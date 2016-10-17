@@ -1,0 +1,15 @@
+{
+  "name": "babel-preset-rx",
+  "version": "1.0.0",
+  "description": "Babel preset for all Rx plugins.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rx/issues"
+  },
+  "homepage": "https://github.com/alibaba/rx#readme",
+  "license": "BSD-3-Clause"
+}
