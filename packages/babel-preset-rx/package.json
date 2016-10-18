@@ -2,7 +2,8 @@
   "name": "babel-preset-rx",
   "version": "1.0.0",
   "description": "Babel preset for all Rx plugins.",
-  "main": "index.js",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"
@@ -11,5 +12,13 @@
     "url": "https://github.com/alibaba/rx/issues"
   },
   "homepage": "https://github.com/alibaba/rx#readme",
-  "license": "BSD-3-Clause"
+  "dependencies": {
+    "babel-plugin-syntax-flow": "^6.3.13",
+    "babel-plugin-syntax-jsx": "^6.3.13",
+    "babel-plugin-transform-flow-strip-types": "^6.3.13",
+    "babel-plugin-transform-react-constant-elements": "^6.9.1",
+    "babel-plugin-transform-react-display-name": "^6.3.13",
+    "babel-plugin-transform-react-jsx": "^6.3.13",
+    "babel-plugin-transform-react-jsx-source": "^6.3.13"
+  }
 }
