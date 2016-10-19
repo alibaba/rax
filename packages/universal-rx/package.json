@@ -2,7 +2,7 @@
   "name": "universal-rx",
   "version": "1.0.0",
   "description": "A universal cross-container render engine.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"
