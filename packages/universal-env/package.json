@@ -1,7 +1,7 @@
 {
-  "name": "universal-rx",
+  "name": "universal-env",
   "version": "1.0.0",
-  "description": "A universal cross-container render engine.",
+  "description": "A universal environment utilities.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
