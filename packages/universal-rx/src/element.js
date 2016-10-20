@@ -1,5 +1,5 @@
 import Host from './vdom/host';
-import {isWeex} from './env';
+import {isWeex} from 'universal-env';
 
 const RESERVED_PROPS = {
   key: true,

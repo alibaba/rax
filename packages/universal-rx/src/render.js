@@ -9,7 +9,7 @@ import instance from './vdom/instance';
 import WeexDriver from './drivers/weex';
 import BrowserDriver from './drivers/browser';
 import {setRem} from './style/unit';
-import {isWeb, isWeex} from './env';
+import {isWeb, isWeex} from 'universal-env';
 
 const FULL_WIDTH_REM = 750;
 

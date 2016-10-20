@@ -2,6 +2,7 @@
   "name": "rx-webpack-plugin",
   "version": "1.0.0",
   "description": "Webpack plugin for Rx framework.",
+  "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
@@ -11,7 +12,6 @@
     "url": "https://github.com/alibaba/rx/issues"
   },
   "homepage": "https://github.com/alibaba/rx#readme",
-  "license": "BSD-3-Clause",
   "devDependencies": {
     "webpack": "^1.13.2"
   }

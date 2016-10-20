@@ -1,5 +1,3 @@
-'use strict';
-
 import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import RxAmdMainTemplatePlugin from './RxAmdMainTemplatePlugin';

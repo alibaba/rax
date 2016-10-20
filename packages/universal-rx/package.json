@@ -11,5 +11,8 @@
   "bugs": {
     "url": "https://github.com/alibaba/rx/issues"
   },
-  "homepage": "https://github.com/alibaba/rx#readme"
+  "homepage": "https://github.com/alibaba/rx#readme",
+  "dependencies": {
+    "universal-env": "^1.0.0"
+  }
 }

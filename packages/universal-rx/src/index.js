@@ -1,7 +1,7 @@
 // include polyfills
 import './polyfills/array';
 import './polyfills/object';
-import {isWeb} from './env';
+import {isWeb} from 'universal-env';
 
 if (isWeb) {
   if (window.__RX__) {
