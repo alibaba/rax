@@ -17,11 +17,13 @@
   "scripts": {
     "clean-build": "rm -rf ./packages/*/lib",
     "clean-coverage": "rm -rf ./coverage",
-    "clean-all": "rm -rf ./packages/*/node_modules; npm run clean-build",
+    "clean-node-modules": "rm -rf ./packages/*/node_modules",
+    "clean-all": "npm run clean-node-modules; npm run clean-build; npm run clean-coverage",
     "build": "npm run clean-build && node ./scripts/build.js",
-    "test": "jest",
-    "coverage": "npm run clean-coverage && npm run test -- --coverage && node ./scripts/mapCoverage.js && codecov",
-    "publish": "npm run test && npm run build && lerna publish"
+    "test": "npm run clean-build && jest",
+    "test-coverage": "npm run test -- --coverage",
+    "coverage": "npm run clean-coverage && npm run test-coverage && node ./scripts/mapCoverage.js && codecov",
+    "publish": "npm run test && lerna publish"
   },
   "jest": {
     "collectCoverage": true,
