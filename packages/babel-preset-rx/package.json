@@ -19,6 +19,8 @@
     "babel-plugin-transform-react-constant-elements": "^6.9.1",
     "babel-plugin-transform-react-display-name": "^6.3.13",
     "babel-plugin-transform-react-jsx": "^6.3.13",
-    "babel-plugin-transform-react-jsx-source": "^6.3.13"
+    "babel-plugin-transform-react-jsx-source": "^6.3.13",
+    "babel-plugin-transform-export-extensions": "^6.8.0",
+    "babel-plugin-transform-class-properties": "^6.16.0"
   }
 }
