@@ -6,14 +6,16 @@ export default {
     ['transform-react-jsx', {
       pragma: 'createElement' // default pragma is React.createElement
     }],
-    'transform-flow-strip-types'
+    'transform-flow-strip-types',
+    'transform-export-extensions', // stage-1
+    'transform-class-properties',
     'syntax-flow',
-    'react-display-name',
+    'syntax-jsx'
   ]),
   env: {
     development: {
       plugins: resolvePlugins([
-        'react-jsx-source',
+        'transform-react-jsx-source',
       ])
     },
     production: {

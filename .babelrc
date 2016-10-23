@@ -1,0 +1,9 @@
+{
+  "presets": [
+    "es2015",
+    "rx"
+  ],
+  "ignore": [
+    "src/polyfills/"
+  ]
+}

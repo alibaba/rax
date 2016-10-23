@@ -1,6 +1,30 @@
 {
   "private": true,
   "devDependencies": {
-    "lerna": "2.0.0-beta.30"
+    "babel-core": "^6.17.0",
+    "babel-jest": "^16.0.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-rx": "1.0.0",
+    "chalk": "^1.1.3",
+    "codecov": "^1.0.1",
+    "glob": "^7.1.1",
+    "istanbul-api": "^1.0.0-aplha.10",
+    "istanbul-lib-coverage": "^1.0.0",
+    "jest": "^16.0.2",
+    "lerna": "2.0.0-beta.30",
+    "minimatch": "^3.0.3"
+  },
+  "scripts": {
+    "clean-build": "rm -rf ./packages/*/lib",
+    "clean-coverage": "rm -rf ./coverage",
+    "clean-all": "rm -rf ./packages/*/node_modules; npm run clean-build",
+    "build": "npm run clean-build && node ./scripts/build.js",
+    "test": "jest",
+    "coverage": "npm run clean-coverage && npm run test -- --coverage && node ./scripts/mapCoverage.js && codecov",
+    "publish": "npm run test && npm run build && lerna publish"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "verbose": true
   }
 }

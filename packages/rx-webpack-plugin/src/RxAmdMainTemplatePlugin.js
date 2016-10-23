@@ -58,7 +58,7 @@ export default class RxAmdMainTemplatePlugin {
 
     mainTemplate.plugin('hash', (hash) => {
       hash.update('exports amd');
-      hash.update(String(this.name);
+      hash.update(String(this.name));
     });
   }
 }
