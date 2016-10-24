@@ -3,6 +3,7 @@
   "devDependencies": {
     "babel-core": "^6.17.0",
     "babel-jest": "^16.0.0",
+    "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-rx": "0.0.2",
     "chalk": "^1.1.3",
@@ -12,13 +13,16 @@
     "istanbul-lib-coverage": "^1.0.0",
     "jest": "^16.0.2",
     "lerna": "2.0.0-beta.30",
-    "minimatch": "^3.0.3"
+    "minimatch": "^3.0.3",
+    "webpack": "^1.13.2"
   },
   "scripts": {
-    "clean-build": "rm -rf ./packages/*/lib",
+    "clean-build": "rm -rf ./packages/*/build",
+    "clean-compile": "rm -rf ./packages/*/lib",
     "clean-coverage": "rm -rf ./coverage",
     "clean-node-modules": "rm -rf ./packages/*/node_modules",
     "clean-all": "npm run clean-node-modules; npm run clean-build; npm run clean-coverage",
+    "compile": "npm run clean-compile && node ./scripts/compile.js",
     "build": "npm run clean-build && node ./scripts/build.js",
     "test": "npm run clean-build && jest",
     "test-coverage": "npm run test -- --coverage",
