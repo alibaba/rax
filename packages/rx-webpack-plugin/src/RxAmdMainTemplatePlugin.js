@@ -29,24 +29,28 @@ export default class RxAmdMainTemplatePlugin {
       externalsDepsArray = JSON.stringify(externalsDepsArray);
 
       let requireCall = '';
-      let polyfills = '';
+      let polyfills = [];
       let name = mainTemplate.applyPluginsWaterfall('asset-path', this.name, {
         hash: hash,
         chunk: chunk
       });
 
-      if (this.options.includePolyfills){
-        polyfills = fs.readFileSync(path.join(__dirname, 'polyfills/require.js'), 'utf8');
+      if (this.options.includePolyfills) {
+        if (Array.isArray(this.options.includePolyfills)) {
+          polyfills = this.options.includePolyfills.map((fp) => {
+            return fs.readFileSync(fp, 'utf8');
+          });
+        }
       }
 
       if (this.options.runMainModule) {
-        requireCall = ';require(' + JSON.stringify(name) + ');';
+        requireCall = 'require(' + JSON.stringify(name) + ');';
       }
 
       return new ConcatSource(
-        polyfills +
+        polyfills.join('\n') +
         'define(' + JSON.stringify(name) + ', ' + externalsDepsArray +
-        ', function(require, exports, module) {\n module.exports = ', source, '});\n' +
+        ', function(require, exports, module) {\n module.exports = ', source, '\n});\n' +
         requireCall
       );
     });

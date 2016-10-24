@@ -1,6 +1,6 @@
 {
   "name": "babel-preset-rx",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "Babel preset for all Rx plugins.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

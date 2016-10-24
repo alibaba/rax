@@ -1,12 +1,17 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import RxAmdMainTemplatePlugin from './RxAmdMainTemplatePlugin';
+import path from 'path';
 
 export default class RxWebpackPlugin {
   constructor(options) {
     this.options = Object.assign({
       runMainModule: true,
-      includePolyfills: false,
+      includePolyfills: [
+        path.join(__dirname, 'polyfills/require.js'),
+        path.join(__dirname, 'polyfills/array.js'),
+        path.join(__dirname, 'polyfills/object.js'),
+      ],
     }, options);
   }
 

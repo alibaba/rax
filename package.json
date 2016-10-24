@@ -4,7 +4,7 @@
     "babel-core": "^6.17.0",
     "babel-jest": "^16.0.0",
     "babel-preset-es2015": "^6.16.0",
-    "babel-preset-rx": "1.0.0",
+    "babel-preset-rx": "0.0.2",
     "chalk": "^1.1.3",
     "codecov": "^1.0.1",
     "glob": "^7.1.1",

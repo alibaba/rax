@@ -8,6 +8,7 @@
  *  node ./scripts/build.js
  *  node ./scripts/build.js /users/123/jest/packages/jest-111/src/111.js
  */
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
