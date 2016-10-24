@@ -2,7 +2,6 @@ export {createElement, cloneElement, isValidElement, createFactory} from './elem
 export Component from './component';
 export PureComponent from './purecomponent';
 export PropTypes from './proptypes';
-
 export render from './render';
 export findDOMNode from './findDOMNode';
 export unmountComponentAtNode from './unmountComponentAtNode';

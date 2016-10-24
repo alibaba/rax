@@ -16,8 +16,10 @@ var RxWebpackPlugin = require('rx-webpack-plugin');
 module.exports = {
   plugins: [
     new RxWebpackPlugin({
-      runMainModule: true,
+      runMainModule: false,
       includePolyfills: false,  
+      moduleName: 'rx',
+      globalName: 'Rx',
     })
   ]
 }

@@ -4,6 +4,19 @@ Rx
 
 Rx is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rx.
 
+* Fast
+* Lightweight
+* Universal
+
+## Size Comparison
+
+| Framework/Library     | Version         | Minified Size (gzip) |
+|-----------------------|-----------------|----------------------|
+| Angular               | [1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js)       | 55.4kb      |
+| React                 | [15.3.2](https://unpkg.com/react@15.3.2/dist/react.min.js)    | 43.7kb      |
+| Vue                   | [2.0.3](https://unpkg.com/vue@2.0.3/dist/vue.min.js)          | 23.2kb      |
+| Rx                    | [0.0.3](https://unpkg.com/universal-rx@0.0.3/dist/rx.min.js)  | 8.6kb       |
+
 ## Example
 
 ```js

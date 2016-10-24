@@ -1,23 +1,20 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
-import RxUmdMainTemplatePlugin from './RxUmdMainTemplatePlugin';
+import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import path from 'path';
 
-export default class RxWebpackPlugin {
+module.exports = class RxWebpackPlugin {
   constructor(options) {
     this.options = Object.assign({
       runMainModule: false,
-      includePolyfills: [
-        path.join(__dirname, 'polyfills/require.js'),
-        path.join(__dirname, 'polyfills/array.js'),
-        path.join(__dirname, 'polyfills/object.js'),
-      ],
+      includePolyfills: false,
+      frameworkComment: false,
     }, options);
   }
 
   apply(compiler) {
     compiler.plugin('this-compilation', (compilation) => {
-      compilation.apply(new RxUmdMainTemplatePlugin(this.options));
+      compilation.apply(new CustomUmdMainTemplatePlugin(this.options));
     });
 
     compiler.plugin('compile', (params) => {
@@ -32,16 +29,20 @@ export default class RxWebpackPlugin {
       ]));
     });
 
-    compiler.plugin('compilation', (compilation) => {
-      compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
-        chunks.forEach(function(chunk) {
-          if(!chunk.initial) return;
-          chunk.files.forEach(function(file) {
-            compilation.assets[file] = new ConcatSource('// {"framework" : "Rx"}', '\n', compilation.assets[file]);
+    if (this.options.frameworkComment) {
+      
+      compiler.plugin('compilation', (compilation) => {
+        compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
+          chunks.forEach(function(chunk) {
+            if(!chunk.initial) return;
+            chunk.files.forEach(function(file) {
+              compilation.assets[file] = new ConcatSource('// {"framework" : "Rx"}', '\n', compilation.assets[file]);
+            });
           });
+          callback();
         });
-        callback();
       });
-    });
+    }
+
   }
 }

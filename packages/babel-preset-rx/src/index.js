@@ -1,6 +1,6 @@
 import resolvePlugins from './resolvePlugins';
 
-export default {
+module.exports = {
   plugins: resolvePlugins([
     'transform-react-display-name',
     ['transform-react-jsx', {
@@ -8,6 +8,7 @@ export default {
     }],
     'transform-flow-strip-types',
     'transform-export-extensions', // stage-1
+    'transform-decorators-legacy', // should before transform-class-properties
     'transform-class-properties',
     'syntax-flow',
     'syntax-jsx'

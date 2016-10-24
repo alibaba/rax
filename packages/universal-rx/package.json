@@ -1,9 +1,10 @@
 {
   "name": "universal-rx",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A universal cross-container render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
+  "browser": "dist/rx.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"

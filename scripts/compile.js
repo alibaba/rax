@@ -103,7 +103,7 @@ const files = process.argv.slice(2);
 if (files.length) {
   files.forEach(buildFile);
 } else {
-  process.stdout.write(chalk.bold.inverse('Building packages\n'));
+  process.stdout.write(chalk.bold.inverse('Compiling packages\n'));
   getPackages().forEach(buildPackage);
   process.stdout.write('\n');
 }
