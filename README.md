@@ -17,11 +17,30 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 | Vue                   | [2.0.3](https://unpkg.com/vue@2.0.3/dist/vue.min.js)          | 23.2kb      |
 | Rx                    | [0.0.3](https://unpkg.com/universal-rx@0.0.3/dist/rx.min.js)  | 8.6kb       |
 
+## Installation
+
+### NPM
+We recommend using Rx from npm with `webpack`. If you use npm for client package management, you can install Rx with:
+```sh
+npm install --save universal-rx
+```
+
+### CDN
+
+If you don't want to use `npm` to manage client packages, the `rx` npm packages also provide UMD distributions in `dist` folders, which are hosted on a CDN:
+```html
+<script src="https://unpkg.com/universal-rx@1/dist/rx.js"></script>
+```
+
+To load a specific version of `rx`, replace `1` with the version number.
+Minified production versions of `rx` are available at:
+```html
+<script src="https://unpkg.com/universal-rx@1/dist/rx.min.js"></script>
+```
+
 ## Example
 
 ```js
-/* @jsx createElement */
-
 import {createElement, Component, render} from 'universal-rx';
 
 class Hello extends Component {
