@@ -1,21 +1,44 @@
-Rx
-==
-> A universal React-compatible render engine.
+<p align="center">
+  <a href="https://alibaba.github.io/rx">
+    <img alt="Rx" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
+  </a>
+</p>
+
+<p align="center">
+A universal React-compatible render engine.
+</p>
+
+<p align="center">
+<img src="https://img.shields.io/npm/l/universal-rx.svg">
+<img src="https://img.shields.io/npm/v/universal-rx.svg">
+<img src="https://img.shields.io/npm/dm/universal-rx.svg">
+</p>
+
+---
 
 Rx is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rx.
 
-* Fast, blazing fast virtual DOM
-* Lightweight, 8kb only after min+gzip
-* Universal, cross browser、Weex and Node.js
+**Fast:** blazing fast virtual DOM.
 
-## Size Comparison
+**Tiny:** 8kb only after min+gzip.
 
-| Framework/Library     | Version         | Minified Size (gzip) |
-|-----------------------|-----------------|----------------------|
-| Angular               | [1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js)       | 55.4kb      |
-| React                 | [15.3.2](https://unpkg.com/react@15.3.2/dist/react.min.js)    | 43.7kb      |
-| Vue                   | [2.0.3](https://unpkg.com/vue@2.0.3/dist/vue.min.js)          | 23.2kb      |
-| Rx                    | [0.0.3](https://unpkg.com/universal-rx@0.0.3/dist/rx.min.js)  | 8.6kb       |
+[Angular 1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js) - 55.4kb (gzip)
+
+<img src="" height="5" width="100%">
+
+[React 15.3.2](https://unpkg.com/react@15.3.2/dist/react.min.js) - 43.7kb (gzip)
+
+<img src="" height="5" width="78.88%">
+
+[Vue 2.0.3](https://unpkg.com/vue@2.0.3/dist/vue.min.js) - 23.2kb (gzip)
+
+<img src="" height="5" width="41.87%">
+
+[Rx 0.0.3](https://unpkg.com/universal-rx@0.0.3/dist/rx.min.js) - 8kb (gzip)
+
+<img src="" height="5" width="14.44%">
+
+**Universal:**: cross browser、Weex and Node.js.
 
 ## Installation
 
