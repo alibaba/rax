@@ -1,6 +1,6 @@
 {
   "name": "weeex-rx-framework",
-  "version": "0.0.2",
+  "version": "0.2.0",
   "description": "Rx framework for weex.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

@@ -62,24 +62,24 @@ if (typeof require === "function"){
       let globalName = this.options.globalName || name;
 
       let sourcePrefix = `
-;(function(f) {
+;(function(fn) {
   if (typeof define === "function"){
     define(${JSON.stringify(moduleName)}, ${externalsDepsArray}, function(require, exports, module){
-      module.exports = f();
+      module.exports = fn();
     });
   } else {
-    var g;
+    var root;
     if (typeof window !== "undefined") {
-      g = window;
+      root = window;
     } else if (typeof global !== "undefined") {
-      g = global;
+      root = global;
     } else if (typeof self !== "undefined") {
-      g = self;
+      root = self;
     } else {
       // NOTICE: In JavaScript strict mode, this is null
-      g = this;
+      root = this;
     }
-    g.${globalName} = f();
+    root.${globalName} = fn();
   }
 })(function(){
   return`;

@@ -1,7 +1,7 @@
 {
   "name": "universal-rx",
   "version": "0.0.4",
-  "description": "A universal cross-container render engine.",
+  "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "browser": "dist/rx.min.js",

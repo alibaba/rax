@@ -215,7 +215,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         }
       }
 
-      const toast ＝ req('@weex-module/toast')
+      const toast = req('@weex-module/toast')
       dialogAPIs = {
         alert: (message) => {
           toast.alert({

@@ -1,12 +1,12 @@
 Rx
 ==
-> :rocket: A universal cross-container render engine.
+> A universal React-compatible render engine.
 
 Rx is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rx.
 
-* Fast
-* Lightweight
-* Universal
+* Fast, blazing fast virtual DOM
+* Lightweight, 8kb only after min+gzip
+* Universal, cross browser、Weex and Node.js
 
 ## Size Comparison
 
@@ -18,6 +18,10 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 | Rx                    | [0.0.3](https://unpkg.com/universal-rx@0.0.3/dist/rx.min.js)  | 8.6kb       |
 
 ## Installation
+
+### Compatibility Note
+
+Rx does not support IE8 and below, because it uses ECMAScript 5 features that are un-shimmable in IE8. However it supports all ECMAScript 5 compliant browsers.
 
 ### NPM
 We recommend using Rx from npm with `webpack`. If you use npm for client package management, you can install Rx with:

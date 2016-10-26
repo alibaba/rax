@@ -3,6 +3,12 @@
 const path = require('path');
 const webpack = require('webpack');
 const RxWebpackPlugin = require('rx-webpack-plugin');
+const fs = require('fs');
+
+// For babelHelpers.js build
+if (!fs.existsSync('./packages/universal-rx/build')) {
+  fs.mkdirSync('./packages/universal-rx/build');
+}
 
 dist(getConfig(
   {
@@ -17,6 +23,17 @@ dist(getConfig(
   {
     moduleName: 'universal-rx',
     globalName: 'Rx',
+  },
+  {
+    presets: ['es2015', 'rx'],
+    plugins: [
+      ['transform-helper', {
+        helperFilename: './packages/universal-rx/build/babelHelpers.js'
+      }]
+    ],
+    ignore: [
+      "babelHelpers.js"
+    ]
   }
 ));
 
@@ -33,10 +50,13 @@ dist(getConfig(
   {
     moduleName: 'universal-env',
     globalName: 'Env',
+  },
+  {
+    presets: ['es2015', 'rx']
   }
 ));
 
-function getConfig(entry, output, moduleOptions) {
+function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
   return {
     target: 'node',
     devtool: 'source-map',
@@ -58,9 +78,7 @@ function getConfig(entry, output, moduleOptions) {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel', // 'babel-loader' is also a legal name to reference
-        query: {
-          presets: ['es2015', 'rx'],
-        }
+        query: babelLoaderQuery
       }]
     }
   };
