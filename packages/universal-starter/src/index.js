@@ -1,11 +1,4 @@
-import {createElement, Component, render} from 'universal-rx';
+import {createElement, render} from 'universal-rx';
+import App from './App';
 
-class Hello extends Component {
-  render() {
-    return (
-      <span>Hello</span>
-    );
-  }
-}
-
-render(document.body);
+render(<App />, document.body);
