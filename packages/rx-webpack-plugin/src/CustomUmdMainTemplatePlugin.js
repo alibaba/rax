@@ -63,7 +63,9 @@ if (typeof require === "function"){
 
       let sourcePrefix = `
 ;(function(fn) {
-  if (typeof define === "function"){
+  if (typeof exports === "object" && typeof module !== "undefined") {
+    module.exports = fn();
+  } else if (typeof define === "function"){
     define(${JSON.stringify(moduleName)}, ${externalsDepsArray}, function(require, exports, module){
       module.exports = fn();
     });

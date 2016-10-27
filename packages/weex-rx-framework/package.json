@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Rx framework for weex.",
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
+  "main": "dist/framework.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"
@@ -11,5 +11,15 @@
   "bugs": {
     "url": "https://github.com/alibaba/rx/issues"
   },
-  "homepage": "https://github.com/alibaba/rx#readme"
+  "scripts": {
+    "test": "babel-node ./test/index.js"
+  },
+  "homepage": "https://github.com/alibaba/rx#readme",
+  "dependencies": {
+    "universal-env": "^0.0.*",
+    "universal-rx": "^0.0.*"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0"
+  }
 }

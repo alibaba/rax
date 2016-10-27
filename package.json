@@ -19,6 +19,7 @@
     "webpack": "^1.13.2"
   },
   "scripts": {
+    "setup": "npm run compile; npm install ./packages/rx-webpack-plugin; npm install ./packages/babel-preset-rx",
     "postinstall": "lerna bootstrap",
     "clean-dist": "rm -rf ./packages/*/dist",
     "clean-compile": "rm -rf ./packages/*/lib",

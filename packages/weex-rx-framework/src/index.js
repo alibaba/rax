@@ -1,31 +1,33 @@
-// TODO
-let builtinModulesCode = '';
+let BuiltinModules = {
+  core: require('universal-rx/dist/rx'),
+  env: require('universal-env/dist/env'),
+};
 
-let NativeComponents = {}
-let NativeModules = {}
+let NativeComponents = {};
+let NativeModules = {};
 
-let Document
-let Element
-let Comment
-let Listener
-let sendTasks
+let Document;
+let Element;
+let Comment;
+let Listener;
+let sendTasks;
 
-const instances = {}
+const instances = {};
 
 export function getInstance(instanceId) {
-  const instance = instances[instanceId]
+  const instance = instances[instanceId];
   if (!instance) {
-    throw new Error(`Invalid instance id "${instanceId}"`)
+    throw new Error(`Invalid instance id "${instanceId}"`);
   }
   return instance;
 }
 
 export function init (cfg) {
-  Document = cfg.Document
-  Element = cfg.Element
-  Comment = cfg.Comment
-  Listener = cfg.Listener
-  sendTasks = cfg.sendTasks
+  Document = cfg.Document;
+  Element = cfg.Element;
+  Comment = cfg.Comment;
+  Listener = cfg.Listener;
+  sendTasks = cfg.sendTasks;
 }
 
 /**
@@ -37,15 +39,15 @@ export function registerComponents (components) {
     components.forEach(function register (name) {
       /* istanbul ignore if */
       if (!name) {
-        return
+        return;
       }
       if (typeof name === 'string') {
-        NativeComponents[name] = true
+        NativeComponents[name] = true;
       }
       else if (typeof name === 'object' && typeof name.type === 'string') {
-        NativeComponents[name.type] = name
+        NativeComponents[name.type] = name;
       }
-    })
+    });
   }
 }
 
@@ -73,9 +75,22 @@ export function registerModules (newModules) {
   }
 }
 
+function genBuiltinModules() {
+  let modules = {};
+  const prefix = '@rx/';
+  for (let name in BuiltinModules) {
+    let moduleName = prefix + name;
+    modules[moduleName] = {
+      module: {exports: BuiltinModules[name]},
+      isInitialized: true,
+    };
+  }
+  return modules;
+}
+
 function genNativeModules(instanceId) {
-  const prefix = '@weex-module/'
-  let modules = {}
+  const prefix = '@weex-module/';
+  let modules = {};
 
   if (typeof NativeModules === 'object') {
     for (let name in NativeModules) {
@@ -83,37 +98,37 @@ function genNativeModules(instanceId) {
       modules[moduleName] = {
         module: {exports: {}},
         isInitialized: true,
-      }
+      };
 
       NativeModules[name].forEach(method => {
 
         if (typeof method === 'string') {
           method = {
             name: method
-          }
+          };
         }
 
-        let methodName = method.name
+        let methodName = method.name;
 
         modules[moduleName].module.exports[methodName] = (...args) => {
-          const finalArgs = []
+          const finalArgs = [];
           args.forEach((arg, index) => {
-            const value = args[index]
+            const value = args[index];
             finalArgs[index] = normalize(value, getInstance(instanceId))
-          })
+          });
 
           sendTasks(String(instanceId), [{
             module: name,
             method: methodName,
             args: finalArgs
-          }])
-        }
+          }]);
+        };
 
-      })
+      });
     }
   }
 
-  return modules
+  return modules;
 }
 
 
@@ -126,24 +141,27 @@ function genNativeModules(instanceId) {
  * @param  {object} [data]
  */
 export function createInstance (instanceId, code, options /* {bundleUrl, debug} */, data) {
-  let instance = instances[instanceId]
+  let instance = instances[instanceId];
 
   if (instance == undefined) {
     let document = new Document(instanceId, options.bundleUrl, null, Listener)
-    let modules = genNativeModules(instanceId)
+    let modules = Object.assign(
+      genBuiltinModules(),
+      genNativeModules(instanceId)
+    );
     instance = instances[instanceId] = {
       document,
       instanceId,
       modules,
       callbacks: [],
       uid: 0
-    }
+    };
 
     function def(id, deps, factory) {
 
       if (deps instanceof Function) {
-        factory = deps
-        deps = []
+        factory = deps;
+        deps = [];
       }
 
       modules[id] = {
@@ -152,46 +170,46 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         module: {exports: {}},
         isInitialized: false,
         hasError: false,
-      }
+      };
     }
 
     function req(id) {
 
-      var mod = modules[id]
+      var mod = modules[id];
 
       if (mod && mod.isInitialized) {
-        return mod.module.exports
+        return mod.module.exports;
       }
 
       if (!mod) {
         throw new Error(
           'Requiring unknown module "' + id + '"'
-        )
+        );
       }
 
       if (mod.hasError) {
         throw new Error(
           'Requiring module "' + id + '" which threw an exception'
-        )
+        );
       }
 
       try {
-        mod.isInitialized = true
-        mod.factory(req, mod.module.exports, mod.module)
+        mod.isInitialized = true;
+        mod.factory(req, mod.module.exports, mod.module);
 
       } catch (e) {
         mod.hasError = true
         mod.isInitialized = false
-        throw e
+        throw e;
       }
 
-      return mod.module.exports
+      return mod.module.exports;
     }
 
-    let timerAPIs
-    let dialogAPIs
+    let timerAPIs;
+    let dialogAPIs;
     if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
-      const timer = req('@weex-module/timer')
+      const timer = req('@weex-module/timer');
       timerAPIs = {
         setTimeout: (...args) => {
           const handler = function () {
@@ -213,7 +231,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         clearInterval: (n) => {
           timer.clearInterval(n)
         }
-      }
+      };
 
       const toast = req('@weex-module/toast')
       dialogAPIs = {
@@ -222,7 +240,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
             message
           }, function() {})
         }
-      }
+      };
 
     } else {
       timerAPIs = {
@@ -230,11 +248,11 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         setInterval,
         clearTimeout,
         clearInterval
-      }
+      };
 
       dialogAPIs = {
         alert,
-      }
+      };
     }
 
     let init = new Function(
@@ -252,9 +270,8 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       'clearTimeout',
       'setInterval',
       'clearInterval',
-      'global',
-      '"use strict";' + builtinModulesCode + code
-    )
+      '"use strict";' + code
+    );
 
     init(
       def,
@@ -270,11 +287,10 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       timerAPIs.setTimeout,
       timerAPIs.clearTimeout,
       timerAPIs.setInterval,
-      timerAPIs.clearInterval,
-      global
-    )
+      timerAPIs.clearInterval
+    );
   } else {
-    throw new Error(`Instance id "${instanceId}" existed when create instance`)
+    throw new Error(`Instance id "${instanceId}" existed when create instance`);
   }
 
 }
@@ -286,13 +302,13 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
  * @param  {object} data
  */
 export function refreshInstance (instanceId, data) {
-  let instance = getInstance(instanceId)
-  let document = instance.document
+  let instance = getInstance(instanceId);
+  let document = instance.document;
   document.documentElement.fireEvent('refresh', {
     timestamp: Date.now(),
     data,
-  })
-  document.listener.refreshFinish()
+  });
+  document.listener.refreshFinish();
 }
 
 /**
@@ -300,17 +316,17 @@ export function refreshInstance (instanceId, data) {
  * @param  {string} instanceId
  */
 export function destroyInstance (instanceId) {
-  let instance = getInstance(instanceId)
-  let document = instance.document
+  let instance = getInstance(instanceId);
+  let document = instance.document;
   document.documentElement.fireEvent('destory', {
     timestamp: Date.now()
-  })
+  });
 
   if (document.destroy) {
-    document.destroy()
+    document.destroy();
   }
 
-  delete instances[instanceId]
+  delete instances[instanceId];
 }
 
 /**
@@ -320,40 +336,40 @@ export function destroyInstance (instanceId) {
  * @return {object} a virtual dom tree
  */
 export function getRoot (instanceId) {
-  let instance = getInstance(instanceId)
-  let document = instance.document
-  return document.toJSON ? document.toJSON() : {}
+  let instance = getInstance(instanceId);
+  let document = instance.document;
+  return document.toJSON ? document.toJSON() : {};
 }
 
 function fireEvent(doc, ref, type, e, domChanges) {
   if (Array.isArray(ref)) {
     ref.some((ref) => {
-      return fireEvent(doc, ref, type, e) !== false
-    })
-    return
+      return fireEvent(doc, ref, type, e) !== false;
+    });
+    return;
   }
 
-  const el = doc.getRef(ref)
+  const el = doc.getRef(ref);
 
   if (el) {
-    const result = doc.fireEvent(el, type, e, domChanges)
-    doc.listener.updateFinish()
-    return result
+    const result = doc.fireEvent(el, type, e, domChanges);
+    doc.listener.updateFinish();
+    return result;
   }
 
-  return new Error(`Invalid element reference "${ref}"`)
+  return new Error(`Invalid element reference "${ref}"`);
 }
 
 function handleCallback(doc, callbacks, callbackId, data, ifKeepAlive) {
 
-  let callback = callbacks[callbackId]
+  let callback = callbacks[callbackId];
   if (typeof callback === 'function') {
-    callback(data)
+    callback(data);
     if (typeof ifKeepAlive === 'undefined' || ifKeepAlive === false) {
-      callbacks[callbackId] = null
+      callbacks[callbackId] = null;
     }
     doc.listener.updateFinish();
-    return
+    return;
   }
 
   return new Error(`Invalid callback id "${callbackId}"`)
@@ -366,26 +382,26 @@ function handleCallback(doc, callbacks, callbackId, data, ifKeepAlive) {
  * @param  {array} tasks list with `method` and `args`
  */
 export function receiveTasks (instanceId, tasks) {
-  const instance = getInstance(instanceId)
+  const instance = getInstance(instanceId);
   if (Array.isArray(tasks)) {
-    const { callbacks, document } = instance
-    const results = []
+    const { callbacks, document } = instance;
+    const results = [];
     tasks.forEach(task => {
       let result;
       if (task.method === 'fireEvent') {
-        let [nodeId, type, data, domChanges] = task.args
-        result = fireEvent(document, nodeId, type, data, domChanges)
+        let [nodeId, type, data, domChanges] = task.args;
+        result = fireEvent(document, nodeId, type, data, domChanges);
       } else if (task.method === 'callback') {
-        let [uid, data, ifKeepAlive] = task.args
-        result = handleCallback(document, callbacks, uid, data, ifKeepAlive)
+        let [uid, data, ifKeepAlive] = task.args;
+        result = handleCallback(document, callbacks, uid, data, ifKeepAlive);
       }
-      results.push(result)
-    })
-    return results
+      results.push(result);
+    });
+    return results;
   }
 }
 
-function normalize (v, instance) {
+export default function normalize (v, instance) {
   const type = typof(v)
 
   switch (type) {
