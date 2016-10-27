@@ -24,19 +24,19 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 [Angular 1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js) - 55.4kb (gzip)
 
-<img src="http://ata2-img.cn-hangzhou.img-pub.aliyun-inc.com/616195344a3b5546f1e059d7931e2d2c" height="5" width="100%">
+<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="100%">
 
 [React 15.3.2](https://unpkg.com/react@15.3.2/dist/react.min.js) - 43.7kb (gzip)
 
-<img src="http://ata2-img.cn-hangzhou.img-pub.aliyun-inc.com/616195344a3b5546f1e059d7931e2d2c" height="5" width="78.88%">
+<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="78.88%">
 
 [Vue 2.0.3](https://unpkg.com/vue@2.0.3/dist/vue.min.js) - 23.2kb (gzip)
 
-<img src="http://ata2-img.cn-hangzhou.img-pub.aliyun-inc.com/616195344a3b5546f1e059d7931e2d2c" height="5" width="41.87%">
+<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="41.87%">
 
 [Rx 0.0.3](https://unpkg.com/universal-rx@0.0.3/dist/rx.min.js) - 8kb (gzip)
 
-<img src="http://ata2-img.cn-hangzhou.img-pub.aliyun-inc.com/616195344a3b5546f1e059d7931e2d2c" height="5" width="14.44%">
+<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="14.44%">
 
 **Universal:** cross browser、Weex and Node.js.
 

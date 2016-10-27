@@ -1,9 +1,21 @@
-**Do you want to request a *feature* or report a *bug*?**
+## Help us to manage our issues by answering the following:
 
-**What is the current behavior?**
+1. How would you tag this issue?
 
-**If the current behavior is a bug, please provide the steps to reproduce and if possible a minimal demo of the problem via https://jsfiddle.net.**
+  - [ ] Question
+  - [ ] Bug
+  - [ ] Discussion
+  - [ ] Feature request
+  - [ ] Tip
+  - [ ] Enhancement
+  - [ ] Performance
 
-**What is the expected behavior?**
+2. Describe your issue:
 
-**Which versions of Rx, and which browser / OS are affected by this issue? Did this work in previous versions of Rx?**
+  - What is the current behavior?
+  - What is the expected behavior?
+  - Which versions of Rx, and which browser / OS are affected by this issue?
+  - Did this work in previous versions of Rx?
+
+3. If your issue is a bug, please provide the steps to reproduce and if possible a minimal demo of the problem via [Bug Report Template](https://jsfiddle.net/yuanyan/ygjr55fh/) on jsFiddle
+.
