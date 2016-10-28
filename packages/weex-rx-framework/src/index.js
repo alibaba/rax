@@ -1,5 +1,6 @@
 import Promise from './promise';
-import Location from './location';
+import URL from './URL';
+import URLSearchParams from './URLSearchParams';
 import downgrade from './downgrade';
 import Fetch from './fetch';
 
@@ -151,7 +152,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
 
   if (instance == undefined) {
     let document = new Document(instanceId, options.bundleUrl, null, Listener);
-    let location = new Location(document.URL || '');
+    let location = new URL(document.URL || '');
     let modules = Object.assign(
       genBuiltinModules(),
       genNativeModules(instanceId)
@@ -272,6 +273,9 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     }
 
     let init = new Function(
+      'Promise',
+      'URL',
+      'URLSearchParams',
       'define',
       'require',
       '__d',
@@ -286,7 +290,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       'clearTimeout',
       'setInterval',
       'clearInterval',
-      'Promise',
       'location',
       'fetch',
       'asyncStorage',
@@ -295,6 +298,9 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     );
 
     init(
+      Promise,
+      URL,
+      URLSearchParams,
       def,
       req,
       def,
@@ -309,7 +315,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       timerAPIs.clearTimeout,
       timerAPIs.setInterval,
       timerAPIs.clearInterval,
-      Promise,
       location,
       networkAPIs.fetch,
       asyncStorageAPIs,
