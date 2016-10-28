@@ -8,7 +8,7 @@ global.WXEnvironment = {
   platform: 'weex'
 }
 
-global.callNative = function(){
+global.callNative = function() {
 
 }
 
@@ -25,6 +25,7 @@ let code = `// {"framework": "Rx"}
     console.log('document', document.URL);
     console.log('location', location.host);
     console.log('URL', new URL('/test', document.URL).toString());
+    console.log('URL', new URL('//example.com/').href);
     console.log('URLSearchParams', new URLSearchParams());
 
     var modal = require("@weex-module/modal");
@@ -105,4 +106,50 @@ framework.createInstance(id2, code2, options)
 framework.receiveTasks(id2, [{
   method: 'callback',
   args: ['1', {bar: 1}, true]
+}])
+
+let id3 = 3
+let code3 = `
+  define("foo", function(require, exports, module){
+    fetch('http://path/to/api').then(function(response) {
+      if (response.status != -1 && response.ok) {
+        return response.json();
+      } else {
+        return Promise.reject(response);
+      }
+    }).then(function (data) {
+      console.log(data);
+    });
+  });
+  require("foo");
+`
+let counter3 = 0;
+let taskList3 = [
+  [ { module: 'stream', method: 'fetch', args: [ {
+      url: 'http://path/to/api',
+      method: 'GET',
+      header: undefined,
+      type: 'json' }, '1', '2'] } ],
+  [ { module: 'dom', method: 'updateFinish', args: [] } ]
+];
+let sendTasks3 = (instanceId, tasks) => {
+  assert.equal(instanceId, id3)
+  assert.deepEqual(tasks, taskList3[counter3])
+  counter3++
+};
+
+framework.init({
+  Document,
+  Element,
+  sendTasks: sendTasks3,
+})
+
+framework.registerModules(modules)
+framework.registerComponents(components)
+
+framework.createInstance(id3, code3, options)
+
+framework.receiveTasks(id3, [{
+  method: 'callback',
+  args: ['1', {status: 200, data: {"foo": "1"}, ok: true}, true]
 }])
