@@ -1,3 +1,8 @@
+import Promise from './promise';
+import Location from './location';
+import downgrade from './downgrade';
+import Fetch from './fetch';
+
 let BuiltinModules = {
   core: require('universal-rx/dist/rx'),
   env: require('universal-env/dist/env'),
@@ -13,6 +18,7 @@ let Listener;
 let sendTasks;
 
 const instances = {};
+const noop = function(){};
 
 export function getInstance(instanceId) {
   const instance = instances[instanceId];
@@ -144,11 +150,13 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
   let instance = instances[instanceId];
 
   if (instance == undefined) {
-    let document = new Document(instanceId, options.bundleUrl, null, Listener)
+    let document = new Document(instanceId, options.bundleUrl, null, Listener);
+    let location = new Location(document.URL || '');
     let modules = Object.assign(
       genBuiltinModules(),
       genNativeModules(instanceId)
     );
+
     instance = instances[instanceId] = {
       document,
       instanceId,
@@ -208,7 +216,12 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
 
     let timerAPIs;
     let dialogAPIs;
+    let downgradeAPIs;
+    let asyncStorageAPIs;
+    let networkAPIs;
+
     if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
+
       const timer = req('@weex-module/timer');
       timerAPIs = {
         setTimeout: (...args) => {
@@ -242,17 +255,20 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         }
       };
 
-    } else {
-      timerAPIs = {
-        setTimeout,
-        setInterval,
-        clearTimeout,
-        clearInterval
+      const instanceWrap = req('@weex-module/instanceWrap');
+      downgradeAPIs = {
+        setting: downgrade.setting.bind(null, instanceWrap);
       };
 
-      dialogAPIs = {
-        alert,
+      const stream = require('@weex-module/stream');
+      networkAPIs = {
+        fetch: Fetch.bind(null, stream.fetch);
       };
+
+      asyncStorageAPIs = req('@weex-module/storage');
+
+    } else {
+      // TODO
     }
 
     let init = new Function(
@@ -270,6 +286,11 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       'clearTimeout',
       'setInterval',
       'clearInterval',
+      'Promise',
+      'location',
+      'fetch',
+      'asyncStorage',
+      'downgrade',
       '"use strict";' + code
     );
 
@@ -287,7 +308,12 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       timerAPIs.setTimeout,
       timerAPIs.clearTimeout,
       timerAPIs.setInterval,
-      timerAPIs.clearInterval
+      timerAPIs.clearInterval,
+      Promise,
+      location,
+      networkAPIs.fetch,
+      asyncStorageAPIs,
+      downgradeAPIs
     );
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);
