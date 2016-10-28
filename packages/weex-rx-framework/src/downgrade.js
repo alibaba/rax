@@ -106,17 +106,15 @@ function check(config) {
   return result;
 }
 
-export default {
-  setting: (nativeInstanceWrap, config) => {
-    let result = check(config.downgrade);
-    if (result.isDowngrade) {
-      nativeInstanceWrap.error(
-        result.errorType,
-        result.code,
-        result.errorMessage
-      );
-      return true;
-    }
-    return false;
+export default (nativeInstanceWrap, config) => {
+  let result = check(config.downgrade);
+  if (result.isDowngrade) {
+    nativeInstanceWrap.error(
+      result.errorType,
+      result.code,
+      result.errorMessage
+    );
+    return true;
   }
-};
+  return false;
+}

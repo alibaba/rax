@@ -16,7 +16,7 @@ var
     return replace[match];
   },
   iterable = isIterable(),
-  secret = '__URLSearchParams__:' + Math.random()
+  secret = '__URLSearchParams__'
 ;
 
 function encode(str) {

@@ -151,8 +151,8 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
   let instance = instances[instanceId];
 
   if (instance == undefined) {
-    let document = new Document(instanceId, options.bundleUrl, null, Listener);
-    let location = new URL(document.URL || '');
+    const document = new Document(instanceId, options.bundleUrl, null, Listener);
+    const location = new URL(document.URL || '');
     let modules = Object.assign(
       genBuiltinModules(),
       genNativeModules(instanceId)
@@ -217,9 +217,9 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
 
     let timerAPIs;
     let dialogAPIs;
-    let downgradeAPIs;
     let asyncStorageAPIs;
     let networkAPIs;
+    let downgradeAPIs;
 
     if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
 
@@ -258,12 +258,12 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
 
       const instanceWrap = req('@weex-module/instanceWrap');
       downgradeAPIs = {
-        setting: downgrade.setting.bind(null, instanceWrap);
+        downgrade: downgrade.bind(null, instanceWrap),
       };
 
-      const stream = require('@weex-module/stream');
+      const stream = req('@weex-module/stream');
       networkAPIs = {
-        fetch: Fetch.bind(null, stream.fetch);
+        fetch: Fetch.bind(null, stream.fetch),
       };
 
       asyncStorageAPIs = req('@weex-module/storage');
@@ -273,52 +273,58 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     }
 
     let init = new Function(
+      // ES
       'Promise',
-      'URL',
-      'URLSearchParams',
-      'define',
-      'require',
-      '__d',
-      '__r',
-      '__DEV__',
-      '__weex_options__',
-      '__weex_data__',
-      '__weex_document__',
+      // W3C
       'document',
       'location',
-      'alert',
+      'fetch',
+      'URL',
+      'URLSearchParams',
       'setTimeout',
       'clearTimeout',
       'setInterval',
       'clearInterval',
-      'fetch',
+      'alert',
+      // W3C +
       'asyncStorage',
-      'downgrade',
+      // ModuleJS
+      'define',
+      'require',
+      // Weex
+      '__weex_define__',
+      '__weex_require__',
+      '__weex_options__',
+      '__weex_data__',
+      '__weex_downgrade__',
       '"use strict";' + code
     );
 
     init(
+      // ES
       Promise,
-      URL,
-      URLSearchParams,
-      def,
-      req,
-      def,
-      req,
-      options.debug,
-      options,
-      data,
-      document,
+      // W3C
       document,
       location,
-      dialogAPIs.alert,
+      networkAPIs.fetch,
+      URL,
+      URLSearchParams,
       timerAPIs.setTimeout,
       timerAPIs.clearTimeout,
       timerAPIs.setInterval,
       timerAPIs.clearInterval,
-      networkAPIs.fetch,
+      dialogAPIs.alert,
+      // W3C +
       asyncStorageAPIs,
-      downgradeAPIs
+      // ModuleJS
+      def,
+      req,
+      // Weex
+      def,
+      req,
+      options,
+      data,
+      downgradeAPIs.downgrade
     );
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);

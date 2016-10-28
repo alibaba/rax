@@ -25,7 +25,7 @@ function bind(fn, thisArg) {
 
 function Promise(fn) {
   if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new');
-  if (typeof fn !== 'function') throw new TypeError('not a function');
+  if (typeof fn !== 'function') throw new TypeError('Promise resolver is not a function');
   this._state = 0;
   this._handled = false;
   this._value = undefined;

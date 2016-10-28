@@ -8,17 +8,28 @@ global.WXEnvironment = {
   platform: 'weex'
 }
 
+global.callNative = function(){
+
+}
+
 let id = '1'
 let code = `// {"framework": "Rx"}
   define("foo", function(require, exports, module){
 
     var Rx = require("@rx/core");
-    console.log('rx', typeof Rx.Component === 'function');
+    console.log('@rx/core', typeof Rx.Component === 'function');
     var Env = require('@rx/env');
-    console.log('rx-env', Env.isWeb === false);
+    console.log('@rx/env', Env);
+
+    console.log('Promise', new Promise(function(){}));
+    console.log('document', document.URL);
+    console.log('location', location.host);
+    console.log('URL', new URL('/test', document.URL).toString());
+    console.log('URLSearchParams', new URLSearchParams());
 
     var modal = require("@weex-module/modal");
     modal.alert('hi', function(data){ console.log('alert callback data', data) });
+
     module.exports = "bar";
   });
   var foo = require("foo");
