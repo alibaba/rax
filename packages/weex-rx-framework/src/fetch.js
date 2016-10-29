@@ -18,7 +18,7 @@ function normalizeValue(value) {
   return value;
 }
 
-function Headers(headers) {
+export function Headers(headers) {
   this.originHeaders = headers;
   this.map = {};
 
@@ -81,17 +81,6 @@ function consumed(body) {
   body.bodyUsed = true;
 }
 
-function fileReaderReady(reader) {
-  return new Promise(function(resolve, reject) {
-    reader.onload = function() {
-      resolve(reader.result);
-    };
-    reader.onerror = function() {
-      reject(reader.error);
-    };
-  });
-}
-
 function Body() {
   this.bodyUsed = false;
 
@@ -127,7 +116,7 @@ function normalizeMethod(method) {
   return (methods.indexOf(upcased) > -1) ? upcased : method;
 }
 
-function Request(input, options) {
+export function Request(input, options) {
   options = options || {};
   var body = options.body;
   if (Request.prototype.isPrototypeOf(input)) {
@@ -181,7 +170,7 @@ function headers(xhr) {
 
 Body.call(Request.prototype);
 
-function Response(bodyInit, options) {
+export function Response(bodyInit, options) {
   if (!options) {
     options = {};
   }

@@ -1,6 +1,6 @@
 
 global.WXEnvironment = {
-  platform: 'native'
+  platform: 'iOS'
 }
 
 global.callNative = function() {

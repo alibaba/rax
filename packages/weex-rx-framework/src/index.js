@@ -2,7 +2,8 @@ import Promise from './promise';
 import URL from './URL';
 import URLSearchParams from './URLSearchParams';
 import downgrade from './downgrade';
-import Fetch from './fetch';
+import Fetch, {Headers, Request, Response} from './fetch';
+import navigator from './navigator';
 
 let BuiltinModules = {
   core: require('universal-rx/dist/rx'),
@@ -277,8 +278,12 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       'Promise',
       // W3C
       'document',
+      'navigator',
       'location',
       'fetch',
+      'Headers',
+      'Response',
+      'Request',
       'URL',
       'URLSearchParams',
       'setTimeout',
@@ -305,8 +310,12 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       Promise,
       // W3C
       document,
+      navigator,
       location,
       networkAPIs.fetch,
+      Headers,
+      Response,
+      Request,
       URL,
       URLSearchParams,
       timerAPIs.setTimeout,
