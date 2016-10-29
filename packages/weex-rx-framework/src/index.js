@@ -247,10 +247,10 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         }
       };
 
-      const toast = req('@weex-module/toast')
+      const modal = req('@weex-module/modal')
       dialogAPIs = {
         alert: (message) => {
-          toast.alert({
+          modal.alert({
             message
           }, function() {})
         }
