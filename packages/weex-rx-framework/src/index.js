@@ -216,39 +216,58 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       return mod.module.exports;
     }
 
-    let timerAPIs;
-    let dialogAPIs;
-    let networkAPIs;
-    let downgradeAPIs;
-
     if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
+      const weexNavigator = req('@weex-module/navigator');
+      const windowAPIs = {
+        outerWidth: WXEnvironment.deviceWidth,
+        outerHeight: WXEnvironment.deviceHeight,
+        devicePixelRatio: WXEnvironment.scale,
+        open: (url) => {
+          weexNavigator.push({
+            url,
+            animated : 'true',
+          }, function(e) {
+            // noop
+          });
+        },
+        addEventListener: (eventName, handler) => {
+          // TODO
+        },
+      };
 
       const timer = req('@weex-module/timer');
-      timerAPIs = {
+      const timerAPIs = {
         setTimeout: (...args) => {
           const handler = function () {
-            args[0](...args.slice(2))
-          }
-          timer.setTimeout(handler, args[1])
-          return instance.uid.toString()
+            args[0](...args.slice(2));
+          };
+          timer.setTimeout(handler, args[1]);
+          return instance.uid.toString();
         },
         setInterval: (...args) => {
           const handler = function () {
-            args[0](...args.slice(2))
-          }
-          timer.setInterval(handler, args[1])
-          return instance.uid.toString()
+            args[0](...args.slice(2));
+          };
+          timer.setInterval(handler, args[1]);
+          return instance.uid.toString();
         },
         clearTimeout: (n) => {
-          timer.clearTimeout(n)
+          timer.clearTimeout(n);
         },
         clearInterval: (n) => {
-          timer.clearInterval(n)
+          timer.clearInterval(n);
+        },
+        requestAnimationFrame: (callback) => {
+          timer.setTimeout(callback, 16);
+          return instance.uid.toString();
+        },
+        cancelAnimationFrame: (n) => {
+          timer.clearTimeout(n);
         }
       };
 
       const modal = req('@weex-module/modal')
-      dialogAPIs = {
+      const dialogAPIs = {
         alert: (message) => {
           modal.alert({
             message
@@ -257,77 +276,91 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       };
 
       const instanceWrap = req('@weex-module/instanceWrap');
-      downgradeAPIs = {
+      const downgradeAPIs = {
         downgrade: downgrade.bind(null, instanceWrap),
       };
 
       const stream = req('@weex-module/stream');
-      networkAPIs = {
+      const networkAPIs = {
         fetch: Fetch.bind(null, stream.fetch),
       };
 
+      let init = new Function(
+        // ES
+        'Promise',
+        // W3C
+        'window',
+        'document',
+        'navigator',
+        'location',
+        'fetch',
+        'Headers',
+        'Response',
+        'Request',
+        'URL',
+        'URLSearchParams',
+        'setTimeout',
+        'clearTimeout',
+        'setInterval',
+        'clearInterval',
+        'requestAnimationFrame',
+        'cancelAnimationFrame',
+        'alert',
+        // ModuleJS
+        'define',
+        'require',
+        // Weex
+        '__weex_define__',
+        '__weex_require__',
+        '__weex_options__',
+        '__weex_data__',
+        '__weex_downgrade__',
+        '"use strict";' + code
+      );
+
+      init(
+        // ES
+        Promise,
+        // W3C
+        windowAPIs,
+        document,
+        navigator,
+        location,
+        networkAPIs.fetch,
+        Headers,
+        Response,
+        Request,
+        URL,
+        URLSearchParams,
+        timerAPIs.setTimeout,
+        timerAPIs.clearTimeout,
+        timerAPIs.setInterval,
+        timerAPIs.clearInterval,
+        timerAPIs.requestAnimationFrame
+        timerAPIs.cancelAnimationFrame,
+        dialogAPIs.alert,
+        // ModuleJS
+        def,
+        req,
+        // Weex
+        def,
+        req,
+        options,
+        data,
+        downgradeAPIs.downgrade
+      );
+
     } else {
-      // TODO
+      let init = new Function(
+        'document',
+        '"use strict";' + code
+      );
+
+      init(
+        document
+      );
     }
 
-    let init = new Function(
-      // ES
-      'Promise',
-      // W3C
-      'document',
-      'navigator',
-      'location',
-      'fetch',
-      'Headers',
-      'Response',
-      'Request',
-      'URL',
-      'URLSearchParams',
-      'setTimeout',
-      'clearTimeout',
-      'setInterval',
-      'clearInterval',
-      'alert',
-      // ModuleJS
-      'define',
-      'require',
-      // Weex
-      '__weex_define__',
-      '__weex_require__',
-      '__weex_options__',
-      '__weex_data__',
-      '__weex_downgrade__',
-      '"use strict";' + code
-    );
-
-    init(
-      // ES
-      Promise,
-      // W3C
-      document,
-      navigator,
-      location,
-      networkAPIs.fetch,
-      Headers,
-      Response,
-      Request,
-      URL,
-      URLSearchParams,
-      timerAPIs.setTimeout,
-      timerAPIs.clearTimeout,
-      timerAPIs.setInterval,
-      timerAPIs.clearInterval,
-      dialogAPIs.alert,
-      // ModuleJS
-      def,
-      req,
-      // Weex
-      def,
-      req,
-      options,
-      data,
-      downgradeAPIs.downgrade
-    );
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);
   }
