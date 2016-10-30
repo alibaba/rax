@@ -4,20 +4,22 @@ import {Document, Element} from './__mocks__/document'
 import * as modules from './__mocks__/modules'
 import components from './__mocks__/components'
 
-let id = 3
+let id = 'downgrade'
 let code = `
   define("foo", function(require, exports, module){
-    console.log(new Request());
-    console.log(new Headers());
-    console.log(new Response());
-    fetch('http://path/to/api').then(function(response) {
-      if (response.status != -1 && response.ok) {
-        return response.json();
-      } else {
-        return Promise.reject(response);
+    __weex_downgrade__({
+      ios: {
+        osVersion: '>1.0.0',
+        appVersion: '>1.0.0',
+        weexVersion: '>1.0.0',
+        deviceModel: ['modelA', 'modelB']
+      },
+      android: {
+        osVersion: '>1.0.0',
+        appVersion: '>1.0.0',
+        weexVersion: '>1.0.0',
+        deviceModel: ['modelA', 'modelB']
       }
-    }).then(function (data) {
-      console.log(data);
     });
   });
   require("foo");

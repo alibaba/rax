@@ -17,3 +17,4 @@ require('./fetch');
 require('./universal-rx');
 require('./universal-env');
 require('./weex-module');
+require('./downgrade');

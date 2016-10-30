@@ -107,7 +107,7 @@ function check(config) {
 }
 
 export default (nativeInstanceWrap, config) => {
-  let result = check(config.downgrade);
+  let result = check(config);
   if (result.isDowngrade) {
     nativeInstanceWrap.error(
       result.errorType,

@@ -218,7 +218,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
 
     let timerAPIs;
     let dialogAPIs;
-    let asyncStorageAPIs;
     let networkAPIs;
     let downgradeAPIs;
 
@@ -267,8 +266,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         fetch: Fetch.bind(null, stream.fetch),
       };
 
-      asyncStorageAPIs = req('@weex-module/storage');
-
     } else {
       // TODO
     }
@@ -291,8 +288,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       'setInterval',
       'clearInterval',
       'alert',
-      // W3C +
-      'asyncStorage',
       // ModuleJS
       'define',
       'require',
@@ -323,8 +318,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       timerAPIs.setInterval,
       timerAPIs.clearInterval,
       dialogAPIs.alert,
-      // W3C +
-      asyncStorageAPIs,
       // ModuleJS
       def,
       req,
@@ -338,7 +331,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);
   }
-
 }
 
 /**
@@ -418,7 +410,7 @@ function handleCallback(doc, callbacks, callbackId, data, ifKeepAlive) {
     return;
   }
 
-  return new Error(`Invalid callback id "${callbackId}"`)
+  return new Error(`Invalid callback id "${callbackId}"`);
 }
 
 /**
@@ -448,34 +440,34 @@ export function receiveTasks (instanceId, tasks) {
 }
 
 export default function normalize (v, instance) {
-  const type = typof(v)
+  const type = typof(v);
 
   switch (type) {
     case 'undefined':
     case 'null':
       return ''
     case 'regexp':
-      return v.toString()
+      return v.toString();
     case 'date':
-      return v.toISOString()
+      return v.toISOString();
     case 'number':
     case 'string':
     case 'boolean':
     case 'array':
     case 'object':
       if (v instanceof Element) {
-        return v.ref
+        return v.ref;
       }
-      return v
+      return v;
     case 'function':
-      instance.callbacks[++instance.uid] = v
-      return instance.uid.toString()
+      instance.callbacks[++instance.uid] = v;
+      return instance.uid.toString();
     default:
-      return JSON.stringify(v)
+      return JSON.stringify(v);
   }
 }
 
 function typof (v) {
-  const s = Object.prototype.toString.call(v)
-  return s.substring(8, s.length - 1).toLowerCase()
+  const s = Object.prototype.toString.call(v);
+  return s.substring(8, s.length - 1).toLowerCase();
 }
