@@ -24,9 +24,11 @@ export default class CustomUmdMainTemplatePlugin {
       let externals = chunk.modules.filter( m => {
         return m.external;
       });
+
       let externalsDepsArray = externals.map( m => {
         return typeof m.request === 'object' ? m.request.amd : m.request;
       });
+
       let externalsArguments = externals.map( m => {
         return '__WEBPACK_EXTERNAL_MODULE_' + m.id + '__';
       });
@@ -60,13 +62,22 @@ if (typeof require === "function"){
 
       let moduleName = this.options.moduleName || name;
       let globalName = this.options.globalName || name;
+      let sourcePrefix;
+      let sourceSuffix;
+      if (chunk.name.endsWith('.factory')) {
+        let factoryDependencies = ['document', 'require', 'exports', 'module'];
+        sourcePrefix = `
+module.exports = function(${factoryDependencies}) {
+  module.exports = `;
 
-      let sourcePrefix = `
+        sourceSuffix = `};`;
+      } else {
+        sourcePrefix = `
 ;(function(fn) {
   if (typeof exports === "object" && typeof module !== "undefined") {
     module.exports = fn();
-  } else if (typeof define === "function"){
-    define(${JSON.stringify(moduleName)}, ${externalsDepsArray}, function(require, exports, module){
+  } else if (typeof define === "function") {
+    define(${JSON.stringify(moduleName)}, function(require, exports, module){
       module.exports = fn();
     });
   } else {
@@ -84,8 +95,10 @@ if (typeof require === "function"){
     root.${globalName} = fn();
   }
 })(function(){
-  return`;
-      let sourceSuffix = `});`;
+  return `;
+
+        sourceSuffix = `});`;
+      }
 
       return new ConcatSource(
         polyfills.join('\n'),
@@ -97,7 +110,7 @@ if (typeof require === "function"){
     });
 
     mainTemplate.plugin('global-hash-paths', (paths) => {
-      if(this.name) paths = paths.concat(this.name);
+      if (this.name) paths = paths.concat(this.name);
 		  return paths;
     });
 

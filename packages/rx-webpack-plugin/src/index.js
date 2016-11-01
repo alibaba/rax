@@ -18,19 +18,19 @@ module.exports = class RxWebpackPlugin {
     });
 
     compiler.plugin('compile', (params) => {
-      params.normalModuleFactory.apply(new ExternalModuleFactoryPlugin('amd', [
+      params.normalModuleFactory.apply(new ExternalModuleFactoryPlugin('amd',
         (context, request, callback) => {
           // @weex-module/* ignored
           if (/^@weex\-module\//.test(request)) {
-            return callback(null, request);
+            return callback(null, request, 'commonjs');
           }
           callback();
         }
-      ]));
+      ));
     });
 
     if (this.options.frameworkComment) {
-      
+
       compiler.plugin('compilation', (compilation) => {
         compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
           chunks.forEach(function(chunk) {

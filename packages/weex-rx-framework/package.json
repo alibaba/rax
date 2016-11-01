@@ -17,6 +17,7 @@
   "homepage": "https://github.com/alibaba/rx#readme",
   "dependencies": {
     "universal-env": "^0.0.*",
+    "universal-transition": "^0.0.*",
     "universal-rx": "^0.0.*"
   },
   "devDependencies": {

@@ -5,9 +5,10 @@ import downgrade from './downgrade';
 import Fetch, {Headers, Request, Response} from './fetch';
 import navigator from './navigator';
 
-let BuiltinModules = {
-  core: require('universal-rx/dist/rx'),
-  env: require('universal-env/dist/env'),
+let BuiltinModulesFactory = {
+  rx: require('universal-rx/dist/rx.factory'),
+  env: require('universal-env/dist/env.factory'),
+  transition: require('universal-transition/dist/transition.factory'),
 };
 
 let NativeComponents = {};
@@ -83,22 +84,21 @@ export function registerModules (newModules) {
   }
 }
 
-function genBuiltinModules() {
-  let modules = {};
-  const prefix = '@rx/';
-  for (let name in BuiltinModules) {
-    let moduleName = prefix + name;
+function genBuiltinModules(modules, document) {
+  const prefix = '@universal/';
+  for (let key in BuiltinModulesFactory) {
+    let moduleName = prefix + key;
     modules[moduleName] = {
-      module: {exports: BuiltinModules[name]},
-      isInitialized: true,
+      factory: (BuiltinModulesFactory[key]).bind(null, document),
+      module: {exports: {}},
+      isInitialized: false,
     };
   }
   return modules;
 }
 
-function genNativeModules(instanceId) {
+function genNativeModules(modules, instanceId) {
   const prefix = '@weex-module/';
-  let modules = {};
 
   if (typeof NativeModules === 'object') {
     for (let name in NativeModules) {
@@ -154,10 +154,9 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
   if (instance == undefined) {
     const document = new Document(instanceId, options.bundleUrl, null, Listener);
     const location = new URL(document.URL || '');
-    let modules = Object.assign(
-      genBuiltinModules(),
-      genNativeModules(instanceId)
-    );
+    let modules = {};
+    genNativeModules(modules, instanceId);
+    genBuiltinModules(modules, document);
 
     instance = instances[instanceId] = {
       document,
@@ -217,10 +216,19 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     }
 
     if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
+
+      // https://drafts.csswg.org/cssom-view/#the-screen-interface
+      const screenAPIs = {
+        width: WXEnvironment.deviceWidth,
+        height: WXEnvironment.deviceHeight,
+        availWidth: WXEnvironment.deviceWidth,
+        availHeight: WXEnvironment.deviceHeight,
+        colorDepth: 24,
+        pixelDepth: 24,
+      };
+
       const weexNavigator = req('@weex-module/navigator');
       const windowAPIs = {
-        outerWidth: WXEnvironment.deviceWidth,
-        outerHeight: WXEnvironment.deviceHeight,
         devicePixelRatio: WXEnvironment.scale,
         open: (url) => {
           weexNavigator.push({
@@ -230,9 +238,12 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
             // noop
           });
         },
-        addEventListener: (eventName, handler) => {
+        addEventListener: (type, listener) => {
           // TODO
         },
+        removeEventListener: (type, listener) => {
+          // TODO
+        }
       };
 
       const timer = req('@weex-module/timer');
@@ -290,6 +301,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         'Promise',
         // W3C
         'window',
+        'screen',
         'document',
         'navigator',
         'location',
@@ -323,6 +335,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         Promise,
         // W3C
         windowAPIs,
+        screenAPIs,
         document,
         navigator,
         location,
@@ -336,7 +349,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         timerAPIs.clearTimeout,
         timerAPIs.setInterval,
         timerAPIs.clearInterval,
-        timerAPIs.requestAnimationFrame
+        timerAPIs.requestAnimationFrame,
         timerAPIs.cancelAnimationFrame,
         dialogAPIs.alert,
         // ModuleJS

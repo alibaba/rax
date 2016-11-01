@@ -8,8 +8,8 @@ let id = '7'
 let code = `// {"framework": "Rx"}
   define("foo", function(require, exports, module){
 
-    var Env = require('@rx/env');
-    console.log('@rx/env', Env);
+    var Env = require('@universal/env');
+    console.log('@universal/env', Env);
 
     module.exports = "bar";
   });

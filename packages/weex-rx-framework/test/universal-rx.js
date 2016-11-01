@@ -8,8 +8,8 @@ let id = '6'
 let code = `// {"framework": "Rx"}
   define("foo", function(require, exports, module){
 
-    var Rx = require("@rx/core");
-    console.log('@rx/core', typeof Rx.Component === 'function');
+    var Rx = require("@universal/rx");
+    console.log('@universal/rx', Rx);
 
     module.exports = "bar";
   });

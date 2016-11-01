@@ -1,4 +1,4 @@
-# universal-starter
+# universal-rx-starter
 
 ## Universal "Gotchas"
 

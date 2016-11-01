@@ -15,6 +15,7 @@ dist(getConfig(
   {
     'env': './packages/universal-env/src/index.js',
     'env.min': './packages/universal-env/src/index.js',
+    'env.factory' : './packages/universal-env/src/index.js',
   },
   {
     path: './packages/universal-env/dist/',
@@ -28,12 +29,13 @@ dist(getConfig(
   {
     presets: ['es2015', 'rx']
   }
-), ()=> {
-  // 2
-  dist(getConfig(
+)).then(() => {
+
+  return dist(getConfig(
     {
       'rx': './packages/universal-rx/src/index.js',
       'rx.min': './packages/universal-rx/src/index.js',
+      'rx.factory': './packages/universal-rx/src/index.js',
     },
     {
       path: './packages/universal-rx/dist/',
@@ -55,30 +57,52 @@ dist(getConfig(
         "babelHelpers.js"
       ]
     }
-  ), ()=> {
-    // 3
-    dist(getConfig(
-      {
-        'framework': './packages/weex-rx-framework/src/index.js',
-      },
-      {
-        path: './packages/weex-rx-framework/dist/',
-        filename: '[name].js',
-        sourceMapFilename: '[name].map',
-      },
-      {
-        moduleName: 'weex-rx-framework',
-        globalName: 'Framework',
-      },
-      {
-        presets: ['es2015'],
-        ignore: [
-          'dist/'
-        ]
-      }
-    ));
-  });
+  ));
+
+}).then(() => {
+  return dist(getConfig(
+    {
+      'transition': './packages/universal-transition/src/index.js',
+      'transition.min': './packages/universal-transition/src/index.js',
+      'transition.factory' : './packages/universal-transition/src/index.js',
+    },
+    {
+      path: './packages/universal-transition/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+    },
+    {
+      moduleName: 'universal-transition',
+      globalName: 'Transition',
+    },
+    {
+      presets: ['es2015', 'rx']
+    }
+  ));
+}).then(()=> {
+  return dist(getConfig(
+    {
+      'framework': './packages/weex-rx-framework/src/index.js',
+    },
+    {
+      path: './packages/weex-rx-framework/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+    },
+    {
+      moduleName: 'weex-rx-framework',
+      globalName: 'Framework',
+    },
+    {
+      presets: ['es2015'],
+      ignore: [
+        'dist/'
+      ]
+    }
+  ));
 });
+
+
 
 function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
   return {
@@ -108,13 +132,15 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
   };
 }
 
-function dist(config, callback){
-  let compiler = webpack(config);
-  compiler.run(function(err, stats) {
-   let options = {
-     colors: true
-   };
-   console.log(stats.toString(options));
-   callback && callback();
+function dist(config){
+  return new Promise(function(resolver, reject){
+    let compiler = webpack(config);
+    compiler.run(function(err, stats) {
+     let options = {
+       colors: true
+     };
+     console.log(stats.toString(options));
+     resolver();
+    });
   });
 }
