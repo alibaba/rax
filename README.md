@@ -20,7 +20,7 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 **Fast:** blazing fast virtual DOM.
 
-**Tiny:** 8kb only after min+gzip.
+**Tiny:** 8.5kb only after min+gzip.
 
 [Angular 1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js) - 55.4kb (gzip)
 
@@ -34,7 +34,7 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 <img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="41.87%">
 
-[Rx 0.0.3](https://unpkg.com/universal-rx@0.0.3/dist/rx.min.js) - 8kb (gzip)
+[Rx 0.0.5](https://unpkg.com/universal-rx@0.0.5/dist/rx.min.js) - 8.5kb (gzip)
 
 <img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="14.44%">
 
