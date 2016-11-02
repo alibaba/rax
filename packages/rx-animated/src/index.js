@@ -1,6 +1,6 @@
 import Animated from './animated';
 import {setNativeProps} from 'universal-rx';
-import {View, Image, Text} from 'rx-components';
+import {View, Image, Text, ScrollView} from 'rx-components';
 import mapStyle from './mapStyle';
 
 function ApplyAnimatedValues(instance, props) {
@@ -48,4 +48,5 @@ export default {
   View: Animated.createAnimatedComponent(View),
   Text: Animated.createAnimatedComponent(Text),
   Image: Animated.createAnimatedComponent(Image),
+  ScrollView: Animated.createAnimatedComponent(ScrollView),
 };

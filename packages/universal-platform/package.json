@@ -1,7 +1,7 @@
 {
-  "name": "rx-starter",
+  "name": "universal-platform",
   "version": "0.0.1",
-  "description": "Rx universal starter kit.",
+  "description": "A universal Platform API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -13,8 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rx#readme",
   "dependencies": {
-    "universal-env": "0.0.*",
-    "universal-rx": "0.0.*",
-    "rx-components": "0.0.*"
+    "universal-env": "0.0.*"
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "rx-panresponder",
+  "name": "universal-panresponder",
   "version": "0.0.1",
-  "description": "Gesture for Rx.",
+  "description": "A universal PanResponder API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
