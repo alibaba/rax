@@ -1,0 +1,19 @@
+{
+  "name": "rx-components",
+  "version": "0.0.1",
+  "description": "Base components for Rx.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rx/issues"
+  },
+  "homepage": "https://github.com/alibaba/rx#readme",
+  "dependencies": {
+    "universal-env": "0.0.*",
+    "universal-rx": "0.0.*"
+  }
+}

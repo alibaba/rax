@@ -111,6 +111,9 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
     entry: entry,
     output: output,
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('production'),
+      }),
       new webpack.NoErrorsPlugin(),
       new RxWebpackPlugin(moduleOptions),
       new webpack.optimize.UglifyJsPlugin({

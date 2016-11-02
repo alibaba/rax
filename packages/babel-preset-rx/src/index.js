@@ -10,6 +10,8 @@ module.exports = {
     'transform-export-extensions', // stage-1
     'transform-decorators-legacy', // should before transform-class-properties
     'transform-class-properties',
+    'transform-object-rest-spread', // stage-3
+    'syntax-trailing-function-commas', // stage-3
     'syntax-flow',
     'syntax-jsx'
   ]),
