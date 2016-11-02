@@ -18,9 +18,13 @@ A universal React-compatible render engine.
 
 Rx is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rx.
 
-**Fast:** blazing fast virtual DOM.
+:zap: **Fast:** blazing fast virtual DOM.
 
-**Tiny:** 8.5kb only after min+gzip.
+:dart: **Tiny:** 8.5kb only after min+gzip.
+
+:art: **Universal:** cross browser、Weex and Node.js.
+
+## Size Comparison
 
 [Angular 1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js) - 55.4kb (gzip)
 
@@ -38,7 +42,6 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 <img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="14.44%">
 
-**Universal:** cross browser、Weex and Node.js.
 
 ## Installation
 
@@ -80,14 +83,12 @@ const styles = {
   }
 };
 
-render(<Hello name="world" />);
+render(<Hello name="world" />, document.body);
 ```
 
-## Packages
+## Universal Libraries
 
-| Package | Version | External Deps | Vulnerabilities |
-|--------|-------|------------|-----------|
-| [`universal-rx`](/packages/universal-rx) | [![npm](https://img.shields.io/npm/v/universal-rx.svg)](https://www.npmjs.com/package/universal-rx) | [![Dependency Status](https://david-dm.org/alibaba/rx.svg?path=packages/universal-rx)](https://david-dm.org/alibaba/rx.svg?path=packages/universal-rx) | [![Known Vulnerabilities](https://snyk.io/test/npm/universal-rx/badge.svg)](https://snyk.io/test/npm/universal-rx) |
-| [`universal-env`](/packages/universal-env) | [![npm](https://img.shields.io/npm/v/universal-env.svg)](https://www.npmjs.com/package/universal-env) | [![Dependency Status](https://david-dm.org/alibaba/rx.svg?path=packages/universal-env)](https://david-dm.org/alibaba/rx.svg?path=packages/universal-env) | [![Known Vulnerabilities](https://snyk.io/test/npm/universal-env/badge.svg)](https://snyk.io/test/npm/universal-env) |
-| [`rx-webpack-plugin`](/packages/rx-webpack-plugin) | [![npm](https://img.shields.io/npm/v/rx-webpack-plugin.svg)](https://www.npmjs.com/package/rx-webpack-plugin) | [![Dependency Status](https://david-dm.org/alibaba/rx.svg?path=packages/rx-webpack-plugin)](https://david-dm.org/alibaba/rx.svg?path=packages/rx-webpack-plugin) | [![Known Vulnerabilities](https://snyk.io/test/npm/rx-webpack-plugin/badge.svg)](https://snyk.io/test/npm/rx-webpack-plugin) |
-| [`babel-preset-rx`](/packages/babel-preset-rx) | [![npm](https://img.shields.io/npm/v/babel-preset-rx.svg)](https://www.npmjs.com/package/babel-preset-rx) | [![Dependency Status](https://david-dm.org/alibaba/rx.svg?path=packages/babel-preset-rx)](https://david-dm.org/alibaba/rx.svg?path=packages/babel-preset-rx) | [![Known Vulnerabilities](https://snyk.io/test/npm/babel-preset-rx/badge.svg)](https://snyk.io/test/npm/babel-preset-rx) |
+* :rocket: [universal-rx](/packages/universal-rx): A universal React-compatible render engine.
+* :four_leaf_clover: [universal-env](/packages/universal-env): A universal environment utilities.
+* :movie_camera: [universal-transition](/packages/universal-transition): A universal transition API.
+* :postbox: [universal-router](https://github.com/kriasoft/universal-router): A simple middleware-style router for isomorphic JavaScript web apps.
