@@ -90,5 +90,5 @@ render(<Hello name="world" />, document.body);
 
 * :rocket: [universal-rx](/packages/universal-rx): A universal React-compatible render engine.
 * :four_leaf_clover: [universal-env](/packages/universal-env): A universal environment utilities.
-* :movie_camera: [universal-transition](/packages/universal-env): A universal transition API.
+* :movie_camera: [universal-transition](/packages/universal-transition): A universal transition API.
 * :postbox: [universal-router](https://github.com/kriasoft/universal-router): A simple middleware-style router for isomorphic JavaScript web apps.
