@@ -19,15 +19,27 @@ class Image extends Component {
 
     // Source must a object
     if (source && source.uri) {
-
+      let style = nativeProps.style;
       let {width, height, uri} = source;
+
+      // Default is 0
+      if (
+        width == null &&
+        height == null &&
+        style.height == null &&
+        style.width == null
+      ) {
+        width = 0;
+        height = 0;
+      }
+
       nativeProps.style = {
         ...{
           display: 'flex',
-          width: width || 0,
-          height: height || 0,
+          width: width,
+          height: height,
         },
-        ...nativeProps.style
+        ...style
       };
       nativeProps.src = uri;
 

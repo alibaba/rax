@@ -64,7 +64,11 @@ if (typeof require === "function"){
       let globalName = this.options.globalName || name;
       let sourcePrefix;
       let sourceSuffix;
-      if (chunk.name.endsWith('.factory')) {
+      if (chunk.name.endsWith('.bundle')) {
+        let factoryDependencies = ['document', 'require', 'exports', 'module'];
+        sourcePrefix = ``;
+        sourceSuffix = ``;
+      } else if (chunk.name.endsWith('.factory')) {
         let factoryDependencies = ['document', 'require', 'exports', 'module'];
         sourcePrefix = `
 module.exports = function(${factoryDependencies}) {

@@ -16,10 +16,11 @@
     "lerna": "2.0.0-beta.30",
     "minimatch": "^3.0.3",
     "rx-webpack-plugin": "^0.0.3",
-    "webpack": "^1.13.2"
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
-    "setup": "npm link ./packages/rx-webpack-plugin",
+    "link": "node ./scripts/link.js",
     "postinstall": "lerna bootstrap",
     "clean-dist": "rm -rf ./packages/*/dist",
     "clean-compile": "rm -rf ./packages/*/lib",
@@ -30,6 +31,7 @@
     "dist": "npm run clean-dist && node ./scripts/dist.js",
     "build": "npm run compile; npm run dist",
     "test": "npm run clean-compile && jest",
+    "start": "node ./scripts/start.js",
     "test-coverage": "npm run test -- --coverage",
     "coverage": "npm run clean-coverage && npm run test-coverage && node ./scripts/mapCoverage.js && codecov",
     "publish": "npm run test && lerna publish"

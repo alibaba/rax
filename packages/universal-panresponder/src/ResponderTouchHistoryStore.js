@@ -121,8 +121,9 @@ function normalizeTouches(touches, nativeEvent) {
       clientX: touch.clientX,
       clientY: touch.clientY,
       force: touch.force,
-      pageX: touch.pageX,
-      pageY: touch.pageY,
+      // FIXME: In weex android pageX/Y return a error value
+      pageX: touch.screenX,
+      pageY: touch.screenY,
       radiusX: touch.radiusX,
       radiusY: touch.radiusY,
       rotationAngle: touch.rotationAngle,

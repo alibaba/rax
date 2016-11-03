@@ -3,6 +3,7 @@ import StyleSheet from 'universal-stylesheet';
 import Platform from 'universal-platform';
 import Animated from 'rx-animated';
 import {Text, TouchableOpacity, View, Image} from 'rx-components';
+import {isWeb} from 'universal-env';
 
 const PROFILE_WIDTH = 90;
 
@@ -71,20 +72,25 @@ class App extends Component {
       outputRange: [20, 20,  20,   0,   0],
       extrapolate: 'clamp',
     });
+
+    let scrollHandler;
+    if (isWeb) {
+      scrollHandler = Animated.event(
+        [{ target: { scrollTop: this.state.scrollY } }],
+        { useNativeDriver: true }
+      );
+    }
+
     return (
-      <View style={{flex: 1}}>
-        <View style={{height: Platform.OS === 'android' ? 24 : 26, position: 'absolute', top: 0, left: 0, right:0, backgroundColor: 'black'}} />
+      <View style={[{flex: 1}, StyleSheet.absoluteFill]}>
         <View style={[styles.fill, { overflow: 'hidden' }]}>
           <Animated.ScrollView
             scrollEventThrottle={16}
             style={styles.fill}
             contentContainerStyle={styles.content}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-              { useNativeDriver: true }
-            )}
+            onScroll={scrollHandler}
           >
-            <Text style={styles.name}>Doogy</Text>
+            <Text style={styles.name}>Profile</Text>
             {this._renderContent()}
           </Animated.ScrollView>
 
@@ -92,7 +98,7 @@ class App extends Component {
             <Animated.Image
               style={[styles.image, { opacity: imageOpacity, transform: [{ translateY: imageTranslate }, { scale: imageScale } ] }]}
               resizeMode="cover"
-              source={{ uri: 'http://vignette4.wikia.nocookie.net/happypasta/images/6/6c/Anime-kittens-cats-praying-496315.jpg/revision/latest?cb=20130914024839' }}
+              source={{ uri: '//img.alicdn.com/imgextra/i3/2950662430/TB2J3uvX9CI.eBjy1XbXXbUBFXa_!!2-jiyoujia.png' }}
             />
           </Animated.View>
 
@@ -103,7 +109,7 @@ class App extends Component {
             <Image
               resizeMode="cover"
               style={styles.profileImage}
-              source={{uri: 'http://favim.com/orig/201106/14/adorable-cute-lab-love-puppy-puppy-face-Favim.com-75572.jpg'}}
+              source={{uri: '//img.alicdn.com/imgextra/i3/2950662430/TB2J3uvX9CI.eBjy1XbXXbUBFXa_!!2-jiyoujia.png'}}
             />
           </Animated.View>
 
@@ -120,7 +126,7 @@ class App extends Component {
 
               <Animated.View pointerEvents="none" style={[styles.titleContainer, {opacity: titleOpacity, transform: [{ translateY: titleTranslate }] }]}>
                 <Text style={styles.title}>
-                  Doogy
+                  Profile
                 </Text>
               </Animated.View>
 
@@ -128,25 +134,23 @@ class App extends Component {
             </View>
           </View>
         </View>
-
       </View>
     );
   }
 }
 
-const HEADER_HEIGHT = 150;
+const HEADER_HEIGHT = 200;
 const NAVBAR_HEIGHT = 56;
 
 const styles = StyleSheet.create({
   row: {
     padding: 10,
     margin: 10,
-    backgroundColor: '#eee',
+    backgroundColor: '#eeeeee',
   },
   fill: {
     flex: 1,
-    backgroundColor: '#fff',
-    marginTop: Platform.OS === 'android' ? 24 : 26,
+    backgroundColor: '#ffffff',
   },
   image: {
     height: HEADER_HEIGHT,
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
     top: -HEADER_HEIGHT - HEADER_HEIGHT,
     left: 0,
     right: 0,
-    backgroundColor: '#008ca6',
+    backgroundColor: '#443f38',
     height: HEADER_HEIGHT + HEADER_HEIGHT + HEADER_HEIGHT,
     paddingTop: HEADER_HEIGHT + HEADER_HEIGHT,
   },
@@ -171,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navbarBackground: {
-    backgroundColor: '#008ca6',
+    backgroundColor: '#443f38',
     position: 'absolute',
     left: 0,
     right: 0,
@@ -184,7 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 8,
     position: 'absolute',
-    top: HEADER_HEIGHT - 30,
+    top: HEADER_HEIGHT - 50,
     left: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -194,15 +198,15 @@ const styles = StyleSheet.create({
     height: PROFILE_WIDTH,
   },
   content: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     paddingTop: HEADER_HEIGHT,
   },
   name: {
     backgroundColor: 'transparent',
     marginTop: 60,
     marginBottom: 16,
-    marginLeft: 10,
-    fontSize: 16,
+    marginLeft: 16,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   backButton: {

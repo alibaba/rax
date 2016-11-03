@@ -10,8 +10,8 @@
  * @flow
  */
 
-var {createElement, Component} = require('universal-rx');
-var mapStyle = require('./mapStyle');
+import {createElement, Component} from 'universal-rx';
+import mapStyle from './mapStyle';
 var AnimatedProps = require('animated/lib/AnimatedProps');
 var ApplyAnimatedValues = require('animated/lib/injectable/ApplyAnimatedValues');
 

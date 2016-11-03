@@ -349,68 +349,66 @@ const PanResponder = {
     // Track for mouse event
     let isPanStart = false;
 
-    let panHandlers;
+    // Default 
+    let panHandlers = {
+      onPanStart: function(e) {
+        isPanStart = true;
 
-    if (isWeex) {
-      panHandlers = {
-        onPanStart: function(e) {
-          isPanStart = true;
+        ResponderTouchHistoryStore.recordTouchTrack('start', e);
 
-          ResponderTouchHistoryStore.recordTouchTrack('start', e);
+        if (!setHandlers.onStartShouldSetResponder(e)) {
+          return responderHandlers.onResponderReject(e);
+        }
 
-          if (!setHandlers.onStartShouldSetResponder(e)) {
-            return responderHandlers.onResponderReject(e);
-          }
+        responderHandlers.onResponderGrant(e);
 
-          responderHandlers.onResponderGrant(e);
+        const touchHistory = ResponderTouchHistoryStore.touchHistory;
+        gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
+        if (config.onPanResponderStart) {
+          config.onPanResponderStart(e, gestureState);
+        }
+      },
 
-          const touchHistory = ResponderTouchHistoryStore.touchHistory;
-          gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
-          if (config.onPanResponderStart) {
-            config.onPanResponderStart(e, gestureState);
-          }
-        },
+      onPanMove: function(e) {
 
-        onPanMove: function(e) {
+        if (!isPanStart) return;
 
-          if (!isPanStart) return;
+        ResponderTouchHistoryStore.recordTouchTrack('move', e);
 
-          ResponderTouchHistoryStore.recordTouchTrack('move', e);
+        if (!setHandlers.onMoveShouldSetResponder(e)) {
+          return;
+        }
 
-          if (!setHandlers.onMoveShouldSetResponder(e)) {
-            return;
-          }
+        const touchHistory = ResponderTouchHistoryStore.touchHistory;
+        // Guard against the dispatch of two touch moves when there are two
+        // simultaneously changed touches.
+        if (gestureState._accountsForMovesUpTo === touchHistory.mostRecentTimeStamp) {
+          return;
+        }
+        // Filter out any touch moves past the first one - we would have
+        // already processed multi-touch geometry during the first event.
+        PanResponder._updateGestureStateOnMove(gestureState, touchHistory);
+        if (config.onPanResponderMove) {
+          config.onPanResponderMove(e, gestureState);
+        }
+      },
 
-          const touchHistory = ResponderTouchHistoryStore.touchHistory;
-          // Guard against the dispatch of two touch moves when there are two
-          // simultaneously changed touches.
-          if (gestureState._accountsForMovesUpTo === touchHistory.mostRecentTimeStamp) {
-            return;
-          }
-          // Filter out any touch moves past the first one - we would have
-          // already processed multi-touch geometry during the first event.
-          PanResponder._updateGestureStateOnMove(gestureState, touchHistory);
-          if (config.onPanResponderMove) {
-            config.onPanResponderMove(e, gestureState);
-          }
-        },
+      onPanEnd: function(e) {
+        isPanStart = false;
 
-        onPanEnd: function(e) {
-          isPanStart = false;
+        ResponderTouchHistoryStore.recordTouchTrack('end', e);
 
-          ResponderTouchHistoryStore.recordTouchTrack('end', e);
+        const touchHistory = ResponderTouchHistoryStore.touchHistory;
+        gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
+        if (config.onPanResponderEnd) {
+          config.onPanResponderEnd(e, gestureState);
+        }
 
-          const touchHistory = ResponderTouchHistoryStore.touchHistory;
-          gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
-          if (config.onPanResponderEnd) {
-            config.onPanResponderEnd(e, gestureState);
-          }
+        responderHandlers.onResponderRelease(e);
+      },
+    };
 
-          responderHandlers.onResponderRelease(e);
-        },
-      };
-    } else {
-
+    if (isWeb) {
       if ('ontouchstart' in window) {
         panHandlers = {
           onTouchStart: panHandlers.onPanStart,
@@ -424,7 +422,6 @@ const PanResponder = {
           onMouseUp: panHandlers.onPanEnd
         };
       }
-      
     }
 
     return { panHandlers: panHandlers };
