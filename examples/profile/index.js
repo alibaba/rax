@@ -2,12 +2,7 @@ import {createElement, Component, render} from 'universal-rx';
 import StyleSheet from 'universal-stylesheet';
 import Platform from 'universal-platform';
 import Animated from 'rx-animated';
-import {
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-} from 'rx-components';
+import {Text, TouchableOpacity, View, Image} from 'rx-components';
 
 const PROFILE_WIDTH = 90;
 

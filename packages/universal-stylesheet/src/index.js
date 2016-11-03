@@ -8,7 +8,7 @@ const absoluteFillObject = {
   bottom: 0,
 };
 
-export defualt {
+export default {
   hairlineWidth: 1,
   absoluteFill: absoluteFillObject,
   absoluteFillObject,
