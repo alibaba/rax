@@ -83,7 +83,7 @@ const styles = {
   }
 };
 
-render(<Hello name="world" />, document.body);
+render(<Hello name="world" />);
 ```
 
 ## Universal Libraries
