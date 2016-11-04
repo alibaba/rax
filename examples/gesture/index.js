@@ -2,7 +2,7 @@ import {createElement, Component, render, setNativeProps} from 'universal-rx';
 import {View} from 'rx-components';
 import PanResponder from 'universal-panresponder';
 
-const CIRCLE_SIZE = 160;
+const CIRCLE_SIZE = 100;
 const CIRCLE_COLOR = 'blue';
 const CIRCLE_HIGHLIGHT_COLOR = 'green'
 
@@ -87,15 +87,6 @@ class PanResponderSample extends Component {
     this._circleStyles.style.left = this._previousLeft + gestureState.dx;
     this._circleStyles.style.top = this._previousTop + gestureState.dy;
 
-    console.log(
-      'move',
-      'left ' + parseInt(this._circleStyles.style.left),
-      'top ' + parseInt(this._circleStyles.style.top),
-      'preLeft ' + parseInt(this._previousLeft),
-      'preTop ' + parseInt(this._previousTop),
-      'dx ' + parseInt(gestureState.dx),
-      'dy ' + parseInt(gestureState.dy)
-    );
     this._updatePosition();
   };
 
