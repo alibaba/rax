@@ -349,9 +349,9 @@ const PanResponder = {
     // Track for mouse event
     let isPanStart = false;
 
-    // Default 
+    // Default
     let panHandlers = {
-      onPanStart: function(e) {
+      onTouchStart: function(e) {
         isPanStart = true;
 
         ResponderTouchHistoryStore.recordTouchTrack('start', e);
@@ -369,7 +369,7 @@ const PanResponder = {
         }
       },
 
-      onPanMove: function(e) {
+      onTouchMove: function(e) {
 
         if (!isPanStart) return;
 
@@ -393,7 +393,7 @@ const PanResponder = {
         }
       },
 
-      onPanEnd: function(e) {
+      onTouchEnd: function(e) {
         isPanStart = false;
 
         ResponderTouchHistoryStore.recordTouchTrack('end', e);
@@ -411,15 +411,15 @@ const PanResponder = {
     if (isWeb) {
       if ('ontouchstart' in window) {
         panHandlers = {
-          onTouchStart: panHandlers.onPanStart,
-          onTouchMove: panHandlers.onPanMove,
-          onTouchEnd: panHandlers.onPanEnd
+          onTouchStart: panHandlers.onTouchStart,
+          onTouchMove: panHandlers.onTouchMove,
+          onTouchEnd: panHandlers.onTouchEnd
         };
       } else {
         panHandlers = {
-          onMouseDown: panHandlers.onPanStart,
-          onMouseMove: panHandlers.onPanMove,
-          onMouseUp: panHandlers.onPanEnd
+          onMouseDown: panHandlers.onTouchStart,
+          onMouseMove: panHandlers.onTouchMove,
+          onMouseUp: panHandlers.onTouchEnd
         };
       }
     }
