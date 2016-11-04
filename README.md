@@ -88,7 +88,10 @@ render(<Hello name="world" />);
 
 ## Universal Libraries
 
-* :rocket: [universal-rx](/packages/universal-rx): A universal React-compatible render engine.
+* :tophat: [universal-rx](/packages/universal-rx): A universal React-compatible render engine.
 * :four_leaf_clover: [universal-env](/packages/universal-env): A universal environment utilities.
-* :movie_camera: [universal-transition](/packages/universal-transition): A universal transition API.
+* :gem: [universal-transition](/packages/universal-transition): A universal transition API.
+* :mahjong: [universal-platform](/packages/universal-platform): A universal Platform API.
+* :black_joker: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
+* :iphone: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
 * :postbox: [universal-router](https://github.com/kriasoft/universal-router): A simple middleware-style router for isomorphic JavaScript web apps.
