@@ -65,7 +65,6 @@ class ExampleItem extends Component {
       var base = getBaseURL('examples');
       url = base + this.props.name + '.js';
     }
-    console.log(url);
     event.openURL(url);
   };
 
