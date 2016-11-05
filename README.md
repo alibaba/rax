@@ -91,9 +91,10 @@ More examples take a look at the [`examples`](/examples/) folder.
 ## Universal Libraries
 
 * :tophat: [universal-rx](/packages/universal-rx): A universal React-compatible render engine.
-* :four_leaf_clover: [universal-env](/packages/universal-env): A universal environment utilities.
-* :gem: [universal-transition](/packages/universal-transition): A universal transition API.
-* :mahjong: [universal-platform](/packages/universal-platform): A universal Platform API.
-* :black_joker: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
-* :iphone: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
+* :earth_asia: [universal-env](/packages/universal-env): A universal environment utilities.
+* :loop: [universal-transition](/packages/universal-transition): A universal transition API.
+* :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
+* :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
+* :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
+* :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
 * :postbox: [universal-router](https://github.com/kriasoft/universal-router): A simple middleware-style router for isomorphic JavaScript web apps.
