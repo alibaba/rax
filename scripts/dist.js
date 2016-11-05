@@ -10,7 +10,6 @@ if (!fs.existsSync('./packages/universal-rx/build')) {
   fs.mkdirSync('./packages/universal-rx/build');
 }
 
-// 1
 dist(getConfig(
   {
     'env': './packages/universal-env/src/index.js',
@@ -102,7 +101,19 @@ dist(getConfig(
   ));
 });
 
+function getExamples() {
+  let entry = {};
 
+  fs.readdirSync(EXAMPLES_DIR)
+    .map(file => {
+      let f = path.resolve(EXAMPLES_DIR, file);
+      if (fs.lstatSync(path.resolve(f)).isDirectory()) {
+        entry[file + '.bundle'] = f;
+      }
+    });
+
+  return entry;
+}
 
 function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
   return {

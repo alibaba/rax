@@ -1,0 +1,23 @@
+{
+  "name": "weeex-rx-examples",
+  "version": "0.2.0",
+  "description": "Rx examples for weex.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rx/issues"
+  },
+  "scripts": {
+    "test": "babel-node ./test/index.js"
+  },
+  "homepage": "https://github.com/alibaba/rx#readme",
+  "dependencies": {
+    "universal-env": "^0.0.*",
+    "universal-transition": "^0.0.*",
+    "universal-rx": "^0.0.*"
+  }
+}

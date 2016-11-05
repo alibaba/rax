@@ -37,7 +37,6 @@ var config = {
     new RxWebpackPlugin({
       frameworkComment: true
     }),
-    new webpack.NoErrorsPlugin(),
   ],
   module: {
     loaders: [{

@@ -237,4 +237,4 @@ const styles = StyleSheet.create({
   },
 });
 
-render(<App />, document.body);
+render(<App />);

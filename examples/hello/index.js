@@ -15,4 +15,4 @@ class Hello extends Component {
   }
 }
 
-render(<Hello />, document.body);
+render(<Hello />);

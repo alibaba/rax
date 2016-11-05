@@ -73,4 +73,4 @@ class TodoApp extends Component {
   }
 }
 
-render(<TodoApp />, document.body);
+render(<TodoApp />);

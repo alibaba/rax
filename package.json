@@ -21,7 +21,7 @@
   },
   "scripts": {
     "link": "node ./scripts/link.js",
-    "postinstall": "lerna bootstrap",
+    "bootstrap": "lerna bootstrap",
     "clean-dist": "rm -rf ./packages/*/dist",
     "clean-compile": "rm -rf ./packages/*/lib",
     "clean-coverage": "rm -rf ./coverage",

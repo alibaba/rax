@@ -316,4 +316,4 @@ var styles = {
   },
 };
 
-render(<TicTacToeApp />, document.body);
+render(<TicTacToeApp />);
