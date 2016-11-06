@@ -11,7 +11,7 @@ class StyleItem extends Component {
     return (
       <text
         value={value}
-        style={[styles.item, {backgroundColor: type == '1' ? '#7BA3A8' : '#BEAD92'}, style]}
+        style={[styles.item, {backgroundColor: type == 1 ? '#7BA3A8' : '#BEAD92'}, style]}
       />
     );
   }

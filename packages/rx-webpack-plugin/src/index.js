@@ -9,6 +9,12 @@ module.exports = class RxWebpackPlugin {
       runMainModule: false,
       includePolyfills: false,
       frameworkComment: false,
+      externalBuiltin: false,
+      builtinModules: {
+        'universal-rx': '@universal/rx',
+        'universal-env': '@universal/env',
+        'universal-transition': '@universal/transition'
+      }
     }, options);
   }
 
@@ -24,6 +30,11 @@ module.exports = class RxWebpackPlugin {
           if (/^@weex\-module\//.test(request)) {
             return callback(null, request, 'commonjs');
           }
+
+          if (this.options.externalBuiltin && this.options.builtinModules[request]) {
+            return callback(null, this.options.builtinModules[request], 'commonjs');
+          }
+
           callback();
         }
       ));
