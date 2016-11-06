@@ -11,16 +11,16 @@ function getEntry() {
 
   function walk(dir) {
     dir = dir || '.'
-    var directory = path.join(__dirname, '..', 'packages', 'weex-rx-examples', 'examples', dir);
+    var directory = path.join(__dirname, '..', 'packages', 'weex-rx-examples', dir);
     fs.readdirSync(directory)
       .forEach(function(file) {
         var fullpath = path.join(directory, file);
         var stat = fs.statSync(fullpath);
         var extname = path.extname(fullpath);
         if (stat.isFile() && (extname === '.js' || extname === '.jsx')) {
-          var name = path.join('packages', 'weex-rx-examples', 'examples', 'build', dir, path.basename(file, extname));
+          var name = path.join('packages', 'weex-rx-examples', 'build', dir, path.basename(file, extname));
           entry[name + '.bundle'] = fullpath;
-        } else if (stat.isDirectory() && file !== 'build') {
+        } else if (stat.isDirectory() && file !== 'build' && file !== 'common' && file !== 'node_modules') {
           var subdir = path.join(dir, file);
           walk(subdir);
         }

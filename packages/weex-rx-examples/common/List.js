@@ -31,39 +31,13 @@ function getBaseURL(dir) {
   return base
 }
 
-const EXAMPLES = [
-  // common
-  {name: '/syntax/hello-world', title: 'Hello World'},
-  {name: '/style/index', title: 'Common Style'},
-  // component
-  {name: '/components/text', title: 'Text'},
-  {name: '/components/image', title: 'Image'},
-  {name: '/components/input', title: 'Input'},
-  {name: '/components/scroller', title: 'Scroller'},
-  {name: '/components/list', title: 'List'},
-  {name: '/components/slider', title: 'Slider'},
-  {name: '/components/a', title: 'A'},
-  {name: '/components/video', title: 'Video'},
-  {name: '/components/countdown', title: 'Countdown'},
-  {name: '/components/marquee', title: 'Marquee'},
-  {name: '/components/web', title: 'Web'},
-  {name: '/components/navigator', title: 'Navigator'},
-  {name: '/components/tabbar', title: 'Tabbar'},
-  // module
-  {name: '/modules/modal', title: 'Modal'},
-  {name: '/modules/stream', title: 'Stream'},
-  {name: '/modules/storage',title:'Storage'},
-  {name: '/modules/animation', title: 'Animation'},
-  // {name: 'module/clipboard', title: 'Clipboard'}, // 0.8 , developing
-];
-
 class ExampleItem extends Component {
   handleClick = () => {
     let event = require('@weex-module/event');
     let url = this.props.url;
     if (!url) {
-      var base = getBaseURL('examples');
-      url = base + this.props.name + '.js';
+      var base = getBaseURL('packages/weex-rx-examples');
+      url = base + this.props.name + '.bundle.js?wh_weex=true';
     }
     event.openURL(url);
   };
@@ -81,11 +55,11 @@ class ExampleItem extends Component {
   }
 }
 
-class Examples extends Component {
+class ExampleList extends Component {
   render() {
     return (
       <list>
-        {EXAMPLES.map((item)=>{
+        {this.props.examples.map((item)=>{
           return <ExampleItem title={item.title} name={item.name} url={item.url} />
         })}
       </list>
@@ -111,4 +85,4 @@ const styles = {
   }
 }
 
-render(<Examples />);
+export default ExampleList;

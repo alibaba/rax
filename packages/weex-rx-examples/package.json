@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Rx examples for weex.",
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"
