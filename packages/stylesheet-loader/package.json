@@ -1,0 +1,19 @@
+{
+  "name": "stylesheet-loader",
+  "version": "0.1.0",
+  "description": "Stylesheet loader.",
+  "license": "BSD-3-Clause",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rx/issues"
+  },
+  "homepage": "https://github.com/alibaba/rx#readme",
+  "dependencies": {
+    "camelcase": "^3.0.0",
+    "css": "^2.2.1"
+  }
+}
