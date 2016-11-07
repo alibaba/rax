@@ -65,11 +65,43 @@ if (typeof require === "function"){
       let sourcePrefix;
       let sourceSuffix;
       if (chunk.name.endsWith('.bundle')) {
-        let factoryDependencies = ['document', 'require', 'exports', 'module'];
         sourcePrefix = ``;
         sourceSuffix = ``;
       } else if (chunk.name.endsWith('.factory')) {
-        let factoryDependencies = ['document', 'require', 'exports', 'module'];
+        // NOTE: globals should sync with weex-rx-framework
+        let factoryDependencies = [
+          // ES
+          'Promise',
+          // W3C
+          'window',
+          'screen',
+          'document',
+          'navigator',
+          'location',
+          'fetch',
+          'Headers',
+          'Response',
+          'Request',
+          'URL',
+          'URLSearchParams',
+          'setTimeout',
+          'clearTimeout',
+          'setInterval',
+          'clearInterval',
+          'requestAnimationFrame',
+          'cancelAnimationFrame',
+          'alert',
+          // Weex
+          '__weex_define__',
+          '__weex_require__',
+          '__weex_options__',
+          '__weex_data__',
+          '__weex_downgrade__',
+          // ModuleJS
+          'require',
+          'exports',
+          'module'
+        ];
         sourcePrefix = `
 module.exports = function(${factoryDependencies}) {
   module.exports = `;

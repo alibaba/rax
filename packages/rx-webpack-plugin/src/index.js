@@ -11,8 +11,8 @@ module.exports = class RxWebpackPlugin {
       frameworkComment: false,
       externalBuiltin: false,
       builtinModules: {
-        'universal-rx': '@universal/rx',
-        'universal-env': '@universal/env',
+        'universal-rx': ['@universal/rx', 'kg/rx/index'],
+        'universal-env': ['@universal/env', 'kg/rx-env/index'],
         'universal-transition': '@universal/transition'
       }
     }, options);
@@ -31,8 +31,23 @@ module.exports = class RxWebpackPlugin {
             return callback(null, request, 'commonjs');
           }
 
-          if (this.options.externalBuiltin && this.options.builtinModules[request]) {
-            return callback(null, this.options.builtinModules[request], 'commonjs');
+          let builtinModuleName = this.options.builtinModules[request];
+          if (this.options.externalBuiltin && builtinModuleName) {
+
+            if (Array.isArray(builtinModuleName)) {
+              let customRequest = '(function(){ var mod;';
+
+              builtinModuleName.forEach((name) => {
+                customRequest += `if (!mod) { try { mod = require("${name}") } catch(e) {} }`;
+              });
+
+              customRequest += 'return mod;})()';
+              // Custom external format
+              return callback(null, customRequest, 'custom');
+            } else {
+              return callback(null, builtinModuleName, 'commonjs');
+            }
+
           }
 
           callback();

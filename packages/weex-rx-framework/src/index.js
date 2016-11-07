@@ -4,12 +4,7 @@ import URLSearchParams from './URLSearchParams';
 import downgrade from './downgrade';
 import Fetch, {Headers, Request, Response} from './fetch';
 import navigator from './navigator';
-
-let BuiltinModulesFactory = {
-  rx: require('universal-rx/dist/rx.factory'),
-  env: require('universal-env/dist/env.factory'),
-  transition: require('universal-transition/dist/transition.factory'),
-};
+import {BuiltinModulesFactory} from './builtin';
 
 let NativeComponents = {};
 let NativeModules = {};
@@ -84,12 +79,68 @@ export function registerModules (newModules) {
   }
 }
 
-function genBuiltinModules(modules, document) {
-  const prefix = '@universal/';
-  for (let key in BuiltinModulesFactory) {
-    let moduleName = prefix + key;
+function genBuiltinModules(
+  modules,
+  // ES
+  Promise,
+  // W3C
+  window,
+  screen,
+  document,
+  navigator,
+  location,
+  fetch,
+  Headers,
+  Response,
+  Request,
+  URL,
+  URLSearchParams,
+  setTimeout,
+  clearTimeout,
+  setInterval,
+  clearInterval,
+  requestAnimationFrame,
+  cancelAnimationFrame,
+  alert,
+  // Weex
+  __weex_define__,
+  __weex_require__,
+  __weex_options__,
+  __weex_data__,
+  __weex_downgrade__
+) {
+  for (let moduleName in BuiltinModulesFactory) {
     modules[moduleName] = {
-      factory: (BuiltinModulesFactory[key]).bind(null, document),
+      factory: (BuiltinModulesFactory[moduleName]).bind(
+          null,
+          // ES
+          Promise,
+          // W3C
+          window,
+          screen,
+          document,
+          navigator,
+          location,
+          fetch,
+          Headers,
+          Response,
+          Request,
+          URL,
+          URLSearchParams,
+          setTimeout,
+          clearTimeout,
+          setInterval,
+          clearInterval,
+          requestAnimationFrame,
+          cancelAnimationFrame,
+          alert,
+          // Weex
+          __weex_define__,
+          __weex_require__,
+          __weex_options__,
+          __weex_data__,
+          __weex_downgrade__
+        ),
       module: {exports: {}},
       isInitialized: false,
     };
@@ -156,7 +207,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     const location = new URL(document.URL || '');
     let modules = {};
     genNativeModules(modules, instanceId);
-    genBuiltinModules(modules, document);
 
     instance = instances[instanceId] = {
       document,
@@ -215,86 +265,147 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       return mod.module.exports;
     }
 
+    // https://drafts.csswg.org/cssom-view/#the-screen-interface
+    const screenAPIs = {
+      width: WXEnvironment.deviceWidth,
+      height: WXEnvironment.deviceHeight,
+      availWidth: WXEnvironment.deviceWidth,
+      availHeight: WXEnvironment.deviceHeight,
+      colorDepth: 24,
+      pixelDepth: 24,
+    };
+
+    const weexNavigator = req('@weex-module/navigator');
+    const windowAPIs = {
+      devicePixelRatio: WXEnvironment.scale,
+      open: (url) => {
+        weexNavigator.push({
+          url,
+          animated : 'true',
+        }, function(e) {
+          // noop
+        });
+      },
+      addEventListener: (type, listener) => {
+        // TODO
+      },
+      removeEventListener: (type, listener) => {
+        // TODO
+      }
+    };
+
+    const timer = req('@weex-module/timer');
+    const timerAPIs = {
+      setTimeout: (...args) => {
+        const handler = function () {
+          args[0](...args.slice(2));
+        };
+        timer.setTimeout(handler, args[1]);
+        return instance.uid.toString();
+      },
+      setInterval: (...args) => {
+        const handler = function () {
+          args[0](...args.slice(2));
+        };
+        timer.setInterval(handler, args[1]);
+        return instance.uid.toString();
+      },
+      clearTimeout: (n) => {
+        timer.clearTimeout(n);
+      },
+      clearInterval: (n) => {
+        timer.clearInterval(n);
+      },
+      requestAnimationFrame: (callback) => {
+        timer.setTimeout(callback, 16);
+        return instance.uid.toString();
+      },
+      cancelAnimationFrame: (n) => {
+        timer.clearTimeout(n);
+      }
+    };
+
+    const modal = req('@weex-module/modal')
+    const dialogAPIs = {
+      alert: (message) => {
+        modal.alert({
+          message
+        }, function() {})
+      }
+    };
+
+    const instanceWrap = req('@weex-module/instanceWrap');
+    const downgradeAPIs = {
+      downgrade: downgrade.bind(null, instanceWrap),
+    };
+
+    const stream = req('@weex-module/stream');
+    const networkAPIs = {
+      fetch: Fetch.bind(null, stream.fetch),
+    };
+
+    let globals = [
+      // ES
+      Promise,
+      // W3C
+      windowAPIs,
+      screenAPIs,
+      document,
+      navigator,
+      location,
+      networkAPIs.fetch,
+      Headers,
+      Response,
+      Request,
+      URL,
+      URLSearchParams,
+      timerAPIs.setTimeout,
+      timerAPIs.clearTimeout,
+      timerAPIs.setInterval,
+      timerAPIs.clearInterval,
+      timerAPIs.requestAnimationFrame,
+      timerAPIs.cancelAnimationFrame,
+      dialogAPIs.alert,
+      // Weex
+      def,
+      req,
+      options,
+      data,
+      downgradeAPIs.downgrade
+    ];
+
+    genBuiltinModules(
+      modules,
+      // ES
+      Promise,
+      // W3C
+      windowAPIs,
+      screenAPIs,
+      document,
+      navigator,
+      location,
+      networkAPIs.fetch,
+      Headers,
+      Response,
+      Request,
+      URL,
+      URLSearchParams,
+      timerAPIs.setTimeout,
+      timerAPIs.clearTimeout,
+      timerAPIs.setInterval,
+      timerAPIs.clearInterval,
+      timerAPIs.requestAnimationFrame,
+      timerAPIs.cancelAnimationFrame,
+      dialogAPIs.alert,
+      // Weex
+      def,
+      req,
+      options,
+      data,
+      downgradeAPIs.downgrade
+    );
+
     if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
-
-      // https://drafts.csswg.org/cssom-view/#the-screen-interface
-      const screenAPIs = {
-        width: WXEnvironment.deviceWidth,
-        height: WXEnvironment.deviceHeight,
-        availWidth: WXEnvironment.deviceWidth,
-        availHeight: WXEnvironment.deviceHeight,
-        colorDepth: 24,
-        pixelDepth: 24,
-      };
-
-      const weexNavigator = req('@weex-module/navigator');
-      const windowAPIs = {
-        devicePixelRatio: WXEnvironment.scale,
-        open: (url) => {
-          weexNavigator.push({
-            url,
-            animated : 'true',
-          }, function(e) {
-            // noop
-          });
-        },
-        addEventListener: (type, listener) => {
-          // TODO
-        },
-        removeEventListener: (type, listener) => {
-          // TODO
-        }
-      };
-
-      const timer = req('@weex-module/timer');
-      const timerAPIs = {
-        setTimeout: (...args) => {
-          const handler = function () {
-            args[0](...args.slice(2));
-          };
-          timer.setTimeout(handler, args[1]);
-          return instance.uid.toString();
-        },
-        setInterval: (...args) => {
-          const handler = function () {
-            args[0](...args.slice(2));
-          };
-          timer.setInterval(handler, args[1]);
-          return instance.uid.toString();
-        },
-        clearTimeout: (n) => {
-          timer.clearTimeout(n);
-        },
-        clearInterval: (n) => {
-          timer.clearInterval(n);
-        },
-        requestAnimationFrame: (callback) => {
-          timer.setTimeout(callback, 16);
-          return instance.uid.toString();
-        },
-        cancelAnimationFrame: (n) => {
-          timer.clearTimeout(n);
-        }
-      };
-
-      const modal = req('@weex-module/modal')
-      const dialogAPIs = {
-        alert: (message) => {
-          modal.alert({
-            message
-          }, function() {})
-        }
-      };
-
-      const instanceWrap = req('@weex-module/instanceWrap');
-      const downgradeAPIs = {
-        downgrade: downgrade.bind(null, instanceWrap),
-      };
-
-      const stream = req('@weex-module/stream');
-      const networkAPIs = {
-        fetch: Fetch.bind(null, stream.fetch),
-      };
 
       let init = new Function(
         // ES
@@ -318,15 +429,15 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         'requestAnimationFrame',
         'cancelAnimationFrame',
         'alert',
-        // ModuleJS
-        'define',
-        'require',
         // Weex
         '__weex_define__',
         '__weex_require__',
         '__weex_options__',
         '__weex_data__',
         '__weex_downgrade__',
+        // ModuleJS
+        'define',
+        'require',
         '"use strict";' + code
       );
 
@@ -352,15 +463,15 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         timerAPIs.requestAnimationFrame,
         timerAPIs.cancelAnimationFrame,
         dialogAPIs.alert,
-        // ModuleJS
-        def,
-        req,
         // Weex
         def,
         req,
         options,
         data,
-        downgradeAPIs.downgrade
+        downgradeAPIs.downgrade,
+        // ModuleJS
+        def,
+        req,
       );
 
     } else {
