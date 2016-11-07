@@ -2,7 +2,7 @@
 
 ## How to custom builtin modules?
 
-1. Build module use factory mode
+### 1. Build module use factory mode
 
 ```js
 const webpack = require('webpack');
@@ -48,7 +48,7 @@ Or [`link`](https://docs.npmjs.com/cli/link) module in local:
 $ npm link
 ```
 
-2. Config `builtin.js` in framework source
+### 2. Config `builtin.js` in framework source
 
 Install builtin module from npm:
 ```sh
@@ -71,7 +71,8 @@ export let BuiltinModulesFactory = {
 };
 ```
 
-3. Build framework use framework mode
+### 3. Build framework use framework mode
+
 ```js
 const webpack = require('webpack');
 const RxPlugin = require('rx-webpack-plugin');
