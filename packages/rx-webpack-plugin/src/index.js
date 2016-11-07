@@ -31,7 +31,7 @@ class RxWebpackPlugin {
           }
 
           let builtinModuleName = this.options.builtinModules[request];
-          if (this.options.externalBuiltin && builtinModuleName) {
+          if (this.options.externalBuiltinModules && builtinModuleName) {
 
             if (Array.isArray(builtinModuleName)) {
               let customRequest = '(function(){ var mod;';

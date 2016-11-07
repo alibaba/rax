@@ -18,13 +18,14 @@ module.exports = {
     new RxPlugin({
       // page mode build config
       frameworkComment: false,
-      externalBuiltinModules: false,
-      builtinModules: RxPlugin.BuiltinModules,
       includePolyfills: false,
       polyfillModules: RxPlugin.PolyfillModules,
       // component mode build config
       moduleName: 'universal-rx',
       globalName: 'Rx',
+      // Common build config
+      externalBuiltinModules: false,
+      builtinModules: RxPlugin.BuiltinModules,
     })
   ]
 }

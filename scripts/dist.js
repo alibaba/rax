@@ -42,6 +42,7 @@ dist(getConfig(
       sourceMapFilename: '[name].map',
     },
     {
+      externalBuiltinModules: true,
       moduleName: 'universal-rx',
       globalName: 'Rx',
     },
@@ -89,8 +90,7 @@ dist(getConfig(
       sourceMapFilename: '[name].map',
     },
     {
-      moduleName: 'weex-rx-framework',
-      globalName: 'Framework',
+      // Empty
     },
     {
       presets: ['es2015'],

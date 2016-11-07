@@ -1,6 +1,6 @@
 {
   "name": "rx-webpack-plugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Webpack plugin for Rx framework.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
