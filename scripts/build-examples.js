@@ -45,7 +45,8 @@ const config = {
     }),
     new webpack.NoErrorsPlugin(),
     new RxWebpackPlugin({
-      frameworkComment: true
+      frameworkComment: true,
+      externalBuiltin: true,
     }),
   ],
   module: {

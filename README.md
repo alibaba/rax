@@ -22,7 +22,7 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 :dart: **Tiny:** 8.5kb only after min+gzip.
 
-:art: **Universal:** cross browser、Weex and Node.js.
+:art: **Universal:** cross Browser、Weex and Node.js.
 
 ## Size Comparison
 
