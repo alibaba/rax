@@ -10,16 +10,20 @@ $ npm install --save-dev rx-webpack-plugin
 
 ## Usage
 
-``` javascript
-var RxWebpackPlugin = require('rx-webpack-plugin');
+```javascript
+var RxPlugin = require('rx-webpack-plugin');
 
 module.exports = {
   plugins: [
-    new RxWebpackPlugin({
-      runMainModule: false,
-      requireBuiltinModule: true,
-      includePolyfills: false,  
-      moduleName: 'rx',
+    new RxPlugin({
+      // page mode build config
+      frameworkComment: false,
+      externalBuiltinModules: false,
+      builtinModules: RxPlugin.BuiltinModules,
+      includePolyfills: false,
+      polyfillModules: RxPlugin.PolyfillModules,
+      // component mode build config
+      moduleName: 'universal-rx',
       globalName: 'Rx',
     })
   ]

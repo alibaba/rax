@@ -81,7 +81,7 @@ dist(getConfig(
 }).then(()=> {
   return dist(getConfig(
     {
-      'framework': './packages/weex-rx-framework/src/index.js',
+      'rx.framework': './packages/weex-rx-framework/src/index.js',
     },
     {
       path: './packages/weex-rx-framework/dist/',
