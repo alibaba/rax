@@ -1,6 +1,5 @@
 import {createElement, Component, render} from 'universal-rx';
 
-
 class Example extends Component {
 
   state = {
