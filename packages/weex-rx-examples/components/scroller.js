@@ -26,7 +26,7 @@ class Example extends Component {
   }
   renderItems = (sec) => {
     let items = sec.items.map((item, index) => {
-      return (<div v-for="item in sec.items" style={styles.item}>
+      return (<div style={styles.item}>
             <text style={styles.itemTitle}>row {item.id}</text>
           </div>);
     });
