@@ -3,13 +3,13 @@ import {createElement, Component, render} from 'universal-rx';
 class Example extends Component {
   state = {
     title: 'Hello World',
-    image: 'https://alibaba.github.io/weex/img/weex_logo_blue@3x.png'
+    image: '//gw.alicdn.com/tps/i2/TB1DpsmMpXXXXabaXXX20ySQVXX-512-512.png_400x400.jpg'
   };
 
   handleClick = () => {
     this.setState({
       title: 'Hello Weex',
-      image: 'https://alibaba.github.io/weex/img/weex_logo_blue@3x.png'
+      image: '//gw.alicdn.com/tps/i2/TB1DpsmMpXXXXabaXXX20ySQVXX-512-512.png_400x400.jpg'
     });
   };
 
@@ -31,8 +31,8 @@ const styles = {
     backgroundColor: 'white'
   },
   logo: {
-    width: 360,
-    height: 82,
+    width: 200,
+    height: 200,
     marginBottom: 40
   },
   title: {

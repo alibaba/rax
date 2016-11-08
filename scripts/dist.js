@@ -42,6 +42,7 @@ dist(getConfig(
       sourceMapFilename: '[name].map',
     },
     {
+      externalBuiltinModules: true,
       moduleName: 'universal-rx',
       globalName: 'Rx',
     },
@@ -81,7 +82,7 @@ dist(getConfig(
 }).then(()=> {
   return dist(getConfig(
     {
-      'framework': './packages/weex-rx-framework/src/index.js',
+      'rx.framework': './packages/weex-rx-framework/src/index.js',
     },
     {
       path: './packages/weex-rx-framework/dist/',
@@ -89,8 +90,7 @@ dist(getConfig(
       sourceMapFilename: '[name].map',
     },
     {
-      moduleName: 'weex-rx-framework',
-      globalName: 'Framework',
+      // Empty
     },
     {
       presets: ['es2015'],

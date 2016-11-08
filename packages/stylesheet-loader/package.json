@@ -1,9 +1,9 @@
 {
-  "name": "rx-webpack-plugin",
-  "version": "0.0.4",
-  "description": "Webpack plugin for Rx framework.",
+  "name": "stylesheet-loader",
+  "version": "0.1.0",
+  "description": "Stylesheet loader.",
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"
@@ -12,7 +12,8 @@
     "url": "https://github.com/alibaba/rx/issues"
   },
   "homepage": "https://github.com/alibaba/rx#readme",
-  "devDependencies": {
-    "webpack": "^1.13.2"
+  "dependencies": {
+    "camelcase": "^3.0.0",
+    "css": "^2.2.1"
   }
 }

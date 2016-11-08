@@ -2,12 +2,6 @@ import ConcatSource from 'webpack/lib/ConcatSource';
 import fs from 'fs';
 import path from 'path';
 
-const POLYFILLS = [
-  path.join(__dirname, 'polyfills/require.js'),
-  path.join(__dirname, 'polyfills/array.js'),
-  path.join(__dirname, 'polyfills/object.js'),
-];
-
 export default class CustomUmdMainTemplatePlugin {
 
   constructor(options){
@@ -21,21 +15,6 @@ export default class CustomUmdMainTemplatePlugin {
 
     compilation.templatesPlugin('render-with-entry', (source, chunk, hash) => {
 
-      let externals = chunk.modules.filter( m => {
-        return m.external;
-      });
-
-      let externalsDepsArray = externals.map( m => {
-        return typeof m.request === 'object' ? m.request.amd : m.request;
-      });
-
-      let externalsArguments = externals.map( m => {
-        return '__WEBPACK_EXTERNAL_MODULE_' + m.id + '__';
-      });
-
-      externalsArguments = externalsArguments.join(', ');
-      externalsDepsArray = JSON.stringify(externalsDepsArray);
-
       let requireCall = '';
       let polyfills = [];
       let name = mainTemplate.applyPluginsWaterfall('asset-path', this.name, {
@@ -44,15 +23,13 @@ export default class CustomUmdMainTemplatePlugin {
       });
 
       if (this.options.includePolyfills) {
-        let includePolyfills = POLYFILLS;
-        if (Array.isArray(this.options.includePolyfills)) {
-          includePolyfills = this.options.includePolyfills;
-        }
-        polyfills = includePolyfills.map((fp) => {
+        let polyfillModules = this.options.polyfillModules;
+        polyfills = polyfillModules.map((fp) => {
           return fs.readFileSync(fp, 'utf8');
         });
       }
 
+      // FIXME: could remove?
       if (this.options.runMainModule) {
         requireCall = `
 if (typeof require === "function"){
@@ -62,13 +39,20 @@ if (typeof require === "function"){
 
       let moduleName = this.options.moduleName || name;
       let globalName = this.options.globalName || name;
-      let sourcePrefix;
-      let sourceSuffix;
-      if (chunk.name.endsWith('.bundle')) {
-        sourcePrefix = ``;
-        sourceSuffix = ``;
+      let sourcePrefix = '';
+      let sourceSuffix = '';
+
+      // Only weex-rx-framework build use this build mode.
+      if (chunk.name.endsWith('.framework')) {
+        sourcePrefix = 'module.exports = ';
+        sourceSuffix = '';
+      } else if (chunk.name.endsWith('.bundle')) {
+        // Build page bundle use this mode.
+        sourcePrefix = '';
+        sourceSuffix = '';
       } else if (chunk.name.endsWith('.factory')) {
-        // NOTE: globals should sync with weex-rx-framework
+        // Build weex builtin modules use this mode.
+        // NOTE: globals should sync logic in weex-rx-framework
         let factoryDependencies = [
           // ES
           'Promise',
@@ -105,9 +89,9 @@ if (typeof require === "function"){
         sourcePrefix = `
 module.exports = function(${factoryDependencies}) {
   module.exports = `;
-
         sourceSuffix = `};`;
       } else {
+        // Default build mode for component
         sourcePrefix = `
 ;(function(fn) {
   if (typeof exports === "object" && typeof module !== "undefined") {

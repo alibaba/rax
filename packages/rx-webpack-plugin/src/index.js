@@ -2,19 +2,18 @@ import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import path from 'path';
+import BuiltinModules from './BuiltinModules';
+import PolyfillModules from './PolyfillModules';
 
-module.exports = class RxWebpackPlugin {
+class RxWebpackPlugin {
   constructor(options) {
     this.options = Object.assign({
       runMainModule: false,
       includePolyfills: false,
       frameworkComment: false,
-      externalBuiltin: false,
-      builtinModules: {
-        'universal-rx': ['@universal/rx', 'kg/rx/index'],
-        'universal-env': ['@universal/env', 'kg/rx-env/index'],
-        'universal-transition': '@universal/transition'
-      }
+      externalBuiltinModules: false,
+      builtinModules: BuiltinModules,
+      polyfillModules: PolyfillModules,
     }, options);
   }
 
@@ -32,7 +31,7 @@ module.exports = class RxWebpackPlugin {
           }
 
           let builtinModuleName = this.options.builtinModules[request];
-          if (this.options.externalBuiltin && builtinModuleName) {
+          if (this.options.externalBuiltinModules && builtinModuleName) {
 
             if (Array.isArray(builtinModuleName)) {
               let customRequest = '(function(){ var mod;';
@@ -43,7 +42,7 @@ module.exports = class RxWebpackPlugin {
 
               customRequest += 'return mod;})()';
               // Custom external format
-              return callback(null, customRequest, 'custom');
+              return callback(null, customRequest, 'custom-format');
             } else {
               return callback(null, builtinModuleName, 'commonjs');
             }
@@ -69,6 +68,10 @@ module.exports = class RxWebpackPlugin {
         });
       });
     }
-
   }
 }
+
+RxWebpackPlugin.BuiltinModules = BuiltinModules;
+RxWebpackPlugin.PolyfillModules = PolyfillModules;
+
+module.exports = RxWebpackPlugin;
