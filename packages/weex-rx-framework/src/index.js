@@ -180,7 +180,7 @@ function genNativeModules(modules, instanceId) {
             module: name,
             method: methodName,
             args: finalArgs
-          }]);
+          }], '-1');
         };
 
       });
