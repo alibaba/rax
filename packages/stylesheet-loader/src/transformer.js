@@ -137,16 +137,15 @@ module.exports = {
   },
 
   inheritText(rule) {
-    const self = this;
     let style = {};
 
     if (rule.tagName === 'text') {
       return;
     }
 
-    rule.declarations.forEach(function(declaration) {
-      let camelCaseProperty = self.convertProp(declaration.property)
-      let value = self.convertValue(camelCaseProperty, declaration.value);
+    rule.declarations.forEach((declaration) => {
+      let camelCaseProperty = this.convertProp(declaration.property)
+      let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
 
       if (particular[camelCaseProperty]) {
