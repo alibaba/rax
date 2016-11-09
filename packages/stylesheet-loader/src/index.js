@@ -129,8 +129,6 @@ module.exports = function(source) {
     throw new Error('Parsing Error occured.');
   }
 
-  var stylesheet = {};
-
   stylesheet.rules.forEach(function(rule) {
     var style = {};
 
