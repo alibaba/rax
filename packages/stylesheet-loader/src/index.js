@@ -20,7 +20,8 @@ module.exports = function(source) {
     compress: !!this.minimize
   };
 
-  let stylesheet = css.parse(source).stylesheet;
+  let stylesheet = css.parse(source).stylesheet,
+    data = {};
 
   if (stylesheet.parsingErrors.length) {
     throw new Error('Parsing Error occured.');
@@ -34,12 +35,9 @@ module.exports = function(source) {
     }
 
     rule.selectors.forEach(function(selector) {
-      stylesheet[sanitizeSelector(selector)] = style;
+      data[sanitizeSelector(selector)] = style;
     });
   });
 
-  delete stylesheet.parsingErrors;
-  delete stylesheet.rules;
-  console.log(stylesheet);
-  cb(null, 'module.exports = ' + JSON.stringify(stylesheet, undefined, '\t') + ';');
+  cb(null, 'module.exports = ' + JSON.stringify(data, undefined, '\t') + ';');
 };

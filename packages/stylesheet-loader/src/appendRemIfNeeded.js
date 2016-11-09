@@ -38,11 +38,11 @@ module.exports = function appendRemIfNeeded(propertyName, value) {
   let cValue = parseInt(value);
   let arr = value.toString().match(reg);
 
-  // 兼容 hairlineWidth
+  // compatible hairlineWidth
   if (value == 0.5) {
     return value;
   }
-  // 带有%或px的原状返回
+  // %、px return origin value
   if (arr && arr[2] && (arr[2] == '%' || arr[2] == 'px')) {
     return value;
   }
@@ -51,4 +51,5 @@ module.exports = function appendRemIfNeeded(propertyName, value) {
     typeof cValue === 'number' &&
     value !== 0;
   return needsRemSuffix ? cValue + 'rem' : value;
-}
+};
+

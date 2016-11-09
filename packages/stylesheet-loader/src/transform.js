@@ -18,7 +18,6 @@ module.exports = {
     return selector.replace(/\s/gi, '_').replace(/[\.#]/g, '');
   },
 
-  // 转换属性
   convertProp(prop) {
     let result = camelCase(prop);
 
@@ -34,8 +33,6 @@ module.exports = {
     return result;
   },
 
-  // 转换transform
-  // rx 中暂时用不到
   convertTransform(fullValue) {
     // remove spaces that are inside transformation values
     fullValue = fullValue.replace(/\((.+?)\)/g, function(a, b) {
@@ -115,7 +112,6 @@ module.exports = {
     }
   },
 
-  // 转换值
   convertValue(property, value) {
     var result = value,
       resultNumber;
@@ -138,7 +134,7 @@ module.exports = {
     return result;
   },
 
-  // 出现错误打出来
+  // print error
   formatLessRenderError(e) {
     let extract = e.extract? '\n near lines:\n   ' + e.extract.join('\n   ') : '';
     let err = new Error(
@@ -150,8 +146,7 @@ module.exports = {
     return err;
   },
 
-  // 文本继承
-  // Todo 继承还没完成
+  // Todo
   inheritText(rule) {
     const self = this;
     let style = {};
@@ -173,10 +168,6 @@ module.exports = {
         }
         Object.assign(style, particularResult);
       }
-      // if (declaration.type === 'declaration' 
-      //   && TEXT_CAN_INHERIT_PROPERTY.indexOf(declaration.property) > -1) {
-      //     console.log(declaration);
-      // }
     });
 
     return style;
