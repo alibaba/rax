@@ -17,20 +17,20 @@ let measure = function(value, key) {
   };
 
   switch (direction.length) {
-    case 1:
-      direction[1] = direction[2] = direction[3] = direction[0];
-      break;
-    case 2:
-      direction[2] = direction[0];
-      direction[3] = direction[1];
-      break;
-    case 3:
-      direction[3] = direction[1];
-      break;
-    case 4:
-      break;
-    default:
-      return {};
+  case 1:
+    direction[1] = direction[2] = direction[3] = direction[0];
+    break;
+  case 2:
+    direction[2] = direction[0];
+    direction[3] = direction[1];
+    break;
+  case 3:
+    direction[3] = direction[1];
+    break;
+  case 4:
+    break;
+  default:
+    return {};
   }
 
   result[topKey] = direction && appendRemIfNeeded(topKey, direction[0]);
