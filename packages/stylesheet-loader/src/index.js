@@ -1,34 +1,32 @@
 'use strict';
 
 const css = require('css');
-const transform = require('./transform');
-
-let sanitizeSelector = transform.sanitizeSelector;
-
-let RULE = 'rule';
+const transformer = require('./transformer');
+const RULE = 'rule';
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
-  let cb = this.async();
 
-  let stylesheet = css.parse(source).stylesheet,
-    data = {};
+  let callback = this.async();
+  let stylesheet = css.parse(source).stylesheet;
+  let data = {};
 
   if (stylesheet.parsingErrors.length) {
-    throw new Error('Parsing Error occured.');
+    throw new Error('StyleSheet Parsing Error occured.');
   }
 
   stylesheet.rules.forEach(function(rule) {
     let style = {};
 
     if (rule.type === RULE) {
-      style = transform.inheritText(rule);
+      style = transformer.convert(rule);
     }
 
     rule.selectors.forEach(function(selector) {
-      data[sanitizeSelector(selector)] = style;
+      let sanitizedSelector = transformer.sanitizeSelector(selector);
+      data[sanitizedSelector] = style;
     });
   });
 
-  cb(null, 'module.exports = ' + JSON.stringify(data, undefined, '\t') + ';');
+  callback(null, 'module.exports = ' + JSON.stringify(data, undefined, '\t') + ';');
 };

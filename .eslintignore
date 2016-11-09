@@ -3,3 +3,4 @@ gh-pages
 lib
 dist
 build
+coverage

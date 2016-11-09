@@ -1,4 +1,5 @@
 'use strict';
+
 const camelCase = require('camelcase');
 const normalizeColor = require('./normalizeColor');
 const particular = require('./particular');
@@ -124,29 +125,16 @@ module.exports = {
     return result;
   },
 
-  // print error
-  formatLessRenderError(e) {
-    let extract = e.extract ? '\n near lines:\n   ' + e.extract.join('\n   ') : '';
-    let err = new Error(
-      e.message + '\n @ ' + e.filename +
-      ' (line ' + e.line + ', column ' + e.column + ')' +
-      extract
-    );
-    err.hideStack = true;
-    return err;
-  },
-
-  inheritText(rule) {
-    const self = this;
+  convert(rule) {
     let style = {};
 
     if (rule.tagName === 'text') {
       return;
     }
 
-    rule.declarations.forEach(function(declaration) {
-      let camelCaseProperty = self.convertProp(declaration.property);
-      let value = self.convertValue(camelCaseProperty, declaration.value);
+    rule.declarations.forEach((declaration) => {
+      let camelCaseProperty = this.convertProp(declaration.property);
+      let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
 
       if (particular[camelCaseProperty]) {
