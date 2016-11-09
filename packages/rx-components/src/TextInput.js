@@ -109,9 +109,7 @@ class TextInput extends Component {
         // https://github.com/alibaba/weex/blob/dev/doc/components/input.md
         return <input {...propsCommon} type={type} disabled={propsCommon.readOnly} />;
       }
-
     } else {
-
       let input;
       if (multiline) {
         const propsMultiline = {
@@ -120,7 +118,6 @@ class TextInput extends Component {
         };
 
         input = <textarea {...propsCommon} {...propsMultiline} >{propsCommon.value}</textarea>;
-
       } else {
         input = <input {...propsCommon} type={type} />;
       }

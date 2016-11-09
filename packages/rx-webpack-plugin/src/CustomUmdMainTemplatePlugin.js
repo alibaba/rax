@@ -4,17 +4,15 @@ import path from 'path';
 
 export default class CustomUmdMainTemplatePlugin {
 
-  constructor(options){
+  constructor(options) {
     this.name = '[name]';
     this.options = options;
   }
 
-  apply(compilation){
-
+  apply(compilation) {
     let mainTemplate = compilation.mainTemplate;
 
     compilation.templatesPlugin('render-with-entry', (source, chunk, hash) => {
-
       let requireCall = '';
       let polyfills = [];
       let name = mainTemplate.applyPluginsWaterfall('asset-path', this.name, {
@@ -89,7 +87,7 @@ if (typeof require === "function"){
         sourcePrefix = `
 module.exports = function(${factoryDependencies}) {
   module.exports = `;
-        sourceSuffix = `};`;
+        sourceSuffix = '};';
       } else {
         // Default build mode for component
         sourcePrefix = `
@@ -117,7 +115,7 @@ module.exports = function(${factoryDependencies}) {
 })(function(){
   return `;
 
-        sourceSuffix = `});`;
+        sourceSuffix = '});';
       }
 
       return new ConcatSource(

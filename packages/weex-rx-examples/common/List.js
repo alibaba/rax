@@ -3,17 +3,15 @@ import {createElement, Component, render} from 'universal-rx';
 function getBaseURL(dir) {
   var bundleUrl = document.URL;
   var nativeBase;
-  var isAndroidAssets = bundleUrl.indexOf('your_current_IP') >= 0 || bundleUrl.indexOf('file://assets/')>=0;
+  var isAndroidAssets = bundleUrl.indexOf('your_current_IP') >= 0 || bundleUrl.indexOf('file://assets/') >= 0;
   var isiOSAssets = bundleUrl.indexOf('file:///') >= 0 && bundleUrl.indexOf('WeexDemo.app') > 0;
   if (isAndroidAssets) {
     nativeBase = 'file://assets/';
-  }
-  else if (isiOSAssets) {
+  } else if (isiOSAssets) {
     // file:///var/mobile/Containers/Bundle/Application/{id}/WeexDemo.app/
     // file:///Users/{user}/Library/Developer/CoreSimulator/Devices/{id}/data/Containers/Bundle/Application/{id}/WeexDemo.app/
     nativeBase = bundleUrl.substring(0, bundleUrl.lastIndexOf('/') + 1);
-  }
-  else {
+  } else {
     var host = 'localhost:12580';
     var matches = /\/\/([^\/]+?)\//.exec(bundleUrl);
     if (matches && matches.length >= 2) {
@@ -28,7 +26,7 @@ function getBaseURL(dir) {
     // in Browser or WebView
     base = h5Base;
   }
-  return base
+  return base;
 }
 
 class ExampleItem extends Component {
@@ -51,7 +49,7 @@ class ExampleItem extends Component {
           </text>
         </div>
       </cell>
-    )
+    );
   }
 }
 
@@ -59,8 +57,8 @@ class ExampleList extends Component {
   render() {
     return (
       <list>
-        {this.props.examples.map((item)=>{
-          return <ExampleItem title={item.title} name={item.name} url={item.url} />
+        {this.props.examples.map((item) => {
+          return <ExampleItem title={item.title} name={item.name} url={item.url} />;
         })}
       </list>
     );
@@ -83,6 +81,6 @@ const styles = {
     fontSize: 48,
     color: '#555555'
   }
-}
+};
 
 export default ExampleList;

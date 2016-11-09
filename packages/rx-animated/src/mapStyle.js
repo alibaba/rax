@@ -13,7 +13,6 @@ function mapTransform(t) {
 // Since this is a hot code path, right now this is mutative...
 // As far as I can tell, this shouldn't cause any unexpected behavior.
 function mapStyle(style) {
-
   if (style && style.transform && typeof style.transform !== 'string') {
     // Use vendor prefixed styles
     let convertedValue = style.transform.map(mapTransform).join(' ');

@@ -10,7 +10,6 @@ import ServerDriver from '../../drivers/server';
 import findDOMNode from '../../findDOMNode';
 
 describe('Key', function() {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -70,7 +69,7 @@ describe('Key', function() {
 
     class Foo extends Component {
       state = {
-        list: [<span key='0'>0</span>, <span key='1'>1</span>, <span key='2'>2</span>]
+        list: [<span key="0">0</span>, <span key="1">1</span>, <span key="2">2</span>]
       };
 
       render() {

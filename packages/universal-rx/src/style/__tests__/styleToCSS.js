@@ -2,9 +2,7 @@ import styleToCSS from '../styleToCSS';
 import {setRem} from '../unit';
 
 describe('StyleToCSS', () => {
-
   it('convert unitless style to css', () => {
-
     let css = styleToCSS({
       background: 'black'
     });
@@ -18,7 +16,7 @@ describe('StyleToCSS', () => {
     let css = styleToCSS({
       width: '750rem'
     });
-    
+
     expect(css).toBe('width:750px;');
 
     let css2 = styleToCSS({

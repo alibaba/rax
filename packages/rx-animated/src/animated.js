@@ -30,7 +30,7 @@ var SpringAnimation = require('animated/lib/SpringAnimation');
 import type { InterpolationConfigType } from 'animated/lib/Interpolation';
 import type { AnimationConfig, EndResult, EndCallback } from 'animated/lib/Animation';
 
-type TimingAnimationConfig =  AnimationConfig & {
+type TimingAnimationConfig = AnimationConfig & {
   toValue: number | AnimatedValue | {x: number, y: number} | AnimatedValueXY;
   easing?: (value: number) => number;
   duration?: number;
@@ -74,8 +74,8 @@ var maybeVectorAnim = function(
         configY[key] = y;
       }
     }
-    var aX = anim((value: AnimatedValueXY).x, configX);
-    var aY = anim((value: AnimatedValueXY).y, configY);
+    var aX = anim(value: AnimatedValueXY.x, configX);
+    var aY = anim(value: AnimatedValueXY.y, configY);
     // We use `stopTogether: false` here because otherwise tracking will break
     // because the second animation will get stopped before it can update.
     return parallel([aX, aY], {stopTogether: false});

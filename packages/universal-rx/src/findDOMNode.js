@@ -1,7 +1,6 @@
 import Host from './vdom/host';
 
 function findDOMNode(instance) {
-
   if (instance == null) {
     return null;
   }
@@ -39,7 +38,6 @@ function findDOMNode(instance) {
   } else {
     throw new Error('findDOMNode was called on an unmounted component.');
   }
-
 }
 
 export default findDOMNode;

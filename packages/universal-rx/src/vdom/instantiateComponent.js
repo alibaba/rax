@@ -19,7 +19,6 @@ function instantiateComponent(element) {
     } else {
       instance = new Host.CompositeComponent(element);
     }
-
   } else if (typeof element === 'string' || typeof element === 'number') {
     instance = new Host.TextComponent(element);
   } else {

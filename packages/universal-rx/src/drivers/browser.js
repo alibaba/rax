@@ -41,7 +41,6 @@ const Driver = {
   },
 
   createElement(component) {
-
     let node = Host.document.createElement(component.type);
     let props = component.props;
 
@@ -96,7 +95,7 @@ const Driver = {
     }
 
     if (node.nodeName.toLowerCase() == 'input' &&
-      ( (propKey == 'checked' && (node.type === 'checkbox' || node.type === 'radio'))
+      ( propKey == 'checked' && (node.type === 'checkbox' || node.type === 'radio')
       || propKey == 'value')) {
       node[propKey] = null;
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
@@ -112,7 +111,7 @@ const Driver = {
     }
 
     if (node.nodeName.toLowerCase() == 'input' &&
-      ( (propKey == 'checked' && (node.type === 'checkbox' || node.type === 'radio'))
+      ( propKey == 'checked' && (node.type === 'checkbox' || node.type === 'radio')
       || propKey == 'value')) {
       node[propKey] = propValue;
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
@@ -123,7 +122,6 @@ const Driver = {
   },
 
   setStyles(node, styles) {
-
     for (let prop in styles) {
       if (styles.hasOwnProperty(prop)) {
         let val = styles[prop];

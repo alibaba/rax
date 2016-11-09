@@ -13,7 +13,7 @@ class Example extends Component {
     setTimeout(() => {
       this.state.refresh_display = 'hide';
       this.setState(this.state);
-    }, 1000)
+    }, 1000);
   }
   onloading = (e) => {
     this.state.loading_display = 'show';
@@ -22,32 +22,31 @@ class Example extends Component {
       console.log('hide', this.state);
       this.state.loading_display = 'hide';
       this.setState(this.state);
-    }, 1000)
+    }, 1000);
   }
   renderItems = (sec) => {
     let items = sec.items.map((item, index) => {
-      return (<div style={styles.item}>
+      return <div style={styles.item}>
             <text style={styles.itemTitle}>row {item.id}</text>
-          </div>);
+          </div>;
     });
     return items;
   }
   render() {
-    
     let sections = data.sections.map((sec, index) => {
-      return (<div style={styles.section}>
+      return <div style={styles.section}>
           <div style={styles.header}>
             <text style={styles.headerTitle}>{sec.title}</text>
           </div>
           {this.renderItems(sec)}
-        </div>);
+        </div>;
     });
 
     return (
       <scroller style={styles.list} append="tree">
         {sections}
         <loading style={styles.loadingView} display={this.state.loading_display} onloading={this.onloading}>
-          <loading-indicator style={{height: 60, width: 60}}></loading-indicator>
+          <loading-indicator style={{height: 60, width: 60}} />
         </loading>
       </scroller>
     );
@@ -121,7 +120,7 @@ const data = {
       ]
     }
   ]
-}
+};
 
 const styles = {
   list: {

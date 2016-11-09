@@ -10,7 +10,7 @@ class Button extends Component {
   render() {
     const {type, size, value, style, onClick} = this.props;
     return (
-      <div onClick={onClick} style={[styles['btn'], styles['btn-' + type], styles['btn-sz-' + size], style]}>
+      <div onClick={onClick} style={[styles.btn, styles['btn-' + type], styles['btn-sz-' + size], style]}>
         <text style={[styles['btn-txt'], styles['btn-txt-' + type], styles['btn-txt-sz-' + size]]}>{value}</text>
       </div>
     );

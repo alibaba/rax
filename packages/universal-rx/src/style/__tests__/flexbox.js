@@ -1,9 +1,7 @@
 import flexbox from '../flexbox';
 
 describe('flexbox', () => {
-
   it('convert flex style to polyfill', () => {
-
     expect(flexbox.isFlexProp('flex')).toEqual(true);
     expect(flexbox.isFlexProp('display')).toEqual(true);
 
@@ -46,7 +44,5 @@ describe('flexbox', () => {
       webkitJustifyContent: 'flex-start',
       webkitBoxPack: 'start'
     });
-
   });
-
 });

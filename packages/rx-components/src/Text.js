@@ -53,7 +53,6 @@ class Text extends Component {
       };
       let numberOfLines = props.numberOfLines;
       if (numberOfLines) {
-
         if (parseInt(numberOfLines) === 1) {
           styleProps.whiteSpace = 'nowrap';
         } else {

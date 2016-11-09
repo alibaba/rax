@@ -16,7 +16,6 @@ export default {
     }
   },
   attach(ownerComponent, ref, component) {
-
     if (!ownerComponent) {
       throw new Error(
         'You might be adding a ref to a component that was not created inside a component\'s ' +

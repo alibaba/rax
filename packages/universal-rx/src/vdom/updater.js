@@ -46,7 +46,6 @@ const Updater = {
   },
 
   runUpdate: function(component) {
-
     let internal = component._internal;
 
     if (!internal || !internal._renderedComponent) {

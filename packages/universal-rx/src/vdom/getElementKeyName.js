@@ -6,7 +6,7 @@ export default (children, element, index) => {
   if (hasKey) {
     let keyName = '$' + elementKey;
     // Child keys must be unique.
-    let keyUnique = (children[keyName] === undefined);
+    let keyUnique = children[keyName] === undefined;
     // Only the first child will be used when encountered two children with the same key
     if (!keyUnique) console.warn(`Encountered two children with the same key "${elementKey}".`);
 
@@ -14,4 +14,4 @@ export default (children, element, index) => {
   } else {
     return defaultName;
   }
-}
+};

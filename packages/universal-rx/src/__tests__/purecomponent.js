@@ -8,7 +8,6 @@ import render from '../render';
 import ServerDriver from '../drivers/server';
 
 describe('PureComponent', function() {
-
   beforeEach(function() {
     Host.driver = ServerDriver;
   });
@@ -62,7 +61,6 @@ describe('PureComponent', function() {
   });
 
   it('extends Component', function() {
-
     class MyComponent extends PureComponent {
       render() {
         expect(this instanceof Component).toBe(true);
@@ -73,5 +71,4 @@ describe('PureComponent', function() {
 
     let component = render(<MyComponent />);
   });
-
 });

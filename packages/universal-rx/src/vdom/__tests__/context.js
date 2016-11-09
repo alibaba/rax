@@ -31,7 +31,6 @@ describe('Context', function() {
   });
 
   it('should pass context when rendering subtree elsewhere', function() {
-
     class MyComponent extends Component {
       static contextTypes = {
         foo: PropTypes.string.isRequired,
@@ -137,5 +136,4 @@ describe('Context', function() {
     instance.setState({bar: 'changed'});
     expect(container.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
-
 });

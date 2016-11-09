@@ -4,7 +4,6 @@ import {View, Image, Text, ScrollView} from 'rx-components';
 import mapStyle from './mapStyle';
 
 function ApplyAnimatedValues(instance, props) {
-
   setNativeProps(instance, {
     style: mapStyle(props.style)
   });

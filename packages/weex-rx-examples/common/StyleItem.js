@@ -21,7 +21,7 @@ class StyleItem extends Component {
 const styles = {
   item: {
     marginRight: 10,
-    /*margin-bottom: 10px;*/
+    /* margin-bottom: 10px; */
     width: 160,
     height: 75,
     paddingLeft: 8,

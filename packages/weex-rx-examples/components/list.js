@@ -34,17 +34,16 @@ class Example extends Component {
   }
 
   render() {
-
     let rows = data.rows.map((item, index) => {
-      return (<cell style={styles.row}>
-          <div 
+      return <cell style={styles.row}>
+          <div
             index={index}
             style={styles.item}
             onAppear={this.onappear}
             onDisappear={this.ondisappear}>
             <text style={styles.itemTitle}>row {item.id}</text>
           </div>
-        </cell>);
+        </cell>;
     });
 
     return (
@@ -89,7 +88,7 @@ const styles = {
 };
 
 const data = {
-  rows:[
+  rows: [
     {id: 1},
     {id: 2},
     {id: 3},

@@ -15,7 +15,6 @@ function StatelessComponent(props) {
 }
 
 describe('StatelessComponent', function() {
-
   beforeEach(function() {
     Host.driver = ServerDriver;
   });
@@ -25,14 +24,11 @@ describe('StatelessComponent', function() {
   });
 
   it('should render functional stateless component', function() {
-
     let html = renderToString(<StatelessComponent name="A" />);
     expect(html).toBe('<div>A</div>');
-
   });
 
   it('should render class stateless component', function() {
-
     class MyComponent {
       render() {
         return <StatelessComponent {...this.props} />;
@@ -41,7 +37,6 @@ describe('StatelessComponent', function() {
 
     let html = renderToString(<MyComponent name="A" />);
     expect(html).toBe('<div>A</div>');
-
   });
 
   it('should update stateless component', function() {
@@ -94,7 +89,6 @@ describe('StatelessComponent', function() {
 
     let html2 = renderToString(<GrandParent test="mest" />);
     expect(html2).toBe('<div>mest</div>');
-
   });
 
 
@@ -149,5 +143,4 @@ describe('StatelessComponent', function() {
     let html = renderToString(<Child />);
     expect(html).toBe('<!-- empty -->');
   });
-
 });
