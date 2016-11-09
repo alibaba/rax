@@ -92,7 +92,6 @@ class Switch extends Component {
   }
 
   render() {
-
     if (isWeex) {
       let nativeProps = {
         style: {
@@ -118,7 +117,6 @@ class Switch extends Component {
           <small style={smallcss}/>
         </span>
       );
-
     }
   }
 }

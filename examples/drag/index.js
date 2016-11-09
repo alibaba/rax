@@ -9,7 +9,7 @@ class Drag extends Component {
     scale: new Animated.Value(1),
   };
 
-  componentWillMount () {
+  componentWillMount() {
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
       onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
@@ -20,7 +20,7 @@ class Drag extends Component {
     });
   }
 
-  render () {
+  render() {
     // Destructure the value of pan from the state
     let { pan, scale } = this.state;
 
@@ -43,25 +43,23 @@ class Drag extends Component {
     );
   }
 
-  _handleStartShouldSetPanResponder (e, gestureState) {
+  _handleStartShouldSetPanResponder(e, gestureState) {
     // Should we become active when the user presses down on the circle?
     return true;
   }
 
-  _handleMoveShouldSetPanResponder (e, gestureState) {
+  _handleMoveShouldSetPanResponder(e, gestureState) {
     // Should we become active when the user moves a touch over the circle?
     return true;
   }
 
   _handlePanResponderGrant = (e, gestureState) => {
-
     this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});
     this.state.pan.setValue({x: 0, y: 0});
     Animated.spring(
       this.state.scale,
       { toValue: 1.1, friction: 3 }
     ).start();
-
   };
 
   _handlePanResponderMove = Animated.event([
@@ -69,13 +67,11 @@ class Drag extends Component {
   ]);
 
   _handlePanResponderEnd = (e, gestureState) => {
-
     this.state.pan.flattenOffset();
     Animated.spring(
       this.state.scale,
       { toValue: 1, friction: 3 }
     ).start();
-
   };
 }
 

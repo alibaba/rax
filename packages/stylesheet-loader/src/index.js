@@ -25,7 +25,7 @@ var convertProp = function(prop) {
 function convertTransform(fullValue) {
   // remove spaces that are inside transformation values
   fullValue = fullValue.replace(/\((.+?)\)/g, function(a, b) {
-    return "(" + b.replace(/\s/g, "") + ")";
+    return '(' + b.replace(/\s/g, '') + ')';
   });
   // the only spaces left should be between transformation values
   var values = fullValue.split(' ');
@@ -37,66 +37,66 @@ function convertTransform(fullValue) {
     var transformation = matches[2];
 
     switch (transformationType.toLowerCase()) {
-      case "perspective":
-        transformations.push({
-          perspective: parseFloat(transformation)
-        })
-        break;
+    case 'perspective':
+      transformations.push({
+        perspective: parseFloat(transformation)
+      });
+      break;
 
-      case "rotate":
-      case "rotatex":
-      case "rotatey":
-      case "rotatez":
-        var thisTransformation = {};
-        thisTransformation[transformationType] = transformation;
-        transformations.push(thisTransformation);
-        break;
+    case 'rotate':
+    case 'rotatex':
+    case 'rotatey':
+    case 'rotatez':
+      var thisTransformation = {};
+      thisTransformation[transformationType] = transformation;
+      transformations.push(thisTransformation);
+      break;
 
-      case "rotate3d":
-        var thisTransformationValues = transformation.split(",");
-        transformations.push({
-          rotateX: thisTransformationValues[0]
-        }, {
-          rotateY: thisTransformationValues[1]
-        }, {
-          rotateZ: thisTransformationValues[2]
-        });
-        break;
+    case 'rotate3d':
+      var thisTransformationValues = transformation.split(',');
+      transformations.push({
+        rotateX: thisTransformationValues[0]
+      }, {
+        rotateY: thisTransformationValues[1]
+      }, {
+        rotateZ: thisTransformationValues[2]
+      });
+      break;
 
-      case "scale":
-      case "scalex":
-      case "scaley":
-        var thisTransformation = {};
-        thisTransformation[transformationType] = parseFloat(transformation);
-        transformations.push(thisTransformation);
-        break;
+    case 'scale':
+    case 'scalex':
+    case 'scaley':
+      var thisTransformation = {};
+      thisTransformation[transformationType] = parseFloat(transformation);
+      transformations.push(thisTransformation);
+      break;
 
-      case "scale3d":
-      case "scale2d":
-        var thisTransformationValues = transformation.split(",");
-        transformations.push({
-          scaleX: parseFloat(thisTransformationValues[0])
-        }, {
-          scaleY: parseFloat(thisTransformationValues[1])
-        });
-        break;
+    case 'scale3d':
+    case 'scale2d':
+      var thisTransformationValues = transformation.split(',');
+      transformations.push({
+        scaleX: parseFloat(thisTransformationValues[0])
+      }, {
+        scaleY: parseFloat(thisTransformationValues[1])
+      });
+      break;
 
-      case "translatex":
-      case "translatey":
-        var thisTransformation = {};
-        thisTransformation[transformationType] = parseFloat(transformation);
-        transformations.push(thisTransformation);
-        break;
+    case 'translatex':
+    case 'translatey':
+      var thisTransformation = {};
+      thisTransformation[transformationType] = parseFloat(transformation);
+      transformations.push(thisTransformation);
+      break;
 
-      case "translate3d":
-      case "translate2d":
-        var thisTransformationValues = transformation.split(",");
-        transformations.push({
-          translateX: parseFloat(thisTransformationValues[0])
-        }, {
-          translateY: parseFloat(thisTransformationValues[1])
-        });
-        break;
+    case 'translate3d':
+    case 'translate2d':
+      var thisTransformationValues = transformation.split(',');
+      transformations.push({
+        translateX: parseFloat(thisTransformationValues[0])
+      }, {
+        translateY: parseFloat(thisTransformationValues[1])
+      });
+      break;
     }
   }
 }
@@ -112,7 +112,7 @@ var convertValue = function(property, value) {
   } else if (typeof resultNumber === 'number') {
     result = resultNumber;
   } else if (property == 'transform') {
-    result = convertTransform(result)
+    result = convertTransform(result);
   }
 
   return result;
@@ -134,7 +134,7 @@ module.exports = function(source) {
 
     if (rule.type === RULE) {
       rule.declarations.forEach(function(declaration) {
-        var camelCaseProperty = convertProp(declaration.property)
+        var camelCaseProperty = convertProp(declaration.property);
         style[camelCaseProperty] = convertValue(camelCaseProperty, declaration.value);
       });
     }

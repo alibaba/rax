@@ -69,7 +69,6 @@ class NativeComponent {
   }
 
   mountChildren(children, context) {
-
     if (!Array.isArray(children)) {
       children = [children];
     }
@@ -105,7 +104,6 @@ class NativeComponent {
 
   unmountComponent(shouldNotRemoveChild) {
     if (this._nativeNode) {
-
       let ref = this._currentElement.ref;
       if (ref) {
         Ref.detach(this._currentElement._owner, ref, this);
@@ -142,7 +140,6 @@ class NativeComponent {
   }
 
   updateProperties(prevProps, nextProps) {
-
     let propKey;
     let styleName;
     let styleUpdates;
@@ -162,13 +159,10 @@ class NativeComponent {
           }
         }
         this._prevStyleCopy = null;
-
       } else if ( propKey.substring(0, 2) === 'on' ) {
-
         if (prevProps[propKey]) {
           Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProps[propKey]);
         }
-
       } else {
         Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[propKey]);
       }
@@ -218,7 +212,6 @@ class NativeComponent {
 
       // Update event binding
       } else if (propKey.substring(0, 2) === 'on') {
-
         if (prevProp != null) {
           Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProp);
         }
@@ -253,7 +246,6 @@ class NativeComponent {
     let oldNodes = {};
 
     if (nextChildrenElements != null) {
-
       if (!Array.isArray(nextChildrenElements)) {
         nextChildrenElements = [nextChildrenElements];
       }
@@ -267,7 +259,6 @@ class NativeComponent {
           // Pass the same context when updating chidren
           prevChild.updateComponent(prevElement, nextElement, context, context);
           nextChildren[name] = prevChild;
-
         } else {
           // Unmount the prevChild when nextChild is different element type.
           if (prevChild) {
@@ -296,7 +287,6 @@ class NativeComponent {
     }
 
     if (nextChildren != null) {
-
       // `nextIndex` will increment for each child in `nextChildren`, but
       // `lastIndex` will be the last index visited in `prevChildren`.
       let lastIndex = 0;
@@ -304,7 +294,6 @@ class NativeComponent {
       let lastPlacedNode = null;
 
       for (let name in nextChildren) {
-
         if (!nextChildren.hasOwnProperty(name)) {
           continue;
         }
@@ -313,7 +302,6 @@ class NativeComponent {
         let prevChild = prevChildren && prevChildren[name];
 
         if (prevChild === nextChild) {
-
           // If the index of `child` is less than `lastIndex`, then it needs to
           // be moved. Otherwise, we do not need to move it because a child will be
           // inserted or moved before `child`.
@@ -324,7 +312,6 @@ class NativeComponent {
           lastIndex = Math.max(prevChild._mountIndex, lastIndex);
           prevChild._mountIndex = nextIndex;
         } else {
-
           if (prevChild != null) {
             // Update `lastIndex` before `_mountIndex` gets unset by unmounting.
             lastIndex = Math.max(prevChild._mountIndex, lastIndex);
@@ -334,7 +321,6 @@ class NativeComponent {
             this.getNativeNode(),
             context,
             (newChild, parent) => {
-
               let oldChild = oldNodes[name];
 
               if (oldChild) {
@@ -358,7 +344,6 @@ class NativeComponent {
   }
 
   getNativeNode() {
-
     if (this._nativeNode == null) {
       this._nativeNode = Host.driver.createElement(this._instance);
       instance.set(this._nativeNode, this._instance);

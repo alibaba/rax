@@ -53,7 +53,7 @@ export function isRem(str) {
  */
 export function calcRem(str, rem = defaultRem) {
   return str.replace(REM_REG, function(remValue) {
-    return (parseFloat(remValue) * rem) + 'px';
+    return parseFloat(remValue) * rem + 'px';
   });
 }
 
@@ -71,7 +71,7 @@ export function isUnitNumber(val, prop) {
 
 export function convertUnit(val, prop) {
   if (prop && isUnitNumber(val, prop)) {
-    return (val * defaultRem) + 'px';
+    return val * defaultRem + 'px';
   } else if (isRem(val)) {
     return calcRem(val);
   }

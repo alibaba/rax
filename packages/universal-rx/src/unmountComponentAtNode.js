@@ -1,7 +1,6 @@
 import instance from './vdom/instance';
 
 export default function unmountComponentAtNode(node) {
-
   let component = instance.get(node);
 
   if (!component) {

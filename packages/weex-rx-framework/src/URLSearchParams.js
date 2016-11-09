@@ -12,12 +12,12 @@ var
     '%20': '+',
     '%00': '\x00'
   },
-  replacer = function (match) {
+  replacer = function(match) {
     return replace[match];
   },
   iterable = isIterable(),
   secret = '__URLSearchParams__'
-;
+  ;
 
 function encode(str) {
   return encodeURIComponent(str).replace(find, replacer);
@@ -46,7 +46,7 @@ function URLSearchParams(query) {
         decode(value.slice(0, index)),
         decode(value.slice(index + 1))
       );
-    } else if (value.length){
+    } else if (value.length) {
       this.append(
         decode(value),
         ''
@@ -60,7 +60,7 @@ var URLSearchParamsProto = URLSearchParams.prototype;
 function isIterable() {
   try {
     return !!Symbol.iterator;
-  } catch(error) {
+  } catch (error) {
     return false;
   }
 }
@@ -107,7 +107,9 @@ URLSearchParamsProto.forEach = function forEach(callback, thisArg) {
 
 URLSearchParamsProto.keys = function keys() {
   var items = [];
-  this.forEach(function(value, name) { items.push(name); });
+  this.forEach(function(value, name) {
+    items.push(name);
+  });
   var iterator = {
     next: function() {
       var value = items.shift();
@@ -126,7 +128,9 @@ URLSearchParamsProto.keys = function keys() {
 
 URLSearchParamsProto.values = function values() {
   var items = [];
-  this.forEach(function(value) { items.push(value); });
+  this.forEach(function(value) {
+    items.push(value);
+  });
   var iterator = {
     next: function() {
       var value = items.shift();
@@ -145,7 +149,9 @@ URLSearchParamsProto.values = function values() {
 
 URLSearchParamsProto.entries = function entries() {
   var items = [];
-  this.forEach(function(value, name) { items.push([name, value]); });
+  this.forEach(function(value, name) {
+    items.push([name, value]);
+  });
   var iterator = {
     next: function() {
       var value = items.shift();

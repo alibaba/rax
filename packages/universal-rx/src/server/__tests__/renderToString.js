@@ -6,7 +6,6 @@ import renderToString from '../renderToString';
 import PropTypes from '../../proptypes';
 
 describe('Server renderToString', () => {
-
   it('renders based on state', () => {
     class Foo extends Component {
       constructor(props, context) {
@@ -29,7 +28,6 @@ describe('Server renderToString', () => {
 
 
   it('renders based on context', () => {
-
     class Button extends Component {
       render() {
         return (
@@ -77,7 +75,6 @@ describe('Server renderToString', () => {
   });
 
   it('renders based on ref', () => {
-
     class MyComponent extends Component {
       componentDidMount() {
         expect(this.refs.myInput.tagName).toEqual('INPUT');
@@ -98,7 +95,6 @@ describe('Server renderToString', () => {
   });
 
   it('renders with lifecycle methods', () => {
-
     class MyComponent extends Component {
 
       stage = '';
@@ -151,5 +147,4 @@ describe('Server renderToString', () => {
     let str = renderToString(<MyComponent />);
     expect(str).toBe('<div>componentWillMount</div>');
   });
-
 });

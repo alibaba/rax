@@ -16,7 +16,7 @@ let Listener;
 let sendTasks;
 
 const instances = {};
-const noop = function(){};
+const noop = function() {};
 
 export function getInstance(instanceId) {
   const instance = instances[instanceId];
@@ -26,7 +26,7 @@ export function getInstance(instanceId) {
   return instance;
 }
 
-export function init (cfg) {
+export function init(cfg) {
   Document = cfg.Document;
   Element = cfg.Element;
   Comment = cfg.Comment;
@@ -38,17 +38,16 @@ export function init (cfg) {
  * register the name of each native component
  * @param  {array} components array of name
  */
-export function registerComponents (components) {
+export function registerComponents(components) {
   if (Array.isArray(components)) {
-    components.forEach(function register (name) {
+    components.forEach(function register(name) {
       /* istanbul ignore if */
       if (!name) {
         return;
       }
       if (typeof name === 'string') {
         NativeComponents[name] = true;
-      }
-      else if (typeof name === 'object' && typeof name.type === 'string') {
+      } else if (typeof name === 'object' && typeof name.type === 'string') {
         NativeComponents[name.type] = name;
       }
     });
@@ -59,7 +58,7 @@ export function registerComponents (components) {
  * register the name and methods of each api
  * @param  {object} apis a object of apis
  */
-export function registerMethods (apis) {
+export function registerMethods(apis) {
   if (typeof apis === 'object') {
     // Noop
   }
@@ -69,7 +68,7 @@ export function registerMethods (apis) {
  * register the name and methods of each module
  * @param  {object} modules a object of modules
  */
-export function registerModules (newModules) {
+export function registerModules(newModules) {
   if (typeof newModules === 'object') {
     for (var name in newModules) {
       if (Object.prototype.hasOwnProperty.call(newModules, name)) {
@@ -111,7 +110,7 @@ function genBuiltinModules(
 ) {
   for (let moduleName in BuiltinModulesFactory) {
     modules[moduleName] = {
-      factory: (BuiltinModulesFactory[moduleName]).bind(
+      factory: BuiltinModulesFactory[moduleName].bind(
           null,
           // ES
           Promise,
@@ -160,7 +159,6 @@ function genNativeModules(modules, instanceId) {
       };
 
       NativeModules[name].forEach(method => {
-
         if (typeof method === 'string') {
           method = {
             name: method
@@ -173,7 +171,7 @@ function genNativeModules(modules, instanceId) {
           const finalArgs = [];
           args.forEach((arg, index) => {
             const value = args[index];
-            finalArgs[index] = normalize(value, getInstance(instanceId))
+            finalArgs[index] = normalize(value, getInstance(instanceId));
           });
 
           sendTasks(String(instanceId), [{
@@ -182,7 +180,6 @@ function genNativeModules(modules, instanceId) {
             args: finalArgs
           }], '-1');
         };
-
       });
     }
   }
@@ -199,7 +196,7 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [options] option `HAS_LOG` enable print log
  * @param  {object} [data]
  */
-export function createInstance (instanceId, code, options /* {bundleUrl, debug} */, data) {
+export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
   let instance = instances[instanceId];
 
   if (instance == undefined) {
@@ -217,7 +214,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     };
 
     function def(id, deps, factory) {
-
       if (deps instanceof Function) {
         factory = deps;
         deps = [];
@@ -233,7 +229,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     }
 
     function req(id) {
-
       var mod = modules[id];
 
       if (mod && mod.isInitialized) {
@@ -255,10 +250,9 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       try {
         mod.isInitialized = true;
         mod.factory(req, mod.module.exports, mod.module);
-
       } catch (e) {
-        mod.hasError = true
-        mod.isInitialized = false
+        mod.hasError = true;
+        mod.isInitialized = false;
         throw e;
       }
 
@@ -281,7 +275,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       open: (url) => {
         weexNavigator.push({
           url,
-          animated : 'true',
+          animated: 'true',
         }, function(e) {
           // noop
         });
@@ -297,14 +291,14 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     const timer = req('@weex-module/timer');
     const timerAPIs = {
       setTimeout: (...args) => {
-        const handler = function () {
+        const handler = function() {
           args[0](...args.slice(2));
         };
         timer.setTimeout(handler, args[1]);
         return instance.uid.toString();
       },
       setInterval: (...args) => {
-        const handler = function () {
+        const handler = function() {
           args[0](...args.slice(2));
         };
         timer.setInterval(handler, args[1]);
@@ -325,12 +319,12 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
       }
     };
 
-    const modal = req('@weex-module/modal')
+    const modal = req('@weex-module/modal');
     const dialogAPIs = {
       alert: (message) => {
         modal.alert({
           message
-        }, function() {})
+        }, function() {});
       }
     };
 
@@ -406,7 +400,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
     );
 
     if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
-
       let init = new Function(
         // ES
         'Promise',
@@ -473,7 +466,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         def,
         req,
       );
-
     } else {
       let init = new Function(
         'document',
@@ -484,7 +476,6 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
         document
       );
     }
-
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);
   }
@@ -496,7 +487,7 @@ export function createInstance (instanceId, code, options /* {bundleUrl, debug} 
  * @param  {string} instanceId
  * @param  {object} data
  */
-export function refreshInstance (instanceId, data) {
+export function refreshInstance(instanceId, data) {
   let instance = getInstance(instanceId);
   let document = instance.document;
   document.documentElement.fireEvent('refresh', {
@@ -510,7 +501,7 @@ export function refreshInstance (instanceId, data) {
  * destroy a Weex instance
  * @param  {string} instanceId
  */
-export function destroyInstance (instanceId) {
+export function destroyInstance(instanceId) {
   let instance = getInstance(instanceId);
   let document = instance.document;
   document.documentElement.fireEvent('destory', {
@@ -530,7 +521,7 @@ export function destroyInstance (instanceId) {
  * @param  {string} instanceId
  * @return {object} a virtual dom tree
  */
-export function getRoot (instanceId) {
+export function getRoot(instanceId) {
   let instance = getInstance(instanceId);
   let document = instance.document;
   return document.toJSON ? document.toJSON() : {};
@@ -556,7 +547,6 @@ function fireEvent(doc, ref, type, e, domChanges) {
 }
 
 function handleCallback(doc, callbacks, callbackId, data, ifKeepAlive) {
-
   let callback = callbacks[callbackId];
   if (typeof callback === 'function') {
     callback(data);
@@ -576,7 +566,7 @@ function handleCallback(doc, callbacks, callbackId, data, ifKeepAlive) {
  * @param  {string} instanceId
  * @param  {array} tasks list with `method` and `args`
  */
-export function receiveTasks (instanceId, tasks) {
+export function receiveTasks(instanceId, tasks) {
   const instance = getInstance(instanceId);
   if (Array.isArray(tasks)) {
     const { callbacks, document } = instance;
@@ -596,35 +586,35 @@ export function receiveTasks (instanceId, tasks) {
   }
 }
 
-export default function normalize (v, instance) {
+export default function normalize(v, instance) {
   const type = typof(v);
 
   switch (type) {
-    case 'undefined':
-    case 'null':
-      return ''
-    case 'regexp':
-      return v.toString();
-    case 'date':
-      return v.toISOString();
-    case 'number':
-    case 'string':
-    case 'boolean':
-    case 'array':
-    case 'object':
-      if (v instanceof Element) {
-        return v.ref;
-      }
-      return v;
-    case 'function':
-      instance.callbacks[++instance.uid] = v;
-      return instance.uid.toString();
-    default:
-      return JSON.stringify(v);
+  case 'undefined':
+  case 'null':
+    return '';
+  case 'regexp':
+    return v.toString();
+  case 'date':
+    return v.toISOString();
+  case 'number':
+  case 'string':
+  case 'boolean':
+  case 'array':
+  case 'object':
+    if (v instanceof Element) {
+      return v.ref;
+    }
+    return v;
+  case 'function':
+    instance.callbacks[++instance.uid] = v;
+    return instance.uid.toString();
+  default:
+    return JSON.stringify(v);
   }
 }
 
-function typof (v) {
+function typof(v) {
   const s = Object.prototype.toString.call(v);
   return s.substring(8, s.length - 1).toLowerCase();
 }

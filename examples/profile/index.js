@@ -56,7 +56,7 @@ class App extends Component {
     });
     const profileTranslateX = this.state.scrollY.interpolate({
       inputRange: [-1, 0, 150, 151],
-      outputRange: [0, 0, -PROFILE_WIDTH/8, -PROFILE_WIDTH/8],
+      outputRange: [0, 0, -PROFILE_WIDTH / 8, -PROFILE_WIDTH / 8],
     });
     const profileScale = this.state.scrollY.interpolate({
       inputRange: [-1, 0, 150, 151],
@@ -68,8 +68,8 @@ class App extends Component {
       outputRange: [0, 0, 1],
     });
     const titleTranslate = this.state.scrollY.interpolate({
-      inputRange:  [-1,  0, 220, 250, 251],
-      outputRange: [20, 20,  20,   0,   0],
+      inputRange: [-1, 0, 220, 250, 251],
+      outputRange: [20, 20, 20, 0, 0],
       extrapolate: 'clamp',
     });
 
@@ -117,7 +117,9 @@ class App extends Component {
             <Animated.View style={[styles.navbarBackground, { opacity: navBarBackgroundOpacity }]} />
 
             <View style={[StyleSheet.absoluteFill, {flexDirection: 'row', alignItems: 'center'}]}>
-              <TouchableOpacity onPress={() => { this.props.navigator.pop() }} hitSlop={{top: 15, left: 15, bottom: 15, right: 15}}>
+              <TouchableOpacity onPress={() => {
+                this.props.navigator.pop();
+              }} hitSlop={{top: 15, left: 15, bottom: 15, right: 15}}>
                 <Image
                   style={styles.backButton}
                   source={{ uri: 'https://www.android.com/static/img/map/back-arrow.png' }}

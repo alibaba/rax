@@ -1,5 +1,4 @@
-(function(global){
-
+(function(global) {
   if (typeof define !== 'undefined') {
     return;
   }
@@ -9,7 +8,6 @@
   var inGuard = false;
 
   function def(id, deps, factory) {
-
     if (deps instanceof Function) {
       factory = deps;
       deps = [];
@@ -79,7 +77,6 @@
       // keep args in sync with with defineModuleCode in
       // rx/bundler/src/resolver.js
       mod.factory(req, mod.module.exports, mod.module);
-
     } catch (e) {
       mod.hasError = true;
       mod.isInitialized = false;

@@ -6,39 +6,39 @@ const modal = require('@weex-module/modal');
 class Example extends Component {
   toast(msg, duration) {
     if (!msg || typeof msg !== 'string') {
-      msg = 'I am Toast show!'
+      msg = 'I am Toast show!';
     }
-    duration = duration || 2
+    duration = duration || 2;
     modal.toast({
       'message': msg,
       'duration': duration
-    })
+    });
   }
   alert(msg, okTitle, cancelTitle) {
     if (!msg || typeof msg !== 'string') {
-      msg = "I am Alert!"
+      msg = 'I am Alert!';
     }
-     modal.alert({
+    modal.alert({
       'message': msg,
       'okTitle': okTitle,
       'cancelTitle': cancelTitle
     }, function() {
-      modal.toast({ message: "Click Alert OK Bnt!!" })
-    })
+      modal.toast({ message: 'Click Alert OK Bnt!!' });
+    });
   }
   confirm(msg, okTitle, cancelTitle) {
     if (!msg || typeof msg !== 'string') {
-      msg = "I am Confirm!"
+      msg = 'I am Confirm!';
     }
-    okTitle = okTitle || "OK"
-    cancelTitle = cancelTitle || "Cancel"
+    okTitle = okTitle || 'OK';
+    cancelTitle = cancelTitle || 'Cancel';
     modal.confirm({
       'message': msg,
       'okTitle': okTitle,
       'cancelTitle': cancelTitle
     }, function(result) {
-      modal.toast({ message: "Click Confirm  " + result })
-    })
+      modal.toast({ message: 'Click Confirm  ' + result });
+    });
   }
   prompt() {
     modal.prompt( {
@@ -46,8 +46,8 @@ class Example extends Component {
       'okTitle': 'ok',
       'cancelTitle': 'cancel'
     }, function(result) {
-      modal.toast({ message: "Click Prompt  " + result })
-    })
+      modal.toast({ message: 'Click Prompt  ' + result });
+    });
   }
   render() {
     return (

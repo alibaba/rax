@@ -5,7 +5,6 @@ import View from './View';
 class Slider extends Component {
 
   render() {
-
     if (isWeex) {
       return <slider {...this.props} />;
     } else {

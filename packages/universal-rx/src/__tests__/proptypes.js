@@ -3,7 +3,6 @@
 import PropTypes from '../proptypes';
 
 describe('PropTypes', () => {
-
   it('Primitive types should be defined', () => {
     expect(PropTypes.array).toBeDefined();
     expect(PropTypes.bool).toBeDefined();
@@ -24,5 +23,4 @@ describe('PropTypes', () => {
     expect(PropTypes.objectOf).toBeDefined();
     expect(PropTypes.shape).toBeDefined();
   });
-
 });

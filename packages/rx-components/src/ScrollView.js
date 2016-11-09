@@ -19,9 +19,7 @@ class ScrollView extends Component {
   lastScrollContentSize = 0;
 
   handleScroll = (e) => {
-
     if (isWeb) {
-
       if (this.props.onScroll) {
         this.props.onScroll(e);
       }
@@ -37,7 +35,7 @@ class ScrollView extends Component {
         // NOTE：iOS7/8下使用offsetHeight/Width获取高/宽度值是屏幕高度，不符合期望，改成 scrollHeight/Width
         let scrollContentSize = this.props.horizontal ? this.scrollerNode.scrollWidth : this.scrollerNode.scrollHeight;
         let scrollDistance = this.props.horizontal ? this.scrollerNode.scrollLeft : this.scrollerNode.scrollTop;
-        let isEndReached = (scrollContentSize - scrollDistance - this.scrollerNodeSize) < this.props.onEndReachedThreshold;
+        let isEndReached = scrollContentSize - scrollDistance - this.scrollerNodeSize < this.props.onEndReachedThreshold;
 
         let isScrollToEnd = scrollDistance > this.lastScrollDistance;
         let isLoadedMoreContent = scrollContentSize != this.lastScrollContentSize;
@@ -61,7 +59,6 @@ class ScrollView extends Component {
   }
 
   scrollTo = (options) => {
-
     let x = parseInt(options.x);
     let y = parseInt(options.y);
 
@@ -85,7 +82,6 @@ class ScrollView extends Component {
   }
 
   render() {
-
     let {
       id,
       style,
@@ -138,7 +134,6 @@ class ScrollView extends Component {
     let showsScrollIndicator = this.props.horizontal ? showsHorizontalScrollIndicator : showsVerticalScrollIndicator;
 
     if (isWeex) {
-
       return (
         <scroller
           id={id}
@@ -151,9 +146,7 @@ class ScrollView extends Component {
           {contentContainer}
         </scroller>
       );
-
     } else {
-
       let handleScroll = this.handleScroll;
       if (scrollEventThrottle) {
         handleScroll = throttle(handleScroll, scrollEventThrottle);
@@ -174,7 +167,6 @@ class ScrollView extends Component {
           {contentContainer}
         </View>
       );
-
     }
   }
 }

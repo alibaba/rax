@@ -27,151 +27,151 @@ class Example extends Component {
     stream.fetch({
       method: 'GET',
       url: GET_URL_JSONP,
-      type:'jsonp'
+      type: 'jsonp'
     }, (ret) => {
-      if(!ret.ok){
+      if (!ret.ok) {
         this.setState({
           getJsonpResult: 'request failed'
         });
-      }else{
-        console.log('get:'+ret);
+      } else {
+        console.log('get:' + ret);
         this.setState({
           getJsonpResult: JSON.stringify(ret.data)
         });
       }
     }, (response) => {
-      console.log('get jsonp in progress:'+response.length);
+      console.log('get jsonp in progress:' + response.length);
       this.setState({
-        getJsonpResult: "bytes received:"+response.length
+        getJsonpResult: 'bytes received:' + response.length
       });
     });
 
     stream.fetch({
       method: 'GET',
       url: GET_URL,
-      type:'json'
+      type: 'json'
     }, (ret) => {
-      if(!ret.ok){
+      if (!ret.ok) {
         this.setState({
           getResult: 'request failed'
         });
-      }else{
-        console.log('get:'+ret);
+      } else {
+        console.log('get:' + ret);
         this.setState({
           getResult: JSON.stringify(ret.data)
         });
       }
     }, (response) => {
-      console.log('get in progress:'+response.length);
+      console.log('get in progress:' + response.length);
       this.setState({
-        getResult: 'bytes received:'+response.length
+        getResult: 'bytes received:' + response.length
       });
     });
     stream.fetch({
       method: 'POST',
       url: POST_URL,
-      type:'json'
+      type: 'json'
     }, (ret) => {
-      if(!ret.ok){
+      if (!ret.ok) {
         this.setState({
           postResult: 'request failed'
         });
-      }else{
-        console.log('get:'+JSON.stringify(ret));
+      } else {
+        console.log('get:' + JSON.stringify(ret));
         this.setState({
           postResult: JSON.stringify(ret.data)
         });
       }
     }, (response) => {
-      console.log('get in progress:'+response.length);
+      console.log('get in progress:' + response.length);
       this.setState({
-        postResult: "bytes received:"+response.length
+        postResult: 'bytes received:' + response.length
       });
     });
 
     stream.fetch({
       method: 'PUT',
       url: PUT_URL,
-      type:'json'
+      type: 'json'
     }, (ret) => {
-      if(!ret.ok){
+      if (!ret.ok) {
         this.setState({
-          putResult: "request failed"
+          putResult: 'request failed'
         });
-      }else{
-        console.log('get:'+JSON.stringify(ret));
+      } else {
+        console.log('get:' + JSON.stringify(ret));
         this.setState({
           putResult: JSON.stringify(ret.data)
         });
       }
     }, (response) => {
-      console.log('get in progress:'+response.length);
+      console.log('get in progress:' + response.length);
       this.setState({
-        putResult: "bytes received:"+response.length
+        putResult: 'bytes received:' + response.length
       });
     });
     stream.fetch({
       method: 'DELETE',
       url: DELETE_URL,
-      type:'json'
+      type: 'json'
     }, (ret) => {
-      if(!ret.ok){
+      if (!ret.ok) {
         this.setState({
-          deleteResult: "request failed"
+          deleteResult: 'request failed'
         });
-      }else{
-        console.log('get:'+JSON.stringify(ret));
+      } else {
+        console.log('get:' + JSON.stringify(ret));
         this.setState({
           deleteResult: JSON.stringify(ret.data)
         });
       }
     }, (response) => {
-      console.log('get in progress:'+response.length);
+      console.log('get in progress:' + response.length);
       this.setState({
-        deleteResult: "bytes received:"+response.length
+        deleteResult: 'bytes received:' + response.length
       });
     });
 
     stream.fetch({
       method: 'HEAD',
       url: HEAD_URL,
-      type:'json'
+      type: 'json'
     }, (ret) => {
-      if(ret.statusText !== 'I\'m a teapot'){
+      if (ret.statusText !== 'I\'m a teapot') {
         this.setState({
-          headResult: "request failed"
+          headResult: 'request failed'
         });
-      }else{
-        console.log('get:'+JSON.stringify(ret));
+      } else {
+        console.log('get:' + JSON.stringify(ret));
         this.setState({
           headResult: ret.statusText
         });
       }
     }, (response) => {
-      console.log('get in progress:'+response.length);
+      console.log('get in progress:' + response.length);
       this.setState({
-        headResult: "bytes received:"+response.length
+        headResult: 'bytes received:' + response.length
       });
     });
     stream.fetch({
       method: 'PATCH',
       url: PATCH_URL,
-      type:'json'
+      type: 'json'
     }, (ret) => {
-      if(!ret.ok){
+      if (!ret.ok) {
         this.setState({
-          patchResult: "request failed"
+          patchResult: 'request failed'
         });
-      }else{
-        console.log('get:'+JSON.stringify(ret));
+      } else {
+        console.log('get:' + JSON.stringify(ret));
         this.setState({
           patchResult: JSON.stringify(ret.data)
         });
       }
     }, (response) => {
-      console.log('get in progress:'+response.length);
+      console.log('get in progress:' + response.length);
       this.setState({
-        patchResult: "bytes received:"+response.length
+        patchResult: 'bytes received:' + response.length
       });
     });
   }

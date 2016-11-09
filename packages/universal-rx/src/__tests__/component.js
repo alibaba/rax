@@ -4,7 +4,6 @@ import Component from '../component';
 import {createElement} from '../element';
 
 describe('Component', () => {
-
   it('preserves the name of the class', () => {
     class Foo extends Component { }
     expect(Foo.name).toBe('Foo');
@@ -57,5 +56,4 @@ describe('Component', () => {
     let instance = new ElementType(foo.props);
     expect(instance.state.bar).toBe('Foo');
   });
-
 });

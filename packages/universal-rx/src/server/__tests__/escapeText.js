@@ -1,7 +1,6 @@
 import escapeText from '../escapeText';
 
 describe('escapeText', () => {
-
   it('should escape boolean to string', function() {
     expect(escapeText(true)).toBe('true');
     expect(escapeText(false)).toBe('false');

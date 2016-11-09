@@ -43,9 +43,9 @@ class Example extends Component {
           <TextItem style={{textAlign: 'right'}}>right</TextItem>
         </Panel>
         <Panel title="textOverflow" type="primary">
-          <TextItem style={{lines:1}}>no textOverflow, no textOverflow</TextItem>
-          <TextItem style={{textOverflow: 'clip', width:450, lines:1}}>textOverflow: clip, textOverflow: clip</TextItem>
-          <TextItem style={{textOverflow: 'ellipsis', width:450, lines:1}}>textOverflow: ellipsis, textOverflow: ellipsis</TextItem>
+          <TextItem style={{lines: 1}}>no textOverflow, no textOverflow</TextItem>
+          <TextItem style={{textOverflow: 'clip', width: 450, lines: 1}}>textOverflow: clip, textOverflow: clip</TextItem>
+          <TextItem style={{textOverflow: 'ellipsis', width: 450, lines: 1}}>textOverflow: ellipsis, textOverflow: ellipsis</TextItem>
         </Panel>
         <Panel title="lineHeight" type="primary">
           <TextItem>no lineheight setting</TextItem>

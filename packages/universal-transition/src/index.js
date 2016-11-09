@@ -1,7 +1,6 @@
 import {isWeex, isWeb} from 'universal-env';
 
 export default function transition(node, styles, options, callback) {
-
   if (typeof options == 'function' || options == null) {
     callback = options;
     options = {
@@ -18,8 +17,7 @@ export default function transition(node, styles, options, callback) {
       timingFunction: options.timingFunction,
       delay: options.delay,
       duration: options.duration,
-    }, callback || function(){});
-
+    }, callback || function() {});
   } else if (isWeb) {
     const duration = options.duration; // ms
     const timingFunction = options.timingFunction;
@@ -31,7 +29,7 @@ export default function transition(node, styles, options, callback) {
     node.style.webkitTransition = transitionValue;
 
     if (callback) {
-      const transitionEndHandler = function (e) {
+      const transitionEndHandler = function(e) {
         e.stopPropagation();
         node.removeEventListener('webkitTransitionEnd', transitionEndHandler);
         node.removeEventListener('transitionend', transitionEndHandler);
@@ -49,5 +47,4 @@ export default function transition(node, styles, options, callback) {
       node.style[key] = value;
     }
   }
-
 }

@@ -6,17 +6,17 @@ class TodoList extends Component {
     if (isWeex) {
       return (
         <div>
-          {this.props.items.map(item => (
+          {this.props.items.map(item =>
             <text key={item.id}>{item.text}</text>
-          ))}
+          )}
         </div>
       );
     } else {
       return (
         <div>
-          {this.props.items.map(item => (
+          {this.props.items.map(item =>
             <p key={item.id}>{item.text}</p>
-          ))}
+          )}
         </div>
       );
     }

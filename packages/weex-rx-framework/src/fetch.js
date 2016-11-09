@@ -26,7 +26,6 @@ export function Headers(headers) {
     headers.forEach(function(value, name) {
       this.append(name, value);
     }, this);
-
   } else if (headers) {
     Object.getOwnPropertyNames(headers).forEach(function(name) {
       this.append(name, headers[name]);
@@ -85,7 +84,6 @@ function Body() {
   this.bodyUsed = false;
 
   this._initBody = function(body, options) {
-
     this._bodyInit = body;
     if (typeof body === 'string') {
       this._bodyText = body;
@@ -113,7 +111,7 @@ var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT'];
 
 function normalizeMethod(method) {
   var upcased = method.toUpperCase();
-  return (methods.indexOf(upcased) > -1) ? upcased : method;
+  return methods.indexOf(upcased) > -1 ? upcased : method;
 }
 
 export function Request(input, options) {
@@ -229,7 +227,7 @@ let fetch = function(nativeFetch, input, init) {
       params.body = request._bodyInit;
     }
 
-    params.type = (init && init.dataType) ? init.dataType : 'json';
+    params.type = init && init.dataType ? init.dataType : 'json';
     nativeFetch(params, (response) => {
       try {
         typeof response === 'string' && (response = JSON.parse(response));
@@ -248,7 +246,6 @@ let fetch = function(nativeFetch, input, init) {
     }, (progress) => {
 
     });
-
   });
 };
 

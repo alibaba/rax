@@ -3,17 +3,16 @@
 import semver from './semver';
 
 function normalizeVersion(v) {
-
   if (v == '*') {
     return v;
   }
-  v = typeof (v) === 'string' ? v : '';
+  v = typeof v === 'string' ? v : '';
   let split = v.split('.');
   let i = 0;
   let result = [];
 
   while (i < 3) {
-    let s = typeof (split[i]) === 'string' && split[i] ? split[i] : '0';
+    let s = typeof split[i] === 'string' && split[i] ? split[i] : '0';
     result.push(s);
     i++;
   }
@@ -117,4 +116,4 @@ export default (nativeInstanceWrap, config) => {
     return true;
   }
   return false;
-}
+};

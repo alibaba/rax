@@ -32,7 +32,6 @@ class RxWebpackPlugin {
 
           let builtinModuleName = this.options.builtinModules[request];
           if (this.options.externalBuiltinModules && builtinModuleName) {
-
             if (Array.isArray(builtinModuleName)) {
               let customRequest = '(function(){ var mod;';
 
@@ -46,7 +45,6 @@ class RxWebpackPlugin {
             } else {
               return callback(null, builtinModuleName, 'commonjs');
             }
-
           }
 
           callback();
@@ -55,11 +53,10 @@ class RxWebpackPlugin {
     });
 
     if (this.options.frameworkComment) {
-
       compiler.plugin('compilation', (compilation) => {
         compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
           chunks.forEach(function(chunk) {
-            if(!chunk.initial) return;
+            if (!chunk.initial) return;
             chunk.files.forEach(function(file) {
               compilation.assets[file] = new ConcatSource('// {"framework" : "Rx"}', '\n', compilation.assets[file]);
             });

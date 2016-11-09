@@ -5,7 +5,6 @@ const STYLE = 'style';
 const CHILDREN = 'children';
 
 export default function setNativeProps(node, props, disableSetStyles) {
-
   node = findDOMNode(node);
 
   for (let prop in props) {

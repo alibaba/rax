@@ -83,7 +83,6 @@ let Toast = {
    * @param userStyle {Object} user defined style
    */
   show(message, duration = SHORT_DELAY) {
-
     if (isWeex) {
       let weexModal = require('@weex-module/modal');
 
@@ -93,7 +92,6 @@ let Toast = {
           duration: Number(duration) / 1000,
         });
       }
-
     } else {
       toast.push(message, duration);
     }

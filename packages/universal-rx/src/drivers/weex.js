@@ -117,7 +117,7 @@ const Driver = {
   insertAfter(node, parent, after) {
     if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return node.childNodes.map((child, index) => {
-        return this.insertAfter(child, parent, node.childNodes[index-1] || after);
+        return this.insertAfter(child, parent, node.childNodes[index - 1] || after);
       });
     } else {
       return parent.insertAfter(node, after);
@@ -172,7 +172,6 @@ const Driver = {
   },
 
   afterRender() {
-
     if (Host.document && Host.document.listener && Host.document.listener.createFinish) {
       Host.document.listener.createFinish(
         () => {
