@@ -151,7 +151,7 @@ module.exports = {
     "react/jsx-no-undef": "error",
     "react/jsx-sort-props": "off",
     "react/jsx-sort-prop-types": "off",
-    "react/jsx-uses-react": "off", // 组件中中是否用了 react
+    "react/jsx-uses-react": "off",
     "react/jsx-uses-vars": "error",
     "react/no-did-mount-set-state": "off",
     "react/no-did-update-set-state": "off",
