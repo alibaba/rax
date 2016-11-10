@@ -22,8 +22,8 @@ class Video extends Component {
       let src = props.src;
 
       return <video
-          {...nativeProps}
-          webkit-playsinline>
+        {...nativeProps}
+        webkit-playsinline>
         <source src={src} />
       </video>;
     }

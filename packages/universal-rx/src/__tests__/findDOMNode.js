@@ -145,10 +145,10 @@ describe('findDOMNode', () => {
       }
 
       render() {
-        return <div/>;
+        return <div />;
       }
     }
 
-    expect(() => render(<Bar/>)).not.toThrow();
+    expect(() => render(<Bar />)).not.toThrow();
   });
 });

@@ -37,8 +37,8 @@ describe('CompositeComponent', function() {
 
       render() {
         return !this.state.activated ?
-          <a ref="x"/> :
-          <b ref="x"/>;
+          <a ref="x" /> :
+          <b ref="x" />;
       }
     }
 
