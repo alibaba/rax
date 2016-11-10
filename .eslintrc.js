@@ -13,6 +13,11 @@ module.exports = {
   "plugins": [
     "react"
   ],
+  "settings": {
+    "react": {
+      "pragma": "createElement",  // Pragma to use, default to "React"
+    }
+  },
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 6,
@@ -95,7 +100,9 @@ module.exports = {
     "handle-callback-err": "off",
 
     "no-empty": "off",
-    "indent": ["error", 2],
+    "indent": ["error", 2, {
+      "SwitchCase": 1
+    }],
     "camelcase": ["off", {
       "properties": "always"
     }],
@@ -145,23 +152,35 @@ module.exports = {
     /**
      * React & JSX
      */
+    "jsx-quotes": ["error", "prefer-double"],
     "react/display-name": "off",
     "react/jsx-boolean-value": ["off", "always"],
-    "jsx-quotes": ["error", "prefer-double"],
+    "react/jsx-no-bind": ["error", {
+      "allowArrowFunctions": true
+    }],
+    "react/prefer-es6-class": "error",
+    "react/jsx-curly-spacing": "error",
+    "react/jsx-indent-props": ["error", 2], // 2 spaces indentation
+    "react/jsx-no-duplicate-props": "error",
     "react/jsx-no-undef": "error",
+    "react/jsx-space-before-closing": "error",
+    "react/jsx-equals-spacing": "error",
     "react/jsx-sort-props": "off",
+    "react/jsx-handler-names": "off",
     "react/jsx-sort-prop-types": "off",
-    "react/jsx-uses-react": "off",
+    "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
+    "react/jsx-wrap-multilines": "off",
+    "react/no-is-mounted": "error",
+    "react/no-children-prop": "error",
     "react/no-did-mount-set-state": "off",
     "react/no-did-update-set-state": "off",
     "react/no-multi-comp": "off",
     "react/no-unknown-property": "error",
     "react/prop-types": "off",
-    "react/no-is-mounted": "error",
-    "react/react-in-jsx-scope": "off",
+    "react/style-prop-object": "error",
+    "react/react-in-jsx-scope": "error",
     "react/self-closing-comp": "error",
-    "react/jsx-wrap-multilines": "off",
     "react/sort-comp": ["off", {
       "order": [
         "lifecycle",

@@ -35,7 +35,7 @@ class Drag extends Component {
     return (
       <View style={styles.container}>
         <Animated.Image
-          source= {{height: 200, width: 200, uri: 'https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg'}}
+          source={{height: 200, width: 200, uri: 'https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg'}}
           style={imageStyle}
           {...this._panResponder.panHandlers}
         />

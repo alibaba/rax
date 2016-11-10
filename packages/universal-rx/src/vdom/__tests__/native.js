@@ -102,8 +102,8 @@ describe('NativeComponent', function() {
         return (
           <div>
             {'foo'}
-            <Hello1 show={this.state.show}/>
-            <Hello2 show={this.state.show}/>
+            <Hello1 show={this.state.show} />
+            <Hello2 show={this.state.show} />
           </div>
         );
       }

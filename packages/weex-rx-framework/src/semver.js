@@ -27,31 +27,31 @@ export default {
     }
 
     switch (arr[1]) {
-    case '<':
-      if (flag === -1) {
-        return true;
-      }
-      break;
-    case '<=':
-      if (flag !== 1) {
-        return true;
-      }
-      break;
-    case '>':
-      if (flag === 1) {
-        return true;
-      }
-      break;
-    case '>=':
-      if (flag !== -1) {
-        return true;
-      }
-      break;
-    default:
-      if (flag === 0) {
-        return true;
-      }
-      break;
+      case '<':
+        if (flag === -1) {
+          return true;
+        }
+        break;
+      case '<=':
+        if (flag !== 1) {
+          return true;
+        }
+        break;
+      case '>':
+        if (flag === 1) {
+          return true;
+        }
+        break;
+      case '>=':
+        if (flag !== -1) {
+          return true;
+        }
+        break;
+      default:
+        if (flag === 0) {
+          return true;
+        }
+        break;
     }
     return false;
   }

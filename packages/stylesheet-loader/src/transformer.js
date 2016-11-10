@@ -39,66 +39,66 @@ module.exports = {
       let transformation = matches[2];
 
       switch (transformationType.toLowerCase()) {
-      case 'perspective':
-        transformations.push({
-          perspective: parseFloat(transformation)
-        });
-        break;
+        case 'perspective':
+          transformations.push({
+            perspective: parseFloat(transformation)
+          });
+          break;
 
-      case 'rotate':
-      case 'rotatex':
-      case 'rotatey':
-      case 'rotatez':
-        var thisTransformation = {};
-        thisTransformation[transformationType] = transformation;
-        transformations.push(thisTransformation);
-        break;
+        case 'rotate':
+        case 'rotatex':
+        case 'rotatey':
+        case 'rotatez':
+          var thisTransformation = {};
+          thisTransformation[transformationType] = transformation;
+          transformations.push(thisTransformation);
+          break;
 
-      case 'rotate3d':
-        var thisTransformationValues = transformation.split(',');
-        transformations.push({
-          rotateX: thisTransformationValues[0]
-        }, {
-          rotateY: thisTransformationValues[1]
-        }, {
-          rotateZ: thisTransformationValues[2]
-        });
-        break;
+        case 'rotate3d':
+          var thisTransformationValues = transformation.split(',');
+          transformations.push({
+            rotateX: thisTransformationValues[0]
+          }, {
+            rotateY: thisTransformationValues[1]
+          }, {
+            rotateZ: thisTransformationValues[2]
+          });
+          break;
 
-      case 'scale':
-      case 'scalex':
-      case 'scaley':
-        var thisTransformation = {};
-        thisTransformation[transformationType] = parseFloat(transformation);
-        transformations.push(thisTransformation);
-        break;
+        case 'scale':
+        case 'scalex':
+        case 'scaley':
+          var thisTransformation = {};
+          thisTransformation[transformationType] = parseFloat(transformation);
+          transformations.push(thisTransformation);
+          break;
 
-      case 'scale3d':
-      case 'scale2d':
-        var thisTransformationValues = transformation.split(',');
-        transformations.push({
-          scaleX: parseFloat(thisTransformationValues[0])
-        }, {
-          scaleY: parseFloat(thisTransformationValues[1])
-        });
-        break;
+        case 'scale3d':
+        case 'scale2d':
+          var thisTransformationValues = transformation.split(',');
+          transformations.push({
+            scaleX: parseFloat(thisTransformationValues[0])
+          }, {
+            scaleY: parseFloat(thisTransformationValues[1])
+          });
+          break;
 
-      case 'translatex':
-      case 'translatey':
-        var thisTransformation = {};
-        thisTransformation[transformationType] = parseFloat(transformation);
-        transformations.push(thisTransformation);
-        break;
+        case 'translatex':
+        case 'translatey':
+          var thisTransformation = {};
+          thisTransformation[transformationType] = parseFloat(transformation);
+          transformations.push(thisTransformation);
+          break;
 
-      case 'translate3d':
-      case 'translate2d':
-        var thisTransformationValues = transformation.split(',');
-        transformations.push({
-          translateX: parseFloat(thisTransformationValues[0])
-        }, {
-          translateY: parseFloat(thisTransformationValues[1])
-        });
-        break;
+        case 'translate3d':
+        case 'translate2d':
+          var thisTransformationValues = transformation.split(',');
+          transformations.push({
+            translateX: parseFloat(thisTransformationValues[0])
+          }, {
+            translateY: parseFloat(thisTransformationValues[1])
+          });
+          break;
       }
     }
   },

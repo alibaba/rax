@@ -36,10 +36,10 @@ class Board extends Component {
   render() {
     return (
       <View style={styles.board}>
-        <View style={styles.row}><Cell/><Cell/><Cell/><Cell/></View>
-        <View style={styles.row}><Cell/><Cell/><Cell/><Cell/></View>
-        <View style={styles.row}><Cell/><Cell/><Cell/><Cell/></View>
-        <View style={styles.row}><Cell/><Cell/><Cell/><Cell/></View>
+        <View style={styles.row}><Cell /><Cell /><Cell /><Cell /></View>
+        <View style={styles.row}><Cell /><Cell /><Cell /><Cell /></View>
+        <View style={styles.row}><Cell /><Cell /><Cell /><Cell /></View>
+        <View style={styles.row}><Cell /><Cell /><Cell /><Cell /></View>
         {this.props.children}
       </View>
     );
@@ -123,7 +123,7 @@ class GameEndOverlay extends Component {
     var board = this.props.board;
 
     if (!board.hasWon() && !board.hasLost()) {
-      return <View/>;
+      return <View />;
     }
 
     var message = board.hasWon() ?

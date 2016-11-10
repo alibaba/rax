@@ -68,12 +68,12 @@ function dumpNode(node, identation) {
 
 function isNormalProp(name: string): boolean {
   switch (name) {
-  case 'children':
-  case 'key':
-  case 'ref':
-    return false;
-  default:
-    return true;
+    case 'children':
+    case 'key':
+    case 'ref':
+      return false;
+    default:
+      return true;
   }
 }
 
@@ -100,17 +100,17 @@ function convertValue(value, depth = 0): ?string {
   }
 
   switch (typeof value) {
-  case 'string':
-    return JSON.stringify(possiblyEllipsis(value).replace('\n', '\\n'));
-  case 'boolean':
-  case 'number':
-    return JSON.stringify(value);
-  case 'function':
-    return '[function]';
-  case 'object':
-    return convertObject(value, depth);
-  default:
-    return null;
+    case 'string':
+      return JSON.stringify(possiblyEllipsis(value).replace('\n', '\\n'));
+    case 'boolean':
+    case 'number':
+      return JSON.stringify(value);
+    case 'function':
+      return '[function]';
+    case 'object':
+      return convertObject(value, depth);
+    default:
+      return null;
   }
 }
 

@@ -114,7 +114,7 @@ class Switch extends Component {
 
       return (
         <span onClick={this.handleClick} style={spancss}>
-          <small style={smallcss}/>
+          <small style={smallcss} />
         </span>
       );
     }

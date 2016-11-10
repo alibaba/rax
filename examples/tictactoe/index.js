@@ -76,34 +76,34 @@ class Board {
 class Cell extends Component {
   cellStyle() {
     switch (this.props.player) {
-    case 1:
-      return styles.cellX;
-    case 2:
-      return styles.cellO;
-    default:
-      return null;
+      case 1:
+        return styles.cellX;
+      case 2:
+        return styles.cellO;
+      default:
+        return null;
     }
   }
 
   textStyle() {
     switch (this.props.player) {
-    case 1:
-      return styles.cellTextX;
-    case 2:
-      return styles.cellTextO;
-    default:
-      return {};
+      case 1:
+        return styles.cellTextX;
+      case 2:
+        return styles.cellTextO;
+      default:
+        return {};
     }
   }
 
   textContents() {
     switch (this.props.player) {
-    case 1:
-      return 'X';
-    case 2:
-      return 'O';
-    default:
-      return '';
+      case 1:
+        return 'X';
+      case 2:
+        return 'O';
+      default:
+        return '';
     }
   }
 
