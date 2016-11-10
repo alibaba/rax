@@ -1,3 +1,4 @@
+/* global __DEV__ */
 'use strict';
 
 const isDev = typeof __DEV__ === 'boolean' && __DEV__;

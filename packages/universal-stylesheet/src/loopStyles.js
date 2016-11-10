@@ -1,3 +1,5 @@
+/* global __DEV__ */
+
 const isDev = typeof __DEV__ === 'boolean' && __DEV__;
 import StyleSheetValidation from './StyleSheetValidation';
 

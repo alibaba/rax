@@ -1,3 +1,4 @@
+/* global __DEV__ */
 'use strict';
 
 import emptyFunction from './emptyFunction';

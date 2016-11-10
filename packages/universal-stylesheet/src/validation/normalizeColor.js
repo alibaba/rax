@@ -11,7 +11,7 @@ function normalizeColor(color: string | number): ?number {
   }
 
   // Ordered based on occurrences on Facebook codebase
-  if ((match = matchers.hex6.exec(color))) {
+  if (match = matchers.hex6.exec(color)) {
     return parseInt(match[1] + 'ff', 16) >>> 0;
   }
 
@@ -19,7 +19,7 @@ function normalizeColor(color: string | number): ?number {
     return names[color];
   }
 
-  if ((match = matchers.rgb.exec(color))) {
+  if (match = matchers.rgb.exec(color)) {
     return (
       parse255(match[1]) << 24 | // r
       parse255(match[2]) << 16 | // g
@@ -28,7 +28,7 @@ function normalizeColor(color: string | number): ?number {
     ) >>> 0;
   }
 
-  if ((match = matchers.rgba.exec(color))) {
+  if (match = matchers.rgba.exec(color)) {
     return (
       parse255(match[1]) << 24 | // r
       parse255(match[2]) << 16 | // g
@@ -37,7 +37,7 @@ function normalizeColor(color: string | number): ?number {
     ) >>> 0;
   }
 
-  if ((match = matchers.hex3.exec(color))) {
+  if (match = matchers.hex3.exec(color)) {
     return parseInt(
       match[1] + match[1] + // r
       match[2] + match[2] + // g
@@ -48,11 +48,11 @@ function normalizeColor(color: string | number): ?number {
   }
 
   // https://drafts.csswg.org/css-color-4/#hex-notation
-  if ((match = matchers.hex8.exec(color))) {
+  if (match = matchers.hex8.exec(color)) {
     return parseInt(match[1], 16) >>> 0;
   }
 
-  if ((match = matchers.hex4.exec(color))) {
+  if (match = matchers.hex4.exec(color)) {
     return parseInt(
       match[1] + match[1] + // r
       match[2] + match[2] + // g
@@ -62,7 +62,7 @@ function normalizeColor(color: string | number): ?number {
     ) >>> 0;
   }
 
-  if ((match = matchers.hsl.exec(color))) {
+  if (match = matchers.hsl.exec(color)) {
     return (
       hslToRgb(
         parse360(match[1]), // h
@@ -73,7 +73,7 @@ function normalizeColor(color: string | number): ?number {
     ) >>> 0;
   }
 
-  if ((match = matchers.hsla.exec(color))) {
+  if (match = matchers.hsla.exec(color)) {
     return (
       hslToRgb(
         parse360(match[1]), // h
@@ -152,7 +152,7 @@ function parse255(str: string): number {
 
 function parse360(str: string): number {
   let int = parseFloat(str);
-  return (((int % 360) + 360) % 360) / 360;
+  return (int % 360 + 360) % 360 / 360;
 }
 
 function parse1(str: string): number {
