@@ -590,27 +590,27 @@ export default function normalize(v, instance) {
   const type = typof(v);
 
   switch (type) {
-  case 'undefined':
-  case 'null':
-    return '';
-  case 'regexp':
-    return v.toString();
-  case 'date':
-    return v.toISOString();
-  case 'number':
-  case 'string':
-  case 'boolean':
-  case 'array':
-  case 'object':
-    if (v instanceof Element) {
-      return v.ref;
-    }
-    return v;
-  case 'function':
-    instance.callbacks[++instance.uid] = v;
-    return instance.uid.toString();
-  default:
-    return JSON.stringify(v);
+    case 'undefined':
+    case 'null':
+      return '';
+    case 'regexp':
+      return v.toString();
+    case 'date':
+      return v.toISOString();
+    case 'number':
+    case 'string':
+    case 'boolean':
+    case 'array':
+    case 'object':
+      if (v instanceof Element) {
+        return v.ref;
+      }
+      return v;
+    case 'function':
+      instance.callbacks[++instance.uid] = v;
+      return instance.uid.toString();
+    default:
+      return JSON.stringify(v);
   }
 }
 

@@ -95,7 +95,9 @@ module.exports = {
     "handle-callback-err": "off",
 
     "no-empty": "off",
-    "indent": ["error", 2],
+    "indent": ["error", 2, {
+      "SwitchCase": 1
+    }],
     "camelcase": ["off", {
       "properties": "always"
     }],
