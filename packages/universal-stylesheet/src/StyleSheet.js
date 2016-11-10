@@ -1,3 +1,4 @@
+import loopStyles from './loopStyles';
 import flattenStyle from './flattenStyle';
 
 const absoluteFillObject = {
@@ -12,6 +13,7 @@ export default {
   hairlineWidth: 1,
   absoluteFill: absoluteFillObject,
   absoluteFillObject,
+
   flatten: flattenStyle,
-  create: obj => obj
+  create: styles => loopStyles(styles)
 };
