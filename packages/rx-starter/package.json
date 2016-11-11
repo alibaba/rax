@@ -12,9 +12,23 @@
     "url": "https://github.com/alibaba/rx/issues"
   },
   "homepage": "https://github.com/alibaba/rx#readme",
+  "scripts": {
+    "start": "./node_modules/.bin/webpack-dev-server"
+  },
   "dependencies": {
     "universal-env": "0.0.*",
     "universal-rx": "0.0.*",
     "rx-components": "0.0.*"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.7",
+    "case-sensitive-paths-webpack-plugin": "^1.1.4",
+    "html-webpack-plugin": "^2.24.1",
+    "json-loader": "^0.5.4",
+    "stylesheet-loader": "^0.1.1",
+    "watch-missing-node-modules-webpack-plugin": "0.0.1",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
   }
 }

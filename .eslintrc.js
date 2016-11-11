@@ -1,14 +1,16 @@
 /* eslint quotes: false */
 
 module.exports = {
+  "root": true,
+
+  "parser": "babel-eslint",
+
   "env": {
     "browser": true,
     "node": true,
     "es6": true,
-    "mocha": true,
     "jest": true,
-    "commonjs": true,
-    "amd": true,
+    "commonjs": true
   },
   "plugins": [
     "react"
@@ -22,7 +24,9 @@ module.exports = {
     "sourceType": "module",
     "ecmaVersion": 6,
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "generators": true,
+      "experimentalObjectRestSpread": true
     }
   },
   "ecmaFeatures": {
@@ -48,7 +52,7 @@ module.exports = {
     "WXEnvironment": true,
     "webkitRequestAnimationFrame": true,
   },
-  "parser": "babel-eslint",
+
   "rules": {
     // ES6
     "prefer-const": "off",
