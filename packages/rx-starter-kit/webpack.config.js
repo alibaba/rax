@@ -5,6 +5,8 @@ var RxWebpackPlugin = require('rx-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-plugin');
+var qrcode = require('qrcode-terminal');
+var internalIp = require('internal-ip');
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebookincubator/create-react-app/issues/637
@@ -18,7 +20,6 @@ var nodePaths = (process.env.NODE_PATH || '')
   .filter(Boolean)
   .map(resolveApp);
 
-// config after eject: we're in ./config/
 var paths = {
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
@@ -46,8 +47,17 @@ if (process.env.NODE_ENV === 'production') {
   entry['index.bundle.min'] = entry['index.bundle'];
 }
 
+if (process.env.NODE_ENV !== 'production') {
+  var ip = internalIp.v4();
+  var port = 8080;
+  var bundleUrl = 'http://' + ip + ':' + port + '/js/index.bundle.js?wh_weex=true';
+  
+  qrcode.generate(bundleUrl, {small: true});
+  console.log('Scan above QRCode ' + bundleUrl + ' use weex playground.\n');
+}
+
 module.exports = {
-  // Compile target should "web" in dev-server
+  // Compile target should "web" when use hot reload
   target: process.env.NODE_ENV === 'production' ? 'node' : 'web',
 
   devtool: 'cheap-module-source-map',

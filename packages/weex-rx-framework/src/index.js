@@ -434,7 +434,9 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         '"use strict";' + code
       );
 
-      init(
+      init.call(
+        // Context is window
+        windowAPIs
         // ES
         Promise,
         // W3C
@@ -472,7 +474,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         '"use strict";' + code
       );
 
-      init(
+      init.call(
+        window,
         document
       );
     }
