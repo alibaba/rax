@@ -1,4 +1,4 @@
-# rx-starter
+# rx-starter-kit
 
 ## Getting Started
 
