@@ -14,7 +14,7 @@ dist(getConfig(
   {
     'env': './packages/universal-env/src/index.js',
     'env.min': './packages/universal-env/src/index.js',
-    'env.factory' : './packages/universal-env/src/index.js',
+    'env.factory': './packages/universal-env/src/index.js',
   },
   {
     path: './packages/universal-env/dist/',
@@ -29,7 +29,6 @@ dist(getConfig(
     presets: ['es2015', 'rx']
   }
 )).then(() => {
-
   return dist(getConfig(
     {
       'rx': './packages/universal-rx/src/index.js',
@@ -54,17 +53,16 @@ dist(getConfig(
         }]
       ],
       ignore: [
-        "babelHelpers.js"
+        'babelHelpers.js'
       ]
     }
   ));
-
 }).then(() => {
   return dist(getConfig(
     {
       'transition': './packages/universal-transition/src/index.js',
       'transition.min': './packages/universal-transition/src/index.js',
-      'transition.factory' : './packages/universal-transition/src/index.js',
+      'transition.factory': './packages/universal-transition/src/index.js',
     },
     {
       path: './packages/universal-transition/dist/',
@@ -79,7 +77,7 @@ dist(getConfig(
       presets: ['es2015', 'rx']
     }
   ));
-}).then(()=> {
+}).then(() => {
   return dist(getConfig(
     {
       'rx.framework': './packages/weex-rx-framework/src/index.js',
@@ -100,20 +98,6 @@ dist(getConfig(
     }
   ));
 });
-
-function getExamples() {
-  let entry = {};
-
-  fs.readdirSync(EXAMPLES_DIR)
-    .map(file => {
-      let f = path.resolve(EXAMPLES_DIR, file);
-      if (fs.lstatSync(path.resolve(f)).isDirectory()) {
-        entry[file + '.bundle'] = f;
-      }
-    });
-
-  return entry;
-}
 
 function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
   return {
@@ -146,15 +130,15 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
   };
 }
 
-function dist(config){
-  return new Promise(function(resolver, reject){
+function dist(config) {
+  return new Promise(function(resolver, reject) {
     let compiler = webpack(config);
     compiler.run(function(err, stats) {
-     let options = {
-       colors: true
-     };
-     console.log(stats.toString(options));
-     resolver();
+      let options = {
+        colors: true
+      };
+      console.log(stats.toString(options));
+      resolver();
     });
   });
 }

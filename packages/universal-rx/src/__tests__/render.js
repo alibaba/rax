@@ -7,7 +7,6 @@ import ServerDriver from '../drivers/server';
 import findDOMNode from '../findDOMNode';
 
 describe('render', () => {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -28,7 +27,6 @@ describe('render', () => {
   });
 
   it('render to default container', () => {
-
     let appendChildMock = jest.fn();
 
     Host.driver = {
@@ -51,10 +49,10 @@ describe('render', () => {
   it('should render different components in same root', function() {
     let container = createNodeElement('container');
 
-    render(<div></div>, container);
+    render(<div />, container);
     expect(container.childNodes[0].tagName).toBe('DIV');
 
-    render(<span></span>, container);
+    render(<span />, container);
     expect(container.childNodes[0].tagName).toBe('SPAN');
   });
 
@@ -73,5 +71,4 @@ describe('render', () => {
 
     expect(instance1 === instance2).toBe(true);
   });
-
 });

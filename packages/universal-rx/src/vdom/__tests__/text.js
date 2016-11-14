@@ -10,7 +10,6 @@ import ServerDriver from '../../drivers/server';
 import findDOMNode from '../../findDOMNode';
 
 describe('TextComponent', function() {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -31,7 +30,6 @@ describe('TextComponent', function() {
   });
 
   it('updates a mounted text component in place', function() {
-
     let el = createNodeElement('div');
     let inst = render(<div><span />{'foo'}{'bar'}</div>, el);
 
@@ -48,5 +46,4 @@ describe('TextComponent', function() {
     expect(foo.data).toBe('baz');
     expect(bar.data).toBe('qux');
   });
-
 });

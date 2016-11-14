@@ -6,7 +6,6 @@ import render from '../render';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 
 describe('unmountComponentAtNode', () => {
-
   beforeEach(() => {
     Host.driver = null;
   });
@@ -16,7 +15,6 @@ describe('unmountComponentAtNode', () => {
   });
 
   it('unmout component', () => {
-
     let appendChildMock = jest.fn();
     let removeChildMock = jest.fn();
     let body = {tagName: 'BODY'};

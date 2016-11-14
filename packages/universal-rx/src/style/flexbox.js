@@ -33,7 +33,6 @@ let Flexbox = {
     return FLEX_PROPS[prop];
   },
   display(value, style = {}) {
-
     if (value === 'flex') {
       style.display = '-webkit-box';
       style.display = '-webkit-flex';

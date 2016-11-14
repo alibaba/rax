@@ -6,11 +6,10 @@ const webpack = require('webpack');
 const RxWebpackPlugin = require('rx-webpack-plugin');
 
 function getEntry() {
-
   let entry = {};
 
   function walk(dir) {
-    dir = dir || '.'
+    dir = dir || '.';
     var directory = path.join(__dirname, '..', 'packages', 'weex-rx-examples', dir);
     fs.readdirSync(directory)
       .forEach(function(file) {
@@ -59,12 +58,12 @@ const config = {
       }
     }]
   }
-}
+};
 
 let compiler = webpack(config);
 compiler.run(function(err, stats) {
- let options = {
-   colors: true
- };
- console.log(stats.toString(options));
+  let options = {
+    colors: true
+  };
+  console.log(stats.toString(options));
 });

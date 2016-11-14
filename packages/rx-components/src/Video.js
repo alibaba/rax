@@ -8,7 +8,6 @@ class Video extends Component {
     if (isWeex) {
       return <video {...props} />;
     } else {
-
       let nativeProps = {
         ...props,
         controls: true,
@@ -22,11 +21,11 @@ class Video extends Component {
       }
       let src = props.src;
 
-      return (<video
-          {...nativeProps}
-          webkit-playsinline>
+      return <video
+        {...nativeProps}
+        webkit-playsinline>
         <source src={src} />
-      </video>);
+      </video>;
     }
   }
 }

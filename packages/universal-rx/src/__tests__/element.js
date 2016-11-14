@@ -8,7 +8,6 @@ import ServerDriver from '../drivers/server';
 import findDOMNode from '../findDOMNode';
 
 describe('Element', () => {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -35,7 +34,6 @@ describe('Element', () => {
   }
 
   it('createElement', () => {
-
     function Foo(props) {
       return <props.tag />;
     }
@@ -97,11 +95,11 @@ describe('Element', () => {
   });
 
   it('should use the same key for a cloned element', function() {
-    var instance = (
+    var instance =
       <div>
         <div />
       </div>
-    );
+    ;
 
     var element = instance.props.children;
     var cloned = cloneElement(element);
@@ -155,7 +153,6 @@ describe('Element', () => {
 
     var component = render(<Grandparent />);
     expect(findDOMNode(component).childNodes[0].attributes.class).toBe('xyz');
-
   });
 
   it('should keep the original ref if it is not overridden', function() {
@@ -367,5 +364,4 @@ describe('Element', () => {
     expect(clone.ref).toBe(null);
     expect(clone.props).toEqual({foo: 'ef'});
   });
-
 });

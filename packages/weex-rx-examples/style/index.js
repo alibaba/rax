@@ -8,10 +8,10 @@ class Example extends Component {
       <scroller>
         <Panel title="opacity" type="primary">
           <div style={{flexDirection: 'row'}}>
-            <StyleItem style={{opacity:1}} value="1" />
-            <StyleItem style={{opacity:0.9}} value="0.9" />
-            <StyleItem style={{opacity:0.5}} value="0.5" />
-            <StyleItem style={{opacity:0.2}} value="0.2" />
+            <StyleItem style={{opacity: 1}} value="1" />
+            <StyleItem style={{opacity: 0.9}} value="0.9" />
+            <StyleItem style={{opacity: 0.5}} value="0.5" />
+            <StyleItem style={{opacity: 0.2}} value="0.2" />
           </div>
         </Panel>
         <Panel title="backgroundColor" type="primary">
@@ -29,10 +29,10 @@ class Example extends Component {
 }
 
 const styles = {
- itemBg: {
-   width: 690,
-   marginBottom: 10,
- }
+  itemBg: {
+    width: 690,
+    marginBottom: 10,
+  }
 };
 
 render(<Example />);

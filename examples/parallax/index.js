@@ -8,7 +8,7 @@ var width = 560;
 var height = 300;
 
 function calculatePercentage(offset, dimension) {
-  return ((-2 / dimension) * offset) + 1;
+  return -2 / dimension * offset + 1;
 }
 
 class App extends Component {
@@ -24,7 +24,7 @@ class App extends Component {
       yRotationPercentage: new Animated.Value(0),
       xTranslationPercentage: new Animated.Value(0),
       yTranslationPercentage: new Animated.Value(0)
-    }
+    };
 
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -42,7 +42,7 @@ class App extends Component {
         this._animations.xTranslationPercentage.setValue(calculatePercentage(x, width));
         this._animations.yTranslationPercentage.setValue(calculatePercentage(y, height));
       }
-    })
+    });
   }
 
   render() {
@@ -50,10 +50,10 @@ class App extends Component {
       <View style={styles.container}>
         <View style={{width: width, height: height}} {...this._panResponder.panHandlers}>
           <Card
-              style={{backgroundColor: '#DDDEDE', borderRadius: 10, width: width, height: height}}
-              stackingFactor={1}
-              {...this.state}
-              {...this._animations}
+            style={{backgroundColor: '#DDDEDE', borderRadius: 10, width: width, height: height}}
+            stackingFactor={1}
+            {...this.state}
+            {...this._animations}
           >
             <Card
               style={{backgroundColor: '#5F5D60', borderRadius: 400, position: 'absolute', top: 30, left: 160, width: 240, height: 240}}
@@ -80,48 +80,46 @@ class App extends Component {
 }
 
 class Card extends Component {
-  componentWillMount () {
-
-    var translateMax = (this.props.maxTranslation * this.props.stackingFactor);
+  componentWillMount() {
+    var translateMax = this.props.maxTranslation * this.props.stackingFactor;
     var rotateMax = this.props.maxRotation;
 
     this._xRotation = this.props.xRotationPercentage.interpolate({
       inputRange: [-1, 1],
-      outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+      outputRange: [ rotateMax * -1 + 'deg', rotateMax + 'deg'],
       extrapolate: 'clamp'
     });
 
     this._yRotation = this.props.yRotationPercentage.interpolate({
       inputRange: [-1, 1],
-      outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+      outputRange: [ rotateMax * -1 + 'deg', rotateMax + 'deg'],
       extrapolate: 'clamp'
     });
 
     this._translateX = this.props.xTranslationPercentage.interpolate({
       inputRange: [-1, 1],
-      outputRange: [(translateMax * -1), translateMax],
+      outputRange: [translateMax * -1, translateMax],
       extrapolate: 'clamp'
-    })
+    });
 
     this._translateY = this.props.yTranslationPercentage.interpolate({
       inputRange: [-1, 1],
-      outputRange: [(translateMax * -1), translateMax],
+      outputRange: [translateMax * -1, translateMax],
       extrapolate: 'clamp'
-    })
-
+    });
   }
 
-  getTransform () {
+  getTransform() {
     return [
       {perspective: this.props.perspective},
       {rotateX: this._xRotation},
       {rotateY: this._yRotation},
       {translateX: this._translateX},
       {translateY: this._translateY},
-    ]
+    ];
   }
 
-  render () {
+  render() {
     return (
       <Animated.View
         {...this.props}
@@ -129,7 +127,7 @@ class Card extends Component {
       >
         {this.props.children}
       </Animated.View>
-    )
+    );
   }
 }
 

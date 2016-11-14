@@ -9,7 +9,6 @@ import ServerDriver from '../drivers/server';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 
 describe('findDOMNode', () => {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -113,7 +112,6 @@ describe('findDOMNode', () => {
     });
 
     expect(node3).toEqual(null);
-
   });
 
   it('findDOMNode should reject random objects', function() {
@@ -147,11 +145,10 @@ describe('findDOMNode', () => {
       }
 
       render() {
-        return <div/>;
+        return <div />;
       }
     }
 
-    expect(() => render(<Bar/>)).not.toThrow();
+    expect(() => render(<Bar />)).not.toThrow();
   });
-
 });

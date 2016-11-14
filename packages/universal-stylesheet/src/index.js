@@ -14,4 +14,4 @@ export default {
   absoluteFillObject,
   flatten: flattenStyle,
   create: obj => obj
-}
+};

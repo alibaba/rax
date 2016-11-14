@@ -1,13 +1,13 @@
 // https://github.com/Polymer/URL
 
 var relative = Object.create(null);
-relative['ftp'] = 21;
-relative['file'] = 0;
-relative['gopher'] = 70;
-relative['http'] = 80;
-relative['https'] = 443;
-relative['ws'] = 80;
-relative['wss'] = 443;
+relative.ftp = 21;
+relative.file = 0;
+relative.gopher = 70;
+relative.http = 80;
+relative.https = 443;
+relative.ws = 80;
+relative.wss = 443;
 
 var relativePathDotMapping = Object.create(null);
 relativePathDotMapping['%2e'] = '.';
@@ -26,10 +26,10 @@ function invalid() {
 
 function IDNAToASCII(h) {
   if ('' == h) {
-    invalid.call(this)
+    invalid.call(this);
   }
   // XXX
-  return h.toLowerCase()
+  return h.toLowerCase();
 }
 
 function percentEscape(c) {
@@ -60,20 +60,20 @@ function percentEscapeQuery(c) {
 }
 
 var EOF = undefined,
-    ALPHA = /[a-zA-Z]/,
-    ALPHANUMERIC = /[a-zA-Z0-9\+\-\.]/;
+  ALPHA = /[a-zA-Z]/,
+  ALPHANUMERIC = /[a-zA-Z0-9\+\-\.]/;
 
 function parse(input, stateOverride, base) {
   function err(message) {
-    errors.push(message)
+    errors.push(message);
   }
 
   var state = stateOverride || 'scheme start',
-      cursor = 0,
-      buffer = '',
-      seenAt = false,
-      seenBracket = false,
-      errors = [];
+    cursor = 0,
+    buffer = '',
+    seenAt = false,
+    seenBracket = false,
+    errors = [];
 
   loop: while ((input[cursor - 1] != EOF || cursor == 0) && !this._isInvalid) {
     var c = input[cursor];
@@ -121,14 +121,13 @@ function parse(input, stateOverride, base) {
         } else if (EOF == c) {
           break loop;
         } else {
-          err('Code point not allowed in scheme: ' + c)
+          err('Code point not allowed in scheme: ' + c);
           break loop;
         }
         break;
 
       case 'scheme data':
         if ('?' == c) {
-          query = '?';
           state = 'query';
         } else if ('#' == c) {
           this._fragment = '#';
@@ -142,7 +141,7 @@ function parse(input, stateOverride, base) {
         break;
 
       case 'no scheme':
-        if (!base || !(isRelativeScheme(base._scheme))) {
+        if (!base || !isRelativeScheme(base._scheme)) {
           err('Missing scheme.');
           invalid.call(this);
         } else {
@@ -152,12 +151,12 @@ function parse(input, stateOverride, base) {
         break;
 
       case 'relative or authority':
-        if ('/' == c && '/' == input[cursor+1]) {
+        if ('/' == c && '/' == input[cursor + 1]) {
           state = 'authority ignore slashes';
         } else {
           err('Expected /, got: ' + c);
           state = 'relative';
-          continue
+          continue;
         }
         break;
 
@@ -195,12 +194,12 @@ function parse(input, stateOverride, base) {
           this._password = base._password;
           state = 'fragment';
         } else {
-          var nextC = input[cursor+1]
-          var nextNextC = input[cursor+2]
+          var nextC = input[cursor + 1];
+          var nextNextC = input[cursor + 2];
           if (
             'file' != this._scheme || !ALPHA.test(c) ||
-            (nextC != ':' && nextC != '|') ||
-            (EOF != nextNextC && '/' != nextNextC && '\\' != nextNextC && '?' != nextNextC && '#' != nextNextC)) {
+            nextC != ':' && nextC != '|' ||
+            EOF != nextNextC && '/' != nextNextC && '\\' != nextNextC && '?' != nextNextC && '#' != nextNextC) {
             this._host = base._host;
             this._port = base._port;
             this._username = base._username;
@@ -281,7 +280,7 @@ function parse(input, stateOverride, base) {
               continue;
             }
             var tempC = percentEscape(cp);
-            (null !== this._password) ? this._password += tempC : this._username += tempC;
+            null !== this._password ? this._password += tempC : this._username += tempC;
           }
           buffer = '';
         } else if (EOF == c || '/' == c || '\\' == c || '?' == c || '#' == c) {
@@ -376,7 +375,7 @@ function parse(input, stateOverride, base) {
         break;
 
       case 'relative path':
-        if (EOF == c || '/' == c || '\\' == c || (!stateOverride && ('?' == c || '#' == c))) {
+        if (EOF == c || '/' == c || '\\' == c || !stateOverride && ('?' == c || '#' == c)) {
           if ('\\' == c) {
             err('\\ not allowed in relative path.');
           }

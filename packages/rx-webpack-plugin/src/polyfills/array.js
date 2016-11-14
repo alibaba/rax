@@ -23,7 +23,7 @@ if (!Array.from) {
     };
 
     // The length property of the from method is 1.
-    return function from(arrayLike/*, mapFn, thisArg */) {
+    return function from(arrayLike/* , mapFn, thisArg */) {
       // 1. Let C be the this value.
       var C = this;
 

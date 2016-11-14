@@ -11,7 +11,6 @@ import findDOMNode from '../../findDOMNode';
 import renderToString from '../../server/renderToString';
 
 describe('Ref', function() {
-
   beforeEach(function() {
     Host.driver = ServerDriver;
   });
@@ -21,7 +20,6 @@ describe('Ref', function() {
   });
 
   it('Allow refs to hop around children correctly', function() {
-
     class RefHopsAround extends Component {
       state = {count: 0};
 
@@ -87,7 +85,6 @@ describe('Ref', function() {
   });
 
   it('Allow refs to hop around composite children correctly', function() {
-
     class Child extends Component {
       render() {
         this.id = this.props.id;
@@ -169,5 +166,4 @@ describe('Ref', function() {
     let instance = render(<MyComponent />);
     expect(instance.refs).toEqual({});
   });
-
 });

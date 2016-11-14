@@ -22,7 +22,7 @@ const EXAMPLES = [
   // module
   {name: '/modules/modal', title: 'Modal'},
   {name: '/modules/stream', title: 'Stream'},
-  {name: '/modules/storage',title:'Storage'},
+  {name: '/modules/storage', title: 'Storage'},
   {name: '/modules/animation', title: 'Animation'},
   // {name: 'module/clipboard', title: 'Clipboard'}, // 0.8 , developing
 ];

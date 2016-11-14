@@ -10,7 +10,6 @@ import ServerDriver from '../../drivers/server';
 import findDOMNode from '../../findDOMNode';
 
 describe('FragmentComponent', function() {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -31,7 +30,6 @@ describe('FragmentComponent', function() {
   });
 
   it('updates a mounted text component in place', function() {
-
     let el = createNodeElement('div');
     let inst = render(['foo', 'bar'], el);
 
@@ -39,7 +37,6 @@ describe('FragmentComponent', function() {
     let bar = el.childNodes[1];
     expect(foo.data).toBe('foo');
     expect(bar.data).toBe('bar');
-
   });
 
   it('should append to right position', function() {
@@ -101,7 +98,5 @@ describe('FragmentComponent', function() {
     expect(childNodes[2].data).toBe('hello1');
     expect(childNodes[3].data).toBe('hello2');
     expect(childNodes[4].data).toBe('hello2');
-
   });
-
 });

@@ -1,7 +1,9 @@
+/* eslint no-extend-native: "off" */
+
 function noop() {}
 
 // Use polyfill for setImmediate for performance gains
-var asap = (typeof setImmediate === 'function' && setImmediate) ||
+var asap = typeof setImmediate === 'function' && setImmediate ||
   function(fn) {
     if (typeof setTimeout === 'function') {
       setTimeout(fn, 0);
@@ -141,7 +143,7 @@ Promise.prototype.catch = function(onRejected) {
 };
 
 Promise.prototype.then = function(onFulfilled, onRejected) {
-  var prom = new (this.constructor)(noop);
+  var prom = new this.constructor(noop);
 
   handle(this, new Handler(onFulfilled, onRejected, prom));
   return prom;

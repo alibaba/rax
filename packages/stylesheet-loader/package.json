@@ -1,9 +1,9 @@
 {
   "name": "stylesheet-loader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Stylesheet loader.",
   "license": "BSD-3-Clause",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"

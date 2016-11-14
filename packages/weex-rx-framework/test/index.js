@@ -1,11 +1,11 @@
 
 global.WXEnvironment = {
   platform: 'iOS'
-}
+};
 
 global.callNative = function() {
 
-}
+};
 
 require('./promise');
 require('./URL');

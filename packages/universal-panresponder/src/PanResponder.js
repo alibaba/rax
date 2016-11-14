@@ -370,7 +370,6 @@ const PanResponder = {
       },
 
       onTouchMove: function(e) {
-
         if (!isPanStart) return;
 
         ResponderTouchHistoryStore.recordTouchTrack('move', e);

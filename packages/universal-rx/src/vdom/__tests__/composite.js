@@ -8,7 +8,6 @@ import findDOMNode from '../../findDOMNode';
 import unmountComponentAtNode from '../../unmountComponentAtNode';
 
 describe('CompositeComponent', function() {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -29,7 +28,6 @@ describe('CompositeComponent', function() {
   });
 
   it('should rewire refs when rendering to different child types', function() {
-
     class MyComponent extends Component {
       state = {activated: false};
 
@@ -39,8 +37,8 @@ describe('CompositeComponent', function() {
 
       render() {
         return !this.state.activated ?
-          <a ref="x"/> :
-          <b ref="x"/>;
+          <a ref="x" /> :
+          <b ref="x" />;
       }
     }
 
@@ -69,7 +67,6 @@ describe('CompositeComponent', function() {
   });
 
   it('donot call render when setState in componentWillMount', function() {
-
     let container = createNodeElement('div');
     let renderCounter = 0;
     class Foo extends Component {
@@ -153,5 +150,4 @@ describe('CompositeComponent', function() {
       'will-unmount',
     ]);
   });
-
 });

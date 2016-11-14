@@ -44,7 +44,6 @@ class FragmentComponent extends NativeComponent {
 
 
   mountChildren(children, context) {
-
     let renderedChildren = {};
     let fragment = this.getNativeNode();
 
@@ -93,7 +92,6 @@ class FragmentComponent extends NativeComponent {
   }
 
   getNativeNode() {
-
     if (this._nativeNode == null) {
       this._nativeNode = Host.driver.createFragment(this._instance);
       // TODO instance cache

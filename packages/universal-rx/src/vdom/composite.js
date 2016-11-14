@@ -18,8 +18,8 @@ class CompositeComponent {
     let type = this._currentElement.type;
     let constructor = this._instance && this._instance.constructor;
     return (
-      type.displayName || (constructor && constructor.displayName) ||
-      type.name || (constructor && constructor.name) ||
+      type.displayName || constructor && constructor.displayName ||
+      type.name || constructor && constructor.name ||
       null
     );
   }
@@ -47,10 +47,8 @@ class CompositeComponent {
       // Component instance
       component = new Component(publicProps, publicContext, updater);
     } else if (typeof Component === 'function') {
-
       // Functional stateless component without state and lifecycles
       component = new StatelessComponent(Component);
-
     } else {
       throw Error(`Invalid component type ${JSON.stringify(Component)}`);
     }
@@ -104,8 +102,10 @@ class CompositeComponent {
     if (component.componentDidMount) {
       try {
         component.componentDidMount();
-      } catch(e) {
-        setTimeout(() => {throw e}, 0);
+      } catch (e) {
+        setTimeout(() => {
+          throw e;
+        }, 0);
       }
     }
 
@@ -122,7 +122,6 @@ class CompositeComponent {
     component._internal = null;
 
     if (this._renderedComponent != null) {
-
       let ref = this._currentElement.ref;
       if (ref) {
         Ref.detach(this._currentElement._owner, ref, this);
@@ -281,13 +280,14 @@ class CompositeComponent {
       if (component.componentDidUpdate) {
         try {
           component.componentDidUpdate(prevProps, prevState, prevContext);
-        } catch(e) {
-          setTimeout(() => {throw e}, 0);
+        } catch (e) {
+          setTimeout(() => {
+            throw e;
+          }, 0);
         }
       }
 
       this._updateCount++;
-
     } else {
       // If it's determined that a component should not update, we still want
       // to set props and state but we shortcut the rest of the update.
@@ -317,7 +317,6 @@ class CompositeComponent {
     }
 
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
-
       prevRenderedComponent.updateComponent(
         prevRenderedElement,
         nextRenderedElement,
@@ -325,7 +324,6 @@ class CompositeComponent {
         this._processChildContext(context)
       );
     } else {
-
       let oldChild = prevRenderedComponent.getNativeNode();
       prevRenderedComponent.unmountComponent(true);
 

@@ -83,7 +83,6 @@ const Driver = {
   },
 
   appendChild(node, parent) {
-
     if (parent.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return parent.childNodes.push(node);
     } else if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
@@ -97,7 +96,6 @@ const Driver = {
   },
 
   removeChild(node, parent) {
-
     let id = node.attributes && node.attributes[ID];
     if (id != null) {
       nodeMaps[id] = null;
@@ -126,7 +124,7 @@ const Driver = {
   insertAfter(node, parent, after) {
     if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return node.childNodes.map((child, index) => {
-        return this.insertAfter(child, parent, node.childNodes[index-1] || after);
+        return this.insertAfter(child, parent, node.childNodes[index - 1] || after);
       });
     } else {
       let nodeIdx = parent.childNodes.indexOf(node);
@@ -146,7 +144,6 @@ const Driver = {
   },
 
   insertBefore(node, parent, before) {
-
     if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return node.childNodes.map((child, index) => {
         return this.insertBefore(child, parent, before);
@@ -201,7 +198,7 @@ const Driver = {
     }
 
     if (node.tagName === 'INPUT' &&
-      ( (propKey == 'checked' && (node.attributes.type === 'checkbox' || node.attributes.type === 'radio'))
+      ( propKey == 'checked' && (node.attributes.type === 'checkbox' || node.attributes.type === 'radio')
       || propKey == 'value')) {
       node.attributes[propKey] = null;
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
@@ -221,7 +218,7 @@ const Driver = {
     }
 
     if (node.tagName === 'INPUT' &&
-      ( (propKey == 'checked' && (node.attributes.type === 'checkbox' || node.attributes.type === 'radio'))
+      ( propKey == 'checked' && (node.attributes.type === 'checkbox' || node.attributes.type === 'radio')
       || propKey == 'value')) {
       node.attributes[propKey] = propValue;
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {

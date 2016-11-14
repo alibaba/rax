@@ -4,7 +4,6 @@ import Host from '../vdom/host';
 import setNativeProps from '../setNativeProps';
 
 describe('setNativeProps', () => {
-
   beforeEach(() => {
     Host.driver = null;
   });
@@ -14,7 +13,6 @@ describe('setNativeProps', () => {
   });
 
   it('set native props', () => {
-
     let setStyles = jest.fn();
     let addEventListener = jest.fn();
     let setAttribute = jest.fn();

@@ -173,19 +173,19 @@ class TicTacToeApp extends Component {
   handlers = [];
 
   getCellPressHandle = (row, col) => {
-    let pos = [row,col].join(',');
+    let pos = [row, col].join(',');
     let handler = this.handlers[pos];
     if (!handler) {
       this.handlers[pos] = this.handleCellPress.bind(this, row, col);
     }
-    return this.handlers[pos]
+    return this.handlers[pos];
   };
 
   nextPlayer() {
     return this.state.player === 1 ? 2 : 1;
   }
 
-  handleCellPress (row, col) {
+  handleCellPress(row, col) {
     if (this.state.board.hasMark(row, col)) {
       return;
     }
@@ -198,7 +198,6 @@ class TicTacToeApp extends Component {
   }
 
   render() {
-
     var rows = this.state.board.grid.map((cells, row) =>
       <View key={'row' + row} style={styles.row}>
         {cells.map((player, col) =>

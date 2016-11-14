@@ -9,7 +9,7 @@ function shouldUpdateComponent(prevElement, nextElement) {
   let prevType = typeof prevElement;
   let nextType = typeof nextElement;
   if (prevType === 'string' || prevType === 'number') {
-    return (nextType === 'string' || nextType === 'number');
+    return nextType === 'string' || nextType === 'number';
   } else {
     return (
       prevType === 'object' &&

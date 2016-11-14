@@ -92,7 +92,6 @@ class Switch extends Component {
   }
 
   render() {
-
     if (isWeex) {
       let nativeProps = {
         style: {
@@ -115,10 +114,9 @@ class Switch extends Component {
 
       return (
         <span onClick={this.handleClick} style={spancss}>
-          <small style={smallcss}/>
+          <small style={smallcss} />
         </span>
       );
-
     }
   }
 }

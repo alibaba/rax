@@ -10,7 +10,6 @@ class TextComponent {
   }
 
   mountComponent(parent, context, childMounter) {
-
     this._parent = parent;
     this._context = context;
     this._mountID = Host.mountID++;
@@ -32,7 +31,6 @@ class TextComponent {
   }
 
   unmountComponent(shouldNotRemoveChild) {
-
     if (this._nativeNode && !shouldNotRemoveChild) {
       Host.driver.removeChild(this._nativeNode, this._parent);
     }

@@ -1,5 +1,7 @@
 .app {
-  text-align: center;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .appLogo {
@@ -8,11 +10,19 @@
 
 .appHeader {
   background-color: #222;
-  height: 150;
-  padding: 20;
+  height: 160;
+  padding: 40;
   color: white;
 }
 
+.appBanner {
+  text-align: center;
+  font-size: 80;
+}
+
 .appIntro {
-  font-size: large;
+  text-align: center;
+  margin-top: 40;
+  font-size: 40;
+  line-height: 60;
 }

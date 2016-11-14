@@ -31,7 +31,6 @@ function initRem(driver) {
 }
 
 function render(element, container, callback) {
-
   // Inject component
   injectComponent();
 

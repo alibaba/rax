@@ -10,7 +10,6 @@ import ServerDriver from '../../drivers/server';
 import findDOMNode from '../../findDOMNode';
 
 describe('NativeComponent', function() {
-
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -31,7 +30,6 @@ describe('NativeComponent', function() {
   });
 
   it('updates a mounted text component in place', function() {
-
     let el = createNodeElement('div');
     let inst = render(<div><span />{'foo'}{'bar'}</div>, el);
 
@@ -50,7 +48,6 @@ describe('NativeComponent', function() {
   });
 
   it('can be toggled in and out of the markup', function() {
-
     let el = createNodeElement('div');
     let inst = render(<div>{'foo'}<div />{'bar'}</div>, el);
 
@@ -105,8 +102,8 @@ describe('NativeComponent', function() {
         return (
           <div>
             {'foo'}
-            <Hello1 show={this.state.show}/>
-            <Hello2 show={this.state.show}/>
+            <Hello1 show={this.state.show} />
+            <Hello2 show={this.state.show} />
           </div>
         );
       }
@@ -131,7 +128,5 @@ describe('NativeComponent', function() {
     expect(childNodes[0].data).toBe('foo');
     expect(childNodes[1].data).toBe('hello1');
     expect(childNodes[2].data).toBe('hello2');
-
   });
-
 });

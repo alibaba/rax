@@ -22,7 +22,7 @@ class Example extends Component {
             type="text"
             placeholder="Text Input"
             style={styles.input}
-            autofocus={true}
+            autoFocus={true}
             value=""
             onChange={this.onchange}
             onInput={this.oninput}

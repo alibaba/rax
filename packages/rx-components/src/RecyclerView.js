@@ -51,7 +51,6 @@ class RecyclerView extends Component {
   }
 
   scrollTo = (options) => {
-
     let x = parseInt(options.x);
     let y = parseInt(options.y);
 
@@ -67,11 +66,9 @@ class RecyclerView extends Component {
   }
 
   render() {
-
     let props = this.props;
 
     if (isWeex) {
-
       let children = props.children;
       if (!Array.isArray(children)) {
         children = [children];

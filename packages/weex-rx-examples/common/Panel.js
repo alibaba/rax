@@ -19,8 +19,8 @@ class Panel extends Component {
           {
             paddingTop: paddingHead,
             paddingBottom: paddingHead,
-            paddingLeft: paddingHead*1.5,
-            paddingRight: paddingHead*1.5
+            paddingLeft: paddingHead * 1.5,
+            paddingRight: paddingHead * 1.5
           }
         ]}>{title}</text>
         <div style={[
@@ -29,8 +29,8 @@ class Panel extends Component {
           {
             paddingTop: paddingBody,
             paddingBottom: paddingBody,
-            paddingLeft: paddingBody*1.5,
-            paddingRight: paddingBody*1.5
+            paddingLeft: paddingBody * 1.5,
+            paddingRight: paddingBody * 1.5
           }
         ]}>
           {this.props.children}
