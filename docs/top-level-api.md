@@ -1,4 +1,4 @@
-## Top-level API
+# Top-level API
 
 * createElement
 * cloneElement
