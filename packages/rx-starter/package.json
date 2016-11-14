@@ -13,7 +13,9 @@
   },
   "homepage": "https://github.com/alibaba/rx#readme",
   "scripts": {
-    "start": "./node_modules/.bin/webpack-dev-server"
+    "start": "./node_modules/.bin/webpack-dev-server --hot --inline --open",
+    "build": "NODE_ENV=production ./node_modules/.bin/webpack",
+    "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
     "universal-env": "0.0.*",
@@ -22,8 +24,11 @@
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
     "case-sensitive-paths-webpack-plugin": "^1.1.4",
+    "eslint": "^3.10.0",
+    "eslint-plugin-react": "^6.6.0",
     "html-webpack-plugin": "^2.24.1",
     "json-loader": "^0.5.4",
     "stylesheet-loader": "^0.1.1",

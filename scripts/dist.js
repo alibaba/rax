@@ -41,7 +41,6 @@ dist(getConfig(
       sourceMapFilename: '[name].map',
     },
     {
-      externalBuiltinModules: true,
       moduleName: 'universal-rx',
       globalName: 'Rx',
     },
