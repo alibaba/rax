@@ -1,9 +1,3 @@
-import Promise from './promise';
-import URL from './URL';
-import URLSearchParams from './URLSearchParams';
-import downgrade from './downgrade';
-import Fetch, {Headers, Request, Response} from './fetch';
-import navigator from './navigator';
 import {BuiltinModulesFactory} from './builtin';
 
 let NativeComponents = {};
@@ -197,6 +191,16 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
+
+  // FIXME: ES6 module format hack
+  const Promise = interopRequireDefault(require('./promise')).default;
+  const URL = require('./URL').default;
+  const URLSearchParams = require('./URLSearchParams').default;
+  const downgrade = require('./downgrade').default;
+  const Fetch = require('./fetch').default;
+  const {Headers, Request, Response} = require('./fetch');
+  const navigator = require('./navigator').default;
+
   let instance = instances[instanceId];
 
   if (instance == undefined) {
