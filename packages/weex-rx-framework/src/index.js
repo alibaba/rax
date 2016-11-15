@@ -436,7 +436,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
 
       init.call(
         // Context is window
-        windowAPIs
+        windowAPIs,
         // ES
         Promise,
         // W3C
