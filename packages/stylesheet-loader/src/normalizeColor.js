@@ -126,17 +126,6 @@ let color = function(input, array) {
 
 let regexp = RegExp([skeys, shex, srgb + slist, shsl + slist].join('|'), 'gi');
 
-color.replace = function(string, method) {
-  if (!method) method = function(match) {
-    return color(match);
-  };
-  return (string + '').replace(regexp, method);
-};
-
-color.matches = function(string) {
-  return !!(string + '').match(regexp);
-};
-
 module.exports = function normalizeColor(propertyName, value) {
   const rgbStr = isRgb[propertyName];
   return rgbStr ? color(value) : value;

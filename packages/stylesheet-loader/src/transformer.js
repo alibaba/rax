@@ -24,85 +24,6 @@ module.exports = {
     return result;
   },
 
-  convertTransform(fullValue) {
-    // remove spaces that are inside transformation values
-    fullValue = fullValue.replace(/\((.+?)\)/g, function(a, b) {
-      return '(' + b.replace(/\s/g, '') + ')';
-    });
-    // the only spaces left should be between transformation values
-    let values = fullValue.split(' ');
-    let transformations = [];
-
-    for (let i = 0, j = values.length; i < j; i++) {
-      let matches = values[i].match(/(.+)\((.+)\)/);
-      let transformationType = matches[1];
-      let transformation = matches[2];
-
-      switch (transformationType.toLowerCase()) {
-      case 'perspective':
-        transformations.push({
-          perspective: parseFloat(transformation)
-        });
-        break;
-
-      case 'rotate':
-      case 'rotatex':
-      case 'rotatey':
-      case 'rotatez':
-        var thisTransformation = {};
-        thisTransformation[transformationType] = transformation;
-        transformations.push(thisTransformation);
-        break;
-
-      case 'rotate3d':
-        var thisTransformationValues = transformation.split(',');
-        transformations.push({
-          rotateX: thisTransformationValues[0]
-        }, {
-          rotateY: thisTransformationValues[1]
-        }, {
-          rotateZ: thisTransformationValues[2]
-        });
-        break;
-
-      case 'scale':
-      case 'scalex':
-      case 'scaley':
-        var thisTransformation = {};
-        thisTransformation[transformationType] = parseFloat(transformation);
-        transformations.push(thisTransformation);
-        break;
-
-      case 'scale3d':
-      case 'scale2d':
-        var thisTransformationValues = transformation.split(',');
-        transformations.push({
-          scaleX: parseFloat(thisTransformationValues[0])
-        }, {
-          scaleY: parseFloat(thisTransformationValues[1])
-        });
-        break;
-
-      case 'translatex':
-      case 'translatey':
-        var thisTransformation = {};
-        thisTransformation[transformationType] = parseFloat(transformation);
-        transformations.push(thisTransformation);
-        break;
-
-      case 'translate3d':
-      case 'translate2d':
-        var thisTransformationValues = transformation.split(',');
-        transformations.push({
-          translateX: parseFloat(thisTransformationValues[0])
-        }, {
-          translateY: parseFloat(thisTransformationValues[1])
-        });
-        break;
-      }
-    }
-  },
-
   convertValue(property, value) {
     var result = value,
       resultNumber;
@@ -116,11 +37,9 @@ module.exports = {
       result = parseInt(result.replace('px', ''), 10);
     } else if (typeof resultNumber === 'number') {
       result = resultNumber;
-    } else if (property == 'transform') {
-      result = this.convertTransform(result);
     }
 
-    result = normalizeColor(property, value);
+    result = normalizeColor(property, result);
 
     return result;
   },
