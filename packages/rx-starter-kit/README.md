@@ -1,4 +1,22 @@
-# rx-starter
+# rx-starter-kit
+
+## Getting Started
+
+### `npm run start`
+
+Runs the app in development mode.
+
+Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
+
+The page will reload if you make edits.
+
+### `npm run lint`
+
+You will see the lint errors in the console.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.
 
 ## Universal "Gotchas"
 

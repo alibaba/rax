@@ -1,4 +1,4 @@
-## Difference with React
+# Difference with React
 
 * No `createClass()` method，use ES6 class by `extends Component` class instead of calling createClass
 

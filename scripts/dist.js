@@ -20,6 +20,7 @@ dist(getConfig(
     path: './packages/universal-env/dist/',
     filename: '[name].js',
     sourceMapFilename: '[name].map',
+    pathinfo: true,
   },
   {
     moduleName: 'universal-env',
@@ -39,9 +40,9 @@ dist(getConfig(
       path: './packages/universal-rx/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
+      pathinfo: true,
     },
     {
-      externalBuiltinModules: true,
       moduleName: 'universal-rx',
       globalName: 'Rx',
     },
@@ -68,6 +69,7 @@ dist(getConfig(
       path: './packages/universal-transition/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
+      pathinfo: true,
     },
     {
       moduleName: 'universal-transition',
@@ -86,6 +88,7 @@ dist(getConfig(
       path: './packages/weex-rx-framework/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
+      pathinfo: true,
     },
     {
       // Empty

@@ -19,7 +19,7 @@ describe('transformer', () => {
     expect(flexDirection).toEqual('flexDirection');
     expect(boxOrientWebkit).toEqual('WebkitBoxOrient');
     expect(boxOrientMoz).toEqual('MozBoxOrient');
-    expect(boxOrientO).toEqual('OBoxOrient');
+    expect(boxOrientO).toEqual('oBoxOrient');
   });
 
   it('should remove px of value', () => {

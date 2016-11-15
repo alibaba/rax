@@ -1,9 +1,3 @@
-import Promise from './promise';
-import URL from './URL';
-import URLSearchParams from './URLSearchParams';
-import downgrade from './downgrade';
-import Fetch, {Headers, Request, Response} from './fetch';
-import navigator from './navigator';
 import {BuiltinModulesFactory} from './builtin';
 
 let NativeComponents = {};
@@ -197,6 +191,15 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
+  // FIXME: ES6 module format hack
+  const Promise = require('./promise').default;
+  const URL = require('./URL').default;
+  const URLSearchParams = require('./URLSearchParams').default;
+  const downgrade = require('./downgrade').default;
+  const Fetch = require('./fetch').default;
+  const {Headers, Request, Response} = require('./fetch');
+  const navigator = require('./navigator').default;
+
   let instance = instances[instanceId];
 
   if (instance == undefined) {
@@ -434,7 +437,9 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         '"use strict";' + code
       );
 
-      init(
+      init.call(
+        // Context is window
+        windowAPIs,
         // ES
         Promise,
         // W3C
@@ -472,7 +477,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         '"use strict";' + code
       );
 
-      init(
+      init.call(
+        window,
         document
       );
     }
@@ -590,27 +596,27 @@ export default function normalize(v, instance) {
   const type = typof(v);
 
   switch (type) {
-  case 'undefined':
-  case 'null':
-    return '';
-  case 'regexp':
-    return v.toString();
-  case 'date':
-    return v.toISOString();
-  case 'number':
-  case 'string':
-  case 'boolean':
-  case 'array':
-  case 'object':
-    if (v instanceof Element) {
-      return v.ref;
-    }
-    return v;
-  case 'function':
-    instance.callbacks[++instance.uid] = v;
-    return instance.uid.toString();
-  default:
-    return JSON.stringify(v);
+    case 'undefined':
+    case 'null':
+      return '';
+    case 'regexp':
+      return v.toString();
+    case 'date':
+      return v.toISOString();
+    case 'number':
+    case 'string':
+    case 'boolean':
+    case 'array':
+    case 'object':
+      if (v instanceof Element) {
+        return v.ref;
+      }
+      return v;
+    case 'function':
+      instance.callbacks[++instance.uid] = v;
+      return instance.uid.toString();
+    default:
+      return JSON.stringify(v);
   }
 }
 

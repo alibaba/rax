@@ -1,5 +1,7 @@
 /* @jsx createElement */
 
+/* eslint react/no-did-update-set-state: "off" */
+
 import Component from '../../component';
 import {createElement} from '../../element';
 import renderToString from '../renderToString';

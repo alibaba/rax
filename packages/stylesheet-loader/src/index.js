@@ -28,5 +28,5 @@ module.exports = function(source) {
     });
   });
 
-  callback(null, 'module.exports = ' + JSON.stringify(data, undefined, '\t') + ';');
+  callback(null, 'module.exports = ' + JSON.stringify(data, undefined, '  ') + ';');
 };

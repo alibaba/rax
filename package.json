@@ -33,6 +33,7 @@
     "compile": "npm run clean-compile && node ./scripts/compile.js",
     "dist": "npm run clean-dist && node ./scripts/dist.js",
     "build": "npm run compile; npm run dist",
+    "build-examples": "node ./scripts/build-examples.js",
     "test": "npm run clean-compile && jest",
     "test-watch": "npm run test -- --watch",
     "start": "node ./scripts/start.js",

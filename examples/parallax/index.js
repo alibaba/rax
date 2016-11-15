@@ -50,10 +50,10 @@ class App extends Component {
       <View style={styles.container}>
         <View style={{width: width, height: height}} {...this._panResponder.panHandlers}>
           <Card
-              style={{backgroundColor: '#DDDEDE', borderRadius: 10, width: width, height: height}}
-              stackingFactor={1}
-              {...this.state}
-              {...this._animations}
+            style={{backgroundColor: '#DDDEDE', borderRadius: 10, width: width, height: height}}
+            stackingFactor={1}
+            {...this.state}
+            {...this._animations}
           >
             <Card
               style={{backgroundColor: '#5F5D60', borderRadius: 400, position: 'absolute', top: 30, left: 160, width: 240, height: 240}}

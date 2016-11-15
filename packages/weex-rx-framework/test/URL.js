@@ -7,7 +7,7 @@ import components from './__mocks__/components';
 let id = '8';
 let code = `// {"framework": "Rx"}
   define("foo", function(require, exports, module){
-
+    
     console.log('URL', new URL('/test', document.URL).toString());
     console.log('URL', new URL('//example.com/').href);
 

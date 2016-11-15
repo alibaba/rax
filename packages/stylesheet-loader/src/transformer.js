@@ -4,6 +4,16 @@ const camelCase = require('camelcase');
 const normalizeColor = require('./normalizeColor');
 const particular = require('./particular');
 
+const COLOR_PROPERTIES = {
+  color: true,
+  backgroundColor: true,
+  borderColor: true,
+  borderBottomColor: true,
+  borderTopColor: true,
+  borderRightColor: true,
+  borderLeftColor: true
+};
+
 module.exports = {
   sanitizeSelector(selector) {
     return selector.replace(/\s/gi, '_').replace(/[\.#]/g, '');
@@ -17,8 +27,6 @@ module.exports = {
       result = result.replace('webkit', 'Webkit');
     } else if (prop.indexOf('-moz') === 0) {
       result = result.replace('moz', 'Moz');
-    } else if (prop.indexOf('-o') === 0) {
-      result = result.replace('o', 'O');
     }
 
     return result;
@@ -39,7 +47,9 @@ module.exports = {
       result = resultNumber;
     }
 
-    result = normalizeColor(property, result);
+    if (COLOR_PROPERTIES[property]) {
+      result = normalizeColor(value);
+    }
 
     return result;
   },
@@ -61,6 +71,7 @@ module.exports = {
         if (particularResult.isDeleted) {
           style[camelCaseProperty] = null;
           delete style[camelCaseProperty];
+          delete particularResult.isDeleted;
         }
         Object.assign(style, particularResult);
       }
