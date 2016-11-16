@@ -1,5 +1,3 @@
-'use strict';
-
 var TouchHistoryMath = {
   /**
    * This code is optimized and not intended to look beautiful. This allows
