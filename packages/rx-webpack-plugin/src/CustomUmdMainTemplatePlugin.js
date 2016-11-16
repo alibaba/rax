@@ -110,7 +110,7 @@ module.exports = function(${factoryDependencies}) {
       // NOTICE: In JavaScript strict mode, this is null
       root = this;
     }
-    root.${globalName} = fn();
+    root["${globalName}"] = fn();
   }
 })(function(){
   return `;
