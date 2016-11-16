@@ -233,6 +233,7 @@ module.exports = function normalizeColor(value) {
     value = hslToRGB.apply(null, match.slice(1));
   }
 
+  if (typeof value === 'string') value = [value];
   if (!(value && (value = RGBtoRGB.apply(null, value)))) return value;
   if (value[3] === 1) value.splice(3, 1);
   return 'rgb' + (value.length === 4 ? 'a' : '') + '(' + value + ')';

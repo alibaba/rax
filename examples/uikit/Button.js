@@ -73,13 +73,13 @@ const Button = ({
   //   )
   // }
   if (!Component && Platform.OS === 'ios') {
-    Component = TouchableHighlight
+    Component = TouchableHighlight;
   }
   if (!Component && Platform.OS === 'android') {
-    Component = TouchableNativeFeedback
+    Component = TouchableNativeFeedback;
   }
   if (!Component) {
-    Component = TouchableHighlight
+    Component = TouchableHighlight;
   }
   return (
     <Component
@@ -142,8 +142,8 @@ const Button = ({
         }
       </View>
     </Component>
-  )
-}
+  );
+};
 
 Button.propTypes = {
   buttonStyle: PropTypes.any,
@@ -166,7 +166,7 @@ Button.propTypes = {
   loading: PropTypes.bool,
   activityIndicatorStyle: PropTypes.any,
   loadingRight: PropTypes.bool
-}
+};
 
 const styles = StyleSheet.create({
   button: {
@@ -211,6 +211,6 @@ const styles = StyleSheet.create({
       }
     })
   }
-})
+});
 
-export default Button
+export default Button;

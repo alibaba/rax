@@ -15,4 +15,4 @@ export default {
   greyOutline: '#cbd2d9',
   searchBg: '#303337',
   disabled: '#dadee0',
-}
+};

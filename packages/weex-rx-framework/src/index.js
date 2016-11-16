@@ -191,7 +191,6 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
-
   // FIXME: ES6 module format hack
   const Promise = require('./promise').default;
   const URL = require('./URL').default;

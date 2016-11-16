@@ -2,7 +2,7 @@ import {createElement} from 'universal-rx';
 import {Text} from 'rx-components';
 import normalize from './normalizeText';
 
-const TextElement = ({style, children, h1, h2, h3, h4, h5, h6, fontFamily}) => (
+const TextElement = ({style, children, h1, h2, h3, h4, h5, h6, fontFamily}) =>
   <Text
     style={[
       h1 && {fontSize: normalize(40)},
@@ -12,6 +12,6 @@ const TextElement = ({style, children, h1, h2, h3, h4, h5, h6, fontFamily}) => (
       fontFamily && {fontFamily},
       style && style
     ]}>{children}</Text>
-);
+;
 
-export default TextElement
+export default TextElement;

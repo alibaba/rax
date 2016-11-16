@@ -35,6 +35,7 @@
     "build": "npm run compile; npm run dist",
     "build-examples": "node ./scripts/build-examples.js",
     "test": "npm run clean-compile && jest",
+    "test-watch": "npm run test -- --watch",
     "start": "node ./scripts/start.js",
     "lint": "eslint --ext .js --ext .jsx ./",
     "lintfix": "eslint --fix --ext .js --ext .jsx ./",

@@ -76,7 +76,7 @@ const normalize = (size) => {
     // catch in-between size Androids and scale font up
     // a tad but not too much
     }
-    if(deviceHeight >= 667 && deviceHeight <= 735) {
+    if (deviceHeight >= 667 && deviceHeight <= 735) {
       return size * 1.25;
     }
     // catch larger phablet devices
@@ -84,6 +84,6 @@ const normalize = (size) => {
   }
   // if older device ie pixelRatio !== 2 || 3 || 3.5
   return size;
-}
+};
 
 module.exports = normalize;

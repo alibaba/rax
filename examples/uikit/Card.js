@@ -17,14 +17,14 @@ const Card = ({
   dividerStyle,
   image,
   imageStyle,
-  fontFamily}) => (
+  fontFamily}) =>
   <View style={[
     styles.container,
     image && {padding: 0},
     containerStyle && containerStyle]}>
     <View style={[styles.wrapper, wrapperStyle && wrapperStyle, flexDirection && {flexDirection}]}>
       {
-        title && !image && (
+        title && !image &&
           <View>
             <Text style={[
               styles.cardTitle,
@@ -33,27 +33,27 @@ const Card = ({
             ]}>{title}</Text>
             <Divider style={[styles.divider, dividerStyle && dividerStyle]} />
           </View>
-        )
+
       }
       {
-        image && (
+        image &&
           <View style={{flex: 1}}>
             <Image
-              resizeMode='cover'
-              style={[{flex:1, width: null, height: 150}, imageStyle && imageStyle]}
-              source={image}  />
+              resizeMode="cover"
+              style={[{flex: 1, width: null, height: 150}, imageStyle && imageStyle]}
+              source={image} />
             <View
               style={[{padding: 10}, wrapperStyle && wrapperStyle]}>
               {title && <Text style={[styles.imageTitle, titleStyle && titleStyle]}>{title}</Text>}
               {children}
             </View>
           </View>
-        )
+
       }
       { !image && children}
     </View>
   </View>
-)
+;
 
 const styles = StyleSheet.create({
   container: {
@@ -94,6 +94,6 @@ const styles = StyleSheet.create({
     marginBottom: 15 * 2,
     color: colors.grey1
   }
-})
+});
 
-export default Card
+export default Card;

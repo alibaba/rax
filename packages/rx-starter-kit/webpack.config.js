@@ -51,7 +51,7 @@ if (process.env.NODE_ENV !== 'production') {
   var ip = internalIp.v4();
   var port = 8080;
   var bundleUrl = 'http://' + ip + ':' + port + '/js/index.bundle.js?wh_weex=true';
-  
+
   qrcode.generate(bundleUrl, {small: true});
   console.log('Scan above QRCode ' + bundleUrl + ' use weex playground.\n');
 }

@@ -10,9 +10,6 @@ let measure = function(value, key) {
   } else if (typeof value === 'string') {
     direction = value.split(/\s+/);
     switch (direction.length) {
-      case 1:
-        direction[1] = direction[2] = direction[3] = direction[0];
-        break;
       case 2:
         direction[2] = direction[0];
         direction[3] = direction[1];
