@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Playground</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css@5.0.0" />
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/codemirror@5.20.2/lib/codemirror.css" />
+    <style>
+    /* Original material color scheme by Mattia Astorino (https://github.com/equinusocio/material-theme) */
+    .cm-s-material {
+      /*background-color: #263238;*/
+      background-color: #1e1d23;
+      color: rgba(233, 237, 237, 1);
+    }
+    .cm-s-material .CodeMirror-gutters {
+      /*background: #263238;*/
+      background-color: #1e1d23;
+      color: rgb(83,127,126);
+      border: none;
+    }
+    .cm-s-material .CodeMirror-guttermarker, .cm-s-material .CodeMirror-guttermarker-subtle, .cm-s-material .CodeMirror-linenumber { color: #999; }
+    .cm-s-material .CodeMirror-cursor { border-left: 1px solid #f8f8f0; }
+    .cm-s-material div.CodeMirror-selected { background: rgba(255, 255, 255, 0.15); }
+    .cm-s-material.CodeMirror-focused div.CodeMirror-selected { background: rgba(255, 255, 255, 0.10); }
+    .cm-s-material .CodeMirror-line::selection, .cm-s-material .CodeMirror-line > span::selection, .cm-s-material .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.10); }
+    .cm-s-material .CodeMirror-line::-moz-selection, .cm-s-material .CodeMirror-line > span::-moz-selection, .cm-s-material .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.10); }
+
+    .cm-s-material .CodeMirror-activeline-background { background: rgba(0, 0, 0, 0); }
+    .cm-s-material .cm-keyword { color: rgba(199, 146, 234, 1); }
+    .cm-s-material .cm-operator { color: rgba(233, 237, 237, 1); }
+    .cm-s-material .cm-variable-2 { color: #80CBC4; }
+    .cm-s-material .cm-variable-3 { color: #82B1FF; }
+    .cm-s-material .cm-builtin { color: #DECB6B; }
+    .cm-s-material .cm-atom { color: #F77669; }
+    .cm-s-material .cm-number { color: #F77669; }
+    .cm-s-material .cm-def { color: rgba(233, 237, 237, 1); }
+    .cm-s-material .cm-string { color: #C3E88D; }
+    .cm-s-material .cm-string-2 { color: #80CBC4; }
+    .cm-s-material .cm-comment { color: #546E7A; }
+    .cm-s-material .cm-variable { color: #82B1FF; }
+    .cm-s-material .cm-tag { color: #80CBC4; }
+    .cm-s-material .cm-meta { color: #80CBC4; }
+    .cm-s-material .cm-attribute { color: #FFCB6B; }
+    .cm-s-material .cm-property { color: #80CBAE; }
+    .cm-s-material .cm-qualifier { color: #DECB6B; }
+    .cm-s-material .cm-variable-3 { color: #DECB6B; }
+    .cm-s-material .cm-tag { color: rgba(255, 83, 112, 1); }
+    .cm-s-material .cm-error {
+      color: rgba(255, 255, 255, 1.0);
+      background-color: #EC5F67;
+    }
+    .cm-s-material .CodeMirror-matchingbracket {
+      text-decoration: underline;
+      color: white !important;
+    }
+    </style>
+    <style>
+    #editor {
+      display: none;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .action-bar {
+      background-color: #3d3d3e;
+      height: 40px;
+    }
+
+    .playground {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+    }
+
+    .preview {
+      width: 375px;
+      background-color: #fff;
+      position: relative;
+    }
+
+    .editor {
+      overflow: scroll;
+      flex: 1;
+    }
+
+    .CodeMirror {
+      height: 100%;
+    }
+
+    .run {
+      display: inline-block;
+      height: 40px;
+      line-height: 40px;
+      font-size: 14px;
+      color: grey;
+      /*border-radius: 3px;*/
+      padding: 0 10px;
+      margin-left: 10px;
+      text-align: center;
+      text-decoration: none;
+      transition: color .1s linear;
+      cursor: pointer;
+    }
+
+    .run:hover {
+      text-decoration: none;
+      background-color: #1e1d23;
+    }
+
+    .frame {
+      border: 0;
+      width: 100%;
+      height: calc(100vh - 40px);
+    }
+    </style>
+  </head>
+<body>
+
+<div class="container">
+  <div class="action-bar">
+    <a class="run" id="run">RUN</a>
+  </div>
+
+  <div class="playground">
+    <div class="editor">
+      <textarea id="editor"></textarea>
+    </div>
+    <div class="preview">
+      <iframe class="frame" id="frame" src="./empty.html"></iframe>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/babel-standalone@6.18.2/babel.min.js"></script>
+<script src="https://unpkg.com/codemirror@5.20.2/lib/codemirror.js"></script>
+<script src="https://unpkg.com/codemirror@5.20.2/mode/xml/xml.js"></script>
+<script src="https://unpkg.com/codemirror@5.20.2/mode/javascript/javascript.js"></script>
+<script src="https://unpkg.com/codemirror@5.20.2/mode/jsx/jsx.js"></script>
+
+<script>
+  var myTextarea = document.getElementById('editor');
+  var editor = CodeMirror.fromTextArea(myTextarea, {
+    lineNumbers: true,
+    theme: 'material',
+    tabSize: 2,
+    mode: 'jsx',
+  });
+
+  var lastScript;
+  function compile(){
+    var input = editor.getValue();
+    var paramComment = '/* @jsx createElement */';
+    try {
+      var output = Babel.transform(input, { presets: ["es2015", "react", "stage-1"] }).code;
+    } catch(e){
+      console.log(e);
+    }
+
+    var body = document.getElementById('frame').contentDocument.body;
+    if (lastScript) {
+      body.removeChild(lastScript);
+      body.innerHTML = '';
+    }
+
+    var script = document.createElement("script");
+    script.innerHTML = output;
+    lastScript = script;
+
+    body.appendChild(script);
+  }
+
+  // editor.on("change", compile);
+  run.onclick = compile;
+
+</script>
+</body>
+</html>
