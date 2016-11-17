@@ -5,6 +5,7 @@ import Serializer from './serializer';
 
 export default function renderToString(element) {
   Host.driver = ServerDriver;
+  Host.roots = {};
   let body = ServerDriver.createBody();
   render(element, body);
   return new Serializer(body).serialize();
