@@ -2,13 +2,46 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const RxWebpackPlugin = require('rx-webpack-plugin');
+const RxPlugin = require('rx-webpack-plugin');
 const fs = require('fs');
 
 // For babelHelpers.js build
 if (!fs.existsSync('./packages/universal-rx/build')) {
   fs.mkdirSync('./packages/universal-rx/build');
 }
+
+[
+  ['rx-components', 'components', 'Components'],
+  ['rx-animated', 'animated', 'Animated'],
+  ['universal-panresponder', 'panresponder', 'PanResponder'],
+  ['universal-platform', 'platform', 'Platform'],
+  ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
+  ['universal-toast', 'toast', 'Toast']
+].forEach(function (info) {
+  var main = './packages/' + info[0] + '/src/index.js';
+  var entry = {};
+  entry[info[1]] = entry[info[1] + '.min'] = entry[info[1] + '.factory'] = main;
+  dist(getConfig(
+    entry,
+    {
+      path: './packages/' + info[0] + '/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+      pathinfo: true,
+    },
+    {
+      externalBuiltinModules: true,
+      builtinModules: Object.assign({
+        'rx-components': ['@rx/components', 'rx-components', 'kg/rx-components/index']
+      }, RxPlugin.BuiltinModules),
+      moduleName: info[0],
+      globalName: info[2],
+    },
+    {
+      presets: ['es2015', 'rx']
+    }
+  ));
+});
 
 dist(getConfig(
   {
@@ -80,7 +113,8 @@ dist(getConfig(
     }
   ));
 }).then(() => {
-  return dist(getConfig(
+
+  dist(getConfig(
     {
       'rx.framework': './packages/weex-rx-framework/src/index.js',
     },
@@ -113,7 +147,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
       new webpack.NoErrorsPlugin(),
-      new RxWebpackPlugin(moduleOptions),
+      new RxPlugin(moduleOptions),
       new webpack.optimize.UglifyJsPlugin({
         include: /\.min\.js$/,
         minimize: true,

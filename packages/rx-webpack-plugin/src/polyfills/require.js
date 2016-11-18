@@ -88,6 +88,4 @@
 
   global.define = def;
   global.require = req;
-  global.__d = def;
-  global.__r = req;
 })(this);

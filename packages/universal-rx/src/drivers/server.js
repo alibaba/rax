@@ -13,12 +13,13 @@ const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const DOCUMENT_FRAGMENT_NODE = 11;
 
-let nodeCounter = 0;
-let nodeMaps = {};
-
 const Driver = {
+  // Internal state
+  nodeMaps: {},
+  nodeCounter: 0,
+
   getElementById(id) {
-    return nodeMaps[id];
+    return this.nodeMaps[id];
   },
 
   createBody() {
@@ -44,7 +45,7 @@ const Driver = {
       nodeType: COMMENT_NODE,
       data: content,
       parentNode: null,
-      nodeId: nodeCounter++
+      nodeId: this.nodeCounter++
     };
   },
 
@@ -57,7 +58,7 @@ const Driver = {
       nodeType: TEXT_NODE,
       data: text,
       parentNode: null,
-      nodeId: nodeCounter++
+      nodeId: this.nodeCounter++
     };
   },
 
@@ -74,7 +75,7 @@ const Driver = {
       style: props.style || {},
       childNodes: [],
       parentNode: null,
-      nodeId: nodeCounter++
+      nodeId: this.nodeCounter++
     };
 
     setNativeProps(node, props, true);
@@ -98,7 +99,7 @@ const Driver = {
   removeChild(node, parent) {
     let id = node.attributes && node.attributes[ID];
     if (id != null) {
-      nodeMaps[id] = null;
+      this.nodeMaps[id] = null;
     }
     if (node.parentNode) {
       let idx = node.parentNode.childNodes.indexOf(node);
@@ -194,7 +195,7 @@ const Driver = {
     }
 
     if (propKey == ID) {
-      nodeMaps[propValue] = null;
+      this.nodeMaps[propValue] = null;
     }
 
     if (node.tagName === 'INPUT' &&
@@ -214,7 +215,7 @@ const Driver = {
     }
 
     if (propKey == ID) {
-      nodeMaps[propValue] = node;
+      this.nodeMaps[propValue] = node;
     }
 
     if (node.tagName === 'INPUT' &&

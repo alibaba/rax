@@ -1,18 +1,20 @@
 import {createElement, Component, render} from 'universal-rx';
-import {isWeex, isWeb} from 'universal-env';
+import {View, Text} from 'rx-components';
 
-class Hello extends Component {
+class App extends Component {
   render() {
-    if (isWeex) {
-      return (
-        <text>Hello world</text>
-      );
-    } else {
-      return (
-        <span>Hello world</span>
-      );
-    }
+    return <View style={styles.container}>
+      <Text>Hello world</Text>
+    </View>;
   }
 }
 
-render(<Hello />);
+const styles = {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+};
+
+render(<App />);

@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "A universal PanResponder API.",
   "license": "BSD-3-Clause",
-  "main": "lib/PanResponder.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"

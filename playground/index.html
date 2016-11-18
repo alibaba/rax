@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Playground</title>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css@5.0.0" />
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/codemirror@5.20.2/lib/codemirror.css" />
+    <title>Rx Playground</title>
+    <link rel="stylesheet" type="text/css" href="//unpkg.com/normalize.css@5.0.0" />
+    <link rel="stylesheet" type="text/css" href="//unpkg.com/codemirror@5.20.2/lib/codemirror.css" />
     <style>
-    /* Original material color scheme by Mattia Astorino (https://github.com/equinusocio/material-theme) */
+    /* Original material color scheme by Mattia Astorino (//github.com/equinusocio/material-theme) */
     .cm-s-material {
       /*background-color: #263238;*/
       background-color: #1e1d23;
@@ -57,6 +57,69 @@
     }
     </style>
     <style>
+    /* http://www.w3schools.com/howto/howto_css_switch.asp The switch - the box around the slider */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 30px;
+      height: 17px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {display:none;}
+
+    /* The slider */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #FF5500;
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px #FF5500;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(12px);
+      transform: translateX(12px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 18px;
+    }
+
+    .slider.round:before {
+      border-radius: 100%;
+    }
+    </style>
+    <style>
+    body {
+      margin: 0;
+    }
+
     #editor {
       display: none;
     }
@@ -64,23 +127,19 @@
     .container {
       display: flex;
       flex-direction: column;
+      background-color: #1e1d23;
     }
 
     .action-bar {
       background-color: #3d3d3e;
       height: 40px;
+      display: flex;
     }
 
     .playground {
       display: flex;
       flex-direction: row;
       flex: 1;
-    }
-
-    .preview {
-      width: 375px;
-      background-color: #fff;
-      position: relative;
     }
 
     .editor {
@@ -92,8 +151,15 @@
       height: 100%;
     }
 
-    .run {
-      display: inline-block;
+    .logo {
+      width: 32px;
+      height: 27px;
+      margin-top: 8px;
+      margin-left: 8px;
+    }
+
+    .action {
+      display: flex;
       height: 40px;
       line-height: 40px;
       font-size: 14px;
@@ -107,23 +173,62 @@
       cursor: pointer;
     }
 
-    .run:hover {
+    .action:hover {
       text-decoration: none;
       background-color: #1e1d23;
     }
 
-    .frame {
-      border: 0;
-      width: 100%;
-      height: calc(100vh - 40px);
+    .action-watch {
+      margin-top: 10px;
+      margin-left: 5px;
     }
+
+    .preview {
+      position: relative;
+      height: calc(100vh - 40px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;;
+    }
+
+    .phone {
+      position: relative;
+      flex: 1;
+      width: 420px;
+      height: 858px;
+      background-image: url(http://cdn.rawgit.com/koenbok/Framer/master/extras/DeviceResources/apple-iphone-6s-plus-space-gray.png);
+      background-size: contain;
+      background-repeat: no-repeat;
+      transform: scale(0.8, 0.8);
+    }
+
+    .frame {
+      position: absolute;
+      top: 90px;
+      left: 22px;
+      border: 0;
+      height: 667px;
+      width: 375px;
+      background-color: #fff;
+    }
+
     </style>
   </head>
 <body>
 
 <div class="container">
   <div class="action-bar">
-    <a class="run" id="run">RUN</a>
+    <img class="logo" alt="Rx" src="//gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
+    <a class="action" id="run">RUN &#9654;</a>
+    <a class="action">
+      <label for="watch">WATCH</label>
+      <label class="action-watch switch">
+        <input name="watch" id="watch" type="checkbox">
+        <div class="slider round"></div>
+      </label>
+    </a>
+
   </div>
 
   <div class="playground">
@@ -131,18 +236,24 @@
       <textarea id="editor"></textarea>
     </div>
     <div class="preview">
-      <iframe class="frame" id="frame" src="./empty.html"></iframe>
+      <div class="phone">
+        <iframe class="frame" id="frame" src="./empty.html"></iframe>
+      </div>
     </div>
   </div>
 </div>
 
-<script src="https://unpkg.com/babel-standalone@6.18.2/babel.min.js"></script>
-<script src="https://unpkg.com/codemirror@5.20.2/lib/codemirror.js"></script>
-<script src="https://unpkg.com/codemirror@5.20.2/mode/xml/xml.js"></script>
-<script src="https://unpkg.com/codemirror@5.20.2/mode/javascript/javascript.js"></script>
-<script src="https://unpkg.com/codemirror@5.20.2/mode/jsx/jsx.js"></script>
+<script src="//unpkg.com/babel-standalone@6.18.2/babel.min.js"></script>
+<script src="//unpkg.com/codemirror@5.20.2/lib/codemirror.js"></script>
+<script src="//unpkg.com/codemirror@5.20.2/mode/xml/xml.js"></script>
+<script src="//unpkg.com/codemirror@5.20.2/mode/javascript/javascript.js"></script>
+<script src="//unpkg.com/codemirror@5.20.2/mode/jsx/jsx.js"></script>
 
 <script>
+  var run = document.getElementById('run');
+  var watch = document.getElementById('watch');
+  var storageKey = 'rx:playground:source';
+  var watchKey = 'rx:playground:watch';
   var myTextarea = document.getElementById('editor');
   var editor = CodeMirror.fromTextArea(myTextarea, {
     lineNumbers: true,
@@ -151,14 +262,40 @@
     mode: 'jsx',
   });
 
+  function getQueryString() {
+    var result = {};
+    var queryString = location.search.slice(1);
+    var re = /([^&=]+)=([^&]*)/g
+    var m;
+
+    while (m = re.exec(queryString)) {
+      result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    }
+
+    return result;
+  }
+
+  var lastStorageSource = localStorage.getItem(storageKey);
+  var sourceFromQueryString = getQueryString()['source'];
+  var source = sourceFromQueryString || lastStorageSource;
+  if (source) {
+    editor.setValue(source);
+    compile();
+  }
+
+  var watchChecked = localStorage.getItem(watchKey);
+  if (watchChecked === 'true') {
+    watch.checked = watchChecked;
+  }
+
   var lastScript;
   function compile(){
     var input = editor.getValue();
-    var paramComment = '/* @jsx createElement */';
+    var paramComment = '/* @jsx createElement */\n';
     try {
-      var output = Babel.transform(input, { presets: ["es2015", "react", "stage-1"] }).code;
+      var output = Babel.transform(paramComment + input, { presets: ["es2015", "react", "stage-1"] }).code;
     } catch(e){
-      console.log(e);
+      console.error(e);
     }
 
     var body = document.getElementById('frame').contentDocument.body;
@@ -174,8 +311,19 @@
     body.appendChild(script);
   }
 
-  // editor.on("change", compile);
+  editor.on("change", function(){
+    if (watch.checked) {
+      compile();
+    }
+
+    var input = editor.getValue();
+    localStorage.setItem(storageKey, input);
+  });
+
   run.onclick = compile;
+  watch.onclick = function(){
+    localStorage.setItem(watchKey, watch.checked);
+  };
 
 </script>
 </body>
