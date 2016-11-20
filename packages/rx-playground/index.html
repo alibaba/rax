@@ -56,65 +56,7 @@
       color: white !important;
     }
     </style>
-    <style>
-    /* http://www.w3schools.com/howto/howto_css_switch.asp The switch - the box around the slider */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 30px;
-      height: 17px;
-    }
 
-    /* Hide default HTML checkbox */
-    .switch input {display:none;}
-
-    /* The slider */
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      -webkit-transition: .4s;
-      transition: .4s;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 14px;
-      width: 14px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      -webkit-transition: .4s;
-      transition: .4s;
-    }
-
-    input:checked + .slider {
-      background-color: #FF5500;
-    }
-
-    input:focus + .slider {
-      box-shadow: 0 0 1px #FF5500;
-    }
-
-    input:checked + .slider:before {
-      -webkit-transform: translateX(12px);
-      transform: translateX(12px);
-    }
-
-    /* Rounded sliders */
-    .slider.round {
-      border-radius: 18px;
-    }
-
-    .slider.round:before {
-      border-radius: 100%;
-    }
-    </style>
     <style>
     body {
       margin: 0;
@@ -125,6 +67,11 @@
     }
 
     .container {
+      position: absolute;;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: flex;
       flex-direction: column;
       background-color: #1e1d23;
@@ -151,41 +98,9 @@
       height: 100%;
     }
 
-    .logo {
-      width: 32px;
-      height: 27px;
-      margin-top: 8px;
-      margin-left: 8px;
-    }
-
-    .action {
-      display: flex;
-      height: 40px;
-      line-height: 40px;
-      font-size: 14px;
-      color: grey;
-      /*border-radius: 3px;*/
-      padding: 0 10px;
-      margin-left: 10px;
-      text-align: center;
-      text-decoration: none;
-      transition: color .1s linear;
-      cursor: pointer;
-    }
-
-    .action:hover {
-      text-decoration: none;
-      background-color: #1e1d23;
-    }
-
-    .action-watch {
-      margin-top: 10px;
-      margin-left: 5px;
-    }
-
     .preview {
       position: relative;
-      height: calc(100vh - 40px);
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -193,11 +108,10 @@
     }
 
     .phone {
-      position: relative;
       flex: 1;
       width: 420px;
       height: 858px;
-      background-image: url(http://cdn.rawgit.com/koenbok/Framer/master/extras/DeviceResources/apple-iphone-6s-plus-space-gray.png);
+      background-image: url(./images/iphone.png);
       background-size: contain;
       background-repeat: no-repeat;
       transform: scale(0.8, 0.8);
@@ -213,33 +127,65 @@
       background-color: #fff;
     }
 
+    .notification {
+      position: absolute;;
+      z-index: 1000;
+      bottom: 10px;
+      left: 40px;
+      background: rgba(61, 61, 62, 0.7);
+      min-width: 280px;
+      max-width: 700px;
+	    border-radius: 5px;
+    }
+
+    .notification.hide {
+      display: none;
+    }
+
+    .notification-content {
+      margin: 12px;
+      font-size: 10px;
+      line-height: 1.4;
+      color: #ddd;
+    }
     </style>
   </head>
 <body>
 
 <div class="container">
-  <div class="action-bar">
-    <img class="logo" alt="Rx" src="//gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
-    <a class="action" id="run">RUN &#9654;</a>
-    <a class="action">
-      <label for="watch">WATCH</label>
-      <label class="action-watch switch">
-        <input name="watch" id="watch" type="checkbox">
-        <div class="slider round"></div>
-      </label>
-    </a>
-
-  </div>
-
   <div class="playground">
     <div class="editor">
-      <textarea id="editor"></textarea>
+      <textarea id="editor">
+import {createElement, Component, render} from 'universal-rx';
+import {View, Text} from 'rx-components';
+
+class App extends Component {
+  render() {
+    return <View style={styles.container}>
+      <Text>Hello world</Text>
+    </View>;
+  }
+}
+
+const styles = {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+};
+
+render(<App />);</textarea>
     </div>
     <div class="preview">
       <div class="phone">
-        <iframe class="frame" id="frame" src="./empty.html"></iframe>
+        <iframe class="frame" id="frame"></iframe>
       </div>
     </div>
+  </div>
+
+  <div class="notification hide" id="notification">
+    <pre class="notification-content" id="notification-content"></pre>
   </div>
 </div>
 
@@ -250,10 +196,11 @@
 <script src="//unpkg.com/codemirror@5.20.2/mode/jsx/jsx.js"></script>
 
 <script>
-  var run = document.getElementById('run');
-  var watch = document.getElementById('watch');
+  var notification = document.getElementById('notification');
+  var notificationContent = document.getElementById('notification-content');
+  var frame = document.getElementById('frame');
+
   var storageKey = 'rx:playground:source';
-  var watchKey = 'rx:playground:watch';
   var myTextarea = document.getElementById('editor');
   var editor = CodeMirror.fromTextArea(myTextarea, {
     lineNumbers: true,
@@ -277,53 +224,100 @@
 
   var lastStorageSource = localStorage.getItem(storageKey);
   var sourceFromQueryString = getQueryString()['source'];
-  var source = sourceFromQueryString || lastStorageSource;
+  var source = sourceFromQueryString || lastStorageSource || editor.getValue();
   if (source) {
     editor.setValue(source);
-    compile();
+    compile(source, true);
   }
 
-  var watchChecked = localStorage.getItem(watchKey);
-  if (watchChecked === 'true') {
-    watch.checked = watchChecked;
+  function hideNotify() {
+    notification.classList.add('hide');
   }
 
-  var lastScript;
-  function compile(){
-    var input = editor.getValue();
-    var paramComment = '/* @jsx createElement */\n';
-    try {
-      var output = Babel.transform(paramComment + input, { presets: ["es2015", "react", "stage-1"] }).code;
-    } catch(e){
-      console.error(e);
+  var lastTimer;
+  function showNotify(message, time) {
+    notificationContent.innerHTML = message;
+    notification.classList.remove('hide');
+
+    if (lastTimer) {
+      clearTimeout(lastTimer);
     }
 
-    var body = document.getElementById('frame').contentDocument.body;
+    if (time) {
+      lastTimer = setTimeout(hideNotify, time);
+    }
+  }
+
+  var isReady = false;
+  var lastCode;
+  var lastScript;
+
+  // Listen to frame
+  window.onmessage = function(e) {
+    var data;
+    try {
+      data = JSON.parse(e.data);
+    } catch (err) {
+      return;
+    }
+
+    switch (data.type) {
+      case 'ready':
+        isReady = true;
+        compile(lastCode);
+      break;
+      case 'error':
+        showNotify(data.message);
+      break
+    }
+  }
+
+  frame.src = "./player.html";
+
+  function runCompiled(code) {
+
+    var body = frame.contentDocument.body;
     if (lastScript) {
       body.removeChild(lastScript);
       body.innerHTML = '';
     }
 
     var script = document.createElement("script");
-    script.innerHTML = output;
+    script.innerHTML = code;
     lastScript = script;
 
     body.appendChild(script);
   }
 
-  editor.on("change", function(){
-    if (watch.checked) {
-      compile();
+  function compile(input, isInit) {
+
+    input = input || '';
+    lastCode = input;
+    hideNotify();
+
+    var paramComment = '/* @jsx createElement */\n';
+    try {
+      var output = Babel.transform(paramComment + input, { presets: ["es2015", "react", "stage-1"] }).code;
+    } catch(e){
+      console.error(e);
+      showNotify(e);
+      return;
     }
 
+    if (!isReady) {
+      !isInit && showNotify('Player is not ready!', 3000);
+      return;
+    }
+
+    runCompiled(output);
+  }
+
+  // Bactched
+  editor.on("changes", function(editor){
     var input = editor.getValue();
+    compile(input);
     localStorage.setItem(storageKey, input);
   });
-
-  run.onclick = compile;
-  watch.onclick = function(){
-    localStorage.setItem(watchKey, watch.checked);
-  };
 
 </script>
 </body>

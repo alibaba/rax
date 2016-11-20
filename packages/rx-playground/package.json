@@ -1,0 +1,15 @@
+{
+  "name": "rx-playground",
+  "version": "0.0.2",
+  "description": "Playground for Rx.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rx/issues"
+  },
+  "homepage": "https://github.com/alibaba/rx#readme"
+}

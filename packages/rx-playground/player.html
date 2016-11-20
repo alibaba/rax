@@ -20,6 +20,16 @@
       margin: 0;
     }
   </style>
+  <script>
+    window.onerror = function(message, source, line) {
+      parent.postMessage(JSON.stringify({
+        type: 'error',
+        message: message,
+        source: source,
+        line: line
+      }), '*');
+    }
+  </script>
   <script src="//unpkg.com/rx-webpack-plugin@0.0.8/lib/polyfills/require.js"></script>
   <script src="//unpkg.com/universal-rx@0.0.5/dist/rx.js"></script>
   <script src="//unpkg.com/universal-env@0.0.3/dist/env.js"></script>
@@ -27,5 +37,10 @@
   <script src="//unpkg.com/rx-animated@0.0.1/dist/animated.js"></script>
 </head>
 <body>
+  <script>
+    parent.postMessage(JSON.stringify({
+      type: 'ready',
+    }), '*');
+  </script>
 </body>
 </html>
