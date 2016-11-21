@@ -5,10 +5,26 @@
 ## Install
 
 ```sh
-$ npm install --save-dev stylesheet-loader
+npm install --save-dev stylesheet-loader
 ```
 
 ## Usage
+
+Config stylesheet loader in `webpack.config.js`:
+```js
+// webpack.config.js
+
+module.export = {
+  module: {
+      {
+        test: /\.css$/,
+        loader: 'stylesheet'
+      }
+    ]
+  }
+};
+```
+
 ```css
 /* foo.css */
 .container {
@@ -21,7 +37,8 @@ $ npm install --save-dev stylesheet-loader
 ```
 
 ```js
-import styles from 'stylesheet!./foo.css';
+// foo.js
+import styles from './foo.css';
 // import styles from 'stylesheet!less!./foo.less';
 function Foo() {
   return <div style={styles.container}>
