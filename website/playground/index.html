@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Rx Playground</title>
     <link rel="stylesheet" type="text/css" href="//unpkg.com/normalize.css@5.0.0" />
@@ -112,7 +111,8 @@
       background-image: url(./images/iphone.png);
       background-size: contain;
       background-repeat: no-repeat;
-      transform: scale(0.8, 0.8);
+      opacity: 0;
+      transition: opacity 1s;
     }
 
     .frame {
@@ -176,7 +176,7 @@ const styles = {
 render(<App />);</textarea>
     </div>
     <div class="preview">
-      <div class="phone">
+      <div class="phone" id="phone">
         <iframe class="frame" id="frame"></iframe>
       </div>
     </div>
@@ -197,6 +197,7 @@ render(<App />);</textarea>
   var notification = document.getElementById('notification');
   var notificationContent = document.getElementById('notification-content');
   var frame = document.getElementById('frame');
+  var phone = document.getElementById('phone');
 
   var storageKey = 'rx:playground:source';
   var myTextarea = document.getElementById('editor');
@@ -220,13 +221,22 @@ render(<App />);</textarea>
     return result;
   }
 
+  var queryString = getQueryString();
   var lastStorageSource = localStorage.getItem(storageKey);
-  var sourceFromQueryString = getQueryString()['source'];
+  var sourceFromQueryString = queryString.code;
   var source = sourceFromQueryString || lastStorageSource || editor.getValue();
   if (source) {
     editor.setValue(source);
     compile(source, true);
   }
+
+  // Auto adjust device scale
+  var windowHeight = window.innerHeight;
+  var phoneHeight = 858;
+  var scale = windowHeight / phoneHeight;
+  scale = scale > 1 ? 1 : scale;
+  phone.style.transform = 'scale(' + scale + ')';
+  phone.style.opacity = 1;
 
   function hideNotify() {
     notification.classList.add('hide');

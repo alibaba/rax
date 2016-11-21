@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "deploy": "surge --project ./ --domain rx.surge.sh"
+  },
+  "devDependencies": {
+    "surge": "latest"
+  }
+}

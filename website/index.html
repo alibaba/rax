@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rx</title>
+    <link rel="stylesheet" type="text/css" href="//unpkg.com/normalize.css@5.0.0" />
+    <style>
+
+    body {
+      color: #3e3d47;
+      background: #1e1d23;
+      margin: 0;
+    }
+
+    svg * {
+      fill: none;
+      stroke: currentColor;
+    }
+
+    #svg-logo {
+      stroke-width: 4;
+      color: #F76927;
+      transform: scale(0.4);
+    }
+
+    nav {
+      width: 100%;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      background-color: #23222a;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10000;
+    }
+
+    main, .site-nav {
+      width: 1190px;
+      margin: 0 auto;
+    }
+
+    .site-nav {
+      position: relative;
+      display: flex;
+    }
+
+    .site-icon {
+      display: inline-block;
+      width: 40px;
+      margin: 8px 0 0 0;
+    }
+
+    .site-nav-links {
+      margin-left: 60px;
+      display: inline-block;
+    }
+
+    .site-nav-links > a {
+      text-decoration: none;
+      color: #dddddd;
+      line-height: 50px;
+      font-size: 16px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .site-nav-links > a:hover {
+      color: #ffffff;
+    }
+
+    .site-nav-links > a:not(:last-child)::after {
+      left: calc(100% + 0.5em);
+    }
+
+    .site-nav-links > a:not(:last-child) {
+      margin: 0 1em 0 0;
+    }
+
+    .site-nav-links > a.current {
+      color: #504f55;
+    }
+
+    .site-nav-links > a:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      width: 1px;
+      height: 30px;
+      line-height: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      -webkit-transform: rotate3d(0, 0, 1, 22.5deg);
+      transform: rotate3d(0, 0, 1, 22.5deg);
+    }
+
+    .site-hero {
+      height: 480px;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .site-btns {
+      text-align: center;
+    }
+
+    .site-examples {
+      text-align: center;
+      margin: 50px auto;
+    }
+
+    .site-example {
+      width: 900px;
+      height: 500px;
+    }
+
+    .button {
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      /*border-radius: 5px;*/
+      width: 200px;
+      margin: 1em;
+      padding: 1em 2em;
+      border: 2px solid;
+      background: none;
+      color: inherit;
+      vertical-align: middle;
+      position: relative;
+      z-index: 1;
+      -webkit-backface-visibility: hidden;
+      -moz-osx-font-smoothing: grayscale;
+      color: #f76927;
+      border-color: #f76927;
+      overflow: hidden;
+      -webkit-transition: border-color 0.3s, color 0.3s;
+      transition: border-color 0.3s, color 0.3s;
+      -webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+      transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+    }
+
+    .button::before {
+    	content: '';
+    	position: absolute;
+    	top: 0;
+    	left: 0;
+    	width: 150%;
+    	height: 100%;
+    	background: #f76927;
+    	z-index: -1;
+    	-webkit-transform: rotate3d(0, 0, 1, -45deg) translate3d(0, -3em, 0);
+    	transform: rotate3d(0, 0, 1, -45deg) translate3d(0, -3em, 0);
+    	-webkit-transform-origin: 0% 100%;
+    	transform-origin: 0% 100%;
+    	-webkit-transition: -webkit-transform 0.3s, opacity 0.3s, background-color 0.3s;
+    	transition: transform 0.3s, opacity 0.3s, background-color 0.3s;
+    }
+    .button:hover {
+    	color: #fff;
+    	border-color: #f76927;
+    }
+    .button:hover::before {
+    	opacity: 1;
+    	background-color: #f76927;
+    	-webkit-transform: rotate3d(0, 0, 1, 0deg);
+    	transform: rotate3d(0, 0, 1, 0deg);
+    	-webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+    	transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
+    }
+
+    .footer { font-size: 12px; line-height: 1.5; color: #999; text-align: center; padding: 25px 0; margin-top: 60px; }
+    .footer .links>li { margin-top: 8px }
+    .footer .links { display: inline-block }
+    .footer .links>li { display: inline-block; padding: 0 5px }
+    .footer .links .muted { padding: 0 }
+    .footer ul,.footer ol { margin: 0; padding: 0; list-style: none; list-style-image: none }
+    .footer a { color: #999; text-decoration: none; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif }
+    .footer a:hover,.footer a:focus { color: #999; text-decoration: underline }
+    </style>
+  </head>
+<body>
+  <nav>
+    <div class="site-nav">
+      <a href="/"><img class="site-icon" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_200x200.jpg"></a>
+      <div class="site-nav-links">
+        <a href="/playground">Playground</a>
+      </div>
+    </div>
+  </nav>
+  <main>
+    <div class="site-hero">
+      <svg id="svg-logo" width="502px" height="500px" viewBox="0 0 502 500">
+        <path d="M1.921875,1.74918424 L124.246094,126.431507 L325.703125,124.945093 C325.703125,124.945093 370.699219,128.423852 370.699219,183.746706 C370.699219,239.069559 332.53125,243.050326 332.53125,243.050326 L249.359375,245.281909 L363.339844,364.446066 C363.339844,364.446066 499.003906,333.666698 499.003906,184.213416 C499.003906,34.7601343 344.476562,0.451022841 344.476562,0.451022841 L1.921875,1.74918424 Z"></path>
+        <polygon points="0.733326549 246.301613 175.226563 246.301613 423.578125 496.136891 247.136719 499.564665"></polygon>
+      </svg>
+    </div>
+    <div class="site-btns">
+      <a class="button" href="https://github.com/alibaba/rx/tree/master/docs">Get Started</a>
+      <a class="button" href="#examples">Examples</a>
+    </div>
+    <div class="site-examples" id="examples">
+      <iframe class="site-example" frameborder="0" src="./playground"></iframe>
+    </div>
+  </main>
+  <footer class="footer">
+    <ul class="links">
+      <li>&#169;&nbsp;2016&nbsp;&nbsp;<a href="http://taobaofed.org/" target="_blank">Taobao FED</a></li>
+    </ul>
+  </footer>
+  <script src="https://unpkg.com/vivus@0.4.0/dist/vivus.min.js"></script>
+  <script>
+    (function() {
+      var logo = new Vivus('svg-logo', {
+        type: 'async',
+        duration: 120,
+      });
+      logo.play();
+    })();
+  </script>
+</body>
+</html>
