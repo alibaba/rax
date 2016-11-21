@@ -40,24 +40,24 @@ module.exports = {
 
 Then publish module with factory build file to npm registry:
 ```sh
-$ npm publish
+npm publish
 ```
 
 Or [`link`](https://docs.npmjs.com/cli/link) module in local:
 ```sh
-$ npm link
+npm link
 ```
 
 ### 2. Config `builtin.js` in framework source
 
 Install builtin module from npm:
 ```sh
-$ npm install your-module --save
+npm install your-module --save
 ```
 
 Or link from local:
 ```sh
-$ npm link your-module
+npm link your-module
 ```
 
 Config `builtin.js` and add your custom builtin module:
@@ -101,4 +101,48 @@ module.exports = {
     }]
   }
 }
+```
+
+## How to build weex `jsfm` including `weex-rx-framework`?
+
+### 1. Clone the weex repository and install prerequisites
+
+```sh
+git clone git@github.com:alibaba/weex.git
+cd weex
+npm install
+```
+
+### 2. Install `weex-rx-framework`
+
+```sh
+cd weex
+npm install weex-rx-framework --save
+```
+
+### 3. Config `weex-rx-framework`
+
+Update `html5/frameworks/index.js` file with below content:
+
+```js
+import * as Weex from './legacy/index'
+import * as Rx from 'weex-rx-framework'
+
+export default {
+  Rx,
+  Weex
+}
+```
+
+### 4. Build `jsfm` for native renderer to `dist/native.js`
+
+```sh
+npm run build:native
+```
+
+### 5. Copy `dist/native.js` to `weex-sdk`
+
+```sh
+cp -vf ./dist/native.js ./android/sdk/assets/main.js
+cp -vf ./dist/native.js ./ios/sdk/WeexSDK/Resources/main.js
 ```
