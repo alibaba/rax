@@ -1,6 +1,6 @@
 {
   "name": "web-rx-framework",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Rx framework for web.",
   "license": "BSD-3-Clause",
   "main": "dist/framework.web.js",

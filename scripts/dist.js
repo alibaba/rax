@@ -17,7 +17,7 @@ if (!fs.existsSync('./packages/universal-rx/build')) {
   ['universal-platform', 'platform', 'Platform'],
   ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
   ['universal-toast', 'toast', 'Toast']
-].forEach(function (info) {
+].forEach(function(info) {
   var main = './packages/' + info[0] + '/src/index.js';
   var entry = {};
   entry[info[1]] = entry[info[1] + '.min'] = entry[info[1] + '.factory'] = main;
@@ -113,7 +113,6 @@ dist(getConfig(
     }
   ));
 }).then(() => {
-
   dist(getConfig(
     {
       'framework.web': './packages/web-rx-framework/src/index.js',
