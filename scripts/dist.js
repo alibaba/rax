@@ -116,7 +116,28 @@ dist(getConfig(
 
   dist(getConfig(
     {
-      'rx.framework': './packages/weex-rx-framework/src/index.js',
+      'web.framework': './packages/web-rx-framework/src/index.js'
+    },
+    {
+      path: './packages/web-rx-framework/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+      pathinfo: true,
+    },
+    {
+      // Empty
+    },
+    {
+      presets: ['es2015'],
+      ignore: [
+        'dist/'
+      ]
+    }
+  ));
+
+  dist(getConfig(
+    {
+      'rx.framework': './packages/weex-rx-framework/src/index.js'
     },
     {
       path: './packages/weex-rx-framework/dist/',
