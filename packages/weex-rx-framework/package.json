@@ -3,7 +3,7 @@
   "version": "0.2.3",
   "description": "Rx framework for weex.",
   "license": "BSD-3-Clause",
-  "main": "dist/rx.framework.js",
+  "main": "dist/framework.weex.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"

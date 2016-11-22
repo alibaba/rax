@@ -1,14 +1,26 @@
-// ModuleJS
-import './require';
+const global = window;
 
 // ES
-import 'es6-promise/dist/es6-promise.auto';
+if (!global.Promise) {
+  global.Promise = require('es6-promise');
+}
 
-// W3c
-import 'whatwg-fetch';
-import 'raf/polyfill';
+// W3C
+require('whatwg-fetch');
+require('raf/polyfill');
+
+// ModuleJS
+require('./require');
 
 // Default Builtin modules
-import 'universal-rx/dist/rx';
-import 'universal-env/dist/env';
-import 'universal-transition/dist/transition';
+global.define('@universal/rx', function(req, exports, module){
+  module.exports = require('universal-rx');
+});
+
+global.define('@universal/env', function(req, exports, module){
+  module.exports = require('universal-env');
+});
+
+global.define('@universal/transition', function(req, exports, module){
+  module.exports = require('universal-transition');
+});

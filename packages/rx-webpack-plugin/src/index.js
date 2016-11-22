@@ -11,6 +11,7 @@ class RxWebpackPlugin {
       runMainModule: false,
       includePolyfills: false,
       frameworkComment: false,
+      target: null,
       externalBuiltinModules: false,
       builtinModules: BuiltinModules,
       polyfillModules: PolyfillModules,

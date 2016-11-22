@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Rx framework for web.",
   "license": "BSD-3-Clause",
-  "main": "dist/web.js",
+  "main": "dist/framework.web.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"

@@ -27,7 +27,7 @@ if (!fs.existsSync('./packages/universal-rx/build')) {
       path: './packages/' + info[0] + '/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
-      pathinfo: true,
+      pathinfo: false,
     },
     {
       externalBuiltinModules: true,
@@ -53,7 +53,7 @@ dist(getConfig(
     path: './packages/universal-env/dist/',
     filename: '[name].js',
     sourceMapFilename: '[name].map',
-    pathinfo: true,
+    pathinfo: false,
   },
   {
     moduleName: 'universal-env',
@@ -73,7 +73,7 @@ dist(getConfig(
       path: './packages/universal-rx/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
-      pathinfo: true,
+      pathinfo: false,
     },
     {
       moduleName: 'universal-rx',
@@ -102,7 +102,7 @@ dist(getConfig(
       path: './packages/universal-transition/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
-      pathinfo: true,
+      pathinfo: false,
     },
     {
       moduleName: 'universal-transition',
@@ -116,16 +116,17 @@ dist(getConfig(
 
   dist(getConfig(
     {
-      'web.framework': './packages/web-rx-framework/src/index.js'
+      'framework.web': './packages/web-rx-framework/src/index.js',
+      'framework.web.min': './packages/web-rx-framework/src/index.js'
     },
     {
       path: './packages/web-rx-framework/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
-      pathinfo: true,
+      pathinfo: false,
     },
     {
-      // Empty
+      target: 'bundle'
     },
     {
       presets: ['es2015'],
@@ -137,7 +138,7 @@ dist(getConfig(
 
   dist(getConfig(
     {
-      'rx.framework': './packages/weex-rx-framework/src/index.js'
+      'framework.weex': './packages/weex-rx-framework/src/index.js'
     },
     {
       path: './packages/weex-rx-framework/dist/',
@@ -146,7 +147,7 @@ dist(getConfig(
       pathinfo: true,
     },
     {
-      // Empty
+      target: 'framework'
     },
     {
       presets: ['es2015'],
@@ -157,9 +158,9 @@ dist(getConfig(
   ));
 });
 
-function getConfig(entry, output, moduleOptions, babelLoaderQuery) {
+function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
   return {
-    target: 'node',
+    target: target || 'node',
     devtool: 'source-map',
     entry: entry,
     output: output,
