@@ -3,7 +3,6 @@ import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import path from 'path';
 import BuiltinModules from './BuiltinModules';
-import PolyfillModules from './PolyfillModules';
 
 class RxWebpackPlugin {
   constructor(options) {
@@ -14,7 +13,7 @@ class RxWebpackPlugin {
       target: null,
       externalBuiltinModules: false,
       builtinModules: BuiltinModules,
-      polyfillModules: PolyfillModules,
+      polyfillModules: [],
     }, options);
   }
 
@@ -70,6 +69,5 @@ class RxWebpackPlugin {
 }
 
 RxWebpackPlugin.BuiltinModules = BuiltinModules;
-RxWebpackPlugin.PolyfillModules = PolyfillModules;
 
 module.exports = RxWebpackPlugin;

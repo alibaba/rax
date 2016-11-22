@@ -19,7 +19,7 @@ module.exports = {
       // page mode build config
       frameworkComment: false,
       includePolyfills: false,
-      polyfillModules: RxPlugin.PolyfillModules,
+      polyfillModules: [],
       // component mode build config
       moduleName: 'universal-rx',
       globalName: 'Rx',
