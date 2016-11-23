@@ -30,19 +30,19 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 [Angular 1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js) - 55.4kb (gzip)
 
-<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="100%">
+<img width="100%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
 [React 15.3.2](https://unpkg.com/react@15.3.2/dist/react.min.js) - 43.7kb (gzip)
 
-<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="78.88%">
+<img width="78.88%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
 [Vue 2.0.3](https://unpkg.com/vue@2.0.3/dist/vue.min.js) - 23.2kb (gzip)
 
-<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="41.87%">
+<img width="41.87%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
 [Rx 0.0.5](https://unpkg.com/universal-rx@0.0.5/dist/rx.min.js) - 8.5kb (gzip)
 
-<img src="https://cloud.githubusercontent.com/assets/677114/19777289/162cc37a-9caa-11e6-9377-d30b3b57abb1.png" height="5" width="14.44%">
+<img width="14.44%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
 
 ## Installation
