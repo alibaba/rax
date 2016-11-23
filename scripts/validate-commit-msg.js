@@ -40,7 +40,7 @@ var validateMessage = function(raw) {
     types = Object.keys(require(types).types);
   }
 
-  var messageWithBody = (raw || '').split('\n').filter(function (str) {
+  var messageWithBody = (raw || '').split('\n').filter(function(str) {
     return str.indexOf('#') !== 0;
   }).join('\n');
 
@@ -53,9 +53,9 @@ var validateMessage = function(raw) {
 
   var isValid = true;
 
-  if(MERGE_COMMIT_PATTERN.test(message)){
+  if (MERGE_COMMIT_PATTERN.test(message)) {
     console.log('Merge commit detected.');
-    return true
+    return true;
   }
 
   if (IGNORED.test(message)) {
@@ -134,7 +134,6 @@ exports.config = config;
 // hacky start if not run by mocha :-D
 // istanbul ignore next
 if (process.argv.join('').indexOf('mocha') === -1) {
-
   var commitMsgFile = process.argv[2] || getGitFolder() + '/COMMIT_EDITMSG';
   var incorrectLogFile = commitMsgFile.replace('COMMIT_EDITMSG', 'logs/incorrect-commit-msgs');
 
@@ -165,16 +164,15 @@ function getConfig() {
   return pkg && pkg.config && pkg.config['validate-commit-msg'] || {};
 }
 
-function getGitFolder()
-{
+function getGitFolder() {
   var gitDirLocation = './.git';
   if (!fs.existsSync(gitDirLocation)) {
-      throw new Error('Cannot find file ' + gitDirLocation);
+    throw new Error('Cannot find file ' + gitDirLocation);
   }
 
-  if(!fs.lstatSync(gitDirLocation).isDirectory()) {
-     var unparsedText = '' + fs.readFileSync(gitDirLocation);
-     gitDirLocation = unparsedText.substring('gitdir: '.length).trim();
+  if (!fs.lstatSync(gitDirLocation).isDirectory()) {
+    var unparsedText = '' + fs.readFileSync(gitDirLocation);
+    gitDirLocation = unparsedText.substring('gitdir: '.length).trim();
   }
 
   if (!fs.existsSync(gitDirLocation)) {

@@ -22,9 +22,8 @@ All lines are wrapped at 100 characters !
 - chore (maintain)
 
 
-
 **Allowed `<scope>`**
-Scope could be anything specifying place of the commit change. 
+Scope could be anything specifying place of the commit change.
 
 For example $location, $browser, compiler, scope, ng:href, etc...
 

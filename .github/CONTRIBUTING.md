@@ -1,11 +1,10 @@
-# Rx Contributing Guide
+# Contributing Guide
 
 Hi! I’m really excited that you are interested in contributing to Rx. Before submitting your contribution though, please make sure to take a moment and read through the following guidelines.
 
 - [Issue Reporting Guidelines](#issue-reporting-guidelines)
 - [Pull Request Guidelines](#pull-request-guidelines)
 - [Git Commit Specific](./GIT_COMMIT_SPECIFIC.md)
-
 
 
 ## Issue Reporting Guidelines
@@ -31,7 +30,7 @@ Hi! I’m really excited that you are interested in contributing to Rx. Before s
 - The `master` branch is basically just a snapshot of the latest stable release. All development should be done in dedicated branches. **Do not submit PRs against the `master` branch.**
 - Checkout a topic branch from the relevant branch, e.g. `dev`, and merge back against that branch.
 - Work in the `src` folder and **DO NOT** checkin `dist` in the commits.
-- Make sure `npm test` passes. 
+- Make sure `npm test` passes.
 - If adding new feature:
   - Add accompanying test case.
   - Provide convincing reason to add this feature. Ideally you should open a suggestion issue first and have it greenlighted before working on it.
@@ -41,11 +40,9 @@ Hi! I’m really excited that you are interested in contributing to Rx. Before s
   - Add appropriate test coverage if applicable.
 
 
-
 ## Git Commit Specific
 
 - Your commits message must follow our [git commit specific](./GIT_COMMIT_SPECIFIC.md).
 - We will check your commit message, if it does not conform to the specification, the commit will be automatically refused, make sure you have read the specification above.
 - You could use `git cz` with a CLI interface to replace `git commit` command, it will help you to build a proper commit-message, see [commitizen](https://github.com/commitizen/cz-cli).
 - It's OK to have multiple small commits as you work on your branch - we will let GitHub automatically squash it before merging.
-
