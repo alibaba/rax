@@ -46,9 +46,9 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 |Engine\Various|renderToSring   | QPS [#/sec] |
 |--------------|----------------|-------------|
-| React        | 337.2ms        |  180.65     |
-| Rx           | 64.4ms         |  307.38     |
-| Vue          | 91.6ms         |  287.77     |
+| React@15.3.2 | 337.2ms        |  180.65     |
+| Rx@0.0.7     | 64.4ms         |  307.38     |
+| Vue@2.0.8    | 91.6ms         |  287.77     |
 
 ```
 MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory
@@ -56,7 +56,8 @@ Node.js v4.3.2
 ```
 
 - renderToSring: Independent process serial execution 10 times, each process parallel rendering 100 times, without cache.
-- qps: `ab -n1000 -c50 http://127.0.0.1:3300/react|rx|vue`, without cache
+- QPS: `ab -n1000 -c50 http://127.0.0.1:3300/react|rx|vue`, without cache
+- code repo: [rx-ssr-compare](https://github.com/taobaofed/rx-ssr-compare)
 
 ## Installation
 
