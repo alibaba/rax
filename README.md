@@ -98,3 +98,7 @@ More examples take a look at the [`examples`](/examples/) folder.
 * :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
 * :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
 * :postbox: [universal-router](https://github.com/kriasoft/universal-router): A simple middleware-style router for isomorphic JavaScript web apps.
+
+## Contributing
+
+Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
