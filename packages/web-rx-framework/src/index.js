@@ -10,11 +10,11 @@ require('whatwg-fetch');
 require('raf/polyfill');
 
 if (!global.URL) {
-  global.URL = require('./URL');
+  global.URL = require('runtime-shared/dist/url.node');
 }
 
 if (!global.URLSearchParams) {
-  global.URLSearchParams = require('./URLSearchParams');
+  global.URLSearchParams = require('runtime-shared/dist/url-search-params.node');
 }
 
 // ModuleJS

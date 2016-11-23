@@ -193,12 +193,12 @@ function genNativeModules(modules, instanceId) {
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
   // FIXME: ES6 module format hack
   const Promise = require('./promise').default;
-  const URL = require('./URL').default;
-  const URLSearchParams = require('./URLSearchParams').default;
   const downgrade = require('./downgrade').default;
   const Fetch = require('./fetch').default;
   const {Headers, Request, Response} = require('./fetch');
   const navigator = require('./navigator').default;
+  const URL = require('runtime-shared/dist/url.function')();
+  const URLSearchParams = require('runtime-shared/dist/url.function')();
 
   let instance = instances[instanceId];
 

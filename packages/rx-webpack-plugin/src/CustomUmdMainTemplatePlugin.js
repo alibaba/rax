@@ -41,14 +41,18 @@ if (typeof require === "function"){
       let sourcePrefix = '';
       let sourceSuffix = '';
 
-      // Only weex-rx-framework build use this build mode.
-      if (!target && chunk.name.endsWith('.framework') || target === 'framework') {
+      if (!target && chunk.name.endsWith('.module') || target === 'module') {
         sourcePrefix = 'module.exports = ';
         sourceSuffix = '';
       } else if (!target && chunk.name.endsWith('.bundle') || target === 'bundle') {
         // Build page bundle use this mode.
         sourcePrefix = '';
         sourceSuffix = '';
+      } else if (!target && chunk.name.endsWith('.function') || target === 'function') {
+        sourcePrefix = `
+module.exports = function() {
+  return `;
+        sourceSuffix = '};';
       } else if (!target && chunk.name.endsWith('.factory') || target === 'factory') {
         // Build weex builtin modules use this mode.
         // NOTE: globals should sync logic in weex-rx-framework

@@ -2,6 +2,6 @@
   "lerna": "2.0.0-beta.30",
   "version": "1.0.0",
   "bootstrapConfig": {
-    "ignore": "@(babel-preset-rx|rx-webpack-plugin)"
+    "ignore": "@(babel-preset-rx|rx-webpack-plugin|rx-starter-kit)"
   }
 }

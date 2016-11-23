@@ -113,6 +113,27 @@ dist(getConfig(
     }
   ));
 }).then(() => {
+  return dist(getConfig(
+    {
+      'url.node': './packages/runtime-shared/src/url.js',
+      'url.function': './packages/runtime-shared/src/url.js',
+      'url-search-params.node': './packages/runtime-shared/src/url-search-params.js',
+      'url-search-params.function': './packages/runtime-shared/src/url-search-params.js',
+    },
+    {
+      path: './packages/runtime-shared/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+      pathinfo: false,
+    },
+    {
+      // Empty
+    },
+    {
+      presets: ['es2015']
+    }
+  ));
+}).then(() => {
   dist(getConfig(
     {
       'framework.web': './packages/web-rx-framework/src/index.js',
@@ -146,7 +167,7 @@ dist(getConfig(
       pathinfo: true,
     },
     {
-      target: 'framework'
+      target: 'module'
     },
     {
       presets: ['es2015'],
