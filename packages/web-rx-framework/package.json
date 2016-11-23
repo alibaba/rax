@@ -1,9 +1,9 @@
 {
-  "name": "weex-rx-framework",
-  "version": "0.2.3",
-  "description": "Rx framework for weex.",
+  "name": "web-rx-framework",
+  "version": "0.0.2",
+  "description": "Rx framework for web.",
   "license": "BSD-3-Clause",
-  "main": "dist/framework.weex.js",
+  "main": "dist/framework.web.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"
@@ -11,17 +11,13 @@
   "bugs": {
     "url": "https://github.com/alibaba/rx/issues"
   },
-  "scripts": {
-    "test": "babel-node ./test/index.js"
-  },
   "homepage": "https://github.com/alibaba/rx#readme",
   "dependencies": {
+    "es6-promise": "^4.0.5",
+    "raf": "^3.3.0",
     "universal-env": "^0.0.*",
+    "universal-rx": "^0.0.*",
     "universal-transition": "^0.0.*",
-    "universal-rx": "^0.0.*"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "weex-vdom-tester": "^0.1.3"
+    "whatwg-fetch": "^2.0.1"
   }
 }

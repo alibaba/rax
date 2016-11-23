@@ -37,18 +37,19 @@ if (typeof require === "function"){
 
       let moduleName = this.options.moduleName || name;
       let globalName = this.options.globalName || name;
+      let target = this.options.target;
       let sourcePrefix = '';
       let sourceSuffix = '';
 
       // Only weex-rx-framework build use this build mode.
-      if (chunk.name.endsWith('.framework')) {
+      if (!target && chunk.name.endsWith('.framework') || target === 'framework') {
         sourcePrefix = 'module.exports = ';
         sourceSuffix = '';
-      } else if (chunk.name.endsWith('.bundle')) {
+      } else if (!target && chunk.name.endsWith('.bundle') || target === 'bundle') {
         // Build page bundle use this mode.
         sourcePrefix = '';
         sourceSuffix = '';
-      } else if (chunk.name.endsWith('.factory')) {
+      } else if (!target && chunk.name.endsWith('.factory') || target === 'factory') {
         // Build weex builtin modules use this mode.
         // NOTE: globals should sync logic in weex-rx-framework
         let factoryDependencies = [
@@ -92,20 +93,20 @@ module.exports = function(${factoryDependencies}) {
         // Default build mode for component
         sourcePrefix = `
 ;(function(fn) {
-  if (typeof exports === "object" && typeof module !== "undefined") {
-    module.exports = fn();
-  } else if (typeof define === "function") {
+  if (typeof define === "function") {
     define(${JSON.stringify(moduleName)}, function(require, exports, module){
       module.exports = fn();
     });
+  } else if (typeof exports === "object" && typeof module !== "undefined") {
+    module.exports = fn();
   } else {
     var root;
     if (typeof window !== "undefined") {
       root = window;
-    } else if (typeof global !== "undefined") {
-      root = global;
     } else if (typeof self !== "undefined") {
       root = self;
+    } else if (typeof global !== "undefined") {
+      root = global;
     } else {
       // NOTICE: In JavaScript strict mode, this is null
       root = this;

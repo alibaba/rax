@@ -220,7 +220,7 @@ let fetch = function(nativeFetch, input, init) {
     let params = {
       url: request.url,
       method: request.method,
-      header: request.headers && request.headers.originHeaders
+      headers: request.headers && request.headers.originHeaders
     };
 
     if (typeof request._bodyInit !== 'undefined') {

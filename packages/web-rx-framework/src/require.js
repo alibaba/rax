@@ -1,5 +1,5 @@
 (function(global) {
-  if (typeof define !== 'undefined') {
+  if (global.define) {
     return;
   }
 
@@ -88,4 +88,4 @@
 
   global.define = def;
   global.require = req;
-})(this);
+})(this || typeof global === 'object' && global || typeof window === 'object' && window);
