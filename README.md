@@ -36,30 +36,23 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 <img width="78.88%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
-[Vue 2.0.3](https://unpkg.com/vue@2.0.3/dist/vue.min.js) - 23.2kb (gzip)
+[Vue 2.0.8](https://unpkg.com/vue@2.0.8/dist/vue.min.js) - 24.4kb (gzip)
 
-<img width="41.87%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
+<img width="44.04%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
-[Rx 0.0.5](https://unpkg.com/universal-rx@0.0.5/dist/rx.min.js) - 8.5kb (gzip)
+[Rx 0.0.8](https://unpkg.com/universal-rx@0.0.5/dist/rx.min.js) - 8.0kb (gzip)
 
 <img width="14.44%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
-## Server-side rendering benchmarks
+## Server-side Rendering Comparison
+> [Benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison): Run on a MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory.
 
-|Engine\Various|renderToSring   | QPS [#/sec] |
-|--------------|----------------|-------------|
-| React@15.3.2 | 337.2ms        |  180.65     |
-| Rx@0.0.7     | 64.4ms         |  307.38     |
-| Vue@2.0.8    | 91.6ms         |  287.77     |
+| Library      | renderToSring (per second)  |
+|--------------|----------------|
+| React@15.3.2 | 297 op/s |
+| Vue@2.0.8    | 1092 op/s|
+| Rx@0.0.8     | 1553 op/s (fastest)|
 
-```
-MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory
-Node.js v4.3.2
-```
-
-- renderToSring: Independent process serial execution 10 times, each process parallel rendering 100 times, without cache.
-- QPS: `ab -n1000 -c50 http://127.0.0.1:3300/react|rx|vue`, without cache
-- code repo: [rx-ssr-compare](https://github.com/taobaofed/rx-ssr-compare)
 
 ## Installation
 
