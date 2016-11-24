@@ -16,8 +16,9 @@ var RxPlugin = require('rx-webpack-plugin');
 module.exports = {
   plugins: [
     new RxPlugin({
+      target: 'bundle',
       // page mode build config
-      frameworkComment: false,
+      frameworkComment: '// {"framework" : "Rx"}', // Default
       includePolyfills: false,
       polyfillModules: [],
       // component mode build config

@@ -87,7 +87,8 @@ module.exports = {
   },
   plugins: [
     new RxWebpackPlugin({
-      frameworkComment: true,
+      target: 'bundle',
+      externalBuiltinModules: false,
     }),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({

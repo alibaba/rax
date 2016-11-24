@@ -1,10 +1,9 @@
 {
   "name": "universal-rx",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
-  "browser": "dist/rx.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rx.git"

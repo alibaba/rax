@@ -115,9 +115,11 @@ dist(getConfig(
 }).then(() => {
   return dist(getConfig(
     {
-      'url.node': './packages/runtime-shared/src/url.js',
+      'promise.module': './packages/runtime-shared/src/promise.js',
+      'promise.function': './packages/runtime-shared/src/promise.js',
+      'url.module': './packages/runtime-shared/src/url.js',
       'url.function': './packages/runtime-shared/src/url.js',
-      'url-search-params.node': './packages/runtime-shared/src/url-search-params.js',
+      'url-search-params.module': './packages/runtime-shared/src/url-search-params.js',
       'url-search-params.function': './packages/runtime-shared/src/url-search-params.js',
     },
     {

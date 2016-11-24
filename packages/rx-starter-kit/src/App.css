@@ -8,12 +8,12 @@
   background-color: #222;
   height: 160;
   padding: 40;
-  color: white;
 }
 
 .appBanner {
   text-align: center;
   font-size: 80;
+  color: white;
 }
 
 .appIntro {

@@ -191,12 +191,8 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
-  // FIXME: ES6 module format hack
-  const Promise = require('./promise').default;
-  const downgrade = require('./downgrade').default;
-  const Fetch = require('./fetch').default;
-  const {Headers, Request, Response} = require('./fetch');
-  const navigator = require('./navigator').default;
+
+  const Promise = require('runtime-shared/dist/promise.function')();
   const URL = require('runtime-shared/dist/url.function')();
   const URLSearchParams = require('runtime-shared/dist/url.function')();
 
@@ -262,19 +258,31 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       return mod.module.exports;
     }
 
+    const ENV = (typeof WXEnvironment === 'object' && WXEnvironment) || {};
+    // https://www.w3.org/TR/2009/WD-html5-20090423/browsers.html#dom-navigator
+    const navigator = {
+      product: 'Weex',
+      platform: ENV.platform,
+      appName: ENV.appName,
+      appVersion: ENV.appVersion,
+      // weexVersion: ENV.weexVersion,
+      // osVersion: ENV.osVersion,
+      // userAgent
+    };
+
     // https://drafts.csswg.org/cssom-view/#the-screen-interface
     const screenAPIs = {
-      width: WXEnvironment.deviceWidth,
-      height: WXEnvironment.deviceHeight,
-      availWidth: WXEnvironment.deviceWidth,
-      availHeight: WXEnvironment.deviceHeight,
+      width: ENV.deviceWidth,
+      height: ENV.deviceHeight,
+      availWidth: ENV.deviceWidth,
+      availHeight: ENV.deviceHeight,
       colorDepth: 24,
       pixelDepth: 24,
     };
 
     const weexNavigator = req('@weex-module/navigator');
     const windowAPIs = {
-      devicePixelRatio: WXEnvironment.scale,
+      devicePixelRatio: ENV.scale,
       open: (url) => {
         weexNavigator.push({
           url,
@@ -332,14 +340,11 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
     };
 
     const instanceWrap = req('@weex-module/instanceWrap');
-    const downgradeAPIs = {
-      downgrade: downgrade.bind(null, instanceWrap),
-    };
+    const downgrade = require('./downgrade.weex')(instanceWrap);
 
     const stream = req('@weex-module/stream');
-    const networkAPIs = {
-      fetch: Fetch.bind(null, stream.fetch),
-    };
+    const fetch = require('./fetch.weex')(Promise, stream.fetch);
+    const {Headers, Request, Response} = fetch;
 
     let globals = [
       // ES
@@ -350,7 +355,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       document,
       navigator,
       location,
-      networkAPIs.fetch,
+      fetch,
       Headers,
       Response,
       Request,
@@ -368,7 +373,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       req,
       options,
       data,
-      downgradeAPIs.downgrade
+      downgrade
     ];
 
     genBuiltinModules(
@@ -381,7 +386,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       document,
       navigator,
       location,
-      networkAPIs.fetch,
+      fetch,
       Headers,
       Response,
       Request,
@@ -399,10 +404,10 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       req,
       options,
       data,
-      downgradeAPIs.downgrade
+      downgrade
     );
 
-    if (typeof WXEnvironment === 'object' && WXEnvironment.platform !== 'Web') {
+    if (ENV.platform !== 'Web') {
       let init = new Function(
         // ES
         'Promise',
@@ -448,7 +453,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         document,
         navigator,
         location,
-        networkAPIs.fetch,
+        fetch,
         Headers,
         Response,
         Request,
@@ -466,7 +471,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         req,
         options,
         data,
-        downgradeAPIs.downgrade,
+        downgrade,
         // ModuleJS
         def,
         req,

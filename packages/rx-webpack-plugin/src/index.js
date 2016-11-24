@@ -9,7 +9,7 @@ class RxWebpackPlugin {
     this.options = Object.assign({
       runMainModule: false,
       includePolyfills: false,
-      frameworkComment: false,
+      frameworkComment: null,
       target: null,
       externalBuiltinModules: false,
       builtinModules: BuiltinModules,
@@ -52,13 +52,17 @@ class RxWebpackPlugin {
       ));
     });
 
-    if (this.options.frameworkComment) {
+    if (this.options.target === 'bundle' || this.options.frameworkComment) {
+      var defaultFrameworkComment = '// {"framework" : "Rx"}';
+      var frameworkComment = typeof this.options.frameworkComment === 'string' ?
+      this.options.frameworkComment : defaultFrameworkComment;
+
       compiler.plugin('compilation', (compilation) => {
         compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
           chunks.forEach(function(chunk) {
             if (!chunk.initial) return;
             chunk.files.forEach(function(file) {
-              compilation.assets[file] = new ConcatSource('// {"framework" : "Rx"}', '\n', compilation.assets[file]);
+              compilation.assets[file] = new ConcatSource(frameworkComment, '\n', compilation.assets[file]);
             });
           });
           callback();

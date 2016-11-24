@@ -2,7 +2,7 @@ const global = window;
 
 // ES
 if (!global.Promise) {
-  global.Promise = require('es6-promise');
+  global.Promise = require('runtime-shared/dist/promise.module');
 }
 
 // W3C
@@ -10,11 +10,11 @@ require('whatwg-fetch');
 require('raf/polyfill');
 
 if (!global.URL) {
-  global.URL = require('runtime-shared/dist/url.node');
+  global.URL = require('runtime-shared/dist/url.module');
 }
 
 if (!global.URLSearchParams) {
-  global.URLSearchParams = require('runtime-shared/dist/url-search-params.node');
+  global.URLSearchParams = require('runtime-shared/dist/url-search-params.module');
 }
 
 // ModuleJS
