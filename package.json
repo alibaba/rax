@@ -38,6 +38,7 @@
     "setup": "npm run link && npm run bootstrap",
     "compile": "npm run clean:compile && node ./scripts/compile.js",
     "dist": "npm run clean:dist && node ./scripts/dist.js",
+    "build": "npm run compile && npm run dist",
     "test": "npm run compile && jest",
     "watch:test": "npm run compile && jest --watch",
     "watch:compile": "npm run compile -- --watch",
@@ -46,7 +47,7 @@
     "coverage": "npm run test -- --coverage",
     "coverage:upload": "npm run clean:coverage && npm run coverage && node ./scripts/mapCoverage.js && codecov",
     "build:examples": "node ./scripts/build-examples.js",
-    "prepublish": "npm run lint && npm run test && npm run compile && npm run dist",
+    "prepublish": "npm run bootstrap && npm run lint && npm run test && npm run build",
     "publish": "lerna publish"
   },
   "jest": {

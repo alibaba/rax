@@ -191,7 +191,6 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
-
   const Promise = require('runtime-shared/dist/promise.function')();
   const URL = require('runtime-shared/dist/url.function')();
   const URLSearchParams = require('runtime-shared/dist/url.function')();
@@ -258,7 +257,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       return mod.module.exports;
     }
 
-    const ENV = (typeof WXEnvironment === 'object' && WXEnvironment) || {};
+    const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
     // https://www.w3.org/TR/2009/WD-html5-20090423/browsers.html#dom-navigator
     const navigator = {
       product: 'Weex',

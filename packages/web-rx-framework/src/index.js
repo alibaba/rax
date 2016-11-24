@@ -24,11 +24,3 @@ require('./require');
 global.define('@universal/rx', function(req, exports, module) {
   module.exports = require('universal-rx');
 });
-
-global.define('@universal/env', function(req, exports, module) {
-  module.exports = require('universal-env');
-});
-
-global.define('@universal/transition', function(req, exports, module) {
-  module.exports = require('universal-transition');
-});

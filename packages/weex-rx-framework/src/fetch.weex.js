@@ -1,5 +1,4 @@
 module.exports = function(Promise, nativeFetch) {
-
   function normalizeName(name) {
     if (typeof name !== 'string') {
       name = String(name);
@@ -254,4 +253,4 @@ module.exports = function(Promise, nativeFetch) {
   fetch.Response = Response;
 
   return fetch;
-}
+};
