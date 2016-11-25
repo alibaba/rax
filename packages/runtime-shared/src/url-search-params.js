@@ -200,4 +200,4 @@ URLSearchParamsProto.toString = function toString() {
   return query.join('&');
 };
 
-export default URLSearchParams;
+module.exports = URLSearchParams;

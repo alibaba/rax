@@ -4,7 +4,7 @@ import {Document, Element} from './__mocks__/document';
 import * as modules from './__mocks__/modules';
 import components from './__mocks__/components';
 
-let id = 'downgrade';
+let id = Date.now();
 let code = `
   define("foo", function(require, exports, module){
     __weex_downgrade__({

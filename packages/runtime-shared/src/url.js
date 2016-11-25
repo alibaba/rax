@@ -580,4 +580,4 @@ URL.prototype = {
   }
 };
 
-export default URL;
+module.exports = URL;

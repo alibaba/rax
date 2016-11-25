@@ -1,6 +1,6 @@
-export function Document() {
+export function Document(id, url) {
   this.refs = {};
-  this.URL = 'http://example.com';
+  this.URL = url;
   this.listener = {
     updateFinish: function() {
 

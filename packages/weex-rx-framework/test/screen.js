@@ -4,14 +4,12 @@ import {Document, Element} from './__mocks__/document';
 import * as modules from './__mocks__/modules';
 import components from './__mocks__/components';
 
-let id = '7';
+let id = Date.now();
 let code = `// {"framework": "Rx"}
   define("foo", function(require, exports, module){
 
-    var Env = require('@universal/env');
-    console.log('@universal/env', Env);
+    console.log('screen', screen);
 
-    module.exports = "bar";
   });
   var foo = require("foo");
 `;

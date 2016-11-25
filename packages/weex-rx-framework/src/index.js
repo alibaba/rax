@@ -18,10 +18,9 @@ function dispatchEventToInstance(event, targetOrigin) {
     if (instances.hasOwnProperty(i)) {
       instance = instances[i];
       if (targetOrigin === '*' || targetOrigin === instance.origin) {
-        var window = instance.window;
-        event.target = window;
+        event.target = instance.window;
         // FIXME: Need async?
-        window.dispatchEvent(event);
+        instance.window.dispatchEvent(event);
       }
     }
   }
@@ -206,16 +205,17 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
+
   const Promise = require('runtime-shared/dist/promise.function')();
   const URL = require('runtime-shared/dist/url.function')();
-  const URLSearchParams = require('runtime-shared/dist/url.function')();
+  const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
 
   let instance = instances[instanceId];
 
   if (instance == undefined) {
     const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
     const document = new Document(instanceId, options.bundleUrl, null, Listener);
-    const location = new URL(document.URL || '');
+    const location = new URL(document.URL);
 
     let modules = {};
     // Generate native modules map at instance init
@@ -282,7 +282,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       postMessage: (message, targetOrigin) => {
         var event = {
           origin: location.origin,
-          data: JSON.stringify(message),
+          data: JSON.parse(JSON.stringify(message)),
           type: 'message',
           source: window, // FIXME: maybe not export window
         };

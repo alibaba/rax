@@ -7,14 +7,16 @@ global.callNative = function() {
 
 };
 
+require('./window');
+require('./navigator');
+require('./screen');
+require('./document');
+require('./location');
 require('./promise');
 require('./URL');
 require('./URLSearchParams');
 require('./alert');
-require('./document');
-require('./location');
 require('./fetch');
-require('./universal-rx');
-require('./universal-env');
-require('./weex-module');
 require('./downgrade');
+require('./weex-module');
+require('./builtin-module');

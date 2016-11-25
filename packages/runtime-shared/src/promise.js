@@ -219,4 +219,4 @@ Promise._setUnhandledRejectionFn = function _setUnhandledRejectionFn(fn) {
   onUnhandledRejection = fn;
 };
 
-export default Promise;
+module.exports = Promise;

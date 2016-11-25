@@ -1,6 +1,6 @@
 {
   "name": "runtime-shared",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Stylesheet loader.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

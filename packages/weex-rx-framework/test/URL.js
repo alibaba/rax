@@ -4,10 +4,10 @@ import {Document, Element} from './__mocks__/document';
 import * as modules from './__mocks__/modules';
 import components from './__mocks__/components';
 
-let id = '8';
+let id = Date.now();
 let code = `// {"framework": "Rx"}
   define("foo", function(require, exports, module){
-    
+
     console.log('URL', new URL('/test', document.URL).toString());
     console.log('URL', new URL('//example.com/').href);
 
@@ -15,6 +15,7 @@ let code = `// {"framework": "Rx"}
   });
   var foo = require("foo");
 `;
+
 let options = {
   bundleUrl: 'http://example.com',
   debug: true
