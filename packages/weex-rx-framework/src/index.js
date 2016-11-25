@@ -1,4 +1,5 @@
 import {BuiltinModulesFactory} from './builtin';
+import EventEmitter from './emitter';
 
 let NativeComponents = {};
 let NativeModules = {};
@@ -10,7 +11,21 @@ let Listener;
 let sendTasks;
 
 const instances = {};
-const noop = function() {};
+
+function dispatchEventToInstance(event, targetOrigin){
+  var instance;
+  for (var i in instances) {
+    if (instances.hasOwnProperty(i)) {
+      instance = instances[i];
+      if (targetOrigin === '*' || targetOrigin === instance.origin) {
+        var window = instance.window;
+        event.target = window;
+        // FIXME: Need async?
+        window.dispatchEvent(event);
+      }
+    }
+  }
+}
 
 export function getInstance(instanceId) {
   const instance = instances[instanceId];
@@ -198,18 +213,14 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
   let instance = instances[instanceId];
 
   if (instance == undefined) {
+
+    const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
     const document = new Document(instanceId, options.bundleUrl, null, Listener);
     const location = new URL(document.URL || '');
-    let modules = {};
-    genNativeModules(modules, instanceId);
 
-    instance = instances[instanceId] = {
-      document,
-      instanceId,
-      modules,
-      callbacks: [],
-      uid: 0
-    };
+    let modules = {};
+    // Generate native modules map at instance init
+    genNativeModules(modules, instanceId);
 
     function def(id, deps, factory) {
       if (deps instanceof Function) {
@@ -257,7 +268,48 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       return mod.module.exports;
     }
 
-    const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
+    const emitter = new EventEmitter();
+    const weexNavigator = req('@weex-module/navigator');
+    const window = {
+      devicePixelRatio: ENV.scale,
+      open: (url) => {
+        weexNavigator.push({
+          url,
+          animated: 'true',
+        }, function(e) {
+          // noop
+        });
+      },
+      postMessage: (message, targetOrigin) => {
+        var event = {
+          origin: location.origin,
+          data: JSON.stringify(message),
+          type: 'message',
+          source: window, // FIXME: maybe not export window
+        };
+        dispatchEventToInstance(event, targetOrigin);
+      },
+      addEventListener: (type, listener) => {
+        emitter.on(type, listener);
+      },
+      removeEventListener: (type, listener) => {
+        emitter.off(type, listener);
+      },
+      dispatchEvent: (e) => {
+        emitter.emit(e.type, e);
+      }
+    };
+
+    instance = instances[instanceId] = {
+      window,
+      document,
+      instanceId,
+      modules,
+      origin: location.origin,
+      callbacks: [],
+      uid: 0
+    };
+
     // https://www.w3.org/TR/2009/WD-html5-20090423/browsers.html#dom-navigator
     const navigator = {
       product: 'Weex',
@@ -270,7 +322,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
     };
 
     // https://drafts.csswg.org/cssom-view/#the-screen-interface
-    const screenAPIs = {
+    const screen = {
       width: ENV.deviceWidth,
       height: ENV.deviceHeight,
       availWidth: ENV.deviceWidth,
@@ -279,63 +331,46 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       pixelDepth: 24,
     };
 
-    const weexNavigator = req('@weex-module/navigator');
-    const windowAPIs = {
-      devicePixelRatio: ENV.scale,
-      open: (url) => {
-        weexNavigator.push({
-          url,
-          animated: 'true',
-        }, function(e) {
-          // noop
-        });
-      },
-      addEventListener: (type, listener) => {
-        // TODO
-      },
-      removeEventListener: (type, listener) => {
-        // TODO
-      }
+    const timer = req('@weex-module/timer');
+
+    const setTimeout = (...args) => {
+      const handler = function() {
+        args[0](...args.slice(2));
+      };
+      timer.setTimeout(handler, args[1]);
+      return instance.uid.toString();
     };
 
-    const timer = req('@weex-module/timer');
-    const timerAPIs = {
-      setTimeout: (...args) => {
-        const handler = function() {
-          args[0](...args.slice(2));
-        };
-        timer.setTimeout(handler, args[1]);
-        return instance.uid.toString();
-      },
-      setInterval: (...args) => {
-        const handler = function() {
-          args[0](...args.slice(2));
-        };
-        timer.setInterval(handler, args[1]);
-        return instance.uid.toString();
-      },
-      clearTimeout: (n) => {
-        timer.clearTimeout(n);
-      },
-      clearInterval: (n) => {
-        timer.clearInterval(n);
-      },
-      requestAnimationFrame: (callback) => {
-        timer.setTimeout(callback, 16);
-        return instance.uid.toString();
-      },
-      cancelAnimationFrame: (n) => {
-        timer.clearTimeout(n);
-      }
+    const setInterval = (...args) => {
+      const handler = function() {
+        args[0](...args.slice(2));
+      };
+      timer.setInterval(handler, args[1]);
+      return instance.uid.toString();
+    };
+
+    const clearTimeout = (n) => {
+      timer.clearTimeout(n);
+    };
+
+    const clearInterval = (n) => {
+      timer.clearInterval(n);
+    };
+
+    const requestAnimationFrame = (callback) => {
+      timer.setTimeout(callback, 16);
+      return instance.uid.toString();
+    };
+
+    const cancelAnimationFrame = (n) => {
+      timer.clearTimeout(n);
     };
 
     const modal = req('@weex-module/modal');
-    const dialogAPIs = {
-      alert: (message) => {
-        modal.alert({
-          message
-        }, function() {});
-      }
+    const alert = (message) => {
+      modal.alert({
+        message
+      }, function() {});
     };
 
     const instanceWrap = req('@weex-module/instanceWrap');
@@ -349,8 +384,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       // ES
       Promise,
       // W3C
-      windowAPIs,
-      screenAPIs,
+      window,
+      screen,
       document,
       navigator,
       location,
@@ -360,13 +395,13 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       Request,
       URL,
       URLSearchParams,
-      timerAPIs.setTimeout,
-      timerAPIs.clearTimeout,
-      timerAPIs.setInterval,
-      timerAPIs.clearInterval,
-      timerAPIs.requestAnimationFrame,
-      timerAPIs.cancelAnimationFrame,
-      dialogAPIs.alert,
+      setTimeout,
+      clearTimeout,
+      setInterval,
+      clearInterval,
+      requestAnimationFrame,
+      cancelAnimationFrame,
+      alert,
       // Weex
       def,
       req,
@@ -380,8 +415,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       // ES
       Promise,
       // W3C
-      windowAPIs,
-      screenAPIs,
+      window,
+      screen,
       document,
       navigator,
       location,
@@ -391,13 +426,13 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       Request,
       URL,
       URLSearchParams,
-      timerAPIs.setTimeout,
-      timerAPIs.clearTimeout,
-      timerAPIs.setInterval,
-      timerAPIs.clearInterval,
-      timerAPIs.requestAnimationFrame,
-      timerAPIs.cancelAnimationFrame,
-      dialogAPIs.alert,
+      setTimeout,
+      clearTimeout,
+      setInterval,
+      clearInterval,
+      requestAnimationFrame,
+      cancelAnimationFrame,
+      alert,
       // Weex
       def,
       req,
@@ -443,12 +478,12 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
 
       init.call(
         // Context is window
-        windowAPIs,
+        window,
         // ES
         Promise,
         // W3C
-        windowAPIs,
-        screenAPIs,
+        window,
+        screen,
         document,
         navigator,
         location,
@@ -458,13 +493,13 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         Request,
         URL,
         URLSearchParams,
-        timerAPIs.setTimeout,
-        timerAPIs.clearTimeout,
-        timerAPIs.setInterval,
-        timerAPIs.clearInterval,
-        timerAPIs.requestAnimationFrame,
-        timerAPIs.cancelAnimationFrame,
-        dialogAPIs.alert,
+        setTimeout,
+        clearTimeout,
+        setInterval,
+        clearInterval,
+        requestAnimationFrame,
+        cancelAnimationFrame,
+        alert,
         // Weex
         def,
         req,
