@@ -12,7 +12,7 @@ let sendTasks;
 
 const instances = {};
 
-function dispatchEventToInstance(event, targetOrigin){
+function dispatchEventToInstance(event, targetOrigin) {
   var instance;
   for (var i in instances) {
     if (instances.hasOwnProperty(i)) {
@@ -213,7 +213,6 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
   let instance = instances[instanceId];
 
   if (instance == undefined) {
-
     const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
     const document = new Document(instanceId, options.bundleUrl, null, Listener);
     const location = new URL(document.URL || '');
