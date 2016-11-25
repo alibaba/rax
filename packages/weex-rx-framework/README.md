@@ -1,23 +1,46 @@
 # weex-rx-framework
 
-## What Rx Framework global API provide?
+## Global API Rx Framework provide
 
-* define
-* require
-* window
-* document
-* navigator
-* screen
-* location
-* fetch
-* alert
-* URL
-* URLSearchParams
-* __weex_downgrade__
-* __weex_data__
-* __weex_options__
-* __weex_define__
-* __weex_require__
+* `window`
+  * devicePixelRatio
+  * open
+  * postMessage
+  * addEventListener
+  * removeEventListener
+* `navigator`
+  * platform
+  * product
+  * appName
+  * appVersion
+* `screen`
+  * width
+  * height
+  * availWidth
+  * availHeight
+  * colorDepth
+  * pixelDepth
+* `location`
+  * hash
+  * search
+  * pathname
+  * port
+  * hostname
+  * host
+  * protocol
+  * origin
+  * href
+* `fetch`
+* `alert`
+* `URL`
+* `URLSearchParams`
+* `define`
+* `require`
+* `__weex_downgrade__`
+* `__weex_data__`
+* `__weex_options__`
+* `__weex_define__`
+* `__weex_require__`
 
 ## How to custom builtin modules?
 
