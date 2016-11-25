@@ -6,8 +6,9 @@ import components from './__mocks__/components';
 
 let id = Date.now();
 let code = `// {"framework": "Rx"}
+  this.globalIsWindow = true;
   define("foo", function(require, exports, module){
-
+    console.log('Global is window', window.globalIsWindow);
     console.log('window', window);
     window.addEventListener('message', function(e){
       console.log('message event', e);

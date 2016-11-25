@@ -1,5 +1,24 @@
 # weex-rx-framework
 
+## What Rx Framework global API provide?
+
+* define
+* require
+* window
+* document
+* navigator
+* screen
+* location
+* fetch
+* alert
+* URL
+* URLSearchParams
+* __weex_downgrade__
+* __weex_data__
+* __weex_options__
+* __weex_define__
+* __weex_require__
+
 ## How to custom builtin modules?
 
 ### 1. Build module use factory mode
