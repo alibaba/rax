@@ -11,9 +11,6 @@
   "bugs": {
     "url": "https://github.com/alibaba/rx/issues"
   },
-  "scripts": {
-    "test": "babel-node ./test/index.js"
-  },
   "homepage": "https://github.com/alibaba/rx#readme",
   "dependencies": {
     "runtime-shared": "^0.0.*",
@@ -22,7 +19,7 @@
     "universal-transition": "^0.0.*"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
+    "weex-js-runtime": "^0.17.0-alpha4",
     "weex-vdom-tester": "^0.1.3"
   }
 }

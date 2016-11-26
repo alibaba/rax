@@ -4,10 +4,10 @@
 
 * `window`
   * devicePixelRatio
-  * open
-  * postMessage
-  * addEventListener
-  * removeEventListener
+  * open()
+  * postMessage()
+  * addEventListener()
+  * removeEventListener()
 * `navigator`
   * platform
   * product
@@ -30,10 +30,24 @@
   * protocol
   * origin
   * href
-* `fetch`
+* [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
+* [`URL`](https://developer.mozilla.org/en-US/docs/Web/API/URL)
+  * href
+  * origin
+  * searchParams
+  * toString()
+* [`URLSearchParams`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
+  * append()
+  * delete()
+  * entries()
+  * get()
+  * getAll()
+  * has()
+  * keys()
+  * set()
+  * values()
+  * toString()
 * `alert`
-* `URL`
-* `URLSearchParams`
 * `define`
 * `require`
 * `__weex_downgrade__`

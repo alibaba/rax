@@ -22,7 +22,7 @@
     "jest": "^16.0.2",
     "lerna": "^2.0.0-beta.30",
     "minimatch": "^3.0.3",
-    "rx-webpack-plugin": "^0.0.3",
+    "rx-webpack-plugin": "^0.4.0",
     "semver-regex": "^1.0.0",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.2"
@@ -39,15 +39,14 @@
     "compile": "npm run clean:compile && node ./scripts/compile.js",
     "dist": "npm run clean:dist && node ./scripts/dist.js",
     "build": "npm run compile && npm run dist",
-    "test": "npm run compile && jest",
-    "watch:test": "npm run compile && jest --watch",
-    "watch:compile": "npm run compile -- --watch",
+    "test": "jest",
+    "watch:test": "jest --watch",
     "start": "node ./scripts/start.js",
     "lint": "eslint --fix --ext .js --ext .jsx ./",
     "coverage": "npm run test -- --coverage",
     "coverage:upload": "npm run clean:coverage && npm run coverage && node ./scripts/mapCoverage.js && codecov",
     "build:examples": "node ./scripts/build-examples.js",
-    "prepublish": "npm run bootstrap && npm run lint && npm run test && npm run build",
+    "prepublish": "npm run bootstrap && npm run build && npm run lint && npm run test",
     "publish": "lerna publish"
   },
   "jest": {
