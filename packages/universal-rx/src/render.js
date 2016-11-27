@@ -30,7 +30,7 @@ function render(element, container, callback) {
   initRem(driver);
 
   // Real native root node is body
-  if (container == null || container === document) {
+  if (container == null) {
     container = driver.createBody();
   }
 
