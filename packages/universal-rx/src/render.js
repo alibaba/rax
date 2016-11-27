@@ -3,27 +3,12 @@ import instantiateComponent from './vdom/instantiateComponent';
 import shouldUpdateComponent from './vdom/shouldUpdateComponent';
 import injectComponent from './vdom/injectComponent';
 import unmountComponentAtNode from './unmountComponentAtNode';
-import Host from './vdom/host';
 import Root from './vdom/root';
 import instance from './vdom/instance';
-import WeexDriver from './drivers/weex';
-import BrowserDriver from './drivers/browser';
 import {setRem} from './style/unit';
-import {isWeb, isWeex} from 'universal-env';
+import {injectDriver, getDriver} from './driver';
 
 const FULL_WIDTH_REM = 750;
-
-function getDriver() {
-  let driver;
-  if (isWeex) {
-    driver = WeexDriver;
-  } else if (isWeb) {
-    driver = BrowserDriver;
-  } else {
-    throw Error('Encountered unknown container');
-  }
-  return driver;
-}
 
 function initRem(driver) {
   if (!driver || !driver.getWindowWidth) return;
@@ -33,22 +18,20 @@ function initRem(driver) {
 function render(element, container, callback) {
   // Inject component
   injectComponent();
-
   // Inject driver
-  if (!Host.driver) {
-    let driver = getDriver();
-    Host.driver = driver;
-  }
+  injectDriver();
+
+  let driver = getDriver();
 
   // Before render callback
-  Host.driver.beforeRender && Host.driver.beforeRender(element, container);
+  driver.beforeRender && driver.beforeRender(element, container);
 
   // Init rem unit
-  initRem(Host.driver);
+  initRem(driver);
 
   // Real native root node is body
-  if (container == null || container === Host.document) {
-    container = Host.driver.createBody();
+  if (container == null || container === document) {
+    container = driver.createBody();
   }
 
   let prevRootComponent = instance.get(container);
@@ -89,7 +72,7 @@ function render(element, container, callback) {
   }
 
   // After render callback
-  Host.driver.afterRender && Host.driver.afterRender(component);
+  driver.afterRender && driver.afterRender(component);
 
   return component;
 }
