@@ -61,7 +61,7 @@ describe('CompositeComponent', function() {
 
     expect(function() {
       render(<BadComponent />);
-    }).toThrow();
+    }).not.toThrow();
 
     expect(Host.component).toBe(null);
   });

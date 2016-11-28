@@ -23,7 +23,7 @@ export const injectDriver = () => {
     } else {
       throw Error('No builtin driver matched');
     }
-    
+
     setDriver(driver);
   }
 };

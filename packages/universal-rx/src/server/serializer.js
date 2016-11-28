@@ -35,21 +35,20 @@ function quoteAttribute(prop, value) {
   return `${prop}="${escapeText(value)}"`;
 }
 
-function createOpenTagMarkup(node) {
-  // Creates markup for the open tag and all attributes.
-  const tagName = node.tagName.toLowerCase();
+function createOpenTagMarkup(tagName, style, attributes) {
   let tagOpen = `<${tagName}`;
 
-  if (node.style) {
-    let styleAttr = styleToCSS(node.style, true);
+  if (style) {
+    let styleAttr = styleToCSS(style, true);
     if (styleAttr) {
       tagOpen += ' ' + quoteAttribute('style', styleAttr);
     }
   }
 
-  let attributes = node.attributes;
-  for (let attrKey in attributes) {
-    tagOpen += ' ' + quoteAttribute(attrKey, attributes[attrKey]);
+  if (attributes) {
+    for (let attrKey in attributes) {
+      tagOpen += ' ' + quoteAttribute(attrKey, attributes[attrKey]);
+    }
   }
 
   return tagOpen;
@@ -61,12 +60,66 @@ class Serializer {
     this.startNode = node;
   }
 
+  toJSON() {
+    return this.toJSONChildren(this.startNode, true);
+  }
+
+  toJSONChildren(parentNode, isTopLevel) {
+    let childNodes = parentNode.childNodes;
+
+    if (childNodes) {
+      let children = [];
+
+      for (let i = 0, len = childNodes.length; i < len; i++) {
+        let node = childNodes[i];
+        if (node.nodeType === ELEMENT_NODE) {
+          let tagName = node.tagName.toLowerCase();
+          let props = {};
+
+          if (node.style) {
+            let css = styleToCSS(node.style, true);
+            if (css) {
+              props.style = css;
+            }
+          }
+
+          if (node.attributes) {
+            props = Object.assign(props, node.attributes);
+          }
+
+          let json = {
+            type: tagName,
+            props,
+            children: this.toJSONChildren(node),
+          };
+
+          children.push(json);
+        } else if (node.nodeType === TEXT_NODE) {
+          var text = node.data;
+          if (typeof text === 'string') {
+            text = escapeText(text);
+          }
+          children.push(text);
+        }
+      }
+
+      // Do not wrap array when only child in top-level
+      if (isTopLevel && children.length === 1) {
+        return children[0];
+      }
+
+      return children.length === 0 ? null : children;
+    }
+
+    return null;
+  }
+
   serialize() {
-    this.serializechildren(this.startNode);
+    this.serializeChildren(this.startNode);
     return this.html;
   }
 
-  serializechildren(parentNode) {
+  serializeChildren(parentNode) {
     let childNodes = parentNode.childNodes;
 
     if (childNodes) {
@@ -75,7 +128,7 @@ class Serializer {
         if (node.nodeType === ELEMENT_NODE) {
           let tagName = node.tagName.toLowerCase();
 
-          this.html += createOpenTagMarkup(node);
+          this.html += createOpenTagMarkup(tagName, node.style, node.attributes);
 
           if (OMITTED_CLOSE_TAGS[tagName]) {
             this.html += '/>';
@@ -84,7 +137,7 @@ class Serializer {
             if (node.__html) {
               this.html += node.__html;
             } else {
-              this.serializechildren(node);
+              this.serializeChildren(node);
             }
             this.html += `</${tagName}>`;
           }

@@ -1,40 +1,35 @@
 import {setDriver} from '../driver';
-import render from '../render';
+import injectComponent from '../vdom/injectComponent';
+import instance from '../vdom/instance';
 import ServerDriver from '../drivers/server';
-
-
-function getRenderedHostOrTextFromComponent(component) {
-  var rendered;
-  while ((rendered = component._renderedComponent)) {
-    component = rendered;
-  }
-  return component;
-}
+import Serializer from '../server/serializer';
+import unmountComponentAtNode from '../unmountComponentAtNode';
 
 export default {
   create(element) {
+    injectComponent();
     setDriver(ServerDriver);
-    let component = render(element);
 
-    component.toJSON = () => {
-      var {children, ...props} = component._internal._currentElement.props;
-      var childrenJSON = [];
-      for (var key in component._internal._renderedChildren) {
-        var inst = component._internal._renderedChildren[key];
-        inst = getRenderedHostOrTextFromComponent(inst);
-        var json = inst.toJSON();
-        if (json !== undefined) {
-          childrenJSON.push(json);
-        }
-      }
-      var object = {
-        type: component._internal._currentElement.type,
-        props: props,
-        children: childrenJSON.length ? childrenJSON : null,
-      };
-      return object;
+    let container = ServerDriver.createBody();
+    let rootComponent = instance.render(element, container);
+    let renderedComponent = rootComponent.getRenderedComponent();
+
+    renderedComponent.toJSON = () => {
+      return new Serializer(container).toJSON();
     };
 
-    return component;
+    renderedComponent.getInstance = () => {
+      return renderedComponent._instance;
+    };
+
+    renderedComponent.update = (element) => {
+      instance.render(element, container);
+    };
+
+    renderedComponent.unmount = () => {
+      unmountComponentAtNode(container);
+    };
+
+    return renderedComponent;
   }
-}
+};

@@ -6,6 +6,20 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 
+function performInSandbox(fn, handleError) {
+  try {
+    return fn();
+  } catch (e) {
+    if (handleError) {
+      handleError(e);
+    } else {
+      setTimeout(() => {
+        throw e;
+      }, 0);
+    }
+  }
+}
+
 /**
  * Composite Component
  */
@@ -71,21 +85,30 @@ class CompositeComponent {
       component.state = initialState = null;
     }
 
-    // TODO: Any updates that happen during in componentWillMount, render or componentDidMount will be batched updated.
-
-    if (component.componentWillMount) {
-      component.componentWillMount();
-    }
+    performInSandbox(() => {
+      if (component.componentWillMount) {
+        component.componentWillMount();
+      }
+    });
 
     if (renderedElement == null) {
       Host.component = this;
       // Process pending state when call setState in componentWillMount
       component.state = this._processPendingState(publicProps, publicContext);
-      try {
-        renderedElement = component.render();
-      } finally {
-        Host.component = null;
+
+      // FIXME: handleError should named as lifecycles
+      let handleError;
+      if (typeof component.handleError === 'function') {
+        handleError = (e) => {
+          component.handleError(e);
+        };
       }
+
+      performInSandbox(() => {
+        renderedElement = component.render();
+      }, handleError);
+
+      Host.component = null;
     }
 
     this._renderedComponent = instantiateComponent(renderedElement);
@@ -99,15 +122,11 @@ class CompositeComponent {
       Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
     }
 
-    if (component.componentDidMount) {
-      try {
+    performInSandbox(() => {
+      if (component.componentDidMount) {
         component.componentDidMount();
-      } catch (e) {
-        setTimeout(() => {
-          throw e;
-        }, 0);
       }
-    }
+    });
 
     return component;
   }
@@ -115,9 +134,11 @@ class CompositeComponent {
   unmountComponent(shouldNotRemoveChild) {
     let component = this._instance;
 
-    if (component.componentWillUnmount) {
-      component.componentWillUnmount();
-    }
+    performInSandbox(() => {
+      if (component.componentWillUnmount) {
+        component.componentWillUnmount();
+      }
+    });
 
     component._internal = null;
 
@@ -232,7 +253,9 @@ class CompositeComponent {
     if (willReceive && component.componentWillReceiveProps) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
       this._pendingState = true;
-      component.componentWillReceiveProps(nextProps, nextContext);
+      performInSandbox(() => {
+        component.componentWillReceiveProps(nextProps, nextContext);
+      });
       this._pendingState = false;
     }
 
@@ -249,8 +272,10 @@ class CompositeComponent {
     // ShouldComponentUpdate is not called when forceUpdate is used
     if (!this._pendingForceUpdate) {
       if (component.shouldComponentUpdate) {
-        shouldUpdate = component.shouldComponentUpdate(nextProps, nextState,
-          nextContext);
+        shouldUpdate = performInSandbox(() => {
+          return component.shouldComponentUpdate(nextProps, nextState,
+            nextContext);
+        });
       } else if (component.isPureComponentClass) {
         shouldUpdate = !shallowEqual(prevProps, nextProps) || !shallowEqual(
           prevState, nextState);
@@ -264,9 +289,11 @@ class CompositeComponent {
 
       // Cannot use this.setState() in componentWillUpdate.
       // If need to update state in response to a prop change, use componentWillReceiveProps instead.
-      if (component.componentWillUpdate) {
-        component.componentWillUpdate(nextProps, nextState, nextContext);
-      }
+      performInSandbox(() => {
+        if (component.componentWillUpdate) {
+          component.componentWillUpdate(nextProps, nextState, nextContext);
+        }
+      });
 
       // Replace with next
       this._currentElement = nextElement;
@@ -277,15 +304,11 @@ class CompositeComponent {
 
       this._updateRenderedComponent(nextUnmaskedContext);
 
-      if (component.componentDidUpdate) {
-        try {
+      performInSandbox(() => {
+        if (component.componentDidUpdate) {
           component.componentDidUpdate(prevProps, prevState, prevContext);
-        } catch (e) {
-          setTimeout(() => {
-            throw e;
-          }, 0);
         }
-      }
+      });
 
       this._updateCount++;
     } else {
@@ -310,11 +333,12 @@ class CompositeComponent {
     let nextRenderedElement;
 
     Host.component = this;
-    try {
+
+    performInSandbox(() => {
       nextRenderedElement = component.render();
-    } finally {
-      Host.component = null;
-    }
+    });
+
+    Host.component = null;
 
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
       prevRenderedComponent.updateComponent(

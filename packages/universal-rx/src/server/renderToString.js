@@ -14,7 +14,7 @@ export default function renderToString(element) {
   // Reset host state
   Host.roots = {};
   Host.mountID = 1;
-  
+
   let body = ServerDriver.createBody();
   render(element, body);
   return new Serializer(body).serialize();

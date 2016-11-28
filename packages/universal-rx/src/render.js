@@ -1,9 +1,4 @@
-import {createElement} from './element';
-import instantiateComponent from './vdom/instantiateComponent';
-import shouldUpdateComponent from './vdom/shouldUpdateComponent';
 import injectComponent from './vdom/injectComponent';
-import unmountComponentAtNode from './unmountComponentAtNode';
-import Root from './vdom/root';
 import instance from './vdom/instance';
 import {setRem} from './style/unit';
 import {injectDriver, getDriver} from './driver';
@@ -34,43 +29,12 @@ function render(element, container, callback) {
     container = driver.createBody();
   }
 
-  let prevRootComponent = instance.get(container);
-  let hasPrevRootComponent = prevRootComponent && prevRootComponent.isRootComponent;
-
-  if (hasPrevRootComponent) {
-    let prevRenderedComponent = prevRootComponent.getRenderedComponent();
-    let prevElement = prevRenderedComponent._currentElement;
-    if (shouldUpdateComponent(prevElement, element)) {
-      let prevUnmaskedContext = prevRenderedComponent._context;
-      prevRenderedComponent.updateComponent(
-        prevElement,
-        element,
-        prevUnmaskedContext,
-        prevUnmaskedContext
-      );
-
-      if (callback) {
-        callback.call(component);
-      }
-
-      return prevRootComponent.getPublicInstance();
-    } else {
-      unmountComponentAtNode(container);
-    }
-  }
-
-  let wrappedElement = createElement(Root, null, element);
-  let renderedComponent = instantiateComponent(wrappedElement);
-  let defaultContext = {};
-  let rootComponent = renderedComponent.mountComponent(container, defaultContext);
+  let rootComponent = instance.render(element, container);
   let component = rootComponent.getPublicInstance();
-
-  instance.set(container, rootComponent);
 
   if (callback) {
     callback.call(component);
   }
-
   // After render callback
   driver.afterRender && driver.afterRender(component);
 

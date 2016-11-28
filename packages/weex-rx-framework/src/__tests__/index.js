@@ -5,20 +5,19 @@ import * as framework from '../index';
 const {Document, Element, Comment} = config;
 global.callNative = () => {};
 global.WXEnvironment = {
-  "scale": 2,
-  "appVersion": "1.8.3",
-  "deviceModel": "x86_64",
-  "appName": "WeexDemo",
-  "platform": "iOS",
-  "osVersion": "9.3",
-  "weexVersion": "0.7.0",
-  "deviceHeight": 1334,
-  "logLevel": "log",
-  "deviceWidth": 750
+  'scale': 2,
+  'appVersion': '1.8.3',
+  'deviceModel': 'x86_64',
+  'appName': 'WeexDemo',
+  'platform': 'iOS',
+  'osVersion': '9.3',
+  'weexVersion': '0.7.0',
+  'deviceHeight': 1334,
+  'logLevel': 'log',
+  'deviceWidth': 750
 };
 
 describe('framework', () => {
-
   let instance;
   let config = {
     bundleUrl: 'http://example.com',
@@ -37,8 +36,8 @@ describe('framework', () => {
     Document.handler = sendTasks;
     framework.init({ Document, Element, Comment, sendTasks });
     const runtime = new Runtime(framework);
-    sendTasksHandler = function () {
-      runtime.target.callNative(...arguments)
+    sendTasksHandler = function() {
+      runtime.target.callNative(...arguments);
     };
     // Create a Weex instance in a certain runtime.
     instance = new Instance(runtime);
@@ -87,7 +86,6 @@ describe('framework', () => {
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('document', () => {
@@ -106,7 +104,6 @@ describe('framework', () => {
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('navigator', () => {
@@ -125,7 +122,6 @@ describe('framework', () => {
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('location', () => {
@@ -144,7 +140,6 @@ describe('framework', () => {
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('screen', () => {
@@ -163,7 +158,6 @@ describe('framework', () => {
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('postMessage', () => {
@@ -205,7 +199,6 @@ describe('framework', () => {
     `;
 
     const mockFn = jest.fn((args) => {
-
       expect(args).toEqual({
         message: 'http://www.example.com/'
       });
@@ -214,7 +207,6 @@ describe('framework', () => {
     instance.oncall('modal', 'alert', mockFn);
     instance.$create(code, config, data);
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('URLSearchParams', () => {
@@ -236,7 +228,6 @@ describe('framework', () => {
     `;
 
     const mockFn = jest.fn((args) => {
-
       expect(args).toEqual({
         message: 'q=URLUtils.searchParams'
       });
@@ -245,7 +236,6 @@ describe('framework', () => {
     instance.oncall('modal', 'alert', mockFn);
     instance.$create(code, config, data);
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('fetch data', () => {
@@ -272,7 +262,6 @@ describe('framework', () => {
     });
 
     instance.$create(code, config, data);
-
   });
 
   it('downgrade', () => {
@@ -296,13 +285,11 @@ describe('framework', () => {
     const mockFn = jest.fn((args) => {
       expect(args).toEqual(1);
     });
-    
+
     instance.oncall('instanceWrap', 'error', mockFn);
 
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
-
   });
-
 });
