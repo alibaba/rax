@@ -13,8 +13,7 @@ describe('renderer', () => {
     var component = renderer.create(<Link />);
     expect(component.toJSON()).toEqual({
       tagName: 'A',
-      attributes: { role: 'link' },
-      children: null,
+      attributes: { role: 'link' }
     });
   });
 
@@ -94,8 +93,7 @@ describe('renderer', () => {
       children: [
         7,
         {
-          tagName: 'MOO',
-          children: null
+          tagName: 'MOO'
         },
       ],
     });

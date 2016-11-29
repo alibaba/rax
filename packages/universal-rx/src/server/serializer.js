@@ -75,8 +75,12 @@ class Serializer {
         if (node.nodeType === ELEMENT_NODE) {
           let json = {
             tagName: node.tagName,
-            children: this.toJSONChildren(node),
           };
+
+          let childrenJSON = this.toJSONChildren(node);
+          if (childrenJSON) {
+            json.children = childrenJSON;
+          }
 
           if (Object.keys(node.style).length) {
             json.style = style;
