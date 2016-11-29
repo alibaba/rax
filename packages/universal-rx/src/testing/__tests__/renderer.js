@@ -12,57 +12,36 @@ describe('renderer', () => {
 
     var component = renderer.create(<Link />);
     expect(component.toJSON()).toEqual({
-      type: 'a',
-      props: { role: 'link' },
+      tagName: 'A',
+      attributes: { role: 'link' },
       children: null,
     });
   });
 
   it('renders a component', () => {
-    const STATUS = {
-      NORMAL: 'normal',
-      HOVERED: 'hovered',
-    };
 
     class Link extends Component {
-      constructor() {
-        super();
-
-        this._onMouseEnter = this._onMouseEnter.bind(this);
-        this._onMouseLeave = this._onMouseLeave.bind(this);
-
-        this.state = {
-          class: STATUS.NORMAL,
-        };
-      }
-
-      _onMouseEnter() {
-        this.setState({class: STATUS.HOVERED});
-      }
-
-      _onMouseLeave() {
-        this.setState({class: STATUS.NORMAL});
-      }
-
       render() {
         return (
           <a
-            className={this.state.class}
             href={this.props.page || '#'}
-            onMouseEnter={this._onMouseEnter}
-            onMouseLeave={this._onMouseLeave}>
+            onMouseEnter={this.props.onMouseEnter}
+            onMouseLeave={this.props.onMouseLeave}>
             {this.props.children}
           </a>
         );
       }
     }
 
-    var component = renderer.create(<Link page="http://example.com">Example</Link>);
+    var noop = () => {};
+    var component = renderer.create(<Link onMouseEnter={noop} page="http://example.com">Example</Link>);
     expect(component.toJSON()).toEqual({
-      type: 'a',
-      props: {
-        class: 'normal',
+      tagName: 'A',
+      attributes: {
         href: 'http://example.com'
+      },
+      eventListeners: {
+        mouseenter: noop
       },
       children: ['Example'],
     });
@@ -110,11 +89,14 @@ describe('renderer', () => {
 
     var component = renderer.create(<MyComponent />);
     expect(component.toJSON()).toEqual({
-      type: 'div',
-      props: { class: 'purple' },
+      tagName: 'DIV',
+      attributes: { class: 'purple' },
       children: [
         7,
-        { type: 'moo', props: {}, children: null },
+        {
+          tagName: 'MOO',
+          children: null
+        },
       ],
     });
     expect(renders).toBe(6);
@@ -136,16 +118,14 @@ describe('renderer', () => {
     var component = renderer.create(<Mouse />);
 
     expect(component.toJSON()).toEqual({
-      type: 'div',
-      props: {},
+      tagName: 'DIV',
       children: ['mouse'],
     });
 
     var mouse = component.getInstance();
     mouse.handleMoose();
     expect(component.toJSON()).toEqual({
-      type: 'div',
-      props: {},
+      tagName: 'DIV',
       children: ['moose'],
     });
   });
@@ -153,15 +133,13 @@ describe('renderer', () => {
   it('updates types', () => {
     var component = renderer.create(<div>mouse</div>);
     expect(component.toJSON()).toEqual({
-      type: 'div',
-      props: {},
+      tagName: 'DIV',
       children: ['mouse'],
     });
 
     component.update(<span>mice</span>);
     expect(component.toJSON()).toEqual({
-      type: 'span',
-      props: {},
+      tagName: 'SPAN',
       children: ['mice'],
     });
   });
@@ -207,5 +185,5 @@ describe('renderer', () => {
     );
     expect(() => inst.unmount()).not.toThrow();
   });
-  
+
 });

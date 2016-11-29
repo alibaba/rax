@@ -99,6 +99,9 @@ render(<Hello name="world" />);
 
 More examples take a look at the [`examples`](/examples/) folder.
 
+## Snapshot Testing
+
+
 ## Universal Libraries
 
 * :tophat: [universal-rx](/packages/universal-rx): A universal React-compatible render engine.

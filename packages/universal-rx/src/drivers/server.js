@@ -28,6 +28,7 @@ const Driver = {
       tagName: 'BODY',
       attributes: {},
       style: {},
+      eventListeners: {},
       childNodes: [],
       parentNode: null
     };
@@ -73,6 +74,7 @@ const Driver = {
       tagName: component.type.toUpperCase(),
       attributes: {},
       style: props.style || {},
+      eventListeners: {},
       childNodes: [],
       parentNode: null,
       nodeId: this.nodeCounter++
@@ -178,15 +180,15 @@ const Driver = {
   },
 
   addEventListener(node, eventName, eventHandler) {
-    // Noop
+    node.eventListeners[eventName] = eventHandler;
   },
 
   removeEventListener(node, eventName, eventHandler) {
-    // Noop
+    delete node.eventListeners[eventName];
   },
 
   removeAllEventListeners(node) {
-    // Noop
+    node.eventListeners = {};
   },
 
   removeAttribute(node, propKey, propValue) {

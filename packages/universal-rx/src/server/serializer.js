@@ -73,25 +73,22 @@ class Serializer {
       for (let i = 0, len = childNodes.length; i < len; i++) {
         let node = childNodes[i];
         if (node.nodeType === ELEMENT_NODE) {
-          let tagName = node.tagName.toLowerCase();
-          let props = {};
-
-          if (node.style) {
-            let css = styleToCSS(node.style, true);
-            if (css) {
-              props.style = css;
-            }
-          }
-
-          if (node.attributes) {
-            props = Object.assign(props, node.attributes);
-          }
-
           let json = {
-            type: tagName,
-            props,
+            tagName: node.tagName,
             children: this.toJSONChildren(node),
           };
+
+          if (Object.keys(node.style).length) {
+            json.style = style;
+          }
+
+          if (Object.keys(node.attributes).length) {
+            json.attributes = node.attributes;
+          }
+
+          if (Object.keys(node.eventListeners).length) {
+            json.eventListeners = node.eventListeners;
+          }
 
           children.push(json);
         } else if (node.nodeType === TEXT_NODE) {

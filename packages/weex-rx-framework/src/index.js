@@ -629,7 +629,7 @@ export function receiveTasks(instanceId, tasks) {
   }
 }
 
-export default function normalize(v, instance) {
+function normalize(v, instance) {
   const type = typof(v);
 
   switch (type) {

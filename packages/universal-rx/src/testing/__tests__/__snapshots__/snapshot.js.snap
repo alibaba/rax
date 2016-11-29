@@ -1,0 +1,50 @@
+exports[`test Link changes the class when hovered 1`] = `
+Object {
+  "attributes": Object {
+    "class": "normal",
+    "href": "http://www.facebook.com",
+  },
+  "children": Array [
+    "Facebook",
+  ],
+  "eventListeners": Object {
+    "mouseenter": [Function],
+    "mouseleave": [Function],
+  },
+  "tagName": "A",
+}
+`;
+
+exports[`test Link changes the class when hovered 2`] = `
+Object {
+  "attributes": Object {
+    "class": "hovered",
+    "href": "http://www.facebook.com",
+  },
+  "children": Array [
+    "Facebook",
+  ],
+  "eventListeners": Object {
+    "mouseenter": [Function],
+    "mouseleave": [Function],
+  },
+  "tagName": "A",
+}
+`;
+
+exports[`test Link changes the class when hovered 3`] = `
+Object {
+  "attributes": Object {
+    "class": "normal",
+    "href": "http://www.facebook.com",
+  },
+  "children": Array [
+    "Facebook",
+  ],
+  "eventListeners": Object {
+    "mouseenter": [Function],
+    "mouseleave": [Function],
+  },
+  "tagName": "A",
+}
+`;
