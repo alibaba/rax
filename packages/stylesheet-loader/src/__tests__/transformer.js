@@ -10,6 +10,12 @@ describe('transformer', () => {
     expect(result).toEqual('a_bcd');
   });
 
+  it('should translate dash-case to camelCase', () => {
+    const result = transformer.sanitizeSelector('a b.c-d', true);
+
+    expect(result).toEqual('aBCD');
+  });
+
   it('should convert prop with camelCase', () => {
     const flexDirection = transformer.convertProp('flex-direction');
     const boxOrientWebkit = transformer.convertProp('-webkit-box-orient');

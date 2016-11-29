@@ -15,8 +15,14 @@ const COLOR_PROPERTIES = {
 };
 
 module.exports = {
-  sanitizeSelector(selector) {
-    return selector.replace(/\s/gi, '_').replace(/[\.#]/g, '');
+  sanitizeSelector(selector, camelcase) {
+    let _selector = selector.replace(/\s/gi, '_').replace(/[\.#]/g, '');
+
+    if (camelcase) {
+      _selector = camelCase(selector);
+    }
+
+    return _selector;
   },
 
   convertProp(prop) {

@@ -207,5 +207,4 @@ describe('renderer', () => {
     );
     expect(() => inst.unmount()).not.toThrow();
   });
-  
 });

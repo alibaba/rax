@@ -47,3 +47,21 @@ function Foo() {
 }
 export default Foo;
 ```
+
+### options
+
+you can pass any specific configuration options through to the render function via [query parameters](http://webpack.github.io/docs/using-loaders.html#query-parameters).
+
+``` js
+module.exports = {
+  module: {
+    loaders: [
+      {
+        test: /\.css$/,
+        loader: 'stylesheet?camelcase'
+      }
+    ]
+  }
+};
+```
+
