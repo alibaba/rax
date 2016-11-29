@@ -2,11 +2,13 @@
 
 const css = require('css');
 const transformer = require('./transformer');
+const loaderUtils = require('loader-utils');
 const RULE = 'rule';
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
 
+  let query = loaderUtils.parseQuery(this.query);
   let callback = this.async();
   let stylesheet = css.parse(source).stylesheet;
   let data = {};
@@ -23,7 +25,7 @@ module.exports = function(source) {
     }
 
     rule.selectors.forEach(function(selector) {
-      let sanitizedSelector = transformer.sanitizeSelector(selector);
+      let sanitizedSelector = transformer.sanitizeSelector(selector, query.camelcase);
       data[sanitizedSelector] = style;
     });
   });
