@@ -18,7 +18,6 @@ describe('renderer', () => {
   });
 
   it('renders a component', () => {
-
     class Link extends Component {
       render() {
         return (
@@ -183,5 +182,4 @@ describe('renderer', () => {
     );
     expect(() => inst.unmount()).not.toThrow();
   });
-
 });
