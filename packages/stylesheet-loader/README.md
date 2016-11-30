@@ -31,7 +31,7 @@ module.export = {
   background-color: blue;
 }
 
-.container .title {
+.container_title {
   font-size: 20px;
 }
 ```

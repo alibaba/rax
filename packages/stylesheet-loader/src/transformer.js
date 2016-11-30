@@ -16,7 +16,12 @@ const COLOR_PROPERTIES = {
 
 module.exports = {
   sanitizeSelector(selector) {
-    return selector.replace(/\s/gi, '_').replace(/[\.#]/g, '');
+    // filter multiple extend selectors
+    if (!/^\.[a-zA-Z0-9_]+$/.test(selector)) {
+      console.log(`error: \`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`);
+      return null;
+    }
+    return selector.replace(/[\.]/g, '');
   },
 
   convertProp(prop) {
