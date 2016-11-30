@@ -5,9 +5,15 @@ import css from 'css';
 
 describe('transformer', () => {
   it('should replace some characters of selector', () => {
-    const result = transformer.sanitizeSelector('a b.c#d');
+    const result = transformer.sanitizeSelector('.abc');
 
-    expect(result).toEqual('a_bcd');
+    expect(result).toEqual('abc');
+  });
+
+  it('should return null when writing multiple selectors', () => {
+    const result = transformer.sanitizeSelector('.abc .bcd');
+
+    expect(result).toBe(null);
   });
 
   it('should convert prop with camelCase', () => {

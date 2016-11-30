@@ -24,7 +24,9 @@ module.exports = function(source) {
 
     rule.selectors.forEach(function(selector) {
       let sanitizedSelector = transformer.sanitizeSelector(selector);
-      data[sanitizedSelector] = style;
+      if (sanitizedSelector) {
+        data[sanitizedSelector] = style;
+      }
     });
   });
 
