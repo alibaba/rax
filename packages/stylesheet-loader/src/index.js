@@ -1,7 +1,7 @@
 'use strict';
 
-const css = require('css');
-const transformer = require('./transformer');
+import css from 'css';
+import transformer from './transformer';
 const RULE = 'rule';
 
 module.exports = function(source) {

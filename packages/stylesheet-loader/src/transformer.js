@@ -1,8 +1,9 @@
 'use strict';
 
-const camelCase = require('camelcase');
-const normalizeColor = require('./normalizeColor');
-const particular = require('./particular');
+import camelCase from 'camelCase';
+import normalizeColor from './normalizeColor';
+import particular from './particular';
+import Validation from './Validation';
 
 const COLOR_PROPERTIES = {
   color: true,
@@ -14,11 +15,11 @@ const COLOR_PROPERTIES = {
   borderLeftColor: true
 };
 
-module.exports = {
+export default {
   sanitizeSelector(selector) {
     // filter multiple extend selectors
     if (!/^\.[a-zA-Z0-9_]+$/.test(selector)) {
-      console.log(`error: \`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`);
+      console.error(`\`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`);
       return null;
     }
     return selector.replace(/[\.]/g, '');
@@ -71,6 +72,7 @@ module.exports = {
       let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
 
+      Validation.validate(camelCaseProperty, declaration.value);
       if (particular[camelCaseProperty]) {
         let particularResult = particular[camelCaseProperty](value);
         if (particularResult.isDeleted) {

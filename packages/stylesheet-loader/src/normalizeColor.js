@@ -218,7 +218,7 @@ let xhex = RegExp(shex, 'i'),
   xrgb = RegExp(srgb + slist, 'i'),
   xhsl = RegExp(shsl + slist, 'i');
 
-module.exports = function normalizeColor(value) {
+export default function normalizeColor(value) {
   if (value == null) return null;
   value = (value + '').replace(/\s+/, '');
 
