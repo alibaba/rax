@@ -1,6 +1,6 @@
 'use strict';
 
-const normalizeColor = require('./normalizeColor');
+import normalizeColor from './normalizeColor';
 
 let measure = function(value, key) {
   let direction = [];
@@ -66,7 +66,7 @@ let border = function(key, value) {
   return result;
 };
 
-module.exports = {
+export default {
   border: (value) => {
     return border('border', value);
   },
