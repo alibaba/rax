@@ -1,1 +1,141 @@
 # universal-stylesheet [![npm](https://img.shields.io/npm/v/universal-stylesheet.svg)](https://www.npmjs.com/package/universal-stylesheet)
+
+## Installation
+
+### To install universal-stylesheet from NPM, run:
+
+```sh
+npm install --save universal-stylesheet
+```
+
+## Create a universal StyleSheet
+
+```js
+import StyleSheet from 'universal-stylesheet';
+
+let styles = StyleSheet.create({
+  container: {
+    width: 750,
+    height: 500,
+    backgroundColor: 'red'
+  },
+  header: {
+    width: 750,
+    height: 100,
+    borderRadius: 10,
+    borderWidth: 4,
+    borderColor: '#ddd'
+  },
+  row: {
+    flexDirection: 'row'
+  }
+});
+```
+
+## Use in the jsx
+
+```js
+<View style={styles.container}>
+  <View style={[styles.row, styles.header]} />
+</View>
+```
+
+## API
+
+### create
+```js
+/**
+ * Creates stylesheet object
+ *
+ * @param {Object} styles
+ * @returns {Object}
+ */
+ create (styles) {...}
+```
+### build
+```js
+/**
+ * Calculates all stylesheets
+ *
+ * @param {Object} styles
+ * @param {Object} themeData theme data
+ */
+ build (styles, themeData) {...}
+```
+### flatten
+```js
+/**
+ * flatten style object
+ *
+ * @param {Object} style
+ */
+ flatten (style) {...}
+```
+
+## Example
+
+```js
+import StyleSheet from 'universal-stylesheet';
+
+let styles = StyleSheet.create({
+  container: {
+    width: 750,
+    height: 500,
+    backgroundColor: 'red'
+  },
+  header: {
+    width: 750,
+    height: '30%',
+    borderRadius: 10,
+    borderWidth: 4,
+    borderColor: '#ddd'
+  },
+  row: {
+    flexDirection: 'row'
+  },
+  listA: {
+    width: 750,
+    height: 50,
+    backgroundColor: 'red'
+  },
+  listB: {
+    backgroundColor: 'green'
+  }
+});
+
+let highTheme = {
+  heightListA: 200,
+  backgroundColorListA: 'red',
+  backgroundColorListB: 'blue'
+};
+let lowTheme = {
+  heightListA: 50,
+  backgroundColorListA: 'aliceblue',
+  backgroundColorListB: 'gainsboro'
+};
+
+let styles = StyleSheet.build({
+  listA: {
+    width: 750,
+    height: '$heightListA',
+    backgroundColor: '$backgroundColorListA'
+  },
+  listB: {
+    backgroundColor: '$backgroundColorListB'
+  }
+}, highTheme);
+
+let styles = StyleSheet.build({
+  listA: {
+    width: 750,
+    height: '$heightHighListA',
+    backgroundColor: '$backgroundColorListA'
+  },
+  listB: {
+    backgroundColor: '$backgroundColorListB'
+  }
+}, lowTheme);
+
+StyleSheet.flatten([styles.listA, styles.listB])
+// returns { width: 750, height: 50, backgroundColor: 'green' }
+```

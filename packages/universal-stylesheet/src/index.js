@@ -1,3 +1,6 @@
+'use strict';
+
+import {createStyle, buildStyle} from './createStyle';
 import flattenStyle from './flattenStyle';
 
 const absoluteFillObject = {
@@ -10,8 +13,9 @@ const absoluteFillObject = {
 
 export default {
   hairlineWidth: 1,
-  absoluteFill: absoluteFillObject,
   absoluteFillObject,
-  flatten: flattenStyle,
-  create: obj => obj
+
+  create: createStyle,
+  build: buildStyle,
+  flatten: flattenStyle
 };
