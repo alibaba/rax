@@ -83,7 +83,7 @@ class Serializer {
           }
 
           if (Object.keys(node.style).length) {
-            json.style = style;
+            json.style = node.style;
           }
 
           if (Object.keys(node.attributes).length) {
