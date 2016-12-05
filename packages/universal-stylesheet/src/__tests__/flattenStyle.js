@@ -1,5 +1,3 @@
-'use strict';
-
 import flattenStyle from '../flattenStyle';
 
 describe('flattenStyle', () => {
