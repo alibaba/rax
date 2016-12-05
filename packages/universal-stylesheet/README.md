@@ -52,16 +52,6 @@ let styles = StyleSheet.create({
  */
  create (styles) {...}
 ```
-### build
-```js
-/**
- * Calculates all stylesheets
- *
- * @param {Object} styles
- * @param {Object} themeData theme data
- */
- build (styles, themeData) {...}
-```
 ### flatten
 ```js
 /**
@@ -102,39 +92,6 @@ let styles = StyleSheet.create({
     backgroundColor: 'green'
   }
 });
-
-let highTheme = {
-  heightListA: 200,
-  backgroundColorListA: 'red',
-  backgroundColorListB: 'blue'
-};
-let lowTheme = {
-  heightListA: 50,
-  backgroundColorListA: 'aliceblue',
-  backgroundColorListB: 'gainsboro'
-};
-
-let styles = StyleSheet.build({
-  listA: {
-    width: 750,
-    height: '$heightListA',
-    backgroundColor: '$backgroundColorListA'
-  },
-  listB: {
-    backgroundColor: '$backgroundColorListB'
-  }
-}, highTheme);
-
-let styles = StyleSheet.build({
-  listA: {
-    width: 750,
-    height: '$heightHighListA',
-    backgroundColor: '$backgroundColorListA'
-  },
-  listB: {
-    backgroundColor: '$backgroundColorListB'
-  }
-}, lowTheme);
 
 StyleSheet.flatten([styles.listA, styles.listB])
 // returns { width: 750, height: 50, backgroundColor: 'green' }
