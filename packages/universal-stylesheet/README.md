@@ -13,7 +13,7 @@ npm install --save universal-stylesheet
 ```js
 import StyleSheet from 'universal-stylesheet';
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     width: 750,
     height: 500,
@@ -67,7 +67,7 @@ let styles = StyleSheet.create({
 ```js
 import StyleSheet from 'universal-stylesheet';
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     width: 750,
     height: 500,
@@ -75,7 +75,7 @@ let styles = StyleSheet.create({
   },
   header: {
     width: 750,
-    height: '30%',
+    height: 30,
     borderRadius: 10,
     borderWidth: 4,
     borderColor: '#ddd'
@@ -85,7 +85,7 @@ let styles = StyleSheet.create({
   },
   listA: {
     width: 750,
-    height: 50,
+    flex: 1,
     backgroundColor: 'red'
   },
   listB: {
@@ -93,6 +93,5 @@ let styles = StyleSheet.create({
   }
 });
 
-StyleSheet.flatten([styles.listA, styles.listB])
-// returns { width: 750, height: 50, backgroundColor: 'green' }
+StyleSheet.flatten([styles.listA, styles.listB]) // => { width: 750, flex: 1, backgroundColor: 'green' }
 ```
