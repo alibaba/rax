@@ -1,3 +1,5 @@
+'use strict';
+
 export default function flattenStyle(style) {
   if (!style) {
     return undefined;
@@ -17,4 +19,4 @@ export default function flattenStyle(style) {
     }
     return result;
   }
-}
+};
