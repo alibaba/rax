@@ -1,6 +1,6 @@
 {
   "name": "weex-rx-framework",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Rx framework for weex.",
   "license": "BSD-3-Clause",
   "main": "dist/framework.weex.js",
