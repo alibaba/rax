@@ -120,8 +120,6 @@ Config `builtin.js` and add your custom builtin module:
 ```js
 export let BuiltinModulesFactory = {
   '@universal/rx': require('universal-rx/dist/rx.factory'),
-  '@universal/env': require('universal-env/dist/env.factory'),
-  '@universal/transition': require('universal-transition/dist/transition.factory'),
   // Add your builtin module
   'your-module': require('your-module/dist/your-module.factory'),
 };
@@ -169,11 +167,15 @@ cd weex
 npm install
 ```
 
-### 2. Install `weex-rx-framework`
+### 2. Install or link `weex-rx-framework`
 
 ```sh
-cd weex
-npm install weex-rx-framework --save
+npm install weex-rx-framework
+```
+Or
+
+```sh
+npm link weex-rx-framework
 ```
 
 ### 3. Config `weex-rx-framework`
@@ -182,7 +184,7 @@ Update `html5/frameworks/index.js` file with below content:
 
 ```js
 import * as Weex from './legacy/index'
-import * as Rx from 'weex-rx-framework'
+import Rx from 'weex-rx-framework'
 
 export default {
   Rx,
