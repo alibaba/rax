@@ -10,11 +10,11 @@ npm="npm"
 install="link"
 onlyBuild=0
 
-while getopts "bln:" opt; do
+while getopts "bin:" opt; do
   case "$opt" in
     b) onlyBuild=1
     ;;
-    l) install="link"
+    i) install="install"
     ;;
     n) npm=$OPTARG
     ;;
