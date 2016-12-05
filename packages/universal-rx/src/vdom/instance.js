@@ -16,7 +16,8 @@ export default {
       node[KEY] = instance;
       // Record root instance to roots map
       if (instance.rootID) {
-        Host.roots[instance.rootID] = instance;
+        Host.rootInstances[instance.rootID] = instance;
+        Host.rootComponents[instance.rootID] = instance._internal;
       }
     }
   },
@@ -28,16 +29,17 @@ export default {
     if (instance) {
       node[KEY] = null;
       if (instance.rootID) {
-        delete Host.roots[instance.rootID];
+        delete Host.rootComponents[instance.rootID];
+        delete Host.rootInstances[instance.rootID];
       }
     }
   },
   render(element, container) {
-    let prevRootComponent = this.get(container);
-    let hasPrevRootComponent = prevRootComponent && prevRootComponent.isRootComponent;
+    let prevRootInstance = this.get(container);
+    let hasPrevRootInstance = prevRootInstance && prevRootInstance.isRootComponent;
 
-    if (hasPrevRootComponent) {
-      let prevRenderedComponent = prevRootComponent.getRenderedComponent();
+    if (hasPrevRootInstance) {
+      let prevRenderedComponent = prevRootInstance.getRenderedComponent();
       let prevElement = prevRenderedComponent._currentElement;
       if (shouldUpdateComponent(prevElement, element)) {
         let prevUnmaskedContext = prevRenderedComponent._context;
@@ -48,7 +50,7 @@ export default {
           prevUnmaskedContext
         );
 
-        return prevRootComponent;
+        return prevRootInstance;
       } else {
         unmountComponentAtNode(container);
       }

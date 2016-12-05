@@ -6,6 +6,7 @@ export default {
   driver: null,
   document: typeof document === 'object' ? document : {},
   mountID: 1,
-  // Root instances
-  roots: {},
+  // Roots
+  rootComponents: {},
+  rootInstances: {},
 };

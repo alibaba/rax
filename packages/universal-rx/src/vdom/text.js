@@ -6,7 +6,7 @@ import Host from './host';
 class TextComponent {
   constructor(element) {
     this._currentElement = element;
-    this._text = '' + element;
+    this._stringText = '' + element;
   }
 
   mountComponent(parent, context, childMounter) {
@@ -39,7 +39,7 @@ class TextComponent {
     this._nativeNode = null;
     this._parent = null;
     this._context = null;
-    this._text = null;
+    this._stringText = null;
   }
 
   updateComponent(prevElement, nextElement, context) {
@@ -50,7 +50,7 @@ class TextComponent {
 
   getNativeNode() {
     if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createText(this._text);
+      this._nativeNode = Host.driver.createText(this._stringText);
     }
     return this._nativeNode;
   }

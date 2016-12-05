@@ -12,7 +12,8 @@ export default function renderToString(element) {
   setDriver(ServerDriver);
 
   // Reset host state
-  Host.roots = {};
+  Host.rootComponents = {};
+  Host.rootInstances = {};
   Host.mountID = 1;
 
   let body = ServerDriver.createBody();

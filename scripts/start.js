@@ -54,7 +54,8 @@ var compiler = webpack(config);
 var server = new WebpackDevServer(compiler, {
   publicPath: config.output.publicPath,
   stats: {
-    colors: true
+    colors: true,
+    info: false
   },
 });
 server.listen(9999);

@@ -1,5 +1,5 @@
-import instance from '../vdom/instance';
-import getTree from './tree';
+import Host from '../vdom/host';
+import getComponentTree from './getComponentTree';
 
 const INDENTATION_SIZE = 2;
 const MAX_DEPTH = 2;
@@ -20,9 +20,9 @@ function dumpTree() {
 
 function getDumpTree() {
   let output = '';
-  const rootIds = Object.getOwnPropertyNames(instance.roots);
+  const rootIds = Object.getOwnPropertyNames(Host.rootComponents);
   for (const rootId of rootIds) {
-    const inst = instance.roots[rootId];
+    const inst = Host.rootComponents[rootId];
     output += `============ Root ID: ${rootId} ============\n`;
     output += dumpNode(inst.getRenderedComponent(), 0);
     output += `============ End root ID: ${rootId} ============\n`;
@@ -31,7 +31,7 @@ function getDumpTree() {
 }
 
 function dumpNode(node, identation) {
-  const data = getTree(node);
+  const data = getComponentTree(node);
   if (data.nodeType === 'Text') {
     return indent(identation) + data.text + '\n';
   } else if (data.nodeType === 'Empty') {
