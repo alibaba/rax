@@ -64,7 +64,7 @@ const Driver = {
     parent.replaceChild(newChild, oldChild);
   },
 
-  insertAfter(node, parent, after) {
+  insertAfter(node, after, parent) {
     const nextSibling = after.nextSibling;
     if (nextSibling) {
       parent.insertBefore(node, nextSibling);
@@ -73,7 +73,7 @@ const Driver = {
     }
   },
 
-  insertBefore(node, parent, before) {
+  insertBefore(node, before, parent) {
     parent.insertBefore(node, before);
   },
 

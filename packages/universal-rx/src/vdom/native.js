@@ -306,7 +306,7 @@ class NativeComponent {
           // be moved. Otherwise, we do not need to move it because a child will be
           // inserted or moved before `child`.
           if (prevChild._mountIndex < lastIndex) {
-            Host.driver.insertAfter(prevChild.getNativeNode(), this.getNativeNode(), lastPlacedNode);
+            Host.driver.insertAfter(prevChild.getNativeNode(), lastPlacedNode, this.getNativeNode());
           }
 
           lastIndex = Math.max(prevChild._mountIndex, lastIndex);
@@ -326,7 +326,7 @@ class NativeComponent {
               if (oldChild) {
                 Host.driver.replaceChild(newChild, oldChild, parent);
               } else if (lastPlacedNode) {
-                Host.driver.insertAfter(newChild, parent, lastPlacedNode);
+                Host.driver.insertAfter(newChild, lastPlacedNode, parent);
               } else {
                 Host.driver.appendChild(newChild, parent);
               }

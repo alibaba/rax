@@ -106,28 +106,28 @@ const Driver = {
     this.removeChild(oldChild, parent);
 
     if (previousSibling) {
-      this.insertAfter(newChild, parent, previousSibling);
+      this.insertAfter(newChild, previousSibling, parent);
     } else if (nextSibling) {
-      this.insertBefore(newChild, parent, nextSibling);
+      this.insertBefore(newChild, nextSibling, parent);
     } else {
       this.appendChild(newChild, parent);
     }
   },
 
-  insertAfter(node, parent, after) {
+  insertAfter(node, after, parent) {
     if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return node.childNodes.map((child, index) => {
-        return this.insertAfter(child, parent, node.childNodes[index - 1] || after);
+        return this.insertAfter(child, node.childNodes[index - 1] || after, parent);
       });
     } else {
       return parent.insertAfter(node, after);
     }
   },
 
-  insertBefore(node, parent, before) {
+  insertBefore(node, before, parent) {
     if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return node.childNodes.map((child, index) => {
-        return this.insertBefore(child, parent, before);
+        return this.insertBefore(child, before, parent);
       });
     } else {
       return parent.insertBefore(node, before);
