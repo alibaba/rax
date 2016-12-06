@@ -101,8 +101,8 @@ More examples take a look at the [`examples`](/examples/) folder.
 
 ## Rax Renderers
 
-* [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
-* [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
+* :traffic_light: [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
+* :computer: [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
 
 ## Universal Libraries
 
