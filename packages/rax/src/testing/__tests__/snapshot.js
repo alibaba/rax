@@ -43,7 +43,7 @@ class Link extends Component {
 
 test('Link changes the class when hovered', () => {
   const component = renderer.create(
-    <Link page="http://www.facebook.com">Facebook</Link>
+    <Link page="https://example.com">Example</Link>
   );
   let tree = component.toJSON();
   expect(tree).toMatchSnapshot();

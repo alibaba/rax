@@ -13,14 +13,17 @@ All lines are wrapped at 100 characters !
 
 **Allowed `<type>`**
 
-- feat (feature)
-- fix (bug fix)
-- docs (documentation)
-- style (formatting, missing semi colons, …)
-- refactor
-- test (when adding missing tests)
-- chore (maintain)
-
+- feat (A new feature)
+- fix (A bug fix)
+- docs (Documentation only changes)
+- style (Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc))
+- perf (A code change that improves performance)
+- refactor (A code change that neither fixes a bug nor adds a feature)
+- test (Adding missing tests or correcting existing tests)
+- build (Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm))
+- ci (Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs))
+- chore (Other changes that don't modify src or test files)
+- revert (Reverts a previous commit)
 
 **Allowed `<scope>`**
 Scope could be anything specifying place of the commit change.

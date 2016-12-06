@@ -99,8 +99,10 @@ render(<Hello name="world" />);
 
 More examples take a look at the [`examples`](/examples/) folder.
 
-## Snapshot Testing
+## Rax Renderers
 
+* [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
+* [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
 
 ## Universal Libraries
 

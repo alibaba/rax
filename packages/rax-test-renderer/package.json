@@ -1,7 +1,7 @@
 {
-  "name": "runtime-shared",
+  "name": "rax-test-renderer",
   "version": "0.0.3",
-  "description": "Shared Runtime.",
+  "description": "Rax renderer for snapshot testing.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -11,5 +11,8 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rax#readme"
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "rax": "^0.0.3"
+  }
 }
