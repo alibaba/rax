@@ -3,8 +3,8 @@
 Before running the website, make sure you've run the following:
 
 ```sh
-git clone https://github.com/alibaba/rx.git
-cd rx
+git clone https://github.com/alibaba/rax.git
+cd rax
 npm install
 ```
 

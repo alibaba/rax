@@ -1,5 +1,5 @@
-import {createElement, PropTypes} from 'universal-rx';
-import {TouchableWithoutFeedback, TouchableNativeFeedback, TouchableOpacity, TouchableHighlight, View} from 'rx-components';
+import {createElement, PropTypes} from 'rax';
+import {TouchableWithoutFeedback, TouchableNativeFeedback, TouchableOpacity, TouchableHighlight, View} from 'rax-components';
 import Platform from 'universal-platform';
 import StyleSheet from 'universal-stylesheet';
 import colors from './colors';

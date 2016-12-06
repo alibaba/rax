@@ -1,7 +1,7 @@
 {
   "presets": [
     "es2015",
-    "rx"
+    "rax"
   ],
   "ignore": [
     "src/polyfills/"

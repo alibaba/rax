@@ -1,8 +1,8 @@
-import {createElement, Component, render} from 'universal-rx';
+import {createElement, Component, render} from 'rax';
 import StyleSheet from 'universal-stylesheet';
 import PanResponder from 'universal-panresponder';
-import Animated from 'rx-animated';
-import {Text, View, Image} from 'rx-components';
+import Animated from 'rax-animated';
+import {Text, View, Image} from 'rax-components';
 
 var width = 560;
 var height = 300;

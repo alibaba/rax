@@ -1,4 +1,4 @@
-import {createElement, Component, render} from 'universal-rx';
+import {createElement, Component, render} from 'rax';
 import {isWeex, isWeb} from 'universal-env';
 
 class TodoList extends Component {

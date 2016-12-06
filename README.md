@@ -1,8 +1,8 @@
 **Warning: This is currently a private repo, please do not share this code.**
 
 <p align="center">
-  <a href="https://alibaba.github.io/rx">
-    <img alt="Rx" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
+  <a href="https://alibaba.github.io/rax">
+    <img alt="Rax" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
   </a>
 </p>
 
@@ -11,14 +11,14 @@ A universal React-compatible render engine.
 </p>
 
 <p align="center">
-<img src="https://img.shields.io/npm/l/universal-rx.svg">
-<img src="https://img.shields.io/npm/v/universal-rx.svg">
-<img src="https://img.shields.io/npm/dm/universal-rx.svg">
+<img src="https://img.shields.io/npm/l/rax.svg">
+<img src="https://img.shields.io/npm/v/rax.svg">
+<img src="https://img.shields.io/npm/dm/rax.svg">
 </p>
 
 ---
 
-Rx is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rx.
+Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 
 :zap: **Fast:** blazing fast virtual DOM.
 
@@ -40,7 +40,7 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 
 <img width="44.04%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
-[Rx 0.0.8](https://unpkg.com/universal-rx@0.0.5/dist/rx.min.js) - 8.0kb (gzip)
+[Rax 0.0.8](https://unpkg.com/rax@0.0.5/dist/rax.min.js) - 8.0kb (gzip)
 
 <img width="14.44%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
@@ -51,34 +51,34 @@ Rx is a universal JavaScript library with a largely React-compatible API. If you
 |--------------|----------------|
 | React@15.3.2 | 297 op/s |
 | Vue@2.0.8    | 1092 op/s|
-| Rx@0.0.8     | 1553 op/s (fastest)|
+| Rax@0.0.8     | 1553 op/s (fastest)|
 
 
 ## Installation
 
 ### NPM
-We recommend using Rx from npm with `webpack`. If you use npm for client package management, you can install Rx with:
+We recommend using Rax from npm with `webpack`. If you use npm for client package management, you can install Rax with:
 ```sh
-npm install --save universal-rx
+npm install --save rax
 ```
 
 ### CDN
 
-If you don't want to use `npm` to manage client packages, the `rx` npm packages also provide UMD distributions in `dist` folders, which are hosted on a CDN:
+If you don't want to use `npm` to manage client packages, the `rax` npm packages also provide UMD distributions in `dist` folders, which are hosted on a CDN:
 ```html
-<script src="https://unpkg.com/universal-rx@1/dist/rx.js"></script>
+<script src="https://unpkg.com/rax@1/dist/rax.js"></script>
 ```
 
-To load a specific version of `rx`, replace `1` with the version number.
-Minified production versions of `rx` are available at:
+To load a specific version of `rax`, replace `1` with the version number.
+Minified production versions of `rax` are available at:
 ```html
-<script src="https://unpkg.com/universal-rx@1/dist/rx.min.js"></script>
+<script src="https://unpkg.com/rax@1/dist/rax.min.js"></script>
 ```
 
 ## Example
 
 ```js
-import {createElement, Component, render} from 'universal-rx';
+import {createElement, Component, render} from 'rax';
 
 class Hello extends Component {
   render() {
@@ -104,7 +104,7 @@ More examples take a look at the [`examples`](/examples/) folder.
 
 ## Universal Libraries
 
-* :tophat: [universal-rx](/packages/universal-rx): A universal React-compatible render engine.
+* :tophat: [rax](/packages/rax): A universal React-compatible render engine.
 * :earth_asia: [universal-env](/packages/universal-env): A universal environment utilities.
 * :loop: [universal-transition](/packages/universal-transition): A universal transition API.
 * :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.

@@ -1,8 +1,8 @@
 // Based on React Native Elements UI Toolkit https://github.com/react-native-community/react-native-elements
 import Button from './Button';
 import Card from './Card';
-import {ScrollView, View, Text} from 'rx-components';
-import {createElement} from 'universal-rx';
+import {ScrollView, View, Text} from 'rax-components';
+import {createElement} from 'rax';
 
 function UIKit() {
   return (

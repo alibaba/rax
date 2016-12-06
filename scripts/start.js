@@ -3,7 +3,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const RxWebpackPlugin = require('rx-webpack-plugin');
+const RaxWebpackPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
 const EXAMPLES_DIR = path.resolve(__dirname, '../examples');
 
@@ -34,7 +34,7 @@ var config = {
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     new webpack.NoErrorsPlugin(),
-    new RxWebpackPlugin({
+    new RaxWebpackPlugin({
       frameworkComment: true
     }),
   ],
@@ -44,7 +44,7 @@ var config = {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel', // 'babel-loader' is also a legal name to reference
       query: {
-        presets: ['es2015', 'rx'],
+        presets: ['es2015', 'rax'],
       }
     }]
   }
@@ -55,7 +55,8 @@ var server = new WebpackDevServer(compiler, {
   publicPath: config.output.publicPath,
   stats: {
     colors: true,
-    info: false
+    chunks: false,
+    errorDetails: true,
   },
 });
 server.listen(9999);

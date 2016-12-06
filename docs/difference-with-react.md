@@ -19,7 +19,7 @@ export default Hi;
 
 ```js
 // After
-import {createElement, Component} from 'universal-rx';
+import {createElement, Component} from 'rax';
 
 class Hi extends Component {
   render() {
@@ -36,7 +36,7 @@ export default Hi;
 * The `findDOMNode()` method accept id which is string type
 
 ```js
-import {createElement, render, findDOMNode} from 'universal-rx';
+import {createElement, render, findDOMNode} from 'rax';
 
 class Hi extends Component {
   render() {

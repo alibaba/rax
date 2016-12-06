@@ -1,7 +1,7 @@
-import {createElement, Component, render, setNativeProps} from 'universal-rx';
-import {View} from 'rx-components';
+import {createElement, Component, render, setNativeProps} from 'rax';
+import {View} from 'rax-components';
 import PanResponder from 'universal-panresponder';
-import Animated from 'rx-animated';
+import Animated from 'rax-animated';
 
 class Drag extends Component {
   state = {

@@ -16,10 +16,10 @@
  */
 'use strict';
 
-import {createElement, Component} from 'universal-rx';
-import {View, Text, TouchableBounce} from 'rx-components';
+import {createElement, Component} from 'rax';
+import {View, Text, TouchableBounce} from 'rax-components';
 import StyleSheet from 'universal-stylesheet';
-import Animated from 'rx-animated';
+import Animated from 'rax-animated';
 import GameBoard from './GameBoard';
 
 var BOARD_PADDING = 3 * 2;

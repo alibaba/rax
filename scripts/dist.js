@@ -2,17 +2,17 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const RxPlugin = require('rx-webpack-plugin');
+const RaxPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
 
 // For babelHelpers.js build
-if (!fs.existsSync('./packages/universal-rx/build')) {
-  fs.mkdirSync('./packages/universal-rx/build');
+if (!fs.existsSync('./packages/rax/build')) {
+  fs.mkdirSync('./packages/rax/build');
 }
 
 [
-  ['rx-components', 'components', 'Components'],
-  ['rx-animated', 'animated', 'Animated'],
+  ['rax-components', 'components', 'Components'],
+  ['rax-animated', 'animated', 'Animated'],
   ['universal-panresponder', 'panresponder', 'PanResponder'],
   ['universal-platform', 'platform', 'Platform'],
   ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
@@ -32,13 +32,13 @@ if (!fs.existsSync('./packages/universal-rx/build')) {
     {
       externalBuiltinModules: true,
       builtinModules: Object.assign({
-        'rx-components': ['@rx/components', 'rx-components', 'kg/rx-components/index']
-      }, RxPlugin.BuiltinModules),
+        'rax-components': ['@rax/components', 'rax-components', 'kg/rax-components/index']
+      }, RaxPlugin.BuiltinModules),
       moduleName: info[0],
       globalName: info[2],
     },
     {
-      presets: ['es2015', 'rx']
+      presets: ['es2015', 'rax']
     }
   ));
 });
@@ -60,30 +60,30 @@ dist(getConfig(
     globalName: 'Env',
   },
   {
-    presets: ['es2015', 'rx']
+    presets: ['es2015', 'rax']
   }
 )).then(() => {
   return dist(getConfig(
     {
-      'rx': './packages/universal-rx/src/index.js',
-      'rx.min': './packages/universal-rx/src/index.js',
-      'rx.factory': './packages/universal-rx/src/index.js',
+      'rax': './packages/rax/src/index.js',
+      'rax.min': './packages/rax/src/index.js',
+      'rax.factory': './packages/rax/src/index.js',
     },
     {
-      path: './packages/universal-rx/dist/',
+      path: './packages/rax/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
       pathinfo: false,
     },
     {
-      moduleName: 'universal-rx',
-      globalName: 'Rx',
+      moduleName: 'rax',
+      globalName: 'Rax',
     },
     {
-      presets: ['es2015', 'rx'],
+      presets: ['es2015', 'rax'],
       plugins: [
         ['transform-helper', {
-          helperFilename: './packages/universal-rx/build/babelHelpers.js'
+          helperFilename: './packages/rax/build/babelHelpers.js'
         }]
       ],
       ignore: [
@@ -109,7 +109,7 @@ dist(getConfig(
       globalName: 'Transition',
     },
     {
-      presets: ['es2015', 'rx']
+      presets: ['es2015', 'rax']
     }
   ));
 }).then(() => {
@@ -138,11 +138,11 @@ dist(getConfig(
 }).then(() => {
   dist(getConfig(
     {
-      'framework.web': './packages/web-rx-framework/src/index.js',
-      'framework.web.min': './packages/web-rx-framework/src/index.js'
+      'framework.web': './packages/web-rax-framework/src/index.js',
+      'framework.web.min': './packages/web-rax-framework/src/index.js'
     },
     {
-      path: './packages/web-rx-framework/dist/',
+      path: './packages/web-rax-framework/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
       pathinfo: false,
@@ -160,10 +160,10 @@ dist(getConfig(
 
   dist(getConfig(
     {
-      'framework.weex': './packages/weex-rx-framework/src/index.js'
+      'framework.weex': './packages/weex-rax-framework/src/index.js'
     },
     {
-      path: './packages/weex-rx-framework/dist/',
+      path: './packages/weex-rax-framework/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
       pathinfo: true,
@@ -191,7 +191,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
       new webpack.NoErrorsPlugin(),
-      new RxPlugin(moduleOptions),
+      new RaxPlugin(moduleOptions),
       new webpack.optimize.UglifyJsPlugin({
         include: /\.min\.js$/,
         minimize: true,
@@ -216,7 +216,9 @@ function dist(config) {
     let compiler = webpack(config);
     compiler.run(function(err, stats) {
       let options = {
-        colors: true
+        colors: true,
+        chunks: false,
+        errorDetails: true,
       };
       console.log(stats.toString(options));
       resolver();

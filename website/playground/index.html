@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Rx Playground</title>
+    <title>Rax Playground</title>
     <link rel="stylesheet" type="text/css" href="//unpkg.com/normalize.css@5.0.0" />
     <link rel="stylesheet" type="text/css" href="//unpkg.com/codemirror@5.20.2/lib/codemirror.css" />
     <style>
@@ -154,8 +154,8 @@
   <div class="playground">
     <div class="editor">
       <textarea id="editor">
-import {createElement, Component, render} from 'universal-rx';
-import {View, Text} from 'rx-components';
+import {createElement, Component, render} from 'rax';
+import {View, Text} from 'rax-components';
 
 class App extends Component {
   render() {
@@ -199,7 +199,7 @@ render(<App />);</textarea>
   var frame = document.getElementById('frame');
   var phone = document.getElementById('phone');
 
-  var storageKey = 'rx:playground:source';
+  var storageKey = 'rax:playground:source';
   var myTextarea = document.getElementById('editor');
   var editor = CodeMirror.fromTextArea(myTextarea, {
     lineNumbers: true,

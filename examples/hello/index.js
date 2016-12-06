@@ -1,5 +1,5 @@
-import {createElement, Component, render} from 'universal-rx';
-import {View, Text} from 'rx-components';
+import {createElement, Component, render} from 'rax';
+import {View, Text} from 'rax-components';
 
 class App extends Component {
   render() {

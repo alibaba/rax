@@ -1,5 +1,5 @@
-import {createElement} from 'universal-rx';
-import {View} from 'rx-components';
+import {createElement} from 'rax';
+import {View} from 'rax-components';
 import StyleSheet from 'universal-stylesheet';
 import colors from './colors';
 

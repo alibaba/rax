@@ -18,7 +18,7 @@ var semverRegex = require('semver-regex');
 
 var config = getConfig();
 var MAX_LENGTH = config.maxSubjectLength || 100;
-var IGNORED = new RegExp(util.format('(^WIP)|(^%s$)', semverRegex().source));
+var IGNORED = new RegExp(util.format('(^WIP)|(^v)|(^%s$)', semverRegex().source));
 
 // fixup! and squash! are part of Git, commits tagged with them are not intended to be merged, cf. https://git-scm.com/docs/git-commit
 var PATTERN = /^((fixup! |squash! )?(\w+)(?:\(([^\)\s]+)\))?: (.+))(?:\n|$)/;
@@ -28,7 +28,7 @@ var error = function() {
   // http://gitx.lighthouseapp.com/projects/17830/tickets/294-feature-display-hook-error-message-when-hook-fails
   // https://groups.google.com/group/gitx/browse_thread/thread/a03bcab60844b812
   console[config.warnOnFail ? 'warn' : 'error']('Invalid commit message: ' + util.format.apply(null, arguments));
-  console.log('See our specific at:', 'https://github.com/alibaba/rx/.github/GIT_COMMIT_SPECIFIC.md');
+  console.log('See our specific at:', 'https://github.com/alibaba/rax/.github/GIT_COMMIT_SPECIFIC.md');
 };
 
 

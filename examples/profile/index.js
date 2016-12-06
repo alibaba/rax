@@ -1,8 +1,8 @@
-import {createElement, Component, render} from 'universal-rx';
+import {createElement, Component, render} from 'rax';
 import StyleSheet from 'universal-stylesheet';
 import Platform from 'universal-platform';
-import Animated from 'rx-animated';
-import {Text, TouchableOpacity, View, Image} from 'rx-components';
+import Animated from 'rax-animated';
+import {Text, TouchableOpacity, View, Image} from 'rax-components';
 import {isWeb} from 'universal-env';
 
 const PROFILE_WIDTH = 90;

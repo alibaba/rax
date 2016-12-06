@@ -1,11 +1,11 @@
-import {createElement, Component, render} from 'universal-rx';
+import {createElement, Component, render} from 'rax';
 import {
   Text,
   View,
   Image,
   ScrollView,
   TouchableHighlight,
-} from 'rx-components';
+} from 'rax-components';
 
 class Board {
   constructor() {

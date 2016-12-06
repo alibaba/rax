@@ -12,7 +12,7 @@ function getPackages() {
 }
 
 getPackages().forEach((p) => {
-  if (p.indexOf('babel-preset-rx') > 0) return;
+  if (p.indexOf('babel-preset-rax') > 0) return;
   console.log('npm link', p);
   spawnSync('npm', ['link', p]);
 });
