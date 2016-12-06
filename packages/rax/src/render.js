@@ -3,13 +3,6 @@ import instance from './vdom/instance';
 import {setRem} from './style/unit';
 import {injectDriver, getDriver} from './driver';
 
-const FULL_WIDTH_REM = 750;
-
-function initRem(driver) {
-  if (!driver || !driver.getWindowWidth) return;
-  setRem(driver.getWindowWidth() / FULL_WIDTH_REM);
-}
-
 function render(element, container, callback) {
   // Inject component
   injectComponent();
@@ -20,9 +13,6 @@ function render(element, container, callback) {
 
   // Before render callback
   driver.beforeRender && driver.beforeRender(element, container);
-
-  // Init rem unit
-  initRem(driver);
 
   // Real native root node is body
   if (container == null) {

@@ -22,7 +22,7 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 
 :zap: **Fast:** blazing fast virtual DOM.
 
-:dart: **Tiny:** 8.5kb only after min+gzip.
+:dart: **Tiny:** 8.0kb only after min+gzip.
 
 :art: **Universal:** cross Browser、Weex and Node.js.
 
@@ -48,10 +48,10 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 > [Benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison): Run on a MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory.
 
 | Library      | renderToSring (per second)  |
-|--------------|----------------|
-| React@15.3.2 | 297 op/s |
-| Vue@2.0.8    | 1092 op/s|
-| Rax@0.0.2    | 1553 op/s (fastest)|
+|--------------|-----------------------------|
+| React@15.3.2 | 297 op/s                    |
+| Vue@2.0.8    | 1092 op/s                   |
+| Rax@0.0.2    | 1553 op/s (fastest)         |
 
 
 ## Installation

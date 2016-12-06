@@ -4,7 +4,7 @@
 
 import Host from '../vdom/host';
 import setNativeProps from '../setNativeProps';
-import {convertUnit} from '../style/unit';
+import {convertUnit, setRem} from '../style/unit';
 
 const STYLE = 'style';
 const ID = 'id';
@@ -169,6 +169,11 @@ const Driver = {
       val = convertUnit(val, key);
       node.setStyle(key, val);
     }
+  },
+
+  beforeRender() {
+    // Init rem unit
+    setRem(this.getWindowWidth() / FULL_WIDTH_REM);
   },
 
   afterRender() {
