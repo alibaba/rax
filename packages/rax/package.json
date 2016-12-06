@@ -1,7 +1,7 @@
 {
-  "name": "runtime-shared",
+  "name": "rax",
   "version": "0.0.1",
-  "description": "Shared Runtime.",
+  "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -11,5 +11,8 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rax#readme"
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "universal-env": "^0.0.1"
+  }
 }

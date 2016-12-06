@@ -1,7 +1,7 @@
 {
-  "name": "runtime-shared",
+  "name": "rax-components",
   "version": "0.0.1",
-  "description": "Shared Runtime.",
+  "description": "Base components for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -11,5 +11,9 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rax#readme"
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "universal-env": "^0.0.1",
+    "rax": "^0.0.1"
+  }
 }

@@ -1,9 +1,9 @@
 {
-  "name": "universal-panresponder",
+  "name": "web-rax-framework",
   "version": "0.0.1",
-  "description": "A universal PanResponder API.",
+  "description": "Rax framework for web.",
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
+  "main": "dist/framework.web.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
@@ -13,6 +13,11 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.0.1"
+    "raf": "^3.3.0",
+    "runtime-shared": "^0.0.1",
+    "universal-env": "^0.0.1",
+    "rax": "^0.0.1",
+    "universal-transition": "^0.0.1",
+    "whatwg-fetch": "^2.0.1"
   }
 }
