@@ -104,7 +104,6 @@ More examples take a look at the [`examples`](/examples/) folder.
 
 ## Universal Libraries
 
-* :tophat: [rax](/packages/rax): A universal React-compatible render engine.
 * :earth_asia: [universal-env](/packages/universal-env): A universal environment utilities.
 * :loop: [universal-transition](/packages/universal-transition): A universal transition API.
 * :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
