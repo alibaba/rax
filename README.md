@@ -40,7 +40,7 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 
 <img width="44.04%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
-[Rax 0.0.8](https://unpkg.com/rax@0.0.5/dist/rax.min.js) - 8.0kb (gzip)
+[Rax 0.0.2](https://unpkg.com/rax@0.0.2/dist/rax.min.js) - 8.0kb (gzip)
 
 <img width="14.44%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
@@ -51,7 +51,7 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 |--------------|----------------|
 | React@15.3.2 | 297 op/s |
 | Vue@2.0.8    | 1092 op/s|
-| Rax@0.0.8     | 1553 op/s (fastest)|
+| Rax@0.0.2    | 1553 op/s (fastest)|
 
 
 ## Installation
@@ -66,10 +66,10 @@ npm install --save rax
 
 If you don't want to use `npm` to manage client packages, the `rax` npm packages also provide UMD distributions in `dist` folders, which are hosted on a CDN:
 ```html
-<script src="https://unpkg.com/rax@1/dist/rax.js"></script>
+<script src="https://unpkg.com/rax@0/dist/rax.js"></script>
 ```
 
-To load a specific version of `rax`, replace `1` with the version number.
+To load a specific version of `rax`, replace `0` with the version number.
 Minified production versions of `rax` are available at:
 ```html
 <script src="https://unpkg.com/rax@1/dist/rax.min.js"></script>
