@@ -12,7 +12,7 @@ class EmptyComponent {
     this._parent = parent;
     this._context = context;
 
-    let component = {
+    let instance = {
       _internal: this
     };
 
@@ -23,7 +23,7 @@ class EmptyComponent {
       Host.driver.appendChild(nativeNode, parent);
     }
 
-    return component;
+    return instance;
   }
 
   unmountComponent(shouldNotRemoveChild) {

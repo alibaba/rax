@@ -15,7 +15,7 @@ npm install --save rax
 If you don't want to use `npm` to manage client packages, the `rax` npm packages also provide UMD distributions in `dist` folders, which are hosted on CDN:
 
 ```html
-<script src="https://unpkg.com/rax@1/dist/rax.js"></script>
+<script src="https://unpkg.com/rax@0/dist/rax.js"></script>
 ```
 
 To load a specific version of `rax`, replace `1` with the version number.

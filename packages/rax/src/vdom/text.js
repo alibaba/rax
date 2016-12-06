@@ -1,4 +1,5 @@
 import Host from './host';
+import Hook from '../debug/hook';
 
 /**
  * Text Component
@@ -6,7 +7,7 @@ import Host from './host';
 class TextComponent {
   constructor(element) {
     this._currentElement = element;
-    this._stringText = '' + element;
+    this._stringText = String(element);
   }
 
   mountComponent(parent, context, childMounter) {
@@ -23,17 +24,21 @@ class TextComponent {
       Host.driver.appendChild(nativeNode, parent);
     }
 
-    let component = {
+    let instance = {
       _internal: this
     };
 
-    return component;
+    Hook.Reconciler.mountComponent(this);
+
+    return instance;
   }
 
   unmountComponent(shouldNotRemoveChild) {
     if (this._nativeNode && !shouldNotRemoveChild) {
       Host.driver.removeChild(this._nativeNode, this._parent);
     }
+
+    Hook.Reconciler.unmountComponent(this);
 
     this._currentElement = null;
     this._nativeNode = null;
@@ -43,9 +48,15 @@ class TextComponent {
   }
 
   updateComponent(prevElement, nextElement, context) {
-    // Replace current element
-    this._currentElement = nextElement;
-    Host.driver.updateText(this.getNativeNode(), nextElement);
+    // If some text do noting
+    if (prevElement !== nextElement) {
+      // Replace current element
+      this._currentElement = nextElement;
+      // Devtool read the latest stringText value
+      this._stringText = String(nextElement);
+      Host.driver.updateText(this.getNativeNode(), nextElement);
+      Hook.Reconciler.receiveComponent(this);
+    }
   }
 
   getNativeNode() {

@@ -4,6 +4,7 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import instance from './instance';
+import Hook from '../debug/hook';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -25,14 +26,14 @@ class NativeComponent {
 
     let props = this._currentElement.props;
     let type = this._currentElement.type;
-    let component = {
+    let instance = {
       _internal: this,
       type,
       props,
     };
     let appendType = props.append; // Default is node
 
-    this._instance = component;
+    this._instance = instance;
 
     // Clone a copy for style diff
     this._prevStyleCopy = Object.assign({}, props.style);
@@ -65,7 +66,9 @@ class NativeComponent {
       }
     }
 
-    return component;
+    Hook.Reconciler.mountComponent(this);
+
+    return instance;
   }
 
   mountChildren(children, context) {
@@ -118,6 +121,8 @@ class NativeComponent {
 
     this.unmountChildren();
 
+    Hook.Reconciler.unmountComponent(this);
+
     this._currentElement = null;
     this._nativeNode = null;
     this._parent = null;
@@ -137,6 +142,8 @@ class NativeComponent {
 
     this.updateProperties(prevProps, nextProps);
     this.updateChildren(nextProps.children, nextContext);
+
+    Hook.Reconciler.receiveComponent(this);
   }
 
   updateProperties(prevProps, nextProps) {

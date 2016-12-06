@@ -4,6 +4,7 @@ import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
+import Hook from '../debug/hook';
 
 /**
  * Instance manager
@@ -52,6 +53,7 @@ export default {
 
         return prevRootInstance;
       } else {
+        Hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
       }
     }
@@ -59,9 +61,10 @@ export default {
     let wrappedElement = createElement(Root, null, element);
     let renderedComponent = instantiateComponent(wrappedElement);
     let defaultContext = {};
-    let rootComponent = renderedComponent.mountComponent(container, defaultContext);
-    this.set(container, rootComponent);
+    let rootInstance = renderedComponent.mountComponent(container, defaultContext);
+    this.set(container, rootInstance);
+    Hook.Mount._renderNewRootComponent(rootInstance._internal);
 
-    return rootComponent;
+    return rootInstance;
   }
 };

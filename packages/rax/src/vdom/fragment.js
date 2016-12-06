@@ -3,6 +3,7 @@ import NativeComponent from './native';
 import instance from './instance';
 import instantiateComponent from './instantiateComponent';
 import getElementKeyName from './getElementKeyName';
+import Hook from '../debug/hook';
 
 /**
  * Fragment Component
@@ -18,10 +19,10 @@ class FragmentComponent extends NativeComponent {
     this._context = context;
     this._mountID = Host.mountID++;
 
-    let component = {
+    let instance = {
       _internal: this,
     };
-    this._instance = component;
+    this._instance = instance;
 
     let nativeNode = this.getNativeNode();
     let children = this._currentElement;
@@ -39,7 +40,9 @@ class FragmentComponent extends NativeComponent {
     // set to right node when append to parent
     this._nativeNode = parent;
 
-    return component;
+    Hook.Reconciler.mountComponent(this);
+
+    return instance;
   }
 
 
@@ -78,6 +81,8 @@ class FragmentComponent extends NativeComponent {
 
     this.unmountChildren();
 
+    Hook.Reconciler.unmountComponent(this);
+
     this._currentElement = null;
     this._nativeNode = null;
     this._parent = null;
@@ -89,6 +94,8 @@ class FragmentComponent extends NativeComponent {
     // Replace current element
     this._currentElement = nextElement;
     this.updateChildren(this._currentElement, nextContext);
+
+    Hook.Reconciler.receiveComponent(this);
   }
 
   getNativeNode() {

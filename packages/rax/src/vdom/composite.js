@@ -5,6 +5,7 @@ import Ref from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
+import Hook from '../debug/hook';
 
 function performInSandbox(fn, handleError) {
   try {
@@ -54,58 +55,58 @@ class CompositeComponent {
     let publicContext = this._processContext(context);
 
     // Initialize the public class
-    let component;
+    let instance;
     let renderedElement;
 
     if (isComponentClass || isStatelessClasss) {
       // Component instance
-      component = new Component(publicProps, publicContext, updater);
+      instance = new Component(publicProps, publicContext, updater);
     } else if (typeof Component === 'function') {
       // Functional stateless component without state and lifecycles
-      component = new StatelessComponent(Component);
+      instance = new StatelessComponent(Component);
     } else {
       throw Error(`Invalid component type ${JSON.stringify(Component)}`);
     }
 
     // These should be set up in the constructor, but as a convenience for
     // simpler class abstractions, we set them up after the fact.
-    component.props = publicProps;
-    component.context = publicContext;
-    component.refs = {};
+    instance.props = publicProps;
+    instance.context = publicContext;
+    instance.refs = {};
 
     // Inject the updater into instance
-    component.updater = updater;
-    component._internal = this;
-    this._instance = component;
+    instance.updater = updater;
+    instance._internal = this;
+    this._instance = instance;
 
     // Init state, must be set to an object or null
-    let initialState = component.state;
+    let initialState = instance.state;
     if (initialState === undefined) {
       // TODO clone the state?
-      component.state = initialState = null;
+      instance.state = initialState = null;
     }
 
     performInSandbox(() => {
-      if (component.componentWillMount) {
-        component.componentWillMount();
+      if (instance.componentWillMount) {
+        instance.componentWillMount();
       }
     });
 
     if (renderedElement == null) {
       Host.component = this;
       // Process pending state when call setState in componentWillMount
-      component.state = this._processPendingState(publicProps, publicContext);
+      instance.state = this._processPendingState(publicProps, publicContext);
 
       // FIXME: handleError should named as lifecycles
       let handleError;
-      if (typeof component.handleError === 'function') {
+      if (typeof instance.handleError === 'function') {
         handleError = (e) => {
-          component.handleError(e);
+          instance.handleError(e);
         };
       }
 
       performInSandbox(() => {
-        renderedElement = component.render();
+        renderedElement = instance.render();
       }, handleError);
 
       Host.component = null;
@@ -123,24 +124,28 @@ class CompositeComponent {
     }
 
     performInSandbox(() => {
-      if (component.componentDidMount) {
-        component.componentDidMount();
+      if (instance.componentDidMount) {
+        instance.componentDidMount();
       }
     });
 
-    return component;
+    Hook.Reconciler.mountComponent(this);
+
+    return instance;
   }
 
   unmountComponent(shouldNotRemoveChild) {
-    let component = this._instance;
+    let instance = this._instance;
 
     performInSandbox(() => {
-      if (component.componentWillUnmount) {
-        component.componentWillUnmount();
+      if (instance.componentWillUnmount) {
+        instance.componentWillUnmount();
       }
     });
 
-    component._internal = null;
+    Hook.Reconciler.unmountComponent(this);
+
+    instance._internal = null;
 
     if (this._renderedComponent != null) {
       let ref = this._currentElement.ref;
@@ -184,8 +189,8 @@ class CompositeComponent {
   }
 
   _processChildContext(currentContext) {
-    let component = this._instance;
-    let childContext = component.getChildContext && component.getChildContext();
+    let instance = this._instance;
+    let childContext = instance.getChildContext && instance.getChildContext();
     if (childContext) {
       return Object.assign({}, currentContext, childContext);
     }
@@ -193,20 +198,20 @@ class CompositeComponent {
   }
 
   _processPendingState(props, context) {
-    let component = this._instance;
+    let instance = this._instance;
     let queue = this._pendingStateQueue;
     if (!queue) {
-      return component.state;
+      return instance.state;
     }
     // Reset pending queue
     this._pendingStateQueue = null;
-    let nextState = Object.assign({}, component.state);
+    let nextState = Object.assign({}, instance.state);
     for (let i = 0; i < queue.length; i++) {
       let partial = queue[i];
       Object.assign(
         nextState,
         typeof partial === 'function' ?
-        partial.call(component, nextState, props, context) :
+        partial.call(instance, nextState, props, context) :
         partial
       );
     }
@@ -220,9 +225,9 @@ class CompositeComponent {
     prevUnmaskedContext,
     nextUnmaskedContext
   ) {
-    let component = this._instance;
+    let instance = this._instance;
 
-    if (!component) {
+    if (!instance) {
       console.error(
         `Update component '${this.getName()}' that has already been unmounted (or failed to mount).`
       );
@@ -234,7 +239,7 @@ class CompositeComponent {
 
     // Determine if the context has changed or not
     if (this._context === nextUnmaskedContext) {
-      nextContext = component.context;
+      nextContext = instance.context;
     } else {
       nextContext = this._processContext(nextUnmaskedContext);
       willReceive = true;
@@ -250,11 +255,11 @@ class CompositeComponent {
       willReceive = true;
     }
 
-    if (willReceive && component.componentWillReceiveProps) {
+    if (willReceive && instance.componentWillReceiveProps) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
       this._pendingState = true;
       performInSandbox(() => {
-        component.componentWillReceiveProps(nextProps, nextContext);
+        instance.componentWillReceiveProps(nextProps, nextContext);
       });
       this._pendingState = false;
     }
@@ -264,19 +269,19 @@ class CompositeComponent {
 
     // Shoud update always default
     let shouldUpdate = true;
-    let prevProps = component.props;
-    let prevState = component.state;
+    let prevProps = instance.props;
+    let prevState = instance.state;
     // TODO: could delay execution processPendingState
     let nextState = this._processPendingState(nextProps, nextContext);
 
     // ShouldComponentUpdate is not called when forceUpdate is used
     if (!this._pendingForceUpdate) {
-      if (component.shouldComponentUpdate) {
+      if (instance.shouldComponentUpdate) {
         shouldUpdate = performInSandbox(() => {
-          return component.shouldComponentUpdate(nextProps, nextState,
+          return instance.shouldComponentUpdate(nextProps, nextState,
             nextContext);
         });
-      } else if (component.isPureComponentClass) {
+      } else if (instance.isPureComponentClass) {
         shouldUpdate = !shallowEqual(prevProps, nextProps) || !shallowEqual(
           prevState, nextState);
       }
@@ -285,28 +290,28 @@ class CompositeComponent {
     if (shouldUpdate) {
       this._pendingForceUpdate = false;
       // Will set `this.props`, `this.state` and `this.context`.
-      let prevContext = component.context;
+      let prevContext = instance.context;
 
       // Cannot use this.setState() in componentWillUpdate.
       // If need to update state in response to a prop change, use componentWillReceiveProps instead.
       performInSandbox(() => {
-        if (component.componentWillUpdate) {
-          component.componentWillUpdate(nextProps, nextState, nextContext);
+        if (instance.componentWillUpdate) {
+          instance.componentWillUpdate(nextProps, nextState, nextContext);
         }
       });
 
       // Replace with next
       this._currentElement = nextElement;
       this._context = nextUnmaskedContext;
-      component.props = nextProps;
-      component.state = nextState;
-      component.context = nextContext;
+      instance.props = nextProps;
+      instance.state = nextState;
+      instance.context = nextContext;
 
       this._updateRenderedComponent(nextUnmaskedContext);
 
       performInSandbox(() => {
-        if (component.componentDidUpdate) {
-          component.componentDidUpdate(prevProps, prevState, prevContext);
+        if (instance.componentDidUpdate) {
+          instance.componentDidUpdate(prevProps, prevState, prevContext);
         }
       });
 
@@ -316,10 +321,12 @@ class CompositeComponent {
       // to set props and state but we shortcut the rest of the update.
       this._currentElement = nextElement;
       this._context = nextUnmaskedContext;
-      component.props = nextProps;
-      component.state = nextState;
-      component.context = nextContext;
+      instance.props = nextProps;
+      instance.state = nextState;
+      instance.context = nextContext;
     }
+
+    Hook.Reconciler.receiveComponent(this);
   }
 
   /**
@@ -329,13 +336,13 @@ class CompositeComponent {
     let prevRenderedComponent = this._renderedComponent;
     let prevRenderedElement = prevRenderedComponent._currentElement;
 
-    let component = this._instance;
+    let instance = this._instance;
     let nextRenderedElement;
 
     Host.component = this;
 
     performInSandbox(() => {
-      nextRenderedElement = component.render();
+      nextRenderedElement = instance.render();
     });
 
     Host.component = null;
@@ -370,12 +377,12 @@ class CompositeComponent {
   }
 
   getPublicInstance() {
-    let component = this._instance;
+    let instance = this._instance;
     // The Stateless components cannot be given refs
-    if (component instanceof StatelessComponent) {
+    if (instance instanceof StatelessComponent) {
       return null;
     }
-    return component;
+    return instance;
   }
 }
 
