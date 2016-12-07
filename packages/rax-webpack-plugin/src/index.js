@@ -64,25 +64,6 @@ class RaxWebpackPlugin {
     compiler.plugin('normal-module-factory', (normalModuleFactory) => {
       const platforms = this.options.platforms;
 
-      let platformsEntry = {};
-
-      normalModuleFactory.plugin('before-resolve', (data, callback) => {
-        const entries = compiler.options.entry;
-
-        Object.keys(entries).forEach((entry) => {
-          if (entries[entry] === data.request) {
-            if (platformsEntry[data.request]) {
-              platformsEntry[data.request].push(entry);
-            } else {
-              platformsEntry[data.request] = [entry];
-            }
-          }
-        });
-
-        data.entryName =
-          callback(null, data);
-      });
-
       normalModuleFactory.plugin('after-resolve', (data, callback) => {
         // Not set platforms
         if (platforms && platforms.length === 0) {
