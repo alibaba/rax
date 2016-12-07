@@ -31,5 +31,10 @@ Anytime you change the contents, just refresh the page and it's going to be upda
 
 ```sh
 cd website
+
+// deploy to rax.surge.sh
 npm run deploy
+
+// deploy to rax.taobaofed.org
+npm run deploy-fed
 ```
