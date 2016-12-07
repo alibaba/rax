@@ -27,6 +27,8 @@ module.exports = {
       // Common build config
       externalBuiltinModules: false,
       builtinModules: RaxPlugin.BuiltinModules,
+      // Multiple platforms
+      platforms: [] // arrayOf ['Weex', 'Web', 'Node', 'ReactNative']
     })
   ]
 }
