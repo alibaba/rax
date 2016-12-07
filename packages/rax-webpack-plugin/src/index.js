@@ -142,6 +142,7 @@ class RaxWebpackPlugin {
 
         // @see https://webpack.github.io/docs/loaders.html#loader-order
         if (!requireRequest ||
+          /\.(?!\b(jsx|js)\b)[a-z0-9]+/.test(requireRequest) || // exclude '' '.js' '.jsx'
           /^!!/.test(requireRequest) ||
           /^-!/.test(requireRequest) ||
           /^react\-/.test(requireRequest) ||
