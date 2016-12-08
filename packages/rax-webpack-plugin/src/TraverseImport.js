@@ -19,7 +19,7 @@ export default function traverseImport(options, inputSource) {
     );
   }
 
-  const platformMaps = {
+  const platformMap = {
     weex: 'isWeex',
     web: 'isWeb',
     node: 'isNode',
@@ -49,18 +49,18 @@ export default function traverseImport(options, inputSource) {
           });
         });
 
-        let hasPlatformDefined = false;
+        let hasPlatformSpecified = false;
 
         specified.forEach(spec => {
-          if (typeof platformMaps[options.platform] !== 'undefined') {
-            hasPlatformDefined = true;
+          if (typeof platformMap[options.platform] !== 'undefined') {
+            hasPlatformSpecified = true;
           }
         });
 
-        if (hasPlatformDefined) {
+        if (hasPlatformSpecified) {
           specified.forEach(specObj => {
 
-            let newNodeInit = specObj.imported === platformMaps[options.platform] ?
+            let newNodeInit = specObj.imported === platformMap[options.platform] ?
               true : false;
             let newNode = variableDeclarationMethod(
               specObj.imported,
