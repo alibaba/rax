@@ -56,8 +56,7 @@ var config = {
       exclude: /(node_modules|bower_components)/,
       loader: 'babel', // 'babel-loader' is also a legal name to reference
       query: {
-        presets: ['es2015', 'rax'],
-        plugins: ['minify-dead-code-elimination']
+        presets: ['es2015', 'rax']
       }
     }]
   }
