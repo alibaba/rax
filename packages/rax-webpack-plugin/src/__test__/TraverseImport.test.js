@@ -6,7 +6,7 @@ describe('PlatformLoader.traverseImport', function() {
   it('isWeex true ', function() {
 
     const { code } = traverseImport(
-      { name: 'universal-env', isWeex: true },
+      { name: 'universal-env', platform: 'weex' },
       'import { isWeex } from "universal-env";'
     );
 
@@ -16,7 +16,7 @@ describe('PlatformLoader.traverseImport', function() {
   it('isWeex as iw ', function() {
 
     const { code } = traverseImport(
-      { name: 'universal-env', isWeex: true },
+      { name: 'universal-env', platform: 'weex' },
       'import { isWeex as iw } from "universal-env";'
     );
 
@@ -29,7 +29,7 @@ const isWeex = true;`
   it('isWeex and isWeb', function() {
 
     const { code } = traverseImport(
-      { name: 'universal-env', isWeex: true },
+      { name: 'universal-env', platform: 'weex' },
       'import { isWeex, isWeb } from "universal-env";'
     );
 
@@ -39,20 +39,45 @@ const isWeex = true;`
     );
   });
 
-  it('isBundle', function() {
+  it('isWeb true', function() {
 
     const { code } = traverseImport(
-      { name: 'universal-env', isBundle: true },
-      'import { isWeex, isWeb } from "universal-env";'
+      { name: 'universal-env', platform: 'web' },
+      'import { isWeb } from "universal-env";'
     );
 
-    expect(code).toBe('import { isWeex, isWeb } from "universal-env";');
+    expect(code).toBe('const isWeb = true;');
+  });
+
+  it('skin other module', function() {
+
+    const { code } = traverseImport(
+      { name: 'universal-env', platform: 'web' },
+`import { isWeb } from "universal-env";
+import { XXX } from "universal-other";
+`
+    );
+
+    expect(code).toBe(
+`const isWeb = true;
+
+import { XXX } from "universal-other";`);
   });
 
   it('not platform define', function() {
 
     const { code } = traverseImport(
       { name: 'universal-env'},
+      'import { isWeex, isWeb } from "universal-env";'
+    );
+
+    expect(code).toBe('import { isWeex, isWeb } from "universal-env";');
+  });
+
+  it('unkonw platform', function() {
+
+    const { code } = traverseImport(
+      { name: 'universal-env', platform: 'xxxx'},
       'import { isWeex, isWeb } from "universal-env";'
     );
 

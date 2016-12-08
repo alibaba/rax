@@ -19,6 +19,13 @@ export default function traverseImport(options, inputSource) {
     );
   }
 
+  const platformMaps = {
+    weex: 'isWeex',
+    web: 'isWeb',
+    node: 'isNode',
+    reactnative: 'isReactNative'
+  }
+
   let ast = babylon.parse(inputSource, {
     sourceType: 'module',
     plugins: [
@@ -33,7 +40,7 @@ export default function traverseImport(options, inputSource) {
     ImportDeclaration(path) {
       let { node } = path;
 
-      if (options.isBundle !== true && node.source.value === options.name) {
+      if (node.source.value === options.name) {
 
         node.specifiers.forEach(spec => {
           specified.push({
@@ -45,15 +52,16 @@ export default function traverseImport(options, inputSource) {
         let hasPlatformDefined = false;
 
         specified.forEach(spec => {
-          if (typeof options[spec.imported] !== 'undefined') {
+          if (typeof platformMaps[options.platform] !== 'undefined') {
             hasPlatformDefined = true;
           }
         });
 
         if (hasPlatformDefined) {
           specified.forEach(specObj => {
-            let newNodeInit = typeof options[specObj.imported] !== 'undefined' ?
-              options[specObj.imported] : false;
+
+            let newNodeInit = specObj.imported === platformMaps[options.platform] ?
+              true : false;
             let newNode = variableDeclarationMethod(
               specObj.imported,
               newNodeInit
