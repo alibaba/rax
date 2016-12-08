@@ -114,7 +114,8 @@ function genBuiltinModules(
   __weex_require__,
   __weex_options__,
   __weex_data__,
-  __weex_downgrade__
+  __weex_downgrade__,
+  __weex_document__
 ) {
   for (let moduleName in BuiltinModulesFactory) {
     modules[moduleName] = {
@@ -146,7 +147,8 @@ function genBuiltinModules(
           __weex_require__,
           __weex_options__,
           __weex_data__,
-          __weex_downgrade__
+          __weex_downgrade__,
+          __weex_document__
         ),
       module: {exports: {}},
       isInitialized: false,
@@ -405,7 +407,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       req,
       options,
       data,
-      downgrade
+      downgrade,
+      document
     ];
 
     genBuiltinModules(
@@ -436,7 +439,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       req,
       options,
       data,
-      downgrade
+      downgrade,
+      document
     );
 
     if (ENV.platform !== 'Web') {
@@ -468,6 +472,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         '__weex_options__',
         '__weex_data__',
         '__weex_downgrade__',
+        '__weex_document__',
         // ModuleJS
         'define',
         'require',
@@ -504,19 +509,18 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         options,
         data,
         downgrade,
+        document,
         // ModuleJS
         def,
         req,
       );
     } else {
       let init = new Function(
-        'document',
         '"use strict";' + code
       );
 
       init.call(
-        window,
-        document
+        window
       );
     }
   } else {

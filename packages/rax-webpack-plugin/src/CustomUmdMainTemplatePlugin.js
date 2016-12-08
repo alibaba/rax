@@ -84,6 +84,7 @@ module.exports = function() {
           '__weex_options__',
           '__weex_data__',
           '__weex_downgrade__',
+          '__weex_document__',
           // ModuleJS
           'require',
           'exports',
