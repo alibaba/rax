@@ -60,9 +60,7 @@ class RaxWebpackPlugin {
       });
 
       compiler.plugin('normal-module-factory', (normalModuleFactory) => {
-
         normalModuleFactory.plugin('after-resolve', (data, callback) => {
-
           const entries = compiler.options.entry;
 
           for (const entry in entries) {
@@ -101,7 +99,6 @@ class RaxWebpackPlugin {
       });
 
       compiler.parser.plugin('call require', function(expr) {
-
         if (expr.arguments.length !== 1) return;
 
         let param = this.evaluateExpression(expr.arguments[0]);

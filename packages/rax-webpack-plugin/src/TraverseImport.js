@@ -3,7 +3,7 @@ import traverse from 'babel-traverse';
 import * as types from 'babel-types';
 import generate from 'babel-generator';
 
-/* eslint new-cap:false */
+/* eslint-disable new-cap */
 
 export default function traverseImport(options, inputSource) {
   let specified; // Collector import specifiers
@@ -24,7 +24,7 @@ export default function traverseImport(options, inputSource) {
     web: 'isWeb',
     node: 'isNode',
     reactnative: 'isReactNative'
-  }
+  };
 
   let ast = babylon.parse(inputSource, {
     sourceType: 'module',
@@ -41,7 +41,6 @@ export default function traverseImport(options, inputSource) {
       let { node } = path;
 
       if (node.source.value === options.name) {
-
         node.specifiers.forEach(spec => {
           specified.push({
             local: spec.local.name,
@@ -59,7 +58,6 @@ export default function traverseImport(options, inputSource) {
 
         if (hasPlatformSpecified) {
           specified.forEach(specObj => {
-
             let newNodeInit = specObj.imported === platformMap[options.platform] ?
               true : false;
             let newNode = variableDeclarationMethod(

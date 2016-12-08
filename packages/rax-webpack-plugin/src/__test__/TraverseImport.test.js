@@ -4,7 +4,6 @@ import traverseImport from '../TraverseImport';
 
 describe('PlatformLoader.traverseImport', function() {
   it('isWeex true ', function() {
-
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
       'import { isWeex } from "universal-env";'
@@ -14,7 +13,6 @@ describe('PlatformLoader.traverseImport', function() {
   });
 
   it('isWeex as iw ', function() {
-
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
       'import { isWeex as iw } from "universal-env";'
@@ -27,7 +25,6 @@ const isWeex = true;`
   });
 
   it('isWeex and isWeb', function() {
-
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
       'import { isWeex, isWeb } from "universal-env";'
@@ -40,7 +37,6 @@ const isWeex = true;`
   });
 
   it('isWeb true', function() {
-
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'web' },
       'import { isWeb } from "universal-env";'
@@ -50,7 +46,6 @@ const isWeex = true;`
   });
 
   it('skin other module', function() {
-
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'web' },
 `import { isWeb } from "universal-env";
@@ -65,7 +60,6 @@ import { XXX } from "universal-other";`);
   });
 
   it('not platform define', function() {
-
     const { code } = traverseImport(
       { name: 'universal-env'},
       'import { isWeex, isWeb } from "universal-env";'
@@ -75,7 +69,6 @@ import { XXX } from "universal-other";`);
   });
 
   it('unkonw platform', function() {
-
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'xxxx'},
       'import { isWeex, isWeb } from "universal-env";'
