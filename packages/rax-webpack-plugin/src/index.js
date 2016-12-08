@@ -1,19 +1,18 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
-import path from 'path';
 import BuiltinModules from './BuiltinModules';
 
 const platformRegexp = (platforms) => {
   return new RegExp('((' + platforms.join(')|(') + '))', 'i');
 };
 
-const envLoader = require.resolve('./env-loader.js');
-let envLoaderDefine;
+const platformLoader = require.resolve('./PlatformLoader');
 
+let platformLoaderDefine;
 let babelLoaderFileTypeSetMap = {};
 
-const platformWihteList = ['Web', 'Node', 'Weex', 'ReactNative'];
+const platformWihteList = ['web', 'node', 'weex', 'reactnative'];
 
 class RaxWebpackPlugin {
   constructor(options) {
@@ -22,7 +21,7 @@ class RaxWebpackPlugin {
       externalBuiltinModules: false,
       frameworkComment: null,
       includePolyfills: false,
-      platforms: [], // Web Node Weex ReactNative
+      platforms: [], // web node weex reactnative
       polyfillModules: [],
       runMainModule: false,
       target: null
@@ -30,113 +29,104 @@ class RaxWebpackPlugin {
   }
 
   apply(compiler) {
-    const self = this;
+    // filter platforms by platformWihteList
+    this.options.platforms = this.options.platforms.filter(platform => {
+      let p = platform.toLowerCase();
+      if (platformWihteList.indexOf(p) !== -1) {
+        return true;
+      }
+      return false;
+    });
 
     compiler.plugin('this-compilation', (compilation) => {
       babelLoaderFileTypeSetMap = {};
-
-      // filter platforms by platformWihteList
-      this.options.platforms = this.options.platforms.filter(platform => {
-        if (platformWihteList.indexOf(platform) !== -1) {
-          return true;
-        }
-        return false;
-      });
-
       compilation.apply(new CustomUmdMainTemplatePlugin(this.options));
     });
 
-    compiler.plugin('entry-option', (context, entry) => {
-      const entries = Object.keys(entry);
+    if (this.options.platforms && this.options.platforms.length !== 0) {
+      const platforms = this.options.platforms;
 
-      if (this.options.platforms.length) {
+      compiler.plugin('entry-option', (context, entry) => {
+        const entries = Object.keys(entry);
+
         // append platform entry
         entries.forEach(name => {
-          this.options.platforms.forEach(p => {
+          platforms.forEach(p => {
             entry[name + '.' + p.toLowerCase()] = entry[name];
           });
         });
 
-        this.platformMatchRegexp = platformRegexp(this.options.platforms);
-      }
-    });
-
-    compiler.plugin('normal-module-factory', (normalModuleFactory) => {
-      const platforms = this.options.platforms;
-
-      normalModuleFactory.plugin('after-resolve', (data, callback) => {
-        // Not set platforms
-        if (platforms && platforms.length === 0) {
-          return callback(null, data);
-        }
-
-        const entries = compiler.options.entry;
-
-        for (const entry in entries) {
-          if (babelLoaderFileTypeSetMap[entry]) {
-            continue;
-          }
-
-          let platformType = this.platformMatchRegexp.exec(entry);
-
-          const entryRawRequest = entries[entry];
-          // entryRawRequest == data.rawRequest
-          if (entryRawRequest === data.rawRequest) {
-            platformType = platformType && platformType[1] || 'Bundle';
-
-            babelLoaderFileTypeSetMap[entry] = true;
-
-            let request = data.request;
-            request = request.split('!');
-
-            let requestLoaders = request.slice(0, request.length - 1);
-            let requestResource = request.slice(request.length - 1, request.length);
-
-            envLoaderDefine = envLoader + '?is' + platformType.substr(0, 1).toUpperCase() + platformType.substr(1) +
-              '=true';
-
-            requestResource.unshift(envLoaderDefine);
-
-            data.request = requestLoaders.concat(requestResource).join('!');
-            data.loaders.push(envLoaderDefine);
-
-            break;
-          }
-        };
-
-        callback(null, data);
+        this.platformMatchRegexp = platformRegexp(platforms);
       });
-    });
 
+      compiler.plugin('normal-module-factory', (normalModuleFactory) => {
 
-    compiler.parser.plugin('call require', function(expr) {
-      const platforms = self.options.platforms;
-      if (platforms && platforms.length === 0) return;
+        normalModuleFactory.plugin('after-resolve', (data, callback) => {
 
-      if (expr.arguments.length !== 1) return;
+          const entries = compiler.options.entry;
 
-      let param = this.evaluateExpression(expr.arguments[0]);
+          for (const entry in entries) {
+            if (babelLoaderFileTypeSetMap[entry]) {
+              continue;
+            }
 
-      if (param.isString()) {
-        let parentModule = this.state.module; // this.state.current;
-        let requireRequest = param.string;
+            let platformType = this.platformMatchRegexp.exec(entry);
 
-        // @see https://webpack.github.io/docs/loaders.html#loader-order
-        if (!requireRequest ||
-          /\.(?!\b(jsx|js)\b)[a-z0-9]+/.test(requireRequest) || // exclude '' '.js' '.jsx'
-          /^!!/.test(requireRequest) ||
-          /^-!/.test(requireRequest) ||
-          /^react\-/.test(requireRequest) ||
-          /^@weex\-module\//.test(requireRequest) // @weex-module/* ignored
-        ) {
-          return true;
-        } else if (/\.jsx?$/.test(this.state.module.resource)) {
-          // inherit parent module loaders
-          expr.arguments[0].value = '!!' +
-            parentModule.loaders.join('!') + '!' + expr.arguments[0].value;
+            const entryRawRequest = entries[entry];
+            // entryRawRequest == data.rawRequest
+            if (entryRawRequest === data.rawRequest) {
+              platformType = platformType && platformType[1] || 'normal';
+
+              babelLoaderFileTypeSetMap[entry] = true;
+
+              let request = data.request;
+              request = request.split('!');
+
+              let requestLoaders = request.slice(0, request.length - 1);
+              let requestResource = request.slice(request.length - 1, request.length);
+
+              platformLoaderDefine = platformLoader + '?platform=' + platformType;
+
+              requestResource.unshift(platformLoaderDefine);
+
+              data.request = requestLoaders.concat(requestResource).join('!');
+              data.loaders.push(platformLoaderDefine);
+
+              break;
+            }
+          };
+
+          callback(null, data);
+        });
+      });
+
+      compiler.parser.plugin('call require', function(expr) {
+
+        if (expr.arguments.length !== 1) return;
+
+        let param = this.evaluateExpression(expr.arguments[0]);
+
+        if (param.isString()) {
+          let parentModule = this.state.module; // this.state.current;
+          let requireRequest = param.string;
+
+          // TODO: exclude webpack.config.externals
+          // @see https://webpack.github.io/docs/loaders.html#loader-order
+          if (!requireRequest ||
+            /\.(?!\b(jsx|js)\b)[a-z0-9]+/.test(requireRequest) || // exclude '' '.js' '.jsx'
+            /^!!/.test(requireRequest) ||
+            /^-!/.test(requireRequest) ||
+            /^@weex\-module\//.test(requireRequest) // @weex-module/* ignored
+          ) {
+            return true;
+          } else if (/\.jsx?$/.test(this.state.module.resource)) {
+            // inherit parent module loaders
+            expr.arguments[0].value = '!!' +
+              parentModule.loaders.join('!') + '!' + expr.arguments[0].value;
+          }
         }
-      }
-    });
+      });
+    }
 
     compiler.plugin('compile', (params) => {
       params.normalModuleFactory.apply(new ExternalModuleFactoryPlugin('amd',

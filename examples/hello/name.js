@@ -1,4 +1,4 @@
-import { isWeex } from 'universal-env';
+import { isWeex, isWeb } from 'universal-env';
 
 let name = '';
 
