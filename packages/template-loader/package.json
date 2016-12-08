@@ -1,0 +1,21 @@
+{
+  "name": "template-loader",
+  "version": "0.0.1",
+  "description": "template loader.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rx/issues"
+  },
+  "homepage": "https://github.com/alibaba/rx#readme",
+  "dependencies": {
+    "consolidate": "^0.14.5",
+    "domhandler": "^2.3.0",
+    "htmlparser2": "^3.9.2",
+    "loader-utils": "^0.2.16"
+  }
+}
