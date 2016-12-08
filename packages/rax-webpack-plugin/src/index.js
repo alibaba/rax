@@ -2,15 +2,23 @@ import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
+import qs from 'qs';
 
 const platformRegexp = (platforms) => {
   return new RegExp('((' + platforms.join(')|(') + '))', 'i');
 };
 
-const platformLoader = require.resolve('./PlatformLoader');
+const getRequireQuery = (request) => {
+  let markIndex = request.indexOf('?');
+  if (markIndex !== -1) {
+    let query = qs.parse(request.substr(markIndex + 1));
+    query.originRequest = request.substr(0, markIndex);
+    return query;
+  }
+  return null;
+};
 
-let platformLoaderDefine;
-let babelLoaderFileTypeSetMap = {};
+const platformLoader = require.resolve('./PlatformLoader');
 
 const platformWihteList = ['web', 'node', 'weex', 'reactnative'];
 
@@ -39,7 +47,6 @@ class RaxWebpackPlugin {
     });
 
     compiler.plugin('this-compilation', (compilation) => {
-      babelLoaderFileTypeSetMap = {};
       compilation.apply(new CustomUmdMainTemplatePlugin(this.options));
     });
 
@@ -52,7 +59,8 @@ class RaxWebpackPlugin {
         // append platform entry
         entries.forEach(name => {
           platforms.forEach(p => {
-            entry[name + '.' + p.toLowerCase()] = entry[name];
+            const platformType = p.toLowerCase();
+            entry[name + '.' + platformType] = entry[name] + '?platform=' + platformType;
           });
         });
 
@@ -61,67 +69,23 @@ class RaxWebpackPlugin {
 
       compiler.plugin('normal-module-factory', (normalModuleFactory) => {
         normalModuleFactory.plugin('after-resolve', (data, callback) => {
-          const entries = compiler.options.entry;
+          const requireQuery = getRequireQuery(data.rawRequest);
+          // has platform specified
+          if (requireQuery) {
+            const platformQuery = `?platform=${requireQuery.platform}`;
 
-          for (const entry in entries) {
-            if (babelLoaderFileTypeSetMap[entry]) {
-              continue;
-            }
+            ['userRequest', 'rawRequest', 'resource'].forEach(key => {
+              // remove platform query string
+              data[key] = data[key].substring(0, data[key].length - platformQuery.length);
+            });
 
-            let platformType = this.platformMatchRegexp.exec(entry);
+            data.loaders.push(`${platformLoader}${platformQuery}`);
 
-            const entryRawRequest = entries[entry];
-            // entryRawRequest == data.rawRequest
-            if (entryRawRequest === data.rawRequest) {
-              platformType = platformType && platformType[1] || 'normal';
-
-              babelLoaderFileTypeSetMap[entry] = true;
-
-              let request = data.request;
-              request = request.split('!');
-
-              let requestLoaders = request.slice(0, request.length - 1);
-              let requestResource = request.slice(request.length - 1, request.length);
-
-              platformLoaderDefine = platformLoader + '?platform=' + platformType;
-
-              requestResource.unshift(platformLoaderDefine);
-
-              data.request = requestLoaders.concat(requestResource).join('!');
-              data.loaders.push(platformLoaderDefine);
-
-              break;
-            }
-          };
+            data.request = data.loaders.join('!') + '!' + data.resource;
+          }
 
           callback(null, data);
         });
-      });
-
-      compiler.parser.plugin('call require', function(expr) {
-        if (expr.arguments.length !== 1) return;
-
-        let param = this.evaluateExpression(expr.arguments[0]);
-
-        if (param.isString()) {
-          let parentModule = this.state.module; // this.state.current;
-          let requireRequest = param.string;
-
-          // TODO: exclude webpack.config.externals
-          // @see https://webpack.github.io/docs/loaders.html#loader-order
-          if (!requireRequest ||
-            /\.(?!\b(jsx|js)\b)[a-z0-9]+/.test(requireRequest) || // exclude '' '.js' '.jsx'
-            /^!!/.test(requireRequest) ||
-            /^-!/.test(requireRequest) ||
-            /^@weex\-module\//.test(requireRequest) // @weex-module/* ignored
-          ) {
-            return true;
-          } else if (/\.jsx?$/.test(this.state.module.resource)) {
-            // inherit parent module loaders
-            expr.arguments[0].value = '!!' +
-              parentModule.loaders.join('!') + '!' + expr.arguments[0].value;
-          }
-        }
       });
     }
 
