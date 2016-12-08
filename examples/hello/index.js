@@ -1,6 +1,6 @@
 import { createElement, Component, render } from 'rax';
 import { View, Text } from 'rax-components';
-import { isWeex } from 'universal-env';
+import { isWeex, isWeb } from 'universal-env';
 import name from './name';
 
 class App extends Component {
