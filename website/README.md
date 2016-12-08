@@ -31,5 +31,6 @@ Anytime you change the contents, just refresh the page and it's going to be upda
 
 ```sh
 cd website
+
 npm run deploy
 ```

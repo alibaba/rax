@@ -1,26 +1,93 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
-import path from 'path';
 import BuiltinModules from './BuiltinModules';
+import qs from 'qs';
+
+const platformRegexp = (platforms) => {
+  return new RegExp('((' + platforms.join(')|(') + '))', 'i');
+};
+
+const getRequireQuery = (request) => {
+  let markIndex = request.indexOf('?');
+  if (markIndex !== -1) {
+    let query = qs.parse(request.substr(markIndex + 1));
+    query.originRequest = request.substr(0, markIndex);
+    return query;
+  }
+  return null;
+};
+
+const platformLoader = require.resolve('./PlatformLoader');
+
+const platformWihteList = ['web', 'node', 'weex', 'reactnative'];
 
 class RaxWebpackPlugin {
   constructor(options) {
     this.options = Object.assign({
-      runMainModule: false,
-      includePolyfills: false,
-      frameworkComment: null,
-      target: null,
-      externalBuiltinModules: false,
       builtinModules: BuiltinModules,
+      externalBuiltinModules: false,
+      frameworkComment: null,
+      includePolyfills: false,
+      platforms: [], // web node weex reactnative
       polyfillModules: [],
+      runMainModule: false,
+      target: null
     }, options);
   }
 
   apply(compiler) {
+    // filter platforms by platformWihteList
+    this.options.platforms = this.options.platforms.filter(platform => {
+      let p = platform.toLowerCase();
+      if (platformWihteList.indexOf(p) !== -1) {
+        return true;
+      }
+      return false;
+    });
+
     compiler.plugin('this-compilation', (compilation) => {
       compilation.apply(new CustomUmdMainTemplatePlugin(this.options));
     });
+
+    if (this.options.platforms && this.options.platforms.length !== 0) {
+      const platforms = this.options.platforms;
+
+      compiler.plugin('entry-option', (context, entry) => {
+        const entries = Object.keys(entry);
+
+        // append platform entry
+        entries.forEach(name => {
+          platforms.forEach(p => {
+            const platformType = p.toLowerCase();
+            entry[name + '.' + platformType] = entry[name] + '?platform=' + platformType;
+          });
+        });
+
+        this.platformMatchRegexp = platformRegexp(platforms);
+      });
+
+      compiler.plugin('normal-module-factory', (normalModuleFactory) => {
+        normalModuleFactory.plugin('after-resolve', (data, callback) => {
+          const requireQuery = getRequireQuery(data.rawRequest);
+          // has platform specified
+          if (requireQuery) {
+            const platformQuery = `?platform=${requireQuery.platform}`;
+
+            ['userRequest', 'rawRequest', 'resource'].forEach(key => {
+              // remove platform query string
+              data[key] = data[key].substring(0, data[key].length - platformQuery.length);
+            });
+
+            data.loaders.push(`${platformLoader}${platformQuery}`);
+
+            data.request = data.loaders.join('!') + '!' + data.resource;
+          }
+
+          callback(null, data);
+        });
+      });
+    }
 
     compiler.plugin('compile', (params) => {
       params.normalModuleFactory.apply(new ExternalModuleFactoryPlugin('amd',
@@ -55,7 +122,7 @@ class RaxWebpackPlugin {
     if (this.options.target === 'bundle' || this.options.frameworkComment) {
       var defaultFrameworkComment = '// {"framework" : "Rax"}';
       var frameworkComment = typeof this.options.frameworkComment === 'string' ?
-      this.options.frameworkComment : defaultFrameworkComment;
+        this.options.frameworkComment : defaultFrameworkComment;
 
       compiler.plugin('compilation', (compilation) => {
         compilation.plugin('optimize-chunk-assets', function(chunks, callback) {

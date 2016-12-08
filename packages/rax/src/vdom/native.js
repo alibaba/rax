@@ -257,7 +257,9 @@ class NativeComponent {
         nextChildrenElements = [nextChildrenElements];
       }
 
-      nextChildrenElements.forEach( (nextElement, index) => {
+      // Update next children elements
+      for (let index = 0, length = nextChildrenElements.length; index < length; index++) {
+        let nextElement = nextChildrenElements[index];
         let name = getElementKeyName(nextChildren, nextElement, index);
         let prevChild = prevChildren && prevChildren[name];
         let prevElement = prevChild && prevChild._currentElement;
@@ -277,7 +279,7 @@ class NativeComponent {
           // The child must be instantiated before it's mounted.
           nextChildren[name] = instantiateComponent(nextElement);
         }
-      });
+      }
     }
 
     // Unmount children that are no longer present.

@@ -2,7 +2,6 @@
  * Web Browser driver
  **/
 
-import Host from '../vdom/host';
 import setNativeProps from '../setNativeProps';
 import {convertUnit, setRem} from '../style/unit';
 import flexbox from '../style/flexbox';
@@ -13,19 +12,19 @@ const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 
 const Driver = {
   getElementById(id) {
-    return Host.document.getElementById(id);
+    return document.getElementById(id);
   },
 
   createBody() {
-    return Host.document.body;
+    return document.body;
   },
 
   createFragment() {
-    return Host.document.createDocumentFragment();
+    return document.createDocumentFragment();
   },
 
   createComment(content) {
-    return Host.document.createComment(content);
+    return document.createComment(content);
   },
 
   createEmpty() {
@@ -33,16 +32,16 @@ const Driver = {
   },
 
   createText(text) {
-    return Host.document.createTextNode(text);
+    return document.createTextNode(text);
   },
 
   updateText(node, text) {
-    let textContentAttr = 'textContent' in Host.document ? 'textContent' : 'nodeValue';
+    let textContentAttr = 'textContent' in document ? 'textContent' : 'nodeValue';
     node[textContentAttr] = text;
   },
 
   createElement(component) {
-    let node = Host.document.createElement(component.type);
+    let node = document.createElement(component.type);
     let props = component.props;
 
     setNativeProps(node, props);
@@ -141,7 +140,7 @@ const Driver = {
   },
 
   getWindowWidth() {
-    return Host.document.documentElement.clientWidth;
+    return document.documentElement.clientWidth;
   },
 };
 
