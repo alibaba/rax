@@ -8,8 +8,8 @@ const platformRegexp = (platforms) => {
   return new RegExp('((' + platforms.join(')|(') + '))', 'i');
 };
 
-const envLoader = require.resolve('./env-loader.js');
-let envLoaderDefine;
+const platformLoader = require.resolve('./PlatformLoader');
+let platformLoaderDefine;
 
 let babelLoaderFileTypeSetMap = {};
 
@@ -92,13 +92,13 @@ class RaxWebpackPlugin {
             let requestLoaders = request.slice(0, request.length - 1);
             let requestResource = request.slice(request.length - 1, request.length);
 
-            envLoaderDefine = envLoader + '?is' + platformType.substr(0, 1).toUpperCase() + platformType.substr(1) +
+            platformLoaderDefine = platformLoader + '?is' + platformType.substr(0, 1).toUpperCase() + platformType.substr(1) +
               '=true';
 
-            requestResource.unshift(envLoaderDefine);
+            requestResource.unshift(platformLoaderDefine);
 
             data.request = requestLoaders.concat(requestResource).join('!');
-            data.loaders.push(envLoaderDefine);
+            data.loaders.push(platformLoaderDefine);
 
             break;
           }
