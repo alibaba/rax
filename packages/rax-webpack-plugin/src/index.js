@@ -4,10 +4,6 @@ import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
 import qs from 'qs';
 
-const platformRegexp = (platforms) => {
-  return new RegExp('((' + platforms.join(')|(') + '))', 'i');
-};
-
 const getRequireQuery = (request) => {
   let markIndex = request.indexOf('?');
   if (markIndex !== -1) {
@@ -54,17 +50,26 @@ class RaxWebpackPlugin {
       const platforms = this.options.platforms;
 
       compiler.plugin('entry-option', (context, entry) => {
-        const entries = Object.keys(entry);
+        if (Array.isArray(entry) || typeof entry === 'string') {
+          // TODO: support entry pass array/string ?
+        } else if (typeof entry === 'object') {
+          const entries = Object.keys(entry);
+          // append platform entry
+          entries.forEach(name => {
+            platforms.forEach(p => {
+              const platformType = p.toLowerCase();
 
-        // append platform entry
-        entries.forEach(name => {
-          platforms.forEach(p => {
-            const platformType = p.toLowerCase();
-            entry[name + '.' + platformType] = entry[name] + '?platform=' + platformType;
+              if (Array.isArray(entry[name])) {
+                entry[`${name}.${platformType}`] = entry[name].map(ev => {
+                  return `${ev}?platform=${platformType}`;
+                });
+              } else if (typeof entry[name] === 'string') {
+                entry[`${name}.${platformType}`] = `${entry[name]}?platform=${platformType}`;
+              }
+            });
           });
-        });
+        }
 
-        this.platformMatchRegexp = platformRegexp(platforms);
       });
 
       compiler.plugin('normal-module-factory', (normalModuleFactory) => {
@@ -80,10 +85,8 @@ class RaxWebpackPlugin {
             });
 
             data.loaders.push(`${platformLoader}${platformQuery}`);
-
             data.request = data.loaders.join('!') + '!' + data.resource;
           }
-
           callback(null, data);
         });
       });
