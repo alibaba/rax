@@ -1,6 +1,6 @@
 {
   "name": "universal-platform",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A universal Platform API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.0.4"
+    "universal-env": "^0.0.5"
   }
 }
