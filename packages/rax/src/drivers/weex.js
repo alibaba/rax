@@ -1,7 +1,6 @@
 /**
  * Weex driver
  **/
-
 import Host from '../vdom/host';
 import setNativeProps from '../setNativeProps';
 import {convertUnit, setRem} from '../style/unit';
@@ -12,6 +11,7 @@ const TEXT = 'text';
 const FULL_WIDTH_REM = 750;
 const DOCUMENT_FRAGMENT_NODE = 11;
 const nodeMaps = {};
+/* global __weex_document__ */
 const document = typeof __weex_document__ === 'object' ?
   __weex_document__ : typeof document === 'object' ?
     document : null;
