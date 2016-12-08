@@ -1,5 +1,5 @@
 import loaderUtils from 'loader-utils';
-import traverseImport from './traverseImport';
+import traverseImport from './TraverseImport';
 
 /**
  * remove universal-env module dependencies
