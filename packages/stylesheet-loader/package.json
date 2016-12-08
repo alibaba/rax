@@ -1,6 +1,6 @@
 {
   "name": "stylesheet-loader",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Stylesheet loader.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

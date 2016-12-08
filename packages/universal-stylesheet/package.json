@@ -1,6 +1,6 @@
 {
   "name": "universal-stylesheet",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A universal StyleSheet API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
