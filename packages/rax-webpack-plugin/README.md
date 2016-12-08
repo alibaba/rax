@@ -27,7 +27,28 @@ module.exports = {
       // Common build config
       externalBuiltinModules: false,
       builtinModules: RaxPlugin.BuiltinModules,
+      // Multiple platforms
+      platforms: [] // arrayOf ['Weex', 'Web', 'Node', 'ReactNative']
     })
   ]
 }
+```
+
+If you setting the `platforms` parameter, must changed the `jsx` loader test expression
+
+`/\.jsx?(\?platform=[a-z]+)?$/`
+
+```javascript
+  // ...
+  module: {
+    loaders: [{
+      test: /\.jsx?(\?platform=[a-z]+)?$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel', // 'babel-loader' is also a legal name to reference
+      query: {
+        presets: ['es2015', 'rax'],
+      }
+    }]
+  }
+  // ...
 ```
