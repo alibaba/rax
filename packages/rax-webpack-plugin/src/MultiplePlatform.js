@@ -18,9 +18,9 @@ module.exports = function MultiplePlatform(config, options = {}) {
   let platforms = options.platforms || config.platforms;
 
   if (typeof platforms === 'undefined' || platforms.length === 0) {
-    console.log('')
+    console.log('');
     console.warn('The \`platforms\` field is not specified!');
-    console.log('')
+    console.log('');
     return config;
   }
 
@@ -36,10 +36,10 @@ module.exports = function MultiplePlatform(config, options = {}) {
   });
 
   if (platforms.length === 0) {
-    console.log('')
+    console.log('');
     console.warn('The options.platforms is no available platform!');
     console.warn('Accept platform list:', JSON.stringify(platformWihteList));
-    console.log('')
+    console.log('');
     return config;
   }
 
