@@ -82,11 +82,6 @@ export default function traverseImport(options, inputSource) {
 
           path.remove();
         }
-      } else {
-        if (options.platform) {
-          node.source.value = node.source.value +
-            '?platform=' + options.platform;
-        }
       }
     }
   });
