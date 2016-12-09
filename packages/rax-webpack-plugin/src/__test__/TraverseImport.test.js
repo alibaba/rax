@@ -56,7 +56,7 @@ import { XXX } from "universal-other";
     expect(code).toBe(
 `const isWeb = true;
 
-import { XXX } from "universal-other?platform=web";`);
+import { XXX } from "universal-other";`);
   });
 
   it('not platform specified', function() {
@@ -68,7 +68,7 @@ import { XXX } from "universal-other?platform=web";`);
     expect(code).toBe('import { isWeex, isWeb } from "universal-env";');
   });
 
-  it('unkonw platform', function() {
+  it('unknown platform', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'xxxx'},
       'import { isWeex, isWeb } from "universal-env";'
@@ -77,7 +77,7 @@ import { XXX } from "universal-other?platform=web";`);
     expect(code).toBe('import { isWeex, isWeb } from "universal-env";');
   });
 
-  it('unkonw platform and unkonw name', function() {
+  it('unknown platform and unknown name', function() {
     const { code } = traverseImport(
       { name: 'universal-xxx'},
       'import { isWeex, isWeb } from "universal-env";'
