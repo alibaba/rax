@@ -50,11 +50,9 @@ export default function traverseImport(options, inputSource) {
 
         let hasPlatformSpecified = false;
 
-        specified.forEach(spec => {
-          if (typeof platformMap[options.platform] !== 'undefined') {
-            hasPlatformSpecified = true;
-          }
-        });
+        if (typeof platformMap[options.platform] !== 'undefined') {
+          hasPlatformSpecified = true;
+        }
 
         if (hasPlatformSpecified) {
           specified.forEach(specObj => {
