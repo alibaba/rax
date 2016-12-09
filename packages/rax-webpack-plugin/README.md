@@ -26,29 +26,30 @@ module.exports = {
       globalName: 'Rax',
       // Common build config
       externalBuiltinModules: false,
-      builtinModules: RaxPlugin.BuiltinModules,
-      // Multiple platforms
-      platforms: [] // arrayOf ['Weex', 'Web', 'Node', 'ReactNative']
+      builtinModules: RaxPlugin.BuiltinModules
     })
   ]
 }
 ```
 
-If you setting the `platforms` parameter, must changed the `jsx` loader test expression
+### MultiplePlatform(<config:Object>[, options: Object])
 
-`/\.jsx?(\?platform=[a-z]+)?$/`
+Output multiple platform
+
+#### options
+
+- `platforms` Array of ['web', 'node', 'weex', 'reactnative']
+
+example
 
 ```javascript
-  // ...
-  module: {
-    loaders: [{
-      test: /\.jsx?(\?platform=[a-z]+)?$/,
-      exclude: /(node_modules|bower_components)/,
-      loader: 'babel', // 'babel-loader' is also a legal name to reference
-      query: {
-        presets: ['es2015', 'rax'],
-      }
-    }]
-  }
-  // ...
+const config = require('webpack.config.js');
+
+const multipleConfig = RaxPlugin.MultiplePlatform(config, {
+  platforms: ['web', 'weex']
+});
+
+const compiler = webpack(configs);
+
+// ....
 ```
