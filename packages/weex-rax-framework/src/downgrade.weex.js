@@ -105,8 +105,9 @@ function check(config) {
   return result;
 }
 
-module.exports = function(nativeInstanceWrap) {
+module.exports = function(__weex_require__) {
   return (config) => {
+    let nativeInstanceWrap = __weex_require__('@weex-module/instanceWrap');
     let result = check(config);
     if (result.isDowngrade) {
       nativeInstanceWrap.error(
