@@ -24,6 +24,7 @@
     "htmlparser2": "^3.9.2",
     "jsdom": "^9.8.3",
     "loader-utils": "^0.2.16",
+    "lodash": "^4.17.2",
     "stylesheet-loader": "^0.0.7"
   }
 }

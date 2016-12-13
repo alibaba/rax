@@ -1,5 +1,5 @@
 import path from 'path';
-import { parser } from './utils';
+import parser from './parserHTML';
 import loaderUtils from 'loader-utils';
 
 module.exports = function(content) {
@@ -8,8 +8,10 @@ module.exports = function(content) {
   const filename = path.basename(this.resourcePath);
   const parts = parser(content);
   let part = parts[query.type];
+
   if (Array.isArray(part)) {
     part = part[query.index];
   }
+
   this.callback(null, part.content, parts);
 };

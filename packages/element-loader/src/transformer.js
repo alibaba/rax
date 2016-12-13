@@ -1,7 +1,6 @@
 import * as babylon from 'babylon';
 import generate from 'babel-generator';
 import traverse from 'babel-traverse';
-import { isObject } from './utils';
 import { IF_KEY, FOR_KEY } from './defaultKey';
 const FULL_VALUE_REG = /\{\{(.*)\}\}/g;
 
@@ -106,16 +105,13 @@ export function transformPair(code, scope, config = {}) {
 
   let codeStr = code;
 
-  if (config.forceObject || isObject(codeStr)) {
-    codeStr = `{${codeStr}}`;
-  }
-
   const ast = babylon.parse(`(${codeStr})`);
   traverse(ast, visitor);
   let newCode = generate(ast).code;
   if (newCode.charAt(newCode.length - 1) === ';') {
     newCode = newCode.slice(0, -1);
   }
+
   return `(${newCode})`;
 }
 

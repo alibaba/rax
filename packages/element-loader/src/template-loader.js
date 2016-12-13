@@ -3,74 +3,40 @@ import path from 'path';
 import loaderUtils from 'loader-utils';
 import HTMLtoJSX from './HTMLtoJSX';
 import { transform } from 'babel-core';
-import { parserWithStatement } from './utils';
+import getPresets from './getPresets';
+import getImportPackages from './getImportPackages';
 const converter = new HTMLtoJSX();
 
 module.exports = function(source, parseObject) {
   this.cacheable && this.cacheable();
   const callback = this.async();
   const query = loaderUtils.parseQuery(this.query);
-  const projectName = query.project || 'react';
-  const project = projects[projectName];
 
   // no engine default: html
   if (!cons[query.engine]) {
-    return callback(null, getConvertText(source, project, parseObject.importLinks));
+    return callback(null, getConvertText(source, parseObject.importLinks, query));
   }
 
   cons[query.engine].render(source, {
     filename: this.resourcePath
   }, (error, html) => {
-    return callback(error, getConvertText(html, project, parseObject.importLinks));
+    return callback(error, getConvertText(html, parseObject.importLinks, query));
   });
 };
 
-const getConvertText = (source, project, links) => {
+const getConvertText = (source, links, query) => {
   const convert = converter.convert(source);
+  const { presets, imports } = query;
   const code = `
-    ${getDefaultPackages(project.defaultPackages, project)}
+    ${getImportPackages(imports)}
     ${getElementsImport(links)}
-    module.exports = {
-      render: function(props, context, styles) {
-        return (${convert.output})
-      }
+
+    module.exports = (props, styles) => {
+      return ${convert.output};
     };
   `;
 
-  return transform(code, {presets: project.presets}).code;
-};
-
-let projects = {
-  react: {
-    name: 'react',
-    defaultPackages: [],
-    presets: ['es2015', 'react']
-  },
-
-  rax: {
-    name: 'rax',
-    defaultPackages: [],
-    presets: ['es2015', 'rax']
-  }
-};
-
-const getDefaultPackages = (packages = '', project) => {
-  const {name} = project;
-  let importText = '';
-
-  if (name === 'react') {
-    importText += 'import React from \'react\';\n';
-  } else {
-    importText += `import {createElement, Component} from '${project.name}';\n`;
-  }
-
-  packages.forEach((packageName) => {
-    const nameFrom = packageName.split(':');
-
-    importText += `import ${nameFrom[0]} from '${nameFrom[1]}';\n`;
-  });
-
-  return importText;
+  return transform(code, { presets: getPresets(presets) }).code;
 };
 
 const getElementsImport = (links) => {

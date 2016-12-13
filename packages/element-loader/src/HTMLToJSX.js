@@ -6,13 +6,13 @@ import {
   hasForKey
 } from './transformer';
 import htmlparser from 'htmlparser2';
-import { IF_KEY, FOR_KEY, IMPORT_NAME } from './defaultKey';
+import { IF_KEY, FOR_KEY } from './defaultKey';
 import {
   endsWith,
   trimEnd,
-  isNumeric,
-  parseHtml
-} from './utils';
+  isNumber
+} from 'lodash';
+import { getDomObject } from './parserHTML';
 
 const PAIR_REG = /^\{\{(.*)}\}$/;
 const NODE_TYPE = {
@@ -45,12 +45,12 @@ export default class HTMLtoJSX {
 
     html = this._cleanInput(html);
 
-    let nodes = parseHtml(html);
+    let nodes = getDomObject(html);
 
     if (!this._onlyOneTopLevel(nodes)) {
       this.level++;
       html = `<div>\n${html}\n</div>`;
-      nodes = parseHtml(html);
+      nodes = getDomObject(html);
     }
 
     this._traverse({
@@ -134,12 +134,6 @@ export default class HTMLtoJSX {
     const outputTagName = tagName;
     let attributes = [];
 
-    if (tagName === IMPORT_NAME) {
-      let attribs = node.attribs;
-      this.outputImportText += transformImport(attribs.name, attribs.from);
-      return;
-    }
-
     node.attributes.forEach((attribute) => {
       attributes.push(this._getElementAttribute(node, attribute));
     });
@@ -157,9 +151,6 @@ export default class HTMLtoJSX {
     const tagName = node.name;
     const outputTagName = tagName;
 
-    if (tagName === IMPORT_NAME) {
-      return;
-    }
     this.output = trimEnd(this.output, this.config.indent);
     this.output += '</' + outputTagName + '>';
     this.output += transformFor(node.attributes, false, this.scope);
@@ -187,7 +178,7 @@ export default class HTMLtoJSX {
 
   _onlyOneTopLevel(nodes) {
     let _rootNodes = nodes.filter((node) => {
-      return !/\n+/.test('\n') && node.name !== IMPORT_NAME;
+      return !/\n+/.test('\n');
     });
     return _rootNodes.length === 1;
   }
@@ -223,7 +214,7 @@ export default class HTMLtoJSX {
         let result = name;
 
         // Numeric values should be output as {123} not "123"
-        if (isNumeric(attribute.value)) {
+        if (isNumber(attribute.value)) {
           result += `={${attribute.value}}`;
         } else if (attribute.value.length > 0) {
           result += `="${attribute.value.replace(/"/gm, '&quot;')}"`;
