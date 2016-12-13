@@ -1,16 +1,20 @@
 import {
   transformFor,
   transformIf,
-  transformImport
+  transformImport,
+  transformPair,
+  hasForKey
 } from './transformer';
 import htmlparser from 'htmlparser2';
-import {IF_KEY, FOR_KEY, IMPORT_NAME} from './defaultKey';
+import { IF_KEY, FOR_KEY, IMPORT_NAME } from './defaultKey';
 import {
   endsWith,
   trimEnd,
-  isNumeric
+  isNumeric,
+  parseHtml
 } from './utils';
 
+const PAIR_REG = /^\{\{(.*)}\}$/;
 const NODE_TYPE = {
   ELEMENT: 'tag',
   TEXT: 'text',
@@ -33,6 +37,7 @@ export default class HTMLtoJSX {
     this.output = '';
     this.outputImportText = '';
     this.level = 0;
+    this.scope = {};
   }
 
   convert(html) {
@@ -40,12 +45,12 @@ export default class HTMLtoJSX {
 
     html = this._cleanInput(html);
 
-    let nodes = this._parseHtml(html);
+    let nodes = parseHtml(html);
 
     if (!this._onlyOneTopLevel(nodes)) {
       this.level++;
       html = `<div>\n${html}\n</div>`;
-      nodes = this._parseHtml(html);
+      nodes = parseHtml(html);
     }
 
     this._traverse({
@@ -75,7 +80,7 @@ export default class HTMLtoJSX {
       return;
     }
     node.attributes = [];
-    for(const key in node.attribs) {
+    for (const key in node.attribs) {
       node.attributes.push({
         name: key,
         value: node.attribs[key]
@@ -139,8 +144,8 @@ export default class HTMLtoJSX {
       attributes.push(this._getElementAttribute(node, attribute));
     });
 
-    this.output += transformIf(node.attributes, true);
-    this.output += transformFor(node.attributes, true);
+    this.output += transformFor(node.attributes, true, this.scope);
+    this.output += transformIf(node.attributes, true, this.scope);
     this.output += `<${outputTagName}`;
     if (attributes.length > 0) {
       this.output += ' ' + attributes.join(' ');
@@ -157,29 +162,27 @@ export default class HTMLtoJSX {
     }
     this.output = trimEnd(this.output, this.config.indent);
     this.output += '</' + outputTagName + '>';
-    this.output += transformIf(node.attributes, false);
-    this.output += transformFor(node.attributes, false);
+    this.output += transformFor(node.attributes, false, this.scope);
+    this.output += transformIf(node.attributes, false, this.scope);
   }
 
   _visitText(node) {
     let text = node.data;
 
-    text = text.replace(/^\{\{(.*)}\}$/, '{$1}');
+    // text = text.replace(PAIR_REG, `{$1}`);
+    if (PAIR_REG.test(text)) {
+      text = text.replace(PAIR_REG, (word, $1) => {
+        if (/^\{\{([props.].*)}\}$/.test(text)) {
+          return `{${$1}}`;
+        }
+        return `{${transformPair($1, this.scope)}}`;
+      });
+    }
     this.output += text;
   }
 
   _visitComment(node) {
     this.output += `{/*${node.data.replace('*/', '* /')}*/}`;
-  }
-
-  _parseHtml(html) {
-    const handler = new htmlparser.DomHandler();
-    const parser = new htmlparser.Parser(handler, {
-      xmlMode: true
-    });
-    parser.parseComplete(html);
-
-    return handler.dom;
   }
 
   _onlyOneTopLevel(nodes) {
@@ -193,6 +196,24 @@ export default class HTMLtoJSX {
     switch (attribute.name) {
       case 'src':
         return `source={{uri: "${attribute.value}"}}`;
+      case 'class':
+        const value = attribute.value.trim();
+        let multiClass = value.split(' ');
+        let style = '';
+
+        if (multiClass.length === 1) {
+          style = `styles.${multiClass[0]}`;
+        } else {
+          style += '[';
+          multiClass = multiClass.map((className) => {
+            return `styles.${className}`;
+          });
+          style += multiClass.join(', ');
+
+          style += ']';
+        }
+
+        return `style={${style}}`;
       case IF_KEY:
       case FOR_KEY:
         break;
