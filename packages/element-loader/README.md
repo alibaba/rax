@@ -44,8 +44,8 @@ Input `Container.html`:
 
 <template>
   <div>
-    <span class="text" #if="{{show}}">{{text}}</span>
-    <div class="item" #for="{{item in items}}">
+    <span class="text" :if="{{show}}">{{text}}</span>
+    <div class="item" :for="{{item in items}}">
       <span class="name">{{item}}</span>
     </div>
     <Hello message="world"></Hello>
@@ -190,8 +190,8 @@ div.header
 
 ## Directives
 
-- #for: repeat a array eg. "{{item in items}}"
-- #if:  show or hide eg. "{{x < 5}}"
+- :for: repeat a array eg. "{{item in items}}"
+- :if:  show or hide eg. "{{x < 5}}"
 
 ## TODO
 
