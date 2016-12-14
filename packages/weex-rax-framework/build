@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Example: ./build -n tnpm -b
 
@@ -24,6 +24,8 @@ done
 shift $((OPTIND-1))
 
 [ "$1" = "--" ] && shift
+
+echo "Make sure you has been build `weex-rax-framework` by `npm run dist` in `rax` project root"
 
 echo "Creates global weex-rax-framework link:"
 $npm link
