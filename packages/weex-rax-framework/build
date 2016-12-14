@@ -36,7 +36,7 @@ if [[ $onlyBuild == 1 ]]; then
 else
 
   echo "Clone the weex repository and install prerequisites:"
-  git clone git@github.com:alibaba/weex.git --depth=1
+  git clone https://github.com/alibaba/weex.git --depth=1
   cd weex
   $npm install
 
