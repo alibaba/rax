@@ -3,8 +3,7 @@ import parser from './parserHTML';
 import pkg from '../package.json';
 import path from 'path';
 import { transform } from 'babel-core';
-import getPresets from './getPresets';
-import getImportPackages from './getImportPackages';
+import getBabelConfig from './getBabelConfig';
 
 module.exports = function(source) {
   this.cacheable();
@@ -52,7 +51,7 @@ module.exports = function(source) {
   }
 
   const code = `
-    ${getImportPackages(query.imports)}
+    ${query.banner}
     var styles = _styles;
 
     class _App extends Component {
@@ -65,6 +64,6 @@ module.exports = function(source) {
 
   output += code;
 
-  return transform(output, { presets: getPresets(query.presets)}).code;
+  return transform(output, getBabelConfig(query)).code;
 };
 

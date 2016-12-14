@@ -21,9 +21,8 @@ module.export = {
         test: /\.html/,
         loader: 'element-loader',
         query: {
-          imports: {
-            react: 'React, { Component }'
-          }
+          // React & Component is required
+          banner: `import React, { Component } from 'react';`
         }
       }
     ]
@@ -127,9 +126,7 @@ module.export = {
         test: /\.html/,
         loader: 'element-loader',
         query: {
-          imports: {
-            rax: '{ createElement, Component, render }'
-          }
+          banner: `import { createElement, Component } from 'rax';`
         }
       }
     ]
@@ -146,23 +143,17 @@ In `.babelrc`:
 
 ### Options
 
-#### `imports`
+#### `banner`
 
-`imports` default import required package, different frames(eg. rax、react、react-native) call packages are not the same, Look at the following configuration.
+Code inserted into each element. You can use it in any framework(eg. rax、react、react-native...) by configuring this option.
 
 For example:
 ```js
 // webpack.config.js
-imports: {
-  rax: '{ createElement, Component, render }',
-  'rax-components': '{ View, Link, Text }'
-}
-```
-
-Will eventually generate the following code:
-```js
-import { createElement, Component, render } from 'rax';
-import { View, Link, Text } from 'rax-components';
+banner: `
+  import { createElement, Component } from 'rax';
+  import { View, Text, Link } from 'rax-components';
+`
 ```
 
 #### `presets`

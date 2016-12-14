@@ -3,8 +3,7 @@ import path from 'path';
 import loaderUtils from 'loader-utils';
 import HTMLtoJSX from './HTMLtoJSX';
 import { transform } from 'babel-core';
-import getPresets from './getPresets';
-import getImportPackages from './getImportPackages';
+import getBabelConfig from './getBabelConfig';
 const converter = new HTMLtoJSX();
 
 module.exports = function(source, parseObject) {
@@ -28,7 +27,7 @@ const getConvertText = (source, links, query) => {
   const convert = converter.convert(source);
   const { presets, imports } = query;
   const code = `
-    ${getImportPackages(imports)}
+    ${query.banner}
     ${getElementsImport(links)}
 
     module.exports = (props, styles) => {
@@ -36,7 +35,7 @@ const getConvertText = (source, links, query) => {
     };
   `;
 
-  return transform(code, { presets: getPresets(presets) }).code;
+  return transform(code, getBabelConfig(query)).code;
 };
 
 const getElementsImport = (links) => {
