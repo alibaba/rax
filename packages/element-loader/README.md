@@ -156,9 +156,17 @@ banner: `
 `
 ```
 
-#### `presets`
+#### `babel`
 
-`presets` list read query option by default, If there is no written in query, We'll get data from the `.babelrc` file.
+option `babel` readed by default, If there is no written in query, We'll get data from the `.babelrc` file.
+
+```js
+query: {
+  babel: {
+    presets: ['es2015', 'rax']
+  }
+}
+```
 
 #### `engine`
 

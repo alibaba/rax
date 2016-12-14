@@ -52,14 +52,12 @@ module.exports = function(source) {
 
   const code = `
     ${query.banner}
-    var styles = _styles;
 
-    class _App extends Component {
+    export default class extends Component {
       render(props) {
-        return templateLoader.call(this, this.props, styles);
+        return templateLoader.call(this, this.props, _styles);
       }
     }
-    module.exports = _App;
   `;
 
   output += code;

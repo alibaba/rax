@@ -4,9 +4,8 @@ export default function getBabelConfig(query = {}) {
   let result = {};
   const BABELRC_FILE = process.cwd() + '/.babelrc';
 
-  if (query.presets && Array.isArray(presets)) {
-    result.presets = query.presets;
-    result.plugins = query.plugins;
+  if (query.babel) {
+    result = query.babel;
   } else {
     let content = fs.readFileSync(BABELRC_FILE);
     try {
