@@ -43,10 +43,12 @@ else
 fi
 
 echo "Install/Link the weex-rax-framework of your dependency:"
-$npm $install weex-rax-framework
+npm $install weex-rax-framework
 
 echo "Config weex/html5/frameworks/index.js"
 echo -e "import * as Weex from './legacy/index'\nimport Rax from 'weex-rax-framework'\nexport default {\n  Rax, Weex\n}" > html5/frameworks/index.js
 
 echo "Build jsfm for native renderer to weex/dist/native.js"
 $npm run build:native
+
+echo "Done"
