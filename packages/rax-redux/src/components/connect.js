@@ -3,7 +3,7 @@ import storeShape from '../utils/storeShape';
 import shallowEqual from 'shallowequal';
 import wrapActionCreators from '../utils/wrapActionCreators';
 import warning from '../utils/warning';
-import isPlainObject from 'lodash.isplainobject'
+import isPlainObject from 'lodash.isplainobject';
 import hoistStatics from '../utils/hoistNonRaxStatics';
 import invariant from 'invariant';
 
@@ -132,9 +132,9 @@ export default function connect(mapStateToProps, mapDispatchToProps, mergeProps,
         let shouldUpdateStateProps = true;
         let shouldUpdateDispatchProps = true;
         if (pure && renderedElement) {
-          shouldUpdateStateProps = hasStoreStateChanged || (
+          shouldUpdateStateProps = hasStoreStateChanged ||
           haveOwnPropsChanged && this.doStatePropsDependOnOwnProps
-          );
+          ;
           shouldUpdateDispatchProps =
             haveOwnPropsChanged && this.doDispatchPropsDependOnOwnProps;
         }

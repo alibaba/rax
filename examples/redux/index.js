@@ -19,27 +19,21 @@ class Page extends Component {
         </Text>
       </View>
       <View style={styles.opt}>
-        <TouchableHighlight style={styles.btn} onPress={() => {
+        <Text style={styles.btn} onPress={() => {
           dispatch({type: 'counter/add'});
         }}>
-          <Text style={styles.text}>
           +
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight style={styles.btn} onPress={() => {
+        </Text>
+        <Text style={styles.btn} onPress={() => {
           dispatch({type: 'counter/minus'});
         }}>
-          <Text style={styles.text}>
           -
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={() => {
+        </Text>
+        <Text style={[styles.btn, styles.set]} onPress={() => {
           dispatch({type: 'content/set', text: 'New Value'});
         }}>
-          <Text style={styles.text}>
-            Set lab
-          </Text>
-        </TouchableHighlight>
+          Set text
+        </Text>
       </View>
     </View>;
   }
@@ -87,8 +81,6 @@ function content(state = {
 }
 
 let store = createStore(
-
-  //多个 reducer 时使用 combineReducers
   combineReducers({
     content,
     counter
@@ -97,28 +89,34 @@ let store = createStore(
 
 const styles = {
   main: {
+    flex: 1,
+    paddingTop: 36
   },
   box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'center'
   },
   opt: {
     flexDirection: 'row',
-    marginTop: '28rem'
+    marginTop: 28,
+    justifyContent: 'center'
   },
   text: {
-    fontSize: '38rem'
+    fontSize: 38
   },
   btn: {
-    marginRight: '12rem',
-    borderWidth: '1rem',
+    fontSize: 38,
+    marginRight: 12,
+    borderWidth: 2,
     borderStyle: 'solid',
     borderColor: '#333333',
-    width: '38rem',
-    height: '38rem',
-    alignItems: 'center'
+    width: 38,
+    height: 38,
+    alignItems: 'center',
+    textAlign: 'center'
   },
-  asyn: {
-    width: '300rem'
+  set: {
+    width: 200
   }
 };
 
