@@ -42,13 +42,14 @@ if (NODE_ENV !== 'production') {
   };
 }
 
+
 Provider.propTypes = {
-  store: storeShape.isRequired,
+  store: storeShape,
   children: PropTypes.element.isRequired
 };
 
 Provider.childContextTypes = {
-  store: storeShape.isRequired
+  store: storeShape
 };
 
 Provider.displayName = 'Provider';
