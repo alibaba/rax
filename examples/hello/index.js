@@ -1,11 +1,19 @@
-import {createElement, Component, render} from 'rax';
-import {View, Text} from 'rax-components';
+import { createElement, Component, render } from 'rax';
+import { View, Text } from 'rax-components';
+import { isWeex, isWeb } from 'universal-env';
+import name from './name';
 
 class App extends Component {
   render() {
-    return <View style={styles.container}>
-      <Text>Hello world</Text>
-    </View>;
+    if (isWeex) {
+      return <View style={styles.container}>
+        <Text>Hello {name}</Text>
+      </View>;
+    } else {
+      return <div>
+        hello {name}
+      </div>;
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-module.exports = function(Promise, nativeFetch) {
+module.exports = function(__weex_require__, Promise) {
   function normalizeName(name) {
     if (typeof name !== 'string') {
       name = String(name);
@@ -227,6 +227,7 @@ module.exports = function(Promise, nativeFetch) {
       }
 
       params.type = init && init.dataType ? init.dataType : 'json';
+      var nativeFetch = __weex_require__('@weex-module/stream').fetch;
       nativeFetch(params, (response) => {
         try {
           typeof response === 'string' && (response = JSON.parse(response));

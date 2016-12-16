@@ -1,19 +1,20 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
-import path from 'path';
 import BuiltinModules from './BuiltinModules';
+import MultiplePlatform from './MultiplePlatform';
 
 class RaxWebpackPlugin {
   constructor(options) {
     this.options = Object.assign({
-      runMainModule: false,
-      includePolyfills: false,
-      frameworkComment: null,
-      target: null,
-      externalBuiltinModules: false,
       builtinModules: BuiltinModules,
+      externalBuiltinModules: false,
+      frameworkComment: null,
+      includePolyfills: false,
+      platforms: [], // web node weex reactnative
       polyfillModules: [],
+      runMainModule: false,
+      target: null
     }, options);
   }
 
@@ -55,7 +56,7 @@ class RaxWebpackPlugin {
     if (this.options.target === 'bundle' || this.options.frameworkComment) {
       var defaultFrameworkComment = '// {"framework" : "Rax"}';
       var frameworkComment = typeof this.options.frameworkComment === 'string' ?
-      this.options.frameworkComment : defaultFrameworkComment;
+        this.options.frameworkComment : defaultFrameworkComment;
 
       compiler.plugin('compilation', (compilation) => {
         compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
@@ -73,5 +74,6 @@ class RaxWebpackPlugin {
 }
 
 RaxWebpackPlugin.BuiltinModules = BuiltinModules;
+RaxWebpackPlugin.MultiplePlatform = MultiplePlatform;
 
 module.exports = RaxWebpackPlugin;

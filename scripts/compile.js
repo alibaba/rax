@@ -101,7 +101,9 @@ function buildFile(file, silent) {
 const files = process.argv.slice(2);
 
 if (files.length) {
-  files.forEach(buildFile);
+  files.forEach(file => {
+    buildFile(path.resolve(file), false);
+  });
 } else {
   process.stdout.write(chalk.bold.inverse('Compiling packages\n'));
   getPackages().forEach(buildPackage);

@@ -114,7 +114,8 @@ function genBuiltinModules(
   __weex_require__,
   __weex_options__,
   __weex_data__,
-  __weex_downgrade__
+  __weex_downgrade__,
+  __weex_document__
 ) {
   for (let moduleName in BuiltinModulesFactory) {
     modules[moduleName] = {
@@ -146,7 +147,8 @@ function genBuiltinModules(
           __weex_require__,
           __weex_options__,
           __weex_data__,
-          __weex_downgrade__
+          __weex_downgrade__,
+          __weex_document__
         ),
       module: {exports: {}},
       isInitialized: false,
@@ -267,10 +269,11 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
     }
 
     const emitter = new EventEmitter();
-    const weexNavigator = req('@weex-module/navigator');
+
     const window = {
       devicePixelRatio: ENV.scale,
       open: (url) => {
+        const weexNavigator = req('@weex-module/navigator');
         weexNavigator.push({
           url,
           animated: 'true',
@@ -329,9 +332,9 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       pixelDepth: 24,
     };
 
-    const timer = req('@weex-module/timer');
-
+    const timerModuleName = '@weex-module/timer';
     const setTimeout = (...args) => {
+      const timer = req(timerModuleName);
       const handler = function() {
         args[0](...args.slice(2));
       };
@@ -340,6 +343,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
     };
 
     const setInterval = (...args) => {
+      const timer = req(timerModuleName);
       const handler = function() {
         args[0](...args.slice(2));
       };
@@ -348,34 +352,35 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
     };
 
     const clearTimeout = (n) => {
+      const timer = req(timerModuleName);
       timer.clearTimeout(n);
     };
 
     const clearInterval = (n) => {
+      const timer = req(timerModuleName);
       timer.clearInterval(n);
     };
 
     const requestAnimationFrame = (callback) => {
+      const timer = req(timerModuleName);
       timer.setTimeout(callback, 16);
       return instance.uid.toString();
     };
 
     const cancelAnimationFrame = (n) => {
+      const timer = req(timerModuleName);
       timer.clearTimeout(n);
     };
 
-    const modal = req('@weex-module/modal');
     const alert = (message) => {
+      const modal = req('@weex-module/modal');
       modal.alert({
         message
       }, function() {});
     };
 
-    const instanceWrap = req('@weex-module/instanceWrap');
-    const downgrade = require('./downgrade.weex')(instanceWrap);
-
-    const stream = req('@weex-module/stream');
-    const fetch = require('./fetch.weex')(Promise, stream.fetch);
+    const downgrade = require('./downgrade.weex')(req);
+    const fetch = require('./fetch.weex')(req, Promise);
     const {Headers, Request, Response} = fetch;
 
     let globals = [
@@ -405,7 +410,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       req,
       options,
       data,
-      downgrade
+      downgrade,
+      document
     ];
 
     genBuiltinModules(
@@ -436,7 +442,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       req,
       options,
       data,
-      downgrade
+      downgrade,
+      document
     );
 
     if (ENV.platform !== 'Web') {
@@ -468,6 +475,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         '__weex_options__',
         '__weex_data__',
         '__weex_downgrade__',
+        '__weex_document__',
         // ModuleJS
         'define',
         'require',
@@ -504,19 +512,18 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         options,
         data,
         downgrade,
+        document,
         // ModuleJS
         def,
         req,
       );
     } else {
       let init = new Function(
-        'document',
         '"use strict";' + code
       );
 
       init.call(
-        window,
-        document
+        window
       );
     }
   } else {
@@ -660,4 +667,17 @@ function normalize(v, instance) {
 function typof(v) {
   const s = Object.prototype.toString.call(v);
   return s.substring(8, s.length - 1).toLowerCase();
+}
+
+export default {
+  createInstance,
+  destroyInstance,
+  getInstance,
+  getRoot,
+  init,
+  receiveTasks,
+  refreshInstance,
+  registerComponents,
+  registerMethods,
+  registerModules
 }
