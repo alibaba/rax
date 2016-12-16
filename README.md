@@ -1,7 +1,7 @@
 **Warning: This is currently a private repo, please do not share this code.**
 
 <p align="center">
-  <a href="https://alibaba.github.io/rax">
+  <a href="https://rax.taobaofed.org">
     <img alt="Rax" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
   </a>
 </p>
@@ -117,3 +117,7 @@ More examples take a look at the [`examples`](/examples/) folder.
 ## Contributing
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
+
+<a href="https://alibaba.github.io/weex/">
+<img alt="Weex Inside" src="https://cloud.githubusercontent.com/assets/677114/21266275/575eabee-c3e0-11e6-92d2-ad57e99372f2.png" width="200">
+</a>
