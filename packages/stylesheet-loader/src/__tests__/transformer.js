@@ -10,6 +10,12 @@ describe('transformer', () => {
     expect(result).toEqual('abc');
   });
 
+  it('should transform nested selector when set ignoreNestedError to true', () => {
+    const result = transformer.sanitizeSelector('.a .b', true);
+
+    expect(result).toEqual('a_b');
+  });
+
   it('should return null when writing multiple selectors', () => {
     const result = transformer.sanitizeSelector('.abc .bcd');
 
@@ -32,7 +38,7 @@ describe('transformer', () => {
     const valueWithPx = transformer.convertValue('width', '16px');
     const valueNoWithPx = transformer.convertValue('width', '16');
 
-    expect(valueWithPx).toEqual(16);
+    expect(valueWithPx).toEqual('16px');
     expect(valueNoWithPx).toEqual(16);
   });
 
