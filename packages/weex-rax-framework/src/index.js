@@ -680,4 +680,4 @@ export default {
   registerComponents,
   registerMethods,
   registerModules
-}
+};
