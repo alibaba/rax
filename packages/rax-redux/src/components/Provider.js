@@ -1,4 +1,4 @@
-import { Component, PropTypes } from 'rax';
+import {Component, PropTypes} from 'rax';
 import storeShape from '../utils/storeShape';
 import warning from '../utils/warning';
 

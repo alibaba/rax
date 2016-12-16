@@ -1,4 +1,4 @@
-import { Component, createElement } from 'rax';
+import {Component, createElement} from 'rax';
 import storeShape from '../utils/storeShape';
 import shallowEqual from 'shallowequal';
 import wrapActionCreators from '../utils/wrapActionCreators';

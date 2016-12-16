@@ -1,4 +1,4 @@
-import { PropTypes } from 'rax';
+import {PropTypes} from 'rax';
 
 export default PropTypes.shape({
   subscribe: PropTypes.func.isRequired,

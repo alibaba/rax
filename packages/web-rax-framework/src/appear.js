@@ -1,10 +1,12 @@
 import Registry, { config, getOffset, pushElement } from './appearRegistry';
 
+let instance = null;
+
 const appear = () => {
   let instances = [];
 
   Registry.createEvent();
-  eventListenerHook(instances);
+  injectEventListenerHook(instances);
 
   instance = new Registry({
     container: window
@@ -12,18 +14,15 @@ const appear = () => {
   instances.push(instance);
 
   let control = {
-    config: (opts) => {
-      config(opts);
-    }
+    config,
   };
 
   return control;
 };
 
-let instance = null;
 
 // hijack addEventListener、removeEventListener
-let eventListenerHook = (instances) => {
+const injectEventListenerHook = (instances) => {
   let nativeAddEventListener = Node.prototype.addEventListener;
   let nativeRemoveEventListener = Node.prototype.removeEventListener;
 
