@@ -16,9 +16,9 @@ const COLOR_PROPERTIES = {
 };
 
 export default {
-  sanitizeSelector(selector, ignoreNestedError) {
+  sanitizeSelector(selector, transformDescendantCombinator) {
     // filter multiple extend selectors
-    if (!ignoreNestedError && !/^\.[a-zA-Z0-9_]+$/.test(selector)) {
+    if (!transformDescendantCombinator && !/^\.[a-zA-Z0-9_]+$/.test(selector)) {
       console.error(`\`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`);
       return null;
     }

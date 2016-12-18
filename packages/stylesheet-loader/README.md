@@ -89,7 +89,7 @@ export default Foo;
 
 ### Options
 
-#### `ignoreNestedError`
+#### `transformDescendantCombinator`
 
-Default does not support nested, but you can also choose to avoid this constraint when set `ignoreNestedError` to true.
+Default does not support nested, but you can also choose to avoid this constraint when set `transformDescendantCombinator` to true.
 

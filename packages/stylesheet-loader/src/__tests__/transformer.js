@@ -10,7 +10,7 @@ describe('transformer', () => {
     expect(result).toEqual('abc');
   });
 
-  it('should transform nested selector when set ignoreNestedError to true', () => {
+  it('should transform nested selector when set transformDescendantCombinator to true', () => {
     const result = transformer.sanitizeSelector('.a .b', true);
 
     expect(result).toEqual('a_b');

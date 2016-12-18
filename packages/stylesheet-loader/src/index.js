@@ -11,7 +11,7 @@ module.exports = function(source) {
   const callback = this.async();
   const stylesheet = css.parse(source).stylesheet;
   const query = loaderUtils.parseQuery(this.query);
-  const ignoreNestedError = query.ignoreNestedError;
+  const transformDescendantCombinator = query.transformDescendantCombinator;
   let data = {};
 
   if (stylesheet.parsingErrors.length) {
@@ -26,7 +26,7 @@ module.exports = function(source) {
     }
 
     rule.selectors.forEach(function(selector) {
-      let sanitizedSelector = transformer.sanitizeSelector(selector, ignoreNestedError);
+      let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator);
       if (sanitizedSelector) {
         data[sanitizedSelector] = style;
       }
