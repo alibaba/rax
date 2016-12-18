@@ -28,7 +28,7 @@ module.exports = function(source) {
     rule.selectors.forEach(function(selector) {
       let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator);
       if (sanitizedSelector) {
-        data[sanitizedSelector] = style;
+        data[sanitizedSelector] = Object.assign(data[sanitizedSelector] || {}, style);
       }
     });
   });
