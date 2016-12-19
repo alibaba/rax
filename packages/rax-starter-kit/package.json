@@ -33,7 +33,7 @@
     "internal-ip": "^1.2.0",
     "json-loader": "^0.5.4",
     "qrcode-terminal": "^0.11.0",
-    "rax-webpack-plugin": "^0.3.0",
+    "rax-webpack-plugin": "^0.0.8",
     "stylesheet-loader": "^0.0.8",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
     "webpack": "^1.13.3",

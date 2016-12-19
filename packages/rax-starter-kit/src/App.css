@@ -10,14 +10,16 @@
   padding: 40;
 }
 
-.appBanner {
+.appBanner, .appIntro {
   text-align: center;
+}
+
+.appBanner {
   font-size: 80;
   color: white;
 }
 
 .appIntro {
-  text-align: center;
   margin-top: 40;
   font-size: 40;
   line-height: 60;

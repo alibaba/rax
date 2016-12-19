@@ -13,5 +13,7 @@ function getPackages() {
 
 getPackages().forEach((p) => {
   console.log('npm link', p);
+  // Skip link starter kit
+  if (p.indexOf('rax-starter-kit') > 0) return;
   spawnSync('npm', ['link', p]);
 });
