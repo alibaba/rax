@@ -13,8 +13,7 @@ module.exports = {
     'transform-object-rest-spread', // stage-3
     'syntax-trailing-function-commas', // stage-3
     'syntax-flow',
-    'syntax-jsx',
-    'minify-dead-code-elimination'
+    'syntax-jsx'
   ]),
   env: {
     development: {
@@ -24,7 +23,8 @@ module.exports = {
     },
     production: {
       plugins: resolvePlugins([
-        'transform-react-constant-elements'
+        'transform-react-constant-elements',
+        'minify-dead-code-elimination'
       ])
     },
   }

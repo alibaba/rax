@@ -1,6 +1,6 @@
 {
   "name": "weex-rax-framework",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Rax framework for weex.",
   "license": "BSD-3-Clause",
   "main": "dist/framework.weex.js",
@@ -16,8 +16,8 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "runtime-shared": "^0.0.8",
-    "rax": "^0.0.8"
+    "runtime-shared": "^0.0.9",
+    "rax": "^0.0.9"
   },
   "devDependencies": {
     "weex-js-runtime": "^0.17.0-alpha4",

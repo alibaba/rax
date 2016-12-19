@@ -1,6 +1,6 @@
 {
   "name": "rax-starter-kit",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Rax universal starter kit.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -18,9 +18,9 @@
     "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "universal-env": "^0.0.8",
-    "rax": "^0.0.8",
-    "rax-components": "^0.0.8"
+    "universal-env": "^0.0.9",
+    "rax": "^0.0.9",
+    "rax-components": "^0.0.9"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
@@ -33,8 +33,8 @@
     "internal-ip": "^1.2.0",
     "json-loader": "^0.5.4",
     "qrcode-terminal": "^0.11.0",
-    "rax-webpack-plugin": "^0.0.8",
-    "stylesheet-loader": "^0.0.8",
+    "rax-webpack-plugin": "^0.0.9",
+    "stylesheet-loader": "^0.0.9",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2"

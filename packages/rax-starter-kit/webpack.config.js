@@ -58,7 +58,6 @@ if (process.env.NODE_ENV !== 'production') {
 
   qrcode.generate(bundleUrl, {small: true});
   console.log('Weex: scan above QRCode ' + bundleUrl + ' use weex playground.\n');
-
 }
 
 module.exports = {
