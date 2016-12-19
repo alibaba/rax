@@ -75,8 +75,6 @@ export default Foo;
 }
 ```
 
-> Nested rules is not supported
-
 ```js
 // foo.less
 import styles from './foo.less';
@@ -88,4 +86,10 @@ function Foo() {
 }
 export default Foo;
 ```
+
+### Options
+
+#### `transformDescendantCombinator`
+
+Default does not support nested, but you can also choose to avoid this constraint when set `transformDescendantCombinator` to true.
 
