@@ -73,5 +73,5 @@ var server = new WebpackDevServer(compiler, {
 });
 
 server.listen(9999, function() {
-  console.log('\n   http://localhost:9999');
+  console.log('\n Open http://localhost:9999/examples/ and select example');
 });

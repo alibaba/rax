@@ -20,7 +20,8 @@ const UNITLESS_NUMBER_PROPS = {
   gridColumn: true,
   fontWeight: true,
   lineClamp: true,
-  lineHeight: true,
+  // We make lineHeight default is px that is diff with w3c spec
+  // lineHeight: true,
   opacity: true,
   order: true,
   orphans: true,

@@ -84,7 +84,8 @@ let store = createStore(
   combineReducers({
     content,
     counter
-  })
+  }),
+  typeof __REDUX_DEVTOOLS_EXTENSION__ === 'function' && __REDUX_DEVTOOLS_EXTENSION__()
 );
 
 const styles = {
@@ -102,10 +103,12 @@ const styles = {
     justifyContent: 'center'
   },
   text: {
-    fontSize: 38
+    fontSize: 38,
+    lineHeight: 38,
   },
   btn: {
     fontSize: 38,
+    lineHeight: 38,
     marginRight: 12,
     borderWidth: 2,
     borderStyle: 'solid',
