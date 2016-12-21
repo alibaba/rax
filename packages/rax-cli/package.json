@@ -1,6 +1,6 @@
 {
   "name": "rax-cli",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "BSD-3-Clause",
   "description": "The Rax CLI tools",
   "main": "lib/index.js",
@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "bin": {
-    "rax": "lib/index.js"
+    "rax": "bin/rax.js"
   },
   "dependencies": {
     "chalk": "^1.1.1",
