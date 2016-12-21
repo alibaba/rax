@@ -4,6 +4,7 @@
     "rax"
   ],
   "ignore": [
-    "src/polyfills/"
+    "src/polyfills/",
+    "src/generator/templates"
   ]
 }

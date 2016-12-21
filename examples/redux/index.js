@@ -1,3 +1,5 @@
+/* global __REDUX_DEVTOOLS_EXTENSION__ */
+
 import {createElement, Component, render} from 'rax';
 import {View, Text, TouchableHighlight} from 'rax-components';
 import {createStore, combineReducers} from 'redux';

@@ -54,35 +54,30 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 | Rax@0.0.2    | 1553 op/s (fastest)         |
 
 
-## Installation
+## Quick Start
 
-### NPM
-We recommend using Rax from npm with `webpack`. If you use npm for client package management, you can install Rax with:
+Install the Rax CLI tools to init project:
+
 ```sh
-npm install --save rax
+npm install rax-cli -g
+rax init YourProjectName
 ```
 
-### CDN
-
-If you don't want to use `npm` to manage client packages, the `rax` npm packages also provide UMD distributions in `dist` folders, which are hosted on a CDN:
-```html
-<script src="https://unpkg.com/rax@0/dist/rax.js"></script>
+Start local server to launch project:
+```sh
+cd YourProjectName
+npm run start
 ```
 
-To load a specific version of `rax`, replace `0` with the version number.
-Minified production versions of `rax` are available at:
-```html
-<script src="https://unpkg.com/rax@1/dist/rax.min.js"></script>
-```
-
-## Example
+## Examples
 
 ```js
 import {createElement, Component, render} from 'rax';
+import {Text} from 'rax-components';
 
 class Hello extends Component {
   render() {
-    return <text style={styles.title}>Hello {this.props.name}</text>;
+    return <Text style={styles.title}>Hello {this.props.name}</Text>;
   }
 }
 
