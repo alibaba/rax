@@ -23,4 +23,6 @@ if (version) {
       stdio: 'inherit'
     }
   );
+} else {
+  console.log('Must specific publish version like: npm run publish 0.0.1');
 }

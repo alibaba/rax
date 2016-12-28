@@ -26,7 +26,6 @@ function removeScript(script) {
 }
 
 const JSONP = function(url, options = {}) {
-
   if (isWeex) {
     const Stream = __weex_require__('@weex-module/stream');
 
@@ -34,7 +33,7 @@ const JSONP = function(url, options = {}) {
       const jsonpCallback = options.jsonpCallback != null ? options.jsonpCallback : defaultOptions.jsonpCallback;
       const callbackFunction = options.jsonpCallbackFunctionName || generateCallbackFunction();
       if (url.indexOf(jsonpCallback) == -1) {
-        url += (url.indexOf('?') === -1) ? '?' : '&';
+        url += url.indexOf('?') === -1 ? '?' : '&';
         url = url + jsonpCallback + '=' + callbackFunction;
       }
       let params = {
@@ -71,9 +70,7 @@ const JSONP = function(url, options = {}) {
       }, (progress) => {
       });
     });
-
   } else {
-
     // !weex env
     return new Promise((resolve, reject) => {
       const timeout = options.timeout != null ? options.timeout : defaultOptions.timeout;
@@ -95,10 +92,10 @@ const JSONP = function(url, options = {}) {
         clearFunction(callbackFunction);
       };
 
-      url += (url.indexOf('?') === -1) ? '?' : '&';
+      url += url.indexOf('?') === -1 ? '?' : '&';
 
       jsonpScript.setAttribute('src', url + jsonpCallback + '=' + callbackFunction);
-      //jsonpScript.id = jsonpCallback + '_' + callbackFunction;
+      // jsonpScript.id = jsonpCallback + '_' + callbackFunction;
       document.getElementsByTagName('head')[0].appendChild(jsonpScript);
 
       timeoutId = setTimeout(() => {
