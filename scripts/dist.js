@@ -17,7 +17,8 @@ if (!fs.existsSync('./packages/rax/build')) {
   ['universal-panresponder', 'panresponder', 'PanResponder'],
   ['universal-platform', 'platform', 'Platform'],
   ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
-  ['universal-toast', 'toast', 'Toast']
+  ['universal-toast', 'toast', 'Toast'],
+  ['universal-jsonp', 'jsonp', 'JSONP']
 ].forEach(function(info) {
   var main = './packages/' + info[0] + '/src/index.js';
   var entry = {};

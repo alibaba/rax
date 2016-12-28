@@ -107,7 +107,7 @@ More examples take a look at the [`examples`](/examples/) folder.
 * :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
 * :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
 * :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
-* :postbox: [universal-router](https://github.com/kriasoft/universal-router): A simple middleware-style router for isomorphic JavaScript web apps.
+* :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
 
 ## Contributing
 
