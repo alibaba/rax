@@ -224,7 +224,15 @@ render(<App />);</textarea>
   var queryString = getQueryString();
   var lastStorageSource = localStorage.getItem(storageKey);
   var sourceFromQueryString = queryString.code;
+  var backgroundColor = queryString.bgColor;
   var source = sourceFromQueryString || lastStorageSource || editor.getValue();
+
+  if (backgroundColor) {
+    var style = document.createElement('style');
+    style.innerHTML = '.cm-s-material, .cm-s-material .CodeMirror-gutters, .container {background-color: #' + backgroundColor + '}';
+    document.body.appendChild(style);
+  }
+
   if (source) {
     editor.setValue(source);
     compile(source, true);
