@@ -160,6 +160,25 @@ describe('framework', () => {
     expect(mockFn).toHaveBeenCalled();
   });
 
+  it('FontFace', () => {
+    const code = `
+      var bitterFontFace = new FontFace('Bitter', 'url(https://fonts.gstatic.com/s/bitter/v7/HEpP8tJXlWaYHimsnXgfCOvvDin1pK8aKteLpeZ5c0A.woff2)');
+      alert(bitterFontFace.family);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'Bitter'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
   it('postMessage', () => {
     const code = `
       window.addEventListener('message', function(e){

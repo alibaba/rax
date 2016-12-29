@@ -301,6 +301,17 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       }
     };
 
+    // FontFace
+    document.fonts = {
+      add: function(fontFace){
+        var domModule = req('@weex-module/dom');
+        domModule.addRule('fontFace', {
+          'fontFamily': fontFace.family,
+          'src': fontFace.source
+        });
+      }
+    };
+
     instance = instances[instanceId] = {
       window,
       document,
@@ -382,6 +393,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
     const downgrade = require('./downgrade.weex')(req);
     const fetch = require('./fetch.weex')(req, Promise);
     const {Headers, Request, Response} = fetch;
+
+    window.FontFace = require('./fontface.weex')(req);
 
     let globals = [
       // ES
@@ -479,7 +492,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         // ModuleJS
         'define',
         'require',
-        '"use strict";' + code
+        'with (window) { (function(){ "use strict";' + code + '})(); }'
       );
 
       init.call(
@@ -517,6 +530,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         def,
         req,
       );
+
     } else {
       let init = new Function(
         '"use strict";' + code
