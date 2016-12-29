@@ -109,6 +109,32 @@ More examples take a look at the [`examples`](/examples/) folder.
 * :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
 * :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
 
+
+## Developer Tools
+
+* [React Developer Tools](https://github.com/facebook/react-devtools): allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
+
+![image](https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png)
+
+* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): provides power-ups for your Redux development workflow.
+  1. Use the `rax-redux` module in your app
+  2. Simply replace:
+  ```js
+  const store = createStore(reducer);
+  ```
+  ```js
+  let store = createStore(
+    combineReducers({
+      content,
+      counter
+    }),
+    typeof __REDUX_DEVTOOLS_EXTENSION__ === 'function' && __REDUX_DEVTOOLS_EXTENSION__()
+  );
+  ```
+
+![image](https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png)
+
+
 ## Contributing
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
