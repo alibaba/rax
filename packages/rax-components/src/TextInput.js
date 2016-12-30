@@ -92,7 +92,7 @@ class TextInput extends Component {
       value,
       id
     };
-    
+
     if (typeof editable !== 'undefined' && !editable) {
       propsCommon.readOnly = true;
     }
