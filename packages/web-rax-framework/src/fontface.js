@@ -1,14 +1,21 @@
-/*
-* FOR USE
-* API:
-* FontFace('iconfont', '//at.alicdn.com/t/font_pkm0oq8is8fo5hfr.ttf');
-* ELEMENT:
-* <Text style={{fontFamily: 'iconfont'}}>{'\uE601'}</Text>
-*/
-const FontFace = (family, source) => {
+const SUPPORTS_ORIGIN_FONT_LOADING = !!document['fonts'];
+
+function FontFace(family, source) {
+  this.family = family;
+  this.source = source;
+  if (!SUPPORTS_ORIGIN_FONT_LOADING) {
+    document.fonts = {
+      add: function(fontFace) {
+        FontFaceHelper(fontFace.family, fontFace.source);
+      }
+    }
+  }
+}
+
+const FontFaceHelper = (family, source) => {
   let tagTemplate = `@font-face{
     font-family: ${family};
-    src: url('${source}')
+    src: ${source}
   }`;
   const existTag = document.getElementById(family);
   if (existTag) {
@@ -21,4 +28,4 @@ const FontFace = (family, source) => {
   document.getElementsByTagName('head')[0].appendChild(styleTag);
 };
 
-export default FontFace;
+export default window.FontFace ? window.FontFace : FontFace;
