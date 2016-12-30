@@ -10,12 +10,12 @@ require('whatwg-fetch');
 require('raf/polyfill');
 
 if (!global.FontFace) {
-  golbal.FontFace = require('runtime-shared/dist/fontface.module');
+  global.FontFace = require('runtime-shared/dist/fontface.module');
 }
 
 if (!document.fonts) {
   document.fonts = {
-    add: function (family, source) {
+    add: function(family, source) {
       let fontFaceRule = `@font-face {
         font-family: ${family};
         src: ${source}

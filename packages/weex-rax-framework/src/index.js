@@ -305,7 +305,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
 
     // FontFace
     document.fonts = {
-      add: function(fontFace){
+      add: function(fontFace) {
         var domModule = req('@weex-module/dom');
         domModule.addRule('fontFace', {
           'fontFamily': fontFace.family,
@@ -530,7 +530,6 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         def,
         req,
       );
-
     } else {
       let init = new Function(
         '"use strict";' + code
