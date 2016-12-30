@@ -56,44 +56,10 @@ module.exports = function() {
       } else if (!target && chunk.name.endsWith('.factory') || target === 'factory') {
         // Build weex builtin modules use this mode.
         // NOTE: globals should sync logic in weex-rax-framework
-        let factoryDependencies = [
-          // ES
-          'Promise',
-          // W3C
-          'window',
-          'screen',
-          'document',
-          'navigator',
-          'location',
-          'fetch',
-          'Headers',
-          'Response',
-          'Request',
-          'URL',
-          'URLSearchParams',
-          'setTimeout',
-          'clearTimeout',
-          'setInterval',
-          'clearInterval',
-          'requestAnimationFrame',
-          'cancelAnimationFrame',
-          'alert',
-          // Weex
-          '__weex_define__',
-          '__weex_require__',
-          '__weex_options__',
-          '__weex_data__',
-          '__weex_downgrade__',
-          '__weex_document__',
-          // ModuleJS
-          'require',
-          'exports',
-          'module'
-        ];
         sourcePrefix = `
-module.exports = function(${factoryDependencies}) {
-  module.exports = `;
-        sourceSuffix = '};';
+module.exports = function(require, exports, module) {
+  with (this) { module.exports = `;
+        sourceSuffix = '}};';
       } else {
         // Default build mode for component
         sourcePrefix = `

@@ -88,68 +88,12 @@ export function registerModules(newModules) {
 
 function genBuiltinModules(
   modules,
-  // ES
-  Promise,
   // W3C
-  window,
-  screen,
-  document,
-  navigator,
-  location,
-  fetch,
-  Headers,
-  Response,
-  Request,
-  URL,
-  URLSearchParams,
-  setTimeout,
-  clearTimeout,
-  setInterval,
-  clearInterval,
-  requestAnimationFrame,
-  cancelAnimationFrame,
-  alert,
-  // Weex
-  __weex_define__,
-  __weex_require__,
-  __weex_options__,
-  __weex_data__,
-  __weex_downgrade__,
-  __weex_document__
+  window
 ) {
   for (let moduleName in BuiltinModulesFactory) {
     modules[moduleName] = {
-      factory: BuiltinModulesFactory[moduleName].bind(
-          null,
-          // ES
-          Promise,
-          // W3C
-          window,
-          screen,
-          document,
-          navigator,
-          location,
-          fetch,
-          Headers,
-          Response,
-          Request,
-          URL,
-          URLSearchParams,
-          setTimeout,
-          clearTimeout,
-          setInterval,
-          clearInterval,
-          requestAnimationFrame,
-          cancelAnimationFrame,
-          alert,
-          // Weex
-          __weex_define__,
-          __weex_require__,
-          __weex_options__,
-          __weex_data__,
-          __weex_downgrade__,
-          __weex_document__
-        ),
+      factory: BuiltinModulesFactory[moduleName].bind(window),
       module: {exports: {}},
       isInitialized: false,
     };
@@ -207,14 +151,14 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
-  const Promise = require('runtime-shared/dist/promise.function')();
-  const URL = require('runtime-shared/dist/url.function')();
-  const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
-  const FontFace = require('runtime-shared/dist/fontface.function')();
 
   let instance = instances[instanceId];
 
   if (instance == undefined) {
+    const Promise = require('runtime-shared/dist/promise.function')();
+    const URL = require('runtime-shared/dist/url.function')();
+    const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
+
     const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
     const document = new Document(instanceId, options.bundleUrl, null, Listener);
     const location = new URL(document.URL);
@@ -269,40 +213,6 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       return mod.module.exports;
     }
 
-    const emitter = new EventEmitter();
-
-    const window = {
-      devicePixelRatio: ENV.scale,
-      FontFace,
-      open: (url) => {
-        const weexNavigator = req('@weex-module/navigator');
-        weexNavigator.push({
-          url,
-          animated: 'true',
-        }, function(e) {
-          // noop
-        });
-      },
-      postMessage: (message, targetOrigin) => {
-        var event = {
-          origin: location.origin,
-          data: JSON.parse(JSON.stringify(message)),
-          type: 'message',
-          source: window, // FIXME: maybe not export window
-        };
-        dispatchEventToInstance(event, targetOrigin);
-      },
-      addEventListener: (type, listener) => {
-        emitter.on(type, listener);
-      },
-      removeEventListener: (type, listener) => {
-        emitter.off(type, listener);
-      },
-      dispatchEvent: (e) => {
-        emitter.emit(e.type, e);
-      }
-    };
-
     // FontFace
     document.fonts = {
       add: function(fontFace) {
@@ -314,36 +224,8 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       }
     };
 
-    instance = instances[instanceId] = {
-      window,
-      document,
-      instanceId,
-      modules,
-      origin: location.origin,
-      callbacks: [],
-      uid: 0
-    };
-
-    // https://www.w3.org/TR/2009/WD-html5-20090423/browsers.html#dom-navigator
-    const navigator = {
-      product: 'Weex',
-      platform: ENV.platform,
-      appName: ENV.appName,
-      appVersion: ENV.appVersion,
-      // weexVersion: ENV.weexVersion,
-      // osVersion: ENV.osVersion,
-      // userAgent
-    };
-
-    // https://drafts.csswg.org/cssom-view/#the-screen-interface
-    const screen = {
-      width: ENV.deviceWidth,
-      height: ENV.deviceHeight,
-      availWidth: ENV.deviceWidth,
-      availHeight: ENV.deviceHeight,
-      colorDepth: 24,
-      pixelDepth: 24,
-    };
+    const fetch = require('./fetch.weex')(req, Promise);
+    const {Headers, Request, Response} = fetch;
 
     const timerModuleName = '@weex-module/timer';
     const setTimeout = (...args) => {
@@ -392,19 +274,32 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       }, function() {});
     };
 
-    const downgrade = require('./downgrade.weex')(req);
-    const fetch = require('./fetch.weex')(req, Promise);
-    const {Headers, Request, Response} = fetch;
-
-    let globals = [
+    const windowEmitter = new EventEmitter();
+    const window = {
       // ES
       Promise,
       // W3C
-      window,
-      screen,
       document,
-      navigator,
       location,
+      // https://www.w3.org/TR/2009/WD-html5-20090423/browsers.html#dom-navigator
+      navigator: {
+        product: 'Weex',
+        platform: ENV.platform,
+        appName: ENV.appName,
+        appVersion: ENV.appVersion,
+        // weexVersion: ENV.weexVersion,
+        // osVersion: ENV.osVersion,
+        // userAgent
+      },
+      // https://drafts.csswg.org/cssom-view/#the-screen-interface
+      screen: {
+        width: ENV.deviceWidth,
+        height: ENV.deviceHeight,
+        availWidth: ENV.deviceWidth,
+        availHeight: ENV.deviceHeight,
+        colorDepth: 24,
+        pixelDepth: 24,
+      },
       fetch,
       Headers,
       Response,
@@ -418,117 +313,72 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       requestAnimationFrame,
       cancelAnimationFrame,
       alert,
+      devicePixelRatio: ENV.scale,
+      FontFace: require('runtime-shared/dist/fontface.function')(),
+      open: (url) => {
+        const weexNavigator = req('@weex-module/navigator');
+        weexNavigator.push({
+          url,
+          animated: 'true',
+        }, function(e) {
+          // noop
+        });
+      },
+      postMessage: (message, targetOrigin) => {
+        var event = {
+          origin: location.origin,
+          data: JSON.parse(JSON.stringify(message)),
+          type: 'message',
+          source: window, // FIXME: maybe not export window
+        };
+        dispatchEventToInstance(event, targetOrigin);
+      },
+      addEventListener: (type, listener) => {
+        windowEmitter.on(type, listener);
+      },
+      removeEventListener: (type, listener) => {
+        windowEmitter.off(type, listener);
+      },
+      dispatchEvent: (e) => {
+        windowEmitter.emit(e.type, e);
+      },
+      // ModuleJS
+      define: def,
+      require: req,
       // Weex
-      def,
-      req,
-      options,
-      data,
-      downgrade,
-      document
-    ];
+      __weex_define__: def,
+      __weex_require__: req,
+      __weex_options__: options,
+      __weex_data__: data,
+      __weex_downgrade__: require('./downgrade.weex')(req),
+      __weex_document__: document,
+    };
+
+    window.self = window.window = window;
+
+    instance = instances[instanceId] = {
+      window,
+      document,
+      instanceId,
+      modules,
+      origin: location.origin,
+      callbacks: [],
+      uid: 0
+    };
 
     genBuiltinModules(
       modules,
-      // ES
-      Promise,
-      // W3C
-      window,
-      screen,
-      document,
-      navigator,
-      location,
-      fetch,
-      Headers,
-      Response,
-      Request,
-      URL,
-      URLSearchParams,
-      setTimeout,
-      clearTimeout,
-      setInterval,
-      clearInterval,
-      requestAnimationFrame,
-      cancelAnimationFrame,
-      alert,
-      // Weex
-      def,
-      req,
-      options,
-      data,
-      downgrade,
-      document
+      window
     );
 
     if (ENV.platform !== 'Web') {
       let init = new Function(
-        // ES
-        'Promise',
-        // W3C
-        'window',
-        'screen',
-        'document',
-        'navigator',
-        'location',
-        'fetch',
-        'Headers',
-        'Response',
-        'Request',
-        'URL',
-        'URLSearchParams',
-        'setTimeout',
-        'clearTimeout',
-        'setInterval',
-        'clearInterval',
-        'requestAnimationFrame',
-        'cancelAnimationFrame',
-        'alert',
-        // Weex
-        '__weex_define__',
-        '__weex_require__',
-        '__weex_options__',
-        '__weex_data__',
-        '__weex_downgrade__',
-        '__weex_document__',
-        // ModuleJS
-        'define',
-        'require',
-        'with (window) { (function(){ "use strict";' + code + '})(); }'
+        'with (this) { (function(){ "use strict";' + code + '})(); }'
       );
 
       init.call(
         // Context is window
         window,
-        // ES
-        Promise,
-        // W3C
-        window,
-        screen,
-        document,
-        navigator,
-        location,
-        fetch,
-        Headers,
-        Response,
-        Request,
-        URL,
-        URLSearchParams,
-        setTimeout,
-        clearTimeout,
-        setInterval,
-        clearInterval,
-        requestAnimationFrame,
-        cancelAnimationFrame,
-        alert,
-        // Weex
-        def,
-        req,
-        options,
-        data,
-        downgrade,
-        document,
-        // ModuleJS
-        def,
-        req,
       );
     } else {
       let init = new Function(
