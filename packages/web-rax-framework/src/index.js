@@ -9,6 +9,8 @@ if (!global.Promise) {
 require('whatwg-fetch');
 require('raf/polyfill');
 
+require('./fontface');
+
 if (!global.URL) {
   global.URL = require('runtime-shared/dist/url.module');
 }
