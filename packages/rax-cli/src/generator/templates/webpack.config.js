@@ -50,10 +50,14 @@ if (process.env.NODE_ENV === 'production') {
 if (process.env.NODE_ENV !== 'production') {
   var ip = internalIp.v4();
   var port = 8080;
+  var webUrl = 'http://' + ip + ':' + port;
   var bundleUrl = 'http://' + ip + ':' + port + '/js/index.bundle.js?wh_weex=true';
 
+  qrcode.generate(webUrl, {small: true});
+  console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n');
+
   qrcode.generate(bundleUrl, {small: true});
-  console.log('Scan above QRCode ' + bundleUrl + ' use weex playground.\n');
+  console.log('Weex: scan above QRCode ' + bundleUrl + ' use weex playground.\n');
 }
 
 module.exports = {

@@ -26,8 +26,30 @@ module.exports = {
       globalName: 'Rax',
       // Common build config
       externalBuiltinModules: false,
-      builtinModules: RaxPlugin.BuiltinModules,
+      builtinModules: RaxPlugin.BuiltinModules
     })
   ]
 }
+```
+
+### MultiplePlatform(<config:Object>[, options: Object])
+
+Output multiple platform
+
+#### options
+
+- `platforms` Array of ['web', 'node', 'weex', 'reactnative']
+
+example
+
+```javascript
+const config = require('webpack.config.js');
+
+const multipleConfig = RaxPlugin.MultiplePlatform(config, {
+  platforms: ['web', 'weex']
+});
+
+const compiler = webpack(configs);
+
+// ....
 ```

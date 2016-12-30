@@ -1,7 +1,7 @@
 **Warning: This is currently a private repo, please do not share this code.**
 
 <p align="center">
-  <a href="https://alibaba.github.io/rax">
+  <a href="https://rax.taobaofed.org">
     <img alt="Rax" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
   </a>
 </p>
@@ -54,35 +54,30 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 | Rax@0.0.2    | 1553 op/s (fastest)         |
 
 
-## Installation
+## Quick Start
 
-### NPM
-We recommend using Rax from npm with `webpack`. If you use npm for client package management, you can install Rax with:
+Install the Rax CLI tools to init project:
+
 ```sh
-npm install --save rax
+npm install rax-cli -g
+rax init YourProjectName
 ```
 
-### CDN
-
-If you don't want to use `npm` to manage client packages, the `rax` npm packages also provide UMD distributions in `dist` folders, which are hosted on a CDN:
-```html
-<script src="https://unpkg.com/rax@0/dist/rax.js"></script>
+Start local server to launch project:
+```sh
+cd YourProjectName
+npm run start
 ```
 
-To load a specific version of `rax`, replace `0` with the version number.
-Minified production versions of `rax` are available at:
-```html
-<script src="https://unpkg.com/rax@1/dist/rax.min.js"></script>
-```
-
-## Example
+## Examples
 
 ```js
 import {createElement, Component, render} from 'rax';
+import {Text} from 'rax-components';
 
 class Hello extends Component {
   render() {
-    return <text style={styles.title}>Hello {this.props.name}</text>;
+    return <Text style={styles.title}>Hello {this.props.name}</Text>;
   }
 }
 
@@ -97,7 +92,15 @@ const styles = {
 render(<Hello name="world" />);
 ```
 
-More examples take a look at the [`examples`](/examples/) folder.
+More examples take a look at the [`examples`](/examples/) folder:
+* [Redux](/examples/redux)
+* [Game2048](/examples/game2048)
+* [Drag](/examples/drag)
+* [TicTacToe](/examples/tictactoe)
+* [Todo](/examples/todo)
+* [UIKit](/examples/uikit)
+* [Profile](/examples/profile)
+* [Parallax](/examples/parallax)
 
 ## Rax Renderers
 
@@ -112,8 +115,29 @@ More examples take a look at the [`examples`](/examples/) folder.
 * :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
 * :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
 * :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
-* :postbox: [universal-router](https://github.com/kriasoft/universal-router): A simple middleware-style router for isomorphic JavaScript web apps.
+* :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
+
+
+## Developer Tools
+
+* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
+
+<p align="center">
+<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
+</p>
+
+* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
+  1. Use the `rax-redux` module in your app
+  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
+
+<p align="center">
+<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
+</p>
 
 ## Contributing
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
+
+<a href="https://alibaba.github.io/weex/">
+<img alt="Weex Inside" src="https://cloud.githubusercontent.com/assets/677114/21266275/575eabee-c3e0-11e6-92d2-ad57e99372f2.png" width="200">
+</a>

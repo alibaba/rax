@@ -16,13 +16,13 @@ const COLOR_PROPERTIES = {
 };
 
 export default {
-  sanitizeSelector(selector) {
+  sanitizeSelector(selector, transformDescendantCombinator) {
     // filter multiple extend selectors
-    if (!/^\.[a-zA-Z0-9_]+$/.test(selector)) {
+    if (!transformDescendantCombinator && !/^\.[a-zA-Z0-9_]+$/.test(selector)) {
       console.error(`\`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`);
       return null;
     }
-    return selector.replace(/[\.]/g, '');
+    return selector.replace(/\s/gi, '_').replace(/[\.]/g, '');
   },
 
   convertProp(prop) {
@@ -43,14 +43,7 @@ export default {
       resultNumber;
 
     if (!Number.isNaN(Number(result))) {
-      resultNumber = Number(result);
-    }
-
-    // Handle single pixel values (font-size: 16px)
-    if (result.indexOf(' ') === -1 && result.indexOf('px') !== -1) {
-      result = parseInt(result.replace('px', ''), 10);
-    } else if (typeof resultNumber === 'number') {
-      result = resultNumber;
+      result = Number(result);
     }
 
     if (COLOR_PROPERTIES[property]) {

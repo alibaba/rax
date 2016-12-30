@@ -12,11 +12,13 @@ if (!fs.existsSync('./packages/rax/build')) {
 
 [
   ['rax-components', 'components', 'Components'],
+  ['rax-redux', 'redux', 'RaxRedux'],
   ['rax-animated', 'animated', 'Animated'],
   ['universal-panresponder', 'panresponder', 'PanResponder'],
   ['universal-platform', 'platform', 'Platform'],
   ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
-  ['universal-toast', 'toast', 'Toast']
+  ['universal-toast', 'toast', 'Toast'],
+  ['universal-jsonp', 'jsonp', 'JSONP']
 ].forEach(function(info) {
   var main = './packages/' + info[0] + '/src/index.js';
   var entry = {};
@@ -32,7 +34,7 @@ if (!fs.existsSync('./packages/rax/build')) {
     {
       externalBuiltinModules: true,
       builtinModules: Object.assign({
-        'rax-components': ['@rax/components', 'rax-components', 'kg/rax-components/index']
+        'rax-components': ['rax-components']
       }, RaxPlugin.BuiltinModules),
       moduleName: info[0],
       globalName: info[2],

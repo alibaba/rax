@@ -12,7 +12,8 @@ function getPackages() {
 }
 
 getPackages().forEach((p) => {
-  if (p.indexOf('babel-preset-rax') > 0) return;
   console.log('npm link', p);
+  // Skip link starter kit
+  if (p.indexOf('babel-preset-rax') > 0) return;
   spawnSync('npm', ['link', p]);
 });

@@ -23,7 +23,8 @@ module.exports = {
     },
     production: {
       plugins: resolvePlugins([
-        'transform-react-constant-elements'
+        'transform-react-constant-elements',
+        'minify-dead-code-elimination'
       ])
     },
   }

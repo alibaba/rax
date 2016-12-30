@@ -1,20 +1,18 @@
 import {createElement, Component, render} from 'rax';
-import {View, Text} from 'rax-components';
+import {Text} from 'rax-components';
 
-class App extends Component {
+class Hello extends Component {
   render() {
-    return <View style={styles.container}>
-      <Text>Hello world</Text>
-    </View>;
+    return <Text style={styles.title}>Hello {this.props.name}</Text>;
   }
 }
 
 const styles = {
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  title: {
+    color: '#ff4400',
+    fontSize: 48,
+    fontWeight: 'bold',
   }
 };
 
-render(<App />);
+render(<Hello name="world" />);

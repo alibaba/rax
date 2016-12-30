@@ -12,7 +12,7 @@
 <body>
   <script src="//unpkg.com/web-rax-framework@0.0.4/dist/framework.web.js"></script>
   <script src="//mathieuancelin.github.io/js-repaint-perfs/ENV.js"></script>
-  <script src="//svelte-dbmonster.surge.sh/perf-monitor.js"></script>
+  <script src="//localvoid.github.io/perf-monitor/0.1/perf-monitor.js"></script>
   <script src="//unpkg.com/babel-standalone@6.18.2/babel.min.js"></script>
   <script type="text/babel">
 
@@ -92,24 +92,25 @@
       this.loadSamples();
     }
 
-    renderDatabase(database) {
-      return (
-        <Database
+    render() {
+      let databases = this.state.databases;
+
+      let databaseElements = [];
+      for (let i = 0; i < databases.length; i++) {
+        let database = databases[i];
+        databaseElements[i] = <Database
           lastMutationId={database.lastMutationId}
           dbname={database.dbname}
           samples={database.samples}
           lastSample={database.lastSample}
-        />
-      );
-    }
+        />;
+      }
 
-    render() {
-      let databases = this.state.databases;
       return (
         <div>
           <table className="table table-striped latest-data">
             <tbody>
-              { databases.map(this.renderDatabase) }
+              {databaseElements}
             </tbody>
           </table>
         </div>

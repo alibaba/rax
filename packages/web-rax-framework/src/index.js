@@ -20,6 +20,9 @@ if (!global.URLSearchParams) {
 // ModuleJS
 require('./require');
 
+// Polyfills for weex
+require('./appear');
+
 // Default Builtin modules
 global.define('rax', function(req, exports, module) {
   module.exports = require('rax');

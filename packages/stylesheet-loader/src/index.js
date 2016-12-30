@@ -2,13 +2,16 @@
 
 import css from 'css';
 import transformer from './transformer';
+import loaderUtils from 'loader-utils';
 const RULE = 'rule';
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
 
-  let callback = this.async();
-  let stylesheet = css.parse(source).stylesheet;
+  const callback = this.async();
+  const stylesheet = css.parse(source).stylesheet;
+  const query = loaderUtils.parseQuery(this.query);
+  const transformDescendantCombinator = query.transformDescendantCombinator;
   let data = {};
 
   if (stylesheet.parsingErrors.length) {
@@ -23,9 +26,9 @@ module.exports = function(source) {
     }
 
     rule.selectors.forEach(function(selector) {
-      let sanitizedSelector = transformer.sanitizeSelector(selector);
+      let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator);
       if (sanitizedSelector) {
-        data[sanitizedSelector] = style;
+        data[sanitizedSelector] = Object.assign(data[sanitizedSelector] || {}, style);
       }
     });
   });

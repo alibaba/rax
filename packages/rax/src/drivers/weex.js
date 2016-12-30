@@ -1,7 +1,6 @@
 /**
  * Weex driver
  **/
-
 import Host from '../vdom/host';
 import setNativeProps from '../setNativeProps';
 import {convertUnit, setRem} from '../style/unit';
@@ -11,8 +10,11 @@ const ID = 'id';
 const TEXT = 'text';
 const FULL_WIDTH_REM = 750;
 const DOCUMENT_FRAGMENT_NODE = 11;
-
 const nodeMaps = {};
+/* global __weex_document__ */
+const document = typeof __weex_document__ === 'object' ?
+  __weex_document__ : typeof document === 'object' ?
+    document : null;
 
 const Driver = {
   getElementById(id) {
@@ -21,14 +23,14 @@ const Driver = {
 
   createBody() {
     // Close batched updates
-    Host.document.open();
+    document.open();
 
-    if (Host.document.body) {
-      return Host.document.body;
+    if (document.body) {
+      return document.body;
     }
 
-    let documentElement = Host.document.documentElement;
-    let body = Host.document.createBody();
+    let documentElement = document.documentElement;
+    let body = document.createBody();
     documentElement.appendChild(body);
 
     return body;
@@ -42,7 +44,7 @@ const Driver = {
   },
 
   createComment(content) {
-    return Host.document.createComment(content);
+    return document.createComment(content);
   },
 
   createEmpty() {
@@ -71,7 +73,7 @@ const Driver = {
       style[prop] = convertUnit(originStyle[prop], prop);
     }
 
-    let node = Host.document.createElement(component.type, {
+    let node = document.createElement(component.type, {
       style,
     });
 
@@ -177,11 +179,11 @@ const Driver = {
   },
 
   afterRender() {
-    if (Host.document && Host.document.listener && Host.document.listener.createFinish) {
-      Host.document.listener.createFinish(
+    if (document && document.listener && document.listener.createFinish) {
+      document.listener.createFinish(
         () => {
           // Make updates batched
-          Host.document.close();
+          document.close();
         }
       );
     }

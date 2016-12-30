@@ -48,7 +48,7 @@ module.exports = {
     "__weex_options__": true,
     "__weex_downgrade__": true,
     "__weex_define__": true,
-    "__weee_require__": true,
+    "__weex_require__": true,
     "WXEnvironment": true,
     "webkitRequestAnimationFrame": true,
   },
