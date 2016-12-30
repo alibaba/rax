@@ -8,6 +8,7 @@ export Switch from './Switch';
 export Video from './Video';
 export ScrollView from './ScrollView';
 export Slider from './Slider';
+export IconFont from './IconFont';
 export ListView from './ListView';
 export RecyclerView from './RecyclerView';
 export RefreshControl from './RefreshControl';
