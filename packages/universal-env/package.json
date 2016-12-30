@@ -1,6 +1,6 @@
 {
   "name": "universal-env",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A universal environment utilities.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

@@ -151,7 +151,6 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [data]
  */
 export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
-
   let instance = instances[instanceId];
 
   if (instance == undefined) {

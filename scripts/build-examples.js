@@ -63,7 +63,9 @@ const config = {
 let compiler = webpack(config);
 compiler.run(function(err, stats) {
   let options = {
-    colors: true
+    colors: true,
+    chunks: false,
+    errorDetails: true,
   };
   console.log(stats.toString(options));
 });
