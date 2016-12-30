@@ -15,7 +15,7 @@ if (!global.FontFace) {
 
 if (!document.fonts) {
   document.fonts = {
-    add: function (family, source) {
+    add: function(family, source) {
       let fontFaceRule = `@font-face {
         font-family: ${family};
         src: ${source}

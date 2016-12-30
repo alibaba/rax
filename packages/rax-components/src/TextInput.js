@@ -92,7 +92,7 @@ class TextInput extends Component {
       value,
       id
     };
-
+    
     if (typeof editable !== 'undefined' && !editable) {
       propsCommon.readOnly = true;
     }
@@ -103,11 +103,14 @@ class TextInput extends Component {
     }
 
     if (isWeex) {
+      // Diff with web readonly attr, `disabled` must be boolean value
+      let disabled = Boolean(propsCommon.readOnly);
+
       if (multiline) {
-        return <textarea {...propsCommon} rows={20} disabled={propsCommon.readOnly} />;
+        return <textarea {...propsCommon} rows={20} disabled={disabled} />;
       } else {
         // https://github.com/alibaba/weex/blob/dev/doc/components/input.md
-        return <input {...propsCommon} type={type} disabled={propsCommon.readOnly} />;
+        return <input {...propsCommon} type={type} disabled={disabled} />;
       }
     } else {
       let input;
