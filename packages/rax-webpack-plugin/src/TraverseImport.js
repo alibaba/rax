@@ -7,6 +7,14 @@ import generate from 'babel-generator';
 
 export default function traverseImport(options, inputSource) {
   let specified; // Collector import specifiers
+  let hasPlatformSpecified = false;
+
+  const platformMap = {
+    weex: 'isWeex',
+    web: 'isWeb',
+    node: 'isNode',
+    reactnative: 'isReactNative'
+  };
 
   function variableDeclarationMethod(name, value) {
     return types.VariableDeclaration(
@@ -19,12 +27,20 @@ export default function traverseImport(options, inputSource) {
     );
   }
 
-  const platformMap = {
-    weex: 'isWeex',
-    web: 'isWeb',
-    node: 'isNode',
-    reactnative: 'isReactNative'
-  };
+  function objectExpressionMethod(platformName) {
+    const properties = [];
+
+    Object.keys(platformMap).forEach((p) => {
+      properties.push(
+        types.objectProperty(
+          types.Identifier(platformMap[p]),
+          types.booleanLiteral(p === platformName)
+        )
+      );
+    });
+
+    return types.objectExpression(properties);
+  }
 
   let ast = babylon.parse(inputSource, {
     sourceType: 'module',
@@ -36,6 +52,23 @@ export default function traverseImport(options, inputSource) {
   traverse(ast, {
     enter() {
       specified = new Array();
+
+      if (typeof platformMap[options.platform] !== 'undefined') {
+        hasPlatformSpecified = true;
+      }
+    },
+    // Support commonjs method `require`
+    CallExpression(path) {
+      let { node } = path;
+
+      if (
+        hasPlatformSpecified &&
+        node.callee.name === 'require' &&
+        node.arguments[0] &&
+        node.arguments[0].value === options.name
+      ) {
+        path.replaceWith(objectExpressionMethod(options.platform));
+      }
     },
     ImportDeclaration(path) {
       let { node } = path;
@@ -47,12 +80,6 @@ export default function traverseImport(options, inputSource) {
             imported: spec.imported.name
           });
         });
-
-        let hasPlatformSpecified = false;
-
-        if (typeof platformMap[options.platform] !== 'undefined') {
-          hasPlatformSpecified = true;
-        }
 
         if (hasPlatformSpecified) {
           specified.forEach(specObj => {

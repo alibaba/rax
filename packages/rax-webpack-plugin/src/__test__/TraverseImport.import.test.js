@@ -2,8 +2,21 @@
 
 import traverseImport from '../TraverseImport';
 
+// Remove padding from a string.
+function unpad(str) {
+  const lines = str.split('\n');
+  const m = lines[1] && lines[1].match(/^\s+/);
+  if (!m) {
+    return str;
+  }
+  const spaces = m[0].length;
+  return lines.map(
+    line => line.slice(spaces)
+  ).join('\n').trim();
+}
+
 describe('PlatformLoader.traverseImport', function() {
-  it('isWeex true ', function() {
+  it('isWeex true', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
       'import { isWeex } from "universal-env";'
@@ -12,16 +25,18 @@ describe('PlatformLoader.traverseImport', function() {
     expect(code).toBe('const isWeex = true;');
   });
 
-  it('isWeex as iw ', function() {
+  it('isWeex as iw', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
       'import { isWeex as iw } from "universal-env";'
     );
 
-    expect(code).toBe(
-`const iw = true;
-const isWeex = true;`
-    );
+    const expected = unpad(`
+      const iw = true;
+      const isWeex = true;
+    `);
+
+    expect(code).toBe(expected);
   });
 
   it('isWeex and isWeb', function() {
@@ -30,10 +45,12 @@ const isWeex = true;`
       'import { isWeex, isWeb } from "universal-env";'
     );
 
-    expect(code).toBe(
-`const isWeb = false;
-const isWeex = true;`
-    );
+    const expected = unpad(`
+      const isWeb = false;
+      const isWeex = true;
+    `);
+
+    expect(code).toBe(expected);
   });
 
   it('isWeb true', function() {
@@ -48,15 +65,19 @@ const isWeex = true;`
   it('skin other module', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'web' },
-`import { isWeb } from "universal-env";
-import { XXX } from "universal-other";
-`
+      unpad(`
+        import { isWeb } from "universal-env";
+        import { XXX } from "universal-other";
+      `)
     );
 
-    expect(code).toBe(
-`const isWeb = true;
+    const expected = unpad(`
+      const isWeb = true;
 
-import { XXX } from "universal-other";`);
+      import { XXX } from "universal-other";
+    `);
+
+    expect(code).toBe(expected);
   });
 
   it('not platform specified', function() {
