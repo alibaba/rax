@@ -210,6 +210,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
   const Promise = require('runtime-shared/dist/promise.function')();
   const URL = require('runtime-shared/dist/url.function')();
   const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
+  const FontFace = require('runtime-shared/dist/fontface.function')();
 
   let instance = instances[instanceId];
 
@@ -272,6 +273,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
 
     const window = {
       devicePixelRatio: ENV.scale,
+      FontFace,
       open: (url) => {
         const weexNavigator = req('@weex-module/navigator');
         weexNavigator.push({
@@ -393,8 +395,6 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
     const downgrade = require('./downgrade.weex')(req);
     const fetch = require('./fetch.weex')(req, Promise);
     const {Headers, Request, Response} = fetch;
-
-    window.FontFace = require('./fontface.weex')(req);
 
     let globals = [
       // ES

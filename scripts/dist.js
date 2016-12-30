@@ -123,6 +123,8 @@ dist(getConfig(
       'url.function': './packages/runtime-shared/src/url.js',
       'url-search-params.module': './packages/runtime-shared/src/url-search-params.js',
       'url-search-params.function': './packages/runtime-shared/src/url-search-params.js',
+      'fontface.module': './packages/runtime-shared/src/fontface.js',
+      'fontface.function': './packages/runtime-shared/src/fontface.js'
     },
     {
       path: './packages/runtime-shared/dist/',
