@@ -10,7 +10,7 @@ require('whatwg-fetch');
 require('raf/polyfill');
 
 if (!global.FontFace) {
-  golbal.FontFace = require('runtime-shared/dist/fontface.module');
+  global.FontFace = require('runtime-shared/dist/fontface.module');
 }
 
 if (!document.fonts) {
