@@ -19,6 +19,7 @@ class IconFont extends Component {
         font-family: ${fontFamily};
         src: url('${source.uri}')
       }`;
+
     const existTag = document.getElementById(fontFamily);
     if (existTag) {
       return;
