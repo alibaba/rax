@@ -4,13 +4,14 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Rax</title>
+    <title>RAX</title>
     <link rel="stylesheet" type="text/css" href="//unpkg.com/normalize.css@5.0.0" />
     <style>
 
     body {
       margin: 0;
       font-family: "Helvetica Neue", Helvetica, arial, sans-serif;
+      font-weight: 300;
     }
 
     svg * {
@@ -38,7 +39,15 @@
       z-index: 10000;
     }
 
-    main, .site-nav {
+    code {
+      display: inline-block;
+      border: 1px solid #ccc;
+      margin: 6px 0;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    .site-nav {
       margin: 0 auto;
     }
 
@@ -48,27 +57,37 @@
       display: flex;
     }
 
+    .site-title {
+      color: #4a4a4a;
+      font-size: 36px;
+      line-height: 36px;
+      margin: 0;
+      padding: 36px 0;
+      font-weight: 300;
+    }
+
     .site-logo {
       text-decoration: none;
     }
 
     .site-logo-icon {
-      display: inline-block;
+      position: absolute;
       width: 30px;
       height: 26px;
-      margin: 12px 0 0 0;
+      top: 12px;
     }
 
     .site-logo-title {
-      display: inline-block;;
+      position: absolute;
       font-size: 16px;
+      line-height: 50px;
       color: white;
-      position: relative;
-      top: -8px;
+      left: 36px;
+      font-weight: 300;
     }
 
     .site-nav-links {
-      margin-left: 32px;
+      margin-left: 100px;
       display: inline-block;
     }
 
@@ -76,13 +95,14 @@
       text-decoration: none;
       color: #dddddd;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: 300;
       position: relative;
       display: inline-block;
     }
 
     .site-nav-links > a:hover {
-      color: #ffffff;
+      color: #f76927;
     }
 
     .site-nav-links > a:not(:last-child)::after {
@@ -116,8 +136,8 @@
     .site-hero-desc {
       color: #F9F9F9;
       margin: 0;
-      padding: 20px;
-      font-size: 20px;
+      padding: 24px 0;
+      font-size: 36px;
       font-weight: 300;
     }
 
@@ -185,8 +205,8 @@
     .site-examples {
       text-align: center;
       margin: 0 auto;
-      padding: 60px 0;
       background: #f9f9f9;
+      padding-bottom: 36px;
     }
 
     .site-example {
@@ -194,9 +214,32 @@
       height: 500px;
     }
 
+    .site-quickstart {
+      text-align: center;
+      background: #f5f5f5;
+      padding-bottom: 36px;
+    }
+
+    .site-quickstart-content {
+      text-align: left;
+      margin: 0 auto;
+      width: 900px;
+    }
+
+    .site-showcase {
+      text-align: center;
+      background: #f9f9f9;
+      padding-bottom: 36px;
+    }
+
+    .site-showcase-app {
+      margin: 0 50px;
+      width: 100px;
+    }
+
     .site-logos {
       text-align: center;
-      background: #ffffff;
+      background: #f9f9f9;
       padding: 60px;
     }
 
@@ -216,7 +259,7 @@
     <div class="site-nav">
       <a class="site-logo" href="/">
         <img class="site-logo-icon" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_200x200.jpg">
-        <span class="site-logo-title">Rax</span>
+        <span class="site-logo-title">RAX</span>
       </a>
       <div class="site-nav-links">
         <a href="https://github.com/alibaba/rax/tree/master/docs">Docs</a>
@@ -245,17 +288,44 @@
 
   </div>
 
-  <main>
-    <div class="site-examples" id="examples">
-      <iframe class="site-example" frameborder="0" src="./playground/index.html?theme=default"></iframe>
-    </div>
-  </main>
+  <div class="site-examples" id="examples">
+    <h3 class="site-title">Examples</h3>
+    <iframe class="site-example" frameborder="0" src="./playground/index.html?theme=default"></iframe>
+  </div>
 
-  <div class="site-logos">
+  <div class="site-quickstart">
+    <h3 class="site-title">Quick Start</h3>
+    <div class="site-quickstart-content">
+      <p>
+        1. Install the RAX CLI tool:
+      </p>
+      <code>
+        npm install -g rax-cli
+      </code>
+      <p>
+        2. Use the RAX CLI tool to create a new project:
+      </p>
+      <code>
+        rax init YOUR_PROJECT_NAME
+      </code>
+      <p>3. Change directory to your new project directory and use the start command to initialize your local development server:</p>
+      <code>
+         npm start
+      </code>
+    </div>
+  </div>
+
+  <div class="site-showcase">
+    <h3 class="site-title">Who's using RAX?</h3>
+    <img class="site-showcase-app" alt="Taobao" src="https://cloud.githubusercontent.com/assets/677114/21566605/6d345216-cedf-11e6-8c4e-ae2522fd6e33.png">
+    <img class="site-showcase-app" alt="QianNiu" src="https://cloud.githubusercontent.com/assets/677114/21566603/6953102e-cedf-11e6-959e-372df2ea00e6.png">
+  </div>
+
+  <!-- <div class="site-logos">
     <a href="https://alibaba.github.io/weex/">
       <img alt="Weex Inside" src="https://cloud.githubusercontent.com/assets/677114/21266275/575eabee-c3e0-11e6-92d2-ad57e99372f2.png" width="200">
     </a>
-  </div>
+  </div> -->
 
   <footer class="footer">
     <ul class="links">
