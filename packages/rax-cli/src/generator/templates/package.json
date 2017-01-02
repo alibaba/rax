@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --no-info",
-    "build": "NODE_ENV=production ./node_modules/.bin/webpack",
+    "build": "rm -rf build && NODE_ENV=production ./node_modules/.bin/webpack",
     "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {

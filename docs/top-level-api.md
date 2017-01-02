@@ -1,9 +1,9 @@
 # Top-level API
 
+* render
 * createElement
 * cloneElement
 * createFactory
-* render
 * Component
 * PureComponent
 * PropTypes
