@@ -6,6 +6,7 @@ import loaderUtils from 'loader-utils';
 
 const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
+const QUOTES_REG = /['|"]/g;
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
@@ -58,7 +59,7 @@ const getFontFaceContent = (rules) => {
 
   rules.forEach((rule, index) => {
     content += `
-      var font${index} = new FontFace('${rule['font-family']}', '${rule.src}');
+      var font${index} = new FontFace('${rule['font-family'].replace(QUOTES_REG, '')}', '${rule.src.replace(QUOTES_REG, '')}');
       document.fonts.add(font${index});
     `;
   });
