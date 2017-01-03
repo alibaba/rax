@@ -122,7 +122,6 @@ describe('Key', function() {
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
 
     render(<Foo value="foo" />, container);
-    console.log(container.childNodes[0]);
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('-1');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('0');
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('1');
