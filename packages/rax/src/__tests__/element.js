@@ -327,7 +327,6 @@ describe('Element', () => {
     expect(elementB.ref).toBe(null);
   });
 
-
   it('should ignore undefined key and ref', function() {
     var element = createFactory(ComponentClass)({
       key: '12',
@@ -346,6 +345,31 @@ describe('Element', () => {
     expect(clone.props).toEqual({foo: 'ef'});
   });
 
+  it('throws when passing null, undefined', function() {
+    expect(function() {
+      createElement(null);
+    }).toThrow();
+
+    expect(function() {
+      createElement(undefined);
+    }).toThrow();
+
+
+    Host.sandbox = false;
+    expect(function() {
+      class ParentComp {
+        render() {
+          return createElement(null);
+        }
+      }
+
+      var component = render(<ParentComp />);
+    }).toThrowError(
+      'createElement: type should not be null or undefined. Check ' +
+      'the render method of `ParentComp`.'
+    );
+    Host.sandbox = true;
+  });
 
   it('should extract null key and ref', function() {
     var element = createFactory(ComponentClass)({

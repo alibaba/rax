@@ -30,7 +30,6 @@ export default {
   object: typeChecker,
   string: typeChecker,
   symbol: typeChecker,
-
   element: typeChecker,
   node: typeChecker,
   any: typeChecker,
