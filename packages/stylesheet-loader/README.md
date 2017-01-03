@@ -93,41 +93,11 @@ export default Foo;
 
 Default does not support nested, but you can also choose to avoid this constraint when set `transformDescendantCombinator` to true.
 
-#### `exportType`
+### Support font-face
 
-Export content can be a object or a function, if you want to support `fontface`, must be set to `function`. Default object.
-
-`webpack.config.js`:
-```
-{
-  test: /\.css$/,
-  loader: 'stylesheet?exportType=function'
-}
-```
-
-`index.css`
 ```
 @font-face {
   font-family: icon;
   src: url('http://at.alicdn.com/t/font_pkm0oq8is8fo5hfr.ttf');
-}
-
-.title {
-  color: #666;
-}
-```
-
-`index.js`
-```
-import { createElement, Component } from 'rax';
-import styleFun from './index.css';
-const styles = styleFun();
-
-class App extends Component {
-  render() {
-    return <span style={[styles.title, {
-      fontFamily: 'icon'
-    }]}>{'\uE601'}</span>;
-  }
 }
 ```

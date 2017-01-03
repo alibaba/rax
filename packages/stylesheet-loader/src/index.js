@@ -43,22 +43,18 @@ module.exports = function(source) {
     }
   });
 
-  return exportContent(query.exportType, data, getFontFaceContent(fontFontRules));
+  return exportContent(data, getFontFaceContent(fontFontRules));
 };
 
-const exportContent = (type, data, fontFaceContent) => {
-  if (type === 'function') {
-    return `module.exports = function(options) {
-      ${fontFaceContent}
-      return ${JSON.stringify(data, undefined, '  ')}
-    };`;
-  } else {
-    return `module.exports = ${JSON.stringify(data, undefined, '  ')};`;
-  }
+const exportContent = (data, fontFaceContent) => {
+  return `module.exports = (function(options) {
+    ${fontFaceContent}
+    return ${JSON.stringify(data, undefined, '  ')}
+  })();`;
 };
 
 const getFontFaceContent = (rules) => {
-  let content = ``;
+  let content = '';
 
   rules.forEach((rule, index) => {
     content += `
