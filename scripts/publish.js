@@ -21,8 +21,8 @@ if (version) {
   const JSONString = fs.readFileSync(GENERATOR_DEPENDENCIES_FILE);
   const packageJSON = JSON.parse(JSONString);
 
-  const ver = "^" + version;
-  packageJSON.dependencies['rax'] = ver;
+  const ver = '^' + version;
+  packageJSON.dependencies.rax = ver;
   packageJSON.dependencies['rax-components'] = ver;
   packageJSON.devDependencies['babel-preset-rax'] = ver;
   packageJSON.devDependencies['rax-webpack-plugin'] = ver;

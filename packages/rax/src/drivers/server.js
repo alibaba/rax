@@ -22,6 +22,10 @@ const Driver = {
     return this.nodeMaps[id];
   },
 
+  getChildNodes(node) {
+    return node.childNodes;
+  },
+
   createBody() {
     return {
       nodeType: ELEMENT_NODE,

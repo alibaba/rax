@@ -92,4 +92,40 @@ describe('Key', function() {
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
     expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
   });
+
+  it('should render right if unshift new element', function() {
+    let container = createNodeElement('container');
+
+    class Foo extends Component {
+
+      constructor(props) {
+        super(props);
+        this.state = {
+          list: [<span key="0">0</span>, <span key="1">1</span>, <span key="2">2</span>]
+        };
+      }
+
+      componentWillReceiveProps() {
+        this.state.list.unshift(<span key="-1">-1</span>);
+      }
+
+      render() {
+        return <div>
+          {this.state.list}
+        </div>;
+      }
+    }
+
+    render(<Foo />, container);
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
+    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
+
+    render(<Foo value="foo" />, container);
+    console.log(container.childNodes[0]);
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('-1');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('0');
+    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('1');
+    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('2');
+  });
 });
