@@ -47,10 +47,10 @@ module.exports = function(source) {
 };
 
 const exportContent = (data, fontFaceContent) => {
-  return `module.exports = (function(options) {
+  return `
     ${fontFaceContent}
-    return ${JSON.stringify(data, undefined, '  ')}
-  })();`;
+    module.exports = ${JSON.stringify(data, undefined, '  ')};
+  `;
 };
 
 const getFontFaceContent = (rules) => {
@@ -58,7 +58,7 @@ const getFontFaceContent = (rules) => {
 
   rules.forEach((rule, index) => {
     content += `
-      var font${index} = new FontFace('${rule['font-family']}', "${rule.src}");
+      var font${index} = new FontFace('${rule['font-family']}', '${rule.src}');
       document.fonts.add(font${index});
     `;
   });

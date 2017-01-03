@@ -98,6 +98,6 @@ Default does not support nested, but you can also choose to avoid this constrain
 ```
 @font-face {
   font-family: icon;
-  src: url('http://at.alicdn.com/t/font_pkm0oq8is8fo5hfr.ttf');
+  src: url(http://at.alicdn.com/t/font_pkm0oq8is8fo5hfr.ttf);
 }
 ```
