@@ -1,4 +1,5 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
+import DefinePlugin from 'webpack/lib/DefinePlugin';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
@@ -19,6 +20,10 @@ class RaxWebpackPlugin {
   }
 
   apply(compiler) {
+    compiler.apply(new DefinePlugin({
+      '__DEV__': JSON.stringify(process.env.DEV ? JSON.parse('true') : JSON.parse('false'))
+    }));
+
     compiler.plugin('this-compilation', (compilation) => {
       compilation.apply(new CustomUmdMainTemplatePlugin(this.options));
     });
