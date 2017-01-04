@@ -88,6 +88,27 @@ describe('framework', () => {
     expect(mockFn).toHaveBeenCalled();
   });
 
+  it('define a module', () => {
+    const code = `
+      define('alert-hello', function(){
+        alert('Hello');
+      });
+      require('alert-hello');
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'Hello'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
   it('document', () => {
     const code = `
       alert(document.URL);
@@ -281,6 +302,256 @@ describe('framework', () => {
     });
 
     instance.$create(code, config, data);
+  });
+
+  it('response default status is 200', () => {
+    const code = `
+      var res = new Response();
+      alert(res.status);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 200
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('response default statusText is OK', () => {
+    const code = `
+      var res = new Response();
+      alert(res.statusText);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'OK'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('response ok is true', () => {
+    const code = `
+      var res = new Response();
+      alert(res.ok);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: true
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('creates Headers object from raw headers', () => {
+    const code = `
+      var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}});
+      alert(r.headers instanceof Headers);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: true
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('deletes headers', () => {
+    const code = `
+      var headers = new Headers();
+      headers.set('Content-Type', 'application/json');
+      var trueValue = headers.has('Content-Type');
+      headers.delete('Content-Type');
+      var falseValue = headers.has('Content-Type');
+      var nullValue = headers.get('Content-Type');
+
+      alert([trueValue, falseValue, nullValue]);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: [true, false, null]
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('constructor copies headers', () => {
+    const code = `
+      var original = new Headers();
+      original.append('Accept', 'application/json');
+      original.append('Accept', 'text/plain');
+      original.append('Content-Type', 'text/html');
+
+      var headers = new Headers(original);
+      alert([headers.get('Accept'), headers.get('Content-type')]);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: ['application/json,text/plain', 'text/html']
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+
+  it('request construct with url', () => {
+    const code = `
+      var request = new Request('https://fetch.spec.whatwg.org/');
+      alert(request.url);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'https://fetch.spec.whatwg.org/'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('construct with Request and override headers', () => {
+
+    const code = `
+      var request1 = new Request('https://fetch.spec.whatwg.org/', {
+        method: 'post',
+        body: 'I work out',
+        headers: {
+          accept: 'application/json',
+          'X-Request-ID': '123'
+        }
+      });
+      var request2 = new Request(request1, {
+        headers: { 'x-test': '42' }
+      });
+
+      var val1 = request2.headers.get('accept');
+      var val2 = request2.headers.get('x-request-id');
+      var val3 = request2.headers.get('x-test');
+
+      alert([val1, val2, val3]);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: [null, null, '42']
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+
+  });
+
+  it('setTimeout', () => {
+    const code = `
+      var id = setTimeout(function(){}, 10);
+      clearTimeout(id);
+    `;
+
+    const mockFn = jest.fn((arg1, arg2) => {
+      expect(arg1).toEqual('1');
+      expect(arg2).toEqual(10);
+    });
+    instance.oncall('timer', 'setTimeout', mockFn);
+
+    const mockFn2 = jest.fn((arg1) => {
+      expect(arg1).toEqual('1');
+    });
+    instance.oncall('timer', 'clearTimeout', mockFn2);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+    expect(mockFn2).toHaveBeenCalled();
+  });
+
+  it('setInterval', () => {
+    const code = `
+      var id = setInterval(function(){}, 10);
+      clearInterval(id);
+    `;
+
+    const mockFn1 = jest.fn((arg1, arg2) => {
+      expect(arg1).toEqual('1');
+      expect(arg2).toEqual(10);
+    });
+    instance.oncall('timer', 'setInterval', mockFn1);
+
+    const mockFn2 = jest.fn((arg1) => {
+      expect(arg1).toEqual('1');
+    });
+    instance.oncall('timer', 'clearInterval', mockFn2);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn1).toHaveBeenCalled();
+    expect(mockFn2).toHaveBeenCalled();
+  });
+
+  it('requestAnimationFrame', () => {
+    const code = `
+      var id = requestAnimationFrame(function(){});
+      cancelAnimationFrame(id);
+    `;
+
+    const mockFn1 = jest.fn((arg1, arg2) => {
+      expect(arg1).toEqual('1');
+      expect(arg2).toEqual(16);
+    });
+    instance.oncall('timer', 'setTimeout', mockFn1);
+
+    const mockFn2 = jest.fn((arg1) => {
+      expect(arg1).toEqual('1');
+    });
+    instance.oncall('timer', 'clearTimeout', mockFn2);
+
+    instance.$create(code, config, data);
+
+    expect(mockFn1).toHaveBeenCalled();
+    expect(mockFn2).toHaveBeenCalled();
   });
 
   it('downgrade', () => {

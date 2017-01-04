@@ -10,6 +10,10 @@ let Comment;
 let Listener;
 let sendTasks;
 
+const MODULE_NAME_PREFIX = '@weex-module/';
+const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
+const DOM_MODULE = MODULE_NAME_PREFIX + 'dom';
+const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 const instances = {};
 
 function dispatchEventToInstance(event, targetOrigin) {
@@ -102,11 +106,10 @@ function genBuiltinModules(
 }
 
 function genNativeModules(modules, instanceId) {
-  const prefix = '@weex-module/';
 
   if (typeof NativeModules === 'object') {
     for (let name in NativeModules) {
-      let moduleName = prefix + name;
+      let moduleName = MODULE_NAME_PREFIX + name;
       modules[moduleName] = {
         module: {exports: {}},
         isInitialized: true,
@@ -150,128 +153,60 @@ function genNativeModules(modules, instanceId) {
  * @param  {object} [options] option `HAS_LOG` enable print log
  * @param  {object} [data]
  */
-export function createInstance(instanceId, code, options /* {bundleUrl, debug} */, data) {
+export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl, debug} */, __weex_data__) {
   let instance = instances[instanceId];
 
   if (instance == undefined) {
+    const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
+
     const Promise = require('runtime-shared/dist/promise.function')();
     const URL = require('runtime-shared/dist/url.function')();
     const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
-
-    const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
-    const document = new Document(instanceId, options.bundleUrl, null, Listener);
+    
+    const document = new Document(instanceId, __weex_options__.bundleUrl, null, Listener);
     const location = new URL(document.URL);
+    const modules = {};
 
-    let modules = {};
+    instance = instances[instanceId] = {
+      document,
+      instanceId,
+      modules,
+      origin: location.origin,
+      callbacks: [],
+      uid: 0
+    };
+
     // Generate native modules map at instance init
     genNativeModules(modules, instanceId);
-
-    function def(id, deps, factory) {
-      if (deps instanceof Function) {
-        factory = deps;
-        deps = [];
-      }
-
-      modules[id] = {
-        factory: factory,
-        deps: deps,
-        module: {exports: {}},
-        isInitialized: false,
-        hasError: false,
-      };
-    }
-
-    function req(id) {
-      var mod = modules[id];
-
-      if (mod && mod.isInitialized) {
-        return mod.module.exports;
-      }
-
-      if (!mod) {
-        throw new Error(
-          'Requiring unknown module "' + id + '"'
-        );
-      }
-
-      if (mod.hasError) {
-        throw new Error(
-          'Requiring module "' + id + '" which threw an exception'
-        );
-      }
-
-      try {
-        mod.isInitialized = true;
-        mod.factory(req, mod.module.exports, mod.module);
-      } catch (e) {
-        mod.hasError = true;
-        mod.isInitialized = false;
-        throw e;
-      }
-
-      return mod.module.exports;
-    }
+    const __weex_define__ = require('./define.weex')(modules);
+    const __weex_require__ = require('./require.weex')(modules);
 
     // FontFace
     document.fonts = {
       add: function(fontFace) {
-        var domModule = req('@weex-module/dom');
+        var domModule = __weex_require__(DOM_MODULE);
         domModule.addRule('fontFace', {
-          'fontFamily': fontFace.family,
-          'src': fontFace.source
+          fontFamily: fontFace.family,
+          src: fontFace.source
         });
       }
     };
 
-    const fetch = require('./fetch.weex')(req, Promise);
-    const {Headers, Request, Response} = fetch;
+    const {
+      fetch,
+      Headers,
+      Request,
+      Response
+    } = require('./fetch.weex')(__weex_require__, Promise);
 
-    const timerModuleName = '@weex-module/timer';
-    const setTimeout = (...args) => {
-      const timer = req(timerModuleName);
-      const handler = function() {
-        args[0](...args.slice(2));
-      };
-      timer.setTimeout(handler, args[1]);
-      return instance.uid.toString();
-    };
-
-    const setInterval = (...args) => {
-      const timer = req(timerModuleName);
-      const handler = function() {
-        args[0](...args.slice(2));
-      };
-      timer.setInterval(handler, args[1]);
-      return instance.uid.toString();
-    };
-
-    const clearTimeout = (n) => {
-      const timer = req(timerModuleName);
-      timer.clearTimeout(n);
-    };
-
-    const clearInterval = (n) => {
-      const timer = req(timerModuleName);
-      timer.clearInterval(n);
-    };
-
-    const requestAnimationFrame = (callback) => {
-      const timer = req(timerModuleName);
-      timer.setTimeout(callback, 16);
-      return instance.uid.toString();
-    };
-
-    const cancelAnimationFrame = (n) => {
-      const timer = req(timerModuleName);
-      timer.clearTimeout(n);
-    };
-
-    const alert = (message) => {
-      const modal = req('@weex-module/modal');
-      modal.alert({
-        message
-      }, function() {});
-    };
+    const {
+      setTimeout,
+      clearTimeout,
+      setInterval,
+      clearInterval,
+      requestAnimationFrame,
+      cancelAnimationFrame
+    } = require('./timer.weex')(__weex_require__, instance);
 
     const windowEmitter = new EventEmitter();
     const window = {
@@ -299,6 +234,7 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         colorDepth: 24,
         pixelDepth: 24,
       },
+      devicePixelRatio: ENV.scale,
       fetch,
       Headers,
       Response,
@@ -311,11 +247,15 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
       clearInterval,
       requestAnimationFrame,
       cancelAnimationFrame,
-      alert,
-      devicePixelRatio: ENV.scale,
+      alert: (message) => {
+        const modal = __weex_require__(MODAL_MODULE);
+        modal.alert({
+          message
+        }, function() {});
+      },
       FontFace: require('runtime-shared/dist/fontface.function')(),
       open: (url) => {
-        const weexNavigator = req('@weex-module/navigator');
+        const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
         weexNavigator.push({
           url,
           animated: 'true',
@@ -342,28 +282,18 @@ export function createInstance(instanceId, code, options /* {bundleUrl, debug} *
         windowEmitter.emit(e.type, e);
       },
       // ModuleJS
-      define: def,
-      require: req,
+      define: __weex_define__,
+      require: __weex_require__,
       // Weex
-      __weex_define__: def,
-      __weex_require__: req,
-      __weex_options__: options,
-      __weex_data__: data,
-      __weex_downgrade__: require('./downgrade.weex')(req),
+      __weex_define__,
+      __weex_require__,
+      __weex_options__,
+      __weex_data__,
+      __weex_downgrade__: require('./downgrade.weex')(__weex_require__),
       __weex_document__: document,
     };
 
-    window.self = window.window = window;
-
-    instance = instances[instanceId] = {
-      window,
-      document,
-      instanceId,
-      modules,
-      origin: location.origin,
-      callbacks: [],
-      uid: 0
-    };
+    instance.window = window.self = window.window = window;
 
     genBuiltinModules(
       modules,
@@ -530,16 +460,3 @@ function typof(v) {
   const s = Object.prototype.toString.call(v);
   return s.substring(8, s.length - 1).toLowerCase();
 }
-
-export default {
-  createInstance,
-  destroyInstance,
-  getInstance,
-  getRoot,
-  init,
-  receiveTasks,
-  refreshInstance,
-  registerComponents,
-  registerMethods,
-  registerModules
-};
