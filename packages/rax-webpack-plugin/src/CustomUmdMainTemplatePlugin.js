@@ -64,9 +64,10 @@ module.exports = function(require, exports, module) {
         // Default build mode for component
         sourcePrefix = `
 ;(function(fn) {
+  // CommonJS first that could rename module name by wrap another define in air
   if (typeof exports === "object" && typeof module !== "undefined") {
     module.exports = fn();
-  } esle if (typeof define === "function") {
+  } else if (typeof define === "function") {
     define(${JSON.stringify(moduleName)}, function(require, exports, module){
       module.exports = fn();
     });

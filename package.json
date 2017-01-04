@@ -20,7 +20,7 @@
     "istanbul-api": "^1.0.0-aplha.10",
     "istanbul-lib-coverage": "^1.0.0",
     "jest": "^16.0.2",
-    "lerna": "^2.0.0-beta.31",
+    "lerna": "^2.0.0-beta.30",
     "minimatch": "^3.0.3",
     "rax-webpack-plugin": "0.0.*",
     "redux": "^3.6.0",
