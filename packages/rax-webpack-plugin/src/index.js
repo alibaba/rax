@@ -5,6 +5,8 @@ import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
 import MultiplePlatform from './MultiplePlatform';
 
+const isProducation = process.env.NODE_ENV === 'production';
+
 class RaxWebpackPlugin {
   constructor(options) {
     this.options = Object.assign({
@@ -21,7 +23,7 @@ class RaxWebpackPlugin {
 
   apply(compiler) {
     compiler.apply(new DefinePlugin({
-      '__DEV__': JSON.stringify(process.env.DEV ? JSON.parse('true') : JSON.parse('false'))
+      '__DEV__': JSON.stringify(isProducation ? JSON.parse('false') : JSON.parse('true'))
     }));
 
     compiler.plugin('this-compilation', (compilation) => {
