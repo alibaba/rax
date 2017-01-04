@@ -64,12 +64,12 @@ module.exports = function(require, exports, module) {
         // Default build mode for component
         sourcePrefix = `
 ;(function(fn) {
-  if (typeof define === "function") {
+  if (typeof exports === "object" && typeof module !== "undefined") {
+    module.exports = fn();
+  } esle if (typeof define === "function") {
     define(${JSON.stringify(moduleName)}, function(require, exports, module){
       module.exports = fn();
     });
-  } else if (typeof exports === "object" && typeof module !== "undefined") {
-    module.exports = fn();
   } else {
     var root;
     if (typeof window !== "undefined") {
