@@ -23,7 +23,7 @@ class RaxWebpackPlugin {
 
   apply(compiler) {
     compiler.apply(new DefinePlugin({
-      '__DEV__': JSON.stringify(isProducation ? JSON.parse('false') : JSON.parse('true'))
+      '__DEV__': isProducation ? false : true
     }));
 
     compiler.plugin('this-compilation', (compilation) => {
