@@ -2,7 +2,6 @@ import resolvePlugins from './resolvePlugins';
 
 module.exports = {
   plugins: resolvePlugins([
-    'babel-plugin-add-module-exports',
     'transform-react-display-name',
     ['transform-react-jsx', {
       pragma: 'createElement' // default pragma is React.createElement
@@ -14,7 +13,8 @@ module.exports = {
     'transform-object-rest-spread', // stage-3
     'syntax-trailing-function-commas', // stage-3
     'syntax-flow',
-    'syntax-jsx'
+    'syntax-jsx',
+    'add-module-exports'
   ]),
   env: {
     development: {
