@@ -1,8 +1,11 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
+import DefinePlugin from 'webpack/lib/DefinePlugin';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
 import MultiplePlatform from './MultiplePlatform';
+
+const isProducation = process.env.NODE_ENV === 'production';
 
 class RaxWebpackPlugin {
   constructor(options) {
@@ -19,6 +22,10 @@ class RaxWebpackPlugin {
   }
 
   apply(compiler) {
+    compiler.apply(new DefinePlugin({
+      '__DEV__': isProducation ? false : true
+    }));
+
     compiler.plugin('this-compilation', (compilation) => {
       compilation.apply(new CustomUmdMainTemplatePlugin(this.options));
     });
