@@ -1,4 +1,4 @@
-import {BuiltinModulesFactory} from './builtin';
+import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
 
 let NativeComponents = {};
@@ -14,6 +14,7 @@ const MODULE_NAME_PREFIX = '@weex-module/';
 const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const DOM_MODULE = MODULE_NAME_PREFIX + 'dom';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
+// Instance hub
 const instances = {};
 
 function dispatchEventToInstance(event, targetOrigin) {
@@ -71,9 +72,7 @@ export function registerComponents(components) {
  * @param  {object} apis a object of apis
  */
 export function registerMethods(apis) {
-  if (typeof apis === 'object') {
-    // Noop
-  }
+  // Noop
 }
 
 /**
@@ -90,14 +89,10 @@ export function registerModules(newModules) {
   }
 }
 
-function genBuiltinModules(
-  modules,
-  // W3C
-  window
-) {
-  for (let moduleName in BuiltinModulesFactory) {
+function genBuiltinModules(modules, moduleFactories, context) {
+  for (let moduleName in moduleFactories) {
     modules[moduleName] = {
-      factory: BuiltinModulesFactory[moduleName].bind(window),
+      factory: moduleFactories[moduleName].bind(context),
       module: {exports: {}},
       isInitialized: false,
     };
@@ -149,11 +144,11 @@ function genNativeModules(modules, instanceId) {
  * create a Weex instance
  *
  * @param  {string} instanceId
- * @param  {string} code
- * @param  {object} [options] option `HAS_LOG` enable print log
- * @param  {object} [data]
+ * @param  {string} __weex_code__
+ * @param  {object} [__weex_options__] bundleUrl, debug}
+ * @param  {object} [__weex_data__]
  */
-export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl, debug} */, __weex_data__) {
+export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_env__) {
   let instance = instances[instanceId];
 
   if (instance == undefined) {
@@ -162,7 +157,8 @@ export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl,
     const Promise = require('runtime-shared/dist/promise.function')();
     const URL = require('runtime-shared/dist/url.function')();
     const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
-    
+    const FontFace = require('runtime-shared/dist/fontface.function')();
+
     const document = new Document(instanceId, __weex_options__.bundleUrl, null, Listener);
     const location = new URL(document.URL);
     const modules = {};
@@ -180,7 +176,7 @@ export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl,
     genNativeModules(modules, instanceId);
     const __weex_define__ = require('./define.weex')(modules);
     const __weex_require__ = require('./require.weex')(modules);
-
+    const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
     // FontFace
     document.fonts = {
       add: function(fontFace) {
@@ -241,6 +237,7 @@ export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl,
       Request,
       URL,
       URLSearchParams,
+      FontFace,
       setTimeout,
       clearTimeout,
       setInterval,
@@ -253,7 +250,6 @@ export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl,
           message
         }, function() {});
       },
-      FontFace: require('runtime-shared/dist/fontface.function')(),
       open: (url) => {
         const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
         weexNavigator.push({
@@ -289,20 +285,29 @@ export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl,
       __weex_require__,
       __weex_options__,
       __weex_data__,
-      __weex_downgrade__: require('./downgrade.weex')(__weex_require__),
+      __weex_downgrade__,
+      __weex_code__,
+      __weex_env__,
       __weex_document__: document,
     };
 
     instance.window = window.self = window.window = window;
 
+    let builtinModuleFactories = {};
+    try {
+      builtinModuleFactories = __weex_env__.services.builtinModuleFactories;
+    } catch(e){}
+
+    const moduleFactories = {...ModuleFactories, ...builtinModuleFactories};
     genBuiltinModules(
       modules,
+      moduleFactories,
       window
     );
 
     if (ENV.platform !== 'Web') {
       let init = new Function(
-        'with (this) { (function(){ "use strict";' + code + '})(); }'
+        'with (this) { (function(){ "use strict";' + __weex_code__ + '}).call(this); }'
       );
 
       init.call(
@@ -311,7 +316,7 @@ export function createInstance(instanceId, code, __weex_options__ /* {bundleUrl,
       );
     } else {
       let init = new Function(
-        '"use strict";' + code
+        '"use strict";' + __weex_code__
       );
 
       init.call(

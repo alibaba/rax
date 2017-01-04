@@ -82,7 +82,57 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
+    instance.$create(code, config, data);
 
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('window is window.window', () => {
+    const code = `
+      alert(window === window.window);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: true
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('self is window', () => {
+    const code = `
+      alert(window === self);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: true
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('this is window', () => {
+    const code = `
+      alert(this === window);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: true
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
