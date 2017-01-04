@@ -13,7 +13,8 @@ module.exports = {
     'transform-object-rest-spread', // stage-3
     'syntax-trailing-function-commas', // stage-3
     'syntax-flow',
-    'syntax-jsx'
+    'syntax-jsx',
+    'add-module-exports'
   ]),
   env: {
     development: {
