@@ -15,6 +15,10 @@ const Driver = {
     return document.getElementById(id);
   },
 
+  getChildNodes(node) {
+    return node.childNodes;
+  },
+
   createBody() {
     return document.body;
   },

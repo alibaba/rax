@@ -330,14 +330,18 @@ class NativeComponent {
             this.getNativeNode(),
             context,
             (newChild, parent) => {
-              let oldChild = oldNodes[name];
-
+              const oldChild = oldNodes[name];
               if (oldChild) {
                 Host.driver.replaceChild(newChild, oldChild, parent);
-              } else if (lastPlacedNode) {
-                Host.driver.insertAfter(newChild, lastPlacedNode, parent);
               } else {
-                Host.driver.appendChild(newChild, parent);
+                // insert child at a specific index
+                const childNodes = Host.driver.getChildNodes(parent);
+                const currentNode = childNodes[nextIndex];
+                if (currentNode) {
+                  Host.driver.insertBefore(newChild, currentNode, parent);
+                } else {
+                  Host.driver.appendChild(newChild, parent);
+                }
               }
             }
           );

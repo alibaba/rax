@@ -1,9 +1,7 @@
 import {
   transformFor,
   transformIf,
-  transformImport,
-  transformPair,
-  hasForKey
+  transformPair
 } from './transformer';
 import htmlparser from 'htmlparser2';
 import { IF_KEY, FOR_KEY } from './defaultKey';
@@ -160,7 +158,6 @@ export default class HTMLtoJSX {
   _visitText(node) {
     let text = node.data;
 
-    // text = text.replace(PAIR_REG, `{$1}`);
     if (PAIR_REG.test(text)) {
       text = text.replace(PAIR_REG, (word, $1) => {
         if (/^\{\{([props.].*)}\}$/.test(text)) {

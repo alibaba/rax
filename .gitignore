@@ -9,3 +9,4 @@ dist/
 build/
 coverage/
 node_modules/
+examples/test

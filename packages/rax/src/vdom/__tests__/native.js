@@ -59,7 +59,6 @@ describe('NativeComponent', function() {
     inst = render(<div>{null}<div />{null}</div>, el);
     container = findDOMNode(inst);
     childNodes = container.childNodes;
-
     expect(childNodes.length).toBe(3);
     expect(childNodes[1]).toBe(childDiv);
 

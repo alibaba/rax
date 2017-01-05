@@ -27,83 +27,42 @@ export default class CustomUmdMainTemplatePlugin {
         });
       }
 
-      // FIXME: could remove?
-      if (this.options.runMainModule) {
-        requireCall = `
-if (typeof require === "function"){
-  require(${JSON.stringify(name)});
-}`;
-      }
-
       let moduleName = this.options.moduleName || name;
       let globalName = this.options.globalName || name;
       let target = this.options.target;
       let sourcePrefix = '';
       let sourceSuffix = '';
 
-      if (!target && chunk.name.endsWith('.module') || target === 'module') {
+      // module, function is private, only use in rax internal
+      if (chunk.name.endsWith('.module') || target === 'module') {
         sourcePrefix = 'module.exports = ';
         sourceSuffix = '';
-      } else if (!target && chunk.name.endsWith('.bundle') || target === 'bundle') {
-        // Build page bundle use this mode.
-        sourcePrefix = '';
-        sourceSuffix = '';
-      } else if (!target && chunk.name.endsWith('.function') || target === 'function') {
+      } else if (chunk.name.endsWith('.function') || target === 'function') {
         sourcePrefix = `
 module.exports = function() {
   return `;
         sourceSuffix = '};';
-      } else if (!target && chunk.name.endsWith('.factory') || target === 'factory') {
+      } else if (chunk.name.endsWith('.bundle') || target === 'bundle') {
+        // Build page bundle use this mode.
+        sourcePrefix = '';
+        sourceSuffix = '';
+      } else if (chunk.name.endsWith('.factory') || target === 'factory') {
         // Build weex builtin modules use this mode.
         // NOTE: globals should sync logic in weex-rax-framework
-        let factoryDependencies = [
-          // ES
-          'Promise',
-          // W3C
-          'window',
-          'screen',
-          'document',
-          'navigator',
-          'location',
-          'fetch',
-          'Headers',
-          'Response',
-          'Request',
-          'URL',
-          'URLSearchParams',
-          'setTimeout',
-          'clearTimeout',
-          'setInterval',
-          'clearInterval',
-          'requestAnimationFrame',
-          'cancelAnimationFrame',
-          'alert',
-          // Weex
-          '__weex_define__',
-          '__weex_require__',
-          '__weex_options__',
-          '__weex_data__',
-          '__weex_downgrade__',
-          '__weex_document__',
-          // ModuleJS
-          'require',
-          'exports',
-          'module'
-        ];
         sourcePrefix = `
-module.exports = function(${factoryDependencies}) {
-  module.exports = `;
-        sourceSuffix = '};';
-      } else {
-        // Default build mode for component
+module.exports = function(require, exports, module) {
+  with (this) { module.exports = `;
+        sourceSuffix = '}};';
+      } else if (chunk.name.endsWith('.umd') || target === 'umd') {
+        // CommonJS first that could rename module name by wrap another define in air
         sourcePrefix = `
 ;(function(fn) {
-  if (typeof define === "function") {
+  if (typeof exports === "object" && typeof module !== "undefined") {
+    module.exports = fn();
+  } else if (typeof define === "function") {
     define(${JSON.stringify(moduleName)}, function(require, exports, module){
       module.exports = fn();
     });
-  } else if (typeof exports === "object" && typeof module !== "undefined") {
-    module.exports = fn();
   } else {
     var root;
     if (typeof window !== "undefined") {

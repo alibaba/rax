@@ -62,8 +62,7 @@
 * `define`
 * `require`
 * `__weex_downgrade__`
-* `__weex_data__`
-* `__weex_options__`
+* `__weex_env__`
 * `__weex_define__`
 * `__weex_require__`
 

@@ -16,17 +16,21 @@ var RaxPlugin = require('rax-webpack-plugin');
 module.exports = {
   plugins: [
     new RaxPlugin({
-      target: 'bundle',
-      // page mode build config
-      frameworkComment: '// {"framework" : "Rax"}', // Default
-      includePolyfills: false,
-      polyfillModules: [],
+      // Target format: `bundle`, `umd` or `factory`(build for builtin module format), default is umd
+      target: 'umd',
+      // Only for `bundle` target, default is '// {"framework" : "Rax"}'
+      frameworkComment: '// {"framework" : "Rax"}',
       // component mode build config
       moduleName: 'rax',
       globalName: 'Rax',
-      // Common build config
+      // Enable external builtin modules, default is false
       externalBuiltinModules: false,
-      builtinModules: RaxPlugin.BuiltinModules
+      // Config which builtin modules should external, default config is define in `RaxPlugin.BuiltinModules`
+      builtinModules: RaxPlugin.BuiltinModules,
+      // Enable include polyfill files
+      includePolyfills: false,
+      // Config which polyfill should include, defaut is empty
+      polyfillModules: [],
     })
   ]
 }
