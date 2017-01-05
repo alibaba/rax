@@ -138,6 +138,35 @@ describe('framework', () => {
     expect(mockFn).toHaveBeenCalled();
   });
 
+  it('window is global context', () => {
+    const code = `
+      this.foo = 'foo';
+      alert(foo);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'foo'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+    instance.$create(code, config, data);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('run in strict mode', () => {
+    const code = `
+      a = 'throws ReferenceError';
+    `;
+
+    expect(function(){
+      instance.$create(code, config, data);
+    }).toThrowError(/a is not defined/);
+
+  });
+
   it('define a module', () => {
     const code = `
       define('alert-hello', function(){
