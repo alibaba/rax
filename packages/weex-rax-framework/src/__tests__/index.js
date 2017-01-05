@@ -161,10 +161,9 @@ describe('framework', () => {
       a = 'throws ReferenceError';
     `;
 
-    expect(function(){
+    expect(function() {
       instance.$create(code, config, data);
     }).toThrowError(/a is not defined/);
-
   });
 
   it('define a module', () => {
