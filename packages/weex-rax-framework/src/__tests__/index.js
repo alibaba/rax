@@ -500,7 +500,6 @@ describe('framework', () => {
   });
 
   it('construct with Request and override headers', () => {
-
     const code = `
       var request1 = new Request('https://fetch.spec.whatwg.org/', {
         method: 'post',
@@ -532,7 +531,6 @@ describe('framework', () => {
     instance.$create(code, config, data);
 
     expect(mockFn).toHaveBeenCalled();
-
   });
 
   it('setTimeout', () => {

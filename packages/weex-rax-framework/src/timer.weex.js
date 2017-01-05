@@ -1,7 +1,6 @@
 const TIMER_MODULE = '@weex-module/timer';
 
 module.exports = function(__weex_require__, instance) {
-
   const setTimeout = (...args) => {
     const timer = __weex_require__(TIMER_MODULE);
     const handler = function() {
@@ -48,5 +47,5 @@ module.exports = function(__weex_require__, instance) {
     clearInterval,
     requestAnimationFrame,
     cancelAnimationFrame
-  }
+  };
 };

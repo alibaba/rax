@@ -8,6 +8,8 @@ let Document;
 let Element;
 let Comment;
 let Listener;
+let TaskCenter;
+let CallbackManager;
 let sendTasks;
 
 const MODULE_NAME_PREFIX = '@weex-module/';
@@ -39,12 +41,14 @@ export function getInstance(instanceId) {
   return instance;
 }
 
-export function init(cfg) {
-  Document = cfg.Document;
-  Element = cfg.Element;
-  Comment = cfg.Comment;
-  Listener = cfg.Listener;
-  sendTasks = cfg.sendTasks;
+export function init(config) {
+  Document = config.Document;
+  Element = config.Element;
+  Comment = config.Comment;
+  Listener = config.Listener;
+  TaskCenter = config.TaskCenter;
+  CallbackManager = config.CallbackManager;
+  sendTasks = config.sendTasks;
 }
 
 /**
@@ -101,7 +105,6 @@ function genBuiltinModules(modules, moduleFactories, context) {
 }
 
 function genNativeModules(modules, instanceId) {
-
   if (typeof NativeModules === 'object') {
     for (let name in NativeModules) {
       let moduleName = MODULE_NAME_PREFIX + name;
@@ -145,21 +148,20 @@ function genNativeModules(modules, instanceId) {
  *
  * @param  {string} instanceId
  * @param  {string} __weex_code__
- * @param  {object} [__weex_options__] bundleUrl, debug}
- * @param  {object} [__weex_data__]
+ * @param  {object} [__weex_config__] {bundleUrl, debug}
  */
-export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_env__) {
+export function createInstance(instanceId, __weex_code__, __weex_config__, __weex_data__, __weex_options__) {
   let instance = instances[instanceId];
 
   if (instance == undefined) {
-    const ENV = typeof WXEnvironment === 'object' && WXEnvironment || {};
+    const __weex_env__ = typeof WXEnvironment === 'object' && WXEnvironment || {};
 
     const Promise = require('runtime-shared/dist/promise.function')();
     const URL = require('runtime-shared/dist/url.function')();
     const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
     const FontFace = require('runtime-shared/dist/fontface.function')();
 
-    const document = new Document(instanceId, __weex_options__.bundleUrl, null, Listener);
+    const document = new Document(instanceId, __weex_config__.bundleUrl, null, Listener);
     const location = new URL(document.URL);
     const modules = {};
 
@@ -214,23 +216,23 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       // https://www.w3.org/TR/2009/WD-html5-20090423/browsers.html#dom-navigator
       navigator: {
         product: 'Weex',
-        platform: ENV.platform,
-        appName: ENV.appName,
-        appVersion: ENV.appVersion,
-        // weexVersion: ENV.weexVersion,
-        // osVersion: ENV.osVersion,
+        platform: __weex_env__.platform,
+        appName: __weex_env__.appName,
+        appVersion: __weex_env__.appVersion,
+        // weexVersion: __weex_env__.weexVersion,
+        // osVersion: __weex_env__.osVersion,
         // userAgent
       },
       // https://drafts.csswg.org/cssom-view/#the-screen-interface
       screen: {
-        width: ENV.deviceWidth,
-        height: ENV.deviceHeight,
-        availWidth: ENV.deviceWidth,
-        availHeight: ENV.deviceHeight,
+        width: __weex_env__.deviceWidth,
+        height: __weex_env__.deviceHeight,
+        availWidth: __weex_env__.deviceWidth,
+        availHeight: __weex_env__.deviceHeight,
         colorDepth: 24,
         pixelDepth: 24,
       },
-      devicePixelRatio: ENV.scale,
+      devicePixelRatio: __weex_env__.scale,
       fetch,
       Headers,
       Response,
@@ -283,29 +285,34 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       // Weex
       __weex_define__,
       __weex_require__,
-      __weex_options__,
-      __weex_data__,
       __weex_downgrade__,
       __weex_code__,
-      __weex_env__,
+      __weex_config__,
+      __weex_data__,
       __weex_document__: document,
+      __weex_env__,
     };
 
     instance.window = window.self = window.window = window;
 
-    let builtinModuleFactories = {};
+    let builtinGlobals = {};
+    let builtinModules = {};
     try {
-      builtinModuleFactories = __weex_env__.services.builtinModuleFactories;
-    } catch(e){}
+      builtinGlobals = __weex_options__.services.builtinGlobals;
+      // Modules should wrap as module factory format
+      builtinModules = __weex_options__.services.builtinModules;
+    } catch (e) {}
 
-    const moduleFactories = {...ModuleFactories, ...builtinModuleFactories};
+    Object.assign(window, builtinGlobals);
+
+    const moduleFactories = {...ModuleFactories, ...builtinModules};
     genBuiltinModules(
       modules,
       moduleFactories,
       window
     );
 
-    if (ENV.platform !== 'Web') {
+    if (__weex_env__.platform !== 'Web') {
       let init = new Function(
         'with (this) { (function(){ "use strict";' + __weex_code__ + '}).call(this); }'
       );

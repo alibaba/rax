@@ -15,4 +15,4 @@ module.exports = function(modules) {
   }
 
   return define;
-}
+};

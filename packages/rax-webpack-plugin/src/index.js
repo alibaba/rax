@@ -16,8 +16,8 @@ class RaxWebpackPlugin {
       includePolyfills: false,
       platforms: [], // web node weex reactnative
       polyfillModules: [],
-      runMainModule: false,
-      target: null
+      runModule: false,
+      target: 'umd'
     }, options);
   }
 

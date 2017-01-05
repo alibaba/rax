@@ -1,5 +1,4 @@
 module.exports = function(modules) {
-
   function require(name) {
     var mod = modules[name];
 
@@ -32,5 +31,4 @@ module.exports = function(modules) {
   }
 
   return require;
-
-}
+};

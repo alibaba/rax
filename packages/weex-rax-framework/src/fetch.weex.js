@@ -1,7 +1,6 @@
 const STREAM_MODULE = '@weex-module/stream';
 
 module.exports = function(__weex_require__, Promise) {
-
   function normalizeName(name) {
     if (typeof name !== 'string') {
       name = String(name);
@@ -39,7 +38,7 @@ module.exports = function(__weex_require__, Promise) {
     name = normalizeName(name);
     value = normalizeValue(value);
     var oldValue = this.map[name];
-    this.map[name] = oldValue ? oldValue+','+value : value;
+    this.map[name] = oldValue ? oldValue + ',' + value : value;
   };
 
   Headers.prototype.delete = function(name) {
