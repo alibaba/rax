@@ -472,3 +472,6 @@ function typof(v) {
   const s = Object.prototype.toString.call(v);
   return s.substring(8, s.length - 1).toLowerCase();
 }
+
+// Hack for rollup build "import Rax from 'weex-rax-framework'" format
+export default exports;
