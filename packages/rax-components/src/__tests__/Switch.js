@@ -9,7 +9,7 @@ class SwitchTest extends Component {
     value: true
   };
   render() {
-    return <Switch value={this.state.value} onValueChange={(value) => { }}/>;
+    return <Switch value={this.state.value} onValueChange={(value) => { }} />;
   }
 }
 
@@ -18,7 +18,7 @@ describe('Switch', () => {
 
   beforeEach(() => {
     component = renderer.create(
-      <SwitchTest/>
+      <SwitchTest />
     );
   });
   it('should render a switch', () => {
@@ -38,7 +38,7 @@ describe('Switch', () => {
 
   it('should change value with disabled', () => {
     let component = renderer.create(
-      <Switch disabled={true}/>
+      <Switch disabled={true} />
     );
     let tree = component.toJSON();
     expect(tree.style.backgroundColor).toEqual('#fff');

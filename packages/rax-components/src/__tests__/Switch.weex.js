@@ -13,14 +13,14 @@ class SwitchTest extends Component {
       this.setState({
         value: false
       });
-    }}/>;
+    }} />;
   }
 }
 
 describe('Switch in weex', () => {
   it('should render a switch', () => {
     const component = renderer.create(
-      <SwitchTest/>
+      <SwitchTest />
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('SWITCH');
@@ -28,7 +28,7 @@ describe('Switch in weex', () => {
 
   it('should change a value', () => {
     const component = renderer.create(
-      <SwitchTest/>
+      <SwitchTest />
     );
     let tree = component.toJSON();
 

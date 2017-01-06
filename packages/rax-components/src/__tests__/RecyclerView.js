@@ -13,7 +13,7 @@ class RecyclerViewTest extends Component {
   }
   renderBody() {
     return [1, 2, 3].map((num) => {
-      return <span>{num}</span>
+      return <span>{num}</span>;
     });
   }
   componentDidMount() {
@@ -23,7 +23,11 @@ class RecyclerViewTest extends Component {
     });
   }
   render() {
-    return <RecyclerView ref="recycleview" children={[].concat(this.renderHeader(), this.renderBody(), this.renderFooter())}/>;
+    let props = {
+      ref: 'recycleview',
+      children: [].concat(this.renderHeader(), this.renderBody(), this.renderFooter())
+    };
+    return <RecyclerView {...props} />;
   }
 }
 
@@ -32,7 +36,7 @@ describe('RecyclerView', () => {
 
   beforeEach(() => {
     component = renderer.create(
-      <RecyclerViewTest/>
+      <RecyclerViewTest />
     );
   });
 
@@ -45,6 +49,5 @@ describe('RecyclerView', () => {
     expect(tree.children[0].children[3].children[0]).toEqual('3');
     expect(tree.children[0].children[4].children[0]).toEqual('footer');
   });
-
 });
 

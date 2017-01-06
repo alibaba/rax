@@ -6,7 +6,7 @@ jest.unmock('universal-env');
 describe('Image', () => {
   it('should render null when no source or source.uri', () => {
     const component = renderer.create(
-      <Image/>
+      <Image />
     );
     let tree = component.toJSON();
     expect(tree).toEqual(null);
@@ -14,7 +14,7 @@ describe('Image', () => {
 
   it('should render null when image no width and height', () => {
     const component = renderer.create(
-      <Image source={{uri: 'a.png'}}/>
+      <Image source={{uri: 'a.png'}} />
     );
 
     let tree = component.toJSON();
@@ -26,7 +26,7 @@ describe('Image', () => {
       <Image source={{uri: 'a.png'}} style={{
         width: '20rem',
         height: '20rem'
-      }}/>
+      }} />
     );
 
     let tree = component.toJSON();
@@ -39,7 +39,7 @@ describe('Image', () => {
       <Image source={{uri: 'a.png'}} style={{
         width: '20rem',
         height: '20rem'
-      }} resizeMode="cover"/>
+      }} resizeMode="cover" />
     );
 
     let tree = component.toJSON();
@@ -52,7 +52,7 @@ describe('Image', () => {
         width: '20rem',
         height: '20rem'
       }}>
-        <Text/>
+        <Text />
       </Image>
     );
 

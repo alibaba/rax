@@ -11,7 +11,7 @@ class ListViewTest extends Component {
   render() {
     return <ListView ref="scrollview" renderRow={(num) => {
       return <span>{num}</span>;
-    }} dataSource={[1, 2, 3]}/>;
+    }} dataSource={[1, 2, 3]} />;
   }
 }
 
@@ -20,7 +20,7 @@ describe('ListView', () => {
 
   beforeEach(() => {
     component = renderer.create(
-      <ListViewTest/>
+      <ListViewTest />
     );
   });
 
@@ -29,6 +29,5 @@ describe('ListView', () => {
     expect(tree.tagName).toEqual('DIV');
     expect(tree.children[0].children.length).toEqual(3);
   });
-
 });
 

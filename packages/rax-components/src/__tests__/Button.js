@@ -17,7 +17,7 @@ class ButtonTest extends Component {
 describe('Button', () => {
   it('should render a button', () => {
     const component = renderer.create(
-      <ButtonTest/>
+      <ButtonTest />
     );
     let tree = component.toJSON();
 

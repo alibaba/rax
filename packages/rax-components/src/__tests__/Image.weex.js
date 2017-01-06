@@ -9,7 +9,7 @@ describe('Link in weex', () => {
       <Image source={{uri: 'a.png'}} style={{
         width: '20rem',
         height: '20rem'
-      }}/>
+      }} />
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('IMAGE');
@@ -21,7 +21,7 @@ describe('Link in weex', () => {
       <Image source={{uri: 'a.png'}} style={{
         width: '20rem',
         height: '20rem'
-      }} resizeMode="cover"/>
+      }} resizeMode="cover" />
     );
 
     let tree = component.toJSON();

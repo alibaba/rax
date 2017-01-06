@@ -13,11 +13,15 @@ class RecyclerViewTest extends Component {
   }
   renderBody() {
     return [1, 2, 3].map((num) => {
-      return <span>{num}</span>
+      return <span>{num}</span>;
     });
   }
   render() {
-    return <RecyclerView ref="recycleview" children={[].concat(this.renderHeader(), this.renderBody(), this.renderFooter())}/>;
+    let props = {
+      ref: 'recycleview',
+      children: [].concat(this.renderHeader(), this.renderBody(), this.renderFooter())
+    };
+    return <RecyclerView {...props} />;
   }
 }
 
@@ -26,7 +30,7 @@ describe('RecyclerView in weex', () => {
 
   beforeEach(() => {
     component = renderer.create(
-      <RecyclerViewTest/>
+      <RecyclerViewTest />
     );
   });
 
@@ -41,32 +45,46 @@ describe('RecyclerView in weex', () => {
   });
 
   it('should render null when child is null', () => {
+    let props = {
+      children: [].concat(null, null, <span>footer</span>)
+    };
     let component = renderer.create(
-      <RecyclerView children={[].concat(null, null, <span>footer</span>)}/>
+      <RecyclerView {...props} />
     );
     let tree = component.toJSON();
     expect(tree.children.length).toEqual(1);
   });
 
   it('should pass a object to children', () => {
+    let props = {
+      children: <span>header</span>
+    };
     let component = renderer.create(
-      <RecyclerView children={<span>header</span>}/>
+      <RecyclerView {...props} />
     );
     let tree = component.toJSON();
     expect(tree.children.length).toEqual(1);
   });
 
   it('should render real cell', () => {
+    let props = {
+      _autoWrapCell: true,
+      children: <span>header</span>
+    };
     let component = renderer.create(
-      <RecyclerView _autoWrapCell={true} children={<span>header</span>}/>
+      <RecyclerView {...props} />
     );
     let tree = component.toJSON();
     expect(tree.children[0].tagName).toEqual('CELL');
   });
 
   it('should use RecyclerView.Header replace view', () => {
+    let props = {
+      _autoWrapCell: true,
+      children: <RecyclerView.Header>header</RecyclerView.Header>
+    };
     let component = renderer.create(
-      <RecyclerView _autoWrapCell={true} children={<RecyclerView.Header>header</RecyclerView.Header>}/>
+      <RecyclerView {...props} />
     );
     let tree = component.toJSON();
     expect(tree.children[0].children[0].tagName).toEqual('HEADER');
@@ -74,7 +92,7 @@ describe('RecyclerView in weex', () => {
 
   it('should use div replace cell when not in RecyclerView', () => {
     let component = renderer.create(
-      <RecyclerView.Cell/>
+      <RecyclerView.Cell />
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
@@ -82,7 +100,7 @@ describe('RecyclerView in weex', () => {
 
   it('should use div replace header when not in RecyclerView', () => {
     let component = renderer.create(
-      <RecyclerView.Header/>
+      <RecyclerView.Header />
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
