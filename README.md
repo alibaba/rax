@@ -141,3 +141,16 @@ Want to file a bug, contribute some code, or improve documentation? Excellent! R
 <a href="https://alibaba.github.io/weex/">
 <img alt="Weex Inside" src="https://cloud.githubusercontent.com/assets/677114/21266275/575eabee-c3e0-11e6-92d2-ad57e99372f2.png" width="200">
 </a>
+
+### Development Workflow
+
+After cloning rax, run `npm install` to fetch its dependencies.  
+Run `npm run setup` link and bootstrap project before development.
+Then, you can run several commands:
+
+* `npm run lint` checks the code style.
+* `npm test` runs the complete test suite.
+* `npm test -- --watch` runs an interactive test watcher.
+* `npm test <pattern>` runs tests with matching filenames.
+* `npm run build` creates `lib` and `dist` folder with all the packages.
+* `npm start` start local server with `examples` folder.

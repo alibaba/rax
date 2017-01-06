@@ -37,7 +37,6 @@
     "build:examples": "node ./scripts/build-examples.js",
     "build": "npm run build:compile && npm run build:dist && npm run build:examples",
     "test": "jest",
-    "watch:test": "jest --watch",
     "start": "npm run build && node ./scripts/start.js",
     "lint": "eslint --fix --ext .js --ext .jsx ./",
     "coverage": "npm run test -- --coverage",

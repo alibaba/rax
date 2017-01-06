@@ -473,5 +473,5 @@ function typof(v) {
   return s.substring(8, s.length - 1).toLowerCase();
 }
 
-// Hack for rollup build "import Rax from 'weex-rax-framework'" format
+// Hack for rollup build "import Rax from 'weex-rax-framework'", in rollup if `module.exports` has `__esModule` key must return by export default
 export default exports;

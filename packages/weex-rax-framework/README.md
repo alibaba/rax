@@ -128,7 +128,7 @@ npm link your-module
 
 Config `builtin.js` and add your custom builtin module:
 ```js
-export let BuiltinModulesFactory = {
+export let ModuleFactories = {
   'rax': require('rax/dist/rax.factory'),
   // Add your builtin module
   'your-module': require('your-module/dist/your-module.factory'),
