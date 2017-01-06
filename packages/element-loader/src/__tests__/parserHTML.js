@@ -32,4 +32,4 @@ describe('parserHTML', () => {
     expect(object.importLinks).toEqual(['index.html']);
     expect(object.styleSheetLinks).toEqual(['common.css']);
   });
-})
+});

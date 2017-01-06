@@ -4,7 +4,7 @@ import Link from '../Link';
 
 jest.mock('universal-env');
 describe('Link in weex', () => {
-  it('render tag a', () => {
+  it('should render a link', () => {
     const component = renderer.create(
       <Link>Example</Link>
     );

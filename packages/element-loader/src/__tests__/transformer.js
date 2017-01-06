@@ -13,11 +13,11 @@ describe('transformer', () => {
     const endOutput = transformFor([{
       name: ':for',
       value: 'item in items'
-    }], false)
+    }], false);
     const errorOutput = transformFor([{
       name: ':for',
       value: ' in items'
-    }], false)
+    }], false);
 
     expect(beginOutput).toEqual('{props.items.map((item) => {return (');
     expect(endOutput).toEqual(');})}');
@@ -32,7 +32,7 @@ describe('transformer', () => {
     const endOutput = transformIf([{
       name: ':if',
       value: 'items.length !== 0'
-    }], false, 1)
+    }], false, 1);
 
     expect(beginOutput).toEqual('{((props.items.length !== 0)) && ');
     expect(endOutput).toEqual('}');

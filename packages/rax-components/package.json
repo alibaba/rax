@@ -15,5 +15,8 @@
   "dependencies": {
     "universal-env": "^0.0.16",
     "rax": "^0.0.16"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.0.16"
   }
 }

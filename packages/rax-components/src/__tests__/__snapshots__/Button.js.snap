@@ -1,0 +1,31 @@
+exports[`Button should render a button 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "attributes": Object {
+        "value": "normal",
+      },
+      "tagName": "TEXT",
+    },
+  ],
+  "eventListeners": Object {
+    "click": [Function],
+  },
+  "style": Object {
+    "alignItems": "center",
+    "borderColor": "#666666",
+    "borderStyle": "solid",
+    "borderWidth": "1px",
+    "cursor": "pointer",
+    "flex": 1,
+    "flexDirection": "row",
+    "height": "60rem",
+    "justifyContent": "center",
+    "paddingBottom": "12rem",
+    "paddingLeft": "25rem",
+    "paddingRight": "25rem",
+    "paddingTop": "12rem",
+  },
+  "tagName": "DIV",
+}
+`;
