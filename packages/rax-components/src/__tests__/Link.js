@@ -1,11 +1,10 @@
-global.callNative = null;
 import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import Link from '../Link';
 
 jest.unmock('universal-env');
 describe('Link', () => {
-  it('render tag a', () => {
+  it('should render a link', () => {
     const component = renderer.create(
       <Link>Example</Link>
     );
@@ -14,7 +13,7 @@ describe('Link', () => {
     expect(tree.children[0].children[0]).toEqual('Example');
   });
 
-  it('turn onPress to onClick', () => {
+  it('should turn onPress to onClick', () => {
     const mockPress = jest.fn();
     const component = renderer.create(
       <Link onPress={mockPress}>Example</Link>
@@ -32,5 +31,5 @@ describe('Link', () => {
     let tree = component.toJSON();
     expect(tree.children).toBe(undefined);
   });
-})
+});
 

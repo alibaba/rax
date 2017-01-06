@@ -100,7 +100,7 @@ class Switch extends Component {
         },
         checked: this.state.value,
         disabled: this.props.disabled,
-        onChange: ({value}) => this.props.onValueChange(value),
+        onChange: ({value}) => this.props.onValueChange(value)
       };
 
       return (
