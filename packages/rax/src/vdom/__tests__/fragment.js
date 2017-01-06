@@ -39,6 +39,34 @@ describe('FragmentComponent', function() {
     expect(bar.data).toBe('bar');
   });
 
+  it('should diff update right', function() {
+    let el = createNodeElement('div');
+    class Hello extends Component {
+      render() {
+        return [
+          <div>
+            <span>hello</span>
+            <span>{this.props.message}</span>
+          </div>
+        ];
+      }
+    }
+
+    let beforeInst = render(<Hello message="world" />, el);
+    let beforeContainer = findDOMNode(beforeInst);
+    let beforeDiv = beforeContainer.childNodes[0];
+    let beforeSpan = beforeDiv.childNodes[0];
+
+    let inst = render(<Hello message="rax" />, el);
+    let container = findDOMNode(inst);
+    let div = container.childNodes[0];
+    let span = div.childNodes[0];
+
+    expect(beforeContainer).toBe(container);
+    expect(beforeDiv).toBe(div);
+    expect(beforeSpan).toBe(span);
+  });
+
   it('should append to right position', function() {
     let el = createNodeElement('div');
     class Hello1 extends Component {
