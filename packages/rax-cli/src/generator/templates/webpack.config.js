@@ -8,6 +8,8 @@ var WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-
 var qrcode = require('qrcode-terminal');
 var internalIp = require('internal-ip');
 
+var isProducation = process.env.NODE_ENV === 'production';
+
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebookincubator/create-react-app/issues/637
 var appDirectory = fs.realpathSync(process.cwd());
@@ -38,16 +40,15 @@ var publicPath = '/';
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
 var publicUrl = '';
+var entry = {};
 
-var entry = {
-  'index.bundle': [paths.appIndexJs]
-};
-
-if (process.env.NODE_ENV === 'production') {
-  entry['index.bundle.min'] = entry['index.bundle'];
+if (isProducation) {
+  entry['index.bundle.min'] = [paths.appIndexJs];
+} else {
+  entry['index.bundle'] = [paths.appIndexJs];
 }
 
-if (process.env.NODE_ENV !== 'production') {
+if (!isProducation) {
   var ip = internalIp.v4();
   var port = 8080;
   var webUrl = 'http://' + ip + ':' + port;
@@ -62,7 +63,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = {
   // Compile target should "web" when use hot reload
-  target: process.env.NODE_ENV === 'production' ? 'node' : 'web',
+  target: isProducation ? 'node' : 'web',
 
   devtool: 'cheap-module-source-map',
   // These are the "entry points" to our application.
@@ -74,7 +75,7 @@ module.exports = {
     // Next line is not used in dev but WebpackDevServer crashes without it:
     path: paths.appBuild,
     // Add /* filename */ comments to generated require()s in the output.
-    pathinfo: true,
+    pathinfo: !isProducation,
     // This does not produce a real file. It's just the virtual path that is
     // served by WebpackDevServer in development. This is the JS bundle
     // containing code from all our entry points, and the Webpack runtime.
@@ -115,7 +116,7 @@ module.exports = {
         'PUBLIC_URL': JSON.stringify(publicUrl)
       }
     }),
-    process.env.NODE_ENV === 'production' ? new webpack.optimize.UglifyJsPlugin({
+    isProducation ? new webpack.optimize.UglifyJsPlugin({
       include: /\.min\.js$/,
       minimize: true,
       compress: {

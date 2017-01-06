@@ -1,6 +1,6 @@
 {
   "name": "babel-preset-rax",
-  "version": "0.0.11",
+  "version": "0.0.16",
   "description": "Babel preset for all Rax plugins.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-minify-dead-code-elimination": "^0.1.1",
     "babel-plugin-syntax-flow": "^6.3.13",
     "babel-plugin-syntax-jsx": "^6.3.13",

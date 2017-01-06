@@ -1,3 +1,5 @@
+const STREAM_MODULE = '@weex-module/stream';
+
 module.exports = function(__weex_require__, Promise) {
   function normalizeName(name) {
     if (typeof name !== 'string') {
@@ -35,12 +37,8 @@ module.exports = function(__weex_require__, Promise) {
   Headers.prototype.append = function(name, value) {
     name = normalizeName(name);
     value = normalizeValue(value);
-    var list = this.map[name];
-    if (!list) {
-      list = [];
-      this.map[name] = list;
-    }
-    list.push(value);
+    var oldValue = this.map[name];
+    this.map[name] = oldValue ? oldValue + ',' + value : value;
   };
 
   Headers.prototype.delete = function(name) {
@@ -48,12 +46,8 @@ module.exports = function(__weex_require__, Promise) {
   };
 
   Headers.prototype.get = function(name) {
-    var values = this.map[normalizeName(name)];
-    return values ? values[0] : null;
-  };
-
-  Headers.prototype.getAll = function(name) {
-    return this.map[normalizeName(name)] || [];
+    name = normalizeName(name);
+    return this.has(name) ? this.map[name] : null;
   };
 
   Headers.prototype.has = function(name) {
@@ -65,11 +59,11 @@ module.exports = function(__weex_require__, Promise) {
   };
 
   Headers.prototype.forEach = function(callback, thisArg) {
-    Object.getOwnPropertyNames(this.map).forEach(function(name) {
-      this.map[name].forEach(function(value) {
-        callback.call(thisArg, value, name, this);
-      }, this);
-    }, this);
+    for (var name in this.map) {
+      if (this.map.hasOwnProperty(name)) {
+        callback.call(thisArg, this.map[name], name, this);
+      }
+    }
   };
 
   function consumed(body) {
@@ -171,13 +165,14 @@ module.exports = function(__weex_require__, Promise) {
     if (!options) {
       options = {};
     }
-    this._initBody(bodyInit, options);
+
     this.type = 'default';
-    this.status = options.status;
+    this.status = 'status' in options ? options.status : 200;
     this.ok = this.status >= 200 && this.status < 300;
-    this.statusText = options.statusText;
-    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers);
+    this.statusText = 'statusText' in options ? options.statusText : 'OK';
+    this.headers = new Headers(options.headers);
     this.url = options.url || '';
+    this._initBody(bodyInit, options);
   }
 
   Body.call(Response.prototype);
@@ -227,7 +222,7 @@ module.exports = function(__weex_require__, Promise) {
       }
 
       params.type = init && init.dataType ? init.dataType : 'json';
-      var nativeFetch = __weex_require__('@weex-module/stream').fetch;
+      var nativeFetch = __weex_require__(STREAM_MODULE).fetch;
       nativeFetch(params, (response) => {
         try {
           typeof response === 'string' && (response = JSON.parse(response));
@@ -249,9 +244,10 @@ module.exports = function(__weex_require__, Promise) {
     });
   };
 
-  fetch.Headers = Headers;
-  fetch.Request = Request;
-  fetch.Response = Response;
-
-  return fetch;
+  return {
+    fetch,
+    Headers,
+    Request,
+    Response
+  };
 };

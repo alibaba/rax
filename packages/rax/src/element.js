@@ -6,6 +6,17 @@ const RESERVED_PROPS = {
   ref: true,
 };
 
+function getRenderErrorInfo() {
+  if (Host.component) {
+    var name = Host.component.getName();
+    if (name) {
+      return ' Check the render method of `' + name + '`.';
+    }
+  }
+  return '';
+}
+
+
 const Element = (type, key, ref, props, owner) => {
   props = filterProps(type, props);
 
@@ -85,7 +96,7 @@ function filterProps(type, props) {
 
 export function createElement(type, config, ...children) {
   if (type == null) {
-    throw Error('Component type is null');
+    throw Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
   }
   // Reserved names are extracted
   let props = {};

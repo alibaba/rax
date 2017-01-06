@@ -5,8 +5,13 @@ import ListView from '../ListView';
 jest.unmock('universal-env');
 
 class ListViewTest extends Component {
+  componentDidMount() {
+    this.refs.scrollview.scrollTo();
+  }
   render() {
-    return <ListView/>;
+    return <ListView ref="scrollview" renderRow={(num) => {
+      return <span>{num}</span>;
+    }} dataSource={[1, 2, 3]}/>;
   }
 }
 
@@ -20,11 +25,9 @@ describe('ListView', () => {
   });
 
   it('should render a ListView', () => {
-    console.log(component);
-    // let tree = component.toJSON();
-    // console.log(tree);
-    // expect(tree.tagName).toEqual('SPAN');
-    // expect(tree.children[0].tagName).toEqual('SMALL');
+    let tree = component.toJSON();
+    expect(tree.tagName).toEqual('DIV');
+    expect(tree.children[0].children.length).toEqual(3);
   });
 
 });

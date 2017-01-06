@@ -21,6 +21,10 @@ const Driver = {
     return nodeMaps[id];
   },
 
+  getChildNodes(node) {
+    return node.children;
+  },
+
   createBody() {
     // Close batched updates
     document.open();

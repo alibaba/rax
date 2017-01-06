@@ -14,9 +14,13 @@ function performInSandbox(fn, handleError) {
     if (handleError) {
       handleError(e);
     } else {
-      setTimeout(() => {
+      if (Host.sandbox) {
+        setTimeout(() => {
+          throw e;
+        }, 0);
+      } else {
         throw e;
-      }, 0);
+      }
     }
   }
 }

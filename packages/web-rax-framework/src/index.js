@@ -9,6 +9,26 @@ if (!global.Promise) {
 require('whatwg-fetch');
 require('raf/polyfill');
 
+if (!global.FontFace) {
+  global.FontFace = require('runtime-shared/dist/fontface.module');
+}
+
+if (!document.fonts) {
+  document.fonts = {
+    add: function(family, source) {
+      let fontFaceRule = `@font-face {
+        font-family: ${family};
+        src: ${source}
+      }`;
+
+      let styleElement = document.createElement('style');
+      styleElement.innerHTML = fontFaceRule;
+      document.head.appendChild(styleElement);
+    }
+  };
+}
+
+
 if (!global.URL) {
   global.URL = require('runtime-shared/dist/url.module');
 }

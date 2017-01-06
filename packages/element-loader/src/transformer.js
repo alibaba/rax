@@ -46,10 +46,6 @@ export const transformIf = (attributes, begin = true, scope) => {
   return output;
 };
 
-export const transformImport = (name, from) => {
-  return `import ${name} from '${from}';`;
-};
-
 export const hasIfKey = (attributes, callback) => {
   return hasKey(IF_KEY, attributes, callback);
 };
