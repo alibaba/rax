@@ -24,6 +24,7 @@
     "minimatch": "^3.0.3",
     "rax-webpack-plugin": "0.0.*",
     "redux": "^3.6.0",
+    "rimraf": "^2.5.4",
     "semver-regex": "^1.0.0",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.2"
