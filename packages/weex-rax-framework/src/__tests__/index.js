@@ -1,8 +1,13 @@
+'use strict';
+
 import {Runtime, Instance} from 'weex-vdom-tester';
 import {config} from 'weex-js-runtime';
 import * as framework from '../index';
 
 const {Document, Element, Comment} = config;
+
+Object.a = 1;
+
 global.callNative = () => {};
 global.WXEnvironment = {
   'scale': 2,

@@ -80,6 +80,7 @@ dist(getConfig(
     {
       moduleName: 'rax',
       globalName: 'Rax',
+      factoryGlobals: ['__weex_document__', 'document']
     },
     {
       presets: ['es2015', 'rax'],

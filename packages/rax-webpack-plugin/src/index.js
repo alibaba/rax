@@ -17,6 +17,7 @@ class RaxWebpackPlugin {
       platforms: [], // web node weex reactnative
       polyfillModules: [],
       runModule: false,
+      bundle: 'compatible', // private
       target: 'umd'
     }, options);
   }
