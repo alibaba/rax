@@ -1,12 +1,28 @@
 'use strict';
 
+function freezePrototype() {
+  Object.freeze(Object);
+  Object.freeze(Array);
+
+  Object.freeze(Object.prototype);
+  Object.freeze(Array.prototype);
+  Object.freeze(String.prototype);
+  Object.freeze(Number.prototype);
+  Object.freeze(Boolean.prototype);
+
+  Object.freeze(Error.prototype);
+  Object.freeze(Date.prototype);
+  Object.freeze(Math.prototype);
+  Object.freeze(RegExp.prototype);
+}
+
+freezePrototype();
+
 import {Runtime, Instance} from 'weex-vdom-tester';
 import {config} from 'weex-js-runtime';
 import * as framework from '../index';
 
 const {Document, Element, Comment} = config;
-
-Object.a = 1;
 
 global.callNative = () => {};
 global.WXEnvironment = {
@@ -186,6 +202,31 @@ describe('framework', () => {
     expect(function() {
       instance.$create(code, __weex_options__, __weex_data__);
     }).toThrowError(/a is not defined/);
+  });
+
+  it('run in Object.prototype freeze mode', () => {
+    const code = `
+      function Foo(){}
+      // Throw Error
+      Foo.prototype.toString = function(){};
+      // Could use Foo.prototype = {toString(){}}
+    `;
+
+    expect(function() {
+      instance.$create(code, __weex_options__, __weex_data__);
+    }).toThrowError(/Cannot assign to read only property/);
+  });
+
+  it('run in Object freeze mode', () => {
+    const code = `
+      var foo = new Object();
+      // Throw Error
+      foo.toString = function(){};
+    `;
+
+    expect(function() {
+      instance.$create(code, __weex_options__, __weex_data__);
+    }).toThrowError(/Cannot assign to read only property/);
   });
 
   it('define a module', () => {
