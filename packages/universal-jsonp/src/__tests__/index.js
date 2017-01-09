@@ -19,7 +19,7 @@ describe('jsonp in web', () => {
 
   it('should fail when time out', (done) => {
     jsonp(URL, {
-      timeout: 50
+      timeout: 0
     }).then(function(response) {
       return response.json();
     }).then((json) => {
