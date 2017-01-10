@@ -2,8 +2,6 @@ import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
 import Switch from '../Switch';
 
-jest.unmock('universal-env');
-
 class SwitchTest extends Component {
   state = {
     value: true

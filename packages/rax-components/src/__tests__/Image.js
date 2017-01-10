@@ -2,7 +2,6 @@ import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
 import Image from '../Image';
 
-jest.unmock('universal-env');
 describe('Image', () => {
   it('should render null when no source or source.uri', () => {
     const component = renderer.create(

@@ -2,8 +2,6 @@ import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
 import ListView from '../ListView';
 
-jest.unmock('universal-env');
-
 class ListViewTest extends Component {
   componentDidMount() {
     this.refs.scrollview.scrollTo();

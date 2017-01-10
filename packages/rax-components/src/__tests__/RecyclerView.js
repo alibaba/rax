@@ -2,8 +2,6 @@ import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
 import RecyclerView from '../RecyclerView';
 
-jest.unmock('universal-env');
-
 class RecyclerViewTest extends Component {
   renderHeader() {
     return <span>header</span>;

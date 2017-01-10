@@ -2,7 +2,11 @@ import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
 import RecyclerView from '../RecyclerView';
 
-jest.mock('universal-env');
+jest.mock('universal-env', () => {
+  return {
+    isWeex: true
+  }
+});
 
 class RecyclerViewTest extends Component {
   renderHeader() {
@@ -32,6 +36,10 @@ describe('RecyclerView in weex', () => {
     component = renderer.create(
       <RecyclerViewTest />
     );
+  });
+
+  afterEach(() => {
+    jest.unmock('universal-env');
   });
 
   it('should render a RecyclerView', () => {

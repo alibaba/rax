@@ -2,7 +2,6 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import Link from '../Link';
 
-jest.unmock('universal-env');
 describe('Link', () => {
   it('should render a link', () => {
     const component = renderer.create(

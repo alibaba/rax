@@ -2,7 +2,12 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import Image from '../Image';
 
-jest.mock('universal-env');
+jest.mock('universal-env', () => {
+  return {
+    isWeex: true
+  }
+});
+
 describe('Link in weex', () => {
   it('should render a image', () => {
     const component = renderer.create(

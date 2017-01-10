@@ -2,7 +2,11 @@ import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
 import Switch from '../Switch';
 
-jest.mock('universal-env');
+jest.mock('universal-env', () => {
+  return {
+    isWeex: true
+  }
+});
 
 class SwitchTest extends Component {
   state = {

@@ -22,12 +22,12 @@ describe('Button', () => {
     let tree = component.toJSON();
 
     expect(tree.tagName).toEqual('DIV');
-    expect(tree.children[0].attributes.value).toEqual('normal');
+    expect(tree.children[0].children[0]).toEqual('normal');
     expect(tree).toMatchSnapshot();
 
     tree.eventListeners.click();
 
     tree = component.toJSON();
-    expect(tree.children[0].attributes.value).toEqual('click');
+    expect(tree.children[0].children[0]).toEqual('click');
   });
 });
