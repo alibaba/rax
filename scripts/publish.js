@@ -27,22 +27,28 @@ function getExamplesHtmlEntry() {
 }
 
 if (version) {
+  const semver = '^' + version;
+
   console.log('Update rax version file to', version);
   const RAX_VERSION_FILE = 'packages/rax/src/version.js';
   fs.writeFileSync(RAX_VERSION_FILE, 'export default \'' + version + '\';\n');
 
-  console.log('Update dependencies in package.json generator');
+  console.log('Update dependencies in package.json');
   const GENERATOR_DEPENDENCIES_FILE = 'packages/rax-cli/src/generator/templates/package.json';
   const JSONString = fs.readFileSync(GENERATOR_DEPENDENCIES_FILE);
   const packageJSON = JSON.parse(JSONString);
-  const semver = '^' + version;
   packageJSON.dependencies.rax = semver;
   packageJSON.dependencies['rax-components'] = semver;
   packageJSON.devDependencies['babel-preset-rax'] = semver;
   packageJSON.devDependencies['rax-webpack-plugin'] = semver;
   packageJSON.devDependencies['stylesheet-loader'] = semver;
-
   fs.writeFileSync(GENERATOR_DEPENDENCIES_FILE, JSON.stringify(packageJSON, null, '  '));
+
+  const PROJECT_DEPENDENCIES_FILE = 'package.json';
+  const ProjectPackageJSON = JSON.parse(fs.readFileSync(PROJECT_DEPENDENCIES_FILE));
+  ProjectPackageJSON.devDependencies['babel-preset-rax'] = semver;
+  ProjectPackageJSON.devDependencies['rax-webpack-plugin'] = semver;
+  fs.writeFileSync(PROJECT_DEPENDENCIES_FILE, JSON.stringify(ProjectPackageJSON, null, '  '));
 
   console.log('Update rax-web-framework version in index.html');
   const GENERATOR_HTML_FILE = 'packages/rax-cli/src/generator/templates/public/index.html';
