@@ -50,7 +50,7 @@ const JSONP = function(url, options = {}) {
               try {
                 response.data = JSON.parse(response.data);
               } catch (e) {
-                throw 'the response.data in not valid json';
+                throw new Error('the response.data in not valid json');
               }
             }
           }

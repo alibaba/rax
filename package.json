@@ -51,7 +51,10 @@
   },
   "jest": {
     "collectCoverage": true,
-    "verbose": true
+    "verbose": true,
+    "setupFiles": [
+      "./scripts/jest.js"
+    ]
   },
   "config": {
     "ghooks": {
