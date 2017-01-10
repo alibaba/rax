@@ -44,15 +44,29 @@ module.exports = function() {
         sourceSuffix = '};';
       } else if (chunk.name.endsWith('.bundle') || target === 'bundle') {
         // Build page bundle use this mode.
-        sourcePrefix = '';
-        sourceSuffix = '';
+        if (this.options.bundle === 'compatible') {
+          sourcePrefix = `define("${chunk.name}", function(require) {`;
+          sourceSuffix = `}); require("${chunk.name}");`;
+        } else {
+          sourcePrefix = '';
+          sourceSuffix = '';
+        }
       } else if (chunk.name.endsWith('.factory') || target === 'factory') {
         // Build weex builtin modules use this mode.
         // NOTE: globals should sync logic in weex-rax-framework
-        sourcePrefix = `
-module.exports = function(require, exports, module) {
-  with (this) { module.exports = `;
-        sourceSuffix = '}};';
+        if (this.options.factoryGlobals) {
+          var globalsCodes = this.options.factoryGlobals.map(function(name) {
+            return `var ${name} = this["${name}"];`;
+          });
+          sourcePrefix = `module.exports = function(require, exports, module) {
+  ${globalsCodes.join('\n')}
+  module.exports = `;
+          sourceSuffix = '};';
+        } else {
+          sourcePrefix = `module.exports = function(require, exports, module) {
+  with(this) { module.exports = `;
+          sourceSuffix = '}};';
+        }
       } else if (chunk.name.endsWith('.umd') || target === 'umd') {
         // CommonJS first that could rename module name by wrap another define in air
         sourcePrefix = `

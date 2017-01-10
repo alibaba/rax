@@ -1,6 +1,6 @@
 {
   "name": "babel-preset-rax",
-  "version": "0.0.19",
+  "version": "0.1.2",
   "description": "Babel preset for all Rax plugins.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

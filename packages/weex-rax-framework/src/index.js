@@ -1,3 +1,5 @@
+'use strict';
+
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
 

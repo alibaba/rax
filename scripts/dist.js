@@ -80,6 +80,7 @@ dist(getConfig(
     {
       moduleName: 'rax',
       globalName: 'Rax',
+      factoryGlobals: ['__weex_document__', 'document']
     },
     {
       presets: ['es2015', 'rax'],
@@ -152,7 +153,9 @@ dist(getConfig(
       pathinfo: false,
     },
     {
-      target: 'bundle'
+      target: 'bundle',
+      bundle: null,
+      frameworkComment: '',
     },
     {
       presets: ['es2015'],
