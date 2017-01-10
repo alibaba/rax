@@ -2,12 +2,11 @@ import RaxWebpackPlugin from '../../../index';
 
 module.exports = {
   entry: {
-    'index.bundle': './index',
+    'index.module': './index',
   },
   plugins: [
     new RaxWebpackPlugin({
-      target: 'bundle',
-      bundle: 'bundle'
+      target: 'module',
     })
   ]
 };

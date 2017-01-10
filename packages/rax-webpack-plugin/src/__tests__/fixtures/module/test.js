@@ -5,5 +5,5 @@ module.exports = function(actualPath, filePath) {
   const expected = readFileOrEmpty(filePath);
 
   expect(actual).toBe(expected);
-  expect(actual).toMatch('// {"framework" : "Rax"}');
+  expect(actual).toMatch(/^module\.exports = /);
 };

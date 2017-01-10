@@ -4,20 +4,21 @@ import path from 'path';
 import rimraf from 'rimraf';
 import webpack from 'webpack';
 
-const fixtures = fs.readdirSync(path.join(__dirname, 'fixtures')).filter(function(fixture) {
-  return fixture.indexOf('.') !== 0;
-});
+const fixturesDirectory = path.join(__dirname, 'fixtures');
+
+const fixtures = fs.readdirSync(fixturesDirectory)
+  .filter(function(fixture) {
+    if (fixture.indexOf('.') == 0) {
+      return false;
+    }
+    if (fs.lstatSync(path.resolve(fixturesDirectory, fixture)).isDirectory()) {
+      return true;
+    }
+    return false;
+  });
 
 let outputDirectory = path.join(os.tmpdir(), '__output__');
 // let outputDirectory = path.join(__dirname, '__output__');
-
-function readFileOrEmpty(filepath) {
-  try {
-    return fs.readFileSync(filepath, 'utf-8');
-  } catch (e) {
-    return '';
-  }
-}
 
 describe('rax-webpack-plugin', function() {
 
@@ -62,13 +63,8 @@ describe('rax-webpack-plugin', function() {
           const filePath = path.join(expectedDirectory, file);
           const actualPath = path.join(outputPath, file);
 
-          const actual = readFileOrEmpty(actualPath);
-          const expected = readFileOrEmpty(filePath);
-
-          expect(actual).toBe(expected);
-
           if (fs.existsSync(fixtureTestSuiteFile)) {
-            require(fixtureTestSuiteFile)(actual, expected);
+            require(fixtureTestSuiteFile)(actualPath, filePath);
           }
         });
         done();
