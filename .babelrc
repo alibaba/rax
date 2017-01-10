@@ -4,7 +4,7 @@
     "rax"
   ],
   "ignore": [
-    "src/polyfills/",
-    "src/generator/templates"
+    "src/generator/templates",
+    "__mockc__"
   ]
 }
