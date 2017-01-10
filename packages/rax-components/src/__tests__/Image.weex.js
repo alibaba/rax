@@ -5,7 +5,7 @@ import Image from '../Image';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('Link in weex', () => {

@@ -3,7 +3,7 @@ import transition from '../index';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 jest.mock('@weex-module/animation', () => {
@@ -11,7 +11,7 @@ jest.mock('@weex-module/animation', () => {
     transition: (ref, options, callback) => {
       callback();
     }
-  }
+  };
 }, {virtual: true});
 
 describe('transition in weex', () => {

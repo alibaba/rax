@@ -5,7 +5,7 @@ import Switch from '../Switch';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 class SwitchTest extends Component {

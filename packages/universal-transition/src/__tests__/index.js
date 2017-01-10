@@ -3,7 +3,7 @@ import transition from '../index';
 jest.mock('universal-env', () => {
   return {
     isWeb: true
-  }
+  };
 });
 
 describe('transition', () => {
@@ -30,9 +30,7 @@ describe('transition', () => {
   });
 
   it('callback as the third parameter when option is function', () => {
-    const mockFn = jest.fn(() => {
-      done();
-    });
+    const mockFn = jest.fn();
     transition(document.body, {
       transform: 'translate(10px, 20px) scale(1.5, 1.5) rotate(90deg)'
     }, mockFn);

@@ -5,7 +5,7 @@ import Video from '../Video';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('Video in weex', () => {

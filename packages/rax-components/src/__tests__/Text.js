@@ -27,6 +27,5 @@ describe('Text', () => {
     expect(tree.style.flexShrink).toBe(0);
     expect(tree.style.fontSize).toBe(32);
   });
-
-})
+});
 

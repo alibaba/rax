@@ -5,7 +5,7 @@ import TextInput from '../TextInput';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('TextInput in weex', () => {

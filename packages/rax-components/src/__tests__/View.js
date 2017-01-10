@@ -45,5 +45,5 @@ describe('View', () => {
     let tree = component.toJSON();
     expect(tree.children[0].children[0]).toBe('Example');
   });
-})
+});
 

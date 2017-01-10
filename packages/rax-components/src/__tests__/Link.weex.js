@@ -5,7 +5,7 @@ import Link from '../Link';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 describe('Link in weex', () => {
   it('should render a link', () => {

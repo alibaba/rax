@@ -5,7 +5,7 @@ import RecyclerView from '../RecyclerView';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 class RecyclerViewTest extends Component {

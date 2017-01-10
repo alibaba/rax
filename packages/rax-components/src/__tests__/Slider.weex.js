@@ -5,7 +5,7 @@ import Slider from '../Slider';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('Slider in weex', () => {

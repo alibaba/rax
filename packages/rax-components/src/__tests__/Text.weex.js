@@ -5,7 +5,7 @@ import Text from '../Text';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('Text in weex', () => {

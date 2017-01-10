@@ -5,7 +5,7 @@ import View from '../View';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('View in weex', () => {

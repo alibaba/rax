@@ -19,8 +19,8 @@ describe('Video', () => {
       <Video />
     );
     let tree = component.toJSON();
-    expect(tree.attributes['controls']).toBe(true);
+    expect(tree.attributes.controls).toBe(true);
     expect(tree.attributes['webkit-playsinline']).toBe(true);
   });
-})
+});
 

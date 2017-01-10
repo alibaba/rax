@@ -5,7 +5,7 @@ import TouchableHighlight from '../TouchableHighlight';
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('TouchableHighlight in weex', () => {
