@@ -1,6 +1,6 @@
 /**
  * Example:
- *  node ./scripts/publish.js 1.0.0
+ *  node ./scripts/publish.js 1.0.0 --force-publish=*
  */
 'use strict';
 
@@ -9,7 +9,22 @@ const path = require('path');
 const execSync = require('child_process').execSync;
 const spawnSync = require('child_process').spawnSync;
 const version = process.argv[2];
+const forcePublish = process.argv[3] || '';
+const EXAMPLES_DIR = path.resolve(__dirname, '../examples');
 
+function getExamplesHtmlEntry() {
+  let entry = [];
+
+  fs.readdirSync(EXAMPLES_DIR)
+    .forEach(file => {
+      let f = path.resolve(EXAMPLES_DIR, file, 'index.html');
+      if (fs.existsSync(f)) {
+        entry.push(f);
+      }
+    });
+
+  return entry;
+}
 
 if (version) {
   console.log('Update rax version file to', version);
@@ -29,15 +44,20 @@ if (version) {
 
   fs.writeFileSync(GENERATOR_DEPENDENCIES_FILE, JSON.stringify(packageJSON, null, '  '));
 
-  console.log('Update rax-web-framework version in index.html generator');
+  console.log('Update rax-web-framework version in index.html');
   const GENERATOR_HTML_FILE = 'packages/rax-cli/src/generator/templates/public/index.html';
-  const HTMLString = String(fs.readFileSync(GENERATOR_HTML_FILE));
-  const updatedHTMLString = HTMLString.replace(/web-rax-framework@\d*.\d*.\d*/g, 'web-rax-framework@' + version);
-  fs.writeFileSync(GENERATOR_HTML_FILE, updatedHTMLString);
+
+  const examplesHtmlEntry = getExamplesHtmlEntry();
+  const htmlEntry = examplesHtmlEntry.concat(GENERATOR_HTML_FILE);
+  examplesHtmlEntry.forEach(function(f) {
+    const HTMLString = String(fs.readFileSync(f));
+    const updatedHTMLString = HTMLString.replace(/web-rax-framework@\d*.\d*.\d*/g, 'web-rax-framework@' + version);
+    fs.writeFileSync(f, updatedHTMLString);
+  });
 
   execSync(
     'npm run bootstrap && npm run build && npm run lint && npm run test &&' +
-    'lerna publish --force-publish=* --skip-git --repo-version=' + version,
+    'lerna publish --skip-git --repo-version=' + version + ' ' + forcePublish,
     {
       stdio: 'inherit'
     }

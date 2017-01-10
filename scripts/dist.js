@@ -153,7 +153,9 @@ dist(getConfig(
       pathinfo: false,
     },
     {
-      target: 'bundle'
+      target: 'bundle',
+      bundle: null,
+      frameworkComment: '',
     },
     {
       presets: ['es2015'],
