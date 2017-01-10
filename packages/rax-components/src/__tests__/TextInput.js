@@ -3,7 +3,6 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import TextInput from '../TextInput';
 
-jest.unmock('universal-env');
 describe('TextInput', () => {
   it('render tag TextInput', () => {
     const component = renderer.create(

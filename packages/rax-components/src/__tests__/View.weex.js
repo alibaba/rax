@@ -2,7 +2,12 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import View from '../View';
 
-jest.mock('universal-env');
+jest.mock('universal-env', () => {
+  return {
+    isWeex: true
+  }
+});
+
 describe('View in weex', () => {
   it('render tag view', () => {
     const component = renderer.create(

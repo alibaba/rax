@@ -3,7 +3,6 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import Video from '../Video';
 
-jest.unmock('universal-env');
 describe('Video', () => {
   it('render tag Video', () => {
     const component = renderer.create(

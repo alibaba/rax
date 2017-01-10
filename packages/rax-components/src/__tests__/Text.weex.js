@@ -2,7 +2,12 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import Text from '../Text';
 
-jest.mock('universal-env');
+jest.mock('universal-env', () => {
+  return {
+    isWeex: true
+  }
+});
+
 describe('Text in weex', () => {
   it('render tag Text', () => {
     const component = renderer.create(

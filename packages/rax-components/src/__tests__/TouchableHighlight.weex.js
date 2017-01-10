@@ -2,7 +2,12 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import TouchableHighlight from '../TouchableHighlight';
 
-jest.mock('universal-env');
+jest.mock('universal-env', () => {
+  return {
+    isWeex: true
+  }
+});
+
 describe('TouchableHighlight in weex', () => {
   it('render tag TouchableHighlight', () => {
     const component = renderer.create(

@@ -3,7 +3,6 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import View from '../View';
 
-jest.unmock('universal-env');
 describe('View', () => {
   it('render tag view', () => {
     const component = renderer.create(

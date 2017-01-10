@@ -3,7 +3,6 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import Text from '../Text';
 
-jest.unmock('universal-env');
 describe('Text', () => {
   it('render tag Text', () => {
     const component = renderer.create(

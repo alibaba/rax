@@ -3,7 +3,6 @@ import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
 import TouchableHighlight from '../TouchableHighlight';
 
-jest.unmock('universal-env');
 describe('TouchableHighlight', () => {
   it('render tag TouchableHighlight', () => {
     const component = renderer.create(
