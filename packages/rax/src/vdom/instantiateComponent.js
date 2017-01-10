@@ -1,11 +1,6 @@
 import Host from './host';
 
 function instantiateComponent(element) {
-  // If only one or null, unzip array
-  if (Array.isArray(element) && element.length < 2) {
-    element = element[0];
-  }
-
   let instance;
 
   if (element === undefined || element === null || element === false || element === true) {

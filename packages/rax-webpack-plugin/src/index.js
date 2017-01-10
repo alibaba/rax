@@ -1,7 +1,7 @@
 import ConcatSource from 'webpack/lib/ConcatSource';
 import DefinePlugin from 'webpack/lib/DefinePlugin';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
-import CustomUmdMainTemplatePlugin from './CustomUmdMainTemplatePlugin';
+import RaxMainTemplatePlugin from './RaxMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
 import MultiplePlatform from './MultiplePlatform';
 
@@ -17,6 +17,7 @@ class RaxWebpackPlugin {
       platforms: [], // web node weex reactnative
       polyfillModules: [],
       runModule: false,
+      bundle: 'compatible', // private
       target: 'umd'
     }, options);
   }
@@ -27,7 +28,7 @@ class RaxWebpackPlugin {
     }));
 
     compiler.plugin('this-compilation', (compilation) => {
-      compilation.apply(new CustomUmdMainTemplatePlugin(this.options));
+      compilation.apply(new RaxMainTemplatePlugin(this.options));
     });
 
     compiler.plugin('compile', (params) => {

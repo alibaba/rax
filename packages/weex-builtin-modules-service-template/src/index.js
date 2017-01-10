@@ -1,11 +1,12 @@
-// import rax from 'rax/dist/rax.factory';
+// import foo from 'foo/dist/foo.factory';
 
 const builtinModulesService = {
 
   create: (id, env, config) => {
     // Modules should wrap as module factory format, see: rax-webpack-plugin
     const builtinModules = {
-      // rax
+      // `rax` have been build in framework, do not need add here
+      // foo
     };
 
     return {

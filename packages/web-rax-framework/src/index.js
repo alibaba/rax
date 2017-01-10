@@ -4,6 +4,8 @@ const global = window;
 if (!global.Promise) {
   global.Promise = require('runtime-shared/dist/promise.module');
 }
+require('./object');
+require('./array');
 
 // W3C
 require('whatwg-fetch');

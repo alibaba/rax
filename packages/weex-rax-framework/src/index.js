@@ -1,3 +1,5 @@
+'use strict';
+
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
 
@@ -148,9 +150,9 @@ function genNativeModules(modules, instanceId) {
  *
  * @param  {string} instanceId
  * @param  {string} __weex_code__
- * @param  {object} [__weex_config__] {bundleUrl, debug}
+ * @param  {object} [__weex_options__] {bundleUrl, debug}
  */
-export function createInstance(instanceId, __weex_code__, __weex_config__, __weex_data__, __weex_options__) {
+export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
   let instance = instances[instanceId];
 
   if (instance == undefined) {
@@ -161,7 +163,7 @@ export function createInstance(instanceId, __weex_code__, __weex_config__, __wee
     const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
     const FontFace = require('runtime-shared/dist/fontface.function')();
 
-    const document = new Document(instanceId, __weex_config__.bundleUrl, null, Listener);
+    const document = new Document(instanceId, __weex_options__.bundleUrl, null, Listener);
     const location = new URL(document.URL);
     const modules = {};
 
@@ -283,14 +285,14 @@ export function createInstance(instanceId, __weex_code__, __weex_config__, __wee
       define: __weex_define__,
       require: __weex_require__,
       // Weex
+      __weex_document__: document,
       __weex_define__,
       __weex_require__,
       __weex_downgrade__,
-      __weex_code__,
-      __weex_config__,
-      __weex_data__,
-      __weex_document__: document,
       __weex_env__,
+      __weex_code__,
+      __weex_options__,
+      __weex_data__
     };
 
     instance.window = window.self = window.window = window;
@@ -298,9 +300,9 @@ export function createInstance(instanceId, __weex_code__, __weex_config__, __wee
     let builtinGlobals = {};
     let builtinModules = {};
     try {
-      builtinGlobals = __weex_options__.services.builtinGlobals;
+      builtinGlobals = __weex_config__.services.builtinGlobals;
       // Modules should wrap as module factory format
-      builtinModules = __weex_options__.services.builtinModules;
+      builtinModules = __weex_config__.services.builtinModules;
     } catch (e) {}
 
     Object.assign(window, builtinGlobals);
@@ -472,3 +474,6 @@ function typof(v) {
   const s = Object.prototype.toString.call(v);
   return s.substring(8, s.length - 1).toLowerCase();
 }
+
+// Hack for rollup build "import Rax from 'weex-rax-framework'", in rollup if `module.exports` has `__esModule` key must return by export default
+export default exports;

@@ -36,9 +36,9 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 
 <img width="78.88%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
-[Vue 2.0.8](https://unpkg.com/vue@2.0.8/dist/vue.min.js) - 24.4kb (gzip)
+[Vue 2.1.8](https://unpkg.com/vue@2.1.8/dist/vue.runtime.min.js) - 17.9kb (gzip)
 
-<img width="44.04%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
+<img width="32.25%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
 [Rax 0.0.2](https://unpkg.com/rax@0.0.2/dist/rax.min.js) - 8.0kb (gzip)
 
@@ -138,6 +138,20 @@ More examples take a look at the [`examples`](/examples/) folder:
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
 
+### Development Workflow
+
+After cloning rax, run `npm install` to fetch its dependencies.  
+Run `npm run setup` link and bootstrap project before development.
+Then, you can run several commands:
+
+* `npm run lint` checks the code style.
+* `npm test` runs the complete test suite.
+* `npm test -- --watch` runs an interactive test watcher.
+* `npm test <pattern>` runs tests with matching filenames.
+* `npm run build` creates `lib` and `dist` folder with all the packages.
+* `npm start` start local server with `examples` folder.
+
+---
 <a href="https://alibaba.github.io/weex/">
 <img alt="Weex Inside" src="https://cloud.githubusercontent.com/assets/677114/21266275/575eabee-c3e0-11e6-92d2-ad57e99372f2.png" width="200">
 </a>

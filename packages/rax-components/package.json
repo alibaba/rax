@@ -1,6 +1,6 @@
 {
   "name": "rax-components",
-  "version": "0.0.16",
+  "version": "0.1.2",
   "description": "Base components for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,10 +13,10 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.0.16",
-    "rax": "^0.0.16"
+    "universal-env": "^0.1.2",
+    "rax": "^0.1.2"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.0.16"
+    "rax-test-renderer": "^0.1.2"
   }
 }

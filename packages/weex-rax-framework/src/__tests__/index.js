@@ -1,8 +1,29 @@
+'use strict';
+
+function freezePrototype() {
+  Object.freeze(Object);
+  Object.freeze(Array);
+
+  Object.freeze(Object.prototype);
+  Object.freeze(Array.prototype);
+  Object.freeze(String.prototype);
+  Object.freeze(Number.prototype);
+  Object.freeze(Boolean.prototype);
+
+  Object.freeze(Error.prototype);
+  Object.freeze(Date.prototype);
+  Object.freeze(Math.prototype);
+  Object.freeze(RegExp.prototype);
+}
+
+freezePrototype();
+
 import {Runtime, Instance} from 'weex-vdom-tester';
 import {config} from 'weex-js-runtime';
 import * as framework from '../index';
 
 const {Document, Element, Comment} = config;
+
 global.callNative = () => {};
 global.WXEnvironment = {
   'scale': 2,
@@ -19,11 +40,11 @@ global.WXEnvironment = {
 
 describe('framework', () => {
   let instance;
-  let config = {
+  let __weex_options__ = {
     bundleUrl: 'http://example.com',
     debug: true
   };
-  let data;
+  let __weex_data__;
   let sendTasksHandler = () => {};
   let sendTasks = function() {
     sendTasksHandler.apply(null, arguments);
@@ -49,6 +70,23 @@ describe('framework', () => {
     instance = null;
   });
 
+  it('weex only var', () => {
+    const code = `
+      alert(__weex_options__.debug)
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: __weex_options__.debug
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+    instance.$create(code, __weex_options__, __weex_data__);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
   it('render a text', () => {
     const code = `
       var Rax = require('rax');
@@ -62,7 +100,7 @@ describe('framework', () => {
       render(createElement(Hello));
     `;
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(instance.getRealRoot()).toEqual({
       type: 'div',
@@ -82,7 +120,7 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -99,7 +137,7 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -116,7 +154,7 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -133,7 +171,7 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -151,7 +189,7 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -162,8 +200,33 @@ describe('framework', () => {
     `;
 
     expect(function() {
-      instance.$create(code, config, data);
+      instance.$create(code, __weex_options__, __weex_data__);
     }).toThrowError(/a is not defined/);
+  });
+
+  it('run in Object.prototype freeze mode', () => {
+    const code = `
+      function Foo(){}
+      // Throw Error
+      Foo.prototype.toString = function(){};
+      // Could use Foo.prototype = {toString(){}}
+    `;
+
+    expect(function() {
+      instance.$create(code, __weex_options__, __weex_data__);
+    }).toThrowError(/Cannot assign to read only property/);
+  });
+
+  it('run in Object freeze mode', () => {
+    const code = `
+      var foo = new Object();
+      // Throw Error
+      foo.toString = function(){};
+    `;
+
+    expect(function() {
+      instance.$create(code, __weex_options__, __weex_data__);
+    }).toThrowError(/Cannot assign to read only property/);
   });
 
   it('define a module', () => {
@@ -182,7 +245,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -200,7 +263,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -218,7 +281,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -236,7 +299,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -254,7 +317,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -273,7 +336,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -293,7 +356,7 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
     expect(mockFn).toHaveBeenCalled();
   });
 
@@ -323,7 +386,7 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
     expect(mockFn).toHaveBeenCalled();
   });
 
@@ -352,11 +415,11 @@ describe('framework', () => {
     });
 
     instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
     expect(mockFn).toHaveBeenCalled();
   });
 
-  it('fetch data', () => {
+  it('fetch __weex_data__', () => {
     const code = `
       fetch('http://path/to/api').then(function(response) {
         if (response.status != -1 && response.ok) {
@@ -364,8 +427,8 @@ describe('framework', () => {
         } else {
           return Promise.reject(response);
         }
-      }).then(function (data) {
-        console.log('fetch response data', data);
+      }).then(function (__weex_data__) {
+        console.log('fetch response __weex_data__', __weex_data__);
       });
     `;
 
@@ -379,7 +442,7 @@ describe('framework', () => {
       );
     });
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
   });
 
   it('response default status is 200', () => {
@@ -396,7 +459,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -415,7 +478,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -434,7 +497,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -453,7 +516,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -478,7 +541,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -502,7 +565,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -522,7 +585,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -556,7 +619,7 @@ describe('framework', () => {
 
     instance.oncall('modal', 'alert', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
@@ -578,7 +641,7 @@ describe('framework', () => {
     });
     instance.oncall('timer', 'clearTimeout', mockFn2);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
     expect(mockFn2).toHaveBeenCalled();
@@ -601,7 +664,7 @@ describe('framework', () => {
     });
     instance.oncall('timer', 'clearInterval', mockFn2);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn1).toHaveBeenCalled();
     expect(mockFn2).toHaveBeenCalled();
@@ -624,7 +687,7 @@ describe('framework', () => {
     });
     instance.oncall('timer', 'clearTimeout', mockFn2);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn1).toHaveBeenCalled();
     expect(mockFn2).toHaveBeenCalled();
@@ -654,7 +717,7 @@ describe('framework', () => {
 
     instance.oncall('instanceWrap', 'error', mockFn);
 
-    instance.$create(code, config, data);
+    instance.$create(code, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
   });
