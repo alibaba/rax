@@ -38,7 +38,7 @@
     "build:examples": "node ./scripts/build-examples.js",
     "build": "npm run build:compile && npm run build:dist && npm run build:examples",
     "test": "jest",
-    "start": "npm run build && node ./scripts/start.js",
+    "start": "npm run build:compile && npm run build:dist && node ./scripts/start.js",
     "lint": "eslint --fix --ext .js --ext .jsx ./",
     "coverage": "npm run test -- --coverage",
     "coverage:upload": "npm run clean:coverage && npm run coverage && node ./scripts/mapCoverage.js && codecov",
@@ -47,7 +47,7 @@
     "clean:compile": "rm -rf ./packages/*/lib",
     "clean:coverage": "rm -rf ./coverage",
     "clean:modules": "rm -rf ./packages/*/node_modules",
-    "clean": "npm run clean:modules; npm run clean:compile; npm run clean:dist; npm run clean:coverage",
+    "clean": "npm run clean:modules & npm run clean:compile & npm run clean:dist & npm run clean:coverage",
     "clear": "git clean -xfd"
   },
   "jest": {

@@ -8,7 +8,7 @@ describe('OS', () => {
   });
 
   it('should use navigator platform', () => {
-    const Platform = require('../index').default;
+    const Platform = require('../index');
     const selectOS = Platform.select({
       macintel: 'test'
     });
