@@ -1,6 +1,6 @@
 'use strict';
 
-import PropTypes from './Proptypes';
+import PropTypes from './PropTypes';
 
 const FlexboxPropTypes = {
   flexDirection: PropTypes.oneOf(['row', 'row-reverse', 'column', 'column-reverse' ]),
