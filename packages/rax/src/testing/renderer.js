@@ -11,7 +11,6 @@ setDriver(ServerDriver);
 
 export default {
   create(element) {
-
     let container = ServerDriver.createBody();
     let rootComponent = instance.render(element, container);
     let renderedComponent = rootComponent.getRenderedComponent();

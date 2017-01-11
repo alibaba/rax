@@ -1,73 +1,71 @@
 
 ;(function(fn) {
-  if (typeof exports === "object" && typeof module !== "undefined") {
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
     module.exports = fn();
-  } else if (typeof define === "function") {
-    define("index.umd", function(require, exports, module){
+  } else if (typeof define === 'function') {
+    define('index.umd', function(require, exports, module) {
       module.exports = fn();
     });
   } else {
     var root;
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       root = window;
-    } else if (typeof self !== "undefined") {
+    } else if (typeof self !== 'undefined') {
       root = self;
-    } else if (typeof global !== "undefined") {
+    } else if (typeof global !== 'undefined') {
       root = global;
     } else {
       // NOTICE: In JavaScript strict mode, this is null
       root = this;
     }
-    root["index.umd"] = fn();
+    root['index.umd'] = fn();
   }
-})(function(){
+})(function() {
   return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
-/******/ 	var installedModules = {};
+    /******/ 	var installedModules = {};
 
 /******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-
+    /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
+      /******/ 		if (installedModules[moduleId])
+        /******/ 			return installedModules[moduleId].exports;
 
 /******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
-/******/ 		};
+      /******/ 		var module = installedModules[moduleId] = {
+        /******/ 			exports: {},
+        /******/ 			id: moduleId,
+        /******/ 			loaded: false
+      /******/ 		};
 
 /******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+      /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 
 /******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
+      /******/ 		module.loaded = true;
 
 /******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
+      /******/ 		return module.exports;
+    /******/ 	}
 
 
 /******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
+    /******/ 	__webpack_require__.m = modules;
 
 /******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
+    /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+    /******/ 	__webpack_require__.p = '';
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
-/******/ })
-/************************************************************************/
-/******/ ([
+    /******/ 	return __webpack_require__(0);
+  /******/ })([
 /* 0 */
-/***/ function(module, exports) {
+    /***/ function(module, exports) {
+      console.log('it work!');
 
-	console.log('it work!');
-
-/***/ }
-/******/ ])});;
+/***/
+    }
+  /******/ ]);
+}); ;

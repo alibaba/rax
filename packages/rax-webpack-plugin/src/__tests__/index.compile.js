@@ -39,10 +39,9 @@ const webpackConfig = {
 };
 
 describe('rax-webpack-plugin compile', function() {
-    
   let expected;
   let actual;
-  
+
   beforeAll(function(done) {
     webpack(webpackConfig, function(err, stats) {
       if (err) {
@@ -64,7 +63,7 @@ describe('rax-webpack-plugin compile', function() {
   it('compile output correct', function() {
     expect(actual).toBe(expected);
   });
-  
+
   it('custom comment is work', function() {
     expect(actual).toMatch('// custom comment');
   });

@@ -10,7 +10,6 @@ const simpleConfig = {
 };
 
 describe('MultiplePlatform', function() {
-
   it('not specified platform', function() {
     expect(MultiplePlatform(simpleConfig)).toBe(simpleConfig);
   });

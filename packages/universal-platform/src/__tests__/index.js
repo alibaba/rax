@@ -2,7 +2,6 @@
 jest.autoMockOff();
 
 describe('OS', () => {
-
   Object.defineProperty(navigator, 'platform', {
     value: 'MacIntel'
   });
