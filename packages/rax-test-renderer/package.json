@@ -12,7 +12,7 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "dependencies": {
+  "peerDependencies": {
     "rax": "^0.1.2"
   }
 }
