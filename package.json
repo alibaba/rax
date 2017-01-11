@@ -54,6 +54,12 @@
     "verbose": true,
     "setupFiles": [
       "./scripts/jest.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/fixtures/",
+      "/__modules__/",
+      "/__files__/"
     ]
   },
   "config": {
