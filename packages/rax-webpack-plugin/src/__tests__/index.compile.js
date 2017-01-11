@@ -21,13 +21,13 @@ const webpackConfig = {
   module: {
     loaders: [{
       test: /\.jsx?$/,
-      loader: path.join(__dirname, '__mocks__/loader.js')
+      loader: path.join(__dirname, '__modules__/loader.js')
     }]
   },
   resolve: {
     alias: {
-      '@weex-module': path.join(__dirname, '__mocks__/@weex-module.js'),
-      'rax': path.join(__dirname, '__mocks__/rax.js')
+      '@weex-module': path.join(__dirname, '__modules__/@weex-module.js'),
+      'rax': path.join(__dirname, '__modules__/rax.js')
     }
   },
   plugins: [new RaxWebpackPlugin({

@@ -1,6 +1,6 @@
 'use strict';
 
-import camelCase from 'camelCase';
+import camelCase from 'camelcase';
 import normalizeColor from './normalizeColor';
 import particular from './particular';
 import Validation from './Validation';
