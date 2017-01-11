@@ -1,4 +1,5 @@
 import './debug/devtools';
+import './check';
 
 export {createElement, cloneElement, isValidElement, createFactory} from './element';
 export Component from './component';
