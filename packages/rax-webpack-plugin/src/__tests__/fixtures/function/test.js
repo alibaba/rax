@@ -1,8 +1,8 @@
-import {readFileOrEmpty} from '../util';
+import readFile from '../readFile';
 
 module.exports = function(actualPath, filePath) {
-  const actual = readFileOrEmpty(actualPath);
-  const expected = readFileOrEmpty(filePath);
+  const actual = readFile(actualPath);
+  const expected = readFile(filePath);
 
   expect(actual).toBe(expected);
 };

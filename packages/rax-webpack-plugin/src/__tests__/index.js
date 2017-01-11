@@ -18,7 +18,6 @@ const fixtures = fs.readdirSync(fixturesDirectory)
   });
 
 let outputDirectory = path.join(os.tmpdir(), '__output__');
-// let outputDirectory = path.join(__dirname, '__output__');
 
 describe('rax-webpack-plugin', function() {
   afterAll(function(done) {
