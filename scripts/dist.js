@@ -5,11 +5,6 @@ const webpack = require('webpack');
 const RaxPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
 
-// For babelHelpers.js build
-if (!fs.existsSync('./packages/rax/build')) {
-  fs.mkdirSync('./packages/rax/build');
-}
-
 [
   ['rax-components', 'components', 'Components'],
   ['rax-redux', 'redux', 'RaxRedux'],
@@ -83,15 +78,7 @@ dist(getConfig(
       factoryGlobals: ['__weex_document__', 'document']
     },
     {
-      presets: ['es2015', 'rax'],
-      plugins: [
-        ['transform-helper', {
-          helperFilename: './packages/rax/build/babelHelpers.js'
-        }]
-      ],
-      ignore: [
-        'babelHelpers.js'
-      ]
+      presets: ['es2015', 'rax']
     }
   ));
 }).then(() => {
