@@ -51,6 +51,13 @@ class TextInput extends Component {
   handleFocus = (e) => this.props.onFocus(e);
   handleBlur = (e) => this.props.onBlur(e);
 
+  focus = () => {
+    this.refs.input.focus && this.refs.input.focus();
+  };
+  blur = () => {
+    this.refs.input.blur && this.refs.input.blur();
+  };
+
   render() {
     const {
       accessibilityLabel,
@@ -90,7 +97,8 @@ class TextInput extends Component {
         ...style
       },
       value,
-      id
+      id,
+      ref: 'input'
     };
 
     if (typeof editable !== 'undefined' && !editable) {

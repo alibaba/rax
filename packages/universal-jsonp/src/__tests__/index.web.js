@@ -7,7 +7,6 @@ const URL = 'http://jsfiddle.net/echo/jsonp/';
 
 describe('jsonp in web', () => {
   it('should fetch jsonp data', (done) => {
-
     jsonp(URL, {
       timeout: 10000
     }).then(function(response) {
@@ -16,7 +15,6 @@ describe('jsonp in web', () => {
       expect(json).not.toBeNull();
       done();
     });
-
   });
 
   it('should fail when time out', (done) => {

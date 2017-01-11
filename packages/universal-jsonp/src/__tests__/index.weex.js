@@ -11,13 +11,13 @@ const mockFetchFn = jest.fn();
 jest.mock('@weex-module/stream', () => {
   return {
     fetch: mockFetchFn
-  }
+  };
 }, {virtual: true});
 
 jest.mock('universal-env', () => {
   return {
     isWeex: true
-  }
+  };
 });
 
 describe('jsonp in weex', () => {
@@ -27,9 +27,9 @@ describe('jsonp in weex', () => {
 
   it('response is object', () => {
     return jsonp(URL).then((response) => {
-       return response.json();
+      return response.json();
     }).then((json) => {
-       expect(json).toEqual(mockReturnedObject);
+      expect(json).toEqual(mockReturnedObject);
     }).catch((error) => {
       expect(error).toBeNull();
     });
