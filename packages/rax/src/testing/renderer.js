@@ -5,10 +5,12 @@ import ServerDriver from '../drivers/server';
 import Serializer from '../server/serializer';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 
+// Init
+injectComponent();
+setDriver(ServerDriver);
+
 export default {
   create(element) {
-    injectComponent();
-    setDriver(ServerDriver);
 
     let container = ServerDriver.createBody();
     let rootComponent = instance.render(element, container);
