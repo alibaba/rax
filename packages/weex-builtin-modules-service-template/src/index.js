@@ -20,4 +20,4 @@ const builtinModulesService = {
   }
 };
 
-export default builtinModulesService;
+global.registerService('builtinModulesService', builtinModulesService);
