@@ -14,6 +14,7 @@ A universal React-compatible render engine.
 <img src="https://img.shields.io/npm/l/rax.svg">
 <img src="https://img.shields.io/npm/v/rax.svg">
 <img src="https://img.shields.io/npm/dm/rax.svg">
+<img src="https://travis-ci.org/alibaba/rax.svg">
 </p>
 
 ---
