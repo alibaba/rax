@@ -30,9 +30,9 @@
     "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
-    "link": "node ./scripts/link.js",
+    "link": "node ./scripts/link.js && npm run build:compile",
     "bootstrap": "lerna bootstrap",
-    "setup": "npm run link && npm run bootstrap",
+    "setup": "npm run bootstrap && npm run link",
     "build:compile": "npm run clean:compile && node ./scripts/compile.js",
     "build:dist": "npm run clean:dist && node ./scripts/dist.js",
     "build:examples": "node ./scripts/build-examples.js",
