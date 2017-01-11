@@ -1,0 +1,13 @@
+language: node_js
+
+node_js:
+  - "4"
+  - "6"
+  - "7"
+
+before_script:
+  - npm run setup
+
+script:
+  - npm run lint:nofix
+  - npm test
