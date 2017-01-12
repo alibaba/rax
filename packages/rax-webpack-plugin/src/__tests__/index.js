@@ -5,6 +5,7 @@ import rimraf from 'rimraf';
 import webpack from 'webpack';
 
 describe('rax-webpack-plugin', function() {
+  const outputDirectory = path.join(os.tmpdir(), '__output__');
 
   function readFile(filepath) {
     try {
@@ -15,7 +16,6 @@ describe('rax-webpack-plugin', function() {
   }
 
   function runWebpack(done, fixture, callback) {
-    const outputDirectory = path.join(os.tmpdir(), '__output__');
     const testDirectory = path.join(__dirname, 'fixtures', fixture);
     const outputPath = path.join(outputDirectory, fixture);
     const configFile = path.join(testDirectory, 'webpack.config.js');
@@ -62,7 +62,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('bundle', function(done){
+  it('bundle', function(done) {
     runWebpack(done, 'bundle', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -72,7 +72,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('bundle-compatible', function(done){
+  it('bundle-compatible', function(done) {
     runWebpack(done, 'bundle-compatible', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -82,7 +82,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('factory', function(done){
+  it('factory', function(done) {
     runWebpack(done, 'factory', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -92,7 +92,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('factory', function(done){
+  it('factory', function(done) {
     runWebpack(done, 'factory', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -102,7 +102,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('factory-factoryGlobals', function(done){
+  it('factory-factoryGlobals', function(done) {
     runWebpack(done, 'factory-factoryGlobals', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -112,7 +112,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('function', function(done){
+  it('function', function(done) {
     runWebpack(done, 'function', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -121,7 +121,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('function', function(done){
+  it('function', function(done) {
     runWebpack(done, 'function', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -130,7 +130,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('module', function(done){
+  it('module', function(done) {
     runWebpack(done, 'module', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -140,7 +140,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('umd', function(done){
+  it('umd', function(done) {
     runWebpack(done, 'umd', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
@@ -148,5 +148,4 @@ describe('rax-webpack-plugin', function() {
       expect(actual).toBe(expected);
     });
   });
-
 });
