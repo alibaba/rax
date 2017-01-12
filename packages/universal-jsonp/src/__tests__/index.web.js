@@ -7,7 +7,6 @@ const mockReturnedObject = {
 const URL = 'http://XXX/jsonp/';
 
 describe('jsonp in web', () => {
-
   it('should fetch jsonp data', (done) => {
     jsonp(URL, {
       jsonpCallbackFunctionName: 'jsonpCb'
