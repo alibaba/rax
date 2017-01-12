@@ -9,10 +9,10 @@ A universal React-compatible render engine.
 </p>
 
 <p align="center">
-<img src="https://img.shields.io/npm/l/rax.svg">
-<img src="https://img.shields.io/npm/v/rax.svg">
-<img src="https://img.shields.io/npm/dm/rax.svg">
-<img src="https://travis-ci.org/alibaba/rax.svg">
+  <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/rax.svg"></a>
+  <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
+  <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
+  <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg"></a>
 </p>
 
 ---
