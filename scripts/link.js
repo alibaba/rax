@@ -12,8 +12,12 @@ function getPackages() {
 }
 
 getPackages().forEach((p) => {
-  console.log('npm link', p);
   // Skip link starter kit
   if (p.indexOf('babel-preset-rax') > 0) return;
-  spawnSync('npm', ['link', p]);
+  const linkArgv = ['link', p];
+  // Skip install devDependencies
+  if (p.endsWith('rax-test-renderer')) linkArgv.push('--production');
+  if (p.endsWith('rax-components')) linkArgv.push('--production');
+  console.log('npm', linkArgv.join(' '));
+  spawnSync('npm', linkArgv);
 });
