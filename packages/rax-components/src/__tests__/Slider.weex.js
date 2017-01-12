@@ -9,9 +9,6 @@ jest.mock('universal-env', () => {
 });
 
 describe('Slider in weex', () => {
-  afterEach(() => {
-    jest.unmock('universal-env');
-  });
   it('should render a slider', () => {
     const component = renderer.create(
       <Slider>Example</Slider>
@@ -20,4 +17,3 @@ describe('Slider in weex', () => {
     expect(tree.tagName).toEqual('SLIDER');
   });
 });
-

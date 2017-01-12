@@ -38,10 +38,6 @@ describe('RecyclerView in weex', () => {
     );
   });
 
-  afterEach(() => {
-    jest.unmock('universal-env');
-  });
-
   it('should render a RecyclerView', () => {
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('LIST');
@@ -114,4 +110,3 @@ describe('RecyclerView in weex', () => {
     expect(tree.tagName).toEqual('DIV');
   });
 });
-
