@@ -1,5 +1,3 @@
-**Warning: This is currently a private repo, please do not share this code.**
-
 <p align="center">
   <a href="https://rax.taobaofed.org">
     <img alt="Rax" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
