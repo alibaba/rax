@@ -151,6 +151,6 @@ Then, you can run several commands:
 * `npm start` start local server with `examples` folder.
 
 ---
-<a href="https://alibaba.github.io/weex/">
-<img alt="Weex Inside" src="https://cloud.githubusercontent.com/assets/677114/21266275/575eabee-c3e0-11e6-92d2-ad57e99372f2.png" width="200">
+<a href="https://weex-project.io/">
+  <img alt="Weex Logo" src="https://camo.githubusercontent.com/11b6ddd7364b6fd42c9efd63939150a950b0de1a/68747470733a2f2f696d672e616c6963646e2e636f6d2f7470732f5442317a424c6150585858585858655858585858585858585858582d3132312d35392e737667" width="200">
 </a>
