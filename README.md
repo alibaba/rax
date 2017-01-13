@@ -46,7 +46,7 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 ## Server-side Rendering Comparison
 > [Benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison): Run on a MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory.
 
-| Library      | renderToSring (per second)  |
+| Library      | renderToString (per second)  |
 |--------------|-----------------------------|
 | React@15.3.2 | 297 op/s                    |
 | Vue@2.0.8    | 1092 op/s                   |
