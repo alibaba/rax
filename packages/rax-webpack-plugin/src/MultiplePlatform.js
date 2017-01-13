@@ -91,10 +91,10 @@ module.exports = function MultiplePlatform(config, options = {}) {
       multiplePlatformConfigs.push(platformConfig);
     });
   }
-  if(options.unshiftOrigin) {
-    multiplePlatformConfigs.unshift(config);  
+  if (options.unshiftOrigin) {
+    multiplePlatformConfigs.unshift(config);
   }
-  
+
 
   return multiplePlatformConfigs;
 };
