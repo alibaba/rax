@@ -368,4 +368,50 @@ describe('MultiplePlatform', function() {
       MultiplePlatform(simpleConfig, []);
     }).toThrowError('Invalid argument: options, must be an object');
   });
+
+  it('specified unshiftOrigin is `false` and not unshift origin config', function(){
+    const config = {
+      platforms: ['weex'],
+      entry: {
+        'hello.bundle': './index.js'
+      },
+      module: {
+        preLoaders: [{
+          test: /\.less$/,
+          loader: 'less'
+        }],
+        loaders: [{
+          test: /\.jsx?$/,
+          loader: 'babel'
+        }]
+      }
+    };
+
+    const expected = [{
+      'entry': {
+        'hello.bundle.weex': './index.js'
+      },
+      'module': {
+        'loaders': [{
+          'test': /\.jsx?$/,
+          'loader': 'babel'
+        }],
+        'preLoaders': [{
+          test: /\.less$/,
+          loader: 'less'
+        }, {
+          'test': /\.jsx?$/,
+          'exclude': /(node_modules|bower_components)/,
+          'loader': `${path.resolve(__dirname, '../PlatformLoader.js')}?platform=weex`
+
+        }]
+      },
+      'platforms': [
+        'weex'
+      ]
+    }];
+
+    expect(MultiplePlatform(config, {unshiftOrigin: false})).toEqual(expected);
+  })
+
 });

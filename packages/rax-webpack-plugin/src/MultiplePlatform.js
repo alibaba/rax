@@ -15,6 +15,12 @@ module.exports = function MultiplePlatform(config, options = {}) {
     throw new TypeError('Invalid argument: options, must be an object');
   }
 
+  let defaultOptions = {
+    unshiftOrigin: true,
+  };
+
+  options = Object.assign(defaultOptions, options);
+
   let platforms = options.platforms || config.platforms;
 
   if (typeof platforms === 'undefined' || platforms.length === 0) {
@@ -85,8 +91,10 @@ module.exports = function MultiplePlatform(config, options = {}) {
       multiplePlatformConfigs.push(platformConfig);
     });
   }
-
-  multiplePlatformConfigs.unshift(config);
+  if(options.unshiftOrigin) {
+    multiplePlatformConfigs.unshift(config);  
+  }
+  
 
   return multiplePlatformConfigs;
 };
