@@ -20,6 +20,11 @@ module.exports = function(source) {
     output += `let templateLoader = ${getCodeString('template', template, filePath)};\n`;
   }
 
+  // parse script
+  const script = parseObject.script;
+  if (script) {
+    output += `let scriptBody = ${getCodeString('script', script, filePath)}.default;\n`;
+  }
   // parse link stylesheet
   const styleSheetLinks = parseObject.styleSheetLinks;
   if (styleSheetLinks.length) {
@@ -39,10 +44,14 @@ module.exports = function(source) {
 
     switch (type) {
       case 'template':
-        loaderString += `${pkg.name}/lib/template-loader?${JSON.stringify(query)}!${pkg.name}/lib/node-loader?type=template&index=0!`;
+        loaderString = `${pkg.name}/lib/template-loader?${JSON.stringify(query)}!${pkg.name}/lib/node-loader?type=template&index=0!`;
         break;
       case 'style':
-        loaderString += `stylesheet-loader!${pkg.name}/lib/node-loader?type=styles&index=0!`;
+        loaderString = `stylesheet-loader!${pkg.name}/lib/node-loader?type=styles&index=0!`;
+        break;
+      case 'script':
+        loaderString = `babel-loader!${pkg.name}/lib/node-loader?type=script&index=0!`;
+        break;
     }
     return 'require(' + loaderUtils.stringifyRequest(
       context,
@@ -51,17 +60,39 @@ module.exports = function(source) {
   }
 
   const code = `
-    ${query.banner}
+${query.banner}
 
-    export default class extends Component {
-      render(props) {
-        return templateLoader.call(this, this.props, _styles);
-      }
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    if (scriptBody && scriptBody.constructor) {
+      scriptBody.constructor.call(this, props);
     }
+  }
+  render(props) {
+    return templateLoader.call(this, this.props, _styles);
+  }
+}
   `;
 
   output += code;
+  let transformCode = transform(output, getBabelConfig(query)).code;
 
-  return transform(output, getBabelConfig(query)).code;
+  transformCode += `
+var filterMethods = ['render', 'constructor'];
+var methods = [];
+for(var key in scriptBody) {
+  if (filterMethods.indexOf(key) === -1) {
+    methods.push({
+      key: key,
+      value: scriptBody[key]
+    });
+  }
+}
+
+_createClass(App, methods);
+  `;
+
+  return transformCode;
 };
 
