@@ -60,11 +60,9 @@ Input `Container.html`:
       this.customMethod();
       console.log('will mount', this);
     },
-
     componentDidMount() {
       console.log('did mount', this);
     },
-
     customMethod() {
       console.log('custom');
     }
@@ -211,5 +209,5 @@ div.header
 
 ## TODO
 
-- [] compile script
+- [x] compile script
 - [] support else、elif directive
