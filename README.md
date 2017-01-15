@@ -113,7 +113,7 @@ More examples take a look at the [`examples`](/examples/) folder:
 * :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
 * :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
 * :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
-* :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
+* :speech_balloon: [universal-toast](/packages/universal-toast): A universal Toast API.
 * :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
 
 
