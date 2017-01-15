@@ -23,8 +23,9 @@ module.exports = function(source) {
   // parse script
   const script = parseObject.script;
   if (script) {
-    output += `let scriptBody = ${getCodeString('script', script, filePath)}.default;\n`;
+    output += `let AppComponent = ${getCodeString('script', script, filePath)}.default;\n`;
   }
+
   // parse link stylesheet
   const styleSheetLinks = parseObject.styleSheetLinks;
   if (styleSheetLinks.length) {
@@ -50,7 +51,7 @@ module.exports = function(source) {
         loaderString = `stylesheet-loader!${pkg.name}/lib/node-loader?type=styles&index=0!`;
         break;
       case 'script':
-        loaderString = `babel-loader!${pkg.name}/lib/node-loader?type=script&index=0!`;
+        loaderString = `babel-loader?${JSON.stringify(getBabelConfig(query))}!${pkg.name}/lib/node-loader?${JSON.stringify({type: 'script', index: 0, banner: query.banner})}!`;
         break;
     }
     return 'require(' + loaderUtils.stringifyRequest(
@@ -59,40 +60,14 @@ module.exports = function(source) {
     ) + ')';
   }
 
-  const code = `
-${query.banner}
-
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-    if (scriptBody && scriptBody.constructor) {
-      scriptBody.constructor.call(this, props);
+  output += `
+    if (AppComponent) {
+      AppComponent.prototype.render = function() {
+        return templateLoader.call(this, _styles);
+      }
     }
-  }
-  render(props) {
-    return templateLoader.call(this, this.props, _styles);
-  }
-}
+    module.exports = AppComponent;
   `;
-
-  output += code;
-  let transformCode = transform(output, getBabelConfig(query)).code;
-
-  transformCode += `
-var filterMethods = ['render', 'constructor'];
-var methods = [];
-for(var key in scriptBody) {
-  if (filterMethods.indexOf(key) === -1) {
-    methods.push({
-      key: key,
-      value: scriptBody[key]
-    });
-  }
-}
-
-_createClass(App, methods);
-  `;
-
-  return transformCode;
+  return output;
 };
 

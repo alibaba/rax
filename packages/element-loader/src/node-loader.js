@@ -9,10 +9,27 @@ module.exports = function(content) {
   const filename = path.basename(this.resourcePath);
   const parts = parser(content);
   let part = parts[type];
+  let output = '';
+  let source;
 
   if (Array.isArray(part)) {
     part = part[query.index];
   }
 
-  this.callback(null, part.content, type === 'script' ? undefined : parts);
+  if (type !== 'script') {
+    output = part.content;
+    source = parts;
+  } else {
+    output = `${query.banner}\n${part.content || defaultComponent}`;
+  }
+
+  this.callback(null, output, source);
 };
+
+const defaultComponent = `
+  export default class extends Component {
+    constructor(props) {
+      super(props);
+    }
+  }
+`;

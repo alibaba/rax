@@ -30,7 +30,8 @@ const getConvertText = (source, links, query) => {
     ${query.banner}
     ${getElementsImport(links)}
 
-    module.exports = (props, styles) => {
+    module.exports = function(styles) {
+      const props = this.props;
       return ${convert.output};
     };
   `;

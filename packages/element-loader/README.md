@@ -52,17 +52,18 @@ Input `Container.html`:
 </template>
 
 <script>
-  export default {
+  export default class extends Component {
     constructor(props) {
-      console.log(this.props);
-    },
+      super(props);
+      console.log(props);
+    }
     componentWillMount() {
       this.customMethod();
       console.log('will mount', this);
-    },
+    }
     componentDidMount() {
       console.log('did mount', this);
-    },
+    }
     customMethod() {
       console.log('custom');
     }
