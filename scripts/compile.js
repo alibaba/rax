@@ -121,10 +121,7 @@ if (args.watch) {
 
   chokidar.watch(watchPackagesDir, {
     ignored: IGNORE_PATTERN
-  }).on('all', (event, filePath) => {
-    if (event !== 'change') {
-      return;
-    }
+  }).on('change', (filePath) => {
     const packageName = filePath.match(/rax\/packages\/([^\/]*)/)[1];
     const packagePath = path.resolve(__dirname, '../packages/', packageName);
     process.stdout.write(chalk.bold.inverse(`Compiling package ${packageName} \n`));
