@@ -52,13 +52,6 @@ Benchmark run on a MacBook Pro 2.4GHz Intel Core i5 and 8GB 1600MHz DDR3 with No
 | React@15.4.2 | 94.93 ops/sec   |
 | Rax@0.1.2    | 154 ops/sec(faster) |
 
-Benchmark info:
-
-- Benchmark repository: https://github.com/taobaofed/server-side-rendering-comparison
-- Platform info: MacBook Pro (Late 2013) 2.4GHz Intel Core i5 and 8GB 1600MHz DDR3
-- Node.js v6.9.2 and with `NODE_ENV=production`. `RenderToString` Both require from `lib` not `dist`
-- with about 600 dom nodes
-
 ## Quick Start
 
 Install the Rax CLI tools to init project:
