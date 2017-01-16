@@ -51,6 +51,25 @@ Input `Container.html`:
   </div>
 </template>
 
+<script>
+  export default class extends Component {
+    constructor(props) {
+      super(props);
+      console.log(props);
+    }
+    componentWillMount() {
+      this.customMethod();
+      console.log('will mount', this);
+    }
+    componentDidMount() {
+      console.log('did mount', this);
+    }
+    customMethod() {
+      console.log('custom');
+    }
+  }
+</script>
+
 <style>
   .text {
     font-size: 25rem;
@@ -60,9 +79,6 @@ Input `Container.html`:
     color: red;
     font-size: 40rem;
   }
-</style>
-
-<style>
   .item {
     width: 200rem;
     height: 60rem;
@@ -194,5 +210,5 @@ div.header
 
 ## TODO
 
-- [] compile script
+- [x] compile script
 - [] support else、elif directive
