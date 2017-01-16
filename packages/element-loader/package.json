@@ -25,6 +25,7 @@
     "jsdom": "^9.8.3",
     "loader-utils": "^0.2.16",
     "lodash": "^4.17.2",
-    "stylesheet-loader": "^0.1.2"
+    "stylesheet-loader": "^0.1.2",
+    "uppercamelcase": "^1.1.0"
   }
 }

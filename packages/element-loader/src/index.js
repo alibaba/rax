@@ -4,40 +4,44 @@ import pkg from '../package.json';
 import path from 'path';
 import { transform } from 'babel-core';
 import getBabelConfig from './getBabelConfig';
+import uppercamelcase from 'uppercamelcase';
 
 module.exports = function(source) {
   this.cacheable();
   const context = this;
   const filePath = this.resourcePath;
+  const fileBaseName = path.basename(filePath, path.extname(filePath));
   const query = loaderUtils.parseQuery(this.query);
   const parseObject = parser(source);
 
-  let output = '\nlet _styles = {};\n';
+  let output = '\nlet styles = {};\n';
+  const componentName = uppercamelcase(fileBaseName);
 
   // parse template
   const template = parseObject.template;
   if (template) {
-    output += `let templateLoader = ${getCodeString('template', template, filePath)};\n`;
+    output += `let template = ${getCodeString('template', template, filePath)};\n`;
   }
 
   // parse script
   const script = parseObject.script;
   if (script) {
-    output += `let AppComponent = ${getCodeString('script', script, filePath)}.default;\n`;
+    output += `let ${componentName} = ${getCodeString('script', script, filePath)};\n`;
+    output += `${componentName} = ${componentName}.__esModule ? ${componentName}.default : ${componentName};\n`;
   }
 
   // parse link stylesheet
   const styleSheetLinks = parseObject.styleSheetLinks;
   if (styleSheetLinks.length) {
     styleSheetLinks.forEach((link) => {
-      output += `_styles = Object.assign(_styles, require('!!stylesheet-loader!${link}'));\n`;
+      output += `styles = Object.assign(styles, require('!!stylesheet-loader!${link}'));\n`;
     });
   }
 
   // parse style
   const styles = parseObject.styles;
   if (styles) {
-    output += `_styles = Object.assign(_styles, ${getCodeString('style', styles[0], filePath)});\n`;
+    output += `styles = Object.assign(styles, ${getCodeString('style', styles[0], filePath)});\n`;
   }
 
   function getCodeString(type, data, path) {
@@ -61,12 +65,13 @@ module.exports = function(source) {
   }
 
   output += `
-    if (AppComponent) {
-      AppComponent.prototype.render = function() {
-        return templateLoader.call(this, _styles);
-      }
-    }
-    module.exports = AppComponent;
+if (${componentName} && typeof ${componentName} === 'function') {
+  ${componentName}.prototype.render = function() {
+    return template.call(this, styles);
+  }
+}
+
+module.exports = ${componentName};
   `;
   return output;
 };
