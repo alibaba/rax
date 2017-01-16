@@ -8,5 +8,5 @@ if (typeof navigator === 'object') {
 
 export default {
   OS,
-  select: obj => obj[OS],
+  select: obj => obj[OS]
 };

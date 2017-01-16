@@ -16,4 +16,4 @@ const builtinGlobalsService = {
   }
 };
 
-export default builtinGlobalsService;
+global.registerService('builtinGlobalsService', builtinGlobalsService);

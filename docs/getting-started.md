@@ -1,6 +1,6 @@
 # Getting Started
 
-Welcome to Rax! Start your first Rex project, you have to install the dependencies used to build and manage Rax apps: **Node.js**, **Rax CLI** and the **Weex Playground App**. If you already have installed, you can skip ahead to the Tutorial.
+Welcome to Rax! Start your first Rax project, you have to install the dependencies used to build and manage Rax apps: **Node.js**, **Rax CLI** and the **Weex Playground App**. If you already have installed, you can skip ahead to the Tutorial.
 
 ## Installing Node.js
 

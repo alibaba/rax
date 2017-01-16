@@ -17,4 +17,4 @@ createElement(
   'Click Me'
 )
 ```
-While using JSX is not mandatory, it is recommended for readability. The React website contains [further details on JAX](https://facebook.github.io/react/docs/jsx-in-depth.html).
+While using JSX is not mandatory, it is recommended for readability. The React website contains [further details on JSX](https://facebook.github.io/react/docs/jsx-in-depth.html).
