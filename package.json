@@ -9,6 +9,7 @@
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-rax": "^0.1.2",
     "chalk": "^1.1.3",
+    "chokidar": "^1.6.1",
     "codecov": "^1.0.1",
     "conventional-commit-types": "^2.1.0",
     "cz-conventional-changelog": "^1.2.0",
