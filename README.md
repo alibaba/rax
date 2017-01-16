@@ -45,16 +45,12 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 
 ## Server-side Rendering Comparison
 
-> [Benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison): Run on a MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory with Node.js v6.9.2.
+> [Benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison): Run on a  MacBook Pro (Late 2013) 2.4GHz Intel Core i5 and 8GB 1600MHz DDR3 with Node.js v6.9.2.
 
-|Library\Version|renderToSring   | QPS [#/sec] |
-|--------------|-----------------|-------------|
-| React@15.4.2 | 152.73ms        |  444.10    |
-| Rax@0.1.2    | 89.70ms         |  513.54 |
-| Vue@2.1.8    | 100.06ms        |  599.58   |
-
-- renderToSring: Independent process serial execution 10 times, each process parallel rendering 100 times, without cache.
-- QPS: `ab -n1000 -c50 url`, without cache
+|Library\Version|renderToSring   |
+|--------------|-----------------|
+| React@15.4.2 | 94.93 ops/sec   |
+| Rax@0.1.2    | 154 ops/sec(faster)     |
 
 ## Quick Start
 
