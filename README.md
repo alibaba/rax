@@ -9,10 +9,10 @@ A universal React-compatible render engine.
 </p>
 
 <p align="center">
-<img src="https://img.shields.io/npm/l/rax.svg">
-<img src="https://img.shields.io/npm/v/rax.svg">
-<img src="https://img.shields.io/npm/dm/rax.svg">
-<img src="https://travis-ci.org/alibaba/rax.svg">
+  <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/rax.svg"></a>
+  <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
+  <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
+  <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg"></a>
 </p>
 
 ---
@@ -44,14 +44,13 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 <img width="14.44%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
 
 ## Server-side Rendering Comparison
-> [Benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison): Run on a MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory.
 
-| Library      | renderToSring (per second)  |
-|--------------|-----------------------------|
-| React@15.3.2 | 297 op/s                    |
-| Vue@2.0.8    | 1092 op/s                   |
-| Rax@0.0.2    | 1553 op/s (fastest)         |
+Benchmark run on a MacBook Pro 2.4GHz Intel Core i5 and 8GB 1600MHz DDR3 with Node.js v6.9.2. For more information, please refer to [benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison).
 
+|Library       |renderToSring   |
+|--------------|-----------------|
+| React@15.4.2 | 94.93 ops/sec   |
+| Rax@0.1.2    | 154 ops/sec(faster) |
 
 ## Quick Start
 
@@ -113,7 +112,7 @@ More examples take a look at the [`examples`](/examples/) folder:
 * :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
 * :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
 * :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
-* :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
+* :speech_balloon: [universal-toast](/packages/universal-toast): A universal Toast API.
 * :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
 
 
@@ -151,6 +150,6 @@ Then, you can run several commands:
 * `npm start` start local server with `examples` folder.
 
 ---
-<a href="https://alibaba.github.io/weex/">
-<img alt="Weex Inside" src="https://cloud.githubusercontent.com/assets/677114/21266275/575eabee-c3e0-11e6-92d2-ad57e99372f2.png" width="200">
+<a href="https://weex-project.io/">
+  <img alt="Weex Logo" src="https://camo.githubusercontent.com/11b6ddd7364b6fd42c9efd63939150a950b0de1a/68747470733a2f2f696d672e616c6963646e2e636f6d2f7470732f5442317a424c6150585858585858655858585858585858585858582d3132312d35392e737667" width="200">
 </a>

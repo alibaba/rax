@@ -164,7 +164,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const FontFace = require('runtime-shared/dist/fontface.function')();
 
     const document = new Document(instanceId, __weex_options__.bundleUrl, null, Listener);
-    const location = new URL(document.URL);
+    const location = new URL(__weex_options__.bundleUrl);
     const modules = {};
 
     instance = instances[instanceId] = {
