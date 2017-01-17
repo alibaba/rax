@@ -27,8 +27,8 @@ Hi! I’m really excited that you are interested in contributing to Rax. Before 
 
 ## Pull Request Guidelines
 
-- The `master` branch is basically just a snapshot of the latest stable release. All development should be done in dedicated branches. **Do not submit PRs against the `master` branch.**
-- Checkout a topic branch from the relevant branch, e.g. `dev`, and merge back against that branch.
+- Only code that's ready for release should be committed to the master branch. All development should be done in dedicated branches.
+- Checkout a **new** topic branch from master branch, and merge back against master branch.
 - Work in the `src` folder and **DO NOT** checkin `dist` in the commits.
 - Make sure `npm test` passes.
 - If adding new feature:
