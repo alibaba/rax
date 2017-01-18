@@ -33,7 +33,7 @@ $ npm install -g rax-cli
 
 We can use the Rax command line interface tool to generate a new project called `hello-world`. The tool creates a new folder containing the skeleton for a Rax project and fetches all the necessary external dependencies.
 
-1. Use the React VR CLI tool to create a new application under a `hello-world` folder and install the required dependencies:
+1. Use the Rax CLI tool to create a new application under a `hello-world` folder and install the required dependencies:
 ```sh
 $ rax init hello-world
 Creating a new Rax project in /Users/anonymous/hello-world
