@@ -158,11 +158,11 @@ function genBuiltinAppModule(moduleFactories) {
     for (let moduleName in moduleFactories) {
 
       if(appModules[moduleName]) {
-          console.log('registing module has exist:::' + moduleName);
+          //console.log('registing module has exist:::' + moduleName);
           return;
       }
-      
-      console.log('gening app module:::' + moduleName);
+
+      //console.log('gening app module:::' + moduleName);
       appModules[moduleName] = {
         factory: moduleFactories[moduleName],
         module: {exports: {}},
@@ -179,7 +179,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
   //增加app require的模块
   let appKey = __weex_options__['appKey'];
 
-  console.log('creating instance, appKey is::' + appKey);
+ 
 
   let appRequire = requireMap[appKey];
   if(!appRequire) {
@@ -348,7 +348,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
 
     const moduleFactories = {...ModuleFactories, ...builtinModules};
     const appModuleFac = {...builtInApps};
-    console.log('appModuleFac', appModuleFac);
+
     genBuiltinModules(
       modules,
       moduleFactories,
