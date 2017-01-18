@@ -1,15 +1,27 @@
-module.exports = function(modules) {
+module.exports = function(modules, appRequire, appModules) {
   function require(name) {
     var mod = modules[name];
+    let req = require;
 
     if (mod && mod.isInitialized) {
       return mod.module.exports;
     }
 
     if (!mod) {
-      throw new Error(
-        'Requiring unknown module "' + name + '"'
-      );
+        //if(appModules) {
+            if(appRequire && appModules[name] ) {
+                mod = appModules[name];
+                req =  appRequire;
+                if (mod.isInitialized) {
+                  return mod.module.exports;
+                }
+            }
+            else {
+                throw new Error(
+                  'Requiring unknown module "' + name + '"'
+                );
+            }
+        //}
     }
 
     if (mod.hasError) {
@@ -20,7 +32,7 @@ module.exports = function(modules) {
 
     try {
       mod.isInitialized = true;
-      mod.factory(require, mod.module.exports, mod.module);
+      mod.factory(req, mod.module.exports, mod.module);
     } catch (e) {
       mod.hasError = true;
       mod.isInitialized = false;

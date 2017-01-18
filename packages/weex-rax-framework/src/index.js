@@ -152,8 +152,41 @@ function genNativeModules(modules, instanceId) {
  * @param  {string} __weex_code__
  * @param  {object} [__weex_options__] {bundleUrl, debug}
  */
+let requireMap = {};
+let appModules = {};
+function genBuiltinAppModule(moduleFactories) {
+    for (let moduleName in moduleFactories) {
+
+      if(appModules[moduleName]) {
+          console.log('registing module has exist:::' + moduleName);
+          return;
+      }
+      
+      console.log('gening app module:::' + moduleName);
+      appModules[moduleName] = {
+        factory: moduleFactories[moduleName],
+        module: {exports: {}},
+        isInitialized: false,
+      };
+    }
+    return appModules;
+}
+
 export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
   let instance = instances[instanceId];
+
+  //===============================
+  //增加app require的模块
+  let appKey = __weex_options__['appKey'];
+
+  console.log('creating instance, appKey is::' + appKey);
+
+  let appRequire = requireMap[appKey];
+  if(!appRequire) {
+      appRequire =  require('./require.weex')(appModules);
+      requireMap[appKey] = appRequire;
+  }
+  //================================
 
   if (instance == undefined) {
     const __weex_env__ = typeof WXEnvironment === 'object' && WXEnvironment || {};
@@ -179,7 +212,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     // Generate native modules map at instance init
     genNativeModules(modules, instanceId);
     const __weex_define__ = require('./define.weex')(modules);
-    const __weex_require__ = require('./require.weex')(modules);
+    // add appKey for special use.
+    const __weex_require__ = require('./require.weex')(modules, appRequire, appModules);
     const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
     // FontFace
     document.fonts = {
@@ -299,20 +333,40 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
 
     let builtinGlobals = {};
     let builtinModules = {};
+    let builtInApps = {};
     try {
-      builtinGlobals = __weex_config__.services.builtinGlobals;
-      // Modules should wrap as module factory format
-      builtinModules = __weex_config__.services.builtinModules;
+        builtinGlobals = __weex_config__.services.builtinGlobals;
+
+        builtInApps =  __weex_config__.services.buildInApps;
+
+        builtinModules = __weex_config__.services.builtinModules;
     } catch (e) {}
+
+
 
     Object.assign(window, builtinGlobals);
 
     const moduleFactories = {...ModuleFactories, ...builtinModules};
+    const appModuleFac = {...builtInApps};
+    console.log('appModuleFac', appModuleFac);
     genBuiltinModules(
       modules,
       moduleFactories,
       window
     );
+
+    genBuiltinAppModule(appModuleFac);
+
+
+    //inject app global env
+    /*
+    let appGlobal = __weex_require__('__app_global__');
+    if(appGlobal && appKey) {
+        if(!appGlobal[appKey]) {
+            appGlobal[appKey] = {};
+        }
+    }
+    */
 
     if (__weex_env__.platform !== 'Web') {
       let init = new Function(
