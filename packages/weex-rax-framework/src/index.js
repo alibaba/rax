@@ -316,7 +316,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
 
     if (__weex_env__.platform !== 'Web') {
       let init = new Function(
-        'with (this) { (function(){ "use strict";' + __weex_code__ + '}).call(this); }'
+        'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}'
       );
 
       init.call(
@@ -325,7 +325,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       );
     } else {
       let init = new Function(
-        '"use strict";' + __weex_code__
+        '"use strict";\n' + __weex_code__
       );
 
       init.call(
