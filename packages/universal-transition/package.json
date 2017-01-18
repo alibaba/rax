@@ -1,6 +1,6 @@
 {
   "name": "universal-transition",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A universal transition API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.1.3"
+    "universal-env": "^0.1.4"
   }
 }
