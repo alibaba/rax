@@ -15,3 +15,4 @@ export TouchableHighlight from './TouchableHighlight';
 export TouchableOpacity from './TouchableHighlight';
 export TouchableWithoutFeedback from './TouchableHighlight';
 export TouchableNativeFeedback from './TouchableHighlight';
+export TouchableBounce from './TouchableHighlight';
