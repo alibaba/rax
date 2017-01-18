@@ -219,6 +219,17 @@ describe('framework', () => {
 
   it('run in Object freeze mode', () => {
     const code = `
+      // Throw Error
+      Object.assgin = function(){}
+    `;
+
+    expect(function() {
+      instance.$create(code, __weex_options__, __weex_data__);
+    }).toThrowError(/Can't add property assgin, object is not extensible/);
+  });
+
+  it('run in Object freeze mode', () => {
+    const code = `
       var foo = new Object();
       // Throw Error
       foo.toString = function(){};
@@ -240,6 +251,42 @@ describe('framework', () => {
     const mockFn = jest.fn((args) => {
       expect(args).toEqual({
         message: 'Hello'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, __weex_options__, __weex_data__);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('atob', () => {
+    const code = `
+      alert(atob('Zm9v'));
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'foo'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, __weex_options__, __weex_data__);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('btoa', () => {
+    const code = `
+      alert(btoa('foo'));
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'Zm9v'
       });
     });
 

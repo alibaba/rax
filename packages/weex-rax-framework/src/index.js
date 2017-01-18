@@ -154,8 +154,9 @@ function genNativeModules(modules, instanceId) {
  */
 export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
   let instance = instances[instanceId];
-
   if (instance == undefined) {
+    // Mark start time
+    const responseEnd = Date.now();
     const __weex_env__ = typeof WXEnvironment === 'object' && WXEnvironment || {};
 
     const Promise = require('runtime-shared/dist/promise.function')();
@@ -208,10 +209,24 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       cancelAnimationFrame
     } = require('./timer.weex')(__weex_require__, instance);
 
+    const {
+      atob,
+      btoa
+    } = require('./base64.weex')();
+
+    const performance = require('./performance.weex')(responseEnd);
+
     const windowEmitter = new EventEmitter();
     const window = {
       // ES
       Promise,
+      // W3C: https://www.w3.org/TR/html5/browsers.html#browsing-context-name
+      name: '',
+      // This read-only property indicates whether the referenced window is closed or not.
+      closed: false,
+      atob,
+      btoa,
+      performance,
       // W3C
       document,
       location,
@@ -315,6 +330,9 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     );
 
     if (__weex_env__.platform !== 'Web') {
+      let timing = performance.timing;
+      timing.domLoading = Date.now();
+
       let init = new Function(
         'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}'
       );
@@ -323,6 +341,9 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
         // Context is window
         window,
       );
+
+      timing.domInteractive = timing.domComplete = timing.domInteractive = Date.now();
+
     } else {
       let init = new Function(
         '"use strict";\n' + __weex_code__
@@ -359,11 +380,11 @@ export function refreshInstance(instanceId, data) {
  */
 export function destroyInstance(instanceId) {
   let instance = getInstance(instanceId);
+  instance.window.closed = true;
   let document = instance.document;
   document.documentElement.fireEvent('destory', {
     timestamp: Date.now()
   });
-
   if (document.destroy) {
     document.destroy();
   }
