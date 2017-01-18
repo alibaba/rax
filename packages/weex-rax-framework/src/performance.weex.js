@@ -24,7 +24,7 @@ module.exports = function(responseEnd) {
     loadEventStart: 0,
     loadEventEnd: 0
   };
-  performance.now = function(){
+  performance.now = function() {
     return Date.now() - performance.timing.navigationStart;
   };
 

@@ -4,7 +4,7 @@ module.exports = function() {
 
   // encoder
   // [https://gist.github.com/999166] by [https://github.com/nignag]
-  base64.btoa = function (input) {
+  base64.btoa = function(input) {
     var str = String(input);
     for (
       // initialize result and counter
@@ -16,7 +16,7 @@ module.exports = function() {
       // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
       output += map.charAt(63 & block >> 8 - idx % 1 * 8)
     ) {
-      charCode = str.charCodeAt(idx += 3/4);
+      charCode = str.charCodeAt(idx += 3 / 4);
       if (charCode > 0xFF) {
         throw new Error("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
@@ -27,7 +27,7 @@ module.exports = function() {
 
   // decoder
   // [https://gist.github.com/1020396] by [https://github.com/atk]
-  base64.atob = function (input) {
+  base64.atob = function(input) {
     var str = String(input).replace(/=+$/, '');
     if (str.length % 4 == 1) {
       throw new Error("'atob' failed: The string to be decoded is not correctly encoded.");

@@ -343,7 +343,6 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       );
 
       timing.domInteractive = timing.domComplete = timing.domInteractive = Date.now();
-
     } else {
       let init = new Function(
         '"use strict";\n' + __weex_code__
