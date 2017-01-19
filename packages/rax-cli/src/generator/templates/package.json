@@ -7,15 +7,15 @@
     "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^0.1.4",
-    "rax-components": "^0.1.4"
+    "rax": "^0.1.5",
+    "rax-components": "^0.1.5"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.16.0",
-    "babel-preset-rax": "^0.1.4",
+    "babel-preset-rax": "^0.1.5",
     "case-sensitive-paths-webpack-plugin": "^1.1.4",
     "eslint": "^3.10.0",
     "eslint-plugin-react": "^6.6.0",
@@ -23,8 +23,8 @@
     "internal-ip": "^1.2.0",
     "json-loader": "^0.5.4",
     "qrcode-terminal": "^0.11.0",
-    "rax-webpack-plugin": "^0.1.4",
-    "stylesheet-loader": "^0.1.4",
+    "rax-webpack-plugin": "^0.1.5",
+    "stylesheet-loader": "^0.1.5",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2"

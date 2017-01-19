@@ -1,6 +1,6 @@
 {
   "name": "element-loader",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "web component loader.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -25,7 +25,7 @@
     "jsdom": "^9.8.3",
     "loader-utils": "^0.2.16",
     "lodash": "^4.17.2",
-    "stylesheet-loader": "^0.1.4",
+    "stylesheet-loader": "^0.1.5",
     "uppercamelcase": "^1.1.0"
   }
 }
