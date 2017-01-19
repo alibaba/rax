@@ -1,4 +1,4 @@
-import {Component, createElement} from 'rax';
+import {Component, createElement, setNativeProps} from 'rax';
 import {isWeex} from 'universal-env';
 
 const typeMap = {
@@ -16,46 +16,63 @@ const typeMap = {
   'numeric': 'number'
 };
 
+
+function getText(event) {
+  let text;
+  if (isWeex) {
+    text = event.value;
+  } else {
+    text = event.target.value;
+  }
+  return text;
+}
+
+function genEventObject(originalEvent) {
+  let text = getText(originalEvent);
+  return {
+    nativeEvent: {
+      text
+    },
+    value: text,
+    originalEvent,
+  };
+}
+
 class TextInput extends Component {
 
-  handleInput = (e) => {
-    let text = e.value;
-    // Shim Event
-    if (isWeex) {
-      e = {
-        nativeEvent: {
-          text
-        },
-        value: text
-      };
-    }
-    this.props.onInput(e);
+  handleInput = (event) => {
+    this.props.onInput(genEventObject(event));
   };
 
-  handleChange = (e) => {
-    let text = e.value;
-    // Shim Event
-    if (isWeex) {
-      e = {
-        nativeEvent: {
-          text
-        },
-        value: text
-      };
+  handleChange = (event) => {
+    if (this.props.onChange) {
+      this.props.onChange(genEventObject(event));
     }
 
-    this.props.onChange && this.props.onChange(e);
-    this.props.onChangeText && this.props.onChangeText(text);
+    if (this.props.onChangeText) {
+      let text = getText(event);
+      this.props.onChangeText(text);
+    }
   };
 
-  handleFocus = (e) => this.props.onFocus(e);
-  handleBlur = (e) => this.props.onBlur(e);
+  handleFocus = (event) => {
+    this.props.onFocus(genEventObject(event));
+  };
+
+  handleBlur = (event) => {
+    this.props.onBlur(genEventObject(event));
+  };
 
   focus = () => {
     this.refs.input.focus && this.refs.input.focus();
   };
+
   blur = () => {
     this.refs.input.blur && this.refs.input.blur();
+  };
+
+  clear = () => {
+    setNativeProps(this.refs.input, {value: ''});
   };
 
   render() {
@@ -147,10 +164,10 @@ const styles = {
     boxSizing: 'border-box',
     color: '#000000',
     padding: 0,
-    paddingLeft: '8rem',
-    lineHeight: '24rem',
-    fontSize: '24rem',
-    height: '36rem', // default height
+    paddingLeft: 24,
+    fontSize: 24,
+    lineHeight: 60,
+    height: 60, // default height
   }
 };
 

@@ -42,6 +42,7 @@
     "build:dist": "npm run clean:dist && node ./scripts/dist.js",
     "build:examples": "node ./scripts/build-examples.js",
     "build": "npm run build:compile && npm run build:dist && npm run build:examples",
+    "watch:compile": "node ./scripts/compile.js --watch",
     "test": "jest",
     "start": "npm run build:compile && npm run build:dist && node ./scripts/start.js",
     "lint": "npm run lint:nofix -- --fix",

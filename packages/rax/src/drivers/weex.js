@@ -157,7 +157,7 @@ const Driver = {
       nodeMaps[propValue] = null;
     }
     // Weex native will crash when pass null value
-    return node.setAttr(propKey, undefined);
+    return node.setAttr(propKey, undefined, false);
   },
 
   setAttribute(node, propKey, propValue) {
@@ -165,7 +165,7 @@ const Driver = {
       nodeMaps[propValue] = node;
     }
 
-    return node.setAttr(propKey, propValue);
+    return node.setAttr(propKey, propValue, false);
   },
 
   setStyles(node, styles) {

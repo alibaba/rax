@@ -91,6 +91,7 @@ render(<Hello name="world" />);
 ```
 
 More examples take a look at the [`examples`](/examples/) folder:
+* [Components](./examples/components)
 * [Redux](/examples/redux)
 * [Game2048](/examples/game2048)
 * [Drag](/examples/drag)
