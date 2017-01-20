@@ -5,9 +5,6 @@ import Serializer from './serializer';
 import {setDriver} from '../driver';
 import {adler32, addChecksumToMarkup} from '../markupChecksum';
 
-const CHECKSUM_ATTR_NAME = 'data-rax-checksum';
-const TAG_END = /\/?>/;
-
 export default function renderToString(element) {
   // Reset driver iternal state
   ServerDriver.nodeMaps = {};
