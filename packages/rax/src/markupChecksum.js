@@ -36,7 +36,7 @@ export function adler32(data) {
 export function addChecksumToMarkup(markup) {
   markup = markup || '';
   let checksum = adler32(markup);
-  
+
   // Add checksum (handle both parent tags, comments and self-closing tags)
   return markup.replace(TAG_END, ' ' + CHECKSUM_ATTR_NAME + '="' + checksum + '"$&');
 }
