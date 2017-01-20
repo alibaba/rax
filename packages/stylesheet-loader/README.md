@@ -101,3 +101,12 @@ Default does not support nested, but you can also choose to avoid this constrain
   src: url(http://at.alicdn.com/t/font_pkm0oq8is8fo5hfr.ttf);
 }
 ```
+
+## Validation
+
+We followed the [css-layout](https://github.com/facebook/yoga) style standard. There will be a friendly reminder on the console when your code is not standardized.
+
+<p align="center">
+  <img alt="stylesheet validation" src="https://gw.alicdn.com/tfs/TB1EHgXPXXXXXc3XVXXXXXXXXXX-1324-208.png" width="400">
+</p>
+
