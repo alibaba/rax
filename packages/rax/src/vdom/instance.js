@@ -5,6 +5,21 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 import Hook from '../debug/hook';
+import {isWeb} from 'universal-env';
+import {canReuseMarkup} from '../markupChecksum';
+
+/**
+ * @param {DOMElement} container DOM element that may contain
+ * a component
+ * @return {?*} DOM element or null.
+ */
+function getRootElementInContainer(container) {
+  if (!container) {
+    return null;
+  }
+
+  return container.firstChild;
+}
 
 /**
  * Instance manager
@@ -55,6 +70,15 @@ export default {
       } else {
         Hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
+      }
+    }
+
+    if (isWeb) {
+      let rootElement = getRootElementInContainer(container);
+      let containerHasMarkup = rootElement && canReuseMarkup(rootElement);
+      let shouldReuseMarkup = containerHasMarkup && !hasPrevRootInstance;
+      if (shouldReuseMarkup) {
+        Host.driver.removeChild(rootElement, container);
       }
     }
 

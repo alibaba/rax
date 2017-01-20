@@ -3,6 +3,10 @@ import ServerDriver from '../drivers/server';
 import render from '../render';
 import Serializer from './serializer';
 import {setDriver} from '../driver';
+import {adler32, addChecksumToMarkup} from '../markupChecksum';
+
+const CHECKSUM_ATTR_NAME = 'data-rax-checksum';
+const TAG_END = /\/?>/;
 
 export default function renderToString(element) {
   // Reset driver iternal state
@@ -18,5 +22,6 @@ export default function renderToString(element) {
 
   let body = ServerDriver.createBody();
   render(element, body);
-  return new Serializer(body).serialize();
+  let markup = new Serializer(body).serialize() || '';
+  return addChecksumToMarkup(markup);
 }
