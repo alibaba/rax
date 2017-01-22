@@ -25,7 +25,7 @@ describe('StatelessComponent', function() {
 
   it('should render functional stateless component', function() {
     let html = renderToString(<StatelessComponent name="A" />);
-    expect(html).toBe('<div data-rax-checksum="426181611">A</div>');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><div>A</div></div>');
   });
 
   it('should render class stateless component', function() {
@@ -36,7 +36,7 @@ describe('StatelessComponent', function() {
     }
 
     let html = renderToString(<MyComponent name="A" />);
-    expect(html).toBe('<div data-rax-checksum="426181611">A</div>');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><div>A</div></div>');
   });
 
   it('should update stateless component', function() {
@@ -47,10 +47,10 @@ describe('StatelessComponent', function() {
     }
 
     let html = renderToString(<Parent name="A" />);
-    expect(html).toBe('<div data-rax-checksum="426181611">A</div>');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><div>A</div></div>');
 
     let html2 = renderToString(<Parent name="B" />);
-    expect(html2).toBe('<div data-rax-checksum="426640364">B</div>');
+    expect(html2).toBe('<div data-rax-checksum="rax-checksum"><div>B</div></div>');
   });
 
   it('should pass context thru stateless component', function() {
@@ -84,11 +84,11 @@ describe('StatelessComponent', function() {
 
 
     let html = renderToString(<GrandParent test="test" />);
-    expect(html).toBe('<div data-rax-checksum="733152618">test</div>');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><div>test</div></div>');
 
 
     let html2 = renderToString(<GrandParent test="mest" />);
-    expect(html2).toBe('<div data-rax-checksum="728565091">mest</div>');
+    expect(html2).toBe('<div data-rax-checksum="rax-checksum"><div>mest</div></div>');
   });
 
 
@@ -100,7 +100,7 @@ describe('StatelessComponent', function() {
     Child.propTypes = {test: PropTypes.string};
 
     let html = renderToString(<Child />);
-    expect(html).toBe('<div data-rax-checksum="733152618">test</div>');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><div>test</div></div>');
   });
 
   it('should receive context', function() {
@@ -125,7 +125,7 @@ describe('StatelessComponent', function() {
     Child.contextTypes = {lang: PropTypes.string};
 
     let html = renderToString(<Parent />);
-    expect(html).toBe('<div data-rax-checksum="529007741">en</div>');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><div>en</div></div>');
   });
 
   it('should allow simple functions to return null', function() {
@@ -133,7 +133,7 @@ describe('StatelessComponent', function() {
       return null;
     };
     let html = renderToString(<Child />);
-    expect(html).toBe('<!-- empty -- data-rax-checksum="453444543">');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><!-- empty --></div>');
   });
 
   it('should allow simple functions to return false', function() {
@@ -141,6 +141,6 @@ describe('StatelessComponent', function() {
       return false;
     }
     let html = renderToString(<Child />);
-    expect(html).toBe('<!-- empty -- data-rax-checksum="453444543">');
+    expect(html).toBe('<div data-rax-checksum="rax-checksum"><!-- empty --></div>');
   });
 });
