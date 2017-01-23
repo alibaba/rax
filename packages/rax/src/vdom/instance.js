@@ -6,20 +6,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 import Hook from '../debug/hook';
 import {isWeb} from 'universal-env';
-import {canReuseMarkup} from '../markupChecksum';
-
-/**
- * @param {DOMElement} container DOM element that may contain
- * a component
- * @return {?*} DOM element or null.
- */
-function getRootElementInContainer(container) {
-  if (!container) {
-    return null;
-  }
-
-  return container.firstChild;
-}
+import {isRenderedByServer} from '../markupCheck';
 
 /**
  * Instance manager
@@ -74,8 +61,14 @@ export default {
     }
 
     if (isWeb) {
-      let rootElement = getRootElementInContainer(container);
-      let containerHasMarkup = rootElement && canReuseMarkup(rootElement);
+      let rootElement;
+      if (!container) {
+        rootElement = null;
+      } else {
+        rootElement = container.firstChild;
+      }
+
+      let containerHasMarkup = rootElement && isRenderedByServer(rootElement);
       let shouldReuseMarkup = containerHasMarkup && !hasPrevRootInstance;
       if (shouldReuseMarkup) {
         Host.driver.removeChild(rootElement, container);

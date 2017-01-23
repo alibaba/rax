@@ -1,6 +1,6 @@
 import escapeText from './escapeText';
 import styleToCSS from '../style/styleToCSS';
-import {addMarkerToMarkup} from '../markupChecksum';
+import {addMarkerToMarkup} from '../markupCheck';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
