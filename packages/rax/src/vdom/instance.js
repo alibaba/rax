@@ -6,7 +6,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 import Hook from '../debug/hook';
 import {isWeb} from 'universal-env';
-import {canReuseMarkup} from '../markupChecksum';
+import {hasRenderedMarked} from '../renderedMarked';
 
 /**
  * Instance manager
@@ -61,17 +61,16 @@ export default {
     }
 
     if (isWeb) {
-      // check server render checksum and replace server dom string
+      // handle rendered ELement
       if (container && container.childNodes) {
-        const serverRenderRootNodes = [];
+        const childNodes = [...container.childNodes];
 
-        Array.prototype.map.call(container.childNodes, (rootChild) => {
-          if (canReuseMarkup(rootChild)) {
-            serverRenderRootNodes.push(rootChild);
+        for (let i = 0; i < childNodes.length; i ++) {
+          const rootChildNode = childNodes[i];
+          if (hasRenderedMarked(rootChildNode)) {
+            Host.driver.removeChild(rootChildNode, container);
           }
-        });
-
-        serverRenderRootNodes.forEach(node => Host.driver.removeChild(node, container));
+        }
       }
     }
 

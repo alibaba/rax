@@ -118,13 +118,6 @@ class Serializer {
   }
 
   serialize() {
-    if (this.needAddCheckSum) {
-      // add checksum to the rootChilds
-      Array.prototype.forEach.call(this.startNode.childNodes, (rootChildNode, index) => {
-        this.startNode.childNodes[index] = addChecksumToElement(rootChildNode);
-      });
-    }
-
     this.serializeChildren(this.startNode);
     return this.html;
   }
