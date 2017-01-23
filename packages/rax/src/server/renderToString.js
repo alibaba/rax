@@ -27,7 +27,7 @@ export default function renderToString(element) {
     }
   }
 
-  let markup = new Serializer(body, true).serialize() || '';
+  let markup = new Serializer(body).serialize() || '';
 
   return markup;
 }

@@ -56,10 +56,9 @@ function createOpenTagMarkup(tagName, style, attributes) {
 }
 
 class Serializer {
-  constructor(node, needAddCheckSum) {
+  constructor(node) {
     this.html = '';
     this.startNode = node;
-    this.needAddCheckSum = needAddCheckSum;
   }
 
   toJSON() {
