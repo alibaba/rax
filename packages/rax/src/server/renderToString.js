@@ -3,7 +3,6 @@ import ServerDriver from '../drivers/server';
 import render from '../render';
 import Serializer from './serializer';
 import {setDriver} from '../driver';
-import {adler32, addChecksumToMarkup} from '../markupChecksum';
 
 export default function renderToString(element) {
   // Reset driver iternal state
@@ -19,6 +18,8 @@ export default function renderToString(element) {
 
   let body = ServerDriver.createBody();
   render(element, body);
-  let markup = new Serializer(body).serialize() || '';
-  return addChecksumToMarkup(markup);
+
+  let markup = new Serializer(body, true).serialize() || '';
+
+  return markup;
 }

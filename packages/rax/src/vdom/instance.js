@@ -9,19 +9,6 @@ import {isWeb} from 'universal-env';
 import {canReuseMarkup} from '../markupChecksum';
 
 /**
- * @param {DOMElement} container DOM element that may contain
- * a component
- * @return {?*} DOM element or null.
- */
-function getRootElementInContainer(container) {
-  if (!container) {
-    return null;
-  }
-
-  return container.firstChild;
-}
-
-/**
  * Instance manager
  */
 const KEY = '$$instance';
@@ -74,11 +61,17 @@ export default {
     }
 
     if (isWeb) {
-      let rootElement = getRootElementInContainer(container);
-      let containerHasMarkup = rootElement && canReuseMarkup(rootElement);
-      let shouldReuseMarkup = containerHasMarkup && !hasPrevRootInstance;
-      if (shouldReuseMarkup) {
-        Host.driver.removeChild(rootElement, container);
+      // check server render checksum and replace server dom string
+      if (container && container.childNodes) {
+        const serverRenderRootNodes = [];
+
+        Array.prototype.map.call(container.childNodes, (rootChild) => {
+          if (canReuseMarkup(rootChild)) {
+            serverRenderRootNodes.push(rootChild);
+          }
+        });
+
+        serverRenderRootNodes.forEach(node => Host.driver.removeChild(node, container));
       }
     }
 
