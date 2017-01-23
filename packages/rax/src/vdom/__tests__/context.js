@@ -58,7 +58,7 @@ describe('Context', function() {
     }
 
     let html = renderToString(<Parent />);
-    expect(html).toBe('<div data-rax-checksum="rax-checksum"><div>bar</div></div>');
+    expect(html).toBe('<div data-server-render="true"><div>bar</div></div>');
   });
 
 

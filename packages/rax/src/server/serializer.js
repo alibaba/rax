@@ -1,6 +1,6 @@
 import escapeText from './escapeText';
 import styleToCSS from '../style/styleToCSS';
-import {addChecksumToMarkup} from '../markupChecksum';
+import {addMarkerToMarkup} from '../markupChecksum';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -118,7 +118,7 @@ class Serializer {
 
   serialize() {
     this.serializeChildren(this.startNode);
-    return addChecksumToMarkup(this.html);
+    return addMarkerToMarkup(this.html);
   }
 
   serializeChildren(parentNode) {

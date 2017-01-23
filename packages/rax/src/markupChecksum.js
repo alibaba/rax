@@ -1,15 +1,14 @@
-const CHECKSUM_ATTR_NAME = 'data-rax-checksum';
-const TAG_END = /\/?>/;
-const CHECKSUM = 'rax-checksum';
+const MARKER_ATTR_NAME = 'data-server-render';
+const MARKER = true;
 
 /**
   * add checksum to markup
 */
-export function addChecksumToMarkup(markup) {
+export function addMarkerToMarkup(markup) {
   markup = markup || '';
 
   // Add checksum (handle both parent tags, comments and self-closing tags)
-  return `<div ${CHECKSUM_ATTR_NAME}="${CHECKSUM}">${markup}</div>`;
+  return `<div ${MARKER_ATTR_NAME}="${MARKER}">${markup}</div>`;
 }
 
 /**
@@ -18,6 +17,6 @@ export function addChecksumToMarkup(markup) {
 */
 
 export function canReuseMarkup(element) {
-  let existingChecksum = element.getAttribute && element.getAttribute(CHECKSUM_ATTR_NAME);
-  return !!existingChecksum;
+  let existingMarker = element.getAttribute && element.getAttribute(MARKER_ATTR_NAME);
+  return !!existingMarker;
 }
