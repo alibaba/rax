@@ -3,6 +3,7 @@
 import css from 'css';
 import transformer from './transformer';
 import loaderUtils from 'loader-utils';
+import {getErrorMessages, getWarnMessages} from './promptMessage';
 
 const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
@@ -50,6 +51,11 @@ module.exports = function(source) {
 const exportContent = (data, fontFaceContent) => {
   return `
     ${fontFaceContent}
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('${getErrorMessages()}');
+      console.warn('${getWarnMessages()}');
+    }
     module.exports = ${JSON.stringify(data, undefined, '  ')};
   `;
 };
