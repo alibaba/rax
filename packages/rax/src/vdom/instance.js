@@ -5,6 +5,8 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 import Hook from '../debug/hook';
+import {isWeb} from 'universal-env';
+import {canReuseMarkup} from '../markupChecksum';
 
 /**
  * Instance manager
@@ -55,6 +57,21 @@ export default {
       } else {
         Hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
+      }
+    }
+
+    if (isWeb) {
+      // check server render checksum and replace server dom string
+      if (container && container.childNodes) {
+        const serverRenderRootNodes = [];
+
+        Array.prototype.map.call(container.childNodes, (rootChild) => {
+          if (canReuseMarkup(rootChild)) {
+            serverRenderRootNodes.push(rootChild);
+          }
+        });
+
+        serverRenderRootNodes.forEach(node => Host.driver.removeChild(node, container));
       }
     }
 

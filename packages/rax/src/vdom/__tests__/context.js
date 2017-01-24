@@ -58,7 +58,7 @@ describe('Context', function() {
     }
 
     let html = renderToString(<Parent />);
-    expect(html).toBe('<div>bar</div>');
+    expect(html).toBe('<div data-rax-checksum="615777503">bar</div>');
   });
 
 

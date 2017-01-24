@@ -18,5 +18,8 @@ export default function renderToString(element) {
 
   let body = ServerDriver.createBody();
   render(element, body);
-  return new Serializer(body).serialize();
+
+  let markup = new Serializer(body, true).serialize() || '';
+
+  return markup;
 }

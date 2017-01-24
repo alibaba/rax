@@ -1,5 +1,6 @@
 import escapeText from './escapeText';
 import styleToCSS from '../style/styleToCSS';
+import {addChecksumToElement} from '../markupChecksum';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -55,9 +56,10 @@ function createOpenTagMarkup(tagName, style, attributes) {
 }
 
 class Serializer {
-  constructor(node) {
+  constructor(node, needAddCheckSum) {
     this.html = '';
     this.startNode = node;
+    this.needAddCheckSum = needAddCheckSum;
   }
 
   toJSON() {
@@ -116,6 +118,13 @@ class Serializer {
   }
 
   serialize() {
+    if (this.needAddCheckSum) {
+      // add checksum to the rootChilds
+      Array.prototype.forEach.call(this.startNode.childNodes, (rootChildNode, index) => {
+        this.startNode.childNodes[index] = addChecksumToElement(rootChildNode);
+      });
+    }
+
     this.serializeChildren(this.startNode);
     return this.html;
   }
