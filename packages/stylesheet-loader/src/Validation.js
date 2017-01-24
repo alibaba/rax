@@ -4,6 +4,7 @@ import BoxModelPropTypes from './BoxModelPropTypes';
 import FlexboxPropTypes from './FlexboxPropTypes';
 import TextStylePropTypes from './TextStylePropTypes';
 import ColorPropTypes from './ColorPropTypes';
+import {pushWarnMessage} from './promptMessage';
 import chalk from 'chalk';
 
 class Validation {
@@ -13,6 +14,7 @@ class Validation {
 
       if (error) {
         console.warn(chalk.yellow.bold(error.message));
+        pushWarnMessage(error.message);
       }
       return error;
     }

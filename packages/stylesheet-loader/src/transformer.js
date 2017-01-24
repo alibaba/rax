@@ -4,6 +4,7 @@ import camelCase from 'camelcase';
 import normalizeColor from './normalizeColor';
 import particular from './particular';
 import Validation from './Validation';
+import {pushErrorMessage} from './promptMessage';
 import chalk from 'chalk';
 
 const COLOR_PROPERTIES = {
@@ -20,7 +21,9 @@ export default {
   sanitizeSelector(selector, transformDescendantCombinator) {
     // filter multiple extend selectors
     if (!transformDescendantCombinator && !/^\.[a-zA-Z0-9_]+$/.test(selector)) {
-      console.error(chalk.red.bold(`\`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`));
+      const message = `\`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`;
+      console.error(chalk.red.bold(message));
+      pushErrorMessage(message);
       return null;
     }
     return selector.replace(/\s/gi, '_').replace(/[\.]/g, '');
