@@ -5,6 +5,8 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 import Hook from '../debug/hook';
+import {isWeb} from 'universal-env';
+import {isRenderedByServer} from '../markupCheck';
 
 /**
  * Instance manager
@@ -55,6 +57,21 @@ export default {
       } else {
         Hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
+      }
+    }
+
+    if (isWeb) {
+      let rootElement;
+      if (!container) {
+        rootElement = null;
+      } else {
+        rootElement = container.firstChild;
+      }
+
+      let containerHasMarkup = rootElement && isRenderedByServer(rootElement);
+      let shouldReuseMarkup = containerHasMarkup && !hasPrevRootInstance;
+      if (shouldReuseMarkup) {
+        Host.driver.removeChild(rootElement, container);
       }
     }
 
