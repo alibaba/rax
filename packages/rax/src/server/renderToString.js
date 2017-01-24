@@ -3,7 +3,7 @@ import ServerDriver from '../drivers/server';
 import render from '../render';
 import Serializer from './serializer';
 import {setDriver} from '../driver';
-import {addRenderedMarkedToElement} from '../renderedMarked';
+import {addRenderedMarkedToElement} from './renderedMarked';
 
 export default function renderToString(element) {
   // Reset driver iternal state

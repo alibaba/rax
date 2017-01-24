@@ -6,7 +6,6 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 import Hook from '../debug/hook';
 import {isWeb} from 'universal-env';
-import {hasRenderedMarked} from '../renderedMarked';
 
 /**
  * Instance manager
@@ -62,12 +61,12 @@ export default {
 
     if (isWeb) {
       // handle rendered ELement
-      if (container && container.childNodes) {
+      if (container.childNodes) {
         const childNodes = [...container.childNodes];
 
         for (let i = 0; i < childNodes.length; i ++) {
           const rootChildNode = childNodes[i];
-          if (hasRenderedMarked(rootChildNode)) {
+          if (rootChildNode.hasAttribute('data-rendered')) {
             Host.driver.removeChild(rootChildNode, container);
           }
         }

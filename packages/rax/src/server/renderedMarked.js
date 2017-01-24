@@ -12,12 +12,3 @@ export function addRenderedMarkedToElement(element, markedValue) {
   element.attributes[MARKED_ATTR_NAME] = markedValue;
   return element;
 }
-
-/**
- * Determine whether the element has rendered marked
- */
-export function hasRenderedMarked(element) {
-  let existingMarked = element.getAttribute && element.getAttribute(MARKED_ATTR_NAME);
-  return !!existingMarked;
-}
-
