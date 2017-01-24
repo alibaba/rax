@@ -59,16 +59,15 @@ export default {
       }
     }
 
-    if (isWeb) {
-      // handle rendered ELement
-      if (container.childNodes) {
-        const childNodes = [...container.childNodes];
+    // handle rendered ELement
+    if (isWeb && container.childNodes) {
+      // clone childNodes, Because removeChild will causing change in childNodes length
+      const childNodes = [...container.childNodes];
 
-        for (let i = 0; i < childNodes.length; i ++) {
-          const rootChildNode = childNodes[i];
-          if (rootChildNode.hasAttribute('data-rendered')) {
-            Host.driver.removeChild(rootChildNode, container);
-          }
+      for (let i = 0; i < childNodes.length; i ++) {
+        const rootChildNode = childNodes[i];
+        if (rootChildNode.hasAttribute('data-rendered')) {
+          Host.driver.removeChild(rootChildNode, container);
         }
       }
     }
