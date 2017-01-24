@@ -25,7 +25,7 @@ describe('Server renderToString', () => {
 
     let foo = <Foo tag="foo" className="bar" />;
     let str = renderToString(foo);
-    expect(str).toBe('<foo></foo>');
+    expect(str).toBe('<div data-rax-checksum="rax-checksum"><foo></foo></div>');
   });
 
 
@@ -73,7 +73,7 @@ describe('Server renderToString', () => {
 
     let messages = <MessageList messages={['foo', 'bar']} />;
     let str = renderToString(messages);
-    expect(str).toBe('<div><div>foo <button style="background:purple;">Delete</button></div><div>bar <button style="background:purple;">Delete</button></div></div>');
+    expect(str).toBe('<div data-rax-checksum="rax-checksum"><div><div>foo <button style="background:purple;">Delete</button></div><div>bar <button style="background:purple;">Delete</button></div></div></div>');
   });
 
   it('renders based on ref', () => {
@@ -93,7 +93,7 @@ describe('Server renderToString', () => {
     }
 
     let str = renderToString(<MyComponent />);
-    expect(str).toBe('<div><input id="myInput"/><input/></div>');
+    expect(str).toBe('<div data-rax-checksum="rax-checksum"><div><input id="myInput"/><input/></div></div>');
   });
 
   it('renders with lifecycle methods', () => {
@@ -147,6 +147,6 @@ describe('Server renderToString', () => {
     }
 
     let str = renderToString(<MyComponent />);
-    expect(str).toBe('<div>componentWillMount</div>');
+    expect(str).toBe('<div data-rax-checksum="rax-checksum"><div>componentWillMount</div></div>');
   });
 });
