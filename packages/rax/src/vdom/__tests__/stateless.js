@@ -133,7 +133,7 @@ describe('StatelessComponent', function() {
       return null;
     };
     let html = renderToString(<Child />);
-    expect(html).toBe('<!-- empty -- data-rendered="server">');
+    expect(html).toBe('<!-- empty -->');
   });
 
   it('should allow simple functions to return false', function() {
@@ -141,6 +141,6 @@ describe('StatelessComponent', function() {
       return false;
     }
     let html = renderToString(<Child />);
-    expect(html).toBe('<!-- empty -- data-rendered="server">');
+    expect(html).toBe('<!-- empty -->');
   });
 });
