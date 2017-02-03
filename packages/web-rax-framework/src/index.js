@@ -15,6 +15,10 @@ if (!global.FontFace) {
   global.FontFace = require('runtime-shared/dist/fontface.module');
 }
 
+if (!global.matchMedia) {
+  global.matchMedia = require('runtime-shared/dist/matchMedia.module');
+}
+
 if (!document.fonts) {
   document.fonts = {
     add: function(family, source) {

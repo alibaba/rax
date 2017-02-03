@@ -162,6 +162,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const URL = require('runtime-shared/dist/url.function')();
     const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
     const FontFace = require('runtime-shared/dist/fontface.function')();
+    const matchMedia = require('runtime-shared/dist/matchMedia.function')();
 
     const document = new Document(instanceId, __weex_options__.bundleUrl, null, Listener);
     const location = new URL(__weex_options__.bundleUrl);
@@ -248,6 +249,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       URL,
       URLSearchParams,
       FontFace,
+      matchMedia,
       setTimeout,
       clearTimeout,
       setInterval,
