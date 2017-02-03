@@ -16,7 +16,6 @@ let sendTasks;
 
 const MODULE_NAME_PREFIX = '@weex-module/';
 const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
-const DOM_MODULE = MODULE_NAME_PREFIX + 'dom';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 // Instance hub
 const instances = {};
@@ -182,16 +181,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const __weex_define__ = require('./define.weex')(modules);
     const __weex_require__ = require('./require.weex')(modules);
     const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
-    // FontFace
-    document.fonts = {
-      add: function(fontFace) {
-        var domModule = __weex_require__(DOM_MODULE);
-        domModule.addRule('fontFace', {
-          fontFamily: fontFace.family,
-          src: fontFace.source
-        });
-      }
-    };
+    // Extend document
+    require('./document.weex')(__weex_require__, document);
 
     const {
       fetch,
