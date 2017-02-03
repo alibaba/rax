@@ -102,6 +102,18 @@ Default does not support nested, but you can also choose to avoid this constrain
 }
 ```
 
+### Support media query
+
+Media type support `screen` and `all`. Media features only support `width` and `height`. Look [@media](https://developer.mozilla.org/en-US/docs/Web/CSS/@media).
+
+```
+@media screen and (min-width: 480px) {
+  .title {
+    font-size: 25rem;
+  }
+}
+```
+
 ## Validation
 
 We followed the [css-layout](https://github.com/facebook/yoga) style standard. There will be a friendly reminder on the console when your code is not standardized.
