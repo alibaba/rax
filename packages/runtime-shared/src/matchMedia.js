@@ -105,8 +105,8 @@ function matchMedia(media) {
 
   mql.matches = _matches(media, {
     type: 'screen',
-    width: screen.width,
-    height: screen.height
+    width: window.screen.width,
+    height: window.screen.height
   });
 
   return mql;
