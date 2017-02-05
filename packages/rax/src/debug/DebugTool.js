@@ -28,6 +28,7 @@ let currentTimerNestedFlushDuration = 0;
 let currentTimerType = null;
 let currentTimerDebugID = null;
 let lifeCycleTimerHasWarned = false;
+let lastMarkTimeStamp;
 
 const clearHistory = () => {
   ComponentTreeHook.purgeUnmountedComponents();
@@ -44,7 +45,7 @@ function callHook(event, fn, context, arg1, arg2, arg3, arg4, arg5) {
   try {
     fn.call(context, arg1, arg2, arg3, arg4, arg5);
   } catch (e) {
-    console.warn('Exception thrown by hook while handling %s: %s', event)
+    console.warn('Exception thrown by hook while handling %s: %s', event);
     didHookThrowForEvent[event] = true;
   }
 }
@@ -64,7 +65,7 @@ function checkDebugID(debugID, allowRoot = false) {
     return;
   }
   if (!debugID) {
-    console.warn('DebugTool: debugID may not be empty.')
+    console.warn('DebugTool: debugID may not be empty.');
   }
 }
 
@@ -217,7 +218,7 @@ let DebugTool = {
   addHook(hook) {
     hooks.push(hook);
   },
-  removeHook(hook: Hook) {
+  removeHook(hook) {
     for (let i = 0; i < hooks.length; i++) {
       if (hooks[i] === hook) {
         hooks.splice(i, 1);

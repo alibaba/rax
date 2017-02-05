@@ -1,7 +1,7 @@
 let processingChildContext = false;
 
 const warnInvalidSetState = () => {
-  console.warn('setState(...): Cannot call setState() inside getChildContext()')
+  console.warn('setState(...): Cannot call setState() inside getChildContext()');
 };
 
 const InvalidSetStateWarningHook = {

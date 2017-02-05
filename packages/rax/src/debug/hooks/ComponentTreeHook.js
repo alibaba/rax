@@ -21,7 +21,7 @@ function isNative(fn) {
   }
 }
 
-const canUseCollections = (
+const canUseCollections =
   typeof Array.from === 'function' &&
   typeof Map === 'function' &&
   isNative(Map) &&
@@ -33,7 +33,7 @@ const canUseCollections = (
   Set.prototype != null &&
   typeof Set.prototype.keys === 'function' &&
   isNative(Set.prototype.keys)
-);
+;
 
 let setItem;
 let getItem;
@@ -73,7 +73,6 @@ if (canUseCollections) {
   getRootIDs = () => {
     return Array.from(rootIDSet.keys());
   };
-
 } else {
   const itemByKey = {};
   const rootByKey = {};
@@ -149,7 +148,7 @@ const ComponentTreeHook = {
     };
     setItem(id, item);
   },
-   onBeforeUpdateComponent(id, element) {
+  onBeforeUpdateComponent(id, element) {
     var item = getItem(id);
     if (!item || !item.isMounted) {
       return;

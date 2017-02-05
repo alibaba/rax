@@ -2,8 +2,7 @@
 
 let alreadyWarned = false;
 
-import DebugTool from './DebugTool';
-import { FlushHistory } from './DebugTool';
+import DebugTool, { FlushHistory } from './DebugTool';
 
 function roundFloat(val, base = 2) {
   const n = Math.pow(10, base);
@@ -11,7 +10,7 @@ function roundFloat(val, base = 2) {
 }
 
 function consoleTable(table) {
-  console.table((table));
+  console.table(table);
 }
 
 function getLastMeasurements() {
