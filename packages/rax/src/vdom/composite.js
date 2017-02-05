@@ -6,7 +6,20 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import Hook from '../debug/hook';
+import DebugTool from '../debug/DebugTool';
 
+function measureLifeCyclePerf(fn, debugID, timerType) {
+  if (debugID === 0) {
+    return fn();
+  }
+
+  DebugTool.onBeginLifeCycleTimer(debugID, timerType);
+  try {
+    return fn();
+  } finally {
+    DebugTool.onEndLifeCycleTimer(debugID, timerType);
+  }
+}
 function performInSandbox(fn, handleError) {
   try {
     return fn();
@@ -48,6 +61,10 @@ class CompositeComponent {
     this._context = context;
     this._mountID = Host.mountID++;
     this._updateCount = 0;
+
+    if (process.env.NODE_ENV !== 'production') {
+      DebugTool.onBeforeMountComponent(this._mountID, this._currentElement, null);
+    }
 
     let Component = this._currentElement.type;
     let publicProps = this._currentElement.props;
@@ -92,7 +109,13 @@ class CompositeComponent {
 
     performInSandbox(() => {
       if (instance.componentWillMount) {
-        instance.componentWillMount();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCyclePerf(() => {
+            instance.componentWillMount();
+          }, this._mountID, 'componentWillMount');
+        } else {
+          instance.componentWillMount();
+        }
       }
     });
 
@@ -110,7 +133,13 @@ class CompositeComponent {
       }
 
       performInSandbox(() => {
-        renderedElement = instance.render();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCyclePerf(() => {
+            renderedElement = instance.render();
+          }, this._mountID, 'render');
+        } else {
+          renderedElement = instance.render();
+        }
       }, handleError);
 
       Host.component = null;
@@ -129,12 +158,21 @@ class CompositeComponent {
 
     performInSandbox(() => {
       if (instance.componentDidMount) {
-        instance.componentDidMount();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCyclePerf(() => {
+            instance.componentDidMount();
+          }, this._mountID, 'componentDidMount');
+        } else {
+          instance.componentDidMount();
+        }
       }
     });
 
     Hook.Reconciler.mountComponent(this);
 
+    if (process.env.NODE_ENV !== 'production') {
+      DebugTool.onMountComponent(this._mountID);
+    }
     return instance;
   }
 
@@ -194,7 +232,17 @@ class CompositeComponent {
 
   _processChildContext(currentContext) {
     let instance = this._instance;
+
+    if (process.env.NODE_ENV !== 'production') {
+      DebugTool.onBeginProcessingChildContext();
+    }
+
     let childContext = instance.getChildContext && instance.getChildContext();
+
+    if (process.env.NODE_ENV !== 'production') {
+      DebugTool.onEndProcessingChildContext();
+    }
+
     if (childContext) {
       return Object.assign({}, currentContext, childContext);
     }
@@ -230,6 +278,10 @@ class CompositeComponent {
     nextUnmaskedContext
   ) {
     let instance = this._instance;
+
+    if (process.env.NODE_ENV !== 'production') {
+      DebugTool.onBeforeUpdateComponent(this._mountID, this._currentElement);
+    }
 
     if (!instance) {
       console.error(
@@ -330,6 +382,10 @@ class CompositeComponent {
       instance.context = nextContext;
     }
 
+    if (process.env.NODE_ENV !== 'production') {
+      DebugTool.onUpdateComponent(this._mountID);
+    }
+
     Hook.Reconciler.receiveComponent(this);
   }
 
@@ -346,7 +402,13 @@ class CompositeComponent {
     Host.component = this;
 
     performInSandbox(() => {
-      nextRenderedElement = instance.render();
+      if (process.env.NODE_ENV !== 'production') {
+        measureLifeCyclePerf(() => {
+          nextRenderedElement = instance.render();
+        }, this._mountID, 'render');
+      } else {
+        nextRenderedElement = instance.render();
+      }
     });
 
     Host.component = null;
@@ -358,6 +420,13 @@ class CompositeComponent {
         prevRenderedComponent._context,
         this._processChildContext(context)
       );
+      if (process.env.NODE_ENV !== 'production') {
+        DebugTool.onHostOperation({
+          instanceID: this._mountID,
+          type: 'update component',
+          payload: {}
+        });
+      }
     } else {
       let oldChild = prevRenderedComponent.getNativeNode();
       prevRenderedComponent.unmountComponent(true);
