@@ -5,6 +5,7 @@ import FlexboxPropTypes from './FlexboxPropTypes';
 import TextStylePropTypes from './TextStylePropTypes';
 import ColorPropTypes from './ColorPropTypes';
 import {pushWarnMessage} from './promptMessage';
+import particular from './particular';
 import chalk from 'chalk';
 
 class Validation {
@@ -17,6 +18,12 @@ class Validation {
         pushWarnMessage(error.message);
       }
       return error;
+    } else {
+      if (!particular[prop]) {
+        const message = `\`${prop}\` is not a valid property in the flexbox specification (https://www.w3.org/TR/css-flexbox-1/)`;
+        console.warn(chalk.yellow.bold(message));
+        pushWarnMessage(message);
+      }
     }
   }
 
