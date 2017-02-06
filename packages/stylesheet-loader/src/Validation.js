@@ -20,7 +20,7 @@ class Validation {
       return error;
     } else {
       if (!particular[prop]) {
-        const message = `\`${prop}\` is not a valid property in the flexbox specification (https://www.w3.org/TR/css-flexbox-1/)`;
+        const message = `\`${prop}\` is not a valid property in the flexbox specification (https://facebook.github.io/yoga/)`;
         console.warn(chalk.yellow.bold(message));
         pushWarnMessage(message);
       }
