@@ -95,7 +95,7 @@ const getMediaContent = (parseData) => {
 
   mediaRules.forEach((rule, index) => {
     content += `
-      if (matchMedia('${rule.key}').matches) {
+      if (window.matchMedia('${rule.key}').matches) {
         var ruleData = ${stringifyData(rule.data)};
         for(var key in ruleData) {
           data[key] = Object.assign(data[key], ruleData[key]);
