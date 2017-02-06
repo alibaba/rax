@@ -110,6 +110,12 @@ const Driver = {
   },
 
   setAttribute(node, propKey, propValue) {
+    // TODO: Only process "false" in browser driver,
+    // maybe should process in vdom stage
+    if (propValue === false) {
+      return this.removeAttribute(node, propKey);
+    }
+
     if (propKey === 'className') {
       propKey = 'class';
     }
