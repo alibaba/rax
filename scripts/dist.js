@@ -107,6 +107,8 @@ dist(getConfig(
     {
       'promise.module': './packages/runtime-shared/src/promise.js',
       'promise.function': './packages/runtime-shared/src/promise.js',
+      'matchMedia.module': './packages/runtime-shared/src/matchMedia.js',
+      'matchMedia.function': './packages/runtime-shared/src/matchMedia.js',
       'url.module': './packages/runtime-shared/src/url.js',
       'url.function': './packages/runtime-shared/src/url.js',
       'url-search-params.module': './packages/runtime-shared/src/url-search-params.js',
