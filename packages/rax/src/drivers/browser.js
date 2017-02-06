@@ -96,7 +96,6 @@ const Driver = {
   },
 
   removeAttribute(node, propKey) {
-
     if (propKey === DANGEROUSLY_SET_INNER_HTML) {
       return node.innerHTML = null;
     }
@@ -113,7 +112,6 @@ const Driver = {
   },
 
   setAttribute(node, propKey, propValue) {
-
     if (propKey === DANGEROUSLY_SET_INNER_HTML) {
       return node.innerHTML = propValue.__html;
     }
@@ -127,7 +125,6 @@ const Driver = {
     } else {
       node.setAttribute(propKey, propValue);
     }
-    
   },
 
   setStyles(node, styles) {
