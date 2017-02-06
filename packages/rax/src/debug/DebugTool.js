@@ -3,10 +3,14 @@ import InvalidSetStateWarningHook from './hooks/InvalidSetStateWarningHook';
 import ComponentTreeHook from './hooks/ComponentTreeHook';
 import ExecutionEnvironment from './ExecutionEnvironment';
 
-let performance =
+let performance = {};
+
+if (ExecutionEnvironment.canUseDOM) {
+  performance =
     window.performance ||
     window.msPerformance ||
-    window.webkitPerformance;
+    window.webkitPerformance || {};
+}
 
 let canUsePerformanceMeasure =
   typeof performance !== 'undefined' &&
@@ -16,7 +20,11 @@ let canUsePerformanceMeasure =
   typeof performance.clearMeasures === 'function';
 
 const performanceNow = () => {
-  return performance.now();
+  if (performance.now) {
+    return performance.now();
+  } else {
+    return Date.now();
+  }
 };
 
 let profiling = false;
@@ -129,12 +137,16 @@ const resetMeasurements = () => {
 };
 
 function resumeCurrentLifeCycleTimer() {
-  const {startTime, nestedFlushStartTime, debugID, timerType} = lifeCycleTimerStack.pop();
-  const nestedFlushDuration = performanceNow() - nestedFlushStartTime;
-  currentTimerStartTime = startTime;
-  currentTimerNestedFlushDuration += nestedFlushDuration;
-  currentTimerDebugID = debugID;
-  currentTimerType = timerType;
+  const lifeCycleTimerStackPop = lifeCycleTimerStack.pop();
+
+  if (lifeCycleTimerStackPop) {
+    const {startTime, nestedFlushStartTime, debugID, timerType} = lifeCycleTimerStackPop;
+    const nestedFlushDuration = performanceNow() - nestedFlushStartTime;
+    currentTimerStartTime = startTime;
+    currentTimerNestedFlushDuration += nestedFlushDuration;
+    currentTimerDebugID = debugID;
+    currentTimerType = timerType;
+  }
 }
 
 const beginLifeCycleTimer = function(debugID, timerType) {
