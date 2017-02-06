@@ -66,7 +66,7 @@ export default {
 
       for (let i = 0; i < childNodes.length; i ++) {
         const rootChildNode = childNodes[i];
-        if (rootChildNode.hasAttribute('data-rendered')) {
+        if (rootChildNode.hasAttribute && rootChildNode.hasAttribute('data-rendered')) {
           Host.driver.removeChild(rootChildNode, container);
         }
       }
