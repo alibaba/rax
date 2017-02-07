@@ -82,8 +82,10 @@ const exportContent = (parseData) => {
     ${mediaContent}
 
     if (process.env.NODE_ENV !== 'production') {
-      console.error('${getErrorMessages()}');
-      console.warn('${getWarnMessages()}');
+      var errorMessages = '${getErrorMessages()}';
+      var warnMessages = '${getWarnMessages()}';
+      errorMessages && console.error(errorMessages);
+      warnMessages && console.warn(warnMessages);
     }
     module.exports = data;
   `;
