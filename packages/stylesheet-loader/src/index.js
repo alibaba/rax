@@ -40,6 +40,21 @@ const parse = (query, stylesheet) => {
 
       rule.selectors.forEach((selector) => {
         let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator);
+
+        // handle pseudo class
+        const pseudoIndex = sanitizedSelector.indexOf(':');
+        if (pseudoIndex > -1) {
+          let pseudoStyle = {};
+          const pseudoName = selector.slice(pseudoIndex + 1);
+          sanitizedSelector = sanitizedSelector.slice(0, pseudoIndex);
+
+          Object.keys(style).forEach((prop) => {
+            pseudoStyle[prop + pseudoName] = style[prop];
+          });
+
+          style = pseudoStyle;
+        }
+
         if (sanitizedSelector) {
           data[sanitizedSelector] = Object.assign(data[sanitizedSelector] || {}, style);
         }
