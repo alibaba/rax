@@ -7,6 +7,8 @@ import Validation from './Validation';
 import {pushErrorMessage} from './promptMessage';
 import chalk from 'chalk';
 
+const QUOTES_REG = /[\\'|\\"]/g;
+
 const COLOR_PROPERTIES = {
   color: true,
   backgroundColor: true,
@@ -65,6 +67,10 @@ export default {
     }
 
     rule.declarations.forEach((declaration) => {
+      if (declaration.type !== 'declaration') {
+        return;
+      }
+      declaration.value = declaration.value.replace(QUOTES_REG, '');
       let camelCaseProperty = this.convertProp(declaration.property);
       let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
