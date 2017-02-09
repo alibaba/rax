@@ -23,34 +23,7 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 
 :dart: **Tiny:** 8.0 KB minified + gzipped.
 
-:art: **Universal:** works in browsers, Weex, and Node.js.
-
-## Size Comparison
-
-[Angular 1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js) - 55.4kb (gzip)
-
-<img width="100%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-[React 15.3.2](https://unpkg.com/react@15.3.2/dist/react.min.js) - 43.7kb (gzip)
-
-<img width="78.88%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-[Vue 2.1.8](https://unpkg.com/vue@2.1.8/dist/vue.runtime.min.js) - 17.9kb (gzip)
-
-<img width="32.25%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-[Rax 0.0.2](https://unpkg.com/rax@0.0.2/dist/rax.min.js) - 8.0kb (gzip)
-
-<img width="14.44%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-## Server-side Rendering Comparison
-
-Benchmark run on a MacBook Pro 2.4GHz Intel Core i5 and 8GB 1600MHz DDR3 with Node.js v6.9.2. For more information, please refer to [benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison).
-
-|Library       |renderToString   |
-|--------------|-----------------|
-| React@15.4.2 | 94.93 ops/sec   |
-| Rax@0.1.2    | 154 ops/sec(faster) |
+:art: **Universal:** works in browsers, Weex, Node.js and could works more container that implement [driver specification](./docs/driver-spec.md).
 
 ## Quick Start
 
