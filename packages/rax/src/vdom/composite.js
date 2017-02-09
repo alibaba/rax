@@ -51,9 +51,10 @@ class CompositeComponent {
 
     let Component = this._currentElement.type;
     let publicProps = this._currentElement.props;
-    let isComponentClass = Component.prototype && Component.prototype.isComponentClass;
+    let isClass = Component.prototype;
+    let isComponentClass = isClass && Component.prototype.isComponentClass;
     // Class stateless component without state but have lifecycles
-    let isStatelessClasss = Component.prototype.render;
+    let isStatelessClass = isClass && Component.prototype.render;
 
     // Context process
     let publicContext = this._processContext(context);
@@ -62,7 +63,7 @@ class CompositeComponent {
     let instance;
     let renderedElement;
 
-    if (isComponentClass || isStatelessClasss) {
+    if (isComponentClass || isStatelessClass) {
       // Component instance
       instance = new Component(publicProps, publicContext, updater);
     } else if (typeof Component === 'function') {
