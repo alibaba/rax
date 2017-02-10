@@ -27,15 +27,17 @@ class App extends Component {
 let class_name_styles = class_name_styles1;
 ```
 
+## Installation
+
+```sh
+npm install --save-dev babel-plugin-jsx-class-name
+```
+
 ## Usage
 
-* Install `babel-plugin-jsx-class-name`.
+### Via `.babelrc`
 
-```
-npm install babel-plugin-jsx-class-name --save-dev
-```
-
-* Add `jsx-class-name` into `.babelrc`.
+**.babelrc**
 
 ```json
 {
