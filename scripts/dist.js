@@ -186,7 +186,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
-      new webpack.NoErrorsPlugin(),
+      new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
       new webpack.optimize.UglifyJsPlugin({
         include: /\.min\.js$/,
@@ -200,7 +200,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
       loaders: [{
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel', // 'babel-loader' is also a legal name to reference
+        loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
         query: babelLoaderQuery
       }]
     }
