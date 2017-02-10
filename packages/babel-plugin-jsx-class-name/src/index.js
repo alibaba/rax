@@ -1,4 +1,8 @@
-const CLASS_NAME_SPACE = 'class_name_styles';
+import path from 'path';
+import camelcase from 'camelcase';
+
+const CLASS_NAME_SPACE = 'classNameStyles';
+const FILE_CLASS_NAME_SUFFIX = 'ClassNameStyles';
 
 export default function({ types: t }) {
   function getMemberExpression(str = str.trim()) {
@@ -42,8 +46,9 @@ export default function({ types: t }) {
 
         if (cssIndex > 0) {
           cssFileCount = file.get('cssFileCount') || 1;
+          const cssFileBaseName = camelcase(path.basename(sourceValue, '.css'));
 
-          const styleName = `${CLASS_NAME_SPACE + cssFileCount}`;
+          const styleName = `${cssFileBaseName + FILE_CLASS_NAME_SUFFIX}`;
           const styleIdentifier = t.identifier(styleName);
           node.specifiers = [t.importDefaultSpecifier(styleIdentifier)];
 

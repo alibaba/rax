@@ -8,14 +8,14 @@
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
   },
-  "scripts": {
-    "build-examples": "babel examples -d built-examples"
-  },
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "devDependencies": {
     "babel-plugin-syntax-jsx": "^6.18.0"
+  },
+  "dependencies": {
+    "camelcase": "^4.0.0"
   }
 }
