@@ -1,0 +1,21 @@
+{
+  "name": "babel-plugin-jsx-class-name",
+  "version": "0.1.7",
+  "description": "babel plugin jsx class name",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "scripts": {
+    "build-examples": "babel examples -d built-examples"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "devDependencies": {
+    "babel-plugin-syntax-jsx": "^6.18.0"
+  }
+}
