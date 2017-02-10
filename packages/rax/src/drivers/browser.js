@@ -9,6 +9,8 @@ import flexbox from '../style/flexbox';
 const FULL_WIDTH_REM = 750;
 const STYLE = 'style';
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
+const CLASS_NAME = 'className';
+const CLASS = 'class';
 
 const Driver = {
   getElementById(id) {
@@ -90,37 +92,37 @@ const Driver = {
   },
 
   removeAllEventListeners(node) {
-    // TODO
+    // noop
   },
 
   removeAttribute(node, propKey) {
-    if (propKey === 'className') {
-      propKey = 'class';
+    if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+      return node.innerHTML = null;
     }
 
-    if (node.nodeName.toLowerCase() == 'input' &&
-      ( propKey == 'checked' && (node.type === 'checkbox' || node.type === 'radio')
-      || propKey == 'value')) {
-      node[propKey] = null;
-    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-      node.innerHTML = null;
-    } else {
-      node.removeAttribute(propKey);
+    if (propKey === CLASS_NAME) {
+      propKey = CLASS;
     }
+
+    if (propKey in node) {
+      node[propKey] = null;
+    }
+
+    node.removeAttribute(propKey);
   },
 
   setAttribute(node, propKey, propValue) {
-    if (propKey === 'className') {
-      propKey = 'class';
+    if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+      return node.innerHTML = propValue.__html;
     }
 
-    if (node.nodeName.toLowerCase() == 'input' &&
-      ( propKey == 'checked' && (node.type === 'checkbox' || node.type === 'radio')
-      || propKey == 'value')) {
+    if (propKey === CLASS_NAME) {
+      propKey = CLASS;
+    }
+
+    if (propKey in node) {
       node[propKey] = propValue;
-    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-      node.innerHTML = propValue.__html;
-    } else if (propValue != null) {
+    } else {
       node.setAttribute(propKey, propValue);
     }
   },

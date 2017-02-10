@@ -7,6 +7,8 @@ import Validation from './Validation';
 import {pushErrorMessage} from './promptMessage';
 import chalk from 'chalk';
 
+const QUOTES_REG = /[\\'|\\"]/g;
+
 const COLOR_PROPERTIES = {
   color: true,
   backgroundColor: true,
@@ -20,7 +22,7 @@ const COLOR_PROPERTIES = {
 export default {
   sanitizeSelector(selector, transformDescendantCombinator) {
     // filter multiple extend selectors
-    if (!transformDescendantCombinator && !/^\.[a-zA-Z0-9_]+$/.test(selector)) {
+    if (!transformDescendantCombinator && !/^\.[a-zA-Z0-9_:]+$/.test(selector)) {
       const message = `\`${selector}\` is not a valid selector (valid e.g. ".abc、.abcBcd、.abc_bcd")`;
       console.error(chalk.red.bold(message));
       pushErrorMessage(message);
@@ -65,6 +67,10 @@ export default {
     }
 
     rule.declarations.forEach((declaration) => {
+      if (declaration.type !== 'declaration') {
+        return;
+      }
+      declaration.value = declaration.value.replace(QUOTES_REG, '');
       let camelCaseProperty = this.convertProp(declaration.property);
       let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;

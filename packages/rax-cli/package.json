@@ -1,6 +1,6 @@
 {
   "name": "rax-cli",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "license": "BSD-3-Clause",
   "description": "The Rax CLI tools",
   "main": "lib/index.js",
@@ -20,6 +20,7 @@
     "cross-spawn": "^4.0.2",
     "easyfile": "^0.1.1",
     "minimist": "^1.2.0",
-    "prompt": "^0.2.14"
+    "prompt": "^0.2.14",
+    "update-notifier": "^1.0.3"
   }
 }
