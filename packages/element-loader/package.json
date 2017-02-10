@@ -6,12 +6,12 @@
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alibaba/rx.git"
+    "url": "git+https://github.com/alibaba/rax.git"
   },
   "bugs": {
-    "url": "https://github.com/alibaba/rx/issues"
+    "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rx#readme",
+  "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
     "babel-core": "^6.20.0",
     "babel-generator": "^6.20.0",

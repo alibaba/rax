@@ -16,7 +16,7 @@ class App extends Component {
 
 will be transpiled into something like this:
 
-```
+```js
 import class_name_styles1 from 'foo.css';
 
 class App extends Component {
