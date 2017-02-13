@@ -72,7 +72,7 @@ class RaxWebpackPlugin {
             // In webpack2 chunk.initial was removed. Use isInitial()
             try {
               if (!chunk.initial) return;
-            } catch (e){
+            } catch (e) {
               if (!chunk.isInitial()) return;
             }
 
