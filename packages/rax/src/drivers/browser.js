@@ -128,16 +128,21 @@ const Driver = {
   },
 
   setStyles(node, styles) {
+    let tranformedStyles = {};
+
     for (let prop in styles) {
-      if (styles.hasOwnProperty(prop)) {
-        let val = styles[prop];
-        if (flexbox.isFlexProp(prop)) {
-          flexbox[prop](val, node.style);
-        } else {
-          node.style[prop] = convertUnit(val, prop);
-        }
+      let val = styles[prop];
+      if (flexbox.isFlexProp(prop)) {
+        flexbox[prop](val, tranformedStyles);
+      } else {
+        tranformedStyles[prop] = convertUnit(val, prop);
       }
     }
+
+    for (let prop in tranformedStyles) {
+      node.style[prop] = tranformedStyles[prop];
+    }
+
   },
 
   beforeRender() {
