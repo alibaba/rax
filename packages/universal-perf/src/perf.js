@@ -100,7 +100,7 @@ function getInclusive(flushHistory = getLastMeasurements()) {
       }
       isCompositeByID[instanceID] = true;
       let nextParentID = instanceID;
-      while(nextParentID) {
+      while (nextParentID) {
         if (isCompositeByID[nextParentID]) {
           updateAggregatedStats(treeSnapshot, nextParentID, stats => {
             stats.inclusiveRenderDuration += duration;

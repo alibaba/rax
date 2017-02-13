@@ -14,6 +14,7 @@ let currentTimerDebugID = null;
 let roots = {};
 let tree = {};
 let operationHistory = [];
+let currentTimerNestedFlushDuration = 0;
 
 function begin() {
   lifeCycleTimerStack.push({

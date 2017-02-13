@@ -195,9 +195,7 @@ class CompositeComponent {
 
   _processChildContext(currentContext) {
     let instance = this._instance;
-
     let childContext = instance.getChildContext && instance.getChildContext();
-
     if (childContext) {
       return Object.assign({}, currentContext, childContext);
     }
