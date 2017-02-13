@@ -1,5 +1,4 @@
 import instance from './vdom/instance';
-import {DebugTool} from 'universal-perf';
 
 export default function unmountComponentAtNode(node) {
   let component = instance.get(node);
@@ -10,10 +9,6 @@ export default function unmountComponentAtNode(node) {
 
   instance.remove(node);
   component._internal.unmountComponent();
-
-  if (process.env.NODE_ENV !== 'production') {
-    DebugTool.onEndFlush();
-  }
 
   return true;
 };

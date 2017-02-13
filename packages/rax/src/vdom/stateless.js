@@ -1,5 +1,3 @@
-import {DebugTool} from 'universal-perf';
-
 /**
  * Stateless Component Class Wrapper
  */
@@ -11,10 +9,6 @@ class StatelessComponent {
     this.pureRender = pureRender;
   }
   render() {
-    if (process.env.NODE_ENV !== 'production') {
-      DebugTool.onBeginFlush();
-    }
-
     return this.pureRender(this.props, this.context);
   }
 }

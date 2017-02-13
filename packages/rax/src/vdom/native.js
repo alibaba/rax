@@ -5,17 +5,10 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import instance from './instance';
 import Hook from '../debug/hook';
-import {DebugTool} from 'universal-perf';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
 const TREE = 'tree';
-
-function operation(options) {
-  if (process.env.NODE_ENV !== 'production') {
-    DebugTool.onHostOperation(options);
-  }
-}
 
 /**
  * Native Component
@@ -235,27 +228,15 @@ class NativeComponent {
         }
       // Update other property
       } else {
-        let payload = {};
-        payload[propKey] = nextProp;
         if (nextProp != null) {
           Host.driver.setAttribute(this.getNativeNode(), propKey, nextProp);
         } else {
           Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[propKey]);
         }
-        operation({
-          instanceID: this._mountID,
-          type: 'update attribute',
-          payload: payload
-        });
       }
     }
 
     if (styleUpdates) {
-      operation({
-        instanceID: this._mountID,
-        type: 'update styles',
-        payload: styleUpdates
-      });
       Host.driver.setStyles(this.getNativeNode(), styleUpdates);
     }
   }

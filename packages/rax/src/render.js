@@ -2,14 +2,9 @@ import injectComponent from './vdom/injectComponent';
 import instance from './vdom/instance';
 import {setRem} from './style/unit';
 import {injectDriver, getDriver} from './driver';
-import {DebugTool} from 'universal-perf';
 import dump from './debug/dump';
 
 function render(element, container, callback) {
-  if (process.env.NODE_ENV !== 'production') {
-    DebugTool.onBeginFlush();
-  }
-
   // Inject component
   injectComponent();
   // Inject driver
@@ -34,9 +29,6 @@ function render(element, container, callback) {
   // After render callback
   driver.afterRender && driver.afterRender(component);
 
-  if (process.env.NODE_ENV !== 'production') {
-    DebugTool.onEndFlush();
-  }
   return component;
 }
 
