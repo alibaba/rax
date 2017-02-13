@@ -1,5 +1,5 @@
 import instance from './vdom/instance';
-import DebugTool from './debug/DebugTool';
+import {DebugTool} from 'universal-perf';
 
 export default function unmountComponentAtNode(node) {
   let component = instance.get(node);

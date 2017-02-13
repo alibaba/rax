@@ -2,7 +2,7 @@ import injectComponent from './vdom/injectComponent';
 import instance from './vdom/instance';
 import {setRem} from './style/unit';
 import {injectDriver, getDriver} from './driver';
-import DebugTool from './debug/DebugTool';
+import {DebugTool} from 'universal-perf';
 import dump from './debug/dump';
 
 function render(element, container, callback) {

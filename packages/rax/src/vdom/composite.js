@@ -6,7 +6,7 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import Hook from '../debug/hook';
-import DebugTool from '../debug/DebugTool';
+import {DebugTool} from 'universal-perf';
 
 function measureLifeCyclePerf(fn, debugID, timerType) {
   if (debugID === 0) {
@@ -63,7 +63,7 @@ class CompositeComponent {
     this._updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
-      DebugTool.onBeforeMountComponent(this._mountID, this._currentElement, null);
+      DebugTool.onBeforeMountComponent(this._mountID, this);
     }
 
     let Component = this._currentElement.type;
@@ -234,15 +234,7 @@ class CompositeComponent {
   _processChildContext(currentContext) {
     let instance = this._instance;
 
-    if (process.env.NODE_ENV !== 'production') {
-      DebugTool.onBeginProcessingChildContext();
-    }
-
     let childContext = instance.getChildContext && instance.getChildContext();
-
-    if (process.env.NODE_ENV !== 'production') {
-      DebugTool.onEndProcessingChildContext();
-    }
 
     if (childContext) {
       return Object.assign({}, currentContext, childContext);
@@ -281,7 +273,7 @@ class CompositeComponent {
     let instance = this._instance;
 
     if (process.env.NODE_ENV !== 'production') {
-      DebugTool.onBeforeUpdateComponent(this._mountID, this._currentElement);
+      DebugTool.onBeforeUpdateComponent(this._mountID, this);
     }
 
     if (!instance) {

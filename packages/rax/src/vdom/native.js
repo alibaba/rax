@@ -5,7 +5,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import instance from './instance';
 import Hook from '../debug/hook';
-import DebugTool from '../debug/DebugTool';
+import {DebugTool} from 'universal-perf';
 
 const STYLE = 'style';
 const CHILDREN = 'children';

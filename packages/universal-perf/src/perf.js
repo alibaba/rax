@@ -1,16 +1,9 @@
-'use strict';
-
-let alreadyWarned = false;
-
-import DebugTool, { FlushHistory } from './DebugTool';
+import DebugTool from './debugTool';
+import getTreeSnapshot from './getTreeSnapshot';
 
 function roundFloat(val, base = 2) {
   const n = Math.pow(10, base);
   return Math.floor(val * n) / n;
-}
-
-function consoleTable(table) {
-  console.table(table);
 }
 
 function getLastMeasurements() {
@@ -21,71 +14,68 @@ function getLastMeasurements() {
   return DebugTool.getFlushHistory();
 }
 
-function getExclusive(flushHistory = getLastMeasurements()) {
+function start() {
+  if (process.env.NODE_ENV === 'production') {
+    return;
+  }
+
+  DebugTool.beginProfiling();
+}
+
+function stop() {
+  if (process.env.NODE_ENV === 'production') {
+    return;
+  }
+
+  DebugTool.endProfiling();
+}
+
+function getOperations(flushHistory = getLastMeasurements()) {
   if (process.env.NODE_ENV === 'production') {
     return [];
   }
 
-  let aggregatedStats = {};
-  let affectedIDs = {};
+  const roots = DebugTool.getRoots();
+  const tree = DebugTool.getTree();
+  const treeSnapshot = getTreeSnapshot(roots, tree);
 
-  function updateAggregatedStats(treeSnapshot, instanceID, timerType, applyUpdate) {
-    const {displayName} = treeSnapshot[instanceID];
-    const key = displayName;
-    let stats = aggregatedStats[key];
-    if (!stats) {
-      affectedIDs[key] = {};
-      stats = aggregatedStats[key] = {
+  let stats = [];
+  flushHistory.forEach((flush, flushIndex) => {
+    let {operations} = flush;
+    operations.forEach(operation => {
+      let {instanceID, type, payload} = operation;
+      let {displayName = '', parentID = 0} = treeSnapshot[instanceID] || {};
+      let owner = treeSnapshot[parentID];
+      let key = (owner ? owner.displayName + ' > ' : '') + displayName;
+
+      stats.push({
+        flushIndex,
+        instanceID,
         key,
-        instanceCount: 0,
-        counts: {},
-        durations: {},
-        totalDuration: 0,
-      };
-    }
-    if (!stats.durations[timerType]) {
-      stats.durations[timerType] = 0;
-    }
-    if (!stats.counts[timerType]) {
-      stats.counts[timerType] = 0;
-    }
-    affectedIDs[key][instanceID] = true;
-    applyUpdate(stats);
-  }
-
-  flushHistory.forEach(flush => {
-    const {measurements, treeSnapshot} = flush;
-    measurements.forEach(measurement => {
-      const {duration, instanceID, timerType} = measurement;
-      updateAggregatedStats(treeSnapshot, instanceID, timerType, stats => {
-        stats.totalDuration += duration;
-        stats.durations[timerType] += duration;
-        stats.counts[timerType]++;
+        type,
+        parentID,
+        payload,
       });
     });
   });
-
-  return Object.keys(aggregatedStats)
-    .map(key => ({
-      ...aggregatedStats[key],
-      instanceCount: Object.keys(affectedIDs[key]).length,
-    }))
-    .sort((a, b) =>
-      b.totalDuration - a.totalDuration
-    );
+  return stats;
 }
 
 function getInclusive(flushHistory = getLastMeasurements()) {
   if (process.env.NODE_ENV === 'production') {
-    return [];
+    return;
   }
+
+  const roots = DebugTool.getRoots();
+  const tree = DebugTool.getTree();
+  const treeSnapshot = getTreeSnapshot(roots, tree);
 
   let aggregatedStats = {};
   let affectedIDs = {};
 
   function updateAggregatedStats(treeSnapshot, instanceID, applyUpdate) {
-    const {displayName, ownerID} = treeSnapshot[instanceID];
-    const owner = treeSnapshot[ownerID];
+    const {displayName, parentID} = treeSnapshot[instanceID];
+    const owner = treeSnapshot[parentID];
     const key = (owner ? owner.displayName + ' > ' : '') + displayName;
     let stats = aggregatedStats[key];
     if (!stats) {
@@ -100,31 +90,17 @@ function getInclusive(flushHistory = getLastMeasurements()) {
     affectedIDs[key][instanceID] = true;
     applyUpdate(stats);
   }
-
   let isCompositeByID = {};
   flushHistory.forEach(flush => {
     const {measurements} = flush;
-    measurements.forEach(measurement => {
-      const {instanceID, timerType} = measurement;
-      if (timerType !== 'render') {
-        return;
-      }
-      isCompositeByID[instanceID] = true;
-    });
-  });
-
-  flushHistory.forEach(flush => {
-    const {measurements, treeSnapshot} = flush;
     measurements.forEach(measurement => {
       const {duration, instanceID, timerType} = measurement;
       if (timerType !== 'render') {
         return;
       }
-      updateAggregatedStats(treeSnapshot, instanceID, stats => {
-        stats.renderCount++;
-      });
+      isCompositeByID[instanceID] = true;
       let nextParentID = instanceID;
-      while (nextParentID) {
+      while(nextParentID) {
         if (isCompositeByID[nextParentID]) {
           updateAggregatedStats(treeSnapshot, nextParentID, stats => {
             stats.inclusiveRenderDuration += duration;
@@ -150,12 +126,16 @@ function getWasted(flushHistory = getLastMeasurements()) {
     return [];
   }
 
+  const roots = DebugTool.getRoots();
+  const tree = DebugTool.getTree();
+  const treeSnapshot = getTreeSnapshot(roots, tree);
+
   let aggregatedStats = {};
   let affectedIDs = {};
 
   function updateAggregatedStats(treeSnapshot, instanceID, applyUpdate) {
-    let {displayName, ownerID} = treeSnapshot[instanceID];
-    let owner = treeSnapshot[ownerID];
+    let {displayName, parentID} = treeSnapshot[instanceID];
+    let owner = treeSnapshot[parentID];
     let key = (owner ? owner.displayName + ' > ' : '') + displayName;
     let stats = aggregatedStats[key];
     if (!stats) {
@@ -172,7 +152,7 @@ function getWasted(flushHistory = getLastMeasurements()) {
   }
 
   flushHistory.forEach(flush => {
-    let {measurements, treeSnapshot, operations} = flush;
+    let {measurements, operations} = flush;
     let isDefinitelyNotWastedByID = {};
 
     operations.forEach(operation => {
@@ -233,39 +213,88 @@ function getWasted(flushHistory = getLastMeasurements()) {
     );
 }
 
-function getOperations(flushHistory = getLastMeasurements()) {
+function getExclusive(flushHistory = getLastMeasurements()) {
   if (process.env.NODE_ENV === 'production') {
     return [];
   }
 
-  let stats = [];
-  flushHistory.forEach((flush, flushIndex) => {
-    let {operations, treeSnapshot} = flush;
-    operations.forEach(operation => {
-      let {instanceID, type, payload} = operation;
-      let {displayName = '', ownerID = 0} = treeSnapshot[instanceID] || {};
-      let owner = treeSnapshot[ownerID];
-      let key = (owner ? owner.displayName + ' > ' : '') + displayName;
+  let aggregatedStats = {};
+  let affectedIDs = {};
 
-      stats.push({
-        flushIndex,
-        instanceID,
+  const roots = DebugTool.getRoots();
+  const tree = DebugTool.getTree();
+  const treeSnapshot = getTreeSnapshot(roots, tree);
+
+  function updateAggregatedStats(treeSnapshot, instanceID, timerType, applyUpdate) {
+    const {displayName} = treeSnapshot[instanceID];
+    const key = displayName;
+    let stats = aggregatedStats[key];
+    if (!stats) {
+      affectedIDs[key] = {};
+      stats = aggregatedStats[key] = {
         key,
-        type,
-        ownerID,
-        payload,
+        instanceCount: 0,
+        counts: {},
+        durations: {},
+        totalDuration: 0,
+      };
+    }
+    if (!stats.durations[timerType]) {
+      stats.durations[timerType] = 0;
+    }
+    if (!stats.counts[timerType]) {
+      stats.counts[timerType] = 0;
+    }
+    affectedIDs[key][instanceID] = true;
+    applyUpdate(stats);
+  }
+
+  flushHistory.forEach(flush => {
+    const {measurements} = flush;
+    measurements.forEach(measurement => {
+      const {duration, instanceID, timerType} = measurement;
+      updateAggregatedStats(treeSnapshot, instanceID, timerType, stats => {
+        stats.totalDuration += duration;
+        stats.durations[timerType] += duration;
+        stats.counts[timerType]++;
       });
     });
   });
-  return stats;
+
+  return Object.keys(aggregatedStats)
+    .map(key => ({
+      ...aggregatedStats[key],
+      instanceCount: Object.keys(affectedIDs[key]).length,
+    }))
+    .sort((a, b) =>
+      b.totalDuration - a.totalDuration
+    );
 }
 
-function printExclusive(flushHistory) {
+function printInclusive() {
   if (process.env.NODE_ENV === 'production') {
     return;
   }
 
-  let stats = getExclusive(flushHistory);
+  const stats = getInclusive();
+
+  const table = stats.map(item => {
+    let {key, instanceCount, inclusiveRenderDuration, renderCount} = item;
+    return {
+      'Component': key,
+      'Inclusive time (ms)': roundFloat(inclusiveRenderDuration),
+      'Instance count': instanceCount
+    };
+  });
+  console.table(table);
+}
+
+function printExclusive() {
+  if (process.env.NODE_ENV === 'production') {
+    return;
+  }
+
+  let stats = getExclusive();
   let table = stats.map(item => {
     let {key, instanceCount, totalDuration} = item;
     let renderCount = item.counts.render || 0;
@@ -282,33 +311,34 @@ function printExclusive(flushHistory) {
       'Total lifecycle time (ms)': roundFloat(totalDuration - renderDuration),
     };
   });
-  consoleTable(table);
+  console.table(table);
 }
 
-function printInclusive(flushHistory) {
+function printOperations() {
   if (process.env.NODE_ENV === 'production') {
     return;
   }
 
-  let stats = getInclusive(flushHistory);
-  let table = stats.map(item => {
-    let {key, instanceCount, inclusiveRenderDuration, renderCount} = item;
-    return {
-      'Owner > Component': key,
-      'Inclusive render time (ms)': roundFloat(inclusiveRenderDuration),
-      'Instance count': instanceCount,
-      'Render count': renderCount,
-    };
-  });
-  consoleTable(table);
+  let stats = getOperations();
+  let table = stats.map(stat => ({
+    'Owner > Node': stat.key,
+    'Operation': stat.type,
+    'Payload': typeof stat.payload === 'object' ?
+      JSON.stringify(stat.payload) :
+      stat.payload,
+    'Flush index': stat.flushIndex,
+    'Owner Component ID': stat.parentID,
+    'DOM Component ID': stat.instanceID,
+  }));
+  console.table(table);
 }
 
-function printWasted(flushHistory) {
+function printWasted() {
   if (process.env.NODE_ENV === 'production') {
     return;
   }
 
-  let stats = getWasted(flushHistory);
+  let stats = getWasted();
   let table = stats.map(item => {
     let {key, instanceCount, inclusiveRenderDuration, renderCount} = item;
     return {
@@ -318,77 +348,21 @@ function printWasted(flushHistory) {
       'Render count': renderCount,
     };
   });
-  consoleTable(table);
+  console.table(table);
 }
 
-function printOperations(flushHistory) {
-  if (process.env.NODE_ENV === 'production') {
-    return;
-  }
-
-  let stats = getOperations(flushHistory);
-  let table = stats.map(stat => ({
-    'Owner > Node': stat.key,
-    'Operation': stat.type,
-    'Payload': typeof stat.payload === 'object' ?
-      JSON.stringify(stat.payload) :
-      stat.payload,
-    'Flush index': stat.flushIndex,
-    'Owner Component ID': stat.ownerID,
-    'DOM Component ID': stat.instanceID,
-  }));
-  consoleTable(table);
-}
-
-let warnedAboutGetMeasurementsSummaryMap = false;
-function getMeasurementsSummaryMap(measurements) {
-  console.warn(
-    warnedAboutGetMeasurementsSummaryMap,
-    '`Perf.getMeasurementsSummaryMap(...)` is deprecated. Use ' +
-    '`Perf.getWasted(...)` instead.'
-  );
-  warnedAboutGetMeasurementsSummaryMap = true;
-  return getWasted(measurements);
-}
-
-function start() {
-  if (process.env.NODE_ENV === 'production') {
-    return;
-  }
-
-  DebugTool.beginProfiling();
-}
-
-function stop() {
-  if (process.env.NODE_ENV === 'production') {
-    return;
-  }
-
-  DebugTool.endProfiling();
-}
-
-function isRunning() {
-  if (process.env.NODE_ENV === 'production') {
-    return;
-  }
-
-  return DebugTool.isProfiling();
-}
-
-let PerfAnalysis = {
+export default {
   getLastMeasurements,
   getExclusive,
   getInclusive,
   getWasted,
   getOperations,
+
   printExclusive,
   printInclusive,
   printWasted,
   printOperations,
-  start,
-  stop,
-  isRunning,
-  getMeasurementsSummaryMap,
-};
 
-export default PerfAnalysis;
+  start,
+  stop
+};

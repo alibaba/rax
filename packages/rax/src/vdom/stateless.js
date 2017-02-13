@@ -1,4 +1,4 @@
-import DebugTool from '../debug/DebugTool';
+import {DebugTool} from 'universal-perf';
 
 /**
  * Stateless Component Class Wrapper
