@@ -39,23 +39,23 @@ const parse = (query, stylesheet) => {
       style = transformer.convert(rule);
 
       rule.selectors.forEach((selector) => {
-        let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator);
-
-        // handle pseudo class
-        const pseudoIndex = sanitizedSelector.indexOf(':');
-        if (pseudoIndex > -1) {
-          let pseudoStyle = {};
-          const pseudoName = selector.slice(pseudoIndex + 1);
-          sanitizedSelector = sanitizedSelector.slice(0, pseudoIndex);
-
-          Object.keys(style).forEach((prop) => {
-            pseudoStyle[prop + pseudoName] = style[prop];
-          });
-
-          style = pseudoStyle;
-        }
+        let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator, rule.position);
 
         if (sanitizedSelector) {
+          // handle pseudo class
+          const pseudoIndex = sanitizedSelector.indexOf(':');
+          if (pseudoIndex > -1) {
+            let pseudoStyle = {};
+            const pseudoName = selector.slice(pseudoIndex + 1);
+            sanitizedSelector = sanitizedSelector.slice(0, pseudoIndex);
+
+            Object.keys(style).forEach((prop) => {
+              pseudoStyle[prop + pseudoName] = style[prop];
+            });
+
+            style = pseudoStyle;
+          }
+
           data[sanitizedSelector] = Object.assign(data[sanitizedSelector] || {}, style);
         }
       });
@@ -90,20 +90,39 @@ const exportContent = (parseData) => {
   const {data, fontFaceRules, mediaRules} = parseData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(parseData);
+  const warnMessageOutput = getWarnMessageOutput();
 
   return `
     var data = ${stringifyData(data)};
     ${fontFaceContent}
     ${mediaContent}
+    ${warnMessageOutput}
 
-    if (process.env.NODE_ENV !== 'production') {
-      var errorMessages = '${getErrorMessages()}';
-      var warnMessages = '${getWarnMessages()}';
-      errorMessages && console.error(errorMessages);
-      warnMessages && console.warn(warnMessages);
-    }
     module.exports = data;
   `;
+};
+
+const getWarnMessageOutput = () => {
+  const errorMessages = getErrorMessages();
+  const warnMessages = getWarnMessages();
+  let output = '';
+
+  if (errorMessages) {
+    output += `
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('${errorMessages}');
+      }
+    `;
+  }
+  if (warnMessages) {
+    output += `
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('${warnMessages}');
+      }
+    `;
+  }
+
+  return output;
 };
 
 const getMediaContent = (parseData) => {

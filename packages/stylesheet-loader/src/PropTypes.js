@@ -12,55 +12,59 @@ let PropTypes = {
   color: createColorChecker
 };
 
-function createLengthChecker(value = '', prop) {
+function createLengthChecker(value = '', prop, selectors) {
   value = value.toString();
 
   if (!value.match(LENGTH_REGEXP)) {
-    return new Error(`\`${value}\` is not a valid value for property \`${prop}\` (e.g. "16、16rem、16px")`);
+    return new Error(getMessage(prop, value, selectors, '16、16rem、16px'));
   }
   return null;
 }
 
-function createNumberChecker(value = '', prop) {
+function createNumberChecker(value = '', prop, selectors) {
   value = value.toString();
   let match = value.match(LENGTH_REGEXP);
 
   if (!match || match[1]) {
-    return new Error(`\`${value}\` is not a valid value for property \`${prop}\` (e.g. "16、24、5.2")`);
+    return new Error(getMessage(prop, value, selectors, '16、24、5.2'));
   }
   return null;
 }
 
-function createIntegerChecker(value = '', prop) {
+function createIntegerChecker(value = '', prop, selectors) {
   value = value.toString();
 
   if (!value.match(INTEGER_REGEXP)) {
-    return new Error(`\`${value}\` is not a valid value for property \`${prop}\` (e.g. "16、24、12")`);
+    return new Error(getMessage(prop, value, selectors, '16、24、12'));
   }
   return null;
 }
 
 function createEnumChecker(list) {
-  return function validate(value, prop) {
+  return function validate(value, prop, selectors) {
     let index = list.indexOf(value);
 
     if (index < 0) {
-      return new Error(`\`${value}\` is not a valid value for property \`${prop}\` (e.g. "${list.join('、')}")`);
+      return new Error(getMessage(prop, value, selectors, `${list.join('、')}`));
     }
 
     return null;
   };
 }
 
-function createColorChecker(value, prop) {
+function createColorChecker(value, prop, selectors) {
   if (typeof value === 'number') {
     return;
   }
 
   if (normalizeColor(value) === null) {
-    return new Error(`\`${value}\` is not a valid value for property \`${prop}\` (e.g. "#333、#fefefe、rgb(255, 0, 0)")`);
+    return new Error(getMessage(prop, value, selectors, '#333、#fefefe、rgb(255, 0, 0)'));
   }
   return null;
 };
+
+function getMessage(prop, value, selectors, link) {
+  return `"${prop}: ${value}" is not valid value in "${selectors}" selector (e.g. "${link}")`;
+}
 
 export default PropTypes;
