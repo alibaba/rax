@@ -3,11 +3,6 @@ import camelcase from 'camelcase';
 
 const NAME_SPACE = 'cssStyles';
 const FILE_NAME_SUFFIX = 'Styles';
-const groups = {
-  id: 'ids',
-  className: 'classes',
-  tagName: 'tags'
-};
 
 export default function({ types: t }) {
   function getMemberExpression(str = str.trim()) {
@@ -23,12 +18,7 @@ export default function({ types: t }) {
   }
   return {
     visitor: {
-      JSXElement({ node }) {
-        const openingElement = node.openingElement;
-        const tagName = openingElement.name.name;
-        const attributes = openingElement.attributes;
-      },
-      // parse jsx className and id
+      // parse jsx className
       JSXAttribute({ node }) {
         let attributeName = node.name.name;
         if (attributeName === 'className' || attributeName === 'class') {
