@@ -2,7 +2,7 @@
 
 ## Installation
 
-### To install universal-stylesheet from NPM, run:
+### To install universal-perf from NPM, run:
 
 ```sh
 npm install --save universal-perf
