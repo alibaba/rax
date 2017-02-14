@@ -92,13 +92,10 @@ const exportContent = (parseData) => {
   const mediaContent = getMediaContent(parseData);
   const warnMessageOutput = getWarnMessageOutput();
 
-  return `
-    var data = ${stringifyData(data)};
-    ${fontFaceContent}
-    ${mediaContent}
-    ${warnMessageOutput}
-
-    module.exports = data;
+  return `module.exports = ${stringifyData(data)};
+  ${fontFaceContent}
+  ${mediaContent}
+  ${warnMessageOutput}
   `;
 };
 
@@ -109,16 +106,16 @@ const getWarnMessageOutput = () => {
 
   if (errorMessages) {
     output += `
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('${errorMessages}');
-      }
+  if (process.env.NODE_ENV !== 'production') {
+    console.error('${errorMessages}');
+  }
     `;
   }
   if (warnMessages) {
     output += `
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn('${warnMessages}');
-      }
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn('${warnMessages}');
+  }
     `;
   }
 
@@ -131,12 +128,12 @@ const getMediaContent = (parseData) => {
 
   mediaRules.forEach((rule, index) => {
     content += `
-      if (window.matchMedia && window.matchMedia('${rule.key}').matches) {
-        var ruleData = ${stringifyData(rule.data)};
-        for(var key in ruleData) {
-          data[key] = Object.assign(data[key], ruleData[key]);
-        }
-      }
+  if (window.matchMedia && window.matchMedia('${rule.key}').matches) {
+    var ruleData = ${stringifyData(rule.data)};
+    for(var key in ruleData) {
+      data[key] = Object.assign(data[key], ruleData[key]);
+    }
+  }
     `;
   });
 
@@ -148,8 +145,8 @@ const getFontFaceContent = (rules) => {
 
   rules.forEach((rule, index) => {
     content += `
-      var font${index} = new FontFace('${rule['font-family'].replace(QUOTES_REG, '')}', '${rule.src.replace(QUOTES_REG, '')}');
-      document.fonts.add(font${index});
+  var fontFace${index} = new FontFace('${rule['font-family'].replace(QUOTES_REG, '')}', '${rule.src.replace(QUOTES_REG, '')}');
+  document.fonts.add(fontFace${index});
     `;
   });
   return content;
