@@ -26,7 +26,6 @@ const Driver = {
   },
 
   createBody() {
-
     if (document.body) {
       return document.body;
     }

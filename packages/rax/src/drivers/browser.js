@@ -142,7 +142,6 @@ const Driver = {
     for (let prop in tranformedStyles) {
       node.style[prop] = tranformedStyles[prop];
     }
-
   },
 
   beforeRender() {
