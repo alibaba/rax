@@ -26,8 +26,6 @@ const Driver = {
   },
 
   createBody() {
-    // Close batched updates
-    document.open();
 
     if (document.body) {
       return document.body;
@@ -178,19 +176,20 @@ const Driver = {
   },
 
   beforeRender() {
+    // Turn off batched updates
+    document.open();
+
     // Init rem unit
     setRem(this.getWindowWidth() / FULL_WIDTH_REM);
   },
 
   afterRender() {
-    if (document && document.listener && document.listener.createFinish) {
-      document.listener.createFinish(
-        () => {
-          // Make updates batched
-          document.close();
-        }
-      );
+    if (document.listener && document.listener.createFinish) {
+      document.listener.createFinish();
     }
+
+    // Turn on batched updates
+    document.close();
   },
 
   getWindowWidth() {
