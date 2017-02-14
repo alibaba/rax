@@ -1,8 +1,8 @@
 import {Component, createElement} from 'rax';
 import {isWeex} from 'universal-env';
 
-const DEFAULT_WIDTH = '100rem';
-const DEFAULT_HEIGHT = '60rem';
+const DEFAULT_WIDTH = 100;
+const DEFAULT_HEIGHT = 60;
 
 class Switch extends Component {
 
@@ -42,10 +42,10 @@ class Switch extends Component {
       span: {
         width: DEFAULT_WIDTH,
         height: DEFAULT_HEIGHT,
-        borderRadius: '40rem',
+        borderRadius: 40,
         position: 'relative',
         display: 'inline-block',
-        margin: '4rem',
+        margin: 4,
         cursor: 'default', // pointer will cause a grey background color on chrome
         verticalAlign: 'middle',
         borderColor: '#dfdfdf',
@@ -75,15 +75,15 @@ class Switch extends Component {
       small: {
         position: 'absolute',
         top: 0,
-        width: '60rem',
-        height: '60rem',
+        width: 60,
+        height: 60,
         backgroundColor: this.props.thumbTintColor,
         borderRadius: '100%',
         boxShadow: '0 1px 3px rgba(0,0,0,0.4)',
         WebkitTransition: '-webkit-transform 0.2s ease-in'
       },
       checkedSmall: {
-        WebkitTransform: 'translateX(40rem)'
+        WebkitTransform: 'translateX(40rem)' // should with rem unit that the value is string type
       },
       uncheckedSmall: {
         WebkitTransform: 'translateX(0)'

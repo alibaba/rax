@@ -5,6 +5,7 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 import Hook from '../debug/hook';
+import {isWeb} from 'universal-env';
 
 /**
  * Instance manager
@@ -55,6 +56,19 @@ export default {
       } else {
         Hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
+      }
+    }
+
+    // handle rendered ELement
+    if (isWeb && container.childNodes) {
+      // clone childNodes, Because removeChild will causing change in childNodes length
+      const childNodes = [...container.childNodes];
+
+      for (let i = 0; i < childNodes.length; i ++) {
+        const rootChildNode = childNodes[i];
+        if (rootChildNode.hasAttribute && rootChildNode.hasAttribute('data-rendered')) {
+          Host.driver.removeChild(rootChildNode, container);
+        }
       }
     }
 

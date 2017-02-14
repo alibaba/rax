@@ -1,4 +1,4 @@
-import ConcatSource from 'webpack/lib/ConcatSource';
+import {ConcatSource} from 'webpack-sources';
 import fs from 'fs';
 import path from 'path';
 

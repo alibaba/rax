@@ -95,9 +95,46 @@ Default does not support nested, but you can also choose to avoid this constrain
 
 ### Support font-face
 
-```
+```css
 @font-face {
   font-family: icon;
   src: url(http://at.alicdn.com/t/font_pkm0oq8is8fo5hfr.ttf);
 }
 ```
+
+### Support media query
+
+Media type support `screen` and `all`. Media features only support `width` and `height`. Look [@media](https://developer.mozilla.org/en-US/docs/Web/CSS/@media).
+
+```css
+@media screen and (min-width: 480px) {
+  .title {
+    font-size: 25rem;
+  }
+}
+```
+
+### Support pseudo class
+
+Pseudo class only in weex. Index of support pseudo classes
+
+* `:active`
+* `:focus`
+* `:disabled`
+* `:enabled`
+
+Example
+```css
+.container:active {
+  background-color: red;
+}
+```
+
+## Validation
+
+We followed the [css-layout](https://github.com/facebook/yoga) style standard. There will be a friendly reminder on the console when your code is not standardized.
+
+<p align="center">
+  <img alt="stylesheet validation" src="https://gw.alicdn.com/tfs/TB1EHgXPXXXXXc3XVXXXXXXXXXX-1324-208.png" width="400">
+</p>
+

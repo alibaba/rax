@@ -21,37 +21,9 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 
 :zap: **Fast:** blazing fast virtual DOM.
 
-:dart: **Tiny:** 8.0kb only after min+gzip.
+:dart: **Tiny:** 8.0 KB minified + gzipped.
 
-:art: **Universal:** cross Browser、Weex and Node.js.
-
-## Size Comparison
-
-[Angular 1.5.8](https://unpkg.com/angular@1.5.8/angular.min.js) - 55.4kb (gzip)
-
-<img width="100%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-[React 15.3.2](https://unpkg.com/react@15.3.2/dist/react.min.js) - 43.7kb (gzip)
-
-<img width="78.88%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-[Vue 2.1.8](https://unpkg.com/vue@2.1.8/dist/vue.runtime.min.js) - 17.9kb (gzip)
-
-<img width="32.25%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-[Rax 0.0.2](https://unpkg.com/rax@0.0.2/dist/rax.min.js) - 8.0kb (gzip)
-
-<img width="14.44%" height="5" src="https://cloud.githubusercontent.com/assets/2505411/20559178/59a527a0-b1ae-11e6-9b71-581323ac22f8.png">
-
-## Server-side Rendering Comparison
-> [Benchmark repository](https://github.com/taobaofed/server-side-rendering-comparison): Run on a MacBook Air Intel Core i5 @1.4 GHz x 2 with 8 GB memory.
-
-| Library      | renderToString (per second)  |
-|--------------|-----------------------------|
-| React@15.3.2 | 297 op/s                    |
-| Vue@2.0.8    | 1092 op/s                   |
-| Rax@0.0.2    | 1553 op/s (fastest)         |
-
+:art: **Universal:** works in browsers, Weex, Node.js and could works more container that implement [driver specification](./docs/driver-spec.md).
 
 ## Quick Start
 
@@ -92,6 +64,7 @@ render(<Hello name="world" />);
 ```
 
 More examples take a look at the [`examples`](/examples/) folder:
+* [Components](./examples/components)
 * [Redux](/examples/redux)
 * [Game2048](/examples/game2048)
 * [Drag](/examples/drag)
@@ -113,7 +86,7 @@ More examples take a look at the [`examples`](/examples/) folder:
 * :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
 * :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
 * :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
-* :speech_balloon: [universal-toast](/packages/universal-panresponder): A universal Toast API.
+* :speech_balloon: [universal-toast](/packages/universal-toast): A universal Toast API.
 * :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
 
 
@@ -154,3 +127,5 @@ Then, you can run several commands:
 <a href="https://weex-project.io/">
   <img alt="Weex Logo" src="https://camo.githubusercontent.com/11b6ddd7364b6fd42c9efd63939150a950b0de1a/68747470733a2f2f696d672e616c6963646e2e636f6d2f7470732f5442317a424c6150585858585858655858585858585858585858582d3132312d35392e737667" width="200">
 </a>
+
+**[⬆ back to top](#top)**

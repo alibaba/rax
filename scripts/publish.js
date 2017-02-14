@@ -34,7 +34,7 @@ if (version) {
   fs.writeFileSync(RAX_VERSION_FILE, 'export default \'' + version + '\';\n');
 
   console.log('Update dependencies in package.json');
-  const GENERATOR_DEPENDENCIES_FILE = 'packages/rax-cli/src/generator/templates/package.json';
+  const GENERATOR_DEPENDENCIES_FILE = path.resolve(__dirname, '../packages/rax-cli/src/generator/templates/package.json');
   const JSONString = fs.readFileSync(GENERATOR_DEPENDENCIES_FILE);
   const packageJSON = JSON.parse(JSONString);
   packageJSON.dependencies.rax = semver;
@@ -43,19 +43,22 @@ if (version) {
   packageJSON.devDependencies['rax-webpack-plugin'] = semver;
   packageJSON.devDependencies['stylesheet-loader'] = semver;
   fs.writeFileSync(GENERATOR_DEPENDENCIES_FILE, JSON.stringify(packageJSON, null, '  '));
+  console.log('*', GENERATOR_DEPENDENCIES_FILE);
 
-  const PROJECT_DEPENDENCIES_FILE = 'package.json';
+  const PROJECT_DEPENDENCIES_FILE = path.resolve(__dirname, '../package.json');
   const ProjectPackageJSON = JSON.parse(fs.readFileSync(PROJECT_DEPENDENCIES_FILE));
   ProjectPackageJSON.devDependencies['babel-preset-rax'] = semver;
   ProjectPackageJSON.devDependencies['rax-webpack-plugin'] = semver;
   fs.writeFileSync(PROJECT_DEPENDENCIES_FILE, JSON.stringify(ProjectPackageJSON, null, '  '));
+  console.log('*', PROJECT_DEPENDENCIES_FILE);
 
   console.log('Update rax-web-framework version in index.html');
-  const GENERATOR_HTML_FILE = 'packages/rax-cli/src/generator/templates/public/index.html';
+  const GENERATOR_HTML_FILE = path.resolve(__dirname, '../packages/rax-cli/src/generator/templates/public/index.html');
 
   const examplesHtmlEntry = getExamplesHtmlEntry();
   const htmlEntry = examplesHtmlEntry.concat(GENERATOR_HTML_FILE);
-  examplesHtmlEntry.forEach(function(f) {
+  htmlEntry.forEach(function(f) {
+    console.log('*', f);
     const HTMLString = String(fs.readFileSync(f));
     const updatedHTMLString = HTMLString.replace(/web-rax-framework@\d*.\d*.\d*/g, 'web-rax-framework@' + version);
     fs.writeFileSync(f, updatedHTMLString);

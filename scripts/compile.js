@@ -5,8 +5,8 @@
  * Non-js or files matching IGNORE_PATTERN will be copied without transpiling.
  *
  * Example:
- *  node ./scripts/compile.js
- *  node ./scripts/compile.js /users/123/jest/packages/jest-111/src/111.js
+ *  compile all packages: node ./scripts/compile.js
+ *  watch compile some packages: node ./scripts/compile.js --watch --packages rax,rax-cli
  */
 'use strict';
 
@@ -18,6 +18,8 @@ const babel = require('babel-core');
 const chalk = require('chalk');
 const glob = require('glob');
 const minimatch = require('minimatch');
+const parseArgs = require('minimist');
+const chokidar = require('chokidar');
 
 const SRC_DIR = 'src';
 const BUILD_DIR = 'lib';
@@ -25,11 +27,15 @@ const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/__tests__/**';
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
+const args = parseArgs(process.argv);
+const customPackages = args.packages;
+
 const babelOptions = JSON.parse(fs.readFileSync(
   path.resolve(__dirname, '..', '.babelrc'),
   'utf8'
 ));
 babelOptions.babelrc = false;
+// babelOptions.sourceMaps = 'inline';
 
 const fixedWidth = str => {
   const WIDTH = 80;
@@ -54,9 +60,17 @@ function buildPackage(p) {
   process.stdout.write(`[  ${chalk.green('OK')}  ]\n`);
 }
 
-function getPackages() {
+function getPackages(customPackages) {
   return fs.readdirSync(PACKAGES_DIR)
     .map(file => path.resolve(PACKAGES_DIR, file))
+    .filter(f => {
+      if (customPackages) {
+        const packageName = path.relative(PACKAGES_DIR, f).split(path.sep)[0];
+        return customPackages.indexOf(packageName) !== -1;
+      } else {
+        return true;
+      }
+    })
     .filter(f => fs.lstatSync(path.resolve(f)).isDirectory());
 }
 
@@ -98,14 +112,26 @@ function buildFile(file, silent) {
   }
 }
 
-const files = process.argv.slice(2);
+if (args.watch) {
+  // watch packages
+  const packages = getPackages(customPackages);
+  const watchPackagesDir = packages.map(dir => path.resolve(dir, 'src'));
 
-if (files.length) {
-  files.forEach(file => {
-    buildFile(path.resolve(file), false);
+  console.log(chalk.green('watch packages compile', packages));
+
+  chokidar.watch(watchPackagesDir, {
+    ignored: IGNORE_PATTERN
+  }).on('change', (filePath) => {
+    const packageName = filePath.match(/\/packages\/([^\/]*)/)[1];
+    const packagePath = path.resolve(__dirname, '../packages/', packageName);
+    process.stdout.write(chalk.bold.inverse(`Compiling package ${packageName} \n`));
+    try {
+      buildPackage(packagePath);
+    } catch (e) {}
+    process.stdout.write('\n');
   });
 } else {
   process.stdout.write(chalk.bold.inverse('Compiling packages\n'));
-  getPackages().forEach(buildPackage);
+  getPackages(customPackages).forEach(buildPackage);
   process.stdout.write('\n');
 }

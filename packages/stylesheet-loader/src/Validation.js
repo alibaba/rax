@@ -4,16 +4,27 @@ import BoxModelPropTypes from './BoxModelPropTypes';
 import FlexboxPropTypes from './FlexboxPropTypes';
 import TextStylePropTypes from './TextStylePropTypes';
 import ColorPropTypes from './ColorPropTypes';
+import {pushWarnMessage} from './promptMessage';
+import particular from './particular';
+import chalk from 'chalk';
 
 class Validation {
-  static validate(prop, value) {
-    if (allStylePropTypes[prop]) {
-      let error = allStylePropTypes[prop](value, prop);
+  static validate(camelCaseProperty, prop, value, selectors = '', position = {}) {
+    if (allStylePropTypes[camelCaseProperty]) {
+      let error = allStylePropTypes[camelCaseProperty](value, prop, selectors);
 
       if (error) {
-        console.warn(error.message);
+        const message = `line: ${position.start.line}, column: ${position.start.column} - ${error.message}`;
+        console.warn(chalk.yellow.bold(message));
+        pushWarnMessage(message);
       }
       return error;
+    } else {
+      if (!particular[camelCaseProperty]) {
+        const message = `line: ${position.start.line}, column: ${position.start.column} - "${prop}: ${value}" is not valid in "${selectors}" selector`;
+        console.warn(chalk.yellow.bold(message));
+        pushWarnMessage(message);
+      }
     }
   }
 

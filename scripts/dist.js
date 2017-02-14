@@ -107,6 +107,8 @@ dist(getConfig(
     {
       'promise.module': './packages/runtime-shared/src/promise.js',
       'promise.function': './packages/runtime-shared/src/promise.js',
+      'matchMedia.module': './packages/runtime-shared/src/matchMedia.js',
+      'matchMedia.function': './packages/runtime-shared/src/matchMedia.js',
       'url.module': './packages/runtime-shared/src/url.js',
       'url.function': './packages/runtime-shared/src/url.js',
       'url-search-params.module': './packages/runtime-shared/src/url-search-params.js',
@@ -184,7 +186,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
-      new webpack.NoErrorsPlugin(),
+      new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
       new webpack.optimize.UglifyJsPlugin({
         include: /\.min\.js$/,
@@ -198,7 +200,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
       loaders: [{
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel', // 'babel-loader' is also a legal name to reference
+        loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
         query: babelLoaderQuery
       }]
     }

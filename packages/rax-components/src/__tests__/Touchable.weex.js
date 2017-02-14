@@ -1,6 +1,6 @@
 import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
-import TouchableHighlight from '../TouchableHighlight';
+import Touchable from '../Touchable';
 
 jest.mock('universal-env', () => {
   return {
@@ -8,10 +8,10 @@ jest.mock('universal-env', () => {
   };
 });
 
-describe('TouchableHighlight in weex', () => {
-  it('render tag TouchableHighlight', () => {
+describe('Touchable in weex', () => {
+  it('render tag Touchable', () => {
     const component = renderer.create(
-      <TouchableHighlight>Example</TouchableHighlight>
+      <Touchable>Example</Touchable>
     );
     let tree = component.toJSON();
 

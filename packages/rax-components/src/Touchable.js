@@ -2,7 +2,7 @@ import {createElement, Component} from 'rax';
 import {isWeex} from 'universal-env';
 import View from './View';
 
-class TouchableHighlight extends Component {
+class Touchable extends Component {
   render() {
     let props = this.props;
     let nativeProps = {
@@ -26,4 +26,4 @@ const styles = {
   }
 };
 
-export default TouchableHighlight;
+export default Touchable;

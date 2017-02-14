@@ -16,7 +16,6 @@ const DOCUMENT_FRAGMENT_NODE = 11;
 const Driver = {
   // Internal state
   nodeMaps: {},
-  nodeCounter: 0,
 
   getElementById(id) {
     return this.nodeMaps[id];
@@ -49,8 +48,7 @@ const Driver = {
     return {
       nodeType: COMMENT_NODE,
       data: content,
-      parentNode: null,
-      nodeId: this.nodeCounter++
+      parentNode: null
     };
   },
 
@@ -62,8 +60,7 @@ const Driver = {
     return {
       nodeType: TEXT_NODE,
       data: text,
-      parentNode: null,
-      nodeId: this.nodeCounter++
+      parentNode: null
     };
   },
 
@@ -80,8 +77,7 @@ const Driver = {
       style: props.style || {},
       eventListeners: {},
       childNodes: [],
-      parentNode: null,
-      nodeId: this.nodeCounter++
+      parentNode: null
     };
 
     setNativeProps(node, props, true);

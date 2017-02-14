@@ -25,10 +25,10 @@ describe('TextInput', () => {
     expect(tree.style.boxSizing).toBe('border-box');
     expect(tree.style.color).toBe('#000000');
     expect(tree.style.padding).toBe(0);
-    expect(tree.style.paddingLeft).toBe('8rem');
-    expect(tree.style.lineHeight).toBe('24rem');
-    expect(tree.style.fontSize).toBe('24rem');
-    expect(tree.style.height).toBe('36rem');
+    expect(tree.style.paddingLeft).toBe(24);
+    expect(tree.style.fontSize).toBe(24);
+    expect(tree.style.lineHeight).toBe(60);
+    expect(tree.style.height).toBe(60);
   });
 
   it('onInput & onChange', () => {
@@ -48,4 +48,3 @@ describe('TextInput', () => {
     expect(typeof tree.eventListeners.focus).toBe('function');
   });
 });
-

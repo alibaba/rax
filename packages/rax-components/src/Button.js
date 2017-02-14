@@ -1,45 +1,49 @@
 import {Component, createElement} from 'rax';
-import Text from './Text';
-import TouchableHighlight from './TouchableHighlight';
 import {isWeex} from 'universal-env';
+import Text from './Text';
+import Touchable from './Touchable';
 
 class Button extends Component {
-  render() {
-    let props = this.props;
-    let children = props.children;
-    let style = {
-      ...styles.initial,
-      ...props.style
-    };
 
-    let content = children;
-    if (typeof children === 'string') {
-      content = <Text>{children}</Text>;
+  render() {
+    const props = this.props;
+    const buttonStyles = [styles.button, props.style];
+    const textStyles = [styles.text];
+
+    if (props.color) {
+      textStyles.push({color: props.color});
+    }
+
+    if (props.disabled) {
+      buttonStyles.push(styles.buttonDisabled);
+      textStyles.push(styles.textDisabled);
+    }
+
+    let content = props.children || props.title;
+    if (typeof content === 'string') {
+      content = <Text style={textStyles}>{content}</Text>;
     }
 
     return (
-      <TouchableHighlight {...props} style={style}>
+      <Touchable {...props} style={buttonStyles}>
         {content}
-      </TouchableHighlight>
+      </Touchable>
     );
   }
 }
 
 const styles = {
-  initial: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    height: '60rem',
-    paddingTop: '12rem',
-    paddingBottom: '12rem',
-    paddingLeft: '25rem',
-    paddingRight: '25rem',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: '#666666',
-  }
+  button: {},
+  text: {
+    color: '#0C42FD',
+    textAlign: 'center',
+    padding: 16,
+    fontSize: 36,
+  },
+  buttonDisabled: {},
+  textDisabled: {
+    color: '#cdcdcd',
+  },
 };
 
 export default Button;

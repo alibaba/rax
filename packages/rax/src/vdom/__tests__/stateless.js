@@ -25,7 +25,7 @@ describe('StatelessComponent', function() {
 
   it('should render functional stateless component', function() {
     let html = renderToString(<StatelessComponent name="A" />);
-    expect(html).toBe('<div>A</div>');
+    expect(html).toBe('<div data-rendered="server">A</div>');
   });
 
   it('should render class stateless component', function() {
@@ -36,7 +36,7 @@ describe('StatelessComponent', function() {
     }
 
     let html = renderToString(<MyComponent name="A" />);
-    expect(html).toBe('<div>A</div>');
+    expect(html).toBe('<div data-rendered="server">A</div>');
   });
 
   it('should update stateless component', function() {
@@ -47,10 +47,10 @@ describe('StatelessComponent', function() {
     }
 
     let html = renderToString(<Parent name="A" />);
-    expect(html).toBe('<div>A</div>');
+    expect(html).toBe('<div data-rendered="server">A</div>');
 
     let html2 = renderToString(<Parent name="B" />);
-    expect(html2).toBe('<div>B</div>');
+    expect(html2).toBe('<div data-rendered="server">B</div>');
   });
 
   it('should pass context thru stateless component', function() {
@@ -84,11 +84,11 @@ describe('StatelessComponent', function() {
 
 
     let html = renderToString(<GrandParent test="test" />);
-    expect(html).toBe('<div>test</div>');
+    expect(html).toBe('<div data-rendered="server">test</div>');
 
 
     let html2 = renderToString(<GrandParent test="mest" />);
-    expect(html2).toBe('<div>mest</div>');
+    expect(html2).toBe('<div data-rendered="server">mest</div>');
   });
 
 
@@ -100,7 +100,7 @@ describe('StatelessComponent', function() {
     Child.propTypes = {test: PropTypes.string};
 
     let html = renderToString(<Child />);
-    expect(html).toBe('<div>test</div>');
+    expect(html).toBe('<div data-rendered="server">test</div>');
   });
 
   it('should receive context', function() {
@@ -125,7 +125,7 @@ describe('StatelessComponent', function() {
     Child.contextTypes = {lang: PropTypes.string};
 
     let html = renderToString(<Parent />);
-    expect(html).toBe('<div>en</div>');
+    expect(html).toBe('<div data-rendered="server">en</div>');
   });
 
   it('should allow simple functions to return null', function() {

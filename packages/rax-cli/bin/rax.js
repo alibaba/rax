@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+// Update notifications
+var updateNotifier = require('update-notifier');
+var pkg = require('../package.json');
+updateNotifier({pkg: pkg}).notify();
+
 var fs = require('fs');
 var path = require('path');
 var exec = require('child_process').exec;
@@ -7,8 +12,6 @@ var spawn = require('cross-spawn');
 var chalk = require('chalk');
 var prompt = require('prompt');
 var cli = require('../lib/');
-
-
 var argv = require('minimist')(process.argv.slice(2));
 
 var RAX_PACKAGE_JSON_PATH = path.resolve(

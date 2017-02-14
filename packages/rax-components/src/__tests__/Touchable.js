@@ -1,12 +1,12 @@
 global.callNative = null;
 import {createElement} from 'rax';
 import renderer from 'rax-test-renderer';
-import TouchableHighlight from '../TouchableHighlight';
+import Touchable from '../Touchable';
 
-describe('TouchableHighlight', () => {
-  it('render tag TouchableHighlight', () => {
+describe('Touchable', () => {
+  it('render tag Touchable', () => {
     const component = renderer.create(
-      <TouchableHighlight>Example</TouchableHighlight>
+      <Touchable>Example</Touchable>
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
@@ -16,15 +16,15 @@ describe('TouchableHighlight', () => {
   it('turn onPress', () => {
     const mockPress = jest.fn();
     const component = renderer.create(
-      <TouchableHighlight onPress={mockPress}>Example</TouchableHighlight>
+      <Touchable onPress={mockPress}>Example</Touchable>
     );
     let tree = component.toJSON();
     expect(tree.eventListeners.click).toBe(mockPress);
   });
 
-  it('style in TouchableHighlight', () => {
+  it('style in Touchable', () => {
     const component = renderer.create(
-      <TouchableHighlight>Example</TouchableHighlight>
+      <Touchable>Example</Touchable>
     );
     let tree = component.toJSON();
     expect(tree.style.border).toBe('0 solid black');
@@ -36,11 +36,11 @@ describe('TouchableHighlight', () => {
     expect(tree.style.cursor).toBe('pointer');
   });
 
-  it('children in TouchableHighlight', () => {
+  it('children in Touchable', () => {
     const component = renderer.create(
-      <TouchableHighlight>
-        <TouchableHighlight>Example</TouchableHighlight>
-      </TouchableHighlight>
+      <Touchable>
+        <Touchable>Example</Touchable>
+      </Touchable>
     );
     let tree = component.toJSON();
     expect(tree.children[0].children[0]).toBe('Example');
