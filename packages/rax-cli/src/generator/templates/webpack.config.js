@@ -65,7 +65,8 @@ module.exports = {
   // Compile target should "web" when use hot reload
   target: isProducation ? 'node' : 'web',
 
-  devtool: 'cheap-module-source-map',
+  // devtool: 'inline-source-map',
+
   // These are the "entry points" to our application.
   // This means they will be the "root" imports that are included in JS bundle.
   // The first two entry points enable "hot" CSS and auto-refreshes for JS.
