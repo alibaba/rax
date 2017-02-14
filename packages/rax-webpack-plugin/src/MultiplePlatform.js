@@ -16,7 +16,7 @@ module.exports = function MultiplePlatform(config, options = {}) {
   }
 
   let defaultOptions = {
-    unshiftOrigin: true,
+    keepOriginConfig: true,
   };
 
   options = Object.assign(defaultOptions, options);
@@ -91,7 +91,9 @@ module.exports = function MultiplePlatform(config, options = {}) {
       multiplePlatformConfigs.push(platformConfig);
     });
   }
-  if (options.unshiftOrigin) {
+
+  // private option: It can be set `false` to prevent from returning webpack config array with origin config.
+  if (options.keepOriginConfig) {
     multiplePlatformConfigs.unshift(config);
   }
 

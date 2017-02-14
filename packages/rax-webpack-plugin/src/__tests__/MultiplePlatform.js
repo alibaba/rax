@@ -369,7 +369,7 @@ describe('MultiplePlatform', function() {
     }).toThrowError('Invalid argument: options, must be an object');
   });
 
-  it('specified unshiftOrigin is `false` and not unshift origin config', function() {
+  it('specified keepOriginConfig is `false` and not unshift origin config', function() {
     const config = {
       platforms: ['weex'],
       entry: {
@@ -411,6 +411,6 @@ describe('MultiplePlatform', function() {
       ]
     }];
 
-    expect(MultiplePlatform(config, {unshiftOrigin: false})).toEqual(expected);
+    expect(MultiplePlatform(config, {keepOriginConfig: false})).toEqual(expected);
   });
 });
