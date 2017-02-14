@@ -80,16 +80,6 @@ describe('particular', () => {
     expect(result).toEqual({});
   });
 
-  it('should add prefix with some property', () => {
-    testPrefix('boxShadow');
-    testPrefix('borderRadius', true);
-    testPrefix('userSelect');
-    testPrefix('flex');
-    testPrefix('justifyContent');
-    testPrefix('transition');
-    testPrefix('transform');
-  });
-
   it('should transform lineHeight to string with rem', () => {
     const result = particular.lineHeight(16);
 
