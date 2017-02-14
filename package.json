@@ -31,8 +31,8 @@
     "redux": "^3.6.0",
     "rimraf": "^2.5.4",
     "semver-regex": "^1.0.0",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.16.2"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0"
   },
   "scripts": {
     "link": "node ./scripts/link.js && npm run build:compile && npm run build:dist",
@@ -68,7 +68,8 @@
       "/fixtures/",
       "/__modules__/",
       "/__files__/",
-      "/lib/"
+      "/lib/",
+      "rax-webpack-plugin"
     ]
   },
   "config": {

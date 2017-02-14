@@ -1,5 +1,5 @@
-import ConcatSource from 'webpack/lib/ConcatSource';
-import DefinePlugin from 'webpack/lib/DefinePlugin';
+import {ConcatSource} from 'webpack-sources';
+import {DefinePlugin} from 'webpack';
 import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin';
 import RaxMainTemplatePlugin from './RaxMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
@@ -69,7 +69,13 @@ class RaxWebpackPlugin {
       compiler.plugin('compilation', (compilation) => {
         compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
           chunks.forEach(function(chunk) {
-            if (!chunk.initial) return;
+            // In webpack2 chunk.initial was removed. Use isInitial()
+            try {
+              if (!chunk.initial) return;
+            } catch (e) {
+              if (!chunk.isInitial()) return;
+            }
+
             chunk.files.forEach(function(file) {
               compilation.assets[file] = new ConcatSource(frameworkComment, '\n', compilation.assets[file]);
             });
