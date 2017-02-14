@@ -48,7 +48,7 @@ export default function({ types: t }) {
           cssFileCount = file.get('cssFileCount') || 1;
           const cssFileBaseName = camelcase(path.basename(sourceValue, '.css'));
 
-          const styleName = `${cssFileBaseName + FILE_NAME_SUFFIX + cssFileCount}`;
+          const styleName = `${cssFileBaseName + FILE_NAME_SUFFIX}`;
           const styleIdentifier = t.identifier(styleName);
           node.specifiers = [t.importDefaultSpecifier(styleIdentifier)];
 

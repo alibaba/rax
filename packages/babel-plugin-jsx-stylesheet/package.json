@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-jsx-stylesheet",
   "version": "0.1.7",
-  "description": "babel plugin jsx class name",
+  "description": "babel plugin jsx stylesheet",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {

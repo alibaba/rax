@@ -19,14 +19,14 @@ Will be transpiled into something like this:
 
 ```js
 import { createElement, Component } from 'rax';
-import appClassNameStyles from './app.css';
+import appStyles from './app.css';
 
 class App extends Component {
   render() {
-    return <div style={classNameStyles.header} />;
+    return <div style={cssStyles.header} />;
   }
 }
-let classNameStyles = fooClassNameStyles;
+let cssStyles = appStyles;
 ```
 
 Can write multiple classNames like this:
@@ -46,14 +46,14 @@ Will be transpiled into something like this:
 
 ```js
 import { createElement, Component } from 'rax';
-import appClassNameStyles from './app.css';
+import appStyles from './app.css';
 
 class App extends Component {
   render() {
-    return <div style={[classNameStyles.header1, classNameStyles.header2]} />;
+    return <div style={[cssStyles.header1, cssStyles.header2]} />;
   }
 }
-let classNameStyles = fooClassNameStyles;
+let cssStyles = appStyles;
 ```
 
 And can also import multiple css file:
@@ -79,10 +79,10 @@ import app2ClassNameStyles from 'app2.css';
 
 class App extends Component {
   render() {
-    return <div style={[classNameStyles.header1, classNameStyles.header2]} />;
+    return <div style={[cssStyles.header1, cssStyles.header2]} />;
   }
 }
-let classNameStyles = Object.assign(app1ClassNameStyles, app2ClassNameStyles);
+let cssStyles = Object.assign(app1ClassNameStyles, app2ClassNameStyles);
 ```
 
 ## Installation
