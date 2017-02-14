@@ -1,5 +1,5 @@
 {
-  "name": "babel-plugin-jsx-class-name",
+  "name": "babel-plugin-jsx-stylesheet",
   "version": "0.1.7",
   "description": "babel plugin jsx class name",
   "license": "BSD-3-Clause",

@@ -1,8 +1,13 @@
 import path from 'path';
 import camelcase from 'camelcase';
 
-const CLASS_NAME_SPACE = 'classNameStyles';
-const FILE_CLASS_NAME_SUFFIX = 'ClassNameStyles';
+const NAME_SPACE = 'cssStyles';
+const FILE_NAME_SUFFIX = 'Styles';
+const groups = {
+  id: 'ids',
+  className: 'classes',
+  tagName: 'tags'
+};
 
 export default function({ types: t }) {
   function getMemberExpression(str = str.trim()) {
@@ -13,12 +18,17 @@ export default function({ types: t }) {
     }
     return classNames.map((className) => {
       className = className.replace(/-/g, '_');
-      return t.memberExpression(t.identifier(CLASS_NAME_SPACE), t.identifier(className));
+      return t.memberExpression(t.identifier(NAME_SPACE), t.identifier(className));
     });
   }
   return {
     visitor: {
-      // parse jsx className
+      JSXElement({ node }) {
+        const openingElement = node.openingElement;
+        const tagName = openingElement.name.name;
+        const attributes = openingElement.attributes;
+      },
+      // parse jsx className and id
       JSXAttribute({ node }) {
         let attributeName = node.name.name;
         if (attributeName === 'className' || attributeName === 'class') {
@@ -48,7 +58,7 @@ export default function({ types: t }) {
           cssFileCount = file.get('cssFileCount') || 1;
           const cssFileBaseName = camelcase(path.basename(sourceValue, '.css'));
 
-          const styleName = `${cssFileBaseName + FILE_CLASS_NAME_SUFFIX}`;
+          const styleName = `${cssFileBaseName + FILE_NAME_SUFFIX + cssFileCount}`;
           const styleIdentifier = t.identifier(styleName);
           node.specifiers = [t.importDefaultSpecifier(styleIdentifier)];
 
@@ -67,10 +77,10 @@ export default function({ types: t }) {
         if (cssParamIdentifiers) {
           // only one css file
           if (cssParamIdentifiers.length === 1) {
-            callExpression = t.variableDeclaration('let', [t.variableDeclarator(t.identifier(CLASS_NAME_SPACE), cssParamIdentifiers[0])]);
+            callExpression = t.variableDeclaration('let', [t.variableDeclarator(t.identifier(NAME_SPACE), cssParamIdentifiers[0])]);
           } else if (cssParamIdentifiers.length > 1) {
             const objectAssignExpression = t.callExpression(t.memberExpression(t.identifier('Object'), t.identifier('assign')), cssParamIdentifiers);
-            callExpression = t.variableDeclaration('let', [t.variableDeclarator(t.identifier(CLASS_NAME_SPACE), objectAssignExpression)]);
+            callExpression = t.variableDeclaration('let', [t.variableDeclarator(t.identifier(NAME_SPACE), objectAssignExpression)]);
           }
 
           // append class declaration

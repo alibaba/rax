@@ -1,4 +1,4 @@
-# babel-plugin-jsx-class-name
+# babel-plugin-jsx-stylesheet
 
 ## Example
 
@@ -88,7 +88,7 @@ let classNameStyles = Object.assign(app1ClassNameStyles, app2ClassNameStyles);
 ## Installation
 
 ```sh
-npm install --save-dev babel-plugin-jsx-class-name
+npm install --save-dev babel-plugin-jsx-stylesheet
 ```
 
 ## Usage
@@ -99,6 +99,6 @@ npm install --save-dev babel-plugin-jsx-class-name
 
 ```json
 {
-  "plugins": ["jsx-class-name"]
+  "plugins": ["jsx-stylesheet"]
 }
 ```
