@@ -18,3 +18,8 @@ export const pushErrorMessage = (message) => {
   message = message.replace(/`/g, '\\`');
   errorMessages += `${message}\\n`;
 };
+
+export const resetMessage = () => {
+  warnMessages = '';
+  errorMessages = '';
+};

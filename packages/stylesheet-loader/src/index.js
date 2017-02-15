@@ -3,7 +3,7 @@
 import css from 'css';
 import transformer from './transformer';
 import loaderUtils from 'loader-utils';
-import {getErrorMessages, getWarnMessages} from './promptMessage';
+import {getErrorMessages, getWarnMessages, resetMessage} from './promptMessage';
 
 const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
@@ -91,6 +91,8 @@ const exportContent = (parseData) => {
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(parseData);
   const warnMessageOutput = getWarnMessageOutput();
+
+  resetMessage();
 
   return `module.exports = ${stringifyData(data)};
   ${fontFaceContent}
