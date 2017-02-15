@@ -75,15 +75,15 @@ class RecyclerView extends Component {
       }
 
       let cells = children.map((child, index) => {
+        const ref = 'cell' + index;
         if (child) {
-          const ref = 'cell' + index;
           if (props._autoWrapCell && child.type != RefreshControl) {
             return <Cell ref={ref}>{child}</Cell>;
           } else {
             return cloneElement(child, {ref});
           }
         } else {
-          return null;
+          return <Cell ref={ref} />;
         }
       });
 
