@@ -23,10 +23,9 @@ import sourceMap from 'source-map';
  */
 
 function mergeSourceMap(map, inputMap) {
-
   if (inputMap) {
-    const inputMapConsumer   = new sourceMap.SourceMapConsumer(inputMap);
-    const outputMapConsumer  = new sourceMap.SourceMapConsumer(map);
+    const inputMapConsumer = new sourceMap.SourceMapConsumer(inputMap);
+    const outputMapConsumer = new sourceMap.SourceMapConsumer(map);
 
     const mergedGenerator = new sourceMap.SourceMapGenerator({
       file: inputMapConsumer.file,
@@ -37,7 +36,7 @@ function mergeSourceMap(map, inputMap) {
     // single source file to a single output file.
     const source = outputMapConsumer.sources[0];
 
-    inputMapConsumer.eachMapping(function (mapping) {
+    inputMapConsumer.eachMapping(function(mapping) {
       const generatedPosition = outputMapConsumer.generatedPositionFor({
         line: mapping.generatedLine,
         column: mapping.generatedColumn,
@@ -74,10 +73,10 @@ module.exports = function(inputSource, inputSourceMap) {
 
   let sourceMapOption = {
     sourceMapTarget: path.basename(resourcePath),
-    soueceFileName: path.relative(projectDir, resourcePath);
+    soueceFileName: path.relative(projectDir, resourcePath),
     sourceMap: true,
     sourceRoot: projectDir
-  }
+  };
 
   const options = Object.assign({ name: 'universal-env' }, loaderOptions);
 

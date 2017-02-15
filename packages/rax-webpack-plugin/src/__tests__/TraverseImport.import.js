@@ -25,23 +25,23 @@ describe('PlatformLoader.traverseImport', function() {
     expect(code).toBe('const isWeex = true;');
   });
 
-  it('sourcemap', function(){
+  it('sourcemap', function() {
     const { map, code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
       'import { isWeex } from "universal-env";\n let a = 1;',
       { sourceMaps: true,
-        filename: "inline",
-      sourceFileName: "inline"}
+        filename: 'inline',
+        sourceFileName: 'inline'}
     );
     let sourceMapObj = {
-      "version":3, 
-      "sources":["inline"],
-      "names":["a"],
-      "mappings":";;AACC,IAAIA,IAAI,CAAR",
-      "sourcesContent":["import { isWeex } from \"universal-env\";\n let a = 1;"]
+      'version': 3,
+      'sources': ['inline'],
+      'names': ['a'],
+      'mappings': ';;AACC,IAAIA,IAAI,CAAR',
+      'sourcesContent': ['import { isWeex } from "universal-env";\n let a = 1;']
     };
     expect(map).toMatchObject(sourceMapObj);
-  })
+  });
 
   it('isWeex as iw', function() {
     const { code } = traverseImport(
