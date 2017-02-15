@@ -135,7 +135,7 @@ const Driver = {
       if (flexbox.isFlexProp(prop)) {
         flexbox[prop](val, tranformedStyles);
       } else {
-        tranformedStyles[prop] = convertUnit(val, prop);
+        tranformedStyles[prop] = convertUnit(val, prop, true);
       }
     }
 
