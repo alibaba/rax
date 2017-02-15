@@ -39,3 +39,5 @@ npm install --save-dev babel-plugin-jsx-stylesheet
   "plugins": ["jsx-stylesheet"]
 }
 ```
+
+更多细节查看[babel-plugin-jsx-stylesheet](https://github.com/alibaba/rax/blob/master/packages/babel-plugin-jsx-stylesheet/README.md)
