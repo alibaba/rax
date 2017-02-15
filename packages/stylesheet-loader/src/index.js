@@ -146,7 +146,7 @@ const getFontFaceContent = (rules) => {
   if (rules.length > 0) {
     content += `
   if (typeof FontFace === 'function') {
-    `
+    `;
   }
 
   rules.forEach((rule, index) => {
@@ -159,7 +159,7 @@ const getFontFaceContent = (rules) => {
   if (rules.length > 0) {
     content += `
   }
-    `
+    `;
   }
   return content;
 };
