@@ -143,12 +143,24 @@ const getMediaContent = (parseData) => {
 const getFontFaceContent = (rules) => {
   let content = '';
 
+  if (rules.length > 0) {
+    content += `
+  if (typeof FontFace === 'function') {
+    `
+  }
+
   rules.forEach((rule, index) => {
     content += `
-  var fontFace${index} = new FontFace('${rule['font-family'].replace(QUOTES_REG, '')}', '${rule.src.replace(QUOTES_REG, '')}');
-  document.fonts.add(fontFace${index});
+    var fontFace${index} = new FontFace('${rule['font-family'].replace(QUOTES_REG, '')}', '${rule.src.replace(QUOTES_REG, '')}');
+    document.fonts.add(fontFace${index});
     `;
   });
+
+  if (rules.length > 0) {
+    content += `
+  }
+    `
+  }
   return content;
 };
 
