@@ -1,9 +1,8 @@
-
 #  样式最佳实践一
 
 对于 Rax 样式最佳实践，我们推荐使用官方提供的 [stylesheet-loader](https://github.com/alibaba/rax/blob/master/packages/stylesheet-loader/README.md)。这个 loader 允许在项目中写 css，通过在 webpack 中配置不同的预处理器 loader 也可以写 less 或 sass。
 
-## 配置
+## 如何配置
 
 ### 安装 loader
 
@@ -25,7 +24,7 @@ module.export = {
 };
 ```
 
-## 使用
+## 如何使用
 
 创建一个 css，`foo.css`:
 ```css
@@ -112,7 +111,7 @@ export default Foo;
 
 ### 伪类
 
-伪类的使用等同于 [css-pseudo](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes)，但支持的伪类有限，目前只支持以下几种：
+伪类的使用等同于 [css-pseudo](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes)，但支持的伪类类型有限，目前只支持以下几种：
 
 * `:active`
 * `:focus`
