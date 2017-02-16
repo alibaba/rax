@@ -111,5 +111,9 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     }
   });
 
-  return generate(ast, sourceMapOption, inputSource);
+  return generate(ast, Object.assign({
+    sourceMaps: true,
+    sourceFileName: 'inline',
+    sourceMapTarget: 'inline',
+  }, sourceMapOption), inputSource);
 };

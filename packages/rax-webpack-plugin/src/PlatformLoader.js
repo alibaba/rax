@@ -1,7 +1,6 @@
 import path from 'path';
 import loaderUtils from 'loader-utils';
 import traverseImport from './TraverseImport';
-import sourceMap from 'source-map';
 
 /**
  * remove universal-env module dependencies
@@ -22,65 +21,21 @@ import sourceMap from 'source-map';
  * ```
  */
 
-function mergeSourceMap(map, inputMap) {
-  if (inputMap) {
-    const inputMapConsumer = new sourceMap.SourceMapConsumer(inputMap);
-    const outputMapConsumer = new sourceMap.SourceMapConsumer(map);
-
-    const mergedGenerator = new sourceMap.SourceMapGenerator({
-      file: inputMapConsumer.file,
-      sourceRoot: inputMapConsumer.sourceRoot
-    });
-
-    // This assumes the output map always has a single source, since Babel always compiles a
-    // single source file to a single output file.
-    const source = outputMapConsumer.sources[0];
-
-    inputMapConsumer.eachMapping(function(mapping) {
-      const generatedPosition = outputMapConsumer.generatedPositionFor({
-        line: mapping.generatedLine,
-        column: mapping.generatedColumn,
-        source: source
-      });
-      if (generatedPosition.column != null) {
-        mergedGenerator.addMapping({
-          source: mapping.source,
-
-          original: mapping.source == null ? null : {
-            line: mapping.originalLine,
-            column: mapping.originalColumn
-          },
-
-          generated: generatedPosition
-        });
-      }
-    });
-
-    const mergedMap = mergedGenerator.toJSON();
-    inputMap.mappings = mergedMap.mappings;
-    return inputMap;
-  } else {
-    return map;
-  }
-}
-
-module.exports = function(inputSource, inputSourceMap) {
+module.exports = function(inputSource) {
   this.cacheable();
   const callback = this.async();
+
   const loaderOptions = loaderUtils.parseQuery(this.query);
   const resourcePath = this.resourcePath;
-  const projectDir = process.cwd();
-
-  let sourceMapOption = {
-    sourceMapTarget: path.basename(resourcePath),
-    soueceFileName: path.relative(projectDir, resourcePath),
-    sourceMap: true,
-    sourceRoot: projectDir
-  };
+  const sourceMapTarget = path.basename(resourcePath);
 
   const options = Object.assign({ name: 'universal-env' }, loaderOptions);
+  
+  const { code, map } = traverseImport(options, inputSource, {
+    sourceMaps: true,
+    sourceMapTarget: sourceMapTarget,
+    sourceFileName: resourcePath
+  });
 
-  const { code, map } = traverseImport(options, inputSource, sourceMapOption);
-
-  callback(null, code, mergeSourceMap(map, inputSourceMap));
+  callback(null, code, map);
 };
