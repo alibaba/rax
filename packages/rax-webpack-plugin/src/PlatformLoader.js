@@ -1,7 +1,7 @@
-import path from 'path';
 import loaderUtils from 'loader-utils';
-import traverseImport from './TraverseImport';
+import path from 'path';
 import sourceMap from 'source-map';
+import traverseImport from './TraverseImport';
 
 /**
  * remove universal-env module dependencies
@@ -67,20 +67,18 @@ function mergeSourceMap(map, inputMap) {
 module.exports = function(inputSource, inputSourceMap) {
   this.cacheable();
   const callback = this.async();
+
   const loaderOptions = loaderUtils.parseQuery(this.query);
   const resourcePath = this.resourcePath;
-  const projectDir = process.cwd();
-
-  let sourceMapOption = {
-    sourceMapTarget: path.basename(resourcePath),
-    soueceFileName: path.relative(projectDir, resourcePath),
-    sourceMap: true,
-    sourceRoot: projectDir
-  };
+  const sourceMapTarget = path.basename(resourcePath);
 
   const options = Object.assign({ name: 'universal-env' }, loaderOptions);
 
-  const { code, map } = traverseImport(options, inputSource, sourceMapOption);
+  const { code, map } = traverseImport(options, inputSource, {
+    sourceMaps: true,
+    sourceMapTarget: sourceMapTarget,
+    sourceFileName: resourcePath
+  });
 
   callback(null, code, mergeSourceMap(map, inputSourceMap));
 };
