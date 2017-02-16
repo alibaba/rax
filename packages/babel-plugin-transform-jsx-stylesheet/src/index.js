@@ -6,24 +6,21 @@ const NAME_SUFFIX = 'StyleSheet';
 
 export default function({ types: t, template }) {
   const assignFunctionTemplate = template(`
-function firstLevelAssign() {
+function _mergeStyles() {
   var newTarget = {};
-  var _arguments = arguments;
 
-  Object.keys(_arguments).forEach(function(index) {
-    var target = _arguments[index];
+  for (var index = 0; index < arguments.length; index++) {
+    var target = arguments[index];
+
     for (var key in target) {
       newTarget[key] = Object.assign(newTarget[key] || {}, target[key]);
     }
-  });
+  }
 
   return newTarget;
 }
   `);
-  const assignFunctionAst = assignFunctionTemplate({
-    IMPORT_NAME: t.identifier('myModule'),
-    SOURCE: t.stringLiteral('my-module')
-  });
+  const assignFunctionAst = assignFunctionTemplate();
 
   function getMemberExpression(str = str.trim()) {
     let classNames = str.split(' ');
@@ -95,7 +92,7 @@ function firstLevelAssign() {
           if (cssParamIdentifiers.length === 1) {
             callExpression = t.variableDeclaration('const', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), cssParamIdentifiers[0])]);
           } else if (cssParamIdentifiers.length > 1) {
-            const objectAssignExpression = t.callExpression(t.identifier('firstLevelAssign'), cssParamIdentifiers);
+            const objectAssignExpression = t.callExpression(t.identifier('_mergeStyles'), cssParamIdentifiers);
             callExpression = t.variableDeclaration('const', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), objectAssignExpression)]);
           }
 
