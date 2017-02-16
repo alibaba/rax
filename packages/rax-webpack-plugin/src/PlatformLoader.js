@@ -32,8 +32,8 @@ function mergeSourceMap(map, inputMap) {
       sourceRoot: inputMapConsumer.sourceRoot
     });
 
-    // This assumes the output map always has a single source, since Babel always compiles a    
-    // single source file to a single output file.    
+    // This assumes the output map always has a single source, since Babel always compiles a
+    // single source file to a single output file.
     const source = outputMapConsumer.sources[0];
 
     inputMapConsumer.eachMapping(function(mapping) {
