@@ -3,7 +3,7 @@
 import css from 'css';
 import transformer from './transformer';
 import loaderUtils from 'loader-utils';
-import {getErrorMessages, getWarnMessages} from './promptMessage';
+import {getErrorMessages, getWarnMessages, resetMessage} from './promptMessage';
 
 const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
@@ -92,6 +92,8 @@ const exportContent = (parseData) => {
   const mediaContent = getMediaContent(parseData);
   const warnMessageOutput = getWarnMessageOutput();
 
+  resetMessage();
+
   return `module.exports = ${stringifyData(data)};
   ${fontFaceContent}
   ${mediaContent}
@@ -143,12 +145,24 @@ const getMediaContent = (parseData) => {
 const getFontFaceContent = (rules) => {
   let content = '';
 
+  if (rules.length > 0) {
+    content += `
+  if (typeof FontFace === 'function') {
+    `;
+  }
+
   rules.forEach((rule, index) => {
     content += `
-  var fontFace${index} = new FontFace('${rule['font-family'].replace(QUOTES_REG, '')}', '${rule.src.replace(QUOTES_REG, '')}');
-  document.fonts.add(fontFace${index});
+    var fontFace${index} = new FontFace('${rule['font-family'].replace(QUOTES_REG, '')}', '${rule.src.replace(QUOTES_REG, '')}');
+    document.fonts.add(fontFace${index});
     `;
   });
+
+  if (rules.length > 0) {
+    content += `
+  }
+    `;
+  }
   return content;
 };
 

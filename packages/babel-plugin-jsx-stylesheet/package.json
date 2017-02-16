@@ -1,0 +1,21 @@
+{
+  "name": "babel-plugin-jsx-stylesheet",
+  "version": "0.1.7",
+  "description": "babel plugin jsx stylesheet",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "devDependencies": {
+    "babel-plugin-syntax-jsx": "^6.18.0"
+  },
+  "dependencies": {
+    "camelcase": "^4.0.0"
+  }
+}
