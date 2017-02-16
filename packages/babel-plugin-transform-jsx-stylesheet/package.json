@@ -1,0 +1,21 @@
+{
+  "name": "babel-plugin-transform-jsx-stylesheet",
+  "version": "0.0.1",
+  "description": "Transform stylesheet selector to style in JSX Elements.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "devDependencies": {
+    "babel-plugin-syntax-jsx": "^6.18.0"
+  },
+  "dependencies": {
+    "camelcase": "^4.0.0"
+  }
+}
