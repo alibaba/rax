@@ -1,8 +1,8 @@
-#  样式最佳实践一
+#  在项目中使用 css
 
 对于 Rax 样式最佳实践，我们推荐使用官方提供的 [stylesheet-loader](https://github.com/alibaba/rax/blob/master/packages/stylesheet-loader/README.md)。这个 loader 允许在项目中写 css，通过在 webpack 中配置不同的预处理器 loader 也可以写 less 或 sass。
 
-## 如何配置
+## 配置
 
 ### 安装 loader
 

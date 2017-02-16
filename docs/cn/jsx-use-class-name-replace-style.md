@@ -1,6 +1,6 @@
-# 样式最佳实践二
+# 在 jsx 中写 className 代替 style
 
-最佳实践往往不止一个，这里会介绍一种相对于[一](https://github.com/alibaba/rax/blob/master/docs/cn/stylesheet-1.md)更方便的形式，首先来看下例子。
+最佳实践往往不止一个，这里会介绍一种相对于[use-css](https://github.com/alibaba/rax/blob/master/docs/cn/use-css.md)更方便的形式，首先来看下例子。
 
 ## 引入 className
 
