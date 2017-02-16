@@ -6,6 +6,7 @@ module.exports = {
     ['transform-react-jsx', {
       pragma: 'createElement' // default pragma is React.createElement
     }],
+    'transform-jsx-stylesheet',
     'transform-flow-strip-types',
     'transform-export-extensions', // stage-1
     'transform-decorators-legacy', // should before transform-class-properties

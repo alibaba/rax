@@ -26,6 +26,7 @@
     "babel-plugin-transform-react-constant-elements": "^6.9.1",
     "babel-plugin-transform-react-display-name": "^6.3.13",
     "babel-plugin-transform-react-jsx": "^6.3.13",
-    "babel-plugin-transform-react-jsx-source": "^6.3.13"
+    "babel-plugin-transform-react-jsx-source": "^6.3.13",
+    "babel-plugin-transform-jsx-stylesheet": "^0.0.1"
   }
 }
