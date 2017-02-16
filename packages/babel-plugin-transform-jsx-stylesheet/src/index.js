@@ -4,7 +4,27 @@ import camelcase from 'camelcase';
 const STYLE_SHEET_NAME = 'styleSheet';
 const NAME_SUFFIX = 'StyleSheet';
 
-export default function({ types: t }) {
+export default function({ types: t, template }) {
+  const assignFunctionTemplate = template(`
+function firstLevelAssign() {
+  var newTarget = {};
+  var _arguments = arguments;
+
+  Object.keys(_arguments).forEach(function(index) {
+    var target = _arguments[index];
+    for (var key in target) {
+      newTarget[key] = Object.assign(newTarget[key] || {}, target[key]);
+    }
+  });
+
+  return newTarget;
+}
+  `);
+  const assignFunctionAst = assignFunctionTemplate({
+    IMPORT_NAME: t.identifier('myModule'),
+    SOURCE: t.stringLiteral('my-module')
+  });
+
   function getMemberExpression(str = str.trim()) {
     let classNames = str.split(' ');
 
@@ -18,6 +38,14 @@ export default function({ types: t }) {
   }
   return {
     visitor: {
+      Program: {
+        exit({ node }, { file }) {
+          const cssFileCount = file.get('cssFileCount');
+          if (cssFileCount > 1) {
+            node.body.unshift(assignFunctionAst);
+          }
+        }
+      },
       // parse jsx className
       JSXAttribute({ node }) {
         let attributeName = node.name.name;
@@ -45,7 +73,7 @@ export default function({ types: t }) {
         let cssFileCount;
 
         if (cssIndex > 0) {
-          cssFileCount = file.get('cssFileCount') || 1;
+          cssFileCount = file.get('cssFileCount') || 0;
           const cssFileBaseName = camelcase(path.basename(sourceValue, '.css'));
           const styleSheetIdentifier = t.identifier(`${cssFileBaseName + NAME_SUFFIX}`);
           node.specifiers = [t.importDefaultSpecifier(styleSheetIdentifier)];
@@ -67,7 +95,7 @@ export default function({ types: t }) {
           if (cssParamIdentifiers.length === 1) {
             callExpression = t.variableDeclaration('const', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), cssParamIdentifiers[0])]);
           } else if (cssParamIdentifiers.length > 1) {
-            const objectAssignExpression = t.callExpression(t.memberExpression(t.identifier('Object'), t.identifier('assign')), cssParamIdentifiers);
+            const objectAssignExpression = t.callExpression(t.identifier('firstLevelAssign'), cssParamIdentifiers);
             callExpression = t.variableDeclaration('const', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), objectAssignExpression)]);
           }
 
