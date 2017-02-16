@@ -10,4 +10,3 @@ export unmountComponentAtNode from './unmountComponentAtNode';
 export findComponentInstance from './findComponentInstance';
 export setNativeProps from './setNativeProps';
 export version from './version';
-export {setDriver, getDriver} from './driver';

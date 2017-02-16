@@ -4,7 +4,7 @@ import BrowserDriver from './drivers/browser';
 import {isWeb, isWeex} from 'universal-env';
 
 export const setDriver = (driver) => {
-  Host.driver = driver;
+  return Host.driver = driver;
 };
 
 export const getDriver = () => {
@@ -26,4 +26,6 @@ export const injectDriver = () => {
 
     setDriver(driver);
   }
+
+  return driver;
 };
