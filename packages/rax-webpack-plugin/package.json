@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "devDependencies": {
-    "webpack": "^1.13.2 || ^2.2.1"
+    "webpack": "^2.2.1"
   },
   "dependencies": {
     "babel-generator": "^6.19.0",
