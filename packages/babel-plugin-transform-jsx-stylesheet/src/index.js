@@ -66,18 +66,17 @@ function _mergeStyles() {
       ImportDeclaration({ node }, { file }) {
         const sourceValue = node.source.value;
         const cssIndex = sourceValue.indexOf('.css');
-        let cssParamIdentifiers;
-        let cssFileCount;
-
-        if (cssIndex > 0) {
-          cssFileCount = file.get('cssFileCount') || 0;
+        // Do not convert `import styles from './foo.css'` kind
+        if (node.importKind !== 'value' && cssIndex > 0) {
+          let cssFileCount = file.get('cssFileCount') || 0;
+          let cssParamIdentifiers = file.get('cssParamIdentifiers') || [];
           const cssFileBaseName = camelcase(path.basename(sourceValue, '.css'));
           const styleSheetIdentifier = t.identifier(`${cssFileBaseName + NAME_SUFFIX}`);
-          node.specifiers = [t.importDefaultSpecifier(styleSheetIdentifier)];
 
-          cssParamIdentifiers = file.get('cssParamIdentifiers') || [];
+          node.specifiers = [t.importDefaultSpecifier(styleSheetIdentifier)];
           cssParamIdentifiers.push(styleSheetIdentifier);
           cssFileCount++;
+
           file.set('cssParamIdentifiers', cssParamIdentifiers);
           file.set('cssFileCount', cssFileCount);
         }
