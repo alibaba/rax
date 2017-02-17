@@ -44,7 +44,6 @@ function _mergeStyles() {
       },
       // parse jsx className
       JSXAttribute({ node }, { file }) {
-
         const cssFileCount = file.get('cssFileCount') || 0;
         if (cssFileCount < 1) {
           return;
