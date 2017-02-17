@@ -5,7 +5,7 @@ const STYLE_SHEET_NAME = 'styleSheet';
 const NAME_SUFFIX = 'StyleSheet';
 
 export default function({ types: t, template }) {
-  const assignFunctionTemplate = template(`
+  const mergeStylesFunctionTemplate = template(`
 function _mergeStyles() {
   var newTarget = {};
 
@@ -20,33 +20,38 @@ function _mergeStyles() {
   return newTarget;
 }
   `);
-  const assignFunctionAst = assignFunctionTemplate();
+  const mergeStylesFunctionAst = mergeStylesFunctionTemplate();
 
   function getMemberExpression(str = str.trim()) {
-    let classNames = str.split(' ');
-
     if (str === '') {
       return [];
     }
-    return classNames.map((className) => {
-      className = className.replace(/-/g, '_');
-      return t.memberExpression(t.identifier(STYLE_SHEET_NAME), t.identifier(className));
+
+    return str.split(/\s+/).map((className) => {
+      return template(`${STYLE_SHEET_NAME}["${className}"]`)().expression;
     });
   }
+
   return {
     visitor: {
       Program: {
         exit({ node }, { file }) {
           const cssFileCount = file.get('cssFileCount');
           if (cssFileCount > 1) {
-            node.body.unshift(assignFunctionAst);
+            node.body.unshift(mergeStylesFunctionAst);
           }
         }
       },
       // parse jsx className
-      JSXAttribute({ node }) {
+      JSXAttribute({ node }, { file }) {
+
+        const cssFileCount = file.get('cssFileCount') || 0;
+        if (cssFileCount < 1) {
+          return;
+        }
+
         let attributeName = node.name.name;
-        if (attributeName === 'className' || attributeName === 'class') {
+        if (attributeName === 'className') {
           const arrayExpression = getMemberExpression(node.value.value);
 
           if (arrayExpression.length === 0) {
