@@ -48,17 +48,6 @@ describe('RecyclerView in weex', () => {
     expect(tree.children[4].children[0]).toEqual('footer');
   });
 
-  it('should render null when child is null', () => {
-    let props = {
-      children: [].concat(null, null, <span>footer</span>)
-    };
-    let component = renderer.create(
-      <RecyclerView {...props} />
-    );
-    let tree = component.toJSON();
-    expect(tree.children.length).toEqual(1);
-  });
-
   it('should pass a object to children', () => {
     let props = {
       children: <span>header</span>
