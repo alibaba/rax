@@ -1,7 +1,7 @@
 import path from 'path';
 import camelcase from 'camelcase';
 
-const STYLE_SHEET_NAME = 'styleSheet';
+const STYLE_SHEET_NAME = '_styleSheet';
 const NAME_SUFFIX = 'StyleSheet';
 
 export default function({ types: t, template }) {
