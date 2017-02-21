@@ -162,8 +162,18 @@ class ScrollView extends Component {
       scrollerStyle.webkitOverflowScrolling = 'touch';
       scrollerStyle.overflow = 'scroll';
 
+      let webProps = {
+        ...this.props,
+        ...{
+          ref: 'scroller',
+          style: scrollerStyle,
+          onScroll: handleScroll
+        }
+      }
+      delete webProps.onEndReachedThreshold;
+
       return (
-        <View {...this.props} ref="scroller" style={scrollerStyle} onScroll={handleScroll}>
+        <View {...webProps}>
           {contentContainer}
         </View>
       );
