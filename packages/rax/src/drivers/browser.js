@@ -84,6 +84,9 @@ const Driver = {
   },
 
   addEventListener(node, eventName, eventHandler) {
+    if (typeof(eventHandler) !== 'function') {
+      console.warn('typeof `on' + eventName + '` is ' + typeof(eventHandler) + ' (it should be a function) ');
+    }
     return node.addEventListener(eventName, eventHandler);
   },
 
