@@ -9,7 +9,7 @@ describe('flexbox', () => {
 
 
     expect(flexbox.display('flex', {})).toEqual({
-      display: 'flex'
+      display: ['-webkit-box', '-webkit-flex', 'flex']
     });
 
     expect(flexbox.flex(1)).toEqual({

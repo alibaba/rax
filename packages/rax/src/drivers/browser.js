@@ -140,7 +140,15 @@ const Driver = {
     }
 
     for (let prop in tranformedStyles) {
-      node.style[prop] = tranformedStyles[prop];
+      const transformValue = tranformedStyles[prop];
+      // hack handle compatibility issue
+      if (Array.isArray(transformValue)) {
+        transformValue.forEach((value) => {
+          node.style[prop] = value;
+        });
+      } else {
+        node.style[prop] = transformValue;
+      }
     }
   },
 

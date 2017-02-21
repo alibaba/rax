@@ -34,9 +34,7 @@ let Flexbox = {
   },
   display(value, style = {}) {
     if (value === 'flex') {
-      style.display = '-webkit-box';
-      style.display = '-webkit-flex';
-      style.display = 'flex';
+      style.display = ['-webkit-box', '-webkit-flex', 'flex'];
     } else {
       style.display = value;
     }
