@@ -5,7 +5,7 @@ import generate from 'babel-generator';
 
 /* eslint-disable new-cap */
 
-export default function traverseImport(options, inputSource) {
+export default function traverseImport(options, inputSource, sourceMapOption) {
   let specified; // Collector import specifiers
   let hasPlatformSpecified = false;
 
@@ -111,5 +111,9 @@ export default function traverseImport(options, inputSource) {
     }
   });
 
-  return generate(ast, null, inputSource);
+  return generate(ast, Object.assign({
+    sourceMaps: true,
+    sourceFileName: 'inline',
+    sourceMapTarget: 'inline',
+  }, sourceMapOption), inputSource);
 };

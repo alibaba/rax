@@ -21,10 +21,10 @@ if (!global.matchMedia) {
 
 if (!document.fonts) {
   document.fonts = {
-    add: function(family, source) {
+    add: function(fontFace) {
       let fontFaceRule = `@font-face {
-        font-family: ${family};
-        src: ${source}
+        font-family: ${fontFace.family};
+        src: ${fontFace.source}
       }`;
 
       let styleElement = document.createElement('style');

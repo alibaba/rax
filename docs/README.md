@@ -12,4 +12,4 @@
 * [Differences with React](./difference-with-react.md)
 
 ## Advanced Guides
-* [Rax Driver Specification](./driver-spec.md)
+* [Driver Specification](./driver-spec.md)

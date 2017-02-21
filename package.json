@@ -10,7 +10,7 @@
     "babel-jest": "^18.0.0",
     "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.16.0",
-    "babel-preset-rax": "^0.1.6",
+    "babel-preset-rax": "^0.1.8",
     "chalk": "^1.1.3",
     "chokidar": "^1.6.1",
     "codecov": "^1.0.1",
@@ -24,15 +24,15 @@
     "istanbul-api": "^1.0.0-aplha.10",
     "istanbul-lib-coverage": "^1.0.0",
     "jest": "^18.1.0",
-    "lerna": "2.0.0-beta.32",
+    "lerna": "2.0.0-beta.37",
     "minimatch": "^3.0.3",
     "minimist": "^1.2.0",
-    "rax-webpack-plugin": "^0.1.6",
+    "rax-webpack-plugin": "^0.1.8",
     "redux": "^3.6.0",
     "rimraf": "^2.5.4",
     "semver-regex": "^1.0.0",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.16.2"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0"
   },
   "scripts": {
     "link": "node ./scripts/link.js && npm run build:compile && npm run build:dist",
@@ -68,7 +68,8 @@
       "/fixtures/",
       "/__modules__/",
       "/__files__/",
-      "/lib/"
+      "/lib/",
+      "rax-webpack-plugin"
     ]
   },
   "config": {

@@ -1,6 +1,6 @@
 {
   "name": "rax-webpack-plugin",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Webpack plugin for Rax framework.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "devDependencies": {
-    "webpack": "^1.13.2"
+    "webpack": "^2.2.1"
   },
   "dependencies": {
     "babel-generator": "^6.19.0",
@@ -21,6 +21,8 @@
     "babel-types": "^6.19.0",
     "babylon": "^6.14.1",
     "loader-utils": "^0.2.16",
-    "lodash.clonedeep": "^4.5.0"
+    "lodash.clonedeep": "^4.5.0",
+    "source-map": "^0.5.6",
+    "webpack-sources": "^0.1.4"
   }
 }

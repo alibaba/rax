@@ -54,25 +54,47 @@ describe('transformer', () => {
         border: '1 solid red';
       }
     `;
-    const stylesheet = css.parse(source).stylesheet;
-    let data = {};
-
-    stylesheet.rules.forEach(function(rule) {
-      let style = {};
-
-      if (rule.type === 'rule') {
-        style = transformer.convert(rule);
-      }
-
-      rule.selectors.forEach(function(selector) {
-        const sanitizedSelector = transformer.sanitizeSelector(selector);
-        data[sanitizedSelector] = style;
-      });
-    });
+    const data = parse(source);
 
     expect(data.container.width).toEqual(750);
     expect(data.container.height).toEqual(800);
     expect(data.header_content.width).toEqual(750);
     expect(data.header_content.height).toEqual(200);
   });
+
+  it('should not compile comment', () => {
+    const source = `
+      .container {
+        /* width must be 750 */
+        width: 750;
+      }
+    `;
+    const data = parse(source);
+
+    expect(data).toEqual({
+      container: {
+        width: 750
+      }
+    });
+  });
 });
+
+function parse(code) {
+  const stylesheet = css.parse(code).stylesheet;
+  let data = {};
+
+  stylesheet.rules.forEach((rule) => {
+    let style = {};
+
+    if (rule.type === 'rule') {
+      style = transformer.convert(rule);
+    }
+
+    rule.selectors.forEach((selector) => {
+      const sanitizedSelector = transformer.sanitizeSelector(selector);
+      data[sanitizedSelector] = style;
+    });
+  });
+
+  return data;
+}

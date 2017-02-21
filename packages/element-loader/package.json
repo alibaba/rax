@@ -1,17 +1,17 @@
 {
   "name": "element-loader",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "web component loader.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alibaba/rx.git"
+    "url": "git+https://github.com/alibaba/rax.git"
   },
   "bugs": {
-    "url": "https://github.com/alibaba/rx/issues"
+    "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rx#readme",
+  "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
     "babel-core": "^6.20.0",
     "babel-generator": "^6.20.0",
@@ -25,7 +25,7 @@
     "jsdom": "^9.8.3",
     "loader-utils": "^0.2.16",
     "lodash": "^4.17.2",
-    "stylesheet-loader": "^0.1.6",
+    "stylesheet-loader": "^0.1.8",
     "uppercamelcase": "^1.1.0"
   }
 }

@@ -4,7 +4,7 @@
 
 function createChainableTypeChecker(validate) {
   function checkType(isRequired, props, propName, componentName, location, propFullName) {
-    // Noop
+    return typeChecker;
   }
 
   let chainedCheckType = checkType.bind(null, false);
