@@ -56,6 +56,33 @@ describe('PlatformLoader.traverseImport work on CommonJS', function() {
     expect(code).toBe(expected);
   });
 
+  it('multiple module name', function() {
+    const { code } = traverseImport(
+      { name: ['universal-env', '@ali/universal-env'], platform: 'weex' },
+      unpad(`
+        const env = require("@ali/universal-env");
+        const env2 = require("universal-env");
+      `)
+    );
+
+    const expected = unpad(`
+      const env = {
+        isWeex: true,
+        isWeb: false,
+        isNode: false,
+        isReactNative: false
+      };
+      const env2 = {
+        isWeex: true,
+        isWeb: false,
+        isNode: false,
+        isReactNative: false
+      };
+    `);
+
+    expect(code).toBe(expected);
+  });
+
   it('skin other module', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'web' },
