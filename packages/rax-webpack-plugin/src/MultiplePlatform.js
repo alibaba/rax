@@ -55,6 +55,7 @@ module.exports = function MultiplePlatform(config, options = {}) {
       const platformType = platform.toLowerCase();
       let platformConfig = cloneDeep(config);
       let platformEntry = {};
+      let nameQuery = '';
       // append platform entry
       entries.forEach(name => {
         if (Array.isArray(entry[name])) {
@@ -68,17 +69,23 @@ module.exports = function MultiplePlatform(config, options = {}) {
 
       platformConfig.entry = platformEntry;
 
+      if (Array.isArray(options.name)) {
+        options.name.map(name => {
+          nameQuery += '&name[]=' + name;
+        });
+      }
+
       if (Array.isArray(platformConfig.module.preLoaders)) {
         platformConfig.module.preLoaders.push({
           test: /\.jsx?$/,
-          exclude: /(node_modules|bower_components)/,
-          loader: `${platformLoader}?platform=${platformType}`
+          exclude: options.exclude ? options.exclude : /(node_modules|bower_components)/,
+          loader: `${platformLoader}?platform=${platformType}${nameQuery}`
         });
       } else if (typeof platformConfig.module.preLoaders === 'undefined') {
         platformConfig.module.preLoaders = [{
           test: /\.jsx?$/,
-          exclude: /(node_modules|bower_components)/,
-          loader: `${platformLoader}?platform=${platformType}`
+          exclude: options.exclude ? options.exclude : /(node_modules|bower_components)/,
+          loader: `${platformLoader}?platform=${platformType}${nameQuery}`
         }];
       }
 
