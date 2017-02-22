@@ -65,7 +65,7 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
         hasPlatformSpecified &&
         node.callee.name === 'require' &&
         node.arguments[0] &&
-        node.arguments[0].value === options.name
+        -1 !== options.name.indexOf(node.arguments[0].value)
       ) {
         path.replaceWith(objectExpressionMethod(options.platform));
       }
@@ -73,7 +73,7 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     ImportDeclaration(path) {
       let { node } = path;
 
-      if (node.source.value === options.name) {
+      if (-1 !== options.name(node.source.value)) {
         node.specifiers.forEach(spec => {
           specified.push({
             local: spec.local.name,
