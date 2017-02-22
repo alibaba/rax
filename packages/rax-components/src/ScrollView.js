@@ -169,7 +169,7 @@ class ScrollView extends Component {
           style: scrollerStyle,
           onScroll: handleScroll
         }
-      }
+      };
       delete webProps.onEndReachedThreshold;
 
       return (
