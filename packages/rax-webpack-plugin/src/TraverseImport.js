@@ -73,7 +73,7 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     ImportDeclaration(path) {
       let { node } = path;
 
-      if (-1 !== options.name(node.source.value)) {
+      if (-1 !== options.name.indexOf(node.source.value)) {
         node.specifiers.forEach(spec => {
           specified.push({
             local: spec.local.name,
