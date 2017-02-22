@@ -84,10 +84,12 @@ const Driver = {
   },
 
   addEventListener(node, eventName, eventHandler) {
-    if (typeof(eventHandler) !== 'function') {
-      console.warn('typeof `on' + eventName + '` is ' + typeof(eventHandler) + ' (it should be a function) ');
+    if (typeof eventHandler === 'function' || typeof eventHandler === 'object') {
+      return node.addEventListener(eventName, eventHandler);
+    } else {
+      console.error('addEventListener TypeError: typeof `on' + eventName + '` is ' + typeof eventHandler + ' (This must be an object implementing the EventListener interface, or simply a JavaScript function.) ');
+      return;
     }
-    return node.addEventListener(eventName, eventHandler);
   },
 
   removeEventListener(node, eventName, eventHandler) {
