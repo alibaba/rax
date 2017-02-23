@@ -82,9 +82,9 @@ describe('PlatformLoader.traverseImport', function() {
 
   it('multiple module name', function() {
     const {code} = traverseImport(
-      { name: ['universal-env', 'xxx-env'], platform: 'web' },
+      { name: ['universal-env', 'env'], platform: 'web' },
       unpad(`
-        import { isWeb } from "xxx-env";
+        import { isWeb } from "env";
         import { isWeex } from "universal-env";
       `)
     );
