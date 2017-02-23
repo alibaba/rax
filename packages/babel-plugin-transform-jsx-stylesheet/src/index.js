@@ -72,7 +72,6 @@ function _mergeStyles() {
 
 
         if (hasClassName) {
-
           // Remove origin className
           attributes.splice(attributes.indexOf(classNameAttribute), 1);
 
@@ -95,7 +94,6 @@ function _mergeStyles() {
             attributes.push(t.jSXAttribute('style', t.jSXExpressionContainer(expression)));
           }
         }
-
       },
       ImportDeclaration({ node }, { file }) {
         const sourceValue = node.source.value;
