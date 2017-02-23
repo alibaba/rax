@@ -22,7 +22,7 @@ function _mergeStyles() {
   `);
   const mergeStylesFunctionAst = mergeStylesFunctionTemplate();
 
-  function getMemberExpression(str = str.trim()) {
+  function getArrayExpression(str = str.trim()) {
     if (str === '') {
       return [];
     }
@@ -42,30 +42,60 @@ function _mergeStyles() {
           }
         }
       },
-      // parse jsx className
-      JSXAttribute({ node }, { file }) {
+      JSXOpeningElement({ container }, { file }) {
         const cssFileCount = file.get('cssFileCount') || 0;
         if (cssFileCount < 1) {
           return;
         }
 
-        let attributeName = node.name.name;
-        if (attributeName === 'className') {
-          const arrayExpression = getMemberExpression(node.value.value);
+        // Check if has "style"
+        let hasStyleAttribute = false;
+        let styleAttribute;
+        let hasClassName = false;
+        let classNameAttribute;
+
+        const attributes = container.openingElement.attributes;
+        for (let i = 0; i < attributes.length; i++) {
+          const name = attributes[i].name;
+          if (name) {
+            if (!hasStyleAttribute) {
+              hasStyleAttribute = name.name === 'style';
+              styleAttribute = hasStyleAttribute && attributes[i];
+            }
+
+            if (!hasClassName) {
+              hasClassName = name.name === 'className';
+              classNameAttribute = hasClassName && attributes[i];
+            }
+          }
+        }
+
+
+        if (hasClassName) {
+
+          // Remove origin className
+          attributes.splice(attributes.indexOf(classNameAttribute), 1);
+
+          const arrayExpression = getArrayExpression(classNameAttribute.value.value);
 
           if (arrayExpression.length === 0) {
             return;
           }
 
-          node.name.name = 'style';
-          node.value.type = 'JSXExpressionContainer';
-
-          if (arrayExpression.length === 1) {
-            node.value.expression = arrayExpression[0];
+          if (hasStyleAttribute) {
+            let expression = styleAttribute.value.expression;
+            let expressionType = expression.type;
+            if (expressionType === 'ArrayExpression') {
+              expression.elements = arrayExpression.concat(expression.elements);
+            } else if (expressionType === 'MemberExpression') {
+              styleAttribute.value.expression = t.arrayExpression(arrayExpression.concat(expression));
+            }
           } else {
-            node.value.expression = t.arrayExpression(arrayExpression);
+            let expression = arrayExpression.length === 1 ? arrayExpression[0] : t.arrayExpression(arrayExpression);
+            attributes.push(t.jSXAttribute('style', t.jSXExpressionContainer(expression)));
           }
         }
+
       },
       ImportDeclaration({ node }, { file }) {
         const sourceValue = node.source.value;
