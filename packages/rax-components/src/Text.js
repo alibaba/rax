@@ -20,9 +20,10 @@ class Text extends Component {
   render() {
     let props = this.props;
     let nativeProps = {
-      style: props.style || {},
-      id: props.id,
-      className: props.className,
+      ...props,
+      ...{
+        style: props.style || {},
+      },
     };
 
     let textString = '';
