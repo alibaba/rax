@@ -84,12 +84,7 @@ const Driver = {
   },
 
   addEventListener(node, eventName, eventHandler) {
-    if (typeof eventHandler === 'function' || typeof eventHandler === 'object') {
-      return node.addEventListener(eventName, eventHandler);
-    } else {
-      console.error('addEventListener TypeError:  `' + typeof eventHandler + '` is not an object  (This must be an object implementing the EventListener interface, or simply a JavaScript function.) ');
-      return;
-    }
+    return node.addEventListener(eventName, eventHandler);
   },
 
   removeEventListener(node, eventName, eventHandler) {
