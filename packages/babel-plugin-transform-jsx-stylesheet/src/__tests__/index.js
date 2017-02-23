@@ -123,7 +123,7 @@ class App extends Component {
     return <div className="header" />;
   }
 }`;
-    
+
     expect(getTransfromCode(code)).toBe(code);
   });
 });
