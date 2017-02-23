@@ -1,6 +1,6 @@
 {
   "name": "babel-preset-rax",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Babel preset for all Rax plugins.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -27,6 +27,6 @@
     "babel-plugin-transform-react-display-name": "^6.3.13",
     "babel-plugin-transform-react-jsx": "^6.3.13",
     "babel-plugin-transform-react-jsx-source": "^6.3.13",
-    "babel-plugin-transform-jsx-stylesheet": "^0.1.10"
+    "babel-plugin-transform-jsx-stylesheet": "^0.1.9"
   }
 }
