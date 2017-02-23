@@ -72,7 +72,6 @@ function _mergeStyles() {
 
 
         if (hasClassName) {
-
           // Remove origin className
           attributes.splice(attributes.indexOf(classNameAttribute), 1);
 
@@ -92,10 +91,9 @@ function _mergeStyles() {
             }
           } else {
             let expression = arrayExpression.length === 1 ? arrayExpression[0] : t.arrayExpression(arrayExpression);
-            attributes.push(t.jSXAttribute('style', t.jSXExpressionContainer(expression)));
+            attributes.push(t.jSXAttribute(t.jSXIdentifier('style'), t.jSXExpressionContainer(expression)));
           }
         }
-
       },
       ImportDeclaration({ node }, { file }) {
         const sourceValue = node.source.value;
