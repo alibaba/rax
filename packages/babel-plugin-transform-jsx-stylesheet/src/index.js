@@ -91,7 +91,7 @@ function _mergeStyles() {
             }
           } else {
             let expression = arrayExpression.length === 1 ? arrayExpression[0] : t.arrayExpression(arrayExpression);
-            attributes.push(t.jSXAttribute('style', t.jSXExpressionContainer(expression)));
+            attributes.push(t.jSXAttribute(t.jSXIdentifier('style'), t.jSXExpressionContainer(expression)));
           }
         }
       },
