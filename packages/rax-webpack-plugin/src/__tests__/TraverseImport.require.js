@@ -58,9 +58,9 @@ describe('PlatformLoader.traverseImport work on CommonJS', function() {
 
   it('multiple module name', function() {
     const { code } = traverseImport(
-      { name: ['universal-env', '@ali/universal-env'], platform: 'weex' },
+      { name: ['universal-env', 'xxx-env'], platform: 'weex' },
       unpad(`
-        const env = require("@ali/universal-env");
+        const env = require("xxx-env");
         const env2 = require("universal-env");
       `)
     );
