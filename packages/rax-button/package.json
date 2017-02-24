@@ -1,0 +1,31 @@
+{
+  "name": "rax-button",
+  "version": "0.1.9",
+  "description": "Button component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component",
+    "react-component"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "rax-touchable": "^0.1.9",
+    "rax-text": "^0.1.9"
+  },
+  "peerDependencies": {
+    "rax": "^0.1.9",
+    "universal-env": "^0.1.9"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.1.9"
+  }
+}
