@@ -9,10 +9,6 @@ let NativeModules = {};
 let Document;
 let Element;
 let Comment;
-let Listener;
-let TaskCenter;
-let CallbackManager;
-let sendTasks;
 
 const MODULE_NAME_PREFIX = '@weex-module/';
 const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
@@ -34,6 +30,10 @@ function dispatchEventToInstance(event, targetOrigin) {
   }
 }
 
+function updateFinish(doc) {
+  doc.taskCenter.send('dom', { action: 'updateFinish' }, []);
+}
+
 export function getInstance(instanceId) {
   const instance = instances[instanceId];
   if (!instance) {
@@ -46,10 +46,6 @@ export function init(config) {
   Document = config.Document;
   Element = config.Element;
   Comment = config.Comment;
-  Listener = config.Listener;
-  TaskCenter = config.TaskCenter;
-  CallbackManager = config.CallbackManager;
-  sendTasks = config.sendTasks;
 }
 
 /**
@@ -105,7 +101,7 @@ function genBuiltinModules(modules, moduleFactories, context) {
   return modules;
 }
 
-function genNativeModules(modules, instanceId) {
+function genNativeModules(modules, document) {
   if (typeof NativeModules === 'object') {
     for (let name in NativeModules) {
       let moduleName = MODULE_NAME_PREFIX + name;
@@ -120,21 +116,14 @@ function genNativeModules(modules, instanceId) {
             name: method
           };
         }
-
-        let methodName = method.name;
+        const methodName = method.name;
 
         modules[moduleName].module.exports[methodName] = (...args) => {
-          const finalArgs = [];
-          args.forEach((arg, index) => {
-            const value = args[index];
-            finalArgs[index] = normalize(value, getInstance(instanceId));
-          });
-
-          sendTasks(String(instanceId), [{
+          // https://github.com/alibaba/weex/issues/1677
+          return document.taskCenter.send('module', {
             module: name,
-            method: methodName,
-            args: finalArgs
-          }], '-1');
+            method: methodName
+          }, args);
         };
       });
     }
@@ -164,7 +153,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const FontFace = require('runtime-shared/dist/fontface.function')();
     const matchMedia = require('runtime-shared/dist/matchMedia.function')();
 
-    const document = new Document(instanceId, __weex_options__.bundleUrl, null, Listener);
+    const document = new Document(instanceId, __weex_options__.bundleUrl);
     const location = new URL(__weex_options__.bundleUrl);
     const modules = {};
 
@@ -173,12 +162,11 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       instanceId,
       modules,
       origin: location.origin,
-      callbacks: [],
       uid: 0
     };
 
     // Generate native modules map at instance init
-    genNativeModules(modules, instanceId);
+    genNativeModules(modules, document);
     const __weex_define__ = require('./define.weex')(modules);
     const __weex_require__ = require('./require.weex')(modules);
     const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
@@ -199,7 +187,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       clearInterval,
       requestAnimationFrame,
       cancelAnimationFrame
-    } = require('./timer.weex')(__weex_require__, instance);
+    } = require('./timer.weex')(__weex_require__);
 
     const {
       atob,
@@ -363,7 +351,7 @@ export function refreshInstance(instanceId, data) {
     timestamp: Date.now(),
     data,
   });
-  document.listener.refreshFinish();
+  document.taskCenter.send('dom', { action: 'refreshFinish' }, []);
 }
 
 /**
@@ -377,8 +365,13 @@ export function destroyInstance(instanceId) {
   document.documentElement.fireEvent('destory', {
     timestamp: Date.now()
   });
+
   if (document.destroy) {
     document.destroy();
+  }
+
+  if (document.taskCenter && document.taskCenter.destroyCallback) {
+    document.taskCenter.destroyCallback();
   }
 
   delete instances[instanceId];
@@ -408,25 +401,11 @@ function fireEvent(doc, ref, type, e, domChanges) {
 
   if (el) {
     const result = doc.fireEvent(el, type, e, domChanges);
-    doc.listener.updateFinish();
+    updateFinish(doc);
     return result;
   }
 
   return new Error(`Invalid element reference "${ref}"`);
-}
-
-function handleCallback(doc, callbacks, callbackId, data, ifKeepAlive) {
-  let callback = callbacks[callbackId];
-  if (typeof callback === 'function') {
-    callback(data);
-    if (typeof ifKeepAlive === 'undefined' || ifKeepAlive === false) {
-      callbacks[callbackId] = null;
-    }
-    doc.listener.updateFinish();
-    return;
-  }
-
-  return new Error(`Invalid callback id "${callbackId}"`);
 }
 
 /**
@@ -438,7 +417,7 @@ function handleCallback(doc, callbacks, callbackId, data, ifKeepAlive) {
 export function receiveTasks(instanceId, tasks) {
   const instance = getInstance(instanceId);
   if (Array.isArray(tasks)) {
-    const { callbacks, document } = instance;
+    const {document} = instance;
     const results = [];
     tasks.forEach(task => {
       let result;
@@ -447,7 +426,8 @@ export function receiveTasks(instanceId, tasks) {
         result = fireEvent(document, nodeId, type, data, domChanges);
       } else if (task.method === 'callback') {
         let [uid, data, ifKeepAlive] = task.args;
-        result = handleCallback(document, callbacks, uid, data, ifKeepAlive);
+        result = document.taskCenter.callback(uid, data, ifKeepAlive);
+        updateFinish(doc);
       }
       results.push(result);
     });
@@ -455,38 +435,5 @@ export function receiveTasks(instanceId, tasks) {
   }
 }
 
-function normalize(v, instance) {
-  const type = typof(v);
-
-  switch (type) {
-    case 'undefined':
-    case 'null':
-      return '';
-    case 'regexp':
-      return v.toString();
-    case 'date':
-      return v.toISOString();
-    case 'number':
-    case 'string':
-    case 'boolean':
-    case 'array':
-    case 'object':
-      if (v instanceof Element) {
-        return v.ref;
-      }
-      return v;
-    case 'function':
-      instance.callbacks[++instance.uid] = v;
-      return instance.uid.toString();
-    default:
-      return JSON.stringify(v);
-  }
-}
-
-function typof(v) {
-  const s = Object.prototype.toString.call(v);
-  return s.substring(8, s.length - 1).toLowerCase();
-}
-
-// Hack for rollup build "import Rax from 'weex-rax-framework'", in rollup if `module.exports` has `__esModule` key must return by export default
+// FIXME: Hack for rollup build "import Rax from 'weex-rax-framework'", in rollup if `module.exports` has `__esModule` key must return by export default
 export default exports;

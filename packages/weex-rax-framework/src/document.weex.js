@@ -69,15 +69,21 @@ module.exports = function(__weex_require__, document) {
 
   // Hijack the origin createBody
   const originCreateBody = document.createBody;
-  document.createBody = function() {
-    var body = originCreateBody.call(document);
 
-    if (hasVisibilityEventPending) {
-      addBodyAppearListener(document);
+  Object.defineProperty(document, 'createBody', {
+    enumerable: true,
+    configurable: true,
+    writable: true,
+    value: function() {
+      var body = originCreateBody.call(document);
+
+      if (hasVisibilityEventPending) {
+        addBodyAppearListener(document);
+      }
+
+      return body;
     }
-
-    return body;
-  };
+  });
 
   return document;
 };
