@@ -46,7 +46,7 @@ describe('framework', () => {
     sendTasksHandler = function() {
       runtime.target.callNative(...arguments);
       // FIXME: Hack for should return value like setTimeout
-      return "1";
+      return '1';
     };
     // Create a Weex instance in a certain runtime.
     instance = new Instance(runtime);

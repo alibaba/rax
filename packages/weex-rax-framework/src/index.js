@@ -146,8 +146,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     // Mark start time
     const responseEnd = Date.now();
     const __weex_env__ = typeof WXEnvironment === 'object' && WXEnvironment || {};
-
-    const Promise = require('runtime-shared/dist/promise.function')();
+    // For better performance use built-in promise first
+    const Promise = typeof Promise === 'function' ? Promise : require('runtime-shared/dist/promise.function')();
     const URL = require('runtime-shared/dist/url.function')();
     const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
     const FontFace = require('runtime-shared/dist/fontface.function')();
@@ -197,6 +197,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const performance = require('./performance.weex')(responseEnd);
 
     const windowEmitter = new EventEmitter();
+
     const window = {
       // ES
       Promise,
@@ -427,7 +428,7 @@ export function receiveTasks(instanceId, tasks) {
       } else if (task.method === 'callback') {
         let [uid, data, ifKeepAlive] = task.args;
         result = document.taskCenter.callback(uid, data, ifKeepAlive);
-        updateFinish(doc);
+        updateFinish(document);
       }
       results.push(result);
     });
