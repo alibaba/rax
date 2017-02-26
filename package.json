@@ -68,8 +68,7 @@
       "/fixtures/",
       "/__modules__/",
       "/__files__/",
-      "/lib/",
-      "rax-webpack-plugin"
+      "/lib/"
     ]
   },
   "config": {
