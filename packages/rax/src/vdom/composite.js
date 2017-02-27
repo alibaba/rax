@@ -7,6 +7,20 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import Hook from '../debug/hook';
 
+function measureLifeCyclePerf(callback, instanceID, type) {
+  if (instanceID === 0) {
+    return callback();
+  }
+
+  Hook.Monitor && Hook.Monitor.beginLifeCycle(instanceID, type);
+
+  try {
+    return callback();
+  } finally {
+    Hook.Monitor && Hook.Monitor.endLifeCycle(instanceID, type);
+  }
+}
+
 function performInSandbox(fn, handleError) {
   try {
     return fn();
@@ -48,6 +62,10 @@ class CompositeComponent {
     this._context = context;
     this._mountID = Host.mountID++;
     this._updateCount = 0;
+
+    if (process.env.NODE_ENV !== 'production') {
+      Hook.Monitor && Hook.Monitor.beginMountComponent(this._mountID, this);
+    }
 
     let Component = this._currentElement.type;
     let publicProps = this._currentElement.props;
@@ -93,7 +111,13 @@ class CompositeComponent {
 
     performInSandbox(() => {
       if (instance.componentWillMount) {
-        instance.componentWillMount();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCyclePerf(() => {
+            instance.componentWillMount();
+          }, this._mountID, 'componentWillMount');
+        } else {
+          instance.componentWillMount();
+        }
       }
     });
 
@@ -111,7 +135,13 @@ class CompositeComponent {
       }
 
       performInSandbox(() => {
-        renderedElement = instance.render();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCyclePerf(() => {
+            renderedElement = instance.render();
+          }, this._mountID, 'render');
+        } else {
+          renderedElement = instance.render();
+        }
       }, handleError);
 
       Host.component = null;
@@ -130,11 +160,21 @@ class CompositeComponent {
 
     performInSandbox(() => {
       if (instance.componentDidMount) {
-        instance.componentDidMount();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCyclePerf(() => {
+            instance.componentDidMount();
+          }, this._mountID, 'componentDidMount');
+        } else {
+          instance.componentDidMount();
+        }
       }
     });
 
     Hook.Reconciler.mountComponent(this);
+
+    if (process.env.NODE_ENV !== 'production') {
+      Hook.Monitor && Hook.Monitor.endMountComponent(this._mountID);
+    }
 
     return instance;
   }
@@ -231,6 +271,10 @@ class CompositeComponent {
     nextUnmaskedContext
   ) {
     let instance = this._instance;
+
+    if (process.env.NODE_ENV !== 'production') {
+      Hook.Monitor && Hook.Monitor.beginUpdateComponent(this._mountID, this);
+    }
 
     if (!instance) {
       console.error(
@@ -331,6 +375,10 @@ class CompositeComponent {
       instance.context = nextContext;
     }
 
+    if (process.env.NODE_ENV !== 'production') {
+      Hook.Monitor && Hook.Monitor.endUpdateComponent(this._mountID);
+    }
+
     Hook.Reconciler.receiveComponent(this);
   }
 
@@ -347,7 +395,13 @@ class CompositeComponent {
     Host.component = this;
 
     performInSandbox(() => {
-      nextRenderedElement = instance.render();
+      if (process.env.NODE_ENV !== 'production') {
+        measureLifeCyclePerf(() => {
+          nextRenderedElement = instance.render();
+        }, this._mountID, 'render');
+      } else {
+        nextRenderedElement = instance.render();
+      }
     });
 
     Host.component = null;
@@ -359,6 +413,13 @@ class CompositeComponent {
         prevRenderedComponent._context,
         this._processChildContext(context)
       );
+      if (process.env.NODE_ENV !== 'production') {
+        Hook.Monitor && Hook.Monitor.recordOperation({
+          instanceID: this._mountID,
+          type: 'update component',
+          payload: {}
+        });
+      }
     } else {
       let oldChild = prevRenderedComponent.getNativeNode();
       prevRenderedComponent.unmountComponent(true);

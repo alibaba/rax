@@ -2,8 +2,15 @@ import injectComponent from './vdom/injectComponent';
 import instance from './vdom/instance';
 import {setRem} from './style/unit';
 import {injectDriver, setDriver} from './driver';
+import Hook from './debug/hook';
 
-function render(element, container, driver, callback) {
+function render(element, container, driver, Monitor, callback) {
+  Hook.Monitor = Monitor;
+
+  if (process.env.NODE_ENV !== 'production') {
+    Hook.Monitor && Hook.Monitor.beginRender();
+  }
+
   // Compatible with `render(element, container, callback)`
   if (typeof driver === 'function') {
     callback = driver;
@@ -32,6 +39,10 @@ function render(element, container, driver, callback) {
   }
   // After render callback
   driver.afterRender && driver.afterRender(component);
+
+  if (process.env.NODE_ENV !== 'production') {
+    Hook.Monitor && Hook.Monitor.endRender();
+  }
 
   return component;
 }
