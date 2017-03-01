@@ -16,11 +16,6 @@ class Switch extends Component {
     value: this.props.value,
   };
 
-  componentWillReceiveProps(props) {
-    this.state.value = props.value;
-    this.setState(this.state);
-  }
-
   handleClick = (e) => {
     if (this.props.disabled) {
       return null;
@@ -100,6 +95,9 @@ class Switch extends Component {
   }
 
   render() {
+
+    this.state.value = this.props.value;
+
     if (isWeex) {
       let nativeProps = {
         style: {
