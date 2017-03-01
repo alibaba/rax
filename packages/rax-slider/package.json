@@ -1,6 +1,6 @@
 {
   "name": "rax-slider",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Slider component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -22,6 +22,6 @@
     "universal-env": "^0.1.9"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.1.9"
+    "rax-test-renderer": "^0.2.0"
   }
 }

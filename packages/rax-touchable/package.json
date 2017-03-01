@@ -1,6 +1,6 @@
 {
   "name": "rax-touchable",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Touchable component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -18,13 +18,13 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "rax-view": "^0.1.9"
+    "rax-view": "^0.2.0"
   },
   "peerDependencies": {
     "rax": "^0.1.9",
     "universal-env": "^0.1.9"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.1.9"
+    "rax-test-renderer": "^0.2.0"
   }
 }
