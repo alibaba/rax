@@ -24,21 +24,26 @@ class FragmentComponent extends NativeComponent {
     };
     this._instance = instance;
 
-    let nativeNode = this.getNativeNode();
+    let fragment = this.getNativeNode();
     let children = this._currentElement;
 
     // Process children
     this.mountChildren(children, context);
 
-    // Fragment child nodes append by tree mode
     if (childMounter) {
-      childMounter(nativeNode, parent);
+      childMounter(fragment, parent);
     } else {
-      Host.driver.appendChild(nativeNode, parent);
+      let isFragmentParent = Array.isArray(parent);
+      for (let i = 0; i < fragment.length; i++) {
+        let child = fragment[i];
+        // When the parent is also a fragment
+        if (isFragmentParent) {
+          parent.push(child);
+        } else {
+          Host.driver.appendChild(child, parent);
+        }
+      }
     }
-
-    // set to right node when append to parent
-    this._nativeNode = parent;
 
     Hook.Reconciler.mountComponent(this);
 
@@ -60,7 +65,13 @@ class FragmentComponent extends NativeComponent {
         this._parent,
         context,
         (nativeNode) => {
-          Host.driver.appendChild(nativeNode, fragment);
+          if (Array.isArray(nativeNode)) {
+            for (let i = 0; i < nativeNode.length; i++) {
+              fragment.push(nativeNode[i]);
+            }
+          } else {
+            fragment.push(nativeNode);
+          }
         }
       );
       return mountImage;
@@ -71,15 +82,18 @@ class FragmentComponent extends NativeComponent {
     return renderedChildrenImage;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(notRemoveChild) {
     if (this._nativeNode) {
       instance.remove(this._nativeNode);
-      if (!shouldNotRemoveChild) {
-        Host.driver.removeChild(this._nativeNode, this._parent);
+      if (!notRemoveChild) {
+        for (let i = 0; i < this._nativeNode.length; i++) {
+          Host.driver.removeChild(this._nativeNode[i]);
+        }
       }
     }
 
-    this.unmountChildren();
+    // Do not need remove child when their parent is removed
+    this.unmountChildren(true);
 
     Hook.Reconciler.unmountComponent(this);
 
@@ -100,16 +114,14 @@ class FragmentComponent extends NativeComponent {
 
   getNativeNode() {
     if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createFragment(this._instance);
-      // TODO instance cache
+      this._nativeNode = [];
     }
 
     return this._nativeNode;
   }
 
   getPublicInstance() {
-    // TODO
-    return null;
+    return this.getNativeNode();
   }
 
   getName() {

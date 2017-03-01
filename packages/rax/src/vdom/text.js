@@ -33,8 +33,8 @@ class TextComponent {
     return instance;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
-    if (this._nativeNode && !shouldNotRemoveChild) {
+  unmountComponent(notRemoveChild) {
+    if (this._nativeNode && !notRemoveChild) {
       Host.driver.removeChild(this._nativeNode, this._parent);
     }
 

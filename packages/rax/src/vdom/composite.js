@@ -139,7 +139,7 @@ class CompositeComponent {
     return instance;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(notRemoveChild) {
     let instance = this._instance;
 
     performInSandbox(() => {
@@ -158,7 +158,7 @@ class CompositeComponent {
         Ref.detach(this._currentElement._owner, ref, this);
       }
 
-      this._renderedComponent.unmountComponent(shouldNotRemoveChild);
+      this._renderedComponent.unmountComponent(notRemoveChild);
       this._renderedComponent = null;
       this._instance = null;
     }
@@ -368,7 +368,34 @@ class CompositeComponent {
         this._parent,
         this._processChildContext(context),
         (newChild, parent) => {
-          Host.driver.replaceChild(newChild, oldChild, parent);
+          // TODO: Duplicate code in native component file
+          if (!Array.isArray(newChild)) {
+            newChild = [newChild];
+          }
+
+          // oldChild or newChild all maybe fragment
+          if (!Array.isArray(oldChild)) {
+            oldChild = [oldChild];
+          }
+
+          // If newChild count large then oldChild
+          let lastNewChild;
+          for (let i = 0; i < newChild.length; i++) {
+            let child = newChild[i];
+            if (oldChild[i]) {
+              Host.driver.replaceChild(child, oldChild[i]);
+            } else {
+              Host.driver.insertAfter(child, lastNewChild);
+            }
+            lastNewChild = child;
+          }
+
+          // If newChild count less then oldChild
+          if (newChild.length < oldChild.length) {
+            for (let i = newChild.length; i < oldChild.length; i++) {
+              Host.driver.removeChild(oldChild[i]);
+            }
+          }
         }
       );
     }
