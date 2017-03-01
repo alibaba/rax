@@ -21,6 +21,7 @@
     "easyfile": "^0.1.1",
     "minimist": "^1.2.0",
     "prompt": "^0.2.14",
+    "semver": "^5.3.0",
     "update-notifier": "^1.0.3"
   }
 }
