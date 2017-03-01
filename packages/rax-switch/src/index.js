@@ -47,10 +47,13 @@ class Switch extends Component {
       span: {
         width: DEFAULT_WIDTH,
         height: DEFAULT_HEIGHT,
+        minWidth: DEFAULT_WIDTH,
+        minHeight: DEFAULT_HEIGHT,
         borderRadius: 40,
         position: 'relative',
         display: 'inline-block',
         margin: 4,
+        padding: 0,
         cursor: 'default', // pointer will cause a grey background color on chrome
         verticalAlign: 'middle',
         borderColor: '#dfdfdf',
