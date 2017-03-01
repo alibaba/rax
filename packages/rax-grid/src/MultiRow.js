@@ -1,6 +1,3 @@
-/** @jsx createElement */
-'use strict';
-
 import {createElement, render, Component} from 'rax';
 import Grid from './Grid';
 import Col from './Col';

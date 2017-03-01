@@ -1,5 +1,3 @@
-/** @jsx createElement */
-
 import {Component, createElement} from 'rax';
 
 let defaultWidth = window.screen.width;

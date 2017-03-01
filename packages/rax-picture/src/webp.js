@@ -1,4 +1,3 @@
-
 /**
  * alicdn webp支持lossy lossless alpha 
  * lossy 有损压缩
@@ -6,7 +5,6 @@
  * alpha 透明通道 如带透明通道的png
  * animation 动画 如gif
  */
-'use strict';
 
 import { isWeex } from 'universal-env';
 

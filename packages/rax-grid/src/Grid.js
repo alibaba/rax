@@ -1,5 +1,3 @@
-/** @jsx createElement */
-
 import {Component, createElement} from 'rax';
 
 class Grid extends Component {

@@ -1,5 +1,3 @@
-/** @jsx createElement */
-'use strict';
 import {createElement, Component, PropTypes} from 'rax';
 import {Image, View} from 'rax-components';
 import webp from './webp';
