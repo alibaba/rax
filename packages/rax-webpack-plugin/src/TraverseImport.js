@@ -2,6 +2,7 @@ import * as babylon from 'babylon';
 import traverse from 'babel-traverse';
 import * as types from 'babel-types';
 import generate from 'babel-generator';
+import codeFrame from "babel-code-frame";
 
 /* eslint-disable new-cap */
 
