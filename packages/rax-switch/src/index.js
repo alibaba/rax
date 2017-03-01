@@ -16,6 +16,11 @@ class Switch extends Component {
     value: this.props.value,
   };
 
+  componentWillReceiveProps(props) {
+    this.state.value = props.value;
+    this.setState(this.state);
+  }
+
   handleClick = (e) => {
     if (this.props.disabled) {
       return null;
@@ -111,7 +116,11 @@ class Switch extends Component {
       let spancss = this.state.value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
       let smallcss = this.state.value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
       spancss = this.props.disabled ? {...spancss, ...styles.disabledSpan} : spancss;
-
+      spancss = {
+        ...this.props.style, 
+        ...spancss
+      };
+      
       return (
         <span onClick={this.handleClick} style={spancss}>
           <small style={smallcss} />
