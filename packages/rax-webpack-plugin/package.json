@@ -12,6 +12,9 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "devDependencies": {
     "webpack": "^2.2.1"
   },

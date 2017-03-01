@@ -12,6 +12,9 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "dependencies": {
     "babel-core": "^6.20.0",
     "babel-generator": "^6.20.0",

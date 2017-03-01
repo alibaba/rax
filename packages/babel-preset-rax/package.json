@@ -12,6 +12,9 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "dependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-minify-dead-code-elimination": "^0.1.1",
