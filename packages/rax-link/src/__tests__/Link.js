@@ -30,4 +30,15 @@ describe('Link', () => {
     let tree = component.toJSON();
     expect(tree.children).toBe(undefined);
   });
+
+  it('should display the font size according to the props', () => {
+    const component = renderer.create(
+      <Link style={{fontSize: '100rem'}}>
+        Some link text
+      </Link>
+    );
+
+    let tree = component.toJSON();
+    expect(tree.children[0].style.fontSize).toBe('100rem');
+  });
 });
