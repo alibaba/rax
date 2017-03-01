@@ -1,8 +1,17 @@
 'use strict';
 
 import normalizeColor from './normalizeColor';
+const SUFFIX = 'rem';
 
-let measure = function(value, key) {
+function convertUnit(val) {
+  if (/^\d+$/.test(val)) {
+    return val + SUFFIX;
+  }
+
+  return val;
+}
+
+function measure(value, key) {
   let direction = [];
 
   if (typeof value === 'number') {
@@ -32,10 +41,10 @@ let measure = function(value, key) {
   let result = {
     isDeleted: true,
   };
-  result[topKey] = direction[0];
-  result[rightKey] = direction[1];
-  result[bottomKey] = direction[2];
-  result[leftKey] = direction[3];
+  result[topKey] = convertUnit(direction[0]);
+  result[rightKey] = convertUnit(direction[1]);
+  result[bottomKey] = convertUnit(direction[2]);
+  result[leftKey] = convertUnit(direction[3]);
 
   return result;
 };
@@ -94,6 +103,11 @@ export default {
     }
     return {
       lineHeight: value
+    };
+  },
+  fontWeight: (value) => {
+    return {
+      fontWeight: value.toString()
     };
   }
 };
