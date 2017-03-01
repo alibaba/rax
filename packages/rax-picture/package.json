@@ -1,7 +1,7 @@
 {
-  "name": "rax-icon",
+  "name": "rax-player",
   "version": "0.1.9",
-  "description": "icon UI for Rax.",
+  "description": "player UI for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -20,8 +20,7 @@
   "dependencies": {
     "rax": "^0.1.9",
     "universal-env": "^0.1.9",
-    "rax-view": "^0.1.9",
-    "rax-text": "^0.1.9",
-    "rax-image": "^0.1.9"
+    "rax-image": "^0.1.9",
+    "rax-view": "^0.1.9"
   }
 }
