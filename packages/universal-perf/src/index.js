@@ -4,4 +4,4 @@ import Perf from './perf';
 export default {
   Monitor,
   Perf
-}
+};

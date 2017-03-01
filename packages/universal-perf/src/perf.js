@@ -91,7 +91,6 @@ function getInclusive(data = getLastMeasurements()) {
     applyUpdate(stats);
   }
   let isCompositeByID = {};
-  console.log(data);
   data.forEach(flush => {
     const {measurements} = flush;
     measurements.forEach(measurement => {

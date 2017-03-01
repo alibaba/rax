@@ -12,12 +12,12 @@ function measureLifeCyclePerf(callback, instanceID, type) {
     return callback();
   }
 
-  Hook.Monitor && Hook.Monitor.beginLifeCycle(instanceID, type);
+  Hook.Monitor && Hook.Monitor.beforeLifeCycle(instanceID, type);
 
   try {
     return callback();
   } finally {
-    Hook.Monitor && Hook.Monitor.endLifeCycle(instanceID, type);
+    Hook.Monitor && Hook.Monitor.afterLifeCycle(instanceID, type);
   }
 }
 
@@ -64,7 +64,7 @@ class CompositeComponent {
     this._updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.Monitor && Hook.Monitor.beginMountComponent(this._mountID, this);
+      Hook.Monitor && Hook.Monitor.beforeMountComponent(this._mountID, this);
     }
 
     let Component = this._currentElement.type;
@@ -173,7 +173,7 @@ class CompositeComponent {
     Hook.Reconciler.mountComponent(this);
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.Monitor && Hook.Monitor.endMountComponent(this._mountID);
+      Hook.Monitor && Hook.Monitor.afterMountComponent(this._mountID);
     }
 
     return instance;
@@ -273,7 +273,7 @@ class CompositeComponent {
     let instance = this._instance;
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.Monitor && Hook.Monitor.beginUpdateComponent(this._mountID, this);
+      Hook.Monitor && Hook.Monitor.beforeUpdateComponent(this._mountID, this);
     }
 
     if (!instance) {
@@ -376,7 +376,7 @@ class CompositeComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.Monitor && Hook.Monitor.endUpdateComponent(this._mountID);
+      Hook.Monitor && Hook.Monitor.afterUpdateComponent(this._mountID);
     }
 
     Hook.Reconciler.receiveComponent(this);

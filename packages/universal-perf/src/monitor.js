@@ -11,12 +11,6 @@ let tree = {};
 let roots = {};
 
 function resetMeasurements() {
-  if (currentNesting === 0) {
-    currentStartTime = 0;
-    currentMeasurements = [];
-    return;
-  }
-
   if (currentMeasurements.length) {
     data.push({
       duration: performanceNow() - currentStartTime,
@@ -53,16 +47,16 @@ const Monitor = {
     profiling = false;
     resetMeasurements();
   },
-  beginRender() {
+  beforeRender() {
     currentNesting++;
     resetMeasurements();
     clear();
   },
-  endRender() {
+  afterRender() {
     resetMeasurements();
     currentNesting--;
   },
-  beginMountComponent(instanceID, element) {
+  beforeMountComponent(instanceID, element) {
     tree[instanceID] = element;
 
     // root
@@ -70,37 +64,29 @@ const Monitor = {
       roots[instanceID] = element;
     }
   },
-  endMountComponent(instanceID) {
+  afterMountComponent(instanceID) {
     const item = tree[instanceID];
     item.isMounted = true;
   },
-  beginUpdateComponent(instanceID, element) {
+  beforeUpdateComponent(instanceID, element) {
     const item = tree[instanceID];
     if (!item || !item.isMounted) {
       return;
     }
     item.element = element;
   },
-  endUpdateComponent(instanceID) {
+  afterUpdateComponent(instanceID) {
     const item = tree[instanceID];
     if (!item || !item.isMounted) {
       return;
     }
     item.updateCount++;
   },
-  beginLifeCycle(instanceID, timeType) {
-    if (currentNesting === 0) {
-      return;
-    }
-
+  beforeLifeCycle(instanceID, timeType) {
     currentStartTime = performanceNow();
     currentNestedDuration = 0;
   },
-  endLifeCycle(instanceID, timerType) {
-    if (currentNesting === 0) {
-      return;
-    }
-
+  afterLifeCycle(instanceID, timerType) {
     if (profiling) {
       currentMeasurements.push({
         timerType,

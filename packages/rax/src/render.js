@@ -4,17 +4,19 @@ import {setRem} from './style/unit';
 import {injectDriver, setDriver} from './driver';
 import Hook from './debug/hook';
 
-function render(element, container, driver, Monitor, callback) {
+function render(element, container, options, callback) {
+  // Compatible with `render(element, container, callback)`
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+
+  let {Monitor, driver} = options;
+
   Hook.Monitor = Monitor;
 
   if (process.env.NODE_ENV !== 'production') {
-    Hook.Monitor && Hook.Monitor.beginRender();
-  }
-
-  // Compatible with `render(element, container, callback)`
-  if (typeof driver === 'function') {
-    callback = driver;
-    driver = null;
+    Hook.Monitor && Hook.Monitor.beforeRender();
   }
 
   // Inject component
@@ -41,7 +43,7 @@ function render(element, container, driver, Monitor, callback) {
   driver.afterRender && driver.afterRender(component);
 
   if (process.env.NODE_ENV !== 'production') {
-    Hook.Monitor && Hook.Monitor.endRender();
+    Hook.Monitor && Hook.Monitor.afterRender();
   }
 
   return component;

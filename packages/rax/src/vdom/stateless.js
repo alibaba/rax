@@ -11,7 +11,7 @@ class StatelessComponent {
   }
   render() {
     if (process.env.NODE_ENV !== 'production') {
-      Hook.Monitor && Hook.Monitor.beginRender();
+      Hook.Monitor && Hook.Monitor.beforeRender();
     }
 
     return this.pureRender(this.props, this.context);
