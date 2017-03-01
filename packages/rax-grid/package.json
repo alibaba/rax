@@ -1,7 +1,7 @@
 {
-  "name": "rax-picture",
+  "name": "rax-grid",
   "version": "0.1.9",
-  "description": "picture UI for Rax.",
+  "description": "grid UI for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -16,11 +16,8 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rax#readme",
+  "homegrid": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "rax": "^0.1.9",
-    "universal-env": "^0.1.9",
-    "rax-image": "^0.1.9",
-    "rax-view": "^0.1.9"
+    "rax": "^0.1.9"
   }
 }
