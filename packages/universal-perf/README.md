@@ -11,7 +11,7 @@ npm install --save universal-perf
 ```js
 import {createElement, Component, render} from 'rax';
 import {Text} from 'rax-components';
-import {Perf, Monitor} from 'universal-perf';
+import {perf, monitor} from 'universal-perf';
 
 class PerfTest extends Component {
   render() {
@@ -27,32 +27,32 @@ const styles = {
   }
 };
 
-Perf.start();
+perf.start();
 render(<PerfTest name="world" />, null, {
-  Monitor
+  monitor
 });
 
-Perf.stop();
-let measurements = Perf.getLastMeasurements();
+perf.stop();
+let measurements = perf.getLastMeasurements();
 
-Perf.printInclusive(measurements);
-Perf.printExclusive(measurements);
+perf.printInclusive(measurements);
+perf.printExclusive(measurements);
 ```
 
 ## API
 
-### `Perf.printExclusive`
+### `perf.printExclusive`
 
 Prints the render time.
 
-### `Perf.printInclusive`
+### `perf.printInclusive`
 
 Prints the overall time taken.
 
-### `Perf.printWasted`
+### `perf.printWasted`
 
 Print newly inserted dom nodes in list as a waste of time
 
-### `Perf.printOperations`
+### `perf.printOperations`
 
 Prints operations, eg. "remove attributes" and "change style"

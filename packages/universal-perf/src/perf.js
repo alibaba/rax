@@ -1,4 +1,4 @@
-import Monitor from './monitor';
+import monitor from './monitor';
 import getTreeSnapshot from './getTreeSnapshot';
 
 function roundFloat(val, base = 2) {
@@ -11,7 +11,7 @@ function getLastMeasurements() {
     return [];
   }
 
-  return Monitor.getData();
+  return monitor.getData();
 }
 
 function start() {
@@ -19,7 +19,7 @@ function start() {
     return;
   }
 
-  Monitor.begin();
+  monitor.begin();
 }
 
 function stop() {
@@ -27,7 +27,7 @@ function stop() {
     return;
   }
 
-  Monitor.end();
+  monitor.end();
 }
 
 function getOperations(data = getLastMeasurements()) {
@@ -35,8 +35,8 @@ function getOperations(data = getLastMeasurements()) {
     return [];
   }
 
-  const roots = Monitor.getRoots();
-  const tree = Monitor.getTree();
+  const roots = monitor.getRoots();
+  const tree = monitor.getTree();
   const treeSnapshot = getTreeSnapshot(roots, tree);
 
   let stats = [];
@@ -66,8 +66,8 @@ function getInclusive(data = getLastMeasurements()) {
     return;
   }
 
-  const roots = Monitor.getRoots();
-  const tree = Monitor.getTree();
+  const roots = monitor.getRoots();
+  const tree = monitor.getTree();
   const treeSnapshot = getTreeSnapshot(roots, tree);
 
   let aggregatedStats = {};
@@ -126,8 +126,8 @@ function getWasted(data = getLastMeasurements()) {
     return [];
   }
 
-  const roots = Monitor.getRoots();
-  const tree = Monitor.getTree();
+  const roots = monitor.getRoots();
+  const tree = monitor.getTree();
   const treeSnapshot = getTreeSnapshot(roots, tree);
 
   let aggregatedStats = {};
@@ -221,8 +221,8 @@ function getExclusive(data = getLastMeasurements()) {
   let aggregatedStats = {};
   let affectedIDs = {};
 
-  const roots = Monitor.getRoots();
-  const tree = Monitor.getTree();
+  const roots = monitor.getRoots();
+  const tree = monitor.getTree();
   const treeSnapshot = getTreeSnapshot(roots, tree);
 
   function updateAggregatedStats(treeSnapshot, instanceID, timerType, applyUpdate) {

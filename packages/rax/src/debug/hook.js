@@ -35,5 +35,5 @@ export default {
     unmountComponent() {},
   },
   // monitor the info of all components
-  Monitor: null
+  monitor: null
 };

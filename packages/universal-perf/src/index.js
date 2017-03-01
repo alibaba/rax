@@ -1,7 +1,7 @@
-import Monitor from './monitor';
-import Perf from './perf';
+import monitor from './monitor';
+import perf from './perf';
 
 export default {
-  Monitor,
-  Perf
+  monitor,
+  perf
 };

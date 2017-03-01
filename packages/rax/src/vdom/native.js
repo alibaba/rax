@@ -235,7 +235,7 @@ class NativeComponent {
         } else {
           Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[propKey]);
         }
-        Hook.Monitor && Hook.Monitor.recordOperation({
+        Hook.monitor && Hook.monitor.recordOperation({
           instanceID: this._mountID,
           type: 'update attribute',
           payload: payload
@@ -245,7 +245,7 @@ class NativeComponent {
 
     if (styleUpdates) {
       if (process.env.NODE_ENV !== 'production') {
-        Hook.Monitor && Hook.Monitor.recordOperation({
+        Hook.monitor && Hook.monitor.recordOperation({
           instanceID: this._mountID,
           type: 'update style',
           payload: styleUpdates

@@ -11,12 +11,12 @@ function render(element, container, options = {}, callback) {
     options = {};
   }
 
-  let {Monitor, driver} = options;
+  let {monitor, driver} = options;
 
-  Hook.Monitor = Monitor;
+  Hook.monitor = monitor;
 
   if (process.env.NODE_ENV !== 'production') {
-    Hook.Monitor && Hook.Monitor.beforeRender();
+    Hook.monitor && Hook.monitor.beforeRender();
   }
 
   // Inject component
@@ -43,7 +43,7 @@ function render(element, container, options = {}, callback) {
   driver.afterRender && driver.afterRender(component);
 
   if (process.env.NODE_ENV !== 'production') {
-    Hook.Monitor && Hook.Monitor.afterRender();
+    Hook.monitor && Hook.monitor.afterRender();
   }
 
   return component;

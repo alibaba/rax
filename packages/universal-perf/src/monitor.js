@@ -29,7 +29,7 @@ function clear() {
   currentNestedDuration = 0;
 }
 
-const Monitor = {
+const monitor = {
   begin() {
     if (profiling) {
       return;
@@ -111,4 +111,4 @@ const Monitor = {
   }
 };
 
-export default Monitor;
+export default monitor;
