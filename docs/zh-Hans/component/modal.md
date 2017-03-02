@@ -11,7 +11,9 @@ $ npm install rax-modal --save
 ```jsx
 /** @jsx createElement */
 import {Component, createElement, render} from 'rax';
-import {Text, View, TouchableHighlight} from 'rax-components';
+import Text from 'rax-text';
+import View from 'rax-view';
+import Touchable from 'rax-touchable';
 import Modal from 'rax-modal';
 
 class Example extends Component {
@@ -26,22 +28,22 @@ class Example extends Component {
   render() {
     return (
       <View>
-        <TouchableHighlight onPress={this.showModal}>
+        <Touchable onPress={this.showModal}>
           <Text>
             Open
           </Text>
-        </TouchableHighlight>
+        </Touchable>
         <Modal ref="modal">
           <View>
             <Text>
               I am a dialog
             </Text>
           </View>
-          <TouchableHighlight onPress={this.hideModal}>
+          <Touchable onPress={this.hideModal}>
             <Text>
               Close
             </Text>
-          </button>
+          </Touchable>
         </Modal>
       </View>
     );

@@ -6,17 +6,17 @@ Text 标签不支持嵌套，默认展现样式会沾满行。
 
 ## 属性
 
-|名称|类型|默认值|描述|
-|:---------------|:--------|:----|:----------|
-|onPress|Function||点击事件|
-|id|String||指定 id|
-|className|String||class 名称|
-|numberOfLines|Number||行数|
+| 名称            | 类型       | 默认值  | 描述       |
+| :------------ | :------- | :--- | :------- |
+| onPress       | Function |      | 点击事件     |
+| id            | String   |      | 指定 id    |
+| className     | String   |      | class 名称 |
+| numberOfLines | Number   |      | 行数       |
 
 ## 引用
 
 ```jsx
-import {Text} from 'rax-components';
+import Text from 'rax-text';
 ```
 
 ## 示例

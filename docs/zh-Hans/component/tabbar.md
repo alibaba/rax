@@ -6,23 +6,23 @@ Tabbar 可以看作一个页面级的导航布局，包含了底部导航和切�
 
 **Tabbar**
 
-|名称|类型|默认值|描述|
-|:---------------|:--------|:----|:----------|
-|barTintColor|color||bar的背景色|
-|style|style||附加在bar上的样式|
-|tintColor|color||选中tab的文案颜色|
+| 名称           | 类型    | 默认值  | 描述         |
+| :----------- | :---- | :--- | :--------- |
+| barTintColor | color |      | bar的背景色    |
+| style        | style |      | 附加在bar上的样式 |
+| tintColor    | color |      | 选中tab的文案颜色 |
 
 **Tabbar.Item**
 
-|名称|类型|默认值|描述|
-|:---------------|:--------|:----|:----------|
-|badge|string,number||透出的消息数|
-|icon|image source||icon地址|
-|selectedIcon|image source||tab选中时的icon地址|
-|onPress|Function||选中的回调|
-|selected|bool||是否选中|
-|style|style||附加在tab上的样式|
-|title|string||透出的文案|
+| 名称           | 类型            | 默认值  | 描述            |
+| :----------- | :------------ | :--- | :------------ |
+| badge        | string,number |      | 透出的消息数        |
+| icon         | image source  |      | icon地址        |
+| selectedIcon | image source  |      | tab选中时的icon地址 |
+| onPress      | Function      |      | 选中的回调         |
+| selected     | bool          |      | 是否选中          |
+| style        | style         |      | 附加在tab上的样式    |
+| title        | string        |      | 透出的文案         |
 
 ## 示例
 
@@ -31,7 +31,9 @@ Tabbar 可以看作一个页面级的导航布局，包含了底部导航和切�
 ```jsx
 /** @jsx createElement */
 import {createElement, Component, render} from 'rax';
-import {View, Text, Image} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
 import Tabbar from 'rax-tabbar';
 
 let base64Icon = 'data:image/png;base64..';
@@ -110,5 +112,4 @@ let styles = {
 };
 
 render(<TabBarExample />);
-
 ```

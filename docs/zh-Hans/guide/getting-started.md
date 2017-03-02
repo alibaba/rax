@@ -56,7 +56,8 @@ To run your app:
 
 ```jsx
 import {createElement, Component, render} from 'rax';
-import {View, Text} from 'rax-components';
+import Text from 'rax-text';
+import View from 'rax-view';
 import styles from './index.css';
 
 class App extends Component {

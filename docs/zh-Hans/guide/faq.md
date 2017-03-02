@@ -6,7 +6,7 @@
 
 ```jsx
 import {createElement, render, Component} from 'rax';
-import {Text} from 'rax-components';
+import Text from 'rax-text';
  
 class Hello extends Component {
   render() {
@@ -22,7 +22,7 @@ Rax 的目标是跨容器的渲染，className只在Web容器下才会生效，�
 
 ```jsx
 import {createElement, render, Component} from 'rax';
-import {Text} from 'rax-components';
+import Text from 'rax-text';
 import {isWeex, isWeb} from 'universal-env';
  
 class Hello extends Component {
@@ -112,7 +112,8 @@ class Counter extends Component {
 
 ```jsx
 import {createElement, Component} from 'rax';
-import {View, Text} from 'rax-components';
+import Text from 'rax-text';
+import View from 'rax-view';
 import styles from './styles.css';
  
 class App extends Component {

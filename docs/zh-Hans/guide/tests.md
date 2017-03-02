@@ -33,11 +33,11 @@ tnpm i --save-dev jest babel-jest babel-preset-es2015 babel-preset-rax rax-test-
 
 ## 如何写测试
 
-拿开源的 [Link](https://github.com/alibaba/rax/blob/master/packages/rax-components/src/__tests__/Link.js) 介绍
+拿开源的 [Link](https://github.com/alibaba/rax/blob/master/packages/rax-link/src/__tests__/Link.js) 介绍
 
-1. 在 [rax-components](https://github.com/alibaba/rax/tree/master/packages/rax-components) 目录下的 [src](https://github.com/alibaba/rax/tree/master/packages/rax-components/src) 中创建 [__tests__](https://github.com/alibaba/rax/tree/master/packages/rax-components/src/__tests__) 目录.
+1. 在 [rax-link](https://github.com/alibaba/rax/tree/master/packages/rax-link) 目录下的 [src](https://github.com/alibaba/rax/tree/master/packages/rax-link/src) 中创建 [__tests__](https://github.com/alibaba/rax/tree/master/packages/rax-link/src/__tests__) 目录.
 
-2. 接着在 `__tests__` 目录下创建两个文件分别是 [Link.js](https://github.com/alibaba/rax/blob/master/packages/rax-components/src/__tests__/Link.js) 和 [Link.weex.js](https://github.com/alibaba/rax/blob/master/packages/rax-components/src/__tests__/Link.weex.js)
+2. 接着在 `__tests__` 目录下创建两个文件分别是 [Link.js](https://github.com/alibaba/rax/blob/master/packages/rax-link/src/__tests__/Link.js) 和 [Link.weex.js](https://github.com/alibaba/rax/blob/master/packages/rax-link/src/__tests__/Link.weex.js)
 
 
 在 `Link.js` 中写入下面的代码

@@ -9,7 +9,8 @@ View 是最基础的组件，它支持Flexbox、touch handling等功能，并且
 ## 引用
 
 ```jsx
-import {View, Text} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
 ```
 
 ## 示例

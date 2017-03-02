@@ -5,15 +5,16 @@
 
 ## 属性
 
-|名称|类型|默认值|描述|
-|:---------------|:--------|:----|:----------|
-|onEndReached|Function||滚动到底部触发事件，将修改后的数据付给 data|
-|onEndReachedThreshold|Number|500|距离多少开始加载下一屏，数字单位默认 rem|
+| 名称                    | 类型       | 默认值  | 描述                       |
+| :-------------------- | :------- | :--- | :----------------------- |
+| onEndReached          | Function |      | 滚动到底部触发事件，将修改后的数据付给 data |
+| onEndReachedThreshold | Number   | 500  | 距离多少开始加载下一屏，数字单位默认 rem   |
 
 ## 引用
 
 ```jsx
-import {RecyclerView, View} from 'rax-components';
+import View from 'rax-view';
+import RecyclerView from 'rax-recyclerview';
 ```
 
 ## 示例

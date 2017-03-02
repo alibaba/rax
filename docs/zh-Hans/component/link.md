@@ -6,16 +6,16 @@ Link 是基础的链接组件，同 a 标签。它带有默认样式 textDecorat
 
 ## 属性
 
-|名称|类型|默认值|描述|
-|:---------------|:--------|:----|:----------|
-|onPress|Function||点击事件|
+| 名称      | 类型       | 默认值  | 描述   |
+| :------ | :------- | :--- | :--- |
+| onPress | Function |      | 点击事件 |
 
 同时支持任意自定义属性的透传
 
 ## 引用
 
 ```jsx
-import { Link } from 'rax-components';
+import Link from 'rax-link';
 ```
 
 ## 示例

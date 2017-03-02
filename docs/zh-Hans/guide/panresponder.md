@@ -85,7 +85,7 @@ this._panResponder = PanResponder.create({
 
 ```javascript
 import {createElement, Component, render, findDOMNode} from 'rax';
-import {View} from 'rax-components';
+import View from 'rax-view';
 import PanResponder from 'universal-panresponder';
 
 const CIRCLE_SIZE = 80;

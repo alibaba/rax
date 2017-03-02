@@ -1,33 +1,33 @@
-# listview 列表容器
+# ListView 列表容器
 
 较复杂的列表实现，内部实现默认基于 RecyclerView
 
 ## 引用
 
 ```jsx
-import { ListView } from 'rax-components';
+import ListView from 'rax-listview';
 ```
 
 ## API
 
 ### Props
 
-|名称|类型|默认值|描述|
-|:---------------|:--------|:----|:----------|
-|renderRow|Function||模板方法（必需）|
-|dataSource|List|''|需要渲染的数据，与 renderRow 配合使用（必需）|
-|onEndReached|Function||滚动到底部触发事件，将修改后的数据付给 data|
-|onEndReachedThreshold|Number|500|距离多少开始加载下一屏，数字单位默认 rem|
-|renderHeader|Function||列表头部 需返回要渲染的标签|
-|renderFooter|Function||列表底部 需返回要渲染的标签 (可以在此处实现 loading 菊花效果)|
-|renderScrollComponent|Function||返回 listview 的外层包裹容器|
+| 名称                    | 类型       | 默认值  | 描述                                    |
+| :-------------------- | :------- | :--- | :------------------------------------ |
+| renderRow             | Function |      | 模板方法（必需）                              |
+| dataSource            | List     | ''   | 需要渲染的数据，与 renderRow 配合使用（必需）          |
+| onEndReached          | Function |      | 滚动到底部触发事件，将修改后的数据付给 data              |
+| onEndReachedThreshold | Number   | 500  | 距离多少开始加载下一屏，数字单位默认 rem                |
+| renderHeader          | Function |      | 列表头部 需返回要渲染的标签                        |
+| renderFooter          | Function |      | 列表底部 需返回要渲染的标签 (可以在此处实现 loading 菊花效果) |
+| renderScrollComponent | Function |      | 返回 listview 的外层包裹容器                   |
 
 
 ### 方法
 
-|名称|参数|返回值|描述|
-|:---------------|:--------|:----|:----------|
-|scrollTo|Object|/|参数示例：{x:0} 或 {y:100}|
+| 名称       | 参数     | 返回值  | 描述                   |
+| :------- | :----- | :--- | :------------------- |
+| scrollTo | Object | /    | 参数示例：{x:0} 或 {y:100} |
 
 
 ## 使用示例 
@@ -43,7 +43,7 @@ import { ListView } from 'rax-components';
 <img src="https://img.alicdn.com/tps/TB1vI_iKVXXXXaUXXXXXXXXXXXX-392-701.gif" height = "300" alt="图片名称" align=center />
 
 ```jsx
-import {ListView} from 'rax-components';
+import ListView from 'rax-listview';
 
 // 参数传入
 class Block extends Component {
@@ -104,7 +104,7 @@ class Block extends Component {
 注意：此时需要设置 ListView 的高度限制滚动区域
 
 <img src="https://img.alicdn.com/tps/TB1tWO2KVXXXXaFXVXXXXXXXXXX-392-701.gif" height = "300" alt="图片名称" align=center />
-    
+​    
 ```jsx
 <View>这里的结构会自动浮动在页面上方</View>
 <ListView 
@@ -121,7 +121,7 @@ class Block extends Component {
 
 ```jsx
 import {Page, Block} from 'rax-page';
-import {ListView} from 'rax-components';
+import ListView from 'rax-listview';
 import FlowView from 'rax-flowview';
 
 <Page>

@@ -38,7 +38,7 @@ Rax 是与 React 兼容的，所以 React 中支持的组件写法 Rax 也都支
 
 ```js
 import { createElement, render, Component } from 'rax';
-import { Text } from 'rax-components';
+import Text from 'rax-text';
 
 class Hello extends Component {
   render() {
@@ -57,7 +57,7 @@ render(<Hello name="Taobao FED" />);
 
 ```jsx
 import { createElement, render, Component } from 'rax';
-import { Text } from 'rax-components';
+import Text from 'rax-text';
 
 function Hello(props) {
   return <Text>Hello {props.name}</Text>;
@@ -75,7 +75,7 @@ render(<Hello name="Taobao FED" />);
 
 ```jsx
 import { createElement, render, Component } from 'rax';
-import { Text } from 'rax-components';
+import Text from 'rax-text';
 
 class Clock extends Component {
   state = {

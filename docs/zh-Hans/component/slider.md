@@ -3,7 +3,7 @@
 ## 引用
 
 ```jsx
-import { Slider } from 'rax-components';
+import Slider from 'rax-slider';
 ```
 
 ## 属性
@@ -71,16 +71,14 @@ slideTo(index) {
 /** @jsx createElement */
 
 import {Component, createElement, render} from 'rax';
-import {mount} from 'rax-mounter';
-import {
-  Text,
-  View,
-  Button,
-  Image,
-  ScrollView,
-  Slider,
-  TouchableHighlight,
-} from 'rax-components';
+
+import Text from 'rax-text';
+import View from 'rax-view';
+import Button from 'rax-button';
+import Image from 'rax-image';
+import ScrollView from 'rax-scrollview';
+import Slider from 'rax-slider';
+import Touchable from 'rax-touchable'; 
 
 let styles = {
   slider: {
@@ -153,6 +151,5 @@ class SlideDemo extends Component {
 render(
   <SlideDemo />
 );
-
 ```
 

@@ -8,19 +8,21 @@
 
 ## 简单的点击事件
 
-对于简单的 Touch 事件，我们可以使用 TouchableHighlight, 通过给它绑定 onPress 事件，来监听他的点击事件 ：
+对于简单的 Touch 事件，我们可以使用 Touchable, 通过给它绑定 onPress 事件，来监听他的点击事件 ：
 
 ```jsx
 import {createElement, Component} from 'rax';
-import {ScrollView, TouchableHighlight, Text} from 'rax-components';
+import ScrollView from 'rax-scrollview';
+import Touchable from 'rax-touchable';
+import Text from 'rax-text';
  
 class TouchDemo extends Component {
   render() {
     return (
       <ScrollView>
-        <TouchableHighlight onPress={() => console.log('pressed')}>
+        <Touchable onPress={() => console.log('pressed')}>
           <Text>Proper Touch Handling</Text>
-        </TouchableHighlight>
+        </Touchable>
       </ScrollView>
     );
   }
@@ -37,7 +39,9 @@ Appear 可以让我们在元素出现的时候做一些事情，比如曝光埋�
 
 ```jsx
 import {createElement, Component} from 'rax';
-import {View, TouchableHighlight, Text} from 'rax-components';
+import View from 'rax-view';
+import Touchable from 'rax-touchable';
+import Text from 'rax-text';
  
 class TouchDemo extends Component {
   render() {
@@ -70,7 +74,9 @@ ScrollView 为我们包装了滚动事件。它同时支持横向滚动和竖向
 
 ```jsx
 import {createElement, Component} from 'rax';
-import {ScrollView, TouchableHighlight, Text} from 'rax-components';
+import ScrollView from 'rax-scrollview';
+import Touchable from 'rax-touchable';
+import Text from 'rax-text';
  
 class TouchDemo extends Component {
   render() {
@@ -103,7 +109,9 @@ TextInput 是唤起用户输入的基础组件。当定义 multiline 输入多�
 
 ```jsx
 import {createElement, Component} from 'rax';
-import {TextInput, TouchableHighlight, Text} from 'rax-components';
+import TextInout from 'rax-textinput';
+import Touchable from 'rax-touchable';
+import Text from 'rax-text';
  
 class TouchDemo extends Component {
   render() {

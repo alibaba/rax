@@ -4,10 +4,10 @@
 
 ## 使用
 
-```
+```jsx
 /** @jsx createElement */
 import {createElement, Component, render} from 'rax';
-import {ScrollView} from 'rax-components';
+import ScrollView from 'rax-scrollview';
 import Picture from 'rax-picture';
 
 class Page extends Component {

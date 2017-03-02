@@ -4,16 +4,17 @@
 
 ## 属性
 
-|名称|类型|默认值|描述|
-|:---------------|:--------|:----|:----------|
-|refreshing|String||是否显示|
-|onRefresh|Number||监听下拉刷新的行为|
+| 名称         | 类型     | 默认值  | 描述        |
+| :--------- | :----- | :--- | :-------- |
+| refreshing | String |      | 是否显示      |
+| onRefresh  | Number |      | 监听下拉刷新的行为 |
 
 ## 引用
 
 ```jsx
-import {RefreshControl, Text} from 'rax-components';
-``
+import RefreshControl from 'rax-refreshcontrol';
+import Text from 'rax-text';
+```
 
 ## 示例
 
@@ -29,4 +30,8 @@ import {RefreshControl, Text} from 'rax-components';
   </RefreshControl>
   {rows}
 </list>
+```
+
+```
+
 ```
