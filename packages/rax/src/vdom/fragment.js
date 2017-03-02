@@ -3,7 +3,6 @@ import NativeComponent from './native';
 import instance from './instance';
 import instantiateComponent from './instantiateComponent';
 import getElementKeyName from './getElementKeyName';
-import Hook from '../debug/hook';
 
 /**
  * Fragment Component
@@ -44,8 +43,6 @@ class FragmentComponent extends NativeComponent {
         }
       }
     }
-
-    Hook.Reconciler.mountComponent(this);
 
     return instance;
   }
@@ -95,8 +92,6 @@ class FragmentComponent extends NativeComponent {
     // Do not need remove child when their parent is removed
     this.unmountChildren(true);
 
-    Hook.Reconciler.unmountComponent(this);
-
     this._currentElement = null;
     this._nativeNode = null;
     this._parent = null;
@@ -108,8 +103,6 @@ class FragmentComponent extends NativeComponent {
     // Replace current element
     this._currentElement = nextElement;
     this.updateChildren(this._currentElement, nextContext);
-
-    Hook.Reconciler.receiveComponent(this);
   }
 
   getNativeNode() {

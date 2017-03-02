@@ -5,7 +5,6 @@ import Ref from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
-import Hook from '../debug/hook';
 
 function performInSandbox(fn, handleError) {
   try {
@@ -134,7 +133,7 @@ class CompositeComponent {
       }
     });
 
-    Hook.Reconciler.mountComponent(this);
+    Host.hook.Reconciler.mountComponent(this);
 
     return instance;
   }
@@ -148,7 +147,7 @@ class CompositeComponent {
       }
     });
 
-    Hook.Reconciler.unmountComponent(this);
+    Host.hook.Reconciler.unmountComponent(this);
 
     instance._internal = null;
 
@@ -331,7 +330,7 @@ class CompositeComponent {
       instance.context = nextContext;
     }
 
-    Hook.Reconciler.receiveComponent(this);
+    Host.hook.Reconciler.receiveComponent(this);
   }
 
   /**

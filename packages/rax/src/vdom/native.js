@@ -4,7 +4,6 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import instance from './instance';
-import Hook from '../debug/hook';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -66,7 +65,7 @@ class NativeComponent {
       }
     }
 
-    Hook.Reconciler.mountComponent(this);
+    Host.hook.Reconciler.mountComponent(this);
 
     return instance;
   }
@@ -121,7 +120,7 @@ class NativeComponent {
 
     this.unmountChildren(notRemoveChild);
 
-    Hook.Reconciler.unmountComponent(this);
+    Host.hook.Reconciler.unmountComponent(this);
 
     this._currentElement = null;
     this._nativeNode = null;
@@ -143,7 +142,7 @@ class NativeComponent {
     this.updateProperties(prevProps, nextProps);
     this.updateChildren(nextProps.children, nextContext);
 
-    Hook.Reconciler.receiveComponent(this);
+    Host.hook.Reconciler.receiveComponent(this);
   }
 
   updateProperties(prevProps, nextProps) {

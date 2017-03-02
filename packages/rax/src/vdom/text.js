@@ -1,5 +1,4 @@
 import Host from './host';
-import Hook from '../debug/hook';
 
 /**
  * Text Component
@@ -28,7 +27,7 @@ class TextComponent {
       _internal: this
     };
 
-    Hook.Reconciler.mountComponent(this);
+    Host.hook.Reconciler.mountComponent(this);
 
     return instance;
   }
@@ -38,7 +37,7 @@ class TextComponent {
       Host.driver.removeChild(this._nativeNode, this._parent);
     }
 
-    Hook.Reconciler.unmountComponent(this);
+    Host.hook.Reconciler.unmountComponent(this);
 
     this._currentElement = null;
     this._nativeNode = null;
@@ -55,7 +54,7 @@ class TextComponent {
       // Devtool read the latest stringText value
       this._stringText = String(nextElement);
       Host.driver.updateText(this.getNativeNode(), nextElement);
-      Hook.Reconciler.receiveComponent(this);
+      Host.hook.Reconciler.receiveComponent(this);
     }
   }
 
