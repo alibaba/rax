@@ -12,29 +12,12 @@ class Switch extends Component {
     tintColor: '#fff'
   }
 
-  state = {
-    value: this.props.value,
-  };
-
   handleClick = (e) => {
     if (this.props.disabled) {
       return null;
     }
-
-    var newVal = !this.state.value;
+    var newVal = !this.props.value;
     this.props.onValueChange && this.props.onValueChange.call(this, newVal);
-    this.setState({
-      value: newVal
-    });
-
-    var oldValue = this.props.value;
-    setTimeout(() => {
-      if (this.props.value == oldValue) {
-        this.setState({
-          value: this.props.value
-        });
-      }
-    }, 200);
   };
 
   getStyles() {
@@ -95,14 +78,13 @@ class Switch extends Component {
   }
 
   render() {
-
     if (isWeex) {
       let nativeProps = {
         style: {
           ...styles.initial,
           ...this.props.style
         },
-        checked: this.state.value,
+        checked: this.props.value,
         disabled: this.props.disabled,
         onChange: ({value}) => this.props.onValueChange(value)
       };
@@ -112,8 +94,8 @@ class Switch extends Component {
       );
     } else {
       let styles = this.getStyles();
-      let spancss = this.state.value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
-      let smallcss = this.state.value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
+      let spancss = this.props.value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
+      let smallcss = this.props.value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
       spancss = this.props.disabled ? {...spancss, ...styles.disabledSpan} : spancss;
       spancss = {
         ...this.props.style,

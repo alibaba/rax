@@ -7,7 +7,7 @@ class SwitchTest extends Component {
     value: true
   };
   render() {
-    return <Switch value={this.state.value} onValueChange={(value) => { }} />;
+    return <Switch value={this.state.value} onValueChange={(value) => {this.setState({value: value})}} />;
   }
 }
 
