@@ -95,7 +95,6 @@ class Switch extends Component {
   }
 
   render() {
-
     if (isWeex) {
       let nativeProps = {
         style: {
