@@ -228,15 +228,29 @@ class NativeComponent {
         }
       // Update other property
       } else {
+        let payload = {};
+        payload[propKey] = nextProp;
         if (nextProp != null) {
           Host.driver.setAttribute(this.getNativeNode(), propKey, nextProp);
         } else {
           Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[propKey]);
         }
+        Host.hook.monitor && Host.hook.monitor.recordOperation({
+          instanceID: this._mountID,
+          type: 'update attribute',
+          payload: payload
+        });
       }
     }
 
     if (styleUpdates) {
+      if (process.env.NODE_ENV !== 'production') {
+        Host.hook.monitor && Host.hook.monitor.recordOperation({
+          instanceID: this._mountID,
+          type: 'update style',
+          payload: styleUpdates
+        });
+      }
       Host.driver.setStyles(this.getNativeNode(), styleUpdates);
     }
   }

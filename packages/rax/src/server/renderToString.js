@@ -15,7 +15,9 @@ export default function renderToString(element) {
   Host.mountID = 1;
 
   let body = ServerDriver.createBody();
-  render(element, body, ServerDriver);
+  render(element, body, {
+    driver: ServerDriver
+  });
 
   // Add rendered marked to root ChildNodes
   if (body.childNodes) {

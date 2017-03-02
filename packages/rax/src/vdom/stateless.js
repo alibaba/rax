@@ -1,3 +1,4 @@
+import Host from './host';
 /**
  * Stateless Component Class Wrapper
  */
@@ -9,6 +10,10 @@ class StatelessComponent {
     this.pureRender = pureRender;
   }
   render() {
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.monitor && Host.hook.monitor.beforeRender();
+    }
+
     return this.pureRender(this.props, this.context);
   }
 }
