@@ -96,8 +96,6 @@ class Switch extends Component {
 
   render() {
 
-    this.state.value = this.props.value;
-
     if (isWeex) {
       let nativeProps = {
         style: {
@@ -118,10 +116,10 @@ class Switch extends Component {
       let smallcss = this.state.value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
       spancss = this.props.disabled ? {...spancss, ...styles.disabledSpan} : spancss;
       spancss = {
-        ...this.props.style, 
+        ...this.props.style,
         ...spancss
       };
-      
+
       return (
         <span onClick={this.handleClick} style={spancss}>
           <small style={smallcss} />
