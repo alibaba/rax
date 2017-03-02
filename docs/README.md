@@ -14,4 +14,8 @@
 ## Advanced Guides
 * [Driver Specification](./en-US/driver-spec.md)
 
-[中文文档](./README.cn.md)
+
+
+# 文档
+
+请 [移步官网查看](http://rax.taobaofed.org)。
