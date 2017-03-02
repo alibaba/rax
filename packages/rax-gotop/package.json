@@ -20,6 +20,9 @@
   "dependencies": {
     "rax": "^0.1.9",
     "rax-view": "^0.1.9",
+    "rax-text": "^0.1.9",
+    "rax-image": "^0.1.9",
+    "universal-env": "^0.1.9",
     "rax-animated": "^0.1.9"
   }
 }
