@@ -21,9 +21,9 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-touchable": "^0.2.0",
-    "rax-view": "^0.2.0",
-    "rax-text": "^0.2.0"
+    "rax-scrollview": "^0.2.0",
+    "rax-refreshcontrol": "^0.2.0",
+    "rax-view": "^0.2.0"
   },
   "peerDependencies": {
     "rax": "^0.1.9",
