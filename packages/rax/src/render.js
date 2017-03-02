@@ -10,12 +10,12 @@ function render(element, container, options = {}, callback) {
     options = {};
   }
 
-  let {monitor, driver} = options;
+  let {measurer, driver} = options;
 
   // Init inject
   inject({
     driver,
-    monitor
+    measurer
   });
 
   let rootComponent = instance.render(element, container);
