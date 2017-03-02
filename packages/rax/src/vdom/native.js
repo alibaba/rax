@@ -235,17 +235,19 @@ class NativeComponent {
         } else {
           Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[propKey]);
         }
-        Host.hook.monitor && Host.hook.monitor.recordOperation({
-          instanceID: this._mountID,
-          type: 'update attribute',
-          payload: payload
-        });
+        if (process.env.NODE_ENV !== 'production') {
+          Host.measurer && Host.measurer.recordOperation({
+            instanceID: this._mountID,
+            type: 'update attribute',
+            payload: payload
+          });
+        }
       }
     }
 
     if (styleUpdates) {
       if (process.env.NODE_ENV !== 'production') {
-        Host.hook.monitor && Host.hook.monitor.recordOperation({
+        Host.measurer && Host.measurer.recordOperation({
           instanceID: this._mountID,
           type: 'update style',
           payload: styleUpdates

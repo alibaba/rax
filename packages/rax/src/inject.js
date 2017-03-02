@@ -9,7 +9,7 @@ import WeexDriver from './drivers/weex';
 import BrowserDriver from './drivers/browser';
 import Hook from './debug/hook';
 
-export default function inject({driver, hook}) {
+export default function inject({driver, hook, measurer}) {
   // Inject component class
   Host.EmptyComponent = EmptyComponent;
   Host.NativeComponent = NativeComponent;
@@ -18,6 +18,9 @@ export default function inject({driver, hook}) {
   Host.CompositeComponent = CompositeComponent;
   // Inject devtool hook
   Host.hook = hook || Hook;
+
+  // Inject performance measurer
+  Host.measurer = measurer;
 
   // Inject render driver
   if (!Host.driver) {

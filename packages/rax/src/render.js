@@ -14,24 +14,15 @@ function render(element, container, options = {}, callback) {
 
   // Init inject
   inject({
-    driver
+    driver,
+    monitor
   });
-
-  Host.hook.monitor = monitor;
-
-  if (process.env.NODE_ENV !== 'production') {
-    Host.hook.monitor && Host.hook.monitor.beforeRender();
-  }
 
   let rootComponent = instance.render(element, container);
   let component = rootComponent.getPublicInstance();
 
   if (callback) {
     callback.call(component);
-  }
-
-  if (process.env.NODE_ENV !== 'production') {
-    Host.hook.monitor && Host.hook.monitor.afterRender();
   }
 
   return component;

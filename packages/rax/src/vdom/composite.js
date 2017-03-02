@@ -6,20 +6,6 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 
-function measureLifeCyclePerf(callback, instanceID, type) {
-  if (instanceID === 0) {
-    return callback();
-  }
-
-  Host.hook.monitor && Host.hook.monitor.beforeLifeCycle(instanceID, type);
-
-  try {
-    return callback();
-  } finally {
-    Host.hook.monitor && Host.hook.monitor.afterLifeCycle(instanceID, type);
-  }
-}
-
 function performInSandbox(fn, handleError) {
   try {
     return fn();
@@ -36,6 +22,15 @@ function performInSandbox(fn, handleError) {
       }
     }
   }
+}
+
+let measureLifeCycle;
+if (process.env.NODE_ENV !== 'production') {
+  measureLifeCycle = function(callback, instanceID, type) {
+    Host.measurer && Host.measurer.beforeLifeCycle(instanceID, type);
+    performInSandbox(callback);
+    Host.measurer && Host.measurer.afterLifeCycle(instanceID, type);
+  };
 }
 
 /**
@@ -63,7 +58,7 @@ class CompositeComponent {
     this._updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.monitor && Host.hook.monitor.beforeMountComponent(this._mountID, this);
+      Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
     let Component = this._currentElement.type;
@@ -111,7 +106,7 @@ class CompositeComponent {
     performInSandbox(() => {
       if (instance.componentWillMount) {
         if (process.env.NODE_ENV !== 'production') {
-          measureLifeCyclePerf(() => {
+          measureLifeCycle(() => {
             instance.componentWillMount();
           }, this._mountID, 'componentWillMount');
         } else {
@@ -135,7 +130,7 @@ class CompositeComponent {
 
       performInSandbox(() => {
         if (process.env.NODE_ENV !== 'production') {
-          measureLifeCyclePerf(() => {
+          measureLifeCycle(() => {
             renderedElement = instance.render();
           }, this._mountID, 'render');
         } else {
@@ -160,7 +155,7 @@ class CompositeComponent {
     performInSandbox(() => {
       if (instance.componentDidMount) {
         if (process.env.NODE_ENV !== 'production') {
-          measureLifeCyclePerf(() => {
+          measureLifeCycle(() => {
             instance.componentDidMount();
           }, this._mountID, 'componentDidMount');
         } else {
@@ -172,7 +167,7 @@ class CompositeComponent {
     Host.hook.Reconciler.mountComponent(this);
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.monitor && Host.hook.monitor.afterMountComponent(this._mountID);
+      Host.measurer && Host.measurer.afterMountComponent(this._mountID);
     }
 
     return instance;
@@ -272,7 +267,7 @@ class CompositeComponent {
     let instance = this._instance;
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.monitor && Host.hook.monitor.beforeUpdateComponent(this._mountID, this);
+      Host.measurer && Host.measurer.beforeUpdateComponent(this._mountID, this);
     }
 
     if (!instance) {
@@ -375,7 +370,7 @@ class CompositeComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.monitor && Host.hook.monitor.afterUpdateComponent(this._mountID);
+      Host.measurer && Host.measurer.afterUpdateComponent(this._mountID);
     }
 
     Host.hook.Reconciler.receiveComponent(this);
@@ -395,7 +390,7 @@ class CompositeComponent {
 
     performInSandbox(() => {
       if (process.env.NODE_ENV !== 'production') {
-        measureLifeCyclePerf(() => {
+        measureLifeCycle(() => {
           nextRenderedElement = instance.render();
         }, this._mountID, 'render');
       } else {
@@ -413,7 +408,7 @@ class CompositeComponent {
         this._processChildContext(context)
       );
       if (process.env.NODE_ENV !== 'production') {
-        Host.hook.monitor && Host.hook.monitor.recordOperation({
+        Host.measurer && Host.measurer.recordOperation({
           instanceID: this._mountID,
           type: 'update component',
           payload: {}

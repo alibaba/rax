@@ -1,7 +1,7 @@
 {
   "name": "universal-perf",
-  "version": "0.1.9",
-  "description": "A universal Perf API.",
+  "version": "0.0.0",
+  "description": "A universal Perf tools.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {

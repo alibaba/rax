@@ -36,6 +36,10 @@ export default {
     }
   },
   render(element, container) {
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.beforeRender();
+    }
+
     // Before render callback
     Host.driver.beforeRender && Host.driver.beforeRender(element, container);
 
@@ -66,9 +70,9 @@ export default {
       }
     }
 
-    // handle rendered ELement
+    // Handle server rendered element
     if (isWeb && container.childNodes) {
-      // clone childNodes, Because removeChild will causing change in childNodes length
+      // Clone childNodes, Because removeChild will causing change in childNodes length
       const childNodes = [...container.childNodes];
 
       for (let i = 0; i < childNodes.length; i ++) {
@@ -84,10 +88,16 @@ export default {
     let defaultContext = {};
     let rootInstance = renderedComponent.mountComponent(container, defaultContext);
     this.set(container, rootInstance);
-    Host.hook.Mount._renderNewRootComponent(rootInstance._internal);
 
     // After render callback
     Host.driver.afterRender && Host.driver.afterRender(rootInstance);
+
+    // Devtool render new root hook
+    Host.hook.Mount._renderNewRootComponent(rootInstance._internal);
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.afterRender();
+    }
 
     return rootInstance;
   }

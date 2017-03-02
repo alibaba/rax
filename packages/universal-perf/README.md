@@ -11,7 +11,7 @@ npm install --save universal-perf
 ```js
 import {createElement, Component, render} from 'rax';
 import {Text} from 'rax-components';
-import {perf, monitor} from 'universal-perf';
+import Perf from 'universal-perf';
 
 class PerfTest extends Component {
   render() {
@@ -27,16 +27,16 @@ const styles = {
   }
 };
 
-perf.start();
+Perf.start();
 render(<PerfTest name="world" />, null, {
-  monitor
+  measurer: Perf.Measurer
 });
 
-perf.stop();
+Perf.stop();
 let measurements = perf.getLastMeasurements();
 
-perf.printInclusive(measurements);
-perf.printExclusive(measurements);
+Perf.printInclusive(measurements);
+Perf.printExclusive(measurements);
 ```
 
 ## API

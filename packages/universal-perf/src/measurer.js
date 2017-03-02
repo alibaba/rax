@@ -1,5 +1,3 @@
-import performanceNow from './performanceNow';
-
 let profiling = false;
 let currentNesting = 0;
 let currentStartTime = 0;
@@ -10,17 +8,32 @@ let data = [];
 let tree = {};
 let roots = {};
 
+let performance = {};
+if (typeof window !== 'undefined') {
+  performance =
+    window.performance ||
+    window.webkitPerformance || {};
+}
+
+function now() {
+  if (performance.now) {
+    return performance.now();
+  } else {
+    return Date.now();
+  }
+}
+
 function resetMeasurements() {
   if (currentMeasurements.length) {
     data.push({
-      duration: performanceNow() - currentStartTime,
+      duration: now() - currentStartTime,
       measurements: currentMeasurements,
       operations: operations,
       tree: tree
     });
   }
 
-  currentStartTime = performanceNow();
+  currentStartTime = now();
   currentMeasurements = [];
 }
 
@@ -29,7 +42,7 @@ function clear() {
   currentNestedDuration = 0;
 }
 
-const monitor = {
+const Measurer = {
   begin() {
     if (profiling) {
       return;
@@ -83,7 +96,7 @@ const monitor = {
     item.updateCount++;
   },
   beforeLifeCycle(instanceID, timeType) {
-    currentStartTime = performanceNow();
+    currentStartTime = now();
     currentNestedDuration = 0;
   },
   afterLifeCycle(instanceID, timerType) {
@@ -91,7 +104,7 @@ const monitor = {
       currentMeasurements.push({
         timerType,
         instanceID: instanceID,
-        duration: performanceNow() - currentStartTime - currentNestedDuration,
+        duration: now() - currentStartTime - currentNestedDuration,
       });
     }
 
@@ -111,4 +124,4 @@ const monitor = {
   }
 };
 
-export default monitor;
+export default Measurer;
