@@ -1,6 +1,6 @@
 {
   "name": "rax",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,6 +16,6 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.0"
+    "universal-env": "^0.2.1"
   }
 }
