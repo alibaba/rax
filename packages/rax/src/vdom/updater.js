@@ -71,7 +71,9 @@ const Updater = {
     }
 
     if (callbacks) {
-      callbacks.forEach(callback => callback());
+      for (let i = 0; i < callbacks.length; i++) {
+        callbacks[i]();
+      }
     }
   }
 

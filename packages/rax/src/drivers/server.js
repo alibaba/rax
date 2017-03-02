@@ -11,7 +11,6 @@ const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
-const DOCUMENT_FRAGMENT_NODE = 11;
 
 const Driver = {
   // Internal state
@@ -21,8 +20,8 @@ const Driver = {
     return this.nodeMaps[id];
   },
 
-  getChildNodes(node) {
-    return node.childNodes;
+  getParentNode(node) {
+    return node.parentNode;
   },
 
   createBody() {
@@ -34,13 +33,6 @@ const Driver = {
       eventListeners: {},
       childNodes: [],
       parentNode: null
-    };
-  },
-
-  createFragment() {
-    return {
-      nodeType: DOCUMENT_FRAGMENT_NODE,
-      childNodes: [],
     };
   },
 
@@ -86,19 +78,12 @@ const Driver = {
   },
 
   appendChild(node, parent) {
-    if (parent.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return parent.childNodes.push(node);
-    } else if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return node.childNodes.map(child => {
-        return this.appendChild(child, parent);
-      });
-    } else {
-      parent.childNodes.push(node);
-      node.parentNode = parent;
-    }
+    parent.childNodes.push(node);
+    node.parentNode = parent;
   },
 
   removeChild(node, parent) {
+    parent = parent || node.parentNode;
     let id = node.attributes && node.attributes[ID];
     if (id != null) {
       this.nodeMaps[id] = null;
@@ -111,6 +96,7 @@ const Driver = {
   },
 
   replaceChild(newChild, oldChild, parent) {
+    parent = parent || oldChild.parentNode;
     let previousSibling = this.previousSibling(oldChild);
     let nextSibling = this.nextSibling(oldChild);
 
@@ -125,42 +111,32 @@ const Driver = {
   },
 
   insertAfter(node, after, parent) {
-    if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return node.childNodes.map((child, index) => {
-        return this.insertAfter(child, node.childNodes[index - 1] || after, parent);
-      });
-    } else {
-      let nodeIdx = parent.childNodes.indexOf(node);
-      if (nodeIdx !== -1) {
-        parent.childNodes.splice(nodeIdx, 1);
-      }
-
-      let idx = parent.childNodes.indexOf(after);
-
-      if (idx === parent.childNodes.length - 1) {
-        parent.childNodes.push(node);
-      } else {
-        parent.childNodes.splice(idx + 1, 0, node);
-      }
-      node.parentNode = parent;
+    parent = parent || after.parentNode;
+    let nodeIdx = parent.childNodes.indexOf(node);
+    if (nodeIdx !== -1) {
+      parent.childNodes.splice(nodeIdx, 1);
     }
+
+    let idx = parent.childNodes.indexOf(after);
+
+    if (idx === parent.childNodes.length - 1) {
+      parent.childNodes.push(node);
+    } else {
+      parent.childNodes.splice(idx + 1, 0, node);
+    }
+    node.parentNode = parent;
   },
 
   insertBefore(node, before, parent) {
-    if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return node.childNodes.map((child, index) => {
-        return this.insertBefore(child, before, parent);
-      });
-    } else {
-      let nodeIdx = parent.childNodes.indexOf(node);
-      if (nodeIdx !== -1) {
-        parent.childNodes.splice(nodeIdx, 1);
-      }
-
-      let idx = parent.childNodes.indexOf(before);
-      parent.childNodes.splice(idx, 0, node);
-      node.parentNode = parent;
+    parent = parent || before.parentNode;
+    let nodeIdx = parent.childNodes.indexOf(node);
+    if (nodeIdx !== -1) {
+      parent.childNodes.splice(nodeIdx, 1);
     }
+
+    let idx = parent.childNodes.indexOf(before);
+    parent.childNodes.splice(idx, 0, node);
+    node.parentNode = parent;
   },
 
   nextSibling(node) {

@@ -1,8 +1,7 @@
-import injectComponent from './vdom/injectComponent';
+import inject from './inject';
 import instance from './vdom/instance';
 import {setRem} from './style/unit';
-import {injectDriver, setDriver} from './driver';
-import Hook from './debug/hook';
+import Host from './vdom/host';
 
 function render(element, container, options = {}, callback) {
   // Compatible with `render(element, container, callback)`
@@ -13,24 +12,15 @@ function render(element, container, options = {}, callback) {
 
   let {monitor, driver} = options;
 
-  Hook.monitor = monitor;
+  // Init inject
+  inject({
+    driver
+  });
+
+  Host.hook.monitor = monitor;
 
   if (process.env.NODE_ENV !== 'production') {
-    Hook.monitor && Hook.monitor.beforeRender();
-  }
-
-  // Inject component
-  injectComponent();
-
-  // Init driver
-  driver = driver ? setDriver(driver) : injectDriver();
-
-  // Before render callback
-  driver.beforeRender && driver.beforeRender(element, container);
-
-  // Real native root node is body
-  if (container == null) {
-    container = driver.createBody();
+    Host.hook.monitor && Host.hook.monitor.beforeRender();
   }
 
   let rootComponent = instance.render(element, container);
@@ -39,11 +29,9 @@ function render(element, container, options = {}, callback) {
   if (callback) {
     callback.call(component);
   }
-  // After render callback
-  driver.afterRender && driver.afterRender(component);
 
   if (process.env.NODE_ENV !== 'production') {
-    Hook.monitor && Hook.monitor.afterRender();
+    Host.hook.monitor && Host.hook.monitor.afterRender();
   }
 
   return component;

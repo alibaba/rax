@@ -5,19 +5,18 @@ import Ref from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
-import Hook from '../debug/hook';
 
 function measureLifeCyclePerf(callback, instanceID, type) {
   if (instanceID === 0) {
     return callback();
   }
 
-  Hook.monitor && Hook.monitor.beforeLifeCycle(instanceID, type);
+  Host.hook.monitor && Host.hook.monitor.beforeLifeCycle(instanceID, type);
 
   try {
     return callback();
   } finally {
-    Hook.monitor && Hook.monitor.afterLifeCycle(instanceID, type);
+    Host.hook.monitor && Host.hook.monitor.afterLifeCycle(instanceID, type);
   }
 }
 
@@ -64,7 +63,7 @@ class CompositeComponent {
     this._updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.monitor && Hook.monitor.beforeMountComponent(this._mountID, this);
+      Host.hook.monitor && Host.hook.monitor.beforeMountComponent(this._mountID, this);
     }
 
     let Component = this._currentElement.type;
@@ -170,16 +169,16 @@ class CompositeComponent {
       }
     });
 
-    Hook.Reconciler.mountComponent(this);
+    Host.hook.Reconciler.mountComponent(this);
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.monitor && Hook.monitor.afterMountComponent(this._mountID);
+      Host.hook.monitor && Host.hook.monitor.afterMountComponent(this._mountID);
     }
 
     return instance;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(notRemoveChild) {
     let instance = this._instance;
 
     performInSandbox(() => {
@@ -188,7 +187,7 @@ class CompositeComponent {
       }
     });
 
-    Hook.Reconciler.unmountComponent(this);
+    Host.hook.Reconciler.unmountComponent(this);
 
     instance._internal = null;
 
@@ -198,7 +197,7 @@ class CompositeComponent {
         Ref.detach(this._currentElement._owner, ref, this);
       }
 
-      this._renderedComponent.unmountComponent(shouldNotRemoveChild);
+      this._renderedComponent.unmountComponent(notRemoveChild);
       this._renderedComponent = null;
       this._instance = null;
     }
@@ -273,7 +272,7 @@ class CompositeComponent {
     let instance = this._instance;
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.monitor && Hook.monitor.beforeUpdateComponent(this._mountID, this);
+      Host.hook.monitor && Host.hook.monitor.beforeUpdateComponent(this._mountID, this);
     }
 
     if (!instance) {
@@ -376,10 +375,10 @@ class CompositeComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      Hook.monitor && Hook.monitor.afterUpdateComponent(this._mountID);
+      Host.hook.monitor && Host.hook.monitor.afterUpdateComponent(this._mountID);
     }
 
-    Hook.Reconciler.receiveComponent(this);
+    Host.hook.Reconciler.receiveComponent(this);
   }
 
   /**
@@ -414,7 +413,7 @@ class CompositeComponent {
         this._processChildContext(context)
       );
       if (process.env.NODE_ENV !== 'production') {
-        Hook.monitor && Hook.monitor.recordOperation({
+        Host.hook.monitor && Host.hook.monitor.recordOperation({
           instanceID: this._mountID,
           type: 'update component',
           payload: {}
@@ -429,7 +428,34 @@ class CompositeComponent {
         this._parent,
         this._processChildContext(context),
         (newChild, parent) => {
-          Host.driver.replaceChild(newChild, oldChild, parent);
+          // TODO: Duplicate code in native component file
+          if (!Array.isArray(newChild)) {
+            newChild = [newChild];
+          }
+
+          // oldChild or newChild all maybe fragment
+          if (!Array.isArray(oldChild)) {
+            oldChild = [oldChild];
+          }
+
+          // If newChild count large then oldChild
+          let lastNewChild;
+          for (let i = 0; i < newChild.length; i++) {
+            let child = newChild[i];
+            if (oldChild[i]) {
+              Host.driver.replaceChild(child, oldChild[i]);
+            } else {
+              Host.driver.insertAfter(child, lastNewChild);
+            }
+            lastNewChild = child;
+          }
+
+          // If newChild count less then oldChild
+          if (newChild.length < oldChild.length) {
+            for (let i = newChild.length; i < oldChild.length; i++) {
+              Host.driver.removeChild(oldChild[i]);
+            }
+          }
         }
       );
     }

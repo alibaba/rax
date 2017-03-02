@@ -1,6 +1,6 @@
 {
   "name": "element-loader",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "web component loader.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -12,6 +12,9 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "dependencies": {
     "babel-core": "^6.20.0",
     "babel-generator": "^6.20.0",
@@ -25,7 +28,7 @@
     "jsdom": "^9.8.3",
     "loader-utils": "^0.2.16",
     "lodash": "^4.17.2",
-    "stylesheet-loader": "^0.1.9",
+    "stylesheet-loader": "^0.2.0",
     "uppercamelcase": "^1.1.0"
   }
 }

@@ -17,16 +17,12 @@ const Driver = {
     return document.getElementById(id);
   },
 
-  getChildNodes(node) {
-    return node.childNodes;
+  getParentNode(node) {
+    return node.parentNode;
   },
 
   createBody() {
     return document.body;
-  },
-
-  createFragment() {
-    return document.createDocumentFragment();
   },
 
   createComment(content) {
@@ -60,17 +56,20 @@ const Driver = {
   },
 
   removeChild(node, parent) {
-    // TODO, maybe has been removed when remove child
-    if (node.parentNode === parent) {
+    parent = parent || node.parentNode;
+    // Maybe has been removed when remove child
+    if (parent) {
       parent.removeChild(node);
     }
   },
 
   replaceChild(newChild, oldChild, parent) {
+    parent = parent || oldChild.parentNode;
     parent.replaceChild(newChild, oldChild);
   },
 
   insertAfter(node, after, parent) {
+    parent = parent || after.parentNode;
     const nextSibling = after.nextSibling;
     if (nextSibling) {
       parent.insertBefore(node, nextSibling);
@@ -80,6 +79,7 @@ const Driver = {
   },
 
   insertBefore(node, before, parent) {
+    parent = parent || before.parentNode;
     parent.insertBefore(node, before);
   },
 
@@ -143,9 +143,9 @@ const Driver = {
       const transformValue = tranformedStyles[prop];
       // hack handle compatibility issue
       if (Array.isArray(transformValue)) {
-        transformValue.forEach((value) => {
-          node.style[prop] = value;
-        });
+        for (let i = 0; i < transformValue.length; i++) {
+          node.style[prop] = transformValue[i];
+        }
       } else {
         node.style[prop] = transformValue;
       }

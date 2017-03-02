@@ -4,7 +4,6 @@ import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
-import Hook from '../debug/hook';
 import {isWeb} from 'universal-env';
 
 /**
@@ -37,6 +36,14 @@ export default {
     }
   },
   render(element, container) {
+    // Before render callback
+    Host.driver.beforeRender && Host.driver.beforeRender(element, container);
+
+    // Real native root node is body
+    if (container == null) {
+      container = Host.driver.createBody();
+    }
+
     let prevRootInstance = this.get(container);
     let hasPrevRootInstance = prevRootInstance && prevRootInstance.isRootComponent;
 
@@ -54,7 +61,7 @@ export default {
 
         return prevRootInstance;
       } else {
-        Hook.Reconciler.unmountComponent(prevRootInstance);
+        Host.hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
       }
     }
@@ -77,7 +84,10 @@ export default {
     let defaultContext = {};
     let rootInstance = renderedComponent.mountComponent(container, defaultContext);
     this.set(container, rootInstance);
-    Hook.Mount._renderNewRootComponent(rootInstance._internal);
+    Host.hook.Mount._renderNewRootComponent(rootInstance._internal);
+
+    // After render callback
+    Host.driver.afterRender && Host.driver.afterRender(rootInstance);
 
     return rootInstance;
   }

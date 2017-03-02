@@ -43,6 +43,8 @@ Output multiple platform
 #### options
 
 - `platforms` Array of ['web', 'node', 'weex', 'reactnative']
+- `exclude` Multiple platform loader exclude, default is `/(node_modules|bower_components)/`
+- `name` Default is `['universal-env']`, you can reassign to other module name when needed
 
 example
 
