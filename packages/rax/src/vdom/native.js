@@ -8,6 +8,7 @@ import instance from './instance';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const TREE = 'tree';
+const EVENT_PREFIX = 'on';
 
 /**
  * Native Component
@@ -165,8 +166,8 @@ class NativeComponent {
           }
         }
         this._prevStyleCopy = null;
-      } else if ( propKey.substring(0, 2) === 'on' ) {
-        if (prevProps[propKey]) {
+      } else if (propKey.substring(0, 2) === EVENT_PREFIX) {
+        if (typeof prevProps[propKey] === 'function') {
           Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProps[propKey]);
         }
       } else {
@@ -217,12 +218,12 @@ class NativeComponent {
         }
 
       // Update event binding
-      } else if (propKey.substring(0, 2) === 'on') {
-        if (prevProp != null) {
+      } else if (propKey.substring(0, 2) === EVENT_PREFIX) {
+        if (typeof prevProp === 'function') {
           Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProp);
         }
 
-        if (nextProp != null) {
+        if (typeof nextProp === 'function') {
           Host.driver.addEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), nextProp);
         }
       // Update other property
