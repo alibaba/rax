@@ -1,0 +1,26 @@
+{
+  "name": "rax-countdown",
+  "version": "0.1.9",
+  "description": "countdown UI for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component",
+    "react-component"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "rax": "^0.1.9",
+    "rax-view": "^0.1.9",
+    "rax-text": "^0.1.9",
+    "rax-image": "^0.1.9"
+  }
+}
