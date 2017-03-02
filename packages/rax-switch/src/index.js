@@ -42,10 +42,13 @@ class Switch extends Component {
       span: {
         width: DEFAULT_WIDTH,
         height: DEFAULT_HEIGHT,
+        minWidth: DEFAULT_WIDTH,
+        minHeight: DEFAULT_HEIGHT,
         borderRadius: 40,
         position: 'relative',
         display: 'inline-block',
         margin: 4,
+        padding: 0,
         cursor: 'default', // pointer will cause a grey background color on chrome
         verticalAlign: 'middle',
         borderColor: '#dfdfdf',
@@ -92,6 +95,9 @@ class Switch extends Component {
   }
 
   render() {
+
+    this.state.value = this.props.value;
+
     if (isWeex) {
       let nativeProps = {
         style: {
@@ -111,7 +117,11 @@ class Switch extends Component {
       let spancss = this.state.value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
       let smallcss = this.state.value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
       spancss = this.props.disabled ? {...spancss, ...styles.disabledSpan} : spancss;
-
+      spancss = {
+        ...this.props.style, 
+        ...spancss
+      };
+      
       return (
         <span onClick={this.handleClick} style={spancss}>
           <small style={smallcss} />
