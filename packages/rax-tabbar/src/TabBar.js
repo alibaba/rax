@@ -1,4 +1,3 @@
-/** @jsx createElement */
 import {createElement, cloneElement, findDOMNode, isValidElement, Component} from 'rax';
 import View from 'rax-view';
 import ScrollView from 'rax-scrollview';

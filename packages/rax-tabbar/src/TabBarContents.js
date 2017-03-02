@@ -1,4 +1,3 @@
-/** @jsx createElement */
 import {createElement, Component} from 'rax';
 import View from 'rax-view';
 const WIDTH = 750;

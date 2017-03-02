@@ -18,7 +18,13 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
+    "rax": "^0.1.9",
+    "universal-env": "^0.1.9",
     "rax-view": "^0.1.9",
-    "rax-recyclerview": "^0.1.9"
+    "rax-image": "^0.1.9",
+    "rax-text": "^0.1.9",
+    "rax-touchable": "^0.1.9",
+    "rax-icon": "^0.1.9",
+    "universal-panresponder": "^0.1.9"
   }
 }
