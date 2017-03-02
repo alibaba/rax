@@ -2,6 +2,7 @@ import * as babylon from 'babylon';
 import traverse from 'babel-traverse';
 import * as types from 'babel-types';
 import generate from 'babel-generator';
+import codeFrame from 'babel-code-frame';
 
 /* eslint-disable new-cap */
 
@@ -42,12 +43,29 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     return types.objectExpression(properties);
   }
 
-  let ast = babylon.parse(inputSource, {
-    sourceType: 'module',
-    plugins: [
-      '*',
-    ]
-  });
+  let ast;
+
+  try {
+    ast = babylon.parse(inputSource, {
+      sourceType: 'module',
+      plugins: [
+        '*',
+      ]
+    });
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      err.lineNumber = err.loc.line;
+      err.column = err.loc.column + 1;
+
+      // remove trailing "(LINE:COLUMN)" acorn message and add in esprima syntax error message start
+      err.message = 'Line ' + err.lineNumber + ': ' + err.message.replace(/ \((\d+):(\d+)\)$/, '') +
+      // add codeframe
+      '\n\n' +
+      codeFrame(inputSource, err.lineNumber, err.column, { highlightCode: true });
+    }
+
+    throw err;
+  }
 
   traverse(ast, {
     enter() {
