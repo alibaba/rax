@@ -27,6 +27,10 @@ class Link extends Component {
     let props = this.props;
     let children = props.children;
     let nativeProps = {...props};
+    let style = {
+      ...styles.initial,
+      ...nativeProps.style
+    };
 
     if (nativeProps.onPress) {
       nativeProps.onClick = nativeProps.onPress;
@@ -35,17 +39,12 @@ class Link extends Component {
 
     let content = children;
     if (typeof children === 'string') {
-      content = <Text>{children}</Text>;
+      content = <Text style={style}>{children}</Text>;
     }
 
     if (isWeex) {
       return <a {...nativeProps}>{content}</a>;
     } else {
-      let style = {
-        ...styles.initial,
-        ...nativeProps.style
-      };
-
       return <a {...nativeProps} style={style}>{content}</a>;
     }
   }

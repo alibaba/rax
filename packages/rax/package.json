@@ -1,6 +1,6 @@
 {
   "name": "rax",
-  "version": "0.1.9",
+  "version": "0.2.1",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -12,7 +12,10 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "dependencies": {
-    "universal-env": "^0.1.9"
+    "universal-env": "^0.2.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "rax-animated",
-  "version": "0.1.9",
+  "version": "0.2.1",
   "description": "Declarative Animations Library for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -12,10 +12,13 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "dependencies": {
     "animated": "0.1.3",
     "invariant": "2.2.1",
-    "rax": "^0.1.9",
-    "rax-components": "^0.1.9"
+    "rax": "^0.2.1",
+    "rax-components": "^0.2.1"
   }
 }

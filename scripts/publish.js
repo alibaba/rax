@@ -38,7 +38,8 @@ if (version) {
   const JSONString = fs.readFileSync(GENERATOR_DEPENDENCIES_FILE);
   const packageJSON = JSON.parse(JSONString);
   packageJSON.dependencies.rax = semver;
-  packageJSON.dependencies['rax-components'] = semver;
+  packageJSON.dependencies['rax-view'] = semver;
+  packageJSON.dependencies['rax-text'] = semver;
   packageJSON.devDependencies['babel-preset-rax'] = semver;
   packageJSON.devDependencies['rax-webpack-plugin'] = semver;
   packageJSON.devDependencies['stylesheet-loader'] = semver;

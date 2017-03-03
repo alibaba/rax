@@ -1,6 +1,6 @@
 {
   "name": "rax-video",
-  "version": "0.1.9",
+  "version": "0.2.1",
   "description": "Video component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -17,11 +17,14 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
   "peerDependencies": {
     "rax": "^0.1.9",
     "universal-env": "^0.1.9"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.1.9"
+    "rax-test-renderer": "^0.2.1"
   }
 }

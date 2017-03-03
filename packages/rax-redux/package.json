@@ -1,6 +1,6 @@
 {
   "name": "rax-redux",
-  "version": "0.1.9",
+  "version": "0.2.1",
   "description": "Official Rax bindings for Redux.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -12,11 +12,16 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "peerDependencies": {
+    "rax": "^0.2.0"
+  },
   "dependencies": {
     "invariant": "^2.0.0",
     "lodash.isplainobject": "^4.0.6",
     "shallowequal": "^0.2.2",
-    "rax": "^0.1.9",
     "redux": "^3.6.0"
   }
 }

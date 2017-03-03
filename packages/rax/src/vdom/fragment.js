@@ -3,7 +3,6 @@ import NativeComponent from './native';
 import instance from './instance';
 import instantiateComponent from './instantiateComponent';
 import getElementKeyName from './getElementKeyName';
-import Hook from '../debug/hook';
 
 /**
  * Fragment Component
@@ -24,23 +23,26 @@ class FragmentComponent extends NativeComponent {
     };
     this._instance = instance;
 
-    let nativeNode = this.getNativeNode();
+    let fragment = this.getNativeNode();
     let children = this._currentElement;
 
     // Process children
     this.mountChildren(children, context);
 
-    // Fragment child nodes append by tree mode
     if (childMounter) {
-      childMounter(nativeNode, parent);
+      childMounter(fragment, parent);
     } else {
-      Host.driver.appendChild(nativeNode, parent);
+      let isFragmentParent = Array.isArray(parent);
+      for (let i = 0; i < fragment.length; i++) {
+        let child = fragment[i];
+        // When the parent is also a fragment
+        if (isFragmentParent) {
+          parent.push(child);
+        } else {
+          Host.driver.appendChild(child, parent);
+        }
+      }
     }
-
-    // set to right node when append to parent
-    this._nativeNode = parent;
-
-    Hook.Reconciler.mountComponent(this);
 
     return instance;
   }
@@ -60,7 +62,13 @@ class FragmentComponent extends NativeComponent {
         this._parent,
         context,
         (nativeNode) => {
-          Host.driver.appendChild(nativeNode, fragment);
+          if (Array.isArray(nativeNode)) {
+            for (let i = 0; i < nativeNode.length; i++) {
+              fragment.push(nativeNode[i]);
+            }
+          } else {
+            fragment.push(nativeNode);
+          }
         }
       );
       return mountImage;
@@ -71,17 +79,18 @@ class FragmentComponent extends NativeComponent {
     return renderedChildrenImage;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(notRemoveChild) {
     if (this._nativeNode) {
       instance.remove(this._nativeNode);
-      if (!shouldNotRemoveChild) {
-        Host.driver.removeChild(this._nativeNode, this._parent);
+      if (!notRemoveChild) {
+        for (let i = 0; i < this._nativeNode.length; i++) {
+          Host.driver.removeChild(this._nativeNode[i]);
+        }
       }
     }
 
-    this.unmountChildren();
-
-    Hook.Reconciler.unmountComponent(this);
+    // Do not need remove child when their parent is removed
+    this.unmountChildren(true);
 
     this._currentElement = null;
     this._nativeNode = null;
@@ -94,22 +103,18 @@ class FragmentComponent extends NativeComponent {
     // Replace current element
     this._currentElement = nextElement;
     this.updateChildren(this._currentElement, nextContext);
-
-    Hook.Reconciler.receiveComponent(this);
   }
 
   getNativeNode() {
     if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createFragment(this._instance);
-      // TODO instance cache
+      this._nativeNode = [];
     }
 
     return this._nativeNode;
   }
 
   getPublicInstance() {
-    // TODO
-    return null;
+    return this.getNativeNode();
   }
 
   getName() {

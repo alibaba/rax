@@ -1,28 +1,22 @@
-import injectComponent from './vdom/injectComponent';
+import inject from './inject';
 import instance from './vdom/instance';
 import {setRem} from './style/unit';
-import {injectDriver, setDriver} from './driver';
+import Host from './vdom/host';
 
-function render(element, container, driver, callback) {
+function render(element, container, options = {}, callback) {
   // Compatible with `render(element, container, callback)`
-  if (typeof driver === 'function') {
-    callback = driver;
-    driver = null;
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
   }
 
-  // Inject component
-  injectComponent();
+  let {measurer, driver} = options;
 
-  // Init driver
-  driver = driver ? setDriver(driver) : injectDriver();
-
-  // Before render callback
-  driver.beforeRender && driver.beforeRender(element, container);
-
-  // Real native root node is body
-  if (container == null) {
-    container = driver.createBody();
-  }
+  // Init inject
+  inject({
+    driver,
+    measurer
+  });
 
   let rootComponent = instance.render(element, container);
   let component = rootComponent.getPublicInstance();
@@ -30,8 +24,6 @@ function render(element, container, driver, callback) {
   if (callback) {
     callback.call(component);
   }
-  // After render callback
-  driver.afterRender && driver.afterRender(component);
 
   return component;
 }

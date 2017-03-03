@@ -80,6 +80,23 @@ describe('PlatformLoader.traverseImport', function() {
     expect(code).toBe('const isWeb = true;');
   });
 
+  it('multiple module name', function() {
+    const {code} = traverseImport(
+      { name: ['universal-env', 'other-env'], platform: 'web' },
+      unpad(`
+        import { isWeb } from "other-env";
+        import { isWeex } from "universal-env";
+      `)
+    );
+
+    const expected = unpad(`
+      const isWeb = true;
+      const isWeex = false;
+    `);
+
+    expect(code).toBe(expected);
+  });
+
   it('skin other module', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'web' },

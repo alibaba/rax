@@ -5,11 +5,28 @@ var updateNotifier = require('update-notifier');
 var pkg = require('../package.json');
 updateNotifier({pkg: pkg}).notify();
 
+// Check node version
+var chalk = require('chalk');
+var semver = require('semver');
+if (!semver.satisfies(process.version, '>=4')) {
+  var message = 'You are currently running Node.js ' +
+    chalk.red(process.version) + '.\n' +
+    '\n' +
+    'Rax runs on Node 4.0 or newer. There are several ways to ' +
+    'upgrade Node.js depending on your preference.\n' +
+    '\n' +
+    'nvm:       nvm install node && nvm alias default node\n' +
+    'Homebrew:  brew install node\n' +
+    'Installer: download the Mac .pkg from https://nodejs.org/\n';
+
+  console.log(message);
+  process.exit(1);
+}
+
 var fs = require('fs');
 var path = require('path');
 var exec = require('child_process').exec;
 var spawn = require('cross-spawn');
-var chalk = require('chalk');
 var prompt = require('prompt');
 var cli = require('../lib/');
 var argv = require('minimist')(process.argv.slice(2));
