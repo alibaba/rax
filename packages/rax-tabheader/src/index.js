@@ -8,7 +8,6 @@ import BottomLine from './bottomLine';
 import BackgroundBlock from './backgroundRun';
 import {Col, Grid, MultiRow} from 'rax-grid';
 import Animated from './animation';
-import Dimensions from '@ali/universal-dimensions';
 import NormalItem from './normalItem';
 import IconItem from './iconItem';
 import style from './style';
@@ -19,7 +18,7 @@ const isWeex = typeof callNative !== 'undefined';
 const DROPDOWN_ROW_HEIGHT = 80;
 const SCROLLVIEW_REF = 'scrollview';
 const MARKER_REF = 'marker';
-let windowWidth = Dimensions.get('window').width;
+let windowWidth = 750;
 
 class TabHeader extends Component {
   

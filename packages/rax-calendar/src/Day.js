@@ -1,4 +1,3 @@
-/** @jsx createElement */
 import {createElement, Component, PropTypes} from 'rax';
 import View from '@ali/rax-view';
 import Text from '@ali/rax-text';

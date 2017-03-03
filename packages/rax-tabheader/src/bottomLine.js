@@ -1,7 +1,7 @@
 import {createElement, findDOMNode, Component} from 'rax';
-import View from '@ali/rax-view';
-import Text from '@ali/rax-text';
-import ScrollView from '@ali/rax-scrollview';
+import View from 'rax-view';
+import Text from 'rax-text';
+import ScrollView from 'rax-scrollview';
 import Animated from './animation';
 import style from './style';
 
