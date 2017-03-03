@@ -8,27 +8,27 @@ const styles = {
     width: DEVICE_WIDTH,
   },
   monthHeading: {
-    padding: '10rem',
+    padding: 10,
     alignItems: 'center',
     borderBottom: '1rem solid #f7f7f7',
-    fontSize: '30rem',
+    fontSize: 30,
   },
   calendarControls: {
     flex: 1,
     flexDirection: 'row',
-    marginBottom: '10rem',
+    marginBottom: 10,
   },
   controlButton: {
   },
   controlButtonText: {
-    margin: '20rem',
-    fontSize: '30rem',
+    margin: 20,
+    fontSize: 30,
   },
   title: {
     flex: 1,
     textAlign: 'center',
-    fontSize: '38rem',
-    margin: '10rem',
+    fontSize: 38,
+    margin: 10,
   },
   calendarHeading: {
     flexDirection: 'row',
@@ -37,15 +37,15 @@ const styles = {
   },
   dayHeading: {
     flex: 1,
-    fontSize: '30rem',
+    fontSize: 30,
     textAlign: 'center',
-    marginVertical: '10rem',
+    marginVertical: 10,
   },
   weekendHeading: {
     flex: 1,
-    fontSize: '30rem',
+    fontSize: 30,
     textAlign: 'center',
-    marginVertical: '10rem',
+    marginVertical: 10,
     color: '#cccccc',
   },
   weekRow: {
@@ -53,26 +53,26 @@ const styles = {
   },
   dayButton: {
     alignItems: 'center',
-    padding: '10rem',
+    padding: 10,
     width: DEVICE_WIDTH / 7,
     borderTopWidth: 1,
     borderTopColor: '#e9e9e9',
   },
   dayButtonFiller: {
-    padding: '10rem',
+    padding: 10,
     width: DEVICE_WIDTH / 7,
   },
   day: {
-    fontSize: '32rem',
+    fontSize: 32,
     alignSelf: 'center',
     color: '#000000',
   },
   eventIndicatorFiller: {
-    marginTop: '6rem',
+    marginTop: 6,
     borderColor: 'transparent',
-    width: '8rem',
-    height: '8rem',
-    borderRadius: '4rem',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   eventIndicator: {
     backgroundColor: '#cccccc',
@@ -80,9 +80,9 @@ const styles = {
   dayCircleFiller: {
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    width: '56rem',
-    height: '56rem',
-    borderRadius: '28rem',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
   },
   currentDayCircle: {
     backgroundColor: 'red',

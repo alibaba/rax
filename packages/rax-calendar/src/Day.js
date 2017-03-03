@@ -1,7 +1,7 @@
 import {createElement, Component, PropTypes} from 'rax';
-import View from '@ali/rax-view';
-import Text from '@ali/rax-text';
-import Touchable from '@ali/rax-touchable';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Touchable from 'rax-touchable';
 
 import styles from './styles';
 
