@@ -11,9 +11,9 @@ jest.mock('universal-env', () => {
 // Could not mock universal-env in rax-text current,
 // because universal-env is not peer ependencies
 jest.mock('rax-text', () => {
-  return function(props){
-    return <text value={props.children} />
-  }
+  return function(props) {
+    return <text value={props.children} />;
+  };
 });
 
 describe('Link in weex', () => {
