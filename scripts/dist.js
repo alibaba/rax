@@ -210,7 +210,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
 }
 
 function dist(config) {
-  console.log(config)
+
   return new Promise(function(resolver, reject) {
     let compiler = webpack(config);
     compiler.run(function(err, stats) {
