@@ -100,8 +100,8 @@ const styles = {
     justifyContent: 'center'
   },
   main: {
-    width: '640rem',
-    height: '340rem',
+    width: 640,
+    height: 340,
     backgroundColor: '#ffffff'
   }
 };

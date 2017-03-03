@@ -7,7 +7,7 @@ class RxPicture extends Component {
     source: {
       uri: ''
     },
-    defaultHeight: '750rem'
+    defaultHeight: 750
   };
 
   static propTypes = {
@@ -19,9 +19,9 @@ class RxPicture extends Component {
       'stretch'
     ]),
 
-    width: PropTypes.string,  // 图片真实宽度
-    height: PropTypes.string,  // 图片真实高度
-    defaultHeight: PropTypes.string, // 当高度设置失败时的默认高度
+    width: PropTypes.string, // width of picture
+    height: PropTypes.string, // height of picture
+    defaultHeight: PropTypes.string, // default height when the height setting fails
 
     forceUpdate: PropTypes.bool
   };
@@ -46,10 +46,10 @@ class RxPicture extends Component {
       defaultHeight
     } = this.props;
     let _resizeMode = resizeMode;
-    let sWidth = style.width, // 图片需要显示的宽度
-      sHeight = style.height; // 图片需要显示的高度
+    let sWidth = style.width, // style width of picture
+      sHeight = style.height; // style width of picture
 
-    // 如果没有设置高度，但是设置了宽度，则根据图片原始高度、宽度设置高度
+    // according to the original height and width of the picture
     if ( ! sHeight && sWidth && width && height) {
       const pScaling = width / parseInt(sWidth, 10);
       sHeight = parseInt(height / pScaling, 10);
@@ -63,7 +63,7 @@ class RxPicture extends Component {
       sHeight = defaultHeight;
 
       if (!_resizeMode) {
-        // 确保图片能够完整显示
+        // ensure that the picture can be displayed
         _resizeMode = 'contain';
       }
     }
