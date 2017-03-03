@@ -39,7 +39,7 @@ class BackgroundRun extends Component {
           position: 'absolute',
           left: 0,
           top: 0,
-          height: '113rem',
+          height: 113,
           width: itemWidth,
           backgroundColor: backgroundColor,
         }}
