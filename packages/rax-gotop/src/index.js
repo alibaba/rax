@@ -8,9 +8,6 @@ import Animated from 'rax-animated';
 let scroll;
 
 if (!isWeex) {
-  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || function(c) {
-    setTimeout(c, 1 / 60 * 1e3);
-  };
   scroll = require('./scroll');
 }
 
@@ -20,13 +17,9 @@ export default class GoTop extends Component {
     let isShow = props.resident ? true : false,
       bottom = props.bottom || 125;
 
-    if (isWeex) {
-      bottom += 'rem';
-    } else {
-      if (!props.resident) {
-        isShow = true;
-        bottom = new Animated.Value(-100);
-      }
+    if (!isWeex && !props.resident) {
+      isShow = true;
+      bottom = new Animated.Value(-100);
     }
     this.state = {
       isShow: isShow,
@@ -194,8 +187,8 @@ let styles = {
 };
 
 GoTop.defaultProps = {
-  name: '顶部',
-  icon: 'https://gw.alicdn.com/tps/TB1UhIvLXXXXXaRXpXXXXXXXXXX-60-66.png',
+  name: 'Top',
+  icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABCCAYAAAAL1LXDAAAClElEQVR42u3YS4vTUBQH8PgWdK8rty5dCy79For3Jt5761R7z52xI7rLB3AhLoTRcXwMKlYUH/gAd25duXYp6AeYjYJOzR+EQO1JaKNtmpw/hLYntzS/np40beQcHVHWv1eGfijjh03cYIMR1gh3UGzDBivAWy0Cb7Wuw+2bYYlEIpEwGQ6HO5Tzl5T1X7Tx37QN13Sa7m8u1vi10a8Mbekd0G3A5mjj3/Z61/c1Bqst3Sy/CqI3QDcSy3eaXqdpureZWL7Tr4BexJm9VYrjZ/ol0M3E8p1+4dzankX4GK/zEPo8pvYxu/05ttPWPwd6IbHa0Kp2If2rjpoNp7SlX0ynnwG9cFis48DYF3foNNDM859mM727Rlh/uwxbBkYSQ2f4TvsnQNcaG9vQx7pycJ7YecWhs/pgbujshXcqQxtl2EnBSNzxcUGnHw8Gg121wipHF7FuWjCibUiy/dtMpx8BPTOstnSnDFsVjChDZzm0svQQ6LlitQ0rWFcNPNppsmynDT0AukbY6mAkW+fYThvaxLH9e6wJdzls7GgZ66qCizvtz/Ez7e/n6Fpgq4OR2IUl7jhwjDm6AlZZuleGnRUYUSacZ9HZyFVCa0eXC97RgDWzBOedpgsFP1A2cEE0FVgZ+lSEnRcYUY58QafXp0LjH8UxJwjCvnmDERwLO26GrkaTJumsHMP/x3+g33GmRL0uYATnEQa9rburh6NJ0+2mB5NOOG6IDuFx3cAIru7GoZMlOhpVSV3BCH6sjIzeB8xxY8FIYpdPKkM38O3S7/cPoNZAMB8BC1jAAhawgAUsYAELWMACFrCABSxgAQtYwAIWcLvBsQ1XRsGoNRacODoxCkYtanK0DT1l6Ss23I8k/ze/AcSDH16N8PnHAAAAAElFTkSuQmCC',
   borderColor: 'rgba(0, 0, 0, 0.1)',
   iconWidth: '90rem',
   iconHeight: '90rem',

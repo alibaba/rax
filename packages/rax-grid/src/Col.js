@@ -1,6 +1,6 @@
 import {Component, createElement} from 'rax';
 
-let defaultWidth = window.screen.width;
+let defaultWidth = 750;
 
 class Col extends Component {
   render() {
@@ -23,7 +23,7 @@ class Col extends Component {
         <div {...this.props} style={style} />
       );
     } else {
-      // 如果仅有一个 child 则返回 child 标签
+      // if only one child, return this child
       children.props.style = {
         ...this.props.style,
         ...children.props.style,
@@ -37,7 +37,7 @@ class Col extends Component {
 const styles = {
   initial: {
     'flex': 1,
-    'width': '1%',
+    'width': '1%', // only for web (Partial Android device column width is not the same problem)
   }
 };
 

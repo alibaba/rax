@@ -9,9 +9,9 @@ class List extends Component {
 
   getContent() {
     let props = this.props,
-      list = props.dataSource || [],
-      count = props.cells || props.rows || 1,
-      temp = props.renderCell || props.renderRow;
+      list = props.dataSource,
+      count = props.cells,
+      renderCell = props.renderCell;
 
     let grids = [];
 
@@ -23,7 +23,7 @@ class List extends Component {
       if (i % count == 0) {
         gridDataArr[index] = [];
       }
-      gridDataArr[index].push(<Col style={props.colStyle}>{temp(list[i], i)}</Col>);
+      gridDataArr[index].push(<Col style={props.colStyle}>{renderCell(list[i], i)}</Col>);
       if (i == list.length - 1) {
         grids.push(<Grid style={props.gridStyle}>{gridDataArr[index]}</Grid>);
       }
@@ -39,8 +39,9 @@ class List extends Component {
 List.defaultProps = {
   colStyle: {},
   gridStyle: {},
-  list: [],
-  temp: function() {}
+  cells: 1,
+  dataSource: [],
+  renderCell: () => {}
 };
 
 export default List;

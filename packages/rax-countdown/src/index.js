@@ -36,11 +36,11 @@ class Index extends Component {
     formatFunc: PropTypes.func,
     onTick: PropTypes.func,
     onComplete: PropTypes.func,
-    tpl: PropTypes.string, // 倒计时展示模板
+    tpl: PropTypes.string, // template (example {h}:{m}:{s})
     timeRemaining: PropTypes.number,
-    secondStyle: PropTypes.object, // 秒的样式
-    timeStyle: PropTypes.object, // 时间数字的样式
-    textStyle: PropTypes.object, // 时间单位的样式
+    secondStyle: PropTypes.object, 
+    timeStyle: PropTypes.object, // style for num
+    textStyle: PropTypes.object, // style for text
     timeWrapStyle: PropTypes.object,
     timeBackground: PropTypes.string,
     timeBackgroundStyle: PropTypes.object,
