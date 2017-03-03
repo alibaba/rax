@@ -123,9 +123,49 @@ Then, you can run several commands:
 * `npm run build` creates `lib` and `dist` folder with all the packages.
 * `npm start` start local server with `examples` folder.
 
+
+## Core Team
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/yuanyan.png?s=128">
+        <br>
+        <a href="https://github.com/yuanyan">@yuanyan</a>
+        <p>Core</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/imsobear.png?s=128">
+        <br>
+        <a href="https://github.com/imsobear">@imsobear</a>
+        <p>Development</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/yacheng.png?s=128">
+        <br>
+        <a href="https://github.com/yacheng">@yacheng</a>
+        <p>Components</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/boiawang.png?s=128">
+        <br>
+        <a href="https://github.com/boiawang">@boiawang</a>
+        <p>Babel Loaders &amp; Plugins</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/noyobo.png?s=128">
+        <br>
+        <a href="https://github.com/noyobo">@noyobo</a>
+        <p>Webpack Plugins</p>
+      </td>
+     </tr>
+  </tbody>
+</table>
+
 ---
 <a href="https://weex-project.io/">
-  <img alt="Weex Logo" src="https://camo.githubusercontent.com/11b6ddd7364b6fd42c9efd63939150a950b0de1a/68747470733a2f2f696d672e616c6963646e2e636f6d2f7470732f5442317a424c6150585858585858655858585858585858585858582d3132312d35392e737667" width="200">
+  <img alt="Weex Logo" src="https://camo.githubusercontent.com/11b6ddd7364b6fd42c9efd63939128a950b0de1a/68747470733a2f2f696d672e616c6963646e2e636f6d2f7470732f5442317a424c6128585858585858655858585858585858585858582d3132312d35392e737667" width="200">
 </a>
 
 **[⬆ back to top](#top)**
