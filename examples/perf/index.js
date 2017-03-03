@@ -1,6 +1,6 @@
 import {createElement, Component, render, PureComponent} from 'rax';
 import {Text, View} from 'rax-components';
-import {perf, monitor} from 'universal-perf';
+import Perf from 'universal-Perf';
 
 class ChildOne extends Component {
   render() {
@@ -50,18 +50,18 @@ class PerfTest extends Component {
         <Text>world</Text>
       </View>
       <ChildOne clickChild={() => {
-        perf.start();
+        Perf.start();
         this.setState({
           childUpdate: true
         });
 
-        perf.stop();
-        let measurements = perf.getLastMeasurements();
+        Perf.stop();
+        let measurements = Perf.getLastMeasurements();
 
         console.log('click child1 print wasted');
-        perf.printWasted(measurements);
+        Perf.printWasted(measurements);
         console.log('click child1 print operations');
-        perf.printOperations(measurements);
+        Perf.printOperations(measurements);
       }} />
       <ChildTwo update={childUpdate} />
       <ChildThree />
@@ -79,13 +79,12 @@ const styles = {
   }
 };
 
-perf.start();
+Perf.start();
 render(<PerfTest name="world" />, null, {
-  monitor
+  measurer: Perf.Measurer
 });
+Perf.stop();
 
-perf.stop();
-let measurements = perf.getLastMeasurements();
-
-perf.printInclusive(measurements);
-perf.printExclusive(measurements);
+let measurements = Perf.getLastMeasurements();
+Perf.printInclusive(measurements);
+Perf.printExclusive(measurements);

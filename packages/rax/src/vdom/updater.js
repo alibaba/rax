@@ -70,9 +70,13 @@ const Updater = {
       );
     }
 
+    this.runCallbacks(callbacks, component);
+  },
+
+  runCallbacks(callbacks, context) {
     if (callbacks) {
       for (let i = 0; i < callbacks.length; i++) {
-        callbacks[i]();
+        callbacks[i].call(context);
       }
     }
   }
