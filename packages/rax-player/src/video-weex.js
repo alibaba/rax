@@ -8,7 +8,7 @@ const weexEnv = typeof WXEnvironment !== 'undefined' ? WXEnvironment : {};
 if (weexEnv.appVersion) {
   let appVersion = weexEnv.appVersion.split('.');
   // 版本判断，当android和ios大于等于6.2.0时使用WeexVideoPlus标签
-  if (appVersion[0] > 6 || (appVersion[0] == 6 && appVersion[1] >= 2)) {
+  if (appVersion[0] > 6 || appVersion[0] == 6 && appVersion[1] >= 2) {
     supportVideoPlus = true;
   }
 }
@@ -115,7 +115,7 @@ class Video extends Component {
     let poster = this.props.poster || this.props.coverImage;
     let playStatus = this.state.pause ? 'stop' : 'play';
     let videoSrc = this.props.src;
-    videoSrc = videoSrc.replace(/\/\/|http:\/\/|https:\/\//, location.protocol + '//'); //解决android下播放器不能播放//前缀视频文件的bug
+    videoSrc = videoSrc.replace(/\/\/|http:\/\/|https:\/\//, location.protocol + '//'); // 解决android下播放器不能播放//前缀视频文件的bug
     let props = {
       ...this.props,
       ...{
@@ -142,7 +142,7 @@ class Video extends Component {
         ...{
           src: videoSrc,
           utParams: utParams,
-          autoPlay: true, //因为videoplus现在有个bug，当autoPlay不为true的时候埋点会有问题，所有，当视频开始播放之后就设置autoPlay为true
+          autoPlay: true, // 因为videoplus现在有个bug，当autoPlay不为true的时候埋点会有问题，所有，当视频开始播放之后就设置autoPlay为true
           onPaused: this.onVideoPause,
           onPlaying: this.onVideoPlay,
           onError: this.onVideoFail,
@@ -175,15 +175,15 @@ class Video extends Component {
         </View>
       }
       { playStatus == 'stop' && this.props.startBtn && <View
-          style={styles.startBtn}
-          ref="starBtn"
+        style={styles.startBtn}
+        ref="starBtn"
           >
           <Image
             source={{
               uri: 'https://gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'
             }}
             style={styles.startBtnImage}
-            onClick={this.switch.bind(this, 'play')}
+            onClick={this.switch}
             />
         </View>
       }
@@ -207,7 +207,7 @@ class Video extends Component {
       ...defaultStyles.startBtn,
       ...{
         width: styles.video.width,
-        height: (parseInt(styles.video.height) - 75) + 'rem'
+        height: parseInt(styles.video.height) - 75 + 'rem'
       }
     };
     styles.startBtnImage = {

@@ -129,7 +129,6 @@ export default class Calendar extends Component {
   }
 
   renderMonthView(argMoment, eventDatesMap) {
-
     let
       renderIndex = 0,
       weekRows = [],
@@ -149,7 +148,7 @@ export default class Calendar extends Component {
       startMoment = this.props.startDate && moment(this.props.startDate),
       endMoment = this.props.endDate && moment(this.props.endDate);
 
-    const events = (eventDatesMap !== null)
+    const events = eventDatesMap !== null
       ? eventDatesMap[argMoment.startOf('month').format()]
       : null;
 
@@ -157,10 +156,10 @@ export default class Calendar extends Component {
       const dayIndex = renderIndex - offset;
       const isoWeekday = (renderIndex + weekStart) % 7;
       const date = moment(startOfArgMonthMoment).set('date', dayIndex + 1);
-      const isDisabled = (startMoment && date < startMoment) || (endMoment && date > endMoment);
+      const isDisabled = startMoment && date < startMoment || endMoment && date > endMoment;
 
       if (dayIndex >= 0 && dayIndex < argMonthDaysCount) {
-        days.push((
+        days.push(
           <Day
             startOfMonth={startOfArgMonthMoment}
             isWeekend={isoWeekday === 0 || isoWeekday === 6}
@@ -169,14 +168,14 @@ export default class Calendar extends Component {
               this.selectDate(date);
             }}
             caption={`${dayIndex + 1}`}
-            isToday={argMonthIsToday && (dayIndex === todayIndex)}
-            isSelected={selectedMonthIsArg && (dayIndex === selectedIndex)}
+            isToday={argMonthIsToday && dayIndex === todayIndex}
+            isSelected={selectedMonthIsArg && dayIndex === selectedIndex}
             hasEvent={events && events[dayIndex] === true}
             usingEvents={this.props.eventDates.length > 0}
             customStyle={this.props.customStyle}
             isDisabled={isDisabled}
           />
-        ));
+        );
       } else {
         days.push(<Day key={`${renderIndex}`} filler />);
       }
@@ -236,7 +235,7 @@ export default class Calendar extends Component {
   renderTopBar() {
     let localizedMonth = this.props.monthNames[this.state.currentMonthMoment.month()];
     return this.props.showControls
-    ? (
+    ?
         <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
           <Touchable
             style={[styles.controlButton, this.props.customStyle.controlButton]}
@@ -258,14 +257,14 @@ export default class Calendar extends Component {
             </Text>
           </Touchable>
         </View>
-      )
-    : (
+
+    :
       <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
         <Text style={[styles.title, this.props.customStyle.title]}>
           {this.state.currentMonthMoment.format(this.props.titleFormat)}
         </Text>
       </View>
-    );
+    ;
   }
 
   render() {

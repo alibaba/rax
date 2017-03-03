@@ -21,7 +21,7 @@ const MARKER_REF = 'marker';
 let windowWidth = 750;
 
 class TabHeader extends Component {
-  
+
   constructor(props) {
     super(props);
     // item 个数
@@ -41,7 +41,7 @@ class TabHeader extends Component {
     this.oldHeight = 0;
     this.oldRotateValue = 0;
     this.gridOpen = false;
-    
+
     this.renderItem = props.renderItem;
     this.renderSelect = props.renderSelect;
     this.onPress = props.onPress;
@@ -53,11 +53,11 @@ class TabHeader extends Component {
     // 禁用点击高亮效果
     if (!isWeex && typeof document !== 'undefined') {
       if (!document.getElementById('rxtabheaderstyle')) {
-        var node = document.createElement('style'),   
-          str = 'html{-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}';  
-        node.innerHTML = str; 
+        var node = document.createElement('style'),
+          str = 'html{-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}';
+        node.innerHTML = str;
         node.id = 'rxtabheaderstyle';
-        document.getElementsByTagName('head')[0].appendChild(node); 
+        document.getElementsByTagName('head')[0].appendChild(node);
       }
     }
     if (this.props.selected) { // 初始化选中
@@ -65,7 +65,7 @@ class TabHeader extends Component {
     }
     // 初始化的回调方法
     setTimeout(() => {
-      this.onSelect && this.onSelect(this.props.selected);      
+      this.onSelect && this.onSelect(this.props.selected);
     }, 10);
     setTimeout(() => {
       this.onSelected && this.onSelected(this.props.selected);
@@ -74,8 +74,8 @@ class TabHeader extends Component {
 
   // 设置组件样式
   resetStyle() {
-    // 基础样式  
-    this.containerStyle = { 
+    // 基础样式
+    this.containerStyle = {
       ...style.container,
       ...style.container,
       ...this.props.style
@@ -160,13 +160,13 @@ class TabHeader extends Component {
 
   changeGrid = () => {
     if (!this.gridOpen) {
-      if (isWeex) { 
+      if (isWeex) {
         this.openPop(); // TODO： WXEnvironment.platform=='android' 兼容安卓弹层问题，ios 待测试
       } else {
         this.openDrop();
       }
     } else {
-      if (isWeex) { 
+      if (isWeex) {
         this.closePop();
       } else {
         this.closeDrop();
@@ -177,14 +177,13 @@ class TabHeader extends Component {
 
   // 唤起弹层 (安卓下有下拉遮罩问题)
   openPop = () => {
-    
     let dom = require('@weex-module/dom');
     dom.scrollToElement(findDOMNode(this.props.id), {offset: 0});
 
-    const icon = findDOMNode(this.refs.icon); 
+    const icon = findDOMNode(this.refs.icon);
     Animated.rotate(icon, 180);
     let dropDownHeight = parseInt(this.dropDownHeight) / 750 * windowWidth;
-    const dropMultiRow = findDOMNode(this.refs.dropMultiRow); 
+    const dropMultiRow = findDOMNode(this.refs.dropMultiRow);
     Animated.height(dropMultiRow, dropDownHeight);
 
     this.state.weexGridTop = 0;
@@ -192,18 +191,16 @@ class TabHeader extends Component {
     this.state.weexGridPosition = 'fixed';
     this.state.weexGridHeight = 2000;
     this.setState(this.state);
-
   }
 
   // 关闭遮罩层
   closePop = () => {
-
     // 下拉高度收起
-    // this.state.height.setValue(0); 
+    // this.state.height.setValue(0);
 
-    const icon = findDOMNode(this.refs.icon); 
+    const icon = findDOMNode(this.refs.icon);
     Animated.rotate(icon, 360);
-    const dropMultiRow = findDOMNode(this.refs.dropMultiRow); 
+    const dropMultiRow = findDOMNode(this.refs.dropMultiRow);
     Animated.height(dropMultiRow, 0);
 
     if (!this.closePopIndex) {
@@ -217,24 +214,23 @@ class TabHeader extends Component {
     this.state.weexGridPosition = 'relative';
     this.state.weexGridHeight = 0;
     this.setState(this.state);
-
   }
 
   // 唤起下拉
   openDrop = () => {
     let dropDownHeight = parseInt(this.dropDownHeight) / 750 * windowWidth;
-    const icon = findDOMNode(this.refs.icon); 
+    const icon = findDOMNode(this.refs.icon);
     Animated.rotate(icon, 180);
-    const dropMultiRow = findDOMNode(this.refs.dropMultiRow); 
+    const dropMultiRow = findDOMNode(this.refs.dropMultiRow);
     Animated.height(dropMultiRow, dropDownHeight);
   }
 
 
   // 关闭下拉
   closeDrop = () => {
-    const icon = findDOMNode(this.refs.icon); 
+    const icon = findDOMNode(this.refs.icon);
     Animated.rotate(icon, 360);
-    const dropMultiRow = findDOMNode(this.refs.dropMultiRow); 
+    const dropMultiRow = findDOMNode(this.refs.dropMultiRow);
     Animated.height(dropMultiRow, 0);
   }
 
@@ -245,13 +241,12 @@ class TabHeader extends Component {
 
   // 渲染用户自定义导航项
   handleRenderItem = (item, index) => {
-    
-    let itemClass = (this.selected == index && this.renderSelect) ? this.renderSelect(item, index) : this.renderItem(item, index);
+    let itemClass = this.selected == index && this.renderSelect ? this.renderSelect(item, index) : this.renderItem(item, index);
 
     // 宽度设置
     let eachItemWidth = style.item.width || '';
     let itemStyle = style.item;
-    if (typeof(this.props.itemWidth) == 'function') {
+    if (typeof this.props.itemWidth == 'function') {
       eachItemWidth = this.props.itemWidth(item, index);
       itemStyle = {
         ...style.item,
@@ -261,10 +256,10 @@ class TabHeader extends Component {
       };
     }
     this.itemWidthArr.push(eachItemWidth);
-    
+
     return (
-      <View 
-        style={itemStyle} 
+      <View
+        style={itemStyle}
         onClick={
           () => {
             this.select(index, true);
@@ -276,8 +271,7 @@ class TabHeader extends Component {
   }
 
   // 渲染默认导航项 for MXUI
-  handleRenderDefaultItem = (item, index, type) => { 
-
+  handleRenderDefaultItem = (item, index, type) => {
     let select = false;
 
     if (this.selected == index) {
@@ -285,32 +279,29 @@ class TabHeader extends Component {
     }
 
     // 文本 tab
-    let NormalItemClass = <NormalItem 
-      style={this.itemStyle} 
-      select={select} 
+    let NormalItemClass = <NormalItem
+      style={this.itemStyle}
+      select={select}
       item={item}
       itemSelectedStyle={this.itemSelectedStyle}
-      onPress={() => { 
+      onPress={() => {
         this.select(index, true);
       }} />;
 
     // icon + 文本 tab
-    let IconItemClass = <IconItem 
-      style={this.itemStyle} 
-      select={select} 
+    let IconItemClass = <IconItem
+      style={this.itemStyle}
+      select={select}
       item={item}
       itemSelectedStyle={this.itemSelectedStyle}
-      onPress={() => { 
+      onPress={() => {
         this.select(index, true);
       }} />;
 
-    let itemClass = (this.styleType == 'icon') ? IconItemClass : NormalItemClass;
-
-        
+    let itemClass = this.styleType == 'icon' ? IconItemClass : NormalItemClass;
 
 
-    if (index == 0) { 
-
+    if (index == 0) {
       // 第一个 tab 中添加额外的滚动容器
       if (this.scrollType == 'scroll') {
         return <View style={this.itemStyle} >
@@ -321,9 +312,7 @@ class TabHeader extends Component {
           {itemClass}
         </Col>;
       }
-
     } else {
-      
       if (this.scrollType == 'scroll') {
         return itemClass;
       } else {
@@ -331,7 +320,6 @@ class TabHeader extends Component {
           {itemClass}
         </Col>;
       }
-
     }
   }
 
@@ -342,22 +330,21 @@ class TabHeader extends Component {
 
   // 渲染下拉选项中的每项内容
   renderGridItemFun = (item, index) => {
-
     if (item == 'noitem') {
       return <View style={style.dropBoxTtem} />;
     } else if (this.selected == index) {
-      return <TouchableHighlight 
+      return <TouchableHighlight
         onPress={() => {
           this.gridItemSelect(index);
-        }} 
+        }}
         style={style.dropBoxTtem}>
           <Text style={style.dropBoxSelectText} >{item}</Text>
       </TouchableHighlight>;
     } else {
-      return <TouchableHighlight 
+      return <TouchableHighlight
         onPress={() => {
           this.gridItemSelect(index);
-        }} 
+        }}
         style={style.dropBoxTtem}>
           <Text style={style.dropBoxText} >{item}</Text>
       </TouchableHighlight>;
@@ -393,16 +380,16 @@ class TabHeader extends Component {
               }}
             />
           </TouchableHighlight>
-          <TouchableHighlight 
+          <TouchableHighlight
             style={{
               backgroundColor: '#000000',
               opacity: 0.1,
               width: 750,
               zIndex: 100,
               ...weexGridMaskerStyle
-            }} 
+            }}
             onPress={this.changeGrid} />
-          <View 
+          <View
             ref="dropMultiRow"
             style={{
               backgroundColor: '#ffffff',
@@ -425,9 +412,8 @@ class TabHeader extends Component {
   }
 
   renderRootBox = (childrens) => {
-
-    let bottomLineClass = (this.animType == 'border') ? <BottomLine ref={MARKER_REF} selected={this.selected} itemWidth={this.itemStyle.width} style={this.runningBorderStyle} styleType={this.styleType} /> : null;
-    let BackgroundBlockClass = (this.animType == 'bg') ? <BackgroundBlock ref={MARKER_REF} selected={this.selected} itemWidth={this.itemStyle.width} style={this.runningBgStyle} /> : null;
+    let bottomLineClass = this.animType == 'border' ? <BottomLine ref={MARKER_REF} selected={this.selected} itemWidth={this.itemStyle.width} style={this.runningBorderStyle} styleType={this.styleType} /> : null;
+    let BackgroundBlockClass = this.animType == 'bg' ? <BackgroundBlock ref={MARKER_REF} selected={this.selected} itemWidth={this.itemStyle.width} style={this.runningBgStyle} /> : null;
 
 
     // 修复低版本 ios 横向未撑开问题
@@ -444,12 +430,12 @@ class TabHeader extends Component {
         contentContainerHeight += parseInt(childrens.props.style.width);
       }
 
-      return <ScrollView 
-        ref={SCROLLVIEW_REF} 
+      return <ScrollView
+        ref={SCROLLVIEW_REF}
         style={{
           ...this.containerStyle,
           display: 'block'
-        }} 
+        }}
         contentContainerStyle={{
           justifyContent: 'center',
           flexDirection: 'row',
@@ -468,14 +454,12 @@ class TabHeader extends Component {
             {bottomLineClass}
         </Grid>;
     }
-
   }
 
 
   render() {
-    
     this.itemWidthArr = [];
-    
+
     // 设置默认导航类型
     let type = (this.props.type || 'default-noanim-scroll').toLowerCase();
     let typeArr = type.split('-');
@@ -484,8 +468,8 @@ class TabHeader extends Component {
     this.scrollType = typeArr[2];
 
     this.data = this.props.data || this.props.dataSource;
-    if (typeof(this.props.itemWidth) == 'string') { 
-      style.item.width = this.props.itemWidth; 
+    if (typeof this.props.itemWidth == 'string') {
+      style.item.width = this.props.itemWidth;
     }
     this.selected = Number(this.state.selected) || 0;
     this.resetStyle();
@@ -493,16 +477,14 @@ class TabHeader extends Component {
     // 设置内部 item 元素
     let itemList;
     if (this.styleType == 'dropdown' || this.styleType == 'normal') {
-
       if (this.styleType == 'dropdown') {
-
         // 默认下拉数据填充
         let dropData = [];
         let nullNum = this.data.length % this.props.dropDownCols;
         if (nullNum) {
           nullNum = this.props.dropDownCols - nullNum;
         }
-        for (let i = 0; i < (this.data.length + nullNum); i++) {
+        for (let i = 0; i < this.data.length + nullNum; i++) {
           if (i < this.data.length) {
             dropData.push(this.data[i]);
           } else {
@@ -511,21 +493,20 @@ class TabHeader extends Component {
         }
         this.gridView = this.renderGridFun(dropData);
         // 用于下拉导航的切换
-        this.containerStyle.width = (750 - 71) + 'rem';
+        this.containerStyle.width = 750 - 71 + 'rem';
       } else {
         this.containerStyle.width = '750rem';
       }
 
-      itemList = this.data.map((item, index) => 
+      itemList = this.data.map((item, index) =>
         this.handleRenderDefaultItem(item, index)
       );
-
     } else if (this.styleType == 'icon') {
-      itemList = this.data.map((item, index) => 
+      itemList = this.data.map((item, index) =>
         this.handleRenderDefaultItem(item, index)
       );
     } else {
-      itemList = this.data.map((item, index) => 
+      itemList = this.data.map((item, index) =>
         this.handleRenderItem(item, index)
       );
     }

@@ -83,7 +83,7 @@ export default class GoTop extends Component {
             width: props.iconWidth,
             height: props.iconHeight,
             borderColor: props.borderColor
-          }]} onClick={this.click.bind(this)}>
+          }]} onClick={this.click}>
             <Image style={{width: '30rem', height: '32.5rem', marginBottom: '4.5rem'}} source={{uri: props.icon}} />
             <View>
               <Text style={styles.text}>{props.name}</Text>
@@ -99,7 +99,7 @@ export default class GoTop extends Component {
 
     onPress && onPress();
     if (isWeex) {
-      let dom = require('@weex-module/dom');     
+      let dom = require('@weex-module/dom');
       let top = findDOMNode('rx-top');
 
       dom.scrollToElement(top.ref, {

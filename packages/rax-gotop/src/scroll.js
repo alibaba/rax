@@ -37,7 +37,7 @@ const currentWindowProperties = () => {
 const requestAnimationFrameHelper = (() => {
   return currentWindowProperties() ||
     function(callback, element, delay) {
-      window.setTimeout(callback, delay || (1000 / 60), new Date().getTime());
+      window.setTimeout(callback, delay || 1000 / 60, new Date().getTime());
     };
 })();
 
@@ -59,7 +59,7 @@ let __delayTimeout;
 
 const currentPositionY = () => {
   let supportPageOffset = window.pageXOffset !== undefined;
-  let isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
+  let isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
   return supportPageOffset ? window.pageYOffset : isCSS1Compat ?
          document.documentElement.scrollTop : document.body.scrollTop;
 };
@@ -91,7 +91,7 @@ const animateTopScroll = (timestamp) => {
 
   __progress = timestamp - __start;
 
-  __percent = (__progress >= __duration ? 1 : easing(__progress / __duration));
+  __percent = __progress >= __duration ? 1 : easing(__progress / __duration);
 
   __currentPositionY = __startPositionY + Math.ceil(__deltaTop * __percent);
 
@@ -105,12 +105,9 @@ const animateTopScroll = (timestamp) => {
   if (events.registered.end) {
     events.registered.end(__to, __target, __currentPositionY);
   }
-
 };
 
 const startAnimateTopScroll = (y, options, to, target) => {
-
-
   window.clearTimeout(__delayTimeout);
 
   __start = null;
@@ -132,7 +129,6 @@ const startAnimateTopScroll = (y, options, to, target) => {
   }
 
   requestAnimationFrameHelper.call(window, animateTopScroll);
-
 };
 
 const scrollToTop = (options) => {

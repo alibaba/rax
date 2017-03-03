@@ -2,7 +2,6 @@ import {Component, createElement} from 'rax';
 
 class Grid extends Component {
   render() {
-    
     const moreStyle = {};
     const gridType = this.props.gridType;
 
@@ -21,7 +20,6 @@ class Grid extends Component {
     return (
       <div {...this.props} style={style} />
     );
-    
   }
 }
 

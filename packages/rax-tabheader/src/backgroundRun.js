@@ -8,13 +8,13 @@ import style from './style';
 const isWeex = typeof callNative !== 'undefined';
 
 class BackgroundRun extends Component {
-  
+
   constructor(props) {
     super(props);
   }
 
   scrollTo = (options) => {
-    const backgroundRun = findDOMNode(this.refs.backgroundRun); 
+    const backgroundRun = findDOMNode(this.refs.backgroundRun);
     Animated.scrollTo(backgroundRun, options, () => {
       this.oldPlaceX = parseInt(options.x);
     });
@@ -26,7 +26,6 @@ class BackgroundRun extends Component {
   }
 
   render() {
-    
     let itemWidth = this.props.itemWidth || '166rem';
     let backgroundColor = '#fc511f';
     if (this.props.style) {

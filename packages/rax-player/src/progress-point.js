@@ -75,7 +75,7 @@ class Point extends Component {
   _calculateTotalWidth() {
     if (!isWeex) {
       var progressBar = document.getElementById('progress-bar');
-      //console.log(progressBar.clientWidth);
+      // console.log(progressBar.clientWidth);
       this.totalWidth = progressBar.clientWidth || this.totalWidth;
     }
   }
@@ -115,17 +115,17 @@ class Point extends Component {
       e.stopPropagation && e.stopPropagation();
       // 计算绝对变化长度
       this.previousPositionX = this.previousPositionX || 0;
-      let absDelta = (gestureState.dx - this.previousPositionX);
+      let absDelta = gestureState.dx - this.previousPositionX;
       if (absDelta == 0) {
         this.updating = false;
         return;
       }
       // 计算根据手势移动距离，控制点应该处于的位置（百分比，具体最左端的距离）
-      this.pointPosition = Math.min(Math.max(0, ((this.pointPosition - 0.04) / 0.92 + (gestureState.dx - this.previousPositionX) / this.totalWidth)), 1) * 0.92 + 0.04;
+      this.pointPosition = Math.min(Math.max(0, (this.pointPosition - 0.04) / 0.92 + (gestureState.dx - this.previousPositionX) / this.totalWidth), 1) * 0.92 + 0.04;
 
       setTimeout(() => {
         this.previousPositionX = gestureState.dx;
-        //触发进度调整事件
+        // 触发进度调整事件
         this.props.onJustify && this.props.onJustify((this.pointPosition - 0.04) / 0.92, 'move', absDelta > 0 ? 'toward' : 'backward');
         this.updating = false;
       }, 0);
@@ -138,7 +138,7 @@ class Point extends Component {
    * @param gestureState {Object} 事件相关属性集
    */
   _handlePanResponderEnd = (e, gestureState) => {
-    this.pointPosition = Math.min(Math.max(0, ((this.pointPosition - 0.04) / 0.92 + (gestureState.dx - this.previousPositionX) / this.totalWidth)), 1) * 0.92 + 0.04;
+    this.pointPosition = Math.min(Math.max(0, (this.pointPosition - 0.04) / 0.92 + (gestureState.dx - this.previousPositionX) / this.totalWidth), 1) * 0.92 + 0.04;
     this.props.onJustify && this.props.onJustify((this.pointPosition - 0.04) / 0.92, 'end');
     this.previousPositionX = 0;
   };

@@ -29,7 +29,7 @@ function parseSuffix(suffix) {
   let ret = [];
 
   // 如果suffix为string类型
-  if (typeof(suffix) === 'string') {
+  if (typeof suffix === 'string') {
     ret = suffix.split(',');
   }
 
@@ -87,9 +87,9 @@ class RxPicture extends Component {
       'stretch'
     ]),
 
-    width: PropTypes.string,  //图片真实宽度
-    height: PropTypes.string,  //图片真实高度
-    defaultHeight: PropTypes.string, //当高度设置失败时的默认高度
+    width: PropTypes.string,  // 图片真实宽度
+    height: PropTypes.string,  // 图片真实高度
+    defaultHeight: PropTypes.string, // 当高度设置失败时的默认高度
 
     autoRemoveScheme: PropTypes.bool,
     autoReplaceDomain: PropTypes.bool,
@@ -125,8 +125,8 @@ class RxPicture extends Component {
       return true;
     }
 
-    return (this.props.source.uri !== nextProps.source.uri) ||
-      (this.state.visible !== nextState.visible);
+    return this.props.source.uri !== nextProps.source.uri ||
+      this.state.visible !== nextState.visible;
   }
 
   render() {
@@ -156,15 +156,15 @@ class RxPicture extends Component {
       { uri } = source;
     let _resizeMode = resizeMode;
     if (!this.uri) {
-      let sWidth = style.width, //图片需要显示的宽度
-        sHeight = style.height; //图片需要显示的高度
+      let sWidth = style.width, // 图片需要显示的宽度
+        sHeight = style.height; // 图片需要显示的高度
 
-      //如果没有设置高度，但是设置了宽度，则根据图片原始高度、宽度设置高度
+      // 如果没有设置高度，但是设置了宽度，则根据图片原始高度、宽度设置高度
       if ( ! sHeight && sWidth && width && height) {
         const pScaling = width / parseInt(sWidth, 10);
         sHeight = parseInt(height / pScaling, 10);
 
-        if (typeof(sWidth) === 'string' && sWidth.indexOf('rem') > -1 && sHeight) {
+        if (typeof sWidth === 'string' && sWidth.indexOf('rem') > -1 && sHeight) {
           sHeight = sHeight + 'rem';
         }
       }
@@ -194,7 +194,7 @@ class RxPicture extends Component {
     if (children || resizeMode) {
       return (
         <View
-          //@HACK for appear
+          // @HACK for appear
           isonce="1"
           onAppear={() => this.lazyLoad()}
           style={[
@@ -202,7 +202,7 @@ class RxPicture extends Component {
               backgroundImage: 'url(' + url + ')',
               backgroundSize: resizeMode || 'cover',
               backgroundRepeat: 'no-repeat'
-            }, (resizeMode === 'cover' || resizeMode === 'contain') ? {
+            }, resizeMode === 'cover' || resizeMode === 'contain' ? {
               backgroundPosition: 'center'
             } : null,
             !this.nstyle.height ? {height: defaultHeight} : null
@@ -213,7 +213,7 @@ class RxPicture extends Component {
       );
     } else {
       return <Image
-        //@HACK for appear
+        // @HACK for appear
         isonce="1"
         onAppear={() => this.lazyLoad()}
         source={{

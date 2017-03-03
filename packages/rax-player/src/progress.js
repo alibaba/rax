@@ -122,25 +122,25 @@ class Progress extends Component {
       ...defaultStyles
     };
     // 计算进度条的上下位置
-    styles.progressUpdate.top = styles.progressBar.top = (parseInt(styles.progress.height) / 2 - 2) + 'rem';
+    styles.progressUpdate.top = styles.progressBar.top = parseInt(styles.progress.height) / 2 - 2 + 'rem';
     // 计算进度条已播放部分长度
-    styles.progressLine.width = this.props.totalTime ? (Math.min(1, time / this.props.totalTime) * 100 + '%') : 0;
+    styles.progressLine.width = this.props.totalTime ? Math.min(1, time / this.props.totalTime) * 100 + '%' : 0;
     // 格式化当前时间
     const currntTime = formatTime(time);
     // 格式化整体时间
     const totalTime = formatTime(this.props.totalTime);
     // 计算进度点位置
-    const pointPosition = this.props.totalTime ? (Math.min(1, time / this.props.totalTime) * 0.92 + 0.04) : 0.04;
+    const pointPosition = this.props.totalTime ? Math.min(1, time / this.props.totalTime) * 0.92 + 0.04 : 0.04;
     // 组件结构
     return <View style={styles.progress}>
       <Text style={styles.currentTime}>{ currntTime }</Text>
       <View style={styles.progressBarWrap}>
         <View style={styles.progressBar} id="progress-bar">
-          <View style={styles.progressLine}/>
+          <View style={styles.progressLine} />
         </View>
         <Point pointPosition={pointPosition} style={styles.progressUpdate} onJustify={(position, status, direction) => {
           this.justify(position, status, direction);
-        }}/>
+        }} />
       </View>
       <Text style={styles.totalTime} class="total-time J_TotalTime">{totalTime}</Text>
     </View>;

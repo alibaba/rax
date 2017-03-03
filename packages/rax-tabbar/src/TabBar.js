@@ -66,7 +66,6 @@ class Tabbar extends Component {
       selectedIndex: initSelectedIndex
     });
     this.initSelectedIndex = initSelectedIndex;
-
   }
 
   componentWillMount() {
@@ -80,7 +79,7 @@ class Tabbar extends Component {
   componentDidMount() {
     this.setInitSelectedIndex();
     if (isWeex) {
-      let dom = require('@weex-module/dom');     
+      let dom = require('@weex-module/dom');
       let selected = findDOMNode('selected');
       // let selected = findDOMNode(tabs[initSelectedIndex]);
 
@@ -145,7 +144,7 @@ class Tabbar extends Component {
     }
 
     if (this.props.horizontal) {
-      tabsElement = (
+      tabsElement =
         <View style={[styles.barWrap, tabsElementStyle]}>
           {tabsElementBgImgStyle ? <Image source={{uri: tabsElementBgImgStyle.uri}} style={[styles.barBgImg, tabsElementBgImgStyle]} /> : null}
           <ScrollView ref="ScrollBar" horizontal={true} showsHorizontalScrollIndicator={false} style={[styles.bar]}>
@@ -153,9 +152,9 @@ class Tabbar extends Component {
           </ScrollView>
           {this.props.extraElement}
         </View>
-      );
+      ;
     } else {
-      tabsElement = (
+      tabsElement =
         <View style={[styles.barWrap, tabsElementStyle]}>
           {tabsElementBgImgStyle ? <Image source={{uri: tabsElementBgImgStyle.uri}} style={[styles.barBgImg, tabsElementBgImgStyle]} /> : null}
           <View style={[styles.bar]}>
@@ -163,7 +162,7 @@ class Tabbar extends Component {
           </View>
           {this.props.extraElement}
         </View>
-      );
+      ;
     }
 
     if (tabContentCount == 0) {
@@ -184,7 +183,6 @@ class Tabbar extends Component {
           </View>
         );
       }
-
     }
   }
 }

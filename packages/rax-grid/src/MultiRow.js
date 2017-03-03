@@ -20,20 +20,19 @@ class List extends Component {
     //  用一次遍历替换两次遍历
     for (let i = 0; i < list.length; i++) {
       let index = Math.floor(i / count);
-      if ((i % count) == 0) {
+      if (i % count == 0) {
         gridDataArr[index] = [];
       }
       gridDataArr[index].push(<Col style={props.colStyle}>{temp(list[i], i)}</Col>);
       if (i == list.length - 1) {
         grids.push(<Grid style={props.gridStyle}>{gridDataArr[index]}</Grid>);
       }
-      if ((i % count) == 0 && i != 0) {
+      if (i % count == 0 && i != 0) {
         grids.push(<Grid style={props.gridStyle}>{gridDataArr[index - 1]}</Grid>);
       }
     };
 
     return <div>{grids}</div>;
-
   }
 }
 

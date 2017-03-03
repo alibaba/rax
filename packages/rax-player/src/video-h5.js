@@ -270,22 +270,22 @@ class H5Video extends Component {
         webkit-playsinline
       />
       { this.state.pause && this.props.startBtn ? <View
-          onClick={this.switch.bind(this, false)}
-          style={styles.startBtn}
-          ref="starBtn"
+        onClick={this.switch}
+        style={styles.startBtn}
+        ref="starBtn"
           >
           <Image source={{ uri: '//gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'}} style={styles.startBtnImage} />
         </View> : null
       }
       { this.props.hasController && env.os.iphone && <Controller
         currentTime={this.state.controllerTime || this.state.currentTime}
-        totalTime= {this.state.duration}
-        pause= {this.state.pause}
-        onPauseOrStart={this.switch.bind(this)}
+        totalTime={this.state.duration}
+        pause={this.state.pause}
+        onPauseOrStart={this.switch}
         onJustify={(second, status) => {
           this.justify(second, status);
         }}
-        onFullScreen={this.fullScreen.bind(this)}
+        onFullScreen={this.fullScreen}
         hasFullScreen={this.props.hasFullScreen}
         style={styles.controller} />
       }
@@ -373,7 +373,7 @@ class H5Video extends Component {
           position: 'absolute',
           top: '50%',
           left: '50%',
-          transform: 'translate(-' + (parseInt(defaultStyles.startBtnImage.width) / 2) + 'rem, -' + (parseInt(defaultStyles.startBtnImage.height) / 2) + 'rem)'
+          transform: 'translate(-' + parseInt(defaultStyles.startBtnImage.width) / 2 + 'rem, -' + parseInt(defaultStyles.startBtnImage.height) / 2 + 'rem)'
         }
       };
     } else {

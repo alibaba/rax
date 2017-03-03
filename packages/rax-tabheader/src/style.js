@@ -1,7 +1,7 @@
 let itemWidth = 166;
 
 export default {
-  
+
   container: {
     height: '80rem',
     backgroundColor: '#ffffff',
@@ -27,7 +27,7 @@ export default {
     paddingTop: '24rem',
     textAlign: 'center',
   },
-  
+
   borderBottom: {
     left: 0,
     height: '0rem',
@@ -86,7 +86,7 @@ export default {
     textAlign: 'center',
     color: '#ff4200',
   },
-  
+
   iconContainer: {
     // 'display':'flex',
     // 'justifyContent':'center',
@@ -118,7 +118,7 @@ export default {
   iconBox: {
     textAlign: 'center',
     justifyContent: 'center',
-    flexDirection: 'row', 
+    flexDirection: 'row',
     height: '63rem',
   },
   icon: {

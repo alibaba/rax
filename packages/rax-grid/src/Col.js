@@ -4,11 +4,10 @@ let defaultWidth = window.screen.width;
 
 class Col extends Component {
   render() {
-
     if (this.props.sm) {
       styles.initial.flex = '';
       styles.initial.float = 'left';
-      styles.initial.width = (defaultWidth / 12) * this.props.sm;
+      styles.initial.width = defaultWidth / 12 * this.props.sm;
     }
 
     let style = {
@@ -32,7 +31,6 @@ class Col extends Component {
       };
       return children;
     }
-
   }
 }
 

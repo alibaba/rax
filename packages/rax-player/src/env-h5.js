@@ -13,7 +13,7 @@ if (!isWeex) {
   envs = {
     os: {
       android: ua.match(/(Android);?[\s\/]+([\d.]+)?/),
-      iphone: (iphone && !ipod),
+      iphone: iphone && !ipod,
       ipad: !!ipad,
       version: (function() {
         var ua = navigator.userAgent.toLowerCase();

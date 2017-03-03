@@ -56,15 +56,15 @@ class Controller extends Component {
     };
     // 组件结构
     return <View style={styles.controller}>
-      <View style={styles.background}/>
-      <View onClick={this.switch.bind(this)} style={styles.iconContainer} >
+      <View style={styles.background} />
+      <View onClick={this.switch} style={styles.iconContainer} >
         <Icon style={styles.play} source={{uri: playImage}} />
       </View>
       <Progress style={styles.progress} onJustify={(time, status) => {
         this.justify(time, status);
-      }} totalTime={this.props.totalTime} currentTime={this.props.currentTime}/>
-      { this.props.hasFullScreen ? <View onClick={this.fullScreen.bind(this)} style={styles.iconContainer}>
-        <Icon style={styles.fullScreen} source={{uri: fullScreenImage}}/>
+      }} totalTime={this.props.totalTime} currentTime={this.props.currentTime} />
+      { this.props.hasFullScreen ? <View onClick={this.fullScreen} style={styles.iconContainer}>
+        <Icon style={styles.fullScreen} source={{uri: fullScreenImage}} />
         </View> : null
       }
     </View>;

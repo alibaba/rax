@@ -7,13 +7,13 @@ import style from './style';
 
 
 class BottomLine extends Component {
-  
+
   constructor(props) {
     super(props);
   }
 
   scrollTo = (options) => {
-    const bottomLine = findDOMNode(this.refs.bottomLine); 
+    const bottomLine = findDOMNode(this.refs.bottomLine);
     Animated.scrollTo(bottomLine, options, () => {
       this.oldPlaceX = parseInt(options.x);
     });
@@ -25,7 +25,6 @@ class BottomLine extends Component {
   }
 
   render() {
-    
     let itemWidth = this.props.itemWidth || '166rem';
     let backgroundColor = '#fc511f';
     if (this.props.style) {
@@ -52,7 +51,6 @@ class BottomLine extends Component {
     </View>;
   }
 }
-
 
 
 export default BottomLine;

@@ -10,7 +10,6 @@ const isWeex = typeof callNative !== 'undefined';
 class Item extends Component {
 
   render() {
-
     if (!this.props.itemSelectedStyle) {
       this.props.itemSelectedStyle = {};
     }
@@ -66,8 +65,6 @@ class Item extends Component {
         </View>
       </TouchableHighlight>;
     }
-
-
   }
 
 }
