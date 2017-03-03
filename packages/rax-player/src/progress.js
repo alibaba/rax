@@ -4,7 +4,7 @@ import Text from 'rax-text';
 import Point from './progress-point';
 
 // weex 环境判断
-import {isWeex} from '@ali/universal-env';
+import {isWeex} from 'universal-env';
 // 默认样式
 const defaultStyles = {
   progress: {

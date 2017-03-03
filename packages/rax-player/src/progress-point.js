@@ -1,5 +1,3 @@
-/* @jsx createElement */
-
 import {createElement, Component, render, findDOMNode} from 'rax';
 import View from 'rax-view';
 import PanResponder from 'universal-panresponder';
