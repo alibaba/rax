@@ -18,9 +18,9 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "rax": "^0.1.9",
-    "rax-view": "^0.1.9",
-    "rax-text": "^0.1.9",
-    "rax-image": "^0.1.9"
+    "rax": "^0.2.2",
+    "rax-view": "^0.2.2",
+    "rax-text": "^0.2.2",
+    "rax-image": "^0.2.2"
   }
 }
