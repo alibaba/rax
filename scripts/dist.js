@@ -130,7 +130,6 @@ dist(getConfig(
     null,
     'hidden-source-map'
   ));
-
 }).then(() => {
   dist(getConfig(
     {
@@ -210,7 +209,6 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
 }
 
 function dist(config) {
-
   return new Promise(function(resolver, reject) {
     let compiler = webpack(config);
     compiler.run(function(err, stats) {
