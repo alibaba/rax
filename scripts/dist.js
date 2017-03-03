@@ -119,7 +119,6 @@ dist(getConfig(
     {
       path: './packages/runtime-shared/dist/',
       filename: '[name].js',
-      sourceMapFilename: '[name].map',
       pathinfo: false,
     },
     {
@@ -127,8 +126,11 @@ dist(getConfig(
     },
     {
       presets: ['es2015']
-    }
+    },
+    null,
+    'hidden-source-map'
   ));
+
 }).then(() => {
   dist(getConfig(
     {
@@ -176,10 +178,10 @@ dist(getConfig(
   ));
 });
 
-function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
+function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
   return {
     target: target || 'node',
-    devtool: 'source-map',
+    devtool: devtool || 'source-map',
     entry: entry,
     output: output,
     plugins: [
@@ -208,6 +210,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
 }
 
 function dist(config) {
+  console.log(config)
   return new Promise(function(resolver, reject) {
     let compiler = webpack(config);
     compiler.run(function(err, stats) {
