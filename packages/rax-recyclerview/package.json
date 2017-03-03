@@ -23,11 +23,11 @@
   "dependencies": {
     "rax-scrollview": "^0.2.1",
     "rax-refreshcontrol": "^0.2.1",
-    "rax-view": "^0.2.1"
+    "rax-view": "^0.2.1",
+    "universal-env": "^0.2.1"
   },
   "peerDependencies": {
-    "rax": "0.x",
-    "universal-env": "0.x"
+    "rax": "0.x"
   },
   "devDependencies": {
     "rax-test-renderer": "^0.2.1"

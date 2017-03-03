@@ -33,7 +33,7 @@ export default function inject({driver, hook, measurer} = {}) {
         throw Error('No builtin driver matched');
       }
     }
-    
+
     Host.driver = driver;
   }
 }
