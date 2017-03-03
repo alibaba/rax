@@ -298,7 +298,9 @@ class CompositeComponent {
       willReceive = true;
     }
 
-    if (willReceive && instance.componentWillReceiveProps) {
+    let hasReceived = willReceive && instance.componentWillReceiveProps;
+
+    if (hasReceived) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
       this._pendingState = true;
       performInSandbox(() => {
@@ -367,6 +369,13 @@ class CompositeComponent {
       instance.props = nextProps;
       instance.state = nextState;
       instance.context = nextContext;
+    }
+
+    // Flush setState callbacks set in componentWillReceiveProps
+    if (hasReceived) {
+      let callbacks = this._pendingCallbacks;
+      this._pendingCallbacks = null;
+      updater.runCallbacks(callbacks, instance);
     }
 
     if (process.env.NODE_ENV !== 'production') {
