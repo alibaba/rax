@@ -38,7 +38,7 @@ class Index extends Component {
     onComplete: PropTypes.func,
     tpl: PropTypes.string, // template (example {h}:{m}:{s})
     timeRemaining: PropTypes.number,
-    secondStyle: PropTypes.object, 
+    secondStyle: PropTypes.object,
     timeStyle: PropTypes.object, // style for num
     textStyle: PropTypes.object, // style for text
     timeWrapStyle: PropTypes.object,
