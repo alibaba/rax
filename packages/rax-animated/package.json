@@ -18,7 +18,12 @@
   "dependencies": {
     "animated": "0.1.3",
     "invariant": "2.2.1",
-    "rax": "^0.2.1",
-    "rax-components": "^0.2.1"
+    "rax-text": "^0.2.1",
+    "rax-view": "^0.2.1",
+    "rax-image": "^0.2.1",
+    "rax-scrollview": "^0.2.1"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
   }
 }

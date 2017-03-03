@@ -1,7 +1,10 @@
-import Animated from './animated';
 import {setNativeProps} from 'rax';
-import {View, Image, Text, ScrollView} from 'rax-components';
+import View from 'rax-view';
+import Image from 'rax-image';
+import Text from 'rax-text';
+import ScrollView from 'rax-scrollview';
 import mapStyle from './mapStyle';
+import Animated from './animated';
 
 function ApplyAnimatedValues(instance, props) {
   setNativeProps(instance, {

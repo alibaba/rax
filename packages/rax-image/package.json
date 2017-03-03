@@ -24,8 +24,8 @@
     "rax-view": "^0.2.1"
   },
   "peerDependencies": {
-    "rax": "^0.1.9",
-    "universal-env": "^0.1.9"
+    "rax": "0.x",
+    "universal-env": "0.x"
   },
   "devDependencies": {
     "rax-test-renderer": "^0.2.1"

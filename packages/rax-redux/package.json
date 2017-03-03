@@ -16,7 +16,7 @@
     "npm": ">=3.0.0"
   },
   "peerDependencies": {
-    "rax": "^0.2.0"
+    "rax": "0.x"
   },
   "dependencies": {
     "invariant": "^2.0.0",
