@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "rax": "^0.2.1",
-    "rax-components": "^0.2.1"
+    "rax-view": "^0.2.1",
+    "rax-text": "^0.2.1"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
