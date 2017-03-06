@@ -4,8 +4,6 @@
 
 这里我们就来列举下各种不同的手势事件在 Rax 中的实现。
 
-
-
 ## 简单的点击事件
 
 对于简单的 Touch 事件，我们可以使用 Touchable, 通过给它绑定 onPress 事件，来监听他的点击事件 ：
@@ -57,8 +55,6 @@ class TouchDemo extends Component {
   }
 }
 ```
-
-
 
 ## 滚动事件
 
@@ -132,8 +128,6 @@ class TouchDemo extends Component {
   }
 }
 ```
-
-
 
 ## 复杂手势事件
 
