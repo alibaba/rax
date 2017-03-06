@@ -3,9 +3,7 @@ import View from 'rax-view';
 import Text from 'rax-text';
 import Point from './progress-point';
 
-// weex 环境判断
 import {isWeex} from 'universal-env';
-// 默认样式
 const defaultStyles = {
   progress: {
     display: 'flex',
@@ -72,9 +70,9 @@ const defaultStyles = {
 };
 
 /**
- * 格式化时间为(mm:ss)形式
- * @param second {Interger} 时间（单位s）
- * @returns {string} 时间
+ * format time (mm:ss)
+ * @param second {Interger}（s）
+ * @returns {string} time
  */
 const formatTime = (second) => {
   second = second || 0;
@@ -86,7 +84,7 @@ const formatTime = (second) => {
 };
 
 /**
- * @description 控制器组件
+ * @description Progress
  */
 class Progress extends Component {
   constructor(props) {
@@ -97,47 +95,38 @@ class Progress extends Component {
   }
 
   /**
-   * @description 播放进度调整事件处理
-   * @param position {Percentage} 进度条位置（百分比）
-   * @param status {String} 控制手势状态（move表示控制手势移动中, end表示控制手势结束）
-   * @param direction {String} 控制手势方向 (toward表示前进， backward表示后退)
+   * @description Playback progress adjustment event handling
+   * @param position {Percentage} Progress bar position (%)
+   * @param status {String} Control gesture state（move, end）
+   * @param direction {String}  (toward: advance forward,， backward: back off)
    */
   justify(position, status, direction) {
     let currentTime = this.props.totalTime * position;
-    // 拦截并处理进度条拖动过程中的位置改变事件
     if (status == 'move') {
       this.state.justifyTime == undefined && this.props.onJustify(currentTime, status);
       this.setState({
         justifyTime: currentTime
       });
     } else if (status == 'end' && this.props.onJustify) {
-      // 将进度条拖动结束的事件上传到视频组件层处理
       this.props.onJustify(currentTime, status);
       this.state.justifyTime = undefined;
     }
   }
 
   /**
-   * @description 组件渲染
+   * @description render
    */
   render() {
-    // 存在调整时间时使用调整时间
     let time = this.state.justifyTime || this.props.currentTime;
     let styles = {
       ...this.props.style,
       ...defaultStyles
     };
-    // 计算进度条的上下位置
     styles.progressUpdate.top = styles.progressBar.top = parseInt(styles.progress.height) / 2 - 2 + 'rem';
-    // 计算进度条已播放部分长度
     styles.progressLine.width = this.props.totalTime ? Math.min(1, time / this.props.totalTime) * 100 + '%' : 0;
-    // 格式化当前时间
     const currntTime = formatTime(time);
-    // 格式化整体时间
     const totalTime = formatTime(this.props.totalTime);
-    // 计算进度点位置
     const pointPosition = this.props.totalTime ? Math.min(1, time / this.props.totalTime) * 0.92 + 0.04 : 0.04;
-    // 组件结构
     return <View style={styles.progress}>
       <Text style={styles.currentTime}>{ currntTime }</Text>
       <View style={styles.progressBarWrap}>

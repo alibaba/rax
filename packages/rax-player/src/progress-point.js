@@ -7,7 +7,7 @@ let {height, width, scale} = Dimensions.get('window');
 width = width / scale * 0.8;
 
 /**
- * @description 进度条控制点
+ * @description Point for progress bar
  */
 class Point extends Component {
 
@@ -15,11 +15,7 @@ class Point extends Component {
     super(props);
   }
 
-  /**
-   * 组件预处理
-   */
   componentWillMount() {
-    // 初始化pan操作控制器
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
       onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
@@ -28,16 +24,14 @@ class Point extends Component {
       onPanResponderRelease: this._handlePanResponderEnd,
       onPanResponderTerminate: this._handlePanResponderEnd,
     });
-    // 初始化位置记录和totalWidth
     this.previousPositionX = 0;
     this.totalWidth = this.props.totalWidth || width;
   }
 
   /**
-   * @description 组件渲染
+   * @description render
    */
   render() {
-    // 计算样式
     this.pointPosition = this.props.pointPosition;
     let styles = defaultStyles;
     styles.pointWrapper = {
@@ -47,7 +41,6 @@ class Point extends Component {
         marginLeft: (this.props.pointPosition || 0.04) * 100 + '%'
       }
     };
-    // 组件结构
     return <View
       ref={(point) => {
         this.point = point;
@@ -59,16 +52,12 @@ class Point extends Component {
     </View>;
   }
 
-  /**
-   * @description 组件实例化完成
-   */
   componentDidMount() {
-    // 更新总长度
     this._calculateTotalWidth();
   }
 
   /**
-   * @description 计算总长度
+   * @description Calculated total length
    */
   _calculateTotalWidth() {
     if (!isWeex) {
@@ -90,10 +79,10 @@ class Point extends Component {
   }
 
   /**
-   * @description pan start 事件处理
-   * @param e {Event} 事件
-   * @param gestureState {Object} 事件相关属性集
-   * @returns {boolean} true 执行成功
+   * @description pan start 
+   * @param e {Event} 
+   * @param gestureState {Object} 
+   * @returns {boolean} true 
    */
   _handlePanResponderGrant = (e, gestureState) => {
     this._calculateTotalWidth();
@@ -101,29 +90,25 @@ class Point extends Component {
   }
 
   /**
-   * @description pan move 事件处理
-   * @param e {Event} 事件
-   * @param gestureState {Object} 事件相关属性集
+   * @description pan move 
+   * @param e {Event} 
+   * @param gestureState {Object} 
    */
   _handlePanResponderMove = (e, gestureState) => {
     if (!this.updating) {
       this.updating = true;
-      // 阻止事件传播
       e.preventDefault && e.preventDefault();
       e.stopPropagation && e.stopPropagation();
-      // 计算绝对变化长度
       this.previousPositionX = this.previousPositionX || 0;
       let absDelta = gestureState.dx - this.previousPositionX;
       if (absDelta == 0) {
         this.updating = false;
         return;
       }
-      // 计算根据手势移动距离，控制点应该处于的位置（百分比，具体最左端的距离）
       this.pointPosition = Math.min(Math.max(0, (this.pointPosition - 0.04) / 0.92 + (gestureState.dx - this.previousPositionX) / this.totalWidth), 1) * 0.92 + 0.04;
 
       setTimeout(() => {
         this.previousPositionX = gestureState.dx;
-        // 触发进度调整事件
         this.props.onJustify && this.props.onJustify((this.pointPosition - 0.04) / 0.92, 'move', absDelta > 0 ? 'toward' : 'backward');
         this.updating = false;
       }, 0);
@@ -131,9 +116,9 @@ class Point extends Component {
   };
 
   /**
-   * @description pan end 事件处理
-   * @param e {Event} 事件
-   * @param gestureState {Object} 事件相关属性集
+   * @description pan end 
+   * @param e {Event} 
+   * @param gestureState {Object} 
    */
   _handlePanResponderEnd = (e, gestureState) => {
     this.pointPosition = Math.min(Math.max(0, (this.pointPosition - 0.04) / 0.92 + (gestureState.dx - this.previousPositionX) / this.totalWidth), 1) * 0.92 + 0.04;
@@ -142,7 +127,6 @@ class Point extends Component {
   };
 }
 
-// 默认样式
 const defaultStyles = {
   pointWrapper: {
     width: 50,

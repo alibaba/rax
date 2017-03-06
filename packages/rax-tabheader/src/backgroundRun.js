@@ -48,8 +48,5 @@ class BackgroundRun extends Component {
   }
 }
 
-let styles = {
-};
-
 
 export default BackgroundRun;

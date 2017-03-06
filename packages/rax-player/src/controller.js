@@ -17,7 +17,7 @@ class Controller extends Component {
   }
 
   /**
-   * @description 切换播放状态事件处理
+   * @description Toggle playback status event processing
    */
   switch() {
     let status = !this.props.pause;
@@ -25,21 +25,21 @@ class Controller extends Component {
   }
 
   /**
-   * @description 调整播放进度事件处理
+   * @description justify
    */
   justify(time, status) {
     this.props.onJustify && this.props.onJustify(time, status);
   }
 
   /**
-   * @description 全屏按钮触发处理
+   * @description fullScreen
    */
   fullScreen() {
     this.props.onFullScreen && this.props.onFullScreen();
   }
 
   /**
-   * @description 组件渲染
+   * @description render
    */
   render() {
     let playImage;
@@ -48,13 +48,11 @@ class Controller extends Component {
     } else {
       playImage = pauseButtonImage;
     }
-    // 处理样式
     let styles = defaultStyles;
     styles.controller = {
       ...defaultStyles.controller,
       ...this.props.style
     };
-    // 组件结构
     return <View style={styles.controller}>
       <View style={styles.background} />
       <View onClick={this.switch} style={styles.iconContainer} >
@@ -71,7 +69,6 @@ class Controller extends Component {
   }
 }
 
-// 默认样式
 const defaultStyles = {
   controller: {
     display: 'flex',

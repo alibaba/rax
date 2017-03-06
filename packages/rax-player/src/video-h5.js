@@ -34,7 +34,7 @@ const defaultStyles = {
 };
 
 /**
- * @description 视频播放组件（H5）
+ * @description for web
  */
 class H5Video extends Component {
 
@@ -52,8 +52,8 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 播放状态切换
-   * @param status {Boolean} 当前状态（true为播放中，false为暂停中）
+   * @description 
+   * @param status {Boolean} （true: play，false: pause）
    */
   switch(status) {
     let video = this.refs.video;
@@ -68,16 +68,14 @@ class H5Video extends Component {
   }
 
   /**
-   * 获取播放器当前播放时间（video真实时间）
-   * @returns {number} 播放器当前播放时间（单位：ms）
+   * @returns {number}（ms）
    */
   getCurrentTime() {
     return this.refs.video.currentTime;
   }
 
   /**
-   * 设置播放器当前播放时间（video真实时间）
-   * @returns {number} 播放器当前播放时间（单位：ms）
+   * @returns {number}（ms）
    */
   setCurrentTime(time) {
     this.refs.video.currentTime = time;
@@ -85,17 +83,15 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 获取视频时间长度
-   * @returns {number} 视频时间长度（单位：ms）
+   * @returns {number}（ms）
    */
   getDuration() {
     return this.refs.video.duration;
   }
 
   /**
-   * @description video时间更新时间处理
-   * @param e video时间更新事件
-   * @returns {number} 当前时间（单位ms）
+   * @description video time update
+   * @returns {number}（ms）
    */
   timeUpdate = e => {
     if (this.state.pause || this.justifiing) {
@@ -112,20 +108,14 @@ class H5Video extends Component {
   };
 
   /**
-   * @description 进度条时间调整事件处理
-   * @param second {Number} 时间（单位ms）
-   * @param status {String} 操作类型（move表示调整中，end表示调整结束）
+   * @description Progress bar
+   * @param second {Number}（ms）
+   * @param status {String}（move: running，end: finish）
    */
   justify(second, status) {
     if (status == 'move') {
-      // 设置控制条时间
-      /* this.setState({
-       controllerTime: second
-       });
-       */
       this.justifiing = true;
     } else if (status == 'end') {
-      // 设置播放时间
       this.justifiing = false;
       this.setCurrentTime(second);
       this.setState({
@@ -136,8 +126,8 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 视频暂停事件处理
-   * @param {Object} e 视频暂停事件
+   * @description pause
+   * @param {Object} e 
    */
   onVideoPause = e => {
     typeof this.props.onVideoPause === 'function' && this.props.onVideoPause(e);
@@ -149,8 +139,8 @@ class H5Video extends Component {
   };
 
   /**
-   * @description 视频播放事件处理
-   * @param {Object} e 视频播放事件
+   * @description play
+   * @param {Object} e
    */
   onVideoPlay = e => {
     typeof this.props.onVideoPlay === 'function' && this.props.onVideoPlay(e);
@@ -162,24 +152,24 @@ class H5Video extends Component {
   };
 
   /**
-   * @description 视频结束事件处理
-   * @param {Object} e 视频结束事件
+   * @description end
+   * @param {Object} e
    */
   onVideoFinish = e => {
     typeof this.props.onVideoFinish === 'function' && this.props.onVideoFinish(e);
   };
 
   /**
-   * @description 视频播放出错事件处理
-   * @param {Object} e 视频播放出错事件
+   * @description fail
+   * @param {Object} e 
    */
   onVideoFail = e => {
     typeof this.props.onVideoFail === 'function' && this.props.onVideoFail(e);
   };
 
   /**
-   * @description 视频源长度更新事件处理（视频信息获取后会更新）
-   * @param {Object} e 视频源长度更新事件
+   * @description 
+   * @param {Object} e
    */
   onDurationChange = e => {
     let duration = this.getDuration();
@@ -191,17 +181,15 @@ class H5Video extends Component {
   };
 
   /**
-   * @description 全屏播放
+   * @description fullScreen
    */
   fullScreen() {
-    const fullScreen = !this.state.fullScreen;
-    // 使用原生全屏播放
     this.requestOriginFullscreen();
     return;
   }
 
   /**
-   * @description 退出原生全屏
+   * @description exit fullScreen
    */
   exitOriginFullScreen() {
     var element = this.refs.video;
@@ -214,7 +202,7 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 调用开启原生全屏播放
+   * @description fullScreen
    */
   requestOriginFullscreen() {
     var element = this.refs.video;
@@ -228,8 +216,8 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 切换原生播放状态
-   * @param fullscreen {Boolean} 是否全屏播放
+   * @description toggle fullScreen
+   * @param fullscreen {Boolean}
    */
   _toggleFullScreen(fullscreen) {
     var doc = window.document;
@@ -255,20 +243,16 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 组件渲染
+   * @description render
    */
   render() {
-    // 设置参数
     const videoProps = this.calculateVideoProps();
-    // 组合样式
     let styles = this.calculateStyle();
-    // 组件结构
     return <View style={styles.container}>
       <video
         {...videoProps}
         style={styles.video}
-        webkit-playsinline
-      />
+        webkit-playsinline />
       { this.state.pause && this.props.startBtn ? <View
         onClick={this.switch}
         style={styles.startBtn}
@@ -306,7 +290,7 @@ class H5Video extends Component {
         ref: 'video'
       }
     };
-    // 安卓下强制使用默认进度条
+    // Android forced to use default progress bar
     if (!env.os.iphone && this.props.hasController) {
       videoProps.controls = 'controls';
     }
@@ -314,13 +298,12 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 样式计算
+   * @description style
    */
   calculateStyle() {
     let styles = {
       ...defaultStyles
     };
-    // 容器
     if (this.state.fullScreen === true && this.state.fullScreenType == 'mock') {
       styles.container = {
         ...defaultStyles.container,
@@ -338,7 +321,6 @@ class H5Video extends Component {
         ...this.props.style
       };
     }
-    // 视频
 
     if (this.state.fullScreen === true && this.state.fullScreenType == 'mock') {
       styles.video = {
@@ -357,7 +339,6 @@ class H5Video extends Component {
         }
       };
     }
-    // 开始按钮区域
     if (this.state.fullScreen === true && this.state.fullScreenType == 'mock') {
       styles.startBtn = {
         ...defaultStyles.startBtn,
@@ -366,7 +347,6 @@ class H5Video extends Component {
           height: '100%'
         }
       };
-      // 开始按钮图片
       styles.startBtnImage = {
         ...defaultStyles.startBtnImage,
         ...{
@@ -384,7 +364,6 @@ class H5Video extends Component {
           height: styles.video.height
         }
       };
-      // 开始按钮图片
       styles.startBtnImage = {
         ...defaultStyles.startBtnImage,
         ...{
@@ -393,7 +372,6 @@ class H5Video extends Component {
         }
       };
     }
-    // 控制条组件
     styles.controller = {
       ...defaultStyles.controller,
       ...{
