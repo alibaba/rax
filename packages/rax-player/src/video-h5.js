@@ -52,7 +52,7 @@ class H5Video extends Component {
   }
 
   /**
-   * @description 
+   * @description
    * @param status {Boolean} （true: play，false: pause）
    */
   switch(status) {
@@ -127,7 +127,7 @@ class H5Video extends Component {
 
   /**
    * @description pause
-   * @param {Object} e 
+   * @param {Object} e
    */
   onVideoPause = e => {
     typeof this.props.onVideoPause === 'function' && this.props.onVideoPause(e);
@@ -161,14 +161,14 @@ class H5Video extends Component {
 
   /**
    * @description fail
-   * @param {Object} e 
+   * @param {Object} e
    */
   onVideoFail = e => {
     typeof this.props.onVideoFail === 'function' && this.props.onVideoFail(e);
   };
 
   /**
-   * @description 
+   * @description
    * @param {Object} e
    */
   onDurationChange = e => {

@@ -79,10 +79,10 @@ class Point extends Component {
   }
 
   /**
-   * @description pan start 
-   * @param e {Event} 
-   * @param gestureState {Object} 
-   * @returns {boolean} true 
+   * @description pan start
+   * @param e {Event}
+   * @param gestureState {Object}
+   * @returns {boolean} true
    */
   _handlePanResponderGrant = (e, gestureState) => {
     this._calculateTotalWidth();
@@ -90,9 +90,9 @@ class Point extends Component {
   }
 
   /**
-   * @description pan move 
-   * @param e {Event} 
-   * @param gestureState {Object} 
+   * @description pan move
+   * @param e {Event}
+   * @param gestureState {Object}
    */
   _handlePanResponderMove = (e, gestureState) => {
     if (!this.updating) {
@@ -116,9 +116,9 @@ class Point extends Component {
   };
 
   /**
-   * @description pan end 
-   * @param e {Event} 
-   * @param gestureState {Object} 
+   * @description pan end
+   * @param e {Event}
+   * @param gestureState {Object}
    */
   _handlePanResponderEnd = (e, gestureState) => {
     this.pointPosition = Math.min(Math.max(0, (this.pointPosition - 0.04) / 0.92 + (gestureState.dx - this.previousPositionX) / this.totalWidth), 1) * 0.92 + 0.04;
