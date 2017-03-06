@@ -34,7 +34,6 @@ class TabBarContents extends Component {
 
     // if the tab has already been shown once, always continue to show it so we
     // preserve state between tab transitions
-    // console.log(style)
     return (
       this.hasBeenSelected ?
         <View style={[this.props.style, style]}>

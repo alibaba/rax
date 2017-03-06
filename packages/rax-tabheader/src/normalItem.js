@@ -26,7 +26,7 @@ class Item extends Component {
         color: this.props.style.color || '#000000',
       }
     };
-    delete itemTextStyle.width; // 删除是为了防止默认 grid 的 1% 样式的影响
+    delete itemTextStyle.width; // fix for grid 1% style
     if (this.props.select) {
       return <TouchableHighlight {...this.props} style={this.props.style}>
         <Text style={itemSelectedStyle}>{this.props.item}</Text>

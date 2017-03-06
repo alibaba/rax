@@ -76,16 +76,16 @@ const defaultStyles = {
   controller: {
     display: 'flex',
     flexDirection: 'row',
-    height: '70rem',
-    zIndex: '1',
+    height: 70,
+    zIndex: 1,
     position: 'absolute',
-    bottom: '0',
-    left: '0'
+    bottom: 0,
+    left: 0
   },
   background: {
     position: 'absolute',
-    left: '0',
-    top: '0',
+    left: 0,
+    top: 0,
     width: '100%',
     height: '100%',
     backgroundColor: '#000',
@@ -93,19 +93,19 @@ const defaultStyles = {
     zIndex: '-1'
   },
   iconContainer: {
-    paddingLeft: '15rem',
-    paddingRight: '15rem'
+    paddingLeft: 15,
+    paddingRight: 15
   },
   play: {
-    width: '40rem',
-    height: '40rem',
-    marginTop: '15rem'
+    width: 40,
+    height: 40,
+    marginTop: 15
   },
   progress: {},
   fullScreen: {
-    width: '40rem',
-    height: '40rem',
-    marginTop: '15rem'
+    width: 40,
+    height: 40,
+    marginTop: 15
   }
 };
 

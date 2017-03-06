@@ -11,25 +11,25 @@ const defaultStyles = {
     overflow: 'hidden'
   },
   video: {
-    width: '750rem',
-    height: '300rem',
+    width: 750,
+    height: 300,
     backgroundColor: '#000000',
     zIndex: 1
   },
   controller: {
-    height: '70rem'
+    height: 70
   },
   startBtn: {
     overflow: 'hidden',
     position: 'absolute',
     color: '#ffffff',
-    top: '0rem',
-    left: '0rem',
+    top: 0,
+    left: 0,
     zIndex: 1
   },
   startBtnImage: {
-    width: '109rem',
-    height: '111rem'
+    width: 109,
+    height: 111
   }
 };
 

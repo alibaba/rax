@@ -10,24 +10,30 @@ const defaultStyles = {
   progress: {
     display: 'flex',
     flexDirection: 'row',
-    flex: '1',
-    height: '70rem',
+    flex: 1,
+    height: 70,
     userSelect: 'none',
     webkitUserSelect: 'none',
     mozUserSelect: 'none'
   },
   currentTime: {
-    margin: '0 3rem',
-    lineHeight: '70rem',
+    marginTop: 0,
+    marginBottom: 0,
+    marginLeft: 3,
+    marginRight: 3,
+    lineHeight: 70,
     color: '#ffffff',
-    fontSize: '24rem',
+    fontSize: 24,
     fontFamily: 'sans-serif'
   },
   totalTime: {
-    margin: '0 3rem',
-    lineHeight: '70rem',
+    marginTop: 0,
+    marginBottom: 0,
+    marginLeft: 3,
+    marginRight: 3,
+    lineHeight: 70,
     color: '#ffffff',
-    fontSize: '24rem',
+    fontSize: 24,
     fontFamily: 'sans-serif'
   },
   progressBarWrap: {
@@ -38,7 +44,7 @@ const defaultStyles = {
   },
   progressBar: {
     width: '92%',
-    height: '3rem',
+    height: 3,
     backgroundColor: '#cfeaff',
     position: 'absolute',
     left: 0,
@@ -49,9 +55,9 @@ const defaultStyles = {
   },
   progressLine: {
     position: 'absolute',
-    height: '3rem',
-    top: '0',
-    left: '0',
+    height: 3,
+    top: 0,
+    left: 0,
     zIndex: '1',
     backgroundColor: '#25c1b7',
     userSelect: 'none',

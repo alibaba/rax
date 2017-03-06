@@ -72,10 +72,6 @@ class TabBarItem extends Component {
   }
 
   render() {
-    if (this.props.selected) {
-      // console.log(this.props)
-    }
-
     let style_tab = styles.tab;
     if (this.props.widthFixed) {
       style_tab = styles.tab_width_fixed;
@@ -167,7 +163,7 @@ const styles = {
   },
   title: {
     fontSize: 28,
-    lineHeight: '38rem'
+    lineHeight: 38
   }
 };
 

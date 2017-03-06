@@ -87,7 +87,7 @@ class TabHeader extends Component {
         ...this.props.containerStyle
       };
     }
-    this.itemStyle = { // item
+    this.itemStyle = {
       ...style.item
     };
     if (!this.scrollType) {
@@ -114,7 +114,6 @@ class TabHeader extends Component {
     }
   }
 
-  // 根据选择索引之行传入的 onSelect
   select = (index, isPress) => {
     let animTime = 300;
 
@@ -122,16 +121,14 @@ class TabHeader extends Component {
     this.oldRotateValue = 0;
 
     if (this.animType != 'noanim') {
-      // 底部浮动 borderBottom
+      // borderBottom
       if (MARKER_REF && this.refs[MARKER_REF]) {
         this.refs[MARKER_REF].scrollTo({x: index * parseInt(this.itemStyle.width)});
       }
-      // 横向滚动动画
       this.scrollTo({x: parseInt(this.itemStyle.width) * index - 300});
     } else {
       animTime = 10;
     }
-    // 动画后延迟触发
     if (this.selected != index) {
       isPress && this.onPress && this.onPress(index);
       this.onSelect && this.onSelect(index);
@@ -160,7 +157,6 @@ class TabHeader extends Component {
     this.gridOpen = !this.gridOpen;
   }
 
-  // 唤起弹层 (安卓下有下拉遮罩问题)
   openPop = () => {
     let dom = require('@weex-module/dom');
     dom.scrollToElement(findDOMNode(this.props.id), {offset: 0});

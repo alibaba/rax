@@ -15,9 +15,7 @@ class List extends Component {
 
     let grids = [];
 
-    // 当单行数据拆分成嵌套数组
     let gridDataArr = [];
-    //  用一次遍历替换两次遍历
     for (let i = 0; i < list.length; i++) {
       let index = Math.floor(i / count);
       if (i % count == 0) {

@@ -18,47 +18,7 @@ webp.isSupport((_isSupportPNG) => {
   isSupportPNG = _isSupportPNG;
 }, 'alpha');
 
-
-/**
- * 转换质量后缀
- * @param  {String|Array} suffix [图片质量后缀]
- * @return {[type]}        [description]
- */
-function parseSuffix(suffix) {
-  const result = [];
-  let ret = [];
-
-  // 如果suffix为string类型
-  if (typeof suffix === 'string') {
-    ret = suffix.split(',');
-  }
-
-  // 如果suffix为array类型
-  if (isArray(suffix)) {
-    ret = suffix;
-  }
-
-  if (ret && ret[0]) {
-    result[0] = ret[0];
-  }
-  if (ret && ret[1]) {
-    result[1] = ret[1];
-  }
-
-  return result;
-}
-
-/**
- * 获取图片质量后缀
- * @param  {String|Array} suffix [图片质量后缀]
- * @return {[type]}        [description]
- */
-function getQualitySuffix(highQuality, suffix) {
-  const _suffix = parseSuffix(suffix);
-  return highQuality ? _suffix[0] : _suffix[1];
-}
-
-class RxPicture extends Component {
+class Picture extends Component {
   static defaultProps = {
     placeholder: 'data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==',
     source: {
@@ -229,4 +189,4 @@ class RxPicture extends Component {
   }
 }
 
-export default RxPicture;
+export default Picture;

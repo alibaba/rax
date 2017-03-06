@@ -145,10 +145,10 @@ class Point extends Component {
 // 默认样式
 const defaultStyles = {
   pointWrapper: {
-    width: '50rem',
-    height: '50rem',
+    width: 50,
+    height: 50,
     position: 'absolute',
-    top: '0',
+    top: 0,
     transform: 'translate(-25rem,-25rem)',
     webkitTransform: 'translate(-25rem,-25rem)',
     mozTransform: 'translate(-25rem,-25rem)',
@@ -157,12 +157,12 @@ const defaultStyles = {
     zIndex: 2
   },
   point: {
-    width: '26rem',
-    height: '26rem',
-    borderRadius: '13rem',
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     backgroundColor: '#ffffff',
-    marginTop: '12rem',
-    marginLeft: '12rem'
+    marginTop: 12,
+    marginLeft: 12
   }
 };
 

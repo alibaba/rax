@@ -69,7 +69,6 @@ class Tabbar extends Component {
   }
 
   componentWillMount() {
-    // console.log(this.props);
     this.insideEmbed = false;
     if (/[?&]{1}_page_inside_embed_=true(&?)/.test(location.search)) {
       this.insideEmbed = true;
@@ -81,7 +80,6 @@ class Tabbar extends Component {
     if (isWeex) {
       let dom = require('@weex-module/dom');
       let selected = findDOMNode('selected');
-      // let selected = findDOMNode(tabs[initSelectedIndex]);
 
       if (selected) {
         dom.scrollToElement(selected.ref, {
