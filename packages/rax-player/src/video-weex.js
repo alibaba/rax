@@ -17,32 +17,32 @@ const defaultStyles = {
   container: {
     position: 'relative',
     overflow: 'hidden',
-    width: '750rem',
-    height: '300rem'
+    width: 750,
+    height: 300
   },
   video: {
-    width: '750rem',
-    height: '300rem',
+    width: 750,
+    height: 300,
     zIndex: 1
   },
   poster: {
     overflow: 'hidden',
     position: 'absolute',
-    top: '0rem',
-    left: '0rem',
+    top: 0,
+    left: 0,
     zIndex: 1,
   },
   startBtn: {
     overflow: 'hidden',
     position: 'absolute',
     color: '#ffffff',
-    top: '0rem',
-    left: '0rem',
+    top: 0,
+    left: 0,
     zIndex: 1
   },
   startBtnImage: {
-    width: '109rem',
-    height: '111rem'
+    width: 109,
+    height: 111
   }
 };
 

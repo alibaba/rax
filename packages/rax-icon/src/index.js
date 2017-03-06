@@ -47,3 +47,30 @@ class Icon extends Component {
 }
 
 export default Icon;
+
+export function createIconSet(glyphMap, fontFamily, uri) {
+
+  class IconFont extends Component {
+    render() {
+      let codePoint = '';
+      if (this.props.codePoint) {
+        codePoint = this.props.codePoint;
+      } else if (this.props.name) {
+        codePoint = glyphMap[this.props.name];
+      }
+      return (
+        <Icon 
+          style={this.props.style} 
+          fontFamily={fontFamily} 
+          source={
+            {
+              uri: uri, 
+              codePoint: codePoint
+            }
+          } />
+      );
+    }
+  }
+
+  return IconFont
+}
