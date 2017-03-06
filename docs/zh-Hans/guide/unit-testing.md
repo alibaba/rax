@@ -7,7 +7,7 @@ Rax 默认使用 [jest](https://facebook.github.io/jest/) 做单元测试.
 安装测试必要的包 
 
 ```bash
-tnpm i --save-dev jest babel-jest babel-preset-es2015 babel-preset-rax rax-test-renderer
+npm i --save-dev jest babel-jest babel-preset-es2015 babel-preset-rax rax-test-renderer
 ```
 
 接着在 `.babelrc` 文件中加入 presets 变量

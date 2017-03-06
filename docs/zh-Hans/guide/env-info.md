@@ -23,13 +23,11 @@ navigator.appVersion // 6.4.1
 因为 Rax 为我们提供了跨容器的能力，我们的页面能够同时的运行在 Web 或 Weex 环境中。有时我们也需要判断运行容器，这时，我们可以通过 Env 组件来进行判断：
 
 ```jsx
-import {isWeex, isWeb, isWidescreen, isDesktop} from 'universal-env';
+import { isWeex, isWeb } from 'universal-env';
 ```
 
 - isWeex 是否是 weex 环境
 - isWeb 是否是 web 环境
-- isWidescreen 是否是宽屏
-- isDesktop 是否是桌面
 
 ## 获取屏幕信息
 
