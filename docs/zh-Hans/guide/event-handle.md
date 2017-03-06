@@ -27,8 +27,6 @@ class TouchDemo extends Component {
 }
 ```
 
-
-
 ## Appear事件
 
 Appear 可以让我们在元素出现的时候做一些事情，比如曝光埋点。rax-picture的图片懒加载也依赖 appear 事件的触发。
@@ -96,8 +94,6 @@ class TouchDemo extends Component {
 ```
 
 如果我们需要更加完整的列表展现，可以使用 Listview 。它具有更多的也加贴近业务需求的丰富功能。  
-
-
 
 ## 用户输入事件
 

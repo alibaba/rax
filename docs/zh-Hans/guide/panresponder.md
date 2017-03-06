@@ -22,7 +22,6 @@ this._panResponder = PanResponder.create({
 无
 
 
-
 ## 方法
 
 ### static create(config)
@@ -46,8 +45,6 @@ this._panResponder = PanResponder.create({
 | config.onPanResponderTerminationRequest  | function | 函数中含有 event （事件对象）,  gestureState （手势状态） 两个参数 | 是    | 无    |
 | config.onShouldBlockNativeResponder      | function | 函数中含有 event （事件对象）,  gestureState （手势状态） 两个参数 | 是    | 无    |
 
-
-
 ##### 事件对象 event 中包含的属性
 
 | 名称                   | 类型     | 描述                |
@@ -61,8 +58,6 @@ this._panResponder = PanResponder.create({
 | event.target         | Node   | 接受 touch 事件的元素    |
 | event.timestamp      | Number | 手势的时间戳            |
 | event.touches        | Array  | 目前屏幕上的所有 touch 事件 |
-
-
 
 ##### 手势状态 gestureState 中包含的属性
 
@@ -78,8 +73,6 @@ this._panResponder = PanResponder.create({
 | gestureState.vx                  | Number | 手势速度            |
 | gestureState.vy                  | Array  | 手势速度            |
 | gestureState.numberActiveTouches | Array  | 目前屏幕上的 touch 事件 |
-
-
 
 #### 示例
 
