@@ -1,4 +1,4 @@
-# Docs [中文文档]（http://rax.taobaofed.org）
+# Docs [中文文档]（https://alibaba.github.io/rax）
 
 ## Quick Start
 * [Getting Started](./en-US/getting-started.md)
