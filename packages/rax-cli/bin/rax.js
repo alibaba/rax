@@ -98,7 +98,7 @@ function createAfterConfirmation(name, verbose, rwPackage) {
     name: 'continueWhileDirectoryExists',
     message: 'Directory ' + name + ' already exists. Continue?',
     default: false
-  }
+  };
 
   return inquirer.prompt(property).then(function(answers) {
     if (answers && answers.continueWhileDirectoryExists) {
@@ -112,9 +112,9 @@ function createAfterConfirmation(name, verbose, rwPackage) {
 
 function askProjectInformaction(name, verbose, rwPackage) {
   var questions = [
-    { 
-      type: 'input', 
-      name: 'projectName',  
+    {
+      type: 'input',
+      name: 'projectName',
       message: 'What\'s your project name?',
       default: kebabcase(name)
     },

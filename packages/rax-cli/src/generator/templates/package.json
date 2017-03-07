@@ -1,5 +1,6 @@
 {
-  "name": "YourProjectName",
+  "name": "__YourProjectName__",
+  "author": "__AuthorName__",
   "version": "0.0.0",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --no-info",

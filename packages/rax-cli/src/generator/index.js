@@ -3,7 +3,8 @@ var chalk = require('chalk');
 var fs = require('fs');
 var spawn = require('cross-spawn');
 var easyfile = require('easyfile');
-var execSync = require('child_process').execSync;
+var cp = require('child_process');
+var execSync = cp.execSync;
 
 function shouldUseYarn() {
   try {
@@ -22,7 +23,7 @@ function install(projectDir, projectName, verbose) {
   if (verbose) {
     args.push('--verbose');
   }
-  args.push('--registry=http://registry.npm.taobao.org'); // how to judge chinese users?
+
   var proc = spawn(pkgManager, args, {stdio: 'inherit'});
 
   proc.on('close', function(code) {
