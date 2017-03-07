@@ -1,7 +1,7 @@
 var generate = require('./generator');
 
-function init(projectDir, projectName, verbose) {
-  generate(projectDir, projectName, verbose);
+function init(kwargs) {
+  generate(kwargs);
 }
 
 module.exports = {

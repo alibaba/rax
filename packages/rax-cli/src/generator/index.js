@@ -1,5 +1,6 @@
 var path = require('path');
 var chalk = require('chalk');
+var fs = require('fs');
 var spawn = require('cross-spawn');
 var easyfile = require('easyfile');
 var execSync = require('child_process').execSync;
@@ -21,6 +22,7 @@ function install(projectDir, projectName, verbose) {
   if (verbose) {
     args.push('--verbose');
   }
+  args.push('--registry=http://registry.npm.taobao.org'); // how to judge chinese users?
   var proc = spawn(pkgManager, args, {stdio: 'inherit'});
 
   proc.on('close', function(code) {
@@ -35,13 +37,24 @@ function install(projectDir, projectName, verbose) {
   });
 }
 
-module.exports = function(projectDir, projectName, verbose) {
-  var src = path.join(__dirname, 'templates');
+module.exports = function(kwargs) {
+  var projectDir = kwargs.root;
+  var projectName = kwargs.projectName;
+  var directoryName = kwargs.directoryName;
+  var projectAuthor = kwargs.projectAuthor;
+  var verbose = kwargs.verbose;
 
+  var src = path.join(__dirname, 'templates');
+  var pkgPath = path.join(projectDir, 'package.json');
   easyfile.copy(src, projectDir, {
     force: true,
     backup: true,
   });
+
+  var replacedPkg = fs.readFileSync(pkgPath, 'utf-8')
+    .replace('__YourProjectName__', projectName)
+    .replace('__AuthorName__', projectAuthor);
+  fs.writeFileSync(pkgPath, replacedPkg);
 
   process.chdir(projectDir);
   install(projectDir, projectName, verbose);
