@@ -39,7 +39,6 @@ npm i --save-dev jest babel-jest babel-preset-es2015 babel-preset-rax rax-test-r
 
 2. 接着在 `__tests__` 目录下创建两个文件分别是 [Link.js](https://github.com/alibaba/rax/blob/master/packages/rax-link/src/__tests__/Link.js) 和 [Link.weex.js](https://github.com/alibaba/rax/blob/master/packages/rax-link/src/__tests__/Link.weex.js)
 
-
 在 `Link.js` 中写入下面的代码
 ```jsx
 import {createElement} from 'rax';
@@ -104,4 +103,3 @@ describe('Link in weex', () => {
 ```
 
 > 注意： 为了 mock weex 环境，你需要在本地文件中重新修改 `universal-env`
-

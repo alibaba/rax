@@ -64,8 +64,6 @@ import { createElement } from 'rax';
 }
 ```
 
-
-
 ### 更多参考
 
 - [React Displaying Data](https://facebook.github.io/react/docs/displaying-data.html)

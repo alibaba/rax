@@ -2,8 +2,6 @@
 
 这里我们就来从零开始，上手一个 Rax 项目。
 
-
-
 ## 工具安装
 
 #### 安装 Node.js
@@ -28,8 +26,6 @@ $ npm install -g rax-cli
 
 > 若安装缓慢报错，可尝试用 `cnpm` 或别的镜像源自行安装：`rm -rf node_modules && cnpm install`。
 
-
-
 ## 项目初始化
 
 我们已经预备了开始项目的一系列工程工具，下面就可以开始初始化我们的 Rax 项目了。 
@@ -47,8 +43,6 @@ To run your app:
 ```
 
 `rax-cli` 会自动安装 npm 依赖，若有问题则可自行安装。
-
-
 
 ## 开始开发
 
@@ -77,8 +71,6 @@ class App extends Component {
 
 render(<App />);
 ```
-
-
 
 ## 页面预览
 

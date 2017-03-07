@@ -6,8 +6,6 @@
 import Icon, {createIconSet} from 'rax-icon';
 ```
 
-
-
 ## 初始化组件
 
 用 iconfont：
@@ -29,8 +27,6 @@ const IconFont = createIconSet({ hello: '\ue60f' }, 'iconfont', 'http://at.alicd
 <IconFont name={'hello'}/>
 ```
 
-
-
 ## API说明
 
 ### 属性
@@ -40,8 +36,6 @@ const IconFont = createIconSet({ hello: '\ue60f' }, 'iconfont', 'http://at.alicd
 | source.uri       | String | ''   | 图片型icon的url，如果出现，则font和codePoint两个属性失效 |
 | fontFamily       | String | ''   | iconfont的字体                            |
 | source.codePoint | String | ''   | iconfont的码点                            |
-
-
 
 ### 方法
 

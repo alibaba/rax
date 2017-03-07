@@ -37,14 +37,10 @@ const styles = {
 };
 ```
 
-
-
 ## 使用 Flexbox
 
 我们依旧可以延续以前的 web 样式的风格，但我相信大家可能会更喜欢 flexbox 大法。 
 事实上，在 [facebook/css-layout](https://github.com/facebook/css-layout#supported-attributes) 中所支持的属性， Rax 都支持。 它们最后都会被 Rax 的样式转换器转换为内联的样式。  
-
-
 
 ## 样式定义中的单位规范
 
@@ -64,8 +60,6 @@ const styles = {
 ```
 
 > 1 个单位的大小为屏幕宽度的 1/750，这样做的好处是当你拿到一份 750px 宽的视觉稿，你再也不需要去做人工换算。
-
-
 
 ## 在 Rax 中使用 CSS
 
@@ -97,8 +91,6 @@ function Foo() {
 
 export default Foo;
 ```
-
-
 
 ### Rax CSS 支持的特性
 
@@ -177,11 +169,7 @@ Rax 中并不支持所有的 CSS 特性 ，下面列举了已经实现的功能�
 
 如果用户输入的样式有问题，我们会在命令行或者浏览器控制台警告，当然为了性能考虑浏览器控制台的警告仅限于 development 模式下。
 
-
-
 如果想要了解更多的实现细节，可以参考 [stylesheet-loader](https://github.com/alibaba/rax/blob/master/packages/stylesheet-loader/README.md)。
-
-
 
 ## 在 JSX 中使用 className
 
@@ -205,9 +193,6 @@ export default Foo;
 
 1. 不用再引入 styles 变量了
 2. JSX 中 style 属性变成 className，值改成字符串的形式
-
-
-
 
 如果想要了解更多的实现细节，可以参考 [babel-plugin-transform-jsx-stylesheet](https://github.com/alibaba/rax/blob/master/packages/babel-plugin-transform-jsx-stylesheet/README.md)。
 

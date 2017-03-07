@@ -22,13 +22,11 @@ import ListView from 'rax-listview';
 | renderFooter          | Function |      | 列表底部 需返回要渲染的标签 (可以在此处实现 loading 菊花效果) |
 | renderScrollComponent | Function |      | 返回 listview 的外层包裹容器                   |
 
-
 ### 方法
 
 | 名称       | 参数     | 返回值  | 描述                   |
 | :------- | :----- | :--- | :------------------- |
 | scrollTo | Object | /    | 参数示例：{x:0} 或 {y:100} |
-
 
 ## 使用示例 
 

@@ -26,8 +26,6 @@
 
 - componentWillUnmount：每当 `Rax` 使用完一个组件，这个组件必须从容器环境中卸载后被销毁，此时该 方法会被执行，完成所有的清理和销毁工作，在 `componentDidMount` 中添加的任务都需要再该方法中撤销，如创建的定时器或事件监听器。
 
-
-
 ### 组件的写法
 
 Rax 是与 React 兼容的，所以 React 中支持的组件写法 Rax 也都支持。
@@ -49,8 +47,6 @@ class Hello extends Component {
 render(<Hello name="Taobao FED" />);
 ```
 
-
-
 #### 无状态函数式组件
 
 下面示例中的组件就仅仅是一个函数,组件本身没有状态：
@@ -65,8 +61,6 @@ function Hello(props) {
 
 render(<Hello name="Taobao FED" />);
 ```
-
-
 
 #### 带状态(State)的组件
 
