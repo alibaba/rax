@@ -20,7 +20,8 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.2.2"
+    "rax-view": "^0.2.2",
+    "rax-grid": "^0.2.2"
   },
   "peerDependencies": {
     "rax": "0.x"

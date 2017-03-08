@@ -1,6 +1,7 @@
 import {Component, createElement} from 'rax';
+import View from 'rax-view';
 
-class Grid extends Component {
+class Row extends Component {
   render() {
     const moreStyle = {};
     const gridType = this.props.gridType;
@@ -18,7 +19,7 @@ class Grid extends Component {
     };
 
     return (
-      <div {...this.props} style={style} />
+      <View {...this.props} style={style} />
     );
   }
 }
@@ -31,4 +32,4 @@ const styles = {
   }
 };
 
-export default Grid;
+export default Row;

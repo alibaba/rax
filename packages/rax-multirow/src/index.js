@@ -1,10 +1,10 @@
 import {createElement, render, Component} from 'rax';
-import Grid from './Grid';
-import Col from './Col';
+import {Row, Col} from 'rax-grid';
+import View from 'rax-view';
 
 class List extends Component {
   render() {
-    return <div>{this.getContent()}</div>;
+    return <View>{this.getContent()}</View>;
   }
 
   getContent() {
@@ -23,14 +23,14 @@ class List extends Component {
       }
       gridDataArr[index].push(<Col style={props.colStyle}>{renderCell(list[i], i)}</Col>);
       if (i == list.length - 1) {
-        grids.push(<Grid style={props.gridStyle}>{gridDataArr[index]}</Grid>);
+        grids.push(<Row style={props.gridStyle}>{gridDataArr[index]}</Row>);
       }
       if (i % count == 0 && i != 0) {
-        grids.push(<Grid style={props.gridStyle}>{gridDataArr[index - 1]}</Grid>);
+        grids.push(<Row style={props.gridStyle}>{gridDataArr[index - 1]}</Row>);
       }
     };
 
-    return <div>{grids}</div>;
+    return <View>{grids}</View>;
   }
 }
 

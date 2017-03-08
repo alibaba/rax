@@ -1,4 +1,5 @@
 import {Component, createElement} from 'rax';
+import View from 'rax-view';
 
 let defaultWidth = 750;
 
@@ -20,7 +21,7 @@ class Col extends Component {
 
     if (length) {
       return (
-        <div {...this.props} style={style} />
+        <View {...this.props} style={style} />
       );
     } else {
       // if only one child, return this child
