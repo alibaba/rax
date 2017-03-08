@@ -87,7 +87,7 @@ function init(name, verbose, rwPackage) {
       return createProject(name, verbose, rwPackage, answers);
     })
     .catch(function(err) {
-      console.log('Error occured', err.stack);
+      console.error('Error occured', err.stack);
       process.exit(1);
     });
 }
