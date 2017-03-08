@@ -118,12 +118,19 @@ class Block extends Component {
 最终实现的效果是，ListView 失去自身滚动能力，Page 标签对外暴露滚动加载数据的方法。  
 
 ```jsx
-import {Page, Block} from 'rax-page';
+import View from 'rax-view';
 import ListView from 'rax-listview';
+import ScrollView from 'rax-scrollview';
 import FlowView from 'rax-flowview';
 
-<Page>
-  <Block>
+// ignore
+const styles = {
+  container: {
+    height: 1000
+  }
+};
+<View style={styles.container}>
+  <ScrollView>
   <ListView 
     renderHeader={listHeader} 
     renderFooter={listFooter} 
@@ -134,6 +141,6 @@ import FlowView from 'rax-flowview';
     dataSource={this.state.data}
     onEndReached={this.handleLoadMore} 
   />
-  </Block>
-</Page>;
+  </ScrollView>
+</View>;
 ```
