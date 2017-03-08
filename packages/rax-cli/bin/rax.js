@@ -25,9 +25,10 @@ if (!semver.satisfies(process.version, '>=4')) {
 
 var fs = require('fs');
 var path = require('path');
-var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 var spawn = require('cross-spawn');
 var inquirer = require('inquirer');
+var chalk = require('chalk');
 var kebabcase = require('lodash.kebabcase');
 var cli = require('../lib/');
 var argv = require('minimist')(process.argv.slice(2));
@@ -119,19 +120,27 @@ function askProjectInformaction(name, verbose, rwPackage) {
       default: kebabcase(name)
     },
     {
-      type: 'author',
+      type: 'input',
       name: 'author',
       message: 'What\'s author\'s name?',
       default: 'rax'
+    },
+    {
+      type: 'confirm',
+      name: 'autoInstallModules',
+      message: 'Do you want to install dependences automatically after initialization?',
+      default: 'y'
     }
   ];
   return inquirer.prompt(questions);
 }
 
 function createProject(name, verbose, rwPackage, userAnswers) {
+  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   var root = path.resolve(name);
   var projectName = userAnswers.projectName;
   var projectAuthor = userAnswers.author;
+  var autoInstallModules = userAnswers.autoInstallModules;
 
   console.log(
     'Creating a new Rax project in',
@@ -150,6 +159,19 @@ function createProject(name, verbose, rwPackage, userAnswers) {
     projectAuthor: projectAuthor,
     verbose: verbose,
     rwPackage: rwPackage
+  }).then(function(directory) {
+    if (autoInstallModules) {
+      return install(directory, verbose);
+    } else {
+      return false;
+    }
+  }).then(function(isAutoInstalled) {
+    console.log(chalk.white.bold('To run your app:'));
+    console.log(chalk.white('   cd ' + projectName));
+    if (!isAutoInstalled) {
+      console.log(chalk.white('   ' + (pkgManager === 'npm' ? 'npm install' : 'yarn')));
+    }
+    console.log(chalk.white('   ' + pkgManager + ' run start'));
   });
 }
 
@@ -163,4 +185,42 @@ function checkForVersionArgument() {
     }
     process.exit();
   }
+}
+
+function shouldUseYarn() {
+  try {
+    execSync('yarnpkg --version', {stdio: 'ignore'});
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * run npm/yarn install
+ * @param directory - the cwd directory
+ * @param verbose - enable verbose mode
+ * @returns {Promise}
+ */
+function install(directory, verbose) {
+  console.log(chalk.white.bold('Install dependencies:'));
+
+  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
+  var args = ['install'];
+  if (verbose) {
+    args.push('--verbose');
+  }
+
+  return new Promise(function(resolve) {
+    var proc = spawn(pkgManager, args, {stdio: 'inherit', cwd: directory});
+
+    proc.on('close', function(code) {
+      if (code !== 0) {
+        console.error('`' + pkgManager + ' install` failed');
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
 }

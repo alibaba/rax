@@ -1,16 +1,18 @@
 var generate = require('./generator');
 
 /**
- * kwargs {Object}
- * @param  {String} root [The absolute path of project directory]
- * @param  {String} directoryName [The folder name]
- * @param  {String} projectName [Kebabcased project name]
- * @param  {String} projectAuthor [The name of project author]
- * @param  {Boolean} verbose [enable verbose mode]
- * @param  {String} rwPackage [argv.version]
+ * The entry of init.
+ * @param  {Object} kwargs - describe the init arguements
+ * @param  {String} kwargs.root - The absolute path of project directory
+ * @param  {String} kwargs.directoryName - The folder name
+ * @param  {String} kwargs.projectName - Kebabcased project name
+ * @param  {String} kwargs.projectAuthor - The name of project author
+ * @param  {Boolean} kwargs.verbose - enable verbose mode
+ * @param  {String} kwargs.rwPackage - argv.version
+ * @return {Promise}
  */
 function init(kwargs) {
-  generate(kwargs);
+  return generate(kwargs);
 }
 
 module.exports = {
