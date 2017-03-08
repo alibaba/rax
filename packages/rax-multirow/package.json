@@ -1,7 +1,7 @@
 {
   "name": "rax-multirow",
-  "version": "0.2.2",
-  "description": "multirow UI for Rax.",
+  "version": "0.2.3",
+  "description": "Multirow component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -20,13 +20,13 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.2.2",
-    "rax-grid": "^0.2.2"
+    "rax-view": "^0.2.3",
+    "rax-grid": "^0.2.3"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.2"
+    "rax-test-renderer": "^0.2.3"
   }
 }

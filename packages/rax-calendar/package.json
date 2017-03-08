@@ -1,7 +1,7 @@
 {
-  "name": "rax-modal",
-  "version": "0.2.2",
-  "description": "modal UI for Rax.",
+  "name": "rax-calendar",
+  "version": "0.2.3",
+  "description": "Calendar component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -20,7 +20,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.2.2",
+    "rax-view": "^0.2.3",
     "rax-text": "^0.2.2",
     "rax-scrollview": "^0.2.2",
     "rax-touchable": "^0.2.2",
@@ -30,6 +30,6 @@
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.2"
+    "rax-test-renderer": "^0.2.3"
   }
 }

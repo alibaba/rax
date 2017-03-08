@@ -6,9 +6,9 @@ const RaxPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
 
 [
-  ['rax-components', 'components', 'Components'],
+  ['rax-components', 'components', 'RaxComponents'],
   ['rax-redux', 'redux', 'RaxRedux'],
-  ['rax-animated', 'animated', 'Animated'],
+  ['rax-animated', 'animated', 'RaxAnimated'],
   ['universal-panresponder', 'panresponder', 'PanResponder'],
   ['universal-platform', 'platform', 'Platform'],
   ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
