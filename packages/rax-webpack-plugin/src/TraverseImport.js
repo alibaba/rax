@@ -16,7 +16,18 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     node: 'isNode',
     reactnative: 'isReactNative'
   };
-
+  
+  /**
+   * generator variable expression
+   * 
+   * @param  {string} name  identifier
+   * @param  {boolean} value
+   * @return {string}
+   * @example
+   *   variableDeclarationMethod('isWeex', true)
+   *   
+   *   const isWeex = true;
+   */
   function variableDeclarationMethod(name, value) {
     return types.VariableDeclaration(
       'const', [
@@ -27,7 +38,20 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
       ]
     );
   }
-
+  
+  /**
+   * generator object expression
+   * 
+   * @param  {string} platformName specified platform value it true
+   * @return {string}
+   * @example
+   *   objectExpressionMethod('isWeex')
+   *   
+   *   {
+   *     isWeex: true,
+   *     isWeb: false
+   *   }
+   */
   function objectExpressionMethod(platformName) {
     const properties = [];
 
@@ -93,33 +117,51 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
 
       if (-1 !== options.name.indexOf(node.source.value)) {
         node.specifiers.forEach(spec => {
-          specified.push({
-            local: spec.local.name,
-            imported: spec.imported.name
-          });
+          if (spec.type === 'ImportNamespaceSpecifier') {
+            specified.push({
+              local: spec.local.name,
+              imported: '*'
+            });
+          } else {
+            specified.push({
+              local: spec.local.name,
+              imported: spec.imported.name
+            });
+          }
         });
 
         if (hasPlatformSpecified) {
           specified.forEach(specObj => {
-            let newNodeInit = specObj.imported === platformMap[options.platform] ?
+            if (specObj.imported === '*') {
+              path.insertAfter(types.VariableDeclaration(
+                'const', [
+                  types.variableDeclarator(
+                    types.Identifier(specObj.local),
+                    objectExpressionMethod(options.platform)
+                  )
+                ]
+              ));
+            } else {
+              let newNodeInit = specObj.imported === platformMap[options.platform] ?
               true : false;
-            let newNode = variableDeclarationMethod(
-              specObj.imported,
-              newNodeInit
-            );
-
-            path.insertAfter(newNode);
-
-            // Support custom alise import:
-            // import { isWeex as iw } from 'universal-env';
-            // const isWeex = true;
-            // const iw = true;
-            if (specObj.imported !== specObj.local) {
-              newNode = variableDeclarationMethod(
-                specObj.local,
+              let newNode = variableDeclarationMethod(
+                specObj.imported,
                 newNodeInit
               );
+
               path.insertAfter(newNode);
+
+              // Support custom alise import:
+              // import { isWeex as iw } from 'universal-env';
+              // const isWeex = true;
+              // const iw = true;
+              if (specObj.imported !== specObj.local) {
+                newNode = variableDeclarationMethod(
+                  specObj.local,
+                  newNodeInit
+                );
+                path.insertAfter(newNode);
+              }
             }
           });
 
