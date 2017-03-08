@@ -16,16 +16,16 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     node: 'isNode',
     reactnative: 'isReactNative'
   };
-  
+
   /**
    * generator variable expression
-   * 
+   *
    * @param  {string} name  identifier
    * @param  {boolean} value
-   * @return {string}
+   * @return {VariableDeclaration}
    * @example
    *   variableDeclarationMethod('isWeex', true)
-   *   
+   *
    *   const isWeex = true;
    */
   function variableDeclarationMethod(name, value) {
@@ -38,15 +38,15 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
       ]
     );
   }
-  
+
   /**
    * generator object expression
-   * 
+   *
    * @param  {string} platformName specified platform value it true
-   * @return {string}
+   * @return {objectExpression}
    * @example
    *   objectExpressionMethod('isWeex')
-   *   
+   *
    *   {
    *     isWeex: true,
    *     isWeb: false

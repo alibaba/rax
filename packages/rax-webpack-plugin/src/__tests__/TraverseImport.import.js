@@ -42,8 +42,8 @@ describe('PlatformLoader.traverseImport', function() {
     };
     expect(map).toMatchObject(sourceMapObj);
   });
-  
-  
+
+
   it('support star syntax by ImportNamespaceSpecifier', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
