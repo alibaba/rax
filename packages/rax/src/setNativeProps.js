@@ -3,6 +3,7 @@ import findDOMNode from './findDOMNode';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
+const EVENT_PREFIX_REGEXP = /on[A-Z]/;
 
 export default function setNativeProps(node, props, disableSetStyles) {
   node = findDOMNode(node);
@@ -19,7 +20,7 @@ export default function setNativeProps(node, props, disableSetStyles) {
           continue;
         }
         Host.driver.setStyles(node, value);
-      } else if (prop.substring(0, 2) === 'on') {
+      } else if (EVENT_PREFIX_REGEXP.test(prop)) {
         let eventName = prop.slice(2).toLowerCase();
         Host.driver.addEventListener(node, eventName, value);
       } else {

@@ -8,7 +8,7 @@ import instance from './instance';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const TREE = 'tree';
-const EVENT_PREFIX = 'on';
+const EVENT_PREFIX_REGEXP = /on[A-Z]/;
 
 /**
  * Native Component
@@ -166,7 +166,7 @@ class NativeComponent {
           }
         }
         this._prevStyleCopy = null;
-      } else if (propKey.substring(0, 2) === EVENT_PREFIX) {
+      } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         if (typeof prevProps[propKey] === 'function') {
           Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProps[propKey]);
         }
@@ -218,7 +218,7 @@ class NativeComponent {
         }
 
       // Update event binding
-      } else if (propKey.substring(0, 2) === EVENT_PREFIX) {
+      } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         if (typeof prevProp === 'function') {
           Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProp);
         }
