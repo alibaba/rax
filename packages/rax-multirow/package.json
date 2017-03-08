@@ -1,7 +1,7 @@
 {
-  "name": "rax-grid",
+  "name": "rax-multirow",
   "version": "0.2.2",
-  "description": "grid UI for Rax.",
+  "description": "multirow UI for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
