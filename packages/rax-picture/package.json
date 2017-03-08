@@ -1,0 +1,33 @@
+{
+  "name": "rax-picture",
+  "version": "0.2.2",
+  "description": "picture UI for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "RaxUI"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "universal-env": "^0.2.2",
+    "rax-image": "^0.2.2",
+    "rax-view": "^0.2.2"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.2.2"
+  }
+}
