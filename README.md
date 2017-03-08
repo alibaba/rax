@@ -17,6 +17,8 @@ A universal React-compatible render engine.
 
 ---
 
+[![Join the chat at https://gitter.im/alibaba/rax](https://badges.gitter.im/alibaba/rax.svg)](https://gitter.im/alibaba/rax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 
 :zap: **Fast:** blazing fast virtual DOM.
