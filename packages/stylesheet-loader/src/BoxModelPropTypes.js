@@ -28,6 +28,7 @@ const BoxModelPropTypes = {
   borderBottomRightRadius: PropTypes.length,
   borderTopLeftRadius: PropTypes.length,
   borderTopRightRadius: PropTypes.length,
+  backgroundImage: PropTypes.string,
   overflow: PropTypes.oneOf(['hidden', 'visible']),
   position: PropTypes.oneOf(['relative', 'absolute', 'sticky', 'fixed']),
   display: PropTypes.oneOf(['block', 'flex', 'inline-flex', 'inline-block', 'inline']),

@@ -2,7 +2,7 @@
 
 import PropTypes from './PropTypes';
 
-const TextPropTypes = {
+const ColorPropTypes = {
   color: PropTypes.color,
   backgroundColor: PropTypes.color,
   borderColor: PropTypes.color,
@@ -17,4 +17,4 @@ const TextPropTypes = {
   textHighlightColor: PropTypes.color
 };
 
-export default TextPropTypes;
+export default ColorPropTypes;
