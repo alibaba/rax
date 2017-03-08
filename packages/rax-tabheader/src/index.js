@@ -4,15 +4,15 @@ import Text from 'rax-text';
 import Image from 'rax-image';
 import ScrollView from 'rax-scrollview';
 import TouchableHighlight from 'rax-touchable';
-import BottomLine from './bottomLine';
-import BackgroundBlock from './backgroundRun';
-import {Col, Grid, MultiRow} from 'rax-grid';
+import BottomLine from './BottomLine';
+import BackgroundBlock from './BackgroundRun';
+import {Col, Row} from 'rax-grid';
+import MultiRow from 'rax-multirow';
 import Animated from './animation';
-import NormalItem from './normalItem';
-import IconItem from './iconItem';
-import style from './style';
-
-const isWeex = typeof callNative !== 'undefined';
+import NormalItem from './NormalItem';
+import IconItem from './IconItem';
+import styles from './styles';
+import {isWeex} from 'universal-env';
 
 // default height
 const DROPDOWN_ROW_HEIGHT = 80;
@@ -71,14 +71,13 @@ class TabHeader extends Component {
 
   resetStyle() {
     this.containerStyle = {
-      ...style.container,
-      ...style.container,
+      ...styles.container,
       ...this.props.style
     };
     if (this.styleType == 'icon') { // container with icon item
       this.containerStyle = {
         ...this.containerStyle,
-        ...style.iconContainer
+        ...styles.iconContainer
       };
     }
     if (this.props.containerStyle) { // user defined
@@ -88,7 +87,7 @@ class TabHeader extends Component {
       };
     }
     this.itemStyle = {
-      ...style.item
+      ...styles.item
     };
     if (!this.scrollType) {
       this.itemStyle.width = 750 / this.data.length + 'rem';
@@ -210,12 +209,12 @@ class TabHeader extends Component {
 
   handleRenderItem = (item, index) => {
     let itemClass = this.selected == index && this.renderSelect ? this.renderSelect(item, index) : this.renderItem(item, index);
-    let eachItemWidth = style.item.width || '';
-    let itemStyle = style.item;
+    let eachItemWidth = styles.item.width || '';
+    let itemStyle = styles.item;
     if (typeof this.props.itemWidth == 'function') {
       eachItemWidth = this.props.itemWidth(item, index);
       itemStyle = {
-        ...style.item,
+        ...styles.item,
         ...{
           width: this.props.itemWidth(item, index)
         }
@@ -294,22 +293,22 @@ class TabHeader extends Component {
 
   renderGridItemFun = (item, index) => {
     if (item == 'noitem') {
-      return <View style={style.dropBoxTtem} />;
+      return <View style={styles.dropBoxTtem} />;
     } else if (this.selected == index) {
       return <TouchableHighlight
         onPress={() => {
           this.gridItemSelect(index);
         }}
-        style={style.dropBoxTtem}>
-          <Text style={style.dropBoxSelectText} >{item}</Text>
+        style={styles.dropBoxTtem}>
+          <Text style={styles.dropBoxSelectText} >{item}</Text>
       </TouchableHighlight>;
     } else {
       return <TouchableHighlight
         onPress={() => {
           this.gridItemSelect(index);
         }}
-        style={style.dropBoxTtem}>
-          <Text style={style.dropBoxText} >{item}</Text>
+        style={styles.dropBoxTtem}>
+          <Text style={styles.dropBoxText} >{item}</Text>
       </TouchableHighlight>;
     }
   }
@@ -328,8 +327,8 @@ class TabHeader extends Component {
         weexGridMaskerStyle.position = this.state.weexGridPosition;
         weexGridMaskerStyle.height = this.state.weexGridHeight;
       }
-      return <View ref="grid" style={style.drop}>
-          <TouchableHighlight style={style.dropBtn} onPress={this.changeGrid}>
+      return <View ref="grid" style={styles.drop}>
+          <TouchableHighlight style={styles.dropBtn} onPress={this.changeGrid}>
             <Image
               ref="icon"
               source={{uri: '//gw.alicdn.com/tps/TB1H03wKVXXXXX_aXXXXXXXXXXX-40-40.png'}}
@@ -428,7 +427,7 @@ class TabHeader extends Component {
 
     this.data = this.props.data || this.props.dataSource;
     if (typeof this.props.itemWidth == 'string') {
-      style.item.width = this.props.itemWidth;
+      styles.item.width = this.props.itemWidth;
     }
     this.selected = Number(this.state.selected) || 0;
     this.resetStyle();

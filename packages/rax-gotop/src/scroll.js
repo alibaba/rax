@@ -3,7 +3,6 @@ import cancelEvents from './cancel-events';
 import events from './scroll-events';
 
 const easing = smooth.defaultEasing;
-const assign = Object.assign;
 
 /*
  * Function helper
@@ -132,19 +131,19 @@ const startAnimateTopScroll = (y, options, to, target) => {
 };
 
 const scrollToTop = (options) => {
-  startAnimateTopScroll(0, assign(options || {}, { absolute: true }));
+  startAnimateTopScroll(0, Object.assign(options || {}, { absolute: true }));
 };
 
 const scrollTo = (toY, options) => {
-  startAnimateTopScroll(toY, assign(options || {}, { absolute: true }));
+  startAnimateTopScroll(toY, Object.assign(options || {}, { absolute: true }));
 };
 
 const scrollToBottom = (options) => {
-  startAnimateTopScroll(pageHeight(), assign(options || {}, { absolute: true }));
+  startAnimateTopScroll(pageHeight(), Object.assign(options || {}, { absolute: true }));
 };
 
 const scrollMore = (toY, options) => {
-  startAnimateTopScroll(currentPositionY() + toY, assign(options || {}, { absolute: true }));
+  startAnimateTopScroll(currentPositionY() + toY, Object.assign(options || {}, { absolute: true }));
 };
 
 export default {

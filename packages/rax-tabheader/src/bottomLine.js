@@ -3,8 +3,7 @@ import View from 'rax-view';
 import Text from 'rax-text';
 import ScrollView from 'rax-scrollview';
 import Animated from './animation';
-import style from './style';
-
+import styles from './styles';
 
 class BottomLine extends Component {
 
@@ -35,7 +34,7 @@ class BottomLine extends Component {
       top = 108;
     }
 
-    return <View style={style.borderBottom}>
+    return <View style={styles.borderBottom}>
       <View
         ref="bottomLine"
         style={{

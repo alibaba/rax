@@ -23,10 +23,10 @@ class List extends Component {
       }
       gridDataArr[index].push(<Col style={props.colStyle}>{renderCell(list[i], i)}</Col>);
       if (i == list.length - 1) {
-        grids.push(<Row style={props.gridStyle}>{gridDataArr[index]}</Row>);
+        grids.push(<Row style={props.rowStyle}>{gridDataArr[index]}</Row>);
       }
       if (i % count == 0 && i != 0) {
-        grids.push(<Row style={props.gridStyle}>{gridDataArr[index - 1]}</Row>);
+        grids.push(<Row style={props.rowStyle}>{gridDataArr[index - 1]}</Row>);
       }
     };
 
@@ -36,7 +36,7 @@ class List extends Component {
 
 List.defaultProps = {
   colStyle: {},
-  gridStyle: {},
+  rowStyle: {},
   cells: 1,
   dataSource: [],
   renderCell: () => {}

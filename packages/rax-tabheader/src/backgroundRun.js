@@ -3,15 +3,10 @@ import View from 'rax-view';
 import Text from 'rax-text';
 import ScrollView from 'rax-scrollview';
 import Animated from './animation';
-import style from './style';
-
-const isWeex = typeof callNative !== 'undefined';
+import styles from './styles';
+import {isWeex} from 'universal-env';
 
 class BackgroundRun extends Component {
-
-  constructor(props) {
-    super(props);
-  }
 
   scrollTo = (options) => {
     const backgroundRun = findDOMNode(this.refs.backgroundRun);
@@ -32,7 +27,7 @@ class BackgroundRun extends Component {
       backgroundColor = this.props.style.backgroundColor;
     }
 
-    return <View style={style.iconBackgroundRun}>
+    return <View style={styles.iconBackgroundRun}>
       <View
         ref="backgroundRun"
         style={{

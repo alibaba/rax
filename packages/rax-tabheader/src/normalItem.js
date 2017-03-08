@@ -2,25 +2,24 @@ import {createElement, Component} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import TouchableHighlight from 'rax-touchable';
-import style from './style';
-
-const isWeex = typeof callNative !== 'undefined';
+import styles from './styles';
+import {isWeex} from 'universal-env';
 
 class Item extends Component {
 
   render() {
     if (!this.props.itemSelectedStyle) {
       this.props.itemSelectedStyle = {
-        color: style.selectItemText.color
+        color: styles.selectItemText.color
       };
     }
 
     let itemSelectedStyle = {
-      ...style.selectItemText,
+      ...styles.selectItemText,
       ...this.props.itemSelectedStyle
     };
     let itemTextStyle = {
-      ...style.selectItemText,
+      ...styles.selectItemText,
       ...this.props.style,
       ...{
         color: this.props.style.color || '#000000',
