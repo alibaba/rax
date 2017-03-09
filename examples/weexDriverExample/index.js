@@ -3,7 +3,7 @@ import {Text, View} from 'rax-components';
 import {isWeex} from 'universal-env';
 import weexRaxDriver from 'weex-rax-driver';
 
-class Hello extends Component {
+class Example extends Component {
   render() {
     return (
       <div>
@@ -19,11 +19,4 @@ class Hello extends Component {
   }
 }
 
-const styles = {
-  img: {
-    width: 750,
-    height: 100
-  }
-};
-
-render(<Hello name="world" />, null, isWeex ? weexRaxDriver : null);
+render(<Example />, null, isWeex ? weexRaxDriver : null);
