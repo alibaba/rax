@@ -12,23 +12,23 @@
 
 var invariant = require('invariant');
 
-var Animated = require('animated/lib/Animated');
-var AnimatedValue = require('animated/lib/AnimatedValue');
-var AnimatedValueXY = require('animated/lib/AnimatedValueXY');
-var AnimatedAddition = require('animated/lib/AnimatedAddition');
-var AnimatedMultiplication = require('animated/lib/AnimatedMultiplication');
-var AnimatedModulo = require('animated/lib/AnimatedModulo');
-var AnimatedTemplate = require('animated/lib/AnimatedTemplate');
-var AnimatedTracking = require('animated/lib/AnimatedTracking');
-var isAnimated = require('animated/lib/isAnimated');
+var Animated = require('animated-js/lib/Animated');
+var AnimatedValue = require('animated-js/lib/AnimatedValue');
+var AnimatedValueXY = require('animated-js/lib/AnimatedValueXY');
+var AnimatedAddition = require('animated-js/lib/AnimatedAddition');
+var AnimatedMultiplication = require('animated-js/lib/AnimatedMultiplication');
+var AnimatedModulo = require('animated-js/lib/AnimatedModulo');
+var AnimatedTemplate = require('animated-js/lib/AnimatedTemplate');
+var AnimatedTracking = require('animated-js/lib/AnimatedTracking');
+var isAnimated = require('animated-js/lib/isAnimated');
 
-var Animation = require('animated/lib/Animation');
-var TimingAnimation = require('animated/lib/TimingAnimation');
-var DecayAnimation = require('animated/lib/DecayAnimation');
-var SpringAnimation = require('animated/lib/SpringAnimation');
+var Animation = require('animated-js/lib/Animation');
+var TimingAnimation = require('animated-js/lib/TimingAnimation');
+var DecayAnimation = require('animated-js/lib/DecayAnimation');
+var SpringAnimation = require('animated-js/lib/SpringAnimation');
 
-import type { InterpolationConfigType } from 'animated/lib/Interpolation';
-import type { AnimationConfig, EndResult, EndCallback } from 'animated/lib/Animation';
+import type { InterpolationConfigType } from 'animated-js/lib/Interpolation';
+import type { AnimationConfig, EndResult, EndCallback } from 'animated-js/lib/Animation';
 
 type TimingAnimationConfig = AnimationConfig & {
   toValue: number | AnimatedValue | {x: number, y: number} | AnimatedValueXY;
@@ -502,12 +502,12 @@ module.exports = {
   createAnimatedComponent: require('./createAnimatedComponent'),
 
   inject: {
-    ApplyAnimatedValues: require('animated/lib/injectable/ApplyAnimatedValues').inject,
-    InteractionManager: require('animated/lib/injectable/InteractionManager').inject,
-    FlattenStyle: require('animated/lib/injectable/FlattenStyle').inject,
-    RequestAnimationFrame: require('animated/lib/injectable/RequestAnimationFrame').inject,
-    CancelAnimationFrame: require('animated/lib/injectable/CancelAnimationFrame').inject,
+    ApplyAnimatedValues: require('animated-js/lib/injectable/ApplyAnimatedValues').inject,
+    InteractionManager: require('animated-js/lib/injectable/InteractionManager').inject,
+    FlattenStyle: require('animated-js/lib/injectable/FlattenStyle').inject,
+    RequestAnimationFrame: require('animated-js/lib/injectable/RequestAnimationFrame').inject,
+    CancelAnimationFrame: require('animated-js/lib/injectable/CancelAnimationFrame').inject,
   },
 
-  __PropsOnlyForTests: require('animated/lib/AnimatedProps'),
+  __PropsOnlyForTests: require('animated-js/lib/AnimatedProps'),
 };
