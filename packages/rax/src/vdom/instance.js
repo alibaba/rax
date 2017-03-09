@@ -4,7 +4,6 @@ import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
-import Hook from '../debug/hook';
 import {isWeb} from 'universal-env';
 
 /**
@@ -37,6 +36,18 @@ export default {
     }
   },
   render(element, container) {
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.beforeRender();
+    }
+
+    // Before render callback
+    Host.driver.beforeRender && Host.driver.beforeRender(element, container);
+
+    // Real native root node is body
+    if (container == null) {
+      container = Host.driver.createBody();
+    }
+
     let prevRootInstance = this.get(container);
     let hasPrevRootInstance = prevRootInstance && prevRootInstance.isRootComponent;
 
@@ -54,14 +65,14 @@ export default {
 
         return prevRootInstance;
       } else {
-        Hook.Reconciler.unmountComponent(prevRootInstance);
+        Host.hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
       }
     }
 
-    // handle rendered ELement
+    // Handle server rendered element
     if (isWeb && container.childNodes) {
-      // clone childNodes, Because removeChild will causing change in childNodes length
+      // Clone childNodes, Because removeChild will causing change in childNodes length
       const childNodes = [...container.childNodes];
 
       for (let i = 0; i < childNodes.length; i ++) {
@@ -77,7 +88,16 @@ export default {
     let defaultContext = {};
     let rootInstance = renderedComponent.mountComponent(container, defaultContext);
     this.set(container, rootInstance);
-    Hook.Mount._renderNewRootComponent(rootInstance._internal);
+
+    // After render callback
+    Host.driver.afterRender && Host.driver.afterRender(rootInstance);
+
+    // Devtool render new root hook
+    Host.hook.Mount._renderNewRootComponent(rootInstance._internal);
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.afterRender();
+    }
 
     return rootInstance;
   }

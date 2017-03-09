@@ -1,13 +1,13 @@
-import {setDriver} from '../driver';
-import injectComponent from '../vdom/injectComponent';
+import inject from '../inject';
 import instance from '../vdom/instance';
 import ServerDriver from '../drivers/server';
 import Serializer from '../server/serializer';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 
 // Init
-injectComponent();
-setDriver(ServerDriver);
+inject({
+  driver: ServerDriver
+});
 
 export default {
   create(element) {

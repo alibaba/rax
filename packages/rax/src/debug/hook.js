@@ -34,4 +34,6 @@ export default {
     receiveComponent() {},
     unmountComponent() {},
   },
+  // monitor the info of all components
+  monitor: null
 };

@@ -43,6 +43,27 @@ describe('PlatformLoader.traverseImport', function() {
     expect(map).toMatchObject(sourceMapObj);
   });
 
+
+  it('support star syntax by ImportNamespaceSpecifier', function() {
+    const { code } = traverseImport(
+      { name: 'universal-env', platform: 'weex' },
+      unpad(`
+        import * as env from 'universal-env'
+      `)
+    );
+
+    const expected = unpad(`
+      const env = {
+        isWeex: true,
+        isWeb: false,
+        isNode: false,
+        isReactNative: false
+      };
+    `);
+
+    expect(code).toBe(expected);
+  });
+
   it('isWeex as iw', function() {
     const { code } = traverseImport(
       { name: 'universal-env', platform: 'weex' },
@@ -78,6 +99,23 @@ describe('PlatformLoader.traverseImport', function() {
     );
 
     expect(code).toBe('const isWeb = true;');
+  });
+
+  it('multiple module name', function() {
+    const {code} = traverseImport(
+      { name: ['universal-env', 'other-env'], platform: 'web' },
+      unpad(`
+        import { isWeb } from "other-env";
+        import { isWeex } from "universal-env";
+      `)
+    );
+
+    const expected = unpad(`
+      const isWeb = true;
+      const isWeex = false;
+    `);
+
+    expect(code).toBe(expected);
   });
 
   it('skin other module', function() {

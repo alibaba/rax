@@ -52,13 +52,14 @@ if (!isProducation) {
   var ip = internalIp.v4();
   var port = 8080;
   var webUrl = 'http://' + ip + ':' + port;
-  var bundleUrl = 'http://' + ip + ':' + port + '/js/index.bundle.js?wh_weex=true';
+  var bundleUrl = 'http://' + ip + ':' + port + '/js/index.bundle.js';
+  var weexBundleUrl = bundleUrl + '?_wx_tpl=' + bundleUrl;
 
   qrcode.generate(webUrl, {small: true});
   console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n');
 
-  qrcode.generate(bundleUrl, {small: true});
-  console.log('Weex: scan above QRCode ' + bundleUrl + ' use weex playground.\n');
+  qrcode.generate(weexBundleUrl, {small: true});
+  console.log('Weex: scan above QRCode ' + weexBundleUrl + ' use weex playground.\n');
 }
 
 module.exports = {

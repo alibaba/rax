@@ -5,7 +5,6 @@ import Ref from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
-import Hook from '../debug/hook';
 
 function performInSandbox(fn, handleError) {
   try {
@@ -23,6 +22,15 @@ function performInSandbox(fn, handleError) {
       }
     }
   }
+}
+
+let measureLifeCycle;
+if (process.env.NODE_ENV !== 'production') {
+  measureLifeCycle = function(callback, instanceID, type) {
+    Host.measurer && Host.measurer.beforeLifeCycle(instanceID, type);
+    performInSandbox(callback);
+    Host.measurer && Host.measurer.afterLifeCycle(instanceID, type);
+  };
 }
 
 /**
@@ -48,6 +56,10 @@ class CompositeComponent {
     this._context = context;
     this._mountID = Host.mountID++;
     this._updateCount = 0;
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
+    }
 
     let Component = this._currentElement.type;
     let publicProps = this._currentElement.props;
@@ -93,7 +105,13 @@ class CompositeComponent {
 
     performInSandbox(() => {
       if (instance.componentWillMount) {
-        instance.componentWillMount();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCycle(() => {
+            instance.componentWillMount();
+          }, this._mountID, 'componentWillMount');
+        } else {
+          instance.componentWillMount();
+        }
       }
     });
 
@@ -111,7 +129,13 @@ class CompositeComponent {
       }
 
       performInSandbox(() => {
-        renderedElement = instance.render();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCycle(() => {
+            renderedElement = instance.render();
+          }, this._mountID, 'render');
+        } else {
+          renderedElement = instance.render();
+        }
       }, handleError);
 
       Host.component = null;
@@ -130,16 +154,26 @@ class CompositeComponent {
 
     performInSandbox(() => {
       if (instance.componentDidMount) {
-        instance.componentDidMount();
+        if (process.env.NODE_ENV !== 'production') {
+          measureLifeCycle(() => {
+            instance.componentDidMount();
+          }, this._mountID, 'componentDidMount');
+        } else {
+          instance.componentDidMount();
+        }
       }
     });
 
-    Hook.Reconciler.mountComponent(this);
+    Host.hook.Reconciler.mountComponent(this);
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.afterMountComponent(this._mountID);
+    }
 
     return instance;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(notRemoveChild) {
     let instance = this._instance;
 
     performInSandbox(() => {
@@ -148,7 +182,7 @@ class CompositeComponent {
       }
     });
 
-    Hook.Reconciler.unmountComponent(this);
+    Host.hook.Reconciler.unmountComponent(this);
 
     instance._internal = null;
 
@@ -158,7 +192,7 @@ class CompositeComponent {
         Ref.detach(this._currentElement._owner, ref, this);
       }
 
-      this._renderedComponent.unmountComponent(shouldNotRemoveChild);
+      this._renderedComponent.unmountComponent(notRemoveChild);
       this._renderedComponent = null;
       this._instance = null;
     }
@@ -232,6 +266,10 @@ class CompositeComponent {
   ) {
     let instance = this._instance;
 
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.beforeUpdateComponent(this._mountID, this);
+    }
+
     if (!instance) {
       console.error(
         `Update component '${this.getName()}' that has already been unmounted (or failed to mount).`
@@ -260,7 +298,9 @@ class CompositeComponent {
       willReceive = true;
     }
 
-    if (willReceive && instance.componentWillReceiveProps) {
+    let hasReceived = willReceive && instance.componentWillReceiveProps;
+
+    if (hasReceived) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
       this._pendingState = true;
       performInSandbox(() => {
@@ -331,7 +371,18 @@ class CompositeComponent {
       instance.context = nextContext;
     }
 
-    Hook.Reconciler.receiveComponent(this);
+    // Flush setState callbacks set in componentWillReceiveProps
+    if (hasReceived) {
+      let callbacks = this._pendingCallbacks;
+      this._pendingCallbacks = null;
+      updater.runCallbacks(callbacks, instance);
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.afterUpdateComponent(this._mountID);
+    }
+
+    Host.hook.Reconciler.receiveComponent(this);
   }
 
   /**
@@ -347,7 +398,13 @@ class CompositeComponent {
     Host.component = this;
 
     performInSandbox(() => {
-      nextRenderedElement = instance.render();
+      if (process.env.NODE_ENV !== 'production') {
+        measureLifeCycle(() => {
+          nextRenderedElement = instance.render();
+        }, this._mountID, 'render');
+      } else {
+        nextRenderedElement = instance.render();
+      }
     });
 
     Host.component = null;
@@ -359,6 +416,13 @@ class CompositeComponent {
         prevRenderedComponent._context,
         this._processChildContext(context)
       );
+      if (process.env.NODE_ENV !== 'production') {
+        Host.measurer && Host.measurer.recordOperation({
+          instanceID: this._mountID,
+          type: 'update component',
+          payload: {}
+        });
+      }
     } else {
       let oldChild = prevRenderedComponent.getNativeNode();
       prevRenderedComponent.unmountComponent(true);
@@ -368,7 +432,34 @@ class CompositeComponent {
         this._parent,
         this._processChildContext(context),
         (newChild, parent) => {
-          Host.driver.replaceChild(newChild, oldChild, parent);
+          // TODO: Duplicate code in native component file
+          if (!Array.isArray(newChild)) {
+            newChild = [newChild];
+          }
+
+          // oldChild or newChild all maybe fragment
+          if (!Array.isArray(oldChild)) {
+            oldChild = [oldChild];
+          }
+
+          // If newChild count large then oldChild
+          let lastNewChild;
+          for (let i = 0; i < newChild.length; i++) {
+            let child = newChild[i];
+            if (oldChild[i]) {
+              Host.driver.replaceChild(child, oldChild[i]);
+            } else {
+              Host.driver.insertAfter(child, lastNewChild);
+            }
+            lastNewChild = child;
+          }
+
+          // If newChild count less then oldChild
+          if (newChild.length < oldChild.length) {
+            for (let i = newChild.length; i < oldChild.length; i++) {
+              Host.driver.removeChild(oldChild[i]);
+            }
+          }
         }
       );
     }

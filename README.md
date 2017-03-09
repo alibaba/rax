@@ -12,10 +12,12 @@ A universal React-compatible render engine.
   <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
-  <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg"></a>
+  <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
 </p>
 
 ---
+
+[![Join the chat at https://gitter.im/alibaba/rax](https://badges.gitter.im/alibaba/rax.svg)](https://gitter.im/alibaba/rax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 
@@ -123,9 +125,49 @@ Then, you can run several commands:
 * `npm run build` creates `lib` and `dist` folder with all the packages.
 * `npm start` start local server with `examples` folder.
 
+
+## Core Team
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/yuanyan.png?s=128">
+        <br>
+        <a href="https://github.com/yuanyan">@yuanyan</a>
+        <p>Core</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/imsobear.png?s=128">
+        <br>
+        <a href="https://github.com/imsobear">@imsobear</a>
+        <p>Development</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/yacheng.png?s=128">
+        <br>
+        <a href="https://github.com/yacheng">@yacheng</a>
+        <p>Components</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/boiawang.png?s=128">
+        <br>
+        <a href="https://github.com/boiawang">@boiawang</a>
+        <p>Babel Loaders &amp; Plugins</p>
+      </td>
+      <td align="center" valign="top">
+        <img width="128" height="128" src="https://github.com/noyobo.png?s=128">
+        <br>
+        <a href="https://github.com/noyobo">@noyobo</a>
+        <p>Webpack Plugins</p>
+      </td>
+     </tr>
+  </tbody>
+</table>
+
 ---
 <a href="https://weex-project.io/">
-  <img alt="Weex Logo" src="https://camo.githubusercontent.com/11b6ddd7364b6fd42c9efd63939150a950b0de1a/68747470733a2f2f696d672e616c6963646e2e636f6d2f7470732f5442317a424c6150585858585858655858585858585858585858582d3132312d35392e737667" width="200">
+  <img alt="Weex Logo" src="https://img.alicdn.com/tps/TB1zBLaPXXXXXXeXXXXXXXXXXXX-121-59.svg" width="200">
 </a>
 
 **[⬆ back to top](#top)**

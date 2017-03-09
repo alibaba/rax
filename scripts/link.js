@@ -13,7 +13,7 @@ function getPackages() {
 
 getPackages().forEach((p) => {
   // Skip link starter kit
-  if (p.indexOf('babel-preset-rax') > 0) return;
+  if (p.indexOf('babel-preset-rax') > 0 || p.indexOf('babel-plugin-transform-jsx-stylesheet') > 0) return;
   const linkArgv = ['link', p];
   // Skip install devDependencies
   if (p.endsWith('rax-test-renderer')) linkArgv.push('--production');

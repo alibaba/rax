@@ -1,22 +1,15 @@
 const TIMER_MODULE = '@weex-module/timer';
 
-module.exports = function(__weex_require__, instance) {
-  const setTimeout = (...args) => {
+module.exports = function(__weex_require__) {
+  const setTimeout = (handler, time) => {
+    console.log('setTimeout', handler, time);
     const timer = __weex_require__(TIMER_MODULE);
-    const handler = function() {
-      args[0](...args.slice(2));
-    };
-    timer.setTimeout(handler, args[1]);
-    return instance.uid.toString();
+    return timer.setTimeout(handler, time);
   };
 
-  const setInterval = (...args) => {
+  const setInterval = (handler, time) => {
     const timer = __weex_require__(TIMER_MODULE);
-    const handler = function() {
-      args[0](...args.slice(2));
-    };
-    timer.setInterval(handler, args[1]);
-    return instance.uid.toString();
+    return timer.setInterval(handler, time);
   };
 
   const clearTimeout = (n) => {
@@ -31,8 +24,7 @@ module.exports = function(__weex_require__, instance) {
 
   const requestAnimationFrame = (callback) => {
     const timer = __weex_require__(TIMER_MODULE);
-    timer.setTimeout(callback, 16);
-    return instance.uid.toString();
+    return timer.setTimeout(callback, 16);
   };
 
   const cancelAnimationFrame = (n) => {

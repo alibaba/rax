@@ -2,12 +2,25 @@ import Host from '../vdom/host';
 import ServerDriver from '../drivers/server';
 import render from '../render';
 import Serializer from './serializer';
-import {addRenderedMarkedToElement} from './renderedMarked';
+
+const RENDERED_NAME = 'data-rendered';
+const CACHE_KEY_NAME = 'data-cache-key';
+
+/**
+ * Add renered mark to element
+ */
+function addRenderedMark(element, markedValue) {
+  if (!element || !element.attributes) {
+    return element;
+  }
+
+  element.attributes[RENDERED_NAME] = markedValue;
+  return element;
+}
 
 export default function renderToString(element) {
   // Reset driver iternal state
   ServerDriver.nodeMaps = {};
-  ServerDriver.nodeCounter = 0;
 
   // Reset host state
   Host.rootComponents = {};
@@ -15,12 +28,14 @@ export default function renderToString(element) {
   Host.mountID = 1;
 
   let body = ServerDriver.createBody();
-  render(element, body, ServerDriver);
+  render(element, body, {
+    driver: ServerDriver
+  });
 
-  // Add rendered marked to root ChildNodes
+  // Add rendered mark to root ChildNodes
   if (body.childNodes) {
     for (let i = 0; i < body.childNodes.length; i ++) {
-      body.childNodes[i] = addRenderedMarkedToElement(body.childNodes[i], 'server');
+      body.childNodes[i] = addRenderedMark(body.childNodes[i], 'server');
     }
   }
 

@@ -3,10 +3,13 @@
  */
 export default {
   component: null,
-  driver: null,
   mountID: 1,
   sandbox: true,
   // Roots
   rootComponents: {},
   rootInstances: {},
+  // Inject
+  hook: null,
+  driver: null,
+  monitor: null
 };

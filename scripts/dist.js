@@ -6,9 +6,9 @@ const RaxPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
 
 [
-  ['rax-components', 'components', 'Components'],
+  ['rax-components', 'components', 'RaxComponents'],
   ['rax-redux', 'redux', 'RaxRedux'],
-  ['rax-animated', 'animated', 'Animated'],
+  ['rax-animated', 'animated', 'RaxAnimated'],
   ['universal-panresponder', 'panresponder', 'PanResponder'],
   ['universal-platform', 'platform', 'Platform'],
   ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
@@ -119,7 +119,6 @@ dist(getConfig(
     {
       path: './packages/runtime-shared/dist/',
       filename: '[name].js',
-      sourceMapFilename: '[name].map',
       pathinfo: false,
     },
     {
@@ -127,7 +126,9 @@ dist(getConfig(
     },
     {
       presets: ['es2015']
-    }
+    },
+    null,
+    'hidden-source-map'
   ));
 }).then(() => {
   dist(getConfig(
@@ -176,10 +177,10 @@ dist(getConfig(
   ));
 });
 
-function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
+function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
   return {
     target: target || 'node',
-    devtool: 'source-map',
+    devtool: devtool || 'source-map',
     entry: entry,
     output: output,
     plugins: [

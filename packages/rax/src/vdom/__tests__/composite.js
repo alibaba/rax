@@ -107,7 +107,9 @@ describe('CompositeComponent', function() {
         lifeCycles.push('did-mount');
       }
       componentWillReceiveProps(nextProps) {
-        this.setState({value: 'bar'});
+        this.setState({value: 'bar'}, function() {
+          lifeCycles.push('receive-props-callback');
+        });
         lifeCycles.push('receive-props', nextProps);
       }
       shouldComponentUpdate(nextProps, nextState) {
@@ -143,6 +145,7 @@ describe('CompositeComponent', function() {
       'will-update', {value: 'bar'}, {value: 'bar'},
       'render',
       'did-update', {value: 'foo'}, {value: 'foo'},
+      'receive-props-callback'
     ]);
     lifeCycles = []; // reset
     unmountComponentAtNode(container);

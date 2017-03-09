@@ -1,15 +1,15 @@
-# Docs
+# Docs [中文文档]（https://alibaba.github.io/rax）
 
 ## Quick Start
-* [Getting Started](./getting-started.md)
-* [Hello World](./tutorial.md)
-* [Key Concepts](./concepts.md)
-* [JSX](./jsx.md)
-* [Networking](./networking.md)
-* [Components, Props and State](./components-props-and-state.md)
-* [Publishing Project](./publishing.md)
-* [Top Level APIs](./top-level-api.md)
-* [Differences with React](./difference-with-react.md)
+* [Getting Started](./en-US/getting-started.md)
+* [Hello World](./en-US/tutorial.md)
+* [Key Concepts](./en-US/concepts.md)
+* [JSX](./en-US/jsx.md)
+* [Networking](./en-US/networking.md)
+* [Components, Props and State](./en-US/components-props-and-state.md)
+* [Publishing Project](./en-US/publishing.md)
+* [Top Level APIs](./en-US/top-level-api.md)
+* [Differences with React](./en-US/difference-with-react.md)
 
 ## Advanced Guides
-* [Driver Specification](./driver-spec.md)
+* [Driver Specification](./en-US/driver-spec.md)
