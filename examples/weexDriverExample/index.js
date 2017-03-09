@@ -12,11 +12,13 @@ class Example extends Component {
         <a href="https://m.taobao.com">
           click
         </a>
-        <textarea rows="10">哈哈哈</textarea>
-        <video width="630" height="350" autoplay controls src="http://flv2.bn.netease.com/videolib3/1611/01/XGqSL5981/SD/XGqSL5981-mobile.mp4" />
+        <textarea rows="10">textarea value</textarea>
+        <video width="630" height="350" autoPlay controls src="http://flv2.bn.netease.com/videolib3/1611/01/XGqSL5981/SD/XGqSL5981-mobile.mp4" />
       </div>
     );
   }
 }
 
-render(<Example />, null, isWeex ? weexRaxDriver : null);
+render(<Example />, null, {
+  driver: isWeex ? weexRaxDriver : null
+});

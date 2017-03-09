@@ -20,7 +20,6 @@ export function transformPropsAttrsToStyle(props, attrs) {
 
 
 export function renamePropsAttr(props, originalAttrName, newAttrName) {
-
   if (props[originalAttrName] && !props[newAttrName]) {
     props[newAttrName] = props[originalAttrName];
     delete props[originalAttrName];
