@@ -407,11 +407,11 @@ class TabHeader extends Component {
           {bottomLineClass}
       </ScrollView>;
     } else {
-      return <Grid style={this.containerStyle}>
+      return <Row style={this.containerStyle}>
             {BackgroundBlockClass}
             {childrens}
             {bottomLineClass}
-        </Grid>;
+        </Row>;
     }
   }
 
