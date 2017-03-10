@@ -17,7 +17,22 @@ A universal React-compatible render engine.
 
 ---
 
-[![Join the chat at https://gitter.im/alibaba/rax](https://badges.gitter.im/alibaba/rax.svg)](https://gitter.im/alibaba/rax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<p align="center">
+Community
+</p>
+
+* [![Join the chat at https://gitter.im/alibaba/rax](https://badges.gitter.im/alibaba/rax.svg)](https://gitter.im/alibaba/rax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
+
+* [Stack Overflow](http://stackoverflow.com/questions/tagged/rax)
+
+* [中文论坛](http://react-china.org/c/rax)
+
+* <details>
+  <summary>钉钉群</summary>
+  <a href="http://qr.dingtalk.com/action/joingroup?code=v1,k1,CP2dPkf6aojTT2QdsLM1GK4vDw4x3Q3UMdC96zOTGWzA09r+RLlVDuyQIAt5L+xqo/WU2LKsFRUYCTNKl7J/riENfO/4JdpdPsdf2DCoeF8tH9f9QvubrOUvmN6NriqFXtEUb0fp/hjJPUzBWCyDJCM63BVN7p2I"><img alt="Join the chat at dingtalk" src="https://cloud.githubusercontent.com/assets/677114/23734081/a3651cd6-04b7-11e7-8290-11fb20b722b4.png"></a>
+</details>
+
+---
 
 Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 
