@@ -31,46 +31,47 @@ module.exports = function(__weex_require__, document) {
   const documentEmitter = new EventEmitter();
   let hasVisibilityEventPending = false;
 
-  document.addEventListener = (type, listener) => {
-    if (type === VISIBILITY_CHANGE_EVENT) {
-      if (document.body) {
-        addBodyAppearListener(document);
-      } else {
-        hasVisibilityEventPending = true;
-      }
-    }
-    documentEmitter.on(type, listener);
-  };
-
-  document.removeEventListener = (type, listener) => {
-    if (type === VISIBILITY_CHANGE_EVENT) {
-      removeBodyAppearListener(document);
-    }
-    documentEmitter.off(type, listener);
-  };
-
-  document.dispatchEvent = (e) => {
-    documentEmitter.emit(e.type, e);
-  };
-
-  // FontFace
-  document.fonts = {
-    add: function(fontFace) {
-      var domModule = __weex_require__(DOM_MODULE);
-      domModule.addRule('fontFace', {
-        fontFamily: fontFace.family,
-        src: fontFace.source
-      });
-    }
-  };
-
-  // Init visibility state
-  document.visibilityState = VISIBLE;
-
+  // Weex freezed the document
   try {
+    document.addEventListener = (type, listener) => {
+      if (type === VISIBILITY_CHANGE_EVENT) {
+        if (document.body) {
+          addBodyAppearListener(document);
+        } else {
+          hasVisibilityEventPending = true;
+        }
+      }
+      documentEmitter.on(type, listener);
+    };
+
+    document.removeEventListener = (type, listener) => {
+      if (type === VISIBILITY_CHANGE_EVENT) {
+        removeBodyAppearListener(document);
+      }
+      documentEmitter.off(type, listener);
+    };
+
+    document.dispatchEvent = (e) => {
+      documentEmitter.emit(e.type, e);
+    };
+
+    // FontFace
+    document.fonts = {
+      add: function(fontFace) {
+        var domModule = __weex_require__(DOM_MODULE);
+        domModule.addRule('fontFace', {
+          fontFamily: fontFace.family,
+          src: fontFace.source
+        });
+      }
+    };
+
+    // Init visibility state
+    document.visibilityState = VISIBLE;
+
     // Hijack the origin createBody
     const originCreateBody = document.createBody;
-    // Weex freezed the document
+
     document.createBody = function() {
       var body = originCreateBody.call(document);
 
