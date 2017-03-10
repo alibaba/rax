@@ -1,18 +1,18 @@
-# weex-rax-driver
+# weex-driver
 
 > Weex driver for Rax.
 
 ## Install
 
 ```bash
-$ npm install --save weex-rax-driver
+$ npm install --save weex-driver
 ```
 
 ## Use
 
 ```jsx
 import {createElement, Component, render} from 'rax';
-import weexRaxDriver from 'weex-rax-driver';
+import weexDriver from 'weex-driver';
 import {isWeex} from 'universal-env';
 
 class Example extends Component {
@@ -25,7 +25,9 @@ class Example extends Component {
   }
 }
 
-render(<Example />, null, isWeex ? weexRaxDriver : null);
+render(<Example />, null, {
+  driver: isWeex ? weexDriver : null
+});
 ```
 
 ## Support elements
