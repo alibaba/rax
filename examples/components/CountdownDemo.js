@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback} from 'rax-components';
 import Countdown from 'rax-countdown';
 
-class CountdownDemo extends Component {  
+class CountdownDemo extends Component {
   onComplete() {
     console.log('countdown complete');
   }
@@ -23,7 +23,7 @@ class CountdownDemo extends Component {
         <View style={styles.container}>
           <Countdown
             timeRemaining={10000}
-            tpl={"{d}天{h}时{m}分{s}秒"}
+            tpl={'{d}天{h}时{m}分{s}秒'}
             onComplete={this.onComplete}
           />
         </View>
@@ -38,7 +38,7 @@ class CountdownDemo extends Component {
             }}
             secondStyle={{'backgroundColor': 'yellow'}}
             textStyle={{'backgroundColor': 'blue'}}
-            tpl={"{d}-{h}-{m}-{s}"}
+            tpl={'{d}-{h}-{m}-{s}'}
             onComplete={this.onComplete}
           />
         </View>

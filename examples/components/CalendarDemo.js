@@ -35,7 +35,7 @@ class CalendarDemo extends Component {
             nextButtonText={'下一月'}
             weekStart={0}
             onDateSelect={(date) => this.setState({ selectedDate: date })}
-            onTouchPrev={() => console.log('Back TOUCH')} 
+            onTouchPrev={() => console.log('Back TOUCH')}
             onTouchNext={() => console.log('Forward TOUCH')}
           />
           <Text style={styles.date}>Selected Date: {this.state.selectedDate}</Text>

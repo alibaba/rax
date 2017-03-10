@@ -30,7 +30,7 @@ class ModalDemo extends Component {
   onHide = (param) => {
     console.log('modal hide', param);
   };
-  
+
   render() {
     return (
       <View>

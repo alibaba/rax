@@ -16,8 +16,8 @@ class Page extends Component {
   render() {
     return (
       <ScrollView ref={(scrollview) => {
-          this.scrollview = scrollview;
-        }
+        this.scrollview = scrollview;
+      }
       }>
         <View>
           <Text style={styles.title}>Gotop</Text>
@@ -30,32 +30,32 @@ class Page extends Component {
           <Text style={styles.title}>Calendar</Text>
           <CalendarDemo />
         </View>
-        
+
         <View>
           <Text style={styles.title}>Countdown</Text>
           <CountdownDemo />
         </View>
-        
+
         <View>
           <Text style={styles.title}>Grid</Text>
           <GridDemo />
         </View>
-        
+
         <View>
           <Text style={styles.title}>Icon</Text>
           <IconDemo />
         </View>
-        
+
         <View>
           <Text style={styles.title}>Modal</Text>
           <ModalDemo />
         </View>
-        
+
         <View>
           <Text style={styles.title}>Multirow</Text>
           <MultirowDemo />
         </View>
-        
+
       </ScrollView>
     );
   }

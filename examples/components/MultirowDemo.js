@@ -19,9 +19,9 @@ class MultiRowDemo extends Component {
       <View>
 
         <View style={styles.container}>
-          <MultiRow 
-            dataSource={[1, 2, 3, 4, 5, 6]} 
-            cells={3} 
+          <MultiRow
+            dataSource={[1, 2, 3, 4, 5, 6]}
+            cells={3}
             renderCell={(item, index) => {
               return (
                 <Text style={styles.num}>{item}</Text>
@@ -31,9 +31,9 @@ class MultiRowDemo extends Component {
         </View>
 
         <View style={styles.container}>
-          <MultiRow 
-            dataSource={[1, 2, 3, 4, 5]} 
-            cells={3} 
+          <MultiRow
+            dataSource={[1, 2, 3, 4, 5]}
+            cells={3}
             renderCell={(item, index) => {
               return (
                 <Text style={styles.num}>{item}</Text>
@@ -43,9 +43,9 @@ class MultiRowDemo extends Component {
         </View>
 
         <View style={styles.container}>
-          <MultiRow 
-            dataSource={[1, 2, 3, 4, 5, '']} 
-            cells={3} 
+          <MultiRow
+            dataSource={[1, 2, 3, 4, 5, '']}
+            cells={3}
             renderCell={(item, index) => {
               return (
                 <Text style={styles.num}>{item}</Text>
