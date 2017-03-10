@@ -9,7 +9,9 @@ export default class MineHeader extends Component {
 
   render() {
     return (
-      <Touchable onPress={() => {alert('hello world')}}>
+      <Touchable onPress={() => {
+        alert('hello world');
+      }}>
         <View style={[styles.item]}>
           <Image
             style={[styles.img]}

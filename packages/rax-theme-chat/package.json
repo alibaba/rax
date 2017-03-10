@@ -1,7 +1,7 @@
 {
   "name": "rax-theme-chat",
   "author": "wssgcg1213",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "raxThemeImages": [
     "//gw.alicdn.com/tfs/TB1Ea3DPVXXXXabXpXXXXXXXXXX-1242-2208.png",
     "//gw.alicdn.com/tfs/TB1mU.uPVXXXXcZXpXXXXXXXXXX-1242-2208.png",
@@ -9,6 +9,10 @@
     "//gw.alicdn.com/tfs/TB1vvcdPVXXXXXSaXXXXXXXXXXX-1242-2208.png"
   ],
   "raxThemeDescription": "这是一个一个聊天软件的主题",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --no-info",
     "build": "rm -rf build && NODE_ENV=production ./node_modules/.bin/webpack",

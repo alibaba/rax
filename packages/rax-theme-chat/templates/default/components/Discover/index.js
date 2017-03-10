@@ -6,13 +6,12 @@ import Item from '..//RowItem';
 import styles from './discover.css';
 
 
-
 export default class Discover extends Component {
   renderRow = (items, idx) => {
     return (
       <View style={styles.group} key={idx}>
         {
-          items.map((item, idx) => (<Item key={idx} title={item.title} icon={item.icon} />))
+          items.map((item, idx) => <Item key={idx} title={item.title} icon={item.icon} />)
         }
       </View>
     );
@@ -28,7 +27,7 @@ export default class Discover extends Component {
           dataSource={data}
         />
       </View>
-    )
+    );
   }
 }
 
@@ -43,4 +42,4 @@ const data = [
 
   [{ title: '购物', icon: { uri: require('../../images/shopping.png') }},
   { title: '游戏', icon: { uri: require('../../images/game.png') }}],
-]
+];

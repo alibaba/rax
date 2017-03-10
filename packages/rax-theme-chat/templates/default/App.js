@@ -13,7 +13,7 @@ class App extends Component {
     super(props);
     this.state = {
       selectedTab: 'message'
-    }
+    };
   }
 
   selectTab = (tab) => {
@@ -24,7 +24,7 @@ class App extends Component {
 
   _renderContent(Component, title) {
     return (
-      <Component title={title}/>
+      <Component title={title} />
     );
   }
 

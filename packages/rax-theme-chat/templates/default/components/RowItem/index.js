@@ -17,7 +17,7 @@ export default class RowItem extends Component {
         <View>
           <Text style={styles.text}>{title}</Text>
         </View>
-        <View style={{flex:1}} />
+        <View style={{flex: 1}} />
         <View>
           <Image
             source={{ uri: require('../../images/forward.png') }}

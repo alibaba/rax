@@ -25,17 +25,17 @@ export default class Contact extends Component {
       <View style={styles.search}>
         <View style={styles.searchBtn}>
           <Touchable>
-            <View style={{flex:1, flexDirection:'row'}}>
-              <View style={{flex:1, flexDirection:'row', justifyContent: 'center'}}>
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <Image
-                  style={{height: 28, width: 28, marginRight:12}}
+                  style={{height: 28, width: 28, marginRight: 12}}
                   source={{ uri: require('../../images/search.png') }}
                 />
-                <Text style={{fontSize:28, color: '#7A7A7A'}}>搜索</Text>
+                <Text style={{fontSize: 28, color: '#7A7A7A'}}>搜索</Text>
               </View>
               <View>
                 <Image
-                  style={{height: 30, width: 30, marginRight:12}}
+                  style={{height: 30, width: 30, marginRight: 12}}
                   source={{ uri: require('../../images/microphone.png') }}
                 />
               </View>

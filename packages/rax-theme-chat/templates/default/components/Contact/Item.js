@@ -57,6 +57,6 @@ export default class MessageItem extends Component {
           </View>
         </View>
       </Touchable>
-    )
+    );
   }
 }
