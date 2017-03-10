@@ -55,15 +55,16 @@ class H5Video extends Component {
    * @description
    * @param status {Boolean} （true: play，false: pause）
    */
-  switch(status) {
+  switch = () => {
     let video = this.refs.video;
-    if (status) {
+    if (this.switchStatus) {
       video && video.pause();
     } else {
       video && video.play();
     }
+    this.switchStatus = !this.switchStatus;
     this.setState({
-      pause: status
+      pause: this.switchStatus
     });
   }
 

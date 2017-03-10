@@ -56,6 +56,16 @@ class Page extends Component {
           <MultirowDemo />
         </View>
 
+        <View>
+          <Text style={styles.title}>Picture</Text>
+          <PictureDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Player</Text>
+          <PlayerDemo />
+        </View>
+
       </ScrollView>
     );
   }

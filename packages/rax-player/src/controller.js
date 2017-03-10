@@ -19,7 +19,7 @@ class Controller extends Component {
   /**
    * @description Toggle playback status event processing
    */
-  switch() {
+  switch = () => {
     let status = !this.props.pause;
     this.props.onPauseOrStart && this.props.onPauseOrStart(status);
   }
