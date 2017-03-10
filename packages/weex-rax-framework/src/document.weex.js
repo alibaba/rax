@@ -67,23 +67,19 @@ module.exports = function(__weex_require__, document) {
   // Init visibility state
   document.visibilityState = VISIBLE;
 
-  // Hijack the origin createBody
-  const originCreateBody = document.createBody;
-
-  Object.defineProperty(document, 'createBody', {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: function() {
+  try {
+    // Hijack the origin createBody
+    const originCreateBody = document.createBody;
+    // Weex freezed the document
+    document.createBody = function() {
       var body = originCreateBody.call(document);
 
       if (hasVisibilityEventPending) {
         addBodyAppearListener(document);
       }
-
       return body;
-    }
-  });
+    };
+  } catch (e) {}
 
   return document;
 };

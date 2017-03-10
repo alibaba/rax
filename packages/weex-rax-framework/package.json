@@ -1,6 +1,6 @@
 {
   "name": "weex-rax-framework",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Rax framework for weex.",
   "license": "BSD-3-Clause",
   "main": "dist/framework.weex.js",
