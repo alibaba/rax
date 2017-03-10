@@ -127,4 +127,25 @@ class App extends Component {
 
     expect(getTransfromCode(code)).toBe(code);
   });
+
+  it('transform scss file', () => {
+    expect(getTransfromCode(`
+import { createElement, Component } from 'rax';
+import './app.scss';
+
+class App extends Component {
+  render() {
+    return <div className="header" />;
+  }
+}`)).toBe(`
+import { createElement, Component } from 'rax';
+import appStyleSheet from './app.scss';
+
+class App extends Component {
+  render() {
+    return <div style={_styleSheet["header"]} />;
+  }
+}
+const _styleSheet = appStyleSheet;`);
+  });
 });
