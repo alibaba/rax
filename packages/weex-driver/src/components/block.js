@@ -1,4 +1,3 @@
-
 export default {
 
   /**
@@ -8,7 +7,7 @@ export default {
    * @return {Object} weex component data
    */
   parse: function(component) {
-    component.type = 'text';
+    component.type = 'view';
     return component;
   }
 };

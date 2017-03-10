@@ -32,9 +32,7 @@ render(<Example />, null, {
 
 ## Support elements
 
-### div
-
-### p
+### Block: p, div, section, header, footer, nav, aside, main
 
 ### img
 

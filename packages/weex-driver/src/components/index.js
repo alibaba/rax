@@ -1,12 +1,17 @@
 
 import img from './img';
-import span from './span';
 import video from './video';
 import textarea from './textarea';
+import block from './block';
 
 export default {
   img,
-  span,
   video,
-  textarea
+  textarea,
+  nav: block,
+  header: block,
+  section: block,
+  footer: block,
+  aside: block,
+  main: block
 };
