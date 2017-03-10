@@ -16,15 +16,7 @@ import {isWeex} from 'universal-env';
 
 const logger = {
   log: content => {
-    try {
-      if (isWeex) {
-        content = typeof content == 'object' ? JSON.stringify(content) : content;
-        typeof nativeLog !== 'undefined' && nativeLog('log:' + content);
-      } else {
-        console && console.log(content);
-      }
-    } catch (e) {
-    }
+    console && console.log(content);
   }
 };
 

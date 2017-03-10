@@ -27,6 +27,11 @@ class Page extends Component {
         </View>
 
         <View>
+          <Text style={styles.title}>Tabheader</Text>
+          <TabheaderDemo />
+        </View>
+
+        <View>
           <Text style={styles.title}>Calendar</Text>
           <CalendarDemo />
         </View>

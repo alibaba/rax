@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "universal-env": "^0.2.3",
+    "universal-transition": "^0.2.3",
     "rax-view": "^0.2.3",
     "rax-text": "^0.2.3",
     "rax-touchable": "^0.2.3",
