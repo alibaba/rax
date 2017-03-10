@@ -54,6 +54,7 @@ class TabheaderDemo extends Component {
       <View>
         <View style={styles.container}>
           <TabHeader
+            id="tabheader"
             ref="tabheader"
             style={styles.tabheader}
             dataSource={['tab1', 'tab2', 'tab3', 'tab4', 'tab5', 'tab6', 'tab7', 'tab8']}
@@ -111,7 +112,6 @@ class TabheaderDemo extends Component {
           />
           <View style={{height: 50}} />
           <TabHeader
-            id="th5"
             style={styles.tabheader}
             dataSource={['tab1', 'tab2', 'tab3', 'tab4', 'tab5', 'tab6', 'tab7', 'tab8', 'tab9']}
             renderItem={renderItem}
