@@ -1,5 +1,5 @@
 
-import * as utils from '../utils';
+import {transformPropsAttrsToStyle, renamePropsAttr} from '../parseProps';
 
 export default {
 
@@ -13,8 +13,8 @@ export default {
     const {props} = component;
 
     // modify props
-    component.props = utils.transformPropsAttrsToStyle(props, ['width', 'height']);
-    component.props = utils.renamePropsAttr(props, 'autoplay', 'auto-play');
+    component.props = transformPropsAttrsToStyle(props, ['width', 'height']);
+    component.props = renamePropsAttr(props, 'autoplay', 'auto-play');
 
     return component;
   }

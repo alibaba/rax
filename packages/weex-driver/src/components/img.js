@@ -1,5 +1,5 @@
 
-import * as utils from '../utils';
+import {transformPropsAttrsToStyle} from '../parseProps';
 
 export default {
 
@@ -14,7 +14,7 @@ export default {
     component.type = 'image';
 
     // modify props
-    component.props = utils.transformPropsAttrsToStyle(props, ['width', 'height']);
+    component.props = transformPropsAttrsToStyle(props, ['width', 'height']);
 
     return component;
   }
