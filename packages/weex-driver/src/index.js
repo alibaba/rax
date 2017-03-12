@@ -4,7 +4,7 @@
 import {setNativeProps} from 'rax';
 import {convertUnit} from './style/unit';
 
-import * as components from './components';
+import * as w3cElements from './elements';
 
 const STYLE = 'style';
 const ID = 'id';
@@ -67,10 +67,10 @@ const Driver = {
   },
 
   createElement(component) {
-    const defineComponent = components[component.type];
+    const w3cElement = w3cElements[component.type];
 
-    if (defineComponent) {
-      component = defineComponent.parse(component);
+    if (w3cElement) {
+      component = w3cElement.parse(component);
     }
 
     let props = component.props;
