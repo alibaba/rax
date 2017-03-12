@@ -8,10 +8,11 @@
  */
 export function transformPropsAttrsToStyle(props, attrs) {
   props.style = props.style || {};
+
   attrs.forEach((attr) => {
     if (props[attr] && !props.style[attr]) {
       props.style[attr] = props[attr];
-      delete props.attr;
+      delete props[attr];
     }
   });
 
