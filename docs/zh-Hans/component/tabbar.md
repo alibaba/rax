@@ -2,28 +2,7 @@
 
 Tabbar 可以看作一个页面级的导航布局，包含了底部导航和切换的页面，外部不需要嵌套其它标签。
 
-## API
-
-**Tabbar**
-
-| 名称           | 类型    | 默认值  | 描述         |
-| :----------- | :---- | :--- | :--------- |
-| barTintColor | color |      | bar的背景色    |
-| style        | style |      | 附加在bar上的样式 |
-| tintColor    | color |      | 选中tab的文案颜色 |
-
-**Tabbar.Item**
-
-| 名称           | 类型            | 默认值  | 描述            |
-| :----------- | :------------ | :--- | :------------ |
-| badge        | string,number |      | 透出的消息数        |
-| icon         | image source  |      | icon地址        |
-| selectedIcon | image source  |      | tab选中时的icon地址 |
-| onPress      | Function      |      | 选中的回调         |
-# Tabbar 底部导航
-
-Tabbar 可以看作一个页面级的导航布局，包含了底部导航和切换的页面，外部不需要嵌套其它标签。  
-Tabbar 具有两种能力：
+其具有两种能力：
 
 - 能力一：可以看作一个页面级的导航布局，包含了导航条和切换的页面，外部不需要嵌套其它标签；
 - 能力二：仅创建导航条模块；
