@@ -33,7 +33,7 @@ render(<PerfTest name="world" />, null, {
 });
 
 Perf.stop();
-let measurements = perf.getLastMeasurements();
+let measurements = Perf.getLastMeasurements();
 
 Perf.printInclusive(measurements);
 Perf.printExclusive(measurements);
@@ -41,18 +41,18 @@ Perf.printExclusive(measurements);
 
 ## API
 
-### `perf.printExclusive`
+### `Perf.printExclusive`
 
 Prints the render time.
 
-### `perf.printInclusive`
+### `Perf.printInclusive`
 
 Prints the overall time taken.
 
-### `perf.printWasted`
+### `Perf.printWasted`
 
 Print newly inserted dom nodes in list as a waste of time
 
-### `perf.printOperations`
+### `Perf.printOperations`
 
 Prints operations, eg. "remove attributes" and "change style"
