@@ -1,14 +1,14 @@
 {
   "name": "rax-theme-chat",
   "author": "wssgcg1213",
-  "version": "0.0.2",
-  "raxThemeImages": [
+  "version": "0.0.3",
+  "snapshots": [
     "//gw.alicdn.com/tfs/TB1Ea3DPVXXXXabXpXXXXXXXXXX-1242-2208.png",
     "//gw.alicdn.com/tfs/TB1mU.uPVXXXXcZXpXXXXXXXXXX-1242-2208.png",
     "//gw.alicdn.com/tfs/TB1ZhjSPVXXXXb9aFXXXXXXXXXX-1242-2208.png",
     "//gw.alicdn.com/tfs/TB1vvcdPVXXXXXSaXXXXXXXXXXX-1242-2208.png"
   ],
-  "raxThemeDescription": "这是一个一个聊天软件的主题",
+  "description": "这是一个即时通讯软件的主题",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
