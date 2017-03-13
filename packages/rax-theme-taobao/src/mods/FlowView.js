@@ -19,7 +19,6 @@ class FlowView extends Component {
     }
   }
   render() {
-
     let style = this.props.style || {};
     if (style.height !== undefined) {
       delete style.height;

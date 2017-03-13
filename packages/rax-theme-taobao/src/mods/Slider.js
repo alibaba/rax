@@ -64,7 +64,6 @@ export default class Slider extends Component {
   }
 
   render() {
-
     if (isWeex) {
       const children = this.props.children;
       const nativeProps = this.handleNativeProps();

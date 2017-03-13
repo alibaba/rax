@@ -1,5 +1,5 @@
 import {createElement, Component, PropTypes} from 'rax';
-import View  from 'rax-view';
+import View from 'rax-view';
 import PanResponder from 'universal-panresponder';
 import isValidSwipe from './isValidSwipe';
 
@@ -86,7 +86,6 @@ export default class SwipeEvent extends Component {
             } else if ((this.props.horizontal || this.props.right) && dx > 0) {
               this.swipeDirection = directions.SWIPE_RIGHT;
             }
-
           } else if (validVertical) {
             this.velocityProp = 'vy';
             this.distanceProp = 'dy';

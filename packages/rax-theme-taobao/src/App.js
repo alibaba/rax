@@ -43,7 +43,7 @@ class App extends Component {
           ref={(scrollView) => {
             this.scrollView = scrollView;
           }}
-          onEndReached={this.handleLoadMore} 
+          onEndReached={this.handleLoadMore}
         >
 
           <Gotop bottom={100} onTop={() => {
@@ -70,9 +70,9 @@ class App extends Component {
 
 
           <View style={styles.appList}>
-            <MultiRow 
-              dataSource={data.appListData} 
-              cells={5} 
+            <MultiRow
+              dataSource={data.appListData}
+              cells={5}
               renderCell={(item, index) => {
                 return (
                   <View style={styles.appItem}>
@@ -100,9 +100,9 @@ class App extends Component {
               <Image style={styles.taoqianggouImage} source={{uri: data.verticalData.taoqianggouBg}} />
             </View>
             <View style={styles.verticalGroup}>
-              <MultiRow 
-                dataSource={data.verticalData.group} 
-                cells={2} 
+              <MultiRow
+                dataSource={data.verticalData.group}
+                cells={2}
                 renderCell={(item, index) => {
                   let boxStyle, imageStyle = styles.verticalGroupImageLine1;
                   if (index >= 2) {
@@ -128,24 +128,24 @@ class App extends Component {
           <View style={styles.bottom} />
 
 
-          <ListView 
-            renderHeader={() => { 
+          <ListView
+            renderHeader={() => {
               return (
                 <View style={styles.likeListHeader}>
                   <Text style={styles.likeListHeaderTitle}>猜你喜欢</Text>
                   <Text style={styles.likeListHeaderText}>实时推荐最适合你的宝贝</Text>
                 </View>
-              ); 
-            }} 
+              );
+            }}
             renderScrollComponent={(props) => {
               return <FlowView {...props} />;
             }}
-            renderRow={(item) => { 
+            renderRow={(item) => {
               return (
                 <View style={styles.likeListItem}>
-                  <MultiRow 
-                    dataSource={item} 
-                    cells={2} 
+                  <MultiRow
+                    dataSource={item}
+                    cells={2}
                     renderCell={(itemInfo, index) => {
                       return (
                         <View>
@@ -158,9 +158,9 @@ class App extends Component {
                   } />
                 </View>
               );
-            }} 
+            }}
             dataSource={data.likeListdata}
-            onEndReached={this.handleLoadMoreInside} 
+            onEndReached={this.handleLoadMoreInside}
           />
           <View style={styles.bottom} />
 
@@ -169,9 +169,9 @@ class App extends Component {
 
 
         <View style={styles.bottomBar}>
-          <MultiRow 
-            dataSource={data.barData} 
-            cells={5} 
+          <MultiRow
+            dataSource={data.barData}
+            cells={5}
             renderCell={(item, index) => {
               return (
                 <View style={styles.bottomBarItem}>

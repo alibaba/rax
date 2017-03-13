@@ -64,14 +64,13 @@ export default class Slide extends Component {
     this.autoPlayTimer && clearInterval(this.autoPlayTimer);
     this.autoPlayTimer = setInterval(() => {
       if (this.isLoopEnd()) return;
-      //根据 index 和偏移改变位置
+      // 根据 index 和偏移改变位置
       this.slideTo(this.index, this.DIRECTION.LEFT);
     }, parseFloat(autoplayInterval));
   }
 
   // 改变 slider 的框子位置
   slideTo(index, direction) {
-
     if (this.isSwiping) return;
 
     // this.index = direction === this.DIRECTION.LEFT ? index + 1 : (index - 1 < 0 ? this.total + index - 1 : index - 1);
@@ -89,7 +88,7 @@ export default class Slide extends Component {
     this.loopIdx = this.index < 0 && realIndex !== 0 ? this.total - realIndex : realIndex;
     let childNum = 'child' + this.loopIdx;
     let childView = findDOMNode(this.refs[childNum]);
-    childView.style.left = (this.offsetX) + 'px';
+    childView.style.left = this.offsetX + 'px';
 
     this.props.onChange({index: this.loopIdx});
     this.setState({
@@ -184,7 +183,7 @@ export default class Slide extends Component {
   getPages = () => {
     const children = this.props.children;
     if (!children.length || children.length <= 1) {
-      return (<View style={styles.childrenStyle}>{children}</View>);
+      return <View style={styles.childrenStyle}>{children}</View>;
     }
 
     return children.map((child, index) => {
@@ -216,7 +215,7 @@ export default class Slide extends Component {
       height: this.height
     };
 
-    return children.length && children.length > 1 ? (
+    return children.length && children.length > 1 ?
       <SwipeEvent style={[styles.swipeWrapper, style]}
         onSwipeBegin={this.onSwipeBegin}
         onSwipeEnd={this.onSwipeEnd}
@@ -229,11 +228,11 @@ export default class Slide extends Component {
           {pages}
         </View>
       </SwipeEvent>
-    ) : (
+     :
       <View ref="swipeView" style={[styles.swipeStyle, style]}>
         {pages}
       </View>
-    );
+    ;
   }
 
   render() {

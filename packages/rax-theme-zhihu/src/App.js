@@ -26,9 +26,9 @@ class App extends Component {
 
 
         <View style={styles.headerBar}>
-          <MultiRow 
-            dataSource={data.headerData} 
-            cells={3} 
+          <MultiRow
+            dataSource={data.headerData}
+            cells={3}
             renderCell={(item, index) => {
               let firstStyle = {};
               if (index == 0) {
@@ -45,8 +45,8 @@ class App extends Component {
         </View>
 
 
-        <ListView 
-          renderRow={(item) => { 
+        <ListView
+          renderRow={(item) => {
             return (
               <View style={styles.listItem}>
                 <View style={styles.bottom} />
@@ -72,15 +72,15 @@ class App extends Component {
                 </View>
               </View>
             );
-          }} 
+          }}
           dataSource={data.listdata}
         />
 
 
         <View style={styles.bottomBar}>
-          <MultiRow 
-            dataSource={data.barData} 
-            cells={5} 
+          <MultiRow
+            dataSource={data.barData}
+            cells={5}
             renderCell={(item, index) => {
               let colorStyle = {};
               if (index == 0) {
