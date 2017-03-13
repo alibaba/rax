@@ -1,7 +1,7 @@
 'use strict';
 
 const imageSize = require('image-size');
-const mimes = require('./mimes.json');
+const mimes = require('../mimes.json');
 
 function getMime(path) {
   const extension = path.split('.').pop().toLowerCase();
@@ -18,7 +18,7 @@ module.exports = function base64ImageLoader(content) {
   try {
     const _dimensions = imageSize(content);
     Object.assign(dimensions, _dimensions);
-  } catch(err) {}
+  } catch (err) {}
   return `module.exports = {
     uri: "data:${getMime(this.resourcePath)};base64,${content.toString('base64')}",
     width: ${dimensions.width || 'undefined'},

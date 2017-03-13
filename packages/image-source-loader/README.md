@@ -11,10 +11,10 @@ If your looking for a loader that simple encodes as base64 try [base64-loader](h
 ## Usage
 
 ``` javascript
-const source = require("image-source-image!./1x1.png");
+const source = require("image-source!./1x1.png");
 
-// file => {
-//   uri: "data:image/png;base64,iVBORw0KGgoAAAANS....",
+// source => {
+//   uri: "data:image/png;base64,iVBORw0KGgoAAAANS...",
 //   width: 1,
 //   height: 1
 // }
