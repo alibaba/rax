@@ -1,24 +1,27 @@
-# rax-starter-kit
+# rax-theme-taobao
 
-## Getting Started
+## 描述
 
-### `npm run start`
+这是一个手机淘宝App示例，你可以在[这里](https://github.com/alibaba/rax/tree/master/packages/rax-theme-taobao)查看源码。
 
-Runs the app in development mode.
+## 使用说明
 
-Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
+### 安装依赖
 
-The page will reload if you make edits.
+```bash
+npm install
+```
 
-### `npm run lint`
+### 在 dev 模式下运行
 
-You will see the lint errors in the console.
+```bash
+npm start
+```
 
-### `npm run build`
+然后在浏览器中打开 [http://localhost:8080](http://localhost:8080) 预览。
 
-Builds the app for production to the `build` folder.
+### 构建
 
-## Universal "Gotchas"
-
-- DOM & DOM like **`window`** & **`document`** do not exist on the server - so using them, or any library that uses them (jQuery for example) will not work.
-- If you need to use them, consider limiting them to wrapping them situationally with the imported *isWeb / isNode / isWeex* features from Universal. `import {isWeb, isWeex, isNode} from 'universal-env'`;
+```bash
+npm run build
+```
