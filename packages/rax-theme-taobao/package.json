@@ -1,7 +1,13 @@
 {
-  "name": "rax-test-project",
+  "name": "rax-theme-taobao",
   "author": "yacheng.sz",
   "version": "0.0.0",
+  "snapshots": [
+    "//gw.alicdn.com/tfs/TB10fVvQXXXXXcWXXXXXXXXXXXX-377-667.png",
+    "//gw.alicdn.com/tfs/TB119sRPVXXXXcUXVXXXXXXXXXX-376-668.png",
+    "//gw.alicdn.com/tfs/TB13rdlQXXXXXbbXpXXXXXXXXXX-376-669.png"
+  ],
+  "description": "这是一个手机淘宝App示例",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --no-info",
     "build": "rm -rf build && NODE_ENV=production ./node_modules/.bin/webpack",
