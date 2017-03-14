@@ -61,7 +61,7 @@ npm run start
 
 ```js
 import {createElement, Component, render} from 'rax';
-import {Text} from 'rax-components';
+import {Text} from 'rax-text';
 
 class Hello extends Component {
   render() {
