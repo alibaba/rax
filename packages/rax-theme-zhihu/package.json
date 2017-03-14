@@ -7,6 +7,10 @@
     "https://gw.alicdn.com/tfs/TB1sjJuQXXXXXc0XXXXXXXXXXXX-377-669.png"
   ],
   "description": "这是一个问答类App列表页示例",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --no-info",
     "build": "rm -rf build && NODE_ENV=production ./node_modules/.bin/webpack",
