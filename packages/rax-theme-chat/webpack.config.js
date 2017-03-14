@@ -26,9 +26,9 @@ var paths = {
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.js'),
+  appIndexJs: resolveApp('templates/default/index.js'),
   appPackageJson: resolveApp('package.json'),
-  appSrc: resolveApp('src'),
+  appSrc: resolveApp('templates/default'),
   appNodeModules: resolveApp('node_modules'),
   nodePaths: nodePaths
 };
@@ -157,10 +157,9 @@ module.exports = {
         test: /\.json$/,
         loader: 'json'
       },
-      // load inline images using image-source-loader for Image
       {
         test: /\.(png|jpe?g|gif)$/i,
-        loader: 'image-source'
+        loader: 'base64-image'
       }
     ]
   }

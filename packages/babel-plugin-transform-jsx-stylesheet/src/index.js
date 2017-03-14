@@ -3,6 +3,7 @@ import camelcase from 'camelcase';
 
 const STYLE_SHEET_NAME = '_styleSheet';
 const NAME_SUFFIX = 'StyleSheet';
+const cssSuffixs = ['.css', '.scss', '.sass', '.less'];
 
 export default function({ types: t, template }) {
   const mergeStylesFunctionTemplate = template(`
@@ -97,12 +98,13 @@ function _mergeStyles() {
       },
       ImportDeclaration({ node }, { file }) {
         const sourceValue = node.source.value;
-        const cssIndex = sourceValue.indexOf('.css');
+        const extname = path.extname(sourceValue);
+        const cssIndex = cssSuffixs.indexOf(extname);
         // Do not convert `import styles from './foo.css'` kind
-        if (node.importKind !== 'value' && cssIndex > 0) {
+        if (node.importKind !== 'value' && cssIndex > -1) {
           let cssFileCount = file.get('cssFileCount') || 0;
           let cssParamIdentifiers = file.get('cssParamIdentifiers') || [];
-          const cssFileBaseName = camelcase(path.basename(sourceValue, '.css'));
+          const cssFileBaseName = camelcase(path.basename(sourceValue, extname));
           const styleSheetIdentifier = t.identifier(`${cssFileBaseName + NAME_SUFFIX}`);
 
           node.specifiers = [t.importDefaultSpecifier(styleSheetIdentifier)];

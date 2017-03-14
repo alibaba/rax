@@ -1,7 +1,17 @@
 {
-  "name": "__YourProjectName__",
-  "author": "__AuthorName__",
+  "name": "rax-theme-taobao",
+  "author": "yacheng.sz",
   "version": "0.0.0",
+  "snapshots": [
+    "//gw.alicdn.com/tfs/TB10fVvQXXXXXcWXXXXXXXXXXXX-377-667.png",
+    "//gw.alicdn.com/tfs/TB119sRPVXXXXcUXVXXXXXXXXXX-376-668.png",
+    "//gw.alicdn.com/tfs/TB13rdlQXXXXXbbXpXXXXXXXXXX-376-669.png"
+  ],
+  "description": "这是一个手机淘宝App示例",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --no-info",
     "build": "rm -rf build && NODE_ENV=production ./node_modules/.bin/webpack",
@@ -10,7 +20,15 @@
   "dependencies": {
     "rax": "^0.2.3",
     "rax-view": "^0.2.3",
-    "rax-text": "^0.2.3"
+    "rax-text": "^0.2.3",
+    "rax-image": "^0.2.3",
+    "rax-listview": "^0.2.3",
+    "rax-multirow": "^0.2.3",
+    "rax-icon": "^0.2.3",
+    "rax-gotop": "^0.2.3",
+    "rax-tabheader": "^0.2.3",
+    "rax-scrollview": "^0.2.3",
+    "universal-panresponder": "^0.2.3"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
@@ -29,7 +47,6 @@
     "stylesheet-loader": "^0.2.3",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
     "webpack": "^1.13.3",
-    "webpack-dev-server": "^1.16.2",
-    "image-source-loader": "^0.1.1"
+    "webpack-dev-server": "^1.16.2"
   }
 }
