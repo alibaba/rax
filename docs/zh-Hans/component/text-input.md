@@ -44,6 +44,7 @@ import TextInput from 'rax-textinput';
 ```jsx
 // demo
 import {createElement, Component, render} from 'rax';
+import TextInput from 'rax-textinput';
 
 render(<TextInput
   placeholder={'Enter text to see events'}
