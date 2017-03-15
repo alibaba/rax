@@ -34,7 +34,7 @@ import ListView from 'rax-listview';
 
 ## 基础用法
 
-作为页面级布局使用，必须穿入 renderRow、 dataSource、 onEndReached
+作为页面级布局使用，必须传入 renderRow、 dataSource、 onEndReached
 
 * renderRow 是每一行渲染的模板
 * dataSource 是需要渲染的数据
@@ -212,7 +212,7 @@ class App extends Component {
           onEndReached={this.handleLoadMore} 
         />
         </ScrollView>
-      </View>;
+      </View>
     );
   }
 }
