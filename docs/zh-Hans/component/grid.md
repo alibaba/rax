@@ -30,7 +30,7 @@ import { Row, Col } from 'rax-grid';
 </Row>
 ```
 
-等宽两列布局：
+## 等宽两列布局
 
 ![](https://img.alicdn.com/tps/TB1Dk9OKVXXXXciapXXXXXXXXXX-415-115.png)
 
@@ -62,7 +62,7 @@ const styles = {
 </Row>
 ```
 
-### 基本示例
+## 基本示例
 
 ```jsx
 // demo
