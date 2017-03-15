@@ -50,7 +50,7 @@ describe('moment', () => {
   });
 
   it('ios week day', () => {
-    expect(moment('2017-3-14').isoWeekday()).toEqual(1);
+    expect(moment('2017-03-14').isoWeekday()).toEqual(2);
   });
 
   it('is same month', () => {
@@ -63,7 +63,7 @@ describe('moment', () => {
   });
 
   it('get time', () => {
-    expect(moment('2017-3-14').getTime(24)).toEqual(1489420800000);
+    expect(moment('2017-03-14').getTime()).toEqual(1489449600000);
   });
 
   it('moment input is date', () => {
