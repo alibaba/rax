@@ -1,6 +1,18 @@
 # Video 视频播放
 
-Rax 中的视频播放组件。
+Rax 中的视频播放组件。更丰富的视频功能参见 [Player](/guide/player) 组件
+
+## 安装
+
+```bash
+$ npm install rax-video --save
+```
+
+## 引用
+
+```jsx
+import Video from 'rax-video';
+```
 
 ## 属性
 
@@ -11,16 +23,12 @@ Rax 中的视频播放组件。
 
 同时支持任意自定义属性的透传
 
-## 引用
+## 基本示例
 
 ```jsx
+// demo
+import {createElement, Component, render} from 'rax';
 import Video from 'rax-video';
+
+render(<Video autoPlay src="https://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4" />);
 ```
-
-## 示例
-
-```jsx
-<Video autoPlay src="//path/to/url" />
-```
-
-更丰富的视频功能参见 [Player](/guide/player) 组件

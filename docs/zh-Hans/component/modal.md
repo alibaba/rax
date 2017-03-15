@@ -6,10 +6,25 @@
 $ npm install rax-modal --save
 ```
 
-## 使用
+## 引用
 
 ```jsx
-/** @jsx createElement */
+import Modal from 'rax-modal';
+```
+
+## 属性
+
+| 名称           | 类型       | 默认值   | 描述              |
+| :----------- | :------- | :---- | :-------------- |
+| onShow       | Function |       | 显示的时候触发回调       |
+| onHide       | Function |       | 隐藏的时候触发回调       |
+| contentStyle | Object   |       | Modal 内容的 style |
+| visible      | Boolean  | false | 模态框是否可见         |
+
+## 基本使用
+
+```jsx
+// demo 
 import {Component, createElement, render} from 'rax';
 import Text from 'rax-text';
 import View from 'rax-view';
@@ -53,9 +68,3 @@ class Example extends Component {
 render(<Example />);
 ```
 
-## Props
-
-* onShow - Show callback.
-* onHide - Hide callback. 
-* contentStyle - CSS styles to apply to the modal's content
-* visible - Modal visible at initialization.

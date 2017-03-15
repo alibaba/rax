@@ -2,7 +2,19 @@
 
 TextInput 是唤起用户输入的基础组件。  
 
-当定义 multiline 输入多行文字时其功能相当于 textarea。  
+当定义 multiline 输入多行文字时其功能相当于 textarea。 
+
+## 安装
+
+```bash
+$ npm install rax-textinput --save 
+```
+
+## 引用
+
+```jsx
+import TextInput from 'rax-textinput';
+```
 
 ## 属性
 
@@ -27,16 +39,13 @@ TextInput 是唤起用户输入的基础组件。
 | onChange           | Function |      | 文本框内容变化时调用此函数                            |
 | onInput            | Function |      | 文本框输入内容时调用此函数                            |
 
-## 引用
+## 基本示例
 
 ```jsx
-import TextInput from 'rax-textinput';
-```
+// demo
+import {createElement, Component, render} from 'rax';
 
-## 示例
-
-```jsx
-<TextInput
+render(<TextInput
   placeholder={'Enter text to see events'}
   autoFocus multiline
   onFocus={() => console.log('onFocus')}
@@ -47,5 +56,5 @@ import TextInput from 'rax-textinput';
     height: '1000rem',
     border: '1px solid #000'
   }}
-/>
+/>);
 ```

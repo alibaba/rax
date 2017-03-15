@@ -1,5 +1,13 @@
 # Slider 轮播
 
+轮播组件，就是以幻灯片的方式，在页面中横向展示诸多内容的组件。 轮播内容相互独立，前后在内容以及数据上都不存在逻辑关系。
+
+## 安装
+
+```bash
+$ npm install rax-slider --save
+```
+
 ## 引用
 
 ```jsx
@@ -62,14 +70,13 @@ slideTo(index) {
 
 
 
-## 示例
+## 基本示例
 
 
 <img src="https://img.alicdn.com/tps/TB1Wk18KVXXXXbYXVXXXXXXXXXX-392-211.gif" alt="图片名称" align=center />
 
 ```jsx
-/** @jsx createElement */
-
+// demo
 import {Component, createElement, render} from 'rax';
 
 import Text from 'rax-text';
@@ -148,8 +155,6 @@ class SlideDemo extends Component {
   }
 }
 
-render(
-  <SlideDemo />
-);
+render(<SlideDemo />);
 ```
 
