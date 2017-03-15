@@ -1,9 +1,5 @@
 
-
-import Driver from '../';
-
 describe('index.js', () => {
-  it('@TODO', () => {
-    // @TODO
+  it('rax-style-unit', () => {
   });
 });
