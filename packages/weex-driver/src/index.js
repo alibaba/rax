@@ -9,7 +9,6 @@ const STYLE = 'style';
 const ID = 'id';
 const TEXT = 'text';
 const FULL_WIDTH_REM = 750;
-const DOCUMENT_FRAGMENT_NODE = 11;
 const nodeMaps = {};
 /* global __weex_document__ */
 const document = typeof __weex_document__ === 'object' ?
@@ -21,8 +20,8 @@ const Driver = {
     return nodeMaps[id];
   },
 
-  getChildNodes(node) {
-    return node.children;
+  getParentNode(node) {
+    return node.parentNode;
   },
 
   createBody() {
@@ -35,13 +34,6 @@ const Driver = {
     documentElement.appendChild(body);
 
     return body;
-  },
-
-  createFragment() {
-    return {
-      nodeType: DOCUMENT_FRAGMENT_NODE,
-      childNodes: []
-    };
   },
 
   createComment(content) {
@@ -67,7 +59,6 @@ const Driver = {
 
   createElement(component) {
     const w3cElement = w3cElements[component.type];
-
     if (w3cElement) {
       component = w3cElement.parse(component);
     }
@@ -90,18 +81,11 @@ const Driver = {
   },
 
   appendChild(node, parent) {
-    if (parent.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return parent.childNodes.push(node);
-    } else if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return node.childNodes.map(child => {
-        return this.appendChild(child, parent);
-      });
-    } else {
-      return parent.appendChild(node);
-    }
+    return parent.appendChild(node);
   },
 
   removeChild(node, parent) {
+    parent = parent || node.parentNode;
     let id = node.attr && node.attr[ID];
     if (id != null) {
       nodeMaps[id] = null;
@@ -110,6 +94,7 @@ const Driver = {
   },
 
   replaceChild(newChild, oldChild, parent) {
+    parent = parent || oldChild.parentNode;
     let previousSibling = oldChild.previousSibling;
     let nextSibling = oldChild.nextSibling;
     this.removeChild(oldChild, parent);
@@ -124,23 +109,13 @@ const Driver = {
   },
 
   insertAfter(node, after, parent) {
-    if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return node.childNodes.map((child, index) => {
-        return this.insertAfter(child, node.childNodes[index - 1] || after, parent);
-      });
-    } else {
-      return parent.insertAfter(node, after);
-    }
+    parent = parent || after.parentNode;
+    return parent.insertAfter(node, after);
   },
 
   insertBefore(node, before, parent) {
-    if (node.nodeType === DOCUMENT_FRAGMENT_NODE) {
-      return node.childNodes.map((child, index) => {
-        return this.insertBefore(child, before, parent);
-      });
-    } else {
-      return parent.insertBefore(node, before);
-    }
+    parent = parent || before.parentNode;
+    return parent.insertBefore(node, before);
   },
 
   addEventListener(node, eventName, eventHandler) {
@@ -152,7 +127,7 @@ const Driver = {
   },
 
   removeAllEventListeners(node) {
-    // noop
+    // Noop
   },
 
   removeAttribute(node, propKey, propValue) {
