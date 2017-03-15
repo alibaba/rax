@@ -5,7 +5,7 @@ import Touchable from 'rax-touchable';
 
 import Day from './Day';
 
-import moment from 'moment';
+import moment from './moment';
 import styles from './styles';
 
 const DEVICE_WIDTH = 750;
@@ -64,7 +64,7 @@ export default class Calendar extends Component {
 
     eventDates.forEach(event => {
       const date = moment(event);
-      const month = moment(date).startOf('month').format();
+      const month = moment(date).startOfMonth().format();
       if (!parsedDates[month]) {
         parsedDates[month] = {};
       }
@@ -79,13 +79,13 @@ export default class Calendar extends Component {
   }
 
   onPrev = () => {
-    const newMoment = moment(this.state.currentMonthMoment).subtract(1, 'month');
+    const newMoment = moment(this.state.currentMonthMoment).addMonth(-1);
     this.setState({ currentMonthMoment: newMoment });
     this.props.onTouchPrev && this.props.onTouchPrev(newMoment);
   }
 
   onNext = () => {
-    const newMoment = moment(this.state.currentMonthMoment).add(1, 'month');
+    const newMoment = moment(this.state.currentMonthMoment).addMonth(1);
     this.setState({ currentMonthMoment: newMoment });
     this.props.onTouchNext && this.props.onTouchNext(newMoment);
   }
@@ -95,7 +95,7 @@ export default class Calendar extends Component {
       renderIndex = 0,
       weekRows = [],
       days = [],
-      startOfArgMonthMoment = argMoment.startOf('month');
+      startOfArgMonthMoment = argMoment.startOfMonth();
 
     const
       selectedMoment = moment(this.state.selectedMoment),
@@ -104,21 +104,26 @@ export default class Calendar extends Component {
       todayIndex = todayMoment.date() - 1,
       argMonthDaysCount = argMoment.daysInMonth(),
       offset = (startOfArgMonthMoment.isoWeekday() - weekStart + 7) % 7,
-      argMonthIsToday = argMoment.isSame(todayMoment, 'month'),
+      argMonthIsToday = argMoment.isSameMonth(todayMoment),
       selectedIndex = moment(selectedMoment).date() - 1,
-      selectedMonthIsArg = selectedMoment.isSame(argMoment, 'month'),
+      selectedMonthIsArg = selectedMoment.isSameMonth(argMoment),
       startMoment = this.props.startDate && moment(this.props.startDate),
       endMoment = this.props.endDate && moment(this.props.endDate);
 
     const events = eventDatesMap !== null
-      ? eventDatesMap[argMoment.startOf('month').format()]
+      ? eventDatesMap[argMoment.startOfMonth().format()]
       : null;
+
+    if (!argMoment.isValid()) {
+      console.error('[currentMonthMoment] is not valid, make sure [selectedDate startDate endDate today] are valid date');
+      return null;
+    }
 
     do {
       const dayIndex = renderIndex - offset;
       const isoWeekday = (renderIndex + weekStart) % 7;
-      const date = moment(startOfArgMonthMoment).set('date', dayIndex + 1);
-      const isDisabled = startMoment && date < startMoment || endMoment && date > endMoment;
+      const date = moment(startOfArgMonthMoment).setDate(dayIndex + 1);
+      const isDisabled = startMoment && date.getTime() < startMoment.getTime() || endMoment && date.getTime() > endMoment.getTime();
 
       if (dayIndex >= 0 && dayIndex < argMonthDaysCount) {
         days.push(
@@ -189,7 +194,6 @@ export default class Calendar extends Component {
   }
 
   renderTopBar() {
-    let localizedMonth = this.props.monthNames[this.state.currentMonthMoment.month()];
     return this.props.showControls
     ?
         <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
@@ -231,11 +235,7 @@ export default class Calendar extends Component {
       <View style={[styles.calendarContainer, this.props.customStyle.calendarContainer]}>
         {this.renderTopBar()}
         {this.props.showDayHeadings && this.renderHeading(this.props.titleFormat)}
-        <View ref={
-            calendar => {
-              this._calendar = calendar;
-            }
-          }>
+        <View>
           {calendarDates.map((date) => this.renderMonthView(moment(date), eventDatesMap))}
         </View>
       </View>
