@@ -16,6 +16,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.3"
+    "universal-env": "^0.2.3",
+    "rax-style-unit": "0.x.x"
   }
 }
