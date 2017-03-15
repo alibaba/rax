@@ -1,9 +1,3 @@
-/* @flow */
-
-import type {
-  NavigationSceneRendererProps,
-} from '../TypeDefinition';
-
 import I18nManager from '../I18nManager';
 
 
@@ -25,7 +19,7 @@ import I18nManager from '../I18nManager';
 /**
  * Render the initial style when the initial layout isn't measured yet.
  */
-function forInitial(props: NavigationSceneRendererProps): Object {
+function forInitial(props) {
   const {
     navigationState,
     scene,
@@ -47,7 +41,7 @@ function forInitial(props: NavigationSceneRendererProps): Object {
 /**
  * Standard iOS-style slide in from the right.
  */
-function forHorizontal(props: NavigationSceneRendererProps): Object {
+function forHorizontal(props) {
   const {
     layout,
     position,
@@ -64,14 +58,11 @@ function forHorizontal(props: NavigationSceneRendererProps): Object {
   // Add ~30px to the interpolated width screens width for horizontal movement. This allows
   // the screen's shadow to go screen fully offscreen without abruptly dissapearing
   const width = layout.initWidth + 30;
-  const outputRange = I18nManager.isRTL ?
-    ([-width, 0, 10, 10]: Array<number>) :
-    ([width, 0, -10, -10]: Array<number>);
-
+  const outputRange = I18nManager.isRTL ? [-width, 0, 10, 10] : [width, 0, -10, -10];
 
   const opacity = position.interpolate({
     inputRange,
-    outputRange: ([1, 1, 0.3, 0]: Array<number>),
+    outputRange: [1, 1, 0.3, 0],
   });
 
   const translateY = 0;
@@ -92,7 +83,7 @@ function forHorizontal(props: NavigationSceneRendererProps): Object {
 /**
  * Standard iOS-style slide in from the bottom (used for modals).
  */
-function forVertical(props: NavigationSceneRendererProps): Object {
+function forVertical(props) {
   const {
     layout,
     position,
@@ -109,13 +100,13 @@ function forVertical(props: NavigationSceneRendererProps): Object {
 
   const opacity = position.interpolate({
     inputRange,
-    outputRange: ([1, 1, 0.3, 0]: Array<number>),
+    outputRange: [1, 1, 0.3, 0],
   });
 
   const translateX = 0;
   const translateY = position.interpolate({
     inputRange,
-    outputRange: ([height, 0, 0, 0]: Array<number>),
+    outputRange: [height, 0, 0, 0],
   });
 
   return {
@@ -130,7 +121,7 @@ function forVertical(props: NavigationSceneRendererProps): Object {
 /**
  * Standard Android-style fade in from the bottom.
  */
-function forFadeFromBottomAndroid(props: NavigationSceneRendererProps): Object {
+function forFadeFromBottomAndroid(props) {
   const {
     layout,
     position,
@@ -147,13 +138,13 @@ function forFadeFromBottomAndroid(props: NavigationSceneRendererProps): Object {
 
   const opacity = position.interpolate({
     inputRange,
-    outputRange: ([0, 1, 1, 0]: Array<number>),
+    outputRange: [0, 1, 1, 0],
   });
 
   const translateX = 0;
   const translateY = position.interpolate({
     inputRange,
-    outputRange: ([50, 0, 0, 0]: Array<number>),
+    outputRange: [50, 0, 0, 0],
   });
 
   return {
@@ -165,7 +156,7 @@ function forFadeFromBottomAndroid(props: NavigationSceneRendererProps): Object {
   };
 }
 
-function canUseNativeDriver(isVertical: boolean): boolean {
+function canUseNativeDriver(isVertical) {
   // The native driver can be enabled for this interpolator animating
   // opacity, translateX, and translateY is supported by the native animation
   // driver on iOS and Android.

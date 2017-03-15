@@ -1,5 +1,3 @@
-/* @flow */
-
 import pathToRegexp from 'path-to-regexp';
 
 import NavigationActions from '../NavigationActions';
@@ -8,20 +6,6 @@ import getScreenForRouteName from './getScreenForRouteName';
 import StateUtils from '../StateUtils';
 import validateRouteConfigMap from './validateRouteConfigMap';
 
-import type {
-  NavigationRoute,
-  NavigationAction,
-  NavigationComponent,
-  NavigationNavigateAction,
-  NavigationRouter,
-  NavigationRouteConfigMap,
-  NavigationResetAction,
-  NavigationParams,
-  NavigationState,
-  NavigationStackAction,
-  NavigationStackRouterConfig,
-} from '../TypeDefinition';
-
 const uniqueBaseId = `id-${Date.now()}`;
 let uuidCount = 0;
 function _getUuid() {
@@ -29,9 +13,9 @@ function _getUuid() {
 }
 
 export default (
-  routeConfigs: NavigationRouteConfigMap,
-  stackConfig: NavigationStackRouterConfig = {},
-): NavigationRouter => {
+  routeConfigs,
+  stackConfig = {},
+) => {
   // Fail fast on invalid route definitions
   validateRouteConfigMap(routeConfigs);
 
@@ -76,7 +60,7 @@ export default (
 
   return {
 
-    getComponentForState(state: NavigationState): NavigationComponent {
+    getComponentForState(state) {
       const activeChildRoute = state.routes[state.index];
       const { routeName } = activeChildRoute;
       if (childRouters[routeName]) {
@@ -85,17 +69,17 @@ export default (
       return getScreenForRouteName(routeConfigs, routeName);
     },
 
-    getComponentForRouteName(routeName: string): NavigationComponent {
+    getComponentForRouteName(routeName) {
       return getScreenForRouteName(routeConfigs, routeName);
     },
 
-    getStateForAction(action: NavigationStackAction, state: ?NavigationState) {
+    getStateForAction(action, state) {
       action = NavigationActions.mapDeprecatedActionAndWarn(action);
 
       // Set up the initial state if needed
       if (!state) {
         let route = {};
-        if (action.type === NavigationActions.NAVIGATE && (childRouters[action.routeName] !== undefined)) {
+        if (action.type === NavigationActions.NAVIGATE && childRouters[action.routeName] !== undefined) {
           return {
             index: 0,
             routes: [
@@ -183,11 +167,11 @@ export default (
       }
 
       if (action.type === NavigationActions.RESET) {
-        const resetAction = ((action: any): NavigationResetAction);
+        const resetAction = action;
 
         return {
           ...state,
-          routes: resetAction.actions.map((action: NavigationNavigateAction, index: number) => {
+          routes: resetAction.actions.map((action, index) => {
             const router = childRouters[action.routeName];
             if (router) {
               return {
@@ -230,14 +214,14 @@ export default (
       return state;
     },
 
-    getPathAndParamsForState(state: NavigationState): {path: string, params?: NavigationParams} {
+    getPathAndParamsForState(state) {
       // TODO: implement this!
       return {
         path: '',
       };
     },
 
-    getActionForPathAndParams(pathToResolve: string): ?NavigationAction {
+    getActionForPathAndParams(pathToResolve) {
       // If the path is empty (null or empty string)
       // just return the initial route action
       if (!pathToResolve) {

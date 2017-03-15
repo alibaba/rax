@@ -1,13 +1,7 @@
 /* @flow */
 
 import {createElement, PureComponent} from 'rax';
-
 import addNavigationHelpers from './addNavigationHelpers';
-
-import type {
-  NavigationScreenProp,
-  NavigationAction,
-} from './TypeDefinition';
 
 type InjectedProps<N> = {
   childNavigationProps: {
@@ -19,8 +13,8 @@ type InjectedProps<N> = {
  * HOC which caches the child navigation items.
  */
 export default function withCachedChildNavigation<T: *, N: *>(
-  Comp: ReactClass<T & InjectedProps<N>>
-): ReactClass<T> {
+  Comp
+) {
   return class extends PureComponent {
 
     static displayName = `withCachedChildNavigation(${Comp.displayName || Comp.name})`;
@@ -35,12 +29,12 @@ export default function withCachedChildNavigation<T: *, N: *>(
       this._updateNavigationProps(nextProps.navigation);
     }
 
-    _childNavigationProps: {
-      [key: string]: NavigationScreenProp<N, NavigationAction>,
-    };
+    // _childNavigationProps: {
+    //   [key: string]: NavigationScreenProp<N, NavigationAction>,
+    // };
 
     _updateNavigationProps = (
-      navigation: NavigationScreenProp<N, NavigationAction>
+      navigation
     ) => {
       // Update props for each child route
       if (!this._childNavigationProps) {

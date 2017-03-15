@@ -1,20 +1,13 @@
-/* @flow */
-
 import invariant from 'invariant';
-
-import type {
-  NavigationComponent,
-  NavigationRouteConfigMap,
-} from '../TypeDefinition';
 
 /**
  * Simple helper that gets a single screen (React component or navigator)
  * out of the navigator config.
  */
 export default function getScreenForRouteName( // eslint-disable-line consistent-return
-  routeConfigs: NavigationRouteConfigMap,
+  routeConfigs,
   routeName: string,
-): NavigationComponent {
+) {
   const routeConfig = routeConfigs[routeName];
 
   invariant(

@@ -1,21 +1,12 @@
-/* @flow */
-
 import {createElement, Component} from 'rax';
-
-import type {
-  NavigationRouter,
-  NavigationRoute,
-  NavigationNavigator,
-  NavigationNavigatorProps,
-} from '../TypeDefinition';
 
 /**
  * Creates a navigator based on a router and a view that renders the screens.
  */
-const createNavigator = (router: NavigationRouter) =>
-  (View: NavigationNavigator<*>) => {
+const createNavigator = (router) =>
+  (View) => {
     class Navigator extends Component {
-      props: NavigationNavigatorProps;
+      // props: NavigationNavigatorProps;
 
       static router = router;
 

@@ -7,62 +7,50 @@ import View from 'rax-view';
 
 import invariant from 'invariant';
 
-import NavigationScenesReducer from './ScenesReducer';
+import navigationScenesReducer from './ScenesReducer';
 import TransitionConfigs from './TransitionConfigs';
 import addNavigationHelpers from '../addNavigationHelpers';
 import NavigationPropTypes from '../PropTypes';
 
-import type {
-  NavigationAnimatedValue,
-  NavigationLayout,
-  NavigationScene,
-  NavigationState,
-  NavigationRoute,
-  NavigationAction,
-  NavigationScreenProp,
-  NavigationTransitionProps,
-  NavigationTransitionSpec,
-} from '../TypeDefinition';
-
-type Props = {
-  configureTransition: (
-    transitionProps: NavigationTransitionProps,
-    prevTransitionProps: ?NavigationTransitionProps,
-  ) => NavigationTransitionSpec,
-  navigation: NavigationScreenProp<NavigationState, NavigationAction>,
-  onTransitionEnd: () => void,
-  onTransitionStart: () => void,
-  render: (
-    transitionProps: NavigationTransitionProps,
-    prevTransitionProps: ?NavigationTransitionProps
-  ) => any,
-  style: any,
-};
-
-type State = {
-  layout: NavigationLayout,
-  position: NavigationAnimatedValue,
-  progress: NavigationAnimatedValue,
-  scenes: Array<NavigationScene>,
-};
+// type Props = {
+//   configureTransition: (
+//     transitionProps: NavigationTransitionProps,
+//     prevTransitionProps: ?NavigationTransitionProps,
+//   ) => NavigationTransitionSpec,
+//   navigation: NavigationScreenProp<NavigationState, NavigationAction>,
+//   onTransitionEnd: () => void,
+//   onTransitionStart: () => void,
+//   render: (
+//     transitionProps: NavigationTransitionProps,
+//     prevTransitionProps: ?NavigationTransitionProps
+//   ) => any,
+//   style: any,
+// };
+//
+// type State = {
+//   layout: NavigationLayout,
+//   position: NavigationAnimatedValue,
+//   progress: NavigationAnimatedValue,
+//   scenes,
+// };
 
 const DefaultTransitionSpec = TransitionConfigs.DefaultTransitionSpec;
 
-class Transitioner extends Component<*, Props, State> {
-  _onLayout: (event: any) => void;
-  _onTransitionEnd: () => void;
-  _prevTransitionProps: ?NavigationTransitionProps;
-  _transitionProps: NavigationTransitionProps;
-  _isMounted: boolean;
-  _isTransitionRunning: boolean;
-  _queuedTransition: ?{
-    nextProps: Props,
-    nextScenes: Array<NavigationScene>,
-    indexHasChanged: boolean,
-  };
-
-  props: Props;
-  state: State;
+class Transitioner extends Component {
+  // _onLayout: (event: any) => void;
+  // _onTransitionEnd: () => void;
+  // _prevTransitionProps: ?NavigationTransitionProps;
+  // _transitionProps: NavigationTransitionProps;
+  // _isMounted: boolean;
+  // _isTransitionRunning: boolean;
+  // _queuedTransition: ?{
+  //   nextProps: Props,
+  //   nextScenes,
+  //   indexHasChanged: boolean,
+  // };
+  //
+  // props: Props;
+  // state: State;
 
   static propTypes = {
     configureTransition: PropTypes.func,
@@ -74,7 +62,7 @@ class Transitioner extends Component<*, Props, State> {
     render: PropTypes.func.isRequired,
   };
 
-  constructor(props: Props, context: any) {
+  constructor(props, context: any) {
     super(props, context);
 
     // The initial layout isn't measured. Measured layout will be only available
@@ -91,7 +79,7 @@ class Transitioner extends Component<*, Props, State> {
       layout,
       position: new Animated.Value(this.props.navigation.state.index),
       progress: new Animated.Value(1),
-      scenes: NavigationScenesReducer([], this.props.navigation.state),
+      scenes: navigationScenesReducer([], this.props.navigation.state),
     };
 
     this._prevTransitionProps = null;
@@ -114,8 +102,8 @@ class Transitioner extends Component<*, Props, State> {
     this._isMounted = false;
   }
 
-  componentWillReceiveProps(nextProps: Props): void {
-    const nextScenes = NavigationScenesReducer(
+  componentWillReceiveProps(nextProps) {
+    const nextScenes = navigationScenesReducer(
       this.state.scenes,
       nextProps.navigation.state,
       this.props.navigation.state
@@ -134,7 +122,7 @@ class Transitioner extends Component<*, Props, State> {
     this._startTransition(nextProps, nextScenes, indexHasChanged);
   }
 
-  _startTransition(nextProps: Props, nextScenes: Array<NavigationScene>, indexHasChanged: boolean) {
+  _startTransition(nextProps, nextScenes, indexHasChanged: boolean) {
     const nextState = {
       ...this.state,
       scenes: nextScenes,
@@ -266,9 +254,9 @@ class Transitioner extends Component<*, Props, State> {
 }
 
 function buildTransitionProps(
-  props: Props,
-  state: State,
-): NavigationTransitionProps {
+  props,
+  state,
+) {
   const {
     navigation,
   } = props;
@@ -299,11 +287,11 @@ function buildTransitionProps(
   };
 }
 
-function isSceneNotStale(scene: NavigationScene): boolean {
+function isSceneNotStale(scene): boolean {
   return !scene.isStale;
 }
 
-function isSceneActive(scene: NavigationScene): boolean {
+function isSceneActive(scene): boolean {
   return scene.isActive;
 }
 

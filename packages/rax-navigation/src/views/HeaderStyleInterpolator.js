@@ -2,10 +2,6 @@
 
 import I18nManager from '../I18nManager';
 
-import type {
-  NavigationSceneRendererProps,
-} from '../TypeDefinition';
-
 /**
  * Utility that builds the style for the navigation header.
  *
@@ -17,45 +13,45 @@ import type {
  * +-------------+-------------+-------------+
  */
 
-function forLeft(props: NavigationSceneRendererProps): Object {
+function forLeft(props): Object {
   const { position, scene } = props;
   const { index } = scene;
   return {
     opacity: position.interpolate({
       inputRange: [index - 1, index, index + 1],
-      outputRange: ([0, 1, 0]: Array<number>),
+      outputRange: [0, 1, 0],
     }),
   };
 }
 
-function forCenter(props: NavigationSceneRendererProps): Object {
+function forCenter(props): Object {
   const { position, scene } = props;
   const { index } = scene;
   return {
     opacity: position.interpolate({
       inputRange: [index - 1, index, index + 1],
-      outputRange: ([0, 1, 0]: Array<number>),
+      outputRange: [0, 1, 0],
     }),
     transform: [
       {
         translateX: position.interpolate({
           inputRange: [index - 1, index + 1],
           outputRange: I18nManager.isRTL ?
-            ([-200, 200]: Array<number>) :
-            ([200, -200]: Array<number>),
+            [-200, 200] :
+            [200, -200],
         }),
       },
     ],
   };
 }
 
-function forRight(props: NavigationSceneRendererProps): Object {
+function forRight(props) {
   const { position, scene } = props;
   const { index } = scene;
   return {
     opacity: position.interpolate({
       inputRange: [index - 1, index, index + 1],
-      outputRange: ([0, 1, 0]: Array<number>),
+      outputRange: [0, 1, 0],
     }),
   };
 }

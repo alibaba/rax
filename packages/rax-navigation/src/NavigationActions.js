@@ -7,7 +7,7 @@ const RESET = namespacedAction('RESET');
 const SET_PARAMS = namespacedAction('SET_PARAMS');
 const URI = namespacedAction('URI');
 
-const createAction = (type: string) => (payload: object = {}) => ({
+const createAction = (type) => (payload = {}) => ({
   type,
   ...payload,
 });
@@ -28,9 +28,11 @@ const deprecatedActionMap = {
   Uri: URI,
 };
 
-const mapDeprecatedActionAndWarn = (action: object) => {
+const mapDeprecatedActionAndWarn = (action) => {
   const mappedType = deprecatedActionMap[action.type];
-  if (!mappedType) { return action; }
+  if (!mappedType) {
+    return action;
+  }
 
   console.warn([
     `The action type '${action.type}' has been renamed to '${mappedType}'.`,

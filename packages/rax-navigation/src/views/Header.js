@@ -13,36 +13,25 @@ import HeaderStyleInterpolator from './HeaderStyleInterpolator';
 import NavigationPropTypes from '../PropTypes';
 import addNavigationHelpers from '../addNavigationHelpers';
 
-import type {
-  NavigationScene,
-  NavigationRouter,
-  NavigationAction,
-  NavigationScreenProp,
-  NavigationSceneRendererProps,
-  NavigationStyleInterpolator,
-  LayoutEvent,
-  Style,
-} from '../TypeDefinition';
-
 export type HeaderMode = 'float' | 'screen' | 'none';
 
-type SubViewProps = NavigationSceneRendererProps & {
-  onNavigateBack?: () => void,
-};
+// type SubViewProps = NavigationSceneRendererProps & {
+//   onNavigateBack?: () => void,
+// };
+//
+// type Navigation = NavigationScreenProp<*, NavigationAction>;
+//
+// type SubViewRenderer = (subViewProps: SubViewProps) => ?Element<any>;
 
-type Navigation = NavigationScreenProp<*, NavigationAction>;
-
-type SubViewRenderer = (subViewProps: SubViewProps) => ?React.Element<any>;
-
-export type HeaderProps = NavigationSceneRendererProps & {
-  mode: HeaderMode,
-  onNavigateBack?: () => void,
-  renderLeftComponent: SubViewRenderer,
-  renderRightComponent: SubViewRenderer,
-  renderTitleComponent: SubViewRenderer,
-  tintColor?: string,
-  router: NavigationRouter,
-};
+// export type HeaderProps = NavigationSceneRendererProps & {
+//   mode: HeaderMode,
+//   onNavigateBack?: () => void,
+//   renderLeftComponent: SubViewRenderer,
+//   renderRightComponent: SubViewRenderer,
+//   renderTitleComponent: SubViewRenderer,
+//   tintColor?: string,
+//   router: NavigationRouter,
+// };
 
 type SubViewName = 'left' | 'title' | 'right';
 
@@ -56,7 +45,7 @@ const APPBAR_HEIGHT = Platform.OS === 'ios' ? 88 : 112;
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 40 : 0;
 const TITLE_OFFSET = Platform.OS === 'ios' ? 140 : 80;
 
-class Header extends PureComponent<void, HeaderProps, HeaderState> {
+class Header extends PureComponent {
 
   static HEIGHT = APPBAR_HEIGHT + STATUSBAR_HEIGHT;
   static Title = HeaderTitle;
@@ -73,13 +62,13 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     style: PropTypes.any,
   };
 
-  props: HeaderProps;
+  // props: HeaderProps;
 
   state = {
     widths: {},
   };
 
-  _getHeaderTitle(navigation: Navigation): ?string {
+  _getHeaderTitle(navigation) {
     const header = this.props.router.getScreenConfig(navigation, 'header');
     let title;
     if (header && header.title) {
@@ -90,7 +79,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     return typeof title === 'string' ? title : undefined;
   }
 
-  _getBackButtonTitle(navigation: Navigation): ?string {
+  _getBackButtonTitle(navigation) {
     const header = this.props.router.getScreenConfig(navigation, 'header') || {};
     if (header.backTitle === null) {
       return undefined;
@@ -98,7 +87,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     return header.backTitle || this._getHeaderTitle(navigation);
   }
 
-  _getHeaderTintColor(navigation: Navigation): ?string {
+  _getHeaderTintColor(navigation) {
     const header = this.props.router.getScreenConfig(navigation, 'header');
     if (header && header.tintColor) {
       return header.tintColor;
@@ -106,7 +95,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     return undefined;
   }
 
-  _getHeaderTitleStyle(navigation: Navigation): Style {
+  _getHeaderTitleStyle(navigation) {
     const header = this.props.router.getScreenConfig(navigation, 'header');
     if (header && header.titleStyle) {
       return header.titleStyle;
@@ -114,7 +103,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     return undefined;
   }
 
-  _renderTitleComponent = (props: SubViewProps) => {
+  _renderTitleComponent = (props) => {
     const titleStyle = this._getHeaderTitleStyle(props.navigation);
     const color = this._getHeaderTintColor(props.navigation);
     const title = this._getHeaderTitle(props.navigation);
@@ -122,7 +111,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     // On iOS, width of left/right components depends on the calculated
     // size of the title.
     const onLayoutIOS = Platform.OS === 'ios'
-      ? (e: LayoutEvent) => {
+      ? (e) => {
         this.setState({
           widths: {
             ...this.state.widths,
@@ -142,7 +131,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     );
   };
 
-  _renderLeftComponent = (props: SubViewProps) => {
+  _renderLeftComponent = (props) => {
     if (props.scene.index === 0 || !props.onNavigateBack) {
       return null;
     }
@@ -167,7 +156,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
 
   _renderRightComponent = () => null;
 
-  _renderLeft(props: NavigationSceneRendererProps): ?React.Element<*> {
+  _renderLeft(props) {
     return this._renderSubView(
       props,
       'left',
@@ -177,7 +166,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     );
   }
 
-  _renderTitle(props: NavigationSceneRendererProps, options: *): ?React.Element<*> {
+  _renderTitle(props, options) {
     const style = {};
 
     if (Platform.OS === 'android') {
@@ -198,7 +187,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     );
   }
 
-  _renderRight(props: NavigationSceneRendererProps): ?React.Element<*> {
+  _renderRight(props) {
     return this._renderSubView(
       props,
       'right',
@@ -209,12 +198,12 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
   }
 
   _renderSubView(
-    props: NavigationSceneRendererProps,
-    name: SubViewName,
-    renderer: SubViewRenderer,
-    defaultRenderer: SubViewRenderer,
-    styleInterpolator: NavigationStyleInterpolator,
-  ): ?React.Element<*> {
+    props,
+    name,
+    renderer,
+    defaultRenderer,
+    styleInterpolator,
+  ) {
     const {
       scene,
       navigationState,
@@ -265,7 +254,7 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     );
   }
 
-  _renderHeader(props: NavigationSceneRendererProps): React.Element<*> {
+  _renderHeader(props) {
     const left = this._renderLeft(props);
     const right = this._renderRight(props);
     const title = this._renderTitle(props, {
@@ -289,8 +278,8 @@ class Header extends PureComponent<void, HeaderProps, HeaderState> {
     let appBar;
 
     if (this.props.mode === 'float') {
-      const scenesProps: Array<NavigationSceneRendererProps> = this.props.scenes
-        .map((scene: NavigationScene, index: number) => ({
+      const scenesProps = this.props.scenes
+        .map((scene, index) => ({
           ...NavigationPropTypes.extractSceneRendererProps(this.props),
           scene,
           index,

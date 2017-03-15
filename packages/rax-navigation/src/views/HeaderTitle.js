@@ -1,22 +1,11 @@
-/* @flow */
-
 import { createElement, Component, PropTypes } from 'rax';
 import StyleSheet from 'universal-stylesheet';
 import Platform from 'universal-platform';
 import Text from 'rax-text';
 
-import type {
-  Style,
-} from '../TypeDefinition';
-
-type Props = {
-  tintColor?: ?string;
-  style?: Style,
-};
-
-const HeaderTitle = ({ style, ...rest }: Props) => (
+const HeaderTitle = ({ style, ...rest }) =>
   <Text numberOfLines={1} {...rest} style={[styles.title, style]} />
-);
+;
 
 const styles = StyleSheet.create({
   title: {

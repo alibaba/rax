@@ -3,10 +3,6 @@
 import { PropTypes } from 'rax';
 import Animated from 'rax-animated';
 
-import type {
-  NavigationSceneRendererProps,
-} from './TypeDefinition';
-
 /**
  * React component PropTypes Definitions. Consider using this as a supplementary
  * measure with `NavigationTypeDefinition`. This helps to capture the propType
@@ -84,8 +80,8 @@ const panHandlers = PropTypes.shape({
  * Helper function that extracts the props needed for scene renderer.
  */
 function extractSceneRendererProps(
-  props: NavigationSceneRendererProps,
-): NavigationSceneRendererProps {
+  props,
+) {
   return {
     index: props.index,
     layout: props.layout,

@@ -2,21 +2,12 @@
 
 import {createElement, Component} from 'rax';
 import invariant from 'invariant';
+import NavigationActions from './NavigationActions';
+import addNavigationHelpers from './addNavigationHelpers';
 import {
   BackAndroid,
   Linking,
 } from './PlatformHelpers';
-import NavigationActions from './NavigationActions';
-import addNavigationHelpers from './addNavigationHelpers';
-
-import type {
-  NavigationRoute,
-  NavigationAction,
-  NavigationContainerOptions,
-  NavigationProp,
-  NavigationState,
-  NavigationScreenProp,
-} from './TypeDefinition';
 
 /**
  * Create an HOC that injects the navigation and manages the navigation state
@@ -25,17 +16,17 @@ import type {
  * components.
  */
 export default function createNavigationContainer<T: *>(
-  Component: ReactClass<*>,
-  containerConfig?: NavigationContainerOptions
+  Component,
+  containerConfig
 ) {
-  type Props = {
-    navigation: NavigationProp<T, NavigationAction>,
-    onNavigationStateChange?: (NavigationState, NavigationState) => void,
-  };
-
-  type State = {
-    nav: ?NavigationState,
-  };
+  // type Props = {
+  //   navigation: NavigationProp<T, NavigationAction>,
+  //   onNavigationStateChange?: (NavigationState, NavigationState) => void,
+  // };
+  //
+  // type State = {
+  //   nav: ?NavigationState,
+  // };
 
   function urlToPathAndParams(url: string) {
     const params = {};
@@ -52,8 +43,8 @@ export default function createNavigationContainer<T: *>(
   }
 
   class NavigationContainer extends Component {
-    state: State;
-    props: Props;
+    // state: State;
+    // props: Props;
 
     subs: ?{
       remove: () => void,
@@ -76,7 +67,7 @@ export default function createNavigationContainer<T: *>(
       return true;
     }
 
-    constructor(props: Props) {
+    constructor(props) {
       super(props);
       this.state = {
         nav: this._isStateful()
@@ -107,7 +98,7 @@ export default function createNavigationContainer<T: *>(
       }
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(prevProps, prevState) {
       const [prevNavigationState, navigationState] = this._isStateful()
         ? [prevState.nav, this.state.nav]
         : [prevProps.navigation.state, this.props.navigation.state];
@@ -138,7 +129,7 @@ export default function createNavigationContainer<T: *>(
       }
     };
 
-    dispatch = (action: NavigationAction) => {
+    dispatch = (action) => {
       const { state } = this;
       if (!this._isStateful()) {
         return false;
@@ -161,13 +152,14 @@ export default function createNavigationContainer<T: *>(
       return false;
     };
 
-    _navigation: ?NavigationScreenProp<NavigationRoute, NavigationAction>;
+    // _navigation: ?NavigationScreenProp<NavigationRoute, NavigationAction>;
 
     render() {
       let navigation = this.props.navigation;
       if (this._isStateful()) {
         if (!this._navigation || this._navigation.state !== this.state.nav) {
           this._navigation = addNavigationHelpers({
+            /* eslint-disable react/jsx-no-bind */
             dispatch: this.dispatch.bind(this),
             state: this.state.nav,
           });

@@ -4,7 +4,7 @@ import invariant from 'invariant';
  * Make sure the config passed e.g. to StackRouter, TabRouter has
  * the correct format, and throw a clear error if it doesn't.
  */
-function validateRouteConfigMap(routeConfigs: NavigationRouteConfigMap) {
+function validateRouteConfigMap(routeConfigs) {
   const routeNames = Object.keys(routeConfigs);
   invariant(
     routeNames.length > 0,
@@ -34,7 +34,7 @@ function validateRouteConfigMap(routeConfigs: NavigationRouteConfigMap) {
 
     if (routeConfig.screen) {
       invariant(
-        typeof (routeConfig.screen) === 'function',
+        typeof routeConfig.screen === 'function',
         `The component for route '${routeName}' must be a ` +
         'a React component. For example:\n\n' +
         'import MyScreen from \'./MyScreen\';\n' +

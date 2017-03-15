@@ -1,24 +1,10 @@
-/* @flow */
-
 import {createElement} from 'rax';
 import createNavigationContainer from '../createNavigationContainer';
 import createNavigator from './createNavigator';
 import CardStack from '../views/CardStack';
 import StackRouter from '../routers/StackRouter';
 
-import type {
-  NavigationContainerConfig,
-  NavigationStackRouterConfig,
-  NavigationStackViewConfig,
-  NavigationRouteConfigMap,
-} from '../TypeDefinition';
-
-export type StackNavigatorConfig =
-  & NavigationContainerConfig
-  & NavigationStackViewConfig
-  & NavigationStackRouterConfig;
-
-export default (routeConfigMap: NavigationRouteConfigMap, stackConfig: StackNavigatorConfig = {}) => {
+export default (routeConfigMap, stackConfig = {}) => {
   const {
     containerOptions,
     initialRouteName,
@@ -38,8 +24,9 @@ export default (routeConfigMap: NavigationRouteConfigMap, stackConfig: StackNavi
     paths,
     navigationOptions,
   };
+  /* eslint-disable new-cap */
   const router = StackRouter(routeConfigMap, stackRouterConfig);
-  return createNavigationContainer(createNavigator(router)(props => (
+  return createNavigationContainer(createNavigator(router)(props =>
     <CardStack
       {...props}
       headerComponent={headerComponent}
@@ -49,5 +36,5 @@ export default (routeConfigMap: NavigationRouteConfigMap, stackConfig: StackNavi
       onTransitionStart={onTransitionStart}
       onTransitionEnd={onTransitionEnd}
     />
-  )), containerOptions);
+  ), containerOptions);
 };

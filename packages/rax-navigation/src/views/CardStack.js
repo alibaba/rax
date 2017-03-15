@@ -1,5 +1,3 @@
-/* @flow */
-
 import { createElement, Component, PropTypes } from 'rax';
 import Animated from 'rax-animated';
 import StyleSheet from 'universal-stylesheet';
@@ -15,63 +13,44 @@ import NavigationPropTypes from '../PropTypes';
 import NavigationActions from '../NavigationActions';
 import addNavigationHelpers from '../addNavigationHelpers';
 import SceneView from './SceneView';
-
-import type {
-  NavigationAction,
-  NavigationScreenProp,
-  NavigationScene,
-  NavigationSceneRenderer,
-  NavigationSceneRendererProps,
-  NavigationTransitionProps,
-  NavigationRouter,
-  Style,
-} from '../TypeDefinition';
-
-import type {
-  HeaderMode,
-} from './Header';
-
-import type { TransitionConfig } from './TransitionConfigs';
-
 import TransitionConfigs from './TransitionConfigs';
 
 const NativeModules = null; // Polyfill module
-
 const NativeAnimatedModule = NativeModules && NativeModules.NativeAnimatedModule;
 
-type Props = {
-  screenProps?: {};
-  headerMode: HeaderMode,
-  headerComponent?: ReactClass<*>,
-  mode: 'card' | 'modal',
-  navigation: NavigationScreenProp<*, NavigationAction>,
-  router: NavigationRouter,
-  cardStyle?: Style,
-  onTransitionStart?: () => void,
-  onTransitionEnd?: () => void,
-  style: Style,
-  gestureResponseDistance?: ?number,
-  /**
-   * Optional custom animation when transitioning between screens.
-   */
-  transitionConfig?: (
-    transitionProps: NavigationTransitionProps,
-    prevTransitionProps: NavigationTransitionProps,
-    isModal: boolean,
-  ) => TransitionConfig,
-};
+// type Props = {
+//   screenProps?: {};
+//   headerMode: HeaderMode,
+//   headerComponent?: ReactClass<*>,
+//   mode: 'card' | 'modal',
+//   navigation: NavigationScreenProp<*, NavigationAction>,
+//   router: NavigationRouter,
+//   cardStyle?: Style,
+//   onTransitionStart?: () => void,
+//   onTransitionEnd?: () => void,
+//   style: Style,
+//   gestureResponseDistance?: ?number,
+//   /**
+//    * Optional custom animation when transitioning between screens.
+//    */
+//   transitionConfig?: (
+//     transitionProps: NavigationTransitionProps,
+//     prevTransitionProps: NavigationTransitionProps,
+//     isModal: boolean,
+//   ) => TransitionConfig,
+// };
+//
+// type DefaultProps = {
+//   mode: 'card' | 'modal',
+//   headerComponent: ReactClass<*>,
+// };
 
-type DefaultProps = {
-  mode: 'card' | 'modal',
-  headerComponent: ReactClass<*>,
-};
-
-class CardStack extends Component<DefaultProps, Props, void> {
-  _render: NavigationSceneRenderer;
-  _renderScene: NavigationSceneRenderer;
-  _childNavigationProps: {
-    [key: string]: NavigationScreenProp<*, NavigationAction>
-  } = {};
+class CardStack extends Component {
+  // _render: NavigationSceneRenderer;
+  // _renderScene: NavigationSceneRenderer;
+  // _childNavigationProps: {
+  //   [key: string]: NavigationScreenProp<*, NavigationAction>
+  // } = {};
 
   static Card = Card;
   static Header = Header;
@@ -135,7 +114,7 @@ class CardStack extends Component<DefaultProps, Props, void> {
     }).isRequired,
   };
 
-  static defaultProps: DefaultProps = {
+  static defaultProps = {
     mode: 'card',
     // headerMode: 'null',
     headerComponent: Header,
@@ -161,9 +140,9 @@ class CardStack extends Component<DefaultProps, Props, void> {
 
   _configureTransition = (
     // props for the new screen
-    transitionProps: NavigationTransitionProps,
+    transitionProps,
     // props for the old screen
-    prevTransitionProps: NavigationTransitionProps
+    prevTransitionProps
   ) => {
     const isModal = this.props.mode === 'modal';
     // Copy the object so we can assign useNativeDriver below
@@ -186,9 +165,9 @@ class CardStack extends Component<DefaultProps, Props, void> {
   }
 
   _renderHeader(
-    transitionProps: NavigationTransitionProps,
-    headerMode: HeaderMode
-  ): ?React.Element<*> {
+    transitionProps,
+    headerMode
+  ) {
     const headerConfig = this.props.router.getScreenConfig(
       transitionProps.navigation,
       'header'
@@ -201,15 +180,15 @@ class CardStack extends Component<DefaultProps, Props, void> {
         style={headerConfig.style}
         mode={headerMode}
         onNavigateBack={() => this.props.navigation.goBack(null)}
-        renderLeftComponent={(props: NavigationTransitionProps) => {
+        renderLeftComponent={(props) => {
           const header = this.props.router.getScreenConfig(props.navigation, 'header') || {};
           return header.left;
         }}
-        renderRightComponent={(props: NavigationTransitionProps) => {
+        renderRightComponent={(props) => {
           const header = this.props.router.getScreenConfig(props.navigation, 'header') || {};
           return header.right;
         }}
-        renderTitleComponent={(props: NavigationTransitionProps) => {
+        renderTitleComponent={(props) => {
           const header = this.props.router.getScreenConfig(props.navigation, 'header') || {};
           // When we return 'undefined' from 'renderXComponent', header treats them as not
           // specified and default 'renderXComponent' functions are used. In case of 'title',
@@ -224,7 +203,7 @@ class CardStack extends Component<DefaultProps, Props, void> {
     );
   }
 
-  _render(props: NavigationTransitionProps): React.Element<*> {
+  _render(props) {
     let floatingHeader = null;
     const headerMode = this._getHeaderMode();
     if (headerMode === 'float') {
@@ -248,7 +227,7 @@ class CardStack extends Component<DefaultProps, Props, void> {
     );
   }
 
-  _getHeaderMode(): HeaderMode {
+  _getHeaderMode() {
     if (this.props.headerMode) {
       return this.props.headerMode;
     }
@@ -260,10 +239,10 @@ class CardStack extends Component<DefaultProps, Props, void> {
 
   _getTransitionConfig(
     // props for the new screen
-    transitionProps: NavigationTransitionProps,
+    transitionProps,
     // props for the old screen
-    prevTransitionProps: NavigationTransitionProps
-  ): TransitionConfig {
+    prevTransitionProps
+  ) {
     const isModal = this.props.mode === 'modal';
     const defaultConfig = TransitionConfigs.defaultTransitionConfig(
       transitionProps,
@@ -285,9 +264,9 @@ class CardStack extends Component<DefaultProps, Props, void> {
   }
 
   _renderInnerCard(
-    SceneComponent: ReactClass<*>,
-    props: NavigationSceneRendererProps,
-  ): React.Element<*> {
+    SceneComponent,
+    props,
+  ) {
     const header = this.props.router.getScreenConfig(props.navigation, 'header');
     const headerMode = this._getHeaderMode();
     if (headerMode === 'screen') {
@@ -317,8 +296,8 @@ class CardStack extends Component<DefaultProps, Props, void> {
   }
 
   _getChildNavigation = (
-    scene: NavigationScene
-  ): NavigationScreenProp<*, NavigationAction> => {
+    scene
+  ) => {
     let navigation = this._childNavigationProps[scene.key];
     if (!navigation || navigation.state !== scene.route) {
       navigation = this._childNavigationProps[scene.key] = addNavigationHelpers({
@@ -329,7 +308,7 @@ class CardStack extends Component<DefaultProps, Props, void> {
     return navigation;
   }
 
-  _renderScene(props: NavigationSceneRendererProps): React.Element<*> {
+  _renderScene(props) {
     const isModal = this.props.mode === 'modal';
 
     /* $FlowFixMe */

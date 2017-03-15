@@ -2,11 +2,6 @@
 
 import invariant from 'invariant';
 
-import type {
-  NavigationRoute,
-  NavigationState,
-} from './TypeDefinition';
-
 /**
  * Utilities to perform atomic operation with navigate state and routes.
  *
@@ -20,7 +15,7 @@ const StateUtils = {
   /**
    * Gets a route by key. If the route isn't found, returns `null`.
    */
-  get(state: NavigationState, key: string): ?NavigationRoute {
+  get(state, key: string) {
     return state.routes.find(route => route.key === key) || null;
   },
 
@@ -28,7 +23,7 @@ const StateUtils = {
    * Returns the first index at which a given route's key can be found in the
    * routes of the navigation state, or -1 if it is not present.
    */
-  indexOf(state: NavigationState, key: string): number {
+  indexOf(state, key: string): number {
     return state.routes.map(route => route.key).indexOf(key);
   },
 
@@ -36,7 +31,7 @@ const StateUtils = {
    * Returns `true` at which a given route's key can be found in the
    * routes of the navigation state.
    */
-  has(state: NavigationState, key: string): boolean {
+  has(state, key: string): boolean {
     return !!state.routes.some(route => route.key === key);
   },
 
@@ -45,7 +40,7 @@ const StateUtils = {
    * Note that this moves the index to the positon to where the last route in the
    * stack is at.
    */
-  push(state: NavigationState, route: NavigationRoute): NavigationState {
+  push(state, route) {
     invariant(
       StateUtils.indexOf(state, route.key) === -1,
       'should not push route with duplicated key %s',
@@ -67,7 +62,7 @@ const StateUtils = {
    * Note that this moves the index to the positon to where the last route in the
    * stack is at.
    */
-  pop(state: NavigationState): NavigationState {
+  pop(state) {
     if (state.index <= 0) {
       // [Note]: Over-popping does not throw error. Instead, it will be no-op.
       return state;
@@ -83,7 +78,7 @@ const StateUtils = {
   /**
    * Sets the focused route of the navigation state by index.
    */
-  jumpToIndex(state: NavigationState, index: number): NavigationState {
+  jumpToIndex(state, index: number) {
     if (index === state.index) {
       return state;
     }
@@ -99,7 +94,7 @@ const StateUtils = {
   /**
    * Sets the focused route of the navigation state by key.
    */
-  jumpTo(state: NavigationState, key: string): NavigationState {
+  jumpTo(state, key: string) {
     const index = StateUtils.indexOf(state, key);
     return StateUtils.jumpToIndex(state, index);
   },
@@ -107,7 +102,7 @@ const StateUtils = {
   /**
    * Sets the focused route to the previous route.
    */
-  back(state: NavigationState): NavigationState {
+  back(state) {
     const index = state.index - 1;
     const route = state.routes[index];
     return route ? StateUtils.jumpToIndex(state, index) : state;
@@ -116,7 +111,7 @@ const StateUtils = {
   /**
    * Sets the focused route to the next route.
    */
-  forward(state: NavigationState): NavigationState {
+  forward(state) {
     const index = state.index + 1;
     const route = state.routes[index];
     return route ? StateUtils.jumpToIndex(state, index) : state;
@@ -128,10 +123,10 @@ const StateUtils = {
    * stack is at.
    */
   replaceAt(
-    state: NavigationState,
+    state,
     key: string,
-    route: NavigationRoute,
-  ): NavigationState {
+    route,
+  ) {
     const index = StateUtils.indexOf(state, key);
     return StateUtils.replaceAtIndex(state, index, route);
   },
@@ -142,10 +137,10 @@ const StateUtils = {
    * stack is at.
    */
   replaceAtIndex(
-    state: NavigationState,
+    state,
     index: number,
-    route: NavigationRoute,
-  ): NavigationState {
+    route,
+  ) {
     invariant(
       !!state.routes[index],
       'invalid index %s for replacing route %s',
@@ -173,10 +168,10 @@ const StateUtils = {
    * stack is at if the param `index` isn't provided.
    */
   reset(
-    state: NavigationState,
-    routes: Array<NavigationRoute>,
+    state,
+    routes,
     index?: number,
-  ): NavigationState {
+  ) {
     invariant(
       routes.length && Array.isArray(routes),
       'invalid routes to replace',

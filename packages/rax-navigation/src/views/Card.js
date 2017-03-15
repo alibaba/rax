@@ -9,26 +9,20 @@ import CardStackStyleInterpolator from './CardStackStyleInterpolator';
 import createPointerEventsContainer from './PointerEventsContainer';
 import NavigationPropTypes from '../PropTypes';
 
-import type {
-  NavigationPanHandlers,
-  NavigationSceneRenderer,
-  NavigationSceneRendererProps,
-} from '../TypeDefinition';
-
-type Props = NavigationSceneRendererProps & {
-  onComponentRef: (ref: any) => void,
-  onNavigateBack: ?Function,
-  panHandlers: ?NavigationPanHandlers,
-  pointerEvents: string,
-  renderScene: NavigationSceneRenderer,
-  style: any,
-};
+// type Props = NavigationSceneRendererProps & {
+//   onComponentRef: (ref: any) => void,
+//   onNavigateBack: ?Function,
+//   panHandlers: ?NavigationPanHandlers,
+//   pointerEvents: string,
+//   renderScene: NavigationSceneRenderer,
+//   style: any,
+// };
 
 /**
  * Component that renders the scene as card for the <NavigationCardStack />.
  */
-class Card extends Component<any, Props, any> {
-  props: Props;
+class Card extends Component {
+  // props: Props;
 
   static propTypes = {
     ...NavigationPropTypes.SceneRendererProps,
@@ -88,6 +82,7 @@ const styles = StyleSheet.create({
   },
 });
 
+/* eslint-disable no-class-assign */
 Card = createPointerEventsContainer(Card);
 
 Card.CardStackPanResponder = CardStackPanResponder;

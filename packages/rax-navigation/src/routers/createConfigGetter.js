@@ -1,28 +1,17 @@
-/*
- * @flow
- */
-
 import invariant from 'invariant';
 
 import getScreenForRouteName from './getScreenForRouteName';
 import addNavigationHelpers from '../addNavigationHelpers';
 
-import type {
-  NavigationProp,
-  NavigationAction,
-  NavigationRouteConfigMap,
-  NavigationScreenOption,
-  NavigationScreenOptions,
-} from '../TypeDefinition';
 
 export default (
-  routeConfigs: NavigationRouteConfigMap,
-  defaultOptions?: NavigationScreenOptions
+  routeConfigs,
+  defaultOptions
 ) =>
   (
-    navigation: NavigationProp<*, NavigationAction>,
-    optionName: string,
-    config?: NavigationScreenOption<*>
+    navigation,
+    optionName,
+    config
   ) => {
     const route = navigation.state;
     invariant(
@@ -55,7 +44,7 @@ export default (
       Component.navigationOptions,
       routeConfig.navigationOptions,
     ].reduce(
-      (acc: *, options: NavigationScreenOptions) => {
+      (acc, options) => {
         if (options && options[optionName] !== undefined) {
           return typeof options[optionName] === 'function'
             ? options[optionName](navigation, acc)

@@ -85,7 +85,7 @@ class HeaderBackButton extends PureComponent<DefaultProps, Props, State> {
               { tintColor },
             ]}
           />
-          {Platform.OS === 'ios' && title && (
+          {Platform.OS === 'ios' && title &&
             <Text
               onLayout={this._onTextLayout}
               style={[styles.title, { color: tintColor }]}
@@ -93,7 +93,7 @@ class HeaderBackButton extends PureComponent<DefaultProps, Props, State> {
             >
               {renderTruncated ? truncatedTitle : title}
             </Text>
-          )}
+          }
         </View>
       </TouchableItem>
     );

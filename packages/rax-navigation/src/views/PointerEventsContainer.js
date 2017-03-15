@@ -1,16 +1,8 @@
 /* @flow */
 
 import {Component, createElement} from 'rax';
-
 import invariant from 'invariant';
-
 import AnimatedValueSubscription from './AnimatedValueSubscription';
-
-import type {
-  NavigationSceneRendererProps,
-} from '../TypeDefinition';
-
-type Props = NavigationSceneRendererProps;
 
 const MIN_POSITION_OFFSET = 0.01;
 
@@ -20,18 +12,18 @@ const MIN_POSITION_OFFSET = 0.01;
  * changes.
  */
 export default function create(
-  Component: ReactClass<*>,
-): ReactClass<*> {
-  class Container extends Component<any, Props, any> {
-    _component: any;
-    _onComponentRef: (view: any) => void;
-    _onPositionChange: (data: {value: number}) => void;
-    _pointerEvents: string;
-    _positionListener: ?AnimatedValueSubscription;
+  Component,
+) {
+  class Container extends Component {
+    // _component: any;
+    // _onComponentRef: (view: any) => void;
+    // _onPositionChange: (data: {value: number}) => void;
+    // _pointerEvents: string;
+    // _positionListener: ?AnimatedValueSubscription;
+    //
+    // props: Props;
 
-    props: Props;
-
-    constructor(props: Props, context: any) {
+    constructor(props, context) {
       super(props, context);
       this._pointerEvents = this._computePointerEvents();
     }
@@ -49,7 +41,7 @@ export default function create(
       this._positionListener && this._positionListener.remove();
     }
 
-    componentWillReceiveProps(nextProps: Props): void {
+    componentWillReceiveProps(nextProps) {
       this._bindPosition(nextProps);
     }
 
@@ -74,7 +66,7 @@ export default function create(
       }
     }
 
-    _bindPosition(props: NavigationSceneRendererProps): void {
+    _bindPosition(props): void {
       this._positionListener && this._positionListener.remove();
       this._positionListener = new AnimatedValueSubscription(
         props.position,

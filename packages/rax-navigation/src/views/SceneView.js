@@ -2,25 +2,18 @@
 
 import { createElement, PureComponent, PropTypes } from 'rax';
 
-import type {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationRoute,
-  NavigationAction,
-} from '../TypeDefinition';
+// type Props = {
+//   screenProps?: {};
+//   navigation: NavigationScreenProp<NavigationRoute, NavigationAction>;
+//   component: Component<*>;
+// };
 
-type Props = {
-  screenProps?: {};
-  navigation: NavigationScreenProp<NavigationRoute, NavigationAction>;
-  component: ReactClass<*>;
-};
-
-export default class SceneView extends PureComponent<void, Props, void> {
+export default class SceneView extends PureComponent {
   static childContextTypes = {
     navigation: PropTypes.object.isRequired,
   };
 
-  props: Props;
+  // props: Props;
 
   getChildContext() {
     return {

@@ -1,11 +1,5 @@
-/* @flow */
-
 import PanResponder from 'universal-panresponder';
 import invariant from 'invariant';
-
-import type {
-  NavigationPanHandlers,
-} from '../TypeDefinition';
 
 const EmptyPanHandlers = {
   onMoveShouldSetPanResponder: null,
@@ -22,12 +16,12 @@ const EmptyPanHandlers = {
  */
 export default class AbstractPanResponder {
 
-  panHandlers: NavigationPanHandlers;
+  // panHandlers: NavigationPanHandlers;
 
   constructor() {
     const config = {};
     Object.keys(EmptyPanHandlers).forEach((name: string) => {
-      const fn: any = (this: any)[name];
+      const fn = this;
 
       invariant(
         typeof fn === 'function',

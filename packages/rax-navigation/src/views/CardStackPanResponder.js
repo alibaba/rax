@@ -6,10 +6,6 @@ import clamp from 'clamp';
 
 import AbstractPanResponder from './AbstractPanResponder';
 
-import type {
-  NavigationPanHandlers,
-  NavigationSceneRendererProps,
-} from '../TypeDefinition';
 
 const emptyFunction = () => {};
 
@@ -54,7 +50,7 @@ const Directions = {
 
 export type GestureDirection = 'horizontal' | 'vertical';
 
-type Props = NavigationSceneRendererProps & {
+type Props = {
   onNavigateBack: ?Function,
   /**
   * The distance from the edge of the navigator which gesture response can start for.
@@ -129,7 +125,7 @@ class CardStackPanResponder extends AbstractPanResponder {
       */
       props.gestureResponseDistance || GESTURE_RESPONSE_DISTANCE;
 
-    if (positionMax != null && (currentDragPosition - currentDragDistance) > positionMax) {
+    if (positionMax != null && currentDragPosition - currentDragDistance > positionMax) {
       return false;
     }
 
@@ -162,8 +158,8 @@ class CardStackPanResponder extends AbstractPanResponder {
       layout.height.__getValue() :
       layout.width.__getValue();
     const currentValue = I18nManager.isRTL && axis === 'dx' ?
-      this._startValue + (gesture[axis] / distance) :
-      this._startValue - (gesture[axis] / distance);
+      this._startValue + gesture[axis] / distance :
+      this._startValue - gesture[axis] / distance;
 
     const value = clamp(
       index - 1,
@@ -271,22 +267,22 @@ class CardStackPanResponder extends AbstractPanResponder {
 }
 
 function createPanHandlers(
-  direction: GestureDirection,
-  props: Props,
-): NavigationPanHandlers {
+  direction,
+  props,
+) {
   const responder = new CardStackPanResponder(direction, props);
   return responder.panHandlers;
 }
 
 function forHorizontal(
-  props: Props,
-): NavigationPanHandlers {
+  props,
+) {
   return createPanHandlers(Directions.HORIZONTAL, props);
 }
 
 function forVertical(
-  props: Props,
-): NavigationPanHandlers {
+  props,
+) {
   return createPanHandlers(Directions.VERTICAL, props);
 }
 

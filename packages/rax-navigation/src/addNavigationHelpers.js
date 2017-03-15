@@ -3,25 +3,18 @@
  *
  * Helpers for navigation.
  */
-
-import type {
-  NavigationAction,
-  NavigationProp,
-  NavigationParams,
-} from './TypeDefinition';
-
 import NavigationActions from './NavigationActions';
 
-export default function<S: *> (navigation: NavigationProp<S, NavigationAction>) {
+export default function<S: *>(navigation) {
   return {
     ...navigation,
     goBack: (key?: ?string): boolean => navigation.dispatch(NavigationActions.back({
       key: key === undefined ? navigation.state.key : key,
     })),
     navigate: (
-      routeName: string,
-      params?: NavigationParams,
-      action?: NavigationAction): boolean =>
+      routeName,
+      params,
+      action) =>
         navigation.dispatch(NavigationActions.navigate({
           routeName,
           params,
@@ -32,7 +25,7 @@ export default function<S: *> (navigation: NavigationProp<S, NavigationAction>) 
      * buttons are based on the route params.
      * This means `setParams` can be used to update nav bar for example.
      */
-    setParams: (params: NavigationParams): boolean =>
+    setParams: (params): boolean =>
       navigation.dispatch(NavigationActions.setParams({
         params,
         key: navigation.state.key,
