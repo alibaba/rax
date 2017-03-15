@@ -66,7 +66,7 @@ describe('moment', () => {
     expect(moment('2017-3-14').getTime(24)).toEqual(1489420800000);
   });
 
-  it('moment input is date', ()=> {
+  it('moment input is date', () => {
     var date = new Date('2017-3-18');
     expect(moment(date).format('YYYY-MM-DD')).toEqual('2017-03-18');
   });

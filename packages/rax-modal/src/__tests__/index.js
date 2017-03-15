@@ -14,7 +14,9 @@ class ModalTest extends Component {
     }
 
     if (this.props.mockClose) {
-      setTimeout(() => {this.refs.modal.hide()}, 500);
+      setTimeout(() => {
+        this.refs.modal.hide();
+      }, 500);
     }
   }
 
@@ -73,7 +75,7 @@ describe('Modal', () => {
     const mockHideCallback = jest.fn();
 
     const component = renderer.create(
-      <ModalTest onHide={mockHideCallback} mockClose={true}></ModalTest>
+      <ModalTest onHide={mockHideCallback} mockClose={true} />
     );
 
     jest.runAllTimers();
@@ -84,7 +86,7 @@ describe('Modal', () => {
     const mockShownCallback = jest.fn();
 
     const component = renderer.create(
-      <ModalTest onShow={mockShownCallback} mockToggle={true}></ModalTest>
+      <ModalTest onShow={mockShownCallback} mockToggle={true} />
     );
 
     jest.runAllTimers();
