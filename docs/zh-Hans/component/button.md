@@ -28,6 +28,7 @@ import Button from 'rax-button';
 ```jsx
 // demo
 import { createElement, render } from 'rax';
+import Button from 'rax-button';
 
 render((
   <Button onPress={(evt) => { console.log('hello'); }}>Click Me</Button>
