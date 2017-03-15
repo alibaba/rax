@@ -1,7 +1,6 @@
 /**
  * Weex driver
  */
-import {setNativeProps} from 'rax';
 import {convertUnit, setRem} from 'rax-style-unit';
 
 import * as w3cElements from './elements';
@@ -85,7 +84,7 @@ const Driver = {
       style,
     });
 
-    setNativeProps(node, props, true);
+    this.setNativeProps(node, props);
 
     return node;
   },
@@ -201,6 +200,28 @@ const Driver = {
   getWindowWidth() {
     return FULL_WIDTH_REM;
   },
+
+  setNativeProps(node, props) {
+    const STYLE = 'style';
+    const CHILDREN = 'children';
+    const EVENT_PREFIX_REGEXP = /on[A-Z]/;
+
+    for (let prop in props) {
+      let value = props[prop];
+      if (prop === CHILDREN) {
+        continue;
+      }
+
+      if (value != null) {
+        if (EVENT_PREFIX_REGEXP.test(prop)) {
+          let eventName = prop.slice(2).toLowerCase();
+          this.addEventListener(node, eventName, value);
+        } else {
+          this.setAttribute(node, prop, value);
+        }
+      }
+    }
+  }
 };
 
 export default Driver;
