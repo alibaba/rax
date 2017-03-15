@@ -9,5 +9,4 @@ export findDOMNode from './findDOMNode';
 export unmountComponentAtNode from './unmountComponentAtNode';
 export findComponentInstance from './findComponentInstance';
 export setNativeProps from './setNativeProps';
-export {getRem} from './style/unit';
 export version from './version';

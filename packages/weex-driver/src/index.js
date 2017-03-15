@@ -2,7 +2,7 @@
  * Weex driver
  */
 import {setNativeProps} from 'rax';
-import {convertUnit} from './style/unit';
+import {convertUnit, setRem} from 'rax-style-unit';
 
 import * as w3cElements from './elements';
 
@@ -181,7 +181,7 @@ const Driver = {
     }
   },
 
-  beforeRender(setRem) {
+  beforeRender() {
     // Turn off batched updates
     document.open();
 

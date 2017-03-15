@@ -4,7 +4,6 @@ import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
-import {setRem} from '../style/unit';
 import {isWeb} from 'universal-env';
 
 /**
@@ -42,7 +41,7 @@ export default {
     }
 
     // Before render callback
-    Host.driver.beforeRender && Host.driver.beforeRender(setRem);
+    Host.driver.beforeRender && Host.driver.beforeRender();
 
     // Real native root node is body
     if (container == null) {

@@ -1,5 +1,3 @@
-import {getRem} from 'rax';
-
 /**
  * CSS properties which accept numbers but are not in units of "px".
  */
@@ -37,12 +35,14 @@ const UNITLESS_NUMBER_PROPS = {
 const SUFFIX = 'rem';
 const REM_REG = /[-+]?\d*\.?\d+rem/g;
 
+let defaultRem;
+
 /**
  * Is string contains rem
  * @param {String} str
  * @returns {Boolean}
  */
-function isRem(str) {
+export function isRem(str) {
   return typeof str === 'string' && str.indexOf(SUFFIX) !== -1;
 }
 
@@ -52,19 +52,27 @@ function isRem(str) {
  * @param {Number} rem
  * @returns {number}
  */
-function calcRem(str, rem = getRem()) {
+export function calcRem(str, rem = defaultRem) {
   return str.replace(REM_REG, function(remValue) {
     return parseFloat(remValue) * rem + 'px';
   });
 }
 
-function isUnitNumber(val, prop) {
+export function getRem() {
+  return defaultRem;
+}
+
+export function setRem(rem) {
+  defaultRem = rem;
+}
+
+export function isUnitNumber(val, prop) {
   return typeof val === 'number' && !UNITLESS_NUMBER_PROPS[prop];
 }
 
 export function convertUnit(val, prop) {
   if (prop && isUnitNumber(val, prop)) {
-    return val * getRem() + 'px';
+    return val * defaultRem + 'px';
   } else if (isRem(val)) {
     return calcRem(val);
   }
