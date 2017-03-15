@@ -37,8 +37,8 @@ render(<Example />, null, {
 ### img
 
 - src
-- width
-- height
+- width: recommend use style.width
+- height: recommend use style.height
 - placeholder: weex only
 - resize: weex only
 

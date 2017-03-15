@@ -19,7 +19,13 @@ export function transformPropsAttrsToStyle(props, attrs) {
   return props;
 };
 
-
+/**
+ * renamePropsAttr
+ *
+ * @param {Object} props
+ * @param {String} originalAttrName
+ * @param {String} newAttrName
+ */
 export function renamePropsAttr(props, originalAttrName, newAttrName) {
   if (props[originalAttrName] && !props[newAttrName]) {
     props[newAttrName] = props[originalAttrName];
