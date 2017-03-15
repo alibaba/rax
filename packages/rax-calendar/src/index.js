@@ -1,7 +1,6 @@
 import {createElement, Component, PropTypes} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
-import ScrollView from 'rax-scrollview';
 import Touchable from 'rax-touchable';
 
 import Day from './Day';
@@ -31,7 +30,6 @@ export default class Calendar extends Component {
     onTouchNext: PropTypes.func,
     onTouchPrev: PropTypes.func,
     prevButtonText: PropTypes.string,
-    scrollEnabled: PropTypes.bool,
     selectedDate: PropTypes.any,
     showControls: PropTypes.bool,
     startDate: PropTypes.any,
@@ -50,7 +48,6 @@ export default class Calendar extends Component {
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     nextButtonText: 'Next',
     prevButtonText: 'Prev',
-    scrollEnabled: false,
     showControls: true,
     titleFormat: 'MMMM YYYY',
     dateFormat: 'YYYY-MM-DD',
@@ -58,22 +55,7 @@ export default class Calendar extends Component {
     weekStart: 1,
   };
 
-  componentDidMount() {
-    this.scrollToItem(VIEW_INDEX);
-  }
-
-  componentDidUpdate() {
-    this.scrollToItem(VIEW_INDEX);
-  }
-
   getMonthStack(currentMonth) {
-    if (this.props.scrollEnabled) {
-      const res = [];
-      for (let i = -VIEW_INDEX; i <= VIEW_INDEX; i++) {
-        res.push(moment(currentMonth).add(i, 'month'));
-      }
-      return res;
-    }
     return [moment(currentMonth)];
   }
 
@@ -106,26 +88,6 @@ export default class Calendar extends Component {
     const newMoment = moment(this.state.currentMonthMoment).add(1, 'month');
     this.setState({ currentMonthMoment: newMoment });
     this.props.onTouchNext && this.props.onTouchNext(newMoment);
-  }
-
-  scrollToItem(itemIndex) {
-    const scrollToX = itemIndex * DEVICE_WIDTH;
-    if (this.props.scrollEnabled) {
-      // this._calendar.scrollTo({ y: 0, x: scrollToX, animated: false });
-    }
-  }
-
-  scrollEnded(event) {
-    const position = event.nativeEvent.contentOffset.x;
-    const currentPage = position / DEVICE_WIDTH;
-    const newMoment = moment(this.state.currentMonthMoment).add(currentPage - VIEW_INDEX, 'month');
-    this.setState({ currentMonthMoment: newMoment });
-
-    if (currentPage < VIEW_INDEX) {
-      this.props.onSwipePrev && this.props.onSwipePrev(newMoment);
-    } else if (currentPage > VIEW_INDEX) {
-      this.props.onSwipeNext && this.props.onSwipeNext(newMoment);
-    }
   }
 
   renderMonthView(argMoment, eventDatesMap) {
@@ -198,12 +160,6 @@ export default class Calendar extends Component {
 
     return (
       <View key={argMoment.month()} style={styles.monthContainer}>
-      {
-        this.props.scrollEnabled &&
-        <View style={styles.monthHeading}>
-          <Text>{argMoment.year()}年{argMoment.month() + 1}月</Text>
-        </View>
-      }
       {weekRows}
       </View>
     );
@@ -275,33 +231,13 @@ export default class Calendar extends Component {
       <View style={[styles.calendarContainer, this.props.customStyle.calendarContainer]}>
         {this.renderTopBar()}
         {this.props.showDayHeadings && this.renderHeading(this.props.titleFormat)}
-        {this.props.scrollEnabled ?
-          <ScrollView
-            ref={
-                calendar => {
-                  this._calendar = calendar;
-                }
-              }
-            horizontal
-            scrollEnabled
-            pagingEnabled
-            removeClippedSubviews
-            scrollEventThrottle={1000}
-            showsHorizontalScrollIndicator={false}
-            automaticallyAdjustContentInsets
-            onMomentumScrollEnd={(event) => this.scrollEnded(event)}
-          >
-            {calendarDates.map((date) => this.renderMonthView(moment(date), eventDatesMap))}
-          </ScrollView>
-          :
-          <View ref={
-              calendar => {
-                this._calendar = calendar;
-              }
-            }>
-            {calendarDates.map((date) => this.renderMonthView(moment(date), eventDatesMap))}
-          </View>
-        }
+        <View ref={
+            calendar => {
+              this._calendar = calendar;
+            }
+          }>
+          {calendarDates.map((date) => this.renderMonthView(moment(date), eventDatesMap))}
+        </View>
       </View>
     );
   }
