@@ -14,10 +14,24 @@ import ListViewDemo from './ListViewDemo';
 import RecyclerViewDemo from './RecyclerViewDemo';
 import LinkDemo from './LinkDemo';
 import TouchableHighlightDemo from './TouchableHighlightDemo';
+import CalendarDemo from './CalendarDemo';
+import CountdownDemo from './CountdownDemo';
+import GotopDemo from './GotopDemo';
+import GridDemo from './GridDemo';
+import IconDemo from './IconDemo';
+import ModalDemo from './ModalDemo';
+import MultirowDemo from './MultirowDemo';
+import PictureDemo from './PictureDemo';
+import PlayerDemo from './PlayerDemo';
+import TabbarDemo from './TabbarDemo';
+import TabheaderDemo from './TabheaderDemo';
 
 class Page extends Component {
   render() {
-    return <ScrollView>
+    return <ScrollView ref={(scrollview) => {
+      this.scrollview = scrollview;
+    }
+      }>
       <View>
         <Text style={styles.title}>Style</Text>
         <StyleDemo />
@@ -88,6 +102,57 @@ class Page extends Component {
         <RefreshControlDemo />
       </View>
 
+        <View>
+          <Text style={styles.title}>Gotop</Text>
+          <GotopDemo onTop={() => {
+            this.scrollview.scrollTo({y: 0});
+          }} />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Tabheader</Text>
+          <TabheaderDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Calendar</Text>
+          <CalendarDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Countdown</Text>
+          <CountdownDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Grid</Text>
+          <GridDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Icon</Text>
+          <IconDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Modal</Text>
+          <ModalDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Multirow</Text>
+          <MultirowDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Picture</Text>
+          <PictureDemo />
+        </View>
+
+        <View>
+          <Text style={styles.title}>Player</Text>
+          <PlayerDemo />
+        </View>
     </ScrollView>;
   }
 }

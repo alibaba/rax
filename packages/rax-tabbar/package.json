@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "rax-view": "^0.2.3",
+    "rax-link": "^0.2.3",
     "rax-text": "^0.2.3",
     "rax-touchable": "^0.2.3",
     "rax-image": "^0.2.3",
