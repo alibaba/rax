@@ -12,13 +12,12 @@ import {
   ScrollView,
   TouchableWithoutFeedback} from 'rax-components';
 import Calendar from 'rax-calendar';
-import moment from 'moment';
 
 class CalendarDemo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedDate: moment().format(),
+      selectedDate: '2017-03-15',
     };
   }
   render() {

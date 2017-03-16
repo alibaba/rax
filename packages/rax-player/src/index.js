@@ -1,2 +1,10 @@
-import H5Video from './video-web';
-export default H5Video;
+import {isWeb} from 'universal-env';
+
+let Video;
+if (isWeb) {
+  Video = require('./video-web');
+} else {
+  Video = require('./video-weex');
+}
+
+export default Video;
