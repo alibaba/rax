@@ -1,8 +1,8 @@
 {
   "name": "image-source-loader",
-  "version": "0.1.1",
+  "version": "0.2.5",
   "description": "image source loader for webpack",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/alibaba/rax.git"
@@ -21,7 +21,6 @@
   ],
   "main": "lib/index.js",
   "author": "wssgcg1213 <i@zeroling.com>",
-  "license": "MIT",
   "dependencies": {
     "image-size": "^0.5.1"
   }
