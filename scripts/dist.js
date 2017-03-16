@@ -13,7 +13,32 @@ const fs = require('fs');
   ['universal-platform', 'platform', 'Platform'],
   ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
   ['universal-toast', 'toast', 'Toast'],
-  ['universal-jsonp', 'jsonp', 'JSONP']
+  ['universal-jsonp', 'jsonp', 'JSONP'],
+  // new added
+  ['rax-text', 'text', 'Text'],
+  ['rax-view', 'view', 'View'],
+  ['rax-image', 'image', 'Image'],
+  ['rax-link', 'link', 'Link'],
+  ['rax-icon', 'icon', 'Icon'],
+  ['rax-button', 'button', 'Button'],
+  ['rax-touchable', 'touchable', 'Touchable'],
+  ['rax-video', 'video', 'Video'],
+  ['rax-grid', 'grid', 'Grid'],
+  ['rax-multirow', 'multirow', 'Multirow'],
+  ['rax-scrollview', 'scrollview', 'ScrollView'],
+  ['rax-listview', 'listview', 'ListView'],
+  ['rax-recyclerview', 'recyclerview', 'RecyclerView'],
+  ['rax-tabheader', 'tabheader', 'Tabheader'],
+  ['rax-tabbar', 'tabbar', 'Tabbar'],
+  ['rax-textinput', 'textinput', 'TextInput'],
+  ['rax-switch', 'switch', 'Switch'],
+  ['rax-calendar', 'calendar', 'Calendar'],
+  ['rax-picture', 'picture', 'Picture'],
+  ['rax-player', 'player', 'Player'],
+  ['rax-countdown', 'countdown', 'Countdown'],
+  ['rax-slider', 'slider', 'Slider'],
+  ['rax-gotop', 'gotop', 'Gotop'],
+
 ].forEach(function(info) {
   var main = './packages/' + info[0] + '/src/index.js';
   var entry = {};
