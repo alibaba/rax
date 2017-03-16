@@ -23,8 +23,7 @@
     "rax-view": "^0.2.3",
     "rax-text": "^0.2.2",
     "rax-scrollview": "^0.2.2",
-    "rax-touchable": "^0.2.2",
-    "moment": "^2.13.0"
+    "rax-touchable": "^0.2.2"
   },
   "peerDependencies": {
     "rax": "0.x"
