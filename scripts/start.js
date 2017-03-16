@@ -18,7 +18,6 @@ function getEntry() {
       }
     });
 
-  entry['components2.bundle'] = EXAMPLES_DIR + '/components/index2';
   return entry;
 }
 
