@@ -1,5 +1,6 @@
 import {createElement, Component, PropTypes} from 'rax';
-import {Image, View} from 'rax-components';
+import Image from 'rax-image';
+import View from 'rax-view';
 import webp from './webp';
 
 const toString = {}.toString;
