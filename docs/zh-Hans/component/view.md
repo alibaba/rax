@@ -6,17 +6,27 @@ View 是最基础的组件，它支持Flexbox、touch handling等功能，并且
 
 支持任意自定义属性的透传。
 
+## 安装
+
+```bash
+$ npm install rax-view --save
+```
+
 ## 引用
 
 ```jsx
 import View from 'rax-view';
-import Text from 'rax-text';
 ```
 
-## 示例
+## 基本示例
 
 ```jsx
-<View>
+// demo
+import {createElement, Component, render} from 'rax';
+import View from 'rax-view';
+import Text from 'rax-text';
+
+render(<View>
   <Text>Hello World!<Text>
-</View>
+</View>);
 ```

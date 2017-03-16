@@ -2,6 +2,14 @@
 
 Switch 是状态切换的开关按钮组件。
 
+## 引用
+
+```jsx
+import View from 'rax-view';
+import Text from 'rax-text';
+import Switch from 'rax-switch';
+```
+
 ## 属性
 
 | 名称             | 类型       | 默认值  | 描述                |
@@ -13,17 +21,20 @@ Switch 是状态切换的开关按钮组件。
 | value          | Boolean  |      | 开关默认状态开启或关闭  true |
 | onValueChange  | Function |      | 值改变时调用此函数         |
 
-## 引用
+## 基本示例
 
 ```jsx
+// demo
+import {createElement, Component, render} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
-import Switch from 'rax-switch';
-```
+import Switch from 'rax-switch';  
 
-## 示例
+const styles = {
+  container: { width: 750 }
+};
 
-```jsx
+class App extends Component {
   state = {
     trueSwitchIsOn: true,
     falseSwitchIsOn: false
@@ -31,16 +42,17 @@ import Switch from 'rax-switch';
   render() {
     return (
       <View style={styles.container}>
-        <Text>
-           Swtich实例
-        </Text>
-        <Switch onTintColor={'green'} tintColor={'#ffffff'} thumbTintColor={'blue'}
-          onValueChange={(value) =>this.setState({falseSwitchIsOn: value})}
+        <Text>Swtich实例</Text>
+        <Switch onTintColor="green" tintColor="#ffffff" thumbTintColor="blue"
+          onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
           value={this.state.falseSwitchIsOn}/>
         <Switch
-          onValueChange={(value) =>this.setState({trueSwitchIsOn: value})}
+          onValueChange={(value) => this.setState({trueSwitchIsOn: value})}
           value={this.state.trueSwitchIsOn}/>
       </View>
     );
   }
+}
+
+render(<App />);
 ```

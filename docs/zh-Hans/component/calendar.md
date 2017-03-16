@@ -1,6 +1,24 @@
 # Calendar 日历
 
-## API
+日历选择器组件
+
+## 安装
+
+```bash
+$ npm install rax-calendar --save
+```
+
+## 兼容性
+
+Web 可用
+
+## 引用
+
+```jsx
+import Calendar from 'rax-calendar';
+```
+
+## 属性
 
 | 名称             | 类型       | 默认值        | 描述           |
 | :------------- | :------- | :--------- | :----------- |
@@ -15,26 +33,37 @@
 | onTouchPrev    | Function | ''         | 上一个月         |
 | onTouchNext    | Function | ''         | 下一个月         |
 
-## 兼容性
-
-h5 可用
-
-## 使用示例
+## 基本示例
 
 ```jsx
+// demo
+import { createElement, render, Component } from 'rax';
 import Calendar from 'rax-calendar';
 
-<Calendar
-  ref="calendar"
-  eventDates={['2016-07-03', '2016-07-05', '2016-07-28', '2016-07-30']}
-  startDate={'2016-05-03'}
-  endDate={'2016-07-03'}
-  titleFormat={'YYYY年MM月'}
-  prevButtonText={'上一月'}
-  nextButtonText={'下一月'}
-  weekStart={0}
-  onDateSelect={(date) => this.setState({ selectedDate: date })}
-  onTouchPrev={() => console.log('Back TOUCH')}
-  onTouchNext={() => console.log('Forward TOUCH')}
-/>
+class App extends Component {
+  state = {
+    selectedDate: '2017-01-01'
+  }
+  
+  render() {
+    console.log(this.state.selectedDate);
+    return (
+      <Calendar
+        ref="calendar"
+        eventDates={['2016-07-03', '2016-07-05', '2016-07-28', '2016-07-30']}
+        startDate={'2016-05-03'}
+        endDate={'2016-07-03'}
+        titleFormat={'YYYY年MM月'}
+        prevButtonText={'上一月'}
+        nextButtonText={'下一月'}
+        weekStart={0}
+        onDateSelect={(date) => this.setState({ selectedDate: date })}
+        onTouchPrev={() => console.log('Back TOUCH')}
+        onTouchNext={() => console.log('Forward TOUCH')}
+      />
+    );
+  }
+}
+
+render(<App />);
 ```

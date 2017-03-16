@@ -2,34 +2,45 @@
 
 Tabbar 可以看作一个页面级的导航布局，包含了底部导航和切换的页面，外部不需要嵌套其它标签。
 
-## API
+其具有两种能力 
 
-**Tabbar**
+- 能力一：可以看作一个页面级的导航布局，包含了导航条和切换的页面，外部不需要嵌套其它标签；
+- 能力二：仅创建导航条模块；
+- 使用差别在于是否在Tabbar.Item中添加children，具体代码参考后面实例；
 
-| 名称           | 类型    | 默认值  | 描述         |
-| :----------- | :---- | :--- | :--------- |
-| barTintColor | color |      | bar的背景色    |
-| style        | style |      | 附加在bar上的样式 |
-| tintColor    | color |      | 选中tab的文案颜色 |
+## 属性 (Tabbar)
 
-**Tabbar.Item**
+| 名称           | 类型          | 默认值   | 描述                                       |
+| :----------- | :---------- | :---- | :--------------------------------------- |
+| horizontal   | Boolean     | false | 是否出现水平滚动条                                |
+| position     | String      | top   | 导航条位置（可选值top, bottom)                    |
+| style        | styleObject | {}    | 附加在bar上的样式，(其中backgroundImage样式做了weex兼容) |
+| autoHidden   | Boolean     | false | 如果tabbar在RaxEmbed中，是否由自动隐藏tabbar模块       |
+| barTintColor | color       |       | bar的背景色                                  |
+| style        | style       |       | 附加在bar上的样式                               |
+| tintColor    | color       |       | 选中tab的文案颜色                               |
 
-| 名称           | 类型            | 默认值  | 描述            |
-| :----------- | :------------ | :--- | :------------ |
-| badge        | string,number |      | 透出的消息数        |
-| icon         | image source  |      | icon地址        |
-| selectedIcon | image source  |      | tab选中时的icon地址 |
-| onPress      | Function      |      | 选中的回调         |
-| selected     | bool          |      | 是否选中          |
-| style        | style         |      | 附加在tab上的样式    |
-| title        | string        |      | 透出的文案         |
+## 属性(Tabbar.Item)
 
-## 示例
+| 名称            | 类型            | 默认值                   | 描述                                      |
+| :------------ | :------------ | :-------------------- | :-------------------------------------- |
+| title         | string        | 无                     | 选中项上的文案                                 |
+| style         | styleObject   | 无                     | 附加在tab上的样式（其中backgroundImage样式做了weex兼容） |
+| icon          | image source  | 无                     | icon图片url                               |
+| selectedIcon  | image source  | 无                     | tab选中状态icon的url                         |
+| iconStyle     | styleObject   | {width: 48,height:48} | icon的样式                                 |
+| selectedStyle | styleObject   |                       | tab选中状态icon的样式                          |
+| selected      | boolean       | false                 | 是否选中                                    |
+| badge         | string,number |                       | 透出的消息数                                  |
+| href          | String        | 空                     | 仅weex中生效：点击当前项动作改为“打开一个页面”              |
+| onPress       | Function      |                       | 选中的回调，用于处理h5中页面切换                       |
+
+## 使用示例
 
 <img src="https://img.alicdn.com/tps/TB1ZqDcKVXXXXb0XFXXXXXXXXXX-392-703.gif" height = "300" alt="图片名称" align=center />
 
 ```jsx
-/** @jsx createElement */
+// demo
 import {createElement, Component, render} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
@@ -56,10 +67,7 @@ class TabBarExample extends Component {
 
   render() {
     return (
-      <Tabbar
-        unselectedTintColor="yellow"
-        tintColor="#ff4400"
-        barTintColor="darkslateblue">
+      <Tabbar position="bottom">
         <Tabbar.Item
           title="Blue Tab"
           icon={{uri: base64Icon, scale: 3}}
