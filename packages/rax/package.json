@@ -17,6 +17,6 @@
   },
   "dependencies": {
     "universal-env": "^0.2.3",
-    "rax-style-unit": "0.x.x"
+    "style-unit": "0.x.x"
   }
 }

@@ -1,1 +1,1 @@
-export * from 'rax-style-unit';
+export * from 'style-unit';

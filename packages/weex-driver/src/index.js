@@ -1,7 +1,7 @@
 /**
  * Weex driver
  */
-import {convertUnit, setRem} from 'rax-style-unit';
+import {convertUnit, setRem} from 'style-unit';
 
 import * as w3cElements from './elements';
 

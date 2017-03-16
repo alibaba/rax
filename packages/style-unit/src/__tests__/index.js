@@ -1,5 +1,5 @@
 
 describe('index.js', () => {
-  it('rax-style-unit', () => {
+  it('style-unit', () => {
   });
 });

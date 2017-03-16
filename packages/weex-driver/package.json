@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "rax-style-unit": "0.x.x"
+    "style-unit": "0.x.x"
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "rax-style-unit",
+  "name": "style-unit",
   "version": "0.0.1",
-  "description": "rax-style-unit",
+  "description": "style-unit",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
