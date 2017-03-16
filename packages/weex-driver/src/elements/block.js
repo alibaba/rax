@@ -7,7 +7,7 @@ export default {
    * @return {Object} weex component data
    */
   parse: function(component) {
-    component.type = 'view';
+    component.type = 'div';
     return component;
   }
 };
