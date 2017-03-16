@@ -29,8 +29,8 @@ import TabheaderDemo from './TabheaderDemo';
 class Page extends Component {
   render() {
     return <ScrollView ref={(scrollview) => {
-        this.scrollview = scrollview;
-      }
+      this.scrollview = scrollview;
+    }
       }>
       <View>
         <Text style={styles.title}>Style</Text>

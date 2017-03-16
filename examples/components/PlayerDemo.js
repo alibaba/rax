@@ -30,12 +30,12 @@ class PlayerDemo extends Component {
             style={{
               height: 400,
               width: 650,
-            }} 
+            }}
             poster="//gw.alicdn.com/tps/TB1m0.aKFXXXXbJXXXXXXXXXXXX-750-300.png"  // 封面图片
             src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"  // 视频源地址
-            controls 
-            startBtn 
-            // autoPlay 
+            controls
+            startBtn
+            // autoPlay
             hasFullScreen={true}
             onVideoFail={logger.log}
             onVideoFinish={logger.log}
