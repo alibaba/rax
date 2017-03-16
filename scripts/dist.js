@@ -38,6 +38,7 @@ const fs = require('fs');
   ['rax-countdown', 'countdown', 'Countdown'],
   ['rax-slider', 'slider', 'Slider'],
   ['rax-gotop', 'gotop', 'Gotop'],
+  ['rax-modal', 'modal', 'Modal'],
 
 ].forEach(function(info) {
   var main = './packages/' + info[0] + '/src/index.js';
