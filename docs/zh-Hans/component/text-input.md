@@ -49,13 +49,16 @@ import TextInput from 'rax-textinput';
 render(<TextInput
   placeholder={'Enter text to see events'}
   autoFocus multiline
-  onFocus={() => console.log('onFocus')}
-  onBlur={() => console.log('onBlur')}
-  onInput={() => console.log('onInput')}
+  onFocus={() => alert('onFocus')}
+  onBlur={() => alert('onBlur')}
+  onInput={() => alert('onInput')}
   style={{
-    width: '1000rem',
-    height: '1000rem',
-    border: '1px solid #000'
+    width: 750,
+    height: 100,
+    borderColor: '#000',
+    borderWidth: 1,
+    paddingTop: 10,
+    paddingLeft: 0
   }}
 />);
 ```

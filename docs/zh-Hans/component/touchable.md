@@ -31,5 +31,5 @@ import Touchable from 'rax-touchable';
 import {createElement, Component, render} from 'rax';
 import Touchable from 'rax-touchable';
 
-render(<Touchable onPress={() => { console.log('hello'); }}>Click Me</Touchable>);
+render(<Touchable onPress={() => { alert('hello'); }}>Click Me</Touchable>);
 ```

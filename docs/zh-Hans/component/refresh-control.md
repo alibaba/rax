@@ -32,14 +32,14 @@ import RefreshControl from 'rax-refreshcontrol';
 import ScrollView from 'rax-scrollview';
 
 render(
-<View style={{height: 500}}>
-  <RefreshControl
-    refreshing={true}
-    onRefresh={() => {}}
-  >
-    <Text>下拉刷新...</Text>
-  </RefreshControl>
-  <ScrollView onEndReachedThreshold={300} onEndReached={() => {}}>
+<View style={{height: 500, width: 750}}>
+  
+  <ScrollView onEndReachedThreshold={300} onEndReached={() => { alert('on end reached'); }}>
+    <RefreshControl
+      onRefresh={() => { alert('fresh!'); }}
+    >
+      <Text>下拉刷新...</Text>
+    </RefreshControl>
     <Text style={{
       color:'#ffffff',
       margin:'5rem',

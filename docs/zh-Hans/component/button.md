@@ -31,6 +31,6 @@ import { createElement, render } from 'rax';
 import Button from 'rax-button';
 
 render((
-  <Button onPress={(evt) => { console.log('hello'); }}>Click Me</Button>
+  <Button onPress={(evt) => { alert('你好'); }}>点我</Button>
 ));
 ```
