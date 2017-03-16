@@ -3,7 +3,7 @@ import View from 'rax-view';
 import Text from 'rax-text';
 import Image from 'rax-image';
 import Controller from './controller';
-import env from './env-h5';
+import env from './env-web';
 
 const defaultStyles = {
   container: {
