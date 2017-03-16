@@ -156,6 +156,11 @@ module.exports = {
       {
         test: /\.json$/,
         loader: 'json'
+      },
+      // load inline images using image-source-loader for Image
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        loader: 'image-source'
       }
     ]
   }

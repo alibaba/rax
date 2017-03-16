@@ -2,6 +2,18 @@
 
 ScrollView 是一个包装了滚动操作的组件。一般情况下需要一个确定的高度来保证 ScrollView 的正常展现。  
 
+## 安装
+
+```bash
+$ npm install rax-scrollview --save
+```
+
+## 引用
+
+```jsx
+import ScrollView from 'rax-scrollview';
+```
+
 ## 属性
 
 | 名称                             | 类型      | 默认值  | 描述                                       |
@@ -13,17 +25,16 @@ ScrollView 是一个包装了滚动操作的组件。一般情况下需要一个
 | onEndReachedThreshold          | Number  |      | 设置加载更多的偏移，默认值为500                        |
 | onEndReached                   | String  |      | 滚动区域还剩 `onEndReachedThreshold` 的长度时触发    |
 
-## 引用
-
-```jsx
-import Text from 'rax-text';
-import ScrollView from 'rax-scrollview';
-```
-
 ## 使用示例
 
 ```jsx
-<ScrollView onEndReachedThreshold={300} onEndReached={()=>{}}>
+// demo
+import {createElement, Component, render} from 'rax';
+import ScrollView from 'rax-scrollview';
+import Text from 'rax-text';
+
+render(
+<ScrollView onEndReachedThreshold={300} onEndReached={() => {}}>
   <Text style={{
     color:'#ffffff',
     margin:'5rem',
@@ -45,4 +56,5 @@ import ScrollView from 'rax-scrollview';
       Shake or press menu button for dev menuShake or press menu button for dev menu
   </Text>
 </ScrollView>
+);
 ```

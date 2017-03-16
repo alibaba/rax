@@ -74,7 +74,11 @@ function getInclusive(data = getLastMeasurements()) {
   let affectedIDs = {};
 
   function updateAggregatedStats(treeSnapshot, instanceID, applyUpdate) {
-    const {displayName, parentID} = treeSnapshot[instanceID];
+    const component = treeSnapshot[instanceID];
+    if (!component) {
+      return;
+    }
+    const {displayName, parentID} = component;
     const owner = treeSnapshot[parentID];
     const key = (owner ? owner.displayName + ' > ' : '') + displayName;
     let stats = aggregatedStats[key];
@@ -106,7 +110,11 @@ function getInclusive(data = getLastMeasurements()) {
             stats.inclusiveRenderDuration += duration;
           });
         }
-        nextParentID = treeSnapshot[nextParentID].parentID;
+        if (treeSnapshot[nextParentID]) {
+          nextParentID = treeSnapshot[nextParentID].parentID;
+        } else {
+          nextParentID = 0;
+        }
       }
     });
   });
@@ -134,7 +142,11 @@ function getWasted(data = getLastMeasurements()) {
   let affectedIDs = {};
 
   function updateAggregatedStats(treeSnapshot, instanceID, applyUpdate) {
-    let {displayName, parentID} = treeSnapshot[instanceID];
+    const component = treeSnapshot[instanceID];
+    if (!component) {
+      return;
+    }
+    let {displayName, parentID} = component;
     let owner = treeSnapshot[parentID];
     let key = (owner ? owner.displayName + ' > ' : '') + displayName;
     let stats = aggregatedStats[key];
@@ -175,11 +187,15 @@ function getWasted(data = getLastMeasurements()) {
 
     measurements.forEach(measurement => {
       let {duration, instanceID, timerType} = measurement;
+      const component = treeSnapshot[instanceID];
+      if (!component) {
+        return;
+      }
       if (timerType !== 'render') {
         return;
       }
 
-      let { updateCount } = treeSnapshot[instanceID];
+      let {updateCount} = component;
       if (isDefinitelyNotWastedByID[instanceID] || updateCount === 0) {
         return;
       }
@@ -226,7 +242,11 @@ function getExclusive(data = getLastMeasurements()) {
   const treeSnapshot = getTreeSnapshot(roots, tree);
 
   function updateAggregatedStats(treeSnapshot, instanceID, timerType, applyUpdate) {
-    const {displayName} = treeSnapshot[instanceID];
+    const component = treeSnapshot[instanceID];
+    if (!component) {
+      return;
+    }
+    const {displayName} = component;
     const key = displayName;
     let stats = aggregatedStats[key];
     if (!stats) {

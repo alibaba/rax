@@ -3,7 +3,7 @@ import View from 'rax-view';
 import Text from 'rax-text';
 import Image from 'rax-image';
 import Controller from './controller';
-import env from './env-h5';
+import env from './env.web';
 
 const defaultStyles = {
   container: {
@@ -55,15 +55,16 @@ class H5Video extends Component {
    * @description
    * @param status {Boolean} （true: play，false: pause）
    */
-  switch(status) {
+  switch = () => {
     let video = this.refs.video;
-    if (status) {
+    if (this.switchStatus) {
       video && video.pause();
     } else {
       video && video.play();
     }
+    this.switchStatus = !this.switchStatus;
     this.setState({
-      pause: status
+      pause: this.switchStatus
     });
   }
 

@@ -42,7 +42,6 @@ export default class GoTop extends Component {
       {topNode}
       <View>
         <View style={styles.hideNode} onAppear={() => {
-          console.log('appear');
           if (props.resident) {
             return;
           }
@@ -55,7 +54,6 @@ export default class GoTop extends Component {
             this.hide();
           }
         }} onDisAppear={() => {
-          console.log('disappear');
           if (props.resident) {
             return;
           }
@@ -87,7 +85,7 @@ export default class GoTop extends Component {
     </View>;
   }
 
-  click(event) {
+  click = (event) => {
     const {onTop, onPress} = this.props;
 
     onPress && onPress();

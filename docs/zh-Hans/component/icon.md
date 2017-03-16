@@ -1,6 +1,14 @@
 # Icon 图标
 
-## 组件引入
+图标组件，实现了 W3C 标准的 IconFont 接口。
+
+## 安装
+
+```bash
+$ npm install rax-icon --save
+```
+
+## 引入
 
 ```jsx
 import Icon, {createIconSet} from 'rax-icon';
@@ -27,7 +35,7 @@ const IconFont = createIconSet({ hello: '\ue60f' }, 'iconfont', 'http://at.alicd
 <IconFont name={'hello'}/>
 ```
 
-## API说明
+## API 说明
 
 ### 属性
 
@@ -39,7 +47,7 @@ const IconFont = createIconSet({ hello: '\ue60f' }, 'iconfont', 'http://at.alicd
 
 ### 方法
 
-### IconComponent createIconSet(Object map, String name, String url);
+- **IconComponent createIconSet(Object map, String name, String url);**
 
 参数说明
 
@@ -49,14 +57,17 @@ const IconFont = createIconSet({ hello: '\ue60f' }, 'iconfont', 'http://at.alicd
 
 IconComponent 属性说明
 
-| 名称        | 类型     | 默认值  | 描述          |
-| :-------- | :----- | :--- | :---------- |
-| name      | String | ''   | 字符的名称       |
-| codePoint | String | ''   | iconfont的码点 |
+| 名称        | 类型     | 默认值  | 描述           |
+| :-------- | :----- | :--- | :----------- |
+| name      | String | ''   | 字符的名称        |
+| codePoint | String | ''   | iconfont 的码点 |
 
-##### 例子
+## 基本示例
 
 ```jsx
+// demo
+import { createElement, render, Component } from 'rax';
+import View from 'rax-view';
 import Icon, {createIconSet} from 'rax-icon';
 
 const IconFont1 = createIconSet({}, 'iconfont', 'http://at.alicdn.com/t/font_pkm0oq8is8fo5hfr.ttf');
@@ -76,5 +87,7 @@ class Demo extends Component {
     );
   }
 }
+
+render(<Demo />);
 ```
 

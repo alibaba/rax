@@ -2,7 +2,11 @@
 
 水平滚动 tab 切换
 
+## 安装
 
+```bash
+$ npm install rax-tabheader --save
+```
 
 ## 引入
 
@@ -10,61 +14,6 @@
 import TabHeader from 'rax-tabheader';
 ```
 
-
-
-## 示例
-
-**完整调用示例**
-
-<img src="https://img.alicdn.com/tps/TB1F3jjKVXXXXX1XpXXXXXXXXXX-392-61.gif" alt="图片名称" align=center />
-
-```jsx
-renderItem(item, index) {
-  return <View style={styles.item}><Text>{item}</Text></View>;
-}
-renderSelect(item, index) {
-  return <View style={styles.select}><Text>{item}</Text></View>;
-}
-onSelect (index) {
-  // do something
-}
-itemWidth(item, index){
-  return (item.length * 50 + 50) + 'rem';
-}
-
-<TabHeader 
-  style={styles.container} 
-  dataSource={['tab1','tab2','tab3','tab4']} 
-  renderItem={self.renderItem} 
-  renderSelect={self.renderSelect} 
-  onPress={self.onSelect}
-  selected={0}
-  itemWidth={self.itemWidth}
-/>
-```
-
-**简单调用示例**
-
-```jsx
-<TabHeader 
-  dataSource={['tab1','tab2','tab3','tab4']} 
-  renderItem={self.renderItem} 
-  itemWidth='150rem'
-/>
-```
-
-**通过方法改变 tab 选项**
-
-```jsx
-this.refs.tabHeader.select(0);
-
-<TabHeader 
-  ref="tabHeader"
-  dataSource={['tab1','tab2','tab3','tab4']} 
-  renderItem={self.renderItem} 
-  itemWidth='150rem'
-/>
-```
 
 ## 属性
 
@@ -102,3 +51,124 @@ this.refs.tabHeader.select(0);
 | selectInternal | n      | /    | 选择第n个导航项目（不会触发onSelect事件），一般用于同步导航状态 |
 | scrollTo       | Object | /    | 设置水平滚动位置，参数示例：{x:'100rem'}           |
 
+## 完整调用示例
+
+<img src="https://img.alicdn.com/tps/TB1F3jjKVXXXXX1XpXXXXXXXXXX-392-61.gif" alt="图片名称" align=center />
+
+```jsx
+// demo
+import {createElement, Component, render} from 'rax';
+import View from 'rax-view';
+import Text from 'rax-text';
+import TabHeader from 'rax-tabheader';
+
+const styles = {
+  container: {
+    width: 750
+  }
+};
+
+class App extends Component {
+  renderItem = (item, index) => {
+    return <View><Text>{item}</Text></View>;
+  }
+  renderSelect = (item, index) => {
+    return <View><Text>{item}</Text></View>;
+  }
+  onSelect = (index) => {
+    // do something
+  }
+  itemWidth = (item, index) => {
+    return (item.length * 50 + 50) + 'rem';
+  }
+  
+  render() {
+    return (
+      <TabHeader 
+        style={styles.container} 
+        dataSource={['tab1','tab2','tab3','tab4']} 
+        renderItem={this.renderItem} 
+        renderSelect={this.renderSelect} 
+        onPress={this.onSelect}
+        selected={0}
+        itemWidth={this.itemWidth}
+      />
+    );
+  }
+}
+
+render(<App />);
+```
+
+## 简单调用示例
+
+```jsx
+// demo
+import {createElement, Component, render} from 'rax';
+import View from 'rax-view';
+import Text from 'rax-text';
+import TabHeader from 'rax-tabheader';
+
+const styles = {
+  container: {
+    width: 750
+  }
+};
+
+class App extends Component {
+  renderItem = (item, index) => {
+    return <View><Text>{item}</Text></View>;
+  }
+  
+  render() {
+    return (
+      <TabHeader 
+        dataSource={['tab1','tab2','tab3','tab4']} 
+        renderItem={this.renderItem} 
+        itemWidth="150rem"
+      />
+    );
+  }
+}
+
+render(<App />);
+```
+
+## 通过方法改变 tab 选项
+
+```jsx
+// demo
+import {createElement, Component, render} from 'rax';
+import View from 'rax-view';
+import Text from 'rax-text';
+import TabHeader from 'rax-tabheader';
+
+const styles = {
+  container: {
+    width: 750
+  }
+};
+
+class App extends Component {
+  renderItem = (item, index) => {
+    return <View><Text>{item}</Text></View>;
+  }
+  
+  componentDidMount() {
+    this.refs.tabHeader.select(0);
+  }
+  
+  render() {
+    return (
+      <TabHeader 
+        ref="tabHeader"
+        dataSource={['tab1','tab2','tab3','tab4']} 
+        renderItem={this.renderItem} 
+        itemWidth='150rem'
+      />
+    );
+  }
+}
+
+render(<App />);
+```

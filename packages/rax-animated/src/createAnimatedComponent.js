@@ -12,8 +12,8 @@
 
 import {createElement, Component} from 'rax';
 import mapStyle from './mapStyle';
-var AnimatedProps = require('animated/lib/AnimatedProps');
-var ApplyAnimatedValues = require('animated/lib/injectable/ApplyAnimatedValues');
+var AnimatedProps = require('animated-js/lib/AnimatedProps');
+var ApplyAnimatedValues = require('animated-js/lib/injectable/ApplyAnimatedValues');
 
 function createAnimatedComponent(OriginComponent: any): any {
   var refName = 'node';

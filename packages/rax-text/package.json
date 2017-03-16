@@ -1,6 +1,6 @@
 {
   "name": "rax-text",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "description": "Text component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,12 +21,12 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.3"
+    "universal-env": "^0.2.5"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.3"
+    "rax-test-renderer": "^0.2.5"
   }
 }

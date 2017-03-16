@@ -364,7 +364,7 @@ class TabHeader extends Component {
               zIndex: 100,
               ...weexGridStyle
             }}>
-            <MultiRow dataSource={dropData} rows={this.props.dropDownCols} renderRow={this.renderGridItemFun} />
+            <MultiRow dataSource={dropData} cells={this.props.dropDownCols} renderCell={this.renderGridItemFun} />
           </View>
         </View>;
     } else {

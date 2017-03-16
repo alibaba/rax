@@ -1,0 +1,142 @@
+
+/* global */
+.bottom{
+  height: 20;
+  background-color: #f8f8f8;
+  border-bottom-color: '#e4e4e4';
+  border-bottom-width: 1; 
+}
+
+/* header search */
+.header {
+  height: 80;
+  display: 'flex';
+  justifyContent: 'center';
+  flexDirection: 'row';
+  border-bottom-color: '#e4e4e4';
+  border-bottom-width: 1; 
+}
+.headerPlaceholder {
+  width: 661;
+  height: 52;
+  line-height: 30;
+  background-color: #e7e7e7;
+  border-radius: 8;
+  margin-top: 15;
+  margin-right: 5;
+  display: 'flex';
+  justifyContent: 'center';
+  flexDirection: 'row';
+}
+.headerPlaceholderIcon {
+  color: #919191;
+  margin-top: 10;
+  margin-right: 8;
+  font-size: 26;
+}
+.headerPlaceholderText {
+  color: #919191;
+  font-size: 26;
+  margin-top: 10;
+}
+.headerBar {
+  border-bottom-color: '#e4e4e4';
+  border-bottom-width: 1; 
+  padding-top: 12;
+  padding-bottom: 12;
+}
+.headerBarItem {
+  display: 'flex';
+  justifyContent: 'center';
+  flexDirection: 'row';
+  height: 45;
+  border-left-color: #e4e4e4;
+  border-left-width: 1;
+}
+.headerBarIcon {
+  color: #7d7e85;
+  font-size: 30;
+  margin-top: 6;
+  margin-right: 8;
+}
+.headerBarText {
+  color: #7d7e85;
+  font-size: 30;
+}
+
+
+/* list */
+.listItem {
+  height: 650;
+  border-bottom-color: '#e4e4e4';
+  border-bottom-width: 1; 
+}
+.listItemInfo {
+  display: 'flex';
+  flexDirection: 'row';
+  padding: 20;
+}
+.listItemInfoImg {
+  width: 40;
+  height: 40;
+}
+.listItemInfoTopic {
+  color: #959595;
+  font-size: 24;
+  margin-left: 13;
+  margin-top: 5;
+}
+.listItemMainImage {
+  width: 750;
+  height: 310;
+}
+.listItemTitle {
+  padding: 15 20;
+  font-size: 30;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+.listItemContent {
+  padding-left: 20;
+  padding-right: 20;
+  color: #292929;
+  font-size: 26;
+}
+.listItemBottom {
+  padding-left: 20;
+  padding-right: 20; 
+  margin-top: 15;
+  display: 'flex';
+  flexDirection: 'row';
+}
+.listItemBottomText {
+  font-size: 24;
+  color: #868686;
+}
+.listItemBottomPoint {
+  width: 2;
+  height: 2;
+  background-color: #868686;
+  margin: 15;
+}
+
+
+/* bar */
+.bottomBar {
+  height: 88;
+}
+.bottomBarIcon {
+  text-align: center;
+  font-size: 35;
+  color: #bdc1cd;
+  margin-top: 12;
+  margin-bottom: 10;
+}
+.bottomBarText {
+  text-align: center;
+  font-size: 14;
+  color: #bdc1cd;
+  line-height: 22;
+}
+
+
