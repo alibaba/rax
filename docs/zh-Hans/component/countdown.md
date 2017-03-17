@@ -35,11 +35,14 @@ import Countdown from 'rax-countdown';
 // demo
 import { createElement, render, Component } from 'rax';
 import Countdown from 'rax-countdown';
+import View from 'rax-view';
 
-render(<Countdown
-  timeRemaining={100000}
-  tpl="{d}天{h}时{m}分{s}秒"
-  onComplete={() => { console.log('complete'); }}
-/>);
+render(<View>
+  <Countdown
+    timeRemaining={100000}
+    tpl="{d}天{h}时{m}分{s}秒"
+    onComplete={() => { console.log('complete'); }}
+  />  
+</View>);
 ```
 
