@@ -1,7 +1,7 @@
 {
-  "name": "rax",
-  "version": "0.2.5",
-  "description": "A universal React-compatible render engine.",
+  "name": "weex-driver",
+  "version": "0.0.1",
+  "description": "Weex driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -12,11 +12,7 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "engines": {
-    "npm": ">=3.0.0"
-  },
   "dependencies": {
-    "universal-env": "^0.2.5",
     "style-unit": "0.x.x"
   }
 }

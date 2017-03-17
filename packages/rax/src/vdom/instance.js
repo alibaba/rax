@@ -41,7 +41,7 @@ export default {
     }
 
     // Before render callback
-    Host.driver.beforeRender && Host.driver.beforeRender(element, container);
+    Host.driver.beforeRender && Host.driver.beforeRender();
 
     // Real native root node is body
     if (container == null) {
