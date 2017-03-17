@@ -49,9 +49,9 @@ import TextInput from 'rax-textinput';
 render(<TextInput
   placeholder={'Enter text to see events'}
   autoFocus multiline
-  onFocus={() => alert('onFocus')}
-  onBlur={() => alert('onBlur')}
-  onInput={() => alert('onInput')}
+  onFocus={() => console.log('onFocus')}
+  onBlur={() => console.log('onBlur')}
+  onInput={() => console.log('onInput')}
   style={{
     width: 750,
     height: 100,
