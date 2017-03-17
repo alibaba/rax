@@ -242,7 +242,7 @@ export function getOffset(el, param) {
 // add element
 export function pushElement(node) {
   if (_appearDoms.indexOf(node) === -1 && !node.appended) {
-    let isOnce = node.getAttribute('isonce') == 1;
+    let isOnce = Boolean(node.getAttribute('isonce')) || Boolean(node.getAttribute('data-once'));
     node.isOnce = isOnce;
     node.appended = true;
     _appearDoms.push(node);
