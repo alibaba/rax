@@ -21,14 +21,14 @@ describe('elements', () => {
   });
 
   it('block elements', () => {
-    const blocks = ['div', 'section', 'footer', 'main', 'aside', 'nav'];
+    const blocks = ['section', 'footer', 'main', 'aside', 'nav'];
 
     blocks.forEach((block) => {
       const element = {
         type: block
       };
       const component = elements[element.type].parse(element);
-      expect(component.type).toBe('view');
+      expect(component.type).toBe('div');
     });
   });
 

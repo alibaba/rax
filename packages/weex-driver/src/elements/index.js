@@ -8,7 +8,6 @@ export default {
   img,
   video,
   textarea,
-  div: block,
   nav: block,
   header: block,
   section: block,
