@@ -1,5 +1,5 @@
 import styleToCSS from '../styleToCSS';
-import {setRem} from '../unit';
+import {setRem} from 'style-unit';
 
 describe('StyleToCSS', () => {
   it('convert unitless style to css', () => {

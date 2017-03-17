@@ -1,6 +1,4 @@
 /**
  * Weex driver
  **/
-import Driver from 'weex-driver';
-
-export default Driver;
+export default from 'weex-driver';
