@@ -123,10 +123,10 @@ function _mergeStyles() {
         if (cssParamIdentifiers) {
           // only one css file
           if (cssParamIdentifiers.length === 1) {
-            callExpression = t.variableDeclaration('const', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), cssParamIdentifiers[0])]);
+            callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), cssParamIdentifiers[0])]);
           } else if (cssParamIdentifiers.length > 1) {
             const objectAssignExpression = t.callExpression(t.identifier('_mergeStyles'), cssParamIdentifiers);
-            callExpression = t.variableDeclaration('const', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), objectAssignExpression)]);
+            callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), objectAssignExpression)]);
           }
 
           // append class declaration
