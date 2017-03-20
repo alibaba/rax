@@ -196,6 +196,7 @@ class Transitioner extends Component {
   }
 
   _onLayout(event: any): void {
+    // TODO: work in weex and web
     const { height, width } = event.nativeEvent.layout;
     if (this.state.layout.initWidth === width &&
       this.state.layout.initHeight === height) {

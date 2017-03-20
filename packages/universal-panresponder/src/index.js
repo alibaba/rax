@@ -356,14 +356,15 @@ const PanResponder = {
 
         ResponderTouchHistoryStore.recordTouchTrack('start', e);
 
-        if (!setHandlers.onStartShouldSetResponder(e)) {
-          return responderHandlers.onResponderReject(e);
-        }
-
         responderHandlers.onResponderGrant(e);
 
         const touchHistory = ResponderTouchHistoryStore.touchHistory;
         gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
+
+        if (!setHandlers.onStartShouldSetResponder(e)) {
+          return responderHandlers.onResponderReject(e);
+        }
+
         if (config.onPanResponderStart) {
           config.onPanResponderStart(e, gestureState);
         }
@@ -374,19 +375,22 @@ const PanResponder = {
 
         ResponderTouchHistoryStore.recordTouchTrack('move', e);
 
-        if (!setHandlers.onMoveShouldSetResponder(e)) {
-          return;
-        }
-
         const touchHistory = ResponderTouchHistoryStore.touchHistory;
+
         // Guard against the dispatch of two touch moves when there are two
         // simultaneously changed touches.
         if (gestureState._accountsForMovesUpTo === touchHistory.mostRecentTimeStamp) {
           return;
         }
+
         // Filter out any touch moves past the first one - we would have
         // already processed multi-touch geometry during the first event.
         PanResponder._updateGestureStateOnMove(gestureState, touchHistory);
+
+        if (!setHandlers.onMoveShouldSetResponder(e)) {
+          return;
+        }
+
         if (config.onPanResponderMove) {
           config.onPanResponderMove(e, gestureState);
         }
@@ -399,6 +403,7 @@ const PanResponder = {
 
         const touchHistory = ResponderTouchHistoryStore.touchHistory;
         gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
+
         if (config.onPanResponderEnd) {
           config.onPanResponderEnd(e, gestureState);
         }

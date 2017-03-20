@@ -26,7 +26,10 @@
     "rax-view": "^0.2.5",
     "rax-text": "^0.2.5",
     "rax-animated": "^0.2.5",
+    "rax-touchable": "^0.2.5",
     "universal-platform": "^0.2.5",
+    "universal-stylesheet": "^0.2.5",
+    "universal-panresponder": "^0.2.5",
     "shallowequal": "^0.2.2"
   },
   "peerDependencies": {

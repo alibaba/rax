@@ -16,21 +16,12 @@ const EmptyPanHandlers = {
  */
 export default class AbstractPanResponder {
 
-  // panHandlers: NavigationPanHandlers;
-
   constructor() {
     const config = {};
     Object.keys(EmptyPanHandlers).forEach((name: string) => {
-      const fn = this;
-
-      invariant(
-        typeof fn === 'function',
-        'subclass of `NavigationAbstractPanResponder` must implement method %s',
-        name
-      );
-
+      const fn = this[name];
       config[name] = fn.bind(this);
-    }, this);
+    });
 
     this.panHandlers = PanResponder.create(config).panHandlers;
   }

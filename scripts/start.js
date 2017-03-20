@@ -23,7 +23,7 @@ function getEntry() {
 
 var config = {
   target: 'node',
-  devtool: '#inline-source-map',
+  // devtool: '#inline-source-map',
   entry: getEntry(),
   output: {
     path: __dirname,

@@ -107,12 +107,14 @@ class CardStackPanResponder extends AbstractPanResponder {
     if (props.navigationState.index !== props.scene.index) {
       return false;
     }
+    // React Native || Web
+    let touchEvent = event.nativeEvent || event.touches[0];
 
     const layout = props.layout;
     const isVertical = this._isVertical;
     const index = props.navigationState.index;
     const currentDragDistance = gesture[isVertical ? 'dy' : 'dx'];
-    const currentDragPosition = event.nativeEvent[isVertical ? 'pageY' : 'pageX'];
+    const currentDragPosition = touchEvent[isVertical ? 'pageY' : 'pageX'];
     const maxDragDistance = isVertical ?
       layout.height.__getValue() :
       layout.width.__getValue();
@@ -128,6 +130,10 @@ class CardStackPanResponder extends AbstractPanResponder {
     if (positionMax != null && currentDragPosition - currentDragDistance > positionMax) {
       return false;
     }
+
+    console.log(currentDragDistance, Math.abs(currentDragDistance) > RESPOND_THRESHOLD &&
+    maxDragDistance > 0 &&
+    index > 0);
 
     return (
       Math.abs(currentDragDistance) > RESPOND_THRESHOLD &&
