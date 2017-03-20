@@ -41,7 +41,7 @@ class App extends Component {
     return <div style={_styleSheet["header"]} />;
   }
 }
-const _styleSheet = appStyleSheet;`);
+var _styleSheet = appStyleSheet;`);
   });
 
   it('transform multiple classNames to style as array', () => {
@@ -62,7 +62,7 @@ class App extends Component {
     return <div style={[_styleSheet["header1"], _styleSheet["header2"]]} />;
   }
 }
-const _styleSheet = appStyleSheet;`);
+var _styleSheet = appStyleSheet;`);
   });
 
   it('combine one style and className', () => {
@@ -87,7 +87,7 @@ class App extends Component {
   }
 }
 
-const _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);`);
+var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);`);
   });
 
   it('combine multiple styles and className', () => {
@@ -112,7 +112,7 @@ class App extends Component {
   }
 }
 
-const _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);`);
+var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);`);
   });
 
   it('do not transfrom code when no css file', () => {
@@ -146,6 +146,6 @@ class App extends Component {
     return <div style={_styleSheet["header"]} />;
   }
 }
-const _styleSheet = appStyleSheet;`);
+var _styleSheet = appStyleSheet;`);
   });
 });
