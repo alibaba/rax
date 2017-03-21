@@ -16,18 +16,16 @@ import Slider from 'rax-slider';
 
 ## 属性
 
-| 名称               | 类型      | 默认值      | 描述                                       |
-| :--------------- | :------ | :------- | :--------------------------------------- |
-| width            | string  | '750rem' | Slider的宽度（必填）                            |
-| height           | string  | '352rem' | Slider的高度（必填）                            |
-| autoPlay         | bool    | false    | Slider是否自动播放                             |
-| showsPagination  | bool    | true     | 是否显示分页的小圆点点                              |
-| paginationStyle  | object  | null     | 自己定义小圆点点的样式，否则默认样式居中                     |
-| loop             | bool    | true     | 是否是循环播放                                  |
-| index            | number  | 0        | 指定默认初始化第几个（在weex安卓下有兼容问题，需要节点渲染完成后异步调用，暂不推荐使用） |
-| autoPlayInterval | number  | 3000     | 自动播放的间隔时间                                |
-| activeDot        | element | default  | 自定义分页元素（自定义小圆点节点激活状态）                    |
-| normalDot        | element | default  | 自定义分页元素（自定义小圆点节点）                        |
+| 名称               | 类型     | 默认值      | 描述                                       |
+| :--------------- | :----- | :------- | :--------------------------------------- |
+| width            | string | '750rem' | Slider的宽度（必填）                            |
+| height           | string | '352rem' | Slider的高度（必填）                            |
+| autoPlay         | bool   | false    | Slider是否自动播放                             |
+| showsPagination  | bool   | true     | 是否显示分页的小圆点点                              |
+| paginationStyle  | object | null     | 自己定义小圆点点的样式，否则默认样式居中                     |
+| loop             | bool   | true     | 是否是循环播放                                  |
+| index            | number | 0        | 指定默认初始化第几个（在weex安卓下有兼容问题，需要节点渲染完成后异步调用，暂不推荐使用） |
+| autoPlayInterval | number | 3000     | 自动播放的间隔时间                                |
 
 - 说明：
   - web 环境中 slider 内部默认做了节点的懒加载渲染，不再需要使用 picture 的 lazyload做懒加载
