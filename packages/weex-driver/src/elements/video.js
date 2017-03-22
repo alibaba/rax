@@ -1,4 +1,3 @@
-
 import {transformPropsAttrsToStyle, renamePropsAttr} from '../parseProps';
 
 export default {
@@ -9,7 +8,7 @@ export default {
    * @param {Object} w3c component data
    * @return {Object} weex component data
    */
-  parse: function(component) {
+  parse(component) {
     const {props} = component;
 
     // modify props

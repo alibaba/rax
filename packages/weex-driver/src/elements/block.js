@@ -6,7 +6,7 @@ export default {
    * @param {Object} w3c component data
    * @return {Object} weex component data
    */
-  parse: function(component) {
+  parse(component) {
     component.type = 'div';
     return component;
   }

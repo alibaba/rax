@@ -11,7 +11,7 @@ const RaxWebpackPlugin = require('rax-webpack-plugin');
 function getEntry() {
   let entry = {};
 
-  function walk(dir) {
+  function walkExamples(dir) {
     dir = dir || '.';
     var directory = path.join(__dirname, '..', 'packages', 'weex-rax-examples', dir);
     fs.readdirSync(directory)
@@ -24,12 +24,12 @@ function getEntry() {
           entry[name + '.bundle'] = fullpath;
         } else if (stat.isDirectory() && file !== 'build' && file !== 'common' && file !== 'node_modules') {
           var subdir = path.join(dir, file);
-          walk(subdir);
+          walkExamples(subdir);
         }
       });
   }
 
-  walk();
+  walkExamples();
 
   return entry;
 }
@@ -38,7 +38,7 @@ const config = {
   target: 'node',
   entry: getEntry(),
   output: {
-    path: '.',
+    path: path.join(__dirname, '..'),
     filename: '[name].js'
   },
   plugins: [

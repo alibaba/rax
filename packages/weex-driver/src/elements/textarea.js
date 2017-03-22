@@ -1,4 +1,3 @@
-
 export default {
 
   /**
@@ -7,12 +6,12 @@ export default {
    * @param {Object} w3c component data
    * @return {Object} weex component data
    */
-  parse: function(component) {
+  parse(component) {
     let {props} = component;
 
     if (typeof props.children === 'string' && !props.value) {
       props.value = props.children;
-      delete props.children;
+      props.children = null;
     }
 
     return component;
