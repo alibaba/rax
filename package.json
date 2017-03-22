@@ -32,6 +32,7 @@
     "redux": "^3.6.0",
     "rimraf": "^2.5.4",
     "semver-regex": "^1.0.0",
+    "uppercamelcase": "^1.1.0",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
   },
