@@ -1,3 +1,35 @@
+const BASE_FONT_SIZE = 28;
+
+const defaultParagraphStyle = {
+  fontSize: BASE_FONT_SIZE,
+  marginTop: BASE_FONT_SIZE,
+  marginBottom: BASE_FONT_SIZE
+};
+
+const TypographyElements = {
+  u: {
+    textDecoration: 'underline'
+  },
+  del: {
+    textDecoration: 'line-through'
+  },
+  em: {
+    fontStyle: 'italic'
+  },
+  b: {
+    fontWeight: 'bold'
+  },
+  strong: {
+    fontWeight: 'bold'
+  },
+  big: {
+    fontSize: BASE_FONT_SIZE * 1.2
+  },
+  small: {
+    fontSize: BASE_FONT_SIZE * 0.8
+  }
+};
+
 function transformString(string) {
   return {
     type: 'span',
@@ -9,13 +41,21 @@ function transformString(string) {
 
 function transformChild(child) {
   let type = child.type;
+  let props = child.props;
+  let style = props.style;
+  let nestedChildren = props.children;
+  // Alias img
   if (type === 'img') {
     type = 'image';
   }
 
-  let props = child.props;
-  let style = props.style;
-  let nestedChildren = props.children;
+  if (TypographyElements[type]) {
+    type = 'span';
+    style = {
+      ...TypographyElements[type],
+      ...style
+    };
+  }
 
   props.style = null;
   props.children = null;
@@ -58,10 +98,15 @@ function transformChildren(children) {
 export default {
   parse(component) {
     let {props} = component;
+    let children = props.children;
+
     component.type = 'richtext';
 
-    let children = props.children;
-    // Current only support span, a and img
+    props.style = {
+      ...defaultParagraphStyle,
+      ...props.style
+    };
+
     props.value = transformChildren(children); ;
     props.children = null;
 
