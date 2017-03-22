@@ -46,7 +46,6 @@ const fs = require('fs');
   'universal-toast',
   'universal-jsonp'
 ].forEach(function(packageName) {
-
   var entryName = packageName.split('-')[1];
   var globalName = uppercamelcase(packageName);
   var main = './packages/' + packageName + '/src/index.js';
@@ -207,8 +206,8 @@ dist(getConfig(
       ]
     }
   ));
-}).catch(function(err){
-  setTimeout(function(){
+}).catch(function(err) {
+  setTimeout(function() {
     throw err;
   });
 });
