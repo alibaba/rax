@@ -67,7 +67,7 @@ describe('elements', () => {
     const component = elements[element.type].parse(element);
 
     expect(component.props.value).toBe('default value');
-    expect(component.props.children).toBe(undefined);
+    expect(component.props.children).toBe(null);
     expect(component.props.rows).toBe(10);
   });
 });
