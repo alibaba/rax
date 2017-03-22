@@ -3,12 +3,15 @@
  */
 import {convertUnit, setRem} from 'style-unit';
 
-import * as w3cElements from './elements';
+import htmlElements from './elements';
 
 const STYLE = 'style';
 const ID = 'id';
 const TEXT = 'text';
+const CHILDREN = 'children';
+const EVENT_PREFIX_REGEXP = /on[A-Z]/;
 const FULL_WIDTH_REM = 750;
+
 const nodeMaps = {};
 /* global __weex_document__ */
 const document = typeof __weex_document__ === 'object' ?
@@ -58,9 +61,9 @@ const Driver = {
   },
 
   createElement(component) {
-    const w3cElement = w3cElements[component.type];
-    if (w3cElement) {
-      component = w3cElement.parse(component);
+    const htmlElement = htmlElements[component.type];
+    if (htmlElement) {
+      component = htmlElement.parse(component);
     }
 
     let props = component.props;
@@ -177,10 +180,6 @@ const Driver = {
   },
 
   setNativeProps(node, props) {
-    const STYLE = 'style';
-    const CHILDREN = 'children';
-    const EVENT_PREFIX_REGEXP = /on[A-Z]/;
-
     for (let prop in props) {
       let value = props[prop];
       if (prop === CHILDREN) {
