@@ -7,7 +7,7 @@
     "//gw.alicdn.com/tfs/TB119sRPVXXXXcUXVXXXXXXXXXX-376-668.png",
     "//gw.alicdn.com/tfs/TB13rdlQXXXXXbbXpXXXXXXXXXX-376-669.png"
   ],
-  "description": "这是一个手机淘宝App示例",
+  "description": "手机淘宝 App 主题示例",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"

@@ -27,6 +27,6 @@ import View from 'rax-view';
 import Text from 'rax-text';
 
 render(<View>
-  <Text>Hello World!<Text>
+  <Text style={{fontSize: 50}}>Hello World!</Text>
 </View>);
 ```
