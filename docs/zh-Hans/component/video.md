@@ -1,6 +1,6 @@
 # Video 视频播放
 
-Rax 中的视频播放组件。更丰富的视频功能参见 [Player](/guide/player) 组件
+Rax 中的视频播放组件。更丰富的视频功能参见 [Player](/component/player) 组件
 
 ## 安装
 
