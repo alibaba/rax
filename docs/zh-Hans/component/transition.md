@@ -33,7 +33,7 @@ const styles = {
   container: {
     width: 100,
     height: 100,
-    background: 'red'
+    backgroundColor: 'red'
   }
 };
 
@@ -46,16 +46,16 @@ class App extends Component {
       opacity: '0.5'
     }, {
       timingFunction: 'ease',
-      delay: 0,
-      duration: 1000
+      delay: 2000,
+      duration: 3000
     }, () => {
-      console.log('animation end');
+      alert('animation end');
     });
   }
   
   render() {
     return (
-      <View ref="box" style={styles.container}></View>
+      <View ref="box" style={styles.container} />
     );
   }
 }

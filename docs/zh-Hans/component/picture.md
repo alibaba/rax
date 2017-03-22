@@ -44,9 +44,10 @@ import Picture from 'rax-picture';
 // demo
 import {createElement, Component, render} from 'rax';
 import ScrollView from 'rax-scrollview';
+import 'rax-components'; // hack for rax-picture@0.2.5
 import Picture from 'rax-picture';
 
-class Page extends Component {
+class Demo extends Component {
   render() {
     return <ScrollView ref='scroll'>
        <Picture
@@ -63,6 +64,6 @@ class Page extends Component {
     </ScrollView>;
   }
 }
-render(<Page />);
+render(<Demo />);
 ```
 

@@ -27,10 +27,19 @@ import Button from 'rax-button';
 
 ```jsx
 // demo
-import { createElement, render } from 'rax';
+import {createElement, Component, render} from 'rax';
+import View from 'rax-view';
 import Button from 'rax-button';
 
-render((
-  <Button onPress={(evt) => { console.log('hello'); }}>Click Me</Button>
-));
+class App extends Component {
+  render() {
+    return (
+      <View style={{ width: 750 }}>
+        <Button onPress={(evt) => { alert('你好'); }}>点我</Button>
+      </View>
+    );
+  }
+}
+
+render(<App />);
 ```

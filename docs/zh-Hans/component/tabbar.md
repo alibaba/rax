@@ -47,7 +47,7 @@ import Text from 'rax-text';
 import Image from 'rax-image';
 import Tabbar from 'rax-tabbar';
 
-let base64Icon = 'data:image/png;base64..';
+let base64Icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAVCAYAAACdbmSKAAACE0lEQVQ4EbWTPWgUQRTHf/N2di8X/A4XFAynjSEoSDo/S8Ug2EkCCYI2looiKS0SBSGdooWVQWxSxGstFMRPUFKIEoyIohJQFA2XI7e7MyOzezm9i00KHyzDe/v//9/HvFG1Ws2xSpNV4jP4fyRZ21KQDm+dxRXXg01Rze4c2ARKZdI9g7h1JXAOlMrIWi3+RL+7D4sGAgXLRA8KFMGLCvXhCVx5d5Mo8cmrpBt6IZKc4NUaX5II6sc84Z1RVO1XM5PKRv71A9G9a9gkBQmyZEop5O0z3FIVrS3x0VHMwWEwBo010L2NeGSipVnvyNMpoulxsIJ8foPxQS/mlZvm+/AiDbOlMhbJy7JpHlUKrebncKJRJsZ19UChE/XpNc4agufT+DIRhe3cmJOcRUfXT6BUkI3YbO8nOXUDZh9RfHiTuGaoS0hRDLbvQCO/QtKBM6j6AmYpRs89IZy6iDt0mnTnEaKCphhBvOswrnd/PnIRtNk3RP37FwqPJ4lNRDRTwXb1kAyNw8I32LQVc+xCc9w+napVq9l16snzhLMPiG1IJCnx4GVM/0CjpNZDsosUwQyNkW7uIyCl7iLCu5fg/UyObtu9nGQtrmMNycgV3NpuCtpm0yzcPgcfX4EIzl9Hw/KN8I5XE8nU9csKJuhAMLgtO7B7jy/js/MPybt/bXILqs1pfYSN1W/DrHBbSSt+/zvwG0xM0LIGM+ZGAAAAAElFTkSuQmCC';
 
 class TabBarExample extends Component {
   state = {
@@ -89,7 +89,7 @@ class TabBarExample extends Component {
               notifCount: this.state.notifCount + 1,
             });
           }}>
-          {this._renderContent('#783E33', 'Red Tab', this.state.notifCount)}
+          {this._renderContent('#ff0000', 'Red Tab', this.state.notifCount)}
         </Tabbar.Item>
         <Tabbar.Item
           renderAsOriginal

@@ -44,9 +44,15 @@ import GoTop from 'rax-gotop';
 // demo
 import { createElement, render, Component } from 'rax';
 import GoTop from 'rax-gotop';
+import ScrollView from 'rax-scrollview';
+import Text from 'rax-text';
 
 render(
-  <GoTop name="click" icon="//gtms03.alicdn.com/tps/i3/TB1rrfVJVXXXXalXXXXGEZzGpXX-40-40.png" />
+  <ScrollView>
+    <GoTop name="click" style={{width: 100, height: 100}}
+    icon="//gtms03.alicdn.com/tps/i3/TB1rrfVJVXXXXalXXXXGEZzGpXX-40-40.png" />
+    {Array.from({length: 50}).map((_, idx) => (<Text style={{fontSize: 50}}>hello world {idx}</Text>))}
+  </ScrollView>
 );
 ```
 

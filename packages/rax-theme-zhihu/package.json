@@ -6,7 +6,7 @@
     "https://gw.alicdn.com/tfs/TB1IvFAQXXXXXakXXXXXXXXXXXX-377-670.png",
     "https://gw.alicdn.com/tfs/TB1sjJuQXXXXXc0XXXXXXXXXXXX-377-669.png"
   ],
-  "description": "这是一个问答类App列表页示例",
+  "description": "问答类 App 主题示例",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"

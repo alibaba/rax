@@ -8,7 +8,7 @@
     "//gw.alicdn.com/tfs/TB1ZhjSPVXXXXb9aFXXXXXXXXXX-1242-2208.png",
     "//gw.alicdn.com/tfs/TB1vvcdPVXXXXXSaXXXXXXXXXXX-1242-2208.png"
   ],
-  "description": "这是一个即时通讯软件的主题",
+  "description": "即时通讯 App 主题示例",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"

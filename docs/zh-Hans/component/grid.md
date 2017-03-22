@@ -82,9 +82,9 @@ class App extends Component {
   render() {
     return (
       <Row style={[styles.container, styles.row]}>
-        <Col style={{flex: 1, background: 'red'}}>Col1</Col>
-        <Col style={{flex: 1, background: 'green'}}>Col2</Col>
-        <Col style={{flex: 1, background: 'blue'}}>Col3</Col>
+        <Col style={{flex: 1, backgroundColor: 'red'}}>Col1</Col>
+        <Col style={{flex: 1, backgroundColor: 'green'}}>Col2</Col>
+        <Col style={{flex: 1, backgroundColor: 'blue'}}>Col3</Col>
       </Row>
     );
   }
