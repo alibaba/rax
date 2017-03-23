@@ -1,6 +1,6 @@
 # Video 视频播放
 
-Rax 中的视频播放组件。更丰富的视频功能参见 [Player](/guide/player) 组件
+Rax 中的视频播放组件。更丰富的视频功能参见 [Player](/component/player) 组件
 
 ## 安装
 
@@ -30,5 +30,5 @@ import Video from 'rax-video';
 import {createElement, Component, render} from 'rax';
 import Video from 'rax-video';
 
-render(<Video autoPlay src="https://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4" />);
+render(<Video style={{ width: 750, height: 400 }} autoPlay src="https://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4" />);
 ```

@@ -34,7 +34,7 @@ import Text from 'rax-text';
 
 render(<Text style={{
   color: '#3c3c3c',
-  fontSize: '20rem'
+  fontSize: '50rem'
 }}>文本内容 </Text>);
 ```
 
@@ -61,7 +61,7 @@ const styles = {
   },
   text: {
     color: 'red',
-    fontSize: '20rem'
+    fontSize: '50rem'
   }
 };
 render(<App />);

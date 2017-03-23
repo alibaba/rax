@@ -31,14 +31,15 @@ import MultiRow from 'rax-multirow';
 import {createElement, Component, render} from 'rax';
 import MultiRow from 'rax-multirow';
 import View from 'rax-view';
-import Text from 'rax-text';
 
-class Demo extends Compoennt {
+class Demo extends Component {
   render() {
     return (
-      <MultiRow dataSource={['tom', 'jeck', 'lilei', 'hanmeimei']} 
+      <View style={{width: 750}}>
+        <MultiRow dataSource={['tom', 'jeck', 'lilei', 'hanmeimei']} 
          cells={2} renderCell={(num, index) => { return <View>{num}</View> }} 
        />
+      </View>
     );
   }
 }

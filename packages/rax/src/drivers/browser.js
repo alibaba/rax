@@ -3,7 +3,7 @@
  **/
 
 import setNativeProps from '../setNativeProps';
-import {convertUnit, setRem} from '../style/unit';
+import {convertUnit, setRem} from 'style-unit';
 import flexbox from '../style/flexbox';
 
 const FULL_WIDTH_REM = 750;

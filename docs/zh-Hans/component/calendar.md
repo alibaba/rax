@@ -39,6 +39,7 @@ import Calendar from 'rax-calendar';
 // demo
 import { createElement, render, Component } from 'rax';
 import Calendar from 'rax-calendar';
+import View from 'rax-view';
 
 class App extends Component {
   state = {
@@ -48,19 +49,21 @@ class App extends Component {
   render() {
     console.log(this.state.selectedDate);
     return (
-      <Calendar
-        ref="calendar"
-        eventDates={['2016-07-03', '2016-07-05', '2016-07-28', '2016-07-30']}
-        startDate={'2016-05-03'}
-        endDate={'2016-07-03'}
-        titleFormat={'YYYY年MM月'}
-        prevButtonText={'上一月'}
-        nextButtonText={'下一月'}
-        weekStart={0}
-        onDateSelect={(date) => this.setState({ selectedDate: date })}
-        onTouchPrev={() => console.log('Back TOUCH')}
-        onTouchNext={() => console.log('Forward TOUCH')}
-      />
+      <View>
+        <Calendar
+          ref="calendar"
+          eventDates={['2017-01-02', '2017-01-05', '2017-01-28', '2017-01-30']}
+          startDate={'2017-01-01'}
+          endDate={'2017-07-01'}
+          titleFormat={'YYYY年MM月'}
+          prevButtonText={'上一月'}
+          nextButtonText={'下一月'}
+          weekStart={0}
+          onDateSelect={(date) => this.setState({ selectedDate: date })}
+          onTouchPrev={() => console.log('Back TOUCH')}
+          onTouchNext={() => console.log('Forward TOUCH')}
+        />
+      </View>
     );
   }
 }

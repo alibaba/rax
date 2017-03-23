@@ -48,9 +48,7 @@ const NativeAnimatedModule = NativeModules && NativeModules.NativeAnimatedModule
 class CardStack extends Component {
   // _render: NavigationSceneRenderer;
   // _renderScene: NavigationSceneRenderer;
-  // _childNavigationProps: {
-  //   [key: string]: NavigationScreenProp<*, NavigationAction>
-  // } = {};
+  _childNavigationProps = {};
 
   static Card = Card;
   static Header = Header;
@@ -116,7 +114,7 @@ class CardStack extends Component {
 
   static defaultProps = {
     mode: 'card',
-    // headerMode: 'null',
+    headerMode: 'null',
     headerComponent: Header,
   };
 
@@ -322,12 +320,11 @@ class CardStack extends Component {
       'cardStack'
     ) || {};
 
-    // On iOS, the default behavior is to allow the user to pop a route by
-    // swiping the corresponding Card away. On Android this is off by default
     const gesturesEnabledConfig = cardStackConfig.gesturesEnabled;
     const gesturesEnabled = typeof gesturesEnabledConfig === 'boolean' ?
       gesturesEnabledConfig :
-      Platform.OS === 'ios';
+      false;
+
     if (gesturesEnabled) {
       let onNavigateBack = null;
       if (this.props.navigation.state.index !== 0) {

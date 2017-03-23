@@ -2,67 +2,68 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const uppercamelcase = require('uppercamelcase');
 const RaxPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
 
 [
-  ['rax-components', 'components', 'RaxComponents'],
-  ['rax-redux', 'redux', 'RaxRedux'],
-  ['rax-animated', 'animated', 'RaxAnimated'],
-  ['rax-text', 'text', 'RaxText'],
-  ['rax-button', 'button', 'RaxButton'],
-  ['rax-calendar', 'calendar', 'RaxCalendar'],
-  ['rax-countdown', 'countdown', 'RaxCountDown'],
-  ['rax-gotop', 'gotop', 'RaxGoTop'],
-  ['rax-grid', 'grid', 'RaxGrid'],
-  ['rax-icon', 'icon', 'RaxIcon'],
-  ['rax-image', 'image', 'RaxImage'],
-  ['rax-link', 'link', 'RaxLink'],
-  ['rax-listview', 'listview', 'RaxListView'],
-  ['rax-modal', 'modal', 'RaxModal'],
-  ['rax-multirow', 'multirow', 'RaxMultiRow'],
-  ['rax-navigation', 'navigation', 'RaxNavigation'],
-  ['rax-picture', 'picture', 'RaxPicture'],
-  ['rax-player', 'player', 'RaxPlayer'],
-  ['rax-recyclerview', 'recyclerview', 'RaxRecyclerView'],
-  ['rax-refreshcontrol', 'refreshcontrol', 'RaxRefreshControl'],
-  ['rax-scrollview', 'scrollview', 'RaxScrollView'],
-  ['rax-slider', 'slider', 'RaxSlider'],
-  ['rax-switch', 'switch', 'RaxSwitch'],
-  ['rax-tabbar', 'tabbar', 'RaxTabBar'],
-  ['rax-tabheader', 'tabheader', 'RaxTabHeader'],
-  ['rax-scrollview', 'scrollview', 'RaxScrollView'],
-  ['rax-textinput', 'textinput', 'RaxTextInput'],
-  ['rax-touchable', 'touchable', 'RaxTouchable'],
-  ['rax-video', 'video', 'RaxVideo'],
-  ['rax-view', 'view', 'RaxView'],
-  ['universal-panresponder', 'panresponder', 'PanResponder'],
-  ['universal-easing', 'easing', 'Easing'],
-  ['universal-perf', 'perf', 'Perf'],
-  ['universal-transition', 'transition', 'Transition'],
-  ['universal-platform', 'platform', 'Platform'],
-  ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
-  ['universal-toast', 'toast', 'Toast'],
-  ['universal-jsonp', 'jsonp', 'JSONP']
-].forEach(function(info) {
-  var main = './packages/' + info[0] + '/src/index.js';
+  'rax-components',
+  'rax-redux',
+  'rax-animated',
+  'rax-text',
+  'rax-button',
+  'rax-calendar',
+  'rax-countdown',
+  'rax-gotop',
+  'rax-grid',
+  'rax-icon',
+  'rax-image',
+  'rax-link',
+  'rax-listview',
+  'rax-modal',
+  'rax-multirow',
+  'rax-navigation',
+  'rax-picture',
+  'rax-player',
+  'rax-recyclerview',
+  'rax-refreshcontrol',
+  'rax-scrollview',
+  'rax-slider',
+  'rax-switch',
+  'rax-tabbar',
+  'rax-tabheader',
+  'rax-scrollview',
+  'rax-textinput',
+  'rax-touchable',
+  'rax-video',
+  'rax-view',
+  'universal-panresponder',
+  'universal-easing',
+  'universal-perf',
+  'universal-transition',
+  'universal-platform',
+  'universal-stylesheet',
+  'universal-toast',
+  'universal-jsonp'
+].forEach(function(packageName) {
+  var entryName = packageName.split('-')[1];
+  var globalName = uppercamelcase(packageName);
+  var main = './packages/' + packageName + '/src/index.js';
   var entry = {};
-  entry[info[1]] = entry[info[1] + '.min'] = entry[info[1] + '.factory'] = main;
+  entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
   dist(getConfig(
     entry,
     {
-      path: './packages/' + info[0] + '/dist/',
+      path: './packages/' + packageName + '/dist/',
       filename: '[name].js',
       sourceMapFilename: '[name].map',
       pathinfo: false,
     },
     {
       externalBuiltinModules: true,
-      builtinModules: Object.assign({
-        'rax-components': ['rax-components']
-      }, RaxPlugin.BuiltinModules),
-      moduleName: info[0],
-      globalName: info[2],
+      builtinModules: RaxPlugin.BuiltinModules,
+      moduleName: packageName,
+      globalName: globalName,
     },
     {
       presets: ['es2015', 'rax']
@@ -205,9 +206,15 @@ dist(getConfig(
       ]
     }
   ));
+}).catch(function(err) {
+  setTimeout(function() {
+    throw err;
+  });
 });
 
 function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
+  // Webpack need an absolute path
+  output.path = path.resolve(__dirname, '..', output.path);
   return {
     target: target || 'node',
     devtool: devtool || 'source-map',

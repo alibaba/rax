@@ -34,7 +34,7 @@ const styles = {
   sticky: {
     width: 750,
     height: 100,
-    background: 'red'
+    backgroundColor: 'red'
   }
 };
 
@@ -44,8 +44,12 @@ render(<RecyclerView>
       <Text>Sticky view must in header root</Text>
     </View>
   </RecyclerView.Header>
-  <RecyclerView.Cell />
-  <RecyclerView.Cell />
-  <RecyclerView.Cell />
+  <RecyclerView.Cell><Text>HELLO</Text></RecyclerView.Cell>
+  <RecyclerView.Cell><Text>HELLO</Text></RecyclerView.Cell>
+  <RecyclerView.Cell><Text>HELLO</Text></RecyclerView.Cell>
+  <RecyclerView.Cell><Text>HELLO</Text></RecyclerView.Cell>
+  <RecyclerView.Cell><Text>HELLO</Text></RecyclerView.Cell>
+  <RecyclerView.Cell><Text>HELLO</Text></RecyclerView.Cell>
+  <RecyclerView.Cell><Text>HELLO</Text></RecyclerView.Cell>
 </RecyclerView>);
 ```

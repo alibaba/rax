@@ -1,4 +1,4 @@
-import {convertUnit} from './unit';
+import {convertUnit} from 'style-unit';
 
 // TODO process flexbox polyfill
 export default function styleToCSS(style, disableConvertUnit) {

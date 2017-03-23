@@ -2,7 +2,7 @@ import {createElement, Component, PropTypes} from 'rax';
 import View from 'rax-view';
 import Image from 'rax-image';
 
-class RxPicture extends Component {
+class Picture extends Component {
   static defaultProps = {
     source: {
       uri: ''
@@ -35,51 +35,45 @@ class RxPicture extends Component {
   }
 
   render() {
-    const {
+    let {
       children,
       style = {},
       source = {},
       resizeMode,
-
       width,
       height,
       defaultHeight
     } = this.props;
-    let _resizeMode = resizeMode;
-    let sWidth = style.width, // style width of picture
-      sHeight = style.height; // style width of picture
+    let styleWidth = style.width; // style width of picture
+    let styleHeight = style.height; // style width of picture
 
     // according to the original height and width of the picture
-    if ( ! sHeight && sWidth && width && height) {
-      const pScaling = width / parseInt(sWidth, 10);
-      sHeight = parseInt(height / pScaling, 10);
-
-      if (typeof sWidth === 'string' && sWidth.indexOf('rem') > -1 && sHeight) {
-        sHeight = sHeight + 'rem';
-      }
+    if (!styleHeight && styleWidth && width && height) {
+      const pScaling = width / parseInt(styleWidth, 10);
+      styleHeight = parseInt(height / pScaling, 10);
     }
 
-    if (!sHeight) {
-      sHeight = defaultHeight;
+    if (!styleHeight) {
+      styleHeight = defaultHeight;
 
-      if (!_resizeMode) {
+      if (!resizeMode) {
         // ensure that the picture can be displayed
-        _resizeMode = 'contain';
+        resizeMode = 'contain';
       }
     }
 
-    let nstyle = Object.assign({
-      height: sHeight
+    let newStyle = Object.assign({
+      height: styleHeight
     }, style);
 
-    if (_resizeMode) {
-      nstyle.resizeMode = _resizeMode;
+    if (resizeMode) {
+      newStyle.resizeMode = resizeMode;
     }
 
-    return <Image source={source} style={nstyle}>
+    return <Image source={source} style={newStyle}>
       {children}
     </Image>;
   }
 }
 
-export default RxPicture;
+export default Picture;

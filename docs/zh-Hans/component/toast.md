@@ -26,14 +26,23 @@ import Toast from 'universal-toast';
 import View from 'rax-view';
 import Touchable from 'rax-touchable';
 
+const styles = {
+  text: {
+    fontSize: 50
+  }
+};
+
 class App extends Component {
   
   render() {
     return (
       <View>
-        <Touchable onPress={() => {Toast.show('Hi')}}>Hi</Touchable>
-        <Touchable onPress={() => {Toast.show('Hello', Toast.SHORT)}}>Hello Short</Touchable>
-        <Touchable onPress={() => {Toast.show('Hello', Toast.LONG)}}>Hello Long</Touchable>
+        <Touchable style={styles.text}
+          onPress={() => {Toast.show('Hi')}}>Hi</Touchable>
+        <Touchable style={styles.text}
+          onPress={() => {Toast.show('Hello Short', Toast.SHORT)}}>Hello Short</Touchable>
+        <Touchable style={styles.text}
+          onPress={() => {Toast.show('Hello Long', Toast.LONG)}}>Hello Long</Touchable>
       </View>
     )
   }

@@ -1,12 +1,7 @@
 import {createElement, Component, PropTypes} from 'rax';
-import Image from 'rax-image';
 import View from 'rax-view';
+import Image from 'rax-image';
 import webp from './webp';
-
-const toString = {}.toString;
-const isArray = Array.isArray || function(arr) {
-  return toString.call(arr) == '[object Array]';
-};
 
 let isSupportJPG = false;
 let isSupportPNG = false;
@@ -73,7 +68,7 @@ class Picture extends Component {
 
   uri = '';
 
-  nstyle = {};
+  newStyle = {};
 
   componentWillUpdate(nextProps) {
     if (this.props.source.uri !== nextProps.source.uri) {
@@ -115,29 +110,25 @@ class Picture extends Component {
         ignoreGif
         } = this.props,
       { uri } = source;
-    let _resizeMode = resizeMode;
+
     if (!this.uri) {
       let sWidth = style.width, // style width of picture
         sHeight = style.height; // style width of picture
 
       // according to the original height and width of the picture
-      if ( ! sHeight && sWidth && width && height) {
+      if (!sHeight && sWidth && width && height) {
         const pScaling = width / parseInt(sWidth, 10);
         sHeight = parseInt(height / pScaling, 10);
-
-        if (typeof sWidth === 'string' && sWidth.indexOf('rem') > -1 && sHeight) {
-          sHeight = sHeight + 'rem';
-        }
       }
 
-      this.nstyle = Object.assign({
+      this.newStyle = Object.assign({
         height: sHeight
       }, style);
 
       this.uri = uri;
 
-      if (_resizeMode) {
-        this.nstyle.resizeMode = _resizeMode;
+      if (resizeMode) {
+        this.newStyle.resizeMode = resizeMode;
       }
     }
 
@@ -155,18 +146,17 @@ class Picture extends Component {
     if (children || resizeMode) {
       return (
         <View
-          // @HACK for appear
-          isonce="1"
+          data-once={true}
           onAppear={() => this.lazyLoad()}
           style={[
-            this.nstyle, {
+            this.newStyle, {
               backgroundImage: 'url(' + url + ')',
               backgroundSize: resizeMode || 'cover',
               backgroundRepeat: 'no-repeat'
             }, resizeMode === 'cover' || resizeMode === 'contain' ? {
               backgroundPosition: 'center'
             } : null,
-            !this.nstyle.height ? {height: defaultHeight} : null
+            !this.newStyle.height ? {height: defaultHeight} : null
           ]}
         >
           {children}
@@ -174,13 +164,12 @@ class Picture extends Component {
       );
     } else {
       return <Image
-        // @HACK for appear
-        isonce="1"
+        data-once={true}
         onAppear={() => this.lazyLoad()}
         source={{
           uri: url
         }}
-        style={this.nstyle}
+        style={this.newStyle}
       />;
     }
   }

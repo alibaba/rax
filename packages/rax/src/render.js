@@ -1,6 +1,5 @@
 import inject from './inject';
 import instance from './vdom/instance';
-import {setRem} from './style/unit';
 import Host from './vdom/host';
 
 function render(element, container, options, callback) {

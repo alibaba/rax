@@ -34,8 +34,8 @@ document.fonts.add(oxygenFontFace);
     * setInterval()
     * clearInterval()
 * `Base64 utility methods`
-    * [atob()](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/atob)
-    * [btoa()](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa)
+    * ~~[atob()](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/atob)~~ 暂未支持
+    * ~~[btoa()](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa)~~ 暂未支持
 * `CSS Object Model (CSSOM) View API`
     * [window.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio)
     * screen

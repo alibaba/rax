@@ -98,15 +98,15 @@ export default (
           }));
         }
         const params = (route.params || action.params || initialRouteParams) && {
-          ...(route.params || {}),
-          ...(action.params || {}),
-          ...(initialRouteParams || {}),
+          ...route.params || {},
+          ...action.params || {},
+          ...initialRouteParams || {},
         };
         route = {
           ...route,
           routeName: initialRouteName,
           key: 'Init',
-          ...(params ? { params } : {}),
+          ...params ? { params } : {},
         };
         state = {
           index: 0,
@@ -280,8 +280,8 @@ export default (
 
       return NavigationActions.navigate({
         routeName: matchedRouteName,
-        ...(params ? { params } : {}),
-        ...(nestedAction ? { action: nestedAction } : {}),
+        ...params ? { params } : {},
+        ...nestedAction ? { action: nestedAction } : {},
       });
     },
 

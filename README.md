@@ -180,7 +180,7 @@ Then, you can run several commands:
 </table>
 
 ---
-<a href="https://weex-project.io/">
+<a href="https://weex.apache.org/">
   <img alt="Weex Logo" src="https://img.alicdn.com/tps/TB1zBLaPXXXXXXeXXXXXXXXXXXX-121-59.svg" width="200">
 </a>
 
