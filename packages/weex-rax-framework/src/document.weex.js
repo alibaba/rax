@@ -82,7 +82,9 @@ module.exports = function(__weex_require__, document) {
         return body;
       }
     });
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
 
   return document;
 };
