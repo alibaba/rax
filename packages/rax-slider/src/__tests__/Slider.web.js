@@ -1,26 +1,10 @@
 import {createElement} from 'rax';
 import View from 'rax-view';
 import Image from 'rax-image';
-import 'universal-env';
 import renderer from 'rax-test-renderer';
 import Slider from '../';
 
-jest.mock('universal-env', () => {
-  return {
-    isWeex: true
-  };
-});
-
-describe('Slider in weex', () => {
-  
-  it('should render a slider', () => {
-    const component = renderer.create(
-      <Slider>Example</Slider>
-    );
-    let tree = component.toJSON();
-    expect(tree.tagName).toEqual('SLIDER');
-  });
-
+describe('Slider in web', () => {
   it('render correctly', () => {
     const mockChange = jest.fn();
     const component = renderer.create(
