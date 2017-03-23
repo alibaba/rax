@@ -1,11 +1,10 @@
 /**
  * weex button
- * 
+ *
  * props: disabled, style
  */
 
 export default {
-
   parse(component) {
     const {props} = component;
     component.type = 'view';
@@ -39,5 +38,4 @@ export default {
 
     return component;
   }
-
 };
