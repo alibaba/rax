@@ -52,17 +52,18 @@ module.exports = function(__weex_require__) {
       let websocket = __weex_require__(WEB_SOCKET_MODULE);
       // eslint-disable-next-line new-cap
       websocket.WebSocket(url, protocols);
+      this.readyState = CONNECTING;
       this.websocket = websocket;
       this._registerEvents();
     }
 
     close(code, reason) {
-      if (this.readyState === this.CLOSING ||
-          this.readyState === this.CLOSED) {
+      if (this.readyState === CLOSING ||
+          this.readyState === CLOSED) {
         return;
       }
 
-      this.readyState = this.CLOSING;
+      this.readyState = CLOSING;
       this.websocket.close(code, reason);
     }
 
@@ -76,26 +77,26 @@ module.exports = function(__weex_require__) {
     }
 
     _registerEvents() {
-      this.websocket.onmessage = (ev) => {
+      this.websocket.onmessage(ev => {
         this.dispatchEvent(new WebSocketEvent('message', ev));
-      };
+      });
 
-      this.websocket.onopen = (ev) => {
-        this.readyState = this.OPEN;
-        this.dispatchEvent(new WebSocketEvent('open'));
-      };
+      this.websocket.onopen(ev => {
+        this.readyState = OPEN;
+        this.dispatchEvent(new WebSocketEvent('open', ev));
+      });
 
-      this.websocket.onclose = (ev) => {
-        this.readyState = this.CLOSED;
+      this.websocket.onclose(ev => {
+        this.readyState = CLOSED;
         this.dispatchEvent(new WebSocketEvent('close', {
           code: ev.code,
           reason: ev.reason,
         }));
-      };
+      });
 
-      this.websocket.onerror = (ev) => {
+      this.websocket.onerror(ev => {
         this.dispatchEvent(new WebSocketEvent('error', ev));
-      };
+      });
     }
   }
 };
