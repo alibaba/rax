@@ -31,7 +31,7 @@ module.exports = function(__weex_require__, document) {
   const documentEmitter = new EventEmitter();
   let hasVisibilityEventPending = false;
 
-  // Weex freezed the document
+  // Weex freezed the document maybe throw error
   try {
     document.addEventListener = (type, listener) => {
       if (type === VISIBILITY_CHANGE_EVENT) {
@@ -72,14 +72,16 @@ module.exports = function(__weex_require__, document) {
     // Hijack the origin createBody
     const originCreateBody = document.createBody;
 
-    document.createBody = function() {
-      var body = originCreateBody.call(document);
+    Object.defineProperty(document, 'createBody', {
+      value: function() {
+        var body = originCreateBody.call(document);
 
-      if (hasVisibilityEventPending) {
-        addBodyAppearListener(document);
+        if (hasVisibilityEventPending) {
+          addBodyAppearListener(document);
+        }
+        return body;
       }
-      return body;
-    };
+    });
   } catch (e) {}
 
   return document;

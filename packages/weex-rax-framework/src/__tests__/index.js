@@ -1,10 +1,11 @@
 'use strict';
 
+require('weex-runtime-js').freezePrototype();
+
 import {Runtime, Instance} from 'weex-vdom-tester';
-import {freezePrototype, config, init} from 'weex-runtime-js';
+import {config, init} from 'weex-runtime-js';
 import * as framework from '../index';
 
-freezePrototype();
 init();
 
 const {Document, Element, Comment} = config;

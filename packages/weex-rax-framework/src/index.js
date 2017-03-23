@@ -180,6 +180,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       Response
     } = require('./fetch.weex')(__weex_require__, Promise);
 
+    const WebSocket = require('./websocket.weex')(__weex_require__);
+
     const {
       setTimeout,
       clearTimeout,
@@ -238,6 +240,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       URL,
       URLSearchParams,
       FontFace,
+      WebSocket,
       matchMedia,
       setTimeout,
       clearTimeout,
