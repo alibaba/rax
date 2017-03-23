@@ -10,14 +10,20 @@ const TypographyElements = {
   u: {
     textDecoration: 'underline'
   },
+  s: {
+    textDecoration: 'line-through'
+  },
+  i: {
+    fontStyle: 'italic'
+  },
+  b: {
+    fontWeight: 'bold'
+  },
   del: {
     textDecoration: 'line-through'
   },
   em: {
     fontStyle: 'italic'
-  },
-  b: {
-    fontWeight: 'bold'
   },
   strong: {
     fontWeight: 'bold'
@@ -44,17 +50,18 @@ function transformChild(child) {
   let props = child.props;
   let style = props.style;
   let nestedChildren = props.children;
-  // Alias img
+  // Alias img tag
   if (type === 'img') {
     type = 'image';
   }
 
+  // Transfrom to span
   if (TypographyElements[type]) {
-    type = 'span';
     style = {
       ...TypographyElements[type],
       ...style
     };
+    type = 'span';
   }
 
   props.style = null;
