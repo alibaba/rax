@@ -26,6 +26,7 @@ global.WXEnvironment = {
 
 describe('framework', () => {
   let instance;
+  let runtime;
   let __weex_options__ = {
     bundleUrl: 'http://example.com',
     debug: true
@@ -43,7 +44,13 @@ describe('framework', () => {
     // global env variables, native modules & components.
     Document.handler = sendTasks;
     framework.init({ Document, Element, Comment });
-    const runtime = new Runtime(framework);
+    runtime = new Runtime(framework);
+    framework.registerModules({
+      webSocket: ['addEventListener', 'removeAllEventListeners', 'onopen', 'onerror', 'send', 'onmessage', 'close', 'onclose', 'WebSocket'],
+      geolocation: ['addEventListener', 'removeAllEventListeners', 'getCurrentPosition', 'watchPosition', 'clearWatch'],
+      audio: ['addEventListener', 'removeAllEventListeners', 'canPlayType', 'stop', 'pause', 'load', 'play', 'setVolume'],
+      picker: ['addEventListener', 'removeAllEventListeners', 'pickTime', 'pickDate', 'pick'],
+    });
     sendTasksHandler = function() {
       runtime.target.callNative(...arguments);
       // FIXME: Hack for should return value like setTimeout
@@ -356,6 +363,56 @@ describe('framework', () => {
     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 
     expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('WebSocket', () => {
+    const code = `
+    const ws = new WebSocket('ws://echo.websocket.org');
+    ws.onopen = function(ev){
+      alert('hi');
+    };
+    ws.addEventListener('message', function(ev){
+      alert(ev.data);
+    });
+    ws.send('Rock it with HTML5 WebSocket');
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual('Rock it with HTML5 WebSocket');
+    });
+
+    const alertMockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'hi'
+      });
+    });
+
+    let messageCallbackId;
+    const messageMockFn = jest.fn((funcId) => {
+      messageCallbackId = funcId;
+    });
+
+    let openCallbackId;
+    const openMockFn = jest.fn((funcId) => {
+      openCallbackId = funcId;
+    });
+
+    instance.oncall('modal', 'alert', alertMockFn);
+    instance.oncall('webSocket', 'onmessage', messageMockFn);
+    instance.oncall('webSocket', 'onopen', openMockFn);
+    instance.oncall('webSocket', 'send', mockFn);
+
+    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+
+    instance.$callback(openCallbackId);
+    instance.$callback(messageCallbackId, {
+      data: 'hi'
+    });
+
+    expect(mockFn).toHaveBeenCalled();
+    expect(messageMockFn).toHaveBeenCalled();
+    expect(openMockFn).toHaveBeenCalled();
+    expect(alertMockFn).toHaveBeenCalled();
   });
 
   it('FontFace', () => {
