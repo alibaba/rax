@@ -24,7 +24,6 @@ document.fonts.add(oxygenFontFace);
     * cancelAnimationFrame()
     * [window.name](https://developer.mozilla.org/en-US/docs/Web/API/Window/name)
     * window.location
-    * window.name
     * window.postMessage()
     * window.open()
     * [window.closed](https://developer.mozilla.org/en-US/docs/Web/API/Window/closed)
