@@ -3,10 +3,10 @@ const colors = require('chalk');
 
 /**
  * Create webpack compiler instance
- * 
+ *
  * @param  {Object} config webpack config
  * @return {compiler}      webpack compiler instance
- * 
+ *
  * @see http://webpack.github.io/docs/plugins.html#the-compiler-instance
  */
 const options = require('./parseOptions');

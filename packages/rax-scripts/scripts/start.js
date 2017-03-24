@@ -14,6 +14,10 @@ const webpackDevServerConfig = require('../config/webpackDevServer.config');
 const webpackConfigDev = require('../config/webpack.config.dev');
 const createWebpackCompiler = require('../utils/createWebpackCompiler');
 
+/**
+ * run webpack dev server
+ * @param  {Number} port server port
+ */
 function run(port) {
   const compiler = createWebpackCompiler(webpackConfigDev);
 

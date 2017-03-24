@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * append 'modult.hot.accept()' to entry point source.
+ */
 module.exports = function(source, inputMap) {
   if (this.cacheable) {
     this.cacheable();

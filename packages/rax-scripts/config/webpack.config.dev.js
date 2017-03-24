@@ -6,6 +6,7 @@ const webpack = require('webpack');
 // enable source map
 webpackConfig.devtool = 'inline-module-source-map';
 
+// show webpakc build progress
 webpackConfig.plugins.push(
   new webpack.ProgressPlugin(function(percentage, msg) {
     const stream = process.stderr;
