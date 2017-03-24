@@ -12,7 +12,6 @@ jest.mock('universal-env', () => {
 });
 
 describe('Slider in weex', () => {
-  
   it('should render a slider', () => {
     const component = renderer.create(
       <Slider>Example</Slider>
