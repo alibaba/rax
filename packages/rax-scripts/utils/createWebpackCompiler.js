@@ -1,3 +1,5 @@
+'use strict';
+
 const webpack = require('webpack');
 const colors = require('chalk');
 
