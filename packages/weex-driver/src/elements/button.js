@@ -7,33 +7,38 @@
 export default {
   parse(component) {
     const {props} = component;
-    component.type = 'view';
+    component.type = 'text';
 
     const {style, disabled, children} = props;
 
-    let destTextStyle = {
-      color: '#0C42FD',
+    let textStyle = {
       textAlign: 'center',
-      padding: 16,
-      fontSize: 36,
+      fontSize: 22,
+      paddingTop: 4,
+      paddingRight: 12,
+      paddingBottom: 6,
+      paddingLeft: 12,
+      borderWidth: 4,
+      borderStyle: 'solid',
+      borderColor: '#000000',
+      backgroudColor: '#c0c0c0',
       ...style
     };
 
     if (disabled) {
       props.onClick = null;
-      destTextStyle = {...destTextStyle, ...{
-        color: '#cdcdcd'
-      }};
+      textStyle = {
+        ...textStyle,
+        ...{
+          color: '#7f7f7f',
+          borderColor: '#7f7f7f',
+        }
+      };
     }
 
     if (typeof children === 'string') {
-      props.children = {
-        type: 'text',
-        props: {
-          style: destTextStyle,
-          value: children
-        }
-      };
+      props.value = children;
+      props.children = null;
     }
 
     return component;
