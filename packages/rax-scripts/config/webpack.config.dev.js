@@ -41,9 +41,4 @@ webpackConfig.module.loaders.forEach(loader => {
 
 webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
-webpackConfig.devServer = {
-  inline: true,
-  hot: true
-};
-
 module.exports = webpackConfig;
