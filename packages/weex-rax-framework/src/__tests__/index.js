@@ -415,6 +415,27 @@ describe('framework', () => {
     expect(alertMockFn).toHaveBeenCalled();
   });
 
+  it('CustomEvent', () => {
+    const code = `
+      var ev = new CustomEvent('click', {
+        detail: 'custom'
+      });
+      alert(ev.type);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'click'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+
+    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
   it('FontFace', () => {
     const code = `
       var bitterFontFace = new FontFace('Bitter', 'url(https://fonts.gstatic.com/s/bitter/v7/HEpP8tJXlWaYHimsnXgfCOvvDin1pK8aKteLpeZ5c0A.woff2)');
