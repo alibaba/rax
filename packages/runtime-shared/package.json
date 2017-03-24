@@ -1,6 +1,6 @@
 {
   "name": "runtime-shared",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Shared Runtime.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

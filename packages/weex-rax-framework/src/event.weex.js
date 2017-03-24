@@ -1,6 +1,5 @@
 
 module.exports = function() {
-  
   class Event {
     constructor(type, params = {}) {
       this.type = type;
