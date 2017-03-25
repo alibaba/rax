@@ -23,11 +23,11 @@ webpackConfig.plugins.push(
 
 // enable entry point module hot accept.
 const client = require.resolve('webpack-dev-server/client');
-const hotServer = require.resolve('webpack/hot/dev-server');
+const onlyDevServer = require.resolve('webpack/hot/only-dev-server');
 const options = require('../utils/parseOptions');
 
 Object.keys(webpackConfig.entry).forEach(point => {
-  webpackConfig.entry[point].unshift(`${hotServer}`);
+  webpackConfig.entry[point].unshift(`${onlyDevServer}`);
   webpackConfig.entry[point].unshift(
     `${client}?${options.protocol}//${options.host}:${options.port}/`
   );
