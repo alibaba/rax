@@ -2,6 +2,7 @@
 
 const webpackConfig = require('./webpack.config.prod');
 const webpack = require('webpack');
+const colors = require('chalk');
 
 // enable source map
 webpackConfig.devtool = 'inline-module-source-map';
@@ -12,25 +13,20 @@ webpackConfig.plugins.push(
     const stream = process.stderr;
     if (stream.isTTY && percentage < 0.71) {
       stream.cursorTo(0);
-      stream.write('  ' + msg + '...');
+      stream.write(`webpack: ${msg}...`);
       stream.clearLine(1);
     } else if (percentage === 1) {
       console.log('');
-      console.log('webpack: bundle build is now finished.');
+      console.log(colors.green('webpack: bundle build is now finished.'));
     }
   })
 );
 
 // enable entry point module hot accept.
-const client = require.resolve('webpack-dev-server/client');
-const onlyDevServer = require.resolve('webpack/hot/only-dev-server');
-const options = require('../utils/parseOptions');
+const webpackHotDevClient = require.resolve('react-dev-utils/webpackHotDevClient');
 
 Object.keys(webpackConfig.entry).forEach(point => {
-  webpackConfig.entry[point].unshift(`${onlyDevServer}`);
-  webpackConfig.entry[point].unshift(
-    `${client}?${options.protocol}//${options.host}:${options.port}/`
-  );
+  webpackConfig.entry[point].unshift(webpackHotDevClient);
 });
 
 webpackConfig.module.loaders.forEach(loader => {

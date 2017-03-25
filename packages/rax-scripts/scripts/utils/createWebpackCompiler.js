@@ -32,12 +32,6 @@ module.exports = webpackConfig => {
         assets: true
       })
     );
-
-    console.log('');
-    console.log('The app is running at:');
-    console.log('');
-    console.log(`  ${colors.cyan(`${options.protocol}//${options.host}:${options.port}/`)}`);
-    console.log('');
   });
 
   compiler.plugin('failed', err => {
