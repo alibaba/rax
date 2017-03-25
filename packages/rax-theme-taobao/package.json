@@ -28,6 +28,7 @@
     "rax-gotop": "^0.2.7",
     "rax-tabheader": "^0.2.7",
     "rax-scrollview": "^0.2.7",
+    "universal-env": "^0.2.7",
     "universal-panresponder": "^0.2.7"
   },
   "devDependencies": {

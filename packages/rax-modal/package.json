@@ -27,6 +27,7 @@
     "rax": "0.x"
   },
   "devDependencies": {
+    "rax-text": "^0.2.7",
     "rax-test-renderer": "^0.2.7"
   }
 }

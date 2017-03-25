@@ -1,7 +1,8 @@
 'use strict';
 const imageSourceLoader = require('../index');
+/* eslint-disable */
 const onePixelPng = require('one-pixel-png');
-
+/* eslint-enable */
 describe('test image source loader', () => {
   it('output the base64 string', () => {
     const thisObj = { resourcePath: 'filename.png' };

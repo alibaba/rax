@@ -14,8 +14,8 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
     "raf": "^3.3.0",
-    "runtime-shared": "^0.2.7",
     "rax": "^0.2.7",
+    "runtime-shared": "^0.2.7",
     "whatwg-fetch": "^2.0.1"
   }
 }

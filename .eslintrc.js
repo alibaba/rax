@@ -13,12 +13,16 @@ module.exports = {
     "commonjs": true
   },
   "plugins": [
-    "react"
+    "react",
+    "import"
   ],
   "settings": {
     "react": {
       "pragma": "createElement",  // Pragma to use, default to "React"
-    }
+    },
+    "import/ignore": [
+      "examples"
+    ]
   },
   "parserOptions": {
     "sourceType": "module",
@@ -153,6 +157,24 @@ module.exports = {
         "balanced": true
       }
     }],
+
+    /**
+     * Import
+     */
+    "import/no-duplicates": "error",
+    "import/no-unresolved": "error",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "peerDependencies": true,
+        "devDependencies": [
+          "**/scripts/*.js",
+          "**/__tests__/*.js",
+          "**/__tests__/**/*.js",
+          '**/*.config.js'
+        ]
+      }
+    ],
 
     /**
      * React & JSX
