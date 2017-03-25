@@ -19,10 +19,7 @@ module.exports = {
   "settings": {
     "react": {
       "pragma": "createElement",  // Pragma to use, default to "React"
-    },
-    "import/ignore": [
-      "examples"
-    ]
+    }
   },
   "parserOptions": {
     "sourceType": "module",
