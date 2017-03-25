@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "universal-env": "^0.2.6",
-    "style-unit": "^0.2.6"
+    "style-unit": "^0.2.6",
+    "weex-driver": "^0.2.6"
   }
 }
