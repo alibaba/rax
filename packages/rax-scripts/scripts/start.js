@@ -10,16 +10,18 @@ process.env.NODE_ENV = 'development';
 const colors = require('chalk');
 const WebpackDevServer = require('webpack-dev-server');
 
-const webpackDevServerConfig = require('../config/webpackDevServer.config');
-const webpackConfigDev = require('../config/webpack.config.dev');
-const createWebpackCompiler = require('../utils/createWebpackCompiler');
+const createWebpackCompiler = require('./utils/createWebpackCompiler');
+const updateWebpackConfig = require('./utils/updateWebpackConfig');
+const webpackConfigDev = require('./config/webpack.config.dev');
+const webpackDevServerConfig = require('./config/webpackDevServer.config');
 
 /**
  * run webpack dev server
  * @param  {Number} port server port
  */
 function run(port) {
-  const compiler = createWebpackCompiler(webpackConfigDev);
+  const config = updateWebpackConfig(webpackConfigDev);
+  const compiler = createWebpackCompiler(config);
 
   const server = new WebpackDevServer(compiler, webpackDevServerConfig);
 
@@ -34,5 +36,5 @@ function run(port) {
   });
 }
 
-const options = require('../utils/parseOptions');
+const options = require('./utils/parseOptions');
 run(options.port);

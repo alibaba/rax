@@ -1,6 +1,6 @@
 'use strict';
 
-const webpackConfig = require('./webpack.config');
+const webpackConfig = require('./webpack.config.prod');
 const webpack = require('webpack');
 
 // enable source map

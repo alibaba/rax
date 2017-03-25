@@ -11,7 +11,7 @@ const address = require('address');
 const isProducation = process.env.NODE_ENV === 'production';
 
 const paths = require('./paths');
-const babelConfig = require('./babelConfig');
+const babelConfig = require('./babel.config');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.

@@ -1,6 +1,6 @@
 'use strict';
 
-const config = require('./webpack.config');
+const config = require('./webpack.config.prod');
 const paths = require('./paths');
 const options = require('../utils/parseOptions');
 

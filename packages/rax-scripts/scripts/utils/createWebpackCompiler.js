@@ -6,15 +6,15 @@ const colors = require('chalk');
 /**
  * Create webpack compiler instance
  *
- * @param  {Object} config webpack config
- * @return {compiler}      webpack compiler instance
+ * @param  {Object} webpackConfig webpack config
+ * @return {compiler}             webpack compiler instance
  *
  * @see http://webpack.github.io/docs/plugins.html#the-compiler-instance
  */
 const options = require('./parseOptions');
 
-module.exports = function createWebpackCompiler(config) {
-  let compiler = webpack(config);
+module.exports = webpackConfig => {
+  let compiler = webpack(webpackConfig);
 
   compiler.plugin('done', stats => {
     if (stats.hasErrors()) {
