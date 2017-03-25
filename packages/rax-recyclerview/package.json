@@ -1,6 +1,6 @@
 {
   "name": "rax-recyclerview",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "RecyclerView component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-scrollview": "^0.2.6",
-    "rax-refreshcontrol": "^0.2.6",
-    "rax-view": "^0.2.6",
-    "universal-env": "^0.2.6"
+    "rax-scrollview": "^0.2.7",
+    "rax-refreshcontrol": "^0.2.7",
+    "rax-view": "^0.2.7",
+    "universal-env": "^0.2.7"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.6"
+    "rax-test-renderer": "^0.2.7"
   }
 }
