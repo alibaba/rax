@@ -19,7 +19,9 @@ const linkSkipPackages = [
 
 getPackages().forEach((p) => {
   // Skip link starter kit
-  if (linkSkipPackages.indexOf(p) > -1) return;
+  if (linkSkipPackages.some(skipPackage => p.endsWith(skipPackage))) {
+    return;
+  };
   const linkArgv = ['link', p];
   // Skip install devDependencies
   if (p.endsWith('rax-test-renderer')) linkArgv.push('--production');
