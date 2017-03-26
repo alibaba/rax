@@ -1,11 +1,10 @@
 'use strict';
 /* eslint no-console: 0 */
+process.env.NODE_ENV = 'development';
 
 process.on('unhandledRejection', err => {
   throw err;
 });
-
-process.env.NODE_ENV = 'development';
 
 const colors = require('chalk');
 const WebpackDevServer = require('webpack-dev-server');
@@ -20,7 +19,7 @@ const options = require('./utils/parse-options');
  * run webpack dev server
  * @param  {Number} port server port
  */
-function run(port) {
+function start(port) {
   const compiler = createWebpackCompiler(webpackConfigDev);
 
   const server = new WebpackDevServer(compiler, webpackDevServerConfig);
@@ -43,4 +42,4 @@ function run(port) {
   });
 }
 
-run(options.port);
+start(options.port);

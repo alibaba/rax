@@ -20,32 +20,35 @@ module.exports = webpackConfig => {
     console.info(colors.yellow('Update webpack config from:'));
     console.info(webpackConfigUpdatePath);
     console.log('');
-    let webpackConfigUpdateFunc;
+    let webpackConfigUpdateRef;
     try {
-      webpackConfigUpdateFunc = require(webpackConfigUpdatePath);
+      webpackConfigUpdateRef = require(webpackConfigUpdatePath);
     } catch (err) {
       throw err;
     }
 
-    if (typeof webpackConfigUpdateFunc !== 'function') {
-      console.error(colors.red(`[ERR]: ${UPDATE_FILE_NAME} must be export a function.`));
+    if (typeof webpackConfigUpdateRef === 'function') {
+      console.error(`[ERR]: ${UPDATE_FILE_NAME} must be return an object of webpack config.`);
       console.info(
-        colors.white(
-          '@see https://github.com/alibaba/rax/packages/rax-scripts#update-webpack-config'
+        'see',
+        colors.underline.white(
+          'https://github.com/alibaba/rax/packages/rax-scripts#update-webpack-config'
         )
       );
       process.exit(1);
     } else {
-      const webpackConfigUpdated = webpackConfigUpdateFunc(webpackConfig);
+      const webpackConfigUpdated = webpackConfigUpdateRef(webpackConfig);
 
       if (!webpackConfigUpdated) {
-        console.error(`[ERR]: ${UPDATE_FILE_NAME} must be return an object of webpack config.`);
+        console.error(colors.red(`[ERR]: ${UPDATE_FILE_NAME} must be export a function.`));
         console.info(
-          '@see https://github.com/alibaba/rax/packages/rax-scripts#update-webpack-config'
+          'see',
+          colors.underline.white(
+            'https://github.com/alibaba/rax/packages/rax-scripts#update-webpack-config'
+          )
         );
         process.exit(1);
       }
-
       return webpackConfigUpdated;
     }
   } else {
