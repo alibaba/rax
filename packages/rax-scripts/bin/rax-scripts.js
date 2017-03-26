@@ -10,7 +10,7 @@ switch (script) {
   case 'build':
   case 'start':
     var result = spawn.sync(
-      'node', [require.resolve('../scripts/' + script)].concat(args), {
+      'node', [require.resolve('../lib/scripts/' + script)].concat(args), {
         cwd: process.cwd(),
         stdio: 'inherit'
       }
