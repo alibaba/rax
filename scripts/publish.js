@@ -40,9 +40,8 @@ if (version) {
   packageJSON.dependencies.rax = semver;
   packageJSON.dependencies['rax-view'] = semver;
   packageJSON.dependencies['rax-text'] = semver;
-  packageJSON.devDependencies['babel-preset-rax'] = semver;
-  packageJSON.devDependencies['rax-webpack-plugin'] = semver;
-  packageJSON.devDependencies['stylesheet-loader'] = semver;
+  packageJSON.devDependencies['rax-scripts'] = semver;
+  
   fs.writeFileSync(GENERATOR_DEPENDENCIES_FILE, JSON.stringify(packageJSON, null, '  '));
   console.log('*', GENERATOR_DEPENDENCIES_FILE);
 
