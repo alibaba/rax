@@ -2,7 +2,7 @@
 
 const config = require('./webpack.config.prod');
 const paths = require('./paths');
-const options = require('../utils/parseOptions');
+const options = require('../utils/parse-options');
 
 module.exports = {
   // Enable gzip compression of generated files.

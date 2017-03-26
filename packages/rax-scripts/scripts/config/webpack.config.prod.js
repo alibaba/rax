@@ -1,12 +1,13 @@
 'use strict';
 
-const webpack = require('webpack');
-const RaxWebpackPlugin = require('rax-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-plugin');
-const qrcode = require('qrcode-terminal');
 const address = require('address');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const colors = require('chalk');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const qrcode = require('qrcode-terminal');
+const RaxWebpackPlugin = require('rax-webpack-plugin');
+const WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-plugin');
+const webpack = require('webpack');
 
 const isProducation = process.env.NODE_ENV === 'production';
 
@@ -116,14 +117,26 @@ module.exports = {
     // to restart the development server for Webpack to discover it. This plugin
     // makes the discovery automatic so you don't have to restart.
     // See https://github.com/facebookincubator/create-react-app/issues/186
-    new WatchMissingNodeModulesPlugin(paths.appNodeModules)
+    new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+    // show webpakc build progress
+    new webpack.ProgressPlugin(function(percentage, msg) {
+      const stream = process.stderr;
+      if (stream.isTTY && percentage < 0.71) {
+        stream.cursorTo(0);
+        stream.write(`webpack: ${msg}...`);
+        stream.clearLine(1);
+      } else if (percentage === 1) {
+        console.log('');
+        console.log(colors.green('webpack: bundle build is now finished.'));
+      }
+    })
   ],
   module: {
     loaders: [
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loaders: ['babel'], // 'babel-loader' is also a legal name to reference
+        loaders: ['babel'] // 'babel-loader' is also a legal name to reference
       },
       {
         test: /\.css$/,

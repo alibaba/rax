@@ -10,12 +10,12 @@ process.env.NODE_ENV = 'development';
 const colors = require('chalk');
 const WebpackDevServer = require('webpack-dev-server');
 
-const createWebpackCompiler = require('./utils/createWebpackCompiler');
-const updateWebpackConfig = require('./utils/updateWebpackConfig');
+const createWebpackCompiler = require('./utils/create-webpack-compiler');
+const updateWebpackConfig = require('./utils/update-webpack-config');
 const webpackConfigDev = require('./config/webpack.config.dev');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const openBrowser = require('react-dev-utils/openBrowser');
-const options = require('./utils/parseOptions');
+const options = require('./utils/parse-options');
 
 /**
  * run webpack dev server
@@ -29,16 +29,18 @@ function run(port) {
 
   server.listen(port, err => {
     if (err) {
-      return console.log(err);
+      console.log(colors.red('[ERR]: Failed to webpack dev server'));
+      console.error(err.message || err);
+      process.exit(1);
     }
-    
+
     const serverUrl = `${options.protocol}//${options.host}:${options.port}/`;
     console.log('');
     console.log('');
     console.log(colors.green('Starting the development server at:'));
-    console.log(`  ${colors.underline.white(serverUrl)}`);
+    console.log(`    ${colors.underline.white(serverUrl)}`);
     console.log('');
-    
+
     openBrowser(serverUrl);
   });
 }
