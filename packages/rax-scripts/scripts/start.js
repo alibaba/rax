@@ -11,7 +11,6 @@ const colors = require('chalk');
 const WebpackDevServer = require('webpack-dev-server');
 
 const createWebpackCompiler = require('./utils/create-webpack-compiler');
-const updateWebpackConfig = require('./utils/update-webpack-config');
 const webpackConfigDev = require('./config/webpack.config.dev');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const openBrowser = require('react-dev-utils/openBrowser');
@@ -22,8 +21,7 @@ const options = require('./utils/parse-options');
  * @param  {Number} port server port
  */
 function run(port) {
-  const config = updateWebpackConfig(webpackConfigDev);
-  const compiler = createWebpackCompiler(config);
+  const compiler = createWebpackCompiler(webpackConfigDev);
 
   const server = new WebpackDevServer(compiler, webpackDevServerConfig);
 

@@ -1,8 +1,8 @@
 'use strict';
 /* eslint no-console: 0 */
-const pathExists = require('path-exists');
-const path = require('path');
 const colors = require('chalk');
+const path = require('path');
+const pathExists = require('path-exists');
 
 /**
  * Method for providing user to modify webpack config

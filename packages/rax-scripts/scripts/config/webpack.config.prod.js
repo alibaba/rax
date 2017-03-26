@@ -1,5 +1,5 @@
 'use strict';
-
+/* eslint no-console: 0 */
 const address = require('address');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const colors = require('chalk');

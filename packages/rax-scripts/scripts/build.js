@@ -1,5 +1,5 @@
 'use strict';
-
+/* eslint no-console: 0 */
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.NODE_ENV = 'production';
 
@@ -10,9 +10,9 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
-const webpackConfigProd = require('./config/webpack.config.prod');
-const createWebpackCompiler = require('./utils/create-webpack-compiler');
 const colors = require('chalk');
+const createWebpackCompiler = require('./utils/create-webpack-compiler');
+const webpackConfigProd = require('./config/webpack.config.prod');
 
 function build(config) {
   const compiler = createWebpackCompiler(config);

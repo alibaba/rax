@@ -1,7 +1,8 @@
 'use strict';
 /* eslint no-console: 0 */
-const webpack = require('webpack');
 const colors = require('chalk');
+const updateWebpackConfig = require('./update-webpack-config');
+const webpack = require('webpack');
 
 /**
  * Create webpack compiler instance
@@ -11,12 +12,13 @@ const colors = require('chalk');
  *
  * @see http://webpack.github.io/docs/plugins.html#the-compiler-instance
  */
-
 module.exports = webpackConfig => {
   let compiler;
+  
+  const config = updateWebpackConfig(webpackConfig);
 
   try {
-    compiler = webpack(webpackConfig);
+    compiler = webpack(config);
   } catch (err) {
     console.error(colors.red('[ERR]: Failed to compile.'));
     console.log('');
