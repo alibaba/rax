@@ -4,4 +4,39 @@ Rax project development tools.
 
 ## Commands 
 
--  `start` Start development services, Default enable hot reload and inline-module-source-map.
+- `start` Start development services, Default enable hot reload and inline-module-source-map.
+- `build` Bundle the project.
+
+### update webpack config
+
+**rax-scripts** has its own default webpack configuration. Also you can modify the webpack configuration.
+
+#### 1. create `webpack.config.update.js` into project root.
+
+```
+Rax-project
+├── src
+│   ├── App.css
+│   ├── App.js
+│   └── index.js
+├── webpack.config.update.js
+```
+
+#### 2. `webpack.config.update.js` accept a webpackConfig and return it.
+
+like:
+
+```js
+// webpack.config.update.js
+const sassLoader = require.resolve('sass-loder');
+
+module.exports = function update (webpackConfig) {
+  
+  webpackConfig.module.loaders.push({
+    test: /\.scss$/,
+    loader: sassLoader
+  });
+  
+  return webpackConfig;
+}
+```
