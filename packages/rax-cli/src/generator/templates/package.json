@@ -3,9 +3,9 @@
   "author": "__AuthorName__",
   "version": "0.0.0",
   "scripts": {
-    "start": "./node_modules/.bin/rax-scripts start",
-    "build": "./node_modules/.bin/rax-scripts build",
-    "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./src"
+    "start": "rax-scripts start",
+    "build": "rax-scripts build",
+    "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
     "rax": "^0.2.8",

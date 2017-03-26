@@ -11,7 +11,10 @@ process.on('unhandledRejection', err => {
 });
 
 const colors = require('chalk');
+const rimraf = require('rimraf');
+
 const createWebpackCompiler = require('./utils/create-webpack-compiler');
+const paths = require('./config/paths');
 const webpackConfigProd = require('./config/webpack.config.prod');
 
 function build(config) {
@@ -27,8 +30,6 @@ function build(config) {
   });
 }
 
-const paths = require('./config/paths');
-const rimraf = require('rimraf');
 
 rimraf(paths.appBuild, err => {
   if (err) {
