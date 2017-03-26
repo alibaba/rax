@@ -1,13 +1,10 @@
 {
   "name": "rax-scripts",
   "version": "0.1.0",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "description": "Scripts for Rax app",
   "bin": {
     "rax-scripts": "bin/rax-scripts.js"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -16,7 +13,6 @@
   "keywords": [
     "rax"
   ],
-  "author": "",
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
