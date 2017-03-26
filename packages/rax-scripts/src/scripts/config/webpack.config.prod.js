@@ -30,17 +30,22 @@ if (isProducation) {
 }
 
 if (!isProducation) {
+  const URL = require('url').URL;
   const ipv4 = address.ip();
   const port = 8080;
   const webUrl = 'http://' + ipv4 + ':' + port;
   const bundleUrl = 'http://' + ipv4 + ':' + port + '/js/index.bundle.js';
-  const weexBundleUrl = bundleUrl + '?_wx_tpl=' + bundleUrl;
+  const weexBundleUrl = new URL(bundleUrl);
+  
+  weexBundleUrl.searchParams.append('wh_weex', true);
+  weexBundleUrl.searchParams.append('wh_native', true);
+  weexBundleUrl.searchParams.append('_wx_tpl', bundleUrl);
 
   qrcode.generate(webUrl, { small: true });
   console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n');
 
-  qrcode.generate(weexBundleUrl, { small: true });
-  console.log('Weex: scan above QRCode ' + weexBundleUrl + ' use weex playground.\n');
+  qrcode.generate(weexBundleUrl.toString(), { small: true });
+  console.log('Weex: scan above QRCode ' + weexBundleUrl.toString() + ' use weex playground.\n');
 }
 
 module.exports = {
