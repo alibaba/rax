@@ -17,7 +17,7 @@ const webpackConfigProd = require('./config/webpack.config.prod');
 function build(config) {
   const compiler = createWebpackCompiler(config);
 
-  compiler.run((err) => {
+  compiler.run(err => {
     if (err) {
       throw err;
     }
@@ -27,4 +27,12 @@ function build(config) {
   });
 }
 
-build(webpackConfigProd);
+const paths = require('./config/paths');
+const rimraf = require('rimraf');
+
+rimraf(paths.appBuild, (err) => {
+  if (err) {
+    throw err;
+  }
+  build(webpackConfigProd);
+});
