@@ -7,12 +7,11 @@ const colors = require('chalk');
 /**
  * Method for providing user to modify webpack config
  * apply webpackConfig to path.join(process.cwc(), webpack.config.update.js);
- * 
+ *
  * @param  {Object} webpackConfig webpack config
  * @return {Object}               webpack cofnig with webpack.config.update.js
  */
 module.exports = webpackConfig => {
-  
   const UPDATE_FILE_NAME = 'webpack.config.update.js';
   const webpackConfigUpdatePath = path.join(process.cwd(), UPDATE_FILE_NAME);
 

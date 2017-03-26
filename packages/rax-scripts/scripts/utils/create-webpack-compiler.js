@@ -1,5 +1,5 @@
 'use strict';
-
+/* eslint no-console: 0 */
 const webpack = require('webpack');
 const colors = require('chalk');
 
@@ -11,14 +11,23 @@ const colors = require('chalk');
  *
  * @see http://webpack.github.io/docs/plugins.html#the-compiler-instance
  */
-const options = require('./parseOptions');
 
 module.exports = webpackConfig => {
-  let compiler = webpack(webpackConfig);
+  let compiler;
+
+  try {
+    compiler = webpack(webpackConfig);
+  } catch (err) {
+    console.error(colors.red('[ERR]: Failed to compile.'));
+    console.log('');
+    console.error(err.message || err);
+    console.log('');
+    process.exit(1);
+  }
 
   compiler.plugin('done', stats => {
     if (stats.hasErrors()) {
-      return console.log(
+      return console.error(
         stats.toString({
           colors: true
         })
