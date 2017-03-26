@@ -3,6 +3,7 @@ import video from './video';
 import textarea from './textarea';
 import span from './span';
 import p from './p';
+import button from './button';
 import heading from './heading';
 import block from './block';
 
@@ -10,6 +11,7 @@ export default {
   span,
   p,
   img,
+  button,
   video,
   textarea,
   h1: heading,

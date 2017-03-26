@@ -1,7 +1,7 @@
 {
   "name": "image-source-loader",
-  "version": "0.2.5",
-  "description": "image source loader for webpack",
+  "version": "0.2.8",
+  "description": "Image source loader for webpack",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -16,11 +16,9 @@
     "webpack",
     "loader",
     "img",
-    "src",
-    "img src"
+    "src"
   ],
   "main": "lib/index.js",
-  "author": "wssgcg1213 <i@zeroling.com>",
   "dependencies": {
     "image-size": "^0.5.1"
   }

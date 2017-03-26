@@ -38,7 +38,7 @@ module.exports = function(__weex_require__) {
    * See https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
    * See https://github.com/websockets/ws
    */
-  class WebSocket extends eventTarget(...WEBSOCKET_EVENTS) {
+  class WebSocket extends eventTarget(WEBSOCKET_EVENTS) {
     static CONNECTING = CONNECTING;
     static OPEN = OPEN;
     static CLOSING = CLOSING;
@@ -47,14 +47,32 @@ module.exports = function(__weex_require__) {
     constructor(url, protocols) {
       super();
 
-      this._registerEvents();
-
       let websocket = __weex_require__(WEB_SOCKET_MODULE);
       // eslint-disable-next-line new-cap
       websocket.WebSocket(url, protocols);
       this.readyState = CONNECTING;
       this.websocket = websocket;
-      this._registerEvents();
+
+      websocket.onmessage(ev => {
+        this.dispatchEvent(new WebSocketEvent('message', ev));
+      });
+
+      websocket.onopen(ev => {
+        this.readyState = OPEN;
+        this.dispatchEvent(new WebSocketEvent('open'));
+      });
+
+      websocket.onclose(ev => {
+        this.readyState = CLOSED;
+        this.dispatchEvent(new WebSocketEvent('close', {
+          code: ev.code,
+          reason: ev.reason,
+        }));
+      });
+
+      websocket.onerror(ev => {
+        this.dispatchEvent(new WebSocketEvent('error', ev));
+      });
     }
 
     close(code, reason) {
@@ -65,6 +83,7 @@ module.exports = function(__weex_require__) {
 
       this.readyState = CLOSING;
       this.websocket.close(code, reason);
+      this.websocket.removeAllEventListeners();
     }
 
     send(data) {
@@ -75,28 +94,7 @@ module.exports = function(__weex_require__) {
 
       throw new Error('Unsupported data type');
     }
-
-    _registerEvents() {
-      this.websocket.onmessage(ev => {
-        this.dispatchEvent(new WebSocketEvent('message', ev));
-      });
-
-      this.websocket.onopen(ev => {
-        this.readyState = OPEN;
-        this.dispatchEvent(new WebSocketEvent('open', ev));
-      });
-
-      this.websocket.onclose(ev => {
-        this.readyState = CLOSED;
-        this.dispatchEvent(new WebSocketEvent('close', {
-          code: ev.code,
-          reason: ev.reason,
-        }));
-      });
-
-      this.websocket.onerror(ev => {
-        this.dispatchEvent(new WebSocketEvent('error', ev));
-      });
-    }
   }
+
+  return WebSocket;
 };

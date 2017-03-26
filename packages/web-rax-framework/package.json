@@ -1,6 +1,6 @@
 {
   "name": "web-rax-framework",
-  "version": "0.2.5",
+  "version": "0.2.8",
   "description": "Rax framework for web.",
   "license": "BSD-3-Clause",
   "main": "dist/framework.web.js",
@@ -14,8 +14,8 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
     "raf": "^3.3.0",
-    "runtime-shared": "^0.2.5",
-    "rax": "^0.2.5",
+    "rax": "^0.2.8",
+    "runtime-shared": "^0.2.8",
     "whatwg-fetch": "^2.0.1"
   }
 }

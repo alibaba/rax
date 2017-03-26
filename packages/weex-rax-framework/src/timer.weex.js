@@ -2,7 +2,6 @@ const TIMER_MODULE = '@weex-module/timer';
 
 module.exports = function(__weex_require__) {
   const setTimeout = (handler, time) => {
-    console.log('setTimeout', handler, time);
     const timer = __weex_require__(TIMER_MODULE);
     return timer.setTimeout(handler, time);
   };

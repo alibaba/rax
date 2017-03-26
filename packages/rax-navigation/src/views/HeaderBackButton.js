@@ -7,9 +7,6 @@ import Text from 'rax-text';
 import View from 'rax-view';
 import StyleSheet from 'universal-stylesheet';
 import Platform from 'universal-platform';
-
-import type { LayoutEvent } from '../TypeDefinition';
-
 import TouchableItem from './TouchableItem';
 
 const BACK_BUTTON_SOURCE = {
@@ -53,7 +50,7 @@ class HeaderBackButton extends PureComponent<DefaultProps, Props, State> {
 
   state = {};
 
-  _onTextLayout = (e: LayoutEvent) => {
+  _onTextLayout = (e) => {
     if (this.state.initialTextWidth) {
       return;
     }

@@ -1,6 +1,6 @@
 {
   "name": "rax-button",
-  "version": "0.2.5",
+  "version": "0.2.8",
   "description": "Button component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,14 +21,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-touchable": "^0.2.5",
-    "rax-text": "^0.2.5",
-    "universal-env": "^0.2.5"
+    "rax-touchable": "^0.2.8",
+    "rax-text": "^0.2.8",
+    "universal-env": "^0.2.8"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.5"
+    "rax-test-renderer": "^0.2.8"
   }
 }

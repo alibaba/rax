@@ -197,6 +197,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     } = require('./base64.weex')();
 
     const performance = require('./performance.weex')(responseEnd);
+    const {Event, CustomEvent} = require('./event.weex')();
 
     const windowEmitter = new EventEmitter();
 
@@ -241,6 +242,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       URLSearchParams,
       FontFace,
       WebSocket,
+      Event,
+      CustomEvent,
       matchMedia,
       setTimeout,
       clearTimeout,

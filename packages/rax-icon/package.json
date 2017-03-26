@@ -1,6 +1,6 @@
 {
   "name": "rax-icon",
-  "version": "0.2.5",
+  "version": "0.2.8",
   "description": "icon UI for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,15 +20,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.5",
-    "rax-view": "^0.2.5",
-    "rax-text": "^0.2.5",
-    "rax-image": "^0.2.5"
+    "universal-env": "^0.2.8",
+    "rax-view": "^0.2.8",
+    "rax-text": "^0.2.8",
+    "rax-image": "^0.2.8"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.5"
+    "rax-test-renderer": "^0.2.8"
   }
 }

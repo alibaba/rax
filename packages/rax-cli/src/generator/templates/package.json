@@ -8,9 +8,9 @@
     "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^0.2.5",
-    "rax-view": "^0.2.5",
-    "rax-text": "^0.2.5"
+    "rax": "^0.2.8",
+    "rax-view": "^0.2.8",
+    "rax-text": "^0.2.8"
   },
   "devDependencies": {
     "rax-scripts": "^0.2.5",

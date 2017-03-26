@@ -1,7 +1,7 @@
 import cons from 'consolidate';
 import path from 'path';
 import loaderUtils from 'loader-utils';
-import HTMLtoJSX from './HTMLtoJSX';
+import HTMLtoJSX from './HTMLToJSX';
 import { transform } from 'babel-core';
 import getBabelConfig from './getBabelConfig';
 const converter = new HTMLtoJSX();
