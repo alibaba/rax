@@ -36,7 +36,7 @@ if (!isProducation) {
   const webUrl = 'http://' + ipv4 + ':' + port;
   const bundleUrl = 'http://' + ipv4 + ':' + port + '/js/index.bundle.js';
   const weexBundleUrl = new URL(bundleUrl);
-  
+
   weexBundleUrl.searchParams.append('wh_weex', true);
   weexBundleUrl.searchParams.append('wh_native', true);
   weexBundleUrl.searchParams.append('_wx_tpl', bundleUrl);
