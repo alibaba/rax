@@ -30,7 +30,7 @@ function build(config) {
 const paths = require('./config/paths');
 const rimraf = require('rimraf');
 
-rimraf(paths.appBuild, (err) => {
+rimraf(paths.appBuild, err => {
   if (err) {
     throw err;
   }

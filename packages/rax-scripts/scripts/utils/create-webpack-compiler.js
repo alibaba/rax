@@ -14,7 +14,7 @@ const webpack = require('webpack');
  */
 module.exports = webpackConfig => {
   let compiler;
-  
+
   const config = updateWebpackConfig(webpackConfig);
 
   try {

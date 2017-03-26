@@ -19,7 +19,7 @@ Rax-project
 │   ├── App.css
 │   ├── App.js
 │   └── index.js
-├── webpack.config.update.js
+└── webpack.config.update.js
 ```
 
 #### 2. `webpack.config.update.js` accept a webpackConfig and return it.
