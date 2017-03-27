@@ -1,15 +1,12 @@
-
 import {createElement, cloneElement, Component, findDOMNode, PropTypes} from 'rax';
 import View from 'rax-view';
 import PanResponder from 'universal-panresponder';
-import SwipeEvent from './swipe';
+import SwipeEvent from './SwipeEvent';
 import styles from './style';
 
-/**
-* @Slider Entrance
-* rax-slider h5 version
-**/
-class Slide extends Component {
+const SWIPE_LEFT = 'SWIPE_LEFT';
+
+class Slider extends Component {
 
   constructor(props) {
     super(props);
@@ -17,10 +14,6 @@ class Slide extends Component {
     this.height = null;
     this.width = null;
     this.loopIdx = 0;
-    this.DIRECTION = {
-      LEFT: 'SWIPE_LEFT',
-      RIGHT: 'SWIPE_RIGHT'
-    };
     this.offsetX = null;
     this.isSwiping = false;
     this.total = 0;
@@ -44,21 +37,18 @@ class Slide extends Component {
 
   autoPlay() {
     const autoplayInterval = this.props.autoplayInterval;
-    // 非自动播放的情况 return 掉
     if (this.isSwiping) return;
     this.autoPlayTimer && clearInterval(this.autoPlayTimer);
     this.autoPlayTimer = setInterval(() => {
       if (this.isLoopEnd()) return;
-      // 根据 index 和偏移改变位置
-      this.slideTo(this.index, this.DIRECTION.LEFT);
+      this.slideTo(this.index, SWIPE_LEFT);
     }, parseFloat(autoplayInterval));
   }
 
   slideTo(index, direction) {
     if (this.isSwiping) return;
 
-    // this.index = direction === this.DIRECTION.LEFT ? index + 1 : (index - 1 < 0 ? this.total + index - 1 : index - 1);
-    this.index = direction === this.DIRECTION.LEFT ? index + 1 : index - 1;
+    this.index = direction === SWIPE_LEFT? index + 1 : index - 1;
     this.offsetX = this.index * this.width;
 
     const realIndex = this.loopedIndex();
@@ -219,6 +209,10 @@ class Slide extends Component {
     ;
   }
 
+  componentWillUnmount() {
+    this.autoPlayTimer && clearInterval(this.autoPlayTimer);
+  }
+
   render() {
     const that = this;
     const {style, showsPagination} = this.props;
@@ -231,7 +225,7 @@ class Slide extends Component {
   }
 };
 
-Slide.defaultProps = {
+Slider.defaultProps = {
   horizontal: true,
   showsPagination: true,
   loop: true,
@@ -245,9 +239,9 @@ Slide.defaultProps = {
   vertical: false
 };
 
-Slide.propTypes = {
+Slider.propTypes = {
   onChange: PropTypes.func,
   paginationStyle: PropTypes.object
 };
 
-export default Slide;
+export default Slider;

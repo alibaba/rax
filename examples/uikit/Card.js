@@ -1,6 +1,5 @@
 import normalize from './normalizeText';
 import {createElement} from 'rax';
-import Text from 'rax-text';
 import View from 'rax-view';
 import Platform from 'universal-platform';
 import StyleSheet from 'universal-stylesheet';
