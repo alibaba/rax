@@ -1,10 +1,8 @@
 
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Button,
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Button from 'rax-button';
 import Toast from 'universal-toast';
 
 class ToastDemo extends Component {

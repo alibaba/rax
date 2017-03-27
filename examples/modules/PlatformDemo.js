@@ -1,10 +1,7 @@
 
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Button
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
 import {OS} from 'universal-platform';
 
 class PlatformDemo extends Component {

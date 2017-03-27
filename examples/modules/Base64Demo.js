@@ -1,10 +1,7 @@
 
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Button
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
 
 var encodedData = window.btoa('Hello, world'); // encode a string
 var decodedData = window.atob(encodedData); // decode the string
