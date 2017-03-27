@@ -1,6 +1,6 @@
 {
   "name": "image-source-loader",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Image source loader for webpack",
   "license": "MIT",
   "repository": {

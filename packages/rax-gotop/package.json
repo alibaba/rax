@@ -1,6 +1,6 @@
 {
   "name": "rax-gotop",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Gotop component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,16 +20,16 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.2.8",
-    "rax-text": "^0.2.8",
-    "rax-image": "^0.2.8",
-    "universal-env": "^0.2.8",
-    "rax-animated": "^0.2.8"
+    "rax-view": "^0.2.9",
+    "rax-text": "^0.2.9",
+    "rax-image": "^0.2.9",
+    "universal-env": "^0.2.9",
+    "rax-animated": "^0.2.9"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.8"
+    "rax-test-renderer": "^0.2.9"
   }
 }
