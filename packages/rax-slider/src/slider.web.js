@@ -42,6 +42,10 @@ class Slide extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.autoPlayTimer && clearInterval(this.autoPlayTimer);
+  }
+
   autoPlay() {
     const autoplayInterval = this.props.autoplayInterval;
     // 非自动播放的情况 return 掉
