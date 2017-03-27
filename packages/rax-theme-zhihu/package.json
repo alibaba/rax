@@ -3,10 +3,11 @@
   "author": "yacheng.sz",
   "version": "0.2.9",
   "snapshots": [
+    "https://gw.alicdn.com/tfs/TB1B9PPQXXXXXcNXVXXXXXXXXXX-300-200.png",
     "https://gw.alicdn.com/tfs/TB1IvFAQXXXXXakXXXXXXXXXXXX-377-670.png",
     "https://gw.alicdn.com/tfs/TB1sjJuQXXXXXc0XXXXXXXXXXXX-377-669.png"
   ],
-  "description": "问答类 App 主题示例",
+  "description": "问答类 App",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"

@@ -67,3 +67,23 @@ class Demo extends Component {
 render(<Demo />);
 ```
 
+## 本地图片示例
+
+在使用前请先检查 webpack.config.js 中已经启用了 image-source-loader
+
+```jsx 
+import {createElement, Component, render} from 'rax';
+import Image from 'rax-image';
+
+class App extends Component {
+  render() {
+    return (
+      <Image source={require('./path/to/your/image.png')}
+        resizeMode="cover"
+      />
+    );
+  }
+}
+
+render(<App />);
+```
