@@ -1,5 +1,7 @@
 import {createElement, Component, render} from 'rax';
-import {View, Text, ScrollView} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import ScrollView from 'rax-scrollview';
 
 import FontFaceDemo from './FontFaceDemo';
 import WindowDemo from './WindowDemo';

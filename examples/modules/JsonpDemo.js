@@ -1,9 +1,7 @@
 
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
 import jsonp from 'universal-jsonp';
 
 class JsonpDemo extends Component {

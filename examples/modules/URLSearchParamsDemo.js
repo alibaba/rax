@@ -1,9 +1,7 @@
 
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
 
 let params = new URLSearchParams('key1=value1&key2=value2');
 

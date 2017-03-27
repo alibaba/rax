@@ -1,10 +1,8 @@
 
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Button,
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Button from 'rax-button';
 
 const eventHandler = (e) => {
   alert('pressed');
