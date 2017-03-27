@@ -12,7 +12,6 @@ const WebpackDevServer = require('webpack-dev-server');
 const createWebpackCompiler = require('./utils/create-webpack-compiler');
 const webpackConfigDev = require('./config/webpack.config.dev');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
-const openBrowser = require('react-dev-utils/openBrowser');
 const options = require('./utils/parse-options');
 
 /**
@@ -37,8 +36,6 @@ function start(port) {
     console.log(colors.green('Starting the development server at:'));
     console.log(`    ${colors.underline.white(serverUrl)}`);
     console.log('');
-
-    openBrowser(serverUrl);
   });
 }
 
