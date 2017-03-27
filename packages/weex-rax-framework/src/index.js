@@ -189,7 +189,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       clearInterval,
       requestAnimationFrame,
       cancelAnimationFrame
-    } = require('./timer.weex')(__weex_require__);
+    } = require('./timer.weex')(__weex_require__, document);
 
     const {
       atob,
