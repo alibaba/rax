@@ -1,6 +1,7 @@
 import normalize from './normalizeText';
 import {createElement} from 'rax';
-import {View, Image} from 'rax-components';
+import Text from 'rax-text';
+import View from 'rax-view';
 import Platform from 'universal-platform';
 import StyleSheet from 'universal-stylesheet';
 import Divider from './Divider';
