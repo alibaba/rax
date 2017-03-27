@@ -39,7 +39,7 @@ class Icon extends Component {
       var domModule = require('@weex-module/dom');
       domModule.addRule('fontFace', {
         'fontFamily': fontFamily,
-        'src': "url('" + uri + "')"
+        'src': "url('" + uri + "')" // single quotes are required around uri, and double quotes can not work
       });
     }
     return <Text style={iconStyle}>{this.props.source.codePoint}</Text>;

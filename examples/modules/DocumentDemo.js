@@ -16,12 +16,12 @@ class DocumentDemo extends Component {
   }
 
   removeEventListener = () => {
-    document.removeEventListener('press', this.eventHandler);
+    document.removeEventListener('press', eventHandler);
   }
 
   dispatchEvent = () => {
-    // const event = new Event('press');
-    // document.dispatchEvent(event);
+    const event = new Event('press');
+    document.dispatchEvent(event);
   }
 
   render() {
