@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
+
 const EXAMPLES_DIR = path.resolve(__dirname, '../examples');
 
 function getEntry() {

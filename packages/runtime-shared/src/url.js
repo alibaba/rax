@@ -1,6 +1,7 @@
 // https://github.com/Polymer/URL
 
 var URLSearchParams = require('./url-search-params');
+
 var relative = Object.create(null);
 relative.ftp = 21;
 relative.file = 0;

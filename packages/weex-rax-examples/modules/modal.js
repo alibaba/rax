@@ -1,6 +1,7 @@
 import {createElement, Component, render} from 'rax';
 import Button from '../common/Button';
 import Panel from '../common/Panel';
+
 const modal = require('@weex-module/modal');
 
 class Example extends Component {

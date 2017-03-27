@@ -3,11 +3,13 @@
 // Update notifications
 var updateNotifier = require('update-notifier');
 var pkg = require('../package.json');
+
 updateNotifier({pkg: pkg}).notify();
 
 // Check node version
 var chalk = require('chalk');
 var semver = require('semver');
+
 if (!semver.satisfies(process.version, '>=4')) {
   var message = 'You are currently running Node.js ' +
     chalk.red(process.version) + '.\n' +

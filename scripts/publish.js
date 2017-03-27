@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const execSync = require('child_process').execSync;
 const spawnSync = require('child_process').spawnSync;
+
 const version = process.argv[2];
 const forcePublish = process.argv[3] || '';
 const EXAMPLES_DIR = path.resolve(__dirname, '../examples');

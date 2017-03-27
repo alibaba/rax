@@ -2,6 +2,7 @@ import * as babylon from 'babylon';
 import generate from 'babel-generator';
 import traverse from 'babel-traverse';
 import { IF_KEY, FOR_KEY } from './defaultKey';
+
 const FULL_VALUE_REG = /\{\{(.*)\}\}/g;
 
 export const transformFor = (attributes, begin = true, scope = {}) => {
@@ -114,4 +115,3 @@ export function transformPair(code, scope, config = {}) {
 function findScope(scope, name) {
   return scope[name];
 }
-

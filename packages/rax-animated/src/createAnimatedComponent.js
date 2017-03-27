@@ -12,6 +12,7 @@
 
 import {createElement, Component} from 'rax';
 import mapStyle from './mapStyle';
+
 var AnimatedProps = require('animated-js/lib/AnimatedProps');
 var ApplyAnimatedValues = require('animated-js/lib/injectable/ApplyAnimatedValues');
 

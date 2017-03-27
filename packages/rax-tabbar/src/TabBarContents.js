@@ -1,5 +1,6 @@
 import {createElement, Component} from 'rax';
 import View from 'rax-view';
+
 const WIDTH = 750;
 
 class TabBarContents extends Component {

@@ -4,6 +4,7 @@
  */
 
 import cloneDeep from 'lodash.clonedeep';
+
 const platformLoader = require.resolve('./PlatformLoader');
 
 module.exports = function MultiplePlatform(config, options = {}) {
