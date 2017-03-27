@@ -22,7 +22,7 @@ function validateSymbol(value) {
 var generateName = (function() {
   var created = Object.create(null);
   return function(desc) {
-    var postfix = 0, name, ie11BugWorkaround;
+    var postfix = 0, name;
     while (created[desc + (postfix || '')]) ++postfix;
     desc += postfix || '';
     created[desc] = true;
@@ -114,5 +114,3 @@ defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toStringTag,
 // See: https://github.com/medikoo/es6-symbol/issues/13#issuecomment-164146149
 defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toPrimitive,
 	{value: SymbolPolyfill.prototype[SymbolPolyfill.toPrimitive]});
-
-module.exports = Set;

@@ -1,9 +1,23 @@
 const global = window;
 
+const shared = require('runtime-shared');
 // ES
 if (!global.Promise) {
-  global.Promise = require('runtime-shared/dist/promise.module');
+  global.Promise = shared.Promise;
 }
+
+if (!global.Symbol) {
+  global.Symbol = shared.Symbol;
+}
+
+if (!global.Set) {
+  global.Set = shared.Set;
+}
+
+if (!global.Map) {
+  global.Map = shared.Map;
+}
+
 require('./object');
 require('./array');
 
@@ -12,11 +26,11 @@ require('whatwg-fetch');
 require('raf/polyfill');
 
 if (!global.FontFace) {
-  global.FontFace = require('runtime-shared/dist/fontface.module');
+  global.FontFace = shared.FontFace;
 }
 
 if (!global.matchMedia) {
-  global.matchMedia = require('runtime-shared/dist/matchMedia.module');
+  global.matchMedia = shared.matchMedia;
 }
 
 if (!document.fonts) {
@@ -36,11 +50,11 @@ if (!document.fonts) {
 
 
 if (!global.URL) {
-  global.URL = require('runtime-shared/dist/url.module');
+  global.URL = shared.URL;
 }
 
 if (!global.URLSearchParams) {
-  global.URLSearchParams = require('runtime-shared/dist/url-search-params.module');
+  global.URLSearchParams = shared.URLSearchParams;
 }
 
 // ModuleJS

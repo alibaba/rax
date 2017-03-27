@@ -1,4 +1,5 @@
 /* eslint no-extend-native: "off" */
+import Symbol from './symbol';
 
 // Deleted map items mess with iterator pointers, so rather than removing them mark them as deleted. Can't use undefined or null since those both valid keys so use a private symbol.
 const undefMarker = Symbol('undef');
@@ -140,9 +141,15 @@ Map.prototype.forEach = function(callbackFn, thisArg) {
     result = iterator.next();
   }
 };
-Map.prototype.constructor =
+
 Map.prototype[Symbol.species] = Map;
 
-Map.length = 0;
+Object.defineProperty(Map, 'constructor', {
+  value: Map
+});
+
+Object.defineProperty(Map, 'length', {
+  value: 0
+});
 
 module.exports = Map;
