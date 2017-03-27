@@ -14,7 +14,7 @@ class URLDemo extends Component {
         <Text style={styles.title}>origin</Text>
         <Text>{url.origin}</Text>
         <Text style={styles.title}>searchParams</Text>
-        <Text>{url.searchParams}</Text>
+        <Text>{url.searchParams.toString()}</Text>
         <Text style={styles.title}>toString()</Text>
         <Text>{url.toString()}</Text>
       </View>
