@@ -1,5 +1,6 @@
 // https://github.com/Polymer/URL
 
+var URLSearchParams = require('./url-search-params');
 var relative = Object.create(null);
 relative.ftp = 21;
 relative.file = 0;
@@ -540,6 +541,10 @@ URL.prototype = {
     if ('?' == search[0])
       search = search.slice(1);
     parse.call(this, search, 'query');
+  },
+
+  get searchParams() {
+    return new URLSearchParams(this.search);
   },
 
   get hash() {
