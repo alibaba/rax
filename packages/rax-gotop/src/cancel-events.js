@@ -1,5 +1,6 @@
 import {isWeex} from 'universal-env';
-let events = ['mousedown', 'mousewheel', 'touchmove', 'keydown'];
+
+const EVENTS = ['mousedown', 'mousewheel', 'touchmove', 'keydown'];
 
 export default {
   register: (cancelEvent) => {
@@ -7,8 +8,8 @@ export default {
       return;
     }
 
-    for (var i = 0; i < events.length; i = i + 1) {
-      document.addEventListener(events[i], cancelEvent);
+    for (var i = 0; i < EVENTS.length; i = i + 1) {
+      document.addEventListener(EVENTS[i], cancelEvent);
     }
   }
 };

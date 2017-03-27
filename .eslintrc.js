@@ -158,6 +158,7 @@ module.exports = {
     /**
      * Import
      */
+    "import/newline-after-import": "error",
     "import/no-duplicates": "error",
     "import/no-unresolved": "error",
     "import/no-extraneous-dependencies": [

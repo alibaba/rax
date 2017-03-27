@@ -1,4 +1,5 @@
 import getComponentTree from './getComponentTree';
+
 let treeSnapshot = {};
 
 export default function getTreeSnapshot(roots, tree) {

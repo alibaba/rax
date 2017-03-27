@@ -23,7 +23,8 @@ export default {
   nav: block,
   article: block,
   section: block,
-  header: block,
+  // Conflict with weex header tag
+  // header: block,
   footer: block,
   aside: block,
   main: block

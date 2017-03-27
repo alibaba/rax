@@ -2,8 +2,8 @@ import {createElement, Component} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Point from './progress-point';
-
 import {isWeex} from 'universal-env';
+
 const defaultStyles = {
   progress: {
     display: 'flex',

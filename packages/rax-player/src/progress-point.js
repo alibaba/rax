@@ -3,6 +3,7 @@ import View from 'rax-view';
 import PanResponder from 'universal-panresponder';
 import Dimensions from './dimensions';
 import {isWeex} from 'universal-env';
+
 let {height, width, scale} = Dimensions.get('window');
 width = width / scale * 0.8;
 

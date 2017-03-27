@@ -1,6 +1,7 @@
 'use strict';
 
 import normalizeColor from './normalizeColor';
+
 const SUFFIX = 'rem';
 
 function convertUnit(val) {

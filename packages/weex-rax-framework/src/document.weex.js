@@ -61,7 +61,7 @@ module.exports = function(__weex_require__, document) {
         var domModule = __weex_require__(DOM_MODULE);
         domModule.addRule('fontFace', {
           fontFamily: fontFace.family,
-          src: fontFace.source
+          src: fontFace.source // url('uri') : single quotes are required around uri, and double quotes can not work in weex
         });
       }
     };

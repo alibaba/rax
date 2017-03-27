@@ -504,6 +504,23 @@ describe('framework', () => {
     expect(mockFn).toHaveBeenCalled();
   });
 
+  it('URL.searchParams', () => {
+    const code = `
+    var params = (new URL("https://developer.mozilla.org?hello=world")).searchParams;
+    alert(params.get('hello'));
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: 'world'
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
+    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+    expect(mockFn).toHaveBeenCalled();
+  });
+
   it('URLSearchParams', () => {
     const code = `
     var paramsString = "q=URLUtils.searchParams&topic=api"

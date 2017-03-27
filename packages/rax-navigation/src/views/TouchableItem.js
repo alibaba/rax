@@ -14,6 +14,7 @@ import { createElement, Component, PropTypes } from 'rax';
 import Platform from 'universal-platform';
 import View from 'rax-view';
 import TouchableNativeFeedback from 'rax-touchable';
+
 const TouchableOpacity = TouchableNativeFeedback;
 
 export default class TouchableItem extends Component {

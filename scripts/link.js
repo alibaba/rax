@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const spawnSync = require('child_process').spawnSync;
+
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
 function getPackages() {
