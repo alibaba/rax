@@ -48,7 +48,7 @@ class Slider extends Component {
   slideTo(index, direction) {
     if (this.isSwiping) return;
 
-    this.index = direction === SWIPE_LEFT? index + 1 : index - 1;
+    this.index = direction === SWIPE_LEFT ? index + 1 : index - 1;
     this.offsetX = this.index * this.width;
 
     const realIndex = this.loopedIndex();
