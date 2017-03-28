@@ -147,11 +147,12 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const responseEnd = Date.now();
     const __weex_env__ = typeof WXEnvironment === 'object' && WXEnvironment || {};
     // For better performance use built-in promise first
-    const Promise = typeof Promise === 'function' ? Promise : require('runtime-shared/dist/promise.function')();
-    const URL = require('runtime-shared/dist/url.function')();
-    const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
-    const FontFace = require('runtime-shared/dist/fontface.function')();
-    const matchMedia = require('runtime-shared/dist/matchMedia.function')();
+    const shared = require('runtime-shared/dist/shared.function')();
+    const Promise = typeof Promise === 'function' ? Promise : shared.Promise;
+    const Set = typeof Set === 'function' ? Set : shared.Set;
+    const Map = typeof Map === 'function' ? Map : shared.Map;
+    const Symbol = typeof Symbol === 'function' ? Symbol : shared.Symbol;
+    const {URL, URLSearchParams, FontFace, matchMedia} = shared;
 
     const document = new Document(instanceId, __weex_options__.bundleUrl);
     const location = new URL(__weex_options__.bundleUrl);
@@ -204,6 +205,9 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const window = {
       // ES
       Promise,
+      Set,
+      Map,
+      Symbol,
       // W3C: https://www.w3.org/TR/html5/browsers.html#browsing-context-name
       name: '',
       // This read-only property indicates whether the referenced window is closed or not.

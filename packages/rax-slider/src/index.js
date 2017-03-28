@@ -1,9 +1,9 @@
 import {Component, createElement, PropTypes} from 'rax';
-import {isWeex} from 'universal-env';
+import {isWeex, isWeb} from 'universal-env';
 
-let Slide;
-if (!isWeex) {
-  Slide = require('./slider.web');
+let SliderWeb;
+if (isWeb) {
+  SliderWeb = require('./slider.web');
 }
 
 class Slider extends Component {
@@ -52,6 +52,19 @@ class Slider extends Component {
     return nativeProps;
   }
 
+  slideTo(index) {
+    if (isWeex) {
+      this.setState({
+        index: index
+      });
+    } else {
+      this.props.onChange({
+        index: index
+      });
+      this.refs.slider.slideTo(index);
+    }
+  }
+
   render() {
     if (isWeex) {
       const children = this.props.children;
@@ -65,20 +78,7 @@ class Slider extends Component {
         </slider>
       );
     } else {
-      return <Slide ref="Slider" {...this.props} />;
-    }
-  }
-
-  slideTo(index) {
-    if (isWeex) {
-      this.setState({
-        index: index
-      });
-    } else {
-      this.props.onChange({
-        index: index
-      });
-      this.refs.Slider.slideTo(index);
+      return <SliderWeb ref="slider" {...this.props} />;
     }
   }
 }

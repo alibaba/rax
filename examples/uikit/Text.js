@@ -1,5 +1,5 @@
 import {createElement} from 'rax';
-import {Text} from 'rax-components';
+import Text from 'rax-text';
 import normalize from './normalizeText';
 
 const TextElement = ({style, children, h1, h2, h3, h4, h5, h6, fontFamily}) =>

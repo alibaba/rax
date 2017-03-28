@@ -79,7 +79,6 @@ import {Component, createElement, render } from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Image from 'rax-image';
-import { isWeex, isWeb } from 'universal-env';
 import Slider from 'rax-slider';
 
 const styles = {
@@ -90,16 +89,16 @@ const styles = {
     width: '750rem',
     position: 'relative',
     overflow: 'hidden',
-    height: '452rem',
+    height: '350rem',
     backgroundColor: '#cccccc' 
   },
   itemWrap: {
     width: '750rem',  
-    height: '352rem'
+    height: '252rem'
   },
   image: {
     width: '750rem',
-    height: '352rem' 
+    height: '252rem' 
   },
   button: {
     marginTop: '20rem',
@@ -127,31 +126,28 @@ class SlideDemo extends Component {
   }
 
   render() {
-    const content = isWeex ? (
-      <Slider className="slider" width="750rem" height="352rem" style={styles.slider}
-        autoPlay={true}
-        loop={true}
-        showsPagination={true}
-        paginationStyle={styles.paginationStyle}
-        autoplayTimeout={3000}
-        onChange={this.onchange.bind(this)}>
-        <View style={styles.itemWrap}>
-          <Image style={styles.image} source={{uri: '//img.alicdn.com/tps/TB1m2LyJFXXXXbHXpXXXXXXXXXX-1125-352.jpg_q50.jpg'}} />
-        </View>
-        <View style={styles.itemWrap}>
-          <Image style={styles.image} source={{uri: '//img.alicdn.com/tps/TB1ogUvJFXXXXaAXXXXXXXXXXXX-1125-352.jpg_q50.jpg'}} />
-        </View>
-        <View style={styles.itemWrap}>
-          <Image style={styles.image} source={{uri: '//gw.alicdn.com/tps/i4/TB1pgxYJXXXXXcAXpXXrVZt0FXX-640-200.jpg_q50.jpg'}} />
-        </View>
-        <View style={styles.itemWrap}>
-          <Image style={styles.image} source={{uri: '//gw.alicdn.com/imgextra/i4/3/TB2STElaohnpuFjSZFPXXb_4XXa_!!3-0-yamato.jpg_q50.jpg'}} />
-        </View>
-      </Slider>
-    ) : <Text style={styles.text}>Sorry, Slider 暂时不支持 Web 端展示, 请扫码预览。</Text>;
     return (
       <View style={styles.container}>
-        {content}
+        <Slider className="slider" width="750rem" height="352rem" style={styles.slider}
+          autoPlay={true}
+          loop={true}
+          showsPagination={true}
+          paginationStyle={styles.paginationStyle}
+          autoplayTimeout={3000}
+          onChange={this.onchange.bind(this)}>
+          <View style={styles.itemWrap}>
+            <Image style={styles.image} source={{uri: '//img.alicdn.com/tps/TB1m2LyJFXXXXbHXpXXXXXXXXXX-1125-352.jpg_q50.jpg'}} />
+          </View>
+          <View style={styles.itemWrap}>
+            <Image style={styles.image} source={{uri: '//img.alicdn.com/tps/TB1ogUvJFXXXXaAXXXXXXXXXXXX-1125-352.jpg_q50.jpg'}} />
+          </View>
+          <View style={styles.itemWrap}>
+            <Image style={styles.image} source={{uri: '//gw.alicdn.com/tps/i4/TB1pgxYJXXXXXcAXpXXrVZt0FXX-640-200.jpg_q50.jpg'}} />
+          </View>
+          <View style={styles.itemWrap}>
+            <Image style={styles.image} source={{uri: '//gw.alicdn.com/imgextra/i4/3/TB2STElaohnpuFjSZFPXXb_4XXa_!!3-0-yamato.jpg_q50.jpg'}} />
+          </View>
+        </Slider>
       </View>
     );
   }

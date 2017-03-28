@@ -14,7 +14,6 @@ import ListViewDemo from './ListViewDemo';
 import RecyclerViewDemo from './RecyclerViewDemo';
 import LinkDemo from './LinkDemo';
 import TouchableHighlightDemo from './TouchableHighlightDemo';
-import SliderDemo from './SliderDemo';
 import CalendarDemo from './CalendarDemo';
 import CountdownDemo from './CountdownDemo';
 import GotopDemo from './GotopDemo';
@@ -26,13 +25,13 @@ import PictureDemo from './PictureDemo';
 import PlayerDemo from './PlayerDemo';
 import TabbarDemo from './TabbarDemo';
 import TabheaderDemo from './TabheaderDemo';
+import SliderDemo from './SliderDemo';
 
 class Page extends Component {
   render() {
     return <ScrollView ref={(scrollview) => {
       this.scrollview = scrollview;
-    }
-      }>
+    }}>
       <View>
         <Text style={styles.title}>Style</Text>
         <StyleDemo />
@@ -111,11 +110,6 @@ class Page extends Component {
       </View>
 
       <View>
-        <Text style={styles.title}>Slider</Text>
-        <SliderDemo />
-      </View>
-
-      <View>
         <Text style={styles.title}>Tabheader</Text>
         <TabheaderDemo />
       </View>
@@ -158,6 +152,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>Player</Text>
         <PlayerDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Slider</Text>
+        <SliderDemo />
       </View>
 
     </ScrollView>;

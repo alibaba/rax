@@ -3,11 +3,12 @@
   "author": "yacheng.sz",
   "version": "0.2.9",
   "snapshots": [
+    "//gw.alicdn.com/tfs/TB12WTDQXXXXXXWapXXXXXXXXXX-300-200.png",
     "//gw.alicdn.com/tfs/TB10fVvQXXXXXcWXXXXXXXXXXXX-377-667.png",
     "//gw.alicdn.com/tfs/TB119sRPVXXXXcUXVXXXXXXXXXX-376-668.png",
     "//gw.alicdn.com/tfs/TB13rdlQXXXXXbbXpXXXXXXXXXX-376-669.png"
   ],
-  "description": "手机淘宝 App 主题示例",
+  "description": "手机淘宝 App",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"

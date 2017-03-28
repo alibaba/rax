@@ -1,13 +1,40 @@
-import {Component, createElement, render} from 'rax';
-import {
-  Text,
-  View,
-  Button,
-  Image,
-  ScrollView,
-  TouchableHighlight,
-} from 'rax-components';
+import {Component, createElement, render } from 'rax';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
 import Slider from 'rax-slider';
+
+class SliderDemo extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  onchange = (index) => {
+    console.log('change', index);
+  }
+
+  render() {
+    return (
+      <Slider className="slider" width="750rem" height="500rem" style={styles.slider}
+        autoPlay={false}
+        loop={true}
+        showsPagination={true}
+        paginationStyle={styles.paginationStyle}
+        autoplayTimeout={3000}
+        onChange={this.onchange}>
+        <View style={styles.itemWrap}>
+          <Image style={styles.image} source={{uri: '//gw.alicdn.com/tfs/TB19NbqKFXXXXXLXVXXXXXXXXXX-750-500.png'}} />
+        </View>
+        <View style={styles.itemWrap}>
+          <Image style={styles.image} source={{uri: '//gw.alicdn.com/tfs/TB1tWYBKFXXXXatXpXXXXXXXXXX-750-500.png'}} />
+        </View>
+        <View style={styles.itemWrap}>
+          <Image style={styles.image} source={{uri: '//gw.alicdn.com/tfs/TB1SX_vKFXXXXbyXFXXXXXXXXXX-750-500.png'}} />
+        </View>
+      </Slider>
+    );
+  }
+}
 
 let styles = {
   slider: {
@@ -42,36 +69,4 @@ let styles = {
   }
 };
 
-class SlideDemo extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  onchange = (index) => {
-    console.log('change', index);
-  }
-
-  render() {
-    return (
-      <Slider className="slider" width="750rem" height="500rem" style={styles.slider}
-        autoPlay={false}
-        loop={true}
-        showsPagination={true}
-        paginationStyle={styles.paginationStyle}
-        autoplayTimeout={3000}
-        onChange={this.onchange}>
-        <View style={styles.itemWrap}>
-          <Image style={styles.image} source={{uri: '//gw.alicdn.com/tfs/TB19NbqKFXXXXXLXVXXXXXXXXXX-750-500.png'}} />
-        </View>
-        <View style={styles.itemWrap}>
-          <Image style={styles.image} source={{uri: '//gw.alicdn.com/tfs/TB1tWYBKFXXXXatXpXXXXXXXXXX-750-500.png'}} />
-        </View>
-        <View style={styles.itemWrap}>
-          <Image style={styles.image} source={{uri: '//gw.alicdn.com/tfs/TB1SX_vKFXXXXbyXFXXXXXXXXXX-750-500.png'}} />
-        </View>
-      </Slider>
-    );
-  }
-}
-
-export default SlideDemo;
+export default SliderDemo;

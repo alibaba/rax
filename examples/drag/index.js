@@ -1,5 +1,5 @@
 import {createElement, Component, render, setNativeProps} from 'rax';
-import {View} from 'rax-components';
+import View from 'rax-view';
 import PanResponder from 'universal-panresponder';
 import Animated from 'rax-animated';
 

@@ -36,13 +36,7 @@ import Image from 'rax-image';
 class App extends Component {
   render() {
     return (
-      <Image source={{
-          uri: 'https://gw.alicdn.com/tfs/TB1g6AvPVXXXXa7XpXXXXXXXXXX-215-215.png'
-        }}
-        style={{
-          width: 100,
-          height: 100,
-        }}
+      <Image source={require('./path/to/your/image.png')}
         resizeMode="cover"
       />
     );
