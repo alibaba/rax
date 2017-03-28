@@ -4,13 +4,13 @@ module.exports = function(__weex_require__, document) {
   const setTimeout = (handler, time) => {
     const timer = __weex_require__(TIMER_MODULE);
     timer.setTimeout(handler, time);
-    return document.taskCenter.callbackManager.lastCallbackId;
+    return document.taskCenter.callbackManager.lastCallbackId.toString();
   };
 
   const setInterval = (handler, time) => {
     const timer = __weex_require__(TIMER_MODULE);
     timer.setInterval(handler, time);
-    return document.taskCenter.callbackManager.lastCallbackId;
+    return document.taskCenter.callbackManager.lastCallbackId.toString();
   };
 
   const clearTimeout = (n) => {
