@@ -768,7 +768,7 @@ describe('framework', () => {
     instance.oncall('timer', 'setTimeout', mockFn);
 
     const mockFn2 = jest.fn((arg1) => {
-      expect(arg1).toEqual('1');
+      expect(arg1).toEqual(1);
     });
     instance.oncall('timer', 'clearTimeout', mockFn2);
 
@@ -785,13 +785,13 @@ describe('framework', () => {
     `;
 
     const mockFn1 = jest.fn((arg1, arg2) => {
-      // expect(arg1).toEqual('1');
+      expect(arg1).toEqual('1');
       expect(arg2).toEqual(10);
     });
     instance.oncall('timer', 'setInterval', mockFn1);
 
     const mockFn2 = jest.fn((arg1) => {
-      expect(arg1).toEqual('1');
+      expect(arg1).toEqual(1);
     });
     instance.oncall('timer', 'clearInterval', mockFn2);
 
