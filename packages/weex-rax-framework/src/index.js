@@ -148,10 +148,13 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const __weex_env__ = typeof WXEnvironment === 'object' && WXEnvironment || {};
     // For better performance use built-in promise first
     const shared = require('runtime-shared/dist/shared.function')();
+
     const Promise = typeof Promise === 'function' ? Promise : shared.Promise;
+    const Symbol = typeof Symbol === 'function' ? Symbol : shared.Symbol;
     const Set = typeof Set === 'function' ? Set : shared.Set;
     const Map = typeof Map === 'function' ? Map : shared.Map;
-    const Symbol = typeof Symbol === 'function' ? Symbol : shared.Symbol;
+    const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
+    const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
 
     const document = new Document(instanceId, __weex_options__.bundleUrl);
@@ -205,9 +208,11 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const window = {
       // ES
       Promise,
-      Set,
-      Map,
       Symbol,
+      Map,
+      Set,
+      WeakMap,
+      WeakSet,
       // W3C: https://www.w3.org/TR/html5/browsers.html#browsing-context-name
       name: '',
       // This read-only property indicates whether the referenced window is closed or not.

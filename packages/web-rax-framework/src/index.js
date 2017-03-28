@@ -1,7 +1,11 @@
 const global = window;
 
 const shared = require('runtime-shared');
+
 // ES
+require('./object');
+require('./array');
+
 if (!global.Promise) {
   global.Promise = shared.Promise;
 }
@@ -10,16 +14,21 @@ if (!global.Symbol) {
   global.Symbol = shared.Symbol;
 }
 
-if (!global.Set) {
-  global.Set = shared.Set;
-}
-
 if (!global.Map) {
   global.Map = shared.Map;
 }
 
-require('./object');
-require('./array');
+if (!global.Set) {
+  global.Set = shared.Set;
+}
+
+if (!global.WeakMap) {
+  global.WeakMap = shared.WeakMap;
+}
+
+if (!global.WeakSet) {
+  global.WeakSet = shared.WeakSet;
+}
 
 // W3C
 require('whatwg-fetch');
@@ -31,6 +40,14 @@ if (!global.FontFace) {
 
 if (!global.matchMedia) {
   global.matchMedia = shared.matchMedia;
+}
+
+if (!global.URL) {
+  global.URL = shared.URL;
+}
+
+if (!global.URLSearchParams) {
+  global.URLSearchParams = shared.URLSearchParams;
 }
 
 if (!document.fonts) {
@@ -46,15 +63,6 @@ if (!document.fonts) {
       document.head.appendChild(styleElement);
     }
   };
-}
-
-
-if (!global.URL) {
-  global.URL = shared.URL;
-}
-
-if (!global.URLSearchParams) {
-  global.URLSearchParams = shared.URLSearchParams;
 }
 
 // ModuleJS
