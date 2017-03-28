@@ -67,7 +67,7 @@ class Video extends Component {
     return false;
   }
 
-  switch(status) {
+  switch = (status) => {
     this.setState({
       pause: status === 'stop' ? true : false,
       update: true
@@ -183,7 +183,9 @@ class Video extends Component {
               uri: 'https://gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'
             }}
             style={styles.startBtnImage}
-            onClick={this.switch}
+            onClick={() => {
+              this.switch(!playStatus);
+            }}
             />
         </View>
       }

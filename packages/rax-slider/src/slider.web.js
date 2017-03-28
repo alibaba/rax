@@ -35,6 +35,10 @@ class Slider extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.autoPlayTimer && clearInterval(this.autoPlayTimer);
+  }
+
   autoPlay() {
     const autoplayInterval = this.props.autoplayInterval;
     if (this.isSwiping) return;
@@ -207,10 +211,6 @@ class Slider extends Component {
         {pages}
       </View>
     ;
-  }
-
-  componentWillUnmount() {
-    this.autoPlayTimer && clearInterval(this.autoPlayTimer);
   }
 
   render() {
