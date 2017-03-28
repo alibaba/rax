@@ -48,7 +48,7 @@ const defaultStyles = {
 
 class Video extends Component {
 
-  new = true;
+  isNew = true;
 
   state = {
     pause: this.props.autoPlay ? false : true,
@@ -60,8 +60,8 @@ class Video extends Component {
     if (this.props.autoPlay) {
       return false;
     }
-    if ( this.new || nextState.update) {
-      this.new = false;
+    if ( this.isNew || nextState.update) {
+      this.isNew = false;
       return true;
     }
     return false;
@@ -130,7 +130,7 @@ class Video extends Component {
         autoPlay: this.props.autoPlay ? true : false
       }
     };
-    // 添加videoplus相关属性适配
+
     if (supportVideoPlus) {
       NativeVideo = 'videoplus';
       let utParams = this.props.utParams || {};
@@ -153,7 +153,7 @@ class Video extends Component {
         }
       };
     }
-    // comp
+
     return <View style={styles.container}>
       {
         poster && playStatus == 'stop' ?
