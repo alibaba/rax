@@ -384,4 +384,11 @@ class H5Video extends Component {
   }
 }
 
+H5Video.defaultProps = {
+  style: {
+    width: 750,
+    height: 450
+  }
+};
+
 export default H5Video;
