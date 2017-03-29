@@ -67,7 +67,9 @@ class RaxWebpackPlugin {
         this.options.frameworkComment : defaultFrameworkComment;
 
       compiler.plugin('compilation', (compilation) => {
-        compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
+        // uglify-webpack-plugin will remove javascript's comments in 
+        // optimize-chunk-assets, add frameworkComment after that.
+        compilation.plugin('after-optimize-chunk-assets', function(chunks) {
           chunks.forEach(function(chunk) {
             // In webpack2 chunk.initial was removed. Use isInitial()
             try {
@@ -80,7 +82,6 @@ class RaxWebpackPlugin {
               compilation.assets[file] = new ConcatSource(frameworkComment, '\n', compilation.assets[file]);
             });
           });
-          callback();
         });
       });
     }
