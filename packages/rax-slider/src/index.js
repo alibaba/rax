@@ -34,7 +34,7 @@ class Slider extends Component {
     const {index} = this.state;
 
     let nativeProps = {
-      onchange: this.onChange,
+      onChange: this.onChange,
       autoPlay: autoPlay,
       showIndicators: showsPagination,
       paginationStyle: paginationStyle ? paginationStyle : defaultPaginationStyle,

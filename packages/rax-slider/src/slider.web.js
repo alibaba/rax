@@ -24,6 +24,7 @@ class Slider extends Component {
     if (children.length < 2) return;
     this.index = 0;
     this.height = height;
+    // TODO: Avoid convert unit in component
     this.width = parseFloat(width) * document.documentElement.clientWidth / 750;
     this.loopIdx = 0;
     this.total = children.length;
