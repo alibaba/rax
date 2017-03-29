@@ -11,6 +11,12 @@ module.exports = {
   get Set() {
     return require('./set');
   },
+  get WeakMap() {
+    return require('./weakmap');
+  },
+  get WeakSet() {
+    return require('./weakset');
+  },
   get FontFace() {
     return require('./fontface');
   },

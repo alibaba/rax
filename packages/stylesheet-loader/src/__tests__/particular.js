@@ -6,9 +6,9 @@ describe('particular', () => {
   function testBorder(methodName) {
     const borderResult = particular[methodName]('1 solid red');
 
-    expect(borderResult[methodName + 'Width']).toEqual('1');
+    expect(borderResult[methodName + 'Width']).toEqual('1rem');
     expect(borderResult[methodName + 'Style']).toEqual('solid');
-    expect(borderResult[methodName + 'Color']).toEqual('#ff0000');
+    expect(borderResult[methodName + 'Color']).toEqual('red');
   }
 
   function testMeasure(key) {
