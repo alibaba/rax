@@ -72,12 +72,10 @@ describe('render', () => {
     expect(instance1 === instance2).toBe(true);
   });
 
-  it('should not throw error when have callback and options is null', function() {
+  it('should not throw error when have callback and options is null', function(done) {
     let container = createNodeElement('container');
-    let instance = render(<div />, container, function() {
-      console.log('render over')
+    render(<div />, container, function() {
+      done();
     });
-
-    expect(1).toBe(1);
   });
 });
