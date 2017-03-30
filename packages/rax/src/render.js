@@ -10,7 +10,7 @@ function render(element, container, options, callback) {
   }
 
   // Init inject
-  inject(options);
+  inject(options || {});
 
   let rootComponent = instance.render(element, container);
   let component = rootComponent.getPublicInstance();
