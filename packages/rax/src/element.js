@@ -16,7 +16,6 @@ function getRenderErrorInfo() {
   return '';
 }
 
-
 const Element = (type, key, ref, props, owner) => {
   props = filterProps(type, props);
 
@@ -78,19 +77,33 @@ function flattenStyle(style) {
   }
 }
 
-// TODO: so hack
+// TODO: move to weex-drvier
 function filterProps(type, props) {
   // Only for weex text
   if (isWeex && type === 'text') {
-    let value = props.children;
-    if (value) {
-      if (Array.isArray(value)) {
-        value = value.join('');
+    let children = props.children;
+    let value = props.value;
+
+    // Value is first
+    if (value == null && children != null) {
+      if (Array.isArray(children)) {
+        children = children.map(function(val) {
+          if (typeof val === 'number' || typeof val === 'string') {
+            return val;
+          } else {
+            return '';
+          }
+        }).join('');
+      } else if (typeof children !== 'number' && typeof children !== 'string') {
+        children = '';
       }
-      props.children = null;
-      props.value = value;
+
+      props.value = String(children);
     }
+
+    props.children = null;
   }
+
   return props;
 }
 
