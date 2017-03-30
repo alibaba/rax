@@ -67,7 +67,7 @@ class RaxWebpackPlugin {
         this.options.frameworkComment : defaultFrameworkComment;
 
       compiler.plugin('compilation', (compilation) => {
-        // uglify-webpack-plugin will remove javascript's comments in 
+        // uglify-webpack-plugin will remove javascript's comments in
         // optimize-chunk-assets, add frameworkComment after that.
         compilation.plugin('after-optimize-chunk-assets', function(chunks) {
           chunks.forEach(function(chunk) {
