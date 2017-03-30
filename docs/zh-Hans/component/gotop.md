@@ -29,8 +29,8 @@ import GoTop from 'rax-gotop';
 
 | 名称          | 类型       | 默认值                                      | 描述                     |
 | :---------- | :------- | :--------------------------------------- | :--------------------- |
-| name        | String   | 顶部                                       | 图标name                 |
-| icon        | String   | //gw.alicdn.com/tps/TB10dz6KXXXXXc0XFXXXXXXXXXX-40-40.png_20x20.jpg | 图标url                  |
+| name        | String   | Top                                      | 图标文字内容                 |
+| icon        | String   | //gw.alicdn.com/tps/TB10dz6KXXXXXc0XFXXXXXXXXXX-40-40.png_20x20.jpg | 图标 Icon URL            |
 | iconWidth   | String   | 90rem                                    | 返回顶部container宽度        |
 | iconHeight  | String   | 90rem                                    | 返回顶部container高度        |
 | borderColor | String   | rgba(0, 0, 0, 0.1)                       | 返回顶部container border颜色 |
@@ -53,7 +53,7 @@ class GoTopDemo extends Component {
       <ScrollView ref={(scrollview) => {
           this.scrollview = scrollview; 
         }}>
-        <GoTop name="click" style={{width: 100, height: 100}}
+        <GoTop name="顶部" style={{width: 100, height: 100}}
           onTop={() => { 
             this.scrollview.scrollTo({y: 0});
           }}
