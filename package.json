@@ -86,7 +86,7 @@
     "build": "npm run build:compile && npm run build:dist && npm run build:examples",
     "watch:compile": "node ./scripts/compile.js --watch",
     "test": "jest",
-    "start": "npm run build:compile && npm run build:dist && node ./scripts/start.js",
+    "start": "npm run build:compile && node ./scripts/start.js",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --ext .js --ext .jsx ./",
     "coverage": "npm run test -- --coverage",
