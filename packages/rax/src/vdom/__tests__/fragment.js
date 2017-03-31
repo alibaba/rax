@@ -338,7 +338,7 @@ describe('FragmentComponent', function() {
 
       render() {
         return this.state.list.map((item, idx) => {
-          return (<span key={idx}>{item}</span>);
+          return <span key={idx}>{item}</span>;
         });
       }
     }
@@ -371,6 +371,5 @@ describe('FragmentComponent', function() {
     expect(childNodes[0].childNodes[0].data).toBe('4');
     expect(childNodes[1].childNodes[0].data).toBe('5');
     expect(childNodes[2].childNodes[0].data).toBe('6');
-
   });
 });
