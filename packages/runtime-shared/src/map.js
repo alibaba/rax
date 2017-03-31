@@ -148,8 +148,10 @@ Object.defineProperty(Map, 'constructor', {
   value: Map
 });
 
-Object.defineProperty(Map, 'length', {
-  value: 0
-});
+try {
+  Object.defineProperty(Map, 'length', {
+    value: 0
+  });
+} catch (e) {}
 
 module.exports = Map;

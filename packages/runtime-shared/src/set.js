@@ -111,8 +111,10 @@ Object.defineProperty(Set, 'constructor', {
   value: Set
 });
 
-Object.defineProperty(Set, 'length', {
-  value: 0
-});
+try {
+  Object.defineProperty(Set, 'length', {
+    value: 0
+  });
+} catch (e) {}
 
 module.exports = Set;
