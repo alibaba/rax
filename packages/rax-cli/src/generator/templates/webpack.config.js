@@ -59,7 +59,7 @@ if (!isProducation) {
   console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n');
 
   qrcode.generate(weexBundleUrl, {small: true});
-  console.log('Weex: scan above QRCode ' + weexBundleUrl + ' use weex playground.\n');
+  console.log('Weex: scan above QRCode ' + weexBundleUrl + ' use weex playground that in the same local area network.\n');
 }
 
 module.exports = {
