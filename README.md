@@ -65,7 +65,10 @@ import Text from 'rax-text';
 
 class Hello extends Component {
   render() {
-    return <Text style={styles.title}>Hello {this.props.name}</Text>;
+    return [
+      <Text style={styles.title}>Hello Rax</Text>,
+      <Text style={styles.title}>Hello {this.props.name}</Text>,
+    ];
   }
 }
 
