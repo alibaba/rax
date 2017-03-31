@@ -53,7 +53,7 @@ class TextComponent {
       this._currentElement = nextElement;
       // Devtool read the latest stringText value
       this._stringText = String(nextElement);
-      Host.driver.updateText(this.getNativeNode(), nextElement);
+      Host.driver.updateText(this.getNativeNode(), this._stringText);
       Host.hook.Reconciler.receiveComponent(this);
     }
   }

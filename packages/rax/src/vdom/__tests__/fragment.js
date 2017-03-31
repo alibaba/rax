@@ -321,4 +321,56 @@ describe('FragmentComponent', function() {
     expect(childNodes[0].childNodes[0].data).toBe('World');
     expect(childNodes[1].childNodes[0].data).toBe('Hello');
   });
+
+  it('should render correct when updated', function() {
+    let el = createNodeElement('div');
+
+    class MyComponent extends Component {
+      state = {
+        list: []
+      };
+
+      componentWillMount() {
+        this.setState({
+          list: [1, 2, 3]
+        });
+      }
+
+      render() {
+        return this.state.list.map((item, idx) => {
+          return (<span key={idx}>{item}</span>);
+        });
+      }
+    }
+
+    let inst = render(<MyComponent />, el);
+    let childNodes = findDOMNode(inst);
+
+    expect(childNodes.length).toBe(3);
+    expect(childNodes[0].childNodes[0].data).toBe('1');
+    expect(childNodes[1].childNodes[0].data).toBe('2');
+    expect(childNodes[2].childNodes[0].data).toBe('3');
+
+    inst.setState({
+      list: [1, 2, 3, 7, 8, 9]
+    });
+
+    expect(childNodes.length).toBe(6);
+    expect(childNodes[0].childNodes[0].data).toBe('1');
+    expect(childNodes[1].childNodes[0].data).toBe('2');
+    expect(childNodes[2].childNodes[0].data).toBe('3');
+    expect(childNodes[3].childNodes[0].data).toBe('7');
+    expect(childNodes[4].childNodes[0].data).toBe('8');
+    expect(childNodes[5].childNodes[0].data).toBe('9');
+
+    inst.setState({
+      list: [4, 5, 6]
+    });
+
+    expect(childNodes.length).toBe(3);
+    expect(childNodes[0].childNodes[0].data).toBe('4');
+    expect(childNodes[1].childNodes[0].data).toBe('5');
+    expect(childNodes[2].childNodes[0].data).toBe('6');
+
+  });
 });
