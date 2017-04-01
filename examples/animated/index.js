@@ -8,7 +8,7 @@ class AnimatedSample extends Component {
 
   state = {
     bounceValue: new Animated.Value(0),
-    translateValue: new Animated.ValueXY({x:0, y:0}),
+    translateValue: new Animated.ValueXY({x: 0, y: 0}),
     rotateValue: new Animated.Value(0),
   };
 
@@ -55,7 +55,6 @@ class AnimatedSample extends Component {
         friction: 1,
       }
     ).start();
-
   }
 }
 
