@@ -1,8 +1,21 @@
-import smooth from './smooth';
+import easing from './easing';
 import cancelEvents from './cancel-events';
 import events from './scroll-events';
 
-const easing = smooth.defaultEasing;
+const scrollEasing = easing.scroll;
+let __currentPositionY = 0;
+let __startPositionY = 0;
+let __targetPositionY = 0;
+let __progress = 0;
+let __duration = 0;
+let __cancel = false;
+
+let __target;
+let __to;
+let __start;
+let __deltaTop;
+let __percent;
+let __delayTimeout;
 
 /*
  * Function helper
@@ -40,22 +53,6 @@ const requestAnimationFrameHelper = (() => {
     };
 })();
 
-
-let __currentPositionY = 0;
-let __startPositionY = 0;
-let __targetPositionY = 0;
-let __progress = 0;
-let __duration = 0;
-let __cancel = false;
-
-let __target;
-let __to;
-let __start;
-let __deltaTop;
-let __percent;
-let __delayTimeout;
-
-
 const currentPositionY = () => {
   let supportPageOffset = window.pageXOffset !== undefined;
   let isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
@@ -90,7 +87,7 @@ const animateTopScroll = (timestamp) => {
 
   __progress = timestamp - __start;
 
-  __percent = __progress >= __duration ? 1 : easing(__progress / __duration);
+  __percent = __progress >= __duration ? 1 : scrollEasing(__progress / __duration);
 
   __currentPositionY = __startPositionY + Math.ceil(__deltaTop * __percent);
 

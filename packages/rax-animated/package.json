@@ -1,6 +1,6 @@
 {
   "name": "rax-animated",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "Declarative Animations Library for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
