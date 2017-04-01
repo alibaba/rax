@@ -16,7 +16,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "animated-js": "0.0.4",
+    "animated-js": "0.0.5",
     "invariant": "2.2.1",
     "rax-text": "^0.2.11",
     "rax-view": "^0.2.11",
