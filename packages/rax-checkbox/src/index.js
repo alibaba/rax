@@ -1,5 +1,3 @@
-/* @jsx createElement */
-
 import {Component, createElement, PropTypes} from 'rax';
 import Image from 'rax-image';
 import Text from 'rax-text';
