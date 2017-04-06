@@ -27,6 +27,7 @@ class ListView extends Component {
       dataSource,
       onEndReached,
       onEndReachedThreshold,
+      onScroll,
       id,
       className,
       style,
@@ -46,6 +47,7 @@ class ListView extends Component {
       children: [].concat(header, body, footer),
       onEndReached,
       onEndReachedThreshold,
+      onScroll,
       _autoWrapCell: true,
     };
 
