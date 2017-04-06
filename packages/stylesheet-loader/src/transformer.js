@@ -22,7 +22,7 @@ const COLOR_PROPERTIES = {
 export default {
   sanitizeSelector(selector, transformDescendantCombinator = false, position = { start: {line: 0, column: 0} }) {
     // filter multiple extend selectors
-    if (!transformDescendantCombinator && !/^\.[a-zA-Z0-9_:]+$/.test(selector)) {
+    if (!transformDescendantCombinator && !/^\.[a-zA-Z0-9_:\-]+$/.test(selector)) {
       const message = `line: ${position.start.line}, column: ${position.start.column} - "${selector}" is not a valid selector (e.g. ".abc、.abcBcd、.abc_bcd")`;
       console.error(chalk.red.bold(message));
       pushErrorMessage(message);
