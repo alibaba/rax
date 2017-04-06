@@ -81,7 +81,19 @@ class Canvas {
     this._matrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
   }
 
-  drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh) {
+  drawImage(img = {}, sx, sy, sw, sh, dx, dy, dw, dh) {
+    if (typeof img === 'string') {
+      img = {
+        src: img
+      };
+    }
+
+    let url = img.src;
+    if (!url) {
+      console.warn('drawImage: the img is null');
+      return;
+    }
+
     if (arguments.length === 3) {
       dw = img.width;
       dh = img.height;
@@ -103,12 +115,6 @@ class Canvas {
       sh = img.height;
     }
     let drawParams = [sx, sy, sw, sh, dx, dy, dw, dh];
-
-    let url = typeof img === 'string' ? img : img.src;
-    if (!url) {
-      console.warn('drawImage: the img is null');
-      return;
-    }
 
     if (this._matrix.join('') !== '100010001') {
       drawParams = drawParams.concat(this._matrix);

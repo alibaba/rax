@@ -1,6 +1,6 @@
 {
   "name": "rax-canvas",
-  "version": "0.0.1",
+  "version": "0.2.11",
   "description": "canvas for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
