@@ -90,6 +90,7 @@ class ScrollView extends Component {
       showsVerticalScrollIndicator,
       onEndReached,
       onEndReachedThreshold,
+      onScroll,
     } = this.props;
 
     // In weex must be int value
@@ -140,6 +141,7 @@ class ScrollView extends Component {
           style={scrollerStyle}
           showScrollbar={showsScrollIndicator}
           onLoadmore={onEndReached}
+          onScroll={onScroll}
           loadmoreoffset={onEndReachedThreshold}
           scrollDirection={this.props.horizontal ? 'horizontal' : 'vertical'}
         >
