@@ -40,7 +40,7 @@ Rax is a universal JavaScript library with a largely React-compatible API. If yo
 
 :dart: **Tiny:** 8.0 KB minified + gzipped.
 
-:art: **Universal:** works in browsers, Weex, Node.js and could works more container that implement [driver specification](./docs/driver-spec.md).
+:art: **Universal:** works in browsers, Weex, Node.js and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
 ## Quick Start
 
