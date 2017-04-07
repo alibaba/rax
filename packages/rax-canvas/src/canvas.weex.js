@@ -82,15 +82,14 @@ class Canvas {
   }
 
   drawImage(img = {}, sx, sy, sw, sh, dx, dy, dw, dh) {
-    if (typeof img === 'string') {
-      img = {
-        src: img
-      };
+    if (typeof img !== 'object') {
+      console.error('Failed to execute \'drawImage\' on Canvas: The provided value is not a Object');
+      return;
     }
 
     let url = img.src;
     if (!url) {
-      console.warn('drawImage: the img is null');
+      console.error('drawImage: the img is null');
       return;
     }
 
