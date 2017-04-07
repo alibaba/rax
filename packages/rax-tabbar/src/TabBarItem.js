@@ -1,9 +1,13 @@
+/** @jsx createElement */
 import {createElement, Component} from 'rax';
 import Text from 'rax-text';
 import Image from 'rax-image';
-import TouchableOpacity from 'rax-touchable';
+import Touchable from 'rax-touchable';
 import Link from 'rax-link';
 import View from 'rax-view';
+import Icon from 'rax-icon';
+import inIOS8H5 from './inIOS8H5';
+import separateStyle from './separateStyle';
 
 const isWeex = typeof callNative !== 'undefined';
 
@@ -13,50 +17,30 @@ class TabBarItem extends Component {
   }
 
   onPress = () => {
+    // api
     if (this.props.onPress) {
       this.props.onPress(this.props);
     }
-    if (this.props.handleTouchTap && this.props.selfTabContentNotEmpty) {
+    // not api
+    if (this.props.handleTouchTap) {
       this.props.handleTouchTap(this.props.index);
     }
   };
 
-  iconSource() {
-    if (this.props.selected) {
-      return this.props.selectedIcon ? this.props.selectedIcon : this.props.icon;
-    }
-    return this.props.icon;
-  };
 
-  boxStyle = () => {
+  getItemStyle = () => {
     if (this.props.selected) {
       return Object.assign({}, this.props.style, this.props.selectedStyle);
     }
     return Object.assign({}, this.props.style);
   };
 
-  styleFilter(target) {
-    let boxStyle = this.boxStyle();
-    switch (target) {
-      case 'text': {
-        let textKeys = ['color', 'fontSize', 'lineHeight'];
-        let textStyle = {};
-        for (let k in boxStyle) {
-          if (textKeys.indexOf(k) >= 0) {
-            textStyle[k] = boxStyle[k];
-          }
-        }
-        return textStyle;
-      }
-    }
-  }
-
   renderBadge() {
     const {
-      badge,
-      badgeStyle
+      badge
       } = this.props;
 
+    const badgeStyle = this.compatRNApi_badge();
     if (badge) {
       if (typeof badge == 'string' ) {
         return (
@@ -71,10 +55,34 @@ class TabBarItem extends Component {
     return null;
   }
 
+  renderIcon() {
+    let icon = this.props.icon;
+    if (this.props.selected) {
+      icon = this.props.selectedIcon ? this.props.selectedIcon : this.props.icon;
+    }
+
+    if (icon && icon.uri && !icon.codePoint) {
+      return <Image style={[styles.icon, this.props.iconStyle || {}]} source={icon} />;
+    } else if (icon && icon.uri && icon.codePoint) {
+      return <Icon style={[styles.icon, this.props.iconStyle || {}]} fontFamily="iconfont" source={icon} />;
+    }
+    return null;
+  };
+
+  compatRNApi_badge() {
+    if (this.props.badgeColor) {
+      return Object.assign({}, this.props.badgeStyle, {
+        color: this.props.badgeColor
+      });
+    } else {
+      return Object.assign({}, this.props.badgeStyle);
+    }
+  }
+
   render() {
     let style_tab = styles.tab;
-    if (this.props.widthFixed) {
-      style_tab = styles.tab_width_fixed;
+    if (this.props.inHorizontal) {
+      style_tab = styles.width_static_tab;
     }
 
     const {
@@ -82,34 +90,38 @@ class TabBarItem extends Component {
       title
       } = this.props;
 
-    let Tag = TouchableOpacity;
+    let Tag = Touchable;
     let TagAttrs = {};
-    if (!this.props.selfTabContentNotEmpty && isWeex && !this.props.selected && this.props.href) {
+    if (isWeex && !this.props.selected && this.props.href) {
       Tag = Link;
       TagAttrs.href = this.props.href;
-    } else {
-      TagAttrs.onPress = this.onPress;
     }
-
     if (this.props.id) {
       TagAttrs.id = this.props.id;
     }
 
-    let boxStyle = this.boxStyle();
-
-    let style_backgroundImage = {
+    let boxStyle = this.getItemStyle();
+    let bgImgInfo = separateStyle(boxStyle, 'backgroundImage', {
       width: boxStyle.width,
       height: boxStyle.height,
-      uri: boxStyle.backgroundImage ? boxStyle.backgroundImage.replace(/url\([\'\"]?([^\'\"]*)[\'\"]?\)/, '$1') : ''
-    };
-    delete boxStyle.backgroundImage;
+    });
+
+    if (inIOS8H5()) {
+      boxStyle.display = 'inline-block';
+      boxStyle.whiteSpace = 'normal';
+      try {
+        boxStyle.paddingTop = (boxStyle.height - this.props.iconStyle.height - separateStyle(boxStyle, 'text').fontSize, this.props.iconStyle.height) / 2;
+      } catch (e) {
+        boxStyle.paddingTop = 20;
+      }
+    }
 
     return (
-      <Tag {...TagAttrs} style={[style_tab, boxStyle]}>
-        <Image source={{uri: style_backgroundImage.uri}} style={[styles.tabBackgroundImage, style_backgroundImage]} />
+      <Tag {...TagAttrs} onPress={this.onPress} style={[style_tab, boxStyle]}>
+        {bgImgInfo ? <Image source={{uri: bgImgInfo.uri}} style={[styles.tabBackgroundImage, bgImgInfo]} /> : null}
         <View style={styles.innerWrap}>
-          {icon ? <Image source={this.iconSource()} style={[styles.icon, this.props.iconStyle || {}]} /> : null}
-          <Text style={[styles.title, this.styleFilter('text')]}>{title}</Text>
+          {this.renderIcon()}
+          <Text style={[styles.title, separateStyle(boxStyle, 'text')]}>{title}</Text>
           {this.renderBadge()}
         </View>
       </Tag>
@@ -118,7 +130,7 @@ class TabBarItem extends Component {
 }
 
 const styles = {
-  tab_width_fixed: {
+  width_static_tab: {
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
@@ -163,7 +175,7 @@ const styles = {
   },
   title: {
     fontSize: 28,
-    lineHeight: 38
+    lineHeight: '38rem'
   }
 };
 

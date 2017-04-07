@@ -22,6 +22,7 @@
   "dependencies": {
     "rax-view": "^0.2.11",
     "rax-link": "^0.2.11",
+    "rax-icon": "^0.2.11",
     "rax-text": "^0.2.11",
     "rax-touchable": "^0.2.11",
     "rax-image": "^0.2.11",
