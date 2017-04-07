@@ -7,11 +7,6 @@ class CanvasSample extends Component {
       const context = this.refs.raxCanvasDemo.getContext();
       context.fillStyle = 'red';
       context.fillRect(0, 0, 100, 100);
-      // context.drawImage({
-      //   src: 'https://gw.alicdn.com/tfs/TB10zx0QpXXXXXJaFXXXXXXXXXX-365-351.png',
-      //   width: 365,
-      //   height: 351
-      // }, 10, 10);
       context.draw && context.draw();
     });
   }
