@@ -21,26 +21,15 @@ class ScrollView extends Component {
   handleScroll = (e) => {
     if (isWeb) {
       if (this.props.onScroll) {
-        const nativeEvent = {
+        e.nativeEvent = {
           get contentOffset() {
             return {
               x: e.target.scrollLeft,
               y: e.target.scrollTop
             };
-          },
-          get contentSize() {
-            return {
-              width: e.target.scrollWidth,
-              height: e.target.scrollHeight
-            };
-          },
-          get target() {
-            return e.target;
-          },
-          timestamp: Date.now(),
-          type: 'scroll'
+          }
         };
-        this.props.onScroll(nativeEvent);
+        this.props.onScroll(e);
       }
 
       if (this.props.onEndReached) {
@@ -65,6 +54,13 @@ class ScrollView extends Component {
         }
 
         this.lastScrollDistance = scrollDistance;
+      }
+
+      if (isWeex) {
+        e.nativeEvent = {
+          contentOffset: e.contentOffset
+        };
+        this.props.onScroll(e);
       }
     }
   }
@@ -160,7 +156,7 @@ class ScrollView extends Component {
           style={scrollerStyle}
           showScrollbar={showsScrollIndicator}
           onLoadmore={onEndReached}
-          onScroll={onScroll}
+          onScroll={onScroll ? this.handleScroll : null}
           loadmoreoffset={onEndReachedThreshold}
           scrollDirection={this.props.horizontal ? 'horizontal' : 'vertical'}
         >
