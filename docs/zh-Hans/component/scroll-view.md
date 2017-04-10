@@ -24,7 +24,7 @@ import ScrollView from 'rax-scrollview';
 | showsVerticalScrollIndicator   | Boolean  |      | 是否允许出现垂直滚动条，默认true                       |
 | onEndReachedThreshold          | Number   |      | 设置加载更多的偏移，默认值为500                        |
 | onEndReached                   | Function |      | 滚动区域还剩 `onEndReachedThreshold` 的长度时触发    |
-| onScroll                       | Function |      | 滚动时触发的事件，返回当前容器的宽高和当前滚动的水平垂直距离 |
+| onScroll                       | Function |      | 滚动时触发的事件，返回当前滚动的水平垂直距离 |
 
 ## 使用示例
 

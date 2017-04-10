@@ -20,6 +20,8 @@ import RecyclerView from 'rax-recyclerview';
 | :-------------------- | :------- | :--- | :----------------------- |
 | onEndReached          | Function |      | 滚动到底部触发事件，将修改后的数据付给 data |
 | onEndReachedThreshold | Number   | 500  | 距离多少开始加载下一屏，数字单位默认 rem   |
+| onScroll              | Function |      | 滚动时触发的事件，返回当前滚动的水平垂直距离 |
+
 
 ## 基本示例
 
