@@ -10,7 +10,7 @@ describe('Grid', () => {
       <Col><View>hello</View></Col>
     );
     let tree = component.toJSON();
-    expect(tree.tagName).toEqual('SPAN');
+    expect(tree.tagName).toEqual('DIV');
   });
 
   it('should render a col with text', () => {
@@ -44,7 +44,7 @@ describe('Grid', () => {
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
-    expect(tree.children[0].tagName).toEqual('SPAN');
+    expect(tree.children[0].tagName).toEqual('DIV');
   });
 
   it('should render a row width 2 col', () => {
@@ -53,7 +53,7 @@ describe('Grid', () => {
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
-    expect(tree.children[0].tagName).toEqual('SPAN');
+    expect(tree.children[0].tagName).toEqual('DIV');
   });
 
   it('style in row', () => {
