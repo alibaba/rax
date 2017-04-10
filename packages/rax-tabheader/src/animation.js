@@ -39,14 +39,17 @@ let Animated = {
   },
 
   scrollTo: (Node, options, callback) => {
+    // 调用动画方法
     let width = parseInt(options.x);
     let translateStr = 'translate(' + width * fullWidthPx / 750 + 'px, 0)';
     if (isWeex) {
       translateStr = 'translate(' + width + 'px, 0)';
     }
-    Animated.transition(Node, {
-      transform: translateStr
-    }, callback);
+    setTimeout(() => {
+      Animated.transition(Node, {
+        transform: translateStr
+      }, callback);
+    }, 0);
   }
 
 };

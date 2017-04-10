@@ -1,8 +1,10 @@
-const itemWidth = 166;
+let itemWidth = 166;
 
+// default style for tabheader
 export default {
+
   container: {
-    height: 80,
+    height: '80rem',
     backgroundColor: '#ffffff',
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
@@ -10,48 +12,49 @@ export default {
     position: 'relative',
   },
   item: {
-    height: 80,
-    width: itemWidth,
+    height: '80rem',
+    width: itemWidth + 'rem',
     textAlign: 'center',
     float: 'left',
     position: 'relative',
   },
   itemText: {
     color: '#000000',
-    paddingTop: 24,
+    paddingTop: '24rem',
     textAlign: 'center',
   },
   selectItemText: {
     color: '#ff4200',
-    paddingTop: 24,
+    paddingTop: '24rem',
     textAlign: 'center',
   },
 
   borderBottom: {
     left: 0,
-    height: 0,
-    width: 0,
+    height: '0rem',
+    width: '0rem',
     position: 'absolute',
   },
   borderRun: {
     position: 'absolute',
     left: 0,
     bottom: 0,
-    height: 4,
-    width: 166,
+    height: '4rem',
+    width: '166rem',
     backgroundColor: '#fc511f',
   },
 
   drop: {
-    height: 81,
-    marginBottom: -81,
+    height: '81rem',
+    marginBottom: '-81rem',
+    position: 'relative',
   },
   dropBtn: {
-    height: 80,
-    width: 71,
+    height: '80rem',
+    width: '71rem',
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: '0rem',
+    right: '0rem',
     backgroundColor: '#ffffff',
     borderLeftWidth: '1px',
     borderLeftStyle: 'solid',
@@ -61,62 +64,63 @@ export default {
     borderBottomColor: '#e7e7e7',
   },
   dropBoxTtem: {
-    height: 80,
+    height: '80rem',
     textAlign: 'center',
   },
   dropBoxText: {
-    paddingTop: 27,
+    paddingTop: '27rem',
     textAlign: 'center',
     color: '#000000',
   },
   dropBoxSelectText: {
-    paddingTop: 27,
+    paddingTop: '27rem',
     textAlign: 'center',
     color: '#ff4200',
   },
 
   iconContainer: {
-    backgroundColor: '#52bfe6',
     boxShadow: 'inset 0px -1px 0px 0px rgba(0,0,0,0.10)',
-    height: 112,
+    height: '112rem',
     fontFamily: 'PingFangSC-Regular'
   },
   iconItem: {
-    width: itemWidth,
+    width: itemWidth + 'rem',
     textAlign: 'center',
     float: 'left',
     position: 'relative',
-    height: 112,
+    height: '112rem',
   },
   iconText: {
     textAlign: 'center',
     fontSize: 28,
-    height: 112,
+    height: '112rem',
     color: '#000000'
   },
   selectedIconText: {
     textAlign: 'center',
     fontSize: 28,
-    height: 112,
+    height: '112rem',
     color: '#FFFFFF',
   },
   iconBox: {
     textAlign: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    height: 63,
+    height: '63rem',
   },
   icon: {
-    width: 48,
-    height: 48,
-    marginTop: 12,
+    width: '48rem',
+    height: '48rem',
+    marginTop: '12rem',
     display: 'inline-block',
     position: 'relative',
   },
   iconBackgroundRun: {
     left: 0,
-    height: 0,
-    width: 0,
+    height: '0rem',
+    width: '0rem',
     position: 'absolute',
   },
+
 };
+
