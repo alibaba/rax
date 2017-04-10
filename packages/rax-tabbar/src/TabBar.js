@@ -1,13 +1,12 @@
-/** @jsx createElement */
 import {createElement, cloneElement, findDOMNode, isValidElement, Component} from 'rax';
 import View from 'rax-view';
 import Image from 'rax-image';
+import ScrollView from 'rax-scrollview';
 import TabBarItem from './TabBarItem';
 import TabBarContents from './TabBarContents';
+import {getScrollViewStyle} from './hackIOS8Styles';
 import separateStyle from './separateStyle';
-import HorizontalScrollView from './HorizontalScrollView';
-
-const isWeex = typeof callNative !== 'undefined';
+import {isWeex} from 'universal-env';
 
 var insideEmbed = false;
 if (/[?&]{1}_page_inside_embed_=true(&?)/.test(location.search)) {
@@ -28,7 +27,7 @@ class Tabbar extends Component {
   handleTouchTap = (index) => {
     if (this.getTabs()[index].props && this.getTabs()[index].props.children) {
       const tabs = this.getTabs();
-
+      
       this.setState({
         selectedIndex: index
       });
@@ -79,24 +78,27 @@ class Tabbar extends Component {
   scrollToSelectedItem() {
     // scrollTo selected item
     let tabItemWidth = this.getTabItemWidth();
+    let scrollLen = 0;
+    if (tabItemWidth * (this.state.selectedIndex + 1) > 750 / 2) {
+      scrollLen = tabItemWidth * (this.state.selectedIndex) - 750 / 2 + tabItemWidth / 2;
+    }
+
     if (isWeex) {
-      let dom = require('@weex-module/dom');
-      // let selected = findDOMNode('selected');
-      let k = parseInt(750 / tabItemWidth / 2);
-      let selected = this.refs[`tab_${this.state.selectedIndex - k}`];
-      if (selected) {
-        dom.scrollToElement(findDOMNode(selected), {
-          offset: 0
-        });
+      try {
+        let dom = require('@weex-module/dom');
+        let k = parseInt(750 / tabItemWidth / 2);
+        let selected = this.refs[`tab_${this.state.selectedIndex - k}`];
+        if (selected) {
+          dom.scrollToElement(findDOMNode(selected), {
+            offset: (k % 2) / 2 * tabItemWidth
+          });
+        }
+      } catch (e) {
+        //
       }
     } else {
-      let scrollLen = 0;
-      if (tabItemWidth * (this.state.selectedIndex + 1) > 750 / 2) {
-        scrollLen = (tabItemWidth * (this.state.selectedIndex + 1) - 750 / 2 - tabItemWidth / 2) / 2;
-      }
-
       if (findDOMNode(this.refs.ScrollBar)) {
-        findDOMNode(this.refs.ScrollBar).scrollLeft = scrollLen;
+        this.refs.ScrollBar.scrollTo({x: scrollLen});
       }
     }
   }
@@ -118,12 +120,6 @@ class Tabbar extends Component {
       return Object.assign({}, this.props.style);
     }
   }
-
-  // rnStyleApi() {
-    // this.props.unselectedTintColor
-    // this.props.tintColor
-    // this.props.unselectedItemTintColor
-  // }
 
   render() {
     if (this.props.autoHidden && insideEmbed) {
@@ -164,26 +160,26 @@ class Tabbar extends Component {
 
     let tabsElement = null;
     if (this.props.horizontal) {
-      tabsElement =
-        <HorizontalScrollView ref="ScrollBar" horizontal={true} showsHorizontalScrollIndicator={false} style={[styles.bar]}>
+      tabsElement = (
+        <ScrollView ref="ScrollBar" horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={getScrollViewStyle()} style={[styles.bar]}>
           {tabs}
-        </HorizontalScrollView>
-      ;
+        </ScrollView>
+      );
     } else {
-      tabsElement =
+      tabsElement = (
         <View style={[styles.bar]}>
           {tabs}
         </View>
-      ;
+      );
     }
-
-    let bar =
+    
+    let bar = (
       <View style={[styles.barWrap, tabbarStyle]}>
         {barBgImgInfo ? <Image source={{uri: barBgImgInfo.uri}} style={[styles.barBgImg, barBgImgInfo]} /> : null}
         {tabsElement}
         {this.props.extraElement}
       </View>
-    ;
+    );
 
     if (tabContentsCount == 0) {
       return bar;
@@ -203,6 +199,7 @@ class Tabbar extends Component {
           </View>
         );
       }
+
     }
   }
 }

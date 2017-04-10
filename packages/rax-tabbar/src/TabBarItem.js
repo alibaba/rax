@@ -1,4 +1,3 @@
-/** @jsx createElement */
 import {createElement, Component} from 'rax';
 import Text from 'rax-text';
 import Image from 'rax-image';
@@ -6,11 +5,9 @@ import Touchable from 'rax-touchable';
 import Link from 'rax-link';
 import View from 'rax-view';
 import Icon from 'rax-icon';
-import inIOS8H5 from './inIOS8H5';
+import {getScrollViewItemStyle} from './hackIOS8Styles';
 import separateStyle from './separateStyle';
-
-const isWeex = typeof callNative !== 'undefined';
-
+import {isWeex} from 'universal-env';
 class TabBarItem extends Component {
   static defaultProps = {
     style: {},
@@ -63,6 +60,7 @@ class TabBarItem extends Component {
 
     if (icon && icon.uri && !icon.codePoint) {
       return <Image style={[styles.icon, this.props.iconStyle || {}]} source={icon} />;
+
     } else if (icon && icon.uri && icon.codePoint) {
       return <Icon style={[styles.icon, this.props.iconStyle || {}]} fontFamily="iconfont" source={icon} />;
     }
@@ -80,9 +78,9 @@ class TabBarItem extends Component {
   }
 
   render() {
-    let style_tab = styles.tab;
+    let styleTab = styles.tab;
     if (this.props.inHorizontal) {
-      style_tab = styles.width_static_tab;
+      styleTab = styles.tabStaticWidth;
     }
 
     const {
@@ -106,18 +104,10 @@ class TabBarItem extends Component {
       height: boxStyle.height,
     });
 
-    if (inIOS8H5()) {
-      boxStyle.display = 'inline-block';
-      boxStyle.whiteSpace = 'normal';
-      try {
-        boxStyle.paddingTop = (boxStyle.height - this.props.iconStyle.height - separateStyle(boxStyle, 'text').fontSize, this.props.iconStyle.height) / 2;
-      } catch (e) {
-        boxStyle.paddingTop = 20;
-      }
-    }
+    Object.assign(boxStyle, getScrollViewItemStyle(this.props, boxStyle));
 
     return (
-      <Tag {...TagAttrs} onPress={this.onPress} style={[style_tab, boxStyle]}>
+      <Tag {...TagAttrs} onPress={this.onPress} style={[styleTab, boxStyle]}>
         {bgImgInfo ? <Image source={{uri: bgImgInfo.uri}} style={[styles.tabBackgroundImage, bgImgInfo]} /> : null}
         <View style={styles.innerWrap}>
           {this.renderIcon()}
@@ -130,16 +120,18 @@ class TabBarItem extends Component {
 }
 
 const styles = {
-  width_static_tab: {
+  tabStaticWidth: {
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
+    verticalAlign: 'top'
   },
   tab: {
     position: 'relative',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    verticalAlign: 'top'
   },
   tabBackgroundImage: {
     position: 'absolute',

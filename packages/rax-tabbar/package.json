@@ -21,12 +21,13 @@
   },
   "dependencies": {
     "rax-view": "^0.2.11",
-    "rax-link": "^0.2.11",
-    "rax-icon": "^0.2.11",
     "rax-text": "^0.2.11",
-    "rax-touchable": "^0.2.11",
+    "rax-icon": "^0.2.8",
     "rax-image": "^0.2.11",
-    "rax-scrollview": "^0.2.11"
+    "rax-link": "^0.2.11",
+    "rax-scrollview": "^0.2.11",
+    "rax-touchable": "^0.2.11",
+    "universal-env": "^0.2.11"
   },
   "peerDependencies": {
     "rax": "0.x"

@@ -1,4 +1,3 @@
-/** @jsx createElement */
 import {createElement, Component} from 'rax';
 import inIOS8H5 from './inIOS8H5';
 import View from 'rax-view';

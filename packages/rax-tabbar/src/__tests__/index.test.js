@@ -1,13 +1,13 @@
-/** @jsx createElement */
-
-import renderer from 'rax-test-renderer';
 import {createElement} from 'rax';
+import renderer from 'rax-test-renderer';
 import Text from 'rax-text';
+import View from 'rax-view';
 
 import Tabbar from '../index';
 
 describe('Tabbar', function() {
-  it('#<Tabbar /> should render null', function() {
+
+  it('<Tabbar /> should render null', function() {
     const tabbarIns = renderer.create(
       <Tabbar />
     );
@@ -15,8 +15,7 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON).toEqual(null);
   });
 
-  location.search = '?_page_inside_embed_=true';
-  it('#<Tabbar />inside embed and set autoHidden=true, should render null', function() {
+  it('<Tabbar />inside embed and set autoHidden=true, should render null', function() {
     const tabbarIns = renderer.create(
       <Tabbar />
     );
@@ -24,7 +23,17 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON).toEqual(null);
   });
 
-  it('#if no declare tabContent, tabContent should render null', function() {
+  it('only one tab.item', function() {
+    const tabbarIns = renderer.create(
+      <Tabbar>
+        <Tabbar.Item />
+      </Tabbar>
+    );
+    const tabbarInsJSON = tabbarIns.toJSON();
+    expect(tabbarInsJSON.children.length).toEqual(1); 
+  });
+
+  it('if no declare tabContent, tabContent should render null', function() {
     const tabbarIns = renderer.create(
       <Tabbar>
         <Tabbar.Item />
@@ -35,8 +44,8 @@ describe('Tabbar', function() {
     const tabbarInsJSON = tabbarIns.toJSON();
     expect(tabbarInsJSON.children.length).toEqual(1);
   });
-
-  it('#tabbar horizontal', function() {
+  
+  it('tabbar horizontal', function() {
     const tabbarIns = renderer.create(
       <Tabbar horizontal={true}>
         <Tabbar.Item>
@@ -54,7 +63,7 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON.children.length).toEqual(2);
   });
 
-  it('#if declare tabContent, tabContent should not null', function() {
+  it('if declare tabContent, tabContent should not null', function() {
     const tabbarIns = renderer.create(
       <Tabbar>
         <Tabbar.Item>
@@ -70,7 +79,7 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON.children.length).toEqual(2);
   });
 
-  it('#position bottom', function() {
+  it('api position bottom', function() {
     const tabbarIns = renderer.create(
       <Tabbar position={'bottom'}>
         <Tabbar.Item>
@@ -88,7 +97,7 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON.children.length).toEqual(2);
   });
 
-  it('#background', function() {
+  it('style background', function() {
     const tabbarIns = renderer.create(
       <Tabbar barTintColor="red" style={{backgroundImage: 'url("bg.jpg")'}}>
         <Tabbar.Item>
@@ -107,13 +116,13 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON.children[0].children.length).toEqual(2);
   });
 
-  it('#Tabbar.Item Icon badge', function() {
+  it('Tabbar.Item Icon badge', function() {
     const tabbarIns = renderer.create(
       <Tabbar>
         <Tabbar.Item icon={{uri: 'a.jpg'}} selectedIcon={{uri: 'b.jpg'}}>
           <Text>content1</Text>
         </Tabbar.Item>
-        <Tabbar.Item icon={{uri: 'a.jpg'}}>
+        <Tabbar.Item icon={{uri: 'a.jpg'}} badgeColor="red" badge={{uri: '//gw.alicdn.com/tfs/TB1E4U4OVXXXXcxXVXXXXXXXXXX-128-100.png'}}>
           <Text>content2</Text>
         </Tabbar.Item>
         <Tabbar.Item icon={{uri: 'a.jpg'}} badge="2">
@@ -125,7 +134,7 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON.children.length).toEqual(2);
   });
 
-  it('#separateStyle', function() {
+  it('fn separateStyle', function() {
     const tabbarIns = renderer.create(
       <Tabbar>
         <Tabbar.Item icon={{uri: 'a.jpg'}} selectedIcon={{uri: 'b.jpg'}} style={{color: '#333333', fontSize: 24}}>
@@ -141,5 +150,25 @@ describe('Tabbar', function() {
     );
     const tabbarInsJSON = tabbarIns.toJSON();
     expect(tabbarInsJSON.children.length).toEqual(2);
+  });
+
+  it('fn onPress', function() {
+    const tabbarIns = renderer.create(
+      <Tabbar>
+        <Tabbar.Item ref="pressIns" onPress={() => {return ;}}>
+          <Text>content1</Text>
+        </Tabbar.Item>
+        <Tabbar.Item>
+          <Text>content2</Text>
+        </Tabbar.Item>
+        <Tabbar.Item>
+          <Text>content3</Text>
+        </Tabbar.Item>
+      </Tabbar>
+    );
+
+    tabbarIns._instance.refs.tab_0.onPress();
+    tabbarIns._instance.refs.tab_1.onPress();
+    expect('').toEqual('');
   });
 });
