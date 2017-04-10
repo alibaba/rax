@@ -5,7 +5,6 @@ import ItemList from './ItemList';
 import tools from './tools';
 import {mixinEmitter} from './Emitter';
 
-// let windowWidth = 750;
 const THCONTAINER_REF = 'tabheaderContainer';
 
 class TabHeader extends Component {

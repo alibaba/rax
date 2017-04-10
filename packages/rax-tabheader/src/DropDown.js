@@ -23,13 +23,9 @@ class DropDown extends Component {
 
   constructor(props) {
     super(props);
-    // item 个数
     let itemNum = this.props.dataSource ? this.props.dataSource.length : 0;
-    // 列数
     let cols = this.props.dropDownCols;
-    // 高度计算
     this.dropDownHeight = Math.ceil(itemNum / cols) * DROPDOWN_ROW_HEIGHT;
-    // 动画相关
     this.state = {
       weexGridTop: -1000,
       weexGridLeft: -1000,

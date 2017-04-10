@@ -37,7 +37,6 @@ class AnimBuoy extends Component {
 
   render() {
     let {
-      // style,
       itemWidth,
       animType,
     } = this.props;
