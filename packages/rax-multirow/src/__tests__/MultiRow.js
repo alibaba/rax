@@ -1,7 +1,6 @@
-
+import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
-import {createElement} from 'rax';
-import {View, Text} from 'rax-components';
+import View from 'rax-view';
 import MultiRow from '../index';
 
 
@@ -9,7 +8,7 @@ describe('MultiRow', function() {
   const component = renderer.create(
     <View>
       <MultiRow dataSource={['tom', 'jeck', 'lilei', 'hanmeimei']} cells={2} renderCell={(name, index) => {
-        return <Text>{name}</Text>;
+        return <View>{name}</View>;
       }} />
     </View>
   );

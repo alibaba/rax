@@ -1,13 +1,13 @@
+import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
-import {createElement} from 'rax';
-import {Text} from 'rax-components';
+import View from 'rax-view';
 import Col from '../Col';
 import Row from '../Row';
 
 describe('Grid', () => {
   it('should render a col', () => {
     const component = renderer.create(
-      <Col><Text>hello</Text></Col>
+      <Col><View>hello</View></Col>
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('SPAN');
@@ -23,7 +23,7 @@ describe('Grid', () => {
 
   it('should render a col with 2 children', () => {
     const component = renderer.create(
-      <Col><Text>hello</Text><Text>hello</Text></Col>
+      <Col><View>hello</View><View>hello</View></Col>
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
@@ -31,7 +31,7 @@ describe('Grid', () => {
 
   it('style in col', () => {
     const component = renderer.create(
-      <Col><Text>hello</Text></Col>
+      <Col><View>hello</View></Col>
     );
     let tree = component.toJSON();
     expect(tree.style.flex).toEqual(1);
@@ -40,7 +40,7 @@ describe('Grid', () => {
 
   it('should render a row', () => {
     const component = renderer.create(
-      <Row><Col><Text>hello</Text></Col></Row>
+      <Row><Col><View>hello</View></Col></Row>
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
@@ -49,7 +49,7 @@ describe('Grid', () => {
 
   it('should render a row width 2 col', () => {
     const component = renderer.create(
-      <Row><Col><Text>hello</Text></Col><Col><Text>hello</Text></Col></Row>
+      <Row><Col><View>hello</View></Col><Col><View>hello</View></Col></Row>
     );
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('DIV');
@@ -58,7 +58,7 @@ describe('Grid', () => {
 
   it('style in row', () => {
     const component = renderer.create(
-      <Row><Col><Text>hello</Text></Col></Row>
+      <Row><Col><View>hello</View></Col></Row>
     );
     let tree = component.toJSON();
     expect(tree.style.flexDirection).toEqual('row');
