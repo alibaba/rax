@@ -92,6 +92,7 @@ class RecyclerView extends Component {
           id={props.id}
           style={props.style}
           onLoadmore={props.onEndReached}
+          onScroll={props.onScroll}
           loadmoreoffset={props.onEndReachedThreshold}
         >
           {cells}

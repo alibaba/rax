@@ -1,7 +1,7 @@
 {
-  "name": "rax-player",
-  "version": "0.2.12",
-  "description": "Vedio player component for Rax.",
+  "name": "rax-canvas",
+  "version": "0.2.11",
+  "description": "canvas for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -20,13 +20,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.11",
-    "rax-view": "^0.2.11",
-    "rax-image": "^0.2.11",
-    "rax-text": "^0.2.11",
-    "rax-touchable": "^0.2.11",
-    "rax-icon": "^0.2.11",
-    "universal-panresponder": "^0.2.11"
+    "universal-env": "^0.2.11"
   },
   "peerDependencies": {
     "rax": "0.x"

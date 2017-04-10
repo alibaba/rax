@@ -8,14 +8,17 @@ class AnimatedSample extends Component {
 
   state = {
     bounceValue: new Animated.Value(0),
-    translateValue: new Animated.ValueXY({x: 0, y: 0}),
+    translateValue: new Animated.ValueXY({
+      x: 0,
+      y: 0
+    }),
     rotateValue: new Animated.Value(0),
   };
 
   render() {
     return (
       <Animated.Image
-        source={{uri: 'http://img1.tbcdn.cn/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999'}}
+        source={{uri: 'https://camo.githubusercontent.com/27b9253de7b03a5e69a7c07b0bc1950c4976a5c2/68747470733a2f2f67772e616c6963646e2e636f6d2f4c312f3436312f312f343031333762363461623733613132336537386438323436636438316338333739333538633939395f343030783430302e6a7067'}}
         style={{
           width: 112,
           height: 96,
