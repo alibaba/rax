@@ -4,6 +4,7 @@ import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin
 import RaxMainTemplatePlugin from './RaxMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
 import MultiplePlatform from './MultiplePlatform';
+import DuplicateChecker from './DuplicateChecker';
 
 const isProducation = process.env.NODE_ENV === 'production';
 
@@ -18,13 +19,18 @@ class RaxWebpackPlugin {
       polyfillModules: [],
       runModule: false,
       bundle: 'compatible', // private
-      target: 'umd'
+      target: 'umd',
+      duplicateCheck: ['rax']
     }, options);
   }
 
   apply(compiler) {
     compiler.apply(new DefinePlugin({
       '__DEV__': isProducation ? false : true
+    }));
+
+    compiler.apply(new DuplicateChecker({
+      modulesToCheck: this.options.duplicateCheck
     }));
 
     compiler.plugin('this-compilation', (compilation) => {

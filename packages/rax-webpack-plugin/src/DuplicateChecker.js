@@ -1,13 +1,9 @@
-var path = require('path');
-var findRoot = require('find-root');
-var WebpackSource = require('webpack-sources');
+import path from 'path';
+import findRoot from 'find-root';
+import WebpackSource from 'webpack-sources';
 
-var ConcatSource = WebpackSource.ConcatSource;
-var isProducation = process.env.NODE_ENV === 'production';
-
-function RaxDuplicateCheckPlugin(options) {
-  this.options = Object.assign({}, options);
-}
+const ConcatSource = WebpackSource.ConcatSource;
+const isProducation = process.env.NODE_ENV === 'production';
 
 function cleanPath(path) {
   return path.split('/node_modules/').join('/~/');
@@ -22,7 +18,7 @@ function getClosestPackage(modulePath) {
   try {
     root = findRoot(modulePath);
     pkg = require(path.join(root, 'package.json'));
-  } catch(e) {
+  } catch (e) {
     return null;
   }
 
@@ -40,7 +36,7 @@ function getClosestPackage(modulePath) {
   };
 }
 
-function check(compilation) {
+function check(compilation, modulesToCheck) {
   var context = compilation.compiler.context;
   var modules = {};
 
@@ -56,7 +52,6 @@ function check(compilation) {
   }
 
   compilation.modules.forEach(module => {
-
     if (!module.resource) {
       return;
     }
@@ -78,7 +73,11 @@ function check(compilation) {
 
     var version = pkg.version;
 
-    modules[pkg.name] = (modules[pkg.name] || []);
+    if (modulesToCheck.indexOf(pkg.name) < 0) {
+      return;
+    }
+
+    modules[pkg.name] = modules[pkg.name] || [];
 
     var isSeen = false;
 
@@ -93,12 +92,11 @@ function check(compilation) {
 
       modules[pkg.name].push(entry);
     }
-
   });
 
   var duplicates = {};
   Object.keys(modules).forEach((name) => {
-    if(modules[name].length > 1) {
+    if (modules[name].length > 1) {
       duplicates[name] = modules[name];
     }
   });
@@ -107,7 +105,7 @@ function check(compilation) {
 }
 
 function formatMsg(duplicates) {
-  var error = 'duplicate-package-found:';
+  var error = 'Duplicate (conflicting) packages loaded, make sure to use only one: ';
 
   if (Object.keys(duplicates).length) {
     Object.keys(duplicates).forEach((key) => {
@@ -124,34 +122,38 @@ function formatMsg(duplicates) {
   return error;
 }
 
-RaxDuplicateCheckPlugin.prototype.apply = function(compiler) {
-  compiler.plugin('compilation', (compilation) => {
-    compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
-      chunks.forEach(function(chunk) {
-        // In webpack2 chunk.initial was removed. Use isInitial()
-        if (chunk.name !== 'index.bundle') {
-          return;
-        }
+export default class DuplicateChecker {
+  constructor(options) {
+    this.options = Object.assign({}, options); ;
+  }
 
-        try {
-          if (!chunk.initial) return;
-        } catch (e) {
-          if (!chunk.isInitial()) return;
-        }
+  apply(compiler) {
+    var modulesToCheck = this.options.modulesToCheck;
+    if (!modulesToCheck || !modulesToCheck.length) {
+      return;
+    }
 
-        var duplicates = check(compilation);
+    compiler.plugin('compilation', (compilation) => {
+      compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
+        chunks.forEach((chunk) => {
+          // In webpack2 chunk.initial was removed. Use isInitial()
+          try {
+            if (!chunk.initial) return;
+          } catch (e) {
+            if (!chunk.isInitial()) return;
+          }
 
-        if (Object.keys(duplicates).length && !isProducation) {
-          var errorMessages = formatMsg(duplicates);
-          chunk.files.forEach(function(file) {
-            compilation.assets[file] = new ConcatSource(compilation.assets[file], `\n console.error('${errorMessages}');`);
-          });
-        }
+          var duplicates = check(compilation, modulesToCheck);
 
+          if (Object.keys(duplicates).length && !isProducation) {
+            var errorMessages = formatMsg(duplicates);
+            chunk.files.forEach(function(file) {
+              compilation.assets[file] = new ConcatSource(compilation.assets[file], `\n console.error('${errorMessages}');`);
+            });
+          }
+        });
+        callback();
       });
-      callback();
     });
-  });
-};
-
-module.exports = RaxDuplicateCheckPlugin;
+  }
+}
