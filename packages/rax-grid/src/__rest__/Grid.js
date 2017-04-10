@@ -5,7 +5,6 @@ import Col from '../Col';
 import Row from '../Row';
 
 describe('Grid', () => {
-
   it('should render a col', () => {
     const component = renderer.create(
       <Col><Text>hello</Text></Col>
@@ -64,5 +63,4 @@ describe('Grid', () => {
     let tree = component.toJSON();
     expect(tree.style.flexDirection).toEqual('row');
   });
-
 });

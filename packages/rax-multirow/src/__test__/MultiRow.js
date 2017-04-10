@@ -5,9 +5,7 @@ import {View, Text} from 'rax-components';
 import MultiRow from '../index';
 
 
-
 describe('MultiRow', function() {
-
   const component = renderer.create(
     <View>
       <MultiRow dataSource={['tom', 'jeck', 'lilei', 'hanmeimei']} cells={2} renderCell={(name, index) => {
@@ -39,5 +37,4 @@ describe('MultiRow', function() {
     expect(tree.children[0].children[0].children[1].children[0].children[0]).toEqual('lilei');
     expect(tree.children[0].children[0].children[1].children[1].children[0]).toEqual('hanmeimei');
   });
-
 });
