@@ -1,6 +1,8 @@
-const itemWidth = 166;
+let itemWidth = 166;
 
+// default style for tabheader
 export default {
+
   container: {
     height: 80,
     backgroundColor: '#ffffff',
@@ -44,7 +46,8 @@ export default {
 
   drop: {
     height: 81,
-    marginBottom: -81,
+    marginBottom: '-81rem',
+    position: 'relative',
   },
   dropBtn: {
     height: 80,
@@ -76,7 +79,6 @@ export default {
   },
 
   iconContainer: {
-    backgroundColor: '#52bfe6',
     boxShadow: 'inset 0px -1px 0px 0px rgba(0,0,0,0.10)',
     height: 112,
     fontFamily: 'PingFangSC-Regular'
@@ -119,4 +121,6 @@ export default {
     width: 0,
     position: 'absolute',
   },
+
 };
+
