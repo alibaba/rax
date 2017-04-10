@@ -1,6 +1,6 @@
 {
   "name": "rax-recyclerview",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "RecyclerView component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
