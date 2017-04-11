@@ -5,9 +5,12 @@ class CanvasSample extends Component {
   componentDidMount() {
     requestAnimationFrame(() => {
       const context = this.refs.raxCanvasDemo.getContext();
-      context.fillStyle = 'red';
-      context.fillRect(0, 0, 100, 100);
-      context.draw && context.draw();
+      context.then((context) => {
+        context.render();
+        context.fillStyle = 'red';
+        context.fillRect(0, 0, 100, 100);
+        context.render();
+      });
     });
   }
 

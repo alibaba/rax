@@ -1,5 +1,6 @@
 import Chart from './charts/Chart';
 import GM from 'g2-mobile';
+
 Chart.Util = GM.Util;
 
 export Area from './charts/Area';
@@ -33,3 +34,4 @@ export Axis from './components/Axis';
 export Coord from './components/Coord';
 
 export default Chart;
+

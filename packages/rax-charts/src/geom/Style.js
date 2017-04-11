@@ -1,9 +1,9 @@
 import {createElement, Component, PropTypes} from 'rax';
-import utils from '../utils';
+import isObject from '../utils/isObject';
+
 export default class Style extends Component {
   /**
    * @type {{lineWidth, fill, radius, stroke, fillOpacity, strokeOpacity, opacity}}
-   * 不同的几何图形支持的配置项不同
    * point: {
    *   lineWidth: 1,
    *   fill: '#999',
@@ -85,7 +85,7 @@ export default class Style extends Component {
   draw = () => {
     let {chart, ...item} = this.props;
 
-    if (item && utils.isObject(item)) {
+    if (item && isObject(item)) {
       chart = chart.style(item);
     }
 

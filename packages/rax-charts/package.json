@@ -9,8 +9,7 @@
     "url": "git+https://github.com/alibaba/rax.git"
   },
   "keywords": [
-    "Rax",
-    "RaxUI"
+    "Rax"
   ],
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
@@ -21,6 +20,7 @@
   },
   "dependencies": {
     "g2-mobile": "^2.1.14",
+    "rax-canvas": "^0.2.11",
     "universal-env": "^0.2.11"
   },
   "peerDependencies": {

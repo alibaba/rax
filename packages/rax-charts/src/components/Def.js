@@ -1,4 +1,5 @@
 import {createElement, Component, PropTypes} from 'rax';
+
 export default class Def extends Component {
   static type = 'def';
 

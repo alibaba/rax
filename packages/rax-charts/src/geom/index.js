@@ -1,9 +1,10 @@
 import {createElement, Component, PropTypes} from 'rax';
-import utils from '../utils';
+import isArray from '../utils/isArray';
 import Color from './Color';
 import Shape from './Shape';
 import Size from './Size';
 import Style from './Style';
+
 export default class Geom extends Component {
   static propTypes = {
     position: PropTypes.string,
@@ -18,7 +19,7 @@ export default class Geom extends Component {
     let {geomChart, position, children} = this.props;
 
     if (!position) {
-      throw Error('图表使用必须指定 position 参数');
+      throw Error('chart error: no position');
     }
 
     let chart = geomChart.position(position);
@@ -27,7 +28,6 @@ export default class Geom extends Component {
       return chart;
     }
 
-    // Geom 里的四个方法执行不分先后顺序，所以这样写可以
     const newChildren = (item) => {
       const type = item.type;
       switch (type) {
@@ -46,7 +46,7 @@ export default class Geom extends Component {
       }
     };
 
-    if (utils.isArray(children) && children.length > 0) {
+    if (isArray(children) && children.length > 0) {
       children.forEach((item) => {
         newChildren(item);
       });

@@ -1,4 +1,5 @@
 import {createElement, Component} from 'rax';
+
 export default class Coord extends Component {
   constructor(props) {
     super(props);
@@ -6,13 +7,10 @@ export default class Coord extends Component {
 
     if (!type && config) {
       return chart.coord(config);
-
     } else if (type && !config) {
       return chart.coord(type);
-
     } else if (type && config) {
       return chart.coord(type, config);
-
     }
   }
 }

@@ -1,4 +1,5 @@
 import {createElement, Component} from 'rax';
+
 export default class Line extends Component {
   constructor(props) {
     super(props);
@@ -6,3 +7,4 @@ export default class Line extends Component {
     return chart.guide().line(from, to, config);
   }
 }
+

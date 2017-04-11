@@ -1,8 +1,9 @@
 import {createElement, Component} from 'rax';
 import Def from './Def';
-import utils from '../utils';
-export default class Defs extends Component {
+import isArray from '../utils/isArray';
+import isObject from '../utils/isObject';
 
+export default class Defs extends Component {
   constructor(props) {
     super(props);
     const conf = this.generateConf();
@@ -17,7 +18,7 @@ export default class Defs extends Component {
       return conf;
     }
 
-    if (utils.isArray(children) && children.length > 0) {
+    if (isArray(children) && children.length > 0) {
       children.forEach((item) => {
         if (item.type === Def) {
           conf[item.props.dim] = item.props;
@@ -25,7 +26,7 @@ export default class Defs extends Component {
       });
     }
 
-    if (utils.isObject(children)) {
+    if (isObject(children)) {
       conf[children.props.dim] = children.props;
     }
 

@@ -1,4 +1,5 @@
 import {createElement, Component} from 'rax';
+
 export default class Html extends Component {
   constructor(props) {
     super(props);
@@ -7,3 +8,4 @@ export default class Html extends Component {
     return chart.guide().html(position, tooltipHtml, config);
   }
 }
+

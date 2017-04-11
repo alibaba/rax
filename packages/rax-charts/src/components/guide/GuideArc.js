@@ -7,3 +7,4 @@ export default class Arc extends Component {
     chart.guide().arc(from, to, config);
   }
 }
+

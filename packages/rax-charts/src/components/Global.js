@@ -1,4 +1,5 @@
 import {createElement, Component} from 'rax';
+
 export default class Global extends Component {
   constructor(props) {
     super(props);

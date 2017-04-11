@@ -12,14 +12,24 @@ class Canvas extends Component {
     const canvas = findDOMNode(this.refs.canvas);
 
     if (isWeex) {
-      return CanvasWeex.getContext(canvas.ref);
+      return CanvasWeex.init(canvas);
     } else {
-      return canvas.getContext('2d');
+      return new Promise((resolve, reject) => {
+        if (canvas && canvas.getContext) {
+          const context = canvas.getContext('2d');
+          context.render = () => {};
+          resolve(context);
+        }
+      });
     }
   };
 
   render() {
-    return <canvas {...this.props} ref="canvas" />;
+    if (isWeex) {
+      return <gcanvas {...this.props} ref="canvas" />;
+    } else {
+      return <canvas {...this.props} ref="canvas" />;
+    }
   }
 }
 

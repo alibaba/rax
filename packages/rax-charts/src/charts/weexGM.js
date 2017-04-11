@@ -1,4 +1,5 @@
-const GM = require('g2-mobile');
+import GM from 'g2-mobile';
+
 let _context;
 const _chartRender = GM.Chart.prototype.render;
 
@@ -11,4 +12,4 @@ GM.ready = function(context) {
   _context = context;
 };
 
-module.exports = GM;
+export default GM;

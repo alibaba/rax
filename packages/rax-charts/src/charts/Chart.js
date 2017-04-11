@@ -19,12 +19,14 @@ import Schema from './Schema';
 import IntervalStack from './IntervalStack';
 import AreaStack from './AreaStack';
 
-import utils from '../utils';
+import isArray from '../utils/isArray';
+import isFunction from '../utils/isFunction';
+
 let WeexGM = null;
-const WEEX_ID = 'taobao-fed-rax-chart-weex-id';// 尽可能特殊
+const WEEX_ID = 'taobao-fed-rax-chart-weex-id';
 
 if (isWeex) {
-  WeexGM = require('./GM');
+  WeexGM = require('./weexGM');
 }
 
 class Chart extends Component {
@@ -43,7 +45,7 @@ class Chart extends Component {
     super(props);
     this.chart = null;
     /**
-     * global defs animate 只能有一个
+     * global defs animate must only one
      */
     this.globalChildren = null;
     this.defsChildren = null;
@@ -62,31 +64,31 @@ class Chart extends Component {
   }
 
   componentDidMount() {
-    const context = this.refs.raxCharts.getContext();
-    this.draw(context);
+    this.refs.raxCharts.getContext().then((context) => {
+      context.render();
+      this.draw(context);
+    });
   }
 
   draw = (context) => {
-
     const {draw} = this.props;
     const GMObject = isWeex ? WeexGM : GM;
 
-    if (!draw || !utils.isFunction(draw)) {
-
+    if (!draw || !isFunction(draw)) {
       this.arrangeChildren();
 
-      this.globalChildren
-      && new Global({GMObject, ...this.globalChildren.props});
+      this.globalChildren && new Global({GMObject, ...this.globalChildren.props});
     }
 
     if (isWeex) {
-      GMObject.Global.pixelRatio = 1; // weex 下 pixelRatio 必须是 1 才能正常展示, 否则是二倍图就错位了
+      // weex pixelRatio must to 1
+      GMObject.Global.pixelRatio = 1;
       this.renderWeexChart(context);
     } else {
       this.renderWebChart(context);
     }
 
-    if (draw && utils.isFunction(draw)) {
+    if (draw && isFunction(draw)) {
       draw(this.chart, GMObject, context);
     } else {
       this.renderChildren();
@@ -114,9 +116,8 @@ class Chart extends Component {
   };
 
   arrangeChildren = () => {
-
     const {children} = this.props;
-    if (children && utils.isArray(children)) {
+    if (children && isArray(children)) {
       children.forEach((item) => {
         switch (item.type) {
           case Defs:
@@ -166,7 +167,6 @@ class Chart extends Component {
   };
 
   renderChildren = () => {
-
     let chart = this.chart;
 
     const newChildren = (children, ChildrenType) => {
@@ -212,7 +212,7 @@ class Chart extends Component {
       style.backgroundColor = backgroundColor;
     }
 
-    // 目前 weex 下必须有背景色，否则颜色会变淡，线条会渲染不出来
+    // weex canvas must have backgroundColor
     if (isWeex && !backgroundColor) {
       style = {
         height: height,
