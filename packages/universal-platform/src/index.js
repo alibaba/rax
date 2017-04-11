@@ -1,8 +1,6 @@
-let OS;
+let OS = 'web';
 
-if (typeof navigator === 'object') {
-  OS = navigator.platform.toLowerCase();
-} else if (typeof WXEnvironment === 'object') {
+if (typeof WXEnvironment === 'object') {
   OS = WXEnvironment.platform;
 }
 
