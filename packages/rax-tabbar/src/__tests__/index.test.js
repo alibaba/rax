@@ -6,7 +6,6 @@ import View from 'rax-view';
 import Tabbar from '../index';
 
 describe('Tabbar', function() {
-
   it('<Tabbar /> should render null', function() {
     const tabbarIns = renderer.create(
       <Tabbar />
@@ -30,7 +29,7 @@ describe('Tabbar', function() {
       </Tabbar>
     );
     const tabbarInsJSON = tabbarIns.toJSON();
-    expect(tabbarInsJSON.children.length).toEqual(1); 
+    expect(tabbarInsJSON.children.length).toEqual(1);
   });
 
   it('if no declare tabContent, tabContent should render null', function() {
@@ -44,7 +43,7 @@ describe('Tabbar', function() {
     const tabbarInsJSON = tabbarIns.toJSON();
     expect(tabbarInsJSON.children.length).toEqual(1);
   });
-  
+
   it('tabbar horizontal', function() {
     const tabbarIns = renderer.create(
       <Tabbar horizontal={true}>
@@ -155,7 +154,9 @@ describe('Tabbar', function() {
   it('fn onPress', function() {
     const tabbarIns = renderer.create(
       <Tabbar>
-        <Tabbar.Item ref="pressIns" onPress={() => {return ;}}>
+        <Tabbar.Item ref="pressIns" onPress={() => {
+          return;
+        }}>
           <Text>content1</Text>
         </Tabbar.Item>
         <Tabbar.Item>

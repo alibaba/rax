@@ -27,7 +27,7 @@ class Tabbar extends Component {
   handleTouchTap = (index) => {
     if (this.getTabs()[index].props && this.getTabs()[index].props.children) {
       const tabs = this.getTabs();
-      
+
       this.setState({
         selectedIndex: index
       });
@@ -80,7 +80,7 @@ class Tabbar extends Component {
     let tabItemWidth = this.getTabItemWidth();
     let scrollLen = 0;
     if (tabItemWidth * (this.state.selectedIndex + 1) > 750 / 2) {
-      scrollLen = tabItemWidth * (this.state.selectedIndex) - 750 / 2 + tabItemWidth / 2;
+      scrollLen = tabItemWidth * this.state.selectedIndex - 750 / 2 + tabItemWidth / 2;
     }
 
     if (isWeex) {
@@ -90,7 +90,7 @@ class Tabbar extends Component {
         let selected = this.refs[`tab_${this.state.selectedIndex - k}`];
         if (selected) {
           dom.scrollToElement(findDOMNode(selected), {
-            offset: (k % 2) / 2 * tabItemWidth
+            offset: 0
           });
         }
       } catch (e) {
@@ -160,26 +160,26 @@ class Tabbar extends Component {
 
     let tabsElement = null;
     if (this.props.horizontal) {
-      tabsElement = (
+      tabsElement =
         <ScrollView ref="ScrollBar" horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={getScrollViewStyle()} style={[styles.bar]}>
           {tabs}
         </ScrollView>
-      );
+      ;
     } else {
-      tabsElement = (
+      tabsElement =
         <View style={[styles.bar]}>
           {tabs}
         </View>
-      );
+      ;
     }
-    
-    let bar = (
+
+    let bar =
       <View style={[styles.barWrap, tabbarStyle]}>
         {barBgImgInfo ? <Image source={{uri: barBgImgInfo.uri}} style={[styles.barBgImg, barBgImgInfo]} /> : null}
         {tabsElement}
         {this.props.extraElement}
       </View>
-    );
+    ;
 
     if (tabContentsCount == 0) {
       return bar;
@@ -199,7 +199,6 @@ class Tabbar extends Component {
           </View>
         );
       }
-
     }
   }
 }

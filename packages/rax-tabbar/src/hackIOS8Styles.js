@@ -11,7 +11,7 @@ export default {
         width: 750,
         overflow: 'scroll',
         whiteSpace: 'nowrap'
-      }
+      };
     } else {
       return {};
     }
@@ -24,12 +24,11 @@ export default {
       };
 
       try {
-        styles.paddingTop =(boxStyle.height - (props.iconStyle.height) - separateStyle(boxStyle, 'text').fontSize) / 2;
+        styles.paddingTop = (boxStyle.height - props.iconStyle.height - separateStyle(boxStyle, 'text').fontSize) / 2;
       } catch (e) {
         styles.paddingTop = 20;
       }
       return styles;
-
     } else {
       return {};
     }

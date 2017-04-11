@@ -60,7 +60,6 @@ class TabBarItem extends Component {
 
     if (icon && icon.uri && !icon.codePoint) {
       return <Image style={[styles.icon, this.props.iconStyle || {}]} source={icon} />;
-
     } else if (icon && icon.uri && icon.codePoint) {
       return <Icon style={[styles.icon, this.props.iconStyle || {}]} fontFamily="iconfont" source={icon} />;
     }

@@ -13,8 +13,6 @@ import Tabbar from '../index';
 
 
 describe('Tabbar', function() {
-
-
   it('#not in embed', function() {
     const tabbarIns = renderer.create(
       <Tabbar horizontal={true}>
@@ -38,12 +36,9 @@ describe('Tabbar', function() {
   it('#in embed', function() {
     const tabbarIns = renderer.create(
       <Tabbar horizontal={true}>
-        <Tabbar.Item selected={true}>
-        </Tabbar.Item>
-        <Tabbar.Item href="about:blank">
-        </Tabbar.Item>
-        <Tabbar.Item>
-        </Tabbar.Item>
+        <Tabbar.Item selected={true} />
+        <Tabbar.Item href="about:blank" />
+        <Tabbar.Item />
       </Tabbar>
     );
 
