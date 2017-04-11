@@ -44,9 +44,11 @@ let Animated = {
     if (isWeex) {
       translateStr = 'translate(' + width + 'px, 0)';
     }
-    Animated.transition(Node, {
-      transform: translateStr
-    }, callback);
+    setTimeout(() => {
+      Animated.transition(Node, {
+        transform: translateStr
+      }, callback);
+    }, 0);
   }
 
 };

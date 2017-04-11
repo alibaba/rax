@@ -50,6 +50,13 @@ class RecyclerView extends Component {
     };
   }
 
+  handleScroll = (e) => {
+    e.nativeEvent = {
+      contentOffset: e.contentOffset
+    };
+    this.props.onScroll(e);
+  }
+
   scrollTo = (options) => {
     let x = parseInt(options.x);
     let y = parseInt(options.y);
@@ -92,7 +99,7 @@ class RecyclerView extends Component {
           id={props.id}
           style={props.style}
           onLoadmore={props.onEndReached}
-          onScroll={props.onScroll}
+          onScroll={props.onScroll ? this.handleScroll : null}
           loadmoreoffset={props.onEndReachedThreshold}
         >
           {cells}

@@ -16,14 +16,15 @@ import ScrollView from 'rax-scrollview';
 
 ## 属性
 
-| 名称                             | 类型      | 默认值  | 描述                                       |
-| :----------------------------- | :------ | :--- | :--------------------------------------- |
-| scrollEventThrottle            | Number  |      | 这个属性控制在滚动过程中，scroll事件被调用的频率（默认值为100），用于滚动的节流 |
-| horizontal                     | boolean |      | 设置为横向滚动                                  |
-| showsHorizontalScrollIndicator | Boolean |      | 是否允许出现水平滚动条，默认true                       |
-| showsVerticalScrollIndicator   | Boolean |      | 是否允许出现垂直滚动条，默认true                       |
-| onEndReachedThreshold          | Number  |      | 设置加载更多的偏移，默认值为500                        |
-| onEndReached                   | String  |      | 滚动区域还剩 `onEndReachedThreshold` 的长度时触发    |
+| 名称                           | 类型      | 默认值  | 描述                                       |
+| :----------------------------- | :------- | :--- | :--------------------------------------- |
+| scrollEventThrottle            | Number   |      | 这个属性控制在滚动过程中，scroll事件被调用的频率（默认值为100），用于滚动的节流 |
+| horizontal                     | Boolean  |      | 设置为横向滚动                                  |
+| showsHorizontalScrollIndicator | Boolean  |      | 是否允许出现水平滚动条，默认true                       |
+| showsVerticalScrollIndicator   | Boolean  |      | 是否允许出现垂直滚动条，默认true                       |
+| onEndReachedThreshold          | Number   |      | 设置加载更多的偏移，默认值为500                        |
+| onEndReached                   | Function |      | 滚动区域还剩 `onEndReachedThreshold` 的长度时触发    |
+| onScroll                       | Function |      | 滚动时触发的事件，返回当前滚动的水平垂直距离 |
 
 ## 使用示例
 
