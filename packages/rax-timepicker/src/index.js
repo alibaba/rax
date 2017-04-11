@@ -1,9 +1,37 @@
-
 import {Component, createElement} from 'rax';
 import {isWeex} from 'universal-env';
-import Picker from 'rax-picker';
+import TouchableHighlight from 'rax-touchable';
+import Text from 'rax-text';
 
 class TimePicker extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedValue: props.selectedValue
+    };
+  }
+
+  handlePress = () => {
+    if (isWeex) {
+      const {
+        onTimeChange,
+        selectedValue,
+      } = this.props;
+      const picker = require('@weex-module/picker');
+
+      picker.pickTime({
+        value: selectedValue,
+      }, event => {
+        if (event.result === 'success') {
+          onTimeChange && onTimeChange(event.data);
+          this.setState({
+            selectedValue: event.data,
+          });
+        }
+      });
+    }
+  }
 
   render() {
     const {
@@ -12,13 +40,28 @@ class TimePicker extends Component {
       style,
     } = this.props;
 
+    let touchableStyle = {
+      ...styles.initial,
+      ...style,
+    };
+    let textStyle = {
+      color: touchableStyle.color,
+      fontSize: touchableStyle.fontSize,
+      fontStyle: touchableStyle.fontStyle,
+      fontWeight: touchableStyle.fontWeight,
+      textAlign: touchableStyle.textAlign,
+      textDecoration: touchableStyle.textDecoration,
+      textOverflow: touchableStyle.textOverflow,
+      lineHeight: touchableStyle.lineHeight
+    };
+
     if (isWeex) {
       return (
-        <Picker
-          mode={'time'}
-          selectedValue={selectedValue}
-          onTimeChange={onTimeChange}
-          style={style} />
+        <TouchableHighlight {...this.props} onPress={this.handlePress} style={touchableStyle}>
+          <Text style={textStyle}>
+            {this.state.selectedValue}
+          </Text>
+        </TouchableHighlight>
       );
     } else {
       return (
@@ -28,10 +71,18 @@ class TimePicker extends Component {
           onChange={function() {
             onTimeChange && onTimeChange(this.value);
           }}
-          style={this.props.style} />
+          style={style} />
       );
     }
   }
 }
+
+const styles = {
+  initial: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  }
+};
 
 export default TimePicker;

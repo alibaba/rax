@@ -1,7 +1,7 @@
 import {Component, createElement} from 'rax';
-import Text from 'rax-text';
-import TouchableHighlight from 'rax-touchable';
 import {isWeex} from 'universal-env';
+import TouchableHighlight from 'rax-touchable';
+import Text from 'rax-text';
 
 class Picker extends Component {
 
@@ -17,9 +17,7 @@ class Picker extends Component {
       children,
       selectedValue
     } = this.props;
-    let pickerItems = [];
-    let items = [];
-    let selectIndex = 0;
+    let pickerItems = [], items = [], selectIndex = 0;
 
     if (children.length) {
       pickerItems = children;
@@ -50,7 +48,6 @@ class Picker extends Component {
   getPickerDataByIndex = (index, pickerData) => {
     let value = '';
     let items = pickerData.items;
-
     for (let i = 0; i < items.length; i++) {
       if (index == i) {
         value = items[i].value;
@@ -62,8 +59,6 @@ class Picker extends Component {
   handlePress = (webIndex) => {
     const {
       onValueChange,
-      onDateChange,
-      onTimeChange,
       selectedValue,
       minimumDate,
       maximumDate,
@@ -71,44 +66,18 @@ class Picker extends Component {
 
     if (isWeex) {
       const picker = require('@weex-module/picker');
-      if (onDateChange) {
-        picker.pickDate({
-          value: selectedValue,
-          max: maximumDate,
-          min: minimumDate,
-        }, event => {
-          if (event.result === 'success') {
-            onDateChange && onDateChange(event.data);
-            this.setState({
-              selectedValue: event.data,
-            });
-          }
-        });
-      } else if (onTimeChange) {
-        picker.pickTime({
-          value: selectedValue,
-        }, event => {
-          if (event.result === 'success') {
-            onTimeChange && onTimeChange(event.data);
-            this.setState({
-              selectedValue: event.data,
-            });
-          }
-        });
-      } else {
-        const pickerData = this.getPickerData();
-        picker.pick({
-          index: pickerData.selectIndex,
-          items: pickerData.pickerStrList,
-        }, event => {
-          if (event.result === 'success') {
-            onValueChange && onValueChange(event.data, pickerData.items);
-            this.setState({
-              selectedValue: pickerData.items[event.data].value,
-            });
-          }
-        });
-      }
+      const pickerData = this.getPickerData();
+      picker.pick({
+        index: pickerData.selectIndex,
+        items: pickerData.pickerStrList,
+      }, event => {
+        if (event.result === 'success') {
+          onValueChange && onValueChange(event.data, pickerData.items);
+          this.setState({
+            selectedValue: pickerData.items[event.data].value,
+          });
+        }
+      });
     } else {
       const pickerData = this.getPickerData();
       let value = this.getPickerDataByIndex(webIndex, pickerData);
@@ -123,7 +92,6 @@ class Picker extends Component {
       ...styles.initial,
       ...this.props.style,
     };
-
     let textStyle = {
       color: style.color,
       fontSize: style.fontSize,

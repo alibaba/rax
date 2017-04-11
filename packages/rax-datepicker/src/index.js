@@ -1,12 +1,44 @@
 import {Component, createElement} from 'rax';
 import {isWeex} from 'universal-env';
-import Picker from 'rax-picker';
+import TouchableHighlight from 'rax-touchable';
+import Text from 'rax-text';
 
 class DatePicker extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedValue: props.selectedValue
+    };
+  }
+
+  handlePress = () => {
+    if (isWeex) {
+      const {
+        onDateChange,
+        selectedValue,
+        minimumDate,
+        maximumDate,
+      } = this.props;
+      const picker = require('@weex-module/picker');
+
+      picker.pickDate({
+        value: selectedValue,
+        max: maximumDate,
+        min: minimumDate,
+      }, event => {
+        if (event.result === 'success') {
+          onDateChange && onDateChange(event.data);
+          this.setState({
+            selectedValue: event.data,
+          });
+        }
+      });
+    }
+  }
+
   render() {
     const {
-      mode,
       selectedValue,
       minimumDate,
       maximumDate,
@@ -14,16 +46,28 @@ class DatePicker extends Component {
       style,
     } = this.props;
 
+    let touchableStyle = {
+      ...styles.initial,
+      ...style,
+    };
+    let textStyle = {
+      color: touchableStyle.color,
+      fontSize: touchableStyle.fontSize,
+      fontStyle: touchableStyle.fontStyle,
+      fontWeight: touchableStyle.fontWeight,
+      textAlign: touchableStyle.textAlign,
+      textDecoration: touchableStyle.textDecoration,
+      textOverflow: touchableStyle.textOverflow,
+      lineHeight: touchableStyle.lineHeight
+    };
+
     if (isWeex) {
       return (
-        <Picker
-          mode={'date'}
-          selectedValue={selectedValue}
-          date={selectedValue}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-          onDateChange={onDateChange}
-          style={style} />
+        <TouchableHighlight {...this.props} onPress={this.handlePress} style={touchableStyle}>
+          <Text style={textStyle}>
+            {this.state.selectedValue}
+          </Text>
+        </TouchableHighlight>
       );
     } else {
       return (
@@ -41,5 +85,13 @@ class DatePicker extends Component {
     }
   }
 }
+
+const styles = {
+  initial: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  }
+};
 
 export default DatePicker;

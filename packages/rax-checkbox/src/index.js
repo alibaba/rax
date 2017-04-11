@@ -4,8 +4,8 @@ import Text from 'rax-text';
 import View from 'rax-view';
 import Touchable from 'rax-touchable';
 
-const CB_ENABLED_IMAGE = '//gw.alicdn.com/tfs/TB1W2fpQXXXXXcLaXXXXXXXXXXX-26-26.png';
-const CB_DISABLED_IMAGE = '//gw.alicdn.com/tfs/TB1jWYvQXXXXXaOXVXXXXXXXXXX-26-26.png';
+const CHECKBOX_ENABLED_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAwUExURUxpcTMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzLRwScAAAAPdFJOUwDvEI8wz69QQL/fIHCAYDHs4yUAAACoSURBVCjPfdIBDoMgDAXQ31JE1K33v60UZSJ2NjEmvvgpUIAD6aMoMMBR3YqMoBpmDDXbV1B5nApKUB3/kU9ZR1QLDcKklACPJmvCpWSSPWLbJK0e1bgNDrW4J/3iLmLbSov7oqNyjtFsM5nQUzyOc61xfKPlOOpsr4QbSb0x6uKuNqTdZovrmm+W8KDTJjhUbeGB5LS8SDcChV4GwB0bqWPzMmz/R3QHJwAPwC8jHWQAAAAASUVORK5CYII=';
+const CHECKBOX_DISABLED_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURUxpcTMzMzMzMzMzMzMzMzMzMzMzMzMzM2vW5DoAAAAHdFJOUwCPEO9AzzBOX/xUAAAASklEQVQoz+2SMRKAQAwCIcmF///YaKl4tYU7Q8O2CwRTD5IBxJJlBSixcKPOFzkzUAmpnGppFCy/+qpqZ2rUJgCbTV/ZbGJ7T/QAwyIE71akwQMAAAAASUVORK5CYII=';
 
 class CheckBox extends Component {
 
@@ -20,13 +20,15 @@ class CheckBox extends Component {
   }
 
   onChange() {
-    if (this.props.onChange && typeof this.props.checked === 'boolean') {
-      this.props.onChange(this.props.checked);
+    const {checked, onChange} = this.props;
+
+    if (onChange && typeof checked === 'boolean') {
+      onChange(checked);
     } else {
       let internalChecked = this.state.internalChecked;
 
-      if (this.props.onChange) {
-        this.props.onChange(internalChecked);
+      if (onChange) {
+        onChange(internalChecked);
       }
       this.setState({
         internalChecked: !internalChecked
@@ -36,40 +38,27 @@ class CheckBox extends Component {
 
   render() {
     let container, source;
+    const {
+      checked,
+      checkedImage,
+      uncheckedImage,
+      containerStyle,
+      checkboxStyle,
+    } = this.props;
 
-    if (typeof this.props.checked === 'boolean') {
-      source = this.props.checked ? this.props.checkedImage : this.props.uncheckedImage;
+    if (typeof checked === 'boolean') {
+      source = checked ? checkedImage : uncheckedImage;
     } else {
-      source = this.state.internalChecked ? this.props.checkedImage : this.props.uncheckedImage;
-    }
-
-    if (this.props.labelBefore) {
-      container =
-        <View style={this.props.containerStyle || [styles.container, styles.flexContainer]}>
-          <View style={styles.labelContainer}>
-            <Text numberOfLines={this.props.labelLines} style={[styles.label, this.props.labelStyle]}>{this.props.label}</Text>
-          </View>
-          <Image
-            style={[styles.checkbox, this.props.checkboxStyle]}
-            source={{uri: source}} />
-        </View>
-      ;
-    } else {
-      container =
-        <View style={[styles.container, this.props.containerStyle]}>
-          <Image
-            style={[styles.checkbox, this.props.checkboxStyle]}
-            source={{uri: source}} />
-          <View style={styles.labelContainer}>
-            <Text numberOfLines={this.props.labelLines} style={[styles.label, this.props.labelStyle]}>{this.props.label}</Text>
-          </View>
-        </View>
-      ;
+      source = this.state.internalChecked ? checkedImage : uncheckedImage;
     }
 
     return (
-      <Touchable onPress={this.onChange} underlayColor={this.props.underlayColor} style={styles.flexContainer}>
-        {container}
+      <Touchable onPress={this.onChange} style={styles.flexContainer}>
+        <View style={[styles.container, containerStyle]}>
+          <Image
+            style={[styles.checkbox, checkboxStyle]}
+            source={{uri: source}} />
+        </View>
       </Touchable>
     );
   }
@@ -84,26 +73,14 @@ var styles = {
   checkbox: {
     width: 40,
     height: 40
-  },
-  labelContainer: {
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  label: {
-    fontSize: 30,
-    color: 'grey'
   }
 };
 
 
 CheckBox.defaultProps = {
-  label: 'Label',
-  labelLines: 1,
-  labelBefore: false,
   checked: null,
-  checkedImage: CB_ENABLED_IMAGE,
-  uncheckedImage: CB_DISABLED_IMAGE,
-  underlayColor: 'white'
+  checkedImage: CHECKBOX_ENABLED_ICON,
+  uncheckedImage: CHECKBOX_DISABLED_ICON,
 };
 
-module.exports = CheckBox;
+export default CheckBox;
