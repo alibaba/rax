@@ -8,6 +8,7 @@ import Icon from 'rax-icon';
 import {getScrollViewItemStyle} from './hackIOS8Styles';
 import separateStyle from './separateStyle';
 import {isWeex} from 'universal-env';
+
 class TabBarItem extends Component {
   static defaultProps = {
     style: {},
