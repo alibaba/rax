@@ -1,10 +1,9 @@
 
 jest.autoMockOff();
-global.WXEnvironment = {
-  platform: 'ios'
-}
 
 describe('OS', () => {
+  global.WXEnvironment = undefined;
+
   it('should use default platform', () => {
     const Platform = require('../index');
     const selectOS = Platform.select({
@@ -16,6 +15,10 @@ describe('OS', () => {
     expect(Platform.OS).toEqual('web');
     expect(selectOS).toEqual('testWeb');
   });
+
+  global.WXEnvironment = {
+    platform: 'ios'
+  };
 
   it('should use WXEnvironment platform', () => {
     const Platform = require('../index');
