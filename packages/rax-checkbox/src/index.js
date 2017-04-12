@@ -9,6 +9,12 @@ const CHECKBOX_DISABLED_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB
 
 class CheckBox extends Component {
 
+  static defaultProps = {
+    checked: null,
+    checkedImage: CHECKBOX_ENABLED_ICON,
+    uncheckedImage: CHECKBOX_DISABLED_ICON,
+  };
+
   constructor(props) {
     super(props);
 
@@ -74,13 +80,6 @@ var styles = {
     width: 40,
     height: 40
   }
-};
-
-
-CheckBox.defaultProps = {
-  checked: null,
-  checkedImage: CHECKBOX_ENABLED_ICON,
-  uncheckedImage: CHECKBOX_DISABLED_ICON,
 };
 
 export default CheckBox;
