@@ -86,7 +86,6 @@ class Picker extends Component {
   }
 
   render() {
-
     let style = {
       ...styles.initial,
       ...this.props.style,
