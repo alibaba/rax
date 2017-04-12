@@ -114,8 +114,8 @@ class Picker extends Component {
     } else {
       const pickerData = this.getPickerData();
       return (
-        <select style={style} onChange={function(e) {
-          self.handlePress(this.options.selectedIndex);
+        <select style={style} onChange={(e) => {
+          self.handlePress(e.target.options.selectedIndex);
         }}>
           {
             pickerData.items.map((item, index) => {

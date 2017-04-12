@@ -68,8 +68,8 @@ class TimePicker extends Component {
         <input
           type="time"
           value={selectedValue}
-          onChange={function() {
-            onTimeChange && onTimeChange(this.value);
+          onChange={(e) => {
+            onTimeChange && onTimeChange(e.target.value);
           }}
           style={style} />
       );

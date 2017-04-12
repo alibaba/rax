@@ -77,8 +77,8 @@ class DatePicker extends Component {
           defaultValue={selectedValue}
           min={minimumDate}
           max={maximumDate}
-          onChange={function() {
-            onDateChange && onDateChange(this.value);
+          onChange={(e) => {
+            onDateChange && onDateChange(e.target.value);
           }}
           style={style} />
       );
