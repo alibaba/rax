@@ -110,7 +110,8 @@
       "/node_modules/",
       "/fixtures/",
       "/__modules__/",
-      "/__files__/"
+      "/__files__/",
+      "/lib/"
     ]
   },
   "config": {

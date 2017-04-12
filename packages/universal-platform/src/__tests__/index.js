@@ -9,9 +9,9 @@ describe('OS', () => {
   it('should use WXEnvironment platform', () => {
     const Platform = require('../index');
     const selectOS = Platform.select({
-      ios: 'test',
-      android: 'testAndroid',
-      web: 'testWeb'
+      iOS: 'test',
+      Android: 'testAndroid',
+      Web: 'testWeb'
     });
 
     expect(Platform.OS).toEqual('ios');

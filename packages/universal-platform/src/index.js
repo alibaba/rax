@@ -6,5 +6,5 @@ if (typeof WXEnvironment === 'object') {
 
 export default {
   OS,
-  select: obj => obj[OS]
+  select: obj => obj[Object.keys(obj).find(el => el.toLowerCase() === OS)]
 };
