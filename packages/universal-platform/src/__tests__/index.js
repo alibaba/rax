@@ -1,14 +1,10 @@
 
 jest.autoMockOff();
-
-jest.mock('WXEnvironment', () => {
-  return {
-    platform: 'ios'
-  };
-});
+global.WXEnvironment = {
+  platform: 'ios'
+}
 
 describe('OS', () => {
-
   it('should use default platform', () => {
     const Platform = require('../index');
     const selectOS = Platform.select({
