@@ -26,9 +26,12 @@ class Col extends Component {
     } else {
       // if only one child, return this child
       children.props.style = {
+        ...styles.initial,
         ...this.props.style,
         ...children.props.style,
-        ...styles.initial,
+        ...{
+          'width': '1%', // only for web (Partial Android device column width is not the same problem)
+        },
       };
       return children;
     }
@@ -38,7 +41,6 @@ class Col extends Component {
 const styles = {
   initial: {
     'flex': 1,
-    'width': '1%', // only for web (Partial Android device column width is not the same problem)
   }
 };
 
