@@ -86,7 +86,6 @@ class Picker extends Component {
   }
 
   render() {
-    let self = this;
 
     let style = {
       ...styles.initial,
@@ -115,7 +114,7 @@ class Picker extends Component {
       const pickerData = this.getPickerData();
       return (
         <select style={style} onChange={(e) => {
-          self.handlePress(e.target.options.selectedIndex);
+          this.handlePress(e.target.options.selectedIndex);
         }}>
           {
             pickerData.items.map((item, index) => {
