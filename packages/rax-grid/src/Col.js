@@ -5,43 +5,35 @@ let defaultWidth = 750;
 
 class Col extends Component {
   render() {
+    
+    let style = {
+      flex: 1,
+    };
+    
+    // FIXME: user need sm?
     if (this.props.sm) {
-      styles.initial.flex = '';
-      styles.initial.float = 'left';
-      styles.initial.width = defaultWidth / 12 * this.props.sm;
+      style.flex = null;
+      style.float = 'left';
+      style.width = defaultWidth / 12 * Number(this.props.sm);
     }
 
-    let style = {
-      ...styles.initial,
-      ...this.props.style
-    };
-
     let children = this.props.children;
-    let length = children.length;
 
-    if (length) {
+    if (Array.isArray(children)) {
       return (
         <View {...this.props} style={style} />
       );
     } else {
-      // if only one child, return this child
+      // If only one child, return this child
       children.props.style = {
-        ...styles.initial,
+        ...style,
         ...this.props.style,
         ...children.props.style,
-        ...{
-          'width': '1%', // only for web (Partial Android device column width is not the same problem)
-        },
+        width: '1%', // FIXME: why 1% works? only for web (partial Android device column width is not the same problem)
       };
       return children;
     }
   }
 }
-
-const styles = {
-  initial: {
-    'flex': 1,
-  }
-};
 
 export default Col;
