@@ -61,7 +61,7 @@ pod install
 ```
 
 * 在 `Xcode` 中打开  `WeexDemo.xcworkspace`
-* 点击 <img src="http://img1.tbcdn.cn/L1/461/1/5470b677a2f2eaaecf412cc55eeae062dbc275f9" height="16" > (`Run` 按钮) 或者使用快捷键 `cmd + r `运行 
+* 点击 <img src="https://img1.tbcdn.cn/L1/461/1/5470b677a2f2eaaecf412cc55eeae062dbc275f9" height="16" > (`Run` 按钮) 或者使用快捷键 `cmd + r `运行 
 
 ## 运行 Rax Examples
 
@@ -85,7 +85,7 @@ npm start
 
 ![](https://img.alicdn.com/tfs/TB1bR8CQFXXXXXWXFXXXXXXXXXX-1828-594.png)
 
-* 点击 <img src="http://img1.tbcdn.cn/L1/461/1/5470b677a2f2eaaecf412cc55eeae062dbc275f9" height="16" > (`Run` 按钮) 或者使用快捷键 `cmd + r` 运行
+* 点击 <img src="https://img.alicdn.com/L1/461/1/5470b677a2f2eaaecf412cc55eeae062dbc275f9" height="16" > (`Run` 按钮) 或者使用快捷键 `cmd + r` 运行
 
 ## 调试
 
