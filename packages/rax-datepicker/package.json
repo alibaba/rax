@@ -1,7 +1,7 @@
 {
-  "name": "rax-icon",
+  "name": "rax-datepicker",
   "version": "0.2.11",
-  "description": "icon component for Rax.",
+  "description": "DatePicker component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -22,9 +22,8 @@
   },
   "dependencies": {
     "universal-env": "^0.2.11",
-    "rax-view": "^0.2.11",
     "rax-text": "^0.2.11",
-    "rax-image": "^0.2.11"
+    "rax-touchable": "^0.2.11"
   },
   "peerDependencies": {
     "rax": "0.x"
