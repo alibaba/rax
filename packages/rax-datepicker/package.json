@@ -23,8 +23,7 @@
   "dependencies": {
     "universal-env": "^0.2.11",
     "rax-text": "^0.2.11",
-    "rax-touchable": "^0.2.11",
-    "rax-picker": "^0.2.11"
+    "rax-touchable": "^0.2.11"
   },
   "peerDependencies": {
     "rax": "0.x"
