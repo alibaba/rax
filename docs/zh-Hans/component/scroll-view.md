@@ -26,6 +26,12 @@ import ScrollView from 'rax-scrollview';
 | onEndReached                   | Function |      | 滚动区域还剩 `onEndReachedThreshold` 的长度时触发    |
 | onScroll                       | Function |      | 滚动时触发的事件，返回当前滚动的水平垂直距离 |
 
+## 方法
+
+| 名称  | 描述  |
+| :------ | :------- |
+| scrollTo    | 滚动到指定位置（参数示例：{x:0, y:100}） |
+
 ## 使用示例
 
 ```jsx
