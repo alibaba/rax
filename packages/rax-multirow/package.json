@@ -10,7 +10,8 @@
   },
   "keywords": [
     "Rax",
-    "RaxUI"
+    "rax-component",
+    "react-component"
   ],
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
