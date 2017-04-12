@@ -36,7 +36,7 @@ import TextInput from 'rax-textinput';
 | value              | String   |      | 文本框的文字内容                                 |
 | onBlur             | Function |      | 文本框失焦时调用此函数。`onBlur={() => console.log('失焦啦')}` |
 | onFocus            | Function |      | 文本框获得焦点时调用此函数                            |
-| onChange           | Function |      | 文本框内容变化时调用此函数                            |
+| onChange           | Function |      | 文本框内容变化时调用此函数（用户输入完成时触发。通常在 blur 事件之后） |
 | onInput            | Function |      | 文本框输入内容时调用此函数                            |
 
 ## 基本示例
