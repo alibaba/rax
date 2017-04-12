@@ -60,8 +60,6 @@ class Picker extends Component {
     const {
       onValueChange,
       selectedValue,
-      minimumDate,
-      maximumDate,
     } = this.props;
 
     if (isWeex) {
