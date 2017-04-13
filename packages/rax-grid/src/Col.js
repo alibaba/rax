@@ -5,41 +5,31 @@ let defaultWidth = 750;
 
 class Col extends Component {
   render() {
-    if (this.props.sm) {
-      styles.initial.flex = '';
-      styles.initial.float = 'left';
-      styles.initial.width = defaultWidth / 12 * this.props.sm;
-    }
-
     let style = {
-      ...styles.initial,
-      ...this.props.style
+      flex: 1,
     };
 
     let children = this.props.children;
-    let length = children.length;
 
-    if (length) {
+    if (children.length) { // Array || String
       return (
         <View {...this.props} style={style} />
       );
     } else {
-      // if only one child, return this child
+      // If only one child, return this child
       children.props.style = {
+        ...style,
         ...this.props.style,
         ...children.props.style,
-        ...styles.initial,
+
+        // width: '1%' only for web (partial Android device column width is not the same problem)
+        // why 1% works? (In Android, the flex element is easy to be opened without the width)
+        // for example： MEIZU MX2 Android 4.4.4
+        width: '1%',
       };
       return children;
     }
   }
 }
-
-const styles = {
-  initial: {
-    'flex': 1,
-    'width': '1%', // only for web (Partial Android device column width is not the same problem)
-  }
-};
 
 export default Col;

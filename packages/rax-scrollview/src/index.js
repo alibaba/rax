@@ -55,13 +55,12 @@ class ScrollView extends Component {
 
         this.lastScrollDistance = scrollDistance;
       }
-
-      if (isWeex) {
-        e.nativeEvent = {
-          contentOffset: e.contentOffset
-        };
-        this.props.onScroll(e);
-      }
+    }
+    if (isWeex) {
+      e.nativeEvent = {
+        contentOffset: e.contentOffset
+      };
+      this.props.onScroll(e);
     }
   }
 
