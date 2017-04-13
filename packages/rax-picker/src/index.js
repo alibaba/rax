@@ -7,8 +7,10 @@ class Picker extends Component {
 
   constructor(props) {
     super(props);
+    let pickerData = this.getPickerData();
     this.state = {
-      selectedValue: props.selectedValue
+      selectedValue: props.selectedValue,
+      selectedLabel: pickerData.selectedLabel,
     };
   }
 
@@ -17,7 +19,11 @@ class Picker extends Component {
       children,
       selectedValue
     } = this.props;
-    let pickerItems = [], items = [], selectIndex = 0;
+    let pickerItems = [],
+      pickerLabelList = [],
+      items = [],
+      selectIndex = 0,
+      selectedLabel;
 
     if (children.length) {
       pickerItems = children;
@@ -25,35 +31,32 @@ class Picker extends Component {
       pickerItems = [children];
     }
 
-    let pickerStrList = pickerItems.map((item, index) => {
+    pickerLabelList = pickerItems.map((item, index) => {
       let {value, label, color} = item.props;
       items.push({
         value: value,
-        label: label,
-        textColor: color,
+        label: label || value,
       });
       if (value == selectedValue) {
         selectIndex = index;
+        selectedLabel = label;
       }
-      return item.props.value;
+      return label;
     });
 
     return {
       selectIndex: selectIndex,
-      pickerStrList: pickerStrList,
+      selectedLabel: selectedLabel,
+      pickerLabelList: pickerLabelList,
       items: items,
     };
   }
 
   getPickerDataByIndex = (index, pickerData) => {
-    let value = '';
-    let items = pickerData.items;
-    for (let i = 0; i < items.length; i++) {
-      if (index == i) {
-        value = items[i].value;
-      }
-    }
-    return value;
+    return {
+      value: pickerData.items[index].value,
+      label: pickerData.items[index].label,
+    };
   }
 
   handlePress = (webIndex) => {
@@ -67,18 +70,20 @@ class Picker extends Component {
       const pickerData = this.getPickerData();
       picker.pick({
         index: pickerData.selectIndex,
-        items: pickerData.pickerStrList,
+        items: pickerData.pickerLabelList,
       }, event => {
         if (event.result === 'success') {
-          onValueChange && onValueChange(event.data, pickerData.items);
+          let {value, label} = this.getPickerDataByIndex(event.data, pickerData);
+          onValueChange && onValueChange(value, pickerData.items);
           this.setState({
-            selectedValue: pickerData.items[event.data].value,
+            selectedValue: value,
+            selectedLabel: label,
           });
         }
       });
     } else {
       const pickerData = this.getPickerData();
-      let value = this.getPickerDataByIndex(webIndex, pickerData);
+      let {value} = this.getPickerDataByIndex(webIndex, pickerData);
       onValueChange && onValueChange(value, pickerData.items);
     }
   }
@@ -103,7 +108,7 @@ class Picker extends Component {
       return (
         <TouchableHighlight {...this.props} onPress={this.handlePress} style={style}>
           <Text style={textStyle}>
-            {this.state.selectedValue}
+            {this.state.selectedLabel}
           </Text>
         </TouchableHighlight>
       );
@@ -116,9 +121,9 @@ class Picker extends Component {
           {
             pickerData.items.map((item, index) => {
               if (index == pickerData.selectIndex) {
-                return <option selected="selected">{item.value}</option>;
+                return <option selected="selected" value={item.value}>{item.label}</option>;
               } else {
-                return <option>{item.value}</option>;
+                return <option value={item.value}>{item.label}</option>;
               }
             })
           }
