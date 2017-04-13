@@ -9,7 +9,6 @@ class Picker extends Component {
     super(props);
     let pickerData = this.getPickerData();
     this.state = {
-      selectedValue: props.selectedValue,
       selectedLabel: pickerData.selectedLabel,
     };
   }
@@ -76,7 +75,6 @@ class Picker extends Component {
           let {value, label} = this.getPickerDataByIndex(event.data, pickerData);
           onValueChange && onValueChange(value, pickerData.items);
           this.setState({
-            selectedValue: value,
             selectedLabel: label,
           });
         }
