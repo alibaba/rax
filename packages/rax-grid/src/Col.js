@@ -11,7 +11,7 @@ class Col extends Component {
 
     let children = this.props.children;
 
-    if (Array.isArray(children)) {
+    if (children.length) { // Array || String
       return (
         <View {...this.props} style={style} />
       );
