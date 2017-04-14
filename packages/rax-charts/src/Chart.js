@@ -2,8 +2,7 @@ import {createElement, Component, PropTypes, findDOMNode} from 'rax';
 import {isWeex} from 'universal-env';
 import Canvas from 'rax-canvas';
 
-import GM from './utils/GM';
-import isArray from './utils/isArray';
+import GM from './adaptGM';
 
 if (!isWeex) {
   GM.Global.pixelRatio = 2;
@@ -42,7 +41,7 @@ class Chart extends Component {
   renderChildren() {
     let {children} = this.props;
 
-    if (children && !isArray(children)) {
+    if (children && !Array.isArray(children)) {
       children = [children];
     }
 

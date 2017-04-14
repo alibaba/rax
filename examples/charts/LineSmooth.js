@@ -4,20 +4,20 @@ import Chart, {Line, Axis} from 'rax-charts';
 class LineSmoothDemo extends Component {
   render() {
     const lineSmoothData = [
-      {time: '周一', tem: 10, city: 'beijing'},
-      {time: '周二', tem: 22, city: 'beijing'},
-      {time: '周三', tem: 20, city: 'beijing'},
-      {time: '周四', tem: 26, city: 'beijing'},
-      {time: '周五', tem: 20, city: 'beijing'},
-      {time: '周六', tem: 26, city: 'beijing'},
-      {time: '周日', tem: 28, city: 'beijing'},
-      {time: '周一', tem: 5, city: 'newYork'},
-      {time: '周二', tem: 12, city: 'newYork'},
-      {time: '周三', tem: 26, city: 'newYork'},
-      {time: '周四', tem: 20, city: 'newYork'},
-      {time: '周五', tem: 28, city: 'newYork'},
-      {time: '周六', tem: 26, city: 'newYork'},
-      {time: '周日', tem: 20, city: 'newYork'}
+      {time: '1', tem: 10, city: 'beijing'},
+      {time: '2', tem: 22, city: 'beijing'},
+      {time: '3', tem: 20, city: 'beijing'},
+      {time: '4', tem: 26, city: 'beijing'},
+      {time: '5', tem: 20, city: 'beijing'},
+      {time: '6', tem: 26, city: 'beijing'},
+      {time: '7', tem: 28, city: 'beijing'},
+      {time: '1', tem: 5, city: 'newYork'},
+      {time: '2', tem: 12, city: 'newYork'},
+      {time: '3', tem: 26, city: 'newYork'},
+      {time: '4', tem: 20, city: 'newYork'},
+      {time: '5', tem: 28, city: 'newYork'},
+      {time: '6', tem: 26, city: 'newYork'},
+      {time: '7', tem: 20, city: 'newYork'}
     ];
 
     return <Chart style={{
