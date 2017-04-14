@@ -8,10 +8,6 @@
 $ npm install rax-calendar --save
 ```
 
-## 兼容性
-
-Web 可用
-
 ## 引用
 
 ```jsx
