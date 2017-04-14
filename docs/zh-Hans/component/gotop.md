@@ -30,9 +30,9 @@ import GoTop from 'rax-gotop';
 | 名称          | 类型       | 默认值                                      | 描述                     |
 | :---------- | :------- | :--------------------------------------- | :--------------------- |
 | name        | String   | Top                                      | 图标文字内容                 |
-| icon        | String   | //gw.alicdn.com/tps/TB10dz6KXXXXXc0XFXXXXXXXXXX-40-40.png_20x20.jpg | 图标 Icon URL            |
-| iconWidth   | String   | 90rem                                    | 返回顶部container宽度        |
-| iconHeight  | String   | 90rem                                    | 返回顶部container高度        |
+| icon        | String   | 内部默认图标 | 图标 Icon URL            |
+| iconWidth   | String   | 90                                    | 返回顶部container宽度        |
+| iconHeight  | String   | 90                                    | 返回顶部container高度        |
 | borderColor | String   | rgba(0, 0, 0, 0.1)                       | 返回顶部container border颜色 |
 | bottom      | int      | 80                                       | 离底部的距离                 |
 | onShow      | function | function() {}                            | icon显示回调               |

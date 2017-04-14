@@ -20,18 +20,18 @@ import Calendar from 'rax-calendar';
 
 | name      | type       | default  | describe   |
 | :------------- | :------- | :--------- | :----------- |
-| startDate      | String   | ''         | Optional start time      |
-| endDate        | String   | ''         | Optional end time      |
-| titleFormat    | String   | MMMM YYYY  | Month rendering format      |
-| dateFormat     | String   | YYYY-MM-DD | Return date format      |
-| weekStart      | Num      | 1          | Start the date as a week |
-| prevButtonText | String   | ''         | Display text for month switch button  |
-| nextButtonText | String   | ''         | Display text for month switch button  |
-| onDateSelect   | Function | ''         | Select a date       |
-| onTouchPrev    | Function | ''         | Last month         |
-| onTouchNext    | Function | ''         | Next month         |
+| startDate      | String   | ''         | optional start time      |
+| endDate        | String   | ''         | optional end time      |
+| titleFormat    | String   | MMMM YYYY  | month rendering format      |
+| dateFormat     | String   | YYYY-MM-DD | return date format      |
+| weekStart      | Num      | 1          | start the date as a week |
+| prevButtonText | String   | ''         | display text for month switch button  |
+| nextButtonText | String   | ''         | display text for month switch button  |
+| onDateSelect   | Function | ''         | select a date       |
+| onTouchPrev    | Function | ''         | last month         |
+| onTouchNext    | Function | ''         | next month         |
 
-## 基本示例
+## Example
 
 ```jsx
 // demo
