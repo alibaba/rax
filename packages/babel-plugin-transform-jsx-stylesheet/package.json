@@ -20,6 +20,6 @@
     "babel-plugin-syntax-jsx": "^6.18.0"
   },
   "dependencies": {
-    "camelcase": "^4.0.0"
+    "camelcase": "^3.0.0"
   }
 }
