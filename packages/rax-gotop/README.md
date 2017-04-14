@@ -31,7 +31,7 @@ user defined style：
 
 | name      | type       | default  | describe   |
 | :---------- | :------- | :--------------------------------------- | :--------------------- |
-| name        | String   | Top                                      | Icon text content                 |
+| name        | String   | Top                                      | icon text content                 |
 | icon        | String   | default icon | icon URL            |
 | iconWidth   | String   | 90                                    | container width        |
 | iconHeight  | String   | 90                                    | container height        |
