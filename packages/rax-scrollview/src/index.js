@@ -58,7 +58,10 @@ class ScrollView extends Component {
     }
     if (isWeex) {
       e.nativeEvent = {
-        contentOffset: e.contentOffset
+        contentOffset:{
+           x: - e.contentOffset.x,
+           y: - e.contentOffset.y
+        }
       };
       this.props.onScroll(e);
     }
