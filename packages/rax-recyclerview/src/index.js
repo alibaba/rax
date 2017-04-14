@@ -53,6 +53,7 @@ class RecyclerView extends Component {
   handleScroll = (e) => {
     e.nativeEvent = {
       contentOffset: {
+        // HACK: weex scroll event value is opposite of web
         x: - e.contentOffset.x,
         y: - e.contentOffset.y
       }
