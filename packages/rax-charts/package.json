@@ -9,7 +9,9 @@
     "url": "git+https://github.com/alibaba/rax.git"
   },
   "keywords": [
-    "Rax"
+    "Rax",
+    "rax-component",
+    "react-component"
   ],
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
