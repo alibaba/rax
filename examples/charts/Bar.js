@@ -4,9 +4,9 @@ import Chart, {Bar, Axis} from 'rax-charts';
 class BarDemo extends Component {
   render() {
     const barData = [
-      {tem:10,city:"tokyo"},
-      {tem:4,city:"newYork"},
-      {tem:3,city:"berlin"}
+      {tem: 10, city: 'tokyo'},
+      {tem: 4, city: 'newYork'},
+      {tem: 3, city: 'berlin'}
     ];
 
     return <Chart style={{

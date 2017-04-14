@@ -12,7 +12,7 @@ class LinePointDemo extends Component {
       {time: '2016-08-09 01:20:00', tem: 26},
       {time: '2016-08-10 01:40:00', tem: 28},
       {time: '2016-08-10 02:00:00', tem: 20},
-      {time: '2016-08-10 02:20:00', tem: 28}   
+      {time: '2016-08-10 02:20:00', tem: 28}
     ];
 
     return <Chart style={{
@@ -23,7 +23,7 @@ class LinePointDemo extends Component {
         type: 'timeCat',
         mask: 'yyyy-mm-dd',
         tickCount: 2,
-        range:[0,1]
+        range: [0, 1]
       },
       tem: {
         tickCount: 5,

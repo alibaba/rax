@@ -20,7 +20,7 @@ class LineDemo extends Component {
         type: 'timeCat',
         mask: 'mm／dd',
         tickCount: 3,
-        range:[0,1]
+        range: [0, 1]
       },
       tem: {
         tickCount: 5,
