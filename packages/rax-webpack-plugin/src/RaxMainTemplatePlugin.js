@@ -33,11 +33,11 @@ export default class CustomUmdMainTemplatePlugin {
       let sourcePrefix = '';
       let sourceSuffix = '';
 
-      if(typeof options.sourcePrefixFn === 'function' && 
-         typeof options.sourceSuffixFn === 'function') {
-        sourcePrefix = options.sourcePrefixFn(source, chunk, hash);
-        sourceSuffix = options.sourceSuffixFn(source, chunk, hash);
-      }else {
+      if (typeof this.options.sourcePrefixFn === 'function' &&
+         typeof this.options.sourceSuffixFn === 'function') {
+        sourcePrefix = this.options.sourcePrefixFn(source, chunk, hash);
+        sourceSuffix = this.options.sourceSuffixFn(source, chunk, hash);
+      } else {
         // module, function is private, only use in rax internal
         if (chunk.name.endsWith('.module') || target === 'module') {
           sourcePrefix = 'module.exports = ';
@@ -102,7 +102,6 @@ export default class CustomUmdMainTemplatePlugin {
           sourceSuffix = '});';
         }
       }
-
 
 
       return new ConcatSource(
