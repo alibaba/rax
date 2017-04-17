@@ -74,4 +74,4 @@ define("index.bundle", function(require) {/******/ (function(modules) { // webpa
 console.log('it work!');
 
 /***/ })
-/******/ ])}); require("index.bundle");;
+/******/ ])});

@@ -64,6 +64,69 @@ describe('MultiplePlatform', function() {
     expect(MultiplePlatform(config)).toEqual(expected);
   });
 
+  it('config `chunkFilenameFn` field', function() {
+    const config = {
+      platforms: ['weex'],
+      entry: {
+        'hello.bundle': './index.js'
+      },
+      module: {
+        loaders: [{
+          test: /\.jsx?$/,
+          loader: 'babel'
+        }]
+      },
+      output: {
+        chunkFilename: '[name].js',
+      }
+    };
+
+    const expected = [{
+      'entry': {
+        'hello.bundle': './index.js'
+      },
+      'module': {
+        'loaders': [{
+          'test': /\.jsx?$/,
+          'loader': 'babel'
+        }]
+      },
+      'platforms': [
+        'weex'
+      ],
+      output: {
+        chunkFilename: '[name].js',
+      }
+    }, {
+      'entry': {
+        'hello.bundle.weex': './index.js'
+      },
+      'module': {
+        'loaders': [{
+          'test': /\.jsx?$/,
+          'loader': 'babel'
+        }],
+        'preLoaders': [{
+          'test': /\.jsx?$/,
+          'exclude': /(node_modules|bower_components)/,
+          'loader': `${path.resolve(__dirname, '../PlatformLoader.js')}?platform=weex`
+
+        }]
+      },
+      'platforms': [
+        'weex'
+      ],
+      output: {
+        chunkFilename: '[name].weex.js',
+      }
+    }];
+    expect(MultiplePlatform(config, {
+      chunkFilenameFn: function(platformType) {
+        return '[name].' + platformType + '.js';
+      }
+    })).toEqual(expected);
+  });
+
   it('specified platform is `weex` pass options', function() {
     const config = {
       entry: {
