@@ -29,7 +29,6 @@ describe('rax-webpack-plugin', function() {
     const configFile = path.join(testDirectory, 'webpack.config.js');
 
 
-
     if (argv.indexOf('--updateFixture') !== -1) {
       outputPath = path.join(__dirname, 'fixtures', fixture, 'expected');
     }
