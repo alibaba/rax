@@ -1,11 +1,17 @@
 import {createElement, cloneElement, findDOMNode, isValidElement, Component} from 'rax';
 import View from 'rax-view';
-import ScrollView from 'rax-scrollview';
 import Image from 'rax-image';
+import ScrollView from 'rax-scrollview';
 import TabBarItem from './TabBarItem';
 import TabBarContents from './TabBarContents';
+import {getScrollViewStyle} from './hackIOS8Styles';
+import separateStyle from './separateStyle';
+import {isWeex} from 'universal-env';
 
-const isWeex = typeof callNative !== 'undefined';
+var insideEmbed = false;
+if (/[?&]{1}_page_inside_embed_=true(&?)/.test(location.search)) {
+  insideEmbed = true;
+}
 
 class Tabbar extends Component {
   static Item = TabBarItem;
@@ -19,10 +25,14 @@ class Tabbar extends Component {
   };
 
   handleTouchTap = (index) => {
-    if (isWeex) {
+    if (this.getTabs()[index].props && this.getTabs()[index].props.children) {
+      const tabs = this.getTabs();
+
       this.setState({
         selectedIndex: index
       });
+
+      this.scrollToSelectedItem(index);
     }
   };
 
@@ -40,9 +50,8 @@ class Tabbar extends Component {
     return tabs;
   }
 
-  getTabWidth() {
+  getTabItemWidth() {
     let tabs = this.getTabs();
-
     for (let i = 0; i < tabs.length; ++i) {
       if (tabs[i]) {
         return tabs[i].props.style.width;
@@ -60,124 +69,133 @@ class Tabbar extends Component {
       }
     }
 
-    tabs[initSelectedIndex].props.id = 'selected';
-
     this.setState({
       selectedIndex: initSelectedIndex
     });
     this.initSelectedIndex = initSelectedIndex;
   }
 
-  componentWillMount() {
-    this.insideEmbed = false;
-    if (/[?&]{1}_page_inside_embed_=true(&?)/.test(location.search)) {
-      this.insideEmbed = true;
+  scrollToSelectedItem() {
+    // scrollTo selected item
+    let tabItemWidth = this.getTabItemWidth();
+    let scrollLen = 0;
+    if (tabItemWidth * (this.state.selectedIndex + 1) > 750 / 2) {
+      scrollLen = tabItemWidth * this.state.selectedIndex - 750 / 2 + tabItemWidth / 2;
+    }
+
+    if (isWeex) {
+      try {
+        let dom = require('@weex-module/dom');
+        let k = parseInt(750 / tabItemWidth / 2);
+        let selected = this.refs[`tab_${this.state.selectedIndex - k}`];
+        if (selected) {
+          dom.scrollToElement(findDOMNode(selected), {
+            offset: 0
+          });
+        }
+      } catch (e) {
+        //
+      }
+    } else {
+      if (findDOMNode(this.refs.ScrollBar)) {
+        this.refs.ScrollBar.scrollTo({x: scrollLen});
+      }
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.setInitSelectedIndex();
-    if (isWeex) {
-      let dom = require('@weex-module/dom');
-      let selected = findDOMNode('selected');
+  }
 
-      if (selected) {
-        dom.scrollToElement(selected.ref, {
-          offset: 0
-        });
-      }
+  componentDidMount() {
+    this.scrollToSelectedItem();
+  }
+
+  compatRNApi_style() {
+    if (this.props.barTintColor) {
+      return Object.assign({}, this.props.style, {
+        backgroundColor: this.props.barTintColor
+      });
     } else {
-      let tabWidth = this.getTabWidth();
-      let scrollLen = 0;
-      if (tabWidth * (this.initSelectedIndex + 1) > 750) {
-        scrollLen = (tabWidth * (this.initSelectedIndex + 1) - 750 / 2 - tabWidth / 2) / 2;
-      }
-
-      if (findDOMNode(this.refs.ScrollBar)) {
-        findDOMNode(this.refs.ScrollBar).scrollLeft = scrollLen;
-      }
+      return Object.assign({}, this.props.style);
     }
   }
 
   render() {
-    if (this.props.autoHidden && this.insideEmbed) {
+    if (this.props.autoHidden && insideEmbed) {
       return null;
     }
 
-    let tabContent = [];
-    let tabContentCount = 0;
+    let tabContents = [];
+    let tabContentsCount = 0;
 
     let tabs = this.getTabs().map((tab, index) => {
       if (tab.props.children) {
-        tabContent.push(createElement(TabBarContents, {
+        tabContents.push(createElement(TabBarContents, {
           key: index,
           index: index,
           selected: this.state.selectedIndex === index,
         }, tab.props.children));
-        ++ tabContentCount;
+        ++ tabContentsCount;
       } else {
-        tabContent.push(undefined);
+        tabContents.push(undefined);
       }
 
       return cloneElement(tab, {
         index: index,
+        ref: `tab_${index}`,
         selected: this.state.selectedIndex === index,
         selectedIcon: tab.props.selectedIcon,
         handleTouchTap: this.handleTouchTap,
-        selfTabContentNotEmpty: tab.props.children ? true : false,
-        widthFixed: this.props.horizontal || false
+        inHorizontal: this.props.horizontal || false
       });
     });
+
+    let tabbarStyle = this.compatRNApi_style();
+
+    let barBgImgInfo = separateStyle(tabbarStyle, 'backgroundImage', {
+      width: 750,
+      height: tabbarStyle.height,
+    });
+
     let tabsElement = null;
-
-    let tabsElementStyle = Object.assign({}, this.props.style);
-    let tabsElementBgImgStyle = null;
-    if (tabsElementStyle.backgroundImage) {
-      tabsElementBgImgStyle = {
-        width: 750,
-        height: tabsElementStyle.height,
-        uri: tabsElementStyle.backgroundImage.replace(/url\([\'\"]?([^\'\"]*)[\'\"]?\)/, '$1')
-      };
-      delete tabsElementStyle.backgroundImage;
-    }
-
     if (this.props.horizontal) {
       tabsElement =
-        <View style={[styles.barWrap, tabsElementStyle]}>
-          {tabsElementBgImgStyle ? <Image source={{uri: tabsElementBgImgStyle.uri}} style={[styles.barBgImg, tabsElementBgImgStyle]} /> : null}
-          <ScrollView ref="ScrollBar" horizontal={true} showsHorizontalScrollIndicator={false} style={[styles.bar]}>
-            {tabs}
-          </ScrollView>
-          {this.props.extraElement}
-        </View>
+        <ScrollView ref="ScrollBar" horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={getScrollViewStyle()} style={[styles.bar]}>
+          {tabs}
+        </ScrollView>
       ;
     } else {
       tabsElement =
-        <View style={[styles.barWrap, tabsElementStyle]}>
-          {tabsElementBgImgStyle ? <Image source={{uri: tabsElementBgImgStyle.uri}} style={[styles.barBgImg, tabsElementBgImgStyle]} /> : null}
-          <View style={[styles.bar]}>
-            {tabs}
-          </View>
-          {this.props.extraElement}
+        <View style={[styles.bar]}>
+          {tabs}
         </View>
       ;
     }
 
-    if (tabContentCount == 0) {
-      return tabsElement;
+    let bar =
+      <View style={[styles.barWrap, tabbarStyle]}>
+        {barBgImgInfo ? <Image source={{uri: barBgImgInfo.uri}} style={[styles.barBgImg, barBgImgInfo]} /> : null}
+        {tabsElement}
+        {this.props.extraElement}
+      </View>
+    ;
+
+    if (tabContentsCount == 0) {
+      return bar;
     } else {
-      if (this.props.fixedPlace == 'bottom') {
+      if (this.props.position == 'bottom' || this.props.fixedPlace == 'bottom') {
         return (
           <View style={styles.container}>
-            <View style={styles.content}>{tabContent}</View>
-            {tabsElement}
+            <View style={styles.content}>{tabContents}</View>
+            {bar}
           </View>
         );
       } else {
         return (
           <View style={styles.container}>
-            {tabsElement}
-            <View style={styles.content}>{tabContent}</View>
+            {bar}
+            <View style={styles.content}>{tabContents}</View>
           </View>
         );
       }
@@ -205,6 +223,7 @@ const styles = {
   },
   bar: {
     display: 'flex',
+    whiteSpace: 'normal',
     flex: 'initial',
     flexDirection: 'row',
     alignItems: 'center',

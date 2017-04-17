@@ -31,6 +31,8 @@ module.exports = {
       includePolyfills: false,
       // Config which polyfill should include, defaut is empty
       polyfillModules: [],
+      // Check duplicate dependencies, default is ['rax']
+      duplicateCheck: ['rax'],
     })
   ]
 }

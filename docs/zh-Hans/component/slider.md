@@ -70,8 +70,7 @@ slideTo(index) {
 
 ## 基本示例
 
-
-<img src="https://img.alicdn.com/tps/TB1Wk18KVXXXXbYXVXXXXXXXXXX-392-211.gif" alt="图片名称" align=center />
+本 Demo 演示最基本的 Slider
 
 ```jsx
 // demo

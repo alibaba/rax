@@ -156,16 +156,16 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
     const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-
-    const document = new Document(instanceId, __weex_options__.bundleUrl);
-    const location = new URL(__weex_options__.bundleUrl);
+    const bundleUrl = __weex_options__.bundleUrl;
+    const document = new Document(instanceId, bundleUrl);
+    const documentURL = new URL(bundleUrl);
     const modules = {};
 
     instance = instances[instanceId] = {
       document,
       instanceId,
       modules,
-      origin: location.origin,
+      origin: documentURL.origin,
       uid: 0
     };
 
@@ -176,6 +176,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
     // Extend document
     require('./document.weex')(__weex_require__, document);
+
+    const location = require('./location.weex')(__weex_require__, documentURL);
 
     const {
       fetch,
