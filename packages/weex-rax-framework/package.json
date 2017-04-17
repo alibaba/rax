@@ -18,7 +18,8 @@
   "dependencies": {
     "event-target-shim": "^2.0.0",
     "rax": "^0.2.11",
-    "runtime-shared": "^0.2.11"
+    "runtime-shared": "^0.2.11",
+    "weex-plugin--weex-gcanvas": "^0.3.3"
   },
   "devDependencies": {
     "weex-runtime-js": "^0.19.8",

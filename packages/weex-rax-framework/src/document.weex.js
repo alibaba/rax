@@ -1,4 +1,5 @@
 import EventEmitter from './emitter';
+import Element from './element.weex';
 
 const DOM_MODULE = '@weex-module/dom';
 const VISIBLE = 'visible';
@@ -80,6 +81,12 @@ module.exports = function(__weex_require__, document) {
           addBodyAppearListener(document);
         }
         return body;
+      }
+    });
+
+    Object.defineProperty(document, 'getElementById', {
+      value: function(id) {
+        return new Element(document.getRef(id));
       }
     });
   } catch (e) {

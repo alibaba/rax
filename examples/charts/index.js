@@ -15,15 +15,17 @@ class Page extends Component {
   render() {
     return <div>
       <Bar />
-      <BarRegion />
-      <Area />
-      <AreaStack />
-      <Line />
-      <LinePoint />
-      <LineSmooth />
-      <Point />
-      <Pie />
-      <PieRose />
+      {
+        // <BarRegion />
+        // <Area />
+        // <AreaStack />
+        // <Line />
+        // <LinePoint />
+        // <LineSmooth />
+        // <Point />
+        // <Pie />
+        // <PieRose />
+      }
     </div>;
   }
 }

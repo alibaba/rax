@@ -29,7 +29,7 @@ class Chart extends Component {
 
     context.render();
     this.chart = new GM.Chart({
-      id: this.id,
+      id: isWeex ? findDOMNode(this.id).ref : this.id,
       context
     });
     this.chart.source(data, config);

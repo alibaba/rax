@@ -1,10 +1,10 @@
 import {createElement, Component, PropTypes, findDOMNode} from 'rax';
 import {isWeex} from 'universal-env';
 
-let CanvasWeex = null;
+let canvasWeex = null;
 
 if (isWeex) {
-  CanvasWeex = require('./canvas.weex');
+  canvasWeex = require('./canvas.weex');
 }
 
 class Canvas extends Component {
@@ -12,7 +12,7 @@ class Canvas extends Component {
     const canvas = findDOMNode(this.refs.canvas);
 
     if (isWeex) {
-      return CanvasWeex.init(canvas);
+      return canvasWeex.init(canvas);
     } else {
       return new Promise((resolve, reject) => {
         if (canvas && canvas.getContext) {
