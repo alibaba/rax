@@ -84,7 +84,7 @@ describe('rax-webpack-plugin', function() {
     });
   });
 
-  it('bundle', function(done) {
+  it('custom', function(done) {
     runWebpack(done, 'custom', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
