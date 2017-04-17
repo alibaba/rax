@@ -70,6 +70,12 @@ module.exports = function MultiplePlatform(config, options = {}) {
 
       platformConfig.entry = platformEntry;
 
+      // support chunkFilename config according to platformType
+      if(typeof options.chunkFilenameFn === 'function') {
+          platformConfig.output.chunkFilename = options.chunkFilenameFn(platformType);
+        }
+      }
+
       if (Array.isArray(options.name)) {
         options.name.map(name => {
           nameQuery += '&name[]=' + name;
