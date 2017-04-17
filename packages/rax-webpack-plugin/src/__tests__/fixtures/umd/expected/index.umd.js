@@ -1,27 +1,27 @@
 
-;(function(fn) {
-  if (typeof exports === "object" && typeof module !== "undefined") {
-    module.exports = fn();
-  } else if (typeof define === "function") {
-    define("index.umd", function(require, exports, module){
+  ;(function(fn) {
+    if (typeof exports === "object" && typeof module !== "undefined") {
       module.exports = fn();
-    });
-  } else {
-    var root;
-    if (typeof window !== "undefined") {
-      root = window;
-    } else if (typeof self !== "undefined") {
-      root = self;
-    } else if (typeof global !== "undefined") {
-      root = global;
+    } else if (typeof define === "function") {
+      define("index.umd", function(require, exports, module){
+        module.exports = fn();
+      });
     } else {
-      // NOTICE: In JavaScript strict mode, this is null
-      root = this;
+      var root;
+      if (typeof window !== "undefined") {
+        root = window;
+      } else if (typeof self !== "undefined") {
+        root = self;
+      } else if (typeof global !== "undefined") {
+        root = global;
+      } else {
+        // NOTICE: In JavaScript strict mode, this is null
+        root = this;
+      }
+      root["index.umd"] = fn();
     }
-    root["index.umd"] = fn();
-  }
-})(function(){
-  return /******/ (function(modules) { // webpackBootstrap
+  })(function(){
+    return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
