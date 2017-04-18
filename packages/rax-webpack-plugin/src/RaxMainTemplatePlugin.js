@@ -33,8 +33,8 @@ export default class CustomUmdMainTemplatePlugin {
       let sourcePrefix = '';
       let sourceSuffix = '';
 
-      if (typeof this.options.sourcePrefixFn === 'function' &&
-         typeof this.options.sourceSuffixFn === 'function') {
+      if (typeof this.options.sourcePrefix === 'function' &&
+         typeof this.options.sourceSuffix === 'function') {
         sourcePrefix = this.options.sourcePrefix(source, chunk, hash);
         sourceSuffix = this.options.sourceSuffix(source, chunk, hash);
       } else {
