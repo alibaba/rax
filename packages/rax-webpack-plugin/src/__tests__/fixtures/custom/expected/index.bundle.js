@@ -1,6 +1,5 @@
-module.exports = function(require, exports, module) {
-    var weex = this["weex"];
-    module.exports = /******/ (function(modules) { // webpackBootstrap
+// {"framework" : "Rax"}
+define("index.bundle", function(require) {/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -75,4 +74,4 @@ module.exports = function(require, exports, module) {
 console.log('it work!');
 
 /***/ })
-/******/ ])};;
+/******/ ])});
