@@ -22,7 +22,7 @@ import CheckBox from 'rax-checkbox';
 | checkedImage | String |      | 选中图片 |
 | uncheckedImage | String |      | 非选中图片 |
 | containerStyle | Object |      | 选择框容器样式 |
-| checkboxStyle | Object |      | 选择框图片央视 |
+| checkboxStyle | Object |      | 选择框图片样式 |
 | onChange | Function |      | 选择事件 |
 
 ## 基本示例
