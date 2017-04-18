@@ -35,8 +35,8 @@ export default class CustomUmdMainTemplatePlugin {
 
       if (typeof this.options.sourcePrefixFn === 'function' &&
          typeof this.options.sourceSuffixFn === 'function') {
-        sourcePrefix = this.options.sourcePrefixFn(source, chunk, hash);
-        sourceSuffix = this.options.sourceSuffixFn(source, chunk, hash);
+        sourcePrefix = this.options.sourcePrefix(source, chunk, hash);
+        sourceSuffix = this.options.sourceSuffix(source, chunk, hash);
       } else {
         // module, function is private, only use in rax internal
         if (chunk.name.endsWith('.module') || target === 'module') {

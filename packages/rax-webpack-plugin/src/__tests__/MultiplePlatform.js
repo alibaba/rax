@@ -64,7 +64,7 @@ describe('MultiplePlatform', function() {
     expect(MultiplePlatform(config)).toEqual(expected);
   });
 
-  it('config `chunkFilenameFn` field', function() {
+  it('config `chunkFilename` field', function() {
     const config = {
       platforms: ['weex'],
       entry: {
@@ -121,7 +121,7 @@ describe('MultiplePlatform', function() {
       }
     }];
     expect(MultiplePlatform(config, {
-      chunkFilenameFn: function(platformType) {
+      chunkFilename: function(platformType) {
         return '[name].' + platformType + '.js';
       }
     })).toEqual(expected);
