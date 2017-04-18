@@ -7,10 +7,10 @@ module.exports = {
   plugins: [
     new RaxWebpackPlugin({
       target: 'bundle',
-      sourcePrefixFn: function(source, chunk, hash) {
+      sourcePrefix: function(source, chunk, hash) {
         return 'define("' + chunk.name + '", function(require) {';
       },
-      sourceSuffixFn: function(source, chunk, hash) {
+      sourceSuffix: function(source, chunk, hash) {
         return '})';
       }
     })
