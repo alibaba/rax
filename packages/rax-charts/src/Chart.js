@@ -22,6 +22,7 @@ class Chart extends Component {
 
   draw(context) {
     const {children, data, config} = this.props;
+    const el = findDOMNode(this.id);
 
     if (!children) {
       return;
@@ -29,7 +30,7 @@ class Chart extends Component {
 
     context.render();
     this.chart = new GM.Chart({
-      id: isWeex ? findDOMNode(this.id).ref : this.id,
+      el,
       context
     });
     this.chart.source(data, config);

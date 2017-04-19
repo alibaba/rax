@@ -24,6 +24,10 @@ global.WXEnvironment = {
   'deviceWidth': 750
 };
 
+jest.mock('@weex-module/gcanvas', () => {
+  return {};
+}, {virtual: true});
+
 describe('framework', () => {
   let instance;
   let runtime;

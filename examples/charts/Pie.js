@@ -13,7 +13,7 @@ class PieDemo extends Component {
       width: 750,
       height: 350
     }} data={pieData}>
-      <Coord type="polar" inner={0.4} transposed={true} />
+      <Coord type="polar" inner={0.6} transposed={true} />
       <Pie position="a*b" color="c" inner={0.3} />
     </Chart>;
   }

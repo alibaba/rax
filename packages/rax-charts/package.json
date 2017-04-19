@@ -21,7 +21,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "g2-mobile": "^2.1.14",
+    "g2-mobile": "^2.1.17",
     "rax-canvas": "^0.2.11",
     "universal-env": "^0.2.11"
   },
