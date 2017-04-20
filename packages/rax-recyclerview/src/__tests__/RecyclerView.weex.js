@@ -80,7 +80,7 @@ describe('RecyclerView in weex', () => {
       <RecyclerView {...props} />
     );
     let tree = component.toJSON();
-    expect(tree.children[0].children[0].tagName).toEqual('HEADER');
+    expect(tree.children[0].tagName).toEqual('HEADER');
   });
 
   it('should use div replace cell when not in RecyclerView', () => {

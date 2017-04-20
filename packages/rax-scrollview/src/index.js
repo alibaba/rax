@@ -1,12 +1,14 @@
 import {Component, createElement, findDOMNode} from 'rax';
 import {isWeex, isWeb} from 'universal-env';
 import View from 'rax-view';
+import RefreshControl from 'rax-refreshcontrol';
 
 const DEFAULT_END_REACHED_THRESHOLD = 500;
 const DEFAULT_SCROLL_CALLBACK_THROTTLE = 50;
 const FULL_WIDTH = 750;
 
 class ScrollView extends Component {
+
   static defaultProps = {
     scrollEventThrottle: DEFAULT_SCROLL_CALLBACK_THROTTLE,
     onEndReachedThreshold: DEFAULT_END_REACHED_THRESHOLD,
@@ -17,6 +19,14 @@ class ScrollView extends Component {
 
   lastScrollDistance = 0;
   lastScrollContentSize = 0;
+  loadmoreretry = 1;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loadmoreretry: 0,
+    };
+  }
 
   handleScroll = (e) => {
     if (isWeb) {
@@ -40,7 +50,7 @@ class ScrollView extends Component {
           this.scrollerNodeSize = this.props.horizontal ? this.scrollerNode.offsetWidth : this.scrollerNode.offsetHeight;
         }
 
-        // NOTE：iOS7/8下使用offsetHeight/Width获取高/宽度值是屏幕高度，不符合期望，改成 scrollHeight/Width
+        // NOTE：in iOS7/8 offsetHeight/Width is is inaccurate （ use scrollHeight/Width ）
         let scrollContentSize = this.props.horizontal ? this.scrollerNode.scrollWidth : this.scrollerNode.scrollHeight;
         let scrollDistance = this.props.horizontal ? this.scrollerNode.scrollLeft : this.scrollerNode.scrollTop;
         let isEndReached = scrollContentSize - scrollDistance - this.scrollerNodeSize < this.props.onEndReachedThreshold;
@@ -68,11 +78,14 @@ class ScrollView extends Component {
     }
   }
 
-  // Reset scroll state, only for web now.
-  resetScroll = (options) => {
+  resetScroll = () => {
     if (isWeb) {
       this.lastScrollContentSize = 0;
       this.lastScrollDistance = 0;
+    } else {
+      this.setState({
+        loadmoreretry: this.loadmoreretry++,
+      });
     }
   }
 
@@ -109,6 +122,7 @@ class ScrollView extends Component {
       onEndReached,
       onEndReachedThreshold,
       onScroll,
+      children,
     } = this.props;
 
     // In weex must be int value
@@ -136,11 +150,24 @@ class ScrollView extends Component {
       }
     }
 
+    let refreshContainer = <View />, contentChild;
+    if (Array.isArray(children)) {
+      contentChild = children.map((child, index) => {
+        if (child.type == RefreshControl) {
+          refreshContainer = child;
+        } else {
+          return child;
+        }
+      });
+    } else {
+      contentChild = children;
+    }
+
     const contentContainer =
       <View
         ref="contentContainer"
         style={contentContainerStyle}>
-        {this.props.children}
+        {contentChild}
       </View>;
 
     const baseStyle = this.props.horizontal ? styles.baseHorizontal : styles.baseVertical;
@@ -155,14 +182,16 @@ class ScrollView extends Component {
     if (isWeex) {
       return (
         <scroller
-          id={id}
+          {...this.props}
           style={scrollerStyle}
           showScrollbar={showsScrollIndicator}
           onLoadmore={onEndReached}
           onScroll={onScroll ? this.handleScroll : null}
           loadmoreoffset={onEndReachedThreshold}
+          loadmoreretry={this.state.loadmoreretry}
           scrollDirection={this.props.horizontal ? 'horizontal' : 'vertical'}
         >
+          {refreshContainer}
           {contentContainer}
         </scroller>
       );
