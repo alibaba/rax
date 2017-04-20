@@ -10,8 +10,12 @@ class ListViewTest extends Component {
     return (
       <ListView
         ref="scrollview"
-        renderHeader={() => {return <span/>}}
-        renderFooter={() => {return <span/>}}
+        renderHeader={() => {
+          return <span />;
+        }}
+        renderFooter={() => {
+          return <span />;
+        }}
         renderRow={(num) => {
           return <span>{num}</span>;
         }}
