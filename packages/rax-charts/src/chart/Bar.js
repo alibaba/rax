@@ -1,6 +1,4 @@
-import {createElement, Component} from 'rax';
-
-export default class Bar extends Component {
+export default class Bar {
   static draw = (chart, props) => {
     const {position, color, setColorCallback, shape, style} = props;
 

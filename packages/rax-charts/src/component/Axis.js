@@ -1,6 +1,4 @@
-import {createElement, Component} from 'rax';
-
-export default class Axis extends Component {
+export default class Axis {
   static draw = (chart, props) => {
     const {name = '', label = {
       fontSize: 14

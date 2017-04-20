@@ -1,6 +1,4 @@
-import {createElement, Component} from 'rax';
-
-export default class Line extends Component {
+export default class Line {
   static draw = (chart, props) => {
     const {position, color, setColorCallback, shape, size} = props;
 

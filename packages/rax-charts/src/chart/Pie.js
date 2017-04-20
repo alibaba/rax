@@ -1,6 +1,4 @@
-import {createElement, Component} from 'rax';
-
-export default class Pie extends Component {
+export default class Pie {
   static draw = (chart, props) => {
     const {position, color, inner} = props;
 

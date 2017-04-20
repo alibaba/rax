@@ -1,28 +1,31 @@
 import {createElement, Component, PropTypes, findDOMNode} from 'rax';
-import {isWeex} from 'universal-env';
+import {isWeex, isWeb} from 'universal-env';
 import Canvas from 'rax-canvas';
 
-import GM from './adaptGM';
+import GM from 'g2-mobile';
 
-if (!isWeex) {
+if (isWeb) {
   GM.Global.pixelRatio = 2;
 }
 
 class Chart extends Component {
   constructor(props) {
     super(props);
-    this.id = `canvas_${parseInt(Math.random() * 899999 + 100000)}`;
   }
 
+  setRef = (ref) => {
+    this.chartInstance = ref;
+  };
+
   componentDidMount() {
-    this.refs[this.id].getContext().then((context) => {
+    this.chartInstance.getContext().then((context) => {
       this.draw(context);
     });
   }
 
   draw(context) {
     const {children, data, config} = this.props;
-    const el = findDOMNode(this.id);
+    const el = findDOMNode(this.chartInstance);
 
     if (!children) {
       return;
@@ -36,10 +39,10 @@ class Chart extends Component {
     this.chart.source(data, config);
     this.chart.axis(false);
 
-    this.renderChildren();
+    this.renderChildren(context);
   }
 
-  renderChildren() {
+  renderChildren(context) {
     let {children} = this.props;
 
     if (children && !Array.isArray(children)) {
@@ -52,6 +55,7 @@ class Chart extends Component {
       }
     });
     this.chart.render();
+    context.render();
   }
 
   render() {
@@ -66,7 +70,7 @@ class Chart extends Component {
     }
 
     return (
-      <Canvas style={chartStyle} ref={this.id} id={this.id} />
+      <Canvas style={chartStyle} ref={this.setRef} />
     );
   }
 }

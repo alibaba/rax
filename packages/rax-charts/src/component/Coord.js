@@ -1,6 +1,4 @@
-import {createElement, Component} from 'rax';
-
-export default class Coord extends Component {
+export default class Coord {
   static draw = (chart, props) => {
     const {type = 'rect', transposed, inner} = props;
 

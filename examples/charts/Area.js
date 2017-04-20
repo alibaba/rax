@@ -42,11 +42,11 @@ class AreaDemo extends Component {
       height: 350
     }} data={areaData} config={areaConfig}>
       <Axis name="time" label={(text, index, total) => {
-        let cfg = Chart.Util.mix({}, {
+        let cfg = {
           fill: '#979797',
           font: '14px san-serif',
           offset: 6
-        });
+        };
         if (index === 0) {
           cfg.textAlign = 'start';
         }

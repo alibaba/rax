@@ -1,7 +1,4 @@
 import Chart from './Chart';
-import GM from 'g2-mobile';
-
-Chart.Util = GM.Util;
 
 export Axis from './component/Axis';
 export Coord from './component/Coord';
