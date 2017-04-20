@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "rax-view": "^0.2.11",
+    "rax-refreshcontrol": "^0.2.11",
     "universal-env": "^0.2.11"
   },
   "peerDependencies": {
