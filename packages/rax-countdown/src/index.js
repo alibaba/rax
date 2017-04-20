@@ -8,8 +8,9 @@ function isFunction(functionToCheck) {
 };
 
 function addZero(num, timeWrapStyle, timeBackground, timeBackgroundStyle, timeStyle, secondStyle) {
-  const displayFirstNum = num < 10 ? 0 : num.toString().slice(0, 1);
-  const displaySecondNum = num < 10 ? num : num.toString().slice(1);
+  const displayNum = num < 0 ? 0 : num;
+  const displayFirstNum = displayNum < 10 ? 0 : displayNum.toString().slice(0, 1);
+  const displaySecondNum = displayNum < 10 ? displayNum : displayNum.toString().slice(1);
   return <View style={[timeWrapStyle, styles.item]}>
       {
         timeBackground ?
@@ -93,7 +94,7 @@ class Index extends Component {
   tick = () => {
     const {onComplete, onTick, interval} = this.props;
     const {timeRemaining} = this.state;
-    const countdownComplete = 0 >= timeRemaining;
+    const countdownComplete = 1000 > timeRemaining;
 
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
