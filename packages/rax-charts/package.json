@@ -1,7 +1,7 @@
 {
-  "name": "rax-canvas",
+  "name": "rax-charts",
   "version": "0.2.11",
-  "description": "canvas for Rax.",
+  "description": "charts for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -21,8 +21,9 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.11",
-    "weex-plugin--weex-gcanvas": "^0.3.3"
+    "g2-mobile": "^2.1.17",
+    "rax-canvas": "^0.2.11",
+    "universal-env": "^0.2.11"
   },
   "peerDependencies": {
     "rax": "0.x"
