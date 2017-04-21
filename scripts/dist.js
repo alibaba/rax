@@ -20,6 +20,7 @@ const fs = require('fs');
   'rax-image',
   'rax-link',
   'rax-listview',
+  'rax-menulist',
   'rax-modal',
   'rax-multirow',
   'rax-navigation',
