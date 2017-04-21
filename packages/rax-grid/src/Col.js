@@ -9,11 +9,20 @@ class Col extends Component {
       flex: 1,
     };
 
-    let children = this.props.children;
+    let {
+      children, 
+      _autoNotWrapView
+    } = this.props;
 
-    if (children.length) { // Array || String
+    if (children.length || !_autoNotWrapView) { // Array || String
       return (
-        <View {...this.props} style={style} />
+        <View 
+          {...this.props} 
+          style={{
+            ...style,
+            ...this.props.style
+          }} 
+        />
       );
     } else {
       // If only one child, return this child
