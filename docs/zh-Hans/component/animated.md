@@ -17,7 +17,7 @@ import Button from 'rax-animated';
 
 最简单的工作流程就是创建一个`Animated.Value`，把它绑定到组件的一个或多个样式属性上。然后可以通过动画驱动它，譬如`Animated.timing`，或者通过`Animated.event`把它关联到一个手势上，譬如拖动或者滑动操作。除了样式，`Animated.value`还可以绑定到props上，并且一样可以被插值。这里有一个简单的例子，一个容器视图会在加载的时候淡入显示：
 
-```javascript
+```jsx
 class FadeInView extends React.Component {
    constructor(props) {
      super(props);
@@ -40,7 +40,7 @@ class FadeInView extends React.Component {
      );
    }
  }
- ```
+```
 
 
  注意只有声明为可动画化的组件才能被关联动画。`View`、`Text`，还有`Image`都是可动画化的。如果你想让自定义组件可动画化，可以用`createAnimatedComponent`。这些特殊的组件里面用了一些黑魔法，来把动画数值绑定到属性上，然后在每帧去执行原生更新，来避免每次render和同步过程的开销。他们还处理了在节点卸载时的清理工作以确保使用安全。
@@ -51,7 +51,7 @@ class FadeInView extends React.Component {
 
  举个例子，你可能希望你的`Animated.Value`从0变化到1时，把组件的位置从150px移动到0px，不透明度从0到1。可以通过以下的方法修改`style`属性来实现：
 
- ```javascript
+```jsx
  style={{
    opacity: this.state.fadeAnim, // Binds directly
    transform: [{
@@ -61,7 +61,7 @@ class FadeInView extends React.Component {
      }),
    }],
  }}>
- ```
+```
 
  动画还可以被更复杂地组合，通过一些辅助函数例如`sequence`或者`parallel`（它们分别用于先后执行多个动画和同时执行多个动画），而且还可以通过把toValue设置为另一个Animated.Value来产生一个动画序列。
 
@@ -73,93 +73,70 @@ class FadeInView extends React.Component {
 
 ### 方法
 
-<div class="props">
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="decay"></a><span class="propType">static </span>decay<span class="propType">(value: AnimatedValue | AnimatedValueXY, config: DecayAnimationConfig)</span> <a class="hash-link" href="#decay">#</a></h4>
-		<div>
-			<p>推动一个值以一个初始的速度和一个衰减系数逐渐变为0。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="timing"></a><span class="propType">static </span>timing<span class="propType">(value: AnimatedValue | AnimatedValueXY, config: TimingAnimationConfig)</span> <a class="hash-link" href="#timing">#</a></h4>
-		<div>
-			<p>推动一个值按照一个过渡曲线而随时间变化。<code>Easing</code>模块定义了一大堆曲线，你也可以使用你自己的函数。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="spring"></a><span class="propType">static </span>spring<span class="propType">(value: AnimatedValue | AnimatedValueXY, config: SpringAnimationConfig)</span> <a class="hash-link" href="#spring">#</a></h4>
-		<div>
-			<p>产生一个基于Rebound和Origami实现的Spring动画。它会在<code>toValue</code>值更新的同时跟踪当前的速度状态，以确保动画连贯。可以链式调用。</p>
-		</div>
-	</div>
-	<div class="prop"><h4 class="propTitle"><a class="anchor" name="add"></a><span class="propType">static </span>add<span class="propType">(a: Animated, b: Animated)</span> <a class="hash-link" href="#add">#</a></h4><div>
-	<p>将两个动画值相加计算，创建一个新的动画值。</p></div></div>
-<div class="prop"><h4 class="propTitle"><a class="anchor" name="multiply"></a><span class="propType">static </span>multiply<span class="propType">(a: Animated, b: Animated)</span> <a class="hash-link" href="#multiply">#</a></h4><div>
-<p>将两个动画值相乘计算，创建一个新的动画值。</p></div></div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="delay"></a><span class="propType">static </span>delay<span class="propType">(time: number)</span> <a class="hash-link" href="#delay">#</a></h4>
-		<div>
-			<p>在指定的延迟之后开始动画。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="sequence"></a><span class="propType">static </span>sequence<span class="propType">(animations: Array&lt;CompositeAnimation&gt;)</span> <a class="hash-link" href="#sequence">#</a></h4>
-		<div>
-			<p>按顺序执行一个动画数组里的动画，等待一个完成后再执行下一个。如果当前的动画被中止，后面的动画则不会继续执行。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="parallel"></a><span class="propType">static </span>parallel<span class="propType">(animations: Array&lt;CompositeAnimation&gt;, config?: ParallelConfig)</span> <a class="hash-link" href="#parallel">#</a></h4>
-		<div>
-			<p>同时开始一个动画数组里的全部动画。默认情况下，如果有任何一个动画停止了，其余的也会被停止。你可以通过<code>stopTogether</code>选项来改变这个效果。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="stagger"></a><span class="propType">static </span>stagger<span class="propType">(time: number, animations: Array&lt;CompositeAnimation&gt;)</span> <a class="hash-link" href="#stagger">#</a></h4>
-		<div>
-			<p>一个动画数组，里面的动画有可能会同时执行（重叠），不过会以指定的延迟来开始。用来制作拖尾效果非常合适。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="event"></a><span class="propType">static </span>event<span class="propType">(argMapping: Array&lt;Mapping&gt;, config?: EventConfig)</span> <a class="hash-link" href="#event">#</a></h4>
-		<div>
-			<p>接受一个映射的数组，对应的解开每个值，然后调用所有对应的输出的<code>setValue</code>方法。例如：</p>
-			<pre><code class="lang-javascript"> onScroll={<span class="hljs-keyword">this</span>.AnimatedEvent(
-   [{nativeEvent: {contentOffset: {x: <span class="hljs-keyword">this</span>._scrollX}}}]
-   {listener},          <span class="hljs-comment">// 可选的异步监听函数</span>
- )
- ...
- onPanResponderMove: <span class="hljs-keyword">this</span>.AnimatedEvent([
-   <span class="hljs-literal">null</span>,                <span class="hljs-comment">// 忽略原始事件</span>
-   {dx: <span class="hljs-keyword">this</span>._panX},    <span class="hljs-comment">// 手势状态参数</span>
- ]),
-</code></pre>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="createanimatedcomponent"></a><span class="propType">static </span>createAnimatedComponent<span class="propType">(Component: any)</span> <a class="hash-link" href="#createanimatedcomponent">#</a></h4>
-		<div>
-			<p>使得任何一个React组件支持动画。用它来创建<code>Animated.View</code>等等。</p>
-		</div>
-	</div>
-</div>
+static decay(value: AnimatedValue | AnimatedValueXY, config: DecayAnimationConfig)
+
+推动一个值以一个初始的速度和一个衰减系数逐渐变为0。
+
+static timing(value: AnimatedValue | AnimatedValueXY, config: TimingAnimationConfig) 
+
+推动一个值按照一个过渡曲线而随时间变化。Easing模块定义了一大堆曲线，你也可以使用你自己的函数。
+
+
+static spring(value: AnimatedValue | AnimatedValueXY, config: SpringAnimationConfig) 
+
+产生一个基于Rebound和Origami实现的Spring动画。它会在toValue值更新的同时跟踪当前的速度状态，以确保动画连贯。可以链式调用。
+
+static add(a: Animated, b: Animated) 
+
+将两个动画值相加计算，创建一个新的动画值。
+
+static multiply(a: Animated, b: Animated) 
+
+将两个动画值相乘计算，创建一个新的动画值。
+
+static delay(time: number) 
+
+在指定的延迟之后开始动画。
+
+static sequence(animations: Array<CompositeAnimation>) 
+
+按顺序执行一个动画数组里的动画，等待一个完成后再执行下一个。如果当前的动画被中止，后面的动画则不会继续执行。
+
+static parallel(animations: Array<CompositeAnimation>, config?: ParallelConfig) 
+
+同时开始一个动画数组里的全部动画。默认情况下，如果有任何一个动画停止了，其余的也会被停止。你可以通过stopTogether选项来改变这个效果。
+
+static stagger(time: number, animations: Array<CompositeAnimation>) 
+
+一个动画数组，里面的动画有可能会同时执行（重叠），不过会以指定的延迟来开始。用来制作拖尾效果非常合适。
+
+static event(argMapping: Array<Mapping>, config?: EventConfig) 
+
+接受一个映射的数组，对应的解开每个值，然后调用所有对应的输出的setValue方法。例如：
+
+```jsx
+onScroll={this.AnimatedEvent(
+	[{nativeEvent: {contentOffset: {x: this._scrollX}}}]
+	{listener},          // 可选的异步监听函数
+)
+...
+onPanResponderMove: this.AnimatedEvent([
+	null,                // 忽略原始事件
+	{dx: this._panX},    // 手势状态参数
+]),
+```
+static createAnimatedComponent(Component: any) 
+
+使得任何一个React组件支持动画。用它来创建Animated.View等等。
 
 ### 属性
+Value: AnimatedValue 
 
-<div class="props">
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="value"></a>Value<span class="propType">: AnimatedValue</span> <a class="hash-link" href="#value">#</a></h4>
-		<div>
-			<p>表示一个数值的类，用于驱动动画。通常用<code>new Animated.Value(0);</code>来初始化。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="valuexy"></a>ValueXY<span class="propType">: AnimatedValueXY</span> <a class="hash-link" href="#valuexy">#</a></h4>
-		<div>
-			<p>表示一个2D值的类，用来驱动2D动画，例如拖动操作等。</p>
-		</div>
-	</div>
-</div>
+表示一个数值的类，用于驱动动画。通常用new Animated.Value(0);来初始化。
+
+ValueXY: AnimatedValueXY 
+
+表示一个2D值的类，用来驱动2D动画，例如拖动操作等。
 
 ## class AnimatedValue
 
@@ -167,71 +144,49 @@ class FadeInView extends React.Component {
 
 ### 方法
 
-<div class="props">
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="constructor"></a>constructor<span class="propType">(value: number)</span> <a class="hash-link" href="#constructor">#</a></h4>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="setvalue"></a>setValue<span class="propType">(value: number)</span> <a class="hash-link" href="#setvalue">#</a></h4>
-		<div>
-			<p>直接设置它的值。这个会停止任何正在进行的动画，然后更新所有绑定的属性。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="setoffset"></a>setOffset<span class="propType">(offset: number)</span> <a class="hash-link" href="#setoffset">#</a></h4>
-		<div>
-			<p>设置一个相对值，不论接下来的值是由<code>setValue</code>、一个动画，还是<code>Animated.event</code>产生的，都会加上这个值。常用来在拖动操作一开始的时候用来记录一个修正值（譬如当前手指位置和View位置）。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="flattenoffset"></a>flattenOffset<span class="propType">()</span> <a class="hash-link" href="#flattenoffset">#</a></h4>
-		<div>
-			<p>把当前的相对值合并到值里，并且将相对值设为0。最终输出的值不会变化。常在拖动操作结束后调用。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="addlistener"></a>addListener<span class="propType">(callback: ValueListenerCallback)</span> <a class="hash-link" href="#addlistener">#</a></h4>
-		<div>
-			<p>添加一个异步监听函数，这样你就可以监听动画值的变更。这有时候很有用，因为你没办法同步的读取动画的当前值，因为有时候动画会在原生层次运行。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="removelistener"></a>removeListener<span class="propType">(id: string)</span> <a class="hash-link" href="#removelistener">#</a></h4>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="removealllisteners"></a>removeAllListeners<span class="propType">()</span> <a class="hash-link" href="#removealllisteners">#</a></h4>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="stopanimation"></a>stopAnimation<span class="propType">(callback?: ?(value: number) =&gt; void)</span> <a class="hash-link" href="#stopanimation">#</a></h4>
-		<div>
-			<p>停止任何正在运行的动画或跟踪值。<code>callback</code>会被调用，参数是动画结束后的最终值，这个值可能会用于同步更新状态与动画位置。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="interpolate"></a>interpolate<span class="propType">(config: InterpolationConfigType)</span> <a class="hash-link" href="#interpolate">#</a></h4>
-		<div>
-			<p>在更新属性之前对值进行插值。譬如：把0-1映射到0-10。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="animate"></a>animate<span class="propType">(animation: Animation, callback: EndCallback)</span> <a class="hash-link" href="#animate">#</a></h4>
-		<div>
-			<p>一般仅供内部使用。不过有可能一个自定义的动画类会用到此方法。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="stoptracking"></a>stopTracking<span class="propType">()</span> <a class="hash-link" href="#stoptracking">#</a></h4>
-		<div>
-			<p>仅供内部使用。</p>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="track"></a>track<span class="propType">(tracking: Animated)</span> <a class="hash-link" href="#track">#</a></h4>
-		<div>
-			<p>仅供内部使用。</p>
-		</div>
-	</div>
-</div>
+
+constructor(value: number) 
+
+setValue(value: number) 
+
+直接设置它的值。这个会停止任何正在进行的动画，然后更新所有绑定的属性。
+
+setOffset(offset: number) 
+
+设置一个相对值，不论接下来的值是由setValue、一个动画，还是Animated.event产生的，都会加上这个值。常用来在拖动操作一开始的时候用来记录一个修正值（譬如当前手指位置和View位置）。
+
+flattenOffset() 
+
+把当前的相对值合并到值里，并且将相对值设为0。最终输出的值不会变化。常在拖动操作结束后调用。
+
+addListener(callback: ValueListenerCallback) 
+
+添加一个异步监听函数，这样你就可以监听动画值的变更。这有时候很有用，因为你没办法同步的读取动画的当前值，因为有时候动画会在原生层次运行。
+
+removeListener(id: string) 
+
+removeAllListeners() 
+
+stopAnimation(callback?: ?(value: number) => void) 
+
+停止任何正在运行的动画或跟踪值。callback会被调用，参数是动画结束后的最终值，这个值可能会用于同步更新状态与动画位置。
+
+interpolate(config: InterpolationConfigType) 
+
+在更新属性之前对值进行插值。譬如：把0-1映射到0-10。
+
+animate(animation: Animation, callback: EndCallback) 
+
+一般仅供内部使用。不过有可能一个自定义的动画类会用到此方法。
+
+stopTracking() 
+
+仅供内部使用。
+
+track(tracking: Animated) 
+
+仅供内部使用。
+
 
 ## class AnimatedValueXY
 
@@ -239,7 +194,7 @@ class FadeInView extends React.Component {
 
 例子：
 
-```javascript
+```jsx
 class DraggableView extends React.Component {
    constructor(props) {
      super(props);
@@ -274,60 +229,40 @@ class DraggableView extends React.Component {
 
 ### 方法
 
-<div class="props">
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="constructor"></a>constructor<span class="propType">(valueIn?: ?{x: number | AnimatedValue; y: number | AnimatedValue})</span> <a class="hash-link" href="#constructor">#</a></h4>
+constructor(valueIn?: ?{x: number | AnimatedValue; y: number | AnimatedValue}) 
 
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="setvalue"></a>setValue<span class="propType">(value: {x: number; y: number})</span> <a class="hash-link" href="#setvalue">#</a></h4>
+setValue(value: {x: number; y: number}) 
 
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="setoffset"></a>setOffset<span class="propType">(offset: {x: number; y: number})</span> <a class="hash-link" href="#setoffset">#</a></h4>
+setOffset(offset: {x: number; y: number}) 
 
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="flattenoffset"></a>flattenOffset<span class="propType">()</span> <a class="hash-link" href="#flattenoffset">#</a></h4>
+flattenOffset() 
 
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="stopanimation"></a>stopAnimation<span class="propType">(callback?: ?() =&gt; number)</span> <a class="hash-link" href="#stopanimation">#</a></h4>
+stopAnimation(callback?: ?() => number) 
 
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="addlistener"></a>addListener<span class="propType">(callback: ValueXYListenerCallback)</span> <a class="hash-link" href="#addlistener">#</a></h4>
+addListener(callback: ValueXYListenerCallback) 
 
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="removelistener"></a>removeListener<span class="propType">(id: string)</span> <a class="hash-link" href="#removelistener">#</a></h4>
+removeListener(id: string) 
 
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="getlayout"></a>getLayout<span class="propType">()</span> <a class="hash-link" href="#getlayout">#</a></h4>
-		<div>
-			<p>将一个<code>{x, y}</code>组合转换为<code>{left, top}</code>以用于样式。例如：</p>
-			<pre><code class="lang-javascript"> style={<span class="hljs-keyword">this</span>.state.anim.getLayout()}
-</code></pre>
-		</div>
-	</div>
-	<div class="prop">
-		<h4 class="propTitle"><a class="anchor" name="gettranslatetransform"></a>getTranslateTransform<span class="propType">()</span> <a class="hash-link" href="#gettranslatetransform">#</a></h4>
-		<div>
-			<p>将一个<code>{x, y}</code> 组合转换为一个可用的位移变换(translation transform)，例如：</p>
-			<pre><code class="lang-javascript"> style={{
-   transform: <span class="hljs-keyword">this</span>.state.anim.getTranslateTransform()
- }}
-</code></pre>
-		</div>
-	</div>
-</div>
+getLayout() 
 
- ### 例子
+将一个{x, y}组合转换为{left, top}以用于样式。例如：
 
- ```javascript
+ style={this.state.anim.getLayout()}
+getTranslateTransform() 
+
+将一个{x, y} 组合转换为一个可用的位移变换(translation transform)，例如：
+
+```jsx
+  style={{
+    transform: this.state.anim.getTranslateTransform()
+  }}
+```
+
+### 例子
+
+```jsx
  
- 'use strict';
+'use strict';
 
 var React = require('react-native');
 var {
@@ -542,4 +477,4 @@ var styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
- ```
+```
