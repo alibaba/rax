@@ -31,9 +31,9 @@ describe('MultiRow', function() {
 
   it('dataSource in multirow', () => {
     let tree = component.toJSON();
-    expect(tree.children[0].children[0].children[0].children[0].children[0]).toEqual('tom');
-    expect(tree.children[0].children[0].children[0].children[1].children[0]).toEqual('jeck');
-    expect(tree.children[0].children[0].children[1].children[0].children[0]).toEqual('lilei');
-    expect(tree.children[0].children[0].children[1].children[1].children[0]).toEqual('hanmeimei');
+    expect(tree.children[0].children[0].children[0].children[0].children[0].children[0]).toEqual('tom');
+    expect(tree.children[0].children[0].children[0].children[1].children[0].children[0]).toEqual('jeck');
+    expect(tree.children[0].children[0].children[1].children[0].children[0].children[0]).toEqual('lilei');
+    expect(tree.children[0].children[0].children[1].children[1].children[0].children[0]).toEqual('hanmeimei');
   });
 });
