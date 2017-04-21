@@ -40,7 +40,7 @@ Components 对应最基础的 HTML 标签，提供了最基础的标签能力，
 
 大促模块分为两类，滚动容器外部的 app 级模块和 滚动容器内的 page 级模块。在 page 级模块的开发过程中需要遵循一些与页面渲染相关的约定，来实现特定逻辑和特定渲染策略。例如 moduleRenderMode 来制定模块类型、getModuleRowHeight 来获取模块高度，以及通过 props 透传的工具方法等。
 
-```
+```jsx
 class Module extends Component {
   
   // 模块行高

@@ -28,15 +28,18 @@ Rax 在设计上抽象出 Driver 的概念，用来支持在不同容器中渲�
 
 任何用过 React 的同学大概都踩过同一个坑：方法返回了多个同级节点导致报错。在设计上 React 只能返回单个节点，因此页面上或多或少会产生一些冗余的节点，这在 PC 端并没有太多问题，然而在无线 Android 端嵌套层级越多，应用的 crash 率会不断提高，这一点在低端 Android 机上表现尤其明显。因此 Rax 支持了返回多个同级节点的功能，如：
 
-    import {createElement, Component, render} from 'rax';
+```jsx
+import {createElement, Component, render} from 'rax';
 
-    class Test extends Component {
-      render() {
-        return [1, 2, 3].map((item) => {
-          return <p>{item}</p>;
-        });
-      }
-    }
+class Test extends Component {
+  render() {
+    return [1, 2, 3].map((item) => {
+      return <p>{item}</p>;
+    });
+  }
+}
+```
+
 这一特性可以有效减少页面的嵌套层级，从而减少应用因嵌套层级过多而出现的 crash 问题。
 
 **4、标准化**
