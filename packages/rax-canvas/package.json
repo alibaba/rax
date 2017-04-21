@@ -10,7 +10,8 @@
   },
   "keywords": [
     "Rax",
-    "RaxUI"
+    "rax-component",
+    "react-component"
   ],
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
@@ -20,7 +21,8 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.11"
+    "universal-env": "^0.2.11",
+    "weex-plugin--weex-gcanvas": "^0.3.3"
   },
   "peerDependencies": {
     "rax": "0.x"

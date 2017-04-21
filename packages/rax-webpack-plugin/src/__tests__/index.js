@@ -28,6 +28,7 @@ describe('rax-webpack-plugin', function() {
     let outputPath = path.join(outputDirectory, fixture);
     const configFile = path.join(testDirectory, 'webpack.config.js');
 
+
     if (argv.indexOf('--updateFixture') !== -1) {
       outputPath = path.join(__dirname, 'fixtures', fixture, 'expected');
     }
@@ -78,7 +79,15 @@ describe('rax-webpack-plugin', function() {
     runWebpack(done, 'bundle', function(actualPath, filePath) {
       const actual = readFile(actualPath);
       const expected = readFile(filePath);
+      expect(actual).toBe(expected);
+      expect(actual).toMatch('// {"framework" : "Rax"}');
+    });
+  });
 
+  it('custom', function(done) {
+    runWebpack(done, 'custom', function(actualPath, filePath) {
+      const actual = readFile(actualPath);
+      const expected = readFile(filePath);
       expect(actual).toBe(expected);
       expect(actual).toMatch('// {"framework" : "Rax"}');
     });
