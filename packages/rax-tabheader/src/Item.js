@@ -45,7 +45,7 @@ class Item extends Component {
       itemSelectedStyle,
     } = this.props;
 
-    if(typeof this.props.itemWidth == 'function'){
+    if (typeof this.props.itemWidth == 'function') {
       itemWidth = this.props.itemWidth(data, index);
     }
 
