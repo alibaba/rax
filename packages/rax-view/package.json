@@ -1,6 +1,6 @@
 {
   "name": "rax-view",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "View component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,12 +21,12 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.3.0"
+    "universal-env": "^0.3.1"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.3.0"
+    "rax-test-renderer": "^0.3.1"
   }
 }
