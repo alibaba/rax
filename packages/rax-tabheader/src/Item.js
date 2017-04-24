@@ -45,6 +45,7 @@ class Item extends Component {
       itemSelectedStyle,
     } = this.props;
 
+    renderSelect = renderSelect ? renderSelect : renderItem;
     let isSelected = index === selected;
     let thisStyles = this.initStyle(styleType, itemStyle, itemSelectedStyle, itemWidth, isSelected);
 
