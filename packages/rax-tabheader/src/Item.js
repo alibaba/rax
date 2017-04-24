@@ -45,6 +45,11 @@ class Item extends Component {
       itemSelectedStyle,
     } = this.props;
 
+    if (typeof this.props.itemWidth == 'function') {
+      itemWidth = this.props.itemWidth(data, index);
+    }
+
+    renderSelect = renderSelect ? renderSelect : renderItem;
     let isSelected = index === selected;
     let thisStyles = this.initStyle(styleType, itemStyle, itemSelectedStyle, itemWidth, isSelected);
 
@@ -89,7 +94,7 @@ class Item extends Component {
           <TouchableHighlight
             onPress={() => {
               this.select(index);
-            }} >
+            }} style={thisStyles.container}>
             {renderItem(data, index)}
           </TouchableHighlight>
         );
