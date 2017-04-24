@@ -153,7 +153,7 @@ class ScrollView extends Component {
     let refreshContainer = <View />, contentChild;
     if (Array.isArray(children)) {
       contentChild = children.map((child, index) => {
-        if (child.type == RefreshControl) {
+        if (child && child.type == RefreshControl) {
           refreshContainer = child;
         } else {
           return child;
