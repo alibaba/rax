@@ -68,7 +68,11 @@ class ItemList extends Component {
     let childrens = [];
     dataSource.map((item, index) => {
       // fix with bug for ios 78
-      contentContainerWidth += parseInt(itemWidth);
+      if (typeof itemWidth == 'function') {
+        contentContainerWidth += parseInt(itemWidth(item, index));
+      } else {
+        contentContainerWidth += parseInt(itemWidth);
+      }
       if (scrollType == 'scroll') {
         childrens.push(
           <Item
