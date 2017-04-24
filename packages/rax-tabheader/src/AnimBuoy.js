@@ -21,8 +21,10 @@ class AnimBuoy extends Component {
   }
 
   scrollTo = (options) => {
-    const animbuoy = findDOMNode(this.refs.animbuoy);
-    Animated.scrollTo(animbuoy, options);
+    if (this.props.animType != 'noanim') {
+      const animbuoy = findDOMNode(this.refs.animbuoy);
+      Animated.scrollTo(animbuoy, options);
+    }
   }
 
   componentDidMount() {
@@ -68,9 +70,13 @@ class AnimBuoy extends Component {
       };
     }
 
-    return <View style={styles.borderBottom}>
-      <View ref="animbuoy" style={thisStyle} />
-    </View>;
+    if (animType == 'noanim') {
+      return null;
+    } else {
+      return <View style={styles.borderBottom}>
+        <View ref="animbuoy" style={thisStyle} />
+      </View>;
+    }
   }
 }
 
