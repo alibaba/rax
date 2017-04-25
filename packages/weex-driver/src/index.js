@@ -9,8 +9,9 @@ const STYLE = 'style';
 const ID = 'id';
 const TEXT = 'text';
 const CHILDREN = 'children';
-const EVENT_PREFIX_REGEXP = /on[A-Z]/;
+const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const FULL_WIDTH_REM = 750;
+const ARIA_PREFIX_REGEXP = /^aria-/;
 
 const nodeMaps = {};
 /* global __weex_document__ */
@@ -144,6 +145,13 @@ const Driver = {
   setAttribute(node, propKey, propValue) {
     if (propKey == ID) {
       nodeMaps[propValue] = node;
+    }
+    
+    // Weex only support `ariaLabel` format, convert `aria-label` format to camelcase
+    if (ARIA_PREFIX_REGEXP.test(propKey)) {
+      propKey = propKey.replace(/\-(\w)/, function(m, p1){
+        return p1.toUpperCase();
+      });
     }
 
     return node.setAttr(propKey, propValue, false);
