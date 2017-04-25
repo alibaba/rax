@@ -1,0 +1,35 @@
+{
+  "name": "rax-counter",
+  "version": "0.3.1",
+  "description": "counter component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "RaxUI"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-link": "^0.3.1",
+    "rax-picture": "^0.3.1",
+    "rax-text": "^0.3.1",
+    "rax-view": "^0.3.1"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-text": "^0.3.1",
+    "rax-test-renderer": "^0.3.1"
+  }
+}

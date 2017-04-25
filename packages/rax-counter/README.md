@@ -1,0 +1,1 @@
+[![npm](https://img.shields.io/npm/v/rax-counter.svg)](https://www.npmjs.com/package/rax-counter)
