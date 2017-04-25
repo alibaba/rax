@@ -146,10 +146,10 @@ const Driver = {
     if (propKey == ID) {
       nodeMaps[propValue] = node;
     }
-    
+
     // Weex only support `ariaLabel` format, convert `aria-label` format to camelcase
     if (ARIA_PREFIX_REGEXP.test(propKey)) {
-      propKey = propKey.replace(/\-(\w)/, function(m, p1){
+      propKey = propKey.replace(/\-(\w)/, function(m, p1) {
         return p1.toUpperCase();
       });
     }
