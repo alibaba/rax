@@ -1,0 +1,37 @@
+{
+  "name": "rax-menulist",
+  "version": "0.3.1",
+  "description": "MenuList component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component",
+    "react-component"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-image": "^0.3.1",
+    "rax-text": "^0.3.1",
+    "rax-touchable": "^0.3.1",
+    "rax-view": "^0.3.1",
+    "universal-stylesheet": "^0.3.1",
+    "universal-transition": "^0.3.1"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.3.1"
+  }
+}
