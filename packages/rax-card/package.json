@@ -1,7 +1,7 @@
 {
-  "name": "rax-counter",
+  "name": "rax-card",
   "version": "0.3.1",
-  "description": "counter component for Rax.",
+  "description": "Card component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
