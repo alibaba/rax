@@ -102,22 +102,22 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loaders: ['babel'] // 'babel-loader' is also a legal name to reference
+        loaders: [require.resolve('babel-loader')] // 'babel-loader' is also a legal name to reference
       },
       {
         test: /\.css$/,
-        loader: 'stylesheet'
+        loader: require.resolve('stylesheet-loader')
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
       {
         test: /\.json$/,
-        loader: 'json'
+        loader: require.resolve('json-loader')
       },
       // load inline images using image-source-loader for Image
       {
         test: /\.(png|jpe?g|gif)$/i,
-        loader: 'image-source'
+        loader: require.resolve('image-source-loader')
       }
     ]
   },
