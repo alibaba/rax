@@ -18,13 +18,10 @@ import Counter from 'rax-counter';
 
 | name      | type       | default  | describe   |
 | :------ | :------- | :--- | :--- |
-| value | Boolean |      | default value |
+| value | Number |      | default value |
 | start | Number |      | start num |
 | end | Number |      | end number |
 | onComplete | Object |      | complete event |
-| countStyle | Object |      | count style |
-| incrementContent | Component |      | content in increment button |
-| decrementContent | Component |      | content in decrement button |
 
 ## Example
 

@@ -42,7 +42,6 @@ class Counter extends Component {
   }
 
   render() {
-    let {incrementContent, decrementContent, countStyle} = this.props;
     return (
       <View {...this.props} style={styles.container}>
         <Touchable
@@ -51,16 +50,12 @@ class Counter extends Component {
             this.decrement
           }
         >
-          {
-            decrementContent ? decrementContent :
-              <Text style={{...styles.buttonText, color: this.state.incrementColor}}>
-                -
-              </Text>
-
-          }
+          <Text style={{...styles.buttonText, color: this.state.incrementColor}}>
+            -
+          </Text>
         </Touchable>
         <View>
-          <Text style={{...styles.countText, ...countStyle}}>
+          <Text style={styles.countText}>
             {this.state.count}
           </Text>
         </View>
@@ -70,13 +65,9 @@ class Counter extends Component {
             this.increment
           }
         >
-          {
-            incrementContent ? incrementContent :
-              <Text style={{...styles.buttonText, color: this.state.decrementColor}}>
-                +
-              </Text>
-
-          }
+          <Text style={{...styles.buttonText, color: this.state.decrementColor}}>
+            +
+          </Text>
         </Touchable>
       </View>
     );
@@ -93,6 +84,9 @@ let styles = {
   },
   countText: {
     flex: 1,
+    height: 50,
+    lineHeight: 50,
+    fontSize: 32,
     textAlign: 'center',
   },
   button: {
@@ -104,6 +98,9 @@ let styles = {
   },
   buttonText: {
     flex: 1,
+    height: 50,
+    lineHeight: 50,
+    fontSize: 32,
     textAlign: 'center',
   }
 };

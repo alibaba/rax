@@ -1,7 +1,7 @@
 {
   "name": "rax-counter",
   "version": "0.3.1",
-  "description": "counter component for Rax.",
+  "description": "Counter component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {

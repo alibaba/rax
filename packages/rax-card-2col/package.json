@@ -1,7 +1,7 @@
 {
   "name": "rax-card-2col",
   "version": "0.3.1",
-  "description": "card-2col component for Rax.",
+  "description": "Card2col component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
