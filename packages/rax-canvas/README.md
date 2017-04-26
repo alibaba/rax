@@ -4,6 +4,8 @@
 
 Rax canvas api.
 
+> Rely on [gcanvas](https://github.com/weex-plugins/weex-plugin-gcanvas) in weex.
+
 ## Install
 
 ```bash
