@@ -1,6 +1,6 @@
 {
   "name": "rax-cli",
-  "version": "0.2.11",
+  "version": "0.3.1",
   "license": "BSD-3-Clause",
   "description": "The Rax CLI tools",
   "main": "lib/index.js",

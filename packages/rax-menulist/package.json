@@ -1,7 +1,7 @@
 {
-  "name": "rax-grid",
+  "name": "rax-menulist",
   "version": "0.3.1",
-  "description": "Grid component for Rax.",
+  "description": "MenuList component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -21,7 +21,12 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.3.1"
+    "rax-image": "^0.3.1",
+    "rax-text": "^0.3.1",
+    "rax-touchable": "^0.3.1",
+    "rax-view": "^0.3.1",
+    "universal-stylesheet": "^0.3.1",
+    "universal-transition": "^0.3.1"
   },
   "peerDependencies": {
     "rax": "0.x"

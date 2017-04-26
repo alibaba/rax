@@ -135,7 +135,7 @@ module.exports = {
     "no-new-object": "error",
     "no-spaced-func": "error",
     "no-trailing-spaces": "error",
-    "no-extra-parens": "error",
+    "no-extra-parens": ["error", "all", { ignoreJSX: "all" }],
     "padded-blocks": ["error", "never"],
     "semi": "error",
     "semi-spacing": "error",
