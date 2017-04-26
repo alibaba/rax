@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "rax": "^0.3.2",
+    "rax-compat": "^0.3.2",
     "rax-view": "^0.3.2",
     "rax-text": "^0.3.2"
   },

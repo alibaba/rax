@@ -46,7 +46,7 @@ module.exports = {
     modulesDirectories: ['node_modules'],
     extensions: ['.js', '.json', '.jsx', ''],
     alias: {
-      react: 'rax'
+      react: 'rax-compat'
     }
   },
   plugins: [
