@@ -22,6 +22,10 @@ const BoxModelPropTypes = {
   borderTopWidth: PropTypes.length,
   borderRightWidth: PropTypes.length,
   borderBottomWidth: PropTypes.length,
+  borderLeftStyle: PropTypes.oneOf(['dotted', 'dashed', 'solid']),
+  borderTopStyle: PropTypes.oneOf(['dotted', 'dashed', 'solid']),
+  borderRightStyle: PropTypes.oneOf(['dotted', 'dashed', 'solid']),
+  borderBottomStyle: PropTypes.oneOf(['dotted', 'dashed', 'solid']),
   borderStyle: PropTypes.oneOf(['dotted', 'dashed', 'solid']),
   borderRadius: PropTypes.length,
   borderBottomLeftRadius: PropTypes.length,
@@ -35,7 +39,8 @@ const BoxModelPropTypes = {
   top: PropTypes.length,
   bottom: PropTypes.length,
   left: PropTypes.length,
-  right: PropTypes.length
+  right: PropTypes.length,
+  opacity: PropTypes.number
 };
 
 export default BoxModelPropTypes;

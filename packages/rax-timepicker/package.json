@@ -1,0 +1,33 @@
+{
+  "name": "rax-timepicker",
+  "version": "0.3.2",
+  "description": "TimePicker component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "RaxUI"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "universal-env": "^0.3.2",
+    "rax-text": "^0.3.2",
+    "rax-touchable": "^0.3.2"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.3.2"
+  }
+}

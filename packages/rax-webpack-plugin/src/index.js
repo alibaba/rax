@@ -4,6 +4,7 @@ import ExternalModuleFactoryPlugin from 'webpack/lib/ExternalModuleFactoryPlugin
 import RaxMainTemplatePlugin from './RaxMainTemplatePlugin';
 import BuiltinModules from './BuiltinModules';
 import MultiplePlatform from './MultiplePlatform';
+import DuplicateChecker from './DuplicateChecker';
 
 const isProducation = process.env.NODE_ENV === 'production';
 
@@ -18,13 +19,18 @@ class RaxWebpackPlugin {
       polyfillModules: [],
       runModule: false,
       bundle: 'compatible', // private
-      target: 'umd'
+      target: 'umd',
+      duplicateCheck: ['rax']
     }, options);
   }
 
   apply(compiler) {
     compiler.apply(new DefinePlugin({
       '__DEV__': isProducation ? false : true
+    }));
+
+    compiler.apply(new DuplicateChecker({
+      modulesToCheck: this.options.duplicateCheck
     }));
 
     compiler.plugin('this-compilation', (compilation) => {
@@ -67,7 +73,9 @@ class RaxWebpackPlugin {
         this.options.frameworkComment : defaultFrameworkComment;
 
       compiler.plugin('compilation', (compilation) => {
-        compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
+        // uglify-webpack-plugin will remove javascript's comments in
+        // optimize-chunk-assets, add frameworkComment after that.
+        compilation.plugin('after-optimize-chunk-assets', function(chunks) {
           chunks.forEach(function(chunk) {
             // In webpack2 chunk.initial was removed. Use isInitial()
             try {
@@ -80,7 +88,6 @@ class RaxWebpackPlugin {
               compilation.assets[file] = new ConcatSource(frameworkComment, '\n', compilation.assets[file]);
             });
           });
-          callback();
         });
       });
     }

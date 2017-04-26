@@ -90,7 +90,7 @@ describe('renderer', () => {
       tagName: 'DIV',
       attributes: { class: 'purple' },
       children: [
-        7,
+        '7',
         {
           tagName: 'MOO'
         },

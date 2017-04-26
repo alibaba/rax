@@ -70,7 +70,7 @@ let border = function(key, value) {
   };
   const direction = value && value.split(' ');
 
-  result[key + 'Width'] = direction && direction[0];
+  result[key + 'Width'] = direction && convertUnit(direction[0]);
   result[key + 'Style'] = direction && direction[1];
   result[key + 'Color'] = direction && normalizeColor(direction[2]);
   return result;

@@ -1,8 +1,9 @@
 export default {
  /*
+  * Default easing function for scroll animation
   * https://github.com/oblador/angular-scroll (duScrollDefaultEasing)
   */
-  defaultEasing: (x) => {
+  scroll(x) {
     if (x < 0.5) {
       return Math.pow(x * 2, 2) / 2;
     }

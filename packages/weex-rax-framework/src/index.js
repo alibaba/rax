@@ -147,21 +147,25 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const responseEnd = Date.now();
     const __weex_env__ = typeof WXEnvironment === 'object' && WXEnvironment || {};
     // For better performance use built-in promise first
-    const Promise = typeof Promise === 'function' ? Promise : require('runtime-shared/dist/promise.function')();
-    const URL = require('runtime-shared/dist/url.function')();
-    const URLSearchParams = require('runtime-shared/dist/url-search-params.function')();
-    const FontFace = require('runtime-shared/dist/fontface.function')();
-    const matchMedia = require('runtime-shared/dist/matchMedia.function')();
+    const shared = require('runtime-shared/dist/shared.function')();
 
-    const document = new Document(instanceId, __weex_options__.bundleUrl);
-    const location = new URL(__weex_options__.bundleUrl);
+    const Promise = typeof Promise === 'function' ? Promise : shared.Promise;
+    const Symbol = typeof Symbol === 'function' ? Symbol : shared.Symbol;
+    const Set = typeof Set === 'function' ? Set : shared.Set;
+    const Map = typeof Map === 'function' ? Map : shared.Map;
+    const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
+    const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
+    const {URL, URLSearchParams, FontFace, matchMedia} = shared;
+    const bundleUrl = __weex_options__.bundleUrl;
+    const document = new Document(instanceId, bundleUrl);
+    const documentURL = new URL(bundleUrl);
     const modules = {};
 
     instance = instances[instanceId] = {
       document,
       instanceId,
       modules,
-      origin: location.origin,
+      origin: documentURL.origin,
       uid: 0
     };
 
@@ -172,6 +176,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
     // Extend document
     require('./document.weex')(__weex_require__, document);
+
+    const location = require('./location.weex')(__weex_require__, documentURL);
 
     const {
       fetch,
@@ -204,6 +210,11 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const window = {
       // ES
       Promise,
+      Symbol,
+      Map,
+      Set,
+      WeakMap,
+      WeakSet,
       // W3C: https://www.w3.org/TR/html5/browsers.html#browsing-context-name
       name: '',
       // This read-only property indicates whether the referenced window is closed or not.

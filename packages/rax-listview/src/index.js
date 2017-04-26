@@ -18,6 +18,12 @@ class ListView extends Component {
     }
   }
 
+  resetScroll = () => {
+    if (this.refs[SCROLLVIEW_REF]) {
+      this.refs[SCROLLVIEW_REF].resetScroll();
+    }
+  }
+
   render() {
     let {
       renderScrollComponent,
@@ -25,11 +31,6 @@ class ListView extends Component {
       renderFooter,
       renderRow,
       dataSource,
-      onEndReached,
-      onEndReachedThreshold,
-      id,
-      className,
-      style,
     } = this.props;
 
     let header = typeof renderHeader == 'function' ? renderHeader() : null;
@@ -39,14 +40,12 @@ class ListView extends Component {
     });
 
     let props = {
-      id,
-      className,
-      ref: SCROLLVIEW_REF,
-      style,
-      children: [].concat(header, body, footer),
-      onEndReached,
-      onEndReachedThreshold,
-      _autoWrapCell: true,
+      ...this.props,
+      ...{
+        ref: SCROLLVIEW_REF,
+        children: [].concat(header, body, footer),
+        _autoWrapCell: true,
+      },
     };
 
     return renderScrollComponent(props);

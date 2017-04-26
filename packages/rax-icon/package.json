@@ -1,7 +1,7 @@
 {
   "name": "rax-icon",
-  "version": "0.2.9",
-  "description": "icon UI for Rax.",
+  "version": "0.3.2",
+  "description": "icon component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -10,7 +10,8 @@
   },
   "keywords": [
     "Rax",
-    "RaxUI"
+    "rax-component",
+    "react-component"
   ],
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
@@ -20,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.2.9",
-    "rax-view": "^0.2.9",
-    "rax-text": "^0.2.9",
-    "rax-image": "^0.2.9"
+    "universal-env": "^0.3.2",
+    "rax-view": "^0.3.2",
+    "rax-text": "^0.3.2",
+    "rax-image": "^0.3.2"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.2.9"
+    "rax-test-renderer": "^0.3.2"
   }
 }

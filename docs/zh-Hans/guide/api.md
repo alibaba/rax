@@ -4,7 +4,7 @@
 ## 环境 API
 `Rax Framework` 参照 W3C 规范，提供了以下在 Weex 和 Web 环境一致的全局API:
 
-（WEEX版本>=0.9.5下可用，对应手淘版本>=6.4.0）
+（Weex版本>=0.9.5下可用，对应手淘版本>=6.4.0）
 
 * `CSS Font Loading API`
     * Class FontFace
@@ -24,7 +24,6 @@ document.fonts.add(oxygenFontFace);
     * cancelAnimationFrame()
     * [window.name](https://developer.mozilla.org/en-US/docs/Web/API/Window/name)
     * window.location
-    * window.name
     * window.postMessage()
     * window.open()
     * [window.closed](https://developer.mozilla.org/en-US/docs/Web/API/Window/closed)
@@ -51,6 +50,7 @@ document.fonts.add(oxygenFontFace);
     * dispatchEvent()
 * `Client identification API`
     * navigator.platform
+      * 平台信息，Weex 下支持分辨 `iOS`、`Android`，Web 下表现同浏览器
     * navigator.product
     * navigator.appName
     * navigator.appVersion

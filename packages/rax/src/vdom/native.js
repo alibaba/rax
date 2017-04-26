@@ -367,8 +367,14 @@ class NativeComponent {
             lastIndex = Math.max(prevChild._mountIndex, lastIndex);
           }
 
+          let parent = this.getNativeNode();
+          // Fragment extended native component, so if parent is fragment should get this._parent
+          if (Array.isArray(parent)) {
+            parent = this._parent;
+          }
+
           nextChild.mountComponent(
-            this.getNativeNode(),
+            parent,
             context,
             (newChild, parent) => {
               // TODO: Rework the duplicate code

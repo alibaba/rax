@@ -5,10 +5,10 @@ import Image from 'rax-image';
 
 let supportVideoPlus = false;
 const weexEnv = typeof WXEnvironment !== 'undefined' ? WXEnvironment : {};
-if (weexEnv.appVersion) {
+// TODO: rework by feature recognition
+if (weexEnv.appName === 'TB' && weexEnv.appVersion) {
   let appVersion = weexEnv.appVersion.split('.');
-  // 版本判断，当android和ios大于等于6.2.0时使用WeexVideoPlus标签
-  if (appVersion[0] > 6 || appVersion[0] == 6 && appVersion[1] >= 2) {
+  if (appVersion[0] >= 6 && appVersion[1] >= 2) {
     supportVideoPlus = true;
   }
 }
@@ -48,7 +48,7 @@ const defaultStyles = {
 
 class Video extends Component {
 
-  new = true;
+  isNew = true;
 
   state = {
     pause: this.props.autoPlay ? false : true,
@@ -60,16 +60,16 @@ class Video extends Component {
     if (this.props.autoPlay) {
       return false;
     }
-    if ( this.new || nextState.update) {
-      this.new = false;
+    if ( this.isNew || nextState.update) {
+      this.isNew = false;
       return true;
     }
     return false;
   }
 
-  switch(status) {
+  switch = (status) => {
     this.setState({
-      pause: status === 'stop' ? true : false,
+      pause: status === 'stop',
       update: true
     });
   }
@@ -108,14 +108,11 @@ class Video extends Component {
   };
 
   render() {
-    let NativeVideo = 'video';
-    // styles
+    let VideoComponent = 'video';
     let styles = this.calculateStyle();
-    // config
     let poster = this.props.poster || this.props.coverImage;
     let playStatus = this.state.pause ? 'stop' : 'play';
-    let videoSrc = this.props.src;
-    videoSrc = videoSrc.replace(/\/\/|http:\/\/|https:\/\//, location.protocol + '//'); // 解决android下播放器不能播放//前缀视频文件的bug
+    let videoSrc = this.props.src.replace(/\/\/|http:\/\/|https:\/\//, location.protocol + '//');
     let props = {
       ...this.props,
       ...{
@@ -130,18 +127,13 @@ class Video extends Component {
         autoPlay: this.props.autoPlay ? true : false
       }
     };
-    // 添加videoplus相关属性适配
+
     if (supportVideoPlus) {
-      NativeVideo = 'videoplus';
-      let utParams = this.props.utParams || {};
-      if (!utParams.page) {
-        utParams.page = 'RX';
-      }
+      VideoComponent = 'videoplus';
       props = {
         ...this.props,
         ...{
           src: videoSrc,
-          utParams: utParams,
           autoPlay: true, // 因为videoplus现在有个bug，当autoPlay不为true的时候埋点会有问题，所有，当视频开始播放之后就设置autoPlay为true
           onPaused: this.onVideoPause,
           onPlaying: this.onVideoPlay,
@@ -153,12 +145,12 @@ class Video extends Component {
         }
       };
     }
-    // comp
+
     return <View style={styles.container}>
       {
         poster && playStatus == 'stop' ?
           null :
-          <NativeVideo
+          <VideoComponent
             {...props}
           />
       }
@@ -183,7 +175,9 @@ class Video extends Component {
               uri: 'https://gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'
             }}
             style={styles.startBtnImage}
-            onClick={this.switch}
+            onClick={() => {
+              this.switch(!playStatus);
+            }}
             />
         </View>
       }
@@ -207,14 +201,14 @@ class Video extends Component {
       ...defaultStyles.startBtn,
       ...{
         width: styles.video.width,
-        height: parseInt(styles.video.height) - 75 + 'rem'
+        height: parseInt(styles.video.height) - 75
       }
     };
     styles.startBtnImage = {
       ...defaultStyles.startBtnImage,
       ...{
-        marginLeft: (parseInt(styles.video.width) - parseInt(defaultStyles.startBtnImage.width)) / 2 + 'rem',
-        marginTop: (parseInt(styles.video.height) - parseInt(defaultStyles.startBtnImage.height)) / 2 + 'rem'
+        marginLeft: (parseInt(styles.video.width) - parseInt(defaultStyles.startBtnImage.width)) / 2,
+        marginTop: (parseInt(styles.video.height) - parseInt(defaultStyles.startBtnImage.height)) / 2
       }
     };
     styles.poster = {
@@ -230,7 +224,6 @@ class Video extends Component {
     };
     return styles;
   }
-
 }
 
 export default Video;

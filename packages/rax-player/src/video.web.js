@@ -33,10 +33,7 @@ const defaultStyles = {
   }
 };
 
-/**
- * @description for web
- */
-class H5Video extends Component {
+class Video extends Component {
 
   state = {
     pause: true,
@@ -384,4 +381,11 @@ class H5Video extends Component {
   }
 }
 
-export default H5Video;
+Video.defaultProps = {
+  style: {
+    width: 750,
+    height: 450
+  }
+};
+
+export default Video;

@@ -33,69 +33,76 @@ export default class CustomUmdMainTemplatePlugin {
       let sourcePrefix = '';
       let sourceSuffix = '';
 
-      // module, function is private, only use in rax internal
-      if (chunk.name.endsWith('.module') || target === 'module') {
-        sourcePrefix = 'module.exports = ';
-        sourceSuffix = '';
-      } else if (chunk.name.endsWith('.function') || target === 'function') {
-        sourcePrefix = `
-module.exports = function() {
-  return `;
-        sourceSuffix = '};';
-      } else if (chunk.name.endsWith('.bundle') || target === 'bundle') {
-        // Build page bundle use this mode.
-        if (this.options.bundle === 'compatible') {
-          sourcePrefix = `define("${chunk.name}", function(require) {`;
-          sourceSuffix = `}); require("${chunk.name}");`;
-        } else {
-          sourcePrefix = '';
+      if (typeof this.options.sourcePrefix === 'function' &&
+         typeof this.options.sourceSuffix === 'function') {
+        sourcePrefix = this.options.sourcePrefix(source, chunk, hash);
+        sourceSuffix = this.options.sourceSuffix(source, chunk, hash);
+      } else {
+        // module, function is private, only use in rax internal
+        if (chunk.name.endsWith('.module') || target === 'module') {
+          sourcePrefix = 'module.exports = ';
           sourceSuffix = '';
-        }
-      } else if (chunk.name.endsWith('.factory') || target === 'factory') {
-        // Build weex builtin modules use this mode.
-        // NOTE: globals should sync logic in weex-rax-framework
-        if (this.options.factoryGlobals) {
-          var globalsCodes = this.options.factoryGlobals.map(function(name) {
-            return `var ${name} = this["${name}"];`;
-          });
-          sourcePrefix = `module.exports = function(require, exports, module) {
-  ${globalsCodes.join('\n')}
-  module.exports = `;
+        } else if (chunk.name.endsWith('.function') || target === 'function') {
+          sourcePrefix = `
+  module.exports = function() {
+    return `;
           sourceSuffix = '};';
-        } else {
-          sourcePrefix = `module.exports = function(require, exports, module) {
-  with(this) { module.exports = `;
-          sourceSuffix = '}};';
-        }
-      } else if (chunk.name.endsWith('.umd') || target === 'umd') {
-        // CommonJS first that could rename module name by wrap another define in air
-        sourcePrefix = `
-;(function(fn) {
-  if (typeof exports === "object" && typeof module !== "undefined") {
-    module.exports = fn();
-  } else if (typeof define === "function") {
-    define(${JSON.stringify(moduleName)}, function(require, exports, module){
+        } else if (chunk.name.endsWith('.bundle') || target === 'bundle') {
+          // Build page bundle use this mode.
+          if (this.options.bundle === 'compatible') {
+            sourcePrefix = `define("${chunk.name}", function(require) {`;
+            sourceSuffix = `}); require("${chunk.name}");`;
+          } else {
+            sourcePrefix = '';
+            sourceSuffix = '';
+          }
+        } else if (chunk.name.endsWith('.factory') || target === 'factory') {
+          // Build weex builtin modules use this mode.
+          // NOTE: globals should sync logic in weex-rax-framework
+          if (this.options.factoryGlobals) {
+            var globalsCodes = this.options.factoryGlobals.map(function(name) {
+              return `var ${name} = this["${name}"];`;
+            });
+            sourcePrefix = `module.exports = function(require, exports, module) {
+    ${globalsCodes.join('\n')}
+    module.exports = `;
+            sourceSuffix = '};';
+          } else {
+            sourcePrefix = `module.exports = function(require, exports, module) {
+    with(this) { module.exports = `;
+            sourceSuffix = '}};';
+          }
+        } else if (chunk.name.endsWith('.umd') || target === 'umd') {
+          // CommonJS first that could rename module name by wrap another define in air
+          sourcePrefix = `
+  ;(function(fn) {
+    if (typeof exports === "object" && typeof module !== "undefined") {
       module.exports = fn();
-    });
-  } else {
-    var root;
-    if (typeof window !== "undefined") {
-      root = window;
-    } else if (typeof self !== "undefined") {
-      root = self;
-    } else if (typeof global !== "undefined") {
-      root = global;
+    } else if (typeof define === "function") {
+      define(${JSON.stringify(moduleName)}, function(require, exports, module){
+        module.exports = fn();
+      });
     } else {
-      // NOTICE: In JavaScript strict mode, this is null
-      root = this;
-    }
-    root["${globalName}"] = fn();
-  }
-})(function(){
-  return `;
-
-        sourceSuffix = '});';
+      var root;
+      if (typeof window !== "undefined") {
+        root = window;
+      } else if (typeof self !== "undefined") {
+        root = self;
+      } else if (typeof global !== "undefined") {
+        root = global;
+      } else {
+        // NOTICE: In JavaScript strict mode, this is null
+        root = this;
       }
+      root["${globalName}"] = fn();
+    }
+  })(function(){
+    return `;
+
+          sourceSuffix = '});';
+        }
+      }
+
 
       return new ConcatSource(
         polyfills.join('\n'),

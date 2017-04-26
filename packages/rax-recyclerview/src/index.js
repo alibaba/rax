@@ -44,10 +44,40 @@ class RecyclerView extends Component {
     isInARecyclerView: PropTypes.bool
   };
 
+  loadmoreretry = 1;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loadmoreretry: 0,
+    };
+  }
+
   getChildContext() {
     return {
       isInARecyclerView: true
     };
+  }
+
+  handleScroll = (e) => {
+    e.nativeEvent = {
+      contentOffset: {
+        // HACK: weex scroll event value is opposite of web
+        x: - e.contentOffset.x,
+        y: - e.contentOffset.y
+      }
+    };
+    this.props.onScroll(e);
+  }
+
+  resetScroll = () => {
+    if (isWeex) {
+      this.setState({
+        loadmoreretry: this.loadmoreretry++,
+      });
+    } else {
+      this.refs.scrollview.resetScroll();
+    }
   }
 
   scrollTo = (options) => {
@@ -77,7 +107,7 @@ class RecyclerView extends Component {
       let cells = children.map((child, index) => {
         const ref = 'cell' + index;
         if (child) {
-          if (props._autoWrapCell && child.type != RefreshControl) {
+          if (props._autoWrapCell && child.type != RefreshControl && child.type != Header) {
             return <Cell ref={ref}>{child}</Cell>;
           } else {
             return cloneElement(child, {ref});
@@ -89,9 +119,10 @@ class RecyclerView extends Component {
 
       return (
         <list
-          id={props.id}
-          style={props.style}
+          {...props}
           onLoadmore={props.onEndReached}
+          onScroll={props.onScroll ? this.handleScroll : null}
+          loadmoreretry={this.state.loadmoreretry}
           loadmoreoffset={props.onEndReachedThreshold}
         >
           {cells}

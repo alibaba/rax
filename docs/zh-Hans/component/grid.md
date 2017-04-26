@@ -1,6 +1,8 @@
 # Grid 栅格布局
 
-面向移动端页面的简单布局标签，提供外部布局容器标签 Grid，内容标签 Col，以及多行多列布局 [MultiRow 参见](/component/multirow)。Row 为行，Col 为列。
+面向移动端页面的简单布局标签，提供外部行布局容器标签 Row，列 Col，多行多列布局参考 [MultiRow ](/component/multirow)。
+
+长列表需求不要使用一个大的 MultiRow 组件进行统一布局，没有一个完整的大标签包裹性能会更好。
 
 ## 安装
 

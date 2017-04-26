@@ -12,14 +12,21 @@ $ npm install universal-transition --save
 import transition from 'universal-transition';
 ```
 
-## API
+## 方法
 
-transition(Node domNode, Object from, Object to, function onEnd);
+### void transition(el, style, option, callback)
 
-- domNode：节点，施展动画的 DOM 节点
-- from：对象，描述动画开始时的状态
-- to：对象，描述动画结束时的状态
-- onEnd：函数，当动画结束时执行的回调
+#### 参数
+
+| 名称         | 类型       | 描述       | 可省略  | 默认值  |
+| ---------- | -------- | -------- | ---- | ---- |
+| `el`       | Array    | 节点。      | 否    | 无    |
+| `style`    | Object   | 样式参数。    | 是    | 无    |
+| `option`   | Object   | 动画参数。    | 否    | 无    |
+| `callback` | Function | 动画成功的回调。 | 是    | 无    |
+
+> 具体详情可查看 [weex 文档](https://weex-project.io/cn/references/modules/animation.html)
+
 
 ## 基本使用
 

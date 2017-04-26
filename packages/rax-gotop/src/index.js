@@ -2,13 +2,12 @@ import {createElement, Component, findDOMNode, render} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Image from 'rax-image';
-import {isWeex} from 'universal-env';
+import {isWeb, isWeex} from 'universal-env';
 import Animated from 'rax-animated';
 
 let scroll;
-
-if (!isWeex) {
-  scroll = require('./scroll');
+if (isWeb) {
+  scroll = require('./scroll.web');
 }
 
 export default class GoTop extends Component {
@@ -21,6 +20,7 @@ export default class GoTop extends Component {
       isShow = true;
       bottom = new Animated.Value(-100);
     }
+
     this.state = {
       isShow: isShow,
       bottom: bottom

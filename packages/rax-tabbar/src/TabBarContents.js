@@ -1,5 +1,6 @@
 import {createElement, Component} from 'rax';
 import View from 'rax-view';
+import {isWeex} from 'universal-env';
 
 const WIDTH = 750;
 
@@ -33,14 +34,21 @@ class TabBarContents extends Component {
       style.left = 0;
     }
 
-    // if the tab has already been shown once, always continue to show it so we
-    // preserve state between tab transitions
-    return (
-      this.hasBeenSelected ?
-        <View style={[this.props.style, style]}>
-          {this.props.children}
-        </View> : <View style={[this.props.style, style]} />
-    );
+    if (!isWeex || this.props.children.length > 0) {
+      return (
+        this.hasBeenSelected ?
+          <View style={[this.props.style, style]}>
+            {this.props.children}
+          </View> : <View style={[this.props.style, style]} />
+      );
+    } else {
+      // in native: save one layer <View />
+      Object.assign(this.props.children.props.style, this.props.style, style);
+      return (
+        this.hasBeenSelected ?
+          this.props.children : <View style={[this.props.style, style]} />
+      );
+    }
   }
 }
 

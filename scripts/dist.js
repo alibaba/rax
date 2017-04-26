@@ -20,6 +20,7 @@ const fs = require('fs');
   'rax-image',
   'rax-link',
   'rax-listview',
+  'rax-menulist',
   'rax-modal',
   'rax-multirow',
   'rax-navigation',
@@ -136,16 +137,7 @@ dist(getConfig(
 }).then(() => {
   return dist(getConfig(
     {
-      'promise.module': './packages/runtime-shared/src/promise.js',
-      'promise.function': './packages/runtime-shared/src/promise.js',
-      'matchMedia.module': './packages/runtime-shared/src/matchMedia.js',
-      'matchMedia.function': './packages/runtime-shared/src/matchMedia.js',
-      'url.module': './packages/runtime-shared/src/url.js',
-      'url.function': './packages/runtime-shared/src/url.js',
-      'url-search-params.module': './packages/runtime-shared/src/url-search-params.js',
-      'url-search-params.function': './packages/runtime-shared/src/url-search-params.js',
-      'fontface.module': './packages/runtime-shared/src/fontface.js',
-      'fontface.function': './packages/runtime-shared/src/fontface.js'
+      'shared.function': './packages/runtime-shared/src/index.js',
     },
     {
       path: './packages/runtime-shared/dist/',

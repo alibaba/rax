@@ -1,7 +1,7 @@
 import {createElement, Component} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
-import Point from './progress-point';
+import Point from './progresspoint';
 import {isWeex} from 'universal-env';
 
 const defaultStyles = {

@@ -1,6 +1,7 @@
 'use strict';
 
 const NAMED_COLORS = {
+  'transparent': '#00000000',
   'aliceblue': '#f0f8ff',
   'antiquewhite': '#faebd7',
   'aqua': '#00ffff',
@@ -224,7 +225,7 @@ export default function normalizeColor(value) {
 
   let match;
   if (NAMED_COLORS.hasOwnProperty(value)) {
-    return NAMED_COLORS[value];
+    return value;
   } else if (match = value.match(xhex)) {
     value = hexToRGB(match[1]);
   } else if (match = value.match(xrgb)) {
