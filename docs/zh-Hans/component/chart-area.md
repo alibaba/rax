@@ -10,7 +10,7 @@ import Chart, {AreaStack, Area, Axis} from 'rax-charts';
 
 ## 基本示例
 
-### 简单区域图
+简单区域图的例子
 
 ```jsx
 // demo
@@ -82,7 +82,7 @@ class SimpleArea extends Component {
 render(<SimpleArea />);
 ```
 
-### 重叠区域图
+重叠区域图
 
 ```jsx
 // demo

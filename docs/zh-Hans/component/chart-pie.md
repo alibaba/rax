@@ -10,7 +10,7 @@ import Chart, {Pie, Coord} from 'rax-charts';
 
 ## 基本示例
 
-### 简单饼图
+简单饼图
 
 ```jsx
 // demo
@@ -38,7 +38,7 @@ class SimplePie extends Component {
 render(<SimplePie />);
 ```
 
-### 玫瑰饼图
+玫瑰饼图
 
 ```jsx
 // demo

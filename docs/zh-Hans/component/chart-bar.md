@@ -10,7 +10,7 @@ import Chart, {Bar, Axis} from 'rax-charts';
 
 ## 基本示例
 
-### 简单柱状图
+简单柱状图
 
 ```jsx
 // demo
@@ -43,7 +43,7 @@ class SimpleBar extends Component {
 render(<SimpleBar />)
 ```
 
-### 区间柱状图
+区间柱状图
 
 ```jsx
 // demo
