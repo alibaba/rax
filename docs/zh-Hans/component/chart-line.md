@@ -1,4 +1,4 @@
-# 线图
+# Line 线图
 
 折线图用于显示数据在一个连续的时间间隔或者时间跨度上的变化，它的特点是反映事物随时间或有序类别而变化的趋势。
 
@@ -8,9 +8,7 @@
 import Chart, {Line, Coord, Axis, Point} from 'rax-charts';
 ```
 
-## 基本示例
-
-普通折线图
+## 普通折线图
 
 ```jsx
 // demo
@@ -60,7 +58,7 @@ class SimpleLine extends Component {
 render(<SimpleLine />);
 ```
 
-点线图
+## 点线图
 
 ```jsx
 // demo
