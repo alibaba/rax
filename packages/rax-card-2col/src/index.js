@@ -105,7 +105,7 @@ const styles = {
     marginBottom: 3
   },
   priceTxt: {
-    fontFamily: 'PingFang SC',
+    fontFamily: 'PingFangSC-Regular',
     fontSize: 32,
     color: '#FF5000'
   },
