@@ -25,7 +25,10 @@ describe('tabheader', () => {
   let tree = component.toJSON();
 
   it('should render a tabheader', () => {
-    expect(1 + 1).toEqual(2);
     expect(tree.tagName).toEqual('DIV');
   });
+
+  it('tab for tabheader', () => {
+    expect(tree.children[1].children[0].children.length).toEqual(9);
+  });  
 });
