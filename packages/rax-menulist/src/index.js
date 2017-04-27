@@ -12,8 +12,9 @@ const ARROW_ICON = '//gw.alicdn.com/tfs/TB1aL6LQFXXXXbQXXXXXXXXXXXX-18-18.png';
 export default class MenuList extends Component {
   constructor(props) {
     super(props);
+    const {visible = false} = props;
     this.state = {
-      visible: props.visible
+      visible
     };
   }
 
@@ -43,6 +44,10 @@ export default class MenuList extends Component {
   }
 
   animate = (visible) => {
+    if (!this.menuList) {
+      return;
+    }
+
     const menuList = findDOMNode(this.menuList);
     if (visible) {
       setNativeProps(this.menuList, {
@@ -150,7 +155,7 @@ const menuListStyle = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     borderColor: '#e7e7e7',
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     width: 210,
     position: 'fixed',
     opacity: 0
