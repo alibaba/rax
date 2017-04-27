@@ -1,20 +1,20 @@
 import renderer from 'rax-test-renderer';
 import {createElement} from 'rax';
 import Text from 'rax-text';
+import View from 'rax-view';
 import TabHeader from '../index';
 
 describe('tabheader', () => {
-
   const component = renderer.create(
-    <TabHeader 
-      style={{height: 80}} 
-      dataSource={['tab1', 'tab2', 'tab3', 'tab4', 'tab5', 'tab6', 'tab7', 'tab8']} 
+    <TabHeader
+      style={{height: 80}}
+      dataSource={['tab1', 'tab2', 'tab3', 'tab4', 'tab5', 'tab6', 'tab7', 'tab8']}
       renderItem={(item, index) => {
         return <View><Text>{item}</Text></View>;
-      }} 
+      }}
       renderSelect={(item, index) => {
         return <View><Text>{item}</Text></View>;
-      }} 
+      }}
       onPress={(index) => {}}
       onSelect={(index) => {}}
       selected={0}
@@ -25,8 +25,7 @@ describe('tabheader', () => {
   let tree = component.toJSON();
 
   it('should render a tabheader', () => {
-    console.log(tree);
-    expect(1+1).toEqual(2);
+    expect(1 + 1).toEqual(2);
+    expect(tree.tagName).toEqual('DIV');
   });
-
 });
