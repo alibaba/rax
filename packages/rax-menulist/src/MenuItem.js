@@ -28,7 +28,7 @@ const menuItemStyle = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#e7e7e7',
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     paddingTop: 15,
     paddingBottom: 15
   },
