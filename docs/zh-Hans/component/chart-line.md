@@ -10,7 +10,7 @@ import Chart, {Line, Coord, Axis, Point} from 'rax-charts';
 
 ## 基本示例
 
-### 普通折线图
+普通折线图
 
 ```jsx
 // demo
@@ -60,7 +60,7 @@ class SimpleLine extends Component {
 render(<SimpleLine />);
 ```
 
-### 点线图
+点线图
 
 ```jsx
 // demo
@@ -122,7 +122,7 @@ class LinePoint extends Component {
 export default LinePoint;
 ```
 
-### 平滑折线图
+平滑折线图
 
 ```jsx
 // demo

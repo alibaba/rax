@@ -25,10 +25,12 @@ class Canvas extends Component {
   };
 
   render() {
+    const {style = {}} = this.props;
+
     if (isWeex) {
       return <gcanvas {...this.props} ref="canvas" />;
     } else {
-      return <canvas {...this.props} ref="canvas" />;
+      return <canvas {...this.props} width={style.width} height={style.height} ref="canvas" />;
     }
   }
 }

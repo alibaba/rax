@@ -1,7 +1,7 @@
 {
-  "name": "rax-picker",
-  "version": "0.3.2",
-  "description": "Picker component for Rax.",
+  "name": "rax-card-2col",
+  "version": "0.3.1",
+  "description": "Card2col component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -21,15 +21,16 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-text": "^0.3.2",
-    "rax-touchable": "^0.3.2",
-    "universal-env": "^0.3.2"
+    "rax-link": "^0.3.1",
+    "rax-picture": "^0.3.1",
+    "rax-text": "^0.3.1",
+    "rax-view": "^0.3.1"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-text": "^0.3.2",
-    "rax-test-renderer": "^0.3.2"
+    "rax-text": "^0.3.1",
+    "rax-test-renderer": "^0.3.1"
   }
 }
