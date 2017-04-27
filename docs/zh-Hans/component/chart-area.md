@@ -80,8 +80,6 @@ class SimpleArea extends Component {
 render(<SimpleArea />);
 ```
 
-
-
 ## 重叠区域图
 
 ```jsx
