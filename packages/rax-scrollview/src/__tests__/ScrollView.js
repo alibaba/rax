@@ -23,20 +23,40 @@ class ScrollViewTest extends Component {
   }
 }
 
+class ScrollViewChildTest extends Component {
+  render() {
+    let props = {
+      children: [<span>1</span>, null, <span>3</span>]
+    };
+    return <ScrollView {...props} />;
+  }
+}
+
 describe('ScrollView', () => {
-  let component;
+  let component1, component2;
 
   beforeEach(() => {
-    component = renderer.create(
+    component1 = renderer.create(
       <ScrollViewTest />
+    );
+    component2 = renderer.create(
+      <ScrollViewChildTest />
     );
   });
 
   it('should render a ScrollView', () => {
-    let tree = component.toJSON();
+    let tree = component1.toJSON();
     expect(tree.tagName).toEqual('DIV');
     expect(tree.children[0].children[0].children[0]).toEqual('1');
     expect(tree.children[0].children[1].children[0]).toEqual('2');
     expect(tree.children[0].children[2].children[0]).toEqual('3');
+  });
+
+  it('child in ScrollView', () => {
+    let tree = component2.toJSON();
+    expect(tree.tagName).toEqual('DIV');
+    expect(tree.children[0].children.length).toEqual(2);
+    expect(tree.children[0].children[0].children[0]).toEqual('1');
+    expect(tree.children[0].children[1].children[0]).toEqual('3');
   });
 });
