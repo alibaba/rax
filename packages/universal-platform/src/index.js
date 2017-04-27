@@ -1,7 +1,7 @@
 let OS = 'web';
 
 if (typeof WXEnvironment === 'object') {
-  OS = WXEnvironment.platform;
+  OS = WXEnvironment.platform.toLowerCase();
 }
 
 export default {
