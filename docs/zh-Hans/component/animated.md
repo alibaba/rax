@@ -1,6 +1,6 @@
-# Animated
+# Animated 动画
 
-动画是现代用户体验中非常重要的一个部分，`Animated`库就是用来创造流畅、强大、并且易于构建和维护的动画。
+动画是现代用户体验中非常重要的一个部分，`Animated` 库就是用来创造流畅、强大、并且易于构建和维护的动画。
 
 
 ## 安装
@@ -19,27 +19,27 @@ import Button from 'rax-animated';
 
 ```jsx
 class FadeInView extends React.Component {
-   constructor(props) {
-     super(props);
-     this.state = {
-       fadeAnim: new Animated.Value(0), // init opacity 0
-     };
-   }
-   componentDidMount() {
-     Animated.timing(          // Uses easing functions
-       this.state.fadeAnim,    // The value to drive
-       {toValue: 1},           // Configuration
-     ).start();                // Don't forget start!
-   }
-   render() {
-     return (
-       <Animated.View          // Special animatable View
-         style={{opacity: this.state.fadeAnim}}> // Binds
-         {this.props.children}
-       </Animated.View>
-     );
-   }
- }
+  constructor(props) {
+    super(props);
+    this.state = {
+      fadeAnim: new Animated.Value(0), // init opacity 0
+    };
+  }
+  componentDidMount() {
+    Animated.timing(          // Uses easing functions
+      this.state.fadeAnim,    // The value to drive
+      {toValue: 1},           // Configuration
+    ).start();                // Don't forget start!
+  }
+  render() {
+    return (
+      <Animated.View          // Special animatable View
+        style={{opacity: this.state.fadeAnim}}> // Binds
+        {this.props.children}
+      </Animated.View>
+    );
+  }
+}
 ```
 
 
@@ -52,15 +52,15 @@ class FadeInView extends React.Component {
  举个例子，你可能希望你的`Animated.Value`从0变化到1时，把组件的位置从150px移动到0px，不透明度从0到1。可以通过以下的方法修改`style`属性来实现：
 
 ```jsx
- style={{
-   opacity: this.state.fadeAnim, // Binds directly
-   transform: [{
-     translateY: this.state.fadeAnim.interpolate({
-       inputRange: [0, 1],
-       outputRange: [150, 0]  // 0 : 150, 0.5 : 75, 1 : 0
-     }),
-   }],
- }}>
+style={{
+     opacity: this.state.fadeAnim, // Binds directly
+     transform: [{
+        translateY: this.state.fadeAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [150, 0]  // 0 : 150, 0.5 : 75, 1 : 0
+       }),
+     }],
+}}>
 ```
 
  动画还可以被更复杂地组合，通过一些辅助函数例如`sequence`或者`parallel`（它们分别用于先后执行多个动画和同时执行多个动画），而且还可以通过把toValue设置为另一个Animated.Value来产生一个动画序列。
@@ -73,44 +73,43 @@ class FadeInView extends React.Component {
 
 ### 方法
 
-static decay(value: AnimatedValue | AnimatedValueXY, config: DecayAnimationConfig)
+- static decay(value: AnimatedValue | AnimatedValueXY, config: DecayAnimationConfig)
 
 推动一个值以一个初始的速度和一个衰减系数逐渐变为0。
 
-static timing(value: AnimatedValue | AnimatedValueXY, config: TimingAnimationConfig) 
+- static timing(value: AnimatedValue | AnimatedValueXY, config: TimingAnimationConfig) 
 
 推动一个值按照一个过渡曲线而随时间变化。Easing模块定义了一大堆曲线，你也可以使用你自己的函数。
 
-
-static spring(value: AnimatedValue | AnimatedValueXY, config: SpringAnimationConfig) 
+- static spring(value: AnimatedValue | AnimatedValueXY, config: SpringAnimationConfig) 
 
 产生一个基于Rebound和Origami实现的Spring动画。它会在toValue值更新的同时跟踪当前的速度状态，以确保动画连贯。可以链式调用。
 
-static add(a: Animated, b: Animated) 
+- static add(a: Animated, b: Animated) 
 
 将两个动画值相加计算，创建一个新的动画值。
 
-static multiply(a: Animated, b: Animated) 
+- static multiply(a: Animated, b: Animated) 
 
 将两个动画值相乘计算，创建一个新的动画值。
 
-static delay(time: number) 
+- static delay(time: number) 
 
 在指定的延迟之后开始动画。
 
-static sequence(animations: Array<CompositeAnimation>) 
+- static sequence(animations: Array<CompositeAnimation>) 
 
 按顺序执行一个动画数组里的动画，等待一个完成后再执行下一个。如果当前的动画被中止，后面的动画则不会继续执行。
 
-static parallel(animations: Array<CompositeAnimation>, config?: ParallelConfig) 
+- static parallel(animations: Array<CompositeAnimation>, config?: ParallelConfig) 
 
 同时开始一个动画数组里的全部动画。默认情况下，如果有任何一个动画停止了，其余的也会被停止。你可以通过stopTogether选项来改变这个效果。
 
-static stagger(time: number, animations: Array<CompositeAnimation>) 
+- static stagger(time: number, animations: Array<CompositeAnimation>) 
 
 一个动画数组，里面的动画有可能会同时执行（重叠），不过会以指定的延迟来开始。用来制作拖尾效果非常合适。
 
-static event(argMapping: Array<Mapping>, config?: EventConfig) 
+- static event(argMapping: Array<Mapping>, config?: EventConfig) 
 
 接受一个映射的数组，对应的解开每个值，然后调用所有对应的输出的setValue方法。例如：
 
@@ -125,16 +124,16 @@ onPanResponderMove: this.AnimatedEvent([
 	{dx: this._panX},    // 手势状态参数
 ]),
 ```
-static createAnimatedComponent(Component: any) 
+- static createAnimatedComponent(Component: any) 
 
 使得任何一个React组件支持动画。用它来创建Animated.View等等。
 
 ### 属性
-Value: AnimatedValue 
+- Value: AnimatedValue 
 
 表示一个数值的类，用于驱动动画。通常用new Animated.Value(0);来初始化。
 
-ValueXY: AnimatedValueXY 
+- ValueXY: AnimatedValueXY 
 
 表示一个2D值的类，用来驱动2D动画，例如拖动操作等。
 
@@ -144,46 +143,42 @@ ValueXY: AnimatedValueXY
 
 ### 方法
 
-
-constructor(value: number) 
-
-setValue(value: number) 
+- constructor(value: number) 
+- setValue(value: number) 
 
 直接设置它的值。这个会停止任何正在进行的动画，然后更新所有绑定的属性。
 
-setOffset(offset: number) 
+- setOffset(offset: number) 
 
 设置一个相对值，不论接下来的值是由setValue、一个动画，还是Animated.event产生的，都会加上这个值。常用来在拖动操作一开始的时候用来记录一个修正值（譬如当前手指位置和View位置）。
 
-flattenOffset() 
+- flattenOffset() 
 
 把当前的相对值合并到值里，并且将相对值设为0。最终输出的值不会变化。常在拖动操作结束后调用。
 
-addListener(callback: ValueListenerCallback) 
+- addListener(callback: ValueListenerCallback) 
 
 添加一个异步监听函数，这样你就可以监听动画值的变更。这有时候很有用，因为你没办法同步的读取动画的当前值，因为有时候动画会在原生层次运行。
 
-removeListener(id: string) 
-
-removeAllListeners() 
-
-stopAnimation(callback?: ?(value: number) => void) 
+- removeListener(id: string) 
+- removeAllListeners() 
+- stopAnimation(callback?: ?(value: number) => void) 
 
 停止任何正在运行的动画或跟踪值。callback会被调用，参数是动画结束后的最终值，这个值可能会用于同步更新状态与动画位置。
 
-interpolate(config: InterpolationConfigType) 
+- interpolate(config: InterpolationConfigType) 
 
 在更新属性之前对值进行插值。譬如：把0-1映射到0-10。
 
-animate(animation: Animation, callback: EndCallback) 
+- animate(animation: Animation, callback: EndCallback) 
 
 一般仅供内部使用。不过有可能一个自定义的动画类会用到此方法。
 
-stopTracking() 
+- stopTracking() 
 
 仅供内部使用。
 
-track(tracking: Animated) 
+- track(tracking: Animated) 
 
 仅供内部使用。
 
@@ -229,50 +224,51 @@ class DraggableView extends React.Component {
 
 ### 方法
 
-constructor(valueIn?: ?{x: number | AnimatedValue; y: number | AnimatedValue}) 
-
-setValue(value: {x: number; y: number}) 
-
-setOffset(offset: {x: number; y: number}) 
-
-flattenOffset() 
-
-stopAnimation(callback?: ?() => number) 
-
-addListener(callback: ValueXYListenerCallback) 
-
-removeListener(id: string) 
-
-getLayout() 
+- constructor(valueIn?: ?{x: number | AnimatedValue; y: number | AnimatedValue}) 
+- setValue(value: {x: number; y: number}) 
+- setOffset(offset: {x: number; y: number}) 
+- flattenOffset() 
+- stopAnimation(callback?: ?() => number) 
+- addListener(callback: ValueXYListenerCallback) 
+- removeListener(id: string) 
+- getLayout() 
 
 将一个{x, y}组合转换为{left, top}以用于样式。例如：
 
- style={this.state.anim.getLayout()}
+```jsx
+style={this.state.anim.getLayout()}
 getTranslateTransform() 
+```
 
 将一个{x, y} 组合转换为一个可用的位移变换(translation transform)，例如：
 
 ```jsx
-  style={{
-    transform: this.state.anim.getTranslateTransform()
-  }}
+style={{
+  transform: this.state.anim.getTranslateTransform()
+}}
 ```
 
 ### 例子
 
 ```jsx
- 
 'use strict';
+import { render } from 'rax';
+import Animated from 'rax-animated';
+import Text from 'rax-text';
+import View from 'rax-view';
+import UIExplorerButton from './UIExplorerButton';
 
-var React = require('react-native');
-var {
-  Animated,
-  Easing,
-  StyleSheet,
-  Text,
-  View,
-} = React;
-var UIExplorerButton = require('./UIExplorerButton');
+const styles = {
+  content: {
+    backgroundColor: 'deepskyblue',
+    borderWidth: 1,
+    borderColor: 'dodgerblue',
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+};
 
 exports.framework = 'React';
 exports.title = 'Animated - Examples';
@@ -466,15 +462,4 @@ exports.examples = [
   }
 ];
 
-var styles = StyleSheet.create({
-  content: {
-    backgroundColor: 'deepskyblue',
-    borderWidth: 1,
-    borderColor: 'dodgerblue',
-    padding: 20,
-    margin: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-});
 ```
