@@ -1,3 +1,8 @@
+---
+title: 什么是 Rax，以及 Rax 的特点
+date: 20170426
+---
+
 # 什么是 Rax，以及 Rax 的特点
 
 <img src="https://img.alicdn.com/tps/TB1LxebPVXXXXaHXpXXXXXXXXXX-900-500.png" style="text-align: center;"/>
