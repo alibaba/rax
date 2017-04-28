@@ -1,4 +1,4 @@
-# 区域图
+# Area 区域图
 
 区域图是在折线图的基础之上填充线下区域形成的。
 
@@ -8,9 +8,7 @@
 import Chart, {AreaStack, Area, Axis} from 'rax-charts';
 ```
 
-## 基本示例
-
-简单区域图的例子
+## 简单区域图
 
 ```jsx
 // demo
@@ -82,11 +80,7 @@ class SimpleArea extends Component {
 render(<SimpleArea />);
 ```
 
-<<<<<<< HEAD
-### 重叠区域图
-=======
-重叠区域图
->>>>>>> 5ff2ec37ecce0774c3c173593d8bd8365b80a742
+## 重叠区域图
 
 ```jsx
 // demo

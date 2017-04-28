@@ -1,4 +1,4 @@
-# 饼图
+# Pie 饼图
 
 饼图广泛得应用在各个领域，用于表示不同分类的占比情况，通过弧度大小来对比各种分类。
 
@@ -8,13 +8,7 @@
 import Chart, {Pie, Coord} from 'rax-charts';
 ```
 
-## 基本示例
-
-<<<<<<< HEAD
-### 简单饼图
-=======
-简单饼图
->>>>>>> 5ff2ec37ecce0774c3c173593d8bd8365b80a742
+## 简单饼图
 
 ```jsx
 // demo
@@ -42,11 +36,7 @@ class SimplePie extends Component {
 render(<SimplePie />);
 ```
 
-<<<<<<< HEAD
-### 玫瑰饼图
-=======
-玫瑰饼图
->>>>>>> 5ff2ec37ecce0774c3c173593d8bd8365b80a742
+## 玫瑰饼图
 
 ```jsx
 // demo
