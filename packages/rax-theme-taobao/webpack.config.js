@@ -85,23 +85,6 @@ module.exports = {
     // This is the URL that app is served from. We use "/" in development.
     publicPath: publicPath
   },
-  // resolve: {
-  //   fallback: paths.nodePaths,
-  //   extensions: ['.js', '.json', '.jsx', ''],
-  //   alias: {
-  //     'react': 'rax'
-  //   }
-  // },
-  // resolve: {
-  //   modules: [
-  //     paths.nodePaths
-  //   ],
-  //   enforceModuleExtension: true,
-  //   extensions: ['.js', '.json', '.jsx'],
-  //   alias: {
-  //     'react': 'rax'
-  //   }
-  // },
   plugins: [
     new RaxWebpackPlugin({
       target: 'bundle',
@@ -132,7 +115,7 @@ module.exports = {
       include: /\.min\.js$/,
       minimize: true,
       sourceMap: true
-    }) : new webpack.NoErrorsPlugin(),
+    }) : new webpack.NoEmitOnErrorsPlugin(),
     // This is necessary to emit hot updates (currently CSS only):
     // new webpack.HotModuleReplacementPlugin(),
     // Watcher doesn't work well if you mistype casing in a path so we use
