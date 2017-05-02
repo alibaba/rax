@@ -15,10 +15,6 @@
   "engines": {
     "npm": ">=3.0.0"
   },
-  "devDependencies": {
-    "rimraf": "^2.6.1",
-    "webpack": "^2.2.1"
-  },
   "peerDependencies": {
     "webpack": "^1.x.x || ^2.x.x"
   },
