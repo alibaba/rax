@@ -2,7 +2,7 @@
 jest.autoMockOff();
 
 global.WXEnvironment = {
-  platform: 'ios'
+  platform: 'iOS'
 };
 
 describe('OS', () => {
@@ -14,7 +14,7 @@ describe('OS', () => {
       Web: 'testWeb'
     });
 
-    expect(Platform.OS).toEqual('ios');
+    expect(Platform.OS).toEqual('iOS');
     expect(selectOS).toEqual('test');
   });
 });
