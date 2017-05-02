@@ -85,13 +85,23 @@ module.exports = {
     // This is the URL that app is served from. We use "/" in development.
     publicPath: publicPath
   },
-  resolve: {
-    fallback: paths.nodePaths,
-    extensions: ['.js', '.json', '.jsx', ''],
-    alias: {
-      'react': 'rax'
-    }
-  },
+  // resolve: {
+  //   fallback: paths.nodePaths,
+  //   extensions: ['.js', '.json', '.jsx', ''],
+  //   alias: {
+  //     'react': 'rax'
+  //   }
+  // },
+  // resolve: {
+  //   modules: [
+  //     paths.nodePaths
+  //   ],
+  //   enforceModuleExtension: true,
+  //   extensions: ['.js', '.json', '.jsx'],
+  //   alias: {
+  //     'react': 'rax'
+  //   }
+  // },
   plugins: [
     new RaxWebpackPlugin({
       target: 'bundle',
@@ -121,9 +131,7 @@ module.exports = {
     isProducation ? new webpack.optimize.UglifyJsPlugin({
       include: /\.min\.js$/,
       minimize: true,
-      compress: {
-        warnings: false
-      }
+      sourceMap: true
     }) : new webpack.NoErrorsPlugin(),
     // This is necessary to emit hot updates (currently CSS only):
     // new webpack.HotModuleReplacementPlugin(),
@@ -138,24 +146,18 @@ module.exports = {
     new WatchMissingNodeModulesPlugin(paths.appNodeModules)
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel', // 'babel-loader' is also a legal name to reference
-        query: {
+        loader: 'babel-loader',
+        options: {
           presets: ['es2015', 'rax'],
         }
       },
       {
         test: /\.css$/,
-        loader: 'stylesheet'
-      },
-      // JSON is not enabled by default in Webpack but both Node and Browserify
-      // allow it implicitly so we also enable it.
-      {
-        test: /\.json$/,
-        loader: 'json'
+        loader: 'stylesheet-loader'
       }
     ]
   }
