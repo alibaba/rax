@@ -16,7 +16,7 @@ var RaxPlugin = require('rax-webpack-plugin');
 module.exports = {
   plugins: [
     new RaxPlugin({
-      // Target format: `bundle`, `umd` or `factory`(build for builtin module format), default is umd
+      // Target format: `bundle`, `cmd`, `umd` or `factory`(build for builtin module format), default is umd
       target: 'umd',
       // Only for `bundle` target, default is '// {"framework" : "Rax"}'
       frameworkComment: '// {"framework" : "Rax"}',

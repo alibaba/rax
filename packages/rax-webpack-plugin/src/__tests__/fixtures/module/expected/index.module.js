@@ -73,4 +73,4 @@ module.exports = /******/ (function(modules) { // webpackBootstrap
 console.log('it work!');
 
 /***/ })
-/******/ ]);
+/******/ ]);;

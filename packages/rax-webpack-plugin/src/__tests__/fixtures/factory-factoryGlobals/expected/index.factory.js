@@ -1,6 +1,6 @@
 module.exports = function(require, exports, module) {
-    var weex = this["weex"];
-    module.exports = /******/ (function(modules) { // webpackBootstrap
+  var weex = this["weex"];
+  module.exports = /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
