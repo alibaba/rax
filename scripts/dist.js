@@ -6,50 +6,25 @@ const uppercamelcase = require('uppercamelcase');
 const RaxPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
 
-[
-  'rax-components',
-  'rax-redux',
-  'rax-animated',
-  'rax-text',
-  'rax-button',
-  'rax-calendar',
-  'rax-countdown',
-  'rax-gotop',
-  'rax-grid',
-  'rax-icon',
-  'rax-image',
-  'rax-link',
-  'rax-listview',
-  'rax-menulist',
-  'rax-modal',
-  'rax-multirow',
-  'rax-navigation',
-  'rax-picture',
-  'rax-player',
-  'rax-recyclerview',
-  'rax-refreshcontrol',
-  'rax-scrollview',
-  'rax-slider',
-  'rax-switch',
-  'rax-tabbar',
-  'rax-tabheader',
-  'rax-scrollview',
-  'rax-textinput',
-  'rax-touchable',
-  'rax-video',
-  'rax-view',
-  'universal-panresponder',
-  'universal-easing',
-  'universal-perf',
-  'universal-transition',
-  'universal-platform',
-  'universal-stylesheet',
-  'universal-toast',
-  'universal-jsonp'
-].forEach(function(packageName) {
+const PACKAGES_DIR = path.resolve(__dirname, '../packages');
+
+fs.readdirSync(PACKAGES_DIR)
+.forEach(function(packageName) {
+  var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
+
+  if (!/^(rax|universal)-/.test(packageName) ||
+     /webpack/.test(packageName) ||
+     /theme/.test(packageName) ||
+     /cli/.test(packageName) ||
+     !fs.existsSync(main)
+   ) {
+    console.log('Ignore dist', packageName);
+    return;
+  };
+
   var entryName = packageName.split('-')[1];
   var globalName = uppercamelcase(packageName);
-  var main = './packages/' + packageName + '/src/index.js';
+
   var entry = {};
   entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
   dist(getConfig(
@@ -74,67 +49,25 @@ const fs = require('fs');
 
 dist(getConfig(
   {
-    'env': './packages/universal-env/src/index.js',
-    'env.min': './packages/universal-env/src/index.js',
-    'env.factory': './packages/universal-env/src/index.js',
+    'rax': './packages/rax/src/index.js',
+    'rax.min': './packages/rax/src/index.js',
+    'rax.factory': './packages/rax/src/index.js',
   },
   {
-    path: './packages/universal-env/dist/',
+    path: './packages/rax/dist/',
     filename: '[name].js',
     sourceMapFilename: '[name].map',
     pathinfo: false,
   },
   {
-    moduleName: 'universal-env',
-    globalName: 'Env',
+    moduleName: 'rax',
+    globalName: 'Rax',
+    factoryGlobals: ['__weex_document__', 'document']
   },
   {
     presets: ['es2015', 'rax']
   }
 )).then(() => {
-  return dist(getConfig(
-    {
-      'rax': './packages/rax/src/index.js',
-      'rax.min': './packages/rax/src/index.js',
-      'rax.factory': './packages/rax/src/index.js',
-    },
-    {
-      path: './packages/rax/dist/',
-      filename: '[name].js',
-      sourceMapFilename: '[name].map',
-      pathinfo: false,
-    },
-    {
-      moduleName: 'rax',
-      globalName: 'Rax',
-      factoryGlobals: ['__weex_document__', 'document']
-    },
-    {
-      presets: ['es2015', 'rax']
-    }
-  ));
-}).then(() => {
-  return dist(getConfig(
-    {
-      'transition': './packages/universal-transition/src/index.js',
-      'transition.min': './packages/universal-transition/src/index.js',
-      'transition.factory': './packages/universal-transition/src/index.js',
-    },
-    {
-      path: './packages/universal-transition/dist/',
-      filename: '[name].js',
-      sourceMapFilename: '[name].map',
-      pathinfo: false,
-    },
-    {
-      moduleName: 'universal-transition',
-      globalName: 'Transition',
-    },
-    {
-      presets: ['es2015', 'rax']
-    }
-  ));
-}).then(() => {
   return dist(getConfig(
     {
       'shared.function': './packages/runtime-shared/src/index.js',

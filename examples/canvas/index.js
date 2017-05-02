@@ -3,14 +3,10 @@ import Canvas from 'rax-canvas';
 
 class CanvasSample extends Component {
   componentDidMount() {
-    requestAnimationFrame(() => {
-      const context = this.refs.raxCanvasDemo.getContext();
-      context.then((context) => {
-        context.render();
-        context.fillStyle = 'red';
-        context.fillRect(0, 0, 100, 100);
-        context.render();
-      });
+    const contextPromise = this.refs.raxCanvasDemo.getContext();
+    contextPromise.then((context) => {
+      context.fillStyle = 'red';
+      context.fillRect(0, 0, 100, 100);
     });
   }
 
