@@ -1,5 +1,4 @@
 import {Component, createElement} from 'rax';
-import {isWeex} from 'universal-env';
 import ScrollView from 'rax-scrollview';
 import Text from 'rax-text';
 import View from 'rax-view';
@@ -17,7 +16,6 @@ class Table extends Component {
   };
 
   _renderCell(cellData, col) {
-
     let width = col.width || this.props.columnWidth;
     let style = {};
     if (width) {
@@ -48,13 +46,13 @@ class Table extends Component {
         <View key={index} style={[styles.tableHeaderCell, style]}>
           <Text>{col.title}</Text>
         </View>
-      )
+      );
     });
   }
 
   _renderRow(rowData, index) {
     let { columns, renderCell } = this.props;
-    if(!renderCell) {
+    if (!renderCell) {
       renderCell = this._renderCell.bind(this);
     }
     return (
@@ -81,7 +79,7 @@ class Table extends Component {
           </ScrollView>
         </View>
       </ScrollView>
-    )
+    );
   }
 }
 
