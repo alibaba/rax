@@ -43,7 +43,10 @@ class TabBarContents extends Component {
       );
     } else {
       // in native: save one layer <View />
-      Object.assign(this.props.children.props.style, this.props.style, style);
+      if (this.props.children.length > 0) {
+        Object.assign(this.props.children.props.style || {}, this.props.style || {}, style);
+      }
+
       return (
         this.hasBeenSelected ?
           this.props.children : <View style={[this.props.style, style]} />
