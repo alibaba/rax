@@ -1,13 +1,13 @@
 {
   "name": "rax-theme-zhihu",
   "author": "yacheng.sz",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "snapshots": [
     "https://gw.alicdn.com/tfs/TB1B9PPQXXXXXcNXVXXXXXXXXXX-300-200.png",
     "https://gw.alicdn.com/tfs/TB1IvFAQXXXXXakXXXXXXXXXXXX-377-670.png",
     "https://gw.alicdn.com/tfs/TB1sjJuQXXXXXc0XXXXXXXXXXXX-377-669.png"
   ],
-  "description": "问答类 App",
+  "description": "问答类应用",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
