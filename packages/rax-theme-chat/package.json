@@ -1,7 +1,7 @@
 {
   "name": "rax-theme-chat",
   "author": "wssgcg1213",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "snapshots": [
     "//gw.alicdn.com/tfs/TB1MlvTQXXXXXcvXVXXXXXXXXXX-300-200.png",
     "//gw.alicdn.com/tfs/TB1Ea3DPVXXXXabXpXXXXXXXXXX-1242-2208.png",
@@ -9,15 +9,15 @@
     "//gw.alicdn.com/tfs/TB1ZhjSPVXXXXb9aFXXXXXXXXXX-1242-2208.png",
     "//gw.alicdn.com/tfs/TB1vvcdPVXXXXXSaXXXXXXXXXXX-1242-2208.png"
   ],
-  "description": "即时通讯类 App",
+  "description": "即时通讯类应用",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
   },
   "scripts": {
-    "start": "./node_modules/.bin/webpack-dev-server --host 0.0.0.0 --no-info",
-    "build": "rm -rf build && NODE_ENV=production ./node_modules/.bin/webpack",
-    "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./templates"
+    "start": "webpack-dev-server --host 0.0.0.0 --no-info",
+    "build": "rm -rf build && NODE_ENV=production webpack",
+    "lint": "eslint --ext .js --ext .jsx ./templates"
   },
   "dependencies": {
     "rax": "^0.3.2",
@@ -50,7 +50,7 @@
     "rax-webpack-plugin": "^0.3.2",
     "stylesheet-loader": "^0.3.2",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
-    "webpack": "^1.13.3",
-    "webpack-dev-server": "^1.16.2"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0"
   }
 }

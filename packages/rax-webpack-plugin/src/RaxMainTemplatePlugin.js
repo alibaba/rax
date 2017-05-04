@@ -38,15 +38,17 @@ export default class CustomUmdMainTemplatePlugin {
         sourcePrefix = this.options.sourcePrefix(source, chunk, hash);
         sourceSuffix = this.options.sourceSuffix(source, chunk, hash);
       } else {
+
         // module, function is private, only use in rax internal
         if (chunk.name.endsWith('.module') || target === 'module') {
           sourcePrefix = 'module.exports = ';
-          sourceSuffix = '';
+          sourceSuffix = ';';
+
         } else if (chunk.name.endsWith('.function') || target === 'function') {
-          sourcePrefix = `
-  module.exports = function() {
-    return `;
+          sourcePrefix = `module.exports = function() {
+  return `;
           sourceSuffix = '};';
+
         } else if (chunk.name.endsWith('.bundle') || target === 'bundle') {
           // Build page bundle use this mode.
           if (this.options.bundle === 'compatible') {
@@ -56,6 +58,7 @@ export default class CustomUmdMainTemplatePlugin {
             sourcePrefix = '';
             sourceSuffix = '';
           }
+
         } else if (chunk.name.endsWith('.factory') || target === 'factory') {
           // Build weex builtin modules use this mode.
           // NOTE: globals should sync logic in weex-rax-framework
@@ -64,14 +67,20 @@ export default class CustomUmdMainTemplatePlugin {
               return `var ${name} = this["${name}"];`;
             });
             sourcePrefix = `module.exports = function(require, exports, module) {
-    ${globalsCodes.join('\n')}
-    module.exports = `;
+  ${globalsCodes.join('\n')}
+  module.exports = `;
             sourceSuffix = '};';
           } else {
             sourcePrefix = `module.exports = function(require, exports, module) {
-    with(this) { module.exports = `;
+  with(this) { module.exports = `;
             sourceSuffix = '}};';
           }
+
+        } else if (chunk.name.endsWith('.cmd') || target === 'cmd') {
+          sourcePrefix = `define(${JSON.stringify(moduleName)}, function(require, exports, module){
+  module.exports = `;
+          sourceSuffix = '});';
+
         } else if (chunk.name.endsWith('.umd') || target === 'umd') {
           // CommonJS first that could rename module name by wrap another define in air
           sourcePrefix = `
@@ -102,7 +111,6 @@ export default class CustomUmdMainTemplatePlugin {
           sourceSuffix = '});';
         }
       }
-
 
       return new ConcatSource(
         polyfills.join('\n'),

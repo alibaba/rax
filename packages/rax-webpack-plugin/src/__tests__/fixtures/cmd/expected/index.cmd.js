@@ -1,5 +1,5 @@
-module.exports = function(require, exports, module) {
-  with(this) { module.exports = /******/ (function(modules) { // webpackBootstrap
+define("index.cmd", function(require, exports, module){
+  module.exports = /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -74,4 +74,4 @@ module.exports = function(require, exports, module) {
 console.log('it work!');
 
 /***/ })
-/******/ ])}};;
+/******/ ])});;

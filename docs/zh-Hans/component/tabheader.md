@@ -89,7 +89,7 @@ class App extends Component {
         dataSource={['tab1','tab2','tab3','tab4']} 
         renderItem={this.renderItem} 
         renderSelect={this.renderSelect} 
-        onPress={this.onSelect}
+        onSelect={this.onSelect}
         selected={0}
         itemWidth={this.itemWidth}
       />
