@@ -30,5 +30,5 @@ describe('tabheader', () => {
 
   it('tab for tabheader', () => {
     expect(tree.children[1].children[0].children.length).toEqual(9);
-  });  
+  });
 });

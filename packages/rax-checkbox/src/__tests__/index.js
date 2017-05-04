@@ -11,7 +11,6 @@ class CheckboxTest extends Component {
 }
 
 describe('checkbox', () => {
-
   let component, component2;
 
   beforeEach(() => {
@@ -34,5 +33,4 @@ describe('checkbox', () => {
     expect(tree.children[0].children[0].tagName).toEqual('IMG');
     expect(tree.children[0].children[0].attributes.src).toEqual('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAYUExURUxpcTMzMzMzMzMzMzMzMzMzMzMzMzMzM2vW5DoAAAAHdFJOUwCPEO9AzzBOX/xUAAAASklEQVQoz+2SMRKAQAwCIcmF///YaKl4tYU7Q8O2CwRTD5IBxJJlBSixcKPOFzkzUAmpnGppFCy/+qpqZ2rUJgCbTV/ZbGJ7T/QAwyIE71akwQMAAAAASUVORK5CYII=');
   });
-
 });
