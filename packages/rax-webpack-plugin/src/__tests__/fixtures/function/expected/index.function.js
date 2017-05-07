@@ -1,6 +1,5 @@
-
-  module.exports = function() {
-    return /******/ (function(modules) { // webpackBootstrap
+module.exports = function() {
+  return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/

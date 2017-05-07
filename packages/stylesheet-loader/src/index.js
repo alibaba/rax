@@ -94,7 +94,7 @@ const exportContent = (parseData) => {
 
   resetMessage();
 
-  return `let _styles = ${stringifyData(data)};
+  return `var _styles = ${stringifyData(data)};
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
