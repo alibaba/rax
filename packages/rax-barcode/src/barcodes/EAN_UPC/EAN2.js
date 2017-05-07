@@ -18,13 +18,13 @@ class EAN2 extends Barcode {
   encode() {
     var encoder = new EANencoder();
 
-		// Choose the structure based on the number mod 4
+    // Choose the structure based on the number mod 4
     var structure = this.structure[parseInt(this.data) % 4];
 
-		// Start bits
+    // Start bits
     var result = '1011';
 
-		// Encode the two digits with 01 in between
+    // Encode the two digits with 01 in between
     result += encoder.encode(this.data, structure, '01');
 
     return {

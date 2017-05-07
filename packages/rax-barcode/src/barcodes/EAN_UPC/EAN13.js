@@ -6,36 +6,36 @@ import Barcode from '../Barcode.js';
 
 class EAN13 extends Barcode {
   constructor(data, options) {
-		// Add checksum if it does not exist
+    // Add checksum if it does not exist
     if (data.search(/^[0-9]{12}$/) !== -1) {
       data += checksum(data);
     }
 
     super(data, options);
 
-		// Make sure the font is not bigger than the space between the guard bars
+    // Make sure the font is not bigger than the space between the guard bars
     if (!options.flat && options.fontSize > options.width * 10) {
       this.fontSize = options.width * 10;
-    }		else {
+    } else {
       this.fontSize = options.fontSize;
     }
 
-		// Make the guard bars go down half the way of the text
+    // Make the guard bars go down half the way of the text
     this.guardHeight = options.height + this.fontSize / 2 + options.textMargin;
 
-		// Adds a last character to the end of the barcode
+    // Adds a last character to the end of the barcode
     this.lastChar = options.lastChar;
   }
 
   valid() {
     return this.data.search(/^[0-9]{13}$/) !== -1 &&
-			this.data[12] == checksum(this.data);
+    	this.data[12] == checksum(this.data);
   }
 
   encode() {
     if (this.options.flat) {
       return this.flatEncoding();
-    }		else {
+    } else {
       return this.guardedEncoding();
     }
   }
@@ -63,13 +63,13 @@ class EAN13 extends Barcode {
 
     var structure = this.getStructure()[this.data[0]];
 
-		// Get the string to be encoded on the left side of the EAN code
+    // Get the string to be encoded on the left side of the EAN code
     var leftSide = this.data.substr(1, 6);
 
-		// Get the string to be encoded on the right side of the EAN code
+    // Get the string to be encoded on the right side of the EAN code
     var rightSide = this.data.substr(7, 6);
 
-		// Add the first digigt
+    // Add the first digigt
     if (this.options.displayValue) {
       result.push({
         data: '000000000000',
@@ -78,33 +78,33 @@ class EAN13 extends Barcode {
       });
     }
 
-		// Add the guard bars
+    // Add the guard bars
     result.push({
       data: '101',
       options: {height: this.guardHeight}
     });
 
-		// Add the left side
+    // Add the left side
     result.push({
       data: encoder.encode(leftSide, structure),
       text: this.text.substr(1, 6),
       options: {fontSize: this.fontSize}
     });
 
-		// Add the middle bits
+    // Add the middle bits
     result.push({
       data: '01010',
       options: {height: this.guardHeight}
     });
 
-		// Add the right side
+    // Add the right side
     result.push({
       data: encoder.encode(rightSide, 'RRRRRR'),
       text: this.text.substr(7, 6),
       options: {fontSize: this.fontSize}
     });
 
-		// Add the end bits
+    // Add the end bits
     result.push({
       data: '101',
       options: {height: this.guardHeight}

@@ -8,7 +8,7 @@ class EAN5 extends Barcode {
   constructor(data, options) {
     super(data, options);
 
-		// Define the EAN-13 structure
+    // Define the EAN-13 structure
     this.structure = [
       'GGLLL',
       'GLGLL',
@@ -31,10 +31,10 @@ class EAN5 extends Barcode {
     var encoder = new EANencoder();
     var checksum = this.checksum();
 
-		// Start bits
+    // Start bits
     var result = '1011';
 
-		// Use normal ean encoding with 01 in between all digits
+    // Use normal ean encoding with 01 in between all digits
     result += encoder.encode(this.data, this.structure[checksum], '01');
 
     return {

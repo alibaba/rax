@@ -6,7 +6,7 @@ import Barcode from '../Barcode.js';
 
 class UPC extends Barcode {
   constructor(data, options) {
-		// Add checksum if it does not exist
+    // Add checksum if it does not exist
     if (data.search(/^[0-9]{11}$/) !== -1) {
       data += checksum(data);
     }
@@ -15,26 +15,26 @@ class UPC extends Barcode {
 
     this.displayValue = options.displayValue;
 
-		// Make sure the font is not bigger than the space between the guard bars
+    // Make sure the font is not bigger than the space between the guard bars
     if (options.fontSize > options.width * 10) {
       this.fontSize = options.width * 10;
-    }		else {
+    } else {
       this.fontSize = options.fontSize;
     }
 
-		// Make the guard bars go down half the way of the text
+    // Make the guard bars go down half the way of the text
     this.guardHeight = options.height + this.fontSize / 2 + options.textMargin;
   }
 
   valid() {
     return this.data.search(/^[0-9]{12}$/) !== -1 &&
-			this.data[11] == checksum(this.data);
+    	this.data[11] == checksum(this.data);
   }
 
   encode() {
     if (this.options.flat) {
       return this.flatEncoding();
-    }		else {
+    } else {
       return this.guardedEncoding();
     }
   }
@@ -59,7 +59,7 @@ class UPC extends Barcode {
     var encoder = new EANencoder();
     var result = [];
 
-		// Add the first digigt
+    // Add the first digigt
     if (this.displayValue) {
       result.push({
         data: '00000000',
@@ -68,39 +68,39 @@ class UPC extends Barcode {
       });
     }
 
-		// Add the guard bars
+    // Add the guard bars
     result.push({
       data: '101' + encoder.encode(this.data[0], 'L'),
       options: {height: this.guardHeight}
     });
 
-		// Add the left side
+    // Add the left side
     result.push({
       data: encoder.encode(this.data.substr(1, 5), 'LLLLL'),
       text: this.text.substr(1, 5),
       options: {fontSize: this.fontSize}
     });
 
-		// Add the middle bits
+    // Add the middle bits
     result.push({
       data: '01010',
       options: {height: this.guardHeight}
     });
 
-		// Add the right side
+    // Add the right side
     result.push({
       data: encoder.encode(this.data.substr(6, 5), 'RRRRR'),
       text: this.text.substr(6, 5),
       options: {fontSize: this.fontSize}
     });
 
-		// Add the end bits
+    // Add the end bits
     result.push({
       data: encoder.encode(this.data[11], 'R') + '101',
       options: {height: this.guardHeight}
     });
 
-		// Add the last digit
+    // Add the last digit
     if (this.displayValue) {
       result.push({
         data: '00000000',

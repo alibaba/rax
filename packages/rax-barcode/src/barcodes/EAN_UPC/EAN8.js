@@ -6,7 +6,7 @@ import Barcode from '../Barcode.js';
 
 class EAN8 extends Barcode {
   constructor(data, options) {
-		// Add checksum if it does not exist
+    // Add checksum if it does not exist
     if (data.search(/^[0-9]{7}$/) !== -1) {
       data += checksum(data);
     }
@@ -16,34 +16,34 @@ class EAN8 extends Barcode {
 
   valid() {
     return this.data.search(/^[0-9]{8}$/) !== -1 &&
-			this.data[7] == checksum(this.data);
+    	this.data[7] == checksum(this.data);
   }
 
   encode() {
     var encoder = new EANencoder();
 
-		// Create the return variable
+    // Create the return variable
     var result = '';
 
-		// Get the number to be encoded on the left side of the EAN code
+    // Get the number to be encoded on the left side of the EAN code
     var leftSide = this.data.substr(0, 4);
 
-		// Get the number to be encoded on the right side of the EAN code
+    // Get the number to be encoded on the right side of the EAN code
     var rightSide = this.data.substr(4, 4);
 
-		// Add the start bits
+    // Add the start bits
     result += encoder.startBin;
 
-		// Add the left side
+    // Add the left side
     result += encoder.encode(leftSide, 'LLLL');
 
-		// Add the middle bits
+    // Add the middle bits
     result += encoder.middleBin;
 
-		// Add the right side
+    // Add the right side
     result += encoder.encode(rightSide, 'RRRR');
 
-		// Add the end bits
+    // Add the end bits
     result += encoder.endBin;
 
     return {

@@ -7,7 +7,7 @@ class CODE39 extends Barcode {
   constructor(data, options) {
     data = data.toUpperCase();
 
-		// Calculate mod43 checksum if enabled
+    // Calculate mod43 checksum if enabled
     if (options.mod43) {
       data += getCharacter(mod43checksum(data));
     }
@@ -16,15 +16,15 @@ class CODE39 extends Barcode {
   }
 
   encode() {
-		// First character is always a *
+    // First character is always a *
     var result = getEncoding('*');
 
-		// Take every character and add the binary representation to the result
+    // Take every character and add the binary representation to the result
     for (let i = 0; i < this.data.length; i++) {
       result += getEncoding(this.data[i]) + '0';
     }
 
-		// Last character is always a *
+    // Last character is always a *
     result += getEncoding('*');
 
     return {

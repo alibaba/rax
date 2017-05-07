@@ -5,7 +5,7 @@ class CODE128AUTO extends CODE128 {
     // ASCII value ranges 0-127, 200-211
     if (data.search(/^[\x00-\x7F\xC8-\xD3]+$/) !== -1) {
       super(autoSelectModes(data), options);
-    }		else {
+    } else {
       super(data, options);
     }
   }

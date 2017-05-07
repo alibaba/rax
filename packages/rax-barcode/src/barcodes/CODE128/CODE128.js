@@ -7,14 +7,14 @@ class CODE128 extends Barcode {
   constructor(data, options) {
     super(data.substring(1), options);
 
-		// Fill the bytes variable with the ascii codes of string
+    // Fill the bytes variable with the ascii codes of string
     this.bytes = [];
     for (var i = 0; i < data.length; ++i) {
       this.bytes.push(data.charCodeAt(i));
     }
 
-		// Data for each character, the last characters will not be encoded but are used for error correction
-		// Numbers encode to (n + 1000) -> binary; 740 -> (740 + 1000).toString(2) -> "11011001100"
+    // Data for each character, the last characters will not be encoded but are used for error correction
+    // Numbers encode to (n + 1000) -> binary; 740 -> (740 + 1000).toString(2) -> "11011001100"
     this.encodings = [ // + 1000
       740, 644, 638, 176, 164, 100, 224, 220, 124, 608, 604,
       572, 436, 244, 230, 484, 260, 254, 650, 628, 614, 764,
@@ -34,31 +34,31 @@ class CODE128 extends Barcode {
   encode() {
     var encodingResult;
     var bytes = this.bytes;
-		// Remove the startcode from the bytes and set its index
+    // Remove the startcode from the bytes and set its index
     var startIndex = bytes.shift() - 105;
 
-		// Start encode with the right type
+    // Start encode with the right type
     if (startIndex === 103) {
       encodingResult = this.nextA(bytes, 1);
-    }		else if (startIndex === 104) {
+    } else if (startIndex === 104) {
       encodingResult = this.nextB(bytes, 1);
-    }		else if (startIndex === 105) {
+    } else if (startIndex === 105) {
       encodingResult = this.nextC(bytes, 1);
-    }		else {
+    } else {
       throw new InvalidStartCharacterException();
     }
 
     return {
       text: this.text == this.data ? this.text.replace(/[^\x20-\x7E]/g, '') : this.text,
       data:
-			// Add the start bits
-			this.getEncoding(startIndex) +
-			// Add the encoded bits
-			encodingResult.result +
-			// Add the checksum
-			this.getEncoding((encodingResult.checksum + startIndex) % 103) +
-			// Add the end bits
-			this.getEncoding(106)
+    	// Add the start bits
+    	this.getEncoding(startIndex) +
+    	// Add the encoded bits
+    	encodingResult.result +
+    	// Add the checksum
+    	this.getEncoding((encodingResult.checksum + startIndex) % 103) +
+    	// Add the end bits
+    	this.getEncoding(106)
     };
   }
 
@@ -79,14 +79,14 @@ class CODE128 extends Barcode {
 
     var next, index;
 
-		// Special characters
+    // Special characters
     if (bytes[0] >= 200) {
       index = bytes[0] - 105;
 
-			// Remove first element
+    	// Remove first element
       bytes.shift();
 
-			// Swap to CODE128C
+    	// Swap to CODE128C
       if (index === 99) {
         next = this.nextC(bytes, depth + 1);
       } else if (index === 100) {
@@ -94,7 +94,7 @@ class CODE128 extends Barcode {
         next = this.nextB(bytes, depth + 1);
       } else if (index === 98) {
         // Shift
-				// Convert the next character so that is encoded correctly
+        // Convert the next character so that is encoded correctly
         bytes[0] = bytes[0] > 95 ? bytes[0] - 96 : bytes[0];
         next = this.nextA(bytes, depth + 1);
       } else {
@@ -106,13 +106,13 @@ class CODE128 extends Barcode {
       var charCode = bytes[0];
       index = charCode < 32 ? charCode + 64 : charCode - 32;
 
-			// Remove first element
+    	// Remove first element
       bytes.shift();
 
       next = this.nextA(bytes, depth + 1);
     }
 
-		// Get the correct binary encoding and calculate the weight
+    // Get the correct binary encoding and calculate the weight
     var enc = this.getEncoding(index);
     var weight = index * depth;
 
@@ -129,14 +129,14 @@ class CODE128 extends Barcode {
 
     var next, index;
 
-		// Special characters
+    // Special characters
     if (bytes[0] >= 200) {
       index = bytes[0] - 105;
 
-			// Remove first element
+    	// Remove first element
       bytes.shift();
 
-			// Swap to CODE128C
+    	// Swap to CODE128C
       if (index === 99) {
         next = this.nextC(bytes, depth + 1);
       } else if (index === 101) {
@@ -144,7 +144,7 @@ class CODE128 extends Barcode {
         next = this.nextA(bytes, depth + 1);
       } else if (index === 98) {
         // Shift
-				// Convert the next character so that is encoded correctly
+        // Convert the next character so that is encoded correctly
         bytes[0] = bytes[0] < 32 ? bytes[0] + 96 : bytes[0];
         next = this.nextB(bytes, depth + 1);
       } else {
@@ -158,7 +158,7 @@ class CODE128 extends Barcode {
       next = this.nextB(bytes, depth + 1);
     }
 
-		// Get the correct binary encoding and calculate the weight
+    // Get the correct binary encoding and calculate the weight
     var enc = this.getEncoding(index);
     var weight = index * depth;
 
@@ -172,14 +172,14 @@ class CODE128 extends Barcode {
 
     var next, index;
 
-		// Special characters
+    // Special characters
     if (bytes[0] >= 200) {
       index = bytes[0] - 105;
 
-			// Remove first element
+    	// Remove first element
       bytes.shift();
 
-			// Swap to CODE128B
+    	// Swap to CODE128B
       if (index === 100) {
         next = this.nextB(bytes, depth + 1);
       } else if (index === 101) {
@@ -197,7 +197,7 @@ class CODE128 extends Barcode {
       next = this.nextC(bytes, depth + 1);
     }
 
-		// Get the correct binary encoding and calculate the weight
+    // Get the correct binary encoding and calculate the weight
     var enc = this.getEncoding(index);
     var weight = index * depth;
 
