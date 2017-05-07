@@ -117,7 +117,7 @@ export default class CustomUmdMainTemplatePlugin {
 
     mainTemplate.plugin('global-hash-paths', (paths) => {
       if (this.name) paths = paths.concat(this.name);
-		  return paths;
+      return paths;
     });
 
     mainTemplate.plugin('hash', (hash) => {

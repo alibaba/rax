@@ -130,10 +130,12 @@ module.exports = {
       "beforeColon": false,
       "afterColon": true
     }],
+    "no-mixed-spaces-and-tabs": "error",
     "no-multi-spaces": "error",
     "no-multiple-empty-lines": "error",
     "no-new-object": "error",
     "no-spaced-func": "error",
+    "no-tabs": "error",
     "no-trailing-spaces": "error",
     "no-extra-parens": ["error", "all", { ignoreJSX: "all" }],
     "padded-blocks": ["error", "never"],
