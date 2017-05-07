@@ -13,7 +13,7 @@ $ npm install universal-platform --save
 ```js
 import {OS} from 'universal-platform';
 
-// maybe ios, android, or web
+// maybe iOS, Android, or Web
 console.log(OS);
 ```
 
@@ -30,7 +30,7 @@ import AndroidComponent from './AndroidComponent';
 import IOSComponent from './IOSComponent';
 
 const DestComponent = select({
-  ios: IOSComponent,
-  android: AndroidComponent
+  iOS: IOSComponent,
+  Android: AndroidComponent
 });
 ```
