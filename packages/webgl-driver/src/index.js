@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-import TrackballControls from './lib/controls/TrackballControls';
-import OrbitControls from './lib/controls/OrbitControls';
+import TrackballControls from './plugin/controls/TrackballControls';
+import OrbitControls from './plugin/controls/OrbitControls';
 
 import Driver from './driver';
 
