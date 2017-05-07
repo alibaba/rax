@@ -19,7 +19,7 @@ class RaxWebpackPlugin {
       polyfillModules: [],
       runModule: false,
       bundle: 'compatible', // private
-      target: 'umd',
+      target: 'umd', // default umd
       duplicateCheck: ['rax']
     }, options);
   }
