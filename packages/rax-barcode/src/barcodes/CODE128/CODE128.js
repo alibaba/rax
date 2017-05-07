@@ -30,7 +30,7 @@ class CODE128 extends Barcode {
     ];
   }
 
-	// The public encoding function
+  // The public encoding function
   encode() {
     var encodingResult;
     var bytes = this.bytes;
@@ -51,14 +51,14 @@ class CODE128 extends Barcode {
     return {
       text: this.text == this.data ? this.text.replace(/[^\x20-\x7E]/g, '') : this.text,
       data:
-    	// Add the start bits
-    	this.getEncoding(startIndex) +
-    	// Add the encoded bits
-    	encodingResult.result +
-    	// Add the checksum
-    	this.getEncoding((encodingResult.checksum + startIndex) % 103) +
-    	// Add the end bits
-    	this.getEncoding(106)
+      // Add the start bits
+      this.getEncoding(startIndex) +
+      // Add the encoded bits
+      encodingResult.result +
+      // Add the checksum
+      this.getEncoding((encodingResult.checksum + startIndex) % 103) +
+      // Add the end bits
+      this.getEncoding(106)
     };
   }
 
@@ -66,7 +66,7 @@ class CODE128 extends Barcode {
     return this.encodings[n] ? (this.encodings[n] + 1000).toString(2) : '';
   }
 
-	// Use the regexp variable for validation
+  // Use the regexp variable for validation
   valid() {
     // ASCII value ranges 0-127, 200-211
     return this.data.search(/^[\x00-\x7F\xC8-\xD3]+$/) !== -1;
@@ -83,10 +83,10 @@ class CODE128 extends Barcode {
     if (bytes[0] >= 200) {
       index = bytes[0] - 105;
 
-    	// Remove first element
+      // Remove first element
       bytes.shift();
 
-    	// Swap to CODE128C
+      // Swap to CODE128C
       if (index === 99) {
         next = this.nextC(bytes, depth + 1);
       } else if (index === 100) {
@@ -106,7 +106,7 @@ class CODE128 extends Barcode {
       var charCode = bytes[0];
       index = charCode < 32 ? charCode + 64 : charCode - 32;
 
-    	// Remove first element
+      // Remove first element
       bytes.shift();
 
       next = this.nextA(bytes, depth + 1);
@@ -133,10 +133,10 @@ class CODE128 extends Barcode {
     if (bytes[0] >= 200) {
       index = bytes[0] - 105;
 
-    	// Remove first element
+      // Remove first element
       bytes.shift();
 
-    	// Swap to CODE128C
+      // Swap to CODE128C
       if (index === 99) {
         next = this.nextC(bytes, depth + 1);
       } else if (index === 101) {
@@ -176,10 +176,10 @@ class CODE128 extends Barcode {
     if (bytes[0] >= 200) {
       index = bytes[0] - 105;
 
-    	// Remove first element
+      // Remove first element
       bytes.shift();
 
-    	// Swap to CODE128B
+      // Swap to CODE128B
       if (index === 100) {
         next = this.nextB(bytes, depth + 1);
       } else if (index === 101) {

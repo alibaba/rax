@@ -12,21 +12,21 @@ class CODE128AUTO extends CODE128 {
 }
 
 function autoSelectModes(string) {
-	// ASCII ranges 0-98 and 200-207 (FUNCs and SHIFTs)
+  // ASCII ranges 0-98 and 200-207 (FUNCs and SHIFTs)
   var aLength = string.match(/^[\x00-\x5F\xC8-\xCF]*/)[0].length;
-	// ASCII ranges 32-127 and 200-207 (FUNCs and SHIFTs)
+  // ASCII ranges 32-127 and 200-207 (FUNCs and SHIFTs)
   var bLength = string.match(/^[\x20-\x7F\xC8-\xCF]*/)[0].length;
-	// Number pairs or [FNC1]
+  // Number pairs or [FNC1]
   var cLength = string.match(/^(\xCF*[0-9]{2}\xCF*)*/)[0].length;
 
   var newString;
-	// Select CODE128C if the string start with enough digits
+  // Select CODE128C if the string start with enough digits
   if (cLength >= 2) {
     newString = String.fromCharCode(210) + autoSelectFromC(string);
   } else if (aLength > bLength) {
     // Select A/C depending on the longest match
     newString = String.fromCharCode(208) + autoSelectFromA(string);
-  }	else {
+  } else {
     newString = String.fromCharCode(209) + autoSelectFromB(string);
   }
 
@@ -78,12 +78,12 @@ function autoSelectFromC(string) {
 
   string = string.substring(length);
 
-	// Select A/B depending on the longest match
+  // Select A/B depending on the longest match
   var aLength = string.match(/^[\x00-\x5F\xC8-\xCF]*/)[0].length;
   var bLength = string.match(/^[\x20-\x7F\xC8-\xCF]*/)[0].length;
   if (aLength >= bLength) {
     return cMatch + String.fromCharCode(206) + autoSelectFromA(string);
-  }	else {
+  } else {
     return cMatch + String.fromCharCode(205) + autoSelectFromB(string);
   }
 }

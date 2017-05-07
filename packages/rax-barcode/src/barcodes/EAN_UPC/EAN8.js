@@ -16,7 +16,7 @@ class EAN8 extends Barcode {
 
   valid() {
     return this.data.search(/^[0-9]{8}$/) !== -1 &&
-    	this.data[7] == checksum(this.data);
+      this.data[7] == checksum(this.data);
   }
 
   encode() {

@@ -48,7 +48,7 @@ class EANencoder {
     ];
   }
 
-	// Convert a numberarray to the representing
+  // Convert a numberarray to the representing
   encode(number, structure, separator) {
     // Create the variable that should be returned at the end of the function
     var result = '';
@@ -58,16 +58,16 @@ class EANencoder {
 
     // Loop all the numbers
     for (var i = 0; i < number.length; i++) {
-    	// Using the L, G or R encoding and add it to the returning variable
+      // Using the L, G or R encoding and add it to the returning variable
       if (structure[i] == 'L') {
         result += this.Lbinary[number[i]];
-      }    	else if (structure[i] == 'G') {
+      } else if (structure[i] == 'G') {
         result += this.Gbinary[number[i]];
-      }    	else if (structure[i] == 'R') {
+      } else if (structure[i] == 'R') {
         result += this.Rbinary[number[i]];
       }
 
-    	// Add separator in between encodings
+      // Add separator in between encodings
       if (i < number.length - 1) {
         result += separator;
       }

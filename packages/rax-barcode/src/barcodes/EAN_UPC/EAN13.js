@@ -29,7 +29,7 @@ class EAN13 extends Barcode {
 
   valid() {
     return this.data.search(/^[0-9]{13}$/) !== -1 &&
-    	this.data[12] == checksum(this.data);
+      this.data[12] == checksum(this.data);
   }
 
   encode() {
@@ -40,7 +40,7 @@ class EAN13 extends Barcode {
     }
   }
 
-	// Define the EAN-13 structure
+  // Define the EAN-13 structure
   getStructure() {
     return [
       'LLLLLL',
@@ -56,7 +56,7 @@ class EAN13 extends Barcode {
     ];
   }
 
-	// The "standard" way of printing EAN13 barcodes with guard bars
+  // The "standard" way of printing EAN13 barcodes with guard bars
   guardedEncoding() {
     var encoder = new EANencoder();
     var result = [];
