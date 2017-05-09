@@ -1,8 +1,8 @@
-# rax-theme-taobao
+# rax-theme-buy
 
 ## 描述
 
-这是一个手机淘宝App示例，你可以在[这里](https://github.com/alibaba/rax/tree/master/packages/rax-theme-taobao)查看源码。
+这是一个表单示例，您可以在[这里](https://github.com/alibaba/rax/tree/master/packages/rax-theme-buy)查看源码。
 
 ## 使用说明
 
