@@ -7,12 +7,11 @@ import Picture from 'rax-picture';
 class Card extends Component {
 
   render() {
-
     let {
-      title, 
-      pic, 
-      desc, 
-      url, 
+      title,
+      pic,
+      desc,
+      url,
       price,
       commendNum
     } = this.props;

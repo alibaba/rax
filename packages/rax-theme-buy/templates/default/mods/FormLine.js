@@ -4,8 +4,8 @@ import View from 'rax-view';
 class FormLine extends Component {
   render() {
     let {
-      children, 
-      style, 
+      children,
+      style,
     } = this.props;
 
     return (
