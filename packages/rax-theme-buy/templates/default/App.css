@@ -1,0 +1,104 @@
+.container{
+  background-color: #f4f4f4;
+}
+.border{
+  height: 11;
+  margin-bottom: 16;
+}
+.borderPic{
+  width: 750;
+  height: 12
+}
+.userInfoBox{
+  padding-left: 30;
+  padding-right: 30;
+}
+.userInfo{
+  display: 'flex';
+  flexDirection: 'row';
+  align-items: 'center';
+  justifyContent: 'space-between';
+  padding-top: 25;
+  margin-bottom: 10;
+}
+.shop{
+  flexDirection: 'row';
+  background-color: #ffffff;
+  height: 80;
+}
+.shopPicBox{
+  border-style: solid;
+  border-color: #efefef;
+  border-width: 1;
+  margin-right: 22;
+  width: 32;
+  height: 32;
+  margin-left: 24;
+  margin-top: 24;
+}
+.shopPic{
+  width: 32;
+  height: 32;
+}
+.shopTitle{
+  flexDirection: 'column';
+  padding-top: 20;
+  position: relative;
+  width: 515;
+}
+.buyNum{
+  display: 'flex';
+  flexDirection: 'row';
+  align-items: 'center';
+  justifyContent: 'space-between';
+}
+.tip{
+  color: #ff995c;
+  font-size: 26;
+  padding-top: 5;
+  padding-bottom: 20;
+}
+.userName{
+  font-size: 30;
+}
+.userAddr{
+  font-size: 26;
+}
+.input{
+  width: 570;
+  placeholder-color: #bebebe;
+}
+.subText{
+  margin-right: 10;
+  font-size: 30;
+}
+.price{
+  margin-right: 20;
+  font-size: 30;
+  color: #ff4200;
+}
+.btn{
+  height: 85;
+  width: 200;
+  background-color: #ee8833;
+}
+.btnText{
+  color: #ffffff;
+  padding-top: 20;
+  padding-left: 40;
+  font-size: 30;
+}
+.pickerBox{
+  position: relative;
+}
+.picker{
+  font-size: 32;
+  width: 300;
+}
+.pickerPic{
+  position: absolute;
+  width: 26;
+  height: 52;
+  right: 10;
+  top: 0;
+}
