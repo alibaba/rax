@@ -33,7 +33,7 @@ describe('Switch', () => {
 
     tree.eventListeners.click();
     tree = component.toJSON();
-    expect(tree.style.backgroundColor).toEqual('#fff');
+    expect(tree.style.backgroundColor).toEqual('#ffffff');
   });
 
   it('should change value with disabled', () => {
@@ -41,9 +41,9 @@ describe('Switch', () => {
       <Switch disabled={true} />
     );
     let tree = component.toJSON();
-    expect(tree.style.backgroundColor).toEqual('#fff');
+    expect(tree.style.backgroundColor).toEqual('#ffffff');
     tree.eventListeners.click();
     tree = component.toJSON();
-    expect(tree.style.backgroundColor).toEqual('#fff');
+    expect(tree.style.backgroundColor).toEqual('#ffffff');
   });
 });
