@@ -46,6 +46,10 @@ export default {
     // Real native root node is body
     if (container == null) {
       container = Host.driver.createBody();
+
+      if (!container) {
+        throw new Error('render: body node does not exist in the document');
+      }
     }
 
     let prevRootInstance = this.get(container);
