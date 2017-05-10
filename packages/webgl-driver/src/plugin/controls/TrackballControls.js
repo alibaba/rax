@@ -2,9 +2,9 @@ import * as THREE from 'three';
 
 /**
  * @author Eberhard Graether / http://egraether.com/
- * @author Mark Lundin 	/ http://mark-lundin.com
+ * @author Mark Lundin   / http://mark-lundin.com
  * @author Simone Manini / http://daron1337.github.io
- * @author Luca Antiga 	/ http://lantiga.github.io
+ * @author Luca Antiga   / http://lantiga.github.io
  */
 
 THREE.TrackballControls = function( object, domElement ) {
@@ -14,7 +14,7 @@ THREE.TrackballControls = function( object, domElement ) {
   this.object = object;
   this.domElement = domElement !== undefined ? domElement : document;
 
-	// API
+  // API
 
   this.enabled = true;
 
@@ -36,7 +36,7 @@ THREE.TrackballControls = function( object, domElement ) {
 
   this.keys = [ 65 /* A */, 83 /* S */, 68 /* D */ ];
 
-	// internals
+  // internals
 
   this.target = new THREE.Vector3();
 
@@ -64,20 +64,20 @@ THREE.TrackballControls = function( object, domElement ) {
     _panStart = new THREE.Vector2(),
     _panEnd = new THREE.Vector2();
 
-	// for reset
+  // for reset
 
   this.target0 = this.target.clone();
   this.position0 = this.object.position.clone();
   this.up0 = this.object.up.clone();
 
-	// events
+  // events
 
   var changeEvent = { type: 'change' };
   var startEvent = { type: 'start' };
   var endEvent = { type: 'end' };
 
 
-	// methods
+  // methods
 
   this.handleResize = function() {
     if ( this.domElement === document ) {
@@ -87,7 +87,7 @@ THREE.TrackballControls = function( object, domElement ) {
       this.screen.height = window.innerHeight;
     } else {
       var box = this.domElement.getBoundingClientRect();
-			// adjustments come from similar code in the jquery offset() function
+      // adjustments come from similar code in the jquery offset() function
       var d = this.domElement.ownerDocument.documentElement;
       this.screen.left = box.left + window.pageXOffset - d.clientLeft;
       this.screen.top = box.top + window.pageYOffset - d.clientTop;
@@ -107,9 +107,9 @@ THREE.TrackballControls = function( object, domElement ) {
 
     return function getMouseOnScreen( pageX, pageY ) {
       vector.set(
-				( pageX - _this.screen.left ) / _this.screen.width,
-				( pageY - _this.screen.top ) / _this.screen.height
-			);
+        ( pageX - _this.screen.left ) / _this.screen.width,
+        ( pageY - _this.screen.top ) / _this.screen.height
+      );
 
       return vector;
     };
@@ -120,9 +120,9 @@ THREE.TrackballControls = function( object, domElement ) {
 
     return function getMouseOnCircle( pageX, pageY ) {
       vector.set(
-				 ( pageX - _this.screen.width * 0.5 - _this.screen.left ) / ( _this.screen.width * 0.5 ),
-				 ( _this.screen.height + 2 * ( _this.screen.top - pageY ) ) / _this.screen.width  // screen.width intentional
-			);
+         ( pageX - _this.screen.width * 0.5 - _this.screen.left ) / ( _this.screen.width * 0.5 ),
+         ( _this.screen.height + 2 * ( _this.screen.top - pageY ) ) / _this.screen.width  // screen.width intentional
+      );
 
       return vector;
     };
@@ -283,7 +283,7 @@ THREE.TrackballControls = function( object, domElement ) {
     lastPosition.copy( _this.object.position );
   };
 
-	// listeners
+  // listeners
 
   function keydown( event ) {
     if ( _this.enabled === false ) return;
@@ -386,7 +386,7 @@ THREE.TrackballControls = function( object, domElement ) {
         break;
 
       default:
-				// undefined, 0, assume pixels
+        // undefined, 0, assume pixels
         _zoomStart.y -= event.deltaY * 0.00025;
         break;
 
@@ -503,7 +503,7 @@ THREE.TrackballControls = function( object, domElement ) {
 
   this.handleResize();
 
-	// force an update at start
+  // force an update at start
   this.update();
 };
 
