@@ -26,7 +26,7 @@ class HelloWorld extends Component {
     this.cameraPosition = [0, 0, 5];
   }
 
-  onAfterAnimate = () => {
+  onFrame = () => {
     this.setState({
       cubeRotation: [
         this.state.cubeRotation[0] + 0.01,
@@ -41,7 +41,7 @@ class HelloWorld extends Component {
       <scene
         width={this.width}
         height={this.height}
-        onAfterAnimate={this.onAfterAnimate}
+        onFrame={this.onFrame}
       >
         <perspective-camera
           fov={75}

@@ -137,9 +137,8 @@ const Driver = {
 
 const render = () => {
   window.requestAnimationFrame(render);
-  scene.onBeforeAnimate();
   renderer.render(scene, camera);
-  scene.onAfterAnimate();
+  scene.onFrame();
 };
 
 export default Driver;

@@ -7,8 +7,7 @@ export default {
       fog = null,
       overrideMaterial = null,
       autoUpdate = true,
-      onBeforeAnimate = () => {},
-      onAfterAnimate = () => {}
+      onFrame = () => {}
     } = props;
 
     const Scene = new THREE.Scene();
@@ -22,8 +21,7 @@ export default {
     Scene.background = background;
     Scene.overrideMaterial = overrideMaterial;
     Scene.autoUpdate = autoUpdate;
-    Scene.onBeforeAnimate = onBeforeAnimate;
-    Scene.onAfterAnimate = onAfterAnimate;
+    Scene.onFrame = onFrame;
     Scene.updateProperty = this.updateProperty;
     return Scene;
   },
