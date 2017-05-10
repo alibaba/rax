@@ -8,8 +8,8 @@ class Switch extends Component {
 
   static defaultProps = {
     onTintColor: '#00e158',
-    thumbTintColor: '#fff',
-    tintColor: '#fff'
+    thumbTintColor: '#ffffff',
+    tintColor: '#ffffff'
   }
 
   handleClick = (e) => {
@@ -78,32 +78,33 @@ class Switch extends Component {
   }
 
   render() {
+    const { style, value, disabled, onValueChange, ...others} = this.props;
     if (isWeex) {
       let nativeProps = {
         style: {
           ...styles.initial,
-          ...this.props.style
+          ...style
         },
-        checked: this.props.value,
-        disabled: this.props.disabled,
-        onChange: ({value}) => this.props.onValueChange(value)
+        checked: value,
+        disabled: disabled,
+        onChange: ({value}) => onValueChange(value)
       };
 
       return (
-        <switch {...nativeProps} />
+        <switch {...nativeProps} {...others} />
       );
     } else {
       let styles = this.getStyles();
-      let spancss = this.props.value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
-      let smallcss = this.props.value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
-      spancss = this.props.disabled ? {...spancss, ...styles.disabledSpan} : spancss;
+      let spancss = value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
+      let smallcss = value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
+      spancss = disabled ? {...spancss, ...styles.disabledSpan} : spancss;
       spancss = {
-        ...this.props.style,
+        ...style,
         ...spancss
       };
 
       return (
-        <span onClick={this.handleClick} style={spancss}>
+        <span onClick={this.handleClick} style={spancss} {...others}>
           <small style={smallcss} />
         </span>
       );
