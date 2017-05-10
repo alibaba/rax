@@ -61,8 +61,8 @@ defineProperties(SymbolPolyfill, {
     for (key in globalSymbols) if (globalSymbols[key] === s) return key;
   }},
 
-	// To ensure proper interoperability with other native functions (e.g. Array.from)
-	// fallback to eventual native implementation of given symbol
+  // To ensure proper interoperability with other native functions (e.g. Array.from)
+  // fallback to eventual native implementation of given symbol
   hasInstance: {value: SymbolPolyfill('hasInstance')},
   isConcatSpreadable: {value: SymbolPolyfill('isConcatSpreadable')},
   iterator: {value: SymbolPolyfill('iterator')},
@@ -97,20 +97,20 @@ defineProperties(SymbolPolyfill.prototype, {
 
 defineProperty(SymbolPolyfill.prototype, SymbolPolyfill.toPrimitive, {
   value: function() {
-  	var symbol = validateSymbol(this);
-  	if (typeof symbol === 'symbol') return symbol;
-  	return symbol.toString();
+    var symbol = validateSymbol(this);
+    if (typeof symbol === 'symbol') return symbol;
+    return symbol.toString();
   }
 });
 defineProperty(SymbolPolyfill.prototype, SymbolPolyfill.toStringTag, {value: 'Symbol'});
 
 // Proper implementaton of toPrimitive and toStringTag for returned symbol instances
 defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toStringTag,
-	{value: SymbolPolyfill.prototype[SymbolPolyfill.toStringTag]});
+  {value: SymbolPolyfill.prototype[SymbolPolyfill.toStringTag]});
 
 // Note: It's important to define `toPrimitive` as last one, as some implementations
 // implement `toPrimitive` natively without implementing `toStringTag` (or other specified symbols)
 // And that may invoke error in definition flow:
 // See: https://github.com/medikoo/es6-symbol/issues/13#issuecomment-164146149
 defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toPrimitive,
-	{value: SymbolPolyfill.prototype[SymbolPolyfill.toPrimitive]});
+  {value: SymbolPolyfill.prototype[SymbolPolyfill.toPrimitive]});
