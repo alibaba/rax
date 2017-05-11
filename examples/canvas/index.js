@@ -29,7 +29,6 @@ class CanvasDemo extends Component {
 
     const contextPromise = this.refs.canvas.getContext();
     contextPromise.then((ctx) => {
-
       function draw() {
         ctx.clearRect(0, 0, w, h);
         ctx.globalCompositeOperation = 'lighter';
