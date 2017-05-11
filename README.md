@@ -89,7 +89,6 @@ More examples take a look at the [`examples`](/examples/) folder:
 * [Game2048](/examples/game2048)
 * [Drag](/examples/drag)
 * [TicTacToe](/examples/tictactoe)
-* [UIKit](/examples/uikit)
 * [Profile](/examples/profile)
 * [Parallax](/examples/parallax)
 
