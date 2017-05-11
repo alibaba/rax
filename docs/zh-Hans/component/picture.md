@@ -24,7 +24,7 @@ import Picture from 'rax-picture';
 | forceUpdate      | boolean | false     | Picture 是一个 PureComponent ，它的 shouldComponentUpdate 决定了当且仅当 porps.source.uri 有变化时才会重新 render。如果你想忽略它的 shouldComponentUpdate，则传入 `forceUpdate={true}` |
 | width            | number  |           | 图片真实宽度，单位 px                             |
 | height           | number  |           | 图片真实高度，单位 px                             |
-| lazyload         | boolean | false     | （web端有效）根据图像是否在可视范围内延迟加载图像，Wed 端需引入脚本：` //g.alicdn.com/kg/appear/0.2.2/appear.min.js` |
+| lazyload         | boolean | false     | （web端有效）根据图像是否在可视范围内延迟加载图像，Web 端需引入脚本：` //g.alicdn.com/kg/appear/0.2.2/appear.min.js` |
 | autoPixelRatio   | boolean | true      | （web端有效）在高分辨率下使用二倍图                      |
 | placeholder      | string  |           | （web端有效）lazyload 时显示的背景图 URL             |
 | autoRemoveScheme | boolean | true      | （web端有效）图像 URL 自动删除协议头                   |
