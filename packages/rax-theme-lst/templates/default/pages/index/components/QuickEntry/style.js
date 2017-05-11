@@ -1,7 +1,7 @@
-import { 
+import {
     center,
     percent
-} from "../../mods/commonStyle";
+} from '../../mods/commonStyle';
 
 export default {
   container: {
@@ -9,10 +9,10 @@ export default {
     height: 184,
     borderBottomWidth: 1,
     borderTopWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#e5e5e5",
-    backgroundColor: "#fff",
-    flexDirection: "row",
+    borderStyle: 'solid',
+    borderColor: '#e5e5e5',
+    backgroundColor: '#fff',
+    flexDirection: 'row',
     paddingLeft: 21,
     paddingRight: 21
   },
@@ -28,7 +28,7 @@ export default {
     fontSize: 20,
     lineHeight: 23,
     marginTop: 12,
-    color: "#333",
-    textAlign: "center"
+    color: '#333',
+    textAlign: 'center'
   }
 };

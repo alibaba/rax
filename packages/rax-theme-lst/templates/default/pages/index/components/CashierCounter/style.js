@@ -1,29 +1,29 @@
-import { 
-  textOverflow, 
-  center, 
+import {
+  textOverflow,
+  center,
   borderRadius,
   percent
-} from "../../mods/commonStyle";
+} from '../../mods/commonStyle';
 
 export default {
   container: {},
   titleSection: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     width: percent(100),
     height: 180,
-    position: "relative",
+    position: 'relative',
     marginTop: 20,
     ...center()
   },
   highlight: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     top: 0,
     width: percent(100),
     height: 150
   },
   image: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     top: 0,
     width: percent(100),
@@ -32,36 +32,36 @@ export default {
   textContainer: {
     width: 320,
     height: 110,
-    alignItems: "center"
+    alignItems: 'center'
   },
   title: {
     fontSize: 32,
-    color: "#333",
-    fontWeight: "bold",
+    color: '#333',
+    fontWeight: 'bold',
     lineHeight: 45
   },
   subTitle: {
     maxWidth: 320,
     fontSize: 22,
-    color: "#B19E90",
+    color: '#B19E90',
     lineHeight: 30,
     ...textOverflow()
   },
   more: {
-    flexDirection: "row",
-    position: "absolute",
+    flexDirection: 'row',
+    position: 'absolute',
     top: 86,
     right: 20,
     width: 100,
     height: 44,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
     ...borderRadius(22)
   },
   moreText: {
     fontSize: 24,
-    color: "#333",
+    color: '#333',
     paddingLeft: 8
   },
   moreIcon: {
@@ -69,7 +69,7 @@ export default {
     marginLeft: 2
   },
   scroll: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     width: percent(100),
     height: 160,
     paddingTop: 20,

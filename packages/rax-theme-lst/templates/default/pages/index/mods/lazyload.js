@@ -1,12 +1,12 @@
-import { createElement, Component, PropTypes, findDOMNode } from "rax";
-import { Image, View } from "rax-components";
-import { isWeex } from "universal-env";
-import transition from "universal-transition";
+import { createElement, Component, PropTypes, findDOMNode } from 'rax';
+import { Image, View } from 'rax-components';
+import { isWeex } from 'universal-env';
+import transition from 'universal-transition';
 
 export default class LazyLoad extends Component {
   static defaultProps = {
-    placeholder: "https://cbu01.alicdn.com/cms/upload/2017/107/213/3312701_38443169.png",
-    source: {uri: ""}
+    placeholder: 'https://cbu01.alicdn.com/cms/upload/2017/107/213/3312701_38443169.png',
+    source: {uri: ''}
   }
 
   static propTypes = {
@@ -40,7 +40,7 @@ export default class LazyLoad extends Component {
     transition(findDOMNode(this.imageRef), {
       opacity: 1
     }, {
-      timingFunction: "ease-in-out",
+      timingFunction: 'ease-in-out',
       delay: 0,
       duration: 300
     });
@@ -60,30 +60,30 @@ export default class LazyLoad extends Component {
     }
 
     return (
-      <View style={{position: "relative", width: style.width, height: style.height}} onAppear={this.onAppear} >
-        <Image 
-          source={{uri: url}} 
+      <View style={{position: 'relative', width: style.width, height: style.height}} onAppear={this.onAppear} >
+        <Image
+          source={{uri: url}}
           style={[style, {
             opacity: visible && isWeex ? 0 : 1
-          }]} 
+          }]}
           onLoad={() => {
             if (url === placeholder) return;
             this.loadAnimate();
-          }} 
+          }}
           ref={ref => this.imageRef = ref}
           {...others} />
         {
-          visible ? null : 
+          visible ? null :
           <View style={{
-            position: "absolute",
+            position: 'absolute',
             left: 0,
             top: 0,
-            width: style.width, 
+            width: style.width,
             height: style.height,
-            backgroundColor: "#fff"
+            backgroundColor: '#fff'
           }}>
             <Image source={{uri: placeholder}} style={{
-              position: "absolute",
+              position: 'absolute',
               left: (style.width - placeStyle.width) / 2,
               top: (style.height - placeStyle.height) / 2,
               ...placeStyle
@@ -93,5 +93,5 @@ export default class LazyLoad extends Component {
       </View>
     );
   }
-  
+
 }

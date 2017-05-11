@@ -1,35 +1,35 @@
-import { 
+import {
     center
-} from "../../mods/commonStyle";
+} from '../../mods/commonStyle';
 
 export default {
   container: {
     width: 750,
     marginTop: 24,
-    overflow: "hidden"
+    overflow: 'hidden'
   },
   title: {
     width: 750,
     height: 80,
-    backgroundColor: "#fff",
-    borderColor: "#e5e5e5",
+    backgroundColor: '#fff',
+    borderColor: '#e5e5e5',
     borderBottomWidth: 1,
     borderTopWidth: 1,
     ...center()
   },
   titleText: {
     fontSize: 34,
-    color: "#333",
-    fontWeight: "bold"
+    color: '#333',
+    fontWeight: 'bold'
   },
   cellContrainer: {
-    flexDirection: "row"
+    flexDirection: 'row'
   },
   cell: {
     marginBottom: 4,
-    borderStyle: "solid",
-    borderColor: "#e5e5e5",
-    backgroundColor: "#fff",
+    borderStyle: 'solid',
+    borderColor: '#e5e5e5',
+    backgroundColor: '#fff',
     borderRightWidth: 1,
     borderBottomWidth: 1
   },
@@ -39,7 +39,7 @@ export default {
     borderLeftWidth: 1
   },
   loadingSection: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     width: 750,
     height: 146,
     paddingBottom: 20,
@@ -52,7 +52,7 @@ export default {
   noMoreSection: {
     width: 750,
     height: 130,
-    flexDirection: "row",
+    flexDirection: 'row',
     ...center()
   },
   nomore: {
@@ -62,6 +62,6 @@ export default {
   nomoreText: {
     marginLeft: 16,
     fontSize: 26,
-    color: "#999"
+    color: '#999'
   }
 };

@@ -1,22 +1,22 @@
-import { createElement, PropTypes as T, findDOMNode, PureComponent } from "rax";
-import { RecyclerView, ScrollView, View } from "rax-components";
-import { isWeb, isWeex } from "universal-env";
-import config from "./config";
-import LstFreshControl from "../components/LstRefreshControl";
-import { getValue } from "./util";
- 
+import { createElement, PropTypes as T, findDOMNode, PureComponent } from 'rax';
+import { RecyclerView, ScrollView, View } from 'rax-components';
+import { isWeb, isWeex } from 'universal-env';
+import config from './config';
+import LstFreshControl from '../components/LstRefreshControl';
+import { getValue } from './util';
+
 const ensureChildrenArray = (children) => {
   if (!children) return [];
-  
+
   return (
     Array.isArray(children) ? children : [ children ]
   );
 };
-const wrapRecyclerCell = (children) => (
+const wrapRecyclerCell = (children) =>
   children.map(child => (
     <RecyclerView.Cell>{child}</RecyclerView.Cell>
   ))
-);
+;
 
 class FloorShouldChangeWrap extends PureComponent {
   // 确保只更新依赖数据的时候才updata
@@ -36,17 +36,17 @@ class FloorShouldChangeWrap extends PureComponent {
   render() {
     const { Comp, ...others } = this.props;
     return (
-      <Comp 
+      <Comp
         {...others} />
     );
   }
 }
 
 export default class FloorWrapper extends PureComponent {
- 
+
   constructor(props, context) {
     super(props, context);
-    this.recyclerView = "";
+    this.recyclerView = '';
     this.once = false;
     this.webRefresh = this.webRefresh.bind(this);
     this.childrenRender();
@@ -61,37 +61,37 @@ export default class FloorWrapper extends PureComponent {
     const dataFromStore = {};
     const propsFromStore = item.propsFromStore;
 
-    if (!TagItem || typeof TagItem === "string") {
+    if (!TagItem || typeof TagItem === 'string') {
       return null;
     }
 
     if (propsFromStore) {
       Object.keys(propsFromStore).forEach((key) => {
-        let value = propsFromStore[key] || "";
-        if (typeof value === "string") {
-          const propsValues = value.split(".");
+        let value = propsFromStore[key] || '';
+        if (typeof value === 'string') {
+          const propsValues = value.split('.');
           dataFromStore[key] = getValue(this.props, propsValues);
         }
       });
     }
 
-    
+
     return (
-      <FloorShouldChangeWrap 
+      <FloorShouldChangeWrap
         Comp={TagItem}
         updateProps={Object.keys(propsFromStore || {})}
         {...dataFromStore}
-        {...item.otherProps} />    
+        {...item.otherProps} />
     );
   }
 
   childrenRender() {
-    this.top = []; 
+    this.top = [];
     this.bottom = [];
     this.header = null;
 
     let children = ensureChildrenArray(this.props.children);
-  
+
     children.forEach((node) => {
       if (node.type === FloorWrapper.Top) {
         this.top = wrapRecyclerCell(ensureChildrenArray(node.props.children));
@@ -119,21 +119,21 @@ export default class FloorWrapper extends PureComponent {
       this.once = true;
       let pixelRatio = document.documentElement.clientWidth / 750;
       onRefresh();
-      const y = 160 * pixelRatio + "px";
+      const y = 160 * pixelRatio + 'px';
       refNode.style.transform = `translate3d(0, ${y}, 0)`;
       setTimeout(() => {
-        refNode.style.transform = "translate3d(0, 0, 0)";
+        refNode.style.transform = 'translate3d(0, 0, 0)';
         this.once = false;
       }, 1300);
 
-      refNode.style.transition = "all 300ms";
-      refNode.style.webkitTransition = "all 300ms";
+      refNode.style.transition = 'all 300ms';
+      refNode.style.webkitTransition = 'all 300ms';
     }
   }
 
   render() {
     const { onEndReached, onEndReachedThreshold, style, onRefresh} = this.props;
-    const children = config.map(this.getFloorItem.bind(this));
+    const children = config.map(this.getFloorItem);
 
     return (
       <RecyclerView
@@ -159,13 +159,13 @@ FloorWrapper.propTypes = {
   style: T.object,
   children: T.node
 };
-  
-FloorWrapper.Top = function Top() { 
-  return null; 
+
+FloorWrapper.Top = function Top() {
+  return null;
 };
-FloorWrapper.Bottom = function Bottom() { 
-  return null; 
+FloorWrapper.Bottom = function Bottom() {
+  return null;
 };
-FloorWrapper.Header = function Header() { 
-  return null; 
+FloorWrapper.Header = function Header() {
+  return null;
 };

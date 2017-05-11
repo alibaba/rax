@@ -1,6 +1,6 @@
-import { PropTypes, Component, createElement } from "rax";
-import { View, Text, Image } from "rax-components";
-import OpenUrl from "../../mods/openUrl";
+import { PropTypes, Component, createElement } from 'rax';
+import { View, Text, Image } from 'rax-components';
+import OpenUrl from '../../mods/openUrl';
 
 export default class CheapOffer extends Component {
   static propsTypes = {
@@ -19,7 +19,7 @@ export default class CheapOffer extends Component {
     let discountPrice = hasDiscount ? offerData.discountPrice : offerData.price;
     let discount = 0;
     if (hasDiscount) {
-      discount = Math.round(offerData.price * 100 - offerData.discountPrice * 100) / 100; 
+      discount = Math.round(offerData.price * 100 - offerData.discountPrice * 100) / 100;
     }
 
     if (!offerData.offerTitle) {
@@ -29,8 +29,8 @@ export default class CheapOffer extends Component {
     return (
       <OpenUrl style={styles.container} url={offerData.offerDetailUrl}>
         <Image source={{uri: offerData.offerImage}} resizeMode="cover" style={styles.offerImg} />
-                
-        {hasDiscount ?  
+
+        {hasDiscount ?
             <Text style={styles.discoutnTag}>直降￥{discount}</Text> : null
         }
 
@@ -53,9 +53,9 @@ const styles = {
     width: 250,
     padding: 20,
     borderLeftWidth: 1,
-    borderColor: "#e5e5e5",
-    boxSizing: "border-box",
-    position: "relative"
+    borderColor: '#e5e5e5',
+    boxSizing: 'border-box',
+    position: 'relative'
   },
   offerImg: {
     width: 210,
@@ -63,51 +63,51 @@ const styles = {
   },
   title: {
     width: 210,
-    fontSize: 24, 
+    fontSize: 24,
     marginTop: 16,
-    textOverflow: "ellipsis"
+    textOverflow: 'ellipsis'
   },
   discoutnTag: {
     borderWidth: 1,
-    borderColor: "#df2211",
-    color: "#df2211",
+    borderColor: '#df2211',
+    color: '#df2211',
     fontSize: 22,
     paddingLeft: 4,
     paddingRight: 4,
     paddingTop: 2,
     paddingBottom: 2,
-    position: "absolute",
+    position: 'absolute',
     left: 20,
     top: 200,
-    backgroundColor: "rgba(255, 255, 255, 0.9)"
+    backgroundColor: 'rgba(255, 255, 255, 0.9)'
   },
   priceContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 4
   },
   price: {
     // top: -1,
-    fontSize: 28, 
-    color: "#df2211",
+    fontSize: 28,
+    color: '#df2211',
     lineHeight: 40
   },
   priceSplash: {
     fontSize: 22,
-    color: "#999999",
+    color: '#999999',
     lineHeight: 30
   },
   priceUnit: {
     fontSize: 22,
-    color: "#999999",
+    color: '#999999',
     flex: 1,
     lineHeight: 30
   },
   oldPrice: {
     fontSize: 22,
     lineHeight: 30,
-    color: "#999999",
-    textDecoration: "line-through"
+    color: '#999999',
+    textDecoration: 'line-through'
   }
 };

@@ -27,7 +27,7 @@ export default {
   },
 
   resetOfferList(state, {payload}) {
-    state["offerList"] = payload;
+    state.offerList = payload;
     return state;
   }
 };
@@ -35,18 +35,17 @@ export default {
 function handleData(original) {
   var floors = {};
   original.floors.forEach(function(item = {}) {
-    if (item.key === "heapMap") {
+    if (item.key === 'heapMap') {
       try {
         let heapMapData = JSON.parse((item.data || {}).string || null);
 
-        floors["heapMap"] = heapMapData;
+        floors.heapMap = heapMapData;
       } catch (e) {
         // TODO
       }
     } else {
       floors[item.key] = item;
     }
-    
   });
 
   return floors;

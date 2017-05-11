@@ -1,8 +1,8 @@
-import { createElement, Component, PropTypes } from "rax";
-import { View, Text, Image, RecyclerView, ScrollView } from "rax-components";
-import OpenUrl from "../../mods/openUrl";
-import { getRandomValue } from "../../mods/util.js";
-import style from "./style.js";
+import { createElement, Component, PropTypes } from 'rax';
+import { View, Text, Image, RecyclerView, ScrollView } from 'rax-components';
+import OpenUrl from '../../mods/openUrl';
+import { getRandomValue } from '../../mods/util.js';
+import style from './style.js';
 
 export default class CashierCounter extends Component {
   static propTypes = {
@@ -23,9 +23,9 @@ export default class CashierCounter extends Component {
     return (
       <RecyclerView.Cell style={[style.container, this.props.style]}>
         <View style={style.titleSection}>
-          <Image 
-            source={{uri: sourceData.backgroundImg}} 
-            style={style.image} 
+          <Image
+            source={{uri: sourceData.backgroundImg}}
+            style={style.image}
             resizeMode="cover" />
           <View style={style.textContainer}>
             <Text style={style.title}>{sourceData.title}</Text>
@@ -36,7 +36,7 @@ export default class CashierCounter extends Component {
           <View style={style.more}>
             <Text style={style.moreText}>更多</Text>
           </View>
-          <OpenUrl  
+          <OpenUrl
             style={style.highlight}
             url={moreUrl} />
         </View>
@@ -46,14 +46,14 @@ export default class CashierCounter extends Component {
             sourceData.cashier.map((item = {}) => {
               const appUrl = item.appUrl;
 
-              return item.imgs && item.imgs.length ? 
+              return item.imgs && item.imgs.length ?
               <View>
                 <OpenUrl
                   component={Image}
-                  style={style.scrollImage} 
-                  source={{uri: (getRandomValue(item.imgs) || {}).imgSrc}} 
+                  style={style.scrollImage}
+                  source={{uri: (getRandomValue(item.imgs) || {}).imgSrc}}
                   resizeMode="cover"
-                  url={appUrl} /> </View>: null;
+                  url={appUrl} /> </View> : null;
             })
           }
         </ScrollView>

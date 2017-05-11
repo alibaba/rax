@@ -1,7 +1,7 @@
-import { createElement, PropTypes } from "rax";
-import { View, Text, Image } from "rax-components";
-import { getRandomValue } from "../../mods/util.js";
-import OpenUrl from "../../mods/openUrl";
+import { createElement, PropTypes } from 'rax';
+import { View, Text, Image } from 'rax-components';
+import { getRandomValue } from '../../mods/util.js';
+import OpenUrl from '../../mods/openUrl';
 
 const style = {
   container: {
@@ -10,32 +10,32 @@ const style = {
     paddingLeft: 26,
     paddingRight: 14,
     height: 268,
-    backgroundColor: "#fff",
-    position: "relative"
+    backgroundColor: '#fff',
+    position: 'relative'
   },
   text: {
-    justifyContent: "flex-start",
-    alignItems: "flex-start"
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
   },
   title: {
     fontSize: 28,
     lineHeight: 40,
-    fontWeight: "bold",
-    whiteSpace: "nowrap",
-    textOverflow: "ellipsis",
-    overflow: "hidden"
+    fontWeight: 'bold',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
   },
   subTitle: {
     fontSize: 22,
     lineHeight: 30,
-    color: "#999",
+    color: '#999',
     maxWidth: 143,
-    whiteSpace: "nowrap",
-    textOverflow: "ellipsis",
-    overflow: "hidden"
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
   },
   image: {
-    position: "absolute",
+    position: 'absolute',
     right: 22,
     bottom: 20,
     width: 146,
@@ -47,7 +47,6 @@ const style = {
 function rowCell(props) {
   let dataSource = props.dataSource || {};
   if (dataSource.title) {
-      
     return (
       <OpenUrl style={[style.container, props.style]} url={dataSource.appUrl}>
         <View style={style.text}>

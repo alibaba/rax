@@ -1,13 +1,13 @@
-import { createElement, PropTypes as T } from "rax";
-import { TouchableHighlight } from "rax-components";
+import { createElement, PropTypes as T } from 'rax';
+import { TouchableHighlight } from 'rax-components';
 
 function openUrl(props) {
   const { url, onClick, component, children, onPress, ...others } = props;
   if (component) {
     const TouchableComponent = component;
     return (
-      <TouchableComponent 
-        onClick={turnToPage(url, onClick)} 
+      <TouchableComponent
+        onClick={turnToPage(url, onClick)}
         {...others}>
         {children}
       </TouchableComponent>
@@ -16,7 +16,7 @@ function openUrl(props) {
 
   return (
     <TouchableHighlight
-      onPress={turnToPage(url, onPress || onClick)} 
+      onPress={turnToPage(url, onPress || onClick)}
       {...others}>
       {children}
     </TouchableHighlight>

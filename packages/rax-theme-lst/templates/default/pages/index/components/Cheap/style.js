@@ -1,35 +1,35 @@
-import { 
+import {
     center
-} from "../../mods/commonStyle";
+} from '../../mods/commonStyle';
 
 export default {
   titleContainer: {
-    position: "relative",
-    flexDirection: "row",
+    position: 'relative',
+    flexDirection: 'row',
     height: 80,
     borderBottomWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#e5e5e5",
-    backgroundColor: "#fff",
+    borderStyle: 'solid',
+    borderColor: '#e5e5e5',
+    backgroundColor: '#fff',
     borderTopWidth: 1,
     marginTop: 20,
     ...center()
   },
   moreUrl: {
-    position: "absolute",
+    position: 'absolute',
     right: 20,
     top: 24,
     lineHeight: 34,
-    flexDirection: "row",
+    flexDirection: 'row',
     marginLeft: 8,
-    alignItems: "center"
+    alignItems: 'center'
   },
   offerContainer: {
-    backgroundColor: "#fff",
-    flexDirection: "row",
+    backgroundColor: '#fff',
+    flexDirection: 'row',
     height: 338,
     borderBottomWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#e5e5e5"
+    borderStyle: 'solid',
+    borderColor: '#e5e5e5'
   }
 };

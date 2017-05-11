@@ -1,7 +1,7 @@
-import { Component, PropTypes, createElement } from "rax";
-import { View, Text, Image, RecyclerView } from "rax-components";
-import OpenUrl from "../../mods/openUrl";
-import style from "./style";
+import { Component, PropTypes, createElement } from 'rax';
+import { View, Text, Image, RecyclerView } from 'rax-components';
+import OpenUrl from '../../mods/openUrl';
+import style from './style';
 
 const QuickEntry = function(props) {
   let sourceData = props.sourceData;

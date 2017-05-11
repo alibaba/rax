@@ -1,41 +1,41 @@
-import { 
+import {
     center,
     percent
-} from "../../mods/commonStyle";
+} from '../../mods/commonStyle';
 
 export default {
   image: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     width: percent(100),
     height: 174
   },
   header: {
-    position: "absolute",
+    position: 'absolute',
     top: 40,
     width: percent(100),
     height: 116 - 40,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center"
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   iconWrapper: {
     width: 44 + 2 * 24,
     height: 56,
-    position: "relative",
+    position: 'relative',
     ...center()
   },
   newMessage: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    textAlign: "center",
-    color: "#CC221D",
+    textAlign: 'center',
+    color: '#CC221D',
     fontSize: 24,
-    position: "absolute",
-    top: navigator.platform === "iOS" ? -8 : 0,
+    position: 'absolute',
+    top: navigator.platform === 'iOS' ? -8 : 0,
     right: 10,
-    backgroundColor: "#fff"
+    backgroundColor: '#fff'
   },
   scan: {
     width: 44,
@@ -48,11 +48,11 @@ export default {
   searchbar: {
     flex: 1,
     height: 56,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 3,
     // justifyContent: 'center',
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   searchIcon: {
     width: 26,
@@ -64,10 +64,10 @@ export default {
   },
   keyword: {
     fontSize: 24,
-    color: "black"
+    color: 'black'
   },
   placeholder: {
     fontSize: 24,
-    color: "#666"
+    color: '#666'
   }
 };

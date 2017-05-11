@@ -1,10 +1,10 @@
-import { createElement, Component, findDOMNode, setNativeProps, PropTypes } from "rax";
-import { View, Text, Image, RecyclerView } from "rax-components";
-import transition from "universal-transition";
-import { isWeex } from "universal-env";
-import { getWebPx } from "../../mods/util";
-import OpenUrl from "../../mods/openUrl";
-import style from "./style";
+import { createElement, Component, findDOMNode, setNativeProps, PropTypes } from 'rax';
+import { View, Text, Image, RecyclerView } from 'rax-components';
+import transition from 'universal-transition';
+import { isWeex } from 'universal-env';
+import { getWebPx } from '../../mods/util';
+import OpenUrl from '../../mods/openUrl';
+import style from './style';
 
 export default class StoresNews extends Component {
 
@@ -53,12 +53,12 @@ export default class StoresNews extends Component {
     // 42是每个item高度
     let height = this.itemHeight * this.curr;
     if (!isWeex) {
-      height = getWebPx(height) + "px";
+      height = getWebPx(height) + 'px';
     }
     transition(ref, {
       transform: `translate(0, -${height})`
     }, {
-      timingFunction: "ease-in-out",
+      timingFunction: 'ease-in-out',
       delay: 0,
       duration: 400
     });
@@ -90,9 +90,9 @@ export default class StoresNews extends Component {
     const ref = findDOMNode(this.animateElement);
     this.curr = 0;
     transition(ref, {
-      transform: "translate(0, 0)"
+      transform: 'translate(0, 0)'
     }, {
-      timingFunction: "ease",
+      timingFunction: 'ease',
       delay: 0,
       duration: 0
     });
@@ -138,28 +138,28 @@ export default class StoresNews extends Component {
     }
     return (
       <RecyclerView.Cell style={style.container}>
-        <Image 
-          source={{uri: "https://cbu01.alicdn.com/cms/upload/2017/462/092/3290264_38443169.png"}}
+        <Image
+          source={{uri: 'https://cbu01.alicdn.com/cms/upload/2017/462/092/3290264_38443169.png'}}
           style={style.image}
           resizeMode="cover" />
         <View style={style.textsView} onAppear={this.startInterval} onDisappear={this.stopInterval}>
-          <View style={{position: "relative", height: this.itemHeight * length * 2}} ref={(node) => {
+          <View style={{position: 'relative', height: this.itemHeight * length * 2}} ref={(node) => {
             this.animateElement = node;
           }}>
             <View style={[style.allView, {top: 0}]}
               ref={(node) => {
                 this.animateElement1 = node;
               }}>
-              {  
+              {
                 (dataSource || []).map(this.getNewsItem)
               }
             </View>
-            <View 
-              style={[style.allView, {top: this.itemHeight * length}]} 
+            <View
+              style={[style.allView, {top: this.itemHeight * length}]}
               ref={(node) => {
                 this.animateElement2 = node;
               }}>
-              {  
+              {
                 (dataSource || []).map(this.getNewsItem)
               }
             </View>

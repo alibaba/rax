@@ -1,11 +1,11 @@
-import Shelf from "../components/Shelf";
-import OfferList from "../components/OfferList";
-import QuickEntry from "../components/QuickEntry";
-import Promotion from "../components/Promotion";
-import CashierCounter from "../components/CashierCounter";
-import StoresNews from "../components/StoresNews";
-import Cheap from "../components/Cheap";
-import Redbag from "../components/Redbag";
+import Shelf from '../components/Shelf';
+import OfferList from '../components/OfferList';
+import QuickEntry from '../components/QuickEntry';
+import Promotion from '../components/Promotion';
+import CashierCounter from '../components/CashierCounter';
+import StoresNews from '../components/StoresNews';
+import Cheap from '../components/Cheap';
+import Redbag from '../components/Redbag';
 
 /*
 **  otherProps其他需要传入的props, $开头表示变量，取值路径是props，
@@ -17,43 +17,43 @@ export default [
   {
     components: QuickEntry,
     propsFromStore: {
-      sourceData: "quickEntry.data"
+      sourceData: 'quickEntry.data'
     }
   }, {
     components: StoresNews,
     propsFromStore: {
-      sourceData: "headlines.data"
+      sourceData: 'headlines.data'
     }
   }, {
     components: Redbag,
     propsFromStore: {
-      sourceData: "hongbao.data"
+      sourceData: 'hongbao.data'
     }
   }, {
     components: Cheap,
     propsFromStore: {
-      sourceData: "cheap"
+      sourceData: 'cheap'
     }
   }, {
     components: Promotion,
     propsFromStore: {
-      sourceData: "promotion.data"
+      sourceData: 'promotion.data'
     }
   }, {
     components: CashierCounter,
     propsFromStore: {
-      sourceData: "cashierCounter"
+      sourceData: 'cashierCounter'
     }
   }, {
     components: Shelf,
     propsFromStore: {
-      sourceData: "shelf"
+      sourceData: 'shelf'
     }
   }, {
     components: OfferList,
     propsFromStore: {
-      sourceData: "offerList",
-      hasMoreOffer: "hasMoreOffer"
+      sourceData: 'offerList',
+      hasMoreOffer: 'hasMoreOffer'
     }
   }
 ];

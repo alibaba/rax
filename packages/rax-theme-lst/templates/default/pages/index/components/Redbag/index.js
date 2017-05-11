@@ -1,14 +1,14 @@
-import { createElement, PropTypes } from "rax";
-import { RecyclerView, Image } from "rax-components";
-import OpenUrl from "../../mods/openUrl";
-import style from "./style";
+import { createElement, PropTypes } from 'rax';
+import { RecyclerView, Image } from 'rax-components';
+import OpenUrl from '../../mods/openUrl';
+import style from './style';
 
 export default function Redbag(props) {
   const dataSource = props.sourceData[0];
   if (!dataSource || !dataSource.appImg) {
     return null;
   }
-  
+
   const appUrl = dataSource.appUrl;
 
   return (

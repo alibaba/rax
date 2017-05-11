@@ -9,18 +9,15 @@
     "lint": "./node_modules/.bin/eslint --ext .js --ext .jsx ./templates/default/pages/index/ --fix"
   },
   "snapshots": [
+    "https://cbu01.alicdn.com/cms/upload/2017/464/974/3479464_38443169.png",
     "https://cbu01.alicdn.com/cms/upload/2017/944/964/3469449_38443169.jpg",
     "https://cbu01.alicdn.com/cms/upload/2017/405/364/3463504_38443169.jpg",
     "https://cbu01.alicdn.com/cms/upload/2017/404/074/3470404_38443169.jpg"
   ],
   "dependencies": {
     "rax": "^0.3.2",
-    "rax-view": "^0.3.2",
-    "rax-text": "^0.3.2",
     "rax-components": "^x.x.x",
-    "universal-dimensions": "^x.x.x",
     "universal-env": "^x.x.x",
-    "universal-toast": "^x.x.x",
     "universal-transition": "^x.x.x"
   },
   "devDependencies": {

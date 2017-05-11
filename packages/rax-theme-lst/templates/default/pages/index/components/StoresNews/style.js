@@ -1,19 +1,19 @@
-import { 
+import {
     center,
     textOverflow,
     percent
-} from "../../mods/commonStyle";
+} from '../../mods/commonStyle';
 
 export default {
   container: {
     width: percent(100),
     height: 76,
-    backgroundColor: "#fff",
-    position: "relative",
-    flexDirection: "row",
+    backgroundColor: '#fff',
+    position: 'relative',
+    flexDirection: 'row',
     borderBottomWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#e5e5e5",
+    borderStyle: 'solid',
+    borderColor: '#e5e5e5',
     ...center()
   },
   image: {
@@ -26,7 +26,7 @@ export default {
     flex: 1,
     marginRight: 15,
     height: 54,
-    overflow: "hidden"
+    overflow: 'hidden'
   },
   texts: {
     paddingRight: 20,
@@ -34,11 +34,11 @@ export default {
     marginLeft: 18,
     fontSize: 24,
     height: 34,
-    color: "#333",
+    color: '#333',
     ...textOverflow()
   },
   allView: {
-    position: "absolute",
+    position: 'absolute',
     left: 0
   }
 };

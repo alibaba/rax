@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 /* global WXEnvironment */
 
-import {isWeex, isWeb} from "universal-env";
+import {isWeex, isWeb} from 'universal-env';
 
 // TODO: should be custom setting
 const FULL_WIDTH = 750;
@@ -13,7 +13,7 @@ const DEFAULT_SCALE = 2;
 function getDimensions() {
   let dimensions = {};
   if (isWeex) {
-    let weexEnv = typeof WXEnvironment !== "undefined" ? WXEnvironment : {};
+    let weexEnv = typeof WXEnvironment !== 'undefined' ? WXEnvironment : {};
     let scale = weexEnv.scale || DEFAULT_SCALE;
     dimensions = {
       window: {

@@ -1,25 +1,26 @@
-import { isWeex } from "universal-env";
+import { isWeex } from 'universal-env';
+
 export function percent(val) {
-  return val*750/100;
+  return val * 750 / 100;
 }
 
 export function textOverflow() {
   if (isWeex) {
     return {
-      overflow: "hidden"
+      overflow: 'hidden'
     };
   }
   return {
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-    whiteSpace: "nowrap",
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
   };
 }
 
 export function center() {
   return {
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: 'center',
+    alignItems: 'center'
   };
 }
 

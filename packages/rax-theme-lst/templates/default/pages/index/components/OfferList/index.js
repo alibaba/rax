@@ -1,7 +1,7 @@
-import { PropTypes, Component, createElement } from "rax";
-import { View, Text, RecyclerView, Image } from "rax-components";
-import Cell from "../OfferCell";
-import style from "./style";
+import { PropTypes, Component, createElement } from 'rax';
+import { View, Text, RecyclerView, Image } from 'rax-components';
+import Cell from '../OfferCell';
+import style from './style';
 
 export default class OfferList extends Component {
   static propsTypes = {
@@ -33,9 +33,9 @@ export default class OfferList extends Component {
           <Cell style={[style.cell, topBorder, this.props.cellStyle]} offer={offerOdd} />
           {sourceData[i + 1] ?
             (<View>
-                <Cell 
-              style={[style.cell, style.rightCell, topBorder, this.props.cellStyle]} 
-              offer={offerEven} />
+                <Cell
+                  style={[style.cell, style.rightCell, topBorder, this.props.cellStyle]}
+                  offer={offerEven} />
             </View>) : null
           }
         </RecyclerView.Cell>
@@ -54,24 +54,23 @@ export default class OfferList extends Component {
         <Text style={style.titleText}>为你推荐</Text>
       </RecyclerView.Cell>,
       ...this.getRowCell(sourceData),
-      props.hasMoreOffer ? 
+      props.hasMoreOffer ?
         <RecyclerView.Cell style={style.loadingSection}>
-          <Image 
-            source={{uri: "https://cbu01.alicdn.com/cms/upload/2017/911/203/3302119_38443169.gif"}}
+          <Image
+            source={{uri: 'https://cbu01.alicdn.com/cms/upload/2017/911/203/3302119_38443169.gif'}}
             style={style.loading}
             />
         </RecyclerView.Cell>
           :
         <RecyclerView.Cell style={style.noMoreSection}>
-          <Image 
-            source={{uri: "https://cbu01.alicdn.com/cms/upload/2017/112/103/3301211_38443169.png"}}
+          <Image
+            source={{uri: 'https://cbu01.alicdn.com/cms/upload/2017/112/103/3301211_38443169.png'}}
             style={style.nomore}
             />
           <Text style={style.nomoreText}>已经到底了...</Text>
         </RecyclerView.Cell>
     ]
-      
-    );
 
+    );
   }
 }

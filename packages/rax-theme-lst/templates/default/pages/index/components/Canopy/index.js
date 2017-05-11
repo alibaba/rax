@@ -1,11 +1,11 @@
-import { createElement, PureComponent, PropTypes as T } from "rax";
-import { Image, View, Text } from "rax-components";
-import styles from "./style";
+import { createElement, PureComponent, PropTypes as T } from 'rax';
+import { Image, View, Text } from 'rax-components';
+import styles from './style';
 
-const CANOPY_IMAGE_URL = "https://cbu01.alicdn.com/cms/upload/2017/972/092/3290279_2093810242.png";
-const SCAN_IMAGE_URL = "https://cbu01.alicdn.com/cms/upload/2017/533/092/3290335_2093810242.png";
-const MESSAGE_IMAGE_URL = "https://cbu01.alicdn.com/cms/upload/2017/982/192/3291289_2093810242.png";
-const SEARCH_IMAGE_URL = "https://cbu01.alicdn.com/cms/upload/2017/294/133/3331492_2093810242.png";
+const CANOPY_IMAGE_URL = 'https://cbu01.alicdn.com/cms/upload/2017/972/092/3290279_2093810242.png';
+const SCAN_IMAGE_URL = 'https://cbu01.alicdn.com/cms/upload/2017/533/092/3290335_2093810242.png';
+const MESSAGE_IMAGE_URL = 'https://cbu01.alicdn.com/cms/upload/2017/982/192/3291289_2093810242.png';
+const SEARCH_IMAGE_URL = 'https://cbu01.alicdn.com/cms/upload/2017/294/133/3331492_2093810242.png';
 
 const noop = () => {};
 
@@ -38,7 +38,7 @@ class Canopy extends PureComponent {
   }
 
   formatMessageNum(num) {
-    return num > 99 ? "99+" : "" + num;
+    return num > 99 ? '99+' : '' + num;
   }
 
   render() {
@@ -47,14 +47,20 @@ class Canopy extends PureComponent {
     return [
       <Image key="canopy" style={styles.image} source={{ uri: CANOPY_IMAGE_URL }} />,
       <View key="navbar" style={styles.header}>
-        <View style={styles.iconWrapper} onClick={function() {onScan();}} >
+        <View style={styles.iconWrapper} onClick={function() {
+          onScan();
+        }} >
           <Image style={styles.scan} source={{ uri: SCAN_IMAGE_URL }} />
         </View>
-        <View style={styles.searchbar} onClick={function() {onSearch();}}>
+        <View style={styles.searchbar} onClick={function() {
+          onSearch();
+        }}>
           <Image style={styles.searchIcon} source={{ uri: SEARCH_IMAGE_URL }} />
           {this.renderPlaceholder()}
         </View>
-        <View style={styles.iconWrapper} onClick={function() {onMessage();}}>
+        <View style={styles.iconWrapper} onClick={function() {
+          onMessage();
+        }}>
           <Image style={styles.message} source={{ uri: MESSAGE_IMAGE_URL }} />
           {messageNum > 0 ? <Text style={styles.newMessage}>{this.formatMessageNum(messageNum)}</Text> : null}
         </View>

@@ -1,7 +1,7 @@
-import { createElement, Component, PropTypes } from "rax";
-import { View, Text, Image, RecyclerView } from "rax-components";
-import style from "./style";
-import OpenUrl from "../../mods/openUrl";
+import { createElement, Component, PropTypes } from 'rax';
+import { View, Text, Image, RecyclerView } from 'rax-components';
+import style from './style';
+import OpenUrl from '../../mods/openUrl';
 
 class Recommend extends Component {
   static propTypes = {
@@ -25,7 +25,7 @@ class Recommend extends Component {
   }
 
   groceriesRow(item, row) {
-    const img = "https://cbu01.alicdn.com/cms/upload/2017/161/692/3296161_38443169.png";
+    const img = 'https://cbu01.alicdn.com/cms/upload/2017/161/692/3296161_38443169.png';
     if (!item.length) {
       return null;
     }
@@ -45,7 +45,7 @@ class Recommend extends Component {
       const appUrl = itemDetail.appUrl;
       return (
         <OpenUrl style={style.listViewItem} url={appUrl}>
-          <Image source={{uri: itemDetail.image}} resizeMode="cover" 
+          <Image source={{uri: itemDetail.image}} resizeMode="cover"
             style={style.groceriesImage} lazyload={true} />
           <View style={style.listViewTitle}>
             <Text style={style.listViewTitleFont}>{itemDetail.title}</Text>
@@ -62,13 +62,13 @@ class Recommend extends Component {
     if (sourceData.length === 0) {
       return null;
     }
-    
-    return ([
+
+    return [
       <RecyclerView.Cell style={style.titleWrapper}>
         <Text style={style.title}>{props.sourceData.title}</Text>
       </RecyclerView.Cell>,
       ...sourceData.map(this.groceriesRow)
-    ]);
+    ];
   }
 }
 
