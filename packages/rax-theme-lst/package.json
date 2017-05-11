@@ -1,8 +1,8 @@
 {
-  "name": "rax-theme-lst",
+  "name": "rax-theme-retail",
   "author": "gaohao",
   "version": "0.0.1",
-  "description": "电商类应用",
+  "description": "零售通应用",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --progress --port 8080 --host 0.0.0.0",
     "build": "rm -rf build && NODE_ENV=production ./node_modules/.bin/webpack",
