@@ -39,6 +39,7 @@
   },
   "peerDependencies": {
     "redux": "latest",
+    "webgl-driver" : "latest",
     "rax": "latest",
     "rax-components": "latest",
     "rax-view": "latest",
