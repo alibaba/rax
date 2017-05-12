@@ -32,8 +32,6 @@ class WebSocketDemo extends Component {
 
     websocket.onmessage = (evt) => {
       this.log('RESPONSE: ' + evt.data);
-
-      websocket.close();
     };
 
     websocket.onerror = (evt) => {
