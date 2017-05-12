@@ -1,7 +1,7 @@
 {
   "name": "rax-theme-retail",
   "author": "gaohao",
-  "version": "0.0.1",
+  "version": "0.3.3",
   "description": "零售通应用",
   "scripts": {
     "start": "./node_modules/.bin/webpack-dev-server --progress --port 8080 --host 0.0.0.0",
@@ -15,17 +15,17 @@
     "https://cbu01.alicdn.com/cms/upload/2017/404/074/3470404_38443169.jpg"
   ],
   "dependencies": {
-    "rax": "^0.3.2",
-    "rax-components": "^x.x.x",
-    "universal-env": "^x.x.x",
-    "universal-transition": "^x.x.x"
+    "rax": "^0.3.3",
+    "rax-components": "^0.3.3",
+    "universal-env": "^0.3.3",
+    "universal-transition": "^0.3.3"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.16.0",
-    "babel-preset-rax": "^0.3.2",
+    "babel-preset-rax": "^0.3.3",
     "case-sensitive-paths-webpack-plugin": "^1.1.4",
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^6.6.0",
@@ -34,8 +34,8 @@
     "internal-ip": "^1.2.0",
     "json-loader": "^0.5.4",
     "qrcode-terminal": "^0.11.0",
-    "rax-webpack-plugin": "^0.3.2",
-    "stylesheet-loader": "^0.3.2",
+    "rax-webpack-plugin": "^0.3.3",
+    "stylesheet-loader": "^0.3.3",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2"

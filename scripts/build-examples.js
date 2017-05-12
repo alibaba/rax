@@ -1,7 +1,7 @@
-'use strict';
 /**
  * build weex-rax-examples
  */
+'use strict';
 
 const path = require('path');
 const fs = require('fs');
