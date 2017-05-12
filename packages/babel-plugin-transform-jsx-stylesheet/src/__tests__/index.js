@@ -90,6 +90,31 @@ class App extends Component {
 var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);`);
   });
 
+  it('combine inline style object and className', () => {
+    expect(getTransfromCode(`
+import { createElement, Component } from 'rax';
+import './app.css';
+
+class App extends Component {
+  render() {
+    return <div className="header2" style={{
+      height: 100
+    }} />;
+  }
+}`)).toBe(`
+import { createElement, Component } from 'rax';
+import appStyleSheet from './app.css';
+
+class App extends Component {
+  render() {
+    return <div style={[_styleSheet["header2"], {
+      height: 100
+    }]} />;
+  }
+}
+var _styleSheet = appStyleSheet;`);
+  });
+
   it('combine multiple styles and className', () => {
     expect(getTransfromCode(`
 import { createElement, Component } from 'rax';
