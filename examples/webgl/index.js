@@ -1,18 +1,3 @@
-# webgl-driver
-
-> WebGL driver for Rax.
-
-Components and APIs are based on `three.js` design and implementation. Use markup language and declarative writing to simplify development.
-
-## Install
-s
-```bash
-$ npm install --save webgl-driver
-```
-
-## Usage
-
-```jsx
 import {createElement, Component, render} from 'rax';
 import WebGLDriver from 'webgl-driver';
 
@@ -51,64 +36,19 @@ class HelloWorld extends Component {
           far={1000}
           position={this.cameraPosition}
         />
-        <mesh
-          rotation={this.state.cubeRotation}
-        >
+        <mesh rotation={this.state.cubeRotation}>
           <box-geometry
             width={1}
             height={1}
             depth={1}
           />
-          <mesh-basic-material
-            color={0x00ff00}
-          />
+          <mesh-basic-material color={0x00ff00} />
         </mesh>
       </scene>
     );
   }
 }
 
-render(<HelloWorld />, document.body, {
+render(<HelloWorld />, null, {
   driver: WebGLDriver
 });
-```
-
-## Built-in Tags
-
-### Scenes
-* scene
-
-### Cameras
-* perspective-camera
-
-### Controls
-* orbit-controls
-* trackball-controls
-
-### Core
-* geometry
-* buffer-geometry
-* object-3d
-* raycaster
-
-### Geometries
-* box-geometry
-* cylinder-geometry
-* sphere-geometry
-
-### Lights
-* ambient-light
-* directional-light
-
-### Materials
-* line-basic-material
-* line-dashed-material
-* mesh-basic-material
-* mesh-lambert-material
-* mesh-phong-material
-* points-material
-
-### Objects
-* line
-* mesh
-* points
