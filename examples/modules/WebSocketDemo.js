@@ -3,7 +3,7 @@ import View from 'rax-view';
 import Text from 'rax-text';
 import Button from 'rax-button';
 
-const WS_URI = "ws://echo.websocket.org/";
+const WS_URI = 'ws://echo.websocket.org/';
 
 class WebSocketDemo extends Component {
   state = {

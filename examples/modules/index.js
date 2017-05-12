@@ -33,7 +33,7 @@ class Page extends Component {
         <Text style={styles.title}>WebSocket</Text>
         <WebSocketDemo />
       </View>
-      
+
       <View>
         <Text style={styles.title}>window</Text>
         <WindowDemo />
