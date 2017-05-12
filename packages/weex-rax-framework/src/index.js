@@ -158,7 +158,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
     const bundleUrl = __weex_options__.bundleUrl;
     const document = new Document(instanceId, bundleUrl);
-    const documentURL = new URL(bundleUrl);
+    const documentURL = bundleUrl ? new URL(bundleUrl) : {};
     const modules = {};
 
     instance = instances[instanceId] = {
@@ -177,7 +177,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     // Extend document
     require('./document.weex')(__weex_require__, document);
 
-    const location = require('./location.weex')(__weex_require__, documentURL);
+    const location = bundleUrl ? require('./location.weex')(__weex_require__, documentURL) : {};
 
     const {
       fetch,
