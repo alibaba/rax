@@ -41,11 +41,10 @@ export default class CustomUmdMainTemplatePlugin {
         // module, function is private, only use in rax internal
         if (chunk.name.endsWith('.module') || target === 'module') {
           sourcePrefix = 'module.exports = ';
-          sourceSuffix = '';
+          sourceSuffix = ';';
         } else if (chunk.name.endsWith('.function') || target === 'function') {
-          sourcePrefix = `
-  module.exports = function() {
-    return `;
+          sourcePrefix = `module.exports = function() {
+  return `;
           sourceSuffix = '};';
         } else if (chunk.name.endsWith('.bundle') || target === 'bundle') {
           // Build page bundle use this mode.
@@ -64,14 +63,18 @@ export default class CustomUmdMainTemplatePlugin {
               return `var ${name} = this["${name}"];`;
             });
             sourcePrefix = `module.exports = function(require, exports, module) {
-    ${globalsCodes.join('\n')}
-    module.exports = `;
+  ${globalsCodes.join('\n')}
+  module.exports = `;
             sourceSuffix = '};';
           } else {
             sourcePrefix = `module.exports = function(require, exports, module) {
-    with(this) { module.exports = `;
+  with(this) { module.exports = `;
             sourceSuffix = '}};';
           }
+        } else if (chunk.name.endsWith('.cmd') || target === 'cmd') {
+          sourcePrefix = `define(${JSON.stringify(moduleName)}, function(require, exports, module){
+  module.exports = `;
+          sourceSuffix = '});';
         } else if (chunk.name.endsWith('.umd') || target === 'umd') {
           // CommonJS first that could rename module name by wrap another define in air
           sourcePrefix = `
@@ -103,7 +106,6 @@ export default class CustomUmdMainTemplatePlugin {
         }
       }
 
-
       return new ConcatSource(
         polyfills.join('\n'),
         sourcePrefix,
@@ -115,7 +117,7 @@ export default class CustomUmdMainTemplatePlugin {
 
     mainTemplate.plugin('global-hash-paths', (paths) => {
       if (this.name) paths = paths.concat(this.name);
-		  return paths;
+      return paths;
     });
 
     mainTemplate.plugin('hash', (hash) => {

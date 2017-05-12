@@ -169,4 +169,13 @@ describe('rax-webpack-plugin', function() {
       expect(actual).toBe(expected);
     });
   });
+
+  it('cmd', function(done) {
+    runWebpack(done, 'cmd', function(actualPath, filePath) {
+      const actual = readFile(actualPath);
+      const expected = readFile(filePath);
+
+      expect(actual).toBe(expected);
+    });
+  });
 });

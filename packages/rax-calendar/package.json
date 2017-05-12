@@ -1,6 +1,6 @@
 {
   "name": "rax-calendar",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Calendar component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -10,7 +10,8 @@
   },
   "keywords": [
     "Rax",
-    "RaxUI"
+    "rax-component",
+    "react-component"
   ],
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
@@ -20,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.3.2",
-    "rax-text": "^0.3.2",
-    "rax-scrollview": "^0.3.2",
-    "rax-touchable": "^0.3.2"
+    "rax-view": "^0.3.3",
+    "rax-text": "^0.3.3",
+    "rax-scrollview": "^0.3.3",
+    "rax-touchable": "^0.3.3"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.3.2"
+    "rax-test-renderer": "^0.3.3"
   }
 }

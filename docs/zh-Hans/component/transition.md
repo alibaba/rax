@@ -48,16 +48,18 @@ class App extends Component {
   componentDidMount() {
     const box = findDOMNode(this.refs.box); // 获取元素
     // 调用动画方法
-    transition(box, {
-      transform: 'translate(10px, 20px) scale(1.5, 1.5) rotate(90deg)',
-      opacity: '0.5'
-    }, {
-      timingFunction: 'ease',
-      delay: 2000,
-      duration: 3000
-    }, () => {
-      alert('animation end');
-    });
+    setTimeout(() => {
+      transition(box, {
+        transform: 'translate(10px, 20px) scale(1.5, 1.5) rotate(90deg)',
+        opacity: '0.5'
+      }, {
+        timingFunction: 'ease',
+        delay: 2000,
+        duration: 3000
+      }, () => {
+        alert('animation end');
+      });
+    }, 0);
   }
   
   render() {

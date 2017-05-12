@@ -94,10 +94,11 @@ const exportContent = (parseData) => {
 
   resetMessage();
 
-  return `module.exports = ${stringifyData(data)};
+  return `var _styles = ${stringifyData(data)};
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
+  module.exports = _styles;
   `;
 };
 
@@ -133,7 +134,7 @@ const getMediaContent = (parseData) => {
   if (window.matchMedia && window.matchMedia('${rule.key}').matches) {
     var ruleData = ${stringifyData(rule.data)};
     for(var key in ruleData) {
-      data[key] = Object.assign(data[key], ruleData[key]);
+      _styles[key] = Object.assign(_styles[key], ruleData[key]);
     }
   }
     `;

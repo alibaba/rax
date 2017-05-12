@@ -39,6 +39,7 @@
   },
   "peerDependencies": {
     "redux": "latest",
+    "webgl-driver" : "latest",
     "rax": "latest",
     "rax-components": "latest",
     "rax-view": "latest",
@@ -82,10 +83,11 @@
     "link": "node ./scripts/link.js && npm run build:compile && npm run build:dist",
     "bootstrap": "lerna bootstrap",
     "setup": "npm run bootstrap && npm run link",
+    "build:theme": "node ./scripts/build-theme.js",
     "build:compile": "npm run clean:compile && node ./scripts/compile.js",
     "build:dist": "npm run clean:dist && node ./scripts/dist.js",
     "build:examples": "node ./scripts/build-examples.js",
-    "build": "npm run build:compile && npm run build:dist && npm run build:examples",
+    "build": "npm run build:compile && npm run build:dist && npm run build:examples && npm run build:theme",
     "watch:compile": "node ./scripts/compile.js --watch",
     "test": "jest",
     "start": "npm run build:compile && node ./scripts/start.js",
@@ -112,7 +114,8 @@
       "/fixtures/",
       "/__modules__/",
       "/__files__/",
-      "/lib/"
+      "/lib/",
+      "/dist/"
     ]
   },
   "config": {

@@ -26,6 +26,7 @@ import PlayerDemo from './PlayerDemo';
 import TabbarDemo from './TabbarDemo';
 import TabheaderDemo from './TabheaderDemo';
 import SliderDemo from './SliderDemo';
+import TableDemo from './TableDemo';
 
 class Page extends Component {
   render() {
@@ -157,6 +158,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>Slider</Text>
         <SliderDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Table</Text>
+        <TableDemo />
       </View>
 
     </ScrollView>;

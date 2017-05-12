@@ -1,6 +1,6 @@
 {
   "name": "rax-navigation",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Navigation component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -24,21 +24,21 @@
     "clamp": "^1.0.1",
     "invariant": "^2.2.2",
     "path-to-regexp": "^1.7.0",
-    "rax-view": "^0.3.2",
-    "rax-text": "^0.3.2",
-    "rax-image": "^0.3.2",
-    "rax-animated": "^0.3.2",
-    "rax-touchable": "^0.3.2",
-    "universal-easing": "^0.3.2",
-    "universal-platform": "^0.3.2",
-    "universal-stylesheet": "^0.3.2",
-    "universal-panresponder": "^0.3.2",
+    "rax-view": "^0.3.3",
+    "rax-text": "^0.3.3",
+    "rax-image": "^0.3.3",
+    "rax-animated": "^0.3.3",
+    "rax-touchable": "^0.3.3",
+    "universal-easing": "^0.3.3",
+    "universal-platform": "^0.3.3",
+    "universal-stylesheet": "^0.3.3",
+    "universal-panresponder": "^0.3.3",
     "shallowequal": "^0.2.2"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.3.2"
+    "rax-test-renderer": "^0.3.3"
   }
 }

@@ -70,7 +70,7 @@ class Picture extends Component {
       newStyle.resizeMode = resizeMode;
     }
 
-    return <Image source={source} style={newStyle}>
+    return <Image {...this.props} source={source} style={newStyle}>
       {children}
     </Image>;
   }

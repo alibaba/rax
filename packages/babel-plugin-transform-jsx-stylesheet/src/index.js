@@ -85,9 +85,12 @@ function _mergeStyles() {
           if (hasStyleAttribute) {
             let expression = styleAttribute.value.expression;
             let expressionType = expression.type;
+
+            // style={[styles.a, styles.b]}
             if (expressionType === 'ArrayExpression') {
               expression.elements = arrayExpression.concat(expression.elements);
-            } else if (expressionType === 'MemberExpression') {
+            // style={{styles.a}} or style={{ height: 100 }}
+            } else if (expressionType === 'MemberExpression' || expressionType === 'ObjectExpression') {
               styleAttribute.value.expression = t.arrayExpression(arrayExpression.concat(expression));
             }
           } else {

@@ -31,7 +31,6 @@ var execSync = require('child_process').execSync;
 var spawn = require('cross-spawn');
 var inquirer = require('inquirer');
 var chalk = require('chalk');
-var kebabcase = require('lodash.kebabcase');
 var cli = require('../lib/');
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -119,7 +118,7 @@ function askProjectInformaction(name, verbose, rwPackage) {
       type: 'input',
       name: 'projectName',
       message: 'What\'s your project name?',
-      default: kebabcase(name)
+      default: name
     },
     {
       type: 'input',
