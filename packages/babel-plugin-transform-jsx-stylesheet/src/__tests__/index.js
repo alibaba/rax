@@ -97,7 +97,7 @@ import './app.css';
 
 class App extends Component {
   render() {
-    return <div className="header2" style={{
+    return <div className="header" style={{
       height: 100
     }} />;
   }
@@ -107,7 +107,7 @@ import appStyleSheet from './app.css';
 
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header2"], {
+    return <div style={[_styleSheet["header"], {
       height: 100
     }]} />;
   }
