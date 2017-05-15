@@ -95,6 +95,38 @@ More examples take a look at the [`examples`](/examples/) folder:
 * [Profile](/examples/profile)
 * [Parallax](/examples/parallax)
 
+## Rax Renderers
+
+* :traffic_light: [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
+* :computer: [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
+
+## Universal Libraries
+
+* :earth_asia: [universal-env](/packages/universal-env): A universal environment utilities.
+* :loop: [universal-transition](/packages/universal-transition): A universal transition API.
+* :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
+* :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
+* :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
+* :speech_balloon: [universal-toast](/packages/universal-toast): A universal Toast API.
+* :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
+
+
+## Developer Tools
+
+* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
+
+<p align="center">
+<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
+</p>
+
+* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
+  1. Use the `rax-redux` module in your app
+  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
+
+<p align="center">
+<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
+</p>
+
 ## Official Components
 
 * [rax-animated](/packages/rax-animated)
@@ -136,38 +168,6 @@ More examples take a look at the [`examples`](/examples/) folder:
 * [rax-touchable](/packages/rax-touchable)
 * [rax-video](/packages/rax-video)
 * [rax-view](/packages/rax-view)
-
-## Rax Renderers
-
-* :traffic_light: [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
-* :computer: [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
-
-## Universal Libraries
-
-* :earth_asia: [universal-env](/packages/universal-env): A universal environment utilities.
-* :loop: [universal-transition](/packages/universal-transition): A universal transition API.
-* :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
-* :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
-* :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
-* :speech_balloon: [universal-toast](/packages/universal-toast): A universal Toast API.
-* :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
-
-
-## Developer Tools
-
-* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
-
-<p align="center">
-<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
-</p>
-
-* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
-  1. Use the `rax-redux` module in your app
-  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
-
-<p align="center">
-<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
-</p>
 
 ## Contributing
 
