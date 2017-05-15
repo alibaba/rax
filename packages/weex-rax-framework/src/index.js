@@ -157,6 +157,11 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
     const bundleUrl = __weex_options__.bundleUrl;
+
+    if (!bundleUrl) {
+      console.error('Warning: Missing bundleUrl for createInstance. Location could not be uesd because of this. Check your Weex environment.');
+    }
+
     const document = new Document(instanceId, bundleUrl);
     const documentURL = bundleUrl ? new URL(bundleUrl) : {};
     const modules = {};
