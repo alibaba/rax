@@ -156,7 +156,12 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
     const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-    const bundleUrl = __weex_options__.bundleUrl;
+    const bundleUrl = __weex_options__.bundleUrl || 'about:blank';
+
+    if (!__weex_options__.bundleUrl) {
+      console.error('Error: Missing bundleUrl for createInstance, about:blank will be used as the default value. Check your Weex environment.');
+    }
+
     const document = new Document(instanceId, bundleUrl);
     const documentURL = new URL(bundleUrl);
     const modules = {};
