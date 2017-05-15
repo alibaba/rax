@@ -156,14 +156,14 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
     const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-    const bundleUrl = __weex_options__.bundleUrl;
+    const bundleUrl = __weex_options__.bundleUrl || 'about:blank';
 
-    if (!bundleUrl) {
-      console.error('Warning: Missing bundleUrl for createInstance. Location could not be uesd because of this. Check your Weex environment.');
+    if (!__weex_options__.bundleUrl) {
+      console.error('Error: Missing bundleUrl for createInstance, about:blank will be used as the default value. Check your Weex environment.');
     }
 
     const document = new Document(instanceId, bundleUrl);
-    const documentURL = bundleUrl ? new URL(bundleUrl) : {};
+    const documentURL = new URL(bundleUrl);
     const modules = {};
 
     instance = instances[instanceId] = {
@@ -182,7 +182,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     // Extend document
     require('./document.weex')(__weex_require__, document);
 
-    const location = bundleUrl ? require('./location.weex')(__weex_require__, documentURL) : {};
+    const location = require('./location.weex')(__weex_require__, documentURL);
 
     const {
       fetch,
