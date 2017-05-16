@@ -46,16 +46,22 @@ class URLSearchParamsDemo extends Component {
   }
 
   render() {
+    let symbolDemos = [];
+    if (typeof Symbol !== 'undefined' && params[Symbol.iterator]) {
+      symbolDemos = [
+        <Text style={styles.title}>keys()</Text>,
+        <Text>{this.keysOfParams()}</Text>,
+        <Text style={styles.title}>values()</Text>,
+        <Text>{this.valuesOfParams()}</Text>,
+        <Text style={styles.title}>entries()</Text>,
+        <Text>{this.entriesOfParams()}</Text>,
+      ];
+    }
+
     return (
       <View style={styles.container}>
         <Text style={styles.title}>toString()</Text>
         <Text>{params.toString()}</Text>
-        <Text style={styles.title}>keys()</Text>
-        <Text>{this.keysOfParams()}</Text>
-        <Text style={styles.title}>values()</Text>
-        <Text>{this.valuesOfParams()}</Text>
-        <Text style={styles.title}>entries()</Text>
-        <Text>{this.entriesOfParams()}</Text>
         <Text style={styles.title}>append()</Text>
         <Text>{this.appendParams()}</Text>
         <Text style={styles.title}>delete()</Text>
@@ -68,6 +74,7 @@ class URLSearchParamsDemo extends Component {
         <Text>{'params.has(\'key1\'): ' + params.has('key1')}</Text>
         <Text style={styles.title}>set()</Text>
         <Text>{this.setParams()}</Text>
+        {symbolDemos}
       </View>
     );
   }

@@ -19,6 +19,7 @@ import EnvDemo from './EnvDemo';
 import JsonpDemo from './JsonpDemo';
 import PlatformDemo from './PlatformDemo';
 import ToastDemo from './ToastDemo';
+import WebSocketDemo from './WebSocketDemo';
 
 class Page extends Component {
   render() {
@@ -26,6 +27,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>FontFace</Text>
         <FontFaceDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>WebSocket</Text>
+        <WebSocketDemo />
       </View>
 
       <View>

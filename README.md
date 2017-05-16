@@ -127,6 +127,48 @@ More examples take a look at the [`examples`](/examples/) folder:
 <img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
 </p>
 
+## Official Components
+
+* [rax-animated](/packages/rax-animated)
+* [rax-barcode](/packages/rax-barcode)
+* [rax-button](/packages/rax-button)
+* [rax-calendar](/packages/rax-calendar)
+* [rax-canvas](/packages/rax-canvas)
+* [rax-charts](/packages/rax-charts)
+* [rax-checkbox](/packages/rax-checkbox)
+* [rax-countdown](/packages/rax-countdown)
+* [rax-counter](/packages/rax-counter)
+* [rax-datepicker](/packages/rax-datepicker)
+* [rax-gotop](/packages/rax-gotop)
+* [rax-grid](/packages/rax-grid)
+* [rax-icon](/packages/rax-icon)
+* [rax-image](/packages/rax-image)
+* [rax-link](/packages/rax-link)
+* [rax-listview](/packages/rax-listview)
+* [rax-menulist](/packages/rax-menulist)
+* [rax-modal](/packages/rax-modal)
+* [rax-multirow](/packages/rax-multirow)
+* [rax-navigation](/packages/rax-navigation)
+* [rax-picker](/packages/rax-picker)
+* [rax-picture](/packages/rax-picture)
+* [rax-player](/packages/rax-player)
+* [rax-qrcode](/packages/rax-qrcode)
+* [rax-recyclerview](/packages/rax-recyclerview)
+* [rax-redux](/packages/rax-redux)
+* [rax-refreshcontrol](/packages/rax-refreshcontrol)
+* [rax-scrollview](/packages/rax-scrollview)
+* [rax-slider](/packages/rax-slider)
+* [rax-switch](/packages/rax-switch)
+* [rax-tabbar](/packages/rax-tabbar)
+* [rax-tabheader](/packages/rax-tabheader)
+* [rax-table](/packages/rax-table)
+* [rax-text](/packages/rax-text)
+* [rax-textinput](/packages/rax-textinput)
+* [rax-timepicker](/packages/rax-timepicker)
+* [rax-touchable](/packages/rax-touchable)
+* [rax-video](/packages/rax-video)
+* [rax-view](/packages/rax-view)
+
 ## Contributing
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
