@@ -6,7 +6,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-plugin');
 var qrcode = require('qrcode-terminal');
-var internalIp = require('internal-ip');
+var address = require('address');
 
 var isProducation = process.env.NODE_ENV === 'production';
 
@@ -49,10 +49,20 @@ if (isProducation) {
 }
 
 if (!isProducation) {
-  var ip = internalIp.v4();
-  var port = 8080;
-  var webUrl = 'http://' + ip + ':' + port;
-  var bundleUrl = 'http://' + ip + ':' + port + '/js/index.bundle.js';
+  var protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
+  var port = parseInt(process.env.PORT, 10) || 8080;
+  var hostname = process.env.HOST;
+
+  if (hostname == null) {
+    try {
+      hostname = address.ip();
+    } catch (_e) {
+      hostname = 'localhost';
+    }
+  }
+
+  var webUrl = protocol + '://' + hostname + ':' + port;
+  var bundleUrl = protocol + '://' + hostname + ':' + port + '/js/index.bundle.js';
   var weexBundleUrl = bundleUrl + '?_wx_tpl=' + bundleUrl;
 
   qrcode.generate(webUrl, {small: true});
@@ -86,8 +96,7 @@ module.exports = {
     publicPath: publicPath
   },
   resolve: {
-    fallback: paths.nodePaths,
-    extensions: ['.js', '.json', '.jsx', ''],
+    extensions: ['.js', '.json', '.jsx'],
     alias: {
       'react': 'rax'
     }
@@ -124,7 +133,7 @@ module.exports = {
       compress: {
         warnings: false
       }
-    }) : new webpack.NoErrorsPlugin(),
+    }) : new webpack.NoEmitOnErrorsPlugin(),
     // This is necessary to emit hot updates (currently CSS only):
     // new webpack.HotModuleReplacementPlugin(),
     // Watcher doesn't work well if you mistype casing in a path so we use
@@ -138,29 +147,29 @@ module.exports = {
     new WatchMissingNodeModulesPlugin(paths.appNodeModules)
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel', // 'babel-loader' is also a legal name to reference
-        query: {
+        loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
+        options: {
           presets: ['es2015', 'rax'],
         }
       },
       {
         test: /\.css$/,
-        loader: 'stylesheet'
+        loader: 'stylesheet-loader'
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
       {
         test: /\.json$/,
-        loader: 'json'
+        loader: 'json-loader'
       },
       // load inline images using image-source-loader for Image
       {
         test: /\.(png|jpe?g|gif)$/i,
-        loader: 'image-source'
+        loader: 'image-source-loader'
       }
     ]
   }
