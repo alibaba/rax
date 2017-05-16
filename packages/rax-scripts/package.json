@@ -40,7 +40,7 @@
     "rimraf": "^2.6.1",
     "stylesheet-loader": "^0.3.3",
     "watch-missing-node-modules-webpack-plugin": "^0.0.1",
-    "webpack": "^1.15.0",
-    "webpack-dev-server": "^1.16.4"
+    "webpack": "^2.5.1",
+    "webpack-dev-server": "^2.4.5"
   }
 }

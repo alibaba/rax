@@ -43,8 +43,7 @@ module.exports = {
     publicPath: publicPath
   },
   resolve: {
-    modulesDirectories: ['node_modules'],
-    extensions: ['.js', '.json', '.jsx', ''],
+    extensions: ['.js', '.json', '.jsx'],
     alias: {
       react: 'rax-compat'
     }
@@ -95,6 +94,12 @@ module.exports = {
         console.log('');
         console.log(colors.green('webpack: bundle build is now finished.'));
       }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      // test: /\.xxx$/, // may apply this only for some modules
+      options: {
+        babel: babelConfig
+      }
     })
   ],
   module: {
@@ -120,6 +125,5 @@ module.exports = {
         loader: require.resolve('image-source-loader')
       }
     ]
-  },
-  babel: babelConfig
+  }
 };

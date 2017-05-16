@@ -39,13 +39,13 @@ Object.keys(webpackConfigDev.entry).forEach(point => {
   webpackConfigDev.entry[point].unshift(webpackHotDevClient);
 });
 
-webpackConfigDev.module.loaders.forEach(loader => {
-  if (loader.test.toString() === /\.jsx?$/.toString()) {
-    loader.loaders.push(require.resolve('../loaders/module-hot-accept'));
-  }
-});
+// webpackConfigDev.module.loaders.forEach(loader => {
+//   if (loader.test.toString() === /\.jsx?$/.toString()) {
+//     loader.loaders.push(require.resolve('../loaders/module-hot-accept'));
+//   }
+// });
 
 webpackConfigDev.plugins.push(new webpack.HotModuleReplacementPlugin());
-webpackConfigDev.plugins.push(new webpack.NoErrorsPlugin());
+webpackConfigDev.plugins.push(new webpack.NoEmitOnErrorsPlugin());
 
 module.exports = webpackConfigDev;
