@@ -30,7 +30,7 @@ import TabHeader from 'rax-tabheader';
 | itemStyle          | Object          |                         | 单个 tab 展现样式                  |
 | itemSelectedStyle  | Object          |                         | 单个选中 tab 展现样式                |
 | animBuoyStyle | Object          |                         | 滑动色块展现样式             |
-| dropDownCols | Number          |                         | 下啦列表的列数             |
+| dropDownCols | Number          |                         | 下拉列表的列数             |
 
 注意：
 
