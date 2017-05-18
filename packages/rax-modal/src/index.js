@@ -75,7 +75,7 @@ export default class Modal extends Component {
   render() {
     const {contentStyle, children} = this.props;
     const {visible} = this.state;
-    // HACK: 'onClick={() => {}}' fix for Android click penetration events (in mask AnimatedView)
+    // HACK: register a empty click event to fix Android click penetration problem when in mask
     return (
       visible && <AnimatedView
         onClick={() => {}}
