@@ -16,6 +16,9 @@ const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 // Instance hub
 const instances = {};
 
+// factory func cache
+const bundleCacheMap = {};
+
 function dispatchEventToInstance(event, targetOrigin) {
   var instance;
   for (var i in instances) {
@@ -337,9 +340,32 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       let timing = performance.timing;
       timing.domLoading = Date.now();
 
-      let init = new Function(
-        'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}'
-      );
+      let init;
+
+      let bundleName = __weex_options__ && __weex_options__.bundleName;
+
+      let isCacheFactoryFunc = bundleName !== '';
+
+      let functoryFuncCode = 'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}';
+
+      if (isCacheFactoryFunc) {
+        instance.bundleName = bundleName;
+
+        let bundle = bundleCacheMap[bundleName];
+
+        init = bundle && bundle.factoryFunc;
+
+        if (typeof init !== 'function') {
+          bundleCacheMap[bundleName] = bundleCacheMap[bundleName] || {};
+          bundleCacheMap[bundleName].factoryFunc = new Function(functoryFuncCode);
+          bundleCacheMap[bundleName].dependents = bundleCacheMap[bundleName].dependents || [];
+          bundleCacheMap[bundleName].dependents.push(instanceId);
+
+          init = bundleCacheMap[bundleName].factoryFunc;
+        }
+      } else {
+        init = new Function(functoryFuncCode);
+      }
 
       init.call(
         // Context is window
@@ -395,6 +421,21 @@ export function destroyInstance(instanceId) {
 
   if (document.taskCenter && document.taskCenter.destroyCallback) {
     document.taskCenter.destroyCallback();
+  }
+
+  let bundleName = instance.bundleName;
+
+  if (bundleName !== '') {
+    let bundle = bundleCacheMap[bundleName];
+    let index = bundle.dependents.indexOf(instanceId);
+    if ( index !== -1) {
+      // remove a dependent from dependents Array
+      bundle.dependents.splice(index, 1);
+    }
+    // delete cache if there is no dependent;
+    if (bundle.dependents.length === 0) {
+      delete bundleCacheMap[bundleName];
+    }
   }
 
   delete instances[instanceId];
