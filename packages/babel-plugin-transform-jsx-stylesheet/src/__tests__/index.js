@@ -174,7 +174,7 @@ class App extends Component {
 }`);
   });
 
-  it('transform simple stateless function', () => {
+  it('transform constant elements in render', () => {
     expect(getTransfromCode(`
 import { createElement, render } from 'rax';
 import './app.css';
