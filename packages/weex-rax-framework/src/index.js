@@ -15,6 +15,8 @@ const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 // Instance hub
 const instances = {};
+// Bundles hub
+const bundles = {};
 
 function dispatchEventToInstance(event, targetOrigin) {
   var instance;
@@ -159,7 +161,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const bundleUrl = __weex_options__.bundleUrl || 'about:blank';
 
     if (!__weex_options__.bundleUrl) {
-      console.error('Error: Missing bundleUrl for createInstance, about:blank will be used as the default value. Check your Weex environment.');
+      console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
     }
 
     const document = new Document(instanceId, bundleUrl);
@@ -169,6 +171,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     instance = instances[instanceId] = {
       document,
       instanceId,
+      bundleUrl,
+      bundleCode: __weex_code__,
       modules,
       origin: documentURL.origin,
       uid: 0
@@ -332,12 +336,13 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       moduleFactories,
       window
     );
-
+    // In weex iOS or Android
     if (__weex_env__.platform !== 'Web') {
       let timing = performance.timing;
       timing.domLoading = Date.now();
 
-      let init = new Function(
+      // Use the cached init function, if existed in bundles
+      let init = bundles[__weex_code__] ? bundles[__weex_code__] : new Function(
         'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}'
       );
 
@@ -347,7 +352,11 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       );
 
       timing.domInteractive = timing.domComplete = timing.domInteractive = Date.now();
+
+      // Cache the init function
+      bundles[__weex_code__] = init;
     } else {
+      // In weex h5
       let init = new Function(
         '"use strict";\n' + __weex_code__
       );
@@ -383,7 +392,9 @@ export function refreshInstance(instanceId, data) {
  */
 export function destroyInstance(instanceId) {
   let instance = getInstance(instanceId);
+  let bundleCode = instance.bundleCode;
   instance.window.closed = true;
+
   let document = instance.document;
   document.documentElement.fireEvent('destory', {
     timestamp: Date.now()
@@ -398,6 +409,7 @@ export function destroyInstance(instanceId) {
   }
 
   delete instances[instanceId];
+  delete bundles[bundleCode];
 }
 
 /**
