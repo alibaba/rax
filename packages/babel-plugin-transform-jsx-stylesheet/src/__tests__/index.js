@@ -36,12 +36,12 @@ class App extends Component {
 import { createElement, Component } from 'rax';
 import appStyleSheet from './app.css';
 
+var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
     return <div style={_styleSheet["header"]} />;
   }
-}
-var _styleSheet = appStyleSheet;`);
+}`);
   });
 
   it('transform multiple classNames to style as array', () => {
@@ -57,12 +57,12 @@ class App extends Component {
 import { createElement, Component } from 'rax';
 import appStyleSheet from './app.css';
 
+var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
     return <div style={[_styleSheet["header1"], _styleSheet["header2"]]} />;
   }
-}
-var _styleSheet = appStyleSheet;`);
+}`);
   });
 
   it('combine one style and className', () => {
@@ -81,13 +81,13 @@ import { createElement, Component } from 'rax';
 import appStyleSheet from './app.css';
 import styleStyleSheet from './style.css';
 
+var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);
+
 class App extends Component {
   render() {
     return <div style={[_styleSheet["header2"], styles.header1]} />;
   }
-}
-
-var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);`);
+}`);
   });
 
   it('combine inline style object and className', () => {
@@ -105,14 +105,14 @@ class App extends Component {
 import { createElement, Component } from 'rax';
 import appStyleSheet from './app.css';
 
+var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
     return <div style={[_styleSheet["header"], {
       height: 100
     }]} />;
   }
-}
-var _styleSheet = appStyleSheet;`);
+}`);
   });
 
   it('combine multiple styles and className', () => {
@@ -131,13 +131,13 @@ import { createElement, Component } from 'rax';
 import appStyleSheet from './app.css';
 import styleStyleSheet from './style.css';
 
+var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);
+
 class App extends Component {
   render() {
     return <div style={[_styleSheet["header2"], styles.header1, styles.header3]} />;
   }
-}
-
-var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);`);
+}`);
   });
 
   it('do not transfrom code when no css file', () => {
@@ -166,11 +166,25 @@ class App extends Component {
 import { createElement, Component } from 'rax';
 import appStyleSheet from './app.scss';
 
+var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
     return <div style={_styleSheet["header"]} />;
   }
-}
-var _styleSheet = appStyleSheet;`);
+}`);
+  });
+
+  it('transform simple stateless function', () => {
+    expect(getTransfromCode(`
+import { createElement, render } from 'rax';
+import './app.css';
+
+render(<div className="header" />);
+`)).toBe(`
+import { createElement, render } from 'rax';
+import appStyleSheet from './app.css';
+
+var _styleSheet = appStyleSheet;
+render(<div style={_styleSheet["header"]} />);`);
   });
 });
