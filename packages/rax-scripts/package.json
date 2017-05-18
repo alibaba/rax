@@ -35,6 +35,7 @@
     "json-loader": "^0.5.4",
     "path-exists": "^3.0.0",
     "qrcode-terminal": "^0.11.0",
+    "rax-hot-loader": "^0.0.2-0",
     "rax-webpack-plugin": "^0.2.12",
     "react-dev-utils": "^0.5.2",
     "rimraf": "^2.6.1",
