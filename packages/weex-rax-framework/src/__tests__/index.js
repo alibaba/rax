@@ -852,4 +852,46 @@ describe('framework', () => {
 
     expect(mockFn).toHaveBeenCalled();
   });
+
+  it('factory func cache', () => {
+
+    let mockData = [{
+      code: 'console.log(\'nxType1 function\')',
+      options: {
+        bundleName: 'nxType1',
+        bundleUrl: 'about:blank'
+      }
+    }, {
+      code: 'console.log(\'nxType2 function\')',
+      options: {
+        bundleName: 'nxType2',
+        bundleUrl: 'about:blank'
+      }
+    }, {
+      code: 'console.log(\'no nxType function\')',
+      options: {
+        bundleUrl: 'about:blank'
+      }
+    },, {
+      code: '',
+      options: {
+        bundleName: 'nxType1',
+        bundleUrl: ''
+      }
+    }];
+
+    // mockData.forEach((data, index) => {
+
+      let data = mockData[0];
+      
+      instance.$create(data.code, __weex_callbacks__, data.options, __weex_data__);
+
+      expect(instance._target.getInstance(instance.id).bundleName).toEqual(data.options.bundleName);
+
+      instance.$destroy();
+    // });
+
+   
+  });
+
 });
