@@ -3,6 +3,8 @@
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
 
+import SegmentInstanceManager from './segment-instance-manager';
+
 let NativeComponents = {};
 let NativeModules = {};
 
@@ -333,29 +335,46 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       window
     );
 
+    let nxType = typeof __weex_data__ !== 'undefined' && __weex_data__.__nxType__;
+
+    let scriptStr = '"use strict";\n' + __weex_code__;
+
+    let timing;
+
     if (__weex_env__.platform !== 'Web') {
-      let timing = performance.timing;
+      timing = performance.timing;
       timing.domLoading = Date.now();
 
-      let init = new Function(
-        'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}'
-      );
-
-      init.call(
-        // Context is window
-        window,
-      );
-
-      timing.domInteractive = timing.domComplete = timing.domInteractive = Date.now();
-    } else {
-      let init = new Function(
-        '"use strict";\n' + __weex_code__
-      );
-
-      init.call(
-        window
-      );
+      scriptStr = 'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}';
     }
+
+    let init;
+
+    if (nxType) {
+
+      init = SegmentInstanceManager.getFactoryFunc(nxType);
+
+      if (typeof init !== 'function') {
+        SegmentInstanceManager.addFactoryFunc(nxType, new Function(scriptStr));
+        init = SegmentInstanceManager.getFactoryFunc(nxType);
+      }
+
+      // 添加依赖
+      SegmentInstanceManager.addDependents(nxType, instanceId);
+
+    } else {
+      init = new Function(scriptStr);
+    }
+
+    init.call(
+      // Context is window
+      window,
+    );
+
+    if (__weex_env__.platform !== 'Web') {
+      timing.domInteractive = timing.domComplete = timing.domInteractive = Date.now();
+    }
+
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);
   }
@@ -398,6 +417,9 @@ export function destroyInstance(instanceId) {
   }
 
   delete instances[instanceId];
+
+  // 释放内存
+  SegmentInstanceManager.removeCell(instanceId);
 }
 
 /**
