@@ -77,7 +77,7 @@ export default class Modal extends Component {
     const {visible} = this.state;
     return (
       visible && <AnimatedView
-        onPress={() => {}}
+        onClick={() => {}}
         style={[styles.mask, {opacity: fadeAnim}]}
       >
         <View style={[styles.main, contentStyle]}>
