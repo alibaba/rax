@@ -37,7 +37,6 @@
     "qrcode-terminal": "^0.11.0",
     "rax-hot-loader": "^0.0.2-0",
     "rax-webpack-plugin": "^0.2.12",
-    "react-dev-utils": "^0.5.2",
     "rimraf": "^2.6.1",
     "stylesheet-loader": "^0.3.3",
     "watch-missing-node-modules-webpack-plugin": "^0.0.1",
