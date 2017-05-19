@@ -119,7 +119,7 @@ class LinePoint extends Component {
   }
 }
 
-export default LinePoint;
+render(<LinePoint />);
 ```
 
 ### 平滑折线图
