@@ -120,7 +120,7 @@ class LinePoint extends Component {
 render(<LinePoint />);
 ```
 
-平滑折线图
+## 平滑折线图
 
 ```jsx
 // demo
