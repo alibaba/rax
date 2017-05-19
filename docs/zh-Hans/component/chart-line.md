@@ -181,5 +181,5 @@ class LineSmooth extends Component {
   }
 }
 
-render(LineSmooth /);
+render(<LineSmooth />);
 ```
