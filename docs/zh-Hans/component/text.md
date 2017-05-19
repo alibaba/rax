@@ -20,9 +20,6 @@ import Text from 'rax-text';
 
 | 名称            | 类型       | 默认值  | 描述       |
 | :------------ | :------- | :--- | :------- |
-| onPress       | Function |      | 点击事件     |
-| id            | String   |      | 指定 id    |
-| className     | String   |      | class 名称 |
 | numberOfLines | Number   |      | 行数       |
 
 ## 基本示例

@@ -1,6 +1,11 @@
+---
+title: 什么是 Rax，以及 Rax 的特点
+date: 20170426
+---
+
 # 什么是 Rax，以及 Rax 的特点
 
-![320x320](https://gw.alicdn.com/tfs/TB18WI4QXXXXXcBapXXXXXXXXXX-1120-960.png_110x110xz.jpg)
+<img src="https://img.alicdn.com/tps/TB1LxebPVXXXXaHXpXXXXXXXXXX-900-500.png" style="text-align: center;"/>
 
 Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 

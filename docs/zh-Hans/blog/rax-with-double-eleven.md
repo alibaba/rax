@@ -1,6 +1,11 @@
+---
+title: Rax 淘宝 双11 双12 实战
+date: 20170427
+---
+
 # Rax 淘宝 双11 双12 实战
 
-![320x320](https://gw.alicdn.com/tfs/TB18WI4QXXXXXcBapXXXXXXXXXX-1120-960.png_110x110xz.jpg)
+<img src="https://gw.alicdn.com/tfs/TB1XDuDPXXXXXbRapXXXXXXXXXX-900-500.jpg" style="text-align: center;"/>
 
 Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 

@@ -1,4 +1,4 @@
-# 柱状图
+# Bar 柱状图
 
 典型的柱状图（又名条形图），使用垂直或水平的柱子显示类别之间的数值比较。其中一个轴表示需要对比的分类维度，另一个轴代表相应的数值。
 
@@ -8,9 +8,7 @@
 import Chart, {Bar, Axis} from 'rax-charts';
 ```
 
-## 基本示例
-
-### 简单柱状图
+## 简单柱状图
 
 ```jsx
 // demo
@@ -43,7 +41,7 @@ class SimpleBar extends Component {
 render(<SimpleBar />)
 ```
 
-### 区间柱状图
+## 区间柱状图
 
 ```jsx
 // demo

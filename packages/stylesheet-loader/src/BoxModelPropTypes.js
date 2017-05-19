@@ -40,7 +40,8 @@ const BoxModelPropTypes = {
   bottom: PropTypes.length,
   left: PropTypes.length,
   right: PropTypes.length,
-  opacity: PropTypes.number
+  opacity: PropTypes.number,
+  transform: PropTypes.string
 };
 
 export default BoxModelPropTypes;
