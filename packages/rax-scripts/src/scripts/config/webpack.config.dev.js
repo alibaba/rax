@@ -30,12 +30,14 @@ webpackConfigDev.entry = {
 Object.keys(webpackConfigDev.entry).forEach(point => {
   // Enable hot reloading
   webpackConfigDev.entry[point].unshift(require.resolve('rax-hot-loader/patch'));
-  webpackConfigDev.entry[point].unshift(`${require.resolve('webpack-dev-server/client')}?${options.protocol}//${options.host}:${options.port}`);
-  // bundle the client for webpack-dev-server
-  // and connect to the provided endpoint
-  webpackConfigDev.entry[point].unshift(require.resolve('webpack/hot/only-dev-server'));
-  // bundle the client for hot reloading
-  // only- means to only hot reload for successful updates
+  // webpackConfigDev.entry[point].unshift(`${require.resolve('webpack-dev-server/client')}?${options.protocol}//${options.host}:${options.port}`);
+  // // bundle the client for webpack-dev-server
+  // // and connect to the provided endpoint
+  // webpackConfigDev.entry[point].unshift(require.resolve('webpack/hot/only-dev-server'));
+  // // bundle the client for hot reloading
+  // // only- means to only hot reload for successful updates
+
+  webpackConfigDev.entry[point].unshift(require.resolve('../../dev-utils/webpackHotDevClient'));
 });
 
 // Only work on web
