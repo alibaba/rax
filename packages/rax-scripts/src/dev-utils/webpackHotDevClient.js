@@ -118,7 +118,6 @@ function handleAvailableHash(hash) {
 // Handle messages from the server.
 connection.onmessage = function(e) {
   var message = JSON.parse(e.data);
-  console.log('message', e.data)
   switch (message.type) {
     case 'hash':
       handleAvailableHash(message.data);
@@ -168,6 +167,7 @@ function tryApplyUpdates(onHotUpdateSuccess) {
   }
 
   function handleApplyUpdates(err, updatedModules) {
+    console.log('handleApplyUpdates', err, updatedModules);
     if (err || !updatedModules) {
       window.location.reload();
       return;

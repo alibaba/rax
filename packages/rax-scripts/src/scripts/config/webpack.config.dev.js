@@ -9,6 +9,8 @@ const webpackConfigBase = require('./webpack.config.base');
 const options = require('../utils/parse-options');
 const webpackConfigDev = Object.assign({}, webpackConfigBase);
 
+const HotModuleReplacementPlugin = require('hot-module-replacement');
+
 const ipv4 = address.ip();
 const port = options.port;
 const webUrl = 'http://' + ipv4 + ':' + port;
@@ -37,11 +39,12 @@ Object.keys(webpackConfigDev.entry).forEach(point => {
   // // bundle the client for hot reloading
   // // only- means to only hot reload for successful updates
 
+  // hot reaload client.
   webpackConfigDev.entry[point].unshift(require.resolve('../../dev-utils/webpackHotDevClient'));
 });
 
 // Only work on web
-webpackConfigDev.plugins.push(new webpack.HotModuleReplacementPlugin());
+webpackConfigDev.plugins.push(new HotModuleReplacementPlugin());
 webpackConfigDev.plugins.push(new webpack.NoEmitOnErrorsPlugin());
 
 module.exports = webpackConfigDev;
