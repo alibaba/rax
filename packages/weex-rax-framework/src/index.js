@@ -195,6 +195,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       Response
     } = require('./fetch.weex')(__weex_require__, Promise);
 
+    const XMLHttpRequest = require('./xmlhttprequest.weex')(__weex_require__);
     const WebSocket = require('./websocket.weex')(__weex_require__);
 
     const {
@@ -257,6 +258,7 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       Headers,
       Response,
       Request,
+      XMLHttpRequest,
       URL,
       URLSearchParams,
       FontFace,
