@@ -6,7 +6,7 @@ import ScrollView from 'rax-scrollview';
 import Picture from 'rax-picture';
 import styles from './style';
 
-class Demo extends Component {
+class Card extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (!nextProps.dataSource ) {
@@ -44,4 +44,4 @@ class Demo extends Component {
 }
 
 
-export default Demo;
+export default Card;

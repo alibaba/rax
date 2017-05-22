@@ -5,7 +5,7 @@ import Link from 'rax-link';
 import Picture from 'rax-picture';
 import styles from './style';
 
-class Demo extends Component {
+class PlayerCard extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (!nextProps.dataSource ) {
@@ -45,4 +45,4 @@ class Demo extends Component {
 }
 
 
-export default Demo;
+export default PlayerCard;
