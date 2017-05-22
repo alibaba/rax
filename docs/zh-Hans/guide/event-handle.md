@@ -101,7 +101,7 @@ TextInput 是唤起用户输入的基础组件。当定义 multiline 输入多�
 
 ```jsx
 import {createElement, Component} from 'rax';
-import TextInout from 'rax-textinput';
+import TextInput from 'rax-textinput';
 import Touchable from 'rax-touchable';
 import Text from 'rax-text';
  

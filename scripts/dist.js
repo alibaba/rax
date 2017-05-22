@@ -160,11 +160,11 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
       })
     ],
     module: {
-      loaders: [{
+      rules: [{
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
-        query: babelLoaderQuery
+        options: babelLoaderQuery
       }]
     }
   };

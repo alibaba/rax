@@ -15,6 +15,8 @@ const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 // Instance hub
 const instances = {};
+// Bundles hub
+const bundles = {};
 
 function dispatchEventToInstance(event, targetOrigin) {
   var instance;
@@ -156,7 +158,12 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
     const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-    const bundleUrl = __weex_options__.bundleUrl;
+    const bundleUrl = __weex_options__.bundleUrl || 'about:blank';
+
+    if (!__weex_options__.bundleUrl) {
+      console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
+    }
+
     const document = new Document(instanceId, bundleUrl);
     const documentURL = new URL(bundleUrl);
     const modules = {};
@@ -164,6 +171,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     instance = instances[instanceId] = {
       document,
       instanceId,
+      bundleUrl,
+      bundleCode: __weex_code__,
       modules,
       origin: documentURL.origin,
       uid: 0
@@ -231,9 +240,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
         platform: __weex_env__.platform,
         appName: __weex_env__.appName,
         appVersion: __weex_env__.appVersion,
-        // weexVersion: __weex_env__.weexVersion,
-        // osVersion: __weex_env__.osVersion,
-        // userAgent
+        // Weex/0.12 (iOS 9.3) AppName/0.12
+        userAgent: `Weex/${__weex_env__.weexVersion} (${__weex_env__.platform} ${__weex_env__.osVersion}) ${__weex_env__.appName}/${__weex_env__.appVersion}`
       },
       // https://drafts.csswg.org/cssom-view/#the-screen-interface
       screen: {
@@ -327,12 +335,13 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       moduleFactories,
       window
     );
-
+    // In weex iOS or Android
     if (__weex_env__.platform !== 'Web') {
       let timing = performance.timing;
       timing.domLoading = Date.now();
 
-      let init = new Function(
+      // Use the cached init function, if existed in bundles
+      let init = bundles[__weex_code__] ? bundles[__weex_code__] : new Function(
         'with(this){(function(){"use strict";\n' + __weex_code__ + '\n}).call(this)}'
       );
 
@@ -342,7 +351,11 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       );
 
       timing.domInteractive = timing.domComplete = timing.domInteractive = Date.now();
+
+      // Cache the init function
+      bundles[__weex_code__] = init;
     } else {
+      // In weex h5
       let init = new Function(
         '"use strict";\n' + __weex_code__
       );
@@ -378,7 +391,9 @@ export function refreshInstance(instanceId, data) {
  */
 export function destroyInstance(instanceId) {
   let instance = getInstance(instanceId);
+  let bundleCode = instance.bundleCode;
   instance.window.closed = true;
+
   let document = instance.document;
   document.documentElement.fireEvent('destory', {
     timestamp: Date.now()
@@ -393,6 +408,7 @@ export function destroyInstance(instanceId) {
   }
 
   delete instances[instanceId];
+  delete bundles[bundleCode];
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "rax-server-renderer",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "Rax renderer for server-side render.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

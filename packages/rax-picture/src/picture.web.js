@@ -146,6 +146,7 @@ class Picture extends Component {
     if (children || resizeMode) {
       return (
         <View
+          {...this.props}
           data-once={true}
           onAppear={() => this.lazyLoad()}
           style={[
@@ -164,6 +165,7 @@ class Picture extends Component {
       );
     } else {
       return <Image
+        {...this.props}
         data-once={true}
         onAppear={() => this.lazyLoad()}
         source={{

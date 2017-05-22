@@ -6,7 +6,7 @@ class RefreshControl extends Component {
     if (isWeex) {
       let displayRefresh = this.props.refreshing ? 'show' : 'hide';
       return (
-        <refresh id={this.props.id} style={this.props.style} display={displayRefresh} onRefresh={this.props.onRefresh}>
+        <refresh {...this.props} display={displayRefresh} >
           {this.props.children}
         </refresh>
       );

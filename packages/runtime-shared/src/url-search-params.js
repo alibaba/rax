@@ -1,23 +1,21 @@
 // https://github.com/WebReflection/url-search-params
+import Symbol from './symbol';
 
-const
-  find = /[!'\(\)~]|%20|%00/g,
-  plus = /\+/g,
-  replace = {
-    '!': '%21',
-    "'": '%27',
-    '(': '%28',
-    ')': '%29',
-    '~': '%7E',
-    '%20': '+',
-    '%00': '\x00'
-  },
-  replacer = function(match) {
-    return replace[match];
-  },
-  iterable = isIterable(),
-  secret = '__URLSearchParams__'
-  ;
+const find = /[!'\(\)~]|%20|%00/g;
+const plus = /\+/g;
+const replace = {
+  '!': '%21',
+  "'": '%27',
+  '(': '%28',
+  ')': '%29',
+  '~': '%7E',
+  '%20': '+',
+  '%00': '\x00'
+};
+const replacer = function(match) {
+  return replace[match];
+};
+const secret = '__URLSearchParams__';
 
 function encode(str) {
   return encodeURIComponent(str).replace(find, replacer);
@@ -25,14 +23,6 @@ function encode(str) {
 
 function decode(str) {
   return decodeURIComponent(str.replace(plus, ' '));
-}
-
-function isIterable() {
-  try {
-    return !!Symbol.iterator;
-  } catch (error) {
-    return false;
-  }
 }
 
 class URLSearchParams {
@@ -116,11 +106,9 @@ class URLSearchParams {
       }
     };
 
-    if (iterable) {
-      iterator[Symbol.iterator] = function() {
-        return iterator;
-      };
-    }
+    iterator[Symbol.iterator] = function() {
+      return iterator;
+    };
 
     return iterator;
   }
@@ -137,11 +125,9 @@ class URLSearchParams {
       }
     };
 
-    if (iterable) {
-      iterator[Symbol.iterator] = function() {
-        return iterator;
-      };
-    }
+    iterator[Symbol.iterator] = function() {
+      return iterator;
+    };
 
     return iterator;
   }
@@ -158,11 +144,9 @@ class URLSearchParams {
       }
     };
 
-    if (iterable) {
-      iterator[Symbol.iterator] = function() {
-        return iterator;
-      };
-    }
+    iterator[Symbol.iterator] = function() {
+      return iterator;
+    };
 
     return iterator;
   }
@@ -183,8 +167,6 @@ class URLSearchParams {
   }
 }
 
-if (iterable) {
-  URLSearchParams.prototype[Symbol.iterator] = URLSearchParams.prototype.entries;
-}
+URLSearchParams.prototype[Symbol.iterator] = URLSearchParams.prototype.entries;
 
 module.exports = URLSearchParams;

@@ -1,4 +1,3 @@
-
 import {createElement, Component} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
@@ -10,7 +9,7 @@ class FetchDemo extends Component {
 
   componentDidMount() {
     var self = this;
-    fetch(location.origin + '/examples/modules/fetchdemo.json')
+    fetch(location.origin + '/examples/modules/fetchDemoData.json')
       .then(function(response) {
         return response.json();
       })
