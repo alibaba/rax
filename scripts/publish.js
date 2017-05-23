@@ -42,11 +42,6 @@ if (version) {
   packageJSON.dependencies.rax = semver;
   packageJSON.dependencies['rax-view'] = semver;
   packageJSON.dependencies['rax-text'] = semver;
-  packageJSON.devDependencies['babel-preset-rax'] = semver;
-  packageJSON.devDependencies['rax-webpack-plugin'] = semver;
-  packageJSON.devDependencies['stylesheet-loader'] = semver;
-  packageJSON.devDependencies['image-source-loader'] = semver;
-
   packageJSON.devDependencies['rax-scripts'] = semver;
 
   fs.writeFileSync(GENERATOR_DEPENDENCIES_FILE, JSON.stringify(packageJSON, null, '  '));
@@ -59,6 +54,8 @@ if (version) {
   const raxScritpsPackageJSON = JSON.parse(raxScriptPackageJSONString);
   raxScritpsPackageJSON.dependencies['babel-preset-rax'] = semver;
   raxScritpsPackageJSON.dependencies['image-source-loader'] = semver;
+  raxScritpsPackageJSON.dependencies['rax-hot-loader'] = semver;
+  raxScritpsPackageJSON.dependencies['rax-hot-module-replacement-webpack-plugin'] = semver;
   raxScritpsPackageJSON.dependencies['rax-webpack-plugin'] = semver;
   raxScritpsPackageJSON.dependencies['stylesheet-loader'] = semver;
 
