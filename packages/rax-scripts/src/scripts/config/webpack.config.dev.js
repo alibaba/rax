@@ -27,6 +27,12 @@ webpackConfigDev.devtool = 'inline-module-source-map';
 webpackConfigDev.entry = {
   'index.bundle': [paths.appIndexJs]
 };
+// Module hot accept
+webpackConfigDev.module.loaders.forEach(loader => {
+  if (loader.test.toString() === /\.jsx?$/.toString()) {
+    loader.loaders.push(`${require.resolve('../loaders/module-hot-accept')}?appIndex=${paths.appIndexJs}`);
+  }
+});
 
 Object.keys(webpackConfigDev.entry).forEach(point => {
   // Enable hot reloading
