@@ -33,11 +33,42 @@ function _mergeStyles() {
     });
   }
 
+  function findLastImportIndex(body) {
+    const bodyReverse = body.slice(0).reverse();
+    let _index = 0;
+
+    bodyReverse.some((node, index) => {
+      if (node.type === 'ImportDeclaration') {
+        _index = body.length - index - 1;
+        return true;
+      }
+      return false;
+    });
+
+    return _index;
+  }
+
   return {
     visitor: {
       Program: {
         exit({ node }, { file }) {
           const cssFileCount = file.get('cssFileCount');
+          const lastImportIndex = findLastImportIndex(node.body);
+          let cssParamIdentifiers = file.get('cssParamIdentifiers');
+          let callExpression;
+
+          if (cssParamIdentifiers) {
+            // only one css file
+            if (cssParamIdentifiers.length === 1) {
+              callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), cssParamIdentifiers[0])]);
+            } else if (cssParamIdentifiers.length > 1) {
+              const objectAssignExpression = t.callExpression(t.identifier('_mergeStyles'), cssParamIdentifiers);
+              callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), objectAssignExpression)]);
+            }
+
+            node.body.splice(lastImportIndex + 1, 0, callExpression);
+          }
+
           if (cssFileCount > 1) {
             node.body.unshift(mergeStylesFunctionAst);
           }
@@ -116,24 +147,6 @@ function _mergeStyles() {
 
           file.set('cssParamIdentifiers', cssParamIdentifiers);
           file.set('cssFileCount', cssFileCount);
-        }
-      },
-      ClassDeclaration({ parent, node }, { file }) {
-        const classIndex = parent.body.indexOf(node);
-        let cssParamIdentifiers = file.get('cssParamIdentifiers');
-        let callExpression;
-
-        if (cssParamIdentifiers) {
-          // only one css file
-          if (cssParamIdentifiers.length === 1) {
-            callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), cssParamIdentifiers[0])]);
-          } else if (cssParamIdentifiers.length > 1) {
-            const objectAssignExpression = t.callExpression(t.identifier('_mergeStyles'), cssParamIdentifiers);
-            callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), objectAssignExpression)]);
-          }
-
-          // append class declaration
-          parent.body.splice(classIndex + 1, 0, callExpression);
         }
       }
     }

@@ -48,8 +48,7 @@ describe('elements', () => {
     expect(component.props.width).toBe(undefined);
     expect(component.props.style.height).toBe('100');
     expect(component.props.style.width).toBe('100');
-    expect(component.props['auto-play']).toBe(true);
-    expect(component.props.autoplay).toBe(undefined);
+    expect(component.props.autoplay).toBe(true);
   });
 
   it('textarea element', () => {
