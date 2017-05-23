@@ -8,7 +8,6 @@ const Template = require('./Template');
 
 class JsonpMainTemplatePlugin {
   apply(mainTemplate) {
-
     mainTemplate.plugin('rax-hot-bootstrap', function(source, chunk, hash) {
       const hotUpdateChunkFilename = this.outputOptions.hotUpdateChunkFilename;
       const hotUpdateMainFilename = this.outputOptions.hotUpdateMainFilename;

@@ -2,14 +2,14 @@
   MIT License http://www.opensource.org/licenses/mit-license.php
   Author Tobias Koppers @sokra
 */
-"use strict";
-var Template = require("./Template");
-var ModuleHotAcceptDependency = require("./dependencies/ModuleHotAcceptDependency");
-var ModuleHotDeclineDependency = require("./dependencies/ModuleHotDeclineDependency");
-var RawSource = require("webpack-sources").RawSource;
-var ConstDependency = require("./dependencies/ConstDependency");
-var NullFactory = require("./NullFactory");
-var ParserHelpers = require("./ParserHelpers");
+'use strict';
+var Template = require('./Template');
+var ModuleHotAcceptDependency = require('./dependencies/ModuleHotAcceptDependency');
+var ModuleHotDeclineDependency = require('./dependencies/ModuleHotDeclineDependency');
+var RawSource = require('webpack-sources').RawSource;
+var ConstDependency = require('./dependencies/ConstDependency');
+var NullFactory = require('./NullFactory');
+var ParserHelpers = require('./ParserHelpers');
 var RaxJsonpMainTemplatePlugin = require('./RaxJsonpMainTemplatePlugin.js');
 
 function HotModuleReplacementPlugin(options) {
@@ -24,9 +24,9 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
   var fullBuildTimeout = this.fullBuildTimeout;
   var hotUpdateChunkFilename = compiler.options.output.hotUpdateChunkFilename;
   var hotUpdateMainFilename = compiler.options.output.hotUpdateMainFilename;
-  compiler.plugin("compilation", function(compilation, params) {
+  compiler.plugin('compilation', function(compilation, params) {
     var hotUpdateChunkTemplate = compilation.hotUpdateChunkTemplate;
-    if(!hotUpdateChunkTemplate) return;
+    if (!hotUpdateChunkTemplate) return;
 
     var normalModuleFactory = params.normalModuleFactory;
 
@@ -39,15 +39,15 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
     compilation.dependencyFactories.set(ModuleHotDeclineDependency, normalModuleFactory);
     compilation.dependencyTemplates.set(ModuleHotDeclineDependency, new ModuleHotDeclineDependency.Template());
 
-    compilation.plugin("record", function(compilation, records) {
-      if(records.hash === this.hash) return;
+    compilation.plugin('record', function(compilation, records) {
+      if (records.hash === this.hash) return;
       records.hash = compilation.hash;
       records.moduleHashs = {};
       this.modules.forEach(function(module) {
         var identifier = module.identifier();
-        var hash = require("crypto").createHash("md5");
+        var hash = require('crypto').createHash('md5');
         module.updateHash(hash);
-        records.moduleHashs[identifier] = hash.digest("hex");
+        records.moduleHashs[identifier] = hash.digest('hex');
       });
       records.chunkHashs = {};
       this.chunks.forEach(function(chunk) {
@@ -62,47 +62,47 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
     });
     var initialPass = false;
     var recompilation = false;
-    compilation.plugin("after-hash", function() {
+    compilation.plugin('after-hash', function() {
       var records = this.records;
-      if(!records) {
+      if (!records) {
         initialPass = true;
         return;
       }
-      if(!records.hash)
+      if (!records.hash)
         initialPass = true;
-      var preHash = records.preHash || "x";
-      var prepreHash = records.prepreHash || "x";
-      if(preHash === this.hash) {
+      var preHash = records.preHash || 'x';
+      var prepreHash = records.prepreHash || 'x';
+      if (preHash === this.hash) {
         recompilation = true;
         this.modifyHash(prepreHash);
         return;
       }
-      records.prepreHash = records.hash || "x";
+      records.prepreHash = records.hash || 'x';
       records.preHash = this.hash;
       this.modifyHash(records.prepreHash);
     });
-    compilation.plugin("should-generate-chunk-assets", function() {
-      if(multiStep && !recompilation && !initialPass)
+    compilation.plugin('should-generate-chunk-assets', function() {
+      if (multiStep && !recompilation && !initialPass)
         return false;
     });
-    compilation.plugin("need-additional-pass", function() {
-      if(multiStep && !recompilation && !initialPass)
+    compilation.plugin('need-additional-pass', function() {
+      if (multiStep && !recompilation && !initialPass)
         return true;
     });
-    compiler.plugin("additional-pass", function(callback) {
-      if(multiStep)
+    compiler.plugin('additional-pass', function(callback) {
+      if (multiStep)
         return setTimeout(callback, fullBuildTimeout);
       return callback();
     });
-    compilation.plugin("additional-chunk-assets", function() {
+    compilation.plugin('additional-chunk-assets', function() {
       var records = this.records;
-      if(records.hash === this.hash) return;
-      if(!records.moduleHashs || !records.chunkHashs || !records.chunkModuleIds) return;
+      if (records.hash === this.hash) return;
+      if (!records.moduleHashs || !records.chunkHashs || !records.chunkModuleIds) return;
       this.modules.forEach(function(module) {
         var identifier = module.identifier();
-        var hash = require("crypto").createHash("md5");
+        var hash = require('crypto').createHash('md5');
         module.updateHash(hash);
-        hash = hash.digest("hex");
+        hash = hash.digest('hex');
         module.hotUpdate = records.moduleHashs[identifier] !== hash;
       });
       var hotUpdateMainContent = {
@@ -112,7 +112,7 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
       Object.keys(records.chunkHashs).forEach(function(chunkId) {
         chunkId = isNaN(+chunkId) ? chunkId : +chunkId;
         var currentChunk = this.chunks.find(chunk => chunk.id === chunkId);
-        if(currentChunk) {
+        if (currentChunk) {
           var newModules = currentChunk.modules.filter(function(module) {
             return module.hotUpdate;
           });
@@ -123,7 +123,7 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
           var removedModules = records.chunkModuleIds[chunkId].filter(function(id) {
             return !allModules[id];
           });
-          if(newModules.length > 0 || removedModules.length > 0) {
+          if (newModules.length > 0 || removedModules.length > 0) {
             var source = hotUpdateChunkTemplate.render(chunkId, newModules, removedModules, this.hash, this.moduleTemplate, this.dependencyTemplates);
             var filename = this.getPath(hotUpdateChunkFilename, {
               hash: records.hash,
@@ -133,7 +133,7 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
             this.assets[filename] = source;
             hotUpdateMainContent.c[chunkId] = true;
             currentChunk.files.push(filename);
-            this.applyPlugins("chunk-asset", currentChunk, filename);
+            this.applyPlugins('chunk-asset', currentChunk, filename);
           }
         } else {
           hotUpdateMainContent.c[chunkId] = false;
@@ -146,78 +146,78 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
       this.assets[filename] = source;
     });
 
-    compilation.mainTemplate.plugin("hash", function(hash) {
-      hash.update("HotMainTemplateDecorator");
+    compilation.mainTemplate.plugin('hash', function(hash) {
+      hash.update('HotMainTemplateDecorator');
     });
 
-    compilation.mainTemplate.plugin("module-require", function(_, chunk, hash, varModuleId) {
-      return "hotCreateRequire(" + varModuleId + ")";
+    compilation.mainTemplate.plugin('module-require', function(_, chunk, hash, varModuleId) {
+      return 'hotCreateRequire(' + varModuleId + ')';
     });
 
-    compilation.mainTemplate.plugin("require-extensions", function(source) {
+    compilation.mainTemplate.plugin('require-extensions', function(source) {
       var buf = [source];
-      buf.push("");
-      buf.push("// __webpack_hash__");
-      buf.push(this.requireFn + ".h = function() { return hotCurrentHash; };");
+      buf.push('');
+      buf.push('// __webpack_hash__');
+      buf.push(this.requireFn + '.h = function() { return hotCurrentHash; };');
       return this.asString(buf);
     });
 
-    compilation.mainTemplate.plugin("bootstrap", function(source, chunk, hash) {
-      source = this.applyPluginsWaterfall("rax-hot-bootstrap", source, chunk, hash);
+    compilation.mainTemplate.plugin('bootstrap', function(source, chunk, hash) {
+      source = this.applyPluginsWaterfall('rax-hot-bootstrap', source, chunk, hash);
 
       // cross-platform weex this is undefined
       source = source.replace(/this\["webpackHotUpdate"\]/g, 'global["webpackHotUpdate"]');
       return this.asString([
         require('./globalTemplate.js'),
         source,
-        "",
+        '',
         hotInitCode
         .replace(/\$require\$/g, this.requireFn)
         .replace(/\$hash\$/g, JSON.stringify(hash))
-        .replace(/\/\*foreachInstalledChunks\*\//g, chunk.chunks.length > 0 ? "for(var chunkId in installedChunks)" : "var chunkId = " + JSON.stringify(chunk.id) + ";")
+        .replace(/\/\*foreachInstalledChunks\*\//g, chunk.chunks.length > 0 ? 'for(var chunkId in installedChunks)' : 'var chunkId = ' + JSON.stringify(chunk.id) + ';')
       ]);
     });
 
-    compilation.mainTemplate.plugin("global-hash", function() {
+    compilation.mainTemplate.plugin('global-hash', function() {
       return true;
     });
 
-    compilation.mainTemplate.plugin("current-hash", function(_, length) {
-      if(isFinite(length))
-        return "hotCurrentHash.substr(0, " + length + ")";
+    compilation.mainTemplate.plugin('current-hash', function(_, length) {
+      if (isFinite(length))
+        return 'hotCurrentHash.substr(0, ' + length + ')';
       else
-        return "hotCurrentHash";
+        return 'hotCurrentHash';
     });
 
-    compilation.mainTemplate.plugin("module-obj", function(source, chunk, hash, varModuleId) {
+    compilation.mainTemplate.plugin('module-obj', function(source, chunk, hash, varModuleId) {
       return this.asString([
-        source + ",",
-        "hot: hotCreateModule(" + varModuleId + "),",
-        "parents: (hotCurrentParentsTemp = hotCurrentParents, hotCurrentParents = [], hotCurrentParentsTemp),",
-        "children: []"
+        source + ',',
+        'hot: hotCreateModule(' + varModuleId + '),',
+        'parents: (hotCurrentParentsTemp = hotCurrentParents, hotCurrentParents = [], hotCurrentParentsTemp),',
+        'children: []'
       ]);
     });
 
-    params.normalModuleFactory.plugin("parser", function(parser, parserOptions) {
-      parser.plugin("expression __webpack_hash__", ParserHelpers.toConstantDependency("__webpack_require__.h()"));
-      parser.plugin("evaluate typeof __webpack_hash__", ParserHelpers.evaluateToString("string"));
-      parser.plugin("evaluate Identifier module.hot", function(expr) {
+    params.normalModuleFactory.plugin('parser', function(parser, parserOptions) {
+      parser.plugin('expression __webpack_hash__', ParserHelpers.toConstantDependency('__webpack_require__.h()'));
+      parser.plugin('evaluate typeof __webpack_hash__', ParserHelpers.evaluateToString('string'));
+      parser.plugin('evaluate Identifier module.hot', function(expr) {
         return ParserHelpers.evaluateToBoolean(!!this.state.compilation.hotUpdateChunkTemplate)(expr);
       });
-      parser.plugin("call module.hot.accept", function(expr) {
-        if(!this.state.compilation.hotUpdateChunkTemplate) return false;
-        if(expr.arguments.length >= 1) {
+      parser.plugin('call module.hot.accept', function(expr) {
+        if (!this.state.compilation.hotUpdateChunkTemplate) return false;
+        if (expr.arguments.length >= 1) {
           var arg = this.evaluateExpression(expr.arguments[0]);
           var params = [],
             requests = [];
-          if(arg.isString()) {
+          if (arg.isString()) {
             params = [arg];
-          } else if(arg.isArray()) {
+          } else if (arg.isArray()) {
             params = arg.items.filter(function(param) {
               return param.isString();
             });
           }
-          if(params.length > 0) {
+          if (params.length > 0) {
             params.forEach(function(param, idx) {
               var request = param.string;
               var dep = new ModuleHotAcceptDependency(request, param.range);
@@ -227,21 +227,21 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
               this.state.module.addDependency(dep);
               requests.push(request);
             }.bind(this));
-            if(expr.arguments.length > 1)
-              this.applyPluginsBailResult("hot accept callback", expr.arguments[1], requests);
+            if (expr.arguments.length > 1)
+              this.applyPluginsBailResult('hot accept callback', expr.arguments[1], requests);
             else
-              this.applyPluginsBailResult("hot accept without callback", expr, requests);
+              this.applyPluginsBailResult('hot accept without callback', expr, requests);
           }
         }
       });
-      parser.plugin("call module.hot.decline", function(expr) {
-        if(!this.state.compilation.hotUpdateChunkTemplate) return false;
-        if(expr.arguments.length === 1) {
+      parser.plugin('call module.hot.decline', function(expr) {
+        if (!this.state.compilation.hotUpdateChunkTemplate) return false;
+        if (expr.arguments.length === 1) {
           var arg = this.evaluateExpression(expr.arguments[0]);
           var params = [];
-          if(arg.isString()) {
+          if (arg.isString()) {
             params = [arg];
-          } else if(arg.isArray()) {
+          } else if (arg.isArray()) {
             params = arg.items.filter(function(param) {
               return param.isString();
             });
@@ -255,13 +255,13 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
           }.bind(this));
         }
       });
-      parser.plugin("expression module.hot", ParserHelpers.skipTraversal);
+      parser.plugin('expression module.hot', ParserHelpers.skipTraversal);
     });
   });
 
-  compiler.plugin("this-compilation", (compilation) => {
+  compiler.plugin('this-compilation', (compilation) => {
     compilation.mainTemplate.apply(new RaxJsonpMainTemplatePlugin());
   });
 };
 
-var hotInitCode = Template.getFunctionContent(require("./HotModuleReplacement.runtime.js"));
+var hotInitCode = Template.getFunctionContent(require('./HotModuleReplacement.runtime.js'));
