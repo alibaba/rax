@@ -28,6 +28,6 @@
     "global": "^4.3.2",
     "react-deep-force-update": "^2.0.1",
     "react-proxy": "^1.1.8",
-    "xhr": "^2.4.0"
+    "rax": "^0.3.4"
   }
 }

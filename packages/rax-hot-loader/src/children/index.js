@@ -12,7 +12,7 @@ const Children = {
     children.forEach(fn);
   },
   count(children) {
-    return (children && children.length) || 0;
+    return children && children.length || 0;
   },
   only(children) {
     children = Children.toArray(children);
