@@ -568,7 +568,7 @@ describe('framework', () => {
         {
           url: 'http://path/to/api',
           method: 'GET',
-          type: 'text'
+          type: 'json'
         }
       );
     });
