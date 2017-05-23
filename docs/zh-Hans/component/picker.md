@@ -45,10 +45,9 @@ class App extends Component {
             selectedValue={'女'}
             onValueChange={(index, item) => {
               console.log('Picker', index, item);
-            }}
-            style={styles.picker}>
-            <Picker.Item value={'男'} />
-            <Picker.Item value={'女'} />
+            }}>
+            <Picker.Item value={'男'} label={'男'} />
+            <Picker.Item value={'女'} label={'女'} />
           </Picker>
       </View>
     );

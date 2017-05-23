@@ -31,7 +31,7 @@ import CheckBox from 'rax-checkbox';
 // demo
 import {createElement, Component, render} from 'rax';
 import View from 'rax-view';
-import Button from 'rax-checkbox';
+import CheckBox from 'rax-checkbox';
 
 class App extends Component {
   render() {
