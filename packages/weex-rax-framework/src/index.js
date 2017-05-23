@@ -241,8 +241,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
         platform: __weex_env__.platform,
         appName: __weex_env__.appName,
         appVersion: __weex_env__.appVersion,
-        // Weex/0.12 (iOS 9.3) AppName/0.12
-        userAgent: `Weex/${__weex_env__.weexVersion} (${__weex_env__.platform} ${__weex_env__.osVersion}) ${__weex_env__.appName}/${__weex_env__.appVersion}`
+        // Weex/0.12 iOS/9.3 (iPhone7,2) AppName/0.12
+        userAgent: `Weex/${__weex_env__.weexVersion} ${__weex_env__.platform}/${__weex_env__.osVersion} (${__weex_env__.deviceModel}) ${__weex_env__.appName}/${__weex_env__.appVersion}`
       },
       // https://drafts.csswg.org/cssom-view/#the-screen-interface
       screen: {

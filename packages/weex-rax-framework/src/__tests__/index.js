@@ -14,14 +14,16 @@ global.callNative = () => {};
 global.WXEnvironment = {
   'scale': 2,
   'appVersion': '1.8.3',
-  'deviceModel': 'x86_64',
+  'deviceModel': 'iPhone7,2',
   'appName': 'WeexDemo',
   'platform': 'iOS',
   'osVersion': '9.3',
   'weexVersion': '0.7.0',
   'deviceHeight': 1334,
+  'deviceWidth': 750,
   'logLevel': 'log',
-  'deviceWidth': 750
+  ttid: '123456',
+  utdid: 'VXViP5AJ2Q0zCzWp0L',
 };
 
 describe('framework', () => {
