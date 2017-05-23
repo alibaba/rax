@@ -1,5 +1,5 @@
 module.exports = function() {
-  XMLHttpRequest = function() { // eslint-disable-line
+  var XMLHttpRequest = function() { // eslint-disable-line
     this.UNSENT = 0;
     this.OPENED = 1;
     this.HEADERS_RECEIVED = 2;
@@ -43,7 +43,8 @@ module.exports = function() {
     this._sent = true;
     var self = this;
     fetch(this._url, {
-      method: this._method
+      method: this._method,
+      dataType: 'text'
     })
       .then(function(response) {
         return response.text();

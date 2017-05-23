@@ -166,7 +166,6 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
       source = this.applyPluginsWaterfall('rax-hot-bootstrap', source, chunk, hash);
 
       // cross-platform weex this is undefined
-      source = source.replace(/this\["webpackHotUpdate"\]/g, 'global["webpackHotUpdate"]');
       return this.asString([
         require('./globalTemplate.js'),
         source,
@@ -174,7 +173,7 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
         hotInitCode
         .replace(/\$require\$/g, this.requireFn)
         .replace(/\$hash\$/g, JSON.stringify(hash))
-        .replace(/\/\*foreachInstalledChunks\*\//g, chunk.chunks.length > 0 ? 'for(var chunkId in installedChunks)' : 'var chunkId = ' + JSON.stringify(chunk.id) + ';')
+        .replace(/\/\* foreachInstalledChunks \*\//g, chunk.chunks.length > 0 ? 'for(var chunkId in installedChunks)' : 'var chunkId = ' + JSON.stringify(chunk.id) + ';')
       ]);
     });
 

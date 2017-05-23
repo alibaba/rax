@@ -1,5 +1,5 @@
 {
-  "name": "rax-hot-module-replacement-webapck-plugin",
+  "name": "rax-hot-module-replacement-webpack-plugin",
   "version": "0.1.0",
   "description": "Universal hot module replacement",
   "main": "./lib/HotModuleReplacementPlugin.js",

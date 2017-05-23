@@ -1,3 +1,6 @@
+const Template = require('./Template');
+const XMLHttpRequestRuntime = Template.getFunctionContent(require('./polyfill/XMLHttpRequest'));
+
 module.exports = `
 var global;
 
@@ -23,4 +26,8 @@ if (isWeex && typeof location.reload === 'undefined') {
     weexLocation.reload(forceReload);
   };
 };
+
+if (typeof XMLHttpRequest === 'undefined') {
+  ${XMLHttpRequestRuntime}
+}
 `;
