@@ -5,7 +5,7 @@ const hotRender = Component => render(<Component />);
 
 hotRender(App);
 
-// Enable hot reloading
+// Enable hot reload
 if (module.hot) {
   module.hot.accept(function(err) {
     if (err) {
