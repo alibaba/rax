@@ -9,7 +9,7 @@ const webpackConfigBase = require('./webpack.config.base');
 const options = require('../utils/parse-options');
 const webpackConfigDev = Object.assign({}, webpackConfigBase);
 
-const HotModuleReplacementPlugin = require('hot-module-replacement');
+const RaxHotModuleReplacementPlugin = require('rax-hot-module-replacement-webpack-plugin');
 
 const ipv4 = address.ip();
 const port = options.port;
@@ -44,7 +44,7 @@ Object.keys(webpackConfigDev.entry).forEach(point => {
 });
 
 // Only work on web
-webpackConfigDev.plugins.push(new HotModuleReplacementPlugin());
+webpackConfigDev.plugins.push(new RaxHotModuleReplacementPlugin());
 webpackConfigDev.plugins.push(new webpack.NoEmitOnErrorsPlugin());
 
 module.exports = webpackConfigDev;
