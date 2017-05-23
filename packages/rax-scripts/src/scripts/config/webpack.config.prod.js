@@ -11,7 +11,7 @@ webpackConfigProd.entry = {
 };
 
 webpackConfigProd.output.pathinfo = false;
-webpackConfigProd.traget = 'node';
+webpackConfigProd.target = 'node';
 
 webpackConfigProd.plugins.push(
   new webpack.optimize.UglifyJsPlugin({
