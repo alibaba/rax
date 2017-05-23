@@ -43,10 +43,7 @@ module.exports = {
     publicPath: publicPath
   },
   resolve: {
-    extensions: ['.js', '.json', '.jsx'],
-    alias: {
-      react: 'rax-compat'
-    }
+    extensions: ['.js', '.json', '.jsx']
   },
   plugins: [
     new RaxWebpackPlugin({
