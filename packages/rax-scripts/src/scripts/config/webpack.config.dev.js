@@ -1,16 +1,15 @@
 'use strict';
+
 /* eslint no-console: 0 */
 const address = require('address');
 const qrcode = require('qrcode-terminal');
 const webpack = require('webpack');
-
 const paths = require('./paths');
 const webpackConfigBase = require('./webpack.config.base');
 const options = require('../utils/parse-options');
-const webpackConfigDev = Object.assign({}, webpackConfigBase);
-
 const RaxHotModuleReplacementPlugin = require('rax-hot-module-replacement-webpack-plugin');
 
+const webpackConfigDev = Object.assign({}, webpackConfigBase);
 const ipv4 = address.ip();
 const port = options.port;
 const webUrl = 'http://' + ipv4 + ':' + port;

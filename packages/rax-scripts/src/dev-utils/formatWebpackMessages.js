@@ -8,6 +8,7 @@
 // https://github.com/webpack/webpack/issues/2878
 
 var chalk = require('chalk');
+
 var friendlySyntaxErrorLabel = 'Syntax error:';
 
 function isLikelyASyntaxError(message) {
