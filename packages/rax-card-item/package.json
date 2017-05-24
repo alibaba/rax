@@ -1,0 +1,36 @@
+{
+  "name": "rax-card-item",
+  "version": "0.3.5",
+  "description": "CardItem component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component",
+    "react-component"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-link": "^0.3.5",
+    "rax-picture": "^0.3.5",
+    "rax-text": "^0.3.5",
+    "rax-view": "^0.3.5"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-text": "^0.3.5",
+    "rax-test-renderer": "^0.3.5"
+  }
+}
