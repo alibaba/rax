@@ -31,7 +31,6 @@ class CanvasDemo extends Component {
     contextPromise.then((ctx) => {
       function draw() {
         ctx.clearRect(0, 0, w, h);
-        ctx.globalCompositeOperation = 'lighter';
         for (var i = 0; i < patriclesNum; i++) {
           var temp = particles[i];
           var factor = 1;

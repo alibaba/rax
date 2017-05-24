@@ -55,7 +55,6 @@ class Chart extends Component {
       }
     });
     this.chart.render();
-    context.render();
   }
 
   render() {
