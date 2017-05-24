@@ -7,5 +7,3 @@ build
 coverage
 weex
 expected
-
-packages/rax-hot-module-replacement-webpack-plugin/

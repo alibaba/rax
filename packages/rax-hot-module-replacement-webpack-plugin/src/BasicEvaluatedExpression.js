@@ -1,6 +1,6 @@
 /*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
 */
 
 'use strict';
@@ -69,7 +69,7 @@ class BasicEvaluatedExpression {
       for (let i = 0; i < this.quasis.length; i++) {
         if (this.quasis[i].asBool()) return true;
       }
-			// can't tell if string will be empty without executing
+      // can't tell if string will be empty without executing
     }
     return undefined;
   }
@@ -78,7 +78,7 @@ class BasicEvaluatedExpression {
     if (str === null)
       delete this.string;
     else
-			this.string = str;
+      this.string = str;
     return this;
   }
 
@@ -91,7 +91,7 @@ class BasicEvaluatedExpression {
     if (num === null)
       delete this.number;
     else
-			this.number = num;
+      this.number = num;
     return this;
   }
 
@@ -99,7 +99,7 @@ class BasicEvaluatedExpression {
     if (bool === null)
       delete this.bool;
     else
-			this.bool = bool;
+      this.bool = bool;
     return this;
   }
 
@@ -107,7 +107,7 @@ class BasicEvaluatedExpression {
     if (regExp === null)
       delete this.regExp;
     else
-			this.regExp = regExp;
+      this.regExp = regExp;
     return this;
   }
 
@@ -115,7 +115,7 @@ class BasicEvaluatedExpression {
     if (identifier === null)
       delete this.identifier;
     else
-			this.identifier = identifier;
+      this.identifier = identifier;
     return this;
   }
 
@@ -135,7 +135,7 @@ class BasicEvaluatedExpression {
     if (options === null)
       delete this.options;
     else
-			this.options = options;
+      this.options = options;
     return this;
   }
 
@@ -143,7 +143,7 @@ class BasicEvaluatedExpression {
     if (items === null)
       delete this.items;
     else
-			this.items = items;
+      this.items = items;
     return this;
   }
 
@@ -151,7 +151,7 @@ class BasicEvaluatedExpression {
     if (array === null)
       delete this.array;
     else
-			this.array = array;
+      this.array = array;
     return this;
   }
 
@@ -159,7 +159,7 @@ class BasicEvaluatedExpression {
     if (quasis === null)
       delete this.quasis;
     else
-			this.quasis = quasis;
+      this.quasis = quasis;
     return this;
   }
 

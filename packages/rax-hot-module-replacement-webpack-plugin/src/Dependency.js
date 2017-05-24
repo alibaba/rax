@@ -1,6 +1,6 @@
 /*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
 */
 'use strict';
 const compareLocations = require('./compareLocations');
@@ -14,7 +14,7 @@ class Dependency {
     return false;
   }
 
-	// Returns the referenced module and export
+  // Returns the referenced module and export
   getReference() {
     if (!this.module) return null;
     return {
@@ -23,7 +23,7 @@ class Dependency {
     };
   }
 
-	// Returns the exported names
+  // Returns the exported names
   getExports() {
     return null;
   }
@@ -44,7 +44,7 @@ class Dependency {
     this.module = null;
   }
 
-	// TODO: remove in webpack 3
+  // TODO: remove in webpack 3
   compare(a, b) {
     return compareLocations(a.loc, b.loc);
   }

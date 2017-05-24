@@ -1,6 +1,6 @@
 /*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Jarid Margolin @jaridmargolin
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Jarid Margolin @jaridmargolin
 */
 'use strict';
 

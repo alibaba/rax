@@ -45,7 +45,7 @@ module.exports = function() {
     };
     for (var name in $require$) {
       if (Object.prototype.hasOwnProperty.call($require$, name) && name !== 'e') {
-        Object.defineProperty(fn, name, ObjectFactory(name));
+        Object.defineProperty(fn, name, ObjectFactory(name)); // eslint-disable-line
       }
     }
     fn.e = function(chunkId) {

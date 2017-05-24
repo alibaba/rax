@@ -1,6 +1,6 @@
 /*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
 */
 'use strict';
 
@@ -31,16 +31,16 @@ module.exports = class Template extends Tapable {
     return str.replace(/[^a-zA-Z0-9_!§$()=\-\^°]+/g, '-').replace(/^-|-$/, '');
   }
 
-	// map number to a single character a-z, A-Z or <_ + number> if number is too big
+  // map number to a single character a-z, A-Z or <_ + number> if number is too big
   static numberToIdentifer(n) {
-		// lower case
+    // lower case
     if (n < DELTA_A_TO_Z) return String.fromCharCode(START_LOWERCASE_ALPHABET_CODE + n);
 
-		// upper case
+    // upper case
     n -= DELTA_A_TO_Z;
     if (n < DELTA_A_TO_Z) return String.fromCharCode(START_UPPERCASE_ALPHABET_CODE + n);
 
-		// fall back to _ + number
+    // fall back to _ + number
     n -= DELTA_A_TO_Z;
     return '_' + n;
   }
@@ -83,7 +83,7 @@ module.exports = class Template extends Tapable {
       if (minId > module.id) minId = module.id;
     });
     if (minId < 16 + ('' + minId).length) {
-			// add minId x ',' instead of 'Array(minId).concat(...)'
+      // add minId x ',' instead of 'Array(minId).concat(...)'
       minId = 0;
     }
     var objectOverhead = modules.map(function(module) {
@@ -121,7 +121,7 @@ module.exports = class Template extends Tapable {
     var bounds = this.getModulesArrayBounds(chunk.modules);
 
     if (bounds) {
-			// Render a spare array
+      // Render a spare array
       var minId = bounds[0];
       var maxId = bounds[1];
       if (minId !== 0) source.add('Array(' + minId + ').concat(');
@@ -142,7 +142,7 @@ module.exports = class Template extends Tapable {
       source.add('\n' + prefix + ']');
       if (minId !== 0) source.add(')');
     } else {
-			// Render an object
+      // Render an object
       source.add('{\n');
       allModules.sort(function(a, b) {
         var aId = a.id + '';
