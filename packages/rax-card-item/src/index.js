@@ -38,7 +38,7 @@ class Card extends Component {
               {item.tagging ? <Text style={styles.tagtext}>{item.tagging}</Text> : null}
             </View>
           </View>
-      </Link>
+        </Link>
       );
     });
 

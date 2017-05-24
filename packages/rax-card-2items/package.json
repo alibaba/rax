@@ -1,7 +1,7 @@
 {
-  "name": "rax-card-3col",
+  "name": "rax-card-2items",
   "version": "0.3.4",
-  "description": "Card3col component for Rax.",
+  "description": "Card2Items component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
