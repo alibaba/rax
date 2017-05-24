@@ -117,10 +117,10 @@ class LinePoint extends Component {
   }
 }
 
-export default LinePoint;
+render(<LinePoint />);
 ```
 
-平滑折线图
+## 平滑折线图
 
 ```jsx
 // demo
@@ -181,5 +181,5 @@ class LineSmooth extends Component {
   }
 }
 
-render(LineSmooth /);
+render(<LineSmooth />);
 ```

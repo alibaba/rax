@@ -181,6 +181,7 @@ render(<App />);
 
 
 ```jsx
+// demo
 import {Component, createElement, render} from 'rax';
 import Text from 'rax-text';
 import View from 'rax-view';

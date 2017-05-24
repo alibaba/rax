@@ -45,7 +45,7 @@ render(<SimpleBar />)
 
 ```jsx
 // demo
-import {createElement, Component} from 'rax';
+import {createElement, Component, render} from 'rax';
 import Chart, {Bar, Axis} from 'rax-charts';
 
 class BarRegion extends Component {
