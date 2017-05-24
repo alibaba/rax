@@ -2,8 +2,17 @@
 import {createElement, Component} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
+import Button from 'rax-button';
 
 class LocationDemo extends Component {
+  assign() {
+    location.assign('//m.taobao.com');
+  }
+
+  replace() {
+    location.replace('//m.taobao.com');
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -23,6 +32,12 @@ class LocationDemo extends Component {
         <Text>{location.origin}</Text>
         <Text style={styles.title}>location.href</Text>
         <Text>{location.href}</Text>
+        <Text style={styles.title}>location.assign()</Text>
+        <Button onPress={this.assign}>click to assign</Button>
+        <Text style={styles.title}>location.replace()</Text>
+        <Button onPress={this.replace}>click to replace</Button>
+        <Text style={styles.title}>location.reload()</Text>
+        <Button onPress={location.reload}>click to reload</Button>
       </View>
     );
   }
