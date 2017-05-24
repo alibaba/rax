@@ -221,7 +221,8 @@ module.exports = function(__weex_require__, Promise) {
         params.body = request._bodyInit;
       }
 
-      params.type = init && init.dataType ? init.dataType : 'json';
+      params.type = init && init.dataType ? init.dataType : 'text';
+
       var nativeFetch = __weex_require__(STREAM_MODULE).fetch;
       nativeFetch(params, (response) => {
         try {
