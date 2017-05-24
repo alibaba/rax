@@ -31,11 +31,20 @@ module.exports = function(source, inputMap) {
 
 // HMR append by rax-scripts/loaders/module-hot-accept.js
 // @see https://github.com/alibaba/rax
-module.hot.accept(function(err){
-  if (err) {
-    console.log(err);
-  }
-});`,
+if (module.hot) {
+  module.hot.accept(function(err) {
+    if (err) {
+      console.log(err);
+    } else {
+      if (typeof App !== 'undefined') {
+        render(<App />)
+      } else {
+        console.error('\`App\` components must exist!')
+      }
+    }
+  });
+}
+`,
     inputMap
   );
 };
