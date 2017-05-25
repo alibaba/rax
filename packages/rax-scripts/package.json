@@ -2,7 +2,7 @@
   "name": "rax-scripts",
   "version": "0.1.0",
   "license": "BSD-3-Clause",
-  "description": "Scripts for Rax app",
+  "description": "Configuration and scripts for Rax App.",
   "bin": {
     "rax-scripts": "bin/rax-scripts.js"
   },
@@ -11,7 +11,8 @@
     "url": "git+ssh://git@github.com/alibaba/rax.git"
   },
   "keywords": [
-    "rax"
+    "Rax",
+    "scripts"
   ],
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"

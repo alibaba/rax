@@ -1,4 +1,4 @@
-# Grid 栅格布局
+# Grid
 
 [![npm](https://img.shields.io/npm/v/rax-grid.svg)](https://www.npmjs.com/package/rax-grid)
 
@@ -93,4 +93,3 @@ class App extends Component {
 
 render(<App />);
 ```
-

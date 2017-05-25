@@ -3,7 +3,7 @@
 'use strict';
 
 import { createElement, Component } from 'rax';
-import Children from './children/';
+import Children from 'react-children';
 
 class AppContainer extends Component {
   render() {

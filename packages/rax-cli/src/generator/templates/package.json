@@ -13,7 +13,7 @@
     "rax-text": "^0.3.5"
   },
   "devDependencies": {
-    "rax-scripts": "^0.2.5",
+    "rax-scripts": "^0.1.0",
     "babel-eslint": "^7.1.0",
     "eslint": "^3.10.0"
   }

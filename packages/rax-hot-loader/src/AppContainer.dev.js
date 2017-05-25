@@ -2,7 +2,7 @@
 
 import { Component, createElement } from 'rax';
 import deepForceUpdate from 'react-deep-force-update';
-import Children from './children/';
+import Children from 'react-children';
 
 class AppContainer extends Component {
   constructor(props) {
