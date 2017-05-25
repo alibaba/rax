@@ -12,7 +12,11 @@ class Canvas extends Component {
     const canvas = findDOMNode(this.refs.canvas);
 
     if (isWeex) {
-      return canvasWeex.init(canvas);
+      return new Promise((resolve, reject) => {
+        requestAnimationFrame(() => {
+          resolve(canvasWeex.init(canvas));
+        });
+      });
     } else {
       return new Promise((resolve, reject) => {
         if (canvas && canvas.getContext) {
