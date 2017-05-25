@@ -133,6 +133,7 @@ class ItemList extends Component {
             display: 'block'
           }}
           contentContainerStyle={{
+            ...thisContainerStyle,
             justifyContent: 'center',
             flexDirection: 'row',
             width: contentContainerWidth
