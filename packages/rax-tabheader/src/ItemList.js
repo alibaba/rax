@@ -134,6 +134,9 @@ class ItemList extends Component {
           }}
           contentContainerStyle={{
             ...thisContainerStyle,
+            borderWidth: 0,
+            margin: 0,
+            padding: 0,
             justifyContent: 'center',
             flexDirection: 'row',
             width: contentContainerWidth
