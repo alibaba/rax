@@ -136,7 +136,10 @@ class Item extends Component {
         ...thisItemStyle,
         ...itemStyle,
       };
-      textStyle = styles.itemText;
+      textStyle = {
+        ...styles.itemText,
+        ...itemStyle
+      };
     }
 
     if (styleType == 'icon') {
