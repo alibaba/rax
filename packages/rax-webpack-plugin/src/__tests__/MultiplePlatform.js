@@ -45,7 +45,7 @@ describe('MultiplePlatform', function() {
       'entry': {
         'hello.bundle.weex': './index.js'
       },
-      "name": "weex",      
+      'name': 'weex',
       'module': {
         'loaders': [{
           'test': /\.jsx?$/,
@@ -102,7 +102,7 @@ describe('MultiplePlatform', function() {
       'entry': {
         'hello.bundle.weex': './index.js'
       },
-      "name": "weex",      
+      'name': 'weex',
       'module': {
         'loaders': [{
           'test': /\.jsx?$/,
@@ -156,7 +156,7 @@ describe('MultiplePlatform', function() {
       'entry': {
         'hello.bundle.weex': './index.js'
       },
-      "name": "weex",
+      'name': 'weex',
       'module': {
         'loaders': [{
           'test': /\.jsx?$/,
@@ -263,7 +263,7 @@ describe('MultiplePlatform', function() {
         'hello.bundle.weex': ['./index.js', './weex.js'],
         'world.bundle.weex': './world.js'
       },
-      "name": "weex",
+      'name': 'weex',
       'module': {
         'loaders': [{
           test: /\.jsx?$/,
@@ -337,7 +337,7 @@ describe('MultiplePlatform', function() {
 
         }]
       },
-      "name": "weex",
+      'name': 'weex',
       'platforms': [
         'weex'
       ]
