@@ -37,7 +37,7 @@ class App extends Component {
         <Text>选择时间</Text>
         <TimePicker 
           selectedValue={'10:10'}
-          style={styles.picker} />
+        />
       </View>
     );
   }

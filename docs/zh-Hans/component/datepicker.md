@@ -43,8 +43,7 @@ class App extends Component {
             maximumDate={'2001-01-01'}
             onDateChange={(date) => {
               console.log('组件date', date);
-            }}
-            style={styles.picker} />
+            }}  />
       </View>
     );
   }
