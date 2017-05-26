@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const fs = require('fs');
+const colors = require('chalk');
 
 const EXAMPLES_DIR = path.resolve(__dirname, '../examples');
 
@@ -35,17 +36,7 @@ var config = {
       'process.env.NODE_ENV': JSON.stringify('development'),
     }),
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.ProgressPlugin(function(percentage, msg) {
-      var stream = process.stderr;
-      if (stream.isTTY && percentage < 0.71) {
-        stream.cursorTo(0);
-        stream.write('🍺   ' + msg);
-        stream.clearLine(1);
-      } else if (percentage === 1) {
-        console.log('');
-        console.log('webpack: bundle build is now finished.');
-      }
-    }),
+    new webpack.ProgressPlugin(),
     new RaxWebpackPlugin({
       frameworkComment: true,
       platforms: []
@@ -66,6 +57,8 @@ var config = {
 var compiler = webpack(config);
 var server = new WebpackDevServer(compiler, {
   publicPath: config.output.publicPath,
+  public: '0.0.0.0',
+  disableHostCheck: true,
   stats: {
     colors: true,
     chunks: false,
@@ -73,6 +66,7 @@ var server = new WebpackDevServer(compiler, {
   },
 });
 
+
 server.listen(9999, function() {
-  console.log('\n Open http://localhost:9999/examples/ and select example');
+  console.log(colors.green('\n  Open http://localhost:9999/examples/ and select example\n'));
 });
