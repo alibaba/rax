@@ -18,7 +18,7 @@ import Button from 'rax-animated';
 最简单的工作流程就是创建一个`Animated.Value`，把它绑定到组件的一个或多个样式属性上。然后可以通过动画驱动它，譬如`Animated.timing`，或者通过`Animated.event`把它关联到一个手势上，譬如拖动或者滑动操作。除了样式，`Animated.value`还可以绑定到props上，并且一样可以被插值。这里有一个简单的例子，一个容器视图会在加载的时候淡入显示：
 
 ```jsx
-class FadeInView extends React.Component {
+class FadeInView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -190,7 +190,7 @@ onPanResponderMove: this.AnimatedEvent([
 例子：
 
 ```jsx
-class DraggableView extends React.Component {
+class DraggableView extends Component {
    constructor(props) {
      super(props);
      this.state = {
@@ -283,7 +283,7 @@ exports.examples = [
       'bring opacity from 0 to 1 when the component ' +
       'mounts.',
     render: function() {
-      class FadeInView extends React.Component {
+      class FadeInView extends Component {
         constructor(props) {
           super(props);
           this.state = {
@@ -310,7 +310,7 @@ exports.examples = [
           );
         }
       }
-      class FadeInExample extends React.Component {
+      class FadeInExample extends Component {
         constructor(props) {
           super(props);
           this.state = {
