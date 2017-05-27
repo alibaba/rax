@@ -69,6 +69,7 @@ module.exports = function MultiplePlatform(config, options = {}) {
       });
 
       platformConfig.entry = platformEntry;
+      platformConfig.name = platformType;
 
       // support chunkFilename config according to platformType
       if (typeof options.chunkFilename === 'function') {
