@@ -235,7 +235,7 @@ export default class Calendar extends Component {
       <View style={[styles.calendarContainer, this.props.customStyle.calendarContainer]}>
         {this.renderTopBar()}
         {this.props.showDayHeadings && this.renderHeading(this.props.titleFormat)}
-        <View style={{height: (calendarDatesNode[0].props.children.length * 92)}}>
+        <View style={{height: calendarDatesNode[0].props.children.length * 92}}>
           {calendarDatesNode}
         </View>
       </View>
