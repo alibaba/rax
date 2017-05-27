@@ -1,7 +1,7 @@
 # Button 按钮
 
 Button 是基础的按钮组件。内部实现依赖 `<Touchable>` 支持 onPress 定义的点击事件。  
-Button 带有默认样式，同时也支持样式的自定义。
+Button 带有默认样式，同时也支持传入 children 替换原有结构。
 
 ## 安装
 
@@ -29,6 +29,7 @@ import Button from 'rax-button';
 // demo
 import {createElement, Component, render} from 'rax';
 import View from 'rax-view';
+import Text from 'rax-text';
 import Button from 'rax-button';
 
 class App extends Component {
@@ -36,6 +37,11 @@ class App extends Component {
     return (
       <View style={{ width: 750 }}>
         <Button onPress={(evt) => { alert('你好'); }}>点我</Button>
+        <Button onPress={(evt) => { alert('你好'); }}>
+        	<View>
+        		<Text>点我</Text>
+        	</View>
+        </Button>
       </View>
     );
   }
