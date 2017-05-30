@@ -27,12 +27,12 @@ module.exports = webpackConfig => {
       throw err;
     }
 
-    if (typeof webpackConfigUpdateRef === 'function') {
-      console.error(`[ERR]: ${UPDATE_FILE_NAME} must be return an object of webpack config.`);
+    if (typeof webpackConfigUpdateRef !== 'function') {
+      console.error(colors.red(`[ERR]: ${UPDATE_FILE_NAME} must be export a function.`));
       console.info(
         'see',
         colors.underline.white(
-          'https://github.com/alibaba/rax/packages/rax-scripts#update-webpack-config'
+          'https://github.com/alibaba/rax/blob/master/packages/rax-scripts/README.md#update-webpack-config'
         )
       );
       process.exit(1);
@@ -40,11 +40,11 @@ module.exports = webpackConfig => {
       const webpackConfigUpdated = webpackConfigUpdateRef(webpackConfig);
 
       if (!webpackConfigUpdated) {
-        console.error(colors.red(`[ERR]: ${UPDATE_FILE_NAME} must be export a function.`));
+        console.error(`[ERR]: ${UPDATE_FILE_NAME} must be return an object of webpack config.`);
         console.info(
           'see',
           colors.underline.white(
-            'https://github.com/alibaba/rax/packages/rax-scripts#update-webpack-config'
+            'https://github.com/alibaba/rax/blob/master/packages/rax-scripts/README.md#update-webpack-config'
           )
         );
         process.exit(1);
