@@ -21,7 +21,8 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.3.5",
+    "universal-env": "^0.3.5",
+    "rax-touchable": "^0.3.5",
     "rax-animated": "^0.3.5"
   },
   "peerDependencies": {

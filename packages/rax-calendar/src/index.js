@@ -230,13 +230,13 @@ export default class Calendar extends Component {
   render() {
     const calendarDates = this.getMonthStack(this.state.currentMonthMoment);
     const eventDatesMap = this.prepareEventDates(this.props.eventDates);
-
+    let calendarDatesNode = calendarDates.map((date) => this.renderMonthView(moment(date), eventDatesMap));
     return (
       <View style={[styles.calendarContainer, this.props.customStyle.calendarContainer]}>
         {this.renderTopBar()}
         {this.props.showDayHeadings && this.renderHeading(this.props.titleFormat)}
-        <View>
-          {calendarDates.map((date) => this.renderMonthView(moment(date), eventDatesMap))}
+        <View style={{height: calendarDatesNode[0].props.children.length * 92}}>
+          {calendarDatesNode}
         </View>
       </View>
     );
