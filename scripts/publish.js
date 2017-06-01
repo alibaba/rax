@@ -83,11 +83,11 @@ if (version) {
   });
 
   execSync(
-    'npm run bootstrap && npm run build && npm run lint && npm run test &&' +
+    'npm run build && npm run lint && npm run test &&' +
     'lerna publish --skip-git --repo-version=' + version + ' ' + forcePublish, {
       stdio: 'inherit'
     }
   );
 } else {
-  console.log('Must specific publish version like: npm run publish 0.0.1');
+  console.log('Must specific publish version like: npm run publish 9.9.9');
 }

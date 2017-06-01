@@ -1,6 +1,6 @@
 {
   "name": "rax-listview",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "ListView component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,14 +21,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.3.5",
-    "rax-recyclerview": "^0.3.5",
-    "universal-env": "^0.3.5"
+    "rax-view": "^0.3.6",
+    "rax-recyclerview": "^0.3.6",
+    "universal-env": "^0.3.6"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.3.5"
+    "rax-test-renderer": "^0.3.6"
   }
 }
