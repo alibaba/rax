@@ -1,6 +1,6 @@
 ---
 title: Rax 0.3 发布
-date: 20170428
+date: 20170528
 ---
 
 ![Rax 0.3](https://img.alicdn.com/tfs/TB1CVaVRpXXXXcnXFXXXXXXXXXX-817-460.jpg)
