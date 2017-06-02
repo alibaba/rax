@@ -1,8 +1,6 @@
 
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text} from 'rax-components';
+import View from 'rax-view';
 import Waterfall from 'rax-waterfall';
 
 let dataSource = [

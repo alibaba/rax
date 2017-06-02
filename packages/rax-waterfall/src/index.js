@@ -48,7 +48,6 @@ class WebFall extends PureComponent {
 
       moduleHeights[targetColumnIndex] += item.height;
       columns[targetColumnIndex].push(item);
-
     });
 
     return (<View style={styles.waterfallWrap}>
