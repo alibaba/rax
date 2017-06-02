@@ -2,8 +2,7 @@
 import {createElement, Component} from 'rax';
 import {
   View,
-  Text,
-  RefreshControl} from 'rax-components';
+  Text} from 'rax-components';
 import Waterfall from 'rax-waterfall';
 
 let dataSource = [
@@ -70,28 +69,8 @@ class WaterfallDemo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      refreshing: false,
       dataSource: dataSource
     };
-  }
-
-  handleRefresh = () => {
-    if (this.state.refreshing) {
-      return;
-    }
-
-    this.setState({
-      refreshing: true,
-      dataSource: []
-    });
-
-    setTimeout(() => {
-      this.setState({
-        refreshing: false,
-        dataSource: dataSource
-      });
-    }, 500);
-
   }
 
   loadMore = () => {
