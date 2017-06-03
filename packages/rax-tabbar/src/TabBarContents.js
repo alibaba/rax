@@ -40,7 +40,6 @@ class TabBarContents extends Component {
           {this.props.children}
         </View> : <View style={[this.props.style, style]} />
     );
-
   }
 }
 
