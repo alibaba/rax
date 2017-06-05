@@ -129,8 +129,18 @@ class RecyclerView extends Component {
         </list>
       );
     } else {
+      const { style = {}, contentContainerStyle = {}, ...others } = props;
+
+      // transport child layout props to contentContainerStyle for ScrollView
+      const childLayoutProps = [ 'alignItems', 'justifyContent' ]
+        .filter((prop) => style[prop] !== undefined);
+      childLayoutProps.forEach(propName => {
+        contentContainerStyle[propName] = style[propName];
+        delete style[propName];
+      });
+
       return (
-        <ScrollView {...props} ref="scrollview" />
+        <ScrollView {...others} style={style} contentContainerStyle={contentContainerStyle} ref="scrollview" />
       );
     }
   }
