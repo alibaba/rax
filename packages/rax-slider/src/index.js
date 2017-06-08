@@ -58,9 +58,6 @@ class Slider extends Component {
         index: index
       });
     } else {
-      this.props.onChange({
-        index: index
-      });
       this.refs.slider.slideTo(index);
     }
   }
