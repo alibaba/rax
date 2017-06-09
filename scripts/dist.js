@@ -16,6 +16,8 @@ fs.readdirSync(PACKAGES_DIR)
      /webpack/.test(packageName) ||
      /theme/.test(packageName) ||
      /cli/.test(packageName) ||
+     /loader/.test(packageName) ||
+     /rax-scripts/.test(packageName) ||
      !fs.existsSync(main)
    ) {
     console.log('Ignore dist', packageName);

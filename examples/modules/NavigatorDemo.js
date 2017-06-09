@@ -15,6 +15,8 @@ class NavigatorDemo extends Component {
         <Text>{navigator.appName}</Text>
         <Text style={styles.title}>navigator.appVersion</Text>
         <Text>{navigator.appVersion}</Text>
+        <Text style={styles.title}>navigator.userAgent</Text>
+        <Text>{navigator.userAgent}</Text>
       </View>
     );
   }

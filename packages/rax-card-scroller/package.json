@@ -1,7 +1,7 @@
 {
-  "name": "rax-card-2col",
-  "version": "0.3.4",
-  "description": "Card2col component for Rax.",
+  "name": "rax-card-scroller",
+  "version": "0.3.6",
+  "description": "CardScroller component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -21,16 +21,17 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-link": "^0.3.4",
-    "rax-picture": "^0.3.4",
-    "rax-text": "^0.3.4",
-    "rax-view": "^0.3.4"
+    "rax-link": "^0.3.6",
+    "rax-picture": "^0.3.6",
+    "rax-text": "^0.3.6",
+    "rax-view": "^0.3.6",
+    "rax-scrollview": "^0.3.6"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-text": "^0.3.4",
-    "rax-test-renderer": "^0.3.4"
+    "rax-text": "^0.3.6",
+    "rax-test-renderer": "^0.3.6"
   }
 }

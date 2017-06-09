@@ -12,6 +12,7 @@ import ButtonDemo from './ButtonDemo';
 import SwitchDemo from './SwitchDemo';
 import ListViewDemo from './ListViewDemo';
 import RecyclerViewDemo from './RecyclerViewDemo';
+import WaterfallDemo from './WaterfallDemo';
 import LinkDemo from './LinkDemo';
 import TouchableHighlightDemo from './TouchableHighlightDemo';
 import CalendarDemo from './CalendarDemo';
@@ -96,6 +97,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>ListView</Text>
         <ListViewDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Waterfall</Text>
+        <WaterfallDemo />
       </View>
 
       <View>

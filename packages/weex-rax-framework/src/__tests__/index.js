@@ -14,14 +14,16 @@ global.callNative = () => {};
 global.WXEnvironment = {
   'scale': 2,
   'appVersion': '1.8.3',
-  'deviceModel': 'x86_64',
+  'deviceModel': 'iPhone7,2',
   'appName': 'WeexDemo',
   'platform': 'iOS',
   'osVersion': '9.3',
   'weexVersion': '0.7.0',
   'deviceHeight': 1334,
+  'deviceWidth': 750,
   'logLevel': 'log',
-  'deviceWidth': 750
+  ttid: '123456',
+  utdid: 'VXViP5AJ2Q0zCzWp0L',
 };
 
 describe('framework', () => {
@@ -550,30 +552,55 @@ describe('framework', () => {
     expect(mockFn).toHaveBeenCalled();
   });
 
-  it('fetch __weex_data__', () => {
+  it('XMLHttpRequest data', () => {
     const code = `
-      fetch('http://path/to/api').then(function(response) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'http://example.com');
+      xhr.send();
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual(
+        {
+          url: 'http://example.com',
+          method: 'GET',
+          type: 'text',
+          headers: {}
+        }
+      );
+    });
+
+    instance.oncall('stream', 'fetch', mockFn);
+    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('fetch data', () => {
+    const code = `
+      fetch('http://example.com').then(function(response) {
         if (response.status != -1 && response.ok) {
           return response.json();
         } else {
           return Promise.reject(response);
         }
-      }).then(function (__weex_data__) {
-        console.log('fetch response __weex_data__', __weex_data__);
+      }).then(function (data) {
+        console.log('fetch response data', data);
       });
     `;
 
-    instance.oncall('stream', 'fetch', (args) => {
+    const mockFn = jest.fn((args) => {
       expect(args).toEqual(
         {
-          url: 'http://path/to/api',
+          url: 'http://example.com',
           method: 'GET',
-          type: 'json'
+          type: 'text'
         }
       );
     });
 
+    instance.oncall('stream', 'fetch', mockFn);
     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+    expect(mockFn).toHaveBeenCalled();
   });
 
   it('response default status is 200', () => {
