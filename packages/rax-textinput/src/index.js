@@ -79,10 +79,8 @@ class TextInput extends Component {
     const {
       accessibilityLabel,
       autoComplete,
-      autoFocus,
       editable,
       keyboardType,
-      maxLength,
       maxNumberOfLines,
       multiline,
       numberOfLines,
@@ -91,30 +89,23 @@ class TextInput extends Component {
       onChange,
       onChangeText,
       onInput,
-      placeholder,
       password,
       secureTextEntry,
       style,
-      value,
-      id
     } = this.props;
 
     let propsCommon = {
+      ...this.props,
       'aria-label': accessibilityLabel,
       autoComplete: autoComplete && 'on',
-      autoFocus,
-      maxLength,
       onChange: (onChange || onChangeText) && this.handleChange,
       onInput: onInput && this.handleInput,
       onBlur: onBlur && this.handleBlur,
       onFocus: onFocus && this.handleFocus,
-      placeholder,
       style: {
         ...styles.initial,
         ...style
       },
-      value,
-      id,
       ref: 'input'
     };
 
