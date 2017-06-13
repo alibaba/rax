@@ -5,9 +5,13 @@ import {isWeb} from 'universal-env';
 
 const {View: AnimatedView} = Animated;
 
-const fadeAnim = new Animated.Value(0);
-
 export default class Modal extends Component {
+
+  constructor(props) {
+    super(props);
+    this.fadeAnim = new Animated.Value(0);
+  }
+
   static propTypes = {
     onHide: PropTypes.func,
     onShow: PropTypes.func,
@@ -25,7 +29,7 @@ export default class Modal extends Component {
   animated(state, callback) {
     const {visible} = state;
     Animated.timing(
-      fadeAnim,
+      this.fadeAnim,
       { toValue: visible === true ? 1 : 0}
     ).start(callback);
   }
@@ -82,7 +86,7 @@ export default class Modal extends Component {
         onClick={() => {
           this.hide();
         }}
-        style={[styles.mask, {opacity: fadeAnim}]}
+        style={[styles.mask, {opacity: this.fadeAnim}]}
       >
         <Touchable onPress={(e) => {
           if (isWeb) {
