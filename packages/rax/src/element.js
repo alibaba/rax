@@ -1,4 +1,5 @@
 import Host from './vdom/host';
+import flattenChildren from './flattenChildren';
 import {isWeex} from 'universal-env';
 
 const RESERVED_PROPS = {
@@ -31,30 +32,6 @@ const Element = (type, key, ref, props, owner) => {
 };
 
 export default Element;
-
-function traverseChildren(children, result) {
-  if (Array.isArray(children)) {
-    for (let i = 0, l = children.length; i < l; i++) {
-      traverseChildren(children[i], result);
-    }
-  } else {
-    result.push(children);
-  }
-}
-
-function flattenChildren(children) {
-  if (children == null) {
-    return children;
-  }
-  let result = [];
-  traverseChildren(children, result);
-
-  if (result.length === 1) {
-    result = result[0];
-  }
-
-  return result;
-}
 
 function flattenStyle(style) {
   if (!style) {

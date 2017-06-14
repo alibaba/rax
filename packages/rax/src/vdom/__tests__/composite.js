@@ -1,4 +1,5 @@
 /* @jsx createElement */
+
 import Component from '../../component';
 import {createElement} from '../../element';
 import Host from '../host';
