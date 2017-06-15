@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-
 import createElement from './createElement';
 
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const ID = 'uuid';
 const nodeMaps = {};
+
 let renderer = null;
 let scene = null;
 let camera = null;
@@ -13,10 +13,6 @@ let camera = null;
 const Driver = {
   getElementById(id) {
     return nodeMaps[id];
-  },
-
-  getParentNode(node) {
-    return node.parent;
   },
 
   createBody() {

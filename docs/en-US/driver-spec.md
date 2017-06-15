@@ -7,7 +7,7 @@ The driver should implement follow method:
 
 * getElementById(id)
 * createBody()
-* createComment(content)
+* createEmpty()
 * createText(text)
 * updateText(node, text)
 * createElement(component: {type, props})

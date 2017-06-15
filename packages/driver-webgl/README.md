@@ -1,4 +1,4 @@
-# webgl-driver
+# driver-webgl
 
 > WebGL driver for Rax.
 
@@ -7,14 +7,14 @@ Components and APIs are based on `three.js` design and implementation. Use marku
 ## Install
 s
 ```bash
-$ npm install --save webgl-driver
+$ npm install --save driver-webgl
 ```
 
 ## Usage
 
 ```jsx
 import {createElement, Component, render} from 'rax';
-import WebGLDriver from 'webgl-driver';
+import WebGLDriver from 'driver-webgl';
 
 class HelloWorld extends Component {
   constructor(props, context) {

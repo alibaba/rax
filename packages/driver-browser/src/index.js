@@ -26,6 +26,10 @@ const Driver = {
     return document.createComment(content);
   },
 
+  createEmpty() {
+    return this.createComment(' empty ');
+  },
+
   createText(text) {
     return document.createTextNode(text);
   },

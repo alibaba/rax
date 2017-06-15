@@ -43,7 +43,7 @@ class EmptyComponent {
   getNativeNode() {
     // Weex native node
     if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createComment(' empty ');
+      this._nativeNode = Host.driver.createEmpty();
     }
 
     return this._nativeNode;

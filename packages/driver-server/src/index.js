@@ -39,6 +39,10 @@ const Driver = {
     };
   },
 
+  createEmpty() {
+    return this.createComment(' empty ');
+  },
+
   createText(text) {
     return {
       nodeType: TEXT_NODE,
