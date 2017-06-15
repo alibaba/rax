@@ -14,7 +14,6 @@ fs.readdirSync(PACKAGES_DIR)
 
   if (!/^(rax|universal)-/.test(packageName) ||
      /webpack/.test(packageName) ||
-     /theme/.test(packageName) ||
      /cli/.test(packageName) ||
      /loader/.test(packageName) ||
      /rax-scripts/.test(packageName) ||
