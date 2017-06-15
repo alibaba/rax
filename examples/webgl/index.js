@@ -1,5 +1,5 @@
 import {createElement, Component, render} from 'rax';
-import WebGLDriver from 'webgl-driver';
+import WebGLDriver from 'driver-webgl';
 
 class HelloWorld extends Component {
   constructor(props, context) {
