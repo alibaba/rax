@@ -2,8 +2,7 @@
  * Weex driver
  */
 import {convertUnit, setRem} from 'style-unit';
-
-import htmlElements from './elements';
+import w3cElements from './elements';
 
 const STYLE = 'style';
 const ID = 'id';
@@ -24,10 +23,6 @@ const Driver = {
     return nodeMaps[id];
   },
 
-  getParentNode(node) {
-    return node.parentNode;
-  },
-
   createBody() {
     if (document.body) {
       return document.body;
@@ -44,10 +39,6 @@ const Driver = {
     return document.createComment(content);
   },
 
-  createEmpty() {
-    return this.createComment(' empty ');
-  },
-
   createText(text) {
     return Driver.createElement({
       type: TEXT,
@@ -62,7 +53,7 @@ const Driver = {
   },
 
   createElement(component) {
-    const htmlElement = htmlElements[component.type];
+    const htmlElement = w3cElements[component.type];
     if (htmlElement) {
       component = htmlElement.parse(component);
     }
@@ -79,7 +70,7 @@ const Driver = {
       style,
     });
 
-    this.setNativeProps(node, props);
+    this.setNativeProps(node, props, true);
 
     return node;
   },
@@ -187,7 +178,7 @@ const Driver = {
     return FULL_WIDTH_REM;
   },
 
-  setNativeProps(node, props) {
+  setNativeProps(node, props, skipSetStyles) {
     for (let prop in props) {
       let value = props[prop];
       if (prop === CHILDREN) {
@@ -195,7 +186,12 @@ const Driver = {
       }
 
       if (value != null) {
-        if (EVENT_PREFIX_REGEXP.test(prop)) {
+        if (prop === STYLE) {
+          if (skipSetStyles) {
+            continue;
+          }
+          this.setStyles(node, value);
+        } else if (EVENT_PREFIX_REGEXP.test(prop)) {
           let eventName = prop.slice(2).toLowerCase();
           this.addEventListener(node, eventName, value);
         } else {

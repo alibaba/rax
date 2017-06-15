@@ -1,6 +1,6 @@
 import inject from '../inject';
 import instance from '../vdom/instance';
-import ServerDriver from '../drivers/server';
+import ServerDriver from 'driver-server';
 import Serializer from '../server/serializer';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 

@@ -2,23 +2,20 @@
  * Web Browser driver
  **/
 
-import setNativeProps from '../setNativeProps';
 import {convertUnit, setRem} from 'style-unit';
-import flexbox from '../style/flexbox';
+import flexbox from './flexbox';
 
 const FULL_WIDTH_REM = 750;
-const STYLE = 'style';
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
+const STYLE = 'style';
+const CHILDREN = 'children';
+const EVENT_PREFIX_REGEXP = /on[A-Z]/;
 
 const Driver = {
   getElementById(id) {
     return document.getElementById(id);
-  },
-
-  getParentNode(node) {
-    return node.parentNode;
   },
 
   createBody() {
@@ -27,10 +24,6 @@ const Driver = {
 
   createComment(content) {
     return document.createComment(content);
-  },
-
-  createEmpty() {
-    return this.createComment(' empty ');
   },
 
   createText(text) {
@@ -46,7 +39,7 @@ const Driver = {
     let node = document.createElement(component.type);
     let props = component.props;
 
-    setNativeProps(node, props);
+    this.setNativeProps(node, props);
 
     return node;
   },
@@ -160,6 +153,26 @@ const Driver = {
   getWindowWidth() {
     return document.documentElement.clientWidth;
   },
+
+  setNativeProps(node, props) {
+    for (let prop in props) {
+      let value = props[prop];
+      if (prop === CHILDREN) {
+        continue;
+      }
+
+      if (value != null) {
+        if (prop === STYLE) {
+          this.setStyles(node, value);
+        } else if (EVENT_PREFIX_REGEXP.test(prop)) {
+          let eventName = prop.slice(2).toLowerCase();
+          this.addEventListener(node, eventName, value);
+        } else {
+          this.setAttribute(node, prop, value);
+        }
+      }
+    }
+  }
 };
 
 export default Driver;

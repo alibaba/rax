@@ -1,12 +1,11 @@
 /**
  *  Server driver
  **/
-
-import setNativeProps from '../setNativeProps';
-
 const ID = 'id';
 const STYLE = 'style';
+const CHILDREN = 'children';
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
+const EVENT_PREFIX_REGEXP = /on[A-Z]/;
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -18,10 +17,6 @@ const Driver = {
 
   getElementById(id) {
     return this.nodeMaps[id];
-  },
-
-  getParentNode(node) {
-    return node.parentNode;
   },
 
   createBody() {
@@ -42,10 +37,6 @@ const Driver = {
       data: content,
       parentNode: null
     };
-  },
-
-  createEmpty() {
-    return this.createComment(' empty ');
   },
 
   createText(text) {
@@ -72,7 +63,7 @@ const Driver = {
       parentNode: null
     };
 
-    setNativeProps(node, props, true);
+    this.setNativeProps(node, props, true);
 
     return node;
   },
@@ -210,6 +201,29 @@ const Driver = {
   setStyles(node, styles) {
     for (let key in styles) {
       node.style[key] = styles[key];
+    }
+  },
+
+  setNativeProps(node, props, skipSetStyles) {
+    for (let prop in props) {
+      let value = props[prop];
+      if (prop === CHILDREN) {
+        continue;
+      }
+
+      if (value != null) {
+        if (prop === STYLE) {
+          if (skipSetStyles) {
+            continue;
+          }
+          this.setStyles(node, value);
+        } else if (EVENT_PREFIX_REGEXP.test(prop)) {
+          let eventName = prop.slice(2).toLowerCase();
+          this.addEventListener(node, eventName, value);
+        } else {
+          this.setAttribute(node, prop, value);
+        }
+      }
     }
   }
 };

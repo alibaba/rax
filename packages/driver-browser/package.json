@@ -1,7 +1,7 @@
 {
-  "name": "weex-driver",
+  "name": "driver-browser",
   "version": "0.3.6",
-  "description": "Weex driver for Rax",
+  "description": "Browser driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {

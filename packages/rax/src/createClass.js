@@ -54,7 +54,6 @@ function flattenHooks(key, hooks) {
   }
 }
 
-// Apply a mapping of Arrays of mixin methods to a component prototype
 function applyMixins(proto, mixins) {
   for (let key in mixins) {
     if (mixins.hasOwnProperty(key)) {

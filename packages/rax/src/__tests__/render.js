@@ -3,7 +3,7 @@
 import {createElement} from '../element';
 import Host from '../vdom/host';
 import render from '../render';
-import ServerDriver from '../drivers/server';
+import ServerDriver from 'driver-server';
 import findDOMNode from '../findDOMNode';
 
 describe('render', () => {

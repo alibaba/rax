@@ -1,5 +1,5 @@
 import escapeText from './escapeText';
-import styleToCSS from '../style/styleToCSS';
+import styleToCSS from './styleToCSS';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
