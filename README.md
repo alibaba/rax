@@ -110,7 +110,7 @@ More examples take a look at the [`examples`](/examples/) folder:
 
 Usage with Webpack or Babel makes React-based components work with Rax, without any code changes.
 
-* Usage with Webpack
+#### Usage with Webpack
 
 Add an alias for `react` and `react-dom`:
 
@@ -128,7 +128,7 @@ Add an alias for `react` and `react-dom`:
   // ...
 }
 ```
-* Usage with Babel
+#### Usage with Babel
 
 Install the babel plugin for aliasing: `npm install --save-dev babel-plugin-module-resolver`
 
