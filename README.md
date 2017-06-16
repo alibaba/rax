@@ -110,7 +110,7 @@ More examples take a look at the [`examples`](/examples/) folder:
 
 Usage with Webpack or Babel makes React-based components work with Rax, without any code changes.
 
-### Webpack
+* Usage with Webpack
 
 Add an alias for `react` and `react-dom`:
 
@@ -128,24 +128,7 @@ Add an alias for `react` and `react-dom`:
   // ...
 }
 ```
-
-## Developer Tools
-
-* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
-
-<p align="center">
-<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
-</p>
-
-* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
-  1. Use the `rax-redux` module in your app
-  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
-
-<p align="center">
-<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
-</p>
-
-### Babel
+* Usage with Babel
 
 Install the babel plugin for aliasing: `npm install --save-dev babel-plugin-module-resolver`
 
@@ -168,6 +151,22 @@ Add an alias for `react` and `react-dom` in your .babelrc:
   // ...
 }
 ```
+
+## Developer Tools
+
+* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
+
+<p align="center">
+<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
+</p>
+
+* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
+  1. Use the `rax-redux` module in your app
+  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
+
+<p align="center">
+<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
+</p>
 
 ## Contributing
 
