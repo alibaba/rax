@@ -133,10 +133,6 @@ function transformChild(child, instance) {
   }
 }
 
-function transformString(child) {
-  return child;
-}
-
 function transformChildren(children, instance) {
   let elements = [];
   if (!Array.isArray(children)) {
@@ -146,7 +142,7 @@ function transformChildren(children, instance) {
   for (let i = 0; i < children.length; i++) {
     let child = children[i];
     if (typeof child === 'string') {
-      elements.push(transformString(child));
+      elements.push(child);
     } else if (typeof child === 'object') {
       elements.push(transformChild(child, instance));
     }
