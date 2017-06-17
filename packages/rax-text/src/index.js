@@ -97,8 +97,8 @@ class Text extends Component {
     let {children} = props;
 
     const nativeProps = {
-        ...props,
-        ...{
+      ...props,
+      ...{
         style: props.style || {},
       }
     };
@@ -116,11 +116,11 @@ class Text extends Component {
 }
 
 function transformChild(child, instance) {
-  const {type, props} = child;
-  const {children} = props
+  const {type: Com, props} = child;
+  const {children} = props;
 
   if (typeof type === 'function') {
-    let childInstance = new type();
+    let childInstance = new Com();
     childInstance.props = props;
     if (children) {
       childInstance.props.children = transformChildren(children, instance);
@@ -152,7 +152,7 @@ function transformChildren(children, instance) {
 }
 
 const styles = {
-  span : {
+  span: {
     border: '0 solid black',
     position: 'relative',
     boxSizing: 'border-box',

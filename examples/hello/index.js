@@ -11,10 +11,10 @@ class Hello extends Component {
       </Text>
       <Text style={{color: 'red'}}>
         Rax
-      </Text>! 
+      </Text>!
       Rax <Text style={{textDecoration: 'underline'}}>website</Text>:
       <Link href="//taobao.com" style={{color: 'blue'}}>
-        <Image 
+        <Image
           source={{uri: 'https://gw.alicdn.com/tfs/TB1g6AvPVXXXXa7XpXXXXXXXXXX-215-215.png'}}
           style={{
             width: 100,
