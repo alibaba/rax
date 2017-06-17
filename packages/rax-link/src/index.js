@@ -5,7 +5,8 @@ import Text from 'rax-text';
 class Link extends Component {
 
   static contextTypes = {
-    isInAParentLink: PropTypes.bool
+    isInAParentLink: PropTypes.bool,
+    isInAParentText: PropTypes.bool
   };
 
   static childContextTypes = {
@@ -38,7 +39,7 @@ class Link extends Component {
     }
 
     let content = children;
-    if (typeof children === 'string') {
+    if (typeof children === 'string' && !this.context.isInAParentText) {
       content = <Text style={style}>{children}</Text>;
     }
 
