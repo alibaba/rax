@@ -1,8 +1,8 @@
-//import isCdnImage from './isCdnImage';
-//var toString = {}.toString;
-//let isArray = Array.isArray || function(arr) {
+// import isCdnImage from './isCdnImage';
+// var toString = {}.toString;
+// let isArray = Array.isArray || function(arr) {
 //  return toString.call(arr) == '[object Array]';
-//};
+// };
 
 /**
  * 添加图片质量后缀
@@ -11,7 +11,7 @@
  * @return {String}        [后缀]
  */
 export default function(compressSuffix, quality, acutance) {
-  return compressSuffix ? compressSuffix : (
+  return compressSuffix ? compressSuffix :
     (quality ? 'Q' + quality : '') + (acutance ? 'S' + acutance : '')
-  );
+  ;
 }

@@ -31,7 +31,7 @@ export default function(uri, config) {
   } = config;
 
   let newUrl = uri;
-  if (typeof(uri) === 'string') {
+  if (typeof uri === 'string') {
     let ret = isCdnImage(uri);
 
     // is cdn image
@@ -39,8 +39,8 @@ export default function(uri, config) {
       const host = ret[1];
       const path = ret[2];
       let suffixRet = path.match(REG_IMG_SUFFIX) || [];
-      const notGif = (!~path.indexOf('gif') && !~path.indexOf('GIF')) || !ignoreGif;
-      const notPng = (!~path.indexOf('png') && !~path.indexOf('png')) || !ignorePng;
+      const notGif = !~path.indexOf('gif') && !~path.indexOf('GIF') || !ignoreGif;
+      const notPng = !~path.indexOf('png') && !~path.indexOf('png') || !ignorePng;
 
       let scalingSuffix = suffixRet[1] || '';
       if (
@@ -68,20 +68,20 @@ export default function(uri, config) {
         ) || _compressSuffix;
       }
 
-      let cut = scalingSuffix ? (suffixRet[2] || '') : '';
-      let suffix = (scalingSuffix || _compressSuffix) ? (suffixRet[4] || '.jpg') : '';
-      let prev = (scalingSuffix || _compressSuffix) ? '_' : '';
+      let cut = scalingSuffix ? suffixRet[2] || '' : '';
+      let suffix = scalingSuffix || _compressSuffix ? suffixRet[4] || '.jpg' : '';
+      let prev = scalingSuffix || _compressSuffix ? '_' : '';
 
       if (notGif) {
         if (suffixRet[0] !== '_.jpg') {
           newUrl = newUrl.replace(suffixRet[0], '');
         }
         newUrl += prev +
-        scalingSuffix + 
-        cut +  
-        _compressSuffix + 
-        suffix +  
-        webpSuffix; 
+        scalingSuffix +
+        cut +
+        _compressSuffix +
+        suffix +
+        webpSuffix;
 
         if (removeScheme) {
           newUrl = removeSchemeFn(newUrl);

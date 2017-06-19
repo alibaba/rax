@@ -30,7 +30,7 @@ function parseSuffix(suffix) {
   let ret = [];
 
   // 如果suffix为string类型
-  if (typeof(suffix) === 'string') {
+  if (typeof suffix === 'string') {
     ret = suffix.split(',');
   }
 
@@ -174,8 +174,8 @@ class Picture extends Component {
 
       if (uri) {
         if (autoPixelRatio && window.devicePixelRatio > 1) { // devicePixelRatio >= 2 for web
-          if (typeof(sWidth) === 'string' && sWidth.indexOf('rem') > -1) {
-            sWidth = (parseInt(sWidth.split('rem')[0]) * 2) + 'rem';
+          if (typeof sWidth === 'string' && sWidth.indexOf('rem') > -1) {
+            sWidth = parseInt(sWidth.split('rem')[0]) * 2 + 'rem';
           }
         }
 

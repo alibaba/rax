@@ -58,8 +58,8 @@ function find(c, arr) {
  * @returns {String}
  */
 export default function(sWidth) {
-  let isRem = (typeof(sWidth) === 'string' && sWidth.indexOf('rem') > -1);
-  let isNum = typeof(sWidth) === 'number';
+  let isRem = typeof sWidth === 'string' && sWidth.indexOf('rem') > -1;
+  let isNum = typeof sWidth === 'number';
   if (isRem || isNum) {
     let xWidth = parseFloat(sWidth, 10);
     let scaling = 1;
