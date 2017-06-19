@@ -1,6 +1,6 @@
 # ListView 列表容器
 
-较复杂的列表实现，内部实现基于 RecyclerView。
+较复杂的列表实现，通过 dataSource 来定义每行渲染的数据，通过 renderRow 来定义每行渲染的模板，内部实现基于 RecyclerView。
 
 ## 安装
 

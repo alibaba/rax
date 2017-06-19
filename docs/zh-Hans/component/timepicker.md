@@ -1,6 +1,6 @@
 # TimePicker 时间选择
 
-TimePicker 调用系统原生选择框实现
+TimePicker 时间选择组件，调用系统原生选择框实现
 
 ## 安装
 

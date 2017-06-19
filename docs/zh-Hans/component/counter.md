@@ -1,6 +1,6 @@
 # Counter 数量选择
 
-Counter 拥有默认的展现样式
+Counter 数量选择，拥有默认的展现样式
 
 ## 安装
 

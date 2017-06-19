@@ -1,5 +1,7 @@
 # Transition 渐变动画
 
+与 Animated 相比具备更好的动画性能
+
 ## 安装
 
 ```bash

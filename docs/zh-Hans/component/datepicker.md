@@ -1,6 +1,6 @@
 # DatePicker 日期选择
 
-DatePicker 调用系统原生选择框实现
+DatePicker 日期选择组件，调用系统原生选择框实现
 
 ## 安装
 
