@@ -4,6 +4,7 @@ import replaceDomainFn from './replaceDomain';
 import scaling from './scaling';
 import webpFn from './webp';
 import compress from './compress';
+
 const REG_IMG_SUFFIX = /_(\d+x\d+|cy\d+i\d+|sum|m|b)?(xz|xc)?((?:q\d+)?(?:s\d+)?)(\.jpg)?(_\.webp)?$/i;
 
 /**
