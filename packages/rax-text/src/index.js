@@ -72,7 +72,7 @@ class Text extends Component {
       return <text {...nativeProps} />;
     } else {
       let styleProps = {
-        ...styles.span,
+        ...styles.text,
         ...nativeProps.style
       };
       let numberOfLines = props.numberOfLines;
@@ -103,7 +103,7 @@ class Text extends Component {
       }
     };
     const styleProps = {
-      ...styles.p,
+      ...styles.richtext,
       ...nativeProps.style
     };
 
@@ -152,7 +152,7 @@ function transformChildren(children, instance) {
 }
 
 const styles = {
-  span: {
+  text: {
     border: '0 solid black',
     position: 'relative',
     boxSizing: 'border-box',
@@ -162,7 +162,7 @@ const styles = {
     flexShrink: 0,
     fontSize: 32
   },
-  p: {
+  richtext: {
     marginTop: 0,
     marginBottom: 0
   }
