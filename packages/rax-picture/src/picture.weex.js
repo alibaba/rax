@@ -1,5 +1,4 @@
 import {createElement, Component, PropTypes} from 'rax';
-import View from 'rax-view';
 import Image from 'rax-image';
 
 class Picture extends Component {

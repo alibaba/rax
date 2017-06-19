@@ -1,7 +1,13 @@
 import {createElement, Component, PropTypes} from 'rax';
 import View from 'rax-view';
 import Image from 'rax-image';
+import optimizer from './optimizer/index';
 import webp from './webp';
+
+const toString = {}.toString;
+const isArray = Array.isArray || function(arr) {
+  return toString.call(arr) == '[object Array]';
+};
 
 let isSupportJPG = false;
 let isSupportPNG = false;
@@ -13,6 +19,45 @@ webp.isSupport((_isSupportJPG) => {
 webp.isSupport((_isSupportPNG) => {
   isSupportPNG = _isSupportPNG;
 }, 'alpha');
+
+/**
+ * 转换质量后缀
+ * @param  {String|Array} suffix [图片质量后缀]
+ * @return {[type]}        [description]
+ */
+function parseSuffix(suffix) {
+  const result = [];
+  let ret = [];
+
+  // 如果suffix为string类型
+  if (typeof(suffix) === 'string') {
+    ret = suffix.split(',');
+  }
+
+  // 如果suffix为array类型
+  if (isArray(suffix)) {
+    ret = suffix;
+  }
+
+  if (ret && ret[0]) {
+    result[0] = ret[0];
+  }
+  if (ret && ret[1]) {
+    result[1] = ret[1];
+  }
+
+  return result;
+}
+
+/**
+ * 获取图片质量后缀
+ * @param  {String|Array} suffix [图片质量后缀]
+ * @return {[type]}        [description]
+ */
+function getQualitySuffix(highQuality, suffix) {
+  const _suffix = parseSuffix(suffix);
+  return highQuality ? _suffix[0] : _suffix[1];
+}
 
 class Picture extends Component {
   static defaultProps = {
@@ -126,6 +171,24 @@ class Picture extends Component {
       }, style);
 
       this.uri = uri;
+
+      if (uri) {
+        if (autoPixelRatio && window.devicePixelRatio > 1) { // devicePixelRatio >= 2 for web
+          if (typeof(sWidth) === 'string' && sWidth.indexOf('rem') > -1) {
+            sWidth = (parseInt(sWidth.split('rem')[0]) * 2) + 'rem';
+          }
+        }
+
+        this.uri = optimizer(uri, {
+          ignoreGif: ignoreGif,
+          ignorePng: true,
+          removeScheme: autoRemoveScheme,
+          replaceDomain: autoReplaceDomain,
+          scalingWidth: autoScaling ? sWidth : 0,
+          webp: autoWebp && (isSupportJPG && isSupportPNG),
+          compressSuffix: autoCompress ? getQualitySuffix(highQuality, compressSuffix) : ''
+        });
+      }
 
       if (resizeMode) {
         this.newStyle.resizeMode = resizeMode;
