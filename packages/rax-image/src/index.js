@@ -11,6 +11,10 @@ class Image extends Component {
     repeat: 'repeat',
   };
 
+  static contextTypes = {
+    isInAParentText: PropTypes.bool
+  };
+
   render() {
     let nativeProps = {
       ...this.props,
@@ -35,7 +39,7 @@ class Image extends Component {
 
       nativeProps.style = {
         ...{
-          display: 'flex',
+          ...!this.context.isInAParentText && {display: 'flex'},
           width: width,
           height: height,
         },
