@@ -5,10 +5,9 @@
 // };
 
 /**
- * 添加图片质量后缀
- * @param  {Number} quality [质量]
- * @param  {Number} acutance [锐度]
- * @return {String}        [后缀]
+ * @param  {Number} quality
+ * @param  {Number} acutance
+ * @return {String}       
  */
 export default function(compressSuffix, quality, acutance) {
   return compressSuffix ? compressSuffix :
