@@ -1,9 +1,3 @@
-// import isCdnImage from './isCdnImage';
-// var toString = {}.toString;
-// let isArray = Array.isArray || function(arr) {
-//  return toString.call(arr) == '[object Array]';
-// };
-
 /**
  * @param  {Number} quality
  * @param  {Number} acutance

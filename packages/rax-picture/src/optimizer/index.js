@@ -1,8 +1,8 @@
 import isCdnImage from './isCdnImage';
-import removeSchemeFn from './removeScheme';
-import replaceDomainFn from './replaceDomain';
+import removeUrlScheme from './removeScheme';
+import replaceUrlDomain from './replaceDomain';
 import scaling from './scaling';
-import webpFn from './webp';
+import webpImage from './webp';
 import compress from './compress';
 
 const REG_IMG_SUFFIX = /_(\d+x\d+|cy\d+i\d+|sum|m|b)?(xz|xc)?((?:q\d+)?(?:s\d+)?)(\.jpg)?(_\.webp)?$/i;
@@ -55,7 +55,7 @@ export default function(uri, config) {
       if (
         webp && notGif
       ) {
-        webpSuffix = webpFn() || webpSuffix;
+        webpSuffix = webpImage() || webpSuffix;
       }
 
       let _compressSuffix = suffixRet[3] || '';
@@ -85,12 +85,12 @@ export default function(uri, config) {
         webpSuffix;
 
         if (removeScheme) {
-          newUrl = removeSchemeFn(newUrl);
+          newUrl = removeUrlScheme(newUrl);
         }
       }
 
       if (replaceDomain) {
-        newUrl = replaceDomainFn(newUrl, host);
+        newUrl = replaceUrlDomain(newUrl, host);
       }
     }
   }

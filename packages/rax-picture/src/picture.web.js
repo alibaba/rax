@@ -21,20 +21,17 @@ webp.isSupport((_isSupportPNG) => {
 }, 'alpha');
 
 /**
- * 转换质量后缀
- * @param  {String|Array} suffix [图片质量后缀]
+ * @param  {String|Array} suffix
  * @return {[type]}        [description]
  */
 function parseSuffix(suffix) {
   const result = [];
   let ret = [];
 
-  // 如果suffix为string类型
   if (typeof suffix === 'string') {
     ret = suffix.split(',');
   }
 
-  // 如果suffix为array类型
   if (isArray(suffix)) {
     ret = suffix;
   }
@@ -50,9 +47,8 @@ function parseSuffix(suffix) {
 }
 
 /**
- * 获取图片质量后缀
- * @param  {String|Array} suffix [图片质量后缀]
- * @return {[type]}        [description]
+ * @param  {String|Array} suffix
+ * @return {[type]}
  */
 function getQualitySuffix(highQuality, suffix) {
   const _suffix = parseSuffix(suffix);
