@@ -3,6 +3,8 @@ import {isWeex} from 'universal-env';
 
 class Text extends Component {
 
+  static propTypes = {};
+
   static contextTypes = {
     isInAParentText: PropTypes.bool
   };

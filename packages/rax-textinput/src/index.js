@@ -41,6 +41,8 @@ function genEventObject(originalEvent) {
 
 class TextInput extends Component {
 
+  static propTypes = {};
+
   handleInput = (event) => {
     this.props.onInput(genEventObject(event));
   };

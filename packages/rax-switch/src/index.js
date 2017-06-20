@@ -6,6 +6,8 @@ const DEFAULT_HEIGHT = 60;
 
 class Switch extends Component {
 
+  static propTypes = {};
+
   static defaultProps = {
     onTintColor: '#00e158',
     thumbTintColor: '#ffffff',

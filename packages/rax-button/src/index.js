@@ -5,6 +5,8 @@ import Touchable from 'rax-touchable';
 
 class Button extends Component {
 
+  static propTypes = {};
+
   render() {
     const props = this.props;
     const buttonStyles = [styles.button, props.style];

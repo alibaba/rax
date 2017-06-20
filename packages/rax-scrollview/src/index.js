@@ -9,6 +9,8 @@ const FULL_WIDTH = 750;
 
 class ScrollView extends Component {
 
+  static propTypes = {};
+
   static defaultProps = {
     scrollEventThrottle: DEFAULT_SCROLL_CALLBACK_THROTTLE,
     onEndReachedThreshold: DEFAULT_END_REACHED_THRESHOLD,
