@@ -18,12 +18,12 @@ import Slider from 'rax-slider';
 
 | 名称               | 类型     | 默认值      | 描述                                       |
 | :--------------- | :----- | :------- | :--------------------------------------- |
-| width            | string | '750rem' | Slider的宽度（必填）                            |
-| height           | string | '352rem' | Slider的高度（必填）                            |
+| width            | string | － | Slider的宽度（必填）                            |
+| height           | string | － | Slider的高度（必填）                            |
 | autoPlay         | bool   | false    | Slider是否自动播放                             |
 | showsPagination  | bool   | true     | 是否显示分页的小圆点点                              |
 | paginationStyle  | object | null     | 自己定义小圆点点的样式，否则默认样式居中                     |
-| loop             | bool   | true     | 是否是循环播放                                  |
+| loop             | bool   | true     | 是否是循环播放（web）                                  |
 | index            | number | 0        | 指定默认初始化第几个（在weex安卓下有兼容问题，需要节点渲染完成后异步调用，暂不推荐使用） |
 | autoPlayInterval | number | 3000     | 自动播放的间隔时间                                |
 
