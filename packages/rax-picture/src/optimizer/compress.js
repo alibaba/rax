@@ -7,7 +7,7 @@
 /**
  * @param  {Number} quality
  * @param  {Number} acutance
- * @return {String}       
+ * @return {String}
  */
 export default function(compressSuffix, quality, acutance) {
   return compressSuffix ? compressSuffix :
