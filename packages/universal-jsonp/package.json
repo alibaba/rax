@@ -1,6 +1,6 @@
 {
   "name": "universal-jsonp",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "A universal JSONP utilities.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.3.7"
+    "universal-env": "^0.3.8"
   }
 }

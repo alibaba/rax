@@ -1,6 +1,6 @@
 {
   "name": "rax-counter",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Counter component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-text": "^0.3.7",
-    "rax-view": "^0.3.7",
-    "rax-touchable": "^0.3.7"
+    "rax-text": "^0.3.8",
+    "rax-view": "^0.3.8",
+    "rax-touchable": "^0.3.8"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-text": "^0.3.7",
-    "rax-test-renderer": "^0.3.7"
+    "rax-text": "^0.3.8",
+    "rax-test-renderer": "^0.3.8"
   }
 }
