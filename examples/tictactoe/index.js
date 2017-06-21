@@ -1,11 +1,9 @@
 import {createElement, Component, render} from 'rax';
-import {
-  Text,
-  View,
-  Image,
-  ScrollView,
-  TouchableHighlight,
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import ScrollView from 'rax-scrollview';
+import TouchableHighlight from 'rax-touchable';
 
 class Board {
   constructor() {

@@ -1,5 +1,9 @@
 import {createElement, Component, render} from 'rax';
-import {View, Text, ScrollView} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import ScrollView from 'rax-scrollview';
+
 import StyleDemo from './StyleDemo';
 import ViewDemo from './ViewDemo';
 import ScrollViewDemo from './ScrollViewDemo';

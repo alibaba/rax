@@ -1,4 +1,3 @@
-
 import {createElement, Component} from 'rax';
 import View from 'rax-view';
 import Waterfall from 'rax-waterfall';
