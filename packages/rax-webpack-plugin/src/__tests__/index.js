@@ -4,13 +4,12 @@ import path from 'path';
 import rimraf from 'rimraf';
 import webpack from 'webpack';
 
-const argv = process.argv.splice(2);
-
 /**
  * If you need to update the webpack output code
  * Use command:
- *   npm test -- ./packages/rax-webpack-plugin/src/__tests__/index.js --updateFixture
+ *   RAX_FIXTURE=WEBPACK_PLUGIN npm test -- ./packages/rax-webpack-plugin/src/__tests__/index.js
  */
+
 
 describe('rax-webpack-plugin', function() {
   const outputDirectory = path.join(os.tmpdir(), '__output__');
@@ -29,7 +28,7 @@ describe('rax-webpack-plugin', function() {
     const configFile = path.join(testDirectory, 'webpack.config.js');
 
 
-    if (argv.indexOf('--updateFixture') !== -1) {
+    if (process.env.RAX_FIXTURE === 'WEBPACK_PLUGIN') {
       outputPath = path.join(__dirname, 'fixtures', fixture, 'expected');
     }
 
