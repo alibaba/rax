@@ -1,6 +1,8 @@
-exports[`test date is not vaild 1`] = `null`;
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test renders correctly 1`] = `
+exports[`date is not vaild 1`] = `null`;
+
+exports[`renders correctly 1`] = `
 Object {
   "children": Array [
     Object {
@@ -3392,7 +3394,7 @@ Object {
 }
 `;
 
-exports[`test today is selected 1`] = `
+exports[`today is selected 1`] = `
 Object {
   "children": Array [
     Object {
