@@ -32,8 +32,9 @@ function genEventObject(originalEvent) {
     nativeEvent: {
       text
     },
-    value: text,
     originalEvent,
+    value: text,
+    target: originalEvent.target,
   };
 }
 
