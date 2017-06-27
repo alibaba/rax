@@ -2,8 +2,6 @@
 
 弹出框，反馈的内容与当前操作有直接关联，提示为非阻碍式，它不打断用户当前操作。
 
-![](https://gw.alicdn.com/tfs/TB1_wQkRVXXXXaPXpXXXXXXXXXX-255-404.gif)
-
 ## 安装
 
 ```bash
