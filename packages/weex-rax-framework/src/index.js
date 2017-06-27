@@ -125,6 +125,8 @@ function genNativeModules(modules, document) {
           let lastArg = args[args.length - 1];
           if (typeof lastArg === 'object' && lastArg.__weex_options__) {
             options = lastArg.__weex_options__;
+            // Remove the last in args
+            args.pop();
           }
           // https://github.com/alibaba/weex/issues/1677
           return document.taskCenter.send('module', {
