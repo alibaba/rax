@@ -118,11 +118,11 @@ class Text extends Component {
 }
 
 function transformChild(child, instance) {
-  const {type: Com, props} = child;
+  const {type: ChildComponent, props} = child;
   const {children} = props;
 
-  if (typeof Com === 'function') {
-    let childInstance = new Com();
+  if (typeof ChildComponent === 'function') {
+    let childInstance = new ChildComponent();
     childInstance.props = props;
     if (children) {
       childInstance.props.children = transformChildren(children, instance);
