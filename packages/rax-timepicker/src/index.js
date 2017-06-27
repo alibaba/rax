@@ -5,6 +5,8 @@ import Text from 'rax-text';
 
 class TimePicker extends Component {
 
+  static propTypes = {};
+
   constructor(props) {
     super(props);
     this.state = {

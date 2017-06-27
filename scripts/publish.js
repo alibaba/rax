@@ -35,17 +35,33 @@ if (version) {
   fs.writeFileSync(RAX_VERSION_FILE, 'export default \'' + version + '\';\n');
 
   console.log('Update dependencies in package.json');
+  // update rax-cli depenpencies - begin
   const GENERATOR_DEPENDENCIES_FILE = path.resolve(__dirname, '../packages/rax-cli/src/generator/templates/package.json');
   const JSONString = fs.readFileSync(GENERATOR_DEPENDENCIES_FILE);
   const packageJSON = JSON.parse(JSONString);
   packageJSON.dependencies.rax = semver;
   packageJSON.dependencies['rax-view'] = semver;
   packageJSON.dependencies['rax-text'] = semver;
-  packageJSON.devDependencies['babel-preset-rax'] = semver;
-  packageJSON.devDependencies['rax-webpack-plugin'] = semver;
-  packageJSON.devDependencies['stylesheet-loader'] = semver;
+  packageJSON.devDependencies['rax-scripts'] = semver;
+
   fs.writeFileSync(GENERATOR_DEPENDENCIES_FILE, JSON.stringify(packageJSON, null, '  '));
   console.log('*', GENERATOR_DEPENDENCIES_FILE);
+  // update rax-cli depenpencies - end
+
+  // update rax-scripts dependencies - begin
+  const RAX_SCRIPTS_DEPENDENCIES_FILE = path.resolve(__dirname, '../packages/rax-scripts/package.json');
+  const raxScriptPackageJSONString = fs.readFileSync(RAX_SCRIPTS_DEPENDENCIES_FILE);
+  const raxScritpsPackageJSON = JSON.parse(raxScriptPackageJSONString);
+  raxScritpsPackageJSON.dependencies['babel-preset-rax'] = semver;
+  raxScritpsPackageJSON.dependencies['image-source-loader'] = semver;
+  raxScritpsPackageJSON.dependencies['rax-hot-loader'] = semver;
+  raxScritpsPackageJSON.dependencies['rax-hot-module-replacement-webpack-plugin'] = semver;
+  raxScritpsPackageJSON.dependencies['rax-webpack-plugin'] = semver;
+  raxScritpsPackageJSON.dependencies['stylesheet-loader'] = semver;
+
+  fs.writeFileSync(RAX_SCRIPTS_DEPENDENCIES_FILE, JSON.stringify(raxScritpsPackageJSON, null, '  '));
+  console.log('*', RAX_SCRIPTS_DEPENDENCIES_FILE);
+  // update rax-scripts dependencies - end
 
   const PROJECT_DEPENDENCIES_FILE = path.resolve(__dirname, '../package.json');
   const ProjectPackageJSON = JSON.parse(fs.readFileSync(PROJECT_DEPENDENCIES_FILE));
@@ -67,12 +83,11 @@ if (version) {
   });
 
   execSync(
-    'npm run bootstrap && npm run build && npm run lint && npm run test &&' +
-    'lerna publish --skip-git --repo-version=' + version + ' ' + forcePublish,
-    {
+    'npm run build && npm run lint && npm run test &&' +
+    'lerna publish --skip-git --repo-version=' + version + ' ' + forcePublish, {
       stdio: 'inherit'
     }
   );
 } else {
-  console.log('Must specific publish version like: npm run publish 0.0.1');
+  console.log('Must specific publish version like: npm run publish 9.9.9');
 }

@@ -2,7 +2,10 @@ import {createElement, Component, render} from 'rax';
 import StyleSheet from 'universal-stylesheet';
 import Platform from 'universal-platform';
 import Animated from 'rax-animated';
-import {Text, TouchableOpacity, View, Image} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import TouchableOpacity from 'rax-touchable';
 import {isWeb} from 'universal-env';
 
 const PROFILE_WIDTH = 90;

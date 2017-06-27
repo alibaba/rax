@@ -1,6 +1,7 @@
 import './debug/devtools';
+import {createElement, cloneElement, isValidElement, createFactory} from './element';
 
-export {createElement, cloneElement, isValidElement, createFactory} from './element';
+export {createElement, cloneElement, isValidElement, createFactory};
 export Component from './component';
 export PureComponent from './purecomponent';
 export PropTypes from './proptypes';

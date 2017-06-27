@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`Button should render a button 1`] = `
 Object {
   "children": Array [

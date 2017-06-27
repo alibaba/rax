@@ -5,6 +5,8 @@ import Text from 'rax-text';
 
 class Picker extends Component {
 
+  static propTypes = {};
+
   constructor(props) {
     super(props);
     let pickerData = this.getPickerData();

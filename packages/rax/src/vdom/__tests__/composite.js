@@ -1,9 +1,10 @@
 /* @jsx createElement */
+
 import Component from '../../component';
 import {createElement} from '../../element';
 import Host from '../host';
 import render from '../../render';
-import ServerDriver from '../../drivers/server';
+import ServerDriver from 'driver-server';
 import findDOMNode from '../../findDOMNode';
 import unmountComponentAtNode from '../../unmountComponentAtNode';
 

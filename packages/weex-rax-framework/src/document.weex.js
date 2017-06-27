@@ -74,7 +74,7 @@ module.exports = function(__weex_require__, document) {
 
     Object.defineProperty(document, 'createBody', {
       value: function() {
-        var body = originCreateBody.call(document);
+        var body = originCreateBody.apply(document, arguments);
 
         if (hasVisibilityEventPending) {
           addBodyAppearListener(document);

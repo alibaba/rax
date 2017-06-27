@@ -1,6 +1,6 @@
 module.exports = function(require, exports, module) {
-    var weex = this["weex"];
-    module.exports = /******/ (function(modules) { // webpackBootstrap
+  var weex = this["weex"];
+  module.exports = /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -34,9 +34,6 @@ module.exports = function(require, exports, module) {
 /******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
 /******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {

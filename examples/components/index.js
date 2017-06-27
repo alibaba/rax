@@ -1,5 +1,9 @@
 import {createElement, Component, render} from 'rax';
-import {View, Text, ScrollView} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import ScrollView from 'rax-scrollview';
+
 import StyleDemo from './StyleDemo';
 import ViewDemo from './ViewDemo';
 import ScrollViewDemo from './ScrollViewDemo';
@@ -12,6 +16,7 @@ import ButtonDemo from './ButtonDemo';
 import SwitchDemo from './SwitchDemo';
 import ListViewDemo from './ListViewDemo';
 import RecyclerViewDemo from './RecyclerViewDemo';
+import WaterfallDemo from './WaterfallDemo';
 import LinkDemo from './LinkDemo';
 import TouchableHighlightDemo from './TouchableHighlightDemo';
 import CalendarDemo from './CalendarDemo';
@@ -26,6 +31,7 @@ import PlayerDemo from './PlayerDemo';
 import TabbarDemo from './TabbarDemo';
 import TabheaderDemo from './TabheaderDemo';
 import SliderDemo from './SliderDemo';
+import TableDemo from './TableDemo';
 
 class Page extends Component {
   render() {
@@ -98,6 +104,11 @@ class Page extends Component {
       </View>
 
       <View>
+        <Text style={styles.title}>Waterfall</Text>
+        <WaterfallDemo />
+      </View>
+
+      <View>
         <Text style={styles.title}>RefreshControl</Text>
         <RefreshControlDemo />
       </View>
@@ -157,6 +168,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>Slider</Text>
         <SliderDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Table</Text>
+        <TableDemo />
       </View>
 
     </ScrollView>;

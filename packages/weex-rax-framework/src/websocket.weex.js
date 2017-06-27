@@ -83,7 +83,6 @@ module.exports = function(__weex_require__) {
 
       this.readyState = CLOSING;
       this.websocket.close(code, reason);
-      this.websocket.removeAllEventListeners();
     }
 
     send(data) {

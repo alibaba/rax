@@ -1,15 +1,13 @@
-# Driver Spec
+# Driver Spec `0.3`
 
 Driver is the key concept that make the application cross-container running.
-Rax have been implemented [browser driver](../../packages/rax/src/drivers/browser.js), [server driver](../../packages/rax/src/drivers/server.js) and [weex driver](../../packages/rax/src/drivers/weex.js).
+Rax have been implemented [browser driver](../../packages/driver-browser/src/index.js), [server driver](../../packages/driver-server/src/index.js) and [weex driver](../../packages/driver-weex/src/index.js).
 If want Rax works on other container, only need implement the driver specification.
 The driver should implement follow method:
 
 * getElementById(id)
-* getChildNodes(node)
 * createBody()
-* createFragment()
-* createComment(content)
+* createEmpty()
 * createText(text)
 * updateText(node, text)
 * createElement(component: {type, props})
@@ -27,8 +25,4 @@ The driver should implement follow method:
 * getWindowWidth()
 * beforeRender()
 * afterRender()
-
-```js
-const container = driver.createBody();
-render(element, container, driver);
-```
+* setNativeProps(node, props)

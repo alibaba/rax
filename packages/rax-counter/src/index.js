@@ -18,14 +18,15 @@ class Counter extends Component {
   }
 
   increment = () => {
-    let {onComplete, end} = this.props;
+    let {onComplete, onChange, end} = this.props;
     if (this.state.count < end) {
       this.state.count++;
+      onChange && onChange(this.state.count);
       this.state.count == end
         ? this.state.decrementColor = DISABLE_BOTTOM_COLOR
         : this.state.incrementColor = BOTTOM_COLOR;
-      onComplete && onComplete(this.state.count);
       this.setState(this.state);
+      onComplete && onComplete(this.state.count);
     }
   }
 

@@ -1,12 +1,17 @@
 import {Component, createElement, PropTypes} from 'rax';
-import View from 'rax-view';
 import Animated from 'rax-animated';
+import Touchable from 'rax-touchable';
+import {isWeb} from 'universal-env';
 
 const {View: AnimatedView} = Animated;
 
-const fadeAnim = new Animated.Value(0);
-
 export default class Modal extends Component {
+
+  constructor(props) {
+    super(props);
+    this.fadeAnim = new Animated.Value(0);
+  }
+
   static propTypes = {
     onHide: PropTypes.func,
     onShow: PropTypes.func,
@@ -24,7 +29,7 @@ export default class Modal extends Component {
   animated(state, callback) {
     const {visible} = state;
     Animated.timing(
-      fadeAnim,
+      this.fadeAnim,
       { toValue: visible === true ? 1 : 0}
     ).start(callback);
   }
@@ -75,13 +80,21 @@ export default class Modal extends Component {
   render() {
     const {contentStyle, children} = this.props;
     const {visible} = this.state;
+    // HACK: register a empty click event to fix Android click penetration problem when in mask
     return (
       visible && <AnimatedView
-        style={[styles.mask, {opacity: fadeAnim}]}
+        onClick={() => {
+          this.hide();
+        }}
+        style={[styles.mask, {opacity: this.fadeAnim}]}
       >
-        <View style={[styles.main, contentStyle]}>
+        <Touchable onPress={(e) => {
+          if (isWeb) {
+            e.stopPropagation && e.stopPropagation();
+          }
+        }} style={[styles.main, contentStyle]}>
           {children}
-        </View>
+        </Touchable>
       </AnimatedView>
     );
   }

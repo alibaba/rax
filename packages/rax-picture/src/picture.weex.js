@@ -1,5 +1,4 @@
 import {createElement, Component, PropTypes} from 'rax';
-import View from 'rax-view';
 import Image from 'rax-image';
 
 class Picture extends Component {
@@ -70,7 +69,7 @@ class Picture extends Component {
       newStyle.resizeMode = resizeMode;
     }
 
-    return <Image source={source} style={newStyle}>
+    return <Image {...this.props} source={source} style={newStyle}>
       {children}
     </Image>;
   }

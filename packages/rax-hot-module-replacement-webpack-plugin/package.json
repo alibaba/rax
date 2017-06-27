@@ -1,0 +1,24 @@
+{
+  "name": "rax-hot-module-replacement-webpack-plugin",
+  "version": "0.4.0",
+  "description": "Rax hot module replacement.",
+  "main": "./lib/HotModuleReplacementPlugin.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "hot-loader",
+    "webpack-plugin"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "tapable": "^0.2.6",
+    "webpack-sources": "^0.2.3"
+  }
+}

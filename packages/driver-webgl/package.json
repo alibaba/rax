@@ -1,0 +1,25 @@
+{
+  "name": "driver-webgl",
+  "version": "0.4.0",
+  "description": "WebGL driver for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component",
+    "react-component",
+    "webgl",
+    "three"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "three": "^0.85.0"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "rax-hot-loader",
+  "version": "0.4.0",
+  "description": "Tweak Rax components in real time.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "hot-loader",
+    "livereload",
+    "loader"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "files": [
+    "lib/",
+    "index.js",
+    "patch.js",
+    "babel.js"
+  ],
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "babel-template": "^6.24.1",
+    "global": "^4.3.2",
+    "react-children": "^0.0.2",
+    "react-deep-force-update": "^2.0.1",
+    "react-proxy": "^1.1.8"
+  },
+  "peerDependencies": {
+    "rax": "^0.3.5"
+  }
+}
