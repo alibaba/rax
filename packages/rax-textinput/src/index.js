@@ -16,7 +16,6 @@ const typeMap = {
   'numeric': 'number'
 };
 
-
 function getText(event) {
   let text;
   if (isWeex) {
@@ -41,7 +40,9 @@ function genEventObject(originalEvent) {
 
 class TextInput extends Component {
 
-  static propTypes = {};
+  componentWillReceiveProps(newProps) {
+    setNativeProps(this.refs.input, {value: newProps.value});
+  }
 
   handleInput = (event) => {
     this.props.onInput(genEventObject(event));
@@ -95,6 +96,8 @@ class TextInput extends Component {
       password,
       secureTextEntry,
       style,
+      value,
+      defaultValue,
     } = this.props;
 
     let propsCommon = {
@@ -111,6 +114,12 @@ class TextInput extends Component {
       },
       ref: 'input'
     };
+
+    if (value) {
+      delete propsCommon.defaultValue;
+    } else {
+      propsCommon.value = defaultValue;
+    }
 
     if (typeof editable !== 'undefined' && !editable) {
       propsCommon.readOnly = true;
