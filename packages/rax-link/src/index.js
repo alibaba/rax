@@ -32,6 +32,17 @@ class Link extends Component {
       ...styles.initial,
       ...nativeProps.style
     };
+    let textStyle = {
+      color: style.color,
+      lines: style.lines,
+      fontSize: style.fontSize,
+      fontStyle: style.fontStyle,
+      fontWeight: style.fontWeight,
+      textDecoration: style.textDecoration,
+      textAlign: style.textAlign,
+      fontFamily: style.fontFamily,
+      textOverflow: style.textOverflow,
+    };
 
     if (nativeProps.onPress) {
       nativeProps.onClick = nativeProps.onPress;
@@ -40,7 +51,7 @@ class Link extends Component {
 
     let content = children;
     if (typeof children === 'string' && !this.context.isInAParentText) {
-      content = <Text style={style}>{children}</Text>;
+      content = <Text style={textStyle}>{children}</Text>;
     }
 
     if (isWeex) {

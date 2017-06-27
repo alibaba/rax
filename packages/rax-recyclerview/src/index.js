@@ -86,7 +86,7 @@ class RecyclerView extends Component {
 
     if (isWeex) {
       let dom = require('@weex-module/dom');
-      let firstCell = findDOMNode(this.refs.cell0);
+      let firstCell = findDOMNode(this.refs[this.firstCellRef]);
       dom.scrollToElement(firstCell.ref, {
         offset: x || y || 0
       });
@@ -106,6 +106,9 @@ class RecyclerView extends Component {
 
       let cells = children.map((child, index) => {
         const ref = 'cell' + index;
+        if (!this.firstCellRef && child.type != RefreshControl && child.type != Header) {
+          this.firstCellRef = ref;
+        }
         if (child) {
           if (props._autoWrapCell && child.type != RefreshControl && child.type != Header) {
             return <Cell ref={ref}>{child}</Cell>;
