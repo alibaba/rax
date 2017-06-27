@@ -121,7 +121,7 @@ function transformChild(child, instance) {
   const {type: Com, props} = child;
   const {children} = props;
 
-  if (typeof type === 'function') {
+  if (typeof Com === 'function') {
     let childInstance = new Com();
     childInstance.props = props;
     if (children) {
