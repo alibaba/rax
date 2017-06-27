@@ -2,6 +2,9 @@
 
 图标组件，实现了 W3C 标准的 IconFont 接口。
 
+![](https://gw.alicdn.com/tfs/TB17w2MRVXXXXcUaXXXXXXXXXXX-261-160.jpg)
+
+
 ## 安装
 
 ```bash

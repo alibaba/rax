@@ -2,6 +2,8 @@
 
 Counter 数量选择，拥有默认的展现样式
 
+![](https://gw.alicdn.com/tfs/TB1dsgvRVXXXXbHXXXXXXXXXXXX-255-161.gif)
+
 ## 安装
 
 ```bash

@@ -2,6 +2,8 @@
 
 基础类型的图片实现，这里的 Image 组件只提供了基础的图片展示，更好的显示图片可以使用 Picture 组件。 
 
+![](https://gw.alicdn.com/tfs/TB1KqzRRVXXXXasaXXXXXXXXXXX-255-367.gif)
+
 ## 安装
 
 ```bash

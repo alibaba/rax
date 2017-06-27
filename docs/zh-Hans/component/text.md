@@ -2,7 +2,9 @@
 
 Text 用于显示文本，在 web 中实际上是一个 span 标签而非 p 标签。 
 
-Text 标签不支持嵌套，默认展现样式会占满一行。
+Text 标签默认展现样式会占满一行，如果有富文本的需求可以 Text 嵌套使用。
+
+![](https://gw.alicdn.com/tfs/TB1CRrMRVXXXXXIapXXXXXXXXXX-259-276.jpg)
 
 ## 安装
 

@@ -2,6 +2,8 @@
 
 复杂的视频播放器组件
 
+![](https://gw.alicdn.com/tfs/TB1.NTYRVXXXXcNXVXXXXXXXXXX-255-201.gif)
+
 ## 安装
 
 ```bash

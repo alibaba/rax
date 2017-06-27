@@ -2,6 +2,8 @@
 
 日历选择器组件，带有默认的展现样式。
 
+![](https://gw.alicdn.com/tfs/TB1uxYIRVXXXXXQapXXXXXXXXXX-255-300.gif)
+
 ## 安装
 
 ```bash

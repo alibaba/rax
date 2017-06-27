@@ -2,6 +2,8 @@
 
 轮播组件，就是以幻灯片的方式，在页面中横向展示诸多内容的组件。 轮播内容相互独立，前后在内容以及数据上都不存在逻辑关系。
 
+![](https://gw.alicdn.com/tfs/TB19Lr9RVXXXXXRXVXXXXXXXXXX-255-201.gif)
+
 ## 安装
 
 ```bash

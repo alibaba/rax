@@ -1,7 +1,10 @@
 # Button 按钮
 
 Button 是基础的按钮组件。内部实现依赖 `<Touchable>` 支持 onPress 定义的点击事件。  
+
 Button 带有默认样式，同时也支持传入 children 替换原有结构。
+
+![](https://gw.alicdn.com/tfs/TB1xub4RVXXXXbzXVXXXXXXXXXX-255-334.gif)
 
 ## 安装
 

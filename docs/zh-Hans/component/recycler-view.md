@@ -2,6 +2,7 @@
 
 `ScrollView` 的同门师兄，在 Weex 下是对 `list` 与 `cell` 的包装，其具有复用内部组件来提供性能的机制。
 
+![](https://gw.alicdn.com/tfs/TB1Cf_ZRVXXXXa8XVXXXXXXXXXX-255-265.gif)
 
 ## 安装
 

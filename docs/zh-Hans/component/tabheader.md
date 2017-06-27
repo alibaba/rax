@@ -2,6 +2,8 @@
 
 水平滚动 tab 切换，通过设置 type 类型可以展现不同的默认展现效果。
 
+![](https://gw.alicdn.com/tfs/TB1dtHMRVXXXXcYaXXXXXXXXXXX-255-433.gif)
+
 ## 安装
 
 ```bash

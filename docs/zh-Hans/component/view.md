@@ -6,6 +6,8 @@ View 是最基础的组件，它支持Flexbox、touch handling等功能，并且
 
 支持任意自定义属性的透传。
 
+![](https://gw.alicdn.com/tfs/TB13lP8RVXXXXbVXFXXXXXXXXXX-242-150.jpg)
+
 ## 安装
 
 ```bash

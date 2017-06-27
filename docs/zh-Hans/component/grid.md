@@ -2,6 +2,8 @@
 
 面向移动端页面的简单布局标签，提供外部行布局容器标签 Row，列 Col，多行多列布局参考 [MultiRow ](/component/multirow)。
 
+![](https://gw.alicdn.com/tfs/TB1fQZfRVXXXXcZXpXXXXXXXXXX-260-157.jpg)
+
 ## 安装
 
 ```bash

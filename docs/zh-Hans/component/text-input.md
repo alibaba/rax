@@ -4,6 +4,8 @@ TextInput 是唤起用户输入的基础组件。
 
 当定义 multiline 输入多行文字时其功能相当于 textarea。 
 
+![](https://gw.alicdn.com/tfs/TB1zgIwRVXXXXbmXXXXXXXXXXXX-255-296.gif)
+
 ## 安装
 
 ```bash

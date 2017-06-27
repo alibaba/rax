@@ -2,6 +2,8 @@
 
 Switch 是状态切换的开关按钮组件，具有默认的展现样式。
 
+![](https://gw.alicdn.com/tfs/TB1Nj.nRVXXXXcMXXXXXXXXXXXX-255-175.gif)
+
 ## 引用
 
 ```jsx

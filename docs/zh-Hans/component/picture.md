@@ -2,6 +2,8 @@
 
 复杂的图片组件，包涵懒加载图片、resizeMode 优化等功能，使用阿里 cdn 的图片可以享受 cdn 的部分优化策略。
 
+![](https://gw.alicdn.com/tfs/TB1sH3gRVXXXXcuXpXXXXXXXXXX-260-424.jpg)
+
 ## 安装
 
 ```bash

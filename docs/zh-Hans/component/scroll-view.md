@@ -1,6 +1,8 @@
 # ScrollView 滚动容器
 
-ScrollView 是一个包装了滚动操作的组件。一般情况下需要一个确定的高度来保证 ScrollView 的正常展现。  
+ScrollView 是一个包装了滚动操作的组件。一般情况下需要一个确定的高度来保证 ScrollView 的正常展现。
+
+![](https://gw.alicdn.com/tfs/TB1SV3iRVXXXXcAXpXXXXXXXXXX-255-383.gif)  
 
 ## 安装
 

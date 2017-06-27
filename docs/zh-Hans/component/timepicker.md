@@ -2,6 +2,8 @@
 
 TimePicker 时间选择组件，调用系统原生选择框实现
 
+![](https://gw.alicdn.com/tfs/TB1p1zYRVXXXXc6XVXXXXXXXXXX-240-390.jpg)
+
 ## 安装
 
 ```bash

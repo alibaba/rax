@@ -4,6 +4,8 @@ Link 是基础的链接组件，同 a 标签。它带有默认样式 `textDecora
 
 在浏览器中，同我们熟悉的 a 标签，使用 Link 标签并不能新开一个 `webview` ，它只是在当前的 `webview` 中做页面的跳转。
 
+![](https://gw.alicdn.com/tfs/TB1rbYSRVXXXXbDaXXXXXXXXXXX-255-367.gif)
+
 ## 安装
 
 ```bash

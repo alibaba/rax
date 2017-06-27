@@ -2,6 +2,8 @@
 
 CheckBox 是基础的选择框，选择框用图片实现，支持用户使用自己的图片进行替换
 
+![](https://gw.alicdn.com/tfs/TB1r5wbRVXXXXaNXFXXXXXXXXXX-255-77.gif)
+
 ## 安装
 
 ```bash

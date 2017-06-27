@@ -4,6 +4,8 @@
 
 长列表需求不要使用一个大的 MultiRow 组件进行统一布局，没有一个完整的大标签包裹性能会更好。
 
+![](https://gw.alicdn.com/tfs/TB17KogRVXXXXXaXFXXXXXXXXXX-261-214.jpg)
+
 ## 安装
 
 ```bash

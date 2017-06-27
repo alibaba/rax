@@ -2,6 +2,8 @@
 
 倒计时组件，可设置倒计时毫秒数，以及展现的模板。
 
+![](https://gw.alicdn.com/tfs/TB1OdDNRVXXXXXeapXXXXXXXXXX-255-201.gif)
+
 ## 安装
 
 ```bash
