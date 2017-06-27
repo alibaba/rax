@@ -57,7 +57,7 @@ class Counter extends Component {
         </Touchable>
         <View>
           <Text style={styles.countText}>
-            {'' + this.state.count}
+            {this.state.count}
           </Text>
         </View>
         <Touchable
