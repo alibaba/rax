@@ -1,6 +1,6 @@
 {
   "name": "universal-perf",
-  "version": "0.3.8",
+  "version": "0.4.0",
   "description": "A universal Perf tools.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -11,6 +11,5 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rax#readme",
-  "dependencies": {}
+  "homepage": "https://github.com/alibaba/rax#readme"
 }
