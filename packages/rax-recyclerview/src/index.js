@@ -106,7 +106,7 @@ class RecyclerView extends Component {
 
       let cells = children.map((child, index) => {
         const ref = 'cell' + index;
-        if (!this.firstCellRef && child.type != RefreshControl && child.type != Header) {
+        if (!this.firstCellRef && child && child.type != RefreshControl && child.type != Header) {
           this.firstCellRef = ref;
         }
         if (child) {
