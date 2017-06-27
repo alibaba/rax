@@ -121,11 +121,16 @@ function genNativeModules(modules, document) {
         const methodName = method.name;
 
         modules[moduleName].module.exports[methodName] = (...args) => {
+          let options = {};
+          let lastArg = args[args.length - 1];
+          if (typeof lastArg === 'object' && lastArg.__weex_options__) {
+            options = lastArg.__weex_options__;
+          }
           // https://github.com/alibaba/weex/issues/1677
           return document.taskCenter.send('module', {
             module: name,
             method: methodName
-          }, args);
+          }, args, options);
         };
       });
     }
