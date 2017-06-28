@@ -17,6 +17,7 @@ const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 const instances = {};
 // Bundles hub
 const bundles = {};
+const noop = function() {};
 
 function dispatchEventToInstance(event, targetOrigin) {
   var instance;
@@ -289,10 +290,14 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
         const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
         weexNavigator.push({
           url,
-          animated: 'true',
-        }, function(e) {
-          // noop
-        });
+          animated: true,
+        }, noop);
+      },
+      close: () => {
+        const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
+        weexNavigator.close({
+          animated: true
+        }, noop, noop);
       },
       postMessage: (message, targetOrigin) => {
         var event = {
