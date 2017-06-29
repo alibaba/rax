@@ -17,7 +17,10 @@
 'use strict';
 
 import {createElement, Component} from 'rax';
-import {View, Text, TouchableBounce} from 'rax-components';
+import TouchableBounce from 'rax-touchable';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
 import StyleSheet from 'universal-stylesheet';
 import Animated from 'rax-animated';
 import GameBoard from './GameBoard';

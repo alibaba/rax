@@ -1,6 +1,6 @@
 {
   "name": "rax-barcode",
-  "version": "0.3.6",
+  "version": "0.4.2",
   "description": "barcode component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -23,13 +23,13 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-canvas": "^0.3.6",
-    "universal-stylesheet": "^0.3.6"
+    "rax-canvas": "^0.4.2",
+    "universal-stylesheet": "^0.4.2"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.3.6"
+    "rax-test-renderer": "^0.4.2"
   }
 }

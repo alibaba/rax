@@ -1,6 +1,6 @@
 {
   "name": "rax-timepicker",
-  "version": "0.3.6",
+  "version": "0.4.2",
   "description": "TimePicker component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,14 +20,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.3.6",
-    "rax-text": "^0.3.6",
-    "rax-touchable": "^0.3.6"
+    "rax-text": "^0.4.2",
+    "rax-touchable": "^0.4.2",
+    "universal-env": "^0.4.2"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.3.6"
+    "rax-test-renderer": "^0.4.2"
   }
 }

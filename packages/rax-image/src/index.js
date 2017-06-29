@@ -3,12 +3,19 @@ import {isWeex} from 'universal-env';
 import View from 'rax-view';
 
 class Image extends Component {
+
+  static propTypes = {};
+
   static resizeMode = {
     contain: 'contain',
     cover: 'cover',
     stretch: 'stretch',
     center: 'center',
     repeat: 'repeat',
+  };
+
+  static contextTypes = {
+    isInAParentText: PropTypes.bool
   };
 
   render() {
@@ -35,7 +42,7 @@ class Image extends Component {
 
       nativeProps.style = {
         ...{
-          display: 'flex',
+          ...!this.context.isInAParentText && {display: 'flex'},
           width: width,
           height: height,
         },

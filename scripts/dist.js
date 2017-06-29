@@ -14,7 +14,6 @@ fs.readdirSync(PACKAGES_DIR)
 
   if (!/^(rax|universal)-/.test(packageName) ||
      /webpack/.test(packageName) ||
-     /theme/.test(packageName) ||
      /cli/.test(packageName) ||
      /loader/.test(packageName) ||
      /rax-scripts/.test(packageName) ||
@@ -142,9 +141,13 @@ dist(getConfig(
 function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
   // Webpack need an absolute path
   output.path = path.resolve(__dirname, '..', output.path);
+
   return {
     target: target || 'node',
     devtool: devtool || 'source-map',
+    stats: {
+      optimizationBailout: true,
+    },
     entry: entry,
     output: output,
     plugins: [
@@ -153,6 +156,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
       }),
       new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
+      new webpack.optimize.ModuleConcatenationPlugin(),
       new webpack.optimize.UglifyJsPlugin({
         include: /\.min\.js$/,
         minimize: true,

@@ -1,26 +1,30 @@
 import resolvePlugins from './resolvePlugins';
+import presetFlow from 'babel-preset-flow';
+import presetEs2016 from 'babel-preset-es2016';
+import presetEs2017 from 'babel-preset-es2017';
+import presetStage0 from 'babel-preset-stage-0';
 
 module.exports = {
+  presets: [
+    presetFlow,
+    presetEs2016,
+    presetEs2017,
+    presetStage0,
+  ],
   plugins: resolvePlugins([
+    'syntax-jsx',
     'transform-react-display-name',
     ['transform-react-jsx', {
       pragma: 'createElement' // default pragma is React.createElement
     }],
     'transform-jsx-stylesheet',
-    'transform-flow-strip-types',
-    'transform-export-extensions', // stage-1
-    'transform-decorators-legacy', // should before transform-class-properties
-    'transform-class-properties',
-    'transform-object-rest-spread', // stage-3
-    'syntax-trailing-function-commas', // stage-3
-    'syntax-flow',
-    'syntax-jsx',
-    'add-module-exports'
+    'add-module-exports',
   ]),
   env: {
     development: {
       plugins: resolvePlugins([
         'transform-react-jsx-source',
+        'transform-react-jsx-self'
       ])
     },
     production: {

@@ -1,6 +1,6 @@
 {
   "name": "rax-hot-loader",
-  "version": "0.3.6",
+  "version": "0.4.2",
   "description": "Tweak Rax components in real time.",
   "main": "index.js",
   "repository": {
@@ -27,9 +27,9 @@
   "dependencies": {
     "babel-template": "^6.24.1",
     "global": "^4.3.2",
+    "react-children": "^0.0.2",
     "react-deep-force-update": "^2.0.1",
-    "react-proxy": "^1.1.8",
-    "react-children": "^0.0.2"
+    "react-proxy": "^1.1.8"
   },
   "peerDependencies": {
     "rax": "^0.3.5"

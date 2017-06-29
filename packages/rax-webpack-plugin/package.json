@@ -1,6 +1,6 @@
 {
   "name": "rax-webpack-plugin",
-  "version": "0.3.6",
+  "version": "0.4.2",
   "description": "Webpack plugin for Rax framework.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -17,10 +17,10 @@
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
-    "webpack": "^2.2.1"
+    "webpack": "^3.0.0"
   },
   "peerDependencies": {
-    "webpack": "^1.x.x || ^2.x.x"
+    "webpack": "^1.x.x || ^2.x.x || ^3.x.x"
   },
   "dependencies": {
     "babel-code-frame": "^6.22.0",
@@ -28,10 +28,10 @@
     "babel-traverse": "^6.19.0",
     "babel-types": "^6.19.0",
     "babylon": "^6.14.1",
+    "find-root": "^1.0.0",
     "loader-utils": "^0.2.16",
     "lodash.clonedeep": "^4.5.0",
     "source-map": "^0.5.6",
-    "webpack-sources": "^0.1.4",
-    "find-root": "^1.0.0"
+    "webpack-sources": "^0.1.4"
   }
 }

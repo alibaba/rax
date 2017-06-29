@@ -16,7 +16,6 @@ const typeMap = {
   'numeric': 'number'
 };
 
-
 function getText(event) {
   let text;
   if (isWeex) {
@@ -33,12 +32,17 @@ function genEventObject(originalEvent) {
     nativeEvent: {
       text
     },
-    value: text,
     originalEvent,
+    value: text,
+    target: originalEvent.target,
   };
 }
 
 class TextInput extends Component {
+
+  componentWillReceiveProps(newProps) {
+    setNativeProps(this.refs.input, {value: newProps.value});
+  }
 
   handleInput = (event) => {
     this.props.onInput(genEventObject(event));
@@ -79,10 +83,8 @@ class TextInput extends Component {
     const {
       accessibilityLabel,
       autoComplete,
-      autoFocus,
       editable,
       keyboardType,
-      maxLength,
       maxNumberOfLines,
       multiline,
       numberOfLines,
@@ -91,32 +93,33 @@ class TextInput extends Component {
       onChange,
       onChangeText,
       onInput,
-      placeholder,
       password,
       secureTextEntry,
       style,
       value,
-      id
+      defaultValue,
     } = this.props;
 
     let propsCommon = {
+      ...this.props,
       'aria-label': accessibilityLabel,
       autoComplete: autoComplete && 'on',
-      autoFocus,
-      maxLength,
       onChange: (onChange || onChangeText) && this.handleChange,
       onInput: onInput && this.handleInput,
       onBlur: onBlur && this.handleBlur,
       onFocus: onFocus && this.handleFocus,
-      placeholder,
       style: {
         ...styles.initial,
         ...style
       },
-      value,
-      id,
       ref: 'input'
     };
+
+    if (value) {
+      delete propsCommon.defaultValue;
+    } else {
+      propsCommon.value = defaultValue;
+    }
 
     if (typeof editable !== 'undefined' && !editable) {
       propsCommon.readOnly = true;

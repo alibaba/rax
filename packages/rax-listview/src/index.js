@@ -7,6 +7,8 @@ const SCROLLVIEW_REF = 'scrollview';
 
 class ListView extends Component {
 
+  static propTypes = {};
+
   static defaultProps = {
     renderScrollComponent: props => <RecyclerView {...props} />,
     dataSource: [],

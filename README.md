@@ -100,16 +100,57 @@ More examples take a look at the [`examples`](/examples/) folder:
 * :traffic_light: [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
 * :computer: [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
 
-## Universal Libraries
+## Rax Drivers
+* :earth_asia: [driver-browser](/packages/driver-browser): A driver for webkit browser.
+* :bullettrain_front: [driver-weex](/packages/driver-weex): A driver for weex container.
+* :tractor: [driver-server](/packages/driver-server): A driver for server-side render.
+* :bus: [driver-webgl](/packages/driver-webgl): A driver for 3d render.
 
-* :earth_asia: [universal-env](/packages/universal-env): A universal environment utilities.
-* :loop: [universal-transition](/packages/universal-transition): A universal transition API.
-* :iphone: [universal-platform](/packages/universal-platform): A universal Platform API.
-* :bikini: [universal-stylesheet](/packages/universal-stylesheet): A universal StyleSheet API.
-* :point_up_2: [universal-panresponder](/packages/universal-panresponder): A universal PanResponder API.
-* :speech_balloon: [universal-toast](/packages/universal-toast): A universal Toast API.
-* :postbox: [universal-jsonp](/packages/universal-jsonp): A universal JSONP utilities.
+## Compatible with React Components
 
+Usage with Webpack or Babel makes React-based components work with Rax, without any code changes.
+
+#### Usage with Webpack
+
+Add an alias for `react` and `react-dom`:
+
+```js
+{
+  // ...
+  resolve: {
+    alias: {
+      'react': 'rax',
+      'react-dom': 'rax',
+      // Not necessary unless you consume a module using `createClass`
+      'create-react-class': "rax/lib/createClass"
+    }
+  }
+  // ...
+}
+```
+#### Usage with Babel
+
+Install the babel plugin for aliasing: `npm install --save-dev babel-plugin-module-resolver`
+
+Add an alias for `react` and `react-dom` in your .babelrc:
+
+```js
+{
+  // ...
+  "plugins": [
+    ["module-resolver", {
+      "root": ["."],
+      "alias": {
+        "react": "rax",
+        "react-dom": "rax",
+        // Not necessary unless you consume a module using `createClass`
+        "create-react-class": "rax/lib/createClass"
+      }
+    }]
+  ]
+  // ...
+}
+```
 
 ## Developer Tools
 
@@ -127,51 +168,10 @@ More examples take a look at the [`examples`](/examples/) folder:
 <img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
 </p>
 
-## Official Components
-
-* [rax-animated](/packages/rax-animated)
-* [rax-barcode](/packages/rax-barcode)
-* [rax-button](/packages/rax-button)
-* [rax-calendar](/packages/rax-calendar)
-* [rax-canvas](/packages/rax-canvas)
-* [rax-charts](/packages/rax-charts)
-* [rax-checkbox](/packages/rax-checkbox)
-* [rax-countdown](/packages/rax-countdown)
-* [rax-counter](/packages/rax-counter)
-* [rax-datepicker](/packages/rax-datepicker)
-* [rax-gotop](/packages/rax-gotop)
-* [rax-grid](/packages/rax-grid)
-* [rax-icon](/packages/rax-icon)
-* [rax-image](/packages/rax-image)
-* [rax-link](/packages/rax-link)
-* [rax-listview](/packages/rax-listview)
-* [rax-menulist](/packages/rax-menulist)
-* [rax-modal](/packages/rax-modal)
-* [rax-multirow](/packages/rax-multirow)
-* [rax-navigation](/packages/rax-navigation)
-* [rax-picker](/packages/rax-picker)
-* [rax-picture](/packages/rax-picture)
-* [rax-player](/packages/rax-player)
-* [rax-qrcode](/packages/rax-qrcode)
-* [rax-recyclerview](/packages/rax-recyclerview)
-* [rax-redux](/packages/rax-redux)
-* [rax-refreshcontrol](/packages/rax-refreshcontrol)
-* [rax-scrollview](/packages/rax-scrollview)
-* [rax-slider](/packages/rax-slider)
-* [rax-switch](/packages/rax-switch)
-* [rax-tabbar](/packages/rax-tabbar)
-* [rax-tabheader](/packages/rax-tabheader)
-* [rax-table](/packages/rax-table)
-* [rax-text](/packages/rax-text)
-* [rax-textinput](/packages/rax-textinput)
-* [rax-timepicker](/packages/rax-timepicker)
-* [rax-touchable](/packages/rax-touchable)
-* [rax-video](/packages/rax-video)
-* [rax-view](/packages/rax-view)
-
 ## Contributing
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
+
 
 ### Development Workflow
 

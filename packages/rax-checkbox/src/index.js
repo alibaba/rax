@@ -34,7 +34,7 @@ class CheckBox extends Component {
       let internalChecked = this.state.internalChecked;
 
       if (onChange) {
-        onChange(internalChecked);
+        onChange(!internalChecked);
       }
       this.setState({
         internalChecked: !internalChecked

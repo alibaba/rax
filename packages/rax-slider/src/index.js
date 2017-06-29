@@ -27,6 +27,7 @@ class Slider extends Component {
       showsPagination,
       paginationStyle,
       autoPlayInterval,
+      loop,
       width,
       height
     } = this.props;
@@ -39,6 +40,7 @@ class Slider extends Component {
       showIndicators: showsPagination,
       paginationStyle: paginationStyle ? paginationStyle : defaultPaginationStyle,
       interval: autoPlayInterval,
+      infinite: loop,
       index: index,
       ...{
         style: {

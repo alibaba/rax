@@ -1,5 +1,5 @@
+import ServerDriver from 'driver-server';
 import Host from '../vdom/host';
-import ServerDriver from '../drivers/server';
 import render from '../render';
 import Serializer from './serializer';
 

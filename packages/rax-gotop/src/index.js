@@ -38,7 +38,11 @@ export default class GoTop extends Component {
     } else {
       Container = Animated.View;
     }
-    return <View>
+    return <View
+      style={styles.root}
+      onAppear={() => {}}
+      onDisAppear={() => {}}
+      >
       {topNode}
       <View>
         <View style={styles.hideNode} onAppear={() => {
@@ -152,6 +156,10 @@ export default class GoTop extends Component {
 }
 
 let styles = {
+  root: {
+    height: 1,
+    marginBottom: -1
+  },
   container: {
     position: 'fixed',
     right: 25,

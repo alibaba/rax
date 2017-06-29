@@ -5,7 +5,8 @@ import Text from 'rax-text';
 class Link extends Component {
 
   static contextTypes = {
-    isInAParentLink: PropTypes.bool
+    isInAParentLink: PropTypes.bool,
+    isInAParentText: PropTypes.bool
   };
 
   static childContextTypes = {
@@ -31,6 +32,17 @@ class Link extends Component {
       ...styles.initial,
       ...nativeProps.style
     };
+    let textStyle = {
+      color: style.color,
+      lines: style.lines,
+      fontSize: style.fontSize,
+      fontStyle: style.fontStyle,
+      fontWeight: style.fontWeight,
+      textDecoration: style.textDecoration,
+      textAlign: style.textAlign,
+      fontFamily: style.fontFamily,
+      textOverflow: style.textOverflow,
+    };
 
     if (nativeProps.onPress) {
       nativeProps.onClick = nativeProps.onPress;
@@ -38,8 +50,8 @@ class Link extends Component {
     }
 
     let content = children;
-    if (typeof children === 'string') {
-      content = <Text style={style}>{children}</Text>;
+    if (typeof children === 'string' && !this.context.isInAParentText) {
+      content = <Text style={textStyle}>{children}</Text>;
     }
 
     if (isWeex) {
