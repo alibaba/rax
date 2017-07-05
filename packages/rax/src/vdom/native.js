@@ -76,19 +76,18 @@ class NativeComponent {
       children = [children];
     }
 
-    let renderedChildren = {};
+    let renderedChildren = this._renderedChildren = {};
 
-    let renderedChildrenImage = children.map( (element, index) => {
+    let renderedChildrenImage = children.map((element, index) => {
       let renderedChild = instantiateComponent(element);
       let name = getElementKeyName(renderedChildren, element, index);
       renderedChildren[name] = renderedChild;
       renderedChild._mountIndex = index;
       // Mount
-      let mountImage = renderedChild.mountComponent(this.getNativeNode(), context);
+      let mountImage = renderedChild.mountComponent(this.getNativeNode(),
+        context);
       return mountImage;
     });
-
-    this._renderedChildren = renderedChildren;
 
     return renderedChildrenImage;
   }
@@ -152,9 +151,9 @@ class NativeComponent {
     let styleUpdates;
     for (propKey in prevProps) {
       if (propKey === CHILDREN ||
-          nextProps.hasOwnProperty(propKey) ||
-         !prevProps.hasOwnProperty(propKey) ||
-         prevProps[propKey] == null) {
+        nextProps.hasOwnProperty(propKey) ||
+        !prevProps.hasOwnProperty(propKey) ||
+        prevProps[propKey] == null) {
         continue;
       }
       if (propKey === STYLE) {
@@ -168,10 +167,12 @@ class NativeComponent {
         this._prevStyleCopy = null;
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         if (typeof prevProps[propKey] === 'function') {
-          Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProps[propKey]);
+          Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(
+            2).toLowerCase(), prevProps[propKey]);
         }
       } else {
-        Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[propKey]);
+        Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[
+          propKey]);
       }
     }
 
@@ -181,9 +182,9 @@ class NativeComponent {
         propKey === STYLE ? this._prevStyleCopy :
         prevProps != null ? prevProps[propKey] : undefined;
       if (propKey === CHILDREN ||
-          !nextProps.hasOwnProperty(propKey) ||
-          nextProp === prevProp ||
-          nextProp == null && prevProp == null) {
+        !nextProps.hasOwnProperty(propKey) ||
+        nextProp === prevProp ||
+        nextProp == null && prevProp == null) {
         continue;
       }
       // Update style
@@ -199,7 +200,7 @@ class NativeComponent {
           // Unset styles on `prevProp` but not on `nextProp`.
           for (styleName in prevProp) {
             if (prevProp.hasOwnProperty(styleName) &&
-                (!nextProp || !nextProp.hasOwnProperty(styleName))) {
+              (!nextProp || !nextProp.hasOwnProperty(styleName))) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = '';
             }
@@ -207,7 +208,7 @@ class NativeComponent {
           // Update styles that changed since `prevProp`.
           for (styleName in nextProp) {
             if (nextProp.hasOwnProperty(styleName) &&
-                prevProp[styleName] !== nextProp[styleName]) {
+              prevProp[styleName] !== nextProp[styleName]) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = nextProp[styleName];
             }
@@ -217,23 +218,26 @@ class NativeComponent {
           styleUpdates = nextProp;
         }
 
-      // Update event binding
+        // Update event binding
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         if (typeof prevProp === 'function') {
-          Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), prevProp);
+          Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(
+            2).toLowerCase(), prevProp);
         }
 
         if (typeof nextProp === 'function') {
-          Host.driver.addEventListener(this.getNativeNode(), propKey.slice(2).toLowerCase(), nextProp);
+          Host.driver.addEventListener(this.getNativeNode(), propKey.slice(2)
+            .toLowerCase(), nextProp);
         }
-      // Update other property
+        // Update other property
       } else {
         let payload = {};
         payload[propKey] = nextProp;
         if (nextProp != null) {
           Host.driver.setAttribute(this.getNativeNode(), propKey, nextProp);
         } else {
-          Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[propKey]);
+          Host.driver.removeAttribute(this.getNativeNode(), propKey,
+            prevProps[propKey]);
         }
         if (process.env.NODE_ENV !== 'production') {
           Host.measurer && Host.measurer.recordOperation({
@@ -274,15 +278,18 @@ class NativeComponent {
       }
 
       // Update next children elements
-      for (let index = 0, length = nextChildrenElements.length; index < length; index++) {
+      for (let index = 0, length = nextChildrenElements.length; index <
+        length; index++) {
         let nextElement = nextChildrenElements[index];
         let name = getElementKeyName(nextChildren, nextElement, index);
         let prevChild = prevChildren && prevChildren[name];
         let prevElement = prevChild && prevChild._currentElement;
 
-        if (prevChild != null && shouldUpdateComponent(prevElement, nextElement)) {
+        if (prevChild != null && shouldUpdateComponent(prevElement,
+            nextElement)) {
           // Pass the same context when updating chidren
-          prevChild.updateComponent(prevElement, nextElement, context, context);
+          prevChild.updateComponent(prevElement, nextElement, context,
+            context);
           nextChildren[name] = prevChild;
         } else {
           // Unmount the prevChild when nextChild is different element type.
@@ -375,8 +382,7 @@ class NativeComponent {
 
           nextChild.mountComponent(
             parent,
-            context,
-            (newChild, parent) => {
+            context, (newChild, parent) => {
               // TODO: Rework the duplicate code
               let oldChild = oldNodes[name];
               if (!Array.isArray(newChild)) {
