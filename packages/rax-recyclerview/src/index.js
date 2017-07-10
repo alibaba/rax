@@ -1,4 +1,4 @@
-import {PureComponent, Component, createElement, cloneElement, findDOMNode, PropTypes} from 'rax';
+import {PureComponent, Component, createElement, findDOMNode, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 import View from 'rax-view';
 import ScrollView from 'rax-scrollview';
@@ -86,8 +86,8 @@ class RecyclerView extends Component {
 
     if (isWeex) {
       let dom = require('@weex-module/dom');
-      let firstCell = findDOMNode(this.refs[this.firstCellRef]);
-      dom.scrollToElement(firstCell.ref, {
+      let firstNode = findDOMNode(this.refs.firstNodePlaceholder);
+      dom.scrollToElement(firstNode.ref, {
         offset: x || y || 0
       });
     } else {
@@ -105,18 +105,14 @@ class RecyclerView extends Component {
       }
 
       let cells = children.map((child, index) => {
-        const ref = 'cell' + index;
-        if (!this.firstCellRef && child && child.type != RefreshControl && child.type != Header) {
-          this.firstCellRef = ref;
-        }
         if (child) {
           if (props._autoWrapCell && child.type != RefreshControl && child.type != Header) {
-            return <Cell ref={ref}>{child}</Cell>;
+            return <Cell>{child}</Cell>;
           } else {
-            return cloneElement(child, {ref});
+            return child;
           }
         } else {
-          return <Cell ref={ref} />;
+          return <Cell />;
         }
       });
 
@@ -128,6 +124,7 @@ class RecyclerView extends Component {
           loadmoreretry={this.state.loadmoreretry}
           loadmoreoffset={props.onEndReachedThreshold}
         >
+          <Cell ref="firstNodePlaceholder" />
           {cells}
         </list>
       );
