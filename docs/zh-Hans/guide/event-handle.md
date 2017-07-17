@@ -61,8 +61,8 @@ ScrollView 为我们包装了滚动事件。它同时支持横向滚动和竖向
 通过下面这三个属性可以更好地实现我们熟悉的 onScroll 相关的功能：
 
 - throttle: 这个属性控制在滚动过程中，scroll事件被调用的频率（默认值为100），用于滚动的节流
-- loadMoreOffset: 设置加载更多的偏移 可以写作loadmoreoffset
-- onLoadMore: 滚动区域还剩 loadmoreoffset 的长度时触发（默认值为100）
+- loadMoreOffset: 设置加载更多的偏移 可以写作loadmoreoffset（默认值为100）
+- onLoadMore: 滚动区域还剩 loadmoreoffset 的长度时触发
 
 示例：
 
