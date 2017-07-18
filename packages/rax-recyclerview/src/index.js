@@ -73,8 +73,9 @@ class RecyclerView extends Component {
   resetScroll = () => {
     if (isWeex) {
       this.setState({
-        loadmoreretry: this.loadmoreretry++,
+        loadmoreretry: this.loadmoreretry++, // for weex 0.9-
       });
+      this.refs.list.resetLoadmore && this.refs.list.resetLoadmore(); // for weex 0.9+
     } else {
       this.refs.scrollview.resetScroll();
     }
@@ -97,7 +98,6 @@ class RecyclerView extends Component {
 
   render() {
     let props = this.props;
-
     if (isWeex) {
       let children = props.children;
       if (!Array.isArray(children)) {
@@ -116,15 +116,19 @@ class RecyclerView extends Component {
         }
       });
 
+      // add firstNodePlaceholder after refreshcontrol
+      let addIndex = cells[0].type == RefreshControl ? 1 : 0 ;
+      cells.splice(addIndex, 0, <Cell ref="firstNodePlaceholder" />);
+
       return (
         <list
           {...props}
+          ref="list"
           onLoadmore={props.onEndReached}
           onScroll={props.onScroll ? this.handleScroll : null}
           loadmoreretry={this.state.loadmoreretry}
           loadmoreoffset={props.onEndReachedThreshold}
         >
-          <Cell ref="firstNodePlaceholder" />
           {cells}
         </list>
       );
