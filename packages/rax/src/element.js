@@ -144,6 +144,10 @@ export function createFactory(type) {
 }
 
 export function cloneElement(element, config, ...children) {
+  if (!isValidElement(element)) {
+    throw Error('cloneElement: not a valid element.' + getRenderErrorInfo());
+  }
+
   // Original props are copied
   const props = Object.assign({}, element.props);
 

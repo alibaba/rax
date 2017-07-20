@@ -1,6 +1,6 @@
 {
   "name": "universal-toast",
-  "version": "0.4.0",
+  "version": "0.4.3",
   "description": "A universal Toast API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.4.0"
+    "universal-env": "^0.4.3"
   }
 }
