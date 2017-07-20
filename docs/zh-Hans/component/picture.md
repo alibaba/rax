@@ -2,6 +2,8 @@
 
 复杂的图片组件，包涵懒加载图片、resizeMode 优化等功能，使用阿里 cdn 的图片可以享受 cdn 的部分优化策略。
 
+（针对 gif 图片的显示依赖客户端的图片库，手淘环境可以在 attribute 和 style 上设置 quality='original' 解决）
+
 ![](https://gw.alicdn.com/tfs/TB1sH3gRVXXXXcuXpXXXXXXXXXX-260-424.jpg)
 
 ## 安装

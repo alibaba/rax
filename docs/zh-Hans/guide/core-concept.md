@@ -22,4 +22,4 @@ this.setState({ value: 10 })
 ```jsx
  <View style={{ width: 100, height: 100, backgroundColor: 'skyblue' }} />
 ```
-虽然支持，但 Rax 不推荐使用内联对象的方式来应用样式，你可以查阅 [样式处理](./style) 来查看在 Rax 中使用样式的最佳实践。
+虽然支持，但 Rax 不推荐使用内联对象的方式来应用样式，你可以查阅 [样式处理](./guide/style) 来查看在 Rax 中使用样式的最佳实践。
