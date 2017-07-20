@@ -12,12 +12,17 @@ $ npm install rax-animated --save
 ## 引用
 
 ```jsx
-import Button from 'rax-animated';
+import Animated from 'rax-animated';
 ```
 
 最简单的工作流程就是创建一个`Animated.Value`，把它绑定到组件的一个或多个样式属性上。然后可以通过动画驱动它，譬如`Animated.timing`，或者通过`Animated.event`把它关联到一个手势上，譬如拖动或者滑动操作。除了样式，`Animated.value`还可以绑定到props上，并且一样可以被插值。这里有一个简单的例子，一个容器视图会在加载的时候淡入显示：
 
 ```jsx
+
+import {createElement, Component, render} from 'rax';
+import Image from 'rax-image';
+import Animated from 'rax-animated';
+
 class FadeInView extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +45,25 @@ class FadeInView extends Component {
     );
   }
 }
+
+// use it
+render(
+  <FadeInView>
+  
+      <Image source={{
+          uri: 'https://gw.alicdn.com/tfs/TB1g6AvPVXXXXa7XpXXXXXXXXXX-215-215.png'
+        }}
+        style={{
+          width: 100,
+          height: 100,
+        }}
+        resizeMode="cover"
+      />
+      
+    hello world
+    
+  </FadeInView>
+);
 ```
 
 
@@ -47,9 +71,9 @@ class FadeInView extends Component {
 
  动画具备很强的可配置性。自定义或者预定义的过渡函数、延迟、时间、衰减比例、刚度等等。取决于动画类型的不同，你还可以配置更多的参数。
 
- 一个`Animated.Value`可以驱动任意数量的属性，并且每个属性可以配置一个不同的插值函数。插值函数把一个输入的范围映射到输出的范围，通常我们用线性插值，不过你也可以使用其他的过渡函数。默认情况下，当输入超出范围时，它也会对应的进行转换，不过你也可以把输出约束到范围之内。 
+ 一个`Animated.View`可以驱动任意数量的属性，并且每个属性可以配置一个不同的插值函数。插值函数把一个输入的范围映射到输出的范围，通常我们用线性插值，不过你也可以使用其他的过渡函数。默认情况下，当输入超出范围时，它也会对应的进行转换，不过你也可以把输出约束到范围之内。 
 
- 举个例子，你可能希望你的`Animated.Value`从0变化到1时，把组件的位置从150px移动到0px，不透明度从0到1。可以通过以下的方法修改`style`属性来实现：
+ 举个例子，你可能希望你的`Animated.View`从0变化到1时，把组件的位置从150px移动到0px，不透明度从0到1。可以通过以下的方法修改`style`属性来实现：
 
 ```jsx
 style={{
@@ -115,13 +139,13 @@ style={{
 
 ```jsx
 onScroll={this.AnimatedEvent(
-	[{nativeEvent: {contentOffset: {x: this._scrollX}}}]
-	{listener},          // 可选的异步监听函数
+  [{nativeEvent: {contentOffset: {x: this._scrollX}}}]
+  {listener},          // 可选的异步监听函数
 )
 ...
 onPanResponderMove: this.AnimatedEvent([
-	null,                // 忽略原始事件
-	{dx: this._panX},    // 手势状态参数
+  null,                // 忽略原始事件
+  {dx: this._panX},    // 手势状态参数
 ]),
 ```
 - static createAnimatedComponent(Component: any) 
@@ -190,7 +214,7 @@ onPanResponderMove: this.AnimatedEvent([
 例子：
 
 ```jsx
-class DraggableView extends Component {
+class DraggableView extends React.Component {
    constructor(props) {
      super(props);
      this.state = {
@@ -283,7 +307,7 @@ exports.examples = [
       'bring opacity from 0 to 1 when the component ' +
       'mounts.',
     render: function() {
-      class FadeInView extends Component {
+      class FadeInView extends React.Component {
         constructor(props) {
           super(props);
           this.state = {
@@ -310,7 +334,7 @@ exports.examples = [
           );
         }
       }
-      class FadeInExample extends Component {
+      class FadeInExample extends React.Component {
         constructor(props) {
           super(props);
           this.state = {
