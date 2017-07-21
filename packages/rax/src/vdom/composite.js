@@ -6,29 +6,11 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 
-function performInSandbox(fn, handleError) {
-  try {
-    return fn();
-  } catch (e) {
-    if (handleError) {
-      handleError(e);
-    } else {
-      if (Host.sandbox) {
-        setTimeout(() => {
-          throw e;
-        }, 0);
-      } else {
-        throw e;
-      }
-    }
-  }
-}
-
 let measureLifeCycle;
 if (process.env.NODE_ENV !== 'production') {
   measureLifeCycle = function(callback, instanceID, type) {
     Host.measurer && Host.measurer.beforeLifeCycle(instanceID, type);
-    performInSandbox(callback);
+    callback();
     Host.measurer && Host.measurer.afterLifeCycle(instanceID, type);
   };
 }
@@ -103,7 +85,9 @@ class CompositeComponent {
       instance.state = initialState = null;
     }
 
-    performInSandbox(() => {
+    let error;
+
+    try {
       if (instance.componentWillMount) {
         if (process.env.NODE_ENV !== 'production') {
           measureLifeCycle(() => {
@@ -113,22 +97,16 @@ class CompositeComponent {
           instance.componentWillMount();
         }
       }
-    });
+    } catch(e) {
+      error = e;
+    }
 
     if (renderedElement == null) {
       Host.component = this;
       // Process pending state when call setState in componentWillMount
       instance.state = this._processPendingState(publicProps, publicContext);
 
-      // FIXME: handleError should named as lifecycles
-      let handleError;
-      if (typeof instance.handleError === 'function') {
-        handleError = (e) => {
-          instance.handleError(e);
-        };
-      }
-
-      performInSandbox(() => {
+      try {
         if (process.env.NODE_ENV !== 'production') {
           measureLifeCycle(() => {
             renderedElement = instance.render();
@@ -136,23 +114,30 @@ class CompositeComponent {
         } else {
           renderedElement = instance.render();
         }
-      }, handleError);
+      } catch(e) {
+        error = e;
+      }
 
       Host.component = null;
     }
 
     this._renderedComponent = instantiateComponent(renderedElement);
-    this._renderedComponent.mountComponent(
-      this._parent,
-      this._processChildContext(context),
-      childMounter
-    );
+
+    try {
+      this._renderedComponent.mountComponent(
+        this._parent,
+        this._processChildContext(context),
+        childMounter
+      );
+    } catch(e) {
+      error = e;
+    }
 
     if (this._currentElement && this._currentElement.ref) {
       Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
     }
 
-    performInSandbox(() => {
+    try {
       if (instance.componentDidMount) {
         if (process.env.NODE_ENV !== 'production') {
           measureLifeCycle(() => {
@@ -162,12 +147,23 @@ class CompositeComponent {
           instance.componentDidMount();
         }
       }
-    });
+    } catch (e) {
+      error = e;
+    }
 
     Host.hook.Reconciler.mountComponent(this);
 
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.afterMountComponent(this._mountID);
+    }
+
+    if (error) {
+      if (instance.componentDidCatch) {
+        instance.componentDidCatch(error);
+      } else {
+        console.error(e);
+        throw error;
+      }
     }
 
     return instance;
@@ -176,11 +172,9 @@ class CompositeComponent {
   unmountComponent(notRemoveChild) {
     let instance = this._instance;
 
-    performInSandbox(() => {
-      if (instance.componentWillUnmount) {
-        instance.componentWillUnmount();
-      }
-    });
+    if (instance.componentWillUnmount) {
+      instance.componentWillUnmount();
+    }
 
     Host.hook.Reconciler.unmountComponent(this);
 
@@ -303,9 +297,7 @@ class CompositeComponent {
     if (hasReceived) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
       this._pendingState = true;
-      performInSandbox(() => {
-        instance.componentWillReceiveProps(nextProps, nextContext);
-      });
+      instance.componentWillReceiveProps(nextProps, nextContext);
       this._pendingState = false;
     }
 
@@ -322,10 +314,8 @@ class CompositeComponent {
     // ShouldComponentUpdate is not called when forceUpdate is used
     if (!this._pendingForceUpdate) {
       if (instance.shouldComponentUpdate) {
-        shouldUpdate = performInSandbox(() => {
-          return instance.shouldComponentUpdate(nextProps, nextState,
-            nextContext);
-        });
+        shouldUpdate = instance.shouldComponentUpdate(nextProps, nextState,
+          nextContext);
       } else if (instance.isPureComponentClass) {
         shouldUpdate = !shallowEqual(prevProps, nextProps) || !shallowEqual(
           prevState, nextState);
@@ -339,11 +329,9 @@ class CompositeComponent {
 
       // Cannot use this.setState() in componentWillUpdate.
       // If need to update state in response to a prop change, use componentWillReceiveProps instead.
-      performInSandbox(() => {
-        if (instance.componentWillUpdate) {
-          instance.componentWillUpdate(nextProps, nextState, nextContext);
-        }
-      });
+      if (instance.componentWillUpdate) {
+        instance.componentWillUpdate(nextProps, nextState, nextContext);
+      }
 
       // Replace with next
       this._currentElement = nextElement;
@@ -354,11 +342,9 @@ class CompositeComponent {
 
       this._updateRenderedComponent(nextUnmaskedContext);
 
-      performInSandbox(() => {
-        if (instance.componentDidUpdate) {
-          instance.componentDidUpdate(prevProps, prevState, prevContext);
-        }
-      });
+      if (instance.componentDidUpdate) {
+        instance.componentDidUpdate(prevProps, prevState, prevContext);
+      }
 
       this._updateCount++;
     } else {
@@ -397,15 +383,13 @@ class CompositeComponent {
 
     Host.component = this;
 
-    performInSandbox(() => {
-      if (process.env.NODE_ENV !== 'production') {
-        measureLifeCycle(() => {
-          nextRenderedElement = instance.render();
-        }, this._mountID, 'render');
-      } else {
+    if (process.env.NODE_ENV !== 'production') {
+      measureLifeCycle(() => {
         nextRenderedElement = instance.render();
-      }
-    });
+      }, this._mountID, 'render');
+    } else {
+      nextRenderedElement = instance.render();
+    }
 
     Host.component = null;
 
