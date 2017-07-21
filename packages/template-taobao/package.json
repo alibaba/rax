@@ -1,7 +1,7 @@
 {
   "name": "template-taobao",
   "author": "yacheng.sz",
-  "version": "0.4.3",
+  "version": "0.4.5",
   "snapshots": [
     "//gw.alicdn.com/tfs/TB12WTDQXXXXXXWapXXXXXXXXXX-300-200.png",
     "//gw.alicdn.com/tfs/TB10fVvQXXXXXcWXXXXXXXXXXXX-377-667.png",
@@ -19,25 +19,25 @@
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^0.4.3",
-    "rax-gotop": "^0.4.3",
-    "rax-icon": "^0.4.3",
-    "rax-image": "^0.4.3",
-    "rax-listview": "^0.4.3",
-    "rax-multirow": "^0.4.3",
-    "rax-scrollview": "^0.4.3",
-    "rax-tabheader": "^0.4.3",
-    "rax-text": "^0.4.3",
-    "rax-view": "^0.4.3",
-    "universal-env": "^0.4.3",
-    "universal-panresponder": "^0.4.3"
+    "rax": "^0.4.5",
+    "rax-gotop": "^0.4.5",
+    "rax-icon": "^0.4.5",
+    "rax-image": "^0.4.5",
+    "rax-listview": "^0.4.5",
+    "rax-multirow": "^0.4.5",
+    "rax-scrollview": "^0.4.5",
+    "rax-tabheader": "^0.4.5",
+    "rax-text": "^0.4.5",
+    "rax-view": "^0.4.5",
+    "universal-env": "^0.4.5",
+    "universal-panresponder": "^0.4.5"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.16.0",
-    "babel-preset-rax": "^0.4.3",
+    "babel-preset-rax": "^0.4.5",
     "case-sensitive-paths-webpack-plugin": "^1.1.4",
     "eslint": "^3.10.0",
     "eslint-plugin-react": "^6.6.0",
@@ -45,8 +45,8 @@
     "internal-ip": "^1.2.0",
     "json-loader": "^0.5.4",
     "qrcode-terminal": "^0.11.0",
-    "rax-webpack-plugin": "^0.4.3",
-    "stylesheet-loader": "^0.4.3",
+    "rax-webpack-plugin": "^0.4.5",
+    "stylesheet-loader": "^0.4.5",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
