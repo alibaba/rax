@@ -161,7 +161,7 @@ class CompositeComponent {
       if (instance.componentDidCatch) {
         instance.componentDidCatch(error);
       } else {
-        console.error(e);
+        console.error(error);
         throw error;
       }
     }
