@@ -22,16 +22,16 @@ import Picture from 'rax-picture';
 
 | 名称               | 类型      | 默认值       | 描述                                       |
 | :--------------- | :------ | :-------- | :--------------------------------------- |
-| source           | object  | {uri: ''} | 图片来源（必需）                                 |
-| style            | object  |           | 样式，必须设置 style.width ，在已知图像真实宽高时可不设置 style.height ，让 rax-pictrue 根据的你的图像真实宽高进行计算（必需） |
-| resizeMode       | string  | stretch   | 决定当组件尺寸和图片尺寸不成比例的时候如何调整图片的大小。下见说明。       |
-| forceUpdate      | boolean | false     | Picture 是一个 PureComponent ，它的 shouldComponentUpdate 决定了当且仅当 porps.source.uri 有变化时才会重新 render。如果你想忽略它的 shouldComponentUpdate，则传入 `forceUpdate={true}` |
-| width            | number  |           | 图片真实宽度，单位 px                             |
-| height           | number  |           | 图片真实高度，单位 px                             |
-| lazyload         | boolean | false     | （web端有效）根据图像是否在可视范围内延迟加载图像，Web 端需引入 `framework.web.js` 脚本 |
-| autoPixelRatio   | boolean | true      | （web端有效）在高分辨率下使用二倍图                      |
-| placeholder      | string  |           | （web端有效）lazyload 时显示的背景图 URL             |
-| autoRemoveScheme | boolean | true      | （web端有效）图像 URL 自动删除协议头                   |
+| source           | Object  | {uri: ''} | 图片来源（必需）                                 |
+| style            | Object  |           | 样式，必须设置 style.width ，在已知图像真实宽高时可不设置 style.height ，让 rax-pictrue 根据的你的图像真实宽高进行计算（必需） |
+| resizeMode       | String  | stretch   | 决定当组件尺寸和图片尺寸不成比例的时候如何调整图片的大小。下见说明。       |
+| forceUpdate      | Boolean | false     | Picture 是一个 PureComponent ，它的 shouldComponentUpdate 决定了当且仅当 porps.source.uri 有变化时才会重新 render。如果你想忽略它的 shouldComponentUpdate，则传入 `forceUpdate={true}` |
+| width            | Number  |           | 图片真实宽度，单位 px                             |
+| height           | Number  |           | 图片真实高度，单位 px                             |
+| lazyload         | Boolean | false     | （web端有效）根据图像是否在可视范围内延迟加载图像，Web 端需引入 `framework.web.js` 脚本 |
+| autoPixelRatio   | Boolean | true      | （web端有效）在高分辨率下使用二倍图                      |
+| placeholder      | String  |           | （web端有效）lazyload 时显示的背景图 URL             |
+| autoRemoveScheme | Boolean | true      | （web端有效）图像 URL 自动删除协议头                   |
 
 
 ** resizeMode 可用值：**
