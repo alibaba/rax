@@ -23,7 +23,7 @@ import TabHeader from 'rax-tabheader';
 | :----------------- | :-------------- | :---------------------- | :--------------------------- |
 | dataSource         | List            |                         | tab 选项的数据（必填）                |
 | renderItem         | Function        |                         | 渲染每项的模板（必填）                  |
-| itemWidth          | String/Function | 300                  | 可以设置每项固定宽度，也可以通过计算每个宽度不同（必填） |
+| itemWidth          | String | Function | 300                  | 可以设置每项固定宽度，也可以通过计算每个宽度不同（必填） |
 | renderSelect       | Function        |                         | 选中导航项的模版                     |
 | onSelect           | Function        |                         | 选中某一 tab 事件                  |
 | selected           | Number          | 0                       | 选中的导航项，从0开始                  |
