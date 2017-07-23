@@ -24,7 +24,7 @@ import Calendar from 'rax-calendar';
 | endDate        | String   | ''         | 可选的结束时间      |
 | titleFormat    | String   | MMMM YYYY  | 月份的渲染格式      |
 | dateFormat     | String   | YYYY-MM-DD | 返回的日期格式      |
-| weekStart      | Num      | 1          | 把周几作为一个星期的开始 |
+| weekStart      | Number      | 1          | 把周几作为一个星期的开始 |
 | prevButtonText | String   | ''         | 月份切换按钮的显示文案  |
 | nextButtonText | String   | ''         | 月份切换按钮的显示文案  |
 | onDateSelect   | Function | ''         | 选中某个日期       |
