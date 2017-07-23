@@ -16,7 +16,7 @@ $ npm install rax-countdown --save
 import Countdown from 'rax-countdown';
 ```
 
-## 参数（Props）
+## 属性
 
 | 名称                | 类型     | 默认值              |  描述                                    | Required |
 | :------------------ | :------- | :------------------- | :--------------------------------------- | :------- |
