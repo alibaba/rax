@@ -36,9 +36,9 @@ import GoTop from 'rax-gotop';
 | iconWidth   | String   | 90                                    | 返回顶部container宽度        |
 | iconHeight  | String   | 90                                    | 返回顶部container高度        |
 | borderColor | String   | rgba(0, 0, 0, 0.1)                       | 返回顶部container border颜色 |
-| bottom      | int      | 80                                       | 离底部的距离                 |
-| onShow      | function | function() {}                            | icon显示回调               |
-| onHide      | function | function() {}                            | icon消失回调               |
+| bottom      | Number      | 80                                       | 离底部的距离                 |
+| onShow      | Function | function() {}                            | icon显示回调               |
+| onHide      | Function | function() {}                            | icon消失回调               |
 
 ## 基本实例
 
