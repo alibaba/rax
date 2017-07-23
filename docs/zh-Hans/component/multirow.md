@@ -23,7 +23,7 @@ import MultiRow from 'rax-multirow';
 | 名称         | 类型       | 默认值  | 描述                           |
 | :--------- | :------- | :--- | :--------------------------- |
 | renderCell | Function |      | 模板方法（必需）                     |
-| dataSource | List     |      | 需要渲染的数据，与 renderCell 配合使用（必需） |
+| dataSource | Array     |      | 需要渲染的数据，与 renderCell 配合使用（必需） |
 | cells      | Number   | 1    | 每行包含几列，默认1列（必需）              |
 
 ## 多列布局基本示例
