@@ -34,7 +34,6 @@ import TextInput from 'rax-textinput';
 | placeholder        | String   |      | 设置文本框提示                                  |
 | password           | Boolean  |      | 文本框内容密码显示                                |
 | secureTextEntry    | Boolean  |      | 同上文本框内容密码显示                              |
-| style              | String   |      | 设置样式                                     |
 | value              | String   |      | 文本框的文字内容 (受控)                                 |
 | defaultValue       | String   |      | 文本框的文字内容（非受控）                                |
 | onBlur             | Function |      | 文本框失焦时调用此函数。`onBlur={() => console.log('失焦啦')}` |
