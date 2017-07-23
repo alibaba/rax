@@ -11,7 +11,7 @@
 $ npm install rax-icon --save
 ```
 
-## 引入
+## 引用
 
 ```jsx
 import Icon, {createIconSet} from 'rax-icon';

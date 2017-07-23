@@ -10,7 +10,7 @@
 $ npm install rax-tabheader --save
 ```
 
-## 引入
+## 引用
 
 ```jsx
 import TabHeader from 'rax-tabheader';

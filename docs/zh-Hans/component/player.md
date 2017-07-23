@@ -10,7 +10,7 @@
 $ npm install rax-player --save
 ```
 
-## 引入
+## 引用
 
 ```jsx
 import Player from 'rax-player'

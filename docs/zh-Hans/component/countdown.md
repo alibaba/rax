@@ -18,7 +18,7 @@ import Countdown from 'rax-countdown';
 
 ## 参数（Props）
 
-| Name                | Type     | Default              | Desc                                     | Required |
+| 名称                | 类型     | 默认值              |  描述                                    | Required |
 | :------------------ | :------- | :------------------- | :--------------------------------------- | :------- |
 | timeRemaining       | Number   | /                    | 倒计时剩余时间,单位为"毫秒"                          | Yes      |
 | interval            | Number   | 1000                 | 倒计时的间隔,单位为"毫秒"                           | No       |
