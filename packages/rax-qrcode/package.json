@@ -1,6 +1,6 @@
 {
   "name": "rax-qrcode",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "QRCode component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -24,13 +24,13 @@
   },
   "dependencies": {
     "qr.js": "0.0.0",
-    "rax-canvas": "^0.4.6",
-    "universal-stylesheet": "^0.4.6"
+    "rax-canvas": "^0.4.7",
+    "universal-stylesheet": "^0.4.7"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.6"
+    "rax-test-renderer": "^0.4.7"
   }
 }
