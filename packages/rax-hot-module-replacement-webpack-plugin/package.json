@@ -1,6 +1,6 @@
 {
   "name": "rax-hot-module-replacement-webpack-plugin",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Rax hot module replacement.",
   "main": "./lib/HotModuleReplacementPlugin.js",
   "repository": {

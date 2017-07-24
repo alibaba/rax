@@ -1,6 +1,6 @@
 {
   "name": "rax-components",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Base components for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,19 +16,19 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-button": "^0.4.5",
-    "rax-image": "^0.4.5",
-    "rax-link": "^0.4.5",
-    "rax-listview": "^0.4.5",
-    "rax-recyclerview": "^0.4.5",
-    "rax-refreshcontrol": "^0.4.5",
-    "rax-scrollview": "^0.4.5",
-    "rax-slider": "^0.4.5",
-    "rax-switch": "^0.4.5",
-    "rax-text": "^0.4.5",
-    "rax-textinput": "^0.4.5",
-    "rax-touchable": "^0.4.5",
-    "rax-video": "^0.4.5",
-    "rax-view": "^0.4.5"
+    "rax-button": "^0.4.6",
+    "rax-image": "^0.4.6",
+    "rax-link": "^0.4.6",
+    "rax-listview": "^0.4.6",
+    "rax-recyclerview": "^0.4.6",
+    "rax-refreshcontrol": "^0.4.6",
+    "rax-scrollview": "^0.4.6",
+    "rax-slider": "^0.4.6",
+    "rax-switch": "^0.4.6",
+    "rax-text": "^0.4.6",
+    "rax-textinput": "^0.4.6",
+    "rax-touchable": "^0.4.6",
+    "rax-video": "^0.4.6",
+    "rax-view": "^0.4.6"
   }
 }
