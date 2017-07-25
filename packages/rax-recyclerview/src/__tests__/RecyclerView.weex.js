@@ -23,6 +23,7 @@ class RecyclerViewTest extends Component {
   render() {
     let props = {
       ref: 'recycleview',
+      _autoWrapCell: true,
       children: [].concat(this.renderHeader(), this.renderBody(), this.renderFooter())
     };
     return <RecyclerView {...props} />;
