@@ -258,7 +258,6 @@ function throttle(func, wait) {
 const styles = {
   baseVertical: {
     flex: 1,
-    transform: 'translateZ(0)',
     flexDirection: 'column',
   },
   baseHorizontal: {
