@@ -117,7 +117,7 @@ class RecyclerView extends Component {
       });
 
       // add firstNodePlaceholder after refreshcontrol
-      let addIndex = cells[0].type == RefreshControl ? 1 : 0;
+      let addIndex = cells[0].type == Cell || cells[0].type == Header ? 0 : 1;
       cells.splice(addIndex, 0, <Cell ref="firstNodePlaceholder" />);
 
       return (
