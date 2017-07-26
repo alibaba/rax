@@ -179,7 +179,7 @@ describe('CompositeComponent', function() {
     render(
       <ErrorBoundary>
         <BrokenRender />
-      </ErrorBoundary> , container);
+      </ErrorBoundary>, container);
 
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
@@ -206,7 +206,7 @@ describe('CompositeComponent', function() {
         throw new Error('Hello');
       }
       render() {
-        retrun (
+        return (
           <span>Hello</span>
         );
       }
@@ -215,7 +215,7 @@ describe('CompositeComponent', function() {
     render(
       <ErrorBoundary>
         <BrokenRender />
-      </ErrorBoundary> , container);
+      </ErrorBoundary>, container);
 
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
@@ -237,7 +237,7 @@ describe('CompositeComponent', function() {
       }
     }
 
-    render(<BrokenRender /> , container);
+    render(<BrokenRender />, container);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 });

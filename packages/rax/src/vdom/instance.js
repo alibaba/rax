@@ -86,7 +86,7 @@ export default {
     let wrappedElement = createElement(Root, null, element);
     let renderedComponent = instantiateComponent(wrappedElement);
     let defaultContext = {};
-    let rootInstance = renderedComponent.mountComponent(container, defaultContext);
+    let rootInstance = renderedComponent.mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
 
     // After render callback
