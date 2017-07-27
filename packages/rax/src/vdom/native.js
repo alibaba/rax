@@ -18,9 +18,10 @@ class NativeComponent {
     this._currentElement = element;
   }
 
-  mountComponent(parent, context, childMounter) {
+  mountComponent(parent, parentInstance, context, childMounter) {
     // Parent native element
     this._parent = parent;
+    this._parentInstance = parentInstance;
     this._context = context;
     this._mountID = Host.mountID++;
 
@@ -85,7 +86,7 @@ class NativeComponent {
       renderedChild._mountIndex = index;
       // Mount
       let mountImage = renderedChild.mountComponent(this.getNativeNode(),
-        context);
+        this._instance, context, null);
       return mountImage;
     });
 
@@ -125,6 +126,7 @@ class NativeComponent {
     this._currentElement = null;
     this._nativeNode = null;
     this._parent = null;
+    this._parentInstance = null;
     this._context = null;
     this._instance = null;
     this._prevStyleCopy = null;
@@ -382,6 +384,7 @@ class NativeComponent {
 
           nextChild.mountComponent(
             parent,
+            this._instance,
             context, (newChild, parent) => {
               // TODO: Rework the duplicate code
               let oldChild = oldNodes[name];

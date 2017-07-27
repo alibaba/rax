@@ -9,8 +9,9 @@ class TextComponent {
     this._stringText = String(element);
   }
 
-  mountComponent(parent, context, childMounter) {
+  mountComponent(parent, parentInstance, context, childMounter) {
     this._parent = parent;
+    this._parentInstance = parentInstance;
     this._context = context;
     this._mountID = Host.mountID++;
 
@@ -42,6 +43,7 @@ class TextComponent {
     this._currentElement = null;
     this._nativeNode = null;
     this._parent = null;
+    this._parentInstance = null;
     this._context = null;
     this._stringText = null;
   }
