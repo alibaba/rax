@@ -89,7 +89,8 @@ class RecyclerView extends Component {
       let dom = require('@weex-module/dom');
       let firstNode = findDOMNode(this.refs.firstNodePlaceholder);
       dom.scrollToElement(firstNode.ref, {
-        offset: x || y || 0
+        offset: x || y || 0,
+        animated: options && typeof options.animated !== 'undefined' ? options.animated : true
       });
     } else {
       this.refs.scrollview.scrollTo(options);
