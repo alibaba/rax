@@ -1,4 +1,5 @@
 import {isWeex, isWeb} from 'universal-env';
+import {convertUnit} from 'style-unit';
 
 export default function transition(node, styles, options, callback) {
   if (typeof options == 'function' || options == null) {
@@ -10,18 +11,22 @@ export default function transition(node, styles, options, callback) {
     };
   }
 
+  for (let prop in styles) {
+    styles[prop] = convertUnit(styles[prop], prop);
+  }
+
   if (isWeex) {
     const animation = require('@weex-module/animation');
     animation.transition(node.ref, {
       styles,
-      timingFunction: options.timingFunction,
-      delay: options.delay,
-      duration: options.duration,
+      timingFunction: options.timingFunction || 'linear',
+      delay: options.delay || 0,
+      duration: options.duration || 0,
     }, callback || function() {});
   } else if (isWeb) {
-    const duration = options.duration; // ms
-    const timingFunction = options.timingFunction;
-    const delay = options.delay;  // ms
+    const duration = options.duration || 0; // ms
+    const timingFunction = options.timingFunction || 'linear';
+    const delay = options.delay || 0;  // ms
     const transitionValue = 'all ' + duration + 'ms '
         + timingFunction + ' ' + delay + 'ms';
 

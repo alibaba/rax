@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.4.7"
+    "universal-env": "^0.4.7",
+    "style-unit": "^0.4.7"
   }
 }
