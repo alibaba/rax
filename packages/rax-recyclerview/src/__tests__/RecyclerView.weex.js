@@ -23,6 +23,7 @@ class RecyclerViewTest extends Component {
   render() {
     let props = {
       ref: 'recycleview',
+      _autoWrapCell: true,
       children: [].concat(this.renderHeader(), this.renderBody(), this.renderFooter())
     };
     return <RecyclerView {...props} />;
@@ -41,11 +42,11 @@ describe('RecyclerView in weex', () => {
   it('should render a RecyclerView', () => {
     let tree = component.toJSON();
     expect(tree.tagName).toEqual('LIST');
-    expect(tree.children[1].children[0]).toEqual('header');
-    expect(tree.children[2].children[0]).toEqual('1');
-    expect(tree.children[3].children[0]).toEqual('2');
-    expect(tree.children[4].children[0]).toEqual('3');
-    expect(tree.children[5].children[0]).toEqual('footer');
+    expect(tree.children[1].children[0].children[0]).toEqual('header');
+    expect(tree.children[2].children[0].children[0]).toEqual('1');
+    expect(tree.children[3].children[0].children[0]).toEqual('2');
+    expect(tree.children[4].children[0].children[0]).toEqual('3');
+    expect(tree.children[5].children[0].children[0]).toEqual('footer');
   });
 
   it('should pass a object to children', () => {
