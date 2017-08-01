@@ -5,6 +5,10 @@ export default class Pie {
     let pie = chart.intervalStack();
 
     position && pie.position(position);
-    color && pie.color(color);
+
+    if (color) {
+     typeof color === 'string' ? pie.color(color) : pie.color.apply(null, color);
+    };
+
   };
 }

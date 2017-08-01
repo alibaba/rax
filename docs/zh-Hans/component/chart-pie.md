@@ -28,7 +28,7 @@ class SimplePie extends Component {
       height: 350
     }} data={pieData}>
       <Coord type="polar" inner={0.6} transposed={true} />
-      <Pie position="a*b" color="c" inner={0.3} />
+      <Pie position="a*b" color={['c', ['#00C1DE', '#C1C3C4', '#000000']]} inner={0.3} />
     </Chart>;
   }
 }
