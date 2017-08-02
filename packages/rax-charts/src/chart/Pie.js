@@ -11,6 +11,5 @@ export default class Pie {
     } else if (color) {
       pie.color(color);
     }
-
   };
 }
