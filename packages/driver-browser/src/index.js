@@ -2,6 +2,8 @@
  * Web Browser driver
  **/
 
+/* global DEVICE_WIDTH, VIEWPORT_WIDTH */
+
 import {convertUnit, setRem} from 'style-unit';
 import flexbox from './flexbox';
 
