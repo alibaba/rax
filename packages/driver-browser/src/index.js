@@ -5,7 +5,6 @@
 import {convertUnit, setRem} from 'style-unit';
 import flexbox from './flexbox';
 
-const FULL_WIDTH_REM = 750;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -14,6 +13,26 @@ const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /on[A-Z]/;
 
 const Driver = {
+
+  deviceWidth: typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || null,
+  viewportWidth: typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || 750,
+
+  getDeviceWidth() {
+    return this.deviceWidth || document.documentElement.clientWidth;
+  },
+
+  setDeviceWidth(width) {
+    this.deviceWidth = width;
+  },
+
+  getViewportWidth() {
+    return this.viewportWidth;
+  },
+
+  setViewportWidth(width) {
+    this.viewportWidth = width;
+  },
+
   getElementById(id) {
     return document.getElementById(id);
   },
@@ -151,11 +170,7 @@ const Driver = {
 
   beforeRender() {
     // Init rem unit
-    setRem(this.getWindowWidth() / FULL_WIDTH_REM);
-  },
-
-  getWindowWidth() {
-    return document.documentElement.clientWidth;
+    setRem( this.getDeviceWidth() / this.getViewportWidth() );
   },
 
   setNativeProps(node, props) {

@@ -35,7 +35,8 @@ const UNITLESS_NUMBER_PROPS = {
 const SUFFIX = 'rem';
 const REM_REG = /[-+]?\d*\.?\d+rem/g;
 
-let defaultRem;
+// Default 1 rem to 1 px
+let defaultRemUnit = 1;
 
 /**
  * Is string contains rem
@@ -52,29 +53,29 @@ export function isRem(str) {
  * @param {Number} rem
  * @returns {number}
  */
-export function calcRem(str, rem = defaultRem) {
-  return str.replace(REM_REG, function(remValue) {
-    return parseFloat(remValue) * rem + 'px';
+export function calcRem(str, remUnit = defaultRemUnit) {
+  return str.replace(REM_REG, function(rem) {
+    return parseFloat(rem) * remUnit + 'px';
   });
 }
 
 export function getRem() {
-  return defaultRem;
+  return defaultRemUnit;
 }
 
 export function setRem(rem) {
-  defaultRem = rem;
+  defaultRemUnit = rem;
 }
 
 export function isUnitNumber(val, prop) {
   return typeof val === 'number' && !UNITLESS_NUMBER_PROPS[prop];
 }
 
-export function convertUnit(val, prop) {
+export function convertUnit(val, prop, remUnit = defaultRemUnit) {
   if (prop && isUnitNumber(val, prop)) {
-    return val * defaultRem + 'px';
+    return val * remUnit + 'px';
   } else if (isRem(val)) {
-    return calcRem(val);
+    return calcRem(val, remUnit);
   }
 
   return val;
