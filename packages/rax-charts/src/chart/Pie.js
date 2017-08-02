@@ -6,9 +6,11 @@ export default class Pie {
 
     position && pie.position(position);
 
-    if (color) {
-     typeof color === 'string' ? pie.color(color) : pie.color.apply(null, color);
-    };
+    if (Array.isArray(color)) {
+      pie.color.apply(null, color);
+    } else if (color) {
+      pie.color(color);
+    }
 
   };
 }
