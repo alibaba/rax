@@ -6,14 +6,9 @@ export function disable() {
 
 export function init(element) {
   return new Promise(function(resolve) {
-    GCanvas.start(element.ref, function() {
-      GCanvas.setDevicePixelRatio();
-      const ctx = GCanvas.getContext('2d');
-      GCanvas.startLoop();
+    const gcanvas = GCanvas.start(element);
 
-      GCanvas.render(() => {
-        resolve(ctx);
-      });
-    });
+    const ctx = gcanvas.getContext('2d');
+    resolve(ctx);
   });
 };

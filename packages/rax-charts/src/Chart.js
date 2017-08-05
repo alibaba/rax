@@ -31,7 +31,6 @@ class Chart extends Component {
       return;
     }
 
-    context.render();
     this.chart = new GM.Chart({
       el,
       context
