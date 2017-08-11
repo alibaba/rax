@@ -1,6 +1,6 @@
 {
   "name": "rax-textinput",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "description": "TextInput component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,12 +21,12 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.4.9"
+    "universal-env": "^0.4.10"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.9"
+    "rax-test-renderer": "^0.4.10"
   }
 }
