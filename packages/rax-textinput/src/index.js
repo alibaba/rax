@@ -40,6 +40,8 @@ function genEventObject(originalEvent) {
 
 class TextInput extends Component {
 
+  static propTypes = {};
+
   componentWillReceiveProps(newProps) {
     setNativeProps(this.refs.input, {value: newProps.value});
   }
