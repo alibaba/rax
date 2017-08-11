@@ -22,11 +22,11 @@ class List extends Component {
         gridDataArr[index] = [];
       }
       gridDataArr[index].push(<Col style={props.colStyle}>{renderCell(list[i], i)}</Col>);
-      if (i == list.length - 1) {
-        grids.push(<Row style={props.rowStyle}>{gridDataArr[index]}</Row>);
-      }
       if (i % count == 0 && i != 0) {
         grids.push(<Row style={props.rowStyle}>{gridDataArr[index - 1]}</Row>);
+      }
+      if (i == list.length - 1) {
+        grids.push(<Row style={props.rowStyle}>{gridDataArr[index]}</Row>);
       }
     };
 
