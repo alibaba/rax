@@ -1,8 +1,28 @@
-import {createElement, render, Component} from 'rax';
+import {createElement, render, Component, PropTypes} from 'rax';
 import {Row, Col} from 'rax-grid';
 import View from 'rax-view';
 
 class List extends Component {
+
+  static propTypes = {
+
+    /**
+     * 模板方法（必需）
+     */
+    renderCell: PropTypes.func.isRequired,
+
+    /**
+     * 需要渲染的数据，与 renderCell 配合使用（必需）
+     */
+    dataSource: PropTypes.array.isRequired,
+
+    /**
+     * 每行包含几列，默认1列（必需）
+     */
+    cells: PropTypes.number.isRequired
+
+  };
+
   render() {
     return <View>{this.getContent()}</View>;
   }

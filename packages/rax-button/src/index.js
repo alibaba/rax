@@ -1,20 +1,16 @@
-import {Component, createElement} from 'rax';
+import {Component, createElement, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 import Text from 'rax-text';
 import Touchable from 'rax-touchable';
 
 class Button extends Component {
-
   
-    static propTypes = {
-      
-      /**
-       * 点击事件
-       */
-      onPress: PropTypes.func
-    
-    };
-  
+  static propTypes = {
+    /**
+     * 点击事件
+     */
+    onPress: PropTypes.func
+  };
 
   render() {
     const props = this.props;

@@ -2,17 +2,13 @@ import {Component, createElement, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 
 class Text extends Component {
-
   
-    static propTypes = {
-      
-      /**
-       * 行数
-       */
-      numberOfLines: PropTypes.number
-    
-    };
-  
+  static propTypes = {
+    /**
+     * 行数
+     */
+    numberOfLines: PropTypes.number
+  };
 
   static contextTypes = {
     isInAParentText: PropTypes.bool

@@ -1,4 +1,4 @@
-import {createElement, Component, findDOMNode, render} from 'rax';
+import {createElement, Component, findDOMNode, render, propTypes} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Image from 'rax-image';
@@ -11,6 +11,51 @@ if (isWeb) {
 }
 
 export default class GoTop extends Component {
+
+  static propTypes = {
+
+    /**
+     * 图标文字内容
+     */
+    name: PropTypes.string,
+
+    /**
+     * 图标 Icon URL
+     */
+    icon: PropTypes.string,
+
+    /**
+     * 返回顶部container宽度
+     */
+    iconWidth: PropTypes.string,
+
+    /**
+     * 返回顶部container高度
+     */
+    iconHeight: PropTypes.string,
+
+    /**
+     * 返回顶部container border颜色
+     */
+    borderColor: PropTypes.string,
+
+    /**
+     * 离底部的距离
+     */
+    bottom: PropTypes.number,
+
+    /**
+     * icon显示回调
+     */
+    onShow: PropTypes.func,
+
+    /**
+     * icon消失回调
+     */
+    onHide: PropTypes.func
+
+  };
+
   constructor(props) {
     super(props);
     let isShow = props.resident ? true : false,

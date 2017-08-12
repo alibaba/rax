@@ -1,4 +1,4 @@
-import {Component, createElement, setNativeProps} from 'rax';
+import {Component, createElement, setNativeProps, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 
 const typeMap = {
@@ -40,7 +40,99 @@ function genEventObject(originalEvent) {
 
 class TextInput extends Component {
 
-  static propTypes = {};
+  static propTypes = {
+
+    /**
+     * 定义该属性文本框可以输入多行文字
+     */
+    multiline: PropTypes.bool,
+
+    /**
+     * 为元素添加标识
+     */
+    accessibilityLabel: PropTypes.string,
+
+    /**
+     * 添加开启自动完成功能
+     */
+    autoComplete: PropTypes.bool,
+
+    /**
+     * 添加开启获取焦点
+     */
+    autoFocus: PropTypes.bool,
+
+    /**
+     * 默认为true 如果为fase则文本框不可编辑
+     */
+    editable: PropTypes.bool,
+
+    /**
+     * 设置弹出哪种软键盘 可用的值有default ascii-capable numbers-and-punctuation url number-pad phone-pad name-phone-pad email-address decimal-pad twitter web-search numeric
+     */
+    keyboardType: PropTypes.string,
+
+    /**
+     * 设置最大可输入值
+     */
+    maxLength: PropTypes.number,
+
+    /**
+     * 当文本框为mutiline时设置最多的行数
+     */
+    maxNumberOfLines: PropTypes.number,
+
+    /**
+     * 同上设置行数
+     */
+    numberOfLines: PropTypes.number,
+
+    /**
+     * 设置文本框提示
+     */
+    placeholder: PropTypes.string,
+
+    /**
+     * 文本框内容密码显示
+     */
+    password: PropTypes.bool,
+
+    /**
+     * 同上文本框内容密码显示
+     */
+    secureTextEntry: PropTypes.bool,
+
+    /**
+     * 文本框的文字内容 (受控)
+     */
+    value: PropTypes.string,
+
+    /**
+     * 文本框的文字内容（非受控）
+     */
+    defaultValue: PropTypes.string,
+
+    /**
+     * 文本框失焦时调用此函数。onBlur={() => console.log('失焦啦')}
+     */
+    onBlur: PropTypes.func,
+
+    /**
+     * 文本框获得焦点时调用此函数
+     */
+    onFocus: PropTypes.func,
+
+    /**
+     * 文本框内容变化时调用此函数（用户输入完成时触发。通常在 blur 事件之后）
+     */
+    onChange: PropTypes.func,
+
+    /**
+     * 文本框输入内容时调用此函数
+     */
+    onInput: PropTypes.func
+
+  };
 
   componentWillReceiveProps(newProps) {
     setNativeProps(this.refs.input, {value: newProps.value});
