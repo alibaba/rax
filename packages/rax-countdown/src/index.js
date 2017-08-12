@@ -34,18 +34,66 @@ class Index extends Component {
   timeoutId = 0;
 
   static propTypes = {
-    formatFunc: PropTypes.func,
-    onTick: PropTypes.func,
-    onComplete: PropTypes.func,
-    tpl: PropTypes.string, // template (example {h}:{m}:{s})
+
+    /**
+      * 倒计时剩余时间,单位为"毫秒"
+      */
     timeRemaining: PropTypes.number,
+
+    /**
+      * 倒计时的间隔,单位为"毫秒"
+      */
+    interval: PropTypes.number,
+
+    /**
+      * 倒计时展示模板,默认为'{d}天{h}时{m}分{s}秒'
+      */
+    tpl: PropTypes.string,
+
+    /**
+      * 自定义格式化剩余时间的方法,非undefined时tpl失效,处理剩余时间的展示
+      */
+    formatFunc: PropTypes.func,
+
+    /**
+      * 倒计时变化时调用的方法
+      */
+    onTick: PropTypes.func,
+
+    /**
+      * 倒计时完成时调用的方法
+      */
+    onComplete: PropTypes.func,
+
+    /**
+      * 时间-数字的样式
+      */
+    timeStyle: PropTypes.object,
+
+    /**
+      * 秒最后一位样式
+      */
     secondStyle: PropTypes.object,
-    timeStyle: PropTypes.object, // style for num
-    textStyle: PropTypes.object, // style for text
+
+    /**
+      * 时间-单位的样式
+      */
+    textStyle: PropTypes.object,
+
+    /**
+      * 各时间区块的样式
+      */
     timeWrapStyle: PropTypes.object,
-    timeBackground: PropTypes.string,
-    timeBackgroundStyle: PropTypes.object,
-    interval: PropTypes.number
+
+    /**
+      * 各时间区块背景(可加背景图)
+      */
+    timeBackground: PropTypes.object,
+
+    /**
+      * 各时间区块背景样式
+      */
+    timeBackgroundStyle: PropTypes.object
   };
 
   static defaultProps = {

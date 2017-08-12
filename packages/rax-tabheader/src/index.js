@@ -9,6 +9,70 @@ const THCONTAINER_REF = 'tabheaderContainer';
 
 class TabHeader extends Component {
 
+  static propTypes = {
+
+    /**
+     * tab 选项的数据（必填）
+     */
+    dataSource: PropTypes.array.isRequired,
+
+    /**
+     * 渲染每项的模板（必填）
+     */
+    renderItem: PropTypes.func.isRequired,
+
+    /**
+     * 300
+     */
+    itemWidth: PropTypes.string,
+
+    /**
+     * 选中导航项的模版
+     */
+    renderSelect: PropTypes.func,
+
+    /**
+     * 选中某一 tab 事件
+     */
+    onSelect: PropTypes.func,
+
+    /**
+     * 选中的导航项，从0开始
+     */
+    selected: PropTypes.number,
+
+    /**
+     * 导航默认展现样式
+     */
+    type: PropTypes.string,
+
+    /**
+     * 导航默认展现样式
+     */
+    containerStyle: PropTypes.object,
+
+    /**
+     * 单个 tab 展现样式
+     */
+    itemStyle: PropTypes.object,
+
+    /**
+     * 单个选中 tab 展现样式
+     */
+    itemSelectedStyle: PropTypes.object,
+
+    /**
+     * 滑动色块展现样式
+     */
+    animBuoyStyle: PropTypes.object,
+
+    /**
+     * 下拉列表的列数
+     */
+    dropDownCols: PropTypes.number
+
+  };
+
   static childContextTypes = {
     tabheader: PropTypes.object,
   };

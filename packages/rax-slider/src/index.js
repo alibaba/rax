@@ -7,13 +7,58 @@ if (isWeb) {
 }
 
 class Slider extends Component {
-  state = {
-    index: this.props.index || 0
-  }
+
+  static propTypes = {
+
+    /**
+     * Slider的宽度（必填）
+     */
+    width: PropTypes.string.isRequired,
+
+    /**
+     * Slider的高度（必填）
+     */
+    height: PropTypes.string.isRequired,
+
+    /**
+     * Slider是否自动播放
+     */
+    autoPlay: PropTypes.bool,
+
+    /**
+     * 是否显示分页的小圆点点
+     */
+    showsPagination: PropTypes.bool,
+
+    /**
+     * 自己定义小圆点点的样式，否则默认样式居中
+     */
+    paginationStyle: PropTypes.object,
+
+    /**
+     * 是否是循环播放（web）
+     */
+    loop: PropTypes.bool,
+
+    /**
+     * 指定默认初始化第几个（在weex安卓下有兼容问题，需要节点渲染完成后异步调用，暂不推荐使用）
+     */
+    index: PropTypes.number,
+
+    /**
+     * 自动播放的间隔时间
+     */
+    autoPlayInterval: PropTypes.number
+
+  };
 
   static defaultProps = {
-    onChange: () => {},
+    onChange: () => { },
     defaultPaginationStyle: defaultPaginationStyle
+  }
+
+  state = {
+    index: this.props.index || 0
   }
 
   onChange = (e) => {

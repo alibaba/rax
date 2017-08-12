@@ -19,25 +19,57 @@ export default class Calendar extends Component {
   };
 
   static propTypes = {
-    customStyle: PropTypes.object,
-    dayHeadings: PropTypes.array,
-    eventDates: PropTypes.array,
-    monthNames: PropTypes.array,
-    nextButtonText: PropTypes.string,
-    onDateSelect: PropTypes.func,
-    onSwipeNext: PropTypes.func,
-    onSwipePrev: PropTypes.func,
-    onTouchNext: PropTypes.func,
-    onTouchPrev: PropTypes.func,
-    prevButtonText: PropTypes.string,
-    selectedDate: PropTypes.any,
-    showControls: PropTypes.bool,
-    startDate: PropTypes.any,
-    endDate: PropTypes.any,
+
+    /**
+     * 可选的起始时间
+     */
+    startDate: PropTypes.string,
+
+    /**
+     * 可选的结束时间
+     */
+    endDate: PropTypes.string,
+
+    /**
+     * 月份的渲染格式
+     */
     titleFormat: PropTypes.string,
+
+    /**
+     * 返回的日期格式
+     */
     dateFormat: PropTypes.string,
-    today: PropTypes.any,
+
+    /**
+     * 把周几作为一个星期的开始
+     */
     weekStart: PropTypes.number,
+
+    /**
+     * 月份切换按钮的显示文案
+     */
+    prevButtonText: PropTypes.string,
+
+    /**
+     * 月份切换按钮的显示文案
+     */
+    nextButtonText: PropTypes.string,
+
+    /**
+     * 选中某个日期
+     */
+    onDateSelect: PropTypes.func,
+
+    /**
+     * 上一个月
+     */
+    onTouchPrev: PropTypes.func,
+
+    /**
+     * 下一个月
+     */
+    onTouchNext: PropTypes.func
+
   };
 
   static defaultProps = {
