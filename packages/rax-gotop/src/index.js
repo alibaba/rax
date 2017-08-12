@@ -1,4 +1,4 @@
-import {createElement, Component, findDOMNode, render, propTypes} from 'rax';
+import {createElement, Component, findDOMNode, render, PropTypes} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Image from 'rax-image';
@@ -18,7 +18,7 @@ export default class GoTop extends Component {
      * 图标文字内容
      */
     name: PropTypes.string,
-
+    
     /**
      * 图标 Icon URL
      */
