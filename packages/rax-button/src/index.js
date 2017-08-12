@@ -4,7 +4,7 @@ import Text from 'rax-text';
 import Touchable from 'rax-touchable';
 
 class Button extends Component {
-  
+
   static propTypes = {
     /**
      * 点击事件

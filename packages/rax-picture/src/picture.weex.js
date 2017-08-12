@@ -15,7 +15,7 @@ class Picture extends Component {
      * 图片来源（必需）
      */
     source: PropTypes.object.isRequired,
-    
+
     /**
      * 决定当组件尺寸和图片尺寸不成比例的时候如何调整图片的大小。
      * cover: 在保持图片宽高比的前提下缩放图片，直到宽度和高度都大于等于容器视图的尺寸（如果容器有padding内衬的话，则相应减去）。译注：这样图片完全覆盖甚至超出容器，容器中不留任何空白。

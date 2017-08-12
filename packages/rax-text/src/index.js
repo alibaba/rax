@@ -2,7 +2,7 @@ import {Component, createElement, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 
 class Text extends Component {
-  
+
   static propTypes = {
     /**
      * 行数

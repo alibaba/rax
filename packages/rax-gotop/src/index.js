@@ -18,7 +18,7 @@ export default class GoTop extends Component {
      * 图标文字内容
      */
     name: PropTypes.string,
-    
+
     /**
      * 图标 Icon URL
      */

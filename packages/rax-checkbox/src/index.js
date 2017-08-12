@@ -30,12 +30,12 @@ class CheckBox extends Component {
      * 选择框容器样式
      */
     containerStyle: PropTypes.object,
-    
+
     /**
      * 选择框图片样式
      */
     checkboxStyle: PropTypes.object,
-    
+
     /**
      * 选择事件
      */
