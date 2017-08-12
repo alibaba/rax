@@ -5,7 +5,21 @@ import Text from 'rax-text';
 
 class Picker extends Component {
 
-  static propTypes = {};
+  
+    static propTypes = {
+      
+      /**
+       * 选中值
+       */
+      selectedValue: PropTypes.string,
+    
+      /**
+       * 选项切换
+       */
+      onValueChange: PropTypes.func
+    
+    };
+  
 
   constructor(props) {
     super(props);

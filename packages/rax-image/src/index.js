@@ -4,7 +4,21 @@ import View from 'rax-view';
 
 class Image extends Component {
 
-  static propTypes = {};
+  
+    static propTypes = {
+      
+      /**
+       * 设置图片的 uri
+       */
+      scoure: PropTypes.object,
+    
+      /**
+       * 决定当组件尺寸和图片尺寸不成比例的时候如何调整图片的大小
+       */
+      resizeMode: PropTypes.string
+    
+    };
+  
 
   static resizeMode = {
     contain: 'contain',

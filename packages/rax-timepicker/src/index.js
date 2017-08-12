@@ -5,7 +5,21 @@ import Text from 'rax-text';
 
 class TimePicker extends Component {
 
-  static propTypes = {};
+  
+    static propTypes = {
+      
+      /**
+       * 选中值（示例：01:01）
+       */
+      selectedValue: PropTypes.string,
+    
+      /**
+       * 时间选择
+       */
+      onTimeChange: PropTypes.func
+    
+    };
+  
 
   constructor(props) {
     super(props);

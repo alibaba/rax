@@ -5,7 +5,16 @@ import Touchable from 'rax-touchable';
 
 class Button extends Component {
 
-  static propTypes = {};
+  
+    static propTypes = {
+      
+      /**
+       * 点击事件
+       */
+      onPress: PropTypes.func
+    
+    };
+  
 
   render() {
     const props = this.props;
