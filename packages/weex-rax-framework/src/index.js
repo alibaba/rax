@@ -328,7 +328,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       __weex_env__,
       __weex_code__,
       __weex_options__,
-      __weex_data__
+      __weex_data__,
+      __weex_config__
     };
 
     instance.window = window.self = window.window = window;
