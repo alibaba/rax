@@ -1,4 +1,4 @@
-import {PureComponent, Component, createElement, cloneElement, findDOMNode, PropTypes} from 'rax';
+import {PureComponent, Component, createElement, findDOMNode, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 import View from 'rax-view';
 import ScrollView from 'rax-scrollview';
@@ -73,8 +73,9 @@ class RecyclerView extends Component {
   resetScroll = () => {
     if (isWeex) {
       this.setState({
-        loadmoreretry: this.loadmoreretry++,
+        loadmoreretry: this.loadmoreretry++, // for weex 0.9-
       });
+      this.refs.list.resetLoadmore && this.refs.list.resetLoadmore(); // for weex 0.9+
     } else {
       this.refs.scrollview.resetScroll();
     }
@@ -86,9 +87,10 @@ class RecyclerView extends Component {
 
     if (isWeex) {
       let dom = require('@weex-module/dom');
-      let firstCell = findDOMNode(this.refs[this.firstCellRef]);
-      dom.scrollToElement(firstCell.ref, {
-        offset: x || y || 0
+      let firstNode = findDOMNode(this.refs.firstNodePlaceholder);
+      dom.scrollToElement(firstNode.ref, {
+        offset: x || y || 0,
+        animated: options && typeof options.animated !== 'undefined' ? options.animated : true
       });
     } else {
       this.refs.scrollview.scrollTo(options);
@@ -97,7 +99,6 @@ class RecyclerView extends Component {
 
   render() {
     let props = this.props;
-
     if (isWeex) {
       let children = props.children;
       if (!Array.isArray(children)) {
@@ -105,24 +106,25 @@ class RecyclerView extends Component {
       }
 
       let cells = children.map((child, index) => {
-        const ref = 'cell' + index;
-        if (!this.firstCellRef && child && child.type != RefreshControl && child.type != Header) {
-          this.firstCellRef = ref;
-        }
         if (child) {
           if (props._autoWrapCell && child.type != RefreshControl && child.type != Header) {
-            return <Cell ref={ref}>{child}</Cell>;
+            return <Cell>{child}</Cell>;
           } else {
-            return cloneElement(child, {ref});
+            return child;
           }
         } else {
-          return <Cell ref={ref} />;
+          return <Cell />;
         }
       });
+
+      // add firstNodePlaceholder after refreshcontrol
+      let addIndex = cells[0].type == Cell || cells[0].type == Header ? 0 : 1;
+      cells && cells.length && cells.splice(addIndex, 0, <Cell ref="firstNodePlaceholder" />);
 
       return (
         <list
           {...props}
+          ref="list"
           onLoadmore={props.onEndReached}
           onScroll={props.onScroll ? this.handleScroll : null}
           loadmoreretry={this.state.loadmoreretry}

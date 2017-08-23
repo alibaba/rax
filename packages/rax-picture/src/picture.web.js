@@ -151,6 +151,7 @@ class Picture extends Component {
         ignoreGif
         } = this.props,
       { uri } = source;
+    let nativeProps = this.props;
 
     if (!this.uri) {
       let sWidth = style.width, // style width of picture
@@ -194,7 +195,7 @@ class Picture extends Component {
     let url = placeholder;
     if (lazyload) {
       const { visible } = this.state;
-
+      nativeProps.onAppear = () => this.lazyLoad();
       if (visible) {
         url = this.uri;
       }
@@ -205,9 +206,8 @@ class Picture extends Component {
     if (children || resizeMode) {
       return (
         <View
-          {...this.props}
+          {...nativeProps}
           data-once={true}
-          onAppear={() => this.lazyLoad()}
           style={[
             this.newStyle, {
               backgroundImage: 'url(' + url + ')',
@@ -224,9 +224,8 @@ class Picture extends Component {
       );
     } else {
       return <Image
-        {...this.props}
+        {...nativeProps}
         data-once={true}
-        onAppear={() => this.lazyLoad()}
         source={{
           uri: url
         }}

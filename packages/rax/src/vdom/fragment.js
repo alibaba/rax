@@ -12,9 +12,10 @@ class FragmentComponent extends NativeComponent {
     super(element);
   }
 
-  mountComponent(parent, context, childMounter) {
+  mountComponent(parent, parentInstance, context, childMounter) {
     // Parent native element
     this._parent = parent;
+    this._parentInstance = parentInstance;
     this._context = context;
     this._mountID = Host.mountID++;
 
@@ -49,10 +50,10 @@ class FragmentComponent extends NativeComponent {
 
 
   mountChildren(children, context) {
-    let renderedChildren = {};
+    let renderedChildren = this._renderedChildren = {};
     let fragment = this.getNativeNode();
 
-    let renderedChildrenImage = children.map( (element, index) => {
+    let renderedChildrenImage = children.map((element, index) => {
       let renderedChild = instantiateComponent(element);
       let name = getElementKeyName(renderedChildren, element, index);
       renderedChildren[name] = renderedChild;
@@ -60,8 +61,8 @@ class FragmentComponent extends NativeComponent {
       // Mount
       let mountImage = renderedChild.mountComponent(
         this._parent,
-        context,
-        (nativeNode) => {
+        this._instance,
+        context, (nativeNode) => {
           if (Array.isArray(nativeNode)) {
             for (let i = 0; i < nativeNode.length; i++) {
               fragment.push(nativeNode[i]);
@@ -73,8 +74,6 @@ class FragmentComponent extends NativeComponent {
       );
       return mountImage;
     });
-
-    this._renderedChildren = renderedChildren;
 
     return renderedChildrenImage;
   }
@@ -95,6 +94,7 @@ class FragmentComponent extends NativeComponent {
     this._currentElement = null;
     this._nativeNode = null;
     this._parent = null;
+    this._parentInstance = null;
     this._context = null;
     this._instance = null;
   }

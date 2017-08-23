@@ -124,7 +124,7 @@ function genNativeModules(modules, document) {
         modules[moduleName].module.exports[methodName] = (...args) => {
           let options = {};
           let lastArg = args[args.length - 1];
-          if (typeof lastArg === 'object' && lastArg.__weex_options__) {
+          if (lastArg && typeof lastArg === 'object' && lastArg.__weex_options__) {
             options = lastArg.__weex_options__;
             // Remove the last in args
             args.pop();
@@ -328,7 +328,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       __weex_env__,
       __weex_code__,
       __weex_options__,
-      __weex_data__
+      __weex_data__,
+      __weex_config__
     };
 
     instance.window = window.self = window.window = window;
