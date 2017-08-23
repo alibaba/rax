@@ -1,6 +1,6 @@
 {
   "lerna": "2.0.0-beta.37",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "commands": {
     "publish": {
       "skipGit": true

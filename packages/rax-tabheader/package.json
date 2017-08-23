@@ -1,6 +1,6 @@
 {
   "name": "rax-tabheader",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "description": "Tabheader component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,21 +20,21 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-grid": "^0.4.10",
-    "rax-icon": "^0.4.10",
-    "rax-image": "^0.4.10",
-    "rax-multirow": "^0.4.10",
-    "rax-scrollview": "^0.4.10",
-    "rax-text": "^0.4.10",
-    "rax-touchable": "^0.4.10",
-    "rax-view": "^0.4.10",
-    "universal-env": "^0.4.10",
-    "universal-transition": "^0.4.10"
+    "rax-grid": "^0.4.11",
+    "rax-icon": "^0.4.11",
+    "rax-image": "^0.4.11",
+    "rax-multirow": "^0.4.11",
+    "rax-scrollview": "^0.4.11",
+    "rax-text": "^0.4.11",
+    "rax-touchable": "^0.4.11",
+    "rax-view": "^0.4.11",
+    "universal-env": "^0.4.11",
+    "universal-transition": "^0.4.11"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.10"
+    "rax-test-renderer": "^0.4.11"
   }
 }
