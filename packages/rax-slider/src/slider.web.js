@@ -5,6 +5,7 @@ import SwipeEvent from './SwipeEvent';
 import styles from './style';
 
 const SWIPE_LEFT = 'SWIPE_LEFT';
+const SWIPE_RIGHT = 'SWIPE_RIGHT';
 
 class Slider extends Component {
 
@@ -104,7 +105,16 @@ class Slider extends Component {
 
   onSwipeEnd = ({ direction, distance, velocity }) => {
     this.isSwiping = false;
-    this.slideTo(this.index, direction);
+    const num = this.total;
+    const realIndex = this.loopedIndex();
+    if (!(
+      this.isLoopEnd() && (
+        realIndex === num - 1 && direction === SWIPE_LEFT ||
+        realIndex === 0 && direction === SWIPE_RIGHT
+      )
+    )) {
+      this.slideTo(this.index, direction);
+    }
     if (this.props.autoPlay) {
       this.autoPlay();
     }
