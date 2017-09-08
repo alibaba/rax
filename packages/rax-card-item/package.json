@@ -1,6 +1,6 @@
 {
   "name": "rax-card-item",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "CardItem component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,16 +21,16 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-link": "^0.4.11",
-    "rax-picture": "^0.4.11",
-    "rax-text": "^0.4.11",
-    "rax-view": "^0.4.11"
+    "rax-link": "^0.4.12",
+    "rax-picture": "^0.4.12",
+    "rax-text": "^0.4.12",
+    "rax-view": "^0.4.12"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.11",
-    "rax-text": "^0.4.11"
+    "rax-test-renderer": "^0.4.12",
+    "rax-text": "^0.4.12"
   }
 }
