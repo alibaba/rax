@@ -118,7 +118,7 @@ Add an alias for `react` and `react-dom`:
   resolve: {
     alias: {
       'react': 'rax',
-      'react-dom': 'rax',
+      'react-dom': 'rax-dom',
       // Not necessary unless you consume a module using `createClass`
       'create-react-class': "rax/lib/createClass"
     }
