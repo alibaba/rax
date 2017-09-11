@@ -3,6 +3,9 @@
     "es2015",
     "rax"
   ],
+  "plugins": [
+    "export-default-module-exports"
+  ],
   "ignore": [
     "src/generator/templates",
     "__mockc__"
