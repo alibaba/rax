@@ -17,7 +17,7 @@ function getRenderErrorInfo() {
   return '';
 }
 
-const Element = (type, key, ref, props, owner) => {
+function Element(type, key, ref, props, owner) {
   props = filterProps(type, props);
 
   return {

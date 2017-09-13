@@ -1,0 +1,21 @@
+{
+  "name": "rax-dom",
+  "version": "0.4.12",
+  "description": "Rax package for working with the DOM.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax": "^0.4.12"
+  }
+}

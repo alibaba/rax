@@ -99,7 +99,8 @@ class ScrollView extends Component {
       let dom = require('@weex-module/dom');
       let contentContainer = findDOMNode(this.refs.contentContainer);
       dom.scrollToElement(contentContainer.ref, {
-        offset: x || y || 0
+        offset: x || y || 0,
+        animated: options && typeof options.animated !== 'undefined' ? options.animated : true
       });
     } else {
       let pixelRatio = document.documentElement.clientWidth / FULL_WIDTH;
@@ -258,7 +259,6 @@ function throttle(func, wait) {
 const styles = {
   baseVertical: {
     flex: 1,
-    transform: 'translateZ(0)',
     flexDirection: 'column',
   },
   baseHorizontal: {

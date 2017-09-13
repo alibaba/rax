@@ -9,7 +9,6 @@ const ID = 'id';
 const TEXT = 'text';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
-const FULL_WIDTH_REM = 750;
 const ARIA_PREFIX_REGEXP = /^aria-/;
 
 const nodeMaps = {};
@@ -19,6 +18,25 @@ const document = typeof __weex_document__ === 'object' ?
     document : null;
 
 const Driver = {
+  deviceWidth: 750,
+  viewportWidth: 750,
+
+  getDeviceWidth() {
+    return this.deviceWidth;
+  },
+
+  setDeviceWidth(width) {
+    this.deviceWidth = width;
+  },
+
+  getViewportWidth() {
+    return this.viewportWidth;
+  },
+
+  setViewportWidth(width) {
+    this.viewportWidth = width;
+  },
+
   getElementById(id) {
     return nodeMaps[id];
   },
@@ -166,7 +184,7 @@ const Driver = {
     document.open();
 
     // Init rem unit
-    setRem(this.getWindowWidth() / FULL_WIDTH_REM);
+    setRem( this.getDeviceWidth() / this.getViewportWidth() );
   },
 
   afterRender() {
@@ -176,10 +194,6 @@ const Driver = {
 
     // Turn on batched updates
     document.close();
-  },
-
-  getWindowWidth() {
-    return FULL_WIDTH_REM;
   },
 
   setNativeProps(node, props, skipSetStyles) {
