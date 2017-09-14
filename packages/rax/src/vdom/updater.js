@@ -43,7 +43,10 @@ const Updater = {
     internal._pendingForceUpdate = true;
 
     enqueueCallback(internal, callback);
-    this.runUpdate(component);
+    // pending in componentWillMount
+    if (internal._renderedComponent) {
+      this.runUpdate(component);
+    }
   },
 
   runUpdate: function(component) {
