@@ -438,7 +438,7 @@ export function getRoot(instanceId) {
   return document.toJSON ? document.toJSON() : {};
 }
 
-function fireEvent(doc, ref, type, e, domChanges) {
+function fireEvent(doc, ref, type, e, domChanges, params) {
   if (Array.isArray(ref)) {
     ref.some((ref) => {
       return fireEvent(doc, ref, type, e) !== false;
@@ -449,7 +449,7 @@ function fireEvent(doc, ref, type, e, domChanges) {
   const el = doc.getRef(ref);
 
   if (el) {
-    const result = doc.fireEvent(el, type, e, domChanges);
+    const result = doc.fireEvent(el, type, e, domChanges, params);
     updateFinish(doc);
     return result;
   }
@@ -471,8 +471,8 @@ export function receiveTasks(instanceId, tasks) {
     tasks.forEach(task => {
       let result;
       if (task.method === 'fireEvent') {
-        let [nodeId, type, data, domChanges] = task.args;
-        result = fireEvent(document, nodeId, type, data, domChanges);
+        let [nodeId, type, data, domChanges, params] = task.args;
+        result = fireEvent(document, nodeId, type, data, domChanges, params);
       } else if (task.method === 'callback') {
         let [uid, data, ifKeepAlive] = task.args;
         result = document.taskCenter.callback(uid, data, ifKeepAlive);
