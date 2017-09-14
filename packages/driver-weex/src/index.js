@@ -135,8 +135,8 @@ const Driver = {
     return parent.insertBefore(node, before);
   },
 
-  addEventListener(node, eventName, eventHandler, parames) {
-    return node.addEvent(eventName, eventHandler, parames);
+  addEventListener(node, eventName, eventHandler, params) {
+    return node.addEvent(eventName, eventHandler, params);
   },
 
   removeEventListener(node, eventName, eventHandler) {
