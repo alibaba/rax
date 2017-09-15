@@ -43,7 +43,6 @@ const injectEventListenerHook = (instances = []) => {
       }
     }
     if (!existIntersection) {
-
       if (instance) {
         instance.check();
       }

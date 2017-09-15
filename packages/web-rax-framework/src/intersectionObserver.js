@@ -1,6 +1,6 @@
 const options = {
   root: null,
-  rootMargin: "0px",
+  rootMargin: '0px',
   threshold: 0.0
 };
 let appearEvt, disappearEvt;
