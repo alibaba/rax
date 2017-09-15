@@ -1,6 +1,6 @@
 {
   "name": "rax-picture",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "description": "Picture component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,14 +21,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-image": "^0.4.12",
-    "rax-view": "^0.4.12",
-    "universal-env": "^0.4.12"
+    "rax-image": "^0.4.13",
+    "rax-view": "^0.4.13",
+    "universal-env": "^0.4.13"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.12"
+    "rax-test-renderer": "^0.4.13"
   }
 }
