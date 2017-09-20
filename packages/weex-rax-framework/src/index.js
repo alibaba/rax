@@ -3,12 +3,12 @@
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
 
-let NativeComponents = {};
-let NativeModules = {};
+// let NativeComponents = {};
+// let NativeModules = {};
 
-let Document;
-let Element;
-let Comment;
+// let Document;
+// let Element;
+// let Comment;
 
 const MODULE_NAME_PREFIX = '@weex-module/';
 const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
@@ -46,19 +46,20 @@ export function getInstance(instanceId) {
 }
 
 export function init(config) {
-  Document = config.Document;
-  Element = config.Element;
-  Comment = config.Comment;
+  // Document = config.Document;
+  // Element = config.Element;
+  // Comment = config.Comment;
 }
 
 /**
  * register the name of each native component
  * @param  {array} components array of name
  */
+/*
 export function registerComponents(components) {
   if (Array.isArray(components)) {
     components.forEach(function register(name) {
-      /* istanbul ignore if */
+      * istanbul ignore if *
       if (!name) {
         return;
       }
@@ -70,19 +71,23 @@ export function registerComponents(components) {
     });
   }
 }
+*/
 
 /**
  * register the name and methods of each api
  * @param  {object} apis a object of apis
  */
+/*
 export function registerMethods(apis) {
   // Noop
 }
+*/
 
 /**
  * register the name and methods of each module
  * @param  {object} modules a object of modules
  */
+/*
 export function registerModules(newModules) {
   if (typeof newModules === 'object') {
     for (var name in newModules) {
@@ -92,6 +97,7 @@ export function registerModules(newModules) {
     }
   }
 }
+*/
 
 function genBuiltinModules(modules, moduleFactories, context) {
   for (let moduleName in moduleFactories) {
@@ -104,7 +110,8 @@ function genBuiltinModules(modules, moduleFactories, context) {
   return modules;
 }
 
-function genNativeModules(modules, document) {
+/*
+function genNativeModules(modules, document, weex) {
   if (typeof NativeModules === 'object') {
     for (let name in NativeModules) {
       let moduleName = MODULE_NAME_PREFIX + name;
@@ -141,7 +148,7 @@ function genNativeModules(modules, document) {
 
   return modules;
 }
-
+*/
 
 /**
  * create a Weex instance
@@ -151,6 +158,7 @@ function genNativeModules(modules, document) {
  * @param  {object} [__weex_options__] {bundleUrl, debug}
  */
 export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
+  let weex = __weex_config__.weex;
   let instance = instances[instanceId];
   if (instance == undefined) {
     // Mark start time
@@ -172,7 +180,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
     }
 
-    const document = new Document(instanceId, bundleUrl);
+    const document = weex.document;
+    // const document = new Document(instanceId, bundleUrl);
     const documentURL = new URL(bundleUrl);
     const modules = {};
 
@@ -187,9 +196,9 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     };
 
     // Generate native modules map at instance init
-    genNativeModules(modules, document);
+    // genNativeModules(modules, document, weex);
     const __weex_define__ = require('./define.weex')(modules);
-    const __weex_require__ = require('./require.weex')(modules);
+    const __weex_require__ = require('./require.weex')(modules, weex);
     const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
     // Extend document
     require('./document.weex')(__weex_require__, document);
