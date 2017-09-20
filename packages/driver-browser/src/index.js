@@ -138,7 +138,7 @@ const Driver = {
       propKey = CLASS;
     }
 
-    if (propKey in node) {
+    if (propKey in node && node.nodeType !== 1) {
       node[propKey] = propValue;
     } else {
       node.setAttribute(propKey, propValue);
