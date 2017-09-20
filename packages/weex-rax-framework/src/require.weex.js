@@ -4,7 +4,7 @@ module.exports = function(modules, weex) {
 
     var shortName = name.split('@weex-module/')[1];
     if (shortName) {
-      return weex.requireMoudle(shortName);
+      return weex.requireModule(shortName);
     }
 
     if (mod && mod.isInitialized) {
