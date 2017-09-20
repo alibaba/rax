@@ -1,4 +1,4 @@
-import {render as originRender, unmountComponentAtNode, findDOMNode} from 'rax';
+import { render as originRender, unmountComponentAtNode, findDOMNode, version } from 'rax';
 
 const DOM_OPTIONS = {
   deviceWidth: 750
@@ -8,4 +8,9 @@ export function render(element, container, callback) {
   return originRender(element, container, DOM_OPTIONS, callback);
 }
 
-export {unmountComponentAtNode, findDOMNode};
+export function unstable_renderSubtreeIntoContainer(parentComponent, element, container, callback) {
+  // TODO
+  return render(element, container, callback);
+}
+
+export { unmountComponentAtNode, findDOMNode, version };

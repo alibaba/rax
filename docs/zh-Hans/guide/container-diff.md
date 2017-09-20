@@ -10,7 +10,7 @@ Rax 在上层除了很好的支持 Flexbox 之外，与 Weex 相同，仅支持�
 
 ## 全局 API 差异
 
-由于 Weex 中没有 BOM 即浏览器对象模型，是浏览器环境为 javascript 提供的接口。Weex 在原生端没有并不基于浏览器运行，不支持浏览器提供的 BOM 接口。 Rax Framework 参照 W3C 规范，提供了以下在 Weex 和 Web 环境一致的全局API: [这里是全集 API](/guide/api)
+由于 Weex 中没有 BOM 即浏览器对象模型，是浏览器环境为 javascript 提供的接口。Weex 在原生端没有并不基于浏览器运行，不支持浏览器提供的 BOM 接口。 Rax Framework 参照 W3C 规范，提供了以下在 Weex 和 Web 环境一致的全局API: [这里是全局 API](/guide/api)
 
 ## 有限的事件类型
 

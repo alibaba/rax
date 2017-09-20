@@ -27,7 +27,8 @@ const Updater = {
     enqueueState(internal, partialState);
     enqueueCallback(internal, callback);
 
-    if (!internal._pendingState) {
+    // pending in componentWillReceiveProps and componentWillMount
+    if (!internal._pendingState && internal._renderedComponent) {
       this.runUpdate(component);
     }
   },
@@ -42,15 +43,14 @@ const Updater = {
     internal._pendingForceUpdate = true;
 
     enqueueCallback(internal, callback);
-    this.runUpdate(component);
+    // pending in componentWillMount
+    if (internal._renderedComponent) {
+      this.runUpdate(component);
+    }
   },
 
   runUpdate: function(component) {
     let internal = component._internal;
-
-    if (!internal || !internal._renderedComponent) {
-      return;
-    }
 
     // If updateComponent happens to enqueue any new updates, we
     // shouldn't execute the callbacks until the next render happens, so
