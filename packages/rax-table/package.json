@@ -1,6 +1,6 @@
 {
   "name": "rax-table",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "description": "Table component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,14 +21,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-scrollview": "^0.4.12",
-    "rax-text": "^0.4.12",
-    "rax-view": "^0.4.12"
+    "rax-scrollview": "^0.4.13",
+    "rax-text": "^0.4.13",
+    "rax-view": "^0.4.13"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.12"
+    "rax-test-renderer": "^0.4.13"
   }
 }
