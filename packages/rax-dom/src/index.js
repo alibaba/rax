@@ -10,7 +10,7 @@ export function render(element, container, callback) {
 
 export function unstable_renderSubtreeIntoContainer(parentComponent, element, container, callback) {
   // TODO
-  return render(element, container, callback);
+  return originRender(element, container, callback);
 }
 
 export { unmountComponentAtNode, findDOMNode, version };
