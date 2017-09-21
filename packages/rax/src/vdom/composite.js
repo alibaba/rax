@@ -105,7 +105,7 @@ class CompositeComponent {
       // Functional stateless component without state and lifecycles
       instance = new StatelessComponent(Component);
     } else {
-      throw Error(`Invalid component type ${JSON.stringify(Component)}`);
+      throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
     }
 
     // These should be set up in the constructor, but as a convenience for
@@ -276,8 +276,8 @@ class CompositeComponent {
       Object.assign(
         nextState,
         typeof partial === 'function' ?
-        partial.call(instance, nextState, props, context) :
-        partial
+          partial.call(instance, nextState, props, context) :
+          partial
       );
     }
 
