@@ -1,4 +1,4 @@
-import { render as originRender, unmountComponentAtNode, findDOMNode as orignFindDOMNode, version } from 'rax';
+import { render as originRender, unmountComponentAtNode, findDOMNode as originFindDOMNode, version } from 'rax';
 
 const DOM_OPTIONS = {
   deviceWidth: 750
@@ -14,11 +14,12 @@ export function unstable_renderSubtreeIntoContainer(parentComponent, element, co
 }
 
 export function findDOMNode(componentOrNode) {
-  if (typeof componentOrNode !== 'object') {
+  // Original findDOMNode in Rax accept string param, but in React that will throw error
+  if (typeof componentOrNode === 'string') {
     throw new Error('findDOMNode: find by neither component nor DOM node.');
   }
 
-  return orignFindDOMNode(componentOrNode);
+  return originFindDOMNode(componentOrNode);
 }
 
 export { unmountComponentAtNode, version };
