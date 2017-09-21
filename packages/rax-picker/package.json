@@ -1,6 +1,6 @@
 {
   "name": "rax-picker",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "description": "Picker component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-text": "^0.4.13",
-    "rax-touchable": "^0.4.13",
-    "universal-env": "^0.4.13"
+    "rax-text": "^0.4.14",
+    "rax-touchable": "^0.4.14",
+    "universal-env": "^0.4.14"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.13",
-    "rax-text": "^0.4.13"
+    "rax-test-renderer": "^0.4.14",
+    "rax-text": "^0.4.14"
   }
 }
