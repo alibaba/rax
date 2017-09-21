@@ -167,11 +167,11 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
     const {URL, URLSearchParams, FontFace, matchMedia} = shared;
     let bundleUrl = __weex_options__.bundleUrl || 'about:blank';
-    
+
     if (!__weex_options__.bundleUrl) {
       console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
     } else if (!bundleUrl.split('//')[0]) {
-      bundleUrl = 'https:'+bundleUrl;
+      bundleUrl = 'https:' + bundleUrl;
     }
 
     const document = new Document(instanceId, bundleUrl);
