@@ -9,8 +9,9 @@ function render(element, container, options, callback) {
     options = null;
   }
 
+  options = options || {};
   // Init inject
-  inject(options || {});
+  inject(options);
 
   let rootComponent = instance.render(element, container, options.parent);
   let componentInstance = rootComponent.getPublicInstance();
