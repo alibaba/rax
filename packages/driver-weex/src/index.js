@@ -135,7 +135,8 @@ const Driver = {
     return parent.insertBefore(node, before);
   },
 
-  addEventListener(node, eventName, eventHandler, params) {
+  addEventListener(node, eventName, eventHandler, props) {
+    let params = props[eventName + 'EventParams'];
     return node.addEvent(eventName, eventHandler, params);
   },
 
@@ -211,8 +212,7 @@ const Driver = {
           this.setStyles(node, value);
         } else if (EVENT_PREFIX_REGEXP.test(prop)) {
           let eventName = prop.slice(2).toLowerCase();
-          let params = props[eventName + 'EventParams'];
-          this.addEventListener(node, eventName, value, params);
+          this.addEventListener(node, eventName, value, props);
         } else {
           this.setAttribute(node, prop, value);
         }

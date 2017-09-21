@@ -228,9 +228,8 @@ class NativeComponent {
         }
 
         if (typeof nextProp === 'function') {
-          let params = nextProps[propKey.slice(2).toLowerCase() + 'EventParams'];
           Host.driver.addEventListener(this.getNativeNode(), propKey.slice(2)
-            .toLowerCase(), nextProp, params);
+            .toLowerCase(), nextProp, nextProps);
         }
         // Update other property
       } else {
