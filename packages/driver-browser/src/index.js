@@ -4,7 +4,7 @@
 
 /* global DEVICE_WIDTH, VIEWPORT_WIDTH */
 
-import {convertUnit, setRem} from 'style-unit';
+import { convertUnit, setRem } from 'style-unit';
 import flexbox from './flexbox';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
@@ -123,7 +123,10 @@ const Driver = {
     }
 
     if (propKey in node) {
-      node[propKey] = null;
+      try {
+        // Some node property is readonly when in strict mode
+        node[propKey] = null;
+      } catch (e) { }
     }
 
     node.removeAttribute(propKey);
@@ -139,7 +142,12 @@ const Driver = {
     }
 
     if (propKey in node) {
-      node[propKey] = propValue;
+      try {
+        // Some node property is readonly when in strict mode
+        node[propKey] = propValue;
+      } catch (e) {
+        node.setAttribute(propKey, propValue);
+      }
     } else {
       node.setAttribute(propKey, propValue);
     }
@@ -172,7 +180,7 @@ const Driver = {
 
   beforeRender() {
     // Init rem unit
-    setRem( this.getDeviceWidth() / this.getViewportWidth() );
+    setRem(this.getDeviceWidth() / this.getViewportWidth());
   },
 
   setNativeProps(node, props) {
