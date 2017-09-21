@@ -8,9 +8,15 @@ export function render(element, container, callback) {
   return originRender(element, container, DOM_OPTIONS, callback);
 }
 
-export function unstable_renderSubtreeIntoContainer(parentComponent, element, container, callback) {
-  // TODO
-  return originRender(element, container, callback);
+export function unstable_renderSubtreeIntoContainer(parent, element, container, callback) {
+  return originRender(
+    element,
+    container,
+    {
+      parent
+    },
+    callback
+  );
 }
 
 export function findDOMNode(componentOrNode) {

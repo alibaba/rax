@@ -35,7 +35,7 @@ export default {
       }
     }
   },
-  render(element, container) {
+  render(element, container, parentInstance) {
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.beforeRender();
     }
@@ -46,6 +46,13 @@ export default {
     // Real native root node is body
     if (container == null) {
       container = Host.driver.createBody();
+    }
+
+    // Get the context from the conceptual parent component.
+    let parentContext;
+    if (parentInstance) {
+      let parentInternal = parentInstance._internal;
+      parentContext = parentInternal._processChildContext(parentInternal._context);
     }
 
     let prevRootInstance = this.get(container);
@@ -60,7 +67,7 @@ export default {
           prevElement,
           element,
           prevUnmaskedContext,
-          prevUnmaskedContext
+          parentContext || prevUnmaskedContext
         );
 
         return prevRootInstance;
@@ -85,7 +92,7 @@ export default {
 
     let wrappedElement = createElement(Root, null, element);
     let renderedComponent = instantiateComponent(wrappedElement);
-    let defaultContext = {};
+    let defaultContext = parentContext || {};
     let rootInstance = renderedComponent.mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
 
