@@ -71,6 +71,32 @@ export function registerComponents(components) {
   }
 }
 
+function __weex_module_supports__(name) {
+  let parts = name.split('.');
+  if (parts.length === 1) {
+    return Boolean(NativeModules[name]);
+  } else {
+    let moduleName = parts[0];
+    let methodName = parts[1];
+    let moduleMethods = NativeModules[moduleName];
+
+    if (moduleMethods) {
+      for (let i = 0; i < moduleMethods.length; i++) {
+        let method = moduleMethods[i];
+        if (typeof method === 'object' && method.name === methodName || method === methodName) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+}
+
+function __weex_tag_supports__(name) {
+  return Boolean(NativeComponents[name]);
+}
+
 /**
  * register the name and methods of each api
  * @param  {object} apis a object of apis
@@ -324,6 +350,8 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       require: __weex_require__,
       // Weex
       __weex_document__: document,
+      __weex_module_supports__,
+      __weex_tag_supports__,
       __weex_define__,
       __weex_require__,
       __weex_downgrade__,
