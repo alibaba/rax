@@ -9,7 +9,7 @@ import WeexDriver from 'driver-weex';
 import BrowserDriver from 'driver-browser';
 import Hook from './debug/hook';
 
-export default function inject({ driver, hook, measurer, deviceWidth, viewportWidth }) {
+export default function inject({ driver, hook, measurer, deviceWidth, viewportWidth, eventRegistry }) {
   // Inject component class
   Host.EmptyComponent = EmptyComponent;
   Host.NativeComponent = NativeComponent;
@@ -43,5 +43,9 @@ export default function inject({ driver, hook, measurer, deviceWidth, viewportWi
 
   if (viewportWidth && Host.driver.setViewportWidth) {
     Host.driver.setViewportWidth(viewportWidth);
+  }
+
+  if (eventRegistry) {
+    Host.driver.eventRegistry = eventRegistry;
   }
 }
