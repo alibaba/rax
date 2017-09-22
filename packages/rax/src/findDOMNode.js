@@ -16,7 +16,12 @@ function findDOMNode(instance) {
   }
 
   if (typeof instance == 'string') {
-    return Host.driver.getElementById(instance);
+    const domNode = Host.driver.getElementById(instance);
+    if (domNode === null) {
+      throw new Error('Appears to be an invalid DOM id');
+    } else {
+      return domNode;
+    }
   }
 
   if (typeof instance.render !== 'function') {
