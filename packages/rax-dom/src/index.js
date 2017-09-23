@@ -8,11 +8,13 @@ const DOM_OPTIONS = {
     change: function (eventType, node, eventName, eventHandler, props) {
       let tagName = node.tagName.toLowerCase();
 
-      if (
-        tagName === 'textarea' ||
-        tagName === 'input' && (!props || !props.type || props.type === 'text' || props.type === 'password')
-      ) {
+      if (tagName === 'textarea') {
         eventName = 'input';
+      }
+      if (tagName === 'input' && props) {
+        if (!props.type || props.type === 'text' || props.type === 'password') {
+          eventName = 'input';
+        }
       }
 
       if (eventType === ADD_EVENT) {

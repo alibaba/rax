@@ -57,7 +57,7 @@ const PROPERTY_WHITE_LIST = {
     htmlFor: 0,
     httpEquiv: 0,
     // Attributes with mutation methods must be specified in the whitelist
-    value: 0,
+    value: MUST_USE_PROPERTY,
     // The following attributes expect boolean values. They must be in
     // the whitelist to allow boolean attribute assignment:
     autoComplete: 0,

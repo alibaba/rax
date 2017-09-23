@@ -145,28 +145,62 @@ const Driver = {
     node.removeAttribute(propKey);
   },
 
-  setAttributeOrProperty(node, propKey, propValue) {
+  setAttribute(node, propKey, propValue) {
     const propertyDetail = getPropertyDetail(propKey);
 
-    if (propertyDetail && this.shouldSetAttribute(propKey, propValue)) {
+    if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+      // in case propValue is not a plain object
+      node.innerHTML = ({ ...propValue }).__html || null;
+    } else if (propertyDetail && this.shouldSetAttribute(propKey, propValue)) {
       // delete property value from node
       if (shouldSetNullValue(propKey, propValue)) {
         this.removeProperty(node, propKey);
       } else if (propertyDetail.mustUseProperty) {
         this.setProperty(node, propertyDetail.propertyName, propValue)
       } else {
-        this.setAttribute(node, propertyDetail.attributeName, propValue)
+        this.setDOMAttribute(node, propertyDetail.attributeName, propValue)
       }
-    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-      // in case propValue is not a plain object
-      node.innerHTML = ({ ...propValue }).__html || null;
+
+      if (propKey === 'value') {
+        // value has some special place
+        this.mutateValue(node, propValue);
+      }
+
     } else {
       propValue = this.shouldSetAttribute(propKey, propValue) ? propValue : null;
-      this.setAttribute(node, propKey, propValue);
+      this.setDOMAttribute(node, propKey, propValue);
     }
   },
 
-  setAttribute(node, propKey, propValue) {
+  // special for value
+  mutateValue(node, propValue) {
+    if (propValue == null) {
+      return node.removeAttribute('value');
+    }
+
+    // Number inputs get special treatment due to some edge cases in
+    // Chrome. Let everything else assign the value attribute as normal.
+    // https://github.com/facebook/react/issues/7253#issuecomment-236074326
+    if (node.type !== 'number' || node.hasAttribute('value') === false) {
+      node.setAttribute('value', '' + propValue);
+    } else if (
+      node.validity &&
+      !node.validity.badInput &&
+      node.ownerDocument.activeElement !== node
+    ) {
+      // Don't assign an attribute if validation reports bad
+      // input. Chrome will clear the value. Additionally, don't
+      // operate on inputs that have focus, otherwise Chrome might
+      // strip off trailing decimal places and cause the user's
+      // cursor position to jump to the beginning of the input.
+      //
+      // In ReactDOMInput, we have an onBlur event that will trigger
+      // this function again when focus is lost.
+      node.setAttribute('value', '' + propValue);
+    }
+  },
+
+  setDOMAttribute(node, propKey, propValue) {
     const propertyDetail = getPropertyDetail(propKey);
     if (propValue == null) {
       node.removeAttribute(name);
@@ -286,7 +320,7 @@ const Driver = {
           let eventName = prop.slice(2).toLowerCase();
           this.addEventListener(node, eventName, value);
         } else {
-          this.setAttributeOrProperty(node, prop, value);
+          this.setAttribute(node, prop, value);
         }
       }
     }
