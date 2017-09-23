@@ -8,11 +8,14 @@ const DOM_OPTIONS = {
     change: function (eventType, node, eventName, eventHandler, props) {
       let tagName = node.tagName.toLowerCase();
 
+      // textarea and input with typeof text or password
+      // need to map onChange to onInput
       if (tagName === 'textarea') {
         eventName = 'input';
       }
-      if (tagName === 'input' && props) {
-        if (!props.type || props.type === 'text' || props.type === 'password') {
+      if (tagName === 'input') {
+        // if input has none attribute `type`, it default to `text`
+        if (node.type === 'text' || props.type === 'password') {
           eventName = 'input';
         }
       }
