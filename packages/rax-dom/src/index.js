@@ -15,7 +15,7 @@ const DOM_OPTIONS = {
       }
       if (tagName === 'input') {
         // if input has none attribute `type`, it default to `text`
-        if (node.type === 'text' || props.type === 'password') {
+        if (node.type === 'text' || node.type === 'password') {
           eventName = 'input';
         }
       }
