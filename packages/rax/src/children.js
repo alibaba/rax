@@ -31,7 +31,9 @@ const Children = {
   toArray(children) {
     if (children == null) return [];
     // `toArray` filter null value
-    return convertChildrenToArray(children).filter(child => child !== null);
+    // flatten children
+    children = flattenChildren(children, []);
+    return Array.isArray(children) ? children.filter(child => child !== null) : [].concat(children);
   }
 };
 

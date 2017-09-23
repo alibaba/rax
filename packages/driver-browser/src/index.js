@@ -6,6 +6,7 @@
 
 import { convertUnit, setRem } from 'style-unit';
 import flexbox from './flexbox';
+import { PROPERTY_WHITE_LIST, isReserved, shouldSetNullValue, getPropertyDetail } from './propertiesConfig';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
@@ -144,24 +145,100 @@ const Driver = {
     node.removeAttribute(propKey);
   },
 
+  setAttributeOrProperty(node, propKey, propValue) {
+    const propertyDetail = getPropertyDetail(propKey);
+
+    if (propertyDetail && this.shouldSetAttribute(propKey, propValue)) {
+      // delete property value from node
+      if (shouldSetNullValue(propKey, propValue)) {
+        this.removeProperty(node, propKey);
+      } else if (propertyDetail.mustUseProperty) {
+        this.setProperty(node, propertyDetail.propertyName, propValue)
+      } else {
+        this.setAttribute(node, propertyDetail.attributeName, propValue)
+      }
+    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+      // in case propValue is not a plain object
+      node.innerHTML = ({ ...propValue }).__html || null;
+    } else {
+      propValue = this.shouldSetAttribute(propKey, propValue) ? propValue : null;
+      this.setAttribute(node, propKey, propValue);
+    }
+  },
+
   setAttribute(node, propKey, propValue) {
-    if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-      return node.innerHTML = propValue.__html;
+    const propertyDetail = getPropertyDetail(propKey);
+    if (propValue == null) {
+      node.removeAttribute(name);
+    } else {
+      const attributeName = propertyDetail.attributeName;
+      // `setAttribute` with objects becomes only `[object]` in IE8/9,
+      // ('' + propValue) makes it output the correct toString()-value.
+      if (
+        propertyDetail.hasBooleanValue ||
+        (propertyDetail.hasOverloadedBooleanValue && propValue === true)
+      ) {
+        // if attributeName is `required`, it becomes `<input required />`
+        node.setAttribute(attributeName, '');
+      } else {
+        node.setAttribute(attributeName, '' + propValue);
+      }
     }
+  },
 
-    if (propKey === CLASS_NAME) {
-      propKey = CLASS;
-    }
-
-    if (propKey in node) {
-      try {
-        // Some node property is readonly when in strict mode
-        node[propKey] = propValue;
-      } catch (e) {
-        node.setAttribute(propKey, propValue);
+  removeProperty(node, propKey) {
+    const propertyDetail = getPropertyDetail(propKey);
+    if (propertyDetail) {
+      if (propertyDetail.mustUseProperty) {
+        if (propertyDetail.hasBooleanValue) {
+          node[propKey] = false;
+        } else {
+          node[propKey] = '';
+        }
+      } else {
+        node.removeAttribute(propertyDetail.attributeName);
       }
     } else {
-      node.setAttribute(propKey, propValue);
+      node.removeAttribute(propKey);
+    }
+  },
+
+  setProperty(node, propKey, propValue) {
+    // Contrary to `setAttribute`, object properties are properly
+    // `toString`ed by IE8/9.
+    node[propKey] = propValue;
+  },
+
+  // check whether a property name is a writeable attribute
+  shouldSetAttribute(propKey, propValue) {
+    // some reserved props ignored
+    if (isReserved(propKey)) {
+      return false;
+    }
+
+    if (propValue === null) {
+      return true;
+    }
+    const propertyDetail = getPropertyDetail(propKey);
+
+    switch (typeof propValue) {
+      case 'boolean':
+        // that not null means propValue in white list
+        if (propertyDetail) {
+          return true;
+        }
+        // data- and aria- pass
+        const prefix = lowerCased.slice(0, 5);
+        return prefix === 'data-' || prefix === 'aria-';
+      case 'undefined':
+      case 'number':
+      case 'string':
+        return true;
+      case 'object':
+        return true;
+      default:
+        // function, symbol, and others
+        return false;
     }
   },
 
@@ -209,7 +286,7 @@ const Driver = {
           let eventName = prop.slice(2).toLowerCase();
           this.addEventListener(node, eventName, value);
         } else {
-          this.setAttribute(node, prop, value);
+          this.setAttributeOrProperty(node, prop, value);
         }
       }
     }

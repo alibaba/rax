@@ -5,12 +5,12 @@ const REMOVE_EVENT = 'removeEvent';
 const DOM_OPTIONS = {
   deviceWidth: 750,
   eventRegistry: {
-    change: function(eventType, node, eventName, eventHandler, props) {
+    change: function (eventType, node, eventName, eventHandler, props) {
       let tagName = node.tagName.toLowerCase();
 
       if (
         tagName === 'textarea' ||
-        tagName === 'input' && (!props.type || props.type === 'text' || props.type === 'password')
+        tagName === 'input' && (!props || !props.type || props.type === 'text' || props.type === 'password')
       ) {
         eventName = 'input';
       }
@@ -21,7 +21,7 @@ const DOM_OPTIONS = {
         return node.removeEventListener(eventName, eventHandler);
       }
     },
-    doubleclick: function(eventType, node, eventName, eventHandler, props) {
+    doubleclick: function (eventType, node, eventName, eventHandler, props) {
       eventName = 'dblclick';
 
       if (eventType === ADD_EVENT) {
