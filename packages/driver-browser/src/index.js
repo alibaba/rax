@@ -81,7 +81,7 @@ const Driver = {
   removeChild(node, parent) {
     parent = parent || node.parentNode;
     // Maybe has been removed when remove child
-    if (parent) {
+    if (parent && parent.contains(node)) {
       parent.removeChild(node);
     }
   },
@@ -103,7 +103,9 @@ const Driver = {
 
   insertBefore(node, before, parent) {
     parent = parent || before.parentNode;
-    parent.insertBefore(node, before);
+    if (parent) {
+      parent.insertBefore(node, before);
+    }
   },
 
   addEventListener(node, eventName, eventHandler, props) {
