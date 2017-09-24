@@ -11,7 +11,7 @@ class DatePicker extends Component {
       selectedValue: props.selectedValue
     };
   }
-  
+
   select = (data) => {
     this.setState({
       selectedValue: data,
