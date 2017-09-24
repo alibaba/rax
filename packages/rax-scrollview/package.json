@@ -1,6 +1,6 @@
 {
   "name": "rax-scrollview",
-  "version": "0.4.12",
+  "version": "0.4.14",
   "description": "ScrollView component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,14 +21,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-refreshcontrol": "^0.4.12",
-    "rax-view": "^0.4.12",
-    "universal-env": "^0.4.12"
+    "rax-refreshcontrol": "^0.4.14",
+    "rax-view": "^0.4.14",
+    "universal-env": "^0.4.14"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.12"
+    "rax-test-renderer": "^0.4.14"
   }
 }

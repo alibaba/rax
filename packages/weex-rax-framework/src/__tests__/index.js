@@ -53,6 +53,8 @@ describe('framework', () => {
       audio: ['addEventListener', 'removeAllEventListeners', 'canPlayType', 'stop', 'pause', 'load', 'play', 'setVolume'],
       picker: ['addEventListener', 'removeAllEventListeners', 'pickTime', 'pickDate', 'pick'],
     });
+
+    framework.registerComponents(['div', 'video']);
     sendTasksHandler = function() {
       runtime.target.callNative(...arguments);
       // FIXME: Hack for should return value like setTimeout
@@ -874,6 +876,29 @@ describe('framework', () => {
     });
 
     instance.oncall('instanceWrap', 'error', mockFn);
+
+    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('weex supports', () => {
+    const code = `
+      var moduleExisted = __weex_module_supports__('webSocket.send');
+      var moduleNotexisted = __weex_module_supports__('webSocket.send2');
+
+      var tagExisted = __weex_tag_supports__('div');
+      var tagNotexisted = __weex_tag_supports__('divx');
+      alert([moduleExisted, moduleNotexisted, tagExisted, tagNotexisted]);
+    `;
+
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual({
+        message: [true, false, true, false]
+      });
+    });
+
+    instance.oncall('modal', 'alert', mockFn);
 
     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 

@@ -20,7 +20,7 @@ function findDOMNode(instance) {
   }
 
   if (typeof instance.render !== 'function') {
-    throw new Error('Appears to be neither Component nor DOMNode.');
+    throw new Error('findDOMNode: find by neither component nor DOM node.');
   }
 
   // Composite component
@@ -36,7 +36,7 @@ function findDOMNode(instance) {
     }
     return internal._nativeNode;
   } else {
-    throw new Error('findDOMNode was called on an unmounted component.');
+    throw new Error('findDOMNode: find on an unmounted component.');
   }
 }
 

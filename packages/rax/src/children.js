@@ -16,7 +16,7 @@ let Children = {
   },
   only(children) {
     children = Children.toArray(children);
-    if (children.length !== 1) throw new Error('Children.only expected to receive a single React element child.');
+    if (children.length !== 1) throw new Error('Children.only: expected to receive a single element child.');
     return children[0];
   },
   toArray(children) {

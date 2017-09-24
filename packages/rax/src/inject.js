@@ -1,4 +1,4 @@
-import {isWeb, isWeex} from 'universal-env';
+import { isWeb, isWeex } from 'universal-env';
 import Host from './vdom/host';
 import EmptyComponent from './vdom/empty';
 import NativeComponent from './vdom/native';
@@ -9,13 +9,14 @@ import WeexDriver from 'driver-weex';
 import BrowserDriver from 'driver-browser';
 import Hook from './debug/hook';
 
-export default function inject({driver, hook, measurer, deviceWidth, viewportWidth}) {
+export default function inject({ driver, hook, measurer, deviceWidth, viewportWidth, eventRegistry }) {
   // Inject component class
   Host.EmptyComponent = EmptyComponent;
   Host.NativeComponent = NativeComponent;
   Host.TextComponent = TextComponent;
   Host.FragmentComponent = FragmentComponent;
   Host.CompositeComponent = CompositeComponent;
+
   // Inject devtool hook
   Host.hook = hook || Hook;
 
@@ -36,11 +37,15 @@ export default function inject({driver, hook, measurer, deviceWidth, viewportWid
     Host.driver = driver;
   }
 
-  if (deviceWidth && driver.setDeviceWidth) {
-    driver.setDeviceWidth(deviceWidth);
+  if (deviceWidth && Host.driver.setDeviceWidth) {
+    Host.driver.setDeviceWidth(deviceWidth);
   }
 
-  if (viewportWidth && driver.setViewportWidth) {
-    driver.setViewportWidth(viewportWidth);
+  if (viewportWidth && Host.driver.setViewportWidth) {
+    Host.driver.setViewportWidth(viewportWidth);
+  }
+
+  if (eventRegistry) {
+    Host.driver.eventRegistry = eventRegistry;
   }
 }
