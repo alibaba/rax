@@ -16,10 +16,10 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "driver-browser": "^0.4.14",
-    "driver-server": "^0.4.14",
-    "driver-weex": "^0.4.14",
-    "style-unit": "^0.4.14",
-    "universal-env": "^0.4.14"
+    "driver-browser": "0.4.14",
+    "driver-server": "0.4.14",
+    "driver-weex": "0.4.14",
+    "style-unit": "0.4.14",
+    "universal-env": "0.4.14"
   }
 }
