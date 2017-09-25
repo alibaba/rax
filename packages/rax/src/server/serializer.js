@@ -1,5 +1,6 @@
 import escapeText from './escapeText';
 import styleToCSS from './styleToCSS';
+import memoize from './memoize';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -35,11 +36,11 @@ function quoteAttribute(prop, value) {
   return `${prop}="${escapeText(value)}"`;
 }
 
-function createOpenTagMarkup(tagName, style, attributes) {
+const createOpenTagMarkup = memoize(function(tagName, style, attributes) {
   let tagOpen = `<${tagName}`;
 
   if (style) {
-    let styleAttr = styleToCSS(style, true);
+    let styleAttr = styleToCSS(style);
     if (styleAttr) {
       tagOpen += ' ' + quoteAttribute('style', styleAttr);
     }
@@ -52,7 +53,7 @@ function createOpenTagMarkup(tagName, style, attributes) {
   }
 
   return tagOpen;
-}
+});
 
 class Serializer {
   constructor(node) {
@@ -82,15 +83,15 @@ class Serializer {
             json.children = childrenJSON;
           }
 
-          if (Object.keys(node.style).length) {
+          if (Object.keys(node.style).length > 0) {
             json.style = node.style;
           }
 
-          if (Object.keys(node.attributes).length) {
+          if (Object.keys(node.attributes).length > 0) {
             json.attributes = node.attributes;
           }
 
-          if (Object.keys(node.eventListeners).length) {
+          if (Object.keys(node.eventListeners).length > 0) {
             json.eventListeners = node.eventListeners;
           }
 
