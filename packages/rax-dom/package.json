@@ -1,6 +1,6 @@
 {
   "name": "rax-dom",
-  "version": "0.4.14",
+  "version": "0.5.0-beta",
   "description": "Rax package for working with the DOM.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,6 +16,6 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax": "^0.4.14"
+    "rax": "^0.5.0-beta"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "rax-hot-loader",
-  "version": "0.4.14",
+  "version": "0.5.0-beta",
   "description": "Tweak Rax components in real time.",
   "main": "index.js",
   "repository": {

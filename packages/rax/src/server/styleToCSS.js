@@ -6,7 +6,7 @@ export default function styleToCSS(style) {
       let val = style[prop];
       if (val != null) {
         let unit = '';
-        if (typeof val === 'number' || String(parseFloat(val)).length === val.length)  unit = 'rem';
+        if (typeof val === 'number' || String(parseFloat(val)).length === val.length) unit = 'rem';
         css += `${prop.replace(/([A-Z])/g, '-$1').toLowerCase()}:${val}${unit};`;
       }
     }

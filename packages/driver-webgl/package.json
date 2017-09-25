@@ -1,6 +1,6 @@
 {
   "name": "driver-webgl",
-  "version": "0.4.14",
+  "version": "0.5.0-beta",
   "description": "WebGL driver for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
