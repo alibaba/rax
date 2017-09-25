@@ -136,7 +136,7 @@ const Driver = {
   },
 
   addEventListener(node, eventName, eventHandler, props) {
-    let params = props && props[eventName + 'EventParams'];
+    let params = props ? props[eventName + 'EventParams'] : null;
     return node.addEvent(eventName, eventHandler, params);
   },
 
