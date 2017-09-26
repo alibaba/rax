@@ -6,7 +6,16 @@
 
 import { convertUnit, setRem } from 'style-unit';
 import flexbox from './flexbox';
-import { PROPERTY_WHITE_LIST, isReserved, shouldSetNullValue, getPropertyDetail } from './propertiesConfig';
+import {
+  mustUseProperty,
+  isNumbericProperty,
+  isStrictBooleanProperty,
+  isBooleanProperty,
+  isAcceptableAttribute,
+  normalizeAttributeName,
+  normalizePropertyName,
+  isReservedProp
+} from './properties';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
@@ -81,9 +90,7 @@ const Driver = {
   removeChild(node, parent) {
     parent = parent || node.parentNode;
     // Maybe has been removed when remove child
-    if (parent && parent.contains(node)) {
-      parent.removeChild(node);
-    }
+    parent.removeChild(node);
   },
 
   replaceChild(newChild, oldChild, parent) {
@@ -103,9 +110,7 @@ const Driver = {
 
   insertBefore(node, before, parent) {
     parent = parent || before.parentNode;
-    if (parent) {
-      parent.insertBefore(node, before);
-    }
+    parent.insertBefore(node, before);
   },
 
   addEventListener(node, eventName, eventHandler, props) {
@@ -144,132 +149,97 @@ const Driver = {
       } catch (e) { }
     }
 
-    node.removeAttribute(propKey);
+    node.removeAttribute(normalizeAttributeName(propKey));
   },
 
   setAttribute(node, propKey, propValue) {
-    const propertyDetail = getPropertyDetail(propKey);
-
     if (propKey === DANGEROUSLY_SET_INNER_HTML) {
       // in case propValue is not a plain object
-      node.innerHTML = ({ ...propValue }).__html || null;
-    } else if (propertyDetail && this.shouldSetAttribute(propKey, propValue)) {
-      // delete property value from node
-      if (shouldSetNullValue(propKey, propValue)) {
+      node.innerHTML = ({ ...propValue }).__html;
+      return;
+    }
+
+    // check property name writeable
+    if (this.shouldSetAttribute(propKey, propValue)) {
+
+      if (
+        propValue === null ||
+        (isBooleanProperty(propKey) && propValue == null || propValue === false) ||
+        (isNumbericProperty(propKey) && isNaN(propValue)) ||
+        (isStrictBooleanProperty(propKey) && propValue === false)
+      ) {
+        // delete property value from node
         this.removeProperty(node, propKey);
-      } else if (propertyDetail.mustUseProperty) {
-        this.setProperty(node, propertyDetail.propertyName, propValue)
+      } else if (mustUseProperty(propKey)) {
+        // must use property
+        this.setProperty(node, propKey, propValue);
       } else {
-        this.setDOMAttribute(node, propertyDetail.attributeName, propValue)
+        // set attribute
+        this.setDOMAttribute(node, propKey, propValue);
       }
-
-      if (propKey === 'value') {
-        // value has some special place
-        this.mutateValue(node, propValue);
-      }
-
     } else {
-      propValue = this.shouldSetAttribute(propKey, propValue) ? propValue : null;
-      this.setDOMAttribute(node, propKey, propValue);
-    }
-  },
-
-  // special for value
-  mutateValue(node, propValue) {
-    if (propValue == null) {
-      return node.removeAttribute('value');
-    }
-
-    // Number inputs get special treatment due to some edge cases in
-    // Chrome. Let everything else assign the value attribute as normal.
-    // https://github.com/facebook/react/issues/7253#issuecomment-236074326
-    if (node.type !== 'number' || node.hasAttribute('value') === false) {
-      node.setAttribute('value', '' + propValue);
-    } else if (
-      node.validity &&
-      !node.validity.badInput &&
-      node.ownerDocument.activeElement !== node
-    ) {
-      // Don't assign an attribute if validation reports bad
-      // input. Chrome will clear the value. Additionally, don't
-      // operate on inputs that have focus, otherwise Chrome might
-      // strip off trailing decimal places and cause the user's
-      // cursor position to jump to the beginning of the input.
-      //
-      // In ReactDOMInput, we have an onBlur event that will trigger
-      // this function again when focus is lost.
-      node.setAttribute('value', '' + propValue);
+      this.removeAttribute(node, propKey);
     }
   },
 
   setDOMAttribute(node, propKey, propValue) {
-    const propertyDetail = getPropertyDetail(propKey);
-    if (propValue == null) {
-      node.removeAttribute(name);
+    const attributeName = normalizeAttributeName(propKey);
+    // `setAttribute` with objects becomes only `[object]` in IE8/9,
+    // ('' + propValue) makes it output the correct toString()-value.
+    if (
+      isBooleanProperty(propKey) ||
+      (isStrictBooleanProperty(propKey) && propValue === true)
+    ) {
+      // if attributeName is `required`, it becomes `<input required />`
+      node.setAttribute(attributeName, '');
     } else {
-      const attributeName = propertyDetail.attributeName;
-      // `setAttribute` with objects becomes only `[object]` in IE8/9,
-      // ('' + propValue) makes it output the correct toString()-value.
-      if (
-        propertyDetail.hasBooleanValue ||
-        (propertyDetail.hasOverloadedBooleanValue && propValue === true)
-      ) {
-        // if attributeName is `required`, it becomes `<input required />`
-        node.setAttribute(attributeName, '');
-      } else {
-        node.setAttribute(attributeName, '' + propValue);
-      }
+      node.setAttribute(attributeName, '' + propValue);
     }
   },
 
   removeProperty(node, propKey) {
-    const propertyDetail = getPropertyDetail(propKey);
-    if (propertyDetail) {
-      if (propertyDetail.mustUseProperty) {
-        if (propertyDetail.hasBooleanValue) {
-          node[propKey] = false;
+    // in write list
+    if (isAcceptableAttribute(propKey)) {
+      if (mustUseProperty(propKey)) {
+        if (isBooleanProperty(propKey)) {
+          node[normalizePropertyName(propKey)] = false;
         } else {
-          node[propKey] = '';
+          node[normalizePropertyName(propKey)] = '';
         }
       } else {
-        node.removeAttribute(propertyDetail.attributeName);
+        node.removeAttribute(normalizeAttributeName(propKey));
       }
     } else {
-      node.removeAttribute(propKey);
+      node.removeAttribute(normalizeAttributeName(propKey));
     }
   },
 
   setProperty(node, propKey, propValue) {
+    const propertyName = normalizePropertyName(propKey);
     // Contrary to `setAttribute`, object properties are properly
     // `toString`ed by IE8/9.
-    node[propKey] = propValue;
+    node[propertyName] = propValue;
   },
 
   // check whether a property name is a writeable attribute
   shouldSetAttribute(propKey, propValue) {
     // some reserved props ignored
-    if (isReserved(propKey)) {
+    if (isReservedProp(propKey)) {
       return false;
     }
 
-    if (propValue === null) {
-      return true;
-    }
-    const propertyDetail = getPropertyDetail(propKey);
-
     switch (typeof propValue) {
       case 'boolean':
-        // that not null means propValue in white list
-        if (propertyDetail) {
+        // that propKey in white list
+        if (isAcceptableAttribute(propKey)) {
           return true;
         }
         // data- and aria- pass
-        const prefix = lowerCased.slice(0, 5);
+        const prefix = propKey.toLowerCase().slice(0, 5);
         return prefix === 'data-' || prefix === 'aria-';
       case 'undefined':
       case 'number':
       case 'string':
-        return true;
       case 'object':
         return true;
       default:
