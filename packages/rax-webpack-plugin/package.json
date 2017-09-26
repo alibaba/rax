@@ -1,6 +1,6 @@
 {
   "name": "rax-webpack-plugin",
-  "version": "0.5.0-beta",
+  "version": "0.4.15",
   "description": "Webpack plugin for Rax framework.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "rax-player",
-  "version": "0.5.0-beta",
+  "version": "0.4.15",
   "description": "Vedio player component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,18 +21,18 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-icon": "^0.5.0-beta",
-    "rax-image": "^0.5.0-beta",
-    "rax-text": "^0.5.0-beta",
-    "rax-touchable": "^0.5.0-beta",
-    "rax-view": "^0.5.0-beta",
-    "universal-env": "^0.5.0-beta",
-    "universal-panresponder": "^0.5.0-beta"
+    "rax-icon": "^0.4.15",
+    "rax-image": "^0.4.15",
+    "rax-text": "^0.4.15",
+    "rax-touchable": "^0.4.15",
+    "rax-view": "^0.4.15",
+    "universal-env": "^0.4.15",
+    "universal-panresponder": "^0.4.15"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.5.0-beta"
+    "rax-test-renderer": "^0.4.15"
   }
 }
