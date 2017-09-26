@@ -73,7 +73,7 @@ export function normalizePropertyName(propKey) {
 
 export function isAcceptableAttribute(propKey) {
   if (PROPERTY.hasOwnProperty(propKey)) {
-    return true
+    return true;
   } else {
     return false;
   }
@@ -81,28 +81,28 @@ export function isAcceptableAttribute(propKey) {
 
 export function isBooleanProperty(propKey) {
   if (BOOLEAN_PROPERTY.hasOwnProperty(propKey)) {
-    return true
+    return true;
   }
   return false;
 }
 
 export function isStrictBooleanProperty(propKey) {
   if (STRICT_BOOLEAN_PROPERTY.hasOwnProperty(propKey)) {
-    return true
+    return true;
   }
   return false;
 }
 
 export function isNumbericProperty(propKey) {
   if (NUMERIC_PROPERTY.hasOwnProperty(propKey)) {
-    return true
+    return true;
   }
   return false;
 }
 
 export function mustUseProperty(propKey) {
   if (MUST_USE_PROPERTY.hasOwnProperty(propKey)) {
-    return true
+    return true;
   }
   return false;
 }

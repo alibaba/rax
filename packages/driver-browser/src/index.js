@@ -155,18 +155,17 @@ const Driver = {
   setAttribute(node, propKey, propValue) {
     if (propKey === DANGEROUSLY_SET_INNER_HTML) {
       // in case propValue is not a plain object
-      node.innerHTML = ({ ...propValue }).__html;
+      node.innerHTML = { ...propValue }.__html;
       return;
     }
 
     // check property name writeable
     if (this.shouldSetAttribute(propKey, propValue)) {
-
       if (
         propValue === null ||
         (isBooleanProperty(propKey) && propValue == null || propValue === false) ||
-        (isNumbericProperty(propKey) && isNaN(propValue)) ||
-        (isStrictBooleanProperty(propKey) && propValue === false)
+        isNumbericProperty(propKey) && isNaN(propValue) ||
+        isStrictBooleanProperty(propKey) && propValue === false
       ) {
         // delete property value from node
         this.removeProperty(node, propKey);
@@ -188,7 +187,7 @@ const Driver = {
     // ('' + propValue) makes it output the correct toString()-value.
     if (
       isBooleanProperty(propKey) ||
-      (isStrictBooleanProperty(propKey) && propValue === true)
+      isStrictBooleanProperty(propKey) && propValue === true
     ) {
       // if attributeName is `required`, it becomes `<input required />`
       node.setAttribute(attributeName, '');
