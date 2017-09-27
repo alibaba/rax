@@ -1,6 +1,5 @@
 import escapeText from './escapeText';
 import styleToCSS from './styleToCSS';
-import memoize from './memoize';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
