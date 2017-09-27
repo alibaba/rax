@@ -36,7 +36,7 @@ function quoteAttribute(prop, value) {
   return `${prop}="${escapeText(value)}"`;
 }
 
-const createOpenTagMarkup = memoize(function(tagName, style, attributes) {
+function createOpenTagMarkup(tagName, style, attributes) {
   let tagOpen = `<${tagName}`;
 
   if (style) {
@@ -53,7 +53,7 @@ const createOpenTagMarkup = memoize(function(tagName, style, attributes) {
   }
 
   return tagOpen;
-});
+}
 
 class Serializer {
   constructor(node) {

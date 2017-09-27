@@ -11,8 +11,5 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rax#readme",
-  "peerDependencies": {
-    "rax": "0.x"
-  }
+  "homepage": "https://github.com/alibaba/rax#readme"
 }
