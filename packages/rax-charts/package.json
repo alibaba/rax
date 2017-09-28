@@ -1,6 +1,6 @@
 {
   "name": "rax-charts",
-  "version": "0.4.15",
+  "version": "0.4.16",
   "description": "charts for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -22,13 +22,13 @@
   },
   "dependencies": {
     "g2-mobile": "^2.1.17",
-    "rax-canvas": "^0.4.15",
-    "universal-env": "^0.4.15"
+    "rax-canvas": "^0.4.16",
+    "universal-env": "^0.4.16"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.15"
+    "rax-test-renderer": "^0.4.16"
   }
 }

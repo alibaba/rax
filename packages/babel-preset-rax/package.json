@@ -1,6 +1,6 @@
 {
   "name": "babel-preset-rax",
-  "version": "0.4.15",
+  "version": "0.4.16",
   "description": "Babel preset for all Rax plugins.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -19,7 +19,7 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-minify-dead-code-elimination": "^0.1.1",
     "babel-plugin-syntax-jsx": "^6.18.0",
-    "babel-plugin-transform-jsx-stylesheet": "^0.4.15",
+    "babel-plugin-transform-jsx-stylesheet": "^0.4.16",
     "babel-plugin-transform-react-constant-elements": "^6.23.0",
     "babel-plugin-transform-react-display-name": "^6.23.0",
     "babel-plugin-transform-react-jsx": "^6.23.0",

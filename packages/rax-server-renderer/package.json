@@ -1,6 +1,6 @@
 {
   "name": "rax-server-renderer",
-  "version": "0.4.15",
+  "version": "0.4.16",
   "description": "Rax renderer for server-side render.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "devDependencies": {
-    "rax": "0.x"
+    "rax": "^0.4.16"
   }
 }
