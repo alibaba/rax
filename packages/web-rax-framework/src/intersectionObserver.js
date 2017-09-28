@@ -17,10 +17,10 @@ function initIntersection() {
 
 function handleIntersect(entries) {
   entries.forEach((entry) => {
-    const { target, isIntersecting, boundingClientRect } = entry;
+    const { target, boundingClientRect, intersectionRatio } = entry;
 
     // is inview
-    if (isIntersecting) {
+    if (intersectionRatio > 0) {
       target.dataset.appeared = true;
       target.dispatchEvent(appearEvt);
     } else if (target.dataset.appeared) {
