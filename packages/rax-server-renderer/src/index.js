@@ -186,8 +186,8 @@ function renderElementToString(element, context) {
       for (var prop in props) {
         var value = props[prop];
 
-        if (prop === 'children' || prop === 'key' || prop === 'ref') {
-          // Ignore reserved prop
+        if (prop === 'children') {
+          // Ignore children prop
         } else if (prop === 'style') {
           html = html + ` style="${styleToCSS(value)}"`;
         } else if (prop === 'className') {

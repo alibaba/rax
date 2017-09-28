@@ -4,7 +4,6 @@ import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
-import {isWeb} from 'universal-env';
 
 /**
  * Instance manager
@@ -35,7 +34,7 @@ export default {
       }
     }
   },
-  render(element, container, parentInstance) {
+  mount(element, container, parentInstance) {
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.beforeRender();
     }
@@ -74,19 +73,6 @@ export default {
       } else {
         Host.hook.Reconciler.unmountComponent(prevRootInstance);
         unmountComponentAtNode(container);
-      }
-    }
-
-    // Handle server rendered element
-    if (isWeb && container.childNodes) {
-      // Clone childNodes, Because removeChild will causing change in childNodes length
-      const childNodes = [...container.childNodes];
-
-      for (let i = 0; i < childNodes.length; i ++) {
-        const rootChildNode = childNodes[i];
-        if (rootChildNode.hasAttribute && rootChildNode.hasAttribute('data-rendered')) {
-          Host.driver.removeChild(rootChildNode, container);
-        }
       }
     }
 

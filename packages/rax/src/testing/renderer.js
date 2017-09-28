@@ -12,7 +12,7 @@ inject({
 export default {
   create(element) {
     let container = ServerDriver.createBody();
-    let rootComponent = instance.render(element, container);
+    let rootComponent = instance.mount(element, container);
     let renderedComponent = rootComponent.getRenderedComponent();
 
     renderedComponent.toJSON = () => {
@@ -24,7 +24,7 @@ export default {
     };
 
     renderedComponent.update = (element) => {
-      instance.render(element, container);
+      instance.mount(element, container);
     };
 
     renderedComponent.unmount = () => {

@@ -18,7 +18,9 @@ function getRenderErrorInfo() {
 }
 
 function Element(type, key, ref, props, owner) {
-  props = filterProps(type, props);
+  if (isWeex) {
+    props = filterProps(type, props);
+  }
 
   return {
     // Built-in properties that belong on the element
@@ -57,7 +59,7 @@ function flattenStyle(style) {
 // TODO: move to weex-drvier
 function filterProps(type, props) {
   // Only for weex text
-  if (isWeex && type === 'text') {
+  if (type === 'text') {
     let children = props.children;
     let value = props.value;
 
@@ -84,7 +86,7 @@ function filterProps(type, props) {
   return props;
 }
 
-export function createElement(type, config, ...children) {
+export function createElement(type, config, children) {
   if (type == null) {
     throw Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
   }
@@ -99,15 +101,26 @@ export function createElement(type, config, ...children) {
     key = config.key === undefined ? null : String(config.key);
     // Remaining properties are added to a new props object
     for (propName in config) {
-      if (config.hasOwnProperty(propName) &&
-          !RESERVED_PROPS.hasOwnProperty(propName)) {
+      if (!RESERVED_PROPS[propName]) {
         props[propName] = config[propName];
       }
     }
   }
 
-  if (children.length) {
-    props.children = flattenChildren(children);
+  const childrenLength = arguments.length - 2;
+  if (childrenLength > 0) {
+    if (childrenLength === 1 && !Array.isArray(children)) {
+      props.children = children;
+    } else {
+      let childArray = children;
+      if (childrenLength > 1) {
+        childArray = new Array(childrenLength);
+        for (var i = 0; i < childrenLength; i++) {
+          childArray[i] = arguments[i + 2];
+        }
+      }
+      props.children = flattenChildren(childArray);
+    }
   }
 
   // Resolve default props
