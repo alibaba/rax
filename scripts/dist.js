@@ -9,14 +9,14 @@ const fs = require('fs');
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
 const GLOBAL_NAME = {
-  'rax-dom': "RaxDOM",
+  'rax-dom': 'RaxDOM',
 };
 function normalizeGlobalName(name) {
   return GLOBAL_NAME[name] || uppercamelcase(name);
 }
 
 fs.readdirSync(PACKAGES_DIR)
-  .forEach(function (packageName) {
+  .forEach(function(packageName) {
     var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
 
     if (!/^(rax|universal)-/.test(packageName) ||
@@ -139,8 +139,8 @@ dist(getConfig(
       ]
     }
   ));
-}).catch(function (err) {
-  setTimeout(function () {
+}).catch(function(err) {
+  setTimeout(function() {
     throw err;
   });
 });
@@ -184,9 +184,9 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
 }
 
 function dist(config) {
-  return new Promise(function (resolver, reject) {
+  return new Promise(function(resolver, reject) {
     let compiler = webpack(config);
-    compiler.run(function (err, stats) {
+    compiler.run(function(err, stats) {
       let options = {
         colors: true,
         chunks: false,
