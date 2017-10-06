@@ -12,6 +12,12 @@ class DatePicker extends Component {
     };
   }
 
+  select = (data) => {
+    this.setState({
+      selectedValue: data,
+    });
+  }
+
   handlePress = () => {
     if (isWeex) {
       const {
