@@ -189,33 +189,33 @@ class RaxPartialRenderer {
       this.stack.push(frame);
       return '';
     }
-  
+
     const type = element.type;
-  
+
     if (type) {
       const props = element.props || EMPTY_OBJECT;
-  
+
       if (type.prototype && type.prototype.render) {
         const instance = new type(props, context, updater); // eslint-disable-line new-cap
-  
+
         let childContext;
         if (instance.getChildContext) {
           childContext = instance.getChildContext();
         }
-  
+
         if (childContext) {
           // Why not use Object.assign? for better performance
           context = merge({}, context, childContext);
         }
         instance.context = context;
-  
+
         if (instance.componentWillMount) {
           instance.componentWillMount();
-  
+
           if (instance._pendingState) {
             const state = instance.state;
             const pending = instance._pendingState;
-  
+
             if (state == null) {
               instance.state = pending;
             } else {
@@ -226,20 +226,20 @@ class RaxPartialRenderer {
             instance._pendingState = null;
           }
         }
-  
+
         var renderedElement = instance.render();
         return this.render(renderedElement, context);
       } else if (typeof type === 'function') {
         var renderedElement = type(props, context);
         return this.render(renderedElement, context);
-      } else if (typeof type === 'string') {  
+      } else if (typeof type === 'string') {
         const isVoidElement = VOID_ELEMENTS[type];
         let html = `<${type}`;
         let innerHTML;
-  
+
         for (var prop in props) {
           var value = props[prop];
-  
+
           if (prop === 'children') {
             // Ignore children prop
           } else if (prop === 'style') {
@@ -266,7 +266,7 @@ class RaxPartialRenderer {
             }
           }
         }
-  
+
         if (isVoidElement) {
           html = html + '>';
         } else {
@@ -284,10 +284,10 @@ class RaxPartialRenderer {
           } else if (innerHTML) {
             html = html + innerHTML;
           }
-  
+
           html = html + `</${type}>`;
         }
-  
+
         return html;
       }
     } else {
@@ -303,5 +303,5 @@ exports.renderToString = function renderToString(element) {
 };
 
 exports.renderToNodeStream = function renderToNodeStream(element) {
-  return new RaxMarkupReadableStream(element)
+  return new RaxMarkupReadableStream(element);
 };
