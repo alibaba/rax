@@ -10,6 +10,8 @@ $ npm install --save rax-server-renderer
 
 ## Usage
 
+### renderToString
+
 ```jsx
 import {createElement, Component} from 'rax';
 import renderer from 'rax-server-renderer';
@@ -21,4 +23,19 @@ class MyComponent extends Component {
 }
 
 renderer.renderToString(<MyComponent />);
+```
+
+### renderToNodeStream
+
+```
+import {createElement, Component} from 'rax';
+import renderer from 'rax-server-renderer';
+
+class MyComponent extends Component {
+  render() {
+    return <div>Hello World</div>;
+  }
+}
+
+renderer.renderToNodeStream(<MyComponent />).pipe(res);
 ```
