@@ -34,8 +34,9 @@ const injectEventListenerHook = (instances = []) => {
   let nativeRemoveEventListener = Node.prototype.removeEventListener;
 
   Node.prototype.addEventListener = function(eventName, eventHandler, useCapture, isNotWatch) {
-    let lowerCaseEventName = eventName.toLowerCase();
-    if (lowerCaseEventName === 'appear' || lowerCaseEventName === 'disappear') {
+    const lowerCaseEventName = eventName.toLowerCase();
+    const isAppearEvent = lowerCaseEventName === 'appear' || lowerCaseEventName === 'disappear';
+    if (isAppearEvent) {
       if (existIntersection) {
         observerElement(this);
       } else {
@@ -43,8 +44,8 @@ const injectEventListenerHook = (instances = []) => {
       }
     }
     if (!existIntersection) {
-      if (instance) {
-        instance.check();
+      if (instance && isAppearEvent) {
+        instance.check([this]);
       }
 
       if (lowerCaseEventName === 'scroll' && !isNotWatch) {
