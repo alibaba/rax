@@ -34,15 +34,15 @@ function collateMixins(mixins) {
 function flattenHooks(key, hooks) {
   let hookType = typeof hooks[0];
   if (hookType === 'object') {
-    // Merge objects
+    // Merge objects in hooks
     hooks.unshift({});
     return Object.assign.apply(null, hooks);
-  } else if (hookType === 'function') {
+  } else if (hookType === 'function' && (key === 'getInitialState' || key === 'getDefaultProps' || key === 'getChildContext')) {
     return function() {
       let ret;
       for (let i = 0; i < hooks.length; i++) {
         let r = hooks[i].apply(this, arguments);
-        if (r && (key === 'getInitialState' || key === 'getDefaultProps' || key === 'getChildContext')) {
+        if (r) {
           if (!ret) ret = {};
           Object.assign(ret, r);
         }
