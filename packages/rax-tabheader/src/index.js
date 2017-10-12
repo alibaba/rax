@@ -23,6 +23,10 @@ class TabHeader extends Component {
     this.refs[THCONTAINER_REF].select(index);
   }
 
+  selectInternal = (index) => {
+    this.refs[THCONTAINER_REF].selectInternal(index);
+  }
+
   scrollTo = (options) => {
     this.refs[THCONTAINER_REF].scrollTo(options);
   }
