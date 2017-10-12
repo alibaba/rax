@@ -107,7 +107,8 @@ class RecyclerView extends Component {
 
       let cells = children.map((child, index) => {
         if (child) {
-          if (props._autoWrapCell && child.type != RefreshControl && child.type != Header) {
+          let hasOnRefresh = typeof child.props.onRefresh == 'function';
+          if (props._autoWrapCell && child.type != RefreshControl && child.type != Header && !hasOnRefresh) {
             return <Cell>{child}</Cell>;
           } else {
             return child;
