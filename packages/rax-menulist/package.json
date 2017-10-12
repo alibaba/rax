@@ -1,6 +1,6 @@
 {
   "name": "rax-menulist",
-  "version": "0.4.16",
+  "version": "0.4.17",
   "description": "MenuList component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,17 +21,17 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-image": "^0.4.16",
-    "rax-text": "^0.4.16",
-    "rax-touchable": "^0.4.16",
-    "rax-view": "^0.4.16",
-    "universal-stylesheet": "^0.4.16",
-    "universal-transition": "^0.4.16"
+    "rax-image": "^0.4.17",
+    "rax-text": "^0.4.17",
+    "rax-touchable": "^0.4.17",
+    "rax-view": "^0.4.17",
+    "universal-stylesheet": "^0.4.17",
+    "universal-transition": "^0.4.17"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.16"
+    "rax-test-renderer": "^0.4.17"
   }
 }
