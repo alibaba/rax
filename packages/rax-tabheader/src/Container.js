@@ -23,15 +23,18 @@ class Container extends Component {
   }
 
   select = (index, isPress) => {
-    const tabheader = this.context.tabheader;
+    if (this.selected != index) {
+      this.props.onSelect && this.props.onSelect(index);
+    }
+    this.selectInternal(index);
+  }
 
+  selectInternal = (index) => {
+    const tabheader = this.context.tabheader;
     if (this.animType != 'noanim') {
       this.scrollTo({
         x: parseInt(this.props.itemWidth) * index
       });
-    }
-    if (this.selected != index) {
-      this.props.onSelect && this.props.onSelect(index);
     }
     if (tabheader) {
       tabheader.emit(TABEHEADER_SELECT, index);
