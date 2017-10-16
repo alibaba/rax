@@ -1,6 +1,6 @@
 {
   "name": "rax-animated",
-  "version": "0.4.17",
+  "version": "0.4.18",
   "description": "Declarative Animations Library for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -18,10 +18,10 @@
   "dependencies": {
     "animated-js": "0.0.5",
     "invariant": "2.2.1",
-    "rax-image": "^0.4.17",
-    "rax-scrollview": "^0.4.17",
-    "rax-text": "^0.4.17",
-    "rax-view": "^0.4.17"
+    "rax-image": "^0.4.18",
+    "rax-scrollview": "^0.4.18",
+    "rax-text": "^0.4.18",
+    "rax-view": "^0.4.18"
   },
   "peerDependencies": {
     "rax": "0.x"

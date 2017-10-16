@@ -1,6 +1,6 @@
 {
   "name": "rax-modal",
-  "version": "0.4.17",
+  "version": "0.4.18",
   "description": "Modal component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-animated": "^0.4.17",
-    "rax-touchable": "^0.4.17",
-    "universal-env": "^0.4.17"
+    "rax-animated": "^0.4.18",
+    "rax-touchable": "^0.4.18",
+    "universal-env": "^0.4.18"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.17",
-    "rax-text": "^0.4.17"
+    "rax-test-renderer": "^0.4.18",
+    "rax-text": "^0.4.18"
   }
 }
