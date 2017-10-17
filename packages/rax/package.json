@@ -1,6 +1,6 @@
 {
   "name": "rax",
-  "version": "0.4.18",
+  "version": "0.4.19",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,10 +16,10 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "driver-browser": "^0.4.18",
-    "driver-server": "^0.4.18",
-    "driver-weex": "^0.4.18",
-    "style-unit": "^0.4.18",
-    "universal-env": "^0.4.18"
+    "driver-browser": "^0.4.19",
+    "driver-server": "^0.4.19",
+    "driver-weex": "^0.4.19",
+    "style-unit": "^0.4.19",
+    "universal-env": "^0.4.19"
   }
 }

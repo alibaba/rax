@@ -1,6 +1,6 @@
 {
   "name": "style-unit",
-  "version": "0.4.18",
+  "version": "0.4.19",
   "description": "style-unit",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
