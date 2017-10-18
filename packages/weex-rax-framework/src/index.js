@@ -33,10 +33,6 @@ function dispatchEventToInstance(event, targetOrigin) {
   }
 }
 
-function updateFinish(doc) {
-  doc.taskCenter.send('dom', { action: 'updateFinish' }, []);
-}
-
 export function getInstance(instanceId) {
   const instance = instances[instanceId];
   if (!instance) {
@@ -480,7 +476,6 @@ function fireEvent(doc, ref, type, e, domChanges, params) {
 
   if (el) {
     const result = doc.fireEvent(el, type, e, domChanges, params);
-    updateFinish(doc);
     return result;
   }
 
@@ -506,7 +501,6 @@ export function receiveTasks(instanceId, tasks) {
       } else if (task.method === 'callback') {
         let [uid, data, ifKeepAlive] = task.args;
         result = document.taskCenter.callback(uid, data, ifKeepAlive);
-        updateFinish(document);
       }
       results.push(result);
     });
