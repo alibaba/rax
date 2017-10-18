@@ -1,6 +1,6 @@
 {
   "name": "rax-checkbox",
-  "version": "0.4.19",
+  "version": "0.4.20",
   "description": "CheckBox component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,16 +21,16 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-image": "^0.4.19",
-    "rax-text": "^0.4.19",
-    "rax-touchable": "^0.4.19",
-    "rax-view": "^0.4.19"
+    "rax-image": "^0.4.20",
+    "rax-text": "^0.4.20",
+    "rax-touchable": "^0.4.20",
+    "rax-view": "^0.4.20"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.4.19",
-    "rax-text": "^0.4.19"
+    "rax-test-renderer": "^0.4.20",
+    "rax-text": "^0.4.20"
   }
 }

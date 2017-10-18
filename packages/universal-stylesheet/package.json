@@ -1,6 +1,6 @@
 {
   "name": "universal-stylesheet",
-  "version": "0.4.19",
+  "version": "0.4.20",
   "description": "A universal StyleSheet API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.4.19"
+    "universal-env": "^0.4.20"
   }
 }
