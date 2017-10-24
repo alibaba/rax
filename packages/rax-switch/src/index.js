@@ -9,7 +9,7 @@ class Switch extends Component {
   static propTypes = {};
 
   static defaultProps = {
-    onTintColor: '#00e158',
+    selectTintColor: '#00e158',
     thumbTintColor: '#ffffff',
     tintColor: '#ffffff'
   }
@@ -44,7 +44,7 @@ class Switch extends Component {
         WebkitBackfaceVisibility: 'hidden'
       },
       checkedSpan: {
-        borderColor: this.props.onTintColor,
+        borderColor: this.props.onTintColor || this.props.selectTintColor,
         backgroundColor: this.props.onTintColor,
         boxShadow: this.props.onTintColor + ' 0 0 0 16px inset',
         WebkitTransition: 'border 0.2s, box-shadow 0.2s, background-color 1s'
