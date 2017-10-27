@@ -17,7 +17,7 @@ class DatePicker extends Component {
         minimumDate,
         maximumDate,
       } = this.props;
-      const picker = require('@weex-module/picker');
+      const picker = __weex_require__('@weex-module/picker');
 
       picker.pickDate({
         value: selectedValue,

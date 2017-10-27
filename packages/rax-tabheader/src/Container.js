@@ -16,7 +16,7 @@ class Container extends Component {
     let tabheader = this.context.tabheader;
     if (tabheader && tabheader.on) {
       tabheader.on(TABEHEADER_GOTOP, () => {
-        let dom = require('@weex-module/dom');
+        let dom = __weex_require__('@weex-module/dom');
         dom.scrollToElement(findDOMNode(this.refs[CONTAINER_REF]), {offset: 0});
       });
     }

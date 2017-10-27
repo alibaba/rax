@@ -16,7 +16,7 @@ export default function transition(node, styles, options, callback) {
   }
 
   if (isWeex) {
-    const animation = require('@weex-module/animation');
+    const animation = __weex_require__('@weex-module/animation');
     animation.transition(node.ref, {
       styles,
       timingFunction: options.timingFunction || 'linear',

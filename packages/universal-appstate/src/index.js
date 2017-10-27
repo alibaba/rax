@@ -6,7 +6,7 @@ const eventHandlers = {
 };
 
 if (isWeex) {
-  const globalEvent = require('@weex-module/globalEvent');
+  const globalEvent = __weex_require__('@weex-module/globalEvent');
   globalEvent.addEventListener('WXApplicationWillResignActiveEvent', () => {
     currentState = 'background';
     eventHandlers.change.forEach((handler) => {

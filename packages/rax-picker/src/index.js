@@ -74,7 +74,7 @@ class Picker extends Component {
     } = this.props;
 
     if (isWeex) {
-      const picker = require('@weex-module/picker');
+      const picker = __weex_require__('@weex-module/picker');
       const pickerData = this.getPickerData();
       picker.pick({
         index: pickerData.selectIndex,

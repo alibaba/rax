@@ -17,7 +17,7 @@ class TimePicker extends Component {
         onTimeChange,
         selectedValue,
       } = this.props;
-      const picker = require('@weex-module/picker');
+      const picker = __weex_require__('@weex-module/picker');
 
       picker.pickTime({
         value: selectedValue,

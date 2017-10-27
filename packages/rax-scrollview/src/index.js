@@ -96,7 +96,7 @@ class ScrollView extends Component {
     let y = parseInt(options.y);
 
     if (isWeex) {
-      let dom = require('@weex-module/dom');
+      let dom = __weex_require__('@weex-module/dom');
       let contentContainer = findDOMNode(this.refs.contentContainer);
       dom.scrollToElement(contentContainer.ref, {
         offset: x || y || 0,
