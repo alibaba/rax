@@ -102,7 +102,7 @@ class Waterfall extends Component {
 
     let cells = header.map((child, index) => {
       if (child) {
-        if (child.type != RefreshControl) {
+        if (child.type != RefreshControl && child.type != Header) {
           return <Header>{child}</Header>;
         } else {
           return cloneElement(child, {});
@@ -118,10 +118,13 @@ class Waterfall extends Component {
       cells = cells.concat(<WebFall {...props} />);
     }
 
-
     cells = cells.concat(footer.map((child, index) => {
       if (child) {
-        return <Header>{child}</Header>;
+        if (child.type != Header) {
+          return <Header>{child}</Header>;
+        } else {
+          return cloneElement(child, {});
+        }
       }
     }));
 
@@ -154,5 +157,6 @@ let styles = {
   },
 };
 
+Waterfall.Header = Header;
 
 export default Waterfall;
