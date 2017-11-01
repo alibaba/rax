@@ -1,5 +1,5 @@
-import {Component, createElement, findDOMNode} from 'rax';
-import {isWeex, isWeb} from 'universal-env';
+import { Component, createElement, findDOMNode, PropTypes } from 'rax';
+import { isWeex, isWeb } from 'universal-env';
 import View from 'rax-view';
 import RefreshControl from 'rax-refreshcontrol';
 
@@ -18,6 +18,27 @@ class ScrollView extends Component {
     showsVerticalScrollIndicator: true,
     className: 'rax-scrollview',
   };
+
+  static contextTypes = {
+    scrollView: {
+      horizontal: PropTypes.bool
+    }
+  };
+
+  getChildContext() {
+    return {
+      scrollView: {
+        horizontal: this.props.horizontal
+      }
+    };
+  }
+
+  get _isNestedWithSameOrientation() {
+    const nestedContext = this.context.scrollView;
+    return !!(
+      nestedContext && !!nestedContext.horizontal === !!this.props.horizontal
+    );
+  }
 
   lastScrollDistance = 0;
   lastScrollContentSize = 0;
@@ -115,6 +136,16 @@ class ScrollView extends Component {
     }
   }
 
+  componentWillMount() {
+    if (this._isNestedWithSameOrientation) {
+      console.error(
+        'ScrollView can not nested in same orientation, details: \r\n',
+        'CN: http://weex-project.io/cn/references/components/scroller.html#%E7%BA%A6%E6%9D%9F \r\n',
+        'EN: http://weex-project.io/references/components/scroller.html#Restrictions'
+      );
+    }
+  }
+
   render() {
     let {
       id,
@@ -148,7 +179,7 @@ class ScrollView extends Component {
       if (childLayoutProps.length !== 0) {
         console.warn(
           'ScrollView child layout (' + JSON.stringify(childLayoutProps) +
-            ') must be applied through the contentContainerStyle prop.'
+          ') must be applied through the contentContainerStyle prop.'
         );
       }
     }
