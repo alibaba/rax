@@ -8,7 +8,8 @@ const NaNMarker = Symbol('NaN');
 var ACCESSOR_SUPPORT = true;
 
 function encodeKey(key) {
-  return Number.isNaN(key) ? NaNMarker : key;
+  // Number.isNaN not extist in iOS 8.x
+  return key !== key ? NaNMarker : key;
 }
 
 function decodeKey(encodedKey) {
