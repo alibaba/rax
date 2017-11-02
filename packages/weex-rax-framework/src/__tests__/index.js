@@ -36,7 +36,7 @@ describe('framework', () => {
   let __weex_callbacks__;
   let __weex_data__;
   let sendTasksHandler = () => { };
-  let sendTasks = function () {
+  let sendTasks = function() {
     return sendTasksHandler.apply(null, arguments);
   };
 
@@ -55,7 +55,7 @@ describe('framework', () => {
     });
 
     framework.registerComponents(['div', 'video']);
-    sendTasksHandler = function () {
+    sendTasksHandler = function() {
       runtime.target.callNative(...arguments);
       // FIXME: Hack for should return value like setTimeout
       return '1';
@@ -199,7 +199,7 @@ describe('framework', () => {
       a = 'throws ReferenceError';
     `;
 
-    expect(function () {
+    expect(function() {
       instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
     }).toThrowError(/a is not defined/);
   });
@@ -212,7 +212,7 @@ describe('framework', () => {
       // Could use Foo.prototype = {toString(){}}
     `;
 
-    expect(function () {
+    expect(function() {
       instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
     }).toThrowError(/Cannot assign to read only property/);
   });
@@ -223,7 +223,7 @@ describe('framework', () => {
       Object.assgin = function(){}
     `;
 
-    expect(function () {
+    expect(function() {
       instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
     }).toThrowError(/object is not extensible/);
   });
@@ -235,7 +235,7 @@ describe('framework', () => {
       foo.toString = function(){};
     `;
 
-    expect(function () {
+    expect(function() {
       instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
     }).toThrowError(/Cannot assign to read only property/);
   });
