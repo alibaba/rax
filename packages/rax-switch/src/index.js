@@ -105,6 +105,8 @@ class Switch extends Component {
         ...spancss
       };
 
+      delete others.onTintColor;
+
       return (
         <span onClick={this.handleClick} style={spancss} {...others}>
           <small style={smallcss} />
