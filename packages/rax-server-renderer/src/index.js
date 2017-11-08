@@ -143,6 +143,7 @@ function renderElementToString(element, context) {
 
     if (type.prototype && type.prototype.render) {
       const instance = new type(props, context, updater); // eslint-disable-line new-cap
+      let currentContext = instance.context = context;
 
       let childContext;
       if (instance.getChildContext) {
@@ -151,9 +152,8 @@ function renderElementToString(element, context) {
 
       if (childContext) {
         // Why not use Object.assign? for better performance
-        context = merge({}, context, childContext);
+        currentContext = merge({}, context, childContext);
       }
-      instance.context = context;
 
       if (instance.componentWillMount) {
         instance.componentWillMount();
@@ -174,7 +174,7 @@ function renderElementToString(element, context) {
       }
 
       var renderedElement = instance.render();
-      return renderElementToString(renderedElement, context);
+      return renderElementToString(renderedElement, currentContext);
     } else if (typeof type === 'function') {
       var renderedElement = type(props, context);
       return renderElementToString(renderedElement, context);

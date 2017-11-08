@@ -8,7 +8,7 @@ class Hello extends Component {
     fontColor: '#333333',
   };
 
-  handleClick(){
+  handleClick() {
     console.log('clicked');
   }
   render() {
