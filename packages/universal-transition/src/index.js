@@ -1,5 +1,9 @@
 import {isWeex, isWeb} from 'universal-env';
-import {convertUnit} from 'style-unit';
+import { convertUnit, setRem } from 'style-unit';
+
+if (isWeb) {
+  setRem(document.documentElement.clientWidth / 750);
+}
 
 export default function transition(node, styles, options, callback) {
   if (typeof options == 'function' || options == null) {
