@@ -48,6 +48,7 @@ let Flexbox = {
     return style;
   },
   flexWrap(value, style = {}) {
+    style.webkitFlexWrap = value;
     style.flexWrap = value;
     return style;
   },
