@@ -17,8 +17,7 @@ module.exports = function(__weex_require__, location) {
     weexLocation.replace(url);
   };
 
-  location.reload = (forceReload) => {
-    forceReload = forceReload || false;
+  location.reload = (forceReload = false) => {
     const weexLocation = __weex_require__(LOCATION_MODULE);
     weexLocation.reload(forceReload);
   };
