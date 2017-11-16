@@ -19,6 +19,7 @@ describe('flexbox', () => {
     });
 
     expect(flexbox.flexWrap('wrap')).toEqual({
+      webkitFlexWrap: 'wrap',
       flexWrap: 'wrap'
     });
 
