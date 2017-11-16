@@ -250,12 +250,12 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const windowEmitter = new EventEmitter();
 
     const globalEvent = __weex_require__('@weex-module/globalEvent');
-    globalEvent.addEventListener("exception", (e) => {
+    globalEvent.addEventListener('exception', (e) => {
       if (window.onerror && typeof window.onerror == 'function') {
         window.onerror(e.exception, e.bundleUrl, 0, 0, new Error(e.exception, e.bundleUrl, 0));
       }
     });
-    
+
     const window = {
       // ES
       Promise,
