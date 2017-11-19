@@ -13,6 +13,7 @@ let Comment;
 const MODULE_NAME_PREFIX = '@weex-module/';
 const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
+const GLOBAL_EVENT_MODULE = MODULE_NAME_PREFIX + 'globalEvent';
 // Instance hub
 const instances = {};
 // Bundles hub
@@ -164,7 +165,6 @@ function genNativeModules(modules, document) {
   return modules;
 }
 
-
 /**
  * create a Weex instance
  *
@@ -248,13 +248,6 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const {Event, CustomEvent} = require('./event.weex')();
 
     const windowEmitter = new EventEmitter();
-
-    const globalEvent = __weex_require__('@weex-module/globalEvent');
-    globalEvent.addEventListener('exception', (e) => {
-      if (window.onerror && typeof window.onerror == 'function') {
-        window.onerror(e.exception, e.bundleUrl, 0, 0, new Error(e.exception, e.bundleUrl, 0));
-      }
-    });
 
     const window = {
       // ES
@@ -365,6 +358,31 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       __weex_data__,
       __weex_config__
     };
+
+    const onerrorDefine = function onerrorDefine(_window) {
+      let _onerror = null;
+      let eventCount = 0;
+      Object.defineProperty(_window, 'onerror', {
+        get: function() {
+          return _onerror;
+        },
+        set: function(func) {
+          if (!eventCount) {
+            eventCount = 1;
+            const globalEvent = __weex_require__(GLOBAL_EVENT_MODULE);
+            globalEvent.addEventListener('exception', (e) => {
+              if (_onerror && typeof _onerror == 'function') {
+                _onerror(e.exception, e.bundleUrl, 0, 0, new Error(e.exception, e.bundleUrl, 0));
+              }
+            });
+          }
+          _onerror = func;
+        },
+        enumerable: true,
+        configurable: true
+      });
+    };
+    onerrorDefine(window);
 
     instance.window = window.self = window.window = window;
 
