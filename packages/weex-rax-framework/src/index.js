@@ -248,7 +248,21 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const {Event, CustomEvent} = require('./event.weex')();
 
     const windowEmitter = new EventEmitter();
-
+    
+    let errorHandler = null;
+    function registerErrorHandler(){
+      if (registerErrorHandler.once) return;
+      
+      const globalEvent = __weex_require__(GLOBAL_EVENT_MODULE);
+      globalEvent.addEventListener('exception', (e) => {
+        // TODO: miss lineno and colno
+        // window.onerror = function(messageOrEvent, source, lineno, colno, error) { ... }
+        errorHandler(e.exception, e.bundleUrl, 0, 0, new Error(e.exception, e.bundleUrl, 0));
+      });
+      
+      registerErrorHandler.once = true;
+    }
+    
     const window = {
       // ES
       Promise,
@@ -341,7 +355,17 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       dispatchEvent: (e) => {
         windowEmitter.emit(e.type, e);
       },
-      onerror: null,
+      set onerror(handler) {
+        if (typeof handler == 'function') {
+          errorHandler = handler;
+          registerErrorHandler();
+        } else {
+          errorHandler = null;
+        }
+      },
+      get onerror() {
+        return errorHandler;
+      },
       // ModuleJS
       define: __weex_define__,
       require: __weex_require__,
@@ -358,31 +382,6 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
       __weex_data__,
       __weex_config__
     };
-
-    const onerrorDefine = function onerrorDefine(_window) {
-      let _onerror = null;
-      let eventCount = 0;
-      Object.defineProperty(_window, 'onerror', {
-        get: function() {
-          return _onerror;
-        },
-        set: function(func) {
-          if (!eventCount) {
-            eventCount = 1;
-            const globalEvent = __weex_require__(GLOBAL_EVENT_MODULE);
-            globalEvent.addEventListener('exception', (e) => {
-              if (_onerror && typeof _onerror == 'function') {
-                _onerror(e.exception, e.bundleUrl, 0, 0, new Error(e.exception, e.bundleUrl, 0));
-              }
-            });
-          }
-          _onerror = func;
-        },
-        enumerable: true,
-        configurable: true
-      });
-    };
-    onerrorDefine(window);
 
     instance.window = window.self = window.window = window;
 
