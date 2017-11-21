@@ -248,21 +248,21 @@ export function createInstance(instanceId, __weex_code__, __weex_options__, __we
     const {Event, CustomEvent} = require('./event.weex')();
 
     const windowEmitter = new EventEmitter();
-    
+
     let errorHandler = null;
-    function registerErrorHandler(){
+    function registerErrorHandler() {
       if (registerErrorHandler.once) return;
-      
+
       const globalEvent = __weex_require__(GLOBAL_EVENT_MODULE);
       globalEvent.addEventListener('exception', (e) => {
         // TODO: miss lineno and colno
         // window.onerror = function(messageOrEvent, source, lineno, colno, error) { ... }
         errorHandler(e.exception, e.bundleUrl, 0, 0, new Error(e.exception, e.bundleUrl, 0));
       });
-      
+
       registerErrorHandler.once = true;
     }
-    
+
     const window = {
       // ES
       Promise,
