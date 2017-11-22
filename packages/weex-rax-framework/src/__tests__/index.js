@@ -906,21 +906,16 @@ describe('framework', () => {
     expect(mockFn).toHaveBeenCalled();
   });
 
-  it('window onerror', () => {
+  it('register window.onerror', () => {
     const code = `
-      window.onerror = function(e){alert('occur error')}
-      var e = err + 1;
+      window.onerror = function(e){}
     `;
     const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'occur error'
-      });
+      expect(args).toEqual('exception');
     });
 
-    expect(function() {
-      instance.oncall('modal', 'alert', mockFn);
-      instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-      expect(mockFn).toHaveBeenCalled();
-    }).toThrowError(/err is not defined/);
+    instance.oncall('globalEvent', 'addEventListener', mockFn);
+    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+    expect(mockFn).toHaveBeenCalled();
   });
 });
