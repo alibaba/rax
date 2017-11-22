@@ -96,7 +96,7 @@ class ScrollView extends Component {
   scrollTo = (options) => {
     let x = parseInt(options.x);
     let y = parseInt(options.y);
-    let animated = options && typeof options.animated !== 'undefined' ? options.animated : true
+    let animated = options && typeof options.animated !== 'undefined' ? options.animated : true;
 
     if (isWeex) {
       let dom = __weex_require__('@weex-module/dom');
