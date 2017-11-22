@@ -36,7 +36,7 @@ const SUFFIX = 'rem';
 const REM_REG = /[-+]?\d*\.?\d+rem/g;
 
 // Default 1 rem to 1 px
-window._defaultRemUnit = 1;
+window._defaultRemUnit = window._defaultRemUnit ? window._defaultRemUnit : 1;
 
 /**
  * Is string contains rem
