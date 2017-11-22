@@ -74,8 +74,8 @@ class ScrollView extends Component {
       e.nativeEvent = {
         contentOffset: {
           // HACK: weex scroll event value is opposite of web
-          x: - e.contentOffset.x,
-          y: - e.contentOffset.y
+          x: -e.contentOffset.x,
+          y: -e.contentOffset.y
         }
       };
       this.props.onScroll(e);
@@ -96,35 +96,47 @@ class ScrollView extends Component {
   scrollTo = (options) => {
     let x = parseInt(options.x);
     let y = parseInt(options.y);
+    let animated = options && typeof options.animated !== 'undefined' ? options.animated : true
 
     if (isWeex) {
       let dom = __weex_require__('@weex-module/dom');
       let contentContainer = findDOMNode(this.refs.contentContainer);
       dom.scrollToElement(contentContainer.ref, {
         offset: x || y || 0,
-        animated: options && typeof options.animated !== 'undefined' ? options.animated : true
+        animated
       });
     } else {
       let pixelRatio = document.documentElement.clientWidth / FULL_WIDTH;
       let scrollView = findDOMNode(this.refs.scroller);
       let scrollLeft = scrollView.scrollLeft;
       let scrollTop = scrollView.scrollTop;
-      let timer = new Timer({
-        duration: 400,
-        easing: 'easeOutSine'
-      });
-      timer.on('run', (e) => {
+
+      if (animated) {
+        let timer = new Timer({
+          duration: 400,
+          easing: 'easeOutSine'
+        });
+        timer.on('run', (e) => {
+          if (x >= 0) {
+            scrollView.scrollLeft = scrollLeft + e.percent * (x * pixelRatio - scrollLeft);
+          }
+          if (y >= 0) {
+            scrollView.scrollTop = scrollTop + e.percent * (y * pixelRatio - scrollTop);
+          }
+        });
+        timer.on('end', () => {
+          timer.stop();
+        });
+        timer.run();
+      } else {
         if (x >= 0) {
-          scrollView.scrollLeft = scrollLeft + e.percent * (x * pixelRatio - scrollLeft);
+          findDOMNode(this.refs.scroller).scrollLeft = pixelRatio * x;
         }
+
         if (y >= 0) {
-          scrollView.scrollTop = scrollTop + e.percent * (y * pixelRatio - scrollTop);
+          findDOMNode(this.refs.scroller).scrollTop = pixelRatio * y;
         }
-      });
-      timer.on('end', () => {
-        timer.stop();
-      });
-      timer.run();
+      }
     }
   }
 
