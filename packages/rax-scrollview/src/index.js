@@ -2,10 +2,12 @@ import {Component, createElement, findDOMNode} from 'rax';
 import {isWeex, isWeb} from 'universal-env';
 import View from 'rax-view';
 import RefreshControl from 'rax-refreshcontrol';
+import Timer from 'animation-util';
 
 const DEFAULT_END_REACHED_THRESHOLD = 500;
 const DEFAULT_SCROLL_CALLBACK_THROTTLE = 50;
 const FULL_WIDTH = 750;
+
 
 class ScrollView extends Component {
 
@@ -104,14 +106,25 @@ class ScrollView extends Component {
       });
     } else {
       let pixelRatio = document.documentElement.clientWidth / FULL_WIDTH;
-
-      if (x >= 0) {
-        findDOMNode(this.refs.scroller).scrollLeft = pixelRatio * x;
-      }
-
-      if (y >= 0) {
-        findDOMNode(this.refs.scroller).scrollTop = pixelRatio * y;
-      }
+      let scrollView = findDOMNode(this.refs.scroller);
+      let scrollLeft = scrollView.scrollLeft;
+      let scrollTop = scrollView.scrollTop;
+      let timer = new Timer({
+        duration: 400,
+        easing: 'easeOutSine'
+      });
+      timer.on('run', (e) => {
+        if (x >= 0) {
+          scrollView.scrollLeft = scrollLeft + e.percent * (x * pixelRatio - scrollLeft);
+        }
+        if (y >= 0) {
+          scrollView.scrollTop = scrollTop + e.percent * (y * pixelRatio - scrollTop);
+        }
+      });
+      timer.on('end', () => {
+        timer.stop();
+      });
+      timer.run();
     }
   }
 
@@ -148,7 +161,7 @@ class ScrollView extends Component {
       if (childLayoutProps.length !== 0) {
         console.warn(
           'ScrollView child layout (' + JSON.stringify(childLayoutProps) +
-            ') must be applied through the contentContainerStyle prop.'
+          ') must be applied through the contentContainerStyle prop.'
         );
       }
     }
