@@ -114,18 +114,15 @@ class ScrollView extends Component {
       if (animated) {
         let timer = new Timer({
           duration: 400,
-          easing: 'easeOutSine'
-        });
-        timer.on('run', (e) => {
-          if (x >= 0) {
-            scrollView.scrollLeft = scrollLeft + e.percent * (x * pixelRatio - scrollLeft);
+          easing: 'easeOutSine',
+          onRun: (e) => {
+            if (x >= 0) {
+              scrollView.scrollLeft = scrollLeft + e.percent * (x * pixelRatio - scrollLeft);
+            }
+            if (y >= 0) {
+              scrollView.scrollTop = scrollTop + e.percent * (y * pixelRatio - scrollTop);
+            }
           }
-          if (y >= 0) {
-            scrollView.scrollTop = scrollTop + e.percent * (y * pixelRatio - scrollTop);
-          }
-        });
-        timer.on('end', () => {
-          timer.stop();
         });
         timer.run();
       } else {

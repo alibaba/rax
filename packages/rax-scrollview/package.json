@@ -21,7 +21,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "animation-util": "^0.0.3",
+    "animation-util": "^1.0.3",
     "rax-refreshcontrol": "^0.4.20",
     "rax-view": "^0.4.20",
     "universal-env": "^0.4.20"
