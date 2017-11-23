@@ -28,7 +28,6 @@ class Slider extends Component {
     // TODO: Avoid convert unit in component
     this.width = parseFloat(width) * document.documentElement.clientWidth / 750;
     this.loopIdx = 0;
-    this.total = children.length;
   }
 
   componentDidMount() {
@@ -230,7 +229,8 @@ class Slider extends Component {
 
   render() {
     const that = this;
-    const {style, showsPagination} = this.props;
+    const {style, showsPagination, children} = this.props;
+    this.total = children.length;
     return (
       <View style={[styles.slideWrapper, style]}>
         {this.renderSwipeView(this.getPages())}
