@@ -34,20 +34,12 @@ const UNITLESS_NUMBER_PROPS = {
 };
 const SUFFIX = 'rem';
 const REM_REG = /[-+]?\d*\.?\d+rem/g;
-
+const GLOBAL_REM_UNIT = '__global_rem_unit__';
+const global = typeof window === 'object' ? window : typeof global === 'object' ? global : {};
 // Default 1 rem to 1 px
-let defaultRemUnit;
-if (typeof window) {
-  window._defaultRemUnit = window._defaultRemUnit ? window._defaultRemUnit : 1;
-  defaultRemUnit = window._defaultRemUnit;
-} else if (typeof global) {
-  global._defaultRemUnit = global._defaultRemUnit ? global._defaultRemUnit : 1;
-  defaultRemUnit = global._defaultRemUnit;
-} else {
-  defaultRemUnit = 1;
+if (global[GLOBAL_REM_UNIT] == null) {
+  global[GLOBAL_REM_UNIT] = 1;
 }
-
-
 
 /**
  * Is string contains rem
@@ -64,33 +56,25 @@ export function isRem(str) {
  * @param {Number} rem
  * @returns {number}
  */
-export function calcRem(str, remUnit = defaultRemUnit) {
+export function calcRem(str, remUnit = global[GLOBAL_REM_UNIT]) {
   return str.replace(REM_REG, function(rem) {
     return parseFloat(rem) * remUnit + 'px';
   });
 }
 
 export function getRem() {
-  return defaultRemUnit;
+  return global[GLOBAL_REM_UNIT];
 }
 
 export function setRem(rem) {
-  if (typeof window) {
-    window._defaultRemUnit = rem;
-    defaultRemUnit = rem;
-  } else if (typeof global) {
-    global._defaultRemUnit = rem;
-    defaultRemUnit = rem;
-  } else {
-    defaultRemUnit = rem;
-  }
+  global[GLOBAL_REM_UNIT] = rem;
 }
 
 export function isUnitNumber(val, prop) {
   return typeof val === 'number' && !UNITLESS_NUMBER_PROPS[prop];
 }
 
-export function convertUnit(val, prop, remUnit = defaultRemUnit) {
+export function convertUnit(val, prop, remUnit = global[GLOBAL_REM_UNIT]) {
   if (prop && isUnitNumber(val, prop)) {
     return val * remUnit + 'px';
   } else if (isRem(val)) {

@@ -52,6 +52,7 @@ describe('framework', () => {
       geolocation: ['addEventListener', 'removeAllEventListeners', 'getCurrentPosition', 'watchPosition', 'clearWatch'],
       audio: ['addEventListener', 'removeAllEventListeners', 'canPlayType', 'stop', 'pause', 'load', 'play', 'setVolume'],
       picker: ['addEventListener', 'removeAllEventListeners', 'pickTime', 'pickDate', 'pick'],
+      globalEvent: ['addEventListener', 'removeEventListener'],
     });
 
     framework.registerComponents(['div', 'video']);
@@ -902,6 +903,19 @@ describe('framework', () => {
 
     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 
+    expect(mockFn).toHaveBeenCalled();
+  });
+
+  it('register window.onerror', () => {
+    const code = `
+      window.onerror = function(e){}
+    `;
+    const mockFn = jest.fn((args) => {
+      expect(args).toEqual('exception');
+    });
+
+    instance.oncall('globalEvent', 'addEventListener', mockFn);
+    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
     expect(mockFn).toHaveBeenCalled();
   });
 });

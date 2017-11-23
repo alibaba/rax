@@ -2,10 +2,12 @@ import {Component, createElement, findDOMNode} from 'rax';
 import {isWeex, isWeb} from 'universal-env';
 import View from 'rax-view';
 import RefreshControl from 'rax-refreshcontrol';
+import Timer from 'animation-util';
 
 const DEFAULT_END_REACHED_THRESHOLD = 500;
 const DEFAULT_SCROLL_CALLBACK_THROTTLE = 50;
 const FULL_WIDTH = 750;
+
 
 class ScrollView extends Component {
 
@@ -72,8 +74,8 @@ class ScrollView extends Component {
       e.nativeEvent = {
         contentOffset: {
           // HACK: weex scroll event value is opposite of web
-          x: - e.contentOffset.x,
-          y: - e.contentOffset.y
+          x: -e.contentOffset.x,
+          y: -e.contentOffset.y
         }
       };
       this.props.onScroll(e);
@@ -94,23 +96,43 @@ class ScrollView extends Component {
   scrollTo = (options) => {
     let x = parseInt(options.x);
     let y = parseInt(options.y);
+    let animated = options && typeof options.animated !== 'undefined' ? options.animated : true;
 
     if (isWeex) {
       let dom = __weex_require__('@weex-module/dom');
       let contentContainer = findDOMNode(this.refs.contentContainer);
       dom.scrollToElement(contentContainer.ref, {
         offset: x || y || 0,
-        animated: options && typeof options.animated !== 'undefined' ? options.animated : true
+        animated
       });
     } else {
       let pixelRatio = document.documentElement.clientWidth / FULL_WIDTH;
+      let scrollView = findDOMNode(this.refs.scroller);
+      let scrollLeft = scrollView.scrollLeft;
+      let scrollTop = scrollView.scrollTop;
 
-      if (x >= 0) {
-        findDOMNode(this.refs.scroller).scrollLeft = pixelRatio * x;
-      }
+      if (animated) {
+        let timer = new Timer({
+          duration: 400,
+          easing: 'easeOutSine',
+          onRun: (e) => {
+            if (x >= 0) {
+              scrollView.scrollLeft = scrollLeft + e.percent * (x * pixelRatio - scrollLeft);
+            }
+            if (y >= 0) {
+              scrollView.scrollTop = scrollTop + e.percent * (y * pixelRatio - scrollTop);
+            }
+          }
+        });
+        timer.run();
+      } else {
+        if (x >= 0) {
+          findDOMNode(this.refs.scroller).scrollLeft = pixelRatio * x;
+        }
 
-      if (y >= 0) {
-        findDOMNode(this.refs.scroller).scrollTop = pixelRatio * y;
+        if (y >= 0) {
+          findDOMNode(this.refs.scroller).scrollTop = pixelRatio * y;
+        }
       }
     }
   }
@@ -148,7 +170,7 @@ class ScrollView extends Component {
       if (childLayoutProps.length !== 0) {
         console.warn(
           'ScrollView child layout (' + JSON.stringify(childLayoutProps) +
-            ') must be applied through the contentContainerStyle prop.'
+          ') must be applied through the contentContainerStyle prop.'
         );
       }
     }
