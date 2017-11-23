@@ -9,7 +9,7 @@ import WeexDriver from 'driver-weex';
 import BrowserDriver from 'driver-browser';
 import Hook from './debug/hook';
 
-export default function inject({ driver, hook, measurer, deviceWidth, viewportWidth, eventRegistry }) {
+export default function inject({ driver, hook, measurer, deviceWidth, viewportWidth, eventRegistry, bodyType, bodyProps}) {
   // Inject component class
   Host.EmptyComponent = EmptyComponent;
   Host.NativeComponent = NativeComponent;
@@ -47,5 +47,14 @@ export default function inject({ driver, hook, measurer, deviceWidth, viewportWi
 
   if (eventRegistry) {
     Host.driver.eventRegistry = eventRegistry;
+  }
+
+  // Body custom type only works in weex
+  if (bodyType) {
+    Host.driver.bodyType = bodyType;
+  }
+
+  if (bodyProps) {
+    Host.driver.bodyProps = bodyProps;
   }
 }

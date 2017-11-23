@@ -47,7 +47,7 @@ const Driver = {
     }
 
     let documentElement = document.documentElement;
-    let body = document.createBody();
+    let body = document.createBody(Driver.bodyType, Driver.bodyProps);
     documentElement.appendChild(body);
 
     return body;
