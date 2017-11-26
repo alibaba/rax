@@ -5,6 +5,15 @@ import {isWeb} from 'universal-env';
 
 const {View: AnimatedView} = Animated;
 
+let isIOS8 = false;
+
+if (!isWeb) {
+  let userAgent = navigator.userAgent;
+  if (userAgent && /ios\/8\./i.test(userAgent)) {
+    isIOS8 = true;
+  }
+}
+
 export default class Modal extends Component {
 
   constructor(props) {
@@ -78,7 +87,7 @@ export default class Modal extends Component {
   }
 
   render() {
-    const {contentStyle, children} = this.props;
+    const {contentStyle, children, maskStyle} = this.props;
     const {visible} = this.state;
     // HACK: register a empty click event to fix Android click penetration problem when in mask
     return (
@@ -86,7 +95,7 @@ export default class Modal extends Component {
         onClick={() => {
           this.hide();
         }}
-        style={[styles.mask, {opacity: this.fadeAnim}]}
+        style={[styles.mask, {opacity: isIOS8 ? 1 : this.fadeAnim}, maskStyle]}
       >
         <Touchable onPress={(e) => {
           if (isWeb) {
