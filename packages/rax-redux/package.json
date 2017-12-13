@@ -1,6 +1,6 @@
 {
   "name": "rax-redux",
-  "version": "0.4.20",
+  "version": "0.5.0",
   "description": "Official Rax bindings for Redux.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
