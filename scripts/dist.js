@@ -4,7 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const uppercamelcase = require('uppercamelcase');
 const RaxPlugin = require('rax-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const fs = require('fs');
 
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
