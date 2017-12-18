@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; 
 
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
@@ -42,6 +42,7 @@ export function getInstance(instanceId) {
   return instance;
 }
 
+// TODO: 未来删掉
 export function init(config) {
   Document = config.Document;
   Element = config.Element;
@@ -52,21 +53,21 @@ export function init(config) {
  * register the name of each native component
  * @param  {array} components array of name
  */
-export function registerComponents(components) {
-  if (Array.isArray(components)) {
-    components.forEach(function register(name) {
-      /* istanbul ignore if */
-      if (!name) {
-        return;
-      }
-      if (typeof name === 'string') {
-        NativeComponents[name] = true;
-      } else if (typeof name === 'object' && typeof name.type === 'string') {
-        NativeComponents[name.type] = name;
-      }
-    });
-  }
-}
+// export function registerComponents(components) {
+//   if (Array.isArray(components)) {
+//     components.forEach(function register(name) {
+//       /* istanbul ignore if */
+//       if (!name) {
+//         return;
+//       }
+//       if (typeof name === 'string') {
+//         NativeComponents[name] = true;
+//       } else if (typeof name === 'object' && typeof name.type === 'string') {
+//         NativeComponents[name.type] = name;
+//       }
+//     });
+//   }
+// }
 
 function __weex_module_supports__(name) {
   let parts = name.split('.');
@@ -98,23 +99,23 @@ function __weex_tag_supports__(name) {
  * register the name and methods of each api
  * @param  {object} apis a object of apis
  */
-export function registerMethods(apis) {
-  // Noop
-}
+// export function registerMethods(apis) {
+//   // Noop
+// }
 
 /**
  * register the name and methods of each module
  * @param  {object} modules a object of modules
  */
-export function registerModules(newModules) {
-  if (typeof newModules === 'object') {
-    for (var name in newModules) {
-      if (Object.prototype.hasOwnProperty.call(newModules, name)) {
-        NativeModules[name] = newModules[name];
-      }
-    }
-  }
-}
+// export function registerModules(newModules) {
+//   if (typeof newModules === 'object') {
+//     for (var name in newModules) {
+//       if (Object.prototype.hasOwnProperty.call(newModules, name)) {
+//         NativeModules[name] = newModules[name];
+//       }
+//     }
+//   }
+// }
 
 function genBuiltinModules(modules, moduleFactories, context) {
   for (let moduleName in moduleFactories) {
@@ -127,43 +128,43 @@ function genBuiltinModules(modules, moduleFactories, context) {
   return modules;
 }
 
-function genNativeModules(modules, document) {
-  if (typeof NativeModules === 'object') {
-    for (let name in NativeModules) {
-      let moduleName = MODULE_NAME_PREFIX + name;
-      modules[moduleName] = {
-        module: {exports: {}},
-        isInitialized: true,
-      };
+// function genNativeModules(modules, document) {
+//   if (typeof NativeModules === 'object') {
+//     for (let name in NativeModules) {
+//       let moduleName = MODULE_NAME_PREFIX + name;
+//       modules[moduleName] = {
+//         module: {exports: {}},
+//         isInitialized: true,
+//       };
 
-      NativeModules[name].forEach(method => {
-        if (typeof method === 'string') {
-          method = {
-            name: method
-          };
-        }
-        const methodName = method.name;
+//       NativeModules[name].forEach(method => {
+//         if (typeof method === 'string') {
+//           method = {
+//             name: method
+//           };
+//         }
+//         const methodName = method.name;
 
-        modules[moduleName].module.exports[methodName] = (...args) => {
-          let options = {};
-          let lastArg = args[args.length - 1];
-          if (lastArg && typeof lastArg === 'object' && lastArg.__weex_options__) {
-            options = lastArg.__weex_options__;
-            // Remove the last in args
-            args.pop();
-          }
-          // https://github.com/alibaba/weex/issues/1677
-          return document.taskCenter.send('module', {
-            module: name,
-            method: methodName
-          }, args, options);
-        };
-      });
-    }
-  }
+//         modules[moduleName].module.exports[methodName] = (...args) => {
+//           let options = {};
+//           let lastArg = args[args.length - 1];
+//           if (lastArg && typeof lastArg === 'object' && lastArg.__weex_options__) {
+//             options = lastArg.__weex_options__;
+//             // Remove the last in args
+//             args.pop();
+//           }
+//           // https://github.com/alibaba/weex/issues/1677
+//           return document.taskCenter.send('module', {
+//             module: name,
+//             method: methodName
+//           }, args, options);
+//         };
+//       });
+//     }
+//   }
 
-  return modules;
-}
+//   return modules;
+// }
 
 /**
  * create a Weex instance
@@ -172,7 +173,8 @@ function genNativeModules(modules, document) {
  * @param  {string} __weex_code__
  * @param  {object} [__weex_options__] {bundleUrl, debug}
  */
-export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
+// export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
+export function createInstanceContext(instanceId, __weex_options__, __weex_data__) {
   let instance = instances[instanceId];
   if (instance == undefined) {
     // Mark start time
@@ -483,29 +485,29 @@ export function destroyInstance(instanceId) {
  * @param  {string} instanceId
  * @return {object} a virtual dom tree
  */
-export function getRoot(instanceId) {
-  let instance = getInstance(instanceId);
-  let document = instance.document;
-  return document.toJSON ? document.toJSON() : {};
-}
+// export function getRoot(instanceId) {
+//   let instance = getInstance(instanceId);
+//   let document = instance.document;
+//   return document.toJSON ? document.toJSON() : {};
+// }
 
-function fireEvent(doc, ref, type, e, domChanges, params) {
-  if (Array.isArray(ref)) {
-    ref.some((ref) => {
-      return fireEvent(doc, ref, type, e) !== false;
-    });
-    return;
-  }
+// function fireEvent(doc, ref, type, e, domChanges, params) {
+//   if (Array.isArray(ref)) {
+//     ref.some((ref) => {
+//       return fireEvent(doc, ref, type, e) !== false;
+//     });
+//     return;
+//   }
 
-  const el = doc.getRef(ref);
+//   const el = doc.getRef(ref);
 
-  if (el) {
-    const result = doc.fireEvent(el, type, e, domChanges, params);
-    return result;
-  }
+//   if (el) {
+//     const result = doc.fireEvent(el, type, e, domChanges, params);
+//     return result;
+//   }
 
-  return new Error(`Invalid element reference "${ref}"`);
-}
+//   return new Error(`Invalid element reference "${ref}"`);
+// }
 
 /**
  * accept calls from native (event or callback)
@@ -513,25 +515,25 @@ function fireEvent(doc, ref, type, e, domChanges, params) {
  * @param  {string} instanceId
  * @param  {array} tasks list with `method` and `args`
  */
-export function receiveTasks(instanceId, tasks) {
-  const instance = getInstance(instanceId);
-  if (Array.isArray(tasks)) {
-    const {document} = instance;
-    const results = [];
-    tasks.forEach(task => {
-      let result;
-      if (task.method === 'fireEvent') {
-        let [nodeId, type, data, domChanges, params] = task.args;
-        result = fireEvent(document, nodeId, type, data, domChanges, params);
-      } else if (task.method === 'callback') {
-        let [uid, data, ifKeepAlive] = task.args;
-        result = document.taskCenter.callback(uid, data, ifKeepAlive);
-      }
-      results.push(result);
-    });
-    return results;
-  }
-}
+// export function receiveTasks(instanceId, tasks) {
+//   const instance = getInstance(instanceId);
+//   if (Array.isArray(tasks)) {
+//     const {document} = instance;
+//     const results = [];
+//     tasks.forEach(task => {
+//       let result;
+//       if (task.method === 'fireEvent') {
+//         let [nodeId, type, data, domChanges, params] = task.args;
+//         result = fireEvent(document, nodeId, type, data, domChanges, params);
+//       } else if (task.method === 'callback') {
+//         let [uid, data, ifKeepAlive] = task.args;
+//         result = document.taskCenter.callback(uid, data, ifKeepAlive);
+//       }
+//       results.push(result);
+//     });
+//     return results;
+//   }
+// }
 
 // FIXME: Hack for rollup build "import Rax from 'weex-rax-framework'", in rollup if `module.exports` has `__esModule` key must return by export default
 export default exports;
