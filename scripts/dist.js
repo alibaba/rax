@@ -4,6 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const uppercamelcase = require('uppercamelcase');
 const RaxPlugin = require('rax-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const fs = require('fs');
 
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
@@ -164,12 +165,8 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
       new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
       new webpack.optimize.ModuleConcatenationPlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        include: /\.min\.js$/,
-        minimize: true,
-        compress: {
-          warnings: false
-        }
+      new UglifyJSPlugin({
+        include: /\.min\.js$/
       })
     ],
     module: {

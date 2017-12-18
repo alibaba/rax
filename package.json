@@ -35,6 +35,7 @@
     "rimraf": "^2.5.4",
     "semver-regex": "^1.0.0",
     "uppercamelcase": "^1.1.0",
+    "uglifyjs-webpack-plugin": "^1.1.4",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.5.0"
   },
