@@ -139,6 +139,28 @@ dist(getConfig(
       ]
     }
   ));
+
+  dist(getConfig(
+    {
+      'frameworkapi.weex': './packages/weex-rax-framework-api/src/index.js'
+    },
+    {
+      path: './packages/weex-rax-framework-api/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+      pathinfo: true,
+    },
+    {
+      target: 'module'
+    },
+    {
+      presets: ['es2015', 'rax'],
+      ignore: [
+        'dist/'
+      ]
+    }
+  ));
+
 }).catch(function(err) {
   setTimeout(function() {
     throw err;
