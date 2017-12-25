@@ -1,6 +1,19 @@
-module.exports = function(modules) {
+const MODULE_NAME_PREFIX = '@weex-module/';
+
+module.exports = function(modules, weex) {
   function require(name) {
     var mod = modules[name];
+
+    // if retuire '@weex-module/'
+    if (name.split(MODULE_NAME_PREFIX) > 1) {
+      if (weex.supports(name)) {
+        return weex.requireModule(name);
+      } else {
+        throw new Error(
+          'Requiring unknown weex module "' + name + '"'
+        );
+      }
+    }
 
     if (mod && mod.isInitialized) {
       return mod.module.exports;

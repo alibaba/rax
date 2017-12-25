@@ -15,60 +15,23 @@ const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 const GLOBAL_EVENT_MODULE = MODULE_NAME_PREFIX + 'globalEvent';
 // Instance hub
-const instances = {};
+// const instances = {};
 // Bundles hub
 const bundles = {};
 const noop = function() {};
+const weex = {};
 
-function dispatchEventToInstance(event, targetOrigin) {
-  var instance;
-  for (var i in instances) {
-    if (instances.hasOwnProperty(i)) {
-      instance = instances[i];
-      if (targetOrigin === '*' || targetOrigin === instance.origin) {
-        event.target = instance.window;
-        // FIXME: Need async?
-        instance.window.dispatchEvent(event);
-      }
-    }
-  }
+function __weex_supports__(name) {
+  return weex.supports(name);
 }
 
-function __weex_module_supports__(name) {
-  let parts = name.split('.');
-  if (parts.length === 1) {
-    return Boolean(NativeModules[name]);
-  } else {
-    let moduleName = parts[0];
-    let methodName = parts[1];
-    let moduleMethods = NativeModules[moduleName];
-
-    if (moduleMethods) {
-      for (let i = 0; i < moduleMethods.length; i++) {
-        let method = moduleMethods[i];
-        if (typeof method === 'object' && method.name === methodName || method === methodName) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+export function injectContext() {
+  console.log('Rax jsfm init injectContext');
+  let instanceContext = (new Function('return this'))();
+  let window = resetInstanceContext(instanceContext);
+  for (key in aa) {
+    instanceContext[key] = window[key];
   }
-}
-
-function __weex_tag_supports__(name) {
-  return Boolean(NativeComponents[name]);
-}
-
-function genBuiltinModules(modules, moduleFactories, context) {
-  for (let moduleName in moduleFactories) {
-    modules[moduleName] = {
-      factory: moduleFactories[moduleName].bind(context),
-      module: {exports: {}},
-      isInitialized: false,
-    };
-  }
-  return modules;
 }
 
 /**
@@ -82,12 +45,15 @@ function genBuiltinModules(modules, moduleFactories, context) {
 export function resetInstanceContext(instanceContext) {
 
   let {
+    instanceId,
     document,
     __weex_document__,
     __weex_options__,
     __weex_data__,
     __weex_config__
   } = instanceContext;
+
+  weex = __weex_options__.weex;
 
   // Mark start time
   const responseEnd = Date.now();
@@ -113,20 +79,10 @@ export function resetInstanceContext(instanceContext) {
   const documentURL = new URL(bundleUrl);
   const modules = {};
 
-  instance = instances[instanceId] = {
-    document,
-    instanceId,
-    bundleUrl,
-    bundleCode: __weex_code__,
-    modules,
-    origin: documentURL.origin,
-    uid: 0
-  };
-
   // Generate native modules map at instance init
   genNativeModules(modules, document);
   const __weex_define__ = require('./define.weex')(modules);
-  const __weex_require__ = require('./require.weex')(modules);
+  const __weex_require__ = require('./require.weex')(modules, weex);
   const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
   // Extend document
   require('./document.weex')(__weex_require__, document);
@@ -257,10 +213,17 @@ export function resetInstanceContext(instanceContext) {
         type: 'message',
         source: window, // FIXME: maybe not export window
       };
-      dispatchEventToInstance(event, targetOrigin);
+
+      const stack = new BroadcastChannel('massage' + instanceId);
+      stack.postMessage(event);
     },
     addEventListener: (type, listener) => {
-      windowEmitter.on(type, listener);
+      if (type = 'massage') {
+        const stack = new BroadcastChannel('massage' + instanceId);
+        stack.onmessage(listener);
+      } else {
+        windowEmitter.on(type, listener);
+      }
     },
     removeEventListener: (type, listener) => {
       windowEmitter.off(type, listener);
@@ -284,8 +247,8 @@ export function resetInstanceContext(instanceContext) {
     require: __weex_require__,
     // Weex
     __weex_document__,
-    __weex_module_supports__,
-    __weex_tag_supports__,
+    __weex_module_supports__: __weex_supports__,
+    __weex_tag_supports__: __weex_supports__,
     __weex_define__,
     __weex_require__,
     __weex_downgrade__,
@@ -296,25 +259,9 @@ export function resetInstanceContext(instanceContext) {
     __weex_config__
   };
 
-  instance.window = window.self = window.window = window;
+  window.self = window.window = window;
 
-  let builtinGlobals = {};
-  let builtinModules = {};
-  try {
-    builtinGlobals = __weex_config__.services.builtinGlobals;
-    // Modules should wrap as module factory format
-    builtinModules = __weex_config__.services.builtinModules;
-  } catch (e) {}
-
-  Object.assign(window, builtinGlobals);
-
-  const moduleFactories = {...ModuleFactories, ...builtinModules};
-  genBuiltinModules(
-    modules,
-    moduleFactories,
-    window
-  );
-
+  console.log('Rax jsfm init window', typeof window);
   return window;
 
 }

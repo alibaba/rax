@@ -53,6 +53,7 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
     require('./document.weex')(__weex_require__, document);
 
     const instanceContext = {
+      instanceId,
       document,
       __weex_document__: document,
       __weex_options__,
@@ -62,7 +63,7 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
     
     return instanceContext
     
-    instance.window = window.self = window.window = window;
+    // instance.window = window.self = window.window = window;
 
 
   } else {
