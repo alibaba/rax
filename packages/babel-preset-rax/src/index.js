@@ -18,7 +18,8 @@ module.exports = {
       pragma: 'createElement' // default pragma is React.createElement
     }],
     'transform-jsx-stylesheet',
-    'add-module-exports',
+    // webpack 3 may not need this plugin
+    process.env.BABEL_NO_ADD_MODULE_EXPORTS ? null : 'add-module-exports',
   ]),
   env: {
     development: {

@@ -222,14 +222,14 @@ class NativeComponent {
 
         // Update event binding
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
+        let eventName = propKey.slice(2).toLowerCase();
+
         if (typeof prevProp === 'function') {
-          Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(
-            2).toLowerCase(), prevProp);
+          Host.driver.removeEventListener(this.getNativeNode(), eventName, prevProp, nextProps);
         }
 
         if (typeof nextProp === 'function') {
-          Host.driver.addEventListener(this.getNativeNode(), propKey.slice(2)
-            .toLowerCase(), nextProp);
+          Host.driver.addEventListener(this.getNativeNode(), eventName, nextProp, nextProps);
         }
         // Update other property
       } else {

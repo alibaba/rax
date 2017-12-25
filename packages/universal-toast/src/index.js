@@ -84,7 +84,7 @@ let Toast = {
    */
   show(message, duration = SHORT_DELAY) {
     if (isWeex) {
-      let weexModal = require('@weex-module/modal');
+      let weexModal = __weex_require__('@weex-module/modal');
 
       if (weexModal.toast) {
         weexModal.toast({

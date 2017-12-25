@@ -9,9 +9,6 @@ class TimePicker extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      selectedValue: props.selectedValue
-    };
   }
 
   handlePress = () => {
@@ -20,16 +17,13 @@ class TimePicker extends Component {
         onTimeChange,
         selectedValue,
       } = this.props;
-      const picker = require('@weex-module/picker');
+      const picker = __weex_require__('@weex-module/picker');
 
       picker.pickTime({
         value: selectedValue,
       }, event => {
         if (event.result === 'success') {
           onTimeChange && onTimeChange(event.data);
-          this.setState({
-            selectedValue: event.data,
-          });
         }
       });
     }
@@ -61,7 +55,7 @@ class TimePicker extends Component {
       return (
         <TouchableHighlight {...this.props} onPress={this.handlePress} style={touchableStyle}>
           <Text style={textStyle}>
-            {this.state.selectedValue}
+            {selectedValue}
           </Text>
         </TouchableHighlight>
       );

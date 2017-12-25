@@ -89,9 +89,7 @@ More examples take a look at the [`examples`](/examples/) folder:
 * [Canvas](/examples/canvas)
 * [Charts](/examples/charts)
 * [Drag](/examples/drag)
-* [Game2048](/examples/game2048)
 * [Animated](/examples/animated)
-* [TicTacToe](/examples/tictactoe)
 * [Profile](/examples/profile)
 * [Parallax](/examples/parallax)
 
@@ -120,7 +118,7 @@ Add an alias for `react` and `react-dom`:
   resolve: {
     alias: {
       'react': 'rax',
-      'react-dom': 'rax',
+      'react-dom': 'rax-dom',
       // Not necessary unless you consume a module using `createClass`
       'create-react-class': "rax/lib/createClass"
     }
@@ -142,7 +140,7 @@ Add an alias for `react` and `react-dom` in your .babelrc:
       "root": ["."],
       "alias": {
         "react": "rax",
-        "react-dom": "rax",
+        "react-dom": "rax-dom",
         // Not necessary unless you consume a module using `createClass`
         "create-react-class": "rax/lib/createClass"
       }

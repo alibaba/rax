@@ -7,9 +7,6 @@ class DatePicker extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      selectedValue: props.selectedValue
-    };
   }
 
   handlePress = () => {
@@ -20,7 +17,7 @@ class DatePicker extends Component {
         minimumDate,
         maximumDate,
       } = this.props;
-      const picker = require('@weex-module/picker');
+      const picker = __weex_require__('@weex-module/picker');
 
       picker.pickDate({
         value: selectedValue,
@@ -29,9 +26,6 @@ class DatePicker extends Component {
       }, event => {
         if (event.result === 'success') {
           onDateChange && onDateChange(event.data);
-          this.setState({
-            selectedValue: event.data,
-          });
         }
       });
     }
@@ -65,7 +59,7 @@ class DatePicker extends Component {
       return (
         <TouchableHighlight {...this.props} onPress={this.handlePress} style={touchableStyle}>
           <Text style={textStyle}>
-            {this.state.selectedValue}
+            {selectedValue}
           </Text>
         </TouchableHighlight>
       );

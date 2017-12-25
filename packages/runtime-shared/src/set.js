@@ -10,7 +10,8 @@ const NaNMarker = Symbol('NaN');
 var ACCESSOR_SUPPORT = true;
 
 function encodeVal(data) {
-  return Number.isNaN(data) ? NaNMarker : data;
+  // Number.isNaN not extist in iOS 8.x
+  return data !== data ? NaNMarker : data;
 }
 
 function decodeVal(encodedData) {

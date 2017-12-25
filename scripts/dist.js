@@ -8,45 +8,52 @@ const fs = require('fs');
 
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
+const GLOBAL_NAME = {
+  'rax-dom': 'RaxDOM',
+};
+function normalizeGlobalName(name) {
+  return GLOBAL_NAME[name] || uppercamelcase(name);
+}
+
 fs.readdirSync(PACKAGES_DIR)
-.forEach(function(packageName) {
-  var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
+  .forEach(function(packageName) {
+    var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
 
-  if (!/^(rax|universal)-/.test(packageName) ||
-     /webpack/.test(packageName) ||
-     /cli/.test(packageName) ||
-     /loader/.test(packageName) ||
-     /rax-scripts/.test(packageName) ||
-     !fs.existsSync(main)
-   ) {
-    console.log('Ignore dist', packageName);
-    return;
-  };
+    if (!/^(rax|universal)-/.test(packageName) ||
+      /webpack/.test(packageName) ||
+      /cli/.test(packageName) ||
+      /loader/.test(packageName) ||
+      /rax-scripts/.test(packageName) ||
+      !fs.existsSync(main)
+    ) {
+      console.log('Ignore dist', packageName);
+      return;
+    };
 
-  var entryName = packageName.split('-')[1];
-  var globalName = uppercamelcase(packageName);
+    var entryName = packageName.split('-')[1];
+    var globalName = normalizeGlobalName(packageName);
 
-  var entry = {};
-  entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
-  dist(getConfig(
-    entry,
-    {
-      path: './packages/' + packageName + '/dist/',
-      filename: '[name].js',
-      sourceMapFilename: '[name].map',
-      pathinfo: false,
-    },
-    {
-      externalBuiltinModules: true,
-      builtinModules: RaxPlugin.BuiltinModules,
-      moduleName: packageName,
-      globalName: globalName,
-    },
-    {
-      presets: ['es2015', 'rax']
-    }
-  ));
-});
+    var entry = {};
+    entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
+    dist(getConfig(
+      entry,
+      {
+        path: './packages/' + packageName + '/dist/',
+        filename: '[name].js',
+        sourceMapFilename: '[name].map',
+        pathinfo: false,
+      },
+      {
+        externalBuiltinModules: true,
+        builtinModules: RaxPlugin.BuiltinModules,
+        moduleName: packageName,
+        globalName: globalName,
+      },
+      {
+        presets: ['es2015', 'rax']
+      }
+    ));
+  });
 
 dist(getConfig(
   {

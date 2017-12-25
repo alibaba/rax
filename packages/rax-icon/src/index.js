@@ -36,7 +36,7 @@ class Icon extends Component {
     }
 
     if (isWeex) {
-      var domModule = require('@weex-module/dom');
+      var domModule = __weex_require__('@weex-module/dom');
       domModule.addRule('fontFace', {
         'fontFamily': fontFamily,
         'src': "url('" + uri + "')" // single quotes are required around uri, and double quotes can not work

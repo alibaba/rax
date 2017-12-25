@@ -20,14 +20,13 @@ function performInSandbox(fn, instance, callback) {
 
 function handleError(instance, error) {
   let boundary;
-  let _instance = instance;
 
-  while (_instance) {
-    if (typeof _instance.componentDidCatch === 'function') {
-      boundary = _instance;
+  while (instance) {
+    if (typeof instance.componentDidCatch === 'function') {
+      boundary = instance;
       break;
-    } else if (_instance._internal && _instance._internal._parentInstance) {
-      _instance = _instance._internal._parentInstance;
+    } else if (instance._internal && instance._internal._parentInstance) {
+      instance = instance._internal._parentInstance;
     } else {
       break;
     }
@@ -105,7 +104,7 @@ class CompositeComponent {
       // Functional stateless component without state and lifecycles
       instance = new StatelessComponent(Component);
     } else {
-      throw Error(`Invalid component type ${JSON.stringify(Component)}`);
+      throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
     }
 
     // These should be set up in the constructor, but as a convenience for
@@ -131,17 +130,17 @@ class CompositeComponent {
       error = e;
     };
 
-    performInSandbox(() => {
-      if (instance.componentWillMount) {
+    if (instance.componentWillMount) {
+      performInSandbox(() => {
         if (process.env.NODE_ENV !== 'production') {
           measureLifeCycle(() => {
             instance.componentWillMount();
-          }, this._mountID, 'componentDidMount');
+          }, this._mountID, 'componentWillMount');
         } else {
           instance.componentWillMount();
         }
-      }
-    }, instance, errorCallback);
+      }, instance, errorCallback);
+    }
 
     if (renderedElement == null) {
       Host.component = this;
@@ -177,8 +176,8 @@ class CompositeComponent {
       Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
     }
 
-    performInSandbox(() => {
-      if (instance.componentDidMount) {
+    if (instance.componentDidMount) {
+      performInSandbox(() => {
         if (process.env.NODE_ENV !== 'production') {
           measureLifeCycle(() => {
             instance.componentDidMount();
@@ -186,8 +185,8 @@ class CompositeComponent {
         } else {
           instance.componentDidMount();
         }
-      }
-    }, instance);
+      }, instance);
+    }
 
     Host.hook.Reconciler.mountComponent(this);
 
@@ -201,11 +200,11 @@ class CompositeComponent {
   unmountComponent(notRemoveChild) {
     let instance = this._instance;
 
-    performInSandbox(() => {
-      if (instance.componentWillUnmount) {
+    if (instance.componentWillUnmount) {
+      performInSandbox(() => {
         instance.componentWillUnmount();
-      }
-    }, instance);
+      }, instance);
+    }
 
     Host.hook.Reconciler.unmountComponent(this);
 
@@ -276,8 +275,8 @@ class CompositeComponent {
       Object.assign(
         nextState,
         typeof partial === 'function' ?
-        partial.call(instance, nextState, props, context) :
-        partial
+          partial.call(instance, nextState, props, context) :
+          partial
       );
     }
 

@@ -10,9 +10,6 @@ class Picker extends Component {
   constructor(props) {
     super(props);
     let pickerData = this.getPickerData();
-    this.state = {
-      selectedLabel: pickerData.selectedLabel,
-    };
   }
 
   getPickerData = () => {
@@ -60,6 +57,16 @@ class Picker extends Component {
     };
   }
 
+  getPickerLableByValue = (value, pickerData) => {
+    let label = '';
+    for (let i = 0; i < pickerData.items.length; i++) {
+      if (pickerData.items[i].value == value) {
+        label = pickerData.items[i].label;
+      }
+    }
+    return label;
+  }
+
   handlePress = (webIndex) => {
     const {
       onValueChange,
@@ -67,7 +74,7 @@ class Picker extends Component {
     } = this.props;
 
     if (isWeex) {
-      const picker = require('@weex-module/picker');
+      const picker = __weex_require__('@weex-module/picker');
       const pickerData = this.getPickerData();
       picker.pick({
         index: pickerData.selectIndex,
@@ -76,9 +83,6 @@ class Picker extends Component {
         if (event.result === 'success') {
           let {value, label} = this.getPickerDataByIndex(event.data, pickerData);
           onValueChange && onValueChange(value, pickerData.items);
-          this.setState({
-            selectedLabel: label,
-          });
         }
       });
     } else {
@@ -89,6 +93,10 @@ class Picker extends Component {
   }
 
   render() {
+    let {selectedValue} = this.props;
+    const pickerData = this.getPickerData();
+    const selectedLabel = this.getPickerLableByValue(selectedValue, pickerData);
+
     let style = {
       ...styles.initial,
       ...this.props.style,
@@ -108,7 +116,7 @@ class Picker extends Component {
       return (
         <TouchableHighlight {...this.props} onPress={this.handlePress} style={style}>
           <Text style={textStyle}>
-            {this.state.selectedLabel}
+            {selectedLabel}
           </Text>
         </TouchableHighlight>
       );

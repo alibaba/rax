@@ -85,7 +85,7 @@ class Tabbar extends Component {
 
     if (isWeex) {
       try {
-        let dom = require('@weex-module/dom');
+        let dom = __weex_require__('@weex-module/dom');
         let k = parseInt(750 / tabItemWidth / 2);
         let selected = this.refs[`tab_${this.state.selectedIndex - k}`];
         if (selected) {

@@ -16,22 +16,25 @@ class Container extends Component {
     let tabheader = this.context.tabheader;
     if (tabheader && tabheader.on) {
       tabheader.on(TABEHEADER_GOTOP, () => {
-        let dom = require('@weex-module/dom');
+        let dom = __weex_require__('@weex-module/dom');
         dom.scrollToElement(findDOMNode(this.refs[CONTAINER_REF]), {offset: 0});
       });
     }
   }
 
   select = (index, isPress) => {
-    const tabheader = this.context.tabheader;
+    if (this.selected != index) {
+      this.props.onSelect && this.props.onSelect(index);
+    }
+    this.selectInternal(index);
+  }
 
+  selectInternal = (index) => {
+    const tabheader = this.context.tabheader;
     if (this.animType != 'noanim') {
       this.scrollTo({
         x: parseInt(this.props.itemWidth) * index
       });
-    }
-    if (this.selected != index) {
-      this.props.onSelect && this.props.onSelect(index);
     }
     if (tabheader) {
       tabheader.emit(TABEHEADER_SELECT, index);

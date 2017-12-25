@@ -9,17 +9,18 @@ function render(element, container, options, callback) {
     options = null;
   }
 
+  options = options || {};
   // Init inject
-  inject(options || {});
+  inject(options);
 
-  let rootComponent = instance.render(element, container);
-  let component = rootComponent.getPublicInstance();
+  let rootComponent = instance.mount(element, container, options.parent);
+  let componentInstance = rootComponent.getPublicInstance();
 
   if (callback) {
-    callback.call(component);
+    callback.call(componentInstance);
   }
 
-  return component;
+  return componentInstance;
 }
 
 export default render;

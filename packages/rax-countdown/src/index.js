@@ -131,10 +131,11 @@ class Index extends Component {
     }
 
     const totalSeconds = Math.floor(timeRemaining / 1000);
-    const days = parseInt(totalSeconds / 3600 / 24);
-    const hours = parseInt(totalSeconds / 3600) % 24;
-    const minutes = parseInt(totalSeconds / 60) % 60;
-    const seconds = parseInt(totalSeconds % 60);
+    let days = parseInt(totalSeconds / 3600 / 24);
+    let hours = parseInt(totalSeconds / 3600) % 24;
+    let minutes = parseInt(totalSeconds / 60) % 60;
+    let seconds = parseInt(totalSeconds % 60);
+
 
     const _timeBackgroundStyle = [styles.background, timeBackgroundStyle];
 
@@ -142,6 +143,10 @@ class Index extends Component {
     const isHours = new RegExp('{h}').test(tpl);
     const isMinutes = new RegExp('{m}').test(tpl);
     const isSeconds = new RegExp('{s}').test(tpl);
+
+    hours = !isDay && days ? hours + 24 * days : hours;
+    minutes = !isHours && hours ? minutes + 60 * hours : minutes;
+    seconds = !isMinutes && minutes ? seconds + 60 * minutes : seconds;
 
     const tplIndexOfDay = tpl.indexOf('d');
     const tplIndexOfHours = tpl.indexOf('h');

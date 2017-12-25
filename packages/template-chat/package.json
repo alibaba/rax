@@ -1,7 +1,7 @@
 {
   "name": "template-chat",
   "author": "wssgcg1213",
-  "version": "0.4.11",
+  "version": "0.5.0",
   "snapshots": [
     "//gw.alicdn.com/tfs/TB1MlvTQXXXXXcvXVXXXXXXXXXX-300-200.png",
     "//gw.alicdn.com/tfs/TB1Ea3DPVXXXXabXpXXXXXXXXXX-1242-2208.png",
@@ -20,25 +20,25 @@
     "lint": "eslint --ext .js --ext .jsx ./templates"
   },
   "dependencies": {
-    "rax": "^0.4.11",
-    "rax-image": "^0.4.11",
-    "rax-link": "^0.4.11",
-    "rax-listview": "^0.4.11",
-    "rax-refreshcontrol": "^0.4.11",
-    "rax-scrollview": "^0.4.11",
-    "rax-tabbar": "^0.4.11",
-    "rax-text": "^0.4.11",
-    "rax-textinput": "^0.4.11",
-    "rax-touchable": "^0.4.11",
-    "rax-view": "^0.4.11",
-    "universal-panresponder": "^0.4.11"
+    "rax": "^0.5.0",
+    "rax-image": "^0.5.0",
+    "rax-link": "^0.5.0",
+    "rax-listview": "^0.5.0",
+    "rax-refreshcontrol": "^0.5.0",
+    "rax-scrollview": "^0.5.0",
+    "rax-tabbar": "^0.5.0",
+    "rax-text": "^0.5.0",
+    "rax-textinput": "^0.5.0",
+    "rax-touchable": "^0.5.0",
+    "rax-view": "^0.5.0",
+    "universal-panresponder": "^0.5.0"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.16.0",
-    "babel-preset-rax": "^0.4.11",
+    "babel-preset-rax": "^0.5.0",
     "base64-image-loader": "^1.2.0",
     "case-sensitive-paths-webpack-plugin": "^1.1.4",
     "eslint": "^3.10.0",
@@ -47,8 +47,8 @@
     "internal-ip": "^1.2.0",
     "json-loader": "^0.5.4",
     "qrcode-terminal": "^0.11.0",
-    "rax-webpack-plugin": "^0.4.11",
-    "stylesheet-loader": "^0.4.11",
+    "rax-webpack-plugin": "^0.5.0",
+    "stylesheet-loader": "^0.5.0",
     "watch-missing-node-modules-webpack-plugin": "0.0.1",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"

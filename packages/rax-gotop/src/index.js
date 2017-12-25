@@ -94,7 +94,7 @@ export default class GoTop extends Component {
 
     onPress && onPress();
     if (isWeex) {
-      let dom = require('@weex-module/dom');
+      let dom = __weex_require__('@weex-module/dom');
       let top = findDOMNode('rx-top');
 
       dom.scrollToElement(top.ref, {

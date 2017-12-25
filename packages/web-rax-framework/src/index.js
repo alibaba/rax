@@ -3,6 +3,7 @@ const global = window;
 const shared = require('runtime-shared');
 
 // ES
+require('./number');
 require('./object');
 require('./array');
 

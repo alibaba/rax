@@ -66,22 +66,22 @@ class AppearRegistry {
   }
 
   // check dom inview
-  check(offset) {
+  check(nodes) {
     raf(() => {
-      this.calculate();
+      this.calculate(nodes);
     });
   }
 
   // calculate everyone dom inview
-  calculate() {
-    let container = this.container,
-      elements = this.getElements(),
-      containerOffset = getOffset(window, {
-        x: this.options.x,
-        y: this.options.y
-      }),
-      isOnce = this.options.once,
-      ev = arguments[0] || {};
+  calculate(nodes) {
+    let container = this.container;
+    let elements = nodes || this.getElements();
+    let containerOffset = getOffset(window, {
+      x: this.options.x,
+      y: this.options.y
+    });
+    let isOnce = this.options.once;
+    let ev = arguments[0] || {};
 
     if (!container) {
       return;
@@ -139,7 +139,7 @@ class AppearRegistry {
   }
   bindEvent() {
     let handle = throttle(() => {
-      this.check(arguments);
+      this.check();
     }, this.options.wait);
     if (this.__handle) {
       this.container.removeEventListener('scroll', this.__handle, false, true);

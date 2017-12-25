@@ -280,6 +280,7 @@ import { render } from 'rax';
 import Animated from 'rax-animated';
 import Text from 'rax-text';
 import View from 'rax-view';
+import Easing from 'universal-easing';
 import UIExplorerButton from './UIExplorerButton';
 
 const styles = {

@@ -2,7 +2,7 @@ import {createElement, Component, render} from 'rax';
 import Button from '../common/Button';
 import Panel from '../common/Panel';
 
-const modal = require('@weex-module/modal');
+const modal = __weex_require__('@weex-module/modal');
 
 class Example extends Component {
   toast(msg, duration) {

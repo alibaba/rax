@@ -86,7 +86,7 @@ class RecyclerView extends Component {
     let y = parseInt(options.y);
 
     if (isWeex) {
-      let dom = require('@weex-module/dom');
+      let dom = __weex_require__('@weex-module/dom');
       let firstNode = findDOMNode(this.refs.firstNodePlaceholder);
       dom.scrollToElement(firstNode.ref, {
         offset: x || y || 0,
@@ -107,7 +107,8 @@ class RecyclerView extends Component {
 
       let cells = children.map((child, index) => {
         if (child) {
-          if (props._autoWrapCell && child.type != RefreshControl && child.type != Header) {
+          let hasOnRefresh = child.props && typeof child.props.onRefresh == 'function';
+          if (props._autoWrapCell && child.type != RefreshControl && child.type != Header && !hasOnRefresh) {
             return <Cell>{child}</Cell>;
           } else {
             return child;

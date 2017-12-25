@@ -10,7 +10,6 @@ function generateCallbackFunction() {
   return `jsonp_${Date.now()}_${Math.ceil(Math.random() * 100000)}`;
 }
 
-// Known issue: Will throw 'Uncaught ReferenceError: callback_*** is not defined' error if request timeout
 function clearFunction(functionName) {
   // IE8 throws an exception when you try to delete a property on window
   // http://stackoverflow.com/a/1824228/751089
@@ -100,8 +99,12 @@ const JSONP = function(url, options = {}) {
 
       timeoutId = setTimeout(() => {
         reject(new Error(`JSONP request to ${url} timed out`));
-        clearFunction(callbackFunction);
         removeScript(jsonpScript);
+
+        // remove script will not abort the request, so rewrite callback function and clear itself after response
+        window[callbackFunction] = function() {
+          clearFunction(callbackFunction);
+        };
       }, timeout);
     });
   }

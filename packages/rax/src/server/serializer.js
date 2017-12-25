@@ -39,7 +39,7 @@ function createOpenTagMarkup(tagName, style, attributes) {
   let tagOpen = `<${tagName}`;
 
   if (style) {
-    let styleAttr = styleToCSS(style, true);
+    let styleAttr = styleToCSS(style);
     if (styleAttr) {
       tagOpen += ' ' + quoteAttribute('style', styleAttr);
     }
@@ -82,15 +82,15 @@ class Serializer {
             json.children = childrenJSON;
           }
 
-          if (Object.keys(node.style).length) {
+          if (Object.keys(node.style).length > 0) {
             json.style = node.style;
           }
 
-          if (Object.keys(node.attributes).length) {
+          if (Object.keys(node.attributes).length > 0) {
             json.attributes = node.attributes;
           }
 
-          if (Object.keys(node.eventListeners).length) {
+          if (Object.keys(node.eventListeners).length > 0) {
             json.eventListeners = node.eventListeners;
           }
 
