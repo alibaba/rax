@@ -1,0 +1,24 @@
+{
+  "name": "universal-binding",
+  "version": "0.5.0",
+  "description": "Binding for web",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "binding",
+    "polyfill"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "object-assign": "^4.1.1",
+    "simple-lodash": "^0.0.2",
+    "universal-env": "0.x.x"
+  }
+}
