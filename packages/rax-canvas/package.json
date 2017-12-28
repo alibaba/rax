@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "universal-env": "^0.5.0",
-    "weex-gcanvas": "^1.0.0"
+    "weex-gcanvas": "^0.5.47"
   },
   "peerDependencies": {
     "rax": "0.x"
