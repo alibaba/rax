@@ -10,7 +10,7 @@ let isSupportBinding = true;
 let WeexBinding;
 let WebBinding = {};
 if (isWeb) {
-  WebBinding = require('./lib/binding');
+  WebBinding = require('./mods/binding');
 }
 try {
   WeexBinding = __weex_require__('@weex-module/binding');
