@@ -4,8 +4,8 @@ const {PI, sin, cos, sqrt, pow} = Math;
 const c1 = 1.70158;
 const c2 = c1 * 1.525;
 const c3 = c1 + 1;
-const c4 = ( 2 * PI ) / 3;
-const c5 = ( 2 * PI ) / 4.5;
+const c4 = 2 * PI / 3;
+const c5 = 2 * PI / 4.5;
 
 // x is the fraction of animation progress, in the range 0..1
 function bounceOut(x) {
@@ -14,11 +14,11 @@ function bounceOut(x) {
   if (x < 1 / d1) {
     return n1 * x * x;
   } else if (x < 2 / d1) {
-    return n1 * (x -= (1.5 / d1)) * x + .75;
+    return n1 * (x -= 1.5 / d1) * x + .75;
   } else if (x < 2.5 / d1) {
-    return n1 * (x -= (2.25 / d1)) * x + .9375;
+    return n1 * (x -= 2.25 / d1) * x + .9375;
   } else {
-    return n1 * (x -= (2.625 / d1)) * x + .984375;
+    return n1 * (x -= 2.625 / d1) * x + .984375;
   }
 }
 
@@ -123,7 +123,7 @@ const Easing = {
   },
   easeInOutBack: function(x) {
     return x < 0.5 ?
-      ( pow(2 * x, 2) * ( ( c2 + 1 ) * 2 * x - c2 ) ) / 2 :
+       pow(2 * x, 2) * ( ( c2 + 1 ) * 2 * x - c2 ) / 2 :
       ( pow(2 * x - 2, 2) * ( ( c2 + 1 ) * ( x * 2 - 2 ) + c2 ) + 2 ) / 2;
   },
   easeInBounce: function(x) {

@@ -36,15 +36,12 @@ function getArgsFromExp(expression) {
         easing
       };
     }
-
   }
   return {
     easing: 'linear',
     duration: Infinity,
     isNormal: true
   };
-
-
 }
 
 export default class TimingHandler extends CommonHandler {

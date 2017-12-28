@@ -17,7 +17,6 @@ function Bezier(x1, y1, x2, y2, epsilon) {
   };
 
   return function(t) {
-
     var x = t,
       t0, t1, t2, x2, d2, i;
 
@@ -46,9 +45,7 @@ function Bezier(x1, y1, x2, y2, epsilon) {
 
     // Failure
     return curveY(t2);
-
   };
-
 };
 
 export default Bezier;

@@ -3,7 +3,6 @@ import CommonHandler from './common';
 import {pxTo750} from '../utils';
 
 function isTurner(prev, now) {
-
   return prev / now < 0;
 }
 
@@ -75,8 +74,6 @@ export default class ScrollHandler extends CommonHandler {
 
     this.prevX = x;
     this.prevY = y;
-
-
   }
 
   destroy() {

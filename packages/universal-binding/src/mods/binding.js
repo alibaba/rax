@@ -49,8 +49,8 @@ class Binding {
     props.forEach((prop) => {
       let {element} = prop;
       if (!_.find(elTransforms, (o) => {
-          return o.element === element;
-        })) {
+        return o.element === element;
+      })) {
         elTransforms.push({
           element,
           transform: {
@@ -137,7 +137,6 @@ class Binding {
       `rotateY(${elTransform.transform.rotateY}deg)`,
       `rotateZ(${elTransform.transform.rotateZ}deg)`
     ].join(' ');
-
   }
 
   destroy() {
@@ -207,7 +206,6 @@ module.exports = {
     if (inst) {
       inst.destroy();
     }
-
   },
   unbindAll() {
     this._bindingInstances.forEach((inst) => {
@@ -229,6 +227,5 @@ module.exports = {
   }
 
 };
-
 
 

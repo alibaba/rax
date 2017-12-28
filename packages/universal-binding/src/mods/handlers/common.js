@@ -25,8 +25,6 @@ export default class TimingHandler {
         }
       }
     });
-
-
   }
 
   destroy() {

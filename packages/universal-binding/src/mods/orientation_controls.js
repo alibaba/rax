@@ -45,14 +45,12 @@ function DeviceOrientationControls(object) {
             records[i] = records[i] - threshold;
           }
         }
-
       }
     }
     return records;
   }
 
   var onDeviceOrientationChangeEvent = function(e) {
-
     var alpha = e.alpha;
     var beta = e.beta;
     var gamma = e.gamma;
@@ -86,19 +84,15 @@ function DeviceOrientationControls(object) {
       dbeta: beta - scope.start.beta,
       dgamma: gamma - scope.start.gamma
     };
-
   };
 
   var onScreenOrientationChangeEvent = function() {
-
     scope.screenOrientation = window.orientation || 0;
-
   };
 
   // The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
 
   var setObjectQuaternion = function() {
-
     var zee = new Vector3(0, 0, 1);
 
     var euler = new Euler();
@@ -108,7 +102,6 @@ function DeviceOrientationControls(object) {
     var q1 = new Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5)); // - PI/2 around the x-axis
 
     return function(quaternion, alpha, beta, gamma, orient) {
-
       euler.set(beta, alpha, -gamma, 'YXZ'); // 'ZXY' for the device, but 'YXZ' for us
 
       quaternion.setFromEuler(euler); // orient the device
@@ -116,9 +109,7 @@ function DeviceOrientationControls(object) {
       quaternion.multiply(q1); // camera looks out the back of the device, not the top
 
       quaternion.multiply(q0.setFromAxisAngle(zee, -orient)); // adjust for screen orientation
-
     };
-
   }();
 
   this.connect = function() {
@@ -135,9 +126,9 @@ function DeviceOrientationControls(object) {
 
   this.update = function() {
     if (scope.enabled === false) return;
-    var alpha = !isNaNOrUndefined(scope.deviceOrientation.formatAlpha) ? _Math.degToRad(!isNaNOrUndefined(scope.object.alpha) ? scope.object.alpha : (scope.deviceOrientation.formatAlpha + scope.alphaOffsetAngle)) : 0; // Z
-    var beta = !isNaNOrUndefined(scope.deviceOrientation.beta) ? _Math.degToRad(!isNaNOrUndefined(scope.object.beta) ? scope.object.beta : (scope.deviceOrientation.beta + scope.betaOffsetAngle)) : 0; // X'
-    var gamma = !isNaNOrUndefined(scope.deviceOrientation.gamma) ? _Math.degToRad(!isNaNOrUndefined(scope.object.gamma) ? scope.object.gamma : (scope.deviceOrientation.gamma + scope.gammaOffsetAngle)) : 0; // Y''
+    var alpha = !isNaNOrUndefined(scope.deviceOrientation.formatAlpha) ? _Math.degToRad(!isNaNOrUndefined(scope.object.alpha) ? scope.object.alpha : scope.deviceOrientation.formatAlpha + scope.alphaOffsetAngle) : 0; // Z
+    var beta = !isNaNOrUndefined(scope.deviceOrientation.beta) ? _Math.degToRad(!isNaNOrUndefined(scope.object.beta) ? scope.object.beta : scope.deviceOrientation.beta + scope.betaOffsetAngle) : 0; // X'
+    var gamma = !isNaNOrUndefined(scope.deviceOrientation.gamma) ? _Math.degToRad(!isNaNOrUndefined(scope.object.gamma) ? scope.object.gamma : scope.deviceOrientation.gamma + scope.gammaOffsetAngle) : 0; // Y''
     var orient = scope.screenOrientation ? _Math.degToRad(scope.screenOrientation) : 0; // O
     setObjectQuaternion(scope.quaternion, alpha, beta, gamma, orient);
   };
@@ -160,7 +151,6 @@ function DeviceOrientationControls(object) {
   };
 
   this.connect();
-
 };
 
 export default DeviceOrientationControls;

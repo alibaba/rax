@@ -12,11 +12,9 @@
 import Quaternion from './quaternion';
 
 function Vector3(x, y, z) {
-
   this.x = x || 0;
   this.y = y || 0;
   this.z = z || 0;
-
 }
 
 Vector3.prototype = {
@@ -26,40 +24,29 @@ Vector3.prototype = {
   isVector3: true,
 
   set: function(x, y, z) {
-
     this.x = x;
     this.y = y;
     this.z = z;
 
     return this;
-
   },
 
   applyEuler: function() {
-
     var quaternion;
 
     return function applyEuler(euler) {
-
       if ((euler && euler.isEuler) === false) {
-
         console.error('THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.');
-
       }
 
       if (quaternion === undefined) quaternion = new Quaternion();
 
       return this.applyQuaternion(quaternion.setFromEuler(euler));
-
     };
-
   }(),
 
 
-
-
   applyQuaternion: function(q) {
-
     var x = this.x,
       y = this.y,
       z = this.z;
@@ -82,9 +69,7 @@ Vector3.prototype = {
     this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
 
     return this;
-
   }
-
 
 
 };

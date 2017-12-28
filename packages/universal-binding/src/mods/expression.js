@@ -18,7 +18,6 @@ function strictlyEqual(v1, v2) {
 }
 
 function execute(node, scope) {
-
   let type = node.type;
   let children = node.children;
   switch (type) {

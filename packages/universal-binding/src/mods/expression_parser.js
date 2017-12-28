@@ -134,7 +134,6 @@ function SyntacticalParser() {
   var hash = {};
 
   function closureNode(node) {
-
     hash[JSON.stringify(node)] = node;
 
     var queue = Object.getOwnPropertyNames(node);
@@ -271,7 +270,7 @@ var parser = new Parser();
 
 function JavaScriptExpression(text) {
   parser.reset();
-  this.tree = (parser.parse(text));
+  this.tree = parser.parse(text);
   this.paths = [];
   var context = Object.create(null);
   var me = this;
@@ -301,7 +300,7 @@ function JavaScriptExpression(text) {
         if (!pathIndex[path.join('.')]) {
           pathIndex[path.join('.')] = true;
         }
-        curr[path[i]] = (value);
+        curr[path[i]] = value;
         if (this.isCompleted()) {
           return me.exec();
         } else {
@@ -320,7 +319,6 @@ function JavaScriptExpression(text) {
     }
   };
   function checkSimple(symbol) {
-
     var curr = symbol;
     while (curr.childNodes.length <= 1 && curr.name !== 'MemberExpression') {
       // console.log(curr.name)
@@ -346,7 +344,6 @@ function JavaScriptExpression(text) {
       for (var i = 0; i < symbol.childNodes.length; i++)
         walk(symbol.childNodes[i]);
     }
-
   }
 
 
@@ -359,7 +356,6 @@ function JavaScriptExpression(text) {
         path = path.concat(symbol.childNodes[0].childNodes[0].token.toString());
       createPath(path);
       return path;
-
     } else if (symbol.childNodes[0].name === 'PrimaryExpression') { // MemberExpression : PrimaryExpression
       if (symbol.childNodes[0].childNodes[0].name === 'Identifier') {
         var path = [symbol.childNodes[0].childNodes[0].token.toString()];
@@ -372,7 +368,6 @@ function JavaScriptExpression(text) {
       getPath(symbol.childNodes[3]);
       walk(symbol.childNodes[1]);
       return null;
-
     } else if (symbol.childNodes[0].name === 'Arguments') { // MemberExpression : "new" MemberExpression Arguments
       walk(symbol.childNodes[0]);
       walk(symbol.childNodes[1]);

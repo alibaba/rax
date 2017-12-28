@@ -3,7 +3,7 @@
 'use strict';
 
 import {isWeex, isWeb} from 'universal-env';
-import {parse} from './lib/expression_parser';
+import {parse} from './mods/expression_parser';
 
 let isSupportNewBinding = true;
 let isSupportBinding = true;

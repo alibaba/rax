@@ -40,7 +40,7 @@ export default class Animation extends EventEmitter {
       percent: 0
     });
     // epsilon determines the precision of the solved values
-    let epsilon = (1000 / 60 / duration) / 4;
+    let epsilon = 1000 / 60 / duration / 4;
     let b = this.cfg.bezierArgs;
     this.easingFn = b && b.length === 4 ? bezier(b[0], b[1], b[2], b[3], epsilon) : easing[this.cfg.easing];
     this._run();
@@ -95,6 +95,5 @@ export default class Animation extends EventEmitter {
 
 
 };
-
 
 
