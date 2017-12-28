@@ -4,6 +4,7 @@
 
 import {isWeex, isWeb} from 'universal-env';
 import {parse} from './lib/expression_parser';
+
 let isSupportNewBinding = true;
 let isSupportBinding = true;
 let WeexBinding;
@@ -47,7 +48,6 @@ function fixCallback(callback) {
       });
     }
   };
-
 }
 
 
@@ -153,6 +153,5 @@ export default {
     }
   }
 };
-
 
 
