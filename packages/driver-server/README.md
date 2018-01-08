@@ -12,8 +12,8 @@ $ npm install --save driver-server
 
 ```jsx
 import {createElement, Component, render} from 'rax';
-import BrowserDriver from 'driver-browser';
-import {isWeb} from 'universal-env';
+import ServerDriver from 'driver-server';
+import {isNode} from 'universal-env';
 
 class Example extends Component {
   render() {
@@ -26,6 +26,6 @@ class Example extends Component {
 }
 
 render(<Example />, null, {
-  driver: isWeb ? BrowserDriver : null
+  driver: isNode ? ServerDriver : null
 });
 ```
