@@ -132,6 +132,7 @@ class Picture extends Component {
         style = {},
         source = {},
         resizeMode,
+        forceUpdate,
 
         width,
         height,
@@ -153,7 +154,7 @@ class Picture extends Component {
       { uri } = source;
     let nativeProps = this.props;
 
-    if (!this.uri) {
+    if (!this.uri || forceUpdate) {
       let sWidth = style.width, // style width of picture
         sHeight = style.height; // style width of picture
 
