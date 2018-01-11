@@ -1,4 +1,6 @@
-'use strict'; 
+'use strict';
+
+// import {ModuleFactories} from './builtin';
 
 let Document;
 let Element;
@@ -32,10 +34,26 @@ export function init(config) {
 // export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
 export function createInstanceContext(instanceId, __weex_options__, __weex_data__) {
   let instance = instances[instanceId];
-  if (instance == undefined) {
 
+  // rax 会有执行时机问题
+  // const modules = {
+  //   rax: {
+  //     factory: ModuleFactories['rax'].bind({}),
+  //     module: {exports: {}},
+  //     isInitialized: false
+  //   }
+  // };
+
+
+  // Generate native modules map at instance init
+  // genNativeModules(modules, document);
+  const weex = __weex_options__.weex;
+  // const __weex_define__ = require('./define.weex')(modules);
+  // const __weex_require__ = require('./require.weex')(modules, weex);
+
+  if (instance == undefined) {
+    const bundleUrl = __weex_options__.weex.document.URL || 'about:blank';
     const document = new Document(instanceId, bundleUrl);
-    const documentURL = new URL(bundleUrl);
     // 待确认这块从哪里获取
     const modules = {};
 
@@ -45,26 +63,26 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
       bundleUrl,
       __weex_data__,
       modules,
-      origin: documentURL.origin,
       uid: 0
     };
 
-    // Extend document
-    require('./document.weex')(__weex_require__, document);
-
     const instanceContext = {
       instanceId,
+      bundleUrl,
       document,
       __weex_document__: document,
       __weex_options__,
       __weex_data__,
-      __weex_config__: __weex_options__
+      // Weex
+      callNative: () => {},
+      __weex_config__: __weex_options__,
+      // define: __weex_define__,
+      // __weex_define__,
+      // require: __weex_require__,
+      // __weex_require__
     };
-    
-    return instanceContext
-    
-    // instance.window = window.self = window.window = window;
 
+    return instanceContext;
 
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);
@@ -94,7 +112,7 @@ export function refreshInstance(instanceId, data) {
 export function destroyInstance(instanceId) {
   let instance = getInstance(instanceId);
   let bundleCode = instance.bundleCode;
-  instance.window.closed = true;
+  // instance.window.closed = true;
 
   let document = instance.document;
   document.documentElement.fireEvent('destory', {

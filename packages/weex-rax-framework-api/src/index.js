@@ -1,4 +1,4 @@
-'use strict'; 
+'use strict';
 
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
@@ -19,18 +19,30 @@ const GLOBAL_EVENT_MODULE = MODULE_NAME_PREFIX + 'globalEvent';
 // Bundles hub
 const bundles = {};
 const noop = function() {};
-const weex = {};
+let weex = {};
+
+function genBuiltinModules(modules, moduleFactories, context) {
+  for (let moduleName in moduleFactories) {
+    modules[moduleName] = {
+      factory: moduleFactories[moduleName].bind(context),
+      module: {exports: {}},
+      isInitialized: false,
+    };
+  }
+  return modules;
+}
 
 function __weex_supports__(name) {
   return weex.supports(name);
 }
 
 export function injectContext() {
-  console.log('Rax jsfm init injectContext');
-  let instanceContext = (new Function('return this'))();
-  let window = resetInstanceContext(instanceContext);
-  for (key in aa) {
-    instanceContext[key] = window[key];
+  let instanceContext = new Function('return this')();
+  var window = resetInstanceContext(instanceContext);
+  for (var key in window) {
+    if (typeof instanceContext[key] === 'undefined' && key != '__weex_data__') {
+      instanceContext[key] = window[key];
+    }
   }
 }
 
@@ -43,10 +55,10 @@ export function injectContext() {
  */
 // export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
 export function resetInstanceContext(instanceContext) {
-
   let {
     instanceId,
     document,
+    bundleUrl,
     __weex_document__,
     __weex_options__,
     __weex_data__,
@@ -68,7 +80,7 @@ export function resetInstanceContext(instanceContext) {
   const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
   const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
   const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-  let bundleUrl = __weex_options__.bundleUrl || 'about:blank';
+  // let bundleUrl = __weex_options__.bundleUrl || 'about:blank';
 
   if (!__weex_options__.bundleUrl) {
     console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
@@ -80,7 +92,7 @@ export function resetInstanceContext(instanceContext) {
   const modules = {};
 
   // Generate native modules map at instance init
-  genNativeModules(modules, document);
+  // genNativeModules(modules, document);
   const __weex_define__ = require('./define.weex')(modules);
   const __weex_require__ = require('./require.weex')(modules, weex);
   const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
@@ -214,13 +226,17 @@ export function resetInstanceContext(instanceContext) {
         source: window, // FIXME: maybe not export window
       };
 
-      const stack = new BroadcastChannel('massage' + instanceId);
-      stack.postMessage(event);
+      if (typeof BroadcastChannel === 'function') {
+        const stack = new BroadcastChannel('massage' + instanceId);
+        stack.postMessage(event);
+      }
     },
     addEventListener: (type, listener) => {
-      if (type = 'massage') {
-        const stack = new BroadcastChannel('massage' + instanceId);
-        stack.onmessage(listener);
+      if (type === 'massage') {
+        if (typeof BroadcastChannel === 'function') {
+          const stack = new BroadcastChannel('massage' + instanceId);
+          stack.onmessage(listener);
+        }
       } else {
         windowEmitter.on(type, listener);
       }
@@ -246,6 +262,7 @@ export function resetInstanceContext(instanceContext) {
     define: __weex_define__,
     require: __weex_require__,
     // Weex
+    callNative: () => {},
     __weex_document__,
     __weex_module_supports__: __weex_supports__,
     __weex_tag_supports__: __weex_supports__,
@@ -253,15 +270,20 @@ export function resetInstanceContext(instanceContext) {
     __weex_require__,
     __weex_downgrade__,
     __weex_env__,
-    __weex_code__,
+    // __weex_code__,
     __weex_options__,
     __weex_data__,
     __weex_config__
   };
 
+  genBuiltinModules(
+    modules,
+    ModuleFactories,
+    window
+  );
+
   window.self = window.window = window;
 
   console.log('Rax jsfm init window', typeof window);
   return window;
-
 }

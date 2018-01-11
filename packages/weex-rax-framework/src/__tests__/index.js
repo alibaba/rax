@@ -1,14 +1,28 @@
 'use strict';
 
 require('weex-runtime-js').freezePrototype();
-
-import { Runtime, Instance } from 'weex-vdom-tester';
-import { config, init } from 'weex-runtime-js';
+import WeexRuntime from '../weex-js-runtime';
 import * as framework from '../index';
 
-init();
+// import * as rax from 'rax';
 
-const { Document, Element, Comment } = config;
+// framework.define('rax', [], function(require, exports, module) {
+//   !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define)define("rax",function(t,n,r){r.exports=e()});else{var t;t="undefined"!=typeof window?window:"undefined"!=typeof self?self:"undefined"!=typeof global?global:this,t.Rax=e()}}(function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=17)}([function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={component:null,mountID:1,sandbox:!0,rootComponents:{},rootInstances:{},hook:null,driver:null,monitor:null},e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0});var o=n(0),i=r(o),u=n(6),l=n(9),a=r(l),f=n(2),s=r(f),d=n(3),c=r(d),p=n(19),v=r(p),h="$$instance";t.default={set:function(e,t){e[h]||(e[h]=t,t.rootID&&(i.default.rootInstances[t.rootID]=t,i.default.rootComponents[t.rootID]=t._internal))},get:function(e){return e[h]},remove:function(e){var t=this.get(e);t&&(e[h]=null,t.rootID&&(delete i.default.rootComponents[t.rootID],delete i.default.rootInstances[t.rootID]))},mount:function(e,t,n){i.default.driver.beforeRender&&i.default.driver.beforeRender(),null==t&&(t=i.default.driver.createBody());var r=void 0;if(n){var o=n._internal;r=o._processChildContext(o._context)}var l=this.get(t);if(l&&l.isRootComponent){var f=l.getRenderedComponent(),d=f._currentElement;if((0,c.default)(d,e)){var p=f._context;return f.updateComponent(d,e,p,r||p),l}i.default.hook.Reconciler.unmountComponent(l),(0,a.default)(t)}var h=(0,u.createElement)(v.default,null,e),y=(0,s.default)(h),m=r||{},_=y.mountComponent(t,null,m);return this.set(t,_),i.default.driver.afterRender&&i.default.driver.afterRender(_),i.default.hook.Mount._renderNewRootComponent(_._internal),_}},e.exports=t.default},function(e,t,n){"use strict";function r(e){var t=void 0;if(void 0===e||null===e||!1===e||!0===e)t=new u.default.EmptyComponent;else if(Array.isArray(e))t=new u.default.FragmentComponent(e);else if("object"===(void 0===e?"undefined":o(e))&&e.type)t="string"==typeof e.type?new u.default.NativeComponent(e):new u.default.CompositeComponent(e);else{if("string"!=typeof e&&"number"!=typeof e)throw new Error("Invalid element type: "+e+". (keys: "+Object.keys(e)+")");t=new u.default.TextComponent(e)}return t._mountIndex=0,t}Object.defineProperty(t,"__esModule",{value:!0});var o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},i=n(0),u=function(e){return e&&e.__esModule?e:{default:e}}(i);t.default=r,e.exports=t.default},function(e,t,n){"use strict";function r(e,t){var n=null===e,r=null===t;if(n||r)return n===r;var i=void 0===e?"undefined":o(e),u=void 0===t?"undefined":o(t);return"string"===i||"number"===i?"string"===u||"number"===u:"object"===i&&"object"===u&&e.type===t.type&&e.key===t.key}Object.defineProperty(t,"__esModule",{value:!0});var o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};t.default=r,e.exports=t.default},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=function(){function e(t,n,o){r(this,e),this.props=t,this.context=n,this.refs={},this.updater=o}return o(e,[{key:"isComponentClass",value:function(){}},{key:"setState",value:function(e,t){this.updater.setState(this,e,t)}},{key:"forceUpdate",value:function(e){this.updater.forceUpdate(this,e)}}]),e}();t.default=i,e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0});var o=n(1),i=r(o),u=n(0),l=r(u);t.default={ComponentTree:{getClosestInstanceFromNode:function(e){return i.default.get(e)},getNodeFromInstance:function(e){for(;e._renderedComponent;)e=e._renderedComponent;return e?e._nativeNode:null}},Mount:{_instancesByReactRootID:l.default.rootComponents,_renderNewRootComponent:function(){}},Reconciler:{mountComponent:function(){},receiveComponent:function(){},unmountComponent:function(){}},monitor:null},e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}function o(){if(v.default.component){var e=v.default.component.getName();if(e)return" Check the render method of `"+e+"`."}return""}function i(e,t,n,r,o){return m.isWeex&&(r=l(e,r)),{type:e,key:t,ref:n,props:r,_owner:o}}function u(e){if(e){if(Array.isArray(e)){for(var t={},n=0;n<e.length;++n){var r=u(e[n]);if(r)for(var o in r)t[o]=r[o]}return t}return e}}function l(e,t){if("text"===e){var n=t.children;null==t.value&&null!=n&&(Array.isArray(n)?n=n.map(function(e){return"number"==typeof e||"string"==typeof e?e:""}).join(""):"number"!=typeof n&&"string"!=typeof n&&(n=""),t.value=String(n)),t.children=null}return t}function a(e,t,n){if(null==e)throw Error("createElement: type should not be null or undefined."+o());var r={},l=void 0,a=null,f=null;if(null!=t){f=void 0===t.ref?null:t.ref,a=void 0===t.key?null:String(t.key);for(l in t)_[l]||(r[l]=t[l])}var s=arguments.length-2;if(s>0)if(1!==s||Array.isArray(n)){var d=n;if(s>1){d=new Array(s);for(var p=0;p<s;p++)d[p]=arguments[p+2]}r.children=(0,y.default)(d)}else r.children=n;if(e&&e.defaultProps){var h=e.defaultProps;for(l in h)void 0===r[l]&&(r[l]=h[l])}return r.style&&(Array.isArray(r.style)||"object"===c(r.style))&&(r.style=u(r.style)),new i(e,a,f,r,v.default.component)}function f(e){var t=a.bind(null,e);return t.type=e,t}function s(e,t){if(!d(e))throw Error("cloneElement: not a valid element."+o());var n=Object.assign({},e.props),r=e.key,u=e.ref,l=e._owner;if(t){void 0!==t.ref&&(u=t.ref,l=v.default.component),void 0!==t.key&&(r=String(t.key));var a=void 0;e.type&&e.type.defaultProps&&(a=e.type.defaultProps);var f=void 0;for(f in t)t.hasOwnProperty(f)&&!_.hasOwnProperty(f)&&(void 0===t[f]&&void 0!==a?n[f]=a[f]:n[f]=t[f])}for(var s=arguments.length,c=Array(s>2?s-2:0),p=2;p<s;p++)c[p-2]=arguments[p];return c.length&&(n.children=(0,y.default)(c)),new i(e.type,r,u,n,l)}function d(e){return"object"===(void 0===e?"undefined":c(e))&&null!==e&&e.type&&e.props}Object.defineProperty(t,"__esModule",{value:!0});var c="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};t.createElement=a,t.createFactory=f,t.cloneElement=s,t.isValidElement=d;var p=n(0),v=r(p),h=n(7),y=r(h),m=n(8),_={key:!0,ref:!0};t.default=i},function(e,t,n){"use strict";function r(e,t){if(Array.isArray(e))for(var n=0,o=e.length;n<o;n++)r(e[n],t);else t.push(e)}function o(e){if(null==e)return e;var t=[];return r(e,t),1===t.length&&(t=t[0]),t}Object.defineProperty(t,"__esModule",{value:!0}),t.default=o,e.exports=t.default},function(e,t,n){"use strict";var r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};Object.defineProperty(t,"__esModule",{value:!0});var o="function"==typeof Symbol&&"symbol"===r(Symbol.iterator)?function(e){return void 0===e?"undefined":r(e)}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":void 0===e?"undefined":r(e)};t.isWeb="object"===("undefined"==typeof navigator?"undefined":o(navigator))&&("Mozilla"===navigator.appCodeName||"Gecko"===navigator.product),t.isNode="undefined"!=typeof process&&!(!process.versions||!process.versions.node),t.isWeex="function"==typeof callNative,t.isReactNative="undefined"!=typeof __fbBatchedBridgeConfig;t.default=e.exports,t.default=e.exports},function(e,t,n){"use strict";function r(e){var t=i.default.get(e);return!!t&&(i.default.remove(e),t._internal.unmountComponent(),!0)}Object.defineProperty(t,"__esModule",{value:!0}),t.default=r;var o=n(1),i=function(e){return e&&e.__esModule?e:{default:e}}(o);e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}function o(e,t,n,r){"function"==typeof n&&(r=n,n=null),n=n||{},(0,u.default)(n);var o=a.default.mount(e,t,n.parent),i=o.getPublicInstance();return r&&r.call(i),i}Object.defineProperty(t,"__esModule",{value:!0});var i=n(22),u=r(i),l=n(1),a=r(l),f=n(0);r(f);t.default=o,e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),u=n(0),l=r(u),a=n(12),f=r(a),s=n(2),d=r(s),c=n(3),p=r(c),v=n(13),h=r(v),y=n(1),m=r(y),_=/on[A-Z]/,b=function(){function e(t){o(this,e),this._currentElement=t}return i(e,[{key:"mountComponent",value:function(e,t,n,r){this._parent=e,this._parentInstance=t,this._context=n,this._mountID=l.default.mountID++;var o=this._currentElement.props,i=this._currentElement.type,u={_internal:this,type:i,props:o},a=o.append;this._instance=u,this._prevStyleCopy=Object.assign({},o.style);var s=this.getNativeNode();"tree"!==a&&(r?r(s,e):l.default.driver.appendChild(s,e)),this._currentElement&&this._currentElement.ref&&f.default.attach(this._currentElement._owner,this._currentElement.ref,this);var d=o.children;return null!=d&&this.mountChildren(d,n),"tree"===a&&(r?r(s,e):l.default.driver.appendChild(s,e)),l.default.hook.Reconciler.mountComponent(this),u}},{key:"mountChildren",value:function(e,t){var n=this;Array.isArray(e)||(e=[e]);var r=this._renderedChildren={};return e.map(function(e,o){var i=(0,d.default)(e),u=(0,h.default)(r,e,o);return r[u]=i,i._mountIndex=o,i.mountComponent(n.getNativeNode(),n._instance,t,null)})}},{key:"unmountChildren",value:function(e){var t=this._renderedChildren;if(t){for(var n in t){t[n].unmountComponent(e)}this._renderedChildren=null}}},{key:"unmountComponent",value:function(e){if(this._nativeNode){var t=this._currentElement.ref;t&&f.default.detach(this._currentElement._owner,t,this),m.default.remove(this._nativeNode),e||l.default.driver.removeChild(this._nativeNode,this._parent),l.default.driver.removeAllEventListeners(this._nativeNode)}this.unmountChildren(e),l.default.hook.Reconciler.unmountComponent(this),this._currentElement=null,this._nativeNode=null,this._parent=null,this._parentInstance=null,this._context=null,this._instance=null,this._prevStyleCopy=null}},{key:"updateComponent",value:function(e,t,n,r){this._currentElement=t,f.default.update(e,t,this);var o=e.props,i=t.props;this.updateProperties(o,i),this.updateChildren(i.children,r),l.default.hook.Reconciler.receiveComponent(this)}},{key:"updateProperties",value:function(e,t){var n=void 0,r=void 0,o=void 0;for(n in e)if("children"!==n&&!t.hasOwnProperty(n)&&e.hasOwnProperty(n)&&null!=e[n])if("style"===n){var i=this._prevStyleCopy;for(r in i)i.hasOwnProperty(r)&&(o=o||{},o[r]="");this._prevStyleCopy=null}else _.test(n)?"function"==typeof e[n]&&l.default.driver.removeEventListener(this.getNativeNode(),n.slice(2).toLowerCase(),e[n]):l.default.driver.removeAttribute(this.getNativeNode(),n,e[n]);for(n in t){var u=t[n],a="style"===n?this._prevStyleCopy:null!=e?e[n]:void 0;if("children"!==n&&t.hasOwnProperty(n)&&u!==a&&(null!=u||null!=a))if("style"===n)if(u?u=this._prevStyleCopy=Object.assign({},u):this._prevStyleCopy=null,null!=a){for(r in a)!a.hasOwnProperty(r)||u&&u.hasOwnProperty(r)||(o=o||{},o[r]="");for(r in u)u.hasOwnProperty(r)&&a[r]!==u[r]&&(o=o||{},o[r]=u[r])}else o=u;else if(_.test(n)){var f=n.slice(2).toLowerCase();"function"==typeof a&&l.default.driver.removeEventListener(this.getNativeNode(),f,a,t),"function"==typeof u&&l.default.driver.addEventListener(this.getNativeNode(),f,u,t)}else{var s={};s[n]=u,null!=u?l.default.driver.setAttribute(this.getNativeNode(),n,u):l.default.driver.removeAttribute(this.getNativeNode(),n,e[n])}}o&&l.default.driver.setStyles(this.getNativeNode(),o)}},{key:"updateChildren",value:function(e,t){var n=this,r=this._renderedChildren;if(null!=e||null!=r){var o={},i={};if(null!=e){Array.isArray(e)||(e=[e]);for(var u=0,a=e.length;u<a;u++){var f=e[u],s=(0,h.default)(o,f,u),c=r&&r[s],v=c&&c._currentElement;if(null!=c&&(0,p.default)(v,f))c.updateComponent(v,f,t,t),o[s]=c;else{if(c){var y=c.getNativeNode();c.unmountComponent(!0),i[s]=y}o[s]=(0,d.default)(f)}}}var m=void 0,_=void 0;if(null!=r)for(var b in r)if(r.hasOwnProperty(b)){var g=r[b],C=!o[b];m?C&&g.unmountComponent():(m=g,_=C)}null!=o&&function(){var e=0,u=0,a=null,f=[];for(var s in o){(function(s){if(!o.hasOwnProperty(s))return"continue";var d=o[s],c=r&&r[s];if(c===d){var p=c.getNativeNode();if(Array.isArray(p)||(p=[p]),c._mountIndex<e){Array.isArray(a)&&(a=a[a.length-1]);for(var v=p.length-1;v>=0;v--)l.default.driver.insertAfter(p[v],a)}f=f.concat(p),e=Math.max(c._mountIndex,e),c._mountIndex=u}else{null!=c&&(e=Math.max(c._mountIndex,e));var h=n.getNativeNode();Array.isArray(h)&&(h=n._parent),d.mountComponent(h,n._instance,t,function(e,t){var n=i[s];if(Array.isArray(e)||(e=[e]),n){Array.isArray(n)||(n=[n]);for(var r=void 0,o=0;o<e.length;o++){var u=e[o];n[o]?l.default.driver.replaceChild(u,n[o]):l.default.driver.insertAfter(u,r),r=u}if(e.length<n.length)for(var d=e.length;d<n.length;d++)l.default.driver.removeChild(n[d])}else{Array.isArray(a)&&(a=a[a.length-1]);var c=void 0;m&&!a&&(c=m.getNativeNode(),Array.isArray(c)&&(c=c[0]));for(var p=e.length-1;p>=0;p--){var v=e[p];a?l.default.driver.insertAfter(v,a):c?l.default.driver.insertBefore(v,c):l.default.driver.appendChild(v,t)}}f=f.concat(e)}),d._mountIndex=u}u++,a=d.getNativeNode()})(s)}if(Array.isArray(n._nativeNode)){n._nativeNode.splice(0,n._nativeNode.length);for(var d=0;d<f.length;d++)n._nativeNode.push(f[d])}}(),_&&m.unmountComponent(),this._renderedChildren=o}}},{key:"getNativeNode",value:function(){return null==this._nativeNode&&(this._nativeNode=l.default.driver.createElement(this._instance),m.default.set(this._nativeNode,this._instance)),this._nativeNode}},{key:"getPublicInstance",value:function(){return this.getNativeNode()}},{key:"getName",value:function(){return this._currentElement.type}}]),e}();t.default=b,e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={update:function(e,t,n){var r=null!=e&&e.ref,o=null!=t&&t.ref;r!==o&&(null!=r&&this.detach(e._owner,r,n),null!=o&&this.attach(t._owner,o,n))},attach:function(e,t,n){if(!e)throw new Error("You might be adding a ref to a component that was not created inside a component's `render` method, or you have multiple copies of Rax loaded.");var r=n.getPublicInstance();"function"==typeof t?t(r):e._instance.refs[t]=r},detach:function(e,t,n){if("function"==typeof t)t(null);else{var r=n.getPublicInstance();e._instance.refs[t]===r&&delete e._instance.refs[t]}}},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=function(e,t,n){var r=t&&t.key,o="string"==typeof r,i="."+n.toString(36);if(o){var u="$"+r,l=void 0===e[u];return l||console.warn('Encountered two children with the same key "'+r+'".'),l?u:i}return i},e.exports=t.default},function(e,t,n){"use strict";function r(e){return"string"==typeof e&&-1!==e.indexOf(c)}function o(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:h[v];return e.replace(p,function(e){return parseFloat(e)*t+"px"})}function i(){return h[v]}function u(e){h[v]=e}function l(e,t){return"number"==typeof e&&!d[t]}function a(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:h[v];return t&&l(e,t)?e*n+"px":r(e)?o(e,n):e}var f="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};Object.defineProperty(t,"__esModule",{value:!0});var s="function"==typeof Symbol&&"symbol"===f(Symbol.iterator)?function(e){return void 0===e?"undefined":f(e)}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":void 0===e?"undefined":f(e)};t.isRem=r,t.calcRem=o,t.getRem=i,t.setRem=u,t.isUnitNumber=l,t.convertUnit=a;var d={animationIterationCount:!0,borderImageOutset:!0,borderImageSlice:!0,borderImageWidth:!0,boxFlex:!0,boxFlexGroup:!0,boxOrdinalGroup:!0,columnCount:!0,flex:!0,flexGrow:!0,flexPositive:!0,flexShrink:!0,flexNegative:!0,flexOrder:!0,gridRow:!0,gridColumn:!0,fontWeight:!0,lineClamp:!0,opacity:!0,order:!0,orphans:!0,tabSize:!0,widows:!0,zIndex:!0,zoom:!0,lines:!0},c="rem",p=/[-+]?\d*\.?\d+rem/g,v="__global_rem_unit__",h="object"===("undefined"==typeof window?"undefined":s(window))?window:"object"===(void 0===h?"undefined":s(h))?h:{};null==h[v]&&(h[v]=1),t.default=e.exports,t.default=e.exports},function(e,t,n){"use strict";function r(e,t){return e.style=e.style||{},t.forEach(function(t){e[t]&&!e.style[t]&&(e.style[t]=e[t],delete e[t])}),e}function o(e,t,n){return e[t]&&!e[n]&&(e[n]=e[t],delete e[t]),e}Object.defineProperty(t,"__esModule",{value:!0}),t.transformPropsAttrsToStyle=r,t.renamePropsAttr=o,t.default=e.exports,t.default=e.exports},function(e,t,n){"use strict";function r(e){if(null==e)return null;if(e.ownerDocument||e.nodeType)return e;if(e._nativeNode)return e._nativeNode;if("string"==typeof e)return i.default.driver.getElementById(e);if("function"!=typeof e.render)throw new Error("findDOMNode: find by neither component nor DOM node.");var t=e._internal;if(t){for(;!t._nativeNode;)if(null==(t=t._renderedComponent))return null;return t._nativeNode}throw new Error("findDOMNode: find on an unmounted component.")}Object.defineProperty(t,"__esModule",{value:!0});var o=n(0),i=function(e){return e&&e.__esModule?e:{default:e}}(o);t.default=r,e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0}),t.Children=t.version=t.setNativeProps=t.findComponentInstance=t.unmountComponentAtNode=t.findDOMNode=t.hydrate=t.render=t.PropTypes=t.PureComponent=t.Component=t.createFactory=t.isValidElement=t.cloneElement=t.createElement=void 0,n(18);var o=n(6),i=n(4),u=r(i),l=n(20),a=r(l),f=n(21),s=r(f),d=n(10),c=r(d),p=n(42),v=r(p),h=n(16),y=r(h),m=n(9),_=r(m),b=n(43),g=r(b),C=n(44),x=r(C),w=n(45),O=r(w),N=n(46),E=r(N);t.createElement=o.createElement,t.cloneElement=o.cloneElement,t.isValidElement=o.isValidElement,t.createFactory=o.createFactory,t.Component=u.default,t.PureComponent=a.default,t.PropTypes=s.default,t.render=c.default,t.hydrate=v.default,t.findDOMNode=y.default,t.unmountComponentAtNode=_.default,t.findComponentInstance=g.default,t.setNativeProps=x.default,t.version=O.default,t.Children=E.default},function(e,t,n){"use strict";var r=n(5),o=function(e){return e&&e.__esModule?e:{default:e}}(r);"undefined"!=typeof __REACT_DEVTOOLS_GLOBAL_HOOK__&&"function"==typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.inject&&__REACT_DEVTOOLS_GLOBAL_HOOK__.inject(o.default)},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function o(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function i(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var u=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),l=n(4),a=function(e){return e&&e.__esModule?e:{default:e}}(l),f=1,s=function(e){function t(){var e,n,i,u;r(this,t);for(var l=arguments.length,a=Array(l),s=0;s<l;s++)a[s]=arguments[s];return n=i=o(this,(e=t.__proto__||Object.getPrototypeOf(t)).call.apply(e,[this].concat(a))),i.rootID=f++,u=n,o(i,u)}return i(t,e),u(t,[{key:"isRootComponent",value:function(){}},{key:"render",value:function(){return this.props.children}},{key:"getPublicInstance",value:function(){return this.getRenderedComponent().getPublicInstance()}},{key:"getRenderedComponent",value:function(){return this._internal._renderedComponent}}]),t}(a.default);t.default=s,e.exports=t.default},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function o(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function i(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var u=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),l=n(4),a=function(e){return e&&e.__esModule?e:{default:e}}(l),f=function(e){function t(e,n){return r(this,t),o(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e,n))}return i(t,e),u(t,[{key:"isPureComponentClass",value:function(){}}]),t}(a.default);t.default=f,e.exports=t.default},function(e,t,n){"use strict";function r(e){function t(e,t,n,r,i,u){return o}var n=t.bind(null,!1);return n.isRequired=t.bind(null,!0),n}Object.defineProperty(t,"__esModule",{value:!0});var o=function(e){function t(e,t,n,r,o){}return r(t)}();t.default={array:o,bool:o,func:o,number:o,object:o,string:o,symbol:o,element:o,node:o,any:o,arrayOf:o,instanceOf:o,objectOf:o,oneOf:o,oneOfType:o,shape:o},e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}function o(e){var t=e.driver,n=e.hook,r=e.measurer,o=e.deviceWidth,u=e.viewportWidth,a=e.eventRegistry,s=e.bodyType,c=e.bodyProps;if(l.default.EmptyComponent=f.default,l.default.NativeComponent=d.default,l.default.TextComponent=p.default,l.default.FragmentComponent=m.default,l.default.CompositeComponent=h.default,l.default.hook=n||w.default,l.default.measurer=r,!l.default.driver){if(!t)if(i.isWeex)t=b.default;else{if(!i.isWeb)throw Error("No builtin driver matched");t=C.default}l.default.driver=t}o&&l.default.driver.setDeviceWidth&&l.default.driver.setDeviceWidth(o),u&&l.default.driver.setViewportWidth&&l.default.driver.setViewportWidth(u),a&&(l.default.driver.eventRegistry=a),s&&(l.default.driver.bodyType=s),c&&(l.default.driver.bodyProps=c)}Object.defineProperty(t,"__esModule",{value:!0}),t.default=o;var i=n(8),u=n(0),l=r(u),a=n(23),f=r(a),s=n(11),d=r(s),c=n(24),p=r(c),v=n(25),h=r(v),y=n(29),m=r(y),_=n(30),b=r(_),g=n(40),C=r(g),x=n(5),w=r(x);e.exports=t.default},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=n(0),u=function(e){return e&&e.__esModule?e:{default:e}}(i),l=function(){function e(){r(this,e),this._currentElement=null}return o(e,[{key:"mountComponent",value:function(e,t,n,r){this._parent=e,this._parentInstance=t,this._context=n;var o={_internal:this},i=this.getNativeNode();return r?r(i,e):u.default.driver.appendChild(i,e),o}},{key:"unmountComponent",value:function(e){this._nativeNode&&!e&&u.default.driver.removeChild(this._nativeNode,this._parent),this._nativeNode=null,this._parent=null,this._parentInstance=null,this._context=null}},{key:"updateComponent",value:function(){}},{key:"getNativeNode",value:function(){return null==this._nativeNode&&(this._nativeNode=u.default.driver.createEmpty()),this._nativeNode}}]),e}();t.default=l,e.exports=t.default},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=n(0),u=function(e){return e&&e.__esModule?e:{default:e}}(i),l=function(){function e(t){r(this,e),this._currentElement=t,this._stringText=String(t)}return o(e,[{key:"mountComponent",value:function(e,t,n,r){this._parent=e,this._parentInstance=t,this._context=n,this._mountID=u.default.mountID++;var o=this.getNativeNode();r?r(o,e):u.default.driver.appendChild(o,e);var i={_internal:this};return u.default.hook.Reconciler.mountComponent(this),i}},{key:"unmountComponent",value:function(e){this._nativeNode&&!e&&u.default.driver.removeChild(this._nativeNode,this._parent),u.default.hook.Reconciler.unmountComponent(this),this._currentElement=null,this._nativeNode=null,this._parent=null,this._parentInstance=null,this._context=null,this._stringText=null}},{key:"updateComponent",value:function(e,t,n){e!==t&&(this._currentElement=t,this._stringText=String(t),u.default.driver.updateText(this.getNativeNode(),this._stringText),u.default.hook.Reconciler.receiveComponent(this))}},{key:"getNativeNode",value:function(){return null==this._nativeNode&&(this._nativeNode=u.default.driver.createText(this._stringText)),this._nativeNode}}]),e}();t.default=l,e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t,n){try{return e()}catch(e){n?n(e):u(t,e)}}function u(e,t){for(var n=void 0;e;){if("function"==typeof e.componentDidCatch){n=e;break}if(!e._internal||!e._internal._parentInstance)break;e=e._internal._parentInstance}if(n)n.componentDidCatch(t);else{if(!p.default.sandbox)throw t;setTimeout(function(){throw t},0)}}Object.defineProperty(t,"__esModule",{value:!0});var l=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),a=n(26),f=r(a),s=n(27),d=r(s),c=n(0),p=r(c),v=n(12),h=r(v),y=n(2),m=r(y),_=n(3),b=r(_),g=n(28),C=r(g),x=function(){function e(t){o(this,e),this._currentElement=t}return l(e,[{key:"getName",value:function(){var e=this._currentElement.type,t=this._instance&&this._instance.constructor;return e.displayName||t&&t.displayName||e.name||t&&t.name||null}},{key:"mountComponent",value:function(e,t,n,r){this._parent=e,this._parentInstance=t,this._context=n,this._mountID=p.default.mountID++,this._updateCount=0;var o=this._currentElement.type,l=this._currentElement.props,a=o.prototype,s=a&&o.prototype.isComponentClass,c=a&&o.prototype.render,v=this._processContext(n),y=void 0,_=void 0;if(s||c)y=new o(l,v,d.default);else{if("function"!=typeof o)throw new Error("Invalid component type: "+o+". (keys: "+Object.keys(o)+")");y=new f.default(o)}y.props=l,y.context=v,y.refs={},y.updater=d.default,y._internal=this,this._instance=y;var b=y.state;void 0===b&&(y.state=b=null);var g=null,C=function(e){g=e};return y.componentWillMount&&i(function(){y.componentWillMount()},y,C),null==_&&(p.default.component=this,y.state=this._processPendingState(l,v),i(function(){_=y.render()},y,C),p.default.component=null),this._renderedComponent=(0,m.default)(_),this._renderedComponent.mountComponent(this._parent,y,this._processChildContext(n),r),g&&u(y,g),this._currentElement&&this._currentElement.ref&&h.default.attach(this._currentElement._owner,this._currentElement.ref,this),y.componentDidMount&&i(function(){y.componentDidMount()},y),p.default.hook.Reconciler.mountComponent(this),y}},{key:"unmountComponent",value:function(e){var t=this._instance;if(t.componentWillUnmount&&i(function(){t.componentWillUnmount()},t),p.default.hook.Reconciler.unmountComponent(this),t._internal=null,null!=this._renderedComponent){var n=this._currentElement.ref;n&&h.default.detach(this._currentElement._owner,n,this),this._renderedComponent.unmountComponent(e),this._renderedComponent=null,this._instance=null}this._currentElement=null,this._parentInstance=null,this._pendingStateQueue=null,this._pendingForceUpdate=!1,this._context=null}},{key:"_processContext",value:function(e){var t=this._currentElement.type,n=t.contextTypes;if(!n)return{};var r={};for(var o in n)r[o]=e[o];return r}},{key:"_processChildContext",value:function(e){var t=this._instance,n=t.getChildContext&&t.getChildContext();return n?Object.assign({},e,n):e}},{key:"_processPendingState",value:function(e,t){var n=this._instance,r=this._pendingStateQueue;if(!r)return n.state;this._pendingStateQueue=null;for(var o=Object.assign({},n.state),i=0;i<r.length;i++){var u=r[i];Object.assign(o,"function"==typeof u?u.call(n,o,e,t):u)}return o}},{key:"updateComponent",value:function(e,t,n,r){var o=this._instance;o||console.error("Update component '"+this.getName()+"' that has already been unmounted (or failed to mount).");var u=!1,l=void 0,a=void 0;this._context===r?l=o.context:(l=this._processContext(r),u=!0),e===t?a=t.props:(a=t.props,u=!0);var f=u&&o.componentWillReceiveProps;f&&(this._pendingState=!0,i(function(){o.componentWillReceiveProps(a,l)},o),this._pendingState=!1),h.default.update(e,t,this);var s=!0,c=o.props,v=o.state,y=this._processPendingState(a,l);if(this._pendingForceUpdate||(o.shouldComponentUpdate?s=i(function(){return o.shouldComponentUpdate(a,y,l)},o):o.isPureComponentClass&&(s=!(0,C.default)(c,a)||!(0,C.default)(v,y))),s){this._pendingForceUpdate=!1;var m=o.context;i(function(){o.componentWillUpdate&&o.componentWillUpdate(a,y,l)},o),this._currentElement=t,this._context=r,o.props=a,o.state=y,o.context=l,this._updateRenderedComponent(r),i(function(){o.componentDidUpdate&&o.componentDidUpdate(c,v,m)},o),this._updateCount++}else this._currentElement=t,this._context=r,o.props=a,o.state=y,o.context=l;if(f){var _=this._pendingCallbacks;this._pendingCallbacks=null,d.default.runCallbacks(_,o)}p.default.hook.Reconciler.receiveComponent(this)}},{key:"_updateRenderedComponent",value:function(e){var t=this._renderedComponent,n=t._currentElement,r=this._instance,o=void 0;if(p.default.component=this,i(function(){o=r.render()},r),p.default.component=null,(0,b.default)(n,o))t.updateComponent(n,o,t._context,this._processChildContext(e));else{var u=t.getNativeNode();t.unmountComponent(!0),this._renderedComponent=(0,m.default)(o),this._renderedComponent.mountComponent(this._parent,r,this._processChildContext(e),function(e,t){Array.isArray(e)||(e=[e]),Array.isArray(u)||(u=[u]);for(var n=void 0,r=0;r<e.length;r++){var o=e[r];u[r]?p.default.driver.replaceChild(o,u[r]):p.default.driver.insertAfter(o,n),n=o}if(e.length<u.length)for(var i=e.length;i<u.length;i++)p.default.driver.removeChild(u[i])})}}},{key:"getNativeNode",value:function(){var e=this._renderedComponent;if(e)return e.getNativeNode()}},{key:"getPublicInstance",value:function(){var e=this._instance;return e instanceof f.default?null:e}}]),e}();t.default=x,e.exports=t.default},function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i=n(0),u=(function(e){e&&e.__esModule}(i),function(){function e(t){r(this,e),this.pureRender=t}return o(e,[{key:"render",value:function(){return this.pureRender(this.props,this.context)}}]),e}());t.default=u,e.exports=t.default},function(e,t,n){"use strict";function r(e,t){if(t){(e._pendingCallbacks||(e._pendingCallbacks=[])).push(t)}}function o(e,t){if(t){(e._pendingStateQueue||(e._pendingStateQueue=[])).push(t)}}Object.defineProperty(t,"__esModule",{value:!0});var i={setState:function(e,t,n){var i=e._internal;i&&(o(i,t),r(i,n),!i._pendingState&&i._renderedComponent&&this.runUpdate(e))},forceUpdate:function(e,t){var n=e._internal;n&&(n._pendingForceUpdate=!0,r(n,t),n._renderedComponent&&this.runUpdate(e))},runUpdate:function(e){var t=e._internal,n=t._pendingCallbacks;t._pendingCallbacks=null;var r=t._currentElement,o=t._context;(t._pendingStateQueue||t._pendingForceUpdate)&&t.updateComponent(r,r,o,o),this.runCallbacks(n,e)},runCallbacks:function(e,t){if(e)for(var n=0;n<e.length;n++)e[n].call(t)}};t.default=i,e.exports=t.default},function(e,t,n){"use strict";function r(e,t){return e===t?0!==e||1/e==1/t:e!==e&&t!==t}function o(e,t){if(r(e,t))return!0;if("object"!==(void 0===e?"undefined":i(e))||null===e||"object"!==(void 0===t?"undefined":i(t))||null===t)return!1;var n=Object.keys(e),o=Object.keys(t);if(n.length!==o.length)return!1;for(var l=0;l<n.length;l++)if(!u.call(t,n[l])||!r(e[n[l]],t[n[l]]))return!1;return!0}Object.defineProperty(t,"__esModule",{value:!0});var i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},u=Object.prototype.hasOwnProperty;t.default=o,e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}function o(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function u(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}Object.defineProperty(t,"__esModule",{value:!0});var l=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),a=n(0),f=r(a),s=n(11),d=r(s),c=n(1),p=r(c),v=n(2),h=r(v),y=n(13),m=r(y),_=function(e){function t(e){return o(this,t),i(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e))}return u(t,e),l(t,[{key:"mountComponent",value:function(e,t,n,r){this._parent=e,this._parentInstance=t,this._context=n,this._mountID=f.default.mountID++;var o={_internal:this};this._instance=o;var i=this.getNativeNode(),u=this._currentElement;if(this.mountChildren(u,n),r)r(i,e);else for(var l=Array.isArray(e),a=0;a<i.length;a++){var s=i[a];l?e.push(s):f.default.driver.appendChild(s,e)}return o}},{key:"mountChildren",value:function(e,t){var n=this,r=this._renderedChildren={},o=this.getNativeNode();return e.map(function(e,i){var u=(0,h.default)(e),l=(0,m.default)(r,e,i);return r[l]=u,u._mountIndex=i,u.mountComponent(n._parent,n._instance,t,function(e){if(Array.isArray(e))for(var t=0;t<e.length;t++)o.push(e[t]);else o.push(e)})})}},{key:"unmountComponent",value:function(e){if(this._nativeNode&&(p.default.remove(this._nativeNode),!e))for(var t=0;t<this._nativeNode.length;t++)f.default.driver.removeChild(this._nativeNode[t]);this.unmountChildren(!0),this._currentElement=null,this._nativeNode=null,this._parent=null,this._parentInstance=null,this._context=null,this._instance=null}},{key:"updateComponent",value:function(e,t,n,r){this._currentElement=t,this.updateChildren(this._currentElement,r)}},{key:"getNativeNode",value:function(){return null==this._nativeNode&&(this._nativeNode=[]),this._nativeNode}},{key:"getPublicInstance",value:function(){return this.getNativeNode()}},{key:"getName",value:function(){return"fragment"}}]),t}(d.default);t.default=_,e.exports=t.default},function(e,t,n){"use strict";var r="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};Object.defineProperty(t,"__esModule",{value:!0});var o="function"==typeof Symbol&&"symbol"===r(Symbol.iterator)?function(e){return void 0===e?"undefined":r(e)}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":void 0===e?"undefined":r(e)},i=n(14),u=n(31),l=function(e){return e&&e.__esModule?e:{default:e}}(u),a=/^on[A-Z]/,f=/^aria-/,s={},d="object"===("undefined"==typeof __weex_document__?"undefined":o(__weex_document__))?__weex_document__:"object"===(void 0===d?"undefined":o(d))?d:null,c={deviceWidth:750,viewportWidth:750,getDeviceWidth:function(){return this.deviceWidth},setDeviceWidth:function(e){this.deviceWidth=e},getViewportWidth:function(){return this.viewportWidth},setViewportWidth:function(e){this.viewportWidth=e},getElementById:function(e){return s[e]},createBody:function(){if(d.body)return d.body;var e=d.documentElement,t=d.createBody(c.bodyType,c.bodyProps);return e.appendChild(t),t},createComment:function(e){return d.createComment(e)},createEmpty:function(){return this.createComment(" empty ")},createText:function(e){return c.createElement({type:"text",props:{value:e}})},updateText:function(e,t){this.setAttribute(e,"value",t)},createElement:function(e){var t=l.default[e.type];t&&(e=t.parse(e));var n=e.props,r={},o=n.style;for(var u in o)r[u]=(0,i.convertUnit)(o[u],u);var a=d.createElement(e.type,{style:r});return this.setNativeProps(a,n,!0),a},appendChild:function(e,t){return t.appendChild(e)},removeChild:function(e,t){t=t||e.parentNode;var n=e.attr&&e.attr.id;return null!=n&&(s[n]=null),t.removeChild(e)},replaceChild:function(e,t,n){n=n||t.parentNode;var r=t.previousSibling,o=t.nextSibling;this.removeChild(t,n),r?this.insertAfter(e,r,n):o?this.insertBefore(e,o,n):this.appendChild(e,n)},insertAfter:function(e,t,n){return n=n||t.parentNode,n.insertAfter(e,t)},insertBefore:function(e,t,n){return n=n||t.parentNode,n.insertBefore(e,t)},addEventListener:function(e,t,n,r){var o=r[t+"EventParams"];return e.addEvent(t,n,o)},removeEventListener:function(e,t,n){return e.removeEvent(t,n)},removeAllEventListeners:function(e){},removeAttribute:function(e,t,n){return"id"==t&&(s[n]=null),e.setAttr(t,void 0,!1)},setAttribute:function(e,t,n){return"id"==t&&(s[n]=e),f.test(t)&&(t=t.replace(/\-(\w)/,function(e,t){return t.toUpperCase()})),e.setAttr(t,n,!1)},setStyles:function(e,t){for(var n in t){var r=t[n];r=(0,i.convertUnit)(r,n),e.setStyle(n,r)}},beforeRender:function(){d.open(),(0,i.setRem)(this.getDeviceWidth()/this.getViewportWidth())},afterRender:function(){d.listener&&d.listener.createFinish&&d.listener.createFinish(),d.close()},setNativeProps:function(e,t,n){for(var r in t){var o=t[r];if("children"!==r&&null!=o)if("style"===r){if(n)continue;this.setStyles(e,o)}else if(a.test(r)){var i=r.slice(2).toLowerCase();this.addEventListener(e,i,o,t)}else this.setAttribute(e,r,o)}}};t.default=c,e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(t,"__esModule",{value:!0});var o=n(32),i=r(o),u=n(33),l=r(u),a=n(34),f=r(a),s=n(35),d=r(s),c=n(36),p=r(c),v=n(37),h=r(v),y=n(38),m=r(y),_=n(39),b=r(_);t.default={span:d.default,p:p.default,img:i.default,button:h.default,video:l.default,textarea:f.default,h1:m.default,h2:m.default,h3:m.default,h4:m.default,h5:m.default,h6:m.default,nav:b.default,article:b.default,section:b.default,footer:b.default,aside:b.default,main:b.default},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=n(15);t.default={parse:function(e){var t=e.props;return e.type="image",e.props=(0,r.transformPropsAttrsToStyle)(t,["width","height"]),e}},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=n(15);t.default={parse:function(e){var t=e.props;return e.props=(0,r.transformPropsAttrsToStyle)(t,["width","height"]),e}},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={parse:function(e){var t=e.props;return"string"!=typeof t.children||t.value||(t.value=t.children,t.children=null),e}},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={parse:function(e){var t=e.props;return e.type="text","string"!=typeof t.children||t.value||(t.value=t.children,t.children=null),e}},e.exports=t.default},function(e,t,n){"use strict";function r(e){return{type:"span",attr:{value:e}}}function o(e){var t=e.type,n=e.props,r=n.style,o=n.children;"img"===t&&(t="image"),s[t]&&(r=a({},s[t],r),t="span"),n.style=null,n.children=null;var u={type:t,style:r,attr:n||{}};return o&&("span"===t&&"string"==typeof o?u.attr.value=o:u.children=i(o)),u}function i(e){var t=[];Array.isArray(e)||(e=[e]);for(var n=0;n<e.length;n++){var i=e[n];"string"==typeof i?t.push(r(i)):"object"===(void 0===i?"undefined":l(i))&&t.push(o(i))}return t}var u="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};Object.defineProperty(t,"__esModule",{value:!0});var l="function"==typeof Symbol&&"symbol"===u(Symbol.iterator)?function(e){return void 0===e?"undefined":u(e)}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":void 0===e?"undefined":u(e)},a=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e},f={fontSize:28,marginTop:28,marginBottom:28},s={u:{textDecoration:"underline"},s:{textDecoration:"line-through"},i:{fontStyle:"italic"},b:{fontWeight:"bold"},del:{textDecoration:"line-through"},em:{fontStyle:"italic"},strong:{fontWeight:"bold"},big:{fontSize:33.6},small:{fontSize:28*.8}};t.default={parse:function(e){var t=e.props,n=t.children;return e.type="richtext",t.style=a({},f,t.style),t.value=i(n),t.children=null,e}},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e};t.default={parse:function(e){var t=e.props;e.type="text";var n=t.style,o=t.disabled,i=t.children,u=r({textAlign:"center",fontSize:22,paddingTop:4,paddingRight:12,paddingBottom:6,paddingLeft:12,borderWidth:4,borderStyle:"solid",borderColor:"#000000",backgroudColor:"#c0c0c0"},n);return o&&(t.onClick=null,u=r({},u,{color:"#7f7f7f",borderColor:"#7f7f7f"})),"string"==typeof i&&(t.value=i,t.children=null),e}},e.exports=t.default},function(e,t,n){"use strict";function r(e,t,n){return{fontSize:e*t,marginTop:e*t*n,marginBottom:e*t*n,fontWeight:"bold"}}Object.defineProperty(t,"__esModule",{value:!0});var o=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e},i={h1:r(28,2,.67),h2:r(28,1.5,.83),h3:r(28,1.17,1),h4:r(28,1,1.33),h5:r(28,.83,1.67),h6:r(28,.67,2.33)};t.default={parse:function(e){var t=e.type,n=e.props;return e.type="text",n.style=o({},i[t]||i.h6,n.style),"string"!=typeof n.children||n.value||(n.value=n.children,n.children=null),e}},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default={parse:function(e){return e.type="div",e}},e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=n(14),o=n(41),i=function(e){return e&&e.__esModule?e:{default:e}}(o),u=/on[A-Z]/,l={deviceWidth:"undefined"!=typeof DEVICE_WIDTH&&DEVICE_WIDTH||null,viewportWidth:"undefined"!=typeof VIEWPORT_WIDTH&&VIEWPORT_WIDTH||750,eventRegistry:{},getDeviceWidth:function(){return this.deviceWidth||document.documentElement.clientWidth},setDeviceWidth:function(e){this.deviceWidth=e},getViewportWidth:function(){return this.viewportWidth},setViewportWidth:function(e){this.viewportWidth=e},getElementById:function(e){return document.getElementById(e)},createBody:function(){return document.body},createComment:function(e){return document.createComment(e)},createEmpty:function(){return this.createComment(" empty ")},createText:function(e){return document.createTextNode(e)},updateText:function(e,t){e["textContent"in document?"textContent":"nodeValue"]=t},createElement:function(e){var t=document.createElement(e.type),n=e.props;return this.setNativeProps(t,n),t},appendChild:function(e,t){return t.appendChild(e)},removeChild:function(e,t){(t=t||e.parentNode)&&t.removeChild(e)},replaceChild:function(e,t,n){n=n||t.parentNode,n.replaceChild(e,t)},insertAfter:function(e,t,n){n=n||t.parentNode;var r=t.nextSibling;r?n.insertBefore(e,r):n.appendChild(e)},insertBefore:function(e,t,n){n=n||t.parentNode,n.insertBefore(e,t)},addEventListener:function(e,t,n,r){return this.eventRegistry[t]?this.eventRegistry[t]("addEvent",e,t,n,r):e.addEventListener(t,n)},removeEventListener:function(e,t,n,r){return this.eventRegistry[t]?this.eventRegistry[t]("removeEvent",e,t,n,r):e.removeEventListener(t,n)},removeAllEventListeners:function(e){},removeAttribute:function(e,t){if("dangerouslySetInnerHTML"===t)return e.innerHTML=null;if("className"===t&&(t="class"),t in e)try{e[t]=null}catch(e){}e.removeAttribute(t)},setAttribute:function(e,t,n){if("dangerouslySetInnerHTML"===t)return e.innerHTML=n.__html;if("className"===t&&(t="class"),t in e)try{e[t]=n}catch(r){e.setAttribute(t,n)}else e.setAttribute(t,n)},setStyles:function(e,t){var n={};for(var o in t){var u=t[o];i.default.isFlexProp(o)?i.default[o](u,n):n[o]=(0,r.convertUnit)(u,o)}for(var l in n){var a=n[l];if(Array.isArray(a))for(var f=0;f<a.length;f++)e.style[l]=a[f];else e.style[l]=a}},beforeRender:function(){(0,r.setRem)(this.getDeviceWidth()/this.getViewportWidth())},setNativeProps:function(e,t){for(var n in t){var r=t[n];if("children"!==n&&null!=r)if("style"===n)this.setStyles(e,r);else if(u.test(n)){var o=n.slice(2).toLowerCase();this.addEventListener(e,o,r)}else this.setAttribute(e,n,r)}}};t.default=l,e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r={stretch:"stretch","flex-start":"start","flex-end":"end",center:"center"},o={row:"horizontal",column:"vertical"},i={"flex-start":"start","flex-end":"end",center:"center","space-between":"justify","space-around":"justify"},u={display:!0,flex:!0,alignItems:!0,alignSelf:!0,flexDirection:!0,justifyContent:!0,flexWrap:!0},l={isFlexProp:function(e){return u[e]},display:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return t.display="flex"===e?["-webkit-box","-webkit-flex","flex"]:e,t},flex:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return t.webkitBoxFlex=e,t.webkitFlex=e,t.flex=e,t},flexWrap:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return t.webkitFlexWrap=e,t.flexWrap=e,t},alignItems:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return t.webkitBoxAlign=r[e],t.webkitAlignItems=e,t.alignItems=e,t},alignSelf:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return t.webkitAlignSelf=e,t.alignSelf=e,t},flexDirection:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return t.webkitBoxOrient=o[e],t.webkitFlexDirection=e,t.flexDirection=e,t},justifyContent:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return t.webkitBoxPack=i[e],t.webkitJustifyContent=e,t.justifyContent=e,t}};t.default=l,e.exports=t.default},function(e,t,n){"use strict";function r(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}function o(e,t,n,o){if(t.childNodes)for(var i=[].concat(r(t.childNodes)),l=0;l<i.length;l++){var a=i[l];t.removeChild(a)}return(0,u.default)(e,t,n,o)}Object.defineProperty(t,"__esModule",{value:!0});var i=n(10),u=function(e){return e&&e.__esModule?e:{default:e}}(i);t.default=o,e.exports=t.default},function(e,t,n){"use strict";function r(e){return null==e?null:i.default.get(e)}Object.defineProperty(t,"__esModule",{value:!0});var o=n(1),i=function(e){return e&&e.__esModule?e:{default:e}}(o);t.default=r,e.exports=t.default},function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{default:e}}function o(e,t){e=(0,a.default)(e),u.default.driver.setNativeProps(e,t)}Object.defineProperty(t,"__esModule",{value:!0}),t.default=o;var i=n(0),u=r(i),l=n(16),a=r(l);e.exports=t.default},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default="0.5.0",e.exports=t.default},function(e,t,n){"use strict";function r(e){return e=(0,i.default)(e,[]),Array.isArray(e)?e:[].concat(e)}Object.defineProperty(t,"__esModule",{value:!0});var o=n(7),i=function(e){return e&&e.__esModule?e:{default:e}}(o),u={map:function(e,t,n){return null==e?null:(e=r(e),e.map(function(e,r){return t.call(n,e,r)}))},forEach:function(e,t,n){if(null==e)return null;e=r(e),e.forEach(function(e,r){return t.call(n,e,r)})},count:function(e){return null==e?0:r(e).length},only:function(e){if(e=u.toArray(e),1!==e.length)throw new Error("Children.only: expected to receive a single element child.");return e[0]},toArray:function(e){return null==e?[]:r(e).filter(function(e){return null!==e})}};t.default=u,e.exports=t.default}])});
+// });
+
+console.log('################# init #################');
+
+// let modules = [];
+// const define = require('../define.weex')(modules);
+// const require = require('../require.weex')(modules);
+
+
+WeexRuntime.config.frameworks = { Rax: framework };
+const context = WeexRuntime.init(WeexRuntime.config);
+// const context = init();
+console.log('################# context #################');
+console.log(context);
+const { Document, Element, Comment } = WeexRuntime.config;
 
 global.callNative = () => { };
 global.WXEnvironment = {
@@ -41,881 +55,159 @@ describe('framework', () => {
   };
 
   beforeEach(() => {
+    console.log('################# beforeEach #################');
     // Create a Weex JavaScript runtime for a certain Weex JS framework.
     // You can also simulate the native environment which includes
     // global env variables, native modules & components.
     Document.handler = sendTasks;
     framework.init({ Document, Element, Comment });
-    runtime = new Runtime(framework);
-    framework.registerModules({
-      webSocket: ['addEventListener', 'removeAllEventListeners', 'onopen', 'onerror', 'send', 'onmessage', 'close', 'onclose', 'WebSocket'],
-      geolocation: ['addEventListener', 'removeAllEventListeners', 'getCurrentPosition', 'watchPosition', 'clearWatch'],
-      audio: ['addEventListener', 'removeAllEventListeners', 'canPlayType', 'stop', 'pause', 'load', 'play', 'setVolume'],
-      picker: ['addEventListener', 'removeAllEventListeners', 'pickTime', 'pickDate', 'pick'],
-      globalEvent: ['addEventListener', 'removeEventListener'],
-    });
 
-    framework.registerComponents(['div', 'video']);
-    sendTasksHandler = function() {
-      runtime.target.callNative(...arguments);
-      // FIXME: Hack for should return value like setTimeout
-      return '1';
-    };
+    console.log('#### framework ####');
+    console.log(framework);
+
+    // console.log('#### 1 ####');
+    // runtime = new Runtime(framework);
+    
+    // console.log('#### runtime ####');
+    // console.log(runtime);
+
+    // framework.registerModules({
+    //   webSocket: ['addEventListener', 'removeAllEventListeners', 'onopen', 'onerror', 'send', 'onmessage', 'close', 'onclose', 'WebSocket'],
+    //   geolocation: ['addEventListener', 'removeAllEventListeners', 'getCurrentPosition', 'watchPosition', 'clearWatch'],
+    //   audio: ['addEventListener', 'removeAllEventListeners', 'canPlayType', 'stop', 'pause', 'load', 'play', 'setVolume'],
+    //   picker: ['addEventListener', 'removeAllEventListeners', 'pickTime', 'pickDate', 'pick'],
+    //   globalEvent: ['addEventListener', 'removeEventListener'],
+    // });
+
+    // framework.registerComponents(['div', 'video']);
+    // sendTasksHandler = function() {
+    //   // runtime.target.callNative(...arguments);
+    //   // FIXME: Hack for should return value like setTimeout
+    //   return '1';
+    // };
+    // console.log('#### 3 ####');
     // Create a Weex instance in a certain runtime.
-    instance = new Instance(runtime);
+    // instance = new Instance(runtime);
+    // console.log('#### 4 ####');
+    // console.log('################# instance #################');
+    // console.log(instance);
   });
 
   afterEach(() => {
     delete Document.handler;
-    instance.$destroy();
+    // instance.$destroy();
     instance = null;
   });
 
-  it('weex only var', () => {
-    const code = `
-      alert(__weex_options__.debug)
-    `;
+  // it('weex only var', () => {
+  //   const code = `
+  //     alert(__weex_options__.debug)
+  //   `;
 
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: __weex_options__.debug
-      });
-    });
+  //   const mockFn = jest.fn((args) => {
+  //     expect(args).toEqual({
+  //       message: __weex_options__.debug
+  //     });
+  //   });
+  //   console.log('################# weex only var #################');
+  //   console.log(instance);
 
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+  //   instance.oncall('modal', 'alert', mockFn);
+  //   instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 
-    expect(mockFn).toHaveBeenCalled();
-  });
+  //   expect(mockFn).toHaveBeenCalled();
+  // });
 
   it('render a text', () => {
+    // const code = `
+    //   var Rax = require('rax');
+    //   var createElement = Rax.createElement;
+    //   var render = Rax.render;
+
+    //   function Hello(){
+    //     return createElement('text', {value: 'Hello'});
+    //   }
+
+    //   render(createElement(Hello));
+    // `;
+
     const code = `
-      var Rax = require('rax');
-      var createElement = Rax.createElement;
-      var render = Rax.render;
 
-      function Hello(){
-        return createElement('text', {value: 'Hello'});
+define("rax-playground", function(require) {
+    'use strict';
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _rax = require('rax');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /** @jsx createElement */
+var App = function (_Component) {
+  _inherits(App, _Component);
+  function App() {
+    _classCallCheck(this, App);
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+  }
+  _createClass(App, [{
+    key: 'render',
+    value: function render() {
+      return (0, _rax.createElement)(
+        'text',
+        null,
+        'Hello'
+      );
+    }
+  }]);
+  return App;
+}(_rax.Component);
+(0, _rax.render)((0, _rax.createElement)(App, null));
+});
+require("rax-playground");
+      `;
+
+    // console.log('#### render a text instance 1 ####');
+    // console.log(instance);
+    // instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+    console.log('#################################### AAA');
+    const instance = context.createInstance(1, `// { "framework": "Rax" }\n${code}`, {
+      document: { // for mock
+        open: () => {}
       }
+    }) || {};
+    // console.log(context.createInstance(2, `// { "framework": "Rax" }\n${code}`));
+    console.log(context);
+    // console.log(context.getDocument(1));
+    console.log('#################################### AAA getRoot');
+    console.log(context.getRoot());
 
-      render(createElement(Hello));
-    `;
+    console.log('#################################### AAA getDocument');
+    console.log(context.getDocument());
 
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 
-    expect(instance.getRealRoot()).toEqual({
+    console.log('#################################### BBB');
+    console.log(instance);
+
+    expect(context.getRoot()).toEqual({
       type: 'div',
       children: [{ type: 'text', attr: { value: 'Hello' } }]
     });
   });
 
-  it('alert message', () => {
-    const code = `
-      alert('Hello');
-    `;
 
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'Hello'
-      });
-    });
+  // it('document', () => {
+  //   const code = `
+  //     alert(document.URL);
+  //   `;
 
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+  //   const mockFn = jest.fn((args) => {
+  //     expect(args).toEqual({
+  //       message: 'http://example.com'
+  //     });
+  //   });
 
-    expect(mockFn).toHaveBeenCalled();
-  });
+  //   instance.oncall('modal', 'alert', mockFn);
 
-  it('window is window.window', () => {
-    const code = `
-      alert(window === window.window);
-    `;
+  //   instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: true
-      });
-    });
+  //   expect(mockFn).toHaveBeenCalled();
+  // });
 
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('self is window', () => {
-    const code = `
-      alert(window === self);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: true
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('this is window', () => {
-    const code = `
-      alert(this === window);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: true
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('window is global context', () => {
-    const code = `
-      this.foo = 'foo';
-      alert(foo);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'foo'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('run in strict mode', () => {
-    const code = `
-      a = 'throws ReferenceError';
-    `;
-
-    expect(function() {
-      instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    }).toThrowError(/a is not defined/);
-  });
-
-  it('run in Object.prototype freeze mode', () => {
-    const code = `
-      function Foo(){}
-      // Throw Error
-      Foo.prototype.toString = function(){};
-      // Could use Foo.prototype = {toString(){}}
-    `;
-
-    expect(function() {
-      instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    }).toThrowError(/Cannot assign to read only property/);
-  });
-
-  it('run in Object freeze mode', () => {
-    const code = `
-      // Throw Error
-      Object.assgin = function(){}
-    `;
-
-    expect(function() {
-      instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    }).toThrowError(/object is not extensible/);
-  });
-
-  it('run in Object freeze mode', () => {
-    const code = `
-      var foo = new Object();
-      // Throw Error
-      foo.toString = function(){};
-    `;
-
-    expect(function() {
-      instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    }).toThrowError(/Cannot assign to read only property/);
-  });
-
-  it('define a module', () => {
-    const code = `
-      define('alert-hello', function(){
-        alert('Hello');
-      });
-      require('alert-hello');
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'Hello'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('atob', () => {
-    const code = `
-      alert(atob('Zm9v'));
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'foo'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('btoa', () => {
-    const code = `
-      alert(btoa('foo'));
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'Zm9v'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('document', () => {
-    const code = `
-      alert(document.URL);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'http://example.com'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('navigator', () => {
-    const code = `
-      alert(navigator.platform);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'iOS'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('location', () => {
-    const code = `
-      alert(location.origin);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'http://example.com'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('screen', () => {
-    const code = `
-      alert(screen.width);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 750
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('WebSocket', () => {
-    const code = `
-    const ws = new WebSocket('ws://echo.websocket.org');
-    ws.onopen = function(ev){
-      alert('hi');
-    };
-    ws.addEventListener('message', function(ev){
-      alert(ev.data);
-    });
-    ws.send('Rock it with HTML5 WebSocket');
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual('Rock it with HTML5 WebSocket');
-    });
-
-    const alertMockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'hi'
-      });
-    });
-
-    let messageCallbackId;
-    const messageMockFn = jest.fn((funcId) => {
-      messageCallbackId = funcId;
-    });
-
-    let openCallbackId;
-    const openMockFn = jest.fn((funcId) => {
-      openCallbackId = funcId;
-    });
-
-    instance.oncall('modal', 'alert', alertMockFn);
-    instance.oncall('webSocket', 'onmessage', messageMockFn);
-    instance.oncall('webSocket', 'onopen', openMockFn);
-    instance.oncall('webSocket', 'send', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    instance.$callback(openCallbackId);
-    instance.$callback(messageCallbackId, {
-      data: 'hi'
-    });
-
-    expect(mockFn).toHaveBeenCalled();
-    expect(messageMockFn).toHaveBeenCalled();
-    expect(openMockFn).toHaveBeenCalled();
-    expect(alertMockFn).toHaveBeenCalled();
-  });
-
-  it('CustomEvent', () => {
-    const code = `
-      var ev = new CustomEvent('click', {
-        detail: 'custom'
-      });
-      alert(ev.type);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'click'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('FontFace', () => {
-    const code = `
-      var bitterFontFace = new FontFace('Bitter', 'url(https://fonts.gstatic.com/s/bitter/v7/HEpP8tJXlWaYHimsnXgfCOvvDin1pK8aKteLpeZ5c0A.woff2)');
-      alert(bitterFontFace.family);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'Bitter'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('postMessage', () => {
-    const code = `
-      window.addEventListener('message', function(e){
-        alert(JSON.stringify(e.data));
-      });
-      window.postMessage({foo: 'foo'}, '*');
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: JSON.stringify({ foo: 'foo' })
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('URL', () => {
-    const code = `
-    var a = new URL("/", "https://developer.mozilla.org"); // Creates a URL pointing to 'https://developer.mozilla.org/'
-    var b = new URL("https://developer.mozilla.org");      // Creates a URL pointing to 'https://developer.mozilla.org/'
-    var c = new URL('en-US/docs', b);                      // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var d = new URL('/en-US/docs', b);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var f = new URL('/en-US/docs', d);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var g = new URL('/en-US/docs', "https://developer.mozilla.org/fr-FR/toto");
-                                                           // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var h = new URL('/en-US/docs', a);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var i = new URL('/en-US/docs', '');                    // Raises a SYNTAX ERROR exception as '/en-US/docs' is not valid
-    var j = new URL('/en-US/docs');                        // Raises a SYNTAX ERROR exception as 'about:blank/en-US/docs' is not valid
-    var k = new URL('http://www.example.com', 'https://developers.mozilla.com');
-                                                           // Creates a URL pointing to 'http://www.example.com/'
-    var l = new URL('http://www.example.com', b);          // Creates a URL pointing to 'http://www.example.com/'
-
-    alert(l.toString());
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'http://www.example.com/'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('URL.searchParams', () => {
-    const code = `
-    var params = (new URL("https://developer.mozilla.org?hello=world")).searchParams;
-    alert(params.get('hello'));
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'world'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('URLSearchParams', () => {
-    const code = `
-    var paramsString = "q=URLUtils.searchParams&topic=api"
-    var searchParams = new URLSearchParams(paramsString);
-    searchParams.has("topic") === true; // true
-    searchParams.get("topic") === "api"; // true
-    searchParams.getAll("topic"); // ["api"]
-    searchParams.get("foo") === null; // true
-    searchParams.append("topic", "webdev");
-    searchParams.toString(); // "q=URLUtils.searchParams&topic=api&topic=webdev"
-    searchParams.set("topic", "More webdev");
-    searchParams.toString(); // "q=URLUtils.searchParams&topic=More+webdev"
-    searchParams.delete("topic");
-    searchParams.toString(); // "q=URLUtils.searchParams"
-
-    alert(searchParams.toString());
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'q=URLUtils.searchParams'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('XMLHttpRequest data', () => {
-    const code = `
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'http://example.com');
-      xhr.send();
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual(
-        {
-          url: 'http://example.com',
-          method: 'GET',
-          type: 'text',
-          headers: {}
-        }
-      );
-    });
-
-    instance.oncall('stream', 'fetch', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('fetch data', () => {
-    const code = `
-      fetch('http://example.com').then(function(response) {
-        if (response.status != -1 && response.ok) {
-          return response.json();
-        } else {
-          return Promise.reject(response);
-        }
-      }).then(function (data) {
-        console.log('fetch response data', data);
-      });
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual(
-        {
-          url: 'http://example.com',
-          method: 'GET',
-          type: 'text'
-        }
-      );
-    });
-
-    instance.oncall('stream', 'fetch', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('response default status is 200', () => {
-    const code = `
-      var res = new Response();
-      alert(res.status);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 200
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('response default statusText is OK', () => {
-    const code = `
-      var res = new Response();
-      alert(res.statusText);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'OK'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('response ok is true', () => {
-    const code = `
-      var res = new Response();
-      alert(res.ok);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: true
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('creates Headers object from raw headers', () => {
-    const code = `
-      var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}});
-      alert(r.headers instanceof Headers);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: true
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('deletes headers', () => {
-    const code = `
-      var headers = new Headers();
-      headers.set('Content-Type', 'application/json');
-      var trueValue = headers.has('Content-Type');
-      headers.delete('Content-Type');
-      var falseValue = headers.has('Content-Type');
-      var nullValue = headers.get('Content-Type');
-
-      alert([trueValue, falseValue, nullValue]);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: [true, false, null]
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('constructor copies headers', () => {
-    const code = `
-      var original = new Headers();
-      original.append('Accept', 'application/json');
-      original.append('Accept', 'text/plain');
-      original.append('Content-Type', 'text/html');
-
-      var headers = new Headers(original);
-      alert([headers.get('Accept'), headers.get('Content-type')]);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: ['application/json,text/plain', 'text/html']
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-
-  it('request construct with url', () => {
-    const code = `
-      var request = new Request('https://fetch.spec.whatwg.org/');
-      alert(request.url);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: 'https://fetch.spec.whatwg.org/'
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('construct with Request and override headers', () => {
-    const code = `
-      var request1 = new Request('https://fetch.spec.whatwg.org/', {
-        method: 'post',
-        body: 'I work out',
-        headers: {
-          accept: 'application/json',
-          'X-Request-ID': '123'
-        }
-      });
-      var request2 = new Request(request1, {
-        headers: { 'x-test': '42' }
-      });
-
-      var val1 = request2.headers.get('accept');
-      var val2 = request2.headers.get('x-request-id');
-      var val3 = request2.headers.get('x-test');
-
-      alert([val1, val2, val3]);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: [null, null, '42']
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('setTimeout', () => {
-    const code = `
-      var id = setTimeout(function(){}, 10);
-      clearTimeout(id);
-    `;
-
-    const mockFn = jest.fn((arg1, arg2) => {
-      expect(arg1).toEqual('1');
-      expect(arg2).toEqual(10);
-    });
-    instance.oncall('timer', 'setTimeout', mockFn);
-
-    const mockFn2 = jest.fn((arg1) => {
-      expect(arg1).toEqual('1');
-    });
-    instance.oncall('timer', 'clearTimeout', mockFn2);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-    expect(mockFn2).toHaveBeenCalled();
-  });
-
-  it('setInterval', () => {
-    const code = `
-      var id = setInterval(function(){}, 10);
-      clearInterval(id);
-    `;
-
-    const mockFn1 = jest.fn((arg1, arg2) => {
-      expect(arg1).toEqual('1');
-      expect(arg2).toEqual(10);
-    });
-    instance.oncall('timer', 'setInterval', mockFn1);
-
-    const mockFn2 = jest.fn((arg1) => {
-      expect(arg1).toEqual('1');
-    });
-    instance.oncall('timer', 'clearInterval', mockFn2);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn1).toHaveBeenCalled();
-    expect(mockFn2).toHaveBeenCalled();
-  });
-
-  it('requestAnimationFrame', () => {
-    const code = `
-      var id = requestAnimationFrame(function(){});
-      cancelAnimationFrame(id);
-    `;
-
-    const mockFn1 = jest.fn((arg1, arg2) => {
-      expect(arg1).toEqual('1');
-      expect(arg2).toEqual(16);
-    });
-    instance.oncall('timer', 'setTimeout', mockFn1);
-
-    const mockFn2 = jest.fn((arg1) => {
-      expect(arg1).toEqual('1');
-    });
-    instance.oncall('timer', 'clearTimeout', mockFn2);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn1).toHaveBeenCalled();
-    expect(mockFn2).toHaveBeenCalled();
-  });
-
-  it('downgrade', () => {
-    const code = `
-      __weex_downgrade__({
-        ios: {
-          osVersion: '>1.0.0',
-          appVersion: '>1.0.0',
-          weexVersion: '>1.0.0',
-          deviceModel: ['modelA', 'modelB']
-        },
-        android: {
-          osVersion: '>1.0.0',
-          appVersion: '>1.0.0',
-          weexVersion: '>1.0.0',
-          deviceModel: ['modelA', 'modelB']
-        }
-      });
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual(1);
-    });
-
-    instance.oncall('instanceWrap', 'error', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('weex supports', () => {
-    const code = `
-      var moduleExisted = __weex_module_supports__('webSocket.send');
-      var moduleNotexisted = __weex_module_supports__('webSocket.send2');
-
-      var tagExisted = __weex_tag_supports__('div');
-      var tagNotexisted = __weex_tag_supports__('divx');
-      alert([moduleExisted, moduleNotexisted, tagExisted, tagNotexisted]);
-    `;
-
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual({
-        message: [true, false, true, false]
-      });
-    });
-
-    instance.oncall('modal', 'alert', mockFn);
-
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-    expect(mockFn).toHaveBeenCalled();
-  });
-
-  it('register window.onerror', () => {
-    const code = `
-      window.onerror = function(e){}
-    `;
-    const mockFn = jest.fn((args) => {
-      expect(args).toEqual('exception');
-    });
-
-    instance.oncall('globalEvent', 'addEventListener', mockFn);
-    instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-    expect(mockFn).toHaveBeenCalled();
-  });
 });

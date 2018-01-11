@@ -160,7 +160,6 @@ dist(getConfig(
       ]
     }
   ));
-
 }).catch(function(err) {
   setTimeout(function() {
     throw err;

@@ -12,6 +12,8 @@ module.exports = function(modules) {
       isInitialized: false,
       hasError: false,
     };
+
+    console.log('define', modules);
   }
 
   return define;

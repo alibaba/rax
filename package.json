@@ -129,5 +129,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "weex-js-runtime": "^0.23.6"
   }
 }
