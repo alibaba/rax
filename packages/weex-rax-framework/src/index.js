@@ -38,7 +38,7 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
   const weex = __weex_options__.weex;
 
   if (instance == undefined) {
-    const bundleUrl = __weex_options__.bundleUrl || 'about:blank';
+    const bundleUrl = weex.config.bundleUrl || 'about:blank';
     const document = new Document(instanceId, bundleUrl);
     // 待确认这块从哪里获取
     const modules = {};
