@@ -1,7 +1,5 @@
 'use strict';
 
-// import {ModuleFactories} from './builtin';
-
 let Document;
 let Element;
 let Comment;
@@ -35,24 +33,12 @@ export function init(config) {
 export function createInstanceContext(instanceId, __weex_options__, __weex_data__) {
   let instance = instances[instanceId];
 
-  // rax 会有执行时机问题
-  // const modules = {
-  //   rax: {
-  //     factory: ModuleFactories['rax'].bind({}),
-  //     module: {exports: {}},
-  //     isInitialized: false
-  //   }
-  // };
-
-
   // Generate native modules map at instance init
   // genNativeModules(modules, document);
   const weex = __weex_options__.weex;
-  // const __weex_define__ = require('./define.weex')(modules);
-  // const __weex_require__ = require('./require.weex')(modules, weex);
 
   if (instance == undefined) {
-    const bundleUrl = __weex_options__.weex.document.URL || 'about:blank';
+    const bundleUrl = __weex_options__.bundleUrl || 'about:blank';
     const document = new Document(instanceId, bundleUrl);
     // 待确认这块从哪里获取
     const modules = {};
@@ -75,11 +61,7 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
       __weex_data__,
       // Weex
       callNative: () => {},
-      __weex_config__: __weex_options__,
-      // define: __weex_define__,
-      // __weex_define__,
-      // require: __weex_require__,
-      // __weex_require__
+      __weex_config__: __weex_options__
     };
 
     return instanceContext;

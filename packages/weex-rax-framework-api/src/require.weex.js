@@ -5,9 +5,10 @@ module.exports = function(modules, weex) {
     var mod = modules[name];
 
     // if retuire '@weex-module/'
-    if (name.split(MODULE_NAME_PREFIX) > 1) {
-      if (weex.supports(name)) {
-        return weex.requireModule(name);
+    if (name.split(MODULE_NAME_PREFIX).length > 1) {
+      const weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
+      if (weex.isRegisteredModule(weexModuleName)) {
+        return weex.requireModule(weexModuleName);
       } else {
         throw new Error(
           'Requiring unknown weex module "' + name + '"'

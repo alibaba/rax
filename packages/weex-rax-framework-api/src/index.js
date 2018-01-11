@@ -82,7 +82,7 @@ export function resetInstanceContext(instanceContext) {
   const {URL, URLSearchParams, FontFace, matchMedia} = shared;
   // let bundleUrl = __weex_options__.bundleUrl || 'about:blank';
 
-  if (!__weex_options__.bundleUrl) {
+  if (!bundleUrl) {
     console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
   } else if (!bundleUrl.split('//')[0]) {
     bundleUrl = 'https:' + bundleUrl;
