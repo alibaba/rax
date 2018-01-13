@@ -11,10 +11,11 @@ npm install --save-dev element-loader
 ## Usage
 
 Config loader in `webpack.config.js`:
+
 ```js
 // webpack.config.js
 
-module.export = {
+module.exports = {
   module: {
     loaders: [
       {
@@ -31,6 +32,7 @@ module.export = {
 ```
 
 Write in `.babelrc`:
+
 ```js
 {
   "presets": ["es2015", "react"]
@@ -38,6 +40,7 @@ Write in `.babelrc`:
 ```
 
 Input `Container.html`:
+
 ```html
 <link rel="import" href="./Hello.html" />
 
@@ -88,6 +91,7 @@ Input `Container.html`:
 ```
 
 Input `Hello.html`:
+
 ```html
 <link rel="stylesheet" href="./hello.css" />
 
@@ -97,20 +101,22 @@ Input `Hello.html`:
 ```
 
 Input `hello.css`:
+
 ```css
 .textMessage {
- color: red;
+  color: red;
 }
 ```
 
 Use react in `index.js`:
+
 ```js
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Container from './Container.html';
 
 ReactDOM.render(
-  <Container text="hello world" show={true} items={[1, 2, 3]}/>,
+  <Container text="hello world" show={true} items={[1, 2, 3]} />,
   document.getElementById('body')
 );
 ```
@@ -120,13 +126,14 @@ ReactDOM.render(
 Of cource, You also can use rax with es6.
 
 Use rax in `index.js`:
+
 ```js
 import { createElement, Component, render } from 'rax';
 import Container from './Container.html';
 
 class App extends Component {
   render() {
-    return <Container text="hello world" show={true} items={[1, 2, 3]}/>;
+    return <Container text="hello world" show={true} items={[1, 2, 3]} />;
   }
 }
 
@@ -134,8 +141,9 @@ render(<App />);
 ```
 
 Config `webpack.config.js`:
+
 ```js
-module.export = {
+module.exports = {
   module: {
     loaders: [
       {
@@ -151,8 +159,9 @@ module.export = {
 ```
 
 In `.babelrc`:
+
 ```js
-{ 
+{
   "presets": ["es2015", "rax"]
 }
 ```
@@ -164,12 +173,13 @@ In `.babelrc`:
 Code inserted into each element. You can use it in any framework(eg. rax、react、react-native...) by configuring this option.
 
 For example:
+
 ```js
 // webpack.config.js
 banner: `
   import { createElement, Component } from 'rax';
   import { View, Text, Link } from 'rax-components';
-`
+`;
 ```
 
 #### `babel`
@@ -179,7 +189,7 @@ option `babel` readed by default, If there is no written in query, We'll get dat
 ```js
 query: {
   babel: {
-    presets: ['es2015', 'rax']
+    presets: ['es2015', 'rax'];
   }
 }
 ```
@@ -189,13 +199,15 @@ query: {
 template engine option you can see [list](https://github.com/tj/consolidate.js).
 
 Config in `webpack.config.js`:
+
 ```js
 query: {
-  engine: 'jade'
+  engine: 'jade';
 }
 ```
 
 Write in html:
+
 ```html
 <template>
 div.header
@@ -205,10 +217,10 @@ div.header
 
 ## Directives
 
-- :for: repeat a array eg. "{{item in items}}"
-- :if:  show or hide eg. "{{x < 5}}"
+* :for: repeat a array eg. "{{item in items}}"
+* :if: show or hide eg. "{{x < 5}}"
 
 ## TODO
 
-- [x] compile script
-- [] support else、elif directive
+* [x] compile script
+* [] support else、elif directive
