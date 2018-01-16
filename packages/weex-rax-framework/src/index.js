@@ -65,7 +65,6 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
     };
 
     return instanceContext;
-
   } else {
     throw new Error(`Instance id "${instanceId}" existed when create instance`);
   }

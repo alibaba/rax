@@ -1,32 +1,43 @@
 // 'use strict';
 
-require('weex-runtime-js').freezePrototype();
-
-import { Runtime, Instance } from 'weex-vdom-tester';
-import { config, init } from 'weex-runtime-js';
 import * as framework from '../index';
 
-// init();
+let instanceContext = {
+  bundleUrl: 'http://example.com',
+  __weex_options__: {
+    weex: {
+      isRegisteredModule: () => {
+        return true;
+      },
+      // config: config || {},
+      // document: new Document(id, this.config.bundleUrl),
+      // requireModule: this.requireModule.bind(this),
+      // isRegisteredModule: isRegisteredModule,
+      // isRegisteredComponent: isRegisteredComponent,
+    },
+  }
+};
 
-// const { Document, Element, Comment } = config;
+global.callNative = () => { };
+global.WXEnvironment = {
+  'scale': 2,
+  'appVersion': '1.8.3',
+  'deviceModel': 'iPhone7,2',
+  'appName': 'WeexDemo',
+  'platform': 'iOS',
+  'osVersion': '9.3',
+  'weexVersion': '0.7.0',
+  'deviceHeight': 1334,
+  'deviceWidth': 750,
+  'logLevel': 'log',
+  ttid: '123456',
+  utdid: 'VXViP5AJ2Q0zCzWp0L',
+};
 
-// global.callNative = () => { };
-// global.WXEnvironment = {
-//   'scale': 2,
-//   'appVersion': '1.8.3',
-//   'deviceModel': 'iPhone7,2',
-//   'appName': 'WeexDemo',
-//   'platform': 'iOS',
-//   'osVersion': '9.3',
-//   'weexVersion': '0.7.0',
-//   'deviceHeight': 1334,
-//   'deviceWidth': 750,
-//   'logLevel': 'log',
-//   ttid: '123456',
-//   utdid: 'VXViP5AJ2Q0zCzWp0L',
-// };
+let window = framework.resetInstanceContext(instanceContext);
+console.log(window);
 
-// describe('framework', () => {
+describe('frameworkapi', () => {
 //   let instance;
 //   let runtime;
 //   let __weex_options__ = {
@@ -70,6 +81,190 @@ import * as framework from '../index';
 //     instance.$destroy();
 //     instance = null;
 //   });
+
+  it('window.Promise', () => {
+    let myFirstPromise = new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        resolve('hi');
+      }, 250);
+    });
+    myFirstPromise.then(function(successMessage) {
+      expect(successMessage).toEqual('hi');
+    });
+  });
+  it('window.Symbol', () => {
+    expect(typeof Symbol()).toEqual('symbol');
+  });
+  it('window.Map', () => {
+    var myMap = new Map();
+    myMap.set(NaN, 'not a number');
+    expect(myMap.get(NaN)).toEqual('not a number');
+  });
+  it('window.Set', () => {
+    let mySet = new Set();
+    mySet.add(1);
+    expect(mySet.has(1)).toEqual(true);
+  });
+  it('window.WeakMap', () => {
+    var wm = new WeakMap();
+    var o = {};
+    wm.set(o, 37);
+    expect(wm.get(o)).toEqual(37);
+  });
+  it('window.WeakSet', () => {
+    var ws = new WeakSet();
+    var obj = {};
+    ws.add(obj);
+    expect(ws.has(obj)).toEqual(true);
+  });
+
+  it('window.name', () => {
+    expect(window.name).toEqual('');
+  });
+
+  it('window.closed', () => {
+    expect(window.closed).toEqual(false);
+  });
+
+  it('window.atob', () => {
+    expect(window.atob('aGk=')).toEqual('hi');
+  });
+
+  it('window.btoa', () => {
+    expect(window.btoa('hi')).toEqual('aGk=');
+  });
+
+  it('window.performance', () => {
+    expect(window.performance.timing.unloadEventStart).toEqual(0);
+    expect(window.performance.timing.loadEventStart).toEqual(0);
+  });
+
+  it('window.location', () => {
+    expect(window.location.href).toEqual('http://example.com/');
+  });
+
+  it('window.navigator', () => {
+    expect(window.navigator.product).toEqual('Weex');
+    expect(window.navigator.platform).toEqual('iOS');
+    expect(window.navigator.appName).toEqual('WeexDemo');
+    expect(window.navigator.appVersion).toEqual('1.8.3');
+    expect(window.navigator.userAgent).toEqual('Weex/0.7.0 iOS/9.3 (iPhone7,2) WeexDemo/1.8.3');
+  });
+
+  it('window.screen', () => {
+    expect(window.screen.width).toEqual(750);
+    expect(window.screen.height).toEqual(1334);
+    expect(window.screen.availWidth).toEqual(750);
+    expect(window.screen.availHeight).toEqual(1334);
+    expect(window.screen.colorDepth).toEqual(24);
+    expect(window.screen.pixelDepth).toEqual(24);
+  });
+
+  it('window.location', () => {
+    expect(window.devicePixelRatio).toEqual(2);
+  });
+
+  // it('window.fetch', () => {
+  //   window.fetch('http://example.com').then(function(response) {
+  //     if (response.status != -1 && response.ok) {
+  //       console.log(1);
+  //       return response.json();
+  //     } else {
+  //       console.log(2);
+  //       return Promise.reject(response);
+  //     }
+  //   }).then(function (data) {
+  //     console.log('fetch response data', data);
+  //   });
+
+  //   expect(1).toEqual(2);
+  // });
+
+  it('window.Headers', () => {
+    var r = new window.Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}});
+    expect(r.headers instanceof window.Headers).toEqual(true);
+  });
+
+  it('window.Response', () => {
+    var res = new window.Response();
+    expect(res.status).toEqual(200);
+  });
+
+  it('window.Request request construct with url', () => {
+    var request = new window.Request('https://fetch.spec.whatwg.org/');
+    expect(request.url).toEqual('https://fetch.spec.whatwg.org/');
+  });
+
+  it('window.Request construct with Request and override headers', () => {
+    var request1 = new window.Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: 'I work out',
+      headers: {
+        accept: 'application/json',
+        'X-Request-ID': '123'
+      }
+    });
+    var request2 = new window.Request(request1, {
+      headers: { 'x-test': '42' }
+    });
+
+    var val1 = request2.headers.get('accept');
+    var val2 = request2.headers.get('x-request-id');
+    var val3 = request2.headers.get('x-test');
+
+    expect([val1, val2, val3]).toEqual([null, null, '42']);
+  });
+
+  // it('window.XMLHttpRequest', () => {
+
+  //   var xhr = new XMLHttpRequest();
+  //   xhr.open('GET', 'http://example.com');
+  //   xhr.send();
+
+  //   expect(xhr).toEqual(
+  //     {
+  //       url: 'http://example.com',
+  //       method: 'GET',
+  //       type: 'text',
+  //       headers: {}
+  //     }
+  //   );
+
+  //   instance.oncall('stream', 'fetch', mockFn);
+  //   instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+  //   expect(mockFn).toHaveBeenCalled();
+  // });
+
+
+//       XMLHttpRequest: { [Function: XMLHttpRequest] UNSENT: 0, OPENED: 1, HEADERS_RECEIVED: 2, LOADING: 3, DONE: 4 },
+//       URL: [Function: URL],
+//       URLSearchParams: [Function: URLSearchParams],
+//       FontFace: [Function: FontFace],
+//       WebSocket: { [Function: WebSocket] CONNECTING: 0, OPEN: 1, CLOSING: 2, CLOSED: 3 },
+//       Event: [Function: Event],
+//       CustomEvent: [Function: CustomEvent],
+//       matchMedia: [Function: matchMedia],
+//       setTimeout: [Function: setTimeout],
+//       clearTimeout: [Function: clearTimeout],
+//       setInterval: [Function: setInterval],
+//       clearInterval: [Function: clearInterval],
+//       requestAnimationFrame: [Function: requestAnimationFrame],
+//       cancelAnimationFrame: [Function: cancelAnimationFrame],
+//       setImmediate: [Function],
+//       clearImmediate: [Function],
+//       frameworkVersion: null,
+//       alert: [Function: alert],
+//       open: [Function: open],
+//       close: [Function: close],
+//       postMessage: [Function: postMessage],
+//       addEventListener: [Function: addEventListener],
+//       removeEventListener: [Function: removeEventListener],
+//       dispatchEvent: [Function: dispatchEvent],
+//       onerror: [Getter/Setter],
+//       define: [Function: define],
+//       require: [Function: require],
+//       callNative: [Function: callNative],
+
 
 //   it('weex only var', () => {
 //     const code = `
@@ -555,75 +750,6 @@ import * as framework from '../index';
 //     expect(mockFn).toHaveBeenCalled();
 //   });
 
-//   it('XMLHttpRequest data', () => {
-//     const code = `
-//       var xhr = new XMLHttpRequest();
-//       xhr.open('GET', 'http://example.com');
-//       xhr.send();
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual(
-//         {
-//           url: 'http://example.com',
-//           method: 'GET',
-//           type: 'text',
-//           headers: {}
-//         }
-//       );
-//     });
-
-//     instance.oncall('stream', 'fetch', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('fetch data', () => {
-//     const code = `
-//       fetch('http://example.com').then(function(response) {
-//         if (response.status != -1 && response.ok) {
-//           return response.json();
-//         } else {
-//           return Promise.reject(response);
-//         }
-//       }).then(function (data) {
-//         console.log('fetch response data', data);
-//       });
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual(
-//         {
-//           url: 'http://example.com',
-//           method: 'GET',
-//           type: 'text'
-//         }
-//       );
-//     });
-
-//     instance.oncall('stream', 'fetch', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('response default status is 200', () => {
-//     const code = `
-//       var res = new Response();
-//       alert(res.status);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 200
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
 
 //   it('response default statusText is OK', () => {
 //     const code = `
@@ -648,25 +774,6 @@ import * as framework from '../index';
 //     const code = `
 //       var res = new Response();
 //       alert(res.ok);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: true
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('creates Headers object from raw headers', () => {
-//     const code = `
-//       var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}});
-//       alert(r.headers instanceof Headers);
 //     `;
 
 //     const mockFn = jest.fn((args) => {
@@ -731,59 +838,6 @@ import * as framework from '../index';
 //     expect(mockFn).toHaveBeenCalled();
 //   });
 
-
-//   it('request construct with url', () => {
-//     const code = `
-//       var request = new Request('https://fetch.spec.whatwg.org/');
-//       alert(request.url);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'https://fetch.spec.whatwg.org/'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('construct with Request and override headers', () => {
-//     const code = `
-//       var request1 = new Request('https://fetch.spec.whatwg.org/', {
-//         method: 'post',
-//         body: 'I work out',
-//         headers: {
-//           accept: 'application/json',
-//           'X-Request-ID': '123'
-//         }
-//       });
-//       var request2 = new Request(request1, {
-//         headers: { 'x-test': '42' }
-//       });
-
-//       var val1 = request2.headers.get('accept');
-//       var val2 = request2.headers.get('x-request-id');
-//       var val3 = request2.headers.get('x-test');
-
-//       alert([val1, val2, val3]);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: [null, null, '42']
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
 
 //   it('setTimeout', () => {
 //     const code = `
@@ -918,4 +972,4 @@ import * as framework from '../index';
 //     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 //     expect(mockFn).toHaveBeenCalled();
 //   });
-// });
+});

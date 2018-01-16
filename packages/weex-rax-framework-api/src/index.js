@@ -100,7 +100,6 @@ export function resetInstanceContext(instanceContext) {
   require('./document.weex')(__weex_require__, document);
 
   const location = require('./location.weex')(__weex_require__, documentURL);
-
   const {
     fetch,
     Headers,
@@ -199,6 +198,15 @@ export function resetInstanceContext(instanceContext) {
     clearInterval,
     requestAnimationFrame,
     cancelAnimationFrame,
+    setImmediate: typeof setImmediate === 'function' && setImmediate ||
+      function(fn) {
+        setTimeout(fn, 0);
+      },
+    clearImmediate: typeof setImmediate === 'function' && setImmediate ||
+      function(id) {
+        clearTimeout(id);
+      },
+    frameworkVersion: null,
     alert: (message) => {
       const modal = __weex_require__(MODAL_MODULE);
       modal.alert({
