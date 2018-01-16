@@ -7,6 +7,7 @@ var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-plugin');
 var qrcode = require('qrcode-terminal');
 var internalIp = require('internal-ip');
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 var isProducation = process.env.NODE_ENV === 'production';
 
@@ -111,10 +112,8 @@ module.exports = {
         'PUBLIC_URL': JSON.stringify(publicUrl)
       }
     }),
-    isProducation ? new webpack.optimize.UglifyJsPlugin({
-      include: /\.min\.js$/,
-      minimize: true,
-      sourceMap: true
+    isProducation ? new UglifyJsPlugin({
+      include: /\.min\.js$/
     }) : new webpack.NoEmitOnErrorsPlugin(),
     // This is necessary to emit hot updates (currently CSS only):
     // new webpack.HotModuleReplacementPlugin(),
