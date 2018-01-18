@@ -272,8 +272,8 @@ export function resetInstanceContext(instanceContext) {
     // Weex
     callNative: () => {},
     __weex_document__,
-    __weex_module_supports__: __weex_supports__,
-    __weex_tag_supports__: __weex_supports__,
+    __weex_module_supports__: weex.isRegisteredModule,
+    __weex_tag_supports__: weex.isRegisteredComponent,
     __weex_define__,
     __weex_require__,
     __weex_downgrade__,

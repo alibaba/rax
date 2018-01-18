@@ -4,21 +4,55 @@ import * as framework from '../index';
 
 let instanceContext = {
   bundleUrl: 'http://example.com',
+  document: {
+    taskCenter: {
+      callbackManager: {
+        lastCallbackId: 0,
+      }
+    }
+  },
   __weex_options__: {
+    debug: true,
     weex: {
+      config: {},
+      requireModule: () => {
+        // mock
+        return {
+          error: () => {}, // nativeInstanceWrap
+          alert: () => {}, // modal
+          addEventListener: () => {}, // globalEvent
+          WebSocket: () => {}, // websocket
+          onmessage: () => {}, // websocket
+          onopen: () => {}, // websocket
+          onclose: () => {}, // websocket
+          onerror: () => {}, // websocket
+          setTimeout: (handler, time) => {
+            handler();
+          }, // timer
+          clearTimeout: (n) => {}, // timer
+          setInterval: (handler, time) => {
+            handler();
+          }, // timer
+          clearInterval: (n) => {}, // timer
+          push: () => {}, // weexNavigator
+          close: () => {}, // weexNavigator
+        };
+      },
       isRegisteredModule: () => {
         return true;
       },
-      // config: config || {},
-      // document: new Document(id, this.config.bundleUrl),
-      // requireModule: this.requireModule.bind(this),
-      // isRegisteredModule: isRegisteredModule,
-      // isRegisteredComponent: isRegisteredComponent,
+      isRegisteredComponent: () => {
+        return true;
+      },
     },
   }
 };
-
-global.callNative = () => { };
+global.BroadcastChannel = {
+  onmessage: (listener) => {
+    listener();
+  }
+};
+global.callNative = () => {};
 global.WXEnvironment = {
   'scale': 2,
   'appVersion': '1.8.3',
@@ -35,7 +69,6 @@ global.WXEnvironment = {
 };
 
 let window = framework.resetInstanceContext(instanceContext);
-console.log(window);
 
 describe('frameworkapi', () => {
 //   let instance;
@@ -82,6 +115,10 @@ describe('frameworkapi', () => {
 //     instance = null;
 //   });
 
+  /*
+    api test
+  */
+
   it('window.Promise', () => {
     let myFirstPromise = new Promise(function(resolve, reject) {
       setTimeout(function() {
@@ -92,25 +129,30 @@ describe('frameworkapi', () => {
       expect(successMessage).toEqual('hi');
     });
   });
+
   it('window.Symbol', () => {
     expect(typeof Symbol()).toEqual('symbol');
   });
+
   it('window.Map', () => {
     var myMap = new Map();
     myMap.set(NaN, 'not a number');
     expect(myMap.get(NaN)).toEqual('not a number');
   });
+
   it('window.Set', () => {
     let mySet = new Set();
     mySet.add(1);
     expect(mySet.has(1)).toEqual(true);
   });
+
   it('window.WeakMap', () => {
     var wm = new WeakMap();
     var o = {};
     wm.set(o, 37);
     expect(wm.get(o)).toEqual(37);
   });
+
   it('window.WeakSet', () => {
     var ws = new WeakSet();
     var obj = {};
@@ -164,21 +206,19 @@ describe('frameworkapi', () => {
     expect(window.devicePixelRatio).toEqual(2);
   });
 
-  // it('window.fetch', () => {
-  //   window.fetch('http://example.com').then(function(response) {
-  //     if (response.status != -1 && response.ok) {
-  //       console.log(1);
-  //       return response.json();
-  //     } else {
-  //       console.log(2);
-  //       return Promise.reject(response);
-  //     }
-  //   }).then(function (data) {
-  //     console.log('fetch response data', data);
-  //   });
+  it('window.fetch', () => {
+    window.fetch('http://example.com').then(function(response) {
+      if (response.status != -1 && response.ok) {
+        return response.json();
+      } else {
+        return Promise.reject(response);
+      }
+    }).then(function(data) {
+      expect(data).toEqual(null);
+      console.log('fetch response data', data);
+    });
 
-  //   expect(1).toEqual(2);
-  // });
+  });
 
   it('window.Headers', () => {
     var r = new window.Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}});
@@ -229,176 +269,192 @@ describe('frameworkapi', () => {
   //       headers: {}
   //     }
   //   );
+  // });
 
-  //   instance.oncall('stream', 'fetch', mockFn);
+
+  it('window.URL', () => {
+    var a = new window.URL('/', 'https://developer.mozilla.org'); // Creates a URL pointing to 'https://developer.mozilla.org/'
+    var b = new window.URL('https://developer.mozilla.org');      // Creates a URL pointing to 'https://developer.mozilla.org/'
+    var c = new window.URL('en-US/docs', b);                      // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var d = new window.URL('/en-US/docs', b);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var f = new window.URL('/en-US/docs', d);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var g = new window.URL('/en-US/docs', 'https://developer.mozilla.org/fr-FR/toto');
+                                                           // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var h = new window.URL('/en-US/docs', a);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var i = new window.URL('/en-US/docs', '');                    // Raises a SYNTAX ERROR exception as '/en-US/docs' is not valid
+    var j = new window.URL('/en-US/docs');                        // Raises a SYNTAX ERROR exception as 'about:blank/en-US/docs' is not valid
+    var k = new window.URL('http://www.example.com', 'https://developers.mozilla.com');
+                                                           // Creates a URL pointing to 'http://www.example.com/'
+    var l = new window.URL('http://www.example.com', b);          // Creates a URL pointing to 'http://www.example.com/'
+
+    alert(l.toString());
+    expect(l.toString()).toEqual('http://www.example.com/');
+  });
+
+  it('window.URL.searchParams', () => {
+    var params = (new window.URL('https://developer.mozilla.org?hello=world')).searchParams;
+    expect(params.get('hello')).toEqual('world');
+  });
+
+  it('window.URLSearchParams', () => {
+    var paramsString = 'q=URLUtils.searchParams&topic=api';
+    var searchParams = new window.URLSearchParams(paramsString);
+    searchParams.has('topic') === true; // true
+    searchParams.get('topic') === 'api'; // true
+    searchParams.getAll('topic'); // ["api"]
+    searchParams.get('foo') === null; // true
+    searchParams.append('topic', 'webdev');
+    searchParams.toString(); // "q=URLUtils.searchParams&topic=api&topic=webdev"
+    searchParams.set('topic', 'More webdev');
+    searchParams.toString(); // "q=URLUtils.searchParams&topic=More+webdev"
+    searchParams.delete('topic');
+    searchParams.toString(); // "q=URLUtils.searchParams"
+
+    expect(searchParams.toString()).toEqual('q=URLUtils.searchParams');
+  });
+
+  it('window.FontFace', () => {
+    var bitterFontFace = new window.FontFace('Bitter', 'url(https://fonts.gstatic.com/s/bitter/v7/HEpP8tJXlWaYHimsnXgfCOvvDin1pK8aKteLpeZ5c0A.woff2)');
+    expect(bitterFontFace.family).toEqual('Bitter');
+  });
+
+  it('window.WebSocket', () => {
+    const ws = new window.WebSocket('ws://echo.websocket.org');
+    expect(ws.readyState).toEqual(0);
+  });
+
+
+  it('window.CustomEvent', () => {
+    var ev = new window.CustomEvent('click', {
+      detail: 'custom'
+    });
+    expect(ev.type).toEqual('click');
+  });
+
+
+  it('window.matchMedia', () => {
+    var mql = window.matchMedia('(min-width: 400px)').matches;
+    expect(mql).toEqual(false);
+  });
+
+
+  it('window.setTimeout', () => {
+    const callback = jest.fn();
+    var id = window.setTimeout(callback, 10);
+    window.clearTimeout(id);
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it('window.setInterval', () => {
+    const callback = jest.fn();
+    var id = window.setInterval(callback, 10);
+    window.clearInterval(id);
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it('window.requestAnimationFrame', () => {
+    const callback = jest.fn();
+    var id = window.requestAnimationFrame(callback);
+    window.cancelAnimationFrame(id);
+    expect(callback).toHaveBeenCalled();
+  });
+
+  // it('window.setImmediate', () => {
+  //   const callback = jest.fn();
+  //   var id = window.setImmediate(() => {
+  //     callback();
+  //   });
+  //   window.clearImmediate(id);
+  //   expect(callback).toHaveBeenCalled();
+  // });
+
+  it('window.frameworkVersion', () => {
+    var frameworkVersion = window.frameworkVersion;
+    expect(frameworkVersion).toEqual(null);
+  });
+
+  it('window.alert', () => {
+    expect(typeof window.alert).toEqual('function');
+  });
+
+  it('window.open', () => {
+    expect(typeof window.open).toEqual('function');
+  });
+
+  it('window.close', () => {
+    expect(typeof window.close).toEqual('function');
+  });
+
+  // it('window.postMessage window.addEventListener', () => {
+  //   const callback = jest.fn();
+  //   window.addEventListener('message', callback);
+  //   window.postMessage({foo: 'foo'}, '*');
+  //   expect(callback).toHaveBeenCalled();
+  // });
+
+
+  it('window.onerror', () => {
+    const callback = jest.fn();
+    window.onerror = callback;
+    window.onerror();
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it('window.define', () => {
+    const callback = jest.fn();
+    window.define('hello', callback, callback);
+    const hello = window.require('hello');
+    expect(callback).toHaveBeenCalled();
+    expect(hello).toEqual({});
+  });
+
+  it('window.callNative', () => {
+    expect(typeof window.callNative).toEqual('function');
+  });
+
+
+  /*
+    more test
+  */
+
+  // it('weex only var', () => {
+  //   const code = `
+  //     alert(__weex_options__.debug)
+  //   `;
+
+  //   const mockFn = jest.fn((args) => {
+  //     expect(args).toEqual({
+  //       message: __weex_options__.debug
+  //     });
+  //   });
+
+  //   instance.oncall('modal', 'alert', mockFn);
   //   instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
+
   //   expect(mockFn).toHaveBeenCalled();
   // });
 
 
-//       XMLHttpRequest: { [Function: XMLHttpRequest] UNSENT: 0, OPENED: 1, HEADERS_RECEIVED: 2, LOADING: 3, DONE: 4 },
-//       URL: [Function: URL],
-//       URLSearchParams: [Function: URLSearchParams],
-//       FontFace: [Function: FontFace],
-//       WebSocket: { [Function: WebSocket] CONNECTING: 0, OPEN: 1, CLOSING: 2, CLOSED: 3 },
-//       Event: [Function: Event],
-//       CustomEvent: [Function: CustomEvent],
-//       matchMedia: [Function: matchMedia],
-//       setTimeout: [Function: setTimeout],
-//       clearTimeout: [Function: clearTimeout],
-//       setInterval: [Function: setInterval],
-//       clearInterval: [Function: clearInterval],
-//       requestAnimationFrame: [Function: requestAnimationFrame],
-//       cancelAnimationFrame: [Function: cancelAnimationFrame],
-//       setImmediate: [Function],
-//       clearImmediate: [Function],
-//       frameworkVersion: null,
-//       alert: [Function: alert],
-//       open: [Function: open],
-//       close: [Function: close],
-//       postMessage: [Function: postMessage],
-//       addEventListener: [Function: addEventListener],
-//       removeEventListener: [Function: removeEventListener],
-//       dispatchEvent: [Function: dispatchEvent],
-//       onerror: [Getter/Setter],
-//       define: [Function: define],
-//       require: [Function: require],
-//       callNative: [Function: callNative],
+  it('window is window.window', () => {
+    expect(window.window).toEqual(window);
+  });
 
+  it('self is window', () => {
+    expect(window.self).toEqual(window);
+  });
 
-//   it('weex only var', () => {
-//     const code = `
-//       alert(__weex_options__.debug)
-//     `;
+  // it('this is window', () => {
+  //   expect(window.this).toEqual(window);
+  // });
 
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: __weex_options__.debug
-//       });
-//     });
+  // it('window is global context', () => {
+  //   this.foo = 'foo';
+  //   expect(foo).toEqual('foo');
+  // });
 
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('render a text', () => {
-//     const code = `
-//       var Rax = require('rax');
-//       var createElement = Rax.createElement;
-//       var render = Rax.render;
-
-//       function Hello(){
-//         return createElement('text', {value: 'Hello'});
-//       }
-
-//       render(createElement(Hello));
-//     `;
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(instance.getRealRoot()).toEqual({
-//       type: 'div',
-//       children: [{ type: 'text', attr: { value: 'Hello' } }]
-//     });
-//   });
-
-//   it('alert message', () => {
-//     const code = `
-//       alert('Hello');
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'Hello'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('window is window.window', () => {
-//     const code = `
-//       alert(window === window.window);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: true
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('self is window', () => {
-//     const code = `
-//       alert(window === self);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: true
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('this is window', () => {
-//     const code = `
-//       alert(this === window);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: true
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('window is global context', () => {
-//     const code = `
-//       this.foo = 'foo';
-//       alert(foo);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'foo'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('run in strict mode', () => {
-//     const code = `
-//       a = 'throws ReferenceError';
-//     `;
-
-//     expect(function() {
-//       instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-//     }).toThrowError(/a is not defined/);
-//   });
+  // it('run in strict mode', () => {
+  //   expect((a = 'throws ReferenceError')).toThrowError(/a is not defined/);
+  // });
 
 //   it('run in Object.prototype freeze mode', () => {
 //     const code = `
@@ -436,62 +492,6 @@ describe('frameworkapi', () => {
 //     }).toThrowError(/Cannot assign to read only property/);
 //   });
 
-//   it('define a module', () => {
-//     const code = `
-//       define('alert-hello', function(){
-//         alert('Hello');
-//       });
-//       require('alert-hello');
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'Hello'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('atob', () => {
-//     const code = `
-//       alert(atob('Zm9v'));
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'foo'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('btoa', () => {
-//     const code = `
-//       alert(btoa('foo'));
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'Zm9v'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
 
 //   it('document', () => {
 //     const code = `
@@ -526,227 +526,6 @@ describe('frameworkapi', () => {
 
 //     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('location', () => {
-//     const code = `
-//       alert(location.origin);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'http://example.com'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('screen', () => {
-//     const code = `
-//       alert(screen.width);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 750
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('WebSocket', () => {
-//     const code = `
-//     const ws = new WebSocket('ws://echo.websocket.org');
-//     ws.onopen = function(ev){
-//       alert('hi');
-//     };
-//     ws.addEventListener('message', function(ev){
-//       alert(ev.data);
-//     });
-//     ws.send('Rock it with HTML5 WebSocket');
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual('Rock it with HTML5 WebSocket');
-//     });
-
-//     const alertMockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'hi'
-//       });
-//     });
-
-//     let messageCallbackId;
-//     const messageMockFn = jest.fn((funcId) => {
-//       messageCallbackId = funcId;
-//     });
-
-//     let openCallbackId;
-//     const openMockFn = jest.fn((funcId) => {
-//       openCallbackId = funcId;
-//     });
-
-//     instance.oncall('modal', 'alert', alertMockFn);
-//     instance.oncall('webSocket', 'onmessage', messageMockFn);
-//     instance.oncall('webSocket', 'onopen', openMockFn);
-//     instance.oncall('webSocket', 'send', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     instance.$callback(openCallbackId);
-//     instance.$callback(messageCallbackId, {
-//       data: 'hi'
-//     });
-
-//     expect(mockFn).toHaveBeenCalled();
-//     expect(messageMockFn).toHaveBeenCalled();
-//     expect(openMockFn).toHaveBeenCalled();
-//     expect(alertMockFn).toHaveBeenCalled();
-//   });
-
-//   it('CustomEvent', () => {
-//     const code = `
-//       var ev = new CustomEvent('click', {
-//         detail: 'custom'
-//       });
-//       alert(ev.type);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'click'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('FontFace', () => {
-//     const code = `
-//       var bitterFontFace = new FontFace('Bitter', 'url(https://fonts.gstatic.com/s/bitter/v7/HEpP8tJXlWaYHimsnXgfCOvvDin1pK8aKteLpeZ5c0A.woff2)');
-//       alert(bitterFontFace.family);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'Bitter'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('postMessage', () => {
-//     const code = `
-//       window.addEventListener('message', function(e){
-//         alert(JSON.stringify(e.data));
-//       });
-//       window.postMessage({foo: 'foo'}, '*');
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: JSON.stringify({ foo: 'foo' })
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('URL', () => {
-//     const code = `
-//     var a = new URL("/", "https://developer.mozilla.org"); // Creates a URL pointing to 'https://developer.mozilla.org/'
-//     var b = new URL("https://developer.mozilla.org");      // Creates a URL pointing to 'https://developer.mozilla.org/'
-//     var c = new URL('en-US/docs', b);                      // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-//     var d = new URL('/en-US/docs', b);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-//     var f = new URL('/en-US/docs', d);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-//     var g = new URL('/en-US/docs', "https://developer.mozilla.org/fr-FR/toto");
-//                                                            // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-//     var h = new URL('/en-US/docs', a);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-//     var i = new URL('/en-US/docs', '');                    // Raises a SYNTAX ERROR exception as '/en-US/docs' is not valid
-//     var j = new URL('/en-US/docs');                        // Raises a SYNTAX ERROR exception as 'about:blank/en-US/docs' is not valid
-//     var k = new URL('http://www.example.com', 'https://developers.mozilla.com');
-//                                                            // Creates a URL pointing to 'http://www.example.com/'
-//     var l = new URL('http://www.example.com', b);          // Creates a URL pointing to 'http://www.example.com/'
-
-//     alert(l.toString());
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'http://www.example.com/'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('URL.searchParams', () => {
-//     const code = `
-//     var params = (new URL("https://developer.mozilla.org?hello=world")).searchParams;
-//     alert(params.get('hello'));
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'world'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('URLSearchParams', () => {
-//     const code = `
-//     var paramsString = "q=URLUtils.searchParams&topic=api"
-//     var searchParams = new URLSearchParams(paramsString);
-//     searchParams.has("topic") === true; // true
-//     searchParams.get("topic") === "api"; // true
-//     searchParams.getAll("topic"); // ["api"]
-//     searchParams.get("foo") === null; // true
-//     searchParams.append("topic", "webdev");
-//     searchParams.toString(); // "q=URLUtils.searchParams&topic=api&topic=webdev"
-//     searchParams.set("topic", "More webdev");
-//     searchParams.toString(); // "q=URLUtils.searchParams&topic=More+webdev"
-//     searchParams.delete("topic");
-//     searchParams.toString(); // "q=URLUtils.searchParams"
-
-//     alert(searchParams.toString());
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: 'q=URLUtils.searchParams'
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
 //     expect(mockFn).toHaveBeenCalled();
 //   });
 
@@ -789,30 +568,16 @@ describe('frameworkapi', () => {
 //     expect(mockFn).toHaveBeenCalled();
 //   });
 
-//   it('deletes headers', () => {
-//     const code = `
-//       var headers = new Headers();
-//       headers.set('Content-Type', 'application/json');
-//       var trueValue = headers.has('Content-Type');
-//       headers.delete('Content-Type');
-//       var falseValue = headers.has('Content-Type');
-//       var nullValue = headers.get('Content-Type');
+  it('deletes headers', () => {
+    var headers = new window.Headers();
+    headers.set('Content-Type', 'application/json');
+    var trueValue = headers.has('Content-Type');
+    headers.delete('Content-Type');
+    var falseValue = headers.has('Content-Type');
+    var nullValue = headers.get('Content-Type');
 
-//       alert([trueValue, falseValue, nullValue]);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: [true, false, null]
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
+    expect([trueValue, falseValue, nullValue]).toEqual([true, false, null]);
+  });
 
 //   it('constructor copies headers', () => {
 //     const code = `
@@ -839,137 +604,28 @@ describe('frameworkapi', () => {
 //   });
 
 
-//   it('setTimeout', () => {
-//     const code = `
-//       var id = setTimeout(function(){}, 10);
-//       clearTimeout(id);
-//     `;
+  it('downgrade', () => {
+    let a = window.__weex_downgrade__({
+      ios: {
+        osVersion: '>1.0.0',
+        appVersion: '>1.0.0',
+        weexVersion: '>1.0.0',
+        deviceModel: ['modelA', 'modelB']
+      },
+      android: {
+        osVersion: '>1.0.0',
+        appVersion: '>1.0.0',
+        weexVersion: '>1.0.0',
+        deviceModel: ['modelA', 'modelB']
+      }
+    });
 
-//     const mockFn = jest.fn((arg1, arg2) => {
-//       expect(arg1).toEqual('1');
-//       expect(arg2).toEqual(10);
-//     });
-//     instance.oncall('timer', 'setTimeout', mockFn);
+    expect(a).toEqual(true);
+  });
 
-//     const mockFn2 = jest.fn((arg1) => {
-//       expect(arg1).toEqual('1');
-//     });
-//     instance.oncall('timer', 'clearTimeout', mockFn2);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//     expect(mockFn2).toHaveBeenCalled();
-//   });
-
-//   it('setInterval', () => {
-//     const code = `
-//       var id = setInterval(function(){}, 10);
-//       clearInterval(id);
-//     `;
-
-//     const mockFn1 = jest.fn((arg1, arg2) => {
-//       expect(arg1).toEqual('1');
-//       expect(arg2).toEqual(10);
-//     });
-//     instance.oncall('timer', 'setInterval', mockFn1);
-
-//     const mockFn2 = jest.fn((arg1) => {
-//       expect(arg1).toEqual('1');
-//     });
-//     instance.oncall('timer', 'clearInterval', mockFn2);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn1).toHaveBeenCalled();
-//     expect(mockFn2).toHaveBeenCalled();
-//   });
-
-//   it('requestAnimationFrame', () => {
-//     const code = `
-//       var id = requestAnimationFrame(function(){});
-//       cancelAnimationFrame(id);
-//     `;
-
-//     const mockFn1 = jest.fn((arg1, arg2) => {
-//       expect(arg1).toEqual('1');
-//       expect(arg2).toEqual(16);
-//     });
-//     instance.oncall('timer', 'setTimeout', mockFn1);
-
-//     const mockFn2 = jest.fn((arg1) => {
-//       expect(arg1).toEqual('1');
-//     });
-//     instance.oncall('timer', 'clearTimeout', mockFn2);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn1).toHaveBeenCalled();
-//     expect(mockFn2).toHaveBeenCalled();
-//   });
-
-//   it('downgrade', () => {
-//     const code = `
-//       __weex_downgrade__({
-//         ios: {
-//           osVersion: '>1.0.0',
-//           appVersion: '>1.0.0',
-//           weexVersion: '>1.0.0',
-//           deviceModel: ['modelA', 'modelB']
-//         },
-//         android: {
-//           osVersion: '>1.0.0',
-//           appVersion: '>1.0.0',
-//           weexVersion: '>1.0.0',
-//           deviceModel: ['modelA', 'modelB']
-//         }
-//       });
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual(1);
-//     });
-
-//     instance.oncall('instanceWrap', 'error', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('weex supports', () => {
-//     const code = `
-//       var moduleExisted = __weex_module_supports__('webSocket.send');
-//       var moduleNotexisted = __weex_module_supports__('webSocket.send2');
-
-//       var tagExisted = __weex_tag_supports__('div');
-//       var tagNotexisted = __weex_tag_supports__('divx');
-//       alert([moduleExisted, moduleNotexisted, tagExisted, tagNotexisted]);
-//     `;
-
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual({
-//         message: [true, false, true, false]
-//       });
-//     });
-
-//     instance.oncall('modal', 'alert', mockFn);
-
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-//     expect(mockFn).toHaveBeenCalled();
-//   });
-
-//   it('register window.onerror', () => {
-//     const code = `
-//       window.onerror = function(e){}
-//     `;
-//     const mockFn = jest.fn((args) => {
-//       expect(args).toEqual('exception');
-//     });
-
-//     instance.oncall('globalEvent', 'addEventListener', mockFn);
-//     instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-//     expect(mockFn).toHaveBeenCalled();
-//   });
+  it('weex supports', () => {
+    var moduleExisted = window.__weex_module_supports__('webSocket.send');
+    var tagExisted = window.__weex_tag_supports__('div');
+    expect([moduleExisted, tagExisted]).toEqual([true, true]);
+  });
 });
