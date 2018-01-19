@@ -6,7 +6,7 @@ Rax 是一个跨容器的渲染引擎。底层依赖各个容器的实现，所�
 
 ## 样式能力差异
 
-Rax 在上层除了很好的支持 Flexbox 之外，与 Weex 相同，仅支持这里枚举出来的样式属性：[通用样式规则](http://weex.alibaba-inc.com/cn/references/common-style.html)
+Rax 在上层除了很好的支持 Flexbox 之外，与 Weex 相同，仅支持这里枚举出来的样式属性：[通用样式规则](https://weex.apache.org/cn/references/common-style.html)
 
 ## 全局 API 差异
 
