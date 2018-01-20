@@ -476,7 +476,7 @@ URL.prototype = {
 
     return this.protocol +
         (this._isRelative ? '//' + authority + this.host : '') +
-        this.pathname + this._query + this._fragment;
+        this.pathname + '?' + this._query + this._fragment;
   },
   set href(href) {
     clear.call(this);
