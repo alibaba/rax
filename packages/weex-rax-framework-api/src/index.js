@@ -1,3 +1,4 @@
+/*global BroadcastChannel*/
 'use strict';
 
 import {ModuleFactories} from './builtin';
@@ -30,10 +31,6 @@ function genBuiltinModules(modules, moduleFactories, context) {
     };
   }
   return modules;
-}
-
-function __weex_supports__(name) {
-  return weex.supports(name);
 }
 
 export function injectContext() {
@@ -235,15 +232,22 @@ export function resetInstanceContext(instanceContext) {
       };
 
       if (typeof BroadcastChannel === 'function') {
-        const stack = new BroadcastChannel('massage' + instanceId);
-        stack.postMessage(event);
+        if (targetOrigin == '*') {
+          var stack = new BroadcastChannel('message');
+          stack.postMessage(event);
+        } else {
+          var stack = new BroadcastChannel('message' + targetOrigin);
+          stack.postMessage(event);
+        }
       }
     },
     addEventListener: (type, listener) => {
-      if (type === 'massage') {
+      if (type === 'message') {
         if (typeof BroadcastChannel === 'function') {
-          const stack = new BroadcastChannel('massage' + instanceId);
-          stack.onmessage(listener);
+          var stack = new BroadcastChannel('message');
+          var thisStack = new BroadcastChannel('message' + bundleUrl);
+          stack.onmessage = (e) => {listener(e.data)};
+          thisStack.onmessage = (e) => {listener(e.data)};
         }
       } else {
         windowEmitter.on(type, listener);
@@ -278,7 +282,7 @@ export function resetInstanceContext(instanceContext) {
     __weex_require__,
     __weex_downgrade__,
     __weex_env__,
-    // __weex_code__,
+    __weex_code__: '',
     __weex_options__,
     __weex_data__,
     __weex_config__

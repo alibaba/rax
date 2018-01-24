@@ -58,7 +58,7 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
       document,
       __weex_document__: document,
       __weex_options__,
-      __weex_data__,
+      __weex_data__: __weex_data__ || {},
       // Weex
       callNative: () => {},
       __weex_config__: __weex_options__
