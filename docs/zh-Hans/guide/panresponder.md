@@ -77,7 +77,7 @@ this._panResponder = PanResponder.create({
 #### 示例
 
 ```javascript
-import {createElement, Component, render, findDOMNode} from 'rax';
+import {createElement, Component, render, findDOMNode, setNativeProps} from 'rax';
 import View from 'rax-view';
 import PanResponder from 'universal-panresponder';
 
@@ -92,7 +92,7 @@ const styles = {
     borderRadius: CIRCLE_SIZE / 2,
     backgroundColor: CIRCLE_COLOR,
     position: 'absolute',
-    left: 0,
+    left: 50,
     top: 0,
   },
   container: {
@@ -131,9 +131,7 @@ class PanResponderSample extends Component {
       <View
         style={styles.container}>
         <View
-          ref={(circle) => {
-            this.circle = circle;
-          }}
+          ref='circle'
           style={styles.circle}
           {...this._panResponder.panHandlers}
         />
@@ -142,8 +140,8 @@ class PanResponderSample extends Component {
   }
 
   _highlight () {
-    if (this.circle && this.circle.setNativeProps) {
-      this.circle.setNativeProps({
+    if (this.refs.circle) {
+      setNativeProps(this.refs.circle, {
         style: {
           backgroundColor: CIRCLE_HIGHLIGHT_COLOR
         }
@@ -152,9 +150,8 @@ class PanResponderSample extends Component {
   }
 
   _unHighlight () {
-
-    if (this.circle && this.circle.setNativeProps) {
-      this.circle.setNativeProps({
+    if (this.refs.circle) {
+      setNativeProps(this.refs.circle, {
         style: {
           backgroundColor: CIRCLE_COLOR
         }
@@ -163,8 +160,8 @@ class PanResponderSample extends Component {
   }
 
   _updatePosition () {
-    if (this.circle && this.circle.setNativeProps) {
-      this.circle.setNativeProps(this._circleStyles);
+    if (this.refs.circle) {
+      setNativeProps(this.refs.circle, this._circleStyles);
     }
   }
 
