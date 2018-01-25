@@ -1,6 +1,6 @@
 {
   "name": "rax-test-renderer",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Rax renderer for snapshot testing.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
