@@ -1,4 +1,4 @@
-/*global BroadcastChannel*/
+/* global BroadcastChannel */
 'use strict';
 
 import {ModuleFactories} from './builtin';
@@ -246,8 +246,12 @@ export function resetInstanceContext(instanceContext) {
         if (typeof BroadcastChannel === 'function') {
           var stack = new BroadcastChannel('message');
           var thisStack = new BroadcastChannel('message' + bundleUrl);
-          stack.onmessage = (e) => {listener(e.data)};
-          thisStack.onmessage = (e) => {listener(e.data)};
+          stack.onmessage = (e) => {
+            listener(e.data);
+          };
+          thisStack.onmessage = (e) => {
+            listener(e.data);
+          };
         }
       } else {
         windowEmitter.on(type, listener);

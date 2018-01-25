@@ -217,7 +217,6 @@ describe('frameworkapi', () => {
       expect(data).toEqual(null);
       console.log('fetch response data', data);
     });
-
   });
 
   it('window.Headers', () => {

@@ -1,4 +1,4 @@
-/*global define,callNative*/
+/* global define,callNative */
 /* Weex JS Runtime 0.23.6, Build 2018-01-04 13:39. */
 
 import {ModuleFactories} from './builtin';
