@@ -18,7 +18,7 @@ npm install
 npm start
 ```
 
-然后在浏览器中打开 [http://localhost:8080](http://localhost:8080) 预览。
+然后在浏览器中打开预览。
 
 ### 构建
 
