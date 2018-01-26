@@ -18,8 +18,6 @@ npm install
 npm start
 ```
 
-然后在浏览器中打开预览。
-
 ### 构建
 
 ```bash

@@ -6,7 +6,7 @@
 
 ## 使用说明
 
-### 安装 依赖
+### 安装依赖
 
 ```bash
 npm install
@@ -18,4 +18,8 @@ npm install
 npm run start
 ```
 
--然后在浏览器中打开[http://localhost:8080](http://localhost:8080)预览。
+### 构建
+
+```bash
+npm run build
+```
