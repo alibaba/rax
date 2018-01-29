@@ -27,6 +27,7 @@
     "istanbul-api": "^1.0.0-aplha.10",
     "istanbul-lib-coverage": "^1.0.0",
     "jest": "^20.0.4",
+    "jest-localstorage-mock": "^2.2.0",
     "lerna": "2.0.0-rc.5",
     "minimatch": "^3.0.3",
     "minimist": "^1.2.0",
@@ -34,8 +35,8 @@
     "redux": "^3.6.0",
     "rimraf": "^2.5.4",
     "semver-regex": "^1.0.0",
-    "uppercamelcase": "^1.1.0",
     "uglifyjs-webpack-plugin": "^1.1.4",
+    "uppercamelcase": "^1.1.0",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.5.0"
   },
@@ -112,7 +113,8 @@
     "collectCoverage": true,
     "verbose": true,
     "setupFiles": [
-      "./scripts/jest.js"
+      "./scripts/jest.js",
+      "jest-localstorage-mock"
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
