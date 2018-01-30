@@ -8,12 +8,12 @@
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^0.5.1",
-    "rax-view": "^0.5.1",
-    "rax-text": "^0.5.1"
+    "rax": "^0.5.2",
+    "rax-view": "^0.5.2",
+    "rax-text": "^0.5.2"
   },
   "devDependencies": {
-    "rax-scripts": "^0.5.1",
+    "rax-scripts": "^0.5.2",
     "babel-eslint": "^7.1.0",
     "eslint": "^3.10.0"
   }
