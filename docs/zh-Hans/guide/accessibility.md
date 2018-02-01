@@ -40,7 +40,7 @@
 * ListView
 * Cell
 * Slider
-...
+* ...
 
 添加 `accessible={true}` 属性，可以强制使组件能够获得焦点。同时，容器组件包含的子组件将无法获得焦点。
 
