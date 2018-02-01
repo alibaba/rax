@@ -2,7 +2,7 @@ import {Component, createElement, findDOMNode} from 'rax';
 import {isWeex, isWeb} from 'universal-env';
 import View from 'rax-view';
 import RefreshControl from 'rax-refreshcontrol';
-import Timer from 'animation-util';
+import Timer from './timer';
 
 const DEFAULT_END_REACHED_THRESHOLD = 500;
 const DEFAULT_SCROLL_CALLBACK_THROTTLE = 50;

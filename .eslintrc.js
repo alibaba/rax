@@ -52,6 +52,7 @@ module.exports = {
     "__weex_require__": true,
     "WXEnvironment": true,
     "webkitRequestAnimationFrame": true,
+    "webkitCancelAnimationFrame": true,
     "jasmine": true
   },
 
