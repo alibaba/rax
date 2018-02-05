@@ -40,33 +40,14 @@ describe('framework', () => {
   };
 
   beforeEach(() => {
-    // Create a Weex JavaScript runtime for a certain Weex JS framework.
-    // You can also simulate the native environment which includes
-    // global env variables, native modules & components.
+
     Document.handler = sendTasks;
     framework.init({ Document, Element, Comment });
 
-    // framework.registerModules({
-    //   webSocket: ['addEventListener', 'removeAllEventListeners', 'onopen', 'onerror', 'send', 'onmessage', 'close', 'onclose', 'WebSocket'],
-    //   geolocation: ['addEventListener', 'removeAllEventListeners', 'getCurrentPosition', 'watchPosition', 'clearWatch'],
-    //   audio: ['addEventListener', 'removeAllEventListeners', 'canPlayType', 'stop', 'pause', 'load', 'play', 'setVolume'],
-    //   picker: ['addEventListener', 'removeAllEventListeners', 'pickTime', 'pickDate', 'pick'],
-    //   globalEvent: ['addEventListener', 'removeEventListener'],
-    // });
-
-    // framework.registerComponents(['div', 'video']);
-    // sendTasksHandler = function() {
-    //   // runtime.target.callNative(...arguments);
-    //   // FIXME: Hack for should return value like setTimeout
-    //   return '1';
-    // };
-    // Create a Weex instance in a certain runtime.
-    // instance = new Instance(runtime);
   });
 
   afterEach(() => {
     delete Document.handler;
-    // instance.$destroy();
     instance = null;
   });
 
@@ -106,26 +87,8 @@ describe('framework', () => {
     expect(context.getRoot(1)).toEqual({
       type: 'div',
       ref: '_root',
-      children: [{ type: 'text', ref: '10', attr: { value: 'Hello' } }]
+      children: [{ type: 'text', ref: '8', attr: { value: 'Hello' } }]
     });
   });
 
-
-  // it('document', () => {
-  //   const code = `
-  //     alert(document.URL);
-  //   `;
-
-  //   const mockFn = jest.fn((args) => {
-  //     expect(args).toEqual({
-  //       message: 'http://example.com'
-  //     });
-  //   });
-
-  //   instance.oncall('modal', 'alert', mockFn);
-
-  //   instance.$create(code, __weex_callbacks__, __weex_options__, __weex_data__);
-
-  //   expect(mockFn).toHaveBeenCalled();
-  // });
 });
