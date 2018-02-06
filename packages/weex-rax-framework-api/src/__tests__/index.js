@@ -71,7 +71,6 @@ global.WXEnvironment = {
 let window = framework.resetInstanceContext(instanceContext);
 
 describe('frameworkapi', () => {
-
   /*
     api test
   */

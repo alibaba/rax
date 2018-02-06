@@ -40,10 +40,8 @@ describe('framework', () => {
   };
 
   beforeEach(() => {
-
     Document.handler = sendTasks;
     framework.init({ Document, Element, Comment });
-
   });
 
   afterEach(() => {
@@ -90,5 +88,4 @@ describe('framework', () => {
       children: [{ type: 'text', ref: '8', attr: { value: 'Hello' } }]
     });
   });
-
 });
