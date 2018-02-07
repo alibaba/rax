@@ -7,7 +7,7 @@ import Timer from './timer';
 const DEFAULT_END_REACHED_THRESHOLD = 500;
 const DEFAULT_SCROLL_CALLBACK_THROTTLE = 50;
 const FULL_WIDTH = 750;
-
+const STYLE_NODE_ID = 'rax-scrollview-style';
 
 class ScrollView extends Component {
 
@@ -225,10 +225,9 @@ class ScrollView extends Component {
       if (scrollEventThrottle) {
         handleScroll = throttle(handleScroll, scrollEventThrottle);
       }
-
-      if (!showsScrollIndicator && typeof document !== 'undefined' && !document.getElementById('rax-scrollview-style')) {
+      if (!showsScrollIndicator && typeof document !== 'undefined' && !document.getElementById(STYLE_NODE_ID)) {
         let styleNode = document.createElement('style');
-        styleNode.id = 'rax-scrollview-style';
+        styleNode.id = STYLE_NODE_ID;
         document.head.appendChild(styleNode);
         styleNode.innerHTML = `.${this.props.className}::-webkit-scrollbar{display: none;}`;
       }
