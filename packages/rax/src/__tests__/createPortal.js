@@ -46,7 +46,6 @@ describe('createPortal', () => {
 
     expect(container.childNodes.length).toBe(0);
     expect(portalContainer.childNodes.length).toBe(0);
-
   });
 
 
@@ -126,5 +125,4 @@ describe('createPortal', () => {
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
-
 });

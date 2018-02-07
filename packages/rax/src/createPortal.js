@@ -8,7 +8,7 @@ class Portal extends Component {
     super(props, context);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.renderPortal();
   }
 

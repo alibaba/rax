@@ -5,7 +5,7 @@ export default function createContext(defaultValue) {
   let updaters = [];
 
   class Provider extends Component {
-    render () {
+    render() {
       const props = this.props;
       if (currentValue !== props.value) {
         currentValue = props.value;
@@ -16,7 +16,7 @@ export default function createContext(defaultValue) {
   }
 
   class Consumer extends Component {
-    componentDidMount () {
+    componentDidMount() {
       updaters.push(() => this.forceUpdate());
     }
     render() {

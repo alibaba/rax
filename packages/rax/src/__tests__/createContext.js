@@ -35,7 +35,6 @@ describe('createContext', () => {
     const Context = createContext(1);
 
     function Consumer(props) {
-
       return (
         <Context.Consumer>
           {value => <span>{value}</span>}
@@ -124,5 +123,4 @@ describe('createContext', () => {
     // expect(container.childNodes[0].childNodes[0].data).toEqual('8');
     // expect(container.childNodes[1].childNodes[0].data).toEqual('8');
   });
-
 });
