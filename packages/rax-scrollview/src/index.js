@@ -226,7 +226,7 @@ class ScrollView extends Component {
         handleScroll = throttle(handleScroll, scrollEventThrottle);
       }
 
-      if (!showsScrollIndicator && !document.getElementById('rax-scrollview-style')) {
+      if (!showsScrollIndicator && typeof document !== 'undefined' && !document.getElementById('rax-scrollview-style')) {
         let styleNode = document.createElement('style');
         styleNode.id = 'rax-scrollview-style';
         document.head.appendChild(styleNode);
