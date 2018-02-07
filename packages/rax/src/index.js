@@ -7,6 +7,7 @@ export PureComponent from './purecomponent';
 export PropTypes from './proptypes';
 export render from './render';
 export hydrate from './hydrate';
+export createPortal from './createPortal';
 export findDOMNode from './findDOMNode';
 export unmountComponentAtNode from './unmountComponentAtNode';
 export findComponentInstance from './findComponentInstance';
