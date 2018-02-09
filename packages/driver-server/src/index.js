@@ -5,7 +5,7 @@ const ID = 'id';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
-const EVENT_PREFIX_REGEXP = /on[A-Z]/;
+const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;

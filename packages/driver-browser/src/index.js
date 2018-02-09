@@ -12,7 +12,7 @@ const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
-const EVENT_PREFIX_REGEXP = /on[A-Z]/;
+const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
