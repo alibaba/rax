@@ -33,11 +33,11 @@ export default class Modal extends Component {
   };
 
   height = 0;
-  
+
 
   animated = (state, callback) => {
     const {visible} = state;
-    const {delay, duration} = this.props
+    const {delay, duration} = this.props;
     transition(findDOMNode(this.refs.mask), {
       opacity: visible === true ? 1 : 0
     }, {
@@ -47,7 +47,6 @@ export default class Modal extends Component {
     }, () => {
       callback && callback();
     });
-
   }
 
   show() {
@@ -55,7 +54,7 @@ export default class Modal extends Component {
       visible: true,
       visibility: 'visible'
     };
-    this.setState
+    this.setState;
     this.setState(
       currentState,
       () => this.animated(currentState, () => this.props.onShow && this.props.onShow(currentState))
@@ -122,7 +121,7 @@ export default class Modal extends Component {
           maskCanBeClick && this.hide();
         }}
         style={{
-          ...styles.mask, 
+          ...styles.mask,
           height: this.height,
           visibility: this.state.visibility,
         }}
@@ -132,7 +131,7 @@ export default class Modal extends Component {
             if (isWeb) {
               e.stopPropagation && e.stopPropagation();
             }
-          }} 
+          }}
           style={[styles.main, contentStyle]}
         >
           {children}
