@@ -11,8 +11,8 @@ class ValueEmitter {
     this.handlers.push(handler);
   }
 
-  off() {
-    handlers = this.handlers.filter(h => h !== handler);
+  off(handler) {
+    this.handlers = this.handlers.filter(h => h !== handler);
   }
 
   emit(value) {
@@ -24,7 +24,6 @@ class ValueEmitter {
 let uniqueId = 0;
 
 export default function createContext(defaultValue) {
-
   const contextProp = '__context_' + uniqueId++ + '__';
 
   class Provider extends Component {
