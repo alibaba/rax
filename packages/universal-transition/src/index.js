@@ -22,7 +22,7 @@ export default function transition(node, styles, options, callback) {
       timingFunction: options.timingFunction || 'linear',
       delay: options.delay || 0,
       duration: options.duration || 0,
-      // needLayout: options.needLayout || 
+      needLayout: options.needLayout || false
     }, callback || function() {});
   } else if (isWeb) {
     const duration = options.duration || 0; // ms
