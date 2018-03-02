@@ -63,14 +63,14 @@ export default class Day extends Component {
     } = this.props;
 
     return filler
-    ?
-        <Touchable>
-          <View style={[styles.dayButtonFiller, customStyle.dayButtonFiller]}>
-            <Text style={[styles.day, customStyle.day]} />
-          </View>
-        </Touchable>
+      ?
+      <Touchable>
+        <View style={[styles.dayButtonFiller, customStyle.dayButtonFiller]}>
+          <Text style={[styles.day, customStyle.day]} />
+        </View>
+      </Touchable>
 
-    :
+      :
       <Touchable onPress={!isDisabled && this.props.onPress}>
         <View style={[styles.dayButton, customStyle.dayButton]}>
           <View style={this.dayCircleStyle(isWeekend, isSelected, isToday)}>

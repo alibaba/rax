@@ -8,7 +8,6 @@ const STATUS = {
 };
 
 class Link extends Component {
-
   constructor() {
     super();
 

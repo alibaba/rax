@@ -47,20 +47,14 @@ class Canopy extends PureComponent {
     return [
       <Image key="canopy" style={styles.image} source={{ uri: CANOPY_IMAGE_URL }} />,
       <View key="navbar" style={styles.header}>
-        <View style={styles.iconWrapper} onClick={function() {
-          onScan();
-        }} >
+        <View style={styles.iconWrapper} onClick={onScan} >
           <Image style={styles.scan} source={{ uri: SCAN_IMAGE_URL }} />
         </View>
-        <View style={styles.searchbar} onClick={function() {
-          onSearch();
-        }}>
+        <View style={styles.searchbar} onClick={onSearch}>
           <Image style={styles.searchIcon} source={{ uri: SEARCH_IMAGE_URL }} />
           {this.renderPlaceholder()}
         </View>
-        <View style={styles.iconWrapper} onClick={function() {
-          onMessage();
-        }}>
+        <View style={styles.iconWrapper} onClick={onMessage}>
           <Image style={styles.message} source={{ uri: MESSAGE_IMAGE_URL }} />
           {messageNum > 0 ? <Text style={styles.newMessage}>{this.formatMessageNum(messageNum)}</Text> : null}
         </View>

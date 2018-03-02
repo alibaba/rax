@@ -27,8 +27,8 @@ var TouchHistoryMath = {
       if (oneTouchData.touchActive && oneTouchData.currentTimeStamp > touchesChangedAfter) {
         total += ofCurrent && isXAxis ? oneTouchData.currentPageX :
           ofCurrent && !isXAxis ? oneTouchData.currentPageY :
-          !ofCurrent && isXAxis ? oneTouchData.previousPageX :
-          oneTouchData.previousPageY;
+            !ofCurrent && isXAxis ? oneTouchData.previousPageX :
+              oneTouchData.previousPageY;
         count = 1;
       }
     } else {
@@ -38,7 +38,7 @@ var TouchHistoryMath = {
             touchTrack !== undefined &&
             touchTrack.touchActive &&
             touchTrack.currentTimeStamp >= touchesChangedAfter) {
-          var toAdd;  // Yuck, program temporarily in invalid state.
+          var toAdd; // Yuck, program temporarily in invalid state.
           if (ofCurrent && isXAxis) {
             toAdd = touchTrack.currentPageX;
           } else if (ofCurrent && !isXAxis) {
@@ -60,8 +60,8 @@ var TouchHistoryMath = {
     return TouchHistoryMath.centroidDimension(
       touchHistory,
       touchesChangedAfter,
-      true,  // isXAxis
-      true   // ofCurrent
+      true, // isXAxis
+      true // ofCurrent
     );
   },
 
@@ -69,8 +69,8 @@ var TouchHistoryMath = {
     return TouchHistoryMath.centroidDimension(
       touchHistory,
       touchesChangedAfter,
-      false,  // isXAxis
-      true    // ofCurrent
+      false, // isXAxis
+      true // ofCurrent
     );
   },
 
@@ -78,8 +78,8 @@ var TouchHistoryMath = {
     return TouchHistoryMath.centroidDimension(
       touchHistory,
       touchesChangedAfter,
-      true,  // isXAxis
-      false  // ofCurrent
+      true, // isXAxis
+      false // ofCurrent
     );
   },
 
@@ -87,26 +87,26 @@ var TouchHistoryMath = {
     return TouchHistoryMath.centroidDimension(
       touchHistory,
       touchesChangedAfter,
-      false,  // isXAxis
-      false   // ofCurrent
+      false, // isXAxis
+      false // ofCurrent
     );
   },
 
   currentCentroidX: function(touchHistory) {
     return TouchHistoryMath.centroidDimension(
       touchHistory,
-      0,     // touchesChangedAfter
-      true,  // isXAxis
-      true   // ofCurrent
+      0, // touchesChangedAfter
+      true, // isXAxis
+      true // ofCurrent
     );
   },
 
   currentCentroidY: function(touchHistory) {
     return TouchHistoryMath.centroidDimension(
       touchHistory,
-      0,     // touchesChangedAfter
-      false,  // isXAxis
-      true    // ofCurrent
+      0, // touchesChangedAfter
+      false, // isXAxis
+      true // ofCurrent
     );
   },
 

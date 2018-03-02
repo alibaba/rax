@@ -5,7 +5,6 @@ import Link from 'rax-link';
 import Picture from 'rax-picture';
 
 class Card extends Component {
-
   render() {
     let {
       title,

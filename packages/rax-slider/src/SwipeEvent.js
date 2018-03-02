@@ -11,7 +11,6 @@ const directions = {
 };
 
 class SwipeEvent extends Component {
-
   constructor(props) {
     super(props);
     this.state = {

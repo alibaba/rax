@@ -7,7 +7,6 @@ const BOTTOM_COLOR = '#666666';
 const DISABLE_BOTTOM_COLOR = '#a1a1a1';
 
 class Counter extends Component {
-
   constructor(props) {
     super(props);
     this.state = {

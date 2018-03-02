@@ -10,16 +10,16 @@ const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 const user = process.argv[2];
 
 fs.readdirSync(PACKAGES_DIR)
-.forEach(function(packageName) {
-  var packageJSON = require(path.join(PACKAGES_DIR, packageName, 'package.json'));
-  if (packageJSON.private) {
-    return console.log('Skip private package:', packageName);
-  }
-
-  execSync(
-    'npm owner add ' + user + ' ' + packageName,
-    {
-      stdio: 'inherit'
+  .forEach(function(packageName) {
+    var packageJSON = require(path.join(PACKAGES_DIR, packageName, 'package.json'));
+    if (packageJSON.private) {
+      return console.log('Skip private package:', packageName);
     }
-  );
-});
+
+    execSync(
+      'npm owner add ' + user + ' ' + packageName,
+      {
+        stdio: 'inherit'
+      }
+    );
+  });

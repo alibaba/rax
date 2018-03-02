@@ -11,7 +11,6 @@ import styles from './App.css';
 import data from './data';
 
 class App extends Component {
-
   render() {
     return (
       <Page>
@@ -41,7 +40,7 @@ class App extends Component {
                 </View>
               );
             }
-          } />
+            } />
         </View>
 
 
@@ -93,14 +92,13 @@ class App extends Component {
                 </View>
               );
             }
-          } />
+            } />
         </View>
 
 
       </Page>
     );
   }
-
 }
 
 export default App;

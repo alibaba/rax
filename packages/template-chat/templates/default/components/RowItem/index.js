@@ -5,7 +5,6 @@ import Image from 'rax-image';
 import styles from './style.css';
 
 export default class RowItem extends Component {
-
   render() {
     const { title, icon } = this.props;
     return (

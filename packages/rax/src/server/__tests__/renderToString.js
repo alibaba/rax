@@ -98,7 +98,6 @@ describe('Server renderToString', () => {
 
   it('renders with lifecycle methods', () => {
     class MyComponent extends Component {
-
       stage = '';
       state = {};
 

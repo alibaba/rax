@@ -4,7 +4,6 @@ import View from 'rax-view';
 const PAGE_ID = 'rax-page';
 
 class Page extends PureComponent {
-
   render() {
     let style = {
       position: 'absolute',

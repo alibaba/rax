@@ -62,7 +62,6 @@ class TextAreaDemo extends Component {
 }
 
 class TextInputDemo extends Component {
-
   state = {
     value: 'I am value',
     curText: '<No Event>',
@@ -124,7 +123,7 @@ class TextInputDemo extends Component {
               borderColor: '#dddddd',
               borderStyle: 'solid',
             }}
-            />
+          />
 
           <Button
             style={{

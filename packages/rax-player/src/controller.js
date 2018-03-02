@@ -63,7 +63,7 @@ class Controller extends Component {
       }} totalTime={this.props.totalTime} currentTime={this.props.currentTime} />
       { this.props.hasFullScreen ? <View onClick={this.fullScreen} style={styles.iconContainer}>
         <Icon style={styles.fullScreen} source={{uri: fullScreenImage}} />
-        </View> : null
+      </View> : null
       }
     </View>;
   }

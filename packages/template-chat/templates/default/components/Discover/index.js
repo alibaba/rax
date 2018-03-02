@@ -35,11 +35,11 @@ const data = [
   [{ title: '朋友圈', icon: { uri: require('../../images/pengyouquan.png') }}],
 
   [{ title: '扫一扫', icon: { uri: require('../../images/scanning.png') }},
-  { title: '摇一摇', icon: { uri: require('../../images/shake.png') }}],
+    { title: '摇一摇', icon: { uri: require('../../images/shake.png') }}],
 
   [{ title: '附近的人', icon: { uri: require('../../images/nearby.png') }},
-  { title: '漂流瓶', icon: { uri: require('../../images/bottle.png') }}],
+    { title: '漂流瓶', icon: { uri: require('../../images/bottle.png') }}],
 
   [{ title: '购物', icon: { uri: require('../../images/shopping.png') }},
-  { title: '游戏', icon: { uri: require('../../images/game.png') }}],
+    { title: '游戏', icon: { uri: require('../../images/game.png') }}],
 ];

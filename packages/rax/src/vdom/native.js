@@ -182,7 +182,7 @@ class NativeComponent {
       let nextProp = nextProps[propKey];
       let prevProp =
         propKey === STYLE ? this._prevStyleCopy :
-        prevProps != null ? prevProps[propKey] : undefined;
+          prevProps != null ? prevProps[propKey] : undefined;
       if (propKey === CHILDREN ||
         !nextProps.hasOwnProperty(propKey) ||
         nextProp === prevProp ||
@@ -288,7 +288,7 @@ class NativeComponent {
         let prevElement = prevChild && prevChild._currentElement;
 
         if (prevChild != null && shouldUpdateComponent(prevElement,
-            nextElement)) {
+          nextElement)) {
           // Pass the same context when updating chidren
           prevChild.updateComponent(prevElement, nextElement, context,
             context);

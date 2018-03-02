@@ -9,7 +9,6 @@ import styles from './sliderStyle';
 * rax-slider h5 version
 **/
 export default class Slide extends Component {
-
   static propTypes = {
     onChange: PropTypes.func,
     paginationStyle: PropTypes.object
@@ -228,7 +227,7 @@ export default class Slide extends Component {
           {pages}
         </View>
       </SwipeEvent>
-     :
+      :
       <View ref="swipeView" style={[styles.swipeStyle, style]}>
         {pages}
       </View>

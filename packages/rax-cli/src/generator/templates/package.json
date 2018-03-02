@@ -14,7 +14,8 @@
   },
   "devDependencies": {
     "rax-scripts": "^0.5.2",
-    "babel-eslint": "^7.1.0",
-    "eslint": "^3.10.0"
+    "babel-eslint": "^8.2.2",
+    "eslint": "^4.18.1",
+    "eslint-plugin-react": "^7.7.0"
   }
 }

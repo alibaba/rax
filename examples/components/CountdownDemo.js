@@ -58,7 +58,7 @@ class CountdownDemo extends Component {
               height: 60,
               backgroundColor: '#333333',
             }}
-           />
+          />
         </View>
       </View>
     );

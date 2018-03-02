@@ -10,7 +10,6 @@ const FULL_WIDTH = 750;
 const STYLE_NODE_ID = 'rax-scrollview-style';
 
 class ScrollView extends Component {
-
   static propTypes = {};
 
   static defaultProps = {

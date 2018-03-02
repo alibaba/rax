@@ -81,7 +81,12 @@ class RaxWebpackPlugin {
             try {
               if (!chunk.initial) return;
             } catch (e) {
-              if (!chunk.isInitial()) return;
+              if (chunk.isInitial && !chunk.isInitial()) {
+                return;
+              }
+              if (chunk.canBeInitial && chunk.canBeInitial()) {
+                return;
+              }
             }
 
             chunk.files.forEach(function(file) {

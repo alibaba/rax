@@ -171,9 +171,9 @@ HotModuleReplacementPlugin.prototype.apply = function(compiler) {
         source,
         '',
         hotInitCode
-        .replace(/\$require\$/g, this.requireFn)
-        .replace(/\$hash\$/g, JSON.stringify(hash))
-        .replace(/\/\* foreachInstalledChunks \*\//g, chunk.chunks.length > 0 ? 'for(var chunkId in installedChunks)' : 'var chunkId = ' + JSON.stringify(chunk.id) + ';')
+          .replace(/\$require\$/g, this.requireFn)
+          .replace(/\$hash\$/g, JSON.stringify(hash))
+          .replace(/\/\* foreachInstalledChunks \*\//g, chunk.chunks.length > 0 ? 'for(var chunkId in installedChunks)' : 'var chunkId = ' + JSON.stringify(chunk.id) + ';')
       ]);
     });
 

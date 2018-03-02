@@ -46,7 +46,6 @@ const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 40 : 0;
 const TITLE_OFFSET = Platform.OS === 'ios' ? 140 : 80;
 
 class Header extends PureComponent {
-
   static HEIGHT = APPBAR_HEIGHT + STATUSBAR_HEIGHT;
   static Title = HeaderTitle;
   static BackButton = HeaderBackButton;

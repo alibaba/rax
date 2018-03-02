@@ -5,7 +5,6 @@ import TabBar from 'rax-tabbar';
 import styles from './navigatior.css';
 
 export default class extends Component {
-
   render() {
     const { title = '', children } = this.props;
 

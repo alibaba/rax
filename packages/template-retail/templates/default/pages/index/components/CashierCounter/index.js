@@ -47,13 +47,13 @@ export default class CashierCounter extends Component {
               const appUrl = item.appUrl;
 
               return item.imgs && item.imgs.length ?
-              <View>
-                <OpenUrl
-                  component={Image}
-                  style={style.scrollImage}
-                  source={{uri: (getRandomValue(item.imgs) || {}).imgSrc}}
-                  resizeMode="cover"
-                  url={appUrl} /> </View> : null;
+                <View>
+                  <OpenUrl
+                    component={Image}
+                    style={style.scrollImage}
+                    source={{uri: (getRandomValue(item.imgs) || {}).imgSrc}}
+                    resizeMode="cover"
+                    url={appUrl} /> </View> : null;
             })
           }
         </ScrollView>

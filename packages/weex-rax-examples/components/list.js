@@ -1,7 +1,6 @@
 import {createElement, Component, render} from 'rax';
 
 class Example extends Component {
-
   state = {
     appearMin: 1,
     appearMax: 1,
@@ -36,14 +35,14 @@ class Example extends Component {
   render() {
     let rows = data.rows.map((item, index) => {
       return <cell style={styles.row}>
-          <div
-            index={index}
-            style={styles.item}
-            onAppear={this.onappear}
-            onDisappear={this.ondisappear}>
-            <text style={styles.itemTitle}>row {item.id}</text>
-          </div>
-        </cell>;
+        <div
+          index={index}
+          style={styles.item}
+          onAppear={this.onappear}
+          onDisappear={this.ondisappear}>
+          <text style={styles.itemTitle}>row {item.id}</text>
+        </div>
+      </cell>;
     });
 
     return (

@@ -1,5 +1,5 @@
 import {
-    center
+  center
 } from '../../mods/commonStyle';
 
 export default {

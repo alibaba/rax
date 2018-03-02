@@ -11,7 +11,6 @@ const TABEHEADER_SCTOLLTO = 'tabheaderScrollTo';
 const TABEHEADER_SELECT = 'tabheaderSelect';
 
 class ItemList extends Component {
-
   static contextTypes = {
     tabheader: PropTypes.object
   };
@@ -143,11 +142,11 @@ class ItemList extends Component {
           }}
           showsHorizontalScrollIndicator={false}
           horizontal={true}>
-            <AnimBuoy
-              {...this.props}
-              itemWidth={itemWidth}
-              style={animBuoyStyle} />
-            {childrens}
+          <AnimBuoy
+            {...this.props}
+            itemWidth={itemWidth}
+            style={animBuoyStyle} />
+          {childrens}
         </ScrollView>
       );
     } else {

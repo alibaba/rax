@@ -1,7 +1,7 @@
 import {
-    center,
-    textOverflow,
-    percent
+  center,
+  textOverflow,
+  percent
 } from '../../mods/commonStyle';
 
 export default {

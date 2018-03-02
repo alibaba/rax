@@ -9,7 +9,6 @@ import MessageItem from './Item';
 import styles from './message.css';
 
 export default class Message extends Component {
-
   generateItem = (item, idx) => {
     return (
       <MessageItem

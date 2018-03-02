@@ -41,7 +41,7 @@ const FadeInFromBottomAndroid = {
   // See http://androidxref.com/7.1.1_r6/xref/frameworks/base/core/res/res/anim/activity_open_enter.xml
   transitionSpec: {
     duration: 350,
-    easing: Easing.out(Easing.poly(5)),  // decelerate
+    easing: Easing.out(Easing.poly(5)), // decelerate
     timing: Animated.timing,
   },
   screenInterpolator: CardStackStyleInterpolator.forFadeFromBottomAndroid,
@@ -52,7 +52,7 @@ const FadeOutToBottomAndroid = {
   // See http://androidxref.com/7.1.1_r6/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
   transitionSpec: {
     duration: 230,
-    easing: Easing.in(Easing.poly(4)),  // accelerate
+    easing: Easing.in(Easing.poly(4)), // accelerate
     timing: Animated.timing,
   },
   screenInterpolator: CardStackStyleInterpolator.forFadeFromBottomAndroid,

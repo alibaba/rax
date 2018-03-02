@@ -12,7 +12,6 @@ const DEVICE_WIDTH = 750;
 const VIEW_INDEX = 2;
 
 export default class Calendar extends Component {
-
   state = {
     currentMonthMoment: moment(this.props.selectedDate || this.props.startDate || this.props.endDate || this.props.today),
     selectedMoment: moment(this.props.selectedDate),
@@ -165,7 +164,7 @@ export default class Calendar extends Component {
 
     return (
       <View key={argMoment.month()} style={styles.monthContainer}>
-      {weekRows}
+        {weekRows}
       </View>
     );
   }
@@ -195,30 +194,30 @@ export default class Calendar extends Component {
 
   renderTopBar() {
     return this.props.showControls
-    ?
-        <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
-          <Touchable
-            style={[styles.controlButton, this.props.customStyle.controlButton]}
-            onPress={this.onPrev}
-          >
-            <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
-              {this.props.prevButtonText}
-            </Text>
-          </Touchable>
-          <Text style={[styles.title, this.props.customStyle.title]}>
-            {this.state.currentMonthMoment.format(this.props.titleFormat)}
+      ?
+      <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
+        <Touchable
+          style={[styles.controlButton, this.props.customStyle.controlButton]}
+          onPress={this.onPrev}
+        >
+          <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
+            {this.props.prevButtonText}
           </Text>
-          <Touchable
-            style={[styles.controlButton, this.props.customStyle.controlButton]}
-            onPress={this.onNext}
-          >
-            <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
-              {this.props.nextButtonText}
-            </Text>
-          </Touchable>
-        </View>
+        </Touchable>
+        <Text style={[styles.title, this.props.customStyle.title]}>
+          {this.state.currentMonthMoment.format(this.props.titleFormat)}
+        </Text>
+        <Touchable
+          style={[styles.controlButton, this.props.customStyle.controlButton]}
+          onPress={this.onNext}
+        >
+          <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
+            {this.props.nextButtonText}
+          </Text>
+        </Touchable>
+      </View>
 
-    :
+      :
       <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
         <Text style={[styles.title, this.props.customStyle.title]}>
           {this.state.currentMonthMoment.format(this.props.titleFormat)}

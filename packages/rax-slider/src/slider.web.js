@@ -8,7 +8,6 @@ const SWIPE_LEFT = 'SWIPE_LEFT';
 const SWIPE_RIGHT = 'SWIPE_RIGHT';
 
 class Slider extends Component {
-
   constructor(props) {
     super(props);
     this.index = 0;
@@ -220,7 +219,7 @@ class Slider extends Component {
           {pages}
         </View>
       </SwipeEvent>
-     :
+      :
       <View ref="swipeView" style={[styles.swipeStyle, style]}>
         {pages}
       </View>

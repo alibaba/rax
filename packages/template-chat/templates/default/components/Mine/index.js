@@ -7,7 +7,6 @@ import Item from '..//RowItem';
 import styles from './mine.css';
 
 export default class Mine extends Component {
-
   renderRow = (items, idx) => {
     return (
       <View style={styles.group} key={idx}>
@@ -42,10 +41,10 @@ export default class Mine extends Component {
 
 const data = [
   [{ title: '相册', icon: { uri: require('../../images/album.png') } },
-  { title: '收藏', icon: { uri: require('../../images/collection.png') } },
-  { title: '钱包', icon: { uri: require('../../images/wallet.png') } },
-  { title: '优惠券', icon: { uri: require('../../images/youhuiquan.png') } }],
+    { title: '收藏', icon: { uri: require('../../images/collection.png') } },
+    { title: '钱包', icon: { uri: require('../../images/wallet.png') } },
+    { title: '优惠券', icon: { uri: require('../../images/youhuiquan.png') } }],
 
   [{ title: '表情', icon: { uri: require('../../images/expression.png') } },
-  { title: '设置', icon: { uri: require('../../images/setting.png') } }],
+    { title: '设置', icon: { uri: require('../../images/setting.png') } }],
 ];

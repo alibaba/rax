@@ -1,5 +1,5 @@
 import {
-    percent
+  percent
 } from '../../mods/commonStyle';
 
 

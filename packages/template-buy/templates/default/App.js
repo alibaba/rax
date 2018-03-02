@@ -14,7 +14,6 @@ import FormSub from './mods/FormSub';
 import styles from './App.css';
 
 class App extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -125,12 +124,12 @@ class App extends Component {
             <Text>花呗分期</Text>
           </View>
           <View>
-          <Switch
-            onValueChange={(value) => {
-              this.state.huabei = value;
-              this.setState(this.state);
-            }}
-            value={this.state.huabei} />
+            <Switch
+              onValueChange={(value) => {
+                this.state.huabei = value;
+                this.setState(this.state);
+              }}
+              value={this.state.huabei} />
           </View>
         </FormLine>
         <FormSub>

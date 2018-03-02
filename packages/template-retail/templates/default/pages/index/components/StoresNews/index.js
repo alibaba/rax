@@ -7,7 +7,6 @@ import OpenUrl from '../../mods/openUrl';
 import style from './style';
 
 export default class StoresNews extends Component {
-
   static propTypes = {
     sourceData: PropTypes.array
   }

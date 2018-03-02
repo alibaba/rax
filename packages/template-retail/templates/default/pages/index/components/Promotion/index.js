@@ -40,10 +40,11 @@ function Promotion(props) {
           return <View style={[style.cellCommon, {
             borderBottomWidth: 1,
             borderLeftWidth: index !== 0 ? 1 : 0
-          }]} ><ColumnCell
-            dataSource={item}
-
-            textStyle={{maxWidth: columnTextWidth}} /></View>;
+          }]}>
+            <ColumnCell
+              dataSource={item}
+              textStyle={{maxWidth: columnTextWidth}} />
+          </View>;
         })
       }
     </RecyclerView.Cell>

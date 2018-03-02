@@ -116,7 +116,7 @@ function rowCell(props) {
               </Text>
             </View>
             <View style={[style.icons, style.leftIcon]} />
-             <View style={[style.icons, style.rightIcon]} />
+            <View style={[style.icons, style.rightIcon]} />
           </View>
         </View>
         <Image style={style.image} source={{uri: getRandomValue(dataSource.offers).picUrlOf290x290}} resizeMode="cover" />

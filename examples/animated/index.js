@@ -5,7 +5,6 @@ import Image from 'rax-image';
 import Animated from 'rax-animated';
 
 class AnimatedSample extends Component {
-
   state = {
     bounceValue: new Animated.Value(0),
     translateValue: new Animated.ValueXY({

@@ -151,6 +151,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
   output.path = path.resolve(__dirname, '..', output.path);
 
   return {
+    mode: 'production',
     target: target || 'node',
     devtool: devtool || 'source-map',
     stats: {
@@ -166,7 +167,8 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
       new RaxPlugin(moduleOptions),
       new webpack.optimize.ModuleConcatenationPlugin(),
       new UglifyJSPlugin({
-        include: /\.min\.js$/
+        include: /\.min\.js$/,
+        sourceMap: true
       })
     ],
     module: {

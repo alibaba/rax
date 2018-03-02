@@ -9,7 +9,6 @@ import Item from './Item';
 import styles from './contact.css';
 
 export default class Contact extends Component {
-
   generateItem = (item, idx) => {
     return (
       <Item

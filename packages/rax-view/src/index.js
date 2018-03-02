@@ -2,7 +2,6 @@ import {Component, createElement} from 'rax';
 import {isWeex} from 'universal-env';
 
 class View extends Component {
-
   static propTypes = {};
 
   render() {

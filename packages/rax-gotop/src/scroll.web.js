@@ -57,7 +57,7 @@ const currentPositionY = () => {
   let supportPageOffset = window.pageXOffset !== undefined;
   let isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
   return supportPageOffset ? window.pageYOffset : isCSS1Compat ?
-         document.documentElement.scrollTop : document.body.scrollTop;
+    document.documentElement.scrollTop : document.body.scrollTop;
 };
 
 const pageHeight = () => {
@@ -65,11 +65,11 @@ const pageHeight = () => {
   let html = document.documentElement;
 
   return Math.max(
-      body.scrollHeight,
-      body.offsetHeight,
-      html.clientHeight,
-      html.scrollHeight,
-      html.offsetHeight
+    body.scrollHeight,
+    body.offsetHeight,
+    html.clientHeight,
+    html.scrollHeight,
+    html.offsetHeight
   );
 };
 

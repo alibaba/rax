@@ -1,6 +1,6 @@
 import {
-    center,
-    percent
+  center,
+  percent
 } from '../../mods/commonStyle';
 
 export default {

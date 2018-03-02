@@ -31,17 +31,17 @@ export default class CheapOffer extends Component {
         <Image source={{uri: offerData.offerImage}} resizeMode="cover" style={styles.offerImg} />
 
         {hasDiscount ?
-            <Text style={styles.discoutnTag}>直降￥{discount}</Text> : null
+          <Text style={styles.discoutnTag}>直降￥{discount}</Text> : null
         }
 
         <Text style={styles.title} numberOfLines={1}>{offerData.offerTitle}</Text>
         <View style={styles.priceContainer}>
-            <Text style={styles.price}>￥{discountPrice}</Text>
-            <Text style={styles.priceSplash}>/</Text>
-            <Text style={styles.priceUnit}>{offerData.unit}</Text>
-            {hasDiscount ?
-                <Text style={styles.oldPrice}>￥{offerData.price}</Text> : null
-            }
+          <Text style={styles.price}>￥{discountPrice}</Text>
+          <Text style={styles.priceSplash}>/</Text>
+          <Text style={styles.priceUnit}>{offerData.unit}</Text>
+          {hasDiscount ?
+            <Text style={styles.oldPrice}>￥{offerData.price}</Text> : null
+          }
         </View>
       </OpenUrl>
     );

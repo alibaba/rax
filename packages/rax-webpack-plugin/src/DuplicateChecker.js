@@ -1,8 +1,7 @@
 import path from 'path';
 import findRoot from 'find-root';
-import WebpackSource from 'webpack-sources';
+import {ConcatSource} from 'webpack-sources';
 
-const ConcatSource = WebpackSource.ConcatSource;
 const isProducation = process.env.NODE_ENV === 'production';
 
 function cleanPath(path) {
@@ -140,7 +139,13 @@ export default class DuplicateChecker {
           try {
             if (!chunk.initial) return;
           } catch (e) {
-            if (!chunk.isInitial()) return;
+            if (chunk.isInitial && !chunk.isInitial()) {
+              return;
+            }
+
+            if (chunk.canBeInitial && chunk.canBeInitial()) {
+              return;
+            }
           }
 
           var duplicates = check(compilation, modulesToCheck);

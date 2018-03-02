@@ -18,7 +18,6 @@ import styles from './App.css';
 
 
 class App extends Component {
-
   handleLoadMoreInside = () => {
     console.log('you can load more data here');
   }
@@ -81,7 +80,7 @@ class App extends Component {
                   </View>
                 );
               }
-            } />
+              } />
           </View>
 
 
@@ -118,7 +117,7 @@ class App extends Component {
                     </View>
                   );
                 }
-              } />
+                } />
             </View>
           </View>
           <View style={styles.bottom} />
@@ -155,7 +154,7 @@ class App extends Component {
                         </View>
                       );
                     }
-                  } />
+                    } />
                 </View>
               );
             }}
@@ -180,14 +179,13 @@ class App extends Component {
                 </View>
               );
             }
-          } />
+            } />
         </View>
 
 
       </Page>
     );
   }
-
 }
 
 

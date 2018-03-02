@@ -43,7 +43,6 @@ class FloorShouldChangeWrap extends PureComponent {
 }
 
 export default class FloorWrapper extends PureComponent {
-
   constructor(props, context) {
     super(props, context);
     this.recyclerView = '';
@@ -144,13 +143,12 @@ export default class FloorWrapper extends PureComponent {
         ref={(ref) => {
           this.recyclerView = ref;
         }}
-        >
+      >
         <LstFreshControl onRefresh={onRefresh} />
         {children}
       </RecyclerView>
     );
   }
-
 }
 
 FloorWrapper.propTypes = {

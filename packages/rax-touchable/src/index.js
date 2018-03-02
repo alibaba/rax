@@ -3,7 +3,6 @@ import {isWeex} from 'universal-env';
 import View from 'rax-view';
 
 class Touchable extends Component {
-
   static propTypes = {};
 
   render() {

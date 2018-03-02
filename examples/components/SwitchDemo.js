@@ -20,11 +20,13 @@ class SwitchDemo extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Switch onValueChange={(value) => {
-          this.setState({eventSwitchIsOn: value});
-        }}
+        <Switch
+          onValueChange={(value) => {
+            this.setState({eventSwitchIsOn: value});
+          }}
           style={{marginBottom: 10}}
-          value={this.state.eventSwitchIsOn} />
+          value={this.state.eventSwitchIsOn}
+        />
 
         <Text>{this.state.eventSwitchIsOn ? 'On' : 'Off'}</Text>
 

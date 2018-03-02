@@ -3,7 +3,7 @@ import Dimension from '../../mods/dimensions';
 
 const { height } = Dimension.get('window');
 import {
-    percent
+  percent
 } from '../../mods/commonStyle';
 
 

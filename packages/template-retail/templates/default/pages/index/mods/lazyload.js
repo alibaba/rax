@@ -74,24 +74,23 @@ export default class LazyLoad extends Component {
           {...others} />
         {
           visible ? null :
-          <View style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: style.width,
-            height: style.height,
-            backgroundColor: '#fff'
-          }}>
-            <Image source={{uri: placeholder}} style={{
+            <View style={{
               position: 'absolute',
-              left: (style.width - placeStyle.width) / 2,
-              top: (style.height - placeStyle.height) / 2,
-              ...placeStyle
-            }} />
-          </View>
+              left: 0,
+              top: 0,
+              width: style.width,
+              height: style.height,
+              backgroundColor: '#fff'
+            }}>
+              <Image source={{uri: placeholder}} style={{
+                position: 'absolute',
+                left: (style.width - placeStyle.width) / 2,
+                top: (style.height - placeStyle.height) / 2,
+                ...placeStyle
+              }} />
+            </View>
         }
       </View>
     );
   }
-
 }

@@ -33,9 +33,9 @@ export default class OfferList extends Component {
           <Cell style={[style.cell, topBorder, this.props.cellStyle]} offer={offerOdd} />
           {sourceData[i + 1] ?
             (<View>
-                <Cell
-                  style={[style.cell, style.rightCell, topBorder, this.props.cellStyle]}
-                  offer={offerEven} />
+              <Cell
+                style={[style.cell, style.rightCell, topBorder, this.props.cellStyle]}
+                offer={offerEven} />
             </View>) : null
           }
         </RecyclerView.Cell>
@@ -50,7 +50,7 @@ export default class OfferList extends Component {
     const sourceData = props.sourceData;
     if (!sourceData.length) return null;
     return (
-    [<RecyclerView.Cell style={style.title}>
+      [<RecyclerView.Cell style={style.title}>
         <Text style={style.titleText}>为你推荐</Text>
       </RecyclerView.Cell>,
       ...this.getRowCell(sourceData),
@@ -59,17 +59,17 @@ export default class OfferList extends Component {
           <Image
             source={{uri: 'https://cbu01.alicdn.com/cms/upload/2017/911/203/3302119_38443169.gif'}}
             style={style.loading}
-            />
+          />
         </RecyclerView.Cell>
-          :
+        :
         <RecyclerView.Cell style={style.noMoreSection}>
           <Image
             source={{uri: 'https://cbu01.alicdn.com/cms/upload/2017/112/103/3301211_38443169.png'}}
             style={style.nomore}
-            />
+          />
           <Text style={style.nomoreText}>已经到底了...</Text>
         </RecyclerView.Cell>
-    ]
+      ]
 
     );
   }

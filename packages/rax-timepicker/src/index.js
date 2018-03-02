@@ -4,7 +4,6 @@ import TouchableHighlight from 'rax-touchable';
 import Text from 'rax-text';
 
 class TimePicker extends Component {
-
   static propTypes = {};
 
   constructor(props) {

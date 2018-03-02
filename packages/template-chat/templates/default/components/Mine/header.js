@@ -6,7 +6,6 @@ import Touchable from 'rax-touchable';
 import styles from './mine.css';
 
 export default class MineHeader extends Component {
-
   render() {
     return (
       <Touchable onPress={() => {
