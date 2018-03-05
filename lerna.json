@@ -1,10 +1,18 @@
 {
   "lerna": "2.9.0",
   "version": "0.5.4",
+  "packages": [
+    "packages/*",
+    "templates/*",
+    "tools/*",
+    "drivers/*",
+    "renderers/*"
+  ],
   "commands": {
     "publish": {
       "skipGit": true,
       "allowBranch": "master"
     }
-  }
+  },
+  "version": "independent"
 }
