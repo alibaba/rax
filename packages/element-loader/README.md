@@ -16,6 +16,20 @@ Config loader in `webpack.config.js`:
 // webpack.config.js
 
 module.exports = {
+  // Webpack 3+
+  module: {
+    rules: [
+      {
+        test: /\.html/,
+        use: 'element-loader',
+        options: {
+          // React & Component is required
+          banner: `import React, { Component } from 'react';`
+        }
+      }
+    ]
+  },
+  // Webpack 2
   module: {
     loaders: [
       {
@@ -27,7 +41,7 @@ module.exports = {
         }
       }
     ]
-  }
+  },
 };
 ```
 

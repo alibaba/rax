@@ -23,7 +23,7 @@
     "rax-text": "^0.5.2",
     "rax-view": "^0.5.2"
   },
-  "peerDependencies": {
-    "rax": "0.x"
+  "devDependencies": {
+    "rax": "^0.5.2"
   }
 }

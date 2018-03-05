@@ -154,6 +154,9 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
     mode: 'production',
     target: target || 'node',
     devtool: devtool || 'source-map',
+    optimization: {
+      minimize: false
+    },
     stats: {
       optimizationBailout: true,
     },

@@ -24,10 +24,8 @@
     "universal-env": "^0.5.2",
     "weex-gcanvas": "^1.0.0"
   },
-  "peerDependencies": {
-    "rax": "0.x"
-  },
   "devDependencies": {
+    "rax": "^0.5.2",
     "rax-test-renderer": "^0.5.2"
   }
 }

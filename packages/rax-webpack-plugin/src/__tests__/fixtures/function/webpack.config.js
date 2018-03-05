@@ -1,7 +1,10 @@
 import RaxWebpackPlugin from '../../../index';
 
 module.exports = {
-  mode: 'development',
+  mode: "production",
+  optimization: {
+    minimize: false
+  },
   entry: {
     'index.function': './index',
   },

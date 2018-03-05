@@ -31,10 +31,8 @@
     "universal-env": "^0.5.2",
     "universal-transition": "^0.5.2"
   },
-  "peerDependencies": {
-    "rax": "0.x"
-  },
   "devDependencies": {
+    "rax": "^0.5.2",
     "rax-test-renderer": "^0.5.2"
   }
 }

@@ -31,7 +31,7 @@
     "react-deep-force-update": "^2.0.1",
     "react-proxy": "^1.1.8"
   },
-  "peerDependencies": {
-    "rax": "^0.3.5"
+  "devDependencies": {
+    "rax": "^0.5.2"
   }
 }

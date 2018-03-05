@@ -1,14 +1,17 @@
 import RaxWebpackPlugin from '../../../index';
 
 module.exports = {
-  mode: 'development',
+  mode: "production",
+  optimization: {
+    minimize: false
+  },
   entry: {
     'index.factory': './index',
   },
   plugins: [
     new RaxWebpackPlugin({
       target: 'factory',
-      factoryGlobals: ['weex'],
+      factoryGlobals: ['window'],
     })
   ]
 };

@@ -24,6 +24,61 @@ class RaxWebpackPlugin {
     }, options);
   }
 
+  applyBanner(compiler) {
+    var defaultFrameworkComment = '// {"framework" : "Rax"}';
+    var frameworkComment = typeof this.options.frameworkComment === 'string' ?
+      this.options.frameworkComment : defaultFrameworkComment;
+
+    // Webpack 4
+    if (compiler.hooks && compiler.hooks.compilation && compiler.hooks.compilation.tap) {
+
+      compiler.hooks.compilation.tap("RaxBannerPlugin", compilation => {
+  			compilation.hooks.optimizeChunkAssets.tap("RaxBannerPlugin", chunks => {
+  				for (const chunk of chunks) {
+            // Entry only
+  					if (!chunk.canBeInitial()) {
+  						continue;
+  					}
+
+            chunk.files.forEach(function(file) {
+              compilation.assets[file] = new ConcatSource(
+                frameworkComment,
+                '\n',
+                compilation.assets[file]
+              );
+            });
+  				}
+  			});
+  		});
+
+    } else {
+
+      compiler.plugin('compilation', (compilation) => {
+        // uglify-webpack-plugin will remove javascript's comments in
+        // optimize-chunk-assets, add frameworkComment after that.
+        compilation.plugin('after-optimize-chunk-assets', function(chunks) {
+          chunks.forEach(function(chunk) {
+            // Entry only
+            try {
+              // In webpack2 chunk.initial was removed. Use isInitial()
+              if (!chunk.initial) return;
+            } catch (e) {
+              if (!chunk.isInitial()) return;
+            }
+
+            chunk.files.forEach(function(file) {
+              compilation.assets[file] = new ConcatSource(
+                frameworkComment,
+                '\n',
+                compilation.assets[file]
+              );
+            });
+          });
+        });
+      });
+    }
+  }
+
   apply(compiler) {
     compiler.apply(new DefinePlugin({
       '__DEV__': isProducation ? false : true
@@ -68,33 +123,7 @@ class RaxWebpackPlugin {
     });
 
     if (this.options.target === 'bundle' || this.options.frameworkComment) {
-      var defaultFrameworkComment = '// {"framework" : "Rax"}';
-      var frameworkComment = typeof this.options.frameworkComment === 'string' ?
-        this.options.frameworkComment : defaultFrameworkComment;
-
-      compiler.plugin('compilation', (compilation) => {
-        // uglify-webpack-plugin will remove javascript's comments in
-        // optimize-chunk-assets, add frameworkComment after that.
-        compilation.plugin('after-optimize-chunk-assets', function(chunks) {
-          chunks.forEach(function(chunk) {
-            // In webpack2 chunk.initial was removed. Use isInitial()
-            try {
-              if (!chunk.initial) return;
-            } catch (e) {
-              if (chunk.isInitial && !chunk.isInitial()) {
-                return;
-              }
-              if (chunk.canBeInitial && chunk.canBeInitial()) {
-                return;
-              }
-            }
-
-            chunk.files.forEach(function(file) {
-              compilation.assets[file] = new ConcatSource(frameworkComment, '\n', compilation.assets[file]);
-            });
-          });
-        });
-      });
+      this.applyBanner(compiler);
     }
   }
 }

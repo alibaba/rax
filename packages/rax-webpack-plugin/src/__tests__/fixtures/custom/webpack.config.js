@@ -1,7 +1,10 @@
 import RaxWebpackPlugin from '../../../index';
 
 module.exports = {
-  mode: 'development',
+  mode: "production",
+  optimization: {
+    minimize: false
+  },
   entry: {
     'index.bundle': './index',
   },
@@ -9,7 +12,7 @@ module.exports = {
     new RaxWebpackPlugin({
       target: 'bundle',
       sourcePrefix: function(source, chunk, hash) {
-        return 'define("' + chunk.name + '", function(require) {';
+        return 'customDefine("' + chunk.name + '", function(require) {';
       },
       sourceSuffix: function(source, chunk, hash) {
         return '})';
