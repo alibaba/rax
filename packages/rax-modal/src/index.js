@@ -13,9 +13,27 @@ export default class Modal extends Component {
   }
 
   static propTypes = {
-    onHide: PropTypes.func,
+
+    /**
+     * 显示的时候触发回调
+     */
     onShow: PropTypes.func,
+
+    /**
+     * 隐藏的时候触发回调
+     */
+    onHide: PropTypes.func,
+
+    /**
+     * Modal 内容的 style
+     */
+    contentStyle: PropTypes.object,
+
+    /**
+     * 模态框是否可见
+     */
     visible: PropTypes.bool
+
   };
 
   static defaultProps = {

@@ -1,4 +1,4 @@
-import {PureComponent, Component, createElement, cloneElement} from 'rax';
+import {PureComponent, Component, createElement, cloneElement, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 import View from 'rax-view';
 import ScrollView from 'rax-scrollview';
@@ -63,6 +63,55 @@ class WebFall extends PureComponent {
 }
 
 class Waterfall extends Component {
+
+  static propTypes = {
+
+    /**
+     * 瀑布流数组，需要传入模块高度（必填）
+     */
+    dataSource: PropTypes.array.isRequired,
+
+    /**
+     * 渲染每项的模板（必填）
+     */
+    renderItem: PropTypes.func.isRequired,
+
+    /**
+     * 渲染 header 部分
+     */
+    renderHeader: PropTypes.func,
+
+    /**
+     * 渲染 footer 部分
+     */
+    renderFooter: PropTypes.func,
+
+    /**
+     * 列宽
+     */
+    columnWidth: PropTypes.number,
+
+    /**
+     * 列数
+     */
+    columnCount: PropTypes.number,
+
+    /**
+     * 列间距
+     */
+    columnGap: PropTypes.number,
+
+    /**
+     * 滚动到底部触发事件
+     */
+    onEndReached: PropTypes.func,
+
+    /**
+     * 触发懒加载距离
+     */
+    onEndReachedThreshold: PropTypes.number
+
+  };
 
   loadmoreretry = 1;
 

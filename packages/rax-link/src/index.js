@@ -4,6 +4,13 @@ import Text from 'rax-text';
 
 class Link extends Component {
 
+  static propTypes = {
+    /**
+     * 响应点击事件
+     */
+    onPress: PropTypes.func
+  };
+
   static contextTypes = {
     isInAParentLink: PropTypes.bool,
     isInAParentText: PropTypes.bool

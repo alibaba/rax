@@ -1,4 +1,4 @@
-import {Component, createElement, findDOMNode} from 'rax';
+import {Component, createElement, findDOMNode, PropTypes} from 'rax';
 import {isWeex, isWeb} from 'universal-env';
 import View from 'rax-view';
 import RefreshControl from 'rax-refreshcontrol';
@@ -11,7 +11,44 @@ const STYLE_NODE_ID = 'rax-scrollview-style';
 
 class ScrollView extends Component {
 
-  static propTypes = {};
+  static propTypes = {
+
+    /**
+     * 这个属性控制在滚动过程中，scroll事件被调用的频率（默认值为100），用于滚动的节流
+     */
+    scrollEventThrottle: PropTypes.number,
+
+    /**
+     * 设置为横向滚动
+     */
+    horizontal: PropTypes.bool,
+
+    /**
+     * 是否允许出现水平滚动条，默认true
+     */
+    showsHorizontalScrollIndicator: PropTypes.bool,
+
+    /**
+     * 是否允许出现垂直滚动条，默认true
+     */
+    showsVerticalScrollIndicator: PropTypes.bool,
+
+    /**
+     * 设置加载更多的偏移，默认值为500
+     */
+    onEndReachedThreshold: PropTypes.number,
+
+    /**
+     * 滚动区域还剩 onEndReachedThreshold 的长度时触发
+     */
+    onEndReached: PropTypes.func,
+
+    /**
+     * 滚动时触发的事件，返回当前滚动的水平垂直距离
+     */
+    onScroll: PropTypes.func
+
+  };
 
   static defaultProps = {
     scrollEventThrottle: DEFAULT_SCROLL_CALLBACK_THROTTLE,

@@ -1,11 +1,23 @@
-import {Component, createElement} from 'rax';
+import {Component, createElement, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 import TouchableHighlight from 'rax-touchable';
 import Text from 'rax-text';
 
 class Picker extends Component {
 
-  static propTypes = {};
+  static propTypes = {
+
+    /**
+     * 选中值
+     */
+    selectedValue: PropTypes.string,
+
+    /**
+     * 选项切换
+     */
+    onValueChange: PropTypes.func
+
+  };
 
   constructor(props) {
     super(props);

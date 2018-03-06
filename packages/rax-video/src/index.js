@@ -1,10 +1,23 @@
-import {Component, createElement} from 'rax';
+import {Component, createElement, PropTypes} from 'rax';
 import {isWeex, isWeb} from 'universal-env';
 
 const PLAY = 'play';
 const PAUSE = 'pause';
 
 class Video extends Component {
+
+  static propTypes = {
+    /**
+     * 设置视频自动播放
+     */
+    autoPlay: PropTypes.bool,
+
+    /**
+     * 视频地址
+     */
+    src: PropTypes.string
+  };
+
   render() {
     let props = this.props;
 

@@ -3,7 +3,12 @@ import {isWeex} from 'universal-env';
 
 class Text extends Component {
 
-  static propTypes = {};
+  static propTypes = {
+    /**
+     * 行数
+     */
+    numberOfLines: PropTypes.number
+  };
 
   static contextTypes = {
     isInAParentText: PropTypes.bool

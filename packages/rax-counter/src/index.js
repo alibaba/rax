@@ -1,4 +1,4 @@
-import {Component, createElement} from 'rax';
+import {Component, createElement, PropTypes} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Touchable from 'rax-touchable';
@@ -7,6 +7,35 @@ const BOTTOM_COLOR = '#666666';
 const DISABLE_BOTTOM_COLOR = '#a1a1a1';
 
 class Counter extends Component {
+
+  static propTypes = {
+
+    /**
+     * 默认数值
+     */
+    value: PropTypes.number,
+
+    /**
+     * 起始值
+     */
+    start: PropTypes.number,
+
+    /**
+     * 终止值
+     */
+    end: PropTypes.number,
+
+    /**
+     * 改变值时触发
+     */
+    onChange: PropTypes.func,
+
+    /**
+     * 渲染完成触发
+     */
+    onComplete: PropTypes.func
+
+  };
 
   constructor(props) {
     super(props);

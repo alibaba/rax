@@ -1,4 +1,4 @@
-import {Component, createElement} from 'rax';
+import {Component, createElement, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 
 const DEFAULT_WIDTH = 100;
@@ -6,7 +6,39 @@ const DEFAULT_HEIGHT = 60;
 
 class Switch extends Component {
 
-  static propTypes = {};
+  static propTypes = {
+
+    /**
+     * 设置开关打开的背景色
+     */
+    onTintColor: PropTypes.string,
+
+    /**
+     * 设置开关关闭时的背景色
+     */
+    tintColor: PropTypes.string,
+
+    /**
+     * 开关圆形按钮的背景色
+     */
+    thumbTintColor: PropTypes.string,
+
+    /**
+     * 开关是否可交互  true
+     */
+    disabled: PropTypes.bool,
+
+    /**
+     * 开关默认状态开启或关闭  true
+     */
+    value: PropTypes.bool,
+
+    /**
+     * 值改变时调用此函数
+     */
+    onValueChange: PropTypes.func
+
+  };
 
   static defaultProps = {
     onTintColor: '#00e158',

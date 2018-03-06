@@ -1,4 +1,4 @@
-import {createElement, Component} from 'rax';
+import {createElement, Component, PropTypes} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Image from 'rax-image';
@@ -34,6 +34,66 @@ const defaultStyles = {
 };
 
 class Video extends Component {
+
+  static propTypes = {
+
+    /**
+     * 视频地址（必填）
+     */
+    src: PropTypes.string.isRequired,
+
+    /**
+     * 封面图地址（必填）
+     */
+    poster: PropTypes.string.isRequired,
+
+    /**
+     * 如果出现该属性，则显示控制器控件（该控制项只在h5下生效）
+     */
+    controls: PropTypes.string,
+
+    /**
+     * 控制条是否带有全局播放按钮（该属性只对iOS-h5生效，Android-h5、iOS-weex默认带有，Android-weex没有全屏功能）
+     */
+    hasFullScreen: PropTypes.bool,
+
+    /**
+     * 是否强制使用原生全屏方法(该属性只对iOS-h5生效，Android-h5、iOS-weex使用默认全屏，Android-weex没有全屏功能)
+     */
+    originFullscreen: PropTypes.bool,
+
+    /**
+     * 如果出现该属性，则显示开始暂停button
+     */
+    startBtn: PropTypes.string,
+
+    /**
+     * 如果出现该属性，则视频在就绪后马上播放
+     */
+    autoPlay: PropTypes.bool,
+
+    /**
+     * video播放结束时间处理方法
+     */
+    onVideoFinish: PropTypes.func,
+
+    /**
+     * video播放时的处理方法
+     */
+    onVideoPlay: PropTypes.func,
+
+    /**
+     * video暂停时的处理方法
+     */
+    onVideoPause: PropTypes.func,
+
+    /**
+     * video播放失败时的处理方法
+     */
+    onVideoFail: PropTypes.func
+
+  };
+
 
   state = {
     pause: true,

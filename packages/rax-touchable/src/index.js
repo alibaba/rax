@@ -1,10 +1,15 @@
-import {createElement, Component} from 'rax';
+import {createElement, Component, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 import View from 'rax-view';
 
 class Touchable extends Component {
 
-  static propTypes = {};
+  static propTypes = {
+    /**
+     * 点击事件
+     */
+    onPress: PropTypes.func
+  };
 
   render() {
     let props = this.props;

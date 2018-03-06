@@ -9,6 +9,40 @@ const CHECKBOX_DISABLED_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB
 
 class CheckBox extends Component {
 
+  static propTypes = {
+
+    /**
+     * 选中状态
+     */
+    checked: PropTypes.bool,
+
+    /**
+     * 选中图片
+     */
+    checkedImage: PropTypes.string,
+
+    /**
+     * 非选中图片
+     */
+    uncheckedImage: PropTypes.string,
+
+    /**
+     * 选择框容器样式
+     */
+    containerStyle: PropTypes.object,
+
+    /**
+     * 选择框图片样式
+     */
+    checkboxStyle: PropTypes.object,
+
+    /**
+     * 选择事件
+     */
+    onChange: PropTypes.func
+
+  };
+
   static defaultProps = {
     checked: null,
     checkedImage: CHECKBOX_ENABLED_ICON,

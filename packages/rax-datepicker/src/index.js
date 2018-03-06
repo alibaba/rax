@@ -1,9 +1,33 @@
-import {Component, createElement} from 'rax';
+import { Component, createElement, PropTypes } from 'rax';
 import {isWeex} from 'universal-env';
 import TouchableHighlight from 'rax-touchable';
 import Text from 'rax-text';
 
 class DatePicker extends Component {
+
+  static propTypes = {
+
+    /**
+     * 选中值（示例：2017-01-01）
+     */
+    selectedValue: PropTypes.string,
+
+    /**
+     * 日期切换
+     */
+    onDateChange: PropTypes.func,
+
+    /**
+     * 日期选择最小范围（示例：2017-01-01）
+     */
+    minimumDate: PropTypes.string,
+
+    /**
+     * 日期选择最大范围（示例：2017-01-01）
+     */
+    maximumDate: PropTypes.string
+
+  };
 
   constructor(props) {
     super(props);

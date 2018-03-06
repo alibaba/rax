@@ -7,6 +7,26 @@ import RefreshControl from 'rax-refreshcontrol';
 const DEFAULT_END_REACHED_THRESHOLD = 500;
 
 class Cell extends PureComponent {
+
+  static propTypes = {
+
+    /**
+     * 滚动到底部触发事件，将修改后的数据付给 data
+     */
+    onEndReached: PropTypes.func,
+
+    /**
+     * 距离多少开始加载下一屏，数字单位默认 rem
+     */
+    onEndReachedThreshold: PropTypes.number,
+
+    /**
+     * 滚动时触发的事件，返回当前滚动的水平垂直距离
+     */
+    onScroll: PropTypes.func
+
+  };
+
   static contextTypes = {
     isInARecyclerView: PropTypes.bool
   };
