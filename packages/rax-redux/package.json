@@ -21,6 +21,9 @@
     "redux": "^3.6.0",
     "shallowequal": "^0.2.2"
   },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
   "devDependencies": {
     "rax": "^0.5.4",
     "rax-test-renderer": "^0.5.4"

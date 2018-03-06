@@ -132,9 +132,7 @@ export default class DuplicateChecker {
 
     // Webpack 4
     if (compiler.hooks && compiler.hooks.compilation && compiler.hooks.compilation.tap) {
-
-      compiler.hooks.compilation.tap("RaxDuplicateCheckerPlugin", compilation => {
-
+      compiler.hooks.compilation.tap('RaxDuplicateCheckerPlugin', compilation => {
         const duplicates = check(compilation, modulesToCheck);
         if (!Object.keys(duplicates).length) {
           return;
@@ -142,7 +140,7 @@ export default class DuplicateChecker {
 
         const errorMessages = `console.error('${formatMsg(duplicates)}');`;
 
-        compilation.hooks.optimizeChunkAssets.tap("RaxDuplicateCheckerPlugin", chunks => {
+        compilation.hooks.optimizeChunkAssets.tap('RaxDuplicateCheckerPlugin', chunks => {
           for (const chunk of chunks) {
             // Entry only
             if (!chunk.canBeInitial()) {
@@ -159,7 +157,6 @@ export default class DuplicateChecker {
           }
         });
       });
-
     } else {
       compiler.plugin('compilation', (compilation) => {
         const duplicates = check(compilation, modulesToCheck);

@@ -29,6 +29,9 @@
     "universal-env": "^0.5.4",
     "universal-panresponder": "^0.5.4"
   },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
   "devDependencies": {
     "rax": "^0.5.4",
     "rax-test-renderer": "^0.5.4"

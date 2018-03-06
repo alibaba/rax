@@ -28,7 +28,7 @@
     "istanbul-lib-coverage": "^1.0.0",
     "jest": "^20.0.4",
     "jest-localstorage-mock": "^2.2.0",
-    "lerna": "^2.9.0",
+    "lerna": "^2.0.0",
     "minimatch": "^3.0.3",
     "minimist": "^1.2.0",
     "rax-webpack-plugin": "^0.5.4",

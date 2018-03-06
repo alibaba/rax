@@ -31,14 +31,13 @@ class RaxWebpackPlugin {
 
     // Webpack 4
     if (compiler.hooks && compiler.hooks.compilation && compiler.hooks.compilation.tap) {
-
-      compiler.hooks.compilation.tap("RaxBannerPlugin", compilation => {
-  			compilation.hooks.optimizeChunkAssets.tap("RaxBannerPlugin", chunks => {
-  				for (const chunk of chunks) {
+      compiler.hooks.compilation.tap('RaxBannerPlugin', compilation => {
+        compilation.hooks.optimizeChunkAssets.tap('RaxBannerPlugin', chunks => {
+          for (const chunk of chunks) {
             // Entry only
-  					if (!chunk.canBeInitial()) {
-  						continue;
-  					}
+            if (!chunk.canBeInitial()) {
+              continue;
+            }
 
             chunk.files.forEach(function(file) {
               compilation.assets[file] = new ConcatSource(
@@ -47,12 +46,10 @@ class RaxWebpackPlugin {
                 compilation.assets[file]
               );
             });
-  				}
-  			});
-  		});
-
+          }
+        });
+      });
     } else {
-
       compiler.plugin('compilation', (compilation) => {
         // uglify-webpack-plugin will remove javascript's comments in
         // optimize-chunk-assets, add frameworkComment after that.

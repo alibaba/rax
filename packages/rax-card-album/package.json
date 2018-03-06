@@ -20,6 +20,9 @@
   "engines": {
     "npm": ">=3.0.0"
   },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
   "dependencies": {
     "rax-link": "^0.5.4",
     "rax-picture": "^0.5.4",

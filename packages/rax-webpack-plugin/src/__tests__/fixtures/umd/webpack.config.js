@@ -1,16 +1,16 @@
 import RaxWebpackPlugin from '../../../index';
 
 module.exports = {
-  mode: "production",
+  mode: 'production',
   optimization: {
     minimize: false
   },
   entry: {
-    'index.module': './index',
+    'index.umd': './index',
   },
   plugins: [
     new RaxWebpackPlugin({
-      target: 'module',
+      target: 'umd'
     })
   ]
 };

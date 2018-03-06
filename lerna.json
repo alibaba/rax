@@ -3,10 +3,7 @@
   "version": "0.5.4",
   "packages": [
     "packages/*",
-    "templates/*",
-    "tools/*",
-    "drivers/*",
-    "renderers/*"
+    "templates/*"
   ],
   "commands": {
     "publish": {
