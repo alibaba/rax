@@ -1,8 +1,8 @@
 {
   "private": true,
   "devEngines": {
-    "node": "4.x || 5.x || 6.x || 7.x",
-    "npm": "3.x || 4.x"
+    "node": "6.x || 7.x || 8.x || 9.x",
+    "npm": "5.x"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",
