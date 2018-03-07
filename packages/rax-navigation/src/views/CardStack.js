@@ -152,7 +152,7 @@ class CardStack extends Component {
       ).transitionSpec,
     };
     if (
-       !!NativeAnimatedModule
+      !!NativeAnimatedModule
        // Native animation support also depends on the transforms used:
        && CardStackStyleInterpolator.canUseNativeDriver(isModal)
     ) {

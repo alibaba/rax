@@ -34,7 +34,6 @@ const defaultStyles = {
 };
 
 class Video extends Component {
-
   state = {
     pause: true,
     currentTime: 0,
@@ -255,9 +254,9 @@ class Video extends Component {
         onClick={this.switch}
         style={styles.startBtn}
         ref="starBtn"
-          >
-          <Image source={{ uri: '//gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'}} style={styles.startBtnImage} />
-        </View> : null
+      >
+        <Image source={{ uri: '//gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'}} style={styles.startBtnImage} />
+      </View> : null
       }
       { this.props.hasController && env.os.iphone && <Controller
         currentTime={this.state.controllerTime || this.state.currentTime}

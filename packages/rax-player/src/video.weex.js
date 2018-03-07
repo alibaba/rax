@@ -47,7 +47,6 @@ const defaultStyles = {
 };
 
 class Video extends Component {
-
   isNew = true;
 
   state = {
@@ -157,29 +156,29 @@ class Video extends Component {
       { playStatus == 'stop' && poster && this.state.poster && <View
         style={styles.poster}
         ref="poster"
-        >
-          <Image
-            source={{
-              uri: poster
-            }}
-            style={styles.posterImage}
-          />
-        </View>
+      >
+        <Image
+          source={{
+            uri: poster
+          }}
+          style={styles.posterImage}
+        />
+      </View>
       }
       { playStatus == 'stop' && this.props.startBtn && <View
         style={styles.startBtn}
         ref="starBtn"
-          >
-          <Image
-            source={{
-              uri: 'https://gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'
-            }}
-            style={styles.startBtnImage}
-            onClick={() => {
-              this.switch(!playStatus);
-            }}
-            />
-        </View>
+      >
+        <Image
+          source={{
+            uri: 'https://gw.alicdn.com/tps/TB1FxjDKFXXXXcRXVXXXXXXXXXX-109-111.png'
+          }}
+          style={styles.startBtnImage}
+          onClick={() => {
+            this.switch(!playStatus);
+          }}
+        />
+      </View>
       }
     </View>;
   }

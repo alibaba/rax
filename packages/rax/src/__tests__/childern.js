@@ -124,12 +124,12 @@ describe('Children', () => {
     expect(Children.toArray(<div />).length).toBe(1);
     expect(Children.toArray([<div />]).length).toBe(1);
     expect(Children.toArray(<div />)[0].key).toBe(
-     Children.toArray([<div />])[0].key,
+      Children.toArray([<div />])[0].key,
     );
 
     var flattened = Children.toArray([
-     [<div key="apple" />, <div key="banana" />, <div key="camel" />],
-     [<div key="banana" />, <div key="camel" />, <div key="deli" />],
+      [<div key="apple" />, <div key="banana" />, <div key="camel" />],
+      [<div key="banana" />, <div key="camel" />, <div key="deli" />],
     ]);
     expect(flattened.length).toBe(6);
     expect(flattened[1].key).toContain('banana');
@@ -137,8 +137,8 @@ describe('Children', () => {
     // expect(flattened[1].key).not.toBe(flattened[3].key);
 
     var reversed = Children.toArray([
-     [<div key="camel" />, <div key="banana" />, <div key="apple" />],
-     [<div key="deli" />, <div key="camel" />, <div key="banana" />],
+      [<div key="camel" />, <div key="banana" />, <div key="apple" />],
+      [<div key="deli" />, <div key="camel" />, <div key="banana" />],
     ]);
     expect(flattened[0].key).toBe(reversed[2].key);
     expect(flattened[1].key).toBe(reversed[1].key);
@@ -239,9 +239,9 @@ describe('Children', () => {
 
   it('should use the same key for a cloned element', () => {
     var instance = (
-     <div>
-       <div />
-     </div>
+      <div>
+        <div />
+      </div>
     );
 
     var mapped = Children.map(
@@ -258,19 +258,19 @@ describe('Children', () => {
 
   it('should use the same key for a cloned element with key', () => {
     var instance = (
-       <div>
-         <div key="unique" />
-       </div>
-     );
+      <div>
+        <div key="unique" />
+      </div>
+    );
 
     var mapped = Children.map(
-       instance.props.children,
-       element => element,
-     );
+      instance.props.children,
+      element => element,
+    );
 
     var mappedWithClone = Children.map(instance.props.children, element =>
-       cloneElement(element, {key: 'unique'}),
-     );
+      cloneElement(element, {key: 'unique'}),
+    );
 
     expect(mapped[0].key).toBe(mappedWithClone[0].key);
   });

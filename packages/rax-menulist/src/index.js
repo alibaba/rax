@@ -141,7 +141,7 @@ export default class MenuList extends Component {
               style={arrowStyle}
               containerWidth={style.width || menuListStyle.menuList.width}
             />
-           ) : null
+          ) : null
         }
       </View>
     );

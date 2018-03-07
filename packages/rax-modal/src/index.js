@@ -6,7 +6,6 @@ import {isWeb} from 'universal-env';
 const {View: AnimatedView} = Animated;
 
 export default class Modal extends Component {
-
   constructor(props) {
     super(props);
     this.fadeAnim = new Animated.Value(0);

@@ -10,7 +10,6 @@ import ScrollView from 'rax-scrollview';
 import TouchableOpacity from 'rax-touchable';
 
 class TextDemo extends Component {
-
   state = {
     timesPressed: 0,
   };

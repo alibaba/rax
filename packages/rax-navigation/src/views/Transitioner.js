@@ -138,7 +138,7 @@ class Transitioner extends Component {
     this._prevTransitionProps = this._transitionProps;
     this._transitionProps = buildTransitionProps(nextProps, nextState);
 
-     // get the transition spec.
+    // get the transition spec.
     const transitionUserSpec = nextProps.configureTransition ?
       nextProps.configureTransition(
         this._transitionProps,
@@ -242,9 +242,9 @@ class Transitioner extends Component {
       );
       if (this._queuedTransition) {
         this._startTransition(
-            this._queuedTransition.nextProps,
-            this._queuedTransition.nextScenes,
-            this._queuedTransition.indexHasChanged
+          this._queuedTransition.nextProps,
+          this._queuedTransition.nextScenes,
+          this._queuedTransition.indexHasChanged
         );
         this._queuedTransition = null;
       } else {

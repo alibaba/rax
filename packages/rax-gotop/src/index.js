@@ -42,7 +42,7 @@ export default class GoTop extends Component {
       style={styles.root}
       onAppear={() => {}}
       onDisAppear={() => {}}
-      >
+    >
       {topNode}
       <View>
         <View style={styles.hideNode} onAppear={() => {

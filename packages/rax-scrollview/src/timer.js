@@ -5,8 +5,8 @@ const requestAnimationFrame = typeof requestAnimationFrame === 'undefined' ?
 
 const cancelAnimationFrame = typeof cancelAnimationFrame === 'undefined' ?
   typeof webkitCancelAnimationFrame === 'undefined' ?
-  clearTimeout :
-  webkitCancelAnimationFrame : cancelAnimationFrame;
+    clearTimeout :
+    webkitCancelAnimationFrame : cancelAnimationFrame;
 
 const TYPES = {
   START: 'start',

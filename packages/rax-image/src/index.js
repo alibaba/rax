@@ -3,7 +3,6 @@ import {isWeex} from 'universal-env';
 import View from 'rax-view';
 
 class Image extends Component {
-
   static propTypes = {};
 
   static resizeMode = {

@@ -36,7 +36,7 @@ class TabBarItem extends Component {
   renderBadge() {
     const {
       badge
-      } = this.props;
+    } = this.props;
 
     const badgeStyle = this.compatRNApi_badge();
     if (badge) {
@@ -86,7 +86,7 @@ class TabBarItem extends Component {
     const {
       icon,
       title
-      } = this.props;
+    } = this.props;
 
     let Tag = Touchable;
     let TagAttrs = {};

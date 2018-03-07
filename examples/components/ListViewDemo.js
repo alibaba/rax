@@ -13,27 +13,26 @@ import ListView from 'rax-listview';
 
 
 let listData = [
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
-    {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
+  {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},
 ];
 // 将 item 定义成组件
 
 class ListViewDemo extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -96,20 +95,19 @@ class ListViewDemo extends Component {
   render() {
     return (
       <View style={styles.container}>
-      <ListView
-        style={{
-          height: 500,
-        }}
-        renderHeader={this.listHeader}
-        renderFooter={this.listLoading}
-        renderRow={this.listItem}
-        dataSource={this.state.data}
-        onEndReached={this.handleLoadMore}
-      />
+        <ListView
+          style={{
+            height: 500,
+          }}
+          renderHeader={this.listHeader}
+          renderFooter={this.listLoading}
+          renderRow={this.listItem}
+          dataSource={this.state.data}
+          onEndReached={this.handleLoadMore}
+        />
       </View>
     );
   }
-
 };
 
 

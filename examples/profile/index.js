@@ -11,7 +11,6 @@ import {isWeb} from 'universal-env';
 const PROFILE_WIDTH = 90;
 
 class App extends Component {
-
   state = {
     scrollY: new Animated.Value(0),
   };

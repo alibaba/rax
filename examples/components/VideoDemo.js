@@ -18,16 +18,16 @@ class VideoDemo extends Component {
   render() {
     return (
       <View style={styles.container}>
-       <Text>controls=false playControl=play|pause</Text>
-       <Video
-         style={{
-           flex: 1,
-           height: 350
-         }}
-         autoPlay={false}
-         controls={false}
-         playControl={this.state.playControl}
-         src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"
+        <Text>controls=false playControl=play|pause</Text>
+        <Video
+          style={{
+            flex: 1,
+            height: 350
+          }}
+          autoPlay={false}
+          controls={false}
+          playControl={this.state.playControl}
+          src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"
         />
 
         <Button onPress={() => {
@@ -48,7 +48,7 @@ class VideoDemo extends Component {
           autoPlay={false}
           muted={true}
           src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"
-         />
+        />
       </View>
     );
   }

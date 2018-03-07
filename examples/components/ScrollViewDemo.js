@@ -39,67 +39,67 @@ class ScrollViewDemo extends Component {
   render() {
     return (
       <View>
-      <View style={styles.container}>
-        <ScrollView
-          ref={(scrollView) => {
-            this.horizontalScrollView = scrollView;
-          }}
-          style={{
-            height: 100,
-          }}
-          horizontal={true}
-          onEndReached={() => this.setState({horizontalScrollViewEventLog: true})}
-        >
-          {THUMBS.map(createThumbRow)}
-        </ScrollView>
+        <View style={styles.container}>
+          <ScrollView
+            ref={(scrollView) => {
+              this.horizontalScrollView = scrollView;
+            }}
+            style={{
+              height: 100,
+            }}
+            horizontal={true}
+            onEndReached={() => this.setState({horizontalScrollViewEventLog: true})}
+          >
+            {THUMBS.map(createThumbRow)}
+          </ScrollView>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => this.horizontalScrollView.scrollTo({x: 0})}>
-          <Text>Scroll to start</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.horizontalScrollView.scrollTo({x: 0})}>
+            <Text>Scroll to start</Text>
+          </TouchableOpacity>
 
-        <View style={styles.eventLogBox}>
-          <Text>{this.state.horizontalScrollViewEventLog ? 'onEndReached' : ''}</Text>
+          <View style={styles.eventLogBox}>
+            <Text>{this.state.horizontalScrollViewEventLog ? 'onEndReached' : ''}</Text>
+          </View>
+
         </View>
 
-      </View>
+        <View style={styles.container}>
+          <ScrollView
+            ref={(scrollView) => {
+              this.scrollView = scrollView;
+            }}
+            style={{
+              height: 500,
+            }}
+            onEndReached={() => this.setState({scrollViewEventLog: true})}>
 
-      <View style={styles.container}>
-        <ScrollView
-          ref={(scrollView) => {
-            this.scrollView = scrollView;
-          }}
-          style={{
-            height: 500,
-          }}
-          onEndReached={() => this.setState({scrollViewEventLog: true})}>
-
-          <View>
-            <View style={styles.sticky}>
-              <Text>Cannot sticky</Text>
+            <View>
+              <View style={styles.sticky}>
+                <Text>Cannot sticky</Text>
+              </View>
             </View>
+
+            <View style={styles.sticky}>
+              <Text>Sticky view must in ScrollView root</Text>
+            </View>
+
+            {THUMBS.map(createThumbRow)}
+
+          </ScrollView>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.scrollView.scrollTo({y: 0})}>
+            <Text>Scroll to top</Text>
+          </TouchableOpacity>
+
+          <View style={styles.eventLogBox}>
+            <Text>{this.state.scrollViewEventLog ? 'onEndReached' : ''}</Text>
           </View>
 
-          <View style={styles.sticky}>
-            <Text>Sticky view must in ScrollView root</Text>
-          </View>
-
-          {THUMBS.map(createThumbRow)}
-
-        </ScrollView>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => this.scrollView.scrollTo({y: 0})}>
-          <Text>Scroll to top</Text>
-        </TouchableOpacity>
-
-        <View style={styles.eventLogBox}>
-          <Text>{this.state.scrollViewEventLog ? 'onEndReached' : ''}</Text>
         </View>
-
-      </View>
 
       </View>
     );

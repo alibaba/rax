@@ -20,14 +20,14 @@
   "engines": {
     "npm": ">=3.0.0"
   },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
   "dependencies": {
     "rax-link": "^0.5.4",
     "rax-picture": "^0.5.4",
     "rax-text": "^0.5.4",
     "rax-view": "^0.5.4"
-  },
-  "peerDependencies": {
-    "rax": "0.x"
   },
   "devDependencies": {
     "rax-test-renderer": "^0.5.4",

@@ -23,5 +23,8 @@
   },
   "peerDependencies": {
     "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.5.4"
   }
 }

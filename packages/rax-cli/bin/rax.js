@@ -57,8 +57,8 @@ switch (commands[0]) {
   case 'init':
     if (!commands[1]) {
       console.error(
-      'Usage: rax init <ProjectName> [--verbose]'
-    );
+        'Usage: rax init <ProjectName> [--verbose]'
+      );
       process.exit(1);
     } else {
       init(commands[1], argv.verbose, argv.version);
@@ -66,9 +66,9 @@ switch (commands[0]) {
     break;
   default:
     console.error(
-    'Command `%s` unrecognized.',
-    commands[0]
-  );
+      'Command `%s` unrecognized.',
+      commands[0]
+    );
     process.exit(1);
     break;
 }

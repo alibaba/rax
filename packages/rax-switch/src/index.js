@@ -5,7 +5,6 @@ const DEFAULT_WIDTH = 100;
 const DEFAULT_HEIGHT = 60;
 
 class Switch extends Component {
-
   static propTypes = {};
 
   static defaultProps = {

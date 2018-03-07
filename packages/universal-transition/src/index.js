@@ -27,7 +27,7 @@ export default function transition(node, styles, options, callback) {
   } else if (isWeb) {
     const duration = options.duration || 0; // ms
     const timingFunction = options.timingFunction || 'linear';
-    const delay = options.delay || 0;  // ms
+    const delay = options.delay || 0; // ms
     const transitionValue = 'all ' + duration + 'ms '
         + timingFunction + ' ' + delay + 'ms';
 

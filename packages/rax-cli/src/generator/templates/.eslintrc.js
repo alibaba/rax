@@ -2,9 +2,7 @@
 
 module.exports = {
   "root": true,
-
   "parser": "babel-eslint",
-
   "env": {
     "browser": true,
     "node": true,
@@ -29,20 +27,6 @@ module.exports = {
       "experimentalObjectRestSpread": true
     }
   },
-  "ecmaFeatures": {
-    "arrowFunctions": true,
-    "blockBindings": true,
-    "classes": true,
-    "defaultParams": true,
-    "destructuring": true,
-    "forOf": true,
-    "objectLiteralComputedProperties": true,
-    "objectLiteralShorthandMethods": true,
-    "objectLiteralShorthandProperties": true,
-    "spread": true,
-    "superInFunctions": true,
-    "templateStrings": true
-  },
   "globals": {
     "__weex_data__": true,
     "__weex_options__": true,
@@ -52,7 +36,6 @@ module.exports = {
     "WXEnvironment": true,
     "webkitRequestAnimationFrame": true,
   },
-
   "rules": {
     // ES6
     "prefer-const": "off",
@@ -167,7 +150,7 @@ module.exports = {
     "react/jsx-indent-props": ["error", 2], // 2 spaces indentation
     "react/jsx-no-duplicate-props": "error",
     "react/jsx-no-undef": "error",
-    "react/jsx-space-before-closing": "error",
+    "react/jsx-tag-spacing": "error",
     "react/jsx-no-comment-textnodes": "error",
     "react/jsx-equals-spacing": "error",
     "react/jsx-handler-names": "off",

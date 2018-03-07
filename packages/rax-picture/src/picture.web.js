@@ -150,7 +150,7 @@ class Picture extends Component {
         lazyload,
         placeholder,
         ignoreGif
-        } = this.props,
+      } = this.props,
       { uri } = source;
     let nativeProps = this.props;
 
