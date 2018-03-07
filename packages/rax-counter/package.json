@@ -29,7 +29,6 @@
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax": "^0.5.4",
     "rax-test-renderer": "^0.5.4",
     "rax-text": "^0.5.4"
   }
