@@ -1,7 +1,7 @@
 'use strict';
 /* eslint no-console: 0 */
 const colors = require('chalk');
-const updateWebpackConfig = require('./update-webpack-config');
+const updateWebpackConfig = require('./updateWebpackConfig');
 const webpack = require('webpack');
 
 /**

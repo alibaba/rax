@@ -1,25 +1,24 @@
 'use strict';
 const webpack = require('webpack');
 
-const paths = require('./paths');
+const pathConfig = require('./path.config');
 const webpackConfigBase = require('./webpack.config.base');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const webpackConfigProd = Object.assign({}, webpackConfigBase);
 
 webpackConfigProd.entry = {
-  'index.bundle.min': [paths.appIndexJs]
+  'index.bundle.min': [pathConfig.appIndexJs]
 };
 
 webpackConfigProd.output.pathinfo = false;
 webpackConfigProd.target = 'node';
 
 webpackConfigProd.plugins.push(
-  new webpack.optimize.UglifyJsPlugin({
+  new UglifyJSPlugin({
     include: /\.min\.js$/,
-    minimize: true,
-    compress: {
-      warnings: false
-    }
+    cache: true,
+    sourceMap: true,
   })
 );
 

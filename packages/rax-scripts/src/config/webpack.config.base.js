@@ -7,7 +7,7 @@ const RaxWebpackPlugin = require('rax-webpack-plugin');
 const WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-plugin');
 const webpack = require('webpack');
 
-const paths = require('./paths');
+const pathConfig = require('./path.config');
 const babelConfig = require('./babel.config');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
@@ -32,7 +32,7 @@ module.exports = {
 
   output: {
     // Next line is not used in dev but WebpackDevServer crashes without it:
-    path: paths.appBuild,
+    path: pathConfig.appBuild,
     // Add /* filename */ comments to generated require()s in the output.
     pathinfo: true,
     // This does not produce a real file. It's just the virtual path that is
@@ -53,7 +53,7 @@ module.exports = {
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
-      template: paths.appHtml
+      template: pathConfig.appHtml
     }),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
@@ -79,7 +79,7 @@ module.exports = {
     // to restart the development server for Webpack to discover it. This plugin
     // makes the discovery automatic so you don't have to restart.
     // See https://github.com/facebookincubator/create-react-app/issues/186
-    new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+    new WatchMissingNodeModulesPlugin(pathConfig.appNodeModules),
     // show webpakc build progress
     new webpack.ProgressPlugin(function(percentage, msg) {
       const stream = process.stderr;
@@ -100,26 +100,51 @@ module.exports = {
     })
   ],
   module: {
-    loaders: [
+    rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
+        ],
+      },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loaders: [require.resolve('babel-loader')] // 'babel-loader' is also a legal name to reference
+        use: [
+          {
+            loader: 'babel-loader'
+          }
+        ],
       },
       {
         test: /\.css$/,
-        loader: require.resolve('stylesheet-loader')
+        use: [
+          {
+            loader: 'stylesheet-loader'
+          }
+        ],
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
       {
         test: /\.json$/,
-        loader: require.resolve('json-loader')
+        use: [
+          {
+            loader: 'json-loader'
+          }
+        ],
       },
       // load inline images using image-source-loader for Image
       {
         test: /\.(png|jpe?g|gif)$/i,
-        loader: require.resolve('image-source-loader')
+        use: [
+          {
+            loader: 'image-source-loader'
+          }
+        ],
       }
     ]
   }

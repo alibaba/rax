@@ -16,10 +16,9 @@ module.exports = function(source, inputMap) {
     return callback(null, source, inputMap);
   }
 
-  const query = this.query === '' ? {} : loaderUtils.parseQuery(this.query);
+  const options = loaderUtils.getOptions(this);
   const resourcePath = this.resourcePath;
-
-  let resourcePathInEntry = query.appIndex && query.appIndex.startsWith(resourcePath);
+  let resourcePathInEntry = options.appIndex && options.appIndex.startsWith(resourcePath);
 
   if (!resourcePathInEntry) {
     return callback(null, source, inputMap);

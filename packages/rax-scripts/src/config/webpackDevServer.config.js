@@ -1,8 +1,8 @@
 'use strict';
 
 const config = require('./webpack.config.prod');
-const paths = require('./paths');
-const options = require('../utils/parse-options');
+const pathConfig = require('./path.config');
+const envConfig = require('./env.config');
 
 module.exports = {
   // Enable gzip compression of generated files.
@@ -24,7 +24,7 @@ module.exports = {
   // for files like `favicon.ico`, `manifest.json`, and libraries that are
   // for some reason broken when imported through Webpack. If you just want to
   // use an image, put it in `src` and `import` it from JavaScript instead.
-  contentBase: paths.appPublic,
+  contentBase: pathConfig.appPublic,
   // By default files from `contentBase` will not trigger a page reload.
   watchContentBase: true,
   // Enable hot reloading server. It will provide /sockjs-node/ endpoint
@@ -45,8 +45,8 @@ module.exports = {
     ignored: /node_modules/,
   },
   // Enable HTTPS if the HTTPS environment variable is set to 'true'
-  https: options.protocol === 'https:',
-  host: options.host,
-  public: options.host,
+  https: envConfig.protocol === 'https:',
+  host: envConfig.host,
+  public: envConfig.host,
   overlay: false,
 };

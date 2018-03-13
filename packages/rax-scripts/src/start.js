@@ -9,10 +9,10 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const WebpackDevServer = require('webpack-dev-server');
 
-const createWebpackCompiler = require('./utils/create-webpack-compiler');
+const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackConfigDev = require('./config/webpack.config.dev');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
-const options = require('./utils/parse-options');
+const envConfig = require('./config/env.config');
 
 /**
  * run webpack dev server
@@ -30,7 +30,7 @@ function start(port) {
       process.exit(1);
     }
 
-    const serverUrl = `${options.protocol}//${options.host}:${options.port}/`;
+    const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}/`;
     console.log('');
     console.log('');
     console.log(colors.green('Starting the development server at:'));
@@ -39,4 +39,4 @@ function start(port) {
   });
 }
 
-start(options.port);
+start(envConfig.port);

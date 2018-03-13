@@ -7,12 +7,13 @@ import MultiplePlatform from './MultiplePlatform';
 import DuplicateChecker from './DuplicateChecker';
 
 const isProducation = process.env.NODE_ENV === 'production';
+const shouldExternalBuiltinModules = process.env.RAX_EXTERNAL_BUILTIN_MODULES === 'true';
 
 class RaxWebpackPlugin {
   constructor(options) {
     this.options = Object.assign({
       builtinModules: BuiltinModules,
-      externalBuiltinModules: false,
+      externalBuiltinModules: shouldExternalBuiltinModules,
       frameworkComment: null,
       includePolyfills: false,
       platforms: [], // web node weex reactnative
