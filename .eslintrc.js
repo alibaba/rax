@@ -1,4 +1,4 @@
-/* eslint quotes: false */
+/* eslint quotes: off */
 
 module.exports = {
   "root": true,

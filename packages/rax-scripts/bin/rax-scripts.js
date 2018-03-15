@@ -47,7 +47,7 @@ if (result.signal === 'SIGKILL') {
   process.exit(1);
 }
 
-process.exit(result.status);var result = spawn.sync(
+process.exit(result.status); var result = spawn.sync(
   'node', [require.resolve('../lib/' + script)], {
     cwd: process.cwd(),
     stdio: 'inherit'

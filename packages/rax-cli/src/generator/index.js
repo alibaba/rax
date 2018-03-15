@@ -19,7 +19,7 @@ module.exports = function(kwargs) {
 
   // Rename files start with '_'
   var files = easyfile.readdir(projectDir);
-  files.forEach(function(filename){
+  files.forEach(function(filename) {
     if (filename[0] === '_') {
       var filepath = path.join(projectDir, filename);
       easyfile.rename(

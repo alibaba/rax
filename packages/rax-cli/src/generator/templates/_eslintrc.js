@@ -1,4 +1,4 @@
-/* eslint quotes: false */
+/* eslint quotes: off */
 
 module.exports = {
   "root": true,
@@ -15,7 +15,7 @@ module.exports = {
   ],
   "settings": {
     "react": {
-      "pragma": "createElement",  // Pragma to use, default to "React"
+      "pragma": "createElement", // Pragma to use, default to "React"
     }
   },
   "parserOptions": {

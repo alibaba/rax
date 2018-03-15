@@ -62,6 +62,5 @@ delete installedChunks[chunkId];
 var parentHotUpdateCallback = global[${JSON.stringify(hotUpdateFunction)}];
 global[${JSON.stringify(hotUpdateFunction)}] = ${runtimeSource}`;
   }
-
 }
 module.exports = JsonpMainTemplatePlugin;
