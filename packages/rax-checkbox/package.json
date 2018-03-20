@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "rax-image": "^0.5.4",
-    "rax-text": "^0.5.4",
     "rax-touchable": "^0.5.4",
     "rax-view": "^0.5.4"
   },

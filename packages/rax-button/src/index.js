@@ -26,7 +26,7 @@ class Button extends Component {
     }
 
     return (
-      <Touchable {...props} style={buttonStyles}>
+      <Touchable role="button" {...props} style={buttonStyles}>
         {content}
       </Touchable>
     );
