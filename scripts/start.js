@@ -24,6 +24,7 @@ function getEntry() {
 }
 
 var config = {
+  mode: 'development',
   target: 'node',
   // devtool: '#inline-source-map',
   entry: getEntry(),
@@ -43,11 +44,11 @@ var config = {
     }),
   ],
   module: {
-    loaders: [{
+    rules: [{
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
       loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
-      query: {
+      options: {
         presets: ['es2015', 'rax']
       }
     }]

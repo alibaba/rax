@@ -71,7 +71,7 @@ export default class Day extends Component {
       </Touchable>
 
       :
-      <Touchable onPress={!isDisabled && this.props.onPress}>
+      <Touchable onPress={isDisabled ? null : this.props.onPress}>
         <View style={[styles.dayButton, customStyle.dayButton]}>
           <View style={this.dayCircleStyle(isWeekend, isSelected, isToday)}>
             <Text style={this.dayTextStyle(isWeekend, isSelected, isToday, isDisabled)}>{caption}</Text>
