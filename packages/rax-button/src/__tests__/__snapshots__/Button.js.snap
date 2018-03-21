@@ -2,6 +2,9 @@
 
 exports[`Button should render a button 1`] = `
 Object {
+  "attributes": Object {
+    "role": "button",
+  },
   "children": Array [
     Object {
       "children": Array [
