@@ -6,7 +6,6 @@ import {isWeex, isWeb} from 'universal-env';
 
 
 export default class Modal extends Component {
-
   constructor(props) {
     super(props);
   }
@@ -145,6 +144,7 @@ const styles = {
   mask: {
     position: 'fixed',
     top: 0,
+    left: 0,
     width: 750,
     height: 3000,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',

@@ -10,11 +10,11 @@ updateNotifier({pkg: pkg}).notify();
 var chalk = require('chalk');
 var semver = require('semver');
 
-if (!semver.satisfies(process.version, '>=4')) {
+if (!semver.satisfies(process.version, '>=6')) {
   var message = 'You are currently running Node.js ' +
     chalk.red(process.version) + '.\n' +
     '\n' +
-    'Rax runs on Node 4.0 or newer. There are several ways to ' +
+    'Rax runs on Node 6.0 or newer. There are several ways to ' +
     'upgrade Node.js depending on your preference.\n' +
     '\n' +
     'nvm:       nvm install node && nvm alias default node\n' +
@@ -31,7 +31,7 @@ var execSync = require('child_process').execSync;
 var spawn = require('cross-spawn');
 var inquirer = require('inquirer');
 var chalk = require('chalk');
-var cli = require('../lib/');
+var cli = require('../src/');
 var argv = require('minimist')(process.argv.slice(2));
 
 var RAX_PACKAGE_JSON_PATH = path.resolve(
@@ -57,8 +57,8 @@ switch (commands[0]) {
   case 'init':
     if (!commands[1]) {
       console.error(
-      'Usage: rax init <ProjectName> [--verbose]'
-    );
+        'Usage: rax init <ProjectName> [--verbose]'
+      );
       process.exit(1);
     } else {
       init(commands[1], argv.verbose, argv.version);
@@ -66,9 +66,9 @@ switch (commands[0]) {
     break;
   default:
     console.error(
-    'Command `%s` unrecognized.',
-    commands[0]
-  );
+      'Command `%s` unrecognized.',
+      commands[0]
+    );
     process.exit(1);
     break;
 }

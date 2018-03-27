@@ -62,7 +62,6 @@ let dataSource = [
 ];
 
 class WaterfallDemo extends Component {
-
   constructor(props) {
     super(props);
     this.state = {

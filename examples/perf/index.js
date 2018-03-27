@@ -70,7 +70,6 @@ class PerfTest extends Component {
       {childUpdate ? <ChildFour /> : null}
     </View>;
   }
-
 }
 
 const styles = {

@@ -16,7 +16,6 @@ const WINDOWWIDTH = 750;
 
 
 class DropDown extends Component {
-
   static contextTypes = {
     tabheader: PropTypes.object
   };
@@ -142,7 +141,7 @@ class DropDown extends Component {
           this.gridItemSelect(index);
         }}
         style={style.dropBoxTtem}>
-          <Text style={style.dropBoxSelectText} >{item}</Text>
+        <Text style={style.dropBoxSelectText} >{item}</Text>
       </TouchableHighlight>;
     } else {
       return <TouchableHighlight
@@ -150,7 +149,7 @@ class DropDown extends Component {
           this.gridItemSelect(index);
         }}
         style={style.dropBoxTtem}>
-          <Text style={style.dropBoxText} >{item}</Text>
+        <Text style={style.dropBoxText} >{item}</Text>
       </TouchableHighlight>;
     }
   }

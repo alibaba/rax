@@ -77,8 +77,7 @@ describe('rax-webpack-plugin', function() {
   it('bundle', function(done) {
     runWebpack(done, 'bundle', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
-      expect(actual).toBe(expected);
+      expect(actual).toMatch('bundle-target');
       expect(actual).toMatch('// {"framework" : "Rax"}');
     });
   });
@@ -86,8 +85,8 @@ describe('rax-webpack-plugin', function() {
   it('custom', function(done) {
     runWebpack(done, 'custom', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
-      expect(actual).toBe(expected);
+      expect(actual).toMatch('customDefine');
+      expect(actual).toMatch('custom-target');
       expect(actual).toMatch('// {"framework" : "Rax"}');
     });
   });
@@ -95,9 +94,10 @@ describe('rax-webpack-plugin', function() {
   it('bundle-compatible', function(done) {
     runWebpack(done, 'bundle-compatible', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
 
-      expect(actual).toBe(expected);
+      expect(actual).toMatch('define("index.bundle"');
+      expect(actual).toMatch('require("index.bundle")');
+      expect(actual).toMatch('bundle-compatible-target');
       expect(actual).toMatch('// {"framework" : "Rax"}');
     });
   });
@@ -105,76 +105,55 @@ describe('rax-webpack-plugin', function() {
   it('factory', function(done) {
     runWebpack(done, 'factory', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
 
-      expect(actual).toBe(expected);
-      expect(actual).toMatch(/^module.exports = /);
-    });
-  });
-
-  it('factory', function(done) {
-    runWebpack(done, 'factory', function(actualPath, filePath) {
-      const actual = readFile(actualPath);
-      const expected = readFile(filePath);
-
-      expect(actual).toBe(expected);
-      expect(actual).toMatch(/^module.exports = /);
+      expect(actual).toMatch('module.exports = function(require, exports, module) {');
+      expect(actual).toMatch('with(this) { module.exports =');
     });
   });
 
   it('factory-factoryGlobals', function(done) {
     runWebpack(done, 'factory-factoryGlobals', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
 
-      expect(actual).toBe(expected);
-      expect(actual).toMatch(/^module.exports = /);
+      expect(actual).toMatch('module.exports = function(require, exports, module) {');
+      expect(actual).toMatch('var window = this["window"];');
+      expect(actual).toMatch('factory-factoryGlobals-target');
     });
   });
 
   it('function', function(done) {
     runWebpack(done, 'function', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
 
-      expect(actual).toBe(expected);
-    });
-  });
-
-  it('function', function(done) {
-    runWebpack(done, 'function', function(actualPath, filePath) {
-      const actual = readFile(actualPath);
-      const expected = readFile(filePath);
-
-      expect(actual).toBe(expected);
+      expect(actual).toMatch('module.exports = function() {');
+      expect(actual).toMatch('function-target');
     });
   });
 
   it('module', function(done) {
     runWebpack(done, 'module', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
 
-      expect(actual).toBe(expected);
       expect(actual).toMatch(/^module\.exports = /);
+      expect(actual).toMatch('module-target');
     });
   });
 
   it('umd', function(done) {
     runWebpack(done, 'umd', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
 
-      expect(actual).toBe(expected);
+      expect(actual).toMatch('define("index.umd", function(require, exports, module){');
+      expect(actual).toMatch('umd-target');
     });
   });
 
   it('cmd', function(done) {
     runWebpack(done, 'cmd', function(actualPath, filePath) {
       const actual = readFile(actualPath);
-      const expected = readFile(filePath);
 
-      expect(actual).toBe(expected);
+      expect(actual).toMatch('define("index.cmd", function(require, exports, module){');
+      expect(actual).toMatch('cmd-target');
     });
   });
 });

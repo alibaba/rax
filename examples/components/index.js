@@ -32,6 +32,7 @@ import TabbarDemo from './TabbarDemo';
 import TabheaderDemo from './TabheaderDemo';
 import SliderDemo from './SliderDemo';
 import TableDemo from './TableDemo';
+import CheckboxDemo from './CheckboxDemo';
 
 class Page extends Component {
   render() {
@@ -66,6 +67,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>Button</Text>
         <ButtonDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Checkbox</Text>
+        <CheckboxDemo />
       </View>
 
       <View>

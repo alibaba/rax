@@ -37,7 +37,7 @@ describe('createContext', () => {
     function Consumer(props) {
       return (
         <Context.Consumer>
-          {value => <span>{value}</span>}
+          {value => <span key={value}>{value}</span>}
         </Context.Consumer>
       );
     }
@@ -54,7 +54,7 @@ describe('createContext', () => {
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
 
     // Update
-    render(<App value={3} />);
+    render(<App value={3} />, container);
     expect(container.childNodes[0].childNodes[0].data).toEqual('3');
   });
 
@@ -110,17 +110,17 @@ describe('createContext', () => {
     }
 
     render(<App value={2} />, container);
-    expect(container.childNodes[0].childNodes[0].data).toEqual('4');
+    expect(container.childNodes[0].childNodes[0].data).toEqual('2');
     expect(container.childNodes[1].childNodes[0].data).toEqual('4');
 
     // Update
-    // render(<App value={3} />, container);
-    // expect(container.childNodes[0].childNodes[0].data).toEqual('6');
-    // expect(container.childNodes[1].childNodes[0].data).toEqual('6');
+    render(<App value={3} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('3');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('6');
 
     // Another update
-    // render(<App value={4} />, container);
-    // expect(container.childNodes[0].childNodes[0].data).toEqual('8');
-    // expect(container.childNodes[1].childNodes[0].data).toEqual('8');
+    render(<App value={4} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('4');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('8');
   });
 });

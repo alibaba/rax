@@ -54,7 +54,7 @@ export default (
       const wildcardRe = pathToRegexp(`${pathPattern}/*`, keys);
       re = new RegExp(`(?:${re.source})|(?:${wildcardRe.source})`);
     }
-      /* $FlowFixMe */
+    /* $FlowFixMe */
     paths[routeName] = { re, keys };
   });
 

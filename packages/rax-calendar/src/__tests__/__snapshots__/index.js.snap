@@ -343,9 +343,6 @@ Object {
                       "tagName": "DIV",
                     },
                   ],
-                  "eventListeners": Object {
-                    "click": false,
-                  },
                   "style": Object {
                     "alignContent": "flex-start",
                     "border": "0 solid black",
@@ -434,9 +431,6 @@ Object {
                       "tagName": "DIV",
                     },
                   ],
-                  "eventListeners": Object {
-                    "click": false,
-                  },
                   "style": Object {
                     "alignContent": "flex-start",
                     "border": "0 solid black",
@@ -3584,9 +3578,6 @@ Object {
                       "tagName": "DIV",
                     },
                   ],
-                  "eventListeners": Object {
-                    "click": false,
-                  },
                   "style": Object {
                     "alignContent": "flex-start",
                     "border": "0 solid black",
@@ -3675,9 +3666,6 @@ Object {
                       "tagName": "DIV",
                     },
                   ],
-                  "eventListeners": Object {
-                    "click": false,
-                  },
                   "style": Object {
                     "alignContent": "flex-start",
                     "border": "0 solid black",

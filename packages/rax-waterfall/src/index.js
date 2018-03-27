@@ -5,7 +5,6 @@ import ScrollView from 'rax-scrollview';
 import RefreshControl from 'rax-refreshcontrol';
 
 class Header extends PureComponent {
-
   render() {
     if (isWeex) {
       return <header {...this.props} append="tree" />;
@@ -16,7 +15,6 @@ class Header extends PureComponent {
 }
 
 class WebFall extends PureComponent {
-
   calcHeightSum = (arr) => {
     let sum = 0;
     arr && arr.forEach(item => {
@@ -63,7 +61,6 @@ class WebFall extends PureComponent {
 }
 
 class Waterfall extends Component {
-
   loadmoreretry = 1;
 
   constructor(props) {
@@ -135,9 +132,9 @@ class Waterfall extends Component {
         onLoadmore={props.onEndReached}
         loadmoreoffset={props.onEndReachedThreshold}
         loadmoreretry={this.state.loadmoreretry}
-        >
-          {cells}
-        </waterfall>);
+      >
+        {cells}
+      </waterfall>);
     } else {
       styles.waterfallColumn.width = columnWidth;
       return (<ScrollView {...props} ref="scrollview">

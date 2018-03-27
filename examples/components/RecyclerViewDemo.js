@@ -37,7 +37,7 @@ class Row extends Component {
 
   render() {
     return (
-     <TouchableWithoutFeedback onPress={this.handleClick} >
+      <TouchableWithoutFeedback onPress={this.handleClick} >
         <View style={styles.row}>
           <Text style={styles.text}>
             {this.props.data.text + ' (' + this.props.data.clicks + ' clicks)'}
@@ -62,41 +62,41 @@ class RecyclerViewDemo extends Component {
     return (
       <View>
 
-      <View style={styles.container}>
-        <RecyclerView
-          ref={(scrollView) => {
-            this.scrollView = scrollView;
-          }}
-          style={{
-            height: 500
-          }}
-          onEndReached={() => this.setState({scrollViewEventLog: true})}>
+        <View style={styles.container}>
+          <RecyclerView
+            ref={(scrollView) => {
+              this.scrollView = scrollView;
+            }}
+            style={{
+              height: 500
+            }}
+            onEndReached={() => this.setState({scrollViewEventLog: true})}>
 
-          <RecyclerView.Header style={styles.sticky}>
-            <Text>Sticky view is not header</Text>
-          </RecyclerView.Header>
+            <RecyclerView.Header style={styles.sticky}>
+              <Text>Sticky view is not header</Text>
+            </RecyclerView.Header>
 
-          <RecyclerView.Header>
-            <View style={styles.sticky}>
-              <Text>Sticky view must in header root</Text>
-            </View>
-          </RecyclerView.Header>
+            <RecyclerView.Header>
+              <View style={styles.sticky}>
+                <Text>Sticky view must in header root</Text>
+              </View>
+            </RecyclerView.Header>
 
-          {THUMBS.map(createThumbRow)}
+            {THUMBS.map(createThumbRow)}
 
-        </RecyclerView>
+          </RecyclerView>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => this.scrollView.scrollTo({y: 0})}>
-          <Text>Scroll to top</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.scrollView.scrollTo({y: 0})}>
+            <Text>Scroll to top</Text>
+          </TouchableOpacity>
 
-        <View style={styles.eventLogBox}>
-          <Text>{this.state.scrollViewEventLog ? 'onEndReached' : ''}</Text>
+          <View style={styles.eventLogBox}>
+            <Text>{this.state.scrollViewEventLog ? 'onEndReached' : ''}</Text>
+          </View>
+
         </View>
-
-      </View>
 
       </View>
     );

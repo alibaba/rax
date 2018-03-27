@@ -87,7 +87,7 @@ class Row extends Component {
 
   render() {
     return (
-     <TouchableWithoutFeedback onPress={this.handleClick} >
+      <TouchableWithoutFeedback onPress={this.handleClick} >
         <View style={styles.row}>
           <Text style={styles.text}>
             {this.props.data.text + ' (' + this.props.data.clicks + ' clicks)'}
@@ -122,11 +122,11 @@ class RefreshControlDemo extends Component {
     setTimeout(() => {
       // prepend 10 items
       const rowData = arrayFrom(new Array(10))
-      .map((val, i) => ({
-        text: 'Loaded row ' + (+this.state.loaded + i),
-        clicks: 0,
-      }))
-      .concat(this.state.rowData);
+        .map((val, i) => ({
+          text: 'Loaded row ' + (+this.state.loaded + i),
+          clicks: 0,
+        }))
+        .concat(this.state.rowData);
 
       this.setState({
         loaded: this.state.loaded + 10,

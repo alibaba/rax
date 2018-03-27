@@ -1,6 +1,6 @@
 {
   "name": "rax-player-album",
-  "version": "0.5.2",
+  "version": "0.5.4",
   "description": "PlayerAlbum component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,16 +21,16 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-link": "^0.5.2",
-    "rax-picture": "^0.5.2",
-    "rax-text": "^0.5.2",
-    "rax-view": "^0.5.2"
+    "rax-link": "^0.5.4",
+    "rax-picture": "^0.5.4",
+    "rax-text": "^0.5.4",
+    "rax-view": "^0.5.4"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.5.2",
-    "rax-text": "^0.5.2"
+    "rax-test-renderer": "^0.5.4",
+    "rax-text": "^0.5.4"
   }
 }

@@ -6,7 +6,6 @@ import styles from './style';
 const TABEHEADER_SCTOLLTO = 'tabheaderScrollTo';
 
 class AnimBuoy extends Component {
-
   static contextTypes = {
     tabheader: PropTypes.object
   };

@@ -79,7 +79,7 @@ export default function createNavigationContainer<T: *>(
     componentDidMount() {
       if (this._isStateful()) {
         this.subs = BackAndroid.addEventListener('backPress', () =>
-           this.dispatch(NavigationActions.back())
+          this.dispatch(NavigationActions.back())
         );
         Linking.addEventListener('url', this._handleOpenURL);
         Linking.getInitialURL().then((url: string) => {

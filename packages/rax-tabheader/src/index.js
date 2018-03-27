@@ -8,7 +8,6 @@ import {mixinEmitter} from './Emitter';
 const THCONTAINER_REF = 'tabheaderContainer';
 
 class TabHeader extends Component {
-
   static childContextTypes = {
     tabheader: PropTypes.object,
   };

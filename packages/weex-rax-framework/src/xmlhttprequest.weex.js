@@ -20,7 +20,6 @@ const XHR_EVENTS = [
 
 module.exports = function(__weex_require__) {
   class XMLHttpRequest extends eventTarget(...XHR_EVENTS) {
-
     static UNSENT = UNSENT;
     static OPENED = OPENED;
     static HEADERS_RECEIVED = HEADERS_RECEIVED;
