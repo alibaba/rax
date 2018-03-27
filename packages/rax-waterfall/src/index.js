@@ -89,6 +89,7 @@ class Waterfall extends Component {
       columnCount = 1,
       columnGap = 0,
       dataSource,
+      cellProps,
       renderItem = () => {}
     } = props;
 
@@ -109,7 +110,7 @@ class Waterfall extends Component {
 
     if (isWeex) {
       dataSource && dataSource.forEach((item, index) => {
-        cells.push(<cell>{renderItem(item, index)}</cell>);
+        cells.push(<cell {...cellProps}>{renderItem(item, index)}</cell>);
       });
     } else {
       cells = cells.concat(<WebFall {...props} />);
