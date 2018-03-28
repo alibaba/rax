@@ -3,6 +3,30 @@ import Text from 'rax-text';
 import renderer from 'rax-test-renderer';
 import Modal from '../';
 
+jest.mock('universal-transition', () => {
+  return (node, cfg1, cfg2, callback) => {
+    callback && callback();
+  };
+});
+
+jest.mock('@weex-module/dom', () => {
+  return {
+    getComponentRect: (name, callback) => {
+      callback && callback({
+        size: {height: 1000}
+      });
+    }
+  };
+}, {virtual: true});
+
+jest.mock('@weex-module/animation', () => {
+  return {
+    transition: (ref, options, callback) => {
+      callback();
+    }
+  };
+}, {virtual: true});
+
 jest.useFakeTimers();
 
 class ModalTest extends Component {

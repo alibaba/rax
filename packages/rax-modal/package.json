@@ -21,7 +21,8 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-animated": "^0.5.4",
+    "rax-view": "^0.5.4",
+    "universal-transition": "^0.5.4",
     "rax-touchable": "^0.5.4",
     "universal-env": "^0.5.4"
   },
