@@ -299,7 +299,7 @@ describe('frameworkapi', () => {
 
   it('window.frameworkVersion', () => {
     var frameworkVersion = window.frameworkVersion;
-    expect(frameworkVersion).toEqual(null);
+    expect(frameworkVersion).toEqual('0.6.0');
   });
 
   it('window.alert', () => {
