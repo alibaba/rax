@@ -73,7 +73,6 @@ type Props = {
  *     +------------+
  */
 class CardStackPanResponder extends AbstractPanResponder {
-
   _isResponding: boolean;
   _isVertical: boolean;
   _props: Props;

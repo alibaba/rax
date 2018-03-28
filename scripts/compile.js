@@ -66,7 +66,7 @@ function getPackages(customPackages) {
     .filter(f => {
       if (customPackages) {
         const packageName = path.relative(PACKAGES_DIR, f).split(path.sep)[0];
-        return customPackages.indexOf(packageName) !== -1;
+        return packageName.indexOf(customPackages) !== -1;
       } else {
         return true;
       }

@@ -4,7 +4,6 @@ import Text from 'rax-text';
 import Touchable from 'rax-touchable';
 
 class Button extends Component {
-
   static propTypes = {};
 
   render() {
@@ -27,7 +26,7 @@ class Button extends Component {
     }
 
     return (
-      <Touchable {...props} style={buttonStyles}>
+      <Touchable role="button" {...props} style={buttonStyles}>
         {content}
       </Touchable>
     );

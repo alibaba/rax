@@ -10,7 +10,6 @@ const TABEHEADER_SCTOLLTO = 'tabheaderScrollTo';
 const TABEHEADER_SELECT = 'tabheaderSelect';
 
 class Item extends Component {
-
   static contextTypes = {
     tabheader: PropTypes.object
   };
@@ -161,7 +160,6 @@ class Item extends Component {
       iconText: iconTextStyle,
     };
   }
-
 }
 
 Item.defaultProps = {

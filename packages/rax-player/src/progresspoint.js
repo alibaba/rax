@@ -11,7 +11,6 @@ width = width / scale * 0.8;
  * @description Point for progress bar
  */
 class Point extends Component {
-
   constructor(props) {
     super(props);
   }
@@ -48,7 +47,7 @@ class Point extends Component {
       }}
       style={styles.pointWrapper}
       {...this._panResponder.panHandlers}
-      >
+    >
       <View style={styles.point} />
     </View>;
   }

@@ -12,7 +12,6 @@ import TouchableHighlight from 'rax-touchable';
 import Modal from 'rax-modal';
 
 class ModalDemo extends Component {
-
   showModal = () => {
     this.refs.modal.show();
   };

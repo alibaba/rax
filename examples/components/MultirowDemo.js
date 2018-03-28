@@ -25,7 +25,7 @@ class MultiRowDemo extends Component {
                 <Text style={styles.num}>{item}</Text>
               );
             }
-          } />
+            } />
         </View>
 
         <View style={styles.container}>
@@ -37,7 +37,7 @@ class MultiRowDemo extends Component {
                 <Text style={styles.num}>{item}</Text>
               );
             }
-          } />
+            } />
         </View>
 
         <View style={styles.container}>
@@ -49,7 +49,7 @@ class MultiRowDemo extends Component {
                 <Text style={styles.num}>{item}</Text>
               );
             }
-          } />
+            } />
         </View>
 
       </View>

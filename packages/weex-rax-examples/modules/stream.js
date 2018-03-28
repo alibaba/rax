@@ -3,7 +3,6 @@ import Button from '../common/Button';
 import Panel from '../common/Panel';
 
 class Example extends Component {
-
   state = {
     getJsonpResult: 'loading...',
     getResult: 'loading...',

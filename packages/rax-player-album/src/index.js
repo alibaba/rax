@@ -6,7 +6,6 @@ import Picture from 'rax-picture';
 import styles from './style';
 
 class PlayerCard extends Component {
-
   shouldComponentUpdate(nextProps, nextState) {
     if (!nextProps.dataSource ) {
       return true;

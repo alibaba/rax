@@ -51,7 +51,7 @@ describe('Image', () => {
         width: '20rem',
         height: '20rem'
       }}>
-        <Text />
+        <span />
       </Image>
     );
 

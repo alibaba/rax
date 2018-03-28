@@ -7,7 +7,6 @@ const TABEHEADER_GOTOP = 'tabheaderGoTop';
 const CONTAINER_REF = 'container';
 
 class Container extends Component {
-
   static contextTypes = {
     tabheader: PropTypes.object
   };

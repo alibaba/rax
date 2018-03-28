@@ -1,5 +1,5 @@
 export default {
- /*
+  /*
   * Default easing function for scroll animation
   * https://github.com/oblador/angular-scroll (duScrollDefaultEasing)
   */

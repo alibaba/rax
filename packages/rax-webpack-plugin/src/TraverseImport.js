@@ -143,7 +143,7 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
               ));
             } else {
               let newNodeInit = specObj.imported === platformMap[options.platform] ?
-              true : false;
+                true : false;
               let newNode = variableDeclarationMethod(
                 specObj.imported,
                 newNodeInit

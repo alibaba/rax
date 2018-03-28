@@ -1,7 +1,6 @@
 import {createElement, Component, render} from 'rax';
 
 class Example extends Component {
-
   state = {
     refresh_display: 'hide',
     loading_display: 'hide',
@@ -27,19 +26,19 @@ class Example extends Component {
   renderItems = (sec) => {
     let items = sec.items.map((item, index) => {
       return <div style={styles.item}>
-            <text style={styles.itemTitle}>row {item.id}</text>
-          </div>;
+        <text style={styles.itemTitle}>row {item.id}</text>
+      </div>;
     });
     return items;
   }
   render() {
     let sections = data.sections.map((sec, index) => {
       return <div style={styles.section}>
-          <div style={styles.header}>
-            <text style={styles.headerTitle}>{sec.title}</text>
-          </div>
-          {this.renderItems(sec)}
-        </div>;
+        <div style={styles.header}>
+          <text style={styles.headerTitle}>{sec.title}</text>
+        </div>
+        {this.renderItems(sec)}
+      </div>;
     });
 
     return (

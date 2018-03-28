@@ -2,7 +2,6 @@ import {Component, createElement, PropTypes} from 'rax';
 import {isWeex} from 'universal-env';
 
 class Text extends Component {
-
   static propTypes = {};
 
   static contextTypes = {
@@ -74,6 +73,7 @@ class Text extends Component {
       return <text {...nativeProps} />;
     } else {
       let styleProps = {
+        whiteSpace: 'pre-wrap',
         ...styles.text,
         ...nativeProps.style
       };

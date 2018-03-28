@@ -132,6 +132,7 @@ class Picture extends Component {
         style = {},
         source = {},
         resizeMode,
+        forceUpdate,
 
         width,
         height,
@@ -149,11 +150,11 @@ class Picture extends Component {
         lazyload,
         placeholder,
         ignoreGif
-        } = this.props,
+      } = this.props,
       { uri } = source;
     let nativeProps = this.props;
 
-    if (!this.uri) {
+    if (!this.uri || forceUpdate) {
       let sWidth = style.width, // style width of picture
         sHeight = style.height; // style width of picture
 

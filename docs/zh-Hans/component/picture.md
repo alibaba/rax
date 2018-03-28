@@ -26,7 +26,7 @@ import Picture from 'rax-picture';
 | height           | number  |           | 图片真实高度，单位 px                             |
 | lazyload         | boolean | false     | （web端有效）根据图像是否在可视范围内延迟加载图像，Web 端需引入 `framework.web.js` 脚本 |
 | autoPixelRatio   | boolean | true      | （web端有效）在高分辨率下使用二倍图                      |
-| placeholder      | string  |           | （web端有效）lazyload 时显示的背景图 URL             |
+| placeholder      | string  |           | （web端有效）lazyload 时显示的背景图 URL, 不能同时设置resizeMode，会有意想不到的效果             |
 | autoRemoveScheme | boolean | true      | （web端有效）图像 URL 自动删除协议头                   |
 
 

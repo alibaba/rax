@@ -12,11 +12,11 @@ function addZero(num, timeWrapStyle, timeBackground, timeBackgroundStyle, timeSt
   const displayFirstNum = displayNum < 10 ? 0 : displayNum.toString().slice(0, 1);
   const displaySecondNum = displayNum < 10 ? displayNum : displayNum.toString().slice(1);
   return <View style={[timeWrapStyle, styles.item]}>
-      {
-        timeBackground ?
-          <Image source={timeBackground} style={timeBackgroundStyle} /> :
-          null
-        }
+    {
+      timeBackground ?
+        <Image source={timeBackground} style={timeBackgroundStyle} /> :
+        null
+    }
     <Text style={timeStyle}>
       {'' + displayFirstNum}
     </Text>
@@ -125,7 +125,7 @@ class Index extends Component {
       secondStyle,
       textStyle,
       tpl
-      } = this.props;
+    } = this.props;
     if (formatFunc) {
       return formatFunc(timeRemaining);
     }
@@ -158,50 +158,50 @@ class Index extends Component {
         isDay ?
           addZero(days, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, timeStyle) :
           null
-        }
+      }
       {
         isDay ? <Text style={textStyle}>
           {
             tpl.slice(tplIndexOfDay + 2, tplIndexOfDay + 3)
           }
         </Text> : null
-        }
+      }
       {
         isHours ?
           addZero(hours, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, timeStyle) :
           null
-        }
+      }
       {
         isHours ? <Text style={textStyle}>
           {
             tpl.slice(tplIndexOfHours + 2, tplIndexOfHours + 3)
           }
         </Text> : null
-        }
+      }
       {
         isMinutes ?
           addZero(minutes, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, timeStyle) :
           null
-        }
+      }
       {
         isMinutes ? <Text style={textStyle}>
           {
             tpl.slice(tplIndexOfMinutes + 2, tplIndexOfMinutes + 3)
           }
         </Text> : null
-        }
+      }
       {
         isSeconds ?
           addZero(seconds, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, secondStyle) :
           null
-        }
+      }
       {
         isSeconds ? <Text style={textStyle}>
           {
             tpl.slice(tplIndexOfSeconds + 2, tplIndexOfSeconds + 3)
           }
         </Text> : null
-        }
+      }
     </View>;
   }
 }

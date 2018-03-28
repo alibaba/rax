@@ -8,13 +8,14 @@
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^0.4.20",
-    "rax-view": "^0.4.20",
-    "rax-text": "^0.4.20"
+    "rax": "^0.5.4",
+    "rax-view": "^0.5.4",
+    "rax-text": "^0.5.4"
   },
   "devDependencies": {
-    "rax-scripts": "^0.4.20",
-    "babel-eslint": "^7.1.0",
-    "eslint": "^3.10.0"
+    "rax-scripts": "^0.5.5",
+    "babel-eslint": "^8.2.2",
+    "eslint": "^4.18.1",
+    "eslint-plugin-react": "^7.7.0"
   }
 }

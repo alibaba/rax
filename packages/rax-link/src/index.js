@@ -3,7 +3,6 @@ import {isWeex} from 'universal-env';
 import Text from 'rax-text';
 
 class Link extends Component {
-
   static contextTypes = {
     isInAParentLink: PropTypes.bool,
     isInAParentText: PropTypes.bool

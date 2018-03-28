@@ -2,6 +2,9 @@
 
 exports[`Button should render a button 1`] = `
 Object {
+  "attributes": Object {
+    "role": "button",
+  },
   "children": Array [
     Object {
       "children": Array [
@@ -19,6 +22,7 @@ Object {
         "padding": 16,
         "position": "relative",
         "textAlign": "center",
+        "whiteSpace": "pre-wrap",
       },
       "tagName": "SPAN",
     },

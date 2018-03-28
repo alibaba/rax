@@ -6,7 +6,6 @@ import View from 'rax-view';
 const DEFAULT_HEIGHT = 480;
 
 class Table extends Component {
-
   static defaultProps = {
     columns: [],
     dataSource: [],

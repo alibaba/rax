@@ -33,8 +33,8 @@ it('today is selected', () => {
       prevButtonText={'上一月'}
       nextButtonText={'下一月'}
       weekStart={0}
-      onTouchPrev={() => console.log('Back TOUCH')}     // eslint-disable-line no-console
-      onTouchNext={() => console.log('Forward TOUCH')}  // eslint-disable-line no-console
+      onTouchPrev={() => console.log('Back TOUCH')} // eslint-disable-line no-console
+      onTouchNext={() => console.log('Forward TOUCH')} // eslint-disable-line no-console
     />
   ).toJSON();
   expect(tree).toMatchSnapshot();

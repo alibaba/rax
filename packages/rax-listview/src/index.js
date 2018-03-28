@@ -6,7 +6,6 @@ import RecyclerView from 'rax-recyclerview';
 const SCROLLVIEW_REF = 'scrollview';
 
 class ListView extends Component {
-
   static propTypes = {};
 
   static defaultProps = {

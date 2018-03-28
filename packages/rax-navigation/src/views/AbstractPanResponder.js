@@ -15,7 +15,6 @@ const EmptyPanHandlers = {
  * the gesture actions.
  */
 export default class AbstractPanResponder {
-
   constructor() {
     const config = {};
     Object.keys(EmptyPanHandlers).forEach((name: string) => {

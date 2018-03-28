@@ -16,7 +16,6 @@ export default function withCachedChildNavigation<T: *, N: *>(
   Comp
 ) {
   return class extends PureComponent {
-
     static displayName = `withCachedChildNavigation(${Comp.displayName || Comp.name})`;
 
     props: T;

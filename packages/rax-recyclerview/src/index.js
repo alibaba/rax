@@ -35,7 +35,6 @@ class Header extends PureComponent {
 }
 
 class RecyclerView extends Component {
-
   static defaultProps = {
     onEndReachedThreshold: DEFAULT_END_REACHED_THRESHOLD,
   };

@@ -85,7 +85,7 @@ class TabbarDemo extends Component {
             iconStyle={iconStyle}
             style={itemStyle}
             selectedStyle={itemSelectedStyle}
-            >
+          >
             <View style={styles.content}>
               <ScrollView>
                 <Text style={{color: 'red', marginTop: 20, marginLeft: 20}}>Index Content</Text>
