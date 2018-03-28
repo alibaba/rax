@@ -203,7 +203,7 @@ export function resetInstanceContext(instanceContext) {
       function(id) {
         clearTimeout(id);
       },
-    frameworkVersion: null,
+    frameworkVersion: '0.6.0', // for debug
     alert: (message) => {
       const modal = __weex_require__(MODAL_MODULE);
       modal.alert({
@@ -278,7 +278,7 @@ export function resetInstanceContext(instanceContext) {
     define: __weex_define__,
     require: __weex_require__,
     // Weex
-    callNative: () => {},
+    callNative: () => {}, // compatible original API
     __weex_document__,
     __weex_module_supports__: weex.isRegisteredModule,
     __weex_tag_supports__: weex.isRegisteredComponent,
@@ -300,6 +300,6 @@ export function resetInstanceContext(instanceContext) {
 
   window.self = window.window = window;
 
-  console.log('Rax jsfm init window', typeof window);
+  console.log('Rax jsfm init window, typeof window is ', typeof window);
   return window;
 }

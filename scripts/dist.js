@@ -142,7 +142,7 @@ dist(getConfig(
 
   dist(getConfig(
     {
-      'frameworkapi.weex': './packages/weex-rax-framework-api/src/index.js'
+      'api.weex': './packages/weex-rax-framework-api/src/index.js'
     },
     {
       path: './packages/weex-rax-framework-api/dist/',

@@ -36,7 +36,8 @@
     "semver-regex": "^1.0.0",
     "uppercamelcase": "^1.1.0",
     "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.5.0"
+    "webpack-dev-server": "^2.5.0",
+    "weex-js-runtime": "^0.23.6"
   },
   "peerDependencies": {
     "redux": "latest",
@@ -129,8 +130,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "dependencies": {
-    "weex-js-runtime": "^0.23.6"
   }
 }
