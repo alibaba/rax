@@ -5,12 +5,12 @@ import {ModuleFactories} from './builtin';
 
 (function(global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  global.WeexJSRuntime = factory();
+    typeof define === 'function' && define.amd ? define(factory) :
+      global.WeexJSRuntime = factory();
 }(this, function() {
   'use strict';
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -29,7 +29,7 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-/**
+  /**
  * Get a unique id.
  */
   var nextNodeRef = 1;
@@ -47,11 +47,11 @@ import {ModuleFactories} from './builtin';
       return '';
     }
     var string = Array.prototype.map.call(
-    new Uint8Array(buffer),
-    function(code) {
-      return String.fromCharCode(code);
-    }
-  ).join('');
+      new Uint8Array(buffer),
+      function(code) {
+        return String.fromCharCode(code);
+      }
+    ).join('');
     return btoa(string); // eslint-disable-line no-undef
   }
 
@@ -67,7 +67,7 @@ import {ModuleFactories} from './builtin';
     return array.buffer;
   }
 
-/**
+  /**
  * Detect if the param is falsy or empty
  * @param {any} any
  */
@@ -84,7 +84,7 @@ import {ModuleFactories} from './builtin';
     return true;
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -103,7 +103,7 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-/**
+  /**
  * Normalize a primitive value.
  * @param  {any}        v
  * @return {primitive}
@@ -174,7 +174,7 @@ import {ModuleFactories} from './builtin';
     return data;
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -197,7 +197,7 @@ import {ModuleFactories} from './builtin';
     return type + '@' + hookName + '#' + componentId;
   }
 
-/**
+  /**
  * For general callback management of a certain Weex instance.
  * Because function can not passed into native, so we create callback
  * callback id for each function and pass the callback id into native
@@ -231,7 +231,7 @@ import {ModuleFactories} from './builtin';
   CallbackManager.prototype.triggerHook = function triggerHook(componentId, type, hookName, options) {
     if ( options === void 0 ) options = {};
 
-  // TODO: validate arguments
+    // TODO: validate arguments
     var key = getHookKey(componentId, type, hookName);
     var hookFunction = this.hooks[key];
     if (typeof hookFunction !== 'function') {
@@ -261,7 +261,7 @@ import {ModuleFactories} from './builtin';
     this.hooks = {};
   };
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -282,7 +282,7 @@ import {ModuleFactories} from './builtin';
 
   var docMap = {};
 
-/**
+  /**
  * Add a document object into docMap.
  * @param {string} id
  * @param {object} document
@@ -293,7 +293,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/**
+  /**
  * Get the document object by id.
  * @param {string} id
  */
@@ -301,7 +301,7 @@ import {ModuleFactories} from './builtin';
     return docMap[id];
   }
 
-/**
+  /**
  * Remove the document from docMap by id.
  * @param {string} id
  */
@@ -309,7 +309,7 @@ import {ModuleFactories} from './builtin';
     delete docMap[id];
   }
 
-/**
+  /**
  * @deprecated
  * Get listener by document id.
  * @param {string} id
@@ -317,7 +317,7 @@ import {ModuleFactories} from './builtin';
  */
 
 
-/**
+  /**
  * Get TaskCenter instance by id.
  * @param {string} id
  * @return {object} TaskCenter
@@ -330,7 +330,7 @@ import {ModuleFactories} from './builtin';
     return null;
   }
 
-/**
+  /**
  * Append body node to documentElement.
  * @param {object} document
  * @param {object} node
@@ -381,7 +381,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/**
+  /**
  * Set up body node.
  * @param {object} document
  * @param {object} element
@@ -395,7 +395,7 @@ import {ModuleFactories} from './builtin';
     doc.body = el;
   }
 
-/**
+  /**
  * Establish the connection between parent and child node.
  * @param {object} child node
  * @param {object} parent node
@@ -413,7 +413,7 @@ import {ModuleFactories} from './builtin';
     });
   }
 
-/**
+  /**
  * Get the next sibling element.
  * @param {object} node
  */
@@ -426,7 +426,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/**
+  /**
  * Get the previous sibling element.
  * @param {object} node
  */
@@ -439,7 +439,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/**
+  /**
  * Insert a node into list at the specified index.
  * @param {object} target node
  * @param {array} list
@@ -464,7 +464,7 @@ import {ModuleFactories} from './builtin';
     return newIndex;
   }
 
-/**
+  /**
  * Move the node to a new index in list.
  * @param {object} target node
  * @param {array} list
@@ -474,7 +474,7 @@ import {ModuleFactories} from './builtin';
  */
   function moveIndex(target, list, newIndex, changeSibling) {
     var index = list.indexOf(target);
-  /* istanbul ignore next */
+    /* istanbul ignore next */
     if (index < 0) {
       return -1;
     }
@@ -504,7 +504,7 @@ import {ModuleFactories} from './builtin';
     return newIndex;
   }
 
-/**
+  /**
  * Remove the node from list.
  * @param {object} target node
  * @param {array} list
@@ -512,7 +512,7 @@ import {ModuleFactories} from './builtin';
  */
   function removeIndex(target, list, changeSibling) {
     var index = list.indexOf(target);
-  /* istanbul ignore next */
+    /* istanbul ignore next */
     if (index < 0) {
       return;
     }
@@ -525,7 +525,7 @@ import {ModuleFactories} from './builtin';
     list.splice(index, 1);
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -554,7 +554,7 @@ import {ModuleFactories} from './builtin';
     this.previousSibling = null;
   };
 
-/**
+  /**
 * Destroy current node, and remove itself form nodeMap.
 */
   Node.prototype.destroy = function destroy() {
@@ -568,7 +568,7 @@ import {ModuleFactories} from './builtin';
     });
   };
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -592,13 +592,13 @@ import {ModuleFactories} from './builtin';
     Element$2 = El;
   }
 
-/**
+  /**
  * A map which stores all type of elements.
  * @type {Object}
  */
   var registeredElements = {};
 
-/**
+  /**
  * Register an extended element type with component methods.
  * @param  {string} type    component type
  * @param  {array}  methods a list of method names
@@ -609,7 +609,7 @@ import {ModuleFactories} from './builtin';
       return;
     }
 
-  // Init constructor.
+    // Init constructor.
     var WeexElement = (function(Element) {
       function WeexElement() {
         Element.apply(this, arguments);
@@ -621,7 +621,7 @@ import {ModuleFactories} from './builtin';
       return WeexElement;
     }(Element$2));
 
-  // Add methods to prototype.
+    // Add methods to prototype.
     methods.forEach(function(methodName) {
       WeexElement.prototype[methodName] = function() {
         var args = [], len = arguments.length;
@@ -638,7 +638,7 @@ import {ModuleFactories} from './builtin';
       };
     });
 
-  // Add to element type map.
+    // Add to element type map.
     registeredElements[type] = WeexElement;
   }
 
@@ -648,11 +648,11 @@ import {ModuleFactories} from './builtin';
   }
 
 
-/**
+  /**
  * Clear all element types. Only for testing.
  */
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -711,7 +711,7 @@ import {ModuleFactories} from './builtin';
     Element.prototype = Object.create( Node$$1 && Node$$1.prototype );
     Element.prototype.constructor = Element;
 
-  /**
+    /**
    * Append a child node.
    * @param {object} node
    * @return {undefined | number} the signal sent by native
@@ -720,7 +720,7 @@ import {ModuleFactories} from './builtin';
       if (node.parentNode && node.parentNode !== this) {
         return;
       }
-    /* istanbul ignore else */
+      /* istanbul ignore else */
       if (!node.parentNode) {
         linkParent(node, this);
         insertIndex(node, this.children, this.children.length, true);
@@ -732,10 +732,10 @@ import {ModuleFactories} from './builtin';
           var taskCenter = getTaskCenter(this.docId);
           if (taskCenter) {
             return taskCenter.send(
-            'dom',
-            { action: 'addElement' },
-            [this.ref, node.toJSON(), -1]
-          );
+              'dom',
+              { action: 'addElement' },
+              [this.ref, node.toJSON(), -1]
+            );
           }
         }
       } else {
@@ -745,16 +745,16 @@ import {ModuleFactories} from './builtin';
           var taskCenter$1 = getTaskCenter(this.docId);
           if (taskCenter$1 && index >= 0) {
             return taskCenter$1.send(
-            'dom',
-            { action: 'moveElement' },
-            [node.ref, this.ref, index]
-          );
+              'dom',
+              { action: 'moveElement' },
+              [node.ref, this.ref, index]
+            );
           }
         }
       }
     };
 
-  /**
+    /**
    * Insert a node before specified node.
    * @param {object} node
    * @param {object} before
@@ -776,46 +776,46 @@ import {ModuleFactories} from './builtin';
         if (node.nodeType === 1) {
           var pureBefore = nextElement(before);
           var index = insertIndex(
-          node,
-          this.pureChildren,
-          pureBefore
-            ? this.pureChildren.indexOf(pureBefore)
-            : this.pureChildren.length
-        );
+            node,
+            this.pureChildren,
+            pureBefore
+              ? this.pureChildren.indexOf(pureBefore)
+              : this.pureChildren.length
+          );
           var taskCenter = getTaskCenter(this.docId);
           if (taskCenter) {
             return taskCenter.send(
-            'dom',
-            { action: 'addElement' },
-            [this.ref, node.toJSON(), index]
-          );
+              'dom',
+              { action: 'addElement' },
+              [this.ref, node.toJSON(), index]
+            );
           }
         }
       } else {
         moveIndex(node, this.children, this.children.indexOf(before), true);
         if (node.nodeType === 1) {
           var pureBefore$1 = nextElement(before);
-        /* istanbul ignore next */
+          /* istanbul ignore next */
           var index$1 = moveIndex(
-          node,
-          this.pureChildren,
-          pureBefore$1
-            ? this.pureChildren.indexOf(pureBefore$1)
-            : this.pureChildren.length
-        );
+            node,
+            this.pureChildren,
+            pureBefore$1
+              ? this.pureChildren.indexOf(pureBefore$1)
+              : this.pureChildren.length
+          );
           var taskCenter$1 = getTaskCenter(this.docId);
           if (taskCenter$1 && index$1 >= 0) {
             return taskCenter$1.send(
-            'dom',
-            { action: 'moveElement' },
-            [node.ref, this.ref, index$1]
-          );
+              'dom',
+              { action: 'moveElement' },
+              [node.ref, this.ref, index$1]
+            );
           }
         }
       }
     };
 
-  /**
+    /**
    * Insert a node after specified node.
    * @param {object} node
    * @param {object} after
@@ -831,47 +831,47 @@ import {ModuleFactories} from './builtin';
       if (!node.parentNode) {
         linkParent(node, this);
         insertIndex(node, this.children, this.children.indexOf(after) + 1, true);
-      /* istanbul ignore else */
+        /* istanbul ignore else */
         if (this.docId) {
           registerNode(this.docId, node);
         }
         if (node.nodeType === 1) {
           var index = insertIndex(
-          node,
-          this.pureChildren,
-          this.pureChildren.indexOf(previousElement(after)) + 1
-        );
+            node,
+            this.pureChildren,
+            this.pureChildren.indexOf(previousElement(after)) + 1
+          );
           var taskCenter = getTaskCenter(this.docId);
-        /* istanbul ignore else */
+          /* istanbul ignore else */
           if (taskCenter) {
             return taskCenter.send(
-            'dom',
-            { action: 'addElement' },
-            [this.ref, node.toJSON(), index]
-          );
+              'dom',
+              { action: 'addElement' },
+              [this.ref, node.toJSON(), index]
+            );
           }
         }
       } else {
         moveIndex(node, this.children, this.children.indexOf(after) + 1, true);
         if (node.nodeType === 1) {
           var index$1 = moveIndex(
-          node,
-          this.pureChildren,
-          this.pureChildren.indexOf(previousElement(after)) + 1
-        );
+            node,
+            this.pureChildren,
+            this.pureChildren.indexOf(previousElement(after)) + 1
+          );
           var taskCenter$1 = getTaskCenter(this.docId);
           if (taskCenter$1 && index$1 >= 0) {
             return taskCenter$1.send(
-            'dom',
-            { action: 'moveElement' },
-            [node.ref, this.ref, index$1]
-          );
+              'dom',
+              { action: 'moveElement' },
+              [node.ref, this.ref, index$1]
+            );
           }
         }
       }
     };
 
-  /**
+    /**
    * Remove a child node, and decide whether it should be destroyed.
    * @param {object} node
    * @param {boolean} preserved
@@ -884,10 +884,10 @@ import {ModuleFactories} from './builtin';
           var taskCenter = getTaskCenter(this.docId);
           if (taskCenter) {
             taskCenter.send(
-            'dom',
-            { action: 'removeElement' },
-            [node.ref]
-          );
+              'dom',
+              { action: 'removeElement' },
+              [node.ref]
+            );
           }
         }
       }
@@ -896,19 +896,19 @@ import {ModuleFactories} from './builtin';
       }
     };
 
-  /**
+    /**
    * Clear all child nodes.
    */
     Element.prototype.clear = function clear() {
       var taskCenter = getTaskCenter(this.docId);
-    /* istanbul ignore else */
+      /* istanbul ignore else */
       if (taskCenter) {
         this.pureChildren.forEach(function(node) {
           taskCenter.send(
-          'dom',
-          { action: 'removeElement' },
-          [node.ref]
-        );
+            'dom',
+            { action: 'removeElement' },
+            [node.ref]
+          );
         });
       }
       this.children.forEach(function(node) {
@@ -918,7 +918,7 @@ import {ModuleFactories} from './builtin';
       this.pureChildren.length = 0;
     };
 
-  /**
+    /**
    * Set an attribute, and decide whether the task should be send to native.
    * @param {string} key
    * @param {string | number} value
@@ -934,14 +934,14 @@ import {ModuleFactories} from './builtin';
         var result = {};
         result[key] = value;
         taskCenter.send(
-        'dom',
-        { action: 'updateAttrs' },
-        [this.ref, result]
-      );
+          'dom',
+          { action: 'updateAttrs' },
+          [this.ref, result]
+        );
       }
     };
 
-  /**
+    /**
    * Set batched attributes.
    * @param {object} batchedAttrs
    * @param {boolean} silent
@@ -963,15 +963,15 @@ import {ModuleFactories} from './builtin';
         var taskCenter = getTaskCenter(this.docId);
         if (!silent && taskCenter) {
           taskCenter.send(
-          'dom',
-          { action: 'updateAttrs' },
-          [this.ref, mutations]
-        );
+            'dom',
+            { action: 'updateAttrs' },
+            [this.ref, mutations]
+          );
         }
       }
     };
 
-  /**
+    /**
    * Set a style property, and decide whether the task should be send to native.
    * @param {string} key
    * @param {string | number} value
@@ -987,14 +987,14 @@ import {ModuleFactories} from './builtin';
         var result = {};
         result[key] = value;
         taskCenter.send(
-        'dom',
-        { action: 'updateStyle' },
-        [this.ref, result]
-      );
+          'dom',
+          { action: 'updateStyle' },
+          [this.ref, result]
+        );
       }
     };
 
-  /**
+    /**
    * Set batched style properties.
    * @param {object} batchedStyles
    * @param {boolean} silent
@@ -1016,15 +1016,15 @@ import {ModuleFactories} from './builtin';
         var taskCenter = getTaskCenter(this.docId);
         if (!silent && taskCenter) {
           taskCenter.send(
-          'dom',
-          { action: 'updateStyle' },
-          [this.ref, mutations]
-        );
+            'dom',
+            { action: 'updateStyle' },
+            [this.ref, mutations]
+          );
         }
       }
     };
 
-  /**
+    /**
    * TODO: deprecated
    * Set style properties from class.
    * @param {object} classStyle
@@ -1032,7 +1032,7 @@ import {ModuleFactories} from './builtin';
     Element.prototype.setClassStyle = function setClassStyle(classStyle) {
       var this$1 = this;
 
-    // reset previous class style to empty string
+      // reset previous class style to empty string
       for (var key in this$1.classStyle) {
         this$1.classStyle[key] = '';
       }
@@ -1041,35 +1041,35 @@ import {ModuleFactories} from './builtin';
       var taskCenter = getTaskCenter(this.docId);
       if (taskCenter) {
         taskCenter.send(
-        'dom',
-        { action: 'updateStyle' },
-        [this.ref, this.toStyle()]
-      );
+          'dom',
+          { action: 'updateStyle' },
+          [this.ref, this.toStyle()]
+        );
       }
     };
 
-  /**
+    /**
    * Set class list.
    * @param {array} classList
    */
     Element.prototype.setClassList = function setClassList(classList) {
       var classes = typeof classList === 'string'
-      ? classList.split(/\s+/)
-      : Array.from(classList);
+        ? classList.split(/\s+/)
+        : Array.from(classList);
       if (Array.isArray(classes) && classes.length > 0) {
         this.classList = classes;
         var taskCenter = getTaskCenter(this.docId);
         if (taskCenter) {
           taskCenter.send(
-          'dom',
-          { action: 'updateClassList' },
-          [this.ref, this.classList.slice()]
-        );
+            'dom',
+            { action: 'updateClassList' },
+            [this.ref, this.classList.slice()]
+          );
         }
       }
     };
 
-  /**
+    /**
    * Add an event handler.
    * @param {string} event type
    * @param {function} event handler
@@ -1083,15 +1083,15 @@ import {ModuleFactories} from './builtin';
         var taskCenter = getTaskCenter(this.docId);
         if (taskCenter) {
           taskCenter.send(
-          'dom',
-          { action: 'addEvent' },
-          [this.ref, type]
-        );
+            'dom',
+            { action: 'addEvent' },
+            [this.ref, type]
+          );
         }
       }
     };
 
-  /**
+    /**
    * Remove an event handler.
    * @param {string} event type
    */
@@ -1101,15 +1101,15 @@ import {ModuleFactories} from './builtin';
         var taskCenter = getTaskCenter(this.docId);
         if (taskCenter) {
           taskCenter.send(
-          'dom',
-          { action: 'removeEvent' },
-          [this.ref, type]
-        );
+            'dom',
+            { action: 'removeEvent' },
+            [this.ref, type]
+          );
         }
       }
     };
 
-  /**
+    /**
    * Fire an event manually.
    * @param {string} type type
    * @param {function} event handler
@@ -1145,7 +1145,7 @@ import {ModuleFactories} from './builtin';
       return result;
     };
 
-  /**
+    /**
    * Get all styles of current element.
    * @return {object} style
    */
@@ -1153,7 +1153,7 @@ import {ModuleFactories} from './builtin';
       return Object.assign({}, this.classStyle, this.style);
     };
 
-  /**
+    /**
    * Convert current element to JSON like object.
    * @return {object} element
    */
@@ -1195,7 +1195,7 @@ import {ModuleFactories} from './builtin';
       return result;
     };
 
-  /**
+    /**
    * Convert to HTML element tag string.
    * @return {stirng} html
    */
@@ -1214,7 +1214,7 @@ import {ModuleFactories} from './builtin';
 
   setElement(Element);
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1235,7 +1235,7 @@ import {ModuleFactories} from './builtin';
 
   var fallback = function() {};
 
-// The API of TaskCenter would be re-design.
+  // The API of TaskCenter would be re-design.
   var TaskCenter = function TaskCenter(id, sendTasks) {
     Object.defineProperty(this, 'instanceId', {
       enumerable: true,
@@ -1279,7 +1279,7 @@ import {ModuleFactories} from './builtin';
     return this.callbackManager.close();
   };
 
-/**
+  /**
  * Normalize a value. Specially, if the value is a function, then generate a function id
  * and save it to `CallbackManager`, at last return the function id.
  * @param{any}      v
@@ -1357,12 +1357,12 @@ import {ModuleFactories} from './builtin';
     var loop = function( name ) {
       var method = DOM_METHODS[name];
       proto[name] = method ?
-      function(id, args) {
-        return method.apply(void 0, [ id ].concat( args ));
-      } :
-      function(id, args) {
-        return fallback(id, [{ module: 'dom', method: name, args: args }], '-1');
-      };
+        function(id, args) {
+          return method.apply(void 0, [ id ].concat( args ));
+        } :
+        function(id, args) {
+          return fallback(id, [{ module: 'dom', method: name, args: args }], '-1');
+        };
     };
 
     for (var name in DOM_METHODS) loop( name );
@@ -1378,7 +1378,7 @@ import {ModuleFactories} from './builtin';
     };
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1423,7 +1423,7 @@ import {ModuleFactories} from './builtin';
     return result;
   }
 
-/**
+  /**
  * Accept calls from native (event or callback).
  *
  * @param  {string} id
@@ -1447,7 +1447,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1468,7 +1468,7 @@ import {ModuleFactories} from './builtin';
 
   var weexModules = {};
 
-/**
+  /**
  * Register native modules information.
  * @param {object} newModules
  */
@@ -1489,7 +1489,7 @@ import {ModuleFactories} from './builtin';
     for (var name in newModules) loop( name );
   }
 
-/**
+  /**
  * Check whether the module or the method has been registered.
  * @param {String} module name
  * @param {String} method name (optional)
@@ -1505,7 +1505,7 @@ import {ModuleFactories} from './builtin';
     return weexModules[name];
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1526,7 +1526,7 @@ import {ModuleFactories} from './builtin';
 
   var weexComponents = {};
 
-/**
+  /**
  * Register native components information.
  * @param {array} newComponents
  */
@@ -1546,7 +1546,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/**
+  /**
  * Check whether the component has been registered.
  * @param {String} component name
  */
@@ -1554,7 +1554,7 @@ import {ModuleFactories} from './builtin';
     return !!weexComponents[name];
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1573,11 +1573,11 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-// JS Services
+  // JS Services
 
   var services = [];
 
-/**
+  /**
  * Register a JavaScript service.
  * A JavaScript service options could have a set of lifecycle methods
  * for each Weex instance. For example: create, refresh, destroy.
@@ -1600,7 +1600,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/**
+  /**
  * Unregister a JavaScript service by name
  * @param {string} name
  */
@@ -1613,7 +1613,7 @@ import {ModuleFactories} from './builtin';
     });
   }
 
-/**
+  /**
  * Check if a JavaScript service with a certain name existed.
  * @param  {string}  name
  * @return {Boolean}
@@ -1622,7 +1622,7 @@ import {ModuleFactories} from './builtin';
     return indexOf(name) >= 0;
   }
 
-/**
+  /**
  * Find the index of a JavaScript service by name
  * @param  {string} name
  * @return {number}
@@ -1633,7 +1633,7 @@ import {ModuleFactories} from './builtin';
     }).indexOf(name);
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1677,7 +1677,7 @@ import {ModuleFactories} from './builtin';
     }
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1713,7 +1713,7 @@ import {ModuleFactories} from './builtin';
     Comment.prototype = Object.create( Node$$1 && Node$$1.prototype );
     Comment.prototype.constructor = Comment;
 
-  /**
+    /**
   * Convert to HTML comment string.
   * @return {stirng} html
   */
@@ -1724,7 +1724,7 @@ import {ModuleFactories} from './builtin';
     return Comment;
   }(Node));
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1743,7 +1743,7 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-/**
+  /**
 * Create the action object.
 * @param {string} name
 * @param {array} arguments
@@ -1771,7 +1771,7 @@ import {ModuleFactories} from './builtin';
     }
   };
 
-/**
+  /**
  * Send the "createFinish" signal.
  * @param {function} callback
  * @return {undefined | number} the signal sent by native
@@ -1781,7 +1781,7 @@ import {ModuleFactories} from './builtin';
     return handler([createAction('createFinish')], callback);
   };
 
-/**
+  /**
  * Send the "updateFinish" signal.
  * @param {function} callback
  * @return {undefined | number} the signal sent by native
@@ -1791,7 +1791,7 @@ import {ModuleFactories} from './builtin';
     return handler([createAction('updateFinish')], callback);
   };
 
-/**
+  /**
  * Send the "refreshFinish" signal.
  * @param {function} callback
  * @return {undefined | number} the signal sent by native
@@ -1801,7 +1801,7 @@ import {ModuleFactories} from './builtin';
     return handler([createAction('refreshFinish')], callback);
   };
 
-/**
+  /**
  * Send the "createBody" signal.
  * @param {object} element
  * @return {undefined | number} the signal sent by native
@@ -1819,7 +1819,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(actions);
   };
 
-/**
+  /**
  * Send the "addElement" signal.
  * @param {object} element
  * @param {stirng} reference id
@@ -1833,7 +1833,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('addElement', [ref, element.toJSON(), index]));
   };
 
-/**
+  /**
  * Send the "removeElement" signal.
  * @param {stirng} reference id
  * @return {undefined | number} the signal sent by native
@@ -1848,7 +1848,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('removeElement', [ref]));
   };
 
-/**
+  /**
  * Send the "moveElement" signal.
  * @param {stirng} target reference id
  * @param {stirng} parent reference id
@@ -1859,7 +1859,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('moveElement', [targetRef, parentRef, index]));
   };
 
-/**
+  /**
  * Send the "updateAttrs" signal.
  * @param {stirng} reference id
  * @param {stirng} key
@@ -1872,7 +1872,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('updateAttrs', [ref, result]));
   };
 
-/**
+  /**
  * Send the "updateStyle" signal, update a sole style.
  * @param {stirng} reference id
  * @param {stirng} key
@@ -1885,7 +1885,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('updateStyle', [ref, result]));
   };
 
-/**
+  /**
  * Send the "updateStyle" signal.
  * @param {stirng} reference id
  * @param {object} style
@@ -1895,7 +1895,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('updateStyle', [ref, style]));
   };
 
-/**
+  /**
  * Send the "addEvent" signal.
  * @param {stirng} reference id
  * @param {string} event type
@@ -1905,7 +1905,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('addEvent', [ref, type]));
   };
 
-/**
+  /**
  * Send the "removeEvent" signal.
  * @param {stirng} reference id
  * @param {string} event type
@@ -1915,7 +1915,7 @@ import {ModuleFactories} from './builtin';
     return this.addActions(createAction('removeEvent', [ref, type]));
   };
 
-/**
+  /**
  * Default handler.
  * @param {object | array} actions
  * @param {function} callback
@@ -1925,7 +1925,7 @@ import {ModuleFactories} from './builtin';
     return cb && cb();
   };
 
-/**
+  /**
  * Add actions into updates.
  * @param {object | array} actions
  * @return {undefined | number} the signal sent by native
@@ -1945,7 +1945,7 @@ import {ModuleFactories} from './builtin';
     }
   };
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -1964,7 +1964,7 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-/**
+  /**
  * @fileOverview
  * Task handler for communication between javascript and native.
  */
@@ -1980,7 +1980,7 @@ import {ModuleFactories} from './builtin';
     removeEvent: 'callRemoveEvent'
   };
 
-/**
+  /**
  * Create a task handler.
  * @param {string} id
  * @param {function} handler
@@ -1989,7 +1989,7 @@ import {ModuleFactories} from './builtin';
   function createHandler(id, handler) {
     var defaultHandler = handler || global.callNative;
 
-  /* istanbul ignore if */
+    /* istanbul ignore if */
     if (typeof defaultHandler !== 'function') {
       console.error('[JS Runtime] no default handler');
     }
@@ -2008,7 +2008,7 @@ import {ModuleFactories} from './builtin';
     };
   }
 
-/**
+  /**
  * Check if there is a corresponding available handler in the environment.
  * @param {string} module
  * @param {string} method
@@ -2020,7 +2020,7 @@ import {ModuleFactories} from './builtin';
     && typeof global[handlerMap[method]] === 'function';
   }
 
-/**
+  /**
  * Dispatch the task to the specified handler.
  * @param {string} id
  * @param {object} task
@@ -2039,7 +2039,7 @@ import {ModuleFactories} from './builtin';
     return defaultHandler(id, [task], '-1');
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -2058,7 +2058,7 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-/**
+  /**
  * Update all changes for an element.
  * @param {object} element
  * @param {object} changes
@@ -2092,7 +2092,7 @@ import {ModuleFactories} from './builtin';
     this.createDocumentElement();
   };
 
-/**
+  /**
 * Get the node from nodeMap.
 * @param {string} reference id
 * @return {object} node
@@ -2101,21 +2101,21 @@ import {ModuleFactories} from './builtin';
     return this.nodeMap[ref];
   };
 
-/**
+  /**
 * Turn on batched updates.
 */
   Document.prototype.open = function open() {
     this.listener.batched = false;
   };
 
-/**
+  /**
 * Turn off batched updates.
 */
   Document.prototype.close = function close() {
     this.listener.batched = true;
   };
 
-/**
+  /**
 * Create the document element.
 * @return {object} documentElement
 */
@@ -2154,7 +2154,7 @@ import {ModuleFactories} from './builtin';
     return this.documentElement;
   };
 
-/**
+  /**
 * Create the body element.
 * @param {string} type
 * @param {objct} props
@@ -2169,7 +2169,7 @@ import {ModuleFactories} from './builtin';
     return this.body;
   };
 
-/**
+  /**
 * Create an element.
 * @param {string} tagName
 * @param {objct} props
@@ -2179,7 +2179,7 @@ import {ModuleFactories} from './builtin';
     return new Element(tagName, props);
   };
 
-/**
+  /**
 * Create an comment.
 * @param {string} text
 * @return {object} comment
@@ -2188,7 +2188,7 @@ import {ModuleFactories} from './builtin';
     return new Comment(text);
   };
 
-/**
+  /**
 * Register StyleSheets.
 * @param {string} scopeId
 * @return {array<object>} styleSheets
@@ -2197,14 +2197,14 @@ import {ModuleFactories} from './builtin';
     var sheets = Array.isArray(styleSheets) ? styleSheets : [styleSheets];
     if (this.taskCenter && sheets.length) {
       return this.taskCenter.send(
-      'dom',
-      { action: 'registerStyleSheets' },
-      [scopeId, sheets]
-    );
+        'dom',
+        { action: 'registerStyleSheets' },
+        [scopeId, sheets]
+      );
     }
   };
 
-/**
+  /**
 * Fire an event on specified element manually.
 * @param {object} element
 * @param {string} event type
@@ -2229,7 +2229,7 @@ import {ModuleFactories} from './builtin';
     return el.fireEvent(type, event, isBubble, options);
   };
 
-/**
+  /**
 * Destroy current document, and remove itself form docMap.
 */
   Document.prototype.destroy = function destroy() {
@@ -2240,10 +2240,10 @@ import {ModuleFactories} from './builtin';
     removeDoc(this.id);
   };
 
-// default task handler
+  // default task handler
   Document.handler = null;
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -2318,13 +2318,13 @@ import {ModuleFactories} from './builtin';
       return;
     }
 
-  // warn for unknown module
+    // warn for unknown module
     if (!isRegisteredModule(moduleName)) {
       console.warn('[JS Framework] using unregistered weex module "' + moduleName + '"');
       return;
     }
 
-  // create new module proxy
+    // create new module proxy
     var proxyName = moduleName + '#' + id;
     if (!moduleProxies[proxyName]) {
     // create registered module apis
@@ -2345,7 +2345,7 @@ import {ModuleFactories} from './builtin';
 
       for (var methodName in moduleDefine) loop( methodName );
 
-    // create module Proxy
+      // create module Proxy
       if (typeof Proxy === 'function') {
         moduleProxies[proxyName] = new Proxy(moduleApis, {
           get: function get(target, methodName) {
@@ -2383,7 +2383,7 @@ import {ModuleFactories} from './builtin';
     return null;
   };
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -2407,7 +2407,7 @@ import {ModuleFactories} from './builtin';
 
   var versionRegExp = /^\s*\/\/ *(\{[^}]*\}) *\r?\n/;
 
-/**
+  /**
  * Detect a JS Bundle code and make sure which framework it's based to. Each JS
  * Bundle should make sure that it starts with a line of JSON comment and is
  * more that one line.
@@ -2423,7 +2423,7 @@ import {ModuleFactories} from './builtin';
       } catch (e) {}
     }
 
-  // default bundle type
+    // default bundle type
     return 'Weex';
   }
 
@@ -2473,7 +2473,7 @@ import {ModuleFactories} from './builtin';
     }
     track(id, 'bundleType', bundleType);
 
-  // prepare js service
+    // prepare js service
     var services$$1 = createServices(id, {
       weex: weex,
       config: options,
@@ -2483,7 +2483,7 @@ import {ModuleFactories} from './builtin';
     }, runtimeConfig);
     Object.freeze(services$$1);
 
-  // prepare runtime context
+    // prepare runtime context
     var runtimeContext = Object.create(null);
     Object.assign(runtimeContext, services$$1, {
       weex: weex,
@@ -2491,7 +2491,7 @@ import {ModuleFactories} from './builtin';
     });
     Object.freeze(runtimeContext);
 
-  // prepare instance context
+    // prepare instance context
     var instanceContext = Object.assign({}, runtimeContext);
     if (typeof framework.createInstanceContext === 'function') {
       Object.assign(instanceContext, framework.createInstanceContext(id, runtimeContext, data));
@@ -2500,7 +2500,7 @@ import {ModuleFactories} from './builtin';
     return instanceContext;
   }
 
-/**
+  /**
  * Check which framework a certain JS Bundle code based to. And create instance
  * by this framework.
  * @param {string} id
@@ -2513,11 +2513,11 @@ import {ModuleFactories} from './builtin';
       return new Error('The instance id "' + id + '" has already been used!');
     }
 
-  // Init instance info.
+    // Init instance info.
     var bundleType = getBundleType(code);
     instanceTypeMap[id] = bundleType;
 
-  // Init instance config.
+    // Init instance config.
     config.env = JSON.parse(JSON.stringify(global.WXEnvironment || {}));
     config.bundleType = bundleType;
 
@@ -2548,25 +2548,25 @@ import {ModuleFactories} from './builtin';
       isInitialized: false,
     };
 
-  // if (typeof framework.createInstance === 'function') {
-  //   // Temporary compatible with some legacy APIs in Rax,
-  //   // some Rax page is using the legacy ".we" framework.
-  //   if (bundleType === 'Rax' || bundleType === 'Weex') {
-  //     var raxInstanceContext = Object.assign({
-  //       config: config,
-  //       created: Date.now(),
-  //       framework: bundleType
-  //     }, instanceContext);
-  //     return framework.createInstance(id, code, config, data, raxInstanceContext)
-  //   }
-  //   return framework.createInstance(id, code, config, data, instanceContext)
-  // }
-  // console.error(`[JS Framework] Can't find available "createInstance" method in ${bundleType}!`)
+    // if (typeof framework.createInstance === 'function') {
+    //   // Temporary compatible with some legacy APIs in Rax,
+    //   // some Rax page is using the legacy ".we" framework.
+    //   if (bundleType === 'Rax' || bundleType === 'Weex') {
+    //     var raxInstanceContext = Object.assign({
+    //       config: config,
+    //       created: Date.now(),
+    //       framework: bundleType
+    //     }, instanceContext);
+    //     return framework.createInstance(id, code, config, data, raxInstanceContext)
+    //   }
+    //   return framework.createInstance(id, code, config, data, instanceContext)
+    // }
+    // console.error(`[JS Framework] Can't find available "createInstance" method in ${bundleType}!`)
 
     return runInContext(code, instanceContext);
   }
 
-/**
+  /**
  * Run js code in a specific context.
  * @param {string} code
  * @param {object} context
@@ -2584,7 +2584,7 @@ import {ModuleFactories} from './builtin';
     return (new (Function.prototype.bind.apply( Function, [ null ].concat( keys, [bundle]) ))).apply(void 0, args);
   }
 
-/**
+  /**
  * Get the JSON object of the root element.
  * @param {string} instanceId
  */
@@ -2616,7 +2616,7 @@ import {ModuleFactories} from './builtin';
     }
   };
 
-/**
+  /**
  * Register methods which will be called for each instance.
  * @param {string} methodName
  */
@@ -2631,7 +2631,7 @@ import {ModuleFactories} from './builtin';
         var result = (ref = frameworks[type])[methodName].apply(ref, args);
         var info = { framework: type };
 
-      // Lifecycle methods
+        // Lifecycle methods
         if (methodName === 'refreshInstance') {
           services.forEach(function(service) {
             var refresh = service.options.refresh;
@@ -2657,7 +2657,7 @@ import {ModuleFactories} from './builtin';
     };
   }
 
-/**
+  /**
  * Register methods which init each frameworks.
  * @param {string} methodName
  * @param {function} sharedMethod
@@ -2671,7 +2671,7 @@ import {ModuleFactories} from './builtin';
         sharedMethod.apply(void 0, args);
       }
 
-    // TODO: deprecated
+      // TODO: deprecated
       for (var name in runtimeConfig.frameworks) {
         var framework = runtimeConfig.frameworks[name];
         if (framework && framework[methodName]) {
@@ -2686,9 +2686,9 @@ import {ModuleFactories} from './builtin';
     frameworks = runtimeConfig.frameworks || {};
     init$1();
 
-  // Init each framework by `init` method and `config` which contains three
-  // virtual-DOM Class: `Document`, `Element` & `Comment`, and a JS bridge method:
-  // `sendTasks(...args)`.
+    // Init each framework by `init` method and `config` which contains three
+    // virtual-DOM Class: `Document`, `Element` & `Comment`, and a JS bridge method:
+    // `sendTasks(...args)`.
     for (var name in frameworks) {
       var framework = frameworks[name];
       if (typeof framework.init === 'function') {
@@ -2702,12 +2702,12 @@ import {ModuleFactories} from './builtin';
     adaptMethod('registerModules', registerModules);
     adaptMethod('registerMethods')
 
-  ; ['destroyInstance', 'refreshInstance'].forEach(genInstance);
+    ; ['destroyInstance', 'refreshInstance'].forEach(genInstance);
 
     return methods;
   }
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -2726,7 +2726,7 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -2761,7 +2761,7 @@ import {ModuleFactories} from './builtin';
 
   Document.handler = config.sendTasks;
 
-/*
+  /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -2780,13 +2780,13 @@ import {ModuleFactories} from './builtin';
  * under the License.
  */
 
-/* istanbul ignore next */
+  /* istanbul ignore next */
   function freezePrototype() {
   // Object.freeze(config.Element)
     Object.freeze(config.Comment);
     Object.freeze(config.Listener);
     Object.freeze(config.Document.prototype);
-  // Object.freeze(config.Element.prototype)
+    // Object.freeze(config.Element.prototype)
     Object.freeze(config.Comment.prototype);
     Object.freeze(config.Listener.prototype);
   }

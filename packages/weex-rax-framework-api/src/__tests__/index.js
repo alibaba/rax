@@ -212,18 +212,18 @@ describe('frameworkapi', () => {
 
   it('window.URL', () => {
     var a = new window.URL('/', 'https://developer.mozilla.org'); // Creates a URL pointing to 'https://developer.mozilla.org/'
-    var b = new window.URL('https://developer.mozilla.org');      // Creates a URL pointing to 'https://developer.mozilla.org/'
-    var c = new window.URL('en-US/docs', b);                      // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var d = new window.URL('/en-US/docs', b);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var f = new window.URL('/en-US/docs', d);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var b = new window.URL('https://developer.mozilla.org'); // Creates a URL pointing to 'https://developer.mozilla.org/'
+    var c = new window.URL('en-US/docs', b); // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var d = new window.URL('/en-US/docs', b); // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var f = new window.URL('/en-US/docs', d); // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
     var g = new window.URL('/en-US/docs', 'https://developer.mozilla.org/fr-FR/toto');
-                                                           // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var h = new window.URL('/en-US/docs', a);                     // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
-    var i = new window.URL('/en-US/docs', '');                    // Raises a SYNTAX ERROR exception as '/en-US/docs' is not valid
-    var j = new window.URL('/en-US/docs');                        // Raises a SYNTAX ERROR exception as 'about:blank/en-US/docs' is not valid
+    // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var h = new window.URL('/en-US/docs', a); // Creates a URL pointing to 'https://developer.mozilla.org/en-US/docs'
+    var i = new window.URL('/en-US/docs', ''); // Raises a SYNTAX ERROR exception as '/en-US/docs' is not valid
+    var j = new window.URL('/en-US/docs'); // Raises a SYNTAX ERROR exception as 'about:blank/en-US/docs' is not valid
     var k = new window.URL('http://www.example.com', 'https://developers.mozilla.com');
-                                                           // Creates a URL pointing to 'http://www.example.com/'
-    var l = new window.URL('http://www.example.com', b);          // Creates a URL pointing to 'http://www.example.com/'
+    // Creates a URL pointing to 'http://www.example.com/'
+    var l = new window.URL('http://www.example.com', b); // Creates a URL pointing to 'http://www.example.com/'
 
     alert(l.toString());
     expect(l.toString()).toEqual('http://www.example.com/');
