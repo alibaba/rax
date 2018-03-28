@@ -50,7 +50,7 @@ export default class OfferList extends Component {
     const sourceData = props.sourceData;
     if (!sourceData.length) return null;
     return (
-      [<RecyclerView.Cell style={style.title}>
+    [<RecyclerView.Cell style={style.title}>
         <Text style={style.titleText}>为你推荐</Text>
       </RecyclerView.Cell>,
       ...this.getRowCell(sourceData),
@@ -69,7 +69,7 @@ export default class OfferList extends Component {
           />
           <Text style={style.nomoreText}>已经到底了...</Text>
         </RecyclerView.Cell>
-      ]
+    ]
 
     );
   }
