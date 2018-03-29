@@ -9,7 +9,6 @@ import {isWeex} from 'universal-env';
 const threshold = 5;
 
 class PanViewOnWeb extends Component {
-
   startX = undefined;
 
   startY = undefined;
@@ -70,12 +69,9 @@ class PanViewOnWeb extends Component {
       onTouchEnd={this.onTouchEnd}
       onTouchCancel={this.onTouchCancel} />);
   }
-
-
 }
 
 class PanViewOnWeex extends Component {
-
   onTouchStart = (e) => {
     this.startX = e.changedTouches[0].clientX;
   }

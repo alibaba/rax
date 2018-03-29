@@ -4,6 +4,7 @@ import TabPanelView from './TabPanelView';
 import TabPanelLink from './TabPanelLink';
 import Detection from './Detection';
 import * as Utils from './Utils';
+
 export {
   TabController,
   TabPanel,

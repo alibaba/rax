@@ -8,7 +8,6 @@ import Detection from './Detection';
 import Link from 'rax-link';
 
 class TabPanelLink extends Component {
-
   isPanning = false;
 
   static contextTypes = {
@@ -53,8 +52,6 @@ class TabPanelLink extends Component {
       }, 50);
     }
   }
-
-
 }
 
 

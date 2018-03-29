@@ -11,7 +11,6 @@ const styles = {
 
 
 class TabPanel extends Component {
-
   state = {
     isAppear: false,
   }

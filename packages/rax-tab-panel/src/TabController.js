@@ -32,7 +32,6 @@ const styles = {
 
 
 class TabController extends Component {
-
   itemCount = 0;
   token = null;
 
@@ -40,13 +39,13 @@ class TabController extends Component {
   static defaultProps = {
     duration: DURATION, // duration for slide animation
     easing: DEFAULT_EASING, // easing for slide animation
-    isPanEnabled: true, 
+    isPanEnabled: true,
     isSlideEnabled: true, // slide animation
     beforeExpressionBind: noop,
     pageConfig: [],
-    onViewAppear: noop, 
+    onViewAppear: noop,
     onViewDisAppear: noop,
-    defaultFocusIndex: 0, 
+    defaultFocusIndex: 0,
     useSlider: false,
     screenNumbersPerSide: null // save screens per-side
   };
@@ -109,8 +108,6 @@ class TabController extends Component {
     // 目前只有weex端可以换成slider  为了不直接依赖rax-slider
     return useSlider && isWeex ? <SliderView {...props} /> : <DefaultView {...props} />;
   }
-
-
 }
 
 

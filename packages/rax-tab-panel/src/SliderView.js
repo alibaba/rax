@@ -8,7 +8,6 @@ import {TabPanel} from './index';
 import {noop} from './Utils';
 
 class SliderView extends BaseView {
-
   static defaultProps = {
     isPanEnabled: true, // 是否可以pan来横向滑动
     isSlideEnabled: true, // 是否可以有滑动slide效果
@@ -53,7 +52,6 @@ class SliderView extends BaseView {
 
 
   switchTo = (index) => {
-
     if (this.refs.container) {
       this.setState({
         index
@@ -78,7 +76,6 @@ class SliderView extends BaseView {
       }
 
       this.afterSwitch();
-
     }, 50);
   }
 

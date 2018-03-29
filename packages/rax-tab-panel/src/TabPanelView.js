@@ -9,7 +9,6 @@ import Detection from './Detection';
 
 
 class TabPanelView extends Component {
-
   isPanning = false;
 
   static contextTypes = {
@@ -57,8 +56,6 @@ class TabPanelView extends Component {
       }, 50);
     }
   }
-
-
 }
 
 

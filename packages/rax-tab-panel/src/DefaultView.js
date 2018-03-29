@@ -44,7 +44,6 @@ const styles = {
 
 
 class DefaultView extends BaseView {
-
   x = 0;
   itemWidth = 750;
   itemCount = 0;
@@ -56,14 +55,14 @@ class DefaultView extends BaseView {
   isPropagationStopped = false;
 
   static defaultProps = {
-    panDist: null, 
-    duration: DURATION, 
-    easing: DEFAULT_EASING, 
-    isPanEnabled: true, 
-    isSlideEnabled: true, 
+    panDist: null,
+    duration: DURATION,
+    easing: DEFAULT_EASING,
+    isPanEnabled: true,
+    isSlideEnabled: true,
     beforeExpressionBind: noop,
     pageConfig: [],
-    defaultFocusIndex: 0, 
+    defaultFocusIndex: 0,
     forbidSwipeBackOnIOS: 'auto'
   };
 
@@ -82,7 +81,6 @@ class DefaultView extends BaseView {
   }
 
   componentWillMount() {
-
     let {style} = this.props;
 
     this.itemWidth = style.width || this.itemWidth;
@@ -149,7 +147,7 @@ class DefaultView extends BaseView {
     this.renderPanel(index);
     let itemWidth = this.itemWidth;
     let end = -index * itemWidth;
-    const wrap = findDOMNode(this.refs.wrap); 
+    const wrap = findDOMNode(this.refs.wrap);
     transition(wrap, {
       transform: `translateX(${end}rem)`,
       webkitTransform: `translateX(${end}rem)`
@@ -171,7 +169,6 @@ class DefaultView extends BaseView {
   }
 
   bindPanExp = (anchor) => {
-
     this.anchor = anchor;
 
     if (!Detection.isEnableSlider) return;
@@ -243,7 +240,6 @@ class DefaultView extends BaseView {
     });
 
     this.token = res && res.token;
-
   }
 
   onPanCallback = (e) => {
@@ -256,7 +252,7 @@ class DefaultView extends BaseView {
       const dist = e.deltaX;
       const panDist = this.props.panDist ? this.props.panDist : this.itemWidth / 2;
       let newIndex = this.curIndex;
-      if (Math.abs(dist) > panDist || (Math.abs(dist) / duration > 0.5 && duration < 200)) {
+      if (Math.abs(dist) > panDist || Math.abs(dist) / duration > 0.5 && duration < 200) {
         if (dist > 0) {
           newIndex--;
         } else {
@@ -270,12 +266,10 @@ class DefaultView extends BaseView {
       } else {
         this.switchTo(newIndex);
       }
-
     }
   }
 
   onHorizontalPan = (e) => {
-
     if (e.state === 'end') {
       this.isPropagationStopped = false;
     }
@@ -307,7 +301,6 @@ class DefaultView extends BaseView {
   }
 
   render() {
-
     let {isPanEnabled} = this.props;
 
     let curIndex = this.curIndex;
@@ -343,8 +336,6 @@ class DefaultView extends BaseView {
       </PanView>
     </View>);
   }
-
-
 }
 
 

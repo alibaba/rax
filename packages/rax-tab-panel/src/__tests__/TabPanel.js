@@ -7,16 +7,7 @@ import {TabController, TabPanel, TabPanelLink, TabPanelView} from '../index';
 
 class TabPanelTest extends Component {
   render() {
-    return (<TabController>
-    		<TabPanel>
-    			<TabPanelLink href={'//github.com'}>1</TabPanelLink>
-    			<TabPanelView><Text>1</Text></TabPanelView>
-    		</TabPanel>
-    		<TabPanel>
-    			<TabPanelLink href={'//github.com'}>2</TabPanelLink>
-    			<TabPanelView><Text>1</Text></TabPanelView>
-    		</TabPanel>
-    	</TabController>);
+    return (<TabController><TabPanel><TabPanelLink href={'//github.com'}>1</TabPanelLink><TabPanelView><Text>1</Text></TabPanelView></TabPanel></TabController>);
   }
 }
 
