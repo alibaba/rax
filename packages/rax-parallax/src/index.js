@@ -105,7 +105,6 @@ function transformRangeToExpression(params = {}, propertyType) {
 
 
 class BindingParallax extends Component {
-
   static defaultProps = {
     bindingScroller: null,
     extraBindingProps: null
@@ -167,12 +166,9 @@ class BindingParallax extends Component {
   render() {
     return <View ref="parallax" style={{...this.props.style}}>{this.props.children}</View>;
   }
-
 }
 
 class Parallax extends Component {
-
-
   static defaultProps = {
     bindingScroller: null
   }

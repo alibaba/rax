@@ -23,7 +23,6 @@
   "dependencies": {
     "universal-env": "^0.5.4",
     "rax-view": "^0.5.4",
-    "universal-env": "^0.5.4",
     "weex-bindingx": "^0.0.23"
   },
   "peerDependencies": {

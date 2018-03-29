@@ -33,7 +33,7 @@ export default class Cheap extends Component {
     const moreUrl = sourceData.moreUrl;
 
     return (
-    [<RecyclerView.Cell onDisappear={this.onDisappear}>
+      [<RecyclerView.Cell onDisappear={this.onDisappear}>
         {sourceData.moreUrl ?
           <OpenUrl style={style.titleContainer} url={moreUrl}>
             <Text style={{fontSize: 32, fontWeight: 'bold'}}>{sourceData.title}</Text>
