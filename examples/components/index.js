@@ -33,12 +33,14 @@ import TabheaderDemo from './TabheaderDemo';
 import SliderDemo from './SliderDemo';
 import TableDemo from './TableDemo';
 import CheckboxDemo from './CheckboxDemo';
+import TabPanelDemo from './TabPanelDemo';
 
 class Page extends Component {
   render() {
     return <ScrollView ref={(scrollview) => {
       this.scrollview = scrollview;
     }}>
+
       <View>
         <Text style={styles.title}>Style</Text>
         <StyleDemo />
@@ -179,6 +181,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>Table</Text>
         <TableDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>TabPanel</Text>
+        <TabPanelDemo />
       </View>
 
     </ScrollView>;
