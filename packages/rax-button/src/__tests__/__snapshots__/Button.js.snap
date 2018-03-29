@@ -22,6 +22,7 @@ Object {
         "padding": 16,
         "position": "relative",
         "textAlign": "center",
+        "whiteSpace": "pre-wrap",
       },
       "tagName": "SPAN",
     },

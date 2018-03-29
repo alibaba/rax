@@ -10,6 +10,27 @@ class Icon extends Component {
     source: PropTypes.object
   }
 
+  componentWillMount() {
+    if (!this.props.source.uri || this.props.source.codePoint) {
+      const uri = this.props.source.uri;
+      const fontFamily = this.props.fontFamily;
+
+      if (isWeb) {
+        const FontFace = window.FontFace;
+        const iconfont = new FontFace(fontFamily, 'url(' + uri + ')');
+        document.fonts.add(iconfont);
+      }
+
+      if (isWeex) {
+        var domModule = __weex_require__('@weex-module/dom');
+        domModule.addRule('fontFace', {
+          'fontFamily': fontFamily,
+          'src': "url('" + uri + "')" // single quotes are required around uri, and double quotes can not work
+        });
+      }
+    }
+  }
+
   render() {
     const style = this.props.style || {};
 
@@ -22,26 +43,12 @@ class Icon extends Component {
     }
 
     // for iconfont
-    const uri = this.props.source.uri;
     const fontFamily = this.props.fontFamily;
     const iconStyle = {
       ...style,
       fontFamily: fontFamily
     };
 
-    if (isWeb) {
-      const FontFace = window.FontFace;
-      const iconfont = new FontFace(fontFamily, 'url(' + uri + ')');
-      document.fonts.add(iconfont);
-    }
-
-    if (isWeex) {
-      var domModule = __weex_require__('@weex-module/dom');
-      domModule.addRule('fontFace', {
-        'fontFamily': fontFamily,
-        'src': "url('" + uri + "')" // single quotes are required around uri, and double quotes can not work
-      });
-    }
     return <Text style={iconStyle}>{this.props.source.codePoint}</Text>;
   }
 }

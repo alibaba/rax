@@ -73,6 +73,7 @@ class Text extends Component {
       return <text {...nativeProps} />;
     } else {
       let styleProps = {
+        whiteSpace: 'pre-wrap',
         ...styles.text,
         ...nativeProps.style
       };
