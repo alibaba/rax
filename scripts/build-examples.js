@@ -52,7 +52,7 @@ const config = {
     }),
   ],
   module: {
-    loaders: [{
+    rules: [{
       test: /\.jsx?$/,
       exclude: /(node_modules|bower_components)/,
       loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
