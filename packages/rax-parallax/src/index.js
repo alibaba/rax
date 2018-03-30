@@ -13,15 +13,12 @@ function getEl(el) {
 
 // judge bindingx support
 const isSupportBinding = !!bindingx.isSupportBinding;
-
-
 /*
 {
           type: 'translate',
           in: [0, 660],
           out: [0, 0, 0, -660] // [x1,y1,x2,y2]
         }
-
         {
           expression:'y',
           property:'transform.translate'
