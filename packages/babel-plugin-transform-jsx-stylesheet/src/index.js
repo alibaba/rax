@@ -86,10 +86,10 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
       // className=""
       return [];
     } else if (value.type === 'JSXExpressionContainer' && value.expression && typeof value.expression.value !== 'string') {
-      // className={{ container: true }} 
+      // className={{ container: true }}
       // className={['container wrapper', { scroll: false }]}
       return [t.callExpression(t.identifier(GET_STYLE_FUNC_NAME), [value.expression])];
-    } else { 
+    } else {
       // className="container"
       // className={'container'}
       str = (value.expression ? value.expression.value : value.value).trim();
@@ -182,7 +182,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
 
           if (
             classNameAttribute.value &&
-            classNameAttribute.value.type === 'JSXExpressionContainer' && 
+            classNameAttribute.value.type === 'JSXExpressionContainer' &&
             typeof classNameAttribute.value.expression.value !== 'string' // not like className={'container'}
           ) {
             file.set('injectGetStyle', true);
