@@ -2,12 +2,15 @@ import path from 'path';
 import camelcase from 'camelcase';
 
 const STYLE_SHEET_NAME = '_styleSheet';
+const GET_STYLE_FUNC_NAME = '_getStyle';
+const MERGE_STYLES_FUNC_NAME = '_mergeStyles';
+const GET_CLS_NAME_FUNC_NAME = '_getClassName';
 const NAME_SUFFIX = 'StyleSheet';
 const cssSuffixs = ['.css', '.scss', '.sass', '.less'];
 
 export default function({ types: t, template }) {
   const mergeStylesFunctionTemplate = template(`
-function _mergeStyles() {
+function ${MERGE_STYLES_FUNC_NAME}() {
   var newTarget = {};
 
   for (var index = 0; index < arguments.length; index++) {
@@ -21,14 +24,78 @@ function _mergeStyles() {
   return newTarget;
 }
   `);
-  const mergeStylesFunctionAst = mergeStylesFunctionTemplate();
+  const getClassNameFunctionTemplate = template(`
+function ${GET_CLS_NAME_FUNC_NAME}() {
+  var className = [];
+  var args = arguments[0];
+  var type = Object.prototype.toString.call(args).slice(8, -1).toLowerCase();
 
-  function getArrayExpression(str = str.trim()) {
-    if (str === '') {
+  if (type === 'string') {
+    args = args.trim();
+    args && className.push(args);
+  } else if (type === 'array') {
+    args.forEach(function (cls) {
+      cls = ${GET_CLS_NAME_FUNC_NAME}(cls).trim();
+      cls && className.push(cls);
+    });
+  } else if (type === 'object') {
+    for (var k in args) {
+      k = k.trim();
+      if (k && object.hasOwnProperty(k) && object[k]) {
+        className.push(k);
+      }
+    }
+  }
+
+  return className.join(' ').trim();
+}
+  `);
+  const getStyleFunctionTemplete = template(`
+function ${GET_STYLE_FUNC_NAME}(classNameExpression) { 
+  var cache = ${STYLE_SHEET_NAME}.__cache || (${STYLE_SHEET_NAME}.__cache = {});
+  var className = ${GET_CLS_NAME_FUNC_NAME}(classNameExpression);
+  var classNameArr = className.split(/\\s+/);
+  var style = cache[className];
+
+  if (!style) {
+    style = {};
+    if (classNameArr.length === 1) {
+      style = ${STYLE_SHEET_NAME}[classNameArr[0].trim()];
+    } else {
+      classNameArr.forEach(function(cls) {
+        style = Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()]);
+      });
+    }
+    cache[className] = style;
+  }
+
+  return style;
+}
+  `);
+
+  const getClassNameFunctionAst = getClassNameFunctionTemplate();
+  const mergeStylesFunctionAst = mergeStylesFunctionTemplate();
+  const getStyleFunctionAst = getStyleFunctionTemplete();
+
+  function getArrayExpression(value) {
+    let expression;
+    let str;
+
+    if (!value || value.value === '') {
+      // className
+      // className=""
       return [];
+    } else if (value.type === 'JSXExpressionContainer' && value.expression && typeof value.expression.value !== 'string') {
+      // className={{ container: true }}
+      // className={['container wrapper', { scroll: false }]}
+      return [t.callExpression(t.identifier(GET_STYLE_FUNC_NAME), [value.expression])];
+    } else {
+      // className="container"
+      // className={'container'}
+      str = (value.expression ? value.expression.value : value.value).trim();
     }
 
-    return str.split(/\s+/).map((className) => {
+    return str === '' ? [] : str.split(/\s+/).map((className) => {
       return template(`${STYLE_SHEET_NAME}["${className}"]`)().expression;
     });
   }
@@ -53,6 +120,7 @@ function _mergeStyles() {
       Program: {
         exit({ node }, { file }) {
           const cssFileCount = file.get('cssFileCount');
+          const injectGetStyle = file.get('injectGetStyle');
           const lastImportIndex = findLastImportIndex(node.body);
           let cssParamIdentifiers = file.get('cssParamIdentifiers');
           let callExpression;
@@ -62,11 +130,16 @@ function _mergeStyles() {
             if (cssParamIdentifiers.length === 1) {
               callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), cssParamIdentifiers[0])]);
             } else if (cssParamIdentifiers.length > 1) {
-              const objectAssignExpression = t.callExpression(t.identifier('_mergeStyles'), cssParamIdentifiers);
+              const objectAssignExpression = t.callExpression(t.identifier(MERGE_STYLES_FUNC_NAME), cssParamIdentifiers);
               callExpression = t.variableDeclaration('var', [t.variableDeclarator(t.identifier(STYLE_SHEET_NAME), objectAssignExpression)]);
             }
 
             node.body.splice(lastImportIndex + 1, 0, callExpression);
+
+            if (injectGetStyle) {
+              node.body.splice(lastImportIndex + 2, 0, getClassNameFunctionAst);
+              node.body.splice(lastImportIndex + 3, 0, getStyleFunctionAst);
+            }
           }
 
           if (cssFileCount > 1) {
@@ -107,7 +180,15 @@ function _mergeStyles() {
           // Remove origin className
           attributes.splice(attributes.indexOf(classNameAttribute), 1);
 
-          const arrayExpression = getArrayExpression(classNameAttribute.value.value);
+          if (
+            classNameAttribute.value &&
+            classNameAttribute.value.type === 'JSXExpressionContainer' &&
+            typeof classNameAttribute.value.expression.value !== 'string' // not like className={'container'}
+          ) {
+            file.set('injectGetStyle', true);
+          }
+
+          const arrayExpression = getArrayExpression(classNameAttribute.value);
 
           if (arrayExpression.length === 0) {
             return;
