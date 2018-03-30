@@ -1,3 +1,5 @@
+'use strict';
+
 import TabController from './TabController';
 import TabPanel from './TabPanel';
 import TabPanelView from './TabPanelView';
