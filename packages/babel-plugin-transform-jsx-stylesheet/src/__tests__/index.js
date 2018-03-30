@@ -16,6 +16,56 @@ const mergeStylesFunctionTemplate = `function _mergeStyles() {
   return newTarget;
 }`;
 
+const getClassNameFunctionTemplate = `function _getClassName() {
+  var className = [];
+  var args = arguments[0];
+  var type = Object.prototype.toString.call(args).slice(8, -1).toLowerCase();
+
+  if (type === 'string') {
+    args = args.trim();
+    args && className.push(args);
+  } else if (type === 'array') {
+    args.forEach(function (cls) {
+      cls = _getClassName(cls).trim();
+      cls && className.push(cls);
+    });
+  } else if (type === 'object') {
+    for (var k in args) {
+      k = k.trim();
+
+      if (k && object.hasOwnProperty(k) && object[k]) {
+        className.push(k);
+      }
+    }
+  }
+
+  return className.join(' ').trim();
+}`;
+
+const getStyleFunctionTemplete = `function _getStyle(classNameExpression) {
+  var cache = _styleSheet.__cache || (_styleSheet.__cache = {});
+
+  var className = _getClassName(classNameExpression);\n
+  var classNameArr = className.split(/\\s+/);
+  var style = cache[className];
+
+  if (!style) {
+    style = {};
+
+    if (classNameArr.length === 1) {
+      style = _styleSheet[classNameArr[0].trim()];
+    } else {
+      classNameArr.forEach(function (cls) {
+        style = Object.assign(style, _styleSheet[cls.trim()]);
+      });
+    }
+
+    cache[className] = style;
+  }
+
+  return style;
+}`;
+
 describe('jsx style plugin', () => {
   function getTransfromCode(code) {
     return transform(code, {
@@ -61,6 +111,42 @@ var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
     return <div style={[_styleSheet["header1"], _styleSheet["header2"]]} />;
+  }
+}`);
+  });
+
+  it('transform array, object and expressions', () => {
+    expect(getTransfromCode(`
+import { createElement, Component } from 'rax';
+import './app.css';
+
+class App extends Component {
+  render() {
+    return <div className={'header'}>
+      <div className={{ active: props.isActive }} />
+      <div className={['header1 header2', 'header3', { active: props.isActive }]} />
+      <div className={props.visible ? 'show' : 'hide'} />
+      <div className={getClassName()} />
+    </div>;
+  }
+}`)).toBe(`
+import { createElement, Component } from 'rax';
+import appStyleSheet from './app.css';
+
+var _styleSheet = appStyleSheet;
+
+${getClassNameFunctionTemplate}
+
+${getStyleFunctionTemplete}
+
+class App extends Component {
+  render() {
+    return <div style={_styleSheet["header"]}>
+      <div style={_getStyle({ active: props.isActive })} />
+      <div style={_getStyle(['header1 header2', 'header3', { active: props.isActive }])} />
+      <div style={_getStyle(props.visible ? 'show' : 'hide')} />
+      <div style={_getStyle(getClassName())} />
+    </div>;
   }
 }`);
   });

@@ -1,30 +1,20 @@
 import {createElement, Component, PropTypes, findDOMNode} from 'rax';
 import {isWeex} from 'universal-env';
-
-let canvasWeex = null;
-
-if (isWeex) {
-  canvasWeex = require('./canvas.weex');
-}
+import * as Gcanvas from 'gcanvas.js';
 
 class Canvas extends Component {
-  getContext = () => {
+  getContext = (type) => {
     const canvas = findDOMNode(this.refs.canvas);
-
     if (isWeex) {
-      return new Promise((resolve, reject) => {
-        requestAnimationFrame(() => {
-          resolve(canvasWeex.init(canvas));
-        });
-      });
+      this._canvasHolder = Gcanvas.enable(this.refs.canvas, {bridge: Gcanvas.WeexBridge});
+      return this._canvasHolder.getContext(type);
     } else {
-      return new Promise((resolve, reject) => {
-        if (canvas && canvas.getContext) {
-          const context = canvas.getContext('2d');
-          context.render = () => {};
-          resolve(context);
-        }
-      });
+      if (canvas && canvas.getContext) {
+        const context = canvas.getContext(type);
+        context.render = () => {
+        };
+        return context;
+      }
     }
   };
 
@@ -38,5 +28,13 @@ class Canvas extends Component {
     }
   }
 }
+
+Canvas.createImage = () => {
+  if (isWeex) {
+    return new Gcanvas.Image();
+  } else {
+    return new Image();
+  }
+};
 
 export default Canvas;

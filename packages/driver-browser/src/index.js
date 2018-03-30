@@ -16,6 +16,7 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
+const TEXT_CONTENT_ATTR = 'textContent' in document ? 'textContent' : 'nodeValue';
 
 const Driver = {
 
@@ -60,8 +61,7 @@ const Driver = {
   },
 
   updateText(node, text) {
-    let textContentAttr = 'textContent' in document ? 'textContent' : 'nodeValue';
-    node[textContentAttr] = text;
+    node[TEXT_CONTENT_ATTR] = text;
   },
 
   createElement(component) {
