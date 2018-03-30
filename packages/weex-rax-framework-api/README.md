@@ -1,4 +1,4 @@
-# weex-rax-framework
+# weex-rax-framework-api
 
 ## Global API Rax Framework provide
 
