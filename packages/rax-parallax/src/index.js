@@ -31,7 +31,7 @@ function transformRangeToExpression(params = {}, propertyType) {
   let output = params.out;
   let result = [];
 
-  // 处理负数
+  // resolve negative number in expression
   function negative(val) {
     return val < 0 ? `${Math.abs(val)}*(0-1)` : `${val}`;
   }
