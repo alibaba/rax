@@ -70,15 +70,11 @@ Detection.checkVersion = (params) => {
 };
 
 if (isWeex) {
-  Detection.isHighOS = Detection.checkVersion({
-    andVer: '4.3', // 针对4.3以下版本的android，不使用expressionBinding
-    isCheckOS: true
-  });
-  // 判断是否支持expressionBinding
-  Detection.isEnableSlider = Binding && Binding.isSupportBinding && Detection.isHighOS;
-  // 判断设备是iOS并支持expressionBinding
+  // judge is support bindingx
+  Detection.isEnableSlider = Binding && Binding.isSupportBinding;
+
   Detection.isEnableSliderIOS = Detection.isEnableSlider && Detection.iOS;
-  // 判断设备是android并支持expressionBinding
+
   Detection.isEnableSliderAndroid = Detection.isEnableSlider && Detection.Android;
 }
 

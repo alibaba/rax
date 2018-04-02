@@ -9,11 +9,10 @@ import {noop} from './Utils';
 
 class SliderView extends BaseView {
   static defaultProps = {
-    isPanEnabled: true, // 是否可以pan来横向滑动
-    isSlideEnabled: true, // 是否可以有滑动slide效果
+    isPanEnabled: true,
+    isSlideEnabled: true,
     pageConfig: [],
-    defaultFocusIndex: 0, // 默认聚焦的index
-    // screenNumbersPerSide: null //每边保留的屏幕数量
+    defaultFocusIndex: 0
   };
 
   params = {

@@ -227,7 +227,7 @@ class DefaultView extends BaseView {
       props
     }, (e) => {
       if (e.state == 'end') {
-        // 解绑已绑定的表达式
+        // unbind bindingx
         if (this.token) {
           binding.unbind({
             token: this.token,
@@ -243,10 +243,6 @@ class DefaultView extends BaseView {
   }
 
   onPanCallback = (e) => {
-    // fix: 修复安卓手淘7.5.0下 pan手势被cancel的bug
-    if (isWeex && Detection.Android && Detection.appVersion === '7.5.0' && e.state === 'cancel') {
-      this.switchTo(this.curIndex);
-    }
     if (e.state === 'end') {
       let duration = Date.now() - this.startTime;
       const dist = e.deltaX;
@@ -320,15 +316,7 @@ class DefaultView extends BaseView {
       }
     });
 
-    let wrapProps = {};
-    // if (isWeex) {
-    wrapProps = !Detection.isEnableSliderAndroid && isPanEnabled ? {onHorizontalPan: this.onHorizontalPan} : {};
-    // }
-
-    // else {
-    //   wrapProps = isPanEnabled ? {onTouchStart: this.onTouchStart} : {};
-    // }
-
+    let wrapProps = !Detection.isEnableSliderAndroid && isPanEnabled ? {onHorizontalPan: this.onHorizontalPan} : {};
 
     return (<View {...this.props} style={[styles.container, this.props.style]}>
       <PanView ref="wrap" {...wrapProps} style={styles.wrap}>

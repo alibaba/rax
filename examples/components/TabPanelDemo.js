@@ -1,10 +1,10 @@
 import {Component, createElement, render } from 'rax';
-import {TabController, TabPanel} from '../../packages/rax-tab-panel/src/';
-import Text from '../../packages/rax-text/src/';
-import View from '../../packages/rax-view/src/';
-import ScrollView from '../../packages/rax-scrollview/src/';
-import Touchable from '../../packages/rax-touchable/src/';
-import TabHeader from '../../packages/rax-tabheader/src/';
+import {TabController, TabPanel} from 'rax-tab-panel';
+import Text from 'rax-text';
+import View from 'rax-view';
+import ScrollView from 'rax-scrollview';
+import Touchable from 'rax-touchable';
+import TabHeader from 'rax-tabheader';
 
 
 let styles = {

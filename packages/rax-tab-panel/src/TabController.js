@@ -66,37 +66,8 @@ class TabController extends Component {
     this.refs.container.switchTo(index, options);
   }
 
-  handleAppear = (e) => {
-    let {onViewAppear} = this.props;
-    if (typeof onViewAppear === 'function') {
-      onViewAppear(e);
-    }
-  }
-
-  handleDisAppear = (e) => {
-    let {onViewDisAppear} = this.props;
-    if (typeof onViewDisAppear === 'function') {
-      onViewDisAppear(e);
-    }
-  }
-
-
-  componentDidMount() {
-    let {onViewDisAppear, onViewAppear} = this.props;
-    // 页面进入时的曝光
-    if (isWeex) {
-      if (typeof onViewAppear === 'function') {
-        document.body.addEvent('viewappear', this.handleAppear);
-      }
-      if (typeof onViewDisAppear === 'function') {
-        document.body.addEvent('viewdisappear', this.handleDisAppear);
-      }
-    }
-  }
-
-
   render() {
-    // 使用slider作为容器
+    // use weex slider component
     let {useSlider} = this.props;
 
     let props = {
@@ -105,7 +76,6 @@ class TabController extends Component {
       style: [styles.container, this.props.style],
       uuid: this.uuid
     };
-    // 目前只有weex端可以换成slider  为了不直接依赖rax-slider
     return useSlider && isWeex ? <SliderView {...props} /> : <DefaultView {...props} />;
   }
 }
