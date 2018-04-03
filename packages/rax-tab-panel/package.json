@@ -24,7 +24,6 @@
     "rax-text": "^0.5.4",
     "rax-view": "^0.5.4",
     "rax-link": "^0.5.4",
-    "simple-lodash": "^0.0.2",
     "universal-env": "^0.5.4",
     "universal-transition": "^0.5.4",
     "weex-bindingx": "^0.0.23"

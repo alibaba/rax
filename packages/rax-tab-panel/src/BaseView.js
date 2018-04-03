@@ -3,8 +3,8 @@
 'use strict';
 
 import {Component} from 'rax';
-import _ from 'simple-lodash';
 import TabPanel from './TabPanel';
+import {findIndex} from './Utils';
 
 class BaseView extends Component {
   itemWidth = 750;
@@ -53,7 +53,7 @@ class BaseView extends Component {
         visibleIndexes.push(i);
       }
       for (let i = 0; i < itemCount; i++) {
-        if (_.findIndex(visibleIndexes, (o) => {
+        if (findIndex(visibleIndexes, (o) => {
           return o === i;
         }) === -1) {
           this.destroyPanel(i);

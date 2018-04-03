@@ -1,7 +1,6 @@
 'use strict';
 
 import {isWeex} from 'universal-env';
-import _ from 'simple-lodash';
 
 const h = new window.URL(location.href);
 const protocol = h.protocol === 'http:' ? 'http:' : 'https:';
@@ -51,12 +50,44 @@ let Event = {
   },
   emit: (eventName, data) => {
     var event = new window.Event(eventName);
-    _.map(data, (v, k) => {
-      event[k] = v;
-    });
+    if (data) {
+      Object.keys(data).forEach((k) => {
+        event[k] = data[k];
+      });
+    }
     window.dispatchEvent(event);
   }
 };
+
+function findIndex(o, condition) {
+  return o.indexOf(find(o, condition));
+}
+
+function forEach(o, fn) {
+  if (o instanceof Array) {
+    return Array.prototype.forEach.call(o, fn);
+  }
+  Object.keys(o).forEach((key) => {
+    fn(o[key], key);
+  });
+}
+
+function find(o, condition) {
+  var result = null;
+  forEach(o, (v, k) => {
+    if (typeof condition === 'function') {
+      if (condition(v, k)) {
+        result = v;
+      }
+    } else {
+      var propName = Object.keys(condition)[0];
+      if (propName && v[propName] === condition[propName]) {
+        result = v;
+      }
+    }
+  });
+  return result;
+}
 
 export {
   clamp,
@@ -64,5 +95,6 @@ export {
   noop,
   forbidSwipeBack,
   uuid,
-  Event
+  Event,
+  findIndex
 };
