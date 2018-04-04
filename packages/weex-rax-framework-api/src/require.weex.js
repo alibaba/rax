@@ -1,3 +1,4 @@
+import windmill from '@ali/windmill-renderer/dist/windmill.renderer';
 const MODULE_NAME_PREFIX = '@weex-module/';
 
 module.exports = function(modules, weex) {
@@ -8,7 +9,11 @@ module.exports = function(modules, weex) {
     if (name.split(MODULE_NAME_PREFIX).length > 1) {
       const weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
       if (weex.isRegisteredModule(weexModuleName)) {
-        return weex.requireModule(weexModuleName);
+        if (weex.environment == 'APP') {
+          return windmill.call(weexModuleName);
+        } else {
+          return weex.requireModule(weexModuleName);
+        }
       } else {
         throw new Error(
           'Requiring unknown weex module "' + name + '"'
