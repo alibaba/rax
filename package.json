@@ -39,7 +39,7 @@
     "uppercamelcase": "^1.1.0",
     "webpack": "^4.0.1",
     "webpack-dev-server": "^3.1.0",
-    "weex-js-runtime": "^0.23.6"
+    "worker-loader": "^1.1.1"
   },
   "peerDependencies": {
     "redux": "latest",

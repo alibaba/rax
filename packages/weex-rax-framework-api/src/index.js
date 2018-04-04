@@ -15,10 +15,6 @@ const MODULE_NAME_PREFIX = '@weex-module/';
 const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 const GLOBAL_EVENT_MODULE = MODULE_NAME_PREFIX + 'globalEvent';
-// Instance hub
-// const instances = {};
-// Bundles hub
-const bundles = {};
 const noop = function() {};
 let weex = {};
 
@@ -50,7 +46,6 @@ export function injectContext() {
  * @param  {string} __weex_code__
  * @param  {object} [__weex_options__] {bundleUrl, debug}
  */
-// export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
 export function resetInstanceContext(instanceContext) {
   let {
     instanceId,
@@ -77,19 +72,11 @@ export function resetInstanceContext(instanceContext) {
   const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
   const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
   const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-  // let bundleUrl = __weex_options__.bundleUrl || 'about:blank';
-
-  if (!bundleUrl) {
-    console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
-  } else if (!bundleUrl.split('//')[0]) {
-    bundleUrl = 'https:' + bundleUrl;
-  }
 
   const documentURL = new URL(bundleUrl);
   const modules = {};
 
   // Generate native modules map at instance init
-  // genNativeModules(modules, document);
   const __weex_define__ = require('./define.weex')(modules);
   const __weex_require__ = require('./require.weex')(modules, weex);
   const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
@@ -300,6 +287,5 @@ export function resetInstanceContext(instanceContext) {
 
   window.self = window.window = window;
 
-  console.log('Rax jsfm init window, typeof window is ', typeof window);
   return window;
 }

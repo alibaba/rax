@@ -29,26 +29,26 @@ export function init(config) {
  * @param  {object} [__weex_options__] {bundleUrl, debug}
  * @param  {object} __weex_data__
  */
-// export function createInstance(instanceId, __weex_code__, __weex_options__, __weex_data__, __weex_config__) {
 export function createInstanceContext(instanceId, __weex_options__, __weex_data__) {
   let instance = instances[instanceId];
-
-  // Generate native modules map at instance init
-  // genNativeModules(modules, document);
   const weex = __weex_options__.weex;
 
   if (instance == undefined) {
-    const bundleUrl = weex.config.bundleUrl || 'about:blank';
+    let bundleUrl = weex.config.bundleUrl;
+    if (!bundleUrl) {
+      console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
+      bundleUrl = 'about:blank';
+    } else if (!bundleUrl.split('//')[0]) {
+      bundleUrl = 'https:' + bundleUrl;
+    }
+
     const document = new Document(instanceId, bundleUrl);
-    // 待确认这块从哪里获取
-    const modules = {};
 
     instance = instances[instanceId] = {
       document,
       instanceId,
       bundleUrl,
       __weex_data__,
-      modules,
       uid: 0
     };
 
