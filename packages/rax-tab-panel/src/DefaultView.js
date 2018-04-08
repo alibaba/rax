@@ -18,7 +18,7 @@ function getEl(el) {
   return isWeex ? findDOMNode(el).ref : findDOMNode(el);
 }
 
-// TODO solve for transition duration = 0 bug
+// solve for transition duration = 0 bug
 const MIN_DURATION = 1;
 
 

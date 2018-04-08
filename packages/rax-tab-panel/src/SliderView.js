@@ -60,7 +60,6 @@ class SliderView extends BaseView {
 
 
   componentDidMount() {
-    // TODO extraBindingProps 需要Slider实现ScrollableProtocol
     this.countItems();
     let {defaultFocusIndex = 0} = this.props;
 
@@ -68,7 +67,6 @@ class SliderView extends BaseView {
       if (defaultFocusIndex !== this.state.index) {
         this.switchTo(defaultFocusIndex);
       } else {
-        // 需要手动触发一下
         this.onChange({
           index: defaultFocusIndex
         });

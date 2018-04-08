@@ -34,6 +34,7 @@ import SliderDemo from './SliderDemo';
 import TableDemo from './TableDemo';
 import CheckboxDemo from './CheckboxDemo';
 import TabPanelDemo from './TabPanelDemo';
+import ParallaxDemo from './ParallaxDemo';
 
 class Page extends Component {
   render() {
@@ -184,9 +185,15 @@ class Page extends Component {
       </View>
 
       <View>
+        <Text style={styles.title}>Parallax</Text>
+        <ParallaxDemo />
+      </View>
+
+      <View>
         <Text style={styles.title}>TabPanel</Text>
         <TabPanelDemo />
       </View>
+
 
     </ScrollView>;
   }
