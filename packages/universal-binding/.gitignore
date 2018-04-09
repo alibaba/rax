@@ -1,0 +1,17 @@
+node_modules/
+build/
+.travis.yml
+*.swp
+.sass-cache/
+.DS_Store
+.idea/
+zip/
+*.tmp
+*.bak
+tmp/
+temp/
+coverage/
+.happypack
+.pagedata.json
+.pagedata.json.lock
+jest.transform.js
