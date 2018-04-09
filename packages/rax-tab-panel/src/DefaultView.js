@@ -163,11 +163,6 @@ class DefaultView extends BaseView {
     });
   }
 
-  onTouchStart = () => {
-    if (isWeex || this.isScrolling) return;
-    this.bindPanExp(this.refs.wrap);
-  }
-
   bindPanExp = (anchor) => {
     this.anchor = anchor;
 
@@ -243,7 +238,7 @@ class DefaultView extends BaseView {
   }
 
   onPanCallback = (e) => {
-    if (e.state === 'end') {
+    if (e.state === 'end' && Math.abs(e.deltaX) > 0) {
       let duration = Date.now() - this.startTime;
       const dist = e.deltaX;
       const panDist = this.props.panDist ? this.props.panDist : this.itemWidth / 2;
@@ -273,27 +268,6 @@ class DefaultView extends BaseView {
     if (e.state === 'start' && !this.isScrolling) {
       this.bindPanExp(this.refs.wrap);
     }
-  }
-
-  disablePan = () => {
-    if (this.token) {
-      binding.unbind({
-        token: this.token,
-        eventType: 'pan',
-        anchor: this.anchor
-      });
-    }
-  }
-
-  shouldBindPanExp(e) {
-    // left
-    if (this.curIndex === 0 && e.changedTouches[0].deltaX > 0) {
-      return false;
-      // right
-    } else if (this.curIndex === this.itemCount - 1 && e.changedTouches[0].deltaX < 0) {
-      return false;
-    }
-    return true;
   }
 
   render() {
