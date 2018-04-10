@@ -221,171 +221,171 @@ declare global {
 
 
     /**
-     * 页面重绘的回调事件，rax原生中使用 setTimeOut(()=>{},16)来模拟
-     * @param {Function} callback
-     * @return {string}
-     */
-    export function requestAnimationFrame(callback: Function): string;
-
-    /**
-     * 取消 requestAnimationFrame
-     * @param {number} timerId
-     */
-    export function cancelAnimationFrame(timerId: number): void;
-
-    /**
-     * 弹出一个默认对话框
-     * @param message
-     */
-    export function alert(message?: string): void;
-
-    /**
-     * 打开一个页面
-     * @param {"url".URL} url
-     */
-    export function open(url: URL): void;
-
-
-     //weex 相关
-
-    /**
-     * weex 模块支持判断，支持 模块名 或 模块名.方法名 例如    __weex_module_supports__(stream.fetch)
-     * @param {string} name
-     * @return {boolean}
-     * @private
-     */
-    export function __weex_module_supports__(name: string): boolean;
-
-    /**
-     * 模块支持判断 仅支持模块名称 例如 __weex_module_supports__(stream)
-     * 为了使用语义上的明确，建议使用 __weex_module_supports__
-     * @param {string} moduleName 模块名称
-     * @return {boolean}
-     * @private
-     */
-    export function __weex_tag_supports__(moduleName: string): boolean;
-
-    /**
-     * weex 模块定义
-     * @param {string} moduleName 模块名称
-     * @return {T}
-     * @private
-     */
-    export function __weex_define__<T extends WeexModule>(moduleName: string): T;
-
-    /**
-     * weex 模块定义
-     * @param {string} moduleName 模块名称
-     * @return {T}
-     * @private
-     */
-    export function __weex_define__<T extends WeexModule>(moduleName: string): T;
-
-    /**
-     * weex 模块导入
-     * @param {string} moduleName 模块名称
-     * @return {T}
-     * @private
-     */
-    export function __weex_require__<T extends WeexModule>(moduleName: string): T;
-
-
-    /**
-     *
-     * weex 环境信息
-     */
-    export const __weex_env__: {
-        /**
-         * 平台
-         */
-        readonly  platform: string,
-        /**
-         * app名称
-         */
-        readonly  appName: string,
-        /**
-         * app版本
-         */
-        readonly  appVersion: string,
-        /**
-         * 操作系统版本
-         */
-        readonly    osVersion: string,
-        /**
-         * 设备名称（模式）
-         */
-        readonly   deviceModel: string,
-        /**
-         * weex sdk版本
-         */
-        readonly    weexVersion: string,
-        /**
-         * 日志版本
-         */
-        readonly  logLevel: string,
-        /**
-         * 设备宽
-         */
-        readonly  deviceWidth: number,
-        /**
-         * 设备高
-         */
-        readonly    deviceHeight: number,
-        /**
-         * 缩放比例
-         */
-        readonly   scale: number,
-
-        readonly   ttid: string,
-
-        readonly   utdid: string
-
-    };
-
-
-    /**
-     * weex 实例编码，在创建实例（createInstance）是传入
-     */
-    export const __weex_code__: string;
-
-    /**
-     * weex配置项
-     */
-    export interface WeexOptions {
-        bundleUrl: string;
-        debug: boolean
-    }
-
-    /**
-     * weex创建实例是传入的可选项
-     */
-    export const __weex_options__: WeexOptions;
-
-    /**
-     * weex 创建实例时传入的自定义对象
-     */
-    export const __weex_data__: any;
-
-    /**
-     * weex 全局配置
-     */
-    export type WeexConfig = {
-        services: any
-    }
-
-    /**
-     * weex 全局配置 创建实例时传入
-     */
-    export const __weex_config__: WeexConfig;
-
-
-    /**
-     * 设置原生的props
-     * 不使用 state/props 的情况下，直接使用 setNativeProps 去触发重新渲染
-     * @param {React.ReactNode} node
-     * @param props
-     */
-    export function setNativeProps(node: ReactNode, props: any): void;
+    //  * 页面重绘的回调事件，rax原生中使用 setTimeOut(()=>{},16)来模拟
+    //  * @param {Function} callback
+    //  * @return {string}
+    //  */
+    // export function requestAnimationFrame(callback: Function): string;
+    //
+    // /**
+    //  * 取消 requestAnimationFrame
+    //  * @param {number} timerId
+    //  */
+    // export function cancelAnimationFrame(timerId: number): void;
+    //
+    // /**
+    //  * 弹出一个默认对话框
+    //  * @param message
+    //  */
+    // export function alert(message?: string): void;
+    //
+    // /**
+    //  * 打开一个页面
+    //  * @param {"url".URL} url
+    //  */
+    // export function open(url: URL): void;
+    //
+    //
+    //  //weex 相关
+    //
+    // /**
+    //  * weex 模块支持判断，支持 模块名 或 模块名.方法名 例如    __weex_module_supports__(stream.fetch)
+    //  * @param {string} name
+    //  * @return {boolean}
+    //  * @private
+    //  */
+    // export function __weex_module_supports__(name: string): boolean;
+    //
+    // /**
+    //  * 模块支持判断 仅支持模块名称 例如 __weex_module_supports__(stream)
+    //  * 为了使用语义上的明确，建议使用 __weex_module_supports__
+    //  * @param {string} moduleName 模块名称
+    //  * @return {boolean}
+    //  * @private
+    //  */
+    // export function __weex_tag_supports__(moduleName: string): boolean;
+    //
+    // /**
+    //  * weex 模块定义
+    //  * @param {string} moduleName 模块名称
+    //  * @return {T}
+    //  * @private
+    //  */
+    // export function __weex_define__<T extends WeexModule>(moduleName: string): T;
+    //
+    // /**
+    //  * weex 模块定义
+    //  * @param {string} moduleName 模块名称
+    //  * @return {T}
+    //  * @private
+    //  */
+    // export function __weex_define__<T extends WeexModule>(moduleName: string): T;
+    //
+    // /**
+    //  * weex 模块导入
+    //  * @param {string} moduleName 模块名称
+    //  * @return {T}
+    //  * @private
+    //  */
+    // export function __weex_require__<T extends WeexModule>(moduleName: string): T;
+    //
+    //
+    // /**
+    //  *
+    //  * weex 环境信息
+    //  */
+    // export const __weex_env__: {
+    //     /**
+    //      * 平台
+    //      */
+    //     readonly  platform: string,
+    //     /**
+    //      * app名称
+    //      */
+    //     readonly  appName: string,
+    //     /**
+    //      * app版本
+    //      */
+    //     readonly  appVersion: string,
+    //     /**
+    //      * 操作系统版本
+    //      */
+    //     readonly    osVersion: string,
+    //     /**
+    //      * 设备名称（模式）
+    //      */
+    //     readonly   deviceModel: string,
+    //     /**
+    //      * weex sdk版本
+    //      */
+    //     readonly    weexVersion: string,
+    //     /**
+    //      * 日志版本
+    //      */
+    //     readonly  logLevel: string,
+    //     /**
+    //      * 设备宽
+    //      */
+    //     readonly  deviceWidth: number,
+    //     /**
+    //      * 设备高
+    //      */
+    //     readonly    deviceHeight: number,
+    //     /**
+    //      * 缩放比例
+    //      */
+    //     readonly   scale: number,
+    //
+    //     readonly   ttid: string,
+    //
+    //     readonly   utdid: string
+    //
+    // };
+    //
+    //
+    // /**
+    //  * weex 实例编码，在创建实例（createInstance）是传入
+    //  */
+    // export const __weex_code__: string;
+    //
+    // /**
+    //  * weex配置项
+    //  */
+    // export interface WeexOptions {
+    //     bundleUrl: string;
+    //     debug: boolean
+    // }
+    //
+    // /**
+    //  * weex创建实例是传入的可选项
+    //  */
+    // export const __weex_options__: WeexOptions;
+    //
+    // /**
+    //  * weex 创建实例时传入的自定义对象
+    //  */
+    // export const __weex_data__: any;
+    //
+    // /**
+    //  * weex 全局配置
+    //  */
+    // export type WeexConfig = {
+    //     services: any
+    // }
+    //
+    // /**
+    //  * weex 全局配置 创建实例时传入
+    //  */
+    // export const __weex_config__: WeexConfig;
+    //
+    //
+    // /**
+    //  * 设置原生的props
+    //  * 不使用 state/props 的情况下，直接使用 setNativeProps 去触发重新渲染
+    //  * @param {React.ReactNode} node
+    //  * @param props
+    //  */
+    // export function setNativeProps(node: ReactNode, props: any): void;
 
     //https://alibaba.github.io/rax/guide/network
     // export function fetch() {
