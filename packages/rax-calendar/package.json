@@ -1,6 +1,6 @@
 {
   "name": "rax-calendar",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "description": "Calendar component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-scrollview": "^0.5.4",
-    "rax-text": "^0.5.4",
-    "rax-touchable": "^0.5.4",
-    "rax-view": "^0.5.4"
+    "rax-scrollview": "^0.6.0",
+    "rax-text": "^0.6.0",
+    "rax-touchable": "^0.6.0",
+    "rax-view": "^0.6.0"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.5.4"
+    "rax-test-renderer": "^0.6.0"
   }
 }
