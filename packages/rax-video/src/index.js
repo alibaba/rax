@@ -10,6 +10,7 @@ class Video extends Component {
 
     if (isWeex) {
       props.playStatus = props.playControl;
+      props.autoplay = props.autoPlay;
       return <video {...props} />;
     } else {
       let nativeProps = {
