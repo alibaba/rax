@@ -1,0 +1,36 @@
+# driver-worker
+
+> Worker driver for Rax.
+
+## Install
+
+```bash
+$ npm install --save driver-worker
+```
+
+## Usage
+
+`worker.js`
+```js
+import WorkerDirver from 'driver-worker';
+import { render } from 'rax';
+import App from './App';
+
+render(
+  <App />
+  null,
+  {
+    driver: WorkerDriver
+  }
+);
+```
+
+`index.js`
+```js
+import domRenderer from 'driver-worker/lib/dom-renderer';
+import spawnWorker from 'worker-loader?inline!./worker.js';
+
+let worker = spawnWorker();
+let tagNamePrefix = 'a-';
+domRenderer({ worker, tagNamePrefix });
+```
