@@ -97,6 +97,10 @@ class RaxWebpackPlugin {
           if (/^@weex\-module\//.test(request)) {
             return callback(null, request, 'commonjs');
           }
+          // @system/* ignored
+          if (/^@system\//.test(request)) {
+            return callback(null, request, 'commonjs');
+          }
 
           let builtinModuleName = this.options.builtinModules[request];
           if (this.options.externalBuiltinModules && builtinModuleName) {
