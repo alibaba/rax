@@ -6,7 +6,7 @@
 
 Runs the app in development mode.
 
-Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
+Open [http://localhost:9999](http://localhost:9999) to view it in the browser.
 
 The page will reload if you make edits.
 

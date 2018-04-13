@@ -5,7 +5,7 @@ import Component from '../component';
 import {createElement} from '../element';
 import Host from '../vdom/host';
 import render from '../render';
-import ServerDriver from '../drivers/server';
+import ServerDriver from 'driver-server';
 
 describe('PureComponent', function() {
   beforeEach(function() {

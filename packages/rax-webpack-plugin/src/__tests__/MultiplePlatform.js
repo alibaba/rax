@@ -45,6 +45,7 @@ describe('MultiplePlatform', function() {
       'entry': {
         'hello.bundle.weex': './index.js'
       },
+      'name': 'weex',
       'module': {
         'loaders': [{
           'test': /\.jsx?$/,
@@ -62,6 +63,70 @@ describe('MultiplePlatform', function() {
       ]
     }];
     expect(MultiplePlatform(config)).toEqual(expected);
+  });
+
+  it('config `chunkFilename` field', function() {
+    const config = {
+      platforms: ['weex'],
+      entry: {
+        'hello.bundle': './index.js'
+      },
+      module: {
+        loaders: [{
+          test: /\.jsx?$/,
+          loader: 'babel'
+        }]
+      },
+      output: {
+        chunkFilename: '[name].js',
+      }
+    };
+
+    const expected = [{
+      'entry': {
+        'hello.bundle': './index.js'
+      },
+      'module': {
+        'loaders': [{
+          'test': /\.jsx?$/,
+          'loader': 'babel'
+        }]
+      },
+      'platforms': [
+        'weex'
+      ],
+      output: {
+        chunkFilename: '[name].js',
+      }
+    }, {
+      'entry': {
+        'hello.bundle.weex': './index.js'
+      },
+      'name': 'weex',
+      'module': {
+        'loaders': [{
+          'test': /\.jsx?$/,
+          'loader': 'babel'
+        }],
+        'preLoaders': [{
+          'test': /\.jsx?$/,
+          'exclude': /(node_modules|bower_components)/,
+          'loader': `${path.resolve(__dirname, '../PlatformLoader.js')}?platform=weex`
+
+        }]
+      },
+      'platforms': [
+        'weex'
+      ],
+      output: {
+        chunkFilename: '[name].weex.js',
+      }
+    }];
+    expect(MultiplePlatform(config, {
+      chunkFilename: function(platformType) {
+        return '[name].' + platformType + '.js';
+      }
+    })).toEqual(expected);
   });
 
   it('specified platform is `weex` pass options', function() {
@@ -91,6 +156,7 @@ describe('MultiplePlatform', function() {
       'entry': {
         'hello.bundle.weex': './index.js'
       },
+      'name': 'weex',
       'module': {
         'loaders': [{
           'test': /\.jsx?$/,
@@ -197,6 +263,7 @@ describe('MultiplePlatform', function() {
         'hello.bundle.weex': ['./index.js', './weex.js'],
         'world.bundle.weex': './world.js'
       },
+      'name': 'weex',
       'module': {
         'loaders': [{
           test: /\.jsx?$/,
@@ -270,6 +337,7 @@ describe('MultiplePlatform', function() {
 
         }]
       },
+      'name': 'weex',
       'platforms': [
         'weex'
       ]

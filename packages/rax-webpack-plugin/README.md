@@ -16,7 +16,7 @@ var RaxPlugin = require('rax-webpack-plugin');
 module.exports = {
   plugins: [
     new RaxPlugin({
-      // Target format: `bundle`, `umd` or `factory`(build for builtin module format), default is umd
+      // Target format: `bundle`, `cmd`, `umd` or `factory`(build for builtin module format), default is umd
       target: 'umd',
       // Only for `bundle` target, default is '// {"framework" : "Rax"}'
       frameworkComment: '// {"framework" : "Rax"}',
@@ -31,6 +31,8 @@ module.exports = {
       includePolyfills: false,
       // Config which polyfill should include, defaut is empty
       polyfillModules: [],
+      // Check duplicate dependencies, default is ['rax']
+      duplicateCheck: ['rax'],
     })
   ]
 }
@@ -43,6 +45,8 @@ Output multiple platform
 #### options
 
 - `platforms` Array of ['web', 'node', 'weex', 'reactnative']
+- `exclude` Multiple platform loader exclude, default is `/(node_modules|bower_components)/`
+- `name` Default is `['universal-env']`, you can reassign to other module name when needed
 
 example
 

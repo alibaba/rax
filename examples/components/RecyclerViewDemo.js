@@ -1,20 +1,18 @@
-
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Image,
-  Link,
-  TextInput,
-  Button,
-  Switch,
-  Video,
-  ScrollView,
-  RecyclerView,
-  RefreshControl,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import Link from 'rax-link';
+import TextInput from 'rax-textinput';
+import Button from 'rax-button';
+import Switch from 'rax-switch';
+import Video from 'rax-video';
+import ScrollView from 'rax-scrollview';
+import TouchableWithoutFeedback from 'rax-touchable';
+import RecyclerView from 'rax-recyclerview';
+import RefreshControl from 'rax-refreshcontrol';
+
+let TouchableOpacity = TouchableWithoutFeedback;
 
 class Thumb extends Component {
   shouldComponentUpdate(nextProps, nextState) {
@@ -39,7 +37,7 @@ class Row extends Component {
 
   render() {
     return (
-     <TouchableWithoutFeedback onPress={this.handleClick} >
+      <TouchableWithoutFeedback onPress={this.handleClick} >
         <View style={styles.row}>
           <Text style={styles.text}>
             {this.props.data.text + ' (' + this.props.data.clicks + ' clicks)'}
@@ -64,41 +62,41 @@ class RecyclerViewDemo extends Component {
     return (
       <View>
 
-      <View style={styles.container}>
-        <RecyclerView
-          ref={(scrollView) => {
-            this.scrollView = scrollView;
-          }}
-          style={{
-            height: 500
-          }}
-          onEndReached={() => this.setState({scrollViewEventLog: true})}>
+        <View style={styles.container}>
+          <RecyclerView
+            ref={(scrollView) => {
+              this.scrollView = scrollView;
+            }}
+            style={{
+              height: 500
+            }}
+            onEndReached={() => this.setState({scrollViewEventLog: true})}>
 
-          <RecyclerView.Header style={styles.sticky}>
-            <Text>Sticky view is not header</Text>
-          </RecyclerView.Header>
+            <RecyclerView.Header style={styles.sticky}>
+              <Text>Sticky view is not header</Text>
+            </RecyclerView.Header>
 
-          <RecyclerView.Header>
-            <View style={styles.sticky}>
-              <Text>Sticky view must in header root</Text>
-            </View>
-          </RecyclerView.Header>
+            <RecyclerView.Header>
+              <View style={styles.sticky}>
+                <Text>Sticky view must in header root</Text>
+              </View>
+            </RecyclerView.Header>
 
-          {THUMBS.map(createThumbRow)}
+            {THUMBS.map(createThumbRow)}
 
-        </RecyclerView>
+          </RecyclerView>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => this.scrollView.scrollTo({y: 0})}>
-          <Text>Scroll to top</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.scrollView.scrollTo({y: 0})}>
+            <Text>Scroll to top</Text>
+          </TouchableOpacity>
 
-        <View style={styles.eventLogBox}>
-          <Text>{this.state.scrollViewEventLog ? 'onEndReached' : ''}</Text>
+          <View style={styles.eventLogBox}>
+            <Text>{this.state.scrollViewEventLog ? 'onEndReached' : ''}</Text>
+          </View>
+
         </View>
-
-      </View>
 
       </View>
     );

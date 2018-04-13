@@ -1,5 +1,7 @@
 // https://github.com/Polymer/URL
 
+var URLSearchParams = require('./url-search-params');
+
 var relative = Object.create(null);
 relative.ftp = 21;
 relative.file = 0;
@@ -38,7 +40,7 @@ function percentEscape(c) {
      unicode < 0x7F &&
      // " # < > ? `
      [0x22, 0x23, 0x3C, 0x3E, 0x3F, 0x60].indexOf(unicode) == -1
-    ) {
+  ) {
     return c;
   }
   return encodeURIComponent(c);
@@ -53,7 +55,7 @@ function percentEscapeQuery(c) {
      unicode < 0x7F &&
      // " # < > ` (do not escape '?')
      [0x22, 0x23, 0x3C, 0x3E, 0x60].indexOf(unicode) == -1
-    ) {
+  ) {
     return c;
   }
   return encodeURIComponent(c);
@@ -492,7 +494,7 @@ URL.prototype = {
 
   get host() {
     return this._isInvalid ? '' : this._port ?
-        this._host + ':' + this._port : this._host;
+      this._host + ':' + this._port : this._host;
   },
   set host(host) {
     if (this._isInvalid || !this._isRelative)
@@ -520,7 +522,7 @@ URL.prototype = {
 
   get pathname() {
     return this._isInvalid ? '' : this._isRelative ?
-        '/' + this._path.join('/') : this._schemeData;
+      '/' + this._path.join('/') : this._schemeData;
   },
   set pathname(pathname) {
     if (this._isInvalid || !this._isRelative)
@@ -531,7 +533,7 @@ URL.prototype = {
 
   get search() {
     return this._isInvalid || !this._query || '?' == this._query ?
-        '' : this._query;
+      '' : this._query;
   },
   set search(search) {
     if (this._isInvalid || !this._isRelative)
@@ -542,9 +544,13 @@ URL.prototype = {
     parse.call(this, search, 'query');
   },
 
+  get searchParams() {
+    return new URLSearchParams(this.search);
+  },
+
   get hash() {
     return this._isInvalid || !this._fragment || '#' == this._fragment ?
-        '' : this._fragment;
+      '' : this._fragment;
   },
   set hash(hash) {
     if (this._isInvalid)

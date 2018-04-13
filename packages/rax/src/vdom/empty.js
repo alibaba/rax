@@ -8,8 +8,9 @@ class EmptyComponent {
     this._currentElement = null;
   }
 
-  mountComponent(parent, context, childMounter) {
+  mountComponent(parent, parentInstance, context, childMounter) {
     this._parent = parent;
+    this._parentInstance = parentInstance;
     this._context = context;
 
     let instance = {
@@ -26,18 +27,19 @@ class EmptyComponent {
     return instance;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
-    if (this._nativeNode && !shouldNotRemoveChild) {
+  unmountComponent(notRemoveChild) {
+    if (this._nativeNode && !notRemoveChild) {
       Host.driver.removeChild(this._nativeNode, this._parent);
     }
 
     this._nativeNode = null;
     this._parent = null;
+    this._parentInstance = null;
     this._context = null;
   }
 
   updateComponent() {
-    // noop
+    // Noop
   }
 
   getNativeNode() {

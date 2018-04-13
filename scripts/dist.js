@@ -2,59 +2,76 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const uppercamelcase = require('uppercamelcase');
 const RaxPlugin = require('rax-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const fs = require('fs');
 
-[
-  ['rax-components', 'components', 'Components'],
-  ['rax-redux', 'redux', 'RaxRedux'],
-  ['rax-animated', 'animated', 'Animated'],
-  ['universal-panresponder', 'panresponder', 'PanResponder'],
-  ['universal-platform', 'platform', 'Platform'],
-  ['universal-stylesheet', 'stylesheet', 'StyleSheet'],
-  ['universal-toast', 'toast', 'Toast'],
-  ['universal-jsonp', 'jsonp', 'JSONP']
-].forEach(function(info) {
-  var main = './packages/' + info[0] + '/src/index.js';
-  var entry = {};
-  entry[info[1]] = entry[info[1] + '.min'] = entry[info[1] + '.factory'] = main;
-  dist(getConfig(
-    entry,
-    {
-      path: './packages/' + info[0] + '/dist/',
-      filename: '[name].js',
-      sourceMapFilename: '[name].map',
-      pathinfo: false,
-    },
-    {
-      externalBuiltinModules: true,
-      builtinModules: Object.assign({
-        'rax-components': ['rax-components']
-      }, RaxPlugin.BuiltinModules),
-      moduleName: info[0],
-      globalName: info[2],
-    },
-    {
-      presets: ['es2015', 'rax']
-    }
-  ));
-});
+const PACKAGES_DIR = path.resolve(__dirname, '../packages');
+
+const GLOBAL_NAME = {
+  'rax-dom': 'RaxDOM',
+};
+function normalizeGlobalName(name) {
+  return GLOBAL_NAME[name] || uppercamelcase(name);
+}
+
+fs.readdirSync(PACKAGES_DIR)
+  .forEach(function(packageName) {
+    var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
+
+    if (!/^(rax|universal)-/.test(packageName) ||
+      /webpack/.test(packageName) ||
+      /cli/.test(packageName) ||
+      /loader/.test(packageName) ||
+      /rax-scripts/.test(packageName) ||
+      !fs.existsSync(main)
+    ) {
+      console.log('Ignore dist', packageName);
+      return;
+    };
+
+    var entryName = packageName.split('-')[1];
+    var globalName = normalizeGlobalName(packageName);
+
+    var entry = {};
+    entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
+    dist(getConfig(
+      entry,
+      {
+        path: './packages/' + packageName + '/dist/',
+        filename: '[name].js',
+        sourceMapFilename: '[name].map',
+        pathinfo: false,
+      },
+      {
+        externalBuiltinModules: true,
+        builtinModules: RaxPlugin.BuiltinModules,
+        moduleName: packageName,
+        globalName: globalName,
+      },
+      {
+        presets: ['es2015', 'rax']
+      }
+    ));
+  });
 
 dist(getConfig(
   {
-    'env': './packages/universal-env/src/index.js',
-    'env.min': './packages/universal-env/src/index.js',
-    'env.factory': './packages/universal-env/src/index.js',
+    'rax': './packages/rax/src/index.js',
+    'rax.min': './packages/rax/src/index.js',
+    'rax.factory': './packages/rax/src/index.js',
   },
   {
-    path: './packages/universal-env/dist/',
+    path: './packages/rax/dist/',
     filename: '[name].js',
     sourceMapFilename: '[name].map',
     pathinfo: false,
   },
   {
-    moduleName: 'universal-env',
-    globalName: 'Env',
+    moduleName: 'rax',
+    globalName: 'Rax',
+    factoryGlobals: ['__weex_document__', 'document']
   },
   {
     presets: ['es2015', 'rax']
@@ -62,64 +79,11 @@ dist(getConfig(
 )).then(() => {
   return dist(getConfig(
     {
-      'rax': './packages/rax/src/index.js',
-      'rax.min': './packages/rax/src/index.js',
-      'rax.factory': './packages/rax/src/index.js',
-    },
-    {
-      path: './packages/rax/dist/',
-      filename: '[name].js',
-      sourceMapFilename: '[name].map',
-      pathinfo: false,
-    },
-    {
-      moduleName: 'rax',
-      globalName: 'Rax',
-      factoryGlobals: ['__weex_document__', 'document']
-    },
-    {
-      presets: ['es2015', 'rax']
-    }
-  ));
-}).then(() => {
-  return dist(getConfig(
-    {
-      'transition': './packages/universal-transition/src/index.js',
-      'transition.min': './packages/universal-transition/src/index.js',
-      'transition.factory': './packages/universal-transition/src/index.js',
-    },
-    {
-      path: './packages/universal-transition/dist/',
-      filename: '[name].js',
-      sourceMapFilename: '[name].map',
-      pathinfo: false,
-    },
-    {
-      moduleName: 'universal-transition',
-      globalName: 'Transition',
-    },
-    {
-      presets: ['es2015', 'rax']
-    }
-  ));
-}).then(() => {
-  return dist(getConfig(
-    {
-      'promise.module': './packages/runtime-shared/src/promise.js',
-      'promise.function': './packages/runtime-shared/src/promise.js',
-      'matchMedia.module': './packages/runtime-shared/src/matchMedia.js',
-      'matchMedia.function': './packages/runtime-shared/src/matchMedia.js',
-      'url.module': './packages/runtime-shared/src/url.js',
-      'url.function': './packages/runtime-shared/src/url.js',
-      'url-search-params.module': './packages/runtime-shared/src/url-search-params.js',
-      'url-search-params.function': './packages/runtime-shared/src/url-search-params.js',
-      'fontface.module': './packages/runtime-shared/src/fontface.js',
-      'fontface.function': './packages/runtime-shared/src/fontface.js'
+      'shared.function': './packages/runtime-shared/src/index.js',
     },
     {
       path: './packages/runtime-shared/dist/',
       filename: '[name].js',
-      sourceMapFilename: '[name].map',
       pathinfo: false,
     },
     {
@@ -127,7 +91,9 @@ dist(getConfig(
     },
     {
       presets: ['es2015']
-    }
+    },
+    null,
+    'hidden-source-map'
   ));
 }).then(() => {
   dist(getConfig(
@@ -147,7 +113,7 @@ dist(getConfig(
       frameworkComment: '',
     },
     {
-      presets: ['es2015'],
+      presets: ['es2015', 'rax'],
       ignore: [
         'dist/'
       ]
@@ -168,18 +134,53 @@ dist(getConfig(
       target: 'module'
     },
     {
-      presets: ['es2015'],
+      presets: ['es2015', 'rax'],
       ignore: [
         'dist/'
       ]
     }
   ));
+
+  dist(getConfig(
+    {
+      'api.weex': './packages/weex-rax-framework-api/src/index.js'
+    },
+    {
+      path: './packages/weex-rax-framework-api/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+      pathinfo: true,
+    },
+    {
+      target: 'module'
+    },
+    {
+      presets: ['es2015', 'rax'],
+      ignore: [
+        'dist/'
+      ]
+    }
+  ));
+}).catch(function(err) {
+  setTimeout(function() {
+    throw err;
+  });
 });
 
-function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
+function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
+  // Webpack need an absolute path
+  output.path = path.resolve(__dirname, '..', output.path);
+
   return {
+    mode: 'production',
     target: target || 'node',
-    devtool: 'source-map',
+    devtool: devtool || 'source-map',
+    optimization: {
+      minimize: false
+    },
+    stats: {
+      optimizationBailout: true,
+    },
     entry: entry,
     output: output,
     plugins: [
@@ -188,20 +189,18 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target) {
       }),
       new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
-      new webpack.optimize.UglifyJsPlugin({
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new UglifyJSPlugin({
         include: /\.min\.js$/,
-        minimize: true,
-        compress: {
-          warnings: false
-        }
+        sourceMap: true
       })
     ],
     module: {
-      loaders: [{
+      rules: [{
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
-        query: babelLoaderQuery
+        options: babelLoaderQuery
       }]
     }
   };

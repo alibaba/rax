@@ -1,5 +1,9 @@
 import {createElement, Component, render} from 'rax';
-import {View, Text, ScrollView} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import ScrollView from 'rax-scrollview';
+
 import StyleDemo from './StyleDemo';
 import ViewDemo from './ViewDemo';
 import ScrollViewDemo from './ScrollViewDemo';
@@ -12,12 +16,32 @@ import ButtonDemo from './ButtonDemo';
 import SwitchDemo from './SwitchDemo';
 import ListViewDemo from './ListViewDemo';
 import RecyclerViewDemo from './RecyclerViewDemo';
+import WaterfallDemo from './WaterfallDemo';
 import LinkDemo from './LinkDemo';
 import TouchableHighlightDemo from './TouchableHighlightDemo';
+import CalendarDemo from './CalendarDemo';
+import CountdownDemo from './CountdownDemo';
+import GotopDemo from './GotopDemo';
+import GridDemo from './GridDemo';
+import IconDemo from './IconDemo';
+import ModalDemo from './ModalDemo';
+import MultirowDemo from './MultirowDemo';
+import PictureDemo from './PictureDemo';
+import PlayerDemo from './PlayerDemo';
+import TabbarDemo from './TabbarDemo';
+import TabheaderDemo from './TabheaderDemo';
+import SliderDemo from './SliderDemo';
+import TableDemo from './TableDemo';
+import CheckboxDemo from './CheckboxDemo';
+import TabPanelDemo from './TabPanelDemo';
+import ParallaxDemo from './ParallaxDemo';
 
 class Page extends Component {
   render() {
-    return <ScrollView>
+    return <ScrollView ref={(scrollview) => {
+      this.scrollview = scrollview;
+    }}>
+
       <View>
         <Text style={styles.title}>Style</Text>
         <StyleDemo />
@@ -46,6 +70,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>Button</Text>
         <ButtonDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Checkbox</Text>
+        <CheckboxDemo />
       </View>
 
       <View>
@@ -84,9 +113,87 @@ class Page extends Component {
       </View>
 
       <View>
+        <Text style={styles.title}>Waterfall</Text>
+        <WaterfallDemo />
+      </View>
+
+      <View>
         <Text style={styles.title}>RefreshControl</Text>
         <RefreshControlDemo />
       </View>
+
+      <View>
+        <Text style={styles.title}>Gotop</Text>
+        <GotopDemo onTop={() => {
+          this.scrollview.scrollTo({y: 0});
+        }} />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Tabheader</Text>
+        <TabheaderDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Calendar</Text>
+        <CalendarDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Countdown</Text>
+        <CountdownDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Grid</Text>
+        <GridDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Icon</Text>
+        <IconDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Modal</Text>
+        <ModalDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Multirow</Text>
+        <MultirowDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Picture</Text>
+        <PictureDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Player</Text>
+        <PlayerDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Slider</Text>
+        <SliderDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Table</Text>
+        <TableDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>Parallax</Text>
+        <ParallaxDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>TabPanel</Text>
+        <TabPanelDemo />
+      </View>
+
 
     </ScrollView>;
   }

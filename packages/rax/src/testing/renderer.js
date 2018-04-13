@@ -1,18 +1,18 @@
-import {setDriver} from '../driver';
-import injectComponent from '../vdom/injectComponent';
+import inject from '../inject';
 import instance from '../vdom/instance';
-import ServerDriver from '../drivers/server';
+import ServerDriver from 'driver-server';
 import Serializer from '../server/serializer';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 
 // Init
-injectComponent();
-setDriver(ServerDriver);
+inject({
+  driver: ServerDriver
+});
 
 export default {
   create(element) {
     let container = ServerDriver.createBody();
-    let rootComponent = instance.render(element, container);
+    let rootComponent = instance.mount(element, container);
     let renderedComponent = rootComponent.getRenderedComponent();
 
     renderedComponent.toJSON = () => {
@@ -24,7 +24,7 @@ export default {
     };
 
     renderedComponent.update = (element) => {
-      instance.render(element, container);
+      instance.mount(element, container);
     };
 
     renderedComponent.unmount = () => {

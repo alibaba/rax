@@ -5,7 +5,7 @@ import Component from '../component';
 import {createElement} from '../element';
 import Host from '../vdom/host';
 import render from '../render';
-import ServerDriver from '../drivers/server';
+import ServerDriver from 'driver-server';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 
 describe('findDOMNode', () => {
@@ -118,7 +118,7 @@ describe('findDOMNode', () => {
     expect(function() {
       findDOMNode({foo: 'bar'});
     }).toThrowError(
-      'Appears to be neither Component nor DOMNode.'
+      'findDOMNode: find by neither component nor DOM node.'
     );
   });
 
@@ -134,7 +134,7 @@ describe('findDOMNode', () => {
     unmountComponentAtNode(container);
 
     expect(() => findDOMNode(inst)).toThrowError(
-      'findDOMNode was called on an unmounted component.'
+      'findDOMNode: find on an unmounted component.'
     );
   });
 

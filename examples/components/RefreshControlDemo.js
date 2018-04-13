@@ -1,19 +1,16 @@
-
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Image,
-  Link,
-  TextInput,
-  Button,
-  Switch,
-  Video,
-  ScrollView,
-  RefreshControl,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import Link from 'rax-link';
+import TextInput from 'rax-textinput';
+import Button from 'rax-button';
+import Switch from 'rax-switch';
+import Video from 'rax-video';
+import ScrollView from 'rax-scrollview';
+import TouchableWithoutFeedback from 'rax-touchable';
+import RecyclerView from 'rax-recyclerview';
+import RefreshControl from 'rax-refreshcontrol';
 
 let arrayFrom = function(arrayLike /* , mapFn, thisArg */) {
   if (arrayLike == null) {
@@ -90,7 +87,7 @@ class Row extends Component {
 
   render() {
     return (
-     <TouchableWithoutFeedback onPress={this.handleClick} >
+      <TouchableWithoutFeedback onPress={this.handleClick} >
         <View style={styles.row}>
           <Text style={styles.text}>
             {this.props.data.text + ' (' + this.props.data.clicks + ' clicks)'}
@@ -125,11 +122,11 @@ class RefreshControlDemo extends Component {
     setTimeout(() => {
       // prepend 10 items
       const rowData = arrayFrom(new Array(10))
-      .map((val, i) => ({
-        text: 'Loaded row ' + (+this.state.loaded + i),
-        clicks: 0,
-      }))
-      .concat(this.state.rowData);
+        .map((val, i) => ({
+          text: 'Loaded row ' + (+this.state.loaded + i),
+          clicks: 0,
+        }))
+        .concat(this.state.rowData);
 
       this.setState({
         loaded: this.state.loaded + 10,

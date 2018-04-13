@@ -22,7 +22,7 @@ function getDumpTree() {
   let output = '';
   const rootIds = Object.getOwnPropertyNames(Host.rootComponents);
   for (const rootId of rootIds) {
-    const inst = Host.rootComponents[rootId];
+    const inst = Host.rootInstances[rootId];
     output += `============ Root ID: ${rootId} ============\n`;
     output += dumpNode(inst.getRenderedComponent(), 0);
     output += `============ End root ID: ${rootId} ============\n`;

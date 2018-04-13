@@ -1,15 +1,13 @@
-
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Image,
-  Link,
-  TextInput,
-  Button,
-  Switch,
-  Video,
-  ScrollView} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import Link from 'rax-link';
+import TextInput from 'rax-textinput';
+import Button from 'rax-button';
+import Switch from 'rax-switch';
+import Video from 'rax-video';
+import ScrollView from 'rax-scrollview';
 
 class ButtonDemo extends Component {
   state = {

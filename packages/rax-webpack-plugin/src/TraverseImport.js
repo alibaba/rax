@@ -2,6 +2,7 @@ import * as babylon from 'babylon';
 import traverse from 'babel-traverse';
 import * as types from 'babel-types';
 import generate from 'babel-generator';
+import codeFrame from 'babel-code-frame';
 
 /* eslint-disable new-cap */
 
@@ -16,6 +17,17 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     reactnative: 'isReactNative'
   };
 
+  /**
+   * generator variable expression
+   *
+   * @param  {string} name  identifier
+   * @param  {boolean} value
+   * @return {VariableDeclaration}
+   * @example
+   *   variableDeclarationMethod('isWeex', true)
+   *
+   *   const isWeex = true;
+   */
   function variableDeclarationMethod(name, value) {
     return types.VariableDeclaration(
       'const', [
@@ -27,6 +39,19 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     );
   }
 
+  /**
+   * generator object expression
+   *
+   * @param  {string} platformName specified platform value it true
+   * @return {objectExpression}
+   * @example
+   *   objectExpressionMethod('isWeex')
+   *
+   *   {
+   *     isWeex: true,
+   *     isWeb: false
+   *   }
+   */
   function objectExpressionMethod(platformName) {
     const properties = [];
 
@@ -42,12 +67,29 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     return types.objectExpression(properties);
   }
 
-  let ast = babylon.parse(inputSource, {
-    sourceType: 'module',
-    plugins: [
-      '*',
-    ]
-  });
+  let ast;
+
+  try {
+    ast = babylon.parse(inputSource, {
+      sourceType: 'module',
+      plugins: [
+        '*',
+      ]
+    });
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      err.lineNumber = err.loc.line;
+      err.column = err.loc.column + 1;
+
+      // remove trailing "(LINE:COLUMN)" acorn message and add in esprima syntax error message start
+      err.message = 'Line ' + err.lineNumber + ': ' + err.message.replace(/ \((\d+):(\d+)\)$/, '') +
+      // add codeframe
+      '\n\n' +
+      codeFrame(inputSource, err.lineNumber, err.column, { highlightCode: true });
+    }
+
+    throw err;
+  }
 
   traverse(ast, {
     enter() {
@@ -65,7 +107,7 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
         hasPlatformSpecified &&
         node.callee.name === 'require' &&
         node.arguments[0] &&
-        node.arguments[0].value === options.name
+        -1 !== options.name.indexOf(node.arguments[0].value)
       ) {
         path.replaceWith(objectExpressionMethod(options.platform));
       }
@@ -73,35 +115,53 @@ export default function traverseImport(options, inputSource, sourceMapOption) {
     ImportDeclaration(path) {
       let { node } = path;
 
-      if (node.source.value === options.name) {
+      if (-1 !== options.name.indexOf(node.source.value)) {
         node.specifiers.forEach(spec => {
-          specified.push({
-            local: spec.local.name,
-            imported: spec.imported.name
-          });
+          if (spec.type === 'ImportNamespaceSpecifier') {
+            specified.push({
+              local: spec.local.name,
+              imported: '*'
+            });
+          } else {
+            specified.push({
+              local: spec.local.name,
+              imported: spec.imported.name
+            });
+          }
         });
 
         if (hasPlatformSpecified) {
           specified.forEach(specObj => {
-            let newNodeInit = specObj.imported === platformMap[options.platform] ?
-              true : false;
-            let newNode = variableDeclarationMethod(
-              specObj.imported,
-              newNodeInit
-            );
-
-            path.insertAfter(newNode);
-
-            // Support custom alise import:
-            // import { isWeex as iw } from 'universal-env';
-            // const isWeex = true;
-            // const iw = true;
-            if (specObj.imported !== specObj.local) {
-              newNode = variableDeclarationMethod(
-                specObj.local,
+            if (specObj.imported === '*') {
+              path.insertAfter(types.VariableDeclaration(
+                'const', [
+                  types.variableDeclarator(
+                    types.Identifier(specObj.local),
+                    objectExpressionMethod(options.platform)
+                  )
+                ]
+              ));
+            } else {
+              let newNodeInit = specObj.imported === platformMap[options.platform] ?
+                true : false;
+              let newNode = variableDeclarationMethod(
+                specObj.imported,
                 newNodeInit
               );
+
               path.insertAfter(newNode);
+
+              // Support custom alise import:
+              // import { isWeex as iw } from 'universal-env';
+              // const isWeex = true;
+              // const iw = true;
+              if (specObj.imported !== specObj.local) {
+                newNode = variableDeclarationMethod(
+                  specObj.local,
+                  newNodeInit
+                );
+                path.insertAfter(newNode);
+              }
             }
           });
 

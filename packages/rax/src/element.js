@@ -1,4 +1,5 @@
 import Host from './vdom/host';
+import flattenChildren from './flattenChildren';
 import {isWeex} from 'universal-env';
 
 const RESERVED_PROPS = {
@@ -16,9 +17,10 @@ function getRenderErrorInfo() {
   return '';
 }
 
-
-const Element = (type, key, ref, props, owner) => {
-  props = filterProps(type, props);
+function Element(type, key, ref, props, owner) {
+  if (isWeex) {
+    props = filterProps(type, props);
+  }
 
   return {
     // Built-in properties that belong on the element
@@ -32,30 +34,6 @@ const Element = (type, key, ref, props, owner) => {
 };
 
 export default Element;
-
-function traverseChildren(children, result) {
-  if (Array.isArray(children)) {
-    for (let i = 0, l = children.length; i < l; i++) {
-      traverseChildren(children[i], result);
-    }
-  } else {
-    result.push(children);
-  }
-}
-
-function flattenChildren(children) {
-  if (children == null) {
-    return children;
-  }
-  let result = [];
-  traverseChildren(children, result);
-
-  if (result.length === 1) {
-    result = result[0];
-  }
-
-  return result;
-}
 
 function flattenStyle(style) {
   if (!style) {
@@ -78,23 +56,37 @@ function flattenStyle(style) {
   }
 }
 
-// TODO: so hack
+// TODO: move to weex-drvier
 function filterProps(type, props) {
   // Only for weex text
-  if (isWeex && type === 'text') {
-    let value = props.children;
-    if (value) {
-      if (Array.isArray(value)) {
-        value = value.join('');
+  if (type === 'text') {
+    let children = props.children;
+    let value = props.value;
+
+    // Value is first
+    if (value == null && children != null) {
+      if (Array.isArray(children)) {
+        children = children.map(function(val) {
+          if (typeof val === 'number' || typeof val === 'string') {
+            return val;
+          } else {
+            return '';
+          }
+        }).join('');
+      } else if (typeof children !== 'number' && typeof children !== 'string') {
+        children = '';
       }
-      props.children = null;
-      props.value = value;
+
+      props.value = String(children);
     }
+
+    props.children = null;
   }
+
   return props;
 }
 
-export function createElement(type, config, ...children) {
+export function createElement(type, config, children) {
   if (type == null) {
     throw Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
   }
@@ -109,15 +101,26 @@ export function createElement(type, config, ...children) {
     key = config.key === undefined ? null : String(config.key);
     // Remaining properties are added to a new props object
     for (propName in config) {
-      if (config.hasOwnProperty(propName) &&
-          !RESERVED_PROPS.hasOwnProperty(propName)) {
+      if (!RESERVED_PROPS[propName]) {
         props[propName] = config[propName];
       }
     }
   }
 
-  if (children.length) {
-    props.children = flattenChildren(children);
+  const childrenLength = arguments.length - 2;
+  if (childrenLength > 0) {
+    if (childrenLength === 1 && !Array.isArray(children)) {
+      props.children = children;
+    } else {
+      let childArray = children;
+      if (childrenLength > 1) {
+        childArray = new Array(childrenLength);
+        for (var i = 0; i < childrenLength; i++) {
+          childArray[i] = arguments[i + 2];
+        }
+      }
+      props.children = flattenChildren(childArray);
+    }
   }
 
   // Resolve default props
@@ -154,6 +157,10 @@ export function createFactory(type) {
 }
 
 export function cloneElement(element, config, ...children) {
+  if (!isValidElement(element)) {
+    throw Error('cloneElement: not a valid element.' + getRenderErrorInfo());
+  }
+
   // Original props are copied
   const props = Object.assign({}, element.props);
 

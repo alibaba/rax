@@ -1,0 +1,55 @@
+{
+  "name": "template-buy",
+  "author": "yacheng.sz",
+  "version": "0.6.0",
+  "snapshots": [
+    "//img.alicdn.com/tfs/TB15xZ1QVXXXXcOapXXXXXXXXXX-1242-2013.jpg",
+    "//img.alicdn.com/tfs/TB1pYFCRXXXXXaYXpXXXXXXXXXX-1242-2012.jpg",
+    "//img.alicdn.com/tfs/TB1bxNdRXXXXXc1XVXXXXXXXXXX-1242-2018.jpg"
+  ],
+  "description": "表单类应用",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --host 0.0.0.0 --no-info",
+    "build": "rm -rf build && NODE_ENV=production webpack",
+    "lint": "eslint --ext .js --ext .jsx ./src"
+  },
+  "dependencies": {
+    "rax": "^0.6.0",
+    "rax-button": "^0.6.0",
+    "rax-link": "^0.6.0",
+    "rax-picker": "^0.6.0",
+    "rax-picture": "^0.6.0",
+    "rax-scrollview": "^0.6.0",
+    "rax-switch": "^0.6.0",
+    "rax-text": "^0.6.0",
+    "rax-textinput": "^0.6.0",
+    "rax-touchable": "^0.6.0",
+    "rax-view": "^0.6.0",
+    "universal-env": "^0.6.0",
+    "universal-panresponder": "^0.6.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-eslint": "^8.2.2",
+    "babel-loader": "^7.1.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-rax": "^0.6.0",
+    "case-sensitive-paths-webpack-plugin": "^1.1.4",
+    "eslint": "^4.18.1",
+    "eslint-plugin-react": "^7.7.0",
+    "html-webpack-plugin": "^3.2.0",
+    "internal-ip": "^1.2.0",
+    "json-loader": "^0.5.4",
+    "qrcode-terminal": "^0.11.0",
+    "rax-webpack-plugin": "^0.6.0",
+    "stylesheet-loader": "^0.6.0",
+    "uglifyjs-webpack-plugin": "^1.1.4",
+    "watch-missing-node-modules-webpack-plugin": "0.0.1",
+    "webpack": "^4.5.0",
+    "webpack-dev-server": "^2.3.0"
+  }
+}

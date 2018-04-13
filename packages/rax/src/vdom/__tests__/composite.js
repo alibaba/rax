@@ -1,9 +1,10 @@
 /* @jsx createElement */
+
 import Component from '../../component';
 import {createElement} from '../../element';
 import Host from '../host';
 import render from '../../render';
-import ServerDriver from '../../drivers/server';
+import ServerDriver from 'driver-server';
 import findDOMNode from '../../findDOMNode';
 import unmountComponentAtNode from '../../unmountComponentAtNode';
 
@@ -107,7 +108,9 @@ describe('CompositeComponent', function() {
         lifeCycles.push('did-mount');
       }
       componentWillReceiveProps(nextProps) {
-        this.setState({value: 'bar'});
+        this.setState({value: 'bar'}, function() {
+          lifeCycles.push('receive-props-callback');
+        });
         lifeCycles.push('receive-props', nextProps);
       }
       shouldComponentUpdate(nextProps, nextState) {
@@ -143,11 +146,98 @@ describe('CompositeComponent', function() {
       'will-update', {value: 'bar'}, {value: 'bar'},
       'render',
       'did-update', {value: 'foo'}, {value: 'foo'},
+      'receive-props-callback'
     ]);
     lifeCycles = []; // reset
     unmountComponentAtNode(container);
     expect(lifeCycles).toEqual([
       'will-unmount',
     ]);
+  });
+
+  it('catches render error in a boundary', () => {
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <span>{`Caught an error: ${this.state.error.message}.`}</span>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    function BrokenRender(props) {
+      throw new Error('Hello');
+    }
+
+    render(
+      <ErrorBoundary>
+        <BrokenRender />
+      </ErrorBoundary>, container);
+
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
+  it('catches lifeCycles errors in a boundary', () => {
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <span>{`Caught an error: ${this.state.error.message}.`}</span>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    class BrokenRender extends Component {
+      componentDidMount() {
+        throw new Error('Hello');
+      }
+      render() {
+        return (
+          <span>Hello</span>
+        );
+      }
+    }
+
+    render(
+      <ErrorBoundary>
+        <BrokenRender />
+      </ErrorBoundary>, container);
+
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
+  it('catches render errors in a component', () => {
+    let container = createNodeElement('div');
+    class BrokenRender extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <span>{`Caught an error: ${this.state.error.message}.`}</span>
+          );
+        }
+        throw new Error('Hello');
+      }
+    }
+
+    render(<BrokenRender />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 });

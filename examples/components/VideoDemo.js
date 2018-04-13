@@ -1,28 +1,53 @@
-
 import {createElement, Component} from 'rax';
-import {
-  View,
-  Text,
-  Image,
-  Link,
-  TextInput,
-  Button,
-  Switch,
-  Video,
-  ScrollView,
-  TouchableWithoutFeedback} from 'rax-components';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import Link from 'rax-link';
+import TextInput from 'rax-textinput';
+import Button from 'rax-button';
+import Switch from 'rax-switch';
+import ScrollView from 'rax-scrollview';
+import TouchableHighlight from 'rax-touchable';
+import Video from 'rax-video';
+
 
 class VideoDemo extends Component {
+  state = {
+    playControl: null
+  };
   render() {
     return (
       <View style={styles.container}>
-       <Video
-         style={{
-           flex: 1,
-           height: '350rem'
-         }}
-         autoPlay={false}
-         src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"
+        <Text>controls=false playControl=play|pause</Text>
+        <Video
+          style={{
+            flex: 1,
+            height: 350
+          }}
+          autoPlay={false}
+          controls={false}
+          playControl={this.state.playControl}
+          src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"
+        />
+
+        <Button onPress={() => {
+          let playControl = this.state.playControl !== 'play' ? 'play' : 'pause';
+          this.setState({
+            playControl
+          });
+        }}>
+          Play or Pause
+        </Button>
+
+        <Text>muted=true</Text>
+        <Video
+          style={{
+            flex: 1,
+            height: 350
+          }}
+          autoPlay={false}
+          muted={true}
+          src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"
         />
       </View>
     );

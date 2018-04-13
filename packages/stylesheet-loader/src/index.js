@@ -21,11 +21,11 @@ module.exports = function(source) {
 
   const parseData = parse(this.query, stylesheet);
 
-  return exportContent(parseData);
+  return genStyleContent(parseData);
 };
 
 const parse = (query, stylesheet) => {
-  let data = {};
+  let styles = {};
   let fontFaceRules = [];
   let mediaRules = [];
   const parseQuery = loaderUtils.parseQuery(query);
@@ -56,7 +56,7 @@ const parse = (query, stylesheet) => {
             style = pseudoStyle;
           }
 
-          data[sanitizedSelector] = Object.assign(data[sanitizedSelector] || {}, style);
+          styles[sanitizedSelector] = Object.assign(styles[sanitizedSelector] || {}, style);
         }
       });
     }
@@ -80,24 +80,25 @@ const parse = (query, stylesheet) => {
   });
 
   return {
-    data,
+    styles,
     fontFaceRules,
     mediaRules
   };
 };
 
-const exportContent = (parseData) => {
-  const {data, fontFaceRules, mediaRules} = parseData;
+const genStyleContent = (parseData) => {
+  const {styles, fontFaceRules, mediaRules} = parseData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
-  const mediaContent = getMediaContent(parseData);
+  const mediaContent = getMediaContent(mediaRules);
   const warnMessageOutput = getWarnMessageOutput();
 
   resetMessage();
 
-  return `module.exports = ${stringifyData(data)};
+  return `var _styles = ${stringifyData(styles)};
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
+  module.exports = _styles;
   `;
 };
 
@@ -124,8 +125,7 @@ const getWarnMessageOutput = () => {
   return output;
 };
 
-const getMediaContent = (parseData) => {
-  const {data, mediaRules} = parseData;
+const getMediaContent = (mediaRules) => {
   let content = '';
 
   mediaRules.forEach((rule, index) => {
@@ -133,7 +133,7 @@ const getMediaContent = (parseData) => {
   if (window.matchMedia && window.matchMedia('${rule.key}').matches) {
     var ruleData = ${stringifyData(rule.data)};
     for(var key in ruleData) {
-      data[key] = Object.assign(data[key], ruleData[key]);
+      _styles[key] = Object.assign(_styles[key], ruleData[key]);
     }
   }
     `;

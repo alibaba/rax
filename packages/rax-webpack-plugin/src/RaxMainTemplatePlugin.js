@@ -2,45 +2,55 @@ import {ConcatSource} from 'webpack-sources';
 import fs from 'fs';
 import path from 'path';
 
-export default class CustomUmdMainTemplatePlugin {
-
+export default class RaxMainTemplatePlugin {
   constructor(options) {
     this.name = '[name]';
     this.options = options;
   }
 
-  apply(compilation) {
-    let mainTemplate = compilation.mainTemplate;
+  onRenderWithEntry(mainTemplate, source, chunk, hash) {
+    let requireCall = '';
+    let polyfills = [];
+    let name = '';
 
-    compilation.templatesPlugin('render-with-entry', (source, chunk, hash) => {
-      let requireCall = '';
-      let polyfills = [];
-      let name = mainTemplate.applyPluginsWaterfall('asset-path', this.name, {
-        hash: hash,
-        chunk: chunk
+    // webpack 4 api
+    if (mainTemplate.getAssetPath) {
+      name = mainTemplate.getAssetPath(this.name, {
+        hash,
+        chunk
       });
+    } else {
+      name = mainTemplate.applyPluginsWaterfall('asset-path', this.name, {
+        hash,
+        chunk
+      });
+    }
 
-      if (this.options.includePolyfills) {
-        let polyfillModules = this.options.polyfillModules;
-        polyfills = polyfillModules.map((fp) => {
-          return fs.readFileSync(fp, 'utf8');
-        });
-      }
+    if (this.options.includePolyfills) {
+      let polyfillModules = this.options.polyfillModules;
+      polyfills = polyfillModules.map((fp) => {
+        return fs.readFileSync(fp, 'utf8');
+      });
+    }
 
-      let moduleName = this.options.moduleName || name;
-      let globalName = this.options.globalName || name;
-      let target = this.options.target;
-      let sourcePrefix = '';
-      let sourceSuffix = '';
+    let moduleName = this.options.moduleName || name;
+    let globalName = this.options.globalName || name;
+    let target = this.options.target;
+    let sourcePrefix = '';
+    let sourceSuffix = '';
 
+    if (typeof this.options.sourcePrefix === 'function' &&
+       typeof this.options.sourceSuffix === 'function') {
+      sourcePrefix = this.options.sourcePrefix(source, chunk, hash);
+      sourceSuffix = this.options.sourceSuffix(source, chunk, hash);
+    } else {
       // module, function is private, only use in rax internal
       if (chunk.name.endsWith('.module') || target === 'module') {
         sourcePrefix = 'module.exports = ';
-        sourceSuffix = '';
+        sourceSuffix = ';';
       } else if (chunk.name.endsWith('.function') || target === 'function') {
-        sourcePrefix = `
-module.exports = function() {
-  return `;
+        sourcePrefix = `module.exports = function() {
+return `;
         sourceSuffix = '};';
       } else if (chunk.name.endsWith('.bundle') || target === 'bundle') {
         // Build page bundle use this mode.
@@ -59,14 +69,18 @@ module.exports = function() {
             return `var ${name} = this["${name}"];`;
           });
           sourcePrefix = `module.exports = function(require, exports, module) {
-  ${globalsCodes.join('\n')}
-  module.exports = `;
+${globalsCodes.join('\n')}
+module.exports = `;
           sourceSuffix = '};';
         } else {
           sourcePrefix = `module.exports = function(require, exports, module) {
-  with(this) { module.exports = `;
+with(this) { module.exports = `;
           sourceSuffix = '}};';
         }
+      } else if (chunk.name.endsWith('.cmd') || target === 'cmd') {
+        sourcePrefix = `define(${JSON.stringify(moduleName)}, function(require, exports, module){
+module.exports = `;
+        sourceSuffix = '});';
       } else if (chunk.name.endsWith('.umd') || target === 'umd') {
         // CommonJS first that could rename module name by wrap another define in air
         sourcePrefix = `
@@ -96,23 +110,55 @@ module.exports = function() {
 
         sourceSuffix = '});';
       }
+    }
 
-      return new ConcatSource(
-        polyfills.join('\n'),
-        sourcePrefix,
-        source,
-        sourceSuffix,
-        requireCall
-      );
+    return new ConcatSource(
+      polyfills.join('\n'),
+      sourcePrefix,
+      source,
+      sourceSuffix,
+      requireCall
+    );
+  }
+
+  // webpack 4
+  applyWithTap(compilation) {
+    const { mainTemplate } = compilation;
+
+    mainTemplate.hooks.renderWithEntry.tap(
+      'RaxMainTemplatePlugin',
+      this.onRenderWithEntry.bind(this, mainTemplate)
+    );
+
+    mainTemplate.hooks.globalHashPaths.tap('RaxMainTemplatePlugin', paths => {
+      if (this.name) paths.push(this.name);
+      return paths;
     });
+
+    mainTemplate.hooks.hash.tap('RaxMainTemplatePlugin', hash => {
+      hash.update('exports rax');
+      hash.update(this.name);
+    });
+  }
+
+  // webpack 3
+  apply(compilation) {
+    // webpack 4
+    if (!compilation.templatesPlugin) {
+      return this.applyWithTap(compilation);
+    }
+
+    const { mainTemplate } = compilation;
+
+    compilation.templatesPlugin('render-with-entry', this.onRenderWithEntry.bind(this, mainTemplate));
 
     mainTemplate.plugin('global-hash-paths', (paths) => {
       if (this.name) paths = paths.concat(this.name);
-		  return paths;
+      return paths;
     });
 
     mainTemplate.plugin('hash', (hash) => {
-      hash.update('custom-umd');
+      hash.update('exports rax');
       hash.update(String(this.name));
     });
   }

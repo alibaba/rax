@@ -31,7 +31,7 @@ function getBaseURL(dir) {
 
 class ExampleItem extends Component {
   handleClick = () => {
-    let event = require('@weex-module/event');
+    let event = __weex_require__('@weex-module/event');
     let url = this.props.url;
     if (!url) {
       var base = getBaseURL('packages/weex-rax-examples');

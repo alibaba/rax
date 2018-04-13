@@ -74,6 +74,10 @@ module.exports = function(inputSource, inputSourceMap) {
 
   const options = Object.assign({ name: 'universal-env' }, loaderOptions);
 
+  if (!Array.isArray(options.name)) {
+    options.name = [options.name];
+  }
+
   const { code, map } = traverseImport(options, inputSource, {
     sourceMaps: true,
     sourceMapTarget: sourceMapTarget,

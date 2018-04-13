@@ -1,18 +1,20 @@
 
 jest.autoMockOff();
 
-describe('OS', () => {
-  Object.defineProperty(navigator, 'platform', {
-    value: 'MacIntel'
-  });
+global.WXEnvironment = {
+  platform: 'iOS'
+};
 
-  it('should use navigator platform', () => {
+describe('OS', () => {
+  it('should use WXEnvironment platform', () => {
     const Platform = require('../index');
     const selectOS = Platform.select({
-      macintel: 'test'
+      iOS: 'test',
+      Android: 'testAndroid',
+      Web: 'testWeb'
     });
 
-    expect(Platform.OS).toEqual('macintel');
+    expect(Platform.OS).toEqual('iOS');
     expect(selectOS).toEqual('test');
   });
 });

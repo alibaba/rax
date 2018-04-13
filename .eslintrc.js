@@ -1,10 +1,8 @@
-/* eslint quotes: false */
+/* eslint quotes: off */
 
 module.exports = {
   "root": true,
-
   "parser": "babel-eslint",
-
   "env": {
     "browser": true,
     "node": true,
@@ -13,7 +11,8 @@ module.exports = {
     "commonjs": true
   },
   "plugins": [
-    "react"
+    "react",
+    "import"
   ],
   "settings": {
     "react": {
@@ -29,20 +28,6 @@ module.exports = {
       "experimentalObjectRestSpread": true
     }
   },
-  "ecmaFeatures": {
-    "arrowFunctions": true,
-    "blockBindings": true,
-    "classes": true,
-    "defaultParams": true,
-    "destructuring": true,
-    "forOf": true,
-    "objectLiteralComputedProperties": true,
-    "objectLiteralShorthandMethods": true,
-    "objectLiteralShorthandProperties": true,
-    "spread": true,
-    "superInFunctions": true,
-    "templateStrings": true
-  },
   "globals": {
     "__weex_data__": true,
     "__weex_options__": true,
@@ -51,9 +36,9 @@ module.exports = {
     "__weex_require__": true,
     "WXEnvironment": true,
     "webkitRequestAnimationFrame": true,
+    "webkitCancelAnimationFrame": true,
     "jasmine": true
   },
-
   "rules": {
     // ES6
     "prefer-const": "off",
@@ -129,12 +114,14 @@ module.exports = {
       "beforeColon": false,
       "afterColon": true
     }],
+    "no-mixed-spaces-and-tabs": "error",
     "no-multi-spaces": "error",
     "no-multiple-empty-lines": "error",
     "no-new-object": "error",
     "no-spaced-func": "error",
+    "no-tabs": "error",
     "no-trailing-spaces": "error",
-    "no-extra-parens": "error",
+    "no-extra-parens": ["error", "all", { ignoreJSX: "all" }],
     "padded-blocks": ["error", "never"],
     "semi": "error",
     "semi-spacing": "error",
@@ -155,6 +142,25 @@ module.exports = {
     }],
 
     /**
+     * Import
+     */
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
+    "import/no-unresolved": "error",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "peerDependencies": true,
+        "devDependencies": [
+          "**/scripts/*.js",
+          "**/__tests__/*.js",
+          "**/__tests__/**/*.js",
+          '**/*.config.js'
+        ]
+      }
+    ],
+
+    /**
      * React & JSX
      */
     "jsx-quotes": ["error", "prefer-double"],
@@ -168,7 +174,7 @@ module.exports = {
     "react/jsx-indent-props": ["error", 2], // 2 spaces indentation
     "react/jsx-no-duplicate-props": "error",
     "react/jsx-no-undef": "error",
-    "react/jsx-space-before-closing": "error",
+    "react/jsx-tag-spacing": "error",
     "react/jsx-no-comment-textnodes": "error",
     "react/jsx-equals-spacing": "error",
     "react/jsx-handler-names": "off",

@@ -130,6 +130,14 @@ Example
 }
 ```
 
+### Support gradient
+
+You can use gradient in Weex 0.10.0+.
+
+```css
+background-image: linear-gradient(to right, blue, white);
+```
+
 ## Validation
 
 We followed the [css-layout](https://github.com/facebook/yoga) style standard. There will be a friendly reminder on the console when your code is not standardized.

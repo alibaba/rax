@@ -1,6 +1,5 @@
-'use strict';
-
 import normalizeColor from './normalizeColor';
+
 const LENGTH_REGEXP = /^[-+]?[0-9]*\.?[0-9]+(px|em|rem|\%)?$/;
 const INTEGER_REGEXP = /^[-+]?[0-9]+$/;
 
@@ -9,7 +8,8 @@ let PropTypes = {
   number: createNumberChecker,
   integer: createIntegerChecker,
   oneOf: createEnumChecker,
-  color: createColorChecker
+  color: createColorChecker,
+  string: createStringChecker
 };
 
 function createLengthChecker(value = '', prop, selectors) {
@@ -61,7 +61,14 @@ function createColorChecker(value, prop, selectors) {
     return new Error(getMessage(prop, value, selectors, '#333、#fefefe、rgb(255, 0, 0)'));
   }
   return null;
-};
+}
+
+function createStringChecker(value, prop, selectors) {
+  if (!value) {
+    return new Error(getMessage(prop, value, selectors, ''));
+  }
+  return null;
+}
 
 function getMessage(prop, value, selectors, link) {
   return `"${prop}: ${value}" is not valid value in "${selectors}" selector (e.g. "${link}")`;

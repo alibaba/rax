@@ -3,7 +3,6 @@ import Button from '../common/Button';
 import Panel from '../common/Panel';
 
 class Example extends Component {
-
   state = {
     getJsonpResult: 'loading...',
     getResult: 'loading...',
@@ -15,7 +14,7 @@ class Example extends Component {
   };
 
   componentDidMount() {
-    var stream = require('@weex-module/stream');
+    var stream = __weex_require__('@weex-module/stream');
     var GET_URL_JSONP = 'http://jsfiddle.net/echo/jsonp/?callback=anything&result=content_in_response';
     var GET_URL = 'http://httpbin.org/get';
     var POST_URL = 'http://httpbin.org/post';

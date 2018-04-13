@@ -1,0 +1,25 @@
+{
+  "name": "image-source-loader",
+  "version": "0.6.0",
+  "description": "Image source loader for webpack",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alibaba/rax.git"
+  },
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "keywords": [
+    "base64",
+    "image",
+    "webpack",
+    "loader",
+    "img",
+    "src"
+  ],
+  "main": "lib/index.js",
+  "dependencies": {
+    "image-size": "^0.5.1"
+  }
+}

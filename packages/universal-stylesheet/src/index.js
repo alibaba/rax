@@ -1,4 +1,5 @@
 import flattenStyle from './flattenStyle';
+import getHairlineWidth from './getHairlineWidth';
 
 const absoluteFillObject = {
   position: 'absolute',
@@ -9,7 +10,7 @@ const absoluteFillObject = {
 };
 
 export default {
-  hairlineWidth: 1,
+  hairlineWidth: getHairlineWidth(),
   absoluteFillObject,
 
   flatten: flattenStyle,

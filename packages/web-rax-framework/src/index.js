@@ -1,22 +1,54 @@
 const global = window;
 
+const shared = require('runtime-shared');
+
 // ES
-if (!global.Promise) {
-  global.Promise = require('runtime-shared/dist/promise.module');
-}
+require('./number');
 require('./object');
 require('./array');
+
+if (!global.Promise) {
+  global.Promise = shared.Promise;
+}
+
+if (!global.Symbol) {
+  global.Symbol = shared.Symbol;
+}
+
+if (!global.Map) {
+  global.Map = shared.Map;
+}
+
+if (!global.Set) {
+  global.Set = shared.Set;
+}
+
+if (!global.WeakMap) {
+  global.WeakMap = shared.WeakMap;
+}
+
+if (!global.WeakSet) {
+  global.WeakSet = shared.WeakSet;
+}
 
 // W3C
 require('whatwg-fetch');
 require('raf/polyfill');
 
 if (!global.FontFace) {
-  global.FontFace = require('runtime-shared/dist/fontface.module');
+  global.FontFace = shared.FontFace;
 }
 
 if (!global.matchMedia) {
-  global.matchMedia = require('runtime-shared/dist/matchMedia.module');
+  global.matchMedia = shared.matchMedia;
+}
+
+if (!global.URL) {
+  global.URL = shared.URL;
+}
+
+if (!global.URLSearchParams) {
+  global.URLSearchParams = shared.URLSearchParams;
 }
 
 if (!document.fonts) {
@@ -32,15 +64,6 @@ if (!document.fonts) {
       document.head.appendChild(styleElement);
     }
   };
-}
-
-
-if (!global.URL) {
-  global.URL = require('runtime-shared/dist/url.module');
-}
-
-if (!global.URLSearchParams) {
-  global.URLSearchParams = require('runtime-shared/dist/url-search-params.module');
 }
 
 // ModuleJS

@@ -3,15 +3,35 @@
 // Update notifications
 var updateNotifier = require('update-notifier');
 var pkg = require('../package.json');
+
 updateNotifier({pkg: pkg}).notify();
+
+// Check node version
+var chalk = require('chalk');
+var semver = require('semver');
+
+if (!semver.satisfies(process.version, '>=6')) {
+  var message = 'You are currently running Node.js ' +
+    chalk.red(process.version) + '.\n' +
+    '\n' +
+    'Rax runs on Node 6.0 or newer. There are several ways to ' +
+    'upgrade Node.js depending on your preference.\n' +
+    '\n' +
+    'nvm:       nvm install node && nvm alias default node\n' +
+    'Homebrew:  brew install node\n' +
+    'Installer: download the Mac .pkg from https://nodejs.org/\n';
+
+  console.log(message);
+  process.exit(1);
+}
 
 var fs = require('fs');
 var path = require('path');
-var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 var spawn = require('cross-spawn');
+var inquirer = require('inquirer');
 var chalk = require('chalk');
-var prompt = require('prompt');
-var cli = require('../lib/');
+var cli = require('../src/');
 var argv = require('minimist')(process.argv.slice(2));
 
 var RAX_PACKAGE_JSON_PATH = path.resolve(
@@ -37,8 +57,8 @@ switch (commands[0]) {
   case 'init':
     if (!commands[1]) {
       console.error(
-      'Usage: rax init <ProjectName> [--verbose]'
-    );
+        'Usage: rax init <ProjectName> [--verbose]'
+      );
       process.exit(1);
     } else {
       init(commands[1], argv.verbose, argv.version);
@@ -46,45 +66,82 @@ switch (commands[0]) {
     break;
   default:
     console.error(
-    'Command `%s` unrecognized.',
-    commands[0]
-  );
+      'Command `%s` unrecognized.',
+      commands[0]
+    );
     process.exit(1);
     break;
 }
 
 function init(name, verbose, rwPackage) {
-  if (fs.existsSync(name)) {
-    createAfterConfirmation(name, verbose, rwPackage);
-  } else {
-    createProject(name, verbose, rwPackage);
-  }
+  Promise.resolve(fs.existsSync(name))
+    .then(function(dirExists) {
+      if (dirExists) {
+        return createAfterConfirmation(name, verbose, rwPackage);
+      } else {
+        return;
+      }
+    })
+    .then(function() {
+      return askProjectInformaction(name, verbose, rwPackage);
+    })
+    .then(function(answers) {
+      return createProject(name, verbose, rwPackage, answers);
+    })
+    .catch(function(err) {
+      console.error('Error occured', err.stack);
+      process.exit(1);
+    });
 }
 
 function createAfterConfirmation(name, verbose, rwPackage) {
-  prompt.start();
-
   var property = {
-    name: 'yesno',
+    type: 'confirm',
+    name: 'continueWhileDirectoryExists',
     message: 'Directory ' + name + ' already exists. Continue?',
-    validator: /y[es]*|n[o]?/,
-    warning: 'Must respond yes or no',
-    default: 'no'
+    default: false
   };
 
-  prompt.get(property, function(err, result) {
-    if (result.yesno[0] === 'y') {
-      createProject(name, verbose, rwPackage);
+  return inquirer.prompt(property).then(function(answers) {
+    if (answers && answers.continueWhileDirectoryExists) {
+      return true;
     } else {
-      console.log('Project initialization canceled');
-      process.exit();
+      console.log('Project initialization canceled.');
+      process.exit(1);
     }
   });
 }
 
-function createProject(name, verbose, rwPackage) {
+function askProjectInformaction(name, verbose, rwPackage) {
+  var questions = [
+    {
+      type: 'input',
+      name: 'projectName',
+      message: 'What\'s your project name?',
+      default: name
+    },
+    {
+      type: 'input',
+      name: 'author',
+      message: 'What\'s author\'s name?',
+      default: 'rax'
+    },
+    {
+      type: 'confirm',
+      name: 'autoInstallModules',
+      message: 'Do you want to install dependences automatically after initialization?',
+      default: 'y'
+    }
+  ];
+  return inquirer.prompt(questions);
+}
+
+function createProject(name, verbose, rwPackage, userAnswers) {
+  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   var root = path.resolve(name);
-  var projectName = path.basename(root);
+  var projectName = userAnswers.projectName;
+  var projectAuthor = userAnswers.author;
+  var autoInstallModules = userAnswers.autoInstallModules;
 
   console.log(
     'Creating a new Rax project in',
@@ -96,7 +153,27 @@ function createProject(name, verbose, rwPackage) {
   }
   process.chdir(root);
 
-  cli.init(root, projectName, verbose);
+  cli.init({
+    root: root,
+    directoryName: name,
+    projectName: projectName,
+    projectAuthor: projectAuthor,
+    verbose: verbose,
+    rwPackage: rwPackage
+  }).then(function(directory) {
+    if (autoInstallModules) {
+      return install(directory, verbose);
+    } else {
+      return false;
+    }
+  }).then(function(isAutoInstalled) {
+    console.log(chalk.white.bold('To run your app:'));
+    console.log(chalk.white('   cd ' + projectName));
+    if (!isAutoInstalled) {
+      console.log(chalk.white('   ' + (pkgManager === 'npm' ? 'npm install' : 'yarn')));
+    }
+    console.log(chalk.white('   ' + pkgManager + ' run start'));
+  });
 }
 
 function checkForVersionArgument() {
@@ -109,4 +186,42 @@ function checkForVersionArgument() {
     }
     process.exit();
   }
+}
+
+function shouldUseYarn() {
+  try {
+    execSync('yarnpkg --version', {stdio: 'ignore'});
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * run npm/yarn install
+ * @param directory - the cwd directory
+ * @param verbose - enable verbose mode
+ * @returns {Promise}
+ */
+function install(directory, verbose) {
+  console.log(chalk.white.bold('Install dependencies:'));
+
+  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
+  var args = ['install'];
+  if (verbose) {
+    args.push('--verbose');
+  }
+
+  return new Promise(function(resolve) {
+    var proc = spawn(pkgManager, args, {stdio: 'inherit', cwd: directory});
+
+    proc.on('close', function(code) {
+      if (code !== 0) {
+        console.error('`' + pkgManager + ' install` failed');
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
 }

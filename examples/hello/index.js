@@ -1,18 +1,21 @@
 import {createElement, Component, render} from 'rax';
-import {Text} from 'rax-components';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import Link from 'rax-link';
 
 class Hello extends Component {
+  state = {
+    fontColor: '#333333',
+  };
+
+  handleClick() {
+    console.log('clicked');
+  }
   render() {
-    return <Text style={styles.title}>Hello {this.props.name}</Text>;
+    return (<p onClick={this.handleClick} style={{fontWeight: 'bold', color: this.state.fontColor}}>
+      Hello {this.props.name}!
+    </p>);
   }
 }
-
-const styles = {
-  title: {
-    color: '#ff4400',
-    fontSize: 48,
-    fontWeight: 'bold',
-  }
-};
 
 render(<Hello name="world" />);

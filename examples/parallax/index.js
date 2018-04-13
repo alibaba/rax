@@ -2,7 +2,9 @@ import {createElement, Component, render} from 'rax';
 import StyleSheet from 'universal-stylesheet';
 import PanResponder from 'universal-panresponder';
 import Animated from 'rax-animated';
-import {Text, View, Image} from 'rax-components';
+import Text from 'rax-text';
+import View from 'rax-view';
+import Image from 'rax-image';
 
 var width = 560;
 var height = 300;

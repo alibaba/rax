@@ -1,16 +1,13 @@
-
-import {createElement, Component, findDOMNode} from 'rax';
-import {
-  View,
-  Text,
-  Image,
-  Link,
-  TextInput,
-  Button,
-  Switch,
-  Video,
-  ScrollView,
-  TouchableHighlight} from 'rax-components';
+import {createElement, Component} from 'rax';
+import View from 'rax-view';
+import Text from 'rax-text';
+import Image from 'rax-image';
+import Link from 'rax-link';
+import TextInput from 'rax-textinput';
+import Button from 'rax-button';
+import Switch from 'rax-switch';
+import ScrollView from 'rax-scrollview';
+import TouchableOpacity from 'rax-touchable';
 
 class TextAreaDemo extends Component {
   state = {
@@ -65,7 +62,6 @@ class TextAreaDemo extends Component {
 }
 
 class TextInputDemo extends Component {
-
   state = {
     value: 'I am value',
     curText: '<No Event>',
@@ -127,7 +123,7 @@ class TextInputDemo extends Component {
               borderColor: '#dddddd',
               borderStyle: 'solid',
             }}
-            />
+          />
 
           <Button
             style={{

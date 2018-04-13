@@ -1,10 +1,11 @@
 import cons from 'consolidate';
 import path from 'path';
 import loaderUtils from 'loader-utils';
-import HTMLtoJSX from './HTMLtoJSX';
+import HTMLToJSX from './HTMLToJSX';
 import { transform } from 'babel-core';
 import getBabelConfig from './getBabelConfig';
-const converter = new HTMLtoJSX();
+
+const converter = new HTMLToJSX();
 
 module.exports = function(source, parseObject) {
   this.cacheable && this.cacheable();

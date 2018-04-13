@@ -1,6 +1,6 @@
 {
   "name": "rax-components",
-  "version": "0.1.8",
+  "version": "0.6.0",
   "description": "Base components for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -12,11 +12,23 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "dependencies": {
-    "universal-env": "^0.1.8",
-    "rax": "^0.1.8"
+  "engines": {
+    "npm": ">=3.0.0"
   },
-  "devDependencies": {
-    "rax-test-renderer": "^0.1.8"
+  "dependencies": {
+    "rax-button": "^0.6.0",
+    "rax-image": "^0.6.0",
+    "rax-link": "^0.6.0",
+    "rax-listview": "^0.6.0",
+    "rax-recyclerview": "^0.6.0",
+    "rax-refreshcontrol": "^0.6.0",
+    "rax-scrollview": "^0.6.0",
+    "rax-slider": "^0.6.0",
+    "rax-switch": "^0.6.0",
+    "rax-text": "^0.6.0",
+    "rax-textinput": "^0.6.0",
+    "rax-touchable": "^0.6.0",
+    "rax-video": "^0.6.0",
+    "rax-view": "^0.6.0"
   }
 }

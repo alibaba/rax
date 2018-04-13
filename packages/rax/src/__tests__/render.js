@@ -3,7 +3,7 @@
 import {createElement} from '../element';
 import Host from '../vdom/host';
 import render from '../render';
-import ServerDriver from '../drivers/server';
+import ServerDriver from 'driver-server';
 import findDOMNode from '../findDOMNode';
 
 describe('render', () => {
@@ -70,5 +70,12 @@ describe('render', () => {
     let instance2 = render(<div />, container);
 
     expect(instance1 === instance2).toBe(true);
+  });
+
+  it('should not throw error when have callback and options is null', function(done) {
+    let container = createNodeElement('container');
+    render(<div />, container, function() {
+      done();
+    });
   });
 });
