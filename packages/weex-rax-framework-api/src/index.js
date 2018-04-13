@@ -1,5 +1,7 @@
+import Windmill from '@ali/windmill-renderer/dist/windmill.renderer';
 /* global BroadcastChannel */
 'use strict';
+const isInWindmill = weex.config.container === 'windmill' || false;
 
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
@@ -29,6 +31,28 @@ function genBuiltinModules(modules, moduleFactories, context) {
   return modules;
 }
 
+function initPageEvent(require, windmill, document) {
+  
+  windmill.$cycle('refresh', function(){
+    document.documentElement.fireEvent('refresh', {
+      timestamp: Date.now()
+    });
+  });
+
+  windmill.$cycle('destory', function(){
+    document.documentElement.fireEvent('destory', {
+      timestamp: Date.now()
+    });
+  });
+
+  // windmill $call error
+  var globalEvent = require(GLOBAL_EVENT_MODULE);
+  globalEvent.addEventListener('weexsecurityerror', function (e) {
+    console.log('weexsecurityerror' + e);
+  });
+
+}
+
 export function injectContext() {
   let instanceContext = new Function('return this')();
   var window = resetInstanceContext(instanceContext);
@@ -51,6 +75,7 @@ export function resetInstanceContext(instanceContext) {
     instanceId,
     document,
     bundleUrl,
+    windmill,
     __weex_document__,
     __weex_options__,
     __weex_data__,
@@ -58,6 +83,7 @@ export function resetInstanceContext(instanceContext) {
   } = instanceContext;
 
   weex = __weex_options__.weex;
+  windmill = Windmill(weex);
 
   // Mark start time
   const responseEnd = Date.now();
@@ -78,7 +104,7 @@ export function resetInstanceContext(instanceContext) {
 
   // Generate native modules map at instance init
   const __weex_define__ = require('./define.weex')(modules);
-  const __weex_require__ = require('./require.weex')(modules, weex);
+  const __weex_require__ = require('./require.weex')(modules, weex, windmill);
   const __weex_downgrade__ = require('./downgrade.weex')(__weex_require__);
   // Extend document
   require('./document.weex')(__weex_require__, document);
@@ -126,6 +152,8 @@ export function resetInstanceContext(instanceContext) {
 
     registerErrorHandler.once = true;
   }
+
+  initPageEvent(__weex_require__, windmill, document);
 
   const window = {
     // ES
@@ -190,7 +218,7 @@ export function resetInstanceContext(instanceContext) {
       function(id) {
         clearTimeout(id);
       },
-    frameworkVersion: '0.6.0', // for debug
+    frameworkVersion: '0.6.1', // for debug
     alert: (message) => {
       const modal = __weex_require__(MODAL_MODULE);
       modal.alert({
@@ -198,11 +226,18 @@ export function resetInstanceContext(instanceContext) {
       }, function() {});
     },
     open: (url) => {
-      const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
-      weexNavigator.push({
-        url,
-        animated: true,
-      }, noop);
+      if (isInWindmill) {
+        windmill.$navTo({
+          url,
+          animated: true,
+        });
+      } else {
+        const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
+        weexNavigator.push({
+          url,
+          animated: true,
+        }, noop);
+      }
     },
     close: () => {
       const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
@@ -240,6 +275,9 @@ export function resetInstanceContext(instanceContext) {
             listener(e.data);
           };
         }
+      } else if (type === '@system:message') {
+        // for miniApp
+        windmill.on(type, listener);
       } else {
         windowEmitter.on(type, listener);
       }
@@ -287,5 +325,10 @@ export function resetInstanceContext(instanceContext) {
 
   window.self = window.window = window;
 
+  if (isInWindmill) {
+    console.log('Rax miniApp jsfm init window, typeof window is ', typeof window);
+  } else {
+    console.log('Rax jsfm init window, typeof window is ', typeof window);
+  }
   return window;
 }

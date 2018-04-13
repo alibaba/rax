@@ -1,10 +1,8 @@
 'use strict';
-import Windmill from '@ali/windmill-renderer/dist/windmill.renderer';
 
 let Document;
 let Element;
 let Comment;
-let windmill;
 
 // Instance hub
 const instances = {};
@@ -34,7 +32,6 @@ export function init(config) {
 export function createInstanceContext(instanceId, __weex_options__, __weex_data__) {
   let instance = instances[instanceId];
   const weex = __weex_options__.weex;
-  windmill = Windmill(weex);
 
   if (instance == undefined) {
     let bundleUrl = weex.config.bundleUrl;
@@ -65,18 +62,6 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
       // Weex
       callNative: () => {},
       __weex_config__: __weex_options__
-    };
-
-    windmill.$cycle('refresh', function(){
-      document.documentElement.fireEvent('refresh', {
-        timestamp: Date.now()
-      });
-    };
-
-    windmill.$cycle('destory', function(){
-      document.documentElement.fireEvent('destory', {
-        timestamp: Date.now()
-      });
     };
 
     return instanceContext;
