@@ -194,15 +194,21 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
             return;
           }
 
-          if (hasStyleAttribute) {
+          if (hasStyleAttribute && styleAttribute.value) {
             let expression = styleAttribute.value.expression;
             let expressionType = expression.type;
 
-            // style={[styles.a, styles.b]}
+            // style={[styles.a, styles.b]} ArrayExpression
             if (expressionType === 'ArrayExpression') {
               expression.elements = arrayExpression.concat(expression.elements);
-            // style={{styles.a}} or style={{ height: 100 }}
-            } else if (expressionType === 'MemberExpression' || expressionType === 'ObjectExpression') {
+            // style={styles.a} MemberExpression
+            // style={{ height: 100 }} ObjectExpression
+            // style={{ ...custom }} ObjectExpression
+            // style={custom} Identifier
+            // style={getStyle()} CallExpression
+            // style={this.props.useCustom ? custom : null} ConditionalExpression
+            // style={custom || other} LogicalExpression
+            } else {
               styleAttribute.value.expression = t.arrayExpression(arrayExpression.concat(expression));
             }
           } else {
