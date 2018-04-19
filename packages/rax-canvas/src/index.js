@@ -3,7 +3,7 @@ import {isWeex} from 'universal-env';
 import * as Gcanvas from 'gcanvas.js';
 
 class Canvas extends Component {
-  getContext = (type) => {
+  getContext = (type = '2d') => {
     const canvas = findDOMNode(this.refs.canvas);
     if (isWeex) {
       this._canvasHolder = Gcanvas.enable(this.refs.canvas, {bridge: Gcanvas.WeexBridge});
