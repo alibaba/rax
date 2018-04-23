@@ -1,25 +1,35 @@
 const MODULE_NAME_PREFIX = '@weex-module/';
-const isInWindmill = weex.config.container === 'windmill' || false;
-isInWindmill = false; // hold
+
+const availableWindmillModules = [
+  'storage', 'navigator', 'network', 'mtop'
+];
+function isAvailableWindmillModule(moduleName) {
+  return availableWindmillModules.indexOf(module) !== -1;
+}
 
 module.exports = function(modules, weex, windmill) {
+  const isInWindmill = weex.config.container === 'windmill';
+  console.log(`[Rax] create require function, container: ${weex.config.container}`);
   function require(name) {
     var mod = modules[name];
 
-    // if retuire '@weex-module/'
+    // if require '@weex-module/'
     if (name.split(MODULE_NAME_PREFIX).length > 1) {
       const weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
-      if (isInWindmill) {
+      if (isInWindmill && isAvailableWindmillModule(weexModuleName)) {
+        console.log(`[Rax] require windmill module: ${weexModuleName}`);
         var handler = {
-          get: function(target, api){
+          get: function(target, api) {
+            console.log(`[Rax] create windmill module api: ${weexModuleName}.${api}`);
             return function(cfg) {
               console.log('$call: ' + weexModuleName + '.' + api);
               return windmill.$call(weexModuleName + '.' + api, cfg);
-            }
+            };
           }
         };
         return new Proxy({}, handler);
       } else {
+        console.log(`[Rax] require weex module ${weexModuleName}`);
         if (weex.isRegisteredModule(weexModuleName)) {
           return weex.requireModule(weexModuleName);
         } else {

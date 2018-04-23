@@ -1,7 +1,6 @@
-import Windmill from '@ali/windmill-renderer/dist/windmill.renderer';
+import setupWindmillRenderer from '@ali/windmill-renderer/dist/windmill.renderer';
 /* global BroadcastChannel */
 'use strict';
-const isInWindmill = weex.config.container === 'windmill' || false;
 
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
@@ -18,7 +17,6 @@ const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 const GLOBAL_EVENT_MODULE = MODULE_NAME_PREFIX + 'globalEvent';
 const noop = function() {};
-let weex = {};
 
 function genBuiltinModules(modules, moduleFactories, context) {
   for (let moduleName in moduleFactories) {
@@ -31,26 +29,49 @@ function genBuiltinModules(modules, moduleFactories, context) {
   return modules;
 }
 
-function initPageEvent(require, windmill, document) {
-  
-  windmill.$cycle('refresh', function(){
-    document.documentElement.fireEvent('refresh', {
-      timestamp: Date.now()
+function initPageEvent(windmill, window) {
+  const supportedPageLifecycles = [
+    'load', 'ready', 'show', 'hide', 'unload'
+  ];
+  const supportedPageEvents = [
+    'pullDownRefresh', 'reachBottom', 'shareAppMessage',
+    'pageScroll', 'TabItemTap'
+  ];
+
+  // listening on page lifecycles
+  supportedPageLifecycles.forEach(lifecycle => {
+    const eventType = `page:${lifecycle}`;
+    console.log(`[Rax] listening on lifecycle: "${eventType}"`);
+    windmill.$cycle(eventType, (options) => {
+      console.log(`[Rax] receive lifecycle: "${eventType}"`);
+      window.dispatchEvent({
+        type: eventType,
+        timestamp: Date.now(),
+        data: options
+      });
     });
   });
 
-  windmill.$cycle('destory', function(){
-    document.documentElement.fireEvent('destory', {
-      timestamp: Date.now()
+  // listening on page events
+  supportedPageEvents.forEach(eventType => {
+    console.log(`[Rax] listening on event: "${eventType}"`);
+    windmill.$on(eventType, (event) => {
+      console.log(`[Rax] receive event: "${eventType}"`);
+      window.dispatchEvent(Object.assign({}, event, {
+        type: eventType,
+        timestamp: Date.now()
+      }));
     });
   });
 
-  // windmill $call error
-  var globalEvent = require(GLOBAL_EVENT_MODULE);
-  globalEvent.addEventListener('weexsecurityerror', function (e) {
-    console.log('weexsecurityerror' + e);
+  // dispatch module call error
+  const errorName = 'weexsecurityerror';
+  windmill.$on(errorName, message => {
+    const errorEvent = typeof window.CustomEvent === 'function'
+      ? new window.CustomEvent('WeexSecurityError', { detail: message })
+      : { type: 'WeexSecurityError', detail: message };
+    window.dispatchEvent(errorName, errorEvent);
   });
-
 }
 
 export function injectContext() {
@@ -75,15 +96,15 @@ export function resetInstanceContext(instanceContext) {
     instanceId,
     document,
     bundleUrl,
-    windmill,
     __weex_document__,
     __weex_options__,
     __weex_data__,
     __weex_config__
   } = instanceContext;
 
-  weex = __weex_options__.weex;
-  windmill = Windmill(weex);
+  const weex = __weex_options__.weex || {};
+  const isInWindmill = weex.config.container === 'windmill';
+  const windmill = setupWindmillRenderer(weex);
 
   // Mark start time
   const responseEnd = Date.now();
@@ -152,8 +173,6 @@ export function resetInstanceContext(instanceContext) {
 
     registerErrorHandler.once = true;
   }
-
-  initPageEvent(__weex_require__, windmill, document);
 
   const window = {
     // ES
@@ -277,7 +296,7 @@ export function resetInstanceContext(instanceContext) {
         }
       } else if (type === '@system:message') {
         // for miniApp
-        windmill.on(type, listener);
+        windmill.$on(type, listener);
       } else {
         windowEmitter.on(type, listener);
       }
@@ -322,6 +341,8 @@ export function resetInstanceContext(instanceContext) {
     ModuleFactories,
     window
   );
+
+  initPageEvent(windmill, window);
 
   window.self = window.window = window;
 
