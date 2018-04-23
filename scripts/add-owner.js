@@ -11,15 +11,23 @@ const user = process.argv[2];
 
 fs.readdirSync(PACKAGES_DIR)
   .forEach(function(packageName) {
-    var packageJSON = require(path.join(PACKAGES_DIR, packageName, 'package.json'));
+    const pkgJSON = path.join(PACKAGES_DIR, packageName, 'package.json');
+    if (!fs.existsSync(pkgJSON)) {
+      return;
+    }
+
+    var packageJSON = require(pkgJSON);
     if (packageJSON.private) {
       return console.log('Skip private package:', packageName);
     }
 
+    const cmd = 'npm owner add ' + user + ' ' + packageName;
+    console.log(cmd);
     execSync(
-      'npm owner add ' + user + ' ' + packageName,
+      cmd,
       {
         stdio: 'inherit'
       }
     );
+
   });

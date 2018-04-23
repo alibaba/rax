@@ -1,6 +1,6 @@
 {
   "name": "rax-video",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Video component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,12 +21,12 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^0.6.0"
+    "universal-env": "^0.6.1"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.6.0"
+    "rax-test-renderer": "^0.6.1"
   }
 }
