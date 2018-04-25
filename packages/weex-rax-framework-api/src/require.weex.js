@@ -1,10 +1,16 @@
 const MODULE_NAME_PREFIX = '@weex-module/';
 
-const availableWindmillModules = [
-  'storage', 'navigator', 'network', 'mtop'
-];
+const availableWindmillModules = {
+  'network': ['request'],
+  'mtop': ['request'],
+  'storage': ['length', 'setItem', 'getItem', 'removeItem'],
+  'navigator': ['push', 'pop'],
+  'user': ['login', 'logout', 'info'],
+  'modal': ['alert', 'confirm', 'toast'],
+};
+
 function isAvailableWindmillModule(moduleName) {
-  return availableWindmillModules.indexOf(module) !== -1;
+  return availableWindmillModules[moduleName] && availableWindmillModules[moduleName].length;
 }
 
 module.exports = function(modules, weex, windmill) {
@@ -18,16 +24,25 @@ module.exports = function(modules, weex, windmill) {
       const weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
       if (isInWindmill && isAvailableWindmillModule(weexModuleName)) {
         console.log(`[Rax] require windmill module: ${weexModuleName}`);
-        var handler = {
-          get: function(target, api) {
-            console.log(`[Rax] create windmill module api: ${weexModuleName}.${api}`);
-            return function(cfg) {
-              console.log('$call: ' + weexModuleName + '.' + api);
-              return windmill.$call(weexModuleName + '.' + api, cfg);
-            };
-          }
-        };
-        return new Proxy({}, handler);
+        let modObj = {};
+        for (let i = 0; i < availableWindmillModules[weexModuleName].length; i++) {
+          let api = availableWindmillModules[weexModuleName][i];
+          modObj[api] = (parames, successCallback, failureCallback) => {
+            console.log('$call: ' + weexModuleName + '.' + api);
+            windmill.$call(weexModuleName + '.' + api, parames, successCallback, failureCallback);
+          };
+        }
+        return modObj;
+        // var handler = {
+        //   get: function(target, api) {
+        //     console.log(`[Rax] create windmill module api: ${weexModuleName}.${api}`);
+        //     return function(cfg) {
+        //       console.log('$call: ' + weexModuleName + '.' + api);
+        //       return windmill.$callAsync(weexModuleName + '.' + api, cfg);
+        //     };
+        //   }
+        // };
+        // return new Proxy({}, handler);
       } else {
         console.log(`[Rax] require weex module ${weexModuleName}`);
         if (weex.isRegisteredModule(weexModuleName)) {

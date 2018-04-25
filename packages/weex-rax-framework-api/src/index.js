@@ -283,6 +283,7 @@ export function resetInstanceContext(instanceContext) {
       }
     },
     addEventListener: (type, listener) => {
+      console.log('window.addEventListener ' + type);
       if (type === 'message') {
         if (typeof BroadcastChannel === 'function') {
           var stack = new BroadcastChannel('message');
@@ -305,6 +306,7 @@ export function resetInstanceContext(instanceContext) {
       windowEmitter.off(type, listener);
     },
     dispatchEvent: (e) => {
+      console.log('window.dispatchEvent ' + e.type);
       windowEmitter.emit(e.type, e);
     },
     set onerror(handler) {
