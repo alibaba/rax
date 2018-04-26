@@ -295,9 +295,11 @@ export function resetInstanceContext(instanceContext) {
             listener(e.data);
           };
         }
-      } else if (type === '@system:message') {
         // for miniApp
-        windmill.$on(type, listener);
+        windmill.$on(type, (e) => {
+          e.origin = 'worker';
+          listener(e);
+        });
       } else {
         windowEmitter.on(type, listener);
       }

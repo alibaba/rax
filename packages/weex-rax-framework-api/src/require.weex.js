@@ -7,6 +7,7 @@ const availableWindmillModules = {
   'navigator': ['push', 'pop'],
   'user': ['login', 'logout', 'info'],
   'modal': ['alert', 'confirm', 'toast'],
+  'navigatorBar': ['show', 'hide', 'setTitle', 'setRightItem', 'setStyle', 'setDrawer', 'setActionSheet', 'openDrawer', 'closeDrawer'],
 };
 
 function isAvailableWindmillModule(moduleName) {
@@ -22,14 +23,24 @@ module.exports = function(modules, weex, windmill) {
     // if require '@weex-module/'
     if (name.split(MODULE_NAME_PREFIX).length > 1) {
       const weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
+      if (weexModuleName == 'stream') {
+        weexModuleName = 'network';
+      }
       if (isInWindmill && isAvailableWindmillModule(weexModuleName)) {
         console.log(`[Rax] require windmill module: ${weexModuleName}`);
         let modObj = {};
         for (let i = 0; i < availableWindmillModules[weexModuleName].length; i++) {
           let api = availableWindmillModules[weexModuleName][i];
+          // network 兼容
           modObj[api] = (parames, successCallback, failureCallback) => {
             console.log('$call: ' + weexModuleName + '.' + api);
             windmill.$call(weexModuleName + '.' + api, parames, successCallback, failureCallback);
+          };
+        }
+        if (weexModuleName == 'network') {
+          modObj[api].fetch = (parames, successCallback, failureCallback) => {
+            console.log('$call: ' + weexModuleName + '.' + api);
+            windmill.$call(weexModuleName + '.request', parames, successCallback, failureCallback);
           };
         }
         return modObj;
