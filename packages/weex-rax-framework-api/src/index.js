@@ -35,7 +35,7 @@ function initPageEvent(windmill, window) {
   ];
   const supportedPageEvents = [
     'pullDownRefresh', 'reachBottom', 'shareAppMessage',
-    'pageScroll', 'TabItemTap'
+    'pageScroll', 'tabItemTap'
   ];
 
   // listening on page lifecycles

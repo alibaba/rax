@@ -22,7 +22,7 @@ module.exports = function(modules, weex, windmill) {
 
     // if require '@weex-module/'
     if (name.split(MODULE_NAME_PREFIX).length > 1) {
-      const weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
+      let weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
       if (weexModuleName == 'stream') {
         weexModuleName = 'network';
       }
