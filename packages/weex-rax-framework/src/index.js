@@ -35,6 +35,7 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
 
   if (instance == undefined) {
     let bundleUrl = weex.config.bundleUrl;
+    let pageUrl = weex.config.pageUrl || '';
     if (!bundleUrl) {
       console.error('Error: Must have bundleUrl option when createInstance, downgrade to "about:blank".');
       bundleUrl = 'about:blank';
@@ -48,6 +49,7 @@ export function createInstanceContext(instanceId, __weex_options__, __weex_data_
       document,
       instanceId,
       bundleUrl,
+      pageUrl,
       __weex_data__,
       uid: 0
     };

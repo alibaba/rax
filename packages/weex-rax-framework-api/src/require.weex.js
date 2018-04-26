@@ -4,6 +4,7 @@ const availableWindmillModules = {
   'network': ['request'],
   'mtop': ['request'],
   'storage': ['length', 'setItem', 'getItem', 'removeItem'],
+  'memoryStorage': ['setItem', 'getItem'],
   'navigator': ['push', 'pop'],
   'user': ['login', 'logout', 'info'],
   'modal': ['alert', 'confirm', 'toast'],
@@ -23,7 +24,7 @@ module.exports = function(modules, weex, windmill) {
     // if require '@weex-module/'
     if (name.split(MODULE_NAME_PREFIX).length > 1) {
       let weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
-      if (weexModuleName == 'stream') {
+      if (isInWindmill && weexModuleName == 'stream') {
         weexModuleName = 'network';
       }
       if (isInWindmill && isAvailableWindmillModule(weexModuleName)) {
@@ -38,8 +39,8 @@ module.exports = function(modules, weex, windmill) {
           };
         }
         if (weexModuleName == 'network') {
-          modObj[api].fetch = (parames, successCallback, failureCallback) => {
-            console.log('$call: ' + weexModuleName + '.' + api);
+          modObj.fetch = (parames, successCallback, failureCallback) => {
+            console.log('$call: network.fetch || stream.fetch');
             windmill.$call(weexModuleName + '.request', parames, successCallback, failureCallback);
           };
         }

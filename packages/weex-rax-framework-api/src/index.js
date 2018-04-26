@@ -1,4 +1,4 @@
-import setupWindmillRenderer from '@ali/windmill-renderer/dist/windmill.renderer';
+import setupWindmillRenderer from '@ali/windmill-renderer';
 /* global BroadcastChannel */
 'use strict';
 
@@ -96,6 +96,7 @@ export function resetInstanceContext(instanceContext) {
     instanceId,
     document,
     bundleUrl,
+    pageUrl,
     __weex_document__,
     __weex_options__,
     __weex_data__,
@@ -104,7 +105,10 @@ export function resetInstanceContext(instanceContext) {
 
   const weex = __weex_options__.weex || {};
   const isInWindmill = weex.config.container === 'windmill';
-  const windmill = setupWindmillRenderer(weex);
+  let windmill;
+  if (isInWindmill) {
+    windmill = setupWindmillRenderer(weex);
+  }
 
   // Mark start time
   const responseEnd = Date.now();
@@ -120,7 +124,12 @@ export function resetInstanceContext(instanceContext) {
   const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
   const {URL, URLSearchParams, FontFace, matchMedia} = shared;
 
-  const documentURL = new URL(bundleUrl);
+  let documentURL;
+  if (isInWindmill) {
+    documentURL = new URL(pageUrl);
+  } else {
+    documentURL = new URL(bundleUrl);
+  }
   const modules = {};
 
   // Generate native modules map at instance init
@@ -296,10 +305,12 @@ export function resetInstanceContext(instanceContext) {
           };
         }
         // for miniApp
-        windmill.$on(type, (e) => {
-          e.origin = 'worker';
-          listener(e);
-        });
+        if (isInWindmill) {
+          windmill.$on(type, (e) => {
+            e.origin = 'worker';
+            listener(e);
+          });
+        }
       } else {
         windowEmitter.on(type, listener);
       }
@@ -346,7 +357,9 @@ export function resetInstanceContext(instanceContext) {
     window
   );
 
-  initPageEvent(windmill, window);
+  if (isInWindmill) {
+    initPageEvent(windmill, window);
+  }
 
   window.self = window.window = window;
 
