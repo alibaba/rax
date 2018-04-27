@@ -219,7 +219,6 @@ class NativeComponent {
           // Assign next prop when prev style is null
           styleUpdates = nextProp;
         }
-
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         // Update event binding
         let eventName = propKey.slice(2).toLowerCase();
@@ -231,7 +230,6 @@ class NativeComponent {
         if (typeof nextProp === 'function') {
           Host.driver.addEventListener(this.getNativeNode(), eventName, nextProp, nextProps);
         }
-        
       } else {
         // Update other property
         let payload = {};

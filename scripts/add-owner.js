@@ -29,5 +29,4 @@ fs.readdirSync(PACKAGES_DIR)
         stdio: 'inherit'
       }
     );
-
   });
