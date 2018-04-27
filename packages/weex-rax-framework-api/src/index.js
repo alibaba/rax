@@ -96,7 +96,6 @@ export function resetInstanceContext(instanceContext) {
     instanceId,
     document,
     bundleUrl,
-    pageUrl,
     __weex_document__,
     __weex_options__,
     __weex_data__,
@@ -123,13 +122,8 @@ export function resetInstanceContext(instanceContext) {
   const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
   const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
   const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-
-  let documentURL;
-  if (isInWindmill) {
-    documentURL = new URL(pageUrl);
-  } else {
-    documentURL = new URL(bundleUrl);
-  }
+  
+  const documentURL = new URL(bundleUrl);
   const modules = {};
 
   // Generate native modules map at instance init
