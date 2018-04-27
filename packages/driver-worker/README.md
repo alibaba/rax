@@ -12,7 +12,7 @@ $ npm install --save driver-worker
 
 `worker.js`
 ```js
-import WorkerDriver from 'driver-worker';
+import createDriver from 'driver-worker';
 import { render } from 'rax';
 import App from './App';
 
@@ -20,7 +20,7 @@ render(
   <App />
   null,
   {
-    driver: WorkerDriver
+    driver: createDriver({ postMessage, addEventListener })
   }
 );
 ```
