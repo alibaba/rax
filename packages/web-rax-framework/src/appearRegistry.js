@@ -217,7 +217,7 @@ export function getOffset(el, param) {
   if (!param) {
     param = {x: 0, y: 0};
   }
-  
+
   if (el === window) {
     l = 0;
     t = 0;

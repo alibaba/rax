@@ -59,6 +59,8 @@ export default ({ worker, tagNamePrefix = '' }) => {
 
     let event = { type: e.type };
     if (e.target) event.target = e.target.$$id;
+    // CustomEvent detail
+    if (e.detail) event.detail = e.detail;
     for (let i in e) {
       let v = e[i];
       if (
