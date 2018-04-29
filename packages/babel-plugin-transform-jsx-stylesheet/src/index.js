@@ -41,7 +41,7 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
   } else if (type === 'object') {
     for (var k in args) {
       k = k.trim();
-      if (k && object.hasOwnProperty(k) && object[k]) {
+      if (k && args.hasOwnProperty(k) && args[k]) {
         className.push(k);
       }
     }
