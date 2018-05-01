@@ -27,7 +27,6 @@ import {SVGFactory} from "react";
 import {HTMLFactory} from "react";
 import {CFactory} from "react";
 import {Factory} from "react";
-import {WeexModule} from "weex";
 
 /**
  * rax type定义

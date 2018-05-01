@@ -1,50 +1,74 @@
 import {BaseProps} from "rax";
 import * as React from "react";
 
+/**
+ * component:waterfall(瀑布流组件)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/waterfall
+ */
 
 export interface WaterFallItem {
 
-    height: number
+    height: number;
+
+    item: any
 }
 
 export interface WaterFallProps extends BaseProps {
 
     /**
-     * 瀑布流数组，需要传入模块高度（必填）
+     * waterfall stream array, need to pass module height
+     * (瀑布流数组，需要传入模块高度)
      */
     dataSource: Array<WaterFallItem>;
+
     /**
-     * 渲染每项的模板（必填）
+     * render each template
+     * (渲染每项的模板)
+     * @param item
+     * @param {number} index
      */
-    renderItem: () => void;
+    renderItem: (item: any, index: number) => void;
+
     /**
-     * 渲染 header 部分
+     * rendering header section
+     * (渲染 header 部分)
      */
     renderHeader?: () => void;
+
     /**
-     * 渲染 footer 部分
+     * render footer section
+     * (渲染 footer 部分)
      */
     renderFooter?: () => void;
+
     /**
-     *    列宽
+     * column width
+     *(列宽)
      */
     columnWidth?: number;
 
     /**
-     * 列数
+     * column count
+     * (列数)
      */
     columnCount?: number;
+
     /**
-     * 列间距
+     * column spacing
+     * (列间距)
      */
     columnGap?: number;
+
     /**
-     * 滚动到底部触发事件
+     * scroll to bottom trigger event
+     * (滚动到底部触发事件)
      */
     onEndReached?: () => void;
 
     /**
-     * 触发懒加载距离
+     * trigger lazy loading distance
+     * 触发懒加载距离()
      */
     onEndReachedThreshold?: number;
 }

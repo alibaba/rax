@@ -2,36 +2,44 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 import * as React from "react";
 
+
 /**
- * 选择框
- * 文档地址 https://alibaba.github.io/rax/component/checkbox
+ * component：checkbox (选择框)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/checkbox
  */
 export interface CheckBoxProps extends BaseProps {
 
     /**
-     * 选中状态
+     * selected state (选中状态)
      */
     checked: boolean;
+
     /**
-     *    选中图片
+     * picture selected  (处于选中状态中的图片)
      */
     checkedImage: string;
+
     /**
-     * 非选中图片
+     * unselected picture (非选中状态中的图片)
      */
     uncheckedImage: string;
+
     /**
-     * 选择框容器样式
+     * select box container style (选择框容器样式)
      */
     containerStyle: React.CSSProperties;
+
     /**
-     * 选择框图片样式
+     * select box picture style (选择框图片样式)
      */
     checkboxStyle: React.CSSProperties;
+
     /**
-     *    选择事件
+     * change event (选择事件)
+     * @param checked checked(是否选中)
      */
-    onChange: () => void;
+    onChange: (checked) => void;
 
 }
 

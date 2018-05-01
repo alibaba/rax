@@ -1,8 +1,11 @@
 import * as Rax from "rax";
-import {KeyboardType} from "rax-enhance/textinput";
-import * as React from "react";
+import {BaseProps} from "../rax";
 
-
+/**
+ * component:(文本输入)
+ * document(文档地址)：
+ * https://alibaba.github.io/rax/component/text-input
+ */
 interface InputDeviceCapabilities {
 
     readonly firesTouchEvents: boolean;
@@ -24,7 +27,7 @@ export interface ChangeEvent extends Event {
 }
 
 
-export interface InpuEvent extends ChangeEvent {
+export interface InputEvent extends ChangeEvent {
 
     readonly  data: string;
     readonly  dataTransfer: string;
@@ -52,7 +55,7 @@ export interface TextInputFocusEvent extends BaseEvent {
  * onInput 事件的evet
  */
 export interface TextInputEvent extends BaseEvent {
-    readonly originalEvent: InpuEvent;
+    readonly originalEvent: InputEvent;
 }
 
 /**
@@ -63,93 +66,125 @@ export interface TextInputChangeEvent extends BaseEvent {
 }
 
 
-export interface TextInputProps {
+export type TextInputKeyboardType = "default" | "ascii-capable" | "numbers-and-punctuation" | "url" | "number-pad" | "phone-pad"
+    | "name-phone-pad" | "email_address" | "decimal_pad" | "twitter" | "web-search" | "numeric"
 
-    style?: React.CSSProperties;
+export interface TextInputProps extends BaseProps {
+
 
     autoCapitalize?: string;
 
     autoCorrect?: boolean;
 
     /**
-     * 定义该属性文本框可以输入多行文字 默认为false
+     * define this property text box to enter multiple lines of text Defaults to false
+     * (定义该属性文本框可以输入多行文字)
+     * default(默认值)：false
      */
     multiline?: boolean;
+
     /**
-     * 为元素添加标识
+     * adding an element to an element
+     * (为元素添加标识)
      */
     accessibilityLabel?: string;
     /**
-     * 添加开启自动完成功能
+     * add On AutoComplete feature
+     * (添加开启自动完成功能)
      */
     autoComplete?: boolean;
+
     /**
-     * 添加开启获取焦点
+     * add open to get focus
+     * (添加开启获取焦点)
      */
     autoFocus?: boolean
+
     /**
-     * 是否可以编辑
-     * 默认为true 如果为fase则文本框不可编辑
+     * can you edit
+     * (是否可以编辑)
+     * default(默认)：true
      */
     editable?: boolean
+
     /**
-     * 设置弹出哪种软键盘 可用的值有
+     * set which kind of soft keyboard pops up
+     * (设置弹出哪种软键盘)
      */
-    keyboardType?: KeyboardType;
+    keyboardType?: TextInputKeyboardType;
+
     /**
-     * 设置最大可输入值
+     * set the maximum input value
+     * (设置最大可输入值)
      */
     maxLength?: number;
 
     /**
-     * 当文本框为mutiline时设置最多的行数
+     * set the maximum number of rows when the text box is mutiline
+     * (当文本框为mutiline时设置最多的行数)
      */
     maxNumberOfLines?: number;
+
     /**
-     * 同上设置行数
+     * set the number of rows as above
+     * (同上设置行数)
      */
     numberOfLines?: number;
+
     /**
-     * 设置文本框提示
+     * set the number of rows as above
+     * (设置文本框提示)
      */
     placeholder?: string
+
     /**
-     * 文本框内容密码显示
+     * text box content password display
+     * (文本框内容密码显示)
      */
     password?: boolean;
+
     /**
-     * 同上文本框内容密码显示
+     * same as text box content password display
+     * (同上文本框内容密码显示)
      */
     secureTextEntry?: boolean;
+
     /**
-     * 文本框的文字内容 (受控)
+     * text content of the text box (controlled)
+     * (文本框的文字内容 (受控))
      */
     value?: string
+
     /**
-     * 文本框的文字内容（非受控）
+     * text content of the text box (uncontrolled)
+     * (文本框的文字内容,[非受控])
      */
     defaultValue?: string;
 
     /**
-     * 文本框失焦时调用此函数。onBlur={() => console.log('失焦啦')}
+     * this function is called when the text box is out of focus. onBlur={() => console.log('lost focus')}
+     * (文本框失焦时调用此函数。onBlur={() => console.log('失焦啦')})
      * @param {TextInputFocusEvent} event
      */
     onBlur?: (event: TextInputFocusEvent) => void;
 
     /**
-     * 文本框获得焦点时调用此函数
+     * call this function when the textbox gets focus
+     * (文本框获得焦点时调用此函数)
      * @param {TextInputFocusEvent} event
      */
     onFocus?: (event: TextInputFocusEvent) => void;
 
     /**
-     * 文本框内容变化时调用此函数（用户输入完成时触发。通常在 blur 事件之后）
+     * this function is called when the content of the text box changes (triggered when the user input completes. Usually after the blur event)
+     * (文本框内容变化时调用此函数，[用户输入完成时触发。通常在 blur 事件之后])
      * @param {TextInputChangeEvent} event
      */
     onChange?: (event: TextInputChangeEvent) => void;
 
     /**
      * 文本框输入内容时调用此函数
+     * (this function is called when the text box is input)
      * @param {TextInputEvent} event
      */
     onInput?: (event: TextInputEvent) => void;
@@ -162,17 +197,20 @@ declare class TextInput extends Rax.Component<TextInputProps, any> {
     render(): JSX.Element;
 
     /**
-     * 获取焦点方法
+     * get focus method
+     * (获取焦点方法)
      */
     focus: () => void;
 
     /**
-     * 焦点失效
+     * failure of focus
+     * (焦点失效)
      */
     blur: () => void;
 
     /**
-     * 清除输入框内容
+     * clear input box contents
+     * (清除输入框内容)
      */
     clear: () => void;
 

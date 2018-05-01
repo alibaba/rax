@@ -2,16 +2,17 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 
 /**
- * 按钮
- * 文档地址 https://alibaba.github.io/rax/component/button
+ * component：button (按钮)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/button
  */
 export interface ButtonProps extends BaseProps {
 
     /**
-     * 点击事件
-     * @param p
+     * press event (点击事件)
+     * @param callback  (回调函数)
      */
-    onPress?: (p: Function) => void;
+    onPress?: (callback: Function) => void;
 
 }
 

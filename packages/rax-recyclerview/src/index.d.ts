@@ -2,29 +2,34 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 import * as React from "react";
 import {Requireable} from "react";
-import {ScrollEvent, ViewPosition} from "../rax-scrollview";
+import {WeexScrollEvent, ViewPosition} from "rax-scrollview";
 
 /**
- *滚动容器
- *文档地址 https://alibaba.github.io/rax/component/recycler-view
+ * component: recycler-view(滚动容器)
+ * document address(文档地址)：
+ * https://alibaba.github.io/rax/component/recycler-view
  */
 
 export interface RecyclerViewProps extends BaseProps {
 
     /**
-     * 滚动到底部触发事件，将修改后的数据付给 data
+     * scroll to the bottom to trigger the event and give the modified data to data
+     * (滚动到底部触发事件，将修改后的数据付给 data)
      */
     onEndReached: () => void;
     /**
-     * 距离多少开始加载下一屏，数字单位默认 rem
-     * 默认值 500
+     * how much the distance starts loading the next screen, digital units default rem
+     * (距离多少开始加载下一屏，数字单位默认 rem)
+     *  default(默认值):500
      */
     onEndReachedThreshold: number
 
     /**
-     * 滚动时触发的事件，返回当前滚动的水平垂直距离
+     * the event fired when scrolling, return the horizontal and vertical distance of the current scroll
+     * (滚动时触发的事件，返回当前滚动的水平垂直距离)
+     * @param {WeexScrollEvent}event
      */
-    //onScroll: () => void;
+    onScroll: (event: WeexScrollEvent) => void;
 
 
 }
@@ -65,15 +70,18 @@ declare class RecyclerView extends Rax.Component<RecyclerViewProps, any> {
     render(): JSX.Element;
 
 
-    handleScroll: (event: ScrollEvent) => void;
+    handleScroll: (event: WeexScrollEvent) => void;
 
     /**
-     * 重置滚动
+     * rest scroll
+     * (重置滚动)
      */
     resetScroll: () => void;
 
     /**
-     * 滚动到指定位置（参数示例：{x:0, y:100}）
+     * scroll to the specified location
+     * (滚动到指定位置)
+     * @param p parameter example(参数示例)：{x:0, y:100}
      */
     scrollTo: (p: ViewPosition) => void;
 }

@@ -2,26 +2,38 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 
 /**
- * 选择框
- * 文档地址：https://alibaba.github.io/rax/component/picker
+ * component: picker(选择框)
+ * document address(文档地址)：
+ * https://alibaba.github.io/rax/component/picker
  */
 export interface PickerProps extends BaseProps {
 
     /**
-     * 选中值
+     * selected value (选中值)
      */
     selectedValue: string;
 
     /**
-     * 选项切换
+     * option switch (选项切换)
+     * @param {string} value
+     * @param {Array<string>} items
      */
     onValueChange?: (value: string, items: Array<string>) => void;
 
 }
 
+/**
+ * option props (选项的属性)
+ */
 export interface ItemProps {
+
     value: string,
+
     label: string,
+
+    /**
+     * tex color (文字颜色)
+     */
     color?: string
 }
 

@@ -1,10 +1,17 @@
 import * as Rax from "rax";
 import {BaseProps} from "rax";
 
+/**
+ * component:Touchable (可点击容器)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/touchable
+ */
+
 export interface TouchableProps extends BaseProps {
 
     /**
-     * 点击事件
+     * click event
+     * (点击事件)
      * @param p
      */
     onPress?: (p: Function) => void;

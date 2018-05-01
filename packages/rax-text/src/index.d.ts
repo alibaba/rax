@@ -1,16 +1,22 @@
 import * as Rax from "rax";
 import {BaseProps} from "rax";
 
+/**
+ * component: text(文本显示)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/text
+ */
 export interface TextProps extends BaseProps {
 
     /**
-     * 点击事件
+     * click event
      * @param p
      */
-    onPress?: (p: Function) => void;
+    onPress?: (p?: Function) => void;
 
     /**
-     * 指定行数
+     * specified number of rows
+     * (指定行数)
      */
     numberOfLines?: number;
 

@@ -2,25 +2,30 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 
 /**
- * 日期选择
- * 文档地址：https://alibaba.github.io/rax/component/datepicker
+ * component: datepicker(日期选择)
+ * document address(文档地址)：
+ * https://alibaba.github.io/rax/component/datepicker
  */
 export interface DatePickerProps extends BaseProps {
 
     /**
-     * 选中值（示例：2017-01-01）
+     * selected value (example: 2017-01-01) (选中值（示例：2017-01-01）)
      */
     selectedValue: string
+
     /**
-     *    日期切换
+     *  data change (日期切换)
+     *  @param value
      */
     onDateChange?: (value: string) => void;
+
     /**
-     * 日期选择最小范围（示例：2017-01-01）
+     * date selection minimum range (example: 2017-01-01) (日期选择最小范围[ 示例：2017-01-01 ])
      */
     minimumDate?: string
+
     /**
-     * 日期选择最大范围（示例：2017-01-01）
+     * date Selection Maximum Range (Example: 2017-01-01) (日期选择最大范围[ 示例：2017-01-01 ])
      */
     maximumDate?: string
 

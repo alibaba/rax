@@ -1,186 +1,249 @@
-/**
- * 通用手势处理
- * 文档地址:https://alibaba.github.io/rax/guide/panresponder
- */
 import * as React from "react";
-import {Event} from "_debugger";
 
-//触发的手势操作配置	否	无
+/**
+ * Gesture processing (通用手势处理)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/guide/panresponder
+ */
+
+/**
+ * Triggered gesture operation configuration
+ * (触发的手势操作配置)
+ */
 export interface PanresponderConfig {
 
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onMoveShouldSetPanResponder: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onMoveShouldSetPanResponderCapture: (event: RaxEvent, gestureState: GestureState) => void;
 
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onStartShouldSetPanResponder: (event: RaxEvent, gestureState: GestureState) => void;
 
     /**
-     * function    函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onStartShouldSetPanResponderCapture: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderReject: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderGrant: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderStart: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderEnd: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderRelease: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderMove: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderTerminate: (event: RaxEvent, gestureState: GestureState) => void;
+
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onPanResponderTerminationRequest: (event: RaxEvent, gestureState: GestureState) => void;
 
     /**
-     * 函数中含有 event （事件对象）, gestureState （手势状态） 两个参数
+     * the function contains two parameters: event (event object) and gestureState (gesture state)
+     * (函数中含有 event （事件对象）, gestureState （手势状态） 两个参数)
      */
     onShouldBlockNativeResponder: (event: RaxEvent, gestureState: GestureState) => void;
 
 }
 
 /**
- *
- * 事件对象 event 中包含的属性
+ * attributes contained in the event object event
+ * (事件对象 event 中包含的属性)
  */
 export interface RaxEvent {
 
     /**
-     * 手势变化的数组对象
+     * gesture changes array object
+     * (手势变化的数组对象)
      */
-    changedTouches: Array<any>;
+    readonly changedTouches: Array<any>;
+
     /**
-     * 手势的 ID
+     * gesture id
+     * (手势的 ID)
      */
-    identifier: number
+    readonly identifier: number
+
     /**
-     * 手势的 X 坐标跟元素相关
+     * the X coordinate of the gesture is related to the element
+     * (手势的 X 坐标跟元素相关)
      */
-    locationX: number;
+    readonly locationX: number;
+
     /**
-     * 手势的 Y 坐标跟元素相关
+     * the Y coordinate of the gesture is related to the element
+     * (手势的 Y 坐标跟元素相关)
      */
-    locationY: number;
+    readonly locationY: number;
+
     /**
-     *    手势的 X 坐标跟根节点相关
+     * the X coordinate of the gesture is related to the root node
+     * (手势的 X 坐标跟根节点相关)
      */
-    pageX: number;
+    readonly pageX: number;
+
     /**
-     * 手势的 Y 坐标跟根节点相关
+     * the Y coordinate of the gesture is related to the root node
+     * (手势的 Y 坐标跟根节点相关)
      */
-    pageY: Number
+    readonly pageY: Number
+
     /**
+     * accepts the elements of the touch event
      * 接受 touch 事件的元素
      */
-    target: React.ReactNode;
+    readonly target: React.ReactNode;
+
     /**
-     * 手势的时间戳
+     * gesture timestamp
+     * (手势的时间戳)
      */
-    timestamp: number;
+    readonly timestamp: number;
+
     /**
-     * 目前屏幕上的所有 touch 事件
+     * all current touch events on the screen
+     * (目前屏幕上的所有 touch 事件)
      */
-    touches: Array<any>;
+    readonly touches: Array<any>;
 }
 
 /**
- * 手势状态 gestureState 中包含的属性
+ * gesture Status Attributes contained in gestureState
+ * (手势状态 gestureState 中包含的属性)
  */
 export interface GestureState {
 
     /**
-     * 手势状态的 ID
+     * gesture status ID
+     * (手势状态的 ID)
      */
-    stateID: Array<string | number>
-    /**
-     * 最近移动触摸屏的最新屏幕坐标
-     */
-    moveX: number;
-    /**
-     * 最近移动触摸屏的最新屏幕坐标
-     */
-    moveY: number;
-    /**
-     * 手势响应的屏幕坐标
-     */
-    x0: number;
-    /**
-     * 手势响应的屏幕坐标
-     */
-    y0: number;
-    /**
-     * 手势距离
-     */
-    dx: number;
-    /**
-     * 手势距离
-     */
-    dy: number;
-    /**
-     * 手势速度
-     */
-    vx: number;
-    /**
-     * 手势速度
-     */
+    readonly stateID: Array<string | number>
 
-    vy: number;
     /**
-     * 目前屏幕上的 touch 事件
+     * recent screen coordinates of the latest mobile touch screen
+     * (最近移动触摸屏的最新屏幕坐标)
      */
-    numberActiveTouches: Array<any>;
+    readonly moveX: number;
+
+    /**
+     * recent screen coordinates of the latest mobile touch screen
+     * (最近移动触摸屏的最新屏幕坐标)
+     */
+    readonly moveY: number;
+
+    /**
+     * gesture response screen coordinates
+     * (手势响应的屏幕坐标)
+     */
+    readonly x0: number;
+
+    /**
+     * gesture response screen coordinates
+     * (手势响应的屏幕坐标)
+     */
+    readonly y0: number;
+
+    /**
+     * gesture distance
+     * (手势距离)
+     */
+    readonly  dx: number;
+
+    /**
+     * gesture distance
+     * (手势距离)
+     */
+    readonly dy: number;
+
+    /**
+     * gesture speed
+     * (手势速度)
+     */
+    readonly vx: number;
+
+    /**
+     * gesture speed
+     * (手势速度)
+     */
+    readonly  vy: number;
+
+    /**
+     * Current screen touch event
+     * (目前屏幕上的 touch 事件)
+     */
+    readonly  numberActiveTouches: Array<any>;
 
 }
 
 /**
- * 原生端或h5端
+ * native or h5
+ * (原生端或h5端)
  */
 export interface PanHandler {
 
-    onTouchStart: (event:RaxEvent) => void;
+    onTouchStart: (event: RaxEvent) => void;
 
-    onTouchMove: (event:RaxEvent) => void;
+    onTouchMove: (event: RaxEvent) => void;
 
-    onTouchEnd: (event:RaxEvent) => void;
+    onTouchEnd: (event: RaxEvent) => void;
 }
 
 /**
- * pc web端
+ * pc web
  */
 export interface WbePanHandler {
 
-    onMouseDown: (event:RaxEvent) => void;
+    onMouseDown: (event: RaxEvent) => void;
 
-    onMouseMove: (event:RaxEvent) => void;
+    onMouseMove: (event: RaxEvent) => void;
 
-    onMouseUp: (event:RaxEvent) => void;
+    onMouseUp: (event: RaxEvent) => void;
 }
 
 export function create(config: PanresponderConfig): PanHandler | WbePanHandler

@@ -2,62 +2,75 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 import {Requireable} from "react";
 
+
 /**
- * 日历
- * 文档地址：https://alibaba.github.io/rax/component/calendar
+ * component：calendar (日历)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/calendar
  */
 export interface CalendarProps extends BaseProps {
 
     /**
-     *    可选的起始时间
-     *    yyyy-MM-dd
+     * optional start time (可选的起始时间)
+     * format(格式):yyyy-MM-dd
      */
     startDate?: string;
+
     /**
-     * 可选的结束时间
-     * yyyy-MM-dd
+     * optional end time (可选的结束时间)
+     * format(格式) yyyy-MM-dd
      */
     endDate?: string;
 
     /**
-     * 活动日期列表
+     * Event date list (活动日期列表)
+     * example(示例):['2017-01-02', '2017-01-05', '2017-01-28', '2017-01-30']
      */
     eventDates?: Array<string>;
+
     /**
-     * 月份的渲染格式
-     * 默认 MMMM YYYY
+     * month's rendering format (月份的渲染格式)
+     * default(默认): MMMM YYYY
      */
     titleFormat?: string;
+
     /**
-     * 返回的日期格式
-     * 默认 YYYY-MM-DD
+     * date format returned (返回的日期格式)
+     * default(默认): YYYY-MM-DD
      */
     dateFormat?: string;
+
     /**
-     * 把周几作为一个星期的开始
-     * 默认 1
+     * let the weekday be the beginning of a week (把周几作为一个星期的开始)
+     * default(默认)：1 (on monday)
      */
     weekStart?: number;
+
     /**
-     * 月份切换按钮的显示文案
+     * switch to last month button to display text (切换到上一个月按钮显示文字)
      */
     prevButtonText?: string;
     /**
-     *    月份切换按钮的显示文案
+     * Switch to next month button to show text (Switch to next month button to show text)
      */
     nextButtonText?: string;
+
     /**
-     * 选中某个日期
+     * select a date (选中某个日期)
+     * @param {string} dateText Expected date selected (期望选中的日期) example: 2017-09-22
      */
     onDateSelect?: (dateText: string) => void;
+
     /**
-     * 上一个月
+     * switch to the previous month (切换到上一个月)
+     * @param {number} month
      */
-    onTouchPrev?: (month: number) => void;
+    onTouchPrev?: (month?: number) => void;
+
     /**
-     * 下一个月
+     * switch to the next month (切换到下一个月)
      */
-    onTouchNext?: (month: number) => void;
+    onTouchNext?: (month?: number) => void;
 
 }
 

@@ -2,31 +2,39 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 
 /**
- * 步进器
- * 文档地址：https://alibaba.github.io/rax/component/counter
+ * component: counter(步进器)
+ * document address(文档地址)：
+ * https://alibaba.github.io/rax/component/counter
  */
 export interface CounterProps extends BaseProps {
 
     /**
-     * 默认数值
+     * default value (默认数值)
      */
     value: number;
+
     /**
-     * 起始值
+     * starting value (起始值)
+     *
      */
     start: number;
+
     /**
-     * 终止值
+     * end value (终止值)
      */
     end: number;
+
     /**
-     * 改变值时触发
+     * trigger on changing value (改变值时触发)
+     * @param num
      */
-    // onChange: (num:number) => void;
+    onChange: (num: number) => void;
+
     /**
-     * 渲染完成触发
+     * render complete trigger (渲染完成触发)
+     *  @param num
      */
-    onComplete?: (num:number) => void;
+    onComplete?: (num: number) => void;
 
 }
 

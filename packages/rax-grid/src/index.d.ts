@@ -2,13 +2,17 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 
 /**
- * 栅格布局
- * 文档地址 https://alibaba.github.io/rax/component/grid
+ * component：grid(栅格布局)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/grid
  */
 
 export interface RowProps extends BaseProps {
 
-    gridType?:string;
+    /**
+     * grid type
+     */
+    gridType?: string;
 
 }
 

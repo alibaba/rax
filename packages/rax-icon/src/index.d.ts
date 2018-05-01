@@ -2,17 +2,19 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 
 /**
- * 图标
- * 文档地址 https://alibaba.github.io/rax/component/icon
+ * component: icon(图标)
+ * document address(文档地址)：
+ * https://alibaba.github.io/rax/component/icon
  */
 export interface IconSource {
     /**
-     * 图片型icon的url，如果出现，则font和codePoint两个属性失效
+     * Picture icon url, if present, font and codePoint two properties are invalid
+     * (图片型icon的url，如果出现，则font和codePoint两个属性失效)
      */
     uri?: string
 
     /**
-     * iconfont的码点
+     * iconfont code point (iconfont的码点)
      */
     codePoint: string
 }
@@ -20,10 +22,13 @@ export interface IconSource {
 export interface IconProps extends BaseProps {
 
 
+    /**
+     * icon source
+     */
     source: IconSource;
 
     /**
-     * iconfont的字体
+     * iconfont's font (iconfont的字体)
      */
     fontFamily?: string
 

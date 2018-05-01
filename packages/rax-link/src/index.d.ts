@@ -2,21 +2,24 @@ import * as Rax from "rax";
 import {BaseProps} from "rax";
 
 /**
- * 链接
- * 文档地址 https://alibaba.github.io/rax/component/link
+ * component: link(链接)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/link
  */
-
 
 export interface LinkProps extends BaseProps {
 
 
+    /**
+     * href
+     */
     href: string;
 
     /**
-     * 点击事件
-     * @param p
+     * click event(点击事件)
+     * @param args
      */
-    onPress?: (p: Function) => void;
+    onPress?: (...args) => void;
 
 }
 

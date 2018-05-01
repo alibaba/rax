@@ -1,4 +1,5 @@
 /**
+ * universal-jsonp
  * 通用jsonp
  */
 export interface JsonpParam {

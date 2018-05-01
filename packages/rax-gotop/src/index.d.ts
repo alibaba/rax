@@ -3,47 +3,54 @@ import {BaseProps} from "rax";
 
 
 /**
- *返回顶部
- *文档地址 https://alibaba.github.io/rax/component/gotop
+ * component: gotop(返回顶部)
+ * document address(文档地址):
+ * https://alibaba.github.io/rax/component/gotop
  */
-
 export interface GoTopProps extends BaseProps {
 
     /**
-     * 图标文字内容
-     * 默认值：Top
+     * icon text content ( 图标文字内容)
+     * default(默认值)：Top
      */
     name?: string;
+
     /**
-     * 内部默认图标
+     * Internal default icon (内部默认图标)
      */
     icon?: string;
+
     /**
-     *返回顶部container宽度
-     * 默认值 90
+     * back to top Container width (返回顶部容器宽度)
+     * default(默认值) 90
      */
     iconWidth?: string;
+
     /**
-     * 返回顶部container高度
-     *  默认值 90
+     * back to top Container height (返回顶部容器高度)
+     * default(默认值) 90
      */
     iconHeight?: string;
+
     /**
-     * 返回顶部container border颜色
-     * 默认值 rgba(0, 0, 0, 0.1)
+     * back to top container border color (返回顶部容器边框颜色)
+     * default(默认值) rgba(0, 0, 0, 0.1)
      */
     borderColor?: string;
+
     /**
-     * 离底部的距离
-     * 默认值 80
+     * distance from the bottom (离底部的距离)
+     * default(默认值) 80
      */
     bottom?: number;
+
     /**
-     *icon显示回调
+     * icon show callback (显示回调)
      */
     onShow?: () => void;
+
     /**
-     * icon消失回调
+     * icon hide callback (消失回调)
      */
     onHide?: () => void;
 
