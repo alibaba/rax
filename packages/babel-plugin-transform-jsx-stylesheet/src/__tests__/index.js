@@ -33,7 +33,7 @@ const getClassNameFunctionTemplate = `function _getClassName() {
     for (var k in args) {
       k = k.trim();
 
-      if (k && object.hasOwnProperty(k) && object[k]) {
+      if (k && args.hasOwnProperty(k) && args[k]) {
         className.push(k);
       }
     }
