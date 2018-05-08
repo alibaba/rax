@@ -1,6 +1,6 @@
 {
   "name": "rax-dom",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Rax package for working with the DOM.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
