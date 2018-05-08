@@ -1,7 +1,6 @@
 import {createElement, Component, render, PureComponent} from 'rax';
 import Text from 'rax-text';
 import View from 'rax-view';
-
 import Perf from 'universal-perf';
 
 class ChildOne extends Component {

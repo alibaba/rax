@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "dependencies": {
+    "universal-panresponder": "^0.6.2",
+    "rax-view": "^0.6.2",
+    "rax-animated": "^0.6.2"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  }
+}

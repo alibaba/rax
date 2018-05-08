@@ -1,5 +1,5 @@
 import {Component, createElement, render } from 'rax';
-import Table from '../../packages/rax-table/src/';
+import Table from 'rax-table';
 
 const columns = [
   {

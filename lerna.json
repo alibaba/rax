@@ -3,7 +3,8 @@
   "version": "0.6.2",
   "packages": [
     "packages/*",
-    "templates/*"
+    "templates/*",
+    "examples/*"
   ],
   "commands": {
     "publish": {

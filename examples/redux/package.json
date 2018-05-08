@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "dependencies": {
+    "rax-image": "^0.6.2",
+    "rax-touchable": "^0.6.2",
+    "rax-view": "^0.6.2",
+    "rax-text": "^0.6.2",
+    "rax-link": "^0.6.2",
+    "rax-redux": "^0.6.2",
+    "redux": "latest"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  }
+}

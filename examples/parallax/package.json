@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "dependencies": {
+    "universal-jsonp": "^0.6.2",
+    "universal-stylesheet": "^0.6.2",
+    "universal-panresponder": "^0.6.2",
+    "rax-image": "^0.6.2",
+    "rax-view": "^0.6.2",
+    "rax-text": "^0.6.2",
+    "rax-animated": "^0.6.2"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "dependencies": {
+    "rax-canvas": "^0.6.2"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  }
+}

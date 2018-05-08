@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "dependencies": {
+    "driver-webgl": "^0.6.2"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  }
+}
