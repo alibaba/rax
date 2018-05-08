@@ -1,6 +1,6 @@
 {
   "name": "rax-slider",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Slider component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,15 +21,15 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.6.2",
-    "universal-env": "^0.6.2",
-    "universal-panresponder": "^0.6.2"
+    "rax-view": "^0.6.3",
+    "universal-env": "^0.6.3",
+    "universal-panresponder": "^0.6.3"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-image": "^0.6.2",
-    "rax-test-renderer": "^0.6.2"
+    "rax-image": "^0.6.3",
+    "rax-test-renderer": "^0.6.3"
   }
 }

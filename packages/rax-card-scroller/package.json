@@ -1,6 +1,6 @@
 {
   "name": "rax-card-scroller",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "CardScroller component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,17 +21,17 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-link": "^0.6.2",
-    "rax-picture": "^0.6.2",
-    "rax-scrollview": "^0.6.2",
-    "rax-text": "^0.6.2",
-    "rax-view": "^0.6.2"
+    "rax-link": "^0.6.3",
+    "rax-picture": "^0.6.3",
+    "rax-scrollview": "^0.6.3",
+    "rax-text": "^0.6.3",
+    "rax-view": "^0.6.3"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.6.2",
-    "rax-text": "^0.6.2"
+    "rax-test-renderer": "^0.6.3",
+    "rax-text": "^0.6.3"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "universal-asyncstorage",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "A universal AsyncStorage API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^0.6.2"
+    "universal-env": "^0.6.3"
   }
 }

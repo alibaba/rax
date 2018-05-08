@@ -4,7 +4,6 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const colors = require('chalk');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
-const WatchMissingNodeModulesPlugin = require('watch-missing-node-modules-webpack-plugin');
 const webpack = require('webpack');
 
 const pathConfig = require('./path.config');
@@ -19,6 +18,8 @@ const publicPath = '/';
 const publicUrl = '';
 
 module.exports = {
+  mode: process.env.NODE_ENV,
+
   context: process.cwd(),
   // Compile target should "web" when use hot reload
   target: 'web',
@@ -75,11 +76,6 @@ module.exports = {
     // a plugin that prints an error when you attempt to do this.
     // See https://github.com/facebookincubator/create-react-app/issues/240
     new CaseSensitivePathsPlugin(),
-    // If you require a missing module and then `npm install` it, you still have
-    // to restart the development server for Webpack to discover it. This plugin
-    // makes the discovery automatic so you don't have to restart.
-    // See https://github.com/facebookincubator/create-react-app/issues/186
-    new WatchMissingNodeModulesPlugin(pathConfig.appNodeModules),
     // show webpakc build progress
     new webpack.ProgressPlugin(function(percentage, msg) {
       const stream = process.stderr;

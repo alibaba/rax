@@ -1,9 +1,15 @@
 {
   "private": true,
+  "scripts": {
+    "start": "rax-scripts start",
+    "build": "rax-scripts build"
+  },
   "dependencies": {
+    "rax": "^0.6.3",
     "rax-canvas": "^0.6.2"
   },
-  "peerDependencies": {
-    "rax": "0.x"
-  }
+  "devDependencies": {
+    "rax-scripts": "^0.6.3"
+  },
+  "version": "0.6.3"
 }

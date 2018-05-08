@@ -18,12 +18,12 @@ const envConfig = require('./config/env.config');
  * run webpack dev server
  * @param  {Number} port server port
  */
-function start(port) {
+function start(port, hostname) {
   const compiler = createWebpackCompiler(webpackConfigDev);
 
   const server = new WebpackDevServer(compiler, webpackDevServerConfig);
 
-  server.listen(port, err => {
+  server.listen(port, hostname, err => {
     if (err) {
       console.log(colors.red('[ERR]: Failed to webpack dev server'));
       console.error(err.message || err);
@@ -39,4 +39,4 @@ function start(port) {
   });
 }
 
-start(envConfig.port);
+start(envConfig.port, envConfig.host);
