@@ -113,7 +113,12 @@ export default ({ worker, tagNamePrefix = '' }) => {
       if (vnode.attributes) {
         for (let i = 0; i < vnode.attributes.length; i++) {
           let a = vnode.attributes[i];
-          node.setAttribute(a.name, a.value);
+
+          if (typeof a.value === 'object') {
+            node[a.name] = a.value;
+          } else {
+            node.setAttribute(a.name, a.value);
+          }
         }
       }
       if (vnode.childNodes) {
@@ -172,7 +177,12 @@ export default ({ worker, tagNamePrefix = '' }) => {
         }
       }
       // TODO attributes remove handle
-      getNode(vnode).setAttribute(attributeName, val);
+      let node = getNode(vnode);
+      if (typeof val === 'object') {
+        node[attributeName] = val;
+      } else {
+        node.setAttribute(attributeName, val);
+      }
     },
     characterData({ target, oldValue }) {
       let vnode = target;

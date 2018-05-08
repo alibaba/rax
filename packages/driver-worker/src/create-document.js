@@ -201,7 +201,16 @@ export default function() {
     setAttributeNS(ns, name, value) {
       let attr = findWhere(this.attributes, createAttributeFilter(ns, name));
       if (!attr) this.attributes.push(attr = { ns, name });
-      attr.value = String(value);
+
+      // array and plain object will pass
+      // through, instead of calling `toString`
+      // null has been filtered before
+      if (typeof value === 'object') {
+        attr.value = value;
+      } else {
+        attr.value = String(value);
+      }
+
       mutation(this, 'attributes', { attributeName: name });
     }
     getAttributeNS(ns, name) {
