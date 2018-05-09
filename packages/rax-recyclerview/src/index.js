@@ -64,7 +64,11 @@ class RecyclerView extends Component {
         // HACK: weex scroll event value is opposite of web
         x: - e.contentOffset.x,
         y: - e.contentOffset.y
-      }
+      },
+      contentSize: e.contentSize ? {
+        width: e.contentSize.width,
+        height: e.contentSize.height
+      } : null
     };
     this.props.onScroll(e);
   }
