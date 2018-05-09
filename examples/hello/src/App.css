@@ -1,0 +1,26 @@
+.app {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.appHeader {
+  background-color: #222;
+  height: 160;
+  padding: 40;
+}
+
+.appBanner, .appIntro {
+  text-align: center;
+}
+
+.appBanner {
+  font-size: 80;
+  color: white;
+}
+
+.appIntro {
+  margin-top: 40;
+  font-size: 40;
+  line-height: 60;
+}

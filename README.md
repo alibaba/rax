@@ -84,14 +84,15 @@ render(<Hello name="world" />);
 ```
 
 More examples take a look at the [`examples`](/examples/) folder:
-* [Components](./examples/components)
+* [Hello](./examples/hello)
 * [Redux](/examples/redux)
 * [Canvas](/examples/canvas)
 * [Charts](/examples/charts)
 * [Drag](/examples/drag)
 * [Animated](/examples/animated)
-* [Profile](/examples/profile)
-* [Parallax](/examples/parallax)
+* [WebGL](/examples/webgl)
+* [Component Showcase](./examples/components)
+* [Module Showcase](./examples/modules)
 
 ## Rax Renderers
 
