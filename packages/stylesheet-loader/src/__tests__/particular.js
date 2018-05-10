@@ -125,15 +125,15 @@ describe('particular', () => {
     expect(result.transitionProperty).toEqual('backgroundColor');
   });
 
-  it('should transform transitionProperty \'all\' to string \'width,height,backgroundColor,opacity,transformOrigin,transform\'', () => {
+  it('should transform transitionProperty \'all\' to string \'width,height,top,bottom,left,right,backgroundColor,opacity,transform\'', () => {
     const result = particular.transitionProperty('all');
 
-    expect(result.transitionProperty).toEqual('width,height,backgroundColor,opacity,transformOrigin,transform');
+    expect(result.transitionProperty).toEqual('width,height,top,bottom,left,right,backgroundColor,opacity,transform');
   });
 
   it('should separate transition value', () => {
     testTransition('all 0.5s linear', {
-      transitionProperty: 'width,height,backgroundColor,opacity,transformOrigin,transform',
+      transitionProperty: 'width,height,top,bottom,left,right,backgroundColor,opacity,transform',
       transitionDuration: '500ms',
       transitionTimingFunction: 'linear',
       transitionDelay: '0ms'

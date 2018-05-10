@@ -90,7 +90,7 @@ let toMs = function(value) {
 
 let transitionProperty = function(value) {
   if (value === 'all') {
-    value = 'width,height,backgroundColor,opacity,transformOrigin,transform';
+    value = 'width,height,top,bottom,left,right,backgroundColor,opacity,transform';
   } else if (value === 'none' || !value) {
     return { isDeleted: true };
   }
