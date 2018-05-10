@@ -283,11 +283,71 @@ export default function() {
     }
   }
 
+  class CanvasRenderingContext2D {
+    constructor(cvsId, vnode) {
+      this.canvasId = cvsId;
+      this.vnode = vnode;
+
+      // canvas api
+      const methods = ['arc', 'arcTo', 'addHitRegion', 'beginPath', 'bezierCurveTo', 'clearHitRegions', 'clearRect', 'clip', 'closePath', 'createImageData', 'createLinearGradient', 'createPattern', 'createRadialGradient', 'drawFocusIfNeeded', 'drawImage', 'drawWidgetAsOnScreen', 'drawWindow', 'ellipse', 'fill', 'fillRect', 'fillText', 'getImageData', 'getLineDash', 'isPointInPath', 'isPointInStroke', 'lineTo', 'measureText', 'moveTo', 'putImageData', 'quadraticCurveTo', 'rect', 'removeHitRegion', 'resetTransform', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'];
+
+      methods.forEach((method) => {
+        this[method] = (...args) => {
+          mutation(this.vnode, 'canvas', {
+            canvasId: this.canvasId,
+            method: method,
+            args: args,
+            properties: this.properties
+          });
+        };
+      });
+
+      // canvas properties
+      const properties = ['direction', 'fillStyle', 'filter', 'font', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline'];
+
+      properties.forEach((property) => {
+        Object.defineProperty(this, property, {
+          get: function () {
+            return this.properties[property];
+          },
+          set: function (value) {
+            this.properties[property] = value;
+          }
+        });
+      });
+      this.properties = {
+        direction: 'inherit',
+        fillStyle: '#000',
+        lineCap: 'square',
+        lineDashOffset: 0,
+        textAlign: 'left'
+      };
+    }
+  }
+
+  let canvasId = 0;
+  class CanvasElement extends Element {
+    constructor(...args) {
+      super(...args);
+      this.canvasId = ++canvasId;
+      this.setAttribute('data-canvas-identifier', this.canvasId);
+    }
+    getContext(contextType) {
+      if (contextType === '2d') {
+        return new CanvasRenderingContext2D(this.canvasId, this);
+      } else {
+        return {};
+      }
+    }
+  }
   function createComment(content) {
     return new Comment(content);
   }
 
   function createElement(type) {
+    if (type === 'canvas') {
+      return new CanvasElement(null, String(type).toUpperCase());
+    }
     return new Element(null, String(type).toUpperCase());
   }
 

@@ -19,6 +19,7 @@ const EVENT_OPTIONS = supportsPassive
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
   const registeredEventCounts = {};
+  const canvasCache = {};
 
   function getNode(node) {
     if (!node) return null;
@@ -191,6 +192,20 @@ export default ({ worker, tagNamePrefix = '' }) => {
     },
     events({ target, eventName }) {
       addEvent(eventName);
+    },
+    canvas(data) {
+      const { canvasId, method, args, properties } = data;
+      const canvas =
+        canvasCache[canvasId] ||
+        (canvasCache[canvasId] = document.querySelector(
+          `[data-canvas-identifier="${canvasId}"]`
+        ));
+      for (let key in properties) {
+        if (properties.hasOwnProperty(key)) {
+          canvas.context2d[key] = properties[key];
+        }
+      }
+      canvas.context2d[method].apply(canvas.context2d, args);
     }
   };
 
