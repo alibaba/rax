@@ -30,6 +30,15 @@ describe('particular', () => {
     expect(result[methodName]).toEqual(value);
   }
 
+  function testTransition(value, separatedValue) {
+    const result = particular.transition(value);
+
+    expect(result.transitionProperty).toEqual(separatedValue.transitionProperty);
+    expect(result.transitionDuration).toEqual(separatedValue.transitionDuration);
+    expect(result.transitionDelay).toEqual(separatedValue.transitionDelay);
+    expect(result.transitionTimingFunction).toEqual(separatedValue.transitionTimingFunction);
+  }
+
   it('should separate border value', () => {
     testBorder('border');
     testBorder('borderTop');
@@ -90,5 +99,55 @@ describe('particular', () => {
     const result = particular.fontWeight(200);
 
     expect(result.fontWeight).toEqual('200');
+  });
+
+  it('should transform transitionDuration to string with ms', () => {
+    const result = particular.transitionDuration('0.5s');
+
+    expect(result.transitionDuration).toEqual('500ms');
+  });
+
+  it('should transform transitionDelay to string with ms', () => {
+    const result = particular.transitionDuration('.5s');
+
+    expect(result.transitionDuration).toEqual('500ms');
+  });
+
+  it('should delete empty spaces in transitionTimingFunction', () => {
+    const result = particular.transitionTimingFunction('cubic-bezier( 0.42, 0, 0.58, 1 )');
+
+    expect(result.transitionTimingFunction).toEqual('cubic-bezier(0.42,0,0.58,1)');
+  });
+
+  it('should transform transitionProperty \'background-color\' to string \'backgroundColor\'', () => {
+    const result = particular.transitionProperty('background-color');
+
+    expect(result.transitionProperty).toEqual('backgroundColor');
+  });
+
+  it('should transform transitionProperty \'all\' to string \'width,height,top,bottom,left,right,backgroundColor,opacity,transform\'', () => {
+    const result = particular.transitionProperty('all');
+
+    expect(result.transitionProperty).toEqual('width,height,top,bottom,left,right,backgroundColor,opacity,transform');
+  });
+
+  it('should separate transition value', () => {
+    testTransition('all 0.5s linear', {
+      transitionProperty: 'width,height,top,bottom,left,right,backgroundColor,opacity,transform',
+      transitionDuration: '500ms',
+      transitionTimingFunction: 'linear',
+      transitionDelay: '0ms'
+    });
+    testTransition('background-color 300ms cubic-bezier( 0.42, 0, 0.58, 1 ) .01s', {
+      transitionProperty: 'backgroundColor',
+      transitionDuration: '300ms',
+      transitionTimingFunction: 'cubic-bezier(0.42,0,0.58,1)',
+      transitionDelay: '10ms'
+    });
+    testTransition('none', {
+      transitionDuration: '0ms',
+      transitionTimingFunction: 'ease',
+      transitionDelay: '0ms'
+    });
   });
 });
