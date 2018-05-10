@@ -307,10 +307,10 @@ export default function() {
 
       properties.forEach((property) => {
         Object.defineProperty(this, property, {
-          get: function () {
+          get: function() {
             return this.properties[property];
           },
-          set: function (value) {
+          set: function(value) {
             this.properties[property] = value;
           }
         });
