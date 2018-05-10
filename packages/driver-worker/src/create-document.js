@@ -318,9 +318,12 @@ export default function() {
       this.properties = {
         direction: 'inherit',
         fillStyle: '#000',
-        lineCap: 'square',
+        strokeStyle: '#000',
+        lineCap: 'butt',
         lineDashOffset: 0,
-        textAlign: 'left'
+        textAlign: 'left',
+        lineJoin: 'miter',
+        lineWidth: 1
       };
     }
   }
