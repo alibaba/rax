@@ -1,15 +1,15 @@
 {
   "lerna": "2.0.0",
-  "version": "0.5.4",
+  "version": "0.6.3",
   "packages": [
     "packages/*",
-    "templates/*"
+    "templates/*",
+    "examples/*"
   ],
   "commands": {
     "publish": {
       "skipGit": true,
       "allowBranch": "master"
     }
-  },
-  "version": "independent"
+  }
 }

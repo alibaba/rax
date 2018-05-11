@@ -18,7 +18,7 @@ function getExamplesHtmlEntry() {
 
   fs.readdirSync(EXAMPLES_DIR)
     .forEach(file => {
-      let f = path.resolve(EXAMPLES_DIR, file, 'index.html');
+      let f = path.resolve(EXAMPLES_DIR, file, 'public/index.html');
       if (fs.existsSync(f)) {
         entry.push(f);
       }

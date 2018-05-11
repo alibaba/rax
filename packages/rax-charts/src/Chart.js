@@ -18,9 +18,8 @@ class Chart extends Component {
   };
 
   componentDidMount() {
-    this.chartInstance.getContext().then((context) => {
-      this.draw(context);
-    });
+    var context = this.chartInstance.getContext();
+    this.draw(context);
   }
 
   draw(context) {

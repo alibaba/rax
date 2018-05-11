@@ -16,7 +16,7 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
-const TEXT_CONTENT_ATTR = 'textContent' in document ? 'textContent' : 'nodeValue';
+const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in document ? 'textContent' : 'nodeValue';
 
 const Driver = {
 

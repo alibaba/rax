@@ -40,6 +40,12 @@ class ScrollView extends Component {
               x: e.target.scrollLeft,
               y: e.target.scrollTop
             };
+          },
+          get contentSize() {
+            return {
+              width: e.target.scrollWidth,
+              height: e.target.scrollHeight
+            };
           }
         };
         this.props.onScroll(e);
@@ -75,7 +81,11 @@ class ScrollView extends Component {
           // HACK: weex scroll event value is opposite of web
           x: -e.contentOffset.x,
           y: -e.contentOffset.y
-        }
+        },
+        contentSize: e.contentSize ? {
+          width: e.contentSize.width,
+          height: e.contentSize.height
+        } : null
       };
       this.props.onScroll(e);
     }

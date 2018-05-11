@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://alibaba.github.io/rax">
-    <img alt="Rax" src="https://gw.alicdn.com/L1/461/1/40137b64ab73a123e78d8246cd81c8379358c999_400x400.jpg" width="200">
+    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/39803702-603fd170-53a4-11e8-994d-bffc24e9fb07.png" width="56">
   </a>
 </p>
 
@@ -84,14 +84,15 @@ render(<Hello name="world" />);
 ```
 
 More examples take a look at the [`examples`](/examples/) folder:
-* [Components](./examples/components)
+* [Hello](./examples/hello)
 * [Redux](/examples/redux)
 * [Canvas](/examples/canvas)
 * [Charts](/examples/charts)
 * [Drag](/examples/drag)
 * [Animated](/examples/animated)
-* [Profile](/examples/profile)
-* [Parallax](/examples/parallax)
+* [WebGL](/examples/webgl)
+* [Component Showcase](./examples/components)
+* [Module Showcase](./examples/modules)
 
 ## Rax Renderers
 

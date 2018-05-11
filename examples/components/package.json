@@ -1,0 +1,46 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "rax-scripts start",
+    "build": "rax-scripts build"
+  },
+  "dependencies": {
+    "rax": "^0.6.3",
+    "rax-animated": "^0.6.2",
+    "rax-button": "^0.6.2",
+    "rax-calendar": "^0.6.2",
+    "rax-checkbox": "^0.6.2",
+    "rax-countdown": "^0.6.2",
+    "rax-gotop": "^0.6.2",
+    "rax-grid": "^0.6.2",
+    "rax-icon": "^0.6.2",
+    "rax-image": "^0.6.2",
+    "rax-link": "^0.6.2",
+    "rax-listview": "^0.6.2",
+    "rax-modal": "^0.6.2",
+    "rax-multirow": "^0.6.2",
+    "rax-parallax": "^0.6.2",
+    "rax-picture": "^0.6.2",
+    "rax-player": "^0.6.2",
+    "rax-recyclerview": "^0.6.2",
+    "rax-refreshcontrol": "^0.6.2",
+    "rax-scrollview": "^0.6.2",
+    "rax-slider": "^0.6.2",
+    "rax-switch": "^0.6.2",
+    "rax-tab-panel": "^0.6.2",
+    "rax-tabbar": "^0.6.2",
+    "rax-tabheader": "^0.6.2",
+    "rax-table": "^0.6.2",
+    "rax-text": "^0.6.2",
+    "rax-textinput": "^0.6.2",
+    "rax-touchable": "^0.6.2",
+    "rax-video": "^0.6.2",
+    "rax-view": "^0.6.2",
+    "rax-waterfall": "^0.6.2",
+    "universal-env": "^0.6.2"
+  },
+  "devDependencies": {
+    "rax-scripts": "^0.6.3"
+  },
+  "version": "0.6.3"
+}

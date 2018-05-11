@@ -1,3 +1,5 @@
+/* eslint indent: "off" */
+
 module.exports = function() {
   var base64 = {};
   var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';

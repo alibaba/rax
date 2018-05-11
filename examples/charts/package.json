@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "rax-scripts start",
+    "build": "rax-scripts build"
+  },
+  "dependencies": {
+    "rax": "^0.6.3",
+    "rax-charts": "^0.6.2"
+  },
+  "devDependencies": {
+    "rax-scripts": "^0.6.3"
+  },
+  "version": "0.6.3"
+}

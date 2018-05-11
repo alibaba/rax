@@ -77,7 +77,7 @@ class App extends Component {
 const styleSheet = appStyleSheet;
 ```
 
-Also support array, object and expressions like this: **（since 0.5.5）**
+Also support array, object and expressions like this: **（since 0.6.0）**
 
 ```js
 import { createElement, Component } from 'rax';
@@ -87,9 +87,9 @@ class App extends Component {
   render() {
     return (
       <div className={'header'}>
-        <div className={{ active: props.isActive }} />
-        <div className={['header1 header2', 'header3', { active: props.isActive }]} />
-        <div className={props.visible ? 'show' : 'hide'} />
+        <div className={{ active: this.props.isActive }} />
+        <div className={['header1 header2', 'header3', { active: this.props.isActive }]} />
+        <div className={this.props.visible ? 'show' : 'hide'} />
         <div className={getClassName()} />
       </div>
     );
@@ -107,9 +107,9 @@ class App extends Component {
   render() {
     return (
       <div style={styleSheet.header}>
-        <div style={_getStyle({ active: props.isActive })} />
-        <div style={_getStyle(['header1 header2', 'header3', { active: props.isActive }])} />
-        <div style={_getStyle(props.visible ? 'show' : 'hide')} />
+        <div style={_getStyle({ active: this.props.isActive })} />
+        <div style={_getStyle(['header1 header2', 'header3', { active: this.props.isActive }])} />
+        <div style={_getStyle(this.props.visible ? 'show' : 'hide')} />
         <div style={_getStyle(getClassName())} />
       </div>
     );

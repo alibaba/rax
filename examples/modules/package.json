@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "dependencies": {
+    "rax": "^0.6.3",
+    "rax-button": "^0.6.2",
+    "rax-image": "^0.6.2",
+    "rax-link": "^0.6.2",
+    "rax-scrollview": "^0.6.2",
+    "rax-text": "^0.6.2",
+    "rax-view": "^0.6.2",
+    "universal-env": "^0.6.2",
+    "universal-jsonp": "^0.6.2",
+    "universal-platform": "^0.6.2",
+    "universal-toast": "^0.6.2"
+  },
+  "scripts": {
+    "start": "rax-scripts start",
+    "build": "rax-scripts build"
+  },
+  "devDependencies": {
+    "rax-scripts": "^0.6.3"
+  },
+  "version": "0.6.3"
+}
