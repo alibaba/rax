@@ -2,3 +2,4 @@ coverage/
 node_modules/
 packages/
 templates/
+package-lock.json
