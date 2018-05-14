@@ -41,9 +41,10 @@ const global =
     : typeof global === 'object'
       ? global
       : {};
+
 // Default 1 rem to 1 px
-if (global[GLOBAL_REM_UNIT] == null) {
-  global[GLOBAL_REM_UNIT] = 1;
+if (getRem() === undefined) {
+  setRem(1);
 }
 
 /**
