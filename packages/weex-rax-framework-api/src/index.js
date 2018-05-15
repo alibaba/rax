@@ -248,18 +248,11 @@ export function resetInstanceContext(instanceContext) {
       }, function() {});
     },
     open: (url) => {
-      if (isInWindmill) {
-        windmill.$navTo({
-          url,
-          animated: true,
-        });
-      } else {
-        const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
-        weexNavigator.push({
-          url,
-          animated: true,
-        }, noop);
-      }
+      const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
+      weexNavigator.push({
+        url,
+        animated: true,
+      }, noop);
     },
     close: () => {
       const weexNavigator = __weex_require__(NAVIGATOR_MODULE);
@@ -345,9 +338,21 @@ export function resetInstanceContext(instanceContext) {
     __weex_config__
   };
 
+  let builtinGlobals = {};
+  let builtinModules = {};
+  try {
+    builtinGlobals = __weex_config__.services.builtinGlobals;
+    // Modules should wrap as module factory format
+    builtinModules = __weex_config__.services.builtinModules;
+  } catch (e) {}
+
+  Object.assign(window, builtinGlobals);
+
+  const moduleFactories = {...ModuleFactories, ...builtinModules};
+
   genBuiltinModules(
     modules,
-    ModuleFactories,
+    moduleFactories,
     window
   );
 
