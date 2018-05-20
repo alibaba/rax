@@ -27,8 +27,8 @@ function createAttributeFilter(ns, name) {
 let resolved = typeof Promise !== 'undefined' && Promise.resolve();
 const setImmediate = resolved
   ? f => {
-      resolved.then(f);
-    }
+    resolved.then(f);
+  }
   : setTimeout;
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -48,8 +48,8 @@ export default function() {
         match = target === ob._target;
       if (!match && ob._options.subtree) {
         do {
-          if ((match = target === ob._target)) break;
-        } while ((target = target.parentNode));
+          if (match = target === ob._target) break;
+        } while (target = target.parentNode);
       }
       if (match) {
         ob._records.push(record);
@@ -224,7 +224,7 @@ export default function() {
 
     setAttributeNS(ns, name, value) {
       let attr = findWhere(this.attributes, createAttributeFilter(ns, name));
-      if (!attr) this.attributes.push((attr = { ns, name }));
+      if (!attr) this.attributes.push(attr = { ns, name });
 
       // array and plain object will pass
       // through, instead of calling `toString`
@@ -258,7 +258,7 @@ export default function() {
       mutation(this, 'events', { eventName: type });
     }
     dispatchEvent(event) {
-      let t = (event.currentTarget = this),
+      let t = event.currentTarget = this,
         c = event.cancelable,
         l,
         i;
@@ -459,7 +459,7 @@ export default function() {
     let document = new Document();
     assign(
       document,
-      (document.defaultView = {
+      document.defaultView = {
         document,
         MutationObserver,
         Document,
@@ -468,7 +468,7 @@ export default function() {
         Element,
         SVGElement: Element,
         Event
-      })
+      }
     );
 
     assign(document, {
@@ -478,12 +478,12 @@ export default function() {
       createTextNode
     });
 
-    document.appendChild((document.documentElement = createElement('html')));
+    document.appendChild(document.documentElement = createElement('html'));
     document.documentElement.appendChild(
-      (document.head = createElement('head'))
+      document.head = createElement('head')
     );
     document.documentElement.appendChild(
-      (document.body = createElement('body'))
+      document.body = createElement('body')
     );
     return document;
   }
