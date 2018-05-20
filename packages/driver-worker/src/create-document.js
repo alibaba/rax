@@ -75,6 +75,7 @@ export default function() {
     constructor(callback) {
       this.callback = callback;
       this._records = [];
+      this._recordsMap = new Map();
     }
     observe(target, options) {
       this.disconnect();
@@ -87,6 +88,7 @@ export default function() {
       splice(observers, this);
     }
     takeRecords() {
+      this._recordsMap = new Map();
       return this._records.splice(0, this._records.length);
     }
   }
@@ -128,6 +130,28 @@ export default function() {
         mutation(this, 'childList', { addedNodes: [child], nextSibling: ref });
       } else {
         this.childNodes.push(child);
+
+        // whether this is already in mutation records
+        let inRecords = false;
+        for (let i = 0, l = observers.length; i < l; i++) {
+          const { _recordsMap } = observers[i];
+
+          _recordsMap.set(child, child);
+
+          /**
+           * if parent in records
+           * it will aumaticlly added
+           * by childNodes ref
+           */
+          if (_recordsMap.has(this)) {
+            inRecords = true;
+          }
+        }
+
+        if (inRecords) {
+          return child;
+        }
+
         mutation(this, 'childList', { addedNodes: [child] });
       }
 
@@ -289,9 +313,55 @@ export default function() {
       this.vnode = vnode;
 
       // canvas api
-      const methods = ['arc', 'arcTo', 'addHitRegion', 'beginPath', 'bezierCurveTo', 'clearHitRegions', 'clearRect', 'clip', 'closePath', 'createImageData', 'createLinearGradient', 'createPattern', 'createRadialGradient', 'drawFocusIfNeeded', 'drawImage', 'drawWidgetAsOnScreen', 'drawWindow', 'ellipse', 'fill', 'fillRect', 'fillText', 'getImageData', 'getLineDash', 'isPointInPath', 'isPointInStroke', 'lineTo', 'measureText', 'moveTo', 'putImageData', 'quadraticCurveTo', 'rect', 'removeHitRegion', 'resetTransform', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'];
+      const methods = [
+        'arc',
+        'arcTo',
+        'addHitRegion',
+        'beginPath',
+        'bezierCurveTo',
+        'clearHitRegions',
+        'clearRect',
+        'clip',
+        'closePath',
+        'createImageData',
+        'createLinearGradient',
+        'createPattern',
+        'createRadialGradient',
+        'drawFocusIfNeeded',
+        'drawImage',
+        'drawWidgetAsOnScreen',
+        'drawWindow',
+        'ellipse',
+        'fill',
+        'fillRect',
+        'fillText',
+        'getImageData',
+        'getLineDash',
+        'isPointInPath',
+        'isPointInStroke',
+        'lineTo',
+        'measureText',
+        'moveTo',
+        'putImageData',
+        'quadraticCurveTo',
+        'rect',
+        'removeHitRegion',
+        'resetTransform',
+        'restore',
+        'rotate',
+        'save',
+        'scale',
+        'scrollPathIntoView',
+        'setLineDash',
+        'setTransform',
+        'stroke',
+        'strokeRect',
+        'strokeText',
+        'transform',
+        'translate'
+      ];
 
-      methods.forEach((method) => {
+      methods.forEach(method => {
         this[method] = (...args) => {
           mutation(this.vnode, 'canvas', {
             canvasId: this.canvasId,
@@ -303,9 +373,30 @@ export default function() {
       });
 
       // canvas properties
-      const properties = ['direction', 'fillStyle', 'filter', 'font', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline'];
+      const properties = [
+        'direction',
+        'fillStyle',
+        'filter',
+        'font',
+        'globalAlpha',
+        'globalCompositeOperation',
+        'imageSmoothingEnabled',
+        'imageSmoothingQuality',
+        'lineCap',
+        'lineDashOffset',
+        'lineJoin',
+        'lineWidth',
+        'miterLimit',
+        'shadowBlur',
+        'shadowColor',
+        'shadowOffsetX',
+        'shadowOffsetY',
+        'strokeStyle',
+        'textAlign',
+        'textBaseline'
+      ];
 
-      properties.forEach((property) => {
+      properties.forEach(property => {
         Object.defineProperty(this, property, {
           get: function() {
             return this.properties[property];
