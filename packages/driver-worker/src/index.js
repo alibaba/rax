@@ -7,7 +7,7 @@ const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
-
+const BODY = 'BODY';
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
 const TO_SANITIZE = [
@@ -17,6 +17,7 @@ const TO_SANITIZE = [
   'nextSibling',
   'previousSibling'
 ];
+
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
@@ -30,7 +31,7 @@ export default ({ postMessage, addEventListener }) => {
     if (node && typeof node === 'object') id = node.$$id;
     if (typeof node === 'string') id = node;
     if (!id) return null;
-    if (node.nodeName === 'BODY') return document.body;
+    if (node.nodeName === BODY) return document.body;
     return NODES.get(id);
   }
 
@@ -56,13 +57,13 @@ export default ({ postMessage, addEventListener }) => {
     }
 
     let out = {
-      $$id: obj.$$id,
+      $$id: obj.$$id
     };
 
-    if (obj.nodeName === 'BODY') {
-      out.nodeName = obj.nodeName;
+    if (obj.nodeName === BODY) {
+      out.nodeName = BODY;
     } else if (prop === 'addedNodes') {
-      if (out.data) {
+      if (obj.data) {
         out.data = obj.data;
       } else {
         out = {
@@ -70,10 +71,10 @@ export default ({ postMessage, addEventListener }) => {
           events: Object.keys(obj.eventListeners || {}),
           attributes: obj.attributes,
           nodeName: obj.nodeName,
-          nodeType: obj.nodeType,
           style: obj.style,
         };
       }
+      out.nodeType = obj.nodeType;
     }
 
     return out;
@@ -87,14 +88,10 @@ export default ({ postMessage, addEventListener }) => {
         mutation[prop] = sanitize(mutation[prop], prop);
       }
     }
-    send({ type: 'MutationRecord', mutations });
+    postMessage({ type: 'MutationRecord', mutations });
   });
 
   mutationObserver.observe(document, { subtree: true });
-
-  function send(message) {
-    postMessage(JSON.parse(JSON.stringify(message)));
-  }
 
   addEventListener('message', ({ data }) => {
     switch (data.type) {
