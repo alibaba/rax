@@ -1,14 +1,6 @@
 import { convertUnit, setRem } from 'style-unit';
 import createDocument from './create-document';
 
-const TO_SANITIZE = [
-  'addedNodes',
-  'removedNodes',
-  'nextSibling',
-  'previousSibling',
-  'target'
-];
-
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -18,6 +10,13 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
+const TO_SANITIZE = [
+  'target',
+  'addedNodes',
+  'removedNodes',
+  'nextSibling',
+  'previousSibling'
+];
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
@@ -43,10 +42,10 @@ export default ({ postMessage, addEventListener }) => {
     }
   }
 
-  function sanitize(obj) {
+  function sanitize(obj, prop) {
     if (!obj || typeof obj !== 'object') return obj;
 
-    if (Array.isArray(obj)) return obj.map(sanitize);
+    if (Array.isArray(obj)) return obj.map(o => sanitize(o, prop));
 
     if (obj instanceof document.defaultView.Node) {
       let id = obj.$$id;
@@ -58,17 +57,23 @@ export default ({ postMessage, addEventListener }) => {
 
     let out = {
       $$id: obj.$$id,
-      events: Object.keys(obj.eventListeners || {}),
-      attributes: obj.attributes,
-      nodeName: obj.nodeName,
-      nodeType: obj.nodeType,
-      style: obj.style,
-      childNodes: obj.childNodes,
-      data: obj.data
     };
 
-    if (out.childNodes && out.childNodes.length) {
-      out.childNodes = sanitize(out.childNodes);
+    if (obj.nodeName === 'BODY') {
+      out.nodeName = obj.nodeName;
+    } else if (prop === 'addedNodes') {
+      if (out.data) {
+        out.data = obj.data;
+      } else {
+        out = {
+          ...out,
+          events: Object.keys(obj.eventListeners || {}),
+          attributes: obj.attributes,
+          nodeName: obj.nodeName,
+          nodeType: obj.nodeType,
+          style: obj.style,
+        };
+      }
     }
 
     return out;
@@ -79,7 +84,7 @@ export default ({ postMessage, addEventListener }) => {
       let mutation = mutations[i];
       for (let j = TO_SANITIZE.length; j--; ) {
         let prop = TO_SANITIZE[j];
-        mutation[prop] = sanitize(mutation[prop]);
+        mutation[prop] = sanitize(mutation[prop], prop);
       }
     }
     send({ type: 'MutationRecord', mutations });

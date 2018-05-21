@@ -166,46 +166,44 @@ export default ({ worker, tagNamePrefix = '' }) => {
         }
       }
     },
-    attributes({ target, attributeName }) {
-      // TODO performance optimize
+    attributes({ target, attributeName, newValue }) {
       let vnode = target;
-      let val;
-      for (let i = vnode.attributes.length; i--; ) {
-        let p = vnode.attributes[i];
-        if (p.name === attributeName) {
-          val = p.value;
-          break;
-        }
-      }
-      // TODO attributes remove handle
       let node = getNode(vnode);
-      if (typeof val === 'object') {
-        node[attributeName] = val;
+      if (newValue == null) {
+        node.removeAttribute(attributeName);
+      } else if (typeof newValue === 'object') {
+        node[attributeName] = newValue;
       } else {
-        node.setAttribute(attributeName, val);
+        node.setAttribute(attributeName, newValue);
       }
     },
-    characterData({ target, oldValue }) {
+    characterData({ target, newValue }) {
       let vnode = target;
       let node = getNode(vnode);
-      node[TEXT_CONTENT_ATTR] = vnode.data;
+      node[TEXT_CONTENT_ATTR] = newValue;
     },
-    events({ target, eventName }) {
+    addEvent({ target, eventName }) {
       addEvent(eventName);
     },
-    canvas(data) {
-      const { canvasId, method, args, properties } = data;
-      const canvas =
-        canvasCache[canvasId] ||
-        (canvasCache[canvasId] = document.querySelector(
-          `[data-canvas-identifier="${canvasId}"]`
-        ));
-      for (let key in properties) {
-        if (properties.hasOwnProperty(key)) {
-          canvas.context2d[key] = properties[key];
+    removeEvent({ target, eventName }) {
+      removeEvent(eventName);
+    },
+    canvasRenderingContext2D({ target, method, args, properties }) {
+      let vnode = target;
+      let canvas = getNode(vnode);
+      let context = canvas.getContext('2d');
+
+      if (properties) {
+        for (let key in properties) {
+          if (properties.hasOwnProperty(key)) {
+            context[key] = properties[key];
+          }
         }
       }
-      canvas.context2d[method].apply(canvas.context2d, args);
+
+      if (method) {
+        context[method].apply(context, args);
+      }
     }
   };
 
