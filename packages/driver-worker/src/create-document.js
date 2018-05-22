@@ -156,7 +156,7 @@ export default function() {
       this.data = text;
     }
     set textContent(text) {
-      mutation(this, 'characterData', { oldValue: this.data });
+      mutation(this, 'characterData', { newValue: text });
       this.data = text;
     }
     get textContent() {
@@ -191,9 +191,11 @@ export default function() {
     setAttribute(key, value) {
       this.setAttributeNS(null, key, value);
     }
+
     getAttribute(key) {
       return this.getAttributeNS(null, key);
     }
+
     removeAttribute(key) {
       this.removeAttributeNS(null, key);
     }
@@ -211,12 +213,14 @@ export default function() {
         attr.value = String(value);
       }
 
-      mutation(this, 'attributes', { attributeName: name });
+      mutation(this, 'attributes', { attributeName: name, newValue: value });
     }
+
     getAttributeNS(ns, name) {
       let attr = findWhere(this.attributes, createAttributeFilter(ns, name));
       return attr && attr.value;
     }
+
     removeAttributeNS(ns, name) {
       splice(this.attributes, createAttributeFilter(ns, name));
       mutation(this, 'attributes', { attributeName: name });
@@ -227,17 +231,19 @@ export default function() {
         this.eventListeners[toLower(type)] ||
         (this.eventListeners[toLower(type)] = [])
       ).push(handler);
-      mutation(this, 'events', { eventName: type });
+      mutation(this, 'addEvent', { eventName: type });
     }
+
     removeEventListener(type, handler) {
       splice(this.eventListeners[toLower(type)], handler, 0, true);
-      mutation(this, 'events', { eventName: type });
+      mutation(this, 'removeEvent', { eventName: type });
     }
+
     dispatchEvent(event) {
-      let t = event.currentTarget = this,
-        c = event.cancelable,
-        l,
-        i;
+      let t = event.currentTarget = this;
+      let c = event.cancelable;
+      let l;
+      let i;
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
@@ -284,65 +290,73 @@ export default function() {
   }
 
   class CanvasRenderingContext2D {
-    constructor(cvsId, vnode) {
-      this.canvasId = cvsId;
-      this.vnode = vnode;
+    constructor(vnode) {
+      this.canvas = vnode;
 
-      // canvas api
-      const methods = ['arc', 'arcTo', 'addHitRegion', 'beginPath', 'bezierCurveTo', 'clearHitRegions', 'clearRect', 'clip', 'closePath', 'createImageData', 'createLinearGradient', 'createPattern', 'createRadialGradient', 'drawFocusIfNeeded', 'drawImage', 'drawWidgetAsOnScreen', 'drawWindow', 'ellipse', 'fill', 'fillRect', 'fillText', 'getImageData', 'getLineDash', 'isPointInPath', 'isPointInStroke', 'lineTo', 'measureText', 'moveTo', 'putImageData', 'quadraticCurveTo', 'rect', 'removeHitRegion', 'resetTransform', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'];
+      let propertyValues = {
+        fillStyle: '#000000',
+        filter: 'none',
+        font: '10px sans-serif',
+        globalAlpha: 1,
+        globalCompositeOperation: 'source-over',
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'low',
+        lineCap: 'butt',
+        lineDashOffset: 0,
+        lineJoin: 'miter',
+        lineWidth: 1,
+        miterLimit: 10,
+        shadowBlur: 0,
+        shadowColor: 'rgba(0, 0, 0, 0)',
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+        strokeStyle: '#000000',
+        textAlign: 'start',
+        textBaseline: 'alphabetic'
+      };
 
-      methods.forEach((method) => {
-        this[method] = (...args) => {
-          mutation(this.vnode, 'canvas', {
-            canvasId: this.canvasId,
-            method: method,
-            args: args,
-            properties: this.properties
-          });
-        };
-      });
-
-      // canvas properties
+      // context properties
       const properties = ['direction', 'fillStyle', 'filter', 'font', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline'];
 
       properties.forEach((property) => {
         Object.defineProperty(this, property, {
           get: function() {
-            return this.properties[property];
+            return propertyValues[property];
           },
           set: function(value) {
-            this.properties[property] = value;
+            propertyValues[property] = value;
           }
         });
       });
-      this.properties = {
-        direction: 'inherit',
-        fillStyle: '#000',
-        strokeStyle: '#000',
-        lineCap: 'butt',
-        lineDashOffset: 0,
-        textAlign: 'left',
-        lineJoin: 'miter',
-        lineWidth: 1
-      };
+
+      // context api
+      const methods = ['arc', 'arcTo', 'addHitRegion', 'beginPath', 'bezierCurveTo', 'clearHitRegions', 'clearRect', 'clip', 'closePath', 'createImageData', 'createLinearGradient', 'createPattern', 'createRadialGradient', 'drawFocusIfNeeded', 'drawImage', 'drawWidgetAsOnScreen', 'drawWindow', 'ellipse', 'fill', 'fillRect', 'fillText', 'getImageData', 'getLineDash', 'isPointInPath', 'isPointInStroke', 'lineTo', 'measureText', 'moveTo', 'putImageData', 'quadraticCurveTo', 'rect', 'removeHitRegion', 'resetTransform', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'];
+
+      methods.forEach((method) => {
+        this[method] = (...args) => {
+          mutation(vnode, 'canvasRenderingContext2D', {
+            method: method,
+            args: args,
+            properties: propertyValues
+          });
+        };
+      });
     }
   }
 
-  let canvasId = 0;
   class CanvasElement extends Element {
     constructor(...args) {
       super(...args);
-      this.canvasId = ++canvasId;
-      this.setAttribute('data-canvas-identifier', this.canvasId);
     }
     getContext(contextType) {
       if (contextType === '2d') {
-        return new CanvasRenderingContext2D(this.canvasId, this);
+        return new CanvasRenderingContext2D(this);
       } else {
         return {};
       }
     }
   }
+
   function createComment(content) {
     return new Comment(content);
   }
