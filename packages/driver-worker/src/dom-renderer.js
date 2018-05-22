@@ -137,7 +137,6 @@ export default ({ worker, tagNamePrefix = '' }) => {
           addEvent(vnode.events[i]);
         }
       }
-
     } else if (vnode.nodeType === 8) {
       node = document.createComment(vnode.data);
     }
