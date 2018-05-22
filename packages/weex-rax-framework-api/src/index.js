@@ -142,7 +142,7 @@ export function resetInstanceContext(instanceContext) {
   } = require('./fetch.weex')(__weex_require__, Promise);
 
   const XMLHttpRequest = require('./xmlhttprequest.weex')(__weex_require__);
-  const WebSocket = require('./websocket.weex')(__weex_require__);
+  const WebSocket = require('./websocket.weex')(__weex_require__, isInWindmill);
 
   const {
     setTimeout,

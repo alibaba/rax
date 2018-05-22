@@ -31,7 +31,7 @@ class WebSocketEvent {
   }
 }
 
-module.exports = function(__weex_require__) {
+module.exports = function(__weex_require__, isInWindmill) {
   /**
    * Browser-compatible WebSockets implementation.
    *
@@ -48,6 +48,21 @@ module.exports = function(__weex_require__) {
       super();
 
       let websocket = __weex_require__(WEB_SOCKET_MODULE);
+      
+      let newWebSocket = websocket.WebSocket;
+      let onopen = websocket.onopen;
+      let onclose = websocket.onclose;
+      let onmessage = websocket.onmessage;
+      let onerror = websocket.onerror;
+
+      if (isInWindmill) {
+        newWebSocket = websocket.webSocket;
+        onopen = websocket.onOpen;
+        onclose = websocket.onClose;
+        onmessage = websocket.onMessage;
+        onerror = websocket.onError;
+      }
+
       // eslint-disable-next-line new-cap
       websocket.WebSocket(url, protocols);
       this.readyState = CONNECTING;
