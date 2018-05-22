@@ -16,6 +16,7 @@ class Picker extends Component {
       children,
       selectedValue
     } = this.props;
+    
     let pickerItems = [],
       pickerLabelList = [],
       items = [],
@@ -72,22 +73,23 @@ class Picker extends Component {
       selectedValue,
     } = this.props;
 
+    const pickerData = this.getPickerData();
+
     if (isWeex) {
       const picker = __weex_require__('@weex-module/picker');
-      const pickerData = this.getPickerData();
       picker.pick({
         index: pickerData.selectIndex,
         items: pickerData.pickerLabelList,
       }, event => {
         if (event.result === 'success') {
-          let {value, label} = this.getPickerDataByIndex(event.data, pickerData);
-          onValueChange && onValueChange(value, pickerData.items);
+          let index = event.data;
+          let {value} = this.getPickerDataByIndex(index, pickerData);
+          onValueChange && onValueChange(value, index);
         }
       });
     } else {
-      const pickerData = this.getPickerData();
       let {value} = this.getPickerDataByIndex(webIndex, pickerData);
-      onValueChange && onValueChange(value, pickerData.items);
+      onValueChange && onValueChange(value, webIndex);
     }
   }
 

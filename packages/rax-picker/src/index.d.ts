@@ -16,9 +16,9 @@ export interface PickerProps extends BaseProps {
     /**
      * option switch (选项切换)
      * @param {string} value
-     * @param {Array<string>} items
+     * @param {number} index
      */
-    onValueChange?: (value: string, items: Array<string>) => void;
+    onValueChange?: (value: string, index: number) => void;
 
 }
 

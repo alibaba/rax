@@ -21,6 +21,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
+    "rax": "^0.6.3",
     "rax-text": "^0.6.3",
     "rax-touchable": "^0.6.3",
     "universal-env": "^0.6.3"
