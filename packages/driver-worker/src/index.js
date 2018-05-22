@@ -1,6 +1,9 @@
 import { convertUnit, setRem } from 'style-unit';
 import createDocument from './create-document';
 
+const ELEMENT_NODE = 1;
+const TEXT_NODE = 3;
+const COMMENT_NODE = 8;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -17,7 +20,6 @@ const TO_SANITIZE = [
   'nextSibling',
   'previousSibling'
 ];
-
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
@@ -63,9 +65,9 @@ export default ({ postMessage, addEventListener }) => {
     if (obj.nodeName === BODY) {
       out.nodeName = BODY;
     } else if (prop === 'addedNodes') {
-      if (obj.data) {
-        out.data = obj.data;
-      } else {
+      let nodeType = obj.nodeType;
+
+      if (nodeType === ELEMENT_NODE) {
         out = {
           ...out,
           events: Object.keys(obj.eventListeners || {}),
@@ -73,8 +75,11 @@ export default ({ postMessage, addEventListener }) => {
           nodeName: obj.nodeName,
           style: obj.style,
         };
+      } else if (nodeType === COMMENT_NODE || nodeType === TEXT_NODE) {
+        out.data = obj.data;
       }
-      out.nodeType = obj.nodeType;
+
+      out.nodeType = nodeType;
     }
 
     return out;
