@@ -16,7 +16,7 @@ class Picker extends Component {
       children,
       selectedValue
     } = this.props;
-    
+
     let pickerItems = [],
       pickerLabelList = [],
       items = [],
