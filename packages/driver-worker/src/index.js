@@ -18,7 +18,6 @@ const TO_SANITIZE = [
   'previousSibling'
 ];
 
-
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
   let MutationObserver = document.defaultView.MutationObserver;
@@ -63,7 +62,7 @@ export default ({ postMessage, addEventListener }) => {
     if (obj.nodeName === BODY) {
       out.nodeName = BODY;
     } else if (prop === 'addedNodes') {
-      if (obj.data) {
+      if (typeof obj.data === 'string') {
         out.data = obj.data;
       } else {
         out = {
@@ -71,7 +70,7 @@ export default ({ postMessage, addEventListener }) => {
           events: Object.keys(obj.eventListeners || {}),
           attributes: obj.attributes,
           nodeName: obj.nodeName,
-          style: obj.style,
+          style: obj.style
         };
       }
       out.nodeType = obj.nodeType;
