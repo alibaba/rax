@@ -1,15 +1,6 @@
 const MODULE_NAME_PREFIX = '@weex-module/';
 
-const availableWindmillModules = {
-  'network': ['request'],
-  'mtop': ['request'],
-  'storage': ['length', 'setItem', 'getItem', 'removeItem'],
-  'memoryStorage': ['setItem', 'getItem'],
-  'navigator': ['push', 'pop'],
-  'user': ['login', 'logout', 'info'],
-  'modal': ['alert', 'confirm', 'toast'],
-  'navigatorBar': ['show', 'hide', 'setTitle', 'setRightItem', 'setStyle', 'setDrawer', 'setActionSheet', 'openDrawer', 'closeDrawer'],
-};
+let availableWindmillModules = {};
 
 function isAvailableWindmillModule(moduleName) {
   return availableWindmillModules[moduleName] && availableWindmillModules[moduleName].length;
@@ -24,6 +15,9 @@ module.exports = function(modules, weex, windmill) {
     // if require '@weex-module/'
     if (name.split(MODULE_NAME_PREFIX).length > 1) {
       let weexModuleName = name.split(MODULE_NAME_PREFIX)[1];
+      if (isInWindmill) {
+        availableWindmillModules = windmill.$getAvailableModules();
+      }
       if (isInWindmill && weexModuleName == 'stream') {
         weexModuleName = 'network';
       }
