@@ -39,7 +39,7 @@ const SVG_TAG_LIST = [
   'tspan',
   'tref',
   'clipPath'
-  ];
+];
 
 
 const Driver = {
