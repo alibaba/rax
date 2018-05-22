@@ -50,12 +50,9 @@ export default ({ postMessage, addEventListener }) => {
 
     if (Array.isArray(obj)) return obj.map(o => sanitize(o, prop));
 
-    if (obj instanceof document.defaultView.Node) {
-      let id = obj.$$id;
-      if (!id) {
-        id = obj.$$id = String(++COUNTER);
-      }
-      NODES.set(id, obj);
+    if (!obj.$$id) {
+      obj.$$id = String(++COUNTER);
+      NODES.set(obj.$$id, obj);
     }
 
     let out = {
@@ -75,7 +72,7 @@ export default ({ postMessage, addEventListener }) => {
           nodeName: obj.nodeName,
           style: obj.style,
         };
-      } else if (nodeType === COMMENT_NODE || nodeType === TEXT_NODE) {
+      } else if (nodeType === TEXT_NODE || nodeType === COMMENT_NODE) {
         out.data = obj.data;
       }
 
