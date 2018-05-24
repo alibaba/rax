@@ -292,7 +292,7 @@ export function resetInstanceContext(instanceContext) {
 
         // for miniapp worker
         if (targetOrigin == '*' || targetOrigin == 'worker') {
-          windmill.$emit('message@' + instanceId, data: data, 'AppWorker');
+          windmill.$emit('message', data, 'AppWorker');
         }
 
       } else if (typeof BroadcastChannel === 'function') {
