@@ -286,7 +286,9 @@ export function resetInstanceContext(instanceContext) {
         }, () => {
           broadcast.postMessage({
             instanceId: broadcastID,
-            message: data,
+            message: {
+              data: data
+            },
           });
         });
 
@@ -324,7 +326,7 @@ export function resetInstanceContext(instanceContext) {
             }, (message) => {
               console.log('[rax jsfm] windmill addEventListener ' + id1);
               listener({
-                data: message
+                data: message.data
               });
             });
           });
@@ -338,7 +340,7 @@ export function resetInstanceContext(instanceContext) {
             }, (message) => {
               console.log('[rax jsfm] windmill addEventListener ' + id2);
               listener({
-                data: message
+                data: message.data
               });
             });
           });
