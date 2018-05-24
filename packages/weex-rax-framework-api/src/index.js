@@ -1,7 +1,8 @@
-import setupWindmillRenderer from '@ali/windmill-renderer';
 /* global BroadcastChannel */
 'use strict';
 
+import setupWindmillRenderer from '@ali/windmill-renderer';
+// import setupWindmillRenderer from '@ali/windmill-renderer/dist/windmill.renderer';
 import {ModuleFactories} from './builtin';
 import EventEmitter from './emitter';
 
@@ -16,6 +17,7 @@ const MODULE_NAME_PREFIX = '@weex-module/';
 const MODAL_MODULE = MODULE_NAME_PREFIX + 'modal';
 const NAVIGATOR_MODULE = MODULE_NAME_PREFIX + 'navigator';
 const GLOBAL_EVENT_MODULE = MODULE_NAME_PREFIX + 'globalEvent';
+const BROADCAST_EVENT_MODULE = MODULE_NAME_PREFIX + 'broadcast';
 const noop = function() {};
 
 function genBuiltinModules(modules, moduleFactories, context) {
@@ -177,6 +179,7 @@ export function resetInstanceContext(instanceContext) {
     registerErrorHandler.once = true;
   }
 
+  let broadcastID = 1;
   const window = {
     // ES
     Promise,
@@ -261,14 +264,38 @@ export function resetInstanceContext(instanceContext) {
       }, noop, noop);
     },
     postMessage: (message, targetOrigin) => {
+      var data = JSON.parse(JSON.stringify(message));
       var event = {
         origin: location.origin,
-        data: JSON.parse(JSON.stringify(message)),
+        data: data,
         type: 'message',
         source: window, // FIXME: maybe not export window
       };
 
-      if (typeof BroadcastChannel === 'function') {
+      if (isInWindmill) {
+        broadcastID++;
+        console.log('[rax jsfm] windmill postmessage ' + broadcastID);
+        let name = 'message' + targetOrigin;
+        if (targetOrigin == '*') {
+          name = 'message';
+        }
+        let broadcast = __weex_require__(BROADCAST_EVENT_MODULE);
+        broadcast.createChannel({
+          instanceId: broadcastID,
+          name: name,
+        }, () => {
+          broadcast.postMessage({
+            instanceId: broadcastID,
+            message: data,
+          });
+        });
+
+        // for miniapp worker
+        if (targetOrigin == '*' || targetOrigin == 'worker') {
+          windmill.$emit('message@' + instanceId, data: data, 'AppWorker');
+        }
+
+      } else if (typeof BroadcastChannel === 'function') {
         if (targetOrigin == '*') {
           var stack = new BroadcastChannel('message');
           stack.postMessage(event);
@@ -279,9 +306,52 @@ export function resetInstanceContext(instanceContext) {
       }
     },
     addEventListener: (type, listener) => {
-      console.log('window.addEventListener ' + type);
       if (type === 'message') {
-        if (typeof BroadcastChannel === 'function') {
+        if (isInWindmill) {
+          
+          // for miniapp page
+          let broadcast = __weex_require__(BROADCAST_EVENT_MODULE);
+          broadcastID++;
+          const id1 = broadcastID;
+          broadcastID++;
+          const id2 = broadcastID;
+          broadcast.createChannel({
+            instanceId: id1,
+            name: 'message',
+          }, () => {
+            broadcast.onMessage({
+              instanceId: id1
+            }, (message) => {
+              console.log('[rax jsfm] windmill addEventListener ' + id1);
+              listener({
+                data: message
+              });
+            });
+          });
+
+          broadcast.createChannel({
+            instanceId: id2,
+            name: 'message' + bundleUrl,
+          }, () => {
+            broadcast.onMessage({
+              instanceId: id2
+            }, (message) => {
+              console.log('[rax jsfm] windmill addEventListener ' + id2);
+              listener({
+                data: message
+              });
+            });
+          });
+
+          // for miniapp worker
+          windmill.$on(type, (e) => {
+            e.origin = 'worker';
+            listener(e);
+          });
+
+        } else if (typeof BroadcastChannel === 'function') {
+
+          // for weex page
           var stack = new BroadcastChannel('message');
           var thisStack = new BroadcastChannel('message' + bundleUrl);
           stack.onmessage = (e) => {
@@ -290,13 +360,7 @@ export function resetInstanceContext(instanceContext) {
           thisStack.onmessage = (e) => {
             listener(e.data);
           };
-        }
-        // for miniApp
-        if (isInWindmill) {
-          windmill.$on(type, (e) => {
-            e.origin = 'worker';
-            listener(e);
-          });
+
         }
       } else {
         windowEmitter.on(type, listener);
