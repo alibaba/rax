@@ -172,6 +172,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
               hasClassName = name.name === 'className';
               classNameAttribute = hasClassName && attributes[i];
               classAttribute = hasClassName && attributes[i];
+              attributes[i].name.name = 'class';
             }
           }
         }
@@ -179,10 +180,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
 
         if (hasClassName) {
           // Remove origin className
-          attributes.splice(attributes.indexOf(classNameAttribute), 1);
-          // Add origin class
-          classAttribute.name.name = 'class';
-          attributes.push(classAttribute);
+          // attributes.splice(attributes.indexOf(classNameAttribute), 1);
 
           if (
             classNameAttribute.value &&
