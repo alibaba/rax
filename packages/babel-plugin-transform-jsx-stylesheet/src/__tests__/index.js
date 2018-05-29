@@ -89,7 +89,7 @@ import appStyleSheet from './app.css';
 var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
-    return <div style={_styleSheet["header"]} />;
+    return <div class="header" style={_styleSheet["header"]} />;
   }
 }`);
   });
@@ -110,7 +110,7 @@ import appStyleSheet from './app.css';
 var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header1"], _styleSheet["header2"]]} />;
+    return <div class="header1 header2" style={[_styleSheet["header1"], _styleSheet["header2"]]} />;
   }
 }`);
   });
@@ -141,11 +141,11 @@ ${getStyleFunctionTemplete}
 
 class App extends Component {
   render() {
-    return <div style={_styleSheet["header"]}>
-      <div style={_getStyle({ active: props.isActive })} />
-      <div style={_getStyle(['header1 header2', 'header3', { active: props.isActive }])} />
-      <div style={_getStyle(props.visible ? 'show' : 'hide')} />
-      <div style={_getStyle(getClassName())} />
+    return <div class={'header'} style={_styleSheet["header"]}>
+      <div class={{ active: props.isActive }} style={_getStyle({ active: props.isActive })} />
+      <div class={['header1 header2', 'header3', { active: props.isActive }]} style={_getStyle(['header1 header2', 'header3', { active: props.isActive }])} />
+      <div class={props.visible ? 'show' : 'hide'} style={_getStyle(props.visible ? 'show' : 'hide')} />
+      <div class={getClassName()} style={_getStyle(getClassName())} />
     </div>;
   }
 }`);
@@ -171,7 +171,7 @@ var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);
 
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header2"], styles.header1]} />;
+    return <div class="header2" style={[_styleSheet["header2"], styles.header1]} />;
   }
 }`);
   });
@@ -194,7 +194,7 @@ import appStyleSheet from './app.css';
 var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header"], {
+    return <div class="header" style={[_styleSheet["header"], {
       height: 100
     }]} />;
   }
@@ -221,7 +221,7 @@ var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);
 
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header2"], styles.header1, styles.header3]} />;
+    return <div class="header2" style={[_styleSheet["header2"], styles.header1, styles.header3]} />;
   }
 }`);
   });
@@ -255,7 +255,7 @@ import appStyleSheet from './app.scss';
 var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
-    return <div style={_styleSheet["header"]} />;
+    return <div class="header" style={_styleSheet["header"]} />;
   }
 }`);
   });
@@ -271,6 +271,6 @@ import { createElement, render } from 'rax';
 import appStyleSheet from './app.css';
 
 var _styleSheet = appStyleSheet;
-render(<div style={_styleSheet["header"]} />);`);
+render(<div class="header" style={_styleSheet["header"]} />);`);
   });
 });

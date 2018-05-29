@@ -157,7 +157,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
         let hasStyleAttribute = false;
         let styleAttribute;
         let hasClassName = false;
-        let classNameAttribute;
+        let classNameAttribute, classAttribute;
 
         const attributes = container.openingElement.attributes;
         for (let i = 0; i < attributes.length; i++) {
@@ -171,6 +171,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
             if (!hasClassName) {
               hasClassName = name.name === 'className';
               classNameAttribute = hasClassName && attributes[i];
+              classAttribute = hasClassName && attributes[i];
             }
           }
         }
@@ -179,6 +180,9 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
         if (hasClassName) {
           // Remove origin className
           attributes.splice(attributes.indexOf(classNameAttribute), 1);
+          // Add origin class
+          classAttribute.name.name = 'class';
+          attributes.push(classAttribute);
 
           if (
             classNameAttribute.value &&

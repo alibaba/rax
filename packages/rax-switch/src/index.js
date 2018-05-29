@@ -10,7 +10,7 @@ class Switch extends Component {
   static defaultProps = {
     onTintColor: '#00e158',
     thumbTintColor: '#ffffff',
-    tintColor: '#eeeeee'
+    tintColor: '#ffffff'
   }
 
   handleClick = (e) => {
