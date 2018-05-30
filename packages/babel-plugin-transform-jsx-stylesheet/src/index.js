@@ -157,7 +157,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
         let hasStyleAttribute = false;
         let styleAttribute;
         let hasClassName = false;
-        let classNameAttribute, classAttribute;
+        let classNameAttribute;
 
         const attributes = container.openingElement.attributes;
         for (let i = 0; i < attributes.length; i++) {
@@ -171,7 +171,6 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
             if (!hasClassName) {
               hasClassName = name.name === 'className';
               classNameAttribute = hasClassName && attributes[i];
-              classAttribute = hasClassName && attributes[i];
               attributes[i].name.name = 'class';
             }
           }
@@ -179,7 +178,6 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
 
 
         if (hasClassName) {
-
           if (
             classNameAttribute.value &&
             classNameAttribute.value.type === 'JSXExpressionContainer' &&
