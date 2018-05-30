@@ -33,7 +33,10 @@ class RaxWebpackPlugin {
     // Webpack 4
     if (compiler.hooks && compiler.hooks.compilation && compiler.hooks.compilation.tap) {
       compiler.hooks.compilation.tap('RaxBannerPlugin', compilation => {
-        compilation.hooks.optimizeChunkAssets.tap('RaxBannerPlugin', chunks => {
+        // uglify-webpack-plugin will remove javascript's comments in optimizeChunkAssets
+        // need use afterOptimizeChunkAssets to add frameworkComment after that.
+        // like the else block
+        compilation.hooks.afterOptimizeChunkAssets.tap('RaxBannerPlugin', chunks => {
           for (const chunk of chunks) {
             // Entry only
             if (!chunk.canBeInitial()) {
