@@ -179,8 +179,6 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
 
 
         if (hasClassName) {
-          // Remove origin className
-          // attributes.splice(attributes.indexOf(classNameAttribute), 1);
 
           if (
             classNameAttribute.value &&
