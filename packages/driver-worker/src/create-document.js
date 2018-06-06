@@ -189,7 +189,9 @@ export default function() {
     }
 
     setAttribute(key, value) {
-      this.setAttributeNS(null, key, value);
+      if (value !== this.getAttribute(key)) {
+        this.setAttributeNS(null, key, value);
+      }
     }
 
     getAttribute(key) {
@@ -212,7 +214,6 @@ export default function() {
       } else {
         attr.value = String(value);
       }
-
       mutation(this, 'attributes', { attributeName: name, newValue: value });
     }
 

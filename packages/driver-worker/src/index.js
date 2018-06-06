@@ -21,6 +21,19 @@ const TO_SANITIZE = [
   'previousSibling'
 ];
 
+const UPPERCASE_REGEXP = /[A-Z]/g;
+const CSSPropCache = {};
+
+function styleToCSS(style) {
+  let css = '';
+  for (var prop in style) {
+    let val = style[prop];
+    prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();
+    css = css + `${prop}:${val};`;
+  }
+  return css;
+}
+
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
   let MutationObserver = document.defaultView.MutationObserver;
@@ -284,6 +297,8 @@ export default ({ postMessage, addEventListener }) => {
           node.style[prop] = transformValue;
         }
       }
+      // For trigger attribute mutation
+      node.style.cssText = styleToCSS(node.style);
     },
 
     beforeRender() {
