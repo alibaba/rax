@@ -1,6 +1,6 @@
 {
   "name": "universal-perf",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "A universal Perf tools.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

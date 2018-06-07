@@ -1,23 +1,38 @@
 import { convertUnit, setRem } from 'style-unit';
 import createDocument from './create-document';
 
-const TO_SANITIZE = [
-  'addedNodes',
-  'removedNodes',
-  'nextSibling',
-  'previousSibling',
-  'target'
-];
-
+const ELEMENT_NODE = 1;
+const TEXT_NODE = 3;
+const COMMENT_NODE = 8;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
-
+const BODY = 'BODY';
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
+const TO_SANITIZE = [
+  'target',
+  'addedNodes',
+  'removedNodes',
+  'nextSibling',
+  'previousSibling'
+];
+
+const UPPERCASE_REGEXP = /[A-Z]/g;
+const CSSPropCache = {};
+
+function styleToCSS(style) {
+  let css = '';
+  for (var prop in style) {
+    let val = style[prop];
+    prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();
+    css = css + `${prop}:${val};`;
+  }
+  return css;
+}
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
@@ -31,7 +46,7 @@ export default ({ postMessage, addEventListener }) => {
     if (node && typeof node === 'object') id = node.$$id;
     if (typeof node === 'string') id = node;
     if (!id) return null;
-    if (node.nodeName === 'BODY') return document.body;
+    if (node.nodeName === BODY) return document.body;
     return NODES.get(id);
   }
 
@@ -43,32 +58,38 @@ export default ({ postMessage, addEventListener }) => {
     }
   }
 
-  function sanitize(obj) {
+  function sanitize(obj, prop) {
     if (!obj || typeof obj !== 'object') return obj;
 
-    if (Array.isArray(obj)) return obj.map(sanitize);
+    if (Array.isArray(obj)) return obj.map(o => sanitize(o, prop));
 
-    if (obj instanceof document.defaultView.Node) {
-      let id = obj.$$id;
-      if (!id) {
-        id = obj.$$id = String(++COUNTER);
-      }
-      NODES.set(id, obj);
+    if (!obj.$$id) {
+      obj.$$id = String(++COUNTER);
+      NODES.set(obj.$$id, obj);
     }
 
     let out = {
-      $$id: obj.$$id,
-      events: Object.keys(obj.eventListeners || {}),
-      attributes: obj.attributes,
-      nodeName: obj.nodeName,
-      nodeType: obj.nodeType,
-      style: obj.style,
-      childNodes: obj.childNodes,
-      data: obj.data
+      $$id: obj.$$id
     };
 
-    if (out.childNodes && out.childNodes.length) {
-      out.childNodes = sanitize(out.childNodes);
+    if (obj.nodeName === BODY) {
+      out.nodeName = BODY;
+    } else if (prop === 'addedNodes') {
+      let nodeType = obj.nodeType;
+
+      if (nodeType === ELEMENT_NODE) {
+        out = {
+          ...out,
+          events: Object.keys(obj.eventListeners || {}),
+          attributes: obj.attributes,
+          nodeName: obj.nodeName,
+          style: obj.style,
+        };
+      } else if (nodeType === TEXT_NODE || nodeType === COMMENT_NODE) {
+        out.data = obj.data;
+      }
+
+      out.nodeType = nodeType;
     }
 
     return out;
@@ -79,17 +100,13 @@ export default ({ postMessage, addEventListener }) => {
       let mutation = mutations[i];
       for (let j = TO_SANITIZE.length; j--; ) {
         let prop = TO_SANITIZE[j];
-        mutation[prop] = sanitize(mutation[prop]);
+        mutation[prop] = sanitize(mutation[prop], prop);
       }
     }
-    send({ type: 'MutationRecord', mutations });
+    postMessage({ type: 'MutationRecord', mutations });
   });
 
   mutationObserver.observe(document, { subtree: true });
-
-  function send(message) {
-    postMessage(JSON.parse(JSON.stringify(message)));
-  }
 
   addEventListener('message', ({ data }) => {
     switch (data.type) {
@@ -280,6 +297,8 @@ export default ({ postMessage, addEventListener }) => {
           node.style[prop] = transformValue;
         }
       }
+      // For trigger attribute mutation
+      node.style.cssText = styleToCSS(node.style);
     },
 
     beforeRender() {

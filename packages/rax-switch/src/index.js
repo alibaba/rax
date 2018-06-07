@@ -21,6 +21,10 @@ class Switch extends Component {
     this.props.onValueChange && this.props.onValueChange.call(this, newVal);
   };
 
+  handleChange = ({value}) => {
+    this.props.onValueChange && this.props.onValueChange.call(this, value);
+  };
+
   getStyles() {
     return {
       span: {
@@ -79,43 +83,41 @@ class Switch extends Component {
   }
 
   render() {
-    const { style, value, disabled, onValueChange, ...others} = this.props;
+    const { style, value, disabled} = this.props;
+
     if (isWeex) {
       let nativeProps = {
-        style: {
-          ...styles.initial,
-          ...style
-        },
+        style,
+        disabled,
         checked: value,
-        disabled: disabled,
-        onChange: ({value}) => onValueChange(value)
+        onChange: this.handleChange
       };
 
       return (
-        <switch {...nativeProps} {...others} />
+        <switch {...nativeProps} />
       );
     } else {
       let styles = this.getStyles();
-      let spancss = value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
-      let smallcss = value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
-      spancss = disabled ? {...spancss, ...styles.disabledSpan} : spancss;
-      spancss = {
-        ...style,
-        ...spancss
+      let spanStyle = value ? {...styles.span, ...styles.checkedSpan} : {...styles.span, ...styles.uncheckedSpan};
+      let smallStyle = value ? {...styles.small, ...styles.checkedSmall} : {...styles.small, ...styles.uncheckedSmall};
+      spanStyle = disabled ? {...spanStyle, ...styles.disabledSpan} : spanStyle;
+      spanStyle = {
+        ...spanStyle,
+        ...style
       };
 
-      delete others.onTintColor;
-
       return (
-        <span onClick={this.handleClick} style={spancss} {...others}>
-          <small style={smallcss} />
+        <span onClick={this.handleClick} style={spanStyle}>
+          <small style={smallStyle} />
         </span>
       );
     }
   }
 }
 
+
 const styles = {
+  // width and height not work on weex switch
   initial: {
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT,

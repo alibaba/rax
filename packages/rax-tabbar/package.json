@@ -1,6 +1,6 @@
 {
   "name": "rax-tabbar",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Tabbar component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,19 +20,19 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-icon": "^0.6.3",
-    "rax-image": "^0.6.3",
-    "rax-link": "^0.6.3",
-    "rax-scrollview": "^0.6.3",
-    "rax-text": "^0.6.3",
-    "rax-touchable": "^0.6.3",
-    "rax-view": "^0.6.3",
-    "universal-env": "^0.6.3"
+    "rax-icon": "^0.6.4",
+    "rax-image": "^0.6.4",
+    "rax-link": "^0.6.4",
+    "rax-scrollview": "^0.6.4",
+    "rax-text": "^0.6.4",
+    "rax-touchable": "^0.6.4",
+    "rax-view": "^0.6.4",
+    "universal-env": "^0.6.4"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.6.3"
+    "rax-test-renderer": "^0.6.4"
   }
 }

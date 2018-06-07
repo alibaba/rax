@@ -26,32 +26,33 @@ import Picker from 'rax-picker';
 Options are defined using Picker.Item, Example：
 
 ```
-  <Picker.Item value={'somevalue'} />
+<Picker.Item value={'somevalue'} />
 ```
 
 ## Example
 
 ```jsx
-// demo
 import {createElement, Component, render} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
 import Picker from 'rax-picker';
 
 class App extends Component {
+  state = {
+    selectedValue: '女'
+  };
   render() {
     return (
       <View style={{ width: 750 }}>
-          <Text>Test</Text>
-          <Picker 
-            selectedValue={'A'}
-            onValueChange={(index, item) => {
-              console.log('Picker', index, item);
-            }}
-            style={styles.picker}>
-            <Picker.Item value={'A'} />
-            <Picker.Item value={'B'} />
-          </Picker>
+        <Text>选择性别</Text>
+        <Picker 
+          selectedValue={this.state.selectedValue}
+          onValueChange={(value, index) => {
+            this.setState({selectedValue: value});
+          }}>
+          <Picker.Item value={'男'} label={'男性'} />
+          <Picker.Item value={'女'} label={'女性'} />
+        </Picker>
       </View>
     );
   }

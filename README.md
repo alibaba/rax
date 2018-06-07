@@ -29,7 +29,7 @@ Community
 
 * <details>
   <summary>钉钉群</summary>
-  <a href="http://qr.dingtalk.com/action/joingroup?code=v1,k1,CP2dPkf6aojTT2QdsLM1GK4vDw4x3Q3UMdC96zOTGWzA09r+RLlVDuyQIAt5L+xqo/WU2LKsFRUYCTNKl7J/riENfO/4JdpdPsdf2DCoeF8tH9f9QvubrOUvmN6NriqFXtEUb0fp/hjJPUzBWCyDJCM63BVN7p2I"><img alt="Join the chat at dingtalk" src="https://cloud.githubusercontent.com/assets/677114/23734081/a3651cd6-04b7-11e7-8290-11fb20b722b4.png"></a>
+  <a href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,kvz0NeXx/rsf/3KhrDQU9J1ZxS0DvkGbL8vvKpCsm04=&_dt_no_comment=1&origin=11"><img alt="Join the chat at dingtalk" src="https://user-images.githubusercontent.com/677114/41036929-486fd78a-69c4-11e8-9eb7-cd69b89821c1.png"></a>
 </details>
 
 ---

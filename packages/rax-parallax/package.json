@@ -1,6 +1,6 @@
 {
   "name": "rax-parallax",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Parallax component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,14 +21,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "^0.6.3",
-    "universal-env": "^0.6.3",
+    "rax-view": "^0.6.4",
+    "universal-env": "^0.6.4",
     "weex-bindingx": "^0.0.23"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.6.3"
+    "rax-test-renderer": "^0.6.4"
   }
 }
