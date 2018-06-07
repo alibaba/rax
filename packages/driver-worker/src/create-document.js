@@ -338,7 +338,7 @@ export default function() {
           mutation(vnode, 'canvasRenderingContext2D', {
             method: method,
             args: args,
-            properties: propertyValues
+            properties: Object.assign({}, propertyValues)
           });
         };
       });
