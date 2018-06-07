@@ -1,0 +1,119 @@
+.container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.console {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 400px;
+}
+
+.console-icon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.filter-bar {
+  padding: 4px 2px;
+  background: #f9f9f9;
+  border-top: 1px solid #ddd; 
+  border-bottom: 1px solid #eee;
+  display: flex;
+}
+
+.filter-buttons {
+  flex: 1;
+}
+
+.filter-button {
+  display: inline-block;
+  background-color: #ededed;
+  color: #666666;
+  padding: 2px 4px;
+  margin: 2px;
+  border-radius: 2px;
+  font-size: 12px;
+  line-height: 12px;
+  font-family: sans-serif;
+}
+
+.close-button, .filter-clear {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 2px 4px;
+  height: 16px;
+  width: 16px;
+}
+
+.filter-checked {
+  color: #ffffff;
+  background-color: #0074e8;
+}
+
+.console-output {
+  overflow: auto;
+  height: 100%;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+.console-messages {
+  position: relative;
+}
+
+.console-message-wrapper {
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.console-error-level {
+  border-top: 1px solid #fed6d6;
+  border-bottom: 1px solid #fed6d6;
+  margin-top: -1px;
+  background-color: #ffefef;
+}
+
+.console-warn-level {
+  border-top: 1px solid #fef4c1;
+  border-bottom: 1px solid #fef4c1;
+  margin-top: -1px;
+  background-color: #fffae5;
+}
+
+.console-message {
+  font-size: 11px;
+  line-height: 18px;
+  font-family: Menlo, monospace, sans-serif;
+  position: relative;
+  padding: 3px 22px 1px 0;
+  margin-left: 4px;
+  min-height: 18px;
+  flex: auto;
+  display: flex;
+}
+
+.console-message-timestamp {
+  color: gray;
+  -webkit-user-select: none;
+  flex: none;
+  margin-right: 5px;
+}
+
+.console-message-text {
+  color: #303942;
+}
+
+.console-message-error-text {
+  color: #ff0000;
+}
+
+.console-message-warn-text {
+  color: #5c3c00;
+}
