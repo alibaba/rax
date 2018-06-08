@@ -84,8 +84,8 @@ render(<Hello name="world" />);
 ```
 
 More examples take a look at the [`examples`](/examples/) folder:
-* [Hello](./examples/hello)
-* [Redux](/examples/redux)
+* [Hello World](./examples/hello)
+* [Todos with Redux](/examples/todos)
 * [Canvas](/examples/canvas)
 * [Charts](/examples/charts)
 * [Drag](/examples/drag)
