@@ -1,9 +1,18 @@
+const IS_DATASET_REG = /^data\-/;
 function assign(obj, props) {
   for (let i in props) obj[i] = props[i];
 }
 
 function toLower(str) {
   return String(str).toLowerCase();
+}
+
+const CAMELCASE_REG = /\-[a-z]/g;
+const CamelCaseCache = {};
+function camelCase(str) {
+  return CamelCaseCache[str] || (
+    CamelCaseCache[str] = str.replace(CAMELCASE_REG, $1 => $1.slice(1).toUpperCase())
+  );
 }
 
 function splice(arr, item, add, byValueOnly) {
@@ -35,7 +44,7 @@ const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const DOCUMENT_NODE = 9;
 
-export default function() {
+export default function () {
   let observers = [];
   let pendingMutations = false;
 
@@ -93,6 +102,9 @@ export default function() {
 
   function isElement(node) {
     return node.nodeType === ELEMENT_NODE;
+  }
+  function isDataset(attr) {
+    return IS_DATASET_REG.test(attr.name);
   }
 
   class Node {
@@ -186,6 +198,15 @@ export default function() {
 
     get children() {
       return this.childNodes.filter(isElement);
+    }
+
+    get dataset() {
+      const dataset = {};
+      this.attributes.filter(isDataset)
+        .forEach(({ name, value }) => {
+          dataset[camelCase(name.slice(5))] = value;
+        });
+      return dataset;
     }
 
     setAttribute(key, value) {
@@ -324,10 +345,10 @@ export default function() {
 
       properties.forEach((property) => {
         Object.defineProperty(this, property, {
-          get: function() {
+          get: function () {
             return propertyValues[property];
           },
-          set: function(value) {
+          set: function (value) {
             propertyValues[property] = value;
           }
         });
