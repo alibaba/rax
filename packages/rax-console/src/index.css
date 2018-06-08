@@ -1,5 +1,5 @@
 .container {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
@@ -10,14 +10,16 @@
   flex-direction: column;
   position: relative;
   height: 400px;
+  background: #ffffff;
 }
 
 .console-icon {
+  position: fixed;
   width: 20px;
   height: 20px;
-  position: absolute;
   bottom: 20px;
   right: 20px;
+  z-index: 9999999;
 }
 
 .filter-bar {
@@ -30,6 +32,11 @@
 
 .filter-buttons {
   flex: 1;
+  margin-top: -3px;
+}
+
+.filter-lable {
+  font-size: 10px;
 }
 
 .filter-button {
@@ -108,6 +115,8 @@
 
 .console-message-text {
   color: #303942;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .console-message-error-text {

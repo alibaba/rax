@@ -58,6 +58,17 @@ class FilterButton extends Component {
   }
 }
 
+class ShowTimeStamp extends Component {
+  render() {
+    const {active, label, filterKey, dispatch} = this.props;
+
+    return <div>
+      <input type="checkbox" id="console-show-timestamps" />
+      <label className="filter-lable" for="console-show-timestamps">Show timestamps</label>
+    </div>;
+  }
+}
+
 export default class FilterBar extends Component {
   render() {
     const {
