@@ -44,7 +44,7 @@ const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const DOCUMENT_NODE = 9;
 
-export default function () {
+export default function() {
   let observers = [];
   let pendingMutations = false;
 
@@ -345,10 +345,10 @@ export default function () {
 
       properties.forEach((property) => {
         Object.defineProperty(this, property, {
-          get: function () {
+          get: function() {
             return propertyValues[property];
           },
-          set: function (value) {
+          set: function(value) {
             propertyValues[property] = value;
           }
         });
