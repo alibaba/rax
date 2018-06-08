@@ -43,7 +43,7 @@ export default function() {
     record.target = target;
     record.type = type;
 
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i],
         match = target === ob._target;
       if (!match && ob._options.subtree) {
@@ -63,7 +63,7 @@ export default function() {
 
   function flushMutations() {
     pendingMutations = false;
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i];
       if (ob._records.length) {
         ob.callback(ob.takeRecords());
@@ -241,6 +241,9 @@ export default function() {
     }
 
     dispatchEvent(event) {
+      event.stopPropagation = () => {
+        event.bubbles = false;
+      };
       let t = event.currentTarget = this;
       let c = event.cancelable;
       let l;
@@ -248,7 +251,7 @@ export default function() {
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
-          for (i = l.length; i--; ) {
+          for (i = l.length; i--;) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
           }
       } while (

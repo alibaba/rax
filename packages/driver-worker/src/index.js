@@ -96,9 +96,9 @@ export default ({ postMessage, addEventListener }) => {
   }
 
   let mutationObserver = new MutationObserver(mutations => {
-    for (let i = mutations.length; i--; ) {
+    for (let i = mutations.length; i--;) {
       let mutation = mutations[i];
-      for (let j = TO_SANITIZE.length; j--; ) {
+      for (let j = TO_SANITIZE.length; j--;) {
         let prop = TO_SANITIZE[j];
         mutation[prop] = sanitize(mutation[prop], prop);
       }
@@ -251,7 +251,7 @@ export default ({ postMessage, addEventListener }) => {
         try {
           // Some node property is readonly when in strict mode
           node[propKey] = null;
-        } catch (e) {}
+        } catch (e) { }
       }
 
       node.removeAttribute(propKey);
