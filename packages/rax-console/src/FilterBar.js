@@ -62,13 +62,13 @@ class FilterButton extends Component {
 
 class ShowTimeStamps extends Component {
   render() {
-    const {active, label, filterKey, dispatch} = this.props;
+    const {dispatch} = this.props;
 
     return <div className="show-timestamps">
-      <input type="checkbox" id="console-show-timestamps" onClick={(evt)=> dispatch({
+      <input className="filter-checkbox" type="checkbox" id="console-show-timestamps" onClick={(evt)=> dispatch({
         type: TIMESTAMPS_TOGGLE,
         value: evt.target.checked
-      })}/>
+      })} />
       <label className="filter-lable" for="console-show-timestamps">Show timestamps</label>
     </div>;
   }
@@ -142,15 +142,14 @@ export default class FilterBar extends Component {
       <div className="console-actions">
         <ClearButton dispatch={dispatch} />
         <div className="toolbar-divider" />
-        <div className="filter-tools">
-          <img
-            className="filter-toggle"
-            src={filterIconSource.uri}
-            onClick={() => this.setState({
-              showFilterButtons: !this.state.showFilterButtons
-            })}
-          />
-        </div>
+        <img
+          className="filter-toggle"
+          src={filterIconSource.uri}
+          onClick={() => this.setState({
+            showFilterButtons: !this.state.showFilterButtons
+          })}
+        />
+        <div className="toolbar-flexspace"></div>
         <ShowTimeStamps dispatch={dispatch} />
         <div className="toolbar-divider" />
         <CloseButton dispatch={dispatch} />

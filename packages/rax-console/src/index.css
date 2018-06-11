@@ -3,6 +3,7 @@
   left: 0;
   right: 0;
   bottom: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .console {
@@ -22,9 +23,8 @@
   z-index: 9999999;
 }
 
-.filter-tools {
+.toolbar-flexspace {
   flex: 1;
-  margin-top: -4px;
 }
 
 .console-toolbar {
@@ -58,8 +58,15 @@
   margin-right: 8px;
 }
 
+.filter-checkbox {
+  width: 14px;
+  height: 14px;
+  margin: 2px;
+}
+
 .filter-lable {
-  font-size: 10px;
+  margin-left: 3px;
+  font-size: 14px;
 }
 
 .filter-button {
@@ -89,6 +96,7 @@
 
 .console-output {
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   height: 100%;
   flex: 1;
   word-wrap: break-word;

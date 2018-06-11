@@ -1,6 +1,6 @@
 {
   "name": "rax-console",
-  "version": "0.6.4",
+  "version": "0.6.4-1",
   "description": "Console component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
