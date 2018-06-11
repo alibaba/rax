@@ -4,7 +4,7 @@
 import {createElement, render} from 'rax';
 import Console from 'rax-console';
 
-var console = render(<Console style={{height: 500, position: 'absolute', left: 0, right: 0, bottom: 0}}/>, );
+var console = render(<Console />);
 console.addMessage({
   source: 'console-api',
   type: 'log',

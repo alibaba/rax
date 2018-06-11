@@ -10,10 +10,12 @@ import {
   FILTER_TEXT_SET,
   FILTER_TOGGLE,
   FILTERS_CLEAR,
-  CONSOLE_CLOSE
+  CONSOLE_CLOSE,
+  TIMESTAMPS_TOGGLE,
 } from './const';
 import clearIconSource from 'image-source-loader!./images/clear.svg';
 import closeIconSource from 'image-source-loader!./images/close.svg';
+import filterIconSource from 'image-source-loader!./images/filter.svg';
 import './index.css';
 
 class ClearButton extends Component {
@@ -58,7 +60,26 @@ class FilterButton extends Component {
   }
 }
 
+class ShowTimeStamps extends Component {
+  render() {
+    const {dispatch} = this.props;
+
+    return <div className="show-timestamps">
+      <input className="filter-checkbox" type="checkbox" id="console-show-timestamps" onClick={(evt)=> dispatch({
+        type: TIMESTAMPS_TOGGLE,
+        value: evt.target.checked
+      })} />
+      <label className="filter-lable" for="console-show-timestamps">Show timestamps</label>
+    </div>;
+  }
+}
+
 export default class FilterBar extends Component {
+
+  state = {
+    showFilterButtons: false
+  };
+
   render() {
     const {
       filter,
@@ -74,51 +95,66 @@ export default class FilterBar extends Component {
       return `${baseLabel} (${count})`;
     };
 
-    return <div className="filter-bar">
-      <ClearButton dispatch={dispatch} />
-      <div className="filter-buttons">
-        <FilterButton
-          dispatch={dispatch}
-          active={filter[FILTERS.ERROR]}
-          label={getLabel(
-            'Errors',
-            FILTERS.ERROR
-          )}
-          filterKey={FILTERS.ERROR} />
-        <FilterButton
-          dispatch={dispatch}
-          active={filter[FILTERS.WARN]}
-          label={getLabel(
-            'Warnings',
-            FILTERS.WARN
-          )}
-          filterKey={FILTERS.WARN} />
-        <FilterButton
-          dispatch={dispatch}
-          active={filter[FILTERS.LOG]}
-          label={getLabel(
-            'Logs',
-            FILTERS.LOG
-          )}
-          filterKey={FILTERS.LOG} />
-        <FilterButton
-          dispatch={dispatch}
-          active={filter[FILTERS.INFO]}
-          label={getLabel(
-            'Info',
-            FILTERS.INFO
-          )}
-          filterKey={FILTERS.INFO} />
-        <FilterButton
-          dispatch={dispatch}
-          active={filter[FILTERS.DEBUG]}
-          label={getLabel(
-            'Debug',
-            FILTERS.DEBUG
-          )}
-          filterKey={FILTERS.DEBUG} />
+    const filterButtons = (<div className="filter-buttons">
+      <FilterButton
+        dispatch={dispatch}
+        active={filter[FILTERS.ERROR]}
+        label={getLabel(
+          'Errors',
+          FILTERS.ERROR
+        )}
+        filterKey={FILTERS.ERROR} />
+      <FilterButton
+        dispatch={dispatch}
+        active={filter[FILTERS.WARN]}
+        label={getLabel(
+          'Warnings',
+          FILTERS.WARN
+        )}
+        filterKey={FILTERS.WARN} />
+      <FilterButton
+        dispatch={dispatch}
+        active={filter[FILTERS.LOG]}
+        label={getLabel(
+          'Logs',
+          FILTERS.LOG
+        )}
+        filterKey={FILTERS.LOG} />
+      <FilterButton
+        dispatch={dispatch}
+        active={filter[FILTERS.INFO]}
+        label={getLabel(
+          'Info',
+          FILTERS.INFO
+        )}
+        filterKey={FILTERS.INFO} />
+      <FilterButton
+        dispatch={dispatch}
+        active={filter[FILTERS.DEBUG]}
+        label={getLabel(
+          'Debug',
+          FILTERS.DEBUG
+        )}
+        filterKey={FILTERS.DEBUG} />
+    </div>);
+
+    return <div className="console-toolbar">
+      <div className="console-actions">
+        <ClearButton dispatch={dispatch} />
+        <div className="toolbar-divider" />
+        <img
+          className="filter-toggle"
+          src={filterIconSource.uri}
+          onClick={() => this.setState({
+            showFilterButtons: !this.state.showFilterButtons
+          })}
+        />
+        <div className="toolbar-flexspace"></div>
+        <ShowTimeStamps dispatch={dispatch} />
+        <div className="toolbar-divider" />
+        <CloseButton dispatch={dispatch} />
       </div>
-      <CloseButton dispatch={dispatch} />
+      {this.state.showFilterButtons ? filterButtons : null}
     </div>;
   }
 }

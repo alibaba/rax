@@ -15,7 +15,8 @@ import {
   FILTER_TEXT_SET,
   FILTER_TOGGLE,
   FILTERS_CLEAR,
-  CONSOLE_CLOSE
+  CONSOLE_CLOSE,
+  TIMESTAMPS_TOGGLE
 } from './const';
 
 function getDefaultFiltersCounter() {
@@ -39,12 +40,17 @@ export default class Console extends Component {
     filteredMessagesCount: getDefaultFiltersCounter(),
     filtersState: {...DEFAULT_FILTERS_VALUES},
     show: false,
+    timestampsVisible: false,
   };
 
   dispatch = (action) => {
     if (action.type === CONSOLE_CLOSE) {
       this.setState({
         show: false
+      });
+    } else if(action.type === TIMESTAMPS_TOGGLE) {
+      this.setState({
+        timestampsVisible: action.value
       });
     } else {
       this.handleFilter(action);
@@ -144,7 +150,7 @@ export default class Console extends Component {
         <ConsoleOutput
           messages={this.state.messagesById}
           visibleMessages={this.state.visibleMessages}
-          timestampsVisible={true}
+          timestampsVisible={this.state.timestampsVisible}
         />
       </div>
     </div> : <img onClick={() => this.setState({show: true})} className="console-icon" src={consoleIconSource.uri} />;
