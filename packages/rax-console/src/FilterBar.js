@@ -65,7 +65,7 @@ class ShowTimeStamps extends Component {
     const {dispatch} = this.props;
 
     return <div className="show-timestamps">
-      <input className="filter-checkbox" type="checkbox" id="console-show-timestamps" onClick={(evt)=> dispatch({
+      <input className="filter-checkbox" type="checkbox" id="console-show-timestamps" onClick={(evt) => dispatch({
         type: TIMESTAMPS_TOGGLE,
         value: evt.target.checked
       })} />
@@ -75,7 +75,6 @@ class ShowTimeStamps extends Component {
 }
 
 export default class FilterBar extends Component {
-
   state = {
     showFilterButtons: false
   };
@@ -149,7 +148,7 @@ export default class FilterBar extends Component {
             showFilterButtons: !this.state.showFilterButtons
           })}
         />
-        <div className="toolbar-flexspace"></div>
+        <div className="toolbar-flexspace" />
         <ShowTimeStamps dispatch={dispatch} />
         <div className="toolbar-divider" />
         <CloseButton dispatch={dispatch} />

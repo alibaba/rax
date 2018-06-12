@@ -91,20 +91,20 @@ class ConnectedTreeNode extends Component {
     this.state = context.store.storeState;
   }
 
+  handleClick = (evt) => {
+    this.context.store.storeState = reducer(this.context.store.storeState, {
+      type: 'TOGGLE_EXPAND',
+      path: this.props.path,
+    });
+    this.setState(this.context.store.storeState);
+  };
+
   shouldComponentUpdate(nextProps, nextState) {
     return (
       !!nextState.expandedPaths[nextProps.path] !== !!this.state.expandedPaths[this.props.path] ||
       nextProps.data !== this.props.data ||
       nextProps.name !== this.props.name
     );
-  }
-
-  handleClick(path) {
-    this.context.store.storeState = reducer(this.context.store.storeState, {
-      type: 'TOGGLE_EXPAND',
-      path: path,
-    });
-    this.setState(this.context.store.storeState);
   }
 
   renderChildNodes(parentData, parentPath) {
@@ -134,18 +134,16 @@ class ConnectedTreeNode extends Component {
   }
 
   render() {
-    const { data, dataIterator, path, depth } = this.props;
+    const { data, dataIterator, path, depth, nodeRenderer } = this.props;
 
     const nodeHasChildNodes = hasChildNodes(data, dataIterator);
     const { expandedPaths } = this.state;
     const expanded = !!expandedPaths[path];
 
-    const { nodeRenderer } = this.props;
-
     return (
       <TreeNode
         expanded={expanded}
-        onClick={nodeHasChildNodes ? this.handleClick.bind(this, path) : () => {}}
+        onClick={nodeHasChildNodes ? this.handleClick : null}
         // show arrow anyway even if not expanded and not rendering children
         shouldShowArrow={nodeHasChildNodes}
         // show placeholder only for non root nodes

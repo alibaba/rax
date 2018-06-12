@@ -51,13 +51,14 @@
   flex: 1;
   border-top: 1px solid #eee;
   padding: 0 2px 2px 2px;
-
 }
 
 .show-timestamps {
   display: flex;
+  height: 14px;
   margin-right: 8px;
 }
+
 
 .filter-checkbox {
   width: 14px;
@@ -66,8 +67,9 @@
 }
 
 .filter-lable {
-  margin-left: 3px;
+  margin-left: 4px;
   font-size: 14px;
+  line-height: 14px;
 }
 
 .filter-button {

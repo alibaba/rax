@@ -48,7 +48,7 @@ export default class Console extends Component {
       this.setState({
         show: false
       });
-    } else if(action.type === TIMESTAMPS_TOGGLE) {
+    } else if (action.type === TIMESTAMPS_TOGGLE) {
       this.setState({
         timestampsVisible: action.value
       });
@@ -88,7 +88,6 @@ export default class Console extends Component {
       filteredMessagesCount,
     });
   }
-
 
   filters(state = {...DEFAULT_FILTERS_VALUES}, action) {
     switch (action.type) {
