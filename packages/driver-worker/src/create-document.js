@@ -1,9 +1,18 @@
+const IS_DATASET_REG = /^data\-/;
 function assign(obj, props) {
   for (let i in props) obj[i] = props[i];
 }
 
 function toLower(str) {
   return String(str).toLowerCase();
+}
+
+const CAMELCASE_REG = /\-[a-z]/g;
+const CamelCaseCache = {};
+function camelCase(str) {
+  return CamelCaseCache[str] || (
+    CamelCaseCache[str] = str.replace(CAMELCASE_REG, $1 => $1.slice(1).toUpperCase())
+  );
 }
 
 function splice(arr, item, add, byValueOnly) {
@@ -43,7 +52,7 @@ export default function() {
     record.target = target;
     record.type = type;
 
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i],
         match = target === ob._target;
       if (!match && ob._options.subtree) {
@@ -63,7 +72,7 @@ export default function() {
 
   function flushMutations() {
     pendingMutations = false;
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i];
       if (ob._records.length) {
         ob.callback(ob.takeRecords());
@@ -93,6 +102,9 @@ export default function() {
 
   function isElement(node) {
     return node.nodeType === ELEMENT_NODE;
+  }
+  function isDataset(attr) {
+    return IS_DATASET_REG.test(attr.name);
   }
 
   class Node {
@@ -188,6 +200,15 @@ export default function() {
       return this.childNodes.filter(isElement);
     }
 
+    get dataset() {
+      const dataset = {};
+      this.attributes.filter(isDataset)
+        .forEach(({ name, value }) => {
+          dataset[camelCase(name.slice(5))] = value;
+        });
+      return dataset;
+    }
+
     setAttribute(key, value) {
       if (value !== this.getAttribute(key)) {
         this.setAttributeNS(null, key, value);
@@ -241,6 +262,9 @@ export default function() {
     }
 
     dispatchEvent(event) {
+      event.stopPropagation = () => {
+        event.bubbles = false;
+      };
       let t = event.currentTarget = this;
       let c = event.cancelable;
       let l;
@@ -248,7 +272,7 @@ export default function() {
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
-          for (i = l.length; i--; ) {
+          for (i = l.length; i--;) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
           }
       } while (
