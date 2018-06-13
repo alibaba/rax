@@ -51,6 +51,31 @@ function Foo() {
 export default Foo;
 ```
 
+### tag/id selector
+
+```css
+div {
+  color: red;
+}
+
+#main {
+  width: 100%;
+}
+```
+
+```js
+{
+  '@div': {
+    color: 'red'
+  },
+  '#main': {
+    width: '100%'
+  }
+}
+```
+
+
+
 ### Write less
 
 `webpack.config.js`:
