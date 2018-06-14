@@ -38,6 +38,7 @@ const JSONP = function(url, options = {}) {
       let params = {
         url: url,
         method: 'GET',
+        dataType: 'jsonp',
         type: 'jsonp'
       };
       Stream.fetch(params, (response) => {
