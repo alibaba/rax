@@ -113,7 +113,7 @@ class Image extends PureComponent {
         return (
           <View style={nativeProps.style}>
             <NativeImage {...nativeProps} />
-              <View style={styles.absoluteImage}>
+            <View style={styles.absoluteImage}>
               {this.props.children}
             </View>
           </View>
