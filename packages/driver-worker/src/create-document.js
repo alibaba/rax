@@ -265,7 +265,7 @@ export default function() {
       event.stopPropagation = () => {
         event.bubbles = false;
       };
-      let t = event.currentTarget = this;
+      let t = event.target = event.currentTarget = this;
       let c = event.cancelable;
       let l;
       let i;
@@ -278,7 +278,7 @@ export default function() {
       } while (
         event.bubbles &&
         !(c && event._stop) &&
-        (event.target = t = t.parentNode)
+        (event.currentTarget = t = t.parentNode)
       );
       return !event.defaultPrevented;
     }
