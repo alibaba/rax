@@ -19,11 +19,12 @@ import Image from 'rax-image';
 
 ## Props
 
-| name      | type       | default  | describe   |
-| :--------- | :----- | :--- | :--------------------------- |
-| scoure     | Object | ''   | set image uri                    |
-| style      | Object | ''   | if picture is not set wide high default is 0x0            |
-| resizeMode | String | ''   | Decide how to resize the image when the component size and picture size are out of proportion |
+| name  | type   | default | describe |
+| :------------- | :----- | :------ | :--------------------------- |
+| source         | Object | ''      | set image uri                    |
+| fallbackSource | Object | ''      | load fallback image when source image load failed      |
+| style          | Object | ''      | if picture is not set wide high default is 0x0            |
+| resizeMode     | String | ''      | Decide how to resize the image when the component size and picture size are out of proportion |
 
 Support any custom attributes.  
 
@@ -40,7 +41,11 @@ import Image from 'rax-image';
 class App extends Component {
   render() {
     return (
-      <Image source={require('./path/to/your/image.png')}
+      <Image
+        source={require('./path/to/your/image.png')}
+        fallbackSource={{
+          uri: 'https://gw.alicdn.com/tps/i3/TB1yeWeIFXXXXX5XFXXuAZJYXXX-210-210.png_70x70.jpg'
+        }}
         resizeMode="cover"
       />
     );
@@ -60,8 +65,12 @@ import Image from 'rax-image';
 class App extends Component {
   render() {
     return (
-      <Image source={{
+      <Image
+        source={{
           uri: 'https://gw.alicdn.com/tfs/TB1g6AvPVXXXXa7XpXXXXXXXXXX-215-215.png'
+        }}
+        fallbackSource={{
+          uri: 'https://gw.alicdn.com/tps/i3/TB1yeWeIFXXXXX5XFXXuAZJYXXX-210-210.png_70x70.jpg'
         }}
         style={{
           width: 100,
