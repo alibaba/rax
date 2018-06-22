@@ -22,3 +22,29 @@ class MyComponent extends Component {
 
 renderer.renderToString(<MyComponent />);
 ```
+
+## Config rem ratio
+
+when rem is used, you need to define the base font-size in web template like this :
+
+```js
+var remUnit = document.documentElement.clientWidth / 750;
+document.documentElement.style.fontSize = remUnit * 100 + 'px';
+```
+
+and config rem ratio :
+
+```jsx
+import {createElement, Component} from 'rax';
+import renderer from 'rax-server-renderer';
+
+class MyComponent extends Component {
+  render() {
+    return <div>Hello World</div>;
+  }
+}
+
+renderer.renderToString(<MyComponent /> , {
+  remRatio: 100
+});
+```
