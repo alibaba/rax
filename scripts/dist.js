@@ -20,10 +20,12 @@ fs.readdirSync(PACKAGES_DIR)
   .forEach(function(packageName) {
     var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
 
-    if (!/^(rax|universal)-/.test(packageName) ||
+    if (
+      !/^(mobx|rax|universal)-/.test(packageName) ||
       /webpack/.test(packageName) ||
       /cli/.test(packageName) ||
       /loader/.test(packageName) ||
+      /rax-test-renderer/.test(packageName) ||
       /rax-scripts/.test(packageName) ||
       !fs.existsSync(main)
     ) {
@@ -222,6 +224,14 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
         options: babelLoaderQuery
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'stylesheet-loader'
+          }
+        ],
       }]
     }
   };

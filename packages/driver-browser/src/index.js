@@ -18,6 +18,30 @@ const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
 const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in document ? 'textContent' : 'nodeValue';
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SVG_TAG_LIST = [
+  'svg',
+  'circle',
+  'ellipse',
+  'line',
+  'rect',
+  'polygon',
+  'polyline',
+  'path',
+  'text',
+  'defs',
+  'stop',
+  'linearGradient',
+  'radialGradient',
+  'textPath',
+  'use',
+  'g',
+  'tspan',
+  'tref',
+  'clipPath'
+];
+
+
 const Driver = {
 
   deviceWidth: typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || null,
@@ -65,7 +89,12 @@ const Driver = {
   },
 
   createElement(component) {
-    let node = document.createElement(component.type);
+    let node;
+    if (component && SVG_TAG_LIST.indexOf(component.type) > -1) {
+      node = document.createElementNS(SVG_NS, component.type);
+    } else {
+      node = document.createElement(component.type);
+    }
     let props = component.props;
 
     this.setNativeProps(node, props);

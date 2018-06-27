@@ -1,6 +1,6 @@
 {
   "name": "rax-tab-panel",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Tabbar component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,17 +21,17 @@
   },
   "dependencies": {
     "object-assign": "^4.1.1",
-    "rax-link": "^0.6.3",
-    "rax-text": "^0.6.3",
-    "rax-view": "^0.6.3",
-    "universal-env": "^0.6.3",
-    "universal-transition": "^0.6.3",
+    "rax-link": "^0.6.4",
+    "rax-text": "^0.6.4",
+    "rax-view": "^0.6.4",
+    "universal-env": "^0.6.4",
+    "universal-transition": "^0.6.4",
     "weex-bindingx": "^0.0.23"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.6.3"
+    "rax-test-renderer": "^0.6.4"
   }
 }

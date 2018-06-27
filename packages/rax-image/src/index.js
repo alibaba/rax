@@ -1,8 +1,8 @@
-import {Component, createElement, PropTypes} from 'rax';
-import {isWeex} from 'universal-env';
+import { PureComponent, createElement, PropTypes } from 'rax';
+import { isWeex } from 'universal-env';
 import View from 'rax-view';
 
-class Image extends Component {
+class Image extends PureComponent {
   static propTypes = {};
 
   static resizeMode = {
@@ -17,11 +17,48 @@ class Image extends Component {
     isInAParentText: PropTypes.bool
   };
 
+  static defaultProps = {
+    onLoad() {},
+    onError() {},
+    fallbackSource: {},
+  };
+
+  state = {
+    source: this.props.source,
+  };
+
+  onLoad = e => {
+    const { onError } = this;
+    const { onLoad } = this.props;
+
+    if (typeof e.success !== 'undefined') {
+      if (e.success) onLoad(e); else onError(e);
+    } else if (typeof e.currentTarget !== 'undefined') {
+      if (e.currentTarget.naturalWidth > 1 && e.currentTarget.naturalHeight > 1) {
+        onLoad(e);
+      } else {
+        onError(e);
+      }
+    }
+  };
+
+  onError = e => {
+    const { fallbackSource, onError } = this.props;
+    const { source } = this.state;
+
+    if (fallbackSource.uri && source.uri !== fallbackSource.uri) {
+      this.setState({
+        source: fallbackSource,
+      });
+    }
+    onError(e);
+  };
+
   render() {
     let nativeProps = {
       ...this.props,
     };
-    let source = nativeProps.source;
+    let source = this.state.source;
 
     // Source must a object
     if (source && source.uri) {
@@ -48,6 +85,8 @@ class Image extends Component {
         ...style
       };
       nativeProps.src = uri;
+      nativeProps.onLoad = this.onLoad;
+      nativeProps.onError = this.onError;
 
       delete nativeProps.source;
 

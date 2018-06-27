@@ -86,7 +86,7 @@ const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
 
-function styleToCSS(style) {
+function styleToCSS(style, remRatio) {
   let css = '';
   // Use var avoid v8 warns "Unsupported phi use of const or let variable"
   for (var prop in style) {
@@ -97,6 +97,14 @@ function styleToCSS(style) {
       // Noop
     } else if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
       unit = 'rem';
+    } else if (val.indexOf('rem') > -1) {
+      // stylesheet-loader will transform padding: 40 to paddingTop: '40rem' ...
+      val = parseFloat(val);
+      unit = 'rem';
+    }
+
+    if (unit === 'rem' && remRatio) {
+      val = val / remRatio;
     }
 
     prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();
@@ -120,7 +128,7 @@ const updater = {
   }
 };
 
-function renderElementToString(element, context) {
+function renderElementToString(element, context, options) {
   if (typeof element === 'string') {
     return escapeText(element);
   } else if (element == null || element === false || element === true) {
@@ -131,7 +139,7 @@ function renderElementToString(element, context) {
     let html = '';
     for (var index = 0, length = element.length; index < length; index++) {
       var child = element[index];
-      html = html + renderElementToString(child, context);
+      html = html + renderElementToString(child, context, options);
     }
     return html;
   }
@@ -174,10 +182,10 @@ function renderElementToString(element, context) {
       }
 
       var renderedElement = instance.render();
-      return renderElementToString(renderedElement, currentContext);
+      return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
       var renderedElement = type(props, context);
-      return renderElementToString(renderedElement, context);
+      return renderElementToString(renderedElement, context, options);
     } else if (typeof type === 'string') {
       const isVoidElement = VOID_ELEMENTS[type];
       let html = `<${type}`;
@@ -189,7 +197,7 @@ function renderElementToString(element, context) {
         if (prop === 'children') {
           // Ignore children prop
         } else if (prop === 'style') {
-          html = html + ` style="${styleToCSS(value)}"`;
+          html = html + ` style="${styleToCSS(value, options.remRatio)}"`;
         } else if (prop === 'className') {
           html = html + ` class="${escapeText(value)}"`;
         } else if (prop === 'defaultValue') {
@@ -222,10 +230,10 @@ function renderElementToString(element, context) {
           if (Array.isArray(children)) {
             for (var i = 0, l = children.length; i < l; i++) {
               var child = children[i];
-              html = html + renderElementToString(child, context);
+              html = html + renderElementToString(child, context, options);
             }
           } else {
-            html = html + renderElementToString(children, context);
+            html = html + renderElementToString(children, context, options);
           }
         } else if (innerHTML) {
           html = html + innerHTML;
@@ -241,6 +249,6 @@ function renderElementToString(element, context) {
   }
 }
 
-exports.renderToString = function renderToString(element) {
-  return renderElementToString(element, EMPTY_OBJECT);
+exports.renderToString = function renderToString(element, options = {}) {
+  return renderElementToString(element, EMPTY_OBJECT, options);
 };

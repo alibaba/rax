@@ -183,7 +183,7 @@ module.exports = {
     "react/no-children-prop": "error",
     "react/no-did-mount-set-state": "error",
     "react/no-did-update-set-state": "error",
-    "react/no-unknown-property": "error",
+    "react/no-unknown-property": "off",
     "react/style-prop-object": "error",
     "react/react-in-jsx-scope": "error",
     "react/self-closing-comp": "error",

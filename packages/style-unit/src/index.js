@@ -30,24 +30,31 @@ const UNITLESS_NUMBER_PROPS = {
   zIndex: true,
   zoom: true,
   // Weex only
-  lines: true,
+  lines: true
 };
-const SUFFIX = 'rem';
-const REM_REG = /[-+]?\d*\.?\d+rem/g;
+const IS_REM_REG = /\d+(rem|rpx)/;
+const REM_REG = /[-+]?\d*\.?\d+(rem|rpx)/g;
 const GLOBAL_REM_UNIT = '__global_rem_unit__';
-const global = typeof window === 'object' ? window : typeof global === 'object' ? global : {};
+const global =
+  typeof window === 'object'
+    ? window
+    : typeof global === 'object'
+      ? global
+      : {};
+
 // Default 1 rem to 1 px
-if (global[GLOBAL_REM_UNIT] == null) {
-  global[GLOBAL_REM_UNIT] = 1;
+if (getRem() === undefined) {
+  setRem(1);
 }
 
 /**
  * Is string contains rem
+ * note: rpx is an alias to rem
  * @param {String} str
  * @returns {Boolean}
  */
 export function isRem(str) {
-  return typeof str === 'string' && str.indexOf(SUFFIX) !== -1;
+  return IS_REM_REG.test(str);
 }
 
 /**
@@ -56,7 +63,7 @@ export function isRem(str) {
  * @param {Number} rem
  * @returns {number}
  */
-export function calcRem(str, remUnit = global[GLOBAL_REM_UNIT]) {
+export function calcRem(str, remUnit = getRem()) {
   return str.replace(REM_REG, function(rem) {
     return parseFloat(rem) * remUnit + 'px';
   });
@@ -74,7 +81,7 @@ export function isUnitNumber(val, prop) {
   return typeof val === 'number' && !UNITLESS_NUMBER_PROPS[prop];
 }
 
-export function convertUnit(val, prop, remUnit = global[GLOBAL_REM_UNIT]) {
+export function convertUnit(val, prop, remUnit = getRem()) {
   if (prop && isUnitNumber(val, prop)) {
     return val * remUnit + 'px';
   } else if (isRem(val)) {

@@ -43,7 +43,6 @@ import Picture from 'rax-picture';
 ## Example
 
 ```jsx
-// demo
 import {createElement, Component, render} from 'rax';
 import ScrollView from 'rax-scrollview';
 import 'rax-components'; // hack for rax-picture@0.2.5

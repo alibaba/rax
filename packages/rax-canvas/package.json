@@ -1,6 +1,6 @@
 {
   "name": "rax-canvas",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "canvas for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -22,12 +22,12 @@
   },
   "dependencies": {
     "gcanvas.js": "^0.0.7",
-    "universal-env": "^0.6.3"
+    "universal-env": "^0.6.4"
   },
   "peerDependencies": {
     "rax": "0.x"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.6.3"
+    "rax-test-renderer": "^0.6.4"
   }
 }

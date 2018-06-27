@@ -12,6 +12,7 @@ module.exports = {
     presetStage0,
   ],
   plugins: resolvePlugins([
+    'transform-decorators-legacy',
     'syntax-jsx',
     'transform-react-display-name',
     ['transform-react-jsx', {

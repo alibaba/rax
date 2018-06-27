@@ -7,7 +7,6 @@ const RaxWebpackPlugin = require('rax-webpack-plugin');
 const webpack = require('webpack');
 
 const pathConfig = require('./path.config');
-const babelConfig = require('./babel.config');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -87,12 +86,6 @@ module.exports = {
         console.log('');
         console.log(colors.green('webpack: bundle build is now finished.'));
       }
-    }),
-    new webpack.LoaderOptionsPlugin({
-      // test: /\.xxx$/, // may apply this only for some modules
-      options: {
-        babel: babelConfig
-      }
     })
   ],
   module: {
@@ -111,7 +104,11 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         use: [
           {
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              presets: [require.resolve('babel-preset-es2015'), require.resolve('babel-preset-rax')],
+              plugins: [require.resolve('rax-hot-loader/babel')]
+            }
           }
         ],
       },
