@@ -48,7 +48,7 @@ module.exports = function(__weex_require__, isInWindmill) {
       super();
 
       let websocket = __weex_require__(WEB_SOCKET_MODULE);
-      
+
       let newWebSocket = websocket.WebSocket;
       let onopen = websocket.onopen;
       let onclose = websocket.onclose;

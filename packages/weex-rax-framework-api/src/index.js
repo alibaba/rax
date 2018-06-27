@@ -124,7 +124,7 @@ export function resetInstanceContext(instanceContext) {
   const WeakMap = typeof WeakMap === 'function' ? WeakMap : shared.WeakMap;
   const WeakSet = typeof WeakSet === 'function' ? WeakSet : shared.WeakSet;
   const {URL, URLSearchParams, FontFace, matchMedia} = shared;
-  
+
   const documentURL = new URL(bundleUrl);
   const modules = {};
 
@@ -296,7 +296,6 @@ export function resetInstanceContext(instanceContext) {
         if (targetOrigin == '*' || targetOrigin == 'worker') {
           windmill.$emit('message', data, 'AppWorker');
         }
-
       } else if (typeof BroadcastChannel === 'function') {
         if (targetOrigin == '*') {
           var stack = new BroadcastChannel('message');
@@ -310,7 +309,6 @@ export function resetInstanceContext(instanceContext) {
     addEventListener: (type, listener) => {
       if (type === 'message') {
         if (isInWindmill) {
-          
           // for miniapp page
           let broadcast = __weex_require__(BROADCAST_EVENT_MODULE);
           broadcastID++;
@@ -350,9 +348,7 @@ export function resetInstanceContext(instanceContext) {
             e.origin = 'worker';
             listener(e);
           });
-
         } else if (typeof BroadcastChannel === 'function') {
-
           // for weex page
           var stack = new BroadcastChannel('message');
           var thisStack = new BroadcastChannel('message' + bundleUrl);
@@ -362,7 +358,6 @@ export function resetInstanceContext(instanceContext) {
           thisStack.onmessage = (e) => {
             listener(e.data);
           };
-
         }
       } else {
         windowEmitter.on(type, listener);

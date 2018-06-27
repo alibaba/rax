@@ -79,7 +79,7 @@ function check(config) {
   for (let i in deviceInfo) {
     let key = i;
     let keyLower = key.toLowerCase();
-    let val = deviceInfo[i]; 
+    let val = deviceInfo[i];
     let isVersion = keyLower.indexOf('version') >= 0;
     let isOsVersion = keyLower.indexOf('osversion') >= 0;
     let isDeviceModel = keyLower.indexOf('devicemodel') >= 0;
@@ -88,7 +88,7 @@ function check(config) {
     // for Android osVersion P
     if (isOsVersion) {
       if (val.toLowerCase() == 'p') {
-        val = '9.0.0'
+        val = '9.0.0';
       }
     }
 
