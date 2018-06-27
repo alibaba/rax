@@ -81,6 +81,7 @@ function check(config) {
     let keyLower = key.toLowerCase();
     let val = deviceInfo[i]; 
     let isVersion = keyLower.indexOf('version') >= 0;
+    let isOsVersion = keyLower.indexOf('osversion') >= 0;
     let isDeviceModel = keyLower.indexOf('devicemodel') >= 0;
     let criteria = cObj[i];
 
