@@ -19,13 +19,13 @@ export function noop() { }
 /**
  * Parse simple path.
  */
-const bailRE = /[^\w.$]/
+const bailRE = /[^\w.$]/;
 export function parsePath(path) {
   if (bailRE.test(path)) {
     return;
   }
   const segments = path.split('.');
-  return function (obj) {
+  return function(obj) {
     for (let i = 0; i < segments.length; i++) {
       if (!obj) {
         return;
@@ -33,7 +33,7 @@ export function parsePath(path) {
       obj = obj[segments[i]];
     }
     return obj;
-  }
+  };
 }
 
 export function kebabCase(string) {

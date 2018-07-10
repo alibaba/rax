@@ -23,7 +23,7 @@ export default function initWatch(vm, watch) {
   }
 }
 
-function createWatcher (vm, expOrFn, handler, options) {
+function createWatcher(vm, expOrFn, handler, options) {
   if (isPlainObject(handler)) {
     options = handler;
     handler = handler.handler;

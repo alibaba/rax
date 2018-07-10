@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { renderSFCModule } from 'utils';
 
-describe('events', function () {
+describe('events', function() {
   it('basic events bind', (done) => {
     const cont = renderSFCModule(require('./basic-events.html'));
 

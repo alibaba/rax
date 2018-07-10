@@ -30,7 +30,7 @@ export default function adapterRaxComponent(def, _renderFn, $_style, rax) {
     this.props = Object.assign({}, props);
 
     // vm: view-model proxy all
-    const vm = (this.vm = {});
+    const vm = this.vm = {};
     Object.defineProperty(vm, '_watchers', {
       enumerable: false,
       value: []

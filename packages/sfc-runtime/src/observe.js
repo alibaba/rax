@@ -78,7 +78,6 @@ class Observer {
     } else if (isPlainObject(value)) {
       this.walk(value, options);
     }
-
   }
 
   walk(obj, opt) {
@@ -88,7 +87,7 @@ class Observer {
     }
   }
 
-  observeArray (items, options) {
+  observeArray(items, options) {
     for (let i = 0, l = items.length; i < l; i++) {
       observe(items[i], options);
     }
@@ -142,18 +141,11 @@ function defineReactive(obj, key, val, opts = {}) {
     set: function reactiveSetter(newVal) {
       const value = getter ? getter.call(obj) : val;
       // 值不变的时候不触发
-      if (newVal === value || (newVal !== newVal && value !== value)) {
+      if (newVal === value || newVal !== newVal && value !== value) {
         return;
       }
 
       dep.notify();
-      // todo: need lazy calucate watcher
-      // todo: need a dep system
-      // const prefix = parents.join('.');
-      // let fullKey = prefix ? prefix : key;
-      // if (declear && declear.watch && Object.hasOwnProperty.call(declear.watch, fullKey)) {
-      //   declear.watch[fullKey].call(vm, newVal, obj[key]);
-      // }
 
       if (setter) {
         setter.call(obj, newVal);
@@ -177,7 +169,7 @@ function defineReactive(obj, key, val, opts = {}) {
  * Collect dependencies on array elements when the array is touched, since
  * we cannot intercept array element access like property getters.
  */
-function dependArray (value) {
+function dependArray(value) {
   for (let e, i = 0, l = value.length; i < l; i++) {
     e = value[i];
     e && e.__ob__ && e.__ob__.dep.depend();

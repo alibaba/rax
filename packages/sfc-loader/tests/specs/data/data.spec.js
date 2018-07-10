@@ -6,5 +6,4 @@ describe('declear data', () => {
 
     expect(container.innerText).to.equal('233');
   });
-
 });

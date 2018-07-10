@@ -1,4 +1,5 @@
 import { renderSFCModule } from 'utils';
+
 describe('life cycle', () => {
   it('before created', (done) => {
     const cont = renderSFCModule(require('./before-created.html'));

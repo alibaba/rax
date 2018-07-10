@@ -9,19 +9,19 @@ export default class Watcher {
   constructor(vm, expOrFn, cb, options, isRenderWatcher) {
     this.vm = vm;
     if (isRenderWatcher) {
-      vm._watcher = this
+      vm._watcher = this;
     }
     vm._watchers.push(this);
 
     // options
     if (options) {
-      this.deep = !!options.deep
-      this.user = !!options.user
-      this.computed = !!options.computed
-      this.sync = !!options.sync
-      this.before = options.before
+      this.deep = !!options.deep;
+      this.user = !!options.user;
+      this.computed = !!options.computed;
+      this.sync = !!options.sync;
+      this.before = options.before;
     } else {
-      this.deep = this.user = this.computed = this.sync = false
+      this.deep = this.user = this.computed = this.sync = false;
     }
 
     this.cb = cb;
@@ -42,7 +42,7 @@ export default class Watcher {
     } else {
       this.getter = parsePath(expOrFn);
       if (!this.getter) {
-        this.getter = function () {};
+        this.getter = function() {};
       }
     }
 
@@ -79,19 +79,19 @@ export default class Watcher {
       popTarget();
       this.cleanupDeps();
     }
-    return value
+    return value;
   }
 
   /**
    * Add a dependency to this directive.
    */
-  addDep (dep) {
-    const id = dep.id
+  addDep(dep) {
+    const id = dep.id;
     if (!this.newDepIds.has(id)) {
-      this.newDepIds.add(id)
-      this.newDeps.push(dep)
+      this.newDepIds.add(id);
+      this.newDeps.push(dep);
       if (!this.depIds.has(id)) {
-        dep.addSub(this)
+        dep.addSub(this);
       }
     }
   }
@@ -99,29 +99,29 @@ export default class Watcher {
   /**
    * Clean up for dependency collection.
    */
-  cleanupDeps () {
-    let i = this.deps.length
+  cleanupDeps() {
+    let i = this.deps.length;
     while (i--) {
-      const dep = this.deps[i]
+      const dep = this.deps[i];
       if (!this.newDepIds.has(dep.id)) {
-        dep.removeSub(this)
+        dep.removeSub(this);
       }
     }
-    let tmp = this.depIds
-    this.depIds = this.newDepIds
-    this.newDepIds = tmp
-    this.newDepIds.clear()
-    tmp = this.deps
-    this.deps = this.newDeps
-    this.newDeps = tmp
-    this.newDeps.length = 0
+    let tmp = this.depIds;
+    this.depIds = this.newDepIds;
+    this.newDepIds = tmp;
+    this.newDepIds.clear();
+    tmp = this.deps;
+    this.deps = this.newDeps;
+    this.newDeps = tmp;
+    this.newDeps.length = 0;
   }
 
   /**
    * Scheduler job interface.
    * Will be called by the scheduler.
    */
-  run () {
+  run() {
     if (this.active) {
       this.getAndInvoke(this.cb);
     }
@@ -131,7 +131,7 @@ export default class Watcher {
    * Subscriber interface.
    * Will be called when a dependency changes.
    */
-  update () {
+  update() {
     if (this.computed) {
       // A computed property watcher has two modes: lazy and activated.
       // It initializes as lazy by default, and only becomes activated when
@@ -157,8 +157,8 @@ export default class Watcher {
     }
   }
 
-  getAndInvoke (cb) {
-    const value = this.get()
+  getAndInvoke(cb) {
+    const value = this.get();
     if (
       value !== this.value ||
       // Deep watchers and watchers on Object/Arrays should fire even
@@ -168,17 +168,17 @@ export default class Watcher {
       this.deep
     ) {
       // set new value
-      const oldValue = this.value
-      this.value = value
-      this.dirty = false
+      const oldValue = this.value;
+      this.value = value;
+      this.dirty = false;
       if (this.user) {
         try {
-          cb.call(this.vm, value, oldValue)
+          cb.call(this.vm, value, oldValue);
         } catch (e) {
-          console.error(e, this.vm, `callback for watcher "${this.expression}"`)
+          console.error(e, this.vm, `callback for watcher "${this.expression}"`);
         }
       } else {
-        cb.call(this.vm, value, oldValue)
+        cb.call(this.vm, value, oldValue);
       }
     }
   }
@@ -187,7 +187,7 @@ export default class Watcher {
    * Evaluate and return the value of the watcher.
    * This only gets called for computed property watchers.
    */
-  evaluate () {
+  evaluate() {
     if (this.dirty) {
       this.value = this.get();
       this.dirty = false;
@@ -198,7 +198,7 @@ export default class Watcher {
   /**
    * Depend on this watcher. Only for computed property watchers.
    */
-  depend () {
+  depend() {
     if (this.dep && Dep.target) {
       this.dep.depend();
     }
@@ -207,7 +207,7 @@ export default class Watcher {
   /**
    * Remove self from all dependencies' subscriber list.
    */
-  teardown () {
+  teardown() {
     if (this.active) {
       // remove self from vm's watcher list
       // this is a somewhat expensive operation so we skip it
@@ -215,7 +215,7 @@ export default class Watcher {
       if (!this.vm._isBeingDestroyed) {
         const watchers = this.vm._watchers;
         if (watchers.length) {
-          const index = watchers.indexOf(this)
+          const index = watchers.indexOf(this);
           if (index > -1) {
             return watchers.splice(index, 1);
           }

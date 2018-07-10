@@ -8,15 +8,15 @@ export const MAX_UPDATE_COUNT = 100;
 
 const queue = [];
 /* { [key: number]: ?true } */
-let has  = {};
-let waiting = false
+let has = {};
+let waiting = false;
 let flushing = false;
 let index = 0;
 
 /**
  * Reset the scheduler's state.
  */
-function resetSchedulerState () {
+function resetSchedulerState() {
   queue.length = 0;
   has = {};
   waiting = flushing = false;
@@ -26,7 +26,7 @@ function resetSchedulerState () {
 /**
  * Flush both queues and run the watchers.
  */
-function flushSchedulerQueue () {
+function flushSchedulerQueue() {
   flushing = true;
 
   /**
@@ -55,12 +55,12 @@ function flushSchedulerQueue () {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
-export function queueWatcher (watcher) {
+export function queueWatcher(watcher) {
   const { id } = watcher;
   if (has[id] == null) {
     has[id] = true;
     if (!flushing) {
-      queue.push(watcher)
+      queue.push(watcher);
     } else {
       // 如果已经在刷新，把 watcher 加入的队列中，
       // 并从小到大排列，如果 flush 的时候，id 比他大的都已经执行，他会被立即执行
@@ -68,7 +68,7 @@ export function queueWatcher (watcher) {
       while (i >= 0 && queue[i].id > watcher.id) {
         i--;
       }
-      queue.splice(Math.max(i, index) + 1, 0, watcher)
+      queue.splice(Math.max(i, index) + 1, 0, watcher);
     }
     // queue the flush
     if (!waiting) {

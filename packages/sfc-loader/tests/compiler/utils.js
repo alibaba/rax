@@ -1,6 +1,7 @@
 const { createCompiler } = require('../../compiler');
 const { baseOptions } = require('../../compiler/options');
 const createRenderFn = require('../../compiler/codegen/createRenderFn');
+
 const compiler = createCompiler(baseOptions);
 
 

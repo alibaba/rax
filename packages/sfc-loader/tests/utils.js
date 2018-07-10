@@ -1,4 +1,5 @@
 import { render, createElement, unmountComponentAtNode } from 'rax';
+
 let id = 0;
 export function renderSFCModule(Mod) {
   if (Mod && Mod.__esModule === true) {

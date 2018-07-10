@@ -68,7 +68,7 @@ function checkEvent(exp, text, errors) {
   const keywordMatch = stipped.match(unaryOperatorsRE);
   if (keywordMatch && stipped.charAt(keywordMatch.index - 1) !== '$') {
     errors.push(
-      `avoid using JavaScript unary operator as property name: ` +
+      'avoid using JavaScript unary operator as property name: ' +
         `"${keywordMatch[0]}" in expression ${text.trim()}`
     );
   }
@@ -97,7 +97,7 @@ function checkExpression(exp, text, errors) {
       .match(prohibitedKeywordRE);
     if (keywordMatch) {
       errors.push(
-        `avoid using JavaScript keyword as property name: ` +
+        'avoid using JavaScript keyword as property name: ' +
           `"${keywordMatch[0]}" in expression ${text.trim()}`
       );
     } else {

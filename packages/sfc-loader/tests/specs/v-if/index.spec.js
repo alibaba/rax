@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { resolve } from 'path';
 import { renderSFCModule } from 'utils';
 
@@ -48,6 +49,6 @@ describe('v-if', () => {
         done();
       });
     });
-  })
+  });
 });
 

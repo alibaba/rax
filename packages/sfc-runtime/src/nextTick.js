@@ -4,8 +4,8 @@ const UA =
   typeof navigator === 'undefined' ? '' : navigator && navigator.userAgent;
 const isWMLIOS =
   typeof __windmill_environment__ !== 'undefined' &&
-  __windmill_environment__.platform === 'iOS';
-const isIOS = (UA && /iphone|ipad|ipod|ios/.test(UA)) || isWMLIOS;
+  __windmill_environment__.platform === 'iOS'; /* eslint-disable-line */
+const isIOS = UA && /iphone|ipad|ipod|ios/.test(UA) || isWMLIOS;
 
 const callbacks = [];
 let pending = false;
@@ -24,7 +24,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
     // needs to do some other work, e.g. handle a timer. Therefore we can
     // "force" the microtask queue to be flushed by adding an empty timer.
     if (isIOS) {
-      setTimeout(() => {});
+      setTimeout(() => { });
     }
   };
 }

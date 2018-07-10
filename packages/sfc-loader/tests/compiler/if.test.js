@@ -1,5 +1,7 @@
+/* eslint-disable */
 const { createElement } = require('rax');
 const renderer = require('rax-test-renderer');
+
 import { compile } from './utils';
 
 test('adds 1 + 2 to equal 3', () => {

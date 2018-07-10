@@ -41,7 +41,7 @@ exports.makeMap = function makeMap(str, expectsLowerCase) {
 /**
  * Mix properties into target object.
  */
-exports.extend = function extend(to, _from) {
+const extend = exports.extend = function extend(to, _from) {
   for (const key in _from) {
     to[key] = _from[key];
   }
@@ -91,6 +91,7 @@ exports.genStaticKeys = function genStaticKeys(modules) {
 };
 
 const colors = require('colors');
+
 exports.warn = function warn(msg) {
   return console.warn(colors.yellow('[WARN]'), msg);
-}
+};

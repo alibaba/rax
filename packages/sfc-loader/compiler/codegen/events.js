@@ -25,14 +25,14 @@ const genGuard = condition => `if(${condition})return null;`;
 const modifierCode = {
   stop: '$event.stopPropagation();',
   prevent: '$event.preventDefault();',
-  self: genGuard(`$event.target !== $event.currentTarget`),
-  ctrl: genGuard(`!$event.ctrlKey`),
-  shift: genGuard(`!$event.shiftKey`),
-  alt: genGuard(`!$event.altKey`),
-  meta: genGuard(`!$event.metaKey`),
-  left: genGuard(`'button' in $event && $event.button !== 0`),
-  middle: genGuard(`'button' in $event && $event.button !== 1`),
-  right: genGuard(`'button' in $event && $event.button !== 2`)
+  self: genGuard('$event.target !== $event.currentTarget'),
+  ctrl: genGuard('!$event.ctrlKey'),
+  shift: genGuard('!$event.shiftKey'),
+  alt: genGuard('!$event.altKey'),
+  meta: genGuard('!$event.metaKey'),
+  left: genGuard('\'button\' in $event && $event.button !== 0'),
+  middle: genGuard('\'button\' in $event && $event.button !== 1'),
+  right: genGuard('\'button\' in $event && $event.button !== 2')
 };
 
 exports.genHandlers = genHandlers;
@@ -50,8 +50,8 @@ function genHandlers(events, isNative, warn, opts) {
       handler.modifiers.right
     ) {
       warn(
-        `Use "contextmenu" instead of "click.right" since right clicks ` +
-        `do not actually fire "click" events.`
+        'Use "contextmenu" instead of "click.right" since right clicks ' +
+        'do not actually fire "click" events.'
       );
     }
 
@@ -144,5 +144,5 @@ function genFilterCode(key) {
   const alias = keyCodes[key];
   return `_k($event.keyCode,${JSON.stringify(key)}${
     alias ? ',' + JSON.stringify(alias) : ''
-    })`;
+  })`;
 }

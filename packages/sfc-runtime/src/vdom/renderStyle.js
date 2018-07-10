@@ -50,7 +50,7 @@ export default function renderStyle(classnames, styles = {}, ...args) {
       } else if (arg) {
         style.push(arg);
       }
-    })
+    });
   }
 
   return style;

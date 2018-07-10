@@ -17,9 +17,9 @@ function parseText(text, delimiters) {
     return;
   }
   const tokens = [];
-  let lastIndex = (tagRE.lastIndex = 0);
+  let lastIndex = tagRE.lastIndex = 0;
   let match, index;
-  while ((match = tagRE.exec(text))) {
+  while (match = tagRE.exec(text)) {
     index = match.index;
     // push text token
     if (index > lastIndex) {

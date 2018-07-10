@@ -53,12 +53,12 @@ function getStyle(vnode, checkChild) {
     }
   }
 
-  if ((styleData = normalizeStyleData(vnode.data))) {
+  if (styleData = normalizeStyleData(vnode.data)) {
     extend(res, styleData);
   }
 
   let parentNode = vnode;
-  while ((parentNode = parentNode.parent)) {
+  while (parentNode = parentNode.parent) {
     if (parentNode.data && (styleData = normalizeStyleData(parentNode.data))) {
       extend(res, styleData);
     }

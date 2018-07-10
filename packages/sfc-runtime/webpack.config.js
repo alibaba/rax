@@ -23,7 +23,7 @@ const config = {
     ]
   },
   externals: [
-    function (context, request, callback) {
+    function(context, request, callback) {
       if (/^@core\//.test(request)) {
         return callback(null, `${request}`);
       }

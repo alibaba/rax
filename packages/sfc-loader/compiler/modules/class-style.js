@@ -41,11 +41,11 @@ function transformNode(el, options) {
     classNames.length === 0
       ? ''
       : `[${classNames
-          .map(
-            className =>
-              NEED_THIS_REG.test(className) ? `this.${className}` : className
-          )
-          .join(',')}]`;
+        .map(
+          className =>
+            NEED_THIS_REG.test(className) ? `this.${className}` : className
+        )
+        .join(',')}]`;
 
   // handle style
   const staticStyle = getAndRemoveAttr(el, 'style');

@@ -1,5 +1,7 @@
+/* eslint-disable */
 process.env.BABEL_ENV = 'test';
 const webpack = require('webpack');
+
 const minidslLoader = require.resolve('..');
 
 module.exports = {

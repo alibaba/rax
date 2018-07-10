@@ -5,16 +5,16 @@ exports.isPreTag = isPreTag;
 
 const isReservedTag = makeMap(
   'template,script,style,element,content,slot,link,meta,svg,view,' +
-    'a,div,img,image,text,span,richtext,input,switch,textarea,spinner,select,' +
-    'slider,slider-neighbor,indicator,trisition,trisition-group,canvas,' +
-    'list,cell,header,loading,loading-indicator,refresh,scrollable,scroller,' +
-    'video,web,embed,tabbar,tabheader,datepicker,timepicker,marquee,countdown',
+  'a,div,img,image,text,span,richtext,input,switch,textarea,spinner,select,' +
+  'slider,slider-neighbor,indicator,trisition,trisition-group,canvas,' +
+  'list,cell,header,loading,loading-indicator,refresh,scrollable,scroller,' +
+  'video,web,embed,tabbar,tabheader,datepicker,timepicker,marquee,countdown',
   true
 );
 exports.isReservedTag = isReservedTag;
 
 exports.isReservedTagName = makeMap(
-  `switch,const,export,import,break,case,catch,continue,default,delete,do,else,finally,for,function,if,in,instanceof,new,return,switch,this,throw,try,typeof,var,void,while,with,abstract,boolean,byte,char,class,const,debugger,double,enum,export,extends,final,float,goto,implements,import,int,interface,long,native,package,private,protected,public,short,static,super,synchronized,throws,transient,volatile,`
+  'switch,const,export,import,break,case,catch,continue,default,delete,do,else,finally,for,function,if,in,instanceof,new,return,switch,this,throw,try,typeof,var,void,while,with,abstract,boolean,byte,char,class,const,debugger,double,enum,export,extends,final,float,goto,implements,import,int,interface,long,native,package,private,protected,public,short,static,super,synchronized,throws,transient,volatile,'
 );
 // these are reserved for web because they are directly compiled away
 // during template compilation
@@ -47,18 +47,9 @@ function isUnknownElement() {
   /* console.log('isUnknownElement') */
 }
 
-exports.query = query;
-function query(el, document) {
-  // renderer is injected by weex factory wrapper
-  const placeholder = new renderer.Comment('root');
-  placeholder.hasAttribute = placeholder.removeAttribute = function() {}; // hack for patch
-  document.documentElement.appendChild(placeholder);
-  return placeholder;
-}
-
 exports.getComKey = getComKey;
 function getComKey(vm) {
-  return vm && vm.$attrs ? vm.$attrs['mpcomid'] : '0';
+  return vm && vm.$attrs ? vm.$attrs.mpcomid : '0';
 }
 
 // 用于小程序的 event type 到 web 的 event

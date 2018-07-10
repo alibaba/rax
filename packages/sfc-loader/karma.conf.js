@@ -1,12 +1,12 @@
+/* eslint-disable */
 const { resolve } = require('path');
 const webpackConfig = require('./tests/webpack.config.test.js');
-process.env.CHROME_BIN = require('puppeteer').executablePath()
+process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 // karma.conf.js
-module.exports = function(config) {
-
+module.exports = function (config) {
   config.set({
-    browsers: ['ChromeHeadless', /*'Safari', */'PhantomJS'],
+    browsers: ['ChromeHeadless', /* 'Safari', */'PhantomJS'],
     frameworks: ['mocha', 'sinon-chai', 'phantomjs-shim'],
     reporters: ['progress', 'spec', 'coverage'],
     files: [
@@ -29,5 +29,5 @@ module.exports = function(config) {
         { type: 'text' },
       ]
     }
-  })
+  });
 };

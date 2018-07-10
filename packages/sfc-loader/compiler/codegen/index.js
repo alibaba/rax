@@ -3,6 +3,7 @@ const baseDirectives = require('../directives');
 const { camelize, no, extend, makeMap } = require('../../shared/utils');
 const { baseWarn, pluckModuleFunction } = require('../helpers');
 const { isReservedTagName } = require('../utils');
+
 const fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 const simplePathRE = /^\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?']|\[".*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*\s*$/;
 
@@ -101,9 +102,9 @@ function genElement(el, state) {
 
       code = `_c(${tagHelperName}${
         data ? `,${data}` : '' // data
-        }${
+      }${
         children ? `,${children}` : '' // children
-        })`;
+      })`;
     }
     // module transforms
     for (let i = 0; i < state.transforms.length; i++) {
@@ -141,7 +142,7 @@ function genStatic(el, state) {
   state.staticRenderFns.push(`with(this){return ${genElement(el, state)}}`);
   return `_m(${state.staticRenderFns.length - 1}${
     el.staticInFor ? ',true' : ''
-    })`;
+  })`;
 }
 
 // v-once
@@ -161,12 +162,12 @@ function genOnce(el, state) {
     }
     if (!key) {
       process.env.NODE_ENV !== 'production' &&
-        state.warn(`v-once can only be used inside v-for that is keyed. `);
+        state.warn('v-once can only be used inside v-for that is keyed. ');
       return genElement(el, state);
     }
     return `_o(${genElement(el, state)},${state.onceId++}${
-      key ? `,${key}` : ``
-      })`;
+      key ? `,${key}` : ''
+    })`;
   } else {
     return genStatic(el, state);
   }
@@ -218,8 +219,8 @@ function genFor(el, state, altGen, altHelper) {
   ) {
     state.warn(
       `<${el.tag} v-for="${alias} in ${exp}">: component lists rendered with ` +
-      `v-for should have explicit keys. ` +
-      `See https://vuejs.org/guide/list.html#key for more info.`,
+      'v-for should have explicit keys. ' +
+      'See https://vuejs.org/guide/list.html#key for more info.',
       true /* tip */
     );
   }
@@ -251,11 +252,11 @@ function genData(el, state) {
     data += `ref:${el.ref},`;
   }
   if (el.refInFor) {
-    data += `refInFor:true,`;
+    data += 'refInFor:true,';
   }
   // pre
   if (el.pre) {
-    data += `pre:true,`;
+    data += 'pre:true,';
   }
   // record original tag name for components using "is" attribute
   if (el.component) {
@@ -297,7 +298,7 @@ function genData(el, state) {
   if (el.model) {
     data += `model:{value:${el.model.value},callback:${
       el.model.callback
-      },expression:${el.model.expression}},`;
+    },expression:${el.model.expression}},`;
   }
   // inline-template
   if (el.inlineTemplate) {
@@ -342,9 +343,9 @@ function genDirectives(el, state) {
         dir.value
           ? `,value:(${dir.value}),expression:${JSON.stringify(dir.value)}`
           : ''
-        }${dir.arg ? `,arg:"${dir.arg}"` : ''}${
+      }${dir.arg ? `,arg:"${dir.arg}"` : ''}${
         dir.modifiers ? `,modifiers:${JSON.stringify(dir.modifiers)}` : ''
-        }},`;
+      }},`;
     }
   }
   if (hasRuntime) {
@@ -366,9 +367,9 @@ function genInlineTemplate(el, state) {
     const inlineRenderFns = generate(ast, state.options);
     return `inlineTemplate:{render:function(){${
       inlineRenderFns.render
-      }},staticRenderFns:[${inlineRenderFns.staticRenderFns
-        .map(code => `function(){${code}}`)
-        .join(',')}]}`;
+    }},staticRenderFns:[${inlineRenderFns.staticRenderFns
+      .map(code => `function(){${code}}`)
+      .join(',')}]}`;
   }
 }
 
@@ -387,9 +388,9 @@ function genScopedSlot(key, el, state) {
   return (
     `{key:${key},fn:function(${String(el.attrsMap.scope)}){` +
     `return ${
-    el.tag === 'template'
-      ? genChildren(el, state) || 'void 0'
-      : genElement(el, state)
+      el.tag === 'template'
+        ? genChildren(el, state) || 'void 0'
+        : genElement(el, state)
     }}}`
   );
 }
@@ -427,7 +428,7 @@ function genChildren(el, state, checkSkip, altGenElement, altGenNode) {
     const gen = altGenNode || genNode;
     return `[${children.map(c => gen(c, state)).join(',')}]${
       normalizationType ? `,${normalizationType}` : ''
-      }`;
+    }`;
   }
 }
 
@@ -444,15 +445,15 @@ function getNormalizationType(children, maybeComponent) {
     }
     if (
       needsNormalization(el) ||
-      (el.ifConditions &&
-        el.ifConditions.some(c => needsNormalization(c.block)))
+      el.ifConditions &&
+        el.ifConditions.some(c => needsNormalization(c.block))
     ) {
       res = 2;
       break;
     }
     if (
       maybeComponent(el) ||
-      (el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block)))
+      el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block))
     ) {
       res = 1;
     }
@@ -481,7 +482,7 @@ function genText(text) {
     text.type === 2
       ? text.expression // no need for () because already wrapped in _s()
       : transformSpecialNewlines(JSON.stringify(text.text))
-    })`;
+  })`;
 }
 
 exports.genComment = genComment;
@@ -498,7 +499,7 @@ function genSlot(el, state) {
     `{${el.attrs.map(a => `${camelize(a.name)}:${a.value}`).join(',')}}`;
   const bind = el.attrsMap['v-bind'];
   if ((attrs || bind) && !children) {
-    res += `,null`;
+    res += ',null';
   }
   if (attrs) {
     res += `,${attrs}`;
@@ -514,7 +515,7 @@ function genComponent(componentName, el, state) {
   const children = el.inlineTemplate ? null : genChildren(el, state, true);
   return `_c(${componentName},${genData(el, state)}${
     children ? `,${children}` : ''
-    })`;
+  })`;
 }
 
 function genProps(props) {

@@ -70,7 +70,7 @@ module.exports = (
 
   // 补充 source content
   for (let i = 0; i < map.sourcesContent.length; i++) {
-    map.sourcesContent[i] = scriptContent; //readFileSync(resolve(map.sources[i]), 'utf-8');
+    map.sourcesContent[i] = scriptContent; // readFileSync(resolve(map.sources[i]), 'utf-8');
   }
 
   // offset source

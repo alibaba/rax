@@ -19,7 +19,7 @@ module.exports = function(rawContent, inputSourceMap) {
   const callback = this.async();
   const context = this;
   const contextPath =
-    this.rootContext || (this.options && this.options.context) || process.cwd();
+    this.rootContext || this.options && this.options.context || process.cwd();
   const filePath = this.resourcePath;
   const relativePath = relative(contextPath, filePath);
 

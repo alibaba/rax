@@ -101,7 +101,7 @@ function parse(template, options) {
       // check namespace.
       // inherit parent ns if there is one
       const ns =
-        (currentParent && currentParent.ns) || platformGetTagNamespace(tag);
+        currentParent && currentParent.ns || platformGetTagNamespace(tag);
 
       // handle IE svg bug
       /* istanbul ignore if */
@@ -172,7 +172,7 @@ function parse(template, options) {
           if (el.tag === 'slot' || el.tag === 'template') {
             warnOnce(
               `Cannot use <${
-              el.tag
+                el.tag
               }> as component root element because it may ` +
               'contain multiple nodes.'
             );
@@ -200,9 +200,9 @@ function parse(template, options) {
           });
         } else if (process.env.NODE_ENV !== 'production') {
           warnOnce(
-            `Component template should contain exactly one root element. ` +
-            `If you are using v-if on multiple elements, ` +
-            `use v-else-if to chain them instead.`
+            'Component template should contain exactly one root element. ' +
+            'If you are using v-if on multiple elements, ' +
+            'use v-else-if to chain them instead.'
           );
         }
       }
@@ -253,7 +253,7 @@ function parse(template, options) {
             warnOnce(
               'Component template requires a root element, rather than just text.'
             );
-          } else if ((text = text.trim())) {
+          } else if (text = text.trim()) {
             warnOnce(`text "${text}" outside root element will be ignored.`);
           }
         }
@@ -322,7 +322,7 @@ function processPre(el) {
 function processRawAttrs(el) {
   const l = el.attrsList.length;
   if (l) {
-    const attrs = (el.attrs = new Array(l));
+    const attrs = el.attrs = new Array(l);
     for (let i = 0; i < l; i++) {
       attrs[i] = {
         name: el.attrsList[i].name,
@@ -340,7 +340,7 @@ function processKey(el) {
   if (exp) {
     if (process.env.NODE_ENV !== 'production' && el.tag === 'template') {
       warn(
-        `<template> cannot be keyed. Place the key on real elements instead.`
+        '<template> cannot be keyed. Place the key on real elements instead.'
       );
     }
     el.key = exp;
@@ -357,7 +357,7 @@ function processRef(el) {
 
 function processFor(el) {
   let exp;
-  if ((exp = getAndRemoveAttr(el, 'v-for'))) {
+  if (exp = getAndRemoveAttr(el, 'v-for')) {
     const inMatch = exp.match(forAliasRE);
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' &&
@@ -422,7 +422,7 @@ function findPrevElement(children) {
       if (process.env.NODE_ENV !== 'production' && children[i].text !== ' ') {
         warn(
           `text "${children[i].text.trim()}" between v-if and v-else(-if) ` +
-          `will be ignored.`
+          'will be ignored.'
         );
       }
       children.pop();
@@ -449,9 +449,9 @@ function processSlot(el) {
     el.slotName = getBindingAttr(el, 'name');
     if (process.env.NODE_ENV !== 'production' && el.key) {
       warn(
-        `\`key\` does not work on <slot> because slots are abstract outlets ` +
-        `and can possibly expand into multiple elements. ` +
-        `Use the key on a wrapping element instead.`
+        '`key` does not work on <slot> because slots are abstract outlets ' +
+        'and can possibly expand into multiple elements. ' +
+        'Use the key on a wrapping element instead.'
       );
     }
   } else {
@@ -467,7 +467,7 @@ function processSlot(el) {
 
 function processComponent(el) {
   let binding;
-  if ((binding = getBindingAttr(el, 'is'))) {
+  if (binding = getBindingAttr(el, 'is')) {
     el.component = binding;
   }
   if (getAndRemoveAttr(el, 'inline-template') != null) {
@@ -507,7 +507,7 @@ function processAttrs(el) {
             addHandler(
               el,
               `update:${camelize(name)}`,
-              genAssignmentCode(value, `$event`)
+              genAssignmentCode(value, '$event')
             );
           }
         }
@@ -601,8 +601,8 @@ function isTextTag(el) {
 function isForbiddenTag(el) {
   return (
     el.tag === 'style' ||
-    (el.tag === 'script' &&
-      (!el.attrsMap.type || el.attrsMap.type === 'text/javascript'))
+    el.tag === 'script' &&
+      (!el.attrsMap.type || el.attrsMap.type === 'text/javascript')
   );
 }
 
@@ -628,10 +628,10 @@ function checkForAliasModel(el, value) {
     if (_el.for && _el.alias === value) {
       warn(
         `<${el.tag} v-model="${value}">: ` +
-        `You are binding v-model directly to a v-for iteration alias. ` +
-        `This will not be able to modify the v-for source array because ` +
-        `writing to the alias is like modifying a function local variable. ` +
-        `Consider using an array of objects and use v-model on an object property instead.`
+        'You are binding v-model directly to a v-for iteration alias. ' +
+        'This will not be able to modify the v-for source array because ' +
+        'writing to the alias is like modifying a function local variable. ' +
+        'Consider using an array of objects and use v-model on an object property instead.'
       );
     }
     _el = _el.parent;

@@ -4,7 +4,7 @@ import { renderSFCModule } from 'utils';
 describe('basic test', () => {
   beforeEach(() => {
     // document.body.innerHTML = '';
-  })
+  });
 
   it('empty file', () => {
     renderSFCModule(require('./empty.html'));
@@ -19,7 +19,7 @@ describe('basic test', () => {
     // expect(document.querySelector('#aaa')).equal('1')
   });
 
-  it ('proxy', () => {
+  it('proxy', () => {
     const cont = renderSFCModule(require('./proxy.html'));
     expect(cont.innerText).to.equal('Hello World');
   });

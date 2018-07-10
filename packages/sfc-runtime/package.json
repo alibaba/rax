@@ -17,6 +17,7 @@
   },
   "license": "BSD-3-Clause",
   "dependencies": {
+    "camelcase": "^5.0.0",
     "uppercamelcase": "^3.0.0"
   },
   "devDependencies": {

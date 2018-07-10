@@ -6,5 +6,5 @@ export default function createNotImplWarn(text, alias) {
     } else {
       return null;
     }
-  }
+  };
 }

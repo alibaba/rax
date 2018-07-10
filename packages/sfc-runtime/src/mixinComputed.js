@@ -14,7 +14,7 @@ export default function mixinComputed(vm, computed) {
     return;
   }
 
-  const watchers = (vm._computedWatchers = Object.create(null));
+  const watchers = vm._computedWatchers = Object.create(null);
   for (const key in computed) {
     const userDef = computed[key];
     const getter = typeof userDef === 'function' ? userDef : userDef.get;

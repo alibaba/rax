@@ -10,5 +10,4 @@ describe('computed', () => {
       done();
     });
   });
-
 });

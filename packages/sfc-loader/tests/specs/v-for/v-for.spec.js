@@ -36,13 +36,13 @@ describe('v-for', () => {
     const cont = renderSFCModule(require('./misc-for'));
     expect(
       cont.querySelector('[data-key="for-method"]').innerHTML
-    ).to.equal(`<text>2</text><text>4</text>`);
+    ).to.equal('<text>2</text><text>4</text>');
   });
 
   it('for with template', () => {
     const cont = renderSFCModule(require('./template-for'));
     expect(cont.innerHTML).to
-      .equal(`<view><text>Foo</text> <text></text><text>Bar</text> <text></text></view>`);
+      .equal('<view><text>Foo</text> <text></text><text>Bar</text> <text></text></view>');
   });
 
   it('for with if', () => {

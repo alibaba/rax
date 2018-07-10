@@ -11,14 +11,14 @@ export default function mixinProps(vm, props, userPropsDef) {
       if (typeof propKey === 'string') {
         propsDef.push({ key: propKey });
       } else if (process.env.NODE_ENV !== 'production') {
-        warn(`props key should be a string, check definition of`, userPropsDef);
+        warn('props key should be a string, check definition of', userPropsDef);
       }
     });
   } else if (isPlainObject(userPropsDef)) {
     const keys = Object.keys(userPropsDef);
     for (let i = 0, l = keys.length; i < l; i ++) {
       const key = keys[i];
-      const defaultVal = userPropsDef[key]['default'];
+      const defaultVal = userPropsDef[key].default;
       propsDef.push({ key, defaultVal });
     }
   }
