@@ -1,0 +1,20 @@
+<style>
+.foo {
+  color: red;
+}
+</style>
+
+<template>
+  <view class="foo">
+    this is custom component!
+    <slot></slot>
+  </view>
+</template>
+
+<script>
+export default {
+  created() {
+    console.log('custom component created', this);
+  }
+};
+</script>

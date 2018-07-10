@@ -1,0 +1,20 @@
+<template>
+  <div>{{foo}}-{{bar}}</div>
+</template>
+<script>
+  export default {
+    props: {
+      // 检测类型
+      foo: String,
+      // 检测类型 + 其他验证
+      bar: {
+        type: String,
+        default: 'bar',
+        required: true,
+        validator: function (value) {
+          return value >= 0
+        }
+      }
+    }
+  }
+</script>

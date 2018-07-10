@@ -1,0 +1,174 @@
+<template>
+    <view>
+        {{ msg }}
+        <text v-bind:title="message">
+            鼠标悬停几秒钟查看此处动态绑定的提示信息！
+        </text>
+
+        <view v-if="seen">现在你看到我了</view>
+
+        <view v-for="(todo, id) in todos">
+            {{id + 1}}. {{ todo.text }}
+        </view>
+
+        <button v-on:click="reverseMessage">逆转消息</button>
+
+        <input v-model="message" />
+        <view>Using mustaches: {{ rawHTML }}</view>
+        <view>Using v-html directive:  <view v-html="rawHTML"></view></view>
+
+        {{ number + 1 }}
+
+        {{ ok ? 'YES' : 'NO' }}
+
+        {{ message.split('').reverse().join('') }}
+
+
+        <button @click="this.todos[0].text = '学习 MiniDSL'">change todo 0</button>
+        <view v-bind:id="'list-' + id"></view>
+        <view v-bind:id="'todos[' + id + ']'"></view>
+
+        <view>Computed reversed message: "{{ reversedMessage }}"</view>
+
+        <view>FullName: {{ fullName }}</view>
+        <button @click="changeFirstName">changeFirstName</button>
+        <button @click="changeFullName">changeFullName</button>
+        <button @click="changeABC">chang abc</button>
+
+        <button
+            :class="{ active: isActive }"
+            class="fooo"
+            style="color: green;"
+            :style="style"
+            @click="ok = !ok"
+        >
+          toggle
+        </button>
+
+        <view v-if="ok">Yes</view>
+        <view v-else>No</view>
+
+        <view v-if="type === 'A'">
+            A
+        </view>
+        <view v-else-if="type === 'B'">
+            B
+        </view>
+        <view v-else-if="type === 'C'">
+            C
+        </view>
+        <view v-else>
+            Not A/B/C
+        </view>
+        <button @click="toggleABC">toggleABCD</button>
+
+        <view v-show="type === 'A'">
+            show is not supported
+        </view>
+
+        <view v-for="(v, k, idx) in style" :key="idx">
+            对象迭代 {{ idx }} - {{ k }} - {{ v }}
+        </view>
+    </view>
+</template>
+
+<style>
+    .active {
+        color: red;
+    }
+    .fooo {
+        background: yellow;
+    }
+</style>
+
+<script>
+  const data = {
+    style: {
+      fontSize: '35px'
+    },
+    // type: 'B',
+    isActive: true,
+    msg: 'Hello MiniDSL!',
+    message: '页面加载于 ' + new Date().toLocaleString(),
+    seen: true,
+    todos: [
+      { text: '学习 JavaScript' },
+      { text: '学习 Vue' },
+      { text: '整个牛项目' }
+    ],
+    rawHTML: '<span style="color: red">red text</span>',
+    number: 102,
+    ok: true,
+    id: 0,
+    a: {
+      b: {
+        c: 1
+      }
+    },
+    firstName: 'Foo',
+    lastName: 'Bar'
+    // fullName: 'Foo Bar'
+  };
+  const def = {
+    data() {
+      return data;
+    },
+    computed: {
+      // 计算属性的 getter
+      reversedMessage: function() {
+        // `this` 指向 vm 实例
+        return this.message
+          .split('')
+          .reverse()
+          .join('');
+      },
+      fullName: {
+        // getter
+        get: function() {
+          return this.firstName + ' ' + this.lastName;
+        },
+        // setter
+        set: function(newValue) {
+          var names = newValue.split(' ');
+          this.firstName = names[0];
+          this.lastName = names[names.length - 1];
+        }
+      },
+      type: function() {
+        const abc = ['A', 'B', 'C', 'D'];
+        return abc[this.id % abc.length];
+      }
+    },
+    methods: {
+      reverseMessage: function() {
+        this.msg = this.msg
+          .split('')
+          .reverse()
+          .join('');
+      },
+      changeFirstName: function() {
+        this.firstName = 'Ling';
+      },
+      changeFullName: function() {
+        this.fullName = 'Zero Ling';
+      },
+      changeABC: function() {
+        this.a.b.c = 2;
+      },
+      toggleABC: function() {
+        this.id++;
+      }
+    },
+    watch: {
+      firstName: function(val, oldVal) {
+        console.log('first name changed from', oldVal, 'to', val);
+        console.log(this);
+      },
+      'a.b.c': function(val, oldVal) {
+        console.log('a.c.c changed from', oldVal, 'to', val);
+        console.log(this);
+      }
+    }
+  };
+  export default def;
+</script>
