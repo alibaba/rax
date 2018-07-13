@@ -2,7 +2,7 @@ const he = require('he');
 const { parseHTML } = require('./html-parser');
 const { parseText } = require('./text-parser');
 const { parseFilters } = require('./filter-parser');
-const { cached, no, camelize } = require('../../shared/utils');
+const { cached, no, camelize } = require('sfc-shared-utils');
 const { genAssignmentCode } = require('../directives/model');
 
 const isIE = false;
@@ -172,7 +172,7 @@ function parse(template, options) {
           if (el.tag === 'slot' || el.tag === 'template') {
             warnOnce(
               `Cannot use <${
-                el.tag
+              el.tag
               }> as component root element because it may ` +
               'contain multiple nodes.'
             );
@@ -602,7 +602,7 @@ function isForbiddenTag(el) {
   return (
     el.tag === 'style' ||
     el.tag === 'script' &&
-      (!el.attrsMap.type || el.attrsMap.type === 'text/javascript')
+    (!el.attrsMap.type || el.attrsMap.type === 'text/javascript')
   );
 }
 

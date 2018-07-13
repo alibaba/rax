@@ -1,12 +1,19 @@
 {
-  "name": "@icedesign/sfc-compiler",
-  "version": "1.0.0",
-  "description": "",
+  "name": "sfc-compiler",
+  "version": "0.1.0",
+  "description": "sfc compiler for sfc dsl",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "sfc-shared-utils": "^0.1.0",
+    "babel-core": "^6.26.3",
+    "babel-generator": "^6.26.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-template": "^6.26.0",
+    "babel-traverse": "^6.26.0",
+    "babel-types": "^6.26.0",
+    "babylon": "^6.18.0",
+    "colors": "^1.3.0",
+    "he": "^1.1.1"
+  }
 }

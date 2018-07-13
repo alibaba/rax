@@ -1,4 +1,4 @@
-const { uniqueInstanceID } = require('../../shared/utils');
+const { uniqueInstanceID } = require('sfc-shared-utils');
 const { parseText } = require('../parser/text-parser');
 const { parseStyleText } = require('../utils/style');
 const { getAndRemoveAttr, getBindingAttr, baseWarn } = require('../helpers');
@@ -15,9 +15,9 @@ function transformNode(el, options) {
     if (expression) {
       warn(
         `class="${staticClass}": ` +
-          'Interpolation inside attributes has been removed. ' +
-          'Use v-bind or the colon shorthand instead. For example, ' +
-          'instead of <div class="{{ val }}">, use <div :class="val">.'
+        'Interpolation inside attributes has been removed. ' +
+        'Use v-bind or the colon shorthand instead. For example, ' +
+        'instead of <div class="{{ val }}">, use <div :class="val">.'
       );
     }
   }
@@ -56,9 +56,9 @@ function transformNode(el, options) {
       if (expression) {
         warn(
           `style="${staticStyle}": ` +
-            'Interpolation inside attributes has been removed. ' +
-            'Use v-bind or the colon shorthand instead. For example, ' +
-            'instead of <div style="{{ val }}">, use <div :style="val">.'
+          'Interpolation inside attributes has been removed. ' +
+          'Use v-bind or the colon shorthand instead. For example, ' +
+          'instead of <div style="{{ val }}">, use <div :style="val">.'
         );
       }
     }
@@ -84,9 +84,9 @@ function genData(el) {
 
   data += `style:_cx(${
     el.classNameStyle ? el.classNameStyle : '!1'
-  },${styleTag},${el.styleBinding ? el.styleBinding : '!1'},${
+    },${styleTag},${el.styleBinding ? el.styleBinding : '!1'},${
     el.staticStyle ? el.staticStyle : '!1'
-  }),`;
+    }),`;
 
   return data;
 }

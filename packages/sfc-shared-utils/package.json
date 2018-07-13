@@ -1,0 +1,14 @@
+{
+  "name": "sfc-shared-utils",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "htmlparser2": "^3.9.2",
+    "uppercamelcase": "^2.0.0",
+    "uuid": "^3.3.2"
+  }
+}

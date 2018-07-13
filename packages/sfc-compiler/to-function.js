@@ -1,4 +1,4 @@
-const { noop } = require('../shared/utils');
+const { noop } = require('sfc-shared-utils');
 // import { warn, tip } from 'core/util/debug';
 
 const warn = console.warn.bind(console);
@@ -34,10 +34,10 @@ function createCompileToFunctionFn(compile) {
         if (e.toString().match(/unsafe-eval|CSP/)) {
           warn(
             'It seems you are using the standalone build of Vue.js in an ' +
-              'environment with Content Security Policy that prohibits unsafe-eval. ' +
-              'The template compiler cannot work in this environment. Consider ' +
-              'relaxing the policy to allow unsafe-eval or pre-compiling your ' +
-              'templates into render functions.'
+            'environment with Content Security Policy that prohibits unsafe-eval. ' +
+            'The template compiler cannot work in this environment. Consider ' +
+            'relaxing the policy to allow unsafe-eval or pre-compiling your ' +
+            'templates into render functions.'
           );
         }
       }
@@ -59,8 +59,8 @@ function createCompileToFunctionFn(compile) {
       if (compiled.errors && compiled.errors.length) {
         warn(
           `Error compiling template:\n\n${template}\n\n` +
-            compiled.errors.map(e => `- ${e}`).join('\n') +
-            '\n',
+          compiled.errors.map(e => `- ${e}`).join('\n') +
+          '\n',
           vm
         );
       }
@@ -85,9 +85,9 @@ function createCompileToFunctionFn(compile) {
       if ((!compiled.errors || !compiled.errors.length) && fnGenErrors.length) {
         warn(
           'Failed to generate render function:\n\n' +
-            fnGenErrors
-              .map(({ err, code }) => `${err.toString()} in\n\n${code}\n`)
-              .join('\n'),
+          fnGenErrors
+            .map(({ err, code }) => `${err.toString()} in\n\n${code}\n`)
+            .join('\n'),
           vm
         );
       }

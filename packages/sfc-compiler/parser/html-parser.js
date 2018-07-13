@@ -9,16 +9,16 @@
  * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
  */
 
-const { makeMap, no } = require('../../shared/utils');
+const { makeMap, no } = require('sfc-shared-utils');
 
 // HTML5 tags https://html.spec.whatwg.org/multipage/indices.html#elements-3
 // Phrasing Content https://html.spec.whatwg.org/multipage/dom.html#phrasing-content
 const isNonPhrasingTag = makeMap(
   'address,article,aside,base,blockquote,body,caption,col,colgroup,dd,' +
-    'details,dialog,div,dl,dt,fieldset,figcaption,figure,footer,form,' +
-    'h1,h2,h3,h4,h5,h6,head,header,hgroup,hr,html,legend,li,menuitem,meta,' +
-    'optgroup,option,param,rp,rt,source,style,summary,tbody,td,tfoot,th,thead,' +
-    'title,tr,track'
+  'details,dialog,div,dl,dt,fieldset,figcaption,figure,footer,form,' +
+  'h1,h2,h3,h4,h5,h6,head,header,hgroup,hr,html,legend,li,menuitem,meta,' +
+  'optgroup,option,param,rp,rt,source,style,summary,tbody,td,tfoot,th,thead,' +
+  'title,tr,track'
 );
 
 // Regular Expressions for parsing tags and attributes
@@ -34,13 +34,13 @@ const singleAttrValues = [
 ];
 const attribute = new RegExp(
   '^\\s*' +
-    singleAttrIdentifier.source +
-    '(?:\\s*(' +
-    singleAttrAssign.source +
-    ')' +
-    '\\s*(?:' +
-    singleAttrValues.join('|') +
-    '))?'
+  singleAttrIdentifier.source +
+  '(?:\\s*(' +
+  singleAttrAssign.source +
+  ')' +
+  '\\s*(?:' +
+  singleAttrValues.join('|') +
+  '))?'
 );
 
 // could use https://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-QName
@@ -55,7 +55,7 @@ const comment = /^<!--/;
 const conditionalComment = /^<!\[/;
 
 let IS_REGEX_CAPTURING_BROKEN = false;
-'x'.replace(/x(.)?/g, function(m, g) {
+'x'.replace(/x(.)?/g, function (m, g) {
   IS_REGEX_CAPTURING_BROKEN = g === '';
 });
 
@@ -184,7 +184,7 @@ function parseHTML(html, options) {
           '([\\s\\S]*?)(</' + stackedTag + '[^>]*>)',
           'i'
         ));
-      const rest = html.replace(reStackedTag, function(all, text, endTag) {
+      const rest = html.replace(reStackedTag, function (all, text, endTag) {
         endTagLength = endTag.length;
         if (!isPlainTextElement(stackedTag) && stackedTag !== 'noscript') {
           text = text

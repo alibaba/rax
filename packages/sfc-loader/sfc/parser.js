@@ -1,4 +1,4 @@
-const { getDomObject, innerHTML } = require('../shared/utils');
+const { getDomObject, innerHTML } = require('sfc-shared-utils');
 
 module.exports = function parse(html) {
   const dom = getDomObject(html);

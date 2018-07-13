@@ -1,4 +1,4 @@
-const { makeMap } = require('../../shared/utils');
+const { makeMap } = require('sfc-shared-utils');
 
 const isPreTag = tag => tag === 'pre';
 exports.isPreTag = isPreTag;

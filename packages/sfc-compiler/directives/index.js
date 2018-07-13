@@ -1,6 +1,6 @@
 const on = require('./on');
 const bind = require('./bind');
-const { noop } = require('../../shared/utils');
+const { noop } = require('sfc-shared-utils');
 
 module.exports = {
   on,

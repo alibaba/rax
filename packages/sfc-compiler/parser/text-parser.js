@@ -1,4 +1,4 @@
-const { cached } = require('../../shared/utils');
+const { cached } = require('sfc-shared-utils');
 const { parseFilters } = require('./filter-parser');
 
 const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g;

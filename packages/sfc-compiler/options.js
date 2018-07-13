@@ -7,7 +7,7 @@ const {
 
 const modules = require('./modules');
 const directives = require('./directives');
-const { genStaticKeys } = require('../shared/utils');
+const { genStaticKeys } = require('sfc-shared-utils');
 const { isUnaryTag, canBeLeftOpenTag } = require('./utils');
 
 exports.baseOptions = {
