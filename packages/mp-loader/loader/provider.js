@@ -18,7 +18,7 @@ module.exports = function providerLoader(content) {
     sources: [relativePath],
     sourcesContent: [content],
     names: [],
-    mappings: ""
+    mappings: ''
   };
 
   if (/node_modules/.test(resourcePath)) {
@@ -27,4 +27,4 @@ module.exports = function providerLoader(content) {
     sourceMap.mappings += ';';
     this.callback(null, provider + '\n' + content, sourceMap);
   }
-}
+};

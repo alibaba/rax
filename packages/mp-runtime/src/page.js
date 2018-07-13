@@ -1,5 +1,6 @@
 import getApp from './getApp';
 import { $on } from './eventHub';
+
 const page = require('@core/page');
 
 function has(key) {
@@ -11,7 +12,7 @@ export default function registerPage(pageInfo, renderFn, initPage) {
   const pageName = pageInfo.page;
   const pagePath = pageInfo.path;
 
-  page.register({ page: pagePath }, function (module, exports, require) {
+  page.register({ page: pagePath }, function(module, exports, require) {
     initPage(function Page(config) {
       const pageCtx = require('@core/context');
       pageCtx.path = pagePath;

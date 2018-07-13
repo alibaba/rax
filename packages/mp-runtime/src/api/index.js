@@ -43,7 +43,7 @@ function login() { }
 function setNavigationBar() { }
 function getSystemInfoSync() { }
 
-let callCount = 0
+let callCount = 0;
 function $call(modKey, params, onSuccess = noop, onFail = noop) {
   const [module, method] = modKey.split('.');
 

@@ -151,7 +151,7 @@ exports.getRootEl = function getRootEl(el) {
   } else {
     return getRootEl(el.parent);
   }
-}
+};
 
 function isInFor(el) {
   if (el.parent) {

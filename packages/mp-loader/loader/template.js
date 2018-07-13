@@ -4,6 +4,7 @@ const { relative } = require('path');
 const { makeMap, compileES5, QueryString } = require('../shared/utils');
 const transpile = require('../transpiler');
 const paths = require('../paths');
+
 const injectThisScope = require(paths.injectThisScope);
 
 const stylesheetLoaderPath = require.resolve('stylesheet-loader');
@@ -37,11 +38,6 @@ module.exports = function templateLoader(content) {
     scope: ''
   };
   const { renderFn, tplAlias, tplASTs, dependencies } = transpile(rawTpl, transpileOpts);
-  // const generate = require('../transpiler/generate');
-  // console.log(1112312, tplASTs && Object.keys(tplASTs).map((tplName) => {
-  //   const ast = tplASTs[tplName];
-  //   return generate(ast, {});
-  // }));
 
   let tplRegisters = '';
   // tpl include and import
@@ -130,4 +126,4 @@ module.exports = function templateLoader(content) {
     require(${stringifyRequest(this, paths.getApp)}).default,
     new require(${stringifyRequest(this, paths.my)}).default({ ctx: '${relativePath}' })
   );`;
-}
+};

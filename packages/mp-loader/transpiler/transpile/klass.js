@@ -1,5 +1,6 @@
 const { getAndRemoveAttr } = require('../helpers');
 const expressionHelpers = require('../expression');
+
 const IS_BIND_REG = /\W*\{\{/;
 
 /**

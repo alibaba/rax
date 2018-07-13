@@ -46,6 +46,6 @@ export default function initApp(config = {}) {
   }
 
   const app = new App(config);
-  return (appInstance = app);
+  return appInstance = app;
 }
 initApp.getApp = getApp;

@@ -1,4 +1,4 @@
-Page({});
+Page({}); /* eslint-disable-line */
 
 describe('basic render', () => {
   const basicContainer = document.querySelector('[data-id="tests/specs/basic/index"]');

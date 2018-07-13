@@ -1,4 +1,4 @@
-import network from '@core/network'
+import network from '@core/network';
 
 export function httpRequest(options) {
   network.request({
@@ -12,10 +12,10 @@ export function httpRequest(options) {
       data: response.data,
       status: response.status,
       headers: response.headers
-    }
-    options.success && options.success(res)
-    options.complete && options.complete(res)
+    };
+    options.success && options.success(res);
+    options.complete && options.complete(res);
   }, error => {
-    options.fail && options.fail(error)
-  })
+    options.fail && options.fail(error);
+  });
 }

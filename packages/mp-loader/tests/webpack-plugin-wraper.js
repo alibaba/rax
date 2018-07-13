@@ -1,5 +1,5 @@
 'use strict';
-const ConcatSource = require('webpack-sources/lib/ConcatSource');
+const ConcatSource = require('webpack-sources/lib/ConcatSource'); /* eslint-disable-line */
 const assert = require('assert');
 
 module.exports = class WrapperPlugin {
@@ -26,14 +26,14 @@ module.exports = class WrapperPlugin {
     const entry = compiler.options.entry;
 
     const wrapFile = (compilation, fileName) => {
-      // preparedChunks 在 apply SingleEntryPlugin 后会向 preparedChunks push 
-      // 对应的当前模块, 根据模块的 name 也就是 entryName 
+      // preparedChunks 在 apply SingleEntryPlugin 后会向 preparedChunks push
+      // 对应的当前模块, 根据模块的 name 也就是 entryName
       // 主要 webpack 源码 Compilation.prototype.addEntry
       // @see https://github.com/webpack/webpack/blob/v1.14.0/lib/Compilation.js#L440
 
-      const headerContent = (typeof header === 'function') ?
+      const headerContent = typeof header === 'function' ?
         header(fileName, entry, compilation.preparedChunks) : header;
-      const footerContent = (typeof footer === 'function') ?
+      const footerContent = typeof footer === 'function' ?
         footer(fileName, entry, compilation.preparedChunks) : footer;
 
       compilation.assets[fileName] = new ConcatSource(

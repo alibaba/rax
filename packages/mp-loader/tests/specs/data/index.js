@@ -1,4 +1,4 @@
-Page({
+Page({ /* eslint-disable-line */
   data: {
     obj: {
       a: 1,
@@ -81,17 +81,16 @@ describe('render with data', () => {
 
   it('字符串运算', () => {
     expect(cont.querySelector('.text-calc').innerText.trim())
-      .to.equal('hellozeroling')
+      .to.equal('hellozeroling');
   });
 
   it('路径运算', () => {
     expect(cont.querySelector('.path-calc').innerText.trim())
-      .to.equal('2 foo')
+      .to.equal('2 foo');
   });
 
   it('在 Mustache 内直接进行组合，构成新的数组或者对象', () => {
     expect(cont.querySelector('.inline-var-mixin').innerText.trim())
-      .to.equal('0 1 2 3 4')
+      .to.equal('0 1 2 3 4');
   });
-
 });

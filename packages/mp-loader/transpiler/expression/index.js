@@ -64,7 +64,7 @@ function transformCode(code_, rmlScope, config) {
         return;
       }
       if (!nameScope) {
-        node.name = config.scope ? (config.scope + '[\'' + node.name + '\']') : node.name;
+        node.name = config.scope ? config.scope + '[\'' + node.name + '\']' : node.name;
       }
     },
     MemberExpression: function MemberExpression(path) {
@@ -74,7 +74,7 @@ function transformCode(code_, rmlScope, config) {
       // do not transform function call
       // skip call callee x[y.q]
       if (
-        // root member node
+      // root member node
         parentType !== 'MemberExpression') {
         // allow {{x.y.z}} even x is undefined
         var members = [node];
@@ -101,7 +101,7 @@ function transformCode(code_, rmlScope, config) {
         if (!members.length) {
           return;
         }
-        members.forEach(function (m) {
+        members.forEach(function(m) {
           // x[y]
           if (m.computed) {
             args.push(m.property);
@@ -141,9 +141,9 @@ function transformCode(code_, rmlScope, config) {
       }]
     }
   };
-  // if (ast.type === 'Identifier') {
-  //   ast.name = `data.${ast.name}`;
-  // } else {
+    // if (ast.type === 'Identifier') {
+    //   ast.name = `data.${ast.name}`;
+    // } else {
   traverse(ast, visitor, undefined, {
     rmlScope: rmlScope,
     strictDataMember: config.strictDataMember !== false

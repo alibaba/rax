@@ -2,7 +2,7 @@ const modules = require('../transpile');
 const { baseOptions } = require('sfc-compiler/options');
 const { generate } = require('sfc-compiler/codegen/index');
 
-module.exports = function (ast) {
+module.exports = function(ast) {
   const options = Object.assign(
     {
       // 完全字符串节点

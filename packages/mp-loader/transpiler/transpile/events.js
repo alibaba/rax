@@ -1,4 +1,5 @@
 const { normalizeMustache } = require('../helpers');
+
 const type = global.TRANSPILER_TYPE || 'my';
 const EVENT_MAPPING = {
   tap: 'click'
@@ -29,7 +30,7 @@ function transformNode(node) {
         const isValFromData = DATA_SCOPE_REG.test(value);
         /**
          * this or data are 2 scope variable origin
-         * 
+         *
          * onClick: data['xxx'] -> original
          * onClick: fooo -> this.fooo
          */

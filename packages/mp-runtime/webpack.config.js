@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
+
 const { NODE_ENV } = process.env;
 const config = {
   mode: NODE_ENV || 'development',

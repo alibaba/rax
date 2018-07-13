@@ -1,7 +1,8 @@
 const { dirname, join } = require('path');
 const { existsSync, readFileSync } = require('fs');
-const { parse } = require('sfc-loader/compiler/parser');
+const { parse } = require('sfc-compiler/parser');
 const { getAndRemoveAttr, getRootEl, normalizeMustache } = require('../helpers');
+
 const cwd = process.cwd();
 
 function transformNode(el, state) {
@@ -9,7 +10,7 @@ function transformNode(el, state) {
 
   function resolveIncludePath(path) {
     if (/^\//.test(path)) {
-      return join(cwd, path)
+      return join(cwd, path);
     } else {
       return join(state.templatePath, '..', path);
     }
@@ -78,11 +79,11 @@ function genData(el) {
   if (el.tag === '$template' && el.attrsMap.hasOwnProperty('is')) {
     const { is } = el.attrsMap;
     /**
-     * _c('$template', { 
+     * _c('$template', {
      *   is: _w('name-of-component'),
      *   data: {}
      * })
-     * 
+     *
      * is maybe dynamic
      * _w(item % 2 ? 'odd' : 'even'),
      */
@@ -96,4 +97,4 @@ function genData(el) {
 module.exports = {
   transformNode,
   genData
-}
+};

@@ -1,7 +1,8 @@
 process.env.BABEL_ENV = 'test';
 const path = require('path');
-const webpack = require('webpack');
+const webpack = require('webpack'); /* eslint-disable-line */
 const Wrapper = require('./webpack-plugin-wraper');
+
 const context = process.cwd();
 
 const babelConfig = {
@@ -9,7 +10,8 @@ const babelConfig = {
   presets: [
     [
       require.resolve('@babel/preset-stage-0'), {
-        decoratorsLegacy: true
+        decoratorsLegacy: true,
+        pipelineProposal: 'minimal'
       }
     ],
     require.resolve('@babel/preset-env')
@@ -55,10 +57,9 @@ module.exports = {
       'node_modules',
       context,
     ],
-    // extensions: ['.js', '.html', '.json']
   },
   externals: [
-    function (context, request, callback) {
+    function(context, request, callback) {
       if (/^@(core|schema)\//.test(request)) {
         return callback(null, `commonjs2 ${request}`);
       }
@@ -71,7 +72,7 @@ module.exports = {
     }),
     new Wrapper({
       header(fileName, entry) {
-        return `var rax = getRax(); (function(require) {`;
+        return 'var rax = getRax(); (function(require) {';
       },
       footer(fileName, entry) {
         return `})(function _require(mod) {

@@ -1,5 +1,5 @@
-import keyboard from '@core/keyboard'
+import keyboard from '@core/keyboard';
 
-export function hideKeyboard () {
-  keyboard.hideKeyboard()
+export function hideKeyboard() {
+  keyboard.hideKeyboard();
 }

@@ -1,7 +1,7 @@
-import location from '@core/location'
-import { callWithCallback } from '../util'
+import location from '@core/location';
+import { callWithCallback } from '../util';
 
-export function getLocation (options) {
+export function getLocation(options) {
   callWithCallback(location.getLocation, options, {},
     res => {
       return {
@@ -16,6 +16,6 @@ export function getLocation (options) {
           street: res.address.road,
           number: res.address.addressLine
         }
-      }
-    })
+      };
+    });
 }

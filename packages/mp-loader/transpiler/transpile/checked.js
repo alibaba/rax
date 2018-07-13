@@ -1,4 +1,5 @@
 const { getAndRemoveAttr, addAttr } = require('../helpers');
+
 const BOOLEAN_ATTRS = ['checked', 'disabled', 'plain'];
 
 function transformNode(el) {

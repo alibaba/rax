@@ -26,7 +26,7 @@ exports.extend = extend;
 /**
  * always return false
  */
-exports.no = function () {
+exports.no = function() {
   return false;
 };
 
@@ -49,6 +49,7 @@ exports.error = function error(...args) {
 const mkdirp = require('mkdirp');
 const { dirname } = require('path');
 const { writeFileSync } = require('fs');
+
 exports.safeWriteFile = function safeWriteFile(path, content) {
   mkdirp.sync(dirname(path));
   writeFileSync(path, content, 'utf-8');
@@ -68,6 +69,7 @@ exports.makeMap = function makeMap(str, expectsLowerCase) {
 };
 
 const { transformSync } = require('@babel/core');
+
 const cwd = process.cwd();
 function getBabelOptions() {
   return {
@@ -86,7 +88,7 @@ function getBabelOptions() {
         rootPathSuffix: cwd
       }]
     ]
-  }
+  };
 };
 
 exports.compileES5 = function compileES5(str, opts) {
@@ -106,4 +108,4 @@ exports.QueryString = class QueryString {
     });
     return result.join('&');
   }
-}
+};

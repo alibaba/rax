@@ -1,6 +1,6 @@
-import Navigator from '@core/navigator'
-import resolve from 'resolve-pathname'
-import { callWithCallback } from '../util'
+import Navigator from '@core/navigator';
+import resolve from 'resolve-pathname';
+import { callWithCallback } from '../util';
 
 export function navigateTo(options, basePath = '') {
   let url = resolve(options.url, basePath);
@@ -10,9 +10,9 @@ export function navigateTo(options, basePath = '') {
   }
   callWithCallback(Navigator.push, options, {
     url
-  })
+  });
 }
 
 export function navigateBack(options) {
-  callWithCallback(Navigator.pop, options)
+  callWithCallback(Navigator.pop, options);
 }

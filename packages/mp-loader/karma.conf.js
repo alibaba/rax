@@ -1,10 +1,9 @@
 const { resolve } = require('path');
 const webpackConfig = require('./tests/webpack.config.test.js');
-process.env.CHROME_BIN = require('puppeteer').executablePath()
+process.env.CHROME_BIN = require('puppeteer').executablePath(); /* eslint-disable-line */
 
 // karma.conf.js
-module.exports = function (config) {
-
+module.exports = function(config) {
   config.set({
     browsers: ['ChromeHeadless'],
     frameworks: ['mocha', 'sinon-chai', 'phantomjs-shim'],
@@ -30,5 +29,5 @@ module.exports = function (config) {
         { type: 'text' },
       ]
     }
-  })
+  });
 };

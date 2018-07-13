@@ -7,8 +7,7 @@ const { existsSync, readFileSync } = require('fs');
  *   script: Object,
  *   style: Object,
  * }
- * > https://developers.weixin.qq.com/miniprogram/dev/framework/config.html
- * > 文件名不需要写文件后缀，因为框架会自动去寻找路径下 .json, .js, .wxml, .wxss 四个文件进行整合。
+ * > 文件名不需要写文件后缀，因为框架会自动去寻找路径下 .json, .js, .axml, .acss 四个文件进行整合。
  * resourcePath 指 js 文件绝对路径
  */
 const EXT = {
