@@ -1,0 +1,3 @@
+<template name="even">
+  <view> even </view>
+</template>

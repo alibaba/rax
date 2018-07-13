@@ -1,0 +1,22 @@
+{
+  "name": "mp-runtime",
+  "version": "0.1.0",
+  "description": "mp dsl runtime",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --config webpack.config.js",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "my-compat": "latest"
+  },
+  "devDependencies": {
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "cross-env": "^5.1.5",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4"
+  }
+}

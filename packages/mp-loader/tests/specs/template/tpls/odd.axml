@@ -1,0 +1,3 @@
+<template name="odd">
+  <view> odd </view>
+</template>

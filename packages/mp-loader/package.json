@@ -1,0 +1,50 @@
+{
+  "name": "mp-loader",
+  "version": "0.1.0",
+  "description": "mp dsl loader for rax",
+  "main": "loader/app.js",
+  "scripts": {
+    "test": "NODE_ENV=test npm run test:karma",
+    "test:karma": "NODE_ENV=test karma start --single-run",
+    "test:karma-watch": " NODE_ENV=test karma start --auto-watch"
+  },
+  "dependencies": {
+    "babel-plugin-root-imports": "^1.0.1",
+    "mp-runtime": "^0.1.0",
+    "sfc-loader": "^0.1.0",
+    "sfc-runtime": "^0.1.0",
+    "@babel/core": "^7.0.0-beta.49",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.49",
+    "@babel/preset-stage-0": "^7.0.0-beta.49",
+    "colors": "^1.3.0",
+    "loader-utils": "^1.1.0",
+    "mkdirp": "^0.5.1",
+    "source-map": "^0.7.3",
+    "stylesheet-loader": "^0.6.4-1"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.0.0-beta.4",
+    "chai": "^4.1.2",
+    "karma": "^2.0.4",
+    "karma-babel-preprocessor": "^7.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.1",
+    "karma-mocha": "^1.3.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-phantomjs-shim": "^1.5.0",
+    "karma-safari-launcher": "^1.0.0",
+    "karma-sinon-chai": "^1.3.4",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "^0.0.32",
+    "karma-webpack": "^3.0.0",
+    "mocha": "^5.2.0",
+    "puppeteer": "^1.5.0",
+    "sinon": "^6.0.1",
+    "sinon-chai": "^3.2.0",
+    "webpack": "^4.14.0"
+  },
+  "publishConfig": {
+    "registry": "http://registry.npm.alibaba-inc.com"
+  }
+}

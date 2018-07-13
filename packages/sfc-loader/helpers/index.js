@@ -1,3 +1,3 @@
-import { adapterRax } from '@ali/sfc-runtime';
+import { adapterRax } from 'sfc-runtime';
 
 export default adapterRax;
