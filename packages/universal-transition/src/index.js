@@ -15,7 +15,9 @@ export default function transition(node, styles, options, callback) {
     styles[prop] = convertUnit(styles[prop], prop);
   }
 
-  if (isWeex && node) {
+  if (!node) return;
+  
+  if (isWeex) {
     const animation = __weex_require__('@weex-module/animation');
     animation.transition(node.ref, {
       styles,
