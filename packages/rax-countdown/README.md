@@ -20,7 +20,7 @@ import Countdown from 'rax-countdown';
 | :------------------ | :------- | :------------------- | :--------------------------------------- | :------- |
 | timeRemaining       | Number   | /                    | countdown time, (ms)                          | Yes      |
 | interval            | Number   | 1000                 | countdown interval, (ms)                           | No       |
-| tpl                 | String   | {d}天{h}时{m}分{s}秒{ms} | countdown display template            | No       |
+| tpl                 | String   | {d}天{h}时{m}分{s}秒 | countdown display template            | No       |
 | formatFunc          | Function | /                    | custom formatted remaining time method, when formatFunc = `undefined`, `tpl` is not available  | No       |
 | onTick              | Function | /                    | method of calling when countdown changes                              | No       |
 | onComplete          | Function | /                    | method of calling when the countdown is complete                              | No       |
