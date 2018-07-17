@@ -152,7 +152,7 @@ class Index extends Component {
     while ( (tmp = rule.exec(tpl)) !== null ) {
       matchlist.push(tmp.index, tmp.index);
     }
-    if (matchlist.length !== 0) {// used to detect the last element 
+    if (matchlist.length !== 0) {// used to detect the last element
       matchlist.push(-1);
     }
     let lastPlaintextIndex = 0;
