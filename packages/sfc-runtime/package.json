@@ -1,10 +1,11 @@
 {
   "name": "sfc-runtime",
-  "version": "0.1.10",
-  "main": "dist/sfc-runtime.js",
+  "version": "0.1.0",
+  "main": "src/index.js",
   "description": "SFC DSL Runtime",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server --config webpack.config.js",
