@@ -1,13 +1,14 @@
 {
   "name": "my-compact",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Alipay API adapter for Taobao mini app",
   "main": "lib/index.js",
   "scripts": {
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "prepublish": "npm run build"
   },
   "files": [
-    "src/"
+    "lib/"
   ],
   "dependencies": {
     "eventemitter3": "^3.1.0",
