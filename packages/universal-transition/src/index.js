@@ -2,6 +2,8 @@ import {isWeex, isWeb} from 'universal-env';
 import {convertUnit} from 'style-unit';
 
 export default function transition(node, styles, options, callback) {
+  if (!node) return;
+  
   if (typeof options == 'function' || options == null) {
     callback = options;
     options = {
@@ -14,8 +16,6 @@ export default function transition(node, styles, options, callback) {
   for (let prop in styles) {
     styles[prop] = convertUnit(styles[prop], prop);
   }
-
-  if (!node) return;
   
   if (isWeex) {
     const animation = __weex_require__('@weex-module/animation');
