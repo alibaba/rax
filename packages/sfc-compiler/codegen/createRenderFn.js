@@ -1,5 +1,5 @@
 const { declearTags } = require('../declear');
-const { uniqueInstanceID, makeMap } = require('sfc-shared-utils');
+const { uniqueInstanceID, makeMap, objectValues } = require('sfc-shared-utils');
 const injectThisScope = require('./injectThisScope');
 
 // helpers
@@ -9,7 +9,7 @@ const helpersFns = '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx';
 module.exports = function(render, tagHelperMap) {
   const declearedTags = declearTags(tagHelperMap, '$t');
   const existRenderHelpers = makeMap(
-    helpersFns + ',' + Object.values(tagHelperMap).join(',')
+    helpersFns + ',' + objectValues(tagHelperMap).join(',')
   );
   const thisDefines = injectThisScope(render, existRenderHelpers);
 

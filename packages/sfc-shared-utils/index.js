@@ -95,3 +95,7 @@ const colors = require('colors');
 exports.warn = function warn(msg) {
   return console.warn(colors.yellow('[WARN]'), msg);
 };
+
+exports.objectValues = function objectValues(arr) {
+  return typeof Object.values === 'function' ? Object.values(arr) : Object.keys(arr).map((k) => arr[k]);
+};
