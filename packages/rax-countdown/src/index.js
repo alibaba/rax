@@ -144,15 +144,15 @@ class Index extends Component {
       'h': hours,
       'm': minutes,
       's': seconds
-    }
+    };
 
     let rule = new RegExp('\{[d,h,m,s]\}', 'g'); // used to matched all template item, which includes 'd', 'h', 'm' and 's'.
     const matchlist = [];
     let tmp = null;
-    while ( (tmp = rule.exec(tpl)) ) {
+    while ( (tmp = rule.exec(tpl)) !== null ) {
       matchlist.push(tmp.index, tmp.index);
     }
-    if (matchlist.length !== 0) { // used to detect the last element 
+    if (matchlist.length !== 0) {// used to detect the last element 
       matchlist.push(-1);
     }
     let lastPlaintextIndex = 0;
@@ -160,28 +160,28 @@ class Index extends Component {
     return <View style={styles.main}>
       {
         matchlist.map((val, index) => {
-          if (val === -1) { // don't forget the potential plain text after last matched item
-            const lastPlaintext  = tpl.slice(lastPlaintextIndex);
+          if (val === -1) {// don't forget the potential plain text after last matched item
+            const lastPlaintext = tpl.slice(lastPlaintextIndex);
             return lastPlaintext ? (
               <Text style={textStyle}>{lastPlaintext}</Text>
             ) : null;
           }
 
-          const matchedCharacter = tpl[val+1];
-          switch(matchedCharacter) {
+          const matchedCharacter = tpl[val + 1];
+          switch (matchedCharacter) {
             case 'd':
-            case 'h': 
+            case 'h':
             case 'm':
             case 's':
-              if (index % 2 === 0) { // insert plain text before current matched item
+              if (index % 2 === 0) {// insert plain text before current matched item
                 return (
                   <Text style={textStyle}>
                     {
                       tpl.slice(lastPlaintextIndex, val)
                     }
-                  </Text> 
+                  </Text>
                 );
-              } else { // replace current matched item to realtime string
+              } else {// replace current matched item to realtime string
                 lastPlaintextIndex = val + 3;
                 return addZero(timeType[matchedCharacter], timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, secondStyle);
               }
