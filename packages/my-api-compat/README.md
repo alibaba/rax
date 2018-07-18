@@ -5,7 +5,7 @@ A `my` object for mini app API.
 ### Usage
 
 ```javascript
-import My from 'my-compat-api'
+import My from 'my-api-compat'
 
 const my = new My({
   // ctx is the path of current page, used by my.navigateTo
@@ -16,4 +16,4 @@ my.xxxx
 
 ### Doc
 
-https://developers.taobao.com/api
+https://developers.taobao.com/api/

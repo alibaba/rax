@@ -1,4 +1,4 @@
-const { extend } = require('sfc-shared-utils');
+const { extend } = require('./utils');
 const { detectErrors } = require('./error-detector');
 const { createCompileToFunctionFn } = require('./to-function');
 

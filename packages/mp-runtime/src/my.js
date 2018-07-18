@@ -1,4 +1,4 @@
-import My from 'my-compat-api';
+import My from 'my-api-compat';
 
 /**
  * my = new My({

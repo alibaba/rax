@@ -1,4 +1,4 @@
-const { uniqueInstanceID } = require('sfc-shared-utils');
+const { uniqueInstanceID } = require('../utils');
 const { isPreveredGlobalObject } = require('./injectThisScope');
 const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
@@ -23,7 +23,7 @@ function getIters(el, iters = {}) {
   }
 }
 
-module.exports = function(code, existsScope = () => false, el) {
+module.exports = function (code, existsScope = () => false, el) {
   const ast = babylon.parse(code);
   const iters = getIters(el);
 

@@ -1,4 +1,4 @@
-const { uppercamelcase } = require('sfc-shared-utils');
+const uppercamelcase = require('uppercamelcase');
 const addThis = require('./addThis');
 
 const fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
@@ -144,5 +144,5 @@ function genFilterCode(key) {
   const alias = keyCodes[key];
   return `_k($event.keyCode,${JSON.stringify(key)}${
     alias ? ',' + JSON.stringify(alias) : ''
-  })`;
+    })`;
 }

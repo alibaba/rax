@@ -1,4 +1,4 @@
-const { noop } = require('sfc-shared-utils');
+const { noop } = require('./utils');
 // import { warn, tip } from 'core/util/debug';
 
 const warn = console.warn.bind(console);

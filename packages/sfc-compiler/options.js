@@ -2,13 +2,14 @@ const {
   isPreTag,
   mustUseProp,
   isReservedTag,
-  getTagNamespace
+  getTagNamespace,
+  genStaticKeys,
+  isUnaryTag,
+  canBeLeftOpenTag
 } = require('./utils');
 
 const modules = require('./modules');
 const directives = require('./directives');
-const { genStaticKeys } = require('sfc-shared-utils');
-const { isUnaryTag, canBeLeftOpenTag } = require('./utils');
 
 exports.baseOptions = {
   expectHTML: true,

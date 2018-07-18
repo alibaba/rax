@@ -1,4 +1,4 @@
-const { uniqueInstanceID } = require('sfc-shared-utils');
+const { uniqueInstanceID } = require('../utils');
 const { parseText } = require('../parser/text-parser');
 const { parseStyleText } = require('../utils/style');
 const { getAndRemoveAttr, getBindingAttr, baseWarn } = require('../helpers');
@@ -84,9 +84,9 @@ function genData(el) {
 
   data += `style:_cx(${
     el.classNameStyle ? el.classNameStyle : '!1'
-  },${styleTag},${el.styleBinding ? el.styleBinding : '!1'},${
+    },${styleTag},${el.styleBinding ? el.styleBinding : '!1'},${
     el.staticStyle ? el.staticStyle : '!1'
-  }),`;
+    }),`;
 
   return data;
 }

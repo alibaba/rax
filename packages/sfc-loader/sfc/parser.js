@@ -1,4 +1,21 @@
-const { getDomObject, innerHTML } = require('sfc-shared-utils');
+const htmlparser = require('htmlparser2');
+
+function getDomObject(html) {
+  const handler = new htmlparser.DomHandler();
+  const parser = new htmlparser.Parser(handler, {
+    xmlMode: true
+  });
+
+  parser.parseComplete(html);
+
+  return handler.dom;
+}
+
+function innerHTML(dom) {
+  return htmlparser.DomUtils.getOuterHTML(dom, {
+    xmlMode: true
+  });
+}
 
 module.exports = function parse(html) {
   const dom = getDomObject(html);
