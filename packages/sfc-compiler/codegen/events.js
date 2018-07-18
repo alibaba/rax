@@ -144,5 +144,5 @@ function genFilterCode(key) {
   const alias = keyCodes[key];
   return `_k($event.keyCode,${JSON.stringify(key)}${
     alias ? ',' + JSON.stringify(alias) : ''
-    })`;
+  })`;
 }

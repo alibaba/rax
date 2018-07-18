@@ -55,7 +55,7 @@ const comment = /^<!--/;
 const conditionalComment = /^<!\[/;
 
 let IS_REGEX_CAPTURING_BROKEN = false;
-'x'.replace(/x(.)?/g, function (m, g) {
+'x'.replace(/x(.)?/g, function(m, g) {
   IS_REGEX_CAPTURING_BROKEN = g === '';
 });
 
@@ -184,7 +184,7 @@ function parseHTML(html, options) {
           '([\\s\\S]*?)(</' + stackedTag + '[^>]*>)',
           'i'
         ));
-      const rest = html.replace(reStackedTag, function (all, text, endTag) {
+      const rest = html.replace(reStackedTag, function(all, text, endTag) {
         endTagLength = endTag.length;
         if (!isPlainTextElement(stackedTag) && stackedTag !== 'noscript') {
           text = text

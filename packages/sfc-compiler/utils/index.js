@@ -54,19 +54,19 @@ const isUnaryTag = exports.isUnaryTag = makeMap('embed,img,image,input,link,meta
 
 exports.mustUseProp = function mustUseProp() {
   /* console.log('mustUseProp') */
-}
+};
 
 exports.getTagNamespace = function getTagNamespace() {
   /* console.log('getTagNamespace') */
-}
+};
 
 exports.isUnknownElement = function isUnknownElement() {
   /* console.log('isUnknownElement') */
-}
+};
 
 exports.getComKey = function getComKey(vm) {
   return vm && vm.$attrs ? vm.$attrs.mpcomid : '0';
-}
+};
 
 // 用于小程序的 event type 到 web 的 event
 const eventTypeMap = exports.eventTypeMap = {
@@ -124,18 +124,20 @@ exports.toObject = function toObject(arr) {
  */
 const cached = exports.cached = function cached(fn) {
   var cache = Object.create(null);
-  return (function cachedFn(str) {
+  return function cachedFn(str) {
     var hit = cache[str];
-    return hit || (cache[str] = fn(str))
-  })
-}
+    return hit || (cache[str] = fn(str));
+  };
+};
 
 /**
  * Camelize a hyphen-delimited string.
  */
 const camelizeRE = /-(\w)/g;
-const camelize = exports.camelize = cached(function (str) {
-  return str.replace(camelizeRE, function (_, c) { return c ? c.toUpperCase() : ''; })
+const camelize = exports.camelize = cached(function(str) {
+  return str.replace(camelizeRE, function(_, c) {
+    return c ? c.toUpperCase() : '';
+  });
 });
 
 const colors = require('colors');
@@ -149,7 +151,7 @@ exports.warn = function warn(msg) {
 /**
  * no op
  */
-exports.noop = function noop() { }
+exports.noop = function noop() { };
 
 /**
  * Generate a static keys string from compiler modules.
