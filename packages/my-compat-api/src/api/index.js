@@ -1,5 +1,3 @@
-export * from './alipay';
-export * from './clipboard';
 export * from './connection';
 export * from './contact';
 export * from './device';

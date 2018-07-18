@@ -1,5 +1,5 @@
 {
-  "name": "my-compact",
+  "name": "my-compat-api",
   "version": "0.1.1",
   "description": "Alipay API adapter for Taobao mini app",
   "main": "lib/index.js",

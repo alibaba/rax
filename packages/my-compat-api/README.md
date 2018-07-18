@@ -1,11 +1,11 @@
-## Mini App My API
+## Mini App My API Ccompatible
 
 A `my` object for mini app API.
 
 ### Usage
 
 ```javascript
-import My from 'my-compact'
+import My from 'my-compat-api'
 
 const my = new My({
   // ctx is the path of current page, used by my.navigateTo
@@ -16,4 +16,4 @@ my.xxxx
 
 ### Doc
 
-https://docs.alipay.com/mini/api/overview
+https://developers.taobao.com/api

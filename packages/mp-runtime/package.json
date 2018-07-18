@@ -8,7 +8,7 @@
     "build": "cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "dependencies": {
-    "my-compact": "latest"
+    "my-compat-api": "^0.1.0"
   },
   "devDependencies": {
     "babel-loader": "^7.1.4",
