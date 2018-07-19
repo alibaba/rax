@@ -139,68 +139,56 @@ class Index extends Component {
 
     const _timeBackgroundStyle = [styles.background, timeBackgroundStyle];
 
-    const isDay = new RegExp('{d}').test(tpl);
-    const isHours = new RegExp('{h}').test(tpl);
-    const isMinutes = new RegExp('{m}').test(tpl);
-    const isSeconds = new RegExp('{s}').test(tpl);
+    const timeType = {
+      'd': days,
+      'h': hours,
+      'm': minutes,
+      's': seconds
+    };
 
-    hours = !isDay && days ? hours + 24 * days : hours;
-    minutes = !isHours && hours ? minutes + 60 * hours : minutes;
-    seconds = !isMinutes && minutes ? seconds + 60 * minutes : seconds;
-
-    const tplIndexOfDay = tpl.indexOf('d');
-    const tplIndexOfHours = tpl.indexOf('h');
-    const tplIndexOfMinutes = tpl.indexOf('m');
-    const tplIndexOfSeconds = tpl.indexOf('s');
+    let rule = new RegExp('\{[d,h,m,s]\}', 'g'); // used to matched all template item, which includes 'd', 'h', 'm' and 's'.
+    const matchlist = [];
+    let tmp = null;
+    while ( (tmp = rule.exec(tpl)) !== null ) {
+      matchlist.push(tmp.index, tmp.index);
+    }
+    if (matchlist.length !== 0) {// used to detect the last element
+      matchlist.push(-1);
+    }
+    let lastPlaintextIndex = 0;
 
     return <View style={styles.main}>
       {
-        isDay ?
-          addZero(days, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, timeStyle) :
-          null
-      }
-      {
-        isDay ? <Text style={textStyle}>
-          {
-            tpl.slice(tplIndexOfDay + 2, tplIndexOfDay + 3)
+        matchlist.map((val, index) => {
+          if (val === -1) {// don't forget the potential plain text after last matched item
+            const lastPlaintext = tpl.slice(lastPlaintextIndex);
+            return lastPlaintext ? (
+              <Text style={textStyle}>{lastPlaintext}</Text>
+            ) : null;
           }
-        </Text> : null
-      }
-      {
-        isHours ?
-          addZero(hours, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, timeStyle) :
-          null
-      }
-      {
-        isHours ? <Text style={textStyle}>
-          {
-            tpl.slice(tplIndexOfHours + 2, tplIndexOfHours + 3)
+
+          const matchedCharacter = tpl[val + 1];
+          switch (matchedCharacter) {
+            case 'd':
+            case 'h':
+            case 'm':
+            case 's':
+              if (index % 2 === 0) {// insert plain text before current matched item
+                return (
+                  <Text style={textStyle}>
+                    {
+                      tpl.slice(lastPlaintextIndex, val)
+                    }
+                  </Text>
+                );
+              } else {// replace current matched item to realtime string
+                lastPlaintextIndex = val + 3;
+                return addZero(timeType[matchedCharacter], timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, secondStyle);
+              }
+            default:
+              return null;
           }
-        </Text> : null
-      }
-      {
-        isMinutes ?
-          addZero(minutes, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, timeStyle) :
-          null
-      }
-      {
-        isMinutes ? <Text style={textStyle}>
-          {
-            tpl.slice(tplIndexOfMinutes + 2, tplIndexOfMinutes + 3)
-          }
-        </Text> : null
-      }
-      {
-        isSeconds ?
-          addZero(seconds, timeWrapStyle, timeBackground, _timeBackgroundStyle, timeStyle, secondStyle) :
-          null
-      }
-      {
-        isSeconds ? <Text style={textStyle}>
-          {
-            tpl.slice(tplIndexOfSeconds + 2, tplIndexOfSeconds + 3)
-          }
-        </Text> : null
+        })
       }
     </View>;
   }
