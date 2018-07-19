@@ -14,7 +14,6 @@
   "dependencies": {
     "sfc-compiler": "^0.1.0",
     "sfc-runtime": "^0.1.0",
-    "sfc-shared-utils": "^0.1.0",
     "babel-core": "^6.26.3",
     "babel-generator": "^6.26.1",
     "babel-preset-env": "^1.7.0",
