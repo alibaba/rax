@@ -1,0 +1,32 @@
+{
+  "name": "sfc-runtime",
+  "version": "0.1.0",
+  "main": "src/index.js",
+  "description": "SFC DSL Runtime",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "start": "NODE_ENV=development webpack-dev-server --config webpack.config.js",
+    "build": "NODE_ENV=production webpack --config webpack.config.js",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "camelcase": "^5.0.0",
+    "uppercamelcase": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4"
+  }
+}

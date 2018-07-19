@@ -11,9 +11,6 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "scripts": {
-    "test": "babel-node ./test/index.js"
-  },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
     "rax": "^0.6.4",

@@ -1,0 +1,15 @@
+{
+  "presets": ["env", "stage-0"],
+  "env": {
+    "test": {
+      "plugins": [
+        [
+          "istanbul",
+          {
+            "exclude": ["tests/**/*.html"]
+          }
+        ]
+      ]
+    }
+  }
+}
