@@ -42,6 +42,7 @@
     "rax-hot-module-replacement-webpack-plugin": "^0.6.4",
     "rax-webpack-plugin": "^0.6.4",
     "rimraf": "^2.6.1",
+    "sfc-loader": "^0.1.35",
     "strip-ansi": "^3.0.1",
     "stylesheet-loader": "^0.6.4",
     "ts-loader": "^4.0.1",

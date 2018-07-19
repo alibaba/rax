@@ -16,6 +16,11 @@ const publicPath = '/';
 // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
 const publicUrl = '';
 
+const babelOptions = {
+  presets: [require.resolve('babel-preset-es2015'), require.resolve('babel-preset-rax')],
+  plugins: [require.resolve('rax-hot-loader/babel')]
+};
+
 module.exports = {
   mode: process.env.NODE_ENV,
 
@@ -43,7 +48,7 @@ module.exports = {
     publicPath: publicPath
   },
   resolve: {
-    extensions: ['.js', '.json', '.jsx']
+    extensions: ['.js', '.json', '.jsx', '.html', '.vue']
   },
   plugins: [
     new RaxWebpackPlugin({
@@ -105,12 +110,24 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader',
-            options: {
-              presets: [require.resolve('babel-preset-es2015'), require.resolve('babel-preset-rax')],
-              plugins: [require.resolve('rax-hot-loader/babel')]
-            }
+            options: babelOptions
           }
         ],
+      },
+      {
+        test: /\.(vue|html)$/,
+        use: [
+          {
+            loader: 'sfc-loader',
+            options: { builtInRuntime: false }
+          }
+        ],
+        // include: [
+        //   process.cwd() + '/src'
+        // ]
+        exclude: [
+          pathConfig.appHtml
+        ]
       },
       {
         test: /\.css$/,
