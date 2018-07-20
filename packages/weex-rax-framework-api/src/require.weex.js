@@ -8,7 +8,7 @@ function isAvailableWindmillModule(moduleName) {
 
 module.exports = function(modules, weex, windmill) {
   const isInWindmill = weex.config.container === 'windmill';
-  console.log(`[Rax] create require function, container: ${weex.config.container}`);
+  // console.log(`[Rax] create require function, container: ${weex.config.container}`);
   function require(name) {
     var mod = modules[name];
 
@@ -22,19 +22,19 @@ module.exports = function(modules, weex, windmill) {
         weexModuleName = 'network';
       }
       if (isInWindmill && isAvailableWindmillModule(weexModuleName)) {
-        console.log(`[Rax] require windmill module: ${weexModuleName}`);
+        // console.log(`[Rax] require windmill module: ${weexModuleName}`);
         let modObj = {};
         for (let i = 0; i < availableWindmillModules[weexModuleName].length; i++) {
           let api = availableWindmillModules[weexModuleName][i];
           // network 兼容
           modObj[api] = (parames, successCallback, failureCallback) => {
-            console.log('$call: ' + weexModuleName + '.' + api);
+            // console.log('$call: ' + weexModuleName + '.' + api);
             windmill.$call(weexModuleName + '.' + api, parames, successCallback, failureCallback);
           };
         }
         if (weexModuleName == 'network') {
           modObj.fetch = (parames, successCallback, failureCallback) => {
-            console.log('$call: network.fetch || stream.fetch');
+            // console.log('$call: network.fetch || stream.fetch');
             windmill.$call(weexModuleName + '.request', parames, successCallback, failureCallback);
           };
         }
@@ -50,7 +50,7 @@ module.exports = function(modules, weex, windmill) {
         // };
         // return new Proxy({}, handler);
       } else {
-        console.log(`[Rax] require weex module ${weexModuleName}`);
+        // console.log(`[Rax] require weex module ${weexModuleName}`);
         if (weex.isRegisteredModule(weexModuleName)) {
           return weex.requireModule(weexModuleName);
         } else {
