@@ -55,7 +55,7 @@ module.exports = function(rawContent, inputSourceMap) {
 
   transformStyle(styles.content, filePath);
 
-  const loadStyleString = `${stylesheetLoader}!${transformLoader}?id=${filePath}`;
+  const loadStyleString = `${stylesheetLoader}?transformDescendantCombinator=true!${transformLoader}?id=${filePath}`;
   const loadStyleRequest = loaderUtils.stringifyRequest(
     context,
     `!!${loadStyleString}!${filePath}`
