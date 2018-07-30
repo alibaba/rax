@@ -62,8 +62,9 @@ class Point extends Component {
   _calculateTotalWidth() {
     if (!isWeex) {
       var progressBar = document.getElementById('progress-bar');
-      // console.log(progressBar.clientWidth);
-      this.totalWidth = progressBar.clientWidth || this.totalWidth;
+      if (progressBar && progressBar.clientWidth) {
+        this.totalWidth = progressBar.clientWidth;
+      }
     }
   }
 
