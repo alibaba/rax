@@ -106,19 +106,6 @@ const styles = {
   </view>
 </template>
 
-<style>
-  .hello {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .title {
-    font-size: 40px;
-    text-align: center;
-  }
-</style>
-
 <script>
   export default {
     data: function () {
@@ -133,6 +120,19 @@ const styles = {
     }
   }
 </script>
+
+<style>
+  .hello {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 40px;
+    text-align: center;
+  }
+</style>
 ```
 
 ```js
