@@ -75,22 +75,27 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
   const tplImports = {};
   if (script) {
     const babelResult = babel.transform(script.content, babelOptions);
-    const { importsMap } = babelResult.metadata;
-    Object.keys(importsMap || {}).forEach((moduleName) => {
-      let modulePath = importsMap[moduleName];
+    const { components: importedComponentsMap } = babelResult.metadata;
+    Object.keys(importedComponentsMap || {}).forEach((tagName) => {
+      let modulePath = importedComponentsMap[tagName];
+
       const { name } = parse(modulePath);
       const vueModulePath = resolve(dirname(path), modulePath);
-      const tplName = tplImports[name] = genName(vueModulePath);
+      const tplName = genName(vueModulePath);
       /**
        * name: 模块名称, name="title"
        * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
        */
-      tplImports[name] = tplName;
+      tplImports[tagName] = {
+        tagName,
+        tplName,
+        filename: name,
+      };
       const tplReq = `/components/${tplName}.axml`;
       emitFile(tplReq.slice(1), genDepAxml({
-        path: extname(vueModulePath) === '.vue'
+        path: extname(vueModulePath) === '.html'
           ? vueModulePath
-          : vueModulePath + '.vue',
+          : vueModulePath + '.html',
         tplName,
         name
       }, loaderCtx));
@@ -130,7 +135,7 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
   ];
 
   Object.keys(tplImports).forEach((name) => {
-    const tplName = tplImports[name];
+    const { tplName } = tplImports[name];
     codes.unshift(`<import src="/components/${tplName}.axml" />`);
   });
 
@@ -142,32 +147,21 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
 const { parseConfig, parseGlobalComponents } = require('../utils/parser');
 const FIRST_PAGE_RE = /^\^/;
 exports.getAppJSON = function getAppJSON(rootDir) {
-  const mainJSPath = join(rootDir, 'main.js');
+  const appJSONPath = join(rootDir, 'manifest.json');
 
-  if (!existsSync(mainJSPath)) {
-    throw new Error('main.js not exists');
+  if (!existsSync(appJSONPath)) {
+    throw new Error('manifest.json not exists');
   }
 
-  const { metadata } = babel.transform(readFileSync(mainJSPath, 'utf-8'), {
-    extends: getBabelrc(),
-    plugins: [parseConfig, parseGlobalComponents]
-  });
-  if (metadata && metadata.config) {
-    const config = metadata.config.value;
-    let pages = config.pages.filter(v => v && v !== 'app').map(getPageSrc);
-    const firstPageIdx = pages.findIndex(v => FIRST_PAGE_RE.test(v));
-    if (firstPageIdx !== -1) {
-      const firstPage = pages[firstPageIdx].slice(1);
-      pages.splice(firstPage, 1);
-      pages.unshift(firstPage);
-    }
-    const appJSON = Object.assign(config, {
-      pages,
-    });
-    return appJSON;
-  } else {
-    throw new Error('main.js have no app config.')
-  }
+  const appJSON = JSON.parse(readFileSync(appJSONPath, 'utf-8'));
+
+  appJSON._pages = appJSON.pages;
+  appJSON.pages = formatPages(appJSON.pages);
+  return appJSON;
+}
+
+function formatPages(pages) {
+  return Object.values(pages);
 }
 
 

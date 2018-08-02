@@ -24,8 +24,8 @@ module.exports = function pageLoader(content) {
   if (script) {
     const babelResult = babel.transform(script.content, babelOptions);
     const { components: importedComponentsMap } = babelResult.metadata;
-    Object.keys(importedComponentsMap || {}).forEach((moduleName) => {
-      let modulePath = importedComponentsMap[moduleName];
+    Object.keys(importedComponentsMap || {}).forEach((tagName) => {
+      let modulePath = importedComponentsMap[tagName];
       const { name } = parse(modulePath);
 
       let vueModulePath = resolve(dirname(resourcePath), modulePath);
@@ -35,17 +35,21 @@ module.exports = function pageLoader(content) {
       }
 
 
-      const tplName = tplImports[name] = genName(vueModulePath);
+      const tplName = genName(vueModulePath);
       /**
        * name: 模块名称, name="title"
        * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
        */
-      tplImports[name] = tplName;
+      tplImports[tagName] = {
+        tagName,
+        tplName,
+        filename: name,
+      };
       const tplReq = `/components/${tplName}.axml`;
       this.emitFile(tplReq.slice(1), genDepAxml({
-        path: extname(vueModulePath) === '.vue'
+        path: extname(vueModulePath) === '.html'
           ? vueModulePath
-          : vueModulePath + '.vue',
+          : vueModulePath + '.html',
         tplName,
         name
       }, this))
@@ -68,10 +72,10 @@ module.exports = function pageLoader(content) {
   let source = 'Page({});';
 
   if (script) {
-    const deps = Object.keys(tplImports).map((name) => {
-      const tplName = tplImports[name];
+    const deps = Object.keys(tplImports).map((tagName) => {
+      const { tplName, filename } = tplImports[tagName];
       return `'${tplName}': {
-  config: require('/assets/components/${name}'),
+  config: require('/assets/components/${filename}'),
   propsData: ${tplPropsData[tplName] ? JSON.stringify(tplPropsData[tplName]) : '{}'},
 },`
     }).join('\n');

@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const { resolve } = require('path');
 const { existsSync } = require('fs');
 const merge = require('webpack-merge');
+const log = require('fancy-log');
 const vendorPaths = require('../utils/vendors');
 const { getAppJSON } = require('../utils');
 
@@ -16,7 +17,7 @@ const baseConfig = {
     alias: {
       'webpack-hot-client/client': require.resolve('webpack-hot-client/client'),
     },
-    extensions: ['.js', '.json', '.vue'],
+    extensions: ['.js', '.json', '.html', 'vue'],
   },
 };
 
@@ -26,6 +27,7 @@ const vendorConfig = {
   entry: {
     'assets/vendor/transAppConfig': vendorPaths.transAppConfig,
     'assets/vendor/transPageConfig': vendorPaths.transPageConfig,
+    'assets/vendor/coreApp': vendorPaths.coreApp,
     'assets/vendor/vue': require.resolve('vue/dist/vue.runtime.common')
   },
   output: {
@@ -47,8 +49,8 @@ const vendorConfig = {
 }
 
 /**
- * 
- * @param {*} opts 
+ * getWebpackConfig
+ * @param {String} rootDir
  */
 module.exports = function getWebpackConfig(rootDir) {
   const appJSON = getAppJSON(rootDir);
@@ -80,9 +82,9 @@ module.exports = function getWebpackConfig(rootDir) {
 }
 
 function getEntry(rootDir, appJSON = {}) {
-  const appPath = resolve(rootDir, appJSON.root || '', 'App.vue');
+  const appPath = resolve(rootDir, appJSON.root || '', 'app.js');
   if (!existsSync(appPath)) {
-    throw new Error('App.vue not exists');
+    throw new Error('app.js not exists');
   }
 
   const entry = {
@@ -90,11 +92,11 @@ function getEntry(rootDir, appJSON = {}) {
   };
 
   if (Array.isArray(appJSON.pages)) {
-    console.log(appJSON.pages)
+    log('Page List:', appJSON.pages);
     appJSON.pages.forEach((pagePath) => {
       entry[pagePath] = pageLoader
         + `?pageName=${pagePath}!`
-        + resolve(rootDir, appJSON.root || '', pagePath + '.vue');
+        + resolve(rootDir, appJSON.root || '', pagePath + '.html');
     });
   }
 

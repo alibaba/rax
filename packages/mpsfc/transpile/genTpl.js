@@ -61,8 +61,8 @@ function genElement(el, state) {
     const hasProps = el.hasBindings || !!el.staticClass || !!el.classBinding || el.attrsList.length > 0;
 
     const camelTagName = camelcase(el.tag);
-    if (state.tplImports[camelTagName]) {
-      return `<template is="${state.tplImports[camelTagName]}" data="{{${genData(el, state)}}}">${genElement(el.children, state)}</template>`;
+    if (state.tplImports[el.tag]) {
+      return `<template is="${state.tplImports[el.tag].tplName}" data="{{${genData(el, state)}}}">${genElement(el.children, state)}</template>`;
     } else if (el.ifConditions) {
       return el.ifConditions
         .map((condition) => {
@@ -129,7 +129,7 @@ function genProps(el, state) {
 }
 
 function genData(el, state) {
-  const tplName = state.tplImports[el.tag];
+  const { tplName } = state.tplImports[el.tag];
   const propsData = state.propsDataMap[tplName] = {};
 
   el.attrsList.forEach(({ name, value }) => {

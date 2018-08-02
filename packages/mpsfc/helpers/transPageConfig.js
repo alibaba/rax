@@ -36,7 +36,7 @@ module.exports = function transPageConfig(config, dependencies = {}) {
    */
   PAGE_LIFECYCLE.forEach((cycle) => {
     if (typeof config[cycle] === 'function') {
-      pageDef[cycle] = PAGE_LIFECYCLE[cycle].bind(vm);
+      pageDef[cycle] = config[cycle].bind(vm);
     }
   });
   pageDef.onLoad = function (query) {
@@ -191,7 +191,6 @@ module.exports = function transPageConfig(config, dependencies = {}) {
         : noop;
       Object.keys(tplVm.$data || {}).forEach((dataKey) => {
         tplVm.$watch(dataKey, function (newVal, oldVal) {
-          console.log(dataKey, newVal, oldVal)
           const new$d = { ...pageDef.data.$d };
           new$d[key][dataKey] = newVal;
           beforeUpdate.call(tplVm);
