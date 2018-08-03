@@ -64,7 +64,7 @@ const pug = require('pug');
 const { parseComponentsDeps } = require('./parser');
 
 const babelOptions = { extends: getBabelrc(), plugins: [parseComponentsDeps] };
-exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
+exports.genDepAxml = function genDepAxml({ path, tplName, name, pageName, modulePath }, loaderCtx) {
   const { emitFile, addDependency } = loaderCtx;
   addDependency(path);
 
@@ -76,6 +76,7 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
   }
 
   const tplImports = {};
+  const pageBase = join(pageName, '..', modulePath);
   if (script) {
     const babelResult = babel.transform(script.content, babelOptions);
     const { components: importedComponentsMap } = babelResult.metadata;
@@ -100,6 +101,8 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
           ? vueModulePath
           : vueModulePath + '.html',
         tplName,
+        pageName: pageBase,
+        modulePath,
         name
       }, loaderCtx));
     });
@@ -128,7 +131,8 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
   /**
    * 生成组件 js context
    */
-  emitFile(`assets/components/${name}.js`, scriptCode);
+  const scriptPath = join('assets', pageName, '..', modulePath + '.js');
+  emitFile(scriptPath, scriptCode);
 
   const codes = [
     // 注册 template

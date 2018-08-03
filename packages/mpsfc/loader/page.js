@@ -3,8 +3,7 @@ const vueCompiler = require('vue-template-compiler');
 const transpile = require('../transpile');
 const { compileES5, genName, genDepAxml, getBabelrc } = require('../utils');
 const { parseComponentsDeps } = require('../utils/parser');
-const { parse, resolve, dirname, extname } = require('path');
-const pug = require('pug');
+const { join, parse, resolve, dirname, extname } = require('path');
 
 const babelOptions = { extends: getBabelrc(), plugins: [parseComponentsDeps] };
 const babel = require('babel-core');
@@ -13,10 +12,6 @@ module.exports = function pageLoader(content) {
   const { script, styles, template } = vueCompiler.parseComponent(content);
   const { resourcePath } = this;
   const { pageName } = getOptions(this);
-
-  if (template && template.lang === 'pug') {
-    template.content = pug.render(template.content);
-  }
 
   const tplDeps = [];
   const tplImports = {};
@@ -29,13 +24,12 @@ module.exports = function pageLoader(content) {
       const { name } = parse(modulePath);
 
       let vueModulePath = resolve(dirname(resourcePath), modulePath);
-
       if (modulePath.indexOf('@/') === 0) {
         vueModulePath = resolve(this.rootContext, modulePath.slice(2));
       }
 
-
       const tplName = genName(vueModulePath);
+      const tplPath = join(pageName, '..', modulePath);
       /**
        * name: 模块名称, name="title"
        * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
@@ -44,16 +38,18 @@ module.exports = function pageLoader(content) {
         tagName,
         tplName,
         filename: name,
+        configPath: join('/assets', tplPath),
       };
-      const tplReq = `/components/${tplName}.axml`;
-      this.emitFile(tplReq.slice(1), genDepAxml({
+
+      this.emitFile(tplPath + '.axml', genDepAxml({
         path: extname(vueModulePath) === '.html'
           ? vueModulePath
           : vueModulePath + '.html',
+        pageName, modulePath,
         tplName,
         name
       }, this));
-      tplDeps.push(`<import src="${tplReq}" />\n`);
+      tplDeps.push(`<import src="/${tplPath + '.axml'}" />\n`);
     });
   }
 
@@ -73,9 +69,9 @@ module.exports = function pageLoader(content) {
 
   if (script) {
     const deps = Object.keys(tplImports).map((tagName) => {
-      const { tplName, filename } = tplImports[tagName];
+      const { tplName, filename, configPath } = tplImports[tagName];
       return `'${tplName}': {
-  config: require('/assets/components/${filename}'),
+  config: require('${configPath}'),
   propsData: ${tplPropsData[tplName] ? JSON.stringify(tplPropsData[tplName]) : '{}'},
 },`;
     }).join('\n');
@@ -88,7 +84,20 @@ module.exports = function pageLoader(content) {
     ].join('\n');
 
     const { code, map } = compileES5(script.content, {
-      sourceMaps: true
+      sourceMaps: true,
+      plugins: [
+        function() {
+          return {
+            visitor: {
+              ImportDeclaration(path) {
+                if (path.node.source && path.node.source.type === 'StringLiteral') {
+                  // path.node.source.value = '/assets/components/title';
+                }
+              },
+            }
+          };
+        }
+      ]
     });
     this.emitFile(`assets/${pageName}.js`, code, map);
   }
