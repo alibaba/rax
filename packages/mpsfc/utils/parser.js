@@ -21,7 +21,7 @@ function getImportsMap(metadata) {
 
 // 解析 config
 const traverseConfigVisitor = {
-  Property: function (path) {
+  Property: function(path) {
     const k = path.node.key.name || path.node.key.value;
     if (k !== 'config') {
       return;
@@ -38,11 +38,11 @@ const traverseConfigVisitor = {
 
 // config 的遍历器
 const configVisitor = {
-  ExportDefaultDeclaration: function (path) {
+  ExportDefaultDeclaration: function(path) {
     path.traverse(traverseConfigVisitor);
     path.remove();
   },
-  NewExpression: function (path) {
+  NewExpression: function(path) {
     const { metadata } = path.hub.file;
     const { importsMap } = getImportsMap(metadata);
 
@@ -69,7 +69,7 @@ function parseConfig(babel) {
 
 // 解析 components
 const traverseComponentsVisitor = {
-  Property: function (path) {
+  Property: function(path) {
     if (path.node.key.name !== 'components') {
       return;
     }
@@ -94,7 +94,7 @@ const traverseComponentsVisitor = {
 
 // components 的遍历器
 const componentsVisitor = {
-  ExportDefaultDeclaration: function (path) {
+  ExportDefaultDeclaration: function(path) {
     path.traverse(traverseComponentsVisitor);
   }
 };
