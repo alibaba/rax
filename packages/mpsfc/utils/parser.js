@@ -3,134 +3,134 @@ const generate = require('@babel/generator').default;
 const babelon = require('babelon');
 
 function getImportsMap(metadata) {
-  let { importsMap } = metadata
-  const { imports } = metadata.modules
+  let { importsMap } = metadata;
+  const { imports } = metadata.modules;
 
   if (!importsMap) {
-    importsMap = {}
+    importsMap = {};
     imports.forEach(m => {
       m.specifiers.forEach(v => {
-        importsMap[v.local] = m.source
-      })
-    })
-    metadata.importsMap = importsMap
+        importsMap[v.local] = m.source;
+      });
+    });
+    metadata.importsMap = importsMap;
   }
 
-  return metadata
+  return metadata;
 }
 
 // 解析 config
 const traverseConfigVisitor = {
   Property: function (path) {
-    const k = path.node.key.name || path.node.key.value
+    const k = path.node.key.name || path.node.key.value;
     if (k !== 'config') {
-      return
+      return;
     }
-    path.stop()
+    path.stop();
 
-    const { metadata } = path.hub.file
-    const { code } = generate(path.node.value, {}, '')
-    metadata.config = { code, node: path.node.value, value: babelon.eval(code) }
+    const { metadata } = path.hub.file;
+    const { code } = generate(path.node.value, {}, '');
+    metadata.config = { code, node: path.node.value, value: babelon.eval(code) };
 
     // path.remove()
   }
-}
+};
 
 // config 的遍历器
 const configVisitor = {
   ExportDefaultDeclaration: function (path) {
-    path.traverse(traverseConfigVisitor)
-    path.remove()
+    path.traverse(traverseConfigVisitor);
+    path.remove();
   },
   NewExpression: function (path) {
-    const { metadata } = path.hub.file
-    const { importsMap } = getImportsMap(metadata)
+    const { metadata } = path.hub.file;
+    const { importsMap } = getImportsMap(metadata);
 
-    const calleeName = path.node.callee.name
-    const isVue = /vue$/.test(importsMap[calleeName])
+    const calleeName = path.node.callee.name;
+    const isVue = /vue$/.test(importsMap[calleeName]);
 
     if (!isVue) {
-      return
+      return;
     }
 
-    const arg = path.node.arguments[0]
+    const arg = path.node.arguments[0];
 
     if (!arg) {
-      return
+      return;
     }
 
-    const v = arg.type === 'Identifier' ? importsMap[arg.name] : importsMap['App']
-    metadata.rootComponent = v || importsMap['index'] || importsMap['main']
+    const v = arg.type === 'Identifier' ? importsMap[arg.name] : importsMap.App;
+    metadata.rootComponent = v || importsMap.index || importsMap.main;
   }
-}
+};
 function parseConfig(babel) {
-  return { visitor: configVisitor }
+  return { visitor: configVisitor };
 }
 
 // 解析 components
 const traverseComponentsVisitor = {
   Property: function (path) {
     if (path.node.key.name !== 'components') {
-      return
+      return;
     }
-    path.stop()
+    path.stop();
 
-    const { metadata } = path.hub.file
-    const { importsMap } = getImportsMap(metadata)
+    const { metadata } = path.hub.file;
+    const { importsMap } = getImportsMap(metadata);
 
     // 找到所有的 imports
-    const { properties } = path.node.value
-    const components = {}
+    const { properties } = path.node.value;
+    const components = {};
     properties.forEach(p => {
-      const k = p.key.name || p.key.value
-      const v = p.value.name || p.value.value
+      const k = p.key.name || p.key.value;
+      const v = p.value.name || p.value.value;
 
-      components[k] = importsMap[v]
-    })
+      components[k] = importsMap[v];
+    });
 
-    metadata.components = components
+    metadata.components = components;
   }
-}
+};
 
 // components 的遍历器
 const componentsVisitor = {
   ExportDefaultDeclaration: function (path) {
-    path.traverse(traverseComponentsVisitor)
+    path.traverse(traverseComponentsVisitor);
   }
-}
+};
 function parseComponentsDeps(babel) {
-  return { visitor: componentsVisitor }
+  return { visitor: componentsVisitor };
 }
 
 // 解析全局components
-let globalComponents = {}
+let globalComponents = {};
 const globalComponentsVisitor = {
   CallExpression(path) {
-    const { callee, arguments: args } = path.node
-    const { metadata } = path.hub.file
+    const { callee, arguments: args } = path.node;
+    const { metadata } = path.hub.file;
     if (!callee.object || !callee.property) {
-      return
+      return;
     }
     if (callee.object.name === 'Vue' && callee.property.name === 'component') {
       if (!args[0] || args[0].type !== 'StringLiteral') {
-        throw new Error('Vue.component()的第一个参数必须为静态字符串')
+        throw new Error('Vue.component() 的第一个参数必须为静态字符串');
       }
       if (!args[1]) {
-        throw new Error('Vue.component()需要两个参数')
+        throw new Error('Vue.component() 需要两个参数');
       }
-      const { importsMap } = getImportsMap(metadata)
-      globalComponents[args[0].value] = importsMap[args[1].name]
+      const { importsMap } = getImportsMap(metadata);
+      globalComponents[args[0].value] = importsMap[args[1].name];
     }
-    metadata.globalComponents = globalComponents
+    metadata.globalComponents = globalComponents;
   }
-}
+};
 
 function parseGlobalComponents(babel) {
-  return { visitor: globalComponentsVisitor }
+  return { visitor: globalComponentsVisitor };
 }
 
 function clearGlobalComponents() {
-  globalComponents = {}
+  globalComponents = {};
 }
 
 module.exports = {

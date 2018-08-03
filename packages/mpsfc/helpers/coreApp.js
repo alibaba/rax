@@ -6,7 +6,7 @@ const cycle = {
 };
 
 const app = {};
-app.on = function (key, fn) {
+app.on = function(key, fn) {
   app[cycle[key] || key] = fn;
 };
 app.getApp = () => app;

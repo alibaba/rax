@@ -1,4 +1,5 @@
 const camelcase = require('camelcase');
+
 const evtNameMapping = {
   click: 'tap'
 };
@@ -79,11 +80,11 @@ function genElement(el, state) {
       const directive = genDirective(el, state);
       return `<${tagName}${
         hasProps ? ' ' + genProps(el, state) : ''
-        }${
+      }${
         directive ? ' ' + directive : ''
-        }>${genElement(el.children, state)}</${tagName}>`;
+      }>${genElement(el.children, state)}</${tagName}>`;
     }
-  } else if (el.type === 2 || (el.type === 3 && el.static)) {
+  } else if (el.type === 2 || el.type === 3 && el.static) {
     // type 2: text node or static text node
 
     return genText(el, state);
@@ -185,7 +186,7 @@ function getStaticProp(str) {
 
 /**
  * 生成 axml template
- * @param {Object} ast 
+ * @param {Object} ast
  */
 module.exports = function genTpl(ast, options) {
   const state = new TplGenState(options);
@@ -196,5 +197,5 @@ module.exports = function genTpl(ast, options) {
     metadata: {
       propsDataMap: state.propsDataMap
     }
-  }
-}
+  };
+};

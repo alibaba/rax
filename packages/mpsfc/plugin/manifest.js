@@ -5,4 +5,4 @@ module.exports = class ManifestPlugin {
   apply() {
     console.log('run manifest plugin');
   }
-}
+};

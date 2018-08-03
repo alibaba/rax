@@ -1,8 +1,9 @@
 /**
  * 分离 SFC 中的三部分
- * part = script | style | template 
+ * part = script | style | template
  */
 const { getOptions } = require('loader-utils');
+
 const defaultPart = 'script';
 const vueCompiler = require('vue-template-compiler');
 
@@ -29,4 +30,4 @@ module.exports = function sfcLoader(content) {
       this.callback(null, styleContent);
       break;
   }
-}
+};

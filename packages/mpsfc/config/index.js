@@ -7,6 +7,7 @@ const vendorPaths = require('../utils/vendors');
 const { getAppJSON } = require('../utils');
 
 const ManifestPlugin = require('../plugin/manifest');
+
 const appLoader = require.resolve('../loader/app');
 const pageLoader = require.resolve('../loader/page');
 
@@ -46,7 +47,7 @@ const vendorConfig = {
       'global.process.env.VUE_ENV': 'browser'
     })
   ]
-}
+};
 
 /**
  * getWebpackConfig
@@ -63,7 +64,7 @@ module.exports = function getWebpackConfig(rootDir) {
       context,
       // external all
       externals: [
-        function (context, request, callback) {
+        function(context, request, callback) {
           if (/^.?\/assets/.test(request)) {
             return callback(null, `commonjs2 ${request}`);
           }
@@ -79,7 +80,7 @@ module.exports = function getWebpackConfig(rootDir) {
 
     done([vendorConfig, config]);
   });
-}
+};
 
 function getEntry(rootDir, appJSON = {}) {
   const appPath = resolve(rootDir, appJSON.root || '', 'app.js');

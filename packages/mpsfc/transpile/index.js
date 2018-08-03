@@ -12,5 +12,5 @@ module.exports = function transpile(tpl = '', opts = {}) {
     template,
     metadata,
     ast
-  }
-}
+  };
+};

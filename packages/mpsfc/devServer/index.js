@@ -31,12 +31,12 @@ module.exports = function startDevServer(rootDir) {
           stats.stats.forEach((stats) => {
             console.log(stats.toString(opt));
           });
-          log(colors.red('Compiled with Error.'))
+          log(colors.red('Compiled with Error.'));
         } else if (err) {
           log.error(err);
         } else {
-          log(colors.green('Compile Succeed. Watching changes.'))
+          log(colors.green('Compile Succeed. Watching changes.'));
         }
       });
     });
-}
+};

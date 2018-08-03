@@ -13,7 +13,7 @@ module.exports = function transAppConfig(obj) {
   const config = obj && obj.default ? obj.default : obj;
   const vm = new Vue(config);
 
-  vm.onLaunch = function (options) {
+  vm.onLaunch = function(options) {
     config.$appOptions = options;
     if (typeof config.onLaunch === 'function') {
       config.onLaunch.call(this, options);
@@ -25,13 +25,13 @@ module.exports = function transAppConfig(obj) {
     if (typeof config.mounted === 'function') {
       config.mounted.call(this);
     }
-  }
+  };
   // bind app cycle
   vm.onShow = config.onShow;
   vm.onHide = config.onHide;
   vm.onError = config.onError;
 
   return vm;
-}
+};
 
 function noop() { }

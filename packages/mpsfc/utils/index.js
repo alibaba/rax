@@ -28,10 +28,11 @@ function getBabelOptions() {
       [require('@babel/plugin-proposal-class-properties'), { 'loose': false }],
       require('@babel/plugin-proposal-json-strings')
     ]
-  }
+  };
 };
 
 const { existsSync } = require('fs');
+
 const getBabelrc = exports.getBabelrc = function getBabelrc() {
   const projectDir = process.cwd();
   const babelrcPath = join(projectDir, '.babelrc');
@@ -40,7 +41,7 @@ const getBabelrc = exports.getBabelrc = function getBabelrc() {
   } else {
     return void 0;
   }
-}
+};
 
 exports.compileES5 = function compileES5(str, opts) {
   const { code, map, ast } = transformSync(str, Object.assign(getBabelOptions(), opts));
@@ -49,10 +50,11 @@ exports.compileES5 = function compileES5(str, opts) {
 
 
 const hash = require('hash-sum');
+
 const genName = exports.genName = function genName(p) {
   const { name } = parse(p);
   return `${name}$${hash(p)}`;
-}
+};
 
 const { readFileSync } = require('fs');
 const vueCompiler = require('vue-template-compiler');
@@ -60,7 +62,8 @@ const transpile = require('../transpile');
 const babel = require('babel-core');
 const pug = require('pug');
 const { parseComponentsDeps } = require('./parser');
-const babelOptions = { extends: getBabelrc(), plugins: [parseComponentsDeps] }
+
+const babelOptions = { extends: getBabelrc(), plugins: [parseComponentsDeps] };
 exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
   const { emitFile, addDependency } = loaderCtx;
   addDependency(path);
@@ -84,7 +87,7 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
       const tplName = genName(vueModulePath);
       /**
        * name: 模块名称, name="title"
-       * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
+       * tplName: mpsfc 生成的唯一名称, 用于 import 和生成 axml
        */
       tplImports[tagName] = {
         tagName,
@@ -131,7 +134,7 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
     // 注册 template
     `<template name="${tplName}">`,
     tpl,
-    `</template>`
+    '</template>'
   ];
 
   Object.keys(tplImports).forEach((name) => {
@@ -141,10 +144,11 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name }, loaderCtx) {
 
   // codes.unshift();
   return codes.join('\n');
-}
+};
 
 
 const { parseConfig, parseGlobalComponents } = require('../utils/parser');
+
 const FIRST_PAGE_RE = /^\^/;
 exports.getAppJSON = function getAppJSON(rootDir) {
   const appJSONPath = join(rootDir, 'manifest.json');
@@ -158,7 +162,7 @@ exports.getAppJSON = function getAppJSON(rootDir) {
   appJSON._pages = appJSON.pages;
   appJSON.pages = formatPages(appJSON.pages);
   return appJSON;
-}
+};
 
 function formatPages(pages) {
   return Object.values(pages);
@@ -166,5 +170,5 @@ function formatPages(pages) {
 
 
 const getPageSrc = exports.getPageSrc = function getPageSrc(pageName) {
-  return parse(pageName).dir ? pageName : `pages/${pageName}/${pageName}`
-}
+  return parse(pageName).dir ? pageName : `pages/${pageName}/${pageName}`;
+};

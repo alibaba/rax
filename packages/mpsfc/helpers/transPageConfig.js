@@ -39,7 +39,7 @@ module.exports = function transPageConfig(config, dependencies = {}) {
       pageDef[cycle] = config[cycle].bind(vm);
     }
   });
-  pageDef.onLoad = function (query) {
+  pageDef.onLoad = function(query) {
     // hack and inject Page's this to _self
     pageDef._self = this;
     /**
@@ -50,10 +50,10 @@ module.exports = function transPageConfig(config, dependencies = {}) {
     if (typeof config.onLoad === 'function') {
       config.onLoad.call(vm, query);
     }
-  }
+  };
   const pageBeforeMountCallbacks = [];
   const pageMountedCallbacks = [];
-  pageDef.onReady = function () {
+  pageDef.onReady = function() {
     if (typeof config.beforeMount === 'function') {
       config.beforeMount.call(vm);
     }
@@ -72,11 +72,11 @@ module.exports = function transPageConfig(config, dependencies = {}) {
     if (typeof config.onReady === 'function') {
       config.onReady.call(vm);
     }
-  }
+  };
 
   const pageBeforeDestroyedCallbacks = [];
   const pageDestroyedCallbacks = [];
-  pageDef.onUnload = function () {
+  pageDef.onUnload = function() {
     pageDef._self = null; // de alloc
     vm._isBeingDestroyed = true;
     if (typeof config.beforeDestroy === 'function') {
@@ -98,7 +98,7 @@ module.exports = function transPageConfig(config, dependencies = {}) {
       config.onUnload.call(vm);
     }
     vm._inactive = true;
-  }
+  };
 
   /**
    * methods transfer
@@ -124,14 +124,14 @@ module.exports = function transPageConfig(config, dependencies = {}) {
     : noop;
 
   Object.keys(vm.$data || {}).forEach((key) => {
-    vm.$watch(key, function (newVal, oldVal) {
+    vm.$watch(key, function(newVal, oldVal) {
       beforeUpdate.call(vm);
       pageDef._self.setData({
         [key]: newVal
-      }, function () {
+      }, function() {
         updated.call(vm);
       });
-    })
+    });
   });
 
   /**
@@ -190,13 +190,13 @@ module.exports = function transPageConfig(config, dependencies = {}) {
         ? tplConfig.updated
         : noop;
       Object.keys(tplVm.$data || {}).forEach((dataKey) => {
-        tplVm.$watch(dataKey, function (newVal, oldVal) {
+        tplVm.$watch(dataKey, function(newVal, oldVal) {
           const new$d = { ...pageDef.data.$d };
           new$d[key][dataKey] = newVal;
           beforeUpdate.call(tplVm);
           pageDef._self.setData({
             $d: new$d
-          }, function () {
+          }, function() {
             updated.call(tplVm);
           });
         });
@@ -205,7 +205,7 @@ module.exports = function transPageConfig(config, dependencies = {}) {
   }
 
   return pageDef;
-}
+};
 
 function noop() { }
 

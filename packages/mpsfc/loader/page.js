@@ -6,7 +6,7 @@ const { parseComponentsDeps } = require('../utils/parser');
 const { parse, resolve, dirname, extname } = require('path');
 const pug = require('pug');
 
-const babelOptions = { extends: getBabelrc(), plugins: [parseComponentsDeps] }
+const babelOptions = { extends: getBabelrc(), plugins: [parseComponentsDeps] };
 const babel = require('babel-core');
 
 module.exports = function pageLoader(content) {
@@ -52,7 +52,7 @@ module.exports = function pageLoader(content) {
           : vueModulePath + '.html',
         tplName,
         name
-      }, this))
+      }, this));
       tplDeps.push(`<import src="${tplReq}" />\n`);
     });
   }
@@ -77,11 +77,11 @@ module.exports = function pageLoader(content) {
       return `'${tplName}': {
   config: require('/assets/components/${filename}'),
   propsData: ${tplPropsData[tplName] ? JSON.stringify(tplPropsData[tplName]) : '{}'},
-},`
+},`;
     }).join('\n');
     source = [
       `var pageConfig = require('/assets/${pageName}');`,
-      `var transPageConfig = require('/assets/vendor/transPageConfig');`,
+      'var transPageConfig = require(\'/assets/vendor/transPageConfig\');',
       `Page(transPageConfig(pageConfig, {
         ${deps}
       }));`
@@ -93,4 +93,4 @@ module.exports = function pageLoader(content) {
     this.emitFile(`assets/${pageName}.js`, code, map);
   }
   this.callback(null, source);
-}
+};

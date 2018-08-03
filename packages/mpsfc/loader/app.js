@@ -1,12 +1,11 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const vueCompiler = require('vue-template-compiler');
 const { compileES5, getBabelrc, getAppJSON } = require('../utils');
-const babel = require('babel-core');
 const { readFileSync, existsSync } = require('fs');
 const { resolve, parse } = require('path');
 
 /**
- *  
+ *
  */
 module.exports = function appLoader(content) {
   /**
@@ -29,6 +28,6 @@ module.exports = function appLoader(content) {
   /**
    * handle with app.js
    */
-  const source = `App(require('/assets/vendor/transAppConfig')(require('/assets/app')));`;
+  const source = 'App(require(\'/assets/vendor/transAppConfig\')(require(\'/assets/app\')));';
   this.callback(null, source);
-}
+};
