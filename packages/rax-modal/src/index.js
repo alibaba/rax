@@ -90,7 +90,8 @@ export default class Modal extends Component {
 
   componentWillMount() {
     this.setState({
-      visible: this.props.visible
+      visible: this.props.visible,
+      visibility: this.props.visible ? 'visible' : 'hidden'
     });
     if (isWeb) {
       this.height = window.screen.height / window.screen.width * 750;
