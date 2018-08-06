@@ -23,12 +23,12 @@ $ wget https://gw.alicdn.com/bao/uploaded/TB1PYDTcxtnkeRjSZSgXXXAuXXa.zip -O sfc
 $ unzip sfc-example.zip
 ```
 
-### 2. 安装 mpsfc
+### 2. 安装 sfc2mp
 ```bash
 $ npm install sfc2mp -g
 ```
 
-### 3. 运行 mpsfc
+### 3. 运行 sfc2mp
 
 打开终端并切换到项目目录，执行以下命令
 
@@ -58,7 +58,7 @@ $ sfc2mp
 
 ## 生命周期
 
-与 [SFC 的生命周期](https://developers.taobao.com/framework/light-framework/lifecycle.html)一样，mpsfc 在应用级(app)、页面(page)、支持所有的组件级生命周期。
+与 [SFC 的生命周期](https://developers.taobao.com/framework/light-framework/lifecycle.html)一样，sfc2mp 在应用级(app)、页面(page)、支持所有的组件级生命周期。
 
 - beforeCreate
 - created

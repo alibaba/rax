@@ -88,7 +88,7 @@ exports.genDepAxml = function genDepAxml({ path, tplName, name, pageName, module
       const tplName = genName(vueModulePath);
       /**
        * name: 模块名称, name="title"
-       * tplName: mpsfc 生成的唯一名称, 用于 import 和生成 axml
+       * tplName: sfc2mp 生成的唯一名称, 用于 import 和生成 axml
        */
       tplImports[tagName] = {
         tagName,
