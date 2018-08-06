@@ -1,10 +1,9 @@
 {
-  "name": "mpsfc",
+  "name": "sfc2mp",
   "version": "0.1.0-0",
-  "description": "SFC DSL Transformer",
-  "main": "index.js",
+  "description": "SFC DSL Transforme to Mini Program",
   "bin": {
-    "mpsfc": "./cli.js"
+    "sfc2mp": "./cli.js"
   },
   "scripts": {},
   "author": "",
