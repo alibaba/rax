@@ -4,7 +4,8 @@
   "packages": [
     "packages/*",
     "templates/*",
-    "examples/*"
+    "examples/*",
+    "components/*"
   ],
   "commands": {
     "publish": {
