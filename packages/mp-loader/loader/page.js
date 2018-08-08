@@ -42,14 +42,13 @@ module.exports = function(content, rawMap) {
    * $REG: registerPage
    * $REN: renderFn
    */
-  let source = `;(function($REG,$REN,getApp,my){$REG(${pageInfo},$REN,function(Page){
+  let source = `;(function($REG,$REN,getApp){$REG(${pageInfo},$REN,function(Page,require){
 ${scriptContent}
     });
   })(
     require(${stringifyRequest(this, paths.Page)}).default,
     require(${tplRequirement}),
-    require(${stringifyRequest(this, paths.getApp)}).default,
-    new require(${stringifyRequest(this, paths.my)}).default({ ctx: '${relativePath}' })
+    require(${stringifyRequest(this, paths.getApp)}).default
   );`;
 
   // 往下滑行一行, 因为上面加了一行 👆
