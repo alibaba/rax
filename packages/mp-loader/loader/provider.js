@@ -9,6 +9,7 @@ module.exports = function providerLoader(content) {
 
   const provider = [
     `var getApp = require(${stringifyRequest(this, paths.getApp)});`,
+    `var my = require(${stringifyRequest(this, paths.createAPI)})({ currentPath: ${JSON.stringify(relativePath)} });`
   ].join('');
 
   const sourceMap = {

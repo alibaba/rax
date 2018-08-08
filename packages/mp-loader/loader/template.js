@@ -123,6 +123,7 @@ module.exports = function templateLoader(content) {
     ${globalStyleReq},
     ${styleReq},
     require(${sfcRuntimeReq}).vdomHelper,
-    require(${stringifyRequest(this, paths.getApp)}).default
+    require(${stringifyRequest(this, paths.getApp)}).default,
+    require(${stringifyRequest(this, paths.createAPI)})({ currentPath: ${JSON.stringify(relativePath)} })
   );`;
 };

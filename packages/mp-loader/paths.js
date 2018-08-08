@@ -6,5 +6,6 @@ module.exports = {
   App: require.resolve('mp-runtime/src/app.js'),
   Page: require.resolve('mp-runtime/src/page.js'),
   sfcRuntime: require.resolve('sfc-runtime'),
-  injectThisScope: require.resolve('sfc-compiler/codegen/injectThisScope')
+  injectThisScope: require.resolve('sfc-compiler/codegen/injectThisScope'),
+  createAPI: require.resolve('./createAPI'),
 };
