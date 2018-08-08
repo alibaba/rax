@@ -42,7 +42,7 @@ module.exports = function (content, rawMap) {
    * $REG: registerPage
    * $REN: renderFn
    */
-  let source = `;(function($REG,$REN,getApp,my){$REG(${pageInfo},$REN,function(Page,require){
+  let source = `;(function($REG,$REN,getApp,my){$REG(${pageInfo},$REN,function(Page){
 ${scriptContent}
     });
   })(

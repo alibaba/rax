@@ -1,6 +1,6 @@
 {
   "name": "mp-loader",
-  "version": "0.1.2-0",
+  "version": "0.1.2-2",
   "description": "mp dsl loader for rax",
   "main": "loader/app.js",
   "scripts": {
