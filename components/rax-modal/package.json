@@ -1,0 +1,36 @@
+{
+  "name": "rax-modal",
+  "version": "0.6.4",
+  "description": "Modal component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component",
+    "react-component"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-touchable": "^0.6.4",
+    "rax-view": "^0.6.4",
+    "universal-env": "^0.6.4",
+    "universal-transition": "^0.6.4"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.6.4",
+    "rax-text": "^0.6.4"
+  }
+}

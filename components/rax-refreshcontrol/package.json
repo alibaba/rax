@@ -1,0 +1,32 @@
+{
+  "name": "rax-refreshcontrol",
+  "version": "0.6.4",
+  "description": "RefreshControl component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "rax-component",
+    "react-component"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "universal-env": "^0.6.4"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.6.4"
+  }
+}
