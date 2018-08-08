@@ -54,6 +54,12 @@ class Image extends PureComponent {
     onError(e);
   };
 
+  save = (callback) => {
+    this.refs.nativeImg.save(result => {
+      callback(result);
+    });
+  }
+
   render() {
     let nativeProps = {
       ...this.props,
@@ -112,14 +118,14 @@ class Image extends PureComponent {
         nativeProps.children = null;
         return (
           <View style={nativeProps.style}>
-            <NativeImage {...nativeProps} />
+            <NativeImage ref={'nativeImg'} {...nativeProps} />
             <View style={styles.absoluteImage}>
               {this.props.children}
             </View>
           </View>
         );
       } else {
-        return <NativeImage {...nativeProps} />;
+        return <NativeImage ref={'nativeImg'} {...nativeProps} />;
       }
     }
     return null;
