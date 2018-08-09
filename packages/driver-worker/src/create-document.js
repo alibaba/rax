@@ -10,8 +10,11 @@ function toLower(str) {
 const CAMELCASE_REG = /\-[a-z]/g;
 const CamelCaseCache = {};
 function camelCase(str) {
-  return CamelCaseCache[str] || (
-    CamelCaseCache[str] = str.replace(CAMELCASE_REG, $1 => $1.slice(1).toUpperCase())
+  return (
+    CamelCaseCache[str] ||
+    (CamelCaseCache[str] = str.replace(CAMELCASE_REG, $1 =>
+      $1.slice(1).toUpperCase()
+    ))
   );
 }
 
@@ -36,8 +39,8 @@ function createAttributeFilter(ns, name) {
 let resolved = typeof Promise !== 'undefined' && Promise.resolve();
 const setImmediate = resolved
   ? f => {
-    resolved.then(f);
-  }
+      resolved.then(f);
+    }
   : setTimeout;
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -52,13 +55,13 @@ export default function() {
     record.target = target;
     record.type = type;
 
-    for (let i = observers.length; i--;) {
+    for (let i = observers.length; i--; ) {
       let ob = observers[i],
         match = target === ob._target;
       if (!match && ob._options.subtree) {
         do {
-          if (match = target === ob._target) break;
-        } while (target = target.parentNode);
+          if ((match = target === ob._target)) break;
+        } while ((target = target.parentNode));
       }
       if (match) {
         ob._records.push(record);
@@ -72,7 +75,7 @@ export default function() {
 
   function flushMutations() {
     pendingMutations = false;
-    for (let i = observers.length; i--;) {
+    for (let i = observers.length; i--; ) {
       let ob = observers[i];
       if (ob._records.length) {
         ob.callback(ob.takeRecords());
@@ -105,6 +108,96 @@ export default function() {
   }
   function isDataset(attr) {
     return IS_DATASET_REG.test(attr.name);
+  }
+
+  const patchTransform = {
+    rotateX: 0,
+    rotateY: 0,
+    rotateZ: 0,
+    translateX: 0,
+    translateY: 0,
+    translateZ: 0,
+    scaleX: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    skewX: 0,
+    skewY: 0
+  };
+
+  function generateAnimation(node, item) {
+    // properties aren't belonged to transform
+    const notBelongedToTransform = [
+      'opacity',
+      'backgroundColor',
+      'width',
+      'height',
+      'top',
+      'left',
+      'bottom',
+      'right'
+    ];
+    let nextProperties = '';
+    let nextTranfrom = 'transform: ';
+    let transformActions = [];
+
+    // actions about transform
+    item.animation.map(prop => {
+      if (notBelongedToTransform.includes(prop[0])) {
+        nextProperties += prop[0] + ':' + prop[1][0] + ';';
+      } else {
+        transformActions.push({
+          name: prop[0],
+          value: prop[1]
+        });
+      }
+    });
+
+    // match actions and update patchTransform
+    transformActions.forEach(action => {
+      let initial = 0;
+      if (action.name === 'matrix' || action.name === 'matrix3d') {
+        nextTranfrom += `${action.name}(${action.value.join(',')})`;
+      } else {
+        // handle the situation that params are not fixed
+        if (
+          action.name === 'rotate' ||
+          action.name === 'scale' ||
+          action.name === 'translate' ||
+          action.name === 'skew' ||
+          action.name.indexOf('3d') > -1
+        ) {
+          // scale's initial is 1
+          if (action.name === 'scale') {
+            initial = 1;
+          }
+          // if the rotate only has one param, it equals to rotateZ
+          if (action.value.length === 1 && action.name === 'rotate') {
+            patchTransform[`${action.name}Z`] = action.value[0] || initial;
+          } else {
+            patchTransform[`${action.name}X`] = action.value[0] || initial;
+            patchTransform[`${action.name}Y`] = action.value[1] || initial;
+          }
+          // handle 3d
+          if (action.value.length === 3) {
+            patchTransform[`${action.name}Z`] = action.value[2] || initial;
+          }
+        } else {
+          patchTransform[action.name] = action.value[0];
+        }
+      }
+    });
+
+    // stitching patchTransform into a string
+    Object.keys(patchTransform).forEach(name => {
+      nextTranfrom += `${name}(${patchTransform[name]})`;
+    });
+
+    // Merge onto style cssText
+    node.style.cssText = `transition: all ${item.config.duration}ms ${
+      item.config.timeFunction
+    } ${item.config.delay}ms;transform-origin: ${
+      item.config.transformOrigin
+    };${nextTranfrom};${nextProperties}`;
   }
 
   class Node {
@@ -188,6 +281,21 @@ export default function() {
         },
         get: () => this.getAttribute('class')
       });
+      Object.defineProperty(this, 'animation', {
+        set(queues) {
+          // 处理动画队列
+          let len = queues.length;
+          let i = 0;
+          generateAnimation(this, queues[i]);
+          this.addEventListener('transitionend', () => {
+            if (i < len - 1) {
+              i++;
+              generateAnimation(this, queues[i]);
+            }
+          });
+        },
+        get: () => this.getAttribute('animation')
+      });
       Object.defineProperty(this.style, 'cssText', {
         set: val => {
           this.setAttribute('style', val);
@@ -202,10 +310,9 @@ export default function() {
 
     get dataset() {
       const dataset = {};
-      this.attributes.filter(isDataset)
-        .forEach(({ name, value }) => {
-          dataset[camelCase(name.slice(5))] = value;
-        });
+      this.attributes.filter(isDataset).forEach(({ name, value }) => {
+        dataset[camelCase(name.slice(5))] = value;
+      });
       return dataset;
     }
 
@@ -225,7 +332,7 @@ export default function() {
 
     setAttributeNS(ns, name, value) {
       let attr = findWhere(this.attributes, createAttributeFilter(ns, name));
-      if (!attr) this.attributes.push(attr = { ns, name });
+      if (!attr) this.attributes.push((attr = { ns, name }));
 
       // array and plain object will pass
       // through, instead of calling `toString`
@@ -265,14 +372,14 @@ export default function() {
       event.stopPropagation = () => {
         event.bubbles = false;
       };
-      let t = event.target = event.currentTarget = this;
+      let t = (event.target = event.currentTarget = this);
       let c = event.cancelable;
       let l;
       let i;
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
-          for (i = l.length; i--;) {
+          for (i = l.length; i--; ) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
           }
       } while (
@@ -341,9 +448,30 @@ export default function() {
       };
 
       // context properties
-      const properties = ['direction', 'fillStyle', 'filter', 'font', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline'];
+      const properties = [
+        'direction',
+        'fillStyle',
+        'filter',
+        'font',
+        'globalAlpha',
+        'globalCompositeOperation',
+        'imageSmoothingEnabled',
+        'imageSmoothingQuality',
+        'lineCap',
+        'lineDashOffset',
+        'lineJoin',
+        'lineWidth',
+        'miterLimit',
+        'shadowBlur',
+        'shadowColor',
+        'shadowOffsetX',
+        'shadowOffsetY',
+        'strokeStyle',
+        'textAlign',
+        'textBaseline'
+      ];
 
-      properties.forEach((property) => {
+      properties.forEach(property => {
         Object.defineProperty(this, property, {
           get: function() {
             return propertyValues[property];
@@ -355,9 +483,55 @@ export default function() {
       });
 
       // context api
-      const methods = ['arc', 'arcTo', 'addHitRegion', 'beginPath', 'bezierCurveTo', 'clearHitRegions', 'clearRect', 'clip', 'closePath', 'createImageData', 'createLinearGradient', 'createPattern', 'createRadialGradient', 'drawFocusIfNeeded', 'drawImage', 'drawWidgetAsOnScreen', 'drawWindow', 'ellipse', 'fill', 'fillRect', 'fillText', 'getImageData', 'getLineDash', 'isPointInPath', 'isPointInStroke', 'lineTo', 'measureText', 'moveTo', 'putImageData', 'quadraticCurveTo', 'rect', 'removeHitRegion', 'resetTransform', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'];
+      const methods = [
+        'arc',
+        'arcTo',
+        'addHitRegion',
+        'beginPath',
+        'bezierCurveTo',
+        'clearHitRegions',
+        'clearRect',
+        'clip',
+        'closePath',
+        'createImageData',
+        'createLinearGradient',
+        'createPattern',
+        'createRadialGradient',
+        'drawFocusIfNeeded',
+        'drawImage',
+        'drawWidgetAsOnScreen',
+        'drawWindow',
+        'ellipse',
+        'fill',
+        'fillRect',
+        'fillText',
+        'getImageData',
+        'getLineDash',
+        'isPointInPath',
+        'isPointInStroke',
+        'lineTo',
+        'measureText',
+        'moveTo',
+        'putImageData',
+        'quadraticCurveTo',
+        'rect',
+        'removeHitRegion',
+        'resetTransform',
+        'restore',
+        'rotate',
+        'save',
+        'scale',
+        'scrollPathIntoView',
+        'setLineDash',
+        'setTransform',
+        'stroke',
+        'strokeRect',
+        'strokeText',
+        'transform',
+        'translate'
+      ];
 
-      methods.forEach((method) => {
+      methods.forEach(method => {
         this[method] = (...args) => {
           mutation(vnode, 'canvasRenderingContext2D', {
             method: method,
@@ -407,7 +581,7 @@ export default function() {
     let document = new Document();
     assign(
       document,
-      document.defaultView = {
+      (document.defaultView = {
         document,
         MutationObserver,
         Document,
@@ -416,7 +590,7 @@ export default function() {
         Element,
         SVGElement: Element,
         Event
-      }
+      })
     );
 
     assign(document, {
@@ -426,12 +600,12 @@ export default function() {
       createTextNode
     });
 
-    document.appendChild(document.documentElement = createElement('html'));
+    document.appendChild((document.documentElement = createElement('html')));
     document.documentElement.appendChild(
-      document.head = createElement('head')
+      (document.head = createElement('head'))
     );
     document.documentElement.appendChild(
-      document.body = createElement('body')
+      (document.body = createElement('body'))
     );
     return document;
   }
