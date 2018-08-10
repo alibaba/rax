@@ -49,7 +49,7 @@
     "build:dist": "npm run clean:dist && node ./scripts/dist-components.js && node ./scripts/dist-packages.js",
     "build:examples": "node ./scripts/build-examples.js",
     "build": "npm run build:compile && npm run build:dist && npm run build:examples && npm run build:templates",
-    "watch:compile": "node ./scripts/compile-components.js --watch && node ./scripts/compile-packages.js --watch",
+    "watch:compile": "node ./scripts/compile-components.js --watch & node ./scripts/compile-packages.js --watch",
     "test": "jest && lerna run test",
     "start:examples": "cd examples/hello && npm start",
     "start": "npm run build:compile && npm run start:examples",
