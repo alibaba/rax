@@ -12,6 +12,7 @@ const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 const GLOBAL_NAME = {
   'rax-dom': 'RaxDOM',
 };
+
 function normalizeGlobalName(name) {
   return GLOBAL_NAME[name] || uppercamelcase(name);
 }
@@ -31,7 +32,7 @@ fs.readdirSync(PACKAGES_DIR)
     ) {
       console.log('Ignore dist', packageName);
       return;
-    };
+    }
 
     var entryName = packageName.split('-')[1];
     var globalName = normalizeGlobalName(packageName);

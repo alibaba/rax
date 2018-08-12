@@ -32,6 +32,7 @@ export default {
       pushErrorMessage(message);
       return null;
     }
+
     return selector.replace(/\s/gi, '_').replace(/[\.]/g, '');
   },
 

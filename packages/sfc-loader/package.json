@@ -11,6 +11,9 @@
     "test:karma-watch": "karma start --auto-watch"
   },
   "license": "BSD-3-Clause",
+  "jest": {
+    "testEnvironment": "node"
+  },
   "dependencies": {
     "sfc-compiler": "^0.1.0",
     "sfc-runtime": "^0.1.0",
