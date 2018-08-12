@@ -9,6 +9,10 @@ export default function _createElement(type, props, children) {
     createElement = get('c');
   }
 
+  if (typeof type === 'object' && type.__esModule === true) {
+    type = type.default;
+  }
+
   if (type === '$template') {
     if (props.is) {
       const data = processPropsData(props, this);

@@ -1,5 +1,4 @@
-const { uniqueInstanceID } = require('../utils');
-const { isPreveredGlobalObject } = require('./injectThisScope');
+const { uniqueInstanceID, isPreveredIdentifier, isPreveredGlobalObject } = require('../utils');
 const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
 const generate = require('babel-generator').default;
@@ -23,7 +22,7 @@ function getIters(el, iters = {}) {
   }
 }
 
-module.exports = function(code, existsScope = () => false, el) {
+module.exports = function (code, existsScope = () => false, el) {
   const ast = babylon.parse(code);
   const iters = getIters(el);
 
@@ -48,6 +47,7 @@ module.exports = function(code, existsScope = () => false, el) {
       }
       if (
         t.isIdentifier(node.object) &&
+        !isPreveredIdentifier(node.object.name) &&
         !isPreveredGlobalObject(node.object.name) &&
         (t.isIdentifier(node.property) || isLiteral(node.property))
       ) {
@@ -90,7 +90,7 @@ module.exports = function(code, existsScope = () => false, el) {
         return;
       }
 
-      if (isPreveredGlobalObject(node.name)) {
+      if (isPreveredIdentifier(node.name) || isPreveredGlobalObject(node.name)) {
         return;
       }
 

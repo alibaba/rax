@@ -134,8 +134,8 @@ const cached = exports.cached = function cached(fn) {
  * Camelize a hyphen-delimited string.
  */
 const camelizeRE = /-(\w)/g;
-const camelize = exports.camelize = cached(function(str) {
-  return str.replace(camelizeRE, function(_, c) {
+const camelize = exports.camelize = cached(function (str) {
+  return str.replace(camelizeRE, function (_, c) {
     return c ? c.toUpperCase() : '';
   });
 });
@@ -163,3 +163,13 @@ exports.genStaticKeys = function genStaticKeys(modules) {
     }, [])
     .join(',');
 };
+
+
+// global id and object that prevered
+exports.isPreveredIdentifier = makeMap('true,false,null,undefined');
+exports.isPreveredGlobalObject = makeMap(
+  'Object,Array,String,Number,Symbol,Function,RegExp,' +
+  'Math,Date,JSON,console,' +
+  'Proxy,Promise,Reflect,Set,Map,ArrayBuffer' +
+  'Int8Array,Uint8Array,Uint8ClampedArray,Int16Array,Uint16Array,Int32Array,Uint32Array,Float32Array,Float64Array'
+);

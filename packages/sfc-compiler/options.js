@@ -21,5 +21,6 @@ exports.baseOptions = {
   canBeLeftOpenTag,
   isReservedTag,
   getTagNamespace,
+  // preserveWhitespace: false, // default to undefined
   staticKeys: genStaticKeys(modules)
 };

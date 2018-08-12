@@ -2,7 +2,7 @@ const { genHandlers } = require('./events');
 const baseDirectives = require('../directives');
 const { camelize, no, extend, makeMap } = require('../utils');
 const { baseWarn, pluckModuleFunction } = require('../helpers');
-const { isReservedTagName } = require('../utils');
+const { isReservedTagName, isPreveredIdentifier } = require('../utils');
 
 const fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 const simplePathRE = /^\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?']|\[".*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*\s*$/;
@@ -90,21 +90,21 @@ function genElement(el, state) {
 
       const children = el.inlineTemplate ? null : genChildren(el, state, true);
 
-      let tagHelperName;
+      let tagHelperName = el.tag;
 
       if (state.originalTag) {
         tagHelperName = JSON.stringify(el.tag);
-      } else {
-        tagHelperName =
-          rootNode.tagHelperMap[el.tag] || createUniqueTagHelper(el.tag);
-        rootNode.tagHelperMap[el.tag] = tagHelperName;
       }
 
-      code = `_c(${tagHelperName}${
+      rootNode.tagHelperMap[el.tag] = tagHelperName;
+
+      const tagStatement = `__components_refs__['${tagHelperName}']||'${tagHelperName}'`;
+
+      code = `_c(${tagStatement}${
         data ? `,${data}` : '' // data
-      }${
+        }${
         children ? `,${children}` : '' // children
-      })`;
+        })`;
     }
     // module transforms
     for (let i = 0; i < state.transforms.length; i++) {
@@ -142,7 +142,7 @@ function genStatic(el, state) {
   state.staticRenderFns.push(`with(this){return ${genElement(el, state)}}`);
   return `_m(${state.staticRenderFns.length - 1}${
     el.staticInFor ? ',true' : ''
-  })`;
+    })`;
 }
 
 // v-once
@@ -167,7 +167,7 @@ function genOnce(el, state) {
     }
     return `_o(${genElement(el, state)},${state.onceId++}${
       key ? `,${key}` : ''
-    })`;
+      })`;
   } else {
     return genStatic(el, state);
   }
@@ -298,7 +298,7 @@ function genData(el, state) {
   if (el.model) {
     data += `model:{value:${el.model.value},callback:${
       el.model.callback
-    },expression:${el.model.expression}},`;
+      },expression:${el.model.expression}},`;
   }
   // inline-template
   if (el.inlineTemplate) {
@@ -343,9 +343,9 @@ function genDirectives(el, state) {
         dir.value
           ? `,value:(${dir.value}),expression:${JSON.stringify(dir.value)}`
           : ''
-      }${dir.arg ? `,arg:"${dir.arg}"` : ''}${
+        }${dir.arg ? `,arg:"${dir.arg}"` : ''}${
         dir.modifiers ? `,modifiers:${JSON.stringify(dir.modifiers)}` : ''
-      }},`;
+        }},`;
     }
   }
   if (hasRuntime) {
@@ -367,9 +367,9 @@ function genInlineTemplate(el, state) {
     const inlineRenderFns = generate(ast, state.options);
     return `inlineTemplate:{render:function(){${
       inlineRenderFns.render
-    }},staticRenderFns:[${inlineRenderFns.staticRenderFns
-      .map(code => `function(){${code}}`)
-      .join(',')}]}`;
+      }},staticRenderFns:[${inlineRenderFns.staticRenderFns
+        .map(code => `function(){${code}}`)
+        .join(',')}]}`;
   }
 }
 
@@ -388,9 +388,9 @@ function genScopedSlot(key, el, state) {
   return (
     `{key:${key},fn:function(${String(el.attrsMap.scope)}){` +
     `return ${
-      el.tag === 'template'
-        ? genChildren(el, state) || 'void 0'
-        : genElement(el, state)
+    el.tag === 'template'
+      ? genChildren(el, state) || 'void 0'
+      : genElement(el, state)
     }}}`
   );
 }
@@ -428,7 +428,7 @@ function genChildren(el, state, checkSkip, altGenElement, altGenNode) {
     const gen = altGenNode || genNode;
     return `[${children.map(c => gen(c, state)).join(',')}]${
       normalizationType ? `,${normalizationType}` : ''
-    }`;
+      }`;
   }
 }
 
@@ -482,7 +482,7 @@ function genText(text) {
     text.type === 2
       ? text.expression // no need for () because already wrapped in _s()
       : transformSpecialNewlines(JSON.stringify(text.text))
-  })`;
+    })`;
 }
 
 exports.genComment = genComment;
@@ -515,7 +515,7 @@ function genComponent(componentName, el, state) {
   const children = el.inlineTemplate ? null : genChildren(el, state, true);
   return `_c(${componentName},${genData(el, state)}${
     children ? `,${children}` : ''
-  })`;
+    })`;
 }
 
 function genProps(props) {
@@ -537,6 +537,9 @@ function genProps(props) {
         // identifier that binded to a parent function scope
       } else if (/[-\s]/.test(prop.value)) {
         prop.value = `${scope}['${prop.value}']`;
+      } else if (isPreveredIdentifier(prop.value)) {
+        // prevered id like `true,false,null,undefined...`
+        prop.value = prop.value;
       } else {
         prop.value = `${scope}.${prop.value}`;
       }

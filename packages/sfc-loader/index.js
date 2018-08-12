@@ -1,4 +1,4 @@
-const loaderUtils = require('loader-utils');
+const { stringifyRequest, getOptions } = require('loader-utils');
 const { basename, extname, dirname, relative, join } = require('path');
 const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
@@ -13,7 +13,7 @@ let adapterRaxEntry = require.resolve('./helpers');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
 
-module.exports = function(rawContent, inputSourceMap) {
+module.exports = function (rawContent, inputSourceMap) {
   this.cacheable();
 
   const callback = this.async();
@@ -21,6 +21,7 @@ module.exports = function(rawContent, inputSourceMap) {
   const contextPath =
     this.rootContext || this.options && this.options.context || process.cwd();
   const filePath = this.resourcePath;
+  const userOptions = getOptions(this) || {};
   const relativePath = relative(contextPath, filePath);
 
   const { template, script, styles } = parseSFCParts(rawContent);
@@ -37,7 +38,10 @@ module.exports = function(rawContent, inputSourceMap) {
   }
 
   const { render, ast } = compiler.compile(template.content, {
-    scopeRefIdentifiers: scopeIdentifiers
+    scopeRefIdentifiers: scopeIdentifiers,
+    // rax prefer false to make it more similar to JSX
+    // undefined means true
+    preserveWhitespace: userOptions.preserveWhitespace
   });
 
   if (!ast) {
@@ -50,27 +54,42 @@ module.exports = function(rawContent, inputSourceMap) {
   }
 
   const renderFn = ast
-    ? createRenderFn(render, ast.tagHelperMap)
+    ? createRenderFn(render, {
+      loaderContext: context,
+      tagHelperMap: ast.tagHelperMap,
+      weexGlobalComponents: userOptions.weexGlobalComponents || null,
+      stringifyRequest
+    })
     : 'function() { return function() { return ""; } }';
 
   transformStyle(styles.content, filePath);
 
   const loadStyleString = `${stylesheetLoader}!${transformLoader}?id=${filePath}`;
-  const loadStyleRequest = loaderUtils.stringifyRequest(
+  const loadStyleRequest = stringifyRequest(
     context,
     `!!${loadStyleString}!${filePath}`
   );
 
   let loadRaxRqeuset = JSON.stringify('rax');
 
-  const userOptions = loaderUtils.getOptions(this);
-  if (userOptions && userOptions.builtInRuntime) {
+  if (userOptions.builtInRuntime) {
     adapterRaxEntry = userOptions.runtimeModule || '@core/runtime';
     loadRaxRqeuset = JSON.stringify('@core/rax');
   }
 
+  /**
+   * support ESModules / commonjs exportation
+   * ?module=modules/commonjs
+   */
+  const moduleExports = ['exports.__esModule=true;exports.default=', '.default'];
+
+  if (userOptions.module === 'commonjs') {
+    moduleExports[0] = 'module.exports =';
+    moduleExports[1] = '';
+  }
+
   const output = `${declarationCode};
-    export default require('${adapterRaxEntry}').default(
+    ${moduleExports[0]} require('${adapterRaxEntry}')${moduleExports[1]}(
       typeof ${declarationName}===void 0?{}:${declarationName},
       ${renderFn},
       require(${loadStyleRequest}),

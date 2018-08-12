@@ -1,15 +1,12 @@
-const { uniqueInstanceID, makeMap } = require('../utils');
+const {
+  uniqueInstanceID,
+  makeMap,
+  isPreveredIdentifier,
+  isPreveredGlobalObject
+} = require('../utils');
 const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
 const t = require('babel-types');
-
-// global object that prevered
-const isPreveredGlobalObject = makeMap(
-  'Object,Array,String,Number,Symbol,Function,RegExp,' +
-  'Math,Date,JSON,console,' +
-  'Proxy,Promise,Reflect,Set,Map,ArrayBuffer' +
-  'Int8Array,Uint8Array,Uint8ClampedArray,Int16Array,Uint16Array,Int32Array,Uint32Array,Float32Array,Float64Array'
-);
 
 /**
  * 类似 with, 注入 scope binding
@@ -18,7 +15,7 @@ const isPreveredGlobalObject = makeMap(
  * @param {Function} existsScope 白名单
  * @param {String} prefix 前缀
  */
-module.exports = function(code, existsScope = () => false, prefix = 'this') {
+module.exports = function (code, existsScope = () => false, prefix = 'this') {
   let ast;
   try {
     ast = babylon.parse(code, {
@@ -36,6 +33,7 @@ module.exports = function(code, existsScope = () => false, prefix = 'this') {
       t.isIdentifier(node) &&
       !existsScope(node.name) &&
       // preserved identifier
+      !isPreveredIdentifier(node.name) &&
       !isPreveredGlobalObject(node.name) &&
       !node.name.startsWith(`$_${uniqueInstanceID}`) &&
       node.name !== '_st'
@@ -110,7 +108,7 @@ module.exports = function(code, existsScope = () => false, prefix = 'this') {
     .map(
       name =>
         `var ${name} = ${prefix}${
-          isValidIdentifier(name) ? '.' + name : "['" + name + "']"
+        isValidIdentifier(name) ? '.' + name : "['" + name + "']"
         };`
     )
     .join('\n');
@@ -121,5 +119,3 @@ module.exports = function(code, existsScope = () => false, prefix = 'this') {
 
   return variableDeclarations;
 };
-
-module.exports.isPreveredGlobalObject = isPreveredGlobalObject;

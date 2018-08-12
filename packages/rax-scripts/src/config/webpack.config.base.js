@@ -81,7 +81,7 @@ module.exports = {
     // See https://github.com/facebookincubator/create-react-app/issues/240
     new CaseSensitivePathsPlugin(),
     // show webpakc build progress
-    new webpack.ProgressPlugin(function(percentage, msg) {
+    new webpack.ProgressPlugin(function (percentage, msg) {
       const stream = process.stderr;
       if (stream.isTTY && percentage < 0.71) {
         stream.cursorTo(0);
@@ -119,12 +119,16 @@ module.exports = {
         use: [
           {
             loader: 'sfc-loader',
-            options: { builtInRuntime: false }
+            options: {
+              builtInRuntime: false,
+              preserveWhitespace: false,
+              module: 'commonjs',
+              weexGlobalComponents: {
+                button: '@ali/rax-sfc-button'
+              },
+            }
           }
         ],
-        // include: [
-        //   process.cwd() + '/src'
-        // ]
         exclude: [
           pathConfig.appHtml
         ]
