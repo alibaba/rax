@@ -95,7 +95,7 @@ module.exports = function templateLoader(content) {
 
   const scopeVariables = injectThisScope(
     renderFn,
-    makeMap(helperFns + ',_w,data,true,false,null,$event'),
+    makeMap(helperFns + ',_w,data,true,false,null,$event,__components_refs__'),
     'data'
   );
 
@@ -112,6 +112,7 @@ module.exports = function templateLoader(content) {
       ${tplRegisters}
 
       function render(data) {
+        var __components_refs__ = this && this.__components_refs__ || {};
         ${scopeVariables}
         var _st = Object.assign({}, globalStyle, pageStyle, ${styleReq});
         return ${renderFn};

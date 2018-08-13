@@ -90,15 +90,10 @@ function genElement(el, state) {
 
       const children = el.inlineTemplate ? null : genChildren(el, state, true);
 
-      let tagHelperName = el.tag;
 
-      if (state.originalTag) {
-        tagHelperName = JSON.stringify(el.tag);
-      }
+      rootNode.tagHelperMap[el.tag] = el.tag;
 
-      rootNode.tagHelperMap[el.tag] = tagHelperName;
-
-      const tagStatement = `__components_refs__['${tagHelperName}']||'${tagHelperName}'`;
+      const tagStatement = `__components_refs__['${el.tag}']||'${el.tag}'`;
 
       code = `_c(${tagStatement}${
         data ? `,${data}` : '' // data
