@@ -124,7 +124,7 @@ export default function() {
     skewY: 0
   };
 
-  function dispatchAnimationToStyle(node, animation) {
+  function dispatchAnimationToStyle(node, animationGroup) {
     // properties aren't belonged to transform
     const notBelongedToTransform = [
       'opacity',
@@ -137,11 +137,11 @@ export default function() {
       'right'
     ];
     let nextProperties = '';
-    let nextTranfrom = 'transform: ';
+    let nextTranfrom = 'transform:';
     let transformActions = [];
 
     // actions about transform
-    animation.animation.map(prop => {
+    animationGroup.animation.map(prop => {
       if (notBelongedToTransform.indexOf(prop[0]) > -1) {
         nextProperties += prop[0] + ':' + prop[1][0] + ';';
       } else {
@@ -156,7 +156,7 @@ export default function() {
     transformActions.forEach(action => {
       let initial = 0;
       if (action.name === 'matrix' || action.name === 'matrix3d') {
-        nextTranfrom += `${action.name}(${action.value.join(',')})`;
+        nextTranfrom += ` ${action.name}(${action.value.join(',')})`;
       } else {
         // handle the situation that params are not fixed
         if (
@@ -189,15 +189,20 @@ export default function() {
 
     // stitching patchTransform into a string
     Object.keys(patchTransform).forEach(name => {
-      nextTranfrom += `${name}(${patchTransform[name]})`;
+      nextTranfrom += ` ${name}(${patchTransform[name]})`;
     });
 
-    // Merge onto style cssText
-    node.style.cssText = `transition: all ${animation.config.duration}ms ${
-      animation.config.timeFunction
-    } ${animation.config.delay}ms;transform-origin: ${
-      animation.config.transformOrigin
-    };${nextTranfrom};${nextProperties}`;
+    /**
+     * Merge onto style cssText
+     * before every animationGroup setTimeout 16ms
+     */
+    setTimeout(() => {
+      node.style.cssText = `transition: all ${animationGroup.config.duration}ms ${
+        animationGroup.config.timeFunction
+      } ${animationGroup.config.delay}ms;transform-origin: ${
+        animationGroup.config.transformOrigin
+      };${nextTranfrom};${nextProperties}`;
+    }, 16);
   }
 
   class Node {
@@ -283,18 +288,18 @@ export default function() {
       });
       Object.defineProperty(this, 'animation', {
         set(queues) {
-          let len = queues.length;
-          let i = 0;
-          const handlerQueue = () => {
-            if (i < len - 1) {
-              i++;
-              dispatchAnimationToStyle(this, queues[i]);
+          const len = queues.length;
+          const handleAnimationQueue = () => {
+            if (queues.length > 0) {
+              dispatchAnimationToStyle(this, queues.shift());
             } else {
-              this.removeEventListener('transitionend', handlerQueue);
+              this.removeEventListener('transitionend', handleAnimationQueue)
             }
-          };
-          dispatchAnimationToStyle(this, queues[i]);
-          this.addEventListener('transitionend', handlerQueue);
+          }
+          if (len > 0) {
+            dispatchAnimationToStyle(this, queues.shift());
+            this.addEventListener('transitionend', handleAnimationQueue);
+          }
         },
         get: () => this.getAttribute('animation')
       });
