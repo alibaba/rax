@@ -2,7 +2,7 @@ import { render, createElement, unmountComponentAtNode } from 'rax';
 
 let id = 0;
 export function renderSFCModule(Mod) {
-  if (Mod && Mod.default) {
+  if (Mod && Mod.__esModule === true) {
     // 兼容 commonjs
     Mod = Mod.default;
   }

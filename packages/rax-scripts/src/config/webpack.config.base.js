@@ -123,9 +123,9 @@ module.exports = {
               builtInRuntime: false,
               preserveWhitespace: false,
               module: 'commonjs',
-              weexGlobalComponents: {
-                button: '@ali/rax-sfc-button'
-              },
+              // weexGlobalComponents: {
+              //   button: 'rax-button'
+              // },
             }
           }
         ],
