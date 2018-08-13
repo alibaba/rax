@@ -29,3 +29,21 @@ render(<Example />, null, {
   driver: isWeb ? BrowserDriver : null
 });
 ```
+
+
+
+## API
+
+**static setTagPrefix(prefix: String)**
+
+set prefix for each tag (except svg)
+
+```js
+import BrowserDriver from 'driver-browser';
+
+BrowserDriver.setTagPrefix('a-');
+```
+
+
+
+
