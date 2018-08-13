@@ -25,7 +25,6 @@ const SRC_DIR = 'src';
 const BUILD_DIR = 'lib';
 const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/__tests__/**';
-const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 
 const args = parseArgs(process.argv);
 const customPackages = args.packages;
@@ -47,7 +46,7 @@ const fixedWidth = str => {
   return strs.slice(0, -1).concat(lastString).join('\n');
 };
 
-function buildPackage(p) {
+function buildPackage(packagesDir, p) {
   const srcDir = path.resolve(p, SRC_DIR);
   const pattern = path.resolve(srcDir, '**/*');
   const files = glob.sync(pattern, {nodir: true});
@@ -56,16 +55,16 @@ function buildPackage(p) {
     fixedWidth(`${path.basename(p)}\n`)
   );
 
-  files.forEach(file => buildFile(file, true));
+  files.forEach(file => buildFile(packagesDir, file, true));
   process.stdout.write(`[  ${chalk.green('OK')}  ]\n`);
 }
 
-function getPackages(customPackages) {
-  return fs.readdirSync(PACKAGES_DIR)
-    .map(file => path.resolve(PACKAGES_DIR, file))
+function getPackages(packagesDir, customPackages) {
+  return fs.readdirSync(packagesDir)
+    .map(file => path.resolve(packagesDir, file))
     .filter(f => {
       if (customPackages) {
-        const packageName = path.relative(PACKAGES_DIR, f).split(path.sep)[0];
+        const packageName = path.relative(packagesDir, f).split(path.sep)[0];
         return packageName.indexOf(customPackages) !== -1;
       } else {
         return true;
@@ -74,10 +73,10 @@ function getPackages(customPackages) {
     .filter(f => fs.lstatSync(path.resolve(f)).isDirectory());
 }
 
-function buildFile(file, silent) {
-  const packageName = path.relative(PACKAGES_DIR, file).split(path.sep)[0];
-  const packageSrcPath = path.resolve(PACKAGES_DIR, packageName, SRC_DIR);
-  const packageBuildPath = path.resolve(PACKAGES_DIR, packageName, BUILD_DIR);
+function buildFile(packagesDir, file, silent) {
+  const packageName = path.relative(packagesDir, file).split(path.sep)[0];
+  const packageSrcPath = path.resolve(packagesDir, packageName, SRC_DIR);
+  const packageBuildPath = path.resolve(packagesDir, packageName, BUILD_DIR);
   const relativeToSrcPath = path.relative(packageSrcPath, file);
   const destPath = path.resolve(packageBuildPath, relativeToSrcPath);
 
@@ -85,16 +84,16 @@ function buildFile(file, silent) {
   if (minimatch(file, IGNORE_PATTERN)) {
     silent || process.stdout.write(
       chalk.dim('  \u2022 ') +
-      path.relative(PACKAGES_DIR, file) +
+      path.relative(packagesDir, file) +
       ' (ignore)\n'
     );
   } else if (!minimatch(file, JS_FILES_PATTERN)) {
     fs.createReadStream(file).pipe(fs.createWriteStream(destPath));
     silent || process.stdout.write(
       chalk.red('  \u2022 ') +
-      path.relative(PACKAGES_DIR, file) +
+      path.relative(packagesDir, file) +
       chalk.red(' \u21D2 ') +
-      path.relative(PACKAGES_DIR, destPath) +
+      path.relative(packagesDir, destPath) +
       ' (copy)' +
       '\n'
     );
@@ -104,34 +103,39 @@ function buildFile(file, silent) {
     fs.writeFileSync(destPath, transformed);
     silent || process.stdout.write(
       chalk.green('  \u2022 ') +
-      path.relative(PACKAGES_DIR, file) +
+      path.relative(packagesDir, file) +
       chalk.green(' \u21D2 ') +
-      path.relative(PACKAGES_DIR, destPath) +
+      path.relative(packagesDir, destPath) +
       '\n'
     );
   }
 }
 
-if (args.watch) {
-  // watch packages
-  const packages = getPackages(customPackages);
-  const watchPackagesDir = packages.map(dir => path.resolve(dir, 'src'));
+// const packagesDir = path.resolve(__dirname, '../packages');
+module.exports = function compile(packagesName) {
+  const packagesDir = path.resolve(__dirname, `../${packagesName}`);
 
-  console.log(chalk.green('watch packages compile', packages));
+  if (args.watch) {
+    // watch packages
+    const packages = getPackages(packagesDir, customPackages);
+    const watchPackagesDir = packages.map(dir => path.resolve(dir, SRC_DIR));
 
-  chokidar.watch(watchPackagesDir, {
-    ignored: IGNORE_PATTERN
-  }).on('change', (filePath) => {
-    const packageName = filePath.match(/\/packages\/([^\/]*)/)[1];
-    const packagePath = path.resolve(__dirname, '../packages/', packageName);
-    process.stdout.write(chalk.bold.inverse(`Compiling package ${packageName} \n`));
-    try {
-      buildPackage(packagePath);
-    } catch (e) {}
+    console.log(chalk.green('watch packages compile', packages));
+
+    chokidar.watch(watchPackagesDir, {
+      ignored: IGNORE_PATTERN
+    }).on('change', (filePath) => {
+      const packageName = filePath.match( new RegExp(`\/${packagesName}\/([^\/]*)`))[1];
+      const packagePath = path.resolve(__dirname, `../${packagesName}/`, packageName);
+      process.stdout.write(chalk.bold.inverse(`Compiling package ${packageName} \n`));
+      try {
+        buildPackage(packagesDir, packagePath);
+      } catch (e) {}
+      process.stdout.write('\n');
+    });
+  } else {
+    process.stdout.write(chalk.bold.inverse('Compiling packages\n'));
+    getPackages(packagesDir, customPackages).forEach(buildPackage.bind(null, packagesDir));
     process.stdout.write('\n');
-  });
-} else {
-  process.stdout.write(chalk.bold.inverse('Compiling packages\n'));
-  getPackages(customPackages).forEach(buildPackage);
-  process.stdout.write('\n');
-}
+  }
+};
