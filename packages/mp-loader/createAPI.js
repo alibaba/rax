@@ -5,8 +5,8 @@ import resolve from 'resolve-pathname';
 module.exports = function createAPI(kwargs) {
   const { currentPath = '' } = kwargs || {};
   const my = {};
-  my.navigateTo = function (navigateOpts = {}) {
-    const isURL = /^[\w\d]+:\/\//.test(navigateOpts.url)
+  my.navigateTo = function(navigateOpts = {}) {
+    const isURL = /^[\w\d]+:\/\//.test(navigateOpts.url);
     const target = isURL ? navigateOpts.url : resolve(navigateOpts.url, currentPath);
 
     MY.navigateTo({
@@ -16,4 +16,4 @@ module.exports = function createAPI(kwargs) {
   };
   my.__proto__ = MY;
   return my;
-}
+};
