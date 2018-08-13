@@ -39,8 +39,8 @@ function createAttributeFilter(ns, name) {
 let resolved = typeof Promise !== 'undefined' && Promise.resolve();
 const setImmediate = resolved
   ? f => {
-      resolved.then(f);
-    }
+    resolved.then(f);
+  }
   : setTimeout;
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -60,8 +60,8 @@ export default function() {
         match = target === ob._target;
       if (!match && ob._options.subtree) {
         do {
-          if ((match = target === ob._target)) break;
-        } while ((target = target.parentNode));
+          if (match = target === ob._target) break;
+        } while (target = target.parentNode);
       }
       if (match) {
         ob._records.push(record);
@@ -124,7 +124,7 @@ export default function() {
     skewY: 0
   };
 
-  function generateAnimation(node, item) {
+  function dispatchAnimationToStyle(node, animation) {
     // properties aren't belonged to transform
     const notBelongedToTransform = [
       'opacity',
@@ -141,8 +141,8 @@ export default function() {
     let transformActions = [];
 
     // actions about transform
-    item.animation.map(prop => {
-      if (notBelongedToTransform.includes(prop[0])) {
+    animation.animation.map(prop => {
+      if (notBelongedToTransform.indexOf(prop[0]) > -1) {
         nextProperties += prop[0] + ':' + prop[1][0] + ';';
       } else {
         transformActions.push({
@@ -166,20 +166,20 @@ export default function() {
           action.name === 'skew' ||
           action.name.indexOf('3d') > -1
         ) {
-          // scale's initial is 1
-          if (action.name === 'scale') {
-            initial = 1;
-          }
-          // if the rotate only has one param, it equals to rotateZ
-          if (action.value.length === 1 && action.name === 'rotate') {
-            patchTransform[`${action.name}Z`] = action.value[0] || initial;
-          } else {
-            patchTransform[`${action.name}X`] = action.value[0] || initial;
-            patchTransform[`${action.name}Y`] = action.value[1] || initial;
-          }
-          // handle 3d
-          if (action.value.length === 3) {
-            patchTransform[`${action.name}Z`] = action.value[2] || initial;
+          switch (true) {
+            // scale's initial is 1
+            case action.name === 'scale':
+              initial = 1;
+            // if the rotate only has one param, it equals to rotateZ
+            case action.value.length === 1 && action.name === 'rotate':
+              patchTransform[`${action.name}Z`] = action.value[0] || initial;
+              break;
+            case action.value.length === 3:
+              patchTransform[`${action.name}Z`] = action.value[2] || initial;
+            default:
+              patchTransform[`${action.name}X`] = action.value[0] || initial;
+              patchTransform[`${action.name}Y`] = action.value[1] || initial;
+              break;
           }
         } else {
           patchTransform[action.name] = action.value[0];
@@ -193,10 +193,10 @@ export default function() {
     });
 
     // Merge onto style cssText
-    node.style.cssText = `transition: all ${item.config.duration}ms ${
-      item.config.timeFunction
-    } ${item.config.delay}ms;transform-origin: ${
-      item.config.transformOrigin
+    node.style.cssText = `transition: all ${animation.config.duration}ms ${
+      animation.config.timeFunction
+    } ${animation.config.delay}ms;transform-origin: ${
+      animation.config.transformOrigin
     };${nextTranfrom};${nextProperties}`;
   }
 
@@ -283,16 +283,18 @@ export default function() {
       });
       Object.defineProperty(this, 'animation', {
         set(queues) {
-          // 处理动画队列
           let len = queues.length;
           let i = 0;
-          generateAnimation(this, queues[i]);
-          this.addEventListener('transitionend', () => {
+          const handlerQueue = () => {
             if (i < len - 1) {
               i++;
-              generateAnimation(this, queues[i]);
+              dispatchAnimationToStyle(this, queues[i]);
+            } else {
+              this.removeEventListener('transitionend', handlerQueue);
             }
-          });
+          };
+          dispatchAnimationToStyle(this, queues[i]);
+          this.addEventListener('transitionend', handlerQueue);
         },
         get: () => this.getAttribute('animation')
       });
@@ -332,7 +334,7 @@ export default function() {
 
     setAttributeNS(ns, name, value) {
       let attr = findWhere(this.attributes, createAttributeFilter(ns, name));
-      if (!attr) this.attributes.push((attr = { ns, name }));
+      if (!attr) this.attributes.push(attr = { ns, name });
 
       // array and plain object will pass
       // through, instead of calling `toString`
@@ -372,7 +374,7 @@ export default function() {
       event.stopPropagation = () => {
         event.bubbles = false;
       };
-      let t = (event.target = event.currentTarget = this);
+      let t = event.target = event.currentTarget = this;
       let c = event.cancelable;
       let l;
       let i;
@@ -581,7 +583,7 @@ export default function() {
     let document = new Document();
     assign(
       document,
-      (document.defaultView = {
+      document.defaultView = {
         document,
         MutationObserver,
         Document,
@@ -590,7 +592,7 @@ export default function() {
         Element,
         SVGElement: Element,
         Event
-      })
+      }
     );
 
     assign(document, {
@@ -600,12 +602,12 @@ export default function() {
       createTextNode
     });
 
-    document.appendChild((document.documentElement = createElement('html')));
+    document.appendChild(document.documentElement = createElement('html'));
     document.documentElement.appendChild(
-      (document.head = createElement('head'))
+      document.head = createElement('head')
     );
     document.documentElement.appendChild(
-      (document.body = createElement('body'))
+      document.body = createElement('body')
     );
     return document;
   }
