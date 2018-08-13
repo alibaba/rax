@@ -13,7 +13,7 @@ let adapterRaxEntry = require.resolve('./helpers');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
 
-module.exports = function (rawContent, inputSourceMap) {
+module.exports = function(rawContent, inputSourceMap) {
   this.cacheable();
 
   const callback = this.async();
@@ -65,7 +65,7 @@ module.exports = function (rawContent, inputSourceMap) {
   transformStyle(styles.content, filePath);
 
   const loadStyleString = `${stylesheetLoader}?transformDescendantCombinator=true!${transformLoader}?id=${filePath}`;
-  const loadStyleRequest = loaderUtils.stringifyRequest(
+  const loadStyleRequest = stringifyRequest(
     context,
     `!!${loadStyleString}!${filePath}`
   );

@@ -114,7 +114,7 @@ export default function adapterRaxComponent(def, _renderFn, $_style, rax) {
     // fire destroyed at next tick
     if (typeof def.destroyed === 'function') {
       const prevComponentWillUnmount = this.componentWillUnmount;
-      this.componentWillUnmount = function () {
+      this.componentWillUnmount = function() {
         prevComponentWillUnmount && prevComponentWillUnmount.call(this);
         setTimeout(() => {
           def.destroyed.apply(vm, arguments);
@@ -123,7 +123,7 @@ export default function adapterRaxComponent(def, _renderFn, $_style, rax) {
     }
 
     const prevComponentWillReceiveProps = this.componentWillReceiveProps;
-    this.componentWillReceiveProps = function (nextProps) {
+    this.componentWillReceiveProps = function(nextProps) {
       prevComponentWillReceiveProps &&
         prevComponentWillReceiveProps.apply(this, arguments);
       if (nextProps.children !== this.props.children) {

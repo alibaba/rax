@@ -173,7 +173,7 @@ function parse(template, options) {
           if (el.tag === 'slot' || el.tag === 'template') {
             warnOnce(
               `Cannot use <${
-              el.tag
+                el.tag
               }> as component root element because it may ` +
               'contain multiple nodes.'
             );

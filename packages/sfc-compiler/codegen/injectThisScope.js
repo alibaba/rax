@@ -15,7 +15,7 @@ const t = require('babel-types');
  * @param {Function} existsScope 白名单
  * @param {String} prefix 前缀
  */
-module.exports = function (code, existsScope = () => false, prefix = 'this') {
+module.exports = function(code, existsScope = () => false, prefix = 'this') {
   let ast;
   try {
     ast = babylon.parse(code, {
@@ -108,7 +108,7 @@ module.exports = function (code, existsScope = () => false, prefix = 'this') {
     .map(
       name =>
         `var ${name} = ${prefix}${
-        isValidIdentifier(name) ? '.' + name : "['" + name + "']"
+          isValidIdentifier(name) ? '.' + name : "['" + name + "']"
         };`
     )
     .join('\n');

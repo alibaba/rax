@@ -22,7 +22,7 @@ function getIters(el, iters = {}) {
   }
 }
 
-module.exports = function (code, existsScope = () => false, el) {
+module.exports = function(code, existsScope = () => false, el) {
   const ast = babylon.parse(code);
   const iters = getIters(el);
 

@@ -134,8 +134,8 @@ const cached = exports.cached = function cached(fn) {
  * Camelize a hyphen-delimited string.
  */
 const camelizeRE = /-(\w)/g;
-const camelize = exports.camelize = cached(function (str) {
-  return str.replace(camelizeRE, function (_, c) {
+const camelize = exports.camelize = cached(function(str) {
+  return str.replace(camelizeRE, function(_, c) {
     return c ? c.toUpperCase() : '';
   });
 });

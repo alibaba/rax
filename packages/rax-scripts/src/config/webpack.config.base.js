@@ -81,7 +81,7 @@ module.exports = {
     // See https://github.com/facebookincubator/create-react-app/issues/240
     new CaseSensitivePathsPlugin(),
     // show webpakc build progress
-    new webpack.ProgressPlugin(function (percentage, msg) {
+    new webpack.ProgressPlugin(function(percentage, msg) {
       const stream = process.stderr;
       if (stream.isTTY && percentage < 0.71) {
         stream.cursorTo(0);
