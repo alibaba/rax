@@ -49,7 +49,7 @@ ${scriptContent}
     require(${stringifyRequest(this, paths.Page)}).default,
     require(${tplRequirement}),
     require(${stringifyRequest(this, paths.getApp)}).default,
-    new require(${stringifyRequest(this, paths.my)}).default({ ctx: '${relativePath}' })
+    require(${stringifyRequest(this, paths.createAPI)})({ currentPath: ${JSON.stringify(relativePath)} })
   );`;
 
   // 往下滑行一行, 因为上面加了一行 👆

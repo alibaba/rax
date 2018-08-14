@@ -125,6 +125,6 @@ module.exports = function templateLoader(content) {
     ${styleReq},
     require(${sfcRuntimeReq}).vdomHelper,
     require(${stringifyRequest(this, paths.getApp)}).default,
-    new require(${stringifyRequest(this, paths.my)}).default({ ctx: '${relativePath}' })
+    require(${stringifyRequest(this, paths.createAPI)})({ currentPath: ${JSON.stringify(relativePath)} })
   );`;
 };
