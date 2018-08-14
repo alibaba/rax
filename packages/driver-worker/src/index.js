@@ -52,9 +52,35 @@ export default ({ postMessage, addEventListener }) => {
 
   function handleEvent(event) {
     let target = getNode(event.target);
+
+    if (/^touch/.test(event.type)) {
+      convertTouchTarget(event);
+    }
+
     if (target) {
       event.target = target;
       target.dispatchEvent(event);
+    }
+  }
+
+  /**
+   * convert Touch#$$id to targetNode
+   */
+  function convertTouchTarget(evt) {
+    function extractTouchListTarget(touchList) {
+      for (let i = 0, l = touchList.length; i < l; i++) {
+        if ('$$id' in touchList[i]) {
+          touchList[i].target = getNode(touchList[i].$$id);
+          delete touchList[i].$$id;
+        }
+      }
+    }
+
+    if (evt.touches) {
+      extractTouchListTarget(evt.touches);
+    }
+    if (evt.changedTouches) {
+      extractTouchListTarget(evt.changedTouches);
     }
   }
 
