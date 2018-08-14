@@ -293,9 +293,9 @@ export default function() {
             if (queues.length > 0) {
               dispatchAnimationToStyle(this, queues.shift());
             } else {
-              this.removeEventListener('transitionend', handleAnimationQueue)
+              this.removeEventListener('transitionend', handleAnimationQueue);
             }
-          }
+          };
           if (len > 0) {
             dispatchAnimationToStyle(this, queues.shift());
             this.addEventListener('transitionend', handleAnimationQueue);
