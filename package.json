@@ -43,7 +43,7 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "setup": "npm run bootstrap && npm run build:compile && npm run build:dist",
+    "setup": "npm run build:compile && npm run bootstrap && npm run build:dist",
     "build:templates": "node ./scripts/build-templates.js",
     "build:compile": "npm run clean:compile && node ./scripts/compile-components.js && node ./scripts/compile-packages.js",
     "build:dist": "npm run clean:dist && node ./scripts/dist-components.js && node ./scripts/dist-packages.js",

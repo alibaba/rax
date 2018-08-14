@@ -1,4 +1,3 @@
-const { declearTags } = require('../declear');
 const { uniqueInstanceID, makeMap, objectValues } = require('../utils');
 const injectThisScope = require('./injectThisScope');
 
@@ -6,17 +5,39 @@ const injectThisScope = require('./injectThisScope');
 const declarationName = `$_${uniqueInstanceID}_declaration`;
 const helpersFns = '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx';
 
-module.exports = function(render, tagHelperMap) {
-  const declearedTags = declearTags(tagHelperMap, '$t');
+module.exports = function(render, opts) {
+  const { loaderContext, tagHelperMap, weexGlobalComponents, stringifyRequest } = opts;
+
   const existRenderHelpers = makeMap(
-    helpersFns + ',' + objectValues(tagHelperMap).join(',')
+    helpersFns + ',__components_refs__'
   );
   const thisDefines = injectThisScope(render, existRenderHelpers);
 
-  return `function(_st,_d,{${helpersFns}}) {
+  /**
+   * driver weex components
+   */
+  let globalComponentReqs = '';
+  if (weexGlobalComponents) {
+    const componentList = Object.keys(weexGlobalComponents);
+    let moduleName;
+    Object.keys(tagHelperMap || {}).forEach((usageTag) => {
+      if (moduleName = weexGlobalComponents[usageTag]) {
+        globalComponentReqs += `'${usageTag}': require(` + stringifyRequest(loaderContext, moduleName) + '),';
+      }
+    });
+  }
+
+  const weexComponentsAdapter = weexGlobalComponents ? `
+    if (isWeex) {
+      __components_refs__ = Object.assign({
+        ${globalComponentReqs}
+      }, __components_refs__);
+    }` : '';
+
+  return `function(_st,_d,{${helpersFns}}, isWeex) {
+    var __components_refs__ = _d.components;
+    ${weexComponentsAdapter}
     return function() {
-      var $t = _d.components || {};
-      ${declearedTags}
       ${thisDefines}
       return ${render};
     };

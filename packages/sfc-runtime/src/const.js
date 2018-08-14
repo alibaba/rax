@@ -5,5 +5,5 @@ export const arrayPatchMethods = [
   'unshift',
   'splice',
   'sort',
-  'reverse'
+  'reverse',
 ];

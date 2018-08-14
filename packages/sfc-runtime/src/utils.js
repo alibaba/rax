@@ -1,6 +1,8 @@
 import uppercamelcase from 'uppercamelcase';
 import camelcase from 'camelcase';
 
+export { isWeb, isNode, isWeex, isReactNative } from 'universal-env';
+
 // including any obj
 export function isObject(obj) {
   return obj !== null && typeof obj === 'object';
