@@ -26,7 +26,7 @@ exports.extend = extend;
 /**
  * always return false
  */
-exports.no = function () {
+exports.no = function() {
   return false;
 };
 
