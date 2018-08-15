@@ -74,7 +74,7 @@ const Driver = {
 
   createElement(component) {
     const parent = component._internal._parent;
-    this.isSVGMode = component.type === 'svg' || (parent && parent.namespaceURI === SVG_NS);
+    this.isSVGMode = component.type === 'svg' || parent && parent.namespaceURI === SVG_NS;
 
     let node;
     if (this.isSVGMode) {
@@ -82,7 +82,7 @@ const Driver = {
     } else {
       node = document.createElement(this.tagPrefix + component.type);
     }
-    
+
     let props = component.props;
     this.setNativeProps(node, props);
 
