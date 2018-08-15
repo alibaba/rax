@@ -1,6 +1,6 @@
 {
   "name": "mp-runtime",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "mp dsl runtime",
   "main": "src/index.js",
   "scripts": {
