@@ -14,19 +14,16 @@ function transformNode(el) {
     return;
   }
 
-  const list = Object.keys(attrsMap);
-  for (let i = 0, l = list.length; i < l; i++) {
+  const keys = attrsList.map(({name}) => name);
+  for (let i = 0, l = keys.length; i < l; i++) {
     transformAttr({
-      name: list[i],
-      value: attrsMap[list[i]]
+      name: keys[i],
+      value: attrsMap[keys[i]]
     });
   }
 
   function transformAttr(attr) {
     const { name, value } = attr;
-    if (name === 'class' || name === 'style') {
-      return;
-    }
     if (IS_DETECTIVE.test(name)) {
       return;
     }

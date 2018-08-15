@@ -26,7 +26,7 @@ exports.extend = extend;
 /**
  * always return false
  */
-exports.no = function() {
+exports.no = function () {
   return false;
 };
 
@@ -122,7 +122,7 @@ exports.QueryString = class QueryString {
   toString() {
     const result = [];
     Object.keys(this.qsObj).forEach((key) => {
-      result.push(`${key}=${encodeURIComponent(this.qsObj[key])}`);
+      result.push(`${key}=${encodeURIComponent(this.qsObj[key]) || ''}`);
     });
     return result.join('&');
   }
