@@ -50,6 +50,7 @@
     "build:examples": "node ./scripts/build-examples.js",
     "build": "npm run build:compile && npm run build:dist && npm run build:examples && npm run build:templates",
     "watch:compile": "node ./scripts/compile-components.js --watch & node ./scripts/compile-packages.js --watch",
+    "jest": "jest",
     "test": "jest && lerna run test",
     "start:examples": "cd examples/hello && npm start",
     "start": "npm run build:compile && npm run start:examples",

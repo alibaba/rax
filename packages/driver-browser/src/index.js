@@ -13,12 +13,10 @@ const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
-
+const SVG_NS = 'http://www.w3.org/2000/svg';
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
 const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in document ? 'textContent' : 'nodeValue';
-
-const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const Driver = {
 
@@ -71,26 +69,21 @@ const Driver = {
     node[TEXT_CONTENT_ATTR] = text;
   },
 
-  /* driver's flag indicating if the diff is currently within an SVG */
+  // driver's flag indicating if the diff is currently within an SVG
   isSVGMode: false,
 
   createElement(component) {
-    let node;
-    if (component.type === 'svg') {
-      this.isSVGMode = true;
-      component.ownerSVGElement = component;
-    } else {
-      const parentInstance = component._internal._parentInstance;
-      this.isSVGMode = parentInstance && parentInstance.ownerSVGElement !== undefined;
-    }
+    const parent = component._internal._parent;
+    this.isSVGMode = component.type === 'svg' || (parent && parent.namespaceURI === SVG_NS);
 
+    let node;
     if (this.isSVGMode) {
       node = document.createElementNS(SVG_NS, component.type);
     } else {
       node = document.createElement(this.tagPrefix + component.type);
     }
+    
     let props = component.props;
-
     this.setNativeProps(node, props);
 
     return node;
