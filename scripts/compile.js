@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const spawnSync = require('child_process').spawnSync;
 
-const babel = require('babel-core');
+const babel = require('@babel/core');
 const chalk = require('chalk');
 const glob = require('glob');
 const minimatch = require('minimatch');

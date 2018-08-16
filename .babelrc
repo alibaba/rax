@@ -1,13 +1,20 @@
 {
   "presets": [
-    "es2015",
-    "rax"
+    "@babel/preset-flow",
+    "@babel/preset-env",
+    ["@babel/preset-react", {
+      "pragma": "createElement"
+    }]
   ],
   "plugins": [
-    "export-default-module-exports"
+    "@babel/plugin-proposal-export-default-from",
+    ["@babel/plugin-proposal-class-properties", { "loose": false }],
+    "babel-plugin-export-default-module-exports",
+    "babel-plugin-transform-jsx-stylesheet"
   ],
   "ignore": [
     "src/generator/templates",
-    "__mockc__"
+    "__mockc__",
+    "dist"
   ]
 }
