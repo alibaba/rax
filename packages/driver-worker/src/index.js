@@ -1,4 +1,5 @@
 import { convertUnit, setRem } from 'style-unit';
+import styleToCSS from './style-to-css';
 import createDocument from './create-document';
 
 const ELEMENT_NODE = 1;
@@ -21,18 +22,6 @@ const TO_SANITIZE = [
   'previousSibling'
 ];
 
-const UPPERCASE_REGEXP = /[A-Z]/g;
-const CSSPropCache = {};
-
-function styleToCSS(style) {
-  let css = '';
-  for (var prop in style) {
-    let val = style[prop];
-    prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();
-    css = css + `${prop}:${val};`;
-  }
-  return css;
-}
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();

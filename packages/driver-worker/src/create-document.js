@@ -1,3 +1,5 @@
+import styleToCSS from './style-to-css';
+
 const IS_DATASET_REG = /^data\-/;
 function assign(obj, props) {
   for (let i in props) obj[i] = props[i];
@@ -55,7 +57,7 @@ export default function() {
     record.target = target;
     record.type = type;
 
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i],
         match = target === ob._target;
       if (!match && ob._options.subtree) {
@@ -75,7 +77,7 @@ export default function() {
 
   function flushMutations() {
     pendingMutations = false;
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i];
       if (ob._records.length) {
         ob.callback(ob.takeRecords());
@@ -110,20 +112,7 @@ export default function() {
     return IS_DATASET_REG.test(attr.name);
   }
 
-  const patchTransform = {
-    rotateX: 0,
-    rotateY: 0,
-    rotateZ: 0,
-    translateX: 0,
-    translateY: 0,
-    translateZ: 0,
-    scaleX: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    skewX: 0,
-    skewY: 0
-  };
-
+  const patchTransform = {};
   function dispatchAnimationToStyle(node, animationGroup) {
     // properties aren't belonged to transform
     const notBelongedToTransform = [
@@ -137,7 +126,7 @@ export default function() {
       'right'
     ];
     let nextProperties = '';
-    let nextTranfrom = 'transform:';
+    let nextTranfrom = '';
     let transformActions = [];
 
     // actions about transform
@@ -153,37 +142,43 @@ export default function() {
     });
 
     // match actions and update patchTransform
-    transformActions.forEach(action => {
-      let initial = 0;
-      if (action.name === 'matrix' || action.name === 'matrix3d') {
-        nextTranfrom += ` ${action.name}(${action.value.join(',')})`;
-      } else {
-        // handle the situation that params are not fixed
-        if (
-          action.name === 'rotate' ||
-          action.name === 'scale' ||
-          action.name === 'translate' ||
-          action.name === 'skew' ||
-          action.name.indexOf('3d') > -1
-        ) {
-          switch (true) {
-            // scale's initial is 1
-            case action.name === 'scale':
-              initial = 1;
-            // if the rotate only has one param, it equals to rotateZ
-            case action.value.length === 1 && action.name === 'rotate':
-              patchTransform[`${action.name}Z`] = action.value[0] || initial;
-              break;
-            case action.value.length === 3:
-              patchTransform[`${action.name}Z`] = action.value[2] || initial;
-            default:
-              patchTransform[`${action.name}X`] = action.value[0] || initial;
-              patchTransform[`${action.name}Y`] = action.value[1] || initial;
-              break;
-          }
-        } else {
-          patchTransform[action.name] = action.value[0];
+    transformActions.forEach(({ name, value }) => {
+      let defaultVal = 0;
+      let unit = '';
+      if (name === 'matrix' || name === 'matrix3d') {
+        nextTranfrom += ` ${name}(${value.join(',')})`;
+      } else if (
+        ['rotate', 'scale', 'translate', 'skew'].indexOf(name) > -1
+        || name.indexOf('3d') > -1
+      ) {
+        if ('rotate' === name) {
+          unit = 'deg';
         }
+
+        if ('translate' === name) {
+          unit = 'px';
+        }
+
+        // scale's defaultVal is 1
+        if (name === 'scale') {
+          defaultVal = 1;
+        }
+
+        // if the rotate only has one param, it equals to rotateZ
+        if (name === 'rotate' && value.length === 1) {
+          patchTransform[`${name}Z`] = (value[0] || defaultVal) + unit;
+          return;
+        }
+
+        if (value.length === 3) {
+          patchTransform[`${name}Z`] = (value[2] || defaultVal) + unit;
+        }
+
+        patchTransform[`${name}X`] = (value[0] || defaultVal) + unit;
+        patchTransform[`${name}Y`] = (value[1] || defaultVal) + unit;
+      } else {
+        // key = val
+        patchTransform[name] = value[0] + unit;
       }
     });
 
@@ -197,11 +192,15 @@ export default function() {
      * before every animationGroup setTimeout 16ms
      */
     setTimeout(() => {
-      node.style.cssText = `transition: all ${animationGroup.config.duration}ms ${
-        animationGroup.config.timeFunction
-      } ${animationGroup.config.delay}ms;transform-origin: ${
-        animationGroup.config.transformOrigin
-      };${nextTranfrom};${nextProperties}`;
+      const { duration, timeFunction, delay, transformOrigin } = animationGroup.config;
+
+      Object.assign(node.style, {
+        transition: `all ${duration}ms ${timeFunction} ${delay}ms`,
+        transformOrigin: transformOrigin,
+        transform: `${nextTranfrom} ${nextProperties}`,
+      });
+
+      node.style.cssText = styleToCSS(node.style);
     }, 16);
   }
 
@@ -386,7 +385,7 @@ export default function() {
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
-          for (i = l.length; i--; ) {
+          for (i = l.length; i--;) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
           }
       } while (
