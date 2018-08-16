@@ -145,25 +145,22 @@ export default function() {
     transformActions.forEach(({ name, value }) => {
       let defaultVal = 0;
       let unit = '';
-      if (name === 'matrix' || name === 'matrix3d') {
-        nextTranfrom += ` ${name}(${value.join(',')})`;
-      } else if (
+
+      if (/rotate[XYZ]?$/.test(name)) {
+        unit = 'deg';
+      }
+
+      if (/translate/.test(name)) {
+        unit = 'px';
+      }
+      // scale's defaultVal is 1
+      if (/scale/.test(name)) {
+        defaultVal = 1;
+      }
+
+      if (
         ['rotate', 'scale', 'translate', 'skew'].indexOf(name) > -1
-        || name.indexOf('3d') > -1
       ) {
-        if ('rotate' === name) {
-          unit = 'deg';
-        }
-
-        if ('translate' === name) {
-          unit = 'px';
-        }
-
-        // scale's defaultVal is 1
-        if (name === 'scale') {
-          defaultVal = 1;
-        }
-
         // if the rotate only has one param, it equals to rotateZ
         if (name === 'rotate' && value.length === 1) {
           patchTransform[`${name}Z`] = (value[0] || defaultVal) + unit;
@@ -176,6 +173,15 @@ export default function() {
 
         patchTransform[`${name}X`] = (value[0] || defaultVal) + unit;
         patchTransform[`${name}Y`] = (value[1] || defaultVal) + unit;
+      } else if (
+        ['scale3d', 'translate3d'].indexOf(name) > -1
+      ) {
+        // three args
+        patchTransform[name] = value.map((i) => `${i || defaultVal}${unit}`).join(',');
+      } else if ('rotate3d' === name) {
+        patchTransform[name] = value.map((i) => `${i || defaultVal}${unit}`).join(',') + 'deg';
+      } else if (['matrix', 'matrix3d'].indexOf(name) > -1) {
+        nextTranfrom += ` ${name}(${value.join(',')})`;
       } else {
         // key = val
         patchTransform[name] = value[0] + unit;
