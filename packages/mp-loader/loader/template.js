@@ -99,7 +99,7 @@ module.exports = function templateLoader(content) {
     'data'
   );
 
-  return `;(function(globalStyle, pageStyle, __v, getApp, my){
+  return `;(function(globalStyle, pageStyle, __v, getApp){
     ${helperVariables}
 
     module.exports = function($parentTpls) {
@@ -124,7 +124,6 @@ module.exports = function templateLoader(content) {
     ${globalStyleReq},
     ${styleReq},
     require(${sfcRuntimeReq}).vdomHelper,
-    require(${stringifyRequest(this, paths.getApp)}).default,
-    require(${stringifyRequest(this, paths.createAPI)})({ currentPath: ${JSON.stringify(relativePath)} })
+    require(${stringifyRequest(this, paths.getApp)}).default
   );`;
 };

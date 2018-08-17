@@ -9,7 +9,7 @@ const injectThisScope = require(paths.injectThisScope);
 
 const tplLoaderPath = require.resolve('./template');
 
-module.exports = function(content, rawMap) {
+module.exports = function (content, rawMap) {
   const { type, globalStyle } = getOptions(this);
   const { resourcePath } = this;
   const relativePath = relative(this.rootContext, this.resourcePath);
@@ -42,14 +42,13 @@ module.exports = function(content, rawMap) {
    * $REG: registerPage
    * $REN: renderFn
    */
-  let source = `;(function($REG,$REN,getApp,my){$REG(${pageInfo},$REN,function(Page){
+  let source = `;(function($REG,$REN,getApp){$REG(${pageInfo},$REN,function(Page){
 ${scriptContent}
     });
   })(
     require(${stringifyRequest(this, paths.Page)}).default,
     require(${tplRequirement}),
-    require(${stringifyRequest(this, paths.getApp)}).default,
-    require(${stringifyRequest(this, paths.createAPI)})({ currentPath: ${JSON.stringify(relativePath)} })
+    require(${stringifyRequest(this, paths.getApp)}).default
   );`;
 
   // 往下滑行一行, 因为上面加了一行 👆

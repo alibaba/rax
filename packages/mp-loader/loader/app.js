@@ -16,7 +16,7 @@ function getPages(resourcePath) {
  * App loader
  * handle app.js for mini program
  */
-module.exports = function(content) {
+module.exports = function (content) {
   const loaderOptions = getOptions(this);
   const relativePath = relative(this.rootContext, this.resourcePath);
   let { type } = loaderOptions || {};
@@ -56,13 +56,12 @@ module.exports = function(content) {
     sourceFileName: relativePath,
   });
 
-  const source = `;(function (App,$PAGE_REG,my){
+  const source = `;(function (App,$PAGE_REG){
 ${code}
 ${registerPages}
   })(
     require(${stringifyRequest(this, paths.App)}).default,
-    require(${stringifyRequest(this, paths.Page)}).default,
-    require(${stringifyRequest(this, paths.createAPI)})({ currentPath: '/' })
+    require(${stringifyRequest(this, paths.Page)}).default
   );`;
 
   // 往下滑行一行, 因为上面加了一行 👆
