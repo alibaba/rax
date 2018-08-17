@@ -136,19 +136,36 @@ export default function() {
       'bottom',
       'right'
     ];
-    let nextProperties = '';
+    let nextProperties = {};
     let nextTranfrom = 'transform:';
     let transformActions = [];
 
     // actions about transform
     animationGroup.animation.map(prop => {
-      if (notBelongedToTransform.indexOf(prop[0]) > -1) {
-        nextProperties += prop[0] + ':' + prop[1][0] + ';';
-      } else {
-        transformActions.push({
-          name: prop[0],
-          value: prop[1]
-        });
+      switch (true) {
+        case notBelongedToTransform.indexOf(prop[0]) > -1:
+          if (prop[0] === 'backgroundColor') {
+            prop[0] = 'background-color';
+          }
+          nextProperties[prop[0]] = prop[1];
+          break;
+        case prop[0].indexOf('rotate') > -1:
+          transformActions.push({
+            name: prop[0],
+            value: prop[1].map(angle => {
+              if (typeof angle === 'number') {
+                return angle + 'deg';
+              }
+              return angle;
+            })
+          });
+          break;
+        default:
+          transformActions.push({
+            name: prop[0],
+            value: prop[1]
+          });
+          break;
       }
     });
 
@@ -195,13 +212,43 @@ export default function() {
     /**
      * Merge onto style cssText
      * before every animationGroup setTimeout 16ms
+     *
+     * it shouldn't just assignment cssText
+     * but parse cssText
      */
     setTimeout(() => {
-      node.style.cssText = `transition: all ${animationGroup.config.duration}ms ${
-        animationGroup.config.timeFunction
-      } ${animationGroup.config.delay}ms;transform-origin: ${
+      let properties = '';
+      if (node.style.cssText) {
+        const propList = node.style.cssText.replace(/;/g, ':').split(':');
+        const style = {};
+        const transformProperties = [
+          'transition',
+          'transform',
+          'transform-origin'
+        ];
+        // traverse all properties that aren't about transform
+        propList.forEach((prop, index) => {
+          if (
+            prop &&
+            index % 2 === 0 &&
+            transformProperties.indexOf(prop) < 0
+          ) {
+            style[prop] = propList[index + 1];
+          }
+        });
+        // merge nextProperties into style
+        nextProperties = Object.assign(style, nextProperties);
+      }
+      Object.keys(nextProperties).forEach(key => {
+        properties += key + ':' + nextProperties[key] + ';';
+      });
+      node.style.cssText = `transition: all ${
+        animationGroup.config.duration
+      }ms ${animationGroup.config.timeFunction} ${
+        animationGroup.config.delay
+      }ms;transform-origin: ${
         animationGroup.config.transformOrigin
-      };${nextTranfrom};${nextProperties}`;
+      };${nextTranfrom};${properties}`;
     }, 16);
   }
 
