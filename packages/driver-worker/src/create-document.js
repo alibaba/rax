@@ -114,6 +114,7 @@ export default function() {
 
   const patchTransform = {};
   function dispatchAnimationToStyle(node, animationGroup) {
+    
     // properties aren't belonged to transform
     const notBelongedToTransform = [
       'opacity',
@@ -126,12 +127,12 @@ export default function() {
       'right'
     ];
     let nextProperties = {};
-    let nextTranfrom = 'transform:';
+    let nextTranfrom = '';
     let transformActions = [];
 
     // actions about transform
     animationGroup.animation.map(prop => {
-      const [name, value] = [prop];
+      const [name, value] = prop;
 
       if (notBelongedToTransform.indexOf(name) > -1) {
         let unit = '';
@@ -212,6 +213,7 @@ export default function() {
      * it shouldn't just assignment cssText
      * but parse cssText
      */
+    
     setTimeout(() => {
       const {
         duration,
@@ -219,7 +221,7 @@ export default function() {
         delay,
         transformOrigin
       } = animationGroup.config;
-      const properties = {};
+      let properties = {};
 
       if (node.style.cssText) {
         const propList = node.style.cssText.replace(/;/g, ':').split(':');
@@ -242,7 +244,7 @@ export default function() {
         // merge nextProperties into style
         properties = Object.assign(style, nextProperties);
       }
-
+      
       Object.assign(node.style, {
         transition: `all ${duration}ms ${timeFunction} ${delay}ms`,
         transformOrigin: transformOrigin,
