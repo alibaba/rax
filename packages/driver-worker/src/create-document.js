@@ -41,8 +41,8 @@ function createAttributeFilter(ns, name) {
 let resolved = typeof Promise !== 'undefined' && Promise.resolve();
 const setImmediate = resolved
   ? f => {
-      resolved.then(f);
-    }
+    resolved.then(f);
+  }
   : setTimeout;
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -62,8 +62,8 @@ export default function() {
         match = target === ob._target;
       if (!match && ob._options.subtree) {
         do {
-          if ((match = target === ob._target)) break;
-        } while ((target = target.parentNode));
+          if (match = target === ob._target) break;
+        } while (target = target.parentNode);
       }
       if (match) {
         ob._records.push(record);
@@ -114,7 +114,6 @@ export default function() {
 
   const patchTransform = {};
   function dispatchAnimationToStyle(node, animationGroup) {
-    
     // properties aren't belonged to transform
     const notBelongedToTransform = [
       'opacity',
@@ -132,7 +131,7 @@ export default function() {
 
     // actions about transform
     animationGroup.animation.map(prop => {
-      const [name, value] = prop;
+      let [name, value] = prop;
 
       if (notBelongedToTransform.indexOf(name) > -1) {
         let unit = '';
@@ -145,7 +144,7 @@ export default function() {
         } else if (name === 'backgroundColor') {
           name = 'background-color';
         }
-        
+
         nextProperties[name] = value + unit;
       } else {
         transformActions.push({
@@ -213,7 +212,7 @@ export default function() {
      * it shouldn't just assignment cssText
      * but parse cssText
      */
-    
+
     setTimeout(() => {
       const {
         duration,
@@ -244,7 +243,7 @@ export default function() {
         // merge nextProperties into style
         properties = Object.assign(style, nextProperties);
       }
-      
+
       Object.assign(node.style, {
         transition: `all ${duration}ms ${timeFunction} ${delay}ms`,
         transformOrigin: transformOrigin,
@@ -390,7 +389,7 @@ export default function() {
 
     setAttributeNS(ns, name, value) {
       let attr = findWhere(this.attributes, createAttributeFilter(ns, name));
-      if (!attr) this.attributes.push((attr = { ns, name }));
+      if (!attr) this.attributes.push(attr = { ns, name });
 
       // array and plain object will pass
       // through, instead of calling `toString`
@@ -430,7 +429,7 @@ export default function() {
       event.stopPropagation = () => {
         event.bubbles = false;
       };
-      let t = (event.target = event.currentTarget = this);
+      let t = event.target = event.currentTarget = this;
       let c = event.cancelable;
       let l;
       let i;
@@ -639,7 +638,7 @@ export default function() {
     let document = new Document();
     assign(
       document,
-      (document.defaultView = {
+      document.defaultView = {
         document,
         MutationObserver,
         Document,
@@ -648,7 +647,7 @@ export default function() {
         Element,
         SVGElement: Element,
         Event
-      })
+      }
     );
 
     assign(document, {
@@ -658,12 +657,12 @@ export default function() {
       createTextNode
     });
 
-    document.appendChild((document.documentElement = createElement('html')));
+    document.appendChild(document.documentElement = createElement('html'));
     document.documentElement.appendChild(
-      (document.head = createElement('head'))
+      document.head = createElement('head')
     );
     document.documentElement.appendChild(
-      (document.body = createElement('body'))
+      document.body = createElement('body')
     );
     return document;
   }
