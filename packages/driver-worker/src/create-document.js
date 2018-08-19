@@ -293,17 +293,18 @@ export default function() {
       });
       Object.defineProperty(this, 'animation', {
         set(queues) {
-          const len = queues.length;
-          const handleAnimationQueue = () => {
+          if (Array.isArray(queues) && queues.length > 0) {
+            const handleAnimationQueue = () => {
+              if (queues.length > 0) {
+                dispatchAnimationToStyle(this, queues.shift());
+              } else {
+                this.removeEventListener('transitionend', handleAnimationQueue);
+              }
+            };
             if (queues.length > 0) {
               dispatchAnimationToStyle(this, queues.shift());
-            } else {
-              this.removeEventListener('transitionend', handleAnimationQueue);
+              this.addEventListener('transitionend', handleAnimationQueue);
             }
-          };
-          if (len > 0) {
-            dispatchAnimationToStyle(this, queues.shift());
-            this.addEventListener('transitionend', handleAnimationQueue);
           }
         },
         get: () => this.getAttribute('animation')

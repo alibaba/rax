@@ -82,6 +82,13 @@ export default ({ worker, tagNamePrefix = '' }) => {
 
     let event = { type: e.type };
     if (e.target) event.target = e.target.$$id;
+    if (e.type === 'scroll' && e.target === document) {
+      event.target = document.body.$$id;
+      // page scroll container's top
+      // safari is document.body.scrollTop
+      // chrome is document.documentElement.scrollTop
+      event.scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    }
     // CustomEvent detail
     if (e.detail) event.detail = e.detail;
     for (let i in e) {
@@ -177,6 +184,11 @@ export default ({ worker, tagNamePrefix = '' }) => {
   const MUTATIONS = {
     childList({ target, removedNodes, addedNodes, nextSibling }) {
       let vnode = target;
+
+      if (vnode && vnode.nodeName === 'BODY') {
+        document.body.$$id = vnode.$$id;
+      }
+
       let parent = getNode(vnode);
       if (removedNodes) {
         for (let i = removedNodes.length; i--;) {
