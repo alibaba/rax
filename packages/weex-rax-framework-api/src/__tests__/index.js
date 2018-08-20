@@ -163,6 +163,7 @@ describe('frameworkapi', () => {
   });
 
   it('window.fetch', () => {
+    // TODO
     window.fetch('http://example.com').then(function(response) {
       if (response.status != -1 && response.ok) {
         return response.json();
@@ -225,7 +226,6 @@ describe('frameworkapi', () => {
     // Creates a URL pointing to 'http://www.example.com/'
     var l = new window.URL('http://www.example.com', b); // Creates a URL pointing to 'http://www.example.com/'
 
-    alert(l.toString());
     expect(l.toString()).toEqual('http://www.example.com/');
   });
 

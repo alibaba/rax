@@ -1,5 +1,5 @@
 
-import * as elements from '../elements';
+import elements from '../elements';
 
 describe('elements', () => {
   it('img element', () => {

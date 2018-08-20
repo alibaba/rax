@@ -44,23 +44,24 @@ describe('Tabbar', function() {
     expect(tabbarInsJSON.children.length).toEqual(1);
   });
 
-  it('tabbar horizontal', function() {
-    const tabbarIns = renderer.create(
-      <Tabbar horizontal={true}>
-        <Tabbar.Item>
-          <Text>content1</Text>
-        </Tabbar.Item>
-        <Tabbar.Item>
-          <Text>content2</Text>
-        </Tabbar.Item>
-        <Tabbar.Item>
-          <Text>content3</Text>
-        </Tabbar.Item>
-      </Tabbar>
-    );
-    const tabbarInsJSON = tabbarIns.toJSON();
-    expect(tabbarInsJSON.children.length).toEqual(2);
-  });
+  // it('tabbar horizontal', function() {
+  //   const tabbarIns = renderer.create(
+  //     <Tabbar horizontal={true}>
+  //       <Tabbar.Item>
+  //         <Text>content1</Text>
+  //       </Tabbar.Item>
+  //       <Tabbar.Item>
+  //         <Text>content2</Text>
+  //       </Tabbar.Item>
+  //       <Tabbar.Item>
+  //         <Text>content3</Text>
+  //       </Tabbar.Item>
+  //     </Tabbar>
+  //   );
+
+  //   const tabbarInsJSON = tabbarIns.toJSON();
+  //   expect(tabbarInsJSON.children.length).toEqual(2);
+  // });
 
   it('if declare tabContent, tabContent should not null', function() {
     const tabbarIns = renderer.create(

@@ -8,11 +8,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const fs = require('fs');
 
 const PACKAGES_DIR = path.resolve(__dirname, '../packages');
-const babelOptions = JSON.parse(fs.readFileSync(
-  path.resolve(__dirname, '..', '.babelrc'),
-  'utf8'
-));
-
+const babelOptions = require('../babel.config')();
 
 const GLOBAL_NAME = {
   'rax-dom': 'RaxDOM',

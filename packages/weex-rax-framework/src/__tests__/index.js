@@ -1,6 +1,6 @@
 'use strict';
 
-require('weex-runtime-js').freezePrototype();
+// require('weex-runtime-js').freezePrototype();
 
 import WeexRuntime from '../mock/weex-rax-js-runtime';
 import * as framework from '../index';

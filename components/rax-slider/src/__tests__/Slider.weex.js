@@ -1,7 +1,6 @@
 import {createElement} from 'rax';
 import View from 'rax-view';
 import Image from 'rax-image';
-import 'universal-env';
 import renderer from 'rax-test-renderer';
 import Slider from '../';
 
