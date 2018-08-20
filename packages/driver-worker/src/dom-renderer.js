@@ -29,22 +29,73 @@ export default ({ worker, tagNamePrefix = '' }) => {
     return NODES.get(node.$$id);
   }
 
-  function addEvent(name) {
-    const registeredCount = registeredEventCounts[name];
-
-    if (!registeredCount) {
-      registeredEventCounts[name] = 1;
-      // Top-level register
-      document.addEventListener(name, eventProxyHandler, EVENT_OPTIONS);
+  function addEvent(name, vnode) {
+    if (name === 'appear' || name === 'disappear') {
+      addAppearEvent(name, vnode);
     } else {
-      registeredEventCounts[name]++;
+      const registeredCount = registeredEventCounts[name];
+
+      if (!registeredCount) {
+        registeredEventCounts[name] = 1;
+        // Top-level register
+        document.addEventListener(name, eventProxyHandler, EVENT_OPTIONS);
+      } else {
+        registeredEventCounts[name]++;
+      }
     }
   }
 
-  function removeEvent() {
-    registeredEventCounts[name]--;
-    if (registeredEventCounts[name] === 0) {
-      document.removeEventListener(name, eventProxyHandler);
+  function removeEvent(name, vnode) {
+    if (name === 'appear' || name === 'disappear') {
+      removeAppearEvent(name, vnode);
+    } else {
+      registeredEventCounts[name]--;
+      if (registeredEventCounts[name] === 0) {
+        document.removeEventListener(name, eventProxyHandler);
+      }
+    }
+  }
+
+  const appearEventStore = {};
+  function addAppearEvent(name, vnode) {
+    const evtStore = appearEventStore[name] = appearEventStore[name] || {};
+    // el may not add to DOM Tree
+    setTimeout(() => {
+      const el = getNode(vnode);
+      if (el) {
+        el.addEventListener(name, evtStore[vnode.$$id] = function(evt) {
+          const {
+            bottom, height,
+            left, right,
+            top, width,
+            x, y,
+          } = evt.target.getBoundingClientRect();
+          const target = { $$id: el.$$id };
+          worker.postMessage({
+            type: 'event',
+            event: {
+              type: name,
+              target,
+              currentTarget: target,
+              detail: {
+                bottom, height,
+                left, right,
+                top, width,
+                x, y,
+              }
+            }
+          });
+        });
+      }
+    }, 0);
+  }
+
+  function removeAppearEvent(name, vnode) {
+    const evtStore = appearEventStore[name] = appearEventStore[name] || {};
+    if (evtStore[vnode.$$id]) {
+      const el = getNode(vnode);
+      el && el.removeEventListener(name, evtStore[vnode.$$id]);
+      delete evtStore[vnode.$$id];
     }
   }
 
@@ -167,7 +218,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
 
       if (vnode.events) {
         for (let i = 0; i < vnode.events.length; i++) {
-          addEvent(vnode.events[i]);
+          addEvent(vnode.events[i], vnode);
         }
       }
     } else if (vnode.nodeType === 8) {
@@ -226,10 +277,10 @@ export default ({ worker, tagNamePrefix = '' }) => {
       node[TEXT_CONTENT_ATTR] = newValue;
     },
     addEvent({ target, eventName }) {
-      addEvent(eventName);
+      addEvent(eventName, target);
     },
     removeEvent({ target, eventName }) {
-      removeEvent(eventName);
+      removeEvent(eventName, target);
     },
     canvasRenderingContext2D({ target, method, args, properties }) {
       let vnode = target;
