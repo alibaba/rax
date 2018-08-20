@@ -136,6 +136,7 @@ export default ({ postMessage, addEventListener }) => {
   });
 
   return {
+    document,
     deviceWidth: null,
     viewportWidth: 750,
     eventRegistry: {},

@@ -56,13 +56,12 @@ module.exports = function(content) {
     sourceFileName: relativePath,
   });
 
-  const source = `;(function (App,$PAGE_REG,my){
+  const source = `;(function (App,$PAGE_REG){
 ${code}
 ${registerPages}
   })(
     require(${stringifyRequest(this, paths.App)}).default,
-    require(${stringifyRequest(this, paths.Page)}).default,
-    require(${stringifyRequest(this, paths.createAPI)})({ currentPath: '/' })
+    require(${stringifyRequest(this, paths.Page)}).default
   );`;
 
   // 往下滑行一行, 因为上面加了一行 👆

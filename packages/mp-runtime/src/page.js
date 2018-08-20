@@ -77,7 +77,10 @@ export default function registerPage(pageInfo, renderFn, initPage) {
            */
           if (has.call(config, 'onLoad')) {
             // query passed by event payload
-            config.onLoad.call(context, pageCtx.pageQuery || {});
+            // macro loop for setData to load
+            setTimeout(() => {
+              config.onLoad.call(context, pageCtx.pageQuery || {});
+            });
             if (has.call(config, 'onShow')) {
               this.componentWillMount = () => {
                 config.onShow.call(context);
@@ -95,6 +98,12 @@ export default function registerPage(pageInfo, renderFn, initPage) {
           }
           if (has.call(config, 'onUnload')) {
             page.on('unload', config.onUnload.bind(context));
+          }
+          // page scroll event
+          if (has.call(config, 'onPageScroll')) {
+            if (pageCtx.document) {
+              pageCtx.document.body.addEventListener('scroll', config.onPageScroll.bind(context));
+            }
           }
         }
 
