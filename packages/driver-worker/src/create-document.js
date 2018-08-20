@@ -57,7 +57,7 @@ export default function() {
     record.target = target;
     record.type = type;
 
-    for (let i = observers.length; i--;) {
+    for (let i = observers.length; i--; ) {
       let ob = observers[i],
         match = target === ob._target;
       if (!match && ob._options.subtree) {
@@ -77,7 +77,7 @@ export default function() {
 
   function flushMutations() {
     pendingMutations = false;
-    for (let i = observers.length; i--;) {
+    for (let i = observers.length; i--; ) {
       let ob = observers[i];
       if (ob._records.length) {
         ob.callback(ob.takeRecords());
@@ -125,18 +125,31 @@ export default function() {
       'bottom',
       'right'
     ];
-    let nextProperties = '';
+    let nextProperties = {};
     let nextTranfrom = '';
     let transformActions = [];
 
     // actions about transform
     animationGroup.animation.map(prop => {
-      if (notBelongedToTransform.indexOf(prop[0]) > -1) {
-        nextProperties += prop[0] + ':' + prop[1][0] + ';';
+      let [name, value] = prop;
+
+      if (notBelongedToTransform.indexOf(name) > -1) {
+        let unit = '';
+        /**
+         * Tip:
+         * Currently, we are not supprt custom unit
+         */
+        if (['opacity', 'backgroundColor'].indexOf(name) < 0) {
+          unit = 'px';
+        } else if (name === 'backgroundColor') {
+          name = 'background-color';
+        }
+
+        nextProperties[name] = value + unit;
       } else {
         transformActions.push({
-          name: prop[0],
-          value: prop[1]
+          name,
+          value
         });
       }
     });
@@ -158,9 +171,7 @@ export default function() {
         defaultVal = 1;
       }
 
-      if (
-        ['rotate', 'scale', 'translate', 'skew'].indexOf(name) > -1
-      ) {
+      if (['rotate', 'scale', 'translate', 'skew'].indexOf(name) > -1) {
         // if the rotate only has one param, it equals to rotateZ
         if (name === 'rotate' && value.length === 1) {
           patchTransform[`${name}Z`] = (value[0] || defaultVal) + unit;
@@ -173,13 +184,14 @@ export default function() {
 
         patchTransform[`${name}X`] = (value[0] || defaultVal) + unit;
         patchTransform[`${name}Y`] = (value[1] || defaultVal) + unit;
-      } else if (
-        ['scale3d', 'translate3d'].indexOf(name) > -1
-      ) {
+      } else if (['scale3d', 'translate3d'].indexOf(name) > -1) {
         // three args
-        patchTransform[name] = value.map((i) => `${i || defaultVal}${unit}`).join(',');
+        patchTransform[name] = value
+          .map(i => `${i || defaultVal}${unit}`)
+          .join(',');
       } else if ('rotate3d' === name) {
-        patchTransform[name] = value.map((i) => `${i || defaultVal}${unit}`).join(',') + 'deg';
+        patchTransform[name] =
+          value.map(i => `${i || defaultVal}${unit}`).join(',') + 'deg';
       } else if (['matrix', 'matrix3d'].indexOf(name) > -1) {
         nextTranfrom += ` ${name}(${value.join(',')})`;
       } else {
@@ -196,14 +208,47 @@ export default function() {
     /**
      * Merge onto style cssText
      * before every animationGroup setTimeout 16ms
+     *
+     * it shouldn't just assignment cssText
+     * but parse cssText
      */
+
     setTimeout(() => {
-      const { duration, timeFunction, delay, transformOrigin } = animationGroup.config;
+      const {
+        duration,
+        timeFunction,
+        delay,
+        transformOrigin
+      } = animationGroup.config;
+      let properties = {};
+
+      if (node.style.cssText) {
+        const propList = node.style.cssText.replace(/;/g, ':').split(':');
+        const style = {};
+        const transformProperties = [
+          'transition',
+          'transform',
+          'transform-origin'
+        ];
+        // traverse all properties that aren't about transform
+        propList.forEach((prop, index) => {
+          if (
+            prop &&
+            index % 2 === 0 &&
+            transformProperties.indexOf(prop) < 0
+          ) {
+            style[prop] = propList[index + 1];
+          }
+        });
+        // merge nextProperties into style
+        properties = Object.assign(style, nextProperties);
+      }
 
       Object.assign(node.style, {
         transition: `all ${duration}ms ${timeFunction} ${delay}ms`,
         transformOrigin: transformOrigin,
-        transform: `${nextTranfrom} ${nextProperties}`,
+        transform: `${nextTranfrom}`,
+        ...properties
       });
 
       node.style.cssText = styleToCSS(node.style);
@@ -392,7 +437,7 @@ export default function() {
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
-          for (i = l.length; i--;) {
+          for (i = l.length; i--; ) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
           }
       } while (
