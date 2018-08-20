@@ -87,9 +87,7 @@ fs.readdirSync(PACKAGES_DIR)
         globalName: globalName,
         version: packagesJson.version,
       },
-      {
-        presets: ['es2015', 'rax']
-      }, null, null, true
+      babelOptions, null, null, true
     )).catch(function(err) {
       setTimeout(function() {
         throw err;
