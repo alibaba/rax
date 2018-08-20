@@ -1,5 +1,20 @@
 import * as my from './api';
 
-my.canIUse = api => api in my;
+const global = getGlobalObject();
 
-export default my;
+if (global && typeof global.my === 'object') {
+  exports.default = global.my;
+} else {
+  my.canIUse = api => api in my;
+  exports.default = my;
+}
+
+function getGlobalObject() {
+  return typeof global !== 'undefined'
+    ? global
+    : typeof self !== 'undefined'
+      ? self
+      : (new Function('return this'))(); // eslint-disable-line
+}
+
+exports.__esModule = true;
