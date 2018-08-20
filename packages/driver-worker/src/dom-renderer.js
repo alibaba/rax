@@ -6,10 +6,11 @@ try {
       supportsPassive = true;
     }
   });
-} catch (e) {}
+} catch (e) { }
 
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
+const TOUCH_EVENTS = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
 const EVENT_OPTIONS = supportsPassive
   ? {
     capture: true,
@@ -56,6 +57,26 @@ export default ({ worker, tagNamePrefix = '' }) => {
     return t && { pageX: t.pageX, pageY: t.pageY };
   }
 
+  function serializeTouchList(touchList) {
+    const touches = [];
+    for (let i = 0, l = touchList.length; i < l; i++) {
+      const {
+        clientX, clientY,
+        pageX, pageY,
+        identifier, target
+      } = touchList[i];
+
+      touches.push({
+        clientX, clientY,
+        pageX, pageY,
+        identifier,
+        // instance id of changed target
+        $$id: target.$$id,
+      });
+    }
+    return touches;
+  }
+
   function eventProxyHandler(e) {
     if (e.type === 'click' && touch) return false;
 
@@ -75,6 +96,11 @@ export default ({ worker, tagNamePrefix = '' }) => {
       }
     }
 
+    if (TOUCH_EVENTS.indexOf(e.type) !== -1) {
+      event.touches = serializeTouchList(e.touches);
+      event.changedTouches = serializeTouchList(e.changedTouches);
+    }
+
     worker.postMessage({
       type: 'event',
       event
@@ -87,7 +113,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
       if (t) {
         let delta = Math.sqrt(
           Math.pow(t.pageX - touch.pageX, 2) +
-            Math.pow(t.pageY - touch.pageY, 2)
+          Math.pow(t.pageY - touch.pageY, 2)
         );
         if (delta < 10) {
           event.type = 'click';
@@ -153,7 +179,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
       let vnode = target;
       let parent = getNode(vnode);
       if (removedNodes) {
-        for (let i = removedNodes.length; i--; ) {
+        for (let i = removedNodes.length; i--;) {
           parent.removeChild(getNode(removedNodes[i]));
         }
       }

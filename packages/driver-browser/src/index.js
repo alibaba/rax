@@ -13,40 +13,21 @@ const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
-
+const SVG_NS = 'http://www.w3.org/2000/svg';
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
 const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in document ? 'textContent' : 'nodeValue';
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const SVG_TAG_LIST = [
-  'svg',
-  'circle',
-  'ellipse',
-  'line',
-  'rect',
-  'polygon',
-  'polyline',
-  'path',
-  'text',
-  'defs',
-  'stop',
-  'linearGradient',
-  'radialGradient',
-  'textPath',
-  'use',
-  'g',
-  'tspan',
-  'tref',
-  'clipPath'
-];
-
-
 const Driver = {
 
+  tagPrefix: '',
   deviceWidth: typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || null,
   viewportWidth: typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || 750,
   eventRegistry: {},
+
+  setTagPrefix(prefix) {
+    this.tagPrefix = prefix;
+  },
 
   getDeviceWidth() {
     return this.deviceWidth || document.documentElement.clientWidth;
@@ -88,15 +69,21 @@ const Driver = {
     node[TEXT_CONTENT_ATTR] = text;
   },
 
+  // driver's flag indicating if the diff is currently within an SVG
+  isSVGMode: false,
+
   createElement(component) {
+    const parent = component._internal._parent;
+    this.isSVGMode = component.type === 'svg' || parent && parent.namespaceURI === SVG_NS;
+
     let node;
-    if (component && SVG_TAG_LIST.indexOf(component.type) > -1) {
+    if (this.isSVGMode) {
       node = document.createElementNS(SVG_NS, component.type);
     } else {
-      node = document.createElement(component.type);
+      node = document.createElement(this.tagPrefix + component.type);
     }
-    let props = component.props;
 
+    let props = component.props;
     this.setNativeProps(node, props);
 
     return node;

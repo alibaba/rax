@@ -76,10 +76,13 @@ export default function registerPage(pageInfo, renderFn, initPage) {
            * unload
            */
           if (has.call(config, 'onLoad')) {
-            // query not support
-            this.componentWillMount = () => {
-              config.onLoad.call(context, {});
-            };
+            // query passed by event payload
+            config.onLoad.call(context, pageCtx.pageQuery || {});
+            if (has.call(config, 'onShow')) {
+              this.componentWillMount = () => {
+                config.onShow.call(context);
+              };
+            }
           }
           if (has.call(config, 'onShow')) {
             page.on('show', config.onShow.bind(context));

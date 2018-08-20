@@ -67,6 +67,7 @@ function parse(template, options) {
 
   const stack = [];
   const preserveWhitespace = options.preserveWhitespace !== false;
+
   let root;
   let currentParent;
   let inVPre = false;

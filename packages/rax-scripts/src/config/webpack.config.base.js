@@ -119,12 +119,16 @@ module.exports = {
         use: [
           {
             loader: 'sfc-loader',
-            options: { builtInRuntime: false }
+            options: {
+              builtInRuntime: false,
+              preserveWhitespace: false,
+              module: 'commonjs',
+              // weexGlobalComponents: {
+              //   button: 'rax-button'
+              // },
+            }
           }
         ],
-        // include: [
-        //   process.cwd() + '/src'
-        // ]
         exclude: [
           pathConfig.appHtml
         ]

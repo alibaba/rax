@@ -49,6 +49,7 @@ export default function mixinData(context, declearation) {
       '[SFC Loader WARN]:',
       'The "data" option should be a function that returns a per-instance value in component definitions.'
     );
+    data = declearation.data;
   } else {
     /* istanbul ignore next */
     data = null;

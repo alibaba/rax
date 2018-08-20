@@ -2,7 +2,7 @@ const { genHandlers } = require('./events');
 const baseDirectives = require('../directives');
 const { camelize, no, extend, makeMap } = require('../utils');
 const { baseWarn, pluckModuleFunction } = require('../helpers');
-const { isReservedTagName } = require('../utils');
+const { isReservedTagName, isPreveredIdentifier } = require('../utils');
 
 const fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 const simplePathRE = /^\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?']|\[".*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*\s*$/;
@@ -90,17 +90,12 @@ function genElement(el, state) {
 
       const children = el.inlineTemplate ? null : genChildren(el, state, true);
 
-      let tagHelperName;
 
-      if (state.originalTag) {
-        tagHelperName = JSON.stringify(el.tag);
-      } else {
-        tagHelperName =
-          rootNode.tagHelperMap[el.tag] || createUniqueTagHelper(el.tag);
-        rootNode.tagHelperMap[el.tag] = tagHelperName;
-      }
+      rootNode.tagHelperMap[el.tag] = el.tag;
 
-      code = `_c(${tagHelperName}${
+      const tagStatement = `__components_refs__['${el.tag}']||'${el.tag}'`;
+
+      code = `_c(${tagStatement}${
         data ? `,${data}` : '' // data
       }${
         children ? `,${children}` : '' // children
@@ -537,6 +532,9 @@ function genProps(props) {
         // identifier that binded to a parent function scope
       } else if (/[-\s]/.test(prop.value)) {
         prop.value = `${scope}['${prop.value}']`;
+      } else if (isPreveredIdentifier(prop.value)) {
+        // prevered id like `true,false,null,undefined...`
+        prop.value = prop.value;
       } else {
         prop.value = `${scope}.${prop.value}`;
       }

@@ -41,14 +41,18 @@ export default function renderStyle(classnames, styles = {}, ...args) {
   }
   const validClasses = classNames(classnames);
 
-  let style = validClasses.map(klass => styles[klass]);
+  const style = validClasses
+    .map(klass => styles[klass])
+    .reduce((prev, next) => {
+      return Object.assign(prev, next);
+    }, {});
 
   if (args && args.length) {
     args.forEach((arg) => {
       if (typeof arg === 'string') {
-        style.push(transformCSSStyleObject(arg));
-      } else if (arg) {
-        style.push(arg);
+        Object.assign(style, transformCSSStyleObject(arg));
+      } else if (typeof arg === 'object') {
+        Object.assign(style, arg);
       }
     });
   }

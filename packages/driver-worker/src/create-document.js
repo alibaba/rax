@@ -10,8 +10,11 @@ function toLower(str) {
 const CAMELCASE_REG = /\-[a-z]/g;
 const CamelCaseCache = {};
 function camelCase(str) {
-  return CamelCaseCache[str] || (
-    CamelCaseCache[str] = str.replace(CAMELCASE_REG, $1 => $1.slice(1).toUpperCase())
+  return (
+    CamelCaseCache[str] ||
+    (CamelCaseCache[str] = str.replace(CAMELCASE_REG, $1 =>
+      $1.slice(1).toUpperCase()
+    ))
   );
 }
 
@@ -52,7 +55,7 @@ export default function() {
     record.target = target;
     record.type = type;
 
-    for (let i = observers.length; i--;) {
+    for (let i = observers.length; i--; ) {
       let ob = observers[i],
         match = target === ob._target;
       if (!match && ob._options.subtree) {
@@ -72,7 +75,7 @@ export default function() {
 
   function flushMutations() {
     pendingMutations = false;
-    for (let i = observers.length; i--;) {
+    for (let i = observers.length; i--; ) {
       let ob = observers[i];
       if (ob._records.length) {
         ob.callback(ob.takeRecords());
@@ -105,6 +108,101 @@ export default function() {
   }
   function isDataset(attr) {
     return IS_DATASET_REG.test(attr.name);
+  }
+
+  const patchTransform = {
+    rotateX: 0,
+    rotateY: 0,
+    rotateZ: 0,
+    translateX: 0,
+    translateY: 0,
+    translateZ: 0,
+    scaleX: 1,
+    scaleY: 1,
+    scaleZ: 1,
+    skewX: 0,
+    skewY: 0
+  };
+
+  function dispatchAnimationToStyle(node, animationGroup) {
+    // properties aren't belonged to transform
+    const notBelongedToTransform = [
+      'opacity',
+      'backgroundColor',
+      'width',
+      'height',
+      'top',
+      'left',
+      'bottom',
+      'right'
+    ];
+    let nextProperties = '';
+    let nextTranfrom = 'transform:';
+    let transformActions = [];
+
+    // actions about transform
+    animationGroup.animation.map(prop => {
+      if (notBelongedToTransform.indexOf(prop[0]) > -1) {
+        nextProperties += prop[0] + ':' + prop[1][0] + ';';
+      } else {
+        transformActions.push({
+          name: prop[0],
+          value: prop[1]
+        });
+      }
+    });
+
+    // match actions and update patchTransform
+    transformActions.forEach(action => {
+      let initial = 0;
+      if (action.name === 'matrix' || action.name === 'matrix3d') {
+        nextTranfrom += ` ${action.name}(${action.value.join(',')})`;
+      } else {
+        // handle the situation that params are not fixed
+        if (
+          action.name === 'rotate' ||
+          action.name === 'scale' ||
+          action.name === 'translate' ||
+          action.name === 'skew' ||
+          action.name.indexOf('3d') > -1
+        ) {
+          switch (true) {
+            // scale's initial is 1
+            case action.name === 'scale':
+              initial = 1;
+            // if the rotate only has one param, it equals to rotateZ
+            case action.value.length === 1 && action.name === 'rotate':
+              patchTransform[`${action.name}Z`] = action.value[0] || initial;
+              break;
+            case action.value.length === 3:
+              patchTransform[`${action.name}Z`] = action.value[2] || initial;
+            default:
+              patchTransform[`${action.name}X`] = action.value[0] || initial;
+              patchTransform[`${action.name}Y`] = action.value[1] || initial;
+              break;
+          }
+        } else {
+          patchTransform[action.name] = action.value[0];
+        }
+      }
+    });
+
+    // stitching patchTransform into a string
+    Object.keys(patchTransform).forEach(name => {
+      nextTranfrom += ` ${name}(${patchTransform[name]})`;
+    });
+
+    /**
+     * Merge onto style cssText
+     * before every animationGroup setTimeout 16ms
+     */
+    setTimeout(() => {
+      node.style.cssText = `transition: all ${animationGroup.config.duration}ms ${
+        animationGroup.config.timeFunction
+      } ${animationGroup.config.delay}ms;transform-origin: ${
+        animationGroup.config.transformOrigin
+      };${nextTranfrom};${nextProperties}`;
+    }, 16);
   }
 
   class Node {
@@ -188,6 +286,23 @@ export default function() {
         },
         get: () => this.getAttribute('class')
       });
+      Object.defineProperty(this, 'animation', {
+        set(queues) {
+          const len = queues.length;
+          const handleAnimationQueue = () => {
+            if (queues.length > 0) {
+              dispatchAnimationToStyle(this, queues.shift());
+            } else {
+              this.removeEventListener('transitionend', handleAnimationQueue);
+            }
+          };
+          if (len > 0) {
+            dispatchAnimationToStyle(this, queues.shift());
+            this.addEventListener('transitionend', handleAnimationQueue);
+          }
+        },
+        get: () => this.getAttribute('animation')
+      });
       Object.defineProperty(this.style, 'cssText', {
         set: val => {
           this.setAttribute('style', val);
@@ -202,10 +317,9 @@ export default function() {
 
     get dataset() {
       const dataset = {};
-      this.attributes.filter(isDataset)
-        .forEach(({ name, value }) => {
-          dataset[camelCase(name.slice(5))] = value;
-        });
+      this.attributes.filter(isDataset).forEach(({ name, value }) => {
+        dataset[camelCase(name.slice(5))] = value;
+      });
       return dataset;
     }
 
@@ -272,7 +386,7 @@ export default function() {
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
-          for (i = l.length; i--;) {
+          for (i = l.length; i--; ) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
           }
       } while (
@@ -341,9 +455,30 @@ export default function() {
       };
 
       // context properties
-      const properties = ['direction', 'fillStyle', 'filter', 'font', 'globalAlpha', 'globalCompositeOperation', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline'];
+      const properties = [
+        'direction',
+        'fillStyle',
+        'filter',
+        'font',
+        'globalAlpha',
+        'globalCompositeOperation',
+        'imageSmoothingEnabled',
+        'imageSmoothingQuality',
+        'lineCap',
+        'lineDashOffset',
+        'lineJoin',
+        'lineWidth',
+        'miterLimit',
+        'shadowBlur',
+        'shadowColor',
+        'shadowOffsetX',
+        'shadowOffsetY',
+        'strokeStyle',
+        'textAlign',
+        'textBaseline'
+      ];
 
-      properties.forEach((property) => {
+      properties.forEach(property => {
         Object.defineProperty(this, property, {
           get: function() {
             return propertyValues[property];
@@ -355,9 +490,55 @@ export default function() {
       });
 
       // context api
-      const methods = ['arc', 'arcTo', 'addHitRegion', 'beginPath', 'bezierCurveTo', 'clearHitRegions', 'clearRect', 'clip', 'closePath', 'createImageData', 'createLinearGradient', 'createPattern', 'createRadialGradient', 'drawFocusIfNeeded', 'drawImage', 'drawWidgetAsOnScreen', 'drawWindow', 'ellipse', 'fill', 'fillRect', 'fillText', 'getImageData', 'getLineDash', 'isPointInPath', 'isPointInStroke', 'lineTo', 'measureText', 'moveTo', 'putImageData', 'quadraticCurveTo', 'rect', 'removeHitRegion', 'resetTransform', 'restore', 'rotate', 'save', 'scale', 'scrollPathIntoView', 'setLineDash', 'setTransform', 'stroke', 'strokeRect', 'strokeText', 'transform', 'translate'];
+      const methods = [
+        'arc',
+        'arcTo',
+        'addHitRegion',
+        'beginPath',
+        'bezierCurveTo',
+        'clearHitRegions',
+        'clearRect',
+        'clip',
+        'closePath',
+        'createImageData',
+        'createLinearGradient',
+        'createPattern',
+        'createRadialGradient',
+        'drawFocusIfNeeded',
+        'drawImage',
+        'drawWidgetAsOnScreen',
+        'drawWindow',
+        'ellipse',
+        'fill',
+        'fillRect',
+        'fillText',
+        'getImageData',
+        'getLineDash',
+        'isPointInPath',
+        'isPointInStroke',
+        'lineTo',
+        'measureText',
+        'moveTo',
+        'putImageData',
+        'quadraticCurveTo',
+        'rect',
+        'removeHitRegion',
+        'resetTransform',
+        'restore',
+        'rotate',
+        'save',
+        'scale',
+        'scrollPathIntoView',
+        'setLineDash',
+        'setTransform',
+        'stroke',
+        'strokeRect',
+        'strokeText',
+        'transform',
+        'translate'
+      ];
 
-      methods.forEach((method) => {
+      methods.forEach(method => {
         this[method] = (...args) => {
           mutation(vnode, 'canvasRenderingContext2D', {
             method: method,

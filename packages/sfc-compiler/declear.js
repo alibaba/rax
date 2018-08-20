@@ -57,6 +57,19 @@ exports.declearVariables = function(kv) {
 exports.declearTags = function(tags, parentName) {
   const declearators = Object.keys(tags).map(sourceTagName => {
     const targetName = tags[sourceTagName];
+    return t.objectProperty(
+      t.stringLiteral(targetName),
+      t.logicalExpression(
+        '||',
+        t.memberExpression(
+          t.identifier(parentName),
+          t.stringLiteral(sourceTagName),
+          true
+        ),
+        t.stringLiteral(sourceTagName)
+      )
+    );
+
 
     return t.variableDeclarator(
       t.identifier(targetName),
@@ -72,6 +85,14 @@ exports.declearTags = function(tags, parentName) {
     );
   });
 
-  const ast = t.variableDeclaration('var', declearators);
+  const ast = t.assignmentExpression(
+    '=',
+    t.memberExpression(
+      t.identifier(parentName),
+      t.identifier('__refs__')
+    ),
+    t.objectExpression(declearators)
+  );
+  // const ast = t.variableDeclaration('var', declearators);
   return generate(ast).code;
 };

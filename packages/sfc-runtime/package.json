@@ -1,10 +1,11 @@
 {
   "name": "sfc-runtime",
-  "version": "0.1.0",
-  "main": "src/index.js",
+  "version": "0.1.1",
+  "main": "lib/index.js",
   "description": "SFC DSL Runtime",
   "files": [
     "dist",
+    "lib",
     "src"
   ],
   "scripts": {
@@ -19,6 +20,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "camelcase": "^5.0.0",
+    "universal-env": "^0.6.4",
     "uppercamelcase": "^3.0.0"
   },
   "devDependencies": {

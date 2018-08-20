@@ -13,6 +13,11 @@ const PACKAGES_DIR = path.resolve(__dirname, `../${PACKAGES_NAME}`);
 const PACKAGES2_NAME = 'components';
 const PACKAGES2_DIR = path.resolve(__dirname, `../${PACKAGES2_NAME}`);
 
+const babelOptions = JSON.parse(fs.readFileSync(
+  path.resolve(__dirname, '..', '.babelrc'),
+  'utf8'
+));
+
 const GLOBAL_NAME = {
   'rax-dom': 'RaxDOM',
 };
@@ -68,9 +73,7 @@ fs.readdirSync(PACKAGES_DIR)
         moduleName: packageName,
         globalName: globalName,
       },
-      {
-        presets: ['es2015', 'rax']
-      }
+      babelOptions
     ));
     
     // read package.json
@@ -119,9 +122,7 @@ dist(getConfig(
     globalName: 'Rax',
     factoryGlobals: ['__weex_document__', 'document']
   },
-  {
-    presets: ['es2015', 'rax']
-  }
+  babelOptions
 )).then(() => {
   return dist(getConfig(
     {
@@ -136,7 +137,7 @@ dist(getConfig(
       // Empty
     },
     {
-      presets: ['es2015']
+      presets: ['@babel/preset-env']
     },
     null,
     'hidden-source-map'
@@ -158,12 +159,7 @@ dist(getConfig(
       bundle: null,
       frameworkComment: '',
     },
-    {
-      presets: ['es2015', 'rax'],
-      ignore: [
-        'dist/'
-      ]
-    }
+    babelOptions
   ));
 
   dist(getConfig(
@@ -179,12 +175,7 @@ dist(getConfig(
     {
       target: 'module'
     },
-    {
-      presets: ['es2015', 'rax'],
-      ignore: [
-        'dist/'
-      ]
-    }
+    babelOptions
   ));
 
   dist(getConfig(
@@ -200,12 +191,7 @@ dist(getConfig(
     {
       target: 'module'
     },
-    {
-      presets: ['es2015', 'rax'],
-      ignore: [
-        'dist/'
-      ]
-    }
+    babelOptions
   ));
 }).catch(function(err) {
   setTimeout(function() {

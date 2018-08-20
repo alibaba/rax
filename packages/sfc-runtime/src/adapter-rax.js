@@ -9,13 +9,32 @@ import lifeCycleFn from './lifeCycleFn';
 import renderHelpers from './vdom';
 import componentName from './components-name';
 import initWatch from './initWatch';
+import { isWeex } from './utils';
 import { set as storeSet } from './store';
+
+/**
+ * registed global components;
+ */
+const globalComponents = typeof __sfc_global_components__ === 'object' ? __sfc_global_components__ : null; // eslint-disable-line
 
 export default function adapterRaxComponent(def, _renderFn, $_style, rax) {
   const { createElement, Component, render } = rax;
   storeSet('c', createElement);
 
-  const renderFn = _renderFn($_style, def, renderHelpers);
+  def.components = def.components || {};
+  // compatible to commonjs2
+  Object.keys(def.components).forEach((componentName) => {
+    const componentDeclear = def.components[componentName];
+    if (componentDeclear.__esModule === true
+      && typeof componentDeclear.default === 'function') {
+      def.components[componentName] = componentDeclear.default;
+    }
+  });
+
+  if (globalComponents) {
+    Object.assign(def.components, globalComponents);
+  }
+  const renderFn = _renderFn($_style, def, renderHelpers, isWeex);
 
   componentName(def);
   function RaxComponent(props, context) {

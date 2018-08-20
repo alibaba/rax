@@ -9,6 +9,10 @@ const fs = require('fs');
 
 const PACKAGES_NAME = 'components';
 const PACKAGES_DIR = path.resolve(__dirname, `../${PACKAGES_NAME}`);
+const babelOptions = JSON.parse(fs.readFileSync(
+  path.resolve(__dirname, '..', '.babelrc'),
+  'utf8'
+));
 
 const PACKAGES2_NAME = 'packages';
 const PACKAGES2_DIR = path.resolve(__dirname, `../${PACKAGES2_NAME}`);
@@ -51,9 +55,7 @@ fs.readdirSync(PACKAGES_DIR)
         moduleName: packageName,
         globalName: globalName,
       },
-      {
-        presets: ['es2015', 'rax']
-      }
+      babelOptions
     )).catch(function(err) {
       setTimeout(function() {
         throw err;
