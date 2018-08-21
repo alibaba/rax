@@ -39,11 +39,15 @@ function createAttributeFilter(ns, name) {
 }
 
 let resolved = typeof Promise !== 'undefined' && Promise.resolve();
-const setImmediate = resolved
-  ? f => {
-    resolved.then(f);
-  }
-  : setTimeout;
+const setImmediate = self && typeof self.setImmediate === 'function' ? self.setImmediate :
+  resolved
+    ? f => {
+      resolved.then(f);
+    }
+    : function(cb) {
+      return setTimeout(cb, 0);
+    }
+;
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
@@ -57,7 +61,7 @@ export default function() {
     record.target = target;
     record.type = type;
 
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i],
         match = target === ob._target;
       if (!match && ob._options.subtree) {
@@ -69,7 +73,7 @@ export default function() {
         ob._records.push(record);
         if (!pendingMutations) {
           pendingMutations = true;
-          setImmediate(flushMutations);
+          setImmediate(flushMutations, 0);
         }
       }
     }
@@ -77,7 +81,7 @@ export default function() {
 
   function flushMutations() {
     pendingMutations = false;
-    for (let i = observers.length; i--; ) {
+    for (let i = observers.length; i--;) {
       let ob = observers[i];
       if (ob._records.length) {
         ob.callback(ob.takeRecords());
@@ -437,7 +441,7 @@ export default function() {
       do {
         l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
-          for (i = l.length; i--; ) {
+          for (i = l.length; i--;) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
           }
       } while (
