@@ -11,6 +11,21 @@ const PACKAGES_NAME = 'components';
 const PACKAGES_DIR = path.resolve(__dirname, `../${PACKAGES_NAME}`);
 const babelOptions = require('../babel.config')();
 
+const PACKAGES2_NAME = 'packages';
+const PACKAGES2_DIR = path.resolve(__dirname, `../${PACKAGES2_NAME}`);
+
+console.log('dist component');
+
+let packages = fs.readdirSync(PACKAGES_DIR);
+let packages2 = fs.readdirSync(PACKAGES2_DIR);
+let buildinObj = {};
+packages.map((item) => {
+  buildinObj[item] = item;
+});
+packages2.map((item) => {
+  buildinObj[item] = item;
+});
+
 fs.readdirSync(PACKAGES_DIR)
   .forEach(function(packageName) {
     var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
@@ -42,17 +57,91 @@ fs.readdirSync(PACKAGES_DIR)
         throw err;
       });
     });
+
+    // read package.json
+    let packagesJsonStr = fs.readFileSync(PACKAGES_DIR + '/' + packageName + '/package.json').toString();
+    let packagesJson = JSON.parse(packagesJsonStr);
+
+    // build service
+    var serviceEntry = {};
+    serviceEntry[entryName + '.service'] = serviceEntry[entryName + '.service.min'] = main;
+    dist(getConfig(
+      serviceEntry,
+      {
+        path: `./${PACKAGES_NAME}/${packageName}/dist/`,
+        filename: '[name].js',
+        // sourceMapFilename: '[name].map',
+        pathinfo: false,
+      },
+      {
+        externalBuiltinModules: true,
+        builtinModules: Object.assign({
+          mobx: ['mobx'],
+          redux: ['redux']
+        }, RaxPlugin.BuiltinModules),
+        moduleName: packageName,
+        globalName: globalName,
+        version: packagesJson.version,
+      },
+      babelOptions, null, null, true
+    )).catch(function(err) {
+      setTimeout(function() {
+        throw err;
+      });
+    });
   });
 
 
-function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
+function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool, buildService) {
   // Webpack need an absolute path
   output.path = path.resolve(__dirname, '..', output.path);
+
+  if (buildService) {
+    buildinObj.rax = 'rax';
+    moduleOptions.builtinModules = buildinObj;
+    moduleOptions.externalBuiltinModules = true;
+    moduleOptions.sourcePrefix = function(source, chunk, hash) {
+      let moduleName = moduleOptions.moduleName;
+      let serviceName = moduleOptions.moduleName + '_' + moduleOptions.version.split('.').join('_');
+      serviceName = serviceName.split('-').join('_');
+      return `service.register(options.serviceName, {
+  create: function(id, env, config) {
+    return {
+      ${serviceName}: function(weex) {
+        return {
+          init : function(define, defineName, window) {
+            for (var key in window) {
+              eval('var ' + key + ' = window.' + key + ';');
+            }
+            ;(function(fn) {
+              if ("object" == typeof exports && "undefined" != typeof module) module.exports = fn();
+              else if ("function" == typeof define) {
+                define("${moduleName}", [], function(require, exports, module) {
+                    module.exports = fn();
+                });
+              } else {
+                var o;
+                o = "undefined" != typeof window ? window: "undefined" != typeof self ? self: "undefined" != typeof global ? global: this,
+                o.${serviceName} = fn()
+              }
+            })(function(){
+              return `;
+    };
+    moduleOptions.sourceSuffix = function(source, chunk, hash) {
+      return ` });
+          }
+        }
+      }
+    }
+  }
+})`;
+    };
+  }
 
   return {
     mode: 'production',
     target: target || 'node',
-    devtool: devtool || 'source-map',
+    devtool: buildService ? '' : devtool || 'source-map',
     optimization: {
       minimize: false
     },
@@ -64,13 +153,14 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
     plugins: [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
+        // 'process.env.RAX_EXTERNAL_BUILTIN_MODULES': 'true',
       }),
       new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
       new webpack.optimize.ModuleConcatenationPlugin(),
       new UglifyJSPlugin({
         include: /\.min\.js$/,
-        sourceMap: true
+        sourceMap: buildService ? false : true
       })
     ],
     module: {
