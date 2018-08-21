@@ -1,5 +1,5 @@
 'use strict';
-console.log('dist packages')
+console.log('dist packages');
 const path = require('path');
 const webpack = require('webpack');
 const uppercamelcase = require('uppercamelcase');
@@ -25,10 +25,10 @@ let packages2 = fs.readdirSync(PACKAGES2_DIR);
 let buildinObj = {};
 packages.map((item) => {
   buildinObj[item] = item;
-})
+});
 packages2.map((item) => {
   buildinObj[item] = item;
-})
+});
 
 function normalizeGlobalName(name) {
   return GLOBAL_NAME[name] || uppercamelcase(name);
@@ -72,7 +72,7 @@ fs.readdirSync(PACKAGES_DIR)
       },
       babelOptions
     ));
-    
+
     // read package.json
     let packagesJsonStr = fs.readFileSync(PACKAGES_DIR + '/' + packageName + '/package.json').toString();
     let packagesJson = JSON.parse(packagesJsonStr);
@@ -97,7 +97,6 @@ fs.readdirSync(PACKAGES_DIR)
       },
       babelOptions, null, null, true
     ));
-    
   });
 
 dist(getConfig(
@@ -199,10 +198,10 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
   output.path = path.resolve(__dirname, '..', output.path);
 
   if (buildService) {
-    buildinObj['rax'] = 'rax';
+    buildinObj.rax = 'rax';
     moduleOptions.builtinModules = buildinObj;
     moduleOptions.externalBuiltinModules = true;
-    moduleOptions.sourcePrefix = function(source, chunk, hash){
+    moduleOptions.sourcePrefix = function(source, chunk, hash) {
       let moduleName = moduleOptions.moduleName;
       let serviceName = moduleOptions.moduleName + '_' + moduleOptions.version.split('.').join('_');
       serviceName = serviceName.split('-').join('_');
@@ -229,7 +228,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
             })(function(){
               return `;
     };
-    moduleOptions.sourceSuffix = function(source, chunk, hash){
+    moduleOptions.sourceSuffix = function(source, chunk, hash) {
       return ` });
           }
         }
@@ -237,7 +236,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
     }
   }
 })`;
-    }
+    };
   }
 
   return {

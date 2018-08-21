@@ -14,21 +14,20 @@ const babelOptions = require('../babel.config')();
 const PACKAGES2_NAME = 'packages';
 const PACKAGES2_DIR = path.resolve(__dirname, `../${PACKAGES2_NAME}`);
 
-console.log('dist component')
+console.log('dist component');
 
 let packages = fs.readdirSync(PACKAGES_DIR);
 let packages2 = fs.readdirSync(PACKAGES2_DIR);
 let buildinObj = {};
 packages.map((item) => {
   buildinObj[item] = item;
-})
+});
 packages2.map((item) => {
   buildinObj[item] = item;
-})
+});
 
 fs.readdirSync(PACKAGES_DIR)
   .forEach(function(packageName) {
-
     var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
     var entryName = packageName.split('-')[1];
     var globalName = uppercamelcase(packageName);
@@ -90,7 +89,6 @@ fs.readdirSync(PACKAGES_DIR)
         throw err;
       });
     });
-    
   });
 
 
@@ -99,10 +97,10 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
   output.path = path.resolve(__dirname, '..', output.path);
 
   if (buildService) {
-    buildinObj['rax'] = 'rax';
+    buildinObj.rax = 'rax';
     moduleOptions.builtinModules = buildinObj;
     moduleOptions.externalBuiltinModules = true;
-    moduleOptions.sourcePrefix = function(source, chunk, hash){
+    moduleOptions.sourcePrefix = function(source, chunk, hash) {
       let moduleName = moduleOptions.moduleName;
       let serviceName = moduleOptions.moduleName + '_' + moduleOptions.version.split('.').join('_');
       serviceName = serviceName.split('-').join('_');
@@ -129,7 +127,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
             })(function(){
               return `;
     };
-    moduleOptions.sourceSuffix = function(source, chunk, hash){
+    moduleOptions.sourceSuffix = function(source, chunk, hash) {
       return ` });
           }
         }
@@ -137,7 +135,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
     }
   }
 })`;
-    }
+    };
   }
 
   return {
