@@ -38,16 +38,10 @@ function createAttributeFilter(ns, name) {
   return o => o.ns === ns && toLower(o.name) === toLower(name);
 }
 
-let resolved = typeof Promise !== 'undefined' && Promise.resolve();
-const setImmediate = self && typeof self.setImmediate === 'function' ? self.setImmediate :
-  resolved
-    ? f => {
-      resolved.then(f);
-    }
-    : function(cb) {
-      return setTimeout(cb, 0);
-    }
-;
+const setImmediate = self.setImmediate || function(cb) {
+  return setTimeout(cb, 0);
+};
+
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
