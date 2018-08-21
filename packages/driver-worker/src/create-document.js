@@ -1,3 +1,5 @@
+import styleToCSS from './style-to-css';
+
 const IS_DATASET_REG = /^data\-/;
 function assign(obj, props) {
   for (let i in props) obj[i] = props[i];
@@ -110,20 +112,7 @@ export default function() {
     return IS_DATASET_REG.test(attr.name);
   }
 
-  const patchTransform = {
-    rotateX: 0,
-    rotateY: 0,
-    rotateZ: 0,
-    translateX: 0,
-    translateY: 0,
-    translateZ: 0,
-    scaleX: 1,
-    scaleY: 1,
-    scaleZ: 1,
-    skewX: 0,
-    skewY: 0
-  };
-
+  const patchTransform = {};
   function dispatchAnimationToStyle(node, animationGroup) {
     // properties aren't belonged to transform
     const notBelongedToTransform = [
@@ -136,54 +125,78 @@ export default function() {
       'bottom',
       'right'
     ];
-    let nextProperties = '';
-    let nextTranfrom = 'transform:';
+    let nextProperties = {};
+    let nextTranfrom = '';
     let transformActions = [];
 
     // actions about transform
     animationGroup.animation.map(prop => {
-      if (notBelongedToTransform.indexOf(prop[0]) > -1) {
-        nextProperties += prop[0] + ':' + prop[1][0] + ';';
+      let [name, value] = prop;
+
+      if (notBelongedToTransform.indexOf(name) > -1) {
+        let unit = '';
+        /**
+         * Tip:
+         * Currently, we are not supprt custom unit
+         */
+        if (['opacity', 'backgroundColor'].indexOf(name) < 0) {
+          unit = 'px';
+        } else if (name === 'backgroundColor') {
+          name = 'background-color';
+        }
+
+        nextProperties[name] = value + unit;
       } else {
         transformActions.push({
-          name: prop[0],
-          value: prop[1]
+          name,
+          value
         });
       }
     });
 
     // match actions and update patchTransform
-    transformActions.forEach(action => {
-      let initial = 0;
-      if (action.name === 'matrix' || action.name === 'matrix3d') {
-        nextTranfrom += ` ${action.name}(${action.value.join(',')})`;
-      } else {
-        // handle the situation that params are not fixed
-        if (
-          action.name === 'rotate' ||
-          action.name === 'scale' ||
-          action.name === 'translate' ||
-          action.name === 'skew' ||
-          action.name.indexOf('3d') > -1
-        ) {
-          switch (true) {
-            // scale's initial is 1
-            case action.name === 'scale':
-              initial = 1;
-            // if the rotate only has one param, it equals to rotateZ
-            case action.value.length === 1 && action.name === 'rotate':
-              patchTransform[`${action.name}Z`] = action.value[0] || initial;
-              break;
-            case action.value.length === 3:
-              patchTransform[`${action.name}Z`] = action.value[2] || initial;
-            default:
-              patchTransform[`${action.name}X`] = action.value[0] || initial;
-              patchTransform[`${action.name}Y`] = action.value[1] || initial;
-              break;
-          }
-        } else {
-          patchTransform[action.name] = action.value[0];
+    transformActions.forEach(({ name, value }) => {
+      let defaultVal = 0;
+      let unit = '';
+
+      if (/rotate[XYZ]?$/.test(name)) {
+        unit = 'deg';
+      }
+
+      if (/translate/.test(name)) {
+        unit = 'px';
+      }
+      // scale's defaultVal is 1
+      if (/scale/.test(name)) {
+        defaultVal = 1;
+      }
+
+      if (['rotate', 'scale', 'translate', 'skew'].indexOf(name) > -1) {
+        // if the rotate only has one param, it equals to rotateZ
+        if (name === 'rotate' && value.length === 1) {
+          patchTransform[`${name}Z`] = (value[0] || defaultVal) + unit;
+          return;
         }
+
+        if (value.length === 3) {
+          patchTransform[`${name}Z`] = (value[2] || defaultVal) + unit;
+        }
+
+        patchTransform[`${name}X`] = (value[0] || defaultVal) + unit;
+        patchTransform[`${name}Y`] = (value[1] || defaultVal) + unit;
+      } else if (['scale3d', 'translate3d'].indexOf(name) > -1) {
+        // three args
+        patchTransform[name] = value
+          .map(i => `${i || defaultVal}${unit}`)
+          .join(',');
+      } else if ('rotate3d' === name) {
+        patchTransform[name] =
+          value.map(i => `${i || defaultVal}${unit}`).join(',') + 'deg';
+      } else if (['matrix', 'matrix3d'].indexOf(name) > -1) {
+        nextTranfrom += ` ${name}(${value.join(',')})`;
+      } else {
+        // key = val
+        patchTransform[name] = value[0] + unit;
       }
     });
 
@@ -195,13 +208,50 @@ export default function() {
     /**
      * Merge onto style cssText
      * before every animationGroup setTimeout 16ms
+     *
+     * it shouldn't just assignment cssText
+     * but parse cssText
      */
+
     setTimeout(() => {
-      node.style.cssText = `transition: all ${animationGroup.config.duration}ms ${
-        animationGroup.config.timeFunction
-      } ${animationGroup.config.delay}ms;transform-origin: ${
-        animationGroup.config.transformOrigin
-      };${nextTranfrom};${nextProperties}`;
+      const {
+        duration,
+        timeFunction,
+        delay,
+        transformOrigin
+      } = animationGroup.config;
+      let properties = {};
+
+      if (node.style.cssText) {
+        const propList = node.style.cssText.replace(/;/g, ':').split(':');
+        const style = {};
+        const transformProperties = [
+          'transition',
+          'transform',
+          'transform-origin'
+        ];
+        // traverse all properties that aren't about transform
+        propList.forEach((prop, index) => {
+          if (
+            prop &&
+            index % 2 === 0 &&
+            transformProperties.indexOf(prop) < 0
+          ) {
+            style[prop] = propList[index + 1];
+          }
+        });
+        // merge nextProperties into style
+        properties = Object.assign(style, nextProperties);
+      }
+
+      Object.assign(node.style, {
+        transition: `all ${duration}ms ${timeFunction} ${delay}ms`,
+        transformOrigin: transformOrigin,
+        transform: `${nextTranfrom}`,
+        ...properties
+      });
+
+      node.style.cssText = styleToCSS(node.style);
     }, 16);
   }
 
@@ -288,17 +338,18 @@ export default function() {
       });
       Object.defineProperty(this, 'animation', {
         set(queues) {
-          const len = queues.length;
-          const handleAnimationQueue = () => {
+          if (Array.isArray(queues) && queues.length > 0) {
+            const handleAnimationQueue = () => {
+              if (queues.length > 0) {
+                dispatchAnimationToStyle(this, queues.shift());
+              } else {
+                this.removeEventListener('transitionend', handleAnimationQueue);
+              }
+            };
             if (queues.length > 0) {
               dispatchAnimationToStyle(this, queues.shift());
-            } else {
-              this.removeEventListener('transitionend', handleAnimationQueue);
+              this.addEventListener('transitionend', handleAnimationQueue);
             }
-          };
-          if (len > 0) {
-            dispatchAnimationToStyle(this, queues.shift());
-            this.addEventListener('transitionend', handleAnimationQueue);
           }
         },
         get: () => this.getAttribute('animation')

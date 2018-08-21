@@ -1,6 +1,5 @@
 import {createElement, cloneElement, Component, findDOMNode, PropTypes} from 'rax';
 import View from 'rax-view';
-import PanResponder from 'universal-panresponder';
 import SwipeEvent from './SwipeEvent';
 import styles from './style';
 

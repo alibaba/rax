@@ -13,10 +13,7 @@ const PACKAGES_DIR = path.resolve(__dirname, `../${PACKAGES_NAME}`);
 const PACKAGES2_NAME = 'components';
 const PACKAGES2_DIR = path.resolve(__dirname, `../${PACKAGES2_NAME}`);
 
-const babelOptions = JSON.parse(fs.readFileSync(
-  path.resolve(__dirname, '..', '.babelrc'),
-  'utf8'
-));
+const babelOptions = require('../babel.config')();
 
 const GLOBAL_NAME = {
   'rax-dom': 'RaxDOM',

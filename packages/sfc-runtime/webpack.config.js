@@ -15,8 +15,7 @@ const config = {
         loader: 'babel-loader',
         options: {
           presets: [
-            require('babel-preset-env'),
-            require('babel-preset-stage-0')
+            require('@babel/preset-env')
           ]
         }
       }
