@@ -51,6 +51,8 @@ export default function registerPage(pageInfo, renderFn, initPage) {
           Object.keys(config).forEach(key => {
             if (typeof config[key] === 'function') {
               context[key] = config[key].bind(context);
+            } else {
+              context[key] = config[key];
             }
           });
           Object.defineProperty(context, 'data', {
