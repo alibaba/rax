@@ -1,9 +1,9 @@
 const { join, relative, extname } = require('path');
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { SourceMapGenerator } = require('source-map');
-const { makeMap, compileES5, QueryString } = require('../shared/utils');
-const parseSFC = require('../parser/page-sfc');
-const paths = require('../paths');
+const { makeMap, compileES5, QueryString } = require('./shared/utils');
+const parseSFC = require('./parser/page-sfc');
+const paths = require('./paths');
 
 const injectThisScope = require(paths.injectThisScope);
 

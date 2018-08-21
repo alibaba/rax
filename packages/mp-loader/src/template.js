@@ -1,9 +1,9 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
 const { relative } = require('path');
-const { makeMap, compileES5, QueryString } = require('../shared/utils');
-const transpile = require('../transpiler');
-const paths = require('../paths');
+const { makeMap, compileES5, QueryString } = require('./shared/utils');
+const transpile = require('./transpiler');
+const paths = require('./paths');
 
 const injectThisScope = require(paths.injectThisScope);
 

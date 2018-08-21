@@ -2,10 +2,12 @@ exports.baseWarn = baseWarn;
 function baseWarn(msg) {
   console.error(`[compiler]: ${msg}`);
 }
+
 exports.pluckModuleFunction = pluckModuleFunction;
 function pluckModuleFunction(modules, key) {
   return modules ? modules.map(m => m[key]).filter(_ => _) : [];
 }
+
 exports.addProp = addProp;
 function addProp(el, name, value) {
   (el.props || (el.props = [])).push({
@@ -13,6 +15,7 @@ function addProp(el, name, value) {
     value
   });
 }
+
 exports.addAttr = addAttr;
 function addAttr(el, name, value, scope = 'this.data') {
   (el.attrs || (el.attrs = [])).push({
@@ -21,6 +24,7 @@ function addAttr(el, name, value, scope = 'this.data') {
     scope
   });
 }
+
 exports.addDirective = addDirective;
 function addDirective(el, name, rawName, value, arg, modifiers) {
   (el.directives || (el.directives = [])).push({
@@ -31,6 +35,7 @@ function addDirective(el, name, rawName, value, arg, modifiers) {
     modifiers
   });
 }
+
 exports.addHandler = addHandler;
 function addHandler(el, name, value, modifiers, important, warn) {
   // warn prevent and passive modifier
@@ -82,6 +87,7 @@ function addHandler(el, name, value, modifiers, important, warn) {
     events[name] = newHandler;
   }
 }
+
 exports.getBindingAttr = getBindingAttr;
 function getBindingAttr(el, name, getStatic) {
   const dynamicValue =

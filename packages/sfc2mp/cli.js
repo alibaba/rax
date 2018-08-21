@@ -1,3 +1,3 @@
 #!env node
 
-require('./devServer')(process.cwd());
+require('./src/devServer')(process.cwd());
