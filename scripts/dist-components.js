@@ -9,10 +9,7 @@ const fs = require('fs');
 
 const PACKAGES_NAME = 'components';
 const PACKAGES_DIR = path.resolve(__dirname, `../${PACKAGES_NAME}`);
-const babelOptions = JSON.parse(fs.readFileSync(
-  path.resolve(__dirname, '..', '.babelrc'),
-  'utf8'
-));
+const babelOptions = require('../babel.config')();
 
 fs.readdirSync(PACKAGES_DIR)
   .forEach(function(packageName) {

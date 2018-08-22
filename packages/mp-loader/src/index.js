@@ -1,8 +1,8 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { resolve, join, basename, relative } = require('path');
 const { existsSync } = require('fs');
-const { compileES5, QueryString } = require('../shared/utils');
-const paths = require('../paths');
+const { compileES5, QueryString } = require('./shared/utils');
+const paths = require('./paths');
 
 const pageLoaderPath = require.resolve('./page');
 

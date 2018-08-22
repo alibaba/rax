@@ -5,8 +5,6 @@
   "bin": {
     "sfc2mp": "./cli.js"
   },
-  "scripts": {},
-  "author": "",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.0.0-beta.51",

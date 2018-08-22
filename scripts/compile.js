@@ -29,10 +29,8 @@ const IGNORE_PATTERN = '**/__tests__/**';
 const args = parseArgs(process.argv);
 const customPackages = args.packages;
 
-const babelOptions = JSON.parse(fs.readFileSync(
-  path.resolve(__dirname, '..', '.babelrc'),
-  'utf8'
-));
+const babelOptions = require('../babel.config')();
+
 babelOptions.babelrc = false;
 // babelOptions.sourceMaps = 'inline';
 
