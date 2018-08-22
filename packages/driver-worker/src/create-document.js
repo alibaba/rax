@@ -1,5 +1,7 @@
 import styleToCSS from './style-to-css';
 
+const global = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();
+
 const IS_DATASET_REG = /^data\-/;
 function assign(obj, props) {
   for (let i in props) obj[i] = props[i];
@@ -38,7 +40,7 @@ function createAttributeFilter(ns, name) {
   return o => o.ns === ns && toLower(o.name) === toLower(name);
 }
 
-const setImmediate = self.setImmediate || function(cb) {
+const setImmediate = global.setImmediate || function(cb) {
   return setTimeout(cb, 0);
 };
 
