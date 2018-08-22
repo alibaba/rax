@@ -25,14 +25,14 @@ packageList.map((item) => {
 });
 
 fs.readdirSync(COMPONENTS_DIR).forEach(function(packageName) {
-  creatBuildinModules(packageName, COMPONENTS_DIR);
+  creatBuildinModules(packageName, COMPONENTS_DIR, COMPONENTS_NAME);
 });
 fs.readdirSync(PACKAGES_DIR).forEach(function(packageName) {
-  creatBuildinModules(packageName, PACKAGES_DIR);
+  creatBuildinModules(packageName, PACKAGES_DIR, PACKAGES_NAME);
 });
 
-function creatBuildinModules(packageName, dirname) {
-  var main = path.join(dirname, packageName + '/src/index.js');
+function creatBuildinModules(packageName, dirpath, dirname) {
+  var main = path.join(dirpath, packageName + '/src/index.js');
   var entryName = packageName.split('-')[1];
   var globalName = uppercamelcase(packageName);
 
@@ -50,7 +50,7 @@ function creatBuildinModules(packageName, dirname) {
   }
 
   // read package.json
-  let packagesJsonStr = fs.readFileSync(dirname + '/' + packageName + '/package.json').toString();
+  let packagesJsonStr = fs.readFileSync(dirpath + '/' + packageName + '/package.json').toString();
   let packagesJson = JSON.parse(packagesJsonStr);
 
   // build service
@@ -59,7 +59,7 @@ function creatBuildinModules(packageName, dirname) {
   dist(getConfig(
     serviceEntry,
     {
-      path: `./${PACKAGES_NAME}/${packageName}/dist/`,
+      path: `./${dirname}/${packageName}/dist/`,
       filename: '[name].js',
       pathinfo: false,
     },
