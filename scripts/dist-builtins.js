@@ -142,7 +142,6 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
     plugins: [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
-        // 'process.env.RAX_EXTERNAL_BUILTIN_MODULES': 'true',
       }),
       new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
