@@ -51,7 +51,7 @@
     "setup": "npm run build:compile && npm run bootstrap && npm run build:dist",
     "build:templates": "node ./scripts/build-templates.js",
     "build:compile": "npm run clean:compile && node ./scripts/compile-components.js && node ./scripts/compile-packages.js",
-    "build:dist": "npm run clean:dist && node ./scripts/dist-components.js && node ./scripts/dist-packages.js",
+    "build:dist": "npm run clean:dist && node ./scripts/dist-components.js && node ./scripts/dist-packages.js && node ./scripts/dist-builtins.js",
     "build:examples": "node ./scripts/build-examples.js",
     "build": "npm run build:compile && npm run build:dist && npm run build:examples && npm run build:templates",
     "watch:compile": "node ./scripts/compile-components.js --watch & node ./scripts/compile-packages.js --watch",
