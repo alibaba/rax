@@ -52,10 +52,10 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir) {
   if (Array.isArray(tabBar.items)) {
     tabBar.list = tabBar.items.map(item => {
       return {
-        "pageName": item.pagePath,
-        "text": item.name,
-        "iconPath": item.icon,
-        "selectedIconPath": item.activeIcon
+        'pageName': item.pagePath,
+        'text': item.name,
+        'iconPath': item.icon,
+        'selectedIconPath': item.activeIcon
       };
     });
     delete tabBar.items;
@@ -74,7 +74,7 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir) {
   result.tabBar = tabBar;
 
   return result;
-}
+};
 
 function readJSONSync(p) {
   return JSON.parse(readFileSync(p, 'utf-8'));
@@ -82,4 +82,4 @@ function readJSONSync(p) {
 
 exports.getPages = function getPages(projectDir) {
   return getAppConfig(projectDir).pages;
-}
+};

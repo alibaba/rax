@@ -1,6 +1,6 @@
 const { join } = require('path');
 const babelConfig = require('../babelConfig');
-const WebpackMiniProgramPlugin = require('../webpack-plugins/WebpackMiniProgramPlugin')
+const WebpackMiniProgramPlugin = require('../webpack-plugins/WebpackMiniProgramPlugin');
 
 module.exports = (projectDir, opts) => {
   return {
@@ -41,4 +41,4 @@ module.exports = (projectDir, opts) => {
       })
     ]
   };
-}
+};

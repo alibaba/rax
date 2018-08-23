@@ -20,4 +20,4 @@ module.exports = function getMiniappType(projectDir) {
   }
 
   return null;
-}
+};

@@ -30,4 +30,4 @@ module.exports = function goldlog(key, data) {
   })
     .then(passThrough)
     .catch(noop);
-}
+};

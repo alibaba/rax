@@ -16,12 +16,11 @@ module.exports = function getEntry(projectDir) {
 
   if (miniappType === 'sfc') {
     /* app entry */
-    entry.$app = resolve(projectDir, 'app.js')
+    entry.$app = resolve(projectDir, 'app.js');
     /* page entry */
     Object.keys(appPages).forEach((key, idx) => {
       entry[key] = resolve(projectDir, appPages[key]);
     });
-
   } else if (miniappType === 'mp') {
     const appFilePath = resolve(projectDir, 'app.js');
 
@@ -30,4 +29,4 @@ module.exports = function getEntry(projectDir) {
   }
 
   return entry;
-}
+};

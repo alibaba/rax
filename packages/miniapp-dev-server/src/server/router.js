@@ -1,4 +1,5 @@
 const Router = require('koa-router');
+
 const router = new Router();
 
 const masterCtrl = require('./controllers/master');
@@ -13,4 +14,4 @@ module.exports = function registerRouter(app) {
 
   app.use(router.routes());
   app.use(router.allowedMethods());
-}
+};
