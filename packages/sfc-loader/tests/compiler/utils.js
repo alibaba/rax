@@ -1,6 +1,6 @@
 const { createCompiler } = require('sfc-compiler');
-const { baseOptions } = require('sfc-compiler/options');
-const createRenderFn = require('sfc-compiler/codegen/createRenderFn');
+const { baseOptions } = require('sfc-compiler/src/options');
+const createRenderFn = require('sfc-compiler/src/codegen/createRenderFn');
 
 const compiler = createCompiler(baseOptions);
 

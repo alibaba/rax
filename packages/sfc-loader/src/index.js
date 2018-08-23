@@ -3,9 +3,9 @@ const { basename, extname, dirname, relative, join } = require('path');
 const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
 const transformStyle = require('./transform/style');
-const { uniqueInstanceID, warn } = require('sfc-compiler/utils');
-const createRenderFn = require('sfc-compiler/codegen/createRenderFn');
-const { baseOptions } = require('sfc-compiler/options');
+const { uniqueInstanceID, warn } = require('sfc-compiler/src/utils');
+const createRenderFn = require('sfc-compiler/src/codegen/createRenderFn');
+const { baseOptions } = require('sfc-compiler/src/options');
 const { createCompiler } = require('sfc-compiler');
 
 const transformLoader = require.resolve('./transform/loader');
@@ -13,7 +13,7 @@ let adapterRaxEntry = require.resolve('./helpers');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
 
-module.exports = function(rawContent, inputSourceMap) {
+module.exports = function (rawContent, inputSourceMap) {
   this.cacheable();
 
   const callback = this.async();
