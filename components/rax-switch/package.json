@@ -1,6 +1,6 @@
 {
   "name": "rax-switch",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "Switch component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -21,13 +21,13 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax": "^0.6.4",
-    "universal-env": "^0.6.4"
+    "rax": "^0.6.5",
+    "universal-env": "^0.6.5"
   },
   "peerDependencies": {
-    "rax": "^0.6.4"
+    "rax": "^0.6.5"
   },
   "devDependencies": {
-    "rax-test-renderer": "^0.6.4"
+    "rax-test-renderer": "^0.6.5"
   }
 }

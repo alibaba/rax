@@ -37,14 +37,15 @@
     "lerna": "2.0.0",
     "minimatch": "^3.0.3",
     "minimist": "^1.2.0",
-    "rax-webpack-plugin": "^0.6.4",
+    "rax-webpack-plugin": "^0.6.5",
     "rimraf": "^2.5.4",
     "semver-regex": "^1.0.0",
-    "stylesheet-loader": "^0.6.4",
+    "stylesheet-loader": "^0.6.5",
     "uglifyjs-webpack-plugin": "^1.2.2",
     "uppercamelcase": "^1.1.0",
     "webpack": "^4.0.1",
-    "worker-loader": "^1.1.1"
+    "worker-loader": "^1.1.1",
+    "babel-preset-rax": "^0.6.5"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
