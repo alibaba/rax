@@ -1,7 +1,7 @@
 const { join, resolve, relative } = require('path');
 const webpack = require('webpack');
 const WebpackWrapPlugin = require('../webpack-plugins/WebpackWrapPlugin');
-const WebpackMiniProgramPlugin = require('../webpack-plugins/WebpackMiniProgramPlugin')
+const WebpackMiniProgramPlugin = require('../webpack-plugins/WebpackMiniProgramPlugin');
 const babelConfig = require('../babelConfig');
 
 const SFCLoader = require.resolve('sfc-loader');
@@ -58,4 +58,4 @@ module.exports = (projectDir, opts) => {
       })
     ]
   };
-}
+};

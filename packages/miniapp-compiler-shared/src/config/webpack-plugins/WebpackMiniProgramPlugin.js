@@ -19,7 +19,7 @@ module.exports = class WebpackMiniProgramPlugin {
         // polyfill global context
         args.unshift(new ConcatSource(
           [
-            `var __global__ = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();`,
+            'var __global__ = typeof global !== \'undefined\' ? global : typeof self !== \'undefined\' ? self : new Function(\'return this\')();',
             'typeof polyfill === \'function\' && polyfill(__global__);'
           ].join('')
         ));
@@ -46,4 +46,4 @@ module.exports = class WebpackMiniProgramPlugin {
       });
     });
   }
-}
+};

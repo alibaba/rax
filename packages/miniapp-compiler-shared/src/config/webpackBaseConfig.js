@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+
 const cwd = process.cwd();
 
 module.exports = {
@@ -22,7 +23,7 @@ module.exports = {
     devtoolModuleFilenameTemplate: '[resource-path]'
   },
   externals: [
-    function (context, request, callback) {
+    function(context, request, callback) {
       if (/^@(core|schema)\//.test(request)) {
         return callback(null, `commonjs2 ${request}`);
       }
@@ -37,4 +38,4 @@ module.exports = {
       my: [require.resolve('my-api-compat'), 'default'],
     }),
   ]
-}
+};

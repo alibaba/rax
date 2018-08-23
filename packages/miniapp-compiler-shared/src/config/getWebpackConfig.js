@@ -28,6 +28,6 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
       mergeConfig
     );
   } else {
-    throw new Error('Cannot recognize MiniApp Type!')
+    throw new Error('Cannot recognize MiniApp Type!');
   }
-}
+};

@@ -1,4 +1,4 @@
-const jszip = require('jszip');
+const Jszip = require('jszip');
 const { getAppConfig } = require('miniapp-compiler-shared');
 const address = require('address');
 
@@ -6,7 +6,7 @@ const address = require('address');
  * write bundle.zip
  */
 module.exports = function bundleCtrl(ctx, next) {
-  const zip = new jszip();
+  const zip = new Jszip();
 
   const appJSON = getAppConfig(ctx.projectDir);
   if (!Array.isArray(appJSON.pages)) {
