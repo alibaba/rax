@@ -1,5 +1,5 @@
 /* eslint no-extend-native: "off" */
-import Symbol from './symbol';
+const Symbol = require('./symbol');
 
 // Deleted map items mess with iterator pointers, so rather than removing them mark them as deleted. Can't use undefined or null since those both valid keys so use a private symbol.
 const undefMarker = Symbol('undef');

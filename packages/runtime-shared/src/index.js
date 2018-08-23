@@ -28,19 +28,5 @@ module.exports = {
   },
   get matchMedia() {
     return require('./matchMedia');
-  },
-  get polyfills() {
-    try {
-      require('./array.es6');
-      require('./array.es7');
-      require('./number.es6');
-      require('./object.es6');
-      require('./object.es8');
-      require('./string.es6');
-      require('./string.es7');
-    } catch (error) {
-      // TODO
-    }
   }
-
 };
