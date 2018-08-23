@@ -1,6 +1,6 @@
 {
   "name": "miniapp-dev-server",
-  "version": "0.1.26",
+  "version": "0.1.0-beta.2",
   "description": "miniapp dev server",
   "bin": {
     "miniapp": "bin/cli.js"
@@ -15,7 +15,6 @@
   "author": "zhuoling.lcl",
   "license": "ISC",
   "dependencies": {
-    "miniapp-compiler-shared": "^0.1.19",
     "address": "^1.0.3",
     "axios": "^0.18.0",
     "chokidar": "^2.0.3",
@@ -29,6 +28,7 @@
     "koa-static": "^4.0.2",
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
+    "miniapp-compiler-shared": "^0.1.0-beta.1",
     "webpack": "^4.6.0"
   }
 }
