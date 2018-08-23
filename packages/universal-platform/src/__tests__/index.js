@@ -11,7 +11,7 @@ describe('OS', () => {
     if (Platform && Platform.__esModule) {
       Platform = Platform.default;
     }
-    
+
     const selectOS = Platform.select({
       iOS: 'test',
       Android: 'testAndroid',
