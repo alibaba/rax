@@ -5,6 +5,7 @@ const packageInfo = require('../package.json');
 
 program
   .version(packageInfo.version)
+  .usage('<command> [options]')
   .command('build', 'Bundle the project')
   .command(
     'start',
