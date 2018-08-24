@@ -12,23 +12,25 @@ module.exports = class WebpackMiniProgramPlugin {
     }
   }
   apply(compiler) {
-    compiler.hooks.compilation.tap('compilation', compilation => {
+    compiler.hooks.compilation.tap('compilation', (compilation) => {
       compilation.hooks.optimizeAssets.tap('MiniAppPlugin', () => {
         const args = Object.values(compilation.assets);
 
         // polyfill global context
-        args.unshift(new ConcatSource(
-          [
-            'var __global__ = typeof global !== \'undefined\' ? global : typeof self !== \'undefined\' ? self : new Function(\'return this\')();',
-            'typeof polyfill === \'function\' && polyfill(__global__);'
-          ].join('')
-        ));
+        args.unshift(
+          new ConcatSource(
+            [
+              "var __global__ = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();",
+              "typeof polyfill === 'function' && polyfill(__global__);",
+            ].join(''),
+          ),
+        );
         args.unshift(ConcatSource);
 
         const app = new (ConcatSource.bind.apply(ConcatSource, args))();
 
         // 删除原 assets
-        Object.keys(compilation.assets).forEach(key => {
+        Object.keys(compilation.assets).forEach((key) => {
           delete compilation.assets[key];
         });
 
@@ -38,6 +40,12 @@ module.exports = class WebpackMiniProgramPlugin {
           this.isH5 ? 'self.$REG_PAGE(function(require){' : '',
           app,
           this.isH5 ? '})' : '',
+        );
+
+        compilation.assets['app.web.js'] = new ConcatSource(
+          'self.$REG_PAGE(function(require){',
+          app,
+          '})',
         );
 
         if (this.isH5) {

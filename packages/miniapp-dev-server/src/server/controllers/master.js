@@ -1,9 +1,7 @@
-const { resolve } = require('path');
 const ejs = require('ejs');
 const { getAppConfig } = require('miniapp-compiler-shared');
 const address = require('address');
-
-const masterViewPath = resolve(__dirname, '../../views/master.ejs');
+const { masterTemplateFilePath } = require('miniapp-compiler-shared');
 
 module.exports = function masterRoute(ctx, next) {
   const appConfig = getAppConfig(ctx.projectDir);
@@ -18,7 +16,7 @@ module.exports = function masterRoute(ctx, next) {
   appConfig.h5Assets = `http://${address.ip()}:${ctx.port}/build/app.js`;
 
   ejs.renderFile(
-    masterViewPath,
+    masterTemplateFilePath,
     {
       appConfig: JSON.stringify(appConfig, null, 2),
       h5MasterJS,

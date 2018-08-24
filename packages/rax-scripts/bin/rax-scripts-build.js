@@ -2,6 +2,7 @@
 'use strict';
 /* eslint no-console: 0 */
 const program = require('commander');
+const gulp = require('gulp');
 const optionsAttachToEnv = require('../lib/config/optionsAttachToEnv');
 
 program
@@ -19,9 +20,10 @@ program
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     if (program.type == 'rax') {
-      require('../src/build')();
+      require('../lib/build')();
     } else if (program.type == 'miniapp') {
-      require('../src/miniapp-build')();
+      require('../lib/miniapp-build');
+      gulp.start('default');
     }
   });
 
