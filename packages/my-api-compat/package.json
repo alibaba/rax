@@ -1,6 +1,6 @@
 {
   "name": "my-api-compat",
-  "version": "0.2.1",
+  "version": "0.6.5",
   "description": "Alipay API adapter for Taobao mini app",
   "main": "lib/index.js",
   "scripts": {

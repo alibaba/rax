@@ -7,7 +7,11 @@ global.WXEnvironment = {
 
 describe('OS', () => {
   it('should use WXEnvironment platform', () => {
-    const Platform = require('../index').default;
+    let Platform = require('../index');
+    if (Platform && Platform.__esModule) {
+      Platform = Platform.default;
+    }
+
     const selectOS = Platform.select({
       iOS: 'test',
       Android: 'testAndroid',

@@ -1,6 +1,6 @@
 {
   "name": "driver-worker",
-  "version": "0.6.4-5",
+  "version": "0.6.5",
   "description": "Worker driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "style-unit": "^0.6.4"
+    "style-unit": "^0.6.5"
   }
 }
