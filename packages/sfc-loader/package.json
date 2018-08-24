@@ -1,6 +1,6 @@
 {
   "name": "sfc-loader",
-  "version": "0.1.35",
+  "version": "0.2.0-0",
   "description": "SFC Loader for SFC DSL",
   "main": "src/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "sfc-compiler": "^0.1.0",
+    "sfc-compiler": "^0.2.0",
     "sfc-runtime": "^0.1.0",
     "babel-core": "^6.26.3",
     "babel-generator": "^6.26.1",
