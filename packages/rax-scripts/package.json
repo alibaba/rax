@@ -1,6 +1,6 @@
 {
   "name": "rax-scripts",
-  "version": "0.6.5",
+  "version": "0.6.5-beta.0",
   "license": "BSD-3-Clause",
   "description": "Configuration and scripts for Rax App.",
   "bin": {
@@ -42,8 +42,8 @@
     "internal-ip": "^1.2.0",
     "json-loader": "^0.5.4",
     "loader-utils": "^1.1.0",
-    "miniapp-compiler-shared": "^0.1.0-beta.1",
-    "miniapp-dev-server": "^0.1.0-beta.2",
+    "miniapp-compiler-shared": "^0.1.0-beta.4",
+    "miniapp-dev-server": "^0.1.0-beta.4",
     "mkdirp": "^0.5.1",
     "path-exists": "^3.0.0",
     "qrcode-terminal": "^0.11.0",
