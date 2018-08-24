@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /* eslint no-console: 0 */
 const { getMiniappType } = require('miniapp-compiler-shared');
 const { resolve, isAbsolute } = require('path');
