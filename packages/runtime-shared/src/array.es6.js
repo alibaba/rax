@@ -5,79 +5,75 @@
  *
  * https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.from
  */
-if (!Array.from) {
-  Array.from = function(arrayLike /* , mapFn, thisArg */) {
-    if (arrayLike == null) {
-      throw new TypeError('Object is null or undefined');
-    }
+export function ArrayFrom(arrayLike /* , mapFn, thisArg */) {
+  if (arrayLike == null) {
+    throw new TypeError('Object is null or undefined');
+  }
 
-    // Optional args.
-    var mapFn = arguments[1];
-    var thisArg = arguments[2];
+  // Optional args.
+  var mapFn = arguments[1];
+  var thisArg = arguments[2];
 
-    var C = this;
-    var items = Object(arrayLike);
-    var symbolIterator =
-      typeof Symbol === 'function' ? Symbol.iterator : '@@iterator';
-    var mapping = typeof mapFn === 'function';
-    var usingIterator = typeof items[symbolIterator] === 'function';
-    var key = 0;
-    var ret;
-    var value;
+  var C = this;
+  var items = Object(arrayLike);
+  var symbolIterator =
+    typeof Symbol === 'function' ? Symbol.iterator : '@@iterator';
+  var mapping = typeof mapFn === 'function';
+  var usingIterator = typeof items[symbolIterator] === 'function';
+  var key = 0;
+  var ret;
+  var value;
 
-    if (usingIterator) {
-      ret = typeof C === 'function' ? new C() : [];
-      var it = items[symbolIterator]();
-      var next;
+  if (usingIterator) {
+    ret = typeof C === 'function' ? new C() : [];
+    var it = items[symbolIterator]();
+    var next;
 
-      while (!(next = it.next()).done) {
-        value = next.value;
-
-        if (mapping) {
-          value = mapFn.call(thisArg, value, key);
-        }
-
-        ret[key] = value;
-        key += 1;
-      }
-
-      ret.length = key;
-      return ret;
-    }
-
-    var len = items.length;
-    if (isNaN(len) || len < 0) {
-      len = 0;
-    }
-
-    ret = typeof C === 'function' ? new C(len) : new Array(len);
-
-    while (key < len) {
-      value = items[key];
+    while (!(next = it.next()).done) {
+      value = next.value;
 
       if (mapping) {
         value = mapFn.call(thisArg, value, key);
       }
 
       ret[key] = value;
-
       key += 1;
     }
 
     ret.length = key;
     return ret;
-  };
+  }
+
+  var len = items.length;
+  if (isNaN(len) || len < 0) {
+    len = 0;
+  }
+
+  ret = typeof C === 'function' ? new C(len) : new Array(len);
+
+  while (key < len) {
+    value = items[key];
+
+    if (mapping) {
+      value = mapFn.call(thisArg, value, key);
+    }
+
+    ret[key] = value;
+
+    key += 1;
+  }
+
+  ret.length = key;
+  return ret;
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/of#Polyfill
-if (!Array.of) {
-  Array.of = function() {
-    return Array.prototype.slice.call(arguments);
-  };
+export function ArrayOf() {
+  return Array.prototype.slice.call(arguments);
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
-function findIndex(predicate, context) {
+export function findIndex(predicate, context) {
   if (this == null) {
     throw new TypeError(
       'Array.prototype.findIndex called on null or undefined',
@@ -96,27 +92,42 @@ function findIndex(predicate, context) {
   return -1;
 }
 
-if (!Array.prototype.findIndex) {
-  Object.defineProperty(Array.prototype, 'findIndex', {
-    enumerable: false,
-    writable: true,
-    configurable: true,
-    value: findIndex,
-  });
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+export function find(predicate, context) {
+  if (this == null) {
+    throw new TypeError('Array.prototype.find called on null or undefined');
+  }
+  var index = findIndex.call(this, predicate, context);
+  return index === -1 ? undefined : this[index];
 }
 
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
-if (!Array.prototype.find) {
-  Object.defineProperty(Array.prototype, 'find', {
-    enumerable: false,
-    writable: true,
-    configurable: true,
-    value: function(predicate, context) {
-      if (this == null) {
-        throw new TypeError('Array.prototype.find called on null or undefined');
-      }
-      var index = findIndex.call(this, predicate, context);
-      return index === -1 ? undefined : this[index];
-    },
-  });
+/**
+ * polyfill ES6 Array
+ */
+export function polyfill(ArrayConstructor = Array) {
+  if (!ArrayConstructor.from) {
+    ArrayConstructor.from = ArrayFrom;
+  }
+
+  if (!ArrayConstructor.of) {
+    ArrayConstructor.of = ArrayOf;
+  }
+
+  if (!ArrayConstructor.prototype.findIndex) {
+    Object.defineProperty(ArrayConstructor.prototype, 'findIndex', {
+      enumerable: false,
+      writable: true,
+      configurable: true,
+      value: findIndex,
+    });
+  }
+
+  if (!ArrayConstructor.prototype.find) {
+    Object.defineProperty(ArrayConstructor.prototype, 'find', {
+      enumerable: false,
+      writable: true,
+      configurable: true,
+      value: find,
+    });
+  }
 }
