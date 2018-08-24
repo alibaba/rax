@@ -3,7 +3,10 @@ import {isWeex, isWeb} from 'universal-env';
 
 let SliderWeb;
 if (isWeb) {
-  SliderWeb = require('./slider.web').default;
+  SliderWeb = require('./slider.web');
+  if (SliderWeb && SliderWeb.__esModule) {
+    SliderWeb = SliderWeb.default;
+  }
 }
 
 class Slider extends Component {
