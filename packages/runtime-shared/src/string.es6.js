@@ -105,7 +105,7 @@ export function codePointAt(position) {
  */
 export function polyfill(StringConstructor = String) {
   if (!StringConstructor.prototype.startsWith) {
-    StringConstructor.prototype.startsWith = startsWith
+    StringConstructor.prototype.startsWith = startsWith;
   }
 
   if (!StringConstructor.prototype.endsWith) {

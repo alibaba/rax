@@ -1,5 +1,9 @@
 // https://github.com/dherman/tc39-codex-wiki/blob/master/data/es6/number/index.md
 
+const globalIsNaN = isNaN;
+const globalIsFinite = isFinite;
+const floor = Math.floor;
+
 export function isInteger(value) {
   return typeof value === 'number' && globalIsFinite(value) &&
     value > -9007199254740992 && value < 9007199254740992 &&
@@ -14,7 +18,6 @@ export function isNaN(value) {
  * polyfill Number
  */
 export function polyfill(NumberConstructor = Number) {
-
   if (NumberConstructor.EPSILON === undefined) {
     Object.defineProperty(NumberConstructor, 'EPSILON', {
       value: Math.pow(2, -52),
@@ -34,19 +37,15 @@ export function polyfill(NumberConstructor = Number) {
   }
 
   if (!NumberConstructor.isNaN) {
-    const globalIsNaN = isNaN;
     definePty(NumberConstructor, 'isNaN', isNaN);
   }
 
   if (!NumberConstructor.isFinite) {
-    const globalIsFinite = isFinite;
     definePty(NumberConstructor, 'isFinite', isNaN);
   }
 
   if (!NumberConstructor.isInteger) {
-    const floor = Math.floor;
-    const globalIsFinite = isFinite;
-    definePty(NumberConstructor, 'isInteger', isInteger)
+    definePty(NumberConstructor, 'isInteger', isInteger);
   }
 }
 
