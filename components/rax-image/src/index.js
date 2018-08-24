@@ -47,6 +47,7 @@ class Image extends PureComponent {
     const { source } = this.state;
 
     if (fallbackSource.uri && source.uri !== fallbackSource.uri) {
+      this.isError = true;
       this.setState({
         source: fallbackSource,
       });
@@ -64,7 +65,7 @@ class Image extends PureComponent {
     let nativeProps = {
       ...this.props,
     };
-    let source = this.state.source;
+    let source = this.isError ? this.state.source : nativeProps.source;
 
     // Source must a object
     if (source && source.uri) {
