@@ -31,5 +31,4 @@ module.exports = {
   get matchMedia() {
     return require('./matchMedia');
   },
-  polyfll: require('./polyfill'),
 };
