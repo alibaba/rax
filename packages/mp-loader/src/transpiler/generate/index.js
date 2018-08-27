@@ -1,7 +1,7 @@
 const modules = require('../transpile');
 const { baseOptions, generate } = require('sfc-compiler');
 
-module.exports = function (ast) {
+module.exports = function(ast) {
   const options = Object.assign(
     {
       // 完全字符串节点

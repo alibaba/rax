@@ -5,12 +5,13 @@ const transformScript = require('./transform/script');
 const transformStyle = require('./transform/style');
 const { uniqueInstanceID, warn } = require('sfc-compiler');
 const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
+
 const transformLoader = require.resolve('./transform/loader');
 let adapterRaxEntry = require.resolve('./helpers');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
 
-module.exports = function (rawContent, inputSourceMap) {
+module.exports = function(rawContent, inputSourceMap) {
   this.cacheable();
 
   const callback = this.async();

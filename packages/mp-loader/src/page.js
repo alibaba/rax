@@ -8,7 +8,7 @@ const paths = require('./paths');
 
 const tplLoaderPath = require.resolve('./template');
 
-module.exports = function (content, rawMap) {
+module.exports = function(content, rawMap) {
   const { type, globalStyle } = getOptions(this);
   const { resourcePath } = this;
   const relativePath = relative(this.rootContext, this.resourcePath);
