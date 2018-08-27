@@ -1,6 +1,6 @@
 const { dirname, join } = require('path');
 const { existsSync, readFileSync } = require('fs');
-const { parse } = require('sfc-compiler/parser');
+const { parse } = require('sfc-compiler');
 const { getAndRemoveAttr, getRootEl, normalizeMustache } = require('../helpers');
 
 const cwd = process.cwd();
