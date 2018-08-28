@@ -18,6 +18,15 @@ const EVENT_OPTIONS = supportsPassive
   }
   : true;
 
+const UNBUBBLES = [
+  'appear',
+  'disappear',
+  'scroll'
+];
+function isUnbubbleEvent(evtName) {
+  return UNBUBBLES.indexOf(evtName) !== -1;
+}
+
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
   const registeredEventCounts = {};
@@ -30,8 +39,8 @@ export default ({ worker, tagNamePrefix = '' }) => {
   }
 
   function addEvent(name, vnode) {
-    if (name === 'appear' || name === 'disappear') {
-      addAppearEvent(name, vnode);
+    if (isUnbubbleEvent(name)) {
+      addUnbubbleEvent(name, vnode);
     } else {
       const registeredCount = registeredEventCounts[name];
 
@@ -46,8 +55,8 @@ export default ({ worker, tagNamePrefix = '' }) => {
   }
 
   function removeEvent(name, vnode) {
-    if (name === 'appear' || name === 'disappear') {
-      removeAppearEvent(name, vnode);
+    if (isUnbubbleEvent(name)) {
+      removeUnbubbleEvent(name, vnode);
     } else {
       registeredEventCounts[name]--;
       if (registeredEventCounts[name] === 0) {
@@ -56,9 +65,9 @@ export default ({ worker, tagNamePrefix = '' }) => {
     }
   }
 
-  const appearEventStore = {};
-  function addAppearEvent(name, vnode) {
-    const evtStore = appearEventStore[name] = appearEventStore[name] || {};
+  const unbubbleEventStore = {};
+  function addUnbubbleEvent(name, vnode) {
+    const evtStore = unbubbleEventStore[name] = unbubbleEventStore[name] || {};
     // el may not add to DOM Tree
     setTimeout(() => {
       const el = getNode(vnode);
@@ -90,8 +99,8 @@ export default ({ worker, tagNamePrefix = '' }) => {
     }, 0);
   }
 
-  function removeAppearEvent(name, vnode) {
-    const evtStore = appearEventStore[name] = appearEventStore[name] || {};
+  function removeUnbubbleEvent(name, vnode) {
+    const evtStore = unbubbleEventStore[name] = unbubbleEventStore[name] || {};
     if (evtStore[vnode.$$id]) {
       const el = getNode(vnode);
       el && el.removeEventListener(name, evtStore[vnode.$$id]);

@@ -1,9 +1,9 @@
 import * as my from './api';
 
-const global = getGlobalObject();
+const GLOBAL = getGlobalObject();
 
-if (global && typeof global.my === 'object') {
-  exports.default = global.my;
+if (GLOBAL && typeof GLOBAL.my === 'object') {
+  exports.default = GLOBAL.my;
 } else {
   my.canIUse = api => api in my;
   exports.default = my;
