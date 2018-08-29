@@ -1,3 +1,5 @@
+const global = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();
+
 const listeners = {};
 
 export function $on(evtName, callback) {
@@ -18,3 +20,10 @@ export function $off(evtName, callback) {
     }
   }
 }
+
+global.__update_page_data__ = (pageName, data) => {
+  $emit('UpdatePageData', {
+    pageName, data
+  });
+};
+

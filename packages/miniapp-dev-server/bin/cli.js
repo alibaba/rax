@@ -31,7 +31,7 @@ if (!miniappType) {
   process.exit(1);
 } else {
   console.log(`检测到 ${TYPE_MAP[miniappType]} 类型项目.`);
-  require('../lib/server')(workDir, port, isDebug);
+  require('../src/server')(workDir, port, isDebug);
 }
 
 function resolveDir(dir) {

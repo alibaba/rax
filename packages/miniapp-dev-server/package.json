@@ -1,10 +1,14 @@
 {
   "name": "miniapp-dev-server",
-  "version": "0.1.0-beta.4",
+  "version": "0.1.0-beta.6",
   "description": "miniapp dev server",
   "bin": {
     "miniapp": "bin/cli.js"
   },
+  "files": [
+    "bin/",
+    "src/"
+  ],
   "engines": {
     "node": "> 6"
   },
@@ -28,7 +32,7 @@
     "koa-static": "^4.0.2",
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
-    "miniapp-compiler-shared": "^0.1.0-beta.4",
+    "miniapp-compiler-shared": "^0.1.0-beta.5",
     "webpack": "^4.6.0"
   }
 }

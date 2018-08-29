@@ -28,7 +28,7 @@ module.exports = (projectDir, opts) => {
          */
         {
           test: /\.js$/,
-          loader: require.resolve('mp-loader/loader/provider'),
+          loader: require.resolve('mp-loader/src/provider'),
           include: [
             projectDir
           ]

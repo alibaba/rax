@@ -34,6 +34,15 @@ export default function registerPage(pageInfo, renderFn, initPage) {
            */
           $on('PageNavigate', this.forceUpdate);
 
+          /**
+           * 暴露 setData 到全局, 接收事件
+           */
+          $on('UpdatePageData', (opts) => {
+            if (opts && opts.pageName === pagePath) {
+              this.setState(opts.data);
+            }
+          });
+
           if (config.data) {
             // inherit app
             this.state = { ...config.data };
@@ -105,6 +114,10 @@ export default function registerPage(pageInfo, renderFn, initPage) {
             if (pageCtx.document) {
               pageCtx.document.body.addEventListener('scroll', config.onPageScroll.bind(context));
             }
+          }
+          // onPullIntercept
+          if (has.call(config, 'onPullIntercept')) {
+            page.on('pullIntercept', config.onPullIntercept.bind(context));
           }
         }
 

@@ -1,7 +1,7 @@
 const { parse } = require('./parser');
 const { generate } = require('./codegen');
 const { createCompilerCreator } = require('./create-compiler');
-const { uniqueInstanceID, warn } = require('sfc-compiler');
+const { uniqueInstanceID, warn } = require('./utils');
 const createRenderFn = require('./codegen/createRenderFn');
 const injectThisScope = require('./codegen/injectThisScope');
 const baseOptions = require('./options');
