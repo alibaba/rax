@@ -2,10 +2,9 @@ const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
 const { relative } = require('path');
 const { makeMap, compileES5, QueryString } = require('./shared/utils');
+const { injectThisScope } = require('sfc-compiler');
 const transpile = require('./transpiler');
 const paths = require('./paths');
-
-const injectThisScope = require(paths.injectThisScope);
 
 const stylesheetLoaderPath = require.resolve('stylesheet-loader');
 const helperFns = '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx';

@@ -1,4 +1,4 @@
-const { parse } = require('sfc-compiler/parser');
+const { parse } = require('sfc-compiler');
 const modules = require('../transpile');
 const baseOptions = require('./baseOptions');
 
