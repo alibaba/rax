@@ -7,12 +7,19 @@ const address = require('address');
  *
  * @return {Object}
  */
-const protocol = process.env.HTTPS === 'true' ? 'https:' : 'http:';
+const protocol =
+  process.env.HTTPS === 'true' || process.env.HTTPS === true
+    ? 'https:'
+    : 'http:';
 const host = process.env.HOST || address.ip();
+const dir = process.env.DIR || process.cwd();
+const debug = process.env.DEBUG === 'true' || process.env.DEBUG === true;
 const port = parseInt(process.env.PORT, 10) || 9999;
 
 module.exports = {
-  host: host,
-  protocol: protocol,
-  port: port
+  host,
+  protocol,
+  port,
+  dir,
+  debug,
 };
