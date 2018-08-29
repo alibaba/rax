@@ -1,6 +1,6 @@
 {
   "name": "sfc-compiler",
-  "version": "0.6.6-1",
+  "version": "0.6.6-2",
   "description": "sfc compiler for sfc dsl",
   "main": "src/index.js",
   "dependencies": {
