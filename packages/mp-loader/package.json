@@ -1,6 +1,6 @@
 {
   "name": "mp-loader",
-  "version": "0.6.5",
+  "version": "0.6.6-1",
   "description": "mp dsl loader for rax",
   "main": "src/index.js",
   "scripts": {
@@ -39,8 +39,8 @@
     "my-api-compat": "^0.6.5",
     "resolve-pathname": "^2.2.0",
     "sfc-compiler": "^0.6.5",
-    "sfc-loader": "^0.6.5",
-    "sfc-runtime": "^0.6.5",
+    "sfc-loader": "^0.6.6-0",
+    "sfc-runtime": "^0.6.6-0",
     "source-map": "^0.7.3",
     "stylesheet-loader": "^0.6.5"
   },
