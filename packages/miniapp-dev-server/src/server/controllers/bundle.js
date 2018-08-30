@@ -24,7 +24,7 @@ module.exports = function bundleCtrl(ctx, next) {
     item.pageUrl = ctx.isDebug
       ? `http://${address.ip()}:8003/native/renderer.html`
       : appJSON.experimentalRemoteRenderer ||
-        'https://g.alicdn.com/miniapp/framework/0.0.13/native/renderer.html';
+      'https://g.alicdn.com/miniapp/framework/0.0.17/native/renderer.html';
   });
 
   /* 指定首页 */
