@@ -1,6 +1,6 @@
 {
   "name": "miniapp-dev-server",
-  "version": "0.1.0-beta.10",
+  "version": "0.1.0-beta.11",
   "description": "miniapp dev server",
   "bin": {
     "miniapp": "bin/cli.js"
