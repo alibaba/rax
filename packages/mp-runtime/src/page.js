@@ -1,8 +1,6 @@
 import getApp from './getApp';
 import { $on } from './eventHub';
 
-const page = require('@core/page');
-
 function has(key) {
   return this && this.hasOwnProperty(key);
 }
@@ -12,12 +10,14 @@ export default function registerPage(pageInfo, renderFn, initPage) {
   const pageName = pageInfo.page;
   const pagePath = pageInfo.path;
 
+  const page = require('@core/page');
+
   page.register({ page: pagePath }, function(module, exports, require) {
     initPage(function Page(config) {
       const pageCtx = require('@core/context');
-      pageCtx.path = pagePath;
       const Rax = require('@core/rax');
       const page = require('@core/page');
+      pageCtx.path = pagePath;
       const { createElement, Component } = Rax;
 
       module.exports = class MPPage extends Component {
@@ -54,6 +54,7 @@ export default function registerPage(pageInfo, renderFn, initPage) {
               context[key] = config[key];
             }
           });
+
           Object.defineProperty(context, 'data', {
             get: () => {
               return this.state;
@@ -62,6 +63,7 @@ export default function registerPage(pageInfo, renderFn, initPage) {
               this.state = data;
             }
           });
+
           this.ctx = context;
 
           this.render = () => {
@@ -70,12 +72,8 @@ export default function registerPage(pageInfo, renderFn, initPage) {
 
           /**
            * page 生命周期
-           * load
-           * ready
-           * show
-           * hide
-           * unload
            */
+
           if (has.call(config, 'onLoad')) {
             // query passed by event payload
             // macro loop for setData to load
@@ -88,18 +86,23 @@ export default function registerPage(pageInfo, renderFn, initPage) {
               };
             }
           }
+
           if (has.call(config, 'onShow')) {
             page.on('show', config.onShow.bind(context));
           }
+
           if (has.call(config, 'onReady')) {
             page.on('ready', config.onReady.bind(context));
           }
+
           if (has.call(config, 'onHide')) {
             page.on('hide', config.onHide.bind(context));
           }
+
           if (has.call(config, 'onUnload')) {
             page.on('unload', config.onUnload.bind(context));
           }
+
           // page scroll event
           if (has.call(config, 'onPageScroll')) {
             if (pageCtx.document) {
@@ -108,9 +111,6 @@ export default function registerPage(pageInfo, renderFn, initPage) {
           }
         }
 
-        /**
-         * setData
-         */
         setData(data, callback) {
           return this.setState(data, callback);
         }

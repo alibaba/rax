@@ -1,9 +1,5 @@
 let appInstance = null;
 
-export function getApp() {
-  return appInstance;
-}
-
 class App {
   constructor(config = {}) {
     const app = require('@core/app');
@@ -40,6 +36,10 @@ class App {
   }
 }
 
+export function getApp() {
+  return appInstance;
+}
+
 export default function initApp(config = {}) {
   if (getApp() !== null) {
     throw new Error('App only can be init once');
@@ -48,4 +48,5 @@ export default function initApp(config = {}) {
   const app = new App(config);
   return appInstance = app;
 }
+
 initApp.getApp = getApp;
