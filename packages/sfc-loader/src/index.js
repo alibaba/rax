@@ -3,10 +3,7 @@ const { basename, extname, dirname, relative, join } = require('path');
 const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
 const transformStyle = require('./transform/style');
-const { uniqueInstanceID, warn } = require('sfc-compiler/utils');
-const createRenderFn = require('sfc-compiler/codegen/createRenderFn');
-const { baseOptions } = require('sfc-compiler/options');
-const { createCompiler } = require('sfc-compiler');
+const { createCompiler, createRenderFn, baseOptions, uniqueInstanceID, warn } = require('sfc-compiler');
 
 const transformLoader = require.resolve('./transform/loader');
 let adapterRaxEntry = require.resolve('./helpers');

@@ -1,7 +1,10 @@
 const { parse } = require('./parser');
-// const { optimize } = require('./optimizer');
 const { generate } = require('./codegen');
 const { createCompilerCreator } = require('./create-compiler');
+const { uniqueInstanceID, warn } = require('sfc-compiler');
+const createRenderFn = require('./codegen/createRenderFn');
+const injectThisScope = require('./codegen/injectThisScope');
+const baseOptions = require('./options');
 
 /**
  * template: string
@@ -22,3 +25,11 @@ exports.createCompiler = createCompilerCreator(function baseCompile(
     staticRenderFns: code.staticRenderFns
   };
 });
+
+exports.createRenderFn = createRenderFn;
+exports.baseOptions = baseOptions;
+exports.uniqueInstanceID = uniqueInstanceID;
+exports.injectThisScope = injectThisScope;
+exports.warn = warn;
+exports.parse = parse;
+exports.generate = generate;
