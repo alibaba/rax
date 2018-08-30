@@ -1,6 +1,6 @@
 {
   "name": "miniapp-compiler-shared",
-  "version": "0.1.1-4",
+  "version": "0.1.1-5",
   "description": "miniapp server and builder webpack shared objects link config and utils",
   "main": "src/index.js",
   "author": "zhuoling.lcl",

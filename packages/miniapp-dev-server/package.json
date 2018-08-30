@@ -32,7 +32,7 @@
     "koa-static": "^4.0.2",
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
-    "miniapp-compiler-shared": "^0.1.1-4",
+    "miniapp-compiler-shared": "^0.1.1-5",
     "webpack": "^4.6.0",
     "webpack-dev-middleware": "^3.2.0"
   }
