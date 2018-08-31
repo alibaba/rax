@@ -2,7 +2,7 @@
 'use strict';
 /* eslint no-console: 0 */
 const program = require('commander');
-const optionsAttachToEnv = require('../lib/config/optionsAttachToEnv');
+const optionsAttachToEnv = require('../src/config/optionsAttachToEnv');
 
 program
   .option(
@@ -19,9 +19,9 @@ program
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     if (program.type == 'rax') {
-      require('../lib/start')();
+      require('../src/start')();
     } else if (program.type == 'miniapp') {
-      require('../lib/miniapp-server')();
+      require('../src/miniapp-server')();
     }
   });
 

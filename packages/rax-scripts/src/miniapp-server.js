@@ -2,7 +2,7 @@
 const { getMiniappType } = require('miniapp-compiler-shared');
 const { resolve, isAbsolute } = require('path');
 
-const server = require('miniapp-dev-server/lib/server/');
+const server = require('miniapp-dev-server/src/server/');
 
 const envConfig = require('./config/env.config');
 

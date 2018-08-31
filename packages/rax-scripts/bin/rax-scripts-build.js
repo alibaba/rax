@@ -3,7 +3,7 @@
 /* eslint no-console: 0 */
 const program = require('commander');
 const gulp = require('gulp');
-const optionsAttachToEnv = require('../lib/config/optionsAttachToEnv');
+const optionsAttachToEnv = require('../src/config/optionsAttachToEnv');
 
 program
   .option(
@@ -20,9 +20,9 @@ program
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     if (program.type == 'rax') {
-      require('../lib/build')();
+      require('../src/build')();
     } else if (program.type == 'miniapp') {
-      require('../lib/miniapp-build');
+      require('../src/miniapp-build');
       gulp.start('default');
     }
   });
