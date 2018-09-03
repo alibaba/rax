@@ -39,7 +39,7 @@ export interface ImageProps extends BaseProps {
      * (当加载完成 src 指定的图片时，load事件将被触发)
      * @param {ImageLoadEvent} event
      */
-    load: (event: ImageLoadEvent) => void;
+    load?: (event: ImageLoadEvent) => void;
 
 
 }
