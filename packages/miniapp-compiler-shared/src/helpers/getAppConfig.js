@@ -1,4 +1,4 @@
-const { join } = require('path');
+const { join, resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
 
 function getAppConfig(projectDir) {
@@ -14,23 +14,40 @@ function getAppConfig(projectDir) {
     throw new Error('不存在以下文件: app.json | manifest.json');
   }
 
-  const pages = {};
-  let homepage = 'index';
+  const pages = [];
+  let homepage = 'index'; // default homepage
   if (Array.isArray(appJSON.pages)) {
-    appJSON.pages.forEach((pageSrc, idx) => {
-      if (0 === idx) {
-        homepage = pageSrc;
+    for (let i = 0; i < appJSON.pages.length; i++) {
+      const pageName = appJSON.pages[i];
+
+      if (i === 0) homepage = pageName;
+
+      const pageConfig = { pageName };
+      // merge page config json
+      const independentPageConfigPath = resolve(projectDir, pageName + '.json');
+      if (existsSync(independentPageConfigPath)) {
+        Object.assign(pageConfig, JSON.parse(readFileSync(independentPageConfigPath)));
       }
-      pages[pageSrc] = pageSrc;
-    });
-  } else {
-    Object.keys(appJSON.pages).forEach((key, idx) => {
-      const pageSrc = appJSON.pages[key];
-      if (0 === idx) {
-        homepage = key;
+
+      pages.push(pageConfig);
+    }
+  } else if (typeof appJSON.pages === 'object') {
+    const pageKeys = Object.keys(appJSON.pages);
+    for (let i = 0; i < pageKeys.length; i++) {
+      const pageName = pageKeys[i];
+      const pagePath = appJSON.pages[pageName];
+
+      if (i === 0) homepage = pageName;
+
+      const pageConfig = { pageName, pagePath };
+      // merge page config json
+      const independentPageConfigPath = resolve(projectDir, pagePath + '.json');
+      if (existsSync(independentPageConfigPath)) {
+        Object.assign(pageConfig, JSON.parse(readFileSync(independentPageConfigPath)));
       }
-      pages[key] = pageSrc;
-    });
+
+      pages.push(pageConfig);
+    }
   }
 
   const result = {
@@ -81,6 +98,9 @@ function readJSONSync(p) {
   return JSON.parse(readFileSync(p, 'utf-8'));
 }
 
+/**
+ * return String[] list of pages
+ */
 exports.getPages = function getPages(projectDir) {
   return getAppConfig(projectDir).pages;
 };

@@ -17,8 +17,8 @@ module.exports = function getEntry(projectDir) {
     /* app entry */
     entry.$app = resolve(projectDir, 'app.js');
     /* page entry */
-    Object.keys(appPages).forEach((key, idx) => {
-      entry[key] = resolve(projectDir, appPages[key]);
+    appPages.forEach(({ pagePath, pageName }) => {
+      entry[pageName] = resolve(projectDir, pagePath);
     });
   } else if (miniappType === 'mp') {
     const appFilePath = resolve(projectDir, 'app.js');
