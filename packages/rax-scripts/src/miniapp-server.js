@@ -27,7 +27,7 @@ function resolveDir(dir) {
 module.exports = function start() {
   const miniappType = getMiniappType(envConfig.dir);
   if (!miniappType) {
-    console.log('请检查是否在淘宝轻应用项目中');
+    console.log('请检查是否符合小程序、轻框架项目类型');
     process.exit(1);
   }
   console.log(`检测到 ${TYPE_MAP[miniappType]} 类型项目.`);
