@@ -37,15 +37,11 @@ module.exports = function(content, rawMap) {
   });
   const tplRequirement = stringifyRequest(this, `${tplLoaderPath}?${tplQueryString}!${template.path}`);
 
-  /**
-   * $REG: registerPage
-   * $REN: renderFn
-   */
-  let source = `;(function($REG,$REN,getApp){$REG(${pageInfo},$REN,function(Page){
+  let source = `;(function(__registerPage__, __renderFactory__, getApp){__registerPage__(${pageInfo}, __renderFactory__, function(Page){
 ${scriptContent}
     });
   })(
-    require(${stringifyRequest(this, paths.Page)}).default,
+    require(${stringifyRequest(this, paths.registerPage)}).default,
     require(${tplRequirement}),
     require(${stringifyRequest(this, paths.getApp)}).default
   );`;
