@@ -61,7 +61,7 @@ gulp.task('bundle', () =>
     .pipe(gulp.dest(destDir)),
 );
 gulp.task('html', (done) => {
-  appConfig.h5Assets = 'http://30.8.76.181:8080/app.web.js';
+  appConfig.h5Assets = '/app.web.js';
   ejs.renderFile(
     masterTemplateFilePath,
     {
@@ -81,14 +81,9 @@ gulp.task('html', (done) => {
   );
 });
 
-// gulp
-//   .src('**', { cwd: destDir, dot: true, nodir: true })
-//   .pipe(zip('bundle.zip'))
-//   .pipe(gulp.dest(destDir)),
-
 gulp.task('collect-assets', () => {
   return gulp
-    .src('**/*.{png,jpg,gif,ico,webp,jpeg}', {
+    .src(['**/*.{png,jpg,gif,ico,webp,jpeg}', '!node_modules/**'], {
       cwd: projectDir,
       dot: true,
       nodir: true,
