@@ -1,7 +1,7 @@
 const { join } = require('path');
 const { readFileSync, existsSync } = require('fs');
 
-const getAppConfig = (exports.getAppConfig = function getAppConfig(projectDir) {
+function getAppConfig(projectDir) {
   const manifestFilePath = join(projectDir, 'manifest.json');
   const appDotJSONFilePath = join(projectDir, 'app.json');
   const appJSON = {};
@@ -73,7 +73,9 @@ const getAppConfig = (exports.getAppConfig = function getAppConfig(projectDir) {
   result.tabBar = tabBar;
 
   return result;
-});
+}
+
+exports.getAppConfig = getAppConfig;
 
 function readJSONSync(p) {
   return JSON.parse(readFileSync(p, 'utf-8'));
