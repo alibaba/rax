@@ -85,6 +85,6 @@ export default function pageComponentFactory(config = {}, renderFactory, mpRequi
   };
 }
 
-function isFn (val){
+function isFn(val) {
   return 'function' === typeof val;
 }
