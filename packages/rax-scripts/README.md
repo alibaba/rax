@@ -30,13 +30,12 @@ like:
 // webpack.config.update.js
 const sassLoader = require.resolve('sass-loder');
 
-module.exports = function update (webpackConfig) {
-
+module.exports = function update(webpackConfig) {
   webpackConfig.module.loaders.push({
     test: /\.scss$/,
-    loader: sassLoader
+    loader: sassLoader,
   });
 
   return webpackConfig;
-}
+};
 ```

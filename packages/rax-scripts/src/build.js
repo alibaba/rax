@@ -6,7 +6,7 @@ process.env.NODE_ENV = 'production';
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   throw err;
 });
 
@@ -17,10 +17,10 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
 const webpackConfigProd = require('./config/webpack.config.prod');
 
-function build(config) {
+function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
 
-  compiler.run(err => {
+  compiler.run((err) => {
     if (err) {
       throw err;
     }
@@ -29,9 +29,11 @@ function build(config) {
   });
 }
 
-rimraf(pathConfig.appBuild, err => {
-  if (err) {
-    throw err;
-  }
-  build(webpackConfigProd);
-});
+module.exports = function build() {
+  rimraf(pathConfig.appBuild, (err) => {
+    if (err) {
+      throw err;
+    }
+    buildCompiler(webpackConfigProd);
+  });
+};
