@@ -169,3 +169,10 @@ exports.isPreveredGlobalObject = makeMap(
   'Proxy,Promise,Reflect,Set,Map,ArrayBuffer' +
   'Int8Array,Uint8Array,Uint8ClampedArray,Int16Array,Uint16Array,Int32Array,Uint32Array,Float32Array,Float64Array'
 );
+
+const sfcModuleDeclarationName = exports.sfcModuleDeclarationName = '__sfc_module_declaration__';
+const globalComponentsRefName = exports.globalComponentsRefName = '__sfc_components_ref__';
+exports.isVDOMHelperFns = makeMap(
+  '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx,_st,_d,_w'
+);
+exports.isSFCInternalIdentifier = makeMap(`${sfcModuleDeclarationName},${globalComponentsRefName}`)

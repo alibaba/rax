@@ -1,17 +1,11 @@
-const { makeMap, objectValues } = require('../utils');
-const injectThisScope = require('./injectThisScope');
-
-// helpers
-const declarationName = '__sfc_module_declaration__';
-const helpersFns = '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx';
+const { isVDOMHelperFns, isSFCInternalIdentifier } = require('../utils');
+const withScope = require('./withScope');
 
 module.exports = function(render, opts) {
   const { loaderContext, tagHelperMap, weexGlobalComponents, stringifyRequest } = opts;
 
-  const existRenderHelpers = makeMap(
-    helpersFns + ',__components_refs__'
-  );
-  const thisDefines = injectThisScope(render, existRenderHelpers);
+  const isPreveredIdentifier = (key) => isVDOMHelperFns(key) && isSFCInternalIdentifier(key);
+  const thisDefines = withScope(render, isPreveredIdentifier);
 
   /**
    * driver weex components

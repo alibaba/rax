@@ -9,7 +9,7 @@ const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
 
-module.exports = function(rawContent, inputSourceMap) {
+module.exports = function(rawContent) {
   this.cacheable();
 
   const callback = this.async();
