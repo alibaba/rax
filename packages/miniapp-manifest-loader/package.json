@@ -1,9 +1,9 @@
 {
   "name": "miniapp-manifest-loader",
-  "version": "0.1.0",
+  "version": "0.1.1-beta.0",
   "description": "Mini App Manifest Loader for Webpack",
   "main": "src/index.js",
   "dependencies": {
-    "miniapp-web-renderer": "^0.1.1-beta.0"
+    "miniapp-web-renderer": "^0.1.1-beta.2"
   }
 }

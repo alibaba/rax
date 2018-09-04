@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 'use strict';
-/* eslint no-console: 0 */
 const program = require('commander');
 const optionsAttachToEnv = require('../src/config/optionsAttachToEnv');
 

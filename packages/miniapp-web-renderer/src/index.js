@@ -1,4 +1,4 @@
-import '@ali/atag/dist/atag.js';
+import 'sfc-atag-beta/dist/atag.js';
 import { render as raxRender, createElement } from 'rax';
 import BrowserDriver from 'driver-browser';
 import createHashHistory from 'history/createHashHistory';
