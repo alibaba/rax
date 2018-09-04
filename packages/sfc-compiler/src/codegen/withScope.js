@@ -106,7 +106,7 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
       name =>
         `var ${name} = ${scope}${
           isValidIdentifier(name) ? '.' + name : "['" + name + "']"
-          };`
+        };`
     )
     .join('');
 };

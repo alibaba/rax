@@ -2,7 +2,7 @@ const { makeMap, objectValues } = require('../utils');
 const injectThisScope = require('./injectThisScope');
 
 // helpers
-const declarationName = `__sfc_module_declaration__`;
+const declarationName = '__sfc_module_declaration__';
 const helpersFns = '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx';
 
 module.exports = function(render, opts) {
