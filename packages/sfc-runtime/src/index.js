@@ -1,2 +1,1 @@
-export { default as adapterRax } from './adapter-rax';
-export { default as vdomHelper } from './vdom';
+export { default as adapterComponent } from './adapterComponent';

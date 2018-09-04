@@ -1,4 +1,3 @@
-const { uniqueInstanceID } = require('../utils');
 const { parseText } = require('../parser/text-parser');
 const { parseStyleText } = require('../utils/style');
 const { getAndRemoveAttr, getBindingAttr, baseWarn } = require('../helpers');

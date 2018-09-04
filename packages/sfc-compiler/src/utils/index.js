@@ -23,10 +23,6 @@ const extend = exports.extend = function extend(to, _from) {
 
 const isPreTag = exports.isPreTag = tag => tag === 'pre';
 
-const uuidv4 = require('uuid/v4');
-// each compiler share a same uiid
-exports.uniqueInstanceID = 'i' + uuidv4().slice(0, 5);
-
 const isReservedTag = exports.isReservedTag = makeMap(
   'template,script,style,element,content,slot,link,meta,svg,view,' +
   'a,div,img,image,text,span,richtext,input,switch,textarea,spinner,select,' +

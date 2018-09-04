@@ -1,5 +1,4 @@
 const {
-  uniqueInstanceID,
   isPreveredIdentifier,
   isPreveredGlobalObject,
   isValidIdentifier,
@@ -34,7 +33,7 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
       !isPrevered(node.name) &&
       !isPreveredIdentifier(node.name) &&
       !isPreveredGlobalObject(node.name) &&
-      !node.name.startsWith(`$_${uniqueInstanceID}`)
+      !node.name.startsWith('__sfc_module_declaration__')
     ) {
       recordIds[node.name] = true;
     }

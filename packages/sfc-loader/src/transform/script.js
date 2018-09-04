@@ -1,5 +1,3 @@
-const { resolve } = require('path');
-const { readFileSync } = require('fs');
 const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
 const generate = require('babel-generator').default;
@@ -23,7 +21,7 @@ module.exports = (
     });
   } catch (err) {
     console.log(scriptContent);
-    throw new Error('Babylon parse err at transform script: ' + err.message);
+    throw new Error('Babylon parse error at transform script: ' + err.message);
   }
 
   let scopeIdentifiers = [];

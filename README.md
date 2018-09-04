@@ -45,14 +45,14 @@ Community
 Install the Rax CLI tools to init project:
 
 ```sh
-npm install rax-cli -g
-rax init YourProjectName
+$ npm install rax-cli -g
+$ rax init <YourProjectName>
 ```
 
 Start local server to launch project:
 ```sh
-cd YourProjectName
-npm run start
+$ cd YourProjectName
+$ npm run start
 ```
 
 ## Example
