@@ -38,7 +38,7 @@ Community
 
 :dart: **Tiny:** 12.6 KB minified + gzipped.
 
-:art: **Universal:** works in browsers, Weex, Node.js, mini-progam, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
+:art: **Universal:** works in browsers, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
 ## Quick Start
 

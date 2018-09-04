@@ -5,10 +5,10 @@ var spawn = require('cross-spawn');
 var easyfile = require('easyfile');
 var path = require('path');
 
-module.exports = function(kwargs) {
-  var projectDir = kwargs.root;
-  var projectName = kwargs.projectName;
-  var projectAuthor = kwargs.projectAuthor;
+module.exports = function(args) {
+  var projectDir = args.root;
+  var projectName = args.projectName;
+  var projectAuthor = args.projectAuthor;
 
   var templates = path.join(__dirname, 'templates');
   var pkgPath = path.join(projectDir, 'package.json');
