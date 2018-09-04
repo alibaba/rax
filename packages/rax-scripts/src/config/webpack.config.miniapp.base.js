@@ -114,15 +114,25 @@ module.exports = {
     ],
   },
   optimization: {
+    namedModules: true,
+    mergeDuplicateChunks: true,
     splitChunks: {
       cacheGroups: {
+        atag: {
+          test: /sfc\-atag\-beta/,
+          name: 'miniapp-components',
+          chunks: 'all',
+          minSize: 0,
+          minChunks: 1,
+          reuseExistingChunk: true,
+          enforce: true,
+          priority: -10,
+        },
         commons: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendor',
           chunks: 'all',
-          minChunks: 1,
-          minSize: 2000,
-          name: true,
+          priority: -20,
         },
       },
     },

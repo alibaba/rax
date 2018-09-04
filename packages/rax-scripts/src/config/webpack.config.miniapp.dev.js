@@ -25,7 +25,10 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
   entry: {
     index: [pathConfig.appManifest],
   },
-  plugins: [new webpack.NoEmitOnErrorsPlugin(), new BundleAnalyzerPlugin()],
+  plugins: [
+    new webpack.NoEmitOnErrorsPlugin(),
+    process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
+  ].filter(Boolean),
 });
 
 Object.keys(webpackConfigDev.entry).forEach((point) => {

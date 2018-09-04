@@ -15,6 +15,7 @@ program
   .option('--dir <dir>', 'set project path')
   .option('--https', 'enabled https protocol', false)
   .option('--debug', 'enabled debug mode', false)
+  .option('--analyzer', 'enabled webpack bundle analyzer', false)
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     require('../src/start')(program.type);
