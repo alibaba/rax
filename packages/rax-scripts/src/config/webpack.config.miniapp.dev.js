@@ -3,6 +3,7 @@
 /* eslint no-console: 0 */
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const address = require('address');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const qrcode = require('qrcode-terminal');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
@@ -26,6 +27,10 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
     index: [pathConfig.appManifest],
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: pathConfig.appHtml,
+    }),
     new webpack.NoEmitOnErrorsPlugin(),
     process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
   ].filter(Boolean),

@@ -29,6 +29,7 @@
     "babel-preset-rax": "^0.6.5",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.1",
+    "clean-webpack-plugin": "^0.1.19",
     "commander": "^2.17.1",
     "cross-spawn": "^5.1.0",
     "html-webpack-plugin": "^3.0.6",
@@ -46,11 +47,13 @@
     "sfc-loader": "^0.6.6-3",
     "strip-ansi": "^3.0.1",
     "stylesheet-loader": "^0.6.5",
+    "sw-precache-webpack-plugin": "^0.11.5",
     "ts-loader": "^4.0.1",
     "uglifyjs-webpack-plugin": "^1.2.2",
     "webpack": "4.8.1",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-dev-server": "3.1.7",
+    "webpack-manifest-plugin": "^2.0.3",
     "webpack-merge": "^4.1.4"
   }
 }

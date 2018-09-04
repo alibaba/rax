@@ -2,7 +2,6 @@
 /* eslint no-console: 0 */
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const colors = require('chalk');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 const pathConfig = require('./path.config');
@@ -41,10 +40,6 @@ module.exports = {
     },
   ],
   plugins: [
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: pathConfig.appHtml,
-    }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
