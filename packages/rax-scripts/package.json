@@ -31,6 +31,7 @@
     "chalk": "^2.4.1",
     "clean-webpack-plugin": "^0.1.19",
     "commander": "^2.17.1",
+    "copy-webpack-plugin": "^4.5.2",
     "cross-spawn": "^5.1.0",
     "html-webpack-plugin": "^3.0.6",
     "image-source-loader": "^0.6.5",

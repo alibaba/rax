@@ -3,6 +3,7 @@
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const colors = require('chalk');
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const pathConfig = require('./path.config');
 
@@ -46,6 +47,17 @@ module.exports = {
         PUBLIC_URL: JSON.stringify(publicUrl),
       },
     }),
+    new CopyWebpackPlugin([
+      {
+        from: pathConfig.appPublic,
+        to: pathConfig.appBuild,
+        ignore: ['.*', '*.html'],
+      },
+      {
+        from: pathConfig.appManifest,
+        to: pathConfig.appBuild,
+      },
+    ]),
     new CaseSensitivePathsPlugin(),
     new webpack.ProgressPlugin(function(percentage, msg) {
       const stream = process.stderr;
