@@ -1,13 +1,13 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
 const { relative } = require('path');
-const { makeMap, compileES5, QueryString } = require('./shared/utils');
+const { makeMap, compileToES5, createRequire, createRequireDefault, QueryString, vdomHelperVars, prerveredVars } = require('./shared/utils');
 const { injectThisScope } = require('sfc-compiler');
 const transpile = require('./transpiler');
 const paths = require('./paths');
 
 const stylesheetLoaderPath = require.resolve('stylesheet-loader');
-const helperFns = '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx';
+
 
 /**
  * template loader
@@ -71,58 +71,49 @@ module.exports = function templateLoader(content) {
     }
   }
 
-  // provide scope vars
-  // provide render helper vars
-  const helperVariables = helperFns
-    .split(',')
-    .map(alias => `var ${alias} = __v.${alias};`)
-    .join('');
 
   // prepare requirements
   const styleReq = stylePath && stylePath !== 'undefined'
-    ? 'require('
-    + stringifyRequest(this, `${stylesheetLoaderPath}!${stylePath}`)
-    + ')'
+    ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}!${stylePath}`))
     : '{}';
-  const sfcRuntimeReq = stringifyRequest(this, paths.sfcRuntime);
-  const globalStyleReq = globalStyle && globalStyle !== 'undefined'
-    ? `require(${stringifyRequest(
+  const vdomHelperReq = stringifyRequest(this, paths.vdomHelper);
+  const globalStyleReq = globalStyle
+    ? createRequire(stringifyRequest(
       this,
       stylesheetLoaderPath + '!' + globalStyle
-    )})`
+    ))
     : '{}';
 
-  const scopeVariables = injectThisScope(
+  const renderFnScopeVariables = injectThisScope(
     renderFn,
-    makeMap(helperFns + ',_w,data,true,false,null,$event,__components_refs__'),
+    prerveredVars,
     'data'
   );
 
-  return `;(function(globalStyle, pageStyle, __v, getApp){
-    ${helperVariables}
-
+  return `;(function(globalStyle, pageStyle, __vdom_helpers__, getApp){
+    ${vdomHelperVars}
     module.exports = function($parentTpls) {
       _c = _c.bind(this);
 
       var $tpls = {};
+      var _st = Object.assign({}, globalStyle, pageStyle, ${styleReq});
       function _w(is) {
         return $tpls[is] ? $tpls[is] : null;
       }
       ${tplRegisters}
 
-      function render(data) {
-        var __components_refs__ = this && this.__components_refs__ || {};
-        ${scopeVariables}
-        var _st = Object.assign({}, globalStyle, pageStyle, ${styleReq});
+      function createVDOM(data) {
+        var __components_refs__ = this.__components_refs__;
+        ${renderFnScopeVariables}
         return ${renderFn};
       }
 
-      return $parentTpls ? ($parentTpls['${tplAlias}'] = render) : render;
+      return $parentTpls ? ($parentTpls['${tplAlias}'] = createVDOM) : createVDOM;
     }
   })(
     ${globalStyleReq},
     ${styleReq},
-    require(${sfcRuntimeReq}).vdomHelper,
-    require(${stringifyRequest(this, paths.getApp)}).default
+    ${createRequireDefault(vdomHelperReq)},
+    ${createRequireDefault(stringifyRequest(this, paths.getApp))}
   );`;
 };

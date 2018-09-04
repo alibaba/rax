@@ -1,6 +1,6 @@
 const { relative, extname } = require('path');
 const { stringifyRequest, getOptions } = require('loader-utils');
-const { compileES5, QueryString } = require('./shared/utils');
+const { compileToES5, QueryString, createRequire, createRequireDefault } = require('./shared/utils');
 const parseSFC = require('./parser/page-sfc');
 const paths = require('./paths');
 
@@ -12,17 +12,15 @@ module.exports = function(content) {
   const relativePath = relative(this.rootContext, this.resourcePath);
 
   let regPageName = relativePath.slice(0, -extname(relativePath).length);
-  regPageName = String(regPageName).replace(/\\/g, '/'); // for windows
-  const pageInfo = JSON.stringify({
-    path: regPageName
-  });
+  regPageName = String(regPageName).replace(/\\/g, '/'); // compatible for windows
+  const pageInfo = JSON.stringify({ path: regPageName });
 
   const { template, style, script } = parseSFC(resourcePath, {
     script: content,
     type
   });
 
-  const { code: scriptContent, map } = compileES5(script.content, {
+  const { code: scriptContent, map: scriptSourceMap } = compileToES5(script.content, {
     sourceMaps: true,
     sourceFileName: relativePath,
   });
@@ -33,18 +31,19 @@ module.exports = function(content) {
     stylePath: style ? style.path : 'null',
     isPage: true
   });
-  const tplRequirement = stringifyRequest(this, `${tplLoaderPath}?${tplQueryString}!${template.path}`);
-  const pageComponentFactory = `require(${stringifyRequest(this, paths.pageComponentFactory)}).default`;
+  const regTemplateReq = createRequire(stringifyRequest(this, `${tplLoaderPath}?${tplQueryString}!${template.path}`));
+  const createPageReq = createRequireDefault(stringifyRequest(this, paths.createPage));
+  const getAppReq = createRequireDefault(stringifyRequest(this, paths.getApp));
 
-  let source = ['var Page = function(config) { Page.config = config; }',
-    `var getApp = require(${stringifyRequest(this, paths.getApp)}).default;`,
-    `require('@core/page').register(${pageInfo}, function(module, exports, mpRequire){\n`, // 分离添加的代码和用户代码
-    scriptContent,
-    `\nmodule.exports = ${pageComponentFactory}(Page.config,require(${tplRequirement}),mpRequire);`,
-    '});',
-  ].join('');
+  let source =
+    `var Page = function(config) { Page.config = config; }
+    var getApp = ${getAppReq};
+    require('@core/page').register(${pageInfo}, function(module, exports, getCoreModule){
+${scriptContent}
+      module.exports = ${createPageReq}(Page.config, ${regTemplateReq}, getCoreModule);
+    });`;
 
-  // sourceMap 往下滑行 3行, 因为上面加了一行 👆
-  map.mappings = ';' + map.mappings;
-  this.callback(null, source, this.sourceMap ? map : void 0);
+  // code above add three lines to user wrote codes
+  scriptSourceMap.mappings = ';;;' + scriptSourceMap.mappings;
+  this.callback(null, source, this.sourceMap ? scriptSourceMap : void 0);
 };
