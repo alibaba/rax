@@ -2,7 +2,7 @@ let appInstance = null;
 
 class App {
   constructor(config = {}) {
-    const nativeEventProxy = require('@core/app');
+    const appEventEmitter = require('@core/app');
 
     // copy all config key-value to app
     Object.assign(this, config);
@@ -16,15 +16,15 @@ class App {
     };
 
     if (typeof onLaunch === 'function') {
-      nativeEventProxy.on('launch', onLaunch.bind(this, options));
+      appEventEmitter.on('launch', onLaunch.bind(this, options));
     }
 
     if (typeof onShow === 'function') {
-      nativeEventProxy.on('show', onShow.bind(this, options));
+      appEventEmitter.on('show', onShow.bind(this, options));
     }
 
     if (typeof onHide === 'function') {
-      nativeEventProxy.on('hide', onHide.bind(this));
+      appEventEmitter.on('hide', onHide.bind(this));
     }
   }
 }

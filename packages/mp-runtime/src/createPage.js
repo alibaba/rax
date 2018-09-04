@@ -1,5 +1,3 @@
-import emitter from './emitter';
-
 /**
  * interface of mp page
  */
@@ -31,7 +29,7 @@ class Page {
 export default function createPage(config = {}, renderFactory, getCoreModule) {
   // each page has unique vars that can not be shared
   const pageContext = getCoreModule('@core/context');
-  const nativeEventProxy = getCoreModule('@core/page');
+  const pageEventEmitter = getCoreModule('@core/page');
   const { document, pageQuery, pageName, Rax } = pageContext;
 
   const createVDOM = renderFactory();
@@ -53,28 +51,22 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       if ('function' === typeof onReady) {
         const cycleFn = onReady.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'ready', fn: cycleFn });
-        nativeEventProxy.on('ready', cycleFn);
+        pageEventEmitter.on('ready', cycleFn);
       }
       if ('function' === typeof onHide) {
         const cycleFn = onHide.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'hide', fn: cycleFn });
-        nativeEventProxy.on('hide', cycleFn);
+        pageEventEmitter.on('hide', cycleFn);
       }
       if ('function' === typeof onUnload) {
         const cycleFn = onUnload.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'unload', fn: cycleFn });
-        nativeEventProxy.on('unload', cycleFn);
+        pageEventEmitter.on('unload', cycleFn);
       }
       // listen to pageScroll
       if ('function' === typeof onPageScroll && document) {
         document.body.addEventListener('scroll', onPageScroll.bind(this.pageInstance));
       }
-
-      // update vdom while toggle show/hide
-      emitter.on('PageNavigate', this.forceUpdate);
-
-      // update page data by external
-      emitter.on('UpdatePageData', this.updatePageData);
     }
 
     // type: [{ type, fn }]
@@ -89,21 +81,21 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
         onShow.call(this.pageInstance);
         const cycleFn = onShow.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'show', fn: cycleFn });
-        nativeEventProxy.on('show', cycleFn);
+        pageEventEmitter.on('show', cycleFn);
       }
+
+      // update vdom while toggle show/hide
+      this.cycleListeners.push({ type: 'show', fn: this.forceUpdate });
+      pageEventEmitter.on('show', this.forceUpdate);
+
+      // update page data by event
+      this.cycleListeners.push({ type: 'updatePageData', fn: this.setState });
+      pageEventEmitter.on('updatePageData', this.setState);
     }
 
     componentWillUnmount() {
       for (let i = 0, l = this.cycleListeners.length; i < l; i++) {
-        nativeEventProxy.off(this.cycleListeners[i].type, this.cycleListeners[i].fn);
-      }
-      emitter.off('PageNavigate', this.forceUpdate);
-      emitter.off('UpdatePageData', this.updatePageData);
-    }
-
-    updatePageData(query) {
-      if (query && query.pageName === pageName) {
-        this.setState(query.data);
+        pageEventEmitter.off(this.cycleListeners[i].type, this.cycleListeners[i].fn);
       }
     }
 

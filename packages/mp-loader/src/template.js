@@ -2,13 +2,11 @@ const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
 const { relative } = require('path');
 const { makeMap, compileToES5, createRequire, createRequireDefault, QueryString, vdomHelperVars, prerveredVars } = require('./shared/utils');
-const { injectThisScope } = require('sfc-compiler');
+const { withScope } = require('sfc-compiler');
 const transpile = require('./transpiler');
 const paths = require('./paths');
 
 const stylesheetLoaderPath = require.resolve('stylesheet-loader');
-
-
 /**
  * template loader
  */
@@ -71,7 +69,6 @@ module.exports = function templateLoader(content) {
     }
   }
 
-
   // prepare requirements
   const styleReq = stylePath && stylePath !== 'undefined'
     ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}!${stylePath}`))
@@ -84,7 +81,7 @@ module.exports = function templateLoader(content) {
     ))
     : '{}';
 
-  const renderFnScopeVariables = injectThisScope(
+  const renderFnScopeVariables = withScope(
     renderFn,
     prerveredVars,
     'data'

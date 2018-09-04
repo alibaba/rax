@@ -1,9 +1,9 @@
 const { parse } = require('./parser');
 const { generate } = require('./codegen');
 const { createCompilerCreator } = require('./create-compiler');
-const { uniqueInstanceID, warn } = require('sfc-compiler');
+const { uniqueInstanceID, warn } = require('./utils');
 const createRenderFn = require('./codegen/createRenderFn');
-const injectThisScope = require('./codegen/injectThisScope');
+const withScope = require('./codegen/withScope');
 const baseOptions = require('./options');
 
 /**
@@ -29,7 +29,7 @@ exports.createCompiler = createCompilerCreator(function baseCompile(
 exports.createRenderFn = createRenderFn;
 exports.baseOptions = baseOptions;
 exports.uniqueInstanceID = uniqueInstanceID;
-exports.injectThisScope = injectThisScope;
+exports.withScope = withScope;
 exports.warn = warn;
 exports.parse = parse;
 exports.generate = generate;
