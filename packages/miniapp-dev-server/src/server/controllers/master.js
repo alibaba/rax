@@ -6,7 +6,7 @@ const { masterTemplateFilePath } = require('miniapp-compiler-shared');
 module.exports = function masterRoute(ctx, next) {
   const appConfig = getAppConfig(ctx.projectDir);
 
-  let h5MasterJS = 'https://g.alicdn.com/miniapp/framework/0.0.17/h5/master.js';
+  let h5MasterJS = 'https://g.alicdn.com/miniapp/framework/0.0.22/h5/master.js';
   if (ctx.isDebug) {
     h5MasterJS = `http://${address.ip()}:8003/h5/master.js`;
   }

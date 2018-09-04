@@ -1,7 +1,7 @@
 {
   "name": "miniapp-dev-server",
   "version": "0.1.0-beta.12",
-  "description": "miniapp dev server",
+  "description": "Miniapp dev server for developers",
   "main": "src/index.js",
   "bin": {
     "miniapp": "bin/cli.js"
@@ -15,10 +15,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.alibaba-inc.com:miniapp/compiler.git"
+    "url": "git@github.com:alibaba/rax.git"
   },
-  "author": "zhuoling.lcl",
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "address": "^1.0.3",
     "axios": "^0.18.0",
@@ -33,7 +32,7 @@
     "koa-static": "^4.0.2",
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
-    "miniapp-compiler-shared": "^0.1.1-5",
+    "miniapp-compiler-shared": "^0.1.1-6",
     "webpack": "^4.6.0",
     "webpack-dev-middleware": "^3.2.0"
   }
