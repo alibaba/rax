@@ -15,7 +15,6 @@ const rimraf = require('rimraf');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
-const webpackConfigProd = require('./config/webpack.config.prod');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -29,11 +28,16 @@ function buildCompiler(config) {
   });
 }
 
-module.exports = function build() {
+const webpackConfigMap = {
+  rax: require('./config/webpack.config.prod'),
+  miniapp: require('./config/webpack.config.miniapp.prod'),
+};
+
+module.exports = function build(type = 'rax') {
   rimraf(pathConfig.appBuild, (err) => {
     if (err) {
       throw err;
     }
-    buildCompiler(webpackConfigProd);
+    buildCompiler(webpackConfigMap[type]);
   });
 };

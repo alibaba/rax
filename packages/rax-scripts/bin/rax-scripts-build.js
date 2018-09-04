@@ -2,7 +2,6 @@
 'use strict';
 /* eslint no-console: 0 */
 const program = require('commander');
-const gulp = require('gulp');
 const optionsAttachToEnv = require('../src/config/optionsAttachToEnv');
 
 program
@@ -19,12 +18,7 @@ program
   .option('--debug', 'enabled debug mode', false)
   .action((cmd) => {
     optionsAttachToEnv(cmd);
-    if (program.type == 'rax') {
-      require('../src/build')();
-    } else if (program.type == 'miniapp') {
-      require('../src/miniapp-build');
-      gulp.start('default');
-    }
+    require('../src/build')(program.type);
   });
 
 program.parse(process.argv);

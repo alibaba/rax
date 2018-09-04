@@ -18,11 +18,7 @@ program
   .option('--debug', 'enabled debug mode', false)
   .action((cmd) => {
     optionsAttachToEnv(cmd);
-    if (program.type == 'rax') {
-      require('../src/start')();
-    } else if (program.type == 'miniapp') {
-      require('../src/miniapp-server')();
-    }
+    require('../src/start')(program.type);
   });
 
 program.parse(process.argv);

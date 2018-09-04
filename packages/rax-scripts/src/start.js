@@ -10,15 +10,20 @@ const colors = require('chalk');
 const WebpackDevServer = require('webpack-dev-server');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
-const webpackConfigDev = require('./config/webpack.config.dev');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
+
+const webpackConfigMap = {
+  rax: require('./config/webpack.config.dev'),
+  miniapp: require('./config/webpack.config.miniapp.dev'),
+};
 
 /**
  * run webpack dev server
  */
-module.exports = function start() {
-  const compiler = createWebpackCompiler(webpackConfigDev);
+
+module.exports = function start(type = 'rax') {
+  const compiler = createWebpackCompiler(webpackConfigMap[type]);
 
   const server = new WebpackDevServer(compiler, webpackDevServerConfig);
 
