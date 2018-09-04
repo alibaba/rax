@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
 // Update notifications
-var updateNotifier = require('update-notifier');
-var pkg = require('../package.json');
+const updateNotifier = require('update-notifier');
+const pkg = require('../package.json');
 
 updateNotifier({pkg: pkg}).notify();
 
 // Check node version
-var chalk = require('chalk');
-var semver = require('semver');
+const chalk = require('chalk');
+const semver = require('semver');
 
 if (!semver.satisfies(process.version, '>=6')) {
-  var message = 'You are currently running Node.js ' +
+  const message = 'You are currently running Node.js ' +
     chalk.red(process.version) + '.\n' +
     '\n' +
     'Rax runs on Node 6.0 or newer. There are several ways to ' +
@@ -25,16 +25,16 @@ if (!semver.satisfies(process.version, '>=6')) {
   process.exit(1);
 }
 
-var fs = require('fs');
-var path = require('path');
-var execSync = require('child_process').execSync;
-var spawn = require('cross-spawn');
-var inquirer = require('inquirer');
-var chalk = require('chalk');
-var cli = require('../src/');
-var argv = require('minimist')(process.argv.slice(2));
+const fs = require('fs');
+const path = require('path');
+const execSync = require('child_process').execSync;
+const spawn = require('cross-spawn');
+const inquirer = require('inquirer');
+const chalk = require('chalk');
+const cli = require('../src/');
+const argv = require('minimist')(process.argv.slice(2));
 
-var RAX_PACKAGE_JSON_PATH = path.resolve(
+const RAX_PACKAGE_JSON_PATH = path.resolve(
   process.cwd(),
   'node_modules',
   'rax',
@@ -44,7 +44,7 @@ var RAX_PACKAGE_JSON_PATH = path.resolve(
 checkForVersionArgument();
 
 // minimist api
-var commands = argv._;
+const commands = argv._;
 
 if (commands.length === 0) {
   console.error(
@@ -73,20 +73,20 @@ switch (commands[0]) {
     break;
 }
 
-function init(name, verbose, rwPackage) {
+function init(name, verbose) {
   Promise.resolve(fs.existsSync(name))
     .then(function(dirExists) {
       if (dirExists) {
-        return createAfterConfirmation(name, verbose, rwPackage);
+        return createAfterConfirmation(name, verbose);
       } else {
         return;
       }
     })
     .then(function() {
-      return askProjectInformaction(name, verbose, rwPackage);
+      return askProjectInformaction(name, verbose);
     })
     .then(function(answers) {
-      return createProject(name, verbose, rwPackage, answers);
+      return createProject(name, verbose, answers);
     })
     .catch(function(err) {
       console.error('Error occured', err.stack);
@@ -94,7 +94,7 @@ function init(name, verbose, rwPackage) {
     });
 }
 
-function createAfterConfirmation(name, verbose, rwPackage) {
+function createAfterConfirmation(name, verbose) {
   var property = {
     type: 'confirm',
     name: 'continueWhileDirectoryExists',
@@ -112,7 +112,7 @@ function createAfterConfirmation(name, verbose, rwPackage) {
   });
 }
 
-function askProjectInformaction(name, verbose, rwPackage) {
+function askProjectInformaction(name, verbose) {
   var questions = [
     {
       type: 'input',
@@ -136,7 +136,7 @@ function askProjectInformaction(name, verbose, rwPackage) {
   return inquirer.prompt(questions);
 }
 
-function createProject(name, verbose, rwPackage, userAnswers) {
+function createProject(name, verbose, userAnswers) {
   var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   var root = path.resolve(name);
   var projectName = userAnswers.projectName;
@@ -159,7 +159,6 @@ function createProject(name, verbose, rwPackage, userAnswers) {
     projectName: projectName,
     projectAuthor: projectAuthor,
     verbose: verbose,
-    rwPackage: rwPackage
   }).then(function(directory) {
     if (autoInstallModules) {
       return install(directory, verbose);
@@ -190,7 +189,7 @@ function checkForVersionArgument() {
 
 function shouldUseYarn() {
   try {
-    execSync('yarnpkg --version', {stdio: 'ignore'});
+    execSync('yarn --version', {stdio: 'ignore'});
     return true;
   } catch (e) {
     return false;
