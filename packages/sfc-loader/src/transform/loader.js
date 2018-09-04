@@ -7,7 +7,7 @@ const loaderUtils = require('loader-utils');
  * object in closure will be created twice
  * to fix this, using global variable instead
  */
-const CACHE_KEY = '__cache_sfc_style__';
+const CACHE_KEY = '__sfc_style_cache__';
 const cache = global[CACHE_KEY] || (global[CACHE_KEY] = {});
 
 module.exports = function(content) {

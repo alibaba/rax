@@ -1,7 +1,7 @@
 {
   "name": "sfc-compiler",
   "version": "0.6.5",
-  "description": "sfc compiler for sfc dsl",
+  "description": "Compiler for SFC.",
   "main": "src/index.js",
   "dependencies": {
     "babel-generator": "^6.26.1",

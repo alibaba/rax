@@ -1,6 +1,5 @@
 import { isPlainObject, warn, noop } from './utils';
 import Watcher from './watcher';
-import { toggleUpdate } from './mixinData';
 
 const sharedPropertyDefinition = {
   enumerable: true,
