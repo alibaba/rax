@@ -1,5 +1,16 @@
 # dev server for miniapp 
 
-support sfc or mp type
+support sfc and mp type
 
-detail contact @zhuoling.lcl
+## Usage
+
+```bash
+npm install miniapp-dev-server
+miniapp
+```
+
+## args
+
+- `-p` port of dev server
+- `-d` path of app source directory
+
