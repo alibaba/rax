@@ -35,7 +35,7 @@ export function getApp() {
 
 export default function createApp(config) {
   if (getApp() !== null) {
-    throw new Error('Only one App create allowed per mini-program.');
+    throw new Error('Only one App create allowed per miniapp.');
   }
 
   return appInstance = new App(config);
