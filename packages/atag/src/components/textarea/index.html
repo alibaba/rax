@@ -1,0 +1,193 @@
+<dom-module id="a-textarea">
+  <template>
+    <style id="style">
+      :host {
+        display: flex;
+        box-sizing: border-box;
+        padding-left: 3.2vw;
+        padding-right: 3.2vw;
+        padding-top: 3.47vw;
+        padding-bottom: 3.47vw;
+        background-color: white;
+      }
+
+      #textarea {
+        display: block;
+        width: 100%;
+        background-color: white;
+        outline: none;
+        border: none;
+        resize: none;
+        font-size: 4.27vw;
+        color: #333333;
+        box-sizing: border-box;
+      }
+    </style>
+    <textarea id="textarea" placeholder="{{placeholder}}" value="{{value}}" disabled="{{disabled}}" focus="{{focus}}" maxlength="{{maxlength}}"
+      readonly="{{readonly}}" autofocus="{{autoFocus}}" style$="{{inputStyle}}" rows="{{rows}}"></textarea>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+import { afterNextRender } from '../../shared/utils';
+import autosize from './autosize';
+
+export default class Textarea extends PolymerElement {
+  static get is() {
+    return 'a-textarea';
+  }
+
+  static get properties() {
+    return {
+      value: {
+        type: String,
+        value: ''
+      },
+      placeholder: {
+        type: String,
+        value: ''
+      },
+      placeholderStyle: {
+        type: String,
+        value: 'color: #999999;'
+      },
+      disabled: {
+        type: Boolean,
+        value: false
+      },
+      maxlength: {
+        type: String,
+        value: 140
+      },
+      // 获取焦点
+      focus: {
+        type: String
+      },
+      autoFocus: {
+        type: Boolean,
+        value: false
+      },
+      autoHeight: {
+        type: String
+      },
+      readonly: {
+        type: Boolean
+      },
+      inputStyle: {
+        type: String,
+        value: ''
+      },
+      rows: {
+        type: String,
+        value: '2'
+      }
+    };
+  }
+
+  ready() {
+    super.ready();
+
+    this.textarea = this.$.textarea;
+    this.formInitialValue = this.value;
+    if (this.placeholderStyle) {
+      this.$.style.innerHTML += `
+          :host #textarea::placeholder {
+            ${this.placeholderStyle}
+          }
+        `;
+    }
+    afterNextRender(this, () => {
+      window.addEventListener('input', this.inputListener, true);
+      window.addEventListener('focus', this.focusListener, true);
+      window.addEventListener('blur', this.blurListener, true);
+      window.addEventListener('reset', this._handleReset, true);
+      if (this.autoHeight) {
+        autosize(this.textarea);
+      }
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('input', this.inputListener, true);
+    window.removeEventListener('focus', this.focusListener, true);
+    window.removeEventListener('blur', this.blurListener, true);
+    window.removeEventListener('reset', this._handleReset, true);
+    autosize.destroy(this.textarea);
+  }
+
+  inputListener = event => {
+    if (!(event instanceof CustomEvent)) {
+      event.stopPropagation();
+      if (event.target === this) {
+        this.handleInput(event);
+      }
+    }
+  };
+
+  focusListener = event => {
+    if (!(event instanceof CustomEvent)) {
+      event.stopPropagation();
+      if (event.target === this) {
+        this.handleFocus(event);
+      }
+    }
+  };
+
+  blurListener = event => {
+    if (!(event instanceof CustomEvent)) {
+      event.stopPropagation();
+      if (event.target === this) {
+        this.handleBlur(event);
+      }
+    }
+  };
+
+  handleInput(e) {
+    e.stopPropagation();
+    if (this.autoHeight) {
+      autosize.update(this.textarea);
+    }
+    const event = new CustomEvent('input', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value: this.textarea.value,
+        cursor: this.textarea.selectionStart
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
+  handleFocus(e) {
+    e.stopPropagation();
+    const event = new CustomEvent('focus', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value: this.textarea.value
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
+  handleBlur(e) {
+    e.stopPropagation();
+    const event = new CustomEvent('blur', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value: this.textarea.value
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
+  _handleReset = () => {
+    this.textarea.value = this.formInitialValue;
+  };
+}
+
+customElements.define(Textarea.is, Textarea);
+</script>

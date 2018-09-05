@@ -1,0 +1,8 @@
+polymer
+node_modules
+
+dist
+.idea/
+coverage
+
+npm-debug.log.*

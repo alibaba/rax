@@ -1,0 +1,8 @@
+{
+  "assets": {
+    "type": "command",
+    "command": {
+      "cmd": ["PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=TRUE yarn", "mv ./dist $BUILD_DEST"]
+    }
+  }
+}

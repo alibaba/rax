@@ -1,0 +1,481 @@
+<dom-module id="a-swiper">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        height: 100%;
+        display: inline-block;
+        overflow: hidden;
+      }
+
+      .swiper {
+        position: relative;
+      }
+
+      .swiper .swiper-wrap {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: all 0ms ease;
+      }
+
+      .swiper .swiper-wrap>div {
+        overflow: hidden;
+        flex-shrink: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .swiper.horizontal .swiper-wrap {
+        flex-direction: row;
+      }
+
+      .swiper.vertical .swiper-wrap {
+        flex-direction: column;
+      }
+
+      .swiper .swiper-pagination {
+        position: absolute;
+      }
+
+      .swiper .swiper-pagination .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        transition: all .5s ease;
+      }
+
+      .swiper .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #000000;
+        transition: all .5s ease;
+      }
+
+      .swiper.vertical .swiper-pagination {
+        right: 10px;
+        top: 50%;
+        transform: translate3d(0, -50%, 0);
+      }
+
+      .swiper.vertical .swiper-pagination .swiper-pagination-bullet {
+        display: block;
+        margin: 6px 0;
+      }
+
+      .swiper.horizontal .swiper-pagination {
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+
+      }
+
+      .swiper.horizontal .swiper-pagination .swiper-pagination-bullet {
+        display: inline-block;
+        margin: 0 3px;
+      }
+    </style>
+    <div class$="[[getContainerClass()]]" on-touchstart="_onTouchStart">
+      <div id="swiperWrap" class="swiper-wrap" on-transitionend="_onTransitionEnd">
+        <slot></slot>
+      </div>
+      <div class="swiper-pagination" style$="{{showIndicatorDotsStyle}}">
+        <template is="dom-repeat" items="{{indicators}}" index-as="index">
+          <div class="swiper-pagination-bullet" style$="{{activeStyle(index)}}"></div>
+        </template>
+      </div>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+import 'components/swiper/swiper-item';
+import { PolymerElement } from 'Element';
+import { afterNextRender } from '../../shared/utils/';
+
+export default class Swiper extends PolymerElement {
+  static get is() {
+    return 'a-swiper';
+  }
+
+  static get properties() {
+    return {
+      currentPage: {
+        type: Number,
+        value: 1
+      },
+      vertical: {
+        type: Boolean,
+        value: false
+      },
+      circular: {
+        type: Boolean,
+        value: false
+      },
+      duration: {
+        type: Number,
+        value: 500
+      },
+      autoplay: {
+        type: Boolean,
+        value: false
+      },
+      interval: {
+        type: Number,
+        value: 5000
+      },
+      indicators: {
+        type: Array,
+        value: []
+      },
+      indicatorDots: {
+        type: Boolean,
+        value: false
+      },
+      activeStyle: {
+        type: String,
+        computed: 'computedActiveStyle(currentPage)'
+      }
+    };
+  }
+
+  constructor() {
+    super();
+    this.lastPage = 1;
+    this.translateX = 0;
+    this.translateY = 0;
+    this.startTranslate = 0;
+    this.delta = 0;
+    this.dragging = false;
+    this.startPos = null;
+    this.transitioning = false;
+    this.translateOffset = 0;
+    this.transitionDuration = 0;
+  }
+
+  ready() {
+    // Be sure to add super.ready() or you won't get shadowRoot
+    super.ready();
+
+    // init
+    this.currentPage = this.current + 1;
+    this.renderSwiper();
+  }
+
+  attributeChangedCallback(key, oldVal, newVal) {
+    if (key === 'circular') {
+      this.circular = newVal === 'true' || newVal === null;
+      if (oldVal !== null) {
+        if (this.timer) {
+          clearTimeout(this.timer);
+        }
+        this.renderSwiper();
+      }
+    }
+    if (key === 'autoplay') {
+      this.autoplay = newVal === 'true' || newVal === null;
+      if (oldVal !== null) {
+        if (newVal !== 'false') {
+          this.autoNext();
+        } else {
+          clearTimeout(this.timer);
+        }
+      }
+    }
+    if (key === 'indicator-dots') {
+      this.showIndicatorDotsStyle = newVal === 'false' ? 'display: none' : ''
+    }
+    if (key === 'vertical') {
+      this.vertical = this.getAttribute('vertical') === 'true';
+    }
+  }
+
+  get isLoop() {
+    return this.circular || this.circular === '';
+  }
+
+  get isAutoplay() {
+    return this.autoplay || this.autoplay === '';
+  }
+
+  get current() {
+    return Number(this.getAttribute('current')) || 0;
+  }
+
+  renderSwiper() {
+    if (this.isLoop) {
+      setTimeout(() => {
+        this._createLoop();
+        this.setPage(this.currentPage, true);
+      }, 0);
+    } else {
+      setTimeout(() => {
+        this._removeLoop();
+      }, 0);
+    }
+    if (this.isAutoplay) {
+      this.autoNext();
+    }
+  }
+
+  getWrapStyle() {
+    return `
+        transform: translate3d(${this.translateX}px, ${this.translateY}px, 0);
+        transition-duration: ${this.transitionDuration}ms
+      `;
+  }
+
+  setWrapStyle() {
+    const swiperWrap = this.$.swiperWrap;
+    swiperWrap.style['transition-duration'] = `${this.transitionDuration}ms`;
+    swiperWrap.style.transform = `translate3d(${this.translateX}px, ${
+      this.translateY
+    }px, 0)`;
+  }
+
+  getContainerClass() {
+    return `swiper ${this.vertical ? 'vertical' : 'horizontal'}`;
+  }
+
+  _onTouchStart = event => {
+    if (this.isAutoplay) {
+      clearTimeout(this.timer);
+    }
+    this.startPos = this._getTouchPos(event);
+    this.delta = 0;
+    this.startTranslate = this._getTranslateOfPage(this.currentPage);
+    this.startTime = new Date().getTime();
+    this.dragging = true;
+    this.transitionDuration = 0;
+
+    document.addEventListener('touchmove', this._onTouchMove, false);
+    document.addEventListener('touchend', this._onTouchEnd, false);
+  };
+
+  _onTouchMove = event => {
+    this.delta = this._getTouchPos(event) - this.startPos;
+    if (!this.performanceMode) {
+      this._setTranslate(this.startTranslate + this.delta);
+    }
+  };
+
+  _onTouchEnd = event => {
+    if (this.isAutoplay) {
+      this.autoNext();
+    }
+    this.dragging = false;
+    this.transitionDuration = this.duration;
+    const isQuickAction = new Date().getTime() - this.startTime < 1000;
+
+    if (this.delta < -100 || (isQuickAction && this.delta < -15)) {
+      this.next();
+    } else if (this.delta > 100 || (isQuickAction && this.delta > 15)) {
+      this.prev();
+    } else {
+      this._revert();
+    }
+
+    document.removeEventListener('touchmove', this._onTouchMove);
+    document.removeEventListener('touchend', this._onTouchEnd);
+  };
+
+  next = () => {
+    const page = this.currentPage;
+    this.transitionDuration = this.duration;
+    if (page < this.children.length || this.isLoop) {
+      if (page === 1) {
+        // Reserve time for reset translate
+        setTimeout(() => {
+          this.setPage(page + 1);
+        }, 0);
+      } else {
+        this.setPage(page + 1);
+      }
+    } else {
+      this._revert();
+    }
+  };
+  prev() {
+    const page = this.currentPage;
+    if (page > 1 || this.isLoop) {
+      this.setPage(page - 1);
+    } else {
+      this._revert();
+    }
+  }
+
+  setPage(page, noAnimation) {
+    this.lastPage = this.currentPage;
+    if (page === 0) {
+      this.currentPage = this.childrenLength;
+    } else if (page === this.childrenLength + 1) {
+      this.currentPage = 1;
+    } else {
+      this.currentPage = page;
+    }
+    if (this.isLoop) {
+      if (this.delta === 0) {
+        this._setTranslate(this._getTranslateOfPage(this.lastPage));
+      }
+      setTimeout(() => {
+        this._setTranslate(this._getTranslateOfPage(page));
+        if (noAnimation) return;
+        this._onTransitionStart();
+      }, 30);
+    } else {
+      this._setTranslate(this._getTranslateOfPage(page));
+      if (noAnimation) return;
+      this._onTransitionStart();
+    }
+  }
+
+  _onTransitionStart() {
+    this.transitioning = true;
+    this.transitionDuration = this.duration;
+    if (this._isPageChanged()) {
+      // this.emit('slide-change-start', this.currentPage);
+    } else {
+      // this.emit('slide-revert-start', this.currentPage);
+    }
+  }
+  _onTransitionEnd() {
+    this.transitioning = false;
+    this.transitionDuration = 0;
+    this.delta = 0;
+    if (this._isPageChanged()) {
+      this.emitChange(this.currentPage);
+    } else {
+      this.emitChange(this.currentPage);
+    }
+  }
+
+  _isPageChanged() {
+    return this.lastPage !== this.currentPage;
+  }
+
+  _revert() {
+    this.setPage(this.currentPage);
+  }
+
+  _setTranslate(value) {
+    const translateName = !this.vertical ? 'translateX' : 'translateY';
+    this[translateName] = value;
+    this.setWrapStyle();
+  }
+
+  _getTranslate() {
+    const translateName = !this.vertical ? 'translateX' : 'translateY';
+    return this[translateName];
+  }
+
+  _getTouchPos(event) {
+    const key = !this.vertical ? 'pageX' : 'pageY';
+    return event.changedTouches ? event.changedTouches[0][key] : event[key];
+  }
+
+  _getTranslateOfPage(page) {
+    if (page === 0) return 0;
+    const propName = !this.vertical ? 'width' : 'height';
+    return (
+      -[].reduce.call(
+        this.children,
+        (total, el, i) => {
+          if (i > page - 2) {
+            return total;
+          } else {
+            if (el.$rectLength === undefined) {
+              el.$rectLength = el.getBoundingClientRect()[propName];
+            }
+            return total + el.$rectLength;
+          }
+        },
+        0
+      ) + this.translateOffset
+    );
+  }
+
+  _createLoop() {
+    const propName = !this.vertical ? 'width' : 'height';
+    this.indicators = new Array(this.children.length);
+    const duplicateFirstChild = this.children[0].cloneNode(true);
+    this.duplicateFirstChild = duplicateFirstChild;
+    const duplicateLastChild = this.children[
+      this.children.length - 1
+    ].cloneNode(true);
+    this.duplicateLastChild = duplicateLastChild;
+    this.childrenLength = this.children.length;
+    this.insertBefore(duplicateLastChild, this.children[0]);
+    this.appendChild(duplicateFirstChild);
+    this.translateOffset = -duplicateLastChild.getBoundingClientRect()[
+      propName
+    ];
+  }
+  _removeLoop() {
+    if (this.duplicateFirstChild) {
+      this.duplicateFirstChild.parentElement.removeChild(
+        this.duplicateFirstChild
+      );
+      this.duplicateFirstChild = null;
+    }
+    if (this.duplicateLastChild) {
+      this.duplicateLastChild.parentElement.removeChild(
+        this.duplicateLastChild
+      );
+      this.duplicateLastChild = null;
+    }
+    this.indicators = this.children;
+    this.childrenLength = this.children.length;
+    this.translateOffset = 0;
+    this.setPage(this.currentPage);
+  }
+
+  emitChange(value) {
+    const current = value - 1;
+    this.setAttribute('current', current);
+    const event = new CustomEvent('change', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        current,
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
+  autoNext() {
+    this.timer = setTimeout(() => {
+      // When looping page 1 is the last view
+      if (this.isLoop && this.currentPage === 1) {
+        /**
+         * Move the view to the first image in a non-animated form,
+         * the principle is that the last child element is the clone of the first element.
+        */
+        this._setTranslate(this._getTranslateOfPage(1));
+      }
+      // When not looping, the last bit of the array is the last view
+      if (!this.isLoop && this.currentPage === this.childrenLength) {
+        this.transitionDuration = this.duration;
+        // Use animation to adjust the view to the first image
+        setTimeout(() => {
+          this.setPage(1);
+          this.autoNext();
+        }, 0);
+      } else {
+        this.next();
+        this.autoNext();
+      }
+    }, this.interval);
+  }
+
+  computedActiveStyle(currentPage) {
+    return function(index) {
+      const bgColor = this.getAttribute('indicator-color') || 'rgba(0, 0, 0, .3)';
+      const activeBgColor = this.getAttribute('indicator-active-color') || '#000';
+      return currentPage === index + 1 ? `background-color: ${activeBgColor}` : `background-color: ${bgColor}` ;
+    };
+  }
+}
+
+customElements.define(Swiper.is, Swiper);
+</script>

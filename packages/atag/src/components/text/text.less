@@ -1,0 +1,19 @@
+:host {
+  -webkit-user-select: none;
+  user-select: none;
+  white-space: pre-line;
+}
+:host([selectable='']),
+:host([selectable='true']) {
+  -webkit-user-select: all;
+  user-select: all;
+}
+
+slot {
+  // 非继承属性的强制继承
+  vertical-align: inherit;
+  text-decoration: inherit;
+  text-decoration-line: inherit;
+  text-decoration-color: inherit;
+  text-decoration-style: inherit;
+}
