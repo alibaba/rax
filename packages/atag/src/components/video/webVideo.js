@@ -1,9 +1,9 @@
 import { PolymerElement } from 'Element';
 import { html } from '@polymer/polymer';
 
-const videoHub = window.videoHub = window.videoHub
+const videoHub = (window.videoHub = window.videoHub
   ? window.videoHub
-  : {};
+  : {});
 
 const pauseImage =
   'https://gw.alicdn.com/tfs/TB1xd9AuamWBuNjy1XaXXXCbXXa-142-142.png';
@@ -175,10 +175,10 @@ export default class VideoElement extends PolymerElement {
     // Update the seek bar as the video plays
     video.addEventListener('timeupdate', function() {
       // Calculate the slider value
-      var value = 100 / video.duration * video.currentTime;
+      var value = (100 / video.duration) * video.currentTime;
       // Update the slider value
-      lineFront.style.width = value * 60 / 100 + 'vw';
-      seekBar.style.left = value * 60 / 100 - 1.6 + 'vw';
+      lineFront.style.width = (value * 60) / 100 + 'vw';
+      seekBar.style.left = (value * 60) / 100 - 1.6 + 'vw';
     });
 
     video.addEventListener('ended', e => {

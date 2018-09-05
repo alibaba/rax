@@ -63,7 +63,7 @@ function assign(ta) {
     const docTop = document.documentElement && document.documentElement.scrollTop;
 
     ta.style.height = '';
-    ta.style.height = ta.scrollHeight + heightOffset + 'px';
+    ta.style.height = (ta.scrollHeight + heightOffset) + 'px';
 
     clientWidth = ta.clientWidth;
 

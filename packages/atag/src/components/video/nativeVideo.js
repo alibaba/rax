@@ -4,7 +4,7 @@ const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
 const isIOS = /(iPhone|iPad|iPod)/.test(ua);
 
-const videoHub = window.videoHub = window.videoHub ? window.videoHub : {};
+const videoHub = (window.videoHub = window.videoHub ? window.videoHub : {});
 let videoInstanceCount = 0;
 
 export default class VideoElement extends PolymerElement {
@@ -52,7 +52,7 @@ export default class VideoElement extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    const container = this.container = document.createElement('object');
+    const container = (this.container = document.createElement('object'));
     container.type = 'application/view';
     container.className = 'atag-native-video';
 
@@ -63,26 +63,26 @@ export default class VideoElement extends PolymerElement {
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);
-    const controls = this._controlsParamEl = VideoElement.createParamTag(
+    const controls = (this._controlsParamEl = VideoElement.createParamTag(
       'controls',
       this.controls ? 'true' : 'false'
-    );
+    ));
     // 1:playing  0：paused
-    const playStatus = this._playStatusParamsEl = VideoElement.createParamTag(
+    const playStatus = (this._playStatusParamsEl = VideoElement.createParamTag(
       'playStatus',
       '0'
-    );
+    ));
 
     // 1:enterFullscreen; 0：exitFullscreen；-1: do nothing
-    const fullScreenStatus = this._fullscreenParamEl = VideoElement.createParamTag(
+    const fullScreenStatus = (this._fullscreenParamEl = VideoElement.createParamTag(
       'fullScreenStatus',
       '-1'
-    );
+    ));
 
-    const loop = this._loopParamEl = VideoElement.createParamTag(
+    const loop = (this._loopParamEl = VideoElement.createParamTag(
       'loop',
       this.loop
-    );
+    ));
 
     const bridgeId = VideoElement.createParamTag(
       'bridgeId',
