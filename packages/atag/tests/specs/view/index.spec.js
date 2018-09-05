@@ -41,7 +41,7 @@ describe('<a-view>', function() {
     const el = document.createElement('a-view');
     el.style.height = '200px';
     el.style.backgroundColor = 'red';
-    el.innerHTML = `<a-view style="height: 1000px;background-color: red"></a-view>`;
+    el.innerHTML = '<a-view style="height: 1000px;background-color: red"></a-view>';
     el.setAttribute('disable-scroll', true);
     document.body.appendChild(el);
     setTimeout(() => {

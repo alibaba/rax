@@ -3,7 +3,7 @@ import { injectStyle } from 'shared/utils';
 import textStyle from './text.less';
 
 @injectStyle(textStyle)
-export default class TextElement extends HTMLElement {
+class TextElement extends HTMLElement {
   static get is() {
     return 'a-text';
   }
@@ -15,5 +15,7 @@ export default class TextElement extends HTMLElement {
     shadowRoot.appendChild(root);
   }
 }
+
+export default TextElement;
 
 customElements.define(TextElement.is, TextElement);

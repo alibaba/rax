@@ -71,6 +71,6 @@ describe('<a-radio> and <a-radio-group>', () => {
     elGroup.appendChild(el2);
     elGroup.appendChild(el3);
     document.body.appendChild(elGroup);
-    el.click();    
+    el.click();
   });
 });

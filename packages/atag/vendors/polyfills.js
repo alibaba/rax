@@ -6,9 +6,9 @@
  */
 
 if (!Array.prototype.includes) {
+  // eslint-disable-next-line
   Object.defineProperty(Array.prototype, 'includes', {
-    value: function (searchElement, fromIndex) {
-
+    value: function(searchElement, fromIndex) {
       // 1. Let O be ? ToObject(this value).
       if (this == null) {
         throw new TypeError('"this" is null or not defined');
@@ -54,10 +54,10 @@ if (!Array.prototype.includes) {
 }
 
 // polyfill setPrototypeOf
-Object.setPrototypeOf = Object.setPrototypeOf || function (obj, proto) {
+Object.setPrototypeOf = Object.setPrototypeOf || function(obj, proto) {
   obj.__proto__ = proto;
   return obj;
-}
+};
 
 /**
  * Code refactored from Mozilla Developer Network:

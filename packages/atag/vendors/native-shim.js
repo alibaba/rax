@@ -1,5 +1,4 @@
-; (function () {
-
+; (function() {
   /**
    * if customElements is polyfilled,
    * native shim is not needed.
@@ -25,5 +24,4 @@
     // for debug
     console.log(err);
   }
-
 })();

@@ -52,7 +52,7 @@ describe('form', () => {
       <a-button form-type="reset" id="btn">Reset</a-button>
     `;
     document.body.appendChild(form);
-    const resetFn = sinon.spy();
+    const resetFn = sinon.spy(); // eslint-disable-line
     form.addEventListener('custom-reset', resetFn);
 
     const clickEvt = new Event('click');

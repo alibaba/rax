@@ -1,7 +1,5 @@
 import { HTMLElement } from 'Element';
 
-
-
 /**
  * ref https://github.com/RevillWeb/img-2
  * MIT

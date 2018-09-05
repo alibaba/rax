@@ -54,17 +54,17 @@ describe('<a-scroll-view>', function() {
           resolve();
         }, 100);
       })
-      .then(() => {
-        el.setAttribute('scroll-x', true);
-        el.setAttribute('scroll-left', '100');
-        return new Promise(resolve => setTimeout(() => {
-          expect(el.scrollLeft).to.above(0).and.below(100);
-          resolve();
-        }, 200));
-      })
-      .then(() => {
-        done();
-      });
+        .then(() => {
+          el.setAttribute('scroll-x', true);
+          el.setAttribute('scroll-left', '100');
+          return new Promise(resolve => setTimeout(() => {
+            expect(el.scrollLeft).to.above(0).and.below(100);
+            resolve();
+          }, 200));
+        })
+        .then(() => {
+          done();
+        });
     }, 500);
   });
 
@@ -92,45 +92,44 @@ describe('<a-scroll-view>', function() {
       })
 
       // Horizontal scrolling
-      .then(() => {
-        return setTimeoutAsync(() => el.setAttribute('scroll-left', 200), 600);
-      })
-      .then(() => {
-        return setTimeoutAsync(() => el.setAttribute('scroll-left', 0), 600);
-      })
-      .then(() => {
-        return setTimeoutAsync(() => {
-          expect(scrollTimes).to.above(0);
-          expect(scrollLowerXTimes).to.above(1);
-          expect(scrollUpperXTimes).to.above(1);
-        }, 1200);
-      })
+        .then(() => {
+          return setTimeoutAsync(() => el.setAttribute('scroll-left', 200), 600);
+        })
+        .then(() => {
+          return setTimeoutAsync(() => el.setAttribute('scroll-left', 0), 600);
+        })
+        .then(() => {
+          return setTimeoutAsync(() => {
+            expect(scrollTimes).to.above(0);
+            expect(scrollLowerXTimes).to.above(1);
+            expect(scrollUpperXTimes).to.above(1);
+          }, 1200);
+        })
 
       // Vertical scrolling
-      .then(() => {
-        el.addEventListener('scrolltolower', () => scrollLowerYTimes++);
-        el.addEventListener('scrolltoupper', () => scrollUpperYTimes++);
-      })
-      .then(() => {
-        return setTimeoutAsync(() => el.setAttribute('scroll-top', 200), 600);
-      })
-      .then(() => {
-        return setTimeoutAsync(() => el.setAttribute('scroll-top', 0), 600);
-      })
-      .then(() => {
-        return setTimeoutAsync(() => {
-          expect(scrollLowerYTimes).to.above(1);
-          expect(scrollUpperYTimes).to.above(1);
-        }, 1200);
-      })
+        .then(() => {
+          el.addEventListener('scrolltolower', () => scrollLowerYTimes++);
+          el.addEventListener('scrolltoupper', () => scrollUpperYTimes++);
+        })
+        .then(() => {
+          return setTimeoutAsync(() => el.setAttribute('scroll-top', 200), 600);
+        })
+        .then(() => {
+          return setTimeoutAsync(() => el.setAttribute('scroll-top', 0), 600);
+        })
+        .then(() => {
+          return setTimeoutAsync(() => {
+            expect(scrollLowerYTimes).to.above(1);
+            expect(scrollUpperYTimes).to.above(1);
+          }, 1200);
+        })
 
-      .catch(e => {
-        throw e;
-      })
-      .then(() => {
-        done();
-      });
-
+        .catch(e => {
+          throw e;
+        })
+        .then(() => {
+          done();
+        });
     }, 500);
   });
 });

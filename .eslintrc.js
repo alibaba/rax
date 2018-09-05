@@ -154,7 +154,10 @@ module.exports = {
           "**/scripts/*.js",
           "**/__tests__/*.js",
           "**/__tests__/**/*.js",
-          '**/*.config.js'
+          '**/*.config.js',
+          "**/config/*.js",
+          "**/*.conf.js",
+          "**/tests/*.test.js"
         ]
       }
     ],
