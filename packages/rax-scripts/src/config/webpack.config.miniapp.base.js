@@ -125,7 +125,7 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         atag: {
-          test: /sfc\-atag\-beta/,
+          test: /[\\/]atag[\\/]/,
           name: 'miniapp-components',
           chunks: 'all',
           minSize: 0,
