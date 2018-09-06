@@ -1,10 +1,11 @@
-import 'atag/dist/atag.js';
+import 'atag';
 import { render as raxRender, createElement } from 'rax';
 import BrowserDriver from 'driver-browser';
 import createHashHistory from 'history/createHashHistory';
 import UniversalRouter from 'universal-router';
 
 import Container from './components/Container';
+import ErrorPage from './components/ErrorPage';
 
 BrowserDriver.setTagPrefix('a-');
 
@@ -33,10 +34,10 @@ export default {
    *
    */
   render(manifest, pagesMap) {
-    function miniappRender(Component) {
+    function miniappRender(Component, props = {}) {
       raxRender(
         <Container manifest={manifest}>
-          <Component />
+          <Component {...props} />
         </Container>,
         null,
         { driver: BrowserDriver },
@@ -52,18 +53,24 @@ export default {
     });
     const router = new UniversalRouter(routers);
 
+    function routerRender(pathname) {
+      router
+        .resolve({ pathname: pathname })
+        .then((Component) => {
+          miniappRender(Component);
+        })
+        .catch((error) => {
+          console.error(`Not found PageComponent on location pathname: "${pathname}"`);
+          miniappRender(ErrorPage, { history });
+        });
+    }
+
     const history = createHashHistory({ hashType: 'hashbang' });
     history.listen((location, action) => {
       getPathnameByLocation(location)
-        .then((pathname) => {
-          router.resolve({ pathname: pathname }).then((Component) => {
-            miniappRender(Component);
-          });
-        })
+        .then(routerRender)
         .catch(() => {
-          console.warn(
-            `history action: ${action}, but can not found pathname in location`,
-          );
+          console.warn(`history action: ${action}, but can not found pathname in location`);
         });
     });
 
@@ -75,11 +82,7 @@ export default {
     };
 
     getPathnameByLocation(history.location)
-      .then((pathname) => {
-        router.resolve({ pathname: pathname }).then((Component) => {
-          miniappRender(Component);
-        });
-      })
+      .then(routerRender)
       .catch(() => {
         history.push(manifest.homepage);
       });
