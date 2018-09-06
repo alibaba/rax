@@ -1,6 +1,6 @@
 {
   "name": "atag",
-  "version": "0.1.0-0",
+  "version": "0.1.0-1",
   "description": "Web Comoponents for MiniApp",
   "main": "dist/atag.js",
   "scripts": {

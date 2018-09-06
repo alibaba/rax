@@ -5,7 +5,7 @@ const webpack = require('webpack');
 module.exports = () => {
   return new Promise(done => {
     const entry = {
-      atag: [resolve('vendors/native-shim.js'), resolve('src/index.js')]
+      atag: [resolve('vendors/intersection-observer.js'), resolve('vendors/native-shim.js'), resolve('src/index.js')]
     };
 
     const config = {
