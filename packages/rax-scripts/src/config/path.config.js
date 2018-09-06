@@ -23,8 +23,9 @@ const paths = {
   appIndexJs: resolveApp('src/index.js'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
+  appManifest: resolveApp('manifest.json'),
   appNodeModules: resolveApp('node_modules'),
-  nodePaths: nodePaths
+  nodePaths: nodePaths,
 };
 
 module.exports = paths;
