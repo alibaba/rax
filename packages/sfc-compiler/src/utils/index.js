@@ -175,7 +175,7 @@ const globalComponentsRefName = exports.globalComponentsRefName = '__sfc_compone
 const componentDifinitionName = exports.componentDifinitionName = '__difinition__';
 const vdomHelperName = exports.vdomHelperName = '__vdom_helpers__';
 const styleObjectName = exports.styleObjectName = '__styles__';
-const VDOMHelpers = exports.VDOMHelpers =  '_c,_cx,_e,_s,_l,_t,_m,_v';
+const VDOMHelpers = exports.VDOMHelpers = '_c,_cx,_e,_s,_l,_t,_m,_v';
 exports.isVDOMHelperFns = makeMap(VDOMHelpers);
 exports.isSFCInternalIdentifier = makeMap([
   sfcModuleDeclarationName,
@@ -190,6 +190,6 @@ exports.isSFCInternalIdentifier = makeMap([
  * @param id name
  * @returns {boolean} isValid
  */
-exports.isValidIdentifier = function (id) {
+exports.isValidIdentifier = function(id) {
   return !/^\ws[~`!@#$%^&*()]/.test(id);
-}
+};

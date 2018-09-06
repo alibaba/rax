@@ -60,7 +60,7 @@ function genData(el) {
   el.styleBinding && styleArgs.push(el.styleBinding);
 
   data += `style:_cx(${styleArgs.join(',')}),`;
-console.log(data)
+  console.log(data);
   return data;
 }
 

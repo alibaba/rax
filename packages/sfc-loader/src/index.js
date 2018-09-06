@@ -9,12 +9,12 @@ const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
 
-module.exports = function (rawContent) {
+module.exports = function(rawContent) {
   this.cacheable();
 
   const callback = this.async();
   const context = this;
-  const contextPath = this.rootContext || (this.options && this.options.context) || process.cwd();
+  const contextPath = this.rootContext || this.options && this.options.context || process.cwd();
   const filePath = this.resourcePath;
   const userOptions = getOptions(this) || {};
   const relativePath = relative(contextPath, filePath);
