@@ -15,7 +15,7 @@
   // including ES6 class definition
   // iOS 8 can not recognize by throwing StynaxError
   try {
-    eval("class A {}");
+    eval('class A {}');
   } catch (err) {
     // not support es6 class
     return;

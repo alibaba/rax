@@ -62,7 +62,7 @@ describe('<a-checkbox> and <a-checkbox-group>', () => {
       done();
     });
     document.body.appendChild(el);
-    el.click();    
+    el.click();
   });
 
   it('will fire change event when clicked (<a-checkbox-group>)', (done) => {
@@ -84,6 +84,6 @@ describe('<a-checkbox> and <a-checkbox-group>', () => {
     elGroup.appendChild(el2);
     elGroup.appendChild(el3);
     document.body.appendChild(elGroup);
-    el.click();    
+    el.click();
   });
 });
