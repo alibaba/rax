@@ -12,14 +12,14 @@ $ npm install --save miniapp-web-renderer
 
 ## Usage
 
-- `renderer(manifest:<object>, pagesComponents:<object>)`
+- `renderer(manifest:<object>, pageComponents:<object>)`
 
 ```js
-import { renderer } from 'miniapp-web-renderer';
+import { render } from 'miniapp-web-renderer';
 
 const manifest = require('./manifest.json');
 
-renderer(manifest, {
+render(manifest, {
   home: require('./home/index.html'),
   list: require('./home/list.html'),
 });

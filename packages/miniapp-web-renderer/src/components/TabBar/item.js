@@ -5,28 +5,16 @@ export default class TabbarItem extends Component {
     const { data } = this.props;
 
     return (
-      <navigator
-        url={data.pageName}
-        style={{ textAlign: 'center' }}
-        id={`tabbar-page-${data.pageName}`}
-        data-page-name={data.pageName}
-      >
-        <image
-          src={data.iconPath}
-          aria-hidden="true"
-          style={{ width: '31.5rem', heigt: '31.5rem' }}
-        />
-        <view
-          style={{
-            fontSize: '3.2vw',
-            color: '#686868',
-            whiteSpace: 'nowrap',
-            lineHeight: '1em',
-          }}
-        >
-          {data.text}
-        </view>
+      <navigator style={styles.link} url={data.pageName} id={`tabbar-page-${data.pageName}`} data-page-name={data.pageName}>
+        <image style={styles.icon} src={data.iconPath} aria-hidden="true" />
+        <view style={styles.text}>{data.text}</view>
       </navigator>
     );
   }
 }
+
+const styles = {
+  link: { textAlign: 'center' },
+  icon: { width: '31.5rem', heigt: '31.5rem' },
+  text: { fontSize: '3.2vw', color: '#686868', whiteSpace: 'nowrap', lineHeight: '1em' },
+};
