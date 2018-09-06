@@ -3,7 +3,7 @@ const { generate } = require('./codegen');
 const { createCompilerCreator } = require('./create-compiler');
 const createRenderFn = require('./codegen/createRenderFn');
 const withScope = require('./codegen/withScope');
-const baseOptions = require('./options');
+const { baseOptions } = require('./options');
 
 /**
  * template: string

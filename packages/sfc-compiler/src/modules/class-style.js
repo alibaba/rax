@@ -3,6 +3,7 @@ const { getAndRemoveAttr, getBindingAttr } = require('../helpers');
 
 const STYLE_OBJECT_VAR = '__styles__';
 
+// not identifier
 function isExpression(expOrRef) {
   return /^[_$\w]/i.test(expOrRef);
 }
@@ -25,7 +26,7 @@ function transformNode(el, options) {
   // <view :class="bar" />
   const classBinding = getBindingAttr(el, 'class', false /* getStatic */);
   if (classBinding) {
-    classNames.push('this.' + classBinding);
+    classNames.push(isExpression(classBinding) ? 'this.' + classBinding : classBinding);
   }
 
   // array of classNames, eg. ["foo", this.bar]
@@ -47,7 +48,6 @@ function transformNode(el, options) {
 
 function genData(el) {
   let data = '';
-  console.log('entring genData', el);
   if (!el.staticStyle && !el.classNameStyle && !el.styleBinding) {
     return data;
   }
@@ -57,10 +57,9 @@ function genData(el) {
   styleArgs.push(STYLE_OBJECT_VAR);
   el.classNameStyle && styleArgs.push(el.classNameStyle);
   el.styleBinding && styleArgs.push(el.styleBinding);
-  el.styleBinding && styleArgs.push(el.styleBinding);
+  el.staticStyle && styleArgs.push(el.staticStyle);
 
   data += `style:_cx(${styleArgs.join(',')}),`;
-  console.log(data);
   return data;
 }
 

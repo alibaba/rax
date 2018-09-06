@@ -24,6 +24,7 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
       plugins: ['objectRestSpread']
     });
   } catch (err) {
+    console.warn(code);
     throw new Error('Babylon parse err at with scope: ' + err.message);
   }
 
