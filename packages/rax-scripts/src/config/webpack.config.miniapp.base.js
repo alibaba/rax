@@ -8,10 +8,7 @@ const webpack = require('webpack');
 const pathConfig = require('./path.config');
 
 const babelOptions = {
-  presets: [
-    require.resolve('babel-preset-es2015'),
-    require.resolve('babel-preset-rax'),
-  ],
+  presets: [require.resolve('babel-preset-es2015'), require.resolve('babel-preset-rax')],
   plugins: [require.resolve('rax-hot-loader/babel')],
 };
 
@@ -126,7 +123,7 @@ module.exports = {
       cacheGroups: {
         atag: {
           test: /[\\/]atag[\\/]/,
-          name: 'miniapp-components',
+          name: 'atag',
           chunks: 'all',
           minSize: 0,
           minChunks: 1,
