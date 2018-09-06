@@ -29,7 +29,6 @@
     "babel-preset-rax": "^0.6.5",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.1",
-    "clean-webpack-plugin": "^0.1.19",
     "commander": "^2.17.1",
     "copy-webpack-plugin": "^4.5.2",
     "cross-spawn": "^5.1.0",
