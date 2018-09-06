@@ -35,7 +35,7 @@ function transformCSSStyleObject(str) {
   return styleObj;
 }
 
-export default function renderStyle(styleObject = {}, classNames, styleBinding, staticStyle) {
+export default function renderStyle(classNames = [], styleObject = {}, styleBinding, staticStyle) {
   const validClasses = flatClassNames(classNames);
 
   const style = validClasses

@@ -52,10 +52,10 @@ function genData(el) {
     return data;
   }
 
-  // _cx(styleObject, ?classNames, ?styleBinding, ?staticStyle);
+  // _cx(classNames, styleObject, ?styleBinding, ?staticStyle);
   const styleArgs = [];
+  styleArgs.push(el.classNameStyle || '[]');
   styleArgs.push(STYLE_OBJECT_VAR);
-  el.classNameStyle && styleArgs.push(el.classNameStyle);
   el.styleBinding && styleArgs.push(el.styleBinding);
   el.staticStyle && styleArgs.push(el.staticStyle);
 
