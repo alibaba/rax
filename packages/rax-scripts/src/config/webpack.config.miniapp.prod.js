@@ -21,6 +21,7 @@ if ('serviceWorker' in navigator) {
 </script>`;
 
 const webpackConfigProd = webpackMerge(webpackConfigBase, {
+  devtool: process.env.DEBUG ? 'module-source-map' : 'none',
   entry: {
     'index.min': [pathConfig.appManifest],
   },
@@ -50,7 +51,7 @@ const webpackConfigProd = webpackMerge(webpackConfigBase, {
     }),
   ],
   optimization: {
-    minimize: true,
+    minimize: process.env.DEBUG ? false : true,
     minimizer: [
       new UglifyJsPlugin({
         cache: true,
