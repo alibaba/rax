@@ -30,7 +30,6 @@ const webpackConfigProd = webpackMerge(webpackConfigBase, {
       template: pathConfig.appHtml,
       registerServiceWorker: registerServiceWorker,
     }),
-
     new ManifestPlugin({
       fileName: 'asset-manifest.json',
     }),
