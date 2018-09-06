@@ -126,7 +126,7 @@ exports.getPages = function getPages(resourcePath) {
 
 // provide scope vars
 // provide render helper vars
-const vdomHelperFns = exports.vdomHelperFns = '_c,_s,_l,_t,_m,_v,_e,_cx,_w,_st';
+const vdomHelperFns = exports.vdomHelperFns = '_c,_s,_l,_t,_m,_v,_e,_cx,_w';
 const staticPreveredIdentifiers = 'data,true,false,null,$event,__components_refs__';
 const prerveredVars = exports.prerveredVars = makeMap(vdomHelperFns + ',' + staticPreveredIdentifiers);
 exports.vdomHelperVars = vdomHelperFns

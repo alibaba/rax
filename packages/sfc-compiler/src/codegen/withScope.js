@@ -2,6 +2,8 @@ const {
   isPreveredIdentifier,
   isPreveredGlobalObject,
   isValidIdentifier,
+  isSFCInternalIdentifier,
+  isVDOMHelperFns,
   no
 } = require('../utils');
 const babylon = require('babylon');
@@ -33,7 +35,8 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
       !isPrevered(node.name) &&
       !isPreveredIdentifier(node.name) &&
       !isPreveredGlobalObject(node.name) &&
-      !node.name.startsWith('__sfc_module_declaration__')
+      !isSFCInternalIdentifier(node.name) &&
+      !isVDOMHelperFns(node.name)
     ) {
       recordIds[node.name] = true;
     }

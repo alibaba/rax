@@ -77,7 +77,7 @@ module.exports = function templateLoader(content) {
   const globalStyleReq = globalStyle
     ? createRequire(stringifyRequest(
       this,
-      stylesheetLoaderPath + '!' + globalStyle
+      stylesheetLoaderPath + '?disableLog=true!' + globalStyle
     ))
     : '{}';
 
@@ -93,7 +93,7 @@ module.exports = function templateLoader(content) {
       _c = _c.bind(this);
 
       var $tpls = {};
-      var _st = Object.assign({}, globalStyle, pageStyle, ${styleReq});
+      var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
       function _w(is) {
         return $tpls[is] ? $tpls[is] : null;
       }

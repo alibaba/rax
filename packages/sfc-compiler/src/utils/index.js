@@ -172,7 +172,24 @@ exports.isPreveredGlobalObject = makeMap(
 
 const sfcModuleDeclarationName = exports.sfcModuleDeclarationName = '__sfc_module_declaration__';
 const globalComponentsRefName = exports.globalComponentsRefName = '__sfc_components_ref__';
-exports.isVDOMHelperFns = makeMap(
-  '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx,_st,_d,_w'
-);
-exports.isSFCInternalIdentifier = makeMap(`${sfcModuleDeclarationName},${globalComponentsRefName}`)
+const componentDifinitionName = exports.componentDifinitionName = '__difinition__';
+const vdomHelperName = exports.vdomHelperName = '__vdom_helpers__';
+const styleObjectName = exports.styleObjectName = '__styles__';
+const VDOMHelpers = exports.VDOMHelpers =  '_c,_cx,_e,_s,_l,_t,_m,_v';
+exports.isVDOMHelperFns = makeMap(VDOMHelpers);
+exports.isSFCInternalIdentifier = makeMap([
+  sfcModuleDeclarationName,
+  globalComponentsRefName,
+  componentDifinitionName,
+  styleObjectName,
+  vdomHelperName
+].join(','));
+
+/**
+ * check whether string is a valid identifer in JS
+ * @param id name
+ * @returns {boolean} isValid
+ */
+exports.isValidIdentifier = function (id) {
+  return !/^\ws[~`!@#$%^&*()]/.test(id);
+}

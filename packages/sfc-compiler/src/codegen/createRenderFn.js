@@ -1,11 +1,11 @@
-const { isVDOMHelperFns, isSFCInternalIdentifier } = require('../utils');
+const { isVDOMHelperFns, isSFCInternalIdentifier, VDOMHelpers, styleObjectName, componentDifinitionName, vdomHelperName, globalComponentsRefName } = require('../utils');
 const withScope = require('./withScope');
 
 module.exports = function(render, opts) {
   const { loaderContext, tagHelperMap, weexGlobalComponents, stringifyRequest } = opts;
 
   const isPreveredIdentifier = (key) => isVDOMHelperFns(key) && isSFCInternalIdentifier(key);
-  const thisDefines = withScope(render, isPreveredIdentifier);
+  const withScopeIdentifierDeclearation = withScope(render, isPreveredIdentifier);
 
   /**
    * driver weex components
@@ -22,17 +22,16 @@ module.exports = function(render, opts) {
   }
 
   const weexComponentsAdapter = weexGlobalComponents ? `
-    if (isWeex) {
-      __components_refs__ = Object.assign({
-        ${globalComponentReqs}
-      }, __components_refs__);
-    }` : '';
+    if (isWeex) Object.assign(__components_refs__, {
+      ${globalComponentReqs}
+    });` : '';
 
-  return `function(_st,_d,{${helpersFns}}, isWeex) {
-    var __components_refs__ = _d.components;
+  return `function(${styleObjectName}, ${componentDifinitionName}, ${vdomHelperName}, isWeex) {
+    ${VDOMHelpers.split(',').map((name) => `var ${name} = ${vdomHelperName}.${name};`).join('')}
+    var ${globalComponentsRefName} = ${componentDifinitionName}.components;
     ${weexComponentsAdapter}
     return function() {
-      ${thisDefines}
+      ${withScopeIdentifierDeclearation}
       return ${render};
     };
   }`;

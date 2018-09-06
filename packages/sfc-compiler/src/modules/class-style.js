@@ -1,7 +1,7 @@
 const { parseStyleText } = require('../utils/style');
 const { getAndRemoveAttr, getBindingAttr } = require('../helpers');
 
-const STYLE_OBJECT_VAR = '_st';
+const STYLE_OBJECT_VAR = '__styles__';
 
 function isExpression(expOrRef) {
   return /^[_$\w]/i.test(expOrRef);
@@ -47,6 +47,7 @@ function transformNode(el, options) {
 
 function genData(el) {
   let data = '';
+  console.log('entring genData', el);
   if (!el.staticStyle && !el.classNameStyle && !el.styleBinding) {
     return data;
   }
@@ -59,7 +60,7 @@ function genData(el) {
   el.styleBinding && styleArgs.push(el.styleBinding);
 
   data += `style:_cx(${styleArgs.join(',')}),`;
-
+console.log(data)
   return data;
 }
 
