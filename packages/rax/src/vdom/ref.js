@@ -10,9 +10,9 @@ export default {
     // Update refs in owner component
     if (prevRef !== nextRef) {
       // Detach prev RenderedElement's ref
-      prevRef != null && this.detach(prevElement._owner, prevRef, component);
+      prevRef !== false && this.detach(prevElement._owner, prevRef, component);
       // Attach next RenderedElement's ref
-      nextRef != null && this.attach(nextElement._owner, nextRef, component);
+      nextRef !== false && this.attach(nextElement._owner, nextRef, component);
     }
   },
   attach(ownerComponent, ref, component) {
