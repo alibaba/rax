@@ -7,7 +7,7 @@ const paths = require('./paths');
 const tplLoaderPath = require.resolve('./template');
 
 module.exports = function(content) {
-  const { type, globalStyle } = getOptions(this);
+  const { type, globalStylePath } = getOptions(this);
   const { resourcePath } = this;
   const relativePath = relative(this.rootContext, this.resourcePath);
 
@@ -29,7 +29,7 @@ module.exports = function(content) {
 
   const tplQueryString = new QueryString({
     type,
-    globalStyle,
+    globalStylePath,
     stylePath: style ? style.path : 'null',
     isPage: true
   });

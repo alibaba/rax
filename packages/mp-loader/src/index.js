@@ -16,20 +16,20 @@ module.exports = function(content) {
   const { resourcePath } = this;
   global.TRANSPILER_TYPE = loaderOptions.type;
 
-  let globalStyle = null;
+  let globalStylePath = null;
   const appStylePath = join(
     this.resourcePath,
     `../app.${STYLE_EXT}`
   );
 
   if (existsSync(appStylePath)) {
-    globalStyle = appStylePath;
+    globalStylePath = appStylePath;
   }
 
   const regPagesCode = getPages(resourcePath)
     .map((pagePath) => {
       const qs = new QueryString({
-        globalStyle,
+        globalStylePath,
         type: loaderOptions.type,
       });
       const absPagePath = join(this.rootContext, pagePath);

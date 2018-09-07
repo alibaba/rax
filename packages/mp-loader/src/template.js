@@ -18,7 +18,7 @@ module.exports = function templateLoader(content) {
   const {
     type,
     stylePath,
-    globalStyle,
+    globalStylePath,
     jsPath,
     isPage
   } = getOptions(this);
@@ -74,15 +74,13 @@ module.exports = function templateLoader(content) {
   }
 
   // prepare requirements
+  const vdomHelperReq = createRequireDefault(stringifyRequest(this, paths.vdomHelper));
+  const getAppReq = createRequireDefault(stringifyRequest(this, paths.getApp));
   const styleReq = stylePath && stylePath !== 'undefined'
     ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}?disableLog=true!${stylePath}`))
     : '{}';
-  const vdomHelperReq = stringifyRequest(this, paths.vdomHelper);
-  const globalStyleReq = globalStyle
-    ? createRequire(stringifyRequest(
-      this,
-      stylesheetLoaderPath + '?disableLog=true!' + globalStyle
-    ))
+  const globalStyleReq = globalStylePath
+    ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}?disableLog=true!${globalStylePath}`))
     : '{}';
 
   const renderFnScopeVariables = withScope(
@@ -93,15 +91,14 @@ module.exports = function templateLoader(content) {
 
   return `;(function(globalStyle, pageStyle, __vdom_helpers__, getApp){
     ${vdomHelperVars}
-    
     module.exports = function renderFactory(__parent_tpls__, Rax) {
       var __tpls__ = {};
       var __sfc_components_ref__ = {};
       var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
       function _w(is) { return tpls[is] ? tpls[is] : null; }
-      ${/* each page's _c need a unique Rax.createElement, for which is sharing a Host */ ''}
+      ${''}
       _c = _c.bind(Rax);
-      ${/* register templates for <template src="##" /> tag */ ''} 
+      ${''} 
       ${tplRegisters}
       function render(data) {
         ${renderFnScopeVariables}
@@ -112,7 +109,7 @@ module.exports = function templateLoader(content) {
   })(
     ${globalStyleReq},
     ${styleReq},
-    ${createRequireDefault(vdomHelperReq)},
-    ${createRequireDefault(stringifyRequest(this, paths.getApp))}
+    ${vdomHelperReq},
+    ${getAppReq}
   );`;
 };
