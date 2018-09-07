@@ -99,9 +99,9 @@ module.exports = function templateLoader(content) {
       var __sfc_components_ref__ = {};
       var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
       function _w(is) { return tpls[is] ? tpls[is] : null; }
-      ${/* each page's _c need a unique Rax.createElement, for which is sharing a Host */''}
+      ${/* each page's _c need a unique Rax.createElement, for which is sharing a Host */ ''}
       _c = _c.bind(Rax);
-      ${''} 
+      ${/* register templates for <template src="##" /> tag */ ''} 
       ${tplRegisters}
       function render(data) {
         ${renderFnScopeVariables}
