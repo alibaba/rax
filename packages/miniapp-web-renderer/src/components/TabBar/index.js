@@ -1,14 +1,24 @@
 import { createElement, Component } from 'rax';
-import TabBarItem from './item';
 
 export default class TabBar extends Component {
   render() {
-    const { config } = this.props;
-    const list = config.list || [];
+    const { tabBar, pages } = this.props;
+    const list = tabBar.list || [];
     return (
       <view style={styles.tabbarWrapper}>
         {list.map((item, index) => {
-          return <TabBarItem key={index} data={item} />;
+          return (
+            <navigator
+              key={index}
+              style={styles.link}
+              url={`/${pages[item.pageName]}`}
+              id={`tabbar-page-${item.pageName}`}
+              data-page-name={item.pageName}
+            >
+              <image style={styles.icon} src={item.iconPath} aria-hidden="true" />
+              <view style={styles.text}>{item.text}</view>
+            </navigator>
+          );
         })}
       </view>
     );
@@ -30,4 +40,7 @@ const styles = {
     borderTop: '1rem solid #eee',
     zIndex: 2,
   },
+  link: { textAlign: 'center' },
+  icon: { width: '31.5rem', heigt: '31.5rem' },
+  text: { fontSize: '24rem', color: '#686868', whiteSpace: 'nowrap', lineHeight: '1' },
 };

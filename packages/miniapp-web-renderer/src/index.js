@@ -4,15 +4,15 @@ import BrowserDriver from 'driver-browser';
 import createHashHistory from 'history/createHashHistory';
 import UniversalRouter from 'universal-router';
 
+import { resolve } from './path';
 import Container from './components/Container';
 import ErrorPage from './components/ErrorPage';
+import PagesManager from './PagesManager';
 
-BrowserDriver.setTagPrefix('a-');
-
-function getPathnameFromLocation(location) {
-  let { pathname = '' } = location;
-  pathname = pathname.replace(/^\//, '');
-  return pathname;
+try {
+  BrowserDriver.setTagNamePrefix('a-');
+} catch (e) {
+  BrowserDriver.setTagPrefix('a-');
 }
 
 export default {
@@ -27,6 +27,8 @@ export default {
    *  render({name: "demo"}, { home: HomeComponent })
    */
   render(manifest, pagesMap) {
+    const manifestPages = manifest.pages;
+    const pageManager = new PagesManager(manifestPages);
     function miniappRender(Component, props = {}) {
       raxRender(
         <Container manifest={manifest}>
@@ -40,7 +42,7 @@ export default {
     const routers = [];
     Object.entries(pagesMap).forEach(([pageName, pageComponent]) => {
       routers.push({
-        path: pageName,
+        path: '/' + pageName,
         action: () => pageComponent,
       });
     });
@@ -52,31 +54,35 @@ export default {
         .then((Component) => {
           miniappRender(Component);
         })
-        .catch((error) => {
+        .catch(() => {
           console.error(`Page "${pathname}" not found.`);
           miniappRender(ErrorPage, { history });
         });
     }
 
     const history = createHashHistory({ hashType: 'hashbang' });
-    history.listen((location, action) => {
-      const pathname = getPathnameFromLocation(location);
+    history.listen(({ pathname }) => {
       routerRender(pathname);
     });
 
     // @hack Simulation of the navigator
     // eslint-disable-next-line camelcase
     window.__renderer_to_worker__ = function __renderer_to_worker__({ navigateTo }) {
-      history.push(navigateTo);
+      const currentPathname = history.location.pathname;
+      const currentPageFilepath = pageManager.getPageFilepathByPathname(currentPathname);
+      const nextPageFilepath = resolve(currentPageFilepath, navigateTo);
+      const pageName = pageManager.getPageNameFromFilepath(nextPageFilepath);
+
+      history.push('/' + pageName);
     };
 
-    const pathnameInitValue = getPathnameFromLocation(history.location);
+    const pathnameInitValue = history.location.pathname;
 
-    if (pathnameInitValue) {
+    if (pathnameInitValue && pathnameInitValue !== '/') {
       routerRender(pathnameInitValue);
     } else {
       // default render of the manifest homepage field.
-      history.push(manifest.homepage);
+      history.push('/' + manifest.homepage);
     }
   },
 };

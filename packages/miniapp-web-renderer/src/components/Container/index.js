@@ -6,10 +6,11 @@ export default class Container extends Component {
   render() {
     const { manifest } = this.props;
     const tabBar = manifest.tabBar;
+    const pages = manifest.pages;
     return (
       <view style={styles.body}>
         <view style={[styles.main, { bottom: tabBar ? '12.8vw' : '0' }]}>{this.props.children}</view>
-        {tabBar && <TabBar config={tabBar} />}
+        {tabBar && <TabBar pages={pages} tabBar={tabBar} />}
       </view>
     );
   }
