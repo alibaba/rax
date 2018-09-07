@@ -110,7 +110,10 @@ module.exports = {
         test: /\.(png|jpe?g|gif)$/i,
         use: [
           {
-            loader: require.resolve('image-source-loader'),
+            loader: require.resolve('file-loader'),
+            options: {
+              name: 'images/[name]-[hash:8].[ext]',
+            },
           },
         ],
       },
