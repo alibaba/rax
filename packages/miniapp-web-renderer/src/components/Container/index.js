@@ -19,7 +19,7 @@ const styles = {
   body: {
     margin: '0',
     position: 'absolute',
-    width: '100vw',
+    width: '750rem',
     top: '0',
     bottom: '0',
     left: '0',

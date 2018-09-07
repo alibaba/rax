@@ -17,8 +17,8 @@ export default class TabBar extends Component {
 
 const styles = {
   tabbarWrapper: {
-    width: '100vw',
-    height: '12.8vw',
+    width: '750rem',
+    height: '96rem',
     backgroundColor: '#fff',
     display: 'flex',
     flexDirection: 'row',

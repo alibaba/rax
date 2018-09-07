@@ -16,5 +16,5 @@ export default class TabbarItem extends Component {
 const styles = {
   link: { textAlign: 'center' },
   icon: { width: '31.5rem', heigt: '31.5rem' },
-  text: { fontSize: '3.2vw', color: '#686868', whiteSpace: 'nowrap', lineHeight: '1em' },
+  text: { fontSize: '24rem', color: '#686868', whiteSpace: 'nowrap', lineHeight: '1' },
 };
