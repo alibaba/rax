@@ -40,10 +40,10 @@ module.exports = function(content) {
       );
       return createRequire(req);
     })
-    .join('');
+    .join(';');
 
   const compiledSource = compileToES5(content, {
-    sourceMap: true,
+    sourceMaps: true,
     sourceFileName: relativePath,
   });
 

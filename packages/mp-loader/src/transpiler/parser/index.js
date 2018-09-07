@@ -1,8 +1,7 @@
 const { parse } = require('sfc-compiler');
-const modules = require('../transpile');
-const baseOptions = require('./baseOptions');
+const modules = require('../transpileModules');
 
 exports.parse = function(ast, opt) {
-  const options = Object.assign({}, baseOptions, { modules }, opt);
+  const options = Object.assign({}, { modules }, opt);
   return parse(ast, options);
 };

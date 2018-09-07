@@ -13,7 +13,9 @@ module.exports = function(content) {
 
   let regPageName = relativePath.slice(0, -extname(relativePath).length);
   regPageName = String(regPageName).replace(/\\/g, '/'); // compatible for windows
-  const pageInfo = JSON.stringify({ path: regPageName });
+  const pageInfo = JSON.stringify({
+    page: regPageName,
+  });
 
   const { template, style, script } = parseSFC(resourcePath, {
     script: content,

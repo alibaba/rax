@@ -30,9 +30,11 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
   // each page has unique vars that can not be shared
   const pageContext = getCoreModule('@core/context');
   const pageEventEmitter = getCoreModule('@core/page');
-  const { document, pageQuery, pageName, Rax } = pageContext;
+  const Rax = getCoreModule('@core/rax');
 
-  const createVDOM = renderFactory();
+  const { document, pageQuery, pageName } = pageContext;
+
+  const render = renderFactory(null, Rax);
   return class extends Rax.Component {
     constructor(props, context) {
       super(props, context);
@@ -40,7 +42,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       // create Page instance, initialize data and setData
       this.pageInstance = new Page(this, config);
 
-      const { data, onLoad, onReady, onHide, onUnload, onPageScroll } = config;
+      const { data, onLoad, onReady, onHide, onUnload, onPageScroll, onPullIntercept } = config;
 
       if (data) this.state = data;
 
@@ -66,6 +68,12 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       // listen to pageScroll
       if ('function' === typeof onPageScroll && document) {
         document.body.addEventListener('scroll', onPageScroll.bind(this.pageInstance));
+      }
+      // onPullIntercept
+      if ('function' === typeof onPullIntercept) {
+        const cycleFn = onPullIntercept.bind(this.pageInstance);
+        this.cycleListeners.push({ type: 'pullIntercept', fn: cycleFn });
+        pageEventEmitter.on('pullIntercept', cycleFn);
       }
     }
 
@@ -100,7 +108,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
     }
 
     render() {
-      return createVDOM.call(this.pageInstance, this.pageInstance.data);
+      return render(this.pageInstance.data);
     }
   };
 }

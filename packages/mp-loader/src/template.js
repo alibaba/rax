@@ -1,10 +1,14 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
 const { relative } = require('path');
-const { makeMap, compileToES5, createRequire, createRequireDefault, QueryString, vdomHelperVars, prerveredVars } = require('./shared/utils');
+const { createRequire, createRequireDefault, QueryString, vdomHelperVars, prerveredVars } = require('./shared/utils');
 const { withScope } = require('sfc-compiler');
-const transpile = require('./transpiler');
+const transpiler = require('./transpiler');
 const paths = require('./paths');
+
+const STYLE_FILE_EXT = '.acss';
+const TEMPLATE_FILE_EXT = '.axml';
+const JS_FILE_EXT = '.js';
 
 const stylesheetLoaderPath = require.resolve('stylesheet-loader');
 /**
@@ -34,7 +38,7 @@ module.exports = function templateLoader(content) {
     templatePath: resourcePath,
     scope: ''
   };
-  const { renderFn, tplAlias, tplASTs, dependencies } = transpile(rawTpl, transpileOpts);
+  const { renderFn, tplAlias, tplASTs, dependencies } = transpiler(rawTpl, transpileOpts);
 
   let tplRegisters = '';
   // tpl include and import
@@ -48,12 +52,12 @@ module.exports = function templateLoader(content) {
         continue;
       }
 
-      const stylePath = tplPath.slice(0, -5) + '.acss';
+      const stylePath = tplPath.slice(0, -STYLE_FILE_EXT.length) + STYLE_FILE_EXT;
       if (existsSync(stylePath)) {
         hasStyle = true;
       }
 
-      const jsPath = tplPath.slice(0, -5) + '.js';
+      const jsPath = tplPath.slice(0, -JS_FILE_EXT.length) + JS_FILE_EXT;
       if (existsSync(jsPath)) {
         hasJS = true;
       }
@@ -65,13 +69,13 @@ module.exports = function templateLoader(content) {
       });
 
       const componentReq = stringifyRequest(this, `!!${__filename}?${qs}!${tplPath}`);
-      tplRegisters += `require(${componentReq}).call(this,$tpls);`;
+      tplRegisters += `require(${componentReq})(__tpls__, Rax);`;
     }
   }
 
   // prepare requirements
   const styleReq = stylePath && stylePath !== 'undefined'
-    ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}!${stylePath}`))
+    ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}?disableLog=true!${stylePath}`))
     : '{}';
   const vdomHelperReq = stringifyRequest(this, paths.vdomHelper);
   const globalStyleReq = globalStyle
@@ -89,23 +93,21 @@ module.exports = function templateLoader(content) {
 
   return `;(function(globalStyle, pageStyle, __vdom_helpers__, getApp){
     ${vdomHelperVars}
-    module.exports = function($parentTpls) {
-      _c = _c.bind(this);
-
-      var $tpls = {};
+    
+    module.exports = function renderFactory(__parent_tpls__, Rax) {
+      var __tpls__ = {};
+      var __sfc_components_ref__ = {};
       var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
-      function _w(is) {
-        return $tpls[is] ? $tpls[is] : null;
-      }
+      function _w(is) { return tpls[is] ? tpls[is] : null; }
+      ${/* each page's _c need a unique Rax.createElement, for which is sharing a Host */''}
+      _c = _c.bind(Rax);
+      ${''} 
       ${tplRegisters}
-
-      function createVDOM(data) {
-        var __components_refs__ = this.__components_refs__;
+      function render(data) {
         ${renderFnScopeVariables}
         return ${renderFn};
       }
-
-      return $parentTpls ? ($parentTpls['${tplAlias}'] = createVDOM) : createVDOM;
+      return __parent_tpls__ ? (__parent_tpls__['${tplAlias}'] = render) : render;
     }
   })(
     ${globalStyleReq},
