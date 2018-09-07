@@ -10,15 +10,9 @@ import ErrorPage from './components/ErrorPage';
 BrowserDriver.setTagPrefix('a-');
 
 function getPathnameByLocation(location) {
-  return new Promise((resolve, reject) => {
-    let { pathname = '' } = location;
-    pathname = pathname.replace(/^\//, '');
-    if (pathname) {
-      resolve(pathname);
-    } else {
-      reject();
-    }
-  });
+  let { pathname = '' } = location;
+  pathname = pathname.replace(/^\//, '');
+  return pathname;
 }
 
 export default {
@@ -60,18 +54,20 @@ export default {
           miniappRender(Component);
         })
         .catch((error) => {
-          console.error(`Not found PageComponent on location pathname: "${pathname}"`);
+          console.warn(`Not found PageComponent when location pathname is: "${pathname}"`);
+          console.error(error);
           miniappRender(ErrorPage, { history });
         });
     }
 
     const history = createHashHistory({ hashType: 'hashbang' });
     history.listen((location, action) => {
-      getPathnameByLocation(location)
-        .then(routerRender)
-        .catch(() => {
-          console.warn(`history action: ${action}, but can not found pathname in location`);
-        });
+      const pathname = getPathnameByLocation(location);
+      if (pathname) {
+        routerRender(pathname);
+      } else {
+        console.warn(`history action: ${action}, but can not found pathname in location`);
+      }
     });
 
     // @hack Simulation of the navigator
@@ -81,10 +77,13 @@ export default {
       history.push(navigateTo);
     };
 
-    getPathnameByLocation(history.location)
-      .then(routerRender)
-      .catch(() => {
-        history.push(manifest.homepage);
-      });
+    const initPathname = getPathnameByLocation(history.location);
+
+    if (initPathname) {
+      routerRender(initPathname);
+    } else {
+      // default render of the manifest homepage field.
+      history.push(manifest.homepage);
+    }
   },
 };
