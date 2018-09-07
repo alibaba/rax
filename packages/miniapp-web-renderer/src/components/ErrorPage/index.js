@@ -8,7 +8,7 @@ export default class ErrorPage extends Component {
     const { message = '好像发生了一些问题' } = this.props;
     return (
       <view style={styles.container}>
-        <image src="https://gw.alicdn.com/tfs/TB1VBforHSYBuNjSspfXXcZCpXa-510-370.png" style={styles.image} />
+        <image src={require('./not-found.png')} style={styles.image} />
         <text style={styles.text}>{message}</text>
         <button size="mini" onClick={this.handleBack}>
           返回
