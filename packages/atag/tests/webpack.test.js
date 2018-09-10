@@ -24,11 +24,15 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: [resolve('vendors')]
+      },
+      {
+        test: /\.(png|gif|jpe?g|svg)$/i,
+        loader: 'url-loader',
       }
     ]
   },
   resolve: {
-    modules: [resolve('src'), 'node_modules'],
+    modules: ['node_modules'],
     extensions: ['.js', '.json', '.html'],
     alias: {
       components: resolve('src/components')
