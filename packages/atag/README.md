@@ -1,6 +1,5 @@
-# atag
-
-Build By WebComponents
+# [atag](https://developer.taobao.com/components/)
+> A UI Web Components Library
 
 ### run dev
 
@@ -20,7 +19,3 @@ npm run build # build to dist/atag.js
 ```bash
 npm test
 ```
-
-### 
-
-* [Document](https://developer.taobao.com/components/)

@@ -1,9 +1,4 @@
 /**
- * polyfill ES
- */
-import '../vendors/polyfills';
-
-/**
  * list of atag components
  */
 import 'components/view';
@@ -32,5 +27,4 @@ import 'components/canvas';
 import 'components/audio';
 import 'components/navigator';
 import 'components/form';
-
 import 'components/unknown';

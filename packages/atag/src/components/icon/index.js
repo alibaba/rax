@@ -1,4 +1,4 @@
-import '../../../vendors/icons'; // reg icons
+import './icons'; // reg icons
 
 export default class IconElement extends HTMLElement {
   static get is() {
