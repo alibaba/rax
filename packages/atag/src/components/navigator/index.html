@@ -1,0 +1,89 @@
+<dom-module id="a-navigator">
+  <template>
+    <span><slot></slot></span>
+  </template>
+</dom-module>
+<script>
+  import { PolymerElement } from '@polymer/polymer';
+
+  class Navigator extends PolymerElement {
+    static get is() {
+      return 'a-navigator';
+    }
+
+    static get properties() {
+      return {
+        'hover-style': String,
+        'hover-start-time': Number,
+        'hover-stay-time': Number,
+        url: String,
+        'open-type': String,
+      };
+    }
+
+    ready() {
+      super.ready();
+      this.addEventListener('click', this.handleClick);
+      this.addEventListener('touchstart', this.handleTouchStart);
+      this.addEventListener('touchend', this.handleTouchEnd);
+    }
+
+    handleTouchStart() {
+      this.touchStartTime = Date.now();
+
+      if (this['hover-style']) {
+        this.touchTimer = setTimeout(() => {
+          this.prevStyle = this.getAttribute('style') || '';
+          this.setAttribute(
+            'style',
+            this.prevStyle + this['hover-style']
+          );
+        }, this['hover-start-time'] || 200);
+      }
+    }
+
+    handleTouchEnd() {
+      clearTimeout(this.touchTimer);
+
+      if (this['hover-style']) {
+        setTimeout(() => {
+          this.setAttribute(
+            'style',
+            this.prevStyle
+          );
+        }, this['hover-stay-time'] || 200);
+      }
+    }
+
+    /**
+     * parse path to absolute path
+     */
+    resolveURL(url) {
+      const currentPage = typeof __current_page__ === 'string' ? __current_page__ : ''; // todo: 更稳妥的获取方式
+      return url;
+    }
+
+    handleClick() {
+      const openType = this['open-type'] || 'navigate';
+      const { url = '' } = this;
+
+      if (typeof __renderer_to_worker__ === 'function') {
+        __renderer_to_worker__({
+          type: 'navigate',
+          navigateType: openType,
+          navigateTo: this.resolveURL(this.url),
+        });
+      } else {
+        console.error('[ATAG_WARNING] Can not find __renderer_to_worker__.');
+      }
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', this.handleClick);
+      this.removeEventListener('touchstart', this.handleTouchStart);
+      this.removeEventListener('touchend', this.handleTouchEnd);
+    }
+  }
+
+  customElements.define(Navigator.is, Navigator);
+</script>

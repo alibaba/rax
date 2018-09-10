@@ -1,0 +1,145 @@
+@import 'variables.less';
+
+:host {
+  display: block;
+}
+
+:host([size='mini']) {
+  display: inline-block;
+}
+
+:host > div {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin: @btn-margin;
+  padding: @btn-padding;
+  font-size: @btn-font-size;
+  text-align: center;
+  text-decoration: none;
+  line-height: unit(@btn-height / @btn-font-size);
+  border-radius: @btn-border-radius;
+  color: @btn-font-color;
+  background: @btn-background-color;
+  cursor: pointer;
+  min-width: 120/7.5vw;
+
+  .setTapColor();
+
+  &:after {
+    content: ' ';
+    width: 200%;
+    height: 200%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid rgba(0, 0, 0, 0);
+    transform: scale(0.5);
+    transform-origin: 0 0;
+    box-sizing: border-box;
+    border-radius: @btn-border-radius * 2;
+  }
+
+  &:active {
+    color: lighten(@btn-font-color, 10);
+    background-color: #dedede;
+  }
+}
+
+// primary
+:host([type='primary']) > div {
+  color: @btn-primary-font-color;
+  background: @btn-primary-background-color;
+
+  &:active {
+    color: rgba(255, 255, 255, 0.6);
+    background: @btn-primary-active-background-color;
+  }
+}
+
+// warn
+:host([type='warn']) > div {
+  color: @btn-warn-font-color;
+  background: @btn-warn-background-color;
+
+  &:active {
+    color: rgba(255, 255, 255, 0.6);
+    background-color: #ce3c39;
+  }
+}
+
+:host([size='mini']) > div {
+  display: inline-flex;
+  min-width: 80/7.5vw;
+  height: 56/7.5vw;
+  line-height: 56/7.5vw;
+  font-size: 24/7.5vw;
+}
+
+// plain
+:host([plain='']),
+:host([plain='true']) {
+  & > div {
+    background: transparent;
+    color: #ff5000;
+    &:after {
+      border: 2px solid #ff5000;
+    }
+  }
+
+  &:host([type='warn']) > div {
+    color: @btn-warn-background-color;
+    &:after {
+      border: 2px solid @btn-warn-background-color;
+    }
+  }
+
+  &:host([disabled='']),
+  &:host([disabled='true']) {
+    & > div {
+      pointer-events: none;
+      color: @btn-disabled-color;
+      background: transparent;
+      &:after {
+        border-color: inherit;
+      }
+    }
+  }
+}
+
+// disabled
+:host([disabled='']),
+:host([disabled='true']) {
+  & {
+    pointer-events: none;
+  }
+  & > div {
+    pointer-events: none;
+    color: @btn-disabled-color;
+    background: @btn-disabled-background-color;
+  }
+}
+
+.loading {
+  display: none;
+}
+
+:host([loading='']),
+:host([loading='true']) {
+  .loading {
+    display: block;
+  }
+}
+
+@keyframes _rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

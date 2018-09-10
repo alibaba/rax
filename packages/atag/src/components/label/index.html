@@ -1,0 +1,74 @@
+<dom-module id="a-label">
+  <template>
+    <slot></slot>
+  </template>
+</dom-module>
+
+<script>
+  import { PolymerElement } from '@polymer/polymer';
+  export default class Label extends PolymerElement {
+
+    static get is() {
+      return 'a-label';
+    }
+
+    static get properties() {
+      return {
+        for: {
+          type: String,
+          value: '',
+        },
+      };
+    }
+
+    constructor() {
+      super();
+    }
+
+    ready() {
+      super.ready();
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+      this.addEventListener('click', this._handleClick);
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      this.removeEventListener('click', this._handleClick);
+    }
+
+    _findTarget() {
+      let target;
+      if (this.for) {
+        target = document.querySelector(`#${this.for}`);
+      }
+      if (target) {
+        return target;
+      }
+
+      if (this.children) {
+        for (let i = 0, l = this.children.length; i < l; i++) {
+          let child = this.children[i]
+          let tagName = child.tagName.toLowerCase();
+          if (tagName === 'a-radio' || tagName === 'a-checkbox') {
+            target = child;
+            break;
+          }
+        }
+      }
+
+      return target;
+    }
+
+    _handleClick(ev) {
+      let forEl = this._findTarget();
+      if (!forEl) return;
+      forEl.focus();
+      forEl.click();
+    }
+  }
+
+  customElements.define(Label.is, Label);
+</script>

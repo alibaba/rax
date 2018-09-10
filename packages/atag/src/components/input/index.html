@@ -1,0 +1,170 @@
+<dom-module id="a-input">
+  <template>
+    <style id="style">
+      :host {
+        display: flex;
+        padding: 2vw 3.2vw;
+        background-color: white;
+        box-sizing: border-box;
+      }
+
+      :host #input {
+        width: 100%;
+        border-width: 0;
+        display: inline-block;
+        background-color: inherit;
+        outline: none;
+        font-size: inherit;
+        color: inherit;
+        box-sizing: border-box;
+      }
+    </style>
+    <input id="input" value$="{{value}}" type$="{{type}}" placeholder$="{{placeholder}}" disabled$="{{disabled}}" autofocus$="{{autoFocus}}"
+      maxlength$="[[maxlength]]"/>
+</template>
+</dom-module>
+
+<script>
+import { PolymerElement } from '@polymer/polymer';
+import { afterNextRender } from '../../shared/utils';
+
+export default class Input extends PolymerElement {
+  static get is() {
+    return 'a-input';
+  }
+
+  static get properties() {
+    return {
+      value: {
+        type: String,
+        value: ''
+      },
+      type: {
+        type: String,
+        value: 'text'
+      },
+      placeholder: {
+        type: String,
+        value: ''
+      },
+      placeholderStyle: {
+        type: String,
+        value: 'color: #999999;'
+      },
+      disabled: {
+        type: Boolean,
+        value: false
+      },
+      maxlength: {
+        type: Number,
+        value: 140
+      },
+      autoFocus: {
+        type: Boolean
+      }
+    };
+  }
+
+  ready() {
+    super.ready();
+    this.input = this.$.input;
+    this.formInitalValue = this.value;
+    afterNextRender(this, () => {
+      this.inputListener = this.inputListener.bind(this);
+      this.focusListener = this.focusListener.bind(this);
+      this.blurListener = this.blurListener.bind(this);
+      this._handlerReset = this._handlerReset.bind(this);
+      window.addEventListener('input', this.inputListener, true);
+      window.addEventListener('focus', this.focusListener, true);
+      window.addEventListener('blur', this.blurListener, true);
+      window.addEventListener('_formReset', this._handlerReset, true);
+    });
+    if (this.placeholderStyle) {
+      this.$.style.innerHTML += `
+        :host #input::placeholder {
+          ${this.placeholderStyle}
+        }
+      `;
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('input', this.inputListener, true);
+    window.removeEventListener('focus', this.focusListener, true);
+    window.removeEventListener('blur', this.blurListener, true);
+    window.removeEventListener('_formReset', this._handlerReset);
+  }
+
+  inputListener(event) {
+    if (!(event instanceof CustomEvent)) {
+      event.stopPropagation();
+      if (event.target === this) {
+        this.handleInput(event);
+      }
+    }
+  }
+
+  _handlerReset() {
+    this.input.value = this.value = this.formInitalValue;
+  }
+
+  focusListener(event) {
+    if (!(event instanceof CustomEvent)) {
+      event.stopPropagation();
+      if (event.target === this) {
+        this.handleFocus(event);
+      }
+    }
+  }
+
+  blurListener(event) {
+    if (!(event instanceof CustomEvent)) {
+      event.stopPropagation();
+      if (event.target === this) {
+        this.handleBlur(event);
+      }
+    }
+  }
+
+  handleInput(e) {
+    e.stopPropagation();
+    this.value = this.input.value;
+    const event = new CustomEvent('input', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value: this.input.value,
+        cursor: this.input.selectionStart
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
+  handleFocus(e) {
+    e.stopPropagation();
+    const event = new CustomEvent('focus', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value: this.input.value
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
+  handleBlur(e) {
+    e.stopPropagation();
+    const event = new CustomEvent('blur', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value: this.input.value
+      }
+    });
+    this.dispatchEvent(event);
+  }
+}
+
+customElements.define(Input.is, Input);
+</script>
