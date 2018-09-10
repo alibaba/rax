@@ -45,8 +45,7 @@
     "uppercamelcase": "^1.1.0",
     "webpack": "^4.0.1",
     "worker-loader": "^1.1.1",
-    "babel-preset-rax": "^0.6.5",
-    "@babel/plugin-proposal-decorators": "^7.0.0"
+    "babel-preset-rax": "^0.6.5"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
