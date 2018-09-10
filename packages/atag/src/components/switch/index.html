@@ -123,7 +123,7 @@ export default class SwitchElement extends PolymerElement {
     // save the formInitialValue for reset
     this.formInitialValue = this.checked;
     this.checkbox = this.$.input;
-    window.addEventListener('reset', this._handleReset, true);
+    window.addEventListener('_formReset', this.handleReset, true);
   }
 
   handleClick() {
@@ -146,12 +146,13 @@ export default class SwitchElement extends PolymerElement {
     }
   }
 
-  _handleReset = () => {
+  handleReset = () => {
     this.checkbox.checked = this.formInitialValue;
   };
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    window.removeEventListener('_formReset', this.handleReset);
   }
 }
 

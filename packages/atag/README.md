@@ -1,6 +1,6 @@
 # atag
 
-Components Library in WebComponents
+Build By WebComponents
 
 ### run dev
 
@@ -20,12 +20,6 @@ npm run build # build to dist/atag.js
 ```bash
 npm test
 ```
-
-### Notes
-
-We provide developers with a set of basic components that they can assemble for rapid development.
-
-Like common HTML tags, components are made up of a pair of closed tags, attributes on the tags, and tag content.
 
 ### 
 

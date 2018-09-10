@@ -77,7 +77,7 @@ export default class Input extends PolymerElement {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
       window.addEventListener('blur', this.blurListener, true);
-      window.addEventListener('reset', this._handlerReset, true);
+      window.addEventListener('_formReset', this._handlerReset, true);
     });
     if (this.placeholderStyle) {
       this.$.style.innerHTML += `
@@ -93,7 +93,7 @@ export default class Input extends PolymerElement {
     window.removeEventListener('input', this.inputListener, true);
     window.removeEventListener('focus', this.focusListener, true);
     window.removeEventListener('blur', this.blurListener, true);
-    window.removeEventListener('reset', this._handlerReset);
+    window.removeEventListener('_formReset', this._handlerReset);
   }
 
   inputListener(event) {

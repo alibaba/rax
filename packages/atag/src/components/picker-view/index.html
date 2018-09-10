@@ -49,13 +49,13 @@ export default class PickerView extends PolymerElement {
     this.formInitialValue = this.value;
     this._valueChanged(this.value);
     this.addEventListener('change', this._onChange);
-    window.addEventListener('reset', this._handleReset, true);
+    window.addEventListener('_formReset', this._handleReset, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('change', this._onChange);
-    window.removeEventListener('reset', this._handleReset, true);
+    window.removeEventListener('_formReset', this._handleReset, true);
   }
 
   _onChange(ev) {
@@ -66,7 +66,6 @@ export default class PickerView extends PolymerElement {
     if (i < 0) return;
     this.set(`value.${i}`, detail.selectedIndex);
     this._dispatchEvent('change');
-    this._dispatchEvent('bindchange');
   }
 
   _pickerViewColumnStyleChange(indicatorStyle) {

@@ -148,6 +148,7 @@ export default class Slider extends PolymerElement {
 
   ready() {
     super.ready();
+    this.formInitialValue = this.value;
   }
 
   connectedCallback() {
@@ -159,6 +160,7 @@ export default class Slider extends PolymerElement {
     this.$.indicatorDotWrapper.addEventListener('touchmove', this._onTouchMove);
     this.$.indicatorDotWrapper.addEventListener('touchend', this._onTouchEnd);
     this.sliderWidth = this.$.container.offsetWidth;
+    window.addEventListener('_formReset', this.handleReset, true);
   }
 
   disconnectedCallback() {
@@ -175,6 +177,7 @@ export default class Slider extends PolymerElement {
       'touchend',
       this._onTouchEnd
     );
+    window.removeEventListener('_formReset', this.handleReset, true);
   }
 
   computeRange(min, max) {
@@ -224,7 +227,6 @@ export default class Slider extends PolymerElement {
 
   _onTouchEnd(ev) {
     this.dispatchEvent(this._createEvent('change'));
-    this.dispatchEvent(this._createEvent('bindchange')); // Match micro-msg api
   }
 
   _createEvent(type) {
@@ -233,6 +235,10 @@ export default class Slider extends PolymerElement {
       bubbles: true,
       cancelable: false
     });
+  }
+
+  handleReset = () => {
+    this.value = this.formInitialValue;
   }
 }
 

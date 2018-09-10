@@ -81,13 +81,13 @@ class Button extends PolymerElement {
     let evt;
     switch (this.formType) {
       case 'submit':
-        evt = new CustomEvent('custom-submit', {
+        evt = new CustomEvent('_submit', {
           bubbles: true,
           composed: true
         });
         break;
       case 'reset':
-        evt = new CustomEvent('custom-reset', {
+        evt = new CustomEvent('_reset', {
           bubbles: true,
           composed: true
         });

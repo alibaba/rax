@@ -101,7 +101,7 @@ export default class Textarea extends PolymerElement {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
       window.addEventListener('blur', this.blurListener, true);
-      window.addEventListener('reset', this._handleReset, true);
+      window.addEventListener('_formReset', this._handleReset, true);
       if (this.autoHeight) {
         autosize(this.textarea);
       }
@@ -113,7 +113,7 @@ export default class Textarea extends PolymerElement {
     window.removeEventListener('input', this.inputListener, true);
     window.removeEventListener('focus', this.focusListener, true);
     window.removeEventListener('blur', this.blurListener, true);
-    window.removeEventListener('reset', this._handleReset, true);
+    window.removeEventListener('_formReset', this._handleReset, true);
     autosize.destroy(this.textarea);
   }
 

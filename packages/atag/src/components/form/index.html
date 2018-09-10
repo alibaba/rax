@@ -29,14 +29,14 @@ export default class FormElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('custom-submit', this._handlerSubmit);
-    this.removeEventListener('custom-reset', this._handlerReset);
+    this.removeEventListener('_submit', this._handlerSubmit);
+    this.removeEventListener('_reset', this._handlerReset);
   }
 
   _listen() {
     afterNextRender(this, () => {
-      this.addEventListener('custom-submit', this._handlerSubmit);
-      this.addEventListener('custom-reset', this._handlerReset);
+      this.addEventListener('_submit', this._handlerSubmit);
+      this.addEventListener('_reset', this._handlerReset);
     })
   }
 
@@ -51,10 +51,17 @@ export default class FormElement extends PolymerElement {
      * but the performance is too low,
      * and it is not as good as saving the initial value for each form element itself.
      */
-    const evt = new CustomEvent('reset', {
+    const formResetEvt = new CustomEvent('_formReset', {
       bubbles: false
     });
-    this.dispatchEvent(evt);
+    this.dispatchEvent(formResetEvt);
+
+    const resetEvt = new CustomEvent('reset', {
+      bubbles: true,
+      composed: true,
+      detail: {}
+    });
+    this.dispatchEvent(resetEvt);
   }
 }
 

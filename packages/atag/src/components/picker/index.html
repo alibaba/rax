@@ -198,7 +198,7 @@ export default class Picker extends PolymerElement {
     content.addEventListener('touchstart', this._handleTouchstart);
     content.addEventListener('touchend', this._handleTouchend);
     content.addEventListener('touchmove', this._handleTouchmove);
-    window.addEventListener('reset', this._handleReset, true);
+    window.addEventListener('_formReset', this._handleReset, true);
 
     this.container = this.$.container;
     this.mask = this.$.mask;
@@ -238,7 +238,7 @@ export default class Picker extends PolymerElement {
   }
 
   disconnectedCallback() {
-    window.removeEventListener('reset', this._handleReset, true);
+    window.removeEventListener('_formReset', this._handleReset, true);
   }
 
   show() {

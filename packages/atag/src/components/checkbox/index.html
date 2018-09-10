@@ -116,13 +116,13 @@ export default class CheckboxElement extends PolymerElement {
     this.formInitialValue = this.checked;
     this.checkbox.addEventListener('change', this.changeHandler);
     this.addEventListener('click', this.clickHandler, true);
-    window.addEventListener('reset', this._handlerReset, true);
+    window.addEventListener('_formReset', this._handlerReset, true);
   }
 
   disconnectedCallback() {
     this.checkbox.removeEventListener('change', this.changeHandler);
     this.removeEventListener('click', this.clickHandler, true);
-    window.removeEventListener('reset', this._handlerReset, true);
+    window.removeEventListener('_formReset', this._handlerReset, true);
   }
 
   _handlerReset = () => {
@@ -142,7 +142,7 @@ export default class CheckboxElement extends PolymerElement {
         value: this.checked
       }
     });
-    const innerEvent = new CustomEvent('$a-checkbox-change', {
+    const innerEvent = new CustomEvent('_checkboxChangee', {
       bubbles: true,
       cancelable: true,
       detail: {

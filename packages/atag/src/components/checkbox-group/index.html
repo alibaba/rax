@@ -75,7 +75,7 @@ export default class CheckboxGroupElement extends PolymerElement {
   ready() {
     super.ready();
 
-    this.addEventListener('$a-checkbox-change', this.changeHandler);
+    this.addEventListener('_checkboxChange', this.changeHandler);
   }
 
   changeHandler = e => {
@@ -95,7 +95,7 @@ export default class CheckboxGroupElement extends PolymerElement {
   };
 
   disconnectedCallback() {
-    this.removeEventListener('$a-checkbox-change', this.changeHandler);
+    this.removeEventListener('_checkboxChange', this.changeHandler);
   }
 }
 

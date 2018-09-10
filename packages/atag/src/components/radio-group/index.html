@@ -76,11 +76,15 @@ export default class RadioGroupElement extends PolymerElement {
 
   ready() {
     super.ready();
-
-    this.addEventListener('$a-radio-change', this.changeHandler.bind(this));
+    this.addEventListener('_radioChange', this.changeHandler);
   }
 
-  changeHandler(e) {
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.addEventListener('_radioChange', this.changeHandler);
+  }
+
+  changeHandler = (e) => {
     const checkboxList = this.querySelectorAll('a-radio');
     for (let i = 0; i < checkboxList.length; i++) {
       const node = checkboxList[i];
