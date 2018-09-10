@@ -1,4 +1,4 @@
-import shouldDowngradeNativeView from 'shared/utils/shouldDowngradeNativeView';
+import shouldDowngradeNativeView from '../../shared/utils/shouldDowngradeNativeView';
 import NativeVideo from './video.native';
 import WebVideo from './video.web';
 
