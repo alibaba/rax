@@ -5,7 +5,6 @@ const isAndroid = /android/i.test(ua);
 const isIOS = /(iPhone|iPad|iPod)/.test(ua);
 
 let videoInstanceCount = 0;
-
 export default class VideoElement extends PolymerElement {
   static get is() {
     return 'a-video';
@@ -45,37 +44,40 @@ export default class VideoElement extends PolymerElement {
 
   constructor(...args) {
     super(...args);
+
+    document.addEventListener('WVEmbed.Ready', this._nativeReady);
     this.uniqueId = String(++videoInstanceCount);
   }
 
   connectedCallback() {
     super.connectedCallback();
-    const container = this.container = document.createElement('object');
+
+    const container = (this.container = document.createElement('object'));
     container.type = 'application/view';
     container.className = 'atag-native-video';
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);
-    const controls = this._controlsParamEl = VideoElement.createParamTag(
+    const controls = (this._controlsParamEl = VideoElement.createParamTag(
       'controls',
       this.controls ? 'true' : 'false'
-    );
+    ));
     // 1:playing  0：paused
-    const playStatus = this._playStatusParamsEl = VideoElement.createParamTag(
+    const playStatus = (this._playStatusParamsEl = VideoElement.createParamTag(
       'playStatus',
       '0'
-    );
+    ));
 
     // 1:enterFullscreen; 0：exitFullscreen；-1: do nothing
-    const fullScreenStatus = this._fullscreenParamEl = VideoElement.createParamTag(
+    const fullScreenStatus = (this._fullscreenParamEl = VideoElement.createParamTag(
       'fullScreenStatus',
       '-1'
-    );
+    ));
 
-    const loop = this._loopParamEl = VideoElement.createParamTag(
+    const loop = (this._loopParamEl = VideoElement.createParamTag(
       'loop',
       this.loop
-    );
+    ));
 
     const bridgeId = VideoElement.createParamTag(
       'bridgeId',
@@ -114,6 +116,21 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener('WVEmbed.Ready', this._nativeReady);
+  }
+
+  setStyle(style) {
+    if (typeof style === 'string') {
+      this.container.style.cssText = style;
+    }
+  }
+
+  getBridgeId() {
+    return this.uniqueId;
+  }
+
   showControls() {
     if (isIOS && this._controlsParamEl) {
       this._controlsParamEl.setAttribute('value', 'true');
@@ -136,16 +153,6 @@ export default class VideoElement extends PolymerElement {
     } else {
       console.warn('Controls status params el not exists');
     }
-  }
-
-  setStyle(style) {
-    if (typeof style === 'string') {
-      this.container.style.cssText = style;
-    }
-  }
-
-  getBridgeId() {
-    return this.uniqueId;
   }
 
   /**
@@ -215,9 +222,27 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
+  isNativeReady = false;
+  nativeReadyCallbacks = [];
+
   callNativeControl(method, params) {
-    window.WindVane.call('WVEmbedView_' + this.getBridgeId(), method, params);
+    const execute = () => {
+      window.WindVane.call('WVEmbedView_' + this.getBridgeId(), method, params);
+    };
+    if (this.isNativeReady) {
+      execute();
+    } else {
+      this.nativeReadyCallbacks.push(execute);
+    }
   }
+
+  _nativeReady = evt => {
+    this.isNativeReady = true;
+    let fn;
+    while ((fn = this.nativeReadyCallbacks.shift())) {
+      fn();
+    }
+  };
 
   static createParamTag(key, value) {
     const param = document.createElement('param');
