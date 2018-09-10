@@ -23,10 +23,6 @@ const extend = exports.extend = function extend(to, _from) {
 
 const isPreTag = exports.isPreTag = tag => tag === 'pre';
 
-const uuidv4 = require('uuid/v4');
-// each compiler share a same uiid
-exports.uniqueInstanceID = 'i' + uuidv4().slice(0, 5);
-
 const isReservedTag = exports.isReservedTag = makeMap(
   'template,script,style,element,content,slot,link,meta,svg,view,' +
   'a,div,img,image,text,span,richtext,input,switch,textarea,spinner,select,' +
@@ -173,3 +169,27 @@ exports.isPreveredGlobalObject = makeMap(
   'Proxy,Promise,Reflect,Set,Map,ArrayBuffer' +
   'Int8Array,Uint8Array,Uint8ClampedArray,Int16Array,Uint16Array,Int32Array,Uint32Array,Float32Array,Float64Array'
 );
+
+const sfcModuleDeclarationName = exports.sfcModuleDeclarationName = '__sfc_module_declaration__';
+const globalComponentsRefName = exports.globalComponentsRefName = '__sfc_components_ref__';
+const componentDifinitionName = exports.componentDifinitionName = '__difinition__';
+const vdomHelperName = exports.vdomHelperName = '__vdom_helpers__';
+const styleObjectName = exports.styleObjectName = '__styles__';
+const VDOMHelpers = exports.VDOMHelpers = '_c,_cx,_e,_s,_l,_t,_m,_v';
+exports.isVDOMHelperFns = makeMap(VDOMHelpers);
+exports.isSFCInternalIdentifier = makeMap([
+  sfcModuleDeclarationName,
+  globalComponentsRefName,
+  componentDifinitionName,
+  styleObjectName,
+  vdomHelperName
+].join(','));
+
+/**
+ * check whether string is a valid identifer in JS
+ * @param id name
+ * @returns {boolean} isValid
+ */
+exports.isValidIdentifier = function(id) {
+  return !/^\ws[~`!@#$%^&*()]/.test(id);
+};

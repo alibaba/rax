@@ -1,44 +1,45 @@
 const {
-  uniqueInstanceID,
-  makeMap,
   isPreveredIdentifier,
-  isPreveredGlobalObject
+  isPreveredGlobalObject,
+  isValidIdentifier,
+  isSFCInternalIdentifier,
+  isVDOMHelperFns,
+  no
 } = require('../utils');
 const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
 const t = require('babel-types');
 
 /**
- * 类似 with, 注入 scope binding
- * _c(foo) --> _c(this.foo)
- * @param {String} code 源码
- * @param {Function} existsScope 白名单
- * @param {String} prefix 前缀
+ * like with, for identifier add scope binding
+ * eg. _c(foo) --> _c(this.foo)
+ * @param {String} code source of the code
+ * @param {Function} isPrevered whitelist
+ * @param {String} scope
  */
-module.exports = function(code, existsScope = () => false, prefix = 'this') {
+module.exports = function(code, isPrevered = no, scope = 'this') {
   let ast;
   try {
     ast = babylon.parse(code, {
       plugins: ['objectRestSpread']
     });
   } catch (err) {
-    console.log(code);
-    throw new Error('Babylon parse err at inject this scope: ' + err.message);
+    console.warn(code);
+    throw new Error('Babylon parse err at with scope: ' + err.message);
   }
 
-  const names = {};
+  const recordIds = {};
 
   function add(node) {
     if (
       t.isIdentifier(node) &&
-      !existsScope(node.name) &&
-      // preserved identifier
+      !isPrevered(node.name) &&
       !isPreveredIdentifier(node.name) &&
       !isPreveredGlobalObject(node.name) &&
-      !node.name.startsWith(`$_${uniqueInstanceID}`) &&
-      node.name !== '_st'
+      !isSFCInternalIdentifier(node.name) &&
+      !isVDOMHelperFns(node.name)
     ) {
-      names[node.name] = true;
+      recordIds[node.name] = true;
     }
   }
 
@@ -103,19 +104,13 @@ module.exports = function(code, existsScope = () => false, prefix = 'this') {
 
   traverse(ast, visitor);
 
-  // 获取 this scope binding
-  const variableDeclarations = Object.keys(names)
+  // generate scope binding code
+  return Object.keys(recordIds)
     .map(
       name =>
-        `var ${name} = ${prefix}${
+        `var ${name} = ${scope}${
           isValidIdentifier(name) ? '.' + name : "['" + name + "']"
         };`
     )
-    .join('\n');
-
-  function isValidIdentifier(id) {
-    return !/^\ws[~`!@#$%^&*()]/.test(id);
-  }
-
-  return variableDeclarations;
+    .join('');
 };

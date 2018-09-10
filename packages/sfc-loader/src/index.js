@@ -1,15 +1,15 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
-const { basename, extname, dirname, relative, join } = require('path');
+const { relative } = require('path');
 const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
 const transformStyle = require('./transform/style');
-const { createCompiler, createRenderFn, baseOptions, uniqueInstanceID } = require('sfc-compiler');
+const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
 
 const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
 
-module.exports = function(rawContent, inputSourceMap) {
+module.exports = function(rawContent) {
   this.cacheable();
 
   const callback = this.async();
@@ -20,17 +20,13 @@ module.exports = function(rawContent, inputSourceMap) {
   const relativePath = relative(contextPath, filePath);
 
   const { template, script, styles } = parseSFCParts(rawContent);
-  const declarationName = `$_${uniqueInstanceID}_declaration`;
+  const declarationName = '__sfc_module_declaration__';
   const { declarationCode, sourceMap, scopeIdentifiers } = transformScript(
     script.content,
     declarationName,
     relativePath,
     rawContent
   );
-
-  if (template.content == null) {
-    template.content = '';
-  }
 
   const { render, ast } = compiler.compile(template.content, {
     scopeRefIdentifiers: scopeIdentifiers,
@@ -59,7 +55,7 @@ module.exports = function(rawContent, inputSourceMap) {
 
   transformStyle(styles.content, filePath);
 
-  const loadStyleString = `${stylesheetLoader}?transformDescendantCombinator=true!${transformLoader}?id=${filePath}`;
+  const loadStyleString = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true!${transformLoader}?id=${filePath}`;
   const loadStyleRequest = stringifyRequest(
     context,
     `!!${loadStyleString}!${filePath}`
@@ -78,29 +74,28 @@ module.exports = function(rawContent, inputSourceMap) {
 
   /**
    * support ESModules / commonjs exportation
-   * ?module=modules/commonjs
    */
-  const moduleExports = [];
+  const moduleExportsWrapper = [];
 
-  // commonjs
   if (userOptions.module === 'commonjs') {
-    moduleExports[0] = 'module.exports =';
-    moduleExports[1] = '';
+    // commonjs
+    moduleExportsWrapper[0] = 'module.exports =';
+    moduleExportsWrapper[1] = '';
   } else {
     // ESModules
-    moduleExports[0] = 'exports.__esModule = true; exports.default=';
-    moduleExports[1] = '.default';
+    moduleExportsWrapper[0] = 'exports.__esModule = true; exports.default =';
+    moduleExportsWrapper[1] = '.default';
   }
 
   const output = `${declarationCode};
-    ${moduleExports[0]} require(${sfcRuntimeModuleName})${moduleExports[1]}(
-      typeof ${declarationName} === void 0 ? {} : ${declarationName},
+    ${moduleExportsWrapper[0]} require(${sfcRuntimeModuleName})${moduleExportsWrapper[1]}(
+      typeof ${declarationName} === 'undefined' ? {} : ${declarationName},
       ${renderFn},
       require(${loadStyleRequest}),
       require(${raxModuleName})
     );`;
 
-  // if webpack devtool is configured
+  // whether webpack's devtool is configured
   if (this.sourceMap) {
     callback(null, output, sourceMap);
   } else {

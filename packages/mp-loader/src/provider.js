@@ -1,7 +1,6 @@
 const { relative } = require('path');
-const { stringifyRequest, getOptions } = require('loader-utils');
+const { stringifyRequest } = require('loader-utils');
 const paths = require('./paths');
-
 
 module.exports = function providerLoader(content) {
   const { resourcePath } = this;

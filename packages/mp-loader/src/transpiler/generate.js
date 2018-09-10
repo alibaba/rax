@@ -1,4 +1,4 @@
-const modules = require('../transpile');
+const modules = require('./transpileModules');
 const { baseOptions, generate } = require('sfc-compiler');
 
 module.exports = function(ast) {

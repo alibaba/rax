@@ -1,4 +1,4 @@
-const { parseExpression } = require('./babylon');
+const { parseExpression } = require('babylon');
 const traverse = require('babel-traverse').default;
 const generate = require('babel-generator').default;
 const t = require('babel-types');

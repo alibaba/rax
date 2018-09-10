@@ -65,12 +65,13 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
 
   return class extends Component {
     constructor(props, context) {
+      super(props, context);
+
       // life cycle: before create
       if (typeof defining.beforeCreate === 'function') {
         defining.beforeCreate.call(null);
       }
 
-      const possiblilyReturned = Component.apply(this, arguments);
       this.props = Object.assign({}, props);
 
       // vm: view-model proxy all
@@ -159,7 +160,6 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
 
       // register render
       this.render = renderLifecycle.bind(vm);
-      return possiblilyReturned;
     }
   };
 }

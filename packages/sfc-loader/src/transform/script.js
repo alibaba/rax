@@ -132,7 +132,6 @@ module.exports = (
     };
   }
 
-  // debugger;
   const { code: $code, map: $map } = babel.transformFromAst(ast, code, {
     // presets order from last to first
     presets: [require('babel-preset-env'), require('babel-preset-stage-0')],
