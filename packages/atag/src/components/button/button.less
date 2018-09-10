@@ -14,13 +14,10 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-
   box-sizing: border-box;
   overflow: hidden;
-
   margin: @btn-margin;
   padding: @btn-padding;
-
   font-size: @btn-font-size;
   text-align: center;
   text-decoration: none;
@@ -29,7 +26,6 @@
   color: @btn-font-color;
   background: @btn-background-color;
   cursor: pointer;
-
   min-width: 120/7.5vw;
 
   .setTapColor();
@@ -93,9 +89,6 @@
     &:after {
       border: 2px solid #ff5000;
     }
-  }
-
-  &:host([type='primary']) > div {
   }
 
   &:host([type='warn']) > div {

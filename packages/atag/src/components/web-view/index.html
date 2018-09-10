@@ -18,22 +18,22 @@
 </dom-module>
 
 <script>
-  import { PolymerElement } from 'Element';
+import { PolymerElement } from 'Element';
 
-  export default class WebView extends PolymerElement {
-    static get is() {
-      return 'a-web-view';
-    }
-
-    static get properties() {
-      return {
-        src: {
-          type: String,
-          notify: true
-        }
-      }
-    }
+export default class WebView extends PolymerElement {
+  static get is() {
+    return 'a-web-view';
   }
 
-  customElements.define(WebView.is, WebView);
+  static get properties() {
+    return {
+      src: {
+        type: String,
+        notify: true
+      }
+    };
+  }
+}
+
+customElements.define(WebView.is, WebView);
 </script>

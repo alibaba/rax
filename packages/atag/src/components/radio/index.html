@@ -4,7 +4,6 @@
       :host {
         position: relative;
         box-sizing: border-box;
-
         -webkit-user-select: none;
         user-select: none;
         overflow: hidden;
@@ -157,14 +156,14 @@ export default class RadioElement extends PolymerElement {
 
   getCircleCheckedStyle(checked, color) {
     if (checked) {
-      return `border: 2px solid ${color};`
+      return `border: 2px solid ${color};`;
     }
     return '';
-  };
+  }
 
   getDotCheckedStyle(checked, color) {
     if (checked) {
-      return `background-color: ${color};`
+      return `background-color: ${color};`;
     }
     return '';
   }

@@ -51,145 +51,142 @@
 </dom-module>
 
 <script>
-  import { PolymerElement } from 'Element';
-  export default class PickerViewColumn extends PolymerElement {
+import { PolymerElement } from 'Element';
+export default class PickerViewColumn extends PolymerElement {
+  static get is() {
+    return 'a-picker-view-column';
+  }
 
-    static get is() {
-      return 'a-picker-view-column';
-    }
-
-    static get properties() {
-      return {
-        value: {
-          type: String,
-          reflectToAttribute: true,
-          value: '',
-        },
-        selectedIndex: {
-          type: Number,
-          reflectToAttribute: true,
-          value: 0,
-          observer: '_selectedIndexChange'
-        }
-      };
-    }
-
-    itemHeight = 0;
-    scrollY = 0;
-    lastY = 0;
-    lastTime = 0;
-    velocity = 0;
-    acceleration = -100;
-    timer = null;
-    isMoving = false;
-
-    constructor() {
-      super();
-      [
-        '__onStart',
-        '__onMove',
-        '__onEnd',
-      ].forEach(method => {
-        this[method] = this[method].bind(this);
-      });
-    }
-
-    ready() {
-      super.ready();
-      this.itemHeight = this.$.indicator.offsetHeight;
-      this.__updateDynamicStyle();
-    }
-
-    connectedCallback() {
-      super.connectedCallback();
-      let {mask} = this.$;
-      mask.addEventListener('touchstart', this.__onStart);
-      mask.addEventListener('touchmove', this.__onMove);
-      mask.addEventListener('touchend', this.__onEnd);
-    }
-
-    disconnectedCallback() {
-      super.disconnectedCallback();
-      let {mask} = this.$;
-      mask.removeEventListener('touchstart', this.__onStart);
-      mask.removeEventListener('touchmove', this.__onMove);
-      mask.removeEventListener('touchend', this.__onEnd);
-    }
-
-    _selectedIndexChange(i) {
-      if (this.isMoving) return;
-      let itemCount = this.children.length;
-      if (i >= itemCount) {
-        this.selectedIndex = i = itemCount - 1;
+  static get properties() {
+    return {
+      value: {
+        type: String,
+        reflectToAttribute: true,
+        value: ''
+      },
+      selectedIndex: {
+        type: Number,
+        reflectToAttribute: true,
+        value: 0,
+        observer: '_selectedIndexChange'
       }
-      this.__scrollTo(this.itemHeight * i, .3);
-    }
+    };
+  }
 
-    __onStart(ev) {
-      this.__stopScroll();
-      this.isMoving = true;
-      this.lastTime = +new Date();
-      this.lastY = ev.touches[0].screenY;
-    }
+  itemHeight = 0;
+  scrollY = 0;
+  lastY = 0;
+  lastTime = 0;
+  velocity = 0;
+  acceleration = -100;
+  timer = null;
+  isMoving = false;
 
-    __onMove(ev) {
-      ev.preventDefault();
-      let now = +new Date();
-      let {lastY, lastTime} = this;
-      let nowY = ev.touches[0].screenY;
-      let offset = nowY - lastY;
-      let duration = now - lastTime;
-      let scrollY = this.scrollY - offset;
-      this.__scrollTo(scrollY, 0);
-      this.lastY = nowY;
-      this.velocity = duration ? -offset / duration * 1000 : this.velocity;
-    }
+  constructor() {
+    super();
+    ['__onStart', '__onMove', '__onEnd'].forEach(method => {
+      this[method] = this[method].bind(this);
+    });
+  }
 
-    __onEnd(ev) {
-      let {itemHeight, scrollY, velocity, acceleration} = this;
-      let maxScrollY = (this.children.length - 1) * itemHeight;
-      let time = 0.3;
-      // handle no touchmove
-      if (velocity === 0) {
-        let rectY = this.$.indicator.getBoundingClientRect().top;
-        let touchY = ev.changedTouches[0].clientY;
-        scrollY = scrollY + touchY - rectY - itemHeight;
-        scrollY = Math.round(scrollY / itemHeight) * itemHeight;
-        this.__scrollTo(scrollY, time);
-        return;
-      }
-      // handle touchmove over start or end
-      if (scrollY < 0 || scrollY > maxScrollY) {
-        scrollY = Math.max(scrollY, 0);
-        scrollY = Math.min(scrollY, maxScrollY);
-        this.__scrollTo(scrollY, time);
-        return;
-      }
-      time = Math.abs(velocity / acceleration);
-      let mayScrollY = scrollY + (velocity / 2 * time); // S1 = S0 + 1/2vt
-      mayScrollY = Math.round(mayScrollY / itemHeight) * itemHeight;
-      let shift;
-      if (mayScrollY < 0) {
-        shift = scrollY;
-        scrollY = 0;
-      } else if (mayScrollY > maxScrollY) {
-        shift = maxScrollY - scrollY;
-        scrollY = maxScrollY;
-      } else {
-        scrollY = mayScrollY;
-      }
-      if (mayScrollY < 0 || mayScrollY > maxScrollY) {
-        velocity = Math.abs(velocity);
-        // S = vt + 1/2at^2 => t = ~
-        time = (Math.sqrt(2 * acceleration * shift + velocity * velocity) - velocity) / acceleration;
-        time = Math.abs(time);
-      }
+  ready() {
+    super.ready();
+    this.itemHeight = this.$.indicator.offsetHeight;
+    this.__updateDynamicStyle();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    let { mask } = this.$;
+    mask.addEventListener('touchstart', this.__onStart);
+    mask.addEventListener('touchmove', this.__onMove);
+    mask.addEventListener('touchend', this.__onEnd);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    let { mask } = this.$;
+    mask.removeEventListener('touchstart', this.__onStart);
+    mask.removeEventListener('touchmove', this.__onMove);
+    mask.removeEventListener('touchend', this.__onEnd);
+  }
+
+  _selectedIndexChange(i) {
+    if (this.isMoving) return;
+    let itemCount = this.children.length;
+    if (i >= itemCount) {
+      this.selectedIndex = i = itemCount - 1;
+    }
+    this.__scrollTo(this.itemHeight * i, 0.3);
+  }
+
+  __onStart(ev) {
+    this.__stopScroll();
+    this.isMoving = true;
+    this.lastTime = +new Date();
+    this.lastY = ev.touches[0].screenY;
+  }
+
+  __onMove(ev) {
+    ev.preventDefault();
+    let now = +new Date();
+    let { lastY, lastTime } = this;
+    let nowY = ev.touches[0].screenY;
+    let offset = nowY - lastY;
+    let duration = now - lastTime;
+    let scrollY = this.scrollY - offset;
+    this.__scrollTo(scrollY, 0);
+    this.lastY = nowY;
+    this.velocity = duration ? -offset / duration * 1000 : this.velocity;
+  }
+
+  __onEnd(ev) {
+    let { itemHeight, scrollY, velocity, acceleration } = this;
+    let maxScrollY = (this.children.length - 1) * itemHeight;
+    let time = 0.3;
+    // handle no touchmove
+    if (velocity === 0) {
+      let rectY = this.$.indicator.getBoundingClientRect().top;
+      let touchY = ev.changedTouches[0].clientY;
+      scrollY = scrollY + touchY - rectY - itemHeight;
+      scrollY = Math.round(scrollY / itemHeight) * itemHeight;
       this.__scrollTo(scrollY, time);
+      return;
     }
+    // handle touchmove over start or end
+    if (scrollY < 0 || scrollY > maxScrollY) {
+      scrollY = Math.max(scrollY, 0);
+      scrollY = Math.min(scrollY, maxScrollY);
+      this.__scrollTo(scrollY, time);
+      return;
+    }
+    time = Math.abs(velocity / acceleration);
+    let mayScrollY = scrollY + velocity / 2 * time; // S1 = S0 + 1/2vt
+    mayScrollY = Math.round(mayScrollY / itemHeight) * itemHeight;
+    let shift;
+    if (mayScrollY < 0) {
+      shift = scrollY;
+      scrollY = 0;
+    } else if (mayScrollY > maxScrollY) {
+      shift = maxScrollY - scrollY;
+      scrollY = maxScrollY;
+    } else {
+      scrollY = mayScrollY;
+    }
+    if (mayScrollY < 0 || mayScrollY > maxScrollY) {
+      velocity = Math.abs(velocity);
+      // S = vt + 1/2at^2 => t = ~
+      time =
+        (Math.sqrt(2 * acceleration * shift + velocity * velocity) - velocity) /
+        acceleration;
+      time = Math.abs(time);
+    }
+    this.__scrollTo(scrollY, time);
+  }
 
-    __updateDynamicStyle() {
-      let padding = (this.offsetHeight - this.itemHeight) / 2;
-      let style = `
+  __updateDynamicStyle() {
+    let padding = (this.offsetHeight - this.itemHeight) / 2;
+    let style = `
         .mask {
           background-size: 100% ${padding}px;
         }
@@ -198,84 +195,88 @@
           padding-bottom: ${padding}px;
         }
       `;
-      this.$['dynamic-style'].innerHTML = style;
-    }
+    this.$['dynamic-style'].innerHTML = style;
+  }
 
-    __setTransform(value) {
-      this.$.content.style.transform = value;
-    }
+  __setTransform(value) {
+    this.$.content.style.transform = value;
+  }
 
-    __setTransition(value) {
-      this.$.content.style.transition = value;
-    }
+  __setTransition(value) {
+    this.$.content.style.transition = value;
+  }
 
-    __scrollTo(y, time = .3) {
-      if (this.scrollY === y) return;
-      this.scrollY = y;
-      if (time) {
-        this.__setTransition(`cubic-bezier(0, 0, 0.2, 1.15) ${time}s`);
-      }
-      this.__setTransform(`translate3d(0, ${-y}px, 0)`);
-      if (time) {
-        this.timer = setTimeout(() => {
-          this.__setTransition('');
-          this.__updateSelectedItem();
-          this.isMoving = false;
-        }, +time * 1000);
-      }
+  __scrollTo(y, time = 0.3) {
+    if (this.scrollY === y) return;
+    this.scrollY = y;
+    if (time) {
+      this.__setTransition(`cubic-bezier(0, 0, 0.2, 1.15) ${time}s`);
     }
-
-    __stopScroll() {
-      let {content} = this.$;
-      let transform = getComputedStyle(content, null).getPropertyValue('transform');
-      if (transform === 'none') return;
-      let matrix = transform.replace(/[^0-9.,]/g, '').split(',');
-      let scrollY = Number(matrix[5]);
-      this.velocity = 0;
-      this.__setTransition('');
-      this.__scrollTo(scrollY, 0);
-      this.isMoving = false;
-      clearTimeout(this.timer);
+    this.__setTransform(`translate3d(0, ${-y}px, 0)`);
+    if (time) {
+      this.timer = setTimeout(() => {
+        this.__setTransition('');
+        this.__updateSelectedItem();
+        this.isMoving = false;
+      }, +time * 1000);
     }
+  }
 
-    __updateSelectedItem() {
-      let {scrollY, itemHeight} = this;
-      let i = Math.round(scrollY / itemHeight);
-      if (this.selectedIndex === i) return;
-      this.selectedIndex = i;
-      let item = this.children[i];
-      if (item) {
-        this.value = item.getAttribute('value') || '';
-      } else {
-        console.warn(`picker-view child item ${i} not found.`, this.children);
-      }
-      this.__dispatchEvent('change');
+  __stopScroll() {
+    let { content } = this.$;
+    let transform = getComputedStyle(content, null).getPropertyValue(
+      'transform'
+    );
+    if (transform === 'none') return;
+    let matrix = transform.replace(/[^0-9.,]/g, '').split(',');
+    let scrollY = Number(matrix[5]);
+    this.velocity = 0;
+    this.__setTransition('');
+    this.__scrollTo(scrollY, 0);
+    this.isMoving = false;
+    clearTimeout(this.timer);
+  }
+
+  __updateSelectedItem() {
+    let { scrollY, itemHeight } = this;
+    let i = Math.round(scrollY / itemHeight);
+    if (this.selectedIndex === i) return;
+    this.selectedIndex = i;
+    let item = this.children[i];
+    if (item) {
+      this.value = item.getAttribute('value') || '';
+    } else {
+      console.warn(`picker-view child item ${i} not found.`, this.children);
     }
+    this.__dispatchEvent('change');
+  }
 
-    updateStyleFromParent(indicatorStyle) {
-      let styleEl = this.shadowRoot.querySelector('#parent-style');
-      if (!this.shadowRoot) return;
-      if (!styleEl) return;
-      let style = `
+  updateStyleFromParent(indicatorStyle) {
+    let styleEl = this.shadowRoot.querySelector('#parent-style');
+    if (!this.shadowRoot) return;
+    if (!styleEl) return;
+    let style = `
         .indicator {
           ${indicatorStyle}
         }
       `;
-      styleEl.innerHTML = style;
-    }
-
-    __dispatchEvent(name) {
-      let {selectedIndex, value} = this;
-      this.dispatchEvent(new CustomEvent(name, {
-        detail: {
-          selectedIndex,
-          value,
-        },
-        bubbles: true,
-        cancelable: false,
-      }));
-    }
+    styleEl.innerHTML = style;
   }
 
-  customElements.define(PickerViewColumn.is, PickerViewColumn);
+  __dispatchEvent(name) {
+    let { selectedIndex, value } = this;
+    this.dispatchEvent(
+      new CustomEvent(name, {
+        detail: {
+          selectedIndex,
+          value
+        },
+        bubbles: true,
+        cancelable: false
+      })
+    );
+  }
+}
+
+customElements.define(PickerViewColumn.is, PickerViewColumn);
 </script>

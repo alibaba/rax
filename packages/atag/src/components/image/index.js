@@ -109,7 +109,7 @@ export default class ImageElement extends HTMLElement {
     this._loaded = true;
 
     /**
-     * 同步内外 image 的高度
+     * Synchronize the height of the inside and outside image
      */
     if (parseInt(this.style.height) !== evt.target.height) {
       this.style.height = evt.target.height + 'px';

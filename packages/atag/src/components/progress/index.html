@@ -92,7 +92,7 @@ export default class Progress extends PolymerElement {
       realPercent: {
         type: Number,
         computed: 'computePercent(active, percent)'
-      },
+      }
     };
   }
 
@@ -145,9 +145,9 @@ export default class Progress extends PolymerElement {
 
   computePercent(active, percent) {
     if (!active) {
-      return percent
+      return percent;
     } else {
-      return 0
+      return 0;
     }
   }
 }

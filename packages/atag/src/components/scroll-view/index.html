@@ -121,15 +121,6 @@
           }
         }
       }
-
-      // const upperThreshold = this.getValue('upper-threshold', 'number', 50);
-      // const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
-      // const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
-    }
-
-    adoptedCallback() {
-      super.adoptedCallback();
-      // console.log('Custom square element moved to new page.');
     }
 
     ready() {
@@ -203,20 +194,16 @@
     scrollDirectionX = 1;
     scrollDirectionY = 1;
     handleScroll(e) {
-
       // Because it is captured on the window, it is necessary to judge whether it is really its own rolling event.
       if (e.target !== this) {
         return;
       }
-
       // Avoid infinite loops
       if (e instanceof CustomEvent) {
         return;
       }
-
       // Terminate the native scroll event
       e.stopPropagation();
-
       // Send a custom scroll event with detail information added
       const event = new CustomEvent("scroll", {
         bubbles: false,

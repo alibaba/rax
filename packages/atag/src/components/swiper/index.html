@@ -184,7 +184,7 @@ export default class Swiper extends PolymerElement {
       }
     }
     if (key === 'indicator-dots') {
-      this.showIndicatorDotsStyle = newVal === 'false' ? 'display: none' : ''
+      this.showIndicatorDotsStyle = newVal === 'false' ? 'display: none' : '';
     }
     if (key === 'vertical') {
       this.vertical = this.getAttribute('vertical') === 'true';
@@ -437,7 +437,7 @@ export default class Swiper extends PolymerElement {
       bubbles: false,
       cancelable: true,
       detail: {
-        current,
+        current
       }
     });
     this.dispatchEvent(event);
@@ -450,7 +450,7 @@ export default class Swiper extends PolymerElement {
         /**
          * Move the view to the first image in a non-animated form,
          * the principle is that the last child element is the clone of the first element.
-        */
+         */
         this._setTranslate(this._getTranslateOfPage(1));
       }
       // When not looping, the last bit of the array is the last view
@@ -470,9 +470,13 @@ export default class Swiper extends PolymerElement {
 
   computedActiveStyle(currentPage) {
     return function(index) {
-      const bgColor = this.getAttribute('indicator-color') || 'rgba(0, 0, 0, .3)';
-      const activeBgColor = this.getAttribute('indicator-active-color') || '#000';
-      return currentPage === index + 1 ? `background-color: ${activeBgColor}` : `background-color: ${bgColor}` ;
+      const bgColor =
+        this.getAttribute('indicator-color') || 'rgba(0, 0, 0, .3)';
+      const activeBgColor =
+        this.getAttribute('indicator-active-color') || '#000';
+      return currentPage === index + 1
+        ? `background-color: ${activeBgColor}`
+        : `background-color: ${bgColor}`;
     };
   }
 }

@@ -12,4 +12,4 @@ npm run build # build to dist/atag.js
 npm test
 ```
 
-* [组件文档](https://developer.taobao.com/components)
+* [组件文档](https://developer.taobao.com/components/)

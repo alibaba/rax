@@ -152,7 +152,10 @@ export default class Slider extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.$.indicatorDotWrapper.addEventListener('touchstart', this._onTouchStart);
+    this.$.indicatorDotWrapper.addEventListener(
+      'touchstart',
+      this._onTouchStart
+    );
     this.$.indicatorDotWrapper.addEventListener('touchmove', this._onTouchMove);
     this.$.indicatorDotWrapper.addEventListener('touchend', this._onTouchEnd);
     this.sliderWidth = this.$.container.offsetWidth;
@@ -160,9 +163,18 @@ export default class Slider extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.$.indicatorDotWrapper.removeEventListener('touchstart', this._onTouchStart);
-    this.$.indicatorDotWrapper.removeEventListener('touchmove', this._onTouchMove);
-    this.$.indicatorDotWrapper.removeEventListener('touchend', this._onTouchEnd);
+    this.$.indicatorDotWrapper.removeEventListener(
+      'touchstart',
+      this._onTouchStart
+    );
+    this.$.indicatorDotWrapper.removeEventListener(
+      'touchmove',
+      this._onTouchMove
+    );
+    this.$.indicatorDotWrapper.removeEventListener(
+      'touchend',
+      this._onTouchEnd
+    );
   }
 
   computeRange(min, max) {

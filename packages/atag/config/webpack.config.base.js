@@ -1,5 +1,4 @@
 const { resolve } = require('path');
-const { readFileSync, readdirSync } = require('fs');
 const webpack = require('webpack');
 
 module.exports = () => {
@@ -7,7 +6,6 @@ module.exports = () => {
     const entry = {
       atag: [resolve('vendors/intersection-observer.js'), resolve('vendors/native-shim.js'), resolve('src/index.js')]
     };
-
     const config = {
       entry,
       module: {
@@ -51,7 +49,6 @@ module.exports = () => {
         })
       ]
     };
-
     done(config);
   });
 };

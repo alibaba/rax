@@ -1,9 +1,7 @@
 import { PolymerElement } from 'Element';
 import { html } from '@polymer/polymer';
 
-const videoHub = window.videoHub = window.videoHub
-  ? window.videoHub
-  : {};
+const videoHub = window.videoHub = window.videoHub ? window.videoHub : {};
 
 const pauseImage =
   'https://gw.alicdn.com/tfs/TB1xd9AuamWBuNjy1XaXXXCbXXa-142-142.png';
