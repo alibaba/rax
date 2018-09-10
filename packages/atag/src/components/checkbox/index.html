@@ -142,7 +142,7 @@ export default class CheckboxElement extends PolymerElement {
         value: this.checked
       }
     });
-    const innerEvent = new CustomEvent('_checkboxChangee', {
+    const innerEvent = new CustomEvent('_checkboxChange', {
       bubbles: true,
       cancelable: true,
       detail: {

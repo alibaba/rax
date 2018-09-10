@@ -29,14 +29,14 @@ export default class FormElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('_submit', this._handlerSubmit);
-    this.removeEventListener('_reset', this._handlerReset);
+    this.removeEventListener('_buttonSubmit', this._handlerSubmit);
+    this.removeEventListener('_buttonReset', this._handlerReset);
   }
 
   _listen() {
     afterNextRender(this, () => {
-      this.addEventListener('_submit', this._handlerSubmit);
-      this.addEventListener('_reset', this._handlerReset);
+      this.addEventListener('_buttonSubmit', this._handlerSubmit);
+      this.addEventListener('_buttonReset', this._handlerReset);
     })
   }
 
