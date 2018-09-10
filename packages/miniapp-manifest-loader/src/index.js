@@ -3,7 +3,7 @@ module.exports = function(source) {
   const pages = manifestJson.pages;
   // Resolve to miniapp-web-renderer local absolute path
   const webRendererPathname = require.resolve('miniapp-web-renderer');
-  
+
   return `
 import { render } from '${webRendererPathname}';
 
@@ -11,10 +11,10 @@ function _requireReturnDefault(obj) { return obj && obj.__esModule ? obj.default
 
 const pagesMap = {
   ${
-    Object.keys(pages).map((page) => {
-      return `  "${page}" : _requireReturnDefault(require('./${pages[page]}'))`;
-    }).join(',\n')
-  }
+  Object.keys(pages).map((page) => {
+    return `  "${page}" : _requireReturnDefault(require('./${pages[page]}'))`;
+  }).join(',\n')
+}
 };
 
 const manifestData = ${
@@ -25,5 +25,4 @@ const manifestData = ${
 
 render(manifestData, pagesMap);
 `;
-
-}
+};

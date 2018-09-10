@@ -30,18 +30,16 @@ render(<Example />, null, {
 });
 ```
 
-
-
 ## API
 
-**static setTagPrefix(prefix: String)**
+**static setTagNamePrefix(prefix: String)**
 
-set prefix for each tag (except svg)
+Set tag prefix for custom elements.
 
 ```js
 import BrowserDriver from 'driver-browser';
 
-BrowserDriver.setTagPrefix('a-');
+BrowserDriver.setTagNamePrefix('a-');
 ```
 
 
