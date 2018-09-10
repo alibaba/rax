@@ -1,0 +1,109 @@
+<dom-module id="a-button">
+  <template>
+    <style>
+      .loading-img {
+        animation: _rotate 1.5s linear infinite;
+        margin-right: 2vw;
+        margin-top: 0.53vw;
+        width: 5.1vw;
+        height: 5.1vw
+      }
+    </style>
+    <div>
+      <img style$="{{hiddenImgStyle}}" class="loading-img" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABMCAMAAAD5ogFjAAAADFBMVEVHcEz///////////8Gn9AKAAAABHRSTlMAVKv+z9BazwAAASxJREFUeNrtmEGOxCAMBOni/3+ew2rHaAATttHOhTpFJOnYxrSslBWCWisqJtRfLCnVBmwdX6l+gFmfQF5iAWZAwTEheaUOaNsUZAppFaKElAqpy5mBDPFwViMWO6nPW6o9o2XmXcMsN4aryWZrEtKDNtXoFmmFgqT7hqtK9rIXmu+ciiFURL6Va6FA0qpN556xd3DmD7DlCcxtbM/uNP3Uhk1lh41Ne8lsJCdJzDDhYiEiHBP9lOHyNcCa7aTBydiH97ter0cUWN1ORIF1/BovqYGcoe5YRKdqRBMdzsDaijqjr+Ka8kcA3rLXoi6Xf4U4vBbs2ICAhUnpsQ+R2ybPzfqckJ8a2Se3vJskdMUvJxdpqI9UbBTd5eFO1P2YcIWmdLOKG9KZRoKy4gVsMw2/9NcQzQAAAABJRU5ErkJggg=='/>
+      <slot></slot>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+import { injectStyle } from '../../shared/utils';
+import styleContent from './button.less';
+
+class Button extends PolymerElement {
+  static get is() {
+    return 'a-button';
+  }
+
+  static get properties() {
+    return {
+      loading: {
+        type: Boolean,
+        value: false
+      },
+      type: {
+        type: String,
+        value: 'default'
+      },
+      disable: {
+        type: Boolean,
+        value: false
+      },
+      hiddenImgStyle: {
+        type: String,
+        value: 'display: none;'
+      }
+    };
+  }
+
+  get formType() {
+    return this.getAttribute('form-type') || this.getAttribute('formType');
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    // check form-type and listen click event, then dispatch event
+    if (this.formType) {
+      this.addEventListener('click', this._dispatchEvent);
+    }
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    super.attributeChangedCallback(name, oldVal, newVal);
+    if (name === 'loading') {
+      this.hiddenImgStyle =
+        newVal == 'true' || newVal == null ? '' : 'display: none;';
+    }
+  }
+
+  disconnectedCallback() {
+    if (this.formType) {
+      this.removeEventListener('click', this._dispatchEvent);
+    }
+  }
+
+  _dispatchEvent() {
+    let evt;
+    switch (this.formType) {
+      case 'submit':
+        evt = new CustomEvent('custom-submit', {
+          bubbles: true,
+          composed: true
+        });
+        break;
+      case 'reset':
+        evt = new CustomEvent('custom-reset', {
+          bubbles: true,
+          composed: true
+        });
+        break;
+      default:
+        break;
+    }
+    if (evt) {
+      this.dispatchEvent(evt);
+    }
+  }
+}
+
+const ButtonElement = injectStyle(styleContent)(Button);
+
+export default ButtonElement;
+
+customElements.define(ButtonElement.is, ButtonElement);
+</script>

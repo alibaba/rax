@@ -1,0 +1,62 @@
+<dom-module id="a-form">
+  <template>
+    <style id="style">
+      :host {
+        display: block;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+    </style>
+    <!-- shadow DOM goes here-->
+    <slot></slot>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+
+import { afterNextRender, handlerSubmit } from '../../shared/utils';
+
+export default class FormElement extends PolymerElement {
+  static get is() {
+    return 'a-form';
+  }
+
+  ready() {
+    super.ready();
+    this._listen();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('custom-submit', this._handlerSubmit);
+    this.removeEventListener('custom-reset', this._handlerReset);
+  }
+
+  _listen() {
+    afterNextRender(this, () => {
+      this.addEventListener('custom-submit', this._handlerSubmit);
+      this.addEventListener('custom-reset', this._handlerReset);
+    })
+  }
+
+  _handlerSubmit() {
+    handlerSubmit(this);
+  }
+
+  _handlerReset() {
+    /**
+     * reset:
+     * The initial values ​​of all form elements are logged when the component is created,
+     * but the performance is too low,
+     * and it is not as good as saving the initial value for each form element itself.
+     */
+    const evt = new CustomEvent('reset', {
+      bubbles: false
+    });
+    this.dispatchEvent(evt);
+  }
+}
+
+customElements.define(FormElement.is, FormElement);
+</script>

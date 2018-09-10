@@ -1,0 +1,167 @@
+<dom-module id="a-checkbox">
+  <template>
+    <style id="style">
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        overflow: hidden;
+      }
+
+      :host input[type="checkbox"] {
+        display: none;
+        font-size: 4.666vw;
+      }
+
+      :host input[type="checkbox"]+label .circle {
+        display: inline-flex;
+        width: 1.25em;
+        height: 1.25em;
+        justify-content: center;
+        align-items: center;
+        vertical-align: middle;
+        border: 1px solid #999;
+        border-radius: 0.2em;
+        box-sizing: border-box;
+        background-color: white;
+        cursor: pointer;
+      }
+
+      :host input[type="checkbox"]:checked+label .circle {
+        border: 1px solid var(--a-checkbox-color);
+      }
+
+      :host input[type="checkbox"]:disabled+label .circle {
+        border: 1px solid #c7c7c7;
+        background-color: #e7e7e7;
+      }
+
+      :host input[type="checkbox"]:checked+label .dot {
+        width: 60%;
+        height: 60%;
+        text-align: center;
+        background-color: var(--a-checkbox-color);
+        -webkit-mask-image: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB3aWR0aD0iMjciIGhlaWdodD0iMTkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkuMzYgMTlhMS4xNSAxLjE1IDAgMCAxLS44MTQtLjM0bC04LjIxLTguMzAyYTEuMTcgMS4xNyAwIDAgMSAwLTEuNjQ0IDEuMTQzIDEuMTQzIDAgMCAxIDEuNjI4IDBsNy4zOTYgNy40NzhMMjUuMDM2LjM0MWExLjE0NCAxLjE0NCAwIDAgMSAxLjYyNyAwIDEuMTcgMS4xNyAwIDAgMSAwIDEuNjQ0TDEwLjE3MyAxOC42NmExLjE0NCAxLjE0NCAwIDAgMS0uODEzLjM0MXoiIGZpbGw9IiNGRjUwMDAiLz48L3N2Zz4=);
+        -webkit-mask-size: 0.75em 0.5em;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        cursor: pointer;
+      }
+
+      :host input[type="checkbox"][disabled]:checked+label .dot {
+        background-color: #bbb;
+      }
+    </style>
+    <style id="customStyle"></style>
+    <input type="checkbox" id="checkbox" disabled="{{disabled::change}}" checked="{{checked::change}}">
+    <label for="checkbox">
+      <div class="circle" style$="{{circleCheckedStyle}}">
+        <div class="dot" style$="{{dotCheckedStyle}}"></div>
+      </div>
+    </label>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+import { afterNextRender, throttle } from '../../shared/utils';
+
+export default class CheckboxElement extends PolymerElement {
+  static get is() {
+    return 'a-checkbox';
+  }
+
+  static get observedAttributes() {
+    return ['value', 'disabled', 'checked', 'color'];
+  }
+
+  static get properties() {
+    return {
+      value: {
+        type: String,
+        notify: true
+      },
+      checked: {
+        type: Boolean,
+        notify: true,
+        value: false,
+        reflectToAttribute: true
+      },
+      disabled: {
+        type: Boolean,
+        notify: true,
+        value: false,
+        reflectToAttribute: true
+      },
+      color: {
+        type: String,
+        notify: true,
+        value: '#ff6600'
+      },
+      circleCheckedStyle: {
+        type: String,
+        computed: 'getCircleCheckedStyle(checked, color)'
+      },
+      dotCheckedStyle: {
+        type: String,
+        computed: 'getDotCheckedStyle(checked, color)'
+      }
+    };
+  }
+
+  ready() {
+    super.ready();
+    this.checkbox = this.$.checkbox;
+    this.formInitialValue = this.checked;
+    this.checkbox.addEventListener('change', this.changeHandler);
+    this.addEventListener('click', this.clickHandler, true);
+    window.addEventListener('reset', this._handlerReset, true);
+  }
+
+  disconnectedCallback() {
+    this.checkbox.removeEventListener('change', this.changeHandler);
+    this.removeEventListener('click', this.clickHandler, true);
+    window.removeEventListener('reset', this._handlerReset, true);
+  }
+
+  _handlerReset = () => {
+    this.checkbox.checked = this.checked = this.formInitialValue;
+  }
+
+  clickHandler = e => {
+    !e.isTrusted && this.$.checkbox.click();
+    e.stopPropagation();
+  }
+
+  changeHandler = e => {
+    const event = new CustomEvent('change', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value: this.checked
+      }
+    });
+    const innerEvent = new CustomEvent('$a-checkbox-change', {
+      bubbles: true,
+      cancelable: true,
+      detail: {
+        value: this.checked
+      }
+    });
+    this.dispatchEvent(event);
+    this.dispatchEvent(innerEvent);
+    e.stopPropagation();
+  };
+
+  getCircleCheckedStyle(checked, color) {
+    return checked ? `border: 1px solid ${color};` : '';
+  };
+
+  getDotCheckedStyle(checked, color) {
+    return checked ? `background-color: ${color};` : ''
+  }
+}
+
+customElements.define(CheckboxElement.is, CheckboxElement);
+</script>

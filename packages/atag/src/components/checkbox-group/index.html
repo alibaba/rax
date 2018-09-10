@@ -1,0 +1,103 @@
+<dom-module id="a-checkbox-group">
+  <template>
+    <style id="style">
+      /* shadow DOM styles go here */
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        overflow: hidden;
+      }
+    </style>
+    <style id="customStyle">
+      /* shadow DOM styles go here */
+    </style>
+    <!-- shadow DOM goes here -->
+    <slot></slot>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+import { afterNextRender, throttle } from '../../shared/utils';
+
+export default class CheckboxGroupElement extends PolymerElement {
+  static get is() {
+    return 'a-checkbox-group';
+  }
+
+  static get observedAttributes() {
+    return ['name'];
+  }
+
+  static get properties() {
+    return {
+      name: {
+        type: String,
+        notify: true
+      }
+    };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    let style = this.getAttribute('style') || '';
+
+    const styleEl = this.shadowRoot.querySelector('#customStyle');
+
+    styleEl.innerHTML = `
+          :host {
+            ${style};
+          }`;
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+
+    // this.expireCache(name);
+
+    if (name === 'style') {
+      let style = this.getAttribute('style') || '';
+
+      afterNextRender(this, () => {
+        const styleEl = this.shadowRoot.querySelector('#customStyle');
+        // this.removeAttribute('style');
+        styleEl.innerHTML = `
+            :host {
+              ${style};
+            }`;
+      });
+    }
+  }
+
+  ready() {
+    super.ready();
+
+    this.addEventListener('$a-checkbox-change', this.changeHandler);
+  }
+
+  changeHandler = e => {
+    const value = [];
+    const checkboxList = this.querySelectorAll('a-checkbox');
+    for (let i = 0; i < checkboxList.length; i++) {
+      const node = checkboxList[i];
+      node.isChecked && value.push(node.value);
+    }
+    const event = new CustomEvent('change', {
+      detail: {
+        value
+      }
+    });
+    this.dispatchEvent(event);
+    e.stopPropagation();
+  };
+
+  disconnectedCallback() {
+    this.removeEventListener('$a-checkbox-change', this.changeHandler);
+  }
+}
+
+customElements.define(CheckboxGroupElement.is, CheckboxGroupElement);
+</script>

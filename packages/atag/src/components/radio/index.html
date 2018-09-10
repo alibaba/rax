@@ -1,0 +1,173 @@
+<dom-module id="a-radio">
+  <template>
+    <style id="style">
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        overflow: hidden;
+      }
+
+      :host input[type="radio"] {
+        display: none;
+        font-size: 4.666vw;
+      }
+
+      :host .circle {
+        display: inline-block;
+        position: relative;
+        width: 2.5em;
+        height: 2.5em;
+        transform: scale(0.5);
+        transform-origin: center;
+        margin: -0.625em;
+        margin-bottom: -0.5em;
+        vertical-align: middle;
+        border: 2px solid #999;
+        border-radius: 100%;
+        box-sizing: border-box;
+        background-color: white;
+        cursor: pointer;
+      }
+
+      :host input[type="radio"]:checked+label .dot {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+        text-align: center;
+        cursor: pointer;
+        border: 1vw solid #fff;
+        box-sizing: border-box;
+      }
+
+      :host input[type="radio"][disabled]+label .circle {
+        border: 2px solid #c7c7c7;
+        background-color: #E7E7E7;
+      }
+
+      :host input[type="radio"][disabled]:checked+label .dot {
+        background-color: #bbb;
+      }
+    </style>
+    <style id="customStyle">
+      /* shadow DOM styles go here */
+    </style>
+    <input type="radio" id="radio" name="{{value}}" disabled="{{disabled::change}}" checked="{{checked::change}}">
+    <label for="radio">
+      <div class="circle" style$="{{circleCheckedStyle}}">
+        <div class="dot" style$="{{dotCheckedStyle}}"></div>
+      </div>
+    </label>
+    <!-- shadow DOM goes here -->
+    <!-- <slot></slot> -->
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+import { afterNextRender, throttle } from '../../shared/utils';
+
+export default class RadioElement extends PolymerElement {
+  static get is() {
+    return 'a-radio';
+  }
+
+  static get observedAttributes() {
+    return ['value', 'disabled', 'checked', 'color'];
+  }
+
+  static get properties() {
+    return {
+      value: {
+        type: String,
+        notify: true
+      },
+      checked: {
+        type: Boolean,
+        notify: true,
+        value: false,
+        reflectToAttribute: true
+      },
+      disabled: {
+        type: Boolean,
+        notify: true,
+        value: false,
+        reflectToAttribute: true
+      },
+      color: {
+        type: String,
+        notify: true,
+        value: '#ff6600'
+      },
+      circleCheckedStyle: {
+        type: String,
+        computed: 'getCircleCheckedStyle(checked, color)'
+      },
+      dotCheckedStyle: {
+        type: String,
+        computed: 'getDotCheckedStyle(checked, color)'
+      }
+    };
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener('click', this.clickHandler, true);
+    window.removeEventListener('reset', this._handlerReset, true);
+  }
+
+  ready() {
+    super.ready();
+
+    this.radio = this.$.radio;
+    this.formInitialValue = this.checked;
+    this.radio.addEventListener('change', this.changeHandler);
+    this.addEventListener('click', this.clickHandler, true);
+    window.addEventListener('reset', this._handlerReset, true);
+  }
+
+  clickHandler = e => {
+    !e.isTrusted && this.$.radio.click();
+    e.stopPropagation();
+  };
+
+  changeHandler = e => {
+    const innerEvent = new CustomEvent('$a-radio-change', {
+      bubbles: true,
+      cancelable: true,
+      detail: {
+        value: this.checked
+      }
+    });
+    // this.dispatchEvent(event);
+    this.dispatchEvent(innerEvent);
+    e.stopPropagation();
+  };
+
+  _handlerReset = () => {
+    this.radio.checked = this.checked = this.formInitialValue;
+  };
+
+  getCircleCheckedStyle(checked, color) {
+    if (checked) {
+      return `border: 2px solid ${color};`;
+    }
+    return '';
+  }
+
+  getDotCheckedStyle(checked, color) {
+    if (checked) {
+      return `background-color: ${color};`;
+    }
+    return '';
+  }
+}
+
+customElements.define(RadioElement.is, RadioElement);
+</script>
