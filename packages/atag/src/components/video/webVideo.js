@@ -1,5 +1,4 @@
-import { PolymerElement } from 'Element';
-import { html } from '@polymer/polymer';
+import { PolymerElement, html } from '@polymer/polymer';
 
 const videoHub = window.videoHub = window.videoHub ? window.videoHub : {};
 

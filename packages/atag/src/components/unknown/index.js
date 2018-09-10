@@ -1,5 +1,3 @@
-import { HTMLElement } from 'Element';
-
 export default class UnknownElement extends HTMLElement {
   static get is() {
     return 'a-unknown';

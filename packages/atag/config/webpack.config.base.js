@@ -34,7 +34,7 @@ module.exports = () => {
         ]
       },
       resolve: {
-        modules: [resolve('src'), 'node_modules'],
+        modules: ['node_modules'],
         extensions: ['.js', '.json', '.html'],
         alias: {
           components: resolve('src/components')

@@ -1,4 +1,4 @@
-import { PolymerElement } from 'Element';
+import { PolymerElement } from '@polymer/polymer';
 
 const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);

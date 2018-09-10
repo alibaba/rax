@@ -1,5 +1,4 @@
-import { HTMLElement } from 'Element';
-import { injectStyle } from 'shared/utils';
+import { injectStyle } from '../../shared/utils';
 import textStyle from './text.less';
 
 @injectStyle(textStyle)

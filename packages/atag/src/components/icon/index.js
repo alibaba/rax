@@ -1,4 +1,3 @@
-import { HTMLElement } from 'Element';
 import '../../../vendors/icons'; // reg icons
 
 export default class IconElement extends HTMLElement {
