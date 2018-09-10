@@ -1,26 +1,30 @@
 const map = new Map();
-const createEvent = (name) => new Event(name, {bubbles: true});
+const createEvent = name => new Event(name, { bubbles: true });
 
-function assign(ta) {
-  if (!ta || !ta.nodeName || ta.nodeName !== 'TEXTAREA' || map.has(ta)) return;
+function assign(node) {
+  if (!node || !node.nodeName || node.nodeName !== 'TEXTAREA' || map.has(node))
+    return;
 
   let heightOffset = null;
   let clientWidth = null;
   let cachedHeight = null;
 
   function init() {
-    const style = window.getComputedStyle(ta, null);
+    const style = window.getComputedStyle(node, null);
 
     if (style.resize === 'vertical') {
-      ta.style.resize = 'none';
+      node.style.resize = 'none';
     } else if (style.resize === 'both') {
-      ta.style.resize = 'horizontal';
+      node.style.resize = 'horizontal';
     }
 
     if (style.boxSizing === 'content-box') {
-      heightOffset = -(parseFloat(style.paddingTop) + parseFloat(style.paddingBottom));
+      heightOffset = -(
+        parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
+      );
     } else {
-      heightOffset = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+      heightOffset =
+        parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
     }
     if (isNaN(heightOffset)) {
       heightOffset = 0;
@@ -30,12 +34,12 @@ function assign(ta) {
   }
 
   function changeOverflow(value) {
-    const width = ta.style.width;
-    ta.style.width = '0px';
-    ta.offsetWidth;
-    ta.style.width = width;
+    const width = node.style.width;
+    node.style.width = '0px';
+    node.offsetWidth;
+    node.style.width = width;
 
-    ta.style.overflowY = value;
+    node.style.overflowY = value;
   }
 
   function getParentOverflows(el) {
@@ -45,7 +49,7 @@ function assign(ta) {
       if (el.parentNode.scrollTop) {
         arr.push({
           node: el.parentNode,
-          scrollTop: el.parentNode.scrollTop,
+          scrollTop: el.parentNode.scrollTop
         });
       }
       el = el.parentNode;
@@ -55,17 +59,18 @@ function assign(ta) {
   }
 
   function resize() {
-    if (ta.scrollHeight === 0) {
+    if (node.scrollHeight === 0) {
       return;
     }
 
-    const overflows = getParentOverflows(ta);
-    const docTop = document.documentElement && document.documentElement.scrollTop;
+    const overflows = getParentOverflows(node);
+    const docTop =
+      document.documentElement && document.documentElement.scrollTop;
 
-    ta.style.height = '';
-    ta.style.height = ta.scrollHeight + heightOffset + 'px';
+    node.style.height = '';
+    node.style.height = node.scrollHeight + heightOffset + 'px';
 
-    clientWidth = ta.clientWidth;
+    clientWidth = node.clientWidth;
 
     overflows.forEach(el => {
       el.node.scrollTop = el.scrollTop;
@@ -79,79 +84,88 @@ function assign(ta) {
   function update() {
     resize();
 
-    const styleHeight = Math.round(parseFloat(ta.style.height));
-    const computed = window.getComputedStyle(ta, null);
-    let actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(computed.height)) : ta.offsetHeight;
+    const styleHeight = Math.round(parseFloat(node.style.height));
+    const computed = window.getComputedStyle(node, null);
+    let actualHeight =
+      computed.boxSizing === 'content-box'
+        ? Math.round(parseFloat(computed.height))
+        : node.offsetHeight;
     if (actualHeight < styleHeight) {
       if (computed.overflowY === 'hidden') {
         changeOverflow('scroll');
         resize();
-        actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(window.getComputedStyle(ta, null).height)) : ta.offsetHeight;
+        actualHeight =
+          computed.boxSizing === 'content-box'
+            ? Math.round(parseFloat(window.getComputedStyle(node, null).height))
+            : node.offsetHeight;
       }
     } else {
       if (computed.overflowY !== 'hidden') {
         changeOverflow('hidden');
         resize();
-        actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(window.getComputedStyle(ta, null).height)) : ta.offsetHeight;
+        actualHeight =
+          computed.boxSizing === 'content-box'
+            ? Math.round(parseFloat(window.getComputedStyle(node, null).height))
+            : node.offsetHeight;
       }
     }
 
     if (cachedHeight !== actualHeight) {
       cachedHeight = actualHeight;
       const evt = createEvent('autosize:resized');
-      ta.dispatchEvent(evt);
+      node.dispatchEvent(evt);
     }
   }
 
   const pageResize = () => {
-    if (ta.clientWidth !== clientWidth) {
+    if (node.clientWidth !== clientWidth) {
       update();
     }
   };
 
   const destroy = (style => {
     window.removeEventListener('resize', pageResize, false);
-    ta.removeEventListener('keyup', update, false);
-    ta.removeEventListener('autosize:destroy', destroy, false);
-    ta.removeEventListener('autosize:update', update, false);
+    node.removeEventListener('keyup', update, false);
+    node.removeEventListener('autosize:destroy', destroy, false);
+    node.removeEventListener('autosize:update', update, false);
 
     Object.keys(style).forEach(key => {
-      ta.style[key] = style[key];
+      node.style[key] = style[key];
     });
 
-    map.delete(ta);
-  }).bind(ta, {
-    height: ta.style.height,
-    resize: ta.style.resize,
-    overflowY: ta.style.overflowY,
-    overflowX: ta.style.overflowX,
-    wordWrap: ta.style.wordWrap,
+    map.delete(node);
+  }).bind(node, {
+    height: node.style.height,
+    resize: node.style.resize,
+    overflowY: node.style.overflowY,
+    overflowX: node.style.overflowX,
+    wordWrap: node.style.wordWrap
   });
 
-  ta.addEventListener('autosize:destroy', destroy, false);
+  node.addEventListener('autosize:destroy', destroy, false);
 
   window.addEventListener('resize', pageResize, false);
-  ta.addEventListener('autosize:update', update, false);
-  ta.style.overflowX = 'hidden';
-  ta.style.wordWrap = 'break-word';
+  node.addEventListener('autosize:update', update, false);
+  node.style.overflowX = 'hidden';
+  node.style.wordWrap = 'break-word';
 
-  map.set(ta, {
+  map.set(node, {
     destroy,
-    update,
+    update
   });
 
   init();
 }
 
-function destroy(ta) {
-  const methods = map.get(ta);
+function destroy(node) {
+  const methods = map.get(node);
   if (methods) {
     methods.destroy();
   }
 }
 
-function update(ta) {
-  const methods = map.get(ta);
+function update(node) {
+  const methods = map.get(node);
   if (methods) {
     methods.update();
   }
@@ -159,7 +173,9 @@ function update(ta) {
 
 const autosize = (el, options) => {
   if (el) {
-    Array.prototype.forEach.call(el.length ? el : [el], x => assign(x, options));
+    Array.prototype.forEach.call(el.length ? el : [el], x =>
+      assign(x, options)
+    );
   }
   return el;
 };
