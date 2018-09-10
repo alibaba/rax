@@ -1,7 +1,7 @@
 {
   "name": "miniapp-web-renderer",
   "version": "0.1.1-beta.5",
-  "description": "Rax renderer for miniapp",
+  "description": "Web renderer for miniapp.",
   "main": "lib/index.js",
   "dependencies": {
     "atag": "^0.1.0-0",
