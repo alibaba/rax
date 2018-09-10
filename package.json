@@ -88,7 +88,8 @@
       "/lib/",
       "/dist/",
       "sfc-loader",
-      "mp-loader"
+      "mp-loader",
+      "atag"
     ]
   },
   "config": {
