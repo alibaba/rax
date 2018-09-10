@@ -1,9 +1,8 @@
 <dom-module id="a-input">
   <template>
-    <style id="style">
+    <style>
       :host {
         display: flex;
-        padding: 2vw 3.2vw;
         background-color: white;
         box-sizing: border-box;
       }
@@ -12,6 +11,7 @@
         width: 100%;
         border-width: 0;
         display: inline-block;
+        padding: 2px 5px;
         background-color: inherit;
         outline: none;
         font-size: inherit;
@@ -19,9 +19,9 @@
         box-sizing: border-box;
       }
     </style>
-    <input id="input" value$="{{value}}" type$="{{type}}" placeholder$="{{placeholder}}" disabled$="{{disabled}}" autofocus$="{{autoFocus}}"
-      maxlength$="[[maxlength]]"/>
-</template>
+    <input id="input" value$="{{value}}" type$="{{type}}" placeholder$="{{placeholder}}" disabled$="{{disabled}}"
+      autofocus$="{{focus}}" maxlength$="{{maxlength}}" />
+  </template>
 </dom-module>
 
 <script>
@@ -59,8 +59,9 @@ export default class Input extends PolymerElement {
         type: Number,
         value: 140
       },
-      autoFocus: {
-        type: Boolean
+      focus: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -69,6 +70,14 @@ export default class Input extends PolymerElement {
     super.ready();
     this.input = this.$.input;
     this.formInitalValue = this.value;
+    this.styleEl = document.createElement('style');
+    this.styleEl.innerHTML = `
+      :host #input::placeholder {
+        ${this.placeholderStyle}
+      }
+    `;
+    const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
+    shadowRoot.appendChild(this.styleEl);
     afterNextRender(this, () => {
       this.inputListener = this.inputListener.bind(this);
       this.focusListener = this.focusListener.bind(this);
@@ -79,13 +88,6 @@ export default class Input extends PolymerElement {
       window.addEventListener('blur', this.blurListener, true);
       window.addEventListener('_formReset', this._handlerReset, true);
     });
-    if (this.placeholderStyle) {
-      this.$.style.innerHTML += `
-        :host #input::placeholder {
-          ${this.placeholderStyle}
-        }
-      `;
-    }
   }
 
   disconnectedCallback() {

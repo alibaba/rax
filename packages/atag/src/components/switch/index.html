@@ -2,23 +2,11 @@
   <template>
     <style id="style">
       /* shadow DOM styles go here */
-      :host {
-        display: inline;
-        box-sizing: border-box;
-        -webkit-user-select: none;
-        user-select: none;
-        outline: none;
-      }
-
       .switch {
         position: relative;
         display: inline-block;
-        width: 11.4666vw;
-        height: 5.33333vw;
-      }
-
-      .switch input {
-        display: none;
+        width: 44px;
+        height: 20px;
       }
 
       .slider {
@@ -31,39 +19,28 @@
         background-color: #B4B4B4;
         -webkit-transition: .4s;
         transition: .4s;
-        border-radius: 2.666666vw;
+        border-radius: 10px;
       }
 
       .slider:before {
         position: absolute;
         content: "";
-        height: 4.5vw;
-        width: 4.5vw;
-        left: 0.375vw;
-        top: 0.375vw;
+        height: 16.8px;
+        width: 16.8px;
+        left: 1.5px;
+        top: 1.5px;
         background-color: white;
         -webkit-transition: .4s;
         transition: .4s;
         border-radius: 50%;
       }
 
-      #input:checked+.slider:before {
-        transform: translateX(6.1vw);
-      }
-
-      /* Rounded sliders */
-
-      .slider.round {
-        border-radius: 5.33333vw;
-      }
-
-      .slider.round:before {
-        border-radius: 50%;
+      .slider-checked:before {
+        transform: translateX(23px);
       }
     </style>
     <!-- shadow DOM goes here -->
     <label class="switch" id="switch" on-click="handleClick">
-      <input id="input" type="checkbox" checked$="{{checked}}">
       <span class="slider" id="slider"  style$="{{checkboxCheckedStyle}}"></span>
     </label>
   </template>
@@ -71,6 +48,7 @@
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
+import { afterNextRender } from '../../shared/utils/'
 
 export default class SwitchElement extends PolymerElement {
   static get is() {
@@ -90,7 +68,8 @@ export default class SwitchElement extends PolymerElement {
       },
       checked: {
         type: Boolean,
-        value: false
+        value: false,
+        reflectToAttribute: true
       },
       checkboxCheckedStyle: {
         type: String,
@@ -101,11 +80,16 @@ export default class SwitchElement extends PolymerElement {
 
   attributeChangedCallback(key, oldVal, newVal) {
     super.attributeChangedCallback(key, oldVal, newVal);
+
     if (oldVal !== newVal) {
       switch (key) {
         case 'checked':
-          this.checkboxCheckedStyle =
-            newVal == 'false' ? '' : `background-color: ${this.color}`;
+          this.checkboxCheckedStyle = this.checked
+            ? `background-color: ${this.color}`
+            : '';
+          if (this.$) {
+            this.translateSliderBlock();
+          }
           break;
         case 'color':
           if (this.checked) {
@@ -123,36 +107,39 @@ export default class SwitchElement extends PolymerElement {
     // save the formInitialValue for reset
     this.formInitialValue = this.checked;
     this.checkbox = this.$.input;
-    window.addEventListener('_formReset', this.handleReset, true);
+
+    afterNextRender(this, () => {
+      window.addEventListener('_formReset', this._handleReset, true);
+    });
+    this.translateSliderBlock();
   }
 
   handleClick() {
-    this.checked = this.checkbox.checked;
-    this.setAttribute('checked', this.checked);
+    this.checked = !this.checked;
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {
-          checked: this.isChecked
+          checked: this.checked
         }
       })
     );
   }
 
-  handleStyle() {
-    const type = this.getAttribute('type');
-
-    if (type === 'round') {
-      this.$.slider.classList.add('round');
-    }
-  }
-
-  handleReset = () => {
-    this.checkbox.checked = this.formInitialValue;
+  _handleReset = () => {
+    this.checked = this.formInitialValue;
   };
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('_formReset', this.handleReset);
+    window.removeEventListener('_formReset', this._handleReset, true);
+  }
+
+  translateSliderBlock() {
+    if (this.checked) {
+      this.$.slider.classList.add('slider-checked');
+    } else {
+      this.$.slider.classList.remove('slider-checked');
+    }
   }
 }
 
