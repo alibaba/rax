@@ -4,7 +4,6 @@ const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
 const isIOS = /(iPhone|iPad|iPod)/.test(ua);
 
-const videoHub = window.videoHub = window.videoHub ? window.videoHub : {};
 let videoInstanceCount = 0;
 
 export default class VideoElement extends PolymerElement {
@@ -46,7 +45,6 @@ export default class VideoElement extends PolymerElement {
 
   constructor(...args) {
     super(...args);
-
     this.uniqueId = String(++videoInstanceCount);
   }
 
@@ -55,11 +53,6 @@ export default class VideoElement extends PolymerElement {
     const container = this.container = document.createElement('object');
     container.type = 'application/view';
     container.className = 'atag-native-video';
-
-    // global videoHub, to receive directives
-    if (this.id) {
-      videoHub[this.id] = this;
-    }
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);

@@ -1,10 +1,8 @@
 import { PolymerElement, html } from '@polymer/polymer';
 
-const videoHub = window.videoHub = window.videoHub ? window.videoHub : {};
-
-const pauseImage = require('./images/TB1xd9AuamWBuNjy1XaXXXCbXXa-142-142.png');
-const playImage = require('./images/TB1Ob3Ht3mTBuNjy1XbXXaMrVXa-142-142.png');
-const fullscreenImage = require('./images/TB1tJs6t29TBuNjy0FcXXbeiFXa-40-40.png');
+const pauseImage = require('./images/pause.png');
+const playImage = require('./images/play.png');
+const fullscreenImage = require('./images/fullscreen.png');
 
 export default class VideoElement extends PolymerElement {
   static get is() {
@@ -135,14 +133,6 @@ export default class VideoElement extends PolymerElement {
         clearInterval(i);
       }
     }, 200);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    // 在全局 videoHub 注册本实例
-    if (this.id) {
-      videoHub[this.id] = this;
-    }
   }
 
   ready() {
@@ -336,7 +326,7 @@ export default class VideoElement extends PolymerElement {
     </style>
     <!-- shadow DOM goes here -->
     <div class="container" id="container">
-      <img id="image" src="./images/TB1Ob3Ht3mTBuNjy1XbXXaMrVXa-142-142.png" alt="">
+      <img id="image" src="./images/play.png" alt="">
       <video id="video" src="{{src}}" autoplay="{{autoplay}}" height="{{height}}" width="{{width}}" mute="{{mute}}" loop="{{loop}}"
              poster="{{poster}}" webkit-playsinline playsinline>
         <slot></slot>
@@ -350,7 +340,7 @@ export default class VideoElement extends PolymerElement {
         </div>
 
         <span id="totalTime"> </span>
-        <img id="fullscreen" src="./images/TB1tJs6t29TBuNjy0FcXXbeiFXa-40-40.png" alt="" />
+        <img id="fullscreen" src="./images/fullscreen.png" alt="" />
       </div>
     </div>`;
   }
