@@ -1,0 +1,446 @@
+<dom-module id="a-picker">
+  <template>
+    <style>
+      #mask {
+        position: fixed;
+        display: none;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        z-index: 9999;
+        background-color: rgba(0, 0, 0, 0);
+        transition: background-color .3s ease-in-out;
+      }
+
+      #container {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        width: 100%;
+        height: 80vw;
+        left: 0;
+        bottom: 0;
+        background-color: white;
+        transition: bottom .3s ease-in-out;
+      }
+
+      #buttonGroup {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        height: 13.33vw;
+        background-color: #F2F2F2;
+      }
+
+      #buttonGroup button {
+        font-size: 4.27vw;
+      }
+
+      #buttonGroup #cancel {
+        margin-left: 4vw;
+        color: #999999;
+      }
+
+      #buttonGroup #confirm {
+        margin-right: 4vw;
+        color: #FF5000;
+      }
+
+      #content {
+        flex: 1;
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+        overflow-y: hidden;
+      }
+
+      #content-inner {
+        position: relative;
+        left: 0;
+        /* pointer-events: none; */
+      }
+
+      #content-inner .item {
+        font-size: 4.27vw;
+        line-height: 27px;
+        vertical-align: middle;
+        color: #333333;
+        /* pointer-events: none; */
+        text-align: center;
+      }
+
+      #content-mask-top {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: calc(50% - 3.6vw);
+        border-bottom: 1px solid #DDDDDD;
+        background: linear-gradient(to top, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
+        /* pointer-events: none; */
+        box-sizing: border-box;
+      }
+
+      #content-mask-bottom {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: calc(50% - 3.6vw);
+        border-top: 1px solid #DDDDDD;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
+        /* pointer-events: none; */
+        box-sizing: border-box;
+      }
+
+      button {
+        -webkit-appearance: none;
+        border: 0;
+        background: transparent;
+        -webkit-tap-highlight-color: transparent;
+        outline: none;
+      }
+    </style>
+    <div id="mask">
+      <div id="container">
+        <div id="buttonGroup">
+          <button id="cancel">取消</button>
+          <button id="confirm">确定</button>
+        </div>
+        <div id="content">
+          <!-- <div>{{range}}</div> -->
+          <div id="content-inner">
+            <template is="dom-repeat" items="{{rangeValue}}">
+              <div class="item">{{item}}</div>
+            </template>
+          </div>
+          <div id="content-mask-top"></div>
+          <div id="content-mask-bottom"></div>
+        </div>
+      </div>
+    </div>
+    <slot id="child"></slot>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+import '@polymer/polymer/lib/elements/dom-repeat.js';
+
+import { throttle, easeInOutCubic } from '../../shared/utils';
+
+// After modifying this, the above CSS will also be modified.
+const LINEHEIGHT = 27 * 100 / document.documentElement.clientWidth;
+const INITIALTOP = 33.333 - LINEHEIGHT / 2;
+const FONTSIZE = 4.27;
+
+export default class Picker extends PolymerElement {
+  static get is() {
+    return 'a-picker';
+  }
+
+  static get observedAttributes() {
+    return ['range', 'range-key', 'value', 'disabled'];
+  }
+
+  static get properties() {
+    return {
+      range: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+      rangeValue: {
+        type: Array,
+        notify: true,
+        computed: 'getRangeValue(range, range-key)'
+      },
+      'range-key': {
+        type: String,
+        notify: true,
+        value: ''
+      },
+      value: {
+        type: String,
+        notify: true,
+        value: 0
+      },
+      disabled: {
+        type: Boolean,
+        notify: true,
+        value: false
+      }
+    };
+  }
+
+  getRangeValue(range, rangeKey) {
+    // return range;
+    if (typeof range[0] === 'object') {
+      return range.map(item => item[rangeKey]);
+    } else {
+      return range;
+    }
+  }
+
+  constructor() {
+    super();
+  }
+
+  ready() {
+    super.ready();
+
+    this.formInitialValue = this.value;
+    const content = this.shadowRoot.querySelector('#content');
+    content.addEventListener('touchstart', this._handleTouchstart);
+    content.addEventListener('touchend', this._handleTouchend);
+    content.addEventListener('touchmove', this._handleTouchmove);
+    window.addEventListener('reset', this._handleReset, true);
+
+    this.container = this.$.container;
+    this.mask = this.$.mask;
+    this.innerEl = this.$['content-inner'];
+
+    this.container.addEventListener('click', e => {
+      e.stopPropagation();
+    });
+    this.mask.addEventListener('click', () => {
+      this.hide();
+    });
+    this.$.cancel.addEventListener('click', () => {
+      this.hide();
+    });
+    this.$.confirm.addEventListener('click', () => {
+      this.emitChange(this.value);
+      this.hide();
+    });
+
+    this.addEventListener('click', evt => {
+      this.show();
+    });
+
+    // alert([INITIALTOP, this.value, this.range.length ,LINEHEIGHT, document.documentElement.clientWidth].join('   '))
+    this.innerEl.style.top =
+      INITIALTOP -
+      Math.max(0, Math.min(this.value, this.range.length - 1)) * LINEHEIGHT +
+      'vw';
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+
+    if (name === 'value' && this.shadowRoot) {
+      this.innerEl.style.top = INITIALTOP - newValue * LINEHEIGHT + 'vw';
+    }
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('reset', this._handleReset, true);
+  }
+
+  show() {
+    this.mask.style.display = 'block';
+    setTimeout(() => {
+      this.mask.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+      this.container.style.bottom = 0;
+    });
+  }
+
+  hide() {
+    this.container.style.bottom = '-100%';
+    this.mask.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+    setTimeout(() => {
+      this.mask.style.display = 'none';
+    }, 300);
+  }
+
+  startY = 0;
+  innerEl = null;
+  innerElStartY = 0;
+  overStartY = 0;
+  overDirection = 0;
+  overInnerElStartY = 0;
+
+  lastPosition = 0;
+  lastTime = 0;
+  velocity = 0;
+
+  _handleTouchstart = e => {
+    const touch = e.touches[0];
+    if (touch && !this.disabled) {
+      this.startY = touch.clientY;
+      this.innerEl = this.shadowRoot.querySelector('#content-inner');
+      this.innerElStartY = Number(this.innerEl.style.top.replace('vw', ''));
+      this.lastTime = Date.now();
+      this.lastPosition = this.innerElStartY;
+      this.velocity = 0;
+      e.stopPropagation();
+    }
+  };
+  _handleTouchmove = e => {
+    const touch = e.touches[0];
+    if (touch && this.innerEl) {
+      // e.proventDefault();
+      e.stopPropagation();
+      e.preventDefault();
+      const delta =
+        (touch.clientY - this.startY) *
+        750 /
+        document.documentElement.clientWidth /
+        7.5;
+      const scrollHeight =
+        this.innerEl.scrollHeight *
+        750 /
+        document.documentElement.clientWidth /
+        7.5;
+
+      const time = Date.now();
+      this.velocity =
+        (this.velocity +
+          (this.innerElStartY + delta - this.lastPosition) /
+            (time - this.lastTime)) /
+        2;
+      this.lastTime = time;
+      this.lastPosition = this.innerElStartY + delta;
+
+      let damping = 1;
+      if (
+        this.innerElStartY + delta - INITIALTOP > 0 &&
+        this.overDirection !== -1
+      ) {
+        this.overStartY = touch.clientY;
+        this.overDirection = -1;
+        this.overInnerElStartY = Number(
+          this.innerEl.style.top.replace('vw', '')
+        );
+      } else if (
+        this.innerElStartY + delta - INITIALTOP < -scrollHeight &&
+        this.overDirection !== 1
+      ) {
+        this.overStartY = touch.clientY;
+        this.overDirection = 1;
+        this.overInnerElStartY = Number(
+          this.innerEl.style.top.replace('vw', '')
+        );
+      } else if (
+        this.innerElStartY + delta - INITIALTOP <= 0 &&
+        this.innerElStartY + delta - INITIALTOP >= -scrollHeight
+      ) {
+        this.overDirection = 0;
+        this.overInnerElStartY = 0;
+      }
+
+      if (this.overDirection === 0) {
+        this.innerEl.style.top = this.innerElStartY + delta * damping + 'vw';
+      } else if (this.overDirection !== 0) {
+        const overDelta =
+          (touch.clientY - this.overStartY) *
+          750 /
+          document.documentElement.clientWidth /
+          7.5;
+        damping =
+          Math.max(
+            0,
+            1 - Math.log(Math.abs(overDelta)) / Math.log(scrollHeight * 10)
+          ) / 2;
+        this.innerEl.style.top =
+          this.overInnerElStartY + overDelta * damping + 'vw';
+      }
+    }
+  };
+  _handleTouchend = e => {
+    if (!this.innerEl) {
+      return;
+    }
+    e.stopPropagation();
+    this.startY = 0;
+    const currentPos = Number(this.innerEl.style.top.replace('vw', ''));
+    const offsetPrevious = Math.abs((currentPos - INITIALTOP) % LINEHEIGHT);
+
+    const delay =
+      Math.abs(this.velocity) /
+      (10 * 100 / document.documentElement.clientWidth);
+    const offset =
+      this.velocity * 1000 * delay -
+      10 * 100 / document.documentElement.clientWidth * delay ** 2 / 2;
+
+    const index = Math.abs(
+      Math.min(
+        Math.max(
+          1 - this.range.length,
+          Math.round((currentPos + offset - INITIALTOP) / LINEHEIGHT)
+        ),
+        0
+      )
+    );
+    let pos = -index * LINEHEIGHT;
+    // this.emitChange(this.range[index]);
+
+    this.value = index;
+
+    this.scrollToY(
+      currentPos + offset,
+      delay + 200,
+      t => t * (2 - t),
+      () => {
+        this.scrollToY(pos + INITIALTOP, 400, easeInOutCubic, () => {
+          this.innerEl = null;
+        });
+      }
+    );
+  };
+
+  scrollingYId = 0;
+  scrollCallback = null;
+
+  scrollToY(value, duration, easeFunc, callback) {
+    if (this.scrollingYId) {
+      clearInterval(this.scrollingYId);
+      this.scrollingYId = 0;
+      this.scrollCallback && this.scrollCallback();
+      this.scrollCallback = null;
+    }
+    // avoid too large duration
+    if (duration > 2000) {
+      duration = 2000;
+    }
+    let startTime = Date.now();
+    let initialValue = Number(this.innerEl.style.top.replace('vw', ''));
+    this.scrollCallback = callback;
+    const id = (this.scrollingYId = setInterval(() => {
+      let deltaTime = Date.now() - startTime;
+      if (deltaTime > duration) {
+        clearInterval(id);
+        this.scrollingYId = 0;
+        this.innerEl.style.top = value + 'vw';
+        this.scrollCallback && this.scrollCallback();
+        this.scrollCallback = null;
+      } else {
+        const process = easeFunc(deltaTime / duration);
+        this.innerEl.style.top =
+          initialValue + process * (value - initialValue) + 'vw';
+      }
+    }, 16));
+  }
+
+  emitChange(value) {
+    const event = new CustomEvent('change', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        value
+      }
+    });
+    this.dispatchEvent(event);
+  }
+
+  _handleReset = () => {
+    this.emitChange(this.formInitialValue);
+  };
+}
+
+customElements.define(Picker.is, Picker);
+</script>

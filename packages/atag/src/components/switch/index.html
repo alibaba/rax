@@ -1,0 +1,159 @@
+<dom-module id="a-switch">
+  <template>
+    <style id="style">
+      /* shadow DOM styles go here */
+      :host {
+        display: inline;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        outline: none;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 11.4666vw;
+        height: 5.33333vw;
+      }
+
+      .switch input {
+        display: none;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #B4B4B4;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 2.666666vw;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 4.5vw;
+        width: 4.5vw;
+        left: 0.375vw;
+        top: 0.375vw;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+      }
+
+      #input:checked+.slider:before {
+        transform: translateX(6.1vw);
+      }
+
+      /* Rounded sliders */
+
+      .slider.round {
+        border-radius: 5.33333vw;
+      }
+
+      .slider.round:before {
+        border-radius: 50%;
+      }
+    </style>
+    <!-- shadow DOM goes here -->
+    <label class="switch" id="switch" on-click="handleClick">
+      <input id="input" type="checkbox" checked$="{{checked}}">
+      <span class="slider" id="slider"  style$="{{checkboxCheckedStyle}}"></span>
+    </label>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+
+export default class SwitchElement extends PolymerElement {
+  static get is() {
+    return 'a-switch';
+  }
+
+  constructor() {
+    super();
+  }
+
+  static get properties() {
+    return {
+      color: {
+        type: String,
+        value: '#FF5000',
+        reflectToAttribute: true
+      },
+      checked: {
+        type: Boolean,
+        value: false
+      },
+      checkboxCheckedStyle: {
+        type: String,
+        computed: ''
+      }
+    };
+  }
+
+  attributeChangedCallback(key, oldVal, newVal) {
+    super.attributeChangedCallback(key, oldVal, newVal);
+    if (oldVal !== newVal) {
+      switch (key) {
+        case 'checked':
+          this.checkboxCheckedStyle =
+            newVal == 'false' ? '' : `background-color: ${this.color}`;
+          break;
+        case 'color':
+          if (this.checked) {
+            this.checkboxCheckedStyle = `background-color: ${newVal}`;
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  ready() {
+    super.ready();
+    // save the formInitialValue for reset
+    this.formInitialValue = this.checked;
+    this.checkbox = this.$.input;
+    window.addEventListener('reset', this._handleReset, true);
+  }
+
+  handleClick() {
+    this.checked = this.checkbox.checked;
+    this.setAttribute('checked', this.checked);
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {
+          checked: this.isChecked
+        }
+      })
+    );
+  }
+
+  handleStyle() {
+    const type = this.getAttribute('type');
+
+    if (type === 'round') {
+      this.$.slider.classList.add('round');
+    }
+  }
+
+  _handleReset = () => {
+    this.checkbox.checked = this.formInitialValue;
+  };
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+  }
+}
+
+customElements.define(SwitchElement.is, SwitchElement);
+</script>

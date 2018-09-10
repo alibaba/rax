@@ -1,0 +1,156 @@
+<dom-module id="a-progress">
+  <template>
+    <div id="container" class="container" style$="[[containerStyle]]">
+      <div id="active" class$="active {{computClass()}}" style$="[[activeStyle]]"></div>
+    </div>
+    <div class="value" style$="[[infoStyle]]">[[percent]]%</div>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+      }
+
+      .container {
+        display: flex;
+        flex: 1;
+        flex-flow: row nowrap;
+        background-color: #ccc;
+        overflow: hidden;
+      }
+
+      .active {
+        flex: none;
+        height: 6px;
+        background-color: #ff5000;
+      }
+
+      .value {
+        font-size: 12px;
+        color: #999;
+        flex: none;
+        margin-left: 5px;
+      }
+
+      .active-bar {
+        transition: all .3s linear 0s;
+        -webkit-transition: all .3s linear 0s;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+export default class Progress extends PolymerElement {
+  static get is() {
+    return 'a-progress';
+  }
+
+  static get properties() {
+    return {
+      percent: {
+        type: Number,
+        value: 0
+      },
+      showInfo: {
+        type: Boolean,
+        value: false
+      },
+      strokeWidth: {
+        type: Number,
+        value: 6
+      },
+      backgroundColor: {
+        type: String,
+        value: '#ccc'
+      },
+      activeColor: {
+        type: String,
+        value: '#ff5000'
+      },
+      active: {
+        type: Boolean,
+        value: false
+      },
+      activeMode: {
+        type: Boolean,
+        value: 'backwards'
+      },
+      containerStyle: {
+        type: String,
+        computed: 'computeContainerStyle(strokeWidth, backgroundColor)'
+      },
+      activeStyle: {
+        type: String,
+        computed: 'computeActiveStyle(realPercent, strokeWidth, activeColor)'
+      },
+      infoStyle: {
+        type: String,
+        computed: 'computeInfoStyle(showInfo)'
+      },
+      realPercent: {
+        type: Number,
+        computed: 'computePercent(active, percent)'
+      }
+    };
+  }
+
+  constructor() {
+    super();
+  }
+
+  ready() {
+    super.ready();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    if (this.active) {
+      setTimeout(() => {
+        this.realPercent = this.percent;
+      }, 30);
+    } else {
+      this.realPercent = this.percent;
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+  }
+
+  computeContainerStyle(strokeWidth, backgroundColor) {
+    return `
+        border-radius: ${strokeWidth / 2}px;
+        background-color: ${backgroundColor};
+      `;
+  }
+
+  computeActiveStyle(realPercent, strokeWidth, activeColor) {
+    return `
+        width: ${realPercent}%;
+        height: ${strokeWidth}px;
+        border-radius: ${strokeWidth / 2}px;
+        background-color: ${activeColor};
+      `;
+  }
+
+  computeInfoStyle(showInfo) {
+    return `display: ${showInfo ? 'block' : 'none'}`;
+  }
+
+  computClass() {
+    return this.active ? 'active-bar' : '';
+  }
+
+  computePercent(active, percent) {
+    if (!active) {
+      return percent;
+    } else {
+      return 0;
+    }
+  }
+}
+
+customElements.define(Progress.is, Progress);
+</script>

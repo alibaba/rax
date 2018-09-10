@@ -1,0 +1,276 @@
+<dom-module id="a-audio">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 0 3.2vw;
+      }
+
+      .audio-container {
+        font-size: 4vw;
+        border-radius: 12px;
+        border: 1px solid #D8D8D8;
+        padding: 2.666666666vw;
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .audio-thumb {
+        width: 24vw;
+        height: 24vw;
+        position: relative;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .audio-play {
+        position: absolute;
+        width: 8vw;
+        height: 8vw;
+        left: 8vw;
+        top: 8vw;
+      }
+
+      .audio-thumb-img {
+        position: absolute;
+        width: 24vw;
+        height: 24vw;
+        left: 0;
+        top: 0;
+        background-size: cover;
+        background-position: center center;
+        background-image: var(--a-audio-thumb);
+      }
+
+      .audio-name {
+        font-size: 4.8vw;
+        color: #333;
+      }
+
+      .audio-author {
+        font-size: 3.7333333333vw;
+        color: #999;
+      }
+
+      .audio-content {
+        margin-left: 2.66666666vw;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .audio-slider {
+        width: 100%;
+      }
+
+      .audio-time {
+        font-size: 3.7333333vw;
+        color: #999;
+      }
+
+      #audio {
+        display: none;
+      }
+    </style>
+    <style id="customStyle"></style>
+    <audio id="audio" src="{{src}}" preload></audio>
+    <div class="audio-container">
+      <div class="audio-thumb" id="playThumb">
+        <div class="audio-thumb-img"></div>
+        <img class="audio-play" id="playIcon" src="./images/audio.png" />
+      </div>
+      <div class="audio-content">
+        <div class="audio-name">{{name}}</div>
+        <div class="audio-author">{{author}}</div>
+        <a-slider id="sliderEl" class="audio-slider" max="100" value="{{sliderValue}}"></a-slider>
+        <div class="audio-time">{{time}}</div>
+      </div>
+    </div>
+  </template>
+</dom-module>
+
+
+<script>
+  import { PolymerElement } from 'Element';
+
+  export default class Audio extends PolymerElement {
+    static get is() {
+      return 'a-audio';
+    }
+
+    static get properties() {
+      return {
+        src: {
+          type: String,
+          notify: true
+        },
+        autoplay: {
+          type: Boolean
+        },
+        poster: {
+          type: String,
+          notify: true
+        },
+        name: {
+          type: String,
+          notify: true,
+          value: '未知音频'
+        },
+        author: {
+          type: String,
+          notify: true,
+          value: '未知作者'
+        },
+        time: {
+          type: String,
+          notify: true,
+          value: '00:00'
+        },
+        sliderValue: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+        playing: {
+          type: Boolean,
+          notify: true
+        },
+        audioPlayStyle: {
+          type: String,
+          notify: true,
+          computed: 'computeAudioStyle(playing)'
+        }
+      };
+    }
+
+    attributeChangedCallback(key, val) {
+      if (key === 'poster') {
+        this.$.customStyle.innerHTML =
+        `:host {
+            --a-audio-thumb: url(${val});
+          }`;
+      }
+    }
+
+    computeAudioStyle() {
+      return this.playing ? 'none' : 'block';
+    }
+
+    ready() {
+      super.ready();
+
+      const self = this;
+      const audioEl = this.audioEl = this.$.audio;
+      if (this.isAutoplay()) {
+        audioEl.addEventListener('canplaythrough', play);
+        function play() {
+          audioEl.removeEventListener('canplaythrough', play);
+          self.play();
+        }
+      }
+
+      const poster = this.poster;
+      this.$.customStyle.innerHTML =
+        `:host {
+            --a-audio-thumb: url(${poster});
+          }`;
+
+      audioEl.onended = this._onend;
+      this.$.sliderEl.addEventListener('change', this._handleSliderChange);
+
+      this.$.playThumb.addEventListener('click', () => {
+        if (this.playing) {
+          this.pause();
+        } else {
+          this.play();
+        }
+      });
+    }
+
+    _handleSliderChange = (evt) => {
+      const detail = evt.detail;
+      const toPercentage = detail.value;
+      this.audioEl.currentTime = parseInt(toPercentage / 100 * this.audioEl.duration) || 0;
+    }
+
+    _onend = () => {
+      this.reset();
+      this._emit('ended');
+    }
+
+    play() {
+      this.playing = true;
+      this.$.playIcon.style.display = 'none';
+      const playPromise = this.audioEl.play();
+      if (playPromise) {
+        playPromise.then(() => {
+          this._emit('play')
+        }).catch((err) => {
+          this.pause();
+        })
+      }
+      this.countTime();
+    }
+
+    pause() {
+      this.playing = false;
+      this.$.audio.pause();
+      this.$.playIcon.style.display = 'block';
+      this._emit('pause');
+      clearInterval(this._timer);
+    }
+
+    _emit(type, detail) {
+      const event = new CustomEvent(type, { detail });
+      this.dispatchEvent(event);
+    }
+
+    countTime() {
+      const duration = parseInt(this.audioEl.duration);
+      this._timer = setInterval(() => {
+        const currentTime = parseInt(this.audioEl.currentTime);
+
+        let s = '00';
+        s = '' + (currentTime % 60);
+        if (s.length === 1) {
+          s = '0' + s;
+        }
+
+        let m = '00';
+        m = '' + parseInt(currentTime / 60);
+        if (m.length === 1) {
+          m = '0' + m;
+        } else if (m.length > 2) {
+          m = '99';
+        }
+
+        this._emit('timeupdate', {
+          currentTime, duration
+        });
+        this.time = `${m}:${s}`;
+
+        this.sliderValue = parseInt(100 * currentTime / duration);
+      }, 1000);
+    }
+
+    reset() {
+      this.pause();
+      this.time = '00:00';
+      this.sliderValue = 0;
+    }
+
+    isAutoplay() {
+      const hasAutoPlay = this.hasAttribute('autoplay');
+      if (!hasAutoPlay) {
+        return false;
+      }
+      const autoPlay = this.getAttribute('autoplay');
+      return autoPlay !== 'false';
+    }
+  }
+
+  customElements.define(Audio.is, Audio);
+
+</script>

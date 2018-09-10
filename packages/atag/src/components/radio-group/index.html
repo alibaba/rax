@@ -1,0 +1,100 @@
+<dom-module id="a-radio-group">
+  <template>
+    <style id="style">
+      /* shadow DOM styles go here */
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        overflow: hidden;
+      }
+
+    </style>
+    <style id="customStyle">
+      /* shadow DOM styles go here */
+
+    </style>
+    <!-- shadow DOM goes here -->
+    <slot></slot>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from 'Element';
+import { afterNextRender, throttle } from '../../shared/utils';
+
+export default class RadioGroupElement extends PolymerElement {
+  static get is() {
+    return 'a-radio-group';
+  }
+
+  static get observedAttributes() {
+    return ['name'];
+  }
+
+  static get properties() {
+    return {
+      name: {
+        type: String,
+        notify: true
+      }
+    };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    let style = this.getAttribute('style') || '';
+
+    const styleEl = this.shadowRoot.querySelector('#customStyle');
+
+    styleEl.innerHTML = `
+          :host {
+            ${style};
+          }`;
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+
+    // this.expireCache(name);
+
+    if (name === 'style') {
+      let style = this.getAttribute('style') || '';
+
+      afterNextRender(this, () => {
+        const styleEl = this.shadowRoot.querySelector('#customStyle');
+        // this.removeAttribute('style');
+        styleEl.innerHTML = `
+            :host {
+              ${style};
+            }`;
+      });
+    }
+  }
+
+  ready() {
+    super.ready();
+
+    this.addEventListener('$a-radio-change', this.changeHandler.bind(this));
+  }
+
+  changeHandler(e) {
+    const checkboxList = this.querySelectorAll('a-radio');
+    for (let i = 0; i < checkboxList.length; i++) {
+      const node = checkboxList[i];
+      node !== e.target && (node.checked = false);
+    }
+    const event = new CustomEvent('change', {
+      detail: {
+        value: e.target.value
+      }
+    });
+    this.dispatchEvent(event);
+    e.stopPropagation();
+  }
+}
+
+customElements.define(RadioGroupElement.is, RadioGroupElement);
+</script>
