@@ -39,7 +39,7 @@ export default class PickerView extends PolymerElement {
 
   constructor() {
     super();
-    ['__onChange'].forEach(method => {
+    ['_onChange'].forEach(method => {
       this[method] = this[method].bind(this);
     });
   }
@@ -48,25 +48,25 @@ export default class PickerView extends PolymerElement {
     super.connectedCallback();
     this.formInitialValue = this.value;
     this._valueChanged(this.value);
-    this.addEventListener('change', this.__onChange);
+    this.addEventListener('change', this._onChange);
     window.addEventListener('reset', this._handleReset, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('change', this.__onChange);
+    this.removeEventListener('change', this._onChange);
     window.removeEventListener('reset', this._handleReset, true);
   }
 
-  __onChange(ev) {
+  _onChange(ev) {
     let { target, detail } = ev;
     if (target.tagName.toLowerCase() !== 'a-picker-view-column') return;
     let columns = this.querySelectorAll('a-picker-view-column');
     let i = Array.prototype.slice.call(columns).indexOf(target);
     if (i < 0) return;
     this.set(`value.${i}`, detail.selectedIndex);
-    this.__dispatchEvent('change');
-    this.__dispatchEvent('bindchange');
+    this._dispatchEvent('change');
+    this._dispatchEvent('bindchange');
   }
 
   _pickerViewColumnStyleChange(indicatorStyle) {
@@ -85,7 +85,7 @@ export default class PickerView extends PolymerElement {
     }
   }
 
-  __dispatchEvent(name) {
+  _dispatchEvent(name) {
     this.dispatchEvent(
       new CustomEvent(name, {
         detail: { value: this.value },
