@@ -42,7 +42,9 @@
     <h4 class="title">a-text</h4>
     <div class="demo">
       <a-text>Hello Rax,</a-text>
-      <a-text style="color: blue"><a-text style="color: green">Hello Atag</a-text>, Hello World</a-text>
+      <a-text style="color: blue">
+        <a-text style="color: green">Hello Atag</a-text>, Hello World
+      </a-text>
     </div>
   </div>
 
@@ -72,8 +74,74 @@
     <div class="demo">
       <a-icon type="success"></a-icon>
       <a-icon type="success" color="#ff5000" size="30"></a-icon>
-      <a-icon type="warn"></a-icon>
-      <a-icon type="info"></a-icon>
+      <a-icon type="warn" size="50"></a-icon>
+      <a-icon type="info" size="70"></a-icon>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-input</h4>
+    <div class="demo">
+      <a-input placeholder="input placeholder" placeholder-style="color: red;" auto-focus=true></a-input>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-textarea</h4>
+    <div class="demo">
+      <a-textarea auto-height=true class="textarea" placeholder="textarea placeholder" auto-focus=true></a-textarea>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <h4 class="title">a-checkbox</h4>
+    <div class="demo">
+      <a-checkbox-group>
+        <a-label>
+          <a-checkbox value="foo" checked></a-checkbox>
+          <a-text>checked</a-text>
+        </a-label>
+        <a-label>
+          <a-checkbox value="bar" disabled></a-checkbox>
+          <a-text>disabled</a-text>
+        </a-label>
+      </a-checkbox-group>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-slider</h4>
+    <div class="demo">
+      <a-slider step="5" show-value></a-slider>
+      <a-slider value="50" show-value></a-slider>
+      <a-slider min="50" max="200" show-value></a-slider>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-progress</h4>
+    <div class="demo">
+      <a-progress class="progress-item" percent="30"></a-progress>
+      <a-progress class="progress-item" percent="50" show-info></a-progress>
+      <a-progress class="progress-item" percent="100" show-info stroke-width="3" background-color="#999" active-color="blue"></a-progress>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-swiper</h4>
+    <div class="demo">
+      <a-swiper indicator-dots=true autoplay="true" interval="2000" duration="500">
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
     </div>
   </div>
 
