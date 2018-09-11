@@ -1,6 +1,6 @@
 <dom-module id="a-radio-group">
   <template>
-    <style id="style">
+    <style>
       /* shadow DOM styles go here */
       :host {
         position: relative;
@@ -9,10 +9,6 @@
         user-select: none;
         overflow: hidden;
       }
-
-    </style>
-    <style id="customStyle">
-      /* shadow DOM styles go here */
 
     </style>
     <!-- shadow DOM goes here -->
@@ -40,38 +36,6 @@ export default class RadioGroupElement extends PolymerElement {
         notify: true
       }
     };
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    let style = this.getAttribute('style') || '';
-
-    const styleEl = this.shadowRoot.querySelector('#customStyle');
-
-    styleEl.innerHTML = `
-          :host {
-            ${style};
-          }`;
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    super.attributeChangedCallback(name, oldValue, newValue);
-
-    // this.expireCache(name);
-
-    if (name === 'style') {
-      let style = this.getAttribute('style') || '';
-
-      afterNextRender(this, () => {
-        const styleEl = this.shadowRoot.querySelector('#customStyle');
-        // this.removeAttribute('style');
-        styleEl.innerHTML = `
-            :host {
-              ${style};
-            }`;
-      });
-    }
   }
 
   ready() {

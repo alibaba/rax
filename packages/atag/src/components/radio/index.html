@@ -1,6 +1,6 @@
 <dom-module id="a-radio">
   <template>
-    <style id="style">
+    <style>
       :host {
         position: relative;
         box-sizing: border-box;
@@ -55,9 +55,6 @@
       :host input[type="radio"][disabled]:checked+label .dot {
         background-color: #bbb;
       }
-    </style>
-    <style id="customStyle">
-      /* shadow DOM styles go here */
     </style>
     <input type="radio" id="radio" name="{{value}}" disabled="{{disabled::change}}" checked="{{checked::change}}">
     <label for="radio">

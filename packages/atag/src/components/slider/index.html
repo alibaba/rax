@@ -1,14 +1,7 @@
 <!-- TODO 优化小数点的数值展示 -->
 <dom-module id="a-slider">
   <template>
-    <div id="container" class="container" style$="[[containerStyle]]">
-      <div id="active" class="active" style$="[[activeStyle]]"></div>
-      <div id="indicatorDotWrapper">
-        <div class="slide-block" style$="[[blockStyle]]"></div>
-      </div>
-    </div>
-    <div class="value" style$=[[valueStyle]]>[[value]]</div>
-    <style id="style">
+    <style>
       :host {
         display: flex;
         flex-flow: row nowrap;
@@ -51,6 +44,13 @@
         margin-left: 1.4vw;
       }
     </style>
+    <div id="container" class="container" style$="[[containerStyle]]">
+        <div id="active" class="active" style$="[[activeStyle]]"></div>
+        <div id="indicatorDotWrapper">
+          <div class="slide-block" style$="[[blockStyle]]"></div>
+        </div>
+      </div>
+    <div class="value" style$=[[valueStyle]]>[[value]]</div>
   </template>
 </dom-module>
 
