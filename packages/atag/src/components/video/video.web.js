@@ -157,10 +157,10 @@ export default class VideoElement extends PolymerElement {
     // Update the seek bar as the video plays
     video.addEventListener('timeupdate', function() {
       // Calculate the slider value
-      var value = 100 / video.duration * video.currentTime;
+      var value = (100 / video.duration) * video.currentTime;
       // Update the slider value
-      lineFront.style.width = value * 60 / 100 + 'vw';
-      seekBar.style.left = value * 60 / 100 - 1.6 + 'vw';
+      lineFront.style.width = (value * 60) / 100 + 'vw';
+      seekBar.style.left = (value * 60) / 100 - 1.6 + 'vw';
     });
 
     video.addEventListener('ended', e => {
@@ -195,34 +195,19 @@ export default class VideoElement extends PolymerElement {
   handleStyle() {
     const width = this.getAttribute('width') || '100';
     const height = this.getAttribute('height');
-    const styleEl = this.shadowRoot.querySelector('#style');
-    styleEl.innerHTML += `
-        :host .container {
-          width: ${width}vw;
-          position: relative;
-        }
-        :host #controls {
-          width: ${width}vw;
-        }
-
-        :host #video {
-          width: ${width}vw;
-          height: ${height}vw;
-        }
-        :host #image {
-        position: absolute;
-        z-index: 100;
-        left: ${(width - 16.8) / 2}vw;
-        top: 50%;
-        margin-top: -40px;
-        opacity: 1;
-      }
-      `;
+    this.$.container.style.width = this.$.controls.style.width = this.$.video.style.width = `${width}vw`;
+    this.$.video.style.height = `${height}vw`;
+    this.$.image.style.cssText = `{
+      left: ${(width - 16.8) / 2}vw;
+      top: 50%;
+      margin-top: -40px;
+      opacity: 1;
+    }`;
   }
 
   static get template() {
     return html`
-      <style id="style">
+      <style>
       /* shadow DOM styles go here */
       :host {
         display: inline;
