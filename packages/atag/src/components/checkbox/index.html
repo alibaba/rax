@@ -1,6 +1,6 @@
 <dom-module id="a-checkbox">
   <template>
-    <style id="style">
+    <style>
       :host {
         position: relative;
         box-sizing: border-box;
@@ -53,7 +53,6 @@
         background-color: #bbb;
       }
     </style>
-    <style id="customStyle"></style>
     <input type="checkbox" id="checkbox" disabled="{{disabled::change}}" checked="{{checked::change}}">
     <label for="checkbox">
       <div class="circle" style$="{{circleCheckedStyle}}">
