@@ -1,9 +1,5 @@
 <dom-module id="a-progress">
   <template>
-    <div id="container" class="container" style$="[[containerStyle]]">
-      <div id="active" class$="active {{computClass()}}" style$="[[activeStyle]]"></div>
-    </div>
-    <div class="value" style$="[[infoStyle]]">[[percent]]%</div>
     <style>
       :host {
         display: flex;
@@ -37,6 +33,10 @@
         -webkit-transition: all .3s linear 0s;
       }
     </style>
+    <div id="container" class="container" style$="[[containerStyle]]">
+      <div id="active" class$="active {{computClass()}}" style$="[[activeStyle]]"></div>
+    </div>
+    <div class="value" style$="[[infoStyle]]">[[percent]]%</div>
   </template>
 </dom-module>
 
