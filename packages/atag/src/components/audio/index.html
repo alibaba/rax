@@ -169,11 +169,7 @@ export default class Audio extends PolymerElement {
 
     afterNextRender(this, () => {
       if (this.isAutoplay()) {
-        const play = () => {
-          audioEl.removeEventListener('canplaythrough', play);
-          this.play();
-        };
-        audioEl.addEventListener('canplaythrough', play);
+        this.play();
       }
       audioEl.onended = this._onend;
       this.$.sliderEl.addEventListener('change', this._handleSliderChange);
@@ -208,6 +204,7 @@ export default class Audio extends PolymerElement {
           this._emit('play');
         })
         .catch(err => {
+          console.log(err)
           this.pause();
         });
     }
