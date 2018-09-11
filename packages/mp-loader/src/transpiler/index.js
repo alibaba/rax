@@ -2,7 +2,7 @@ const { dirname, isAbsolute, join } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const { parse } = require('./parser');
 const generate = require('./generate');
-const { compileES5 } = require('../shared/utils');
+const { compileToES5 } = require('../shared/utils');
 
 module.exports = function transpiler(content, opts) {
   const templateAST = parse(content.trim(), opts);
@@ -27,7 +27,7 @@ module.exports = function transpiler(content, opts) {
    * support object spread stynax in template
    * https://new.babeljs.io/docs/en/next/babel-plugin-proposal-object-rest-spread.html
    */
-  const { code } = compileES5(render, {
+  const { code } = compileToES5(render, {
     presets: [],
     plugins: [
       [

@@ -1,13 +1,4 @@
 const { noop } = require('./utils');
-// import { warn, tip } from 'core/util/debug';
-
-const warn = console.warn.bind(console);
-const tip = warn;
-
-// type CompiledFunctionResult = {
-//   render: Function,
-//   staticRenderFns: Array<Function>
-// };
 
 function createFunction(code, errors) {
   try {
@@ -32,7 +23,7 @@ function createCompileToFunctionFn(compile) {
         new Function('return 1');
       } catch (e) {
         if (e.toString().match(/unsafe-eval|CSP/)) {
-          warn(
+          console.warn(
             'It seems you are using the standalone build of Vue.js in an ' +
             'environment with Content Security Policy that prohibits unsafe-eval. ' +
             'The template compiler cannot work in this environment. Consider ' +
@@ -57,7 +48,7 @@ function createCompileToFunctionFn(compile) {
     // check compilation errors/tips
     if (process.env.NODE_ENV !== 'production') {
       if (compiled.errors && compiled.errors.length) {
-        warn(
+        console.warn(
           `Error compiling template:\n\n${template}\n\n` +
           compiled.errors.map(e => `- ${e}`).join('\n') +
           '\n',
@@ -65,7 +56,7 @@ function createCompileToFunctionFn(compile) {
         );
       }
       if (compiled.tips && compiled.tips.length) {
-        compiled.tips.forEach(msg => tip(msg, vm));
+        compiled.tips.forEach(msg => console.warn(msg, vm));
       }
     }
 
@@ -83,7 +74,7 @@ function createCompileToFunctionFn(compile) {
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production') {
       if ((!compiled.errors || !compiled.errors.length) && fnGenErrors.length) {
-        warn(
+        console.warn(
           'Failed to generate render function:\n\n' +
           fnGenErrors
             .map(({ err, code }) => `${err.toString()} in\n\n${code}\n`)

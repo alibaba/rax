@@ -38,21 +38,21 @@ Community
 
 :dart: **Tiny:** 12.6 KB minified + gzipped.
 
-:art: **Universal:** works in browsers, Weex, Node.js, mini-progam, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
+:art: **Universal:** works in browsers, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
 ## Quick Start
 
 Install the Rax CLI tools to init project:
 
 ```sh
-npm install rax-cli -g
-rax init YourProjectName
+$ npm install rax-cli -g
+$ rax init <YourProjectName>
 ```
 
 Start local server to launch project:
 ```sh
-cd YourProjectName
-npm run start
+$ cd YourProjectName
+$ npm run start
 ```
 
 ## Example

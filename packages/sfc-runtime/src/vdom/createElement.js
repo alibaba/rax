@@ -1,7 +1,7 @@
 import { processPropsData } from '../utils';
 import { get } from '../store';
 
-export default function _createElement(type, props, children) {
+export default function(type, props, children) {
   let createElement;
   if (this && typeof this.createElement === 'function') {
     createElement = this.createElement;

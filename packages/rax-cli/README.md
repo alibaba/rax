@@ -7,3 +7,9 @@
 ```sh
 $ npm install -g rax-cli
 ```
+
+## Usage
+
+```sh
+$ rax init <ProjectName> [--verbose]
+```

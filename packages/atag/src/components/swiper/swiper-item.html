@@ -1,0 +1,27 @@
+<dom-module id="a-swiper-item">
+  <template>
+    <style>
+      :host {
+        overflow: hidden;
+        flex-shrink: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <slot></slot>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from '@polymer/polymer';
+
+export default class SwiperItem extends PolymerElement {
+  static get is() {
+    return 'a-swiper-item';
+  }
+  constructor() {
+    super();
+  }
+}
+customElements.define(SwiperItem.is, SwiperItem);
+</script>

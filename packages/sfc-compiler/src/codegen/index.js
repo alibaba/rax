@@ -1,8 +1,7 @@
 const { genHandlers } = require('./events');
 const baseDirectives = require('../directives');
-const { camelize, no, extend, makeMap } = require('../utils');
 const { baseWarn, pluckModuleFunction } = require('../helpers');
-const { isReservedTagName, isPreveredIdentifier } = require('../utils');
+const { camelize, no, extend, makeMap, isReservedTagName, isPreveredIdentifier, globalComponentsRefName } = require('../utils');
 
 const fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 const simplePathRE = /^\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?']|\[".*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*\s*$/;
@@ -93,7 +92,7 @@ function genElement(el, state) {
 
       rootNode.tagHelperMap[el.tag] = el.tag;
 
-      const tagStatement = `__components_refs__['${el.tag}']||'${el.tag}'`;
+      const tagStatement = `${globalComponentsRefName}['${el.tag}']||'${el.tag}'`;
 
       code = `_c(${tagStatement}${
         data ? `,${data}` : '' // data
@@ -214,8 +213,7 @@ function genFor(el, state, altGen, altHelper) {
   ) {
     state.warn(
       `<${el.tag} v-for="${alias} in ${exp}">: component lists rendered with ` +
-      'v-for should have explicit keys. ' +
-      'See https://vuejs.org/guide/list.html#key for more info.',
+      'v-for should have explicit keys. ',
       true /* tip */
     );
   }

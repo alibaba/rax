@@ -1,9 +1,5 @@
 import nextTick from './nextTick';
 
-/**
- * reactive 调度器
- */
-
 export const MAX_UPDATE_COUNT = 100;
 
 const queue = [];

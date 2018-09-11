@@ -1,29 +1,18 @@
-const { uniqueInstanceID } = require('../utils');
-const { parseText } = require('../parser/text-parser');
 const { parseStyleText } = require('../utils/style');
-const { getAndRemoveAttr, getBindingAttr, baseWarn } = require('../helpers');
+const { getAndRemoveAttr, getBindingAttr } = require('../helpers');
 
-const NEED_THIS_REG = /^[_$\w]/i;
+const STYLE_OBJECT_VAR = '__styles__';
+
+// not identifier
+function isExpression(expOrRef) {
+  return /^[_$\w]/i.test(expOrRef);
+}
 
 function transformNode(el, options) {
-  const warn = options.warn || baseWarn;
   const classNames = [];
 
+  // <view class="foo" />
   const staticClass = getAndRemoveAttr(el, 'class');
-  if (process.env.NODE_ENV !== 'production' && staticClass) {
-    const expression = parseText(staticClass, options.delimiters);
-    if (expression) {
-      warn(
-        `class="${staticClass}": ` +
-        'Interpolation inside attributes has been removed. ' +
-        'Use v-bind or the colon shorthand instead. For example, ' +
-        'instead of <div class="{{ val }}">, use <div :class="val">.'
-      );
-    }
-  }
-
-  const classBinding = getBindingAttr(el, 'class', false /* getStatic */);
-
   if (staticClass) {
     const staticClasses = staticClass.split(' ');
     staticClasses.forEach(klass => {
@@ -33,61 +22,44 @@ function transformNode(el, options) {
       }
     });
   }
+
+  // <view :class="bar" />
+  const classBinding = getBindingAttr(el, 'class', false /* getStatic */);
   if (classBinding) {
-    classNames.push(classBinding);
+    classNames.push(isExpression(classBinding) ? 'this.' + classBinding : classBinding);
   }
 
-  el.classNameStyle =
-    classNames.length === 0
-      ? ''
-      : `[${classNames
-        .map(
-          className =>
-            NEED_THIS_REG.test(className) ? `this.${className}` : className
-        )
-        .join(',')}]`;
+  // array of classNames, eg. ["foo", this.bar]
+  el.classNameStyle = classNames.length === 0 ? '' : `[${classNames.join(',')}]`;
 
-  // handle style
+  // <view style="color: red;" />
   const staticStyle = getAndRemoveAttr(el, 'style');
   if (staticStyle) {
-    /* istanbul ignore if */
-    if (process.env.NODE_ENV !== 'production') {
-      const expression = parseText(staticStyle, options.delimiters);
-      if (expression) {
-        warn(
-          `style="${staticStyle}": ` +
-          'Interpolation inside attributes has been removed. ' +
-          'Use v-bind or the colon shorthand instead. For example, ' +
-          'instead of <div style="{{ val }}">, use <div :style="val">.'
-        );
-      }
-    }
+    // { "color": "red" }
     el.staticStyle = JSON.stringify(parseStyleText(staticStyle));
   }
 
+  // <view :style="styleObject" />
   const styleBinding = getBindingAttr(el, 'style', false /* getStatic */);
   if (styleBinding) {
-    el.styleBinding = styleBinding;
+    el.styleBinding = isExpression(styleBinding) ? styleBinding : 'this.' + styleBinding;
   }
 }
 
 function genData(el) {
-  const styleTag = '_st';
   let data = '';
   if (!el.staticStyle && !el.classNameStyle && !el.styleBinding) {
     return data;
   }
 
-  if (el.styleBinding && NEED_THIS_REG.test(el.styleBinding)) {
-    el.styleBinding = 'this.' + el.styleBinding;
-  }
+  // _cx(classNames, styleObject, ?styleBinding, ?staticStyle);
+  const styleArgs = [];
+  styleArgs.push(el.classNameStyle || '[]');
+  styleArgs.push(STYLE_OBJECT_VAR);
+  el.styleBinding && styleArgs.push(el.styleBinding);
+  el.staticStyle && styleArgs.push(el.staticStyle);
 
-  data += `style:_cx(${
-    el.classNameStyle ? el.classNameStyle : '!1'
-  },${styleTag},${el.styleBinding ? el.styleBinding : '!1'},${
-    el.staticStyle ? el.staticStyle : '!1'
-  }),`;
-
+  data += `style:_cx(${styleArgs.join(',')}),`;
   return data;
 }
 

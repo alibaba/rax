@@ -1,0 +1,103 @@
+<dom-module id="a-picker-view">
+  <template>
+    <slot></slot>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: row nowrap;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<script>
+import './picker-view-column';
+import { PolymerElement } from '@polymer/polymer';
+export default class PickerView extends PolymerElement {
+  static get is() {
+    return 'a-picker-view';
+  }
+
+  static get properties() {
+    return {
+      value: {
+        type: Array,
+        reflectToAttribute: true,
+        value: [],
+        observer: '_valueChanged'
+      },
+      indicatorStyle: {
+        type: String,
+        value: ''
+      }
+    };
+  }
+
+  static get observers() {
+    return ['_pickerViewColumnStyleChange(indicatorStyle, maskStyle)'];
+  }
+
+  constructor() {
+    super();
+    ['_onChange'].forEach(method => {
+      this[method] = this[method].bind(this);
+    });
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.formInitialValue = this.value;
+    this._valueChanged(this.value);
+    this.addEventListener('change', this._onChange);
+    window.addEventListener('_formReset', this._handleReset, true);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('change', this._onChange);
+    window.removeEventListener('_formReset', this._handleReset, true);
+  }
+
+  _onChange(ev) {
+    let { target, detail } = ev;
+    if (target.tagName.toLowerCase() !== 'a-picker-view-column') return;
+    let columns = this.querySelectorAll('a-picker-view-column');
+    let i = Array.prototype.slice.call(columns).indexOf(target);
+    if (i < 0) return;
+    this.set(`value.${i}`, detail.selectedIndex);
+    this._dispatchEvent('change');
+  }
+
+  _pickerViewColumnStyleChange(indicatorStyle) {
+    setTimeout(() => {
+      let columns = this.querySelectorAll('a-picker-view-column');
+      for (let column of columns) {
+        column.updateStyleFromParent(indicatorStyle);
+      }
+    }, 0);
+  }
+
+  _valueChanged(value) {
+    let columns = this.querySelectorAll('a-picker-view-column');
+    for (let i = 0; i < columns.length; i++) {
+      columns[i].setAttribute('selected-index', value[i] || 0);
+    }
+  }
+
+  _dispatchEvent(name) {
+    this.dispatchEvent(
+      new CustomEvent(name, {
+        detail: { value: this.value },
+        bubbles: true,
+        cancelable: false
+      })
+    );
+  }
+
+  _handleReset = () => {
+    this.value = this.formInitialValue;
+  };
+}
+
+customElements.define(PickerView.is, PickerView);
+</script>
