@@ -139,6 +139,7 @@ const INITIALTOP = 33.333 - LINEHEIGHT / 2;
 const FONTSIZE = 4.27;
 
 export default class Picker extends PolymerElement {
+
   static get is() {
     return 'a-picker';
   }
@@ -186,10 +187,6 @@ export default class Picker extends PolymerElement {
     }
   }
 
-  constructor() {
-    super();
-  }
-
   ready() {
     super.ready();
 
@@ -207,12 +204,15 @@ export default class Picker extends PolymerElement {
     this.container.addEventListener('click', e => {
       e.stopPropagation();
     });
+
     this.mask.addEventListener('click', () => {
       this.hide();
     });
+
     this.$.cancel.addEventListener('click', () => {
       this.hide();
     });
+
     this.$.confirm.addEventListener('click', () => {
       this.emitChange(this.value);
       this.hide();
@@ -222,11 +222,7 @@ export default class Picker extends PolymerElement {
       this.show();
     });
 
-    // alert([INITIALTOP, this.value, this.range.length ,LINEHEIGHT, document.documentElement.clientWidth].join('   '))
-    this.innerEl.style.top =
-      INITIALTOP -
-      Math.max(0, Math.min(this.value, this.range.length - 1)) * LINEHEIGHT +
-      'vw';
+    this.innerEl.style.top = INITIALTOP - Math.max(0, Math.min(this.value, this.range.length - 1)) * LINEHEIGHT + 'vw';
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -280,22 +276,15 @@ export default class Picker extends PolymerElement {
       e.stopPropagation();
     }
   };
+
   _handleTouchmove = e => {
     const touch = e.touches[0];
     if (touch && this.innerEl) {
-      // e.proventDefault();
       e.stopPropagation();
       e.preventDefault();
-      const delta =
-        (touch.clientY - this.startY) *
-        750 /
-        document.documentElement.clientWidth /
-        7.5;
-      const scrollHeight =
-        this.innerEl.scrollHeight *
-        750 /
-        document.documentElement.clientWidth /
-        7.5;
+
+      const delta = (touch.clientY - this.startY) * 750 / document.documentElement.clientWidth / 7.5;
+      const scrollHeight = this.innerEl.scrollHeight * 750 / document.documentElement.clientWidth / 7.5;
 
       const time = Date.now();
       this.velocity =
@@ -336,21 +325,13 @@ export default class Picker extends PolymerElement {
       if (this.overDirection === 0) {
         this.innerEl.style.top = this.innerElStartY + delta * damping + 'vw';
       } else if (this.overDirection !== 0) {
-        const overDelta =
-          (touch.clientY - this.overStartY) *
-          750 /
-          document.documentElement.clientWidth /
-          7.5;
-        damping =
-          Math.max(
-            0,
-            1 - Math.log(Math.abs(overDelta)) / Math.log(scrollHeight * 10)
-          ) / 2;
-        this.innerEl.style.top =
-          this.overInnerElStartY + overDelta * damping + 'vw';
+        const overDelta = (touch.clientY - this.overStartY) * 750 / document.documentElement.clientWidth / 7.5;
+        damping = Math.max( 0, 1 - Math.log(Math.abs(overDelta)) / Math.log(scrollHeight * 10) ) / 2;
+        this.innerEl.style.top = this.overInnerElStartY + overDelta * damping + 'vw';
       }
     }
   };
+
   _handleTouchend = e => {
     if (!this.innerEl) {
       return;
@@ -377,7 +358,6 @@ export default class Picker extends PolymerElement {
       )
     );
     let pos = -index * LINEHEIGHT;
-    // this.emitChange(this.range[index]);
 
     this.value = index;
 

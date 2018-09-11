@@ -1,7 +1,7 @@
 /**
- * ref https://github.com/RevillWeb/img-2
- * MIT
+ * https://github.com/RevillWeb/img-2
  */
+
 export default class ImageElement extends HTMLElement {
   static get is() {
     return 'a-image';
@@ -71,9 +71,11 @@ export default class ImageElement extends HTMLElement {
     if (this.hasAttribute('width')) {
       this.style.width = `${this._width}px`;
     }
+
     if (this.hasAttribute('height')) {
       this.style.height = `${this._height}px`;
     }
+    
     this._width = parseFloat(this.style.width);
     this._height = parseFloat(this.style.height);
 
@@ -137,6 +139,7 @@ export default class ImageElement extends HTMLElement {
   static get observedAttributes() {
     return ['src', 'width', 'height', 'alt'];
   }
+
   attributeChangedCallback(name, oldValue, newValue) {
     // If nothing has changed then just return
     if (newValue === oldValue) return;
@@ -279,6 +282,7 @@ export default class ImageElement extends HTMLElement {
   }
 
   static _preCacheListeners = new Map();
+
   static _addPreCacheListener(cb, url) {
     ImageElement._preCacheListeners.set(cb, url);
   }
@@ -296,10 +300,13 @@ export default class ImageElement extends HTMLElement {
    */
 
   static __priorityCount = 0;
+
   static _startPreCacheDebounce = null;
+
   static get _priorityCount() {
     return ImageElement.__priorityCount;
   }
+
   static set _priorityCount(value) {
     ImageElement.__priorityCount = value;
     if (ImageElement.__priorityCount < 1) {
@@ -319,6 +326,7 @@ export default class ImageElement extends HTMLElement {
    * Methods used to determine when this element is in the visible viewport
    */
   static _intersectListeners = new Map();
+
   static _observer = new IntersectionObserver(handleIntersect, {
     root: null,
     rootMargin: '0px',
@@ -335,6 +343,7 @@ export default class ImageElement extends HTMLElement {
   }
 
   static _preCacheCallbacks = {};
+
   static _preCache(url, cb) {
     let slot = ImageElement._preCacheCallbacks[url];
     if (slot === undefined) {
@@ -414,6 +423,5 @@ function handleIntersect(entries) {
     }
   });
 }
-
 
 customElements.define(ImageElement.is, ImageElement);

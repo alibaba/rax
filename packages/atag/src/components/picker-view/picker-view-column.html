@@ -103,7 +103,6 @@ export default class PickerViewColumn extends PolymerElement {
 
   ready() {
     super.ready();
-    console.log(afterNextRender)
     afterNextRender(this, () => {
       this.itemHeight = this.$.indicator.offsetHeight;
       this._updateDynamicStyle();
@@ -176,10 +175,12 @@ export default class PickerViewColumn extends PolymerElement {
       this._scrollTo(scrollY, time);
       return;
     }
+
     time = Math.abs(velocity / acceleration);
     let mayScrollY = scrollY + velocity / 2 * time; // S1 = S0 + 1/2vt
     mayScrollY = Math.round(mayScrollY / itemHeight) * itemHeight;
     let shift;
+
     if (mayScrollY < 0) {
       shift = scrollY;
       scrollY = 0;
@@ -189,6 +190,7 @@ export default class PickerViewColumn extends PolymerElement {
     } else {
       scrollY = mayScrollY;
     }
+
     if (mayScrollY < 0 || mayScrollY > maxScrollY) {
       velocity = Math.abs(velocity);
       // S = vt + 1/2at^2 => t = ~
@@ -216,10 +218,13 @@ export default class PickerViewColumn extends PolymerElement {
 
   _scrollTo(y, time = 0.3) {
     if (this.scrollY === y) return;
+
     this.scrollY = y;
+
     if (time) {
       this._setTransition(`cubic-bezier(0, 0, 0.2, 1.15) ${time}s`);
     }
+
     this._setTransform(`translate3d(0, ${-y}px, 0)`);
     if (time) {
       this.timer = setTimeout(() => {
@@ -236,6 +241,7 @@ export default class PickerViewColumn extends PolymerElement {
       'transform'
     );
     if (transform === 'none') return;
+    
     let matrix = transform.replace(/[^0-9.,]/g, '').split(',');
     let scrollY = Number(matrix[5]);
     this.velocity = 0;
