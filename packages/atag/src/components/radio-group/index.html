@@ -1,7 +1,6 @@
 <dom-module id="a-radio-group">
   <template>
     <style>
-      /* shadow DOM styles go here */
       :host {
         position: relative;
         box-sizing: border-box;
@@ -9,9 +8,7 @@
         user-select: none;
         overflow: hidden;
       }
-
     </style>
-    <!-- shadow DOM goes here -->
     <slot></slot>
   </template>
 </dom-module>
@@ -45,14 +42,18 @@ export default class RadioGroupElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.addEventListener('_radioChange', this.changeHandler);
+    this.removeEventListener('_radioChange', this.changeHandler);
   }
 
   changeHandler = (e) => {
+    e.stopPropagation();
+
     const checkboxList = this.querySelectorAll('a-radio');
     for (let i = 0; i < checkboxList.length; i++) {
       const node = checkboxList[i];
-      node !== e.target && (node.checked = false);
+      if (node !== e.target) {
+        node.checked = false
+      }
     }
     const event = new CustomEvent('change', {
       detail: {
@@ -60,7 +61,6 @@ export default class RadioGroupElement extends PolymerElement {
       }
     });
     this.dispatchEvent(event);
-    e.stopPropagation();
   }
 }
 
