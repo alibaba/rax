@@ -168,7 +168,7 @@ export default class VideoElement extends PolymerElement {
     // Update the seek bar as the video plays
     video.addEventListener('timeupdate', function() {
       // Calculate the slider value
-      var value = (100 / video.duration) * video.currentTime;
+      var value = 100 / video.duration * video.currentTime;
       // Update the slider value
       lineFront.style.width = value + '%';
       seekBar.style.left = value - 5 + '%';

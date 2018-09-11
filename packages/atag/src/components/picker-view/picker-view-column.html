@@ -1,9 +1,9 @@
 <dom-module id="a-picker-view-column">
   <template>
-    <div id="mask" class="mask">
-      <div id="indicator" class="indicator"></div>
+    <div id="mask" class="mask" style$="{{maskStyle}}">
+      <div id="indicator" class="indicator" style$="{{indicatorStyle}}"></div>
     </div>
-    <div id="content" class="content">
+    <div id="content" class="content" style$="{{contentStyle}}">
       <slot></slot>
     </div>
     <style>
@@ -45,13 +45,13 @@
         color: #333;
       }
     </style>
-    <style id="parent-style"></style>
-    <style id="dynamic-style"></style>
   </template>
 </dom-module>
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
+import { afterNextRender } from "../../shared/utils";
+
 export default class PickerViewColumn extends PolymerElement {
   static get is() {
     return 'a-picker-view-column';
@@ -69,6 +69,18 @@ export default class PickerViewColumn extends PolymerElement {
         reflectToAttribute: true,
         value: 0,
         observer: '_selectedIndexChange'
+      },
+      indicatorStyle: {
+        type: String,
+        value: ''
+      },
+      maskStyle: {
+        type: String,
+        value: ''
+      },
+      contentStyle: {
+        type: String,
+        value: ''
       }
     };
   }
@@ -91,8 +103,11 @@ export default class PickerViewColumn extends PolymerElement {
 
   ready() {
     super.ready();
-    this.itemHeight = this.$.indicator.offsetHeight;
-    this._updateDynamicStyle();
+    console.log(afterNextRender)
+    afterNextRender(this, () => {
+      this.itemHeight = this.$.indicator.offsetHeight;
+      this._updateDynamicStyle();
+    })
   }
 
   connectedCallback() {
@@ -144,6 +159,7 @@ export default class PickerViewColumn extends PolymerElement {
     let { itemHeight, scrollY, velocity, acceleration } = this;
     let maxScrollY = (this.children.length - 1) * itemHeight;
     let time = 0.3;
+    
     // handle no touchmove
     if (velocity === 0) {
       let rectY = this.$.indicator.getBoundingClientRect().top;
@@ -186,16 +202,8 @@ export default class PickerViewColumn extends PolymerElement {
 
   _updateDynamicStyle() {
     let padding = (this.offsetHeight - this.itemHeight) / 2;
-    let style = `
-        .mask {
-          background-size: 100% ${padding}px;
-        }
-        .content {
-          padding-top: ${padding}px;
-          padding-bottom: ${padding}px;
-        }
-      `;
-    this.$['dynamic-style'].innerHTML = style;
+    this.maskStyle = `background-size: 100% ${padding}px;`
+    this.contentStyle = `padding-top: ${padding}px; padding-bottom: ${padding}px;`
   }
 
   _setTransform(value) {
@@ -252,15 +260,7 @@ export default class PickerViewColumn extends PolymerElement {
   }
 
   updateStyleFromParent(indicatorStyle) {
-    let styleEl = this.shadowRoot.querySelector('#parent-style');
-    if (!this.shadowRoot) return;
-    if (!styleEl) return;
-    let style = `
-        .indicator {
-          ${indicatorStyle}
-        }
-      `;
-    styleEl.innerHTML = style;
+    this.indicatorStyle = indicatorStyle;
   }
 
   _dispatchEvent(name) {
