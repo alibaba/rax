@@ -62,8 +62,6 @@
         <div class="dot" style$="{{dotCheckedStyle}}"></div>
       </div>
     </label>
-    <!-- shadow DOM goes here -->
-    <!-- <slot></slot> -->
   </template>
 </dom-module>
 
@@ -114,11 +112,6 @@ export default class RadioElement extends PolymerElement {
     };
   }
 
-  disconnectedCallback() {
-    this.removeEventListener('click', this.clickHandler, true);
-    window.removeEventListener('_formReset', this._handlerReset, true);
-  }
-
   ready() {
     super.ready();
 
@@ -129,22 +122,32 @@ export default class RadioElement extends PolymerElement {
     window.addEventListener('_formReset', this._handlerReset, true);
   }
 
-  clickHandler = e => {
-    !e.isTrusted && this.$.radio.click();
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    
+    this.removeEventListener('click', this.clickHandler, true);
+    window.removeEventListener('_formReset', this._handlerReset, true);
+  }
+
+  clickHandler = (e) => {
     e.stopPropagation();
+
+    if(!e.isTrusted) {
+      this.$.radio.click();
+    }
   };
 
-  changeHandler = e => {
-    const innerEvent = new CustomEvent('_radioChange', {
+  changeHandler = (e) => {
+    e.stopPropagation();
+
+    const customEvent = new CustomEvent('_radioChange', {
       bubbles: true,
       cancelable: true,
       detail: {
         value: this.checked
       }
     });
-    // this.dispatchEvent(event);
-    this.dispatchEvent(innerEvent);
-    e.stopPropagation();
+    this.dispatchEvent(customEvent);
   };
 
   _handlerReset = () => {
