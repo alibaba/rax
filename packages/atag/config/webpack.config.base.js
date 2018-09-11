@@ -1,5 +1,7 @@
-const { resolve } = require('path');
+const { resolve, join } = require('path');
+const fs = require('fs');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = () => {
   return new Promise(done => {
@@ -46,7 +48,7 @@ module.exports = () => {
         }
       },
       devServer: {
-        contentBase: resolve('.'),
+        contentBase: resolve(fs.realpathSync(process.cwd()), 'demo'),
         port: 9001
       },
       plugins: [
@@ -54,8 +56,13 @@ module.exports = () => {
           'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }),
         new webpack.BannerPlugin({
-          banner: `builtAt: ${new Date()}`
-        })
+          banner: `${new Date()}`
+        }),
+        // Generates an `index.html` file with the <script> injected.
+        new HtmlWebpackPlugin({
+          inject: true,
+          template: resolve(fs.realpathSync(process.cwd()), 'demo/index.htm')
+        }),
       ]
     };
     done(config);
