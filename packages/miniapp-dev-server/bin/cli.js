@@ -9,8 +9,6 @@ const { existsSync } = require('fs');
 // print dependencies versions
 console.log(`miniapp-dev-server: ${pkgJSON.version}`);
 console.log(`miniapp-compiler-shared: ${require('miniapp-compiler-shared/package.json').version}`);
-console.log(`mp-loader: ${require('miniapp-compiler-shared/node_modules/mp-loader/package.json').version}`);
-console.log(`sfc-loader: ${require('miniapp-compiler-shared/node_modules/sfc-loader/package.json').version}`);
 console.log();
 
 const cwd = process.cwd();
