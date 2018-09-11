@@ -10,10 +10,6 @@
         overflow: hidden;
       }
     </style>
-    <style id="customStyle">
-      /* shadow DOM styles go here */
-    </style>
-    <!-- shadow DOM goes here -->
     <slot></slot>
   </template>
 </dom-module>
@@ -40,41 +36,8 @@ export default class CheckboxGroupElement extends PolymerElement {
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    let style = this.getAttribute('style') || '';
-
-    const styleEl = this.shadowRoot.querySelector('#customStyle');
-
-    styleEl.innerHTML = `
-          :host {
-            ${style};
-          }`;
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    super.attributeChangedCallback(name, oldValue, newValue);
-
-    // this.expireCache(name);
-
-    if (name === 'style') {
-      let style = this.getAttribute('style') || '';
-
-      afterNextRender(this, () => {
-        const styleEl = this.shadowRoot.querySelector('#customStyle');
-        // this.removeAttribute('style');
-        styleEl.innerHTML = `
-            :host {
-              ${style};
-            }`;
-      });
-    }
-  }
-
   ready() {
     super.ready();
-
     this.addEventListener('_checkboxChange', this.changeHandler);
   }
 
