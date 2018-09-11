@@ -1,0 +1,13 @@
+{
+  "name": "miniapp-web-renderer",
+  "version": "0.1.1-beta.5",
+  "description": "Web renderer for miniapp.",
+  "main": "lib/index.js",
+  "dependencies": {
+    "atag": "^0.1.0-0",
+    "driver-browser": "^0.6.5",
+    "history": "^4.7.2",
+    "rax": "^0.6.5",
+    "universal-router": "^6.0.0"
+  }
+}

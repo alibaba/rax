@@ -1,14 +1,16 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
 const { relative } = require('path');
-const { makeMap, compileES5, QueryString } = require('./shared/utils');
-const { injectThisScope } = require('sfc-compiler');
-const transpile = require('./transpiler');
+const { createRequire, createRequireDefault, QueryString, vdomHelperVars, prerveredVars } = require('./shared/utils');
+const { withScope } = require('sfc-compiler');
+const transpiler = require('./transpiler');
 const paths = require('./paths');
 
-const stylesheetLoaderPath = require.resolve('stylesheet-loader');
-const helperFns = '_c,_o,_n,_s,_l,_t,_q,_i,_m,_f,_k,_b,_v,_e,_u,_g,_cx';
+const STYLE_FILE_EXT = '.acss';
+const TEMPLATE_FILE_EXT = '.axml';
+const JS_FILE_EXT = '.js';
 
+const stylesheetLoaderPath = require.resolve('stylesheet-loader');
 /**
  * template loader
  */
@@ -16,7 +18,7 @@ module.exports = function templateLoader(content) {
   const {
     type,
     stylePath,
-    globalStyle,
+    globalStylePath,
     jsPath,
     isPage
   } = getOptions(this);
@@ -36,7 +38,7 @@ module.exports = function templateLoader(content) {
     templatePath: resourcePath,
     scope: ''
   };
-  const { renderFn, tplAlias, tplASTs, dependencies } = transpile(rawTpl, transpileOpts);
+  const { renderFn, tplAlias, tplASTs, dependencies } = transpiler(rawTpl, transpileOpts);
 
   let tplRegisters = '';
   // tpl include and import
@@ -50,12 +52,12 @@ module.exports = function templateLoader(content) {
         continue;
       }
 
-      const stylePath = tplPath.slice(0, -5) + '.acss';
+      const stylePath = tplPath.slice(0, -STYLE_FILE_EXT.length) + STYLE_FILE_EXT;
       if (existsSync(stylePath)) {
         hasStyle = true;
       }
 
-      const jsPath = tplPath.slice(0, -5) + '.js';
+      const jsPath = tplPath.slice(0, -JS_FILE_EXT.length) + JS_FILE_EXT;
       if (existsSync(jsPath)) {
         hasJS = true;
       }
@@ -67,62 +69,47 @@ module.exports = function templateLoader(content) {
       });
 
       const componentReq = stringifyRequest(this, `!!${__filename}?${qs}!${tplPath}`);
-      tplRegisters += `require(${componentReq}).call(this,$tpls);`;
+      tplRegisters += `require(${componentReq})(__tpls__, Rax);`;
     }
   }
 
-  // provide scope vars
-  // provide render helper vars
-  const helperVariables = helperFns
-    .split(',')
-    .map(alias => `var ${alias} = __v.${alias};`)
-    .join('');
-
   // prepare requirements
+  const vdomHelperReq = createRequireDefault(stringifyRequest(this, paths.vdomHelper));
+  const getAppReq = createRequireDefault(stringifyRequest(this, paths.getApp));
   const styleReq = stylePath && stylePath !== 'undefined'
-    ? 'require('
-    + stringifyRequest(this, `${stylesheetLoaderPath}!${stylePath}`)
-    + ')'
+    ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}?disableLog=true!${stylePath}`))
     : '{}';
-  const sfcRuntimeReq = stringifyRequest(this, paths.sfcRuntime);
-  const globalStyleReq = globalStyle && globalStyle !== 'undefined'
-    ? `require(${stringifyRequest(
-      this,
-      stylesheetLoaderPath + '!' + globalStyle
-    )})`
+  const globalStyleReq = globalStylePath
+    ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}?disableLog=true!${globalStylePath}`))
     : '{}';
 
-  const scopeVariables = injectThisScope(
+  const renderFnScopeVariables = withScope(
     renderFn,
-    makeMap(helperFns + ',_w,data,true,false,null,$event,__components_refs__'),
+    prerveredVars,
     'data'
   );
 
-  return `;(function(globalStyle, pageStyle, __v, getApp){
-    ${helperVariables}
-
-    module.exports = function($parentTpls) {
-      _c = _c.bind(this);
-
-      var $tpls = {};
-      function _w(is) {
-        return $tpls[is] ? $tpls[is] : null;
-      }
+  return `;(function(globalStyle, pageStyle, __vdom_helpers__, getApp){
+    ${vdomHelperVars}
+    module.exports = function renderFactory(__parent_tpls__, Rax) {
+      var __tpls__ = {};
+      var __sfc_components_ref__ = {};
+      var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
+      function _w(is) { return tpls[is] ? tpls[is] : null; }
+      ${''}
+      _c = _c.bind(Rax);
+      ${''} 
       ${tplRegisters}
-
       function render(data) {
-        var __components_refs__ = this && this.__components_refs__ || {};
-        ${scopeVariables}
-        var _st = Object.assign({}, globalStyle, pageStyle, ${styleReq});
+        ${renderFnScopeVariables}
         return ${renderFn};
       }
-
-      return $parentTpls ? ($parentTpls['${tplAlias}'] = render) : render;
+      return __parent_tpls__ ? (__parent_tpls__['${tplAlias}'] = render) : render;
     }
   })(
     ${globalStyleReq},
     ${styleReq},
-    require(${sfcRuntimeReq}).vdomHelper,
-    require(${stringifyRequest(this, paths.getApp)}).default
+    ${vdomHelperReq},
+    ${getAppReq}
   );`;
 };

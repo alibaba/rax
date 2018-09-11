@@ -1,6 +1,7 @@
 'use strict';
 /* eslint no-console: 0 */
 const colors = require('chalk');
+
 const updateWebpackConfig = require('./updateWebpackConfig');
 const webpack = require('webpack');
 
@@ -12,7 +13,7 @@ const webpack = require('webpack');
  *
  * @see http://webpack.github.io/docs/plugins.html#the-compiler-instance
  */
-module.exports = webpackConfig => {
+module.exports = (webpackConfig) => {
   let compiler;
 
   const config = updateWebpackConfig(webpackConfig);
@@ -27,25 +28,28 @@ module.exports = webpackConfig => {
     process.exit(1);
   }
 
-  compiler.plugin('done', stats => {
+  compiler.hooks.done.tap('done', (stats) => {
     if (stats.hasErrors()) {
       return console.error(
         stats.toString({
-          colors: true
-        })
+          colors: true,
+        }),
       );
     }
 
     console.log(
       stats.toString({
+        assets: true,
         colors: true,
+        children: false,
         chunks: false,
-        assets: true
-      })
+        entrypoints: false,
+        modules: false,
+      }),
     );
   });
 
-  compiler.plugin('failed', err => {
+  compiler.hooks.failed.call('failed', (err) => {
     throw err;
   });
 

@@ -1,0 +1,147 @@
+<dom-module id="a-switch">
+  <template>
+    <style id="style">
+      /* shadow DOM styles go here */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 20px;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #B4B4B4;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 10px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16.8px;
+        width: 16.8px;
+        left: 1.5px;
+        top: 1.5px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+      }
+
+      .slider-checked:before {
+        transform: translateX(23px);
+      }
+    </style>
+    <!-- shadow DOM goes here -->
+    <label class="switch" id="switch" on-click="handleClick">
+      <span class="slider" id="slider"  style$="{{checkboxCheckedStyle}}"></span>
+    </label>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from '@polymer/polymer';
+import { afterNextRender } from '../../shared/utils/'
+
+export default class SwitchElement extends PolymerElement {
+  static get is() {
+    return 'a-switch';
+  }
+
+  constructor() {
+    super();
+  }
+
+  static get properties() {
+    return {
+      color: {
+        type: String,
+        value: '#FF5000',
+        reflectToAttribute: true
+      },
+      checked: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+      checkboxCheckedStyle: {
+        type: String,
+        computed: ''
+      }
+    };
+  }
+
+  attributeChangedCallback(key, oldVal, newVal) {
+    super.attributeChangedCallback(key, oldVal, newVal);
+
+    if (oldVal !== newVal) {
+      switch (key) {
+        case 'checked':
+          this.checkboxCheckedStyle = this.checked
+            ? `background-color: ${this.color}`
+            : '';
+          if (this.$) {
+            this.translateSliderBlock();
+          }
+          break;
+        case 'color':
+          if (this.checked) {
+            this.checkboxCheckedStyle = `background-color: ${newVal}`;
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  ready() {
+    super.ready();
+    // save the formInitialValue for reset
+    this.formInitialValue = this.checked;
+    this.checkbox = this.$.input;
+
+    afterNextRender(this, () => {
+      window.addEventListener('_formReset', this._handleReset, true);
+    });
+    this.translateSliderBlock();
+  }
+
+  handleClick() {
+    this.checked = !this.checked;
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {
+          checked: this.checked
+        }
+      })
+    );
+  }
+
+  _handleReset = () => {
+    this.checked = this.formInitialValue;
+  };
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('_formReset', this._handleReset, true);
+  }
+
+  translateSliderBlock() {
+    if (this.checked) {
+      this.$.slider.classList.add('slider-checked');
+    } else {
+      this.$.slider.classList.remove('slider-checked');
+    }
+  }
+}
+
+customElements.define(SwitchElement.is, SwitchElement);
+</script>

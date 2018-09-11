@@ -1,17 +1,11 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
-const { resolve, join, basename, relative } = require('path');
+const { join, relative } = require('path');
 const { existsSync } = require('fs');
-const { compileES5, QueryString } = require('./shared/utils');
+const { compileToES5, QueryString, createRequire, createRequireDefault, getPages } = require('./shared/utils');
 const paths = require('./paths');
 
 const pageLoaderPath = require.resolve('./page');
-
-function getPages(resourcePath) {
-  const appJSONPath = join(resourcePath, '../app.json');
-  const appJSON = require(appJSONPath);
-  return appJSON.pages || [];
-}
-
+const STYLE_EXT = 'acss';
 /**
  * App loader
  * handle app.js for mini program
@@ -19,27 +13,24 @@ function getPages(resourcePath) {
 module.exports = function(content) {
   const loaderOptions = getOptions(this);
   const relativePath = relative(this.rootContext, this.resourcePath);
-  let { type } = loaderOptions || {};
   const { resourcePath } = this;
+  global.TRANSPILER_TYPE = loaderOptions.type;
 
-  type = type || 'my'; // wx or my, weixin | alipay
-  global.TRANSPILER_TYPE = type;
-
-
-  let globalStyle = null;
+  let globalStylePath = null;
   const appStylePath = join(
     this.resourcePath,
-    `../app.${type === 'wx' ? 'wxss' : 'acss'}`
+    `../app.${STYLE_EXT}`
   );
+
   if (existsSync(appStylePath)) {
-    globalStyle = appStylePath;
+    globalStylePath = appStylePath;
   }
 
-  const registerPages = getPages(resourcePath)
+  const regPagesCode = getPages(resourcePath)
     .map((pagePath) => {
       const qs = new QueryString({
-        globalStyle,
-        type,
+        globalStylePath,
+        type: loaderOptions.type,
       });
       const absPagePath = join(this.rootContext, pagePath);
 
@@ -47,23 +38,22 @@ module.exports = function(content) {
         this,
         `!!${pageLoaderPath}?${qs}!${absPagePath}`
       );
-      return `require(${req});`;
+      return createRequire(req);
     })
-    .join('');
+    .join(';');
 
-  const { code, map } = compileES5(content, {
-    sourceMap: true,
+  const compiledSource = compileToES5(content, {
+    sourceMaps: true,
     sourceFileName: relativePath,
   });
 
-  const source = `;(function (App){
-${code}
-${registerPages}
-  })(
-    require(${stringifyRequest(this, paths.createApp)}).default
-  );`;
+  const runtimeReq = createRequireDefault(stringifyRequest(this, paths.createApp));
 
-  // 往下滑行一行, 因为上面加了一行 👆
-  map.mappings = ';' + map.mappings;
-  this.callback(null, source, this.sourceMap ? map : void 0);
+  const source = `var App = ${runtimeReq};\n`
+    + compiledSource.code + '\n' + regPagesCode;
+
+  // skipping 1 line
+  compiledSource.map.mappings = ';' + compiledSource.map.mappings;
+  // `this.sourceMap` means whether sourceMap is enabled
+  this.callback(null, source, this.sourceMap ? compiledSource.map : void 0);
 };

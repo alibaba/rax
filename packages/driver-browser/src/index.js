@@ -20,13 +20,13 @@ const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in docum
 
 const Driver = {
 
-  tagPrefix: '',
+  tagNamePrefix: '',
   deviceWidth: typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || null,
   viewportWidth: typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || 750,
   eventRegistry: {},
 
-  setTagPrefix(prefix) {
-    this.tagPrefix = prefix;
+  setTagNamePrefix(prefix) {
+    this.tagNamePrefix = prefix;
   },
 
   getDeviceWidth() {
@@ -80,7 +80,7 @@ const Driver = {
     if (this.isSVGMode) {
       node = document.createElementNS(SVG_NS, component.type);
     } else {
-      node = document.createElement(this.tagPrefix + component.type);
+      node = document.createElement(this.tagNamePrefix + component.type);
     }
 
     let props = component.props;

@@ -1,10 +1,5 @@
-const babylon = require('babylon');
-const template = require('babel-template');
-const traverse = require('babel-traverse').default;
 const generate = require('babel-generator').default;
 const t = require('babel-types');
-const uppercamelcase = require('uppercamelcase');
-const { uniqueInstanceID } = require('./utils');
 
 /**
  * kv: {

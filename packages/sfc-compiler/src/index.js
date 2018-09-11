@@ -1,10 +1,9 @@
 const { parse } = require('./parser');
 const { generate } = require('./codegen');
 const { createCompilerCreator } = require('./create-compiler');
-const { uniqueInstanceID, warn } = require('sfc-compiler');
 const createRenderFn = require('./codegen/createRenderFn');
-const injectThisScope = require('./codegen/injectThisScope');
-const baseOptions = require('./options');
+const withScope = require('./codegen/withScope');
+const { baseOptions } = require('./options');
 
 /**
  * template: string
@@ -14,13 +13,11 @@ exports.createCompiler = createCompilerCreator(function baseCompile(
   template,
   options
 ) {
-  const vueAST = parse(template.trim(), options);
-
-  // optimize(ast, options);
-  const code = generate(vueAST, options);
+  const ast = parse(template.trim(), options);
+  const code = generate(ast, options);
 
   return {
-    ast: vueAST,
+    ast: ast,
     render: code.render,
     staticRenderFns: code.staticRenderFns
   };
@@ -28,8 +25,6 @@ exports.createCompiler = createCompilerCreator(function baseCompile(
 
 exports.createRenderFn = createRenderFn;
 exports.baseOptions = baseOptions;
-exports.uniqueInstanceID = uniqueInstanceID;
-exports.injectThisScope = injectThisScope;
-exports.warn = warn;
+exports.withScope = withScope;
 exports.parse = parse;
 exports.generate = generate;

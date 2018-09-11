@@ -1,7 +1,7 @@
 // classnames or cx
 
 var hasOwn = {}.hasOwnProperty;
-function classNames() {
+function flatClassNames() {
   var classes = [];
   for (var i = 0; i < arguments.length; i++) {
     var arg = arguments[i];
@@ -12,7 +12,7 @@ function classNames() {
     } else if (argType === 'number') {
       classes.push(arg);
     } else if (Array.isArray(arg)) {
-      classes.push(classNames.apply(null, arg));
+      classes.push(flatClassNames.apply(null, arg));
     } else if (argType === 'object') {
       for (var key in arg) {
         if (hasOwn.call(arg, key) && arg[key]) {
@@ -35,26 +35,24 @@ function transformCSSStyleObject(str) {
   return styleObj;
 }
 
-export default function renderStyle(classnames, styles = {}, ...args) {
-  if (classnames == null) {
-    return '';
-  }
-  const validClasses = classNames(classnames);
+export default function renderStyle(classNames = [], styleObject = {}, styleBinding, staticStyle) {
+  const validClasses = flatClassNames(classNames);
 
   const style = validClasses
-    .map(klass => styles[klass])
+    .map(klass => styleObject[klass])
     .reduce((prev, next) => {
       return Object.assign(prev, next);
     }, {});
 
-  if (args && args.length) {
-    args.forEach((arg) => {
-      if (typeof arg === 'string') {
-        Object.assign(style, transformCSSStyleObject(arg));
-      } else if (typeof arg === 'object') {
-        Object.assign(style, arg);
-      }
-    });
+  if (typeof styleBinding === 'string') {
+    Object.assign(style, transformCSSStyleObject(styleBinding));
+  } else if (typeof styleBinding === 'object') {
+    Object.assign(style, styleBinding);
+  }
+  if (typeof staticStyle === 'string') {
+    Object.assign(style, transformCSSStyleObject(staticStyle));
+  } else if (typeof staticStyle === 'object') {
+    Object.assign(style, staticStyle);
   }
 
   return style;

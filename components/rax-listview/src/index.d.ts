@@ -1,5 +1,4 @@
 import * as Rax from "rax";
-import * as React from "react";
 import {BaseProps} from "rax";
 import {WeexScrollEvent, ViewPosition} from "rax-scrollview";
 import RecyclerView from "rax-recyclerview";
@@ -43,29 +42,29 @@ export interface ListViewProps extends BaseProps {
      * (滚动时触发的事件，返回当前滚动的水平垂直距离)
      * @param {WeexScrollEvent} event
      */
-    onScroll: (event: WeexScrollEvent) => void;
+    onScroll?: (event: WeexScrollEvent) => void;
 
 
     /**
      * the list header needs to return the label to be rendered
      * (列表头部 需返回要渲染的标签)
-     * @return {React.ReactNode}
+     * @return {Object}
      */
-    renderHeader: () => React.ReactNode;
+    renderHeader?: () => Object;
 
     /**
      * the bottom of the list needs to return the label to be rendered (the loading chrysanthemum effect can be implemented here)
      * (列表底部 需返回要渲染的标签 (可以在此处实现 loading 菊花效果))
-     * @return {React.ReactNode}
+     * @return {Object}
      */
-    renderFooter: () => React.ReactNode;
+    renderFooter?: () => Object;
 
     /**
      * return to the listview's outer wrap container
      * (返回 listview 的外层包裹容器)
      * @param {RenderProps} p
      */
-    renderScrollComponent: (p: RenderProps) => RecyclerView;
+    renderScrollComponent?: (p: RenderProps) => RecyclerView;
 
 }
 
