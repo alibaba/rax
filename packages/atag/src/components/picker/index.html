@@ -58,13 +58,13 @@
         overflow-y: hidden;
       }
 
-      #content-inner {
+      #contentInner {
         position: relative;
         left: 0;
         /* pointer-events: none; */
       }
 
-      #content-inner .item {
+      #contentInner .item {
         font-size: 4.27vw;
         line-height: 27px;
         vertical-align: middle;
@@ -113,7 +113,7 @@
         </div>
         <div id="content">
           <!-- <div>{{range}}</div> -->
-          <div id="content-inner">
+          <div id="contentInner">
             <template is="dom-repeat" items="{{rangeValue}}">
               <div class="item">{{item}}</div>
             </template>
@@ -194,7 +194,7 @@ export default class Picker extends PolymerElement {
     super.ready();
 
     this.formInitialValue = this.value;
-    const content = this.shadowRoot.querySelector('#content');
+    const content = this.$.content;
     content.addEventListener('touchstart', this._handleTouchstart);
     content.addEventListener('touchend', this._handleTouchend);
     content.addEventListener('touchmove', this._handleTouchmove);
@@ -202,7 +202,7 @@ export default class Picker extends PolymerElement {
 
     this.container = this.$.container;
     this.mask = this.$.mask;
-    this.innerEl = this.$['content-inner'];
+    this.innerEl = this.$.contentInner;
 
     this.container.addEventListener('click', e => {
       e.stopPropagation();
@@ -272,7 +272,7 @@ export default class Picker extends PolymerElement {
     const touch = e.touches[0];
     if (touch && !this.disabled) {
       this.startY = touch.clientY;
-      this.innerEl = this.shadowRoot.querySelector('#content-inner');
+      this.innerEl = this.$.contentInner;
       this.innerElStartY = Number(this.innerEl.style.top.replace('vw', ''));
       this.lastTime = Date.now();
       this.lastPosition = this.innerElStartY;
