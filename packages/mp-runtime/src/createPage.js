@@ -1,3 +1,5 @@
+import computeChangedData from './computeChangedData';
+
 /**
  * interface of mp page
  */
@@ -21,11 +23,23 @@ class Page {
     // warn: not commanded usage of assigning state directly
     this.vnode.state = val;
   }
-  setData(...args) {
-    // todo: support key parse and queue flush
-    setTimeout(() => {
-      this.vnode.setState(...args);
-    }, 0);
+
+  /**
+   * support string path like
+   * - 'a[0].foo': 1
+   * - a.b.c.d
+   */
+  setData(expData, callback) {
+    const changedData = computeChangedData(this.data, expData);
+    // component is not mounted
+    const callSetState = () => {
+      this.vnode.setState(changedData, callback);
+    };
+    if (this.vnode.updater === undefined) {
+      this.vnode.cycleHooks.willMount.push(callSetState)
+    } else {
+      callSetState();
+    }
   }
 }
 
@@ -44,6 +58,14 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
 
       // create Page instance, initialize data and setData
       this.pageInstance = new Page(this, config);
+      /**
+       * willMount: [fn],
+       * unmount: []
+       */
+      this.cycleHooks = {
+        willMount: [],
+        unmount: []
+      };
 
       const { data, onLoad, onReady, onHide, onUnload, onPageScroll, onPullIntercept } = config;
 
@@ -105,11 +127,24 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       // update page data by event
       this.cycleListeners.push({ type: 'updatePageData', fn: updatePageData });
       pageEventEmitter.on('updatePageData', updatePageData);
+
+      if (this.cycleHooks.willMount.length > 0) {
+        let fn;
+        while(fn = this.cycleHooks.willMount.shift()) {
+          fn();
+        }
+      }
     }
 
     componentWillUnmount() {
       for (let i = 0, l = this.cycleListeners.length; i < l; i++) {
         pageEventEmitter.off(this.cycleListeners[i].type, this.cycleListeners[i].fn);
+      }
+      if (this.cycleHooks.unmount.length > 0) {
+        let fn;
+        while(fn = this.cycleHooks.unmount.shift()) {
+          fn();
+        }
       }
     }
 
