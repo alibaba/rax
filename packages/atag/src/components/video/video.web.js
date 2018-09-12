@@ -1,5 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '../../shared/utils'
+import { afterNextRender } from '../../shared/utils';
 
 const pauseImage = require('./images/pause.png');
 const playImage = require('./images/play.png');
@@ -151,7 +151,7 @@ export default class VideoElement extends PolymerElement {
       this.$.image.addEventListener('click', this.handlePlay);
       this.$.fullscreen.addEventListener('click', this.fullscreen);
       this.$.video.addEventListener('click', this.showPause);
-    })
+    });
   }
 
   disconnectedCallback() {
