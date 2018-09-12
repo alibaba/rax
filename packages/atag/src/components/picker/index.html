@@ -15,7 +15,9 @@
 
       #container {
         display: flex;
+        display: -webkit-flex;
         flex-direction: column;
+        -webkit-flex-direction: column;
         position: absolute;
         width: 100%;
         height: 80vw;
@@ -27,8 +29,11 @@
 
       #buttonGroup {
         display: flex;
+        display: -webkit-flex;
         flex-direction: row;
+        -webkit-flex-direction: row;
         justify-content: space-between;
+        -webkit-justify-content: space-between;
         width: 100%;
         height: 13.33vw;
         background-color: #F2F2F2;
@@ -50,10 +55,14 @@
 
       #content {
         flex: 1;
+        -webkit-flex: 1;
         display: flex;
+        display: -webkit-flex;
         position: relative;
         flex-direction: column;
+        -webkit-flex-direction: column;
         align-items: center;
+        -webkit-align-items: center;
         overflow-x: hidden;
         overflow-y: hidden;
       }
