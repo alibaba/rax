@@ -34,5 +34,5 @@ function transformNode(node) {
 }
 
 module.exports = {
-  transformNode
+  transformNode,
 };

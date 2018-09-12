@@ -95,7 +95,7 @@ module.exports = function templateLoader(content) {
       var __tpls__ = {};
       var __sfc_components_ref__ = {};
       var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
-      function _w(is) { return tpls[is] ? tpls[is] : null; }
+      function _w(is) { return __tpls__[is] ? __tpls__[is] : null; }
       ${''}
       _c = _c.bind(Rax);
       ${''} 

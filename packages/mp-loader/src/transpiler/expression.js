@@ -193,7 +193,11 @@ function transformExpression(str_, scope) {
   if ('text' in config) {
     return ret.length > 1 ? '[' + ret.join(', ') + ']' : ret[0];
   }
-  return ret.join(' + ');
+  return ret.map(addParentheses).join(' + ');
+}
+
+function addParentheses(c) {
+  return '(' + c + ')';
 }
 
 exports.hasExpression = hasExpression;

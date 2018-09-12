@@ -91,7 +91,7 @@ const createRequireDefault = exports.createRequireDefault = function(mod) {
  * @returns {{code, map, ast}}
  */
 exports.compileToES5 = function compileToES5(str, opts) {
-  const { code, map, ast } = transformSync(str, Object.assign(getBabelOptions(), opts));
+  const { code, map, ast } = transformSync(str, Object.assign({}, getBabelOptions(), opts));
   return { code, map, ast };
 };
 
@@ -128,7 +128,7 @@ exports.getPages = function getPages(resourcePath) {
 // provide render helper vars
 const vdomHelperFns = exports.vdomHelperFns = '_c,_s,_l,_t,_m,_v,_e,_cx';
 const staticPreveredIdentifiers = 'data,true,false,null,$event,__components_refs__';
-const prerveredVars = exports.prerveredVars = makeMap(vdomHelperFns + ',' + staticPreveredIdentifiers);
+const prerveredVars = exports.prerveredVars = makeMap(vdomHelperFns + ',' + staticPreveredIdentifiers + ',' + '_w');
 exports.vdomHelperVars = vdomHelperFns
   .split(',')
   .map(alias => `var ${alias} = __vdom_helpers__.${alias};`)
