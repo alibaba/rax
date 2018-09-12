@@ -3,7 +3,7 @@
 ## 安装
 
 ```bash
-$ tnpm install rax-gesture-view --save
+$ npm install rax-gesture-view --save
 ```
 
 ## 引用
