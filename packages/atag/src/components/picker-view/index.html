@@ -15,6 +15,8 @@
 <script>
 import './picker-view-column';
 import { PolymerElement } from '@polymer/polymer';
+import { afterNextRender } from '../../shared/utils';
+
 export default class PickerView extends PolymerElement {
   static get is() {
     return 'a-picker-view';
@@ -49,14 +51,23 @@ export default class PickerView extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     this.formInitialValue = this.value;
-    this._valueChanged(this.value);
-    this.addEventListener('change', this._onChange);
-    window.addEventListener('_formReset', this._handleReset, true);
+
+    afterNextRender(this, () => {
+      /**
+       * However, the observer func is executed earlier than ready,
+       * dom hasn't been rendered，
+       * so I execute the first _selectedIndexChange func in ready，
+       * to ensure that the dom has been rendered
+       */
+      this._valueChanged(this.value, null);
+      this.addEventListener('_columnChange', this._onChange);
+      window.addEventListener('_formReset', this._handleReset, true);
+    })
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('change', this._onChange);
+    this.removeEventListener('_columnChange', this._onChange);
     window.removeEventListener('_formReset', this._handleReset, true);
   }
 
@@ -79,10 +90,12 @@ export default class PickerView extends PolymerElement {
     }, 0);
   }
 
-  _valueChanged(value) {
-    let columns = this.querySelectorAll('a-picker-view-column');
-    for (let i = 0; i < columns.length; i++) {
-      columns[i].setAttribute('selected-index', value[i] || 0);
+  _valueChanged(value, oldVal) {
+    if (oldVal !== undefined) {
+      let columns = this.children;
+      for (let i = 0; i < columns.length; i++) {
+        columns[i].setAttribute('selected-index', value[i] || 0);
+      }
     }
   }
 
