@@ -1,0 +1,39 @@
+{
+  "name": "rax-xslider",
+  "version": "0.6.5",
+  "description": "Tabbar component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "RaxUI"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-gesture-view": "^0.6.5",
+    "universal-animation": "^0.6.5",
+    "object-assign": "^4.1.1",
+    "rax": "^0.6.5",
+    "rax-link": "^0.6.5",
+    "rax-view": "^0.6.5",
+    "universal-env": "^0.6.5",
+    "universal-transition": "^0.6.5",
+    "weex-bindingx": "^0.0.44"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.6.5"
+  }
+}
