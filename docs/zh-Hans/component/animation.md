@@ -3,7 +3,7 @@
 ## 安装
 
 ```bash
-$ tnpm install universal-animation --save
+$ npm install universal-animation --save
 ```
 
 ## 引用
