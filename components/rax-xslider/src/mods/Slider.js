@@ -31,7 +31,6 @@ class Slider extends Component {
       style: {...styles.container, ...style},
       ref: 'content'
     };
-    //  window.__weex_tag_supports__('vslider')
 
     return isWeex && useListView ? <ListView
       {...commonProps}

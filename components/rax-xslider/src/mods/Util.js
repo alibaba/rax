@@ -21,20 +21,6 @@ function map(o, fn) {
 }
 
 
-/*
- forEach({a: 1, b: 2}, (v, k) => {
- console.log({
- v, k
- })
- })
-
- forEach([1,2,3],(v,k)=>{
- console.log({
- v,k
- })
- })
- */
-
 function forEach(o, fn) {
   if (o instanceof Array) {
     return Array.prototype.forEach.call(o, fn);
@@ -44,14 +30,6 @@ function forEach(o, fn) {
   });
 }
 
-
-/* console.log(
- find([{name: 1}, {name: 2}], (o) => {
- return o.name === 2;
- }))
-
- console.log(find([{name: 1,age:2}, {name: 2}], {name:1}))
- */
 function find(o, condition) {
   var result = null;
   forEach(o, (v, k) => {
@@ -81,15 +59,6 @@ function getLast(array) {
   if (!array || !array.length) return;
   return array[array.length - 1];
 }
-
-/*
-{out2: 1, out1: 1.3, in2: 0, in1: -150, ratio: -0.0020000000000000005}
-in1 * x + y = out1
-in2 * x + y = out2 => y = out2 - in2 * x
-in1 * x + out2 - in2 * x = out1
-x  = (out1 - out2) / (in1 - in2)
-y = out2 - in2 * (out1 - out2) / (in1 - in2)
- */
 
 function transformExpression(in1, in2, out1, out2, ix) {
   let inMax = Math.max(in1, in2);

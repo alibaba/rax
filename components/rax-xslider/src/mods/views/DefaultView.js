@@ -56,7 +56,7 @@ class DefaultView extends BaseView {
     this.curIndex = index;
     this.loopIndex = loopIndex;
     this.handleScreensRender();
-    const wrap = findDOMNode(this.refs.content); // 获取元素
+    const wrap = findDOMNode(this.refs.content);
     let transitionProps = [];
 
     this.indexesQueue.forEach((queue) => {
