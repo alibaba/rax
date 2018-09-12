@@ -437,8 +437,10 @@ class NativeComponent {
                   if (lastPlacedNode) {
                     Host.driver.insertAfter(child, lastPlacedNode);
                   } else if (prevFirstNativeNode) {
+                    child = newChild[newChild.length - 1 - i];
                     Host.driver.insertBefore(child, prevFirstNativeNode);
                   } else {
+                    child = newChild[newChild.length - 1 - i];
                     Host.driver.appendChild(child, parent);
                   }
                 }
