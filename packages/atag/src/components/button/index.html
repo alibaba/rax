@@ -8,9 +8,13 @@
       :host > div {
         position: relative;
         display: flex;
+        display: -webkit-flex;
         flex-direction: row;
+        -webkit-flex-direction: row;
         justify-content: center;
+        -webkit-justify-content: center;
         align-items: center;
+        -webkit-align-items: center;
         box-sizing: border-box;
         overflow: hidden;
         margin: 0 auto;
@@ -75,6 +79,7 @@
 
       :host([size='mini']) > div {
         display: inline-flex;
+        display: -webkit-inline-flex;
         min-width: 40px;
         height: 28px;
         line-height: 28px;
