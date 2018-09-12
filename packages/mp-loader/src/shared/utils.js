@@ -91,7 +91,7 @@ const createRequireDefault = exports.createRequireDefault = function(mod) {
  * @returns {{code, map, ast}}
  */
 exports.compileToES5 = function compileToES5(str, opts) {
-  const { code, map, ast } = transformSync(str, Object.assign(getBabelOptions(), opts));
+  const { code, map, ast } = transformSync(str, Object.assign({}, getBabelOptions(), opts));
   return { code, map, ast };
 };
 
