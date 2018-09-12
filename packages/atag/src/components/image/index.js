@@ -75,7 +75,7 @@ export default class ImageElement extends HTMLElement {
     if (this.hasAttribute('height')) {
       this.style.height = `${this._height}px`;
     }
-    
+
     this._width = parseFloat(this.style.width);
     this._height = parseFloat(this.style.height);
 

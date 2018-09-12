@@ -1,0 +1,27 @@
+{
+  "name": "universal-animation",
+  "version": "0.6.5",
+  "description": "animation for multiple elements",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "animation",
+    "bindingx"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "universal-env": "^0.6.5",
+    "universal-transition": "^0.6.5",
+    "weex-bindingx": "^0.0.23"
+  }
+}
