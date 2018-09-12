@@ -397,6 +397,17 @@ class NativeComponent {
                   oldChild = [oldChild];
                 }
 
+                // move the oldChild to the right place
+                if (prevChild._mountIndex < lastIndex) {
+                  if (Array.isArray(lastPlacedNode)) {
+                    lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
+                  }
+
+                  for (let i = oldChild.length - 1; i >= 0; i--) {
+                    Host.driver.insertAfter(oldChild[i], lastPlacedNode);
+                  }
+                }
+
                 // If newChild count large then oldChild
                 let lastNewChild;
                 for (let i = 0; i < newChild.length; i++) {
