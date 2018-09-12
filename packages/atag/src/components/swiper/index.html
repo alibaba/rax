@@ -14,6 +14,7 @@
 
       .swiper .swiper-wrap {
         display: flex;
+        display: -webkit-flex;
         width: 100%;
         height: 100%;
         transition: all 0ms ease;
@@ -22,16 +23,19 @@
       .swiper .swiper-wrap>div {
         overflow: hidden;
         flex-shrink: 0;
+        -webkit-flex-shrink: 0;
         width: 100%;
         height: 100%;
       }
 
       .swiper.horizontal .swiper-wrap {
         flex-direction: row;
+        -webkit-flex-direction: row;
       }
 
       .swiper.vertical .swiper-wrap {
         flex-direction: column;
+        -webkit-flex-direction: column;
       }
 
       .swiper .swiper-pagination {

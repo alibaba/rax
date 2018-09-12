@@ -252,8 +252,11 @@ export default class VideoElement extends PolymerElement {
         padding: 0;
         line-height: 0;
         display: flex;
+        display: -webkit-flex;
         justify-items: center;
+        -webkit-justify-items: center;
         align-items: center;
+        -webkit-align-items: center;
         background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4));;
         height: 48px;
         position: absolute;
@@ -276,7 +279,6 @@ export default class VideoElement extends PolymerElement {
       }
 
       :host #lineFront {
-        width: 20%;
         height: 2px;
         background-color: #FF5000;
         position: absolute;

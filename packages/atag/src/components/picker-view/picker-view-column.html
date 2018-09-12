@@ -9,6 +9,7 @@
     <style>
       :host {
         flex: 1;
+        -webkit-flex: 1;
         height: 100%;
         overflow: hidden;
         position: relative;
@@ -21,9 +22,13 @@
         width: 100%;
         height: 100%;
         display: flex;
+        display: -webkit-flex;
         flex-flow: column nowrap;
+        -webkit-flex-flow: column nowrap;
         align-items: center;
+        -webkit-align-items: center;
         justify-content: center;
+        -webkit-justify-content: center;
         background-image:
           linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)),
           linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
