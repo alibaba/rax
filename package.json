@@ -59,7 +59,7 @@
     "build": "npm run build:compile && npm run build:dist && npm run build:examples && npm run build:templates",
     "watch:compile": "node ./scripts/compile-components.js --watch & node ./scripts/compile-packages.js --watch",
     "test": "jest",
-    "start:examples": "cd examples/hello && npm start",
+    "start:examples": "cd examples/components && npm start",
     "start": "npm run build:compile && npm run start:examples",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --ext .js --ext .jsx ./",

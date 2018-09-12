@@ -35,12 +35,17 @@ import TableDemo from './TableDemo';
 import CheckboxDemo from './CheckboxDemo';
 import TabPanelDemo from './TabPanelDemo';
 import ParallaxDemo from './ParallaxDemo';
+import GyroscopeParallaxDemo from './GyroscopeParallaxDemo';
 
 class Page extends Component {
   render() {
     return <ScrollView ref={(scrollview) => {
       this.scrollview = scrollview;
     }}>
+      <View>
+        <Text style={styles.title}>GyroscopeParallax</Text>
+        <GyroscopeParallaxDemo />
+      </View>
 
       <View>
         <Text style={styles.title}>Style</Text>
