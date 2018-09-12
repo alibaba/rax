@@ -31,12 +31,14 @@ class Page {
    */
   setData(expData, callback) {
     const changedData = computeChangedData(this.data, expData);
-    // component is not mounted
+
     const callSetState = () => {
       this.vnode.setState(changedData, callback);
     };
+
+    // in case component is not mounted
     if (this.vnode.updater === undefined) {
-      this.vnode.cycleHooks.willMount.push(callSetState)
+      this.vnode.cycleHooks.willMount.push(callSetState);
     } else {
       callSetState();
     }
@@ -130,7 +132,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
 
       if (this.cycleHooks.willMount.length > 0) {
         let fn;
-        while(fn = this.cycleHooks.willMount.shift()) {
+        while (fn = this.cycleHooks.willMount.shift()) {
           fn();
         }
       }
@@ -142,7 +144,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       }
       if (this.cycleHooks.unmount.length > 0) {
         let fn;
-        while(fn = this.cycleHooks.unmount.shift()) {
+        while (fn = this.cycleHooks.unmount.shift()) {
           fn();
         }
       }
