@@ -35,6 +35,7 @@ import TableDemo from './TableDemo';
 import CheckboxDemo from './CheckboxDemo';
 import TabPanelDemo from './TabPanelDemo';
 import ParallaxDemo from './ParallaxDemo';
+import XSliderDemo from './XSliderDemo';
 
 class Page extends Component {
   render() {
@@ -192,6 +193,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>TabPanel</Text>
         <TabPanelDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>XSlider</Text>
+        <XSliderDemo />
       </View>
 
 
