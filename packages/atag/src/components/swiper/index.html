@@ -139,7 +139,8 @@ export default class Swiper extends PolymerElement {
       },
       indicatorDots: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: 'observerIndicatorDots'
       },
       activeStyle: {
         type: String,
@@ -192,7 +193,7 @@ export default class Swiper extends PolymerElement {
       }
     }
     if (key === 'indicator-dots') {
-      this.showIndicatorDotsStyle = newVal === 'false' ? 'display: none' : '';
+      this.indicatorDots = newVal === 'true';
     }
     if (key === 'vertical') {
       this.vertical = this.getAttribute('vertical') === 'true';
@@ -231,7 +232,9 @@ export default class Swiper extends PolymerElement {
     return `
         transform: translate3d(${this.translateX}px, ${this.translateY}px, 0);
         transition-duration: ${this.transitionDuration}ms;
-        -webkit-transform: translate3d(${this.translateX}px, ${this.translateY}px, 0);
+        -webkit-transform: translate3d(${this.translateX}px, ${
+      this.translateY
+    }px, 0);
         -webkit-transition-duration: ${this.transitionDuration}ms
       `;
   }
@@ -347,11 +350,6 @@ export default class Swiper extends PolymerElement {
   _onTransitionStart() {
     this.transitioning = true;
     this.transitionDuration = this.duration;
-    if (this._isPageChanged()) {
-      // this.emit('slide-change-start', this.currentPage);
-    } else {
-      // this.emit('slide-revert-start', this.currentPage);
-    }
   }
   _onTransitionEnd() {
     this.transitioning = false;
@@ -492,6 +490,10 @@ export default class Swiper extends PolymerElement {
         ? `background-color: ${activeBgColor}`
         : `background-color: ${bgColor}`;
     };
+  }
+
+  observerIndicatorDots(newVal, oldVal) {
+    this.showIndicatorDotsStyle = newVal ? '' : 'display: none';
   }
 }
 
