@@ -126,6 +126,8 @@ export default class Textarea extends PolymerElement {
   }
 
   attributeChangedCallback(key, oldVal, newVal) {
+    super.attributeChangedCallback(key, oldVal, newVal);
+    
     switch (key) {
       case 'show-count':
         this.showCount = !(newVal === 'false');
