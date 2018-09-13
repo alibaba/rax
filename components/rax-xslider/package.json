@@ -1,7 +1,7 @@
 {
-  "name": "rax-gyroscope-parallax",
+  "name": "rax-xslider",
   "version": "0.6.5",
-  "description": "GyroscopePrallax component for Rax.",
+  "description": "XSlider component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -20,8 +20,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-view": "0.x.x",
-    "universal-env": "0.x.x",
+    "rax-gesture-view": "^0.6.0",
+    "universal-animation": "^0.6.0",
+    "object-assign": "^4.1.1",
+    "rax": "^0.6.5",
+    "rax-link": "^0.6.5",
+    "rax-view": "^0.6.5",
+    "universal-env": "^0.6.5",
+    "universal-transition": "^0.6.5",
     "weex-bindingx": "^0.0.44"
   },
   "peerDependencies": {
