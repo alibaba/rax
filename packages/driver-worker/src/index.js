@@ -4,7 +4,6 @@ import createDocument from './create-document';
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
-const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
@@ -254,10 +253,6 @@ export default ({ postMessage, addEventListener }) => {
     },
 
     removeAttribute(node, propKey) {
-      if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-        return node.innerHTML = null;
-      }
-
       if (propKey === CLASS_NAME) {
         propKey = CLASS;
       }
@@ -273,10 +268,6 @@ export default ({ postMessage, addEventListener }) => {
     },
 
     setAttribute(node, propKey, propValue) {
-      if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-        return node.innerHTML = propValue.__html;
-      }
-
       if (propKey === CLASS_NAME) {
         propKey = CLASS;
       }
