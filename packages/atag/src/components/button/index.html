@@ -138,6 +138,7 @@
       .loading {
         display: none;
         animation: _rotate 1.5s linear infinite;
+        -webkit-animation: _rotate 1.5s linear infinite;
         margin-right: 7.5px;
         margin-top: 2px;
         width: 20px;
@@ -155,6 +156,15 @@
         }
         to {
           transform: rotate(360deg);
+        }
+      }
+
+      @-webkit-keyframes _rotate {
+        from {
+          -webkit-transform: rotate(0deg);
+        }
+        to {
+          -webkit-transform: rotate(360deg);
         }
       }
     </style>

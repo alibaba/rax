@@ -167,7 +167,7 @@ export default class Input extends PolymerElement {
   changePlaceholderStyle(placeholderStyle) {
     if (!this.styleEl) {
       // unique id for data-id to avoid style pollution
-      this.id = ++uid;
+      this.id = `input-${++uid}`;
       this.styleEl = document.createElement('style');
       this.setAttribute('data-id', this.id);
       const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
@@ -180,7 +180,7 @@ export default class Input extends PolymerElement {
       a-input[data-id=${this.id}] #input::-webkit-input-placeholder {
         ${placeholderStyle}
       }
-    `
+    `;
   }
 }
 
