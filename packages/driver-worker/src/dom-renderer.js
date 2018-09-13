@@ -43,7 +43,7 @@ const PREFIX_PROPS = {
   lineClamp: true,
 };
 
-const Autoprefixer = {
+const StylePrefixer = {
   shouldPrefix(prop) {
     return PREFIX_PROPS[prop];
   },
@@ -97,8 +97,8 @@ function applyCompatibleStyle(node, styleObject) {
 
   for (let prop in styleObject) {
     let val = styleObject[prop];
-    if (Autoprefixer.shouldPrefix(prop)) {
-      Autoprefixer[prop](val, tranformedStyles);
+    if (StylePrefixer.shouldPrefix(prop)) {
+      StylePrefixer[prop](val, tranformedStyles);
     } else {
       tranformedStyles[prop] = val;
     }
