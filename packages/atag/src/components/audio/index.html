@@ -13,15 +13,15 @@
         padding: 10px;
         background-color: #fff;
         display: flex;
+        display: -webkit-flex;
         flex-direction: row;
+        -webkit-flex-direction: row;
       }
 
       .audio-thumb {
         width: 90px;
         height: 90px;
         position: relative;
-        border-radius: 50%;
-        overflow: hidden;
       }
 
       .audio-play {
@@ -40,6 +40,7 @@
         top: 0;
         background-size: cover;
         background-position: center center;
+        border-radius: 50%;
       }
 
       .audio-name {
@@ -55,9 +56,12 @@
       .audio-content {
         margin-left: 10px;
         flex: 1;
+        -webkit-flex: 1;
         display: flex;
         flex-direction: column;
+        -webkit-flex-direction: column;
         justify-content: center;
+        -webkit-justify-content: center;
       }
 
       .audio-slider {

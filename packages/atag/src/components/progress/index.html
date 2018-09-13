@@ -3,20 +3,27 @@
     <style>
       :host {
         display: flex;
+        display: -webkit-flex;
         flex-flow: row nowrap;
+        -webkit-flex-flow: row nowrap;
         align-items: center;
+        -webkit-align-items: center;
       }
 
       .container {
         display: flex;
+        display: -webkit-flex;
         flex: 1;
+        -webkit-flex: 1;
         flex-flow: row nowrap;
+        -webkit-flex-flow: row nowrap;
         background-color: #ccc;
         overflow: hidden;
       }
 
       .active {
         flex: none;
+        -webkit-flex: none;
         height: 6px;
         background-color: #ff5000;
       }
@@ -25,6 +32,7 @@
         font-size: 12px;
         color: #999;
         flex: none;
+        -webkit-flex: none;
         margin-left: 5px;
       }
 

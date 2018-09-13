@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="format-detection" content="telephone=no">
   <title>Atag Demo</title>
-  <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.1.1/bundles/webcomponents-sd-ce-pf.js"></script>
+  <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <style>
     body {
       background-color: #e9eaed;
@@ -93,7 +93,6 @@
     </div>
   </div>
 
-
   <div class="card">
     <h4 class="title">a-checkbox</h4>
     <div class="demo">
@@ -152,6 +151,15 @@
   </div>
 
   <div class="card">
+    <h4 class="title">a-picker</h4>
+    <div class="demo">
+      <a-picker value="0" range="[1,2,3,4,5]">
+        <a-text>pick me</a-text>
+      </a-picker>
+    </div>
+  </div>
+
+  <div class="card">
     <h4 class="title">a-progress</h4>
     <div class="demo">
       <a-progress class="progress-item" percent="30"></a-progress>
@@ -194,8 +202,8 @@
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
-      <a-picker-view style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;" value="[9999,5,5]">
-        <a-picker-view-column selected-index="19">
+      <a-picker-view style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;" value="[3,5,5]">
+        <a-picker-view-column>
           <a-view value="1998">1998年</a-view>
           <a-view value="1999">1999年</a-view>
           <a-view value="2000">2000年</a-view>
@@ -217,7 +225,7 @@
           <a-view value="2016">2016年</a-view>
           <a-view value="2017">2017年</a-view>
         </a-picker-view-column>
-        <a-picker-view-column selected-index="5">
+        <a-picker-view-column>
           <a-view value="1">1月</a-view>
           <a-view value="2">2月</a-view>
           <a-view value="3">3月</a-view>
@@ -231,7 +239,7 @@
           <a-view value="11">11月</a-view>
           <a-view value="12">12月</a-view>
         </a-picker-view-column>
-        <a-picker-view-column selected-index="5">
+        <a-picker-view-column>
           <a-view value="1">1日</a-view>
           <a-view value="2">2日</a-view>
           <a-view value="3">3日</a-view>

@@ -3,6 +3,7 @@
     <style>
       :host {
         display: flex;
+        display: -webkit-flex;
         background-color: white;
         box-sizing: border-box;
       }
@@ -28,6 +29,8 @@
 import { PolymerElement } from '@polymer/polymer';
 import { afterNextRender } from '../../shared/utils';
 
+let uid = 0;
+
 export default class Input extends PolymerElement {
   static get is() {
     return 'a-input';
@@ -49,7 +52,8 @@ export default class Input extends PolymerElement {
       },
       placeholderStyle: {
         type: String,
-        value: 'color: #999999;'
+        value: 'color: #999999;',
+        observer: 'changePlaceholderStyle'
       },
       disabled: {
         type: Boolean,
@@ -70,14 +74,7 @@ export default class Input extends PolymerElement {
     super.ready();
     this.input = this.$.input;
     this.formInitalValue = this.value;
-    this.styleEl = document.createElement('style');
-    this.styleEl.innerHTML = `
-      :host #input::placeholder {
-        ${this.placeholderStyle}
-      }
-    `;
-    const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
-    shadowRoot.appendChild(this.styleEl);
+    
     afterNextRender(this, () => {
       this.inputListener = this.inputListener.bind(this);
       this.focusListener = this.focusListener.bind(this);
@@ -165,6 +162,25 @@ export default class Input extends PolymerElement {
       }
     });
     this.dispatchEvent(event);
+  }
+
+  changePlaceholderStyle(placeholderStyle) {
+    if (!this.styleEl) {
+      // unique id for data-id to avoid style pollution
+      this.id = `input-${++uid}`;
+      this.styleEl = document.createElement('style');
+      this.setAttribute('data-id', this.id);
+      const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
+      shadowRoot.appendChild(this.styleEl);
+    }
+    this.styleEl.textContent = `
+      :host #input::placeholder {
+        ${placeholderStyle}
+      }
+      a-input[data-id=${this.id}] #input::-webkit-input-placeholder {
+        ${placeholderStyle}
+      }
+    `;
   }
 }
 
