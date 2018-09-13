@@ -94,7 +94,7 @@
       super.attributeChangedCallback(name, oldValue, newValue);
 
       this.expireCache(name);
-      
+
       if (name === 'style' || name === 'scroll-x' || name === 'scroll-y') {
         let style = this.getAttribute('style') || '';
         const scrollX = this.getValue('scroll-x', 'boolean', false);
