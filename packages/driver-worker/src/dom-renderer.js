@@ -35,7 +35,6 @@ function isUnbubbleEvent(evtName) {
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
   const registeredEventCounts = {};
-  const canvasCache = {};
 
   function getNode(node) {
     if (!node) return null;
