@@ -34,6 +34,15 @@
       return 'a-scroll-view';
     }
 
+    static get properties() {
+      return {
+        scrollIntoView: {
+          type: String,
+          value: ''
+        }
+      }
+    }
+
     static get observedAttributes() {
       return ['scroll-x',
         'scroll-y',
@@ -41,7 +50,6 @@
         'lower-threshold',
         'scroll-top',
         'scroll-left',
-        'scroll-into-view',
         'scroll-with-animation'
       ];
     }
@@ -71,8 +79,8 @@
         if (scrollIntoView) {
           const el = document.getElementById(scrollIntoView);
           if (el) {
-            scrollX && (this.scrollLeft = el.offsetLeft);
-            scrollY && (this.scrollTop = el.offsetTop);
+            scrollX && this.scrollToY(el.offsetLeft);
+            scrollY && this.scrollToY(el.offsetTop);
           }
         }
       });
