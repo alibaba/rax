@@ -247,12 +247,12 @@ export default function() {
         properties = Object.assign(style, nextProperties);
       }
 
-      node.setStyles(Object.assign(node.style, {
+      node.style = Object.assign(node.style, {
         transition: `all ${duration}ms ${timeFunction} ${delay}ms`,
         transformOrigin: transformOrigin,
         transform: `${nextTranfrom}`,
         ...properties
-      }));
+      });
     });
   }
 
@@ -369,7 +369,11 @@ export default function() {
       return dataset;
     }
 
-    setStyles(styleObject) {
+    get style() {
+      return this._style;
+    }
+    set style(styleObject) {
+      this._style = styleObject;
       mutation(this, 'attributes', { style: styleObject });
     }
 

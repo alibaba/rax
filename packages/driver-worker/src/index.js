@@ -301,19 +301,8 @@ export default ({ postMessage, addEventListener }) => {
         tranformedStyles[prop] = convertUnit(val, prop);
       }
 
-      for (let prop in tranformedStyles) {
-        const transformValue = tranformedStyles[prop];
-        // hack handle compatibility issue
-        if (Array.isArray(transformValue)) {
-          for (let i = 0; i < transformValue.length; i++) {
-            node.style[prop] = transformValue[i];
-          }
-        } else {
-          node.style[prop] = transformValue;
-        }
-      }
       // For trigger attribute mutation
-      node.setStyles(node.style);
+      node.style = tranformedStyles;
     },
 
     beforeRender() {

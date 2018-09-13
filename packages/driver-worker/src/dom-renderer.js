@@ -86,7 +86,7 @@ const Flexbox = {
   }
 };
 
-function compatStyle(node, styleObject) {
+function applyCompatibleStyle(node, styleObject) {
   let tranformedStyles = {};
 
   for (let prop in styleObject) {
@@ -285,7 +285,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
       }
 
       if (vnode.style) {
-        compatStyle(node, vnode.style);
+        applyCompatibleStyle(node, vnode.style);
       }
 
       if (vnode.attributes) {
@@ -355,7 +355,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
       let node = getNode(vnode);
 
       if (style) {
-        compatStyle(node, style);
+        applyCompatibleStyle(node, style);
       } else if (newValue == null) {
         node.removeAttribute(attributeName);
       } else if (typeof newValue === 'object') {
