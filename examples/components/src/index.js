@@ -35,12 +35,18 @@ import TableDemo from './TableDemo';
 import CheckboxDemo from './CheckboxDemo';
 import TabPanelDemo from './TabPanelDemo';
 import ParallaxDemo from './ParallaxDemo';
+import GestureViewDemo from './GestureViewDemo';
 
 class Page extends Component {
   render() {
     return <ScrollView ref={(scrollview) => {
       this.scrollview = scrollview;
     }}>
+
+      <View>
+        <Text style={styles.title}>GestureViewDemo</Text>
+        <GestureViewDemo />
+      </View>
 
       <View>
         <Text style={styles.title}>Style</Text>
