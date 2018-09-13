@@ -8,9 +8,13 @@
       :host > div {
         position: relative;
         display: flex;
+        display: -webkit-flex;
         flex-direction: row;
+        -webkit-flex-direction: row;
         justify-content: center;
+        -webkit-justify-content: center;
         align-items: center;
+        -webkit-align-items: center;
         box-sizing: border-box;
         overflow: hidden;
         margin: 0 auto;
@@ -75,6 +79,7 @@
 
       :host([size='mini']) > div {
         display: inline-flex;
+        display: -webkit-inline-flex;
         min-width: 40px;
         height: 28px;
         line-height: 28px;
@@ -133,6 +138,7 @@
       .loading {
         display: none;
         animation: _rotate 1.5s linear infinite;
+        -webkit-animation: _rotate 1.5s linear infinite;
         margin-right: 7.5px;
         margin-top: 2px;
         width: 20px;
@@ -150,6 +156,15 @@
         }
         to {
           transform: rotate(360deg);
+        }
+      }
+
+      @-webkit-keyframes _rotate {
+        from {
+          -webkit-transform: rotate(0deg);
+        }
+        to {
+          -webkit-transform: rotate(360deg);
         }
       }
     </style>

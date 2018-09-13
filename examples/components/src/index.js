@@ -36,6 +36,7 @@ import CheckboxDemo from './CheckboxDemo';
 import TabPanelDemo from './TabPanelDemo';
 import ParallaxDemo from './ParallaxDemo';
 import GyroscopeParallaxDemo from './GyroscopeParallaxDemo';
+import GestureViewDemo from './GestureViewDemo';
 
 class Page extends Component {
   render() {
@@ -45,6 +46,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>GyroscopeParallax</Text>
         <GyroscopeParallaxDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>GestureViewDemo</Text>
+        <GestureViewDemo />
       </View>
 
       <View>

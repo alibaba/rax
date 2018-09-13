@@ -29,6 +29,7 @@
     "rax-switch": "^0.6.2",
     "rax-tab-panel": "^0.6.2",
     "rax-gyroscope-parallax":"^0.6.2",
+    "rax-gesture-view": "^0.6.2",
     "rax-tabbar": "^0.6.2",
     "rax-tabheader": "^0.6.2",
     "rax-table": "^0.6.2",

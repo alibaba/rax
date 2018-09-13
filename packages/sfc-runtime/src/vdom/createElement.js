@@ -16,7 +16,7 @@ export default function(type, props, children) {
   if (type === '$template') {
     if (props.is) {
       const data = processPropsData(props, this);
-      return props.is.call(this.ctx, data);
+      return props.is.call(props.pageInstance, data);
     } else {
       return null;
     }
