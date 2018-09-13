@@ -34,6 +34,15 @@
       return 'a-scroll-view';
     }
 
+    static get properties() {
+      return {
+        scrollIntoView: {
+          type: String,
+          value: ''
+        }
+      }
+    }
+
     static get observedAttributes() {
       return ['scroll-x',
         'scroll-y',
@@ -41,7 +50,6 @@
         'lower-threshold',
         'scroll-top',
         'scroll-left',
-        'scroll-into-view',
         'scroll-with-animation'
       ];
     }
@@ -71,8 +79,8 @@
         if (scrollIntoView) {
           const el = document.getElementById(scrollIntoView);
           if (el) {
-            scrollX && (this.scrollLeft = el.offsetLeft);
-            scrollY && (this.scrollTop = el.offsetTop);
+            scrollX && this.scrollToY(el.offsetLeft);
+            scrollY && this.scrollToY(el.offsetTop);
           }
         }
       });
@@ -86,7 +94,7 @@
       super.attributeChangedCallback(name, oldValue, newValue);
 
       this.expireCache(name);
-
+      
       if (name === 'style' || name === 'scroll-x' || name === 'scroll-y') {
         let style = this.getAttribute('style') || '';
         const scrollX = this.getValue('scroll-x', 'boolean', false);
@@ -146,7 +154,7 @@
             this.scrollTop = value;
           } else {
             const process = easeInOutCubic(deltaTime / duration);
-            this.scrollTop = initialValue + process * (value - initialValue);
+            this.scrollTo(initialValue + process * (value - initialValue));
           }
         }, 16);
       } else {
