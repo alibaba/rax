@@ -154,7 +154,7 @@
             this.scrollTop = value;
           } else {
             const process = easeInOutCubic(deltaTime / duration);
-            this.scrollTo(initialValue + process * (value - initialValue));
+            this.scrollTop = initialValue + process * (value - initialValue);
           }
         }, 16);
       } else {
