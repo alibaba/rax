@@ -1,7 +1,7 @@
 {
   "name": "universal-animation",
   "version": "0.6.5",
-  "description": "animation for multiple elements",
+  "description": "A universal animation API.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
