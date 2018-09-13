@@ -1,12 +1,17 @@
 <dom-module id="a-textarea">
   <template>
-    <style id="style">
+    <style>
       :host {
+        display: block;
+      }
+
+      .container {
         display: flex;
         display: -webkit-flex;
+        position: relative;
         box-sizing: border-box;
-        padding: 2px 5px;
         background-color: white;
+        padding: 2px 5px;
       }
 
       #textarea {
@@ -20,9 +25,21 @@
         color: #333333;
         box-sizing: border-box;
       }
+
+      .count {
+        position: absolute;
+        bottom: 0;
+        right: 5px;
+        color: #b2b2b2;
+        font-size: 14px;
+        margin: 0;
+      }
     </style>
-    <textarea id="textarea" placeholder="{{placeholder}}" value="{{value}}" disabled="{{disabled}}" focus="{{focus}}" maxlength="{{maxlength}}"
-      readonly="{{readonly}}" autofocus="{{autoFocus}}" style$="{{inputStyle}}" rows="{{rows}}"></textarea>
+    <div class="container" style$="{{containerStyle}}">
+      <textarea id="textarea" placeholder="{{placeholder}}" value$="{{value}}" disabled$="{{disabled}}" maxlength$="{{maxlength}}"
+        readonly$="{{readonly}}" autofocus$="{{focus}}" style$="{{inputStyle}}" rows$="{{rows}}"></textarea>
+      <p class="count" style$="{{countStyle}}">{{valueLength}}/{{maxlength}}</p>
+    </div>
   </template>
 </dom-module>
 
@@ -61,16 +78,13 @@ export default class Textarea extends PolymerElement {
         type: String,
         value: 140
       },
-      // 获取焦点
       focus: {
-        type: String
-      },
-      autoFocus: {
         type: Boolean,
         value: false
       },
       autoHeight: {
-        type: String
+        type: Boolean,
+        value: false
       },
       readonly: {
         type: Boolean
@@ -82,6 +96,15 @@ export default class Textarea extends PolymerElement {
       rows: {
         type: String,
         value: '2'
+      },
+      showCount: {
+        type: Boolean,
+        value: true,
+        observer: 'observerShowCount'
+      },
+      valueLength: {
+        type: Number,
+        computed: 'computedValueLength(value)'
       }
     };
   }
@@ -100,6 +123,18 @@ export default class Textarea extends PolymerElement {
         autosize(this.textarea);
       }
     });
+  }
+
+  attributeChangedCallback(key, oldVal, newVal) {
+    super.attributeChangedCallback(key, oldVal, newVal);
+    
+    switch (key) {
+      case 'show-count':
+        this.showCount = !(newVal === 'false');
+        break;
+      default:
+        break;
+    }
   }
 
   disconnectedCallback() {
@@ -143,6 +178,7 @@ export default class Textarea extends PolymerElement {
     if (this.autoHeight) {
       autosize.update(this.textarea);
     }
+    this.value = this.textarea.value;
     const event = new CustomEvent('input', {
       bubbles: false,
       cancelable: true,
@@ -199,6 +235,20 @@ export default class Textarea extends PolymerElement {
         ${placeholderStyle}
       }
     `;
+  }
+
+  computedValueLength(value) {
+    return value.length;
+  }
+
+  observerShowCount(newVal, oldVal) {
+    if (newVal) {
+      this.countStyle = '';
+      this.containerStyle = 'padding-bottom: 18px';
+    } else {
+      this.countStyle = 'display: none;';
+      this.containerStyle = '';
+    }
   }
 }
 
