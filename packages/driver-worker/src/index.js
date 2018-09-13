@@ -1,5 +1,4 @@
 import { convertUnit, setRem } from 'style-unit';
-import styleToCSS from './style-to-css';
 import createDocument from './create-document';
 
 const ELEMENT_NODE = 1;
@@ -314,7 +313,7 @@ export default ({ postMessage, addEventListener }) => {
         }
       }
       // For trigger attribute mutation
-      node.style.cssText = styleToCSS(node.style);
+      node.setStyles(node.style);
     },
 
     beforeRender() {

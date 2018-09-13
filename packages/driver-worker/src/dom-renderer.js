@@ -32,6 +32,86 @@ function isUnbubbleEvent(evtName) {
   return UNBUBBLES.indexOf(evtName) !== -1;
 }
 
+const FLEX_PROPS = {
+  display: true,
+  flex: true,
+  alignItems: true,
+  alignSelf: true,
+  flexDirection: true,
+  justifyContent: true,
+  flexWrap: true,
+};
+
+const Flexbox = {
+  isFlexProp(prop) {
+    return FLEX_PROPS[prop];
+  },
+  display(value, style = {}) {
+    if (value === 'flex') {
+      style.display = ['-webkit-flex', 'flex'];
+    } else {
+      style.display = value;
+    }
+    return style;
+  },
+  flex(value, style = {}) {
+    style.webkitFlex = value;
+    style.flex = value;
+    return style;
+  },
+  flexWrap(value, style = {}) {
+    style.webkitFlexWrap = value;
+    style.flexWrap = value;
+    return style;
+  },
+  alignItems(value, style = {}) {
+    style.webkitAlignItems = value;
+    style.alignItems = value;
+    return style;
+  },
+  alignSelf(value, style = {}) {
+    style.webkitAlignSelf = value;
+    style.alignSelf = value;
+    return style;
+  },
+  flexDirection(value, style = {}) {
+    style.webkitFlexDirection = value;
+    style.flexDirection = value;
+    return style;
+  },
+  justifyContent(value, style = {}) {
+    style.webkitJustifyContent = value;
+    style.justifyContent = value;
+    return style;
+  }
+};
+
+function compatStyle(node, styleObject) {
+  let tranformedStyles = {};
+
+  for (let prop in styleObject) {
+    let val = styleObject[prop];
+    if (Flexbox.isFlexProp(prop)) {
+      Flexbox[prop](val, tranformedStyles);
+    } else {
+      tranformedStyles[prop] = val;
+    }
+  }
+
+  for (let prop in tranformedStyles) {
+    const transformValue = tranformedStyles[prop];
+    // if browser only accept -webkit-flex
+    // node.style.display = 'flex' will not work
+    if (Array.isArray(transformValue)) {
+      for (let i = 0; i < transformValue.length; i++) {
+        node.style[prop] = transformValue[i];
+      }
+    } else {
+      node.style[prop] = transformValue;
+    }
+  }
+}
+
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
   const registeredEventCounts = {};
@@ -205,10 +285,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
       }
 
       if (vnode.style) {
-        for (let i in vnode.style)
-          if (vnode.style.hasOwnProperty(i)) {
-            node.style[i] = vnode.style[i];
-          }
+        compatStyle(node, vnode.style);
       }
 
       if (vnode.attributes) {
@@ -273,10 +350,13 @@ export default ({ worker, tagNamePrefix = '' }) => {
         }
       }
     },
-    attributes({ target, attributeName, newValue }) {
+    attributes({ target, attributeName, newValue, style }) {
       let vnode = target;
       let node = getNode(vnode);
-      if (newValue == null) {
+
+      if (style) {
+        compatStyle(node, style);
+      } else if (newValue == null) {
         node.removeAttribute(attributeName);
       } else if (typeof newValue === 'object') {
         node[attributeName] = newValue;
