@@ -1,6 +1,6 @@
 {
   "name": "miniapp-dev-server",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Miniapp dev server for developers",
   "main": "src/index.js",
   "bin": {
