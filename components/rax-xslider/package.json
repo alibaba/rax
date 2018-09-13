@@ -1,7 +1,7 @@
 {
   "name": "rax-xslider",
   "version": "0.6.5",
-  "description": "Tabbar component for Rax.",
+  "description": "XSlider component for Rax.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
