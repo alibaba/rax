@@ -20,7 +20,6 @@ const TO_SANITIZE = [
   'previousSibling'
 ];
 
-
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
   let MutationObserver = document.defaultView.MutationObserver;

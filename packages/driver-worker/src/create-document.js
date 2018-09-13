@@ -43,8 +43,8 @@ const setImmediate = global.setImmediate || function(cb) {
   return setTimeout(cb, 0);
 };
 
-function requestAnimationFrame(fn) {
-  return setTimeout(fn, 16);
+const requestAnimationFrame = global.requestAnimationFrame || function(cb) {
+  return setTimeout(cb, 16);
 }
 
 const ELEMENT_NODE = 1;
