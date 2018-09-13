@@ -45,7 +45,7 @@ const setImmediate = global.setImmediate || function(cb) {
 
 const requestAnimationFrame = global.requestAnimationFrame || function(cb) {
   return setTimeout(cb, 16);
-}
+};
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -226,7 +226,7 @@ export default function() {
       let properties = {};
 
       if (node.style) {
-        const styleKeys = Object.keys(node.style);
+        const propList = Object.keys(node.style);
         const style = {};
         const transformProperties = [
           'transition',
@@ -234,13 +234,12 @@ export default function() {
           'transform-origin'
         ];
         // traverse all properties that aren't about transform
-        styleKeys.forEach((styleKey) => {
-          const styleVal = node.style[styleKey];
+        propList.forEach((prop) => {
           if (
-            styleKey &&
-            transformProperties.indexOf(styleKey) < 0
+            prop &&
+            transformProperties.indexOf(prop) < 0
           ) {
-            style[styleKey] = styleVal;
+            style[prop] = node.style[prop];
           }
         });
         // merge nextProperties into style

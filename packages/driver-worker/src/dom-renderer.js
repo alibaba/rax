@@ -32,7 +32,7 @@ function isUnbubbleEvent(evtName) {
   return UNBUBBLES.indexOf(evtName) !== -1;
 }
 
-const FLEX_PROPS = {
+const PREFIX_PROPS = {
   display: true,
   flex: true,
   alignItems: true,
@@ -40,11 +40,12 @@ const FLEX_PROPS = {
   flexDirection: true,
   justifyContent: true,
   flexWrap: true,
+  lineClamp: true,
 };
 
-const Flexbox = {
-  isFlexProp(prop) {
-    return FLEX_PROPS[prop];
+const Autoprefixer = {
+  shouldPrefix(prop) {
+    return PREFIX_PROPS[prop];
   },
   display(value, style = {}) {
     if (value === 'flex') {
@@ -83,6 +84,11 @@ const Flexbox = {
     style.webkitJustifyContent = value;
     style.justifyContent = value;
     return style;
+  },
+  lineClamp(value, style = {}) {
+    style.webkitLineClamp = value;
+    style.lineClamp = value;
+    return style;
   }
 };
 
@@ -91,8 +97,8 @@ function applyCompatibleStyle(node, styleObject) {
 
   for (let prop in styleObject) {
     let val = styleObject[prop];
-    if (Flexbox.isFlexProp(prop)) {
-      Flexbox[prop](val, tranformedStyles);
+    if (Autoprefixer.shouldPrefix(prop)) {
+      Autoprefixer[prop](val, tranformedStyles);
     } else {
       tranformedStyles[prop] = val;
     }
