@@ -21,7 +21,12 @@ const EVENT_OPTIONS = supportsPassive
 const UNBUBBLES = [
   'appear',
   'disappear',
-  'scroll'
+  'scroll',
+  'blur',
+  'focus',
+  'load',
+  'unload',
+  'resize',
 ];
 function isUnbubbleEvent(evtName) {
   return UNBUBBLES.indexOf(evtName) !== -1;
