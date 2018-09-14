@@ -32,77 +32,80 @@ function isUnbubbleEvent(evtName) {
   return UNBUBBLES.indexOf(evtName) !== -1;
 }
 
-// array describe the val that need to prefix
-// $prop means property itself should add prefix
 const PREFIX_PROPS = {
-  position: ['sticky'],
+  flex: true,
+  alignItems: true,
+  alignSelf: true,
+  flexDirection: true,
+  justifyContent: true,
+  flexWrap: true,
 
-  display: ['flex'],
-  flex: ['$prop'],
-  alignItems: ['$prop'],
-  alignSelf: ['$prop'],
-  flexDirection: ['$prop'],
-  justifyContent: ['$prop'],
-  flexWrap: ['$prop'],
+  lineClamp: true,
+  textSizeAdjust: true,
+  textDecorationLine: true,
+  textDecorationColor: true,
+  textDecorationStyle: true,
+  textDecorationSkip: true,
+  writingMode: true,
 
-  lineClamp: ['$prop'],
-  textSizeAdjust: ['$prop'],
-  textDecorationLine: ['$prop'],
-  textDecorationColor: ['$prop'],
-  textDecorationStyle: ['$prop'],
-  textDecorationSkip: ['$prop'],
-  writingMode: ['$prop'],
+  animatin: true,
+  animationName: true,
+  animationDuration: true,
+  animationTimingFunction: true,
+  animationDelay: true,
+  animationIterationCount: true,
+  animationDirection: true,
+  animationFillMode: true,
+  animationPlayState: true,
 
-  animatin: ['$prop'],
-  animationName: ['$prop'],
-  animationDuration: ['$prop'],
-  animationTimingFunction: ['$prop'],
-  animationDelay: ['$prop'],
-  animationIterationCount: ['$prop'],
-  animationDirection: ['$prop'],
-  animationFillMode: ['$prop'],
-  animationPlayState: ['$prop'],
+  transform: true,
+  transformOrigin: true,
+  transformStyle: true,
+  perspective: true,
+  perspectiveOrigin: true,
+  backfaceVisibility: true,
+  appearance: true,
+  userSelect: true,
 
-  transform: ['$prop'],
-  transformOrigin: ['$prop'],
-  transformStyle: ['$prop'],
-  perspective: ['$prop'],
-  perspectiveOrigin: ['$prop'],
-  backfaceVisibility: ['$prop'],
-  appearance: ['$prop'],
-  userSelect: ['$prop'],
+  columns: true,
+  columnWidth: true,
+  columnCount: true,
+  columnGap: true,
+  columnRule: true,
+  columnRuleWidth: true,
+  columnRuleStyle: true,
+  columnRuleColor: true,
+  columnSpan: true,
+  columnFill: true,
+  columnBreakBefore: true,
+  columnBreakAfter: true,
+  columnBreakInside: true,
+};
 
-  columns: ['$prop'],
-  columnWidth: ['$prop'],
-  columnCount: ['$prop'],
-  columnGap: ['$prop'],
-  columnRule: ['$prop'],
-  columnRuleWidth: ['$prop'],
-  columnRuleStyle: ['$prop'],
-  columnRuleColor: ['$prop'],
-  columnSpan: ['$prop'],
-  columnFill: ['$prop'],
-  columnBreakBefore: ['$prop'],
-  columnBreakAfter: ['$prop'],
-  columnBreakInside: ['$prop'],
-
+const PREFIX_PROP_VALS = {
+  position: 'sticky',
+  display: 'flex',
 };
 
 const StylePrefixer = {
   shouldPrefix(prop) {
-    return PREFIX_PROPS[prop];
+    return PREFIX_PROPS[prop] || PREFIX_PROP_VALS[prop];
   },
 };
 Object.keys(PREFIX_PROPS).forEach((prop) => {
+  StylePrefixer[prop] = (value, style = {}) => {
+    style['webkit' + prop[0].toUpperCase() + prop.slice(1)] = value;
+    style[prop] = value;
+    return style;
+  };
+});
+Object.keys(PREFIX_PROP_VALS).forEach((prop) => {
   const rule = PREFIX_PROPS[prop];
   StylePrefixer[prop] = (value, style = {}) => {
-    for (let i = 0, l = rule.length; i < l; i ++) {
-      if ('$prop' === rule[i]) {
-        style['webkit' + prop[0].toUpperCase() + prop.slice(1)] = value;
-        style[prop] = value;
-      } else {
-        style[prop] = ['-webkit-' + value, value];
-      }
+    if (value === rule) {
+      style[prop] = ['-webkit-' + rule, rule];
+    } else {
+      style[prop] = value;
     }
     return style;
   };
