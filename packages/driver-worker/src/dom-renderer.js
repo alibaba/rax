@@ -32,65 +32,82 @@ function isUnbubbleEvent(evtName) {
   return UNBUBBLES.indexOf(evtName) !== -1;
 }
 
+// array describe the val that need to prefix
+// $prop means property itself should add prefix
 const PREFIX_PROPS = {
-  display: true,
-  flex: true,
-  alignItems: true,
-  alignSelf: true,
-  flexDirection: true,
-  justifyContent: true,
-  flexWrap: true,
-  lineClamp: true,
+  position: ['sticky'],
+
+  display: ['flex'],
+  flex: ['$prop'],
+  alignItems: ['$prop'],
+  alignSelf: ['$prop'],
+  flexDirection: ['$prop'],
+  justifyContent: ['$prop'],
+  flexWrap: ['$prop'],
+
+  lineClamp: ['$prop'],
+  textSizeAdjust: ['$prop'],
+  textDecorationLine: ['$prop'],
+  textDecorationColor: ['$prop'],
+  textDecorationStyle: ['$prop'],
+  textDecorationSkip: ['$prop'],
+  writingMode: ['$prop'],
+
+  animatin: ['$prop'],
+  animationName: ['$prop'],
+  animationDuration: ['$prop'],
+  animationTimingFunction: ['$prop'],
+  animationDelay: ['$prop'],
+  animationIterationCount: ['$prop'],
+  animationDirection: ['$prop'],
+  animationFillMode: ['$prop'],
+  animationPlayState: ['$prop'],
+
+  transform: ['$prop'],
+  transformOrigin: ['$prop'],
+  transformStyle: ['$prop'],
+  perspective: ['$prop'],
+  perspectiveOrigin: ['$prop'],
+  backfaceVisibility: ['$prop'],
+  appearance: ['$prop'],
+  userSelect: ['$prop'],
+
+  columns: ['$prop'],
+  columnWidth: ['$prop'],
+  columnCount: ['$prop'],
+  columnGap: ['$prop'],
+  columnRule: ['$prop'],
+  columnRuleWidth: ['$prop'],
+  columnRuleStyle: ['$prop'],
+  columnRuleColor: ['$prop'],
+  columnSpan: ['$prop'],
+  columnFill: ['$prop'],
+  columnBreakBefore: ['$prop'],
+  columnBreakAfter: ['$prop'],
+  columnBreakInside: ['$prop'],
+
 };
 
 const StylePrefixer = {
   shouldPrefix(prop) {
     return PREFIX_PROPS[prop];
   },
-  display(value, style = {}) {
-    if (value === 'flex') {
-      style.display = ['-webkit-flex', 'flex'];
-    } else {
-      style.display = value;
+};
+Object.keys(PREFIX_PROPS).forEach((prop) => {
+  const rule = PREFIX_PROPS[prop];
+  StylePrefixer[prop] = (value, style = {}) => {
+    debugger;
+    for (let i = 0, l = rule.length; i < l; i ++) {
+      if ('$prop' === rule[i]) {
+        style['webkit' + prop[0].toUpperCase() + prop.slice(1)] = value;
+        style[prop] = value;
+      } else {
+        style[prop] = ['-webkit-' + value, value];
+      }
     }
     return style;
-  },
-  flex(value, style = {}) {
-    style.webkitFlex = value;
-    style.flex = value;
-    return style;
-  },
-  flexWrap(value, style = {}) {
-    style.webkitFlexWrap = value;
-    style.flexWrap = value;
-    return style;
-  },
-  alignItems(value, style = {}) {
-    style.webkitAlignItems = value;
-    style.alignItems = value;
-    return style;
-  },
-  alignSelf(value, style = {}) {
-    style.webkitAlignSelf = value;
-    style.alignSelf = value;
-    return style;
-  },
-  flexDirection(value, style = {}) {
-    style.webkitFlexDirection = value;
-    style.flexDirection = value;
-    return style;
-  },
-  justifyContent(value, style = {}) {
-    style.webkitJustifyContent = value;
-    style.justifyContent = value;
-    return style;
-  },
-  lineClamp(value, style = {}) {
-    style.webkitLineClamp = value;
-    style.lineClamp = value;
-    return style;
-  }
-};
+  };
+});
 
 function applyCompatibleStyle(node, styleObject) {
   let tranformedStyles = {};
