@@ -35,17 +35,15 @@ module.exports = function(content) {
   });
   const regTemplateReq = createRequire(stringifyRequest(this, `${tplLoaderPath}?${tplQueryString}!${template.path}`));
   const createPageReq = createRequireDefault(stringifyRequest(this, paths.createPage));
-  const getAppReq = createRequireDefault(stringifyRequest(this, paths.getApp));
 
   let source =
     `var Page = function(config) { Page.config = config; }
-    var getApp = ${getAppReq};
     require('@core/page').register(${pageInfo}, function(module, exports, getCoreModule){
 ${scriptContent}
       module.exports = ${createPageReq}(Page.config, ${regTemplateReq}, getCoreModule);
     });`;
 
-  // code above add three lines to user wrote codes
-  scriptSourceMap.mappings = ';;;' + scriptSourceMap.mappings;
+  // code above add 2 lines to user wrote codes
+  scriptSourceMap.mappings = ';;' + scriptSourceMap.mappings;
   this.callback(null, source, this.sourceMap ? scriptSourceMap : void 0);
 };
