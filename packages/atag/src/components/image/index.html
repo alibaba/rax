@@ -6,67 +6,57 @@
         overflow: hidden;
         display: inline-block;
         outline: none;
+        width: 300px;
+        height: 225px;
       }
 
-      img {
-        position: absolute;
-        left: 0;
-        top: 0;
+      #img {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
       }
 
-      img.image-src {
+      div.image-src {
         z-index: 1;
         opacity: 0;
       }
 
-      img.image-preview {
-        z-index: 2;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-      }
-
-      :host([loaded]) img.image-src {
+      :host([loaded]) div.image-src {
         opacity: 1;
       }
     </style>
-    <img id="img" />
+    <div id="img"></div>
   </template>
 </dom-module>
 
 
 <script>
-/**
- * https://github.com/RevillWeb/img-2
- */
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender } from "../../shared/utils";
+import { afterNextRender } from '../../shared/utils';
 
 export default class ImageElement extends PolymerElement {
   static get is() {
     return 'a-image';
   }
 
-  constructor() {
-    super();
+  static get properties() {
+    return {
+      src: {
+        type: String,
+        value: '',
+        reflectToAttrbute: true
+      },
+      mode: {
+        type: String,
+        reflectToAttrbute: true,
+        observer: 'observerMode'
+      }
+    };
+  }
 
-    // Private class variables
-    this._root = null;
-    this._$preview = null;
-    this._preview = null;
-    this._src = null;
-    this._width = null;
-    this._height = null;
+  ready() {
+    super.ready();
     this._reset();
-
-    // Settings
-    this._renderOnPreCached = ImageElement.settings.RENDER_ON_PRECACHED;
-
-    // Bound class methods
-    this._precache = this._precache.bind(this);
-    this._onImgLoad = this._onImgLoad.bind(this);
-    this._onImgPreCached = this._onImgPreCached.bind(this);
   }
 
   get loaded() {
@@ -94,41 +84,22 @@ export default class ImageElement extends PolymerElement {
       this.getAttribute('render-on-pre-cached') === 'true';
     afterNextRender(this, () => {
       this._init();
-    })
+    });
   }
 
   _init() {
-    // Check to see if we have a src, if not return and do nothing else
-    this._src = this.getAttribute('src');
-    // Grab the initial attribute values
-    this._preview = this.getAttribute('src-preview');
-    this._width = this.getAttribute('width');
-    this._height = this.getAttribute('height');
-
-    if (!this._src) return;
-
-    // Set the height and width of the element so that we can figure out if it is on the screen or not
-    if (this.hasAttribute('width')) {
-      this.style.width = `${this._width}px`;
-    }
-
-    if (this.hasAttribute('height')) {
-      this.style.height = `${this._height}px`;
-    }
-
-    this._width = parseFloat(this.style.width);
-    this._height = parseFloat(this.style.height);
+    if (!this.src) return;
 
     // Figure out if this image is within view
     ImageElement.addIntersectListener(this, () => {
-      ImageElement._removePreCacheListener(this._precache);     
+      ImageElement._removePreCacheListener(this._precache);
       this._render();
       this._load();
       ImageElement.removeIntersectListener(this);
     });
 
     // Listen for precache instruction
-    ImageElement._addPreCacheListener(this._precache, this._src);
+    ImageElement._addPreCacheListener(this._precache, this.src);
     this._inited = true;
   }
 
@@ -138,77 +109,51 @@ export default class ImageElement extends PolymerElement {
    */
   _load() {
     if (this._preCached === false) ImageElement._priorityCount += 1;
-    this.$.img.onload = this._onImgLoad;
     this._loading = true;
-    this.$.img.src = this._src;
+    // handle background-size
+    this.$.img.style.backgroundImage = `url(${this.src})`;
     this.$.img.style.opacity = 1;
+    this.observerMode(this.mode, '');
   }
 
-  _onImgLoad(evt) {
-    this._loading = false;
-    this._loaded = true;
-
-    /**
-     * Synchronize the height of the inside and outside image
-     */
-    if (parseInt(this.style.height) !== evt.target.height) {
-      this.style.height = evt.target.height + 'px';
-    }
-    if (parseInt(this.style.width) !== evt.target.width) {
-      this.style.width = evt.target.width + 'px';
-    }
-
-    if (this._$preview !== null) {
-      this._root.removeChild(this._$preview);
-      this._$preview = null;
-    }
-    this.$.img.onload = null;
-    if (this._preCached === false) ImageElement._priorityCount -= 1;
-    this.setAttribute('loaded', '');
-  }
-
-  _onImgPreCached() {
+  _onImgPreCached = () => {
     this._preCaching = false;
     this._preCached = true;
     if (this._renderOnPreCached !== false) {
       this._render();
       this._load();
     }
-  }
+  };
 
-  static get observedAttributes() {
-    return ['src', 'width', 'height', 'alt'];
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name, oldVal, newVal) {
+    super.attributeChangedCallback(name, oldVal, newVal);
     // If nothing has changed then just return
-    if (newValue === oldValue) return;
+    if (newVal === oldVal) return;
 
     switch (name) {
       case 'src':
         // If the src is changed then we need to reset and start again
         this._reset();
-        this._init();
-        break;
-      case 'width':
-        this._width = newValue;
-        if (this._$preview !== null) this._$preview.width = this._width;
-        this.$.img.width = this._width;
-        this.style.width = `${this._width}px`;
-        if (!this._inited) this._init();
-        break;
-      case 'height':
-        this._height = newValue;
-        if (this._$preview !== null) this._$preview.height = this._height;
-        this.$.img.height = this._height;
-        this.style.height = `${this._height}px`;
-        if (!this._inited) this._init();
-        break;
-      case 'render-on-pre-cached':
-        this._renderOnPreCached = !(newValue === 'false');
-        break;
-      case 'alt':
-        this._updateAttribute('alt', newValue);
+        if (this.img) {
+          this._init();
+        } else {
+          // save the img reference
+          this.img = new Image();
+          this.img.src = this.src;
+          this.img.onload = () => {
+            // dispatch load event
+            const evt = new CustomEvent('load', {
+              bubbles: false,
+              composed: true,
+              detail: {
+                width: `${this.img.width}px`,
+                height: `${this.img.height}px`
+              }
+            });
+            this.dispatchEvent(evt);
+            this._init();
+          };
+        }
         break;
     }
   }
@@ -232,50 +177,14 @@ export default class ImageElement extends PolymerElement {
   _render() {
     if (this._rendered === true) return;
 
-    // Render the Shadow Root if not done already (src change can force this method to be called again)
-    if (this._root === null) {
-      // Attach the Shadow Root to the element
-      this._root = this.shadowRoot;
-    }
-
-    // If a preview image has been specified
-    if (
-      this._$preview === null &&
-      this._preview !== null &&
-      this._loaded === false
-    ) {
-      // Create the element
-      this._$preview = document.createElement('img');
-      this._$preview.classList.add('image-preview');
-      this._$preview.src = this._preview;
-      // Add the specified width and height
-      if (this._width) {
-        this._$preview.width = this._width;
-      }
-      if (this._height) {
-        this._$preview.height = this._height;
-      }
-      // Add it to the Shadow Root
-      this._root.appendChild(this._$preview);
-    }
-
     this.$.img.classList.add('image-src');
-    // add the specified width and height to the image element
-    if (this._width) {
-      this.$.img.width = this._width;
-    }
-    if (this._height) {
-      this.$.img.height = this._height;
-    }
-    const alt = this.getAttribute('alt');
-    if (alt !== null) this.$.img.setAttribute('alt', alt);
     // Flag as rendered
     this._rendered = true;
   }
 
   _precache() {
     this._preCaching = true;
-    ImageElement._preCache(this._src, this._onImgPreCached);
+    ImageElement._preCache(this.src, this._onImgPreCached);
   }
 
   static _preCacheListeners = new Map();
@@ -313,7 +222,7 @@ export default class ImageElement extends PolymerElement {
         clearTimeout(ImageElement._startPreCacheDebounce);
         ImageElement._startPreCacheDebounce = null;
       }
-      ImageElement._startPreCacheDebounce = setTimeout(function() {
+      ImageElement._startPreCacheDebounce = setTimeout(() => {
         if (ImageElement.__priorityCount < 1) ImageElement._startPreCache();
       }, 500);
     }
@@ -360,10 +269,56 @@ export default class ImageElement extends PolymerElement {
     }
   }
 
-  static settings = {
-    // Set this to false to save memory but can cause jank during scrolling
-    RENDER_ON_PRECACHED: false
-  };
+  observerMode(newVal, oldVal) {
+    if (oldVal === undefined) return;
+
+    // init dom
+    if (this.$.img.children.length > 0) {
+      this.$.img.style.height = 'inital';
+      this.img.style.cssText = 'display: none';
+    }
+
+    const positions = [
+      'top',
+      'bottom',
+      'center',
+      'left',
+      'right',
+      'top left',
+      'top right',
+      'bottom left',
+      'bottom right'
+    ];
+
+    if (positions.indexOf(newVal) > -1) {
+      this.$.img.style.backgroundSize = 'auto';
+      this.$.img.style.backgroundPosition = `${newVal}`;
+    } else {
+      switch (newVal) {
+        case 'scaleToFill':
+          this.$.img.style.backgroundSize = '100% 100%';
+          this.$.img.style.backgroundPosition = '0% 0%';
+          break;
+        case 'aspectFit':
+          this.$.img.style.backgroundSize = 'contain';
+          this.$.img.style.backgroundPosition = 'center center';
+          this.$.img.style.backgroundRepeat = 'no-repeat';
+          break;
+        case 'aspectFill':
+          this.$.img.style.backgroundSize = 'cover';
+          this.$.img.style.backgroundPosition = 'center center';
+          break;
+        case 'widthFix':
+          this.img.style.cssText = 'visibility: hidden;width: 100%;';
+          this.$.img.style.height = 'auto';
+          this.$.img.style.backgroundSize = 'contain';
+          this.$.img.appendChild(this.img);
+          break;
+        default:
+          break;
+      }
+    }
+  }
 }
 
 /**
@@ -379,7 +334,18 @@ ImageElement._worker = new Worker(
             self.postMessage(e.data.url);
           }
           xhr.responseType = 'blob';
-          xhr.onload = xhr.onerror = onload;
+          xhr.onload = onload;
+          xhr.onerror = function() {
+            const evt = new CustomEvent('error', {
+              bubbles: false,
+              composed: true,
+              detail: {
+                errMsg: 'something wrong'
+              }
+            });
+            ImageElement.dispatchEvent(evt);
+            onload();
+          };
           xhr.open('GET', resolveURL(e.data.location), true); // eslint-disable-line
           xhr.send();
         }.toString()};`,
