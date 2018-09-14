@@ -1,8 +1,49 @@
+<dom-module id="a-image">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        outline: none;
+      }
+
+      img {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      img.image-src {
+        z-index: 1;
+        opacity: 0;
+      }
+
+      img.image-preview {
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+
+      :host([loaded]) img.image-src {
+        opacity: 1;
+      }
+    </style>
+    <img id="img" />
+  </template>
+</dom-module>
+
+
+<script>
 /**
  * https://github.com/RevillWeb/img-2
  */
+import { PolymerElement } from '@polymer/polymer';
+import { afterNextRender } from "../../shared/utils";
 
-export default class ImageElement extends HTMLElement {
+export default class ImageElement extends PolymerElement {
   static get is() {
     return 'a-image';
   }
@@ -12,7 +53,6 @@ export default class ImageElement extends HTMLElement {
 
     // Private class variables
     this._root = null;
-    this._$img = null;
     this._$preview = null;
     this._preview = null;
     this._src = null;
@@ -48,13 +88,13 @@ export default class ImageElement extends HTMLElement {
   }
 
   connectedCallback() {
-    if (window.ShadyCSS) {
-      window.ShadyCSS.styleElement(this);
-    }
-    // Override any global settings
+    super.connectedCallback();
+
     this._renderOnPreCached =
       this.getAttribute('render-on-pre-cached') === 'true';
-    this._init();
+    afterNextRender(this, () => {
+      this._init();
+    })
   }
 
   _init() {
@@ -81,7 +121,7 @@ export default class ImageElement extends HTMLElement {
 
     // Figure out if this image is within view
     ImageElement.addIntersectListener(this, () => {
-      ImageElement._removePreCacheListener(this._precache);
+      ImageElement._removePreCacheListener(this._precache);     
       this._render();
       this._load();
       ImageElement.removeIntersectListener(this);
@@ -98,10 +138,10 @@ export default class ImageElement extends HTMLElement {
    */
   _load() {
     if (this._preCached === false) ImageElement._priorityCount += 1;
-    this._$img.onload = this._onImgLoad;
+    this.$.img.onload = this._onImgLoad;
     this._loading = true;
-    this._$img.src = this._src;
-    this._$img.style.opacity = 1;
+    this.$.img.src = this._src;
+    this.$.img.style.opacity = 1;
   }
 
   _onImgLoad(evt) {
@@ -122,7 +162,7 @@ export default class ImageElement extends HTMLElement {
       this._root.removeChild(this._$preview);
       this._$preview = null;
     }
-    this._$img.onload = null;
+    this.$.img.onload = null;
     if (this._preCached === false) ImageElement._priorityCount -= 1;
     this.setAttribute('loaded', '');
   }
@@ -153,14 +193,14 @@ export default class ImageElement extends HTMLElement {
       case 'width':
         this._width = newValue;
         if (this._$preview !== null) this._$preview.width = this._width;
-        if (this._$img !== null) this._$img.width = this._width;
+        this.$.img.width = this._width;
         this.style.width = `${this._width}px`;
         if (!this._inited) this._init();
         break;
       case 'height':
         this._height = newValue;
         if (this._$preview !== null) this._$preview.height = this._height;
-        if (this._$img !== null) this._$img.height = this._height;
+        this.$.img.height = this._height;
         this.style.height = `${this._height}px`;
         if (!this._inited) this._init();
         break;
@@ -182,7 +222,7 @@ export default class ImageElement extends HTMLElement {
   _updateAttribute(name, value) {
     // If the image element hasn't been rendered yet, just return.
     if (this._rendered === false) return;
-    this._$img.setAttribute(name, value);
+    this.$.img.setAttribute(name, value);
   }
 
   /**
@@ -195,42 +235,7 @@ export default class ImageElement extends HTMLElement {
     // Render the Shadow Root if not done already (src change can force this method to be called again)
     if (this._root === null) {
       // Attach the Shadow Root to the element
-      this._root = this.attachShadow({ mode: 'open' });
-      // Create the initial template with styles
-      let $template = document.createElement('template');
-      $template.innerHTML = `
-            <style>
-              :host {
-                position: relative;
-                overflow: hidden;
-                display: inline-block;
-                outline: none;
-              }
-              img {
-                position: absolute;
-                left: 0;
-                top: 0;
-              }
-              img.image-src {
-                z-index: 1;
-                opacity: 0;
-              }
-              img.image-preview {
-                z-index: 2;
-                width: 100%;
-                height: 100%;
-                top: 0;
-                left: 0;
-              }
-              :host([loaded]) img.image-src {
-                opacity: 1;
-              }
-            </style>
-          `;
-      if (window.ShadyCSS) {
-        window.ShadyCSS.prepareTemplate($template, 'a-image');
-      }
-      this._root.appendChild(document.importNode($template.content, true));
+      this._root = this.shadowRoot;
     }
 
     // If a preview image has been specified
@@ -254,24 +259,16 @@ export default class ImageElement extends HTMLElement {
       this._root.appendChild(this._$preview);
     }
 
-    // Render the img element if not done already
-    if (this._$img === null) {
-      // Create the actual image element to be used to display the image
-      this._$img = document.createElement('img');
-      this._$img.classList.add('image-src');
-      // add the specified width and height to the image element
-      if (this._width) {
-        this._$img.width = this._width;
-      }
-      if (this._height) {
-        this._$img.height = this._height;
-      }
-      const alt = this.getAttribute('alt');
-      if (alt !== null) this._$img.setAttribute('alt', alt);
-      // Add the image to the Shadow Root
-      this._root.appendChild(this._$img);
+    this.$.img.classList.add('image-src');
+    // add the specified width and height to the image element
+    if (this._width) {
+      this.$.img.width = this._width;
     }
-
+    if (this._height) {
+      this.$.img.height = this._height;
+    }
+    const alt = this.getAttribute('alt');
+    if (alt !== null) this.$.img.setAttribute('alt', alt);
     // Flag as rendered
     this._rendered = true;
   }
@@ -386,7 +383,7 @@ ImageElement._worker = new Worker(
           xhr.open('GET', resolveURL(e.data.location), true); // eslint-disable-line
           xhr.send();
         }.toString()};`,
-        `var HTTP_REG = /^http/;
+        `const HTTP_REG = /^http/;
         function resolveURL(path) {
           if (HTTP_REG.test(path)) {
             return path;
@@ -425,3 +422,4 @@ function handleIntersect(entries) {
 }
 
 customElements.define(ImageElement.is, ImageElement);
+</script>
