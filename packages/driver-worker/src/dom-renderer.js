@@ -96,7 +96,6 @@ const StylePrefixer = {
 Object.keys(PREFIX_PROPS).forEach((prop) => {
   const rule = PREFIX_PROPS[prop];
   StylePrefixer[prop] = (value, style = {}) => {
-    debugger;
     for (let i = 0, l = rule.length; i < l; i ++) {
       if ('$prop' === rule[i]) {
         style['webkit' + prop[0].toUpperCase() + prop.slice(1)] = value;
