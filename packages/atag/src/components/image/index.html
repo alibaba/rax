@@ -6,26 +6,28 @@
         overflow: hidden;
         display: inline-block;
         outline: none;
+        /* image default width to 300px、height to 225px */
         width: 300px;
         height: 225px;
+        line-height: 0;
       }
 
-      #img {
+      #imageContainer {
         display: inline-block;
         width: 100%;
         height: 100%;
       }
 
-      div.image-src {
+      .image-src {
         z-index: 1;
         opacity: 0;
       }
 
-      :host([loaded]) div.image-src {
+      :host([loaded]) .image-src {
         opacity: 1;
       }
     </style>
-    <div id="img"></div>
+    <div id="imageContainer"></div>
   </template>
 </dom-module>
 
@@ -48,6 +50,7 @@ export default class ImageElement extends PolymerElement {
       },
       mode: {
         type: String,
+        value: 'scaleToFill',
         reflectToAttrbute: true,
         observer: 'observerMode'
       }
@@ -110,9 +113,11 @@ export default class ImageElement extends PolymerElement {
   _load() {
     if (this._preCached === false) ImageElement._priorityCount += 1;
     this._loading = true;
+
     // handle background-size
-    this.$.img.style.backgroundImage = `url(${this.src})`;
-    this.$.img.style.opacity = 1;
+    const imageContainerStyle = this.$.imageContainer.style;
+    imageContainerStyle.backgroundImage = `url(${this.src})`;
+    imageContainerStyle.opacity = 1;
     this.observerMode(this.mode, '');
   }
 
@@ -134,20 +139,20 @@ export default class ImageElement extends PolymerElement {
       case 'src':
         // If the src is changed then we need to reset and start again
         this._reset();
-        if (this.img) {
+        if (this.imageEl) {
           this._init();
         } else {
           // save the img reference
-          this.img = new Image();
-          this.img.src = this.src;
-          this.img.onload = () => {
+          const imageEl = this.imageEl = new Image();
+          imageEl.src = this.src;
+          imageEl.onload = () => {
             // dispatch load event
             const evt = new CustomEvent('load', {
               bubbles: false,
               composed: true,
               detail: {
-                width: `${this.img.width}px`,
-                height: `${this.img.height}px`
+                width: `${imageEl.width}px`,
+                height: `${imageEl.height}px`
               }
             });
             this.dispatchEvent(evt);
@@ -167,7 +172,7 @@ export default class ImageElement extends PolymerElement {
   _updateAttribute(name, value) {
     // If the image element hasn't been rendered yet, just return.
     if (this._rendered === false) return;
-    this.$.img.setAttribute(name, value);
+    imageContainer.setAttribute(name, value);
   }
 
   /**
@@ -177,7 +182,7 @@ export default class ImageElement extends PolymerElement {
   _render() {
     if (this._rendered === true) return;
 
-    this.$.img.classList.add('image-src');
+    this.$.imageContainer.classList.add('image-src');
     // Flag as rendered
     this._rendered = true;
   }
@@ -272,10 +277,12 @@ export default class ImageElement extends PolymerElement {
   observerMode(newVal, oldVal) {
     if (oldVal === undefined) return;
 
+    const imageContainer = this.$.imageContainer;
+    const imageContainerStyle = imageContainer.style;
     // init dom
-    if (this.$.img.children.length > 0) {
-      this.$.img.style.height = 'inital';
-      this.img.style.cssText = 'display: none';
+    if (imageContainer.children.length > 0) {
+      imageContainerStyle.height = 'inital';
+      this.imageEl.cssText = 'display: none';
     }
 
     const positions = [
@@ -291,28 +298,28 @@ export default class ImageElement extends PolymerElement {
     ];
 
     if (positions.indexOf(newVal) > -1) {
-      this.$.img.style.backgroundSize = 'auto';
-      this.$.img.style.backgroundPosition = `${newVal}`;
+      imageContainerStyle.backgroundSize = 'auto';
+      imageContainerStyle.backgroundPosition = `${newVal}`;
     } else {
       switch (newVal) {
         case 'scaleToFill':
-          this.$.img.style.backgroundSize = '100% 100%';
-          this.$.img.style.backgroundPosition = '0% 0%';
+          imageContainerStyle.backgroundSize = '100% 100%';
+          imageContainerStyle.backgroundPosition = '0% 0%';
           break;
         case 'aspectFit':
-          this.$.img.style.backgroundSize = 'contain';
-          this.$.img.style.backgroundPosition = 'center center';
-          this.$.img.style.backgroundRepeat = 'no-repeat';
+          imageContainerStyle.backgroundSize = 'contain';
+          imageContainerStyle.backgroundPosition = 'center center';
+          imageContainerStyle.backgroundRepeat = 'no-repeat';
           break;
         case 'aspectFill':
-          this.$.img.style.backgroundSize = 'cover';
-          this.$.img.style.backgroundPosition = 'center center';
+          imageContainerStyle.backgroundSize = 'cover';
+          imageContainerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          this.img.style.cssText = 'visibility: hidden;width: 100%;';
-          this.$.img.style.height = 'auto';
-          this.$.img.style.backgroundSize = 'contain';
-          this.$.img.appendChild(this.img);
+          this.imageEl.cssText = 'visibility: hidden;width: 100%;';
+          imageContainerStyle.height = 'auto';
+          imageContainerStyle.backgroundSize = 'contain';
+          imageContainer.appendChild(this.imageEl);
           break;
         default:
           break;
