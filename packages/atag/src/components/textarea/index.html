@@ -1,14 +1,17 @@
 <dom-module id="a-textarea">
   <template>
-    <style id="style">
+    <style>
       :host {
+        display: block;
+      }
+
+      .container {
         display: flex;
+        display: -webkit-flex;
+        position: relative;
         box-sizing: border-box;
-        padding-left: 3.2vw;
-        padding-right: 3.2vw;
-        padding-top: 3.47vw;
-        padding-bottom: 3.47vw;
         background-color: white;
+        padding: 2px 5px;
       }
 
       #textarea {
@@ -18,13 +21,25 @@
         outline: none;
         border: none;
         resize: none;
-        font-size: 4.27vw;
+        font-size: 16px;
         color: #333333;
         box-sizing: border-box;
       }
+
+      .count {
+        position: absolute;
+        bottom: 0;
+        right: 5px;
+        color: #b2b2b2;
+        font-size: 14px;
+        margin: 0;
+      }
     </style>
-    <textarea id="textarea" placeholder="{{placeholder}}" value="{{value}}" disabled="{{disabled}}" focus="{{focus}}" maxlength="{{maxlength}}"
-      readonly="{{readonly}}" autofocus="{{autoFocus}}" style$="{{inputStyle}}" rows="{{rows}}"></textarea>
+    <div class="container" style$="{{containerStyle}}">
+      <textarea id="textarea" placeholder="{{placeholder}}" value$="{{value}}" disabled$="{{disabled}}" maxlength$="{{maxlength}}"
+        readonly$="{{readonly}}" autofocus$="{{focus}}" style$="{{inputStyle}}" rows$="{{rows}}"></textarea>
+      <p class="count" style$="{{countStyle}}">{{valueLength}}/{{maxlength}}</p>
+    </div>
   </template>
 </dom-module>
 
@@ -32,6 +47,8 @@
 import { PolymerElement } from '@polymer/polymer';
 import { afterNextRender } from '../../shared/utils';
 import autosize from './autosize';
+
+let uid = 0;
 
 export default class Textarea extends PolymerElement {
   static get is() {
@@ -50,7 +67,8 @@ export default class Textarea extends PolymerElement {
       },
       placeholderStyle: {
         type: String,
-        value: 'color: #999999;'
+        value: 'color: #999999;',
+        observer: 'changePlaceholderStyle'
       },
       disabled: {
         type: Boolean,
@@ -60,16 +78,13 @@ export default class Textarea extends PolymerElement {
         type: String,
         value: 140
       },
-      // 获取焦点
       focus: {
-        type: String
-      },
-      autoFocus: {
         type: Boolean,
         value: false
       },
       autoHeight: {
-        type: String
+        type: Boolean,
+        value: false
       },
       readonly: {
         type: Boolean
@@ -81,22 +96,24 @@ export default class Textarea extends PolymerElement {
       rows: {
         type: String,
         value: '2'
+      },
+      showCount: {
+        type: Boolean,
+        value: true,
+        observer: 'observerShowCount'
+      },
+      valueLength: {
+        type: Number,
+        computed: 'computedValueLength(value)'
       }
     };
   }
 
   ready() {
     super.ready();
-
     this.textarea = this.$.textarea;
     this.formInitialValue = this.value;
-    if (this.placeholderStyle) {
-      this.$.style.innerHTML += `
-          :host #textarea::placeholder {
-            ${this.placeholderStyle}
-          }
-        `;
-    }
+
     afterNextRender(this, () => {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
@@ -106,6 +123,18 @@ export default class Textarea extends PolymerElement {
         autosize(this.textarea);
       }
     });
+  }
+
+  attributeChangedCallback(key, oldVal, newVal) {
+    super.attributeChangedCallback(key, oldVal, newVal);
+    
+    switch (key) {
+      case 'show-count':
+        this.showCount = !(newVal === 'false');
+        break;
+      default:
+        break;
+    }
   }
 
   disconnectedCallback() {
@@ -149,6 +178,7 @@ export default class Textarea extends PolymerElement {
     if (this.autoHeight) {
       autosize.update(this.textarea);
     }
+    this.value = this.textarea.value;
     const event = new CustomEvent('input', {
       bubbles: false,
       cancelable: true,
@@ -187,6 +217,39 @@ export default class Textarea extends PolymerElement {
   _handleReset = () => {
     this.textarea.value = this.formInitialValue;
   };
+
+  changePlaceholderStyle(placeholderStyle) {
+    if (!this.styleEl) {
+      // unique id for data-id to avoid style pollution
+      this.id = `textarea-${++uid}`;
+      this.styleEl = document.createElement('style');
+      this.setAttribute('data-id', this.id);
+      const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
+      shadowRoot.appendChild(this.styleEl);
+    }
+    this.styleEl.textContent = `
+      :host #textarea::placeholder {
+        ${placeholderStyle}
+      }
+      a-textarea[data-id=${this.id}] #textarea::-webkit-input-placeholder {
+        ${placeholderStyle}
+      }
+    `;
+  }
+
+  computedValueLength(value) {
+    return value.length;
+  }
+
+  observerShowCount(newVal, oldVal) {
+    if (newVal) {
+      this.countStyle = '';
+      this.containerStyle = 'padding-bottom: 18px';
+    } else {
+      this.countStyle = 'display: none;';
+      this.containerStyle = '';
+    }
+  }
 }
 
 customElements.define(Textarea.is, Textarea);

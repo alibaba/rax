@@ -6,8 +6,8 @@ process.env.CHROME_BIN = require('puppeteer').executablePath();
 // karma.conf.js
 module.exports = function (config) {
   config.set({
-    browsers: ['ChromeHeadless', /* 'Safari', */'PhantomJS'],
-    frameworks: ['mocha', 'sinon-chai', 'phantomjs-shim'],
+    browsers: ['ChromeHeadless'],
+    frameworks: ['mocha', 'sinon-chai'],
     reporters: ['progress', 'spec', 'coverage'],
     files: [
       'tests/test.js'

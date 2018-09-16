@@ -1,4 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '../../shared/utils';
 
 const pauseImage = require('./images/pause.png');
 const playImage = require('./images/play.png');
@@ -56,7 +57,7 @@ export default class VideoElement extends PolymerElement {
     this.$.video.pause();
   }
 
-  fullscreen() {
+  fullscreen = () => {
     const video = this.$.video;
 
     if (video.webkitEnterFullscreen) {
@@ -70,7 +71,7 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
-  showPause() {
+  showPause = () => {
     const $image = this.$.image;
     const $controls = this.$.controls;
 
@@ -95,7 +96,7 @@ export default class VideoElement extends PolymerElement {
       }
     }, 3000);
   }
-  handlePlay() {
+  handlePlay = () => {
     if (this.playing) {
       this.pause();
       this.$.image.style.opacity = 1;
@@ -138,9 +139,6 @@ export default class VideoElement extends PolymerElement {
   ready() {
     super.ready();
     this._listen();
-    this.$.image.addEventListener('click', this.handlePlay.bind(this));
-    this.$.fullscreen.addEventListener('click', this.fullscreen.bind(this));
-    this.$.video.addEventListener('click', this.showPause.bind(this));
     this.handleStyle();
     const autoplay = this.getAttribute('autoplay');
     this.playing = !autoplay;
@@ -148,6 +146,19 @@ export default class VideoElement extends PolymerElement {
     this.handlePlay();
     this.delayHideControls();
     this.handleSeekBar();
+
+    afterNextRender(this, () => {
+      this.$.image.addEventListener('click', this.handlePlay);
+      this.$.fullscreen.addEventListener('click', this.fullscreen);
+      this.$.video.addEventListener('click', this.showPause);
+    });
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.$.image.removeEventListener('click', this.handlePlay);
+    this.$.fullscreen.removeEventListener('click', this.fullscreen);
+    this.$.video.removeEventListener('click', this.showPause);
   }
 
   handleSeekBar() {
@@ -159,8 +170,8 @@ export default class VideoElement extends PolymerElement {
       // Calculate the slider value
       var value = 100 / video.duration * video.currentTime;
       // Update the slider value
-      lineFront.style.width = value * 60 / 100 + 'vw';
-      seekBar.style.left = value * 60 / 100 - 1.6 + 'vw';
+      lineFront.style.width = value + '%';
+      seekBar.style.left = value - 5 + '%';
     });
 
     video.addEventListener('ended', e => {
@@ -192,62 +203,45 @@ export default class VideoElement extends PolymerElement {
       video.currentTime = time;
     });
   }
-  handleStyle() {
-    const width = this.getAttribute('width') || '100';
-    const height = this.getAttribute('height');
-    const styleEl = this.shadowRoot.querySelector('#style');
-    styleEl.innerHTML += `
-        :host .container {
-          width: ${width}vw;
-          position: relative;
-        }
-        :host #controls {
-          width: ${width}vw;
-        }
 
-        :host #video {
-          width: ${width}vw;
-          height: ${height}vw;
-        }
-        :host #image {
-        position: absolute;
-        z-index: 100;
-        left: ${(width - 16.8) / 2}vw;
-        top: 50%;
-        margin-top: -40px;
-        opacity: 1;
-      }
-      `;
+  handleStyle() {
+    const width = this.getAttribute('width');
+    const height = this.getAttribute('height');
+    this.$.container.style.width = this.$.controls.style.width = this.$.video.style.width = width ? `${width}px` : '100%';
+    this.$.video.style.height = `${height}px`;
+    this.$.image.style.opacity = 1;
   }
 
   static get template() {
     return html`
-      <style id="style">
+      <style>
       /* shadow DOM styles go here */
       :host {
         display: inline;
         box-sizing: border-box;
-
         -webkit-user-select: none;
         user-select: none;
-
       }
 
       :host #container {
         position: relative;
-        width: 100vw;
+        max-width: 100vw;
       }
 
       :host #image {
         position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -40px;
+        margin-left: -30px;
         z-index: 100;
-        width: 16.8vw;
-        height: 16.8vw;
+        width: 60px;
+        height: 60px;
         opacity: 0;
       }
 
       :host #controls {
-        width: 100vw;
+        width: 100%;
         -webkit-transition: opacity .3s;
         -moz-transition: opacity .3s;
         -o-transition: opacity .3s;
@@ -258,34 +252,34 @@ export default class VideoElement extends PolymerElement {
         padding: 0;
         line-height: 0;
         display: flex;
+        display: -webkit-flex;
         justify-items: center;
+        -webkit-justify-items: center;
         align-items: center;
+        -webkit-align-items: center;
         background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4));;
-        height: 12.8vw;
+        height: 48px;
         position: absolute;
-        bottom: 1.2vw;
+        bottom: 4.5px;
         left: 0;
         z-index: 101;
       }
 
       :host #line {
-        width: 60vw;
-        height: 0.5333333333333333vw;
+        width: 100%;
+        height: 2px;
         position: relative;
-
       }
 
       :host #lineBackground {
-        width: 60vw;
-        height: 0.5333333333333333vw;
+        width: 100%;
+        height: 2px;
         opacity: 0.25;
         background-color: #FFFFFF;
-
       }
 
       :host #lineFront {
-        width: 20vw;
-        height: 0.5333333333333333vw;
+        height: 2px;
         background-color: #FF5000;
         position: absolute;
         left: 0;
@@ -293,9 +287,9 @@ export default class VideoElement extends PolymerElement {
       }
 
       :host #fullscreen {
-        width: 5.333333333333333vw;
-        height: 5.333333333333333vw;
-        margin-right: 3.8666666666666667vw;
+        width: 20px;
+        height: 20px;
+        margin-right: 14px;
       }
 
       :host button:hover {
@@ -303,25 +297,25 @@ export default class VideoElement extends PolymerElement {
       }
 
       :host #seekbar {
-        width: 3.2vw;
-        height: 3.2vw;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         background-color: #fff;
         position: absolute;
-        top: -1.6vw;
+        top: -6px;
       }
 
       :host #fullscreen {
-        width: 4.333333333333333vw;
-        height: 4.333333333333333vw;
-        margin-left: 3.2vw;
+        width: 16px;
+        height: 16px;
+        margin-left: 12px;
       }
 
       :host span {
         color: #ffffff;
-        font-size: 3.8666666666666667vw;
-        padding-left: 2.4vw;
-        padding-right: 2.4vw;
+        font-size: 14px;
+        padding-left: 9px;
+        padding-right: 9px;
       }
     </style>
     <!-- shadow DOM goes here -->
@@ -338,7 +332,6 @@ export default class VideoElement extends PolymerElement {
           <div id="lineFront"></div>
           <div id="seekbar"></div>
         </div>
-
         <span id="totalTime"> </span>
         <img id="fullscreen" src="./images/fullscreen.png" alt="" />
       </div>

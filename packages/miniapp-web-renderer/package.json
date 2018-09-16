@@ -1,6 +1,6 @@
 {
   "name": "miniapp-web-renderer",
-  "version": "0.1.1-beta.5",
+  "version": "0.1.1",
   "description": "Web renderer for miniapp.",
   "main": "lib/index.js",
   "dependencies": {

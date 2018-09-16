@@ -1,8 +1,7 @@
-import styleToCSS from './style-to-css';
-
 const global = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();
 
-const IS_DATASET_REG = /^data\-/;
+const IS_DATASET_REG = /^data-/;
+
 function assign(obj, props) {
   for (let i in props) obj[i] = props[i];
 }
@@ -11,7 +10,7 @@ function toLower(str) {
   return String(str).toLowerCase();
 }
 
-const CAMELCASE_REG = /\-[a-z]/g;
+const CAMELCASE_REG = /-[a-z]/g;
 const CamelCaseCache = {};
 function camelCase(str) {
   return (
@@ -42,6 +41,10 @@ function createAttributeFilter(ns, name) {
 
 const setImmediate = global.setImmediate || function(cb) {
   return setTimeout(cb, 0);
+};
+
+const requestAnimationFrame = global.requestAnimationFrame || function(cb) {
+  return setTimeout(cb, 16);
 };
 
 const ELEMENT_NODE = 1;
@@ -213,7 +216,7 @@ export default function() {
      * but parse cssText
      */
 
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const {
         duration,
         timeFunction,
@@ -222,8 +225,8 @@ export default function() {
       } = animationGroup.config;
       let properties = {};
 
-      if (node.style.cssText) {
-        const propList = node.style.cssText.replace(/;/g, ':').split(':');
+      if (node.style) {
+        const propList = Object.keys(node.style);
         const style = {};
         const transformProperties = [
           'transition',
@@ -231,28 +234,25 @@ export default function() {
           'transform-origin'
         ];
         // traverse all properties that aren't about transform
-        propList.forEach((prop, index) => {
+        propList.forEach((prop) => {
           if (
             prop &&
-            index % 2 === 0 &&
             transformProperties.indexOf(prop) < 0
           ) {
-            style[prop] = propList[index + 1];
+            style[prop] = node.style[prop];
           }
         });
         // merge nextProperties into style
         properties = Object.assign(style, nextProperties);
       }
 
-      Object.assign(node.style, {
+      node.style = Object.assign(node.style, {
         transition: `all ${duration}ms ${timeFunction} ${delay}ms`,
         transformOrigin: transformOrigin,
         transform: `${nextTranfrom}`,
         ...properties
       });
-
-      node.style.cssText = styleToCSS(node.style);
-    }, 16);
+    });
   }
 
   class Node {
@@ -354,12 +354,6 @@ export default function() {
         },
         get: () => this.getAttribute('animation')
       });
-      Object.defineProperty(this.style, 'cssText', {
-        set: val => {
-          this.setAttribute('style', val);
-        },
-        get: () => this.getAttribute('style')
-      });
     }
 
     get children() {
@@ -372,6 +366,14 @@ export default function() {
         dataset[camelCase(name.slice(5))] = value;
       });
       return dataset;
+    }
+
+    get style() {
+      return this._style;
+    }
+    set style(styleObject) {
+      this._style = styleObject;
+      mutation(this, 'attributes', { style: styleObject });
     }
 
     setAttribute(key, value) {

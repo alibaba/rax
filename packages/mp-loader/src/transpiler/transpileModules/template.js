@@ -88,7 +88,7 @@ function genData(el) {
      * _w(item % 2 ? 'odd' : 'even'),
      */
     const isExp = normalizeMustache(is, el);
-    return `is:_w(${isExp === is ? `'${is}'` : isExp}),`;
+    return `is:_w(${isExp === is ? `'${is}'` : isExp}),pageInstance:this,`;
   } else {
     return '';
   }

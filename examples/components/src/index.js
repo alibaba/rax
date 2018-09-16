@@ -35,12 +35,24 @@ import TableDemo from './TableDemo';
 import CheckboxDemo from './CheckboxDemo';
 import TabPanelDemo from './TabPanelDemo';
 import ParallaxDemo from './ParallaxDemo';
+import XSliderDemo from './XSliderDemo';
+import GyroscopeParallaxDemo from './GyroscopeParallaxDemo';
+import GestureViewDemo from './GestureViewDemo';
 
 class Page extends Component {
   render() {
     return <ScrollView ref={(scrollview) => {
       this.scrollview = scrollview;
     }}>
+      <View>
+        <Text style={styles.title}>GyroscopeParallax</Text>
+        <GyroscopeParallaxDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>GestureViewDemo</Text>
+        <GestureViewDemo />
+      </View>
 
       <View>
         <Text style={styles.title}>Style</Text>
@@ -192,6 +204,11 @@ class Page extends Component {
       <View>
         <Text style={styles.title}>TabPanel</Text>
         <TabPanelDemo />
+      </View>
+
+      <View>
+        <Text style={styles.title}>XSlider</Text>
+        <XSliderDemo />
       </View>
 
 

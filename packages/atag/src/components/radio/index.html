@@ -1,6 +1,6 @@
 <dom-module id="a-radio">
   <template>
-    <style id="style">
+    <style>
       :host {
         position: relative;
         box-sizing: border-box;
@@ -17,12 +17,9 @@
       :host .circle {
         display: inline-block;
         position: relative;
-        width: 2.5em;
-        height: 2.5em;
-        transform: scale(0.5);
-        transform-origin: center;
-        margin: -0.625em;
-        margin-bottom: -0.5em;
+        width: 1.25em;
+        height: 1.25em;
+        margin: -0.625em 0;
         vertical-align: middle;
         border: 2px solid #999;
         border-radius: 100%;
@@ -56,17 +53,12 @@
         background-color: #bbb;
       }
     </style>
-    <style id="customStyle">
-      /* shadow DOM styles go here */
-    </style>
     <input type="radio" id="radio" name="{{value}}" disabled="{{disabled::change}}" checked="{{checked::change}}">
     <label for="radio">
       <div class="circle" style$="{{circleCheckedStyle}}">
         <div class="dot" style$="{{dotCheckedStyle}}"></div>
       </div>
     </label>
-    <!-- shadow DOM goes here -->
-    <!-- <slot></slot> -->
   </template>
 </dom-module>
 
@@ -117,11 +109,6 @@ export default class RadioElement extends PolymerElement {
     };
   }
 
-  disconnectedCallback() {
-    this.removeEventListener('click', this.clickHandler, true);
-    window.removeEventListener('_formReset', this._handlerReset, true);
-  }
-
   ready() {
     super.ready();
 
@@ -132,22 +119,32 @@ export default class RadioElement extends PolymerElement {
     window.addEventListener('_formReset', this._handlerReset, true);
   }
 
-  clickHandler = e => {
-    !e.isTrusted && this.$.radio.click();
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    
+    this.removeEventListener('click', this.clickHandler, true);
+    window.removeEventListener('_formReset', this._handlerReset, true);
+  }
+
+  clickHandler = (e) => {
     e.stopPropagation();
+
+    if(!e.isTrusted) {
+      this.$.radio.click();
+    }
   };
 
-  changeHandler = e => {
-    const innerEvent = new CustomEvent('_radioChange', {
+  changeHandler = (e) => {
+    e.stopPropagation();
+
+    const customEvent = new CustomEvent('_radioChange', {
       bubbles: true,
       cancelable: true,
       detail: {
         value: this.checked
       }
     });
-    // this.dispatchEvent(event);
-    this.dispatchEvent(innerEvent);
-    e.stopPropagation();
+    this.dispatchEvent(customEvent);
   };
 
   _handlerReset = () => {

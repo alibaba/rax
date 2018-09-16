@@ -75,7 +75,6 @@ module.exports = function templateLoader(content) {
 
   // prepare requirements
   const vdomHelperReq = createRequireDefault(stringifyRequest(this, paths.vdomHelper));
-  const getAppReq = createRequireDefault(stringifyRequest(this, paths.getApp));
   const styleReq = stylePath && stylePath !== 'undefined'
     ? createRequire(stringifyRequest(this, `${stylesheetLoaderPath}?disableLog=true!${stylePath}`))
     : '{}';
@@ -89,13 +88,13 @@ module.exports = function templateLoader(content) {
     'data'
   );
 
-  return `;(function(globalStyle, pageStyle, __vdom_helpers__, getApp){
+  return `;(function(globalStyle, pageStyle, __vdom_helpers__){
     ${vdomHelperVars}
     module.exports = function renderFactory(__parent_tpls__, Rax) {
       var __tpls__ = {};
       var __sfc_components_ref__ = {};
       var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
-      function _w(is) { return tpls[is] ? tpls[is] : null; }
+      function _w(is) { return __tpls__[is] ? __tpls__[is] : null; }
       ${''}
       _c = _c.bind(Rax);
       ${''} 
@@ -109,7 +108,6 @@ module.exports = function templateLoader(content) {
   })(
     ${globalStyleReq},
     ${styleReq},
-    ${vdomHelperReq},
-    ${getAppReq}
+    ${vdomHelperReq}
   );`;
 };

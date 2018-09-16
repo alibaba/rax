@@ -1,0 +1,292 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <title>Atag Demo</title>
+  <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
+  <style>
+    body {
+      background-color: #e9eaed;
+      margin: 0;
+    }
+
+    .card {
+      border: 1px solid #d6d7da;
+      margin: 10px;
+      background-color: #fff;
+      border-radius: 4px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 10px;
+      border-bottom: 1px solid #d6d7da;
+    }
+
+    .demo {
+      padding: 10px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h4 class="title">a-text</h4>
+    <div class="demo">
+      <a-text>Hello Rax,</a-text>
+      <a-text style="color: blue">
+        <a-text style="color: green">Hello Atag</a-text>, Hello World
+      </a-text>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-view</h4>
+    <div class="demo">
+      <a-view style="height: 100px; width: 100px; background: green" />
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-button</h4>
+    <div class="demo">
+      <a-button>Button</a-button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-image</h4>
+    <div class="demo">
+      <a-image style="width: 300px; border: 1px solid #e5e5e5;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" />
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-icon</h4>
+    <div class="demo">
+      <a-icon type="success"></a-icon>
+      <a-icon type="success" color="#ff5000" size="30"></a-icon>
+      <a-icon type="warn" size="50"></a-icon>
+      <a-icon type="info" size="70"></a-icon>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-input</h4>
+    <div class="demo">
+      <a-input placeholder="input placeholder" placeholder-style="color: red;" auto-focus=true></a-input>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-textarea</h4>
+    <div class="demo">
+      <a-textarea auto-height=true class="textarea" placeholder="textarea placeholder" focus=true></a-textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-checkbox</h4>
+    <div class="demo">
+      <a-checkbox-group>
+        <a-label>
+          <a-checkbox value="foo" checked></a-checkbox>
+          <a-text>checked</a-text>
+        </a-label>
+        <a-label>
+          <a-checkbox value="baz"></a-checkbox>
+          <a-text>unchecked</a-text>
+        </a-label>
+        <a-label>
+          <a-checkbox value="bar" disabled></a-checkbox>
+          <a-text>disabled</a-text>
+        </a-label>
+      </a-checkbox-group>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-radio</h4>
+    <div class="demo">
+      <a-radio-group>
+        <a-label>
+          <a-radio value="foo" checked></a-radio>
+          <a-text>checked</a-text>
+        </a-label>
+        <a-label>
+          <a-radio value="baz"></a-radio>
+          <a-text>unchecked</a-text>
+        </a-label>
+        <a-label>
+          <a-radio value="bar" disabled></a-radio>
+          <a-text>disabled</a-text>
+        </a-label>
+      </a-radio-group>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-slider</h4>
+    <div class="demo">
+      <a-slider step="5" show-value></a-slider>
+      <a-slider value="50" show-value></a-slider>
+      <a-slider min="50" max="200" show-value></a-slider>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-switch</h4>
+    <div class="demo">
+      <a-switch checked></a-switch>
+      <a-switch></a-switch>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-picker</h4>
+    <div class="demo">
+      <a-picker value="0" range="[1,2,3,4,5]">
+        <a-text>pick me</a-text>
+      </a-picker>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-progress</h4>
+    <div class="demo">
+      <a-progress class="progress-item" percent="30"></a-progress>
+      <a-progress class="progress-item" percent="50" show-info></a-progress>
+      <a-progress class="progress-item" percent="100" show-info stroke-width="3" background-color="#999" active-color="blue"></a-progress>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-swiper</h4>
+    <div class="demo">
+      <a-swiper indicator-dots=true autoplay="true" interval="2000" duration="500">
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-audio</h4>
+    <div class="demo">
+      <a-audio name="Move" author="NuG" src="http://www.bandguru.com/mp3/move.mp3" poster="http://www.bandguru.com/images/nug.jpg"></a-audio>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-video</h4>
+    <div class="demo">
+      <a-video src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"></a-video>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-picker-view</h4>
+    <div class="demo">
+      <a-picker-view style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;" value="[3,5,5]">
+        <a-picker-view-column>
+          <a-view value="1998">1998年</a-view>
+          <a-view value="1999">1999年</a-view>
+          <a-view value="2000">2000年</a-view>
+          <a-view value="2001">2001年</a-view>
+          <a-view value="2002">2002年</a-view>
+          <a-view value="2003">2003年</a-view>
+          <a-view value="2004">2004年</a-view>
+          <a-view value="2005">2005年</a-view>
+          <a-view value="2006">2006年</a-view>
+          <a-view value="2007">2007年</a-view>
+          <a-view value="2008">2008年</a-view>
+          <a-view value="2009">2009年</a-view>
+          <a-view value="2010">2010年</a-view>
+          <a-view value="2011">2011年</a-view>
+          <a-view value="2012">2012年</a-view>
+          <a-view value="2013">2013年</a-view>
+          <a-view value="2014">2014年</a-view>
+          <a-view value="2015">2015年</a-view>
+          <a-view value="2016">2016年</a-view>
+          <a-view value="2017">2017年</a-view>
+        </a-picker-view-column>
+        <a-picker-view-column>
+          <a-view value="1">1月</a-view>
+          <a-view value="2">2月</a-view>
+          <a-view value="3">3月</a-view>
+          <a-view value="4">4月</a-view>
+          <a-view value="5">5月</a-view>
+          <a-view value="6">6月</a-view>
+          <a-view value="7">7月</a-view>
+          <a-view value="8">8月</a-view>
+          <a-view value="9">9月</a-view>
+          <a-view value="10">10月</a-view>
+          <a-view value="11">11月</a-view>
+          <a-view value="12">12月</a-view>
+        </a-picker-view-column>
+        <a-picker-view-column>
+          <a-view value="1">1日</a-view>
+          <a-view value="2">2日</a-view>
+          <a-view value="3">3日</a-view>
+          <a-view value="4">4日</a-view>
+          <a-view value="5">5日</a-view>
+          <a-view value="6">6日</a-view>
+          <a-view value="7">7日</a-view>
+          <a-view value="8">8日</a-view>
+          <a-view value="9">9日</a-view>
+          <a-view value="10">10日</a-view>
+          <a-view value="11">11日</a-view>
+          <a-view value="12">12日</a-view>
+          <a-view value="13">13日</a-view>
+          <a-view value="14">14日</a-view>
+          <a-view value="15">15日</a-view>
+          <a-view value="16">16日</a-view>
+          <a-view value="17">17日</a-view>
+          <a-view value="18">18日</a-view>
+          <a-view value="19">19日</a-view>
+          <a-view value="20">20日</a-view>
+          <a-view value="21">21日</a-view>
+          <a-view value="22">22日</a-view>
+          <a-view value="23">23日</a-view>
+          <a-view value="24">24日</a-view>
+          <a-view value="25">25日</a-view>
+          <a-view value="26">26日</a-view>
+          <a-view value="27">27日</a-view>
+          <a-view value="28">28日</a-view>
+          <a-view value="29">29日</a-view>
+          <a-view value="30">30日</a-view>
+          <a-view value="31">31日</a-view>
+        </a-picker-view-column>
+      </a-picker-view>
+    </div>
+  </div>
+  <div class="card">
+    <h4 class="title">a-scroll-view</h4>
+    <div class="demo">
+      <a-scroll-view scroll-y="true" class="scroll-view" scroll-into-view="red" style="height: 50px;"
+        scroll-with-animation>
+        <a-view id="blue" style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="red" style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="green" style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="yellow" style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+      </a-scroll-view>
+    </div>
+  </div>
+</body>
+
+</html>

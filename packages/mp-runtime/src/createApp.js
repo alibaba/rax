@@ -1,3 +1,6 @@
+import getContextObject from './getContextObject';
+
+const global = getContextObject();
 let appInstance = null;
 
 class App {
@@ -33,6 +36,9 @@ export function getApp() {
   return appInstance;
 }
 
+// register getApp at runtime
+global.getApp = getApp;
+
 export default function createApp(config) {
   if (getApp() !== null) {
     throw new Error('Only one App create allowed per miniapp.');
@@ -40,3 +46,4 @@ export default function createApp(config) {
 
   return appInstance = new App(config);
 }
+
