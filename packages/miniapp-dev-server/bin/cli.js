@@ -9,6 +9,7 @@ const getMiniappType = require('../src/config/getMiniappType');
 console.log(`miniapp-cli: ${pkgJSON.version}`);
 console.log(`mp-loader: ${require('mp-loader/package.json').version}`);
 console.log(`sfc-loader: ${require('sfc-loader/package.json').version}`);
+
 console.log('---');
 
 const cwd = process.cwd();
