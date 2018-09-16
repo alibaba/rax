@@ -5,6 +5,15 @@
  */
 const { ConcatSource } = require('webpack-sources');
 
+const webRegisterWrapper = [
+  '__register_pages__(function(require){',
+  '})',
+];
+const globalPolyfills = [
+  "var __global__ = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();",
+  "typeof polyfill === 'function' && polyfill(__global__);",
+];
+
 module.exports = class WebpackMiniProgramPlugin {
   constructor(opts) {
     if (opts && opts.isH5) {
@@ -17,14 +26,7 @@ module.exports = class WebpackMiniProgramPlugin {
         const args = Object.values(compilation.assets);
 
         // polyfill global context
-        args.unshift(
-          new ConcatSource(
-            [
-              "var __global__ = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();",
-              "typeof polyfill === 'function' && polyfill(__global__);",
-            ].join(''),
-          ),
-        );
+        args.unshift(new ConcatSource(globalPolyfills.join('')));
         args.unshift(ConcatSource);
 
         const app = new (ConcatSource.bind.apply(ConcatSource, args))();
@@ -36,21 +38,13 @@ module.exports = class WebpackMiniProgramPlugin {
 
         // 增加 app.js
         // wrapper for app.js
-        compilation.assets['app.js'] = new ConcatSource(
-          this.isH5 ? 'self.$REG_PAGE(function(require){' : '',
-          app,
-          this.isH5 ? '})' : '',
-        );
+        compilation.assets['app.js'] = global.AppJSContent = app;
 
         compilation.assets['app.web.js'] = new ConcatSource(
-          'self.$REG_PAGE(function(require){',
+          webRegisterWrapper[0],
           app,
-          '})',
+          webRegisterWrapper[1]
         );
-
-        if (this.isH5) {
-          compilation.assets['app.raw.js'] = app;
-        }
       });
     });
   }

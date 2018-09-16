@@ -35,10 +35,6 @@ function koaDevware(compiler) {
     });
   }
 
-  compiler.hooks.emit.tap('MiniappPlugin', (compilation) => {
-    global.APPJSContent = compilation.assets['app.raw.js'].source();
-  });
-
   return (context, next) => {
     return Promise.all([
       waitMiddleware(context),

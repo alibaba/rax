@@ -30,7 +30,7 @@ module.exports = function bundleCtrl(ctx, next) {
   appJSON.appType = 'webview';
 
   zip.file('app.config.json', JSON.stringify(appJSON, null, 2));
-  zip.file('app.js', global.APPJSContent);
+  zip.file('app.js', global.AppJSContent);
 
   // stream mode output
   ctx.body = zip.generateNodeStream({
