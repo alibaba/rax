@@ -1,6 +1,7 @@
 const Jszip = require('jszip');
-const { getAppConfig } = require('miniapp-compiler-shared');
 const address = require('address');
+const { getAppConfig } = require('../../config/getAppConfig');
+const { nativeRendererHTML } = require('../../config/getFrameworkCDNUrl');
 
 /**
  * write bundle.zip
@@ -15,7 +16,7 @@ module.exports = function bundleCtrl(ctx, next) {
     item.pageUrl = ctx.isDebug
       ? `http://${address.ip()}:8003/native/renderer.html`
       : appJSON.experimentalRemoteRenderer ||
-      'https://g.alicdn.com/miniapp/framework/0.0.17/native/renderer.html';
+      nativeRendererHTML;
   });
 
   /* 指定首页, 兼容外部依赖 */

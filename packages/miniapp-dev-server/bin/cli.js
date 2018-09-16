@@ -2,14 +2,14 @@
 
 const program = require('commander');
 const pkgJSON = require('../package.json');
-const { getMiniappType } = require('miniapp-compiler-shared');
-const { resolve, join, isAbsolute } = require('path');
-const { existsSync } = require('fs');
+const { resolve, isAbsolute } = require('path');
+const getMiniappType = require('../src/config/getMiniappType');
 
 // print dependencies versions
-console.log(`miniapp-dev-server: ${pkgJSON.version}`);
-console.log(`miniapp-compiler-shared: ${require('miniapp-compiler-shared/package.json').version}`);
-console.log();
+console.log(`miniapp-cli: ${pkgJSON.version}`);
+console.log(`mp-loader: ${require('mp-loader/package.json').version}`);
+console.log(`sfc-loader: ${require('sfc-loader/package.json').version}`);
+console.log('---');
 
 const cwd = process.cwd();
 const DEFAULT_PORT = 8081;

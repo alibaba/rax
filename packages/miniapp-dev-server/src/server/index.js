@@ -7,11 +7,8 @@ const webpack = require('webpack');
 const createDevMiddleware = require('./middlewares/dev');
 const registerWatcher = require('./service/registerWatcher');
 const registerRouter = require('./router');
-const {
-  getWebpackConfig,
-  getMiniappType,
-  goldlog,
-} = require('miniapp-compiler-shared');
+const getWebpackConfig = require('../config/getWebpackConfig');
+const getMiniappType = require('../config/getMiniappType');
 
 const app = new Koa();
 
@@ -65,14 +62,5 @@ module.exports = function startDevServer(projectDir, port, isDebug) {
       console.log(
         `Debug Scan QR of http://${ip}:${port}/app/bundle.zip?_wml_debug=true`,
       );
-
-    /**
-     * log
-     */
-    goldlog('taobao-developers.build.start-dev-server', {
-      miniapp_type: miniappType,
-      ip,
-      port,
-    });
   });
 };

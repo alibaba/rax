@@ -2,11 +2,9 @@ const chokidar = require('chokidar');
 const webpack = require('webpack');
 const colors = require('colors');
 const { join } = require('path');
-const {
-  getWebpackConfig,
-  getMiniappType,
-  getPages,
-} = require('miniapp-compiler-shared');
+const getWebpackConfig = require('../../config/getWebpackConfig');
+const getMiniappType = require('../../config/getMiniappType');
+const { getPages } = require('../../config/getAppConfig');
 const { isEqual } = require('lodash');
 
 let pages = null;

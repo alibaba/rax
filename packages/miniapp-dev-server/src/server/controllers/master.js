@@ -1,14 +1,17 @@
-const ejs = require('ejs');
-const { getAppConfig } = require('miniapp-compiler-shared');
+const path = require('path');
 const address = require('address');
-const { masterTemplateFilePath } = require('miniapp-compiler-shared');
+const ejs = require('ejs');
+const { getAppConfig } = require('../../config/getAppConfig');
+let { h5Master } = require('../../config/getFrameworkCDNUrl');
+
+const localIP = address.ip();
+const masterTemplateFilePath = path.resolve(__dirname, '../views/master.ejs');
 
 module.exports = function masterRoute(ctx, next) {
   const appConfig = getAppConfig(ctx.projectDir);
 
-  let h5MasterJS = 'https://g.alicdn.com/miniapp/framework/0.0.22/h5/master.js';
   if (ctx.isDebug) {
-    h5MasterJS = `http://${address.ip()}:8003/h5/master.js`;
+    h5Master = `http://${localIP}:8003/h5/master.js`;
   }
 
   appConfig.homepage =
@@ -19,7 +22,7 @@ module.exports = function masterRoute(ctx, next) {
     masterTemplateFilePath,
     {
       appConfig: JSON.stringify(appConfig, null, 2),
-      h5MasterJS,
+      h5Master,
     },
     {},
     (err, str) => {
