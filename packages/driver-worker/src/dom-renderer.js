@@ -33,64 +33,83 @@ function isUnbubbleEvent(evtName) {
 }
 
 const PREFIX_PROPS = {
-  display: true,
   flex: true,
   alignItems: true,
   alignSelf: true,
   flexDirection: true,
   justifyContent: true,
   flexWrap: true,
+
   lineClamp: true,
+  textSizeAdjust: true,
+  textDecorationLine: true,
+  textDecorationColor: true,
+  textDecorationStyle: true,
+  textDecorationSkip: true,
+  writingMode: true,
+
+  animatin: true,
+  animationName: true,
+  animationDuration: true,
+  animationTimingFunction: true,
+  animationDelay: true,
+  animationIterationCount: true,
+  animationDirection: true,
+  animationFillMode: true,
+  animationPlayState: true,
+
+  transform: true,
+  transformOrigin: true,
+  transformStyle: true,
+  perspective: true,
+  perspectiveOrigin: true,
+  backfaceVisibility: true,
+  appearance: true,
+  userSelect: true,
+
+  columns: true,
+  columnWidth: true,
+  columnCount: true,
+  columnGap: true,
+  columnRule: true,
+  columnRuleWidth: true,
+  columnRuleStyle: true,
+  columnRuleColor: true,
+  columnSpan: true,
+  columnFill: true,
+  columnBreakBefore: true,
+  columnBreakAfter: true,
+  columnBreakInside: true,
+};
+
+const PREFIX_PROP_VALS = {
+  position: 'sticky',
+  display: 'flex',
 };
 
 const StylePrefixer = {
   shouldPrefix(prop) {
-    return PREFIX_PROPS[prop];
+    return PREFIX_PROPS[prop] || PREFIX_PROP_VALS[prop];
   },
-  display(value, style = {}) {
-    if (value === 'flex') {
-      style.display = ['-webkit-flex', 'flex'];
+};
+Object.keys(PREFIX_PROPS).forEach((prop) => {
+  StylePrefixer[prop] = (value, style = {}) => {
+    style['webkit' + prop[0].toUpperCase() + prop.slice(1)] = value;
+    style[prop] = value;
+    return style;
+  };
+});
+Object.keys(PREFIX_PROP_VALS).forEach((prop) => {
+  const rule = PREFIX_PROPS[prop];
+  StylePrefixer[prop] = (value, style = {}) => {
+    if (value === rule) {
+      style[prop] = ['-webkit-' + rule, rule];
     } else {
-      style.display = value;
+      style[prop] = value;
     }
     return style;
-  },
-  flex(value, style = {}) {
-    style.webkitFlex = value;
-    style.flex = value;
-    return style;
-  },
-  flexWrap(value, style = {}) {
-    style.webkitFlexWrap = value;
-    style.flexWrap = value;
-    return style;
-  },
-  alignItems(value, style = {}) {
-    style.webkitAlignItems = value;
-    style.alignItems = value;
-    return style;
-  },
-  alignSelf(value, style = {}) {
-    style.webkitAlignSelf = value;
-    style.alignSelf = value;
-    return style;
-  },
-  flexDirection(value, style = {}) {
-    style.webkitFlexDirection = value;
-    style.flexDirection = value;
-    return style;
-  },
-  justifyContent(value, style = {}) {
-    style.webkitJustifyContent = value;
-    style.justifyContent = value;
-    return style;
-  },
-  lineClamp(value, style = {}) {
-    style.webkitLineClamp = value;
-    style.lineClamp = value;
-    return style;
-  }
-};
+  };
+});
 
 function applyCompatibleStyle(node, styleObject) {
   let tranformedStyles = {};
