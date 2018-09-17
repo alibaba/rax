@@ -1,12 +1,24 @@
-# dev server for miniapp 
+# miniapp cli
 
-support sfc and mp type
+Miniapp build cli tool.  
+Support sfc and mp type
 
-## Usage
+## Install
 
 ```bash
-npm install miniapp-dev-server
-miniapp
+npm install miniapp-cli -g
+```
+
+## dev server
+
+```bash
+miniapp start
+```
+
+## build 
+
+```bash
+miniapp build
 ```
 
 ## args
