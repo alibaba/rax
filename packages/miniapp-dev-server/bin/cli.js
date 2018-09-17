@@ -1,44 +1,62 @@
 #!/usr/bin/env node
 
-const program = require('commander');
-const pkgJSON = require('../package.json');
-const { resolve, isAbsolute } = require('path');
-const getMiniappType = require('../src/config/getMiniappType');
+const program = require("commander");
+const pkgJSON = require("../package.json");
+const { resolve, isAbsolute } = require("path");
+const getMiniappType = require("../src/config/getMiniappType");
 
 // print dependencies versions
 console.log(`miniapp-cli: ${pkgJSON.version}`);
-console.log(`mp-loader: ${require('mp-loader/package.json').version}`);
-console.log(`sfc-loader: ${require('sfc-loader/package.json').version}`);
+console.log(`mp-loader: ${require("mp-loader/package.json").version}`);
+console.log(`sfc-loader: ${require("sfc-loader/package.json").version}`);
 
-console.log('---');
+console.log("---");
 
 const cwd = process.cwd();
 const DEFAULT_PORT = 8081;
 const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
-  sfc: '轻框架',
-  mp: '小程序语法',
+  sfc: "Light Framework",
+  mp: "Mini Program Stynax"
 };
 
 program
+  .arguments("<cmd> [env]")
+
   .version(pkgJSON.version)
-  .option('-d, --dir <dir>', '指定当前工作目录, 默认为当前目录')
-  .option('-p, --port <port>', '程序启动端口号, 默认为 6001')
-  .option('-b, --debug', '调试模式, 默认 false')
-  .parse(process.argv);
+  .option("-d, --dir <dir>", "<String>  Current work directory, default to CWD")
+  .option(
+    "-p, --port <port>",
+    "<Number> Dev server listening port, default to 6001"
+  )
+  .option("-b, --debug", "<Boolean> Enable debug mode, default to false")
+  .action(function(cmd, env) {
+    const workDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
+    const port = program.port || DEFAULT_PORT;
+    const isDebug = !!program.debug;
+    const miniappType = getMiniappType(workDir);
+    if (!miniappType) {
+      console.log("Please Check your current directory is a valid project.");
+      process.exit(1);
+    } else {
+      console.log(`Detect ${TYPE_MAP[miniappType]} type project.`);
+    }
 
-const workDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
-const port = program.port || DEFAULT_PORT;
-const isDebug = !!program.debug;
-const miniappType = getMiniappType(workDir);
+    switch (cmd) {
+      case "start": {
+        require("../src/server")(workDir, port, isDebug);
+        break;
+      }
+      case "build": {
+        require("../src/builder")(workDir, isDebug);
+        break;
+      }
+      default:
+        break;
+    }
+  });
 
-if (!miniappType) {
-  console.log('请检查是否在淘宝轻应用项目中');
-  process.exit(1);
-} else {
-  console.log(`检测到 ${TYPE_MAP[miniappType]} 类型项目.`);
-  require('../src/server')(workDir, port, isDebug);
-}
+program.parse(process.argv);
 
 function resolveDir(dir) {
   if (!dir) {
