@@ -1,6 +1,6 @@
 const { writeFileSync } = require('fs');
 const { join } = require('path');
-const { nativeRendererHTML } = require('../../config/getFrameworkCDNUrl');
+const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
 const DEFAULT_EXTRA_CONFIG = {
   appType: 'webview', // thirdparty miniapp type
@@ -20,8 +20,7 @@ module.exports = function(destDir, appConfig) {
     frameworkRendererURL = appConfig.experimentalRemoteRenderer;
     console.log('[NOTICE] framework debug: ' + frameworkRendererURL);
   } else {
-    frameworkRendererURL = nativeRendererHTML;
-    console.log('[NOTICE] framework version: ' + frameworkRendererURL);
+    frameworkRendererURL = getNativeRendererHTML(appConfig.frameworkVersion || FRAMEWORK_VERSION);
   }
 
   return done => {

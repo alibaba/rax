@@ -2,13 +2,14 @@ const path = require('path');
 const address = require('address');
 const ejs = require('ejs');
 const { getAppConfig } = require('../../config/getAppConfig');
-let { h5Master } = require('../../config/getFrameworkCDNUrl');
+const { getH5Master, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
 const localIP = address.ip();
 const masterTemplateFilePath = path.resolve(__dirname, '../views/master.ejs');
 
 module.exports = function masterRoute(ctx, next) {
   const appConfig = getAppConfig(ctx.projectDir);
+  let h5Master = getH5Master(appConfig.frameworkVersion || FRAMEWORK_VERSION);
 
   if (ctx.isDebug) {
     h5Master = `http://${localIP}:8003/h5/master.js`;

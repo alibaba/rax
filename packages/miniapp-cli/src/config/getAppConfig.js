@@ -53,6 +53,7 @@ function getAppConfig(projectDir) {
   const result = {
     pages,
     homepage,
+    frameworkVersion: appJSON.frameworkVersion,
     experimentalRemoteRenderer: appJSON.experimentalRemoteRenderer || null,
   };
 
