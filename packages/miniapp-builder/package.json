@@ -51,6 +51,7 @@
     "gulp-zip": "^4.2.0",
     "gutil": "^1.6.4",
     "jszip": "^3.1.5",
+    "klaw-sync": "^5.0.0",
     "koa": "^2.5.1",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.4.0",

@@ -22,6 +22,9 @@ exports.registerGulpTasks = function({ appConfig, projectDir, destDir }) {
   // build schema for template miniapp
   gulp.task('build-schema', require('./buildSchema')(destDir, projectDir));
 
+  // build page meta for template miniapp
+  gulp.task('build-mod-meta', require('./buildModMeta')(destDir, projectDir));
+
   // bundle zip file
   gulp.task('bundle', require('./bundle')(destDir));
 

@@ -58,7 +58,7 @@ module.exports = function startDevServer(projectDir, port, isDebug) {
     const ip = address.ip();
 
     console.log(colors.green(`DevServer Running At http://127.0.0.1:${port}/`));
-    if (isDebug)  {
+    if (isDebug) {
       console.log(
         `Debug Scan QR of http://${ip}:${port}/app/bundle.zip?_wml_debug=true`,
       );

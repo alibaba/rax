@@ -9,13 +9,19 @@ module.exports = function(projectDir) {
   registerGulpTasks({
     appConfig: getAppConfig(projectDir),
     projectDir,
-    destDir: join(projectDir, BUILD_DEST || 'build'),
+    destDir: join(projectDir, BUILD_DEST || 'build')
   });
 
   runSequence(
     'clean',
     'ensure-dir',
-    ['build-config', 'build-app', 'build-schema', 'collect-assets'],
+    [
+      'build-config',
+      'build-app',
+      'build-schema',
+      'build-mod-meta',
+      'collect-assets'
+    ],
     'bundle',
     'build-web'
   );
