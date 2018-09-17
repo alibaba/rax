@@ -372,4 +372,68 @@ describe('FragmentComponent', function() {
     expect(childNodes[1].childNodes[0].data).toBe('5');
     expect(childNodes[2].childNodes[0].data).toBe('6');
   });
+
+  it('should render correct when updated for null to fragment', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, 3];
+      }
+    }
+
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count % 2 === 0 ? null :
+                <Frag key="a" />
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, el);
+    expect(el.childNodes[0].childNodes).toEqual([]);
+    instance.setState({
+      count: 1
+    });
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+  });
+
+  it('should render correct when updated with first old child existing', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, 3];
+      }
+    }
+
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count % 2 === 0 ? <div>1</div> :
+                <Frag key="a" />
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].childNodes[0].data).toBe('1');
+    instance.setState({
+      count: 1
+    });
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+  });
 });
