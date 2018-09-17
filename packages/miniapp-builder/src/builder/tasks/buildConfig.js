@@ -28,10 +28,7 @@ module.exports = function(destDir, appConfig) {
 
     // decide framework renderer url by page.pageUrl rule
     pages.forEach(pageConfig => {
-      pageConfig.pageUrl =
-        frameworkRendererURL +
-        '?pageName=' +
-        encodeURIComponent(pageConfig.pageName);
+      pageConfig.pageUrl = frameworkRendererURL
     });
 
     Object.assign(appConfig, DEFAULT_EXTRA_CONFIG);
