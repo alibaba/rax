@@ -1,3 +1,2 @@
-const server = require('./server');
-
-exports.server = server;
+exports.server = require('./server');
+exports.builder = require('./builder');
