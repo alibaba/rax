@@ -1,7 +1,7 @@
 {
   "name": "eslint-config-miniapp",
   "version": "1.0.0",
-  "description": "eslint config of the miniapp",
+  "description": "eslint config for the miniapp",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
