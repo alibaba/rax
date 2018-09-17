@@ -95,7 +95,7 @@ export default ({ postMessage, addEventListener }) => {
           events: Object.keys(obj.eventListeners || {}),
           attributes: obj.attributes,
           nodeName: obj.nodeName,
-          style: obj.style,
+          style: obj.style
         };
       } else if (nodeType === TEXT_NODE || nodeType === COMMENT_NODE) {
         out.data = obj.data;
