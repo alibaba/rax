@@ -17,6 +17,7 @@ module.exports = function bundleCtrl(ctx, next) {
       ? `http://${address.ip()}:8003/native/renderer.html`
       : appJSON.experimentalRemoteRenderer ||
       nativeRendererHTML;
+    item.pageUrl += '?pageName=' + encodeURIComponent(item.pageName);
   });
 
   /* 指定首页, 兼容外部依赖 */

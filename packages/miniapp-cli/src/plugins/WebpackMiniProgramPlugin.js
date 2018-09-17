@@ -38,7 +38,8 @@ module.exports = class WebpackMiniProgramPlugin {
 
         // 增加 app.js
         // wrapper for app.js
-        compilation.assets['app.js'] = global.AppJSContent = app;
+        compilation.assets['app.js'] = app;
+        global.AppJSContent = app.source();
 
         compilation.assets['app.web.js'] = new ConcatSource(
           webRegisterWrapper[0],
