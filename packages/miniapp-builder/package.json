@@ -1,6 +1,6 @@
 {
   "name": "miniapp-builder",
-  "version": "0.1.0-2",
+  "version": "0.1.0-3",
   "description": "Miniapp build kit for developers",
   "main": "src/index.js",
   "bin": {
@@ -46,7 +46,7 @@
     "commander": "^2.15.1",
     "ejs": "^2.6.1",
     "gulp": "^3.9.1",
-    "gulp-debug": "^4.0.0",
+    "gulp-debug": "^3.x.x",
     "gulp-imagemin": "^4.1.0",
     "gulp-zip": "^4.2.0",
     "gutil": "^1.6.4",
