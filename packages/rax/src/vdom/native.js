@@ -432,16 +432,21 @@ class NativeComponent {
                   }
                 }
 
-                for (let i = newChild.length - 1; i >= 0; i--) {
-                  let child = newChild[i];
-                  if (lastPlacedNode) {
-                    Host.driver.insertAfter(child, lastPlacedNode);
-                  } else if (prevFirstNativeNode) {
-                    child = newChild[newChild.length - 1 - i];
-                    Host.driver.insertBefore(child, prevFirstNativeNode);
-                  } else {
-                    child = newChild[newChild.length - 1 - i];
-                    Host.driver.appendChild(child, parent);
+                if (lastPlacedNode) {
+                  // Should reverse order when insert new child after lastPlacedNode: 
+                  // [lastPlacedNode, *newChild1, *newChild2]
+                  for (let i = newChild.length - 1; i >= 0; i--) {
+                    Host.driver.insertAfter(newChild[i], lastPlacedNode);
+                  }
+                } else if (prevFirstNativeNode) {
+                  // [*newChild1, *newChild2, prevFirstNativeNode]
+                  for (let i = 0; i < newChild.length; i++) {
+                    Host.driver.insertBefore(newChild[i], prevFirstNativeNode);
+                  }
+                } else {
+                  // [*newChild1, *newChild2]
+                  for (let i = 0; i < newChild.length; i++) {
+                    Host.driver.appendChild(newChild[i], parent);
                   }
                 }
               }
