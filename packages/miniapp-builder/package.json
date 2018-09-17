@@ -58,7 +58,6 @@
     "koa-static": "^4.0.2",
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
-    "miniapp-compiler-shared": "^0.1.1-11",
     "mkdirp": "^0.5.1",
     "mp-loader": "^0.6.6-10",
     "null-loader": "^0.1.1",
