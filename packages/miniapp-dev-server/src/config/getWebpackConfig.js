@@ -1,7 +1,7 @@
 const merge = require('webpack-merge');
 const webpackBaseConfig = require('./webpackBaseConfig');
 const getEntry = require('./getEntry');
-const getMiniappType = require('../helpers/getMiniappType');
+const getMiniappType = require('../config/getMiniappType');
 
 // devtool: 'eval-source-map',
 module.exports = function getWebpackConfig(projectDir, isDevServer) {
@@ -14,7 +14,7 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
   if (miniappType === 'sfc') {
     return merge(
       webpackBaseConfig,
-      require('./dsl/sfc')(projectDir, {
+      require('./getSFCConfig')(projectDir, {
         isDevServer,
       }),
       mergeConfig,
@@ -22,7 +22,7 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
   } else if (miniappType === 'mp') {
     return merge(
       webpackBaseConfig,
-      require('./dsl/mp')(projectDir, {
+      require('./getMiniProgramConfig')(projectDir, {
         isDevServer,
       }),
       mergeConfig,

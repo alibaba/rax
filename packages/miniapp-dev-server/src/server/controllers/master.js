@@ -16,7 +16,7 @@ module.exports = function masterRoute(ctx, next) {
 
   appConfig.homepage =
     ctx.query.wml_path || ctx.query.homepage || appConfig.homepage;
-  appConfig.h5Assets = `http://${address.ip()}:${ctx.port}/build/app.js`;
+  appConfig.h5Assets = `http://${address.ip()}:${ctx.port}/build/app.web.js`;
 
   ejs.renderFile(
     masterTemplateFilePath,
