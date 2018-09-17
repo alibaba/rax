@@ -1,7 +1,6 @@
 <dom-module id="a-radio-group">
   <template>
-    <style id="style">
-      /* shadow DOM styles go here */
+    <style>
       :host {
         position: relative;
         box-sizing: border-box;
@@ -9,13 +8,7 @@
         user-select: none;
         overflow: hidden;
       }
-
     </style>
-    <style id="customStyle">
-      /* shadow DOM styles go here */
-
-    </style>
-    <!-- shadow DOM goes here -->
     <slot></slot>
   </template>
 </dom-module>
@@ -42,38 +35,6 @@ export default class RadioGroupElement extends PolymerElement {
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    let style = this.getAttribute('style') || '';
-
-    const styleEl = this.shadowRoot.querySelector('#customStyle');
-
-    styleEl.innerHTML = `
-          :host {
-            ${style};
-          }`;
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    super.attributeChangedCallback(name, oldValue, newValue);
-
-    // this.expireCache(name);
-
-    if (name === 'style') {
-      let style = this.getAttribute('style') || '';
-
-      afterNextRender(this, () => {
-        const styleEl = this.shadowRoot.querySelector('#customStyle');
-        // this.removeAttribute('style');
-        styleEl.innerHTML = `
-            :host {
-              ${style};
-            }`;
-      });
-    }
-  }
-
   ready() {
     super.ready();
     this.addEventListener('_radioChange', this.changeHandler);
@@ -81,14 +42,18 @@ export default class RadioGroupElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.addEventListener('_radioChange', this.changeHandler);
+    this.removeEventListener('_radioChange', this.changeHandler);
   }
 
   changeHandler = (e) => {
+    e.stopPropagation();
+
     const checkboxList = this.querySelectorAll('a-radio');
     for (let i = 0; i < checkboxList.length; i++) {
       const node = checkboxList[i];
-      node !== e.target && (node.checked = false);
+      if (node !== e.target) {
+        node.checked = false
+      }
     }
     const event = new CustomEvent('change', {
       detail: {
@@ -96,7 +61,6 @@ export default class RadioGroupElement extends PolymerElement {
       }
     });
     this.dispatchEvent(event);
-    e.stopPropagation();
   }
 }
 

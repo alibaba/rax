@@ -1,33 +1,34 @@
 <!-- TODO 优化小数点的数值展示 -->
 <dom-module id="a-slider">
   <template>
-    <div id="container" class="container" style$="[[containerStyle]]">
-      <div id="active" class="active" style$="[[activeStyle]]"></div>
-      <div id="indicatorDotWrapper">
-        <div class="slide-block" style$="[[blockStyle]]"></div>
-      </div>
-    </div>
-    <div class="value" style$=[[valueStyle]]>[[value]]</div>
-    <style id="style">
+    <style>
       :host {
         display: flex;
+        display: -webkit-flex;
         flex-flow: row nowrap;
+        -webkit-flex-flow: row nowrap;
         align-items: center;
+        -webkit-align-items: center;
       }
 
       .container {
         display: flex;
+        display: -webkit-flex;
         flex: 1;
+        -webkit-flex: 1;
         flex-flow: row nowrap;
+        -webkit-flex-flow: row nowrap;
+        align-items: center;
+        -webkit-align-items: center;
         height: 1.07vw;
+        margin: 2vw 2.7vw;
         border-radius: 0.54vw;
         background-color: #ccc;
-        align-items: center;
-        margin: 2vw 2.7vw;
       }
 
       .active {
         flex: none;
+        -webkit-flex: none;
         height: 1.07vw;
         border-radius: 0.54vw;
         overflow: hidden;
@@ -39,6 +40,7 @@
 
       .slide-block {
         flex: none;
+        -webkit-flex: none;
         margin: 0 -2.4vw 0 -2.4vw;
         border-radius: 50%;
         box-shadow: 0 0 4px 0 rgba(0, 0, 0, .15);
@@ -48,9 +50,17 @@
         font-size: 3.73vw;
         color: #999;
         flex: none;
+        -webkit-flex: none;
         margin-left: 1.4vw;
       }
     </style>
+    <div id="container" class="container" style$="[[containerStyle]]">
+        <div id="active" class="active" style$="[[activeStyle]]"></div>
+        <div id="indicatorDotWrapper">
+          <div class="slide-block" style$="[[blockStyle]]"></div>
+        </div>
+      </div>
+    <div class="value" style$=[[valueStyle]]>[[value]]</div>
   </template>
 </dom-module>
 

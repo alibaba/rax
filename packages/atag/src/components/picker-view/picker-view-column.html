@@ -1,18 +1,20 @@
 <dom-module id="a-picker-view-column">
   <template>
-    <div id="mask" class="mask">
-      <div id="indicator" class="indicator"></div>
+    <div id="mask" class="mask" style$="{{maskStyle}}">
+      <div id="indicator" class="indicator" style$="{{indicatorStyle}}"></div>
     </div>
-    <div id="content" class="content">
+    <div id="content" class="content" style$="{{contentStyle}}">
       <slot></slot>
     </div>
     <style>
       :host {
         flex: 1;
+        -webkit-flex: 1;
         height: 100%;
         overflow: hidden;
         position: relative;
       }
+
       .mask {
         position: absolute;
         left: 0;
@@ -21,9 +23,13 @@
         width: 100%;
         height: 100%;
         display: flex;
+        display: -webkit-flex;
         flex-flow: column nowrap;
+        -webkit-flex-flow: column nowrap;
         align-items: center;
+        -webkit-align-items: center;
         justify-content: center;
+        -webkit-justify-content: center;
         background-image:
           linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)),
           linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
@@ -31,6 +37,7 @@
         background-repeat: no-repeat;
         background-size: 100% 45%;
       }
+
       .indicator {
         box-sizing: border-box;
         width: 100%;
@@ -38,6 +45,7 @@
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
       }
+
       .content ::slotted(a-view) {
         height: 40px;
         line-height: 40px;
@@ -45,13 +53,13 @@
         color: #333;
       }
     </style>
-    <style id="parent-style"></style>
-    <style id="dynamic-style"></style>
   </template>
 </dom-module>
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
+import { afterNextRender } from '../../shared/utils';
+
 export default class PickerViewColumn extends PolymerElement {
   static get is() {
     return 'a-picker-view-column';
@@ -69,6 +77,18 @@ export default class PickerViewColumn extends PolymerElement {
         reflectToAttribute: true,
         value: 0,
         observer: '_selectedIndexChange'
+      },
+      indicatorStyle: {
+        type: String,
+        value: ''
+      },
+      maskStyle: {
+        type: String,
+        value: ''
+      },
+      contentStyle: {
+        type: String,
+        value: ''
       }
     };
   }
@@ -81,6 +101,7 @@ export default class PickerViewColumn extends PolymerElement {
   acceleration = -100;
   timer = null;
   isMoving = false;
+  touchMove = false;
 
   constructor() {
     super();
@@ -91,8 +112,17 @@ export default class PickerViewColumn extends PolymerElement {
 
   ready() {
     super.ready();
-    this.itemHeight = this.$.indicator.offsetHeight;
-    this._updateDynamicStyle();
+    afterNextRender(this, () => {
+      this.itemHeight = this.$.indicator.offsetHeight;
+      this._updateDynamicStyle();
+      /**
+       * However, the observer func is executed earlier than ready,
+       * dom hasn't been rendered，
+       * so I execute the first _selectedIndexChange func in ready，
+       * to ensure that the dom has been rendered
+       */
+      this._selectedIndexChange(this.selectedIndex, null);
+    });
   }
 
   connectedCallback() {
@@ -111,13 +141,15 @@ export default class PickerViewColumn extends PolymerElement {
     mask.removeEventListener('touchend', this._onEnd);
   }
 
-  _selectedIndexChange(i) {
-    if (this.isMoving) return;
-    let itemCount = this.children.length;
-    if (i >= itemCount) {
-      this.selectedIndex = i = itemCount - 1;
+  _selectedIndexChange(newIndex, oldIndex) {
+    if (oldIndex !== undefined) {
+      if (this.isMoving) return;
+      let itemCount = this.children.length;
+      if (newIndex >= itemCount) {
+        this.selectedIndex = newIndex = itemCount - 1;
+      }
+      this._scrollTo(this.itemHeight * newIndex, 0.3);
     }
-    this._scrollTo(this.itemHeight * i, 0.3);
   }
 
   _onStart(ev) {
@@ -138,21 +170,25 @@ export default class PickerViewColumn extends PolymerElement {
     this._scrollTo(scrollY, 0);
     this.lastY = nowY;
     this.velocity = duration ? -offset / duration * 1000 : this.velocity;
+    this.touchMove = true;
   }
 
   _onEnd(ev) {
-    let { itemHeight, scrollY, velocity, acceleration } = this;
+    let { itemHeight, scrollY, velocity, acceleration, touchMove } = this;
     let maxScrollY = (this.children.length - 1) * itemHeight;
     let time = 0.3;
     // handle no touchmove
-    if (velocity === 0) {
+    if (!touchMove) {
       let rectY = this.$.indicator.getBoundingClientRect().top;
       let touchY = ev.changedTouches[0].clientY;
       scrollY = scrollY + touchY - rectY - itemHeight;
       scrollY = Math.round(scrollY / itemHeight) * itemHeight;
       this._scrollTo(scrollY, time);
       return;
+    } else {
+      this.touchMove = false;
     }
+
     // handle touchmove over start or end
     if (scrollY < 0 || scrollY > maxScrollY) {
       scrollY = Math.max(scrollY, 0);
@@ -160,10 +196,12 @@ export default class PickerViewColumn extends PolymerElement {
       this._scrollTo(scrollY, time);
       return;
     }
+
     time = Math.abs(velocity / acceleration);
     let mayScrollY = scrollY + velocity / 2 * time; // S1 = S0 + 1/2vt
     mayScrollY = Math.round(mayScrollY / itemHeight) * itemHeight;
     let shift;
+
     if (mayScrollY < 0) {
       shift = scrollY;
       scrollY = 0;
@@ -173,6 +211,7 @@ export default class PickerViewColumn extends PolymerElement {
     } else {
       scrollY = mayScrollY;
     }
+
     if (mayScrollY < 0 || mayScrollY > maxScrollY) {
       velocity = Math.abs(velocity);
       // S = vt + 1/2at^2 => t = ~
@@ -186,32 +225,29 @@ export default class PickerViewColumn extends PolymerElement {
 
   _updateDynamicStyle() {
     let padding = (this.offsetHeight - this.itemHeight) / 2;
-    let style = `
-        .mask {
-          background-size: 100% ${padding}px;
-        }
-        .content {
-          padding-top: ${padding}px;
-          padding-bottom: ${padding}px;
-        }
-      `;
-    this.$['dynamic-style'].innerHTML = style;
+    this.maskStyle = `background-size: 100% ${padding}px;`;
+    this.contentStyle = `padding: ${padding}px 0;`;
   }
 
   _setTransform(value) {
     this.$.content.style.transform = value;
+    this.$.content.style.webkitTransform = value;
   }
 
   _setTransition(value) {
     this.$.content.style.transition = value;
+    this.$.content.style.webkitTransition = value;
   }
 
   _scrollTo(y, time = 0.3) {
     if (this.scrollY === y) return;
+
     this.scrollY = y;
+
     if (time) {
       this._setTransition(`cubic-bezier(0, 0, 0.2, 1.15) ${time}s`);
     }
+
     this._setTransform(`translate3d(0, ${-y}px, 0)`);
     if (time) {
       this.timer = setTimeout(() => {
@@ -224,12 +260,11 @@ export default class PickerViewColumn extends PolymerElement {
 
   _stopScroll() {
     let { content } = this.$;
-    let transform = getComputedStyle(content, null).getPropertyValue(
-      'transform'
-    );
-    if (transform === 'none') return;
+    let transform =
+      this.$.content.style.transform || this.$.content.style.webkitTransform;
+    if (transform === '') return;
     let matrix = transform.replace(/[^0-9.,]/g, '').split(',');
-    let scrollY = Number(matrix[5]);
+    let scrollY = Number(matrix[1]);
     this.velocity = 0;
     this._setTransition('');
     this._scrollTo(scrollY, 0);
@@ -248,19 +283,11 @@ export default class PickerViewColumn extends PolymerElement {
     } else {
       console.warn(`picker-view child item ${i} not found.`, this.children);
     }
-    this._dispatchEvent('change');
+    this._dispatchEvent('_columnChange');
   }
 
   updateStyleFromParent(indicatorStyle) {
-    let styleEl = this.shadowRoot.querySelector('#parent-style');
-    if (!this.shadowRoot) return;
-    if (!styleEl) return;
-    let style = `
-        .indicator {
-          ${indicatorStyle}
-        }
-      `;
-    styleEl.innerHTML = style;
+    this.indicatorStyle = indicatorStyle;
   }
 
   _dispatchEvent(name) {

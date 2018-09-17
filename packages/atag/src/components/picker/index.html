@@ -11,11 +11,14 @@
         z-index: 9999;
         background-color: rgba(0, 0, 0, 0);
         transition: background-color .3s ease-in-out;
+        -webkit-transition: background-color .3s ease-in-out;
       }
 
       #container {
         display: flex;
+        display: -webkit-flex;
         flex-direction: column;
+        -webkit-flex-direction: column;
         position: absolute;
         width: 100%;
         height: 80vw;
@@ -23,12 +26,16 @@
         bottom: 0;
         background-color: white;
         transition: bottom .3s ease-in-out;
+        -webkit-transition: bottom .3s ease-in-out;
       }
 
       #buttonGroup {
         display: flex;
+        display: -webkit-flex;
         flex-direction: row;
+        -webkit-flex-direction: row;
         justify-content: space-between;
+        -webkit-justify-content: space-between;
         width: 100%;
         height: 13.33vw;
         background-color: #F2F2F2;
@@ -50,21 +57,25 @@
 
       #content {
         flex: 1;
+        -webkit-flex: 1;
         display: flex;
+        display: -webkit-flex;
         position: relative;
         flex-direction: column;
+        -webkit-flex-direction: column;
         align-items: center;
+        -webkit-align-items: center;
         overflow-x: hidden;
         overflow-y: hidden;
       }
 
-      #content-inner {
+      #contentInner {
         position: relative;
         left: 0;
         /* pointer-events: none; */
       }
 
-      #content-inner .item {
+      #contentInner .item {
         font-size: 4.27vw;
         line-height: 27px;
         vertical-align: middle;
@@ -113,7 +124,7 @@
         </div>
         <div id="content">
           <!-- <div>{{range}}</div> -->
-          <div id="content-inner">
+          <div id="contentInner">
             <template is="dom-repeat" items="{{rangeValue}}">
               <div class="item">{{item}}</div>
             </template>
@@ -139,6 +150,7 @@ const INITIALTOP = 33.333 - LINEHEIGHT / 2;
 const FONTSIZE = 4.27;
 
 export default class Picker extends PolymerElement {
+
   static get is() {
     return 'a-picker';
   }
@@ -186,15 +198,11 @@ export default class Picker extends PolymerElement {
     }
   }
 
-  constructor() {
-    super();
-  }
-
   ready() {
     super.ready();
 
     this.formInitialValue = this.value;
-    const content = this.shadowRoot.querySelector('#content');
+    const content = this.$.content;
     content.addEventListener('touchstart', this._handleTouchstart);
     content.addEventListener('touchend', this._handleTouchend);
     content.addEventListener('touchmove', this._handleTouchmove);
@@ -202,17 +210,20 @@ export default class Picker extends PolymerElement {
 
     this.container = this.$.container;
     this.mask = this.$.mask;
-    this.innerEl = this.$['content-inner'];
+    this.innerEl = this.$.contentInner;
 
     this.container.addEventListener('click', e => {
       e.stopPropagation();
     });
+
     this.mask.addEventListener('click', () => {
       this.hide();
     });
+
     this.$.cancel.addEventListener('click', () => {
       this.hide();
     });
+
     this.$.confirm.addEventListener('click', () => {
       this.emitChange(this.value);
       this.hide();
@@ -222,11 +233,7 @@ export default class Picker extends PolymerElement {
       this.show();
     });
 
-    // alert([INITIALTOP, this.value, this.range.length ,LINEHEIGHT, document.documentElement.clientWidth].join('   '))
-    this.innerEl.style.top =
-      INITIALTOP -
-      Math.max(0, Math.min(this.value, this.range.length - 1)) * LINEHEIGHT +
-      'vw';
+    this.innerEl.style.top = INITIALTOP - Math.max(0, Math.min(this.value, this.range.length - 1)) * LINEHEIGHT + 'vw';
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -272,7 +279,7 @@ export default class Picker extends PolymerElement {
     const touch = e.touches[0];
     if (touch && !this.disabled) {
       this.startY = touch.clientY;
-      this.innerEl = this.shadowRoot.querySelector('#content-inner');
+      this.innerEl = this.$.contentInner;
       this.innerElStartY = Number(this.innerEl.style.top.replace('vw', ''));
       this.lastTime = Date.now();
       this.lastPosition = this.innerElStartY;
@@ -280,22 +287,15 @@ export default class Picker extends PolymerElement {
       e.stopPropagation();
     }
   };
+
   _handleTouchmove = e => {
     const touch = e.touches[0];
     if (touch && this.innerEl) {
-      // e.proventDefault();
       e.stopPropagation();
       e.preventDefault();
-      const delta =
-        (touch.clientY - this.startY) *
-        750 /
-        document.documentElement.clientWidth /
-        7.5;
-      const scrollHeight =
-        this.innerEl.scrollHeight *
-        750 /
-        document.documentElement.clientWidth /
-        7.5;
+
+      const delta = (touch.clientY - this.startY) * 750 / document.documentElement.clientWidth / 7.5;
+      const scrollHeight = this.innerEl.scrollHeight * 750 / document.documentElement.clientWidth / 7.5;
 
       const time = Date.now();
       this.velocity =
@@ -336,21 +336,13 @@ export default class Picker extends PolymerElement {
       if (this.overDirection === 0) {
         this.innerEl.style.top = this.innerElStartY + delta * damping + 'vw';
       } else if (this.overDirection !== 0) {
-        const overDelta =
-          (touch.clientY - this.overStartY) *
-          750 /
-          document.documentElement.clientWidth /
-          7.5;
-        damping =
-          Math.max(
-            0,
-            1 - Math.log(Math.abs(overDelta)) / Math.log(scrollHeight * 10)
-          ) / 2;
-        this.innerEl.style.top =
-          this.overInnerElStartY + overDelta * damping + 'vw';
+        const overDelta = (touch.clientY - this.overStartY) * 750 / document.documentElement.clientWidth / 7.5;
+        damping = Math.max( 0, 1 - Math.log(Math.abs(overDelta)) / Math.log(scrollHeight * 10) ) / 2;
+        this.innerEl.style.top = this.overInnerElStartY + overDelta * damping + 'vw';
       }
     }
   };
+
   _handleTouchend = e => {
     if (!this.innerEl) {
       return;
@@ -377,7 +369,6 @@ export default class Picker extends PolymerElement {
       )
     );
     let pos = -index * LINEHEIGHT;
-    // this.emitChange(this.range[index]);
 
     this.value = index;
 

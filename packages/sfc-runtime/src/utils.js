@@ -67,21 +67,16 @@ export { uppercamelcase, camelcase, runtimeWarn as warn };
 */
 export function processPropsData(props = {}, self = {}) {
   const data = Object.create(props.data || {});
+  const { pageInstance } = props;
+
   Object.keys(props.data || {})
     .forEach((key) => {
       const val = props.data[key];
       if (typeof val === 'string') {
         data[key] =
-          typeof self._cfg[val] === 'function'
-            ? self._cfg[val].bind(self)
+          pageInstance && typeof pageInstance[val] === 'function'
+            ? pageInstance[val].bind(pageInstance)
             : val;
-      }
-    });
-  Object.keys(self._cfg)
-    .forEach((key) => {
-      const val = self._cfg[key];
-      if (typeof val === 'function' && !data[key]) {
-        data[key] = val.bind(self);
       }
     });
   return data;

@@ -1,11 +1,9 @@
 import { convertUnit, setRem } from 'style-unit';
-import styleToCSS from './style-to-css';
 import createDocument from './create-document';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
-const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
@@ -21,7 +19,6 @@ const TO_SANITIZE = [
   'nextSibling',
   'previousSibling'
 ];
-
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
@@ -255,10 +252,6 @@ export default ({ postMessage, addEventListener }) => {
     },
 
     removeAttribute(node, propKey) {
-      if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-        return node.innerHTML = null;
-      }
-
       if (propKey === CLASS_NAME) {
         propKey = CLASS;
       }
@@ -274,10 +267,6 @@ export default ({ postMessage, addEventListener }) => {
     },
 
     setAttribute(node, propKey, propValue) {
-      if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-        return node.innerHTML = propValue.__html;
-      }
-
       if (propKey === CLASS_NAME) {
         propKey = CLASS;
       }
@@ -302,19 +291,8 @@ export default ({ postMessage, addEventListener }) => {
         tranformedStyles[prop] = convertUnit(val, prop);
       }
 
-      for (let prop in tranformedStyles) {
-        const transformValue = tranformedStyles[prop];
-        // hack handle compatibility issue
-        if (Array.isArray(transformValue)) {
-          for (let i = 0; i < transformValue.length; i++) {
-            node.style[prop] = transformValue[i];
-          }
-        } else {
-          node.style[prop] = transformValue;
-        }
-      }
       // For trigger attribute mutation
-      node.style.cssText = styleToCSS(node.style);
+      node.style = tranformedStyles;
     },
 
     beforeRender() {

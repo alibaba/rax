@@ -1,6 +1,6 @@
 <dom-module id="a-checkbox">
   <template>
-    <style id="style">
+    <style>
       :host {
         position: relative;
         box-sizing: border-box;
@@ -16,10 +16,13 @@
 
       :host input[type="checkbox"]+label .circle {
         display: inline-flex;
+        display: -webkit-inline-flex;
         width: 1.25em;
         height: 1.25em;
         justify-content: center;
+        -webkit-justify-content: center;
         align-items: center;
+        -webkit-align-items: center;
         vertical-align: middle;
         border: 1px solid #999;
         border-radius: 0.2em;
@@ -53,7 +56,6 @@
         background-color: #bbb;
       }
     </style>
-    <style id="customStyle"></style>
     <input type="checkbox" id="checkbox" disabled="{{disabled::change}}" checked="{{checked::change}}">
     <label for="checkbox">
       <div class="circle" style$="{{circleCheckedStyle}}">

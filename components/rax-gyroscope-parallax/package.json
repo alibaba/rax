@@ -1,0 +1,33 @@
+{
+  "name": "rax-gyroscope-parallax",
+  "version": "0.6.5",
+  "description": "GyroscopePrallax component for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "keywords": [
+    "Rax",
+    "RaxUI"
+  ],
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-view": "0.x.x",
+    "universal-env": "0.x.x",
+    "weex-bindingx": "^0.0.44"
+  },
+  "peerDependencies": {
+    "rax": "0.x"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.6.5"
+  }
+}
