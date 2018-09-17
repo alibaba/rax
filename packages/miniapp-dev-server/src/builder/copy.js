@@ -10,4 +10,4 @@ module.exports = function copy(from, to) {
     to,
     readFileSync(from)
   );
-}
+};

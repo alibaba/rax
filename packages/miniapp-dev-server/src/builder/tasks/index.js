@@ -3,7 +3,7 @@ const gulp = require('gulp');
 /**
  * register all gulp tasks
  */
-exports.registerGulpTasks = function ({ appConfig, projectDir, destDir }) {
+exports.registerGulpTasks = function({ appConfig, projectDir, destDir }) {
   // make sure build folder exists
   gulp.task('ensure-dir', require('./ensureDir')(destDir));
 
@@ -27,4 +27,4 @@ exports.registerGulpTasks = function ({ appConfig, projectDir, destDir }) {
 
   // collect static assets
   gulp.task('collect-assets', require('./collectAssets')(destDir, projectDir));
-}
+};

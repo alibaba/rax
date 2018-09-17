@@ -3,7 +3,7 @@ const { join } = require('path');
 const { existsSync } = require('fs');
 const copy = require('../copy');
 
-module.exports = function (destDir, projectDir) {
+module.exports = function(destDir, projectDir) {
   return (done) => {
     mkdirp.sync(join(destDir, '.schema'));
 
@@ -32,4 +32,4 @@ module.exports = function (destDir, projectDir) {
 
     done();
   };
-}
+};

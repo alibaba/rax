@@ -5,4 +5,4 @@ module.exports = function ensureDir(dir) {
     mkdirp.sync(dir);
     done();
   };
-}
+};

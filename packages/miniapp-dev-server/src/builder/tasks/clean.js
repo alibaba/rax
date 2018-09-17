@@ -4,5 +4,5 @@ module.exports = function clean(dir) {
   return (done) => {
     rimraf.sync(dir);
     done();
-  }
-}
+  };
+};
