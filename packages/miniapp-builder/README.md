@@ -1,4 +1,4 @@
-# miniapp cli
+# miniapp builder
 
 Miniapp build cli tool.  
 Support sfc and mp type
@@ -6,7 +6,7 @@ Support sfc and mp type
 ## Install
 
 ```bash
-npm install miniapp-cli -g
+npm install miniapp-builder -g
 ```
 
 ## dev server
