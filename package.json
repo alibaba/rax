@@ -101,7 +101,6 @@
     }
   },
   "dependencies": {
-    "babel-plugin-add-module-exports": "^0.2.1",
     "driver-worker": "^0.6.3-1"
   }
 }

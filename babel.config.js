@@ -13,7 +13,6 @@ module.exports = function(api) {
     'plugins': [
       '@babel/plugin-proposal-export-default-from',
       ['@babel/plugin-proposal-class-properties', { 'loose': false }],
-      'babel-plugin-export-default-module-exports',
       'babel-plugin-transform-jsx-stylesheet',
       'babel-plugin-add-module-exports',
       ['@babel/plugin-proposal-decorators', { 'legacy': true }],
