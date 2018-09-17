@@ -1,0 +1,38 @@
+<dom-module id="a-text">
+  <template>
+    <style>
+      :host {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      
+      :host([selectable='']),
+      :host([selectable='true']) {
+        -webkit-user-select: all;
+        user-select: all;
+      }
+      
+      slot {
+        all: inherit;
+      }
+    </style>
+    <slot></slot>
+  </template>
+</dom-module>
+
+<script>
+import { PolymerElement } from '@polymer/polymer';
+export default class TextElement extends PolymerElement {
+  static get is() {
+    return 'a-text';
+  }
+
+  constructor() {
+    super();
+  }
+}
+
+customElements.define(TextElement.is, TextElement);
+</script>
+
+
