@@ -278,10 +278,11 @@ export default class ImageElement extends PolymerElement {
 
     const container = this.$.container;
     const containerStyle = container.style;
+    const imgElStyle = this.imageEl.style;
     // init dom
     if (container.children.length > 0) {
       containerStyle.height = 'inital';
-      this.imageEl.style.cssText = 'display: none';
+      imgElStyle.display = 'none';
     }
 
     const positions = [
@@ -314,7 +315,8 @@ export default class ImageElement extends PolymerElement {
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          this.imageEl.style.cssText = 'visibility: hidden;width: 100%;';
+          imgElStyle.visibility = 'hidden';
+          imgElStyle.width = '100%';
           containerStyle.height = 'auto';
           containerStyle.backgroundSize = 'contain';
           container.appendChild(this.imageEl);
