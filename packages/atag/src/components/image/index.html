@@ -16,6 +16,7 @@
         display: inline-block;
         width: 100%;
         height: 100%;
+        background-repeat: no-repeat;
       }
     </style>
     <div id="container"></div>
@@ -280,7 +281,7 @@ export default class ImageElement extends PolymerElement {
     // init dom
     if (container.children.length > 0) {
       containerStyle.height = 'inital';
-      this.imageEl.cssText = 'display: none';
+      this.imageEl.style.cssText = 'display: none';
     }
 
     const positions = [
@@ -307,14 +308,13 @@ export default class ImageElement extends PolymerElement {
         case 'aspectFit':
           containerStyle.backgroundSize = 'contain';
           containerStyle.backgroundPosition = 'center center';
-          containerStyle.backgroundRepeat = 'no-repeat';
           break;
         case 'aspectFill':
           containerStyle.backgroundSize = 'cover';
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          this.imageEl.cssText = 'visibility: hidden;width: 100%;';
+          this.imageEl.style.cssText = 'visibility: hidden;width: 100%;';
           containerStyle.height = 'auto';
           containerStyle.backgroundSize = 'contain';
           container.appendChild(this.imageEl);
