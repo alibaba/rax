@@ -181,7 +181,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
     setTimeout(() => {
       const el = getNode(vnode);
       if (el) {
-        el.addEventListener(name, evtStore[vnode.$$id] = function (evt) {
+        el.addEventListener(name, evtStore[vnode.$$id] = function(evt) {
           const target = { $$id: el.$$id };
           worker.postMessage({
             type: 'event',

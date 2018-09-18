@@ -49,16 +49,16 @@ const BOOL_PROPERTY = {
 };
 
 function isProperty(node, prop, val) {
-  return typeof val === 'object' || (
+  return typeof val === 'object' ||
     node.nodeType === 1 && BOOL_PROPERTY[node.nodeName] && BOOL_PROPERTY[node.nodeName][prop]
-  );
+  ;
 }
 
-const setImmediate = global.setImmediate || function (cb) {
+const setImmediate = global.setImmediate || function(cb) {
   return setTimeout(cb, 0);
 };
 
-const requestAnimationFrame = global.requestAnimationFrame || function (cb) {
+const requestAnimationFrame = global.requestAnimationFrame || function(cb) {
   return setTimeout(cb, 16);
 };
 
@@ -67,7 +67,7 @@ const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const DOCUMENT_NODE = 9;
 
-export default function () {
+export default function() {
   let observers = [];
   let pendingMutations = false;
 
@@ -548,10 +548,10 @@ export default function () {
 
       properties.forEach(property => {
         Object.defineProperty(this, property, {
-          get: function () {
+          get: function() {
             return propertyValues[property];
           },
-          set: function (value) {
+          set: function(value) {
             propertyValues[property] = value;
           }
         });
