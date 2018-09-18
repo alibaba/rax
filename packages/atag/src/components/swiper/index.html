@@ -436,7 +436,7 @@ export default class Swiper extends PolymerElement {
       );
       this.duplicateLastChild = null;
     }
-    this.indicators = this.children;
+    this.indicators = [].slice.call(this.children);
     this.childrenLength = this.children.length;
     this.translateOffset = 0;
     this.setPage(this.currentPage);
