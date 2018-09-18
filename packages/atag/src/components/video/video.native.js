@@ -34,7 +34,8 @@ export default class VideoElement extends PolymerElement {
         value: false
       },
       controls: {
-        type: Boolean
+        type: Boolean,
+        value: true
       },
       muted: {
         type: Boolean,
