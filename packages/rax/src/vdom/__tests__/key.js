@@ -126,4 +126,27 @@ describe('Key', function() {
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('1');
     expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('2');
   });
+
+  it('should move to correct position for same key in different element', () => {
+    let container = createNodeElement('container');
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count % 2 === 0 ? [<div key="a">1</div>, <span key="b">2</span>] :
+                [<span key="b">2</span>, <span key="a">3</span>]
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, container);
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('1');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('2');
+    instance.setState({count: 1});
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('2');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('3');
+  });
 });
