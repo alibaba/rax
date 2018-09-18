@@ -69,18 +69,13 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
         unmount: []
       };
 
-      const { data, onLoad, onReady, onHide, onUnload, onPageScroll, onPullIntercept } = config;
+      const { data, onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
 
       if (data) this.state = data;
 
       // trigger while loaded，pageQuery passed to cycle
       if ('function' === typeof onLoad) {
         onLoad.call(this.pageInstance, pageQuery);
-      }
-      if ('function' === typeof onReady) {
-        const cycleFn = onReady.bind(this.pageInstance);
-        this.cycleListeners.push({ type: 'ready', fn: cycleFn });
-        pageEventEmitter.on('ready', cycleFn);
       }
       if ('function' === typeof onHide) {
         const cycleFn = onHide.bind(this.pageInstance);
@@ -111,12 +106,21 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
     componentWillMount() {
       // native event of first show triggered too ealier,
       // triggering by willMount
-      const { onShow } = config;
+      const { onShow, onReady } = config;
       if ('function' === typeof onShow) {
         onShow.call(this.pageInstance);
         const cycleFn = onShow.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'show', fn: cycleFn });
         pageEventEmitter.on('show', cycleFn);
+      }
+
+      // ready event fired at componentWillMount by front end
+      if ('function' === typeof onReady) {
+        try {
+          onReady.call(this.pageInstance);
+        } catch (err) {
+          console.error(err); // do not stuck willMount
+        }
       }
 
       // update vdom while toggle show/hide
