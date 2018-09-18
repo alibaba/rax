@@ -4,8 +4,8 @@
 
 export default {
   update(prevElement, nextElement, component) {
-    let prevRef = prevElement != null && prevElement.ref;
-    let nextRef = nextElement != null && nextElement.ref;
+    let prevRef = prevElement && prevElement.ref || null;
+    let nextRef = nextElement && nextElement.ref || null;
 
     // Update refs in owner component
     if (prevRef !== nextRef) {
