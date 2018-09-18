@@ -67,9 +67,25 @@
   <div class="card">
     <h4 class="title">a-image</h4>
     <div class="demo">
-      <a-image mode="aspectFit" style="width: 300px;height: 300px; border: 1px solid #e5e5e5;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" />
+      <a-image id="image" mode="scaleToFill" style="border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif"></a-image>
+      <p>
+        Load Event: <span id="imageLoad"></span>
+      </p>
+      <a-image id="errorImage" mode="scaleToFill" style="border: 2px solid red;" src="https://path-to-error.com"></a-image>
+      <p>
+        Error Event: <span id="imageError"></span>
+      </p>
     </div>
   </div>
+
+  <script>
+    image.addEventListener('load', function(e){
+      imageLoad.innerHTML = JSON.stringify(e.detail);
+    });
+    errorImage.addEventListener('error', function(e){
+      imageError.innerHTML = e.detail.errMsg;
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-icon</h4>
@@ -84,16 +100,53 @@
   <div class="card">
     <h4 class="title">a-input</h4>
     <div class="demo">
-      <a-input placeholder="input placeholder" placeholder-style="color: red;" focus=true></a-input>
+      <a-input id="input" placeholder="input placeholder" placeholder-style="color: red;" focus=true></a-input>
+      <p style="overflow-wrap: break-word;">
+        Input Event: <span id="inputInput">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Focus Event: <span id="inputFocus">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Blur Event: <span id="inputBlur">null</span>
+      </p>
     </div>
   </div>
+
+  <script>
+    input.addEventListener('input', function(e){
+      inputInput.innerHTML = e.detail.value || 'null';
+    });
+    input.addEventListener('focus', function(e){
+      inputFocus.innerHTML = e.detail.value || 'null';
+    });
+    input.addEventListener('blur', function(e){
+      inputBlur.innerHTML = e.detail.value || 'null';
+    });
+  </script>
+  
 
   <div class="card">
     <h4 class="title">a-textarea</h4>
     <div class="demo">
-      <a-textarea auto-height=true class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <a-textarea id="textarea" auto-height=true class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <p style="overflow-wrap: break-word;">
+        Input Event: <span id="textareaInput">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Blur Event: <span id="textareaBlur">null</span>
+      </p>
     </div>
   </div>
+
+  <script>
+    textarea.addEventListener('input', function(e){
+      textareaInput.innerHTML = e.detail.value || 'null';
+    });
+    textarea.addEventListener('blur', function(e){
+      textareaBlur.innerHTML = e.detail.value || 'null';
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-checkbox</h4>

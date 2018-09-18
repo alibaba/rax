@@ -175,6 +175,10 @@ export default class Textarea extends PolymerElement {
     }
   };
 
+  _handleReset = () => {
+    this.textarea.value = this.formInitialValue;
+  };
+
   handleInput(e) {
     e.stopPropagation();
     if (this.autoHeight) {
@@ -215,10 +219,6 @@ export default class Textarea extends PolymerElement {
     });
     this.dispatchEvent(event);
   }
-
-  _handleReset = () => {
-    this.textarea.value = this.formInitialValue;
-  };
 
   changePlaceholderStyle(placeholderStyle) {
     if (!this.styleEl) {

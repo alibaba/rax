@@ -77,10 +77,6 @@ export default class Input extends PolymerElement {
     this.formInitalValue = this.value;
     
     afterNextRender(this, () => {
-      this.inputListener = this.inputListener.bind(this);
-      this.focusListener = this.focusListener.bind(this);
-      this.blurListener = this.blurListener.bind(this);
-      this._handlerReset = this._handlerReset.bind(this);
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
       window.addEventListener('blur', this.blurListener, true);
@@ -93,39 +89,39 @@ export default class Input extends PolymerElement {
     window.removeEventListener('input', this.inputListener, true);
     window.removeEventListener('focus', this.focusListener, true);
     window.removeEventListener('blur', this.blurListener, true);
-    window.removeEventListener('_formReset', this._handlerReset);
+    window.removeEventListener('_formReset', this._handlerReset, true);
   }
 
-  inputListener(event) {
+  inputListener = (event) => {
     if (!(event instanceof CustomEvent)) {
       event.stopPropagation();
       if (event.target === this) {
         this.handleInput(event);
       }
     }
-  }
+  };
 
-  _handlerReset() {
+  _handlerReset = () => {
     this.input.value = this.value = this.formInitalValue;
-  }
+  };
 
-  focusListener(event) {
+  focusListener = (event) => {
     if (!(event instanceof CustomEvent)) {
       event.stopPropagation();
       if (event.target === this) {
         this.handleFocus(event);
       }
     }
-  }
+  };
 
-  blurListener(event) {
+  blurListener = (event) => {
     if (!(event instanceof CustomEvent)) {
       event.stopPropagation();
       if (event.target === this) {
         this.handleBlur(event);
       }
     }
-  }
+  };
 
   handleInput(e) {
     e.stopPropagation();
