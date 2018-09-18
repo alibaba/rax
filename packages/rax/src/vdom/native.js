@@ -397,18 +397,18 @@ class NativeComponent {
                 if (Array.isArray(lastPlacedNode)) {
                   lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
                 }
-    
+
                 let prevFirstNativeNode;
-    
+
                 if (firstPrevChild && !lastPlacedNode) {
                   prevFirstNativeNode = firstPrevChild.getNativeNode();
                   if (Array.isArray(prevFirstNativeNode)) {
                     prevFirstNativeNode = prevFirstNativeNode[0];
                   }
                 }
-    
+
                 if (lastPlacedNode) {
-                  // Should reverse order when insert new child after lastPlacedNode: 
+                  // Should reverse order when insert new child after lastPlacedNode:
                   // [lastPlacedNode, *newChild1, *newChild2]
                   for (let i = newChild.length - 1; i >= 0; i--) {
                     Host.driver.insertAfter(newChild[i], lastPlacedNode);
@@ -433,14 +433,12 @@ class NativeComponent {
                 }
 
                 if (prevChild._mountIndex < lastIndex) {
-
                   for (let i = 0; i < oldChild.length; i++) {
                     Host.driver.removeChild(oldChild[i]);
                   }
 
                   insertNewChild(newChild);
                 } else {
-
                   // If newChild count large then oldChild:
                   // [oldChild1, oldChild2] => [newChild1, newChild2, newChild3]
                   let lastNewChild;
@@ -461,12 +459,10 @@ class NativeComponent {
                       Host.driver.removeChild(oldChild[i]);
                     }
                   }
-
                 }
-                
               } else {
                 // Insert child at a specific index
-                insertNewChild(newChild); 
+                insertNewChild(newChild);
               }
 
               nextNativeNode = nextNativeNode.concat(newChild);

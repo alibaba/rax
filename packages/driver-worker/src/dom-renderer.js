@@ -182,12 +182,6 @@ export default ({ worker, tagNamePrefix = '' }) => {
       const el = getNode(vnode);
       if (el) {
         el.addEventListener(name, evtStore[vnode.$$id] = function(evt) {
-          const {
-            bottom, height,
-            left, right,
-            top, width,
-            x, y,
-          } = evt.target.getBoundingClientRect();
           const target = { $$id: el.$$id };
           worker.postMessage({
             type: 'event',
@@ -195,12 +189,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
               type: name,
               target,
               currentTarget: target,
-              detail: {
-                bottom, height,
-                left, right,
-                top, width,
-                x, y,
-              }
+              detail: evt.detail
             }
           });
         });
