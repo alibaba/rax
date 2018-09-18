@@ -181,7 +181,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
     setTimeout(() => {
       const el = getNode(vnode);
       if (el) {
-        el.addEventListener(name, evtStore[vnode.$$id] = function(evt) {
+        el.addEventListener(name, evtStore[vnode.$$id] = function (evt) {
           const target = { $$id: el.$$id };
           worker.postMessage({
             type: 'event',
@@ -306,7 +306,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
         for (let i = 0; i < vnode.attributes.length; i++) {
           let a = vnode.attributes[i];
 
-          if (typeof a.value === 'object') {
+          if (typeof a.value === 'object' || typeof a.value === 'boolean') {
             node[a.name] = a.value;
           } else {
             node.setAttribute(a.name, a.value);
