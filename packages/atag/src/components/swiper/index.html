@@ -84,7 +84,7 @@
         margin: 0 3px;
       }
     </style>
-    <div class$="[[getContainerClass()]]" on-touchstart="_onTouchStart">
+    <div class$="[[getContainerClass()]]">
       <div id="swiperWrap" class="swiper-wrap" on-transitionend="_onTransitionEnd">
         <slot></slot>
       </div>
@@ -100,7 +100,11 @@
 <script>
 import 'components/swiper/swiper-item';
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender } from '../../shared/utils/';
+import {
+  afterNextRender,
+  GestureEventListeners,
+  Gestures
+} from '../../shared/utils/';
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -170,6 +174,10 @@ export default class Swiper extends PolymerElement {
     // init
     this.currentPage = this.current + 1;
     this.renderSwiper();
+
+    afterNextRender(this, () => {
+      Gestures.addListener(this, 'track', this.handleTrack);
+    });
   }
 
   attributeChangedCallback(key, oldVal, newVal) {
@@ -255,11 +263,11 @@ export default class Swiper extends PolymerElement {
     return `swiper ${this.vertical ? 'vertical' : 'horizontal'}`;
   }
 
-  _onTouchStart = event => {
+  _onTouchStart = ({ x, y }) => {
     if (this.isAutoplay) {
       clearTimeout(this.timer);
     }
-    this.startPos = this._getTouchPos(event);
+    this.startPos = !this.vertical ? x : y;
     this.delta = 0;
     this.startTranslate = this._getTranslateOfPage(this.currentPage);
     this.startTime = new Date().getTime();
@@ -436,7 +444,7 @@ export default class Swiper extends PolymerElement {
       );
       this.duplicateLastChild = null;
     }
-    this.indicators = [].slice.call(this.children);
+    this.indicators = this.children;
     this.childrenLength = this.children.length;
     this.translateOffset = 0;
     this.setPage(this.currentPage);
@@ -494,6 +502,21 @@ export default class Swiper extends PolymerElement {
 
   observerIndicatorDots(newVal, oldVal) {
     this.showIndicatorDotsStyle = newVal ? '' : 'display: none';
+  }
+
+  handleTrack(e) {
+    switch (e.detail.state) {
+      case 'start':
+        const { dx, dy } = e.detail;
+        const direction = Math.abs(dy) - Math.abs(dx);
+        if (!this.vertical && direction < 0) {
+          this._onTouchStart(e.detail);
+        }
+        if (this.vertical && direction > 0) {
+          this._onTouchStart(e.detail);
+        }
+        break;
+    }
   }
 }
 
