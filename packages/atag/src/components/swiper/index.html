@@ -186,7 +186,7 @@ export default class Swiper extends PolymerElement {
     super.attributeChangedCallback(key, oldVal, newVal);
     switch (key) {
       case 'circular':
-        this.circular = newVal === 'true' || newVal === null;
+        this.circular = newVal === 'true' || newVal === "";
         if (oldVal !== null) {
           if (this.timer) {
             clearTimeout(this.timer);
@@ -195,7 +195,7 @@ export default class Swiper extends PolymerElement {
         }
         break;
       case 'autoplay':
-        this.autoplay = newVal === 'true' || newVal === null;
+        this.autoplay = newVal === 'true' || newVal === "";
         if (oldVal !== null) {
           if (newVal !== 'false') {
             this.autoNext();
@@ -208,7 +208,7 @@ export default class Swiper extends PolymerElement {
         this.indicatorDots = newVal === 'true';
         break;
       case 'vertical':
-        this.vertical = this.getAttribute('vertical') === 'true';
+        this.vertical = newVal === 'true';
         break;
       case 'current':
         if (oldVal !== null && oldVal !== newVal) {
