@@ -1,6 +1,7 @@
 const { join, resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
 const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('./getFrameworkCDNUrl');
+
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
 
 function getAppConfig(projectDir, opts) {

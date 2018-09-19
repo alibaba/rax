@@ -12,11 +12,8 @@ const CONFIG_FILENAME = 'app.config.json';
  * @param {*} destDir
  * @param {*} appConfig
  */
-module.exports = function (destDir, appConfig) {
-
-
+module.exports = function(destDir, appConfig) {
   return done => {
-
     Object.assign(appConfig, DEFAULT_EXTRA_CONFIG);
 
     const appConfigJSONPath = join(destDir, CONFIG_FILENAME);
