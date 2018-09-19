@@ -240,7 +240,7 @@ export default class Textarea extends PolymerElement {
   }
 
   computedValueLength(value) {
-    return value.length;
+    return value.length || 0;
   }
 
   observerShowCount(newVal, oldVal) {

@@ -64,7 +64,7 @@
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender, throttle } from '../../shared/utils';
+import { afterNextRender } from '../../shared/utils';
 
 export default class RadioElement extends PolymerElement {
   static get is() {
@@ -100,11 +100,11 @@ export default class RadioElement extends PolymerElement {
       },
       circleCheckedStyle: {
         type: String,
-        computed: 'getCircleCheckedStyle(checked, color)'
+        computed: 'getCircleCheckedStyle(checked, color, disabled)'
       },
       dotCheckedStyle: {
         type: String,
-        computed: 'getDotCheckedStyle(checked, color)'
+        computed: 'getDotCheckedStyle(checked, color, disabled)'
       }
     };
   }
@@ -128,10 +128,7 @@ export default class RadioElement extends PolymerElement {
 
   clickHandler = (e) => {
     e.stopPropagation();
-
-    if(!e.isTrusted) {
-      this.$.radio.click();
-    }
+    this.$.radio.click();
   };
 
   changeHandler = (e) => {
@@ -151,15 +148,15 @@ export default class RadioElement extends PolymerElement {
     this.radio.checked = this.checked = this.formInitialValue;
   };
 
-  getCircleCheckedStyle(checked, color) {
-    if (checked) {
+  getCircleCheckedStyle(checked, color, disabled) {
+    if (checked && !disabled) {
       return `border: 2px solid ${color};`;
     }
     return '';
   }
 
-  getDotCheckedStyle(checked, color) {
-    if (checked) {
+  getDotCheckedStyle(checked, color, disabled) {
+    if (checked && !disabled) {
       return `background-color: ${color};`;
     }
     return '';
