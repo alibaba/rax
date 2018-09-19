@@ -306,7 +306,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
         for (let i = 0; i < vnode.attributes.length; i++) {
           let a = vnode.attributes[i];
 
-          if (typeof a.value === 'object') {
+          if (typeof a.value === 'object' || typeof a.value === 'boolean') {
             node[a.name] = a.value;
           } else {
             node.setAttribute(a.name, a.value);
