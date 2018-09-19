@@ -30,6 +30,7 @@ const styles = {
   },
   image: {
     width: 290,
+    height: 210
   },
   text: {
     marginTop: 20,

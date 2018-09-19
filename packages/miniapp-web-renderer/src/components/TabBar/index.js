@@ -41,6 +41,6 @@ const styles = {
     zIndex: 2,
   },
   link: { textAlign: 'center' },
-  icon: { width: '31.5rem', heigt: '31.5rem' },
+  icon: { width: '31.5rem', height: '31.5rem' },
   text: { fontSize: '24rem', color: '#686868', whiteSpace: 'nowrap', lineHeight: '1' },
 };
