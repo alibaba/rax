@@ -291,8 +291,7 @@ export default ({ postMessage, addEventListener }) => {
         tranformedStyles[prop] = convertUnit(val, prop);
       }
 
-      // For trigger attribute mutation
-      node.style = tranformedStyles;
+      node.style = Object.assign(node.style, tranformedStyles);
     },
 
     beforeRender() {

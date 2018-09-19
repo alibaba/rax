@@ -344,7 +344,7 @@ export default function() {
       super(nodeType || ELEMENT_NODE, nodeName); // ELEMENT_NODE
       this.attributes = [];
       this.eventListeners = {};
-      this.style = {};
+      this._style = {};
       Object.defineProperty(this, 'className', {
         set: val => {
           this.setAttribute('class', val);
@@ -386,6 +386,7 @@ export default function() {
     get style() {
       return this._style;
     }
+
     set style(styleObject) {
       this._style = styleObject;
       mutation(this, 'attributes', { style: styleObject });
