@@ -474,8 +474,10 @@ class CompositeComponent {
             let child = newChild[i];
             if (oldChild[i]) {
               Host.driver.replaceChild(child, oldChild[i]);
-            } else {
+            } else if (lastNewChild) {
               Host.driver.insertAfter(child, lastNewChild);
+            } else {
+              Host.driver.appendChild(child, parent);
             }
             lastNewChild = child;
           }
