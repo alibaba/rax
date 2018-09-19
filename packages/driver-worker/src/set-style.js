@@ -80,7 +80,7 @@ Object.keys(PREFIX_PROP_VALS).forEach((prop) => {
   };
 });
 
-export default function addVendorPrefixes(node, styleObject) {
+export default function setStyleWithVendorPrefixes(node, styleObject) {
   let tranformedStyles = {};
 
   for (let prop in styleObject) {
