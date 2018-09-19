@@ -45,12 +45,12 @@ export default class ImageElement extends PolymerElement {
       src: {
         type: String,
         value: '',
-        reflectToAttrbute: true
+        reflectToAttribute: true
       },
       mode: {
         type: String,
         value: 'scaleToFill',
-        reflectToAttrbute: true,
+        reflectToAttribute: true,
         observer: 'observerMode'
       }
     };
@@ -98,9 +98,9 @@ export default class ImageElement extends PolymerElement {
   _load() {
     this._loading = true;
     const image = this.image = new Image();
+    
     image.onload = (e) => {
       this._loading = false;
-      this._render();
       // Dispatch custom load event
       const customEvent = new CustomEvent('load', {
         bubbles: false,
@@ -112,6 +112,7 @@ export default class ImageElement extends PolymerElement {
       });
       this.dispatchEvent(customEvent);
     };
+
     image.onerror = (e) => {
       const customEvent = new CustomEvent('error', {
         bubbles: false,
@@ -123,13 +124,14 @@ export default class ImageElement extends PolymerElement {
       this.dispatchEvent(customEvent);
     };
     image.src = this.src;
+
+    this._render();
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
     super.attributeChangedCallback(name, oldVal, newVal);
     // If nothing has changed then just return
     if (newVal === oldVal) return;
-
     switch (name) {
       case 'src':
         // If the src is changed then we need to reset and start again
