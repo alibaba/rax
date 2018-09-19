@@ -264,15 +264,14 @@ export default ({ worker, tagNamePrefix = '' }) => {
           if (!newNode) {
             newNode = createNode(addedNodes[i]);
           }
-          parent.insertBefore(
-            newNode,
-            nextSibling && getNode(nextSibling) || null
-          );
+          parent.insertBefore(newNode, nextSibling && getNode(nextSibling) || null);
         }
       }
     },
     attributes({ target, attributeName, newValue, style }) {
       let node = getNode(target);
+      // Node maybe null when node is removed and there is a setInterval change the node that will cause error
+      if (!node) return;
 
       // TODO: some with `createNode`, should processed by one method
       if (style) {
@@ -291,14 +290,20 @@ export default ({ worker, tagNamePrefix = '' }) => {
     },
     addEvent({ target, eventName }) {
       let node = getNode(target);
+      if (!node) return;
+
       addEvent(node, eventName);
     },
     removeEvent({ target, eventName }) {
       let node = getNode(target);
+      if (!node) return;
+
       removeEvent(node, eventName);
     },
     canvasRenderingContext2D({ target, method, args, properties }) {
       let canvas = getNode(target);
+      if (!canvas) return;
+
       let context = canvas.getContext('2d');
 
       if (properties) {
