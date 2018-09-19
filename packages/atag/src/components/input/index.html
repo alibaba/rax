@@ -19,6 +19,7 @@
         color: inherit;
         box-sizing: border-box;
         border-width: 0;
+        text-align: inherit;
       }
     </style>
     <input id="input" value$="{{value}}" type$="{{type}}" placeholder$="{{placeholder}}" disabled$="{{disabled}}"
@@ -75,7 +76,9 @@ export default class Input extends PolymerElement {
     super.ready();
     this.input = this.$.input;
     this.formInitalValue = this.value;
-    
+    // label target
+    this.setAttribute('a-label-target', "");
+
     afterNextRender(this, () => {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
