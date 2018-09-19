@@ -26,6 +26,7 @@
         font-size: 16px;
         color: #333333;
         box-sizing: border-box;
+        text-align: inherit;
       }
 
       .count {
@@ -115,7 +116,9 @@ export default class Textarea extends PolymerElement {
     super.ready();
     this.textarea = this.$.textarea;
     this.formInitialValue = this.value;
-
+    // label target
+    this.setAttribute('a-label-target', "");
+    
     afterNextRender(this, () => {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
