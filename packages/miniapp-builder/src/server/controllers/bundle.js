@@ -1,7 +1,6 @@
 const Jszip = require('jszip');
 const address = require('address');
 const { getAppConfig } = require('../../config/getAppConfig');
-const { nativeRendererHTML } = require('../../config/getFrameworkCDNUrl');
 
 /**
  * write bundle.zip
@@ -9,13 +8,8 @@ const { nativeRendererHTML } = require('../../config/getFrameworkCDNUrl');
 module.exports = function bundleCtrl(ctx, next) {
   const zip = new Jszip();
 
-  const appJSON = getAppConfig(ctx.projectDir);
-
-  appJSON.pages.forEach((item) => {
-    item.pageUrl = ctx.isDebug
-      ? `http://${address.ip()}:8003/native/renderer.html`
-      : appJSON.experimentalRemoteRenderer ||
-      nativeRendererHTML;
+  const appJSON = getAppConfig(ctx.projectDir, {
+    pageUrl: ctx.isDebug ? `http://${address.ip()}:8003/native/renderer.html` : null
   });
 
   /* 指定首页, 兼容外部依赖 */

@@ -1,7 +1,9 @@
 const { join, resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
+const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('./getFrameworkCDNUrl');
+const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
 
-function getAppConfig(projectDir) {
+function getAppConfig(projectDir, opts) {
   const manifestFilePath = join(projectDir, 'manifest.json');
   const appDotJSONFilePath = join(projectDir, 'app.json');
   const appJSON = {};
@@ -14,6 +16,10 @@ function getAppConfig(projectDir) {
     throw new Error('不存在以下文件: app.json | manifest.json');
   }
 
+  const nativeRendererHTML = getNativeRendererHTML(
+    appJSON.frameworkVersion || FRAMEWORK_VERSION
+  );
+
   const pages = [];
   let homepage = 'index'; // default homepage
   if (Array.isArray(appJSON.pages)) {
@@ -22,7 +28,20 @@ function getAppConfig(projectDir) {
 
       if (i === 0) homepage = pageName;
 
-      const pageConfig = { pageName };
+      let pageUrl;
+
+      if (EXTERNAL_PAGE_URL_REG.test(pageName)) {
+        pageUrl = pageName;
+      } else if (opts && opts.pageUrl) {
+        pageUrl = opts.pageUrl;
+      } else {
+        pageUrl = nativeRendererHTML;
+      }
+
+      const pageConfig = {
+        pageName,
+        pageUrl
+      };
       // merge page config json
       const independentPageConfigPath = resolve(projectDir, pageName + '.json');
       if (existsSync(independentPageConfigPath)) {
@@ -39,7 +58,11 @@ function getAppConfig(projectDir) {
 
       if (i === 0) homepage = pageName;
 
-      const pageConfig = { pageName, pagePath };
+      const pageConfig = {
+        pageName,
+        pagePath,
+        pageUrl: nativeRendererHTML
+      };
       // merge page config json
       const independentPageConfigPath = resolve(projectDir, pagePath + '.json');
       if (existsSync(independentPageConfigPath)) {
