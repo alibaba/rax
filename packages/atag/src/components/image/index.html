@@ -98,7 +98,7 @@ export default class ImageElement extends PolymerElement {
    */
   _load() {
     this._loading = true;
-    
+
     const image = this.image = new Image();
     image.onload = (e) => {
       this._loading = false;
@@ -172,7 +172,7 @@ export default class ImageElement extends PolymerElement {
 
     if (container.children.length > 0) {
       containerStyle.height = 'inital';
-      imgElStyle.display = 'none';
+      imageStyle.display = 'none';
     }
 
     const positions = [
