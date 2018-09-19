@@ -21,7 +21,7 @@
         height: 1.25em;
         margin: -0.625em 0;
         vertical-align: middle;
-        border: 2px solid #999;
+        border: 1px solid #999;
         border-radius: 100%;
         box-sizing: border-box;
         background-color: white;
@@ -40,12 +40,12 @@
         border-radius: 100%;
         text-align: center;
         cursor: pointer;
-        border: 1vw solid #fff;
+        border: 2px solid #fff;
         box-sizing: border-box;
       }
 
       :host input[type="radio"][disabled]+label .circle {
-        border: 2px solid #c7c7c7;
+        border: 1px solid #c7c7c7;
         background-color: #E7E7E7;
       }
 
@@ -153,7 +153,7 @@ export default class RadioElement extends PolymerElement {
 
   getCircleCheckedStyle(checked, color, disabled) {
     if (checked && !disabled) {
-      return `border: 2px solid ${color};`;
+      return `border: 1px solid ${color};`;
     }
     return '';
   }
