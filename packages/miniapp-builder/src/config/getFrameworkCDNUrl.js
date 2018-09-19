@@ -1,4 +1,4 @@
-const FRAMEWORK_VERSION = exports.FRAMEWORK_VERSION = '0.1.9';
+const FRAMEWORK_VERSION = exports.FRAMEWORK_VERSION = '0.1.11';
 const FRAMEWORK_CDN_PREFIX = 'https://g.alicdn.com/code/npm/miniapp-framework/';
 const FRAMEWORK_CDN_SUFFIX = '/dist';
 
