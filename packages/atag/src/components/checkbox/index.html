@@ -100,6 +100,9 @@ export default class CheckboxElement extends PolymerElement {
   ready() {
     super.ready();
     this.formInitialValue = this.checked;
+    // label target
+    this.setAttribute('a-label-target', "");
+    
     afterNextRender(this, () => {
       this.addEventListener('click', this.clickHandler);
       window.addEventListener('_formReset', this._handlerReset, true);
