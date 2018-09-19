@@ -1,3 +1,5 @@
+import setStyle from './set-style';
+
 // feature-detect support for event listener options
 let supportsPassive = false;
 try {
@@ -18,138 +20,48 @@ const EVENT_OPTIONS = supportsPassive
   }
   : true;
 
-const UNBUBBLES = [
-  'appear',
-  'disappear',
-  'scroll',
-  'blur',
-  'focus',
-  'load',
-  'unload',
-  'resize',
-];
-function isUnbubbleEvent(evtName) {
-  return UNBUBBLES.indexOf(evtName) !== -1;
-}
-
-const PREFIX_PROPS = {
-  flex: true,
-  alignItems: true,
-  alignSelf: true,
-  flexDirection: true,
-  justifyContent: true,
-  flexWrap: true,
-
-  lineClamp: true,
-  textSizeAdjust: true,
-  textDecorationLine: true,
-  textDecorationColor: true,
-  textDecorationStyle: true,
-  textDecorationSkip: true,
-  writingMode: true,
-
-  animatin: true,
-  animationName: true,
-  animationDuration: true,
-  animationTimingFunction: true,
-  animationDelay: true,
-  animationIterationCount: true,
-  animationDirection: true,
-  animationFillMode: true,
-  animationPlayState: true,
-
-  transform: true,
-  transformOrigin: true,
-  transformStyle: true,
-  perspective: true,
-  perspectiveOrigin: true,
-  backfaceVisibility: true,
-  appearance: true,
-  userSelect: true,
-
-  columns: true,
-  columnWidth: true,
-  columnCount: true,
-  columnGap: true,
-  columnRule: true,
-  columnRuleWidth: true,
-  columnRuleStyle: true,
-  columnRuleColor: true,
-  columnSpan: true,
-  columnFill: true,
-  columnBreakBefore: true,
-  columnBreakAfter: true,
-  columnBreakInside: true,
+const NO_BUBBLES_EVENTS = {
+  // Resource Events and Progress Events
+  load: true,
+  error: true,
+  unload: true,
+  abort: true,
+  loadstart: true,
+  progress: true,
+  loadend: true,
+  // Focus Events
+  blur: true,
+  focus: true,
+  // View Events
+  scroll: true, // Not bubles on elements
+  appear: true,
+  disappear: true,
+  // Uncategorized events
+  invalid: true
 };
-
-const PREFIX_PROP_VALS = {
-  position: 'sticky',
-  display: 'flex',
-};
-
-const StylePrefixer = {
-  shouldPrefix(prop) {
-    return PREFIX_PROPS[prop] || PREFIX_PROP_VALS[prop];
-  },
-};
-Object.keys(PREFIX_PROPS).forEach((prop) => {
-  StylePrefixer[prop] = (value, style = {}) => {
-    style['webkit' + prop[0].toUpperCase() + prop.slice(1)] = value;
-    style[prop] = value;
-    return style;
-  };
-});
-Object.keys(PREFIX_PROP_VALS).forEach((prop) => {
-  const rule = PREFIX_PROPS[prop];
-  StylePrefixer[prop] = (value, style = {}) => {
-    if (value === rule) {
-      style[prop] = ['-webkit-' + rule, rule];
-    } else {
-      style[prop] = value;
-    }
-    return style;
-  };
-});
-
-function applyCompatibleStyle(node, styleObject) {
-  let tranformedStyles = {};
-
-  for (let prop in styleObject) {
-    let val = styleObject[prop];
-    if (StylePrefixer.shouldPrefix(prop)) {
-      StylePrefixer[prop](val, tranformedStyles);
-    } else {
-      tranformedStyles[prop] = val;
-    }
-  }
-
-  for (let prop in tranformedStyles) {
-    const transformValue = tranformedStyles[prop];
-    // if browser only accept -webkit-flex
-    // node.style.display = 'flex' will not work
-    if (Array.isArray(transformValue)) {
-      for (let i = 0; i < transformValue.length; i++) {
-        node.style[prop] = transformValue[i];
-      }
-    } else {
-      node.style[prop] = transformValue;
-    }
-  }
-}
 
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
   const registeredEventCounts = {};
 
-  function getNode(node) {
-    if (!node) return null;
-    if (node.nodeName === 'BODY') return document.body;
-    return NODES.get(node.$$id);
+  function setNode(vnode, node) {
+    node.$$id = vnode.$$id;
+    return NODES.set(vnode.$$id, node);
   }
 
-  function addEvent(name, vnode) {
-    if (isUnbubbleEvent(name)) {
-      addUnbubbleEvent(name, vnode);
+  function getNode(vnode) {
+    if (!vnode) return null;
+    if (vnode.nodeName === 'BODY') return document.body;
+    return NODES.get(vnode.$$id);
+  }
+
+  function deleteNode(vnode) {
+    return NODES.delete(vnode.$$id);
+  }
+
+  function addEvent(node, name) {
+    if (NO_BUBBLES_EVENTS[name]) {
+      addNoBubblesEventListener(node, name);
     } else {
       const registeredCount = registeredEventCounts[name];
 
@@ -163,9 +75,9 @@ export default ({ worker, tagNamePrefix = '' }) => {
     }
   }
 
-  function removeEvent(name, vnode) {
-    if (isUnbubbleEvent(name)) {
-      removeUnbubbleEvent(name, vnode);
+  function removeEvent(node, name) {
+    if (NO_BUBBLES_EVENTS[name]) {
+      removeNoBubblesEventListener(node, name);
     } else {
       registeredEventCounts[name]--;
       if (registeredEventCounts[name] === 0) {
@@ -174,44 +86,37 @@ export default ({ worker, tagNamePrefix = '' }) => {
     }
   }
 
-  const unbubbleEventStore = {};
-  function addUnbubbleEvent(name, vnode) {
-    const evtStore = unbubbleEventStore[name] = unbubbleEventStore[name] || {};
-    // el may not add to DOM Tree
-    setTimeout(() => {
-      const el = getNode(vnode);
-      if (el) {
-        el.addEventListener(name, evtStore[vnode.$$id] = function(evt) {
-          const target = { $$id: el.$$id };
-          worker.postMessage({
-            type: 'event',
-            event: {
-              type: name,
-              target,
-              currentTarget: target,
-              detail: evt.detail
-            }
-          });
-        });
-      }
-    }, 0);
+  function addNoBubblesEventListener(node, name) {
+    function listener(evt) {
+      const target = {
+        $$id: node.$$id
+      };
+      worker.postMessage({
+        type: 'event',
+        event: {
+          type: name,
+          target,
+          currentTarget: target,
+          detail: evt.detail
+        }
+      });
+    };
+    node[`__$${name}_listener__`] = listener;
+    node.addEventListener(name, listener);
   }
 
-  function removeUnbubbleEvent(name, vnode) {
-    const evtStore = unbubbleEventStore[name] = unbubbleEventStore[name] || {};
-    if (evtStore[vnode.$$id]) {
-      const el = getNode(vnode);
-      el && el.removeEventListener(name, evtStore[vnode.$$id]);
-      delete evtStore[vnode.$$id];
+  function removeNoBubblesEventListener(node, name) {
+    const listener = node[`__$${name}_listener__`];
+    if (listener) {
+      node.removeEventListener(name, listener);
+      node[`__$${name}_listener__`] = null;
     }
   }
 
   let touch;
   function getTouch(e) {
-    let t =
-      e.changedTouches && e.changedTouches[0] ||
-      e.touches && e.touches[0] ||
-      e;
+    let t = e.changedTouches && e.changedTouches[0] ||
+      e.touches && e.touches[0] || e;
     return t && { pageX: t.pageX, pageY: t.pageY };
   }
 
@@ -294,12 +199,13 @@ export default ({ worker, tagNamePrefix = '' }) => {
       node = document.createTextNode(vnode.data);
     } else if (vnode.nodeType === 1) {
       node = document.createElement(tagNamePrefix + vnode.nodeName);
+
       if (vnode.className) {
         node.className = vnode.className;
       }
 
       if (vnode.style) {
-        applyCompatibleStyle(node, vnode.style);
+        setStyle(node, vnode.style);
       }
 
       if (vnode.attributes) {
@@ -322,15 +228,14 @@ export default ({ worker, tagNamePrefix = '' }) => {
 
       if (vnode.events) {
         for (let i = 0; i < vnode.events.length; i++) {
-          addEvent(vnode.events[i], vnode);
+          addEvent(node, vnode.events[i]);
         }
       }
     } else if (vnode.nodeType === 8) {
       node = document.createComment(vnode.data);
     }
 
-    node.$$id = vnode.$$id;
-    NODES.set(vnode.$$id, node);
+    setNode(vnode, node);
     return node;
   }
   // Returns "attributes" if it was an attribute mutation.
@@ -347,7 +252,9 @@ export default ({ worker, tagNamePrefix = '' }) => {
       let parent = getNode(vnode);
       if (removedNodes) {
         for (let i = removedNodes.length; i--;) {
-          parent.removeChild(getNode(removedNodes[i]));
+          let node = getNode(removedNodes[i]);
+          parent.removeChild(node);
+          deleteNode(node);
         }
       }
 
@@ -365,33 +272,33 @@ export default ({ worker, tagNamePrefix = '' }) => {
       }
     },
     attributes({ target, attributeName, newValue, style }) {
-      let vnode = target;
-      let node = getNode(vnode);
+      let node = getNode(target);
 
+      // TODO: some with `createNode`, should processed by one method
       if (style) {
-        applyCompatibleStyle(node, style);
+        setStyle(node, style);
       } else if (newValue == null) {
         node.removeAttribute(attributeName);
-      } else if (typeof newValue === 'object') {
+      } else if (typeof newValue === 'object' || typeof newValue === 'boolean') {
         node[attributeName] = newValue;
       } else {
         node.setAttribute(attributeName, newValue);
       }
     },
     characterData({ target, newValue }) {
-      let vnode = target;
-      let node = getNode(vnode);
+      let node = getNode(target);
       node[TEXT_CONTENT_ATTR] = newValue;
     },
     addEvent({ target, eventName }) {
-      addEvent(eventName, target);
+      let node = getNode(target);
+      addEvent(node, eventName);
     },
     removeEvent({ target, eventName }) {
-      removeEvent(eventName, target);
+      let node = getNode(target);
+      removeEvent(node, eventName);
     },
     canvasRenderingContext2D({ target, method, args, properties }) {
-      let vnode = target;
-      let canvas = getNode(vnode);
+      let canvas = getNode(target);
       let context = canvas.getContext('2d');
 
       if (properties) {
