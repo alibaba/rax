@@ -113,6 +113,11 @@ export default class Swiper extends PolymerElement {
 
   static get properties() {
     return {
+      current: {
+        type: Number,
+        value: 0,
+        reflectToAttribute: true
+      },
       currentPage: {
         type: Number,
         value: 1
@@ -170,42 +175,57 @@ export default class Swiper extends PolymerElement {
   ready() {
     // Be sure to add super.ready() or you won't get shadowRoot
     super.ready();
-
-    // init
     this.currentPage = this.current + 1;
     this.renderSwiper();
-
     afterNextRender(this, () => {
       Gestures.addListener(this, 'track', this.handleTrack);
     });
   }
 
   attributeChangedCallback(key, oldVal, newVal) {
-    if (key === 'circular') {
-      this.circular = newVal === 'true' || newVal === null;
-      if (oldVal !== null) {
-        if (this.timer) {
-          clearTimeout(this.timer);
+    super.attributeChangedCallback(key, oldVal, newVal);
+    switch (key) {
+      case 'circular':
+        this.circular = newVal === 'true' || newVal === null;
+        if (oldVal !== null) {
+          if (this.timer) {
+            clearTimeout(this.timer);
+          }
+          this.renderSwiper();
         }
-        this.renderSwiper();
-      }
-    }
-    if (key === 'autoplay') {
-      this.autoplay = newVal === 'true' || newVal === null;
-      if (oldVal !== null) {
-        if (newVal !== 'false') {
-          this.autoNext();
-        } else {
-          clearTimeout(this.timer);
+        break;
+      case 'autoplay':
+        this.autoplay = newVal === 'true' || newVal === null;
+        if (oldVal !== null) {
+          if (newVal !== 'false') {
+            this.autoNext();
+          } else {
+            clearTimeout(this.timer);
+          }
         }
-      }
+        break;
+      case 'indicator-dots':
+        this.indicatorDots = newVal === 'true';
+        break;
+      case 'vertical':
+        this.vertical = this.getAttribute('vertical') === 'true';
+        break;
+      case 'current':
+        if (oldVal !== null && oldVal !== newVal) {
+          if (this.timer) {
+            clearTimeout(this.timer);
+            this.autoNext();
+          }
+          this.setPage(Number(newVal) + 1);
+        }
+      default:
+        break;
     }
-    if (key === 'indicator-dots') {
-      this.indicatorDots = newVal === 'true';
-    }
-    if (key === 'vertical') {
-      this.vertical = this.getAttribute('vertical') === 'true';
-    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    Gestures.removeListener(this, 'track', this.handleTrack);
   }
 
   get isLoop() {
@@ -214,10 +234,6 @@ export default class Swiper extends PolymerElement {
 
   get isAutoplay() {
     return this.autoplay || this.autoplay === '';
-  }
-
-  get current() {
-    return Number(this.getAttribute('current')) || 0;
   }
 
   renderSwiper() {
@@ -447,17 +463,16 @@ export default class Swiper extends PolymerElement {
     this.indicators = this.children;
     this.childrenLength = this.children.length;
     this.translateOffset = 0;
-    this.setPage(this.currentPage);
+    this.setPage(this.currentPage, true);
   }
 
   emitChange(value) {
-    const current = value - 1;
-    this.setAttribute('current', current);
+    this.current = value - 1;
     const event = new CustomEvent('change', {
       bubbles: false,
       cancelable: true,
       detail: {
-        current
+        current: this.current
       }
     });
     this.dispatchEvent(event);
