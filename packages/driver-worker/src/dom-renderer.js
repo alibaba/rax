@@ -56,6 +56,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
   }
 
   function deleteNode(vnode) {
+    if (!vnode) return null;
     return NODES.delete(vnode.$$id);
   }
 
@@ -253,8 +254,10 @@ export default ({ worker, tagNamePrefix = '' }) => {
       if (removedNodes) {
         for (let i = removedNodes.length; i--;) {
           let node = getNode(removedNodes[i]);
-          parent.removeChild(node);
           deleteNode(node);
+          if (parent && node) {
+            parent.removeChild(node);
+          }
         }
       }
 
@@ -264,7 +267,10 @@ export default ({ worker, tagNamePrefix = '' }) => {
           if (!newNode) {
             newNode = createNode(addedNodes[i]);
           }
-          parent.insertBefore(newNode, nextSibling && getNode(nextSibling) || null);
+
+          if (parent) {
+            parent.insertBefore(newNode, nextSibling && getNode(nextSibling) || null);
+          }
         }
       }
     },
