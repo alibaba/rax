@@ -240,4 +240,27 @@ describe('CompositeComponent', function() {
     render(<BrokenRender />, container);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
+
+  it('should render correct when prevRenderedComponent did not generate nodes', () => {
+    let container = createNodeElement('div');
+    class Frag extends Component {
+      render() {
+        return [];
+      }
+    }
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        if (this.state.count === 0) {
+          return <Frag />;
+        }
+        return <div />;
+      }
+    }
+
+    const instance = render(<App />, container);
+    expect(container.childNodes.length).toBe(0);
+    instance.setState({count: 1});
+    expect(container.childNodes[0].tagName).toBe('DIV');
+  });
 });

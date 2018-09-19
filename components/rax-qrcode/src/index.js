@@ -41,18 +41,17 @@ class QRCode extends Component {
     const cells = codeData.modules;
     const tileWidth = this.width / cells.length;
     const tileHeight = this.height / cells.length;
-    this.canvas.getContext()
-      .then((ctx) => {
-        for (let r = 0; r < cells.length; ++r) {
-          const row = cells[r];
-          for (let c = 0; c < row.length; ++c) {
-            ctx.fillStyle = row[c] ? fillColor : blankColor;
-            const w = Math.ceil((c + 1) * tileWidth) - Math.floor(c * tileWidth);
-            const h = Math.ceil((r + 1) * tileHeight) - Math.floor(r * tileHeight);
-            ctx.fillRect(Math.round(c * tileWidth), Math.round(r * tileHeight), w, h);
-          }
-        }
-      });
+    const ctx = this.canvas.getContext();
+
+    for (let r = 0; r < cells.length; ++r) {
+      const row = cells[r];
+      for (let c = 0; c < row.length; ++c) {
+        ctx.fillStyle = row[c] ? fillColor : blankColor;
+        const w = Math.ceil((c + 1) * tileWidth) - Math.floor(c * tileWidth);
+        const h = Math.ceil((r + 1) * tileHeight) - Math.floor(r * tileHeight);
+        ctx.fillRect(Math.round(c * tileWidth), Math.round(r * tileHeight), w, h);
+      }
+    }
   }
 
   render() {

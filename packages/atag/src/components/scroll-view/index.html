@@ -78,8 +78,7 @@ export default class ScrollViewElement extends PolymerElement {
       if (scrollIntoView) {
         const el = document.getElementById(scrollIntoView);
         if (el) {
-          scrollX && this.scrollToY(el.offsetLeft);
-          scrollY && this.scrollToY(el.offsetTop);
+          el.scrollIntoView(true);
         }
       }
     });
@@ -94,35 +93,41 @@ export default class ScrollViewElement extends PolymerElement {
 
     this.expireCache(name);
 
+    const scrollX = this.getValue('scroll-x', 'boolean', false);
+    const scrollY = this.getValue('scroll-y', 'boolean', false);
+
     if (name === 'style' || name === 'scroll-x' || name === 'scroll-y') {
       let style = this.getAttribute('style') || '';
-      const scrollX = this.getValue('scroll-x', 'boolean', false);
-      const scrollY = this.getValue('scroll-y', 'boolean', false);
-
       style += scrollX ? 'overflow-x: scroll;' : 'overflow-x: hidden;';
       style += scrollY ? 'overflow-y: scroll;' : 'overflow-y: hidden;';
-
       afterNextRender(this, () => {
         this.setAttribute('style', style);
       });
-    } else if (name === 'scroll-top') {
-      const scrollY = this.getValue('scroll-y', 'boolean', false);
+    } else {
       const scrollTop = this.getValue('scroll-top', 'number', 0);
-      scrollY && this.scrollToY(scrollTop);
-    } else if (name === 'scroll-left') {
-      const scrollX = this.getValue('scroll-x', 'boolean', false);
       const scrollLeft = this.getValue('scroll-left', 'number', 0);
-      scrollX && this.scrollToX(scrollLeft);
-    } else if (name === 'scroll-into-view') {
-      const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
-      const scrollX = this.getValue('scroll-x', 'boolean', false);
-      const scrollY = this.getValue('scroll-y', 'boolean', false);
-      if (scrollIntoView) {
-        const el = document.getElementById(scrollIntoView);
-        if (el) {
-          scrollX && this.scrollToX(el.offsetLeft);
-          scrollY && this.scrollToY(el.offsetTop);
-        }
+      switch (name) {
+        case 'scroll-top':
+          scrollY && this.scrollToY(scrollTop);
+          break;
+        case 'scroll-left':
+          scrollX && this.scrollToX(scrollLeft);
+          break;
+        case 'scroll-into-view':
+          const scrollIntoView = this.getValue(
+            'scroll-into-view',
+            'string',
+            ''
+          );
+          if (scrollIntoView) {
+            const el = document.getElementById(scrollIntoView);
+            if (el) {
+              el.scrollIntoView(true);
+            }
+          }
+          break;
+        default:
+          break;
       }
     }
   }
@@ -335,14 +340,21 @@ export default class ScrollViewElement extends PolymerElement {
       value = this.getAttribute(name);
       this.saveToCache(name, value);
     }
-    if (type === 'boolean') {
-      return value === null
-        ? defaultValue
-        : value === '' || value === 'true' || value === true;
-    } else if (type === 'string') {
-      return value === null ? defaultValue : String(value);
-    } else if (type === 'number') {
-      return value === null ? defaultValue : Number(value);
+
+    switch (type) {
+      case 'boolean':
+        return value === null
+          ? defaultValue
+          : value === '' || value === 'true' || value === true;
+        break;
+      case 'string':
+        return value === null ? defaultValue : String(value);
+        break;
+      case 'number':
+        return value === null ? defaultValue : Number(value);
+        break;
+      default:
+        break;
     }
     throw Error(`unrecognized type of ${type}`);
   }
