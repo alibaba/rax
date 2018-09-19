@@ -284,14 +284,14 @@ export default ({ postMessage, addEventListener }) => {
     },
 
     setStyles(node, styles) {
-      let tranformedStyles = {};
+      let newStyles = node.style;
 
       for (let prop in styles) {
         let val = styles[prop];
-        tranformedStyles[prop] = convertUnit(val, prop);
+        newStyles[prop] = convertUnit(val, prop);
       }
-
-      node.style = Object.assign(node.style, tranformedStyles);
+      // Assign to style for trigger style update
+      node.style = newStyles;
     },
 
     beforeRender() {

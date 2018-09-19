@@ -91,6 +91,30 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[0].attributes.class).toBe('foo');
   });
 
+  it('setState callback triggered in componentWillMount', function() {
+    let container = createNodeElement('div');
+    let triggered = false;
+    class Foo extends Component {
+      constructor() {
+        super();
+        this.state = {};
+      }
+      componentWillMount() {
+        this.setState({
+          value: 'foo'
+        }, () => {
+          triggered = true;
+        });
+      }
+      render() {
+        return <span className={this.state.value} />;
+      }
+    }
+
+    render(<Foo />, container);
+    expect(triggered).toBe(true);
+  });
+
   it('will call all the normal life cycle methods', function() {
     var lifeCycles = [];
     let container = createNodeElement('div');
