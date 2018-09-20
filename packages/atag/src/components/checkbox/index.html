@@ -118,10 +118,11 @@ export default class CheckboxElement extends PolymerElement {
     this.checked = this.formInitialValue;
   };
 
-  clickHandler = () => {
+  clickHandler = (e) => {
     if (!this.disabled) {
       this.checked = !this.checked;
     }
+    e.stopPropagation();
   };
 
   changeHandler = (newVal, oldVal) => {
