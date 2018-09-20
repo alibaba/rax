@@ -219,6 +219,59 @@
   </div>
 
   <div class="card">
+    <h4 class="title">a-form</h4>
+    <div class="demo">
+      <a-form id="form">
+        <a-view style="margin: 8px">
+          <a-view>switch</a-view>
+          <a-switch name="switch"></a-switch>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>slider</a-view>
+          <a-slider name="slider" show-value></a-slider>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>input</a-view>
+          <a-input name="input" placeholder="please input here" />
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>radio</a-view>
+          <a-radio-group name="radio-group">
+            <a-label><a-radio value="radio1"></a-radio>radio1</a-label>
+            <a-label><a-radio value="radio2"></a-radio>radio2</a-label>
+          </radio-group>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>checkbox</a-view>
+          <a-checkbox-group name="checkbox">
+            <a-label><a-checkbox value="checkbox1"></a-checkbox>checkbox1</a-label>
+            <a-label><a-checkbox value="checkbox2"></a-checkbox>checkbox2</a-label>
+          </a-checkbox-group>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-button style="margin: 8px" formType="submit">Submit</a-button>
+          <a-button style="margin: 8px" formType="reset">Reset</a-button>
+        </a-view>
+        <p style="overflow-wrap: break-word;">
+          Submit Event: <span id="formSubmit">null</span>
+        </p>
+        <p style="overflow-wrap: break-word;">
+          Reset Event: <span id="formReset">null</span>
+        </p>
+      </a-form>
+    </div>
+  </div>
+
+  <script>
+    form.addEventListener('submit', function(e){
+      formSubmit.innerHTML = JSON.stringify(e.detail.value);
+    });
+    form.addEventListener('reset', function(e){
+      formReset.innerHTML = String(new Date);
+    });
+  </script>
+
+  <div class="card">
     <h4 class="title">a-progress</h4>
     <div class="demo">
       <a-progress class="progress-item" percent="30"></a-progress>
