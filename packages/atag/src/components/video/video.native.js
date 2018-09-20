@@ -59,11 +59,12 @@ export default class VideoElement extends PolymerElement {
     super.connectedCallback();
 
     const container = this.container = document.createElement('object');
-    container.type = 'application/view';
+    container.setAttribute('type', 'application/view');
     container.className = 'atag-native-video';
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);
+
     const controls = this._controlsParamEl = VideoElement.createParamTag(
       'controls',
       this.controls ? 'true' : 'false'
