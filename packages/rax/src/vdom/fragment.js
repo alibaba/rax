@@ -33,15 +33,9 @@ class FragmentComponent extends NativeComponent {
     if (childMounter) {
       childMounter(fragment, parent);
     } else {
-      let isFragmentParent = Array.isArray(parent);
       for (let i = 0; i < fragment.length; i++) {
         let child = fragment[i];
-        // When the parent is also a fragment
-        if (isFragmentParent) {
-          parent.push(child);
-        } else {
-          Host.driver.appendChild(child, parent);
-        }
+        Host.driver.appendChild(child, parent);
       }
     }
 
