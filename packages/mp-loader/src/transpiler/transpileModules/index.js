@@ -7,4 +7,4 @@ const tagName = require('./tagName');
 const checked = require('./checked');
 const template = require('./template');
 
-module.exports = [checked, klass, events, condition, list, bind, template, tagName];
+module.exports = [checked, klass, events, list, condition, bind, template, tagName];
