@@ -16,14 +16,15 @@ const port = envConfig.port;
 const webUrl = envConfig.protocol + '//' + ipv4 + ':' + port;
 
 qrcode.generate(webUrl, { small: true });
-console.log(
-  'Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n',
-);
+console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n');
 
 const webpackConfigDev = webpackMerge(webpackConfigBase, {
   devtool: 'inline-module-source-map',
   entry: {
     index: [pathConfig.appManifest],
+  },
+  output: {
+    publicPath: '/',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -37,9 +38,7 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
 
 Object.keys(webpackConfigDev.entry).forEach((point) => {
   // hot reaload client.
-  webpackConfigDev.entry[point].unshift(
-    require.resolve('../hmr/webpackHotDevClient.entry'),
-  );
+  webpackConfigDev.entry[point].unshift(require.resolve('../hmr/webpackHotDevClient.entry'));
 });
 
 module.exports = webpackConfigDev;
