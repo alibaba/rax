@@ -283,7 +283,8 @@
   <div class="card">
     <h4 class="title">a-swiper</h4>
     <div class="demo">
-      <a-swiper indicator-dots=true autoplay="true" interval="2000" duration="500">
+        <a-view>current=1</a-view>
+      <a-swiper current=1 indicator-dots=true>
         <a-swiper-item>
           <a-view style="display: block;height: 150px;background-color: red"></a-view>
         </a-swiper-item>
@@ -294,6 +295,33 @@
           <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
         </a-swiper-item>
       </a-swiper>
+
+      <a-view>circular=true</a-view>
+      <a-swiper circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+
+      <a-view>vertical=true</a-view>
+      <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+      
     </div>
   </div>
 
