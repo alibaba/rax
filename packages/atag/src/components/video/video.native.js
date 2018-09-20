@@ -237,6 +237,19 @@ export default class VideoElement extends PolymerElement {
   }
 
   /**
+   * stop video play
+   */
+  stop() {
+    if (isIOS && this._playStatusParamsEl) {
+      this._playStatusParamsEl.setAttribute('value', '2');
+    } else if (isAndroid) {
+      this.callNativeControl('stop', {});
+    } else {
+      console.warn('Play status params el not exists');
+    }
+  }
+
+  /**
    * interface of entering fullscreen
    */
   requestFullScreen() {
