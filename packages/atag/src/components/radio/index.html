@@ -128,7 +128,7 @@ export default class RadioElement extends PolymerElement {
   }
 
   clickHandler = e => {
-    const event = new Custom('event', {
+    const event = new Custom('click', {
       bubbles: false
     })
     this.$.radio.dispatchEvent(event);
