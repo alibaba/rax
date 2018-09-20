@@ -111,9 +111,9 @@ export default class RadioElement extends PolymerElement {
 
   ready() {
     super.ready();
-    
+
     // label target
-    this.setAttribute('a-label-target', "");
+    this.setAttribute('a-label-target', '');
     this.radio = this.$.radio;
     this.formInitialValue = this.checked;
     this.addEventListener('click', this.clickHandler);
@@ -122,18 +122,22 @@ export default class RadioElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    
+
     this.removeEventListener('click', this.clickHandler);
     window.removeEventListener('_formReset', this._handlerReset, true);
   }
 
-  clickHandler = () => {
-    this.$.radio.click();
+  clickHandler = e => {
+    const event = new Custom('click', {
+      bubbles: false
+    })
+    this.$.radio.dispatchEvent(event);
+    e.stopPropagation();
   };
 
-  changeHandler = (e) => {
+  changeHandler = e => {
     e.stopPropagation();
-    dispatchChange(this.checked); 
+    dispatchChange(this.checked);
   };
 
   dispatchChange = value => {
@@ -141,11 +145,11 @@ export default class RadioElement extends PolymerElement {
       bubbles: true,
       cancelable: true,
       detail: {
-        value,
+        value
       }
     });
     this.dispatchEvent(customEvent);
-  }
+  };
 
   _handlerReset = () => {
     this.radio.checked = this.checked = this.formInitialValue;
