@@ -38,7 +38,6 @@
         position: absolute;
         top: 0;
         left: 0;
-        border: 1px solid rgba(0, 0, 0, 0);
         transform: scale(0.5);
         transform-origin: 0 0;
         box-sizing: border-box;
@@ -181,6 +180,26 @@ import { PolymerElement } from '@polymer/polymer';
 export default class Button extends PolymerElement {
   static get is() {
     return 'a-button';
+  }
+
+  static get properties() {
+    return {
+      disabled: {
+        type: String,
+        value: 'false',
+        reflectToAttribute: true
+      },
+      plain: {
+        type: String,
+        value: 'false',
+        reflectToAttribute: true
+      },
+      loading: {
+        type: String,
+        value: 'false',
+        reflectToAttribute: true
+      }
+    }
   }
 
   get formType() {
