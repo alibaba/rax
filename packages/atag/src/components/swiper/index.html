@@ -3,12 +3,9 @@
     <style>
       :host {
         width: 100%;
-        height: 100%;
+        height: 150px;
         display: inline-block;
         overflow: hidden;
-      }
-
-      .swiper {
         position: relative;
       }
 
@@ -39,48 +36,22 @@
         -webkit-flex-direction: column;
       }
 
-      .swiper .swiper-pagination {
+      .swiper-pagination {
         position: absolute;
-      }
-
-      .swiper .swiper-pagination .swiper-pagination-bullet {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        transition: all .5s ease;
-        -webkit-transition: all .5s ease;
-      }
-
-      .swiper .swiper-pagination-bullet {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #000000;
-        transition: all .5s ease;
-        -webkit-transition: all .5s ease;
-      }
-
-      .swiper.vertical .swiper-pagination {
-        right: 10px;
-        top: 50%;
-        transform: translate3d(0, -50%, 0);
-        -webkit-transform: translate3d(0, -50%, 0);
-      }
-
-      .swiper.vertical .swiper-pagination .swiper-pagination-bullet {
-        display: block;
-        margin: 6px 0;
-      }
-
-      .swiper.horizontal .swiper-pagination {
         bottom: 10px;
+        display: flex;
+        display: -webkit-flex;
+        justify-content: center;
         width: 100%;
-        text-align: center;
-
       }
 
-      .swiper.horizontal .swiper-pagination .swiper-pagination-bullet {
-        display: inline-block;
+      .swiper-pagination .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        transition: all .5s ease;
+        -webkit-transition: all .5s ease;
+        background-color: #000000;
         margin: 0 3px;
       }
     </style>
@@ -88,11 +59,11 @@
       <div id="swiperWrap" class="swiper-wrap" on-transitionend="_onTransitionEnd">
         <slot></slot>
       </div>
-      <div class="swiper-pagination" style$="{{showIndicatorDotsStyle}}">
-        <template is="dom-repeat" items="{{indicators}}" index-as="index">
-          <div class="swiper-pagination-bullet" style$="{{activeStyle(index)}}"></div>
-        </template>
-      </div>
+    </div>
+    <div class="swiper-pagination" style$="{{showIndicatorDotsStyle}}">
+      <template is="dom-repeat" items="{{indicators}}" index-as="index">
+        <div class="swiper-pagination-bullet" style$="{{activeStyle(index)}}"></div>
+      </template>
     </div>
   </template>
 </dom-module>
