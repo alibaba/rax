@@ -14,8 +14,7 @@
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-
-import { afterNextRender, handlerSubmit } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
 
 export default class FormElement extends PolymerElement {
   static get is() {
@@ -29,22 +28,65 @@ export default class FormElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('_buttonSubmit', this._handlerSubmit);
-    this.removeEventListener('_buttonReset', this._handlerReset);
+    this.removeEventListener('_buttonSubmit', this._submitHandler);
+    this.removeEventListener('_buttonReset', this._resetHandler);
   }
 
   _listen() {
     afterNextRender(this, () => {
-      this.addEventListener('_buttonSubmit', this._handlerSubmit);
-      this.addEventListener('_buttonReset', this._handlerReset);
+      this.addEventListener('_buttonSubmit', this._submitHandler);
+      this.addEventListener('_buttonReset', this._resetHandler);
     })
   }
 
-  _handlerSubmit() {
-    handlerSubmit(this);
+  _submitHandler() {
+    /**
+     * Get the value of all form elements in a child element
+     * format e.detail
+     * {
+     *   value: {
+     *      [name]: 'value'
+     *   }
+     * }
+     */
+    const form = this;
+    const formFields = form.querySelectorAll('[name]');
+    const value = Object.create(null);
+    [...formFields].forEach(node => {
+      const name = node.getAttribute('name');
+      switch (node.localName) {
+        case 'a-checkbox-group':
+          const arr = [...node.querySelectorAll('a-checkbox')].filter(
+            checkbox => checkbox.checked
+          );
+          value[name] = arr.map(checkbox => checkbox.value);
+          break;
+        case 'a-switch':
+          value[name] = node.checked;
+          break;
+        case 'a-radio-group':
+          const checkedRadio = node.querySelector('[checked]');
+          if (checkedRadio) {
+            value[name] = node.querySelector('[checked]').value;
+          } else {
+            value[name] = '';
+          }
+          break;
+        default:
+          value[name] = node.value;
+      }
+    });
+    const evt = new CustomEvent('submit', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        value
+      }
+    });
+    form.dispatchEvent(evt);
   }
 
-  _handlerReset() {
+  _resetHandler() {
     /**
      * reset:
      * The initial values ​​of all form elements are logged when the component is created,

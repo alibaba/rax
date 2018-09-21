@@ -340,6 +340,51 @@
   </div>
 
   <div class="card">
+    <h4 class="title">a-scroll-view</h4>
+    <div class="demo">
+      <a-scroll-view id="scrollview" scroll-y="true" class="scroll-view" scroll-into-view="red" style="height: 200px;"
+        scroll-with-animation>
+        <a-view id="blue" style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="red" style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="green" style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="yellow" style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="blue" style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="red" style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="green" style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="yellow" style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="blue" style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="red" style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="green" style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="yellow" style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+      </a-scroll-view>
+
+      <p style="overflow-wrap: break-word;">
+        Scroll Event: <span id="scrollEvent">null</span>
+      </p>
+      <p>
+        Scroll To Upper Event: <span id="scrolltoupperEvent">null</span>
+      </p>
+      <p>
+        Scroll to Lower Event: <span id="scrolltolowerEvent">null</span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    scrollview.addEventListener('scroll', function(e){
+      scrollEvent.innerHTML = JSON.stringify(e.detail);
+    });
+
+    scrollview.addEventListener('scrolltoupper', function(e){
+      scrolltoupperEvent.innerHTML = +new Date;
+    });
+
+    scrollview.addEventListener('scrolltolower', function(e){
+      scrolltolowerEvent.innerHTML = +new Date;
+    });
+  </script>
+  
+  <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
       <a-picker-view style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;" value="[3,5,5]">
@@ -413,18 +458,6 @@
           <a-view value="31">31日</a-view>
         </a-picker-view-column>
       </a-picker-view>
-    </div>
-  </div>
-  <div class="card">
-    <h4 class="title">a-scroll-view</h4>
-    <div class="demo">
-      <a-scroll-view scroll-y="true" class="scroll-view" scroll-into-view="red" style="height: 50px;"
-        scroll-with-animation>
-        <a-view id="blue" style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
-        <a-view id="red" style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
-        <a-view id="green" style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
-        <a-view id="yellow" style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
-      </a-scroll-view>
     </div>
   </div>
 </body>

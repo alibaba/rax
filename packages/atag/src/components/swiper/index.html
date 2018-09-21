@@ -71,11 +71,8 @@
 <script>
 import 'components/swiper/swiper-item';
 import { PolymerElement } from '@polymer/polymer';
-import {
-  afterNextRender,
-  GestureEventListeners,
-  Gestures
-} from '../../shared/utils/';
+import afterNextRender from '../../shared/afterNextRender';
+import Gestures from '../../shared/gestures';
 
 export default class Swiper extends PolymerElement {
   static get is() {

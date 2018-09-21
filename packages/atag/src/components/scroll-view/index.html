@@ -1,7 +1,6 @@
 <dom-module id="a-scroll-view">
   <template>
     <style>
-      /* shadow DOM styles go here */
       :host {
         position: relative;
         display: inline-block;
@@ -14,14 +13,15 @@
         scroll-behavior: smooth;
       }
     </style>
-    <!-- shadow DOM goes here -->
     <slot></slot>
   </template>
 </dom-module>
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender, throttle, easeInOutCubic } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
+import throttle from '../../shared/throttle';
+import easeInOutCubic from '../../shared/easeInOutCubic';
 
 export default class ScrollViewElement extends PolymerElement {
   static get is() {
@@ -134,6 +134,7 @@ export default class ScrollViewElement extends PolymerElement {
 
   ready() {
     super.ready();
+    // Improving Scroll Performance with Passive Event Listeners
     this.addEventListener('scroll', this.handleScroll, true);
   }
 
