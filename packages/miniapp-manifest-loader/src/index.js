@@ -2,7 +2,11 @@ module.exports = function(source) {
   const manifestJson = typeof source === 'string' ? JSON.parse(source) : source;
   const pages = manifestJson.pages;
   // Resolve to miniapp-web-renderer local absolute path
-  const webRendererPathname = require.resolve('miniapp-web-renderer');
+  let webRendererPathname = require.resolve('miniapp-web-renderer');
+
+  if (process.platform == 'win32') {
+    webRendererPathname = webRendererPathname.replace(/\\/g, '/');
+  }
 
   return `
 import { render } from '${webRendererPathname}';
