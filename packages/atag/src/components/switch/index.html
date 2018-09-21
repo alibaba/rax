@@ -114,6 +114,7 @@ export default class SwitchElement extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('click', this.handleClick);
     window.removeEventListener('_formReset', this._handleReset, true);
   }
 
