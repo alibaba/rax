@@ -7,10 +7,12 @@
           display: inline-block;
           overflow: hidden;
         }
+
         .swiper {
           position: relative;
           height: 100%;
         }
+        
         .swiper .swiper-wrap {
           display: flex;
           display: -webkit-flex;
@@ -19,24 +21,29 @@
           transition: all 0ms ease;
           -webkit-transition: all 0ms ease;
         }
-        .swiper .swiper-wrap>div {
+
+        .swiper .swiper-wrap > div {
           overflow: hidden;
           flex-shrink: 0;
           -webkit-flex-shrink: 0;
           width: 100%;
           height: 100%;
         }
+
         .swiper.horizontal .swiper-wrap {
           flex-direction: row;
           -webkit-flex-direction: row;
         }
+
         .swiper.vertical .swiper-wrap {
           flex-direction: column;
           -webkit-flex-direction: column;
         }
+
         .swiper .swiper-pagination {
           position: absolute;
         }
+
         .swiper .swiper-pagination .swiper-pagination-bullet {
           width: 8px;
           height: 8px;
@@ -44,6 +51,7 @@
           transition: all .5s ease;
           -webkit-transition: all .5s ease;
         }
+
         .swiper .swiper-pagination-bullet {
           width: 8px;
           height: 8px;
@@ -52,6 +60,7 @@
           transition: all .5s ease;
           -webkit-transition: all .5s ease;
         }
+
         .swiper.vertical .swiper-pagination {
           right: 10px;
           top: 50%;
@@ -62,17 +71,19 @@
           display: block;
           margin: 6px 0;
         }
+
         .swiper.horizontal .swiper-pagination {
           bottom: 10px;
           width: 100%;
           text-align: center;
         }
+
         .swiper.horizontal .swiper-pagination .swiper-pagination-bullet {
           display: inline-block;
           margin: 0 3px;
         }
       </style>
-      <div class$="[[getContainerClass()]]">
+      <div on-touchmove="_handleSwiperTouchMove" class$="[[getContainerClass()]]">
         <div id="swiperWrap" class="swiper-wrap" on-transitionend="_onTransitionEnd">
           <slot></slot>
         </div>
@@ -268,6 +279,7 @@ export default class Swiper extends PolymerElement {
     if (this.isAutoplay) {
       clearTimeout(this.timer);
     }
+
     this.startPos = !this.vertical ? x : y;
     this.delta = 0;
     this.startTranslate = this._getTranslateOfPage(this.currentPage);
@@ -278,6 +290,13 @@ export default class Swiper extends PolymerElement {
     document.addEventListener('touchmove', this._onTouchMove, false);
     document.addEventListener('touchend', this._onTouchEnd, false);
   };
+
+  _handleSwiperTouchMove = (event) => {
+    // Prevent scrolling in swipper when user is dragging
+    if (this.dragging) {
+      event.preventDefault();
+    }
+  }
 
   _onTouchMove = event => {
     this.delta = this._getTouchPos(event) - this.startPos;
@@ -322,14 +341,15 @@ export default class Swiper extends PolymerElement {
       this._revert();
     }
   };
-  prev() {
+
+  prev = () => {
     const page = this.currentPage;
     if (page > 1 || this.isLoop) {
       this.setPage(page - 1);
     } else {
       this._revert();
     }
-  }
+  };
 
   setPage(page, noAnimation) {
     this.lastPage = this.currentPage;
@@ -375,9 +395,9 @@ export default class Swiper extends PolymerElement {
     return this.lastPage !== this.currentPage;
   }
 
-  _revert() {
+  _revert = () => {
     this.setPage(this.currentPage);
-  }
+  };
 
   _setTranslate(value) {
     const translateName = !this.vertical ? 'translateX' : 'translateY';
@@ -432,6 +452,7 @@ export default class Swiper extends PolymerElement {
       propName
     ];
   }
+
   _removeLoop() {
     if (this.duplicateFirstChild) {
       this.duplicateFirstChild.parentElement.removeChild(
@@ -463,7 +484,7 @@ export default class Swiper extends PolymerElement {
     this.dispatchEvent(event);
   }
 
-  autoNext() {
+  autoNext = () => {
     this.timer = setTimeout(() => {
       // When looping page 1 is the last view
       if (this.isLoop && this.currentPage === 1) {
@@ -509,10 +530,7 @@ export default class Swiper extends PolymerElement {
       case 'start':
         const { dx, dy } = e.detail;
         const direction = Math.abs(dy) - Math.abs(dx);
-        if (!this.vertical && direction < 0) {
-          this._onTouchStart(e.detail);
-        }
-        if (this.vertical && direction > 0) {
+        if ((!this.vertical && direction < 0) || (this.vertical && direction > 0)) {
           this._onTouchStart(e.detail);
         }
         break;

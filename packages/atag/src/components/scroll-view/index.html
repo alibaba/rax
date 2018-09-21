@@ -67,8 +67,8 @@ export default class ScrollViewElement extends PolymerElement {
       false
     );
 
-    style += scrollX ? 'overflow-x: auto;' : 'overflow-x: hidden;';
-    style += scrollY ? 'overflow-y: auto;' : 'overflow-y: hidden;';
+    this.style.overflowX = scrollX ? 'auto' : 'hidden';
+    this.style.overflowY = scrollY ? 'auto' : 'hidden';
 
     // Cannot override styles directly through innerHTML on mobile devices
     this.setAttribute('style', style);
@@ -98,12 +98,8 @@ export default class ScrollViewElement extends PolymerElement {
     const scrollY = this.getValue('scroll-y', 'boolean', false);
 
     if (name === 'style' || name === 'scroll-x' || name === 'scroll-y') {
-      let style = this.getAttribute('style') || '';
-      style += scrollX ? 'overflow-x: scroll;' : 'overflow-x: hidden;';
-      style += scrollY ? 'overflow-y: scroll;' : 'overflow-y: hidden;';
-      afterNextRender(this, () => {
-        this.setAttribute('style', style);
-      });
+      this.style.overflowX = scrollX ? 'auto' : 'hidden';
+      this.style.overflowY = scrollY ? 'auto' : 'hidden';
     } else {
       const scrollTop = this.getValue('scroll-top', 'number', 0);
       const scrollLeft = this.getValue('scroll-left', 'number', 0);
@@ -361,7 +357,7 @@ export default class ScrollViewElement extends PolymerElement {
       default:
         break;
     }
-    throw Error(`unrecognized type of ${type}`);
+    console.error(`unrecognized type of ${type}`);
   }
 
   valueCache = {};
