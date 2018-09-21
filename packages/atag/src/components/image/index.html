@@ -66,7 +66,6 @@ export default class ImageElement extends PolymerElement {
 
   _init() {
     if (!this.src) return;
-
     // Figure out if this image is within view
     ImageElement.addIntersectListener(this, () => {
       this._load();
@@ -80,13 +79,11 @@ export default class ImageElement extends PolymerElement {
    * Method which renders the DOM elements and displays any preview image
    * @private
    */
-   _render() {
+  _render() {
     if (this._rendered === true) return;
-
+    this.observerMode(this.mode, '');
     const containerStyle = this.$.container.style;
     containerStyle.backgroundImage = `url(${this.src})`;
-    this.observerMode(this.mode, '');
-
     // Flag as rendered
     this._rendered = true;
   }
@@ -97,9 +94,10 @@ export default class ImageElement extends PolymerElement {
    */
   _load() {
     this._loading = true;
-    const image = this.image = new Image();
-    
-    image.onload = (e) => {
+    const image = (this.image = new Image());
+    image.src = this.src;
+
+    image.onload = e => {
       this._loading = false;
       // Dispatch custom load event
       const customEvent = new CustomEvent('load', {
@@ -111,9 +109,10 @@ export default class ImageElement extends PolymerElement {
         }
       });
       this.dispatchEvent(customEvent);
+      this._render();
     };
 
-    image.onerror = (e) => {
+    image.onerror = e => {
       const customEvent = new CustomEvent('error', {
         bubbles: false,
         composed: true,
@@ -123,9 +122,6 @@ export default class ImageElement extends PolymerElement {
       });
       this.dispatchEvent(customEvent);
     };
-    image.src = this.src;
-
-    this._render();
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -135,10 +131,8 @@ export default class ImageElement extends PolymerElement {
     switch (name) {
       case 'src':
         // If the src is changed then we need to reset and start again
-        if (this.image) {
-          this._reset();
-          this._init();
-        }
+        this._reset();
+        this._init();
         break;
     }
   }
@@ -205,11 +199,10 @@ export default class ImageElement extends PolymerElement {
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          imageStyle.visibility = 'hidden';
-          imageStyle.width = '100%';
-          containerStyle.height = 'auto';
+          const hostWidth = parseFloat(this.style.width);
+          this.style.height =
+            hostWidth * this.image.height / this.image.width + 'px';
           containerStyle.backgroundSize = 'contain';
-          container.appendChild(this.image);
           break;
         default:
           break;
@@ -221,12 +214,11 @@ export default class ImageElement extends PolymerElement {
    * Reset all private values
    * @private
    */
-   _reset() {
+  _reset() {
     this._inited = false;
     this._rendered = false;
     this._loading = false;
   }
-
 }
 
 customElements.define(ImageElement.is, ImageElement);
