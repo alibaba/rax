@@ -1,72 +1,89 @@
 <dom-module id="a-swiper">
-  <template>
-    <style>
-      :host {
-        width: 100%;
-        height: 150px;
-        display: inline-block;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .swiper .swiper-wrap {
-        display: flex;
-        display: -webkit-flex;
-        width: 100%;
-        height: 100%;
-        transition: all 0ms ease;
-        -webkit-transition: all 0ms ease;
-      }
-
-      .swiper .swiper-wrap>div {
-        overflow: hidden;
-        flex-shrink: 0;
-        -webkit-flex-shrink: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      .swiper.horizontal .swiper-wrap {
-        flex-direction: row;
-        -webkit-flex-direction: row;
-      }
-
-      .swiper.vertical .swiper-wrap {
-        flex-direction: column;
-        -webkit-flex-direction: column;
-      }
-
-      .swiper-pagination {
-        position: absolute;
-        bottom: 10px;
-        display: flex;
-        display: -webkit-flex;
-        justify-content: center;
-        width: 100%;
-      }
-
-      .swiper-pagination .swiper-pagination-bullet {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        transition: all .5s ease;
-        -webkit-transition: all .5s ease;
-        background-color: #000000;
-        margin: 0 3px;
-      }
-    </style>
-    <div class$="[[getContainerClass()]]">
-      <div id="swiperWrap" class="swiper-wrap" on-transitionend="_onTransitionEnd">
-        <slot></slot>
+    <template>
+      <style>
+        :host {
+          width: 100%;
+          height: 150px;
+          display: inline-block;
+          overflow: hidden;
+        }
+        .swiper {
+          position: relative;
+          height: 100%;
+        }
+        .swiper .swiper-wrap {
+          display: flex;
+          display: -webkit-flex;
+          width: 100%;
+          height: 100%;
+          transition: all 0ms ease;
+          -webkit-transition: all 0ms ease;
+        }
+        .swiper .swiper-wrap>div {
+          overflow: hidden;
+          flex-shrink: 0;
+          -webkit-flex-shrink: 0;
+          width: 100%;
+          height: 100%;
+        }
+        .swiper.horizontal .swiper-wrap {
+          flex-direction: row;
+          -webkit-flex-direction: row;
+        }
+        .swiper.vertical .swiper-wrap {
+          flex-direction: column;
+          -webkit-flex-direction: column;
+        }
+        .swiper .swiper-pagination {
+          position: absolute;
+        }
+        .swiper .swiper-pagination .swiper-pagination-bullet {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          transition: all .5s ease;
+          -webkit-transition: all .5s ease;
+        }
+        .swiper .swiper-pagination-bullet {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #000000;
+          transition: all .5s ease;
+          -webkit-transition: all .5s ease;
+        }
+        .swiper.vertical .swiper-pagination {
+          right: 10px;
+          top: 50%;
+          transform: translate3d(0, -50%, 0);
+          -webkit-transform: translate3d(0, -50%, 0);
+        }
+        .swiper.vertical .swiper-pagination .swiper-pagination-bullet {
+          display: block;
+          margin: 6px 0;
+        }
+        .swiper.horizontal .swiper-pagination {
+          bottom: 10px;
+          width: 100%;
+          text-align: center;
+        }
+        .swiper.horizontal .swiper-pagination .swiper-pagination-bullet {
+          display: inline-block;
+          margin: 0 3px;
+        }
+      </style>
+      <div class$="[[getContainerClass()]]">
+        <div id="swiperWrap" class="swiper-wrap" on-transitionend="_onTransitionEnd">
+          <slot></slot>
+        </div>
+        <div class="swiper-pagination" style$="{{showIndicatorDotsStyle}}">
+          <template is="dom-repeat" items="{{indicators}}" index-as="index">
+            <div class="swiper-pagination-bullet" style$="{{activeStyle(index)}}"></div>
+          </template>
+        </div>
       </div>
-    </div>
-    <div class="swiper-pagination" style$="{{showIndicatorDotsStyle}}">
-      <template is="dom-repeat" items="{{indicators}}" index-as="index">
-        <div class="swiper-pagination-bullet" style$="{{activeStyle(index)}}"></div>
-      </template>
-    </div>
-  </template>
-</dom-module>
+    </template>
+  </dom-module>
 
 <script>
 import 'components/swiper/swiper-item';
@@ -374,7 +391,7 @@ export default class Swiper extends PolymerElement {
   }
 
   _getTouchPos(event) {
-    const key = !this.vertical ? 'pageX' : 'pageY';
+    const key = !this.vertical ? 'clientX' : 'clientY';
     return event.changedTouches ? event.changedTouches[0][key] : event[key];
   }
 
