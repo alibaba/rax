@@ -22,6 +22,7 @@ import { PolymerElement } from '@polymer/polymer';
 import afterNextRender from '../../shared/afterNextRender';
 import throttle from '../../shared/throttle';
 import easeInOutCubic from '../../shared/easeInOutCubic';
+import supportsPassive from '../../shared/supportsPassive';
 
 export default class ScrollViewElement extends PolymerElement {
   static get is() {
@@ -71,7 +72,7 @@ export default class ScrollViewElement extends PolymerElement {
 
     // Cannot override styles directly through innerHTML on mobile devices
     this.setAttribute('style', style);
-    // this.scrollTop = 100;
+
     afterNextRender(this, () => {
       scrollY && scrollTop && this.scrollToY(scrollTop);
       scrollX && scrollLeft && this.scrollToX(scrollLeft);
@@ -135,7 +136,10 @@ export default class ScrollViewElement extends PolymerElement {
   ready() {
     super.ready();
     // Improving Scroll Performance with Passive Event Listeners
-    this.addEventListener('scroll', this.handleScroll, true);
+    this.addEventListener('scroll', this.handleScroll, supportsPassive ? {
+        capture: true,
+        passive: true
+      } : true);
   }
 
   scrollingXId = 0;
