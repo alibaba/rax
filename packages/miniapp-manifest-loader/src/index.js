@@ -2,14 +2,14 @@ module.exports = function(source) {
   const manifestJson = typeof source === 'string' ? JSON.parse(source) : source;
   const pages = manifestJson.pages;
   // Resolve to miniapp-web-renderer local absolute path
-  let webRendererPathname = require.resolve('miniapp-web-renderer');
+  let webRendererAbsolutePath = require.resolve('miniapp-web-renderer');
 
   if (process.platform == 'win32') {
-    webRendererPathname = webRendererPathname.replace(/\\/g, '/');
+    webRendererAbsolutePath = webRendererAbsolutePath.replace(/\\/g, '/');
   }
 
   return `
-import { render } from '${webRendererPathname}';
+import { render } from '${webRendererAbsolutePath}';
 
 function _requireReturnDefault(obj) { return obj && obj.__esModule ? obj.default : obj; }
 
