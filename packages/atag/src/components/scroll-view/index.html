@@ -42,90 +42,55 @@ export default class ScrollViewElement extends PolymerElement {
     return [
       'scroll-x',
       'scroll-y',
-      'upper-threshold',
-      'lower-threshold',
       'scroll-top',
       'scroll-left',
-      'scroll-with-animation'
+      'scroll-into-view'
     ];
   }
 
   connectedCallback() {
     super.connectedCallback();
-
-    let style = this.getAttribute('style') || '';
-    const scrollX = this.getValue('scroll-x', 'boolean', false);
-    const scrollY = this.getValue('scroll-y', 'boolean', false);
-    const upperThreshold = this.getValue('upper-threshold', 'number', 50);
-    const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
-    const scrollTop = this.getValue('scroll-top', 'number', 0);
-    const scrollLeft = this.getValue('scroll-left', 'number', 0);
-    const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
-    const scrollWithAnimation = this.getValue(
-      'scroll-with-animation',
-      'boolean',
-      false
-    );
-
-    this.style.overflowX = scrollX ? 'auto' : 'hidden';
-    this.style.overflowY = scrollY ? 'auto' : 'hidden';
-
-    // Cannot override styles directly through innerHTML on mobile devices
-    this.setAttribute('style', style);
-
-    afterNextRender(this, () => {
-      scrollY && scrollTop && this.scrollToY(scrollTop);
-      scrollX && scrollLeft && this.scrollToX(scrollLeft);
-      if (scrollIntoView) {
-        const el = document.getElementById(scrollIntoView);
-        if (el) {
-          el.scrollIntoView(true);
-        }
-      }
-    });
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
-
     this.expireCache(name);
-
+    
     const scrollX = this.getValue('scroll-x', 'boolean', false);
     const scrollY = this.getValue('scroll-y', 'boolean', false);
-
-    if (name === 'style' || name === 'scroll-x' || name === 'scroll-y') {
-      this.style.overflowX = scrollX ? 'auto' : 'hidden';
-      this.style.overflowY = scrollY ? 'auto' : 'hidden';
-    } else {
-      const scrollTop = this.getValue('scroll-top', 'number', 0);
-      const scrollLeft = this.getValue('scroll-left', 'number', 0);
-      switch (name) {
-        case 'scroll-top':
-          scrollY && this.scrollToY(scrollTop);
-          break;
-        case 'scroll-left':
-          scrollX && this.scrollToX(scrollLeft);
-          break;
-        case 'scroll-into-view':
-          const scrollIntoView = this.getValue(
-            'scroll-into-view',
-            'string',
-            ''
-          );
-          if (scrollIntoView) {
-            const el = document.getElementById(scrollIntoView);
-            if (el) {
-              el.scrollIntoView(true);
+ 
+    switch (name) {
+      case 'scroll-x':
+      case 'scroll-y':
+        this.style.overflowX = scrollX ? 'auto' : 'hidden';
+        this.style.overflowY = scrollY ? 'auto' : 'hidden';
+        break;
+      case 'scroll-top':
+        const scrollTop = this.getValue('scroll-top', 'number', 0);
+        this.scrollToY(scrollTop);
+        break;
+      case 'scroll-left':
+        const scrollLeft = this.getValue('scroll-left', 'number', 0);
+        this.scrollToX(scrollLeft);
+        break;
+      case 'scroll-into-view':
+        const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
+        if (scrollIntoView) {
+          const targetNode = this.querySelector(`#${scrollIntoView}`);
+          if (targetNode) {
+            const containerRect = this.getBoundingClientRect();
+            const targetNodeRect = targetNode.getBoundingClientRect();
+            if (scrollX) {
+              this.scrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
+            }
+            if (scrollY) {
+              this.scrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
             }
           }
-          break;
-        default:
-          break;
-      }
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -136,6 +101,11 @@ export default class ScrollViewElement extends PolymerElement {
         capture: true,
         passive: true
       } : true);
+  }
+
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
   }
 
   scrollingXId = 0;
@@ -203,14 +173,9 @@ export default class ScrollViewElement extends PolymerElement {
 
   // The event interacting with the upper DSL has a 10ms throttle, which is consistent here.
   lastScrollTime = 0;
-  scrolledToLowerX = false;
-  scrolledToUpperX = false;
-  scrolledToLowerY = false;
-  scrolledToUpperY = false;
   lastScrollTop = 0;
   lastScrollLeft = 0;
-  scrollDirectionX = 1;
-  scrollDirectionY = 1;
+
   handleScroll = e => {
     // Because it is captured on the window, it is necessary to judge whether it is really its own rolling event.
     if (e.target !== this) {
@@ -222,8 +187,11 @@ export default class ScrollViewElement extends PolymerElement {
     }
     // Terminate the native scroll event
     e.stopPropagation();
+
     // Send a custom scroll event with detail information added
-    const event = new CustomEvent('scroll', {
+    const deltaX = this.scrollLeft - this.lastScrollLeft;
+    const deltaY = this.scrollTop - this.lastScrollTop;
+    const scrollEvent = new CustomEvent('scroll', {
       bubbles: false,
       cancelable: true,
       detail: {
@@ -231,109 +199,48 @@ export default class ScrollViewElement extends PolymerElement {
         scrollTop: this.scrollTop,
         scrollHeight: this.scrollHeight,
         scrollWidth: this.scrollWidth,
-        deltaX: this.scrollLeft - this.lastScrollLeft,
-        deltaY: this.scrollTop - this.lastScrollTop
+        deltaX,
+        deltaY,
       }
     });
-    this.dispatchEvent(event);
+    this.dispatchEvent(scrollEvent);
 
-    // The following are the processing logic for scrolling to the top/bottom
-    if (this.lastScrollLeft < this.scrollLeft) {
-      this.scrollDirectionX = 1;
-    } else if (this.lastScrollLeft > this.scrollLeft) {
-      this.scrollDirectionX = -1;
-    }
-    if (this.lastScrollTop < this.scrollTop) {
-      this.scrollDirectionY = 1;
-    } else if (this.lastScrollTop > this.scrollTop) {
-      this.scrollDirectionY = -1;
-    }
     this.lastScrollTop = this.scrollTop;
     this.lastScrollLeft = this.scrollLeft;
     if (e.timeStamp - this.lastScrollTime < 10) {
       return;
     }
-    const scrollX = this.getValue('scroll-x', 'boolean', false);
-    const scrollY = this.getValue('scroll-y', 'boolean', false);
-    const upperThreshold = this.getValue('upper-threshold', 'number', 50);
-    const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
-    const upperEmitOnce = this.getValue('upper-emit-once', 'boolean', false);
-    const lowerEmitOnce = this.getValue('lower-emit-once', 'boolean', false);
     this.lastScrollTime = e.timeStamp;
-    if (scrollX) {
-      if (this.scrollLeft <= upperThreshold) {
-        if (this.scrollDirectionX < 0) {
-          if (upperEmitOnce) {
-            !this.scrolledToUpperX && this.emitUpper();
-          } else {
-            this.emitUpperThrottle();
-          }
-          this.scrolledToUpperX = true;
-        }
-      } else {
-        this.scrolledToUpperX = false;
+    
+    const upperThreshold = this.getValue('upper-threshold', 'number', 50);
+    if (
+      (deltaX < 0 && this.scrollLeft <= upperThreshold) ||
+      (deltaY < 0 && this.scrollTop <= upperThreshold)
+    ) {
+      if (!this.scrolledToUpper) {
+        const scrollToUpperEvent = new CustomEvent('scrolltoupper');
+        this.dispatchEvent(scrollToUpperEvent);
       }
-
-      if (
-        this.scrollWidth - this.scrollLeft - this.clientWidth <=
-        lowerThreshold
-      ) {
-        if (this.scrollDirectionX > 0) {
-          if (lowerEmitOnce) {
-            !this.scrolledToLowerX && ths.emitLower();
-          } else {
-            this.emitLowerThrottle();
-          }
-          this.scrolledToLowerX = true;
-        }
-      } else {
-        this.scrolledToLowerX = false;
-      }
+      this.scrolledToUpper = true;
+    } else {
+      this.scrolledToUpper = false;
     }
-    if (scrollY) {
-      if (this.scrollTop <= upperThreshold) {
-        if (this.scrollDirectionY < 0) {
-          if (upperEmitOnce) {
-            !this.scrolledToUpperY && this.emitUpper();
-          } else {
-            this.emitUpperThrottle();
-          }
-          this.scrolledToUpperY = true;
-        }
-      } else {
-        this.scrolledToUpperY = false;
-      }
 
-      if (
-        this.scrollHeight - this.scrollTop - this.clientHeight <=
-        lowerThreshold
-      ) {
-        if (this.scrollDirectionY > 0) {
-          if (lowerEmitOnce) {
-            !this.scrolledToLowerY && this.emitLower();
-          } else {
-            this.emitLowerThrottle();
-          }
-          this.scrolledToLowerY = true;
-        }
-      } else {
-        this.scrolledToLowerY = false;
+    const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
+    if (
+      (deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold) || 
+      (deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold)
+    ) {
+      if (!this.scrolledToLower) {
+        const scrollToLowerEvent = new CustomEvent('scrolltolower');
+        this.dispatchEvent(scrollToLowerEvent);
       }
+      this.scrolledToLower = true;
+    } else {
+      this.scrolledToLower = false;
     }
-  };
 
-  emitUpper = () => {
-    const event = new CustomEvent('scrolltoupper');
-    this.dispatchEvent(event);
   };
-
-  emitLower = () => {
-    const event = new CustomEvent('scrolltolower');
-    this.dispatchEvent(event);
-  };
-
-  emitUpperThrottle = throttle(this.emitUpper, 200);
-  emitLowerThrottle = throttle(this.emitLower, 200);
 
   getValue(name, type, defaultValue) {
     let value = this.getFromCache(name);
