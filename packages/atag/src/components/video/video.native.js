@@ -34,7 +34,8 @@ export default class VideoElement extends PolymerElement {
         value: false
       },
       controls: {
-        type: Boolean
+        type: Boolean,
+        value: true
       },
       muted: {
         type: Boolean,
@@ -58,11 +59,12 @@ export default class VideoElement extends PolymerElement {
     super.connectedCallback();
 
     const container = this.container = document.createElement('object');
-    container.type = 'application/view';
+    container.setAttribute('type', 'application/view');
     container.className = 'atag-native-video';
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);
+
     const controls = this._controlsParamEl = VideoElement.createParamTag(
       'controls',
       this.controls ? 'true' : 'false'
@@ -232,6 +234,19 @@ export default class VideoElement extends PolymerElement {
         isLoop: this.loop,
         objectFit
       });
+    }
+  }
+
+  /**
+   * stop video play
+   */
+  stop() {
+    if (isIOS && this._playStatusParamsEl) {
+      this._playStatusParamsEl.setAttribute('value', '2');
+    } else if (isAndroid) {
+      this.callNativeControl('stop', {});
+    } else {
+      console.warn('Play status params el not exists');
     }
   }
 
