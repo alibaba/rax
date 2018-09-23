@@ -79,14 +79,14 @@
     </style>
     <audio id="audio" src="{{src}}" preload></audio>
     <div class="audio-container">
-      <div class="audio-thumb" id="playThumb">
-        <div class="audio-thumb-img" id="thumbImg"></div>
+      <div class="audio-thumb" id="thumb">
+        <div class="audio-thumb-img" id="thumbImage"></div>
         <img class="audio-play" id="playIcon" src="./images/audio.png" />
       </div>
       <div class="audio-content">
         <div class="audio-name">{{name}}</div>
         <div class="audio-author">{{author}}</div>
-        <a-slider id="sliderEl" class="audio-slider" max="100" value="{{sliderValue}}"></a-slider>
+        <a-slider id="progress" class="audio-slider" max="100" value="{{sliderValue}}"></a-slider>
         <div class="audio-time">{{time}}</div>
       </div>
     </div>
@@ -107,10 +107,12 @@ export default class Audio extends PolymerElement {
     return {
       src: {
         type: String,
-        notify: true
+        notify: true,
+        reflectToAttribute: true
       },
       autoplay: {
-        type: Boolean
+        type: Boolean,
+        reflectToAttribute: true
       },
       poster: {
         type: String,
@@ -140,57 +142,35 @@ export default class Audio extends PolymerElement {
       playing: {
         type: Boolean,
         notify: true
-      },
-      audioPlayStyle: {
-        type: String,
-        notify: true,
-        computed: 'computeAudioStyle(playing)'
       }
     };
   }
 
-  attributeChangedCallback(key, oldVal, newVal) {
-    super.attributeChangedCallback(key, oldVal, newVal);
-
-    switch (key) {
-      case 'poster':
-        if (this.$) {
-          this.$.thumbImg.style.backgroundImage = `url(${newVal})`;
-        }
-        break;
-      default:
-        break;
-    }
-  }
-
-  computeAudioStyle() {
-    return this.playing ? 'none' : 'block';
-  }
-
   ready() {
     super.ready();
-    const audioEl = (this.audioEl = this.$.audio);
 
     afterNextRender(this, () => {
-      if (this.isAutoplay()) {
+      this.$.audio.addEventListener('ended', this._onend);
+      this.$.progress.addEventListener('change', this._handleProgressChange);
+      this.$.thumb.addEventListener('click', this._toggle);
+      if (this.poster) {
+        this.$.thumbImage.style.backgroundImage = `url(${this.poster})`;
+      }
+      if (this._isAutoplay()) {
         this.play();
       }
-      audioEl.onended = this._onend;
-      this.$.sliderEl.addEventListener('change', this._handleSliderChange);
-      this.$.playThumb.addEventListener('click', this.toggle);
     });
   }
 
   disconnectedCallback() {
-    this.$.sliderEl.removeEventListener('change', this._handleSliderChange);
-    this.$.playThumb.removeEventListener('click', this.toggle);
+    this.pause();
+    this.$.progress.removeEventListener('change', this._handleProgressChange);
+    this.$.thumb.removeEventListener('click', this._toggle);
   }
 
-  _handleSliderChange = evt => {
-    const detail = evt.detail;
-    const toPercentage = detail.value;
-    this.audioEl.currentTime =
-      parseInt(toPercentage / 100 * this.audioEl.duration) || 0;
+  _handleProgressChange = evt => {
+    const toPercentage = evt.detail.value;
+    this.$.audio.currentTime = parseInt(toPercentage / 100 * this.$.audio.duration) || 0;
   };
 
   _onend = () => {
@@ -201,7 +181,7 @@ export default class Audio extends PolymerElement {
   play() {
     this.playing = true;
     this.$.playIcon.style.display = 'none';
-    const playPromise = this.audioEl.play();
+    const playPromise = this.$.audio.play();
     if (playPromise) {
       playPromise
         .then(() => {
@@ -229,9 +209,9 @@ export default class Audio extends PolymerElement {
   }
 
   countTime() {
-    const duration = parseInt(this.audioEl.duration);
+    const duration = parseInt(this.$.audio.duration);
     this._timer = setInterval(() => {
-      const currentTime = parseInt(this.audioEl.currentTime);
+      const currentTime = parseInt(this.$.audio.currentTime);
 
       let s = '00';
       s = '' + currentTime % 60;
@@ -254,7 +234,7 @@ export default class Audio extends PolymerElement {
       this.time = `${m}:${s}`;
 
       this.sliderValue = parseInt(100 * currentTime / duration);
-    }, 1000);
+    }, 500);
   }
 
   reset() {
@@ -263,7 +243,7 @@ export default class Audio extends PolymerElement {
     this.sliderValue = 0;
   }
 
-  isAutoplay() {
+  _isAutoplay() {
     const hasAutoPlay = this.hasAttribute('autoplay');
     if (!hasAutoPlay) {
       return false;
@@ -272,7 +252,7 @@ export default class Audio extends PolymerElement {
     return autoPlay !== 'false';
   }
 
-  toggle = () => {
+  _toggle = () => {
     this.playing ? this.pause() : this.play();
   };
 }
