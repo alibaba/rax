@@ -30,6 +30,10 @@ class Page {
    * - a.b.c.d
    */
   setData(expData, callback) {
+    if (expData == null) {
+      return;
+    }
+
     const changedData = computeChangedData(this.data, expData);
 
     const callSetState = () => {
