@@ -40,6 +40,17 @@ const NO_BUBBLES_EVENTS = {
   invalid: true
 };
 
+function redirect(url) {
+  // in iframe it should only redirect itself
+  if (window.frameElement) {
+    // remove src doc if exists
+    window.frameElement.removeAttribute('srcDoc');
+    window.frameElement.src = url;
+  } else {
+    location.href = url;
+  }
+}
+
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
   const registeredEventCounts = {};
@@ -335,6 +346,8 @@ export default ({ worker, tagNamePrefix = '' }) => {
         let mutation = mutations[i];
         MUTATIONS[mutation.type](mutation);
       }
+    } else if (type === 'Location') {
+      redirect(data.href);
     }
   };
 

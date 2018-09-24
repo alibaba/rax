@@ -51,9 +51,18 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
   const pageEventEmitter = getCoreModule('@core/page');
   const Rax = getCoreModule('@core/rax');
 
-  const { document, pageQuery, pageName } = pageContext;
+  const { document, location, pageQuery, pageName } = pageContext;
+  const { getWebViewSource } = renderFactory;
 
-  const render = renderFactory(null, Rax);
+  const render = getWebViewSource
+    ? (data) => {
+      const url = getWebViewSource(data);
+      if (url && location.href !== url) {
+        location.href = url;
+      }
+      return '';
+    }
+    : renderFactory(null, Rax);
   return class extends Rax.Component {
     constructor(props, context) {
       super(props, context);
