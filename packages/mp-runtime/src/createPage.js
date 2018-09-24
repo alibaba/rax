@@ -164,7 +164,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
      * before first render
      */
     mergeState(data, callback) {
-      if (!data == null) {
+      if (data == null) {
         return;
       }
 
