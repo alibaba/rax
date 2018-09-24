@@ -36,15 +36,11 @@ class Page {
 
     const changedData = computeChangedData(this.data, expData);
 
-    const callSetState = () => {
-      this.vnode.setState(changedData, callback);
-    };
-
     // in case component is not mounted
     if (this.vnode.updater === undefined) {
-      this.vnode.cycleHooks.willMount.push(callSetState);
+      this.vnode.mergeState(changedData, callback);
     } else {
-      callSetState();
+      this.vnode.setState(changedData, callback);
     }
   }
 }
@@ -66,11 +62,13 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       this.pageInstance = new Page(this, config);
       /**
        * willMount: [fn],
-       * unmount: []
+       * didMount: [fn],
+       * unMount: []
        */
       this.cycleHooks = {
         willMount: [],
-        unmount: []
+        didMount: [],
+        unMount: []
       };
 
       const { data, onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
@@ -109,7 +107,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
 
     componentWillMount() {
       // native event of first show triggered too ealier,
-      // triggering by willMount
+      // triggering by didMount
       const { onShow, onReady } = config;
       if ('function' === typeof onShow) {
         onShow.call(this.pageInstance);
@@ -138,22 +136,48 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       this.cycleListeners.push({ type: 'updatePageData', fn: updatePageData });
       pageEventEmitter.on('updatePageData', updatePageData);
 
-      if (this.cycleHooks.willMount.length > 0) {
-        let fn;
-        while (fn = this.cycleHooks.willMount.shift()) {
-          fn();
-        }
-      }
+      this.runCycleHooks('willMount');
+    }
+
+    componentDidMount() {
+      this.runCycleHooks('didMount');
     }
 
     componentWillUnmount() {
       for (let i = 0, l = this.cycleListeners.length; i < l; i++) {
         pageEventEmitter.off(this.cycleListeners[i].type, this.cycleListeners[i].fn);
       }
-      if (this.cycleHooks.unmount.length > 0) {
+      this.runCycleHooks('unMount');
+    }
+
+    runCycleHooks(cycleName) {
+      if (this.cycleHooks[cycleName] && this.cycleHooks[cycleName].length > 0) {
         let fn;
-        while (fn = this.cycleHooks.unmount.shift()) {
+        while (fn = this.cycleHooks[cycleName].shift()) {
           fn();
+        }
+      }
+    }
+
+    /**
+     * merge data to state
+     * before first render
+     */
+    mergeState(data, callback) {
+      if (!data == null) {
+        return;
+      }
+
+      this.state = {
+        ...this.state,
+        ...data
+      };
+
+      if (typeof callback === 'function') {
+        if (this.updater) {
+          callback.call(this.pageInstance);
+        } else {
+          this.cycleHooks.didMount.push(callback.bind(this.pageInstance));
         }
       }
     }
