@@ -27,11 +27,12 @@ export default class VideoElement extends PolymerElement {
         type: String
       },
       loop: {
-        type: Boolean
+        type: Boolean,
+        value: false,
       },
       autoplay: {
         type: Boolean,
-        value: false
+        value: false,
       },
       controls: {
         type: Boolean,
