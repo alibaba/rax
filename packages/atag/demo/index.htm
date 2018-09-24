@@ -13,6 +13,7 @@
     body {
       background-color: #e9eaed;
       margin: 0;
+      -webkit-tap-highlight-color: transparent
     }
 
     .card {
@@ -43,7 +44,9 @@
     <div class="demo">
       <a-text>Hello Rax,</a-text>
       <a-text style="color: blue">
-        <a-text style="color: green">Hello Atag</a-text>, Hello World
+        <a-text style="color: green">Hello Atag</a-text>,
+        Hello
+        World
       </a-text>
       <a-text style="line-height: 10px; font-size: 12px;">line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px;</a-text>
       <a-text style="line-height: 18px; font-size: 20px;">line-height: 18px; font-size: 20px; line-height: 18px; font-size: 20px;</a-text>
@@ -67,9 +70,38 @@
   <div class="card">
     <h4 class="title">a-image</h4>
     <div class="demo">
-      <a-image mode="aspectFit" style="width: 300px;height: 300px; border: 1px solid #e5e5e5;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" />
+      <a-image id="image" mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif"></a-image>
+      <p>
+        Load Event: <span id="imageLoad"></span>
+      </p>
+      <a-image id="errorImage" mode="scaleToFill" style="border: 2px solid red;" src="https://path-to-error.com"></a-image>
+      <p>
+        Error Event: <span id="imageError"></span>
+      </p>
+      <a-image id="asyncImage" mode="scaleToFill" style="border: 2px solid red;" src=""></a-image>
+      <p>
+        Load Event: <span id="asyncImageLoad"></span>
+      </p>
     </div>
   </div>
+
+  <script>
+    image.addEventListener('load', function(e){
+      imageLoad.innerHTML = JSON.stringify(e.detail);
+    });
+    errorImage.addEventListener('error', function(e){
+      imageError.innerHTML = e.detail.errMsg;
+    });
+    image.addEventListener('click', function(e){
+      image.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    });
+    asyncImage.addEventListener('click', function(e){
+      asyncImage.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    });
+    asyncImage.addEventListener('load', function(e){
+      asyncImageLoad.innerHTML = JSON.stringify(e.detail);
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-icon</h4>
@@ -84,16 +116,53 @@
   <div class="card">
     <h4 class="title">a-input</h4>
     <div class="demo">
-      <a-input placeholder="input placeholder" placeholder-style="color: red;" auto-focus=true></a-input>
+      <a-input id="input" placeholder="input placeholder" placeholder-style="color: red;" focus=true></a-input>
+      <p style="overflow-wrap: break-word;">
+        Input Event: <span id="inputInput">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Focus Event: <span id="inputFocus">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Blur Event: <span id="inputBlur">null</span>
+      </p>
     </div>
   </div>
+
+  <script>
+    input.addEventListener('input', function(e){
+      inputInput.innerHTML = e.detail.value || 'null';
+    });
+    input.addEventListener('focus', function(e){
+      inputFocus.innerHTML = e.detail.value || 'null';
+    });
+    input.addEventListener('blur', function(e){
+      inputBlur.innerHTML = e.detail.value || 'null';
+    });
+  </script>
+  
 
   <div class="card">
     <h4 class="title">a-textarea</h4>
     <div class="demo">
-      <a-textarea auto-height=true class="textarea" placeholder="textarea placeholder" focus=true></a-textarea>
+      <a-textarea id="textarea" auto-height=true class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <p style="overflow-wrap: break-word;">
+        Input Event: <span id="textareaInput">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Blur Event: <span id="textareaBlur">null</span>
+      </p>
     </div>
   </div>
+
+  <script>
+    textarea.addEventListener('input', function(e){
+      textareaInput.innerHTML = e.detail.value || 'null';
+    });
+    textarea.addEventListener('blur', function(e){
+      textareaBlur.innerHTML = e.detail.value || 'null';
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-checkbox</h4>
@@ -162,6 +231,59 @@
   </div>
 
   <div class="card">
+    <h4 class="title">a-form</h4>
+    <div class="demo">
+      <a-form id="form">
+        <a-view style="margin: 8px">
+          <a-view>switch</a-view>
+          <a-switch name="switch"></a-switch>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>slider</a-view>
+          <a-slider name="slider" show-value></a-slider>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>input</a-view>
+          <a-input name="input" placeholder="please input here" />
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>radio</a-view>
+          <a-radio-group name="radio-group">
+            <a-label><a-radio value="radio1"></a-radio>radio1</a-label>
+            <a-label><a-radio value="radio2"></a-radio>radio2</a-label>
+          </radio-group>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>checkbox</a-view>
+          <a-checkbox-group name="checkbox">
+            <a-label><a-checkbox value="checkbox1"></a-checkbox>checkbox1</a-label>
+            <a-label><a-checkbox value="checkbox2"></a-checkbox>checkbox2</a-label>
+          </a-checkbox-group>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-button style="margin: 8px" formType="submit">Submit</a-button>
+          <a-button style="margin: 8px" formType="reset">Reset</a-button>
+        </a-view>
+        <p style="overflow-wrap: break-word;">
+          Submit Event: <span id="formSubmit">null</span>
+        </p>
+        <p style="overflow-wrap: break-word;">
+          Reset Event: <span id="formReset">null</span>
+        </p>
+      </a-form>
+    </div>
+  </div>
+
+  <script>
+    form.addEventListener('submit', function(e){
+      formSubmit.innerHTML = JSON.stringify(e.detail.value);
+    });
+    form.addEventListener('reset', function(e){
+      formReset.innerHTML = String(new Date);
+    });
+  </script>
+
+  <div class="card">
     <h4 class="title">a-progress</h4>
     <div class="demo">
       <a-progress class="progress-item" percent="30"></a-progress>
@@ -173,7 +295,8 @@
   <div class="card">
     <h4 class="title">a-swiper</h4>
     <div class="demo">
-      <a-swiper indicator-dots=true autoplay="true" interval="2000" duration="500">
+      <a-view>current=1</a-view>
+      <a-swiper current=1 indicator-dots=true>
         <a-swiper-item>
           <a-view style="display: block;height: 150px;background-color: red"></a-view>
         </a-swiper-item>
@@ -184,6 +307,46 @@
           <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
         </a-swiper-item>
       </a-swiper>
+
+      <a-view>circular=true</a-view>
+      <a-swiper circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+
+      <a-view>vertical=true</a-view>
+      <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+
+      <a-swiper style="height: 300px;">
+        <a-swiper-item>
+          <a-scroll-view style="display: block;height: 300px;background-color: red" scroll-y=true>
+            <a-view style="background: linear-gradient(to bottom, red, white); width: 100%;height: 600px;color: #fff;"></a-view>
+          </a-scroll-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-scroll-view style="display: block;height: 300px;background-color: blue" scroll-y=true>
+            <a-view style="background: linear-gradient(to bottom, blue, white); width: 100%;height: 600px;color: #fff;"></a-view>
+          </a-scroll-view>
+        </a-swiper-item>
+      </a-swiper>
+      
     </div>
   </div>
 
@@ -201,6 +364,75 @@
     </div>
   </div>
 
+  <div class="card">
+    <h4 class="title">a-scroll-view</h4>
+    <div class="demo">
+      <a-scroll-view id="scrollview" scroll-y="true" scroll-top="100" scroll-into-view="red" style="height: 200px;"
+        scroll-with-animation>
+        <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="red" style="background:red; width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+      </a-scroll-view>
+      
+      <p style="overflow-wrap: break-word;">
+        Scroll Event: <span id="scrollEvent">null</span>
+      </p>
+      <p>
+        Scroll To Upper Event: <span id="scrolltoupperEvent">null</span>
+      </p>
+      <a-button id="scrollToUpper">Scroll To Upper</a-button>
+
+      <p>
+        Scroll to Lower Event: <span id="scrolltolowerEvent">null</span>
+      </p>
+
+      <a-button id="scrollToLower">Scroll To Lower</a-button>
+      
+      <p>
+        Scrolling status: <span id="scrollingStatus">enable</span>
+      </p>
+      <a-button id="toggleScroll">Toggle Scroll</a-button>
+      
+    </div>
+  </div>
+
+  <script>
+    var toggleScrolling = true;
+    toggleScroll.addEventListener('click', function(){
+      scrollingStatus.innerHTML = (toggleScrolling = !toggleScrolling) ? 'enable' : 'disable';
+      scrollview.setAttribute('scroll-y', toggleScrolling);
+    });
+
+    scrollview.addEventListener('scroll', function(e){
+      scrollEvent.innerHTML = JSON.stringify(e.detail);
+    });
+
+    scrollview.addEventListener('scrolltoupper', function(e){
+      scrolltoupperEvent.innerHTML = +new Date;
+    });
+
+    scrollview.addEventListener('scrolltolower', function(e){
+      scrolltolowerEvent.innerHTML = +new Date;
+    });
+
+    scrollToUpper.addEventListener('click', function(e){
+      scrollview.setAttribute('scroll-top', 0);
+    });
+
+    scrollToLower.addEventListener('click', function(e){
+      scrollview.setAttribute('scroll-top', 10000);
+    });
+  </script>
+  
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
@@ -275,18 +507,6 @@
           <a-view value="31">31日</a-view>
         </a-picker-view-column>
       </a-picker-view>
-    </div>
-  </div>
-  <div class="card">
-    <h4 class="title">a-scroll-view</h4>
-    <div class="demo">
-      <a-scroll-view scroll-y="true" class="scroll-view" scroll-into-view="red" style="height: 50px;"
-        scroll-with-animation>
-        <a-view id="blue" style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
-        <a-view id="red" style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
-        <a-view id="green" style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
-        <a-view id="yellow" style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
-      </a-scroll-view>
     </div>
   </div>
 </body>

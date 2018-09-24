@@ -3,20 +3,22 @@
     <style>
       :host {
         display: block;
+        padding: 2px 5px;
+        background: #fff;
+        box-sizing: border-box;
       }
 
       .container {
         display: flex;
         display: -webkit-flex;
         position: relative;
-        box-sizing: border-box;
-        background-color: white;
-        padding: 2px 5px;
+        height: 100%;
       }
 
       #textarea {
         display: block;
         width: 100%;
+        padding: 0;
         background-color: white;
         outline: none;
         border: none;
@@ -24,6 +26,7 @@
         font-size: 16px;
         color: #333333;
         box-sizing: border-box;
+        text-align: inherit;
       }
 
       .count {
@@ -45,7 +48,7 @@
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
 import autosize from './autosize';
 
 let uid = 0;
@@ -113,7 +116,9 @@ export default class Textarea extends PolymerElement {
     super.ready();
     this.textarea = this.$.textarea;
     this.formInitialValue = this.value;
-
+    // label target
+    this.setAttribute('a-label-target', "");
+    
     afterNextRender(this, () => {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
@@ -173,6 +178,10 @@ export default class Textarea extends PolymerElement {
     }
   };
 
+  _handleReset = () => {
+    this.textarea.value = this.formInitialValue;
+  };
+
   handleInput(e) {
     e.stopPropagation();
     if (this.autoHeight) {
@@ -214,10 +223,6 @@ export default class Textarea extends PolymerElement {
     this.dispatchEvent(event);
   }
 
-  _handleReset = () => {
-    this.textarea.value = this.formInitialValue;
-  };
-
   changePlaceholderStyle(placeholderStyle) {
     if (!this.styleEl) {
       // unique id for data-id to avoid style pollution
@@ -238,7 +243,7 @@ export default class Textarea extends PolymerElement {
   }
 
   computedValueLength(value) {
-    return value.length;
+    return value.length || 0;
   }
 
   observerShowCount(newVal, oldVal) {

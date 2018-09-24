@@ -13,9 +13,9 @@
       }
 
       #container {
-        display: inline-block;
         width: 100%;
         height: 100%;
+        background-repeat: no-repeat;
       }
     </style>
     <div id="container"></div>
@@ -24,7 +24,7 @@
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
 
 function handleIntersect(entries) {
   entries.forEach(entry => {
@@ -45,45 +45,20 @@ export default class ImageElement extends PolymerElement {
       src: {
         type: String,
         value: '',
-        reflectToAttrbute: true
+        reflectToAttribute: true
       },
       mode: {
         type: String,
         value: 'scaleToFill',
-        reflectToAttrbute: true,
+        reflectToAttribute: true,
         observer: 'observerMode'
       }
     };
   }
 
-  ready() {
-    super.ready();
-    this._reset();
-  }
-
-  get loaded() {
-    return this._loaded;
-  }
-
-  /**
-   * Reset all private values
-   * @private
-   */
-  _reset() {
-    if (this._loaded === true) this.removeAttribute('loaded');
-    this._inited = false;
-    this._rendered = false;
-    this._loading = false;
-    this._loaded = false;
-    this._preCaching = false;
-    this._preCached = false;
-  }
-
   connectedCallback() {
     super.connectedCallback();
 
-    this._renderOnPreCached =
-      this.getAttribute('render-on-pre-cached') === 'true';
     afterNextRender(this, () => {
       this._init();
     });
@@ -91,86 +66,13 @@ export default class ImageElement extends PolymerElement {
 
   _init() {
     if (!this.src) return;
-
     // Figure out if this image is within view
     ImageElement.addIntersectListener(this, () => {
-      ImageElement._removePreCacheListener(this._precache);
-      this._render();
       this._load();
       ImageElement.removeIntersectListener(this);
     });
 
-    // Listen for precache instruction
-    ImageElement._addPreCacheListener(this._precache, this.src);
     this._inited = true;
-  }
-
-  /**
-   * Method which displays the image once ready to be displayed
-   * @private
-   */
-  _load() {
-    if (this._preCached === false) ImageElement._priorityCount += 1;
-    this._loading = true;
-
-    // handle background-size
-    const containerStyle = this.$.container.style;
-    containerStyle.backgroundImage = `url(${this.src})`;
-    this.observerMode(this.mode, '');
-  }
-
-  _onImgPreCached = () => {
-    this._preCaching = false;
-    this._preCached = true;
-    if (this._renderOnPreCached !== false) {
-      this._render();
-      this._load();
-    }
-  };
-
-  attributeChangedCallback(name, oldVal, newVal) {
-    super.attributeChangedCallback(name, oldVal, newVal);
-    // If nothing has changed then just return
-    if (newVal === oldVal) return;
-
-    switch (name) {
-      case 'src':
-        // If the src is changed then we need to reset and start again
-        this._reset();
-        if (this.imageEl) {
-          this._init();
-        } else {
-          // save the img reference
-          const imageEl = this.imageEl = new Image();
-          imageEl.src = this.src;
-          imageEl.onload = () => {
-            // dispatch load event
-            const evt = new CustomEvent('load', {
-              bubbles: false,
-              composed: true,
-              detail: {
-                width: `${imageEl.width}px`,
-                height: `${imageEl.height}px`
-              }
-            });
-            this.dispatchEvent(evt);
-            this._init();
-          };
-        }
-        break;
-    }
-  }
-
-  /**
-   * Method used to update an individual attribute on the native image element
-   * @param {string} name - The name of the attribute to update
-   * @param {string} value - The new attribute value
-   * @private
-   */
-  _updateAttribute(name, value) {
-    // If the image element hasn't been rendered yet, just return.
-    if (this._rendered === false) return;
-    this.$.container.setAttribute(name, value);
   }
 
   /**
@@ -179,55 +81,59 @@ export default class ImageElement extends PolymerElement {
    */
   _render() {
     if (this._rendered === true) return;
-
-    this.$.container.classList.add('image-src');
+    this.observerMode(this.mode, '');
+    const containerStyle = this.$.container.style;
+    containerStyle.backgroundImage = `url(${this.src})`;
     // Flag as rendered
     this._rendered = true;
   }
 
-  _precache() {
-    this._preCaching = true;
-    ImageElement._preCache(this.src, this._onImgPreCached);
-  }
-
-  static _preCacheListeners = new Map();
-
-  static _addPreCacheListener(cb, url) {
-    ImageElement._preCacheListeners.set(cb, url);
-  }
-
-  static _removePreCacheListener(cb) {
-    ImageElement._preCacheListeners.delete(cb);
-  }
-
-  static _startPreCache() {
-    for (let cb of ImageElement._preCacheListeners.keys()) cb();
-  }
-
   /**
-   * Methods used to determine when currently visible (priority) elements have finished download to then inform other elements to pre-cache
+   * Method which displays the image once ready to be displayed
+   * @private
    */
+  _load() {
+    this._loading = true;
+    const image = (this.image = new Image());
+    image.src = this.src;
 
-  static __priorityCount = 0;
+    image.onload = e => {
+      this._loading = false;
+      // Dispatch custom load event
+      const customEvent = new CustomEvent('load', {
+        bubbles: false,
+        composed: true,
+        detail: {
+          width: `${image.width}px`,
+          height: `${image.height}px`
+        }
+      });
+      this.dispatchEvent(customEvent);
+      this._render();
+    };
 
-  static _startPreCacheDebounce = null;
-
-  static get _priorityCount() {
-    return ImageElement.__priorityCount;
+    image.onerror = e => {
+      const customEvent = new CustomEvent('error', {
+        bubbles: false,
+        composed: true,
+        detail: {
+          errMsg: `Load ${this.src} error`
+        }
+      });
+      this.dispatchEvent(customEvent);
+    };
   }
 
-  static set _priorityCount(value) {
-    ImageElement.__priorityCount = value;
-    if (ImageElement.__priorityCount < 1) {
-      // Inform components that they can start to pre-cache their images
-      // Debounce in case the user scrolls because then there will be more priority images
-      if (ImageElement._startPreCacheDebounce !== null) {
-        clearTimeout(ImageElement._startPreCacheDebounce);
-        ImageElement._startPreCacheDebounce = null;
-      }
-      ImageElement._startPreCacheDebounce = setTimeout(() => {
-        if (ImageElement.__priorityCount < 1) ImageElement._startPreCache();
-      }, 500);
+  attributeChangedCallback(name, oldVal, newVal) {
+    super.attributeChangedCallback(name, oldVal, newVal);
+    // If nothing has changed then just return
+    if (newVal === oldVal) return;
+    switch (name) {
+      case 'src':
+        // If the src is changed then we need to reset and start again
+        this._reset();
+        this._init();
+        break;
     }
   }
 
@@ -242,34 +148,13 @@ export default class ImageElement extends PolymerElement {
     threshold: 0
   });
 
-  static addIntersectListener($element, intersectCallback) {
-    ImageElement._intersectListeners.set($element, intersectCallback);
-    ImageElement._observer.observe($element);
+  static addIntersectListener(element, intersectCallback) {
+    ImageElement._intersectListeners.set(element, intersectCallback);
+    ImageElement._observer.observe(element);
   }
 
-  static removeIntersectListener($element) {
-    if ($element) ImageElement._observer.unobserve($element);
-  }
-
-  static _preCacheCallbacks = {};
-
-  static _preCache(url, cb) {
-    let slot = ImageElement._preCacheCallbacks[url];
-    if (slot === undefined) {
-      ImageElement._preCacheCallbacks[url] = {
-        cached: false,
-        cbs: [cb]
-      };
-      const absolute = url.indexOf('http') === 0 || url.indexOf('/') === 0;
-      const location = absolute ? url : window.location.href + url;
-      ImageElement._worker.postMessage({ location: location, url: url });
-    } else {
-      if (slot.cached === true) {
-        cb();
-      } else {
-        slot.cbs.push(cb);
-      }
-    }
+  static removeIntersectListener(element) {
+    if (element) ImageElement._observer.unobserve(element);
   }
 
   observerMode(newVal, oldVal) {
@@ -277,10 +162,11 @@ export default class ImageElement extends PolymerElement {
 
     const container = this.$.container;
     const containerStyle = container.style;
-    // init dom
+    const imageStyle = this.image.style;
+
     if (container.children.length > 0) {
       containerStyle.height = 'inital';
-      this.imageEl.cssText = 'display: none';
+      imageStyle.display = 'none';
     }
 
     const positions = [
@@ -307,81 +193,33 @@ export default class ImageElement extends PolymerElement {
         case 'aspectFit':
           containerStyle.backgroundSize = 'contain';
           containerStyle.backgroundPosition = 'center center';
-          containerStyle.backgroundRepeat = 'no-repeat';
           break;
         case 'aspectFill':
           containerStyle.backgroundSize = 'cover';
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          this.imageEl.cssText = 'visibility: hidden;width: 100%;';
-          containerStyle.height = 'auto';
+          const hostWidth = parseFloat(this.style.width);
+          this.style.height =
+            hostWidth * this.image.height / this.image.width + 'px';
           containerStyle.backgroundSize = 'contain';
-          container.appendChild(this.imageEl);
           break;
         default:
           break;
       }
     }
   }
-}
 
-/**
- * setup worker to pre-cache images
- */
-ImageElement._worker = new Worker(
-  window.URL.createObjectURL(
-    new Blob(
-      [
-        `self.onmessage=${function(e) {
-          const xhr = new XMLHttpRequest();
-          function onload() {
-            self.postMessage(e.data.url);
-          }
-          xhr.responseType = 'blob';
-          xhr.onload = onload;
-          xhr.onerror = function() {
-            const evt = new CustomEvent('error', {
-              bubbles: false,
-              composed: true,
-              detail: {
-                errMsg: 'something wrong'
-              }
-            });
-            ImageElement.dispatchEvent(evt);
-            onload();
-          };
-          xhr.open('GET', resolveURL(e.data.location), true); // eslint-disable-line
-          xhr.send();
-        }.toString()};`,
-        `var HTTP_REG = /^http/;
-        function resolveURL(path) {
-          if (HTTP_REG.test(path)) {
-            return path;
-          } else if (path[0] === '/') {
-            return location.origin + path;
-          } else {
-            return location.origin + location.pathname + path;
-          }
-        }`
-      ],
-      { type: 'text/javascript' }
-    )
-  )
-);
-
-ImageElement._worker.onmessage = function(e) {
-  const slot = ImageElement._preCacheCallbacks[e.data];
-  if (slot !== undefined) {
-    slot.cached = true;
-    slot.cbs = slot.cbs.filter(cb => {
-      // Call the callback
-      cb();
-      // Remove the callback
-      return false;
-    });
+  /**
+   * Reset all private values
+   * @private
+   */
+  _reset() {
+    this._inited = false;
+    this._rendered = false;
+    this._loading = false;
   }
-};
+}
 
 customElements.define(ImageElement.is, ImageElement);
 </script>

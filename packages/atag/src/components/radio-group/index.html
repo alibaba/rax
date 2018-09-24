@@ -15,7 +15,7 @@
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender, throttle } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
 
 export default class RadioGroupElement extends PolymerElement {
   static get is() {
@@ -47,7 +47,6 @@ export default class RadioGroupElement extends PolymerElement {
 
   changeHandler = (e) => {
     e.stopPropagation();
-
     const checkboxList = this.querySelectorAll('a-radio');
     for (let i = 0; i < checkboxList.length; i++) {
       const node = checkboxList[i];

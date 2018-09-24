@@ -95,7 +95,7 @@ export default ({ postMessage, addEventListener }) => {
           events: Object.keys(obj.eventListeners || {}),
           attributes: obj.attributes,
           nodeName: obj.nodeName,
-          style: obj.style,
+          style: obj.style
         };
       } else if (nodeType === TEXT_NODE || nodeType === COMMENT_NODE) {
         out.data = obj.data;
@@ -284,15 +284,14 @@ export default ({ postMessage, addEventListener }) => {
     },
 
     setStyles(node, styles) {
-      let tranformedStyles = {};
+      let newStyles = node.style;
 
       for (let prop in styles) {
         let val = styles[prop];
-        tranformedStyles[prop] = convertUnit(val, prop);
+        newStyles[prop] = convertUnit(val, prop);
       }
-
-      // For trigger attribute mutation
-      node.style = tranformedStyles;
+      // Assign to style for trigger style update
+      node.style = newStyles;
     },
 
     beforeRender() {

@@ -28,6 +28,9 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
   entry: {
     'index.bundle': [pathConfig.appIndexJs],
   },
+  output: {
+    publicPath: '/',
+  },
   plugins: [new webpack.NoEmitOnErrorsPlugin()], // Only work on web
 });
 

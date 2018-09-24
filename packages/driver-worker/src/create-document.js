@@ -39,6 +39,21 @@ function createAttributeFilter(ns, name) {
   return o => o.ns === ns && toLower(o.name) === toLower(name);
 }
 
+const BOOL_PROPERTY = {
+  'CHECKBOX': {
+    checked: true,
+  },
+  'RADIO': {
+    checked: true
+  }
+};
+
+function isProperty(node, prop, val) {
+  return typeof val === 'object' ||
+    node.nodeType === 1 && BOOL_PROPERTY[node.nodeName] && BOOL_PROPERTY[node.nodeName][prop]
+  ;
+}
+
 const setImmediate = global.setImmediate || function(cb) {
   return setTimeout(cb, 0);
 };
@@ -329,7 +344,7 @@ export default function() {
       super(nodeType || ELEMENT_NODE, nodeName); // ELEMENT_NODE
       this.attributes = [];
       this.eventListeners = {};
-      this.style = {};
+      this._style = {};
       Object.defineProperty(this, 'className', {
         set: val => {
           this.setAttribute('class', val);
@@ -371,6 +386,7 @@ export default function() {
     get style() {
       return this._style;
     }
+
     set style(styleObject) {
       this._style = styleObject;
       mutation(this, 'attributes', { style: styleObject });
@@ -397,7 +413,7 @@ export default function() {
       // array and plain object will pass
       // through, instead of calling `toString`
       // null has been filtered before
-      if (typeof value === 'object') {
+      if (isProperty(this, name, value)) {
         attr.value = value;
       } else {
         attr.value = String(value);

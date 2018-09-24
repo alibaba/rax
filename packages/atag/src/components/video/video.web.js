@@ -1,5 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
 
 const pauseImage = require('./images/pause.png');
 const playImage = require('./images/play.png');

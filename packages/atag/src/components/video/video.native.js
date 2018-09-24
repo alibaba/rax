@@ -26,9 +26,6 @@ export default class VideoElement extends PolymerElement {
       height: {
         type: String
       },
-      muted: {
-        type: Boolean
-      },
       loop: {
         type: Boolean
       },
@@ -37,7 +34,16 @@ export default class VideoElement extends PolymerElement {
         value: false
       },
       controls: {
-        type: Boolean
+        type: Boolean,
+        value: true
+      },
+      muted: {
+        type: Boolean,
+        value: false,
+      },
+      objectFit: {
+        type: String,
+        value: 'contain',
       }
     };
   }
@@ -53,11 +59,12 @@ export default class VideoElement extends PolymerElement {
     super.connectedCallback();
 
     const container = this.container = document.createElement('object');
-    container.type = 'application/view';
+    container.setAttribute('type', 'application/view');
     container.className = 'atag-native-video';
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);
+
     const controls = this._controlsParamEl = VideoElement.createParamTag(
       'controls',
       this.controls ? 'true' : 'false'
@@ -79,6 +86,18 @@ export default class VideoElement extends PolymerElement {
       this.loop
     );
 
+    // number(1为静音，0为不静音)
+    const muted = this._mutedParamEl = VideoElement.createParamTag(
+      'muted',
+      this.muted ? 1 : 0
+    );
+
+    // String（contain：包含，fill：填充，cover：覆盖）
+    const objectFit = this._objectFitParamEl = VideoElement.createParamTag(
+      'objectFit',
+      this.objectFit
+    );
+
     const bridgeId = VideoElement.createParamTag(
       'bridgeId',
       this.getBridgeId()
@@ -89,6 +108,8 @@ export default class VideoElement extends PolymerElement {
     container.appendChild(playStatus);
     container.appendChild(fullScreenStatus);
     container.appendChild(loop);
+    container.appendChild(muted);
+    container.appendChild(objectFit);
     container.appendChild(bridgeId);
 
     this.setStyle(this.getAttribute('style'));
@@ -110,6 +131,14 @@ export default class VideoElement extends PolymerElement {
       switch (key) {
         case 'controls': {
           newVal ? this.showControls() : this.hideControls();
+          break;
+        }
+        case 'muted': {
+          this.mute(newVal);
+          break;
+        }
+        case 'objectFit': {
+          this.changeObjectFit(newVal);
           break;
         }
       }
@@ -162,7 +191,11 @@ export default class VideoElement extends PolymerElement {
     if (isIOS && this._playStatusParamsEl) {
       this._playStatusParamsEl.setAttribute('value', '1');
     } else if (isAndroid) {
-      this.callNativeControl('play', { videoUrl: this.src, isLoop: this.loop });
+      this.callNativeControl('play', {
+        videoUrl: this.src,
+        isLoop: this.loop,
+        objectFit: this.objectFit
+      });
     } else {
       console.warn('Play status params el not exists');
     }
@@ -176,6 +209,42 @@ export default class VideoElement extends PolymerElement {
       this._playStatusParamsEl.setAttribute('value', '0');
     } else if (isAndroid) {
       this.callNativeControl('pause', {});
+    } else {
+      console.warn('Play status params el not exists');
+    }
+  }
+
+  mute(isMute) {
+    if (isIOS && this._mutedParamEl) {
+      // status(1为静音，0为不静音)
+      this._mutedParamEl.setAttribute('value', isMute ? '1' : '0');
+    } else if (isAndroid) {
+      this.callNativeControl('muted', { status: isMute ? '1' : '0' });
+    } else {
+      console.warn('Muted status params el not exists');
+    }
+  }
+
+  changeObjectFit(objectFit) {
+    if (isIOS && this._objectFitParamEl) {
+      this._objectFitParamEl.setAttribute('value', objectFit);
+    } else if (isAndroid) {
+      this.callNativeControl('play', {
+        videoUrl: this.src,
+        isLoop: this.loop,
+        objectFit
+      });
+    }
+  }
+
+  /**
+   * stop video play
+   */
+  stop() {
+    if (isIOS && this._playStatusParamsEl) {
+      this._playStatusParamsEl.setAttribute('value', '2');
+    } else if (isAndroid) {
+      this.callNativeControl('stop', {});
     } else {
       console.warn('Play status params el not exists');
     }

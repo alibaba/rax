@@ -9,12 +9,7 @@
         overflow: hidden;
       }
 
-      :host input[type="checkbox"] {
-        display: none;
-        font-size: 4.666vw;
-      }
-
-      :host input[type="checkbox"]+label .circle {
+      :host .circle {
         display: inline-flex;
         display: -webkit-inline-flex;
         width: 1.25em;
@@ -31,20 +26,15 @@
         cursor: pointer;
       }
 
-      :host input[type="checkbox"]:checked+label .circle {
-        border: 1px solid var(--a-checkbox-color);
-      }
-
-      :host input[type="checkbox"]:disabled+label .circle {
+      :host([disabled]) .circle {
         border: 1px solid #c7c7c7;
         background-color: #e7e7e7;
       }
 
-      :host input[type="checkbox"]:checked+label .dot {
+      :host([checked]) .dot {
         width: 60%;
         height: 60%;
         text-align: center;
-        background-color: var(--a-checkbox-color);
         -webkit-mask-image: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB3aWR0aD0iMjciIGhlaWdodD0iMTkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkuMzYgMTlhMS4xNSAxLjE1IDAgMCAxLS44MTQtLjM0bC04LjIxLTguMzAyYTEuMTcgMS4xNyAwIDAgMSAwLTEuNjQ0IDEuMTQzIDEuMTQzIDAgMCAxIDEuNjI4IDBsNy4zOTYgNy40NzhMMjUuMDM2LjM0MWExLjE0NCAxLjE0NCAwIDAgMSAxLjYyNyAwIDEuMTcgMS4xNyAwIDAgMSAwIDEuNjQ0TDEwLjE3MyAxOC42NmExLjE0NCAxLjE0NCAwIDAgMS0uODEzLjM0MXoiIGZpbGw9IiNGRjUwMDAiLz48L3N2Zz4=);
         -webkit-mask-size: 0.75em 0.5em;
         -webkit-mask-repeat: no-repeat;
@@ -52,22 +42,19 @@
         cursor: pointer;
       }
 
-      :host input[type="checkbox"][disabled]:checked+label .dot {
+      :host([disabled]) .dot {
         background-color: #bbb;
       }
     </style>
-    <input type="checkbox" id="checkbox" disabled="{{disabled::change}}" checked="{{checked::change}}">
-    <label for="checkbox">
-      <div class="circle" style$="{{circleCheckedStyle}}">
-        <div class="dot" style$="{{dotCheckedStyle}}"></div>
-      </div>
-    </label>
+    <div class="circle" style$="{{circleCheckedStyle}}">
+      <div class="dot" style$="{{dotCheckedStyle}}"></div>
+    </div>
   </template>
 </dom-module>
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender, throttle } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
 
 export default class CheckboxElement extends PolymerElement {
   static get is() {
@@ -87,14 +74,12 @@ export default class CheckboxElement extends PolymerElement {
       checked: {
         type: Boolean,
         notify: true,
-        value: false,
-        reflectToAttribute: true
+        observer: 'changeHandler'
       },
       disabled: {
         type: Boolean,
         notify: true,
-        value: false,
-        reflectToAttribute: true
+        value: false
       },
       color: {
         type: String,
@@ -103,65 +88,76 @@ export default class CheckboxElement extends PolymerElement {
       },
       circleCheckedStyle: {
         type: String,
-        computed: 'getCircleCheckedStyle(checked, color)'
+        computed: 'getCircleCheckedStyle(checked, color, disabled)'
       },
       dotCheckedStyle: {
         type: String,
-        computed: 'getDotCheckedStyle(checked, color)'
+        computed: 'getDotCheckedStyle(checked, color, disabled)'
       }
     };
   }
 
   ready() {
     super.ready();
-    this.checkbox = this.$.checkbox;
     this.formInitialValue = this.checked;
-    this.checkbox.addEventListener('change', this.changeHandler);
-    this.addEventListener('click', this.clickHandler, true);
-    window.addEventListener('_formReset', this._handlerReset, true);
+    // label target
+    this.setAttribute('a-label-target', "");
+    
+    afterNextRender(this, () => {
+      this.addEventListener('click', this.clickHandler);
+      window.addEventListener('_formReset', this._handlerReset, true);
+    });
   }
 
   disconnectedCallback() {
-    this.checkbox.removeEventListener('change', this.changeHandler);
-    this.removeEventListener('click', this.clickHandler, true);
+    this.removeEventListener('click', this.clickHandler);
     window.removeEventListener('_formReset', this._handlerReset, true);
   }
 
   _handlerReset = () => {
-    this.checkbox.checked = this.checked = this.formInitialValue;
-  }
+    this.checked = this.formInitialValue;
+  };
 
-  clickHandler = e => {
-    !e.isTrusted && this.$.checkbox.click();
-    e.stopPropagation();
-  }
-
-  changeHandler = e => {
-    const event = new CustomEvent('change', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.checked
-      }
-    });
-    const innerEvent = new CustomEvent('_checkboxChange', {
-      bubbles: true,
-      cancelable: true,
-      detail: {
-        value: this.checked
-      }
-    });
-    this.dispatchEvent(event);
-    this.dispatchEvent(innerEvent);
+  clickHandler = (e) => {
+    if (!this.disabled) {
+      this.checked = !this.checked;
+    }
     e.stopPropagation();
   };
 
-  getCircleCheckedStyle(checked, color) {
-    return checked ? `border: 1px solid ${color};` : '';
+  changeHandler = (newVal, oldVal) => {
+    if (oldVal !== null) {
+      const event = new CustomEvent('change', {
+        bubbles: false,
+        cancelable: true,
+        detail: {
+          value: newVal
+        }
+      });
+      const innerEvent = new CustomEvent('_checkboxChange', {
+        bubbles: true,
+        cancelable: true,
+        detail: {
+          value: this.checked
+        }
+      });
+      if (newVal && !this.getAttribute('checked')) {
+        this.setAttribute('checked', "");
+      }
+      this.dispatchEvent(event);
+      this.dispatchEvent(innerEvent);
+    } else {
+      // checked initalValue
+      this.checked = false;
+    }
   };
 
-  getDotCheckedStyle(checked, color) {
-    return checked ? `background-color: ${color};` : ''
+  getCircleCheckedStyle(checked, color, disabled) {
+    return checked && !disabled ? `border: 1px solid ${color};` : '';
+  }
+
+  getDotCheckedStyle(checked, color, disabled) {
+    return checked && !disabled ? `background-color: ${color};` : '';
   }
 }
 
