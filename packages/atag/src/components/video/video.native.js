@@ -27,11 +27,12 @@ export default class VideoElement extends PolymerElement {
         type: String
       },
       loop: {
-        type: Boolean
+        type: Boolean,
+        value: false,
       },
       autoplay: {
         type: Boolean,
-        value: false
+        value: false,
       },
       controls: {
         type: Boolean,
@@ -41,7 +42,7 @@ export default class VideoElement extends PolymerElement {
         type: Boolean,
         value: false,
       },
-      objectFit: {
+      objectfit: {
         type: String,
         value: 'contain',
       }
@@ -53,6 +54,13 @@ export default class VideoElement extends PolymerElement {
 
     document.addEventListener('WVEmbed.Ready', this._nativeReady);
     this.uniqueId = String(++videoInstanceCount);
+    if (isAndroid) {
+      this.callNativeControl('setup', {
+        videoUrl: this.src,
+        isLoop: this.loop,
+        objectFit: this.objectfit
+      });
+    }
   }
 
   connectedCallback() {
@@ -95,7 +103,7 @@ export default class VideoElement extends PolymerElement {
     // String（contain：包含，fill：填充，cover：覆盖）
     const objectFit = this._objectFitParamEl = VideoElement.createParamTag(
       'objectFit',
-      this.objectFit
+      this.objectfit
     );
 
     const bridgeId = VideoElement.createParamTag(
@@ -137,8 +145,12 @@ export default class VideoElement extends PolymerElement {
           this.mute(newVal);
           break;
         }
-        case 'objectFit': {
+        case 'objectfit': {
           this.changeObjectFit(newVal);
+          break;
+        }
+        case 'loop': {
+          this.changeLoop(newVal);
           break;
         }
       }
@@ -194,7 +206,7 @@ export default class VideoElement extends PolymerElement {
       this.callNativeControl('play', {
         videoUrl: this.src,
         isLoop: this.loop,
-        objectFit: this.objectFit
+        objectFit: this.objectfit
       });
     } else {
       console.warn('Play status params el not exists');
@@ -229,10 +241,22 @@ export default class VideoElement extends PolymerElement {
     if (isIOS && this._objectFitParamEl) {
       this._objectFitParamEl.setAttribute('value', objectFit);
     } else if (isAndroid) {
-      this.callNativeControl('play', {
+      this.callNativeControl('setup', {
         videoUrl: this.src,
         isLoop: this.loop,
         objectFit
+      });
+    }
+  }
+
+  changeLoop(isLoop) {
+    if (isIOS && this._objectFitParamEl) {
+      this._loopParamEl.setAttribute('value', '' + isLoop);
+    } else if (isAndroid) {
+      this.callNativeControl('setup', {
+        videoUrl: this.src,
+        isLoop,
+        objectFit: this.objectfit
       });
     }
   }
