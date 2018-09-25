@@ -351,11 +351,11 @@ export default ({ worker, tagNamePrefix = '' }) => {
       const { type, prop } = payload;
       switch (type) {
         case 'call': {
-          location[prop] = payload.val;
+          location[prop].apply(location, payload.args);
           break;
         }
         case 'assign': {
-          location[prop].apply(window, payload.args);
+          location[prop] = payload.val;
           break;
         }
       }
