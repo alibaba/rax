@@ -5,7 +5,7 @@ const WEBVIEW_TAG = 'web-view';
 
 function transformNode(el, state) {
   const rootEl = getRootEl(el);
-  const { src } = el.attrsMap;
+  const { src, onMessage } = el.attrsMap;
 
   if (el.tag === WEBVIEW_TAG) {
     rootEl.isWebView = true;
@@ -15,6 +15,13 @@ function transformNode(el, state) {
       rootEl.webViewSrc = srcExp;
     } else {
       rootEl.webViewSrc = JSON.stringify(srcExp);
+    }
+
+    const onMessageExp = getAndRemoveAttr(el, 'onMessage');
+    if (IS_BIND_REG.test(onMessage)) {
+      rootEl.webViewOnMessage = onMessageExp;
+    } else {
+      rootEl.webViewOnMessage = JSON.stringify(onMessageExp);
     }
   }
 }
