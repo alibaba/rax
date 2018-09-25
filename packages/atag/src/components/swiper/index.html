@@ -12,14 +12,14 @@
           position: relative;
           height: 100%;
         }
-        
+
         .swiper .swiper-wrap {
           display: flex;
           display: -webkit-flex;
           width: 100%;
           height: 100%;
-          transition: all 0ms ease;
-          -webkit-transition: all 0ms ease;
+          transition: all 500ms ease;
+          -webkit-transition: all 500ms ease;
         }
 
         .swiper .swiper-wrap > div {
@@ -165,7 +165,7 @@ export default class Swiper extends PolymerElement {
     this.startPos = null;
     this.transitioning = false;
     this.translateOffset = 0;
-    this.transitionDuration = 0;
+    this.transitionDuration = 500;
   }
 
   ready() {
@@ -214,6 +214,7 @@ export default class Swiper extends PolymerElement {
           }
           this.setPage(Number(newVal) + 1);
         }
+        break;
       default:
         break;
     }
@@ -382,7 +383,6 @@ export default class Swiper extends PolymerElement {
   }
   _onTransitionEnd() {
     this.transitioning = false;
-    this.transitionDuration = 0;
     this.delta = 0;
     if (this._isPageChanged()) {
       this.emitChange(this.currentPage);
