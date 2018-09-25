@@ -13,7 +13,7 @@
           height: 100%;
         }
 
-        .swiper .swiper-wrap {
+        .swiper .swiper-items {
           display: flex;
           display: -webkit-flex;
           width: 100%;
@@ -22,20 +22,12 @@
           -webkit-transition: all 500ms ease;
         }
 
-        .swiper .swiper-wrap > div {
-          overflow: hidden;
-          flex-shrink: 0;
-          -webkit-flex-shrink: 0;
-          width: 100%;
-          height: 100%;
-        }
-
-        .swiper.horizontal .swiper-wrap {
+        .swiper.horizontal .swiper-items {
           flex-direction: row;
           -webkit-flex-direction: row;
         }
 
-        .swiper.vertical .swiper-wrap {
+        .swiper.vertical .swiper-items {
           flex-direction: column;
           -webkit-flex-direction: column;
         }
@@ -48,8 +40,8 @@
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          transition: all .5s ease;
-          -webkit-transition: all .5s ease;
+          transition: all 500ms ease;
+          -webkit-transition: all 500ms ease;
         }
 
         .swiper .swiper-pagination-bullet {
@@ -57,8 +49,8 @@
           height: 8px;
           border-radius: 50%;
           background-color: #000000;
-          transition: all .5s ease;
-          -webkit-transition: all .5s ease;
+          transition: all 500ms ease;
+          -webkit-transition: all 500ms ease;
         }
 
         .swiper.vertical .swiper-pagination {
@@ -84,12 +76,12 @@
         }
       </style>
       <div on-touchmove="_handleSwiperTouchMove" class$="[[getContainerClass()]]">
-        <div id="swiperWrap" class="swiper-wrap" on-transitionend="_onTransitionEnd">
+        <div id="swiperItems" class="swiper-items" on-transitionend="_onTransitionEnd">
           <slot></slot>
         </div>
-        <div class="swiper-pagination" style$="{{showIndicatorDotsStyle}}">
+        <div id="indicator" class="swiper-pagination">
           <template is="dom-repeat" items="{{indicators}}" index-as="index">
-            <div class="swiper-pagination-bullet" style$="{{activeStyle(index)}}"></div>
+            <div class="swiper-pagination-bullet" style$="{{_indicatorDotStyle(index)}}"></div>
           </template>
         </div>
       </div>
@@ -111,12 +103,10 @@ export default class Swiper extends PolymerElement {
     return {
       current: {
         type: Number,
-        value: 0,
-        reflectToAttribute: true
+        value: 0
       },
-      currentPage: {
-        type: Number,
-        value: 1
+      currentItemId: {
+        type: String
       },
       vertical: {
         type: Boolean,
@@ -138,18 +128,22 @@ export default class Swiper extends PolymerElement {
         type: Number,
         value: 5000
       },
-      indicators: {
-        type: Array,
-        value: []
-      },
       indicatorDots: {
         type: Boolean,
         value: false,
-        observer: 'observerIndicatorDots'
+        observer: '_observerIndicatorDots'
       },
-      activeStyle: {
+      indicatorColor: {
         type: String,
-        computed: 'computedActiveStyle(currentPage)'
+        value: 'rgba(0, 0, 0, .3)'
+      },
+      indicatorActiveColor: {
+        type: String,
+        value: 'rgb(0, 0, 0)'
+      },
+      _indicatorDotStyle: {
+        type: String,
+        computed: '_computeIndicatorDotStyle(current)'
       }
     };
   }
@@ -163,23 +157,67 @@ export default class Swiper extends PolymerElement {
     this.delta = 0;
     this.dragging = false;
     this.startPos = null;
-    this.transitioning = false;
-    this.translateOffset = 0;
     this.transitionDuration = 500;
+  }
+
+  get isLoop() {
+    return this.circular || this.circular === '';
+  }
+
+  get isAutoplay() {
+    return this.autoplay || this.autoplay === '';
   }
 
   ready() {
     // Be sure to add super.ready() or you won't get shadowRoot
     super.ready();
-    this.currentPage = this.current + 1;
-    this.renderSwiper();
-    afterNextRender(this, () => {
-      Gestures.addListener(this, 'track', this.handleTrack);
-    });
+    
+    this.itemsCount = this.children.length;
+    this.indicators = new Array(this.itemsCount);
+
+    this.render();
+
+    Gestures.addListener(this, 'track', this.handleTrack);
+  }
+
+
+  render() {
+    if (this.currentItemId) {
+      const currentItem = this.querySelector(`[item-id=${this.currentItemId}]`);
+      for (var i = 0; i < this.children.length; ++i) {
+        if (currentItem === this.children[i]) {
+          this.current = i
+          break;
+        };
+      }
+    }
+
+    if (this.isLoop) {
+      this._createLoopAssistNode();
+    }
+    
+    // Set init current item
+    var realCurrent = this.isLoop ? this.current + 1 : this.current;
+    this._setTranslate(this._getTranslateOfRealItem(realCurrent), 0);
+    
+    if (this.isAutoplay) {
+      this._autoplay();
+    }
+  }
+
+  _computeIndicatorDotStyle(current) {
+    return function(index) {
+      return `background-color: ${ current === index ? this.indicatorActiveColor : this.indicatorColor}`
+    };
+  }
+
+  _observerIndicatorDots(newVal, oldVal) {
+    this.$.indicator.style.display = newVal ? 'block' : 'none';
   }
 
   attributeChangedCallback(key, oldVal, newVal) {
     super.attributeChangedCallback(key, oldVal, newVal);
+
     switch (key) {
       case 'circular':
         this.circular = newVal === 'true' || newVal === "";
@@ -187,14 +225,14 @@ export default class Swiper extends PolymerElement {
           if (this.timer) {
             clearTimeout(this.timer);
           }
-          this.renderSwiper();
+          this.render();
         }
         break;
       case 'autoplay':
         this.autoplay = newVal === 'true' || newVal === "";
         if (oldVal !== null) {
           if (newVal !== 'false') {
-            this.autoNext();
+            this._autoplay();
           } else {
             clearTimeout(this.timer);
           }
@@ -210,9 +248,9 @@ export default class Swiper extends PolymerElement {
         if (oldVal !== null && oldVal !== newVal) {
           if (this.timer) {
             clearTimeout(this.timer);
-            this.autoNext();
+            this._autoplay();
           }
-          this.setPage(Number(newVal) + 1);
+          this.setRealItem(this.isLoop ? newVal + 1 : newVal);
         }
         break;
       default:
@@ -225,72 +263,9 @@ export default class Swiper extends PolymerElement {
     Gestures.removeListener(this, 'track', this.handleTrack);
   }
 
-  get isLoop() {
-    return this.circular || this.circular === '';
-  }
-
-  get isAutoplay() {
-    return this.autoplay || this.autoplay === '';
-  }
-
-  renderSwiper() {
-    if (this.isLoop) {
-      setTimeout(() => {
-        this._createLoop();
-        this.setPage(this.currentPage, true);
-      }, 0);
-    } else {
-      setTimeout(() => {
-        this._removeLoop();
-      }, 0);
-    }
-    if (this.isAutoplay) {
-      this.autoNext();
-    }
-  }
-
-  getWrapStyle() {
-    return `
-        transform: translate3d(${this.translateX}px, ${this.translateY}px, 0);
-        transition-duration: ${this.transitionDuration}ms;
-        -webkit-transform: translate3d(${this.translateX}px, ${
-      this.translateY
-    }px, 0);
-        -webkit-transition-duration: ${this.transitionDuration}ms
-      `;
-  }
-
-  setWrapStyle() {
-    const swiperWrap = this.$.swiperWrap;
-    swiperWrap.style['transition-duration'] = `${this.transitionDuration}ms`;
-    swiperWrap.style.webkitTransitionDuration = `${this.transitionDuration}ms`;
-    swiperWrap.style.transform = `translate3d(${this.translateX}px, ${
-      this.translateY
-    }px, 0)`;
-    swiperWrap.style.webkitTransform = `translate3d(${this.translateX}px, ${
-      this.translateY
-    }px, 0)`;
-  }
-
   getContainerClass() {
     return `swiper ${this.vertical ? 'vertical' : 'horizontal'}`;
   }
-
-  _onTouchStart = ({ x, y }) => {
-    if (this.isAutoplay) {
-      clearTimeout(this.timer);
-    }
-
-    this.startPos = !this.vertical ? x : y;
-    this.delta = 0;
-    this.startTranslate = this._getTranslateOfPage(this.currentPage);
-    this.startTime = new Date().getTime();
-    this.dragging = true;
-    this.transitionDuration = 0;
-
-    document.addEventListener('touchmove', this._onTouchMove, false);
-    document.addEventListener('touchend', this._onTouchEnd, false);
-  };
 
   _handleSwiperTouchMove = (event) => {
     // Prevent scrolling in swipper when user is dragging
@@ -298,6 +273,23 @@ export default class Swiper extends PolymerElement {
       event.preventDefault();
     }
   }
+
+  _onTouchStart = ({ x, y }) => {
+    this.dragging = true;
+
+    if (this.isAutoplay) {
+      clearTimeout(this.timer);
+    }
+
+    this.startPos = this.vertical ? y : x;
+    this.delta = 0;
+    this.startTranslate = this._getTranslateOfRealItem(this.isLoop ? this.current + 1 : this.current);
+    this.startTime = new Date().getTime();
+    this.transitionDuration = 0;
+
+    document.addEventListener('touchmove', this._onTouchMove, false);
+    document.addEventListener('touchend', this._onTouchEnd, false);
+  };
 
   _onTouchMove = event => {
     this.delta = this._getTouchPos(event) - this.startPos;
@@ -307,173 +299,139 @@ export default class Swiper extends PolymerElement {
   };
 
   _onTouchEnd = event => {
-    if (this.isAutoplay) {
-      this.autoNext();
-    }
     this.dragging = false;
     this.transitionDuration = this.duration;
     const isQuickAction = new Date().getTime() - this.startTime < 1000;
 
     if (this.delta < -100 || (isQuickAction && this.delta < -15)) {
-      this.next();
+      if (!this.isLoop && this.current + 1 === this.itemsCount) {
+        this._revert();
+      } else {
+        this._next();
+      }
     } else if (this.delta > 100 || (isQuickAction && this.delta > 15)) {
-      this.prev();
+      if (!this.isLoop && this.current === 0) {
+        this._revert();
+      } else {
+        this._prev();
+      }
     } else {
       this._revert();
+    }
+
+    if (this.isAutoplay) {
+      setTimeout(() => {
+        this._autoplay();
+      }, this.duration);
     }
 
     document.removeEventListener('touchmove', this._onTouchMove);
     document.removeEventListener('touchend', this._onTouchEnd);
   };
 
-  next = () => {
-    const page = this.currentPage;
-    this.transitionDuration = this.duration;
-    if (page < this.children.length || this.isLoop) {
-      if (page === 1) {
-        // Reserve time for reset translate
-        setTimeout(() => {
-          this.setPage(page + 1);
-        }, 0);
-      } else {
-        this.setPage(page + 1);
-      }
-    } else {
-      this._revert();
-    }
+  _next = () => {
+    const isCurrentLastItem = this.current === (this.itemsCount - 1);
+    const realCurrent = this.isLoop ? this.current + 1 : this.current ;
+    const nextRealCurrent = isCurrentLastItem ? (this.isLoop ? realCurrent + 1 : 0) : realCurrent + 1;
+    
+    this.prevAction = 'next';
+    this.setRealItem(nextRealCurrent);
+
+    this.prevCurrent = this.current;
+    this.current = isCurrentLastItem ? 0 : this.current + 1;
   };
 
-  prev = () => {
-    const page = this.currentPage;
-    if (page > 1 || this.isLoop) {
-      this.setPage(page - 1);
-    } else {
-      this._revert();
-    }
+  _prev = () => {
+    const isCurrentFirstItem = this.current === 0;
+    const realCurrent = this.isLoop ? this.current + 1 : this.current ;
+    const prevRealCurrent = isCurrentFirstItem ? (this.isLoop ? realCurrent - 1 : 0) : realCurrent - 1;
+    
+    this.prevAction = 'prev';
+    this.setRealItem(prevRealCurrent);
+    
+    this.prevCurrent = this.current;
+    this.current = isCurrentFirstItem ? this.itemsCount - 1 : this.current - 1;
   };
-
-  setPage(page, noAnimation) {
-    this.lastPage = this.currentPage;
-    if (page === 0) {
-      this.currentPage = this.childrenLength;
-    } else if (page === this.childrenLength + 1) {
-      this.currentPage = 1;
-    } else {
-      this.currentPage = page;
-    }
-    if (this.isLoop) {
-      if (this.delta === 0) {
-        this._setTranslate(this._getTranslateOfPage(this.lastPage));
-      }
-      setTimeout(() => {
-        this._setTranslate(this._getTranslateOfPage(page));
-        if (noAnimation) return;
-        this._onTransitionStart();
-      }, 30);
-    } else {
-      this._setTranslate(this._getTranslateOfPage(page));
-      if (noAnimation) return;
-      this._onTransitionStart();
-    }
-  }
-
-  _onTransitionStart() {
-    this.transitioning = true;
-    this.transitionDuration = this.duration;
-  }
-  _onTransitionEnd() {
-    this.transitioning = false;
-    this.delta = 0;
-    if (this._isPageChanged()) {
-      this.emitChange(this.currentPage);
-    } else {
-      this.emitChange(this.currentPage);
-    }
-  }
-
-  _isPageChanged() {
-    return this.lastPage !== this.currentPage;
-  }
 
   _revert = () => {
-    this.setPage(this.currentPage);
+    // Only no loop mode will should revert
+    this.setRealItem(this.current);
   };
 
-  _setTranslate(value) {
-    const translateName = !this.vertical ? 'translateX' : 'translateY';
+  setRealItem(realCurrent, noAnimation) {
+    if (!noAnimation) {
+      this.transitionDuration = this.duration;
+    }
+    this._setTranslate(this._getTranslateOfRealItem(realCurrent), noAnimation ? 0 : null);
+  }
+
+  _onTransitionEnd() {
+    this.delta = 0;
+    
+    const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === (this.itemsCount - 1);
+    const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
+    if (this.isLoop && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
+      this.setRealItem(isPrevCurrentLastItem ? 1 : this.itemsCount, this.isLoop);
+    }
+
+    this.emitChangeEvent();
+  }
+
+  _setTranslate(value, duration) {
+    const translateName = this.vertical ? 'translateY' : 'translateX';
     this[translateName] = value;
-    this.setWrapStyle();
+
+    const swiperItems = this.$.swiperItems;
+    const transitionDuration = duration != null ? duration : this.transitionDuration;
+  
+    swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
+    swiperItems.style.transitionDuration = `${transitionDuration}ms`;
+
+    swiperItems.style.webkitTransform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
+    swiperItems.style.transform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
   }
 
   _getTranslate() {
-    const translateName = !this.vertical ? 'translateX' : 'translateY';
+    const translateName = this.vertical ? 'translateY' : 'translateX';
     return this[translateName];
   }
 
   _getTouchPos(event) {
-    const key = !this.vertical ? 'clientX' : 'clientY';
+    const key = this.vertical ? 'clientY' : 'clientX';
     return event.changedTouches ? event.changedTouches[0][key] : event[key];
   }
 
-  _getTranslateOfPage(page) {
-    if (page === 0) return 0;
-    const propName = !this.vertical ? 'width' : 'height';
-    return (
-      -[].reduce.call(
-        this.children,
-        (total, el, i) => {
-          if (i > page - 2) {
-            return total;
-          } else {
-            if (el.$rectLength === undefined) {
-              el.$rectLength = el.getBoundingClientRect()[propName];
-            }
-            return total + el.$rectLength;
-          }
-        },
-        0
-      ) + this.translateOffset
-    );
-  }
+  _getTranslateOfRealItem(realCurrent) {
 
-  _createLoop() {
-    const propName = !this.vertical ? 'width' : 'height';
-    this.indicators = new Array(this.children.length);
-    const duplicateFirstChild = this.children[0].cloneNode(true);
-    this.duplicateFirstChild = duplicateFirstChild;
-    const duplicateLastChild = this.children[
-      this.children.length - 1
-    ].cloneNode(true);
-    this.duplicateLastChild = duplicateLastChild;
-    this.childrenLength = this.children.length;
-    this.insertBefore(duplicateLastChild, this.children[0]);
-    this.appendChild(duplicateFirstChild);
-    this.translateOffset = -duplicateLastChild.getBoundingClientRect()[
-      propName
-    ];
-  }
-
-  _removeLoop() {
-    if (this.duplicateFirstChild) {
-      this.duplicateFirstChild.parentElement.removeChild(
-        this.duplicateFirstChild
-      );
-      this.duplicateFirstChild = null;
+    const propName = this.vertical ? 'height' : 'width';
+    
+    var translate = 0;
+    for (var i = 0; i < realCurrent; i++) {
+      var item = this.children[i];
+      if (item.__rectCache == null) {
+        item.__rectCache = item.getBoundingClientRect()[propName];
+      }
+      translate -= item.__rectCache;
     }
-    if (this.duplicateLastChild) {
-      this.duplicateLastChild.parentElement.removeChild(
-        this.duplicateLastChild
-      );
-      this.duplicateLastChild = null;
-    }
-    this.indicators = this.children;
-    this.childrenLength = this.children.length;
-    this.translateOffset = 0;
-    this.setPage(this.currentPage, true);
+
+    return translate;
   }
 
-  emitChange(value) {
-    this.current = value - 1;
+  _createLoopAssistNode() {
+    const swiperItems = this.children;
+
+    if (swiperItems.length > 1) {
+
+      const duplicateFirstChild = this.duplicateFirstChild = this.children[0].cloneNode(true);
+      const duplicateLastChild = this.children[swiperItems.length - 1].cloneNode(true);
+      
+      this.insertBefore(duplicateLastChild, this.children[0]);
+      this.appendChild(duplicateFirstChild);
+    }
+  }
+
+  emitChangeEvent() {
+
     const event = new CustomEvent('change', {
       bubbles: false,
       cancelable: true,
@@ -481,59 +439,32 @@ export default class Swiper extends PolymerElement {
         current: this.current
       }
     });
+
     this.dispatchEvent(event);
   }
 
-  autoNext = () => {
+  _autoplay = () => {
+
+    if (this.itemsCount === 1) return;
+
     this.timer = setTimeout(() => {
-      // When looping page 1 is the last view
-      if (this.isLoop && this.currentPage === 1) {
-        /**
-         * Move the view to the first image in a non-animated form,
-         * the principle is that the last child element is the clone of the first element.
-         */
-        this._setTranslate(this._getTranslateOfPage(1));
-      }
-      // When not looping, the last bit of the array is the last view
-      if (!this.isLoop && this.currentPage === this.childrenLength) {
-        this.transitionDuration = this.duration;
-        // Use animation to adjust the view to the first image
-        setTimeout(() => {
-          this.setPage(1);
-          this.autoNext();
-        }, 0);
-      } else {
-        this.next();
-        this.autoNext();
-      }
+
+      this._next(); 
+      this._autoplay();
+
     }, this.interval);
   }
 
-  computedActiveStyle(currentPage) {
-    return function(index) {
-      const bgColor =
-        this.getAttribute('indicator-color') || 'rgba(0, 0, 0, .3)';
-      const activeBgColor =
-        this.getAttribute('indicator-active-color') || '#000';
-      return currentPage === index + 1
-        ? `background-color: ${activeBgColor}`
-        : `background-color: ${bgColor}`;
-    };
-  }
-
-  observerIndicatorDots(newVal, oldVal) {
-    this.showIndicatorDotsStyle = newVal ? '' : 'display: none';
-  }
-
   handleTrack(e) {
-    switch (e.detail.state) {
-      case 'start':
-        const { dx, dy } = e.detail;
-        const direction = Math.abs(dy) - Math.abs(dx);
-        if ((!this.vertical && direction < 0) || (this.vertical && direction > 0)) {
-          this._onTouchStart(e.detail);
-        }
-        break;
+    const detail = e.detail;
+    if (detail.state === 'start') {
+      const dx = detail.dx;
+      const dy = detail.dy;
+      const direction = Math.abs(dy) - Math.abs(dx);
+
+      if ((!this.vertical && direction < 0) || (this.vertical && direction > 0)) {
+        this._onTouchStart(detail);
+      }
     }
   }
 }

@@ -308,6 +308,19 @@
         </a-swiper-item>
       </a-swiper>
 
+      <a-view>current-item-id="green"</a-view>
+      <a-swiper current-item-id="green" indicator-dots=true>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item item-id="green">
+          <a-view style="display: block;height: 150px;background-color: green"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+
       <a-view>circular=true</a-view>
       <a-swiper circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
         <a-swiper-item>
@@ -322,18 +335,23 @@
       </a-swiper>
 
       <a-view>vertical=true</a-view>
-      <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
+      <a-swiper id="swiper" vertical=true circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
         <a-swiper-item>
-          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+          <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
         </a-swiper-item>
         <a-swiper-item>
-          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+          <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
         </a-swiper-item>
         <a-swiper-item>
-          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+          <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
         </a-swiper-item>
       </a-swiper>
 
+      <p style="overflow-wrap: break-word;">
+        Change Event: <span id="swiperChangeEvent">null</span>
+      </p>
+
+      <a-view>scroll-view nested</a-view>
       <a-swiper style="height: 300px;">
         <a-swiper-item>
           <a-scroll-view style="display: block;height: 300px;background-color: red" scroll-y=true>
@@ -349,6 +367,12 @@
       
     </div>
   </div>
+
+  <script>
+    swiper.addEventListener('change', function(event){
+      swiperChangeEvent.innerHTML = event.detail.current;
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-audio</h4>
