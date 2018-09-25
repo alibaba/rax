@@ -422,7 +422,7 @@ export default class Swiper extends PolymerElement {
 
     if (swiperItems.length > 1) {
 
-      const duplicateFirstChild = this.duplicateFirstChild = this.children[0].cloneNode(true);
+      const duplicateFirstChild = this.children[0].cloneNode(true);
       const duplicateLastChild = this.children[swiperItems.length - 1].cloneNode(true);
       
       this.insertBefore(duplicateLastChild, this.children[0]);
