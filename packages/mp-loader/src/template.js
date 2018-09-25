@@ -105,13 +105,13 @@ module.exports = function templateLoader(content) {
       }
       return __parent_tpls__ ? (__parent_tpls__['${tplAlias}'] = render) : render;
     }
-    ${ast.isWebView 
-      ? `
+    ${ast.isWebView
+    ? `
         module.exports.getWebViewSource = function (data) { return ${ast.webViewSrc}; };
         module.exports.getWebViewOnMessage = function (data) { return ${ast.webViewOnMessage}; };
-      ` 
-      : ''
-    }
+      `
+    : ''
+}
   })(
     ${globalStyleReq},
     ${styleReq},

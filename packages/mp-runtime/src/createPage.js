@@ -119,7 +119,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
         const onMessageMethod = getWebViewOnMessage.call(this.pageInstance, this.state);
         if (typeof config[onMessageMethod] === 'function') {
           const cycleFn = (evt) => {
-              config[onMessageMethod].call(this.pageInstance, { detail: { data: evt.data } });
+            config[onMessageMethod].call(this.pageInstance, { detail: { data: evt.data } });
           };
           this.cycleListeners.push({ type: WEBVIEW_MESSAGE_NAME, fn: cycleFn });
           pageEventEmitter.on(WEBVIEW_MESSAGE_NAME, cycleFn);
