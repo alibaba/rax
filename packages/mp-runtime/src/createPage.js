@@ -58,7 +58,7 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
     ? (data) => {
       const url = getWebViewSource(data);
       if (url && location.href !== url) {
-        location.href = url;
+        location.replace(url);
       }
       return '';
     }

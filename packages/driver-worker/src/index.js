@@ -26,13 +26,21 @@ export default ({ postMessage, addEventListener }) => {
   let MutationObserver = document.defaultView.MutationObserver;
 
   function createLocation() {
+    const sendLocationDirective = (data) => postMessage({ type: 'Location', data });
     return {
       get href() {
         return document.URL;
       },
       set href(url) {
         document.URL = url;
-        postMessage({ type: 'Location', href: url });
+        sendLocationDirective({ type: 'assign', prop: 'href', val: url });
+      },
+      replace(url) {
+        document.URL = url;
+        sendLocationDirective({ type: 'call', prop: 'replace', args: [url] });
+      },
+      reload() {
+        sendLocationDirective({ type: 'call', prop: 'reload' });
       },
     };
   }

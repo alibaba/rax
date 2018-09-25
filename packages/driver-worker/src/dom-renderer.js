@@ -40,16 +40,16 @@ const NO_BUBBLES_EVENTS = {
   invalid: true
 };
 
-function redirect(url) {
-  // in iframe it should only redirect itself
-  if (window.frameElement) {
-    // remove src doc if exists
-    window.frameElement.removeAttribute('srcDoc');
-    window.frameElement.src = url;
-  } else {
-    location.href = url;
-  }
-}
+// function redirect(url) {
+//   // in iframe it should only redirect itself
+//   if (window.frameElement) {
+//     // remove src doc if exists
+//     window.frameElement.removeAttribute('srcDoc');
+//     window.frameElement.src = url;
+//   } else {
+//
+//   }
+// }
 
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
@@ -347,7 +347,18 @@ export default ({ worker, tagNamePrefix = '' }) => {
         MUTATIONS[mutation.type](mutation);
       }
     } else if (type === 'Location') {
-      redirect(data.href);
+      const { data: payload } = data;
+      const { type, prop } = payload;
+      switch (type) {
+        case 'call': {
+          location[prop] = payload.val;
+          break;
+        }
+        case 'assign': {
+          location[prop].apply(window, payload.args);
+          break;
+        }
+      }
     }
   };
 
