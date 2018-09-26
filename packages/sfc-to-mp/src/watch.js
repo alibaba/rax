@@ -11,30 +11,30 @@ const statsOptions = {
   hash: false,
   modules: false,
   entrypoints: false,
-  assets: false,
+  assets: true,
   version: false,
   builtAt: false,
   timings: false,
 };
 
 module.exports = function watch() {
-  const watchOpts = {
-    aggregateTimeout: 300,
-  };
-  console.log(vendorConfig);
+  const watchOpts = { aggregateTimeout: 300 };
+
   const compiler = webpack([vendorConfig /* , webpackConfig */]);
 
-  compiler.watch(watchOpts, (err, stats) => {
-    const hasErr = stats.stats.reduce((prev, curr) => prev || curr.hasErrors(), false);
+  compiler.watch(watchOpts, (err, statsQueue) => {
+    const hasErr = statsQueue.stats.reduce((prev, curr) => prev || curr.hasErrors(), false);
     if (hasErr) {
-      stats.stats.forEach((stats) => {
+      statsQueue.stats.forEach((stats) => {
         console.log(stats.toString(statsOptions));
       });
       log(colors.red('Compiled with Error.'));
     } else if (err) {
       log.error(err);
     } else {
-      console.log(stats.toString(statsOptions));
+      statsQueue.stats.forEach((stats) => {
+        console.log(stats.toString(statsOptions));
+      });
       log(colors.green('Compile Succeed. Watching changes.'));
     }
   });
