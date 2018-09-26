@@ -242,8 +242,8 @@
     <h4 class="title">a-picker</h4>
     <div class="demo">
       <a-view>
-        <a-picker value="0" range="[1,2,3,4,5]">
-          <a-text>pick me</a-text>
+        <a-picker value="0" range="[1,2,3,4,5]" id="picker">
+          <a-text id="pickerResult">pick me</a-text>
         </a-picker>
       </a-view>
       <a-view>
@@ -253,6 +253,11 @@
       </a-view>
     </div>
   </div>
+  <script>
+    picker.addEventListener('change', e => {
+      pickerResult.innerHTML = 'picked ' + e.detail.value;
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-form</h4>
