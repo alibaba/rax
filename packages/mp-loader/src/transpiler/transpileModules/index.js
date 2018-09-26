@@ -6,5 +6,6 @@ const list = require('./list');
 const tagName = require('./tagName');
 const checked = require('./checked');
 const template = require('./template');
+const webView = require('./web-view');
 
-module.exports = [checked, klass, events, list, condition, bind, template, tagName];
+module.exports = [checked, klass, events, list, condition, bind, template, tagName, webView];
