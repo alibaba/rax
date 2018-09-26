@@ -48,8 +48,10 @@
         Hello
         World
       </a-text>
-      <a-text style="line-height: 10px; font-size: 12px;">line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px;</a-text>
-      <a-text style="line-height: 18px; font-size: 20px;">line-height: 18px; font-size: 20px; line-height: 18px; font-size: 20px;</a-text>
+      <a-text style="line-height: 10px; font-size: 12px;">line-height: 10px; font-size: 12px; line-height: 10px;
+        font-size: 12px; line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px;</a-text>
+      <a-text style="line-height: 18px; font-size: 20px;">line-height: 18px; font-size: 20px; line-height: 18px;
+        font-size: 20px;</a-text>
     </div>
   </div>
 
@@ -86,20 +88,20 @@
   </div>
 
   <script>
-    image.addEventListener('load', function(e){
-      imageLoad.innerHTML = JSON.stringify(e.detail);
+    image.addEventListener('load',function(e) {
+      imageLoad.innerHTML=JSON.stringify(e.detail);
     });
-    errorImage.addEventListener('error', function(e){
-      imageError.innerHTML = e.detail.errMsg;
+    errorImage.addEventListener('error',function(e) {
+      imageError.innerHTML=e.detail.errMsg;
     });
-    image.addEventListener('click', function(e){
-      image.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    image.addEventListener('click',function(e) {
+      image.src='https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
     });
-    asyncImage.addEventListener('click', function(e){
-      asyncImage.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    asyncImage.addEventListener('click',function(e) {
+      asyncImage.src='https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
     });
-    asyncImage.addEventListener('load', function(e){
-      asyncImageLoad.innerHTML = JSON.stringify(e.detail);
+    asyncImage.addEventListener('load',function(e) {
+      asyncImageLoad.innerHTML=JSON.stringify(e.detail);
     });
   </script>
 
@@ -116,6 +118,7 @@
   <div class="card">
     <h4 class="title">a-input</h4>
     <div class="demo">
+      <p>event:</p>
       <a-input id="input" placeholder="input placeholder" placeholder-style="color: red;" focus=true></a-input>
       <p style="overflow-wrap: break-word;">
         Input Event: <span id="inputInput">null</span>
@@ -126,41 +129,46 @@
       <p style="overflow-wrap: break-word;">
         Blur Event: <span id="inputBlur">null</span>
       </p>
+      <p>custom style:</p>
+      <a-input style="text-align: center;font-weight: bold;padding: 10px;color: red" placeholder="input placeholder"></a-input>
     </div>
   </div>
 
   <script>
-    input.addEventListener('input', function(e){
-      inputInput.innerHTML = e.detail.value || 'null';
+    input.addEventListener('input',function(e) {
+      inputInput.innerHTML=e.detail.value||'null';
     });
-    input.addEventListener('focus', function(e){
-      inputFocus.innerHTML = e.detail.value || 'null';
+    input.addEventListener('focus',function(e) {
+      inputFocus.innerHTML=e.detail.value||'null';
     });
-    input.addEventListener('blur', function(e){
-      inputBlur.innerHTML = e.detail.value || 'null';
+    input.addEventListener('blur',function(e) {
+      inputBlur.innerHTML=e.detail.value||'null';
     });
   </script>
-  
+
 
   <div class="card">
     <h4 class="title">a-textarea</h4>
     <div class="demo">
-      <a-textarea id="textarea" auto-height=true class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <p>event:</p>
+      <a-textarea id="textarea" class="textarea" placeholder="textarea placeholder"></a-textarea>
       <p style="overflow-wrap: break-word;">
         Input Event: <span id="textareaInput">null</span>
       </p>
       <p style="overflow-wrap: break-word;">
         Blur Event: <span id="textareaBlur">null</span>
       </p>
+      <p>custom style:</p>
+      <a-textarea style="text-align: center;font-weight: bold;padding: 10px; color: red" auto-height=true placeholder="textarea placeholder"></a-textarea>
     </div>
   </div>
 
   <script>
-    textarea.addEventListener('input', function(e){
-      textareaInput.innerHTML = e.detail.value || 'null';
+    textarea.addEventListener('input',function(e) {
+      textareaInput.innerHTML=e.detail.value||'null';
     });
-    textarea.addEventListener('blur', function(e){
-      textareaBlur.innerHTML = e.detail.value || 'null';
+    textarea.addEventListener('blur',function(e) {
+      textareaBlur.innerHTML=e.detail.value||'null';
     });
   </script>
 
@@ -187,22 +195,31 @@
   <div class="card">
     <h4 class="title">a-radio</h4>
     <div class="demo">
-      <a-radio-group>
+      <a-radio-group id="radioGroup">
         <a-label>
           <a-radio value="foo" checked></a-radio>
-          <a-text>checked</a-text>
+          <a-text>foo</a-text>
         </a-label>
         <a-label>
           <a-radio value="baz"></a-radio>
-          <a-text>unchecked</a-text>
+          <a-text>baz</a-text>
         </a-label>
         <a-label>
           <a-radio value="bar" disabled></a-radio>
           <a-text>disabled</a-text>
         </a-label>
       </a-radio-group>
+      <p style="overflow-wrap: break-word;">
+        Change Event: <span id="radioChange">null</span>
+      </p>
     </div>
   </div>
+
+  <script>
+    radioGroup.addEventListener('change',e => {
+      radioChange.innerHTML=e.detail.value;
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-slider</h4>
@@ -217,18 +234,30 @@
     <h4 class="title">a-switch</h4>
     <div class="demo">
       <a-switch checked></a-switch>
-      <a-switch></a-switch>
+      <a-switch color="#508EDC"></a-switch>
     </div>
   </div>
 
   <div class="card">
     <h4 class="title">a-picker</h4>
     <div class="demo">
-      <a-picker value="0" range="[1,2,3,4,5]">
-        <a-text>pick me</a-text>
-      </a-picker>
+      <a-view>
+        <a-picker value="0" range="[1,2,3,4,5]" id="picker">
+          <a-text id="pickerResult">pick me</a-text>
+        </a-picker>
+      </a-view>
+      <a-view>
+        <a-picker value="0" range="[1,2,3,4,5]" disabled=true>
+          <a-text>disalbed pick</a-text>
+        </a-picker>
+      </a-view>
     </div>
   </div>
+  <script>
+    picker.addEventListener('change', e => {
+      pickerResult.innerHTML = 'picked ' + e.detail.value;
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-form</h4>
@@ -249,15 +278,23 @@
         <a-view style="margin: 8px">
           <a-view>radio</a-view>
           <a-radio-group name="radio-group">
-            <a-label><a-radio value="radio1"></a-radio>radio1</a-label>
-            <a-label><a-radio value="radio2"></a-radio>radio2</a-label>
-          </radio-group>
+            <a-label>
+              <a-radio value="radio1"></a-radio>radio1
+            </a-label>
+            <a-label>
+              <a-radio value="radio2"></a-radio>radio2
+            </a-label>
+            </radio-group>
         </a-view>
         <a-view style="margin: 8px">
           <a-view>checkbox</a-view>
           <a-checkbox-group name="checkbox">
-            <a-label><a-checkbox value="checkbox1"></a-checkbox>checkbox1</a-label>
-            <a-label><a-checkbox value="checkbox2"></a-checkbox>checkbox2</a-label>
+            <a-label>
+              <a-checkbox value="checkbox1"></a-checkbox>checkbox1
+            </a-label>
+            <a-label>
+              <a-checkbox value="checkbox2"></a-checkbox>checkbox2
+            </a-label>
           </a-checkbox-group>
         </a-view>
         <a-view style="margin: 8px">
@@ -275,11 +312,11 @@
   </div>
 
   <script>
-    form.addEventListener('submit', function(e){
-      formSubmit.innerHTML = JSON.stringify(e.detail.value);
+    form.addEventListener('submit',function(e) {
+      formSubmit.innerHTML=JSON.stringify(e.detail.value);
     });
-    form.addEventListener('reset', function(e){
-      formReset.innerHTML = String(new Date);
+    form.addEventListener('reset',function(e) {
+      formReset.innerHTML=String(new Date);
     });
   </script>
 
@@ -367,13 +404,13 @@
           </a-scroll-view>
         </a-swiper-item>
       </a-swiper>
-      
+
     </div>
   </div>
 
   <script>
-    swiper.addEventListener('change', function(event){
-      swiperChangeEvent.innerHTML = event.detail.current;
+    swiper.addEventListener('change',function(event) {
+      swiperChangeEvent.innerHTML=event.detail.current;
     });
 
     swiperPrevButton.addEventListener('click', function(event){
@@ -417,7 +454,7 @@
         <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
         <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
       </a-scroll-view>
-      
+
       <p style="overflow-wrap: break-word;">
         Scroll Event: <span id="scrollEvent">null</span>
       </p>
@@ -431,43 +468,43 @@
       </p>
 
       <a-button id="scrollToLower">Scroll To Lower</a-button>
-      
+
       <p>
         Scrolling status: <span id="scrollingStatus">enable</span>
       </p>
       <a-button id="toggleScroll">Toggle Scroll</a-button>
-      
+
     </div>
   </div>
 
   <script>
-    var toggleScrolling = true;
-    toggleScroll.addEventListener('click', function(){
-      scrollingStatus.innerHTML = (toggleScrolling = !toggleScrolling) ? 'enable' : 'disable';
-      scrollview.setAttribute('scroll-y', toggleScrolling);
+    var toggleScrolling=true;
+    toggleScroll.addEventListener('click',function() {
+      scrollingStatus.innerHTML=(toggleScrolling=!toggleScrolling)? 'enable':'disable';
+      scrollview.setAttribute('scroll-y',toggleScrolling);
     });
 
-    scrollview.addEventListener('scroll', function(e){
-      scrollEvent.innerHTML = JSON.stringify(e.detail);
+    scrollview.addEventListener('scroll',function(e) {
+      scrollEvent.innerHTML=JSON.stringify(e.detail);
     });
 
-    scrollview.addEventListener('scrolltoupper', function(e){
-      scrolltoupperEvent.innerHTML = +new Date;
+    scrollview.addEventListener('scrolltoupper',function(e) {
+      scrolltoupperEvent.innerHTML=+new Date;
     });
 
-    scrollview.addEventListener('scrolltolower', function(e){
-      scrolltolowerEvent.innerHTML = +new Date;
+    scrollview.addEventListener('scrolltolower',function(e) {
+      scrolltolowerEvent.innerHTML=+new Date;
     });
 
-    scrollToUpper.addEventListener('click', function(e){
-      scrollview.setAttribute('scroll-top', 0);
+    scrollToUpper.addEventListener('click',function(e) {
+      scrollview.setAttribute('scroll-top',0);
     });
 
-    scrollToLower.addEventListener('click', function(e){
-      scrollview.setAttribute('scroll-top', 10000);
+    scrollToLower.addEventListener('click',function(e) {
+      scrollview.setAttribute('scroll-top',10000);
     });
   </script>
-  
+
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">

@@ -83,24 +83,24 @@ export default class ViewElement extends PolymerElement {
   }
 
   _activeHoverStyle() {
-    var currentHoverStyle;
+    let currentHoverStyle;
     if ((currentHoverStyle = this.hoverStyle));
     /**
      * Add a flag bit in style to specify the hover state
      */
-    this.setAttribute(
-      'style',
-      this.getAttribute('style') + '/*h*/' + currentHoverStyle + '/*h*/'
-    );
+    if (currentHoverStyle) {
+      const style = this.getAttribute('style') || '';
+      this.setAttribute('style', style + '/*h*/' + currentHoverStyle + '/*h*/');
+    }
     this._hoverActiveState = true;
   }
 
   _inactiveHoverStyle() {
     if (this._hoverActiveState) {
-      const rawCSSText = this.getAttribute('style');
+      const rawCSSText = this.getAttribute('style') || '';
       const cssText = rawCSSText.replace(/(\/\*h\*\/).*\1/, '');
       this._hoverActiveState = false;
-      this.setAttribute('style', cssText);
+      cssText && this.setAttribute('style', cssText);
     }
   }
 
