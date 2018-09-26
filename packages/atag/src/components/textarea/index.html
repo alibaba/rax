@@ -11,7 +11,6 @@
       }
 
       #textarea {
-        all: inherit;
         outline: none;
         border: none;
         resize: none;
@@ -19,8 +18,21 @@
         margin: 0;
         width: 100%;
         height: 100%;
-        outline: none;
         background: transparent;
+        /*
+          textarea default style reset
+        */
+        text-rendering: inherit;
+        color: inherit;
+        letter-spacing: inherit;
+        word-spacing: inherit;
+        text-transform: inherit;
+        text-indent: inherit;
+        text-shadow: inherit;
+        text-align: inherit;
+        font: inherit;
+        white-space: inherit;
+        overflow-wrap: inherit;
       }
 
       #count {
