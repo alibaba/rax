@@ -81,7 +81,7 @@
         </div>
         <div id="indicator" class="swiper-pagination">
           <template is="dom-repeat" items="{{indicators}}" index-as="index">
-            <div class="swiper-pagination-bullet" style$="{{_indicatorDotStyle(index)}}"></div>
+            <div class="swiper-pagination-bullet" style$="background-color: {{_indicatorDotStyle(index)}}"></div>
           </template>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default class Swiper extends PolymerElement {
         value: 0
       },
       currentItemId: {
-        type: String
+        type: String,
       },
       vertical: {
         type: Boolean,
@@ -150,7 +150,6 @@ export default class Swiper extends PolymerElement {
 
   constructor() {
     super();
-    this.lastPage = 1;
     this.translateX = 0;
     this.translateY = 0;
     this.startTranslate = 0;
@@ -160,7 +159,7 @@ export default class Swiper extends PolymerElement {
     this.transitionDuration = 500;
   }
 
-  get isLoop() {
+  get isCircular() {
     return this.circular || this.circular === '';
   }
 
@@ -178,10 +177,15 @@ export default class Swiper extends PolymerElement {
     this.render();
 
     Gestures.addListener(this, 'track', this.handleTrack);
+    this.isReady = true;
   }
 
 
   render() {
+    if (this.isCircular) {
+      this._createCircularAssistNode();
+    }
+
     if (this.currentItemId) {
       const currentItem = this.querySelector(`[item-id=${this.currentItemId}]`);
       for (var i = 0; i < this.children.length; ++i) {
@@ -191,13 +195,9 @@ export default class Swiper extends PolymerElement {
         };
       }
     }
-
-    if (this.isLoop) {
-      this._createLoopAssistNode();
-    }
     
     // Set init current item
-    var realCurrent = this.isLoop ? this.current + 1 : this.current;
+    var realCurrent = this.isCircular ? this.current + 1 : this.current;
     this._setTranslate(this._getTranslateOfRealItem(realCurrent), 0);
     
     if (this.isAutoplay) {
@@ -207,7 +207,7 @@ export default class Swiper extends PolymerElement {
 
   _computeIndicatorDotStyle(current) {
     return function(index) {
-      return `background-color: ${ current === index ? this.indicatorActiveColor : this.indicatorColor}`
+      return current === index ? this.indicatorActiveColor : this.indicatorColor
     };
   }
 
@@ -219,22 +219,13 @@ export default class Swiper extends PolymerElement {
     super.attributeChangedCallback(key, oldVal, newVal);
 
     switch (key) {
-      case 'circular':
-        this.circular = newVal === 'true' || newVal === "";
-        if (oldVal !== null) {
-          if (this.timer) {
-            clearTimeout(this.timer);
-          }
-          this.render();
-        }
-        break;
       case 'autoplay':
         this.autoplay = newVal === 'true' || newVal === "";
         if (oldVal !== null) {
-          if (newVal !== 'false') {
-            this._autoplay();
-          } else {
+          if (newVal === 'false') {
             clearTimeout(this.timer);
+          } else {
+            this._autoplay();
           }
         }
         break;
@@ -245,12 +236,14 @@ export default class Swiper extends PolymerElement {
         this.vertical = newVal === 'true';
         break;
       case 'current':
-        if (oldVal !== null && oldVal !== newVal) {
-          if (this.timer) {
+        if (this.isReady && Number(newVal) > -1 && Number(newVal) < this.itemsCount) {
+          if (this.timer !== null) {
             clearTimeout(this.timer);
-            this._autoplay();
           }
-          this.setRealItem(this.isLoop ? newVal + 1 : newVal);
+          var realCurrent = this.isCircular ? Number(newVal) + 1 : Number(newVal);
+          this._setTranslate(this._getTranslateOfRealItem(realCurrent));
+
+          this._autoplay();
         }
         break;
       default:
@@ -277,18 +270,18 @@ export default class Swiper extends PolymerElement {
   _onTouchStart = ({ x, y }) => {
     this.dragging = true;
 
-    if (this.isAutoplay) {
+    if (this.timer !== null) {
       clearTimeout(this.timer);
     }
 
     this.startPos = this.vertical ? y : x;
     this.delta = 0;
-    this.startTranslate = this._getTranslateOfRealItem(this.isLoop ? this.current + 1 : this.current);
+    this.startTranslate = this._getTranslateOfRealItem(this.isCircular ? this.current + 1 : this.current);
     this.startTime = new Date().getTime();
     this.transitionDuration = 0;
 
-    document.addEventListener('touchmove', this._onTouchMove, false);
-    document.addEventListener('touchend', this._onTouchEnd, false);
+    document.addEventListener('touchmove', this._onTouchMove);
+    document.addEventListener('touchend', this._onTouchEnd);
   };
 
   _onTouchMove = event => {
@@ -300,17 +293,18 @@ export default class Swiper extends PolymerElement {
 
   _onTouchEnd = event => {
     this.dragging = false;
+
     this.transitionDuration = this.duration;
     const isQuickAction = new Date().getTime() - this.startTime < 1000;
 
     if (this.delta < -100 || (isQuickAction && this.delta < -15)) {
-      if (!this.isLoop && this.current + 1 === this.itemsCount) {
+      if (!this.isCircular && this.current + 1 === this.itemsCount) {
         this._revert();
       } else {
         this._next();
       }
     } else if (this.delta > 100 || (isQuickAction && this.delta > 15)) {
-      if (!this.isLoop && this.current === 0) {
+      if (!this.isCircular && this.current === 0) {
         this._revert();
       } else {
         this._prev();
@@ -321,7 +315,7 @@ export default class Swiper extends PolymerElement {
 
     if (this.isAutoplay) {
       setTimeout(() => {
-        this._autoplay();
+        this._autoplay()
       }, this.duration);
     }
 
@@ -330,9 +324,12 @@ export default class Swiper extends PolymerElement {
   };
 
   _next = () => {
+
+    this.current = this.current < 0 ? 0 : this.current > this.itemsCount - 1 ? this.itemsCount - 1 : this.current;
+
     const isCurrentLastItem = this.current === (this.itemsCount - 1);
-    const realCurrent = this.isLoop ? this.current + 1 : this.current ;
-    const nextRealCurrent = isCurrentLastItem ? (this.isLoop ? realCurrent + 1 : 0) : realCurrent + 1;
+    const realCurrent = this.isCircular ? this.current + 1 : this.current ;
+    const nextRealCurrent = isCurrentLastItem ? (this.isCircular ? realCurrent + 1 : 0) : realCurrent + 1;
     
     this.prevAction = 'next';
     this.setRealItem(nextRealCurrent);
@@ -343,8 +340,8 @@ export default class Swiper extends PolymerElement {
 
   _prev = () => {
     const isCurrentFirstItem = this.current === 0;
-    const realCurrent = this.isLoop ? this.current + 1 : this.current ;
-    const prevRealCurrent = isCurrentFirstItem ? (this.isLoop ? realCurrent - 1 : 0) : realCurrent - 1;
+    const realCurrent = this.isCircular ? this.current + 1 : this.current ;
+    const prevRealCurrent = isCurrentFirstItem ? (this.isCircular ? realCurrent - 1 : 0) : realCurrent - 1;
     
     this.prevAction = 'prev';
     this.setRealItem(prevRealCurrent);
@@ -370,8 +367,8 @@ export default class Swiper extends PolymerElement {
     
     const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === (this.itemsCount - 1);
     const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
-    if (this.isLoop && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
-      this.setRealItem(isPrevCurrentLastItem ? 1 : this.itemsCount, this.isLoop);
+    if (this.isCircular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
+      this.setRealItem(isPrevCurrentLastItem ? 1 : this.itemsCount, this.isCircular);
     }
 
     this.emitChangeEvent();
@@ -404,10 +401,11 @@ export default class Swiper extends PolymerElement {
   _getTranslateOfRealItem(realCurrent) {
 
     const propName = this.vertical ? 'height' : 'width';
-    
+
     var translate = 0;
     for (var i = 0; i < realCurrent; i++) {
       var item = this.children[i];
+      if (!item) break;
       if (item.__rectCache == null) {
         item.__rectCache = item.getBoundingClientRect()[propName];
       }
@@ -417,7 +415,7 @@ export default class Swiper extends PolymerElement {
     return translate;
   }
 
-  _createLoopAssistNode() {
+  _createCircularAssistNode() {
     const swiperItems = this.children;
 
     if (swiperItems.length > 1) {
@@ -436,7 +434,7 @@ export default class Swiper extends PolymerElement {
       bubbles: false,
       cancelable: true,
       detail: {
-        current: this.current
+        current: this.current < 0 ? 0 : this.current > this.itemsCount - 1 ? this.itemsCount - 1 : this.current
       }
     });
 
@@ -446,10 +444,14 @@ export default class Swiper extends PolymerElement {
   _autoplay = () => {
 
     if (this.itemsCount === 1) return;
+    
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
 
     this.timer = setTimeout(() => {
 
-      this._next(); 
+      this._next();
       this._autoplay();
 
     }, this.interval);
