@@ -38,7 +38,7 @@ module.exports = function templateLoader(content) {
     templatePath: resourcePath,
     scope: ''
   };
-  const { renderFn, tplAlias, tplASTs, dependencies } = transpiler(rawTpl, transpileOpts);
+  const { ast, renderFn, tplAlias, tplASTs, dependencies } = transpiler(rawTpl, transpileOpts);
 
   let tplRegisters = '';
   // tpl include and import
@@ -105,6 +105,13 @@ module.exports = function templateLoader(content) {
       }
       return __parent_tpls__ ? (__parent_tpls__['${tplAlias}'] = render) : render;
     }
+    ${ast.isWebView
+    ? `
+        module.exports.getWebViewSource = function (data) { return ${ast.webViewSrc}; };
+        module.exports.getWebViewOnMessage = function (data) { return ${ast.webViewOnMessage}; };
+      `
+    : ''
+}
   })(
     ${globalStyleReq},
     ${styleReq},
