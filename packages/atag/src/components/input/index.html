@@ -2,24 +2,21 @@
   <template>
     <style>
       :host {
-        display: flex;
-        display: -webkit-flex;
-        background-color: white;
-        box-sizing: border-box;
-        padding: 2px 5px;
+        display: inline-block;
+        background-color: #fff;
+        border: 1px solid #DFDFDF;
+        padding: 1px;
       }
 
       :host #input {
-        width: 100%;
-        display: inline-block;
-        padding: 0;
+        all: inherit;
         background-color: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
         outline: none;
-        font-size: inherit;
-        color: inherit;
-        box-sizing: border-box;
-        border-width: 0;
-        text-align: inherit;
       }
     </style>
     <input id="input" value$="{{value}}" type$="{{type}}" placeholder$="{{placeholder}}" disabled$="{{disabled}}"

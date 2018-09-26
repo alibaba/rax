@@ -116,6 +116,7 @@
   <div class="card">
     <h4 class="title">a-input</h4>
     <div class="demo">
+      <p>event:</p>
       <a-input id="input" placeholder="input placeholder" placeholder-style="color: red;" focus=true></a-input>
       <p style="overflow-wrap: break-word;">
         Input Event: <span id="inputInput">null</span>
@@ -126,6 +127,8 @@
       <p style="overflow-wrap: break-word;">
         Blur Event: <span id="inputBlur">null</span>
       </p>
+      <p>custom style:</p>
+      <a-input style="text-align: center;font-weight: bold;padding: 10px" placeholder="input placeholder"></a-input>
     </div>
   </div>
 
@@ -145,13 +148,16 @@
   <div class="card">
     <h4 class="title">a-textarea</h4>
     <div class="demo">
-      <a-textarea id="textarea" auto-height=true class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <p>event:</p>
+      <a-textarea id="textarea" class="textarea" placeholder="textarea placeholder"></a-textarea>
       <p style="overflow-wrap: break-word;">
         Input Event: <span id="textareaInput">null</span>
       </p>
       <p style="overflow-wrap: break-word;">
         Blur Event: <span id="textareaBlur">null</span>
       </p>
+      <p>custom style:</p>
+      <a-textarea style="text-align: center;font-weight: bold;padding: 10px" auto-height=true placeholder="textarea placeholder"></a-textarea>
     </div>
   </div>
 
@@ -217,7 +223,7 @@
     <h4 class="title">a-switch</h4>
     <div class="demo">
       <a-switch checked></a-switch>
-      <a-switch></a-switch>
+      <a-switch color="#508EDC"></a-switch>
     </div>
   </div>
 
