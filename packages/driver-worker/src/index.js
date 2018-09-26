@@ -22,7 +22,28 @@ const TO_SANITIZE = [
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
+  let location = createLocation();
   let MutationObserver = document.defaultView.MutationObserver;
+
+  function createLocation() {
+    const sendLocationDirective = (data) => postMessage({ type: 'Location', data });
+    return {
+      get href() {
+        return document.URL;
+      },
+      set href(url) {
+        document.URL = url;
+        sendLocationDirective({ type: 'assign', prop: 'href', val: url });
+      },
+      replace(url) {
+        document.URL = url;
+        sendLocationDirective({ type: 'call', prop: 'replace', args: [url] });
+      },
+      reload() {
+        sendLocationDirective({ type: 'call', prop: 'reload' });
+      },
+    };
+  }
 
   const NODES = new Map();
   let COUNTER = 0;
@@ -134,6 +155,7 @@ export default ({ postMessage, addEventListener }) => {
 
   return {
     document,
+    location,
     deviceWidth: null,
     viewportWidth: 750,
     eventRegistry: {},
