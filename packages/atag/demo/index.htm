@@ -193,22 +193,31 @@
   <div class="card">
     <h4 class="title">a-radio</h4>
     <div class="demo">
-      <a-radio-group>
+      <a-radio-group id="radioGroup">
         <a-label>
           <a-radio value="foo" checked></a-radio>
-          <a-text>checked</a-text>
+          <a-text>foo</a-text>
         </a-label>
         <a-label>
           <a-radio value="baz"></a-radio>
-          <a-text>unchecked</a-text>
+          <a-text>baz</a-text>
         </a-label>
         <a-label>
           <a-radio value="bar" disabled></a-radio>
           <a-text>disabled</a-text>
         </a-label>
       </a-radio-group>
+      <p style="overflow-wrap: break-word;">
+        Change Event: <span id="radioChange">null</span>
+      </p>
     </div>
   </div>
+
+  <script>
+    radioGroup.addEventListener('change', e => {
+      radioChange.innerHTML = e.detail.value;
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-slider</h4>
