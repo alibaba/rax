@@ -1,3 +1,4 @@
+const key = require('./key');
 const klass = require('./klass');
 const events = require('./events');
 const bind = require('./bind');
@@ -8,4 +9,4 @@ const checked = require('./checked');
 const template = require('./template');
 const webView = require('./web-view');
 
-module.exports = [checked, klass, events, list, condition, bind, template, tagName, webView];
+module.exports = [key, checked, klass, events, list, condition, bind, template, tagName];
