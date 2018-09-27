@@ -41,7 +41,7 @@ export default class SFC {
     // 4. data & observe
     // 5. computed
     // 6. watch
-    mixinProps(this, config.props);
+    mixinProps(this, config.propsData, config.props);
     // mixin methods
     if (config.methods) {
       Object.keys(config.methods).forEach(methodName => {
@@ -59,10 +59,6 @@ export default class SFC {
         return config;
       },
     });
-    // proxy $data, $props
-    proxy(this, 'props', this, '$props');
-    proxy(this, 'refs', this, '$refs');
-
     mixinComputed(this, config.computed);
 
     initWatch(this, config.watch);
