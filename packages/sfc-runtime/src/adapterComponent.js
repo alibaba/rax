@@ -75,7 +75,7 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
       this.props = Object.assign({}, props);
 
       // vm: view-model proxy all
-      const vm = this.vm = {};
+      const vm = this._data = {};
       Object.defineProperty(vm, '_watchers', {
         enumerable: false,
         value: []
@@ -114,7 +114,7 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
         }
       });
       // proxy $data, $props
-      proxy(vm, '$data', this, '_data');
+      proxy(this, '_data', this, '$data');
       proxy(vm, '$props', this, 'props');
       proxy(vm, '$refs', this, 'refs');
 

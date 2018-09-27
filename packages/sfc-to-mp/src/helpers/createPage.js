@@ -25,7 +25,7 @@ module.exports = function createPage(config, dependencies = {}) {
    * initial view-model
    * using a real Vue to support full Vue ability
    */
-  const vm = new Vue(config);
+  const vm = new SFC(config);
 
   /**
    * life cycle beforeMount & mounted
@@ -142,7 +142,7 @@ module.exports = function createPage(config, dependencies = {}) {
   for (let key in dependencies) {
     if (dependencies.hasOwnProperty(key)) {
       const tplConfig = requireDefault(dependencies[key].config);
-      const tplVm = new Vue({
+      const tplVm = new SFC({
         ...tplConfig,
         propsData: dependencies[key].propsData,
       });
