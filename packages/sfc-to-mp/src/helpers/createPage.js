@@ -31,7 +31,7 @@ module.exports = function createPage(config, dependencies = {}) {
    * life cycle beforeMount & mounted
    * 小程序生命周期函数 this 也指向 vm (by mpvue)
    */
-  PAGE_LIFECYCLE.forEach((cycle) => {
+  PAGE_LIFECYCLE.forEach(cycle => {
     if (typeof config[cycle] === 'function') {
       pageDef[cycle] = config[cycle].bind(vm);
     }
@@ -54,7 +54,7 @@ module.exports = function createPage(config, dependencies = {}) {
     if (typeof config.beforeMount === 'function') {
       config.beforeMount.call(vm);
     }
-    pageBeforeMountCallbacks.forEach((cb) => {
+    pageBeforeMountCallbacks.forEach(cb => {
       cb();
     });
     vm._isMounted = true;
@@ -62,7 +62,7 @@ module.exports = function createPage(config, dependencies = {}) {
     if (typeof config.mounted === 'function') {
       config.mounted.call(vm);
     }
-    pageMountedCallbacks.forEach((cb) => {
+    pageMountedCallbacks.forEach(cb => {
       cb();
     });
 
@@ -79,7 +79,7 @@ module.exports = function createPage(config, dependencies = {}) {
     if (typeof config.beforeDestroy === 'function') {
       config.beforeDestroy.call(vm);
     }
-    pageBeforeDestroyedCallbacks.forEach((cb) => {
+    pageBeforeDestroyedCallbacks.forEach(cb => {
       cb();
     });
     vm._isMounted = false;
@@ -88,7 +88,7 @@ module.exports = function createPage(config, dependencies = {}) {
     if (typeof config.destroyed === 'function') {
       config.destroyed.call(vm);
     }
-    pageDestroyedCallbacks.forEach((cb) => {
+    pageDestroyedCallbacks.forEach(cb => {
       cb();
     });
     if (typeof config.onUnload === 'function') {
@@ -113,10 +113,14 @@ module.exports = function createPage(config, dependencies = {}) {
    * TODO enhancement: queen & debounce
    * TODO [DIFF TO VUE]: beforeUpdate will not trigger while data not changing
    */
-  const beforeUpdate = typeof config.beforeUpdate === 'function' ? config.beforeUpdate : noop;
-  const updated = typeof config.updated === 'function' ? config.updated : noop;
+  const beforeUpdate =
+    typeof config.beforeUpdate === 'function'
+      ? config.beforeUpdate
+      : noop;
+  const updated =
+    typeof config.updated === 'function' ? config.updated : noop;
 
-  Object.keys(vm.$data || {}).forEach((key) => {
+  Object.keys(vm.$data || {}).forEach(key => {
     vm.$watch(key, function(newVal, oldVal) {
       beforeUpdate.call(vm);
       pageDef._self.setData(
@@ -125,7 +129,7 @@ module.exports = function createPage(config, dependencies = {}) {
         },
         function() {
           updated.call(vm);
-        },
+        }
       );
     });
   });
@@ -149,13 +153,17 @@ module.exports = function createPage(config, dependencies = {}) {
 
       // lifecycles for components
       if (tplConfig.beforeMount) {
-        pageBeforeMountCallbacks.push(tplConfig.beforeMount.bind(tplVm));
+        pageBeforeMountCallbacks.push(
+          tplConfig.beforeMount.bind(tplVm)
+        );
       }
       if (tplConfig.mounted) {
         pageMountedCallbacks.push(tplConfig.mounted.bind(tplVm));
       }
       if (tplConfig.beforeDestroy) {
-        pageBeforeDestroyedCallbacks.push(tplConfig.beforeDestroy.bind(tplVm));
+        pageBeforeDestroyedCallbacks.push(
+          tplConfig.beforeDestroy.bind(tplVm)
+        );
       }
       if (tplConfig.destroyed) {
         pageDestroyedCallbacks.push(tplConfig.destroyed.bind(tplVm));
@@ -170,18 +178,26 @@ module.exports = function createPage(config, dependencies = {}) {
        * method pass
        */
       if (tplConfig.methods) {
-        Object.keys(tplConfig.methods).forEach((methodName) => {
+        Object.keys(tplConfig.methods).forEach(methodName => {
           const methodPropsPassName = `${key}$${methodName}`;
-          pageDef[methodPropsPassName] = tplConfig.methods[methodName].bind(tplVm);
+          pageDef[methodPropsPassName] = tplConfig.methods[
+            methodName
+          ].bind(tplVm);
         });
       }
 
       /**
        * watch component data change
        */
-      const beforeUpdate = typeof tplConfig.beforeUpdate === 'function' ? tplConfig.beforeUpdate : noop;
-      const updated = typeof tplConfig.updated === 'function' ? tplConfig.updated : noop;
-      Object.keys(tplVm.$data || {}).forEach((dataKey) => {
+      const beforeUpdate =
+        typeof tplConfig.beforeUpdate === 'function'
+          ? tplConfig.beforeUpdate
+          : noop;
+      const updated =
+        typeof tplConfig.updated === 'function'
+          ? tplConfig.updated
+          : noop;
+      Object.keys(tplVm.$data || {}).forEach(dataKey => {
         tplVm.$watch(dataKey, function(newVal, oldVal) {
           const new$d = { ...pageDef.data.$d };
           new$d[key][dataKey] = newVal;
@@ -192,7 +208,7 @@ module.exports = function createPage(config, dependencies = {}) {
             },
             function() {
               updated.call(tplVm);
-            },
+            }
           );
         });
       });

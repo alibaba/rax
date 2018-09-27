@@ -24,7 +24,7 @@ module.exports = {
   },
   externals: [
     function(context, request, callback) {
-      if (/^.?\/assets/.test(request)) {
+      if (/^.?\/sources/.test(request)) {
         return callback(null, `commonjs2 ${request}`);
       }
       callback();

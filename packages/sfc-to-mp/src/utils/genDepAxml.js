@@ -6,6 +6,10 @@ const { parseComponentsDeps } = require('../parser');
 const compileES5 = require('./compileES5');
 const genTemplateName = require('./genTemplateName');
 const transpiler = require('../transpiler');
+const {
+  OUTPUT_SOURCE_FOLDER,
+  OUTPUT_VENDOR_FOLDER,
+} = require('../config/CONSTANTS');
 
 const babelOptions = {
   // extends: getBabelOptions(),
@@ -93,7 +97,7 @@ module.exports = function genDepAxml(
    * 生成组件 js context
    */
   const scriptPath = join(
-    'assets',
+    OUTPUT_SOURCE_FOLDER,
     pageName,
     '..',
     modulePath + '.js'

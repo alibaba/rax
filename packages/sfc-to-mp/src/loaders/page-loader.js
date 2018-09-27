@@ -1,11 +1,16 @@
-const { join, parse, resolve, dirname, extname } = require('path');
 const { getOptions } = require('loader-utils');
+const { join, parse, resolve, dirname, extname } = require('path');
 const vueCompiler = require('vue-template-compiler');
+
 const transpiler = require('../transpiler');
 const compileES5 = require('../utils/compileES5');
 const genTemplateName = require('../utils/genTemplateName');
 const genDepAxml = require('../utils/genDepAxml');
 const { parseComponentsDeps } = require('../parser');
+const {
+  OUTPUT_SOURCE_FOLDER,
+  OUTPUT_VENDOR_FOLDER,
+} = require('../config/CONSTANTS');
 
 const babelOptions = {
   // extends: getBabelOptions(),
@@ -50,7 +55,7 @@ module.exports = function pageLoader(content) {
         tagName,
         tplName,
         filename: name,
-        configPath: join('/assets', tplPath),
+        configPath: join(`/${OUTPUT_SOURCE_FOLDER}/`, tplPath),
       };
 
       this.emitFile(
@@ -104,9 +109,9 @@ module.exports = function pageLoader(content) {
       })
       .join('\n');
     source = [
-      `var pageConfig = require('/assets/${pageName}');`,
-      "var transPageConfig = require('/assets/vendor/transPageConfig');",
-      `Page(transPageConfig(pageConfig, {
+      `var pageConfig = require('/${OUTPUT_SOURCE_FOLDER}/${pageName}');`,
+      `var createPage = require('/${OUTPUT_VENDOR_FOLDER}/createPage');`,
+      `Page(createPage(pageConfig, {
         ${deps}
       }));`,
     ].join('\n');
@@ -122,7 +127,7 @@ module.exports = function pageLoader(content) {
                   path.node.source &&
                   path.node.source.type === 'StringLiteral'
                 ) {
-                  // path.node.source.value = '/assets/components/title';
+                  // path.node.source.value = `/${OUTPUT_SOURCE_FOLDER}/components/title`;
                 }
               },
             },
@@ -130,7 +135,11 @@ module.exports = function pageLoader(content) {
         },
       ],
     });
-    this.emitFile(`assets/${pageName}.js`, code, map);
+    this.emitFile(
+      `${OUTPUT_SOURCE_FOLDER}/${pageName}.js`,
+      code,
+      map
+    );
   }
   this.callback(null, source);
 };

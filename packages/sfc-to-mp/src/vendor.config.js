@@ -2,14 +2,15 @@ const webpack = require('webpack');
 const path = require('path');
 
 const vendors = require('./config/vendors');
+const { OUTPUT_VENDOR_FOLDER } = require('./config/CONSTANTS');
 
 module.exports = {
   mode: 'development',
   entry: {
-    'vendors/createApp': vendors.createApp,
-    'vendors/createPage': vendors.createPage,
-    'vendors/coreApp': vendors.coreApp,
-    'vendors/sfc': vendors.sfc,
+    [`${OUTPUT_VENDOR_FOLDER}/createApp`]: vendors.createApp,
+    [`${OUTPUT_VENDOR_FOLDER}/createPage`]: vendors.createPage,
+    [`${OUTPUT_VENDOR_FOLDER}/coreApp`]: vendors.coreApp,
+    [`${OUTPUT_VENDOR_FOLDER}/sfc`]: vendors.sfc,
   },
   output: {
     path: path.resolve(process.cwd(), process.env.OUTPUT || 'dist'),
@@ -19,7 +20,7 @@ module.exports = {
     global: false,
   },
   externals: {
-    sfc: 'commonjs2 /assets/vendor/sfc',
+    sfc: `commonjs2 /${OUTPUT_VENDOR_FOLDER}/sfc`,
   },
   devtool: false,
   plugins: [

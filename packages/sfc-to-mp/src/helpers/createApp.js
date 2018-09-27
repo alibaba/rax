@@ -6,8 +6,6 @@ const AppCycle = ['onLaunch', 'onShow', 'onHide', 'onError'];
 
 module.exports = function createApp(obj) {
   const config = obj && obj.default ? obj.default : obj;
-  console.log('config', config)
-  config.data = config.data || function() {return {}};
   const vm = new SFC(config);
 
   vm.onLaunch = function(options) {
