@@ -1,7 +1,8 @@
-const babel = require('babel-core');
 const { join, resolve, parse, dirname, extname } = require('path');
 const { readFileSync } = require('fs');
+const babel = require('babel-core');
 const vueCompiler = require('vue-template-compiler');
+
 const { parseComponentsDeps } = require('../parser');
 const compileES5 = require('./compileES5');
 const genTemplateName = require('./genTemplateName');
@@ -23,6 +24,7 @@ module.exports = function genDepAxml(
   addDependency(path);
 
   const content = readFileSync(path, 'utf-8');
+
   const { script, styles, template } = vueCompiler.parseComponent(
     content
   );
@@ -53,7 +55,7 @@ module.exports = function genDepAxml(
         tplName,
         filename: name,
       };
-      const tplReq = `/components/${tplName}.axml`;
+      const tplReq = `/${OUTPUT_SOURCE_FOLDER}/components/${tplName}.axml`;
       emitFile(
         tplReq.slice(1),
         genDepAxml(
@@ -90,7 +92,10 @@ module.exports = function genDepAxml(
    */
   if (Array.isArray(styles)) {
     const style = styles.map(s => s.content).join('\n');
-    emitFile(`components/${tplName}.acss`, style);
+    emitFile(
+      `${OUTPUT_SOURCE_FOLDER}/components/${tplName}.acss`,
+      style
+    );
   }
 
   /**
@@ -113,7 +118,9 @@ module.exports = function genDepAxml(
 
   Object.keys(tplImports).forEach(name => {
     const { tplName } = tplImports[name];
-    codes.unshift(`<import src="/components/${tplName}.axml" />`);
+    codes.unshift(
+      `<import src="/${OUTPUT_SOURCE_FOLDER}/components/${tplName}.axml" />`
+    );
   });
 
   // codes.unshift();

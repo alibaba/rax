@@ -33,6 +33,7 @@ module.exports = function pageLoader(content) {
     const {
       components: importedComponentsMap,
     } = babelResult.metadata;
+
     Object.keys(importedComponentsMap || {}).forEach(tagName => {
       let modulePath = importedComponentsMap[tagName];
       const { name } = parse(modulePath);
@@ -46,7 +47,17 @@ module.exports = function pageLoader(content) {
       }
 
       const tplName = genTemplateName(vueModulePath);
-      const tplPath = join(pageName, '..', modulePath);
+      const tplPath = join(
+        OUTPUT_SOURCE_FOLDER,
+        'components',
+        modulePath
+      );
+      const tplPath2 = join(
+        OUTPUT_SOURCE_FOLDER,
+        'components',
+        genTemplateName(modulePath)
+      );
+
       /**
        * name: 模块名称, name="title"
        * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
@@ -55,26 +66,26 @@ module.exports = function pageLoader(content) {
         tagName,
         tplName,
         filename: name,
-        configPath: join(`/${OUTPUT_SOURCE_FOLDER}/`, tplPath),
+        configPath: tplPath,
       };
 
-      this.emitFile(
-        tplPath + '.axml',
-        genDepAxml(
-          {
-            path:
-              extname(vueModulePath) === '.html'
-                ? vueModulePath
-                : vueModulePath + '.html',
-            pageName,
-            modulePath,
-            tplName,
-            name,
-          },
-          this
-        )
+      const p =
+        extname(vueModulePath) === '.html'
+          ? vueModulePath
+          : vueModulePath + '.html';
+
+      const axmlContent = genDepAxml(
+        {
+          path: p,
+          pageName,
+          modulePath,
+          tplName,
+          name,
+        },
+        this
       );
-      tplDeps.push(`<import src="/${tplPath + '.axml'}" />\n`);
+      this.emitFile(tplPath2 + '.axml', axmlContent);
+      tplDeps.push(`<import src="/${tplPath2 + '.axml'}" />\n`);
     });
   }
 
@@ -99,21 +110,19 @@ module.exports = function pageLoader(content) {
       .map(tagName => {
         const { tplName, filename, configPath } = tplImports[tagName];
         return `'${tplName}': {
-  config: require('${configPath}'),
-  propsData: ${
-    tplPropsData[tplName]
-      ? JSON.stringify(tplPropsData[tplName])
-      : '{}'
-  },
-},`;
+            config: require('/${configPath}'),
+            propsData: ${
+              tplPropsData[tplName]
+                ? JSON.stringify(tplPropsData[tplName])
+                : '{}'
+            },
+          },`;
       })
       .join('\n');
     source = [
       `var pageConfig = require('/${OUTPUT_SOURCE_FOLDER}/${pageName}');`,
       `var createPage = require('/${OUTPUT_VENDOR_FOLDER}/createPage');`,
-      `Page(createPage(pageConfig, {
-        ${deps}
-      }));`,
+      `Page(createPage(pageConfig, {${deps}}));`,
     ].join('\n');
 
     const { code, map } = compileES5(script.content, {
