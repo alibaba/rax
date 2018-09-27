@@ -1,28 +1,38 @@
+const { readFileSync } = require('fs');
 const log = require('fancy-log');
+const path = require('path');
 
-const { resolve } = require('path');
-const { existsSync } = require('fs');
+const appLoaderPath = require.resolve('../loaders/app-loader');
+const pageLoaderPath = require.resolve('../loaders/page-loader');
 
-const appLoader = require.resolve('../loaders/app-loader');
-const pageLoader = require.resolve('../loaders/page-loader');
+const SFC_EXT = '.html';
+const APP_ENTRY_PATH = 'app.js';
+const MANIFEST_ENTRY_PATH = 'manifest.json';
 
-module.exports = function getEntry(rootDir, appJSON = {}) {
-  const appPath = resolve(rootDir, appJSON.root || '', 'app.js');
-  if (!existsSync(appPath)) {
-    throw new Error('app.js not exists');
-  }
+const context = process.cwd();
+const appPath = path.resolve(context, APP_ENTRY_PATH);
+const manifestPath = path.resolve(context, MANIFEST_ENTRY_PATH);
+const appConfig = JSON.parse(readFileSync(manifestPath, 'utf-8'));
 
-  const entry = {
-    app: appLoader + '!' + appPath,
-  };
+module.exports = function getEntry() {
+  const entry = {};
 
-  if (Array.isArray(appJSON.pages)) {
-    log('Page List:', appJSON.pages);
-    appJSON.pages.forEach((pagePath) => {
+  entry.app = appLoaderPath + '!' + appPath;
+
+  const { pages } = appConfig;
+  if (pages) {
+    Object.keys(pages).forEach(pageName => {
+      const pagePath = pages[pageName];
+      const pageEntryPath = path.resolve(context, pagePath);
       entry[pagePath] =
-        pageLoader + `?pageName=${pagePath}!` + resolve(rootDir, appJSON.root || '', pagePath + '.html');
+        pageLoaderPath +
+        '?pageName=' +
+        pagePath +
+        '!' +
+        pageEntryPath +
+        SFC_EXT;
     });
   }
-
+  console.log(entry);
   return entry;
 };
