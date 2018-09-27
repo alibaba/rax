@@ -10,7 +10,6 @@ module.exports = function getAppJSON(rootDir) {
 
   const appJSON = JSON.parse(readFileSync(appJSONPath, 'utf-8'));
 
-  appJSON._pages = appJSON.pages;
   appJSON.pages = Object.values(appJSON.pages);
   return appJSON;
 };

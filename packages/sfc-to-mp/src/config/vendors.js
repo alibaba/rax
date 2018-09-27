@@ -1,5 +1,6 @@
 module.exports = {
-  transAppConfig: require.resolve('../helpers/transAppConfig'),
-  transPageConfig: require.resolve('../helpers/transPageConfig'),
   coreApp: require.resolve('../helpers/coreApp'),
+  createApp: require.resolve('../helpers/createApp'),
+  createPage: require.resolve('../helpers/createPage'),
+  sfc: require.resolve('sfc-runtime/lib/sfc'),
 };

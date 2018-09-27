@@ -1,5 +1,4 @@
-const Vue = require('vue');
-
+const SFC = require('sfc');
 /**
  * 小程序 Page 生命周期
  * https://docs.alipay.com/mini/framework/page
@@ -18,7 +17,7 @@ const PAGE_LIFECYCLE = [
   'onShareAppMessage',
 ];
 
-module.exports = function transPageConfig(config, dependencies = {}) {
+module.exports = function createPage(config, dependencies = {}) {
   const pageDef = {};
   config = requireDefault(config);
 

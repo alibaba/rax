@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const log = require('fancy-log');
 const colors = require('chalk');
 
-// const webpackConfig = require('./webpack.config.dev');
+const appBuildConfig = require('./webpack.config.dev');
 const vendorConfig = require('./vendor.config');
 
 const statsOptions = {
@@ -20,7 +20,7 @@ const statsOptions = {
 module.exports = function watch() {
   const watchOpts = { aggregateTimeout: 300 };
 
-  const compiler = webpack([vendorConfig /* , webpackConfig */]);
+  const compiler = webpack([vendorConfig , appBuildConfig]);
 
   compiler.watch(watchOpts, (err, statsQueue) => {
     const hasErr = statsQueue.stats.reduce((prev, curr) => prev || curr.hasErrors(), false);

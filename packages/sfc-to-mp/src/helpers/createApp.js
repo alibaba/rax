@@ -1,12 +1,12 @@
-const Vue = require('vue');
+const SFC = require('sfc');
 /**
  * 支付宝小程序 App 级生命周期
  */
 const AppCycle = ['onLaunch', 'onShow', 'onHide', 'onError'];
 
-module.exports = function transAppConfig(obj) {
+module.exports = function createApp(obj) {
   const config = obj && obj.default ? obj.default : obj;
-  const vm = new Vue(config);
+  const vm = new SFC(config);
 
   vm.onLaunch = function(options) {
     config.$appOptions = options;
