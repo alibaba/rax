@@ -1,5 +1,8 @@
 import computeChangedData from './computeChangedData';
 
+const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
+const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
+
 /**
  * interface of mp page
  */
@@ -51,9 +54,20 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
   const pageEventEmitter = getCoreModule('@core/page');
   const Rax = getCoreModule('@core/rax');
 
-  const { document, pageQuery, pageName } = pageContext;
+  const { document, location, pageQuery, pageName } = pageContext;
+  const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
-  const render = renderFactory(null, Rax);
+  const render = getWebViewSource
+    ? (data) => {
+      const url = getWebViewSource(data);
+      if (url && location && location.href !== url) {
+        location.replace(url);
+        return '';
+      } else {
+        return Rax.createElement('web-view', { src: url, style: WEBVIEW_STYLE });
+      }
+    }
+    : renderFactory(null, Rax);
   return class extends Rax.Component {
     constructor(props, context) {
       super(props, context);
@@ -98,6 +112,18 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
         const cycleFn = onPullIntercept.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'pullIntercept', fn: cycleFn });
         pageEventEmitter.on('pullIntercept', cycleFn);
+      }
+
+      // in web-view page
+      if (getWebViewOnMessage) {
+        const onMessageMethod = getWebViewOnMessage.call(this.pageInstance, this.state);
+        if (typeof config[onMessageMethod] === 'function') {
+          const cycleFn = (evt) => {
+            config[onMessageMethod].call(this.pageInstance, { detail: { data: evt.data } });
+          };
+          this.cycleListeners.push({ type: WEBVIEW_MESSAGE_NAME, fn: cycleFn });
+          pageEventEmitter.on(WEBVIEW_MESSAGE_NAME, cycleFn);
+        }
       }
     }
 

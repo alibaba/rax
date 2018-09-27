@@ -3,35 +3,25 @@
     <style>
       :host {
         display: block;
-      }
-
-      :host > div {
         position: relative;
-        display: flex;
-        display: -webkit-flex;
-        flex-direction: row;
-        -webkit-flex-direction: row;
-        justify-content: center;
-        -webkit-justify-content: center;
-        align-items: center;
-        -webkit-align-items: center;
-        box-sizing: border-box;
-        overflow: hidden;
         margin: 0 auto;
         padding: 0 10px;
-        font-size: 14px;
-        text-align: center;
-        text-decoration: none;
+        min-width: 60px;
+        height: 40px;
         line-height: 40px;
+        text-align: center;
+        box-sizing: border-box;
+        overflow: hidden;
+        font-size: 14px;
+        text-decoration: none;
         border-radius: 40px;
         color: #fff;
         background: linear-gradient(to right, #ff8000, #ff5000);
         cursor: pointer;
-        min-width: 60px;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
       }
 
-      :host > div:after {
+      :host:after {
         content: ' ';
         width: 200%;
         height: 200%;
@@ -44,29 +34,29 @@
         border-radius: 80px;
       }
 
-      :host > div:active {
+      :host:active {
         color: #fff;
         background-color: #dedede;
       }
 
       /* primary */
-      :host([type='primary']) > div {
+      :host([type='primary']) {
         color: #fff;
         background: linear-gradient(to right, #ff8000, #ff5000);
       }
 
-      :host([type='primary']) > div:active {
+      :host([type='primary']):active {
         color: rgba(255, 255, 255, 0.6);
         background: #ff5100;
       }
 
       /* warn */
-      :host([type='warn']) > div {
+      :host([type='warn']) {
         color: #fff;
         background: #e64340;
       }
 
-      :host([type='warn']) > div:active {
+      :host([type='warn']):active {
         color: rgba(255, 255, 255, 0.6);
         background-color: #ce3c39;
       }
@@ -74,51 +64,46 @@
       /* mini */
       :host([size='mini']) {
         display: inline-block;
-      }
-
-      :host([size='mini']) > div {
-        display: inline-flex;
-        display: -webkit-inline-flex;
         min-width: 40px;
         height: 28px;
         line-height: 28px;
         font-size: 12px;
       }
 
-      :host([plain='']) > div,
-      :host([plain='true']) > div {
+      :host([plain='']),
+      :host([plain='true']) {
         background: transparent;
         color: #ff5000;
       }
 
-      :host([plain='']) > div:after,
-      :host([plain='true']) > div:after {
+      :host([plain='']):after,
+      :host([plain='true']):after {
         border: 2px solid #ff5000;
       }
 
-      :host([plain='']):host([type='warn']) > div,
-      :host([plain='true']):host([type='warn']) > div {
+      :host([plain='']):host([type='warn']),
+      :host([plain='true']):host([type='warn']) {
         color: #e64340;
       }
 
-      :host([plain='']):host([type='warn']) > div:after,
-      :host([plain='true']):host([type='warn']) > div:after {
+      :host([plain='']):host([type='warn']):after,
+      :host([plain='true']):host([type='warn']):after {
         border: 2px solid #e64340;
       }
 
-      :host([plain='']):host([disabled='']) > div,
-      :host([plain='true']):host([disabled='']) > div,
-      :host([plain='']):host([disabled='true']) > div,
-      :host([plain='true']):host([disabled='true']) > div {
+      :host([plain='']):host([disabled='']),
+      :host([plain='true']):host([disabled='']),
+      :host([plain='']):host([disabled='true']),
+      :host([plain='true']):host([disabled='true']) {
         pointer-events: none;
         color: #ffc6a1;
         background: transparent;
       }
 
-      :host([plain='']):host([disabled='']) > div:after,
-      :host([plain='true']):host([disabled='']) > div:after,
-      :host([plain='']):host([disabled='true']) > div:after,
-      :host([plain='true']):host([disabled='true']) > div:after {
+      :host([plain='']):host([disabled='']):after,
+      :host([plain='true']):host([disabled='']):after,
+      :host([plain='']):host([disabled='true']):after,
+      :host([plain='true']):host([disabled='true']):after {
         border-color: inherit;
       }
 
@@ -127,8 +112,8 @@
         pointer-events: none;
       }
 
-      :host([disabled='']) > div,
-      :host([disabled='true']) > div {
+      :host([disabled='']),
+      :host([disabled='true']) {
         pointer-events: none;
         color: #ffc6a1;
         background: linear-gradient(to right, #ffbf7f, #ffa87f);
@@ -136,17 +121,17 @@
 
       .loading {
         display: none;
-        animation: _rotate 1.5s linear infinite;
-        -webkit-animation: _rotate 1.5s linear infinite;
-        margin-right: 7.5px;
-        margin-top: 2px;
         width: 20px;
         height: 20px;
+        margin-right: 7.5px;
+        animation: _rotate 1.5s linear infinite;
+        -webkit-animation: _rotate 1.5s linear infinite;
+        vertical-align: middle;
       }
 
       :host([loading='']) .loading,
       :host([loading='true']) .loading {
-        display: block;
+        display: inline-block;
       }
 
       @keyframes _rotate {
@@ -167,10 +152,8 @@
         }
       }
     </style>
-    <div>
-      <img class="loading" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABMCAMAAAD5ogFjAAAADFBMVEVHcEz///////////8Gn9AKAAAABHRSTlMAVKv+z9BazwAAASxJREFUeNrtmEGOxCAMBOni/3+ew2rHaAATttHOhTpFJOnYxrSslBWCWisqJtRfLCnVBmwdX6l+gFmfQF5iAWZAwTEheaUOaNsUZAppFaKElAqpy5mBDPFwViMWO6nPW6o9o2XmXcMsN4aryWZrEtKDNtXoFmmFgqT7hqtK9rIXmu+ciiFURL6Va6FA0qpN556xd3DmD7DlCcxtbM/uNP3Uhk1lh41Ne8lsJCdJzDDhYiEiHBP9lOHyNcCa7aTBydiH97ter0cUWN1ORIF1/BovqYGcoe5YRKdqRBMdzsDaijqjr+Ka8kcA3rLXoi6Xf4U4vBbs2ICAhUnpsQ+R2ybPzfqckJ8a2Se3vJskdMUvJxdpqI9UbBTd5eFO1P2YcIWmdLOKG9KZRoKy4gVsMw2/9NcQzQAAAABJRU5ErkJggg=='/>
-      <slot></slot>
-    </div>
+    <img class="loading" src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABMCAMAAAD5ogFjAAAADFBMVEVHcEz///////////8Gn9AKAAAABHRSTlMAVKv+z9BazwAAASxJREFUeNrtmEGOxCAMBOni/3+ew2rHaAATttHOhTpFJOnYxrSslBWCWisqJtRfLCnVBmwdX6l+gFmfQF5iAWZAwTEheaUOaNsUZAppFaKElAqpy5mBDPFwViMWO6nPW6o9o2XmXcMsN4aryWZrEtKDNtXoFmmFgqT7hqtK9rIXmu+ciiFURL6Va6FA0qpN556xd3DmD7DlCcxtbM/uNP3Uhk1lh41Ne8lsJCdJzDDhYiEiHBP9lOHyNcCa7aTBydiH97ter0cUWN1ORIF1/BovqYGcoe5YRKdqRBMdzsDaijqjr+Ka8kcA3rLXoi6Xf4U4vBbs2ICAhUnpsQ+R2ybPzfqckJ8a2Se3vJskdMUvJxdpqI9UbBTd5eFO1P2YcIWmdLOKG9KZRoKy4gVsMw2/9NcQzQAAAABJRU5ErkJggg=='/>
+    <slot></slot>
   </template>
 </dom-module>
 
