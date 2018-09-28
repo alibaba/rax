@@ -6,6 +6,7 @@ const genTemplateName = require('../utils/genTemplateName');
 const genTemplate = require('../utils/genTemplate');
 const { parseComponentsDeps } = require('../parser');
 const { parseSFCParts } = require('../transpiler/parse');
+const getExt = require('../config/getExt');
 const babel = require('babel-core');
 
 const {
@@ -14,6 +15,8 @@ const {
 } = require('../config/CONSTANTS');
 
 module.exports = function pageLoader(content) {
+  const templateExt = getExt('template');
+  const styleExt = getExt('style');
   const { script, styles, template } = parseSFCParts(content);
   const { resourcePath } = this;
   const { pageName } = getOptions(this);
@@ -69,7 +72,7 @@ module.exports = function pageLoader(content) {
           ? vueModulePath
           : vueModulePath + '.html';
 
-      const axmlContent = genTemplate(
+      const templateContent = genTemplate(
         {
           path: p,
           pageName,
@@ -79,14 +82,14 @@ module.exports = function pageLoader(content) {
         },
         this
       );
-      this.emitFile(tplPath2 + '.axml', axmlContent);
-      tplDeps.push(`<import src="/${tplPath2 + '.axml'}" />\n`);
+      this.emitFile(tplPath2 + templateExt, templateContent);
+      tplDeps.push(`<import src="/${tplPath2 + templateExt}" />\n`);
     });
   }
 
   if (Array.isArray(styles)) {
     const style = styles.map(s => s.content).join('\n');
-    this.emitFile(`${pageName}.acss`, style);
+    this.emitFile(`${pageName}${styleExt}`, style);
   }
 
   if (template) {
@@ -95,7 +98,10 @@ module.exports = function pageLoader(content) {
     });
     Object.assign(tplPropsData, metadata.propsDataMap);
 
-    this.emitFile(`${pageName}.axml`, tplDeps.join('\n') + tpl);
+    this.emitFile(
+      `${pageName}${templateExt}`,
+      tplDeps.join('\n') + tpl
+    );
   }
 
   let source = 'Page({});';
@@ -107,10 +113,10 @@ module.exports = function pageLoader(content) {
         return `'${tplName}': {
             config: require('/${configPath}'),
             propsData: ${
-  tplPropsData[tplName]
-    ? JSON.stringify(tplPropsData[tplName])
-    : '{}'
-},
+              tplPropsData[tplName]
+                ? JSON.stringify(tplPropsData[tplName])
+                : '{}'
+            },
           },`;
       })
       .join('\n');

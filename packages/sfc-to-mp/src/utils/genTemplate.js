@@ -6,12 +6,17 @@ const { parseComponentsDeps } = require('../parser');
 const compileES5 = require('./compileES5');
 const genTemplateName = require('./genTemplateName');
 const transpiler = require('../transpiler');
+const getExt = require('../config/getExt');
 const { OUTPUT_SOURCE_FOLDER } = require('../config/CONSTANTS');
 
 module.exports = function genTemplate(
   { path, tplName, name, pageName, modulePath },
   loaderCtx
 ) {
+  const templateExt = getExt('template');
+  const styleExt = getExt('style');
+  const scriptExt = getExt('script');
+
   const { emitFile, addDependency } = loaderCtx;
   addDependency(path);
 
@@ -42,7 +47,7 @@ module.exports = function genTemplate(
         tplName,
         filename: name,
       };
-      const tplReq = `/${OUTPUT_SOURCE_FOLDER}/components/${tplName}.axml`;
+      const tplReq = `/${OUTPUT_SOURCE_FOLDER}/components/${tplName}${templateExt}`;
       emitFile(
         tplReq.slice(1),
         genTemplate(
@@ -80,7 +85,7 @@ module.exports = function genTemplate(
   if (Array.isArray(styles)) {
     const style = styles.map(s => s.content).join('\n');
     emitFile(
-      `${OUTPUT_SOURCE_FOLDER}/components/${tplName}.acss`,
+      `${OUTPUT_SOURCE_FOLDER}/components/${tplName}${styleExt}`,
       style
     );
   }
@@ -92,7 +97,7 @@ module.exports = function genTemplate(
     OUTPUT_SOURCE_FOLDER,
     pageName,
     '..',
-    modulePath + '.js'
+    modulePath + scriptExt
   );
   emitFile(scriptPath, scriptCode);
 
@@ -106,7 +111,7 @@ module.exports = function genTemplate(
   Object.keys(tplImports).forEach(name => {
     const { tplName } = tplImports[name];
     codes.unshift(
-      `<import src="/${OUTPUT_SOURCE_FOLDER}/components/${tplName}.axml" />`
+      `<import src="/${OUTPUT_SOURCE_FOLDER}/components/${tplName}${templateExt}" />`
     );
   });
 

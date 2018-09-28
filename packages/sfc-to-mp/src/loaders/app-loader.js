@@ -1,6 +1,7 @@
 const { readFileSync, existsSync } = require('fs');
 const { resolve } = require('path');
 const getAppJSON = require('../config/getAppJSON');
+const getExt = require('../config/getExt');
 const {
   OUTPUT_SOURCE_FOLDER,
   OUTPUT_VENDOR_FOLDER,
@@ -28,7 +29,7 @@ module.exports = function appLoader(content) {
   if (existsSync(appCSSPath)) {
     this.addDependency(appCSSPath);
     const styleContent = readFileSync(appCSSPath, 'utf-8');
-    this.emitFile('app.acss', styleContent);
+    this.emitFile('app' + getExt('style'), styleContent);
   }
 
   /**

@@ -25,7 +25,7 @@ module.exports = {
     global: false,
   },
   externals: {
-    sfc: `commonjs2 /${OUTPUT_VENDOR_FOLDER}/sfc`,
+    sfc: `commonjs2 /sfc`,
   },
   devtool: false,
   plugins: [
