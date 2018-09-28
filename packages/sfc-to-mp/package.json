@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.1.0",
+    "@babel/generator": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-decorators": "^7.1.0",
     "@babel/plugin-proposal-do-expressions": "^7.0.0",
@@ -34,6 +35,8 @@
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-syntax-import-meta": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.4",
     "babelon": "^1.0.5",
     "camelcase": "^5.0.0",
     "chalk": "^2.4.1",

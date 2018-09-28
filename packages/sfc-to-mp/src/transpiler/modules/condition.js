@@ -1,4 +1,5 @@
 const getTargetType = require('../../config/getTargetType');
+
 const type = getTargetType();
 
 const CONDITION_DIRECTIVES = {

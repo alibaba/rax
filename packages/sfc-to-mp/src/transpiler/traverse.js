@@ -10,4 +10,4 @@ module.exports = function traverse(ast, iterator) {
     }
   }
   iterator(ast);
-}
+};

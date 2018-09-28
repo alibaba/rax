@@ -66,7 +66,6 @@ const { parseComponentsDeps } = require('./parser');
 const babelOptions = { extends: getBabelrc(), plugins: [parseComponentsDeps] };
 
 
-
 const { parseConfig, parseGlobalComponents } = require('../utils/parser');
 
 const FIRST_PAGE_RE = /^\^/;

@@ -6,7 +6,7 @@ module.exports = {
     // Stage 0
     require('@babel/plugin-proposal-function-bind'),
     // Stage 1
-    require('@babel/plugin-proposal-export-default-from'),
+    require('@babel/plugin-proposal-export-defa@babel/generatorult-from'),
     require('@babel/plugin-proposal-logical-assignment-operators'),
     [require('@babel/plugin-proposal-optional-chaining'), { 'loose': false }],
     [require('@babel/plugin-proposal-pipeline-operator'), { 'proposal': 'minimal' }],
@@ -25,4 +25,3 @@ module.exports = {
     require('@babel/plugin-proposal-json-strings')
   ]
 };
-}

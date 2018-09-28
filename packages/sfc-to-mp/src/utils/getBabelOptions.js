@@ -39,4 +39,4 @@ module.exports = function getBabelOptions() {
       require('@babel/plugin-proposal-json-strings'),
     ],
   };
-}
+};

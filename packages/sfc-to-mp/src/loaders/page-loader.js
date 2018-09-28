@@ -107,10 +107,10 @@ module.exports = function pageLoader(content) {
         return `'${tplName}': {
             config: require('/${configPath}'),
             propsData: ${
-              tplPropsData[tplName]
-                ? JSON.stringify(tplPropsData[tplName])
-                : '{}'
-            },
+  tplPropsData[tplName]
+    ? JSON.stringify(tplPropsData[tplName])
+    : '{}'
+},
           },`;
       })
       .join('\n');

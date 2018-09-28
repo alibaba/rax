@@ -18,10 +18,6 @@ module.exports = function genDepAxml(
   const content = readFileSync(path, 'utf-8');
   const { script, styles, template } = parseSFCParts(content);
 
-  if (template && template.lang === 'pug') {
-    template.content = pug.render(template.content);
-  }
-
   const tplImports = {};
   const pageBase = join(pageName, '..', modulePath);
   if (script) {
