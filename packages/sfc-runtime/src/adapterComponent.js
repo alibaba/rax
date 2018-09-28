@@ -7,16 +7,10 @@ import {
 } from './mixin';
 import renderHelpers from './vdom';
 import initWatch from './initWatch';
+import lifecyclesMap from './lifecyclesMap';
 import { isWeex, kebabCase } from './utils';
 import { set as storeSet } from './store';
 
-const lifecyclesMap = {
-  beforeMount: 'componentWillMount',
-  mounted: 'componentDidMount',
-  beforeUpdate: 'componentWillUpdate',
-  updated: 'componentDidUpdate',
-  beforeDestroy: 'componentWillUnmount'
-};
 
 // When defining a component with PascalCase like MyComponentName,
 // you can use either case when referencing its custom element.

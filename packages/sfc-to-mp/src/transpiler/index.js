@@ -1,16 +1,15 @@
-const vueCompiler = require('vue-template-compiler');
-const genTpl = require('./genTpl');
+const parse = require('./parse');
+const generate = require('./generate');
 
 /**
- * template transpile from vue to axml
+ * template transpile from sfc to mp
  */
-module.exports = function transpile(tpl = '', opts = {}) {
-  const { ast } = vueCompiler.compile(tpl);
-
-  const { metadata, template } = genTpl(ast, opts);
+module.exports = function transpile(content = '', opts = {}) {
+  const { ast } = parse(content);
+  const { metadata, template } = generate(ast, opts);
   return {
     template,
     metadata,
-    ast
+    ast,
   };
 };

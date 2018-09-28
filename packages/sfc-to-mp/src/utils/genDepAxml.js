@@ -1,16 +1,12 @@
-const babel = require('babel-core');
 const { join, resolve, parse, dirname, extname } = require('path');
 const { readFileSync } = require('fs');
-const vueCompiler = require('vue-template-compiler');
+const babel = require('babel-core');
+const { parseSFCParts } = require('../transpiler/parse');
 const { parseComponentsDeps } = require('../parser');
 const compileES5 = require('./compileES5');
 const genTemplateName = require('./genTemplateName');
 const transpiler = require('../transpiler');
 
-const babelOptions = {
-  // extends: getBabelOptions(),
-  plugins: [parseComponentsDeps],
-};
 module.exports = function genDepAxml(
   { path, tplName, name, pageName, modulePath },
   loaderCtx
@@ -19,9 +15,7 @@ module.exports = function genDepAxml(
   addDependency(path);
 
   const content = readFileSync(path, 'utf-8');
-  const { script, styles, template } = vueCompiler.parseComponent(
-    content
-  );
+  const { script, styles, template } = parseSFCParts(content);
 
   if (template && template.lang === 'pug') {
     template.content = pug.render(template.content);
@@ -30,7 +24,9 @@ module.exports = function genDepAxml(
   const tplImports = {};
   const pageBase = join(pageName, '..', modulePath);
   if (script) {
-    const babelResult = babel.transform(script.content, babelOptions);
+    const babelResult = babel.transform(script.content, {
+      plugins: [parseComponentsDeps],
+    });
     const {
       components: importedComponentsMap,
     } = babelResult.metadata;

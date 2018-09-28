@@ -3,17 +3,9 @@ import {
   mixinProps,
   mixinSlots,
   mixinData,
-  proxy,
 } from './mixin';
 import initWatch from './initWatch';
-
-const lifecyclesMap = {
-  beforeMount: 'componentWillMount',
-  mounted: 'componentDidMount',
-  beforeUpdate: 'componentWillUpdate',
-  updated: 'componentDidUpdate',
-  beforeDestroy: 'componentWillUnmount',
-};
+import lifecyclesMap from './lifecyclesMap';
 
 export default class SFC {
   constructor(config) {

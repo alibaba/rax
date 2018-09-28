@@ -1,11 +1,11 @@
 const { join, parse, resolve, dirname, extname } = require('path');
 const { getOptions } = require('loader-utils');
-const vueCompiler = require('vue-template-compiler');
 const transpiler = require('../transpiler');
 const compileES5 = require('../utils/compileES5');
 const genTemplateName = require('../utils/genTemplateName');
 const genDepAxml = require('../utils/genDepAxml');
 const { parseComponentsDeps } = require('../parser');
+const { parseSFCParts } = require('../transpiler/parse');
 
 const babelOptions = {
   // extends: getBabelOptions(),
@@ -14,9 +14,7 @@ const babelOptions = {
 const babel = require('babel-core');
 
 module.exports = function pageLoader(content) {
-  const { script, styles, template } = vueCompiler.parseComponent(
-    content
-  );
+  const { script, styles, template } = parseSFCParts(content);
   const { resourcePath } = this;
   const { pageName } = getOptions(this);
 
