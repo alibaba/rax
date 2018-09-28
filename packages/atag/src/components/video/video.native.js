@@ -121,6 +121,16 @@ export default class VideoElement extends PolymerElement {
 
     this.appendChild(container);
 
+    // android should execute setup before play
+    // iOS will read src from <params> el
+    if (isAndroid && this.src) {
+      this.callNativeControl('setup', {
+        videoUrl: this.src,
+        isLoop: this.loop,
+        objectFit: this.objectfit
+      });
+    }
+
     if (this.autoplay) {
       this.play();
     }
@@ -130,16 +140,6 @@ export default class VideoElement extends PolymerElement {
     super.attributeChangedCallback(key, oldVal, newVal);
     if (oldVal !== newVal) {
       switch (key) {
-        case 'src': {
-          if (isAndroid) {
-            this.callNativeControl('setup', {
-              videoUrl: newVal,
-              isLoop: this.loop,
-              objectFit: this.objectfit
-            });
-          }
-          break;
-        }
         case 'controls': {
           newVal ? this.showControls() : this.hideControls();
           break;
