@@ -37,7 +37,7 @@ module.exports = function(content) {
   const createPageReq = createRequireDefault(stringifyRequest(this, paths.createPage));
 
   let source =
-    `var Page = function(config) { Page.config = config; }
+    `var Page = function(config) { Page.config = config; };
     require('@core/page').register(${pageInfo}, function(module, exports, getCoreModule){
 ${scriptContent}
       module.exports = ${createPageReq}(Page.config, ${regTemplateReq}, getCoreModule);

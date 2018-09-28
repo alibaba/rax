@@ -6,6 +6,7 @@ const paths = require('./paths');
 
 const pageLoaderPath = require.resolve('./page');
 const STYLE_EXT = 'acss';
+const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
 /**
  * App loader
  * handle app.js for mini program
@@ -27,6 +28,7 @@ module.exports = function(content) {
   }
 
   const regPagesCode = getPages(resourcePath)
+    .filter((pagePath) => !EXTERNAL_PAGE_URL_REG.test(pagePath))
     .map((pagePath) => {
       const qs = new QueryString({
         globalStylePath,
