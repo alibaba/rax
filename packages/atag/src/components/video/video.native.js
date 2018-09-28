@@ -54,13 +54,6 @@ export default class VideoElement extends PolymerElement {
 
     document.addEventListener('WVEmbed.Ready', this._nativeReady);
     this.uniqueId = String(++videoInstanceCount);
-    if (isAndroid) {
-      this.callNativeControl('setup', {
-        videoUrl: this.src,
-        isLoop: this.loop,
-        objectFit: this.objectfit
-      });
-    }
   }
 
   connectedCallback() {
@@ -137,6 +130,16 @@ export default class VideoElement extends PolymerElement {
     super.attributeChangedCallback(key, oldVal, newVal);
     if (oldVal !== newVal) {
       switch (key) {
+        case 'src': {
+          if (isAndroid) {
+            this.callNativeControl('setup', {
+              videoUrl: newVal,
+              isLoop: this.loop,
+              objectFit: this.objectfit
+            });
+          }
+          break;
+        }
         case 'controls': {
           newVal ? this.showControls() : this.hideControls();
           break;
