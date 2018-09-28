@@ -84,7 +84,6 @@ module.exports = function createPage(config, dependencies = {}) {
     });
     vm._isMounted = false;
     vm._isDestroyed = true;
-    vm._watchers = []; // teardown watchers
     if (typeof config.destroyed === 'function') {
       config.destroyed.call(vm);
     }
