@@ -2,18 +2,23 @@ const webpack = require('webpack');
 const path = require('path');
 
 const vendors = require('./config/vendors');
+const { getOption } = require('./config/cliOptions');
 const { OUTPUT_VENDOR_FOLDER } = require('./config/CONSTANTS');
 
 module.exports = {
   mode: 'development',
   entry: {
-    [`${OUTPUT_VENDOR_FOLDER}/createApp`]: vendors.createApp,
-    [`${OUTPUT_VENDOR_FOLDER}/createPage`]: vendors.createPage,
-    [`${OUTPUT_VENDOR_FOLDER}/coreApp`]: vendors.coreApp,
-    [`${OUTPUT_VENDOR_FOLDER}/sfc`]: vendors.sfc,
+    createApp: vendors.createApp,
+    createPage: vendors.createPage,
+    coreApp: vendors.coreApp,
+    sfc: vendors.sfc,
   },
   output: {
-    path: path.resolve(process.cwd(), process.env.OUTPUT || 'dist'),
+    path: path.join(
+      process.cwd(),
+      getOption('output'),
+      OUTPUT_VENDOR_FOLDER
+    ),
     libraryTarget: 'commonjs2',
   },
   node: {

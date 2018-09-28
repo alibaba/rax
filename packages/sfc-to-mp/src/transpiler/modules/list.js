@@ -1,7 +1,6 @@
-const getTargetType = require('../../config/getTargetType');
+const { getOption } = require('../../config/cliOptions');
 
-const type = getTargetType();
-
+const targetType = getOption('target');
 const LIST_DIRECTIVES = {
   ali: {
     for: 'a:for',
@@ -14,7 +13,7 @@ const LIST_DIRECTIVES = {
     forIndex: 'wx:for-index',
   },
 };
-const directiveGroup = LIST_DIRECTIVES[type];
+const directiveGroup = LIST_DIRECTIVES[targetType];
 
 function genData(el) {
   const directives = [];

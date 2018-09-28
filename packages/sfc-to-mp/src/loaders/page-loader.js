@@ -3,7 +3,7 @@ const { join, parse, resolve, dirname, extname } = require('path');
 const transpiler = require('../transpiler');
 const compileES5 = require('../utils/compileES5');
 const genTemplateName = require('../utils/genTemplateName');
-const genDepAxml = require('../utils/genDepAxml');
+const genTemplate = require('../utils/genTemplate');
 const { parseComponentsDeps } = require('../parser');
 const { parseSFCParts } = require('../transpiler/parse');
 const babel = require('babel-core');
@@ -69,7 +69,7 @@ module.exports = function pageLoader(content) {
           ? vueModulePath
           : vueModulePath + '.html';
 
-      const axmlContent = genDepAxml(
+      const axmlContent = genTemplate(
         {
           path: p,
           pageName,

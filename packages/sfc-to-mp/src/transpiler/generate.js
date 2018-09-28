@@ -1,6 +1,3 @@
-const camelcase = require('camelcase');
-const traverse = require('./traverse');
-
 const evtNameMapping = {
   click: 'tap',
 };
@@ -76,7 +73,7 @@ function genElement(el, state) {
         hasProps ? ' ' + genProps(el, state) : ''
       }${moduleData}>${genElement(el.children, state)}</${el.tag}>`;
     }
-  } else if (el.type === 2 || el.type === 3 && el.static) {
+  } else if (el.type === 2 || (el.type === 3 && el.static)) {
     // type 2: text node or static text node
     return genText(el, state);
   } else {
@@ -152,7 +149,7 @@ function genProps(el, state) {
  */
 function genData(el, state) {
   const { tplName } = state.tplImports[el.tag];
-  const propsData = state.propsDataMap[tplName] = {};
+  const propsData = (state.propsDataMap[tplName] = {});
 
   el.attrsList.forEach(({ name, value }) => {
     if (name[0] === ':' || name[0] === 'v-bind:') {

@@ -1,10 +1,9 @@
-const { readFileSync } = require('fs');
 const path = require('path');
-const webpackMerge = require('webpack-merge');
-
 const getEntry = require('./config/getEntry');
+const { getOption } = require('./config/cliOptions');
 
 const cwd = process.cwd();
+
 module.exports = {
   mode: 'development',
   devtool: false,
@@ -20,15 +19,9 @@ module.exports = {
   context: cwd,
   entry: getEntry(),
   output: {
-    path: path.resolve(cwd, process.env.OUTPUT || 'dist'),
+    path: path.resolve(cwd, getOption('output')),
   },
   externals: [
-    function(context, request, callback) {
-      if (/^.?\/sources/.test(request)) {
-        return callback(null, `commonjs2 ${request}`);
-      }
-      callback();
-    },
     function(context, request, callback) {
       if (/^.?\/(vendors|sources)/.test(request)) {
         return callback(null, `commonjs2 ${request}`);

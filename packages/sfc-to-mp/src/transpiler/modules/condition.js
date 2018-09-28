@@ -1,7 +1,6 @@
-const getTargetType = require('../../config/getTargetType');
+const { getOption } = require('../../config/cliOptions');
 
-const type = getTargetType();
-
+const targetType = getOption('target');
 const CONDITION_DIRECTIVES = {
   ali: {
     if: 'a:if',
@@ -14,9 +13,9 @@ const CONDITION_DIRECTIVES = {
     else: 'wx:else',
   },
 };
-const directiveGroup = CONDITION_DIRECTIVES[type];
+const directiveGroup = CONDITION_DIRECTIVES[targetType];
 
-function genData(el, state) {
+function genData(el) {
   const directives = [];
   if (el.if) {
     directives.push(`${directiveGroup.if}="{{${el.if}}}"`);

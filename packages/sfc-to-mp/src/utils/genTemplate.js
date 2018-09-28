@@ -8,7 +8,7 @@ const genTemplateName = require('./genTemplateName');
 const transpiler = require('../transpiler');
 const { OUTPUT_SOURCE_FOLDER } = require('../config/CONSTANTS');
 
-module.exports = function genDepAxml(
+module.exports = function genTemplate(
   { path, tplName, name, pageName, modulePath },
   loaderCtx
 ) {
@@ -45,7 +45,7 @@ module.exports = function genDepAxml(
       const tplReq = `/${OUTPUT_SOURCE_FOLDER}/components/${tplName}.axml`;
       emitFile(
         tplReq.slice(1),
-        genDepAxml(
+        genTemplate(
           {
             path:
               extname(vueModulePath) === '.html'

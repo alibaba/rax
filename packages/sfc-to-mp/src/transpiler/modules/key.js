@@ -1,14 +1,13 @@
-const getTargetType = require('../../config/getTargetType');
+const { getOption } = require('../../config/cliOptions');
 
-const type = getTargetType();
-
+const targetType = getOption('target');
 const KEY_DIRECTIVES = {
   ali: 'a:key',
   wx: 'wx:key',
 };
-const propKey = KEY_DIRECTIVES[type];
+const propKey = KEY_DIRECTIVES[targetType];
 
-function genData(el, state) {
+function genData(el) {
   let data = '';
   if (el.key) {
     data = propKey + '="{{' + el.key + '}}"';
