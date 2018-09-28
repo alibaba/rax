@@ -6,6 +6,7 @@ const { parseComponentsDeps } = require('../parser');
 const compileES5 = require('./compileES5');
 const genTemplateName = require('./genTemplateName');
 const transpiler = require('../transpiler');
+const { OUTPUT_SOURCE_FOLDER } = require('../config/CONSTANTS');
 
 module.exports = function genDepAxml(
   { path, tplName, name, pageName, modulePath },
@@ -45,7 +46,7 @@ module.exports = function genDepAxml(
         tplName,
         filename: name,
       };
-      const tplReq = `/components/${tplName}.axml`;
+      const tplReq = `/${OUTPUT_SOURCE_FOLDER}/components/${tplName}.axml`;
       emitFile(
         tplReq.slice(1),
         genDepAxml(
@@ -82,14 +83,17 @@ module.exports = function genDepAxml(
    */
   if (Array.isArray(styles)) {
     const style = styles.map(s => s.content).join('\n');
-    emitFile(`components/${tplName}.acss`, style);
+    emitFile(
+      `${OUTPUT_SOURCE_FOLDER}/components/${tplName}.acss`,
+      style
+    );
   }
 
   /**
    * 生成组件 js context
    */
   const scriptPath = join(
-    'assets',
+    OUTPUT_SOURCE_FOLDER,
     pageName,
     '..',
     modulePath + '.js'
@@ -105,7 +109,9 @@ module.exports = function genDepAxml(
 
   Object.keys(tplImports).forEach(name => {
     const { tplName } = tplImports[name];
-    codes.unshift(`<import src="/components/${tplName}.axml" />`);
+    codes.unshift(
+      `<import src="/${OUTPUT_SOURCE_FOLDER}/components/${tplName}.axml" />`
+    );
   });
 
   // codes.unshift();

@@ -1,19 +1,24 @@
 const { readFileSync, existsSync } = require('fs');
 const { resolve } = require('path');
 const getAppJSON = require('../config/getAppJSON');
+const {
+  OUTPUT_SOURCE_FOLDER,
+  OUTPUT_VENDOR_FOLDER,
+} = require('../config/CONSTANTS');
 
-/**
- *
- */
 module.exports = function appLoader(content) {
   /**
    * handle with app.json
    */
   const appJSON = getAppJSON(this.rootContext);
   this.emitFile('app.json', JSON.stringify(appJSON, null, 2) + '\n');
+  content = content + '\nmodule.exports = app;';
   this.emitFile(
-    'assets/app.js',
-    content.replace(/@core\/app/, '/assets/vendor/coreApp.js') + '\nmodule.exports = app;',
+    `${OUTPUT_SOURCE_FOLDER}/app.js`,
+    content.replace(
+      /@core\/app/,
+      `/${OUTPUT_VENDOR_FOLDER}/coreApp.js`
+    )
   );
 
   /**
@@ -29,6 +34,10 @@ module.exports = function appLoader(content) {
   /**
    * handle with app.js
    */
-  const source = "App(require('/assets/vendor/transAppConfig')(require('/assets/app')));";
+  const source = `
+  var createApp = require('/${OUTPUT_VENDOR_FOLDER}/createApp');
+  var appConfig = require('/${OUTPUT_SOURCE_FOLDER}/app');
+  App(createApp(appConfig));
+`;
   this.callback(null, source);
 };

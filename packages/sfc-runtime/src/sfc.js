@@ -36,7 +36,7 @@ export default class SFC {
     mixinProps(this, config.propsData, config.props);
     // mixin methods
     if (config.methods) {
-      Object.keys(config.methods).forEach(methodName => {
+      Object.keys(config.methods).forEach((methodName) => {
         this[methodName] = config.methods[methodName].bind(this);
       });
     }
@@ -72,19 +72,16 @@ export default class SFC {
     if (typeof config.destroyed === 'function') {
       const prevComponentWillUnmount = this.componentWillUnmount;
       this.componentWillUnmount = function() {
-        prevComponentWillUnmount &&
-          prevComponentWillUnmount.call(this);
+        prevComponentWillUnmount && prevComponentWillUnmount.call(this);
         setTimeout(() => {
           config.destroyed.apply(this, arguments);
         });
       };
     }
 
-    const prevComponentWillReceiveProps = this
-      .componentWillReceiveProps;
+    const prevComponentWillReceiveProps = this.componentWillReceiveProps;
     this.componentWillReceiveProps = function(nextProps) {
-      prevComponentWillReceiveProps &&
-        prevComponentWillReceiveProps.apply(this, arguments);
+      prevComponentWillReceiveProps && prevComponentWillReceiveProps.apply(this, arguments);
       if (nextProps.children !== this.props.children) {
         // update slots
         mixinSlots(this, nextProps.children);
@@ -99,4 +96,7 @@ export default class SFC {
   render() {
     return null;
   }
+
+  // TODO fix me
+  forceUpdate() {}
 }

@@ -1,17 +1,17 @@
-const { join, parse, resolve, dirname, extname } = require('path');
 const { getOptions } = require('loader-utils');
+const { join, parse, resolve, dirname, extname } = require('path');
 const transpiler = require('../transpiler');
 const compileES5 = require('../utils/compileES5');
 const genTemplateName = require('../utils/genTemplateName');
 const genDepAxml = require('../utils/genDepAxml');
 const { parseComponentsDeps } = require('../parser');
 const { parseSFCParts } = require('../transpiler/parse');
-
-const babelOptions = {
-  // extends: getBabelOptions(),
-  plugins: [parseComponentsDeps],
-};
 const babel = require('babel-core');
+
+const {
+  OUTPUT_SOURCE_FOLDER,
+  OUTPUT_VENDOR_FOLDER,
+} = require('../config/CONSTANTS');
 
 module.exports = function pageLoader(content) {
   const { script, styles, template } = parseSFCParts(content);
@@ -22,10 +22,13 @@ module.exports = function pageLoader(content) {
   const tplImports = {};
   const tplPropsData = {};
   if (script) {
-    const babelResult = babel.transform(script.content, babelOptions);
+    const babelResult = babel.transform(script.content, {
+      plugins: [parseComponentsDeps],
+    });
     const {
       components: importedComponentsMap,
     } = babelResult.metadata;
+
     Object.keys(importedComponentsMap || {}).forEach(tagName => {
       let modulePath = importedComponentsMap[tagName];
       const { name } = parse(modulePath);
@@ -39,7 +42,17 @@ module.exports = function pageLoader(content) {
       }
 
       const tplName = genTemplateName(vueModulePath);
-      const tplPath = join(pageName, '..', modulePath);
+      const tplPath = join(
+        OUTPUT_SOURCE_FOLDER,
+        'components',
+        modulePath
+      );
+      const tplPath2 = join(
+        OUTPUT_SOURCE_FOLDER,
+        'components',
+        genTemplateName(modulePath)
+      );
+
       /**
        * name: 模块名称, name="title"
        * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
@@ -48,26 +61,26 @@ module.exports = function pageLoader(content) {
         tagName,
         tplName,
         filename: name,
-        configPath: join('/assets', tplPath),
+        configPath: tplPath,
       };
 
-      this.emitFile(
-        tplPath + '.axml',
-        genDepAxml(
-          {
-            path:
-              extname(vueModulePath) === '.html'
-                ? vueModulePath
-                : vueModulePath + '.html',
-            pageName,
-            modulePath,
-            tplName,
-            name,
-          },
-          this
-        )
+      const p =
+        extname(vueModulePath) === '.html'
+          ? vueModulePath
+          : vueModulePath + '.html';
+
+      const axmlContent = genDepAxml(
+        {
+          path: p,
+          pageName,
+          modulePath,
+          tplName,
+          name,
+        },
+        this
       );
-      tplDeps.push(`<import src="/${tplPath + '.axml'}" />\n`);
+      this.emitFile(tplPath2 + '.axml', axmlContent);
+      tplDeps.push(`<import src="/${tplPath2 + '.axml'}" />\n`);
     });
   }
 
@@ -92,21 +105,19 @@ module.exports = function pageLoader(content) {
       .map(tagName => {
         const { tplName, filename, configPath } = tplImports[tagName];
         return `'${tplName}': {
-  config: require('${configPath}'),
-  propsData: ${
-    tplPropsData[tplName]
-      ? JSON.stringify(tplPropsData[tplName])
-      : '{}'
-  },
-},`;
+            config: require('/${configPath}'),
+            propsData: ${
+              tplPropsData[tplName]
+                ? JSON.stringify(tplPropsData[tplName])
+                : '{}'
+            },
+          },`;
       })
       .join('\n');
     source = [
-      `var pageConfig = require('/assets/${pageName}');`,
-      "var transPageConfig = require('/assets/vendor/transPageConfig');",
-      `Page(transPageConfig(pageConfig, {
-        ${deps}
-      }));`,
+      `var pageConfig = require('/${OUTPUT_SOURCE_FOLDER}/${pageName}');`,
+      `var createPage = require('/${OUTPUT_VENDOR_FOLDER}/createPage');`,
+      `Page(createPage(pageConfig, {${deps}}));`,
     ].join('\n');
 
     const { code, map } = compileES5(script.content, {
@@ -120,7 +131,7 @@ module.exports = function pageLoader(content) {
                   path.node.source &&
                   path.node.source.type === 'StringLiteral'
                 ) {
-                  // path.node.source.value = '/assets/components/title';
+                  // path.node.source.value = `/${OUTPUT_SOURCE_FOLDER}/components/title`;
                 }
               },
             },
@@ -128,7 +139,11 @@ module.exports = function pageLoader(content) {
         },
       ],
     });
-    this.emitFile(`assets/${pageName}.js`, code, map);
+    this.emitFile(
+      `${OUTPUT_SOURCE_FOLDER}/${pageName}.js`,
+      code,
+      map
+    );
   }
   this.callback(null, source);
 };

@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const log = require('fancy-log');
 const colors = require('chalk');
 
-const appBuildConfig = require('./webpack.config.dev');
+const appBuildConfig = require('./webpack.config');
 const vendorConfig = require('./vendor.config');
 
 const statsOptions = {
@@ -20,19 +20,22 @@ const statsOptions = {
 module.exports = function watch() {
   const watchOpts = { aggregateTimeout: 300 };
 
-  const compiler = webpack([vendorConfig , appBuildConfig]);
+  const compiler = webpack([vendorConfig, appBuildConfig]);
 
   compiler.watch(watchOpts, (err, statsQueue) => {
-    const hasErr = statsQueue.stats.reduce((prev, curr) => prev || curr.hasErrors(), false);
+    const hasErr = statsQueue.stats.reduce(
+      (prev, curr) => prev || curr.hasErrors(),
+      false
+    );
     if (hasErr) {
-      statsQueue.stats.forEach((stats) => {
+      statsQueue.stats.forEach(stats => {
         console.log(stats.toString(statsOptions));
       });
       log(colors.red('Compiled with Error.'));
     } else if (err) {
       log.error(err);
     } else {
-      statsQueue.stats.forEach((stats) => {
+      statsQueue.stats.forEach(stats => {
         console.log(stats.toString(statsOptions));
       });
       log(colors.green('Compile Succeed. Watching changes.'));
