@@ -167,32 +167,6 @@ function genData(el, state) {
   return `$d, ...$d['${tplName}']`;
 }
 
-function genDirective(el, state) {
-  const directives = [];
-
-  // for
-  if (el.for) {
-    directives.push(`a:for="{{${el.for}}}"`);
-    if (el.alias) {
-      directives.push(`a:for-item="${el.alias}"`);
-    }
-    if (el.iterator1) {
-      directives.push(`a:for-index="${el.iterator1}"`);
-    }
-  }
-
-  // if
-  if (el.if) {
-    directives.push(`a:if="{{${el.if}}}"`);
-  } else if (el.elseif) {
-    directives.push(`a:elif="{{${el.elseif}}}"`);
-  } else if (el.else) {
-    directives.push('a:else');
-  }
-
-  return directives.join(' ');
-}
-
 const STATIC_PROP_REG = /^"?(.*)"/;
 function getStaticProp(str) {
   const match = STATIC_PROP_REG.exec(str);

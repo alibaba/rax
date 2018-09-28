@@ -5,8 +5,8 @@ const compiler = require('vue-template-compiler');
  * @param content
  * @return ast
  */
-module.exports = function parse(content) {
-  return compiler.compile(content);
+module.exports = function parse(content, opts) {
+  return compiler.compile(content, opts);
 };
 
 module.exports.parseSFCParts = function(content) {
