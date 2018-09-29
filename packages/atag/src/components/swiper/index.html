@@ -189,9 +189,10 @@ export default class Swiper extends PolymerElement {
   handleChildrenChanged(info) {
     this.indicators = new Array(this.itemsCount);
 
-    this._removeCircularAssistNode();
+    this._resetCircularAssistNode();
     if (this.isCircular) {
-      this._createCircularAssistNode();
+      this._createCircularAssistNode() &&
+      this._setTranslate(this._getTranslateOfRealItem(this.current + 1), 0);
     }
   }
 
@@ -433,7 +434,7 @@ export default class Swiper extends PolymerElement {
     return translate;
   }
 
-  _removeCircularAssistNode() {
+  _resetCircularAssistNode() {
     if (this.duplicateFirstChild) {
       this.duplicateFirstChild.parentElement.removeChild(this.duplicateFirstChild);
     }
@@ -441,6 +442,11 @@ export default class Swiper extends PolymerElement {
       this.duplicateLastChild.parentElement.removeChild(this.duplicateLastChild);
     }
   }
+
+  /**
+   * add circular assit node to shadom dom
+   * @returns {Boolean} if is created
+   */
   _createCircularAssistNode() {
     const swiperItems = this.children;
     if (swiperItems.length > 1) {
@@ -451,7 +457,9 @@ export default class Swiper extends PolymerElement {
 
       this.$.swiperItems.insertBefore(this.duplicateLastChild, this.$.swiperItems.children[0]);
       this.$.swiperItems.appendChild(this.duplicateFirstChild);
-      this._setTranslate(this._getTranslateOfRealItem(this.current + 1), 0);
+      return true;
+    } else {
+      return false;
     }
   }
 
