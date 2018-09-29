@@ -415,6 +415,10 @@ export default class Swiper extends PolymerElement {
   _getTranslateOfRealItem(realCurrent) {
     const propName = this.vertical ? 'height' : 'width';
 
+    /**
+     * `this.$.swiperItems.children` can only get slot element
+     * Using this.children to get real childNodes
+     */
     const childItems = [];
     for (let i = 0, l = this.children.length; i < l; i++ ) {
       childItems.push(this.children[i]);
