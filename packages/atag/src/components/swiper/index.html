@@ -414,7 +414,10 @@ export default class Swiper extends PolymerElement {
   _getTranslateOfRealItem(realCurrent) {
     const propName = this.vertical ? 'height' : 'width';
 
-    const childItems = [...this.children];
+    const childItems = [];
+    for (let i = 0, l = this.children.length; i < l; i++ ) {
+      childItems.push(this.children[i]);
+    }
     if (this.duplicateFirstChild) {
       childItems.unshift(this.duplicateFirstChild);
     }
