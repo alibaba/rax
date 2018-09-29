@@ -18,10 +18,10 @@
   )
     return;
   var a = HTMLElement;
-  (window.HTMLElement = function() {
+  window.HTMLElement = function() {
     return Reflect.construct(a, [], this.constructor);
-  }),
-    (HTMLElement.prototype = a.prototype),
-    (HTMLElement.prototype.constructor = HTMLElement),
-    Object.setPrototypeOf(HTMLElement, a);
+  },
+  HTMLElement.prototype = a.prototype,
+  HTMLElement.prototype.constructor = HTMLElement,
+  Object.setPrototypeOf(HTMLElement, a);
 })();

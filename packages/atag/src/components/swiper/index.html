@@ -91,8 +91,12 @@
 <script>
 import 'components/swiper/swiper-item';
 import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
+import FlattenedNodesObserver from '../../shared/FlattenedNodesObserver';
 import Gestures from '../../shared/gestures';
+
+function isSwiperItem(node) {
+  return node.nodeName === 'A-SWIPER-ITEM';
+}
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -167,39 +171,46 @@ export default class Swiper extends PolymerElement {
     return this.autoplay || this.autoplay === '';
   }
 
+  get itemsCount() {
+    return FlattenedNodesObserver.getFlattenedNodes(this).filter(isSwiperItem).length;
+  }
+
   ready() {
     // Be sure to add super.ready() or you won't get shadowRoot
     super.ready();
-    
-    this.itemsCount = this.children.length;
-    this.indicators = new Array(this.itemsCount);
 
+    this.childrenObserver = new FlattenedNodesObserver(this, this.handleChildrenChanged);
     this.render();
 
     Gestures.addListener(this, 'track', this.handleTrack);
     this.isReady = true;
   }
 
+  handleChildrenChanged(info) {
+    this.indicators = new Array(this.itemsCount);
 
-  render() {
+    this._removeCircularAssistNode();
     if (this.isCircular) {
       this._createCircularAssistNode();
     }
+  }
 
+
+  render() {
     if (this.currentItemId) {
       const currentItem = this.querySelector(`[item-id=${this.currentItemId}]`);
       for (var i = 0; i < this.children.length; ++i) {
         if (currentItem === this.children[i]) {
           this.current = i
           break;
-        };
+        }
       }
     }
-    
+
     // Set init current item
-    var realCurrent = this.isCircular ? this.current + 1 : this.current;
+    let realCurrent = this.isCircular ? this.current + 1 : this.current;
     this._setTranslate(this._getTranslateOfRealItem(realCurrent), 0);
-    
+
     if (this.isAutoplay) {
       this._autoplay();
     }
@@ -254,6 +265,7 @@ export default class Swiper extends PolymerElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     Gestures.removeListener(this, 'track', this.handleTrack);
+    this.childrenObserver.disconnect();
   }
 
   getContainerClass() {
@@ -324,13 +336,12 @@ export default class Swiper extends PolymerElement {
   };
 
   _next = () => {
-
-    this.current = this.current < 0 ? 0 : this.current > this.itemsCount - 1 ? this.itemsCount - 1 : this.current;
-
-    const isCurrentLastItem = this.current === (this.itemsCount - 1);
+    const itemsCount = this.itemsCount;
+    this.current = this.current < 0 ? 0 : this.current > itemsCount - 1 ? itemsCount - 1 : this.current;
+    const isCurrentLastItem = this.current === (itemsCount - 1);
     const realCurrent = this.isCircular ? this.current + 1 : this.current ;
     const nextRealCurrent = isCurrentLastItem ? (this.isCircular ? realCurrent + 1 : 0) : realCurrent + 1;
-    
+
     this.prevAction = 'next';
     this.setRealItem(nextRealCurrent);
 
@@ -342,10 +353,10 @@ export default class Swiper extends PolymerElement {
     const isCurrentFirstItem = this.current === 0;
     const realCurrent = this.isCircular ? this.current + 1 : this.current ;
     const prevRealCurrent = isCurrentFirstItem ? (this.isCircular ? realCurrent - 1 : 0) : realCurrent - 1;
-    
+
     this.prevAction = 'prev';
     this.setRealItem(prevRealCurrent);
-    
+
     this.prevCurrent = this.current;
     this.current = isCurrentFirstItem ? this.itemsCount - 1 : this.current - 1;
   };
@@ -364,7 +375,7 @@ export default class Swiper extends PolymerElement {
 
   _onTransitionEnd() {
     this.delta = 0;
-    
+
     const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === (this.itemsCount - 1);
     const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
     if (this.isCircular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
@@ -380,7 +391,7 @@ export default class Swiper extends PolymerElement {
 
     const swiperItems = this.$.swiperItems;
     const transitionDuration = duration != null ? duration : this.transitionDuration;
-  
+
     swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
     swiperItems.style.transitionDuration = `${transitionDuration}ms`;
 
@@ -399,12 +410,19 @@ export default class Swiper extends PolymerElement {
   }
 
   _getTranslateOfRealItem(realCurrent) {
-
     const propName = this.vertical ? 'height' : 'width';
+
+    const childItems = [...this.children];
+    if (this.duplicateFirstChild) {
+      childItems.unshift(this.duplicateFirstChild);
+    }
+    if (this.duplicateLastChild) {
+      childItems.push(this.duplicateLastChild);
+    }
 
     var translate = 0;
     for (var i = 0; i < realCurrent; i++) {
-      var item = this.children[i];
+      var item = childItems[i];
       if (!item) break;
       if (item.__rectCache == null) {
         item.__rectCache = item.getBoundingClientRect()[propName];
@@ -415,16 +433,25 @@ export default class Swiper extends PolymerElement {
     return translate;
   }
 
+  _removeCircularAssistNode() {
+    if (this.duplicateFirstChild) {
+      this.duplicateFirstChild.parentElement.removeChild(this.duplicateFirstChild);
+    }
+    if (this.duplicateLastChild) {
+      this.duplicateLastChild.parentElement.removeChild(this.duplicateLastChild);
+    }
+  }
   _createCircularAssistNode() {
     const swiperItems = this.children;
-
     if (swiperItems.length > 1) {
+      this.duplicateFirstChild = this.children[0].cloneNode(true);
+      this.duplicateFirstChild.setAttribute('data-a-swiper-dup-first-child', true);
+      this.duplicateLastChild = this.children[swiperItems.length - 1].cloneNode(true);
+      this.duplicateLastChild.setAttribute('data-a-swiper-dup-last-child', true);
 
-      const duplicateFirstChild = this.children[0].cloneNode(true);
-      const duplicateLastChild = this.children[swiperItems.length - 1].cloneNode(true);
-      
-      this.insertBefore(duplicateLastChild, this.children[0]);
-      this.appendChild(duplicateFirstChild);
+      this.$.swiperItems.insertBefore(this.duplicateLastChild, this.$.swiperItems.children[0]);
+      this.$.swiperItems.appendChild(this.duplicateFirstChild);
+      this._setTranslate(this._getTranslateOfRealItem(this.current + 1), 0);
     }
   }
 
@@ -444,15 +471,15 @@ export default class Swiper extends PolymerElement {
   _autoplay = () => {
 
     if (this.itemsCount === 1) return;
-    
+
     if (this.timer) {
       clearTimeout(this.timer);
     }
 
     this.timer = setTimeout(() => {
 
-      this._next();
-      this._autoplay();
+      // this._next();
+      // this._autoplay();
 
     }, this.interval);
   }
