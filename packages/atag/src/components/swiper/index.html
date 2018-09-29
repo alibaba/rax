@@ -94,10 +94,6 @@ import { PolymerElement } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures.js';
 
-function isSwiperItem(node) {
-  return node.nodeName === 'A-SWIPER-ITEM';
-}
-
 export default class Swiper extends PolymerElement {
   static get is() {
     return 'a-swiper';
@@ -172,7 +168,10 @@ export default class Swiper extends PolymerElement {
   }
 
   get itemsCount() {
-    return FlattenedNodesObserver.getFlattenedNodes(this).filter(isSwiperItem).length;
+    return FlattenedNodesObserver
+      .getFlattenedNodes(this)
+      .filter((node) => node.nodeName === 'A-SWIPER-ITEM')
+      .length;
   }
 
   ready() {
@@ -192,8 +191,10 @@ export default class Swiper extends PolymerElement {
 
     this._resetCircularAssistNode();
     if (this.isCircular) {
-      this._createCircularAssistNode() &&
-      this._setTranslate(this._getTranslateOfRealItem(this.current + 1), 0);
+      this._createCircularAssistNode();
+      if (this.duplicateFirstChild) {
+        this._setTranslate(this._getTranslateOfRealItem(this.current + 1), 0);
+      }
     }
   }
 
@@ -448,22 +449,21 @@ export default class Swiper extends PolymerElement {
   }
 
   /**
-   * add circular assit node to shadom dom
-   * @returns {Boolean} if assist node is created
+   * Add circular assit node to shadom dom
    */
   _createCircularAssistNode() {
-    const swiperItems = this.children;
-    if (swiperItems.length > 1) {
-      this.duplicateFirstChild = this.children[0].cloneNode(true);
+    const childSwiperItems = this.children;
+    if (childSwiperItems.length > 1) {
+      this.duplicateFirstChild = childSwiperItems[0].cloneNode(true);
       this.duplicateFirstChild.setAttribute('data-a-swiper-dup-first-child', true);
-      this.duplicateLastChild = this.children[swiperItems.length - 1].cloneNode(true);
+
+      this.duplicateLastChild = this.children[childSwiperItems.length - 1].cloneNode(true);
       this.duplicateLastChild.setAttribute('data-a-swiper-dup-last-child', true);
 
-      this.$.swiperItems.insertBefore(this.duplicateLastChild, this.$.swiperItems.children[0]);
-      this.$.swiperItems.appendChild(this.duplicateFirstChild);
-      return true;
+      const { swiperItems } = this.$;
+      swiperItems.insertBefore(this.duplicateLastChild, swiperItems.children[0]);
+      swiperItems.appendChild(this.duplicateFirstChild);
     } else {
-      return false;
     }
   }
 
