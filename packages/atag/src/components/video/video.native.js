@@ -4,8 +4,8 @@ const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
 const isIOS = /(iPhone|iPad|iPod)/.test(ua);
 /**
- * <params> mark changed time to trigger
- * MutationObserver to make native known
+ * HACK: <params> mark changed time to trigger
+ * MutationObserver to make native known changes
  */
 const DATA_CHANGED_KEY = 'data-change-timestamp';
 
