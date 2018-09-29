@@ -54,13 +54,6 @@ export default class VideoElement extends PolymerElement {
 
     document.addEventListener('WVEmbed.Ready', this._nativeReady);
     this.uniqueId = String(++videoInstanceCount);
-    if (isAndroid) {
-      this.callNativeControl('setup', {
-        videoUrl: this.src,
-        isLoop: this.loop,
-        objectFit: this.objectfit
-      });
-    }
   }
 
   connectedCallback() {
@@ -127,6 +120,16 @@ export default class VideoElement extends PolymerElement {
     container.$$id = this.$$id;
 
     this.appendChild(container);
+
+    // android should execute setup before play
+    // iOS will read src from <params> el
+    if (isAndroid && this.src) {
+      this.callNativeControl('setup', {
+        videoUrl: this.src,
+        isLoop: this.loop,
+        objectFit: this.objectfit
+      });
+    }
 
     if (this.autoplay) {
       this.play();
