@@ -489,10 +489,8 @@ export default class Swiper extends PolymerElement {
     }
 
     this.timer = setTimeout(() => {
-
-      // this._next();
-      // this._autoplay();
-
+      this._next();
+      this._autoplay();
     }, this.interval);
   }
 
