@@ -187,6 +187,7 @@ export default class Swiper extends PolymerElement {
   }
 
   handleChildrenChanged(info) {
+    // reset number of indicators
     this.indicators = new Array(this.itemsCount);
 
     this._resetCircularAssistNode();
@@ -445,7 +446,7 @@ export default class Swiper extends PolymerElement {
 
   /**
    * add circular assit node to shadom dom
-   * @returns {Boolean} if is created
+   * @returns {Boolean} if assist node is created
    */
   _createCircularAssistNode() {
     const swiperItems = this.children;
