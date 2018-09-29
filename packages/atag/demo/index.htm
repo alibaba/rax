@@ -103,6 +103,9 @@
     asyncImage.addEventListener('load',function(e) {
       asyncImageLoad.innerHTML=JSON.stringify(e.detail);
     });
+    setTimeout(() => {
+      image.setAttribute('mode', 'top');
+    }, 2000);
   </script>
 
   <div class="card">
