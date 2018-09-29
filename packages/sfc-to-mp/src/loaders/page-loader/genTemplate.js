@@ -1,6 +1,7 @@
 const { join, resolve, parse, dirname, extname } = require('path');
 const { readFileSync } = require('fs');
 const babel = require('babel-core');
+const debug = require('debug')('mp:generator');
 
 const { parseSFCParts } = require('../../transpiler/parse');
 const { parseComponentsDeps } = require('./parser');
@@ -118,6 +119,8 @@ module.exports = function genTemplate({
     tpl,
     '</template>',
   ];
+
+  debug(tplImports);
 
   Object.keys(tplImports).forEach(name => {
     const { tplName } = tplImports[name];

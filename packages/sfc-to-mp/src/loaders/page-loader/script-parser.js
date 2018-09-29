@@ -13,6 +13,7 @@
 
 const { join, parse, resolve, dirname, extname } = require('path');
 const babel = require('babel-core');
+const debug = require('debug')('mp:parse');
 
 const genTemplateName = require('./genTemplateName');
 const genTemplate = require('./genTemplate');
@@ -76,6 +77,9 @@ module.exports = (script, { resourcePath, pageName }) => {
     scriptReferencePath = tplPath2 + templateExt;
     dependencies.push(`<import src="/${scriptReferencePath}" />`);
   });
+
+  debug(imports);
+  debug(dependencies);
 
   return {
     originPath: result.originPath,
