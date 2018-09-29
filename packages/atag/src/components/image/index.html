@@ -95,7 +95,6 @@ export default class ImageElement extends PolymerElement {
   _load() {
     this._loading = true;
     const image = (this.image = new Image());
-    image.src = this.src;
 
     image.onload = e => {
       this._loading = false;
@@ -109,7 +108,6 @@ export default class ImageElement extends PolymerElement {
         }
       });
       this.dispatchEvent(customEvent);
-      this._render();
     };
 
     image.onerror = e => {
@@ -122,6 +120,8 @@ export default class ImageElement extends PolymerElement {
       });
       this.dispatchEvent(customEvent);
     };
+    image.src = this.src;
+    this._render();
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -162,11 +162,9 @@ export default class ImageElement extends PolymerElement {
 
     const container = this.$.container;
     const containerStyle = container.style;
-    const imageStyle = this.image.style;
 
-    if (container.children.length > 0) {
-      containerStyle.height = 'inital';
-      imageStyle.display = 'none';
+    if (oldVal === 'widthFix') {
+      this.style.height = this.initialHeight;
     }
 
     const positions = [
@@ -200,6 +198,7 @@ export default class ImageElement extends PolymerElement {
           break;
         case 'widthFix':
           const hostWidth = parseFloat(this.style.width);
+          this.initialHeight = this.clientHeight + 'px';
           this.style.height =
             hostWidth * this.image.height / this.image.width + 'px';
           containerStyle.backgroundSize = 'contain';
