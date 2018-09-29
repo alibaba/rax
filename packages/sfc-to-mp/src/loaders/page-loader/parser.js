@@ -30,10 +30,14 @@ const traverseConfigVisitor = {
 
     const { metadata } = path.hub.file;
     const { code } = generate(path.node.value, {}, '');
-    metadata.config = { code, node: path.node.value, value: babelon.eval(code) };
+    metadata.config = {
+      code,
+      node: path.node.value,
+      value: babelon.eval(code),
+    };
 
     // path.remove()
-  }
+  },
 };
 
 // config 的遍历器
@@ -59,9 +63,12 @@ const configVisitor = {
       return;
     }
 
-    const v = arg.type === 'Identifier' ? importsMap[arg.name] : importsMap.App;
+    const v =
+      arg.type === 'Identifier'
+        ? importsMap[arg.name]
+        : importsMap.App;
     metadata.rootComponent = v || importsMap.index || importsMap.main;
-  }
+  },
 };
 function parseConfig(babel) {
   return { visitor: configVisitor };
@@ -89,14 +96,14 @@ const traverseComponentsVisitor = {
     });
 
     metadata.components = components;
-  }
+  },
 };
 
 // components 的遍历器
 const componentsVisitor = {
   ExportDefaultDeclaration: function(path) {
     path.traverse(traverseComponentsVisitor);
-  }
+  },
 };
 function parseComponentsDeps(babel) {
   return { visitor: componentsVisitor };
@@ -111,9 +118,14 @@ const globalComponentsVisitor = {
     if (!callee.object || !callee.property) {
       return;
     }
-    if (callee.object.name === 'Vue' && callee.property.name === 'component') {
+    if (
+      callee.object.name === 'Vue' &&
+      callee.property.name === 'component'
+    ) {
       if (!args[0] || args[0].type !== 'StringLiteral') {
-        throw new Error('Vue.component() 的第一个参数必须为静态字符串');
+        throw new Error(
+          'Vue.component() 的第一个参数必须为静态字符串'
+        );
       }
       if (!args[1]) {
         throw new Error('Vue.component() 需要两个参数');
@@ -122,7 +134,7 @@ const globalComponentsVisitor = {
       globalComponents[args[0].value] = importsMap[args[1].name];
     }
     metadata.globalComponents = globalComponents;
-  }
+  },
 };
 
 function parseGlobalComponents(babel) {
@@ -137,5 +149,5 @@ module.exports = {
   parseConfig,
   parseComponentsDeps,
   parseGlobalComponents,
-  clearGlobalComponents
+  clearGlobalComponents,
 };

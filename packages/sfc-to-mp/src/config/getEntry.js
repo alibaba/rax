@@ -1,5 +1,4 @@
 const { readFileSync } = require('fs');
-const log = require('fancy-log');
 const path = require('path');
 
 const appLoaderPath = require.resolve('../loaders/app-loader');
@@ -33,6 +32,5 @@ module.exports = function getEntry() {
         SFC_EXT;
     });
   }
-  console.log(entry);
   return entry;
 };

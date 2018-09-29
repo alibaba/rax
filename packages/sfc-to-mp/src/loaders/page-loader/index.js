@@ -1,155 +1,89 @@
 const { getOptions } = require('loader-utils');
-const { join, parse, resolve, dirname, extname } = require('path');
-const transpiler = require('../transpiler');
-const compileES5 = require('../utils/compileES5');
-const genTemplateName = require('../utils/genTemplateName');
-const genTemplate = require('../utils/genTemplate');
-const { parseComponentsDeps } = require('../parser');
-const { parseSFCParts } = require('../transpiler/parse');
-const getExt = require('../config/getExt');
-const babel = require('babel-core');
+const debug = require('debug')('mp');
 
-const {
-  OUTPUT_SOURCE_FOLDER,
-  OUTPUT_VENDOR_FOLDER,
-} = require('../config/CONSTANTS');
+const { parseSFCParts } = require('../../transpiler/parse');
+const getExt = require('../../config/getExt');
+const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
+const generateStyle = require('./generate-style');
+const generateTemplate = require('./generate-template');
+const generateScript = require('./generate-script');
+const scriptParser = require('./script-parser');
+const fixedString = require('./fixed-string');
 
 module.exports = function pageLoader(content) {
   const templateExt = getExt('template');
   const styleExt = getExt('style');
+  const scriptExt = getExt('script');
+
   const { script, styles, template } = parseSFCParts(content);
   const { resourcePath } = this;
   const { pageName } = getOptions(this);
 
-  const tplDeps = [];
-  const tplImports = {};
+  let dependencies = [];
+  let imports = {};
   const tplPropsData = {};
+
+  const emitParsedFile = ({
+    path,
+    contents,
+    originPath,
+    children,
+  }) => {
+    if (originPath) {
+      debug(fixedString('addDependency'), originPath);
+      this.addDependency(originPath);
+    }
+    if (path) {
+      debug(fixedString('emitFile'), path);
+      this.emitFile(path, contents);
+    }
+    if (Array.isArray(children) && children.length > 0) {
+      children.forEach(emitParsedFile);
+    }
+  };
+
   if (script) {
-    const babelResult = babel.transform(script.content, {
-      plugins: [parseComponentsDeps],
-    });
-    const {
-      components: importedComponentsMap,
-    } = babelResult.metadata;
-
-    Object.keys(importedComponentsMap || {}).forEach(tagName => {
-      let modulePath = importedComponentsMap[tagName];
-      const { name } = parse(modulePath);
-
-      let vueModulePath = resolve(dirname(resourcePath), modulePath);
-      if (modulePath.indexOf('@/') === 0) {
-        vueModulePath = resolve(
-          this.rootContext,
-          modulePath.slice(2)
-        );
-      }
-
-      const tplName = genTemplateName(vueModulePath);
-      const tplPath = join(
-        OUTPUT_SOURCE_FOLDER,
-        'components',
-        modulePath
-      );
-      const tplPath2 = join(
-        OUTPUT_SOURCE_FOLDER,
-        'components',
-        genTemplateName(modulePath)
-      );
-
-      /**
-       * name: 模块名称, name="title"
-       * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
-       */
-      tplImports[tagName] = {
-        tagName,
-        tplName,
-        filename: name,
-        configPath: tplPath,
-      };
-
-      const p =
-        extname(vueModulePath) === '.html'
-          ? vueModulePath
-          : vueModulePath + '.html';
-
-      const templateContent = genTemplate(
-        {
-          path: p,
-          pageName,
-          modulePath,
-          tplName,
-          name,
-        },
-        this
-      );
-      this.emitFile(tplPath2 + templateExt, templateContent);
-      tplDeps.push(`<import src="/${tplPath2 + templateExt}" />\n`);
-    });
+    const result = scriptParser(script, { resourcePath, pageName });
+    dependencies = result.dependencies;
+    imports = result.imports;
+    emitParsedFile.call(this, result);
   }
 
   if (Array.isArray(styles)) {
-    const style = styles.map(s => s.content).join('\n');
-    this.emitFile(`${pageName}${styleExt}`, style);
+    const styleContents = generateStyle(styles);
+    const styleOutputPath = `${pageName}${styleExt}`;
+    debug(fixedString(styleExt), styleOutputPath);
+    this.emitFile(styleOutputPath, styleContents);
   }
 
   if (template) {
-    const { template: tpl, metadata } = transpiler(template.content, {
-      tplImports,
-    });
+    const { template: templateContents, metadata } = generateTemplate(
+      template,
+      { tplImports: imports }
+    );
+
     Object.assign(tplPropsData, metadata.propsDataMap);
 
+    const templateOutputPath = `${pageName}${templateExt}`;
+    debug(fixedString(templateExt), templateOutputPath);
+
     this.emitFile(
-      `${pageName}${templateExt}`,
-      tplDeps.join('\n') + tpl
+      templateOutputPath,
+      dependencies.join('\n') + templateContents
     );
   }
-
-  let source = 'Page({});';
 
   if (script) {
-    const deps = Object.keys(tplImports)
-      .map(tagName => {
-        const { tplName, filename, configPath } = tplImports[tagName];
-        return `'${tplName}': {
-            config: require('/${configPath}'),
-            propsData: ${
-              tplPropsData[tplName]
-                ? JSON.stringify(tplPropsData[tplName])
-                : '{}'
-            },
-          },`;
-      })
-      .join('\n');
-    source = [
-      `var pageConfig = require('/${OUTPUT_SOURCE_FOLDER}/${pageName}');`,
-      `var createPage = require('/${OUTPUT_VENDOR_FOLDER}/createPage');`,
-      `Page(createPage(pageConfig, {${deps}}));`,
-    ].join('\n');
-
-    const { code, map } = compileES5(script.content, {
-      sourceMaps: true,
-      plugins: [
-        function() {
-          return {
-            visitor: {
-              ImportDeclaration(path) {
-                if (
-                  path.node.source &&
-                  path.node.source.type === 'StringLiteral'
-                ) {
-                  // path.node.source.value = `/${OUTPUT_SOURCE_FOLDER}/components/title`;
-                }
-              },
-            },
-          };
-        },
-      ],
+    const { code, map, source } = generateScript(script, {
+      pageName,
+      tplImports: imports,
+      tplPropsData,
     });
-    this.emitFile(
-      `${OUTPUT_SOURCE_FOLDER}/${pageName}.js`,
-      code,
-      map
-    );
+    const scriptOutputPath = `${OUTPUT_SOURCE_FOLDER}/${pageName}${scriptExt}`;
+    debug(fixedString(scriptExt), scriptOutputPath);
+    this.emitFile(scriptOutputPath, code, map);
+    this.callback(null, source);
+  } else {
+    this.callback(null, 'Page({});');
   }
-  this.callback(null, source);
 };

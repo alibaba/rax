@@ -1,29 +1,32 @@
 const { join, resolve, parse, dirname, extname } = require('path');
 const { readFileSync } = require('fs');
 const babel = require('babel-core');
-const { parseSFCParts } = require('../transpiler/parse');
-const { parseComponentsDeps } = require('../parser');
+
+const { parseSFCParts } = require('../../transpiler/parse');
+const { parseComponentsDeps } = require('./parser');
 const compileES5 = require('./compileES5');
 const genTemplateName = require('./genTemplateName');
-const transpiler = require('../transpiler');
-const getExt = require('../config/getExt');
-const { OUTPUT_SOURCE_FOLDER } = require('../config/CONSTANTS');
+const transpiler = require('../../transpiler');
+const getExt = require('../../config/getExt');
+const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
 
-module.exports = function genTemplate(
-  { path, tplName, name, pageName, modulePath },
-  loaderCtx
-) {
+module.exports = function genTemplate({
+  path,
+  tplName,
+  pageName,
+  modulePath,
+}) {
   const templateExt = getExt('template');
   const styleExt = getExt('style');
   const scriptExt = getExt('script');
 
-  const { emitFile, addDependency } = loaderCtx;
-  addDependency(path);
+  const files = [];
 
   const content = readFileSync(path, 'utf-8');
   const { script, styles, template } = parseSFCParts(content);
 
   const tplImports = {};
+
   const pageBase = join(pageName, '..', modulePath);
   if (script) {
     const babelResult = babel.transform(script.content, {
@@ -37,6 +40,7 @@ module.exports = function genTemplate(
 
       const { name } = parse(modulePath);
       const vueModulePath = resolve(dirname(path), modulePath);
+
       const tplName = genTemplateName(vueModulePath);
       /**
        * name: 模块名称, name="title"
@@ -48,28 +52,30 @@ module.exports = function genTemplate(
         filename: name,
       };
       const tplReq = `/${OUTPUT_SOURCE_FOLDER}/components/${tplName}${templateExt}`;
-      emitFile(
-        tplReq.slice(1),
-        genTemplate(
-          {
-            path:
-              extname(vueModulePath) === '.html'
-                ? vueModulePath
-                : vueModulePath + '.html',
-            tplName,
-            pageName: pageBase,
-            modulePath,
-            name,
-          },
-          loaderCtx
-        )
-      );
+
+      const { contents, files: depsFiles, originPath } = genTemplate({
+        path:
+          extname(vueModulePath) === '.html' // XXXX 只
+            ? vueModulePath
+            : vueModulePath + '.html',
+        tplName,
+        pageName: pageBase,
+        modulePath,
+        name,
+      });
+
+      files.push({
+        path: tplReq.slice(1),
+        contents: contents,
+        originPath: originPath,
+        children: depsFiles,
+      });
     });
   }
 
-  const { template: tpl, metadata } = transpiler(template.content, {
+  const { template: tpl } = transpiler(template.content, {
     tplImports,
-    isTemplateDependency: true,
+    isTemplateoriginPath: true,
     templateName: tplName,
   });
 
@@ -84,10 +90,11 @@ module.exports = function genTemplate(
    */
   if (Array.isArray(styles)) {
     const style = styles.map(s => s.content).join('\n');
-    emitFile(
-      `${OUTPUT_SOURCE_FOLDER}/components/${tplName}${styleExt}`,
-      style
-    );
+
+    files.unshift({
+      path: `${OUTPUT_SOURCE_FOLDER}/components/${tplName}${styleExt}`,
+      contents: style,
+    });
   }
 
   /**
@@ -99,7 +106,11 @@ module.exports = function genTemplate(
     '..',
     modulePath + scriptExt
   );
-  emitFile(scriptPath, scriptCode);
+
+  files.unshift({
+    path: scriptPath,
+    contents: scriptCode,
+  });
 
   const codes = [
     // 注册 template
@@ -115,6 +126,5 @@ module.exports = function genTemplate(
     );
   });
 
-  // codes.unshift();
-  return codes.join('\n');
+  return { contents: codes.join('\n'), files, originPath: path };
 };
