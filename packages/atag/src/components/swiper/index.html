@@ -2,15 +2,14 @@
     <template>
       <style>
         :host {
-          width: 100%;
+          display: block;
           height: 150px;
-          display: inline-block;
-          overflow: hidden;
         }
 
         .swiper {
           position: relative;
           height: 100%;
+          overflow: hidden;
         }
 
         .swiper .swiper-items {
@@ -160,7 +159,8 @@ export default class Swiper extends PolymerElement {
   }
 
   get isCircular() {
-    return this.circular || this.circular === '';
+    // if itemsCount less than 1, circular should not perform
+    return this.itemsCount > 1 && this.circular || this.circular === '';
   }
 
   get isAutoplay() {
@@ -257,7 +257,9 @@ export default class Swiper extends PolymerElement {
           var realCurrent = this.isCircular ? Number(newVal) + 1 : Number(newVal);
           this._setTranslate(this._getTranslateOfRealItem(realCurrent));
 
-          this._autoplay();
+          if (this.isAutoplay) {
+            this._autoplay();
+          }
         }
         break;
       default:
@@ -484,7 +486,6 @@ export default class Swiper extends PolymerElement {
   }
 
   _autoplay = () => {
-
     if (this.itemsCount === 1) return;
 
     if (this.timer) {
