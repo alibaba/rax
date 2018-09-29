@@ -91,8 +91,8 @@
 <script>
 import 'components/swiper/swiper-item';
 import { PolymerElement } from '@polymer/polymer';
-import FlattenedNodesObserver from '../../shared/FlattenedNodesObserver';
-import Gestures from '../../shared/gestures';
+import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
+import * as Gestures from '@polymer/polymer/lib/utils/gestures.js';
 
 function isSwiperItem(node) {
   return node.nodeName === 'A-SWIPER-ITEM';
