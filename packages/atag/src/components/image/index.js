@@ -73,6 +73,10 @@ export default class ImageElement extends PolymerElement {
 
     image.onload = e => {
       this._loading = false;
+      let readyFn;
+      while ((readyFn = this._imageReadyCallbacks.shift())) {
+        readyFn();
+      }
       // Dispatch custom load event
       const customEvent = new CustomEvent('load', {
         bubbles: false,
@@ -172,11 +176,21 @@ export default class ImageElement extends PolymerElement {
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          const hostWidth = parseFloat(this.style.width);
-          this.initialHeight = this.clientHeight + 'px';
-          this.style.height =
-            (hostWidth * this.image.height) / this.image.width + 'px';
-          containerStyle.backgroundSize = 'contain';
+          // reset initial height to 0
+          this.style.height = '0px';
+          this.onImageReady(() => {
+            // exec proper height after image loaded to get
+            // image's real rect
+            const {
+              width: realWidth,
+              height: realHeight,
+            } = this.image;
+            const hostWidth = this.clientWidth;
+            const hostHeight = (hostWidth * realHeight) / realWidth;
+
+            this.style.height = hostHeight + 'px';
+            containerStyle.backgroundSize = 'contain';
+          });
           break;
         default:
           break;
@@ -192,6 +206,18 @@ export default class ImageElement extends PolymerElement {
     this._inited = false;
     this._rendered = false;
     this._loading = false;
+  }
+
+  /**
+   * Exec callbacks after image is loaded
+   */
+  _imageReadyCallbacks = [];
+  onImageReady(callback) {
+    if (!this._loading) {
+      callback();
+    } else {
+      this._imageReadyCallbacks.push(callback);
+    }
   }
 
   static get template() {

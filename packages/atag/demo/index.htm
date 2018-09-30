@@ -73,6 +73,40 @@
     <h4 class="title">a-image</h4>
     <div class="demo">
       <a-image id="image" mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif"></a-image>
+
+      <p>Mode: scaleToFill 150x150</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="scaleToFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFit</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="aspectFit" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFill</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="aspectFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: widthFix</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="widthFix" style="display: block; width: 100%;"></a-image>
+
+      <p>Mode: top</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="top" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="bottom" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: center</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="center" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: left</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: right</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top left</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="top left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top right</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="top right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom left</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="bottom left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom right</p>
+      <a-image src="http://placehold.jp/702x200.png" mode="bottom right" style="display: block; width: 150px; height: 150px;"></a-image>
+
+
+
       <p>
         Load Event: <span id="imageLoad"></span>
       </p>
@@ -103,9 +137,6 @@
     asyncImage.addEventListener('load',function(e) {
       asyncImageLoad.innerHTML=JSON.stringify(e.detail);
     });
-    setTimeout(() => {
-      image.setAttribute('mode', 'top');
-    }, 2000);
   </script>
 
   <div class="card">
