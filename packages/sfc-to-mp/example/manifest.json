@@ -1,0 +1,41 @@
+{
+  "manifest_version": 1,
+  "pages": {
+    "home": "pages/home"
+  },
+  "homepage": "home",
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FAFAFA",
+    "navigationBarTitleText": "小程序",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f9f9f9"
+  },
+  "tabBar": {
+    "color": "#515151",
+    "selectedColor": "#8742fa",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "#999999",
+    "position": "bottom",
+    "list": [
+      {
+        "pageName": "components",
+        "text": "组件",
+        "iconPath": "http://gw.alicdn.com/tps/TB12VVsPFXXXXcvXpXXXXXXXXXX-72-72.png",
+        "selectedIconPath": "http://gw.alicdn.com/tps/TB1sMUnPpXXXXXUapXXXXXXXXXX-138-138.png"
+      },
+      {
+        "pageName": "apis",
+        "text": "API",
+        "iconPath": "http://gw.alicdn.com/tps/TB1lZ46PVXXXXaNXFXXXXXXXXXX-72-72.png_230x230q75",
+        "selectedIconPath": "http://gw.alicdn.com/tps/TB1dalEPVXXXXaMapXXXXXXXXXX-72-72.png"
+      },
+      {
+        "pageName": "dsl",
+        "text": "框架",
+        "iconPath": "http://gw.alicdn.com/tps/TB15wOqPVXXXXaXXXXXXXXXXXXX-72-72.png",
+        "selectedIconPath": "http://gw.alicdn.com/tps/TB1eiJ9PVXXXXajXFXXXXXXXXXX-72-72.png"
+      }
+    ]
+  }
+}
