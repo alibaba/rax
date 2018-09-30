@@ -2,15 +2,14 @@
     <template>
       <style>
         :host {
-          width: 100%;
+          display: block;
           height: 150px;
-          display: inline-block;
-          overflow: hidden;
         }
 
         .swiper {
           position: relative;
           height: 100%;
+          overflow: hidden;
         }
 
         .swiper .swiper-items {
@@ -91,8 +90,8 @@
 <script>
 import 'components/swiper/swiper-item';
 import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
-import Gestures from '../../shared/gestures';
+import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
+import * as Gestures from '@polymer/polymer/lib/utils/gestures.js';
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -160,46 +159,61 @@ export default class Swiper extends PolymerElement {
   }
 
   get isCircular() {
-    return this.circular || this.circular === '';
+    // if itemsCount less than 1, circular should not perform
+    return this.itemsCount > 1 && this.circular || this.circular === '';
   }
 
   get isAutoplay() {
     return this.autoplay || this.autoplay === '';
   }
 
+  get itemsCount() {
+    return FlattenedNodesObserver
+      .getFlattenedNodes(this)
+      .filter((node) => node.nodeName === 'A-SWIPER-ITEM')
+      .length;
+  }
+
   ready() {
     // Be sure to add super.ready() or you won't get shadowRoot
     super.ready();
-    
-    this.itemsCount = this.children.length;
-    this.indicators = new Array(this.itemsCount);
 
+    this.childrenObserver = new FlattenedNodesObserver(this, this.handleChildrenChanged);
     this.render();
 
     Gestures.addListener(this, 'track', this.handleTrack);
     this.isReady = true;
   }
 
+  handleChildrenChanged(info) {
+    // reset number of indicators
+    this.indicators = new Array(this.itemsCount);
 
-  render() {
+    this._resetCircularAssistNode();
     if (this.isCircular) {
       this._createCircularAssistNode();
+      if (this.duplicateFirstChild) {
+        this._setTranslate(this._getTranslateOfRealItem(this.current + 1), 0);
+      }
     }
+  }
 
+
+  render() {
     if (this.currentItemId) {
       const currentItem = this.querySelector(`[item-id=${this.currentItemId}]`);
       for (var i = 0; i < this.children.length; ++i) {
         if (currentItem === this.children[i]) {
           this.current = i
           break;
-        };
+        }
       }
     }
-    
+
     // Set init current item
-    var realCurrent = this.isCircular ? this.current + 1 : this.current;
+    let realCurrent = this.isCircular ? this.current + 1 : this.current;
     this._setTranslate(this._getTranslateOfRealItem(realCurrent), 0);
-    
+
     if (this.isAutoplay) {
       this._autoplay();
     }
@@ -243,7 +257,9 @@ export default class Swiper extends PolymerElement {
           var realCurrent = this.isCircular ? Number(newVal) + 1 : Number(newVal);
           this._setTranslate(this._getTranslateOfRealItem(realCurrent));
 
-          this._autoplay();
+          if (this.isAutoplay) {
+            this._autoplay();
+          }
         }
         break;
       default:
@@ -254,6 +270,7 @@ export default class Swiper extends PolymerElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     Gestures.removeListener(this, 'track', this.handleTrack);
+    this.childrenObserver.disconnect();
   }
 
   getContainerClass() {
@@ -324,13 +341,12 @@ export default class Swiper extends PolymerElement {
   };
 
   _next = () => {
-
-    this.current = this.current < 0 ? 0 : this.current > this.itemsCount - 1 ? this.itemsCount - 1 : this.current;
-
-    const isCurrentLastItem = this.current === (this.itemsCount - 1);
+    const itemsCount = this.itemsCount;
+    this.current = this.current < 0 ? 0 : this.current > itemsCount - 1 ? itemsCount - 1 : this.current;
+    const isCurrentLastItem = this.current === (itemsCount - 1);
     const realCurrent = this.isCircular ? this.current + 1 : this.current ;
     const nextRealCurrent = isCurrentLastItem ? (this.isCircular ? realCurrent + 1 : 0) : realCurrent + 1;
-    
+
     this.prevAction = 'next';
     this.setRealItem(nextRealCurrent);
 
@@ -342,10 +358,10 @@ export default class Swiper extends PolymerElement {
     const isCurrentFirstItem = this.current === 0;
     const realCurrent = this.isCircular ? this.current + 1 : this.current ;
     const prevRealCurrent = isCurrentFirstItem ? (this.isCircular ? realCurrent - 1 : 0) : realCurrent - 1;
-    
+
     this.prevAction = 'prev';
     this.setRealItem(prevRealCurrent);
-    
+
     this.prevCurrent = this.current;
     this.current = isCurrentFirstItem ? this.itemsCount - 1 : this.current - 1;
   };
@@ -364,7 +380,7 @@ export default class Swiper extends PolymerElement {
 
   _onTransitionEnd() {
     this.delta = 0;
-    
+
     const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === (this.itemsCount - 1);
     const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
     if (this.isCircular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
@@ -380,7 +396,7 @@ export default class Swiper extends PolymerElement {
 
     const swiperItems = this.$.swiperItems;
     const transitionDuration = duration != null ? duration : this.transitionDuration;
-  
+
     swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
     swiperItems.style.transitionDuration = `${transitionDuration}ms`;
 
@@ -399,12 +415,26 @@ export default class Swiper extends PolymerElement {
   }
 
   _getTranslateOfRealItem(realCurrent) {
-
     const propName = this.vertical ? 'height' : 'width';
+
+    /**
+     * `this.$.swiperItems.children` can only get slot element
+     * Using this.children to get real childNodes
+     */
+    const childItems = [];
+    for (let i = 0, l = this.children.length; i < l; i++ ) {
+      childItems.push(this.children[i]);
+    }
+    if (this.duplicateFirstChild) {
+      childItems.unshift(this.duplicateFirstChild);
+    }
+    if (this.duplicateLastChild) {
+      childItems.push(this.duplicateLastChild);
+    }
 
     var translate = 0;
     for (var i = 0; i < realCurrent; i++) {
-      var item = this.children[i];
+      var item = childItems[i];
       if (!item) break;
       if (item.__rectCache == null) {
         item.__rectCache = item.getBoundingClientRect()[propName];
@@ -415,16 +445,30 @@ export default class Swiper extends PolymerElement {
     return translate;
   }
 
+  _resetCircularAssistNode() {
+    if (this.duplicateFirstChild) {
+      this.duplicateFirstChild.parentElement.removeChild(this.duplicateFirstChild);
+    }
+    if (this.duplicateLastChild) {
+      this.duplicateLastChild.parentElement.removeChild(this.duplicateLastChild);
+    }
+  }
+
+  /**
+   * Add circular assit node to shadom dom
+   */
   _createCircularAssistNode() {
-    const swiperItems = this.children;
+    const childSwiperItems = this.children;
+    if (childSwiperItems.length > 1) {
+      this.duplicateFirstChild = childSwiperItems[0].cloneNode(true);
+      this.duplicateFirstChild.setAttribute('data-a-swiper-dup-first-child', true);
 
-    if (swiperItems.length > 1) {
+      this.duplicateLastChild = this.children[childSwiperItems.length - 1].cloneNode(true);
+      this.duplicateLastChild.setAttribute('data-a-swiper-dup-last-child', true);
 
-      const duplicateFirstChild = this.children[0].cloneNode(true);
-      const duplicateLastChild = this.children[swiperItems.length - 1].cloneNode(true);
-      
-      this.insertBefore(duplicateLastChild, this.children[0]);
-      this.appendChild(duplicateFirstChild);
+      const { swiperItems } = this.$;
+      swiperItems.insertBefore(this.duplicateLastChild, swiperItems.children[0]);
+      swiperItems.appendChild(this.duplicateFirstChild);
     }
   }
 
@@ -442,18 +486,15 @@ export default class Swiper extends PolymerElement {
   }
 
   _autoplay = () => {
-
     if (this.itemsCount === 1) return;
-    
+
     if (this.timer) {
       clearTimeout(this.timer);
     }
 
     this.timer = setTimeout(() => {
-
       this._next();
       this._autoplay();
-
     }, this.interval);
   }
 
