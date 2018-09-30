@@ -17,7 +17,7 @@ module.exports = function componentParser({ path: componentPath }, loaderContext
     const content = readFileSync(componentPath, 'utf-8');
     const { script, styles, template } = parseSFCParts(content);
     const files = [];
-    detectDependencies.apply(loaderContext, [script, componentPath]).then((dependenciesMap = {}) => {
+    detectDependencies.apply(loaderContext, [script, componentPath]).then((dependencyMap = {}) => {
       if (Array.isArray(styles)) {
         const styleContents = generateStyle(styles);
         files.push({
@@ -27,11 +27,11 @@ module.exports = function componentParser({ path: componentPath }, loaderContext
       }
       const templatePropsData = {};
       if (template) {
-        const { template: templateContents, metadata } = generateTemplate(template, { tplImports: dependenciesMap });
+        const { template: templateContents, metadata } = generateTemplate(template, { dependencyMap: dependencyMap });
 
         Object.assign(templatePropsData, metadata.propsDataMap);
 
-        const dependenciesTemplateSpec = Object.values(dependenciesMap)
+        const dependenciesTemplateSpec = Object.values(dependencyMap)
           .map((dependencies) => {
             const outputPathMate = path.parse(dependencies.filePath);
             delete outputPathMate.base;
@@ -71,13 +71,13 @@ module.exports = function componentParser({ path: componentPath }, loaderContext
       }
 
       Promise.all(
-        Object.values(dependenciesMap).map((dependency) => {
+        Object.values(dependencyMap).map((dependency) => {
           return componentParser({ path: dependency.filePath }, loaderContext);
         })
       ).then((children) => {
         resolve({
           originPath: componentPath,
-          dependenciesMap,
+          dependencyMap,
           files: files,
           children,
         });

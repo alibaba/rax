@@ -1,2 +1,0 @@
-<import src="../sources/components/title.axml" />
-<view class="home-container"   ><template is="title$3e4aefc4" data="{{$d, ...$d['title$3e4aefc4']}}"></template> <view class="title"   >Hello {{ name }}!</view> <button onTap="changeName"   >Change Name</button> <button onTap="navigateTo"   >Navigate to Another Page</button></view>

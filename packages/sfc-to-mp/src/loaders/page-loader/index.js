@@ -31,7 +31,7 @@ module.exports = function pageLoader(content) {
   console.log(pageOriginFileMate);
 
   // 分析当前 page 文件中的依赖
-  detectDependencies.apply(this, [script, this.resourcePath]).then((dependenciesMap) => {
+  detectDependencies.apply(this, [script, this.resourcePath]).then((dependencyMap) => {
     // 生成 style 文件
     if (Array.isArray(styles)) {
       const styleOutputAbsolutePath = path.format({ ...pageOriginFileMate, ext: styleExt });
@@ -39,7 +39,7 @@ module.exports = function pageLoader(content) {
 
       const styleContents = generateStyle(styles);
 
-      const dependenciesImportSpec = Object.values(dependenciesMap)
+      const dependenciesImportSpec = Object.values(dependencyMap)
         .map((dependencies) => {
           const outputPath = dependencies.outputPath;
           const outputPathMate = path.parse(outputPath);
@@ -57,14 +57,14 @@ module.exports = function pageLoader(content) {
     }
     const templatePropsData = {};
     if (template) {
-      const { template: templateContents, metadata } = generateTemplate(template, { tplImports: dependenciesMap });
+      const { template: templateContents, metadata } = generateTemplate(template, { dependencyMap: dependencyMap });
 
       Object.assign(templatePropsData, metadata.propsDataMap);
 
       const templateOutputAbsolutePath = path.format({ ...pageOriginFileMate, ext: templateExt });
       const templateOutputPath = path.relative(this.rootContext, templateOutputAbsolutePath);
 
-      const dependenciesTemplateSpec = Object.values(dependenciesMap)
+      const dependenciesTemplateSpec = Object.values(dependencyMap)
         .map((dependencies) => {
           const outputPath = dependencies.outputPath;
           const outputPathMate = path.parse(outputPath);
@@ -117,7 +117,7 @@ module.exports = function pageLoader(content) {
           const { code, map, source } = generateScript(script, {
             pagePath: scriptAbsolutePath,
             ext: scriptExt,
-            tplImports: dependenciesMap,
+            dependencyMap: dependencyMap,
             tplPropsData: templatePropsData,
             createPageRelatedPath,
             pageRelatedPath,

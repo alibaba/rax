@@ -1,7 +1,7 @@
 const transpiler = require('../../transpiler');
 
-module.exports = (template, { tplImports }) => {
+module.exports = (template, { dependencyMap }) => {
   return transpiler(template.content, {
-    tplImports,
+    dependencyMap,
   });
 };

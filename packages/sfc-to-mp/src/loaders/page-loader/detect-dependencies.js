@@ -24,9 +24,9 @@ const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
  */
 
 module.exports = function(script, scriptOriginFilePath) {
-  const dependenciesMap = {};
+  const dependencyMap = {};
   if (!script || !script.content) {
-    return Promise.resolve(dependenciesMap);
+    return Promise.resolve(dependencyMap);
   }
   const babelResult = babel.transform(script.content, {
     plugins: [parseComponentsDeps],
@@ -58,9 +58,9 @@ module.exports = function(script, scriptOriginFilePath) {
     })
   ).then((dependencies) => {
     dependencies.forEach((dep) => {
-      dependenciesMap[dep.tagName] = dep;
+      dependencyMap[dep.tagName] = dep;
     });
-    debug(dependenciesMap);
-    return dependenciesMap;
+    debug(dependencyMap);
+    return dependencyMap;
   });
 };

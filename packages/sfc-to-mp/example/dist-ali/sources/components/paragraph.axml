@@ -1,4 +1,0 @@
-
-<template name="paragraph$5f7d6cee">
-<view class="p"   >{{content}}</view>
-</template>

@@ -1,2 +1,0 @@
-
-<view onTap="handleClick" class="container {{ctxClass}}"   ><view class="title"   >Another Page</view> <block a:for="{{items}}" a:for-item="value" a:for-index="key"  ><view   >{{key}} - {{value}}</view></block> <view  a:if="{{isShow % 3 === 0}}" >isShow?</view><view  a:elif="{{isShow % 3 === 1}}" >elseif</view><view  a:else >not Show</view></view>

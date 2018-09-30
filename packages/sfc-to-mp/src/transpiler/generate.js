@@ -15,7 +15,7 @@ class GeneratorState {
      * value: { propsData }
      */
     this.propsDataMap = {};
-    this.tplImports = options.tplImports || {};
+    this.dependencyMap = options.dependencyMap || {};
     this.isTemplateDependency = options.isTemplateDependency || false;
     this.templateName = options.templateName || '';
 
@@ -47,8 +47,8 @@ function genElement(el, state) {
     // type 1: element
     const hasProps = el.hasBindings || !!el.staticClass || !!el.classBinding || el.attrsList.length > 0;
 
-    if (state.tplImports[el.tag]) {
-      return `<template is="${state.tplImports[el.tag].templateName}" data="{{${genData(el, state)}}}">${genElement(
+    if (state.dependencyMap[el.tag]) {
+      return `<template is="${state.dependencyMap[el.tag].templateName}" data="{{${genData(el, state)}}}">${genElement(
         el.children,
         state
       )}</template>`;
@@ -131,7 +131,7 @@ function genProps(el, state) {
  * generate data
  */
 function genData(el, state) {
-  const { templateName } = state.tplImports[el.tag];
+  const { templateName } = state.dependencyMap[el.tag];
   const propsData = (state.propsDataMap[templateName] = {});
 
   el.attrsList.forEach(({ name, value }) => {
