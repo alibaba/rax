@@ -91,9 +91,33 @@
   !*** ../src/loaders/page-loader?pageName=pages/home!./pages/home.html ***!
   \************************************************************************/
 /*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pageConfig = __webpack_require__(/*! /sources/pages/home */ "/sources/pages/home");
+var createPage = __webpack_require__(/*! /vendors/createPage */ "/vendors/createPage");
+Page(createPage(pageConfig, {'title$3e4aefc4': { config: __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../components/title.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())), propsData: {"message":"Home Page"} },}));
+
+/***/ }),
+
+/***/ "/sources/pages/home":
+/*!**************************************!*\
+  !*** external "/sources/pages/home" ***!
+  \**************************************/
+/*! no static exports found */
 /***/ (function(module, exports) {
 
-Page({});
+module.exports = require("/sources/pages/home");
+
+/***/ }),
+
+/***/ "/vendors/createPage":
+/*!**************************************!*\
+  !*** external "/vendors/createPage" ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("/vendors/createPage");
 
 /***/ })
 

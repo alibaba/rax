@@ -82,30 +82,23 @@ module.exports = function pageLoader(content) {
     //   emitParsedFile.call(this, result);
     // }
 
-    // if (template) {
-    //   const { template: templateContents, metadata } = generateTemplate(template, { tplImports: imports });
+    if (script) {
+      const scriptOutputAbsolutePath = path.join(this.rootContext, `${OUTPUT_SOURCE_FOLDER}/${pageName}${scriptExt}`);
+      const scriptOutputPath = path.relative(this.rootContext, scriptOutputAbsolutePath);
 
-    //   Object.assign(tplPropsData, metadata.propsDataMap);
+      const { code, map, source } = generateScript(script, {
+        pagePath: scriptOutputAbsolutePath,
+        pageName,
+        ext: scriptExt,
+        tplImports: dependenciesMap,
+        tplPropsData: templatePropsData,
+      });
 
-    //   const templateOutputPath = `${pageName}${templateExt}`;
-    //   debug(fixedString(templateExt), templateOutputPath);
-
-    //   this.emitFile(templateOutputPath, dependencies.join('\n') + templateContents);
-    // }
-
-    // if (script) {
-    //   const { code, map, source } = generateScript(script, {
-    //     pageName,
-    //     tplImports: imports,
-    //     tplPropsData,
-    //   });
-    //   const scriptOutputPath = `${OUTPUT_SOURCE_FOLDER}/${pageName}${scriptExt}`;
-    //   debug(fixedString(scriptExt), scriptOutputPath);
-    //   this.emitFile(scriptOutputPath, code, map);
-    //   callback(null, source);
-    // } else {
-    //   callback(null, 'Page({});');
-    // }
-    callback(null, 'Page({});');
+      debug(fixedString(scriptExt), scriptOutputPath);
+      this.emitFile(scriptOutputPath, code, map);
+      callback(null, source);
+    } else {
+      callback(null, 'Page({});');
+    }
   });
 };

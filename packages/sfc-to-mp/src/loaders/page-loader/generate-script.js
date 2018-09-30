@@ -1,19 +1,19 @@
-const {
-  OUTPUT_SOURCE_FOLDER,
-  OUTPUT_VENDOR_FOLDER,
-} = require('../../config/CONSTANTS');
+const path = require('path');
+const { OUTPUT_SOURCE_FOLDER, OUTPUT_VENDOR_FOLDER } = require('../../config/CONSTANTS');
 
 const compileES5 = require('./compileES5');
 
-module.exports = (script, { pageName, tplImports, tplPropsData }) => {
+module.exports = (script, { pageName, pagePath, ext, tplImports, tplPropsData }) => {
   let source = 'Page({});';
   const deps = Object.keys(tplImports)
-    .map(tagName => {
-      const { tplName, configPath } = tplImports[tagName];
-      const propsData = tplPropsData[tplName]
-        ? JSON.stringify(tplPropsData[tplName])
-        : '{}';
-      return `'${tplName}': { config: require('/${configPath}'), propsData: ${propsData} },`;
+    .map((tagName) => {
+      const { templateName, outputPath } = tplImports[tagName];
+      const propsData = tplPropsData[templateName] ? JSON.stringify(tplPropsData[templateName]) : '{}';
+      const templateRelatedPath = path.relative(path.dirname(pagePath), outputPath);
+      const outputPathMate = path.parse(templateRelatedPath);
+      delete outputPathMate.base;
+      outputPathMate.ext = ext;
+      return `'${templateName}': { config: require('${path.format(outputPathMate)}'), propsData: ${propsData} },`;
     })
     .join('\n');
   source = [
