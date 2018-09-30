@@ -1,7 +1,8 @@
 {
   "manifest_version": 1,
   "pages": {
-    "home": "pages/home"
+    "home": "pages/home",
+    "subPage": "pages/subPage"
   },
   "homepage": "home",
   "window": {

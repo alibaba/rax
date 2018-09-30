@@ -8,7 +8,7 @@ const detectDependencies = require('./detect-dependencies');
 const generateStyle = require('./generate-style');
 const generateTemplate = require('./generate-template');
 const dependenciesHelper = require('./dependencies-helper');
-const genTemplateName = require('./genTemplateName');
+const genTemplateName = require('./getTemplateName');
 
 module.exports = function genTemplate({ path: componentPath }, loaderContext) {
   const templateExt = getExt('template');

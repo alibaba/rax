@@ -1,5 +1,14 @@
+const { promisify } = require('util');
+const babel = require('babel-core');
+const debug = require('debug')('mp:deps');
+const path = require('path');
+
+const genTemplateName = require('./getTemplateName');
+const { parseComponentsDeps } = require('./parser');
+const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
+
 /**
- * 分析当前页面 SFC 中的依赖文件
+ * 分析 SFC 中的依赖文件
  * 并解析出模板文件中的组件依赖与标签映射关系
  *
  * @return object
@@ -14,15 +23,6 @@
     }
  */
 
-const { promisify } = require('util');
-const babel = require('babel-core');
-const debug = require('debug')('mp:deps');
-const path = require('path');
-
-const genTemplateName = require('./genTemplateName');
-const { parseComponentsDeps } = require('./parser');
-const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
-
 module.exports = function(script, scriptOriginFilePath) {
   const babelResult = babel.transform(script.content, {
     plugins: [parseComponentsDeps],
@@ -36,7 +36,6 @@ module.exports = function(script, scriptOriginFilePath) {
       return new Promise((resolve) => {
         let modulePath = importedComponentsMap[tagName];
         resolvePromise(path.dirname(scriptOriginFilePath), modulePath).then((sfcModuleAbsolute) => {
-          console.log(sfcModuleAbsolute, 22222);
           const templateName = genTemplateName(sfcModuleAbsolute);
           const { name } = path.parse(sfcModuleAbsolute);
           resolve({
@@ -45,7 +44,6 @@ module.exports = function(script, scriptOriginFilePath) {
             fileName: name,
             filePath: sfcModuleAbsolute, // source file path
             outputPath: path.join(
-              // transform when output path
               this.rootContext,
               OUTPUT_SOURCE_FOLDER,
               path.relative(this.rootContext, sfcModuleAbsolute)
