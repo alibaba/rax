@@ -1,30 +1,5 @@
-<dom-module id="a-image">
-  <template>
-    <style>
-      :host {
-        position: relative;
-        overflow: hidden;
-        display: inline-block;
-        outline: none;
-        /* Default width/height is 300px/225px */
-        width: 300px;
-        height: 225px;
-        line-height: 0;
-      }
-
-      #container {
-        width: 100%;
-        height: 100%;
-        background-repeat: no-repeat;
-      }
-    </style>
-    <div id="container"></div>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
+import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 function handleIntersect(entries) {
   entries.forEach(entry => {
@@ -45,14 +20,14 @@ export default class ImageElement extends PolymerElement {
       src: {
         type: String,
         value: '',
-        reflectToAttribute: true
+        reflectToAttribute: true,
       },
       mode: {
         type: String,
         value: 'scaleToFill',
         reflectToAttribute: true,
-        observer: 'observerMode'
-      }
+        observer: 'observerMode',
+      },
     };
   }
 
@@ -104,8 +79,8 @@ export default class ImageElement extends PolymerElement {
         composed: true,
         detail: {
           width: `${image.width}px`,
-          height: `${image.height}px`
-        }
+          height: `${image.height}px`,
+        },
       });
       this.dispatchEvent(customEvent);
     };
@@ -115,8 +90,8 @@ export default class ImageElement extends PolymerElement {
         bubbles: false,
         composed: true,
         detail: {
-          errMsg: `Load ${this.src} error`
-        }
+          errMsg: `Load ${this.src} error`,
+        },
       });
       this.dispatchEvent(customEvent);
     };
@@ -145,7 +120,7 @@ export default class ImageElement extends PolymerElement {
   static _observer = new IntersectionObserver(handleIntersect, {
     root: null,
     rootMargin: '0px',
-    threshold: 0
+    threshold: 0,
   });
 
   static addIntersectListener(element, intersectCallback) {
@@ -176,7 +151,7 @@ export default class ImageElement extends PolymerElement {
       'top left',
       'top right',
       'bottom left',
-      'bottom right'
+      'bottom right',
     ];
 
     if (positions.indexOf(newVal) > -1) {
@@ -200,7 +175,7 @@ export default class ImageElement extends PolymerElement {
           const hostWidth = parseFloat(this.style.width);
           this.initialHeight = this.clientHeight + 'px';
           this.style.height =
-            hostWidth * this.image.height / this.image.width + 'px';
+            (hostWidth * this.image.height) / this.image.width + 'px';
           containerStyle.backgroundSize = 'contain';
           break;
         default:
@@ -218,7 +193,30 @@ export default class ImageElement extends PolymerElement {
     this._rendered = false;
     this._loading = false;
   }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          position: relative;
+          overflow: hidden;
+          display: inline-block;
+          outline: none;
+          /* Default width/height is 300px/225px */
+          width: 300px;
+          height: 225px;
+          line-height: 0;
+        }
+  
+        #container {
+          width: 100%;
+          height: 100%;
+          background-repeat: no-repeat;
+        }
+      </style>
+      <div id="container"></div>
+    `;
+  }
 }
 
 customElements.define(ImageElement.is, ImageElement);
-</script>
