@@ -8,8 +8,8 @@ function getImportsMap(metadata) {
 
   if (!importsMap) {
     importsMap = {};
-    imports.forEach(m => {
-      m.specifiers.forEach(v => {
+    imports.forEach((m) => {
+      m.specifiers.forEach((v) => {
         importsMap[v.local] = m.source;
       });
     });
@@ -63,13 +63,11 @@ const configVisitor = {
       return;
     }
 
-    const v =
-      arg.type === 'Identifier'
-        ? importsMap[arg.name]
-        : importsMap.App;
+    const v = arg.type === 'Identifier' ? importsMap[arg.name] : importsMap.App;
     metadata.rootComponent = v || importsMap.index || importsMap.main;
   },
 };
+
 function parseConfig(babel) {
   return { visitor: configVisitor };
 }
@@ -88,7 +86,7 @@ const traverseComponentsVisitor = {
     // 找到所有的 imports
     const { properties } = path.node.value;
     const components = {};
-    properties.forEach(p => {
+    properties.forEach((p) => {
       const k = p.key.name || p.key.value;
       const v = p.value.name || p.value.value;
 
@@ -118,14 +116,9 @@ const globalComponentsVisitor = {
     if (!callee.object || !callee.property) {
       return;
     }
-    if (
-      callee.object.name === 'Vue' &&
-      callee.property.name === 'component'
-    ) {
+    if (callee.object.name === 'Vue' && callee.property.name === 'component') {
       if (!args[0] || args[0].type !== 'StringLiteral') {
-        throw new Error(
-          'Vue.component() 的第一个参数必须为静态字符串'
-        );
+        throw new Error('Vue.component() 的第一个参数必须为静态字符串');
       }
       if (!args[1]) {
         throw new Error('Vue.component() 需要两个参数');

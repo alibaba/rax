@@ -1,6 +1,6 @@
 const { getOption } = require('./cliOptions');
 
-const EXTS = {
+const PLATFORM_FILE_SUFFIX_MAP = {
   ali: {
     template: '.axml',
     style: '.acss',
@@ -15,5 +15,9 @@ const EXTS = {
 
 module.exports = function getExt(type) {
   const targetType = getOption('target');
-  return EXTS[targetType][type];
+  const ext = PLATFORM_FILE_SUFFIX_MAP[targetType][type];
+  if (!ext) {
+    throw new Error(`Unkown type '${type}' on platform ${targetType}`);
+  }
+  return ext;
 };
