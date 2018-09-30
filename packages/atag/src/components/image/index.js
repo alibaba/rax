@@ -1,6 +1,10 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
+const UNSENT = 0;
+const LOADING = 1;
+const DONE = 2;
+
 function handleIntersect(entries) {
   entries.forEach(entry => {
     if (entry.isIntersecting === true) {
@@ -68,15 +72,16 @@ export default class ImageElement extends PolymerElement {
    * @private
    */
   _load() {
-    this._loading = true;
-    const image = this.image = new Image();
+    this.state = LOADING;
+    const image = (this.image = new Image());
 
     image.onload = e => {
-      this._loading = false;
-      let readyFn;
-      while (readyFn = this._imageReadyCallbacks.shift()) {
-        readyFn();
+      this.state = DONE;
+
+      if (this._needAdaptHeight) {
+        this._adaptHeight();
       }
+
       // Dispatch custom load event
       const customEvent = new CustomEvent('load', {
         bubbles: false,
@@ -90,6 +95,7 @@ export default class ImageElement extends PolymerElement {
     };
 
     image.onerror = e => {
+      this.state = DONE;
       const customEvent = new CustomEvent('error', {
         bubbles: false,
         composed: true,
@@ -176,28 +182,33 @@ export default class ImageElement extends PolymerElement {
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          // Reset initial height to 0
-          this.style.height = 0;
-          this.onImageReady(() => {
-            /**
-             * Exec proper height after image loaded to get
-             * image's real rect
-             */
-            const {
-              width: realWidth,
-              height: realHeight,
-            } = this.image;
-            const hostWidth = this.clientWidth;
-            const hostHeight = hostWidth * realHeight / realWidth;
-
-            this.style.height = hostHeight + 'px';
-            containerStyle.backgroundSize = 'contain';
-          });
+          if (this.state < DONE) {
+            this._needAdaptHeight = true;
+          } else {
+            this._adaptHeight();
+          }
           break;
         default:
           break;
       }
     }
+  }
+
+  /**
+   * Get and adjust container's height
+   * to 100% cover the image's real rect
+   * @private
+   */
+  _adaptHeight() {
+    this._needAdaptHeight = false;
+
+    const containerStyle = this.$.container.style;
+    const { width: realWidth, height: realHeight } = this.image;
+    const hostWidth = this.clientWidth;
+    const hostHeight = (hostWidth * realHeight) / realWidth;
+
+    this.style.height = hostHeight + 'px';
+    containerStyle.backgroundSize = 'contain';
   }
 
   /**
@@ -207,19 +218,7 @@ export default class ImageElement extends PolymerElement {
   _reset() {
     this._inited = false;
     this._rendered = false;
-    this._loading = false;
-  }
-
-  /**
-   * Exec callbacks after image is loaded
-   */
-  _imageReadyCallbacks = [];
-  onImageReady(callback) {
-    if (!this._loading) {
-      callback();
-    } else {
-      this._imageReadyCallbacks.push(callback);
-    }
+    this.state = UNSENT;
   }
 
   static get template() {
