@@ -190,8 +190,8 @@ export default class Textarea extends PolymerElement {
         ${placeholderStyle}
       }
       a-textarea[data-id=${
-        this.id
-      }] #textarea::-webkit-input-placeholder {
+  this.id
+}] #textarea::-webkit-input-placeholder {
         ${placeholderStyle}
       }
     `;
