@@ -103,6 +103,9 @@
     asyncImage.addEventListener('load',function(e) {
       asyncImageLoad.innerHTML=JSON.stringify(e.detail);
     });
+    setTimeout(() => {
+      image.setAttribute('mode', 'top');
+    }, 2000);
   </script>
 
   <div class="card">
@@ -405,6 +408,20 @@
         </a-swiper-item>
       </a-swiper>
 
+      <a-view>swiper children changes</a-view>
+      <a-button id="btnAddSwiperItem" style="margin-bottom: 15px;">Add Swiper Item</a-button>
+      <a-swiper id="dynamicSwiper" circular=true indicator-dots=true autoplay=true interval=4000 duration=500>
+        <a-swiper-item>
+          <a-view style="background: red; height: 100%;">1</a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="background: green; height: 100%;">2</a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="background: blue; height: 100%;">3</a-view>
+        </a-swiper-item>
+      </a-swiper>
+
     </div>
   </div>
 
@@ -420,6 +437,15 @@
     swiperNextButton.addEventListener('click', function(event){
       swiper.setAttribute('current', swiper.current + 1);
     });
+
+    btnAddSwiperItem.addEventListener('click', function(event){
+      dynamicSwiper.innerHTML += `
+        <a-swiper-item>
+          <a-view style="height: 100%;">` + (dynamicSwiper.children.length + 1) + `</a-view>
+        </a-swiper-item>
+      `;
+    });
+
   </script>
 
   <div class="card">
