@@ -176,11 +176,13 @@ export default class ImageElement extends PolymerElement {
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          // reset initial height to 0
-          this.style.height = '0px';
+          // Reset initial height to 0
+          this.style.height = 0;
           this.onImageReady(() => {
-            // exec proper height after image loaded to get
-            // image's real rect
+            /**
+             * Exec proper height after image loaded to get
+             * image's real rect
+             */
             const {
               width: realWidth,
               height: realHeight,

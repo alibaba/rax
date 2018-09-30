@@ -69,7 +69,7 @@ export default class Textarea extends PolymerElement {
     super.ready();
     this.textarea = this.$.textarea;
     this.formInitialValue = this.value;
-    // label target
+
     this.setAttribute('a-label-target', '');
 
     afterNextRender(this, () => {
@@ -177,7 +177,7 @@ export default class Textarea extends PolymerElement {
 
   changePlaceholderStyle(placeholderStyle) {
     if (!this.styleEl) {
-      // unique id for data-id to avoid style pollution
+      // Unique id for data-id to avoid style pollution
       this.id = `textarea-${++uid}`;
       this.styleEl = document.createElement('style');
       this.setAttribute('data-id', this.id);
@@ -249,7 +249,7 @@ export default class Textarea extends PolymerElement {
           bottom: 0;
           right: 5px;
           color: #b2b2b2;
-          /* count's font style should not effect by CSS inherit */
+          /* Count's font style should not effect by CSS inherit */
           font-size: 14px;
           font-weight: initial;
         }
