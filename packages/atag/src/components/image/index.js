@@ -69,12 +69,12 @@ export default class ImageElement extends PolymerElement {
    */
   _load() {
     this._loading = true;
-    const image = (this.image = new Image());
+    const image = this.image = new Image();
 
     image.onload = e => {
       this._loading = false;
       let readyFn;
-      while ((readyFn = this._imageReadyCallbacks.shift())) {
+      while (readyFn = this._imageReadyCallbacks.shift()) {
         readyFn();
       }
       // Dispatch custom load event
@@ -186,7 +186,7 @@ export default class ImageElement extends PolymerElement {
               height: realHeight,
             } = this.image;
             const hostWidth = this.clientWidth;
-            const hostHeight = (hostWidth * realHeight) / realWidth;
+            const hostHeight = hostWidth * realHeight / realWidth;
 
             this.style.height = hostHeight + 'px';
             containerStyle.backgroundSize = 'contain';
