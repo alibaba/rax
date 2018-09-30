@@ -23,7 +23,7 @@ const genTemplateName = require('./genTemplateName');
 const { parseComponentsDeps } = require('./parser');
 const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
 
-module.exports = function(script) {
+module.exports = function(script, scriptOriginFilePath) {
   const babelResult = babel.transform(script.content, {
     plugins: [parseComponentsDeps],
   });
@@ -32,32 +32,31 @@ module.exports = function(script) {
   const resolvePromise = promisify(this.resolve);
 
   return Promise.all(
-    Object.keys(importedComponentsMap).map(tagName => {
-      return new Promise(resolve => {
+    Object.keys(importedComponentsMap).map((tagName) => {
+      return new Promise((resolve) => {
         let modulePath = importedComponentsMap[tagName];
-        resolvePromise(path.dirname(this.resourcePath), modulePath).then(
-          sfcModuleAbsolute => {
-            const templateName = genTemplateName(sfcModuleAbsolute);
-            const { name } = path.parse(sfcModuleAbsolute);
-            resolve({
-              tagName, // 标签名
-              templateName, // unique template name
-              fileName: name,
-              filePath: sfcModuleAbsolute, // source file path
-              outputPath: path.join(
-                // transform when output path
-                this.rootContext,
-                OUTPUT_SOURCE_FOLDER,
-                path.relative(this.rootContext, sfcModuleAbsolute)
-              ),
-            });
-          }
-        );
+        resolvePromise(path.dirname(scriptOriginFilePath), modulePath).then((sfcModuleAbsolute) => {
+          console.log(sfcModuleAbsolute, 22222);
+          const templateName = genTemplateName(sfcModuleAbsolute);
+          const { name } = path.parse(sfcModuleAbsolute);
+          resolve({
+            tagName, // 标签名
+            templateName, // unique template name
+            fileName: name,
+            filePath: sfcModuleAbsolute, // source file path
+            outputPath: path.join(
+              // transform when output path
+              this.rootContext,
+              OUTPUT_SOURCE_FOLDER,
+              path.relative(this.rootContext, sfcModuleAbsolute)
+            ),
+          });
+        });
       });
     })
-  ).then(dependencies => {
+  ).then((dependencies) => {
     const dependenciesMap = {};
-    dependencies.forEach(dep => {
+    dependencies.forEach((dep) => {
       dependenciesMap[dep.tagName] = dep;
     });
     debug(dependenciesMap);

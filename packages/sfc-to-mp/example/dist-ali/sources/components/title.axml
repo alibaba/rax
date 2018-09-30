@@ -1,0 +1,4 @@
+<import src="./paragraph.axml" />
+<template name="title$3e4aefc4">
+<view class="sfc-container"   ><text class="sfc-title"   >{{message}}</text> <template is="paragraph$5f7d6cee" data="{{$d, ...$d['paragraph$5f7d6cee']}}"></template></view>
+</template>

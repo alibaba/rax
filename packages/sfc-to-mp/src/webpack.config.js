@@ -20,7 +20,7 @@ module.exports = {
   },
   externals: [
     function(context, request, callback) {
-      if (/^.?\/(vendors|sources)/.test(request)) {
+      if (/^[\\.]{0,2}\/(vendors|sources)/.test(request)) {
         return callback(null, `commonjs2 ${request}`);
       } else {
         return callback();

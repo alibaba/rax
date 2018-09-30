@@ -86,6 +86,17 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "../sources/components/title.js":
+/*!*************************************************!*\
+  !*** external "../sources/components/title.js" ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("../sources/components/title.js");
+
+/***/ }),
+
 /***/ "../src/loaders/page-loader/index.js?pageName=pages/home!./pages/home.html":
 /*!************************************************************************!*\
   !*** ../src/loaders/page-loader?pageName=pages/home!./pages/home.html ***!
@@ -95,7 +106,7 @@
 
 var pageConfig = __webpack_require__(/*! /sources/pages/home */ "/sources/pages/home");
 var createPage = __webpack_require__(/*! /vendors/createPage */ "/vendors/createPage");
-Page(createPage(pageConfig, {'title$3e4aefc4': { config: __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../components/title.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())), propsData: {"message":"Home Page"} },}));
+Page(createPage(pageConfig, {'title$3e4aefc4': { config: __webpack_require__(/*! ../sources/components/title.js */ "../sources/components/title.js"), propsData: {"message":"Home Page"} },}));
 
 /***/ }),
 

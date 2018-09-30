@@ -25,7 +25,7 @@ module.exports = function pageLoader(content) {
   const { script, styles, template } = parseSFCParts(content);
 
   // 分析当前 page 文件中的依赖
-  detectDependencies.call(this, script).then((dependenciesMap) => {
+  detectDependencies.apply(this, [script, this.resourcePath]).then((dependenciesMap) => {
     // 生成 style 文件
     if (Array.isArray(styles)) {
       const styleContents = generateStyle(styles);
@@ -48,7 +48,7 @@ module.exports = function pageLoader(content) {
           const outputPathMate = path.parse(outputPath);
           delete outputPathMate.base;
           outputPathMate.ext = templateExt;
-          outputPathMate.name = dependencies.templateName;
+          outputPathMate.name = dependencies.fileName;
           return dependenciesHelper.getTemplateImportPath(templateOutputAbsolutePath, path.format(outputPathMate));
         })
         .join('\n');
@@ -58,45 +58,44 @@ module.exports = function pageLoader(content) {
       this.emitFile(templateOutputPath, dependenciesTemplateSpec + '\n' + templateContents);
     }
 
-    // let dependencies = [];
-    // let imports = {};
-
-    // const emitParsedFile = ({ path, contents, originPath, children }) => {
-    //   if (originPath) {
-    //     debug(fixedString('addDependency'), originPath);
-    //     this.addDependency(originPath);
-    //   }
-    //   if (path) {
-    //     debug(fixedString('emitFile'), path);
-    //     this.emitFile(path, contents);
-    //   }
-    //   if (Array.isArray(children) && children.length > 0) {
-    //     children.forEach(emitParsedFile);
-    //   }
-    // };
-
-    // if (script) {
-    //   const result = scriptParser(script, { resourcePath, pageName });
-    //   dependencies = result.dependencies;
-    //   imports = result.imports;
-    //   emitParsedFile.call(this, result);
-    // }
+    function emitComponentFiles(componentMetaData) {
+      const { originPath, files } = componentMetaData;
+      const fileTargetPath = path.join(OUTPUT_SOURCE_FOLDER, path.relative(this.rootContext, originPath));
+      const fileTargetMetaData = path.parse(fileTargetPath);
+      delete fileTargetMetaData.base;
+      this.addDependency(originPath);
+      files.forEach((file) => {
+        fileTargetMetaData.ext = getExt(file.type);
+        this.emitFile(path.format(fileTargetMetaData), file.contents);
+      });
+      componentMetaData.children.forEach(emitComponentFiles.bind(this));
+    }
 
     if (script) {
-      const scriptOutputAbsolutePath = path.join(this.rootContext, `${OUTPUT_SOURCE_FOLDER}/${pageName}${scriptExt}`);
-      const scriptOutputPath = path.relative(this.rootContext, scriptOutputAbsolutePath);
+      // 分析当前页面中的依赖文件
+      scriptParser
+        .apply(this, [script, { resourcePath, pageName }])
+        .then((componentMetaDataList) => {
+          componentMetaDataList.forEach(emitComponentFiles.bind(this));
+        })
+        .then(() => {
+          const scriptOutputAbsolutePath = path.join(this.rootContext, OUTPUT_SOURCE_FOLDER, `${pageName}${scriptExt}`);
+          const scriptAbsolutePath = path.join(this.rootContext, `${pageName}${scriptExt}`);
 
-      const { code, map, source } = generateScript(script, {
-        pagePath: scriptOutputAbsolutePath,
-        pageName,
-        ext: scriptExt,
-        tplImports: dependenciesMap,
-        tplPropsData: templatePropsData,
-      });
+          const scriptOutputPath = path.relative(this.rootContext, scriptOutputAbsolutePath);
 
-      debug(fixedString(scriptExt), scriptOutputPath);
-      this.emitFile(scriptOutputPath, code, map);
-      callback(null, source);
+          const { code, map, source } = generateScript(script, {
+            pagePath: scriptAbsolutePath,
+            pageName,
+            ext: scriptExt,
+            tplImports: dependenciesMap,
+            tplPropsData: templatePropsData,
+          });
+
+          debug(fixedString(scriptExt), scriptOutputPath);
+          this.emitFile(scriptOutputPath, code, map);
+          callback(null, source);
+        });
     } else {
       callback(null, 'Page({});');
     }

@@ -11,71 +11,29 @@
  * }
  */
 
-const { join, parse, resolve, dirname, extname } = require('path');
 const babel = require('babel-core');
 const debug = require('debug')('mp:parse');
+const { promisify } = require('util');
 
-const genTemplateName = require('./genTemplateName');
 const genTemplate = require('./genTemplate');
 const { parseComponentsDeps } = require('./parser');
-const getExt = require('../../config/getExt');
-const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
 
-module.exports = (script, { resourcePath, pageName }) => {
-  const templateExt = getExt('template');
-  const imports = {};
-  const dependencies = [];
-
+module.exports = function(script, { pageName }) {
   const babelResult = babel.transform(script.content, {
     plugins: [parseComponentsDeps],
   });
-  const { components: importedComponentsMap } = babelResult.metadata;
+  const { components: importedComponentsMap = {} } = babelResult.metadata;
+  debug(importedComponentsMap);
 
-  let scriptReferencePath;
-  let result = {};
-  Object.keys(importedComponentsMap || {}).forEach(tagName => {
-    let modulePath = importedComponentsMap[tagName];
-    const { name } = parse(modulePath);
+  const resolvePromise = promisify(this.resolve);
 
-    let vueModulePath = resolve(dirname(resourcePath), modulePath);
-    const tplName = genTemplateName(vueModulePath);
-    const tplPath = join(OUTPUT_SOURCE_FOLDER, 'components', modulePath);
-    const tplPath2 = join(OUTPUT_SOURCE_FOLDER, 'components', genTemplateName(modulePath));
-
-    /**
-     * name: 模块名称, name="title"
-     * tplName: vmp 生成的唯一名称, 用于 import 和生成 axml
-     */
-    imports[tagName] = {
-      tagName,
-      tplName,
-      filename: name,
-      configPath: tplPath,
-    };
-
-    const p = extname(vueModulePath) === '.html' ? vueModulePath : vueModulePath + '.html';
-
-    result = genTemplate({
-      path: p,
-      pageName,
-      modulePath,
-      tplName,
-      name,
-    });
-
-    scriptReferencePath = tplPath2 + templateExt;
-    dependencies.push(`<import src="/${scriptReferencePath}" />`);
-  });
-
-  debug(imports);
-  debug(dependencies);
-
-  return {
-    originPath: result.originPath,
-    path: scriptReferencePath,
-    contents: result.contents,
-    children: result.files,
-    imports,
-    dependencies,
-  };
+  return Promise.all(
+    Object.keys(importedComponentsMap).map((tagName) => {
+      let modulePath = importedComponentsMap[tagName];
+      return resolvePromise(this.context, modulePath).then((importedComponentAbsolute) => {
+        // 解析所有依赖得到组件依赖树
+        return genTemplate({ path: importedComponentAbsolute, pageName, modulePath }, this);
+      });
+    })
+  );
 };

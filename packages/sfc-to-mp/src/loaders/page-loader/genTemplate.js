@@ -1,133 +1,82 @@
-const { join, resolve, parse, dirname, extname } = require('path');
 const { readFileSync } = require('fs');
-const babel = require('babel-core');
-const debug = require('debug')('mp:generator');
+const path = require('path');
 
 const { parseSFCParts } = require('../../transpiler/parse');
-const { parseComponentsDeps } = require('./parser');
 const compileES5 = require('./compileES5');
-const genTemplateName = require('./genTemplateName');
-const transpiler = require('../../transpiler');
 const getExt = require('../../config/getExt');
-const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
+const detectDependencies = require('./detect-dependencies');
+const generateStyle = require('./generate-style');
+const generateTemplate = require('./generate-template');
+const dependenciesHelper = require('./dependencies-helper');
+const genTemplateName = require('./genTemplateName');
 
-module.exports = function genTemplate({
-  path,
-  tplName,
-  pageName,
-  modulePath,
-}) {
+module.exports = function genTemplate({ path: componentPath }, loaderContext) {
   const templateExt = getExt('template');
-  const styleExt = getExt('style');
-  const scriptExt = getExt('script');
 
-  const files = [];
+  return new Promise((resolve) => {
+    const content = readFileSync(componentPath, 'utf-8');
+    const { script, styles, template } = parseSFCParts(content);
+    const files = [];
+    detectDependencies.apply(loaderContext, [script, componentPath]).then((dependenciesMap = {}) => {
+      if (Array.isArray(styles)) {
+        const styleContents = generateStyle(styles);
+        files.push({
+          type: 'style',
+          contents: styleContents,
+        });
+      }
+      const templatePropsData = {};
+      if (template) {
+        const { template: templateContents, metadata } = generateTemplate(template, { tplImports: dependenciesMap });
 
-  const content = readFileSync(path, 'utf-8');
-  const { script, styles, template } = parseSFCParts(content);
+        Object.assign(templatePropsData, metadata.propsDataMap);
 
-  const tplImports = {};
+        const dependenciesTemplateSpec = Object.values(dependenciesMap)
+          .map((dependencies) => {
+            const outputPathMate = path.parse(dependencies.filePath);
+            delete outputPathMate.base;
+            outputPathMate.ext = templateExt;
+            outputPathMate.name = dependencies.fileName;
+            return dependenciesHelper.getTemplateImportPath(componentPath, path.format(outputPathMate));
+          })
+          .join('\n');
 
-  const pageBase = join(pageName, '..', modulePath);
-  if (script) {
-    const babelResult = babel.transform(script.content, {
-      plugins: [parseComponentsDeps],
-    });
-    const {
-      components: importedComponentsMap,
-    } = babelResult.metadata;
-    Object.keys(importedComponentsMap || {}).forEach(tagName => {
-      let modulePath = importedComponentsMap[tagName];
+        const templateContentsRegistered = [
+          // 注册 template
+          `<template name="${genTemplateName(componentPath)}">`,
+          templateContents,
+          '</template>',
+        ];
 
-      const { name } = parse(modulePath);
-      const vueModulePath = resolve(dirname(path), modulePath);
+        templateContentsRegistered.unshift(dependenciesTemplateSpec);
+        files.push({
+          type: 'template',
+          contents: templateContentsRegistered.join('\n'),
+        });
+      }
+      let scriptCode = 'module.exports = {};';
 
-      const tplName = genTemplateName(vueModulePath);
-      /**
-       * name: 模块名称, name="title"
-       * tplName: sfc2mp 生成的唯一名称, 用于 import 和生成 axml
-       */
-      tplImports[tagName] = {
-        tagName,
-        tplName,
-        filename: name,
-      };
-      const tplReq = `/${OUTPUT_SOURCE_FOLDER}/components/${tplName}${templateExt}`;
+      if (script) {
+        const { code } = compileES5(script.content);
+        scriptCode = code;
+        files.push({
+          type: 'script',
+          contents: scriptCode,
+        });
+      }
 
-      const { contents, files: depsFiles, originPath } = genTemplate({
-        path:
-          extname(vueModulePath) === '.html' // XXXX 只
-            ? vueModulePath
-            : vueModulePath + '.html',
-        tplName,
-        pageName: pageBase,
-        modulePath,
-        name,
+      Promise.all(
+        Object.values(dependenciesMap).map((dependency) => {
+          return genTemplate({ path: dependency.filePath }, loaderContext);
+        })
+      ).then((children) => {
+        resolve({
+          originPath: componentPath,
+          dependenciesMap,
+          files: files,
+          children,
+        });
       });
-
-      files.push({
-        path: tplReq.slice(1),
-        contents: contents,
-        originPath: originPath,
-        children: depsFiles,
-      });
     });
-  }
-
-  const { template: tpl } = transpiler(template.content, {
-    tplImports,
-    isTemplateoriginPath: true,
-    templateName: tplName,
   });
-
-  let scriptCode = 'module.exports = {};';
-  if (script) {
-    const { code } = compileES5(script.content);
-    scriptCode = code;
-  }
-
-  /**
-   * 生成组件样式
-   */
-  if (Array.isArray(styles)) {
-    const style = styles.map(s => s.content).join('\n');
-
-    files.unshift({
-      path: `${OUTPUT_SOURCE_FOLDER}/components/${tplName}${styleExt}`,
-      contents: style,
-    });
-  }
-
-  /**
-   * 生成组件 js context
-   */
-  const scriptPath = join(
-    OUTPUT_SOURCE_FOLDER,
-    pageName,
-    '..',
-    modulePath + scriptExt
-  );
-
-  files.unshift({
-    path: scriptPath,
-    contents: scriptCode,
-  });
-
-  const codes = [
-    // 注册 template
-    `<template name="${tplName}">`,
-    tpl,
-    '</template>',
-  ];
-
-  debug(tplImports);
-
-  Object.keys(tplImports).forEach(name => {
-    const { tplName } = tplImports[name];
-    codes.unshift(
-      `<import src="/${OUTPUT_SOURCE_FOLDER}/components/${tplName}${templateExt}" />`
-    );
-  });
-
-  return { contents: codes.join('\n'), files, originPath: path };
 };
