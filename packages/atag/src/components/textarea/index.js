@@ -1,57 +1,5 @@
-<dom-module id="a-textarea">
-  <template>
-    <style>
-      :host {
-        display: block;
-        position: relative;
-        min-height: 42px;
-        background-color: #fff;
-        word-wrap: break-word;
-      }
-
-      #textarea {
-        outline: none;
-        border: none;
-        resize: none;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        background: transparent;
-        /*
-          textarea default style reset
-        */
-        text-rendering: inherit;
-        color: inherit;
-        letter-spacing: inherit;
-        word-spacing: inherit;
-        text-transform: inherit;
-        text-indent: inherit;
-        text-shadow: inherit;
-        text-align: inherit;
-        font: inherit;
-        white-space: inherit;
-        overflow-wrap: inherit;
-      }
-
-      #count {
-        position: absolute;
-        bottom: 0;
-        right: 5px;
-        color: #b2b2b2;
-        font-size: 14px;
-        margin: 0;
-      }
-    </style>
-    <textarea id="textarea" placeholder="{{placeholder}}" value$="{{value}}" disabled$="{{disabled}}" maxlength$="{{maxlength}}"
-    readonly$="{{readonly}}" autofocus$="{{focus}}" style$="{{inputStyle}}" rows$="{{rows}}"></textarea>
-    <p id="count" style$="{{countStyle}}">{{valueLength}}/{{maxlength}}</p>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
+import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import autosize from './autosize';
 
 let uid = 0;
@@ -65,53 +13,55 @@ export default class Textarea extends PolymerElement {
     return {
       value: {
         type: String,
-        value: ''
+        value: '',
       },
       placeholder: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true,
       },
-      placeholderStyle: {
+      placeholderstyle: {
         type: String,
         value: 'color: #999999;',
-        observer: 'changePlaceholderStyle'
+        observer: 'changePlaceholderStyle',
       },
       disabled: {
         type: Boolean,
-        value: false
+        value: false,
+        reflectToAttribute: true,
       },
       maxlength: {
         type: String,
-        value: 140
+        value: 140,
       },
       focus: {
         type: Boolean,
-        value: false
+        value: false,
       },
       autoHeight: {
         type: Boolean,
-        value: false
+        value: false,
       },
       readonly: {
-        type: Boolean
+        type: Boolean,
       },
       inputStyle: {
         type: String,
-        value: ''
+        value: '',
       },
       rows: {
         type: String,
-        value: '2'
+        value: '2',
       },
       showCount: {
         type: Boolean,
         value: true,
-        observer: 'observerShowCount'
+        observer: 'observerShowCount',
       },
       valueLength: {
         type: Number,
-        computed: 'computedValueLength(value)'
-      }
+        computed: 'computedValueLength(value)',
+      },
     };
   }
 
@@ -119,9 +69,9 @@ export default class Textarea extends PolymerElement {
     super.ready();
     this.textarea = this.$.textarea;
     this.formInitialValue = this.value;
-    // label target
-    this.setAttribute('a-label-target', "");
-    
+
+    this.setAttribute('a-label-target', '');
+
     afterNextRender(this, () => {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
@@ -135,13 +85,12 @@ export default class Textarea extends PolymerElement {
 
   attributeChangedCallback(key, oldVal, newVal) {
     super.attributeChangedCallback(key, oldVal, newVal);
-    
+
     switch (key) {
-      case 'show-count':
-        this.showCount = !(newVal === 'false');
+      case 'show-count': {
+        this.showCount = newVal !== 'false';
         break;
-      default:
-        break;
+      }
     }
   }
 
@@ -196,8 +145,8 @@ export default class Textarea extends PolymerElement {
       cancelable: true,
       detail: {
         value: this.textarea.value,
-        cursor: this.textarea.selectionStart
-      }
+        cursor: this.textarea.selectionStart,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -208,8 +157,8 @@ export default class Textarea extends PolymerElement {
       bubbles: false,
       cancelable: true,
       detail: {
-        value: this.textarea.value
-      }
+        value: this.textarea.value,
+      },
     });
     this.dispatchEvent(event);
   }
@@ -220,26 +169,29 @@ export default class Textarea extends PolymerElement {
       bubbles: false,
       cancelable: true,
       detail: {
-        value: this.textarea.value
-      }
+        value: this.textarea.value,
+      },
     });
     this.dispatchEvent(event);
   }
 
   changePlaceholderStyle(placeholderStyle) {
     if (!this.styleEl) {
-      // unique id for data-id to avoid style pollution
+      // Unique id for data-id to avoid style pollution
       this.id = `textarea-${++uid}`;
       this.styleEl = document.createElement('style');
       this.setAttribute('data-id', this.id);
-      const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
+      const shadowRoot =
+        this.shadowRoot || this.attachShadow({ mode: 'open' });
       shadowRoot.appendChild(this.styleEl);
     }
     this.styleEl.textContent = `
       :host #textarea::placeholder {
         ${placeholderStyle}
       }
-      a-textarea[data-id=${this.id}] #textarea::-webkit-input-placeholder {
+      a-textarea[data-id=${
+  this.id
+}] #textarea::-webkit-input-placeholder {
         ${placeholderStyle}
       }
     `;
@@ -254,13 +206,68 @@ export default class Textarea extends PolymerElement {
     const textareaStyle = this.$.textarea.style;
     if (newVal) {
       countStyle.display = 'block';
-      textareaStyle.marginBottom = '18px';
+      textareaStyle.paddingBottom = '18px';
     } else {
       countStyle.display = 'none';
-      textareaStyle.marginBottom = '0';
+      textareaStyle.paddingBottom = '0';
     }
+  }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          display: block;
+          position: relative;
+          min-height: 42px;
+          background-color: #fff;
+          word-wrap: break-word;
+        }
+  
+        #textarea {
+          all: unset;
+          /*
+           * HACK: webkit placeholder color will 
+           * inherit from color, reset here
+           */
+          -webkit-text-fill-color: initial;
+          
+          display: block;
+          outline: none;
+          border: none;
+          resize: none;
+          padding: 0;
+          margin: 0;
+          width: 100%;
+          height: 100%;
+          background: transparent;
+        }
+  
+        #count {
+          margin: 0;
+          position: absolute;
+          bottom: 0;
+          right: 5px;
+          color: #b2b2b2;
+          /* Count's font style should not effect by CSS inherit */
+          font-size: 14px;
+          font-weight: initial;
+        }
+      </style>
+      <textarea 
+        id="textarea"
+        placeholder="[[placeholder]]"
+        value="[[value]]"
+        disabled$="[[disabled]]"
+        maxlength$="[[maxlength]]"
+        readonly$="[[readonly]]"
+        autofocus$="[[focus]]"
+        style$="[[inputStyle]]"
+        rows$="[[rows]]"
+      ></textarea>
+      <p id="count" style$="[[countStyle]]">{{valueLength}}/{{maxlength}}</p>
+    `;
   }
 }
 
 customElements.define(Textarea.is, Textarea);
-</script>

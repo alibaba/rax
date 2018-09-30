@@ -72,6 +72,37 @@
   <div class="card">
     <h4 class="title">a-image</h4>
     <div class="demo">
+      <p>Mode: scaleToFill 150x150</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="scaleToFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFit</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFit" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFill</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: widthFix</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="widthFix" style="display: block; width: 100%;"></a-image>
+
+      <p>Mode: top</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: center</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="center" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom right" style="display: block; width: 150px; height: 150px;"></a-image>
+
       <a-image id="image" mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif"></a-image>
       <p>
         Load Event: <span id="imageLoad"></span>
@@ -103,9 +134,6 @@
     asyncImage.addEventListener('load',function(e) {
       asyncImageLoad.innerHTML=JSON.stringify(e.detail);
     });
-    setTimeout(() => {
-      image.setAttribute('mode', 'top');
-    }, 2000);
   </script>
 
   <div class="card">
@@ -135,6 +163,8 @@
       <p>custom style:</p>
       <a-input style="text-align: center;font-weight: bold;padding: 10px;color: red" placeholder="input placeholder"></a-input>
     </div>
+    <p>placeholder style:</p>
+    <a-input placeholderStyle="color: green" auto-height=true placeholder="styled placeholder"></a-input>
   </div>
 
   <script>
@@ -155,6 +185,8 @@
     <div class="demo">
       <p>event:</p>
       <a-textarea id="textarea" class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <a-button id="textareaValChange" style="margin-bottom: 10px;">Change Textarea Value</a-button>
+      <a-button id="textareaPlaceholderChange">Change Placeholder Value</a-button>
       <p style="overflow-wrap: break-word;">
         Input Event: <span id="textareaInput">null</span>
       </p>
@@ -163,15 +195,24 @@
       </p>
       <p>custom style:</p>
       <a-textarea style="text-align: center;font-weight: bold;padding: 10px; color: red" auto-height=true placeholder="textarea placeholder"></a-textarea>
+      <p>placeholder style:</p>
+      <a-textarea placeholderStyle="color: green" auto-height=true placeholder="styled placeholder"></a-textarea>
     </div>
   </div>
 
   <script>
+    var textarea = document.getElementById('textarea');
     textarea.addEventListener('input',function(e) {
       textareaInput.innerHTML=e.detail.value||'null';
     });
     textarea.addEventListener('blur',function(e) {
       textareaBlur.innerHTML=e.detail.value||'null';
+    });
+    textareaValChange.addEventListener('click', function(e) {
+      textarea.setAttribute('value', 'hello world');
+    });
+    textareaPlaceholderChange.addEventListener('click', function(e) {
+      textarea.setAttribute('placeholder', 'hello placeholder!');
     });
   </script>
 
