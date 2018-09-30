@@ -43,7 +43,7 @@
         margin: 0;
       }
     </style>
-    <textarea id="textarea" placeholder="{{placeholder}}" value$="{{value}}" disabled$="{{disabled}}" maxlength$="{{maxlength}}"
+    <textarea id="textarea" placeholder="[[placeholder]]" value="[[value]]" disabled$="{{disabled}}" maxlength$="{{maxlength}}"
     readonly$="{{readonly}}" autofocus$="{{focus}}" style$="{{inputStyle}}" rows$="{{rows}}"></textarea>
     <p id="count" style$="{{countStyle}}">{{valueLength}}/{{maxlength}}</p>
   </template>
@@ -65,11 +65,13 @@ export default class Textarea extends PolymerElement {
     return {
       value: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true,
       },
       placeholder: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true,
       },
       placeholderStyle: {
         type: String,
@@ -121,7 +123,7 @@ export default class Textarea extends PolymerElement {
     this.formInitialValue = this.value;
     // label target
     this.setAttribute('a-label-target', "");
-    
+
     afterNextRender(this, () => {
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
@@ -135,13 +137,12 @@ export default class Textarea extends PolymerElement {
 
   attributeChangedCallback(key, oldVal, newVal) {
     super.attributeChangedCallback(key, oldVal, newVal);
-    
+
     switch (key) {
-      case 'show-count':
-        this.showCount = !(newVal === 'false');
+      case 'show-count': {
+        this.showCount = newVal !== 'false';
         break;
-      default:
-        break;
+      }
     }
   }
 

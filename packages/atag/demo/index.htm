@@ -155,6 +155,8 @@
     <div class="demo">
       <p>event:</p>
       <a-textarea id="textarea" class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <a-button id="textareaValChange" style="margin-bottom: 10px;">改变 textarea 的内容</a-button>
+      <a-button id="textareaPlaceholderChange">改变 placeholder 的内容</a-button>
       <p style="overflow-wrap: break-word;">
         Input Event: <span id="textareaInput">null</span>
       </p>
@@ -167,11 +169,18 @@
   </div>
 
   <script>
+    var textarea = document.getElementById('textarea');
     textarea.addEventListener('input',function(e) {
       textareaInput.innerHTML=e.detail.value||'null';
     });
     textarea.addEventListener('blur',function(e) {
       textareaBlur.innerHTML=e.detail.value||'null';
+    });
+    textareaValChange.addEventListener('click', function(e) {
+      textarea.setAttribute('value', 'hello world');
+    });
+    textareaPlaceholderChange.addEventListener('click', function(e) {
+      textarea.setAttribute('placeholder', 'hello placeholder!');
     });
   </script>
 
