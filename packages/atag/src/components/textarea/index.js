@@ -20,7 +20,7 @@ export default class Textarea extends PolymerElement {
         value: '',
         reflectToAttribute: true,
       },
-      placeholderStyle: {
+      placeholderstyle: {
         type: String,
         value: 'color: #999999;',
         observer: 'changePlaceholderStyle',
@@ -206,10 +206,10 @@ export default class Textarea extends PolymerElement {
     const textareaStyle = this.$.textarea.style;
     if (newVal) {
       countStyle.display = 'block';
-      textareaStyle.marginBottom = '18px';
+      textareaStyle.paddingBottom = '18px';
     } else {
       countStyle.display = 'none';
-      textareaStyle.marginBottom = '0';
+      textareaStyle.paddingBottom = '0';
     }
   }
 
@@ -244,12 +244,14 @@ export default class Textarea extends PolymerElement {
         }
   
         #count {
+          margin: 0;
           position: absolute;
           bottom: 0;
           right: 5px;
           color: #b2b2b2;
+          /* count's font style should not effect by CSS inherit */
           font-size: 14px;
-          margin: 0;
+          font-weight: initial;
         }
       </style>
       <textarea 
