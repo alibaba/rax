@@ -40,27 +40,21 @@ function genElement(el, state) {
   }
 
   if (Array.isArray(el)) {
-    return el.map(_el => genElement(_el, state)).join('');
+    return el.map((_el) => genElement(_el, state)).join('');
   }
 
   if (el.type === 1) {
     // type 1: element
-    const hasProps =
-      el.hasBindings ||
-      !!el.staticClass ||
-      !!el.classBinding ||
-      el.attrsList.length > 0;
+    const hasProps = el.hasBindings || !!el.staticClass || !!el.classBinding || el.attrsList.length > 0;
 
     if (state.tplImports[el.tag]) {
-      return `<template is="${
-        state.tplImports[el.tag].tplName
-      }" data="{{${genData(el, state)}}}">${genElement(
+      return `<template is="${state.tplImports[el.tag].templateName}" data="{{${genData(el, state)}}}">${genElement(
         el.children,
         state
       )}</template>`;
     } else if (el.ifConditions) {
       return el.ifConditions
-        .map(condition => {
+        .map((condition) => {
           // 避免递归
           condition.block.ifConditions = null;
           return genElement(condition.block, state);
@@ -69,9 +63,9 @@ function genElement(el, state) {
     } else {
       // directive, like for, if
       const moduleData = genModuleData(el, state);
-      return `<${el.tag}${
-        hasProps ? ' ' + genProps(el, state) : ''
-      }${moduleData}>${genElement(el.children, state)}</${el.tag}>`;
+      return `<${el.tag}${hasProps ? ' ' + genProps(el, state) : ''}${moduleData}>${genElement(el.children, state)}</${
+        el.tag
+      }>`;
     }
   } else if (el.type === 2 || (el.type === 3 && el.static)) {
     // type 2: text node or static text node
@@ -95,10 +89,7 @@ function genText(el) {
 function genModuleData(el, state) {
   let data = '',
     l;
-  if (
-    Array.isArray(state.modules) &&
-    (l = state.modules.length) > 0
-  ) {
+  if (Array.isArray(state.modules) && (l = state.modules.length) > 0) {
     for (let i = 0; i < l; i++) {
       if (typeof state.modules[i].genData === 'function') {
         data += ' ' + state.modules[i].genData(el, state);
@@ -121,11 +112,7 @@ function genProps(el, state) {
     } else if (name[0] === '@') {
       // event
       const evtName = name.slice(1);
-      const evtProp =
-        'on' +
-        (evtNameMapping[evtName] || evtName).replace(/^(\w)/, $1 =>
-          $1.toUpperCase()
-        );
+      const evtProp = 'on' + (evtNameMapping[evtName] || evtName).replace(/^(\w)/, ($1) => $1.toUpperCase());
       if (state.isTemplateDependency) {
         value = state.templateName + '$' + value;
       }
@@ -135,11 +122,7 @@ function genProps(el, state) {
     }
   });
   if (el.staticClass || el.classBinding) {
-    attrs.push(
-      `class="${getStaticProp(el.staticClass)}${
-        el.classBinding ? ` {{${el.classBinding}}}` : ''
-      }"`
-    );
+    attrs.push(`class="${getStaticProp(el.staticClass)}${el.classBinding ? ` {{${el.classBinding}}}` : ''}"`);
   }
   return attrs.join(' ');
 }
@@ -148,8 +131,8 @@ function genProps(el, state) {
  * generate data
  */
 function genData(el, state) {
-  const { tplName } = state.tplImports[el.tag];
-  const propsData = (state.propsDataMap[tplName] = {});
+  const { templateName } = state.tplImports[el.tag];
+  const propsData = (state.propsDataMap[templateName] = {});
 
   el.attrsList.forEach(({ name, value }) => {
     if (name[0] === ':' || name[0] === 'v-bind:') {
@@ -161,7 +144,7 @@ function genData(el, state) {
     }
   });
 
-  return `$d, ...$d['${tplName}']`;
+  return `$d, ...$d['${templateName}']`;
 }
 
 const STATIC_PROP_REG = /^"?(.*)"/;

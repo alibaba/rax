@@ -9,10 +9,7 @@ module.exports = {
   devtool: false,
   resolve: {
     alias: {
-      '@': cwd,
-      'webpack-hot-client/client': require.resolve(
-        'webpack-hot-client/client'
-      ),
+      'webpack-hot-client/client': require.resolve('webpack-hot-client/client'),
     },
     extensions: ['.js', '.json', '.html', 'vue'],
   },

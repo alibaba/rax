@@ -39,16 +39,8 @@ module.exports = (script, { resourcePath, pageName }) => {
 
     let vueModulePath = resolve(dirname(resourcePath), modulePath);
     const tplName = genTemplateName(vueModulePath);
-    const tplPath = join(
-      OUTPUT_SOURCE_FOLDER,
-      'components',
-      modulePath
-    );
-    const tplPath2 = join(
-      OUTPUT_SOURCE_FOLDER,
-      'components',
-      genTemplateName(modulePath)
-    );
+    const tplPath = join(OUTPUT_SOURCE_FOLDER, 'components', modulePath);
+    const tplPath2 = join(OUTPUT_SOURCE_FOLDER, 'components', genTemplateName(modulePath));
 
     /**
      * name: 模块名称, name="title"
@@ -61,10 +53,7 @@ module.exports = (script, { resourcePath, pageName }) => {
       configPath: tplPath,
     };
 
-    const p =
-      extname(vueModulePath) === '.html'
-        ? vueModulePath
-        : vueModulePath + '.html';
+    const p = extname(vueModulePath) === '.html' ? vueModulePath : vueModulePath + '.html';
 
     result = genTemplate({
       path: p,

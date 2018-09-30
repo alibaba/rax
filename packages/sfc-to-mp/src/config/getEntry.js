@@ -23,13 +23,9 @@ module.exports = function getEntry() {
     Object.keys(pages).forEach(pageName => {
       const pagePath = pages[pageName];
       const pageEntryPath = path.resolve(context, pagePath);
-      entry[pagePath] =
-        pageLoaderPath +
-        '?pageName=' +
-        pagePath +
-        '!' +
-        pageEntryPath +
-        SFC_EXT;
+      entry[
+        pagePath
+      ] = `${pageLoaderPath}?pageName=${pagePath}!${pageEntryPath}${SFC_EXT}`;
     });
   }
   return entry;

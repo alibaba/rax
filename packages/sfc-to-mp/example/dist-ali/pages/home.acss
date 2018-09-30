@@ -1,0 +1,13 @@
+
+.home-container {
+  font-size: 45rpx;
+  text-align: center;
+  margin-top: 25px;
+}
+
+.title {
+  font-weight: bold;
+  padding-top: 45rpx;
+  color: #f50;
+  margin-bottom: 25px;
+}

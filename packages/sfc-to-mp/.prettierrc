@@ -1,4 +1,5 @@
 # .prettierrc
 singleQuote: true
 trailingComma: es5
-printWidth: 70
+printWidth: 120
+arrowParens: always
