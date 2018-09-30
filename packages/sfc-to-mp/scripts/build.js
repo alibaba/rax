@@ -3,7 +3,7 @@ const path = require('path');
 
 const cli = path.join(__dirname, '../bin/mp.js');
 
-const build = spawn('node', [cli, 'watch', '--output=dist-ali'], {
+const build = spawn('node', [cli, 'watch', '--output=dist'], {
   cwd: path.join(__dirname, '../example'),
   env: {
     ...process.env,
