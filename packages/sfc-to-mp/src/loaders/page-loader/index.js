@@ -4,7 +4,7 @@ const path = require('path');
 
 const { parseSFCParts } = require('../../transpiler/parse');
 const getExt = require('../../config/getExt');
-const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
+const { OUTPUT_SOURCE_FOLDER, OUTPUT_VENDOR_FOLDER } = require('../../config/CONSTANTS');
 const generateStyle = require('./generate-style');
 const generateTemplate = require('./generate-template');
 const generateScript = require('./generate-script');
@@ -23,15 +23,37 @@ module.exports = function pageLoader(content) {
   const scriptExt = getExt('script');
 
   const { script, styles, template } = parseSFCParts(content);
+  const pageOriginFilePath = this.resourcePath;
+  const pageOriginFileMate = path.parse(pageOriginFilePath);
+
+  delete pageOriginFileMate.base;
+
+  console.log(pageOriginFileMate);
 
   // 分析当前 page 文件中的依赖
   detectDependencies.apply(this, [script, this.resourcePath]).then((dependenciesMap) => {
     // 生成 style 文件
     if (Array.isArray(styles)) {
+      const styleOutputAbsolutePath = path.format({ ...pageOriginFileMate, ext: styleExt });
+      const styleOutputPath = path.relative(this.rootContext, styleOutputAbsolutePath);
+
       const styleContents = generateStyle(styles);
-      const styleOutputPath = `${pageName}${styleExt}`;
+
+      const dependenciesImportSpec = Object.values(dependenciesMap)
+        .map((dependencies) => {
+          const outputPath = dependencies.outputPath;
+          const outputPathMate = path.parse(outputPath);
+          delete outputPathMate.base;
+          outputPathMate.ext = styleExt;
+          outputPathMate.name = dependencies.fileName;
+          return dependenciesHelper.getStyleImportPath(styleOutputAbsolutePath, path.format(outputPathMate));
+        })
+        .join('\n');
+
       debug(fixedString(styleExt), styleOutputPath);
-      this.emitFile(styleOutputPath, styleContents);
+      debug(fixedString(styleExt), styleOutputPath);
+
+      this.emitFile(styleOutputPath, dependenciesImportSpec + styleContents);
     }
     const templatePropsData = {};
     if (template) {
@@ -39,7 +61,7 @@ module.exports = function pageLoader(content) {
 
       Object.assign(templatePropsData, metadata.propsDataMap);
 
-      const templateOutputAbsolutePath = path.join(this.rootContext, `${pageName}${templateExt}`);
+      const templateOutputAbsolutePath = path.format({ ...pageOriginFileMate, ext: templateExt });
       const templateOutputPath = path.relative(this.rootContext, templateOutputAbsolutePath);
 
       const dependenciesTemplateSpec = Object.values(dependenciesMap)
@@ -79,21 +101,31 @@ module.exports = function pageLoader(content) {
           componentMetaDataList.forEach(emitComponentFiles.bind(this));
         })
         .then(() => {
-          const scriptOutputAbsolutePath = path.join(this.rootContext, OUTPUT_SOURCE_FOLDER, `${pageName}${scriptExt}`);
-          const scriptAbsolutePath = path.join(this.rootContext, `${pageName}${scriptExt}`);
+          const scriptAbsolutePath = path.format({ ...pageOriginFileMate, ext: scriptExt });
+          const scriptOutputAbsolutePath = path.join(
+            this.rootContext,
+            OUTPUT_SOURCE_FOLDER,
+            path.relative(this.rootContext, scriptAbsolutePath)
+          );
 
           const scriptOutputPath = path.relative(this.rootContext, scriptOutputAbsolutePath);
+          const createPageAbsolutePath = path.join(this.rootContext, OUTPUT_VENDOR_FOLDER, 'createPage.js');
+
+          const pageRelatedPath = path.relative(path.dirname(scriptAbsolutePath), scriptOutputAbsolutePath);
+          const createPageRelatedPath = path.relative(path.dirname(scriptAbsolutePath), createPageAbsolutePath);
 
           const { code, map, source } = generateScript(script, {
             pagePath: scriptAbsolutePath,
-            pageName,
             ext: scriptExt,
             tplImports: dependenciesMap,
             tplPropsData: templatePropsData,
+            createPageRelatedPath,
+            pageRelatedPath,
           });
 
           debug(fixedString(scriptExt), scriptOutputPath);
           this.emitFile(scriptOutputPath, code, map);
+          console.log(source);
           callback(null, source);
         });
     } else {

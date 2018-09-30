@@ -18,9 +18,24 @@ module.exports = {
   output: {
     path: path.resolve(cwd, getOption('output')),
   },
+  module: {
+    rules: [
+      {
+        test: /\.(png|jpg|jpeg|gif)$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 9182,
+          name: 'assets/[hash].[ext]',
+        },
+      },
+    ],
+  },
   externals: [
     function(context, request, callback) {
-      if (/^[\\.]{0,2}\/(vendors|sources)/.test(request)) {
+      // 判断 request 的文件地址是否为 sources 、vendors
+      // 这两个目录下的文件是转换后的用户文件，以及运行时依赖
+      const requestAbsolutePath = path.resolve(context, request);
+      if (/\/(vendors|sources)/.test(requestAbsolutePath)) {
         return callback(null, `commonjs2 ${request}`);
       } else {
         return callback();

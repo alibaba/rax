@@ -1,9 +1,8 @@
 const path = require('path');
-const { OUTPUT_SOURCE_FOLDER, OUTPUT_VENDOR_FOLDER } = require('../../config/CONSTANTS');
 
 const compileES5 = require('./compileES5');
 
-module.exports = (script, { pageName, pagePath, ext, tplImports, tplPropsData }) => {
+module.exports = (script, { pagePath, ext, tplImports, tplPropsData, createPageRelatedPath, pageRelatedPath }) => {
   let source = 'Page({});';
   const deps = Object.keys(tplImports)
     .map((tagName) => {
@@ -16,9 +15,10 @@ module.exports = (script, { pageName, pagePath, ext, tplImports, tplPropsData })
       return `'${templateName}': { config: require('${path.format(outputPathMate)}'), propsData: ${propsData} },`;
     })
     .join('\n');
+
   source = [
-    `var pageConfig = require('/${OUTPUT_SOURCE_FOLDER}/${pageName}');`,
-    `var createPage = require('/${OUTPUT_VENDOR_FOLDER}/createPage');`,
+    `var pageConfig = require('${pageRelatedPath}');`,
+    `var createPage = require('${createPageRelatedPath}');`,
     `Page(createPage(pageConfig, {${deps}}));`,
   ].join('\n');
 

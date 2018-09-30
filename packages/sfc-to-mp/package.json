@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "nodemon ./scripts/build.js"
+    "watch": "nodemon ./scripts/build.js",
+    "watch-wx": "nodemon ./scripts/build-wx.js"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -58,6 +59,7 @@
     "hash-sum": "^1.0.2",
     "loader-utils": "^1.1.0",
     "string-width": "^2.1.1",
+    "url-loader": "^1.1.1",
     "vue": "^2.5.17",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^4.20.2",

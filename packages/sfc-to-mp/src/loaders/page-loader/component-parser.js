@@ -8,9 +8,9 @@ const detectDependencies = require('./detect-dependencies');
 const generateStyle = require('./generate-style');
 const generateTemplate = require('./generate-template');
 const dependenciesHelper = require('./dependencies-helper');
-const genTemplateName = require('./getTemplateName');
+const getTemplateName = require('./getTemplateName');
 
-module.exports = function genTemplate({ path: componentPath }, loaderContext) {
+module.exports = function componentParser({ path: componentPath }, loaderContext) {
   const templateExt = getExt('template');
 
   return new Promise((resolve) => {
@@ -43,7 +43,7 @@ module.exports = function genTemplate({ path: componentPath }, loaderContext) {
 
         const templateContentsRegistered = [
           // 注册 template
-          `<template name="${genTemplateName(componentPath)}">`,
+          `<template name="${getTemplateName(componentPath)}">`,
           templateContents,
           '</template>',
         ];
@@ -63,11 +63,16 @@ module.exports = function genTemplate({ path: componentPath }, loaderContext) {
           type: 'script',
           contents: scriptCode,
         });
+      } else {
+        files.push({
+          type: 'script',
+          contents: scriptCode,
+        });
       }
 
       Promise.all(
         Object.values(dependenciesMap).map((dependency) => {
-          return genTemplate({ path: dependency.filePath }, loaderContext);
+          return componentParser({ path: dependency.filePath }, loaderContext);
         })
       ).then((children) => {
         resolve({

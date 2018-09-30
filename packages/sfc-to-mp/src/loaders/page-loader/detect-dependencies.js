@@ -3,7 +3,7 @@ const babel = require('babel-core');
 const debug = require('debug')('mp:deps');
 const path = require('path');
 
-const genTemplateName = require('./getTemplateName');
+const getTemplateName = require('./getTemplateName');
 const { parseComponentsDeps } = require('./parser');
 const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
 
@@ -24,6 +24,10 @@ const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
  */
 
 module.exports = function(script, scriptOriginFilePath) {
+  const dependenciesMap = {};
+  if (!script || !script.content) {
+    return Promise.resolve(dependenciesMap);
+  }
   const babelResult = babel.transform(script.content, {
     plugins: [parseComponentsDeps],
   });
@@ -36,7 +40,7 @@ module.exports = function(script, scriptOriginFilePath) {
       return new Promise((resolve) => {
         let modulePath = importedComponentsMap[tagName];
         resolvePromise(path.dirname(scriptOriginFilePath), modulePath).then((sfcModuleAbsolute) => {
-          const templateName = genTemplateName(sfcModuleAbsolute);
+          const templateName = getTemplateName(sfcModuleAbsolute);
           const { name } = path.parse(sfcModuleAbsolute);
           resolve({
             tagName, // 标签名
@@ -53,7 +57,6 @@ module.exports = function(script, scriptOriginFilePath) {
       });
     })
   ).then((dependencies) => {
-    const dependenciesMap = {};
     dependencies.forEach((dep) => {
       dependenciesMap[dep.tagName] = dep;
     });
