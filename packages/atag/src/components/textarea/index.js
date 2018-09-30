@@ -1,57 +1,5 @@
-<dom-module id="a-textarea">
-  <template>
-    <style>
-      :host {
-        display: block;
-        position: relative;
-        min-height: 42px;
-        background-color: #fff;
-        word-wrap: break-word;
-      }
-
-      #textarea {
-        outline: none;
-        border: none;
-        resize: none;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        background: transparent;
-        /*
-          textarea default style reset
-        */
-        text-rendering: inherit;
-        color: inherit;
-        letter-spacing: inherit;
-        word-spacing: inherit;
-        text-transform: inherit;
-        text-indent: inherit;
-        text-shadow: inherit;
-        text-align: inherit;
-        font: inherit;
-        white-space: inherit;
-        overflow-wrap: inherit;
-      }
-
-      #count {
-        position: absolute;
-        bottom: 0;
-        right: 5px;
-        color: #b2b2b2;
-        font-size: 14px;
-        margin: 0;
-      }
-    </style>
-    <textarea id="textarea" placeholder="[[placeholder]]" value="[[value]]" disabled$="{{disabled}}" maxlength$="{{maxlength}}"
-    readonly$="{{readonly}}" autofocus$="{{focus}}" style$="{{inputStyle}}" rows$="{{rows}}"></textarea>
-    <p id="count" style$="{{countStyle}}">{{valueLength}}/{{maxlength}}</p>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
+import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import autosize from './autosize';
 
 let uid = 0;
@@ -122,7 +70,7 @@ export default class Textarea extends PolymerElement {
     this.textarea = this.$.textarea;
     this.formInitialValue = this.value;
     // label target
-    this.setAttribute('a-label-target', "");
+    this.setAttribute('a-label-target', '');
 
     afterNextRender(this, () => {
       window.addEventListener('input', this.inputListener, true);
@@ -261,7 +209,66 @@ export default class Textarea extends PolymerElement {
       textareaStyle.marginBottom = '0';
     }
   }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          display: block;
+          position: relative;
+          min-height: 42px;
+          background-color: #fff;
+          word-wrap: break-word;
+        }
+  
+        #textarea {
+          outline: none;
+          border: none;
+          resize: none;
+          padding: 0;
+          margin: 0;
+          width: 100%;
+          height: 100%;
+          background: transparent;
+          /*
+            textarea default style reset
+          */
+          text-rendering: inherit;
+          color: inherit;
+          letter-spacing: inherit;
+          word-spacing: inherit;
+          text-transform: inherit;
+          text-indent: inherit;
+          text-shadow: inherit;
+          text-align: inherit;
+          font: inherit;
+          white-space: inherit;
+          overflow-wrap: inherit;
+        }
+  
+        #count {
+          position: absolute;
+          bottom: 0;
+          right: 5px;
+          color: #b2b2b2;
+          font-size: 14px;
+          margin: 0;
+        }
+      </style>
+      <textarea 
+        id="textarea"
+        placeholder="[[placeholder]]"
+        value="[[value]]"
+        disabled$="[[disabled]]"
+        maxlength$="[[maxlength]]"
+        readonly$="[[readonly]]"
+        autofocus$="[[focus]]"
+        style$="[[inputStyle]]"
+        rows$="[[rows]]"
+      ></textarea>
+      <p id="count" style$="[[countStyle]]">{{valueLength}}/{{maxlength}}</p>
+    `;
+  }
 }
 
 customElements.define(Textarea.is, Textarea);
-</script>
