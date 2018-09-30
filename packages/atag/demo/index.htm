@@ -104,8 +104,8 @@
       asyncImageLoad.innerHTML=JSON.stringify(e.detail);
     });
     setTimeout(() => {
-      image.setAttribute('mode', 'top');
-    }, 2000);
+      image.setAttribute('mode','top');
+    },2000);
   </script>
 
   <div class="card">
@@ -257,8 +257,8 @@
     </div>
   </div>
   <script>
-    picker.addEventListener('change', e => {
-      pickerResult.innerHTML = 'picked ' + e.detail.value;
+    picker.addEventListener('change',e => {
+      pickerResult.innerHTML='picked '+e.detail.value;
     });
   </script>
 
@@ -430,18 +430,18 @@
       swiperChangeEvent.innerHTML=event.detail.current;
     });
 
-    swiperPrevButton.addEventListener('click', function(event){
-      swiper.setAttribute('current', swiper.current - 1);
+    swiperPrevButton.addEventListener('click',function(event) {
+      swiper.setAttribute('current',swiper.current-1);
     });
 
-    swiperNextButton.addEventListener('click', function(event){
-      swiper.setAttribute('current', swiper.current + 1);
+    swiperNextButton.addEventListener('click',function(event) {
+      swiper.setAttribute('current',swiper.current+1);
     });
 
-    btnAddSwiperItem.addEventListener('click', function(event){
-      dynamicSwiper.innerHTML += `
+    btnAddSwiperItem.addEventListener('click',function(event) {
+      dynamicSwiper.innerHTML+=`
         <a-swiper-item>
-          <a-view style="height: 100%;">` + (dynamicSwiper.children.length + 1) + `</a-view>
+          <a-view style="height: 100%;">` +(dynamicSwiper.children.length+1)+`</a-view>
         </a-swiper-item>
       `;
     });
@@ -534,7 +534,7 @@
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
-      <a-picker-view style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;" value="[3,5,5]">
+      <a-picker-view id="pickerView" style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
         <a-picker-view-column>
           <a-view value="1998">1998年</a-view>
           <a-view value="1999">1999年</a-view>
@@ -605,6 +605,177 @@
           <a-view value="31">31日</a-view>
         </a-picker-view-column>
       </a-picker-view>
+    </div>
+    <script>
+      setTimeout(() => {
+        pickerView.setAttribute('value','[3, 5, 5]');
+      },2000);
+    </script>
+  </div>
+  <div class="card">
+    <h4 class="title">a-swiper composite</h4>
+    <div class="demo">
+      <p>Row</p>
+      <a-swiper>
+        <a-swiper-item>
+          <a-view style="display: block;height: 130px;background-color: red; padding-top: 20px">
+            <a-slider min="0" max="100" style="width: 200px"></a-slider>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;">
+            <a-picker-view style="height:150px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+              <a-picker-view-column>
+                <a-view value="2010">2010年</a-view>
+                <a-view value="2011">2011年</a-view>
+                <a-view value="2012">2012年</a-view>
+                <a-view value="2013">2013年</a-view>
+                <a-view value="2014">2014年</a-view>
+                <a-view value="2015">2015年</a-view>
+                <a-view value="2016">2016年</a-view>
+                <a-view value="2017">2017年</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1月</a-view>
+                <a-view value="2">2月</a-view>
+                <a-view value="3">3月</a-view>
+                <a-view value="4">4月</a-view>
+                <a-view value="5">5月</a-view>
+                <a-view value="6">6月</a-view>
+                <a-view value="7">7月</a-view>
+                <a-view value="8">8月</a-view>
+                <a-view value="9">9月</a-view>
+                <a-view value="10">10月</a-view>
+                <a-view value="11">11月</a-view>
+                <a-view value="12">12月</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1日</a-view>
+                <a-view value="2">2日</a-view>
+                <a-view value="3">3日</a-view>
+                <a-view value="4">4日</a-view>
+                <a-view value="5">5日</a-view>
+                <a-view value="6">6日</a-view>
+                <a-view value="7">7日</a-view>
+                <a-view value="8">8日</a-view>
+                <a-view value="9">9日</a-view>
+                <a-view value="10">10日</a-view>
+              </a-picker-view-column>
+            </a-picker-view>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+      <p>Column</p>
+      <a-swiper vertical=true circular=true>
+        <a-swiper-item>
+          <a-view style="display: block;height: 180px;background-color: red; padding-top: 20px">
+            <a-slider min="0" max="100" style="width: 200px"></a-slider>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 200pxpx;">
+            <a-picker-view style="height:120px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+              <a-picker-view-column>
+                <a-view value="2010">2010年</a-view>
+                <a-view value="2011">2011年</a-view>
+                <a-view value="2012">2012年</a-view>
+                <a-view value="2013">2013年</a-view>
+                <a-view value="2014">2014年</a-view>
+                <a-view value="2015">2015年</a-view>
+                <a-view value="2016">2016年</a-view>
+                <a-view value="2017">2017年</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1月</a-view>
+                <a-view value="2">2月</a-view>
+                <a-view value="3">3月</a-view>
+                <a-view value="4">4月</a-view>
+                <a-view value="5">5月</a-view>
+                <a-view value="6">6月</a-view>
+                <a-view value="7">7月</a-view>
+                <a-view value="8">8月</a-view>
+                <a-view value="9">9月</a-view>
+                <a-view value="10">10月</a-view>
+                <a-view value="11">11月</a-view>
+                <a-view value="12">12月</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1日</a-view>
+                <a-view value="2">2日</a-view>
+                <a-view value="3">3日</a-view>
+                <a-view value="4">4日</a-view>
+                <a-view value="5">5日</a-view>
+                <a-view value="6">6日</a-view>
+                <a-view value="7">7日</a-view>
+                <a-view value="8">8日</a-view>
+                <a-view value="9">9日</a-view>
+                <a-view value="10">10日</a-view>
+              </a-picker-view-column>
+            </a-picker-view>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 200px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+    </div>
+    <div class="card">
+      <h4 class="title">a-scroll-view composite</h4>
+      <div class="demo">
+        <a-scroll-view style="display: block;height: 300px;" scroll-y=true>
+          <a-picker-view style="height:250px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+            <a-picker-view-column>
+              <a-view value="2010">2010年</a-view>
+              <a-view value="2011">2011年</a-view>
+              <a-view value="2012">2012年</a-view>
+              <a-view value="2013">2013年</a-view>
+              <a-view value="2014">2014年</a-view>
+              <a-view value="2015">2015年</a-view>
+              <a-view value="2016">2016年</a-view>
+              <a-view value="2017">2017年</a-view>
+            </a-picker-view-column>
+            <a-picker-view-column>
+              <a-view value="1">1月</a-view>
+              <a-view value="2">2月</a-view>
+              <a-view value="3">3月</a-view>
+              <a-view value="4">4月</a-view>
+              <a-view value="5">5月</a-view>
+              <a-view value="6">6月</a-view>
+              <a-view value="7">7月</a-view>
+              <a-view value="8">8月</a-view>
+              <a-view value="9">9月</a-view>
+              <a-view value="10">10月</a-view>
+              <a-view value="11">11月</a-view>
+              <a-view value="12">12月</a-view>
+            </a-picker-view-column>
+            <a-picker-view-column>
+              <a-view value="1">1日</a-view>
+              <a-view value="2">2日</a-view>
+              <a-view value="3">3日</a-view>
+              <a-view value="4">4日</a-view>
+              <a-view value="5">5日</a-view>
+              <a-view value="6">6日</a-view>
+              <a-view value="7">7日</a-view>
+              <a-view value="8">8日</a-view>
+              <a-view value="9">9日</a-view>
+              <a-view value="10">10日</a-view>
+            </a-picker-view-column>
+          </a-picker-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+        </a-scroll-view>
+      </div>
     </div>
   </div>
 </body>

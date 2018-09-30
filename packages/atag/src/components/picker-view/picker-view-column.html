@@ -157,6 +157,7 @@ export default class PickerViewColumn extends PolymerElement {
     this.isMoving = true;
     this.lastTime = +new Date();
     this.lastY = ev.touches[0].screenY;
+    ev.stopPropagation();
   }
 
   _onMove(ev) {
@@ -171,6 +172,7 @@ export default class PickerViewColumn extends PolymerElement {
     this.lastY = nowY;
     this.velocity = duration ? -offset / duration * 1000 : this.velocity;
     this.touchMove = true;
+    ev.stopPropagation();
   }
 
   _onEnd(ev) {
@@ -221,6 +223,7 @@ export default class PickerViewColumn extends PolymerElement {
       time = Math.abs(time);
     }
     this._scrollTo(scrollY, time);
+    ev.stopPropagation();
   }
 
   _updateDynamicStyle() {
