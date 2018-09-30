@@ -73,7 +73,7 @@ export default class ImageElement extends PolymerElement {
    */
   _load() {
     this.state = LOADING;
-    const image = (this.image = new Image());
+    const image = this.image = new Image();
 
     image.onload = e => {
       this.state = DONE;
@@ -205,7 +205,7 @@ export default class ImageElement extends PolymerElement {
     const containerStyle = this.$.container.style;
     const { width: realWidth, height: realHeight } = this.image;
     const hostWidth = this.clientWidth;
-    const hostHeight = (hostWidth * realHeight) / realWidth;
+    const hostHeight = hostWidth * realHeight / realWidth;
 
     this.style.height = hostHeight + 'px';
     containerStyle.backgroundSize = 'contain';
