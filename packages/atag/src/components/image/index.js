@@ -32,6 +32,10 @@ export default class ImageElement extends PolymerElement {
         reflectToAttribute: true,
         observer: 'observerMode',
       },
+      lazyload: {
+        type: Boolean,
+        value: false,
+      },
     };
   }
 
@@ -45,11 +49,16 @@ export default class ImageElement extends PolymerElement {
 
   _init() {
     if (!this.src) return;
-    // Figure out if this image is within view
-    ImageElement.addIntersectListener(this, () => {
+
+    if (this.lazyload) {
+      // Figure out if this image is within view
+      ImageElement.addIntersectListener(this, () => {
+        this._load();
+        ImageElement.removeIntersectListener(this);
+      });
+    } else {
       this._load();
-      ImageElement.removeIntersectListener(this);
-    });
+    }
 
     this._inited = true;
   }
