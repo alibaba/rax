@@ -58,7 +58,7 @@ export default class ImageElement extends PolymerElement {
       });
     } else {
       // Load after next frame
-      requestAnimationFrame(() => this._load());
+      this._load();
     }
 
     this._inited = true;
@@ -127,9 +127,18 @@ export default class ImageElement extends PolymerElement {
       case 'src':
         // If the src is changed then we need to reset and start again
         this._reset();
-        this._init();
+        if (this.isReady) {
+          this._init();
+        }
         break;
     }
+  }
+
+  isReady = false;
+  ready() {
+    super.ready();
+    this.isReady = true;
+    this._init();
   }
 
   /**
