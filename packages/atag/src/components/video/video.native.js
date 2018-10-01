@@ -56,22 +56,22 @@ export default class VideoElement extends PolymerElement {
 
   constructor(...args) {
     super(...args);
-
-    document.addEventListener('WVEmbed.Ready', this._nativeReady);
     this.uniqueId = String(++videoInstanceCount);
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  ready() {
+    super.ready();
 
+    document.addEventListener('WVEmbed.Ready', this._nativeReady);
     /**
-     * If user did not define display
-     * host display default to block
+     * Assign default style
      */
-    if (!this.style.display) {
-      this.style.display = 'block';
-    }
+    this.style.display = 'block';
 
+    this.createLightDOM();
+  }
+
+  createLightDOM() {
     const container = this.container = document.createElement('object');
     container.setAttribute('type', 'application/view');
     container.className = 'atag-native-video';
