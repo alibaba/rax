@@ -17,14 +17,7 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   static get observedAttributes() {
-    return [
-      'scroll-x',
-      'scroll-y',
-      'scroll-top',
-      'scroll-left',
-      'scroll-into-view',
-      'scroll-with-animation',
-    ];
+    return ['scroll-x', 'scroll-y', 'scroll-top', 'scroll-left', 'scroll-into-view', 'scroll-with-animation'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -49,29 +42,17 @@ export default class ScrollViewElement extends PolymerElement {
         this.scrollToX(scrollLeft);
         break;
       case 'scroll-into-view':
-        const scrollIntoView = this.getValue(
-          'scroll-into-view',
-          'string',
-          ''
-        );
+        const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
         if (scrollIntoView) {
           const targetNode = this.querySelector(`#${scrollIntoView}`);
           if (targetNode) {
             const containerRect = this.getBoundingClientRect();
             const targetNodeRect = targetNode.getBoundingClientRect();
             if (scrollX) {
-              this.scrollToX(
-                this.scrollLeft +
-                  targetNodeRect.left -
-                  containerRect.left
-              );
+              this.scrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
             }
             if (scrollY) {
-              this.scrollToY(
-                this.scrollTop +
-                  targetNodeRect.top -
-                  containerRect.top
-              );
+              this.scrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
             }
           }
         }
@@ -89,9 +70,9 @@ export default class ScrollViewElement extends PolymerElement {
       this.handleScroll,
       supportsPassive
         ? {
-          capture: true,
-          passive: true,
-        }
+            capture: true,
+            passive: true,
+          }
         : true
     );
   }
@@ -100,11 +81,7 @@ export default class ScrollViewElement extends PolymerElement {
   scrollingYId = 0;
 
   scrollToY(value) {
-    const scrollWithAnimation = this.getValue(
-      'scroll-with-animation',
-      'boolean',
-      false
-    );
+    const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
     if (scrollWithAnimation) {
       if (this.scrollingYId) {
         clearInterval(this.scrollingYId);
@@ -121,8 +98,7 @@ export default class ScrollViewElement extends PolymerElement {
           this.scrollTop = value;
         } else {
           const process = easeInOutCubic(deltaTime / duration);
-          this.scrollTop =
-            initialValue + process * (value - initialValue);
+          this.scrollTop = initialValue + process * (value - initialValue);
         }
       }, 16);
     } else {
@@ -131,11 +107,7 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   scrollToX(value) {
-    const scrollWithAnimation = this.getValue(
-      'scroll-with-animation',
-      'boolean',
-      false
-    );
+    const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
     if (scrollWithAnimation) {
       if (this.scrollingXId) {
         clearInterval(this.scrollingXId);
@@ -152,8 +124,7 @@ export default class ScrollViewElement extends PolymerElement {
           this.scrollLeft = value;
         } else {
           const process = easeInOutCubic(deltaTime / duration);
-          this.scrollLeft =
-            initialValue + process * (value - initialValue);
+          this.scrollLeft = initialValue + process * (value - initialValue);
         }
       }, 16);
     } else {
@@ -202,15 +173,8 @@ export default class ScrollViewElement extends PolymerElement {
     }
     this.lastScrollTime = e.timeStamp;
 
-    const upperThreshold = this.getValue(
-      'upper-threshold',
-      'number',
-      50
-    );
-    if (
-      deltaX < 0 && this.scrollLeft <= upperThreshold ||
-      deltaY < 0 && this.scrollTop <= upperThreshold
-    ) {
+    const upperThreshold = this.getValue('upper-threshold', 'number', 50);
+    if ((deltaX < 0 && this.scrollLeft <= upperThreshold) || (deltaY < 0 && this.scrollTop <= upperThreshold)) {
       if (!this.scrolledToUpper) {
         const scrollToUpperEvent = new CustomEvent('scrolltoupper');
         this.dispatchEvent(scrollToUpperEvent);
@@ -220,18 +184,10 @@ export default class ScrollViewElement extends PolymerElement {
       this.scrolledToUpper = false;
     }
 
-    const lowerThreshold = this.getValue(
-      'lower-threshold',
-      'number',
-      50
-    );
+    const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
     if (
-      deltaX > 0 &&
-        this.scrollWidth - this.scrollLeft - this.clientWidth <=
-          lowerThreshold ||
-      deltaY > 0 &&
-        this.scrollHeight - this.scrollTop - this.clientHeight <=
-          lowerThreshold
+      (deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold) ||
+      (deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold)
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');
@@ -252,9 +208,7 @@ export default class ScrollViewElement extends PolymerElement {
 
     switch (type) {
       case 'boolean':
-        return value === null
-          ? defaultValue
-          : value === '' || value === 'true' || value === true;
+        return value === null ? defaultValue : value === '' || value === 'true' || value === true;
       case 'string':
         return value === null ? defaultValue : String(value);
       case 'number':
