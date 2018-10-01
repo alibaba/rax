@@ -3,28 +3,30 @@ const path = require('path');
 
 const { parseSFCParts } = require('../../transpiler/parse');
 const compileES5 = require('./compileES5');
-const getExt = require('../../config/getExt');
 const detectDependencies = require('./detectDependencies');
 const generateStyle = require('./generateStyle');
 const generateTemplate = require('./generateTemplate');
-const dependencyHelper = require('./dependencyHelper');
 const getTemplateName = require('./getTemplateName');
+const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
 
 /**
  * SFC file parser with in webpack loader context
  * Return the parsed file contents node tree
  *
- *
  * @param {string} componentPath SFC file path
- * @return \{{{type}}\} {{description}}{{}}
  */
 module.exports = function componentParser(componentPath) {
-  const templateExt = getExt('template');
-
   return new Promise((resolve) => {
     const content = readFileSync(componentPath, 'utf-8');
     const { script, styles, template } = parseSFCParts(content);
     const files = [];
+
+    const originPath = componentPath;
+    const outputPath = path.join(
+      this.rootContext,
+      OUTPUT_SOURCE_FOLDER,
+      path.relative(this.rootContext, componentPath)
+    );
 
     detectDependencies
       .bind(this)(script, componentPath)
@@ -42,27 +44,9 @@ module.exports = function componentParser(componentPath) {
 
           Object.assign(templatePropsData, metadata.propsDataMap);
 
-          const dependenciesTemplateSpec = Object.values(dependencyMap)
-            .map((dependencies) => {
-              const outputPathMate = path.parse(dependencies.filePath);
-              delete outputPathMate.base;
-              outputPathMate.ext = templateExt;
-              outputPathMate.name = dependencies.fileName;
-              return dependencyHelper.getTemplateImportPath(componentPath, path.format(outputPathMate));
-            })
-            .join('\n');
-
-          const templateContentsRegistered = [
-            // 注册 template
-            `<template name="${getTemplateName(componentPath)}">`,
-            templateContents,
-            '</template>',
-          ];
-
-          templateContentsRegistered.unshift(dependenciesTemplateSpec);
           files.push({
             type: 'template',
-            contents: templateContentsRegistered.join('\n'),
+            contents: templateContents,
           });
         }
         let scriptCode = 'module.exports = {};';
@@ -87,8 +71,11 @@ module.exports = function componentParser(componentPath) {
           })
         ).then((children) => {
           resolve({
-            originPath: componentPath,
+            originPath,
+            outputPath,
+            templateName: getTemplateName(originPath),
             dependencyMap,
+            templatePropsData,
             files: files,
             children,
           });

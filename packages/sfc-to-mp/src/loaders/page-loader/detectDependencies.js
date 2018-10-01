@@ -14,7 +14,7 @@ const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
  * @return object
  * @example
  *
-    { 'sfc-title':
+    { 'title$4a18c350':
       { tagName: 'sfc-title',
         templateName: 'title$4a18c350',
         fileName: 'title',
