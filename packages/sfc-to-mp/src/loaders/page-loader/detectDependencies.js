@@ -14,13 +14,12 @@ const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
  * @return object
  * @example
  *
-    { 'title$4a18c350':
-      { tagName: 'sfc-title',
-        templateName: 'title$4a18c350',
-        fileName: 'title',
-        filePath: '/Users/noyobo/iceworks-workspace/example/components/title.html',
-        outputPath: '/Users/noyobo/iceworks-workspace/example/sources/components/title.html' }
-    }
+    { paragraph:
+      { tagName: 'paragraph',
+        templateName: 'paragraph$5f7d6cee',
+        parentPath: 'example/pages/home.html',
+        filePath: 'example/components/paragraph.html',
+        outputPath: 'example/sources/components/paragraph.html' } }
  */
 
 module.exports = function(script, scriptOriginFilePath) {
@@ -41,11 +40,10 @@ module.exports = function(script, scriptOriginFilePath) {
         let modulePath = importedComponentsMap[tagName];
         resolvePromise(path.dirname(scriptOriginFilePath), modulePath).then((sfcModuleAbsolute) => {
           const templateName = getTemplateName(sfcModuleAbsolute);
-          const { name } = path.parse(sfcModuleAbsolute);
           resolve({
             tagName, // 标签名
             templateName, // unique template name
-            fileName: name,
+            parentPath: scriptOriginFilePath,
             filePath: sfcModuleAbsolute, // source file path
             outputPath: path.join(
               this.rootContext,

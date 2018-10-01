@@ -7,6 +7,7 @@ const ComponentEmiter = class ComponentEmiter {
   constructor(loaderContext) {
     this.loaderContext = loaderContext;
   }
+
   emitStyle({ filepath, contents, dependencyMap }) {
     const ext = getExt('style');
     const filePathMate = path.parse(filepath);
@@ -20,7 +21,6 @@ const ComponentEmiter = class ComponentEmiter {
         const outputPathMate = path.parse(outputPath);
         delete outputPathMate.base;
         outputPathMate.ext = ext;
-        outputPathMate.name = dependencies.fileName;
         return dependencyHelper.getStyleImportPath(styleAbsolutePath, path.format(outputPathMate));
       })
       .join('\n');
@@ -35,14 +35,11 @@ const ComponentEmiter = class ComponentEmiter {
     const templateAbsolutePath = path.format({ ...filePathMate, ext });
     const templateOutputPath = path.relative(this.loaderContext.rootContext, templateAbsolutePath);
 
-    console.log(templateAbsolutePath);
-
     const dependenciesTemplateSpec = Object.values(dependencyMap)
       .map((dependencies) => {
         const outputPathMate = path.parse(dependencies.outputPath);
         delete outputPathMate.base;
         outputPathMate.ext = ext;
-        outputPathMate.name = dependencies.fileName;
         return dependencyHelper.getTemplateImportPath(templateAbsolutePath, path.format(outputPathMate));
       })
       .join('\n');
@@ -65,6 +62,8 @@ const ComponentEmiter = class ComponentEmiter {
     delete filePathMate.base;
     const scriptAbsolutePath = path.format({ ...filePathMate, ext });
     const scriptOutputPath = path.relative(this.loaderContext.rootContext, scriptAbsolutePath);
+
+    debug(scriptOutputPath);
     this.loaderContext.emitFile(scriptOutputPath, contents);
   }
 };

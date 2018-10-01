@@ -2,12 +2,12 @@ const { readFileSync } = require('fs');
 const path = require('path');
 
 const { parseSFCParts } = require('../../transpiler/parse');
+const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
+const transpiler = require('../../transpiler');
+
 const compileES5 = require('./compileES5');
 const detectDependencies = require('./detectDependencies');
-const generateStyle = require('./generateStyle');
-const generateTemplate = require('./generateTemplate');
 const getTemplateName = require('./getTemplateName');
-const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
 
 /**
  * SFC file parser with in webpack loader context
@@ -15,6 +15,13 @@ const { OUTPUT_SOURCE_FOLDER } = require('../../config/CONSTANTS');
  *
  * @param {string} componentPath SFC file path
  */
+
+const generateTemplate = function(template, { dependencyMap }) {
+  return transpiler(template.content, {
+    dependencyMap,
+  });
+};
+
 module.exports = function componentParser(componentPath) {
   return new Promise((resolve) => {
     const content = readFileSync(componentPath, 'utf-8');
@@ -32,7 +39,7 @@ module.exports = function componentParser(componentPath) {
       .bind(this)(script, componentPath)
       .then((dependencyMap = {}) => {
         if (Array.isArray(styles)) {
-          const styleContents = generateStyle(styles);
+          const styleContents = styles.map((s) => s.content).join('\n');
           files.push({
             type: 'style',
             contents: styleContents,

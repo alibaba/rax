@@ -9,6 +9,10 @@ const PageGenerator = class PageGenerator {
     this.emiter = new ComponentEmiter(loaderContext);
   }
 
+  init(rootContentsNode) {
+    this.rootContentsNode = rootContentsNode;
+  }
+
   emitChildren(note = {}) {
     if (Array.isArray(note.children)) {
       note.children.forEach((childrenNote) => {
@@ -21,14 +25,13 @@ const PageGenerator = class PageGenerator {
     }
   }
 
-  emitPage(rootContentsNode) {
-    this.rootContentsNode = rootContentsNode;
-    const { originPath, outputPath, dependencyMap, files } = rootContentsNode;
+  emitPage() {
+    const { originPath, outputPath, dependencyMap, files } = this.rootContentsNode;
     files.forEach((file) => {
       this.emitFile({ originPath, outputPath, dependencyMap, file }, 'page');
     });
 
-    this.emitChildren(rootContentsNode);
+    this.emitChildren(this.rootContentsNode);
   }
 
   emitFile({ originPath, outputPath, templateName, dependencyMap, file }, sfcType = 'component') {
@@ -40,9 +43,9 @@ const PageGenerator = class PageGenerator {
     } else if (file.type === 'template') {
       this.emiter.emitTemplate({
         filepath,
+        contents: file.contents,
         templateName,
         registyTemplate: sfcType == 'component',
-        contents: file.contents,
         dependencyMap: dependencyMap,
       });
     } else if (file.type === 'script') {
@@ -54,7 +57,6 @@ const PageGenerator = class PageGenerator {
         );
         this.emiter.emitScript({
           filepath: scriptOutputAbsolutePath,
-          scriptOutputAbsolutePath,
           contents: file.contents,
         });
       } else {
