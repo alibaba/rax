@@ -72,7 +72,7 @@ export default class VideoElement extends PolymerElement {
   }
 
   createLightDOM() {
-    const container = this.container = document.createElement('object');
+    const container = document.createElement('object');
     container.setAttribute('type', 'application/view');
     container.className = 'atag-native-video';
     container.style.display = 'block';
