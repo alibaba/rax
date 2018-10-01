@@ -96,10 +96,6 @@ export default class ScrollViewElement extends PolymerElement {
     );
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
-
   scrollingXId = 0;
   scrollingYId = 0;
 
