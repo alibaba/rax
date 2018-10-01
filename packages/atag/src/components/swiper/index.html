@@ -375,6 +375,12 @@ export default class Swiper extends PolymerElement {
     if (!noAnimation) {
       this.transitionDuration = this.duration;
     }
+    /**
+     * Hack: to trigger MutaionObserver of
+     * polyfilled IntersectionObserver to make
+     * image lazyLoad works
+     */
+    this.setAttribute('data-swiper-current', this.current);
     this._setTranslate(this._getTranslateOfRealItem(realCurrent), noAnimation ? 0 : null);
   }
 
