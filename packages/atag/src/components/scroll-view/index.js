@@ -1,26 +1,4 @@
-<dom-module id="a-scroll-view">
-  <template>
-    <style>
-      :host {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        max-width: 100vw;
-        box-sizing: border-box;
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-      }
-    </style>
-    <slot></slot>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
-import throttle from '../../shared/throttle';
+import { PolymerElement, html } from '@polymer/polymer';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
 
@@ -33,32 +11,18 @@ export default class ScrollViewElement extends PolymerElement {
     return {
       scrollIntoView: {
         type: String,
-        value: ''
-      }
+        value: '',
+      },
     };
-  }
-
-  static get observedAttributes() {
-    return [
-      'scroll-x',
-      'scroll-y',
-      'scroll-top',
-      'scroll-left',
-      'scroll-into-view'
-    ];
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
     this.expireCache(name);
-    
+
     const scrollX = this.getValue('scroll-x', 'boolean', false);
     const scrollY = this.getValue('scroll-y', 'boolean', false);
- 
+
     switch (name) {
       case 'scroll-x':
       case 'scroll-y':
@@ -74,17 +38,29 @@ export default class ScrollViewElement extends PolymerElement {
         this.scrollToX(scrollLeft);
         break;
       case 'scroll-into-view':
-        const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
+        const scrollIntoView = this.getValue(
+          'scroll-into-view',
+          'string',
+          ''
+        );
         if (scrollIntoView) {
           const targetNode = this.querySelector(`#${scrollIntoView}`);
           if (targetNode) {
             const containerRect = this.getBoundingClientRect();
             const targetNodeRect = targetNode.getBoundingClientRect();
             if (scrollX) {
-              this.scrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
+              this.scrollToX(
+                this.scrollLeft +
+                  targetNodeRect.left -
+                  containerRect.left
+              );
             }
             if (scrollY) {
-              this.scrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
+              this.scrollToY(
+                this.scrollTop +
+                  targetNodeRect.top -
+                  containerRect.top
+              );
             }
           }
         }
@@ -97,12 +73,17 @@ export default class ScrollViewElement extends PolymerElement {
   ready() {
     super.ready();
     // Improving Scroll Performance with Passive Event Listeners
-    this.addEventListener('scroll', this.handleScroll, supportsPassive ? {
-        capture: true,
-        passive: true
-      } : true);
+    this.addEventListener(
+      'scroll',
+      this.handleScroll,
+      supportsPassive
+        ? {
+            capture: true,
+            passive: true,
+          }
+        : true
+    );
   }
-
 
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -133,7 +114,8 @@ export default class ScrollViewElement extends PolymerElement {
           this.scrollTop = value;
         } else {
           const process = easeInOutCubic(deltaTime / duration);
-          this.scrollTop = initialValue + process * (value - initialValue);
+          this.scrollTop =
+            initialValue + process * (value - initialValue);
         }
       }, 16);
     } else {
@@ -163,7 +145,8 @@ export default class ScrollViewElement extends PolymerElement {
           this.scrollLeft = value;
         } else {
           const process = easeInOutCubic(deltaTime / duration);
-          this.scrollLeft = initialValue + process * (value - initialValue);
+          this.scrollLeft =
+            initialValue + process * (value - initialValue);
         }
       }, 16);
     } else {
@@ -201,7 +184,7 @@ export default class ScrollViewElement extends PolymerElement {
         scrollWidth: this.scrollWidth,
         deltaX,
         deltaY,
-      }
+      },
     });
     this.dispatchEvent(scrollEvent);
 
@@ -211,8 +194,12 @@ export default class ScrollViewElement extends PolymerElement {
       return;
     }
     this.lastScrollTime = e.timeStamp;
-    
-    const upperThreshold = this.getValue('upper-threshold', 'number', 50);
+
+    const upperThreshold = this.getValue(
+      'upper-threshold',
+      'number',
+      50
+    );
     if (
       (deltaX < 0 && this.scrollLeft <= upperThreshold) ||
       (deltaY < 0 && this.scrollTop <= upperThreshold)
@@ -226,10 +213,18 @@ export default class ScrollViewElement extends PolymerElement {
       this.scrolledToUpper = false;
     }
 
-    const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
+    const lowerThreshold = this.getValue(
+      'lower-threshold',
+      'number',
+      50
+    );
     if (
-      (deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold) || 
-      (deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold)
+      (deltaX > 0 &&
+        this.scrollWidth - this.scrollLeft - this.clientWidth <=
+          lowerThreshold) ||
+      (deltaY > 0 &&
+        this.scrollHeight - this.scrollTop - this.clientHeight <=
+          lowerThreshold)
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');
@@ -239,12 +234,11 @@ export default class ScrollViewElement extends PolymerElement {
     } else {
       this.scrolledToLower = false;
     }
-
   };
 
   getValue(name, type, defaultValue) {
     let value = this.getFromCache(name);
-    if (value === undefined) {
+    if (value == null) {
       value = this.getAttribute(name);
       this.saveToCache(name, value);
     }
@@ -254,17 +248,14 @@ export default class ScrollViewElement extends PolymerElement {
         return value === null
           ? defaultValue
           : value === '' || value === 'true' || value === true;
-        break;
       case 'string':
         return value === null ? defaultValue : String(value);
-        break;
       case 'number':
         return value === null ? defaultValue : Number(value);
-        break;
       default:
         break;
     }
-    console.error(`unrecognized type of ${type}`);
+    console.error(`atag scroll-view: unrecognized type of ${type}`);
   }
 
   valueCache = {};
@@ -277,7 +268,25 @@ export default class ScrollViewElement extends PolymerElement {
   expireCache(key) {
     delete this.valueCache[key];
   }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          position: relative;
+          display: inline-block;
+          width: 100%;
+          max-width: 100vw;
+          box-sizing: border-box;
+          -webkit-user-select: none;
+          user-select: none;
+          -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
+        }
+      </style>
+      <slot></slot>
+    `;
+  }
 }
 
 customElements.define(ScrollViewElement.is, ScrollViewElement);
-</script>
