@@ -1,26 +1,4 @@
-<dom-module id="a-scroll-view">
-  <template>
-    <style>
-      :host {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-        max-width: 100vw;
-        box-sizing: border-box;
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-      }
-    </style>
-    <slot></slot>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
-import throttle from '../../shared/throttle';
+import { PolymerElement, html } from '@polymer/polymer';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
 
@@ -33,32 +11,22 @@ export default class ScrollViewElement extends PolymerElement {
     return {
       scrollIntoView: {
         type: String,
-        value: ''
-      }
+        value: '',
+      },
     };
   }
 
   static get observedAttributes() {
-    return [
-      'scroll-x',
-      'scroll-y',
-      'scroll-top',
-      'scroll-left',
-      'scroll-into-view'
-    ];
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
+    return ['scroll-x', 'scroll-y', 'scroll-top', 'scroll-left', 'scroll-into-view', 'scroll-with-animation'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
     this.expireCache(name);
-    
+
     const scrollX = this.getValue('scroll-x', 'boolean', false);
     const scrollY = this.getValue('scroll-y', 'boolean', false);
- 
+
     switch (name) {
       case 'scroll-x':
       case 'scroll-y':
@@ -97,26 +65,23 @@ export default class ScrollViewElement extends PolymerElement {
   ready() {
     super.ready();
     // Improving Scroll Performance with Passive Event Listeners
-    this.addEventListener('scroll', this.handleScroll, supportsPassive ? {
-        capture: true,
-        passive: true
-      } : true);
-  }
-
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
+    this.addEventListener(
+      'scroll',
+      this.handleScroll,
+      supportsPassive
+        ? {
+          capture: true,
+          passive: true,
+        }
+        : true
+    );
   }
 
   scrollingXId = 0;
   scrollingYId = 0;
 
   scrollToY(value) {
-    const scrollWithAnimation = this.getValue(
-      'scroll-with-animation',
-      'boolean',
-      false
-    );
+    const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
     if (scrollWithAnimation) {
       if (this.scrollingYId) {
         clearInterval(this.scrollingYId);
@@ -142,11 +107,7 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   scrollToX(value) {
-    const scrollWithAnimation = this.getValue(
-      'scroll-with-animation',
-      'boolean',
-      false
-    );
+    const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
     if (scrollWithAnimation) {
       if (this.scrollingXId) {
         clearInterval(this.scrollingXId);
@@ -201,7 +162,7 @@ export default class ScrollViewElement extends PolymerElement {
         scrollWidth: this.scrollWidth,
         deltaX,
         deltaY,
-      }
+      },
     });
     this.dispatchEvent(scrollEvent);
 
@@ -211,12 +172,9 @@ export default class ScrollViewElement extends PolymerElement {
       return;
     }
     this.lastScrollTime = e.timeStamp;
-    
+
     const upperThreshold = this.getValue('upper-threshold', 'number', 50);
-    if (
-      (deltaX < 0 && this.scrollLeft <= upperThreshold) ||
-      (deltaY < 0 && this.scrollTop <= upperThreshold)
-    ) {
+    if (deltaX < 0 && this.scrollLeft <= upperThreshold || deltaY < 0 && this.scrollTop <= upperThreshold) {
       if (!this.scrolledToUpper) {
         const scrollToUpperEvent = new CustomEvent('scrolltoupper');
         this.dispatchEvent(scrollToUpperEvent);
@@ -228,8 +186,8 @@ export default class ScrollViewElement extends PolymerElement {
 
     const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
     if (
-      (deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold) || 
-      (deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold)
+      deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold ||
+      deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');
@@ -239,32 +197,26 @@ export default class ScrollViewElement extends PolymerElement {
     } else {
       this.scrolledToLower = false;
     }
-
   };
 
   getValue(name, type, defaultValue) {
     let value = this.getFromCache(name);
-    if (value === undefined) {
+    if (value == null) {
       value = this.getAttribute(name);
       this.saveToCache(name, value);
     }
 
     switch (type) {
       case 'boolean':
-        return value === null
-          ? defaultValue
-          : value === '' || value === 'true' || value === true;
-        break;
+        return value === null ? defaultValue : value === '' || value === 'true' || value === true;
       case 'string':
         return value === null ? defaultValue : String(value);
-        break;
       case 'number':
         return value === null ? defaultValue : Number(value);
-        break;
       default:
         break;
     }
-    console.error(`unrecognized type of ${type}`);
+    console.error(`atag scroll-view: unrecognized type of ${type}`);
   }
 
   valueCache = {};
@@ -277,7 +229,22 @@ export default class ScrollViewElement extends PolymerElement {
   expireCache(key) {
     delete this.valueCache[key];
   }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          position: relative;
+          display: block;
+          box-sizing: border-box;
+          
+          -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
+        }
+      </style>
+      <slot></slot>
+    `;
+  }
 }
 
 customElements.define(ScrollViewElement.is, ScrollViewElement);
-</script>
