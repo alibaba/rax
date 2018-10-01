@@ -57,7 +57,8 @@ export default class ImageElement extends PolymerElement {
         ImageElement.removeIntersectListener(this);
       });
     } else {
-      this._load();
+      // Load after next frame
+      requestAnimationFrame(() => this._load());
     }
 
     this._inited = true;
