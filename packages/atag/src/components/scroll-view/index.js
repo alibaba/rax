@@ -16,6 +16,17 @@ export default class ScrollViewElement extends PolymerElement {
     };
   }
 
+  static get observedAttributes() {
+    return [
+      'scroll-x',
+      'scroll-y',
+      'scroll-top',
+      'scroll-left',
+      'scroll-into-view',
+      'scroll-with-animation',
+    ];
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
     this.expireCache(name);
