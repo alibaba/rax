@@ -70,9 +70,9 @@ export default class ScrollViewElement extends PolymerElement {
       this.handleScroll,
       supportsPassive
         ? {
-            capture: true,
-            passive: true,
-          }
+          capture: true,
+          passive: true,
+        }
         : true
     );
   }
@@ -174,7 +174,7 @@ export default class ScrollViewElement extends PolymerElement {
     this.lastScrollTime = e.timeStamp;
 
     const upperThreshold = this.getValue('upper-threshold', 'number', 50);
-    if ((deltaX < 0 && this.scrollLeft <= upperThreshold) || (deltaY < 0 && this.scrollTop <= upperThreshold)) {
+    if (deltaX < 0 && this.scrollLeft <= upperThreshold || deltaY < 0 && this.scrollTop <= upperThreshold) {
       if (!this.scrolledToUpper) {
         const scrollToUpperEvent = new CustomEvent('scrolltoupper');
         this.dispatchEvent(scrollToUpperEvent);
@@ -186,8 +186,8 @@ export default class ScrollViewElement extends PolymerElement {
 
     const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
     if (
-      (deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold) ||
-      (deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold)
+      deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold ||
+      deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');
@@ -237,9 +237,6 @@ export default class ScrollViewElement extends PolymerElement {
           position: relative;
           display: block;
           box-sizing: border-box;
-          
-          -webkit-user-select: none;
-          user-select: none;
           
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
