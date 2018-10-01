@@ -89,9 +89,9 @@ export default class ScrollViewElement extends PolymerElement {
       this.handleScroll,
       supportsPassive
         ? {
-            capture: true,
-            passive: true,
-          }
+          capture: true,
+          passive: true,
+        }
         : true
     );
   }
@@ -212,8 +212,8 @@ export default class ScrollViewElement extends PolymerElement {
       50
     );
     if (
-      (deltaX < 0 && this.scrollLeft <= upperThreshold) ||
-      (deltaY < 0 && this.scrollTop <= upperThreshold)
+      deltaX < 0 && this.scrollLeft <= upperThreshold ||
+      deltaY < 0 && this.scrollTop <= upperThreshold
     ) {
       if (!this.scrolledToUpper) {
         const scrollToUpperEvent = new CustomEvent('scrolltoupper');
@@ -230,12 +230,12 @@ export default class ScrollViewElement extends PolymerElement {
       50
     );
     if (
-      (deltaX > 0 &&
+      deltaX > 0 &&
         this.scrollWidth - this.scrollLeft - this.clientWidth <=
-          lowerThreshold) ||
-      (deltaY > 0 &&
+          lowerThreshold ||
+      deltaY > 0 &&
         this.scrollHeight - this.scrollTop - this.clientHeight <=
-          lowerThreshold)
+          lowerThreshold
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');
@@ -285,12 +285,12 @@ export default class ScrollViewElement extends PolymerElement {
       <style>
         :host {
           position: relative;
-          display: inline-block;
-          width: 100%;
-          max-width: 100vw;
+          display: block;
           box-sizing: border-box;
+          
           -webkit-user-select: none;
           user-select: none;
+          
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
         }
