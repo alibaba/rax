@@ -13,9 +13,8 @@ module.exports = function bundleCtrl(ctx, next) {
     pageUrl = rendererUrl;
   }
   if (ctx.rendererInspect) {
-    pageUrl += `?remoteDebugHost=${encodeURIComponent(ctx.rendererInspectHost)}&remoteDebugPort=${
-      ctx.rendererInspectPort
-    }`;
+    const remoteInspectUrl = `http://${ctx.rendererInspectHost}:${ctx.rendererInspectPort}/target/target-script-min.js`;
+    pageUrl += `?remoteInspectUrl=${encodeURIComponent(remoteInspectUrl)}`;
   }
 
   const appJSON = getAppConfig(ctx.projectDir, {
