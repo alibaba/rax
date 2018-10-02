@@ -1,5 +1,4 @@
 const Jszip = require('jszip');
-const address = require('address');
 const { getAppConfig } = require('../../config/getAppConfig');
 const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
@@ -9,14 +8,14 @@ const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('../../config/getFr
 module.exports = function bundleCtrl(ctx, next) {
   const zip = new Jszip();
 
-  const localIP = address.ip();
-
   let pageUrl = getNativeRendererHTML(FRAMEWORK_VERSION);
   if (ctx.rendererUrl) {
     pageUrl = rendererUrl;
   }
   if (ctx.rendererInspect) {
-    pageUrl += `?remoteDebugHost=${encodeURIComponent(localIP)}&remoteDebugPort=${ctx.rendererInspectPort}`;
+    pageUrl += `?remoteDebugHost=${encodeURIComponent(ctx.rendererInspectHost)}&remoteDebugPort=${
+      ctx.rendererInspectPort
+    }`;
   }
 
   const appJSON = getAppConfig(ctx.projectDir, {

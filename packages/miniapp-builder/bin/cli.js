@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander');
+const address = require('address');
 const pkgJSON = require('../package.json');
 const { resolve, isAbsolute } = require('path');
 const getMiniappType = require('../src/config/getMiniappType');
@@ -27,13 +28,15 @@ program
   .option('-d, --dir <dir>', '<String>  Current work directory, default to CWD')
   .option('-p, --port <port>', '<Number> Dev server listening port, default to 6001')
   .option('--renderer-inspect <rendererInspect>', '<Boolean> Enable renderer inspect mode, default to false')
-  .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Inspect port for renderer, default to 9000')
+  .option('--renderer-inspect-host <rendererInspectHost>', '<String> Inspect host for renderer, default to local ip')
+  .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Inspect port for renderer, default to 8080')
   .option('--renderer-url <rendererUrl>', '<String> Renderer url for debug')
   .action(function(cmd, env) {
     const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
     const port = program.port || DEFAULT_PORT;
     const rendererInspect = !!program.rendererInspect;
-    const rendererInspectPort = program.rendererInspectPort || 9000;
+    const rendererInspectHost = program.rendererInspectHost || address.ip();
+    const rendererInspectPort = program.rendererInspectPort || 8080;
     const rendererUrl = !!program.rendererUrl;
 
     const miniappType = getMiniappType(projectDir);
@@ -50,6 +53,7 @@ program
           projectDir,
           port,
           rendererInspect,
+          rendererInspectHost,
           rendererInspectPort,
           rendererUrl,
         });
