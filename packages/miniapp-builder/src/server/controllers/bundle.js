@@ -13,6 +13,9 @@ module.exports = function bundleCtrl(ctx, next) {
     pageUrl = rendererUrl;
   }
   if (ctx.rendererInspect) {
+    /**
+     * Inspect url format of Weinre
+     */
     const remoteInspectUrl = `http://${ctx.rendererInspectHost}:${ctx.rendererInspectPort}/target/target-script-min.js`;
     pageUrl += `?remoteInspectUrl=${encodeURIComponent(remoteInspectUrl)}`;
   }
