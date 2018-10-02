@@ -16,7 +16,7 @@ const cwd = process.cwd();
 const DEFAULT_PORT = 8081;
 const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
-  sfc: 'Light Framework',
+  sfc: 'SFC Framework',
   mp: 'Mini Program Stynax',
 };
 
