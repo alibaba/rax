@@ -232,6 +232,12 @@ export default class Textarea extends PolymerElement {
            */
           -webkit-text-fill-color: initial;
           
+          /**
+           * User can select to type text
+           */
+          -webkit-user-select: auto;
+          user-select: auto;
+          
           display: block;
           outline: none;
           border: none;
