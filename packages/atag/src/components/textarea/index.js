@@ -56,11 +56,11 @@ export default class Textarea extends PolymerElement {
       showCount: {
         type: Boolean,
         value: true,
-        observer: 'observerShowCount',
+        observer: '_changeCustomStyle',
       },
       _valueLength: {
         type: Number,
-        computed: 'computedValueLength(value)',
+        computed: '_computedValueLength(value)',
       },
       countStyle: {
         type: String,
@@ -181,7 +181,7 @@ export default class Textarea extends PolymerElement {
   }
 
   _changeCustomStyle() {
-    const { placeholderStyle, countStyle } = this;
+    const { placeholderStyle, countStyle, showCount } = this;
     if (!this.styleEl) {
       // Unique id for data-id to avoid style pollution
       this.id = `textarea-${++uid}`;
@@ -191,6 +191,9 @@ export default class Textarea extends PolymerElement {
       shadowRoot.appendChild(this.styleEl);
     }
     this.styleEl.textContent = `
+      :host #textarea {
+        padding-bottom: ${showCount ? '18px' : '0'};
+      }
       :host #textarea::placeholder {
         ${placeholderStyle}
       }
@@ -198,25 +201,14 @@ export default class Textarea extends PolymerElement {
         ${placeholderStyle}
       }
       :host #count {
+        display: ${showCount ? 'block' : 'none'};
         ${countStyle}
       }
     `;
   }
 
-  computedValueLength(value) {
-    return value.length || 0;
-  }
-
-  observerShowCount(newVal, oldVal) {
-    const countStyle = this.$.count.style;
-    const textareaStyle = this.$.textarea.style;
-    if (newVal) {
-      countStyle.display = 'block';
-      textareaStyle.paddingBottom = '18px';
-    } else {
-      countStyle.display = 'none';
-      textareaStyle.paddingBottom = '0';
-    }
+  _computedValueLength(value) {
+    return value ? value.length : 0;
   }
 
   static get template() {
@@ -277,7 +269,7 @@ export default class Textarea extends PolymerElement {
         style$="[[inputStyle]]"
         rows$="[[rows]]"
       ></textarea>
-      <p id="count" style$="[[countStyle]]">{{_valueLength}}/{{maxlength}}</p>
+      <p id="count">{{_valueLength}}/{{maxlength}}</p>
     `;
   }
 }
