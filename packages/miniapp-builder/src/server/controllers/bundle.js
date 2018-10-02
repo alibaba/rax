@@ -1,6 +1,7 @@
 const Jszip = require('jszip');
 const address = require('address');
 const { getAppConfig } = require('../../config/getAppConfig');
+const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
 /**
  * write bundle.zip
@@ -8,16 +9,22 @@ const { getAppConfig } = require('../../config/getAppConfig');
 module.exports = function bundleCtrl(ctx, next) {
   const zip = new Jszip();
 
+  const localIP = address.ip();
+
+  let pageUrl = getNativeRendererHTML(FRAMEWORK_VERSION);
+  if (ctx.isDebugFramework) {
+    pageUrl = `http://${localIP}:8003/native/renderer.html`;
+  }
+  if (ctx.isDebug) {
+    pageUrl += `?remoteDebugHost=${encodeURIComponent(localIP)}&remoteDebugPort=${ctx.debugPort}`;
+  }
+
   const appJSON = getAppConfig(ctx.projectDir, {
-    pageUrl: ctx.isDebug ? `http://${address.ip()}:8003/native/renderer.html` : null
+    pageUrl,
   });
 
   /* 指定首页, 兼容外部依赖 */
-  appJSON.homepage =
-    ctx.query.wml_path ||
-    ctx.query.homepage ||
-    appJSON.homepage ||
-    appJSON.pages[0].pageName;
+  appJSON.homepage = ctx.query.wml_path || ctx.query.homepage || appJSON.homepage || appJSON.pages[0].pageName;
 
   /* 指定渲染类型, 客户端必须指定 */
   appJSON.appType = 'webview';

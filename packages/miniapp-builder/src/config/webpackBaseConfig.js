@@ -1,5 +1,4 @@
 const webpack = require('webpack');
-
 const cwd = process.cwd();
 
 module.exports = {

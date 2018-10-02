@@ -17,7 +17,7 @@ const DEFAULT_PORT = 8081;
 const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
   sfc: 'Light Framework',
-  mp: 'Mini Program Stynax'
+  mp: 'Mini Program Stynax',
 };
 
 program
@@ -25,16 +25,16 @@ program
 
   .version(pkgJSON.version)
   .option('-d, --dir <dir>', '<String>  Current work directory, default to CWD')
-  .option(
-    '-p, --port <port>',
-    '<Number> Dev server listening port, default to 6001'
-  )
+  .option('-p, --port <port>', '<Number> Dev server listening port, default to 6001')
   .option('-b, --debug', '<Boolean> Enable debug mode, default to false')
+  .option('--debug-port <debugPort>', '<Number> Client debug port, default to 9000')
+  .option('--debug-framework', '<Boolean> Enable debug framework, default to false')
   .action(function(cmd, env) {
-    const workDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
+    const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
     const port = program.port || DEFAULT_PORT;
     const isDebug = !!program.debug;
-    const miniappType = getMiniappType(workDir);
+    const isDebugFramework = !!program.debugFramework;
+    const miniappType = getMiniappType(projectDir);
     if (!miniappType) {
       console.log('Please Check your current directory is a valid project.');
       process.exit(1);
@@ -44,11 +44,21 @@ program
 
     switch (cmd) {
       case 'start': {
-        require('../src/server')(workDir, port, isDebug);
+        require('../src/server')({
+          projectDir,
+          port,
+          isDebug,
+          debugPort: program.debugPort || 9000,
+          isDebugFramework,
+        });
         break;
       }
       case 'build': {
-        require('../src/builder')(workDir, isDebug);
+        require('../src/builder')({
+          projectDir,
+          isDebug,
+          isDebugFramework,
+        });
         break;
       }
       default:
