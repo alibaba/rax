@@ -1,4 +1,5 @@
 const FRAMEWORK_VERSION = exports.FRAMEWORK_VERSION = require('./frameworkVersion');
+
 const FRAMEWORK_CDN_PREFIX = 'https://g.alicdn.com/code/npm/miniapp-framework/';
 const FRAMEWORK_CDN_SUFFIX = '/dist';
 
