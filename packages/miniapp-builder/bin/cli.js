@@ -28,7 +28,7 @@ program
   .option('-p, --port <port>', '<Number> Dev server listening port, default to 6001')
   .option('--renderer-inspect <rendererInspect>', '<Boolean> Enable renderer inspect mode, default to false')
   .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Client debug port, default to 9000')
-  .option('--renderer-url <rendererUrl>', '<String> Renderer debug url')
+  .option('--renderer-url <rendererUrl>', '<String> Renderer url for debug')
   .action(function(cmd, env) {
     const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
     const port = program.port || DEFAULT_PORT;
