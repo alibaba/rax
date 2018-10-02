@@ -177,6 +177,12 @@ export default class Input extends PolymerElement {
            * inherit from color, reset here
            */
           -webkit-text-fill-color: initial;
+          
+          /**
+           * User can select to type text
+           */
+          -webkit-user-select: auto;
+          user-select: auto;
         }
   
       </style>
