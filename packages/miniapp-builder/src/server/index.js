@@ -15,7 +15,7 @@ const app = new Koa();
  * Start MiniApp Dev Server
  */
 module.exports = function startDevServer(opts) {
-  const { projectDir, port, isDebug, debugPort, isDebugFramework } = opts;
+  const { projectDir, port, rendererInspect, rendererInspectPort, rendererUrl } = opts;
   const webpackConfig = getWebpackConfig(projectDir, true);
 
   const devMiddleware = createDevMiddleware({
@@ -39,9 +39,9 @@ module.exports = function startDevServer(opts) {
   app.use(function(ctx, next) {
     ctx.projectDir = projectDir;
     ctx.port = port;
-    ctx.isDebug = isDebug;
-    ctx.debugPort = debugPort;
-    ctx.isDebugFramework = isDebugFramework;
+    ctx.rendererInspect = rendererInspect;
+    ctx.rendererInspectPort = rendererInspectPort;
+    ctx.rendererUrl = rendererUrl;
     return next();
   });
   app.use(devMiddleware);

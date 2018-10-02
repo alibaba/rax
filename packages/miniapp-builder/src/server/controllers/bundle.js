@@ -12,11 +12,11 @@ module.exports = function bundleCtrl(ctx, next) {
   const localIP = address.ip();
 
   let pageUrl = getNativeRendererHTML(FRAMEWORK_VERSION);
-  if (ctx.isDebugFramework) {
-    pageUrl = `http://${localIP}:8003/native/renderer.html`;
+  if (ctx.rendererUrl) {
+    pageUrl = rendererUrl;
   }
-  if (ctx.isDebug) {
-    pageUrl += `?remoteDebugHost=${encodeURIComponent(localIP)}&remoteDebugPort=${ctx.debugPort}`;
+  if (ctx.rendererInspect) {
+    pageUrl += `?remoteDebugHost=${encodeURIComponent(localIP)}&remoteDebugPort=${ctx.rendererInspectPort}`;
   }
 
   const appJSON = getAppConfig(ctx.projectDir, {

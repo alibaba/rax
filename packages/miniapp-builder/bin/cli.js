@@ -26,14 +26,16 @@ program
   .version(pkgJSON.version)
   .option('-d, --dir <dir>', '<String>  Current work directory, default to CWD')
   .option('-p, --port <port>', '<Number> Dev server listening port, default to 6001')
-  .option('-b, --debug', '<Boolean> Enable debug mode, default to false')
-  .option('--debug-port <debugPort>', '<Number> Client debug port, default to 9000')
-  .option('--debug-framework', '<Boolean> Enable debug framework, default to false')
+  .option('--renderer-inspect <rendererInspect>', '<Boolean> Enable renderer inspect mode, default to false')
+  .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Client debug port, default to 9000')
+  .option('--renderer-url <rendererUrl>', '<String> Renderer debug url, default to false')
   .action(function(cmd, env) {
     const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
     const port = program.port || DEFAULT_PORT;
-    const isDebug = !!program.debug;
-    const isDebugFramework = !!program.debugFramework;
+    const rendererInspect = !!program.rendererInspect;
+    const rendererInspectPort = program.rendererInspectPort || 9000;
+    const rendererUrl = !!program.rendererUrl;
+
     const miniappType = getMiniappType(projectDir);
     if (!miniappType) {
       console.log('Please Check your current directory is a valid project.');
@@ -47,17 +49,15 @@ program
         require('../src/server')({
           projectDir,
           port,
-          isDebug,
-          debugPort: program.debugPort || 9000,
-          isDebugFramework,
+          rendererInspect,
+          rendererInspectPort,
+          rendererUrl,
         });
         break;
       }
       case 'build': {
         require('../src/builder')({
           projectDir,
-          isDebug,
-          isDebugFramework,
         });
         break;
       }
