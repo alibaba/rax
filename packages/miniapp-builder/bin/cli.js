@@ -17,7 +17,7 @@ const DEFAULT_PORT = 8081;
 const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
   sfc: 'SFC Framework',
-  mp: 'Mini Program Stynax',
+  mp: 'Mini Program',
 };
 
 program
