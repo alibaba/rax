@@ -23,7 +23,7 @@ export default class Input extends PolymerElement {
         value: '',
         reflectToAttribute: true,
       },
-      placeholderstyle: {
+      placeholderStyle: {
         type: String,
         value: 'color: #999999;',
         observer: 'changePlaceholderStyle',
