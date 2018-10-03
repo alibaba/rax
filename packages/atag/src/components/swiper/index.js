@@ -419,6 +419,13 @@ export default class Swiper extends PolymerElement {
       if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
         this._onTouchStart(detail);
       }
+
+      /**
+       * NOTE: Android style set touch-action means
+       * do not act any type of touch events, which will
+       * prevent default page scroll.
+       */
+      Gestures.setTouchAction(this, 'initial');
     }
   }
 
