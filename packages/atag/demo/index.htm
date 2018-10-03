@@ -87,26 +87,42 @@
 
   <div class="card">
     <h4 class="title">a-button</h4>
-    <div class="demo">
-      <a-button>Button</a-button>
-      <a-button type="warn">Warn Button</a-button>
-      <a-button size="mini">Mini Button</a-button>
-      <a-button plain>Plain Button</a-button>
-      <a-button disabled>Dsabled Button</a-button>
-      <a-button id="buttonDisabled" type="warn" disabled>Dsabled Warn Button</a-button>
-      <a-button size="mini" disabled>Dsabled Mini Button</a-button>
-      <a-button plain disabled>Disabled Plain Button</a-button>
-      <a-button id="buttonSubmit" form-type="submit">FormType submit</a-button>
+    <div class="demo" style="background-color: #eee">
+
+      <a-button style="margin: 8px">Default Button</a-button>
+      <a-button style="margin: 8px" type="primary">Primary Button</a-button>
+      <a-button style="margin: 8px" type="warn">Warn Button</a-button>
+
+      <a-button style="margin: 8px" size="mini">Mini Default Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="primary">Mini Primary Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="warn">Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain>Plain Default Button</a-button>
+      <a-button style="margin: 8px" plain type="primary">Plain Primary Button</a-button>
+      <a-button style="margin: 8px" plain type="warn">Plain Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain size="mini">Plain Mini Default Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="primary">Plain Mini Primary Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="warn">Plain Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled>Dsabled Default Button</a-button>
+      <a-button style="margin: 8px" disabled type="primary">Dsabled Primary Button</a-button>
+      <a-button style="margin: 8px" disabled type="warn">Dsabled Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled plain>Dsabled Plain Default Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="primary">Dsabled Plain Primary Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="warn">Dsabled Plain Warn Button</a-button>
+
+
+      <a-button style="margin: 8px" loading>Loading Default Button</a-button>
+      <a-button style="margin: 8px" loading type="primary">Loading Primary Button</a-button>
+      <a-button style="margin: 8px" loading type="warn">Loading Warn Button</a-button>
+
+      <a-button style="margin: 8px" loading plain>Loading Plain Button</a-button>
+      <a-button style="margin: 8px" loading plain type="primary">Loading Plain Primary Button</a-button>
+      <a-button style="margin: 8px" loading plain type="warn">Loading Plain Warn Button</a-button>
     </div>
   </div>
-  <script>
-    buttonDisabled.addEventListener('click', (evt) => {
-      alert('You should not see this.');
-    });
-    buttonSubmit.addEventListener('_buttonSubmit', (evt) => {
-      alert('Trigger button submit event.');
-    });
-  </script>
 
   <div class="card">
     <h4 class="title">a-image</h4>
