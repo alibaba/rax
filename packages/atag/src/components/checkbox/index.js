@@ -6,10 +6,6 @@ export default class CheckboxElement extends PolymerElement {
     return 'a-checkbox';
   }
 
-  static get observedAttributes() {
-    return ['value', 'disabled', 'checked', 'color'];
-  }
-
   static get properties() {
     return {
       value: {
