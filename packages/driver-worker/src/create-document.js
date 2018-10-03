@@ -304,7 +304,7 @@ export default function() {
         event.bubbles &&
         !(c && event._stop) &&
         (event.currentTarget = t = t.parentNode)
-        );
+      );
       return !event.defaultPrevented;
     }
   }
