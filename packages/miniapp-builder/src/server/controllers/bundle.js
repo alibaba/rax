@@ -3,7 +3,7 @@ const { getAppConfig } = require('../../config/getAppConfig');
 const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
 /**
- * write bundle.zip
+ * Output bundle.zip
  */
 module.exports = function bundleCtrl(ctx, next) {
   const zip = new Jszip();
