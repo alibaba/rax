@@ -93,11 +93,20 @@
       <a-button size="mini">Mini Button</a-button>
       <a-button plain>Plain Button</a-button>
       <a-button disabled>Dsabled Button</a-button>
-      <a-button type="warn" disabled>Dsabled Warn Button</a-button>
+      <a-button id="buttonDisabled" type="warn" disabled>Dsabled Warn Button</a-button>
       <a-button size="mini" disabled>Dsabled Mini Button</a-button>
       <a-button plain disabled>Disabled Plain Button</a-button>
+      <a-button id="buttonSubmit" form-type="submit">FormType submit</a-button>
     </div>
   </div>
+  <script>
+    buttonDisabled.addEventListener('click', (evt) => {
+      alert('You should not see this.');
+    });
+    buttonSubmit.addEventListener('_buttonSubmit', (evt) => {
+      alert('Trigger button submit event.');
+    });
+  </script>
 
   <div class="card">
     <h4 class="title">a-image</h4>
