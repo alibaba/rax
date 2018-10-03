@@ -10,7 +10,7 @@ module.exports = function bundleCtrl(ctx, next) {
 
   let pageUrl = getNativeRendererHTML(FRAMEWORK_VERSION);
   if (ctx.rendererUrl) {
-    pageUrl = rendererUrl;
+    pageUrl = ctx.rendererUrl;
   }
   if (ctx.rendererInspect) {
     /**
