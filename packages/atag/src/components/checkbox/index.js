@@ -110,27 +110,26 @@ export default class CheckboxElement extends PolymerElement {
     return html`
       <style>
         :host {
-          position: relative;
-          box-sizing: border-box;
-          -webkit-user-select: none;
-          user-select: none;
-          overflow: hidden;
+          -webkit-tap-highlight-color: transparent;
+          display: inline-block;
         }
-  
         :host .circle {
           display: inline-flex;
           display: -webkit-inline-flex;
+          
           width: 1.25em;
           height: 1.25em;
+          
           justify-content: center;
           -webkit-justify-content: center;
           align-items: center;
           -webkit-align-items: center;
+          
           vertical-align: middle;
           border: 1px solid #999;
           border-radius: 0.2em;
           box-sizing: border-box;
-          background-color: white;
+          background-color: #fff;
           cursor: pointer;
         }
   
