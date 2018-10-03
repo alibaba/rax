@@ -1,0 +1,235 @@
+import { PolymerElement, html } from '@polymer/polymer';
+
+export default class Button extends PolymerElement {
+  static get is() {
+    return 'a-button';
+  }
+
+  /**
+   * Reflect button properties to attribute
+   * for applying CSS effect
+   */
+  static get properties() {
+    return {
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      },
+      plain: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      },
+      loading: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      },
+      formType: {
+        type: String,
+        value: '',
+      },
+    };
+  }
+
+  ready() {
+    super.ready();
+    // Check form-type and listen click event, then dispatch event
+    if (this.formType) {
+      this.addEventListener('click', this._dispatchEvent);
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.formType) {
+      this.removeEventListener('click', this._dispatchEvent);
+    }
+  }
+
+  _dispatchEvent() {
+    let evt;
+    switch (this.formType) {
+      case 'submit':
+        evt = new CustomEvent('_buttonSubmit', {
+          bubbles: true,
+          composed: true,
+        });
+        break;
+      case 'reset':
+        evt = new CustomEvent('_buttonReset', {
+          bubbles: true,
+          composed: true,
+        });
+        break;
+    }
+    if (evt) {
+      this.dispatchEvent(evt);
+    }
+  }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          display: block;
+          position: relative;
+          margin: 0 auto;
+          padding: 0 10px;
+          min-width: 60px;
+          height: 40px;
+          line-height: 40px;
+          text-align: center;
+          box-sizing: border-box;
+          overflow: hidden;
+          font-size: 14px;
+          text-decoration: none;
+          border-radius: 40px;
+          color: #fff;
+          background: linear-gradient(to right, #ff8000, #ff5000);
+          cursor: pointer;
+          -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        :host:after {
+          content: ' ';
+          width: 200%;
+          height: 200%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform: scale(0.5);
+          transform-origin: 0 0;
+          box-sizing: border-box;
+          border-radius: 80px;
+        }
+
+        :host:active {
+          color: #fff;
+          background-color: #dedede;
+        }
+
+        /* primary */
+        :host([type='primary']) {
+          color: #fff;
+          background: linear-gradient(to right, #ff8000, #ff5000);
+        }
+
+        :host([type='primary']):active {
+          color: rgba(255, 255, 255, 0.6);
+          background: #ff5100;
+        }
+
+        /* warn */
+        :host([type='warn']) {
+          color: #fff;
+          background: #e64340;
+        }
+
+        :host([type='warn']):active {
+          color: rgba(255, 255, 255, 0.6);
+          background-color: #ce3c39;
+        }
+
+        /* mini */
+        :host([size='mini']) {
+          display: inline-block;
+          min-width: 40px;
+          height: 28px;
+          line-height: 28px;
+          font-size: 12px;
+        }
+
+        :host([plain='']),
+        :host([plain='true']) {
+          background: transparent;
+          color: #ff5000;
+        }
+
+        :host([plain='']):after,
+        :host([plain='true']):after {
+          border: 2px solid #ff5000;
+        }
+
+        :host([plain='']):host([type='warn']),
+        :host([plain='true']):host([type='warn']) {
+          color: #e64340;
+        }
+
+        :host([plain='']):host([type='warn']):after,
+        :host([plain='true']):host([type='warn']):after {
+          border: 2px solid #e64340;
+        }
+
+        :host([plain='']):host([disabled='']),
+        :host([plain='true']):host([disabled='']),
+        :host([plain='']):host([disabled='true']),
+        :host([plain='true']):host([disabled='true']) {
+          pointer-events: none;
+          color: #ffc6a1;
+          background: transparent;
+        }
+
+        :host([plain='']):host([disabled='']):after,
+        :host([plain='true']):host([disabled='']):after,
+        :host([plain='']):host([disabled='true']):after,
+        :host([plain='true']):host([disabled='true']):after {
+          border-color: inherit;
+        }
+
+        :host([disabled='']),
+        :host([disabled='true']) {
+          pointer-events: none;
+        }
+
+        :host([disabled='']),
+        :host([disabled='true']) {
+          pointer-events: none;
+          color: #ffc6a1;
+          background: linear-gradient(to right, #ffbf7f, #ffa87f);
+        }
+
+        .loading {
+          display: none;
+          width: 20px;
+          height: 20px;
+          margin-right: 7.5px;
+          animation: _rotate 1.5s linear infinite;
+          -webkit-animation: _rotate 1.5s linear infinite;
+          vertical-align: middle;
+        }
+
+        :host([loading='']) .loading,
+        :host([loading='true']) .loading {
+          display: inline-block;
+        }
+
+        @keyframes _rotate {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        /**
+         * Add webkit prefix for iOS 8
+         */
+        @-webkit-keyframes _rotate {
+          from {
+            -webkit-transform: rotate(0deg);
+          }
+          to {
+            -webkit-transform: rotate(360deg);
+          }
+        }
+      </style>
+      <img class="loading" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABMCAMAAAD5ogFjAAAADFBMVEVHcEz///////////8Gn9AKAAAABHRSTlMAVKv+z9BazwAAASxJREFUeNrtmEGOxCAMBOni/3+ew2rHaAATttHOhTpFJOnYxrSslBWCWisqJtRfLCnVBmwdX6l+gFmfQF5iAWZAwTEheaUOaNsUZAppFaKElAqpy5mBDPFwViMWO6nPW6o9o2XmXcMsN4aryWZrEtKDNtXoFmmFgqT7hqtK9rIXmu+ciiFURL6Va6FA0qpN556xd3DmD7DlCcxtbM/uNP3Uhk1lh41Ne8lsJCdJzDDhYiEiHBP9lOHyNcCa7aTBydiH97ter0cUWN1ORIF1/BovqYGcoe5YRKdqRBMdzsDaijqjr+Ka8kcA3rLXoi6Xf4U4vBbs2ICAhUnpsQ+R2ybPzfqckJ8a2Se3vJskdMUvJxdpqI9UbBTd5eFO1P2YcIWmdLOKG9KZRoKy4gVsMw2/9NcQzQAAAABJRU5ErkJggg==" />
+      <slot></slot>
+    `;
+  }
+}
+
+customElements.define(Button.is, Button);
