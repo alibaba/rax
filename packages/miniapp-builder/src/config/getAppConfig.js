@@ -3,11 +3,23 @@ const { readFileSync, existsSync } = require('fs');
 const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('./getFrameworkCDNUrl');
 
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
+const DEFAULT_CONFIG = {
+  /**
+   * Native appType for setting container type
+   */
+  appType: 'webview',
+  /**
+   * Native SDK Version means API level
+   * if not satisfied, will notify upgrade
+   * for users. must be a typeof string.
+   */
+  sdkVersion: '2',
+};
 
 function getAppConfig(projectDir, opts) {
   const manifestFilePath = join(projectDir, 'manifest.json');
   const appDotJSONFilePath = join(projectDir, 'app.json');
-  const appJSON = {};
+  const appJSON = Object.assign({}, DEFAULT_CONFIG);
 
   if (existsSync(manifestFilePath)) {
     Object.assign(appJSON, readJSONSync(manifestFilePath));
