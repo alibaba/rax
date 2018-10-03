@@ -386,25 +386,25 @@
           </a-checkbox-group>
         </a-view>
         <a-view style="margin: 8px">
-          <a-button style="margin: 8px" formType="submit">Submit</a-button>
-          <a-button style="margin: 8px" formType="reset">Reset</a-button>
+          <a-button style="margin: 8px" form-type="submit">Submit</a-button>
+          <a-button style="margin: 8px" form-type="reset">Reset</a-button>
         </a-view>
         <p style="overflow-wrap: break-word;">
-          Submit Event: <span id="formSubmit">null</span>
+          Submit Event: <pre id="formSubmit">null</pre>
         </p>
         <p style="overflow-wrap: break-word;">
-          Reset Event: <span id="formReset">null</span>
+          Reset Event: <pre id="formReset">null</pre>
         </p>
       </a-form>
     </div>
   </div>
 
   <script>
-    form.addEventListener('submit',function(e) {
-      formSubmit.innerHTML=JSON.stringify(e.detail.value);
+    form.addEventListener('submit', function(e) {
+      formSubmit.innerHTML = JSON.stringify(e.detail.value, null, 2);
     });
-    form.addEventListener('reset',function(e) {
-      formReset.innerHTML=String(new Date);
+    form.addEventListener('reset', function(e) {
+      formReset.innerHTML = String(new Date);
     });
   </script>
 
