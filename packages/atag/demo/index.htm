@@ -88,24 +88,24 @@
   </div>
 
   <script>
-    image.addEventListener('load',function(e) {
-      imageLoad.innerHTML=JSON.stringify(e.detail);
+    image.addEventListener('load', function (e) {
+      imageLoad.innerHTML = JSON.stringify(e.detail);
     });
-    errorImage.addEventListener('error',function(e) {
-      imageError.innerHTML=e.detail.errMsg;
+    errorImage.addEventListener('error', function (e) {
+      imageError.innerHTML = e.detail.errMsg;
     });
-    image.addEventListener('click',function(e) {
-      image.src='https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    image.addEventListener('click', function (e) {
+      image.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
     });
-    asyncImage.addEventListener('click',function(e) {
-      asyncImage.src='https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    asyncImage.addEventListener('click', function (e) {
+      asyncImage.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
     });
-    asyncImage.addEventListener('load',function(e) {
-      asyncImageLoad.innerHTML=JSON.stringify(e.detail);
+    asyncImage.addEventListener('load', function (e) {
+      asyncImageLoad.innerHTML = JSON.stringify(e.detail);
     });
     setTimeout(() => {
-      image.setAttribute('mode','top');
-    },2000);
+      image.setAttribute('mode', 'top');
+    }, 2000);
   </script>
 
   <div class="card">
@@ -138,14 +138,14 @@
   </div>
 
   <script>
-    input.addEventListener('input',function(e) {
-      inputInput.innerHTML=e.detail.value||'null';
+    input.addEventListener('input', function (e) {
+      inputInput.innerHTML = e.detail.value || 'null';
     });
-    input.addEventListener('focus',function(e) {
-      inputFocus.innerHTML=e.detail.value||'null';
+    input.addEventListener('focus', function (e) {
+      inputFocus.innerHTML = e.detail.value || 'null';
     });
-    input.addEventListener('blur',function(e) {
-      inputBlur.innerHTML=e.detail.value||'null';
+    input.addEventListener('blur', function (e) {
+      inputBlur.innerHTML = e.detail.value || 'null';
     });
   </script>
 
@@ -167,11 +167,11 @@
   </div>
 
   <script>
-    textarea.addEventListener('input',function(e) {
-      textareaInput.innerHTML=e.detail.value||'null';
+    textarea.addEventListener('input', function (e) {
+      textareaInput.innerHTML = e.detail.value || 'null';
     });
-    textarea.addEventListener('blur',function(e) {
-      textareaBlur.innerHTML=e.detail.value||'null';
+    textarea.addEventListener('blur', function (e) {
+      textareaBlur.innerHTML = e.detail.value || 'null';
     });
   </script>
 
@@ -219,8 +219,8 @@
   </div>
 
   <script>
-    radioGroup.addEventListener('change',e => {
-      radioChange.innerHTML=e.detail.value;
+    radioGroup.addEventListener('change', e => {
+      radioChange.innerHTML = e.detail.value;
     });
   </script>
 
@@ -257,8 +257,8 @@
     </div>
   </div>
   <script>
-    picker.addEventListener('change',e => {
-      pickerResult.innerHTML='picked '+e.detail.value;
+    picker.addEventListener('change', e => {
+      pickerResult.innerHTML = 'picked ' + e.detail.value;
     });
   </script>
 
@@ -315,11 +315,11 @@
   </div>
 
   <script>
-    form.addEventListener('submit',function(e) {
-      formSubmit.innerHTML=JSON.stringify(e.detail.value);
+    form.addEventListener('submit', function (e) {
+      formSubmit.innerHTML = JSON.stringify(e.detail.value);
     });
-    form.addEventListener('reset',function(e) {
-      formReset.innerHTML=String(new Date);
+    form.addEventListener('reset', function (e) {
+      formReset.innerHTML = String(new Date);
     });
   </script>
 
@@ -426,22 +426,22 @@
   </div>
 
   <script>
-    swiper.addEventListener('change',function(event) {
-      swiperChangeEvent.innerHTML=event.detail.current;
+    swiper.addEventListener('change', function (event) {
+      swiperChangeEvent.innerHTML = event.detail.current;
     });
 
-    swiperPrevButton.addEventListener('click',function(event) {
-      swiper.setAttribute('current',swiper.current-1);
+    swiperPrevButton.addEventListener('click', function (event) {
+      swiper.setAttribute('current', swiper.current - 1);
     });
 
-    swiperNextButton.addEventListener('click',function(event) {
-      swiper.setAttribute('current',swiper.current+1);
+    swiperNextButton.addEventListener('click', function (event) {
+      swiper.setAttribute('current', swiper.current + 1);
     });
 
-    btnAddSwiperItem.addEventListener('click',function(event) {
-      dynamicSwiper.innerHTML+=`
+    btnAddSwiperItem.addEventListener('click', function (event) {
+      dynamicSwiper.innerHTML += `
         <a-swiper-item>
-          <a-view style="height: 100%;">` +(dynamicSwiper.children.length+1)+`</a-view>
+          <a-view style="height: 100%;">` + (dynamicSwiper.children.length + 1) + `</a-view>
         </a-swiper-item>
       `;
     });
@@ -504,30 +504,30 @@
   </div>
 
   <script>
-    var toggleScrolling=true;
-    toggleScroll.addEventListener('click',function() {
-      scrollingStatus.innerHTML=(toggleScrolling=!toggleScrolling)? 'enable':'disable';
-      scrollview.setAttribute('scroll-y',toggleScrolling);
+    var toggleScrolling = true;
+    toggleScroll.addEventListener('click', function () {
+      scrollingStatus.innerHTML = (toggleScrolling = !toggleScrolling) ? 'enable' : 'disable';
+      scrollview.setAttribute('scroll-y', toggleScrolling);
     });
 
-    scrollview.addEventListener('scroll',function(e) {
-      scrollEvent.innerHTML=JSON.stringify(e.detail);
+    scrollview.addEventListener('scroll', function (e) {
+      scrollEvent.innerHTML = JSON.stringify(e.detail);
     });
 
-    scrollview.addEventListener('scrolltoupper',function(e) {
-      scrolltoupperEvent.innerHTML=+new Date;
+    scrollview.addEventListener('scrolltoupper', function (e) {
+      scrolltoupperEvent.innerHTML = +new Date;
     });
 
-    scrollview.addEventListener('scrolltolower',function(e) {
-      scrolltolowerEvent.innerHTML=+new Date;
+    scrollview.addEventListener('scrolltolower', function (e) {
+      scrolltolowerEvent.innerHTML = +new Date;
     });
 
-    scrollToUpper.addEventListener('click',function(e) {
-      scrollview.setAttribute('scroll-top',0);
+    scrollToUpper.addEventListener('click', function (e) {
+      scrollview.setAttribute('scroll-top', 0);
     });
 
-    scrollToLower.addEventListener('click',function(e) {
-      scrollview.setAttribute('scroll-top',10000);
+    scrollToLower.addEventListener('click', function (e) {
+      scrollview.setAttribute('scroll-top', 10000);
     });
   </script>
 
@@ -608,8 +608,8 @@
     </div>
     <script>
       setTimeout(() => {
-        pickerView.setAttribute('value','[3, 5, 5]');
-      },2000);
+        pickerView.setAttribute('value', '[3, 5, 5]');
+      }, 2000);
     </script>
   </div>
   <div class="card">
