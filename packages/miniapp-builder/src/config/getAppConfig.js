@@ -1,6 +1,6 @@
 const { join, resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
-const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('./getFrameworkCDNUrl');
+const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('./getFrameworkCDNUrl');
 
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
 
@@ -17,7 +17,7 @@ function getAppConfig(projectDir, opts) {
     throw new Error('不存在以下文件: app.json | manifest.json');
   }
 
-  const nativeRendererHTML = getNativeRendererHTML(
+  const nativeRendererUrl = getNativeRendererUrl(
     appJSON.frameworkVersion || FRAMEWORK_VERSION
   );
 
@@ -36,7 +36,7 @@ function getAppConfig(projectDir, opts) {
       } else if (opts && opts.pageUrl) {
         pageUrl = opts.pageUrl;
       } else {
-        pageUrl = nativeRendererHTML;
+        pageUrl = nativeRendererUrl;
       }
 
       const pageConfig = {
@@ -62,7 +62,7 @@ function getAppConfig(projectDir, opts) {
       const pageConfig = {
         pageName,
         pagePath,
-        pageUrl: nativeRendererHTML
+        pageUrl: nativeRendererUrl
       };
       // merge page config json
       const independentPageConfigPath = resolve(projectDir, pagePath + '.json');
