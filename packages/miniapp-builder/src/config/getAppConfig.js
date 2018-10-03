@@ -4,8 +4,10 @@ const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('./getFrameworkCDNUr
 
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
 const DEFAULT_CONFIG = {
-  appType: 'webview', // thirdparty miniapp type
-  sdkVersion: '2' // native sdk version
+  // Thirdparty miniapp type
+  appType: 'webview',
+  // Native sdk version
+  sdkVersion: '2',
 };
 
 function getAppConfig(projectDir, opts) {
