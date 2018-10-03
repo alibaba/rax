@@ -352,11 +352,17 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
+  /**
+   * Each embed view will emit whose ready event
+   * identifier by param.bridgeId
+   */
   _nativeReady = evt => {
-    this.isNativeReady = true;
-    let fn;
-    while (fn = this.nativeReadyCallbacks.shift()) {
-      fn();
+    if (evt.param && evt.param.bridgeId === this.getBridgeId()) {
+      this.isNativeReady = true;
+      let fn;
+      while (fn = this.nativeReadyCallbacks.shift()) {
+        fn();
+      }
     }
   };
 
