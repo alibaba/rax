@@ -1,6 +1,6 @@
 const Jszip = require('jszip');
 const { getAppConfig } = require('../../config/getAppConfig');
-const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
+const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
 /**
  * write bundle.zip
@@ -8,7 +8,7 @@ const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('../../config/getFr
 module.exports = function bundleCtrl(ctx, next) {
   const zip = new Jszip();
 
-  let pageUrl = getNativeRendererHTML(FRAMEWORK_VERSION);
+  let pageUrl = getNativeRendererUrl(FRAMEWORK_VERSION);
   if (ctx.rendererUrl) {
     pageUrl = ctx.rendererUrl;
   }
