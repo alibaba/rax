@@ -4,9 +4,15 @@ const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('./getFrameworkCDNUr
 
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
 const DEFAULT_CONFIG = {
-  // Thirdparty miniapp type
+  /**
+   * Native appType for setting container type
+   */
   appType: 'webview',
-  // Native sdk version
+  /**
+   * Native SDK Version means API level
+   * if not satisfied, will notify upgrade
+   * for users. must be a typeof string.
+   */
   sdkVersion: '2',
 };
 
