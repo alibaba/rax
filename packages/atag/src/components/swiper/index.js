@@ -70,7 +70,7 @@ export default class Swiper extends PolymerElement {
 
   get isCircular() {
     // if itemsCount less than 1, circular should not perform
-    return (this.itemsCount > 1 && this.circular) || this.circular === '';
+    return this.itemsCount > 1 && this.circular || this.circular === '';
   }
 
   get isAutoplay() {
@@ -220,13 +220,13 @@ export default class Swiper extends PolymerElement {
     this.transitionDuration = this.duration;
     const isQuickAction = new Date().getTime() - this.startTime < 1000;
 
-    if (this.delta < -100 || (isQuickAction && this.delta < -15)) {
+    if (this.delta < -100 || isQuickAction && this.delta < -15) {
       if (!this.isCircular && this.current + 1 === this.itemsCount) {
         this._revert();
       } else {
         this._next();
       }
-    } else if (this.delta > 100 || (isQuickAction && this.delta > 15)) {
+    } else if (this.delta > 100 || isQuickAction && this.delta > 15) {
       if (!this.isCircular && this.current === 0) {
         this._revert();
       } else {
@@ -251,7 +251,7 @@ export default class Swiper extends PolymerElement {
     this.current = this.current < 0 ? 0 : this.current > itemsCount - 1 ? itemsCount - 1 : this.current;
     const isCurrentLastItem = this.current === itemsCount - 1;
     const realCurrent = this.isCircular ? this.current + 1 : this.current;
-    const nextRealCurrent = isCurrentLastItem ? (this.isCircular ? realCurrent + 1 : 0) : realCurrent + 1;
+    const nextRealCurrent = isCurrentLastItem ? this.isCircular ? realCurrent + 1 : 0 : realCurrent + 1;
 
     this.prevAction = 'next';
     this._setRealItem(nextRealCurrent);
@@ -263,7 +263,7 @@ export default class Swiper extends PolymerElement {
   _prev = () => {
     const isCurrentFirstItem = this.current === 0;
     const realCurrent = this.isCircular ? this.current + 1 : this.current;
-    const prevRealCurrent = isCurrentFirstItem ? (this.isCircular ? realCurrent - 1 : 0) : realCurrent - 1;
+    const prevRealCurrent = isCurrentFirstItem ? this.isCircular ? realCurrent - 1 : 0 : realCurrent - 1;
 
     this.prevAction = 'prev';
     this._setRealItem(prevRealCurrent);
@@ -416,7 +416,7 @@ export default class Swiper extends PolymerElement {
       const dy = detail.dy;
       const direction = Math.abs(dy) - Math.abs(dx);
 
-      if ((!this.vertical && direction < 0) || (this.vertical && direction > 0)) {
+      if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
         this._onTouchStart(detail);
       }
     }
