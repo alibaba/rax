@@ -2,6 +2,7 @@ import 'components/swiper/swiper-item';
 import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures.js';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -20,6 +21,7 @@ export default class Swiper extends PolymerElement {
       vertical: {
         type: Boolean,
         value: false,
+        observer: '_observeVertical',
       },
       circular: {
         type: Boolean,
@@ -90,6 +92,38 @@ export default class Swiper extends PolymerElement {
 
     Gestures.addListener(this, 'track', this.handleTrack);
     this.isReady = true;
+  }
+
+  /**
+   * NOTE: if swiper direction is different with parent
+   * scroll view direction, set touch-action to pan-x if vertical,
+   * to pan-y if not vertical.
+   * Espect case: if parent scroll element is the whole page
+   * swiper's scroll direction is y, set touch action to none to
+   * avoid double scroll.
+   */
+  _observeVertical() {
+    afterNextRender(this, () => {
+      const parentScrollView = this._getParentScrollView();
+      const parentScrollVertical = !(parentScrollView && parentScrollView.scrollX);
+      if (this.vertical && parentScrollView === null) {
+        Gestures.setTouchAction(this, 'none');
+      } else if (this.vertical === parentScrollVertical) {
+        Gestures.setTouchAction(this, 'auto');
+      } else {
+        Gestures.setTouchAction(this, this.vertical ? 'pan-x' : 'pan-y');
+      }
+    });
+  }
+
+  _getParentScrollView() {
+    let parent = this;
+    while (parent = parent.parentElement) {
+      if (parent.tagName === 'A-SCROLL-VIEW') {
+        return parent;
+      }
+    }
+    return null;
   }
 
   handleChildrenChanged(info) {
@@ -419,13 +453,6 @@ export default class Swiper extends PolymerElement {
       if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
         this._onTouchStart(detail);
       }
-
-      /**
-       * NOTE: Android style set touch-action means
-       * do not act any type of touch events, which will
-       * prevent default page scroll.
-       */
-      Gestures.setTouchAction(this, 'initial');
     }
   }
 

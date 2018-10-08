@@ -13,6 +13,14 @@ export default class ScrollViewElement extends PolymerElement {
         type: String,
         value: '',
       },
+      scrollX: {
+        type: Boolean,
+        value: false,
+      },
+      scrollY: {
+        type: Boolean,
+        value: false,
+      },
     };
   }
 
