@@ -96,16 +96,17 @@ export default class Swiper extends PolymerElement {
 
   /**
    * NOTE: if swiper direction is different with parent
-   * scroll view direction, set touch-action to pan-x if vertical,
-   * to pan-y if not vertical.
-   * Espect case: if parent scroll element is the whole page
-   * swiper's scroll direction is y, set touch action to none to
-   * avoid double scroll.
+   * scroll view direction, set touch-action to pan-x if vertically,
+   * to pan-y if not.
+   * Excepted case: if parent scroll element is the whole page (body)
+   * and the swiper's scroll direction is vertical, set touch action
+   * to none to avoid double scrolling.
    */
   _observeVertical() {
     afterNextRender(this, () => {
       const parentScrollView = this._getParentScrollView();
       const parentScrollVertical = !(parentScrollView && parentScrollView.scrollX);
+
       if (this.vertical && parentScrollView === null) {
         Gestures.setTouchAction(this, 'none');
       } else if (this.vertical === parentScrollVertical) {
