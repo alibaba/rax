@@ -128,7 +128,7 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
   result.tabBar = tabBar;
 
   return result;
-}
+};
 
 /**
  * Get JS Object from filename.
