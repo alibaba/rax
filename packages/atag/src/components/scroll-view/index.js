@@ -1,6 +1,9 @@
 import { PolymerElement, html } from '@polymer/polymer';
+import '@polymer/polymer/lib/elements/custom-style';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
+
+let uid = 0;
 
 export default class ScrollViewElement extends PolymerElement {
   static get is() {
@@ -16,6 +19,7 @@ export default class ScrollViewElement extends PolymerElement {
       scrollX: {
         type: Boolean,
         value: false,
+        observer: '_observerScrollX',
       },
       scrollY: {
         type: Boolean,
@@ -25,7 +29,15 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   static get observedAttributes() {
-    return ['scroll-x', 'scroll-y', 'scroll-top', 'scroll-left', 'scroll-into-view', 'scroll-with-animation'];
+    return [
+      'scroll-x',
+      'scroll-y',
+      'scroll-top',
+      'scroll-left',
+      'scroll-into-view',
+      'scroll-with-animation',
+      'hide-scroll-bar',
+    ];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -72,6 +84,7 @@ export default class ScrollViewElement extends PolymerElement {
 
   ready() {
     super.ready();
+
     // Improving Scroll Performance with Passive Event Listeners
     this.addEventListener(
       'scroll',
@@ -206,6 +219,32 @@ export default class ScrollViewElement extends PolymerElement {
       this.scrolledToLower = false;
     }
   };
+
+  _observerScrollX() {
+    if (!this.styleEl) {
+      this._initStyleEl();
+    }
+    if (this.scrollX) {
+      const hideScrollBarStyle = 'display: none;';
+      this._styleEl.textContent = `
+        :host::-webkit-scrollbar {
+          ${hideScrollBarStyle}
+        }
+        a-scroll-view[data-id=${this._id}]::-webkit-scrollbar {
+          ${hideScrollBarStyle}
+        }
+      `;
+    }
+  }
+
+  _initStyleEl() {
+    // unique id for data-id to avoid style pollution
+    this._id = `scroll-view-${++uid}`;
+    this._styleEl = document.createElement('style');
+    this.setAttribute('data-id', this._id);
+    const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
+    shadowRoot.appendChild(this._styleEl);
+  }
 
   getValue(name, type, defaultValue) {
     let value = this.getFromCache(name);
