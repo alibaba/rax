@@ -1,5 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import '@polymer/polymer/lib/elements/custom-style';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
 
