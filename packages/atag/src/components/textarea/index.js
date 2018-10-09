@@ -206,9 +206,9 @@ export default class Textarea extends PolymerElement {
     const { placeholderStyle, countStyle, showCount } = this;
     if (!this.styleEl) {
       // Unique id for data-id to avoid style pollution
-      this.id = `textarea-${++uid}`;
+      this._id = `textarea-${++uid}`;
       this.styleEl = document.createElement('style');
-      this.setAttribute('data-id', this.id);
+      this.setAttribute('data-id', this._id);
       const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
       shadowRoot.appendChild(this.styleEl);
     }
@@ -219,7 +219,7 @@ export default class Textarea extends PolymerElement {
       :host #textarea::placeholder {
         ${placeholderStyle}
       }
-      a-textarea[data-id=${this.id}] #textarea::-webkit-input-placeholder {
+      a-textarea[data-id=${this._id}] #textarea::-webkit-input-placeholder {
         ${placeholderStyle}
       }
       :host #count {
