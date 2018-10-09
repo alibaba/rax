@@ -147,8 +147,8 @@ export default class Textarea extends PolymerElement {
     }
     this.value = this.textarea.value
         = this.textarea.value.length > this.maxlength
-          ? this._cutString(this.textarea.value, this.maxlength)
-          : this.textarea.value;
+        ? this._cutString(this.textarea.value, this.maxlength)
+        : this.textarea.value;
     const event = new CustomEvent('input', {
       bubbles: false,
       cancelable: true,
