@@ -2,6 +2,7 @@ import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import autosize from './autosize';
 
+const regexAstralSymbols = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 let uid = 0;
 
 export default class Textarea extends PolymerElement {
@@ -31,7 +32,7 @@ export default class Textarea extends PolymerElement {
         reflectToAttribute: true,
       },
       maxlength: {
-        type: String,
+        type: Number,
         value: 140,
       },
       focus: {
@@ -144,7 +145,10 @@ export default class Textarea extends PolymerElement {
     if (this.autoHeight) {
       autosize.update(this.textarea);
     }
-    this.value = this.textarea.value;
+    this.value = this.textarea.value
+        = this.textarea.value.length > this.maxlength
+          ? this._cutString(this.textarea.value, this.maxlength)
+          : this.textarea.value;
     const event = new CustomEvent('input', {
       bubbles: false,
       cancelable: true,
@@ -153,7 +157,25 @@ export default class Textarea extends PolymerElement {
         cursor: this.textarea.selectionStart,
       },
     });
+
     this.dispatchEvent(event);
+  }
+
+  /**
+   * Treat emoji's length equal 1.
+   */
+  _cutString(text, length) {
+    let res = '';
+    for (let i = 0, textLen = text.length; i < textLen && i < length; i++) {
+      if (/[\uD800-\uDBFF]/.test(text[i])) {
+        res += text[i];
+        res += text[i + 1];
+        ++i; ++length;
+      } else {
+        res += text[i];
+      }
+    }
+    return res;
   }
 
   handleFocus(e) {
@@ -208,7 +230,11 @@ export default class Textarea extends PolymerElement {
   }
 
   _computedValueLength(value) {
-    return value ? value.length : 0;
+    return value ? this._countStringLength(value) : 0;
+  }
+
+  _countStringLength(text = '') {
+    return text.replace(regexAstralSymbols, '_').length;
   }
 
   static get template() {
@@ -263,7 +289,6 @@ export default class Textarea extends PolymerElement {
         placeholder="[[placeholder]]"
         value="[[value]]"
         disabled$="[[disabled]]"
-        maxlength$="[[maxlength]]"
         readonly$="[[readonly]]"
         autofocus$="[[focus]]"
         style$="[[inputStyle]]"
