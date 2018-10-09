@@ -514,7 +514,8 @@ export default class Swiper extends PolymerElement {
           margin: 6px 0;
         }
         .swiper.horizontal .swiper-pagination {
-          bottom: 10px;
+          line-height: 0;
+          bottom: 12px;
           width: 100%;
           text-align: center;
         }
