@@ -7,21 +7,23 @@
  Code distributed by Google as part of the polymer project is also
  subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
-;(function() {
-  'use strict';
+(function() {
   if (
-    void 0 === window.Reflect ||
-    void 0 === window.customElements ||
-    window.customElements.hasOwnProperty(
-      'polyfillWrapFlushCallback'
-    )
-  )
+    // No Reflect, no classes, no need for shim because native custom elements
+  // require ES2015 classes or Reflect.
+    window.Reflect === undefined ||
+    window.customElements === undefined ||
+    // The webcomponentsjs custom elements polyfill doesn't require
+    // ES2015-compatible construction (`super()` or `Reflect.construct`).
+    window.customElements.hasOwnProperty('polyfillWrapFlushCallback')
+  ) {
     return;
-  var a = HTMLElement;
-  window.HTMLElement = function() {
-    return Reflect.construct(a, [], this.constructor);
-  },
-  HTMLElement.prototype = a.prototype,
-  HTMLElement.prototype.constructor = HTMLElement,
-  Object.setPrototypeOf(HTMLElement, a);
+  }
+  var BuiltInHTMLElement = HTMLElement;
+  window.HTMLElement = function HTMLElement() {
+    return Reflect.construct(BuiltInHTMLElement, [], this.constructor);
+  };
+  HTMLElement.prototype = BuiltInHTMLElement.prototype;
+  HTMLElement.prototype.constructor = HTMLElement;
+  Object.setPrototypeOf(HTMLElement, BuiltInHTMLElement);
 })();
