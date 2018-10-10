@@ -8,7 +8,7 @@ export default class UnicodeCharString {
     this._match = text.match(astralRange) || [];
 
     if (lengthLimit) {
-      this._match = this._match.slice(0, lengthLimit)
+      this._match = this._match.slice(0, lengthLimit);
     }
   }
 
