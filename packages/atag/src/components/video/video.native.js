@@ -3,6 +3,11 @@ import { PolymerElement } from '@polymer/polymer';
 const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
 const isIOS = /(iPhone|iPad|iPod)/.test(ua);
+/**
+ * HACK: <params> mark changed time to trigger
+ * MutationObserver to make native known changes
+ */
+const DATA_TIMESTAMP = 'data-timestamp';
 
 let videoInstanceCount = 0;
 export default class VideoElement extends PolymerElement {
@@ -51,24 +56,28 @@ export default class VideoElement extends PolymerElement {
 
   constructor(...args) {
     super(...args);
-
-    document.addEventListener('WVEmbed.Ready', this._nativeReady);
     this.uniqueId = String(++videoInstanceCount);
-    if (isAndroid) {
-      this.callNativeControl('setup', {
-        videoUrl: this.src,
-        isLoop: this.loop,
-        objectFit: this.objectfit
-      });
-    }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  ready() {
+    super.ready();
 
-    const container = this.container = document.createElement('object');
+    document.addEventListener('WVEmbed.Ready', this._nativeReady);
+    /**
+     * Assign default style
+     */
+    this.style.display = 'block';
+
+    this.createLightDOM();
+  }
+
+  createLightDOM() {
+    const container = document.createElement('object');
     container.setAttribute('type', 'application/view');
     container.className = 'atag-native-video';
+    container.style.display = 'block';
+    container.style.width = '100%';
+    container.style.height = '100%';
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);
@@ -120,13 +129,21 @@ export default class VideoElement extends PolymerElement {
     container.appendChild(objectFit);
     container.appendChild(bridgeId);
 
-    this.setStyle(this.getAttribute('style'));
-
     // for native hack
     // all events triggered at object tag proxyed to this
     container.$$id = this.$$id;
 
     this.appendChild(container);
+
+    // android should execute setup before play
+    // iOS will read src from <params> el
+    if (isAndroid && this.src) {
+      this.callNativeControl('setup', {
+        videoUrl: this.src,
+        isLoop: this.loop,
+        objectFit: this.objectfit
+      });
+    }
 
     if (this.autoplay) {
       this.play();
@@ -138,19 +155,19 @@ export default class VideoElement extends PolymerElement {
     if (oldVal !== newVal) {
       switch (key) {
         case 'controls': {
-          newVal ? this.showControls() : this.hideControls();
+          this.controls ? this.showControls() : this.hideControls();
           break;
         }
         case 'muted': {
-          this.mute(newVal);
+          this.mute(this.muted);
           break;
         }
         case 'objectfit': {
-          this.changeObjectFit(newVal);
+          this.changeObjectFit(this.objectfit);
           break;
         }
         case 'loop': {
-          this.changeLoop(newVal);
+          this.changeLoop(this.loop);
           break;
         }
       }
@@ -162,12 +179,6 @@ export default class VideoElement extends PolymerElement {
     document.removeEventListener('WVEmbed.Ready', this._nativeReady);
   }
 
-  setStyle(style) {
-    if (typeof style === 'string') {
-      this.container.style.cssText = style;
-    }
-  }
-
   getBridgeId() {
     return this.uniqueId;
   }
@@ -175,6 +186,7 @@ export default class VideoElement extends PolymerElement {
   showControls() {
     if (isIOS && this._controlsParamEl) {
       this._controlsParamEl.setAttribute('value', 'true');
+      this._controlsParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('changeControllerStatus', {
         status: '1'
@@ -187,6 +199,7 @@ export default class VideoElement extends PolymerElement {
   hideControls() {
     if (isIOS && this._controlsParamEl) {
       this._controlsParamEl.setAttribute('value', 'false');
+      this._controlsParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('changeControllerStatus', {
         status: '0'
@@ -202,6 +215,7 @@ export default class VideoElement extends PolymerElement {
   play() {
     if (isIOS && this._playStatusParamsEl) {
       this._playStatusParamsEl.setAttribute('value', '1');
+      this._playStatusParamsEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('play', {
         videoUrl: this.src,
@@ -219,6 +233,7 @@ export default class VideoElement extends PolymerElement {
   pause() {
     if (isIOS && this._playStatusParamsEl) {
       this._playStatusParamsEl.setAttribute('value', '0');
+      this._playStatusParamsEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('pause', {});
     } else {
@@ -230,6 +245,7 @@ export default class VideoElement extends PolymerElement {
     if (isIOS && this._mutedParamEl) {
       // status(1为静音，0为不静音)
       this._mutedParamEl.setAttribute('value', isMute ? '1' : '0');
+      this._mutedParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('muted', { status: isMute ? '1' : '0' });
     } else {
@@ -240,6 +256,7 @@ export default class VideoElement extends PolymerElement {
   changeObjectFit(objectFit) {
     if (isIOS && this._objectFitParamEl) {
       this._objectFitParamEl.setAttribute('value', objectFit);
+      this._objectFitParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('setup', {
         videoUrl: this.src,
@@ -252,6 +269,7 @@ export default class VideoElement extends PolymerElement {
   changeLoop(isLoop) {
     if (isIOS && this._objectFitParamEl) {
       this._loopParamEl.setAttribute('value', '' + isLoop);
+      this._loopParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('setup', {
         videoUrl: this.src,
@@ -267,6 +285,7 @@ export default class VideoElement extends PolymerElement {
   stop() {
     if (isIOS && this._playStatusParamsEl) {
       this._playStatusParamsEl.setAttribute('value', '2');
+      this._playStatusParamsEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('stop', {});
     } else {
@@ -280,6 +299,7 @@ export default class VideoElement extends PolymerElement {
   requestFullScreen() {
     if (isIOS && this._fullscreenParamEl) {
       this._fullscreenParamEl.setAttribute('value', '1');
+      this._fullscreenParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('enterFullScreen', {});
     } else {
@@ -293,6 +313,7 @@ export default class VideoElement extends PolymerElement {
   exitFullScreen() {
     if (isIOS && this._fullscreenParamEl) {
       this._fullscreenParamEl.setAttribute('value', '0');
+      this._fullscreenParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.callNativeControl('exitFullScreen', {});
     } else {
@@ -303,6 +324,7 @@ export default class VideoElement extends PolymerElement {
   enableLoop() {
     if (isIOS && this._loopParamEl) {
       this._loopParamEl.setAttribute('value', 'true');
+      this._loopParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.loop = true;
     }
@@ -310,6 +332,7 @@ export default class VideoElement extends PolymerElement {
   disableLoop() {
     if (isIOS && this._loopParamEl) {
       this._loopParamEl.setAttribute('value', 'false');
+      this._loopParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
     } else if (isAndroid) {
       this.loop = false;
     }
@@ -329,11 +352,17 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
+  /**
+   * Each embed view will emit whose ready event
+   * identifier by param.bridgeId
+   */
   _nativeReady = evt => {
-    this.isNativeReady = true;
-    let fn;
-    while (fn = this.nativeReadyCallbacks.shift()) {
-      fn();
+    if (evt.param && evt.param.bridgeId === this.getBridgeId()) {
+      this.isNativeReady = true;
+      let fn;
+      while (fn = this.nativeReadyCallbacks.shift()) {
+        fn();
+      }
     }
   };
 
@@ -341,6 +370,7 @@ export default class VideoElement extends PolymerElement {
     const param = document.createElement('param');
     param.setAttribute('name', key);
     param.setAttribute('value', value);
+    param.setAttribute(DATA_TIMESTAMP, Date.now());
     return param;
   }
 }

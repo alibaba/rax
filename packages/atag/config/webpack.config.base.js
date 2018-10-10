@@ -10,8 +10,8 @@ module.exports = () => {
         resolve('vendors/intersection-observer.js'),
         resolve('vendors/custom-elements-es5-adapter.js'),
         resolve('vendors/es-polyfills'),
-        resolve('src/index.js')
-      ]
+        resolve('src/index.js'),
+      ],
     };
     const config = {
       entry,
@@ -19,51 +19,60 @@ module.exports = () => {
         rules: [
           {
             test: /\.css$/,
-            use: 'raw-loader'
+            use: 'raw-loader',
           },
           {
             test: /\.less$/,
-            use: ['raw-loader', 'less-loader']
+            use: ['raw-loader', 'less-loader'],
           },
           {
             test: /\.html$/,
-            use: ['babel-loader', 'polymer-webpack-loader']
+            use: ['babel-loader', 'polymer-webpack-loader'],
           },
           {
             test: /\.js$/,
             loader: 'babel-loader',
-            exclude: [resolve('vendors')]
+            options: {
+              babelrc: true,
+              extends: join(__dirname + '/../.babelrc'),
+            },
+            exclude: [resolve('vendors')],
           },
           {
             test: /\.(png|gif|jpe?g|svg)$/i,
             loader: 'url-loader',
           },
-        ]
+        ],
       },
       resolve: {
         modules: ['node_modules'],
         extensions: ['.js', '.json', '.html'],
         alias: {
-          components: resolve('src/components')
-        }
+          components: resolve('src/components'),
+        },
       },
       devServer: {
         contentBase: resolve(fs.realpathSync(process.cwd()), 'demo'),
-        port: 9001
+        port: 9001,
       },
       plugins: [
         new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+          'process.env.NODE_ENV': JSON.stringify(
+            process.env.NODE_ENV
+          ),
         }),
         new webpack.BannerPlugin({
-          banner: `${new Date()}`
+          banner: `${new Date()}`,
         }),
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
           inject: true,
-          template: resolve(fs.realpathSync(process.cwd()), 'demo/index.htm')
+          template: resolve(
+            fs.realpathSync(process.cwd()),
+            'demo/index.htm'
+          ),
         }),
-      ]
+      ],
     };
     done(config);
   });

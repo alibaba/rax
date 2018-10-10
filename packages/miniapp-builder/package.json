@@ -1,10 +1,13 @@
 {
   "name": "miniapp-builder",
-  "version": "0.1.0-18",
+  "version": "0.1.0-24",
   "description": "Miniapp build kit for developers",
   "main": "src/index.js",
   "bin": {
     "miniapp": "bin/cli.js"
+  },
+  "scripts": {
+    "prepublish": "node prepublish.js"
   },
   "files": [
     "bin/",

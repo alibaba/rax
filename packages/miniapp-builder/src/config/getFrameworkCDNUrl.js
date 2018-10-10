@@ -1,4 +1,5 @@
-const FRAMEWORK_VERSION = exports.FRAMEWORK_VERSION = '0.1.24';
+const FRAMEWORK_VERSION = exports.FRAMEWORK_VERSION = require('./frameworkVersion');
+
 const FRAMEWORK_CDN_PREFIX = 'https://g.alicdn.com/code/npm/miniapp-framework/';
 const FRAMEWORK_CDN_SUFFIX = '/dist';
 
@@ -9,10 +10,10 @@ const FRAMEWORK_RENDERER_VIEW = '/native/renderer.html';
 const FRAMEWORK_H5_MASTER = '/h5/master.js';
 const FRAMEWORK_H5_VIEW = '/h5/master.html';
 
-const getNativeRendererHTML = exports.getNativeRendererHTML = function(version) {
+const getNativeRendererUrl = exports.getNativeRendererUrl = function(version) {
   return FRAMEWORK_CDN_PREFIX + version + FRAMEWORK_CDN_SUFFIX + FRAMEWORK_RENDERER_VIEW;
 };
-exports.nativeRendererHTML = getNativeRendererHTML(FRAMEWORK_VERSION);
+exports.nativeRendererUrl = getNativeRendererUrl(FRAMEWORK_VERSION);
 
 const getH5Master = exports.getH5Master = function(version) {
   return FRAMEWORK_CDN_PREFIX + version + FRAMEWORK_CDN_SUFFIX + FRAMEWORK_H5_MASTER;
