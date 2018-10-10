@@ -75,6 +75,11 @@ export default class Textarea extends PolymerElement {
     };
   }
 
+  /**
+   * If IME is writing, do not response to value change.
+   */
+  _isCompositing = false;
+
   ready() {
     super.ready();
     this.textarea = this.$.textarea;
@@ -82,10 +87,6 @@ export default class Textarea extends PolymerElement {
 
     this.setAttribute('a-label-target', '');
 
-    /**
-     * If IME is writing, do not response to value change.
-     */
-    this._isCompositing = false;
     afterNextRender(this, () => {
       window.addEventListener('compositionstart', this._handleCompositionStart, true);
       window.addEventListener('compositionend', this._handleCompositionEnd, true);
