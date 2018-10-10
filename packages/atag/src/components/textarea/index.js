@@ -82,7 +82,13 @@ export default class Textarea extends PolymerElement {
 
     this.setAttribute('a-label-target', '');
 
+    /**
+     * If IME is writing, do not response to value change.
+     */
+    this._isCompositing = false;
     afterNextRender(this, () => {
+      window.addEventListener('compositionstart', this._handleCompositionStart, true);
+      window.addEventListener('compositionend', this._handleCompositionEnd, true);
       window.addEventListener('input', this.inputListener, true);
       window.addEventListener('focus', this.focusListener, true);
       window.addEventListener('blur', this.blurListener, true);
@@ -111,6 +117,8 @@ export default class Textarea extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    window.removeEventListener('compositionstart', this._handleCompositionStart, true);
+    window.removeEventListener('compositionend', this._handleCompositionEnd, true);
     window.removeEventListener('input', this.inputListener, true);
     window.removeEventListener('focus', this.focusListener, true);
     window.removeEventListener('blur', this.blurListener, true);
@@ -121,7 +129,7 @@ export default class Textarea extends PolymerElement {
   inputListener = event => {
     if (!(event instanceof CustomEvent)) {
       event.stopPropagation();
-      if (event.target === this) {
+      if (!this._isCompositing && event.target === this) {
         this.handleInput(event);
       }
     }
@@ -168,6 +176,16 @@ export default class Textarea extends PolymerElement {
 
     this.dispatchEvent(event);
   }
+
+
+  _handleCompositionStart = () => {
+    this._isCompositing = true;
+  };
+
+  _handleCompositionEnd = (evt) => {
+    this._isCompositing = false;
+    this.handleInput(evt);
+  };
 
   handleFocus(e) {
     e.stopPropagation();
