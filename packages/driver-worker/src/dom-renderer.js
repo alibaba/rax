@@ -199,7 +199,11 @@ export default ({ worker, tagNamePrefix = '' }) => {
     if (vnode.nodeType === 3) {
       node = document.createTextNode(vnode.data);
     } else if (vnode.nodeType === 1) {
-      node = document.createElement(tagNamePrefix + vnode.nodeName);
+      /**
+       * In some android webkit, tag name is case-sensitive,
+       * eg. a-VIEW is diffrenet with a-view
+       */
+      node = document.createElement(tagNamePrefix + vnode.nodeName.toLowerCase());
 
       if (vnode.className) {
         node.className = vnode.className;
