@@ -87,26 +87,42 @@
 
   <div class="card">
     <h4 class="title">a-button</h4>
-    <div class="demo">
-      <a-button>Button</a-button>
-      <a-button type="warn">Warn Button</a-button>
-      <a-button size="mini">Mini Button</a-button>
-      <a-button plain>Plain Button</a-button>
-      <a-button disabled>Dsabled Button</a-button>
-      <a-button id="buttonDisabled" type="warn" disabled>Dsabled Warn Button</a-button>
-      <a-button size="mini" disabled>Dsabled Mini Button</a-button>
-      <a-button plain disabled>Disabled Plain Button</a-button>
-      <a-button id="buttonSubmit" form-type="submit">FormType submit</a-button>
+    <div class="demo" style="background-color: #eee">
+
+      <a-button style="margin: 8px">Default Button</a-button>
+      <a-button style="margin: 8px" type="primary">Primary Button</a-button>
+      <a-button style="margin: 8px" type="warn">Warn Button</a-button>
+
+      <a-button style="margin: 8px" size="mini">Mini Default Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="primary">Mini Primary Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="warn">Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain>Plain Default Button</a-button>
+      <a-button style="margin: 8px" plain type="primary">Plain Primary Button</a-button>
+      <a-button style="margin: 8px" plain type="warn">Plain Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain size="mini">Plain Mini Default Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="primary">Plain Mini Primary Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="warn">Plain Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled>Dsabled Default Button</a-button>
+      <a-button style="margin: 8px" disabled type="primary">Dsabled Primary Button</a-button>
+      <a-button style="margin: 8px" disabled type="warn">Dsabled Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled plain>Dsabled Plain Default Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="primary">Dsabled Plain Primary Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="warn">Dsabled Plain Warn Button</a-button>
+
+
+      <a-button style="margin: 8px" loading>Loading Default Button</a-button>
+      <a-button style="margin: 8px" loading type="primary">Loading Primary Button</a-button>
+      <a-button style="margin: 8px" loading type="warn">Loading Warn Button</a-button>
+
+      <a-button style="margin: 8px" loading plain>Loading Plain Button</a-button>
+      <a-button style="margin: 8px" loading plain type="primary">Loading Plain Primary Button</a-button>
+      <a-button style="margin: 8px" loading plain type="warn">Loading Plain Warn Button</a-button>
     </div>
   </div>
-  <script>
-    buttonDisabled.addEventListener('click', (evt) => {
-      alert('You should not see this.');
-    });
-    buttonSubmit.addEventListener('_buttonSubmit', (evt) => {
-      alert('Trigger button submit event.');
-    });
-  </script>
 
   <div class="card">
     <h4 class="title">a-image</h4>
@@ -240,7 +256,7 @@
       <p>custom style:</p>
       <a-textarea style="text-align: center;font-weight: bold;padding: 10px; color: red" auto-height=true placeholder="textarea placeholder" show-count="false"></a-textarea>
       <p>placeholder style:</p>
-      <a-textarea placeholder-style="color: green" auto-height=true placeholder="styled placeholder" count-style="color: red;" show-count></a-textarea>
+      <a-textarea placeholder-style="color: green" auto-height=true placeholder="styled placeholder" count-style="color: red;" show-count maxlength="70"></a-textarea>
     </div>
   </div>
 
@@ -507,6 +523,95 @@
         </a-swiper-item>
       </a-swiper>
 
+      <p>scroll x with vertical swiper</p>
+      <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll x with hortical swiper</p>
+      <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll y with vertical swiper</p>
+      <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll y with hortical swiper</p>
+      <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll x + y with hortical swiper</p>
+      <a-scroll-view scroll-x="true" scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
     </div>
   </div>
 
@@ -585,6 +690,23 @@
       </p>
       <a-button id="toggleScroll">Toggle Scroll</a-button>
 
+
+      <p>Horizental scroll view</p>
+      <a-scroll-view id="horScrollView" scroll-x="true" hide-scroll-bar style="display: flex; height: 200px;" scroll-with-animation scroll-into-view="red">
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view id="red" style="background:red; min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+      </a-scroll-view>
+      <a-button onclick="horScrollView.setAttribute('scroll-left', 500)">Set Scroll Left</a-button>
     </div>
   </div>
 

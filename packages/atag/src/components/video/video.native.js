@@ -155,19 +155,19 @@ export default class VideoElement extends PolymerElement {
     if (oldVal !== newVal) {
       switch (key) {
         case 'controls': {
-          newVal ? this.showControls() : this.hideControls();
+          this.controls ? this.showControls() : this.hideControls();
           break;
         }
         case 'muted': {
-          this.mute(newVal);
+          this.mute(this.muted);
           break;
         }
         case 'objectfit': {
-          this.changeObjectFit(newVal);
+          this.changeObjectFit(this.objectfit);
           break;
         }
         case 'loop': {
-          this.changeLoop(newVal);
+          this.changeLoop(this.loop);
           break;
         }
       }

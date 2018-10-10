@@ -2,6 +2,8 @@ import { PolymerElement, html } from '@polymer/polymer';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
 
+let uid = 0;
+
 export default class ScrollViewElement extends PolymerElement {
   static get is() {
     return 'a-scroll-view';
@@ -13,11 +15,28 @@ export default class ScrollViewElement extends PolymerElement {
         type: String,
         value: '',
       },
+      scrollX: {
+        type: Boolean,
+        value: false,
+        observer: '_observerScrollX',
+      },
+      scrollY: {
+        type: Boolean,
+        value: false,
+      },
     };
   }
 
   static get observedAttributes() {
-    return ['scroll-x', 'scroll-y', 'scroll-top', 'scroll-left', 'scroll-into-view', 'scroll-with-animation'];
+    return [
+      'scroll-x',
+      'scroll-y',
+      'scroll-top',
+      'scroll-left',
+      'scroll-into-view',
+      'scroll-with-animation',
+      'hide-scroll-bar',
+    ];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -35,11 +54,22 @@ export default class ScrollViewElement extends PolymerElement {
         break;
       case 'scroll-top':
         const scrollTop = this.getValue('scroll-top', 'number', 0);
-        this.scrollToY(scrollTop);
+        /**
+         * If smooth scrolling works, use Node.scrollTop/scrollLeft
+         */
+        if ('scrollBehavior' in this.style) {
+          this.scrollTop = scrollTop;
+        } else {
+          this.scrollToY(scrollTop);
+        }
         break;
       case 'scroll-left':
         const scrollLeft = this.getValue('scroll-left', 'number', 0);
-        this.scrollToX(scrollLeft);
+        if ('scrollBehavior' in this.style) {
+          this.scrollLeft = scrollLeft;
+        } else {
+          this.scrollToX(scrollLeft);
+        }
         break;
       case 'scroll-into-view':
         const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
@@ -64,6 +94,7 @@ export default class ScrollViewElement extends PolymerElement {
 
   ready() {
     super.ready();
+
     // Improving Scroll Performance with Passive Event Listeners
     this.addEventListener(
       'scroll',
@@ -107,6 +138,8 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   scrollToX(value) {
+    console.log('call scrollTo X', value);
+
     const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
     if (scrollWithAnimation) {
       if (this.scrollingXId) {
@@ -198,6 +231,32 @@ export default class ScrollViewElement extends PolymerElement {
       this.scrolledToLower = false;
     }
   };
+
+  _observerScrollX() {
+    if (!this.styleEl) {
+      this._initStyleEl();
+    }
+    if (this.scrollX) {
+      const hideScrollBarStyle = 'display: none;';
+      this._styleEl.textContent = `
+        :host::-webkit-scrollbar {
+          ${hideScrollBarStyle}
+        }
+        a-scroll-view[data-id=${this._id}]::-webkit-scrollbar {
+          ${hideScrollBarStyle}
+        }
+      `;
+    }
+  }
+
+  _initStyleEl() {
+    // unique id for data-id to avoid style pollution
+    this._id = `scroll-view-${++uid}`;
+    this._styleEl = document.createElement('style');
+    this.setAttribute('data-id', this._id);
+    const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
+    shadowRoot.appendChild(this._styleEl);
+  }
 
   getValue(name, type, defaultValue) {
     let value = this.getFromCache(name);
