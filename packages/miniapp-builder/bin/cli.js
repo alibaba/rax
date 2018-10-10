@@ -37,7 +37,7 @@ program
     const rendererInspect = !!program.rendererInspect;
     const rendererInspectHost = program.rendererInspectHost || address.ip();
     const rendererInspectPort = program.rendererInspectPort || 8080;
-    const rendererUrl = !!program.rendererUrl;
+    const rendererUrl = program.rendererUrl;
 
     const miniappType = getMiniappType(projectDir);
     if (!miniappType) {

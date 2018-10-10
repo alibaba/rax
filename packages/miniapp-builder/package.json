@@ -1,6 +1,6 @@
 {
   "name": "miniapp-builder",
-  "version": "0.1.0-22",
+  "version": "0.1.0-24",
   "description": "Miniapp build kit for developers",
   "main": "src/index.js",
   "bin": {

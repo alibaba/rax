@@ -16,7 +16,10 @@ const DEFAULT_CONFIG = {
   sdkVersion: '2',
 };
 
-function getAppConfig(projectDir, opts) {
+/**
+ * Get configuration for app.
+ */
+const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, opts) {
   const manifestFilePath = join(projectDir, 'manifest.json');
   const appDotJSONFilePath = join(projectDir, 'app.json');
   const appJSON = Object.assign({}, DEFAULT_CONFIG);
@@ -86,12 +89,10 @@ function getAppConfig(projectDir, opts) {
     }
   }
 
-  const result = {
+  const result = Object.assign({}, appJSON, {
     pages,
     homepage,
-    frameworkVersion: appJSON.frameworkVersion,
-    experimentalRemoteRenderer: appJSON.experimentalRemoteRenderer || null,
-  };
+  });
 
   let tabBar = {};
   if (appJSON.tabBar) {
@@ -127,16 +128,17 @@ function getAppConfig(projectDir, opts) {
   result.tabBar = tabBar;
 
   return result;
-}
+};
 
-exports.getAppConfig = getAppConfig;
-
-function readJSONSync(p) {
-  return JSON.parse(readFileSync(p, 'utf-8'));
+/**
+ * Get JS Object from filename.
+ */
+function readJSONSync(filename) {
+  return JSON.parse(readFileSync(filename, 'utf-8'));
 }
 
 /**
- * return String[] list of pages
+ * Get list of page names.
  */
 exports.getPages = function getPages(projectDir) {
   return getAppConfig(projectDir).pages;
