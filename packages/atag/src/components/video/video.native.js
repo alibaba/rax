@@ -342,7 +342,6 @@ export default class VideoElement extends PolymerElement {
   nativeReadyCallbacks = [];
 
   callNativeControl(method, params) {
-    alert(JSON.stringify({method, params, id: this.getBridgeId()}))
     const execute = () => {
       window.WindVane.call('WVEmbedView_' + this.getBridgeId(), method, params);
     };
