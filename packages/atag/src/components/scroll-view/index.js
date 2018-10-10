@@ -54,11 +54,22 @@ export default class ScrollViewElement extends PolymerElement {
         break;
       case 'scroll-top':
         const scrollTop = this.getValue('scroll-top', 'number', 0);
-        this.scrollToY(scrollTop);
+        /**
+         * If smooth scrolling works, use Node.scrollTop/scrollLeft
+         */
+        if ('scrollBehavior' in this.style) {
+          this.scrollTop = scrollTop;
+        } else {
+          this.scrollToY(scrollTop);
+        }
         break;
       case 'scroll-left':
         const scrollLeft = this.getValue('scroll-left', 'number', 0);
-        this.scrollToX(scrollLeft);
+        if ('scrollBehavior' in this.style) {
+          this.scrollLeft = scrollLeft;
+        } else {
+          this.scrollToX(scrollLeft);
+        }
         break;
       case 'scroll-into-view':
         const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
@@ -127,6 +138,8 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   scrollToX(value) {
+    console.log('call scrollTo X', value);
+
     const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
     if (scrollWithAnimation) {
       if (this.scrollingXId) {
