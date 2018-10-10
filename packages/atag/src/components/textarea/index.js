@@ -1,8 +1,8 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import autosize from './autosize';
+import UnicodeCharString from './unicodeCharString';
 
-const regexAstralSymbols = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 let uid = 0;
 
 export default class Textarea extends PolymerElement {
@@ -61,13 +61,17 @@ export default class Textarea extends PolymerElement {
       },
       _valueLength: {
         type: Number,
-        computed: '_computedValueLength(value)',
+        computed: '_computedValueLength(_valueUnicodeCharString)',
       },
       countStyle: {
         type: String,
         value: '',
         observer: '_changeCustomStyle',
       },
+      _valueUnicodeCharString: {
+        type: Object,
+        value: new UnicodeCharString(''),
+      }
     };
   }
 
@@ -95,6 +99,11 @@ export default class Textarea extends PolymerElement {
     switch (key) {
       case 'show-count': {
         this.showCount = newVal !== 'false';
+        break;
+      }
+      case 'value': {
+        this.value = newVal;
+        this._valueUnicodeCharString = new UnicodeCharString(newVal, this.maxlength);
         break;
       }
     }
@@ -145,10 +154,9 @@ export default class Textarea extends PolymerElement {
     if (this.autoHeight) {
       autosize.update(this.textarea);
     }
-    this.value = this.textarea.value
-        = this.textarea.value.length > this.maxlength
-        ? this._cutString(this.textarea.value, this.maxlength)
-        : this.textarea.value;
+    this._valueUnicodeCharString = new UnicodeCharString(this.textarea.value, this.maxlength);
+    this.value = this.textarea.value = this._valueUnicodeCharString.toString();
+
     const event = new CustomEvent('input', {
       bubbles: false,
       cancelable: true,
@@ -159,23 +167,6 @@ export default class Textarea extends PolymerElement {
     });
 
     this.dispatchEvent(event);
-  }
-
-  /**
-   * Treat emoji's length equal 1.
-   */
-  _cutString(text, length) {
-    let res = '';
-    for (let i = 0, textLen = text.length; i < textLen && i < length; i++) {
-      if (/[\uD800-\uDBFF]/.test(text[i])) {
-        res += text[i];
-        res += text[i + 1];
-        ++i; ++length;
-      } else {
-        res += text[i];
-      }
-    }
-    return res;
   }
 
   handleFocus(e) {
@@ -229,12 +220,8 @@ export default class Textarea extends PolymerElement {
     `;
   }
 
-  _computedValueLength(value) {
-    return value ? this._countStringLength(value) : 0;
-  }
-
-  _countStringLength(text = '') {
-    return text.replace(regexAstralSymbols, '_').length;
+  _computedValueLength() {
+    return this._valueUnicodeCharString.length;
   }
 
   static get template() {
