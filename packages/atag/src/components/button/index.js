@@ -182,8 +182,8 @@ export default class Button extends PolymerElement {
           height: 4px;
           background-color: #ff5500;
           border-radius: 4px;
-          -webkit-animation: loading-circleBounceDelay 1.2s infinite ease-in-out both;
-                  animation: loading-circleBounceDelay 1.2s infinite ease-in-out both;
+          -webkit-animation: loading-circle-bounce 1.2s infinite ease-in-out both;
+                  animation: loading-circle-bounce 1.2s infinite ease-in-out both;
         }
 
         :host([type="primary"]) .loading-circle .loading-child:before,
@@ -247,7 +247,7 @@ export default class Button extends PolymerElement {
           -webkit-animation-delay: -0.1s;
                   animation-delay: -0.1s; }
         
-        @-webkit-keyframes loading-circleBounceDelay {
+        @-webkit-keyframes loading-circle-bounce {
           0%, 80%, 100% {
             -webkit-transform: scale(0.6);
                     transform: scale(0.6);
@@ -257,7 +257,7 @@ export default class Button extends PolymerElement {
           }
         }
         
-        @keyframes loading-circleBounceDelay {
+        @keyframes loading-circle-bounce {
           0%, 80%, 100% {
             -webkit-transform: scale(0.6);
                     transform: scale(0.6);
