@@ -75,7 +75,7 @@ export function calcRem(str, remUnit = getRem(), roundPixel = false) {
 }
 
 export function calcUnitNumber(val, remUnit = getRem(), roundPixel = false) {
-  return roundPixel ? parseInt(val * remUnit, 10) : val * remUnit + 'px';
+  return (roundPixel ? parseInt(val * remUnit, 10) : val * remUnit) + 'px';
 }
 
 export function getRem() {
