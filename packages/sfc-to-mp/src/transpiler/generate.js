@@ -1,9 +1,5 @@
-const evtNameMapping = {
-  click: 'tap',
-};
-
 /**
- * store generate state
+ * Store generate state
  */
 class GeneratorState {
   constructor(options) {
@@ -28,7 +24,7 @@ class GeneratorState {
 }
 
 /**
- * generate mini-program template stynax:
+ * Generate mini-program template stynax:
  * <view @click="handleClick" :foo="bar" style="{ }">
  *   <text>mustache {{ binding }} !</text>
  * </view>
@@ -44,14 +40,14 @@ function genElement(el, state) {
   }
 
   if (el.type === 1) {
-    // type 1: element
-    const hasProps = el.hasBindings || !!el.staticClass || !!el.classBinding || el.attrsList.length > 0;
-
+    // Type 1: element
     if (state.dependencyMap[el.tag]) {
-      return `<template is="${state.dependencyMap[el.tag].templateName}" data="{{${genData(el, state)}}}">${genElement(
-        el.children,
-        state
-      )}</template>`;
+      return `<template is="${
+        state.dependencyMap[el.tag].tplName
+        }" data="{{${genData(el, state)}}}">${genElement(
+          el.children,
+          state
+        )}</template>`;
     } else if (el.ifConditions) {
       return el.ifConditions
         .map((condition) => {
@@ -61,30 +57,29 @@ function genElement(el, state) {
         })
         .join('');
     } else {
-      // directive, like for, if
-      const moduleData = genModuleData(el, state);
-      return `<${el.tag}${hasProps ? ' ' + genProps(el, state) : ''}${moduleData}>${genElement(el.children, state)}</${
-        el.tag
-      }>`;
+      const hasAttrs = el.hasBindings || el.attrs;
+      return `<${el.tag}${
+        hasAttrs ? ' ' + genAttrs(el, state) : ''
+        }${genModuleData(el, state)}>${genElement(el.children, state)}</${el.tag}>`;
     }
   } else if (el.type === 2 || (el.type === 3 && el.static)) {
-    // type 2: text node or static text node
+    // Type 2: text node or static text node
     return genText(el, state);
   } else {
-    // 忽略其它所有类型节点.
+    // Ignore other types
     return '';
   }
 }
 
 /**
- * text node has no children
+ * Text node has no children
  */
 function genText(el) {
   return el.text;
 }
 
 /**
- * call module genData fn
+ * Call module genData fn
  */
 function genModuleData(el, state) {
   let data = '',
@@ -100,35 +95,25 @@ function genModuleData(el, state) {
 }
 
 /**
- * props = attrs + events
+ * Handle bind values
  */
-function genProps(el, state) {
-  const attrs = [];
-  el.attrsList.forEach(({ name, value }) => {
-    if (name[0] === ':') {
-      // bind
-      const pty = name.slice(1);
-      attrs.push(`${pty}="{{${value}}}"`);
-    } else if (name[0] === '@') {
-      // event
-      const evtName = name.slice(1);
-      const evtProp = 'on' + (evtNameMapping[evtName] || evtName).replace(/^(\w)/, ($1) => $1.toUpperCase());
-      if (state.isTemplateDependency) {
-        value = state.templateName + '$' + value;
+function genAttrs(el, state) {
+  console.log(el)
+  if (el.attrs) {
+    return el.attrs.map(({ name, value }) => {
+      if (el.attrsMap['v-on:' + name] || el.attrsMap[':' + name]) {
+        return `${name}="{{${value}}}"`;
+      } else {
+        return `${name}=${value}`;
       }
-      attrs.push(`${evtProp}="${value}"`);
-    } else {
-      attrs.push(`${name}="${value}"`);
-    }
-  });
-  if (el.staticClass || el.classBinding) {
-    attrs.push(`class="${getStaticProp(el.staticClass)}${el.classBinding ? ` {{${el.classBinding}}}` : ''}"`);
+    }).join(' ');
+  } else {
+    return '';
   }
-  return attrs.join(' ');
 }
 
 /**
- * generate data
+ * Generate data
  */
 function genData(el, state) {
   const { templateName } = state.dependencyMap[el.tag];
@@ -136,7 +121,6 @@ function genData(el, state) {
 
   el.attrsList.forEach(({ name, value }) => {
     if (name[0] === ':' || name[0] === 'v-bind:') {
-      // bind
       const pty = name.slice(name[0].length);
       propsData[pty] = value;
     } else {
@@ -147,14 +131,10 @@ function genData(el, state) {
   return `$d, ...$d['${templateName}']`;
 }
 
-const STATIC_PROP_REG = /^"?(.*)"/;
-function getStaticProp(str) {
-  const match = STATIC_PROP_REG.exec(str);
-  return match ? match[1] : str;
-}
+
 
 /**
- * generate axml template
+ * Generate axml template
  * @param {Object} ast
  * @param {Object} options
  */
