@@ -61,12 +61,21 @@ export function isRem(str) {
  * Calculate rem to pixels: '1.2rem' => 1.2 * rem
  * @param {String} str
  * @param {Number} rem
- * @returns {number}
+ * @param {Boolean} round pixel to integer
+ * @returns {String}
  */
-export function calcRem(str, remUnit = getRem()) {
+export function calcRem(str, remUnit = getRem(), roundPixel = false) {
   return str.replace(REM_REG, function(rem) {
-    return parseFloat(rem) * remUnit + 'px';
+    if (roundPixel) {
+      return parseInt(parseFloat(rem) * remUnit, 10) + 'px';
+    } else {
+      return parseFloat(rem) * remUnit + 'px';
+    }
   });
+}
+
+export function calcUnitNumber(val, remUnit = getRem(), roundPixel = false) {
+  return roundPixel ? parseInt(val * remUnit, 10) : val * remUnit + 'px';
 }
 
 export function getRem() {
@@ -81,11 +90,11 @@ export function isUnitNumber(val, prop) {
   return typeof val === 'number' && !UNITLESS_NUMBER_PROPS[prop];
 }
 
-export function convertUnit(val, prop, remUnit = getRem()) {
+export function convertUnit(val, prop, remUnit = getRem(), roundPixel = false) {
   if (prop && isUnitNumber(val, prop)) {
-    return val * remUnit + 'px';
+    return calcUnitNumber(val, remUnit, roundPixel);
   } else if (isRem(val)) {
-    return calcRem(val, remUnit);
+    return calcRem(val, remUnit, roundPixel);
   }
 
   return val;

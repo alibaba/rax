@@ -12,6 +12,7 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const BODY = 'BODY';
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
+const ROUND_CSS_PIXEL = true;
 const TO_SANITIZE = [
   'target',
   'addedNodes',
@@ -309,7 +310,7 @@ export default ({ postMessage, addEventListener }) => {
 
       for (let prop in styles) {
         let val = styles[prop];
-        newStyles[prop] = convertUnit(val, prop);
+        newStyles[prop] = convertUnit(val, prop, ROUND_CSS_PIXEL);
       }
       // Assign to style for trigger style update
       node.style = newStyles;
