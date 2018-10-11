@@ -1,20 +1,5 @@
-<dom-module id="a-view">
-  <template>
-    <style>
-      :host {
-        display: block;
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-overflow-scrolling: touch;
-      }
-    </style>
-    <slot></slot>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
+import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class ViewElement extends PolymerElement {
   static get is() {
@@ -83,24 +68,28 @@ export default class ViewElement extends PolymerElement {
   }
 
   _activeHoverStyle() {
-    let currentHoverStyle;
-    if ((currentHoverStyle = this.hoverStyle));
     /**
      * Add a flag bit in style to specify the hover state
      */
+    let currentHoverStyle = this.hoverStyle;
     if (currentHoverStyle) {
-      const style = this.getAttribute('style') || '';
-      this.setAttribute('style', style + '/*h*/' + currentHoverStyle + '/*h*/');
+      let originStyle = this.getAttribute('style') || '';
+      this.setAttribute(
+        'style',
+        originStyle + '/*h*/' + currentHoverStyle + '/*h*/'
+      );
     }
+
     this._hoverActiveState = true;
   }
 
   _inactiveHoverStyle() {
     if (this._hoverActiveState) {
+      this._hoverActiveState = false;
+
       const rawCSSText = this.getAttribute('style') || '';
       const cssText = rawCSSText.replace(/(\/\*h\*\/).*\1/, '');
-      this._hoverActiveState = false;
-      cssText && this.setAttribute('style', cssText);
+      rawCSSText !== cssText && this.setAttribute('style', cssText);
     }
   }
 
@@ -139,7 +128,19 @@ export default class ViewElement extends PolymerElement {
     super.ready();
     this._listen();
   }
+  static get template() {
+    return html`
+      <style>
+        :host {
+          display: block;
+          -webkit-user-select: none;
+          user-select: none;
+          -webkit-overflow-scrolling: touch;
+        }
+      </style>
+      <slot></slot>
+    `;
+  }
 }
 
 customElements.define(ViewElement.is, ViewElement);
-</script>

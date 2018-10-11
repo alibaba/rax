@@ -1,30 +1,9 @@
-<dom-module id="a-image">
-  <template>
-    <style>
-      :host {
-        position: relative;
-        overflow: hidden;
-        display: inline-block;
-        outline: none;
-        /* Default width/height is 300px/225px */
-        width: 300px;
-        height: 225px;
-        line-height: 0;
-      }
+import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
-      #container {
-        width: 100%;
-        height: 100%;
-        background-repeat: no-repeat;
-      }
-    </style>
-    <div id="container"></div>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
+const UNSENT = 0;
+const LOADING = 1;
+const DONE = 2;
 
 function handleIntersect(entries) {
   entries.forEach(entry => {
@@ -45,14 +24,18 @@ export default class ImageElement extends PolymerElement {
       src: {
         type: String,
         value: '',
-        reflectToAttribute: true
+        reflectToAttribute: true,
       },
       mode: {
         type: String,
         value: 'scaleToFill',
         reflectToAttribute: true,
-        observer: 'observerMode'
-      }
+        observer: 'observerMode',
+      },
+      lazyload: {
+        type: Boolean,
+        value: false,
+      },
     };
   }
 
@@ -66,11 +49,17 @@ export default class ImageElement extends PolymerElement {
 
   _init() {
     if (!this.src) return;
-    // Figure out if this image is within view
-    ImageElement.addIntersectListener(this, () => {
+
+    if (this.lazyload) {
+      // Figure out if this image is within view
+      ImageElement.addIntersectListener(this, () => {
+        this._load();
+        ImageElement.removeIntersectListener(this);
+      });
+    } else {
+      // Load after next frame
       this._load();
-      ImageElement.removeIntersectListener(this);
-    });
+    }
 
     this._inited = true;
   }
@@ -93,30 +82,36 @@ export default class ImageElement extends PolymerElement {
    * @private
    */
   _load() {
-    this._loading = true;
-    const image = (this.image = new Image());
+    this.state = LOADING;
+    const image = this.image = new Image();
 
     image.onload = e => {
-      this._loading = false;
+      this.state = DONE;
+
+      if (this._needAdaptHeight) {
+        this._adaptHeight();
+      }
+
       // Dispatch custom load event
       const customEvent = new CustomEvent('load', {
         bubbles: false,
         composed: true,
         detail: {
           width: `${image.width}px`,
-          height: `${image.height}px`
-        }
+          height: `${image.height}px`,
+        },
       });
       this.dispatchEvent(customEvent);
     };
 
     image.onerror = e => {
+      this.state = DONE;
       const customEvent = new CustomEvent('error', {
         bubbles: false,
         composed: true,
         detail: {
-          errMsg: `Load ${this.src} error`
-        }
+          errMsg: `Load ${this.src} error`,
+        },
       });
       this.dispatchEvent(customEvent);
     };
@@ -132,9 +127,18 @@ export default class ImageElement extends PolymerElement {
       case 'src':
         // If the src is changed then we need to reset and start again
         this._reset();
-        this._init();
+        if (this.isReady) {
+          this._init();
+        }
         break;
     }
+  }
+
+  isReady = false;
+  ready() {
+    super.ready();
+    this.isReady = true;
+    this._init();
   }
 
   /**
@@ -145,7 +149,7 @@ export default class ImageElement extends PolymerElement {
   static _observer = new IntersectionObserver(handleIntersect, {
     root: null,
     rootMargin: '0px',
-    threshold: 0
+    threshold: 0,
   });
 
   static addIntersectListener(element, intersectCallback) {
@@ -176,7 +180,7 @@ export default class ImageElement extends PolymerElement {
       'top left',
       'top right',
       'bottom left',
-      'bottom right'
+      'bottom right',
     ];
 
     if (positions.indexOf(newVal) > -1) {
@@ -197,16 +201,33 @@ export default class ImageElement extends PolymerElement {
           containerStyle.backgroundPosition = 'center center';
           break;
         case 'widthFix':
-          const hostWidth = parseFloat(this.style.width);
-          this.initialHeight = this.clientHeight + 'px';
-          this.style.height =
-            hostWidth * this.image.height / this.image.width + 'px';
-          containerStyle.backgroundSize = 'contain';
+          if (this.state < DONE) {
+            this._needAdaptHeight = true;
+          } else {
+            this._adaptHeight();
+          }
           break;
         default:
           break;
       }
     }
+  }
+
+  /**
+   * Get and adjust container's height
+   * to 100% cover the image's real rect
+   * @private
+   */
+  _adaptHeight() {
+    this._needAdaptHeight = false;
+
+    const containerStyle = this.$.container.style;
+    const { width: realWidth, height: realHeight } = this.image;
+    const hostWidth = this.clientWidth;
+    const hostHeight = hostWidth * realHeight / realWidth;
+
+    this.style.height = hostHeight + 'px';
+    containerStyle.backgroundSize = 'contain';
   }
 
   /**
@@ -216,9 +237,32 @@ export default class ImageElement extends PolymerElement {
   _reset() {
     this._inited = false;
     this._rendered = false;
-    this._loading = false;
+    this.state = UNSENT;
+  }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          position: relative;
+          overflow: hidden;
+          display: inline-block;
+          outline: none;
+          /* Default width/height is 300px/225px */
+          width: 300px;
+          height: 225px;
+          line-height: 0;
+        }
+  
+        #container {
+          width: 100%;
+          height: 100%;
+          background-repeat: no-repeat;
+        }
+      </style>
+      <div id="container"></div>
+    `;
   }
 }
 
 customElements.define(ImageElement.is, ImageElement);
-</script>

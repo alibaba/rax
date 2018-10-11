@@ -1,13 +1,28 @@
 const { join, resolve } = require('path');
 const { readFileSync, existsSync } = require('fs');
-const { getNativeRendererHTML, FRAMEWORK_VERSION } = require('./getFrameworkCDNUrl');
+const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('./getFrameworkCDNUrl');
 
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
+const DEFAULT_CONFIG = {
+  /**
+   * Native appType for setting container type
+   */
+  appType: 'webview',
+  /**
+   * Native SDK Version means API level
+   * if not satisfied, will notify upgrade
+   * for users. must be a typeof string.
+   */
+  sdkVersion: '2',
+};
 
-function getAppConfig(projectDir, opts) {
+/**
+ * Get configuration for app.
+ */
+const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, opts) {
   const manifestFilePath = join(projectDir, 'manifest.json');
   const appDotJSONFilePath = join(projectDir, 'app.json');
-  const appJSON = {};
+  const appJSON = Object.assign({}, DEFAULT_CONFIG);
 
   if (existsSync(manifestFilePath)) {
     Object.assign(appJSON, readJSONSync(manifestFilePath));
@@ -17,7 +32,7 @@ function getAppConfig(projectDir, opts) {
     throw new Error('不存在以下文件: app.json | manifest.json');
   }
 
-  const nativeRendererHTML = getNativeRendererHTML(
+  const nativeRendererUrl = getNativeRendererUrl(
     appJSON.frameworkVersion || FRAMEWORK_VERSION
   );
 
@@ -36,7 +51,7 @@ function getAppConfig(projectDir, opts) {
       } else if (opts && opts.pageUrl) {
         pageUrl = opts.pageUrl;
       } else {
-        pageUrl = nativeRendererHTML;
+        pageUrl = nativeRendererUrl;
       }
 
       const pageConfig = {
@@ -62,7 +77,7 @@ function getAppConfig(projectDir, opts) {
       const pageConfig = {
         pageName,
         pagePath,
-        pageUrl: nativeRendererHTML
+        pageUrl: nativeRendererUrl
       };
       // merge page config json
       const independentPageConfigPath = resolve(projectDir, pagePath + '.json');
@@ -74,12 +89,10 @@ function getAppConfig(projectDir, opts) {
     }
   }
 
-  const result = {
+  const result = Object.assign({}, appJSON, {
     pages,
     homepage,
-    frameworkVersion: appJSON.frameworkVersion,
-    experimentalRemoteRenderer: appJSON.experimentalRemoteRenderer || null,
-  };
+  });
 
   let tabBar = {};
   if (appJSON.tabBar) {
@@ -115,16 +128,17 @@ function getAppConfig(projectDir, opts) {
   result.tabBar = tabBar;
 
   return result;
-}
+};
 
-exports.getAppConfig = getAppConfig;
-
-function readJSONSync(p) {
-  return JSON.parse(readFileSync(p, 'utf-8'));
+/**
+ * Get JS Object from filename.
+ */
+function readJSONSync(filename) {
+  return JSON.parse(readFileSync(filename, 'utf-8'));
 }
 
 /**
- * return String[] list of pages
+ * Get list of page names.
  */
 exports.getPages = function getPages(projectDir) {
   return getAppConfig(projectDir).pages;

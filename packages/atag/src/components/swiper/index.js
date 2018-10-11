@@ -1,97 +1,8 @@
-<dom-module id="a-swiper">
-    <template>
-      <style>
-        :host {
-          display: block;
-          height: 150px;
-        }
-
-        .swiper {
-          position: relative;
-          height: 100%;
-          overflow: hidden;
-        }
-
-        .swiper .swiper-items {
-          display: flex;
-          display: -webkit-flex;
-          width: 100%;
-          height: 100%;
-          transition: all 500ms ease;
-          -webkit-transition: all 500ms ease;
-        }
-
-        .swiper.horizontal .swiper-items {
-          flex-direction: row;
-          -webkit-flex-direction: row;
-        }
-
-        .swiper.vertical .swiper-items {
-          flex-direction: column;
-          -webkit-flex-direction: column;
-        }
-
-        .swiper .swiper-pagination {
-          position: absolute;
-        }
-
-        .swiper .swiper-pagination .swiper-pagination-bullet {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          transition: all 500ms ease;
-          -webkit-transition: all 500ms ease;
-        }
-
-        .swiper .swiper-pagination-bullet {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: #000000;
-          transition: all 500ms ease;
-          -webkit-transition: all 500ms ease;
-        }
-
-        .swiper.vertical .swiper-pagination {
-          right: 10px;
-          top: 50%;
-          transform: translate3d(0, -50%, 0);
-          -webkit-transform: translate3d(0, -50%, 0);
-        }
-        .swiper.vertical .swiper-pagination .swiper-pagination-bullet {
-          display: block;
-          margin: 6px 0;
-        }
-
-        .swiper.horizontal .swiper-pagination {
-          bottom: 10px;
-          width: 100%;
-          text-align: center;
-        }
-
-        .swiper.horizontal .swiper-pagination .swiper-pagination-bullet {
-          display: inline-block;
-          margin: 0 3px;
-        }
-      </style>
-      <div on-touchmove="_handleSwiperTouchMove" class$="[[getContainerClass()]]">
-        <div id="swiperItems" class="swiper-items" on-transitionend="_onTransitionEnd">
-          <slot></slot>
-        </div>
-        <div id="indicator" class="swiper-pagination">
-          <template is="dom-repeat" items="{{indicators}}" index-as="index">
-            <div class="swiper-pagination-bullet" style$="background-color: {{_indicatorDotStyle(index)}}"></div>
-          </template>
-        </div>
-      </div>
-    </template>
-  </dom-module>
-
-<script>
 import 'components/swiper/swiper-item';
-import { PolymerElement } from '@polymer/polymer';
+import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures.js';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -102,48 +13,49 @@ export default class Swiper extends PolymerElement {
     return {
       current: {
         type: Number,
-        value: 0
+        value: 0,
       },
       currentItemId: {
         type: String,
       },
       vertical: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: '_observeVertical',
       },
       circular: {
         type: Boolean,
-        value: false
+        value: false,
       },
       duration: {
         type: Number,
-        value: 500
+        value: 500,
       },
       autoplay: {
         type: Boolean,
-        value: false
+        value: false,
       },
       interval: {
         type: Number,
-        value: 5000
+        value: 5000,
       },
       indicatorDots: {
         type: Boolean,
         value: false,
-        observer: '_observerIndicatorDots'
+        observer: '_observerIndicatorDots',
       },
       indicatorColor: {
         type: String,
-        value: 'rgba(0, 0, 0, .3)'
+        value: 'rgba(0, 0, 0, .3)',
       },
       indicatorActiveColor: {
         type: String,
-        value: 'rgb(0, 0, 0)'
+        value: 'rgb(0, 0, 0)',
       },
       _indicatorDotStyle: {
         type: String,
-        computed: '_computeIndicatorDotStyle(current)'
-      }
+        computed: '_computeIndicatorDotStyle(current)',
+      },
     };
   }
 
@@ -168,10 +80,7 @@ export default class Swiper extends PolymerElement {
   }
 
   get itemsCount() {
-    return FlattenedNodesObserver
-      .getFlattenedNodes(this)
-      .filter((node) => node.nodeName === 'A-SWIPER-ITEM')
-      .length;
+    return FlattenedNodesObserver.getFlattenedNodes(this).filter(node => node.nodeName === 'A-SWIPER-ITEM').length;
   }
 
   ready() {
@@ -183,6 +92,39 @@ export default class Swiper extends PolymerElement {
 
     Gestures.addListener(this, 'track', this.handleTrack);
     this.isReady = true;
+  }
+
+  /**
+   * NOTE: if swiper direction is different with parent
+   * scroll view direction, set touch-action to pan-x if vertically,
+   * to pan-y if not.
+   * Excepted case: if parent scroll element is the whole page (body)
+   * and the swiper's scroll direction is vertical, set touch action
+   * to none to avoid double scrolling.
+   */
+  _observeVertical() {
+    afterNextRender(this, () => {
+      const parentScrollView = this._getParentScrollView();
+      const parentScrollVertical = !(parentScrollView && parentScrollView.scrollX);
+
+      if (this.vertical && parentScrollView === null) {
+        Gestures.setTouchAction(this, 'none');
+      } else if (this.vertical === parentScrollVertical) {
+        Gestures.setTouchAction(this, 'auto');
+      } else {
+        Gestures.setTouchAction(this, this.vertical ? 'pan-x' : 'pan-y');
+      }
+    });
+  }
+
+  _getParentScrollView() {
+    let parent = this;
+    while (parent = parent.parentElement) {
+      if (parent.tagName === 'A-SCROLL-VIEW') {
+        return parent;
+      }
+    }
+    return null;
   }
 
   handleChildrenChanged(info) {
@@ -198,13 +140,12 @@ export default class Swiper extends PolymerElement {
     }
   }
 
-
   render() {
     if (this.currentItemId) {
       const currentItem = this.querySelector(`[item-id=${this.currentItemId}]`);
       for (var i = 0; i < this.children.length; ++i) {
         if (currentItem === this.children[i]) {
-          this.current = i
+          this.current = i;
           break;
         }
       }
@@ -221,7 +162,7 @@ export default class Swiper extends PolymerElement {
 
   _computeIndicatorDotStyle(current) {
     return function(index) {
-      return current === index ? this.indicatorActiveColor : this.indicatorColor
+      return current === index ? this.indicatorActiveColor : this.indicatorColor;
     };
   }
 
@@ -234,7 +175,7 @@ export default class Swiper extends PolymerElement {
 
     switch (key) {
       case 'autoplay':
-        this.autoplay = newVal === 'true' || newVal === "";
+        this.autoplay = newVal === 'true' || newVal === '';
         if (oldVal !== null) {
           if (newVal === 'false') {
             clearTimeout(this.timer);
@@ -277,12 +218,12 @@ export default class Swiper extends PolymerElement {
     return `swiper ${this.vertical ? 'vertical' : 'horizontal'}`;
   }
 
-  _handleSwiperTouchMove = (event) => {
+  _handleSwiperTouchMove = event => {
     // Prevent scrolling in swipper when user is dragging
     if (this.dragging) {
       event.preventDefault();
     }
-  }
+  };
 
   _onTouchStart = ({ x, y }) => {
     this.dragging = true;
@@ -314,13 +255,13 @@ export default class Swiper extends PolymerElement {
     this.transitionDuration = this.duration;
     const isQuickAction = new Date().getTime() - this.startTime < 1000;
 
-    if (this.delta < -100 || (isQuickAction && this.delta < -15)) {
+    if (this.delta < -100 || isQuickAction && this.delta < -15) {
       if (!this.isCircular && this.current + 1 === this.itemsCount) {
         this._revert();
       } else {
         this._next();
       }
-    } else if (this.delta > 100 || (isQuickAction && this.delta > 15)) {
+    } else if (this.delta > 100 || isQuickAction && this.delta > 15) {
       if (!this.isCircular && this.current === 0) {
         this._revert();
       } else {
@@ -332,7 +273,7 @@ export default class Swiper extends PolymerElement {
 
     if (this.isAutoplay) {
       setTimeout(() => {
-        this._autoplay()
+        this._autoplay();
       }, this.duration);
     }
 
@@ -343,12 +284,12 @@ export default class Swiper extends PolymerElement {
   _next = () => {
     const itemsCount = this.itemsCount;
     this.current = this.current < 0 ? 0 : this.current > itemsCount - 1 ? itemsCount - 1 : this.current;
-    const isCurrentLastItem = this.current === (itemsCount - 1);
-    const realCurrent = this.isCircular ? this.current + 1 : this.current ;
-    const nextRealCurrent = isCurrentLastItem ? (this.isCircular ? realCurrent + 1 : 0) : realCurrent + 1;
+    const isCurrentLastItem = this.current === itemsCount - 1;
+    const realCurrent = this.isCircular ? this.current + 1 : this.current;
+    const nextRealCurrent = isCurrentLastItem ? this.isCircular ? realCurrent + 1 : 0 : realCurrent + 1;
 
     this.prevAction = 'next';
-    this.setRealItem(nextRealCurrent);
+    this._setRealItem(nextRealCurrent);
 
     this.prevCurrent = this.current;
     this.current = isCurrentLastItem ? 0 : this.current + 1;
@@ -356,11 +297,11 @@ export default class Swiper extends PolymerElement {
 
   _prev = () => {
     const isCurrentFirstItem = this.current === 0;
-    const realCurrent = this.isCircular ? this.current + 1 : this.current ;
-    const prevRealCurrent = isCurrentFirstItem ? (this.isCircular ? realCurrent - 1 : 0) : realCurrent - 1;
+    const realCurrent = this.isCircular ? this.current + 1 : this.current;
+    const prevRealCurrent = isCurrentFirstItem ? this.isCircular ? realCurrent - 1 : 0 : realCurrent - 1;
 
     this.prevAction = 'prev';
-    this.setRealItem(prevRealCurrent);
+    this._setRealItem(prevRealCurrent);
 
     this.prevCurrent = this.current;
     this.current = isCurrentFirstItem ? this.itemsCount - 1 : this.current - 1;
@@ -368,26 +309,32 @@ export default class Swiper extends PolymerElement {
 
   _revert = () => {
     // Only no loop mode will should revert
-    this.setRealItem(this.current);
+    this._setRealItem(this.current);
   };
 
-  setRealItem(realCurrent, noAnimation) {
+  _setRealItem(realCurrent, noAnimation) {
     if (!noAnimation) {
       this.transitionDuration = this.duration;
     }
+    /**
+     * Hack: Add timestamp to trigger MutaionObserver of
+     * polyfilled IntersectionObserver to make
+     * image lazyLoad works
+     */
+    this.setAttribute('data-timestamp', Date.now());
     this._setTranslate(this._getTranslateOfRealItem(realCurrent), noAnimation ? 0 : null);
   }
 
   _onTransitionEnd() {
     this.delta = 0;
 
-    const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === (this.itemsCount - 1);
+    const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === this.itemsCount - 1;
     const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
     if (this.isCircular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
-      this.setRealItem(isPrevCurrentLastItem ? 1 : this.itemsCount, this.isCircular);
+      this._setRealItem(isPrevCurrentLastItem ? 1 : this.itemsCount, this.isCircular);
     }
 
-    this.emitChangeEvent();
+    this._emitChangeEvent();
   }
 
   _setTranslate(value, duration) {
@@ -422,7 +369,7 @@ export default class Swiper extends PolymerElement {
      * Using this.children to get real childNodes
      */
     const childItems = [];
-    for (let i = 0, l = this.children.length; i < l; i++ ) {
+    for (let i = 0, l = this.children.length; i < l; i++) {
       childItems.push(this.children[i]);
     }
     if (this.duplicateFirstChild) {
@@ -472,14 +419,13 @@ export default class Swiper extends PolymerElement {
     }
   }
 
-  emitChangeEvent() {
-
+  _emitChangeEvent() {
     const event = new CustomEvent('change', {
       bubbles: false,
       cancelable: true,
       detail: {
-        current: this.current < 0 ? 0 : this.current > this.itemsCount - 1 ? this.itemsCount - 1 : this.current
-      }
+        current: this.current < 0 ? 0 : this.current > this.itemsCount - 1 ? this.itemsCount - 1 : this.current,
+      },
     });
 
     this.dispatchEvent(event);
@@ -496,7 +442,7 @@ export default class Swiper extends PolymerElement {
       this._next();
       this._autoplay();
     }, this.interval);
-  }
+  };
 
   handleTrack(e) {
     const detail = e.detail;
@@ -505,12 +451,91 @@ export default class Swiper extends PolymerElement {
       const dy = detail.dy;
       const direction = Math.abs(dy) - Math.abs(dx);
 
-      if ((!this.vertical && direction < 0) || (this.vertical && direction > 0)) {
+      if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
         this._onTouchStart(detail);
       }
     }
   }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          display: block;
+          height: 150px;
+        }
+        .swiper {
+          position: relative;
+          height: 100%;
+          overflow: hidden;
+        }
+        .swiper .swiper-items {
+          display: flex;
+          display: -webkit-flex;
+          width: 100%;
+          height: 100%;
+          transition: all 500ms ease;
+          -webkit-transition: all 500ms ease;
+        }
+        .swiper.horizontal .swiper-items {
+          flex-direction: row;
+          -webkit-flex-direction: row;
+        }
+        .swiper.vertical .swiper-items {
+          flex-direction: column;
+          -webkit-flex-direction: column;
+        }
+        .swiper .swiper-pagination {
+          position: absolute;
+        }
+        .swiper .swiper-pagination .swiper-pagination-bullet {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          transition: all 500ms ease;
+          -webkit-transition: all 500ms ease;
+        }
+        .swiper .swiper-pagination-bullet {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: #000000;
+          transition: all 500ms ease;
+          -webkit-transition: all 500ms ease;
+        }
+        .swiper.vertical .swiper-pagination {
+          right: 10px;
+          top: 50%;
+          transform: translate3d(0, -50%, 0);
+          -webkit-transform: translate3d(0, -50%, 0);
+        }
+        .swiper.vertical .swiper-pagination .swiper-pagination-bullet {
+          display: block;
+          margin: 6px 0;
+        }
+        .swiper.horizontal .swiper-pagination {
+          line-height: 0;
+          bottom: 1.6vw;
+          width: 100%;
+          text-align: center;
+        }
+        .swiper.horizontal .swiper-pagination .swiper-pagination-bullet {
+          display: inline-block;
+          margin: 0 3px;
+        }
+      </style>
+      <div on-touchmove="_handleSwiperTouchMove" class$="[[getContainerClass()]]">
+        <div id="swiperItems" class="swiper-items" on-transitionend="_onTransitionEnd">
+          <slot></slot>
+        </div>
+        <div id="indicator" class="swiper-pagination">
+          <template is="dom-repeat" items="{{indicators}}" index-as="index">
+            <div class="swiper-pagination-bullet" style$="background-color: {{_indicatorDotStyle(index)}}"></div>
+          </template>
+        </div>
+      </div>
+    `;
+  }
 }
 
 customElements.define(Swiper.is, Swiper);
-</script>
