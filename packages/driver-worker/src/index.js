@@ -1,4 +1,4 @@
-import { convertUnit, setRem } from 'style-unit';
+import { convertUnit, setRem, getRem } from 'style-unit';
 import createDocument from './create-document';
 
 const ELEMENT_NODE = 1;
@@ -310,7 +310,7 @@ export default ({ postMessage, addEventListener }) => {
 
       for (let prop in styles) {
         let val = styles[prop];
-        newStyles[prop] = convertUnit(val, prop, ROUND_CSS_PIXEL);
+        newStyles[prop] = convertUnit(val, prop, getRem(), ROUND_CSS_PIXEL);
       }
       // Assign to style for trigger style update
       node.style = newStyles;

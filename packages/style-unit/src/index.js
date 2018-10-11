@@ -95,7 +95,7 @@ export function convertUnit(val, prop, remUnit = getRem(), roundPixel = false) {
     return calcUnitNumber(val, remUnit, roundPixel);
   } else if (isRem(val)) {
     return calcRem(val, remUnit, roundPixel);
+  } else {
+    return val;
   }
-
-  return val;
 }
