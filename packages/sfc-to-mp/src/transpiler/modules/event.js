@@ -1,4 +1,5 @@
 const { getOption } = require('../../config/cliOptions');
+
 const targetType = getOption('target');
 
 /**
@@ -34,12 +35,11 @@ function genData(el, state = {}) {
         value = state.templateName + '$' + value;
       }
 
-      data += ` ${eventName}="${value}"`;
+      data += `${eventName}="${value}"`;
     });
   }
 
   return data;
-
 }
 
 module.exports = {

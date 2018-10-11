@@ -5,5 +5,5 @@ exports.getOption = function get(key) {
 };
 
 exports.setOption = function set(key, val) {
-  return (options[key] = val);
+  return options[key] = val;
 };

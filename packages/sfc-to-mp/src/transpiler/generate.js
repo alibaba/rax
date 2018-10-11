@@ -44,10 +44,10 @@ function genElement(el, state) {
     if (state.dependencyMap[el.tag]) {
       return `<template is="${
         state.dependencyMap[el.tag].tplName
-        }" data="{{${genData(el, state)}}}">${genElement(
-          el.children,
-          state
-        )}</template>`;
+      }" data="{{${genData(el, state)}}}">${genElement(
+        el.children,
+        state
+      )}</template>`;
     } else if (el.ifConditions) {
       return el.ifConditions
         .map((condition) => {
@@ -60,9 +60,9 @@ function genElement(el, state) {
       const hasAttrs = el.hasBindings || el.attrs;
       return `<${el.tag}${
         hasAttrs ? ' ' + genAttrs(el, state) : ''
-        }${genModuleData(el, state)}>${genElement(el.children, state)}</${el.tag}>`;
+      }${genModuleData(el, state)}>${genElement(el.children, state)}</${el.tag}>`;
     }
-  } else if (el.type === 2 || (el.type === 3 && el.static)) {
+  } else if (el.type === 2 || el.type === 3 && el.static) {
     // Type 2: text node or static text node
     return genText(el, state);
   } else {
@@ -98,7 +98,7 @@ function genModuleData(el, state) {
  * Handle bind values
  */
 function genAttrs(el, state) {
-  console.log(el)
+  console.log(el);
   if (el.attrs) {
     return el.attrs.map(({ name, value }) => {
       if (el.attrsMap['v-on:' + name] || el.attrsMap[':' + name]) {
@@ -117,7 +117,7 @@ function genAttrs(el, state) {
  */
 function genData(el, state) {
   const { templateName } = state.dependencyMap[el.tag];
-  const propsData = (state.propsDataMap[templateName] = {});
+  const propsData = state.propsDataMap[templateName] = {};
 
   el.attrsList.forEach(({ name, value }) => {
     if (name[0] === ':' || name[0] === 'v-bind:') {
@@ -130,7 +130,6 @@ function genData(el, state) {
 
   return `$d, ...$d['${templateName}']`;
 }
-
 
 
 /**
