@@ -2,10 +2,7 @@ const { readFileSync, existsSync } = require('fs');
 const { resolve } = require('path');
 const getAppJSON = require('../config/getAppJSON');
 const getExt = require('../config/getExt');
-const {
-  OUTPUT_SOURCE_FOLDER,
-  OUTPUT_VENDOR_FOLDER,
-} = require('../config/CONSTANTS');
+const { OUTPUT_SOURCE_FOLDER, OUTPUT_VENDOR_FOLDER } = require('../config/CONSTANTS');
 
 module.exports = function appLoader(content) {
   /**
@@ -16,10 +13,7 @@ module.exports = function appLoader(content) {
   content = content + '\nmodule.exports = app;';
   this.emitFile(
     `${OUTPUT_SOURCE_FOLDER}/app.js`,
-    content.replace(
-      /@core\/app/,
-      `/${OUTPUT_VENDOR_FOLDER}/coreApp.js`
-    )
+    content.replace(/@core\/app/, `../${OUTPUT_VENDOR_FOLDER}/coreApp.js`)
   );
 
   /**
@@ -36,8 +30,8 @@ module.exports = function appLoader(content) {
    * handle with app.js
    */
   const source = `
-  var createApp = require('/${OUTPUT_VENDOR_FOLDER}/createApp');
-  var appConfig = require('/${OUTPUT_SOURCE_FOLDER}/app');
+  var createApp = require('./${OUTPUT_VENDOR_FOLDER}/createApp');
+  var appConfig = require('./${OUTPUT_SOURCE_FOLDER}/app');
   App(createApp(appConfig));
 `;
   this.callback(null, source);

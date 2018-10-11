@@ -1,0 +1,15 @@
+{
+  "manifest_version": 1,
+  "pages": {
+    "home": "pages/home",
+    "subPage": "pages/subPage"
+  },
+  "homepage": "home",
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FAFAFA",
+    "navigationBarTitleText": "小程序",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f9f9f9"
+  }
+}

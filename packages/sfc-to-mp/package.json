@@ -8,11 +8,23 @@
     "mp-watch": "bin/mp-watch.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "nodemon ./scripts/build.js",
+    "watch-wx": "nodemon ./scripts/build-wx.js"
+  },
+  "engines": {
+    "node": ">=8.0.0"
   },
   "keywords": [
     "miniapp"
   ],
+  "nodemonConfig": {
+    "ignore": [
+      "test/*",
+      "lib/*",
+      "example/*"
+    ]
+  },
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -47,11 +59,15 @@
     "hash-sum": "^1.0.2",
     "loader-utils": "^1.1.0",
     "string-width": "^2.1.1",
+    "url-loader": "^1.1.1",
     "vue": "^2.5.17",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^4.20.2",
     "webpack-hot-client": "^4.1.1",
     "webpack-merge": "^4.1.4",
     "webpack-server": "^0.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
   }
 }

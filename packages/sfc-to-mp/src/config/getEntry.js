@@ -20,16 +20,10 @@ module.exports = function getEntry() {
 
   const { pages } = appConfig;
   if (pages) {
-    Object.keys(pages).forEach(pageName => {
+    Object.keys(pages).forEach((pageName) => {
       const pagePath = pages[pageName];
       const pageEntryPath = path.resolve(context, pagePath);
-      entry[pagePath] =
-        pageLoaderPath +
-        '?pageName=' +
-        pagePath +
-        '!' +
-        pageEntryPath +
-        SFC_EXT;
+      entry[pagePath] = `${pageLoaderPath}!${pageEntryPath}${SFC_EXT}`;
     });
   }
   return entry;

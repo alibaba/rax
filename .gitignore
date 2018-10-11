@@ -13,3 +13,4 @@ examples/test
 .idea/
 package-lock.json
 yarn.lock
+.tea
