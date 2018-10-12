@@ -342,15 +342,8 @@ export default ({ worker, tagNamePrefix = '' }) => {
     } else if (type === 'Location') {
       const { data: payload } = data;
       const { type, prop } = payload;
-      switch (type) {
-        case 'call': {
-          location[prop].apply(location, payload.args);
-          break;
-        }
-        case 'assign': {
-          location[prop] = payload.val;
-          break;
-        }
+      if (type === 'call' && prop === 'replace') {
+        location.replace(payload.args[0]);
       }
     }
   };

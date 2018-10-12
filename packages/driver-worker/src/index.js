@@ -1,4 +1,4 @@
-import { convertUnit, setRem, getRem } from 'style-unit';
+import { convertUnit, setRem, setDecimalPixelTransformer } from 'style-unit';
 import createDocument from './create-document';
 
 const ELEMENT_NODE = 1;
@@ -12,7 +12,6 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const BODY = 'BODY';
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
-const ROUND_CSS_PIXEL = true;
 const TO_SANITIZE = [
   'target',
   'addedNodes',
@@ -310,7 +309,7 @@ export default ({ postMessage, addEventListener }) => {
 
       for (let prop in styles) {
         let val = styles[prop];
-        newStyles[prop] = convertUnit(val, prop, getRem(), ROUND_CSS_PIXEL);
+        newStyles[prop] = convertUnit(val, prop);
       }
       // Assign to style for trigger style update
       node.style = newStyles;
@@ -319,6 +318,7 @@ export default ({ postMessage, addEventListener }) => {
     beforeRender() {
       // Init rem unit
       setRem(this.getDeviceWidth() / this.getViewportWidth());
+      setDecimalPixelTransformer(Math.floor);
     },
 
     setNativeProps(node, props) {

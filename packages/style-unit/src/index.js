@@ -57,25 +57,38 @@ export function isRem(str) {
   return IS_REM_REG.test(str);
 }
 
+
+function passthrough(val) {
+  return val;
+}
+
+let decimalPixelTransformer = passthrough;
+
+/**
+ * Set a function to transform unit of pixel,
+ * default to passthrough.
+ * @param {Function} transformer function
+ */
+export function setDecimalPixelTransformer(transformer) {
+  decimalPixelTransformer = transformer;
+}
+
+
 /**
  * Calculate rem to pixels: '1.2rem' => 1.2 * rem
  * @param {String} str
  * @param {Number} rem
- * @param {Boolean} round pixel to integer
+ * @param {String} decimalRule
  * @returns {String}
  */
-export function calcRem(str, remUnit = getRem(), roundPixel = false) {
+export function calcRem(str, remUnit = getRem()) {
   return str.replace(REM_REG, function(rem) {
-    if (roundPixel) {
-      return parseInt(parseFloat(rem) * remUnit, 10) + 'px';
-    } else {
-      return parseFloat(rem) * remUnit + 'px';
-    }
+    return decimalPixelTransformer(parseFloat(rem) * remUnit) + 'px';
   });
 }
 
-export function calcUnitNumber(val, remUnit = getRem(), roundPixel = false) {
-  return (roundPixel ? parseInt(val * remUnit, 10) : val * remUnit) + 'px';
+export function calcUnitNumber(val, remUnit = getRem()) {
+  return decimalPixelTransformer(val * remUnit) + 'px';
 }
 
 export function getRem() {
@@ -90,11 +103,11 @@ export function isUnitNumber(val, prop) {
   return typeof val === 'number' && !UNITLESS_NUMBER_PROPS[prop];
 }
 
-export function convertUnit(val, prop, remUnit = getRem(), roundPixel = false) {
+export function convertUnit(val, prop, remUnit = getRem()) {
   if (prop && isUnitNumber(val, prop)) {
-    return calcUnitNumber(val, remUnit, roundPixel);
+    return calcUnitNumber(val, remUnit);
   } else if (isRem(val)) {
-    return calcRem(val, remUnit, roundPixel);
+    return calcRem(val, remUnit, );
   } else {
     return val;
   }

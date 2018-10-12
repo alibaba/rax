@@ -271,18 +271,18 @@ export default function() {
   }
 
   class EventTarget {
-    _eventListeners = {};
+    eventListeners = {};
 
     addEventListener(type, handler) {
       (
-        this._eventListeners[toLower(type)] ||
-        (this._eventListeners[toLower(type)] = [])
+        this.eventListeners[toLower(type)] ||
+        (this.eventListeners[toLower(type)] = [])
       ).push(handler);
       mutation(this, 'addEvent', { eventName: type });
     }
 
     removeEventListener(type, handler) {
-      splice(this._eventListeners[toLower(type)], handler, 0, true);
+      splice(this.eventListeners[toLower(type)], handler, 0, true);
       mutation(this, 'removeEvent', { eventName: type });
     }
 
@@ -295,7 +295,7 @@ export default function() {
       let l;
       let i;
       do {
-        l = t._eventListeners && t._eventListeners[toLower(event.type)];
+        l = t.eventListeners && t.eventListeners[toLower(event.type)];
         if (l)
           for (i = l.length; i--;) {
             if ((l[i].call(t, event) === false || event._end) && c) break;
