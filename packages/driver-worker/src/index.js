@@ -22,23 +22,22 @@ const TO_SANITIZE = [
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
+  // TODO: should remove location object, and replace with RPC-like
+  const LOCATION = 'Location';
   let location = {
-    _send(data) {
-      postMessage({ type: 'Location', data });
-    },
     get href() {
       return document.URL;
     },
     set href(url) {
       document.URL = url;
-      location._send({ type: 'assign', prop: 'href', val: url });
+      postMessage({ type: LOCATION, { type: 'assign', prop: 'href', val: url } });
     },
     replace(url) {
       document.URL = url;
-      location._send({ type: 'call', prop: 'replace', args: [url] });
+      postMessage({ type: LOCATION, { type: 'call', prop: 'replace', args: [url] } });
     },
     reload() {
-      location._send({ type: 'call', prop: 'reload' });
+      postMessage({ type: LOCATION, { type: 'call', prop: 'reload' } });
     },
   };
 
