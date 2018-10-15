@@ -24,7 +24,6 @@ const TO_SANITIZE = [
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
   let rpcClient = new RPCClient({ postMessage, addEventListener });
-
   let MutationObserver = document.defaultView.MutationObserver;
 
   const NODES = new Map();
@@ -138,8 +137,23 @@ export default ({ postMessage, addEventListener }) => {
     }
   });
 
+  const rpcProxyObjects = {};
+  const rpcMethodList = {
+    location: ['assign', 'replace', 'reload'],
+    history: ['back', 'forward', 'go', 'pushState', 'replaceState'],
+  };
+  Object.keys(rpcMethodList).forEach((scope) => {
+    rpcProxyObjects[scope] = {};
+    rpcMethodList[scope].forEach((method) => {
+      rpcProxyObjects[scope][method] = (...args) => {
+        rpcClient.apply(`${scope}.${method}`, args);
+      };
+    });
+  });
+
   return {
     document,
+    ...rpcProxyObjects,
     postMessage,
     deviceWidth: null,
     viewportWidth: 750,

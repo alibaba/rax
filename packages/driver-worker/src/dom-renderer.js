@@ -44,6 +44,10 @@ const NO_BUBBLES_EVENTS = {
 export default ({ worker, tagNamePrefix = '' }) => {
   const NODES = new Map();
   const registeredEventCounts = {};
+  const rpcServer = new RPCServer({
+    postMessage: worker.postMessage,
+  });
+
 
   function setNode(vnode, node) {
     node.$$id = vnode.$$id;
@@ -331,10 +335,6 @@ export default ({ worker, tagNamePrefix = '' }) => {
     }
   };
 
-  let rpc = new RPCServer({
-    postMessage: worker.postMessage,
-  })
-
   worker.onmessage = ({ data }) => {
     let type = data.type;
     if (type === 'MutationRecord') {
@@ -351,7 +351,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
         location.replace(payload.args[0]);
       }
     } else if (type === 'rpc') {
-      rpc.receiver(data);
+      rpcServer.receiver(data);
     }
   };
 
