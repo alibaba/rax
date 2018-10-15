@@ -1,5 +1,6 @@
 import { convertUnit, setRem, setDecimalPixelTransformer } from 'style-unit';
 import createDocument from './create-document';
+import RPCClient from './rpc/client';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -22,6 +23,8 @@ const TO_SANITIZE = [
 
 export default ({ postMessage, addEventListener }) => {
   let document = createDocument();
+  let rpcClient = new RPCClient({ postMessage, addEventListener });
+
   let MutationObserver = document.defaultView.MutationObserver;
 
   const NODES = new Map();
@@ -128,6 +131,9 @@ export default ({ postMessage, addEventListener }) => {
         break;
       case 'event':
         handleEvent(data.event);
+        break;
+      case 'rpc':
+        rpcClient.receiver(data);
         break;
     }
   });

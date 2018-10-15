@@ -1,4 +1,5 @@
 import setStyle from './set-style';
+import RPCServer from './rpc/server';
 
 // feature-detect support for event listener options
 let supportsPassive = false;
@@ -330,6 +331,10 @@ export default ({ worker, tagNamePrefix = '' }) => {
     }
   };
 
+  let rpc = new RPCServer({
+    postMessage: worker.postMessage,
+  })
+
   worker.onmessage = ({ data }) => {
     let type = data.type;
     if (type === 'MutationRecord') {
@@ -345,6 +350,8 @@ export default ({ worker, tagNamePrefix = '' }) => {
       if (type === 'call' && prop === 'replace') {
         location.replace(payload.args[0]);
       }
+    } else if (type === 'rpc') {
+      rpc.receiver(data);
     }
   };
 
