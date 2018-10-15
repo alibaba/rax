@@ -7,7 +7,7 @@ module.exports = function pageLoader() {
   const pageGenerator = new PageGenerator(this);
   componentParser.call(this, this.resourcePath).then((contentsTree) => {
     pageGenerator.init(contentsTree);
-    pageGenerator.emitPage(contentsTree);
+    pageGenerator.emitPage();
     const source = pageGenerator.getSource();
     callback(null, source);
   });
