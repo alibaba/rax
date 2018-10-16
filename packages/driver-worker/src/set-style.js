@@ -69,7 +69,7 @@ Object.keys(PREFIX_PROPS).forEach((prop) => {
 });
 
 Object.keys(PREFIX_PROP_VALS).forEach((prop) => {
-  const rule = PREFIX_PROPS[prop];
+  const rule = PREFIX_PROP_VALS[prop];
   StylePrefixer[prop] = (value, style = {}) => {
     if (value === rule) {
       style[prop] = ['-webkit-' + rule, rule];
