@@ -1,15 +1,23 @@
 const { readFileSync, existsSync } = require('fs');
 const { resolve } = require('path');
-const getAppJSON = require('../config/getAppJSON');
-const getExt = require('../config/getExt');
-const { OUTPUT_SOURCE_FOLDER, OUTPUT_VENDOR_FOLDER } = require('../config/CONSTANTS');
+
+const getAppJSON = require('./getAppJSON');
+const getExt = require('../../config/getExt');
+const { OUTPUT_SOURCE_FOLDER, OUTPUT_VENDOR_FOLDER } = require('../../config/CONSTANTS');
 
 module.exports = function appLoader(content) {
   /**
    * handle with app.json
    */
-  const appJSON = getAppJSON(this.rootContext);
+
+  const manifestPath = resolve(this.rootContext, 'manifest.json');
+
+  this.addDependency(manifestPath);
+
+  const appJSON = getAppJSON(manifestPath);
+
   this.emitFile('app.json', JSON.stringify(appJSON, null, 2) + '\n');
+
   content = content + '\nmodule.exports = app;';
   this.emitFile(
     `${OUTPUT_SOURCE_FOLDER}/app.js`,
