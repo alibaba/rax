@@ -1,6 +1,7 @@
 // from https://github.com/mpvue/mpvue-loader/blob/master/lib/mp-compiler/parse.js
 const generate = require('@babel/generator').default;
 const babelon = require('babelon');
+const kebabCase = require('./kebabCase');
 
 function getImportsMap(metadata) {
   let { importsMap } = metadata;
@@ -90,7 +91,7 @@ const traverseComponentsVisitor = {
       const k = p.key.name || p.key.value;
       const v = p.value.name || p.value.value;
 
-      components[k] = importsMap[v];
+      components[kebabCase(k)] = importsMap[v];
     });
 
     metadata.components = components;

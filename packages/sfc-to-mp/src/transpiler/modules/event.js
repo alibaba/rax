@@ -21,7 +21,7 @@ function genData(el, state = {}) {
 
   if (el.events) {
     Object.keys(el.events).forEach((eventName) => {
-      const { value } = el.events[eventName];
+      let { value } = el.events[eventName];
 
       eventName = EVENT_MAP[eventName] || eventName;
 

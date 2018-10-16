@@ -61,7 +61,7 @@ function genElement(el, state) {
         state
       )}</${el.tag}>`;
     }
-  } else if (el.type === 2 || (el.type === 3 && el.static)) {
+  } else if (el.type === 2 || el.type === 3 && el.static) {
     // Type 2: text node or static text node
     return genText(el, state);
   } else {
@@ -117,7 +117,7 @@ function genAttrs(el, state) {
  */
 function genData(el, state) {
   const { templateName } = state.dependencyMap[el.tag];
-  const propsData = (state.propsDataMap[templateName] = {});
+  const propsData = state.propsDataMap[templateName] = {};
 
   el.attrsList.forEach(({ name, value }) => {
     if (name[0] === ':' || name[0] === 'v-bind:') {
