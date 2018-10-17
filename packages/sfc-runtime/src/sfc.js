@@ -74,12 +74,14 @@ export default class SFC {
       throw new TypeError('Plugin should not be undefined or null');
     }
 
-    if (installedPlugins.has(Plugin) && process.env.NODE_ENV !== 'production') {
-      console.error(`SFC: Plugin ${Plugin.name} can not use more than once.`);
+    if (installedPlugins.has(Plugin)) {
+      if (process.env.NODE_ENV !== 'production')
+        console.error(`SFC: Plugin ${Plugin.name} can not use more than once.`);
       return;
     }
 
     Plugin.install(SFC, options);
+    installedPlugins.add(Plugin);
   }
 
   /**
