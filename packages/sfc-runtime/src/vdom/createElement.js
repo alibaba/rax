@@ -1,12 +1,12 @@
 import { processPropsData } from '../utils';
-import { get } from '../store';
+import Host from '../host';
 
 export default function(type, props, children) {
   let createElement;
   if (this && typeof this.createElement === 'function') {
     createElement = this.createElement;
   } else {
-    createElement = get('c');
+    createElement = Host.createElement;
   }
 
   if (typeof type === 'object' && type.__esModule === true) {

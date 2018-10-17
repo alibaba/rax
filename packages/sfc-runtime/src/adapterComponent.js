@@ -1,16 +1,16 @@
 import SFC from './sfc';
 import renderHelpers from './vdom';
 import { isWeex } from './utils';
-import { set as storeSet } from './store';
+import Host from './host';
 import { mixinSlots, proxy } from './mixin';
 import convertComponentsDefining from './convertComponentsDefining';
 import getGlobalComponents from './getGlobalComponents';
-import lifecyclesMap from "./lifecyclesMap";
+import lifecyclesMap from './lifecyclesMap';
 import nextTick from './nextTick';
 
 export default function adapterComponent(defining, renderFactory, styles, Rax) {
   const { createElement, Component } = Rax;
-  storeSet('c', createElement);
+  Host.createElement = createElement;
 
   if (defining.components) {
     /**
