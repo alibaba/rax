@@ -1,8 +1,6 @@
-import ViewModel from './sfc';
+import SFC from './sfc';
 import adapterComponent from './adapterComponent';
 
-export default ViewModel;
-export {
-  adapterComponent
-};
+export default SFC;
+export { adapterComponent };
 
