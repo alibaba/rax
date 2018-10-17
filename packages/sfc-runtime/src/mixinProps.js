@@ -4,26 +4,26 @@ function preventPropsSet() {
   throw new Error('props can not be set');
 }
 
-export default function mixinProps(vm, props, userPropsDef) {
+export default function mixinProps(vm, propsData = {}, propsDefining) {
   const _props = {};
-  const propsDef = [];
-  if (Array.isArray(userPropsDef)) {
-    userPropsDef.forEach(propKey => {
+  const formattedPropsDefining = [];
+  if (Array.isArray(propsDefining)) {
+    propsDefining.forEach(propKey => {
       if (typeof propKey === 'string') {
-        propsDef.push({ key: propKey });
+        formattedPropsDefining.push({ key: propKey });
       } else if (process.env.NODE_ENV !== 'production') {
         warn(
           'props key should be a string, check definition of',
-          userPropsDef
+          propsDefining
         );
       }
     });
-  } else if (isPlainObject(userPropsDef)) {
-    const keys = Object.keys(userPropsDef);
+  } else if (isPlainObject(propsDefining)) {
+    const keys = Object.keys(propsDefining);
     for (let i = 0, l = keys.length; i < l; i++) {
       const key = keys[i];
-      const defaultVal = userPropsDef[key].default;
-      propsDef.push({ key, defaultVal });
+      const defaultVal = propsDefining[key].default;
+      formattedPropsDefining.push({ key, defaultVal });
     }
   }
 
@@ -33,13 +33,13 @@ export default function mixinProps(vm, props, userPropsDef) {
     },
   });
 
-  for (let i = 0, l = propsDef.length; i < l; i++) {
-    const { key, defaultVal } = propsDef[i];
-    _props[key] = props[key] || defaultVal;
+  for (let i = 0, l = formattedPropsDefining.length; i < l; i++) {
+    const { key, defaultVal } = formattedPropsDefining[i];
+    _props[key] = propsData[key] || defaultVal;
     Object.defineProperty(vm, key, {
       enumerable: true,
       configurable: false,
-      get: function() {
+      get: function () {
         return _props[key];
       },
       set: preventPropsSet,
