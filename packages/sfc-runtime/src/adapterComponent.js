@@ -1,16 +1,14 @@
 import SFC from './sfc';
 import renderHelpers from './vdom';
-import Host from './host';
+import setRuntime from './vdom/setRuntime';
 import { mixinSlots, proxy } from './mixin';
 import convertComponentsDefining from './convertComponentsDefining';
-import getGlobalComponents from './getGlobalComponents';
 import lifecyclesMap from './lifecyclesMap';
 import nextTick from './nextTick';
 import { isWeex } from './utils';
 
 export default function adapterComponent(defining, renderFactory, styles, Rax) {
-  const { createElement, Component } = Rax;
-  Host.createElement = createElement;
+  setRuntime(Rax);
 
   if (defining.components) {
     /**
@@ -29,12 +27,6 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
      * - MyComponentName(PascalCase) => my-component-name(kebab-case)
      */
     convertComponentsDefining(defining.components);
-
-    /**
-     * Register global components
-     */
-    let globalComponents = getGlobalComponents();
-    if (globalComponents) Object.assign(defining.components, globalComponents);
   } else {
     /**
      * Must have a components object scope for doing
@@ -45,7 +37,7 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
 
   const renderLifecycle = renderFactory(styles, defining, renderHelpers, isWeex);
 
-  return class extends Component {
+  return class extends Rax.Component {
     constructor(props, context) {
       super(props, context);
 

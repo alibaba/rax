@@ -2,12 +2,7 @@ import { processPropsData } from '../utils';
 import Host from '../host';
 
 export default function(type, props, children) {
-  let createElement;
-  if (this && typeof this.createElement === 'function') {
-    createElement = this.createElement;
-  } else {
-    createElement = Host.createElement;
-  }
+  const createElement = Host.createElement;
 
   if (typeof type === 'object' && type.__esModule === true) {
     type = type.default;
