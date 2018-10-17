@@ -29,17 +29,17 @@ function observeWithContext(data, context, def) {
       update();
     },
     declear: def,
-    vm: context.vm
+    vm: context._data,
   });
 }
 export { observeWithContext };
 
 export default function mixinData(context, declearation) {
   // init reactive data
-  var data; // data always exists
+  var data = context.data; // data always exists
   var __data_type = typeof declearation.data;
   if (__data_type === 'function') {
-    data = declearation.data.call(this);
+    data = declearation.data.call(context);
   } else if (
     __data_type === 'object' &&
     process.env.NODE_ENV !== 'production'
@@ -52,11 +52,16 @@ export default function mixinData(context, declearation) {
     data = declearation.data;
   } else {
     /* istanbul ignore next */
-    data = null;
+    data = {};
   }
+  context._data = data;
 
-  // register data
-  context._data = data || {};
+  // $data getter
+  Object.defineProperty(context, '$data', {
+    get() {
+      return data;
+    },
+  });
 
   if (!data) {
     return;
@@ -65,8 +70,8 @@ export default function mixinData(context, declearation) {
   observeWithContext(data, context, declearation);
 
   Object.keys(data).forEach(dataKey => {
-    context.vm[dataKey] = data[dataKey];
-    Object.defineProperty(context.vm, dataKey, {
+    context[dataKey] = data[dataKey];
+    Object.defineProperty(context, dataKey, {
       enumerable: true,
       configurable: true,
       get: function proxyGet() {
@@ -74,7 +79,7 @@ export default function mixinData(context, declearation) {
       },
       set: function proxySet(newVal) {
         data[dataKey] = newVal;
-      }
+      },
     });
   });
 }
