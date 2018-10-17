@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const log = require('fancy-log');
 const colors = require('chalk');
+const rimraf = require('rimraf');
 
 const appBuildConfig = require('./webpack.config');
 const vendorConfig = require('./vendor.config');
@@ -18,12 +19,17 @@ const statsOptions = {
 };
 
 module.exports = function watch() {
+  log.info(colors.blue('Clean output folder:'), appBuildConfig.output.path);
+  rimraf.sync(appBuildConfig.output.path);
   const watchOpts = { aggregateTimeout: 300 };
 
   const compiler = webpack([vendorConfig, appBuildConfig]);
 
   compiler.watch(watchOpts, (err, statsQueue) => {
-    const hasErr = statsQueue.stats.reduce((prev, curr) => prev || curr.hasErrors(), false);
+    const hasErr = statsQueue.stats.reduce(
+      (prev, curr) => prev || curr.hasErrors(),
+      false
+    );
     if (hasErr) {
       statsQueue.stats.forEach((stats) => {
         console.log(stats.toString(statsOptions));

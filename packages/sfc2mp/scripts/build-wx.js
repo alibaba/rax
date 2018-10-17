@@ -1,7 +1,7 @@
 const { spawn, spawnSync } = require('child_process');
 const path = require('path');
 
-const cli = path.join(__dirname, '../bin/mp.js');
+const cli = path.join(__dirname, '../bin/sfc2mp.js');
 // spawnSync('rm', ['-rf', './dist'], {
 //   cwd: path.join(__dirname, '../example'),
 // });
