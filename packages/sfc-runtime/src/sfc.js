@@ -16,7 +16,6 @@ export default class SFC {
       config.beforeCreate.call(null);
     }
 
-    this._data = {};
     Object.defineProperty(this, '_watchers', {
       enumerable: false,
       value: [],

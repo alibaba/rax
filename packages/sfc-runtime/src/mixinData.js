@@ -36,7 +36,7 @@ export { observeWithContext };
 
 export default function mixinData(context, declearation) {
   // init reactive data
-  var data = context._data; // data always exists
+  var data = context.data; // data always exists
   var __data_type = typeof declearation.data;
   if (__data_type === 'function') {
     data = declearation.data.call(context);
@@ -54,6 +54,7 @@ export default function mixinData(context, declearation) {
     /* istanbul ignore next */
     data = {};
   }
+  context._data = data;
 
   // $data getter
   Object.defineProperty(context, '$data', {
