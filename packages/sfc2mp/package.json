@@ -8,8 +8,8 @@
     "sfc2mp-watch": "bin/sfc2mp-watch.js"
   },
   "scripts": {
-    "watch": "nodemon ./scripts/build.js",
-    "watch-wx": "nodemon ./scripts/build-wx.js"
+    "watch": "nodemon ./scripts/watch.js",
+    "watch-wx": "nodemon ./scripts/watch-wx.js"
   },
   "engines": {
     "node": ">=8.0.0"
