@@ -32,8 +32,8 @@ module.exports = function getAppJSON(manifestPath) {
         return {
           text: item.text,
           pagePath: item.pagePath || pages[item.pageName],
-          iconPath: item.iconPath,
-          selectedIconPath: item.selectedIconPath,
+          // iconPath: item.iconPath, // FIXME  微信小程序暂不支持网路图
+          // selectedIconPath: item.selectedIconPath,
         };
       });
     }

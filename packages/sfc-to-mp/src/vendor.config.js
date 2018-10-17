@@ -14,11 +14,7 @@ module.exports = {
     sfc: vendors.sfc,
   },
   output: {
-    path: path.join(
-      process.cwd(),
-      getOption('output'),
-      OUTPUT_VENDOR_FOLDER
-    ),
+    path: path.join(process.cwd(), getOption('output'), OUTPUT_VENDOR_FOLDER),
     libraryTarget: 'commonjs2',
   },
   node: {
@@ -30,6 +26,7 @@ module.exports = {
   devtool: false,
   plugins: [
     // vue need to access global.process.env.VUE_ENV
+    new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
       'global.process.env.VUE_ENV': 'browser',
     }),

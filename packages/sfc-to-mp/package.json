@@ -58,6 +58,7 @@
     "fancy-log": "^1.3.2",
     "hash-sum": "^1.0.2",
     "loader-utils": "^1.1.0",
+    "rimraf": "^2.6.2",
     "sfc-runtime": "^0.6.6-6",
     "string-width": "^2.1.1",
     "url-loader": "^1.1.1",

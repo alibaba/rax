@@ -1,8 +1,19 @@
 const path = require('path');
+const log = require('fancy-log');
+const colors = require('chalk');
+
 const getEntry = require('./config/getEntry');
 const { getOption } = require('./config/cliOptions');
 
 const cwd = process.cwd();
+const targetType = getOption('target');
+
+const targetMap = {
+  ali: '支付宝小程序',
+  wx: '微信小程序',
+};
+
+log.info(colors.green('Transform to miniapp type:'), targetMap[targetType]);
 
 module.exports = {
   mode: 'development',
