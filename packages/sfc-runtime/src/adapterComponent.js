@@ -59,14 +59,14 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
       // Fire destroyed at next tick
       if (typeof defining.destroyed === 'function') {
         const prevComponentWillUnmount = this.componentWillUnmount;
-        this.componentWillUnmount = function () {
+        this.componentWillUnmount = function() {
           prevComponentWillUnmount && prevComponentWillUnmount.call(this);
           nextTick(defining.destroyed, vm);
         };
       }
 
       const prevComponentWillReceiveProps = this.componentWillReceiveProps;
-      this.componentWillReceiveProps = function (nextProps) {
+      this.componentWillReceiveProps = function(nextProps) {
         prevComponentWillReceiveProps && prevComponentWillReceiveProps.apply(vm, arguments);
         if (nextProps.children !== this.props.children) {
           // update slots

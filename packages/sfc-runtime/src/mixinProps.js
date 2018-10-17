@@ -39,7 +39,7 @@ export default function mixinProps(vm, propsData = {}, propsDefining) {
     Object.defineProperty(vm, key, {
       enumerable: true,
       configurable: false,
-      get: function () {
+      get: function() {
         return _props[key];
       },
       set: preventPropsSet,
