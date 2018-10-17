@@ -6,6 +6,8 @@ import {
 } from './mixin';
 import initWatch from './initWatch';
 
+const installedPlugins = new Set();
+
 export default class SFC {
   constructor(config) {
     if (typeof config !== 'object') {
@@ -62,6 +64,22 @@ export default class SFC {
     if (typeof config.created === 'function') {
       config.created.call(this);
     }
+  }
+
+  /**
+   * Register an SFC plugin
+   */
+  static use(Plugin, options) {
+    if (Plugin == null) {
+      throw new TypeError('Plugin should not be undefined or null');
+    }
+
+    if (installedPlugins.has(Plugin) && process.env.NODE_ENV !== 'production') {
+      console.error(`SFC: Plugin ${Plugin.name} can not use more than once.`);
+      return;
+    }
+
+    Plugin.install(SFC, options);
   }
 
   /**
