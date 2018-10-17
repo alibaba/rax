@@ -1,12 +1,12 @@
 import SFC from './sfc';
 import renderHelpers from './vdom';
-import { isWeex } from './utils';
 import Host from './host';
 import { mixinSlots, proxy } from './mixin';
 import convertComponentsDefining from './convertComponentsDefining';
 import getGlobalComponents from './getGlobalComponents';
 import lifecyclesMap from './lifecyclesMap';
 import nextTick from './nextTick';
+import { isWeex } from './utils';
 
 export default function adapterComponent(defining, renderFactory, styles, Rax) {
   const { createElement, Component } = Rax;
@@ -56,14 +56,15 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
       });
       proxy(vm, '$refs', this, 'refs');
 
-      // bind other life cycle
+      // Bind mount related life cycles to Rax.
       const fns = Object.keys(lifecyclesMap);
       for (let i = 0, l = fns.length; i < l; i++) {
         if (typeof defining[fns[i]] === 'function') {
           this[lifecyclesMap[fns[i]]] = defining[fns[i]].bind(vm);
         }
       }
-      // fire destroyed at next tick
+
+      // Fire destroyed at next tick
       if (typeof defining.destroyed === 'function') {
         const prevComponentWillUnmount = this.componentWillUnmount;
         this.componentWillUnmount = function() {

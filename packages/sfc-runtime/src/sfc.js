@@ -12,7 +12,6 @@ export default class SFC {
       throw new TypeError('SFC Config must be an object.');
     }
 
-    // life cycle: before create
     if (typeof config.beforeCreate === 'function') {
       config.beforeCreate.call(null);
     }
@@ -30,21 +29,23 @@ export default class SFC {
       });
     }
 
-    // 1. _watchers
-    // 2. props
-    // 3. methods
-    // 4. data & observe
-    // 5. computed
-    // 6. watch
+    /**
+     * Mixins order:
+     *  1. _watchers
+     *  2. props
+     *  3. methods
+     *  4. data & observe
+     *  5. computed
+     *  6. watch
+     */
     mixinProps(this, config.propsData, config.props);
-    // mixin methods
+
     if (config.methods) {
       Object.keys(config.methods).forEach((methodName) => {
         this[methodName] = config.methods[methodName].bind(this);
       });
     }
 
-    // mixin data
     mixinData(this, config);
     mixinSlots(this, config.children);
 
@@ -55,10 +56,10 @@ export default class SFC {
         return config;
       },
     });
+
     mixinComputed(this, config.computed);
     initWatch(this, config.watch);
 
-    // fire created
     if (typeof config.created === 'function') {
       config.created.call(this);
     }
