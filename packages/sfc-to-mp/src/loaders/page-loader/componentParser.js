@@ -16,19 +16,17 @@ const getTemplateName = require('./getTemplateName');
  * @param {string} componentPath SFC file path
  */
 
-const generateTemplate = function(template, { dependencyMap }) {
-  return transpiler(template.content, {
-    dependencyMap,
-  });
+const generateTemplate = function(template, options) {
+  return transpiler(template.content, options);
 };
 
-module.exports = function componentParser(componentPath) {
+module.exports = function componentParser(componentPath, options = {}) {
+  const templateName = getTemplateName(componentPath);
   return new Promise((resolve) => {
     const content = readFileSync(componentPath, 'utf-8');
     const { script, styles, template } = parseSFCParts(content);
     const files = [];
 
-    const originPath = componentPath;
     const outputPath = path.join(
       this.rootContext,
       OUTPUT_SOURCE_FOLDER,
@@ -47,7 +45,10 @@ module.exports = function componentParser(componentPath) {
         }
         const templatePropsData = {};
         if (template) {
-          const { template: templateContents, metadata } = generateTemplate(template, { dependencyMap: dependencyMap });
+          const { template: templateContents, metadata } = generateTemplate(template, {
+            dependencyMap: dependencyMap,
+            ...options,
+          });
 
           Object.assign(templatePropsData, metadata.propsDataMap);
 
@@ -74,13 +75,17 @@ module.exports = function componentParser(componentPath) {
 
         Promise.all(
           Object.values(dependencyMap).map((dependency) => {
-            return componentParser.bind(this)(dependency.filePath);
+            const childTemplateName = getTemplateName(dependency.filePath);
+            return componentParser.bind(this)(dependency.filePath, {
+              isTemplateDependency: true,
+              templateName: childTemplateName,
+            });
           })
         ).then((children) => {
           resolve({
-            originPath,
+            originPath: componentPath,
             outputPath,
-            templateName: getTemplateName(originPath),
+            templateName,
             dependencyMap,
             templatePropsData,
             files: files,
