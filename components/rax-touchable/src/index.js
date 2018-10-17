@@ -1,31 +1,35 @@
-import {createElement, Component} from 'rax';
-import {isWeex} from 'universal-env';
+import { createElement, PureComponent, PropTypes } from 'rax';
+import { isWeb } from 'universal-env';
 import View from 'rax-view';
 
-class Touchable extends Component {
-  static propTypes = {};
+export default class Touchable extends PureComponent {
+  static displayName = 'Touchable';
+
+  static propTypes = {
+    style: PropTypes.object,
+    onPress: PropTypes.func,
+  };
 
   render() {
-    let props = this.props;
-    let nativeProps = {
+    const { style = {}, onPress, ...props } = this.props;
+
+    const nativeProps = {
       ...props,
       style: {
-        ...styles.initial,
-        ...props.style
+        ...styles.container,
+        ...style,
       },
-      onClick: props.onPress
     };
 
-    delete nativeProps.onPress;
+    if (onPress) nativeProps.onClick = onPress;
 
     return <View {...nativeProps} />;
   }
 }
 
 const styles = {
-  initial: {
-    cursor: 'pointer'
-  }
+  container: isWeb ? {
+    cursor: 'pointer',
+    '-webkit-tap-highlight-color': 'transparent',
+  } : {}
 };
-
-export default Touchable;
