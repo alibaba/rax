@@ -220,6 +220,7 @@ export default class Slider extends PolymerElement {
     if (this.disabled) return;
     this.startPageX = ev.changedTouches[0].pageX;
     this.lastValue = this.value;
+    ev.stopPropagation();
   }
 
   _onTouchMove(ev) {
@@ -233,10 +234,12 @@ export default class Slider extends PolymerElement {
     this.value = newValue;
     this.dispatchEvent(this._createEvent('input'));
     this.dispatchEvent(this._createEvent('changing')); // Match micro-msg api
+    ev.stopPropagation();
   }
 
   _onTouchEnd(ev) {
     this.dispatchEvent(this._createEvent('change'));
+    ev.stopPropagation();
   }
 
   _createEvent(type) {
