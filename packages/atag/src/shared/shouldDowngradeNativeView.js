@@ -2,8 +2,14 @@ const embedViewManager =
   typeof __embed_view_manager__ !== "undefined" ? __embed_view_manager__ : null; // eslint-disable-line
 
 /**
- * check whether native view is supported
+ * Check whether native view is supported
+ * Android: inject a boolean flag at __sfc__.isDowngrade
+ * iOS: depend on embedViewManager.shouldDowngrade()
  */
 export default function shouldDowngradeNativeView() {
-  return embedViewManager ? embedViewManager.shouldDowngrade() : false;
+  if (typeof __sfc__ !== 'undefined' && __sfc__.isDowngrade) { // eslint-disable-line
+    return __sfc__.isDowngrade; // eslint-disable-line
+  } else {
+    return embedViewManager ? embedViewManager.shouldDowngrade() : false;
+  }
 }

@@ -10,10 +10,31 @@
   <title>Atag Demo</title>
   <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <style>
+    html {
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      background-color: #e9eaed;
       margin: 0;
-      -webkit-tap-highlight-color: transparent
+      height: 100%;
+      /**
+       * Hack: >= iOS 11 make body at least
+       * 100vh height to avoid tap highlight
+       */
+      min-height: 100vh;
+      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
+    }
+
+    a img {
+      border: 0;
+    }
+
+    a {
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .card {
@@ -39,6 +60,7 @@
 </head>
 
 <body>
+
   <div class="card">
     <h4 class="title">a-text</h4>
     <div class="demo">
@@ -58,20 +80,84 @@
   <div class="card">
     <h4 class="title">a-view</h4>
     <div class="demo">
-      <a-view style="height: 100px; width: 100px; background: green" />
+      <a-view style="height: 100px; width: 100px; background: green;"></a-view>
+      <a-view hover-style="background: yellow;" style="height: 100px; width: 100px; background: red;"></a-view>
     </div>
   </div>
 
   <div class="card">
     <h4 class="title">a-button</h4>
-    <div class="demo">
-      <a-button>Button</a-button>
+    <div class="demo" style="background-color: #eee">
+
+      <a-button style="margin: 8px">Default Button</a-button>
+      <a-button style="margin: 8px" type="primary">Primary Button</a-button>
+      <a-button style="margin: 8px" type="warn">Warn Button</a-button>
+
+      <a-button style="margin: 8px" size="mini">Mini Default Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="primary">Mini Primary Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="warn">Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain>Plain Default Button</a-button>
+      <a-button style="margin: 8px" plain type="primary">Plain Primary Button</a-button>
+      <a-button style="margin: 8px" plain type="warn">Plain Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain size="mini">Plain Mini Default Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="primary">Plain Mini Primary Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="warn">Plain Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled>Dsabled Default Button</a-button>
+      <a-button style="margin: 8px" disabled type="primary">Dsabled Primary Button</a-button>
+      <a-button style="margin: 8px" disabled type="warn">Dsabled Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled plain>Dsabled Plain Default Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="primary">Dsabled Plain Primary Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="warn">Dsabled Plain Warn Button</a-button>
+
+
+      <a-button style="margin: 8px" loading>Loading Default Button</a-button>
+      <a-button style="margin: 8px" loading type="primary">Loading Primary Button</a-button>
+      <a-button style="margin: 8px" loading type="warn">Loading Warn Button</a-button>
+
+      <a-button style="margin: 8px" loading plain>Loading Plain Button</a-button>
+      <a-button style="margin: 8px" loading plain type="primary">Loading Plain Primary Button</a-button>
+      <a-button style="margin: 8px" loading plain type="warn">Loading Plain Warn Button</a-button>
     </div>
   </div>
 
   <div class="card">
     <h4 class="title">a-image</h4>
     <div class="demo">
+      <p>Mode: scaleToFill 150x150</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="scaleToFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFit</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFit" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFill</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: widthFix</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="widthFix" style="display: block; width: 100%;"></a-image>
+
+      <p>Mode: top</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: center</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="center" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom right" style="display: block; width: 150px; height: 150px;"></a-image>
+
       <a-image id="image" mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif"></a-image>
       <p>
         Load Event: <span id="imageLoad"></span>
@@ -84,6 +170,11 @@
       <p>
         Load Event: <span id="asyncImageLoad"></span>
       </p>
+
+      <p>lazyLoad:</p>
+      <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
+      <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
+      <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
     </div>
   </div>
 
@@ -103,9 +194,6 @@
     asyncImage.addEventListener('load', function (e) {
       asyncImageLoad.innerHTML = JSON.stringify(e.detail);
     });
-    setTimeout(() => {
-      image.setAttribute('mode', 'top');
-    }, 2000);
   </script>
 
   <div class="card">
@@ -135,6 +223,8 @@
       <p>custom style:</p>
       <a-input style="text-align: center;font-weight: bold;padding: 10px;color: red" placeholder="input placeholder"></a-input>
     </div>
+    <p>placeholder style:</p>
+    <a-input placeholder-style="color: green" auto-height=true placeholder="styled placeholder"></a-input>
   </div>
 
   <script>
@@ -155,6 +245,8 @@
     <div class="demo">
       <p>event:</p>
       <a-textarea id="textarea" class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <a-button id="textareaValChange" style="margin-bottom: 10px;">Change Textarea Value</a-button>
+      <a-button id="textareaPlaceholderChange">Change Placeholder Value</a-button>
       <p style="overflow-wrap: break-word;">
         Input Event: <span id="textareaInput">null</span>
       </p>
@@ -162,16 +254,25 @@
         Blur Event: <span id="textareaBlur">null</span>
       </p>
       <p>custom style:</p>
-      <a-textarea style="text-align: center;font-weight: bold;padding: 10px; color: red" auto-height=true placeholder="textarea placeholder"></a-textarea>
+      <a-textarea style="text-align: center;font-weight: bold;padding: 10px; color: red" auto-height=true placeholder="textarea placeholder" show-count="false"></a-textarea>
+      <p>placeholder style:</p>
+      <a-textarea placeholder-style="color: green" auto-height=true placeholder="styled placeholder" count-style="color: red;" show-count maxlength="70"></a-textarea>
     </div>
   </div>
 
   <script>
-    textarea.addEventListener('input', function (e) {
-      textareaInput.innerHTML = e.detail.value || 'null';
+    var textarea = document.getElementById('textarea');
+    textarea.addEventListener('input',function(e) {
+      textareaInput.innerHTML=e.detail.value||'null';
     });
     textarea.addEventListener('blur', function (e) {
       textareaBlur.innerHTML = e.detail.value || 'null';
+    });
+    textareaValChange.addEventListener('click', function(e) {
+      textarea.setAttribute('value', 'hello world');
+    });
+    textareaPlaceholderChange.addEventListener('click', function(e) {
+      textarea.setAttribute('placeholder', 'hello placeholder!');
     });
   </script>
 
@@ -301,24 +402,24 @@
           </a-checkbox-group>
         </a-view>
         <a-view style="margin: 8px">
-          <a-button style="margin: 8px" formType="submit">Submit</a-button>
-          <a-button style="margin: 8px" formType="reset">Reset</a-button>
+          <a-button style="margin: 8px" form-type="submit">Submit</a-button>
+          <a-button style="margin: 8px" form-type="reset">Reset</a-button>
         </a-view>
         <p style="overflow-wrap: break-word;">
-          Submit Event: <span id="formSubmit">null</span>
+          Submit Event: <pre id="formSubmit">null</pre>
         </p>
         <p style="overflow-wrap: break-word;">
-          Reset Event: <span id="formReset">null</span>
+          Reset Event: <pre id="formReset">null</pre>
         </p>
       </a-form>
     </div>
   </div>
 
   <script>
-    form.addEventListener('submit', function (e) {
-      formSubmit.innerHTML = JSON.stringify(e.detail.value);
+    form.addEventListener('submit', function(e) {
+      formSubmit.innerHTML = JSON.stringify(e.detail.value, null, 2);
     });
-    form.addEventListener('reset', function (e) {
+    form.addEventListener('reset', function(e) {
       formReset.innerHTML = String(new Date);
     });
   </script>
@@ -422,6 +523,95 @@
         </a-swiper-item>
       </a-swiper>
 
+      <p>scroll x with vertical swiper</p>
+      <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll x with hortical swiper</p>
+      <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll y with vertical swiper</p>
+      <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll y with hortical swiper</p>
+      <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
+
+      <p>scroll x + y with hortical swiper</p>
+      <a-scroll-view scroll-x="true" scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
     </div>
   </div>
 
@@ -500,6 +690,23 @@
       </p>
       <a-button id="toggleScroll">Toggle Scroll</a-button>
 
+
+      <p>Horizental scroll view</p>
+      <a-scroll-view id="horScrollView" scroll-x="true" hide-scroll-bar style="display: flex; height: 200px;" scroll-with-animation scroll-into-view="red">
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view id="red" style="background:red; min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+      </a-scroll-view>
+      <a-button onclick="horScrollView.setAttribute('scroll-left', 500)">Set Scroll Left</a-button>
     </div>
   </div>
 

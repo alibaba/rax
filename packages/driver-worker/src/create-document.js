@@ -270,8 +270,48 @@ export default function() {
     });
   }
 
-  class Node {
+  class EventTarget {
+    eventListeners = {};
+
+    addEventListener(type, handler) {
+      (
+        this.eventListeners[toLower(type)] ||
+        (this.eventListeners[toLower(type)] = [])
+      ).push(handler);
+      mutation(this, 'addEvent', { eventName: type });
+    }
+
+    removeEventListener(type, handler) {
+      splice(this.eventListeners[toLower(type)], handler, 0, true);
+      mutation(this, 'removeEvent', { eventName: type });
+    }
+
+    dispatchEvent(event) {
+      event.stopPropagation = () => {
+        event.bubbles = false;
+      };
+      let t = event.target = event.currentTarget = this;
+      let c = event.cancelable;
+      let l;
+      let i;
+      do {
+        l = t.eventListeners && t.eventListeners[toLower(event.type)];
+        if (l)
+          for (i = l.length; i--;) {
+            if ((l[i].call(t, event) === false || event._end) && c) break;
+          }
+      } while (
+        event.bubbles &&
+        !(c && event._stop) &&
+        (event.currentTarget = t = t.parentNode)
+      );
+      return !event.defaultPrevented;
+    }
+  }
+
+  class Node extends EventTarget {
     constructor(nodeType, nodeName) {
+      super();
       this.nodeType = nodeType;
       this.nodeName = nodeName;
       this.childNodes = [];
@@ -343,7 +383,6 @@ export default function() {
     constructor(nodeType, nodeName) {
       super(nodeType || ELEMENT_NODE, nodeName); // ELEMENT_NODE
       this.attributes = [];
-      this.eventListeners = {};
       this._style = {};
       Object.defineProperty(this, 'className', {
         set: val => {
@@ -429,41 +468,6 @@ export default function() {
     removeAttributeNS(ns, name) {
       splice(this.attributes, createAttributeFilter(ns, name));
       mutation(this, 'attributes', { attributeName: name });
-    }
-
-    addEventListener(type, handler) {
-      (
-        this.eventListeners[toLower(type)] ||
-        (this.eventListeners[toLower(type)] = [])
-      ).push(handler);
-      mutation(this, 'addEvent', { eventName: type });
-    }
-
-    removeEventListener(type, handler) {
-      splice(this.eventListeners[toLower(type)], handler, 0, true);
-      mutation(this, 'removeEvent', { eventName: type });
-    }
-
-    dispatchEvent(event) {
-      event.stopPropagation = () => {
-        event.bubbles = false;
-      };
-      let t = event.target = event.currentTarget = this;
-      let c = event.cancelable;
-      let l;
-      let i;
-      do {
-        l = t.eventListeners && t.eventListeners[toLower(event.type)];
-        if (l)
-          for (i = l.length; i--;) {
-            if ((l[i].call(t, event) === false || event._end) && c) break;
-          }
-      } while (
-        event.bubbles &&
-        !(c && event._stop) &&
-        (event.currentTarget = t = t.parentNode)
-      );
-      return !event.defaultPrevented;
     }
   }
 

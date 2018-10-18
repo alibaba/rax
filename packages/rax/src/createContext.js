@@ -15,9 +15,8 @@ class ValueEmitter {
     this.handlers = this.handlers.filter(h => h !== handler);
   }
 
-  emit(value) {
-    this.value = value;
-    this.handlers.forEach(handler => handler(value));
+  emit() {
+    this.handlers.forEach(handler => handler(this.value));
   }
 }
 
@@ -47,7 +46,13 @@ export default function createContext(defaultValue) {
 
     componentWillReceiveProps(nextProps) {
       if (this.props.value !== nextProps.value) {
-        this.emitter.emit(nextProps.value);
+        this.emitter.value = nextProps.value;
+      }
+    }
+
+    componentDidUpdate(prevProps) {
+      if (this.props.value !== prevProps.value) {
+        this.emitter.emit();
       }
     }
 
@@ -58,18 +63,31 @@ export default function createContext(defaultValue) {
 
   class Consumer extends Component {
     state = {
-      value: this.context[contextProp] ? this.context[contextProp].value : defaultValue
+      value: this.readContext(this.context)
     }
 
     static contextTypes = {
       [contextProp]: PropTypes.object
     };
 
-    onUpdate = value => this.setState({value});
+    onUpdate = value => this.state.value !== value && this.setState({value});
+
+    readContext(context) {
+      return context[contextProp] ? context[contextProp].value : defaultValue;
+    }
 
     componentDidMount() {
       if (this.context[contextProp]) {
         this.context[contextProp].on(this.onUpdate);
+      }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+      const newContextValue = this.readContext(nextContext);
+      if (this.state.value !== newContextValue) {
+        this.setState({
+          value: newContextValue
+        });
       }
     }
 

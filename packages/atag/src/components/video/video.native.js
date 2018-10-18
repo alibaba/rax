@@ -56,17 +56,28 @@ export default class VideoElement extends PolymerElement {
 
   constructor(...args) {
     super(...args);
-
-    document.addEventListener('WVEmbed.Ready', this._nativeReady);
     this.uniqueId = String(++videoInstanceCount);
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  ready() {
+    super.ready();
 
-    const container = this.container = document.createElement('object');
+    document.addEventListener('WVEmbed.Ready', this._nativeReady);
+    /**
+     * Assign default style
+     */
+    this.style.display = 'block';
+
+    this.createLightDOM();
+  }
+
+  createLightDOM() {
+    const container = document.createElement('object');
     container.setAttribute('type', 'application/view');
     container.className = 'atag-native-video';
+    container.style.display = 'block';
+    container.style.width = '100%';
+    container.style.height = '100%';
 
     const type = VideoElement.createParamTag('viewType', 'wmlVideo');
     const url = VideoElement.createParamTag('url', this.src);
@@ -118,8 +129,6 @@ export default class VideoElement extends PolymerElement {
     container.appendChild(objectFit);
     container.appendChild(bridgeId);
 
-    this.setStyle(this.getAttribute('style'));
-
     // for native hack
     // all events triggered at object tag proxyed to this
     container.$$id = this.$$id;
@@ -146,19 +155,19 @@ export default class VideoElement extends PolymerElement {
     if (oldVal !== newVal) {
       switch (key) {
         case 'controls': {
-          newVal ? this.showControls() : this.hideControls();
+          this.controls ? this.showControls() : this.hideControls();
           break;
         }
         case 'muted': {
-          this.mute(newVal);
+          this.mute(this.muted);
           break;
         }
         case 'objectfit': {
-          this.changeObjectFit(newVal);
+          this.changeObjectFit(this.objectfit);
           break;
         }
         case 'loop': {
-          this.changeLoop(newVal);
+          this.changeLoop(this.loop);
           break;
         }
       }
@@ -168,12 +177,6 @@ export default class VideoElement extends PolymerElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('WVEmbed.Ready', this._nativeReady);
-  }
-
-  setStyle(style) {
-    if (typeof style === 'string') {
-      this.container.style.cssText = style;
-    }
   }
 
   getBridgeId() {
@@ -349,11 +352,17 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
+  /**
+   * Each embed view will emit whose ready event
+   * identifier by param.bridgeId
+   */
   _nativeReady = evt => {
-    this.isNativeReady = true;
-    let fn;
-    while (fn = this.nativeReadyCallbacks.shift()) {
-      fn();
+    if (evt.param && evt.param.bridgeId === this.getBridgeId()) {
+      this.isNativeReady = true;
+      let fn;
+      while (fn = this.nativeReadyCallbacks.shift()) {
+        fn();
+      }
     }
   };
 

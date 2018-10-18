@@ -9,8 +9,10 @@ import renderList from './renderList';
 import createNotImplWarn from './createNotImplWarn';
 import renderSlot from './renderSlot';
 import renderStyle from './renderStyle';
+import setRuntime from './setRuntime';
 
 export default {
+  _r: setRuntime,
   _c: createElement,
   // _o: markOnce,
   // _n: toNumber,
