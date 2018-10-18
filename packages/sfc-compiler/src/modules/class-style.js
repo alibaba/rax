@@ -1,12 +1,8 @@
+const isValidIdentifier = require('is-valid-identifier');
 const { parseStyleText } = require('../utils/style');
 const { getAndRemoveAttr, getBindingAttr } = require('../helpers');
 
 const STYLE_OBJECT_VAR = '__styles__';
-
-// not identifier
-function isExpression(expOrRef) {
-  return /^[_$\w]/i.test(expOrRef);
-}
 
 function transformNode(el, options) {
   const classNames = [];
@@ -23,10 +19,14 @@ function transformNode(el, options) {
     });
   }
 
-  // <view :class="bar" />
+  /**
+   * <view :class="bar" />
+   * or
+   * <view :class="{ bar: true }" />
+   */
   const classBinding = getBindingAttr(el, 'class', false /* getStatic */);
   if (classBinding) {
-    classNames.push(isExpression(classBinding) ? 'this.' + classBinding : classBinding);
+    classNames.push(isValidIdentifier(classBinding) ? 'this.' + classBinding : classBinding);
   }
 
   // array of classNames, eg. ["foo", this.bar]
@@ -39,10 +39,14 @@ function transformNode(el, options) {
     el.staticStyle = JSON.stringify(parseStyleText(staticStyle));
   }
 
-  // <view :style="styleObject" />
+  /**
+   * <view :style="styleObject" />
+   * or
+   * <view :style="{ color: 'red' }" />
+   */
   const styleBinding = getBindingAttr(el, 'style', false /* getStatic */);
   if (styleBinding) {
-    el.styleBinding = isExpression(styleBinding) ? styleBinding : 'this.' + styleBinding;
+    el.styleBinding = isValidIdentifier(styleBinding) ? 'this.' + styleBinding : styleBinding;
   }
 }
 
