@@ -2,9 +2,7 @@ const { spawn, spawnSync } = require('child_process');
 const path = require('path');
 
 const cli = path.join(__dirname, '../bin/sfc2mp.js');
-// spawnSync('rm', ['-rf', './dist'], {
-//   cwd: path.join(__dirname, '../example'),
-// });
+
 const build = spawn('node', [cli, 'watch', '--output=dist', '--target=wx'], {
   cwd: path.join(__dirname, '../example'),
   stdio: 'inherit',
