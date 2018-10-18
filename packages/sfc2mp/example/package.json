@@ -1,12 +1,4 @@
 {
-  "scripts": {
-    "start": "rax-scripts start --port 6002 --type=miniapp",
-    "build": "rax-scripts build --type=miniapp --public-path=/ice/rax-materials/miniapp-lite/"
-  },
-  "dependencies": {
-    "@babel/core": "^7.1.2"
-  },
-  "devDependencies": {
-    "rax-scripts": "^0.6.6-beta.2"
-  }
+  "name": "miniapp-example",
+  "version": "1.0.0"
 }
