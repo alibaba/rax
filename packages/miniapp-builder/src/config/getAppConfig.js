@@ -74,10 +74,20 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
 
       if (i === 0) homepage = pageName;
 
+      let pageUrl;
+
+      if (EXTERNAL_PAGE_URL_REG.test(pageName)) {
+        pageUrl = pageName;
+      } else if (opts && opts.pageUrl) {
+        pageUrl = opts.pageUrl;
+      } else {
+        pageUrl = nativeRendererUrl;
+      }
+
       const pageConfig = {
         pageName,
         pagePath,
-        pageUrl: nativeRendererUrl
+        pageUrl,
       };
       // merge page config json
       const independentPageConfigPath = resolve(projectDir, pagePath + '.json');
