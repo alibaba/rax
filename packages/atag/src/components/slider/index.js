@@ -1,71 +1,5 @@
-<!-- TODO 优化小数点的数值展示 -->
-<dom-module id="a-slider">
-  <template>
-    <style>
-      :host {
-        display: flex;
-        display: -webkit-flex;
-        flex-flow: row nowrap;
-        -webkit-flex-flow: row nowrap;
-        align-items: center;
-        -webkit-align-items: center;
-      }
+import { PolymerElement, html } from '@polymer/polymer';
 
-      .container {
-        display: flex;
-        display: -webkit-flex;
-        flex: 1;
-        -webkit-flex: 1;
-        flex-flow: row nowrap;
-        -webkit-flex-flow: row nowrap;
-        align-items: center;
-        -webkit-align-items: center;
-        height: 4px;
-        margin: 7.5px 10px;
-        border-radius: 2px;
-        background-color: #ccc;
-      }
-
-      .active {
-        flex: none;
-        -webkit-flex: none;
-        height: 4px;
-        border-radius: 2px;
-        overflow: hidden;
-      }
-
-      #indicatorDotWrapper {
-        padding: 5px;
-      }
-
-      .slide-block {
-        flex: none;
-        -webkit-flex: none;
-        margin: 0 -9px 0 -9px;
-        border-radius: 50%;
-        box-shadow: 0 0 4px 0 rgba(0, 0, 0, .15);
-      }
-
-      .value {
-        font-size: 14px;
-        color: #999;
-        flex: none;
-        -webkit-flex: none;
-        margin-left: 5px;
-      }
-    </style>
-    <div id="container" class="container" style$="[[containerStyle]]">
-        <div id="active" class="active" style$="[[activeStyle]]"></div>
-        <div id="indicatorDotWrapper">
-          <div class="slide-block" style$="[[blockStyle]]"></div>
-        </div>
-      </div>
-    <div class="value" style$=[[valueStyle]]>[[value]]</div>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
 export default class Slider extends PolymerElement {
   static get is() {
     return 'a-slider';
@@ -220,6 +154,7 @@ export default class Slider extends PolymerElement {
     if (this.disabled) return;
     this.startPageX = ev.changedTouches[0].pageX;
     this.lastValue = this.value;
+    ev.stopPropagation();
   }
 
   _onTouchMove(ev) {
@@ -233,10 +168,12 @@ export default class Slider extends PolymerElement {
     this.value = newValue;
     this.dispatchEvent(this._createEvent('input'));
     this.dispatchEvent(this._createEvent('changing')); // Match micro-msg api
+    ev.stopPropagation();
   }
 
   _onTouchEnd(ev) {
     this.dispatchEvent(this._createEvent('change'));
+    ev.stopPropagation();
   }
 
   _createEvent(type) {
@@ -250,7 +187,71 @@ export default class Slider extends PolymerElement {
   handleReset = () => {
     this.value = this.formInitialValue;
   }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          display: -webkit-flex;
+          display: flex;
+          -webkit-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+          -webkit-align-items: center;
+          align-items: center;
+        }
+  
+        .container {
+          display: flex;
+          display: -webkit-flex;
+          -webkit-flex: 1;
+          flex: 1;
+          -webkit-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+          -webkit-align-items: center;
+          align-items: center;
+          height: 4px;
+          margin: 7.5px 10px;
+          border-radius: 2px;
+          background-color: #ccc;
+        }
+  
+        .active {
+          flex: none;
+          -webkit-flex: none;
+          height: 4px;
+          border-radius: 2px;
+          overflow: hidden;
+        }
+  
+        #indicatorDotWrapper {
+          padding: 5px;
+        }
+  
+        .slide-block {
+          flex: none;
+          -webkit-flex: none;
+          margin: 0 -9px 0 -9px;
+          border-radius: 50%;
+          box-shadow: 0 0 4px 0 rgba(0, 0, 0, .15);
+        }
+  
+        .value {
+          font-size: 14px;
+          color: #999;
+          -webkit-flex: none;
+          flex: none;
+          margin-left: 5px;
+        }
+      </style>
+      <div id="container" class="container" style$="[[containerStyle]]">
+          <div id="active" class="active" style$="[[activeStyle]]"></div>
+          <div id="indicatorDotWrapper">
+            <div class="slide-block" style$="[[blockStyle]]"></div>
+          </div>
+        </div>
+      <div class="value" style$=[[valueStyle]]>[[value]]</div>
+    `;
+  }
 }
 
 customElements.define(Slider.is, Slider);
-</script>
