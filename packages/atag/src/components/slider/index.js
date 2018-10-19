@@ -1,4 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
+import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
 export default class Slider extends PolymerElement {
   static get is() {
@@ -52,42 +53,30 @@ export default class Slider extends PolymerElement {
         type: String,
         value: '#fff'
       },
-      range: {
-        type: Number,
-        computed: 'computeRange(min, max)'
-      },
-      activeRatio: {
-        type: Number,
-        computed: 'computeActiveRatio(value, min, range)'
-      },
-      activeStyle: {
+      _activeStyle: {
         type: String,
-        computed: 'computeActiveStyle(activeRatio, activeColor)'
+        computed: '_computeActiveStyle(value, min, max, activeColor)'
       },
-      valueStyle: {
+      _valueStyle: {
         type: String,
-        computed: 'computeValueStyle(showValue)'
+        computed: '_computeValueStyle(showValue)'
       },
-      blockStyle: {
+      _handleStyle: {
         type: String,
-        computed: 'computeBlockStyle(handleSize, handleColor)'
+        computed: '_computeHandleStyle(handleSize, handleColor)'
       },
-      containerStyle: {
+      _sliderStyle: {
         type: String,
-        computed: 'computeContainerStyle(trackSize, backgroundColor)'
+        computed: '_computeSliderStyle(trackSize, backgroundColor)'
       }
     };
   }
 
   sliderWidth = 0;
-  startPageX = 0;
   lastValue = 0;
 
   constructor() {
     super();
-    ['_onTouchStart', '_onTouchMove', '_onTouchEnd'].forEach(method => {
-      this[method] = this[method].bind(this);
-    });
   }
 
   ready() {
@@ -97,88 +86,65 @@ export default class Slider extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.$.indicatorDotWrapper.addEventListener(
-      'touchstart',
-      this._onTouchStart
-    );
-    this.$.indicatorDotWrapper.addEventListener('touchmove', this._onTouchMove);
-    this.$.indicatorDotWrapper.addEventListener('touchend', this._onTouchEnd);
-    this.sliderWidth = this.$.container.offsetWidth;
+
+    Gestures.addListener(this.$.handle, 'track', this._handleTrack);
+
+    this.sliderWidth = this.$.slider.offsetWidth;
     window.addEventListener('_formReset', this.handleReset, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.$.indicatorDotWrapper.removeEventListener(
-      'touchstart',
-      this._onTouchStart
-    );
-    this.$.indicatorDotWrapper.removeEventListener(
-      'touchmove',
-      this._onTouchMove
-    );
-    this.$.indicatorDotWrapper.removeEventListener(
-      'touchend',
-      this._onTouchEnd
-    );
+
+    Gestures.removeListener(this.$.handle, 'track', this._handleTrack);
     window.removeEventListener('_formReset', this.handleReset, true);
   }
 
-  computeRange(min, max) {
-    return max - min;
+  _computeActiveStyle(value, min, max, activeColor) {
+    let ratio = (value - min) / (max - min);
+    let percent = Math.max(Math.min(ratio, 1), 0) * 100;
+    return `width: ${percent}%; background-color: ${activeColor};`;
   }
 
-  computeActiveRatio(value, min, range) {
-    return (value - min) / range;
-  }
-
-  computeActiveStyle(ratio, activeColor, handleSize) {
-    ratio = Math.min(ratio, 1);
-    ratio = Math.max(ratio, 0);
-    return `width: ${ratio * 100}%; background-color: ${activeColor};`;
-  }
-
-  computeBlockStyle(handleSize, handleColor) {
+  _computeHandleStyle(handleSize, handleColor) {
     return `width: ${handleSize}px; height: ${handleSize}px; background-color: ${handleColor}`;
   }
 
-  computeValueStyle(showValue) {
+  _computeValueStyle(showValue) {
     return showValue ? `` : `display: none;`;
   }
 
-  computeContainerStyle(trackSize, backgroundColor) {
+  _computeSliderStyle(trackSize, backgroundColor) {
     return `height: ${trackSize}px; background-color: ${backgroundColor}`;
   }
 
-  _onTouchStart(ev) {
-    if (this.disabled) return;
-    this.startPageX = ev.changedTouches[0].pageX;
-    this.lastValue = this.value;
-    ev.stopPropagation();
-  }
+  _handleTrack = ({detail}) => {
 
-  _onTouchMove(ev) {
     if (this.disabled) return;
-    let offset = ev.changedTouches[0].pageX - this.startPageX;
-    let offsetValue = offset / this.sliderWidth * this.range;
-    let newValue =
-      Math.round((this.lastValue + offsetValue) / this.step) * this.step;
-    newValue = Math.max(newValue, this.min);
-    newValue = Math.min(newValue, this.max);
-    this.value = newValue;
-    this.dispatchEvent(this._createEvent('input'));
-    this.dispatchEvent(this._createEvent('changing')); // Match micro-msg api
-    ev.stopPropagation();
-  }
 
-  _onTouchEnd(ev) {
-    this.dispatchEvent(this._createEvent('change'));
-    ev.stopPropagation();
-  }
+    if (detail.state === 'start') {
+      this.lastValue = this.value;
+    } else if (detail.state === 'track') {
+      let dx = detail.dx;
+      let offsetValue = dx / this.sliderWidth * (this.max - this.min);
+      let newValue = Math.round((this.lastValue + offsetValue) / this.step) * this.step;
+      newValue = Math.max(newValue, this.min);
+      newValue = Math.min(newValue, this.max);
+      this.value = newValue;
+
+      this.dispatchEvent(this._createEvent('input'));
+      this.dispatchEvent(this._createEvent('changing')); // Match micro-msg api  
+
+    } else if (detail.state === 'end') {
+      this.dispatchEvent(this._createEvent('change'));
+    }
+  };
 
   _createEvent(type) {
     return new CustomEvent(type, {
-      detail: { value: this.value },
+      detail: {
+        value: this.value
+      },
       bubbles: true,
       cancelable: false
     });
@@ -200,7 +166,7 @@ export default class Slider extends PolymerElement {
           align-items: center;
         }
   
-        .container {
+        #slider {
           display: flex;
           display: -webkit-flex;
           -webkit-flex: 1;
@@ -214,20 +180,16 @@ export default class Slider extends PolymerElement {
           border-radius: 2px;
           background-color: #ccc;
         }
-  
-        .active {
+
+        #active {
           flex: none;
           -webkit-flex: none;
           height: 4px;
           border-radius: 2px;
           overflow: hidden;
         }
-  
-        #indicatorDotWrapper {
-          padding: 5px;
-        }
-  
-        .slide-block {
+
+        #handle {
           flex: none;
           -webkit-flex: none;
           margin: 0 -9px 0 -9px;
@@ -235,7 +197,7 @@ export default class Slider extends PolymerElement {
           box-shadow: 0 0 4px 0 rgba(0, 0, 0, .15);
         }
   
-        .value {
+        #value {
           font-size: 14px;
           color: #999;
           -webkit-flex: none;
@@ -243,13 +205,11 @@ export default class Slider extends PolymerElement {
           margin-left: 5px;
         }
       </style>
-      <div id="container" class="container" style$="[[containerStyle]]">
-          <div id="active" class="active" style$="[[activeStyle]]"></div>
-          <div id="indicatorDotWrapper">
-            <div class="slide-block" style$="[[blockStyle]]"></div>
-          </div>
-        </div>
-      <div class="value" style$=[[valueStyle]]>[[value]]</div>
+      <div id="slider" style$="[[_sliderStyle]]">
+        <div id="active" style$="[[_activeStyle]]"></div>
+        <div id="handle" style$="[[_handleStyle]]"></div>
+      </div>
+      <div id="value" style$=[[_valueStyle]]>[[value]]</div>
     `;
   }
 }
