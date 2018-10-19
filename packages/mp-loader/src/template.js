@@ -95,9 +95,10 @@ module.exports = function templateLoader(content) {
       var __sfc_components_ref__ = {};
       var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
       function _w(is) { return __tpls__[is] ? __tpls__[is] : null; }
-      ${''}
-      _c = _c.bind(Rax);
-      ${''} 
+     
+      ${/* Register Runtime */''}
+      __vdom_helpers__._r(Rax);
+      
       ${tplRegisters}
       function render(data) {
         ${renderFnScopeVariables}

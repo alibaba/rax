@@ -12,7 +12,7 @@ function hydrate(element, container, options, callback) {
     }
   }
 
-  return render(element, container, options, callback); ;
+  return render(element, container, options, callback);
 }
 
 export default hydrate;

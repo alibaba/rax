@@ -38,6 +38,13 @@ function transformCSSStyleObject(str) {
 export default function renderStyle(classNames = [], styleObject = {}, styleBinding, staticStyle) {
   const validClasses = flatClassNames(classNames);
 
+  /**
+   * Handle style with Array binding
+   */
+  if (Array.isArray(styleBinding)) {
+    styleBinding = styleBinding.reduce((iter, curr) => Object.assign(iter, curr), {});
+  }
+
   const style = validClasses
     .map(klass => styleObject[klass])
     .reduce((prev, next) => {
