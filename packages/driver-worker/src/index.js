@@ -1,4 +1,4 @@
-import { convertUnit, setRem } from 'style-unit';
+import { convertUnit, setRem, setDecimalPixelTransformer } from 'style-unit';
 import createDocument from './create-document';
 
 const ELEMENT_NODE = 1;
@@ -297,6 +297,7 @@ export default ({ postMessage, addEventListener }) => {
     beforeRender() {
       // Init rem unit
       setRem(this.getDeviceWidth() / this.getViewportWidth());
+      setDecimalPixelTransformer(Math.floor);
     },
 
     setNativeProps(node, props) {
