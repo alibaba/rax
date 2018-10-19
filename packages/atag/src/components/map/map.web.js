@@ -1,4 +1,3 @@
-<script>
 import { PolymerElement } from '@polymer/polymer';
 
 const API_KEY = 'f8da82225187d49348c217617a564ed0';
@@ -180,5 +179,3 @@ export default class MapElement extends PolymerElement {
   }
 }
 
-customElements.define(MapElement.is, MapElement);
-</script>
