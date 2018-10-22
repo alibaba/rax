@@ -46,25 +46,36 @@ export default class CheckboxElement extends PolymerElement {
      * Mark form initial value, while reset the
      * related form, this val will be used.
      */
-    this.formInitialValue = this.checked;
+    this._initialValue = this.checked;
     /**
      * Mark this element is a target of label.
      */
     this.setAttribute('a-label-target', '');
 
-    afterNextRender(this, () => {
-      this.addEventListener('click', this._handleClick);
-      window.addEventListener('_formReset', this._handlerReset, true);
-    });
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('click', this._handleClick);
+    window.addEventListener('_formReset', this._handlerReset, true);
   }
 
   disconnectedCallback() {
+    super.disconnectedCallback();
     this.removeEventListener('click', this._handleClick);
     window.removeEventListener('_formReset', this._handlerReset, true);
   }
 
-  _handlerReset = () => {
-    this.checked = this.formInitialValue;
+  _handlerReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.checked = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
   };
 
   _handleClick = e => {

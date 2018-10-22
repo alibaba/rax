@@ -348,11 +348,8 @@ export default class Swiper extends PolymerElement {
     const swiperItems = this.$.swiperItems;
     const transitionDuration = duration != null ? duration : this.transitionDuration;
 
-    swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
-    swiperItems.style.transitionDuration = `${transitionDuration}ms`;
-
-    swiperItems.style.webkitTransform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
-    swiperItems.style.transform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
+    swiperItems.style.transitionDuration = swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
+    swiperItems.style.transform = swiperItems.style.webkitTransform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
   }
 
   _getTranslate() {

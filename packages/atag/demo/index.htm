@@ -11,6 +11,9 @@
   <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <style>
     html {
+      /* HACK: fix safari mobile click events aren't fired https://developer.mozilla.org/en-US/docs/Web/Events/click#Safari_Mobile */
+      cursor: pointer;
+      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
       -webkit-text-size-adjust: 100%;
       -webkit-tap-highlight-color: transparent;
     }
@@ -18,25 +21,19 @@
     body {
       margin: 0;
       height: 100%;
-      /**
-       * Hack: >= iOS 11 make body at least
-       * 100vh height to avoid tap highlight
-       */
+      /* HACK: >= iOS 11 make body at least 100vh height to avoid tap highlight */
       min-height: 100vh;
-      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      cursor: pointer;
     }
+  </style>
 
-    a img {
-      border: 0;
+  <script>
+    var isTouchDevice = 'ontouchstart' in window || 'onmsgesturechange' in window;
+    if (!isTouchDevice) {
+      document.documentElement.style.cursor = 'auto';
     }
+  </script>
 
-    a {
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+  <style>
     .card {
       border: 1px solid #d6d7da;
       margin: 10px;
@@ -55,12 +52,10 @@
     .demo {
       padding: 10px;
     }
-
   </style>
 </head>
 
 <body>
-
   <div class="card">
     <h4 class="title">a-text</h4>
     <div class="demo">
@@ -346,7 +341,7 @@
     <h4 class="title">a-picker</h4>
     <div class="demo">
       <a-view>
-        <a-picker value="0" range="[1,2,3,4,5]" id="picker">
+        <a-picker value="0" range="[1,2,3,4,5,6,7,8,9,10]" id="picker">
           <a-text id="pickerResult">pick me</a-text>
         </a-picker>
       </a-view>

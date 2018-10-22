@@ -46,17 +46,16 @@ export default class Input extends PolymerElement {
 
   ready() {
     super.ready();
-    this.input = this.$.input;
-    this.formInitalValue = this.value;
-    // label target
+    this._initalValue = this.value;
     this.setAttribute('a-label-target', '');
+  }
 
-    afterNextRender(this, () => {
-      window.addEventListener('input', this.inputListener, true);
-      window.addEventListener('focus', this.focusListener, true);
-      window.addEventListener('blur', this.blurListener, true);
-      window.addEventListener('_formReset', this._handlerReset, true);
-    });
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('input', this.inputListener, true);
+    window.addEventListener('focus', this.focusListener, true);
+    window.addEventListener('blur', this.blurListener, true);
+    window.addEventListener('_formReset', this._handlerReset, true);
   }
 
   disconnectedCallback() {
@@ -64,24 +63,16 @@ export default class Input extends PolymerElement {
     window.removeEventListener('input', this.inputListener, true);
     window.removeEventListener('focus', this.focusListener, true);
     window.removeEventListener('blur', this.blurListener, true);
-    window.removeEventListener(
-      '_formReset',
-      this._handlerReset,
-      true
-    );
+    window.removeEventListener('_formReset', this._handlerReset, true);
   }
 
-  inputListener = event => {
+  inputListener = (event) => {
     if (!(event instanceof CustomEvent)) {
       event.stopPropagation();
       if (event.target === this) {
         this.handleInput(event);
       }
     }
-  };
-
-  _handlerReset = () => {
-    this.input.value = this.value = this.formInitalValue;
   };
 
   focusListener = event => {
@@ -104,13 +95,15 @@ export default class Input extends PolymerElement {
 
   handleInput(e) {
     e.stopPropagation();
-    this.value = this.input.value;
+
+    this.value = this.$.input.value;
+
     const event = new CustomEvent('input', {
       bubbles: false,
       cancelable: true,
       detail: {
-        value: this.input.value,
-        cursor: this.input.selectionStart,
+        value: this.$.input.value,
+        cursor: this.$.input.selectionStart,
       },
     });
     this.dispatchEvent(event);
@@ -118,11 +111,12 @@ export default class Input extends PolymerElement {
 
   handleFocus(e) {
     e.stopPropagation();
+
     const event = new CustomEvent('focus', {
       bubbles: false,
       cancelable: true,
       detail: {
-        value: this.input.value,
+        value: this.$.input.value,
       },
     });
     this.dispatchEvent(event);
@@ -134,31 +128,45 @@ export default class Input extends PolymerElement {
       bubbles: false,
       cancelable: true,
       detail: {
-        value: this.input.value,
+        value: this.$.input.value,
       },
     });
     this.dispatchEvent(event);
   }
 
   changePlaceholderStyle(placeholderStyle) {
-    if (!this.styleEl) {
-      // unique id for data-id to avoid style pollution
-      this.id = `input-${++uid}`;
-      this.styleEl = document.createElement('style');
-      this.setAttribute('data-id', this.id);
+
+    // HACK: unique id for data-id to avoid style pollution
+    if (!this._placeholderStyleElement) {
+      this._id = `input-${++uid}`;
+      this._placeholderStyleElement = document.createElement('style');
+      this.setAttribute('data-id', this._id);
       const shadowRoot =
         this.shadowRoot || this.attachShadow({ mode: 'open' });
-      shadowRoot.appendChild(this.styleEl);
+      shadowRoot.appendChild(this._placeholderStyleElement);
     }
-    this.styleEl.textContent = `
+
+    this._placeholderStyleElement.textContent = `
       :host #input::placeholder {
         ${placeholderStyle}
       }
-      a-input[data-id=${this.id}] #input::-webkit-input-placeholder {
+      a-input[data-id=${this._id}] #input::-webkit-input-placeholder {
         ${placeholderStyle}
       }
     `;
   }
+
+  _handlerReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.$.input.value = this.value = this._initalValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
+  };
 
   static get template() {
     return html`

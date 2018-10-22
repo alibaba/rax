@@ -8,6 +8,11 @@ export default class Slider extends PolymerElement {
 
   static get properties() {
     return {
+      value: {
+        type: Number,
+        reflectToAttribute: true,
+        value: 0
+      },
       min: {
         type: Number,
         value: 0
@@ -19,11 +24,6 @@ export default class Slider extends PolymerElement {
       step: {
         type: Number,
         value: 1
-      },
-      value: {
-        type: Number,
-        reflectToAttribute: true,
-        value: 0
       },
       disabled: {
         type: Boolean,
@@ -72,8 +72,8 @@ export default class Slider extends PolymerElement {
     };
   }
 
-  sliderWidth = 0;
-  lastValue = 0;
+  _lastValue = 0;
+  _initialValue = 0;
 
   constructor() {
     super();
@@ -81,15 +81,19 @@ export default class Slider extends PolymerElement {
 
   ready() {
     super.ready();
-    this.formInitialValue = this.value;
+    
+    if (this.value < this.min || this.value > this.max) {
+      this.value = this.min;
+    }
+    this._initialValue = this.value;
   }
 
   connectedCallback() {
     super.connectedCallback();
 
+    Gestures.setTouchAction(this.$.handle, 'auto');
     Gestures.addListener(this.$.handle, 'track', this._handleTrack);
 
-    this.sliderWidth = this.$.slider.offsetWidth;
     window.addEventListener('_formReset', this.handleReset, true);
   }
 
@@ -118,40 +122,55 @@ export default class Slider extends PolymerElement {
     return `height: ${trackSize}px; background-color: ${backgroundColor}`;
   }
 
+  _valueChanged(value) {
+    return Math.min(Math.max(value, this.min), this.max);
+  }
+
   _handleTrack = ({detail}) => {
 
     if (this.disabled) return;
 
+    let getNewValue = (dx) => {
+      let sliderWidth = this.$.slider.offsetWidth;
+      let offsetValue = dx / sliderWidth * (this.max - this.min);
+      let newValue = Math.round((this._lastValue + offsetValue) / this.step) * this.step;
+      return this._valueChanged(newValue);
+    }
+
     if (detail.state === 'start') {
-      this.lastValue = this.value;
+      this._lastValue = this.value;
     } else if (detail.state === 'track') {
-      let dx = detail.dx;
-      let offsetValue = dx / this.sliderWidth * (this.max - this.min);
-      let newValue = Math.round((this.lastValue + offsetValue) / this.step) * this.step;
-      newValue = Math.max(newValue, this.min);
-      newValue = Math.min(newValue, this.max);
-      this.value = newValue;
-
-      this.dispatchEvent(this._createEvent('input'));
-      this.dispatchEvent(this._createEvent('changing')); // Match micro-msg api  
-
+      let currentValue = getNewValue(detail.dx);
+      let activeStyle = this._computeActiveStyle(currentValue, this.min, this.max, this.activeColor);
+      this.$.active.setAttribute('style', activeStyle);
+      this.$.value.childNodes[0].textContent = currentValue;
+      this.dispatchEvent(this._createEvent('changing'), currentValue);
     } else if (detail.state === 'end') {
+      this.value = getNewValue(detail.dx);
       this.dispatchEvent(this._createEvent('change'));
     }
   };
 
-  _createEvent(type) {
+  _createEvent(type, value) {
     return new CustomEvent(type, {
       detail: {
-        value: this.value
+        value: value || this.value
       },
       bubbles: true,
       cancelable: false
     });
   }
 
-  handleReset = () => {
-    this.value = this.formInitialValue;
+  handleReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.value = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
   }
 
   static get template() {
@@ -203,6 +222,8 @@ export default class Slider extends PolymerElement {
           -webkit-flex: none;
           flex: none;
           margin-left: 5px;
+          -webkit-user-select: none;
+          user-select: none;
         }
       </style>
       <div id="slider" style$="[[_sliderStyle]]">

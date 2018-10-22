@@ -23,20 +23,16 @@ export default class FormElement extends PolymerElement {
 
   ready() {
     super.ready();
-    this._listen();
+  }
+
+  connectedCallback() {
+    this.addEventListener('_buttonSubmit', this._submitHandler);
+    this.addEventListener('_buttonReset', this._resetHandler);
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
     this.removeEventListener('_buttonSubmit', this._submitHandler);
     this.removeEventListener('_buttonReset', this._resetHandler);
-  }
-
-  _listen() {
-    afterNextRender(this, () => {
-      this.addEventListener('_buttonSubmit', this._submitHandler);
-      this.addEventListener('_buttonReset', this._resetHandler);
-    })
   }
 
   _submitHandler() {
