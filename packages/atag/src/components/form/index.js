@@ -1,50 +1,32 @@
-<dom-module id="a-form">
-  <template>
-    <style>
-      :host {
-        display: block;
-        -webkit-user-select: none;
-        user-select: none;
-      }
-    </style>
-    <!-- shadow DOM goes here-->
-    <slot></slot>
-  </template>
-</dom-module>
+import { PolymerElement, html } from '@polymer/polymer';
 
-<script>
-import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
-
-export default class FormElement extends PolymerElement {
+export default class Form extends PolymerElement {
   static get is() {
     return 'a-form';
   }
 
-  ready() {
-    super.ready();
-  }
-
   connectedCallback() {
-    this.addEventListener('_buttonSubmit', this._submitHandler);
-    this.addEventListener('_buttonReset', this._resetHandler);
+    super.connectedCallback();
+    this.addEventListener('_buttonSubmit', this._handleSubmit);
+    this.addEventListener('_buttonReset', this._handleReset);
   }
 
   disconnectedCallback() {
-    this.removeEventListener('_buttonSubmit', this._submitHandler);
-    this.removeEventListener('_buttonReset', this._resetHandler);
+    super.disconnectedCallback();
+    this.removeEventListener('_buttonSubmit', this._handleSubmit);
+    this.removeEventListener('_buttonReset', this._handleReset);
   }
 
-  _submitHandler() {
-    /**
-     * Get the value of all form elements in a child element
-     * format e.detail
-     * {
-     *   value: {
-     *      [name]: 'value'
-     *   }
-     * }
-     */
+  /**
+   * Get the value of all form elements in a child element
+   * format e.detail
+   * {
+   *   value: {
+   *      [name]: 'value'
+   *   }
+   * }
+   */
+  _handleSubmit() {
     const form = this;
     const formFields = form.querySelectorAll('[name]');
     const value = Object.create(null);
@@ -76,32 +58,44 @@ export default class FormElement extends PolymerElement {
       bubbles: true,
       composed: true,
       detail: {
-        value
-      }
+        value,
+      },
     });
     form.dispatchEvent(evt);
   }
 
-  _resetHandler() {
-    /**
-     * reset:
-     * The initial values ​​of all form elements are logged when the component is created,
-     * but the performance is too low,
-     * and it is not as good as saving the initial value for each form element itself.
-     */
+  /**
+   * Reset:
+   * The initial values ​​of all form elements are logged when the component is created,
+   * but the performance is too low,
+   * and it is not as good as saving the initial value for each form element itself.
+   */
+  _handleReset() {
     const formResetEvt = new CustomEvent('_formReset', {
-      bubbles: false
+      bubbles: false,
     });
     this.dispatchEvent(formResetEvt);
 
     const resetEvt = new CustomEvent('reset', {
       bubbles: true,
       composed: true,
-      detail: {}
+      detail: {},
     });
     this.dispatchEvent(resetEvt);
   }
+
+  static get template() {
+    return html`
+      <style>
+        :host {
+          display: block;
+          -webkit-user-select: none;
+          user-select: none;
+        }
+      </style>
+      <slot></slot>
+    `;
+  }
 }
 
-customElements.define(FormElement.is, FormElement);
-</script>
+customElements.define(Form.is, Form);

@@ -25,8 +25,8 @@ export default class Input extends PolymerElement {
       },
       placeholderStyle: {
         type: String,
-        value: 'color: #999999;',
-        observer: 'changePlaceholderStyle',
+        value: 'color: #999;',
+        observer: '_changePlaceholderStyle',
       },
       disabled: {
         type: Boolean,
@@ -52,90 +52,74 @@ export default class Input extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('input', this.inputListener, true);
-    window.addEventListener('focus', this.focusListener, true);
-    window.addEventListener('blur', this.blurListener, true);
-    window.addEventListener('_formReset', this._handlerReset, true);
+    window.addEventListener('input', this._handleInput, true);
+    window.addEventListener('focus', this._handleFocus, true);
+    window.addEventListener('blur', this._handleBlur, true);
+    window.addEventListener('_formReset', this._handleReset, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('input', this.inputListener, true);
-    window.removeEventListener('focus', this.focusListener, true);
-    window.removeEventListener('blur', this.blurListener, true);
-    window.removeEventListener('_formReset', this._handlerReset, true);
+    window.removeEventListener('input', this._handleInput, true);
+    window.removeEventListener('focus', this._handleFocus, true);
+    window.removeEventListener('blur', this._handleBlur, true);
+    window.removeEventListener('_formReset', this._handleReset, true);
   }
 
-  inputListener = (event) => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
-      if (event.target === this) {
-        this.handleInput(event);
+  _handleInput = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
+      if (evt.target === this) {
+        this.value = this.$.input.value;
+        const customEvent = new CustomEvent('input', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.input.value,
+            cursor: this.$.input.selectionStart,
+          },
+        });
+        this.dispatchEvent(customEvent);
       }
     }
   };
 
-  focusListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
-      if (event.target === this) {
-        this.handleFocus(event);
+  _handleFocus = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
+      if (evt.target === this) {
+        const customEvent = new CustomEvent('focus', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.input.value,
+          },
+        });
+        this.dispatchEvent(customEvent);
       }
     }
   };
 
-  blurListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
-      if (event.target === this) {
-        this.handleBlur(event);
+  _handleBlur = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
+      if (evt.target === this) {
+        const customEvent = new CustomEvent('blur', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.input.value,
+          },
+        });
+        this.dispatchEvent(customEvent);
       }
     }
   };
 
-  handleInput(e) {
-    e.stopPropagation();
-
-    this.value = this.$.input.value;
-
-    const event = new CustomEvent('input', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.$.input.value,
-        cursor: this.$.input.selectionStart,
-      },
-    });
-    this.dispatchEvent(event);
-  }
-
-  handleFocus(e) {
-    e.stopPropagation();
-
-    const event = new CustomEvent('focus', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.$.input.value,
-      },
-    });
-    this.dispatchEvent(event);
-  }
-
-  handleBlur(e) {
-    e.stopPropagation();
-    const event = new CustomEvent('blur', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.$.input.value,
-      },
-    });
-    this.dispatchEvent(event);
-  }
-
-  changePlaceholderStyle(placeholderStyle) {
-    // HACK: unique id for data-id to avoid style pollution
+  _changePlaceholderStyle(placeholderStyle) {
+    /**
+     * HACK: unique id for data-id to avoid style pollution
+     */
     if (!this._placeholderStyleElement) {
       this._id = `input-${++uid}`;
       this._placeholderStyleElement = document.createElement('style');
@@ -155,11 +139,11 @@ export default class Input extends PolymerElement {
     `;
   }
 
-  _handlerReset = (event) => {
+  _handleReset = (evt) => {
     let parentElement = this.parentElement;
 
     while (parentElement) {
-      if (parentElement === event.target) {
+      if (parentElement === evt.target) {
         this.$.input.value = this.value = this._initalValue;
         break;
       }
