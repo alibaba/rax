@@ -735,10 +735,21 @@
     });
   </script>
 
+  <a-view>
+      <a-picker value="1" range="[1,2,3,4,5,6,7,8,9,10]" id="picker">
+        <a-text id="pickerResult">pick me</a-text>
+      </a-picker>
+    </a-view>
+    <a-view>
+      <a-picker value="0" range="[1,2,3,4,5]" disabled=true>
+        <a-text>disalbed pick</a-text>
+      </a-picker>
+    </a-view>
+
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
-      <a-picker-view id="pickerView" style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+      <a-picker-view id="pickerView" style="height:333px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
         <a-picker-view-column>
           <a-view value="1998">1998年</a-view>
           <a-view value="1999">1999年</a-view>
@@ -812,7 +823,7 @@
     </div>
     <script>
       setTimeout(() => {
-        pickerView.setAttribute('value', '[3, 5, 5]');
+        pickerView.setAttribute('value', '[1999, 5, 5]');
       }, 2000);
     </script>
   </div>
