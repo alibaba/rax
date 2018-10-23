@@ -138,8 +138,6 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   scrollToX(value) {
-    console.log('call scrollTo X', value);
-
     const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
     if (scrollWithAnimation) {
       if (this.scrollingXId) {

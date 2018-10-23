@@ -82,15 +82,20 @@ export default class SwitchElement extends PolymerElement {
 
   ready() {
     super.ready();
-    // save the formInitialValue for reset
-    this.formInitialValue = this.checked;
+    // Save the _initialValue for form reset
+    this._initialValue = this.checked;
     this.checkbox = this.$.input;
-
-    afterNextRender(this, () => {
-      this.addEventListener('click', this.handleClick);
-      window.addEventListener('_formReset', this._handleReset, true);
-    });
     this.translateSliderBlock();
+  }
+
+  connectedCallback() {
+    this.addEventListener('click', this.handleClick);
+    window.addEventListener('_formReset', this._handleReset, true);
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener('click', this.handleClick);
+    window.removeEventListener('_formReset', this._handleReset, true);
   }
 
   get isChecked() {
@@ -108,15 +113,18 @@ export default class SwitchElement extends PolymerElement {
     );
   }
 
-  _handleReset = () => {
-    this.checked = this.formInitialValue;
+  _handleReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.checked = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
   };
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeEventListener('click', this.handleClick);
-    window.removeEventListener('_formReset', this._handleReset, true);
-  }
 
   translateSliderBlock() {
     if (this.isChecked) {
