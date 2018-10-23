@@ -90,10 +90,11 @@ export default class Textarea extends PolymerElement {
     super.connectedCallback();
     window.addEventListener('compositionstart', this._handleCompositionStart, true);
     window.addEventListener('compositionend', this._handleCompositionEnd, true);
-    window.addEventListener('input', this.inputListener, true);
-    window.addEventListener('focus', this.focusListener, true);
-    window.addEventListener('blur', this.blurListener, true);
+    window.addEventListener('input', this._handleInput, true);
+    window.addEventListener('focus', this._handleFocus, true);
+    window.addEventListener('blur', this._handleBlur, true);
     window.addEventListener('_formReset', this._handleReset, true);
+
     if (this.autoHeight) {
       autosize(this.$.textarea);
     }
@@ -103,9 +104,9 @@ export default class Textarea extends PolymerElement {
     super.disconnectedCallback();
     window.removeEventListener('compositionstart', this._handleCompositionStart, true);
     window.removeEventListener('compositionend', this._handleCompositionEnd, true);
-    window.removeEventListener('input', this.inputListener, true);
-    window.removeEventListener('focus', this.focusListener, true);
-    window.removeEventListener('blur', this.blurListener, true);
+    window.removeEventListener('input', this._handleInput, true);
+    window.removeEventListener('focus', this._handleFocus, true);
+    window.removeEventListener('blur', this._handleBlur, true);
     window.removeEventListener('_formReset', this._handleReset, true);
     autosize.destroy(this.$.textarea);
   }
@@ -127,65 +128,70 @@ export default class Textarea extends PolymerElement {
   }
 
 
-  inputListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
+  _handleInput = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
       if (!this._isCompositing && event.target === this) {
-        this.handleInput(event);
+        if (this.autoHeight) {
+          autosize.update(this.$.textarea);
+        }
+
+        this._valueUnicodeCharString = new UnicodeCharString(this.$.textarea.value, this.maxlength);
+        this.value = this.$.textarea.value = this._valueUnicodeCharString.toString();
+
+        this.dispatchEvent(new CustomEvent('input', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.textarea.value,
+            cursor: this.$.textarea.selectionStart,
+          },
+        }));
       }
     }
   };
 
-  focusListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
-      if (event.target === this) {
-        this.handleFocus(event);
+  _handleFocus = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
+      if (evt.target === this) {
+        this.dispatchEvent(new CustomEvent('focus', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.textarea.value,
+          },
+        }));
       }
     }
   };
 
-  blurListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
-      if (event.target === this) {
-        this.handleBlur(event);
+  _handleBlur = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
+      if (evt.target === this) {
+        this.dispatchEvent(new CustomEvent('blur', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.textarea.value,
+          },
+        }));
       }
     }
   };
 
-  _handleReset = (event) => {
+  _handleReset = (evt) => {
     let parentElement = this.parentElement;
 
     while (parentElement) {
-      if (parentElement === event.target) {
+      if (parentElement === evt.target) {
         this.$.textarea.value = this._initialValue;
         break;
       }
       parentElement = parentElement.parentElement;
     }
   };
-
-  handleInput(e) {
-    e.stopPropagation();
-    if (this.autoHeight) {
-      autosize.update(this.$.textarea);
-    }
-    this._valueUnicodeCharString = new UnicodeCharString(this.$.textarea.value, this.maxlength);
-    this.value = this.$.textarea.value = this._valueUnicodeCharString.toString();
-
-    const event = new CustomEvent('input', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.$.textarea.value,
-        cursor: this.$.textarea.selectionStart,
-      },
-    });
-
-    this.dispatchEvent(event);
-  }
-
 
   _handleCompositionStart = () => {
     this._isCompositing = true;
@@ -195,30 +201,6 @@ export default class Textarea extends PolymerElement {
     this._isCompositing = false;
     this.handleInput(evt);
   };
-
-  handleFocus(e) {
-    e.stopPropagation();
-    const event = new CustomEvent('focus', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.$.textarea.value,
-      },
-    });
-    this.dispatchEvent(event);
-  }
-
-  handleBlur(e) {
-    e.stopPropagation();
-    const event = new CustomEvent('blur', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.$.textarea.value,
-      },
-    });
-    this.dispatchEvent(event);
-  }
 
   _changeCustomStyle() {
     const { placeholderStyle, countStyle, showCount } = this;
