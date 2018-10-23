@@ -436,4 +436,20 @@ describe('FragmentComponent', function() {
     expect(el.childNodes[0].childNodes[1].data).toBe('2');
     expect(el.childNodes[0].childNodes[2].data).toBe('3');
   });
+
+  it('Fragment and its child Fragment should have the same parent node', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, [4, 5, [7, 8]], 6];
+      }
+    }
+
+    const instance = render(<Frag />, el);
+    const frgmentInstance = instance._internal._renderedComponent;
+    expect(frgmentInstance._parent).toBe(el);
+    expect(frgmentInstance._renderedChildren['.2']._parent).toBe(el);
+    expect(frgmentInstance._renderedChildren['.2']._renderedChildren['.2']._parent).toBe(el);
+  });
 });

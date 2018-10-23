@@ -1,5 +1,8 @@
 import computeChangedData from './computeChangedData';
 
+const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
+const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
+
 /**
  * interface of mp page
  */
@@ -30,17 +33,17 @@ class Page {
    * - a.b.c.d
    */
   setData(expData, callback) {
-    const changedData = computeChangedData(this.data, expData);
+    if (expData == null) {
+      return;
+    }
 
-    const callSetState = () => {
-      this.vnode.setState(changedData, callback);
-    };
+    const changedData = computeChangedData(this.data, expData);
 
     // in case component is not mounted
     if (this.vnode.updater === undefined) {
-      this.vnode.cycleHooks.willMount.push(callSetState);
+      this.vnode.mergeState(changedData, callback);
     } else {
-      callSetState();
+      this.vnode.setState(changedData, callback);
     }
   }
 }
@@ -51,9 +54,20 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
   const pageEventEmitter = getCoreModule('@core/page');
   const Rax = getCoreModule('@core/rax');
 
-  const { document, pageQuery, pageName } = pageContext;
+  const { document, location, pageQuery, pageName } = pageContext;
+  const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
-  const render = renderFactory(null, Rax);
+  const render = getWebViewSource
+    ? (data) => {
+      const url = getWebViewSource(data);
+      if (url && location && location.href !== url) {
+        location.replace(url);
+        return '';
+      } else {
+        return Rax.createElement('web-view', { src: url, style: WEBVIEW_STYLE });
+      }
+    }
+    : renderFactory(null, Rax);
   return class extends Rax.Component {
     constructor(props, context) {
       super(props, context);
@@ -62,25 +76,22 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       this.pageInstance = new Page(this, config);
       /**
        * willMount: [fn],
-       * unmount: []
+       * didMount: [fn],
+       * unMount: []
        */
       this.cycleHooks = {
         willMount: [],
-        unmount: []
+        didMount: [],
+        unMount: []
       };
 
-      const { data, onLoad, onReady, onHide, onUnload, onPageScroll, onPullIntercept } = config;
+      const { data, onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
 
       if (data) this.state = data;
 
       // trigger while loaded，pageQuery passed to cycle
       if ('function' === typeof onLoad) {
         onLoad.call(this.pageInstance, pageQuery);
-      }
-      if ('function' === typeof onReady) {
-        const cycleFn = onReady.bind(this.pageInstance);
-        this.cycleListeners.push({ type: 'ready', fn: cycleFn });
-        pageEventEmitter.on('ready', cycleFn);
       }
       if ('function' === typeof onHide) {
         const cycleFn = onHide.bind(this.pageInstance);
@@ -102,6 +113,18 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
         this.cycleListeners.push({ type: 'pullIntercept', fn: cycleFn });
         pageEventEmitter.on('pullIntercept', cycleFn);
       }
+
+      // in web-view page
+      if (getWebViewOnMessage) {
+        const onMessageMethod = getWebViewOnMessage.call(this.pageInstance, this.state);
+        if (typeof config[onMessageMethod] === 'function') {
+          const cycleFn = (evt) => {
+            config[onMessageMethod].call(this.pageInstance, { detail: { data: evt.data } });
+          };
+          this.cycleListeners.push({ type: WEBVIEW_MESSAGE_NAME, fn: cycleFn });
+          pageEventEmitter.on(WEBVIEW_MESSAGE_NAME, cycleFn);
+        }
+      }
     }
 
     // type: [{ type, fn }]
@@ -110,13 +133,22 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
 
     componentWillMount() {
       // native event of first show triggered too ealier,
-      // triggering by willMount
-      const { onShow } = config;
+      // triggering by didMount
+      const { onShow, onReady } = config;
       if ('function' === typeof onShow) {
         onShow.call(this.pageInstance);
         const cycleFn = onShow.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'show', fn: cycleFn });
         pageEventEmitter.on('show', cycleFn);
+      }
+
+      // ready event fired at componentWillMount by front end
+      if ('function' === typeof onReady) {
+        try {
+          onReady.call(this.pageInstance);
+        } catch (err) {
+          console.error(err); // do not stuck willMount
+        }
       }
 
       // update vdom while toggle show/hide
@@ -130,22 +162,48 @@ export default function createPage(config = {}, renderFactory, getCoreModule) {
       this.cycleListeners.push({ type: 'updatePageData', fn: updatePageData });
       pageEventEmitter.on('updatePageData', updatePageData);
 
-      if (this.cycleHooks.willMount.length > 0) {
-        let fn;
-        while (fn = this.cycleHooks.willMount.shift()) {
-          fn();
-        }
-      }
+      this.runCycleHooks('willMount');
+    }
+
+    componentDidMount() {
+      this.runCycleHooks('didMount');
     }
 
     componentWillUnmount() {
       for (let i = 0, l = this.cycleListeners.length; i < l; i++) {
         pageEventEmitter.off(this.cycleListeners[i].type, this.cycleListeners[i].fn);
       }
-      if (this.cycleHooks.unmount.length > 0) {
+      this.runCycleHooks('unMount');
+    }
+
+    runCycleHooks(cycleName) {
+      if (this.cycleHooks[cycleName] && this.cycleHooks[cycleName].length > 0) {
         let fn;
-        while (fn = this.cycleHooks.unmount.shift()) {
+        while (fn = this.cycleHooks[cycleName].shift()) {
           fn();
+        }
+      }
+    }
+
+    /**
+     * merge data to state
+     * before first render
+     */
+    mergeState(data, callback) {
+      if (data == null) {
+        return;
+      }
+
+      this.state = {
+        ...this.state,
+        ...data
+      };
+
+      if (typeof callback === 'function') {
+        if (this.updater) {
+          callback.call(this.pageInstance);
+        } else {
+          this.cycleHooks.didMount.push(callback.bind(this.pageInstance));
         }
       }
     }

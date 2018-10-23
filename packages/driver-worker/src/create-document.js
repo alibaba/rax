@@ -39,6 +39,21 @@ function createAttributeFilter(ns, name) {
   return o => o.ns === ns && toLower(o.name) === toLower(name);
 }
 
+const BOOL_PROPERTY = {
+  'CHECKBOX': {
+    checked: true,
+  },
+  'RADIO': {
+    checked: true
+  }
+};
+
+function isProperty(node, prop, val) {
+  return typeof val === 'object' ||
+    node.nodeType === 1 && BOOL_PROPERTY[node.nodeName] && BOOL_PROPERTY[node.nodeName][prop]
+  ;
+}
+
 const setImmediate = global.setImmediate || function(cb) {
   return setTimeout(cb, 0);
 };
@@ -255,8 +270,48 @@ export default function() {
     });
   }
 
-  class Node {
+  class EventTarget {
+    eventListeners = {};
+
+    addEventListener(type, handler) {
+      (
+        this.eventListeners[toLower(type)] ||
+        (this.eventListeners[toLower(type)] = [])
+      ).push(handler);
+      mutation(this, 'addEvent', { eventName: type });
+    }
+
+    removeEventListener(type, handler) {
+      splice(this.eventListeners[toLower(type)], handler, 0, true);
+      mutation(this, 'removeEvent', { eventName: type });
+    }
+
+    dispatchEvent(event) {
+      event.stopPropagation = () => {
+        event.bubbles = false;
+      };
+      let t = event.target = event.currentTarget = this;
+      let c = event.cancelable;
+      let l;
+      let i;
+      do {
+        l = t.eventListeners && t.eventListeners[toLower(event.type)];
+        if (l)
+          for (i = l.length; i--;) {
+            if ((l[i].call(t, event) === false || event._end) && c) break;
+          }
+      } while (
+        event.bubbles &&
+        !(c && event._stop) &&
+        (event.currentTarget = t = t.parentNode)
+      );
+      return !event.defaultPrevented;
+    }
+  }
+
+  class Node extends EventTarget {
     constructor(nodeType, nodeName) {
+      super();
       this.nodeType = nodeType;
       this.nodeName = nodeName;
       this.childNodes = [];
@@ -328,8 +383,7 @@ export default function() {
     constructor(nodeType, nodeName) {
       super(nodeType || ELEMENT_NODE, nodeName); // ELEMENT_NODE
       this.attributes = [];
-      this.eventListeners = {};
-      this.style = {};
+      this._style = {};
       Object.defineProperty(this, 'className', {
         set: val => {
           this.setAttribute('class', val);
@@ -371,6 +425,7 @@ export default function() {
     get style() {
       return this._style;
     }
+
     set style(styleObject) {
       this._style = styleObject;
       mutation(this, 'attributes', { style: styleObject });
@@ -397,7 +452,7 @@ export default function() {
       // array and plain object will pass
       // through, instead of calling `toString`
       // null has been filtered before
-      if (typeof value === 'object') {
+      if (isProperty(this, name, value)) {
         attr.value = value;
       } else {
         attr.value = String(value);
@@ -413,41 +468,6 @@ export default function() {
     removeAttributeNS(ns, name) {
       splice(this.attributes, createAttributeFilter(ns, name));
       mutation(this, 'attributes', { attributeName: name });
-    }
-
-    addEventListener(type, handler) {
-      (
-        this.eventListeners[toLower(type)] ||
-        (this.eventListeners[toLower(type)] = [])
-      ).push(handler);
-      mutation(this, 'addEvent', { eventName: type });
-    }
-
-    removeEventListener(type, handler) {
-      splice(this.eventListeners[toLower(type)], handler, 0, true);
-      mutation(this, 'removeEvent', { eventName: type });
-    }
-
-    dispatchEvent(event) {
-      event.stopPropagation = () => {
-        event.bubbles = false;
-      };
-      let t = event.target = event.currentTarget = this;
-      let c = event.cancelable;
-      let l;
-      let i;
-      do {
-        l = t.eventListeners && t.eventListeners[toLower(event.type)];
-        if (l)
-          for (i = l.length; i--;) {
-            if ((l[i].call(t, event) === false || event._end) && c) break;
-          }
-      } while (
-        event.bubbles &&
-        !(c && event._stop) &&
-        (event.currentTarget = t = t.parentNode)
-      );
-      return !event.defaultPrevented;
     }
   }
 

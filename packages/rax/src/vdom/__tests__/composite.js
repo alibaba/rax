@@ -91,6 +91,30 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[0].attributes.class).toBe('foo');
   });
 
+  it('setState callback triggered in componentWillMount', function() {
+    let container = createNodeElement('div');
+    let triggered = false;
+    class Foo extends Component {
+      constructor() {
+        super();
+        this.state = {};
+      }
+      componentWillMount() {
+        this.setState({
+          value: 'foo'
+        }, () => {
+          triggered = true;
+        });
+      }
+      render() {
+        return <span className={this.state.value} />;
+      }
+    }
+
+    render(<Foo />, container);
+    expect(triggered).toBe(true);
+  });
+
   it('will call all the normal life cycle methods', function() {
     var lifeCycles = [];
     let container = createNodeElement('div');
@@ -239,5 +263,28 @@ describe('CompositeComponent', function() {
 
     render(<BrokenRender />, container);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
+  it('should render correct when prevRenderedComponent did not generate nodes', () => {
+    let container = createNodeElement('div');
+    class Frag extends Component {
+      render() {
+        return [];
+      }
+    }
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        if (this.state.count === 0) {
+          return <Frag />;
+        }
+        return <div />;
+      }
+    }
+
+    const instance = render(<App />, container);
+    expect(container.childNodes.length).toBe(0);
+    instance.setState({count: 1});
+    expect(container.childNodes[0].tagName).toBe('DIV');
   });
 });

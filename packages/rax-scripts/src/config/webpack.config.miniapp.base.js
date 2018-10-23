@@ -12,8 +12,8 @@ const babelOptions = {
   plugins: [require.resolve('rax-hot-loader/babel')],
 };
 
-const publicPath = '/';
-const publicUrl = '';
+const publicPath = process.env.PUBLIC_PATH || '/';
+const publicUrl = publicPath.replace(/\/$/, '');
 
 module.exports = {
   mode: process.env.NODE_ENV,

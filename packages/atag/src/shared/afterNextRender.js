@@ -1,0 +1,1 @@
+export { afterNextRender as default } from '@polymer/polymer/lib/utils/render-status';

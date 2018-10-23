@@ -41,15 +41,15 @@
       }
     </style>
     <!-- shadow DOM goes here -->
-    <label class="switch" id="switch" on-click="handleClick">
-      <span class="slider" id="slider" style$="{{checkboxCheckedStyle}}"></span>
+    <label class="switch" id="switch">
+      <span class="slider" id="slider" style$="{{switchStyle}}"></span>
     </label>
   </template>
 </dom-module>
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender } from '../../shared/utils/';
+import afterNextRender from '../../shared/afterNextRender';
 
 export default class SwitchElement extends PolymerElement {
   static get is() {
@@ -68,84 +68,80 @@ export default class SwitchElement extends PolymerElement {
         reflectToAttribute: true
       },
       checked: {
-        type: Boolean,
-        value: false,
+        type: String,
+        value: 'false',
+        reflectToAttribute: true,
         observer: 'observerChecked'
       },
-      checkboxCheckedStyle: {
+      switchStyle: {
         type: String,
-        computed: ''
+        computed: 'computedSwitchStyle(checked, color)'
       }
     };
   }
 
-  attributeChangedCallback(key, oldVal, newVal) {
-    super.attributeChangedCallback(key, oldVal, newVal);
-
-    if (oldVal !== newVal) {
-      switch (key) {
-        case 'checked':
-          const checked = this.getAttribute('checked');
-          this.checked = checked === "" || checked === 'true';
-          break;
-        case 'color':
-          if (this.checked) {
-            this.checkboxCheckedStyle = `background-color: ${newVal}`;
-          }
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
   ready() {
     super.ready();
-    // save the formInitialValue for reset
-    this.formInitialValue = this.checked;
+    // Save the _initialValue for form reset
+    this._initialValue = this.checked;
     this.checkbox = this.$.input;
-
-    afterNextRender(this, () => {
-      window.addEventListener('_formReset', this._handleReset, true);
-    });
     this.translateSliderBlock();
   }
 
-  handleClick() {
-    this.checked = !this.checked;
+  connectedCallback() {
+    this.addEventListener('click', this.handleClick);
+    window.addEventListener('_formReset', this._handleReset, true);
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener('click', this.handleClick);
+    window.removeEventListener('_formReset', this._handleReset, true);
+  }
+
+  get isChecked() {
+    return this.checked !== 'false' && this.checked !== null;
+  }
+
+  handleClick = () => {
+    this.checked = String(!this.isChecked);
     this.dispatchEvent(
       new CustomEvent('change', {
         detail: {
-          checked: this.checked
+          checked: this.isChecked
         }
       })
     );
   }
 
-  _handleReset = () => {
-    this.checked = this.formInitialValue;
+  _handleReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.checked = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
   };
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    window.removeEventListener('_formReset', this._handleReset, true);
-  }
 
   translateSliderBlock() {
-    if (this.checked) {
+    if (this.isChecked) {
       this.$.slider.classList.add('slider-checked');
     } else {
       this.$.slider.classList.remove('slider-checked');
     }
   }
 
-  observerChecked(newVal, oldVal) {
-    this.checkboxCheckedStyle = newVal
-      ? `background-color: ${this.color}`
+  computedSwitchStyle(checked, color) {
+    return this.isChecked
+      ? `background-color: ${color};`
       : '';
-    if (this.$) {
-      this.translateSliderBlock();
-    }
+  }
+
+  observerChecked(newVal, oldVal) {
+    this.translateSliderBlock();
   }
 }
 

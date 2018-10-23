@@ -21,7 +21,7 @@
         height: 1.25em;
         margin: -0.625em 0;
         vertical-align: middle;
-        border: 2px solid #999;
+        border: 1px solid #999;
         border-radius: 100%;
         box-sizing: border-box;
         background-color: white;
@@ -40,12 +40,12 @@
         border-radius: 100%;
         text-align: center;
         cursor: pointer;
-        border: 1vw solid #fff;
+        border: 2px solid #fff;
         box-sizing: border-box;
       }
 
       :host input[type="radio"][disabled]+label .circle {
-        border: 2px solid #c7c7c7;
+        border: 1px solid #c7c7c7;
         background-color: #E7E7E7;
       }
 
@@ -64,7 +64,7 @@
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import { afterNextRender, throttle } from '../../shared/utils';
+import afterNextRender from '../../shared/afterNextRender';
 
 export default class RadioElement extends PolymerElement {
   static get is() {
@@ -100,11 +100,11 @@ export default class RadioElement extends PolymerElement {
       },
       circleCheckedStyle: {
         type: String,
-        computed: 'getCircleCheckedStyle(checked, color)'
+        computed: 'getCircleCheckedStyle(checked, color, disabled)'
       },
       dotCheckedStyle: {
         type: String,
-        computed: 'getDotCheckedStyle(checked, color)'
+        computed: 'getDotCheckedStyle(checked, color, disabled)'
       }
     };
   }
@@ -112,54 +112,63 @@ export default class RadioElement extends PolymerElement {
   ready() {
     super.ready();
 
+    // label target
+    this.setAttribute('a-label-target', '');
     this.radio = this.$.radio;
-    this.formInitialValue = this.checked;
-    this.radio.addEventListener('change', this.changeHandler);
-    this.addEventListener('click', this.clickHandler, true);
+    this._initialValue = this.checked;
+    this.addEventListener('click', this.clickHandler);
     window.addEventListener('_formReset', this._handlerReset, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    
-    this.removeEventListener('click', this.clickHandler, true);
+
+    this.removeEventListener('click', this.clickHandler);
     window.removeEventListener('_formReset', this._handlerReset, true);
   }
 
-  clickHandler = (e) => {
+  clickHandler = e => {
+    this.dispatchChange(this.checked);
     e.stopPropagation();
-
-    if(!e.isTrusted) {
-      this.$.radio.click();
-    }
   };
 
-  changeHandler = (e) => {
+  changeHandler = e => {
+    dispatchChange(this.checked);
     e.stopPropagation();
+  };
 
+  dispatchChange = value => {
     const customEvent = new CustomEvent('_radioChange', {
       bubbles: true,
       cancelable: true,
       detail: {
-        value: this.checked
+        value
       }
     });
     this.dispatchEvent(customEvent);
   };
 
-  _handlerReset = () => {
-    this.radio.checked = this.checked = this.formInitialValue;
+  _handlerReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.radio.checked = this.checked = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
   };
 
-  getCircleCheckedStyle(checked, color) {
-    if (checked) {
-      return `border: 2px solid ${color};`;
+  getCircleCheckedStyle(checked, color, disabled) {
+    if (checked && !disabled) {
+      return `border: 1px solid ${color};`;
     }
     return '';
   }
 
-  getDotCheckedStyle(checked, color) {
-    if (checked) {
+  getDotCheckedStyle(checked, color, disabled) {
+    if (checked && !disabled) {
       return `background-color: ${color};`;
     }
     return '';

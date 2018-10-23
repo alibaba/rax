@@ -63,6 +63,12 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
       add(node.left);
       add(node.right);
     },
+    ArrayExpression(path) {
+      const { node } = path;
+      if (node.elements) {
+        node.elements.forEach(add);
+      }
+    },
     ConditionalExpression(path) {
       const { node } = path;
       add(node.consequent);

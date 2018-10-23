@@ -11,10 +11,6 @@
         -webkit-user-select: all;
         user-select: all;
       }
-      
-      slot {
-        all: inherit;
-      }
     </style>
     <slot></slot>
   </template>
@@ -29,6 +25,27 @@ export default class TextElement extends PolymerElement {
 
   constructor() {
     super();
+  }
+
+  ready() {
+    super.ready();
+    
+    for (var i = 0; i < this.childNodes.length; i++) {
+      var node = this.childNodes[i];
+      if (node.nodeType === document.TEXT_NODE) {
+        var contents = node.textContent.split('\n');
+        if (contents.length > 1) {
+          const fragment = document.createDocumentFragment();
+          for (var i=0; i < contents.length; i++) {
+            fragment.appendChild(document.createTextNode(contents[i]));
+            if ( i !== contents.length - 1) {
+              fragment.appendChild(document.createElement('br'));
+            }
+          }
+          node.parentNode.replaceChild(fragment, node);
+        }
+      }
+    }
   }
 }
 
