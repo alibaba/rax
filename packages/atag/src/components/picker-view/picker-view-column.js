@@ -1,63 +1,4 @@
-<dom-module id="a-picker-view-column">
-  <template>
-    <div id="mask" class="mask" style$="{{maskStyle}}">
-      <div id="indicator" class="indicator" style$="{{indicatorStyle}}"></div>
-    </div>
-    <div id="content" class="content" style$="{{contentStyle}}">
-      <slot></slot>
-    </div>
-    <style>
-      :host {
-        flex: 1;
-        -webkit-flex: 1;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .mask {
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 2;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        display: -webkit-flex;
-        flex-flow: column nowrap;
-        -webkit-flex-flow: column nowrap;
-        align-items: center;
-        -webkit-align-items: center;
-        justify-content: center;
-        -webkit-justify-content: center;
-        background-image:
-          linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)),
-          linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-        background-position: top, bottom;
-        background-repeat: no-repeat;
-        background-size: 100% 45%;
-      }
-
-      .indicator {
-        box-sizing: border-box;
-        width: 100%;
-        height: 40px;
-        border-top: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .content ::slotted(a-view) {
-        height: 40px;
-        line-height: 40px;
-        font-size: 16px;
-        color: #333;
-      }
-    </style>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
+import { PolymerElement, html } from '@polymer/polymer';
 import afterNextRender from '../../shared/afterNextRender';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
@@ -312,7 +253,64 @@ export default class PickerViewColumn extends PolymerElement {
       })
     );
   }
+
+  static get template() {
+    return html`
+      <div id="mask" class="mask" style$="{{maskStyle}}">
+        <div id="indicator" class="indicator" style$="{{indicatorStyle}}"></div>
+      </div>
+      <div id="content" class="content" style$="{{contentStyle}}">
+        <slot></slot>
+      </div>
+      <style>
+        :host {
+          flex: 1;
+          -webkit-flex: 1;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+        }
+  
+        .mask {
+          position: absolute;
+          left: 0;
+          top: 0;
+          z-index: 2;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          display: -webkit-flex;
+          flex-flow: column nowrap;
+          -webkit-flex-flow: column nowrap;
+          align-items: center;
+          -webkit-align-items: center;
+          justify-content: center;
+          -webkit-justify-content: center;
+          background-image:
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)),
+            linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+          background-position: top, bottom;
+          background-repeat: no-repeat;
+          background-size: 100% 45%;
+        }
+  
+        .indicator {
+          box-sizing: border-box;
+          width: 100%;
+          height: 40px;
+          border-top: 1px solid #ddd;
+          border-bottom: 1px solid #ddd;
+        }
+  
+        .content ::slotted(a-view) {
+          height: 40px;
+          line-height: 40px;
+          font-size: 16px;
+          color: #333;
+        }
+      </style>
+    `;
+  }
 }
 
 customElements.define(PickerViewColumn.is, PickerViewColumn);
-</script>

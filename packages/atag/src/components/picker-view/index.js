@@ -52,8 +52,8 @@ export default class PickerView extends PolymerElement {
     window.removeEventListener('_formReset', this._handleReset, true);
   }
 
-  _handleChange = (ev) => {
-    let { target, detail } = ev;
+  _handleChange = (evt) => {
+    let { target, detail } = evt;
     if (target.tagName.toLowerCase() !== 'a-picker-view-column') return;
     let columns = this.querySelectorAll('a-picker-view-column');
     let i = Array.prototype.slice.call(columns).indexOf(target);
@@ -85,7 +85,7 @@ export default class PickerView extends PolymerElement {
       new CustomEvent(name, {
         detail: { value: this.value },
         bubbles: true,
-        cancelable: false
+        cancelable: false,
       })
     );
   }
