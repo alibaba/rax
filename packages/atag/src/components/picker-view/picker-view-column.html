@@ -291,7 +291,11 @@ export default class PickerViewColumn extends PolymerElement {
     this._dispatchEvent('_columnChange');
   }
 
-  updateStyleFromParent(indicatorStyle) {
+  /**
+   * Called from parent picker-view
+   * to update indicator style
+   */
+  _updateStyleFromParent(indicatorStyle) {
     this.indicatorStyle = indicatorStyle;
   }
 
