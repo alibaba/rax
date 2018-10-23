@@ -8,7 +8,7 @@ const embedViewManager =
  */
 export default function shouldDowngradeNativeView() {
   if (typeof __sfc__ !== 'undefined' && __sfc__.isDowngrade) { // eslint-disable-line
-    return __sfc__.isDowngrade; // eslint-disable-line
+    return String(__sfc__.isDowngrade) === 'true'; // eslint-disable-line
   } else {
     return embedViewManager ? embedViewManager.shouldDowngrade() : false;
   }
