@@ -10,74 +10,69 @@ export default class Slider extends PolymerElement {
     return {
       value: {
         type: Number,
-        reflectToAttribute: true,
-        value: 0
+        value: 0,
       },
       min: {
         type: Number,
-        value: 0
+        value: 0,
       },
       max: {
         type: Number,
-        value: 100
+        value: 100,
       },
       step: {
         type: Number,
-        value: 1
+        value: 1,
       },
       disabled: {
         type: Boolean,
-        value: false
+        value: false,
       },
       showValue: {
         type: Boolean,
-        value: false
+        value: false,
       },
       activeColor: {
         type: String,
-        value: '#ff5000'
+        value: '#ff5000',
       },
       handleSize: {
         type: Number,
-        value: 22
+        value: 22,
       },
       trackSize: {
         type: Number,
-        value: 4
+        value: 4,
       },
       backgroundColor: {
         type: String,
-        value: '#ddd'
+        value: '#ddd',
       },
       handleColor: {
         type: String,
-        value: '#fff'
+        value: '#fff',
       },
       _activeStyle: {
         type: String,
-        computed: '_computeActiveStyle(value, min, max, activeColor)'
+        computed: '_computeActiveStyle(value, min, max, activeColor)',
       },
       _valueStyle: {
         type: String,
-        computed: '_computeValueStyle(showValue)'
+        computed: '_computeValueStyle(showValue)',
       },
       _handleStyle: {
         type: String,
-        computed: '_computeHandleStyle(handleSize, handleColor)'
+        computed: '_computeHandleStyle(handleSize, handleColor)',
       },
       _sliderStyle: {
         type: String,
-        computed: '_computeSliderStyle(trackSize, backgroundColor)'
-      }
+        computed: '_computeSliderStyle(trackSize, backgroundColor)',
+      },
     };
   }
 
   _lastValue = 0;
   _initialValue = 0;
-
-  constructor() {
-    super();
-  }
 
   ready() {
     super.ready();
@@ -91,9 +86,8 @@ export default class Slider extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
-    Gestures.setTouchAction(this.$.handle, 'auto');
     Gestures.addListener(this.$.handle, 'track', this._handleTrack);
-
+    Gestures.setTouchAction(this.$.handle, 'auto');
     window.addEventListener('_formReset', this.handleReset, true);
   }
 
@@ -126,7 +120,7 @@ export default class Slider extends PolymerElement {
     return Math.min(Math.max(value, this.min), this.max);
   }
 
-  _handleTrack = ({detail}) => {
+  _handleTrack = ({ detail }) => {
     if (this.disabled) return;
 
     let getNewValue = (dx) => {
@@ -153,18 +147,18 @@ export default class Slider extends PolymerElement {
   _createEvent(type, value) {
     return new CustomEvent(type, {
       detail: {
-        value: value || this.value
+        value: value || this.value,
       },
       bubbles: true,
-      cancelable: false
+      cancelable: false,
     });
   }
 
-  handleReset = (event) => {
+  handleReset = (evt) => {
     let parentElement = this.parentElement;
 
     while (parentElement) {
-      if (parentElement === event.target) {
+      if (parentElement === evt.target) {
         this.value = this._initialValue;
         break;
       }
