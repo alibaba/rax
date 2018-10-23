@@ -236,6 +236,10 @@ export default class Swiper extends PolymerElement {
     this.transitionDuration = 0;
 
     Gestures.addListener(document.documentElement, 'track', this._handleGlobalTrack);
+    /**
+     * Avoid to disable document scroll
+     */
+    Gestures.setTouchAction(document.documentElement, null);
   };
 
   _handleGlobalTrack = ({detail}) => {
