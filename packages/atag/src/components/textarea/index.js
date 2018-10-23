@@ -132,12 +132,12 @@ export default class Textarea extends PolymerElement {
     if (!(evt instanceof CustomEvent)) {
       evt.stopPropagation();
       if (!this._isCompositing && event.target === this) {
-        if (this.autoHeight) {
+        this._valueUnicodeCharString = new UnicodeCharString(this.$.textarea.value, this.maxlength);
+        const updatedValue = this._valueUnicodeCharString.toString();
+        if (this.value !== updatedValue && this.autoHeight) {
           autosize.update(this.$.textarea);
         }
-
-        this._valueUnicodeCharString = new UnicodeCharString(this.$.textarea.value, this.maxlength);
-        this.value = this.$.textarea.value = this._valueUnicodeCharString.toString();
+        this.value = this.$.textarea.value = updatedValue;
 
         this.dispatchEvent(new CustomEvent('input', {
           bubbles: false,
@@ -199,7 +199,7 @@ export default class Textarea extends PolymerElement {
 
   _handleCompositionEnd = (evt) => {
     this._isCompositing = false;
-    this.handleInput(evt);
+    this._handleInput(evt);
   };
 
   _changeCustomStyle() {
