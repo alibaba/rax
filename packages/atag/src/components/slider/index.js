@@ -87,7 +87,6 @@ export default class Slider extends PolymerElement {
     super.connectedCallback();
 
     Gestures.addListener(this.$.handle, 'track', this._handleTrack);
-    Gestures.setTouchAction(this.$.handle, 'auto');
     window.addEventListener('_formReset', this.handleReset, true);
   }
 
