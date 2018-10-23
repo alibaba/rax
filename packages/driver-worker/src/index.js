@@ -1,4 +1,5 @@
 import { convertUnit, setRem, setDecimalPixelTransformer } from 'style-unit';
+import DedicatedDriverWrokerScope from './worker/DedicatedDriverWrokerScope';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -20,8 +21,7 @@ const TO_SANITIZE = [
 ];
 
 export default ({ postMessage, addEventListener }) => {
-  let document = createDocument();
-  let rpcClient = new RPCClient({ postMessage, addEventListener });
+  let { document } = DedicatedDriverWrokerScope;
   let MutationObserver = document.defaultView.MutationObserver;
 
   const NODES = new Map();
@@ -139,28 +139,13 @@ export default ({ postMessage, addEventListener }) => {
         handleEvent(data.event);
         break;
       case 'rpc':
-        rpcClient.receiver(data);
+
         break;
     }
   });
 
-  const rpcProxyObjects = {};
-  const rpcMethodList = {
-    location: ['assign', 'replace', 'reload'],
-    history: ['back', 'forward', 'go', 'pushState', 'replaceState'],
-  };
-  Object.keys(rpcMethodList).forEach((scope) => {
-    rpcProxyObjects[scope] = {};
-    rpcMethodList[scope].forEach((method) => {
-      rpcProxyObjects[scope][method] = (...args) => {
-        rpcClient.apply(`${scope}.${method}`, args);
-      };
-    });
-  });
-
   return {
     document,
-    ...rpcProxyObjects,
     postMessage,
     deviceWidth: null,
     viewportWidth: 750,
