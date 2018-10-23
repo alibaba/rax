@@ -1,6 +1,6 @@
 import './picker-view-column';
 import { PolymerElement, html } from '@polymer/polymer';
-import afterNextRender from '@polymer/polymer/lib/uti'
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class PickerView extends PolymerElement {
   static get is() {
