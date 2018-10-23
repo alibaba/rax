@@ -1,64 +1,6 @@
-<dom-module id="a-picker-view-column">
-  <template>
-    <div id="mask" class="mask" style$="{{maskStyle}}">
-      <div id="indicator" class="indicator" style$="{{indicatorStyle}}"></div>
-    </div>
-    <div id="content" class="content" style$="{{contentStyle}}">
-      <slot></slot>
-    </div>
-    <style>
-      :host {
-        flex: 1;
-        -webkit-flex: 1;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .mask {
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 2;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        display: -webkit-flex;
-        flex-flow: column nowrap;
-        -webkit-flex-flow: column nowrap;
-        align-items: center;
-        -webkit-align-items: center;
-        justify-content: center;
-        -webkit-justify-content: center;
-        background-image:
-          linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)),
-          linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-        background-position: top, bottom;
-        background-repeat: no-repeat;
-        background-size: 100% 45%;
-      }
-
-      .indicator {
-        box-sizing: border-box;
-        width: 100%;
-        height: 40px;
-        border-top: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .content ::slotted(a-view) {
-        height: 40px;
-        line-height: 40px;
-        font-size: 16px;
-        color: #333;
-      }
-    </style>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
+import { PolymerElement, html } from '@polymer/polymer';
 import afterNextRender from '../../shared/afterNextRender';
+import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
 export default class PickerViewColumn extends PolymerElement {
   static get is() {
@@ -105,9 +47,6 @@ export default class PickerViewColumn extends PolymerElement {
 
   constructor() {
     super();
-    ['_onStart', '_onMove', '_onEnd'].forEach(method => {
-      this[method] = this[method].bind(this);
-    });
   }
 
   ready() {
@@ -122,23 +61,16 @@ export default class PickerViewColumn extends PolymerElement {
        * to ensure that the dom has been rendered
        */
       this._selectedIndexChange(this.selectedIndex, null);
+      /**
+       * In Gestures listener callback, 'this' is the listener target
+       */
+      Gestures.addListener(this, 'track', this.handleTrack);
     });
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    let { mask } = this.$;
-    mask.addEventListener('touchstart', this._onStart);
-    mask.addEventListener('touchmove', this._onMove);
-    mask.addEventListener('touchend', this._onEnd);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    let { mask } = this.$;
-    mask.removeEventListener('touchstart', this._onStart);
-    mask.removeEventListener('touchmove', this._onMove);
-    mask.removeEventListener('touchend', this._onEnd);
+    Gestures.removeListener(this, 'track', this.handleTrack);
   }
 
   _selectedIndexChange(newIndex, oldIndex) {
@@ -152,18 +84,28 @@ export default class PickerViewColumn extends PolymerElement {
     }
   }
 
-  _onStart(ev) {
-    this._stopScroll();
-    this.isMoving = true;
-    this.lastTime = +new Date();
-    this.lastY = ev.touches[0].screenY;
+  handleTrack = (e) => {
+    const { detail } = e;
+    if (detail.state === 'start') {
+      const { dx, dy, y } = detail;
+      const direction = Math.abs(dy) - Math.abs(dx);
+      if (direction > 0) {
+        this._stopScroll();
+        this.isMoving = true;
+        this.lastTime = +new Date();
+        this.lastY = y;
+        this.addEventListener('touchmove', this._onMove);
+        this.addEventListener('touchend', this._onEnd);
+        e.stopPropagation();
+      }
+    }
   }
 
-  _onMove(ev) {
-    ev.preventDefault();
+  _onMove(e) {
+    e.preventDefault();
     let now = +new Date();
     let { lastY, lastTime } = this;
-    let nowY = ev.touches[0].screenY;
+    let nowY = e.touches[0].clientY;
     let offset = nowY - lastY;
     let duration = now - lastTime;
     let scrollY = this.scrollY - offset;
@@ -171,16 +113,17 @@ export default class PickerViewColumn extends PolymerElement {
     this.lastY = nowY;
     this.velocity = duration ? -offset / duration * 1000 : this.velocity;
     this.touchMove = true;
+    e.stopPropagation();
   }
 
-  _onEnd(ev) {
+  _onEnd(e) {
     let { itemHeight, scrollY, velocity, acceleration, touchMove } = this;
     let maxScrollY = (this.children.length - 1) * itemHeight;
     let time = 0.3;
     // handle no touchmove
     if (!touchMove) {
       let rectY = this.$.indicator.getBoundingClientRect().top;
-      let touchY = ev.changedTouches[0].clientY;
+      let touchY = e.changedTouches[0].clientY;
       scrollY = scrollY + touchY - rectY - itemHeight;
       scrollY = Math.round(scrollY / itemHeight) * itemHeight;
       this._scrollTo(scrollY, time);
@@ -221,6 +164,9 @@ export default class PickerViewColumn extends PolymerElement {
       time = Math.abs(time);
     }
     this._scrollTo(scrollY, time);
+    this.removeEventListener('touchmove', this._onMove);
+    this.removeEventListener('touchend', this._onEnd);
+    e.stopPropagation();
   }
 
   _updateDynamicStyle() {
@@ -286,7 +232,11 @@ export default class PickerViewColumn extends PolymerElement {
     this._dispatchEvent('_columnChange');
   }
 
-  updateStyleFromParent(indicatorStyle) {
+  /**
+   * Called from parent picker-view
+   * to update indicator style
+   */
+  _updateStyleFromParent(indicatorStyle) {
     this.indicatorStyle = indicatorStyle;
   }
 
@@ -303,7 +253,64 @@ export default class PickerViewColumn extends PolymerElement {
       })
     );
   }
+
+  static get template() {
+    return html`
+      <div id="mask" class="mask" style$="{{maskStyle}}">
+        <div id="indicator" class="indicator" style$="{{indicatorStyle}}"></div>
+      </div>
+      <div id="content" class="content" style$="{{contentStyle}}">
+        <slot></slot>
+      </div>
+      <style>
+        :host {
+          flex: 1;
+          -webkit-flex: 1;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+        }
+  
+        .mask {
+          position: absolute;
+          left: 0;
+          top: 0;
+          z-index: 2;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          display: -webkit-flex;
+          flex-flow: column nowrap;
+          -webkit-flex-flow: column nowrap;
+          align-items: center;
+          -webkit-align-items: center;
+          justify-content: center;
+          -webkit-justify-content: center;
+          background-image:
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)),
+            linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+          background-position: top, bottom;
+          background-repeat: no-repeat;
+          background-size: 100% 45%;
+        }
+  
+        .indicator {
+          box-sizing: border-box;
+          width: 100%;
+          height: 40px;
+          border-top: 1px solid #ddd;
+          border-bottom: 1px solid #ddd;
+        }
+  
+        .content ::slotted(a-view) {
+          height: 40px;
+          line-height: 40px;
+          font-size: 16px;
+          color: #333;
+        }
+      </style>
+    `;
+  }
 }
 
 customElements.define(PickerViewColumn.is, PickerViewColumn);
-</script>

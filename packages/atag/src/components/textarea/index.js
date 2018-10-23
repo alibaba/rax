@@ -82,22 +82,33 @@ export default class Textarea extends PolymerElement {
 
   ready() {
     super.ready();
-    this.textarea = this.$.textarea;
-    this.formInitialValue = this.value;
-
+    this._initialValue = this.value;
     this.setAttribute('a-label-target', '');
+  }
 
-    afterNextRender(this, () => {
-      window.addEventListener('compositionstart', this._handleCompositionStart, true);
-      window.addEventListener('compositionend', this._handleCompositionEnd, true);
-      window.addEventListener('input', this.inputListener, true);
-      window.addEventListener('focus', this.focusListener, true);
-      window.addEventListener('blur', this.blurListener, true);
-      window.addEventListener('_formReset', this._handleReset, true);
-      if (this.autoHeight) {
-        autosize(this.textarea);
-      }
-    });
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('compositionstart', this._handleCompositionStart, true);
+    window.addEventListener('compositionend', this._handleCompositionEnd, true);
+    window.addEventListener('input', this._handleInput, true);
+    window.addEventListener('focus', this._handleFocus, true);
+    window.addEventListener('blur', this._handleBlur, true);
+    window.addEventListener('_formReset', this._handleReset, true);
+
+    if (this.autoHeight) {
+      autosize(this.$.textarea);
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('compositionstart', this._handleCompositionStart, true);
+    window.removeEventListener('compositionend', this._handleCompositionEnd, true);
+    window.removeEventListener('input', this._handleInput, true);
+    window.removeEventListener('focus', this._handleFocus, true);
+    window.removeEventListener('blur', this._handleBlur, true);
+    window.removeEventListener('_formReset', this._handleReset, true);
+    autosize.destroy(this.$.textarea);
   }
 
   attributeChangedCallback(key, oldVal, newVal) {
@@ -116,68 +127,71 @@ export default class Textarea extends PolymerElement {
     }
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    window.removeEventListener('compositionstart', this._handleCompositionStart, true);
-    window.removeEventListener('compositionend', this._handleCompositionEnd, true);
-    window.removeEventListener('input', this.inputListener, true);
-    window.removeEventListener('focus', this.focusListener, true);
-    window.removeEventListener('blur', this.blurListener, true);
-    window.removeEventListener('_formReset', this._handleReset, true);
-    autosize.destroy(this.textarea);
-  }
 
-  inputListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
+  _handleInput = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
       if (!this._isCompositing && event.target === this) {
-        this.handleInput(event);
+        this._valueUnicodeCharString = new UnicodeCharString(this.$.textarea.value, this.maxlength);
+        const updatedValue = this._valueUnicodeCharString.toString();
+        if (this.value !== updatedValue && this.autoHeight) {
+          autosize.update(this.$.textarea);
+        }
+        this.value = this.$.textarea.value = updatedValue;
+
+        this.dispatchEvent(new CustomEvent('input', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.textarea.value,
+            cursor: this.$.textarea.selectionStart,
+          },
+        }));
       }
     }
   };
 
-  focusListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
-      if (event.target === this) {
-        this.handleFocus(event);
+  _handleFocus = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
+      if (evt.target === this) {
+        this.dispatchEvent(new CustomEvent('focus', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.textarea.value,
+          },
+        }));
       }
     }
   };
 
-  blurListener = event => {
-    if (!(event instanceof CustomEvent)) {
-      event.stopPropagation();
-      if (event.target === this) {
-        this.handleBlur(event);
+  _handleBlur = (evt) => {
+    if (!(evt instanceof CustomEvent)) {
+      evt.stopPropagation();
+      if (evt.target === this) {
+        this.dispatchEvent(new CustomEvent('blur', {
+          bubbles: false,
+          cancelable: true,
+          detail: {
+            value: this.$.textarea.value,
+          },
+        }));
       }
     }
   };
 
-  _handleReset = () => {
-    this.textarea.value = this.formInitialValue;
-  };
+  _handleReset = (evt) => {
+    let parentElement = this.parentElement;
 
-  handleInput(e) {
-    e.stopPropagation();
-    if (this.autoHeight) {
-      autosize.update(this.textarea);
+    while (parentElement) {
+      if (parentElement === evt.target) {
+        this.$.textarea.value = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
     }
-    this._valueUnicodeCharString = new UnicodeCharString(this.textarea.value, this.maxlength);
-    this.value = this.textarea.value = this._valueUnicodeCharString.toString();
-
-    const event = new CustomEvent('input', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.textarea.value,
-        cursor: this.textarea.selectionStart,
-      },
-    });
-
-    this.dispatchEvent(event);
-  }
-
+  };
 
   _handleCompositionStart = () => {
     this._isCompositing = true;
@@ -185,44 +199,21 @@ export default class Textarea extends PolymerElement {
 
   _handleCompositionEnd = (evt) => {
     this._isCompositing = false;
-    this.handleInput(evt);
+    this._handleInput(evt);
   };
-
-  handleFocus(e) {
-    e.stopPropagation();
-    const event = new CustomEvent('focus', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.textarea.value,
-      },
-    });
-    this.dispatchEvent(event);
-  }
-
-  handleBlur(e) {
-    e.stopPropagation();
-    const event = new CustomEvent('blur', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
-        value: this.textarea.value,
-      },
-    });
-    this.dispatchEvent(event);
-  }
 
   _changeCustomStyle() {
     const { placeholderStyle, countStyle, showCount } = this;
-    if (!this.styleEl) {
+    if (!this._placeholderStyleElement) {
       // Unique id for data-id to avoid style pollution
       this._id = `textarea-${++uid}`;
-      this.styleEl = document.createElement('style');
+      this._placeholderStyleElement = document.createElement('style');
       this.setAttribute('data-id', this._id);
       const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
-      shadowRoot.appendChild(this.styleEl);
+      shadowRoot.appendChild(this._placeholderStyleElement);
     }
-    this.styleEl.textContent = `
+
+    this._placeholderStyleElement.textContent = `
       :host #textarea {
         padding-bottom: ${showCount ? '18px' : '0'};
       }

@@ -68,7 +68,7 @@ const JSONP = function(url, options = {}) {
           reject(e);
         }
       }, (progress) => {
-        if (progress.status === 'FAILED') reject(new Error(progress.data))
+        if (progress.status === 'FAILED') reject(new Error(progress.data));
       });
     });
   } else {

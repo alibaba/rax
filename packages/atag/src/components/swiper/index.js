@@ -1,7 +1,7 @@
 import 'components/swiper/swiper-item';
 import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
-import * as Gestures from '@polymer/polymer/lib/utils/gestures.js';
+import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class Swiper extends PolymerElement {
@@ -64,7 +64,6 @@ export default class Swiper extends PolymerElement {
     this.translateX = 0;
     this.translateY = 0;
     this.startTranslate = 0;
-    this.delta = 0;
     this.dragging = false;
     this.startPos = null;
     this.transitionDuration = 500;
@@ -90,7 +89,7 @@ export default class Swiper extends PolymerElement {
     this.childrenObserver = new FlattenedNodesObserver(this, this.handleChildrenChanged);
     this.render();
 
-    Gestures.addListener(this, 'track', this.handleTrack);
+    Gestures.addListener(this, 'track', this._handleTrack);
     this.isReady = true;
   }
 
@@ -210,7 +209,7 @@ export default class Swiper extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    Gestures.removeListener(this, 'track', this.handleTrack);
+    Gestures.removeListener(this, 'track', this._handleTrack);
     this.childrenObserver.disconnect();
   }
 
@@ -225,43 +224,54 @@ export default class Swiper extends PolymerElement {
     }
   };
 
-  _onTouchStart = ({ x, y }) => {
+  _handleTrackStart = ({ x, y }) => {
     this.dragging = true;
 
     if (this.timer !== null) {
       clearTimeout(this.timer);
     }
 
-    this.startPos = this.vertical ? y : x;
-    this.delta = 0;
     this.startTranslate = this._getTranslateOfRealItem(this.isCircular ? this.current + 1 : this.current);
     this.startTime = new Date().getTime();
     this.transitionDuration = 0;
 
-    document.addEventListener('touchmove', this._onTouchMove);
-    document.addEventListener('touchend', this._onTouchEnd);
+    Gestures.addListener(document.documentElement, 'track', this._handleGlobalTrack);
+    /**
+     * Avoid to disable document scroll
+     */
+    Gestures.setTouchAction(document.documentElement, null);
   };
 
-  _onTouchMove = event => {
-    this.delta = this._getTouchPos(event) - this.startPos;
-    if (!this.performanceMode) {
-      this._setTranslate(this.startTranslate + this.delta);
+  _handleGlobalTrack = ({detail}) => {
+    if (detail.state === 'end') {
+      this._handleGlobalEnd(detail);
+    } else {
+      // Move when start or track state
+      this._handleGlobalMove(detail);
     }
   };
 
-  _onTouchEnd = event => {
+  _handleGlobalMove = ({dx, dy}) => {
+    // TODO: add performanceMode desc
+    if (!this.performanceMode) {
+      this._setTranslate(this.startTranslate + (this.vertical ? dy : dx));
+    }
+  };
+
+  _handleGlobalEnd = ({dx, dy}) => {
     this.dragging = false;
 
     this.transitionDuration = this.duration;
     const isQuickAction = new Date().getTime() - this.startTime < 1000;
+    const delta = this.vertical ? dy : dx;
 
-    if (this.delta < -100 || isQuickAction && this.delta < -15) {
+    if (delta < -100 || isQuickAction && delta < -15) {
       if (!this.isCircular && this.current + 1 === this.itemsCount) {
         this._revert();
       } else {
         this._next();
       }
-    } else if (this.delta > 100 || isQuickAction && this.delta > 15) {
+    } else if (delta > 100 || isQuickAction && delta > 15) {
       if (!this.isCircular && this.current === 0) {
         this._revert();
       } else {
@@ -277,8 +287,7 @@ export default class Swiper extends PolymerElement {
       }, this.duration);
     }
 
-    document.removeEventListener('touchmove', this._onTouchMove);
-    document.removeEventListener('touchend', this._onTouchEnd);
+    Gestures.removeListener(document.documentElement, 'track', this._handleGlobalTrack);
   };
 
   _next = () => {
@@ -326,8 +335,6 @@ export default class Swiper extends PolymerElement {
   }
 
   _onTransitionEnd() {
-    this.delta = 0;
-
     const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === this.itemsCount - 1;
     const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
     if (this.isCircular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
@@ -344,11 +351,8 @@ export default class Swiper extends PolymerElement {
     const swiperItems = this.$.swiperItems;
     const transitionDuration = duration != null ? duration : this.transitionDuration;
 
-    swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
-    swiperItems.style.transitionDuration = `${transitionDuration}ms`;
-
-    swiperItems.style.webkitTransform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
-    swiperItems.style.transform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
+    swiperItems.style.transitionDuration = swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
+    swiperItems.style.transform = swiperItems.style.webkitTransform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
   }
 
   _getTranslate() {
@@ -356,10 +360,10 @@ export default class Swiper extends PolymerElement {
     return this[translateName];
   }
 
-  _getTouchPos(event) {
-    const key = this.vertical ? 'clientY' : 'clientX';
-    return event.changedTouches ? event.changedTouches[0][key] : event[key];
-  }
+  // _getTouchPos(event) {
+  //   const key = this.vertical ? 'clientY' : 'clientX';
+  //   return event.changedTouches ? event.changedTouches[0][key] : event[key];
+  // }
 
   _getTranslateOfRealItem(realCurrent) {
     const propName = this.vertical ? 'height' : 'width';
@@ -408,10 +412,11 @@ export default class Swiper extends PolymerElement {
     const childSwiperItems = this.children;
     if (childSwiperItems.length > 1) {
       this.duplicateFirstChild = childSwiperItems[0].cloneNode(true);
-      this.duplicateFirstChild.setAttribute('data-a-swiper-dup-first-child', true);
+      // Marker node type
+      this.duplicateFirstChild.setAttribute('data-a-swiper-duplicate-first-child', true);
 
       this.duplicateLastChild = this.children[childSwiperItems.length - 1].cloneNode(true);
-      this.duplicateLastChild.setAttribute('data-a-swiper-dup-last-child', true);
+      this.duplicateLastChild.setAttribute('data-a-swiper-duplicate-last-child', true);
 
       const { swiperItems } = this.$;
       swiperItems.insertBefore(this.duplicateLastChild, swiperItems.children[0]);
@@ -444,15 +449,14 @@ export default class Swiper extends PolymerElement {
     }, this.interval);
   };
 
-  handleTrack(e) {
-    const detail = e.detail;
+  _handleTrack({detail}) {
     if (detail.state === 'start') {
       const dx = detail.dx;
       const dy = detail.dy;
       const direction = Math.abs(dy) - Math.abs(dx);
 
       if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
-        this._onTouchStart(detail);
+        this._handleTrackStart(detail);
       }
     }
   }
