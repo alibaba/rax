@@ -115,7 +115,7 @@ export default class RadioElement extends PolymerElement {
     // label target
     this.setAttribute('a-label-target', '');
     this.radio = this.$.radio;
-    this.formInitialValue = this.checked;
+    this._initialValue = this.checked;
     this.addEventListener('click', this.clickHandler);
     window.addEventListener('_formReset', this._handlerReset, true);
   }
@@ -148,8 +148,16 @@ export default class RadioElement extends PolymerElement {
     this.dispatchEvent(customEvent);
   };
 
-  _handlerReset = () => {
-    this.radio.checked = this.checked = this.formInitialValue;
+  _handlerReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.radio.checked = this.checked = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
   };
 
   getCircleCheckedStyle(checked, color, disabled) {

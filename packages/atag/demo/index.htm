@@ -11,6 +11,9 @@
   <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <style>
     html {
+      /* HACK: fix safari mobile click events aren't fired https://developer.mozilla.org/en-US/docs/Web/Events/click#Safari_Mobile */
+      cursor: pointer;
+      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
       -webkit-text-size-adjust: 100%;
       -webkit-tap-highlight-color: transparent;
     }
@@ -18,25 +21,19 @@
     body {
       margin: 0;
       height: 100%;
-      /**
-       * Hack: >= iOS 11 make body at least
-       * 100vh height to avoid tap highlight
-       */
+      /* HACK: >= iOS 11 make body at least 100vh height to avoid tap highlight */
       min-height: 100vh;
-      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      cursor: pointer;
     }
+  </style>
 
-    a img {
-      border: 0;
+  <script>
+    var isTouchDevice = 'ontouchstart' in window || 'onmsgesturechange' in window;
+    if (!isTouchDevice) {
+      document.documentElement.style.cursor = 'auto';
     }
+  </script>
 
-    a {
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+  <style>
     .card {
       border: 1px solid #d6d7da;
       margin: 10px;
@@ -55,12 +52,10 @@
     .demo {
       padding: 10px;
     }
-
   </style>
 </head>
 
 <body>
-
   <div class="card">
     <h4 class="title">a-text</h4>
     <div class="demo">
@@ -179,20 +174,20 @@
   </div>
 
   <script>
-    image.addEventListener('load',function(e) {
-      imageLoad.innerHTML=JSON.stringify(e.detail);
+    image.addEventListener('load', function (e) {
+      imageLoad.innerHTML = JSON.stringify(e.detail);
     });
-    errorImage.addEventListener('error',function(e) {
-      imageError.innerHTML=e.detail.errMsg;
+    errorImage.addEventListener('error', function (e) {
+      imageError.innerHTML = e.detail.errMsg;
     });
-    image.addEventListener('click',function(e) {
-      image.src='https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    image.addEventListener('click', function (e) {
+      image.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
     });
-    asyncImage.addEventListener('click',function(e) {
-      asyncImage.src='https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    asyncImage.addEventListener('click', function (e) {
+      asyncImage.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
     });
-    asyncImage.addEventListener('load',function(e) {
-      asyncImageLoad.innerHTML=JSON.stringify(e.detail);
+    asyncImage.addEventListener('load', function (e) {
+      asyncImageLoad.innerHTML = JSON.stringify(e.detail);
     });
   </script>
 
@@ -228,14 +223,14 @@
   </div>
 
   <script>
-    input.addEventListener('input',function(e) {
-      inputInput.innerHTML=e.detail.value||'null';
+    input.addEventListener('input', function (e) {
+      inputInput.innerHTML = e.detail.value || 'null';
     });
-    input.addEventListener('focus',function(e) {
-      inputFocus.innerHTML=e.detail.value||'null';
+    input.addEventListener('focus', function (e) {
+      inputFocus.innerHTML = e.detail.value || 'null';
     });
-    input.addEventListener('blur',function(e) {
-      inputBlur.innerHTML=e.detail.value||'null';
+    input.addEventListener('blur', function (e) {
+      inputBlur.innerHTML = e.detail.value || 'null';
     });
   </script>
 
@@ -265,8 +260,8 @@
     textarea.addEventListener('input',function(e) {
       textareaInput.innerHTML=e.detail.value||'null';
     });
-    textarea.addEventListener('blur',function(e) {
-      textareaBlur.innerHTML=e.detail.value||'null';
+    textarea.addEventListener('blur', function (e) {
+      textareaBlur.innerHTML = e.detail.value || 'null';
     });
     textareaValChange.addEventListener('click', function(e) {
       textarea.setAttribute('value', 'hello world');
@@ -320,8 +315,8 @@
   </div>
 
   <script>
-    radioGroup.addEventListener('change',e => {
-      radioChange.innerHTML=e.detail.value;
+    radioGroup.addEventListener('change', e => {
+      radioChange.innerHTML = e.detail.value;
     });
   </script>
 
@@ -346,7 +341,7 @@
     <h4 class="title">a-picker</h4>
     <div class="demo">
       <a-view>
-        <a-picker value="0" range="[1,2,3,4,5]" id="picker">
+        <a-picker value="0" range="[1,2,3,4,5,6,7,8,9,10]" id="picker">
           <a-text id="pickerResult">pick me</a-text>
         </a-picker>
       </a-view>
@@ -526,7 +521,6 @@
       <p>scroll x with vertical swiper</p>
       <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
         <a-view>
-          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
           <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
             <a-swiper-item>
               <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
@@ -544,7 +538,6 @@
       <p>scroll x with hortical swiper</p>
       <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
         <a-view>
-          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
           <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
             <a-swiper-item>
               <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
@@ -562,7 +555,6 @@
       <p>scroll y with vertical swiper</p>
       <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
         <a-view>
-          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
           <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
             <a-swiper-item>
               <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
@@ -580,7 +572,6 @@
       <p>scroll y with hortical swiper</p>
       <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
         <a-view>
-          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
           <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
             <a-swiper-item>
               <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
@@ -598,7 +589,6 @@
       <p>scroll x + y with hortical swiper</p>
       <a-scroll-view scroll-x="true" scroll-y="true" style="width: 100%; background: grey; height: 180px;">
         <a-view>
-          The touch-action CSS property sets how a region can be manipulated by a touchscreen user (for example, by zooming features built into the browser).
           <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
             <a-swiper-item>
               <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
@@ -616,19 +606,19 @@
   </div>
 
   <script>
-    swiper.addEventListener('change',function(event) {
-      swiperChangeEvent.innerHTML=event.detail.current;
+    swiper.addEventListener('change', function (event) {
+      swiperChangeEvent.innerHTML = event.detail.current;
     });
 
-    swiperPrevButton.addEventListener('click', function(event){
+    swiperPrevButton.addEventListener('click', function (event) {
       swiper.setAttribute('current', swiper.current - 1);
     });
 
-    swiperNextButton.addEventListener('click', function(event){
+    swiperNextButton.addEventListener('click', function (event) {
       swiper.setAttribute('current', swiper.current + 1);
     });
 
-    btnAddSwiperItem.addEventListener('click', function(event){
+    btnAddSwiperItem.addEventListener('click', function (event) {
       dynamicSwiper.innerHTML += `
         <a-swiper-item>
           <a-view style="height: 100%;">` + (dynamicSwiper.children.length + 1) + `</a-view>
@@ -641,7 +631,14 @@
   <div class="card">
     <h4 class="title">a-audio</h4>
     <div class="demo">
-      <a-audio name="Move" author="NuG" src="http://www.bandguru.com/mp3/move.mp3" poster="http://www.bandguru.com/images/nug.jpg"></a-audio>
+      <a-audio
+        controls
+        loop
+        name="Move"
+        author="NuG"
+        src="http://www.bandguru.com/mp3/move.mp3"
+        poster="http://www.bandguru.com/images/nug.jpg"
+      ></a-audio>
     </div>
   </div>
 
@@ -711,37 +708,37 @@
   </div>
 
   <script>
-    var toggleScrolling=true;
-    toggleScroll.addEventListener('click',function() {
-      scrollingStatus.innerHTML=(toggleScrolling=!toggleScrolling)? 'enable':'disable';
-      scrollview.setAttribute('scroll-y',toggleScrolling);
+    var toggleScrolling = true;
+    toggleScroll.addEventListener('click', function () {
+      scrollingStatus.innerHTML = (toggleScrolling = !toggleScrolling) ? 'enable' : 'disable';
+      scrollview.setAttribute('scroll-y', toggleScrolling);
     });
 
-    scrollview.addEventListener('scroll',function(e) {
-      scrollEvent.innerHTML=JSON.stringify(e.detail);
+    scrollview.addEventListener('scroll', function (e) {
+      scrollEvent.innerHTML = JSON.stringify(e.detail);
     });
 
-    scrollview.addEventListener('scrolltoupper',function(e) {
-      scrolltoupperEvent.innerHTML=+new Date;
+    scrollview.addEventListener('scrolltoupper', function (e) {
+      scrolltoupperEvent.innerHTML = +new Date;
     });
 
-    scrollview.addEventListener('scrolltolower',function(e) {
-      scrolltolowerEvent.innerHTML=+new Date;
+    scrollview.addEventListener('scrolltolower', function (e) {
+      scrolltolowerEvent.innerHTML = +new Date;
     });
 
-    scrollToUpper.addEventListener('click',function(e) {
-      scrollview.setAttribute('scroll-top',0);
+    scrollToUpper.addEventListener('click', function (e) {
+      scrollview.setAttribute('scroll-top', 0);
     });
 
-    scrollToLower.addEventListener('click',function(e) {
-      scrollview.setAttribute('scroll-top',10000);
+    scrollToLower.addEventListener('click', function (e) {
+      scrollview.setAttribute('scroll-top', 10000);
     });
   </script>
 
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
-      <a-picker-view style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;" value="[3,5,5]">
+      <a-picker-view id="pickerView" style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
         <a-picker-view-column>
           <a-view value="1998">1998年</a-view>
           <a-view value="1999">1999年</a-view>
@@ -812,6 +809,177 @@
           <a-view value="31">31日</a-view>
         </a-picker-view-column>
       </a-picker-view>
+    </div>
+    <script>
+      setTimeout(() => {
+        pickerView.setAttribute('value', '[3, 5, 5]');
+      }, 2000);
+    </script>
+  </div>
+  <div class="card">
+    <h4 class="title">a-swiper composite</h4>
+    <div class="demo">
+      <p>Row</p>
+      <a-swiper>
+        <a-swiper-item>
+          <a-view style="display: block;height: 130px;background-color: red; padding-top: 20px">
+            <a-slider min="0" max="100" style="width: 200px"></a-slider>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;">
+            <a-picker-view style="height:150px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+              <a-picker-view-column>
+                <a-view value="2010">2010年</a-view>
+                <a-view value="2011">2011年</a-view>
+                <a-view value="2012">2012年</a-view>
+                <a-view value="2013">2013年</a-view>
+                <a-view value="2014">2014年</a-view>
+                <a-view value="2015">2015年</a-view>
+                <a-view value="2016">2016年</a-view>
+                <a-view value="2017">2017年</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1月</a-view>
+                <a-view value="2">2月</a-view>
+                <a-view value="3">3月</a-view>
+                <a-view value="4">4月</a-view>
+                <a-view value="5">5月</a-view>
+                <a-view value="6">6月</a-view>
+                <a-view value="7">7月</a-view>
+                <a-view value="8">8月</a-view>
+                <a-view value="9">9月</a-view>
+                <a-view value="10">10月</a-view>
+                <a-view value="11">11月</a-view>
+                <a-view value="12">12月</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1日</a-view>
+                <a-view value="2">2日</a-view>
+                <a-view value="3">3日</a-view>
+                <a-view value="4">4日</a-view>
+                <a-view value="5">5日</a-view>
+                <a-view value="6">6日</a-view>
+                <a-view value="7">7日</a-view>
+                <a-view value="8">8日</a-view>
+                <a-view value="9">9日</a-view>
+                <a-view value="10">10日</a-view>
+              </a-picker-view-column>
+            </a-picker-view>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+      <p>Column</p>
+      <a-swiper vertical=true circular=true>
+        <a-swiper-item>
+          <a-view style="display: block;height: 180px;background-color: red; padding-top: 20px">
+            <a-slider min="0" max="100" style="width: 200px"></a-slider>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 200pxpx;">
+            <a-picker-view style="height:120px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+              <a-picker-view-column>
+                <a-view value="2010">2010年</a-view>
+                <a-view value="2011">2011年</a-view>
+                <a-view value="2012">2012年</a-view>
+                <a-view value="2013">2013年</a-view>
+                <a-view value="2014">2014年</a-view>
+                <a-view value="2015">2015年</a-view>
+                <a-view value="2016">2016年</a-view>
+                <a-view value="2017">2017年</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1月</a-view>
+                <a-view value="2">2月</a-view>
+                <a-view value="3">3月</a-view>
+                <a-view value="4">4月</a-view>
+                <a-view value="5">5月</a-view>
+                <a-view value="6">6月</a-view>
+                <a-view value="7">7月</a-view>
+                <a-view value="8">8月</a-view>
+                <a-view value="9">9月</a-view>
+                <a-view value="10">10月</a-view>
+                <a-view value="11">11月</a-view>
+                <a-view value="12">12月</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1日</a-view>
+                <a-view value="2">2日</a-view>
+                <a-view value="3">3日</a-view>
+                <a-view value="4">4日</a-view>
+                <a-view value="5">5日</a-view>
+                <a-view value="6">6日</a-view>
+                <a-view value="7">7日</a-view>
+                <a-view value="8">8日</a-view>
+                <a-view value="9">9日</a-view>
+                <a-view value="10">10日</a-view>
+              </a-picker-view-column>
+            </a-picker-view>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 200px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+    </div>
+    <div class="card">
+      <h4 class="title">a-scroll-view composite</h4>
+      <div class="demo">
+        <a-scroll-view style="display: block;height: 300px;" scroll-y=true>
+          <a-picker-view style="height:250px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+            <a-picker-view-column>
+              <a-view value="2010">2010年</a-view>
+              <a-view value="2011">2011年</a-view>
+              <a-view value="2012">2012年</a-view>
+              <a-view value="2013">2013年</a-view>
+              <a-view value="2014">2014年</a-view>
+              <a-view value="2015">2015年</a-view>
+              <a-view value="2016">2016年</a-view>
+              <a-view value="2017">2017年</a-view>
+            </a-picker-view-column>
+            <a-picker-view-column>
+              <a-view value="1">1月</a-view>
+              <a-view value="2">2月</a-view>
+              <a-view value="3">3月</a-view>
+              <a-view value="4">4月</a-view>
+              <a-view value="5">5月</a-view>
+              <a-view value="6">6月</a-view>
+              <a-view value="7">7月</a-view>
+              <a-view value="8">8月</a-view>
+              <a-view value="9">9月</a-view>
+              <a-view value="10">10月</a-view>
+              <a-view value="11">11月</a-view>
+              <a-view value="12">12月</a-view>
+            </a-picker-view-column>
+            <a-picker-view-column>
+              <a-view value="1">1日</a-view>
+              <a-view value="2">2日</a-view>
+              <a-view value="3">3日</a-view>
+              <a-view value="4">4日</a-view>
+              <a-view value="5">5日</a-view>
+              <a-view value="6">6日</a-view>
+              <a-view value="7">7日</a-view>
+              <a-view value="8">8日</a-view>
+              <a-view value="9">9日</a-view>
+              <a-view value="10">10日</a-view>
+            </a-picker-view-column>
+          </a-picker-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+        </a-scroll-view>
+      </div>
     </div>
   </div>
 </body>

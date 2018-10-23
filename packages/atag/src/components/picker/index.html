@@ -3,138 +3,140 @@
     <style>
       #mask {
         position: fixed;
-        display: none;
-        width: 100%;
-        height: 100%;
         left: 0;
+        right: 0;
         top: 0;
+        bottom: 320px;
         z-index: 9999;
-        background-color: rgba(0, 0, 0, 0);
-        transition: background-color .3s ease-in-out;
-        -webkit-transition: background-color .3s ease-in-out;
+        background-color: rgba(0, 0, 0, 0.7);
       }
 
       #container {
-        display: flex;
-        display: -webkit-flex;
-        flex-direction: column;
-        -webkit-flex-direction: column;
-        position: absolute;
+        position: fixed;
         width: 100%;
-        height: 80vw;
+        height: 320px;
         left: 0;
         bottom: 0;
         background-color: white;
-        transition: bottom .3s ease-in-out;
-        -webkit-transition: bottom .3s ease-in-out;
-      }
-
-      #buttonGroup {
-        display: flex;
-        display: -webkit-flex;
-        flex-direction: row;
-        -webkit-flex-direction: row;
-        justify-content: space-between;
-        -webkit-justify-content: space-between;
-        width: 100%;
-        height: 13.33vw;
-        background-color: #F2F2F2;
-      }
-
-      #buttonGroup button {
-        font-size: 4.27vw;
-      }
-
-      #buttonGroup #cancel {
-        margin-left: 4vw;
-        color: #999999;
-      }
-
-      #buttonGroup #confirm {
-        margin-right: 4vw;
-        color: #FF5000;
+        z-index: 9999;
       }
 
       #content {
-        flex: 1;
-        -webkit-flex: 1;
-        display: flex;
+        width: 100%;
+        height: 100%;
         display: -webkit-flex;
-        position: relative;
-        flex-direction: column;
+        display: flex;
         -webkit-flex-direction: column;
-        align-items: center;
+        flex-direction: column;
+        -webkit-transition: bottom .3s ease-in-out;
+        transition: bottom .3s ease-in-out;
+      }
+
+      #header {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: row;
+        flex-direction: row;
+        -webkit-justify-content: space-between;
+        justify-content: space-between;
+        width: 100%;
+        height: 50px;
+        background-color: #F2F2F2;
+      }
+
+      #header button {
+        font-size: 16px;
+        cursor: pointer;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
+        background: transparent;
+        outline: none;
+        border: 0;
+      }
+
+      #header #cancel {
+        margin-left: 16px;
+        color: #999999;
+      }
+
+      #header #confirm {
+        margin-right: 16px;
+        color: #FF5000;
+      }
+
+      #body {
+        position: relative;
+        -webkit-flex: 1;
+        flex: 1;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        flex-direction: column;
         -webkit-align-items: center;
+        align-items: center;
         overflow-x: hidden;
         overflow-y: hidden;
+        height: 100px;
       }
 
-      #contentInner {
+      #selector {
         position: relative;
         left: 0;
-        /* pointer-events: none; */
+        -webkit-transform:  translate3d(0, 120px, 0);
+        transform: translate3d(0, 120px, 0);
+        -webkit-transition: all 500ms ease;
+        transition: all 500ms ease;
       }
 
-      #contentInner .item {
-        font-size: 4.27vw;
-        line-height: 27px;
+      #selector .item {
+        font-size: 14px;
+        line-height: 30px;
         vertical-align: middle;
         color: #333333;
-        /* pointer-events: none; */
         text-align: center;
       }
 
-      #content-mask-top {
+      #selector-mask-top {
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
-        height: calc(50% - 3.6vw);
+        height: 120px;
         border-bottom: 1px solid #DDDDDD;
         background: linear-gradient(to top, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
-        /* pointer-events: none; */
         box-sizing: border-box;
       }
 
-      #content-mask-bottom {
+      #selector-mask-bottom {
         position: absolute;
         left: 0;
         bottom: 0;
         width: 100%;
-        height: calc(50% - 3.6vw);
+        height: 120px;
         border-top: 1px solid #DDDDDD;
         background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
-        /* pointer-events: none; */
         box-sizing: border-box;
       }
-
-      button {
-        -webkit-appearance: none;
-        border: 0;
-        background: transparent;
-        -webkit-tap-highlight-color: transparent;
-        outline: none;
-      }
     </style>
-    <div id="mask">
-      <div id="container">
-        <div id="buttonGroup">
+    <div id="mask" style="display: none;"></div>
+    <div id="container" style="display: none;">
+      <div id="content">
+        <div id="header">
           <button id="cancel">取消</button>
           <button id="confirm">确定</button>
         </div>
-        <div id="content">
-          <!-- <div>{{range}}</div> -->
-          <div id="contentInner">
-            <template is="dom-repeat" items="{{rangeValue}}">
+        <div id="body">
+          <div id="selector">
+            <template is="dom-repeat" items="{{_rangeItems}}">
               <div class="item">{{item}}</div>
             </template>
           </div>
-          <div id="content-mask-top"></div>
-          <div id="content-mask-bottom"></div>
+          <div id="selector-mask-top"></div>
+          <div id="selector-mask-bottom"></div>
         </div>
       </div>
     </div>
-    <slot></slot>
+    <slot id="slot"></slot>
   </template>
 </dom-module>
 
@@ -144,11 +146,10 @@ import { PolymerElement } from '@polymer/polymer';
 import throttle from '../../shared/throttle';
 import afterNextRender from '../../shared/afterNextRender';
 import easeInOutCubic from '../../shared/easeInOutCubic';
+import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
-// After modifying this, the above CSS will also be modified.
-const LINEHEIGHT = (27 * 100) / document.documentElement.clientWidth;
-const INITIALTOP = 33.333 - LINEHEIGHT / 2;
-const FONTSIZE = 4.27;
+const initOffset = 120;
+const itemHeight = 30;
 
 export default class Picker extends PolymerElement {
   static get is() {
@@ -162,12 +163,7 @@ export default class Picker extends PolymerElement {
         notify: true,
         value: []
       },
-      rangeValue: {
-        type: Array,
-        notify: true,
-        computed: 'getRangeValue(range, range-key)'
-      },
-      'range-key': {
+      rangeKey: {
         type: String,
         notify: true,
         value: ''
@@ -181,12 +177,16 @@ export default class Picker extends PolymerElement {
         type: Boolean,
         notify: true,
         value: false
-      }
+      },
+      _rangeItems: {
+        type: Array,
+        notify: true,
+        computed: '_computedRangeItems(range, rangeKey)'
+      },
     };
   }
 
-  getRangeValue(range, rangeKey) {
-    // return range;
+  _computedRangeItems(range, rangeKey) {
     if (typeof range[0] === 'object') {
       return range.map(item => item[rangeKey]);
     } else {
@@ -196,255 +196,117 @@ export default class Picker extends PolymerElement {
 
   ready() {
     super.ready();
-    this.formInitialValue = this.value;
-
-    afterNextRender(this, () => {
-      this.content = this.$.content;
-      this.container = this.$.container;
-      this.mask = this.$.mask;
-      this.innerEl = this.$.contentInner;
-
-      this.content.addEventListener('touchstart', this._handleTouchstart);
-      window.addEventListener('_formReset', this._handleReset, true);
-      this.container.addEventListener('click', this.stopPropagation);
-      this.mask.addEventListener('click', this.hide);
-      this.$.cancel.addEventListener('click', this.hide);
-      this.$.confirm.addEventListener('click', this.confirm);
-      this.addEventListener('click', this.show);
-
-      this.innerEl.style.top =
-        INITIALTOP -
-        Math.max(0, Math.min(this.value, this.range.length - 1)) * LINEHEIGHT +
-        'vw';
-    });
+    this._initialValue = this.value;
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    super.attributeChangedCallback(name, oldValue, newValue);
+  connectedCallback() {
+    super.connectedCallback();
 
-    if (name === 'value' && this.shadowRoot) {
-      this.innerEl.style.top = INITIALTOP - newValue * LINEHEIGHT + 'vw';
+    window.addEventListener('_formReset', this._handleReset, true);
+    Gestures.addListener(this.$.body, 'track', this._handleTrack);
+    this.$.slot.addEventListener('click', this.show);
+
+    this.$.mask.addEventListener('click', this.hide);
+    this.$.cancel.addEventListener('click', this.hide);
+    this.$.confirm.addEventListener('click', this.confirm);
+  }
+
+  _lastOffset = initOffset;
+
+  _handleTrack = ({detail}) => {
+ 
+    const itemLength = this.range.length;
+    const maxOffset = (itemLength - 1) * itemHeight;
+    const halfItemHeight = itemHeight / 2;
+    let offset = this._lastOffset + detail.dy;
+
+    if (offset >= (initOffset + halfItemHeight)) {
+      // -1 for not overflow half height then bounce the scroll animation
+      offset = initOffset + halfItemHeight - 1;
+    } else if (offset <= initOffset - maxOffset - halfItemHeight) {
+      offset = initOffset - maxOffset - halfItemHeight - 1;
     }
+
+    this._setTranslateY(offset);
+
+    if (detail.state === 'end') {
+
+      let offsetOver = offset % itemHeight;
+      let autoOffset = 0;
+      if (offsetOver !== 0) {
+        if (offsetOver > halfItemHeight) {
+          autoOffset = itemHeight - offsetOver;
+        } else {
+          autoOffset = -offsetOver;
+        }
+      }
+      
+      offset = offset + autoOffset;
+      this._setTranslateY(offset);
+
+      this._lastOffset = offset;
+    }
+    
+  };
+
+  _setTranslateY(value, duration) {
+
+    const selector = this.$.selector;
+    
+    if (duration) {
+      selector.style.transitionDuration = selector.style.webkitTransitionDuration = `${duration}ms`;
+    }
+
+    selector.style.transform = selector.style.webkitTransform = `translate3d(0, ${value}px, 0)`;
   }
 
   disconnectedCallback() {
+    super.disconnectedCallback();
+
     window.removeEventListener('_formReset', this._handleReset, true);
-    this.container.addEventListener('click', this.stopPropagation);
-    this.mask.removeEventListener('click', this.hide);
+    Gestures.removeListener(this.$.body, 'track', this._handleTrack);
+    this.$.slot.removeEventListener('click', this.show);
+
+    this.$.mask.removeEventListener('click', this.hide);
     this.$.cancel.removeEventListener('click', this.hide);
     this.$.confirm.removeEventListener('click', this.confirm);
-    this.removeEventListener('click', this.show);
   }
 
   show = () => {
     if (!this.disabled) {
-      this.mask.style.display = 'block';
-      this.mask.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-      this.container.style.bottom = 0;
+      this.$.mask.style.display = 'block';
+      this.$.container.style.display = 'block';
     }
   };
 
   hide = () => {
-    this.container.style.bottom = '-100%';
-    this.mask.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-    setTimeout(() => {
-      this.mask.style.display = 'none';
-    }, 300);
+    this.$.mask.style.display = 'none';
+    this.$.container.style.display = 'none';
   };
 
   confirm = () => {
-    this.emitChange(this.value);
-    this.hide();
-  };
-
-  stopPropagation = e => {
-    e.stopPropagation();
-  };
-
-  startY = 0;
-  innerEl = null;
-  innerElStartY = 0;
-  overStartY = 0;
-  overDirection = 0;
-  overInnerElStartY = 0;
-
-  lastPosition = 0;
-  lastTime = 0;
-  velocity = 0;
-
-  _handleTouchstart = e => {
-    const touch = e.touches[0];
-    if (touch) {
-      this.startY = touch.clientY;
-      this.innerEl = this.$.contentInner;
-      this.innerElStartY = Number(this.innerEl.style.top.replace('vw', ''));
-      this.lastTime = Date.now();
-      this.lastPosition = this.innerElStartY;
-      this.velocity = 0;
-      this.content.addEventListener('touchmove', this._handleTouchmove);
-      this.content.addEventListener('touchend', this._handleTouchend);
-      e.stopPropagation();
-    }
-  };
-
-  _handleTouchmove = e => {
-    const touch = e.touches[0];
-    if (touch && this.innerEl) {
-      e.stopPropagation();
-      e.preventDefault();
-
-      const delta =
-        ((touch.clientY - this.startY) * 750) /
-        document.documentElement.clientWidth /
-        7.5;
-      const scrollHeight =
-        (this.innerEl.scrollHeight * 750) /
-        document.documentElement.clientWidth /
-        7.5;
-
-      const time = Date.now();
-      this.velocity =
-        (this.velocity +
-          (this.innerElStartY + delta - this.lastPosition) /
-            (time - this.lastTime)) /
-        2;
-      this.lastTime = time;
-      this.lastPosition = this.innerElStartY + delta;
-
-      let damping = 1;
-      if (
-        this.innerElStartY + delta - INITIALTOP > 0 &&
-        this.overDirection !== -1
-      ) {
-        this.overStartY = touch.clientY;
-        this.overDirection = -1;
-        this.overInnerElStartY = Number(
-          this.innerEl.style.top.replace('vw', '')
-        );
-      } else if (
-        this.innerElStartY + delta - INITIALTOP < -scrollHeight &&
-        this.overDirection !== 1
-      ) {
-        this.overStartY = touch.clientY;
-        this.overDirection = 1;
-        this.overInnerElStartY = Number(
-          this.innerEl.style.top.replace('vw', '')
-        );
-      } else if (
-        this.innerElStartY + delta - INITIALTOP <= 0 &&
-        this.innerElStartY + delta - INITIALTOP >= -scrollHeight
-      ) {
-        this.overDirection = 0;
-        this.overInnerElStartY = 0;
-      }
-
-      if (this.overDirection === 0) {
-        this.innerEl.style.top = this.innerElStartY + delta * damping + 'vw';
-      } else if (this.overDirection !== 0) {
-        const overDelta =
-          ((touch.clientY - this.overStartY) * 750) /
-          document.documentElement.clientWidth /
-          7.5;
-        damping =
-          Math.max(
-            0,
-            1 - Math.log(Math.abs(overDelta)) / Math.log(scrollHeight * 10)
-          ) / 2;
-        this.innerEl.style.top =
-          this.overInnerElStartY + overDelta * damping + 'vw';
-      }
-    }
-  };
-
-  _handleTouchend = e => {
-    if (!this.innerEl) {
-      return;
-    }
-    e.stopPropagation();
-    this.startY = 0;
-    const currentPos = Number(this.innerEl.style.top.replace('vw', ''));
-    const offsetPrevious = Math.abs((currentPos - INITIALTOP) % LINEHEIGHT);
-
-    const delay =
-      Math.abs(this.velocity) /
-      ((10 * 100) / document.documentElement.clientWidth);
-    const offset =
-      this.velocity * 1000 * delay -
-      (((10 * 100) / document.documentElement.clientWidth) * delay ** 2) / 2;
-
-    const index = Math.abs(
-      Math.min(
-        Math.max(
-          1 - this.range.length,
-          Math.round((currentPos + offset - INITIALTOP) / LINEHEIGHT)
-        ),
-        0
-      )
-    );
-    let pos = -index * LINEHEIGHT;
-
-    this.value = index;
-
-    this.scrollToY(
-      currentPos + offset,
-      delay + 200,
-      t => t * (2 - t),
-      () => {
-        this.scrollToY(pos + INITIALTOP, 400, easeInOutCubic, () => {
-          this.innerEl = null;
-        });
-      }
-    );
-    this.content.removeEventListener('touchmove', this._handleTouchmove);
-    this.content.removeEventListener('touchend', this._handleTouchend);
-  };
-
-  scrollingYId = 0;
-  scrollCallback = null;
-
-  scrollToY(value, duration, easeFunc, callback) {
-    if (this.scrollingYId) {
-      clearInterval(this.scrollingYId);
-      this.scrollingYId = 0;
-      this.scrollCallback && this.scrollCallback();
-      this.scrollCallback = null;
-    }
-    // avoid too large duration
-    if (duration > 2000) {
-      duration = 2000;
-    }
-    let startTime = Date.now();
-    let initialValue = Number(this.innerEl.style.top.replace('vw', ''));
-    this.scrollCallback = callback;
-    const id = (this.scrollingYId = setInterval(() => {
-      let deltaTime = Date.now() - startTime;
-      if (deltaTime > duration) {
-        clearInterval(id);
-        this.scrollingYId = 0;
-        this.innerEl.style.top = value + 'vw';
-        this.scrollCallback && this.scrollCallback();
-        this.scrollCallback = null;
-      } else {
-        const process = easeFunc(deltaTime / duration);
-        this.innerEl.style.top =
-          initialValue + process * (value - initialValue) + 'vw';
-      }
-    }, 16));
-  }
-
-  emitChange(value) {
+    this.value = (initOffset - this._lastOffset) / itemHeight;
     const event = new CustomEvent('change', {
       bubbles: false,
       cancelable: true,
       detail: {
-        value
+        value: this.value
       }
     });
     this.dispatchEvent(event);
-  }
+    this.hide();
+  };
 
-  _handleReset = () => {
-    this.emitChange(this.formInitialValue);
+  _handleReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.value = thia._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
   };
 }
 

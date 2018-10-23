@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="76px" height="76px" viewBox="0 0 76 76" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <circle id="path-1" cx="30" cy="30" r="30"></circle>
+        <filter x="-20.0%" y="-20.0%" width="140.0%" height="140.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.12 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" transform="translate(-512.000000, -12513.000000)">
+            <g id="Group" transform="translate(520.000000, 12521.000000)">
+                <g id="Oval">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <circle stroke="#FFFFFF" stroke-width="3" stroke-linejoin="square" fill-opacity="0.2" fill="#000000" fill-rule="evenodd" cx="30" cy="30" r="28.5"></circle>
+                </g>
+                <path d="M34.0141457,23.3486325 L40.144146,33.5652997 C40.9965905,34.9860405 40.5358953,36.8288213 39.1151545,37.6812657 C38.6489083,37.9610135 38.115399,38.108787 37.5716672,38.108787 L25.3116666,38.108787 C23.6548124,38.108787 22.3116666,36.7656412 22.3116666,35.108787 C22.3116666,34.5650551 22.4594401,34.0315459 22.7391878,33.5652997 L28.8691881,23.3486325 C29.7216326,21.9278917 31.5644134,21.4671966 32.9851542,22.319641 C33.407403,22.5729903 33.7607964,22.9263837 34.0141457,23.3486325 Z" id="Triangle-2" fill="#FFFFFF" transform="translate(31.441894, 30.000227) rotate(90.000000) translate(-31.441894, -30.000227) "></path>
+            </g>
+        </g>
+    </g>
+</svg>
