@@ -51,7 +51,6 @@ export default class CheckboxElement extends PolymerElement {
      * Mark this element is a target of label.
      */
     this.setAttribute('a-label-target', '');
-
   }
 
   connectedCallback() {

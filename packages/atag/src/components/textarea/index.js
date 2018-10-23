@@ -164,7 +164,6 @@ export default class Textarea extends PolymerElement {
       }
       parentElement = parentElement.parentElement;
     }
-    
   };
 
   handleInput(e) {

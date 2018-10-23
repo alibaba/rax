@@ -243,7 +243,7 @@ export default class Swiper extends PolymerElement {
   };
 
   _handleGlobalTrack = ({detail}) => {
-    if (detail.state === 'end'){
+    if (detail.state === 'end') {
       this._handleGlobalEnd(detail);
     } else {
       // Move when start or track state
@@ -263,7 +263,7 @@ export default class Swiper extends PolymerElement {
 
     this.transitionDuration = this.duration;
     const isQuickAction = new Date().getTime() - this.startTime < 1000;
-    const delta = (this.vertical ? dy : dx);
+    const delta = this.vertical ? dy : dx;
 
     if (delta < -100 || isQuickAction && delta < -15) {
       if (!this.isCircular && this.current + 1 === this.itemsCount) {
@@ -335,7 +335,6 @@ export default class Swiper extends PolymerElement {
   }
 
   _onTransitionEnd() {
-
     const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === this.itemsCount - 1;
     const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
     if (this.isCircular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {

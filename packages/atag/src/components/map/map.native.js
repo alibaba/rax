@@ -21,11 +21,10 @@ function createTagWithAttrs(tagName, attrs) {
  * Initial default style for a-map
  */
 const customStyle = document.createElement('style');
-customStyle.innerHTML = `a-map { display: block; }`;
+customStyle.innerHTML = 'a-map { display: block; }';
 document.head.appendChild(customStyle);
 
 export default class NativeMap extends PolymerElement {
-
   static get is() {
     return 'a-map';
   }
@@ -103,7 +102,7 @@ export default class NativeMap extends PolymerElement {
   constructor() {
     super();
 
-    this.uniqueId = 'map-' + (++nativeInstanceCount);
+    this.uniqueId = 'map-' + ++nativeInstanceCount;
     this._container = document.createElement('object');
 
     Object.keys(NativeMap.properties).forEach((attr) => {

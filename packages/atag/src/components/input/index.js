@@ -135,7 +135,6 @@ export default class Input extends PolymerElement {
   }
 
   changePlaceholderStyle(placeholderStyle) {
-
     // HACK: unique id for data-id to avoid style pollution
     if (!this._placeholderStyleElement) {
       this._id = `input-${++uid}`;

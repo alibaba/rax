@@ -81,7 +81,7 @@ export default class Slider extends PolymerElement {
 
   ready() {
     super.ready();
-    
+
     if (this.value < this.min || this.value > this.max) {
       this.value = this.min;
     }
@@ -115,7 +115,7 @@ export default class Slider extends PolymerElement {
   }
 
   _computeValueStyle(showValue) {
-    return showValue ? `` : `display: none;`;
+    return showValue ? '' : 'display: none;';
   }
 
   _computeSliderStyle(trackSize, backgroundColor) {
@@ -127,7 +127,6 @@ export default class Slider extends PolymerElement {
   }
 
   _handleTrack = ({detail}) => {
-
     if (this.disabled) return;
 
     let getNewValue = (dx) => {
@@ -135,7 +134,7 @@ export default class Slider extends PolymerElement {
       let offsetValue = dx / sliderWidth * (this.max - this.min);
       let newValue = Math.round((this._lastValue + offsetValue) / this.step) * this.step;
       return this._valueChanged(newValue);
-    }
+    };
 
     if (detail.state === 'start') {
       this._lastValue = this.value;
