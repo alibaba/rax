@@ -1,5 +1,6 @@
 import { convertUnit, setRem, setDecimalPixelTransformer } from 'style-unit';
 import DedicatedDriverWrokerScope from './worker/DedicatedDriverWrokerScope';
+import DelegateCSSStyle from "./worker/DelegateCSSStyle";
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -119,16 +120,7 @@ export default ({ postMessage, addEventListener }) => {
   });
 
   mutationObserver.observe(document, { subtree: true });
-
-  let style = document.createElement('style');
-  debugger;
-  document.body.appendChild(style);
-  let styleInnerText = document.createTextNode('body { background: red; }');
-  style.appendChild(styleInnerText);
-  setTimeout(() => {
-    styleInnerText.textContent = 'body { background: green; }';
-  }, 500);
-
+  const styleDelegate = new DelegateCSSStyle(document);
   addEventListener('message', ({ data }) => {
     switch (data.type) {
       case 'init':
@@ -145,8 +137,10 @@ export default ({ postMessage, addEventListener }) => {
   });
 
   return {
-    document,
-    postMessage,
+    global: DedicatedDriverWrokerScope,
+    styleDelegate,
+
+    // Driver interface
     deviceWidth: null,
     viewportWidth: 750,
     eventRegistry: {},
