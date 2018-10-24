@@ -248,10 +248,7 @@ export default class NativeMap extends PolymerElement {
     const { param } = evt;
     const { eventType, bridgeId, ...eventDetail } = param;
     if (bridgeId === this.uniqueId) {
-      /**
-       * Transform native event name
-       * onRegionChange -> regionchane
-       */
+      // Transform native event name: onRegionChange -> regionchange
       const eventName = eventType.replace(/^on/, '').toLowerCase();
       this._dispatchEvent(eventName, eventDetail);
     }
@@ -303,7 +300,7 @@ export default class NativeMap extends PolymerElement {
         'WVEmbedView_' + this.uniqueId,
         method,
         params,
-        successCallback,
+        successCallback,regionchane
         errorCallback
       );
     };
