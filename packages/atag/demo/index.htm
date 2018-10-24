@@ -738,79 +738,50 @@
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
+      <a-view id="pickerViewValue">1989年1月1日</a-view>
+
       <a-picker-view id="pickerView" style="height:333px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
-        <a-picker-view-column>
-          <a-view value="1998">1998年</a-view>
-          <a-view value="1999">1999年</a-view>
-          <a-view value="2000">2000年</a-view>
-          <a-view value="2001">2001年</a-view>
-          <a-view value="2002">2002年</a-view>
-          <a-view value="2003">2003年</a-view>
-          <a-view value="2004">2004年</a-view>
-          <a-view value="2005">2005年</a-view>
-          <a-view value="2006">2006年</a-view>
-          <a-view value="2007">2007年</a-view>
-          <a-view value="2008">2008年</a-view>
-          <a-view value="2009">2009年</a-view>
-          <a-view value="2010">2010年</a-view>
-          <a-view value="2011">2011年</a-view>
-          <a-view value="2012">2012年</a-view>
-          <a-view value="2013">2013年</a-view>
-          <a-view value="2014">2014年</a-view>
-          <a-view value="2015">2015年</a-view>
-          <a-view value="2016">2016年</a-view>
-          <a-view value="2017">2017年</a-view>
+        <a-picker-view-column id="pickerViewColumn1">
         </a-picker-view-column>
-        <a-picker-view-column>
-          <a-view value="1">1月</a-view>
-          <a-view value="2">2月</a-view>
-          <a-view value="3">3月</a-view>
-          <a-view value="4">4月</a-view>
-          <a-view value="5">5月</a-view>
-          <a-view value="6">6月</a-view>
-          <a-view value="7">7月</a-view>
-          <a-view value="8">8月</a-view>
-          <a-view value="9">9月</a-view>
-          <a-view value="10">10月</a-view>
-          <a-view value="11">11月</a-view>
-          <a-view value="12">12月</a-view>
+        <a-picker-view-column id="pickerViewColumn2">
         </a-picker-view-column>
-        <a-picker-view-column>
-          <a-view value="1">1日</a-view>
-          <a-view value="2">2日</a-view>
-          <a-view value="3">3日</a-view>
-          <a-view value="4">4日</a-view>
-          <a-view value="5">5日</a-view>
-          <a-view value="6">6日</a-view>
-          <a-view value="7">7日</a-view>
-          <a-view value="8">8日</a-view>
-          <a-view value="9">9日</a-view>
-          <a-view value="10">10日</a-view>
-          <a-view value="11">11日</a-view>
-          <a-view value="12">12日</a-view>
-          <a-view value="13">13日</a-view>
-          <a-view value="14">14日</a-view>
-          <a-view value="15">15日</a-view>
-          <a-view value="16">16日</a-view>
-          <a-view value="17">17日</a-view>
-          <a-view value="18">18日</a-view>
-          <a-view value="19">19日</a-view>
-          <a-view value="20">20日</a-view>
-          <a-view value="21">21日</a-view>
-          <a-view value="22">22日</a-view>
-          <a-view value="23">23日</a-view>
-          <a-view value="24">24日</a-view>
-          <a-view value="25">25日</a-view>
-          <a-view value="26">26日</a-view>
-          <a-view value="27">27日</a-view>
-          <a-view value="28">28日</a-view>
-          <a-view value="29">29日</a-view>
-          <a-view value="30">30日</a-view>
-          <a-view value="31">31日</a-view>
+        <a-picker-view-column id="pickerViewColumn3">
         </a-picker-view-column>
       </a-picker-view>
     </div>
     <script>
+
+      const date = new Date()
+      const years = []
+      const months = []
+      const days = []
+
+      for (let i = 1989; i <= date.getFullYear(); i++) {
+        years.push(i)
+        let node = document.createElement('a-view');
+        node.innerHTML = i + '年';
+        pickerViewColumn1.appendChild(node);
+      }
+
+      for (let i = 1 ; i <= 12; i++) {
+        months.push(i);
+        let node = document.createElement('a-view');
+        node.innerHTML = i + '月';
+        pickerViewColumn2.appendChild(node);
+      }
+
+      for (let i = 1 ; i <= 31; i++) {
+        days.push(i);
+        let node = document.createElement('a-view');
+        node.innerHTML = i + '日';
+        pickerViewColumn3.appendChild(node);
+      }
+
+      pickerView.addEventListener('change', function(event){
+        var value = event.detail.value;
+        pickerViewValue.innerHTML = (years[value[0]] || '1989') + '年' + (months[value[1]] || '1') +'月' + (days[value[2]] || '1') +'日';
+      });
+
       pickerView.setAttribute('value', '[9, 9, 9]');
 
       setTimeout(() => {
