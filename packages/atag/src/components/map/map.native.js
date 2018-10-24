@@ -1,7 +1,10 @@
+/* global WindVane */
 import { PolymerElement } from '@polymer/polymer';
 import debounce from '../../shared/debounce';
 import kebabCase from '../../shared/kebabCase';
 
+const ua = navigator.userAgent;
+const isAndroid = /android/i.test(ua);
 let nativeInstanceCount = 0;
 
 function createTagWithAttrs(tagName, attrs) {
@@ -48,9 +51,9 @@ export default class NativeMap extends PolymerElement {
         type: Array,
         observer: '_observeMarkers',
       },
-      polyline: {
+      polylines: {
         type: Array,
-        observer: '_observePolyline',
+        observer: '_observePolylines',
       },
       circles: {
         type: Array,
@@ -110,13 +113,23 @@ export default class NativeMap extends PolymerElement {
         this._createOrUpdateParam(attr, val);
       }, 16);
     });
-
-    document.addEventListener('amap-bridge-event', this._handleEmbedMapEvent);
   }
 
   ready() {
     super.ready();
     this._createLightDOM();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener('amap-bridge-event', this._handleEmbedMapEvent);
+    if (isAndroid) document.addEventListener('WVEmbed.Ready', this._handleWindVaneReady);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener('amap-bridge-event', this._handleEmbedMapEvent);
+    if (isAndroid) document.removeEventListener('WVEmbed.Ready', this._handleWindVaneReady);
   }
 
   _createLightDOM() {
@@ -162,6 +175,11 @@ export default class NativeMap extends PolymerElement {
 
     if (paramRef) {
       paramRef.setAttribute('value', value);
+      /**
+       * NOTE: In android, we should call WindVane to
+       * notify native to update param value.
+       */
+      if (isAndroid) this._updateParamWithAndroid(key, value);
     } else {
       this[paramRefKey] = createTagWithAttrs('param', {
         name: kebabCase(key), value,
@@ -169,6 +187,50 @@ export default class NativeMap extends PolymerElement {
       this._container.appendChild(this[paramRefKey]);
     }
     return this[paramRefKey];
+  }
+
+  _updateParamWithAndroid(key, value) {
+    switch (key) {
+      case 'longitude':
+      case 'latitude':
+        this._callNativeControl('moveTo', {
+          latitude: this.latitude,
+          longitude: this.longitude,
+        });
+        break;
+
+      case 'scale':
+        this._callNativeControl('zoomTo', { zoomLevel: value });
+        break;
+
+      case 'routeStart':
+      case 'routeEnd':
+      case 'routeColor':
+      case 'routeWidth':
+        this._callNativeControl('drawRoute', {
+          routeStart: this.routeStart,
+          routeEnd: this.routeEnd,
+          routeColor: this.routeColor,
+          routeWidth: this.routeWidth,
+        });
+        break;
+
+      /**
+       * Others are overlayers above embed map,
+       * call update to reset overlayer.
+       */
+      default:
+        this._callNativeControl('update', {
+          markers: this.markers,
+          polylines: this.polylines,
+          circles: this.circles,
+          controls: this.controls,
+          polygons: this.polygons,
+          includePoints: this.includePoints,
+          showLocation: this.showLocation,
+          showMapText: this.showMapText,
+        });
+    }
   }
 
   /**
@@ -216,6 +278,39 @@ export default class NativeMap extends PolymerElement {
       return 18;
     } else {
       return scale;
+    }
+  }
+
+  _isWindVaneReady = false;
+  _windVaneReadyCallbacks = [];
+  /**
+   * Each embed view will emit whose ready event
+   * identifier by param.bridgeId
+   */
+  _handleWindVaneReady = (evt) => {
+    if (evt.param && evt.param.bridgeId === this.uniqueId) {
+      this._isWindVaneReady = true;
+      let fn;
+      while (fn = this._windVaneReadyCallbacks.shift()) {
+        fn();
+      }
+    }
+  };
+
+  _callNativeControl(method, params, successCallback, errorCallback) {
+    const execute = () => {
+      typeof WindVane !== 'undefined' && WindVane.call(
+        'WVEmbedView_' + this.uniqueId,
+        method,
+        params,
+        successCallback,
+        errorCallback
+      );
+    };
+    if (this._isWindVaneReady) {
+      execute();
+    } else {
+      this._windVaneReadyCallbacks.push(execute);
     }
   }
 }
