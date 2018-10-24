@@ -811,8 +811,11 @@
       </a-picker-view>
     </div>
     <script>
+      pickerView.setAttribute('value', '[9, 9, 9]');
+
       setTimeout(() => {
-        pickerView.setAttribute('value', '[1999, 5, 5]');
+        // Error case
+        pickerView.setAttribute('value', '[999, 999, 999]');
       }, 2000);
     </script>
   </div>

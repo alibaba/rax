@@ -187,6 +187,9 @@ export default class Picker extends PolymerElement {
     };
   }
 
+  _initOffset = INIT_OFFSET;
+  _lastOffset = INIT_OFFSET;
+
   _computedRangeItems(range, rangeKey) {
     if (typeof range[0] === 'object') {
       return range.map(item => item[rangeKey]);
@@ -205,10 +208,10 @@ export default class Picker extends PolymerElement {
 
     window.addEventListener('_formReset', this._handleReset, true);
     Gestures.addListener(this.$.body, 'track', this._handleTrack);
-    this.$.slot.addEventListener('click', this.show);
+    this.$.slot.addEventListener('click', this._handleShow);
 
-    this.$.mask.addEventListener('click', this.hide);
-    this.$.cancel.addEventListener('click', this.hide);
+    this.$.mask.addEventListener('click', this._handleHide);
+    this.$.cancel.addEventListener('click', this._handleHide);
     this.$.confirm.addEventListener('click', this.confirm);
     
     if (this.value > 0) {
@@ -216,8 +219,17 @@ export default class Picker extends PolymerElement {
     }
   }
 
-  _initOffset = INIT_OFFSET;
-  _lastOffset = INIT_OFFSET;
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    window.removeEventListener('_formReset', this._handleReset, true);
+    Gestures.removeListener(this.$.body, 'track', this._handleTrack);
+    this.$.slot.removeEventListener('click', this._handleShow);
+
+    this.$.mask.removeEventListener('click', this._handleHide);
+    this.$.cancel.removeEventListener('click', this._handleHide);
+    this.$.confirm.removeEventListener('click', this._handleConfirm);
+  }
 
   _selectedIndexChange(newIndex, oldIndex) {
     if (oldIndex !== undefined) {
@@ -280,31 +292,19 @@ export default class Picker extends PolymerElement {
     selector.style.transform = selector.style.webkitTransform = `translate3d(0, ${value}px, 0)`;
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-
-    window.removeEventListener('_formReset', this._handleReset, true);
-    Gestures.removeListener(this.$.body, 'track', this._handleTrack);
-    this.$.slot.removeEventListener('click', this.show);
-
-    this.$.mask.removeEventListener('click', this.hide);
-    this.$.cancel.removeEventListener('click', this.hide);
-    this.$.confirm.removeEventListener('click', this.confirm);
-  }
-
-  show = () => {
+  _handleShow = () => {
     if (!this.disabled) {
       this.$.mask.style.display = 'block';
       this.$.container.style.display = 'block';
     }
   };
 
-  hide = () => {
+  _handleHide = () => {
     this.$.mask.style.display = 'none';
     this.$.container.style.display = 'none';
   };
 
-  confirm = () => {
+  _handleConfirm = () => {
     this.value = (INIT_OFFSET - this._lastOffset) / ITEM_HEIGHT;
     const event = new CustomEvent('change', {
       bubbles: false,
@@ -314,7 +314,7 @@ export default class Picker extends PolymerElement {
       }
     });
     this.dispatchEvent(event);
-    this.hide();
+    this._handleHide();
   };
 
   _handleReset = (event) => {
