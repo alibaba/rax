@@ -174,8 +174,7 @@ export default class Button extends PolymerElement {
           top: 0;
         }
         
-        .loading-child:before {
-          content: '';
+        .loading-child-before {
           display: block;
           margin: 0 auto;
           width: 4px;
@@ -186,20 +185,20 @@ export default class Button extends PolymerElement {
                   animation: loading-circle-bounce 1.2s infinite ease-in-out both;
         }
 
-        :host([type="primary"]) .loading-circle .loading-child:before,
-        :host([type="warn"]) .loading-circle .loading-child:before {
+        :host([type="primary"]) .loading-circle .loading-child-before,
+        :host([type="warn"]) .loading-circle .loading-child-before {
           background-color: white;
         }
 
-        :host([plain]) .loading-circle .loading-child:before {
+        :host([plain]) .loading-circle .loading-child-before {
           background-color: #999999;
         }
 
-        :host([type="primary"][plain]) .loading-circle .loading-child:before {
+        :host([type="primary"][plain]) .loading-circle .loading-child-before {
           background-color: #ff5500;
         }
 
-        :host([type="warn"][plain]) .loading-circle .loading-child:before {
+        :host([type="warn"][plain]) .loading-circle .loading-child-before {
           background-color: #fb9025;
         }
 
@@ -225,57 +224,69 @@ export default class Button extends PolymerElement {
           -webkit-transform: rotate(315deg);
                   transform: rotate(315deg); }
 
-        .loading-circle .loading-circle2:before {
+        .loading-circle .loading-circle2-before {
           -webkit-animation-delay: -0.7s;
                   animation-delay: -0.7s; }
-        .loading-circle .loading-circle3:before {
+        .loading-circle .loading-circle3-before {
           -webkit-animation-delay: -0.6s;
                   animation-delay: -0.6s; }
-        .loading-circle .loading-circle4:before {
+        .loading-circle .loading-circle4-before {
           -webkit-animation-delay: -0.5s;
                   animation-delay: -0.5s; }
-        .loading-circle .loading-circle5:before {
+        .loading-circle .loading-circle5-before {
           -webkit-animation-delay: -0.4s;
                   animation-delay: -0.4s; }
-        .loading-circle .loading-circle6:before {
+        .loading-circle .loading-circle6-before {
           -webkit-animation-delay: -0.3s;
                   animation-delay: -0.3s; }
-        .loading-circle .loading-circle7:before {
+        .loading-circle .loading-circle7-before {
           -webkit-animation-delay: -0.2s;
                   animation-delay: -0.2s; }
-        .loading-circle .loading-circle8:before {
+        .loading-circle .loading-circle8-before {
           -webkit-animation-delay: -0.1s;
                   animation-delay: -0.1s; }
         
         @-webkit-keyframes loading-circle-bounce {
           0%, 80%, 100% {
             -webkit-transform: scale(0.6);
-                    transform: scale(0.6);
           } 40% {
             -webkit-transform: scale(1.2);
-                    transform: scale(1.2);
           }
         }
         
         @keyframes loading-circle-bounce {
           0%, 80%, 100% {
-            -webkit-transform: scale(0.6);
-                    transform: scale(0.6);
+            transform: scale(0.6);
           } 40% {
-            -webkit-transform: scale(1.2);
-                    transform: scale(1.2);
+            transform: scale(1.2);
           }
         }
       </style>
       <div class="loading-circle">
-        <div class="loading-circle1 loading-child"></div>
-        <div class="loading-circle2 loading-child"></div>
-        <div class="loading-circle3 loading-child"></div>
-        <div class="loading-circle4 loading-child"></div>
-        <div class="loading-circle5 loading-child"></div>
-        <div class="loading-circle6 loading-child"></div>
-        <div class="loading-circle7 loading-child"></div>
-        <div class="loading-circle8 loading-child"></div>
+        <div class="loading-circle1 loading-child">
+          <div class="loading-circle1-before loading-child-before"></div>
+        </div>
+        <div class="loading-circle2 loading-child">
+          <div class="loading-circle2-before loading-child-before"></div>
+        </div>
+        <div class="loading-circle3 loading-child">
+          <div class="loading-circle3-before loading-child-before"></div>
+        </div>
+        <div class="loading-circle4 loading-child">
+          <div class="loading-circle4-before loading-child-before"></div>
+        </div>
+        <div class="loading-circle5 loading-child">
+          <div class="loading-circle5-before loading-child-before"></div>
+        </div>
+        <div class="loading-circle6 loading-child">
+          <div class="loading-circle6-before loading-child-before"></div>
+        </div>
+        <div class="loading-circle7 loading-child">
+          <div class="loading-circle7-before loading-child-before"></div>
+        </div>
+        <div class="loading-circle8 loading-child">
+          <div class="loading-circle8-before loading-child-before"></div>
+        </div>
       </div>
       <slot></slot>
     `;
