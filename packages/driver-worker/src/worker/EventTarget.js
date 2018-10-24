@@ -1,3 +1,6 @@
+import { mutation } from './MutationObserver';
+import toLower from '../shared/toLower';
+import splice from '../shared/splice';
 
 export default class EventTarget {
   _eventListeners = {};
@@ -33,7 +36,7 @@ export default class EventTarget {
       event.bubbles &&
       !(c && event._stop) &&
       (event.currentTarget = t = t.parentNode)
-      );
+    );
     return !event.defaultPrevented;
   }
 }

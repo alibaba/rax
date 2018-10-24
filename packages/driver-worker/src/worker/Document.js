@@ -12,8 +12,8 @@ registerElement('canvas', CanvasElement);
 export function createDocument() {
   const document = new Document();
   document.appendChild(document.documentElement = createElement('html'));
-  document.documentElement.appendChild((document.head = document.createElement('head')));
-  document.documentElement.appendChild((document.body = document.createElement('body')));
+  document.documentElement.appendChild(document.head = document.createElement('head'));
+  document.documentElement.appendChild(document.body = document.createElement('body'));
   return document;
 }
 
@@ -35,7 +35,7 @@ export default class Document extends Element {
   }
 
   createElement(tagName) {
-    return createElement(tagName)
+    return createElement(tagName);
   }
 
   createElementNS(namespaceURI, tagName) {
@@ -50,7 +50,7 @@ export default class Document extends Element {
     return new Text(text);
   }
 
-  getElementById(id){
+  getElementById(id) {
     // TODO
     // return matchChildElement(this.body, element => element.id === id);
   }

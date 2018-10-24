@@ -126,8 +126,8 @@ export default ({ postMessage, addEventListener }) => {
   let styleInnerText = document.createTextNode('body { background: red; }');
   style.appendChild(styleInnerText);
   setTimeout(() => {
-    styleInnerText.textContent = 'body { background: green; }'
-  }, 500)
+    styleInnerText.textContent = 'body { background: green; }';
+  }, 500);
 
   addEventListener('message', ({ data }) => {
     switch (data.type) {

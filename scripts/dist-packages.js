@@ -146,6 +146,28 @@ dist(getConfig(
     },
     babelOptions
   ));
+
+  dist(getConfig(
+    {
+      'driver.worker': './packages/driver-worker/src/index.js',
+      'driver.worker.min': './packages/driver-worker/src/index.js',
+      'driver.worker.renderer.web': './packages/driver-worker/src/platform/web/index.js',
+      'driver.worker.renderer.web.min': './packages/driver-worker/src/platform/web/index.js',
+    },
+    {
+      path: './packages/driver-worker/dist/',
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
+      pathinfo: false,
+    },
+    {
+      // target: 'bundle',
+      bundle: null,
+      frameworkComment: '',
+      libraryTarget: 'umd',
+    },
+    babelOptions
+  ));
 }).catch(function(err) {
   setTimeout(function() {
     throw err;

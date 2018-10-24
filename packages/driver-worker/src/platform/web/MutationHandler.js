@@ -1,6 +1,7 @@
 import setStyle from './setStyle';
 import { nodeMap } from './NodeMap';
 import { createNode } from './nodes';
+import { addEvent, removeEvent } from './events';
 
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
@@ -11,12 +12,12 @@ const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
  * And "childList" if it was a mutation to the tree of nodes.
  */
 export default class MutationHandler {
-  apply(data) {
+  apply(data, { worker }) {
     let mutations = data.mutations;
     for (let i = 0; i < mutations.length; i++) {
       // apply mutation
       let mutation = mutations[i];
-      this[mutation.type](mutation);
+      this[mutation.type](mutation, worker);
     }
   }
 
@@ -74,22 +75,22 @@ export default class MutationHandler {
     node[TEXT_CONTENT_ATTR] = newValue;
   }
 
-  addEvent({ target, eventName }) {
-    let node = getNode(target);
+  addEvent({ target, eventName }, worker) {
+    let node = nodeMap.get(target);
     if (!node) return;
 
-    addEvent(node, eventName);
+    addEvent(node, eventName, worker);
   }
 
-  removeEvent({ target, eventName }) {
-    let node = getNode(target);
+  removeEvent({ target, eventName }, worker) {
+    let node = nodeMap.get(target);
     if (!node) return;
 
-    removeEvent(node, eventName);
+    removeEvent(node, eventName, worker);
   }
 
   canvasRenderingContext2D({ target, method, args, properties }) {
-    let canvas = getNode(target);
+    let canvas = nodeMap.get(target);
     if (!canvas) return;
 
     let context = canvas.getContext('2d');

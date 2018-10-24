@@ -5,6 +5,7 @@ import { mutation } from './MutationObserver';
 import camelCase from '../shared/camelCase';
 import toLower from '../shared/toLower';
 import findWhere from '../shared/findWhere';
+import splice from '../shared/splice';
 
 const elementConstructors = {};
 export function registerElement(nodeName, elementConstructor) {
@@ -17,7 +18,7 @@ export function createElementNS(namespaceURI, nodeName) {
   return new (elementConstructors[nodeName] || Element)(ELEMENT_NODE, nodeName, namespaceURI);
 }
 export function isElement(node) {
-  return node && (node.nodeType === ELEMENT_NODE);
+  return node && node.nodeType === ELEMENT_NODE;
 }
 const IS_DATASET_REG = /^data-/;
 function isDataset(attr) {
@@ -32,7 +33,6 @@ function isProperty(node, prop, val) {
 }
 
 export default class Element extends Node {
-
   attributes = [];
   _style = {};
 
@@ -47,6 +47,14 @@ export default class Element extends Node {
 
   get className() {
     return this.getAttribute('class');
+  }
+
+  set id(val) {
+    this.setAttribute('id', val);
+  }
+
+  get id() {
+    return this.getAttribute('id');
   }
 
   set animation(queues) {

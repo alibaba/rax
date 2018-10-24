@@ -1,3 +1,4 @@
+import Node from './Node';
 import { TEXT_NODE } from './NodeTypes';
 import { mutation } from './MutationObserver';
 

@@ -1,3 +1,5 @@
+import { mutation } from './MutationObserver';
+
 const CanvasContext2DMethods = [
   'arc',
   'arcTo',

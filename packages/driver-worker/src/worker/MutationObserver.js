@@ -1,3 +1,6 @@
+import splice from '../shared/splice';
+import setImmediate from '../shared/setImmediate';
+
 let observers = [];
 let pendingMutations = false;
 

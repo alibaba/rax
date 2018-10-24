@@ -10,7 +10,7 @@ export default ({ worker, tagNamePrefix = '' }) => {
   worker.onmessage = ({ data }) => {
     let type = data.type;
     if (handlers[type]) {
-      handlers[type].apply(data);
+      handlers[type].apply(data, { worker });
     } else {
       console.error('[DriverWorker] Can not handle with ' + type, data);
     }
