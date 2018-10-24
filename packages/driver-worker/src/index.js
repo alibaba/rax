@@ -1,6 +1,6 @@
 import { convertUnit, setRem, setDecimalPixelTransformer } from 'style-unit';
 import DedicatedDriverWrokerScope from './worker/DedicatedDriverWrokerScope';
-import DelegateCSSStyle from "./worker/DelegateCSSStyle";
+import DelegateCSSStyle from './worker/DelegateCSSStyle';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;

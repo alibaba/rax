@@ -1,7 +1,7 @@
 import { setEventSender } from './events';
 import MutationHandler from './MutationHandler';
 import LocationHandler from './LocationHandler';
-import RemoteDOMSyncHandler from './RemoteDOMSyncHandler';
+import RemoteESSyncHandler from './RemoteESSyncHandler';
 
 export default ({ worker }) => {
   setEventSender(worker.postMessage);
@@ -9,7 +9,7 @@ export default ({ worker }) => {
   const handlers = {
     MutationRecord: new MutationHandler(),
     Location: new LocationHandler(),
-    RemoteDOMSync: new RemoteDOMSyncHandler(worker.postMessage),
+    RemoteDOMSync: new RemoteESSyncHandler(worker.postMessage),
   };
 
   worker.onmessage = ({ data }) => {
