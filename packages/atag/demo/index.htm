@@ -738,7 +738,7 @@
   <div class="card">
     <h4 class="title">a-picker-view</h4>
     <div class="demo">
-      <a-picker-view id="pickerView" style="height:200px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+      <a-picker-view id="pickerView" style="height:333px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
         <a-picker-view-column>
           <a-view value="1998">1998年</a-view>
           <a-view value="1999">1999年</a-view>
@@ -811,8 +811,11 @@
       </a-picker-view>
     </div>
     <script>
+      pickerView.setAttribute('value', '[9, 9, 9]');
+
       setTimeout(() => {
-        pickerView.setAttribute('value', '[3, 5, 5]');
+        // Error case
+        pickerView.setAttribute('value', '[999, 999, 999]');
       }, 2000);
     </script>
   </div>

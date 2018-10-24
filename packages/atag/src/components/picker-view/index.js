@@ -1,6 +1,6 @@
 import './picker-view-column';
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
+
 
 export default class PickerView extends PolymerElement {
   static get is() {
@@ -33,21 +33,13 @@ export default class PickerView extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    /**
-     * However, the observer func is executed earlier than ready,
-     * dom hasn't been rendered，
-     * so I execute the first _selectedIndexChange func in ready，
-     * to ensure that the dom has been rendered
-     */
     this._valueChanged(this.value, null);
     this.addEventListener('_columnChange', this._handleChange);
     window.addEventListener('_formReset', this._handleReset, true);
-
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-
     this.removeEventListener('_columnChange', this._handleChange);
     window.removeEventListener('_formReset', this._handleReset, true);
   }
@@ -63,11 +55,9 @@ export default class PickerView extends PolymerElement {
   }
 
   _pickerViewColumnStyleChange(indicatorStyle) {
-    afterNextRender(this, () => {
-      let columns = [...this.querySelectorAll('a-picker-view-column')];
-      columns.forEach(column => {
-        column._updateStyleFromParent(indicatorStyle);
-      });
+    let columns = [...this.querySelectorAll('a-picker-view-column')];
+    columns.forEach(column => {
+      column.setAttribute('indicator-style', indicatorStyle);
     });
   }
 
