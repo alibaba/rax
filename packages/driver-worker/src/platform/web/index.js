@@ -1,16 +1,21 @@
+import { setEventSender } from './events';
 import MutationHandler from './MutationHandler';
 import LocationHandler from './LocationHandler';
+import RemoteDOMSyncHandler from './RemoteDOMSyncHandler';
 
-export default ({ worker, tagNamePrefix = '' }) => {
+export default ({ worker }) => {
+  setEventSender(worker.postMessage);
+
   const handlers = {
     MutationRecord: new MutationHandler(),
     Location: new LocationHandler(),
-    // RemoteDOMSync: new RemoteDOMSyncHandler(),
+    RemoteDOMSync: new RemoteDOMSyncHandler(worker.postMessage),
   };
+
   worker.onmessage = ({ data }) => {
     let type = data.type;
     if (handlers[type]) {
-      handlers[type].apply(data, { worker });
+      handlers[type].apply(data);
     } else {
       console.error('[DriverWorker] Can not handle with ' + type, data);
     }

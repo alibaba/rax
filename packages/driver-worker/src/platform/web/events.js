@@ -23,7 +23,12 @@ const NO_BUBBLES_EVENTS = {
 const TOUCH_EVENTS = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
 
 const registeredEventCounts = {};
+let sendMessage;
 let touch;
+
+export function setEventSender(handler) {
+  sendMessage = handler;
+}
 
 export function addEvent(node, name) {
   if (NO_BUBBLES_EVENTS[name]) {
@@ -57,7 +62,7 @@ export function addNoBubblesEventListener(node, name) {
     const target = {
       $$id: node.$$id
     };
-    worker.postMessage({
+    driver.postMessage({
       type: 'event',
       event: {
         type: name,
@@ -110,7 +115,7 @@ export function eventProxyHandler(e) {
     event.changedTouches = serializeTouchList(e.changedTouches);
   }
 
-  worker.postMessage({
+  driver.postMessage({
     type: 'event',
     event
   });
@@ -126,7 +131,7 @@ export function eventProxyHandler(e) {
       );
       if (delta < 10) {
         event.type = 'click';
-        worker.postMessage({ type: 'event', event });
+        driver.postMessage({ type: 'event', event });
       }
     }
   }

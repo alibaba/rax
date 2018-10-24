@@ -12,12 +12,12 @@ const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
  * And "childList" if it was a mutation to the tree of nodes.
  */
 export default class MutationHandler {
-  apply(data, { worker }) {
+  apply(data) {
     let mutations = data.mutations;
     for (let i = 0; i < mutations.length; i++) {
       // apply mutation
       let mutation = mutations[i];
-      this[mutation.type](mutation, worker);
+      this[mutation.type](mutation);
     }
   }
 
@@ -75,18 +75,18 @@ export default class MutationHandler {
     node[TEXT_CONTENT_ATTR] = newValue;
   }
 
-  addEvent({ target, eventName }, worker) {
+  addEvent({ target, eventName }) {
     let node = nodeMap.get(target);
     if (!node) return;
 
-    addEvent(node, eventName, worker);
+    addEvent(node, eventName);
   }
 
-  removeEvent({ target, eventName }, worker) {
+  removeEvent({ target, eventName }) {
     let node = nodeMap.get(target);
     if (!node) return;
 
-    removeEvent(node, eventName, worker);
+    removeEvent(node, eventName);
   }
 
   canvasRenderingContext2D({ target, method, args, properties }) {
