@@ -41,7 +41,7 @@ export default class NativeMap extends PolymerElement {
       scale: {
         type: Number,
         value: 16,
-        observer: '@scale',
+        observer: '_observeScale',
         computed: '_computeScale(scale)',
       },
       markers: {
@@ -106,10 +106,12 @@ export default class NativeMap extends PolymerElement {
      * All observers are automaticlly generated.
      */
     Object.keys(NativeMap.properties).forEach((attr) => {
-      this['@' + attr] = debounce((val) => {
+      this['_observe' + attr[0].toUpperCase() + attr.slice(1)] = debounce((val) => {
         this._createOrUpdateParam(attr, val);
       }, 16);
     });
+
+    document.addEventListener('amap-bridge-event', this._handleEmbedMapEvent);
   }
 
   ready() {
@@ -167,6 +169,38 @@ export default class NativeMap extends PolymerElement {
       this._container.appendChild(this[paramRefKey]);
     }
     return this[paramRefKey];
+  }
+
+  /**
+   * Embed map will emit native events through this
+   * handler, param's bridgeId to identifier which map
+   * instance is, param's eventType points out native
+   * event type, one of followings:
+   *  onMarkerTap
+   *  onCalloutTap
+   *  onControlTap
+   *  onRegionChange
+   *  onTap
+   */
+  _handleEmbedMapEvent = (evt) => {
+    const { param } = evt;
+    const { eventType, bridgeId, ...eventDetail } = param;
+    if (bridgeId === this.uniqueId) {
+      /**
+       * Transform native event name
+       * onRegionChange -> regionchane
+       */
+      const eventName = eventType.replace(/^on/, '').toLowerCase();
+      this._dispatchEvent(eventName, eventDetail);
+    }
+  }
+
+  _dispatchEvent(eventName, detail) {
+    this.dispatchEvent(new CustomEvent(eventName, {
+      bubbles: true,
+      cancelable: true,
+      detail,
+    }));
   }
 
   /**
