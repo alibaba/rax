@@ -6,7 +6,7 @@ export default class RemoteESSync {
     this.sender = sender;
   }
 
-  handleMessage(data) {
+  apply(data) {
     const { resolve, reject } = this.pendingPromiseMap[data.id];
     if (data.error) {
       reject(data.error);
@@ -32,8 +32,8 @@ export default class RemoteESSync {
   /**
    * Call a specfic method with params.
    */
-  method(varExp, params) {
-    return this._invoke('method', { varExp, params });
+  method(method, params) {
+    return this._invoke('method', { method, params });
   }
 
   /**
@@ -46,7 +46,7 @@ export default class RemoteESSync {
   _invoke(type, data) {
     const id = this.generateId();
     return new Promise((resolve, reject) => {
-      this.send({ type, ...data });
+      this.send({ id, type, ...data });
       this.pendingPromiseMap[id] = { resolve, reject };
     });
   }

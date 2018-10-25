@@ -9,7 +9,7 @@ export default ({ worker }) => {
   const handlers = {
     MutationRecord: new MutationHandler(),
     Location: new LocationHandler(),
-    RemoteDOMSync: new RemoteESSyncHandler(worker.postMessage),
+    RemoteESSync: new RemoteESSyncHandler(worker.postMessage),
   };
 
   worker.onmessage = ({ data }) => {

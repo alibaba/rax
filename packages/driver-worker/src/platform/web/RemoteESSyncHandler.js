@@ -1,11 +1,11 @@
 import global from '../../shared/global';
 
 export default class RemoteESSyncHandler {
-  costructor(sender) {
+  constructor(sender) {
     this.sender = sender;
   }
 
-  apply(data) {
+  apply({ data }) {
     const { type } = data;
     this[type](data);
   }
@@ -32,7 +32,8 @@ export default class RemoteESSyncHandler {
    */
   query({ id, varExp }) {
     try {
-      const { value } = this.resolveMemberExpression(varExp);
+      const path = resolveMemberExpressionPath(varExp);
+      const value = path[path.length - 1].ref;
       this.returnWithResult(id, value);
     } catch (err) {
       this.returnWithError(id, 'Can not get value of ' + key);
@@ -46,10 +47,12 @@ export default class RemoteESSyncHandler {
    */
   method({ id, method, params }) {
     try {
-      const { scope, value } = this.resolveMemberExpression(method);
-      this.resolve(id, value.apply(scope, params));
+      const path = resolveMemberExpressionPath(method);
+      const scope = path[path.length - 2].ref;
+      const value = path[path.length - 1].ref;
+      this.returnWithResult(id, value.apply(scope, params));
     } catch (err) {
-      this.reject(id, 'Can not call ' + expression);
+      this.returnWithError(id, `Can not call ${method} with params ${params}`);
     }
   }
 
@@ -57,24 +60,35 @@ export default class RemoteESSyncHandler {
    * Assign value to some variable
    */
   assign({ id, varExp, value }) {
-    // todo
-  }
-
-  resolveMemberExpression(exp, scope = global) {
-    let i = 0, ref = scope, current = '';
-    while (exp[i]) {
-      if (exp[i] === '.' || exp[i] === '[') {
-        ref = ref[current];
-        current = '';
-      } else if (exp[i] === ']' || exp[i] === ' ') {
-        // Skip
-      } if (exp[i] === '#') {
-        ref = scope;
-      } else {
-        current += exp[i];
-      }
-      i++;
+    try {
+      const path = resolveMemberExpressionPath(varExp);
+      const scope = path[path.length - 2].ref;
+      const { identifier } = path[path.length - 1];
+      this.returnWithResult(id, scope[identifier] = value);
+    } catch (err) {
+      this.returnWithError(id, `Can not assign ${varExp} with params ${value}`);
     }
-    return { scope: ref, value: ref[current] };
   }
+}
+
+function resolveMemberExpressionPath(exp, scope = global) {
+  let i = 0, ref = scope, current = '';
+  const path = [{ref, identifier: 'scope'}];
+  while (exp[i]) {
+    if (exp[i] === '.' || exp[i] === '[') {
+      ref = ref[current];
+      path.push({ ref, identifier: current });
+      current = '';
+    } else if (exp[i] === ']' || exp[i] === ' ') {
+      // Skip
+    } else if (exp[i] === '#') {
+      ref = scope;
+    } else {
+      current += exp[i];
+    }
+    i++;
+  }
+  ref = ref[current];
+  path.push({ ref, identifier: current });
+  return path;
 }

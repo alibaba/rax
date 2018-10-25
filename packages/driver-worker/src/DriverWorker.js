@@ -2,6 +2,7 @@ import { createDedicatedDriverWrokerScope } from './worker/DedicatedDriverWroker
 import DelegateCSSStyle from './worker/DelegateCSSStyle';
 import RemoteESSync from './worker/RemoteESSync';
 import Driver from './Driver';
+import global from './shared/global';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -28,7 +29,7 @@ export default class DriverWorker extends Driver {
 
     this.initMutationObserver(driverWorkerScope.document.defaultView.MutationObserver);
     this.styleDelegate = new DelegateCSSStyle(driverWorkerScope.document);
-    this.remoteESSync = new RemoteESSync(postMessage);
+    global.remoteESSync = this.remoteESSync = new RemoteESSync(postMessage);
 
     addEventListener('message', this.handleMessage);
   }
@@ -61,9 +62,9 @@ export default class DriverWorker extends Driver {
       case 'event':
         this.handleEvent(data.event);
         break;
-      default:
-        debugger
-        // this.remoteESSync.handleMessage();
+      case 'RemoteESSync':
+        this.remoteESSync.apply(data.data);
+        break;
     }
   };
 
