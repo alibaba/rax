@@ -219,7 +219,7 @@ export default class Slider extends PolymerElement {
   
         #value {
           margin-left: 12px;
-          mini-width: 28px;
+          min-width: 28px;
           font-size: 14px;
           text-align: center;
           color: #999;
