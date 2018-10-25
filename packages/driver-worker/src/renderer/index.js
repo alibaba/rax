@@ -1,11 +1,11 @@
 import MutationHandler from './MutationHandler';
 import LocationHandler from './LocationHandler';
-import OperatorHandler from './OperatorHandler';
+import OperationHandler from './OperationHandler';
 
 export default ({ worker }) => {
   const handlers = {
     MutationRecord: new MutationHandler(worker.postMessage),
-    OperatorRecord: new OperatorHandler(worker.postMessage),
+    OperationRecord: new OperationHandler(worker.postMessage),
 
     // Deprecated handler.
     Location: new LocationHandler(worker.postMessage),

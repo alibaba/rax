@@ -1,6 +1,6 @@
 import global from '../../shared/global';
 
-export default class OperatorHandler {
+export default class OperationHandler {
   constructor(sender) {
     this.sender = sender;
   }

@@ -8,7 +8,7 @@ export default class Operator {
 
   apply(data) {
     const { resolve, reject } = this.pendingPromiseMap[data.id];
-    if (data.type === 'result') {
+    if (data.type === 'success') {
       resolve(data.result);
     } else if (data.type === 'error') {
       reject(data.error);
@@ -16,9 +16,9 @@ export default class Operator {
   }
 
   send(data) {
-    this.sender && this.sender({
-      type: 'OperatorRecord',
-      data,
+    this.sender({
+      type: 'OperationRecord',
+      return: data,
     });
   }
 

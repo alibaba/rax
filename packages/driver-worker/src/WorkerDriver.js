@@ -1,5 +1,4 @@
-import { createDedicatedDriverWrokerScope } from './worker/DedicatedDriverWrokerScope';
-import DelegateCSSStyle from './worker/DelegateCSSStyle';
+import createWorkerGlobalScope from './worker/createWorkerGlobalScope';
 import Operator from './worker/Operator';
 import Driver from './Driver';
 
@@ -18,17 +17,16 @@ const TO_SANITIZE = [
 
 export default class WorkerDriver extends Driver {
   constructor({ postMessage, addEventListener }) {
-    const driverWorkerScope = createDedicatedDriverWrokerScope();
-    super(driverWorkerScope.document);
+    const workerGlobalScope = createWorkerGlobalScope();
+    super(workerGlobalScope.document);
 
-    this.global = driverWorkerScope;
+    this.global = workerGlobalScope;
     this.nodesMap = new Map();
     this.nodeCounter = 0;
     this.postMessage = postMessage;
 
-    this.initMutationObserver(driverWorkerScope.document.defaultView.MutationObserver);
-    this.styleDelegate = new DelegateCSSStyle(driverWorkerScope.document);
-    this.remoteESSync = new Operator(postMessage);
+    this.initMutationObserver(workerGlobalScope.document.defaultView.MutationObserver);
+    this.operator = new Operator(postMessage);
 
     addEventListener('message', this.handleMessage);
   }
@@ -61,8 +59,8 @@ export default class WorkerDriver extends Driver {
       case 'event':
         this.handleEvent(data.event);
         break;
-      case 'RemoteESSync':
-        this.remoteESSync.apply(data.data);
+      case 'return':
+        this.handleReturn(data.return);
         break;
     }
   };
@@ -134,6 +132,10 @@ export default class WorkerDriver extends Driver {
       event.target = target;
       target.dispatchEvent(event);
     }
+  }
+
+  hnaldeReturn(data) {
+    this.operator.apply(data);
   }
 
   /**

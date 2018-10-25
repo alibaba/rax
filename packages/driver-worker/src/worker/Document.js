@@ -52,7 +52,6 @@ export default class Document extends Element {
 
   getElementById(id) {
     // TODO
-    // return matchChildElement(this.body, element => element.id === id);
   }
 }
 
