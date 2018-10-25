@@ -9,7 +9,7 @@ export default class Operator {
   apply(data) {
     const { resolve, reject } = this.pendingPromiseMap[data.id];
     if (data.type === 'success') {
-      resolve(data.result);
+      resolve(data.success);
     } else if (data.type === 'error') {
       reject(data.error);
     }

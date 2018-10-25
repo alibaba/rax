@@ -10,11 +10,11 @@ export default class OperationHandler {
     this[type](data);
   }
 
-  returnWithResult(id, result) {
-    this.send({ type: 'result', id, result });
+  returnSuccess(id, success) {
+    this.send({ type: 'success', id, success });
   }
 
-  returnWithError(id, error) {
+  returnError(id, error) {
     this.send({ type: 'error', id, error });
   }
 
@@ -34,9 +34,9 @@ export default class OperationHandler {
     try {
       const path = resolveMemberExpressionPath(varExp);
       const value = path[path.length - 1].ref;
-      this.returnWithResult(id, value);
+      this.returnSuccess(id, value);
     } catch (err) {
-      this.returnWithError(id, 'Can not get value of ' + varExp);
+      this.returnError(id, 'Can not get value of ' + varExp);
     }
   }
 
@@ -48,9 +48,9 @@ export default class OperationHandler {
       const path = resolveMemberExpressionPath(varExp);
       const scope = path[path.length - 2].ref;
       const { identifier } = path[path.length - 1];
-      this.returnWithResult(id, scope[identifier] = value);
+      this.returnSuccess(id, scope[identifier] = value);
     } catch (err) {
-      this.returnWithError(id, `Can not assign ${varExp} with params ${value}`);
+      this.returnError(id, `Can not assign ${varExp} with params ${value}`);
     }
   }
 
@@ -63,9 +63,9 @@ export default class OperationHandler {
       const scope = path[path.length - 2].ref;
       const { identifier } = path[path.length - 1];
       delete scope[identifier];
-      this.returnWithResult(id, true);
+      this.returnSuccess(id, true);
     } catch (err) {
-      this.returnWithError(id, `Can not delete ${varExp}.`);
+      this.returnError(id, `Can not delete ${varExp}.`);
     }
   }
 
@@ -79,9 +79,9 @@ export default class OperationHandler {
       const path = resolveMemberExpressionPath(method);
       const scope = path[path.length - 2].ref;
       const value = path[path.length - 1].ref;
-      this.returnWithResult(id, value.apply(scope, params));
+      this.returnSuccess(id, value.apply(scope, params));
     } catch (err) {
-      this.returnWithError(id, `Can not call ${method} with params ${params}`);
+      this.returnError(id, `Can not call ${method} with params ${params}`);
     }
   }
 }
