@@ -1,7 +1,6 @@
 <dom-module id="a-switch">
   <template>
     <style>
-      /* shadow DOM styles go here */
       .switch {
         position: relative;
         display: inline-block;
@@ -36,28 +35,22 @@
       }
 
       .slider-checked:before {
-        transform: translateX(23px);
         -webkit-transform: translateX(23px);
+        transform: translateX(23px);
       }
     </style>
-    <!-- shadow DOM goes here -->
     <label class="switch" id="switch">
-      <span class="slider" id="slider" style$="{{switchStyle}}"></span>
+      <span class="slider" id="slider" style$="{{_switchStyle}}"></span>
     </label>
   </template>
 </dom-module>
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
 
 export default class SwitchElement extends PolymerElement {
   static get is() {
     return 'a-switch';
-  }
-
-  constructor() {
-    super();
   }
 
   static get properties() {
@@ -68,14 +61,19 @@ export default class SwitchElement extends PolymerElement {
         reflectToAttribute: true
       },
       checked: {
-        type: String,
-        value: 'false',
+        type: Boolean,
+        value: false,
         reflectToAttribute: true,
-        observer: 'observerChecked'
+        observer: '_observerChecked'
       },
-      switchStyle: {
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+      _switchStyle: {
         type: String,
-        computed: 'computedSwitchStyle(checked, color)'
+        computed: '_computedSwitchStyle(checked, color)'
       }
     };
   }
@@ -84,33 +82,35 @@ export default class SwitchElement extends PolymerElement {
     super.ready();
     // Save the _initialValue for form reset
     this._initialValue = this.checked;
-    this.checkbox = this.$.input;
-    this.translateSliderBlock();
+    this._translateSliderBlock();
   }
 
   connectedCallback() {
-    this.addEventListener('click', this.handleClick);
+
+    super.connectedCallback();
+
+    this.addEventListener('click', this._handleClick);
     window.addEventListener('_formReset', this._handleReset, true);
   }
 
   disconnectedCallback() {
-    this.removeEventListener('click', this.handleClick);
+    super.disconnectedCallback();
+
+    this.removeEventListener('click', this._handleClick);
     window.removeEventListener('_formReset', this._handleReset, true);
   }
 
-  get isChecked() {
-    return this.checked !== 'false' && this.checked !== null;
-  }
-
-  handleClick = () => {
-    this.checked = String(!this.isChecked);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: {
-          checked: this.isChecked
-        }
-      })
-    );
+  _handleClick = () => {
+    if (!this.disabled) {
+      this.checked = !this.checked;
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {
+            checked: this.checked
+          }
+        })
+      );
+    }
   }
 
   _handleReset = (event) => {
@@ -126,22 +126,20 @@ export default class SwitchElement extends PolymerElement {
   };
 
 
-  translateSliderBlock() {
-    if (this.isChecked) {
+  _translateSliderBlock() {
+    if (this.checked) {
       this.$.slider.classList.add('slider-checked');
     } else {
       this.$.slider.classList.remove('slider-checked');
     }
   }
 
-  computedSwitchStyle(checked, color) {
-    return this.isChecked
-      ? `background-color: ${color};`
-      : '';
+  _computedSwitchStyle(checked, color) {
+    return checked ? `background-color: ${color};` : '';
   }
 
-  observerChecked(newVal, oldVal) {
-    this.translateSliderBlock();
+  _observerChecked(newVal, oldVal) {
+    this._translateSliderBlock();
   }
 }
 

@@ -40,7 +40,7 @@ export default class Form extends PolymerElement {
           value[name] = arr.map(checkbox => checkbox.value);
           break;
         case 'a-switch':
-          value[name] = node.isChecked;
+          value[name] = node.checked;
           break;
         case 'a-radio-group':
           const checkedRadio = node.querySelector('[checked]');
