@@ -21,6 +21,7 @@ export default class Driver {
   }
 
   getDeviceWidth() {
+    const { document } = this;
     return this.deviceWidth || document.documentElement.clientWidth;
   }
 

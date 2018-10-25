@@ -10,59 +10,53 @@ export default class RemoteESSyncHandler {
     this[type](data);
   }
 
-  resolve(processId, result) {
-    this.sender({ processId, result });
+  returnWithResult(id, result) {
+    this.send({ type: 'result', id, result });
   }
 
-  reject(processId, errorMessage) {
-    this.sender({ processId, error: errorMessage });
+  returnWithError(id, error) {
+    this.send({ type: 'result', id, error });
+  }
+
+  send(data) {
+    this.sender && this.sender({
+      type: 'RemoteESSync',
+      data,
+    });
   }
 
   /**
    * Query a global variable's val
-   * payload: { key: 'location.href[0]' }
+   * payload: { varExp: 'location.href[0]' }
    * returns: value
    */
-  query({ key, processId }) {
+  query({ id, varExp }) {
     try {
-      const { value } = this.resolveMemberExpression(method);
-      this.resolve(processId, value);
+      const { value } = this.resolveMemberExpression(varExp);
+      this.returnWithResult(id, value);
     } catch (err) {
-      this.reject(processId, 'Can not read value of ' + key);
+      this.returnWithError(id, 'Can not get value of ' + key);
     }
   }
 
   /**
    * Call a method
-   * payload: { method: 'location.replace', args: ['/foo.html'] }
+   * payload: { method: 'location.replace', params: ['/foo.html'] }
    * returns: executed result
    */
-  call({ processId, method, args }) {
+  method({ id, method, params }) {
     try {
       const { scope, value } = this.resolveMemberExpression(method);
-      this.resolve(processId, value.apply(scope, args));
+      this.resolve(id, value.apply(scope, params));
     } catch (err) {
-      this.reject(processId, 'Can not call ' + expression);
+      this.reject(id, 'Can not call ' + expression);
     }
   }
 
-  assign({ processid, key, value }) {
-    // todo
-  }
-
   /**
-   * Execute a procedure
-   * payload: {
-   *   procedures: [
-   *     { type: 'call', method: 'document.createElement', args: ['div'], as: '#container' },
-   *     { type: 'call', method: 'document.createElement', args: ['span'], as: '#child' },
-   *     { type: 'assign', key: '#child.innerHTML', value: 'hello world' },
-   *     { type: 'call', '#container.appendChild', args: ['#child'] },
-   *   ]
-   * }
-   * returns: executed result
+   * Assign value to some variable
    */
-  procedure({ processId, }) {
+  assign({ id, varExp, value }) {
     // todo
   }
 
