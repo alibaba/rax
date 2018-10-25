@@ -65,7 +65,7 @@ export default class OperatorHandler {
       delete scope[identifier];
       this.returnWithResult(id, true);
     } catch (err) {
-      this.returnWithError(id, `Can not delete ${varExp} with params ${value}`);
+      this.returnWithError(id, `Can not delete ${varExp}.`);
     }
   }
 
