@@ -36,7 +36,7 @@ export default class RemoteESSyncHandler {
       const value = path[path.length - 1].ref;
       this.returnWithResult(id, value);
     } catch (err) {
-      this.returnWithError(id, 'Can not get value of ' + key);
+      this.returnWithError(id, 'Can not get value of ' + varExp);
     }
   }
 
