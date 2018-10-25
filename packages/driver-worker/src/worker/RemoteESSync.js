@@ -57,5 +57,4 @@ export default class RemoteESSync {
   generateId() {
     return this._procedureCount++;
   }
-
 }
