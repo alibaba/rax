@@ -40,7 +40,6 @@ export default class PickerViewColumn extends PolymerElement {
     Gestures.addListener(this, 'track', this.handleTrack);
 
     requestAnimationFrame(() => {
-    
       const pickerViewHeigth = this.$.mask.offsetHeight;
       const offset = (pickerViewHeigth - ITEM_HEIGHT) / 2;
       this._setTranslateY(offset);
@@ -72,7 +71,6 @@ export default class PickerViewColumn extends PolymerElement {
   }
 
   handleTrack = (evt) => {
-
     evt.preventDefault();
     evt.stopPropagation();
 
@@ -82,7 +80,7 @@ export default class PickerViewColumn extends PolymerElement {
     const halfItemHeight = ITEM_HEIGHT / 2;
     let offset = this._lastOffset + detail.dy;
 
-    if (offset >= (this._initOffset + halfItemHeight)) {
+    if (offset >= this._initOffset + halfItemHeight) {
       // -1 for not overflow half height then bounce the scroll animation
       offset = this._initOffset + halfItemHeight - 1;
     } else if (offset <= this._initOffset - maxOffset - halfItemHeight) {
@@ -117,7 +115,6 @@ export default class PickerViewColumn extends PolymerElement {
   }
 
   _updateSelectedItem() {
-
     let selectedIndex = (this._initOffset - this._lastOffset) / ITEM_HEIGHT;
 
     if (this.selectedIndex !== selectedIndex) {
