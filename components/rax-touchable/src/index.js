@@ -30,6 +30,6 @@ export default class Touchable extends PureComponent {
 const styles = {
   container: isWeb ? {
     cursor: 'pointer',
-    '-webkit-tap-highlight-color': 'transparent',
+    webkitTapHighlightColor: 'transparent',
   } : {}
 };
