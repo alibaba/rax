@@ -13,10 +13,10 @@ const TO_SANITIZE = [
   'addedNodes',
   'removedNodes',
   'nextSibling',
-  'previousSibling'
+  'previousSibling',
 ];
 
-export default class DriverWorker extends Driver {
+export default class WorkerDriver extends Driver {
   constructor({ postMessage, addEventListener }) {
     const driverWorkerScope = createDedicatedDriverWrokerScope();
     super(driverWorkerScope.document);

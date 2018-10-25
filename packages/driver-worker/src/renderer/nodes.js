@@ -1,26 +1,20 @@
 import setStyle from './setStyle';
-import { nodeMap } from './NodeMap';
+import { sharedNodeMap } from './NodeMap';
 import { addEvent } from './events';
+import { isW3CTag } from '../shared/W3CTags';
+import { isCustomTags } from '../shared/CustomTags';
 
-const W3CTag = {
-  style: true,
-};
-const ATag = {
-  view: true,
-  text: true,
-  // ...todo...
-};
-const ATAG_PREFIX = 'a-';
+const CUSTOM_TAG_PREFIX = 'a-';
 
 /**
  * Only nodeName that in whitelist can be created.
  */
 function getValidTagName(nodeName) {
   const lowerCased = String(nodeName).toLowerCase();
-  if (W3CTag[lowerCased]) {
+  if (isW3CTag(lowerCased)) {
     return lowerCased;
-  } else if (ATAG_PREFIX) {
-    return ATAG_PREFIX + nodeName;
+  } else if (isCustomTags(lowerCased)) {
+    return CUSTOM_TAG_PREFIX + nodeName;
   } else {
     return null;
   }
@@ -68,6 +62,6 @@ export function createNode(vnode) {
     node = document.createComment(vnode.data);
   }
 
-  nodeMap.set(vnode, node);
+  sharedNodeMap.set(vnode, node);
   return node;
 }

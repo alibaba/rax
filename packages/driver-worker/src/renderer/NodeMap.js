@@ -16,4 +16,4 @@ export default class NodeMap extends Map {
   }
 }
 
-export const nodeMap = new NodeMap();
+export const sharedNodeMap = new NodeMap();

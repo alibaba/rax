@@ -1,5 +1,5 @@
 import setStyle from './setStyle';
-import { nodeMap } from './NodeMap';
+import { sharedNodeMap } from './NodeMap';
 import { createNode } from './nodes';
 import { addEvent, removeEvent } from './events';
 
@@ -28,11 +28,11 @@ export default class MutationHandler {
       document.body.$$id = vnode.$$id;
     }
 
-    let parent = nodeMap.get(vnode);
+    let parent = sharedNodeMap.get(vnode);
     if (removedNodes) {
       for (let i = removedNodes.length; i--;) {
-        let node = nodeMap.get(removedNodes[i]);
-        nodeMap.delete(node);
+        let node = sharedNodeMap.get(removedNodes[i]);
+        sharedNodeMap.delete(node);
         if (parent && node) {
           parent.removeChild(node);
         }
@@ -41,20 +41,20 @@ export default class MutationHandler {
 
     if (addedNodes) {
       for (let i = 0; i < addedNodes.length; i++) {
-        let newNode = nodeMap.get(addedNodes[i]);
+        let newNode = sharedNodeMap.get(addedNodes[i]);
         if (!newNode) {
           newNode = createNode(addedNodes[i]);
         }
 
         if (parent) {
-          parent.insertBefore(newNode, nextSibling && nodeMap.get(nextSibling) || null);
+          parent.insertBefore(newNode, nextSibling && sharedNodeMap.get(nextSibling) || null);
         }
       }
     }
   }
 
   attributes({ target, attributeName, newValue, style }) {
-    let node = nodeMap.get(target);
+    let node = sharedNodeMap.get(target);
     // Node maybe null when node is removed and there is a setInterval change the node that will cause error
     if (!node) return;
 
@@ -71,26 +71,26 @@ export default class MutationHandler {
   }
 
   characterData({ target, newValue }) {
-    let node = nodeMap.get(target);
+    let node = sharedNodeMap.get(target);
     node[TEXT_CONTENT_ATTR] = newValue;
   }
 
   addEvent({ target, eventName }) {
-    let node = nodeMap.get(target);
+    let node = sharedNodeMap.get(target);
     if (!node) return;
 
     addEvent(node, eventName);
   }
 
   removeEvent({ target, eventName }) {
-    let node = nodeMap.get(target);
+    let node = sharedNodeMap.get(target);
     if (!node) return;
 
     removeEvent(node, eventName);
   }
 
   canvasRenderingContext2D({ target, method, args, properties }) {
-    let canvas = nodeMap.get(target);
+    let canvas = sharedNodeMap.get(target);
     if (!canvas) return;
 
     let context = canvas.getContext('2d');
