@@ -1,4 +1,4 @@
-# sfc2mp 
+# sfc2mp
 
 > `sfc2mp` 是一个使用 SFC 语法开发小程序的辅助工具。
 
@@ -10,37 +10,52 @@
 $ npm install sfc2mp -g
 ```
 
+## 命令行说明
+
+- `sfc2mp build` 将项目转换到目标小程序
+- `sfc2mp watch` 实时监听文件变动，用于实时开发调试使用
+
+参数说明
+
+- `--target <target>` 设置目标转换类型 ali/wx (default: ali)
+- `--output <output>` 设置转换后的文件夹名 (default: dist)
+
+示例
+
+```bash
+sfc2mp build --output=weixin-dist --target=wx # 转成微信可运行的小程序
+```
+
+```bash
+sfc2mp build # 转成支付宝可运行的小程序
+```
+
 ## 快速开始
 
 ### 1. 初始化 SFC 项目
 
 使用 [Taobao-Editor](https://developers.taobao.net/ide) 初始化一个轻应用项目。
 
-**或者**下载[示例工程](https://gw.alicdn.com/bao/uploaded/TB1PYDTcxtnkeRjSZSgXXXAuXXa.zip)并解压到一个独立的文件夹中，或者使用下面的命令
+**或者**下载[示例工程](https://gw.alicdn.com/bao/uploaded/TB10t8AkHrpK1RjSZTEXXcWAVXa.zip)并解压到一个独立的文件夹中，或者使用下面的命令
 
 ```bash
-$ wget https://gw.alicdn.com/bao/uploaded/TB1PYDTcxtnkeRjSZSgXXXAuXXa.zip -O sfc-example.zip
+$ wget https://gw.alicdn.com/bao/uploaded/TB10t8AkHrpK1RjSZTEXXcWAVXa.zip -O sfc-example.zip
 $ unzip sfc-example.zip
 ```
 
-### 2. 安装 sfc2mp
-```bash
-$ npm install sfc2mp -g
-```
-
-### 3. 运行 sfc2mp
+### 2. 运行 sfc2mp
 
 打开终端并切换到项目目录，执行以下命令
 
 ```bash
-$ sfc2mp
+$ sfc2mp build
 ```
 
-看到 `Compile Succeed` 字样后说明已经成功运行 
+看到 `Compile completed.` 字样后说明已经成功运行
 
 ![](https://gw.alicdn.com/tfs/TB1ejKsIHSYBuNjSspiXXXNzpXa-1546-1278.png)
 
-### 4. 小程序预览
+### 3. 小程序预览
 
 使用[蚂蚁小程序开发者工具](https://docs.alipay.com/mini/ide/download)打开当前目录下的 dist 目录
 
@@ -71,7 +86,7 @@ $ sfc2mp
 
 ### app 级生命周期
 
-在应用级监听生命周期的使用方式为，在 app.js 中加入以下代码 
+在应用级监听生命周期的使用方式为，在 app.js 中加入以下代码
 
 ```js
 import app from '@core/app';
