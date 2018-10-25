@@ -3,7 +3,9 @@ import { createDocument } from './Document';
 // Navigator
 //
 
-export default {
-  document: createDocument(),
-  // location: createLocation(),
-};
+export function createDedicatedDriverWrokerScope() {
+  return {
+    document: createDocument(),
+    // location: createLocation(),
+  };
+}

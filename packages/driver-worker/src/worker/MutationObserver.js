@@ -4,7 +4,7 @@ import setImmediate from '../shared/setImmediate';
 let observers = [];
 let pendingMutations = false;
 
-export function mutation(target, type, record) {
+export function mutate(target, type, record) {
   record.target = target;
   record.type = type;
 

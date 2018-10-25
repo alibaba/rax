@@ -1,5 +1,5 @@
 import EventTarget from './EventTarget';
-import { mutation } from './MutationObserver';
+import { mutate } from './MutationObserver';
 import findWhere from '../shared/findWhere';
 import splice from '../shared/splice';
 
@@ -34,10 +34,10 @@ export default class Node extends EventTarget {
 
     if (ref) {
       splice(this.childNodes, ref, child);
-      mutation(this, 'childList', { addedNodes: [child], nextSibling: ref });
+      mutate(this, 'childList', { addedNodes: [child], nextSibling: ref });
     } else {
       this.childNodes.push(child);
-      mutation(this, 'childList', { addedNodes: [child] });
+      mutate(this, 'childList', { addedNodes: [child] });
     }
 
     return child;
@@ -51,7 +51,7 @@ export default class Node extends EventTarget {
   }
   removeChild(child) {
     splice(this.childNodes, child);
-    mutation(this, 'childList', { removedNodes: [child] });
+    mutate(this, 'childList', { removedNodes: [child] });
     return child;
   }
   remove() {

@@ -27,7 +27,7 @@ export default class RemoteESSyncHandler {
     try {
       const { value } = this.resolveMemberExpression(method);
       this.resolve(processId, value);
-    } catch(err) {
+    } catch (err) {
       this.reject(processId, 'Can not read value of ' + key);
     }
   }
@@ -41,7 +41,7 @@ export default class RemoteESSyncHandler {
     try {
       const { scope, value } = this.resolveMemberExpression(method);
       this.resolve(processId, value.apply(scope, args));
-    } catch(err) {
+    } catch (err) {
       this.reject(processId, 'Can not call ' + expression);
     }
   }

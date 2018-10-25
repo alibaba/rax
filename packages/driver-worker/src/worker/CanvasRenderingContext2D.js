@@ -1,4 +1,4 @@
-import { mutation } from './MutationObserver';
+import { mutate } from './MutationObserver';
 
 const CanvasContext2DMethods = [
   'arc',
@@ -111,7 +111,7 @@ export default class CanvasRenderingContext2D {
 
     CanvasContext2DMethods.forEach(method => {
       this[method] = (...args) => {
-        mutation(vnode, 'canvasRenderingContext2D', {
+        mutate(vnode, 'canvasRenderingContext2D', {
           method: method,
           args: args,
           properties: Object.assign({}, propertyValues)

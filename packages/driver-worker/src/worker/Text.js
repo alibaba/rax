@@ -1,6 +1,6 @@
 import Node from './Node';
 import { TEXT_NODE } from './NodeTypes';
-import { mutation } from './MutationObserver';
+import { mutate } from './MutationObserver';
 
 export default class Text extends Node {
   constructor(text) {
@@ -8,7 +8,7 @@ export default class Text extends Node {
     this.data = text;
   }
   set textContent(text) {
-    mutation(this, 'characterData', { newValue: text });
+    mutate(this, 'characterData', { newValue: text });
     this.data = text;
   }
   get textContent() {

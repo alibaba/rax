@@ -1,7 +1,7 @@
 import Node from './Node';
 import { ELEMENT_NODE } from './NodeTypes';
 import { dispatchAnimationToStyle } from './Animation';
-import { mutation } from './MutationObserver';
+import { mutate } from './MutationObserver';
 import camelCase from '../shared/camelCase';
 import toLower from '../shared/toLower';
 import findWhere from '../shared/findWhere';
@@ -94,7 +94,7 @@ export default class Element extends Node {
 
   set style(styleObject) {
     this._style = styleObject;
-    mutation(this, 'attributes', { style: styleObject });
+    mutate(this, 'attributes', { style: styleObject });
   }
 
   setAttribute(key, value) {
@@ -123,7 +123,7 @@ export default class Element extends Node {
     } else {
       attr.value = String(value);
     }
-    mutation(this, 'attributes', { attributeName: name, newValue: value });
+    mutate(this, 'attributes', { attributeName: name, newValue: value });
   }
 
   getAttributeNS(ns, name) {
@@ -133,6 +133,6 @@ export default class Element extends Node {
 
   removeAttributeNS(ns, name) {
     splice(this.attributes, createAttributeFilter(ns, name));
-    mutation(this, 'attributes', { attributeName: name });
+    mutate(this, 'attributes', { attributeName: name });
   }
 }

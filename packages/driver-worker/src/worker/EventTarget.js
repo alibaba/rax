@@ -1,21 +1,25 @@
-import { mutation } from './MutationObserver';
+import { mutate } from './MutationObserver';
 import toLower from '../shared/toLower';
 import splice from '../shared/splice';
 
 export default class EventTarget {
   _eventListeners = {};
 
+  _getEvents() {
+    return Object.keys(this._eventListeners);
+  }
+
   addEventListener(type, handler) {
     (
       this._eventListeners[toLower(type)] ||
       (this._eventListeners[toLower(type)] = [])
     ).push(handler);
-    mutation(this, 'addEvent', { eventName: type });
+    mutate(this, 'addEvent', { eventName: type });
   }
 
   removeEventListener(type, handler) {
     splice(this._eventListeners[toLower(type)], handler, 0, true);
-    mutation(this, 'removeEvent', { eventName: type });
+    mutate(this, 'removeEvent', { eventName: type });
   }
 
   dispatchEvent(event) {
