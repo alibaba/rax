@@ -1,6 +1,6 @@
 import global from '../../shared/global';
 
-export default class RemoteESSyncHandler {
+export default class OperatorHandler {
   constructor(sender) {
     this.sender = sender;
   }
@@ -15,22 +15,22 @@ export default class RemoteESSyncHandler {
   }
 
   returnWithError(id, error) {
-    this.send({ type: 'result', id, error });
+    this.send({ type: 'error', id, error });
   }
 
   send(data) {
     this.sender && this.sender({
-      type: 'RemoteESSync',
+      type: 'return',
       data,
     });
   }
 
   /**
-   * Query a global variable's val
+   * Get a global variable's val.
    * payload: { varExp: 'location.href[0]' }
    * returns: value
    */
-  query({ id, varExp }) {
+  get({ id, varExp }) {
     try {
       const path = resolveMemberExpressionPath(varExp);
       const value = path[path.length - 1].ref;
@@ -41,25 +41,9 @@ export default class RemoteESSyncHandler {
   }
 
   /**
-   * Call a method
-   * payload: { method: 'location.replace', params: ['/foo.html'] }
-   * returns: executed result
+   * Assign value to some variable.
    */
-  method({ id, method, params }) {
-    try {
-      const path = resolveMemberExpressionPath(method);
-      const scope = path[path.length - 2].ref;
-      const value = path[path.length - 1].ref;
-      this.returnWithResult(id, value.apply(scope, params));
-    } catch (err) {
-      this.returnWithError(id, `Can not call ${method} with params ${params}`);
-    }
-  }
-
-  /**
-   * Assign value to some variable
-   */
-  assign({ id, varExp, value }) {
+  set({ id, varExp, value }) {
     try {
       const path = resolveMemberExpressionPath(varExp);
       const scope = path[path.length - 2].ref;
@@ -67,6 +51,37 @@ export default class RemoteESSyncHandler {
       this.returnWithResult(id, scope[identifier] = value);
     } catch (err) {
       this.returnWithError(id, `Can not assign ${varExp} with params ${value}`);
+    }
+  }
+
+  /**
+   * Delete value.
+   */
+  delete({ id, varExp }) {
+    try {
+      const path = resolveMemberExpressionPath(varExp);
+      const scope = path[path.length - 2].ref;
+      const { identifier } = path[path.length - 1];
+      delete scope[identifier];
+      this.returnWithResult(id, true);
+    } catch (err) {
+      this.returnWithError(id, `Can not delete ${varExp} with params ${value}`);
+    }
+  }
+
+  /**
+   * Call a method.
+   * payload: { method: 'location.replace', params: ['/foo.html'] }
+   * returns: executed result
+   */
+  call({ id, method, params }) {
+    try {
+      const path = resolveMemberExpressionPath(method);
+      const scope = path[path.length - 2].ref;
+      const value = path[path.length - 1].ref;
+      this.returnWithResult(id, value.apply(scope, params));
+    } catch (err) {
+      this.returnWithError(id, `Can not call ${method} with params ${params}`);
     }
   }
 }

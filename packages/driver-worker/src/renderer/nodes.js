@@ -1,4 +1,4 @@
-import setStyle from './setStyle';
+import setStyle from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { addEvent } from './events';
 import { isW3CTag } from '../shared/W3CTags';

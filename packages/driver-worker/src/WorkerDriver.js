@@ -1,6 +1,6 @@
 import { createDedicatedDriverWrokerScope } from './worker/DedicatedDriverWrokerScope';
 import DelegateCSSStyle from './worker/DelegateCSSStyle';
-import RemoteESSync from './worker/RemoteESSync';
+import Operator from './worker/Operator';
 import Driver from './Driver';
 
 const ELEMENT_NODE = 1;
@@ -28,7 +28,7 @@ export default class WorkerDriver extends Driver {
 
     this.initMutationObserver(driverWorkerScope.document.defaultView.MutationObserver);
     this.styleDelegate = new DelegateCSSStyle(driverWorkerScope.document);
-    this.remoteESSync = new RemoteESSync(postMessage);
+    this.remoteESSync = new Operator(postMessage);
 
     addEventListener('message', this.handleMessage);
   }

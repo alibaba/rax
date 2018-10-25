@@ -1,4 +1,4 @@
-export default class RemoteESSync {
+export default class Operator {
   pendingPromiseMap = {};
   _procedureCount = 0;
 
@@ -8,16 +8,16 @@ export default class RemoteESSync {
 
   apply(data) {
     const { resolve, reject } = this.pendingPromiseMap[data.id];
-    if (data.error) {
-      reject(data.error);
-    } else {
+    if (data.type === 'result') {
       resolve(data.result);
+    } else if (data.type === 'error') {
+      reject(data.error);
     }
   }
 
   send(data) {
     this.sender && this.sender({
-      type: 'RemoteESSync',
+      type: 'OperatorRecord',
       data,
     });
   }
@@ -25,22 +25,29 @@ export default class RemoteESSync {
   /**
    * Query a variable's value.
    */
-  query(varExp) {
-    return this._invoke('query', { varExp });
-  }
-
-  /**
-   * Call a specfic method with params.
-   */
-  method(method, params) {
-    return this._invoke('method', { method, params });
+  get(varExp) {
+    return this._invoke('get', { varExp });
   }
 
   /**
    * Assign value to an variable.
    */
-  assign(varExp, value) {
-    return this._invoke('assign', { varExp, value });
+  set(varExp, value) {
+    return this._invoke('set', { varExp, value });
+  }
+
+  /**
+   * Delete an variable.
+   */
+  delete(varExp, value) {
+    return this._invoke('delete', { varExp, value });
+  }
+
+  /**
+   * Call a specfic method with params.
+   */
+  call(method, params) {
+    return this._invoke('call', { method, params });
   }
 
   _invoke(type, data) {

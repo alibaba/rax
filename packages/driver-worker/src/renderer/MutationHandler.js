@@ -1,7 +1,7 @@
-import setStyle from './setStyle';
+import setStyle from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { createNode } from './nodes';
-import { addEvent, removeEvent } from './events';
+import { setEventSender, addEvent, removeEvent } from './events';
 
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
@@ -12,6 +12,10 @@ const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
  * And "childList" if it was a mutation to the tree of nodes.
  */
 export default class MutationHandler {
+  constructor(sender) {
+    setEventSender(sender);
+  }
+
   apply(data) {
     let mutations = data.mutations;
     for (let i = 0; i < mutations.length; i++) {

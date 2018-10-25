@@ -1,15 +1,14 @@
-import { setEventSender } from './events';
 import MutationHandler from './MutationHandler';
 import LocationHandler from './LocationHandler';
-import RemoteESSyncHandler from './RemoteESSyncHandler';
+import OperatorHandler from './OperatorHandler';
 
 export default ({ worker }) => {
-  setEventSender(worker.postMessage);
-
   const handlers = {
-    MutationRecord: new MutationHandler(),
-    Location: new LocationHandler(),
-    RemoteESSync: new RemoteESSyncHandler(worker.postMessage),
+    MutationRecord: new MutationHandler(worker.postMessage),
+    OperatorRecord: new OperatorHandler(worker.postMessage),
+
+    // Deprecated handler.
+    Location: new LocationHandler(worker.postMessage),
   };
 
   worker.onmessage = ({ data }) => {
@@ -17,7 +16,7 @@ export default ({ worker }) => {
     if (handlers[type]) {
       handlers[type].apply(data);
     } else {
-      console.error('[DriverWorker] Can not handle with ' + type, data);
+      console.error('Can not handle with ' + type, data);
     }
   };
 
