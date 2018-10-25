@@ -27,7 +27,6 @@ export default class PickerView extends PolymerElement {
 
   ready() {
     super.ready();
-
     this._initialValue = this.value;
   }
 

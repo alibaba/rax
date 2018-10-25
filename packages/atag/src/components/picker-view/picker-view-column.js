@@ -74,7 +74,6 @@ export default class PickerViewColumn extends PolymerElement {
   handleTrack = (evt) => {
 
     evt.preventDefault();
-    evt.stopPropagation();
 
     const detail = evt.detail;
     const itemCount = this.children.length;

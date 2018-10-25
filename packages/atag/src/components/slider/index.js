@@ -62,7 +62,7 @@ export default class Slider extends PolymerElement {
       },
       _handleStyle: {
         type: String,
-        computed: '_computeHandleStyle(handleSize, handleColor)',
+        computed: '_computeHandleStyle(value, min, max, handleSize, handleColor)',
       },
       _sliderStyle: {
         type: String,
@@ -86,25 +86,30 @@ export default class Slider extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
-    Gestures.addListener(this.$.handle, 'track', this._handleTrack);
+    Gestures.addListener(this.$.handle, 'track', this._handleTrack, true);
     window.addEventListener('_formReset', this.handleReset, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
-    Gestures.removeListener(this.$.handle, 'track', this._handleTrack);
+    Gestures.removeListener(this.$.handle, 'track', this._handleTrack, true);
     window.removeEventListener('_formReset', this.handleReset, true);
   }
 
-  _computeActiveStyle(value, min, max, activeColor) {
+  _getCurrentPrecent(value, min, max) {
     let ratio = (value - min) / (max - min);
-    let percent = Math.max(Math.min(ratio, 1), 0) * 100;
+    return Math.max(Math.min(ratio, 1), 0) * 100;
+  }
+
+  _computeActiveStyle(value, min, max, activeColor) {
+    let percent = this._getCurrentPrecent(value, min, max);
     return `width: ${percent}%; background-color: ${activeColor};`;
   }
 
-  _computeHandleStyle(handleSize, handleColor) {
-    return `width: ${handleSize}px; height: ${handleSize}px; background-color: ${handleColor}`;
+  _computeHandleStyle(value, min, max, handleSize, handleColor) {
+    let percent = this._getCurrentPrecent(value, min, max);
+    return `left: ${percent}%; width: ${handleSize}px; height: ${handleSize}px; background-color: ${handleColor}`;
   }
 
   _computeValueStyle(showValue) {
@@ -119,8 +124,11 @@ export default class Slider extends PolymerElement {
     return Math.min(Math.max(value, this.min), this.max);
   }
 
-  _handleTrack = ({ detail }) => {
+  _handleTrack = (event) => {
+    const detail = event.detail;
     if (this.disabled) return;
+
+    event.stopPropagation();
 
     let getNewValue = (dx) => {
       let sliderWidth = this.$.slider.offsetWidth;
@@ -133,8 +141,8 @@ export default class Slider extends PolymerElement {
       this._lastValue = this.value;
     } else if (detail.state === 'track') {
       let currentValue = getNewValue(detail.dx);
-      let activeStyle = this._computeActiveStyle(currentValue, this.min, this.max, this.activeColor);
-      this.$.active.setAttribute('style', activeStyle);
+      var precent = this._getCurrentPrecent(currentValue, this.min, this.max);
+      this.$.handle.style.left = this.$.active.style.width = `${precent}%`;
       this.$.value.childNodes[0].textContent = currentValue;
       this.dispatchEvent(this._createEvent('changing'), currentValue);
     } else if (detail.state === 'end') {
@@ -175,6 +183,7 @@ export default class Slider extends PolymerElement {
           flex-flow: row nowrap;
           -webkit-align-items: center;
           align-items: center;
+          margin: 8px;
         }
   
         #slider {
@@ -187,9 +196,9 @@ export default class Slider extends PolymerElement {
           -webkit-align-items: center;
           align-items: center;
           height: 4px;
-          margin: 7.5px 10px;
           border-radius: 2px;
           background-color: #ccc;
+          position: relative;
         }
 
         #active {
@@ -201,19 +210,21 @@ export default class Slider extends PolymerElement {
         }
 
         #handle {
-          flex: none;
-          -webkit-flex: none;
-          margin: 0 -9px 0 -9px;
+          position: absolute;
           border-radius: 50%;
           box-shadow: 0 0 4px 0 rgba(0, 0, 0, .15);
+          -webkit-transform: translate3d(-50%, 0, 0);
+          transform: translate3d(-50%, 0, 0);
         }
   
         #value {
+          margin-left: 12px;
+          mini-width: 28px;
           font-size: 14px;
+          text-align: center;
           color: #999;
           -webkit-flex: none;
           flex: none;
-          margin-left: 5px;
           -webkit-user-select: none;
           user-select: none;
         }
