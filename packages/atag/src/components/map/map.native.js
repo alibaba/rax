@@ -300,7 +300,7 @@ export default class NativeMap extends PolymerElement {
         'WVEmbedView_' + this.uniqueId,
         method,
         params,
-        successCallback,regionchane
+        successCallback,
         errorCallback
       );
     };
