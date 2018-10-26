@@ -1,14 +1,16 @@
 import MutationHandler from './MutationHandler';
+import EvaluationHandler from './EvaluationHandler';
 import LocationHandler from './LocationHandler';
-import OperationHandler from './OperationHandler';
 
 export default ({ worker }) => {
+  const postMessage = worker.postMessage;
+
   const handlers = {
-    MutationRecord: new MutationHandler(worker.postMessage),
-    OperationRecord: new OperationHandler(worker.postMessage),
+    MutationRecord: new MutationHandler(postMessage),
+    EvaluationRecord: new EvaluationHandler(postMessage),
 
     // Deprecated handler.
-    Location: new LocationHandler(worker.postMessage),
+    Location: new LocationHandler(postMessage),
   };
 
   worker.onmessage = ({ data }) => {

@@ -1,8 +1,7 @@
-import setStyle from './styles';
+import { setStyle } from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { addEvent } from './events';
-import { isW3CTag } from '../shared/W3CTags';
-import { isCustomTags } from '../shared/CustomTags';
+import { isW3CTag, isCustomTags } from './tags';
 
 const CUSTOM_TAG_PREFIX = 'a-';
 
@@ -10,11 +9,11 @@ const CUSTOM_TAG_PREFIX = 'a-';
  * Only nodeName that in whitelist can be created.
  */
 function getValidTagName(nodeName) {
-  const lowerCased = String(nodeName).toLowerCase();
-  if (isW3CTag(lowerCased)) {
-    return lowerCased;
-  } else if (isCustomTags(lowerCased)) {
-    return CUSTOM_TAG_PREFIX + nodeName;
+  const tagName = String(nodeName).toLowerCase();
+  if (isW3CTag(tagName)) {
+    return tagName;
+  } else if (isCustomTags(tagName)) {
+    return CUSTOM_TAG_PREFIX + tagName;
   } else {
     return null;
   }

@@ -1,5 +1,4 @@
 import { mutate } from './MutationObserver';
-import toLower from '../shared/toLower';
 import splice from '../shared/splice';
 
 export default class EventTarget {
@@ -10,15 +9,17 @@ export default class EventTarget {
   }
 
   addEventListener(type, handler) {
+    type = String(type).toLowerCase();
     (
-      this._eventListeners[toLower(type)] ||
-      (this._eventListeners[toLower(type)] = [])
+      this._eventListeners[type] ||
+      (this._eventListeners[type] = [])
     ).push(handler);
     mutate(this, 'addEvent', { eventName: type });
   }
 
   removeEventListener(type, handler) {
-    splice(this._eventListeners[toLower(type)], handler, 0, true);
+    type = String(type).toLowerCase();
+    splice(this._eventListeners[type], handler, 0, true);
     mutate(this, 'removeEvent', { eventName: type });
   }
 
@@ -26,20 +27,23 @@ export default class EventTarget {
     event.stopPropagation = () => {
       event.bubbles = false;
     };
-    let t = event.target = event.currentTarget = this;
-    let c = event.cancelable;
-    let l;
+
+    let type = event.type.toLowerCase();
+    let target = event.target = event.currentTarget = this;
+    let cancelable = event.cancelable;
+
+    let listeners;
     let i;
     do {
-      l = t._eventListeners && t._eventListeners[toLower(event.type)];
-      if (l)
-        for (i = l.length; i--;) {
-          if ((l[i].call(t, event) === false || event._end) && c) break;
+      listeners = target._eventListeners && target._eventListeners[type];
+      if (listeners)
+        for (i = listeners.length; i--;) {
+          if ((listeners[i].call(target, event) === false || event._end) && cancelable) break;
         }
     } while (
       event.bubbles &&
-      !(c && event._stop) &&
-      (event.currentTarget = t = t.parentNode)
+      !(cancelable && event._stop) &&
+      (event.currentTarget = target = target.parentNode)
     );
     return !event.defaultPrevented;
   }

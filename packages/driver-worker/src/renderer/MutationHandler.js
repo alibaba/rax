@@ -1,4 +1,4 @@
-import setStyle from './styles';
+import { setStyle } from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { createNode } from './nodes';
 import { setEventSender, addEvent, removeEvent } from './events';

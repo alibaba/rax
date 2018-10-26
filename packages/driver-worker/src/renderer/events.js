@@ -1,4 +1,4 @@
-import { supportsPassive } from './featureDetector';
+import { passive as supportsPassive } from './supports';
 
 const EVENT_OPTIONS = supportsPassive ? { capture: true, passive: true } : true;
 const NO_BUBBLES_EVENTS = {

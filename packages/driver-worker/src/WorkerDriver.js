@@ -1,5 +1,5 @@
 import createWorkerGlobalScope from './worker/createWorkerGlobalScope';
-import Operator from './worker/Operator';
+import Evaluator from './worker/Evaluator';
 import Driver from './Driver';
 
 const ELEMENT_NODE = 1;
@@ -26,7 +26,7 @@ export default class WorkerDriver extends Driver {
     this.postMessage = postMessage;
 
     this.initMutationObserver(workerGlobalScope.document.defaultView.MutationObserver);
-    this.operator = new Operator(postMessage);
+    this.evaluator = new Evaluator(postMessage);
 
     addEventListener('message', this.handleMessage);
   }
@@ -134,7 +134,7 @@ export default class WorkerDriver extends Driver {
     }
   }
 
-  hnaldeReturn(data) {
+  handleReturn(data) {
     this.operator.apply(data);
   }
 

@@ -3,30 +3,36 @@ import { ELEMENT_NODE } from './NodeTypes';
 import { dispatchAnimationToStyle } from './Animation';
 import { mutate } from './MutationObserver';
 import camelCase from '../shared/camelCase';
-import toLower from '../shared/toLower';
 import findWhere from '../shared/findWhere';
 import splice from '../shared/splice';
 
+const IS_DATASET_REG = /^data-/;
 const elementConstructors = {};
+
 export function registerElement(nodeName, elementConstructor) {
   elementConstructors[nodeName] = elementConstructor;
 }
+
 export function createElement(nodeName) {
   return createElementNS(null, nodeName);
 }
+
 export function createElementNS(namespaceURI, nodeName) {
   return new (elementConstructors[nodeName] || Element)(ELEMENT_NODE, nodeName, namespaceURI);
 }
+
 export function isElement(node) {
   return node && node.nodeType === ELEMENT_NODE;
 }
-const IS_DATASET_REG = /^data-/;
+
 function isDataset(attr) {
   return IS_DATASET_REG.test(attr.name);
 }
+
 function createAttributeFilter(ns, name) {
-  return o => o.ns === ns && toLower(o.name) === toLower(name);
+  return o => o.ns === ns && String(o.name).toLowerCase() === String(name).toLowerCase();
 }
+
 function isProperty(node, prop, val) {
   const valType = typeof val;
   return valType === 'object' || valType === 'boolean';

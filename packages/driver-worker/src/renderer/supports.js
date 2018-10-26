@@ -8,6 +8,4 @@ try {
   });
 } catch (e) { }
 
-export {
-  supportsPassive
-};
+export let passive = supportsPassive;

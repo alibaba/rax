@@ -1,6 +1,6 @@
 import { createDocument } from './Document';
 
-export default function () {
+export default function createWorkerGlobalScope() {
   return {
     document: createDocument()
   };
