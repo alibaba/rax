@@ -32,9 +32,7 @@ export default class OperationHandler {
    */
   get({ id, varExp }) {
     try {
-      const path = resolveMemberExpressionPath(varExp);
-      const value = path[path.length - 1].ref;
-      this.returnSuccess(id, value);
+      this.returnSuccess(id, eval(varExp));
     } catch (err) {
       this.returnError(id, 'Can not get value of ' + varExp);
     }
@@ -45,10 +43,9 @@ export default class OperationHandler {
    */
   set({ id, varExp, value }) {
     try {
-      const path = resolveMemberExpressionPath(varExp);
-      const scope = path[path.length - 2].ref;
-      const { identifier } = path[path.length - 1];
-      this.returnSuccess(id, scope[identifier] = value);
+      // Pass the real JSVal to variable.
+      (new Function('v', `${varExp} = v`))(value);
+      this.returnSuccess(id, value);
     } catch (err) {
       this.returnError(id, `Can not assign ${varExp} with params ${value}`);
     }
@@ -59,10 +56,7 @@ export default class OperationHandler {
    */
   delete({ id, varExp }) {
     try {
-      const path = resolveMemberExpressionPath(varExp);
-      const scope = path[path.length - 2].ref;
-      const { identifier } = path[path.length - 1];
-      delete scope[identifier];
+      eval(`delete ${varExp}`);
       this.returnSuccess(id, true);
     } catch (err) {
       this.returnError(id, `Can not delete ${varExp}.`);
@@ -76,23 +70,20 @@ export default class OperationHandler {
    */
   call({ id, method, params }) {
     try {
-      const path = resolveMemberExpressionPath(method);
-      const scope = path[path.length - 2].ref;
-      const value = path[path.length - 1].ref;
-      this.returnSuccess(id, value.apply(scope, params));
+      const success = (new Function('p', `return ${method}.apply(${scope}, p)`))(params);
+      const scope = getScopeOfVarExp(method);
+      this.returnSuccess(id, success);
     } catch (err) {
       this.returnError(id, `Can not call ${method} with params ${params}`);
     }
   }
 }
 
-function resolveMemberExpressionPath(exp, scope = global) {
+function getScopeOfVarExp(exp, scope = global) {
   let i = 0, ref = scope, current = '';
-  const path = [{ref, identifier: 'scope'}];
   while (exp[i]) {
     if (exp[i] === '.' || exp[i] === '[') {
       ref = ref[current];
-      path.push({ ref, identifier: current });
       current = '';
     } else if (exp[i] === ']' || exp[i] === ' ') {
       // Skip
@@ -103,7 +94,5 @@ function resolveMemberExpressionPath(exp, scope = global) {
     }
     i++;
   }
-  ref = ref[current];
-  path.push({ ref, identifier: current });
-  return path;
+  return ref;
 }
