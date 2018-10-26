@@ -1,7 +1,7 @@
 import { setStyle } from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { addEvent } from './events';
-import { isW3CTag, isCustomTags } from './tags';
+import { isValidW3CTag, isValidCustomTags } from './tags';
 
 const CUSTOM_TAG_PREFIX = 'a-';
 
@@ -10,12 +10,12 @@ const CUSTOM_TAG_PREFIX = 'a-';
  */
 function getValidTagName(nodeName) {
   const tagName = String(nodeName).toLowerCase();
-  if (isW3CTag(tagName)) {
+  if (isValidW3CTag(tagName)) {
     return tagName;
-  } else if (isCustomTags(tagName)) {
+  } else if (isValidCustomTags(tagName)) {
     return CUSTOM_TAG_PREFIX + tagName;
   } else {
-    return null;
+    return 'invalid-tag';
   }
 }
 

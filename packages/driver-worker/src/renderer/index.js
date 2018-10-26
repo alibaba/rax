@@ -3,7 +3,7 @@ import EvaluationHandler from './EvaluationHandler';
 import LocationHandler from './LocationHandler';
 
 export default ({ worker }) => {
-  const postMessage = worker.postMessage;
+  const postMessage = worker.postMessage.bind(worker);
 
   const handlers = {
     MutationRecord: new MutationHandler(postMessage),

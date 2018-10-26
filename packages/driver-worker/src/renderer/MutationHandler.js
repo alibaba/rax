@@ -1,7 +1,7 @@
 import { setStyle } from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { createNode } from './nodes';
-import { setEventSender, addEvent, removeEvent } from './events';
+import { addEvent, removeEvent, setPostMessage } from './events';
 
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
@@ -13,7 +13,7 @@ const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
  */
 export default class MutationHandler {
   constructor(sender) {
-    setEventSender(sender);
+    setPostMessage(sender);
   }
 
   apply(data) {

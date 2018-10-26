@@ -15,24 +15,25 @@ const TO_SANITIZE = [
   'previousSibling',
 ];
 
+const workerGlobalScope = createWorkerGlobalScope();
+
 export default class WorkerDriver extends Driver {
   constructor({ postMessage, addEventListener }) {
-    const workerGlobalScope = createWorkerGlobalScope();
     super(workerGlobalScope.document);
 
-    this.global = workerGlobalScope;
+    this.evaluator = new Evaluator(postMessage);
     this.nodesMap = new Map();
     this.nodeCounter = 0;
-    this.postMessage = postMessage;
 
-    this.initMutationObserver(workerGlobalScope.document.defaultView.MutationObserver);
-    this.evaluator = new Evaluator(postMessage);
+    let mutationObserver = this.createMutationObserver(postMessage);
+    mutationObserver.observe(this.document, { subtree: true });
 
     addEventListener('message', this.handleMessage);
   }
 
-  initMutationObserver(MutationObserver) {
-    let mutationObserver = new MutationObserver(mutations => {
+  createMutationObserver(callback) {
+    let MutationObserver = this.document.defaultView.MutationObserver;
+    return new MutationObserver(mutations => {
       for (let i = mutations.length; i--;) {
         let mutation = mutations[i];
         for (let j = TO_SANITIZE.length; j--;) {
@@ -40,17 +41,16 @@ export default class WorkerDriver extends Driver {
           mutation[prop] = this.sanitize(mutation[prop], prop);
         }
       }
-      this.send({ type: 'MutationRecord', mutations });
-    });
 
-    mutationObserver.observe(this.global.document, { subtree: true });
+      callback({ type: 'MutationRecord', mutations });
+    });
   }
 
   /**
    * Event `message' listener.
    */
   handleMessage = ({ data }) => {
-    const { document } = this.global;
+    const document = this.document;
     switch (data.type) {
       case 'init':
         document.URL = data.url;
@@ -117,7 +117,7 @@ export default class WorkerDriver extends Driver {
     if (node && typeof node === 'object') id = node.$$id;
     if (typeof node === 'string') id = node;
     if (!id) return null;
-    if (node.nodeName === BODY) return this.global.document.body;
+    if (node.nodeName === BODY) return this.document.body;
     return this.nodesMap.get(id);
   }
 
@@ -161,9 +161,5 @@ export default class WorkerDriver extends Driver {
       this.extractTouchListTarget(evt.changedTouches);
     }
     return evt;
-  }
-
-  send(payload) {
-    this.postMessage && this.postMessage(payload);
   }
 }

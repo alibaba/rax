@@ -33,10 +33,10 @@ const w3cTags = {
   'style': true
 };
 
-export function isCustomTags(tagName) {
+export function isValidCustomTags(tagName) {
   return customTags.hasOwnProperty(tagName);
 }
 
-export function isW3CTag(tagName) {
+export function isValidW3CTag(tagName) {
   return w3cTags.hasOwnProperty(tagName);
 }
