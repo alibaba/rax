@@ -18,6 +18,8 @@ $ npm install sfc2mp -g
 参数说明
 
 - `--target <target>` 设置目标转换类型 ali/wx (default: ali)
+  - `ali` 支付宝小程序
+  - `wx` 微信小程序
 - `--output <output>` 设置转换后的文件夹名 (default: dist)
 
 示例
