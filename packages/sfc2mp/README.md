@@ -36,10 +36,10 @@ sfc2mp build # 转成支付宝可运行的小程序
 
 使用 [Taobao-Editor](https://developers.taobao.net/ide) 初始化一个轻应用项目。
 
-**或者**下载[示例工程](https://gw.alicdn.com/bao/uploaded/TB10t8AkHrpK1RjSZTEXXcWAVXa.zip)并解压到一个独立的文件夹中，或者使用下面的命令
+**或者**下载[示例工程](https://gw.alicdn.com/bao/uploaded/TB1HD7jkPDpK1RjSZFrXXa78VXa.zip)并解压到一个独立的文件夹中，或者使用下面的命令
 
 ```bash
-$ wget https://gw.alicdn.com/bao/uploaded/TB10t8AkHrpK1RjSZTEXXcWAVXa.zip -O sfc-example.zip
+$ wget https://gw.alicdn.com/bao/uploaded/TB1HD7jkPDpK1RjSZFrXXa78VXa.zip -O sfc-example.zip
 $ unzip sfc-example.zip
 ```
 
