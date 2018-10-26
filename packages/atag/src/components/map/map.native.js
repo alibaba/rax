@@ -5,6 +5,7 @@ import kebabCase from '../../shared/kebabCase';
 
 const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
+const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
 let nativeInstanceCount = 0;
 
 function createTagWithAttrs(tagName, attrs) {
@@ -122,14 +123,22 @@ export default class NativeMap extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('amap-bridge-event', this._handleEmbedMapEvent);
-    if (isAndroid) document.addEventListener('WVEmbed.Ready', this._handleWindVaneReady);
+    if (isAndroid) {
+      document.addEventListener('amap-bridge-event', this._handleAndroidEmbedMapEvent);
+      document.addEventListener('WVEmbed.Ready', this._handleWindVaneReady);
+    } else if (isIOS) {
+      window.addEventListener('embedviewevent', this._handleIOSEmbedMapEvent);
+    }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('amap-bridge-event', this._handleEmbedMapEvent);
-    if (isAndroid) document.removeEventListener('WVEmbed.Ready', this._handleWindVaneReady);
+    if (isAndroid) {
+      document.removeEventListener('amap-bridge-event', this._handleAndroidEmbedMapEvent);
+      document.removeEventListener('WVEmbed.Ready', this._handleWindVaneReady);
+    } else if (isIOS) {
+      window.removeEventListener('embedviewevent', this._handleIOSEmbedMapEvent);
+    }
   }
 
   _createLightDOM() {
@@ -175,6 +184,7 @@ export default class NativeMap extends PolymerElement {
 
     if (paramRef) {
       paramRef.setAttribute('value', value);
+      paramRef.setAttribute('data-timestamp', Date.now());
       /**
        * NOTE: In android, we should call WindVane to
        * notify native to update param value.
@@ -182,7 +192,9 @@ export default class NativeMap extends PolymerElement {
       if (isAndroid) this._updateParamWithAndroid(key, value);
     } else {
       this[paramRefKey] = createTagWithAttrs('param', {
-        name: kebabCase(key), value,
+        name: kebabCase(key),
+        value,
+        'data-timestamp': Date.now(),
       });
       this._container.appendChild(this[paramRefKey]);
     }
@@ -233,6 +245,15 @@ export default class NativeMap extends PolymerElement {
     }
   }
 
+
+  _handleIOSEmbedMapEvent = (evt) => {
+    this._handleEmbedMapData(evt.data.data);
+  }
+
+  _handleAndroidEmbedMapEvent = (evt) => {
+    this._handleEmbedMapData(evt.param);
+  }
+
   /**
    * Embed map will emit native events through this
    * handler, param's bridgeId to identifier which map
@@ -244,9 +265,7 @@ export default class NativeMap extends PolymerElement {
    *  onRegionChange
    *  onTap
    */
-  _handleEmbedMapEvent = (evt) => {
-    const { param } = evt;
-    const { eventType, bridgeId, ...eventDetail } = param;
+  _handleEmbedMapData({ eventType, bridgeId, ...eventDetail }) {
     if (bridgeId === this.uniqueId) {
       // Transform native event name: onRegionChange -> regionchange
       const eventName = eventType.replace(/^on/, '').toLowerCase();
