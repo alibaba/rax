@@ -70,8 +70,8 @@ export default class OperationHandler {
    */
   call({ id, method, params }) {
     try {
-      const success = (new Function('p', `return ${method}.apply(${scope}, p)`))(params);
       const scope = getScopeOfVarExp(method);
+      const success = (new Function('p', `return ${method}.apply(${scope}, p)`))(params);
       this.returnSuccess(id, success);
     } catch (err) {
       this.returnError(id, `Can not call ${method} with params ${params}`);
