@@ -8,7 +8,7 @@ const CUSTOM_TAG_PREFIX = 'a-';
 /**
  * Only nodeName that in whitelist can be created.
  */
-function getValidTagName(nodeName) {
+function getTagName(nodeName) {
   const tagName = String(nodeName).toLowerCase();
   if (isValidW3CTag(tagName)) {
     return tagName;
@@ -23,7 +23,7 @@ export function createNode(vnode) {
   let node, tagName;
   if (vnode.nodeType === 3) {
     node = document.createTextNode(vnode.data);
-  } else if (vnode.nodeType === 1 && (tagName = getValidTagName(vnode.nodeName))) {
+  } else if (vnode.nodeType === 1 && (tagName = getTagName(vnode.nodeName))) {
     node = document.createElement(tagName);
 
     if (vnode.className) {
