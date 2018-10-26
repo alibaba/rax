@@ -151,8 +151,8 @@ dist(getConfig(
     {
       'driver.worker': './packages/driver-worker/src/index.js',
       'driver.worker.min': './packages/driver-worker/src/index.js',
-      'driver.worker.renderer.web': './packages/driver-worker/src/platform/web/index.js',
-      'driver.worker.renderer.web.min': './packages/driver-worker/src/platform/web/index.js',
+      'driver.worker.renderer': './packages/driver-worker/src/renderer/index.js',
+      'driver.worker.renderer.min': './packages/driver-worker/src/renderer/index.js',
     },
     {
       path: './packages/driver-worker/dist/',
