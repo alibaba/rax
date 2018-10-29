@@ -1,6 +1,6 @@
 {
   "name": "sfc2mp",
-  "version": "0.6.6-0",
+  "version": "0.6.6-1",
   "description": "SFC DSL Transforme to Mini Program",
   "bin": {
     "sfc2mp": "bin/sfc2mp.js",
