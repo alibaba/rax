@@ -11,7 +11,7 @@ const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
  * App loader
  * handle app.js for mini program
  */
-module.exports = function (content) {
+module.exports = function(content) {
   const loaderOptions = getOptions(this) || {};
   const relativePath = relative(this.rootContext, this.resourcePath);
   const { resourcePath } = this;

@@ -1,3 +1,5 @@
+/* global getApp, Page */
+/* eslint-disable new-cap */
 const app = getApp();
 
 Page({

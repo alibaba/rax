@@ -1,4 +1,5 @@
 const WebpackMiniProgramPlugin = require('./WebpackMiniProgramPlugin');
+
 const cwd = process.cwd();
 const babelConfig = {
   babelrc: false,
@@ -48,7 +49,7 @@ module.exports = {
     ]
   },
   externals: [
-    function (context, request, callback) {
+    function(context, request, callback) {
       if (/^@(core|schema)\//.test(request)) {
         return callback(null, `commonjs2 ${request}`);
       }
