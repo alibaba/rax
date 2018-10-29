@@ -33,6 +33,8 @@ const babelConfig = {
   ]
 };
 
+console.log(typeof require('../'));
+
 module.exports = {
   mode: 'development',
   entry: ['./app.js'],
@@ -43,11 +45,16 @@ module.exports = {
         test: /\.js$/,
         use: [
           {
-            loader: require('../')
-          },
-          {
             loader: 'babel-loader',
             options: babelConfig,
+          }
+        ]
+      },
+      {
+        test: /app\.js$/,
+        use: [
+          {
+            loader: require.resolve('../')
           }
         ]
       },

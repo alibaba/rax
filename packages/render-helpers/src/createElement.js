@@ -1,7 +1,7 @@
 import Host from './host';
 
 /**
-* support for include template
+* For template include
 */
 function processPropsData(props = {}, self = {}) {
   const data = Object.create(props.data || {});
@@ -11,23 +11,18 @@ function processPropsData(props = {}, self = {}) {
     .forEach((key) => {
       const val = props.data[key];
       if (typeof val === 'string') {
-        data[key] =
-          pageInstance && typeof pageInstance[val] === 'function'
-            ? pageInstance[val].bind(pageInstance)
-            : val;
+        data[key] = pageInstance && typeof pageInstance[val] === 'function'
+          ? pageInstance[val].bind(pageInstance) : val;
       }
     });
   return data;
 }
 
-export default function(type, props, children) {
-  const createElement = Host.render.createElement;
+export default function(type, props, ...children) {
 
-  if (typeof type === 'object' && type.__esModule === true) {
+  if (typeof type === 'object' && type.__esModule) {
     type = type.default;
-  }
-
-  if (type === '$template') {
+  } else if (type === '$template') {
     if (props.is) {
       const data = processPropsData(props, this);
       return props.is.call(props.pageInstance, data);
@@ -35,7 +30,8 @@ export default function(type, props, children) {
       return null;
     }
   }
-  // for reduce code size
+
+  // For reduce code size
   // eg: _c(View, undefined, ['xxx'])
   // vs: _c(View, ['xxx'])
   if (Array.isArray(props)) {
@@ -43,16 +39,14 @@ export default function(type, props, children) {
     props = undefined;
   }
 
-  /**
-   * for array mutation
-   */
+  // For array mutation
   for (let prop in props) {
     if (Array.isArray(props[prop])) {
       props[prop] = [...props[prop]];
     }
   }
 
-  return createElement(type, props, children);
+  return Host.render.createElement(type, props, ...children);
 }
 
 
