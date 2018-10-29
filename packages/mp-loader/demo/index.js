@@ -1,1 +1,1 @@
-import '../?type=my!./app.js';
+import '../!./app.js';

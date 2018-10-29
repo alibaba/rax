@@ -1,4 +1,4 @@
-const type = global.TRANSPILER_TYPE || 'my';
+const type = global.TRANSPILER_TYPE || 'ali';
 
 const ATTRIBUTES = {
   wx: {
@@ -6,7 +6,7 @@ const ATTRIBUTES = {
     FOR_ITEM: 'wx:for-item',
     FOR_IDX: 'wx:for-index'
   },
-  my: {
+  ali: {
     FOR: 'a:for',
     FOR_ITEM: 'a:for-item',
     FOR_IDX: 'a:for-index'

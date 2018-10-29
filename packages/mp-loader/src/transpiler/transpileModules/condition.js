@@ -1,4 +1,4 @@
-const type = global.TRANSPILER_TYPE || 'my';
+const type = global.TRANSPILER_TYPE || 'ali';
 
 const ATTRIBUTES = {
   wx: {
@@ -6,7 +6,7 @@ const ATTRIBUTES = {
     ELSE_IF: 'wx:elif',
     ELSE: 'wx:else'
   },
-  my: {
+  ali: {
     IF: 'a:if',
     ELSE_IF: 'a:elif',
     ELSE: 'a:else'

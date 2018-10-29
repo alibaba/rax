@@ -17,5 +17,6 @@ import 'mp-loader!./app.js';
 
 ## Options
 
-- type
-  - my
+- type: Type of miniapp stynax
+  - ali: [Default] Alibaba type of mini program stynax.
+  - wx: Weixin type of mini program stynax.
