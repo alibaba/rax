@@ -1,10 +1,10 @@
 const { normalizeMustache } = require('../helpers');
 
-const type = global.TRANSPILER_TYPE || 'my';
+const type = global.TRANSPILER_TYPE || 'ali';
 const EVENT_MAPPING = {
   tap: 'click'
 };
-const MY_EVENT_REG = /^on[A-Z]/;
+const ALI_EVENT_REG = /^on[A-Z]/;
 const DATA_SCOPE_REG = /^data[.[]/;
 
 /**
@@ -18,11 +18,11 @@ function transformNode(node) {
   }
   const events = {};
   const toSplice = [];
-  if (type === 'my') {
+  if (type === 'ali') {
     for (let i = 0, l = attrsList.length; i < l; i++) {
       let { name, value } = attrsList[i];
       value = normalizeMustache(value, node);
-      if (MY_EVENT_REG.test(name)) {
+      if (ALI_EVENT_REG.test(name)) {
         const rawEvtName = name.slice(2).toLowerCase();
         const evtName = EVENT_MAPPING[rawEvtName] || rawEvtName;
         toSplice.push(i);
@@ -38,6 +38,10 @@ function transformNode(node) {
       }
     }
   } else if (type === 'wx') {
+    /**
+     * Type of wx binding stynax: bindtap, bindtouchstart
+     * remove the first 4 letters to get real event name.
+     */
     for (let i = 0, l = attrsList.length; i < l; i++) {
       const { name, value } = attrsList[i];
       if (name.slice(0, 4) === 'bind') {

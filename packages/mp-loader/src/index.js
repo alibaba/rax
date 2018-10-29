@@ -12,10 +12,10 @@ const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
  * handle app.js for mini program
  */
 module.exports = function(content) {
-  const loaderOptions = getOptions(this);
+  const loaderOptions = getOptions(this) || {};
   const relativePath = relative(this.rootContext, this.resourcePath);
   const { resourcePath } = this;
-  global.TRANSPILER_TYPE = loaderOptions.type;
+  const stynaxType = global.TRANSPILER_TYPE = loaderOptions.type || 'ali';
 
   let globalStylePath = null;
   const appStylePath = join(
@@ -32,7 +32,7 @@ module.exports = function(content) {
     .map((pagePath) => {
       const qs = new QueryString({
         globalStylePath,
-        type: loaderOptions.type,
+        type: stynaxType,
       });
       const absPagePath = join(this.rootContext, pagePath);
 

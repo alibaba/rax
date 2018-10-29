@@ -16,7 +16,7 @@ const EXT = {
     style: '.wxss',
     script: '.js'
   },
-  my: {
+  ali: {
     template: '.axml',
     style: '.acss',
     script: '.js'
