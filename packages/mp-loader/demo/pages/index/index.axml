@@ -1,0 +1,4 @@
+<view class="container">
+  hello world
+  {{state}}
+</view>
