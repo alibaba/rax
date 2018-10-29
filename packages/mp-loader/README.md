@@ -1,6 +1,6 @@
 # mp-loader
 
-> A webpack loader that transform miniapp DSL stynax project to Rax vdom.
+> A webpack loader that transform mini program DSL stynax project to Rax.
 
 ## Install
 

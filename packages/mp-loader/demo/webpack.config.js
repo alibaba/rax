@@ -35,16 +35,21 @@ const babelConfig = {
 
 module.exports = {
   mode: 'development',
-  entry: ['./index'],
+  entry: ['./app.js'],
   context: __dirname,
   module: {
     rules: [
       {
         test: /\.js$/,
-        use: [{
-          loader: 'babel-loader',
-          options: babelConfig,
-        }]
+        use: [
+          {
+            loader: require('../')
+          },
+          {
+            loader: 'babel-loader',
+            options: babelConfig,
+          }
+        ]
       },
     ]
   },
