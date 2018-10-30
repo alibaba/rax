@@ -23,7 +23,8 @@ fs.readdirSync(PACKAGES_DIR)
     var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
 
     if (
-      !/^(mobx|rax|universal)-/.test(packageName) ||
+      !/^universal-/.test(packageName) ||
+      /(mobx|rax)/.test(packageName) ||
       /webpack/.test(packageName) ||
       /cli/.test(packageName) ||
       /loader/.test(packageName) ||

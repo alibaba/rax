@@ -35,16 +35,47 @@ const babelConfig = {
 
 module.exports = {
   mode: 'development',
-  entry: ['./index'],
+  entry: ['./app.js'],
   context: __dirname,
   module: {
     rules: [
       {
         test: /\.js$/,
-        use: [{
-          loader: 'babel-loader',
-          options: babelConfig,
-        }]
+        use: [
+          {
+            loader: 'babel-loader',
+            options: babelConfig,
+          }
+        ]
+      },
+      {
+        test: /\.acss$/,
+        use: [
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: [
+                require('../src/postcss-rpx2rem'),
+                require('../src/postcss-tag-prefix'),
+                require('autoprefixer')
+              ]
+            }
+          }
+        ]
+      },
+      {
+        test: /app\.js$/,
+        use: [
+          {
+            loader: require.resolve('../')
+          }
+        ]
       },
     ]
   },

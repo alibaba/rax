@@ -1,61 +1,49 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { join, relative } = require('path');
 const { existsSync } = require('fs');
-const { compileToES5, QueryString, createRequire, createRequireDefault, getPages } = require('./shared/utils');
-const paths = require('./paths');
+const querystring = require('querystring');
+const { createRequire } = require('./utils');
+const runtimeHelpers = require('./runtimeHelpers');
 
-const pageLoaderPath = require.resolve('./page');
-const STYLE_EXT = 'acss';
+const pageLoader = require.resolve('./page-loader');
+const CSS_EXT = '.acss';
+const JS_EXT = '.js';
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
+
 /**
  * App loader
  * handle app.js for mini program
  */
 module.exports = function(content) {
-  const loaderOptions = getOptions(this) || {};
-  const relativePath = relative(this.rootContext, this.resourcePath);
-  const { resourcePath } = this;
-  const stynaxType = global.TRANSPILER_TYPE = loaderOptions.type || 'ali';
+  const jsPath = this.resourcePath;
+  let cssPath = jsPath.replace(JS_EXT, CSS_EXT);
+  const relativePath = relative(this.rootContext, jsPath);
 
-  let globalStylePath = null;
-  const appStylePath = join(
-    this.resourcePath,
-    `../app.${STYLE_EXT}`
-  );
-
-  if (existsSync(appStylePath)) {
-    globalStylePath = appStylePath;
+  if (!existsSync(cssPath)) {
+    cssPath = null;
   }
 
-  const regPagesCode = getPages(resourcePath)
-    .filter((pagePath) => !EXTERNAL_PAGE_URL_REG.test(pagePath))
-    .map((pagePath) => {
-      const qs = new QueryString({
-        globalStylePath,
-        type: stynaxType,
-      });
-      const absPagePath = join(this.rootContext, pagePath);
+  let source = content;
 
-      const req = stringifyRequest(
-        this,
-        `!!${pageLoaderPath}?${qs}!${absPagePath}`
-      );
-      return createRequire(req);
-    })
-    .join(';');
+  if (relativePath === 'app.js') {
+    const appJson = require(jsPath.replace(JS_EXT, '.json'));
+    const appJsonPages = appJson.pages || [];
 
-  const compiledSource = compileToES5(content, {
-    sourceMaps: true,
-    sourceFileName: relativePath,
-  });
+    const requireAppPages = appJsonPages.filter((pagePath) => !EXTERNAL_PAGE_URL_REG.test(pagePath))
+      .map((pagePath) => {
+        const qs = querystring.stringify({
+          appCssPath: cssPath
+        });
+        const absPagePath = join(this.rootContext, pagePath);
+        return createRequire(stringifyRequest(this, `${pageLoader}?${qs}!${absPagePath}`));
+      }).join(';');
 
-  const runtimeReq = createRequireDefault(stringifyRequest(this, paths.createApp));
+    const requireCreateApp = createRequire(stringifyRequest(this, runtimeHelpers.createApp));
+    // Alias createApp to App
+    source = `var App = ${requireCreateApp};
+      ${content}
+      ${requireAppPages}`;
+  }
 
-  const source = `var App = ${runtimeReq};\n`
-    + compiledSource.code + '\n' + regPagesCode;
-
-  // skipping 1 line
-  compiledSource.map.mappings = ';' + compiledSource.map.mappings;
-  // `this.sourceMap` means whether sourceMap is enabled
-  this.callback(null, source, this.sourceMap ? compiledSource.map : void 0);
+  return source;
 };
