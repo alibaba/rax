@@ -24,7 +24,7 @@ module.exports = function getEntry(projectDir) {
     const appFilePath = resolve(projectDir, 'app.js');
 
     /* app entry */
-    entry.app = `!!${mpLoaderPath}?type=my!${appFilePath}`;
+    entry.app = `!!${mpLoaderPath}?type=ali!${appFilePath}`;
   }
 
   return entry;

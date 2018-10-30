@@ -1,4 +1,5 @@
-const { relative, extname } = require('path');
+const { relative, extname, join } = require('path');
+const { existsSync, readFileSync } = require('fs');
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { compileToES5, QueryString, createRequire, createRequireDefault } = require('./shared/utils');
 const parseSFC = require('./parser/page-sfc');
@@ -27,11 +28,25 @@ module.exports = function(content) {
     sourceFileName: relativePath,
   });
 
+  const dependencyComponents = {};
+  const configPath = this.resourcePath.replace(/\.js$/, '.json');
+  if (existsSync(configPath)) {
+    const pageConfig = JSON.parse(readFileSync(configPath, 'utf-8'));
+    if (pageConfig.usingComponents) {
+      for (let componentName in pageConfig.usingComponents) {
+        if (pageConfig.usingComponents.hasOwnProperty(componentName)) {
+          dependencyComponents[componentName] = join(this.rootContext, pageConfig.usingComponents[componentName]);
+        }
+      }
+    }
+  }
+
   const tplQueryString = new QueryString({
     type,
     globalStylePath,
     stylePath: style ? style.path : 'null',
-    isPage: true
+    isPage: true,
+    dependencyComponents: JSON.stringify(dependencyComponents),
   });
   const regTemplateReq = createRequire(stringifyRequest(this, `${tplLoaderPath}?${tplQueryString}!${template.path}`));
   const createPageReq = createRequireDefault(stringifyRequest(this, paths.createPage));

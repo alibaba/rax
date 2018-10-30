@@ -20,7 +20,8 @@ module.exports = function templateLoader(content) {
     stylePath,
     globalStylePath,
     jsPath,
-    isPage
+    isPage,
+    dependencyComponents,
   } = getOptions(this);
   const { resourcePath } = this;
   const relativePath = relative(this.rootContext, this.resourcePath);
@@ -88,11 +89,21 @@ module.exports = function templateLoader(content) {
     'data'
   );
 
+  const ComponentLoaderPath = require.resolve('./component');
+  const dependencyComponentsDeclaration = dependencyComponents ? JSON.parse(dependencyComponents) : {};
+  let registerPageComponent = '';
+  for (let componentName in dependencyComponentsDeclaration) {
+    if (dependencyComponentsDeclaration.hasOwnProperty(componentName)) {
+      registerPageComponent += `__sfc_components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!/Users/zhuoling/workspace/atag-amap/components/title/my-title.axml`)) + '(Rax)';
+    }
+  }
+
   return `;(function(globalStyle, pageStyle, __vdom_helpers__){
     ${vdomHelperVars}
     module.exports = function renderFactory(__parent_tpls__, Rax) {
       var __tpls__ = {};
       var __sfc_components_ref__ = {};
+      ${registerPageComponent}
       var __styles__ = Object.assign({}, globalStyle, pageStyle, ${styleReq});
       function _w(is) { return __tpls__[is] ? __tpls__[is] : null; }
      
