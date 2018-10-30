@@ -2,7 +2,7 @@ const { stringifyRequest, getOptions } = require('loader-utils');
 const { join, relative } = require('path');
 const { existsSync } = require('fs');
 const querystring = require('querystring');
-const { createRequire } = require('./shared/utils');
+const { createRequire } = require('./utils');
 const runtimeHelpers = require('./runtimeHelpers');
 
 const pageLoader = require.resolve('./page-loader');

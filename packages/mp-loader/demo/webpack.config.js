@@ -33,8 +33,6 @@ const babelConfig = {
   ]
 };
 
-console.log(typeof require('../'));
-
 module.exports = {
   mode: 'development',
   entry: ['./app.js'],
@@ -47,6 +45,27 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: babelConfig,
+          }
+        ]
+      },
+      {
+        test: /\.acss$/,
+        use: [
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: [
+                require('../src/postcss-rpx2rem'),
+                require('../src/postcss-tag-prefix'),
+                require('autoprefixer')
+              ]
+            }
           }
         ]
       },

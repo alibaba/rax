@@ -19,7 +19,6 @@ function processPropsData(props = {}, self = {}) {
 }
 
 export default function(type, props, ...children) {
-
   if (typeof type === 'object' && type.__esModule) {
     type = type.default;
   } else if (type === '$template') {
