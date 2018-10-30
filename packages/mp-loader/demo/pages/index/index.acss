@@ -2,6 +2,11 @@ page {
   background: grey;
 }
 
+::placeholder {
+  color: gray;
+}
+
 .container {
   color: red;
+  height: 750rpx
 }

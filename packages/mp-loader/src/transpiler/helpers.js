@@ -119,10 +119,7 @@ const SPREAD_REG = /^\.\.\.[\w$_]/;
 const OBJ_REG = /^[\w$_](?:[\w$_\d\s]+)?:/;
 const ES2015_OBJ_REG = /^[\w$_](?:[\w$_\d\s]+)?,/;
 const IDENTIFIER_REG = /^\(([\w\d_-]+)\)$/;
-function isObject(str = '') {
-  str = String(str).trim();
-  return SPREAD_REG.test(str) || OBJ_REG.test(str) || ES2015_OBJ_REG.test(str);
-}
+
 const expressionHelper = require('./expression');
 
 exports.normalizeMustache = normalizeMustache;

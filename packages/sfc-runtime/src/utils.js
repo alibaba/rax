@@ -61,23 +61,3 @@ function runtimeWarn(...args) {
 }
 
 export { uppercamelcase, camelcase, runtimeWarn as warn };
-
-/**
-* support for include template
-*/
-export function processPropsData(props = {}, self = {}) {
-  const data = Object.create(props.data || {});
-  const { pageInstance } = props;
-
-  Object.keys(props.data || {})
-    .forEach((key) => {
-      const val = props.data[key];
-      if (typeof val === 'string') {
-        data[key] =
-          pageInstance && typeof pageInstance[val] === 'function'
-            ? pageInstance[val].bind(pageInstance)
-            : val;
-      }
-    });
-  return data;
-}
