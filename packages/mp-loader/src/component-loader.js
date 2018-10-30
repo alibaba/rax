@@ -1,33 +1,41 @@
-const { relative, extname } = require('path');
-const { existsSync, readFileSync } = require('fs');
-const { stringifyRequest, getOptions } = require('loader-utils');
-const { compileToES5, QueryString, createRequire, createRequireDefault } = require('./shared/utils');
-const paths = require('./paths');
-const tplLoaderPath = require.resolve('./template');
-const createPageReq = createRequireDefault(stringifyRequest(this, paths.createComponent));
+const querystring = require('querystring');
+const { extname } = require('path');
+const { existsSync } = require('fs');
+const { stringifyRequest } = require('loader-utils');
+const { createRequire } = require('./utils');
+const runtimeHelpers = require('./runtimeHelpers');
+
+const templateLoaderPath = require.resolve('./template-loader');
+const createPageReq = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
+const CSS_EXT = '.acss';
+const TEMPLATE_EXT = '.axml';
+const CONFIG_EXT = '.json';
+const JS_EXT = '.js';
 
 module.exports = function(content) {
   const { resourcePath } = this;
   const basePath = resourcePath.replace(extname(resourcePath), '');
+  let jsPath = basePath + JS_EXT;
+  let cssPath = basePath + CSS_EXT;
+  let templatePath = basePath + TEMPLATE_EXT;
+  let configPath = basePath + CONFIG_EXT;
 
-  if (existsSync(basePath + '.js')) {
-    this.addDependency(basePath + '.js');
+  if (existsSync(jsPath)) {
+    this.addDependency(jsPath);
   }
-  let stylePath = null;
-  if (existsSync(basePath + '.acss')) {
-    this.addDependency(stylePath = basePath + '.acss');
+  if (existsSync(cssPath)) {
+    this.addDependency(cssPath);
   }
-  const tplQueryString = new QueryString({
-    type: 'my',
-    stylePath,
-    isPage: false,
-    dependencyComponents: null,
+
+  const templateLoaderQueryString = querystring.stringify({
+    cssPath,
+    isEntryTemplate: false,
   });
-  const regTemplateReq = createRequire(stringifyRequest(this, `${tplLoaderPath}?${tplQueryString}!${basePath + '.axml'}`));
-  return `module.exports = function(Rax) {
-      function Component(config) { Component.config = config; }
-      ${readFileSync(basePath + '.js', 'utf-8')}
-      return ${createPageReq}(Component.config, Rax, ${regTemplateReq});
+  const regTemplateReq = createRequire(stringifyRequest(this, `${templateLoaderPath}?${templateLoaderQueryString}!${templatePath}`));
+  return `module.exports = function(__render__) {
+      function Component(config) { Component.__config__ = config; }
+      ${content}
+      return ${createPageReq}(Component.__config__, __render__, ${regTemplateReq})
     };
   `;
 }

@@ -50,7 +50,6 @@ module.exports = function(content) {
     }
   }
 
-
   const templateLoaderQueryString = querystring.stringify({
     appCssPath,
     cssPath,
