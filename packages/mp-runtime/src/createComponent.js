@@ -12,7 +12,7 @@ export default function createComponent(config, Rax, getRender) {
     }
 
     _createPublicInstance() {
-      const scope  = {};
+      const scope = {};
 
       if (config.methods != null) {
         for (let key in config.methods) {
@@ -61,5 +61,5 @@ export default function createComponent(config, Rax, getRender) {
     render() {
       return render.call(this.publicInstance, this.publicInstance.data);
     }
-  }
+  };
 }

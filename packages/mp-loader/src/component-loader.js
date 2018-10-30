@@ -38,4 +38,4 @@ module.exports = function(content) {
       return ${createPageReq}(Component.__config__, __render__, ${regTemplateReq})
     };
   `;
-}
+};
