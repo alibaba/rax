@@ -4,7 +4,7 @@
   "description": "Mini-program dsl loader for Rax",
   "main": "src/index.js",
   "scripts": {
-    "start": "node ./demo/webpack-dev-server.js",
+    "start": "node --inspect ./demo/webpack-dev-server.js",
     "test": "NODE_ENV=test npm run test:karma",
     "test:karma": "NODE_ENV=test karma start --single-run",
     "test:karma-watch": " NODE_ENV=test karma start --auto-watch"

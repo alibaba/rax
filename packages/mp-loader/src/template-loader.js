@@ -6,8 +6,6 @@ const transpiler = require('./transpiler');
 const runtimeHelpers = require('./runtimeHelpers');
 const { withScope } = require('sfc-compiler');
 
-const cssLoader = require.resolve('css-loader');
-
 module.exports = function templateLoader(content) {
   const options = getOptions(this);
   const isEntryTemplate = options && options.isEntryTemplate;
