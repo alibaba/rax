@@ -6,7 +6,7 @@ const { createRequire } = require('./utils');
 const runtimeHelpers = require('./runtimeHelpers');
 
 const templateLoaderPath = require.resolve('./template-loader');
-const createPageReq = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
+const requireCreatePage = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
 const CSS_EXT = '.acss';
 const TEMPLATE_EXT = '.axml';
 const CONFIG_EXT = '.json';
@@ -27,11 +27,13 @@ module.exports = function(content) {
     cssPath,
     isEntryTemplate: false,
   });
-  const regTemplateReq = createRequire(stringifyRequest(this, `${templateLoaderPath}?${templateLoaderQueryString}!${templatePath}`));
+
+  const requireTemplate = createRequire(stringifyRequest(this, `${templateLoaderPath}?${templateLoaderQueryString}!${templatePath}`));
+
   return `module.exports = function(__render__) {
       function Component(config) { Component.__config__ = config; }
       ${content}
-      return ${createPageReq}(Component.__config__, __render__, ${regTemplateReq})
+      return ${requireCreatePage}(Component.__config__, __render__, ${requireTemplate})
     };
   `;
 };

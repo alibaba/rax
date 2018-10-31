@@ -24,6 +24,7 @@ module.exports = function templateLoader(content) {
   const { cssPath, appCssPath } = options;
   if (existsSync(appCssPath)) {
     css += ` + ${createRequire(stringifyRequest(this, appCssPath))}`;
+    // Adds css file as dependency of the loader result in order to make them watchable.
     this.addDependency(appCssPath);
   }
   if (existsSync(cssPath)) {
