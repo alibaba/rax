@@ -136,9 +136,7 @@ export default class Button extends PolymerElement {
         :host([plain]) {
           background: transparent;
           color: #999999;
-          color: var(--color-text-2, #999999);
           border: 1px #999999 solid;
-          border: 1px var(--color-line-2, #999999) solid;
         }
 
         :host([plain][type="primary"]) {
