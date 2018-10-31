@@ -1,11 +1,11 @@
 import computeChangedData from './computeChangedData';
 
-export default function createComponent(config, renderer, getRender) {
-  const render = getRender(renderer);
+export default function createComponent(renderFactory, render, config) {
+  const templateRender = renderFactory(render);
 
-  return class extends renderer.Component {
+  return class extends render.Component {
     constructor(passedProps) {
-      super({ ...config.props, ...passedProps, append: 'node', });
+      super({ ...config.props, ...passedProps});
       this.config = config;
       this.state = { ...config.data };
       this.publicInstance = this._createPublicInstance();
@@ -59,7 +59,7 @@ export default function createComponent(config, renderer, getRender) {
     }
 
     render() {
-      return render.call(this.publicInstance, this.publicInstance.data);
+      return templateRender.call(this.publicInstance, this.publicInstance.data);
     }
   };
 }

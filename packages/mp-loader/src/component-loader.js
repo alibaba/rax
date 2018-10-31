@@ -37,9 +37,9 @@ module.exports = function(content) {
   const requireTemplate = createRequire(stringifyRequest(this, `${templateLoaderPath}?${templateLoaderQueryString}!${templatePath}`));
   
   return `module.exports = function(__render__) {
-      function Component(config) { Component.__config__ = config; }
+      function Component(config) { Component.__config = config; }
       ${content}
-      return ${requireCreatePage}(Component.__config__, __render__, ${requireTemplate})
+      return ${requireCreatePage}(${requireTemplate}, __render__, Component.__config)
     };
   `;
 };
