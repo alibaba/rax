@@ -43,12 +43,10 @@ module.exports = function(content) {
   pageName = String(pageName).replace(/\\/g, '/'); // Compatible for windows
 
   // "getApp" is global injected
-  let source = `var __renderFactory = ${requirePageTemplate};
-    var __createPage = ${requireCreatePage};
-    var Page = function(config) { Page.config = config; };
+  let source = `var Page = function(config) { Page.__config = config; };
     ${content}
-    require('@core/page').register({ page: ${JSON.stringify(pageName)} }, function(module, exports, require){
-      module.exports = __createPage(Page.config, __renderFactory, require);
+    require('@core/page').register({ page: ${JSON.stringify(pageName)} }, function(__module, __exports, __require){
+      __module.exports = ${requireCreatePage}(${requirePageTemplate}, __require, Page.__config);
     });`;
 
   return source;
