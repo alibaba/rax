@@ -1,16 +1,16 @@
 const querystring = require('querystring');
 const { extname } = require('path');
-const { existsSync } = require('fs');
+const { readFileSync, existsSync } = require('fs');
 const { stringifyRequest } = require('loader-utils');
 const { createRequire } = require('./utils');
 const runtimeHelpers = require('./runtimeHelpers');
+const resolveDependencyComponents = require('./component-resolver');
 
 const templateLoaderPath = require.resolve('./template-loader');
 const requireCreatePage = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
 const CSS_EXT = '.acss';
 const TEMPLATE_EXT = '.axml';
 const CONFIG_EXT = '.json';
-const JS_EXT = '.js';
 
 module.exports = function(content) {
   const { resourcePath } = this;
@@ -19,13 +19,18 @@ module.exports = function(content) {
   let templatePath = basePath + TEMPLATE_EXT;
   let configPath = basePath + CONFIG_EXT;
 
+  // Component dependents components
+  let config = {};
   if (existsSync(configPath)) {
-    this.addDependency(templatePath);
+    config = JSON.parse(readFileSync(configPath, 'utf-8'));
+    this.addDependency(configPath);
   }
 
+  const dependencyComponents = resolveDependencyComponents(config, this.rootContext, basePath);
   const templateLoaderQueryString = querystring.stringify({
     cssPath,
     isEntryTemplate: false,
+    dependencyComponents: JSON.stringify(dependencyComponents),
   });
 
   const requireTemplate = createRequire(stringifyRequest(this, `${templateLoaderPath}?${templateLoaderQueryString}!${templatePath}`));

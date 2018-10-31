@@ -19,25 +19,28 @@ module.exports = function templateLoader(content) {
   });
 
   let render = renderFn;
-
-  let css = JSON.stringify('');
+  const requireCssList = [];
   const { cssPath, appCssPath } = options;
   if (existsSync(appCssPath)) {
-    css += ` + ${createRequire(stringifyRequest(this, appCssPath))}`;
+    requireCssList.push(createRequire(stringifyRequest(this, appCssPath)));
     // Adds css file as dependency of the loader result in order to make them watchable.
     this.addDependency(appCssPath);
   }
   if (existsSync(cssPath)) {
-    css += ` + ${createRequire(stringifyRequest(this, cssPath))}`;
+    requireCssList.push(createRequire(stringifyRequest(this, cssPath)));
     this.addDependency(cssPath);
   }
+
+  // Make css-loader processed object to string.
+  const css = requireCssList.map((str) => str + '.toString()').join(' + ');
+  const style = css ? `_c('style', null, ${css})` : null;
   if (isEntryTemplate) {
     // NOTE: Should config css-loader and postcss-loader in webpack.config.js
-    let style = `_c('style', null, ${css})`;
     // Wrap page for "page" css selector
     render = `_c('page', null, ${style}, ${renderFn})`;
-  } else if (css) {
-    render = `[_c('style', null, ${css}),${renderFn}]`;
+  } else {
+    // Prepend style tag to template
+    render = style ? `[${style}, ${renderFn}]` : renderFn;
   }
 
   let registerPageComponent = '';
