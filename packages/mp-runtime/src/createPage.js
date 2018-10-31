@@ -48,7 +48,7 @@ class Page {
   }
 }
 
-export default function createPage(config = {}, renderFactory, requireCoreModule) {
+export default function createPage(renderFactory, requireCoreModule, config = {}) {
   // each page has unique vars that can not be shared
   const pageContext = requireCoreModule('@core/context');
   const pageEventEmitter = requireCoreModule('@core/page');

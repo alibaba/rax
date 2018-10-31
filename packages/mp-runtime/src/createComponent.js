@@ -1,15 +1,15 @@
 import computeChangedData from './computeChangedData';
 
-export default function createComponent(config, renderer, getRender) {
-  const render = getRender(renderer);
+export default function createComponent(renderFactory, render, config) {
+  const templateRender = renderFactory(render);
 
-  return class extends renderer.Component {
-    constructor(passedProps) {
-      super({ ...config.props, ...passedProps, append: 'node', });
-      this.config = config;
+  return class extends render.Component {
+    constructor() {
       this.state = { ...config.data };
       this.publicInstance = this._createPublicInstance();
     }
+
+    static defaultProps = config.props;
 
     _createPublicInstance() {
       const scope = {};
@@ -25,9 +25,11 @@ export default function createComponent(config, renderer, getRender) {
       Object.defineProperty(scope, 'data', {
         get: () => this.state,
       });
+
       Object.defineProperty(scope, 'setData', {
         get: () => this.setData,
       });
+
       Object.defineProperty(scope, '$slots', {
         get: () => ({ default: this.props.children }),
       });
@@ -35,31 +37,31 @@ export default function createComponent(config, renderer, getRender) {
       return scope;
     }
 
-    setData = (expData, callback) => {
-      if (expData == null) return;
-      this.setState(computeChangedData(this.data, expData), callback);
+    setData = (data, callback) => {
+      if (data == null) return;
+      this.setState(computeChangedData(this.data, data), callback);
     }
 
     componentDidMount() {
-      if (typeof this.config.didMount === 'function') {
+      if (typeof config.didMount === 'function') {
         this.config.didMount.call(this.publicInstance);
       }
     }
 
     componentWillReceiveProps(prevProps, prevState) {
-      if (typeof this.config.didUpdate === 'function') {
-        this.config.didUpdate.call(this.publicInstance, prevProps, prevState);
+      if (typeof config.didUpdate === 'function') {
+        config.didUpdate.call(this.publicInstance, prevProps, prevState);
       }
     }
 
     componentWillUnmount() {
-      if (typeof this.config.didUnmount === 'function') {
-        this.config.didUnmount.call(this.publicInstance);
+      if (typeof config.didUnmount === 'function') {
+        config.didUnmount.call(this.publicInstance);
       }
     }
 
     render() {
-      return render.call(this.publicInstance, this.publicInstance.data);
+      return templateRender.call(this.publicInstance, this.publicInstance.data);
     }
   };
 }
