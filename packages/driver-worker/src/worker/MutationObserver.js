@@ -16,6 +16,7 @@ export function mutate(target, type, record) {
         if (match = target === ob._target) break;
       } while (target = target.parentNode);
     }
+
     if (match) {
       ob._records.push(record);
       if (!pendingMutations) {

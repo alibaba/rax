@@ -3,6 +3,16 @@ import { mutate } from './MutationObserver';
 import findWhere from '../shared/findWhere';
 import splice from '../shared/splice';
 
+function mutateChildNodes(node) {
+  if (node && node.childNodes) {
+    for (let i = 0, len = node.childNodes.length; i < len; i++) {
+      const child = node.childNodes[i];
+      mutate(node, 'childList', { addedNodes: [child] });
+      mutateChildNodes(child);
+    }
+  }
+}
+
 export default class Node extends EventTarget {
   constructor(nodeType, nodeName) {
     super();
@@ -37,7 +47,9 @@ export default class Node extends EventTarget {
       mutate(this, 'childList', { addedNodes: [child], nextSibling: ref });
     } else {
       this.childNodes.push(child);
+
       mutate(this, 'childList', { addedNodes: [child] });
+      mutateChildNodes(child);
     }
 
     return child;

@@ -1,16 +1,16 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
-const { existsSync, readFileSync } = require('fs');
-const { relative } = require('path');
+const { existsSync } = require('fs');
 const { createRequire, renderHelperVars, prerveredVars } = require('./utils');
 const transpiler = require('./transpiler');
 const runtimeHelpers = require('./runtimeHelpers');
 const { withScope } = require('sfc-compiler');
 
-const cssLoader = require.resolve('css-loader');
+const ComponentLoaderPath = require.resolve('./component-loader');
 
 module.exports = function templateLoader(content) {
   const options = getOptions(this);
   const isEntryTemplate = options && options.isEntryTemplate;
+  const dependencyComponents = options && options.dependencyComponents && JSON.parse(options.dependencyComponents);
 
   content = `<template>${content}</template>`; // Wrap <tempalte> when user define more then one nodes at root
 
@@ -27,11 +27,18 @@ module.exports = function templateLoader(content) {
     const requireCss = createRequire(stringifyRequest(this, cssPath));
 
     let css = `${requireAppCss} + ${requireCss}`;
-
-    // TODO: rpx in css should be convert in runtime
     let style = `_c('style', null, ${css})`;
     // Wrap page for "page" css selector
     entryRender = `_c('page', null, ${style}, ${renderFn})`;
+  }
+
+  let registerPageComponent = '';
+  if (dependencyComponents) {
+    for (let componentName in dependencyComponents) {
+      if (dependencyComponents.hasOwnProperty(componentName)) {
+        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__)';
+      }
+    }
   }
 
   const requireRenderHelpers = createRequire(stringifyRequest(this, runtimeHelpers.renderHelpers));
@@ -55,6 +62,7 @@ module.exports = function templateLoader(content) {
   
   // Custom components ref
   var __components_ref__ = {};
+  ${registerPageComponent}
 
   ${dependencies.map((subTemplate) => {
     if (!existsSync(subTemplate)) {
