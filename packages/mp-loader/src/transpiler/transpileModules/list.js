@@ -1,29 +1,20 @@
-const type = global.TRANSPILER_TYPE || 'ali';
+const { getAndRemoveAttr, addAttr } = require('../helpers');
 
 const ATTRIBUTES = {
-  wx: {
-    FOR: 'wx:for',
-    FOR_ITEM: 'wx:for-item',
-    FOR_IDX: 'wx:for-index'
-  },
-  ali: {
-    FOR: 'a:for',
-    FOR_ITEM: 'a:for-item',
-    FOR_IDX: 'a:for-index'
-  }
+  FOR: 'a:for',
+  FOR_ITEM: 'a:for-item',
+  FOR_IDX: 'a:for-index'
 };
 
 const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
 const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/;
 
-const { getAndRemoveAttr, addAttr } = require('../helpers');
-
 function transformNode(el, modules) {
   if (el.type !== 1) return;
-  let forKey = getAndRemoveAttr(el, ATTRIBUTES[type].FOR);
+  let forKey = getAndRemoveAttr(el, ATTRIBUTES.FOR);
   if (forKey) {
-    const forItem = getAndRemoveAttr(el, ATTRIBUTES[type].FOR_ITEM) || 'item';
-    const forIdx = getAndRemoveAttr(el, ATTRIBUTES[type].FOR_IDX) || 'index';
+    const forItem = getAndRemoveAttr(el, ATTRIBUTES.FOR_ITEM) || 'item';
+    const forIdx = getAndRemoveAttr(el, ATTRIBUTES.FOR_IDX) || 'index';
     let exp = `(${forItem},${forIdx}) in ${forKey}`;
     const inMatch = exp.match(forAliasRE);
     if (!inMatch) {
