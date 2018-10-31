@@ -34,6 +34,7 @@ module.exports = function(content) {
 
   let config = {};
   if (existsSync(configPath)) {
+    this.addDependency(configPath);
     config = JSON.parse(readFileSync(configPath, 'utf-8'));
   }
 

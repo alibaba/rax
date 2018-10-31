@@ -15,16 +15,12 @@ const JS_EXT = '.js';
 module.exports = function(content) {
   const { resourcePath } = this;
   const basePath = resourcePath.replace(extname(resourcePath), '');
-  let jsPath = basePath + JS_EXT;
   let cssPath = basePath + CSS_EXT;
   let templatePath = basePath + TEMPLATE_EXT;
   let configPath = basePath + CONFIG_EXT;
 
-  if (existsSync(jsPath)) {
-    this.addDependency(jsPath);
-  }
-  if (existsSync(cssPath)) {
-    this.addDependency(cssPath);
+  if (existsSync(configPath)) {
+    this.addDependency(templatePath);
   }
 
   const templateLoaderQueryString = querystring.stringify({
