@@ -22,6 +22,9 @@ export default function createComponent(config, renderer, getRender) {
         }
       }
 
+      Object.defineProperty(scope, 'props', {
+        get: () => this.props,
+      });
       Object.defineProperty(scope, 'data', {
         get: () => this.state,
       });
@@ -59,7 +62,7 @@ export default function createComponent(config, renderer, getRender) {
     }
 
     render() {
-      return render.call(this.publicInstance, this.publicInstance.data);
+      return render.call(this.publicInstance, { ...this.props, ...this.data });
     }
   };
 }

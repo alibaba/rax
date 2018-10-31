@@ -47,7 +47,7 @@ module.exports = function templateLoader(content) {
   if (dependencyComponents) {
     for (let componentName in dependencyComponents) {
       if (dependencyComponents.hasOwnProperty(componentName)) {
-        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__)';
+        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__);';
       }
     }
   }
