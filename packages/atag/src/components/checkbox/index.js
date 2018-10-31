@@ -139,7 +139,8 @@ export default class CheckboxElement extends PolymerElement {
         }
 
         :host([checked]) .circle {
-          border: 1px solid var(--color-primary-2);
+          border: #ff5500;
+          border: 1px solid var(--color-primary-2, #ff5500);
         }
 
         :host([disabled]) .circle {
@@ -156,8 +157,10 @@ export default class CheckboxElement extends PolymerElement {
           -webkit-mask-repeat: no-repeat;
           -webkit-mask-position: center;
           cursor: pointer;
-          border: 1px solid var(--color-primary-2);
-          background-color: var(--color-primary-2);
+          border: 1px solid #ff5500;
+          border: 1px solid var(--color-primary-2, #ff5500);
+          background-color: #ff5500;
+          background-color: var(--color-primary-2, #ff5500);
         }
 
         :host([disabled]) .dot {

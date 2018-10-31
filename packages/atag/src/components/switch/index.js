@@ -116,7 +116,8 @@ export default class SwitchElement extends PolymerElement {
 
       }
       .slider-checked {
-        background-color: var(--color-primary-2);
+        background-color: #ff5500;
+        background-color: var(--color-primary-2, #ff5500);
       }
 
       .slider:before {

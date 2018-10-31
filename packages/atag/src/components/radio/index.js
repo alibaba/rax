@@ -133,7 +133,8 @@ export default class RadioElement extends PolymerElement {
         cursor: pointer;
       }
       :host([checked]) .circle {
-        border: 1px solid var(--color-primary-2);
+        border: #ff5500;
+        border: 1px solid var(--color-primary-2, #ff5500);
       }
 
       :host input[type="radio"]:checked+label .dot {
@@ -150,7 +151,8 @@ export default class RadioElement extends PolymerElement {
         cursor: pointer;
         border: 2px solid #fff;
         box-sizing: border-box;
-        background-color: var(--color-primary-2);
+        background-color: #ff5500;
+        background-color: var(--color-primary-2, #ff5500);
       }
 
       :host input[type="radio"][disabled]+label .circle {

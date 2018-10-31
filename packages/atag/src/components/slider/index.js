@@ -205,7 +205,8 @@ export default class Slider extends PolymerElement {
           height: 4px;
           border-radius: 2px;
           overflow: hidden;
-          background-color: var(--color-primary-2);
+          background-color: #ff5500;
+          background-color: var(--color-primary-2, #ff5500);
         }
 
         #handle {
