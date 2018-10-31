@@ -26,8 +26,7 @@ export default class CheckboxElement extends PolymerElement {
       },
       color: {
         type: String,
-        notify: true,
-        value: '#ff6600',
+        notify: true
       },
       _circleCheckedStyle: {
         type: String,
@@ -105,11 +104,11 @@ export default class CheckboxElement extends PolymerElement {
   };
 
   _getCircleCheckedStyle(checked, color, disabled) {
-    return checked && !disabled ? `border: 1px solid ${color};` : '';
+    return checked && !disabled && color ? `border: 1px solid ${color};` : '';
   }
 
   _getDotCheckedStyle(checked, color, disabled) {
-    return checked && !disabled ? `background-color: ${color};` : '';
+    return checked && !disabled && color ? `background-color: ${color};` : '';
   }
 
   static get template() {
@@ -122,15 +121,15 @@ export default class CheckboxElement extends PolymerElement {
         :host .circle {
           display: inline-flex;
           display: -webkit-inline-flex;
-          
+
           width: 1.25em;
           height: 1.25em;
-          
+
           justify-content: center;
           -webkit-justify-content: center;
           align-items: center;
           -webkit-align-items: center;
-          
+
           vertical-align: middle;
           border: 1px solid #999;
           border-radius: 0.2em;
@@ -138,12 +137,16 @@ export default class CheckboxElement extends PolymerElement {
           background-color: #fff;
           cursor: pointer;
         }
-  
+
+        :host([checked]) .circle {
+          border: 1px solid var(--color-primary-2);
+        }
+
         :host([disabled]) .circle {
           border: 1px solid #c7c7c7;
           background-color: #e7e7e7;
         }
-  
+
         :host([checked]) .dot {
           width: 60%;
           height: 60%;
@@ -153,8 +156,10 @@ export default class CheckboxElement extends PolymerElement {
           -webkit-mask-repeat: no-repeat;
           -webkit-mask-position: center;
           cursor: pointer;
+          border: 1px solid var(--color-primary-2);
+          background-color: var(--color-primary-2);
         }
-  
+
         :host([disabled]) .dot {
           background-color: #bbb;
         }

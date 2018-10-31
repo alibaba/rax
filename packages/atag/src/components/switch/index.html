@@ -19,6 +19,10 @@
         -webkit-transition: .4s;
         transition: .4s;
         border-radius: 10px;
+
+      }
+      .slider-checked {
+        background-color: var(--color-primary-2);
       }
 
       .slider:before {
@@ -57,7 +61,6 @@ export default class SwitchElement extends PolymerElement {
     return {
       color: {
         type: String,
-        value: '#FF5000',
         reflectToAttribute: true
       },
       checked: {
@@ -135,7 +138,7 @@ export default class SwitchElement extends PolymerElement {
   }
 
   _computedSwitchStyle(checked, color) {
-    return checked ? `background-color: ${color};` : '';
+    return checked && color ? `background-color: ${color};` : '';
   }
 
   _observerChecked(newVal, oldVal) {

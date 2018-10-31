@@ -34,7 +34,6 @@ export default class Slider extends PolymerElement {
       },
       activeColor: {
         type: String,
-        value: '#ff5000',
       },
       handleSize: {
         type: Number,
@@ -46,11 +45,9 @@ export default class Slider extends PolymerElement {
       },
       backgroundColor: {
         type: String,
-        value: '#ddd',
       },
       handleColor: {
         type: String,
-        value: '#fff',
       },
       _activeStyle: {
         type: String,
@@ -185,7 +182,7 @@ export default class Slider extends PolymerElement {
           align-items: center;
           margin: 8px;
         }
-  
+
         #slider {
           display: flex;
           display: -webkit-flex;
@@ -199,6 +196,7 @@ export default class Slider extends PolymerElement {
           border-radius: 2px;
           background-color: #ccc;
           position: relative;
+          background-color: #fff;
         }
 
         #active {
@@ -207,6 +205,7 @@ export default class Slider extends PolymerElement {
           height: 4px;
           border-radius: 2px;
           overflow: hidden;
+          background-color: var(--color-primary-2);
         }
 
         #handle {
@@ -215,8 +214,9 @@ export default class Slider extends PolymerElement {
           box-shadow: 0 0 4px 0 rgba(0, 0, 0, .15);
           -webkit-transform: translate3d(-50%, 0, 0);
           transform: translate3d(-50%, 0, 0);
+          background-color: #fff;
         }
-  
+
         #value {
           margin-left: 12px;
           min-width: 28px;

@@ -61,7 +61,7 @@
 
       #header #confirm {
         margin-right: 16px;
-        color: #FF5000;
+        color: var(--color-primary-2);
       }
 
       #body {
@@ -213,7 +213,7 @@ export default class Picker extends PolymerElement {
     this.$.mask.addEventListener('click', this._handleHide);
     this.$.cancel.addEventListener('click', this._handleHide);
     this.$.confirm.addEventListener('click', this.confirm);
-    
+
     if (this.value > 0) {
       this._setSelected(this.value);
     }
@@ -246,7 +246,7 @@ export default class Picker extends PolymerElement {
   }
 
   _handleTrack = ({detail}) => {
- 
+
     const itemCount = this.range.length;
     const maxOffset = (itemCount - 1) * ITEM_HEIGHT;
     const halfItemHeight = ITEM_HEIGHT / 2;
@@ -272,19 +272,19 @@ export default class Picker extends PolymerElement {
           autoOffset = -offsetOver;
         }
       }
-      
+
       offset = offset + autoOffset;
       this._setTranslateY(offset);
 
       this._lastOffset = offset;
     }
-    
+
   };
 
   _setTranslateY(value, duration) {
 
     const selector = this.$.selector;
-    
+
     if (duration) {
       selector.style.transitionDuration = selector.style.webkitTransitionDuration = `${duration}ms`;
     }

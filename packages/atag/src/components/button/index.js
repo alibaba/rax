@@ -85,10 +85,10 @@ export default class Button extends PolymerElement {
           box-sizing: border-box;
           overflow: hidden;
           text-decoration: none;
-          border-radius: 40px;
+          border-radius: var(--btn-border-1);
           cursor: pointer;
           -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-          color: #ff5500;
+          color: var(--color-primary-2);
           background: white;
         }
 
@@ -102,19 +102,19 @@ export default class Button extends PolymerElement {
           transform: scale(0.5);
           transform-origin: 0 0;
           box-sizing: border-box;
-          border-radius: 80px;
+          border-radius: var(--btn-border-2);
         }
 
         /* primary */
         :host([type="primary"]) {
           color: white;
-          background: linear-gradient(to right, #ff8000, #ff5000);
+          background: linear-gradient(to right, var(--color-primary-3), var(--color-primary-2));
         }
 
         /* warn */
         :host([type="warn"]) {
           color: white;
-          background: linear-gradient(to right, #fbca2f, #fb9025);
+          background: linear-gradient(to right, var(--color-warning-3), var(--color-warning-2));
         }
 
         /* mini */
@@ -130,20 +130,20 @@ export default class Button extends PolymerElement {
 
         :host([plain]) {
           background: transparent;
-          color: #999999;
-          border: 1px #999999 solid;
+          color: var(--color-text-2);
+          border: 1px var(--color-line-2) solid;
         }
 
         :host([plain][type="primary"]) {
           background: transparent;
-          color: #ff5500;
-          border: 1px #ff5500 solid;
+          color: var(--color-primary-2);
+          border: 1px var(--color-primary-2) solid;
         }
 
         :host([plain][type="warn"]) {
           background: transparent;
-          color: #fb9025;
-          border: 1px #fb9025 solid;
+          color: var(--color-warning-2);
+          border: 1px var(--color-warning-2) solid;
         }
 
         /* disabled */
@@ -173,13 +173,13 @@ export default class Button extends PolymerElement {
           left: 0;
           top: 0;
         }
-        
+
         .loading-child-before {
           display: block;
           margin: 0 auto;
           width: 4px;
           height: 4px;
-          background-color: #ff5500;
+          background-color: var(--color-primary-2);
           border-radius: 4px;
           -webkit-animation: loading-circle-bounce 1.2s infinite ease-in-out both;
                   animation: loading-circle-bounce 1.2s infinite ease-in-out both;
@@ -195,7 +195,7 @@ export default class Button extends PolymerElement {
         }
 
         :host([type="primary"][plain]) .loading-circle .loading-child-before {
-          background-color: #ff5500;
+          background-color: var(--color-primary-2);
         }
 
         :host([type="warn"][plain]) .loading-circle .loading-child-before {
@@ -245,7 +245,7 @@ export default class Button extends PolymerElement {
         .loading-circle .loading-circle8-before {
           -webkit-animation-delay: -0.1s;
                   animation-delay: -0.1s; }
-        
+
         @-webkit-keyframes loading-circle-bounce {
           0%, 80%, 100% {
             -webkit-transform: scale(0.6);
@@ -253,7 +253,7 @@ export default class Button extends PolymerElement {
             -webkit-transform: scale(1.2);
           }
         }
-        
+
         @keyframes loading-circle-bounce {
           0%, 80%, 100% {
             transform: scale(0.6);

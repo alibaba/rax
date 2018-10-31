@@ -27,6 +27,9 @@
         background-color: white;
         cursor: pointer;
       }
+      :host([checked]) .circle {
+        border: 1px solid var(--color-primary-2);
+      }
 
       :host input[type="radio"]:checked+label .dot {
         position: absolute;
@@ -42,6 +45,7 @@
         cursor: pointer;
         border: 2px solid #fff;
         box-sizing: border-box;
+        background-color: var(--color-primary-2);
       }
 
       :host input[type="radio"][disabled]+label .circle {
@@ -95,8 +99,7 @@ export default class RadioElement extends PolymerElement {
       },
       color: {
         type: String,
-        notify: true,
-        value: '#ff6600'
+        notify: true
       },
       circleCheckedStyle: {
         type: String,
@@ -161,14 +164,14 @@ export default class RadioElement extends PolymerElement {
   };
 
   getCircleCheckedStyle(checked, color, disabled) {
-    if (checked && !disabled) {
+    if (checked && !disabled && color) {
       return `border: 1px solid ${color};`;
     }
     return '';
   }
 
   getDotCheckedStyle(checked, color, disabled) {
-    if (checked && !disabled) {
+    if (checked && !disabled && color) {
       return `background-color: ${color};`;
     }
     return '';
