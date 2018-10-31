@@ -21,10 +21,8 @@ module.exports = function getEntry(projectDir) {
       entry[pageName] = resolve(projectDir, pagePath);
     });
   } else if (miniappType === 'mp') {
-    const appFilePath = resolve(projectDir, 'app.js');
-
     /* app entry */
-    entry.app = `!!${mpLoaderPath}?type=ali!${appFilePath}`;
+    entry.app = resolve(projectDir, 'app.js');
   }
 
   return entry;

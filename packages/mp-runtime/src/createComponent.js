@@ -1,9 +1,9 @@
 import computeChangedData from './computeChangedData';
 
-export default function createComponent(config, Rax, getRender) {
-  const render = getRender(null, Rax);
+export default function createComponent(config, renderer, getRender) {
+  const render = getRender(renderer);
 
-  return class extends Rax.Component {
+  return class extends renderer.Component {
     constructor(passedProps) {
       super({ ...config.props, ...passedProps, append: 'node', });
       this.config = config;
