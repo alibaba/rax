@@ -38,7 +38,7 @@ module.exports = function(content) {
   return `module.exports = function(__render__) {
       function Component(config) { Component.__config = config; }
       ${content}
-      return ${requireCreatePage}(${requireTemplate}, __render__, Component.__config)
+      return ${requireCreatePage}(${requireTemplate}, __render__, Component.__config);
     };
   `;
 };
