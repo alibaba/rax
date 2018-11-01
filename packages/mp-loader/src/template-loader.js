@@ -4,11 +4,10 @@ const { createRequire, renderHelperVars, prerveredVars } = require('./utils');
 const transpiler = require('./transpiler');
 const runtimeHelpers = require('./runtimeHelpers');
 const { withScope } = require('sfc-compiler');
-
 const ComponentLoaderPath = require.resolve('./component-loader');
 
 module.exports = function templateLoader(content) {
-  const options = getOptions(this);
+  const options = getOptions(this) || {};
   const isEntryTemplate = options && options.isEntryTemplate;
   const dependencyComponents = options && options.dependencyComponents && JSON.parse(options.dependencyComponents);
 
