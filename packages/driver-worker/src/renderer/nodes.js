@@ -29,7 +29,6 @@ function getAttributeName(attr) {
   } else {
     return attr;
   }
-
 }
 
 export function createNode(vnode) {
@@ -49,12 +48,14 @@ export function createNode(vnode) {
 
     if (vnode.attributes) {
       for (let i = 0; i < vnode.attributes.length; i++) {
-        let a = getAttributeName(vnode.attributes[i]);
-        if (a == null) continue;
-        if (typeof a.value === 'object' || typeof a.value === 'boolean') {
-          node[a.name] = a.value;
+        let { name, value } = vnode.attributes[i];
+        let attrName = getAttributeName(name);
+        if (attrName === null) continue;
+
+        if (typeof value === 'object' || typeof value === 'boolean') {
+          node[attrName] = value;
         } else {
-          node.setAttribute(a.name, a.value);
+          node.setAttribute(attrName, value);
         }
       }
     }
