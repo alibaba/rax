@@ -1,6 +1,6 @@
 {
   "name": "sfc2mp",
-  "version": "0.6.6-0",
+  "version": "0.6.6-2",
   "description": "SFC DSL Transforme to Mini Program",
   "bin": {
     "sfc2mp": "bin/sfc2mp.js",
@@ -58,7 +58,7 @@
     "hash-sum": "^1.0.2",
     "loader-utils": "^1.1.0",
     "rimraf": "^2.6.2",
-    "sfc-runtime": "^0.6.6-6",
+    "sfc-runtime": "^0.7.0-0",
     "string-width": "^2.1.1",
     "url-loader": "^1.1.1",
     "vue": "^2.5.17",

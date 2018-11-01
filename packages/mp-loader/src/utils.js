@@ -1,8 +1,6 @@
-const { transformSync } = require('@babel/core');
 const mkdirp = require('mkdirp');
 const { dirname, join } = require('path');
-const { readFileSync, writeFileSync } = require('fs');
-const babelOptions = require('./babelOptions');
+const { writeFileSync } = require('fs');
 
 const LOG_PREFIX = 'MINIAPP';
 
@@ -72,64 +70,16 @@ const makeMap = exports.makeMap = function makeMap(str, expectsLowerCase) {
   return expectsLowerCase ? val => map[val.toLowerCase()] : val => map[val];
 };
 
-const getBabelOptions = exports.getBabelOptions = function() {
-  return babelOptions;
-};
-
-const createRequire = exports.createRequire = function(mod) {
-  return 'require(' + mod + ')';
-};
-
-const createRequireDefault = exports.createRequireDefault = function(mod) {
-  return createRequire(mod) + '.default';
-};
-
-/**
- * compile JS TO ES5
- * @param str
- * @param opts
- * @returns {{code, map, ast}}
- */
-exports.compileToES5 = function compileToES5(str, opts) {
-  const { code, map, ast } = transformSync(str, Object.assign({}, getBabelOptions(), opts));
-  return { code, map, ast };
-};
-
-/**
- * query string formatter
- * @type {QueryString}
- */
-exports.QueryString = class QueryString {
-  constructor(query = {}) {
-    this.qsObj = query;
-  }
-
-  toString() {
-    const result = [];
-    Object.keys(this.qsObj).forEach((key) => {
-      result.push(`${key}=${encodeURIComponent(this.qsObj[key]) || ''}`);
-    });
-    return result.join('&');
-  }
-};
-
-/**
- * get page list
- * @param resourcePath
- * @returns {*|Array}
- */
-exports.getPages = function getPages(resourcePath) {
-  const appJSONPath = join(resourcePath, '../app.json');
-  const appJSON = JSON.parse(readFileSync(appJSONPath, 'utf-8'));
-  return appJSON.pages || [];
+const createRequire = exports.createRequire = function(modulePath) {
+  return `(function() { var obj = require(${modulePath}); return obj && obj.__esModule ? obj.default : obj; })()`;
 };
 
 // provide scope vars
 // provide render helper vars
-const vdomHelperFns = exports.vdomHelperFns = '_c,_s,_l,_t,_m,_v,_e,_cx';
+const renderHelperFns = exports.renderHelperFns = '_c,_s,_l,_t,_m,_v,_e,_cx';
 const staticPreveredIdentifiers = 'data,true,false,null,$event,__components_refs__';
-const prerveredVars = exports.prerveredVars = makeMap(vdomHelperFns + ',' + staticPreveredIdentifiers + ',' + '_w');
-exports.vdomHelperVars = vdomHelperFns
+const prerveredVars = exports.prerveredVars = makeMap(renderHelperFns + ',' + staticPreveredIdentifiers + ',' + '_w');
+exports.renderHelperVars = renderHelperFns
   .split(',')
-  .map(alias => `var ${alias} = __vdom_helpers__.${alias};`)
+  .map(alias => `var ${alias} = __render_helpers__.${alias};`)
   .join('');

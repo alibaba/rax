@@ -1,14 +1,10 @@
 const { getAndRemoveAttr } = require('../helpers');
 
-const type = global.TRANSPILER_TYPE || 'ali';
-const ATTR_KEY_ALI = 'a:key';
-const ATTR_KEY_WX = 'wx:key';
+const ATTR_KEY = 'a:key';
 
 function transformNode(el, state) {
-  if (type === 'ali' && el.attrsMap[ATTR_KEY_ALI] !== undefined) {
-    el.key = getAndRemoveAttr(el, ATTR_KEY_ALI);
-  } else if (type === 'wx' && el.attrsMap[ATTR_KEY_WX] !== undefined) {
-    el.key = getAndRemoveAttr(el, ATTR_KEY_WX);
+  if (el.attrsMap[ATTR_KEY] !== undefined) {
+    el.key = getAndRemoveAttr(el, ATTR_KEY);
   }
 }
 
