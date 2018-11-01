@@ -7,7 +7,7 @@ const { withScope } = require('sfc-compiler');
 const ComponentLoaderPath = require.resolve('./component-loader');
 
 module.exports = function templateLoader(content) {
-  const options = getOptions(this);
+  const options = getOptions(this) || {};
   const isEntryTemplate = options && options.isEntryTemplate;
   const dependencyComponents = options && options.dependencyComponents && JSON.parse(options.dependencyComponents);
 
@@ -46,7 +46,7 @@ module.exports = function templateLoader(content) {
   if (dependencyComponents) {
     for (let componentName in dependencyComponents) {
       if (dependencyComponents.hasOwnProperty(componentName)) {
-        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__)';
+        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__);';
       }
     }
   }
