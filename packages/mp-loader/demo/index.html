@@ -1,27 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <title>Demo</title>
+  <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <style>
     html {
-      -ms-text-size-adjust: 100%;
+      /* HACK: fix safari mobile click events aren't fired https://developer.mozilla.org/en-US/docs/Web/Events/click#Safari_Mobile */
+      cursor: pointer;
+      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
       -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     body {
-      line-height: 1.6;
-      font-family: -apple-system-font, "Helvetica Neue", sans-serif;
       margin: 0;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: 0;
+      height: 100%;
+      /* HACK: >= iOS 11 make body at least 100vh height to avoid tap highlight */
+      min-height: 100vh;
     }
+  </style>
 
+  <script>
+    var documentElementStyle = document.documentElement.style;
+    var isTouchDevice = 'ontouchstart' in window || 'onmsgesturechange' in window;
+    if (!isTouchDevice) {
+      documentElementStyle.cursor = 'auto';
+    }
+    // Set rem
+    documentElementStyle.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';
+  </script>
+
+  <style>
     a img {
       border: 0;
     }
@@ -113,7 +129,6 @@
         <img src="https://gw.alicdn.com/tfs/TB1cNCCqTtYBeNjy1XdXXXXyVXa-38-66.png" style="width: 2.5vw; margin-top: 1.5vw;" />
       </div>
       <div class="title"></div>
-
       <div style="width: 26vw;"></div>
     </div>
   </div>
@@ -133,19 +148,18 @@
       pages: [
         {
           pageName: "pages/index/index",
-          pageUrl:
-            "https://unpkg.com/miniapp-framework@0.1.39/dist/native/renderer.html"
+          pageUrl: "https://unpkg.com/miniapp-framework@0.1.43/dist/native/renderer.html"
         }
       ],
       window: {
-        navigationBarBackgroundColor: "green",
-        navigationBarTitleText: "Todo App",
+        navigationBarBackgroundColor: "#cccccc",
+        navigationBarTitleText: "Demo App",
       },
       homepage: "pages/index/index",
       tabBar: {},
       h5Assets: "/app.web.js"
     };  
   </script>
-  <script src="https://unpkg.com/miniapp-framework@0.1.39/dist/h5/master.js"></script>
+  <script src="https://unpkg.com/miniapp-framework@0.1.43/dist/h5/master.js"></script>
 </body>
 </html>
