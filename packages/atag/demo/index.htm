@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="format-detection" content="telephone=no">
-  <title>Atag Demo</title>
+  <title>Demo</title>
   <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <style>
     html {
@@ -29,10 +29,13 @@
   </style>
 
   <script>
+    var documentElementStyle = document.documentElement.style;
     var isTouchDevice = 'ontouchstart' in window || 'onmsgesturechange' in window;
     if (!isTouchDevice) {
-      document.documentElement.style.cursor = 'auto';
+      documentElementStyle.cursor = 'auto';
     }
+    // Set rem
+    documentElementStyle.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';
   </script>
 
   <style>
