@@ -8,6 +8,8 @@ Tabbar 可以看作一个页面级的导航布局，包含了底部导航和切�
 - 能力二：仅创建导航条模块；
 - 使用差别在于是否在Tabbar.Item中添加children，具体代码参考后面实例；
 
+![](https://gw.alicdn.com/tfs/TB1Qlj7RVXXXXc5XFXXXXXXXXXX-255-434.gif)
+
 ## 属性 (Tabbar)
 
 | 名称           | 类型          | 默认值   | 描述                                       |
