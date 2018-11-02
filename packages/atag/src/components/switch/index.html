@@ -1,7 +1,6 @@
 <dom-module id="a-switch">
   <template>
     <style>
-      /* shadow DOM styles go here */
       .switch {
         position: relative;
         display: inline-block;
@@ -36,28 +35,22 @@
       }
 
       .slider-checked:before {
-        transform: translateX(23px);
         -webkit-transform: translateX(23px);
+        transform: translateX(23px);
       }
     </style>
-    <!-- shadow DOM goes here -->
     <label class="switch" id="switch">
-      <span class="slider" id="slider" style$="{{switchStyle}}"></span>
+      <span class="slider" id="slider" style$="{{_switchStyle}}"></span>
     </label>
   </template>
 </dom-module>
 
 <script>
 import { PolymerElement } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
 
 export default class SwitchElement extends PolymerElement {
   static get is() {
     return 'a-switch';
-  }
-
-  constructor() {
-    super();
   }
 
   static get properties() {
@@ -68,72 +61,85 @@ export default class SwitchElement extends PolymerElement {
         reflectToAttribute: true
       },
       checked: {
-        type: String,
-        value: 'false',
+        type: Boolean,
+        value: false,
         reflectToAttribute: true,
-        observer: 'observerChecked'
+        observer: '_observerChecked'
       },
-      switchStyle: {
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+      _switchStyle: {
         type: String,
-        computed: 'computedSwitchStyle(checked, color)'
+        computed: '_computedSwitchStyle(checked, color)'
       }
     };
   }
 
   ready() {
     super.ready();
-    // save the formInitialValue for reset
-    this.formInitialValue = this.checked;
-    this.checkbox = this.$.input;
-
-    afterNextRender(this, () => {
-      this.addEventListener('click', this.handleClick);
-      window.addEventListener('_formReset', this._handleReset, true);
-    });
-    this.translateSliderBlock();
+    // Save the _initialValue for form reset
+    this._initialValue = this.checked;
+    this._translateSliderBlock();
   }
 
-  get isChecked() {
-    return this.checked !== 'false' && this.checked !== null;
-  }
+  connectedCallback() {
 
-  handleClick = () => {
-    this.checked = String(!this.isChecked);
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: {
-          checked: this.isChecked
-        }
-      })
-    );
-  }
+    super.connectedCallback();
 
-  _handleReset = () => {
-    this.checked = this.formInitialValue;
-  };
+    this.addEventListener('click', this._handleClick);
+    window.addEventListener('_formReset', this._handleReset, true);
+  }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('click', this.handleClick);
+
+    this.removeEventListener('click', this._handleClick);
     window.removeEventListener('_formReset', this._handleReset, true);
   }
 
-  translateSliderBlock() {
-    if (this.isChecked) {
+  _handleClick = () => {
+    if (!this.disabled) {
+      this.checked = !this.checked;
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: {
+            checked: this.checked
+          }
+        })
+      );
+    }
+  }
+
+  _handleReset = (event) => {
+    let parentElement = this.parentElement;
+
+    while (parentElement) {
+      if (parentElement === event.target) {
+        this.checked = this._initialValue;
+        break;
+      }
+      parentElement = parentElement.parentElement;
+    }
+  };
+
+
+  _translateSliderBlock() {
+    if (this.checked) {
       this.$.slider.classList.add('slider-checked');
     } else {
       this.$.slider.classList.remove('slider-checked');
     }
   }
 
-  computedSwitchStyle(checked, color) {
-    return this.isChecked
-      ? `background-color: ${color};`
-      : '';
+  _computedSwitchStyle(checked, color) {
+    return checked ? `background-color: ${color};` : '';
   }
 
-  observerChecked(newVal, oldVal) {
-    this.translateSliderBlock();
+  _observerChecked(newVal, oldVal) {
+    this._translateSliderBlock();
   }
 }
 

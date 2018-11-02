@@ -1,16 +1,7 @@
-const type = global.TRANSPILER_TYPE || 'my';
-
 const ATTRIBUTES = {
-  wx: {
-    IF: 'wx:if',
-    ELSE_IF: 'wx:elif',
-    ELSE: 'wx:else'
-  },
-  my: {
-    IF: 'a:if',
-    ELSE_IF: 'a:elif',
-    ELSE: 'a:else'
-  }
+  IF: 'a:if',
+  ELSE_IF: 'a:elif',
+  ELSE: 'a:else'
 };
 
 const { getAndRemoveAttr } = require('../helpers');
@@ -21,7 +12,7 @@ function transformNode(el, options) {
     return;
   }
 
-  const exp = getAndRemoveAttr(el, ATTRIBUTES[type].IF);
+  const exp = getAndRemoveAttr(el, ATTRIBUTES.IF);
   if (exp) {
     el.if = exp;
     addIfCondition(el, {
@@ -29,10 +20,10 @@ function transformNode(el, options) {
       block: el
     });
   } else {
-    if (getAndRemoveAttr(el, ATTRIBUTES[type].ELSE) != null) {
+    if (getAndRemoveAttr(el, ATTRIBUTES.ELSE) != null) {
       el.else = true;
     }
-    const elseif = getAndRemoveAttr(el, ATTRIBUTES[type].ELSE_IF);
+    const elseif = getAndRemoveAttr(el, ATTRIBUTES.ELSE_IF);
     if (elseif) {
       el.elseif = elseif;
     }
@@ -47,7 +38,5 @@ function addIfCondition(el, condition) {
 }
 
 module.exports = {
-  // staticKeys: ['className', 'style'],
   transformNode
-  // genData
 };

@@ -3,7 +3,7 @@ const {
   isPreveredGlobalObject,
   isValidIdentifier,
   isSFCInternalIdentifier,
-  isVDOMHelperFns,
+  isRenderHelperFns,
   no
 } = require('../utils');
 const babylon = require('babylon');
@@ -37,7 +37,7 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
       !isPreveredIdentifier(node.name) &&
       !isPreveredGlobalObject(node.name) &&
       !isSFCInternalIdentifier(node.name) &&
-      !isVDOMHelperFns(node.name)
+      !isRenderHelperFns(node.name)
     ) {
       recordIds[node.name] = true;
     }
@@ -62,6 +62,12 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
       const { node } = path;
       add(node.left);
       add(node.right);
+    },
+    ArrayExpression(path) {
+      const { node } = path;
+      if (node.elements) {
+        node.elements.forEach(add);
+      }
     },
     ConditionalExpression(path) {
       const { node } = path;

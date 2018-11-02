@@ -51,7 +51,7 @@ module.exports = {
         }, {
           loader: require.resolve('../loader/page'),
           options: {
-            type: 'my',
+            type: 'ali',
           }
         }],
         include: [

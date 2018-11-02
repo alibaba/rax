@@ -2,14 +2,14 @@ import { isPlainObject } from './utils';
 import Watcher from './watcher';
 
 export default function initWatch(vm, watch) {
-  if (!isPlainObject(watch)) {
-    return;
-  }
-
   Object.defineProperty(vm, '$watch', {
     enumerable: false,
     value: $watch
   });
+
+  if (!isPlainObject(watch)) {
+    return;
+  }
 
   for (const key in watch) {
     const handler = watch[key];

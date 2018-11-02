@@ -41,6 +41,7 @@ const global =
     : typeof global === 'object'
       ? global
       : {};
+let decimalPixelTransformer = (val) => val;
 
 // Default 1 rem to 1 px
 if (getRem() === undefined) {
@@ -61,12 +62,16 @@ export function isRem(str) {
  * Calculate rem to pixels: '1.2rem' => 1.2 * rem
  * @param {String} str
  * @param {Number} rem
- * @returns {number}
+ * @returns {String}
  */
 export function calcRem(str, remUnit = getRem()) {
   return str.replace(REM_REG, function(rem) {
-    return parseFloat(rem) * remUnit + 'px';
+    return decimalPixelTransformer(parseFloat(rem) * remUnit) + 'px';
   });
+}
+
+export function calcUnitNumber(val, remUnit = getRem()) {
+  return decimalPixelTransformer(val * remUnit) + 'px';
 }
 
 export function getRem() {
@@ -77,16 +82,25 @@ export function setRem(rem) {
   global[GLOBAL_REM_UNIT] = rem;
 }
 
+/**
+ * Set a function to transform unit of pixel,
+ * default to passthrough.
+ * @param {Function} transformer function
+ */
+export function setDecimalPixelTransformer(transformer) {
+  decimalPixelTransformer = transformer;
+}
+
 export function isUnitNumber(val, prop) {
   return typeof val === 'number' && !UNITLESS_NUMBER_PROPS[prop];
 }
 
 export function convertUnit(val, prop, remUnit = getRem()) {
   if (prop && isUnitNumber(val, prop)) {
-    return val * remUnit + 'px';
+    return calcUnitNumber(val, remUnit);
   } else if (isRem(val)) {
-    return calcRem(val, remUnit);
+    return calcRem(val, remUnit, );
+  } else {
+    return val;
   }
-
-  return val;
 }
