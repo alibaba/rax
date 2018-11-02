@@ -54,7 +54,7 @@ class Test extends Component {
 
 当然，受限于各个端的差异，标准化的道路还很长，「更标准化」这也是 Rax 未来的重要目标之一。
 
-##未来
+## 未来
 
 Write once, run everywhere. 这是口号，亦是目标。Rax 未来会在更多的端上不断探索，比如 VR/AR, 甚至之前微博上有同学提出的是否可以用 Rax 写微信小程序，也是一个蛮有意思的想法。
 

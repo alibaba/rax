@@ -1,5 +1,9 @@
 # Countdown 倒计时
 
+倒计时组件，可设置倒计时毫秒数，以及展现的模板。
+
+![](https://gw.alicdn.com/tfs/TB1OdDNRVXXXXXeapXXXXXXXXXX-255-201.gif)
+
 ## 安装
 
 ```bash
@@ -12,9 +16,9 @@ $ npm install rax-countdown --save
 import Countdown from 'rax-countdown';
 ```
 
-## 参数（Props）
+## 属性
 
-| Name                | Type     | Default              | Desc                                     | Required |
+| 名称                | 类型     | 默认值              |  描述                                    | Required |
 | :------------------ | :------- | :------------------- | :--------------------------------------- | :------- |
 | timeRemaining       | Number   | /                    | 倒计时剩余时间,单位为"毫秒"                          | Yes      |
 | interval            | Number   | 1000                 | 倒计时的间隔,单位为"毫秒"                           | No       |
@@ -34,15 +38,79 @@ import Countdown from 'rax-countdown';
 ```jsx
 // demo
 import { createElement, render, Component } from 'rax';
-import Countdown from 'rax-countdown';
 import View from 'rax-view';
+import Countdown from 'rax-countdown';
 
-render(<View>
-  <Countdown
-    timeRemaining={100000}
-    tpl="{d}天{h}时{m}分{s}秒"
-    onComplete={() => { console.log('complete'); }}
-  />  
-</View>);
+class App extends Component {
+  onComplete() {
+    console.log('countdown complete');
+  }
+  render() {
+    return (
+      <View style={styles.root}>
+        <View style={styles.container}>
+          <Countdown
+            timeRemaining={100000}
+            tpl={'{d}天{h}时{m}分{s}秒'}
+            onComplete={this.onComplete}
+          />
+        </View>
+        <View style={styles.container}>
+          <Countdown
+            timeRemaining={100000000}
+            timeStyle={{
+              'color': '#007457',
+              'backgroundColor': 'red',
+              'marginLeft': '2rem',
+              'marginRight': '2rem'
+            }}
+            secondStyle={{'backgroundColor': 'yellow'}}
+            textStyle={{'backgroundColor': 'blue'}}
+            tpl={'{d}-{h}-{m}-{s}'}
+            onComplete={this.onComplete}
+          />
+        </View>
+        <View style={styles.container}>
+          <Countdown
+            timeRemaining={500000}
+            tpl="{h}:{m}:{s}"
+            timeStyle={{
+              color: '#ffffff',
+              fontSize: 40,
+            }}
+            secondStyle={{
+              color: '#ffffff',
+              fontSize: 40,
+            }}
+            timeWrapStyle={{
+              borderRadius: 6,
+              width: 50,
+              height: 60,
+              backgroundColor: '#333333',
+            }}
+           />
+        </View>
+      </View>
+    );
+  }
+}
+
+let styles = {
+  root: {
+    width: 750,
+    paddingTop: 20
+  },
+  container: {
+    padding: 20,
+    borderStyle: 'solid',
+    borderColor: '#dddddd',
+    borderWidth: 1,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 10,
+  },
+};
+
+render(<App />);
 ```
 
