@@ -10,15 +10,7 @@ const IS_BIND_REG = /\W*\{\{/;
  * @param {*} indexKey
  */
 function transformNode(node) {
-  const { attrsMap, attrsList } = node;
-  if (attrsMap && attrsMap.hasOwnProperty('class')) {
-    if (IS_BIND_REG.test(attrsMap.class)) {
-      const exp = getAndRemoveAttr(node, 'class');
-      node.classNameStyle = exp;
-    } else {
-      node.classNameStyle = JSON.stringify([attrsMap.class]);
-    }
-  }
+  const { attrsMap } = node;
   if (attrsMap && attrsMap.hasOwnProperty('style')) {
     const styleExp = attrsMap.style;
     getAndRemoveAttr(node, 'style');

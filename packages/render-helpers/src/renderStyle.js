@@ -35,8 +35,8 @@ function transformCSSStyleObject(str) {
   return styleObj;
 }
 
-export default function renderStyle(classNames = [], styleObject = {}, styleBinding, staticStyle) {
-  const validClasses = flatClassNames(classNames);
+export default function renderStyle(styleBinding, staticStyle) {
+  const style = {};
 
   /**
    * Handle style with Array binding
@@ -44,12 +44,6 @@ export default function renderStyle(classNames = [], styleObject = {}, styleBind
   if (Array.isArray(styleBinding)) {
     styleBinding = styleBinding.reduce((iter, curr) => Object.assign(iter, curr), {});
   }
-
-  const style = validClasses
-    .map(klass => styleObject[klass])
-    .reduce((prev, next) => {
-      return Object.assign(prev, next);
-    }, {});
 
   if (typeof styleBinding === 'string') {
     Object.assign(style, transformCSSStyleObject(styleBinding));
