@@ -1,5 +1,9 @@
 # Modal 模态框
 
+带有半透明蒙层效果的模态框，用户可以自定义弹出层内的展现效果。
+
+![](https://gw.alicdn.com/tfs/TB1wXIXRVXXXXbPXFXXXXXXXXXX-255-404.gif)
+
 ## 安装
 
 ```bash

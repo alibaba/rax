@@ -9,8 +9,12 @@ module.exports = (projectDir, opts) => {
     },
     module: {
       rules: [
+        /**
+         * Post babel loader to compile template attribute expression
+         */
         {
-          test: /\.js$/,
+          test: /\.(js|axml)$/,
+          enforce: 'post',
           use: [
             {
               loader: require.resolve('babel-loader'),
