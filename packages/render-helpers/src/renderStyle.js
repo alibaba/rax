@@ -45,7 +45,6 @@ export default function renderStyle(styleBinding, staticStyle) {
     styleBinding = styleBinding.reduce((iter, curr) => Object.assign(iter, curr), {});
   }
 
-
   if (typeof styleBinding === 'string') {
     Object.assign(style, transformCSSStyleObject(styleBinding));
   } else if (typeof styleBinding === 'object') {

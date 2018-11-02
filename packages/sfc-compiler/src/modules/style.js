@@ -54,12 +54,11 @@ function genData(el) {
     return data;
   }
 
-  // _cx(?styleBinding, ?staticStyle);
-  const styleArgs = [];
-  el.styleBinding && styleArgs.push(el.styleBinding);
-  el.staticStyle && styleArgs.push(el.staticStyle);
+  // _cx(styleBinding, staticStyle);
+  const styleBinding = el.styleBinding ? el.styleBinding : 'null';
+  const staticStyle = el.staticStyle ? el.staticStyle : 'null';
+  data += `style:_cx(${styleBinding},${staticStyle}),`;
 
-  data += `style:_cx(${styleArgs.join(',')}),`;
   return data;
 }
 
