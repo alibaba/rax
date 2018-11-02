@@ -1,7 +1,7 @@
 /* global __sfc__, __embed_view_manager__ */
 const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent);
 const embedViewManager =
-  typeof __embed_view_manager__ !== "undefined" ? __embed_view_manager__ : null;
+  typeof __embed_view_manager__ !== 'undefined' ? __embed_view_manager__ : null;
 
 /**
  * Check whether native view is supported
