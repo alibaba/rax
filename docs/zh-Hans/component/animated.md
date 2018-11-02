@@ -91,7 +91,7 @@ style={{
 
  `Animated.ValueXY`则用来处理一些2D动画，譬如滑动。并且还有一些辅助功能譬如`setOffset`和`getLayout`来帮助实现一些常见的交互效果，譬如拖放操作(Drag and drop)。
 
- 你可以在`AnimationExample.js`中找到一些更复杂的例子。你还可以看看Gratuitous Animation App，以及[动画指南文档](animations.html)。
+ 你可以在`AnimationExample.js`中找到一些更复杂的例子。你还可以看看Gratuitous Animation App。
 
 注意`Animated`模块被设计为可完全序列化的，这样动画可以脱离JavaScript事件循环，以一种高性能的方式运行。这可能会导致API看起来比较难懂，与一个完全同步的动画系统相比稍微有一些奇怪。`Animated.Value.addListener`可以帮助你解决一些相关限制，不过使用它的时候需要小心，因为将来的版本中它可能会牵扯到性能问题。
 
@@ -139,13 +139,13 @@ style={{
 
 ```jsx
 onScroll={this.AnimatedEvent(
-	[{nativeEvent: {contentOffset: {x: this._scrollX}}}]
-	{listener},          // 可选的异步监听函数
+  [{nativeEvent: {contentOffset: {x: this._scrollX}}}]
+  {listener},          // 可选的异步监听函数
 )
 ...
 onPanResponderMove: this.AnimatedEvent([
-	null,                // 忽略原始事件
-	{dx: this._panX},    // 手势状态参数
+  null,                // 忽略原始事件
+  {dx: this._panX},    // 手势状态参数
 ]),
 ```
 - static createAnimatedComponent(Component: any) 
