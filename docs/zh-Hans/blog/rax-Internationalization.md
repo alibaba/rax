@@ -161,13 +161,9 @@ Text 组件传入是否预留 font-padding 的参数，如果需要处理超高�
 
 [CLDR 信息](//cldr.unicode.org/index)是指不同国家在数字，时间，单复数等制式方面差异的信息规范。在实现层面，端、后端语言通常有 ICU 工具库，前端则通常依赖 [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) api 。在 Rax 项目中，基于此 API 封装的国际化组件有：
 
-*   @ali/rax-intl (此方案暂未开放)
+*   rax-intl (此方案待开放)
 
     能够基本满足诉求，唯一的问题是：Intl 的兼容性并不是很理想，iOS 9.3 以下及 Android 4.3 以下没有 Intl 对象。**目前，rax 还没有在 framework 层去实现低版本 jscore 的 Polyfill**。
-
-*   @alife/universal-intl
-
-    不依赖任何上层 JS 框架，提供与 [react-intl](https://github.com/yahoo/react-intl/) 类似的 api。在 lazada 实践中，为了解决多技术栈统一问题，我们在 pc，msite, rax 项目中都使用了此组件。
 
 
 ## [](#9)金额数据

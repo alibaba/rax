@@ -95,39 +95,7 @@ weex 下没有script标签，要使用就需要hack。
 实现这个的技术关键是：
 
 *   下载： 其实就是发起http请求了，可以用fetch，ajax
-*   执行： new Function or eval, (weex据说准备在native层支持执行代码了) 基于以上两点，坡哥这边实现了webpack-weex-require-ensure-plugin 。 下面举一个线上在跑的例子：
-
-
-```
-    const mkSdk = require('bundle-loader?name=[folder]/[name]!@ali/mk-sdk');
-    mkSdk && mkSdk(Sdk => {
-      this.sdk = new Sdk({pageId: 0, delay: 0});
-      this.sdk.on('poplayer', data => {
-        !this.state.poplayer.rule && this.setState({poplayer: data});
-      }).on('optional-poplayer', data => {
-        const activityId = this.parse('aid');
-        const pageId = this.parse('pid');
-        if ((pageId == '0' || pageId == 0) && activityId == data.id) {
-          !this.state.poplayer.rule && this.setState({poplayer: data});
-        }
-      }).on('market-card', data => {
-        this.setState({marketCard: data});
-      });
-    });
-
-```
-
-
-上面是使用bundle-loader 的形式，我们也可以直接使用require.ensure，类似下面：
-
-
-```
-      require.ensure([], (require) => {
-        pay = require('@ali/universal-pay');
-      });
-
-```
-
+*   执行： new Function or eval
 
 其实webpack 2 还有个System.import 更强大一些，but，我们还是1.x. 不过已经够用了。
 这个问题的缺点或者说解决不了下面说的模块与页面主bundle的发布分离的问题（因为这些还是需要和主bundle一起build，虽然不build一起了）。

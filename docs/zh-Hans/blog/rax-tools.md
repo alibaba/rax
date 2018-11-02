@@ -77,7 +77,7 @@ const config = {
     module:{
         rules:[{
             test:/\.js|\.jsx?，
-            include:[new RegExp(/node_modules\/.*@ali.*/)]
+            include:[new RegExp(/node_modules\/.*@.*/)]
             use:`${require.resolve('babel-loader')}?${JSON.stringify(babelConfig)}`
         }]
     },
@@ -141,7 +141,7 @@ module:{
         use:[require.resolve('stylesheet-loader'),require.resolve('less-loader'),]
     },{
         test:/\.js|\.jsx?，
-        include:[new RegExp(/node_modules\/.*@ali.*/)]
+        include:[new RegExp(/node_modules\/.*@.*/)]
         use:`${require.resolve('babel-loader')}?${JSON.stringify(babelConfig)}`
     }]
  },
@@ -263,7 +263,7 @@ script:{
 
 ### [](#8)调试
 
-weex 官方文档中已经给出了比较清晰的介绍。不清楚流程的同学可以参考最新版本的weex-toolkit 2.0 [文档](https://www.atatech.org/articles/94484) 。
+weex 官方文档中已经给出了比较清晰的介绍。不清楚流程的同学可以参考最新版本的 weex-toolkit 2.0。
 
 ### [](#9)降级
 

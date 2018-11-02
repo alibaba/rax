@@ -86,7 +86,7 @@ JS Service 是一个很久以前 weex 就已经支持的功能，在淘宝大促
 
     再按照 [service 编写的文档](https://weex.apache.org/cn/references/js-service.html#bian-xie-yi-ge-js-service) 的要求，把上面的 `weex-nuke.buildin.js` 打包成一个 JS Service 文件，命名为 `module-service.js` 。
 
-    聪明的我们当然不会用复制黏贴这么低效的方式去生成，于是分分钟写了一个基于 xtpl 的构建工具 @ali/nuke-jservice 一键生成，核心的伪代码示意如下：
+    核心的伪代码示意如下：
 
 
     ```
