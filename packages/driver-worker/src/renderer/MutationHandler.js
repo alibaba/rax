@@ -1,7 +1,7 @@
 import { sharedNodeMap } from './NodeMap';
 import { createNode } from './nodes';
 import { addEvent, removeEvent, setPostMessage } from './events';
-import { setAttribute} from './attrs';
+import { setAttribute } from './attrs';
 
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';

@@ -19,6 +19,7 @@ export function setAttribute(node, attrName, value) {
 
   if (attrName === STYLE) {
     setStyle(node, value);
+    return;
   }
 
   if (typeof value === 'object' || typeof value === 'boolean') {
