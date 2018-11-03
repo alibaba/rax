@@ -27,10 +27,9 @@ render(
 
 `index.js`
 ```js
-import domRenderer from 'driver-worker/lib/dom-renderer';
+import domRenderer from 'driver-worker/lib/renderer';
 import spawnWorker from 'worker-loader?inline!./worker.js';
 
 const worker = spawnWorker();
-const tagNamePrefix = 'a-'; // Only for custom-elements
-domRenderer({ worker, tagNamePrefix });
+domRenderer({ worker });
 ```

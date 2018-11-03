@@ -2,7 +2,6 @@ import 'components/swiper/swiper-item';
 import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -20,8 +19,7 @@ export default class Swiper extends PolymerElement {
       },
       vertical: {
         type: Boolean,
-        value: false,
-        observer: '_observeVertical',
+        value: false
       },
       circular: {
         type: Boolean,
@@ -90,40 +88,9 @@ export default class Swiper extends PolymerElement {
     this.render();
 
     Gestures.addListener(this, 'track', this._handleTrack);
+    Gestures.setTouchAction(this, 'auto');
+
     this.isReady = true;
-  }
-
-  /**
-   * NOTE: if swiper direction is different with parent
-   * scroll view direction, set touch-action to pan-x if vertically,
-   * to pan-y if not.
-   * Excepted case: if parent scroll element is the whole page (body)
-   * and the swiper's scroll direction is vertical, set touch action
-   * to none to avoid double scrolling.
-   */
-  _observeVertical() {
-    afterNextRender(this, () => {
-      const parentScrollView = this._getParentScrollView();
-      const parentScrollVertical = !(parentScrollView && parentScrollView.scrollX);
-
-      if (this.vertical && parentScrollView === null) {
-        Gestures.setTouchAction(this, 'none');
-      } else if (this.vertical === parentScrollVertical) {
-        Gestures.setTouchAction(this, 'auto');
-      } else {
-        Gestures.setTouchAction(this, this.vertical ? 'pan-x' : 'pan-y');
-      }
-    });
-  }
-
-  _getParentScrollView() {
-    let parent = this;
-    while (parent = parent.parentElement) {
-      if (parent.tagName === 'A-SCROLL-VIEW') {
-        return parent;
-      }
-    }
-    return null;
   }
 
   handleChildrenChanged(info) {

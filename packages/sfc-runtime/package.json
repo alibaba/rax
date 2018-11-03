@@ -1,6 +1,6 @@
 {
   "name": "sfc-runtime",
-  "version": "0.6.6-5",
+  "version": "0.7.0-0",
   "main": "lib/index.js",
   "description": "SFC DSL Runtime",
   "files": [
@@ -21,7 +21,8 @@
   "dependencies": {
     "camelcase": "^5.0.0",
     "universal-env": "^0.6.5",
-    "uppercamelcase": "^3.0.0"
+    "uppercamelcase": "^3.0.0",
+    "render-helpers": "^0.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-rc.1",

@@ -1,3 +1,9 @@
+---
+title: 什么是 Rax，以及 Rax 的特点
+date: 20170426
+author: 大果
+---
+
 # 什么是 Rax，以及 Rax 的特点
 
 <img src="https://img.alicdn.com/tps/TB1LxebPVXXXXaHXpXXXXXXXXXX-900-500.png" style="text-align: center;"/>
@@ -59,4 +65,4 @@ Rax 团队敬上。
 
 
 
-参考文章：http://taobaofed.org/blog/2017/02/10/why-rax/
+参考文章：//taobaofed.org/blog/2017/02/10/why-rax/

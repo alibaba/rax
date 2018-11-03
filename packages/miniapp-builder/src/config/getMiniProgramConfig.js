@@ -10,21 +10,43 @@ module.exports = (projectDir, opts) => {
     module: {
       rules: [
         /**
-         * disable webpack-hot-client
+         * Post babel loader to compile template attribute expression
          */
         {
-          test: /webpack\-hot\-client/,
-          loader: require.resolve('null-loader'),
-        },
-        {
-          test: /\.js$/,
-          loaders: [
+          test: /\.(js|axml)$/,
+          enforce: 'post',
+          use: [
             {
               loader: require.resolve('babel-loader'),
               options: babelConfig,
+            }
+          ]
+        },
+        {
+          test: /\.acss$/,
+          use: [
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
+              }
             },
-          ],
-        }
+            {
+              loader: require.resolve('postcss-loader'),
+              options: {
+                plugins: [
+                  require('mp-loader/src/postcss-rpx2rem'),
+                  require('mp-loader/src/postcss-tag-prefix'),
+                  require('autoprefixer')
+                ]
+              }
+            },
+          ]
+        },
+        {
+          test: /app\.js$/,
+          loader: require.resolve('mp-loader'),
+        },
       ],
     },
     plugins: [

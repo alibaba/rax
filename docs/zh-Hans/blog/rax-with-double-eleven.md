@@ -1,10 +1,16 @@
+---
+title: Rax 淘宝 双11 双12 实战
+date: 20170427
+author: 亚城
+---
+
 # Rax 淘宝 双11 双12 实战
 
 <img src="https://gw.alicdn.com/tfs/TB1XDuDPXXXXXbRapXXXXXXXXXX-900-500.jpg" style="text-align: center;"/>
 
 Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 
-Rax 介绍参考：[http://react-china.org/t/rax-rax/11552](http://react-china.org/t/rax-rax/11552)
+Rax 介绍参考：[//react-china.org/t/rax-rax/11552](//react-china.org/t/rax-rax/11552)
 
 ## 上层体系
 
@@ -136,4 +142,4 @@ Rax 第一次接受淘宝双促的考验，在 native 化、性能、稳定性�
 了解更多 [Rax](https://github.com/alibaba/rax) 相关内容，欢迎访问 [alibaba.github.io/rax](https://alibaba.github.io/rax)
 Rax 团队敬上。
 
-参考文章：[http://taobaofed.org/blog/2017/01/13/rax-in-act/](http://taobaofed.org/blog/2017/01/13/rax-in-act/)
+参考文章：[//taobaofed.org/blog/2017/01/13/rax-in-act/](//taobaofed.org/blog/2017/01/13/rax-in-act/)

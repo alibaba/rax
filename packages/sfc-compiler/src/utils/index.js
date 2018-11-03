@@ -171,18 +171,18 @@ exports.isPreveredGlobalObject = makeMap(
 );
 
 const sfcModuleDeclarationName = exports.sfcModuleDeclarationName = '__sfc_module_declaration__';
-const globalComponentsRefName = exports.globalComponentsRefName = '__sfc_components_ref__';
+const globalComponentsRefName = exports.globalComponentsRefName = '__components_ref__';
 const componentDifinitionName = exports.componentDifinitionName = '__difinition__';
-const vdomHelperName = exports.vdomHelperName = '__vdom_helpers__';
+const renderHelperName = exports.renderHelperName = '__render_helpers__';
 const styleObjectName = exports.styleObjectName = '__styles__';
-const VDOMHelpers = exports.VDOMHelpers = '_c,_cx,_e,_s,_l,_t,_m,_v';
-exports.isVDOMHelperFns = makeMap(VDOMHelpers);
+const renderHelpers = exports.renderHelpers = '_c,_cx,_e,_s,_l,_t,_m,_v';
+exports.isRenderHelperFns = makeMap(renderHelpers);
 exports.isSFCInternalIdentifier = makeMap([
   sfcModuleDeclarationName,
   globalComponentsRefName,
   componentDifinitionName,
   styleObjectName,
-  vdomHelperName
+  renderHelperName
 ].join(','));
 
 /**
