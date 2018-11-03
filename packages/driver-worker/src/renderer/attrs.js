@@ -1,3 +1,7 @@
+import { setStyle } from './styles';
+import camelCase from '../shared/camelCase';
+
+const STYLE = 'style';
 const INVALID_ATTRS_MAP = {
   /**
    * In web components, slot attribute has side effects to
@@ -8,4 +12,28 @@ const INVALID_ATTRS_MAP = {
 
 export function isInvalidAttr(attr) {
   return INVALID_ATTRS_MAP.hasOwnProperty(attr);
+}
+
+export function setAttribute(node, attrName, value) {
+  if (isInvalidAttr(attrName)) return;
+
+  if (attrName === STYLE) {
+    setStyle(node, value);
+  }
+
+  if (typeof value === 'object' || typeof value === 'boolean') {
+    /**
+     * Transform kebab cased attribute name to camel cased property name.
+     * <a-view foo-bar="true" />
+     * ->
+     * el.fooBar = true;
+     */
+    node[camelCase(attrName)] = value;
+  } else {
+    if (value == null) {
+      node.removeAttribute(attrName);
+    } else {
+      node.setAttribute(attrName, value);
+    }
+  }
 }
