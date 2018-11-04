@@ -60,7 +60,6 @@ export default class RadioGroupElement extends PolymerElement {
     <slot></slot>
     `;
   }
-
 }
 
 customElements.define(RadioGroupElement.is, RadioGroupElement);

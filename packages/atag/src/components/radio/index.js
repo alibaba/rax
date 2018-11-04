@@ -172,7 +172,6 @@ export default class RadioElement extends PolymerElement {
     </label>
     `;
   }
-
 }
 
 customElements.define(RadioElement.is, RadioElement);

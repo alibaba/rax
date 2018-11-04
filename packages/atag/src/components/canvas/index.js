@@ -39,7 +39,6 @@ export default class CanvasElement extends PolymerElement {
     <canvas id="canvasEl" width="{{width}}" height="{{height}}"></canvas>
     `;
   }
-
 }
 
 customElements.define(CanvasElement.is, CanvasElement);
