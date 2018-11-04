@@ -11,7 +11,7 @@ const DATA_SCOPE_REG = /^data[.[]/;
  * @param {*} node
  */
 function transformNode(node) {
-  const { attrsMap, attrsList } = node;
+  const { attrsList } = node;
   if (!Array.isArray(attrsList)) {
     return;
   }
@@ -40,7 +40,13 @@ function transformNode(node) {
   toSplice.reverse().forEach(i => {
     splice(attrsList, i);
   });
-  node.events = events;
+
+  /**
+   * If events not exists, not to generate event handlers.
+   */
+  if (Object.keys(events).length > 0) {
+    node.events = events;
+  }
 }
 
 function splice(arr, i) {

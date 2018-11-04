@@ -2,6 +2,7 @@ import { setStyle } from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { addEvent } from './events';
 import { isValidW3CTag, isValidCustomTags } from './tags';
+import { isInvalidAttr } from './attrs';
 
 const CUSTOM_TAG_PREFIX = 'a-';
 
@@ -16,6 +17,17 @@ function getTagName(nodeName) {
     return CUSTOM_TAG_PREFIX + tagName;
   } else {
     return 'invalid-tag';
+  }
+}
+
+/**
+ * Attrs that in blacklist should be ignored
+ */
+function getAttributeName(attr) {
+  if (isInvalidAttr(attr)) {
+    return null;
+  } else {
+    return attr;
   }
 }
 
@@ -36,12 +48,14 @@ export function createNode(vnode) {
 
     if (vnode.attributes) {
       for (let i = 0; i < vnode.attributes.length; i++) {
-        let a = vnode.attributes[i];
+        let { name, value } = vnode.attributes[i];
+        let attrName = getAttributeName(name);
+        if (attrName === null) continue;
 
-        if (typeof a.value === 'object' || typeof a.value === 'boolean') {
-          node[a.name] = a.value;
+        if (typeof value === 'object' || typeof value === 'boolean') {
+          node[attrName] = value;
         } else {
-          node.setAttribute(a.name, a.value);
+          node.setAttribute(attrName, value);
         }
       }
     }

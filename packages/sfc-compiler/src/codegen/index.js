@@ -415,47 +415,9 @@ function genChildren(el, state, checkSkip, altGenElement, altGenNode) {
     ) {
       return (altGenElement || genElement)(el, state);
     }
-    const normalizationType = checkSkip
-      ? getNormalizationType(children, state.maybeComponent)
-      : 0;
     const gen = altGenNode || genNode;
-    return `[${children.map(c => gen(c, state)).join(',')}]${
-      normalizationType ? `,${normalizationType}` : ''
-    }`;
+    return `[${children.map(c => gen(c, state)).join(',')}]`;
   }
-}
-
-// determine the normalization needed for the children array.
-// 0: no normalization needed
-// 1: simple normalization needed (possible 1-level deep nested array)
-// 2: full normalization needed
-function getNormalizationType(children, maybeComponent) {
-  let res = 0;
-  for (let i = 0; i < children.length; i++) {
-    const el = children[i];
-    if (el.type !== 1) {
-      continue;
-    }
-    if (
-      needsNormalization(el) ||
-      el.ifConditions &&
-      el.ifConditions.some(c => needsNormalization(c.block))
-    ) {
-      res = 2;
-      break;
-    }
-    if (
-      maybeComponent(el) ||
-      el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block))
-    ) {
-      res = 1;
-    }
-  }
-  return res;
-}
-
-function needsNormalization(el) {
-  return el.for !== undefined || el.tag === 'template' || el.tag === 'slot';
 }
 
 function genNode(node, state) {

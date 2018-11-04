@@ -4,23 +4,12 @@ const querystring = require('querystring');
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { createRequire } = require('./utils');
 const runtimeHelpers = require('./runtimeHelpers');
+const resolveDependencyComponents = require('./component-resolver');
 
 const templateLoader = require.resolve('./template-loader');
 const CSS_EXT = '.acss';
 const TEMPLATE_EXT = '.axml';
 const CONFIG_EXT = '.json';
-const RELATIVE_PATH_REG = /^\./;
-const ABSOLUTE_PATH_REG = /^\//;
-
-function resolveComponentPath(componentPath, projectPath, pagePath) {
-  if (RELATIVE_PATH_REG.test(componentPath)) {
-    return join(pagePath, componentPath);
-  } else if (ABSOLUTE_PATH_REG.test(componentPath)) {
-    return join(projectPath, componentPath);
-  } else {
-    return join(projectPath, 'node_modules', componentPath);
-  }
-}
 
 module.exports = function(content) {
   const { appCssPath } = getOptions(this);
@@ -35,21 +24,10 @@ module.exports = function(content) {
   let config = {};
   if (existsSync(configPath)) {
     config = JSON.parse(readFileSync(configPath, 'utf-8'));
+    this.addDependency(configPath);
   }
 
-  const dependencyComponents = {};
-  if (config.usingComponents) {
-    for (let componentName in config.usingComponents) {
-      if (config.usingComponents.hasOwnProperty(componentName)) {
-        dependencyComponents[componentName] = resolveComponentPath(
-          config.usingComponents[componentName],
-          this.rootContext,
-          basePath
-        );
-      }
-    }
-  }
-
+  const dependencyComponents = resolveDependencyComponents(config, this.rootContext, basePath);
   const templateLoaderQueryString = querystring.stringify({
     appCssPath,
     cssPath,
@@ -65,12 +43,10 @@ module.exports = function(content) {
   pageName = String(pageName).replace(/\\/g, '/'); // Compatible for windows
 
   // "getApp" is global injected
-  let source = `var __renderFactory = ${requirePageTemplate};
-    var __createPage = ${requireCreatePage};
-    var Page = function(config) { Page.config = config; };
+  let source = `var Page = function(config) { Page.__config = config; };
     ${content}
-    require('@core/page').register({ page: ${JSON.stringify(pageName)} }, function(module, exports, require){
-      module.exports = __createPage(Page.config, __renderFactory, require);
+    require('@core/page').register({ page: ${JSON.stringify(pageName)} }, function(__module, __exports, __require){
+      __module.exports = ${requireCreatePage}(${requirePageTemplate}, __require, Page.__config);
     });`;
 
   return source;

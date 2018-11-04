@@ -135,7 +135,7 @@ export default class WorkerDriver extends Driver {
   }
 
   handleReturn(data) {
-    this.operator.apply(data);
+    this.evaluator.apply(data);
   }
 
   /**

@@ -8,35 +8,46 @@ const { withScope } = require('sfc-compiler');
 const ComponentLoaderPath = require.resolve('./component-loader');
 
 module.exports = function templateLoader(content) {
-  const options = getOptions(this);
+  const options = getOptions(this) || {};
   const isEntryTemplate = options && options.isEntryTemplate;
   const dependencyComponents = options && options.dependencyComponents && JSON.parse(options.dependencyComponents);
 
   content = `<template>${content}</template>`; // Wrap <tempalte> when user define more then one nodes at root
 
-  const {ast, renderFn, dependencies, tplAlias } = transpiler(content, {
+  const { ast, renderFn, dependencies, tplAlias } = transpiler(content, {
     templatePath: this.resourcePath,
   });
 
-  let entryRender = '';
+  let render = renderFn;
+  const requireCssList = [];
+  const { cssPath, appCssPath } = options;
+  if (existsSync(appCssPath)) {
+    requireCssList.push(createRequire(stringifyRequest(this, appCssPath)));
+    // Adds css file as dependency of the loader result in order to make them watchable.
+    this.addDependency(appCssPath);
+  }
+  if (existsSync(cssPath)) {
+    requireCssList.push(createRequire(stringifyRequest(this, cssPath)));
+    this.addDependency(cssPath);
+  }
 
+  // Make css-loader processed object to string.
+  const css = requireCssList.map((str) => str + '.toString()').join(' + ');
+  const style = css ? `_c('style', null, ${css})` : null;
   if (isEntryTemplate) {
-    const {cssPath, appCssPath} = options;
     // NOTE: Should config css-loader and postcss-loader in webpack.config.js
-    const requireAppCss = createRequire(stringifyRequest(this, appCssPath));
-    const requireCss = createRequire(stringifyRequest(this, cssPath));
-
-    let css = `${requireAppCss} + ${requireCss}`;
-    let style = `_c('style', null, ${css})`;
     // Wrap page for "page" css selector
-    entryRender = `_c('page', null, ${style}, ${renderFn})`;
+    render = `_c('page', null, ${style}, ${renderFn})`;
+  } else {
+    // Prepend style tag to template
+    render = style ? `[${style}, ${renderFn}]` : renderFn;
   }
 
   let registerPageComponent = '';
   if (dependencyComponents) {
     for (let componentName in dependencyComponents) {
       if (dependencyComponents.hasOwnProperty(componentName)) {
-        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__)';
+        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__);';
       }
     }
   }
@@ -74,7 +85,7 @@ module.exports = function templateLoader(content) {
 
   function render(data) {
     ${renderFnScopeVariables}
-    return ${isEntryTemplate ? entryRender : renderFn}
+    return ${render};
   }
 
   return ${tplAlias ? subTemplateRender : 'render'};
