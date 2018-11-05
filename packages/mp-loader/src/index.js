@@ -42,6 +42,7 @@ module.exports = function(content) {
     /**
      * Alias createApp to App.
      * Import statement will be upgraded to the top of the scope.
+     * We should ensure running App at the top of the scope.
      */
     source = `import App from ${createAppRequest};
       ${content}
