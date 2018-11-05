@@ -1,5 +1,6 @@
 const gulp = require('gulp');
 const debug = require('gulp-debug');
+
 const INCLUDE_FILES = 'includeFiles';
 
 /**
@@ -21,5 +22,5 @@ module.exports = function(destDir, projectDir, appConfig) {
     } else {
       return Promise.resolve();
     }
-  }
+  };
 };
