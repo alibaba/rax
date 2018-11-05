@@ -16,9 +16,9 @@
 | font-family                      | ✓                                  |
 | font-weight                      | ✓                                  |
 | opacity                          | ✓                                  |
-| max-width                        | ✕                                  |
+| max-width                        | ✓                                  |
 | box-sizing                       | ✕ 只支持 `border-box`                 |
-| max-height                       | ✕                                  |
+| max-height                       | ✓                                  |
 | webkit-user-select               | ✕                                  |
 | align-items                      | ✓                                  |
 | justify-content                  | ✓                                  |
@@ -58,9 +58,9 @@
 | outline                          | ✕                                  |
 | border-right                     | ✓                                  |
 | border-left                      | ✓                                  |
-| min-height                       | ✕                                  |
+| min-height                       | ✓                                  |
 | font-style                       | ✓                                  |
-| min-width                        | ✕                                  |
+| min-width                        | ✓                                  |
 | list-style                       | ✕                                  |
 | font                             | ✕                                  |
 | background-size                  | ✕                                  |
@@ -95,7 +95,7 @@
 | webkit-font-smoothing            | ✕                                  |
 | border-bottom-width              | ✓                                  |
 | border-right-color               | ✓                                  |
-| direction                        | ✕                                  |
+| direction                        | ✓                                  |
 | webkit-tap-highlight-color       | ✕                                  |
 | border-left-color                | ✓                                  |
 | border-top-width                 | ✓                                  |
@@ -107,7 +107,7 @@
 | transform-origin                 | ✕                                  |
 | filter                           | ✕                                  |
 | resize                           | ✕                                  |
-| flex                             | ✕                                  |
+| flex                             | ✓                                  |
 | font-variant                     | ✕                                  |
 | text-rendering                   | ✕                                  |
 | webkit-filter                    | ✕                                  |
@@ -163,7 +163,7 @@
 | background-attachment            | ✕                                  |
 | counter-increment                | ✕                                  |
 | counter-reset                    | ✕                                  |
-| align-self                       | ✕                                  |
+| align-self                       | ✓                                  |
 | webkit-box-ordinal-group         | ✕                                  |
 | webkit-animation-direction       | ✕                                  |
 | background-position-x            | ✕                                  |
@@ -171,7 +171,7 @@
 | background-position-y            | ✕                                  |
 | webkit-user-drag                 | ✕                                  |
 | flex-basis                       | ✕                                  |
-| align-content                    | ✕                                  |
+| align-content                    | ✓                                  |
 | flex-flow                        | ✕                                  |
 | image-rendering                  | ✕                                  |
 | webkit-margin-start              | ✕                                  |

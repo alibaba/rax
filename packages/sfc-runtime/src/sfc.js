@@ -94,5 +94,5 @@ export default class SFC {
   /**
    * Need override
    */
-  forceUpdate() {}
+  forceUpdate() { }
 }

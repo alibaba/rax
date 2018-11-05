@@ -1,6 +1,5 @@
 import SFC from './sfc';
-import renderHelpers from './vdom';
-import setRuntime from './vdom/setRuntime';
+import renderHelpers from 'render-helpers';
 import { mixinSlots, proxy } from './mixin';
 import convertComponentsDefining from './convertComponentsDefining';
 import lifecyclesMap from './lifecyclesMap';
@@ -8,7 +7,8 @@ import nextTick from './nextTick';
 import { isWeex } from './utils';
 
 export default function adapterComponent(defining, renderFactory, styles, Rax) {
-  setRuntime(Rax);
+  // Set Rax as render
+  renderHelpers._r(Rax);
 
   if (defining.components) {
     /**

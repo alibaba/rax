@@ -8,6 +8,12 @@
 $ npm install universal-toast --save
 ```
 
+## 引用
+
+```jsx
+import Toast from 'universal-toast';
+```
+
 ## API
 
 ```jsx

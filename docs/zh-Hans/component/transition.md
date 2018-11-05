@@ -1,5 +1,7 @@
 # Transition 渐变动画
 
+与 Animated 相比具备更好的动画性能
+
 ## 安装
 
 ```bash
@@ -57,9 +59,9 @@ class App extends Component {
         delay: 2000,
         duration: 3000
       }, () => {
-        alert('animation end');
+        console.log('animation end');
       });
-    }, 0);
+    }, 1000);
   }
   
   render() {

@@ -170,7 +170,8 @@ function parse(template, options) {
 
       function checkRootConstraints(el) {
         if (process.env.NODE_ENV !== 'production') {
-          if (el.tag === 'slot' || el.tag === 'template') {
+          // if (el.tag === 'slot' || el.tag === 'template') {
+          if (el.tag === 'slot') {
             warnOnce(
               `Cannot use <${
                 el.tag
