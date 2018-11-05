@@ -1,6 +1,20 @@
 module.exports = {
   babelrc: false,
-  presets: [require.resolve('@babel/preset-env')],
+  presets: [
+    [
+      require.resolve('@babel/preset-env'),
+      {
+        targets: {
+          chrome: '49',
+          ios: '8'
+        },
+        modules: 'commonjs'
+      }
+    ]
+  ],
+  parserOpts: {
+    allowImportExportEverywhere: true,
+  },
   plugins: [
     // Stage 0
     require.resolve('@babel/plugin-proposal-function-bind'),
