@@ -13,6 +13,10 @@ module.exports = {
     ]
   ],
   parserOpts: {
+    /**
+     * During loader process, user content JS may contains import statement,
+     * which may be wrapped at a function scope.
+     */
     allowImportExportEverywhere: true,
   },
   plugins: [
