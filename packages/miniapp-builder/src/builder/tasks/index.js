@@ -1,31 +1,34 @@
 const gulp = require('gulp');
 
 /**
- * register all gulp tasks
+ * Register all gulp tasks
  */
 exports.registerGulpTasks = function({ appConfig, projectDir, destDir }) {
-  // make sure build folder exists
+  // Make sure build folder exists
   gulp.task('ensure-dir', require('./ensureDir')(destDir));
 
-  // make sure build folder clean
+  // Make sure build folder clean
   gulp.task('clean', require('./clean')(destDir));
 
-  // entry of app build task
+  // Entry of app build task
   gulp.task('build-app', require('./buildApp')(projectDir, destDir));
 
-  // entry of config build task
+  // Entry of config build task
   gulp.task('build-config', require('./buildConfig')(destDir, appConfig));
 
-  // entry of web build task
+  // Entry of web build task
   gulp.task('build-web', require('./buildWeb')(destDir, appConfig));
 
-  // build schema for template miniapp
+  // Build schema for template miniapp
   gulp.task('build-schema', require('./buildSchema')(destDir, projectDir));
 
-  // build page meta for template miniapp
+  // Build page meta for template miniapp
   gulp.task('build-mod-meta', require('./buildModMeta')(destDir, projectDir));
 
-  // bundle zip file
+  // Add `includeFiles` determated files to package.
+  gulp.task('build-include-files', require('./buildIncludeFiles')(destDir, projectDir, appConfig));
+
+  // Bundle zip file
   gulp.task('bundle', require('./bundle')(destDir));
 
   // collect static assets

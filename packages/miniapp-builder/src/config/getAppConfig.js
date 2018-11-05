@@ -89,7 +89,7 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
         pagePath,
         pageUrl,
       };
-      // merge page config json
+      // Merge page config json
       const independentPageConfigPath = resolve(projectDir, pagePath + '.json');
       if (existsSync(independentPageConfigPath)) {
         Object.assign(pageConfig, JSON.parse(readFileSync(independentPageConfigPath)));
