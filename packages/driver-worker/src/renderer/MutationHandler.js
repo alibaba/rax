@@ -1,7 +1,7 @@
-import { setStyle } from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { createNode } from './nodes';
 import { addEvent, removeEvent, setPostMessage } from './events';
+import { setAttribute } from './attrs';
 
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
@@ -62,15 +62,11 @@ export default class MutationHandler {
     // Node maybe null when node is removed and there is a setInterval change the node that will cause error
     if (!node) return;
 
-    // TODO: some with `createNode`, should processed by one method
     if (style) {
-      setStyle(node, style);
-    } else if (newValue == null) {
-      node.removeAttribute(attributeName);
-    } else if (typeof newValue === 'object' || typeof newValue === 'boolean') {
-      node[attributeName] = newValue;
-    } else {
-      node.setAttribute(attributeName, newValue);
+      setAttribute(node, 'style', style);
+    }
+    if (attributeName) {
+      setAttribute(node, attributeName, newValue);
     }
   }
 
