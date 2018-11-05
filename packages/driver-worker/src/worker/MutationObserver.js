@@ -9,12 +9,13 @@ export function mutate(target, type, record) {
   record.type = type;
 
   for (let i = observers.length; i--;) {
+    let _target = target;
     let ob = observers[i],
-      match = target === ob._target;
+      match = _target === ob._target;
     if (!match && ob._options.subtree) {
       do {
-        if (match = target === ob._target) break;
-      } while (target = target.parentNode);
+        if (match = _target === ob._target) break;
+      } while (_target = _target.parentNode);
     }
 
     if (match) {
