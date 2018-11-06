@@ -1,5 +1,6 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
+import getFileSchemaPrefix from '../../shared/getFileSchemaPrefix';
 
 const UNSENT = 0;
 const LOADING = 1;
@@ -72,7 +73,8 @@ export default class ImageElement extends PolymerElement {
     if (this._rendered === true) return;
     this.observerMode(this.mode, '');
     const containerStyle = this.$.container.style;
-    containerStyle.backgroundImage = `url(${this.src})`;
+    const fileSchemaPrefix = getFileSchemaPrefix();
+    containerStyle.backgroundImage = `url(${fileSchemaPrefix ? fileSchemaPrefix : ''}${this.src})`;
     // Flag as rendered
     this._rendered = true;
   }
