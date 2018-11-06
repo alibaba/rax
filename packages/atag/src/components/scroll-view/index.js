@@ -18,74 +18,101 @@ export default class ScrollViewElement extends PolymerElement {
       scrollX: {
         type: Boolean,
         value: false,
-        observer: '_observerScrollX',
+        observer: '_observeScrollX',
       },
       scrollY: {
+        type: Boolean,
+        value: false,
+        observer: '_ovserveScrollY',
+      },
+      scrollTop: {
+        type: Number,
+        value: 0,
+        observer: '_ovserveScrollTop',
+      },
+      scrollLeft: {
+        type: Number,
+        value: 0,
+        observer: '_ovserveScrollLeft',
+      },
+      scrollIntoView: {
+        type: String,
+        observer: '_ovserveScrollIntoView',
+      },
+      scrollWithAnimation: {
+        type: Boolean,
+        value: false,
+      },
+      hideScrollBar: {
         type: Boolean,
         value: false,
       },
     };
   }
 
-  static get observedAttributes() {
-    return [
-      'scroll-x',
-      'scroll-y',
-      'scroll-top',
-      'scroll-left',
-      'scroll-into-view',
-      'scroll-with-animation',
-      'hide-scroll-bar',
-    ];
+  _observeScrollX() {
+    this.style.overflowX = this.scrollX ? 'auto' : 'hidden';
+  }
+  _observeScrollY() {
+    this.style.overflowY = this.scrollY ? 'auto' : 'hidden';
+  }
+  /**
+   * If smooth scrolling works, use Node.scrollTop/scrollLeft
+   */
+  _observeScrollTop() {
+    if ('scrollBehavior' in this.style) {
+      this.scrollTop = scrollTop;
+    } else {
+      this._scrollToY(scrollTop);
+    }
+  }
+  _observeScrollLeft() {
+    if ('scrollBehavior' in this.style) {
+      this.scrollLeft = scrollLeft;
+    } else {
+      this._scrollToX(scrollLeft);
+    }
+  }
+  _ovserveScrollIntoView() {
+    if (this.scrollIntoView) {
+      const targetNode = this.querySelector(`#${scrollIntoView}`);
+      if (targetNode) {
+        const containerRect = this.getBoundingClientRect();
+        const targetNodeRect = targetNode.getBoundingClientRect();
+
+        if (this.scrollX) {
+          this._scrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
+        }
+
+        if (this.scrollY) {
+          this._scrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
+        }
+      }
+    } else {
+      this.scrollTop = this.scrollLeft = 0;
+    }
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
-    this.expireCache(name);
 
-    const scrollX = this.getValue('scroll-x', 'boolean', false);
-    const scrollY = this.getValue('scroll-y', 'boolean', false);
 
     switch (name) {
       case 'scroll-x':
       case 'scroll-y':
-        this.style.overflowX = scrollX ? 'auto' : 'hidden';
-        this.style.overflowY = scrollY ? 'auto' : 'hidden';
+
         break;
       case 'scroll-top':
         const scrollTop = this.getValue('scroll-top', 'number', 0);
-        /**
-         * If smooth scrolling works, use Node.scrollTop/scrollLeft
-         */
-        if ('scrollBehavior' in this.style) {
-          this.scrollTop = scrollTop;
-        } else {
-          this.scrollToY(scrollTop);
-        }
+
         break;
       case 'scroll-left':
         const scrollLeft = this.getValue('scroll-left', 'number', 0);
-        if ('scrollBehavior' in this.style) {
-          this.scrollLeft = scrollLeft;
-        } else {
-          this.scrollToX(scrollLeft);
-        }
+
         break;
       case 'scroll-into-view':
         const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
-        if (scrollIntoView) {
-          const targetNode = this.querySelector(`#${scrollIntoView}`);
-          if (targetNode) {
-            const containerRect = this.getBoundingClientRect();
-            const targetNodeRect = targetNode.getBoundingClientRect();
-            if (scrollX) {
-              this.scrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
-            }
-            if (scrollY) {
-              this.scrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
-            }
-          }
-        }
+
         break;
       default:
         break;
@@ -230,7 +257,8 @@ export default class ScrollViewElement extends PolymerElement {
     }
   };
 
-  _observerScrollX() {
+  _observeHideScrollBar() {
+
     if (!this.styleEl) {
       this._initStyleEl();
     }
@@ -274,17 +302,6 @@ export default class ScrollViewElement extends PolymerElement {
         break;
     }
     console.error(`atag scroll-view: unrecognized type of ${type}`);
-  }
-
-  valueCache = {};
-  saveToCache(key, value) {
-    this.valueCache[key] = value;
-  }
-  getFromCache(key) {
-    return this.valueCache[key];
-  }
-  expireCache(key) {
-    delete this.valueCache[key];
   }
 
   static get template() {
