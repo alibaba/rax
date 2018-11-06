@@ -50,6 +50,7 @@
     "commander": "^2.15.1",
     "css-loader": "^1.0.1",
     "ejs": "^2.6.1",
+    "glob": "^7.1.3",
     "gulp": "^3.9.1",
     "gulp-debug": "^3.x.x",
     "gulp-imagemin": "^4.1.0",
