@@ -294,7 +294,7 @@ export default class ScrollViewElement extends PolymerElement {
   _observeHideScrollBar(enableScrollBar) {
     if (enableScrollBar) {
       this._createCustomStyle();
-      const hideScrollBarStyle = 'display: none;'
+      const hideScrollBarStyle = 'display: none;';
       /**
        * A way to compatible with WebComponents polyfill
        */
