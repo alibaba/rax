@@ -116,7 +116,7 @@ export default class VideoElement extends PolymerElement {
     );
 
     const poster = this._posterParamEl = VideoElement.createParamTag(
-      'poster',
+      'videoPoster',
       this.poster
     );
 
