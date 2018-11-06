@@ -241,8 +241,8 @@ export default class ScrollViewElement extends PolymerElement {
     /**
      *  Send a custom scroll event with detail information added
      */
-    const deltaX = this._scrollLeft - this.lastScrollLeft;
-    const deltaY = this._scrollTop - this.lastScrollTop;
+    const deltaX = this.scrollLeft - this.lastScrollLeft;
+    const deltaY = this.scrollTop - this.lastScrollTop;
     const scrollEvent = new CustomEvent('scroll', {
       bubbles: false,
       cancelable: true,
@@ -257,16 +257,16 @@ export default class ScrollViewElement extends PolymerElement {
     });
     this.dispatchEvent(scrollEvent);
 
-    this.lastScrollTop = this._scrollTop;
-    this.lastScrollLeft = this._scrollLeft;
+    this.lastScrollTop = this.scrollTop;
+    this.lastScrollLeft = this.scrollLeft;
     if (evt.timeStamp - this.lastScrollTime < 10) {
       return;
     }
     this.lastScrollTime = evt.timeStamp;
 
     if (
-      deltaX < 0 && this._scrollLeft <= this.upperThreshold
-      || deltaY < 0 && this._scrollTop <= this.upperThreshold
+      deltaX < 0 && this.scrollLeft <= this.upperThreshold
+      || deltaY < 0 && this.scrollTop <= this.upperThreshold
     ) {
       if (!this.scrolledToUpper) {
         const scrollToUpperEvent = new CustomEvent('scrolltoupper');
@@ -278,8 +278,8 @@ export default class ScrollViewElement extends PolymerElement {
     }
 
     if (
-      deltaX > 0 && this.scrollWidth - this._scrollLeft - this.clientWidth <= this.lowerThreshold ||
-      deltaY > 0 && this.scrollHeight - this._scrollTop - this.clientHeight <= this.lowerThreshold
+      deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= this.lowerThreshold ||
+      deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= this.lowerThreshold
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');

@@ -747,6 +747,7 @@
       });
 
       scrollview.addEventListener('scroll', function (e) {
+        console.log(e);
         scrollEvent.innerHTML = JSON.stringify(e.detail);
       });
 
