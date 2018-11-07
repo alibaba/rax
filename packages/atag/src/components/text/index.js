@@ -13,7 +13,7 @@ export default class TextElement extends PolymerElement {
   }
 
   connectedCallback() {
-    super.connectedCallback()
+    super.connectedCallback();
     this.childrenObserver = new FlattenedNodesObserver(this, this._observeChildren);
   }
   disconnectedCallback() {

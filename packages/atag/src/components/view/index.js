@@ -1,5 +1,6 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
+import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
 export default class ViewElement extends PolymerElement {
   static get is() {
@@ -56,37 +57,37 @@ export default class ViewElement extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     afterNextRender(this, () => {
-      this.addEventListener('touchstart', this._handleTouchstart);
+      Gestures.addListener(this, 'down', this._handleHoverStart);
+      Gestures.addListener(this, 'up', this._handleHoverEnd);
       this.addEventListener('touchmove', this._handleTouchmove);
-      this.addEventListener('touchend', this._handleTouchend);
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('touchstart', this._handleTouchstart);
+    Gestures.addListener(this, 'down', this._handleHoverStart);
+    Gestures.addListener(this, 'up', this._handleHoverEnd);
     this.removeEventListener('touchmove', this._handleTouchmove);
-    this.removeEventListener('touchend', this._handleTouchend);
   }
 
-  _handleTouchstart = (evt) => {
+  _handleHoverStart = (evt) => {
     if (this.hoverStopPropagation) {
       evt.stopPropagation();
     }
     this._activeHoverState();
   };
 
-  _handleTouchmove = (evt) => {
-    if (this.disableScroll) {
-      evt.preventDefault();
-    }
-  };
-
-  _handleTouchend = (evt) => {
+  _handleHoverEnd = (evt) => {
     if (this.hoverStopPropagation) {
       evt.stopPropagation();
     }
     this._inactiveHoverState();
+  };
+
+  _handleTouchmove = (evt) => {
+    if (this.disableScroll) {
+      evt.preventDefault();
+    }
   };
 
   /**

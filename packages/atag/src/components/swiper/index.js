@@ -271,7 +271,7 @@ export default class Swiper extends PolymerElement {
   };
 
   _next = () => {
-    debugger
+    debugger;
     const itemsCount = this.itemsCount;
     const current = this.current < 0 ? 0 : this.current > itemsCount - 1 ? itemsCount - 1 : this.current;
     const isCurrentLastItem = current === itemsCount - 1;
