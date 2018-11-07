@@ -48,7 +48,7 @@ export default class ViewElement extends PolymerElement {
         type: String,
         value: '',
       },
-    }
+    };
   }
 
   _hoverActiveState = false;
