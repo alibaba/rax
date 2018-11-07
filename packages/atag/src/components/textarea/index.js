@@ -84,6 +84,14 @@ export default class Textarea extends PolymerElement {
     super.ready();
     this._initialValue = this.value;
     this.setAttribute('a-label-target', '');
+
+    /**
+     * `maxlength` equals -1 means infinite.
+     */
+    if (this.maxlength === -1) {
+      this.$.count.style.display = 'none';
+      this.maxlength = Infinity;
+    }
   }
 
   connectedCallback() {

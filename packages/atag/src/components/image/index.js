@@ -1,9 +1,12 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
+import getFileSchemaPrefix from '../../shared/getFileSchemaPrefix';
 
 const UNSENT = 0;
 const LOADING = 1;
 const DONE = 2;
+const IS_HTTP_REG = /^http/;
+const IS_ABS_REG = /^\//;
 
 function handleIntersect(entries) {
   entries.forEach(entry => {
@@ -72,9 +75,20 @@ export default class ImageElement extends PolymerElement {
     if (this._rendered === true) return;
     this.observerMode(this.mode, '');
     const containerStyle = this.$.container.style;
-    containerStyle.backgroundImage = `url(${this.src})`;
+    containerStyle.backgroundImage = `url(${this._getSourceUrl()})`;
     // Flag as rendered
     this._rendered = true;
+  }
+
+  _getSourceUrl() {
+    const fileSchemaPrefix = getFileSchemaPrefix() || '';
+    if (IS_ABS_REG.test(this.src)) {
+      return fileSchemaPrefix + this.src;
+    } else if (IS_HTTP_REG.test(this.src)) {
+      return this.src;
+    } else {
+      return fileSchemaPrefix + '/' + this.src;
+    }
   }
 
   /**

@@ -50,7 +50,7 @@ export default class VideoElement extends PolymerElement {
       objectfit: {
         type: String,
         value: 'contain',
-      }
+      },
     };
   }
 
@@ -115,6 +115,11 @@ export default class VideoElement extends PolymerElement {
       this.objectfit
     );
 
+    const poster = this._posterParamEl = VideoElement.createParamTag(
+      'videoPoster',
+      this.poster
+    );
+
     const bridgeId = VideoElement.createParamTag(
       'bridgeId',
       this.getBridgeId()
@@ -127,6 +132,7 @@ export default class VideoElement extends PolymerElement {
     container.appendChild(loop);
     container.appendChild(muted);
     container.appendChild(objectFit);
+    container.appendChild(poster);
     container.appendChild(bridgeId);
 
     // for native hack
@@ -141,6 +147,7 @@ export default class VideoElement extends PolymerElement {
       this.callNativeControl('setup', {
         videoUrl: this.src,
         isLoop: this.loop,
+        poster: this.poster,
         objectFit: this.objectfit
       });
     }
@@ -155,19 +162,23 @@ export default class VideoElement extends PolymerElement {
     if (oldVal !== newVal) {
       switch (key) {
         case 'controls': {
-          this.controls ? this.showControls() : this.hideControls();
+          this._changeControls(this.controls);
           break;
         }
         case 'muted': {
-          this.mute(this.muted);
+          this._changeMuted(this.muted);
           break;
         }
         case 'objectfit': {
-          this.changeObjectFit(this.objectfit);
+          this._changeObjectFit(this.objectfit);
+          break;
+        }
+        case 'poster': {
+          this._changePoster(this.poster);
           break;
         }
         case 'loop': {
-          this.changeLoop(this.loop);
+          this._changeLoop(this.loop);
           break;
         }
       }
@@ -183,7 +194,29 @@ export default class VideoElement extends PolymerElement {
     return this.uniqueId;
   }
 
-  showControls() {
+  _changePoster(poster) {
+    if (isIOS && this._posterParamEl) {
+      this._posterParamEl.setAttribute('value', poster);
+      this._posterParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
+    } else if (isAndroid) {
+      this.callNativeControl('setup', {
+        videoUrl: this.src,
+        isLoop: this.loop,
+        poster,
+        objectFit: this.objectfit,
+      });
+    }
+  }
+
+  _changeControls(controls) {
+    if (controls) {
+      this._showControls();
+    } else {
+      this._hideControls();
+    }
+  }
+
+  _showControls() {
     if (isIOS && this._controlsParamEl) {
       this._controlsParamEl.setAttribute('value', 'true');
       this._controlsParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
@@ -196,7 +229,7 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
-  hideControls() {
+  _hideControls() {
     if (isIOS && this._controlsParamEl) {
       this._controlsParamEl.setAttribute('value', 'false');
       this._controlsParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
@@ -220,6 +253,7 @@ export default class VideoElement extends PolymerElement {
       this.callNativeControl('play', {
         videoUrl: this.src,
         isLoop: this.loop,
+        poster: this.poster,
         objectFit: this.objectfit
       });
     } else {
@@ -241,7 +275,11 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
-  mute(isMute) {
+  _changeMuted(muted) {
+    this.mute(muted);
+  }
+
+  mute(isMute = true) {
     if (isIOS && this._mutedParamEl) {
       // status(1为静音，0为不静音)
       this._mutedParamEl.setAttribute('value', isMute ? '1' : '0');
@@ -253,7 +291,7 @@ export default class VideoElement extends PolymerElement {
     }
   }
 
-  changeObjectFit(objectFit) {
+  _changeObjectFit(objectFit) {
     if (isIOS && this._objectFitParamEl) {
       this._objectFitParamEl.setAttribute('value', objectFit);
       this._objectFitParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
@@ -261,12 +299,13 @@ export default class VideoElement extends PolymerElement {
       this.callNativeControl('setup', {
         videoUrl: this.src,
         isLoop: this.loop,
+        poster: this.poster,
         objectFit
       });
     }
   }
 
-  changeLoop(isLoop) {
+  _changeLoop(isLoop) {
     if (isIOS && this._objectFitParamEl) {
       this._loopParamEl.setAttribute('value', '' + isLoop);
       this._loopParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
@@ -274,6 +313,7 @@ export default class VideoElement extends PolymerElement {
       this.callNativeControl('setup', {
         videoUrl: this.src,
         isLoop,
+        poster: this.poster,
         objectFit: this.objectfit
       });
     }

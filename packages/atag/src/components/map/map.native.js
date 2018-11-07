@@ -52,9 +52,13 @@ export default class NativeMap extends PolymerElement {
         type: Array,
         observer: '_observeMarkers',
       },
-      polylines: {
+      tileOverlay: {
         type: Array,
-        observer: '_observePolylines',
+        observer: '_observeTileOverlay',
+      },
+      polyline: {
+        type: Array,
+        observer: '_observePolyline',
       },
       circles: {
         type: Array,
@@ -64,9 +68,9 @@ export default class NativeMap extends PolymerElement {
         type: Array,
         observer: '_observeControls',
       },
-      polygons: {
+      polygon: {
         type: Array,
-        observer: '_observePolygons',
+        observer: '_observePolygon',
       },
       includePoints: {
         type: Array,
@@ -234,10 +238,10 @@ export default class NativeMap extends PolymerElement {
       default:
         this._callNativeControl('update', {
           markers: this.markers,
-          polylines: this.polylines,
+          polyline: this.polyline,
           circles: this.circles,
           controls: this.controls,
-          polygons: this.polygons,
+          polygon: this.polygon,
           includePoints: this.includePoints,
           showLocation: this.showLocation,
           showMapText: this.showMapText,
