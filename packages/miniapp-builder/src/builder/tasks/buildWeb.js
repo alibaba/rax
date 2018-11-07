@@ -29,7 +29,7 @@ module.exports = function buildWeb(destDir, appConfig) {
         '__register_pages__(function(require){',
         readFileSync(join(destDir, 'app.js'), 'utf-8'),
         '});'
-      ].join('');
+      ].join('\n');
       const webDistFilePath = join(destDir, 'app.web.js');
       writeFileSync(webDistFilePath, webDistFileContent, 'utf-8');
 

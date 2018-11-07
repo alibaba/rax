@@ -1,4 +1,7 @@
+const { join } = require('path');
+const fs = require('fs');
 const Jszip = require('jszip');
+const glob = require('glob');
 const { getAppConfig } = require('../../config/getAppConfig');
 const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
@@ -29,6 +32,27 @@ module.exports = function bundleCtrl(ctx, next) {
 
   /* 指定渲染类型, 客户端必须指定 */
   appJSON.appType = 'webview';
+
+  const globOpts = {
+    cwd: ctx.projectDir,
+    dot: true,
+    nodir: true,
+  };
+
+  function zipFiles(fileList) {
+    if (!Array.isArray(fileList)) return;
+    for (let i = 0, len = fileList.length; i < len; i++) {
+      zip.file(fileList[i], fs.readFileSync(join(ctx.projectDir, fileList[i])));
+    }
+  }
+
+  // Pack image files
+  const imageFiles = glob.sync('**/*.{png,jpg,gif,ico,webp,jpeg}', globOpts);
+  zipFiles(imageFiles);
+
+  // Pack includeFiles
+  const { includeFiles } = appJSON;
+  zipFiles(includeFiles);
 
   zip.file('app.config.json', JSON.stringify(appJSON, null, 2));
   zip.file('app.js', global.AppJSContent);

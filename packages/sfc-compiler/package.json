@@ -1,6 +1,6 @@
 {
   "name": "sfc-compiler",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Compiler for SFC.",
   "main": "src/index.js",
   "dependencies": {

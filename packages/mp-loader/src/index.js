@@ -38,9 +38,13 @@ module.exports = function(content) {
         return createRequire(stringifyRequest(this, `${pageLoader}?${qs}!${absPagePath}`));
       }).join(';');
 
-    const requireCreateApp = createRequire(stringifyRequest(this, runtimeHelpers.createApp));
-    // Alias createApp to App
-    source = `var App = ${requireCreateApp};
+    const createAppRequest = stringifyRequest(this, runtimeHelpers.createApp);
+    /**
+     * Alias createApp to App.
+     * Import statement will be upgraded to the top of the scope.
+     * We should ensure running App at the top of the scope.
+     */
+    source = `import App from ${createAppRequest};
       ${content}
       ${requireAppPages}`;
   }

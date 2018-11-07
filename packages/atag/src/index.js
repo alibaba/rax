@@ -1,5 +1,5 @@
 /**
- * list of atag components
+ * List of atag components
  */
 import 'components/view';
 import 'components/text';

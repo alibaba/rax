@@ -1,6 +1,24 @@
 module.exports = {
   babelrc: false,
-  presets: [require.resolve('@babel/preset-env')],
+  presets: [
+    [
+      require.resolve('@babel/preset-env'),
+      {
+        targets: {
+          chrome: '49',
+          ios: '8'
+        },
+        modules: 'commonjs'
+      }
+    ]
+  ],
+  parserOpts: {
+    /**
+     * During loader process, user content JS may contains import statement,
+     * which may be wrapped at a function scope.
+     */
+    allowImportExportEverywhere: true,
+  },
   plugins: [
     // Stage 0
     require.resolve('@babel/plugin-proposal-function-bind'),

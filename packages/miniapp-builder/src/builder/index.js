@@ -16,8 +16,15 @@ module.exports = function(opts) {
   runSequence(
     'clean',
     'ensure-dir',
-    ['build-config', 'build-app', 'build-schema', 'build-mod-meta', 'collect-assets'],
+    [
+      'build-config',
+      'build-app',
+      'build-schema',
+      'build-mod-meta',
+      'collect-assets',
+      'build-include-files',
+    ],
     'bundle',
-    'build-web'
+    'build-web',
   );
 };
