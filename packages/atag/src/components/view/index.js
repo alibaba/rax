@@ -6,71 +6,93 @@ export default class ViewElement extends PolymerElement {
     return 'a-view';
   }
 
+  static get properties() {
+    return {
+      /**
+       * Whether to prevent scrolling pages in the area
+       * Boolean, default false
+       */
+      disableScroll: {
+        type: Boolean,
+        value: false,
+      },
+      /**
+       * How long after clicking and holding, the click state, in ms
+       * Number, default 50
+       */
+      hoverStartTime: {
+        type: Number,
+        value: 50,
+      },
+      /**
+       * Hover state retention time after the finger is released, in milliseconds
+       * Number, default 400
+       */
+      hoverStayTime: {
+        type: Number,
+        value: 400,
+      },
+      /**
+       * Specifies whether to prevent the ancestor node of this node from hovering
+       * Boolean, default false
+       */
+      hoverStopPropagation: {
+        type: Boolean,
+        value: false,
+      },
+      hoverStyle: {
+        type: String,
+        value: '',
+      },
+      hoverClass: {
+        type: String,
+        value: '',
+      },
+    }
+  }
+
   _hoverActiveState = false;
 
-  _listen() {
-    /**
-     * Best practices for binding events
-     * Trigger after first rendering
-     */
+  connectedCallback() {
+    super.connectedCallback();
     afterNextRender(this, () => {
-      this.addEventListener('touchstart', this._active);
-      this.addEventListener('touchend', this._inactive);
-      if (this.disableScroll) {
-        this.addEventListener('touchmove', this._disableScroll);
-      }
+      this.addEventListener('touchstart', this._handleTouchstart);
+      this.addEventListener('touchmove', this._handleTouchmove);
+      this.addEventListener('touchend', this._handleTouchend);
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('touchstart', this._active);
-    this.removeEventListener('touchend', this._inactive);
-    if (this.disableScroll) {
-      this.removeEventListener('touchmove', this._disableScroll);
+    this.removeEventListener('touchstart', this._handleTouchstart);
+    this.removeEventListener('touchmove', this._handleTouchmove);
+    this.removeEventListener('touchend', this._handleTouchend);
+  }
+
+  _handleTouchstart = (evt) => {
+    if (this.hoverStopPropagation) {
+      evt.stopPropagation();
     }
-  }
+    this._activeHoverState();
+  };
+
+  _handleTouchmove = (evt) => {
+    if (this.disableScroll) {
+      evt.preventDefault();
+    }
+  };
+
+  _handleTouchend = (evt) => {
+    if (this.hoverStopPropagation) {
+      evt.stopPropagation();
+    }
+    this._inactiveHoverState();
+  };
 
   /**
-   * Whether to prevent scrolling pages in the area
-   * Boolean, default false
+   * Add a flag bit in style to specify the hover state
    */
-  get disableScroll() {
-    return this.getAttribute('disable-scroll') === 'true';
-  }
-
-  /**
-   * How long after clicking and holding, the click state, in ms
-   * Number, default 50
-   */
-  get hoverStartTime() {
-    return parseInt(this.getAttribute('hover-start-time'), 10) || 50;
-  }
-
-  /**
-   * Hover state retention time after the finger is released, in milliseconds
-   * Number, default 400
-   */
-  get hoverStayTime() {
-    return parseInt(this.getAttribute('hover-stay-time'), 10) || 400;
-  }
-
-  /**
-   * Specifies whether to prevent the ancestor node of this node from hovering
-   * Boolean, default false
-   */
-  get hoverStopPropagation() {
-    return this.getAttribute('hover-stop-propagation') === 'true';
-  }
-
-  get hoverStyle() {
-    return this.getAttribute('hover-style') || '';
-  }
-
-  _activeHoverStyle() {
-    /**
-     * Add a flag bit in style to specify the hover state
-     */
+  _setHoverAttrs() {
     let currentHoverStyle = this.hoverStyle;
     if (currentHoverStyle) {
       let originStyle = this.getAttribute('style') || '';
@@ -80,54 +102,52 @@ export default class ViewElement extends PolymerElement {
       );
     }
 
-    this._hoverActiveState = true;
-  }
-
-  _inactiveHoverStyle() {
-    if (this._hoverActiveState) {
-      this._hoverActiveState = false;
-
-      const rawCSSText = this.getAttribute('style') || '';
-      const cssText = rawCSSText.replace(/(\/\*h\*\/).*\1/, '');
-      rawCSSText !== cssText && this.setAttribute('style', cssText);
+    const hoverClassList = this._getHoverClassList();
+    for (let i = 0, len = hoverClassList.length; i < len; i++) {
+      this.classList.add(hoverClassList[i]);
     }
   }
 
-  _active(evt) {
-    if (this.hoverStopPropagation) {
-      evt.stopPropagation();
-    }
+  _removeHoverAttrs() {
+    const rawCSSText = this.getAttribute('style') || '';
+    const cssText = rawCSSText.replace(/(\/\*h\*\/).*\1/, '');
+    rawCSSText !== cssText && this.setAttribute('style', cssText);
 
+    const hoverClassList = this._getHoverClassList();
+    for (let i = 0, len = hoverClassList.length; i < len; i++) {
+      this.classList.remove(hoverClassList[i]);
+    }
+  }
+
+  _getHoverClassList() {
+    if (this.hoverClass) {
+      return this.hoverClass.trim().split(/\s+/);
+    } else {
+      return [];
+    }
+  }
+
+  _activeHoverState() {
     const delay = this.hoverStartTime;
     clearTimeout(this.hoverActiveTimer);
 
     this.hoverActiveTimer = setTimeout(() => {
-      this._activeHoverStyle();
+      this._setHoverAttrs();
+      this._hoverActiveState = true;
     }, delay);
   }
 
-  _inactive(evt) {
-    if (this.hoverStopPropagation) {
-      evt.stopPropagation();
-    }
-
+  _inactiveHoverState() {
     const delay = this.hoverStayTime;
     clearTimeout(this.hoverActiveTimer);
     clearTimeout(this.hoverInactiveTimer);
 
     this.hoverInactiveTimer = setTimeout(() => {
-      this._inactiveHoverStyle();
+      this._hoverActiveState = false;
+      this._removeHoverAttrs();
     }, delay);
   }
 
-  _disableScroll(evt) {
-    evt.preventDefault();
-  }
-
-  ready() {
-    super.ready();
-    this._listen();
-  }
   static get template() {
     return html`
       <style>
