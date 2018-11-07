@@ -1,21 +1,4 @@
-<dom-module id="a-checkbox-group">
-  <template>
-    <style>
-      /* shadow DOM styles go here */
-      :host {
-        position: relative;
-        box-sizing: border-box;
-        -webkit-user-select: none;
-        user-select: none;
-        overflow: hidden;
-      }
-    </style>
-    <slot></slot>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
+import { PolymerElement, html } from '@polymer/polymer';
 import afterNextRender from '../../shared/afterNextRender';
 import throttle from '../../shared/throttle';
 
@@ -61,7 +44,22 @@ export default class CheckboxGroupElement extends PolymerElement {
   disconnectedCallback() {
     this.removeEventListener('_checkboxChange', this.changeHandler);
   }
+
+  static get template() {
+    return html`
+    <style>
+      /* shadow DOM styles go here */
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        overflow: hidden;
+      }
+    </style>
+    <slot></slot>
+    `;
+  }
 }
 
 customElements.define(CheckboxGroupElement.is, CheckboxGroupElement);
-</script>

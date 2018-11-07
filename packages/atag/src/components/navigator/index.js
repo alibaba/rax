@@ -1,12 +1,4 @@
-<dom-module id="a-navigator">
-  <template>
-    <span>
-      <slot></slot>
-    </span>
-  </template>
-</dom-module>
-<script>
-import { PolymerElement } from '@polymer/polymer';
+import { PolymerElement, html } from '@polymer/polymer';
 
 class Navigator extends PolymerElement {
   static get is() {
@@ -63,6 +55,7 @@ class Navigator extends PolymerElement {
 
   callWorker(args) {
     if (typeof __renderer_to_worker__ === 'function') {
+      /* eslint-disable no-undef */
       __renderer_to_worker__(args);
     }
   }
@@ -72,7 +65,14 @@ class Navigator extends PolymerElement {
     this.removeEventListener('touchstart', this.handleTouchStart);
     this.removeEventListener('touchend', this.handleTouchEnd);
   }
+
+  static get template() {
+    return html`
+    <span>
+      <slot></slot>
+    </span>
+    `;
+  }
 }
 
 customElements.define(Navigator.is, Navigator);
-</script>

@@ -1,4 +1,4 @@
-import 'components/swiper/swiper-item';
+import './swiper-item';
 import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
