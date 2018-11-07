@@ -53,7 +53,7 @@ export default class NativeMap extends PolymerElement {
         observer: '_observeMarkers',
       },
       tileOverlay: {
-        type: Array,
+        type: Object,
         observer: '_observeTileOverlay',
       },
       polyline: {
