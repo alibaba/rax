@@ -55,12 +55,12 @@ export default class MapElement extends PolymerElement {
         value: true
       },
 
-      makers: {
+      markers: {
         type: Array,
         notify: true,
         value: true,
-        observer: '_makersChange'
-      }
+        observer: '_markersChange'
+      },
     };
   }
 
@@ -101,13 +101,13 @@ export default class MapElement extends PolymerElement {
       this.map.setZoom(val);
     }
   }
-  _makersChange(makers) {
+  _markersChange(markers) {
     if (this.map) {
-      for (let i = 0, l = makers.length; i < l; i++) {
-        const [lng, lat] = makers[i].position;
+      for (let i = 0, l = markers.length; i < l; i++) {
+        const [lng, lat] = markers[i].position;
         const marker = new AMap.Marker({
           position: new AMap.LngLat(lng, lat),
-          title: makers[i].title
+          title: markers[i].title
         });
 
         this.map.add([marker]);

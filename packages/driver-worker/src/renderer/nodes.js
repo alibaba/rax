@@ -2,11 +2,12 @@ import { setStyle } from './styles';
 import { sharedNodeMap } from './NodeMap';
 import { addEvent } from './events';
 import { isValidW3CTag, isValidCustomTags } from './tags';
+import { setAttribute } from './attrs';
 
 const CUSTOM_TAG_PREFIX = 'a-';
 
 /**
- * Only nodeName that in whitelist can be created.
+ * Only node name that in whitelist can be created.
  */
 function getTagName(nodeName) {
   const tagName = String(nodeName).toLowerCase();
@@ -15,7 +16,7 @@ function getTagName(nodeName) {
   } else if (isValidCustomTags(tagName)) {
     return CUSTOM_TAG_PREFIX + tagName;
   } else {
-    return 'invalid-tag';
+    return 'a-unknown';
   }
 }
 
@@ -36,13 +37,8 @@ export function createNode(vnode) {
 
     if (vnode.attributes) {
       for (let i = 0; i < vnode.attributes.length; i++) {
-        let a = vnode.attributes[i];
-
-        if (typeof a.value === 'object' || typeof a.value === 'boolean') {
-          node[a.name] = a.value;
-        } else {
-          node.setAttribute(a.name, a.value);
-        }
+        let { name, value } = vnode.attributes[i];
+        setAttribute(node, name, value);
       }
     }
 

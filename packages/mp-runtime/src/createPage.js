@@ -48,20 +48,20 @@ class Page {
   }
 }
 
-export default function createPage(config = {}, renderFactory, requireCoreModule) {
+export default function createPage(renderFactory, requireCoreModule, config = {}) {
   // each page has unique vars that can not be shared
   const pageContext = requireCoreModule('@core/context');
   const pageEventEmitter = requireCoreModule('@core/page');
   const Rax = requireCoreModule('@core/rax');
 
-  const { document, location, pageQuery, pageName } = pageContext;
+  const { document, evaluator, pageQuery, pageName } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
   const render = getWebViewSource
     ? (data) => {
       const url = getWebViewSource(data);
-      if (url && location && location.href !== url) {
-        location.replace(url);
+      if (url && evaluator) {
+        evaluator.call('location.replace', url);
         return '';
       } else {
         return Rax.createElement('web-view', { src: url, style: WEBVIEW_STYLE });

@@ -2,6 +2,10 @@ const { join } = require('path');
 const babelConfig = require('./babelConfig');
 const WebpackMiniProgramPlugin = require('../plugins/WebpackMiniProgramPlugin');
 
+const babelLoaderConfig = {
+  loader: require.resolve('babel-loader'),
+  options: babelConfig,
+};
 module.exports = (projectDir, opts) => {
   return {
     output: {
@@ -11,12 +15,15 @@ module.exports = (projectDir, opts) => {
       rules: [
         {
           test: /\.js$/,
-          use: [
-            {
-              loader: require.resolve('babel-loader'),
-              options: babelConfig,
-            }
-          ]
+          use: [babelLoaderConfig],
+        },
+        /**
+         * Post babel loader to compile template attribute expression
+         */
+        {
+          test: /\.axml$/,
+          enforce: 'post',
+          use: [babelLoaderConfig],
         },
         {
           test: /\.acss$/,

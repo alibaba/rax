@@ -94,8 +94,10 @@ export default class Swiper extends PolymerElement {
   }
 
   handleChildrenChanged(info) {
-    // reset number of indicators
+    // Reset number of indicators
     this.indicators = new Array(this.itemsCount);
+    // Rerender the current swiper item
+    this.render();
 
     this._resetCircularAssistNode();
     if (this.isCircular) {
@@ -326,11 +328,6 @@ export default class Swiper extends PolymerElement {
     const translateName = this.vertical ? 'translateY' : 'translateX';
     return this[translateName];
   }
-
-  // _getTouchPos(event) {
-  //   const key = this.vertical ? 'clientY' : 'clientX';
-  //   return event.changedTouches ? event.changedTouches[0][key] : event[key];
-  // }
 
   _getTranslateOfRealItem(realCurrent) {
     const propName = this.vertical ? 'height' : 'width';

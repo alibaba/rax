@@ -3,17 +3,13 @@ const postcss = require('postcss');
 const rpxRegex = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 
 const defaults = {
-  rootValue: 16,
-  unitPrecision: 5,
-  minPixelValue: 0
+  remRatio: 100, // Ref: https://github.com/alibaba/rax/tree/master/packages/rax-server-renderer#config-rem-ratio
 };
 
 module.exports = postcss.plugin('postcss-rpx2rem', function(options) {
   var opts = Object.assign({}, defaults, options);
   var remReplace = createRemReplace(
-    opts.rootValue,
-    opts.unitPrecision,
-    opts.minPixelValue
+    opts.remRatio
   );
 
   return function(root) {
@@ -30,24 +26,10 @@ module.exports = postcss.plugin('postcss-rpx2rem', function(options) {
   };
 });
 
-function createRemReplace(rootValue, unitPrecision, minPixelValue) {
+function createRemReplace(remRatio) {
   return function(m, $1) {
     if (!$1) return m;
-    let pixels = parseFloat($1);
-    if (pixels < minPixelValue) return m;
-    /**
-     * iphone6 font-size = 16
-     * 1rpx = .5px
-     * 1rem = 16px
-     * => 1rpx = 1rem / 32
-     */
-    let fixedVal = toFixed(pixels / rootValue / 2, unitPrecision);
-    return fixedVal === 0 ? '0' : fixedVal + 'rem';
+    let remVal = parseFloat($1) / remRatio;
+    return remVal === 0 ? '0' : remVal + 'rem';
   };
-}
-
-function toFixed(number, precision) {
-  let multiplier = Math.pow(10, precision + 1);
-  let wholeNumber = Math.floor(number * multiplier);
-  return Math.round(wholeNumber / 10) * 10 / multiplier;
 }

@@ -15,10 +15,9 @@ const TO_SANITIZE = [
   'previousSibling',
 ];
 
-const workerGlobalScope = createWorkerGlobalScope();
-
 export default class WorkerDriver extends Driver {
   constructor({ postMessage, addEventListener }) {
+    const workerGlobalScope = createWorkerGlobalScope();
     super(workerGlobalScope.document);
 
     this.evaluator = new Evaluator(postMessage);
@@ -135,7 +134,7 @@ export default class WorkerDriver extends Driver {
   }
 
   handleReturn(data) {
-    this.operator.apply(data);
+    this.evaluator.apply(data);
   }
 
   /**

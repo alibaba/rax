@@ -17,9 +17,9 @@ this.setState({ value: 10 })
 <TextInput onInput={ (event) => this.setState({ text: event.value }) } />
 ```
 
-* **Flexbox 布局** - Rax 使用 `flexbox` 规则来描述组件。 `Flexbox` 意为"弹性布局"，用来为盒状模型提供最大的灵活性。你可以查阅 [样式处理](./style) 来了解 `flexbox` 的基本布局方法。
+* **Flexbox 布局** - Rax 使用 `flexbox` 规则来描述组件。 `Flexbox` 意为"弹性布局"，用来为盒状模型提供最大的灵活性。你可以查阅 [样式处理](./guide/style) 来了解 `flexbox` 的基本布局方法。
 * **样式** - 我们可以使用对象的方式来描述 CSS 中的样式，并传递给组件的 **`style`** 属性，唯一的区别是带连词号(-)的属性需要用驼峰写法代替。例如：
 ```jsx
  <View style={{ width: 100, height: 100, backgroundColor: 'skyblue' }} />
 ```
-虽然支持，但 Rax 不推荐使用内联对象的方式来应用样式，你可以查阅 [样式处理](./style) 来查看在 Rax 中使用样式的最佳实践。
+虽然支持，但 Rax 不推荐使用内联对象的方式来应用样式，你可以查阅 [样式处理](./guide/style) 来查看在 Rax 中使用样式的最佳实践。

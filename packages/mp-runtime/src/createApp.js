@@ -36,7 +36,7 @@ export function getApp() {
   return appInstance;
 }
 
-// register getApp at runtime
+// Register getApp at runtime
 global.getApp = getApp;
 
 export default function createApp(config) {

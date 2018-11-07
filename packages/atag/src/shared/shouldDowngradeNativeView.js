@@ -1,15 +1,22 @@
+/* global __embed_view_manager__ */
+import getEnvironmentObject from './getEnvironmentObject';
+
+const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent);
 const embedViewManager =
-  typeof __embed_view_manager__ !== "undefined" ? __embed_view_manager__ : null; // eslint-disable-line
+  typeof __embed_view_manager__ !== 'undefined' ? __embed_view_manager__ : null;
 
 /**
  * Check whether native view is supported
- * Android: inject a boolean flag at __sfc__.isDowngrade
  * iOS: depend on embedViewManager.shouldDowngrade()
+ * Android: inject a boolean flag at __sfc__.isDowngrade
  */
 export default function shouldDowngradeNativeView() {
-  if (typeof __sfc__ !== 'undefined' && __sfc__.isDowngrade) { // eslint-disable-line
-    return String(__sfc__.isDowngrade) === 'true'; // eslint-disable-line
-  } else {
+  if (isIOS) {
     return embedViewManager ? embedViewManager.shouldDowngrade() : false;
+  } else {
+    const env = getEnvironmentObject();
+    // `isDowngrade` may be string or boolean, due to version of Apps.
+    return env && String(env.isDowngrade) === 'true';
   }
 }
+

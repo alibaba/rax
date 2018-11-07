@@ -1,3 +1,3 @@
-const klassStyle = require('./class-style');
+const style = require('./style');
 
-module.exports = [klassStyle];
+module.exports = [style];

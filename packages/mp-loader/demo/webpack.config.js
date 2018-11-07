@@ -39,8 +39,12 @@ module.exports = {
   context: __dirname,
   module: {
     rules: [
+      /**
+       * Post babel loader to compile template attribute expression
+       */
       {
-        test: /\.js$/,
+        test: /\.(js|axml)$/,
+        enforce: 'post',
         use: [
           {
             loader: 'babel-loader',
