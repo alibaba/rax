@@ -11,7 +11,7 @@ export default class ViewElement extends PolymerElement {
     return {
       /**
        * Whether to prevent scrolling pages in the area
-       * Boolean, default false
+       * Boolean, default falsex
        */
       disableScroll: {
         type: Boolean,
