@@ -272,7 +272,9 @@ export default class NativeMap extends PolymerElement {
   _handleEmbedMapData({ eventType, bridgeId, ...eventDetail }) {
     if (bridgeId === this.uniqueId) {
       // Transform native event name: onRegionChange -> regionchange
-      const eventName = eventType.replace(/^on/, '').toLowerCase();
+      let eventName = eventType.replace(/^on/, '').toLowerCase();
+      // All tap event listened will be normalized to click in process.
+      if (eventName === 'tap') eventName = 'click';
       this._dispatchEvent(eventName, eventDetail);
     }
   }
