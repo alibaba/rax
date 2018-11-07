@@ -2,6 +2,7 @@ const { getAndRemoveAttr, addAttr, normalizeMustache } = require('../helpers');
 
 const IS_BIND_REG = /\W*\{\{/;
 const IS_DETECTIVE = /^a\:/;
+
 function transformNode(el) {
   const { attrsList, attrsMap } = el;
 

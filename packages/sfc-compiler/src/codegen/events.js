@@ -93,7 +93,7 @@ function genHandler(name, handler, opts) {
       // so only need handle `this.fooo`
       (typeof handler.scope === 'string' ? handler.scope : 'this.') + handler.value
       : // add this. for all identifiers
-      `function($event){${addThis(
+      `function($event){${handler.disableAddThis ? handler.value : addThis(
         handler.value,
         opts.state.isScopedIdentifier,
         opts.el

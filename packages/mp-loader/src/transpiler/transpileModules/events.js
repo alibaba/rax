@@ -4,7 +4,7 @@ const EVENT_MAPPING = {
   tap: 'click'
 };
 const EVENT_REG = /^on[A-Z]/;
-const DATA_SCOPE_REG = /^data[.[]/;
+const IS_EVENT_BINDING_REG = /{{(.*)}}/;
 
 /**
  * transpile bindXxx to onXxxx
@@ -20,20 +20,34 @@ function transformNode(node) {
 
   for (let i = 0, l = attrsList.length; i < l; i++) {
     let { name, value } = attrsList[i];
-    value = normalizeMustache(value, node);
     if (EVENT_REG.test(name)) {
       const rawEvtName = name.slice(2).toLowerCase();
       const evtName = EVENT_MAPPING[rawEvtName] || rawEvtName;
       toSplice.push(i);
-      // gen handler
-      const isValFromData = DATA_SCOPE_REG.test(value);
-      /**
-       * this or data are 2 scope variable origin
-       *
-       * onClick: data['xxx'] -> original
-       * onClick: fooo -> this.fooo
-       */
-      events[evtName] = { value, scope: isValFromData ? '' : 'this.' };
+
+      // Gen handler
+      if (IS_EVENT_BINDING_REG.test(value)) {
+        value = `var fn = this[${normalizeMustache(value, node)}];`
+           + 'fn && fn.call(this,$event);';
+        events[evtName] = { value, disableAddThis: true, };
+        /**
+         * onTap="{{handlerName}}"
+         * ->
+         * {
+         *   onClick: function($event){
+         *     var fn = this[data.handlerName];
+         *     fn && fn.call(this, $event);
+         *   }.bind(this),
+         * }
+         */
+      } else {
+        /**
+         * onTap="handler"
+         * ->
+         * { onClick: this.handler }
+         */
+        events[evtName] = { value, scope: 'this.' };
+      }
     }
   }
 
