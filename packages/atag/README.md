@@ -24,14 +24,18 @@ npm test
 
 atag 组件通过 css 变量方式支持主题切换，目前可用的变量：
 
-|css 变量名           |默认值        |说明               |
-|--------------------|-------------|------------------|
-|--color-primary-2   |#ff5500      |主色2，中等|
-|--color-primary-3   |#ff8800      |主色3，深|
-|--color-warning-2   |#fb9025      |警示色2，中等|
-|--color-warning-3   |#fbca2f      |警示色3，深|
-|--btn-border-1      |40px         |按钮圆角|
-|--btn-border-2      |80px         |按钮二倍圆角|
+- --color-primary，默认 #ff5500
+- --color-warn，默认 #fb9025
+- --button-primary-background-color-from，默认 #ff8800
+- --button-primary-background-color-to，默认 #ff5500
+- --button-primary-text-color，默认 #ffffff
+- --button-warn-background-color-from，默认 #fbca2f
+- --button-warn-background-color-to，默认 #fb9025
+- --button-warn-text-color，默认 #ffffff
+- --button-default-background-color-from，默认 #ffffff
+- --button-default-background-color-to，默认 #ffffff
+- --button-default-text-color，默认 #ff5500
+- --button-border-radius，默认 40px
 
 使用：
 

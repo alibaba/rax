@@ -136,7 +136,7 @@ export default class Progress extends PolymerElement {
         -webkit-flex: none;
         height: 6px;
         background-color: #ff5500;
-        background-color: var(--color-primary-2, #ff5500);
+        background-color: var(--color-primary, #ff5500);
       }
 
       .value {

@@ -246,7 +246,7 @@ export default class Picker extends PolymerElement {
       #header #confirm {
         margin-right: 16px;
         color: #ff5500;
-        color: var(--color-primary-2, #ff5500);
+        color: var(--color-primary, #ff5500);
       }
 
       #body {

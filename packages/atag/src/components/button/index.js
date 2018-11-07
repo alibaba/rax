@@ -86,40 +86,29 @@ export default class Button extends PolymerElement {
           overflow: hidden;
           text-decoration: none;
           border-radius: 40px;
-          border-radius: var(--btn-border-1, 40px);
+          border-radius: var(--button-border-radius, 40px);
           cursor: pointer;
           -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
           color: #ff5500;
-          color: var(--color-primary-2, #ff5500);
-          background: white;
-        }
-
-        :host:after {
-          content: ' ';
-          width: 200%;
-          height: 200%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          transform: scale(0.5);
-          transform-origin: 0 0;
-          box-sizing: border-box;
-          border-radius: 80px;
-          border-radius: var(--btn-border-2, 80px);
+          color: var(--button-default-text-color, #ff5500);
+          background: linear-gradient(to right, #fff, #fff);
+          background: linear-gradient(to right, var(--button-default-background-color-from, #fff), var(--button-default-background-color-to, #fff));
         }
 
         /* primary */
         :host([type="primary"]) {
           color: white;
+          color: var(--button-warn-text-color, white);
           background: linear-gradient(to right, #ff8800, #ff5500);
-          background: linear-gradient(to right, var(--color-primary-3, #ff8800), var(--color-primary-2, #ff5500));
+          background: linear-gradient(to right, var(--button-primary-background-color-from, #ff8800), var(--button-primary-background-color-to, #ff5500));
         }
 
         /* warn */
         :host([type="warn"]) {
           color: white;
+          color: var(--button-warn-text-color, white);
           background: linear-gradient(to right, #fbca2f, #fb9025);
-          background: linear-gradient(to right, var(--color-warning-3, #fbca2f), var(--color-warning-2, #fb9025));
+          background: linear-gradient(to right, var(--button-warn-background-color-from, #fbca2f), var(--button-warn-background-color-to, #fb9025));
         }
 
         /* mini */
@@ -142,17 +131,17 @@ export default class Button extends PolymerElement {
         :host([plain][type="primary"]) {
           background: transparent;
           color: #ff5500;
-          color: var(--color-primary-2, #ff5500);
+          color: var(--color-primary, #ff5500);
           border: 1px #ff5500 solid;
-          border: 1px var(--color-primary-2, #ff5500) solid;
+          border: 1px var(--color-primary, #ff5500) solid;
         }
 
         :host([plain][type="warn"]) {
           background: transparent;
           color: #fb9025;
-          color: var(--color-warning-2, #fb9025);
+          color: var(--color-warn, #fb9025);
           border: 1px #fb9025 solid;
-          border: 1px var(--color-warning-2, #fb9025) solid;
+          border: 1px var(--color-warn, #fb9025) solid;
         }
 
         /* disabled */
@@ -189,7 +178,7 @@ export default class Button extends PolymerElement {
           width: 4px;
           height: 4px;
           background-color: #ff5500;
-          background-color: var(--color-primary-2, #ff5500);
+          background-color: var(--color-primary, #ff5500);
           border-radius: 4px;
           -webkit-animation: loading-circle-bounce 1.2s infinite ease-in-out both;
                   animation: loading-circle-bounce 1.2s infinite ease-in-out both;
@@ -206,11 +195,12 @@ export default class Button extends PolymerElement {
 
         :host([type="primary"][plain]) .loading-circle .loading-child-before {
           background-color: #ff5500;
-          background-color: var(--color-primary-2, #ff5500);
+          background-color: var(--color-primary, #ff5500);
         }
 
         :host([type="warn"][plain]) .loading-circle .loading-child-before {
           background-color: #fb9025;
+          background-color: var(--color-warn, #fb9025);
         }
 
         .loading-circle .loading-circle2 {
