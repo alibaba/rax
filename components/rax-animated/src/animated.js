@@ -74,8 +74,8 @@ var maybeVectorAnim = function(
         configY[key] = y;
       }
     }
-    var aX = anim(value: AnimatedValueXY.x, configX);
-    var aY = anim(value: AnimatedValueXY.y, configY);
+    var aX = anim(AnimatedValueXY.x, configX);
+    var aY = anim(AnimatedValueXY.y, configY);
     // We use `stopTogether: false` here because otherwise tracking will break
     // because the second animation will get stopped before it can update.
     return parallel([aX, aY], {stopTogether: false});
