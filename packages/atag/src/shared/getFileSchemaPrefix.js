@@ -1,6 +1,7 @@
 import getEnvironmentObject from './getEnvironmentObject';
 
-const FILE_SCHEMA_PREFIX = '__file_schema_prefix__';
+const FILE_SCHEMA_PREFIX_FROM_ENV = 'fileSchemaPrefix';
+const FILE_SCHEMA_PREFIX_FROM_URL = '__file_schema_prefix__';
 
 /**
  * Get the schema of local file reader, like image, video and so on.
@@ -12,19 +13,21 @@ const FILE_SCHEMA_PREFIX = '__file_schema_prefix__';
  */
 export default function getFileSchemaPrefix() {
   const env = getEnvironmentObject();
-  if (env && env.fileSchemaPrefix) {
-    return env.fileSchemaPrefix;
+  if (env && env[FILE_SCHEMA_PREFIX_FROM_ENV]) {
+    return env[FILE_SCHEMA_PREFIX_FROM_ENV];
   } else {
-    return extractQuery(FILE_SCHEMA_PREFIX);
+    return extractQuery(FILE_SCHEMA_PREFIX_FROM_URL);
   }
 }
 
 function extractQuery(param) {
   const { href } = location;
   const match = (new RegExp(`${param}=([^&]+)`)).exec(href);
-
   if (match) {
-    return decodeURIComponent(match[1]);
+    let result = decodeURIComponent(match[1]);
+    let hashIdx = result.indexOf('#');
+    if (hashIdx > -1) result = result.slice(0, hashIdx);
+    return result;
   } else {
     return '';
   }

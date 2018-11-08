@@ -1,20 +1,4 @@
-<dom-module id="a-radio-group">
-  <template>
-    <style>
-      :host {
-        position: relative;
-        box-sizing: border-box;
-        -webkit-user-select: none;
-        user-select: none;
-        overflow: hidden;
-      }
-    </style>
-    <slot></slot>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
+import { PolymerElement, html } from '@polymer/polymer';
 import afterNextRender from '../../shared/afterNextRender';
 
 export default class RadioGroupElement extends PolymerElement {
@@ -51,7 +35,7 @@ export default class RadioGroupElement extends PolymerElement {
     for (let i = 0; i < checkboxList.length; i++) {
       const node = checkboxList[i];
       if (node !== e.target) {
-        node.checked = false
+        node.checked = false;
       }
     }
     const event = new CustomEvent('change', {
@@ -61,7 +45,21 @@ export default class RadioGroupElement extends PolymerElement {
     });
     this.dispatchEvent(event);
   }
+
+  static get template() {
+    return html`
+    <style>
+      :host {
+        position: relative;
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        overflow: hidden;
+      }
+    </style>
+    <slot></slot>
+    `;
+  }
 }
 
 customElements.define(RadioGroupElement.is, RadioGroupElement);
-</script>

@@ -3,6 +3,7 @@ import { PolymerElement } from '@polymer/polymer';
 import debounce from '../../shared/debounce';
 import kebabCase from '../../shared/kebabCase';
 
+const NATIVE_UPDATE_DEBOUNCE_TIME = 5;
 const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
 const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
@@ -53,7 +54,7 @@ export default class NativeMap extends PolymerElement {
         observer: '_observeMarkers',
       },
       tileOverlay: {
-        type: Array,
+        type: Object,
         observer: '_observeTileOverlay',
       },
       polyline: {
@@ -118,6 +119,8 @@ export default class NativeMap extends PolymerElement {
         this._createOrUpdateParam(attr, val);
       }, 16);
     });
+
+    this._callNativeUpdate = debounce(this._callNativeUpdate, NATIVE_UPDATE_DEBOUNCE_TIME);
   }
 
   ready() {
@@ -236,17 +239,22 @@ export default class NativeMap extends PolymerElement {
        * call update to reset overlayer.
        */
       default:
-        this._callNativeControl('update', {
-          markers: this.markers,
-          polyline: this.polyline,
-          circles: this.circles,
-          controls: this.controls,
-          polygon: this.polygon,
-          includePoints: this.includePoints,
-          showLocation: this.showLocation,
-          showMapText: this.showMapText,
-        });
+        this._callNativeUpdate();
     }
+  }
+
+  _callNativeUpdate() {
+    this._callNativeControl('update', {
+      bridgeId: this.uniqueId,
+      markers: this.markers,
+      polyline: this.polyline,
+      circles: this.circles,
+      controls: this.controls,
+      polygon: this.polygon,
+      includePoints: this.includePoints,
+      showLocation: this.showLocation,
+      showMapText: this.showMapText,
+    });
   }
 
 
@@ -272,7 +280,9 @@ export default class NativeMap extends PolymerElement {
   _handleEmbedMapData({ eventType, bridgeId, ...eventDetail }) {
     if (bridgeId === this.uniqueId) {
       // Transform native event name: onRegionChange -> regionchange
-      const eventName = eventType.replace(/^on/, '').toLowerCase();
+      let eventName = eventType.replace(/^on/, '').toLowerCase();
+      // All tap event listened will be normalized to click in process.
+      if (eventName === 'tap') eventName = 'click';
       this._dispatchEvent(eventName, eventDetail);
     }
   }
