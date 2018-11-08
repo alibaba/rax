@@ -1,4 +1,3 @@
-const slash = require('slash');
 const path = require('path');
 
 const root = process.cwd();
@@ -104,7 +103,7 @@ function hasRootPathPrefixInString(importPath, rootPathPrefix = '~') {
 }
 
 function transformRelativeToRootPath(importPath, rootPathSuffix, rootPathPrefix, sourceFile = '') {
-  sourceFile = sourceFile.replace(/\\/g, '/');
+  sourceFile = slash(sourceFile);
   let withoutRootPathPrefix = '';
   if (hasRootPathPrefixInString(importPath, rootPathPrefix)) {
     if (importPath.substring(0, 1) === '/') {
@@ -134,6 +133,20 @@ function transformRelativeToRootPath(importPath, rootPathSuffix, rootPathPrefix,
     return importPath;
   }
   throw new Error('ERROR: No path passed');
+}
+
+/**
+ * Convert Windows backslash paths to slash paths: `foo\\bar` -> `foo/bar`
+ */
+function slash(str) {
+  const isExtendedLengthPath = /^\\\\\?\\/.test(str);
+  const hasNonAscii = /[^\x00-\x80]+/.test(str);
+
+  if (isExtendedLengthPath || hasNonAscii) {
+    return str;
+  }
+
+  return str.replace(/\\/g, '/');
 }
 
 module.exports = RootImportPlugin;
