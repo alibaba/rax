@@ -3,7 +3,8 @@ import { PolymerElement } from '@polymer/polymer';
 import debounce from '../../shared/debounce';
 import kebabCase from '../../shared/kebabCase';
 
-const NATIVE_UPDATE_DEBOUNCE_TIME = 5;
+// Debounce native params update
+const NATIVE_UPDATE_DEBOUNCE_TIME = 16;
 const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
 const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
@@ -88,19 +89,19 @@ export default class NativeMap extends PolymerElement {
       },
       routeStart: {
         type: Object,
-        observer: '_observeRouteStart',
+        observer: '_observeRouteConfig',
       },
       routeEnd: {
         type: Object,
-        observer: '_observeRouteEnd',
+        observer: '_observeRouteConfig',
       },
       routeColor: {
         type: String,
-        observer: '_observeRouteColor',
+        observer: '_observeRouteConfig',
       },
       routeWidth: {
         type: Number,
-        observer: '_observeRouteWidth',
+        observer: '_observeRouteConfig',
       },
     };
   }
@@ -117,10 +118,11 @@ export default class NativeMap extends PolymerElement {
     Object.keys(NativeMap.properties).forEach((attr) => {
       this['_observe' + attr[0].toUpperCase() + attr.slice(1)] = debounce((val) => {
         this._createOrUpdateParam(attr, val);
-      }, 16);
+      }, NATIVE_UPDATE_DEBOUNCE_TIME);
     });
 
     this._callNativeUpdate = debounce(this._callNativeUpdate, NATIVE_UPDATE_DEBOUNCE_TIME);
+    this._observeRouteConfig = debounce(this._observeRouteConfig, NATIVE_UPDATE_DEBOUNCE_TIME);
   }
 
   ready() {
@@ -206,6 +208,15 @@ export default class NativeMap extends PolymerElement {
       this._container.appendChild(this[paramRefKey]);
     }
     return this[paramRefKey];
+  }
+
+  _observeRouteConfig() {
+    this._createOrUpdateParam('route-config', {
+      'route-start': this.routeStart,
+      'route-end': this.routeEnd,
+      'route-width': this.routeWidth,
+      'route-color': this.routeColor,
+    });
   }
 
   _updateParamWithAndroid(key, value) {
