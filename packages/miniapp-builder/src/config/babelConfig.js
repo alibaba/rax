@@ -21,7 +21,7 @@ module.exports = {
   },
   plugins: [
     [
-      require.resolve('../vendors/babel-plugin-root-import'),
+      require.resolve('../plugins/babelPluginRootImport'),
       {
         rootPathPrefix: '/',
       },

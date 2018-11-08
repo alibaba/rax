@@ -71,6 +71,7 @@
     "rimraf": "^2.6.2",
     "run-sequence": "^2.2.1",
     "sfc-loader": "^0.6.6-7",
+    "slash": "^1.0.0",
     "webpack": "^4.19.0",
     "webpack-dev-middleware": "^3.2.0",
     "webpack-merge": "^4.1.4",
