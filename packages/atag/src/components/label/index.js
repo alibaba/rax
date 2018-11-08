@@ -1,16 +1,5 @@
-<dom-module id="a-label">
-  <template>
-    <style>
-      :host {
-        display: inline-block;
-      }
-    </style>
-    <slot></slot>
-  </template>
-</dom-module>
+import { PolymerElement, html } from '@polymer/polymer';
 
-<script>
-import { PolymerElement } from '@polymer/polymer';
 export default class Label extends PolymerElement {
   static get is() {
     return 'a-label';
@@ -85,7 +74,17 @@ export default class Label extends PolymerElement {
         break;
     }
   }
+
+  static get template() {
+    return html`
+    <style>
+      :host {
+        display: inline-block;
+      }
+    </style>
+    <slot></slot>
+    `;
+  }
 }
 
 customElements.define(Label.is, Label);
-</script>

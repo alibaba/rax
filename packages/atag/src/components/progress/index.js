@@ -1,55 +1,5 @@
-<dom-module id="a-progress">
-  <template>
-    <style>
-      :host {
-        display: flex;
-        display: -webkit-flex;
-        flex-flow: row nowrap;
-        -webkit-flex-flow: row nowrap;
-        align-items: center;
-        -webkit-align-items: center;
-      }
+import { PolymerElement, html } from '@polymer/polymer';
 
-      .container {
-        display: flex;
-        display: -webkit-flex;
-        flex: 1;
-        -webkit-flex: 1;
-        flex-flow: row nowrap;
-        -webkit-flex-flow: row nowrap;
-        background-color: #ccc;
-        overflow: hidden;
-      }
-
-      .active {
-        flex: none;
-        -webkit-flex: none;
-        height: 6px;
-        background-color: #ff5000;
-      }
-
-      .value {
-        font-size: 12px;
-        color: #999;
-        flex: none;
-        -webkit-flex: none;
-        margin-left: 5px;
-      }
-
-      .active-bar {
-        transition: all .3s linear 0s;
-        -webkit-transition: all .3s linear 0s;
-      }
-    </style>
-    <div id="container" class="container" style$="[[containerStyle]]">
-      <div id="active" class$="active {{computClass()}}" style$="[[activeStyle]]"></div>
-    </div>
-    <div class="value" style$="[[infoStyle]]">[[percent]]%</div>
-  </template>
-</dom-module>
-
-<script>
-import { PolymerElement } from '@polymer/polymer';
 export default class Progress extends PolymerElement {
   static get is() {
     return 'a-progress';
@@ -75,7 +25,6 @@ export default class Progress extends PolymerElement {
       },
       activeColor: {
         type: String,
-        value: '#ff5000'
       },
       active: {
         type: Boolean,
@@ -158,7 +107,57 @@ export default class Progress extends PolymerElement {
       return 0;
     }
   }
+
+  static get template() {
+    return html`
+    <style>
+      :host {
+        display: flex;
+        display: -webkit-flex;
+        flex-flow: row nowrap;
+        -webkit-flex-flow: row nowrap;
+        align-items: center;
+        -webkit-align-items: center;
+      }
+
+      .container {
+        display: flex;
+        display: -webkit-flex;
+        flex: 1;
+        -webkit-flex: 1;
+        flex-flow: row nowrap;
+        -webkit-flex-flow: row nowrap;
+        background-color: #ccc;
+        overflow: hidden;
+      }
+
+      .active {
+        flex: none;
+        -webkit-flex: none;
+        height: 6px;
+        background-color: #ff5500;
+        background-color: var(--color-primary, #ff5500);
+      }
+
+      .value {
+        font-size: 12px;
+        color: #999;
+        flex: none;
+        -webkit-flex: none;
+        margin-left: 5px;
+      }
+
+      .active-bar {
+        transition: all .3s linear 0s;
+        -webkit-transition: all .3s linear 0s;
+      }
+    </style>
+    <div id="container" class="container" style$="[[containerStyle]]">
+      <div id="active" class$="active {{computClass()}}" style$="[[activeStyle]]"></div>
+    </div>
+    <div class="value" style$="[[infoStyle]]">[[percent]]%</div>
+    `;
+  }
 }
 
 customElements.define(Progress.is, Progress);
-</script>

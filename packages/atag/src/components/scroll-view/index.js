@@ -2,6 +2,8 @@ import { PolymerElement, html } from '@polymer/polymer';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
 
+const supportSmoothScroll = 'webkitScrollBehavior' in document.documentElement.style
+  || 'scrollBehavior' in document.documentElement.style;
 let uid = 0;
 
 export default class ScrollViewElement extends PolymerElement {
@@ -9,96 +11,114 @@ export default class ScrollViewElement extends PolymerElement {
     return 'a-scroll-view';
   }
 
+  /**
+   * Properteies scrollLeft and scrollTop are conflicted with Element prototype,
+   * so we should handle them in manual with attribute apis.
+   */
   static get properties() {
     return {
-      scrollIntoView: {
-        type: String,
-        value: '',
-      },
       scrollX: {
         type: Boolean,
         value: false,
-        observer: '_observerScrollX',
+        computed: '_getBoolPropFromAttr("scroll-x", scrollX)',
+        observer: '_observeScrollX',
       },
       scrollY: {
         type: Boolean,
         value: false,
+        computed: '_getBoolPropFromAttr("scroll-y", scrollY)',
+        observer: '_observeScrollY',
+      },
+      'scroll-left': Number,
+      'scroll-top': Number,
+      scrollIntoView: {
+        type: String,
+        observer: '_observeScrollIntoView',
+      },
+      scrollWithAnimation: {
+        type: Boolean,
+        value: false,
+      },
+      hideScrollBar: {
+        type: Boolean,
+        value: false,
+        observer: '_observeHideScrollBar',
+      },
+      upperThreshold: {
+        type: Number,
+        value: 50,
+      },
+      lowerThreshold: {
+        type: Number,
+        value: 50,
       },
     };
   }
 
-  static get observedAttributes() {
-    return [
-      'scroll-x',
-      'scroll-y',
-      'scroll-top',
-      'scroll-left',
-      'scroll-into-view',
-      'scroll-with-animation',
-      'hide-scroll-bar',
-    ];
+  _getBoolPropFromAttr(attr, fallbackVal) {
+    if (this.hasAttribute(attr)) {
+      const value = this.getAttribute(attr);
+      return value === 'true';
+    } else {
+      return fallbackVal;
+    }
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    super.attributeChangedCallback(name, oldValue, newValue);
-    this.expireCache(name);
+  constructor() {
+    super();
 
-    const scrollX = this.getValue('scroll-x', 'boolean', false);
-    const scrollY = this.getValue('scroll-y', 'boolean', false);
+    // The timer ids.
+    this.timerX = null;
+    this.timerY = null;
 
-    switch (name) {
-      case 'scroll-x':
-      case 'scroll-y':
-        this.style.overflowX = scrollX ? 'auto' : 'hidden';
-        this.style.overflowY = scrollY ? 'auto' : 'hidden';
+    // The event interacting with the upper DSL has a 10ms throttle, which is consistent here.
+    this.lastScrollTime = 0;
+    this.lastScrollTop = 0;
+    this.lastScrollLeft = 0;
+
+    // Add a unique id for element to avoid style pollution.
+    this._id = `scroll-view-${++uid}`;
+  }
+
+  get _scrollTop() {
+    return this['scroll-top'];
+  }
+  get _scrollLeft() {
+    return this['scroll-left'];
+  }
+
+  attributeChangedCallback(key, oldVal, newVal) {
+    switch (key) {
+      case 'scroll-left':
+        if (this.scrollWithAnimation) {
+          this._smoothScrollToX(newVal);
+        } else {
+          this.scrollLeft = newVal;
+        }
         break;
       case 'scroll-top':
-        const scrollTop = this.getValue('scroll-top', 'number', 0);
-        /**
-         * If smooth scrolling works, use Node.scrollTop/scrollLeft
-         */
-        if ('scrollBehavior' in this.style) {
-          this.scrollTop = scrollTop;
+        if (this.scrollWithAnimation) {
+          this._smoothScrollToY(newVal);
         } else {
-          this.scrollToY(scrollTop);
+          this.scrollTop = newVal;
         }
-        break;
-      case 'scroll-left':
-        const scrollLeft = this.getValue('scroll-left', 'number', 0);
-        if ('scrollBehavior' in this.style) {
-          this.scrollLeft = scrollLeft;
-        } else {
-          this.scrollToX(scrollLeft);
-        }
-        break;
-      case 'scroll-into-view':
-        const scrollIntoView = this.getValue('scroll-into-view', 'string', '');
-        if (scrollIntoView) {
-          const targetNode = this.querySelector(`#${scrollIntoView}`);
-          if (targetNode) {
-            const containerRect = this.getBoundingClientRect();
-            const targetNodeRect = targetNode.getBoundingClientRect();
-            if (scrollX) {
-              this.scrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
-            }
-            if (scrollY) {
-              this.scrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
-            }
-          }
-        }
-        break;
-      default:
         break;
     }
+
+    super.attributeChangedCallback(key, oldVal, newVal);
   }
 
   ready() {
     super.ready();
+    this.setAttribute('atag-id', this._id);
+  }
 
+  connectedCallback() {
+    super.connectedCallback();
     // Improving Scroll Performance with Passive Event Listeners
-    this.addEventListener(
+    window.addEventListener(
       'scroll',
-      this.handleScroll,
+      this._handleScroll,
       supportsPassive
         ? {
           capture: true,
@@ -108,50 +128,65 @@ export default class ScrollViewElement extends PolymerElement {
     );
   }
 
-  scrollingXId = 0;
-  scrollingYId = 0;
-
-  scrollToY(value) {
-    const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
-    if (scrollWithAnimation) {
-      if (this.scrollingYId) {
-        clearInterval(this.scrollingYId);
-        this.scrollingYId = 0;
-      }
-      let startTime = Date.now();
-      let duration = 400;
-      let initialValue = this.scrollTop;
-      this.scrollingYId = setInterval(() => {
-        let deltaTime = Date.now() - startTime;
-        if (deltaTime > duration) {
-          clearInterval(this.scrollingYId);
-          this.scrollingYId = 0;
-          this.scrollTop = value;
-        } else {
-          const process = easeInOutCubic(deltaTime / duration);
-          this.scrollTop = initialValue + process * (value - initialValue);
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener(
+      'scroll',
+      this._handleScroll,
+      supportsPassive
+        ? {
+          capture: true,
+          passive: true,
         }
-      }, 16);
+        : true
+    );
+  }
+
+  _observeScrollX() {
+    this.style.overflowX = this.scrollX ? 'auto' : 'hidden';
+  }
+
+  _observeScrollY() {
+    this.style.overflowY = this.scrollY ? 'auto' : 'hidden';
+  }
+
+  _observeScrollIntoView() {
+    if (this.scrollIntoView) {
+      const targetNode = this.querySelector(`#${this.scrollIntoView}`);
+      if (targetNode) {
+        const containerRect = this.getBoundingClientRect();
+        const targetNodeRect = targetNode.getBoundingClientRect();
+
+        if (this.scrollX) {
+          this._smoothScrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
+        }
+
+        if (this.scrollY) {
+          this._smoothScrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
+        }
+      }
     } else {
-      this.scrollTop = value;
+      this.scrollTop = this.scrollLeft = 0;
     }
   }
 
-  scrollToX(value) {
-    const scrollWithAnimation = this.getValue('scroll-with-animation', 'boolean', false);
-    if (scrollWithAnimation) {
-      if (this.scrollingXId) {
-        clearInterval(this.scrollingXId);
-        this.scrollingXId = 0;
+  /**
+   * If smooth scrolling works, use Element.scrollTop/scrollLeft
+   */
+  _smoothScrollToX(value) {
+    if (!supportSmoothScroll) {
+      if (this.timerX) {
+        clearInterval(this.timerX);
+        this.timerX = 0;
       }
       let startTime = Date.now();
       let duration = 800;
       let initialValue = this.scrollLeft;
-      this.scrollingXId = setInterval(() => {
+      this.timerX = setInterval(() => {
         let deltaTime = Date.now() - startTime;
         if (deltaTime > duration) {
-          clearInterval(this.scrollingXId);
-          this.scrollingXId = 0;
+          clearInterval(this.timerX);
+          this.timerX = 0;
           this.scrollLeft = value;
         } else {
           const process = easeInOutCubic(deltaTime / duration);
@@ -163,24 +198,53 @@ export default class ScrollViewElement extends PolymerElement {
     }
   }
 
-  // The event interacting with the upper DSL has a 10ms throttle, which is consistent here.
-  lastScrollTime = 0;
-  lastScrollTop = 0;
-  lastScrollLeft = 0;
+  _smoothScrollToY(value) {
+    if (!this.scrollWithAnimation) {
+      if (this.timerY) {
+        clearInterval(this.timerY);
+        this.timerY = 0;
+      }
+      let startTime = Date.now();
+      let duration = 400;
+      let initialValue = this._scrollTop;
+      this.timerY = setInterval(() => {
+        let deltaTime = Date.now() - startTime;
+        if (deltaTime > duration) {
+          clearInterval(this.timerY);
+          this.timerY = 0;
+          this.scrollTop = value;
+        } else {
+          const process = easeInOutCubic(deltaTime / duration);
+          this.scrollTop = initialValue + process * (value - initialValue);
+        }
+      }, 16);
+    } else {
+      this.scrollTop = value;
+    }
+  }
 
-  handleScroll = e => {
-    // Because it is captured on the window, it is necessary to judge whether it is really its own rolling event.
-    if (e.target !== this) {
+  _handleScroll = (evt) => {
+    /**
+     * Because it is captured on the window, it is necessary to judge
+     * whether it is really its own rolling event.
+     */
+    if (evt.target !== this) {
       return;
     }
-    // Avoid infinite loops
-    if (e instanceof CustomEvent) {
+    /**
+     * Avoid infinite loops
+     */
+    if (evt instanceof CustomEvent) {
       return;
     }
-    // Terminate the native scroll event
-    e.stopPropagation();
+    /**
+     * Terminate the native scroll event
+     */
+    evt.stopPropagation();
 
-    // Send a custom scroll event with detail information added
+    /**
+     *  Send a custom scroll event with detail information added
+     */
     const deltaX = this.scrollLeft - this.lastScrollLeft;
     const deltaY = this.scrollTop - this.lastScrollTop;
     const scrollEvent = new CustomEvent('scroll', {
@@ -199,13 +263,15 @@ export default class ScrollViewElement extends PolymerElement {
 
     this.lastScrollTop = this.scrollTop;
     this.lastScrollLeft = this.scrollLeft;
-    if (e.timeStamp - this.lastScrollTime < 10) {
+    if (evt.timeStamp - this.lastScrollTime < 10) {
       return;
     }
-    this.lastScrollTime = e.timeStamp;
+    this.lastScrollTime = evt.timeStamp;
 
-    const upperThreshold = this.getValue('upper-threshold', 'number', 50);
-    if (deltaX < 0 && this.scrollLeft <= upperThreshold || deltaY < 0 && this.scrollTop <= upperThreshold) {
+    if (
+      deltaX < 0 && this.scrollLeft <= this.upperThreshold
+      || deltaY < 0 && this.scrollTop <= this.upperThreshold
+    ) {
       if (!this.scrolledToUpper) {
         const scrollToUpperEvent = new CustomEvent('scrolltoupper');
         this.dispatchEvent(scrollToUpperEvent);
@@ -215,10 +281,9 @@ export default class ScrollViewElement extends PolymerElement {
       this.scrolledToUpper = false;
     }
 
-    const lowerThreshold = this.getValue('lower-threshold', 'number', 50);
     if (
-      deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= lowerThreshold ||
-      deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= lowerThreshold
+      deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= this.lowerThreshold ||
+      deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= this.lowerThreshold
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');
@@ -230,61 +295,31 @@ export default class ScrollViewElement extends PolymerElement {
     }
   };
 
-  _observerScrollX() {
-    if (!this.styleEl) {
-      this._initStyleEl();
-    }
-    if (this.scrollX) {
+  _observeHideScrollBar(enableScrollBar) {
+    if (enableScrollBar) {
+      this._createCustomStyle();
       const hideScrollBarStyle = 'display: none;';
-      this._styleEl.textContent = `
+      /**
+       * A way to compatible with WebComponents polyfill
+       */
+      this._customStyle.textContent = `
         :host::-webkit-scrollbar {
           ${hideScrollBarStyle}
         }
-        a-scroll-view[data-id=${this._id}]::-webkit-scrollbar {
+        a-scroll-view[atag-id=${this._id}]::-webkit-scrollbar {
           ${hideScrollBarStyle}
         }
       `;
+    } else {
+      this._customStyle && this.shadowRoot.removeChild(this._customStyle);
     }
   }
 
-  _initStyleEl() {
-    // unique id for data-id to avoid style pollution
-    this._id = `scroll-view-${++uid}`;
-    this._styleEl = document.createElement('style');
-    this.setAttribute('data-id', this._id);
+  _createCustomStyle() {
+    if (this._customStyle) return;
+    this._customStyle = document.createElement('style');
     const shadowRoot = this.shadowRoot || this.attachShadow({ mode: 'open' });
-    shadowRoot.appendChild(this._styleEl);
-  }
-
-  getValue(name, type, defaultValue) {
-    let value = this.getFromCache(name);
-    if (value == null) {
-      value = this.getAttribute(name);
-      this.saveToCache(name, value);
-    }
-
-    switch (type) {
-      case 'boolean':
-        return value === null ? defaultValue : value === '' || value === 'true' || value === true;
-      case 'string':
-        return value === null ? defaultValue : String(value);
-      case 'number':
-        return value === null ? defaultValue : Number(value);
-      default:
-        break;
-    }
-    console.error(`atag scroll-view: unrecognized type of ${type}`);
-  }
-
-  valueCache = {};
-  saveToCache(key, value) {
-    this.valueCache[key] = value;
-  }
-  getFromCache(key) {
-    return this.valueCache[key];
-  }
-  expireCache(key) {
-    delete this.valueCache[key];
+    shadowRoot.appendChild(this._customStyle);
   }
 
   static get template() {
