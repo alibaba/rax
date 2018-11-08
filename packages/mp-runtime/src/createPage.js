@@ -54,17 +54,26 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   const pageEventEmitter = requireCoreModule('@core/page');
   const Rax = requireCoreModule('@core/rax');
 
-  const { document, evaluator, pageQuery, pageName } = pageContext;
+  const { document, location, evaluator, pageQuery, pageName } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
   const render = getWebViewSource
     ? (data) => {
       const url = getWebViewSource(data);
-      if (url && evaluator) {
-        evaluator.call('location.replace', url);
-        return '';
+      if (url) {
+        if (location) {
+          // Compatible with previous version of miniapp framework
+          location.replace(url);
+          return null;
+        } else if (evaluator) {
+          evaluator.call('location.replace', url);
+          return null;
+        } else {
+          // Downgrade to compatible with unsupport version of miniapp framework
+          return Rax.createElement('web-view', { src: url, style: WEBVIEW_STYLE });
+        }
       } else {
-        return Rax.createElement('web-view', { src: url, style: WEBVIEW_STYLE });
+        return null;
       }
     }
     : renderFactory(Rax);

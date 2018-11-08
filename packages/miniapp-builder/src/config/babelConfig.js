@@ -20,6 +20,12 @@ module.exports = {
     allowImportExportEverywhere: true,
   },
   plugins: [
+    [
+      require.resolve('../plugins/babelPluginRootImport'),
+      {
+        rootPathPrefix: '/',
+      },
+    ],
     // Stage 0
     require.resolve('@babel/plugin-proposal-function-bind'),
     // Stage 1
