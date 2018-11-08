@@ -11,6 +11,5 @@ coverage/
 node_modules/
 examples/test
 .idea/
-package-lock.json
-yarn.lock
-
+*/*/package-lock.json
+*/*/yarn.lock
