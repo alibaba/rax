@@ -78,7 +78,6 @@ export default class ScrollViewElement extends PolymerElement {
 
     // Add a unique id for element to avoid style pollution.
     this._id = `scroll-view-${++uid}`;
-    this.setAttribute('atag-id', this._id);
   }
 
   get _scrollTop() {
@@ -107,6 +106,11 @@ export default class ScrollViewElement extends PolymerElement {
     }
 
     super.attributeChangedCallback(key, oldVal, newVal);
+  }
+
+  ready() {
+    super.ready();
+    this.setAttribute('atag-id', this._id);
   }
 
   connectedCallback() {

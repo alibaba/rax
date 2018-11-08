@@ -19,11 +19,14 @@ export default class Swiper extends PolymerElement {
       },
       vertical: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: '_observeVertical',
       },
       circular: {
         type: Boolean,
         value: false,
+        observer: '_observeCircular',
+        computed: '_computeCircular(circular)',
       },
       duration: {
         type: Number,
@@ -32,6 +35,7 @@ export default class Swiper extends PolymerElement {
       autoplay: {
         type: Boolean,
         value: false,
+        observer: '_observeAutoplay',
       },
       interval: {
         type: Number,
@@ -40,7 +44,7 @@ export default class Swiper extends PolymerElement {
       indicatorDots: {
         type: Boolean,
         value: false,
-        observer: '_observerIndicatorDots',
+        observer: '_observeIndicatorDots',
       },
       indicatorColor: {
         type: String,
@@ -54,6 +58,10 @@ export default class Swiper extends PolymerElement {
         type: String,
         computed: '_computeIndicatorDotStyle(current)',
       },
+      _containerClass: {
+        type: String,
+        computed: '_computeContainerClass(vertical)',
+      }
     };
   }
 
@@ -64,51 +72,68 @@ export default class Swiper extends PolymerElement {
     this.startTranslate = 0;
     this.dragging = false;
     this.startPos = null;
+    this._current = 0;
     this.transitionDuration = 500;
   }
 
-  get isCircular() {
-    // if itemsCount less than 1, circular should not perform
-    return this.itemsCount > 1 && this.circular || this.circular === '';
+  _computeCircular(circular) {
+    // If itemsCount less than 1, circular should not perform
+    return this.itemsCount > 1 && circular;
   }
 
-  get isAutoplay() {
-    return this.autoplay || this.autoplay === '';
+  _observeCircular(circular, prevCircular) {
+    if (prevCircular !== circular) {
+      if (circular) {
+        this._createCircularAssistNode();
+      } else {
+        this._removeCircularAssistNode();
+      }
+    }
   }
 
   get itemsCount() {
-    return FlattenedNodesObserver.getFlattenedNodes(this).filter(node => node.nodeName === 'A-SWIPER-ITEM').length;
+    return FlattenedNodesObserver.getFlattenedNodes(this)
+      .filter(node => node.nodeName === 'A-SWIPER-ITEM' && !node.hasAttribute('a-swiper-helper')).length;
   }
 
   ready() {
     // Be sure to add super.ready() or you won't get shadowRoot
     super.ready();
-
-    this.childrenObserver = new FlattenedNodesObserver(this, this.handleChildrenChanged);
-    this.render();
-
-    Gestures.addListener(this, 'track', this._handleTrack);
-    Gestures.setTouchAction(this, 'auto');
-
     this.isReady = true;
   }
 
-  handleChildrenChanged(info) {
+  connectedCallback() {
+    super.connectedCallback();
+    this._childrenObserver = new FlattenedNodesObserver(this, this._handleChildrenChanged);
+    this._render();
+    Gestures.addListener(this, 'track', this._handleTrack);
+    Gestures.setTouchAction(this, 'auto');
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    Gestures.removeListener(this, 'track', this._handleTrack);
+    this._childrenObserver.disconnect();
+  }
+
+  _handleChildrenChanged({ addedNodes }) {
+    if (addedNodes && addedNodes.every((item) => {
+      return item.hasAttribute('a-swiper-helper');
+    })) {
+      return;
+    }
     // Reset number of indicators
     this.indicators = new Array(this.itemsCount);
     // Rerender the current swiper item
-    this.render();
+    this._render();
 
-    this._resetCircularAssistNode();
-    if (this.isCircular) {
+    this._removeCircularAssistNode();
+    if (this.circular) {
       this._createCircularAssistNode();
-      if (this.duplicateFirstChild) {
-        this._setTranslate(this._getTranslateOfRealItem(this.current + 1), 0);
-      }
     }
   }
 
-  render() {
+  _render() {
     if (this.currentItemId) {
       const currentItem = this.querySelector(`[item-id=${this.currentItemId}]`);
       for (var i = 0; i < this.children.length; ++i) {
@@ -120,11 +145,11 @@ export default class Swiper extends PolymerElement {
     }
 
     // Set init current item
-    let realCurrent = this.isCircular ? this.current + 1 : this.current;
-    this._setTranslate(this._getTranslateOfRealItem(realCurrent), 0);
+    let realCurrent = this.circular ? this.current + 1 : this.current;
+    this._setTranslate(this._getOffset(realCurrent), 0);
 
     if (this.isAutoplay) {
-      this._autoplay();
+      this._activeAutoplay();
     }
   }
 
@@ -134,56 +159,44 @@ export default class Swiper extends PolymerElement {
     };
   }
 
-  _observerIndicatorDots(newVal, oldVal) {
+  _observeIndicatorDots(newVal, oldVal) {
     this.$.indicator.style.display = newVal ? 'block' : 'none';
+  }
+
+  _observeVertical(vertical) {
+    // Set init current item
+    let realCurrent = this.circular ? this.current + 1 : this.current;
+    const offset = this._getOffset(realCurrent);
+    this._setRealItem(offset, 0);
+  }
+
+  _observeAutoplay(autoplay) {
+    clearTimeout(this.timer);
+    if (autoplay) {
+      this._activeAutoplay();
+    }
   }
 
   attributeChangedCallback(key, oldVal, newVal) {
     super.attributeChangedCallback(key, oldVal, newVal);
-
     switch (key) {
-      case 'autoplay':
-        this.autoplay = newVal === 'true' || newVal === '';
-        if (oldVal !== null) {
-          if (newVal === 'false') {
-            clearTimeout(this.timer);
-          } else {
-            this._autoplay();
-          }
-        }
-        break;
-      case 'indicator-dots':
-        this.indicatorDots = newVal === 'true';
-        break;
-      case 'vertical':
-        this.vertical = newVal === 'true';
-        break;
-      case 'current':
-        if (this.isReady && Number(newVal) > -1 && Number(newVal) < this.itemsCount) {
-          if (this.timer !== null) {
-            clearTimeout(this.timer);
-          }
-          var realCurrent = this.isCircular ? Number(newVal) + 1 : Number(newVal);
-          this._setTranslate(this._getTranslateOfRealItem(realCurrent));
+      case 'current': {
+        const current = newVal;
+        if (this.isReady && current > -1 && current < this.itemsCount) {
+          clearTimeout(this.timer);
+          const realCurrent = this.circular ? current + 1 : current;
+          this._setTranslate(this._getOffset(realCurrent));
 
-          if (this.isAutoplay) {
-            this._autoplay();
+          if (this.autoplay) {
+            this._activeAutoplay();
           }
         }
-        break;
-      default:
-        break;
+      }
     }
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    Gestures.removeListener(this, 'track', this._handleTrack);
-    this.childrenObserver.disconnect();
-  }
-
-  getContainerClass() {
-    return `swiper ${this.vertical ? 'vertical' : 'horizontal'}`;
+  _computeContainerClass(vertical) {
+    return `swiper ${vertical ? 'vertical' : 'horizontal'}`;
   }
 
   _handleSwiperTouchMove = event => {
@@ -200,14 +213,12 @@ export default class Swiper extends PolymerElement {
       clearTimeout(this.timer);
     }
 
-    this.startTranslate = this._getTranslateOfRealItem(this.isCircular ? this.current + 1 : this.current);
+    this.startTranslate = this._getOffset(this.circular ? this.current + 1 : this.current);
     this.startTime = new Date().getTime();
     this.transitionDuration = 0;
 
     Gestures.addListener(document.documentElement, 'track', this._handleGlobalTrack);
-    /**
-     * Avoid to disable document scroll
-     */
+    // Avoid to disable document scroll
     Gestures.setTouchAction(document.documentElement, null);
   };
 
@@ -235,13 +246,13 @@ export default class Swiper extends PolymerElement {
     const delta = this.vertical ? dy : dx;
 
     if (delta < -100 || isQuickAction && delta < -15) {
-      if (!this.isCircular && this.current + 1 === this.itemsCount) {
+      if (!this.circular && this.current + 1 === this.itemsCount) {
         this._revert();
       } else {
         this._next();
       }
     } else if (delta > 100 || isQuickAction && delta > 15) {
-      if (!this.isCircular && this.current === 0) {
+      if (!this.circular && this.current === 0) {
         this._revert();
       } else {
         this._prev();
@@ -250,9 +261,9 @@ export default class Swiper extends PolymerElement {
       this._revert();
     }
 
-    if (this.isAutoplay) {
+    if (this.autoplay) {
       setTimeout(() => {
-        this._autoplay();
+        this._activeAutoplay();
       }, this.duration);
     }
 
@@ -260,12 +271,12 @@ export default class Swiper extends PolymerElement {
   };
 
   _next = () => {
+    debugger;
     const itemsCount = this.itemsCount;
-    this.current = this.current < 0 ? 0 : this.current > itemsCount - 1 ? itemsCount - 1 : this.current;
-    const isCurrentLastItem = this.current === itemsCount - 1;
-    const realCurrent = this.isCircular ? this.current + 1 : this.current;
-    const nextRealCurrent = isCurrentLastItem ? this.isCircular ? realCurrent + 1 : 0 : realCurrent + 1;
-
+    const current = this.current < 0 ? 0 : this.current > itemsCount - 1 ? itemsCount - 1 : this.current;
+    const isCurrentLastItem = current === itemsCount - 1;
+    const realCurrent = this.circular ? current + 1 : current;
+    const nextRealCurrent = isCurrentLastItem ? this.circular ? realCurrent + 1 : 0 : realCurrent + 1;
     this.prevAction = 'next';
     this._setRealItem(nextRealCurrent);
 
@@ -275,8 +286,8 @@ export default class Swiper extends PolymerElement {
 
   _prev = () => {
     const isCurrentFirstItem = this.current === 0;
-    const realCurrent = this.isCircular ? this.current + 1 : this.current;
-    const prevRealCurrent = isCurrentFirstItem ? this.isCircular ? realCurrent - 1 : 0 : realCurrent - 1;
+    const realCurrent = this.circular ? this.current + 1 : this.current;
+    const prevRealCurrent = isCurrentFirstItem ? this.circular ? realCurrent - 1 : 0 : realCurrent - 1;
 
     this.prevAction = 'prev';
     this._setRealItem(prevRealCurrent);
@@ -300,42 +311,41 @@ export default class Swiper extends PolymerElement {
      * image lazyLoad works
      */
     this.setAttribute('data-timestamp', Date.now());
-    this._setTranslate(this._getTranslateOfRealItem(realCurrent), noAnimation ? 0 : null);
+    this._setTranslate(this._getOffset(realCurrent), noAnimation ? 0 : null);
   }
 
   _onTransitionEnd() {
     const isPrevCurrentLastItem = this.prevAction === 'next' && this.prevCurrent === this.itemsCount - 1;
     const isPrevCurrentFirstItem = this.prevAction === 'prev' && this.prevCurrent === 0;
-    if (this.isCircular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
-      this._setRealItem(isPrevCurrentLastItem ? 1 : this.itemsCount, this.isCircular);
+    if (this.circular && (isPrevCurrentLastItem || isPrevCurrentFirstItem)) {
+      this._setRealItem(isPrevCurrentLastItem ? 1 : this.itemsCount, this.circular);
     }
 
     this._emitChangeEvent();
   }
 
-  _setTranslate(value, duration) {
-    const translateName = this.vertical ? 'translateY' : 'translateX';
-    this[translateName] = value;
+  _setTranslate(offset, duration) {
+    if (this.vertical) {
+      this.translateX = 0;
+      this.translateY = offset;
+    } else {
+      this.translateX = offset;
+      this.translateY = 0;
+    }
 
-    const swiperItems = this.$.swiperItems;
+    const { swiperItems } = this.$;
     const transitionDuration = duration != null ? duration : this.transitionDuration;
 
     swiperItems.style.transitionDuration = swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
     swiperItems.style.transform = swiperItems.style.webkitTransform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
   }
 
-  _getTranslate() {
-    const translateName = this.vertical ? 'translateY' : 'translateX';
-    return this[translateName];
-  }
-
-  _getTranslateOfRealItem(realCurrent) {
+  /**
+   * Get the offset pixel.
+   * Using this.children to get real childNodes.
+   */
+  _getOffset(realCurrent) {
     const propName = this.vertical ? 'height' : 'width';
-
-    /**
-     * `this.$.swiperItems.children` can only get slot element
-     * Using this.children to get real childNodes
-     */
     const childItems = [];
     for (let i = 0, l = this.children.length; i < l; i++) {
       childItems.push(this.children[i]);
@@ -347,26 +357,13 @@ export default class Swiper extends PolymerElement {
       childItems.push(this.duplicateLastChild);
     }
 
-    var translate = 0;
-    for (var i = 0; i < realCurrent; i++) {
-      var item = childItems[i];
-      if (!item) break;
-      if (item.__rectCache == null) {
-        item.__rectCache = item.getBoundingClientRect()[propName];
+    let translate = 0;
+    for (let i = 0; i < realCurrent; i++) {
+      if (childItems[i]) {
+        translate -= childItems[i].getBoundingClientRect()[propName];
       }
-      translate -= item.__rectCache;
     }
-
     return translate;
-  }
-
-  _resetCircularAssistNode() {
-    if (this.duplicateFirstChild) {
-      this.duplicateFirstChild.parentElement.removeChild(this.duplicateFirstChild);
-    }
-    if (this.duplicateLastChild) {
-      this.duplicateLastChild.parentElement.removeChild(this.duplicateLastChild);
-    }
   }
 
   /**
@@ -375,17 +372,30 @@ export default class Swiper extends PolymerElement {
   _createCircularAssistNode() {
     const childSwiperItems = this.children;
     if (childSwiperItems.length > 1) {
-      this.duplicateFirstChild = childSwiperItems[0].cloneNode(true);
       // Marker node type
-      this.duplicateFirstChild.setAttribute('data-a-swiper-duplicate-first-child', true);
-
+      this.duplicateFirstChild = childSwiperItems[0].cloneNode(true);
+      this.duplicateFirstChild.setAttribute('a-swiper-helper', true);
       this.duplicateLastChild = this.children[childSwiperItems.length - 1].cloneNode(true);
-      this.duplicateLastChild.setAttribute('data-a-swiper-duplicate-last-child', true);
+      this.duplicateLastChild.setAttribute('a-swiper-helper', true);
 
-      const { swiperItems } = this.$;
-      swiperItems.insertBefore(this.duplicateLastChild, swiperItems.children[0]);
-      swiperItems.appendChild(this.duplicateFirstChild);
+      this.insertBefore(this.duplicateLastChild, this.firstElementChild);
+      this.appendChild(this.duplicateFirstChild);
     }
+    if (this.duplicateFirstChild) {
+      this._setTranslate(this._getOffset(this.current + 1), 0);
+    }
+  }
+
+  _removeCircularAssistNode() {
+    if (this.duplicateFirstChild) {
+      this.removeChild(this.duplicateFirstChild);
+      this.duplicateFirstChild = null;
+    }
+    if (this.duplicateLastChild) {
+      this.removeChild(this.duplicateLastChild);
+      this.duplicateLastChild = null;
+    }
+    this._setTranslate(this._getOffset(this.current), 0);
   }
 
   _emitChangeEvent() {
@@ -393,14 +403,18 @@ export default class Swiper extends PolymerElement {
       bubbles: false,
       cancelable: true,
       detail: {
-        current: this.current < 0 ? 0 : this.current > this.itemsCount - 1 ? this.itemsCount - 1 : this.current,
+        current: this.current < 0
+          ? 0
+          : this.current > this.itemsCount - 1
+            ? this.itemsCount - 1
+            : this.current,
       },
     });
 
     this.dispatchEvent(event);
   }
 
-  _autoplay = () => {
+  _activeAutoplay = () => {
     if (this.itemsCount === 1) return;
 
     if (this.timer) {
@@ -409,11 +423,11 @@ export default class Swiper extends PolymerElement {
 
     this.timer = setTimeout(() => {
       this._next();
-      this._autoplay();
+      this._activeAutoplay();
     }, this.interval);
   };
 
-  _handleTrack({detail}) {
+  _handleTrack = ({detail}) => {
     if (detail.state === 'start') {
       const dx = detail.dx;
       const dy = detail.dy;
@@ -492,7 +506,7 @@ export default class Swiper extends PolymerElement {
           margin: 0 3px;
         }
       </style>
-      <div on-touchmove="_handleSwiperTouchMove" class$="[[getContainerClass()]]">
+      <div on-touchmove="_handleSwiperTouchMove" class$="[[_containerClass]]">
         <div id="swiperItems" class="swiper-items" on-transitionend="_onTransitionEnd">
           <slot></slot>
         </div>

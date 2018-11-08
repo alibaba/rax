@@ -1,4 +1,6 @@
 import { PolymerElement, html } from '@polymer/polymer';
+import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
+import debounce from '../../shared/debounce';
 
 export default class TextElement extends PolymerElement {
   static get is() {
@@ -7,24 +9,36 @@ export default class TextElement extends PolymerElement {
 
   constructor() {
     super();
+    this._observeChildren = debounce(this._observeChildren);
   }
 
-  ready() {
-    super.ready();
+  connectedCallback() {
+    super.connectedCallback();
+    this.childrenObserver = new FlattenedNodesObserver(this, this._observeChildren);
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.childrenObserver.disconnect();
+  }
 
-    for (var i = 0; i < this.childNodes.length; i++) {
-      var node = this.childNodes[i];
-      if (node.nodeType === document.TEXT_NODE) {
-        var contents = node.textContent.split('\n');
-        if (contents.length > 1) {
-          const fragment = document.createDocumentFragment();
-          for (var j = 0; j < contents.length; j++) {
-            fragment.appendChild(document.createTextNode(contents[j]));
-            if ( j !== contents.length - 1) {
-              fragment.appendChild(document.createElement('br'));
+  _observeChildren({ addedNodes, target }) {
+    if (this === target && addedNodes.length > 0) {
+      for (let i = 0; i < addedNodes.length; i++) {
+        const node = addedNodes[i];
+        if (node.nodeType === document.TEXT_NODE) {
+          let contents = node.textContent.split('\\n');
+          if (contents.length > 1) {
+            const fragment = document.createDocumentFragment();
+            for (let j = 0; j < contents.length; j++) {
+              const textNode = document.createTextNode(contents[j]);
+              fragment.appendChild(textNode);
+              // Append br at each gap
+              if (j !== contents.length - 1) {
+                fragment.appendChild(document.createElement('br'));
+              }
             }
+            node.parentNode.replaceChild(fragment, node);
           }
-          node.parentNode.replaceChild(fragment, node);
         }
       }
     }
@@ -32,19 +46,19 @@ export default class TextElement extends PolymerElement {
 
   static get template() {
     return html`
-    <style>
-      :host {
-        -webkit-user-select: none;
-        user-select: none;
-      }
-
-      :host([selectable='']),
-      :host([selectable='true']) {
-        -webkit-user-select: all;
-        user-select: all;
-      }
-    </style>
-    <slot></slot>
+      <style>
+        :host {
+          -webkit-user-select: none;
+          user-select: none;
+        }
+  
+        :host([selectable='']),
+        :host([selectable='true']) {
+          -webkit-user-select: all;
+          user-select: all;
+        }
+      </style>
+      <slot></slot>
     `;
   }
 }
