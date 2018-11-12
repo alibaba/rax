@@ -272,6 +272,7 @@ export default class ImageElement extends PolymerElement {
           width: 100%;
           height: 100%;
           background-repeat: no-repeat;
+          background-size: 100%;
         }
       </style>
       <div id="container"></div>
