@@ -99,7 +99,7 @@ export default class ImageElement extends PolymerElement {
     this.state = LOADING;
     const image = this.image = new Image();
 
-    image.onload = e => {
+    image.onload = (evt) => {
       this.state = DONE;
 
       if (this._needAdaptHeight) {
@@ -118,7 +118,7 @@ export default class ImageElement extends PolymerElement {
       this.dispatchEvent(customEvent);
     };
 
-    image.onerror = e => {
+    image.onerror = (evt) => {
       this.state = DONE;
       const customEvent = new CustomEvent('error', {
         bubbles: false,
@@ -129,7 +129,7 @@ export default class ImageElement extends PolymerElement {
       });
       this.dispatchEvent(customEvent);
     };
-    image.src = this.src;
+    image.src = this._getSourceUrl();
     this._render();
   }
 
@@ -272,7 +272,6 @@ export default class ImageElement extends PolymerElement {
           width: 100%;
           height: 100%;
           background-repeat: no-repeat;
-          background-size: 100%;
         }
       </style>
       <div id="container"></div>
