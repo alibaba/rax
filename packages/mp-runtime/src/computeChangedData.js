@@ -67,6 +67,9 @@ export default function computeChangedData(originalData, changedData) {
   let ret = {};
   Object.keys(changedData).forEach((pathString) => {
     const path = stringToPath(pathString);
+    if (path && path[0] !== undefined) {
+      ret[path[0]] = originalData[path[0]];
+    }
     set(ret, ret, path, (clonedObj, finalPath) => {
       clonedObj[finalPath] = changedData[pathString];
       return clonedObj;
