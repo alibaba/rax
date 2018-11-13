@@ -4,7 +4,7 @@ const debug = require('gulp-debug');
 
 module.exports = function(destDir, projectDir) {
   return () => {
-    return gulp.src('**/*.{png,jpg,gif,ico,webp,jpeg}', {
+    return gulp.src('**/*.{apng,png,jpg,gif,ico,webp,jpeg,svg}', {
       cwd: projectDir,
       dot: true,
       nodir: true,
