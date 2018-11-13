@@ -47,6 +47,10 @@ module.exports = (projectDir, opts) => {
           ]
         },
         {
+          test: /\.(a?png|jpe?g|gif|webp|svg|ico)$/i,
+          loader: require.resolve('mp-loader/src/local-assets-loader'),
+        },
+        {
           test: /app\.js$/,
           loader: require.resolve('mp-loader'),
         },
