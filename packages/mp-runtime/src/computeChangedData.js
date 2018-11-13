@@ -53,10 +53,23 @@ function set(dest, src, path, changeCallback, deep) {
   return dest;
 }
 
+/**
+ * Get changed data, just changed keys will included.
+ * eg:
+ *   originalData: { foo: 'some val', bar: '' }
+ *   changedData: { foo: 'new val' }
+ *   returns: { foo: 'new val' }
+ * @param originalData
+ * @param changedData
+ * @returns {Object}
+ */
 export default function computeChangedData(originalData, changedData) {
-  let ret = { ...originalData };
+  let ret = {};
   Object.keys(changedData).forEach((pathString) => {
     const path = stringToPath(pathString);
+    if (path && path[0] !== undefined) {
+      ret[path[0]] = originalData[path[0]];
+    }
     set(ret, ret, path, (clonedObj, finalPath) => {
       clonedObj[finalPath] = changedData[pathString];
       return clonedObj;
