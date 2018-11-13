@@ -233,10 +233,7 @@ export default class NativeMap extends PolymerElement {
         this._callNativeControl('zoomTo', { zoomLevel: value });
         break;
 
-      case 'routeStart':
-      case 'routeEnd':
-      case 'routeColor':
-      case 'routeWidth':
+      case 'route-config':
         this._callNativeControl('drawRoute', {
           routeStart: this.routeStart,
           routeEnd: this.routeEnd,
