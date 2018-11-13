@@ -1,7 +1,8 @@
 const { relative } = require('path');
+
 const FILE_SCHEMA_PREFIX = '__file_schema_prefix__';
 
-module.exports = function () {
+module.exports = function() {
   const assetPath = `/${relative(this.rootContext, this.resourcePath)}`;
   return `
     var prefix = typeof ${FILE_SCHEMA_PREFIX} !== 'undefined' 
@@ -9,4 +10,4 @@ module.exports = function () {
       : '';
     module.exports = prefix + '${assetPath}';
   `;
-}
+};
