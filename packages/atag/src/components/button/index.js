@@ -33,22 +33,19 @@ export default class Button extends PolymerElement {
     };
   }
 
-  ready() {
-    super.ready();
+
+  connectedCallback() {
+    super.connectedCallback();
     // Check form-type and listen click event, then dispatch event
-    if (this.formType) {
-      this.addEventListener('click', this._dispatchEvent);
-    }
+    this.addEventListener('click', this._handleClick);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    if (this.formType) {
-      this.removeEventListener('click', this._dispatchEvent);
-    }
+    this.removeEventListener('click', this._handleClick);
   }
 
-  _dispatchEvent() {
+  _handleClick = () => {
     let evt;
     switch (this.formType) {
       case 'submit':
