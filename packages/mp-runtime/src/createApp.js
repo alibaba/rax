@@ -13,17 +13,12 @@ class App {
     // lifecycle
     const { onLaunch, onShow, onHide } = config;
 
-    const options = {
-      query: {}, // TODO: 打开小程序的query
-      path: '', // TODO: 打开小程序的路径
-    };
-
     if (typeof onLaunch === 'function') {
-      appEventEmitter.on('launch', onLaunch.bind(this, options));
+      appEventEmitter.on('launch', onLaunch.bind(this));
     }
 
     if (typeof onShow === 'function') {
-      appEventEmitter.on('show', onShow.bind(this, options));
+      appEventEmitter.on('show', onShow.bind(this));
     }
 
     if (typeof onHide === 'function') {
