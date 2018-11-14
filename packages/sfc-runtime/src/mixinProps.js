@@ -40,7 +40,13 @@ export default function mixinProps(vm, propsData = {}, propsDefining) {
 
   for (let i = 0, l = formattedPropsDefining.length; i < l; i++) {
     const { key, defaultVal } = formattedPropsDefining[i];
-    _props[key] = propsData[key] || defaultVal;
+
+    if (propsData.hasOwnProperty(key)) {
+      _props[key] = propsData[key];
+    } else {
+      _props[key] = defaultVal;
+    }
+
     Object.defineProperty(vm, key, {
       enumerable: true,
       configurable: false,
