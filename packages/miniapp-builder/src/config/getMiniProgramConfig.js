@@ -38,8 +38,8 @@ module.exports = (projectDir, opts) => {
               loader: require.resolve('postcss-loader'),
               options: {
                 plugins: [
-                  require('mp-loader/src/postcss-rpx2rem'),
-                  require('mp-loader/src/postcss-tag-prefix'),
+                  require('../plugins/PostcssPluginRpx2rem'),
+                  require('../plugins/PostcssPluginTagPrefix'),
                   require('autoprefixer')
                 ]
               }
