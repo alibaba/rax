@@ -32,4 +32,4 @@ const validTags = {
 
 exports.isValidTag = function isValidTag(tagName) {
   return validTags.hasOwnProperty(tagName);
-}
+};
