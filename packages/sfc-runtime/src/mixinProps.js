@@ -6,6 +6,15 @@ function preventPropsSet() {
 
 export default function mixinProps(vm, propsData = {}, propsDefining) {
   const _props = {};
+  Object.defineProperty(vm, '$props', {
+    get() {
+      return _props;
+    },
+  });
+
+  // if no propsDefining in config, no props will be added
+  if (!propsDefining) return;
+
   const formattedPropsDefining = [];
   if (Array.isArray(propsDefining)) {
     propsDefining.forEach(propKey => {
@@ -27,11 +36,7 @@ export default function mixinProps(vm, propsData = {}, propsDefining) {
     }
   }
 
-  Object.defineProperty(vm, '$props', {
-    get() {
-      return _props;
-    },
-  });
+  vm._props = _props;
 
   for (let i = 0, l = formattedPropsDefining.length; i < l; i++) {
     const { key, defaultVal } = formattedPropsDefining[i];
