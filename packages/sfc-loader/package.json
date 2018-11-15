@@ -1,6 +1,6 @@
 {
   "name": "sfc-loader",
-  "version": "0.6.6-6",
+  "version": "0.7.0",
   "description": "Loader for SFC.",
   "main": "src/index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "lodash": "^4.17.5",
     "rax": "^0.6.5",
     "sfc-compiler": "^0.6.6-4",
-    "sfc-runtime": "^0.6.6-5",
+    "sfc-runtime": "^0.7.0",
     "source-map": "^0.7.3",
     "stylesheet-loader": "^0.6.6-0",
     "uppercamelcase": "^2.0.0",
