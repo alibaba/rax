@@ -4,13 +4,13 @@ const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
 const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
 
 /**
- * interface of mp page
+ * Interface of mp page
  */
 class Page {
   constructor(vnode, config) {
     this.vnode = vnode;
 
-    // copy methods and other keys
+    // Copy methods and other keys
     Object.keys(config).forEach(key => {
       if (typeof config[key] === 'function') {
         this[key] = config[key].bind(this);
@@ -23,12 +23,12 @@ class Page {
     return this.vnode.state;
   }
   set data(val) {
-    // warn: not commanded usage of assigning state directly
+    // Warn: not commanded usage of assigning state directly
     this.vnode.state = val;
   }
 
   /**
-   * support string path like
+   * Support string path like
    * - 'a[0].foo': 1
    * - a.b.c.d
    */
@@ -37,14 +37,9 @@ class Page {
       return;
     }
 
-    const changedData = computeChangedData(this.data, expData);
-
-    // in case component is not mounted
-    if (this.vnode.updater === undefined) {
-      this.vnode.mergeState(changedData, callback);
-    } else {
-      this.vnode.setState(changedData, callback);
-    }
+    // In case component is not mounted
+    const operation = this.vnode.updater === undefined ? 'mergeState' : 'setState';
+    this.vnode[operation](computeChangedData(this.data, expData), callback);
   }
 }
 

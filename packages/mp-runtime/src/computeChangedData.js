@@ -64,12 +64,9 @@ function set(dest, src, path, changeCallback, deep) {
  * @returns {Object}
  */
 export default function computeChangedData(originalData, changedData) {
-  let ret = {};
+  let ret = { ...originalData };
   Object.keys(changedData).forEach((pathString) => {
     const path = stringToPath(pathString);
-    if (path && path[0] !== undefined) {
-      ret[path[0]] = originalData[path[0]];
-    }
     set(ret, ret, path, (clonedObj, finalPath) => {
       clonedObj[finalPath] = changedData[pathString];
       return clonedObj;
