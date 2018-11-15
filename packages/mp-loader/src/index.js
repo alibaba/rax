@@ -1,6 +1,6 @@
-const { stringifyRequest, getOptions } = require('loader-utils');
+const { stringifyRequest } = require('loader-utils');
 const { join, relative } = require('path');
-const { existsSync } = require('fs');
+const { existsSync, readFileSync } = require('fs');
 const querystring = require('querystring');
 const { createRequire } = require('./utils');
 const runtimeHelpers = require('./runtimeHelpers');
@@ -8,6 +8,7 @@ const runtimeHelpers = require('./runtimeHelpers');
 const pageLoader = require.resolve('./page-loader');
 const CSS_EXT = '.acss';
 const JS_EXT = '.js';
+const CONFIG_EXT = '.json';
 const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
 
 /**
@@ -16,6 +17,7 @@ const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
  */
 module.exports = function(content) {
   const jsPath = this.resourcePath;
+  const configPath = jsPath.replace(JS_EXT, CONFIG_EXT);
   let cssPath = jsPath.replace(JS_EXT, CSS_EXT);
   const relativePath = relative(this.rootContext, jsPath);
 
@@ -25,9 +27,10 @@ module.exports = function(content) {
 
   let source = content;
 
-  if (relativePath === 'app.js') {
-    const appJson = require(jsPath.replace(JS_EXT, '.json'));
+  if (relativePath === 'app.js' && existsSync(configPath)) {
+    const appJson = JSON.parse(readFileSync(configPath, 'utf-8'));
     const appJsonPages = appJson.pages || [];
+    this.addDependency(configPath);
 
     const requireAppPages = appJsonPages.filter((pagePath) => !EXTERNAL_PAGE_URL_REG.test(pagePath))
       .map((pagePath) => {
