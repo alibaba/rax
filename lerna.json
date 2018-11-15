@@ -3,12 +3,19 @@
   "version": "0.6.5",
   "packages": [
     "packages/*",
-    "components/*"
+    "components/*",
+    "universal/*"
   ],
   "commands": {
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
+    },
     "publish": {
       "skipGit": true,
-      "allowBranch": "master"
+      "allowBranch": "master",
+      "ignoreChanges": [
+        "*.md"
+      ]
     }
   }
 }

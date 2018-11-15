@@ -19,8 +19,6 @@
     "loader-utils": "^1.1.0",
     "mkdirp": "^0.5.1",
     "mp-runtime": "^0.7.5",
-    "postcss": "^7.0.5",
-    "postcss-selector-parser": "^5.0.0-rc.4",
     "render-helpers": "^0.0.4",
     "resolve-pathname": "^2.2.0",
     "sfc-compiler": "^0.7.2",

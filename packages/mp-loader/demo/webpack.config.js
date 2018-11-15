@@ -65,8 +65,8 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               plugins: [
-                require('../src/postcss-rpx2rem'),
-                require('../src/postcss-tag-prefix'),
+                require('miniapp-builer/src/plugins/PostcssPluginRpx2rem'),
+                require('miniapp-builer/src/plugins/PostcssPluginTagPrefix'),
                 require('autoprefixer')
               ]
             }
