@@ -2,6 +2,19 @@ import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import debounce from '../../shared/debounce';
 
+const STYLE = `
+  :host {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  :host([selectable='']),
+  :host([selectable='true']) {
+    -webkit-user-select: all;
+    user-select: all;
+  }
+`;
+
 export default class TextElement extends PolymerElement {
   static get is() {
     return 'a-text';
@@ -45,21 +58,7 @@ export default class TextElement extends PolymerElement {
   }
 
   static get template() {
-    return html`
-      <style>
-        :host {
-          -webkit-user-select: none;
-          user-select: none;
-        }
-  
-        :host([selectable='']),
-        :host([selectable='true']) {
-          -webkit-user-select: all;
-          user-select: all;
-        }
-      </style>
-      <slot></slot>
-    `;
+    return html(`<style>${STYLE}</style><slot></slot>`);
   }
 }
 
