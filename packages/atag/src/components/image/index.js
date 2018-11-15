@@ -5,7 +5,7 @@ import getFileSchemaPrefix from '../../shared/getFileSchemaPrefix';
 const UNSENT = 0;
 const LOADING = 1;
 const DONE = 2;
-const IS_HTTP_REG = /^http/;
+const IS_HTTP_REG = /^(https?:)?\/{2}/;
 /**
  * Local files:
  *   eg: /foo/bar.png
