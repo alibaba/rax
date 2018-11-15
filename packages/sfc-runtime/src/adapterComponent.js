@@ -68,6 +68,18 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
       const prevComponentWillReceiveProps = this.componentWillReceiveProps;
       this.componentWillReceiveProps = function(nextProps) {
         prevComponentWillReceiveProps && prevComponentWillReceiveProps.apply(vm, arguments);
+
+        if (nextProps !== this.props && vm.hasOwnProperty('_props')) {
+          // update propsData
+          let keys = Object.keys(nextProps);
+          for (let i = 0, l = keys.length; i < l; i++) {
+            const prop = keys[i];
+            if (vm._props.hasOwnProperty(prop) && vm._props[prop] !== nextProps[prop]) {
+              vm._props[prop] = nextProps[prop];
+            }
+          }
+        }
+
         if (nextProps.children !== this.props.children) {
           // update slots
           mixinSlots(vm, nextProps.children);
