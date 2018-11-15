@@ -118,7 +118,9 @@ export default class Swiper extends PolymerElement {
 
   _handleChildrenChanged({ addedNodes }) {
     if (addedNodes && addedNodes.every((item) => {
-      return item.hasAttribute('a-swiper-helper');
+      if (item.nodeType === document.ELEMENT_NODE) {
+        return item.hasAttribute('a-swiper-helper');
+      }
     })) {
       return;
     }
