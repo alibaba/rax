@@ -35,8 +35,11 @@ module.exports = function templateLoader(content) {
   const css = requireCssList.map((str) => str + '.toString()').join(' + ');
   const style = css ? `_c('style', null, ${css})` : null;
   if (isEntryTemplate) {
-    // NOTE: Should config css-loader and postcss-loader in webpack.config.js
-    // Wrap page for "page" css selector
+    /**
+     * NOTE: Should config css-loader and postcss-loader in webpack.config.js
+     * Wrap page for "page" css selector.
+     * Mark data-userview-root for site build usage.
+     */
     render = `_c('page', { 'data-userview-root': 'true' }, ${style}, ${renderFn})`;
   } else {
     // Prepend style tag to template
