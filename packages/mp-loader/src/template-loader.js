@@ -37,7 +37,7 @@ module.exports = function templateLoader(content) {
   if (isEntryTemplate) {
     // NOTE: Should config css-loader and postcss-loader in webpack.config.js
     // Wrap page for "page" css selector
-    render = `_c('page', null, ${style}, ${renderFn})`;
+    render = `_c('page', { 'data-userview-root': true }, ${style}, ${renderFn})`;
   } else {
     // Prepend style tag to template
     render = style ? `[${style}, ${renderFn}]` : renderFn;
