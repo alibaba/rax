@@ -1,6 +1,6 @@
 {
   "name": "miniapp-builder",
-  "version": "0.1.8",
+  "version": "0.1.11",
   "description": "Miniapp build kit for developers",
   "main": "src/index.js",
   "bin": {
@@ -65,11 +65,11 @@
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
     "mkdirp": "^0.5.1",
-    "mp-loader": "^0.7.5",
+    "mp-loader": "^0.7.6",
     "null-loader": "^0.1.1",
     "postcss": "^7.0.5",
-    "postcss-selector-parser": "^5.0.0-rc.4",
     "postcss-loader": "^3.0.0",
+    "postcss-selector-parser": "^5.0.0-rc.4",
     "rimraf": "^2.6.2",
     "run-sequence": "^2.2.1",
     "sfc-loader": "^0.7.0",
