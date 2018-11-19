@@ -199,7 +199,7 @@ export default class Picker extends PolymerElement {
           left: 0;
           bottom: 0;
           background-color: white;
-          z-index: 9999;
+          z-index: 3;
         }
   
         #content {
