@@ -1,8 +1,5 @@
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import { PolymerElement, html } from '@polymer/polymer';
-import throttle from '../../shared/throttle';
-import afterNextRender from '../../shared/afterNextRender';
-import easeInOutCubic from '../../shared/easeInOutCubic';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
 const INIT_OFFSET = 120;
@@ -69,7 +66,7 @@ export default class Picker extends PolymerElement {
 
     this.$.mask.addEventListener('click', this._handleHide);
     this.$.cancel.addEventListener('click', this._handleHide);
-    this.$.confirm.addEventListener('click', this.confirm);
+    this.$.confirm.addEventListener('click', this._handleConfirm);
 
     if (this.value > 0) {
       this._setSelected(this.value);
@@ -184,144 +181,144 @@ export default class Picker extends PolymerElement {
 
   static get template() {
     return html`
-    <style>
-      #mask {
-        position: fixed;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 320px;
-        z-index: 9999;
-        background-color: rgba(0, 0, 0, 0.7);
-      }
-
-      #container {
-        position: fixed;
-        width: 100%;
-        height: 320px;
-        left: 0;
-        bottom: 0;
-        background-color: white;
-        z-index: 9999;
-      }
-
-      #content {
-        width: 100%;
-        height: 100%;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-direction: column;
-        flex-direction: column;
-        -webkit-transition: bottom .3s ease-in-out;
-        transition: bottom .3s ease-in-out;
-      }
-
-      #header {
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-direction: row;
-        flex-direction: row;
-        -webkit-justify-content: space-between;
-        justify-content: space-between;
-        width: 100%;
-        height: 50px;
-        background-color: #F2F2F2;
-      }
-
-      #header button {
-        font-size: 16px;
-        cursor: pointer;
-        -webkit-appearance: none;
-        -webkit-tap-highlight-color: transparent;
-        background: transparent;
-        outline: none;
-        border: 0;
-      }
-
-      #header #cancel {
-        margin-left: 16px;
-        color: #999999;
-      }
-
-      #header #confirm {
-        margin-right: 16px;
-        color: #ff5500;
-        color: var(--color-primary, #ff5500);
-      }
-
-      #body {
-        position: relative;
-        -webkit-flex: 1;
-        flex: 1;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-direction: column;
-        flex-direction: column;
-        -webkit-align-items: center;
-        align-items: center;
-        overflow-x: hidden;
-        overflow-y: hidden;
-        height: 100px;
-      }
-
-      #selector {
-        position: relative;
-        left: 0;
-        -webkit-transform:  translate3d(0, 120px, 0);
-        transform: translate3d(0, 120px, 0);
-        -webkit-transition: all 300ms ease;
-        transition: all 300ms ease;
-      }
-
-      #selector .item {
-        font-size: 14px;
-        line-height: 30px;
-        vertical-align: middle;
-        color: #333333;
-        text-align: center;
-      }
-
-      #selector-mask-top {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 120px;
-        border-bottom: 1px solid #DDDDDD;
-        background: linear-gradient(to top, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
-        box-sizing: border-box;
-      }
-
-      #selector-mask-bottom {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: 120px;
-        border-top: 1px solid #DDDDDD;
-        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
-        box-sizing: border-box;
-      }
-    </style>
-    <div id="mask" style="display: none;"></div>
-    <div id="container" style="display: none;">
-      <div id="content">
-        <div id="header">
-          <button id="cancel">取消</button>
-          <button id="confirm">确定</button>
-        </div>
-        <div id="body">
-          <div id="selector">
-            <template is="dom-repeat" items="{{_rangeItems}}">
-              <div class="item">{{item}}</div>
-            </template>
+      <style>
+        #mask {
+          position: fixed;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 320px;
+          z-index: 9999;
+          background-color: rgba(0, 0, 0, 0.7);
+        }
+  
+        #container {
+          position: fixed;
+          width: 100%;
+          height: 320px;
+          left: 0;
+          bottom: 0;
+          background-color: white;
+          z-index: 3;
+        }
+  
+        #content {
+          width: 100%;
+          height: 100%;
+          display: -webkit-flex;
+          display: flex;
+          -webkit-flex-direction: column;
+          flex-direction: column;
+          -webkit-transition: bottom .3s ease-in-out;
+          transition: bottom .3s ease-in-out;
+        }
+  
+        #header {
+          display: -webkit-flex;
+          display: flex;
+          -webkit-flex-direction: row;
+          flex-direction: row;
+          -webkit-justify-content: space-between;
+          justify-content: space-between;
+          width: 100%;
+          height: 50px;
+          background-color: #F2F2F2;
+        }
+  
+        #header button {
+          font-size: 16px;
+          cursor: pointer;
+          -webkit-appearance: none;
+          -webkit-tap-highlight-color: transparent;
+          background: transparent;
+          outline: none;
+          border: 0;
+        }
+  
+        #header #cancel {
+          margin-left: 16px;
+          color: #999999;
+        }
+  
+        #header #confirm {
+          margin-right: 16px;
+          color: #ff5500;
+          color: var(--color-primary, #ff5500);
+        }
+  
+        #body {
+          position: relative;
+          -webkit-flex: 1;
+          flex: 1;
+          display: -webkit-flex;
+          display: flex;
+          -webkit-flex-direction: column;
+          flex-direction: column;
+          -webkit-align-items: center;
+          align-items: center;
+          overflow-x: hidden;
+          overflow-y: hidden;
+          height: 100px;
+        }
+  
+        #selector {
+          position: relative;
+          left: 0;
+          -webkit-transform:  translate3d(0, 120px, 0);
+          transform: translate3d(0, 120px, 0);
+          -webkit-transition: all 300ms ease;
+          transition: all 300ms ease;
+        }
+  
+        #selector .item {
+          font-size: 14px;
+          line-height: 30px;
+          vertical-align: middle;
+          color: #333333;
+          text-align: center;
+        }
+  
+        #selector-mask-top {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 120px;
+          border-bottom: 1px solid #DDDDDD;
+          background: linear-gradient(to top, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
+          box-sizing: border-box;
+        }
+  
+        #selector-mask-bottom {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 120px;
+          border-top: 1px solid #DDDDDD;
+          background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.93));
+          box-sizing: border-box;
+        }
+      </style>
+      <div id="mask" style="display: none;"></div>
+      <div id="container" style="display: none;">
+        <div id="content">
+          <div id="header">
+            <button id="cancel">取消</button>
+            <button id="confirm">确定</button>
           </div>
-          <div id="selector-mask-top"></div>
-          <div id="selector-mask-bottom"></div>
+          <div id="body">
+            <div id="selector">
+              <template is="dom-repeat" items="{{_rangeItems}}">
+                <div class="item">{{item}}</div>
+              </template>
+            </div>
+            <div id="selector-mask-top"></div>
+            <div id="selector-mask-bottom"></div>
+          </div>
         </div>
       </div>
-    </div>
-    <slot id="slot"></slot>
+      <slot id="slot"></slot>
     `;
   }
 }

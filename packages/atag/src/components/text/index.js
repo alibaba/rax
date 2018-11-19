@@ -45,21 +45,18 @@ export default class TextElement extends PolymerElement {
   }
 
   static get template() {
-    return html`
-      <style>
-        :host {
-          -webkit-user-select: none;
-          user-select: none;
-        }
-  
-        :host([selectable='']),
-        :host([selectable='true']) {
-          -webkit-user-select: all;
-          user-select: all;
-        }
-      </style>
-      <slot></slot>
-    `;
+    return html`<style>
+      :host {
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      :host([selectable='']),
+      :host([selectable='true']) {
+        -webkit-user-select: all;
+        user-select: all;
+      }
+    </style><slot></slot>`;
   }
 }
 

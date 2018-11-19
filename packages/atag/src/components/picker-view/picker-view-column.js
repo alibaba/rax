@@ -1,6 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 const ITEM_HEIGHT = 40;
 
@@ -48,6 +47,9 @@ export default class PickerViewColumn extends PolymerElement {
       if (this.selectedIndex > 0) {
         this._setSelected(this.selectedIndex);
       }
+
+      let backgroundHeight = (this.clientHeight - ITEM_HEIGHT) / 2;
+      this.$.mask.style.backgroundSize = `100% ${backgroundHeight}px`;
     });
   }
 
@@ -146,7 +148,6 @@ export default class PickerViewColumn extends PolymerElement {
         :host {
           -webkit-flex: 1;
           flex: 1;
-          height: 100%;
           overflow: hidden;
           position: relative;
         }
@@ -171,7 +172,6 @@ export default class PickerViewColumn extends PolymerElement {
             linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
           background-position: top, bottom;
           background-repeat: no-repeat;
-          background-size: 100% 45%;
         }
   
         #indicator {
