@@ -1,6 +1,6 @@
-import getContextObject from './getContextObject';
+import global from './global';
+import { getCurrentPages } from './pageHub';
 
-const global = getContextObject();
 let appInstance = null;
 
 class App {
@@ -31,8 +31,9 @@ export function getApp() {
   return appInstance;
 }
 
-// Register getApp at runtime
+// Register global object at runtime
 global.getApp = getApp;
+global.getCurrentPages = getCurrentPages;
 
 export default function createApp(config) {
   if (getApp() !== null) {
