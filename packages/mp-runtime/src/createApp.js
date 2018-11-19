@@ -1,7 +1,6 @@
-import getContextObject from './getContextObject';
-import { getCurrentPages } from './getCurrentPagesImpl';
+import global from './global';
+import { getCurrentPages } from './pageHub';
 
-const global = getContextObject();
 let appInstance = null;
 
 class App {

@@ -1,5 +1,5 @@
 import computeChangedData from './computeChangedData';
-import { pushPage, unlinkPage, popupPage } from './getCurrentPagesImpl';
+import { pushPage, unlinkPage, popupPage } from './pageHub';
 
 const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
 const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
