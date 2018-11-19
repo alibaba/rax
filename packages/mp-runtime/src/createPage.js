@@ -142,11 +142,11 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
        * When page shown, popup page instance.
        */
       pushPage(this.pageInstance);
-      function pageOnShow() {
+      function pageShowHandler() {
         popupPage(this.pageInstance);
       }
-      this.cycleListeners.push({ type: 'show', fn: pageOnShow });
-      pageEventEmitter.on('show', pageOnShow);
+      this.cycleListeners.push({ type: 'show', fn: pageShowHandler });
+      pageEventEmitter.on('show', pageShowHandler);
 
       // native event of first show triggered too ealier,
       // triggering by didMount
