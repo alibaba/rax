@@ -1,4 +1,5 @@
 import computeChangedData from './computeChangedData';
+import { pushPage, unlinkPage, popupPage } from './getCurrentPagesImpl';
 
 const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
 const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
@@ -136,6 +137,17 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     cycleListeners = [];
 
     componentWillMount() {
+      /**
+       * Add page instance to page stack.
+       * When page shown, popup page instance.
+       */
+      pushPage(this.pageInstance);
+      function pageOnShow() {
+        popupPage(this.pageInstance);
+      }
+      this.cycleListeners.push({ type: 'show', fn: pageOnShow });
+      pageEventEmitter.on('show', pageOnShow);
+
       // native event of first show triggered too ealier,
       // triggering by didMount
       const { onShow, onReady } = config;
@@ -174,6 +186,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     }
 
     componentWillUnmount() {
+      unlinkPage(this.pageInstance);
       for (let i = 0, l = this.cycleListeners.length; i < l; i++) {
         pageEventEmitter.off(this.cycleListeners[i].type, this.cycleListeners[i].fn);
       }
