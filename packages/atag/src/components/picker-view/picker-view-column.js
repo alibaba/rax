@@ -172,7 +172,6 @@ export default class PickerViewColumn extends PolymerElement {
             linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
           background-position: top, bottom;
           background-repeat: no-repeat;
-          background-size: 100% 141px;
         }
   
         #indicator {
