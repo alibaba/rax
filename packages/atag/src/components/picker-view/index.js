@@ -1,7 +1,6 @@
 import './picker-view-column';
 import { PolymerElement, html } from '@polymer/polymer';
 
-
 export default class PickerView extends PolymerElement {
   static get is() {
     return 'a-picker-view';
@@ -100,6 +99,7 @@ export default class PickerView extends PolymerElement {
           display: flex;
           -webkit-flex-flow: row nowrap;
           flex-flow: row nowrap;
+          text-align: center;
         }
       </style>
     `;
