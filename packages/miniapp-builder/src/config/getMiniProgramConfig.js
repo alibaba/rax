@@ -19,7 +19,6 @@ const babelLoaderConfig = {
  *   @import "third-party/button.acss"; // npm package
  */
 function styleResolver(id, basedir, importOptions) {
-
   let filePath;
   if (ABSOLUTE_REG.test(id)) {
     filePath = join(importOptions.root, id);
