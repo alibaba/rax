@@ -1,4 +1,4 @@
-const { join } = require('path');
+const { join, extname } = require('path');
 const babelConfig = require('./babelConfig');
 const WebpackMiniProgramPlugin = require('../plugins/WebpackMiniProgramPlugin');
 
@@ -33,7 +33,7 @@ function styleResolver(id, basedir, importOptions) {
   /**
    * Allow to ignore extension, default to .acss
    */
-  if (!/\.acss$/.test(filePath)) {
+  if (extname(filePath) !== STYLE_EXT) {
     filePath = filePath + STYLE_EXT;
   }
 
