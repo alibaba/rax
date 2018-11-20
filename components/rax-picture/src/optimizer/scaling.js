@@ -57,7 +57,7 @@ function find(c, arr) {
  * @param sWidth
  * @returns {String}
  */
-export default function(sWidth) {
+export default function(sWidth, isOSSImg) {
   let isRem = typeof sWidth === 'string' && sWidth.indexOf('rem') > -1;
   let isNum = typeof sWidth === 'number';
   if (isRem || isNum) {
@@ -70,7 +70,11 @@ export default function(sWidth) {
 
     let newWidth = find(parseInt(xWidth / scaling, 10), scalingWidth);
     if (newWidth) {
-      return newWidth + 'x10000';
+      if (isOSSImg) {
+        return '_' + newWidth + 'w';
+      } else {
+        return newWidth + 'x10000';
+      }
     }
   }
 

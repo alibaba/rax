@@ -1,4 +1,5 @@
 import isCdnImage from './isCdnImage';
+import isOSSImage from './isOSSImage';
 import removeUrlScheme from './removeScheme';
 import replaceUrlDomain from './replaceDomain';
 import scaling from './scaling';
@@ -6,6 +7,12 @@ import webpImage from './webp';
 import compress from './compress';
 
 const REG_IMG_SUFFIX = /_(\d+x\d+|cy\d+i\d+|sum|m|b)?(xz|xc)?((?:q\d+)?(?:s\d+)?)(\.jpg)?(_\.webp)?$/i;
+
+/*
+TODO
+缩放剪裁(xz) _100x100xz.jpg @100h_100w_1e
+非缩放剪裁(xc) _100x100xc.jpg  @100-50-0-0a
+*/
 
 /**
  *
@@ -37,6 +44,12 @@ export default function(uri, config) {
 
     // is cdn image
     if (ret) {
+
+      let isOSSImg = false
+      if (isOSSImage(uri)) {
+        isOSSImg = true;
+      }
+
       const host = ret[1];
       const path = ret[2];
       let suffixRet = path.match(REG_IMG_SUFFIX) || [];
@@ -47,7 +60,7 @@ export default function(uri, config) {
       if (
         scalingWidth && notGif
       ) {
-        scalingSuffix = scaling(scalingWidth, path) || scalingSuffix;
+        scalingSuffix = scaling(scalingWidth, isOSSImg) || scalingSuffix;
       }
 
       // webp
@@ -55,7 +68,7 @@ export default function(uri, config) {
       if (
         webp && notGif
       ) {
-        webpSuffix = webpImage() || webpSuffix;
+        webpSuffix = webpImage(isOSSImg) || webpSuffix;
       }
 
       let _compressSuffix = suffixRet[3] || '';
@@ -65,24 +78,44 @@ export default function(uri, config) {
         _compressSuffix = compress(
           compressSuffix,
           quality,
-          acutance
+          acutance,
+          isOSSImg
         ) || _compressSuffix;
       }
 
       let cut = scalingSuffix ? suffixRet[2] || '' : '';
       let suffix = scalingSuffix || _compressSuffix ? suffixRet[4] || '.jpg' : '';
       let prev = scalingSuffix || _compressSuffix ? '_' : '';
+      if (isOSSImg) {
+        if (prev == '_') {
+          prev = '@';
+        }
+        if (uri.split('@')[1]) {
+          prev = '';
+        }
+      }
 
       if (notGif) {
         if (suffixRet[0] !== '_.jpg') {
           newUrl = newUrl.replace(suffixRet[0], '');
         }
-        newUrl += prev +
-        scalingSuffix +
-        cut +
-        _compressSuffix +
-        suffix +
-        webpSuffix;
+
+
+        if (isOSSImg) {
+          newUrl += prev +
+          scalingSuffix +
+          cut +
+          _compressSuffix +
+          webpSuffix;
+        } else {
+          newUrl += prev +
+          scalingSuffix +
+          cut +
+          _compressSuffix +
+          suffix +
+          webpSuffix;
+        }
+
 
         if (removeScheme) {
           newUrl = removeUrlScheme(newUrl);
