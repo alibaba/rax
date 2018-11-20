@@ -38,9 +38,7 @@ class Page {
       return;
     }
 
-    // In case component is not mounted
-    const operation = this.vnode.updater === undefined ? 'mergeState' : 'setState';
-    this.vnode[operation](computeChangedData(this.data, expData), callback);
+    this.vnode.mergeState(computeChangedData(this.data, expData), callback);
   }
 }
 
@@ -142,9 +140,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
        * When page shown, popup page instance.
        */
       pushPage(this.pageInstance);
-      function pageShowHandler() {
-        popupPage(this.pageInstance);
-      }
+      const pageShowHandler = () => popupPage(this.pageInstance);
       this.cycleListeners.push({ type: 'show', fn: pageShowHandler });
       pageEventEmitter.on('show', pageShowHandler);
 
@@ -216,12 +212,13 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         ...data
       };
 
-      if (typeof callback === 'function') {
-        if (this.updater) {
-          callback.call(this.pageInstance);
-        } else {
+      // In case component is not mounted
+      if (this.updater === undefined) {
+        if (typeof callback === 'function') {
           this.cycleHooks.didMount.push(callback.bind(this.pageInstance));
         }
+      } else {
+        this.setState(this.state, callback);
       }
     }
 
