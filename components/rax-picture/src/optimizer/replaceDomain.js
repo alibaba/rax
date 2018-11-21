@@ -1,10 +1,10 @@
 const DEFAULT_HOSTNAME = 'gw.alicdn.com';
 const ALI_HOST = /(.+\.(?:alicdn|taobaocdn|taobao|mmcdn)\.com)/;
 const filterDomains = [
-  'a.tbcdn.cn', 
-  'assets.alicdn.com', 
-  'wwc.taobaocdn.com', 
-  'wwc.alicdn.com', 
+  'a.tbcdn.cn',
+  'assets.alicdn.com',
+  'wwc.taobaocdn.com',
+  'wwc.alicdn.com',
   'cbu01.alicdn.com',
   'ossgw.alicdn.com'
 ];

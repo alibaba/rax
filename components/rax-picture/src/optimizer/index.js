@@ -44,8 +44,7 @@ export default function(uri, config) {
 
     // is cdn image
     if (ret) {
-
-      let isOSSImg = false
+      let isOSSImg = false;
       if (isOSSImage(uri)) {
         isOSSImg = true;
       }
