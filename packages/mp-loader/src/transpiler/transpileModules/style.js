@@ -1,13 +1,8 @@
 const { getAndRemoveAttr } = require('../helpers');
 const expressionHelpers = require('../expression');
 
-const IS_BIND_REG = /\W*\{\{/;
-
 /**
- * transpile class
- * @param {*} attr
- * @param {*} itemKey
- * @param {*} indexKey
+ * Transform style
  */
 function transformNode(node) {
   const { attrsMap } = node;
