@@ -1,20 +1,11 @@
 import Host from './host';
 
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
 export default function(type, props, ...children) {
   if (typeof type === 'object' && type.__esModule) {
     type = type.default;
   } else if (type === '$template') {
     if (props.is) {
-      /**
-       * Template Data default to an empty object:
-       * <view val="{{val}}" /> will be generated as
-       *   _c('view', { val: data.val });
-       * Should not throw exception if no data were passed.
-       */
-      const templateData = hasOwnProperty.call(props, 'data') ? props.data : {};
-      return props.is.call(props.pageInstance, templateData);
+      return props.is.call(props.pageInstance, props.data);
     } else {
       return null;
     }
