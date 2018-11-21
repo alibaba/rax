@@ -1,7 +1,7 @@
 const { dirname, join } = require('path');
 const { existsSync, readFileSync } = require('fs');
 const { parse } = require('sfc-compiler');
-const { getAndRemoveAttr, getRootEl, normalizeMustache } = require('../helpers');
+const { getAndRemoveAttr, getRootEl, normalizeMustache, addAttr } = require('../helpers');
 
 const cwd = process.cwd();
 
@@ -44,6 +44,14 @@ function transformNode(el, state) {
     const { data } = el.attrsMap;
     if (data) {
       el.attrsMap.data = normalizeMustache(data, el);
+    } else {
+      /**
+       * Template Data default to an empty object:
+       * <view val="{{val}}" /> will be generated as
+       *   _c('view', { val: data.val });
+       * Should not throw exception if no data were passed.
+       */
+      addAttr(el, 'data', JSON.stringify({}));
     }
   }
 
