@@ -15,3 +15,4 @@ export setNativeProps from './setNativeProps';
 export version from './version';
 export Children from './children';
 export createContext from './createContext';
+export createRef from './createRef';

@@ -26,6 +26,8 @@ export default {
     let instance = component.getPublicInstance();
     if (typeof ref === 'function') {
       ref(instance);
+    } else if (typeof ref === 'object') {
+      ref.current = instance;
     } else {
       ownerComponent._instance.refs[ref] = instance;
     }
@@ -34,6 +36,10 @@ export default {
     if (typeof ref === 'function') {
       // When the referenced component is unmounted and whenever the ref changes, the old ref will be called with null as an argument.
       ref(null);
+    } else if (typeof ref === 'object') {
+      if (ref.current === instance) {
+        ref.current = null;
+      }
     } else {
       // Must match component and ref could detach the ref on owner when A's before ref is B's current ref
       let instance = component.getPublicInstance();
