@@ -4,11 +4,8 @@
  * @return {String}
  */
 export default function(compressSuffix, quality, acutance, isOSSImg) {
-  console.error('isOSSImg', isOSSImg, compressSuffix);
   if (isOSSImg) {
     // @90q（Q） ['@75q', '@50q']
-    console.error(typeof compressSuffix);
-    console.error(compressSuffix.startsWith);
     if (compressSuffix.startsWith('Q')) {
       compressSuffix = '_' + compressSuffix.split('Q')[1] + 'Q';
     }
