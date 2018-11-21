@@ -58,6 +58,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "^0.0.32",
     "karma-webpack": "^3.0.0",
+    "miniapp-builder": "^0.1.11",
     "mocha": "^5.2.0",
     "postcss": "^7.0.5",
     "postcss-loader": "^3.0.0",
