@@ -82,7 +82,7 @@ module.exports = function templateLoader(content) {
     if (!existsSync(subTemplate)) {
       return '';
     }
-    const subTemplatePath = stringifyRequest(this, `!!${__filename}!${subTemplate}`);
+    const subTemplatePath = stringifyRequest(this, `${__filename}!${subTemplate}`);
     return `require(${subTemplatePath})(__render__, __templates_ref__);`;
   }).join(';\n')}
 
