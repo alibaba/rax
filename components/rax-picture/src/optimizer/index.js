@@ -44,7 +44,7 @@ export default function(uri, config) {
 
     // is cdn image
     if (ret) {
-      const isOSSImg = isOSSImage(uri) ? true : false;
+      const isOSSImg = isOSSImage(uri);
       const host = ret[1];
       const path = ret[2];
       let suffixRet = path.match(REG_IMG_SUFFIX) || [];
