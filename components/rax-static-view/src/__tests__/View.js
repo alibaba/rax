@@ -28,7 +28,6 @@ describe('View', () => {
     );
     let tree = component.toJSON();
     expect(tree.style.border).toBe('0 solid black');
-    expect(tree.style.position).toBe('relative');
     expect(tree.style.boxSizing).toBe('border-box');
     expect(tree.style.display).toBe('flex');
     expect(tree.style.flexDirection).toBe('column');

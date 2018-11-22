@@ -8,7 +8,7 @@ const weexEnv = typeof WXEnvironment !== 'undefined' ? WXEnvironment : {};
 // TODO: rework by feature recognition
 if (weexEnv.appName === 'TB' && weexEnv.appVersion) {
   let appVersion = weexEnv.appVersion.split('.');
-  if ((appVersion[0] >= 6 && appVersion[1] >= 2) || appVersion[0] >= 7) {
+  if (appVersion[0] >= 6 && appVersion[1] >= 2 || appVersion[0] >= 7) {
     supportVideoPlus = true;
   }
 }
