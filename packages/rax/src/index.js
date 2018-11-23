@@ -1,7 +1,8 @@
 import './debug/devtools';
 import {createElement, cloneElement, isValidElement, createFactory} from './element';
+import {useState, useContext} from './hooks';
 
-export {createElement, cloneElement, isValidElement, createFactory};
+export {createElement, cloneElement, isValidElement, createFactory, useState, useContext};
 export Component from './component';
 export PureComponent from './purecomponent';
 export PropTypes from './proptypes';
@@ -16,3 +17,4 @@ export version from './version';
 export Children from './children';
 export createContext from './createContext';
 export createRef from './createRef';
+
