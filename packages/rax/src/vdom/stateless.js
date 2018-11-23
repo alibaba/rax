@@ -54,7 +54,7 @@ class StatelessComponent extends Component {
   }
 
   componentWillUnmount() {
-    this.willUnmountHandlerst.forEach(handler => handler());
+    this.willUnmountHandlers.forEach(handler => handler());
   }
 
   render() {
