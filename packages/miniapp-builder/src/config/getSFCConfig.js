@@ -18,14 +18,8 @@ module.exports = (projectDir, opts) => {
     module: {
       rules: [
         {
-          test: /\.(vue|html)$/,
-          use: [
-            {
-              loader: SFCLoader,
-              /* 使用 framework 中自带的 runtime 以减小体积 */
-              // options: { builtInRuntime: true },
-            },
-          ],
+          test: /\.(sfc|vue|html)$/,
+          loader: SFCLoader,
         },
         {
           test: /\.jsx?$/,
