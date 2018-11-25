@@ -3,33 +3,6 @@ const { parseStyleText } = require('../utils/style');
 const { getAndRemoveAttr, getBindingAttr } = require('../helpers');
 
 function transformNode(el, options) {
-  const classNames = [];
-
-  // <view class="foo" />
-  const staticClass = getAndRemoveAttr(el, 'class');
-  if (staticClass) {
-    const staticClasses = staticClass.split(' ');
-    staticClasses.forEach(klass => {
-      const val = klass.trim();
-      if (val) {
-        classNames.push(JSON.stringify(val));
-      }
-    });
-  }
-
-  /**
-   * <view :class="bar" />
-   * or
-   * <view :class="{ bar: true }" />
-   */
-  const classBinding = getBindingAttr(el, 'class', false /* getStatic */);
-  if (classBinding) {
-    classNames.push(isValidIdentifier(classBinding) ? 'this.' + classBinding : classBinding);
-  }
-
-  // array of classNames, eg. ["foo", this.bar]
-  el.classNameStyle = classNames.length === 0 ? '' : `[${classNames.join(',')}]`;
-
   // <view style="color: red;" />
   const staticStyle = getAndRemoveAttr(el, 'style');
   if (staticStyle) {
@@ -50,7 +23,7 @@ function transformNode(el, options) {
 
 function genData(el) {
   let data = '';
-  if (!el.staticStyle && !el.classNameStyle && !el.styleBinding) {
+  if (!el.staticStyle && !el.styleBinding) {
     return data;
   }
 
@@ -63,7 +36,7 @@ function genData(el) {
 }
 
 module.exports = {
-  staticKeys: ['className', 'style'],
+  staticKeys: ['style'],
   transformNode,
   genData
 };

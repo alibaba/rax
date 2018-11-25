@@ -7,6 +7,7 @@ const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
 
 const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
+const rawLoader = require.resolve('./raw-loader');
 const compiler = createCompiler(baseOptions);
 const raxModuleName = JSON.stringify('@core/rax');
 
@@ -56,10 +57,21 @@ module.exports = function(rawContent) {
 
   transformStyle(styles.content, filePath);
 
-  const loadStyleString = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true!${transformLoader}?id=${filePath}`;
+  /**
+   * By default, sfc loader will create style tag for CSS text.
+   * if RN/Weex style CSS is needed, enable `cssInJS` in loader option.
+   */
+  let styleLoader = '';
+  if (userOptions.cssInJS === true) {
+    styleLoader = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true`;
+  } else {
+    styleLoader = rawLoader;
+  }
+
+  const loadStyleString = `${styleLoader}!${transformLoader}?id=${filePath}`;
   const loadStyleRequest = stringifyRequest(
     context,
-    `!!${loadStyleString}!${filePath}`
+    `${loadStyleString}!${filePath}`
   );
 
   let sfcRuntimeModuleName;

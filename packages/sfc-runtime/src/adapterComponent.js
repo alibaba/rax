@@ -75,7 +75,7 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
           for (let i = 0, l = keys.length; i < l; i++) {
             const prop = keys[i];
             if (vm._props.hasOwnProperty(prop) && vm._props[prop] !== nextProps[prop]) {
-              vm._props[prop] = nextProps[prop];
+              vm[prop] = nextProps[prop];
             }
           }
         }
@@ -89,7 +89,16 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
       /* @overrides forceUpdate */
       vm.forceUpdate = this.forceUpdate.bind(this);
       /* @overrides render */
-      this.render = renderLifecycle.bind(vm);
+      this.render = function() {
+        const VTree = renderLifecycle.call(vm);
+
+        // Inject style tag, if CSS text mode enables.
+        if (typeof styles === 'string' && styles.length > 0) {
+          return [Rax.createElement('style', null, styles), VTree];
+        } else {
+          return VTree;
+        }
+      }
     }
   };
 }
