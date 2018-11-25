@@ -23,7 +23,7 @@ module.exports = (projectDir, opts) => {
             {
               loader: SFCLoader,
               /* 使用 framework 中自带的 runtime 以减小体积 */
-              options: { builtInRuntime: true },
+              // options: { builtInRuntime: true },
             },
           ],
         },

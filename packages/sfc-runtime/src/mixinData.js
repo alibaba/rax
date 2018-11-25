@@ -28,8 +28,6 @@ function observeWithContext(data, context, def) {
       isDirty = true;
       update();
     },
-    declear: def,
-    vm: context._data,
   });
 }
 export { observeWithContext };
