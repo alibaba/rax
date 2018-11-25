@@ -8,6 +8,7 @@ const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
 const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(baseOptions);
+const raxModuleName = JSON.stringify('@core/rax');
 
 module.exports = function(rawContent) {
   this.cacheable();
@@ -62,14 +63,11 @@ module.exports = function(rawContent) {
   );
 
   let sfcRuntimeModuleName;
-  let raxModuleName;
 
   if (userOptions.builtInRuntime) {
     sfcRuntimeModuleName = JSON.stringify('@core/runtime');
-    raxModuleName = JSON.stringify('@core/rax');
   } else {
     sfcRuntimeModuleName = JSON.stringify(require.resolve('./helpers/runtime'));
-    raxModuleName = JSON.stringify('rax');
   }
 
   /**
