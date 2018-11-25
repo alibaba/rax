@@ -35,6 +35,7 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
     defining.components = {};
   }
 
+  const isCSSTextMode = typeof styles === 'string';
   const renderLifecycle = renderFactory(styles, defining, renderHelpers, isWeex);
 
   return class extends Rax.Component {
@@ -93,7 +94,7 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
         const VTree = renderLifecycle.call(vm);
 
         // Inject style tag, if CSS text mode enables.
-        if (typeof styles === 'string' && styles.length > 0) {
+        if (isCSSTextMode && styles.length > 0) {
           return [Rax.createElement('style', null, styles), VTree];
         } else {
           return VTree;
