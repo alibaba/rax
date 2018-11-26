@@ -4,11 +4,12 @@ const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
 const transformStyle = require('./transform/style');
 const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
+const modules = require('./modules');
 
 const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const rawLoader = require.resolve('./raw-loader');
-const compiler = createCompiler(baseOptions);
+const compiler = createCompiler(Object.assign({}, baseOptions, { modules }));
 const raxModuleName = JSON.stringify('@core/rax');
 
 module.exports = function(rawContent) {
@@ -34,7 +35,8 @@ module.exports = function(rawContent) {
     scopeRefIdentifiers: scopeIdentifiers,
     // rax prefer false to make it more similar to JSX
     // undefined means true
-    preserveWhitespace: userOptions.preserveWhitespace
+    preserveWhitespace: userOptions.preserveWhitespace,
+    cssInJS: userOptions && userOptions.cssInJS,
   });
 
   if (!ast) {

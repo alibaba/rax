@@ -17,7 +17,7 @@ module.exports = {
   },
   output: {
     // show at devtool console panel
-    devtoolModuleFilenameTemplate: '[resource-path]',
+    // devtoolModuleFilenameTemplate: '[resource-path]',
   },
   externals: [
     function(context, request, callback) {

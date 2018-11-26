@@ -1,5 +1,5 @@
 const isValidIdentifier = require('is-valid-identifier');
-const { getAndRemoveAttr, getBindingAttr } = require('../helpers');
+const { getAndRemoveAttr, getBindingAttr } = require('sfc-compiler/src/helpers');
 
 function transformNode(el) {
   const classNames = [];

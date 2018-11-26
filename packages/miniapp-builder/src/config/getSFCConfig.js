@@ -1,9 +1,10 @@
-const { join } = require('path');
+const { join, extname } = require('path');
 const WebpackWrapPlugin = require('../plugins/WebpackWrapPlugin');
 const WebpackMiniProgramPlugin = require('../plugins/WebpackMiniProgramPlugin');
 const babelConfig = require('./babelConfig');
 
 const SFCLoader = require.resolve('sfc-loader');
+
 
 /**
  * SFC DSL webpack config
@@ -20,6 +21,9 @@ module.exports = (projectDir, opts) => {
         {
           test: /\.(sfc|vue|html)$/,
           loader: SFCLoader,
+          options: {
+            cssInJS: true,
+          },
         },
         {
           test: /\.jsx?$/,

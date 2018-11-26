@@ -8,12 +8,12 @@ const {
   canBeLeftOpenTag
 } = require('./utils');
 
-const modules = require('./modules');
+const defaultModules = [];
 const directives = require('./directives');
 
 exports.baseOptions = {
   expectHTML: true,
-  modules,
+  modules: defaultModules,
   directives,
   isPreTag,
   isUnaryTag,
@@ -22,5 +22,5 @@ exports.baseOptions = {
   isReservedTag,
   getTagNamespace,
   // preserveWhitespace: false, // default to undefined
-  staticKeys: genStaticKeys(modules)
+  staticKeys: genStaticKeys(defaultModules)
 };
