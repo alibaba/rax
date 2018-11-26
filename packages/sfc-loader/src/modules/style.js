@@ -41,7 +41,7 @@ function genData(el, state) {
     return data;
   }
 
-  // _cx(styleBinding, staticStyle[, styleName]);
+  // _cx(styleBinding, staticStyle, ?styleObject, ?classNames);
   const styleBinding = el.styleBinding ? el.styleBinding : 'null';
   const staticStyle = el.staticStyle ? el.staticStyle : 'null';
 
