@@ -10,8 +10,15 @@ class StatelessComponent extends Component {
     // A stateless function
     this.pureRender = pureRender;
     this.hooksIndex = 0;
-    this.state = {};
+    this.hookStates = {};
+    this.hookEffects = {};
     this.willUnmountHandlers = [];
+    this.didMountHandlers = [];
+    this.didUpdateHandlers = [];
+  }
+
+  getCurrentHookId() {
+    return ++this.hooksIndex;
   }
 
   readContext(context) {
@@ -22,35 +29,42 @@ class StatelessComponent extends Component {
     const contextEmitter = unmaskContext[contextProp];
 
     if (contextEmitter) {
-      this.watchContext(contextEmitter);
-      return contextEmitter.value;
+      const mountId = this._internal._mountID;
+
+      if (!contextEmitter[mountId]) {
+        // One context one updater bind
+        contextEmitter[mountId] = {};
+
+        const contextUpdater = (newContext) => {
+          if (newContext !== contextEmitter[mountId].renderedContext) {
+            this.forceUpdate();
+          }
+        };
+
+        contextEmitter.on(contextUpdater);
+
+        this.willUnmountHandlers.push(() => {
+          delete contextEmitter[mountId];
+          contextEmitter.off(contextUpdater);
+        });
+      }
+
+      return contextEmitter[mountId].renderedContext = contextEmitter.value;
     }
 
     return Provider.defaultValue;
   }
 
-  watchContext(contextEmitter) {
-    const mountId = this._internal._mountID;
+  isComponentRendered() {
+    return Boolean(this._internal._renderedComponent);
+  }
 
-    if (!contextEmitter[mountId]) {
-      // One context one updater bind
-      contextEmitter[mountId] = {};
+  componentDidMount() {
+    this.didMountHandlers.forEach(handler => handler());
+  }
 
-      const contextUpdater = (newContext) => {
-        if (newContext !== contextEmitter[mountId].renderedContext) {
-          this.forceUpdate();
-        }
-      };
-
-      contextEmitter.on(contextUpdater);
-
-      this.willUnmountHandlers.push(() => {
-        delete contextEmitter[mountId];
-        contextEmitter.off(contextUpdater);
-      });
-    }
-
-    contextEmitter[mountId].renderedContext = contextEmitter.value;
+  componentDidUpdate() {
+    this.didUpdateHandlers.forEach(handler => handler());
   }
 
   componentWillUnmount() {
