@@ -99,7 +99,7 @@ export default function adapterComponent(defining, renderFactory, styles, Rax) {
         } else {
           return VTree;
         }
-      }
+      };
     }
   };
 }

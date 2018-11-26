@@ -13,7 +13,7 @@ const parseStyleText = function(cssText) {
     }
   });
   return res;
-}
+};
 
 function transformNode(el, options) {
   // <view style="color: red;" />
