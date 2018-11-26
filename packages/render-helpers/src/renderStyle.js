@@ -34,8 +34,33 @@ function transformCSSStyleObject(str) {
   return styleObj;
 }
 
+/**
+ * Style order:
+ *   1. static inline style
+ *   2. inline style with binding
+ *   3. CSS Selector style
+ * @param styleBinding
+ * @param staticStyle
+ */
 export default function renderStyle(styleBinding, staticStyle) {
   const style = {};
+
+  /**
+   * cssInJS mode will pass 4 args, the other 2 are:
+   *   @param styleObject {Object} whole style object.
+   *   @param classNames {Array} valid className refs.
+   */
+  if (arguments.length === 4) {
+    const styleObject = arguments[2];
+    const validClassNames = flatClassNames(arguments[3]);
+
+    for (let i = 0, l = validClassNames.length; i < l; i ++) {
+      const className = validClassNames[i];
+      if (hasOwn.call(styleObject, className)) {
+        Object.assign(style, styleObject[className]);
+      }
+    }
+  }
 
   /**
    * Handle style with Array binding
@@ -53,23 +78,6 @@ export default function renderStyle(styleBinding, staticStyle) {
     Object.assign(style, transformCSSStyleObject(staticStyle));
   } else if (typeof staticStyle === 'object') {
     Object.assign(style, staticStyle);
-  }
-
-  /**
-   * cssInJS mode will pass 4 args.
-   *   @param styleObject {Object}
-   *   @param classNames {Array} valid classNames refs.
-   */
-  if (arguments.length === 4) {
-    const styleObject = arguments[2];
-    const validClassNames = flatClassNames(arguments[3]);
-
-    for (let i = 0, l = validClassNames.length; i < l; i ++) {
-      const className = validClassNames[i];
-      if (hasOwn.call(styleObject, className)) {
-        Object.assign(style, styleObject[className]);
-      }
-    }
   }
 
   return style;
