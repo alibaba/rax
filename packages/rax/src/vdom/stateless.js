@@ -10,8 +10,7 @@ class StatelessComponent extends Component {
     // A stateless function
     this.pureRender = pureRender;
     this.hooksIndex = 0;
-    this.hookStates = {};
-    this.hookEffects = {};
+    this.hooks = {};
     this.willUnmountHandlers = [];
     this.didMountHandlers = [];
     this.didUpdateHandlers = [];

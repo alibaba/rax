@@ -6,7 +6,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
-import {useState, useContext, useEffect} from '../hooks';
+import {useState, useContext, useEffect, useRef} from '../hooks';
 
 describe('hooks', () => {
   function createNodeElement(tagName) {
@@ -42,6 +42,48 @@ describe('hooks', () => {
     render(<App value={2} />, container);
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
   });
+
+  it('lazy state initializer', () => {
+    const container = createNodeElement('div');
+    let stateUpdater = null;
+    function Counter(props) {
+      const [count, updateCount] = useState(() => {
+        return props.initialState + 1;
+      });
+      stateUpdater = updateCount;
+      return <span>{count}</span>;
+    }
+
+    render(<Counter initialState={1} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('2');
+
+    stateUpdater(10);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('10');
+  });
+
+  it('returns the same updater function every time', () => {
+    const container = createNodeElement('div');
+    let updaters = [];
+    function Counter() {
+      const [count, updateCount] = useState(0);
+      updaters.push(updateCount);
+      return <span>{count}</span>;
+    }
+    render(<Counter />, container);
+
+    expect(container.childNodes[0].childNodes[0].data).toEqual('0');
+
+    updaters[0](1);
+
+    expect(container.childNodes[0].childNodes[0].data).toEqual('1');
+
+    updaters[0](count => count + 10);
+
+    expect(container.childNodes[0].childNodes[0].data).toEqual('11');
+
+    expect(updaters).toEqual([updaters[0], updaters[0], updaters[0]]);
+  });
+
 
   it('mount and update a function component with useEffect', () => {
     const container = createNodeElement('div');
@@ -119,7 +161,7 @@ describe('hooks', () => {
       const value = useContext(Context);
 
       return (
-        <span key={value}>{value}</span>
+        <span>{value}</span>
       );
     }
 
@@ -137,5 +179,28 @@ describe('hooks', () => {
     // Update
     render(<App value={3} />, container);
     expect(container.childNodes[0].childNodes[0].data).toEqual('3');
+  });
+
+  it('should return the same ref during re-renders', () => {
+    const container = createNodeElement('div');
+    let renderCounter = 0;
+    function Counter() {
+      const ref = useRef('val');
+      const [firstRef] = useState(ref);
+
+      if (firstRef !== ref) {
+        throw new Error('should never change');
+      }
+      renderCounter++;
+      return <span>{ref.current}</span>;
+    }
+
+    render(<Counter />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('val');
+    expect(renderCounter).toEqual(1);
+
+    render(<Counter foo="bar" />, container);
+    expect(renderCounter).toEqual(2);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('val');
   });
 });
