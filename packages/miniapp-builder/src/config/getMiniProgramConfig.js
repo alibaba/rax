@@ -44,6 +44,8 @@ module.exports = (projectDir, opts) => {
   return {
     output: {
       path: join(projectDir, 'build'),
+      // show at devtool console panel
+      devtoolModuleFilenameTemplate: '[resource-path]',
     },
     module: {
       rules: [
