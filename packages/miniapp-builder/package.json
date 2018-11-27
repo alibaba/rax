@@ -1,6 +1,6 @@
 {
   "name": "miniapp-builder",
-  "version": "0.1.11",
+  "version": "0.2.0-4",
   "description": "Miniapp build kit for developers",
   "main": "src/index.js",
   "bin": {
@@ -73,7 +73,7 @@
     "postcss-selector-parser": "^5.0.0-rc.4",
     "rimraf": "^2.6.2",
     "run-sequence": "^2.2.1",
-    "sfc-loader": "^0.7.0",
+    "sfc-loader": "^0.7.1-5",
     "webpack": "^4.19.0",
     "webpack-dev-middleware": "^3.2.0",
     "webpack-merge": "^4.1.4",

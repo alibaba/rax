@@ -1,8 +1,5 @@
 import { isPlainObject, warn } from './utils';
-
-function preventPropsSet() {
-  throw new Error('props can not be set');
-}
+import { defineReactive } from './observe';
 
 export default function mixinProps(vm, propsData = {}, propsDefining) {
   const _props = {};
@@ -47,13 +44,10 @@ export default function mixinProps(vm, propsData = {}, propsDefining) {
       _props[key] = defaultVal;
     }
 
-    Object.defineProperty(vm, key, {
-      enumerable: true,
-      configurable: false,
-      get: function() {
-        return _props[key];
+    defineReactive(vm, key, _props[key], {
+      afterSetter() {
+        vm.forceUpdate();
       },
-      set: preventPropsSet,
     });
   }
 }
