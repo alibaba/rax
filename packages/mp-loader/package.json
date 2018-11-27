@@ -1,6 +1,6 @@
 {
   "name": "mp-loader",
-  "version": "0.7.8",
+  "version": "0.7.9",
   "description": "Mini-program dsl loader for Rax",
   "main": "src/index.js",
   "scripts": {
@@ -19,9 +19,9 @@
     "loader-utils": "^1.1.0",
     "mkdirp": "^0.5.1",
     "mp-runtime": "^0.7.8",
-    "render-helpers": "^0.0.5",
+    "render-helpers": "^0.0.6",
     "resolve-pathname": "^2.2.0",
-    "sfc-compiler": "^0.7.2",
+    "sfc-compiler": "^0.7.3",
     "source-map": "^0.7.3"
   },
   "devDependencies": {
