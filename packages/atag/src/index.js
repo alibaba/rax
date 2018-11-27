@@ -7,6 +7,7 @@ import 'components/button';
 import 'components/image';
 import 'components/icon';
 import 'components/input';
+import 'components/lottie';
 import 'components/swiper';
 import 'components/textarea';
 import 'components/video';

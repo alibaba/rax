@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@polymer/polymer": "^3.0.2",
+    "lottie-web": "^5.4.1",
     "runtime-shared": "^0.6.6-0",
     "universal-env": "^0.6.6"
   },
