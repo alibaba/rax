@@ -47,7 +47,12 @@ export function useContext(context) {
   return currentInstance.readContext(context);
 }
 
-export function useEffect(effect, inputs) {
+export function useEffect(create, inputs) {
+  // TODO: defer exec effect
+  useLayoutEffect(create, inputs);
+}
+
+export function useLayoutEffect(effect, inputs) {
   const currentInstance = getCurrentRenderingInstance();
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
@@ -104,6 +109,22 @@ export function useEffect(effect, inputs) {
   }
 }
 
+export function useImperativeMethods(ref, create, inputs) {
+  const nextInputs = inputs != null ? inputs.concat([ref]) : [ref, create];
+
+  useLayoutEffect(() => {
+    if (typeof ref === 'function') {
+      ref(create());
+      return () => ref(null);
+    } else if (ref != null) {
+      ref.current = create();
+      return () => {
+        ref.current = null;
+      };
+    }
+  }, nextInputs);
+}
+
 export function useRef(initialValue) {
   const currentInstance = getCurrentRenderingInstance();
   const hookId = currentInstance.getCurrentHookId();
@@ -146,7 +167,6 @@ export function useReducer(reducer, initialState, initialAction) {
   const hooks = currentInstance.hooks;
 
   if (!currentInstance.isComponentRendered()) {
-
     if (initialAction) {
       initialState = reducer(initialState, initialAction);
     }

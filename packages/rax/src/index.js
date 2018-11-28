@@ -1,8 +1,9 @@
 import './debug/devtools';
 import {createElement, cloneElement, isValidElement, createFactory} from './element';
-import {useState, useContext, useEffect} from './hooks';
+import {useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeMethods} from './hooks';
 
-export {createElement, cloneElement, isValidElement, createFactory, useState, useContext, useEffect};
+export {createElement, cloneElement, isValidElement, createFactory};
+export {useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeMethods};
 export Component from './component';
 export PureComponent from './purecomponent';
 export PropTypes from './proptypes';
