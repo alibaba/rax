@@ -1,6 +1,6 @@
-import { sharedNodeMap } from './NodeMap';
-import { createNode } from './nodes';
-import { addEvent, removeEvent, setPostMessage } from './events';
+import NodeMap from './NodeMap';
+import EventHandler from './events';
+import { createNode, getTagName } from './nodes';
 import { setAttribute } from './attrs';
 
 const TEXT_CONTENT = 'textContent';
@@ -12,8 +12,12 @@ const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
  * And "childList" if it was a mutation to the tree of nodes.
  */
 export default class MutationHandler {
-  constructor(sender) {
-    setPostMessage(sender);
+  constructor(sender, mountNode) {
+    this.eventHandler = new EventHandler(sender, mountNode);
+    this.mountNode = mountNode || document.body;
+
+    this.sharedNodeMap = new NodeMap();
+    this.sharedNodeMap._setMountNode(this.mountNode);
   }
 
   apply(data) {
@@ -26,10 +30,11 @@ export default class MutationHandler {
   }
 
   childList({ target, removedNodes, addedNodes, nextSibling }) {
+    let sharedNodeMap = this.sharedNodeMap;
     let vnode = target;
 
     if (vnode && vnode.nodeName === 'BODY') {
-      document.body.$$id = vnode.$$id;
+      this.mountNode.$$id = vnode.$$id;
     }
 
     let parent = sharedNodeMap.get(vnode);
@@ -47,7 +52,8 @@ export default class MutationHandler {
       for (let i = 0; i < addedNodes.length; i++) {
         let newNode = sharedNodeMap.get(addedNodes[i]);
         if (!newNode) {
-          newNode = createNode(addedNodes[i]);
+          newNode = this.createNode(addedNodes[i]);
+          sharedNodeMap.set(addedNodes[i], newNode);
         }
 
         if (parent) {
@@ -57,8 +63,30 @@ export default class MutationHandler {
     }
   }
 
+  createNode(vnode) {
+    let node = createNode(vnode);
+
+    if (vnode.nodeType === 1 && getTagName(vnode.nodeName)) {
+      if (vnode.childNodes) {
+        for (let i = 0; i < vnode.childNodes.length; i++) {
+          node.appendChild(this.createNode(vnode.childNodes[i]));
+        }
+      }
+  
+      if (vnode.events) {
+        for (let i = 0; i < vnode.events.length; i++) {
+          this.eventHandler.addEvent(node, vnode.events[i]);
+        }
+      }
+    }
+
+    this.sharedNodeMap.set(vnode, node);
+
+    return node;
+  }
+
   attributes({ target, attributeName, newValue, style }) {
-    let node = sharedNodeMap.get(target);
+    let node = this.sharedNodeMap.get(target);
     // Node maybe null when node is removed and there is a setInterval change the node that will cause error
     if (!node) return;
 
@@ -71,26 +99,25 @@ export default class MutationHandler {
   }
 
   characterData({ target, newValue }) {
-    let node = sharedNodeMap.get(target);
+    let node = this.sharedNodeMap.get(target);
     node[TEXT_CONTENT_ATTR] = newValue;
   }
 
   addEvent({ target, eventName }) {
-    let node = sharedNodeMap.get(target);
+    let node = this.sharedNodeMap.get(target);
     if (!node) return;
-
-    addEvent(node, eventName);
+    this.eventHandler.addEvent(node, eventName);
   }
 
   removeEvent({ target, eventName }) {
-    let node = sharedNodeMap.get(target);
+    let node = this.sharedNodeMap.get(target);
     if (!node) return;
 
-    removeEvent(node, eventName);
+    this.eventHandler.removeEvent(node, eventName);
   }
 
   canvasRenderingContext2D({ target, method, args, properties }) {
-    let canvas = sharedNodeMap.get(target);
+    let canvas = this.sharedNodeMap.get(target);
     if (!canvas) return;
 
     let context = canvas.getContext('2d');

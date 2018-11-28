@@ -1,6 +1,4 @@
 import { setStyle } from './styles';
-import { sharedNodeMap } from './NodeMap';
-import { addEvent } from './events';
 import { isValidW3CTag, isValidCustomTags } from './tags';
 import { setAttribute } from './attrs';
 
@@ -9,7 +7,7 @@ const CUSTOM_TAG_PREFIX = 'a-';
 /**
  * Only node name that in whitelist can be created.
  */
-function getTagName(nodeName) {
+export function getTagName(nodeName) {
   const tagName = String(nodeName).toLowerCase();
   if (isValidW3CTag(tagName)) {
     return tagName;
@@ -41,22 +39,9 @@ export function createNode(vnode) {
         setAttribute(node, name, value);
       }
     }
-
-    if (vnode.childNodes) {
-      for (let i = 0; i < vnode.childNodes.length; i++) {
-        node.appendChild(createNode(vnode.childNodes[i]));
-      }
-    }
-
-    if (vnode.events) {
-      for (let i = 0; i < vnode.events.length; i++) {
-        addEvent(node, vnode.events[i]);
-      }
-    }
   } else if (vnode.nodeType === 8) {
     node = document.createComment(vnode.data);
   }
 
-  sharedNodeMap.set(vnode, node);
   return node;
 }
