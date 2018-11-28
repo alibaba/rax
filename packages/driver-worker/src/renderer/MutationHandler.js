@@ -53,7 +53,6 @@ export default class MutationHandler {
         let newNode = sharedNodeMap.get(addedNodes[i]);
         if (!newNode) {
           newNode = this.createNode(addedNodes[i]);
-          sharedNodeMap.set(addedNodes[i], newNode);
         }
 
         if (parent) {
