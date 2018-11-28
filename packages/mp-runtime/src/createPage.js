@@ -88,7 +88,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         unMount: []
       };
 
-      const { data, onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
+      const { data, onLoad, onHide, onUnload, onReachBottom, onPageScroll, onPullIntercept } = config;
 
       if (data) this.state = data;
 
@@ -106,10 +106,16 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         this.cycleListeners.push({ type: 'unload', fn: cycleFn });
         pageEventEmitter.on('unload', cycleFn);
       }
-      // listen to pageScroll
+      // Listen to pageScroll
       if ('function' === typeof onPageScroll && document) {
         document.body.addEventListener('scroll', onPageScroll.bind(this.pageInstance));
       }
+
+      // Listen to reachBottom
+      if ('function' === typeof onReachBottom && document) {
+        document.body.addEventListener('reachbottom', onReachBottom.bind(this.pageInstance));
+      }
+
       // onPullIntercept
       if ('function' === typeof onPullIntercept) {
         const cycleFn = onPullIntercept.bind(this.pageInstance);
