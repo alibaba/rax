@@ -6,9 +6,6 @@
   "bin": {
     "miniapp": "bin/cli.js"
   },
-  "scripts": {
-    "prepublish": "node prepublish.js"
-  },
   "files": [
     "bin/",
     "src/"
