@@ -27,12 +27,6 @@ export default class WorkerDriver extends Driver {
     let mutationObserver = this.createMutationObserver(postMessage);
     mutationObserver.observe(this.document, { subtree: true });
 
-    // const document = this.document;
-    // let container = document.createElement('div');
-    // container.id = 'client-1';
-    // document.body.appendChild(container);
-    // mutationObserver.observe(container, { subtree: true });
-
     addEventListener('message', this.handleMessage);
   }
 
