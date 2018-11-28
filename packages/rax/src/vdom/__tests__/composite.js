@@ -244,6 +244,42 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
+  it('catches constructor errors in a boundary', () => {
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <span>{`Caught an error: ${this.state.error.message}.`}</span>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    class BrokenRender extends Component {
+      constructor() {
+        throw new Error('Hello');
+      }
+      render() {
+        return (
+          <span>Hello</span>
+        );
+      }
+    }
+
+    render(
+      <ErrorBoundary>
+        <BrokenRender />
+      </ErrorBoundary>, container);
+
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
   it('catches render errors in a component', () => {
     let container = createNodeElement('div');
     class BrokenRender extends Component {
