@@ -107,9 +107,9 @@ class CompositeComponent {
       } else {
         throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
       }
-    } catch(e) {
+    } catch (e) {
       handleError(parentInstance, e);
-      return instance
+      return instance;
     }
 
     // These should be set up in the constructor, but as a convenience for
