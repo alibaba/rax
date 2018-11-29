@@ -37,10 +37,11 @@ module.exports = function bundleCtrl(ctx, next) {
     cwd: ctx.projectDir,
     dot: true,
     nodir: true,
-    ignore: '**/node_modules/**',
+    ignore: ['node_modules/**', 'build/**'],
   };
 
-  function zipFiles(fileList) {
+  function zipFiles(pattern) {
+    let fileList = glob.sync(pattern, globOpts);
     if (!Array.isArray(fileList)) return;
     for (let i = 0, len = fileList.length; i < len; i++) {
       zip.file(fileList[i], fs.readFileSync(join(ctx.projectDir, fileList[i])));
@@ -48,8 +49,7 @@ module.exports = function bundleCtrl(ctx, next) {
   }
 
   // Pack image files
-  const imageFiles = glob.sync('**/*.{png,jpg,gif,ico,webp,jpeg}', globOpts);
-  zipFiles(imageFiles);
+  zipFiles('**/*.{png,jpg,gif,ico,webp,jpeg}');
 
   // Pack includeFiles
   const { includeFiles } = appJSON;
