@@ -3,6 +3,10 @@ const { join } = require('path');
 const { existsSync } = require('fs');
 const copy = require('../copy');
 
+const APP_CONFIG = 'app.config.json';
+const SCHEMA_CONFIG = 'schema.json';
+const MOCK_DATA = 'mock-data.json';
+
 /**
  * Build Schema Files for template miniapp
  *   |---- .schema
@@ -22,16 +26,16 @@ module.exports = function(destDir, projectDir) {
     mkdirp.sync(schemaDest);
 
     copyIfExists(
-      join(projectDir, 'app.config.json'),
-      join(schemaDest, 'app.config.json')
+      join(projectDir, APP_CONFIG),
+      join(schemaDest, APP_CONFIG)
     );
     copyIfExists(
-      join(schemaSource, 'schema.json'),
-      join(schemaDest, 'schema.json'),
+      join(schemaSource, SCHEMA_CONFIG),
+      join(schemaDest, SCHEMA_CONFIG),
     );
     copyIfExists(
-      join(schemaSource, 'mock-data.json'),
-      join(schemaDest, 'mock-data.json'),
+      join(schemaSource, MOCK_DATA),
+      join(schemaDest, MOCK_DATA),
     );
     done();
   };
