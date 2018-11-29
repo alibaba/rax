@@ -20,8 +20,8 @@ function getRemotePackage(name, tag, registry) {
 
   return (function run(registries, idx) {
     if (!registries[idx]) return Promise.resolve(null);
-    const registryPackageURL = registries[idx] + '/' +  name + '/' + tag;
-    return axios({ url: registryPackageURL,  responseType: 'json', timeout: 1000 })
+    const registryPackageURL = registries[idx] + '/' + name + '/' + tag;
+    return axios({ url: registryPackageURL, responseType: 'json', timeout: 1000 })
       .then((response) => response.data)
       .catch(() => run(registries, idx + 1));
   })(registries, 0);

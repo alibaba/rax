@@ -67,8 +67,7 @@ program
       .catch((err) => {
         console.warn('Update FrameworkVersion Failed, fallback to default verison:', defaultFrameworkVersion);
         executeCommand(cmd, options);
-      })
-
+      });
   });
 
 program.parse(process.argv);

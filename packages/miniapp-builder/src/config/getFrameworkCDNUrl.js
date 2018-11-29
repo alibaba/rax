@@ -12,7 +12,7 @@ const FRAMEWORK_H5_VIEW = '/h5/master.html';
 
 exports.updateFrameworkVersion = function(version) {
   FRAMEWORK_VERSION = exports.FRAMEWORK_VERSION = version;
-}
+};
 
 const getNativeRendererUrl = exports.getNativeRendererUrl = function(version) {
   return FRAMEWORK_CDN_PREFIX + version + FRAMEWORK_CDN_SUFFIX + FRAMEWORK_RENDERER_VIEW;

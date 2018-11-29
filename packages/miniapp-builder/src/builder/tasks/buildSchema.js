@@ -3,33 +3,42 @@ const { join } = require('path');
 const { existsSync } = require('fs');
 const copy = require('../copy');
 
+/**
+ * Build Schema Files for template miniapp
+ *   |---- .schema
+ *   |     |----app.config.json  // same to miniapp config
+ *   |     |----mock-data.json  // template mock data
+ *   |     |----schema.json     // template schema
+ */
 module.exports = function(destDir, projectDir) {
+  const schemaSource = join(destDir, 'schema');
   return (done) => {
-    mkdirp.sync(join(destDir, '.schema'));
+    if (!existsSync(schemaSource)) {
+      done();
+      return;
+    }
 
-    const appConfigJSONPath = join(destDir, 'app.config.json');
+    const schemaDest = join(destDir, '.schema');
+    mkdirp.sync(schemaDest);
 
-    copy(
-      appConfigJSONPath,
-      join(destDir, '.schema/app.config.json')
+    copyIfExists(
+      join(projectDir, 'app.config.json'),
+      join(schemaDest, 'app.config.json')
     );
-
-    const schemaPath = join(projectDir, 'schema', 'data.json');
-    if (existsSync(schemaPath)) {
-      copy(
-        schemaPath,
-        join(destDir, '.schema/schema.json')
-      );
-    }
-
-    const mockPath = join(projectDir, 'mock', 'data.json');
-    if (existsSync(mockPath)) {
-      copy(
-        mockPath,
-        join(destDir, '.schema/mock-data.json')
-      );
-    }
-
+    copyIfExists(
+      join(schemaSource, 'schema.json'),
+      join(schemaDest, 'schema.json'),
+    );
+    copyIfExists(
+      join(schemaSource, 'mock-data.json'),
+      join(schemaDest, 'mock-data.json'),
+    );
     done();
   };
 };
+
+function copyIfExists(from, to) {
+  if (existsSync(from)) {
+    copy(from, to);
+  }
+}
