@@ -2,13 +2,13 @@
  * Deep Copy from rfdc(really fast deep copy)
  */
 export default function deepCopy(o) {
-  if (typeof o !== "object" || o === null) return o;
+  if (typeof o !== 'object' || o === null) return o;
   if (o instanceof Date) return new Date(o);
   if (Array.isArray(o)) return cloneArray(o, deepCopy);
   const o2 = {};
   for (var k in o) {
     var cur = o[k];
-    if (typeof cur !== "object" || cur === null) {
+    if (typeof cur !== 'object' || cur === null) {
       o2[k] = cur;
     } else if (cur instanceof Date) {
       o2[k] = new Date(cur);
@@ -25,7 +25,7 @@ function cloneArray(a, fn) {
   for (var i = 0; i < keys.length; i++) {
     const k = keys[i];
     const cur = a[k];
-    if (typeof cur !== "object" || cur === null) {
+    if (typeof cur !== 'object' || cur === null) {
       a2[k] = cur;
     } else if (cur instanceof Date) {
       a2[k] = new Date(cur);
