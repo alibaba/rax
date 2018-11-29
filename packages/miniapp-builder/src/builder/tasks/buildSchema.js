@@ -15,7 +15,7 @@ const MOCK_DATA = 'mock-data.json';
  *   |     |----schema.json     // template schema
  */
 module.exports = function(destDir, projectDir) {
-  const schemaSource = join(destDir, 'schema');
+  const schemaSource = join(projectDir, 'schema');
   return (done) => {
     if (!existsSync(schemaSource)) {
       done();
@@ -26,7 +26,7 @@ module.exports = function(destDir, projectDir) {
     mkdirp.sync(schemaDest);
 
     copyIfExists(
-      join(projectDir, APP_CONFIG),
+      join(destDir, APP_CONFIG),
       join(schemaDest, APP_CONFIG)
     );
     copyIfExists(
