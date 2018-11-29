@@ -37,6 +37,7 @@ module.exports = function bundleCtrl(ctx, next) {
     cwd: ctx.projectDir,
     dot: true,
     nodir: true,
+    ignore: '**/node_modules/**',
   };
 
   function zipFiles(fileList) {

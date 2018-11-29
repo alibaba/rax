@@ -8,6 +8,7 @@ module.exports = function(destDir, projectDir) {
       cwd: projectDir,
       dot: true,
       nodir: true,
+      ignore: '**/node_modules/**',
     })
       .pipe(imagemin())
       .pipe(debug({
