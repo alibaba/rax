@@ -14,7 +14,22 @@ class App {
     const { onLaunch, onShow, onHide } = config;
 
     if (typeof onLaunch === 'function') {
-      appEventEmitter.on('launch', onLaunch.bind(this));
+      appEventEmitter.on('launch', (option = {}, ...args) => {
+        /**
+         * @hack
+         * In perious version of native, schemeData is a typo,
+         * with wrong type of string. To fix it using a hacking way.
+         */
+        const KEY_TO_FIX = 'schemeData';
+        const KEY_RIGHT = 'schemaData';
+        const fixedOption = Object.create(option);
+        if (typeof fixedOption[KEY_TO_FIX] === 'string') {
+          try {
+            fixedOption[KEY_RIGHT] = JSON.parse(fixedOption[KEY_TO_FIX]);
+          } catch(err) {}
+        }
+        onLaunch.call(this, fixedOption, args);
+      });
     }
 
     if (typeof onShow === 'function') {
