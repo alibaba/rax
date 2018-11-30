@@ -77,7 +77,7 @@ module.exports = (projectDir, opts) => {
                   require('postcss-import')({ resolve: styleResolver }),
                   require('../plugins/PostcssPluginRpx2rem'),
                   require('../plugins/PostcssPluginTagPrefix'),
-                  require('autoprefixer')
+                  require('autoprefixer')({ remove: false }),
                 ]
               }
             },
