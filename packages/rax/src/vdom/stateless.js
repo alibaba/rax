@@ -11,9 +11,9 @@ class StatelessComponent extends Component {
     this.pureRender = pureRender;
     this.hooksIndex = 0;
     this.hooks = {};
-    this.willUnmountHandlers = [];
     this.didMountHandlers = [];
     this.didUpdateHandlers = [];
+    this.willUnmountHandlers = [];
   }
 
   getCurrentHookId() {
@@ -36,7 +36,7 @@ class StatelessComponent extends Component {
 
         const contextUpdater = (newContext) => {
           if (newContext !== contextEmitter[mountId].renderedContext) {
-            this.forceUpdate();
+            this.update();
           }
         };
 
@@ -68,6 +68,12 @@ class StatelessComponent extends Component {
 
   componentWillUnmount() {
     this.willUnmountHandlers.forEach(handler => handler());
+  }
+
+  // Async update
+  update() {
+    const setImmediate = typeof setImmediate === 'function' ? setImmediate : setTimeout;
+    setTimeout(() => this.forceUpdate());
   }
 
   render() {

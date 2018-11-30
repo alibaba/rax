@@ -9,6 +9,21 @@ function getCurrentRenderingInstance() {
   }
 }
 
+function areInputsEqual(inputs, prevInputs) {
+  for (let i = 0; i < inputs.length; i++) {
+    const val1 = inputs[i];
+    const val2 = prevInputs[i];
+    if (
+      val1 === val2 && (val1 !== 0 || 1 / val1 === 1 / val2) ||
+      val1 !== val1 && val2 !== val2 // eslint-disable-line no-self-compare
+    ) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
+
 export function useState(initialState) {
   const currentInstance = getCurrentRenderingInstance();
   const hookId = currentInstance.getCurrentHookId();
@@ -29,7 +44,7 @@ export function useState(initialState) {
 
       if (newState !== current) {
         hooks[hookId][0] = newState;
-        currentInstance.forceUpdate();
+        currentInstance.update();
       }
     };
 
@@ -47,18 +62,22 @@ export function useContext(context) {
   return currentInstance.readContext(context);
 }
 
-export function useEffect(create, inputs) {
-  // TODO: defer exec effect
-  useLayoutEffect(create, inputs);
+export function useEffect(effect, inputs) {
+  useEffectImpl(effect, inputs, true);
 }
 
 export function useLayoutEffect(effect, inputs) {
+  useEffectImpl(effect, inputs);
+}
+
+function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
   if (!currentInstance.isComponentRendered()) {
-    const create = () => {
+    const create = (immediately) => {
+      if (!immediately && defered) return setTimeout(() => create(true));
       const { current } = create;
       if (current) {
         destory.current = current();
@@ -66,11 +85,15 @@ export function useLayoutEffect(effect, inputs) {
       }
     };
 
-    const destory = () => {
+    const destory = (immediately) => {
+      if (!immediately && defered) return setTimeout(() => destory(true));
       const { current } = destory;
       if (current) {
         current();
         destory.current = null;
+      } else if (defered) {
+        create(true);
+        destory(true);
       }
     };
 
@@ -85,27 +108,19 @@ export function useLayoutEffect(effect, inputs) {
 
     currentInstance.didMountHandlers.push(create);
     currentInstance.willUnmountHandlers.push(destory);
-
-    if (!inputs) {
-      currentInstance.didUpdateHandlers.push(create);
-    } else if (inputs.length > 0) {
-      currentInstance.didUpdateHandlers.push(() => {
-        const { prevInputs, inputs } = hooks[hookId];
-        if (inputs.some((data, index) => data !== prevInputs[index])) {
-          create();
-        }
-      });
-    }
+    currentInstance.didUpdateHandlers.push(() => {
+      const { prevInputs, inputs, create } = hooks[hookId];
+      if (prevInputs == null || !areInputsEqual(inputs, prevInputs)) {
+        destory(true);
+        create();
+      }
+    });
   } else {
     const hook = hooks[hookId];
-    const { create, destory, inputs: prevInputs = [] } = hook;
+    const { create, inputs: prevInputs } = hook;
     hook.inputs = inputs;
     hook.prevInputs = prevInputs;
-
-    if (!inputs || inputs.some((data, index) => data !== prevInputs[index])) {
-      destory();
-      create.current = effect;
-    }
+    create.current = effect;
   }
 }
 
@@ -153,7 +168,7 @@ export function useMemo(create, inputs) {
   } else {
     const hook = hooks[hookId];
     const prevInputs = hook[1];
-    if (inputs.some((data, index) => data !== prevInputs[index])) {
+    if (!areInputsEqual(inputs, prevInputs)) {
       hook[0] = create();
     }
   }
@@ -178,7 +193,7 @@ export function useReducer(reducer, initialState, initialAction) {
 
       if (next !== current) {
         hook[0] = next;
-        currentInstance.forceUpdate();
+        currentInstance.update();
       }
     };
 
