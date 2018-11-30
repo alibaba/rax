@@ -26,7 +26,7 @@ class App {
         if (typeof fixedOption[KEY_TO_FIX] === 'string') {
           try {
             fixedOption[KEY_RIGHT] = JSON.parse(fixedOption[KEY_TO_FIX]);
-          } catch(err) {}
+          } catch (err) {}
         } else if (fixedOption[KEY_TO_FIX]) {
           fixedOption[KEY_RIGHT] = fixedOption[KEY_TO_FIX];
         }
