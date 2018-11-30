@@ -1,4 +1,4 @@
-const SFC = require('sfc');
+const SFC = require('sfc').default;
 /**
  * 支付宝小程序 App 级生命周期
  */
