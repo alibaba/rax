@@ -46,7 +46,7 @@ module.exports = function(content) {
      */
     source = `import App from ${createAppRequest};
       ${content}
-      ${requireAppPages}`;
+      ;${requireAppPages}`;
   }
 
   return source;
