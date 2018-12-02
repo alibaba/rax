@@ -19,6 +19,15 @@ module.exports = function masterRoute(ctx, next) {
     ctx.query.wml_path || ctx.query.homepage || appConfig.homepage;
   appConfig.h5Assets = `http://${address.ip()}:${ctx.port}/build/app.web.js`;
 
+  /**
+   * Declear assets to load plugins
+   *   pluginAssets: Array[URL<String>]
+   * Each url will be loaded asynchronously or synchronously before app.js.
+   */
+  // appConfig.pluginAssets = [
+  //   // 'http://192.168.31.42:9988/build/plugin.js',
+  // ];
+
   ejs.renderFile(
     masterTemplateFilePath,
     {

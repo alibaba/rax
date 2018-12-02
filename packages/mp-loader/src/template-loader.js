@@ -56,7 +56,7 @@ module.exports = function templateLoader(content) {
         const depPath = dependencyComponents[componentName];
         if (PLUGIN_REG.test(depPath)) {
           const pluginComponentPath = depPath.replace(PLUGIN_REG, '');
-          registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${PluginLoaderPath}!${resourcePath}?type=component&path=${pluginComponentPath}`)) + ';';
+          registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${PluginLoaderPath}?type=component&path=${encodeURIComponent(pluginComponentPath)}!${resourcePath}`)) + ';';
         } else {
           registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${depPath}.js`)) + '(__render__);';
         }
