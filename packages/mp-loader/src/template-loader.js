@@ -6,8 +6,11 @@ const runtimeHelpers = require('./runtimeHelpers');
 const { withScope } = require('sfc-compiler');
 
 const ComponentLoaderPath = require.resolve('./component-loader');
+const PluginLoaderPath = require.resolve('./plugin-loader');
+const PLUGIN_REG = /^plugin:\/\//;
 
 module.exports = function templateLoader(content) {
+  const { resourcePath } = this;
   const options = getOptions(this) || {};
   const isEntryTemplate = options && options.isEntryTemplate;
   const dependencyComponents = options && options.dependencyComponents && JSON.parse(options.dependencyComponents);
@@ -50,7 +53,13 @@ module.exports = function templateLoader(content) {
   if (dependencyComponents) {
     for (let componentName in dependencyComponents) {
       if (dependencyComponents.hasOwnProperty(componentName)) {
-        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__);';
+        const depPath = dependencyComponents[componentName];
+        if (PLUGIN_REG.test(depPath)) {
+          const pluginComponentPath = depPath.replace(PLUGIN_REG, '');
+          registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${PluginLoaderPath}!${resourcePath}?type=component&path=${pluginComponentPath}`)) + ';';
+        } else {
+          registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${depPath}.js`)) + '(__render__);';
+        }
       }
     }
   }
