@@ -62,7 +62,7 @@ export default class Picker extends PolymerElement {
 
     window.addEventListener('_formReset', this._handleReset, true);
     Gestures.addListener(this.$.body, 'track', this._handleTrack);
-    this.$.slot.addEventListener('click', this._handleShow);
+    Gestures.addListener(this.$.slot, 'tap', this._handleShow);
 
     this.$.mask.addEventListener('click', this._handleHide);
     this.$.cancel.addEventListener('click', this._handleHide);
@@ -78,7 +78,7 @@ export default class Picker extends PolymerElement {
 
     window.removeEventListener('_formReset', this._handleReset, true);
     Gestures.removeListener(this.$.body, 'track', this._handleTrack);
-    this.$.slot.removeEventListener('click', this._handleShow);
+    Gestures.removeListener(this.$.slot, 'tap', this._handleShow);
 
     this.$.mask.removeEventListener('click', this._handleHide);
     this.$.cancel.removeEventListener('click', this._handleHide);

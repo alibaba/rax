@@ -1,5 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import autosize from './autosize';
 import UnicodeCharString from './unicodeCharString';
 
@@ -38,6 +37,7 @@ export default class Textarea extends PolymerElement {
       focus: {
         type: Boolean,
         value: false,
+        observer: '_observeFocus',
       },
       autoHeight: {
         type: Boolean,
@@ -135,6 +135,10 @@ export default class Textarea extends PolymerElement {
     }
   }
 
+  _observeFocus(focus) {
+    const method = focus ? 'focus' : 'blur';
+    this.$.textarea[method]();
+  }
 
   _handleInput = (evt) => {
     if (!(evt instanceof CustomEvent)) {

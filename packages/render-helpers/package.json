@@ -1,6 +1,6 @@
 {
   "name": "render-helpers",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Render helpers for mp and sfc loader",
   "main": "lib/index.js",
   "keywords": [

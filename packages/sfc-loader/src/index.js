@@ -4,10 +4,13 @@ const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
 const transformStyle = require('./transform/style');
 const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
+const modules = require('./modules');
 
 const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
-const compiler = createCompiler(baseOptions);
+const rawLoader = require.resolve('./raw-loader');
+const compiler = createCompiler(Object.assign({}, baseOptions, { modules }));
+const raxModuleName = JSON.stringify('@core/rax');
 
 module.exports = function(rawContent) {
   this.cacheable();
@@ -32,7 +35,8 @@ module.exports = function(rawContent) {
     scopeRefIdentifiers: scopeIdentifiers,
     // rax prefer false to make it more similar to JSX
     // undefined means true
-    preserveWhitespace: userOptions.preserveWhitespace
+    preserveWhitespace: userOptions.preserveWhitespace,
+    cssInJS: userOptions && userOptions.cssInJS,
   });
 
   if (!ast) {
@@ -55,21 +59,29 @@ module.exports = function(rawContent) {
 
   transformStyle(styles.content, filePath);
 
-  const loadStyleString = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true!${transformLoader}?id=${filePath}`;
+  /**
+   * By default, sfc loader will create style tag for CSS text.
+   * if RN/Weex style CSS is needed, enable `cssInJS` in loader option.
+   */
+  let styleLoader = '';
+  if (userOptions.cssInJS === true) {
+    styleLoader = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true`;
+  } else {
+    styleLoader = rawLoader;
+  }
+
+  const loadStyleString = `${styleLoader}!${transformLoader}?id=${filePath}`;
   const loadStyleRequest = stringifyRequest(
     context,
-    `!!${loadStyleString}!${filePath}`
+    `${loadStyleString}!${filePath}`
   );
 
   let sfcRuntimeModuleName;
-  let raxModuleName;
 
   if (userOptions.builtInRuntime) {
     sfcRuntimeModuleName = JSON.stringify('@core/runtime');
-    raxModuleName = JSON.stringify('@core/rax');
   } else {
     sfcRuntimeModuleName = JSON.stringify(require.resolve('./helpers/runtime'));
-    raxModuleName = JSON.stringify('rax');
   }
 
   /**
