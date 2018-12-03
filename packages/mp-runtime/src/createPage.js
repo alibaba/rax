@@ -91,7 +91,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         unMount: []
       };
 
-      const { onLoad, onHide, onUnload, onPageScroll,onReachBottom, onPullIntercept } = config;
+      const { onLoad, onHide, onUnload, onPageScroll, onReachBottom, onPullIntercept } = config;
 
       // trigger while loaded，pageQuery passed to cycle
       if ('function' === typeof onLoad) {
