@@ -1,4 +1,5 @@
 import Host from './vdom/host';
+import { scheduleIdleCallback } from './scheduler';
 
 function getCurrentRenderingInstance() {
   const currentInstance = Host.component._instance;
@@ -77,7 +78,7 @@ function useEffectImpl(effect, inputs, defered) {
 
   if (!currentInstance.isComponentRendered()) {
     const create = (immediately) => {
-      if (!immediately && defered) return setTimeout(() => create(true));
+      if (!immediately && defered) return scheduleIdleCallback(() => create(true));
       const { current } = create;
       if (current) {
         destory.current = current();
@@ -86,7 +87,7 @@ function useEffectImpl(effect, inputs, defered) {
     };
 
     const destory = (immediately) => {
-      if (!immediately && defered) return setTimeout(() => destory(true));
+      if (!immediately && defered) return scheduleIdleCallback(() => destory(true));
       const { current } = destory;
       if (current) {
         current();

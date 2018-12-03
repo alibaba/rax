@@ -1,5 +1,6 @@
 import Host from './host';
 import Component from '../component';
+import { scheduleImmediateCallback } from '../scheduler';
 
 /**
  * Functional Reactive Component Class Wrapper
@@ -72,8 +73,7 @@ class ReactiveComponent extends Component {
 
   // Async update
   update() {
-    const setImmediate = typeof setImmediate === 'function' ? setImmediate : setTimeout;
-    setImmediate(() => this.forceUpdate());
+    scheduleImmediateCallback(() => this.forceUpdate());
   }
 
   render() {
