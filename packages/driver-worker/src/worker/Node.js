@@ -2,7 +2,6 @@ import EventTarget from './EventTarget';
 import { mutate } from './MutationObserver';
 import findWhere from '../shared/findWhere';
 import splice from '../shared/splice';
-import setImmediate from '../shared/setImmediate';
 
 function mutateChildNodes(node) {
   if (node && node.childNodes) {
@@ -39,7 +38,6 @@ export default class Node extends EventTarget {
     this.insertBefore(child);
     // If fragment appended, the childNodes need to be mutated.
     mutateChildNodes(child);
-
     return child;
   }
   insertBefore(child, ref) {
