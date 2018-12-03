@@ -1,3 +1,4 @@
+import deepCopy from './deepCopy';
 import computeChangedData from './computeChangedData';
 import { pushPage, unlinkPage, popupPage } from './pageHub';
 
@@ -25,7 +26,9 @@ class Page {
   }
   set data(val) {
     // Warn: not commanded usage of assigning state directly
-    this.vnode.state = val;
+    this.vnode.state = typeof val === 'function'
+      ? val.call(this)
+      : deepCopy(val);
   }
 
   /**
@@ -88,9 +91,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         unMount: []
       };
 
-      const { data, onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
-
-      if (data) this.state = data;
+      const { onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
 
       // trigger while loaded，pageQuery passed to cycle
       if ('function' === typeof onLoad) {
@@ -209,7 +210,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
 
       this.state = {
         ...this.state,
-        ...data
+        ...data,
       };
 
       // In case component is not mounted
@@ -223,7 +224,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     }
 
     render() {
-      return render.call(this.pageInstance, this.pageInstance.data);
+      return render.call(this.pageInstance, this.state);
     }
   };
 }
