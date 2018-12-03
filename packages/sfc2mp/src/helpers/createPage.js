@@ -1,4 +1,4 @@
-const SFC = require('sfc').default;
+const SFC = require('sfc-runtime').default;
 /**
  * 小程序 Page 生命周期
  * https://docs.alipay.com/mini/framework/page
