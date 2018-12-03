@@ -11,7 +11,7 @@ module.exports = {
     createApp: vendors.createApp,
     createPage: vendors.createPage,
     coreApp: vendors.coreApp,
-    sfc: vendors.sfc,
+    'sfc-runtime': vendors.sfcRuntime,
   },
   output: {
     path: path.join(process.cwd(), getOption('output'), OUTPUT_VENDOR_FOLDER),
@@ -21,7 +21,7 @@ module.exports = {
     global: false,
   },
   externals: {
-    sfc: 'commonjs2 ./sfc',
+    'sfc-runtime': 'commonjs2 ./sfc-runtime',
   },
   devtool: false,
   plugins: [
