@@ -2,7 +2,7 @@ import EventTarget from './EventTarget';
 import { mutate } from './MutationObserver';
 import findWhere from '../shared/findWhere';
 import splice from '../shared/splice';
-import setImmediate from "../shared/setImmediate";
+import setImmediate from '../shared/setImmediate';
 
 function mutateChildNodes(node) {
   if (node && node.childNodes) {
