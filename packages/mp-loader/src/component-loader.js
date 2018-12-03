@@ -7,7 +7,7 @@ const runtimeHelpers = require('./runtimeHelpers');
 const resolveDependencyComponents = require('./component-resolver');
 
 const templateLoaderPath = require.resolve('./template-loader');
-const requireCreatePage = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
+const requireCreateComponent = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
 const CSS_EXT = '.acss';
 const TEMPLATE_EXT = '.axml';
 const CONFIG_EXT = '.json';
@@ -38,7 +38,7 @@ module.exports = function(content) {
   return `module.exports = function(__render__) {
       function Component(config) { Component.__config = config; }
       ${content}
-      return ${requireCreatePage}(${requireTemplate}, __render__, Component.__config);
+      return ${requireCreateComponent}(${requireTemplate}, __render__, Component.__config);
     };
   `;
 };
