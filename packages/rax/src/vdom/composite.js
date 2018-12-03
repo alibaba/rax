@@ -1,4 +1,4 @@
-import StatelessComponent from './stateless';
+import ReactiveComponent from './reactivecomponent';
 import updater from './updater';
 import Host from './host';
 import Ref from './ref';
@@ -101,8 +101,8 @@ class CompositeComponent {
       // Component instance
       instance = new Component(publicProps, publicContext, updater);
     } else if (typeof Component === 'function') {
-      // Functional stateless component without state and lifecycles
-      instance = new StatelessComponent(Component);
+      // Functional reactive component with hooks
+      instance = new ReactiveComponent(Component);
     } else {
       throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
     }
@@ -510,7 +510,7 @@ class CompositeComponent {
   getPublicInstance() {
     let instance = this._instance;
     // The Stateless components cannot be given refs
-    if (instance instanceof StatelessComponent) {
+    if (instance instanceof ReactiveComponent) {
       return null;
     }
     return instance;

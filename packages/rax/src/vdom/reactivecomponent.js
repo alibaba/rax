@@ -2,9 +2,9 @@ import Host from './host';
 import Component from '../component';
 
 /**
- * Stateless Component Class Wrapper
+ * Reactive Function Component Class Wrapper
  */
-class StatelessComponent extends Component {
+class ReactiveComponent extends Component {
   constructor(pureRender) {
     super();
     // A stateless function
@@ -85,4 +85,4 @@ class StatelessComponent extends Component {
   }
 }
 
-export default StatelessComponent;
+export default ReactiveComponent;
