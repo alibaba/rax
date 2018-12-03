@@ -36,18 +36,7 @@ export default class Node extends EventTarget {
     return this.childNodes[this.childNodes.length - 1];
   }
   appendChild(child) {
-    /**
-     * If parentNode is not appended,
-     *   wait next tick to append child.
-     */
-    if (!this.parentNode && this.nodeName !== '#DOCUMENT') {
-      setImmediate(() => {
-        this.insertBefore(child);
-      });
-    } else {
-      this.insertBefore(child);
-    }
-
+    this.insertBefore(child);
     // If fragment appended, the childNodes need to be mutated.
     mutateChildNodes(child);
 
