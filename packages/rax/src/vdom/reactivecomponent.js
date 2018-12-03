@@ -2,12 +2,12 @@ import Host from './host';
 import Component from '../component';
 
 /**
- * Reactive Function Component Class Wrapper
+ * Functional Reactive Component Class Wrapper
  */
 class ReactiveComponent extends Component {
   constructor(pureRender) {
     super();
-    // A stateless function
+    // A pure function
     this.pureRender = pureRender;
     this.hooksIndex = 0;
     this.hooks = {};
@@ -73,7 +73,7 @@ class ReactiveComponent extends Component {
   // Async update
   update() {
     const setImmediate = typeof setImmediate === 'function' ? setImmediate : setTimeout;
-    setTimeout(() => this.forceUpdate());
+    setImmediate(() => this.forceUpdate());
   }
 
   render() {

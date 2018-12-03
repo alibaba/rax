@@ -102,7 +102,7 @@ class CompositeComponent {
         // Component instance
         instance = new Component(publicProps, publicContext, updater);
       } else if (typeof Component === 'function') {
-        // Functional reactive component without state and lifecycles
+        // Functional reactive component with hooks
         instance = new ReactiveComponent(Component);
       } else {
         throw new Error(`Invalid component type: ${Component}. (current: ${typeof Component === 'object' && Object.keys(Component) || typeof Component})`);
