@@ -1,13 +1,10 @@
 {
   "name": "miniapp-builder",
-  "version": "0.2.0-4",
+  "version": "0.2.1",
   "description": "Miniapp build kit for developers",
   "main": "src/index.js",
   "bin": {
     "miniapp": "bin/cli.js"
-  },
-  "scripts": {
-    "prepublish": "node prepublish.js"
   },
   "files": [
     "bin/",
@@ -65,7 +62,7 @@
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
     "mkdirp": "^0.5.1",
-    "mp-loader": "^0.7.6",
+    "mp-loader": "^0.7.9",
     "null-loader": "^0.1.1",
     "postcss": "^7.0.5",
     "postcss-import": "^12.0.1",
@@ -73,7 +70,7 @@
     "postcss-selector-parser": "^5.0.0-rc.4",
     "rimraf": "^2.6.2",
     "run-sequence": "^2.2.1",
-    "sfc-loader": "^0.7.1-5",
+    "sfc-loader": "^0.7.1",
     "webpack": "^4.19.0",
     "webpack-dev-middleware": "^3.2.0",
     "webpack-merge": "^4.1.4",

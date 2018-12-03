@@ -21,6 +21,8 @@ exports.baseOptions = {
   canBeLeftOpenTag,
   isReservedTag,
   getTagNamespace,
-  // preserveWhitespace: false, // default to undefined
+  // Whether add whitespace between tags.
+  // Rax prefer false to make it more similar to JSX
+  preserveWhitespace: false,
   staticKeys: genStaticKeys(defaultModules)
 };

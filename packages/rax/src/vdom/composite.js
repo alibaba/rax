@@ -97,14 +97,19 @@ class CompositeComponent {
     let instance;
     let renderedElement;
 
-    if (isComponentClass || isStatelessClass) {
-      // Component instance
-      instance = new Component(publicProps, publicContext, updater);
-    } else if (typeof Component === 'function') {
-      // Functional stateless component without state and lifecycles
-      instance = new StatelessComponent(Component);
-    } else {
-      throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
+    try {
+      if (isComponentClass || isStatelessClass) {
+        // Component instance
+        instance = new Component(publicProps, publicContext, updater);
+      } else if (typeof Component === 'function') {
+        // Functional stateless component without state and lifecycles
+        instance = new StatelessComponent(Component);
+      } else {
+        throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
+      }
+    } catch (e) {
+      handleError(parentInstance, e);
+      return instance;
     }
 
     // These should be set up in the constructor, but as a convenience for
@@ -206,6 +211,10 @@ class CompositeComponent {
 
   unmountComponent(notRemoveChild) {
     let instance = this._instance;
+
+    if (!instance) {
+      return;
+    }
 
     if (instance.componentWillUnmount) {
       performInSandbox(() => {

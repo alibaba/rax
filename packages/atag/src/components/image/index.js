@@ -46,8 +46,19 @@ export default class ImageElement extends PolymerElement {
       lazyload: {
         type: Boolean,
         value: false,
+        computed: '_computeLazyLoad(lazyload)',
       },
     };
+  }
+
+  /**
+   * Compatible with lazyload and lazyLoad
+   *   for previous versions, we use `lazyload` prop,
+   *   but to compatible with `lazy-load` or `lazyLoad`
+   *   in other mini-program standard image components.
+   */
+  _computeLazyLoad(lazyload) {
+    return Boolean(lazyload || this.lazyLoad);
   }
 
   connectedCallback() {

@@ -1,4 +1,5 @@
 import computeChangedData from './computeChangedData';
+import deepCopy from './deepCopy';
 
 function getSlotName(item) {
   if (item && Object.hasOwnProperty.call(item, 'props')) {
@@ -22,7 +23,7 @@ export default function createComponent(renderFactory, render, config) {
   return class extends render.Component {
     constructor() {
       super();
-      this.state = { ...config.data };
+      this.state = deepCopy(config.data);
       this.publicInstance = this._createPublicInstance();
     }
 

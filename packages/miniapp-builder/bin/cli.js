@@ -47,30 +47,46 @@ program
       console.log(`Detect ${TYPE_MAP[miniappType]} type project.`);
     }
 
-    switch (cmd) {
-      case 'start': {
-        require('../src/server')({
-          projectDir,
-          port,
-          rendererInspect,
-          rendererInspectHost,
-          rendererInspectPort,
-          rendererUrl,
-        });
-        break;
-      }
-      case 'build': {
-        require('../src/builder')({
-          projectDir,
-        });
-        break;
-      }
-      default:
-        break;
-    }
+    const options = {
+      projectDir,
+      port,
+      rendererInspect,
+      rendererInspectHost,
+      rendererInspectPort,
+      rendererUrl,
+    };
+    const defaultFrameworkVersion = require('../src/config/frameworkVersion');
+    const getFrameworkVersion = require('../src/config/getFrameworkVersion');
+    const { updateFrameworkVersion } = require('../src/config/getFrameworkCDNUrl');
+    getFrameworkVersion()
+      .then((version) => {
+        updateFrameworkVersion(version);
+        console.log('Using latest framework version:', version);
+        executeCommand(cmd, options);
+      })
+      .catch((err) => {
+        console.warn('Update FrameworkVersion Failed, fallback to default verison:', defaultFrameworkVersion);
+        executeCommand(cmd, options);
+      });
   });
 
 program.parse(process.argv);
+
+function executeCommand(cmd, options) {
+  switch (cmd) {
+    case 'start': {
+      require('../src/server')(options);
+      break;
+    }
+    case 'build': {
+      require('../src/builder')(options);
+      break;
+    }
+    default:
+      console.warn('Unknown Command: ' + cmd);
+      break;
+  }
+}
 
 function resolveDir(dir) {
   if (!dir) {
