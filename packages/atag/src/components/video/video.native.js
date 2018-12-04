@@ -43,11 +43,13 @@ export default class NativeVideo extends PolymerElement {
         type: String,
         notify: true,
         observer: '_observeSrc',
+        nativeAttr: 'url',
       },
       poster: {
         type: String,
         notify: true,
         observer: '_observePoster',
+        nativeAttr: 'videoPoster',
       },
       loop: {
         type: Boolean,
@@ -58,6 +60,11 @@ export default class NativeVideo extends PolymerElement {
         type: Boolean,
         value: false,
         observer: '_observeAutoplay',
+        nativeAttr: 'playStatus',
+        // 1: playing  0：paused
+        formatter(val) {
+          return val ? '1' : '0';
+        },
       },
       controls: {
         type: Boolean,
@@ -68,11 +75,16 @@ export default class NativeVideo extends PolymerElement {
         type: Boolean,
         value: false,
         observer: '_observeMuted',
+        // 1: muted  0：inmuted
+        formatter(val) {
+          return val ? '1' : '0';
+        },
       },
       objectfit: {
         type: String,
         value: 'contain',
         observer: '_observeObjectfit',
+        nativeAttr: 'objectFit',
       },
       width: {
         type: String,
@@ -86,24 +98,27 @@ export default class NativeVideo extends PolymerElement {
   constructor(...args) {
     super(...args);
     this.uniqueId = String(++videoInstanceCount);
+    this._setupAndroid = debounce(this._setupAndroid, NATIVE_UPDATE_DEBOUNCE_TIME);
   }
 
   connectedCallback(...args) {
-    super.connectedCallback(args);
-
     document.addEventListener('WVEmbed.Ready', this._nativeReady);
-
     this._container = document.createElement('object');
+
     /**
      * All observers are automaticlly generated.
      */
     Object.keys(NativeVideo.properties).forEach((attr) => {
       this['_observe' + attr[0].toUpperCase() + attr.slice(1)] = debounce((val) => {
-        console.log(attr, val);
-        this._createOrUpdateParam(attr, val);
+        const nativeAttr = NativeVideo.properties[attr].nativeAttr || attr;
+        if (NativeVideo.properties[attr].formatter) {
+          val = NativeVideo.properties[attr].formatter(val);
+        }
+        this._createOrUpdateParam(nativeAttr, val);
       }, NATIVE_UPDATE_DEBOUNCE_TIME);
     });
 
+    super.connectedCallback(...args);
   }
 
   ready() {
@@ -128,7 +143,7 @@ export default class NativeVideo extends PolymerElement {
 
     if (paramRef) {
       paramRef.setAttribute('value', value);
-      paramRef.setAttribute('data-timestamp', Date.now());
+      paramRef.setAttribute(DATA_TIMESTAMP, Date.now());
       /**
        * NOTE: In android, we should call WindVane to
        * notify native to update param value.
@@ -136,9 +151,9 @@ export default class NativeVideo extends PolymerElement {
       if (isAndroid) this._updateParamWithAndroid(key, value);
     } else {
       this[paramRefKey] = createTagWithAttrs('param', {
-        name: kebabCase(key),
+        name: key,
         value,
-        'data-timestamp': Date.now(),
+        [DATA_TIMESTAMP]: Date.now(),
       });
       this._container.appendChild(this[paramRefKey]);
     }
@@ -169,59 +184,6 @@ export default class NativeVideo extends PolymerElement {
       value: this.getBridgeId(),
     }));
 
-    // const controls = this._controlsParamEl = NativeVideo.createParamTag(
-    //   'controls',
-    //   !!this.controls
-    // );
-    // // 1:playing  0：paused
-    // const playStatus = this._playStatusParamsEl = NativeVideo.createParamTag(
-    //   'playStatus',
-    //   '0'
-    // );
-    //
-    // // 1:enterFullscreen; 0：exitFullscreen；-1: do nothing
-    // const fullScreenStatus = this._fullscreenParamEl = NativeVideo.createParamTag(
-    //   'fullScreenStatus',
-    //   '-1'
-    // );
-    //
-    // const loop = this._loopParamEl = NativeVideo.createParamTag(
-    //   'loop',
-    //   this.loop
-    // );
-    //
-    // // number(1为静音，0为不静音)
-    // const muted = this._mutedParamEl = NativeVideo.createParamTag(
-    //   'muted',
-    //   this.muted ? 1 : 0
-    // );
-    //
-    // // String（contain：包含，fill：填充，cover：覆盖）
-    // const objectFit = this._objectFitParamEl = NativeVideo.createParamTag(
-    //   'objectFit',
-    //   this.objectfit
-    // );
-    //
-    // const poster = this._posterParamEl = NativeVideo.createParamTag(
-    //   'videoPoster',
-    //   this.poster
-    // );
-    //
-    // const bridgeId = NativeVideo.createParamTag(
-    //   'bridgeId',
-    //   this.getBridgeId()
-    // );
-    // container.appendChild(type);
-    // container.appendChild(url);
-    // container.appendChild(controls);
-    // container.appendChild(playStatus);
-    // container.appendChild(fullScreenStatus);
-    // container.appendChild(loop);
-    // container.appendChild(muted);
-    // container.appendChild(objectFit);
-    // container.appendChild(poster);
-    // container.appendChild(bridgeId);
-
     // for native hack
     // all events triggered at object tag proxyed to this
     container.$$id = this.$$id;
@@ -231,7 +193,7 @@ export default class NativeVideo extends PolymerElement {
     // android should execute setup before play
     // iOS will read src from <params> el
     if (isAndroid && this.src) {
-      this._setupAndroid()
+      this._setupAndroid();
     }
 
     if (this.autoplay) {
@@ -239,17 +201,20 @@ export default class NativeVideo extends PolymerElement {
     }
   }
 
-  _paramsMap = {};
-  _createOrGetParam(param, value) {
-    return this._paramsMap[param]
-      || (this._paramsMap[param] = NativeVideo.createParamTag(param, value));
+
+  _updateParamWithAndroid(key, val) {
+    switch (key) {
+      // case '':
+      //
+      //   break;
+
+      // default: this._setupAndroid();
+    }
   }
 
   _observeSrc(src) {
     if (isIOS) {
-      const srcParamEl = this._createOrGetParam('src', src);
-      srcParamEl.setAttribute('value', src);
-      srcParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
+      this._createOrUpdateParam('src', src);
     } else {
       this._setupAndroid();
     }
@@ -273,62 +238,12 @@ export default class NativeVideo extends PolymerElement {
     return this.uniqueId;
   }
 
-  //
-  // _changePoster(poster) {
-  //   if (isIOS && this._posterParamEl) {
-  //     this._posterParamEl.setAttribute('value', poster);
-  //     this._posterParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
-  //   } else if (isAndroid) {
-  //     this._callNativeControl('setup', {
-  //       videoUrl: this.src,
-  //       isLoop: this.loop,
-  //       poster,
-  //       objectFit: this.objectfit,
-  //     });
-  //   }
-  // }
-  //
-  // _changeControls(controls) {
-  //   if (controls) {
-  //     this._showControls();
-  //   } else {
-  //     this._hideControls();
-  //   }
-  // }
-  //
-  // _showControls() {
-  //   if (isIOS && this._controlsParamEl) {
-  //     this._controlsParamEl.setAttribute('value', 'true');
-  //     this._controlsParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
-  //   } else if (isAndroid) {
-  //     this._callNativeControl('changeControllerStatus', {
-  //       status: '1'
-  //     });
-  //   } else {
-  //     console.warn('Controls status params el not exists');
-  //   }
-  // }
-  //
-  // _hideControls() {
-  //   if (isIOS && this._controlsParamEl) {
-  //     this._controlsParamEl.setAttribute('value', 'false');
-  //     this._controlsParamEl.setAttribute(DATA_TIMESTAMP, Date.now());
-  //   } else if (isAndroid) {
-  //     this._callNativeControl('changeControllerStatus', {
-  //       status: '0'
-  //     });
-  //   } else {
-  //     console.warn('Controls status params el not exists');
-  //   }
-  // }
-
   /**
    * interface play for videoEl
    */
   play() {
-    if (isIOS && this._playStatusParamsEl) {
-      this._playStatusParamsEl.setAttribute('value', '1');
-      this._playStatusParamsEl.setAttribute(DATA_TIMESTAMP, Date.now());
+    if (isIOS) {
+      this._createOrUpdateParam('playStatus', '1');
     } else if (isAndroid) {
       this._callNativeControl('play', {
         videoUrl: this.src,
@@ -336,8 +251,6 @@ export default class NativeVideo extends PolymerElement {
         poster: this.poster,
         objectFit: this.objectfit
       });
-    } else {
-      console.warn('Play status params el not exists');
     }
   }
 
@@ -395,14 +308,6 @@ export default class NativeVideo extends PolymerElement {
     }
   }
 
-  enableLoop() {
-    this.loop = true;
-  }
-
-  disableLoop() {
-    this.loop = false;
-  }
-
   isNativeReady = false;
   nativeReadyCallbacks = [];
 
@@ -421,7 +326,8 @@ export default class NativeVideo extends PolymerElement {
    * Each embed view will emit whose ready event
    * identifier by param.bridgeId
    */
-  _nativeReady = evt => {
+  _nativeReady = (evt) => {
+    if (this.isNativeReady) return;
     if (evt.param && evt.param.bridgeId === this.getBridgeId()) {
       this.isNativeReady = true;
       let fn;
