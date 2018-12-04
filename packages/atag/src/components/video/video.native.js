@@ -1,6 +1,5 @@
 import { PolymerElement } from '@polymer/polymer';
 import debounce from '../../shared/debounce';
-import kebabCase from '../../shared/kebabCase';
 
 const ua = navigator.userAgent;
 const isAndroid = /android/i.test(ua);
@@ -103,7 +102,9 @@ export default class NativeVideo extends PolymerElement {
 
   connectedCallback(...args) {
     document.addEventListener('WVEmbed.Ready', this._nativeReady);
+
     this._container = document.createElement('object');
+    this._createLightDOM();
 
     /**
      * All observers are automaticlly generated.
@@ -118,12 +119,18 @@ export default class NativeVideo extends PolymerElement {
       }, NATIVE_UPDATE_DEBOUNCE_TIME);
     });
 
+    // Init data after observer ready
     super.connectedCallback(...args);
-  }
 
-  ready() {
-    super.ready();
-    this._createLightDOM();
+    // android should execute setup before play
+    // iOS will read src from <params> el
+    if (isAndroid) {
+      this._setupAndroid();
+    }
+
+    if (this.autoplay) {
+      this.play();
+    }
   }
 
   /**
@@ -189,27 +196,10 @@ export default class NativeVideo extends PolymerElement {
     container.$$id = this.$$id;
 
     this.appendChild(container);
-
-    // android should execute setup before play
-    // iOS will read src from <params> el
-    if (isAndroid && this.src) {
-      this._setupAndroid();
-    }
-
-    if (this.autoplay) {
-      this.play();
-    }
   }
 
-
   _updateParamWithAndroid(key, val) {
-    switch (key) {
-      // case '':
-      //
-      //   break;
-
-      // default: this._setupAndroid();
-    }
+    this._setupAndroid();
   }
 
   _observeSrc(src) {
@@ -221,6 +211,8 @@ export default class NativeVideo extends PolymerElement {
   }
 
   _setupAndroid() {
+    // If src not exists, will crash the app.
+    if (!this.src) return;
     this._callNativeControl('setup', {
       videoUrl: this.src,
       isLoop: this.loop,
@@ -245,7 +237,7 @@ export default class NativeVideo extends PolymerElement {
     if (isIOS) {
       this._createOrUpdateParam('playStatus', '1');
     } else if (isAndroid) {
-      this._callNativeControl('play', {
+      this.src && this._callNativeControl('play', {
         videoUrl: this.src,
         isLoop: this.loop,
         poster: this.poster,
@@ -327,9 +319,9 @@ export default class NativeVideo extends PolymerElement {
    * identifier by param.bridgeId
    */
   _nativeReady = (evt) => {
-    if (this.isNativeReady) return;
     if (evt.param && evt.param.bridgeId === this.getBridgeId()) {
       this.isNativeReady = true;
+      this._setupAndroid();
       let fn;
       while (fn = this.nativeReadyCallbacks.shift()) {
         fn();
