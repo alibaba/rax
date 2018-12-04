@@ -15,10 +15,6 @@ module.exports = {
     modules: ['node_modules', cwd],
     extensions: ['.js', '.html', '.json'],
   },
-  output: {
-    // show at devtool console panel
-    devtoolModuleFilenameTemplate: '[resource-path]',
-  },
   externals: [
     function(context, request, callback) {
       if (/^@(core|schema)\//.test(request)) {

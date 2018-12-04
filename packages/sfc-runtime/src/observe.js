@@ -1,6 +1,5 @@
 import { isPlainObject, isObject } from './utils';
 import { arrayPatchMethods } from './const';
-import { queueWatcher } from './scheduler';
 import Dep from './Dep';
 
 const arrayProto = Array.prototype;
@@ -97,9 +96,8 @@ class Observer {
 /**
  * vue observe function
  */
-function defineReactive(obj, key, val, opts = {}) {
+export function defineReactive(obj, key, val, opts = {}) {
   const dep = new Dep();
-  const { declear, vm } = opts;
   const property = Object.getOwnPropertyDescriptor(obj, key);
   if (property && property.configurable === false) {
     return;

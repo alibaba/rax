@@ -89,7 +89,7 @@ export default class Driver {
 
   replaceChild(newChild, oldChild, parent) {
     parent = parent || oldChild.parentNode;
-    parent.replaceChild(newChild, oldChild);
+    if (parent) parent.replaceChild(newChild, oldChild);
   }
 
   insertAfter(node, after, parent) {

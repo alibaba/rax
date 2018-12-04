@@ -44,6 +44,8 @@ module.exports = (projectDir, opts) => {
   return {
     output: {
       path: join(projectDir, 'build'),
+      // show at devtool console panel
+      devtoolModuleFilenameTemplate: '[resource-path]',
     },
     module: {
       rules: [
@@ -75,7 +77,7 @@ module.exports = (projectDir, opts) => {
                   require('postcss-import')({ resolve: styleResolver }),
                   require('../plugins/PostcssPluginRpx2rem'),
                   require('../plugins/PostcssPluginTagPrefix'),
-                  require('autoprefixer')
+                  require('autoprefixer')({ remove: false }),
                 ]
               }
             },

@@ -8,12 +8,12 @@ const {
   canBeLeftOpenTag
 } = require('./utils');
 
-const modules = require('./modules');
+const defaultModules = [];
 const directives = require('./directives');
 
 exports.baseOptions = {
   expectHTML: true,
-  modules,
+  modules: defaultModules,
   directives,
   isPreTag,
   isUnaryTag,
@@ -21,6 +21,8 @@ exports.baseOptions = {
   canBeLeftOpenTag,
   isReservedTag,
   getTagNamespace,
-  // preserveWhitespace: false, // default to undefined
-  staticKeys: genStaticKeys(modules)
+  // Whether add whitespace between tags.
+  // Rax prefer false to make it more similar to JSX
+  preserveWhitespace: false,
+  staticKeys: genStaticKeys(defaultModules)
 };

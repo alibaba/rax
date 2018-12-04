@@ -98,6 +98,7 @@ export default class WorkerDriver extends Driver {
             attributes: node.attributes,
             nodeName: node.nodeName,
             style: node.style,
+            childNodes: node.childNodes && node.childNodes.map((node) => this.sanitize(node, prop)),
           });
           break;
 
