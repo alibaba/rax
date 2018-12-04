@@ -115,6 +115,7 @@ export default class NativeVideo extends PolymerElement {
         if (NativeVideo.properties[attr].formatter) {
           val = NativeVideo.properties[attr].formatter(val);
         }
+
         this._createOrUpdateParam(nativeAttr, val);
       }, NATIVE_UPDATE_DEBOUNCE_TIME);
     });
@@ -195,6 +196,8 @@ export default class NativeVideo extends PolymerElement {
     // all events triggered at object tag proxyed to this
     container.$$id = this.$$id;
 
+    // Reset innerHTML if exists
+    this.innerHTML = '';
     this.appendChild(container);
   }
 
