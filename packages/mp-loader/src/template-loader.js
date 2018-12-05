@@ -20,7 +20,7 @@ module.exports = function templateLoader(content) {
 
   let render = renderFn;
   const requireCssList = [];
-  const { cssPath, appCssPath } = options;
+  const { cssPath, appCssPath, componentBasePath } = options;
   if (existsSync(appCssPath)) {
     requireCssList.push(createRequire(stringifyRequest(this, appCssPath)));
     // Adds css file as dependency of the loader result in order to make them watchable.
@@ -49,8 +49,23 @@ module.exports = function templateLoader(content) {
   let registerPageComponent = '';
   if (dependencyComponents) {
     for (let componentName in dependencyComponents) {
+      const isSelf = dependencyComponents[componentName] === '__SELF__';
+
       if (dependencyComponents.hasOwnProperty(componentName)) {
-        registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`)) + '(__render__);';
+        const loadComponent = createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`));
+        const loadComponentsHub = 'require(' + stringifyRequest(this, runtimeHelpers.componentsHub) + ')';
+
+        if (isSelf) {
+          registerPageComponent += `
+            Object.defineProperty(__components_ref__, '${componentName}', {
+              get: function() {
+                return (${loadComponentsHub}).getComponent('${componentBasePath}');
+              }
+            });
+          `;
+        } else {
+          registerPageComponent += `__components_ref__['${componentName}'] = ${loadComponent}(__render__);`;
+        }
       }
     }
   }
