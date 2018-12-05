@@ -1,6 +1,5 @@
-import { setStyle } from './styles';
 import { isValidW3CTag, isValidCustomTags } from './tags';
-import { setAttribute } from './attrs';
+
 
 const CUSTOM_TAG_PREFIX = 'a-';
 
@@ -24,21 +23,6 @@ export function createNode(vnode) {
     node = document.createTextNode(vnode.data);
   } else if (vnode.nodeType === 1 && (tagName = getTagName(vnode.nodeName))) {
     node = document.createElement(tagName);
-
-    if (vnode.className) {
-      node.className = vnode.className;
-    }
-
-    if (vnode.style) {
-      setStyle(node, vnode.style);
-    }
-
-    if (vnode.attributes) {
-      for (let i = 0; i < vnode.attributes.length; i++) {
-        let { name, value } = vnode.attributes[i];
-        setAttribute(node, name, value);
-      }
-    }
   } else if (vnode.nodeType === 8) {
     node = document.createComment(vnode.data);
   }

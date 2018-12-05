@@ -1,7 +1,8 @@
 import NodeMap from './NodeMap';
-import EventHandler from './events';
+import EventHandler from './EventHandler';
 import { createNode, getTagName } from './nodes';
 import { setAttribute } from './attrs';
+import { setStyle } from './styles';
 
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
@@ -12,9 +13,9 @@ const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
  * And "childList" if it was a mutation to the tree of nodes.
  */
 export default class MutationHandler {
-  constructor(sender, mountNode) {
-    this.eventHandler = new EventHandler(sender, mountNode);
-    this.mountNode = mountNode || document.body;
+  constructor(sender, options = {}) {
+    this.eventHandler = new EventHandler(sender, options);
+    this.mountNode = options.mountNode || document.body;
 
     this.sharedNodeMap = new NodeMap();
     this.sharedNodeMap._setMountNode(this.mountNode);
@@ -66,12 +67,27 @@ export default class MutationHandler {
     let node = createNode(vnode);
 
     if (vnode.nodeType === 1 && getTagName(vnode.nodeName)) {
+      if (vnode.className) {
+        node.className = vnode.className;
+      }
+
+      if (vnode.style) {
+        setStyle(node, vnode.style);
+      }
+
+      if (vnode.attributes) {
+        for (let i = 0; i < vnode.attributes.length; i++) {
+          let { name, value } = vnode.attributes[i];
+          setAttribute(node, name, value);
+        }
+      }
+
       if (vnode.childNodes) {
         for (let i = 0; i < vnode.childNodes.length; i++) {
           node.appendChild(this.createNode(vnode.childNodes[i]));
         }
       }
-  
+
       if (vnode.events) {
         for (let i = 0; i < vnode.events.length; i++) {
           this.eventHandler.addEvent(node, vnode.events[i]);
