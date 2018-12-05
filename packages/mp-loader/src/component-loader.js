@@ -42,8 +42,7 @@ module.exports = function(content) {
       return ${requireCreateComponent}(
         ${requireTemplate}, 
         __render__, 
-        Component.__config,
-        '${basePath}'
+        Component.__config
       );
     };
   `;
