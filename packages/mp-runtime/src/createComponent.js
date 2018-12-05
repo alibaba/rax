@@ -1,5 +1,6 @@
 import computeChangedData from './computeChangedData';
 import deepCopy from './deepCopy';
+import { registerComponent } from './componentsHub';
 
 function getSlotName(item) {
   if (item && Object.hasOwnProperty.call(item, 'props')) {
@@ -17,10 +18,10 @@ function injectSlot(child, $slots) {
   $slots[slotName].push(child);
 }
 
-export default function createComponent(renderFactory, render, config) {
+export default function createComponent(renderFactory, render, config, componentPath) {
   const templateRender = renderFactory(render);
 
-  return class extends render.Component {
+  const component = class extends render.Component {
     constructor() {
       super();
       this.state = deepCopy(config.data);
@@ -98,4 +99,10 @@ export default function createComponent(renderFactory, render, config) {
       return templateRender.call(this.publicInstance, { $slots, ...props, ...data });
     }
   };
+
+  if (componentPath !== undefined) {
+    registerComponent(componentPath, component);
+  }
+
+  return component;
 }

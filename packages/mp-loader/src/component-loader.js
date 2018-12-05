@@ -30,6 +30,7 @@ module.exports = function(content) {
   const templateLoaderQueryString = querystring.stringify({
     cssPath,
     isEntryTemplate: false,
+    componentBasePath: basePath,
     dependencyComponents: JSON.stringify(dependencyComponents),
   });
 
@@ -38,7 +39,11 @@ module.exports = function(content) {
   return `module.exports = function(__render__) {
       function Component(config) { Component.__config = config; }
       ${content}
-      return ${requireCreateComponent}(${requireTemplate}, __render__, Component.__config);
+      return ${requireCreateComponent}(
+        ${requireTemplate}, 
+        __render__, 
+        Component.__config
+      );
     };
   `;
 };

@@ -18,8 +18,10 @@ module.exports = function resolveDependencyComponents(config, projectPath, baseP
   if (config && config.usingComponents) {
     for (let componentName in config.usingComponents) {
       if (config.usingComponents.hasOwnProperty(componentName)) {
-        result[componentName] = resolveComponentPath(
-          config.usingComponents[componentName],
+        const declearedComponentPath = config.usingComponents[componentName];
+        const isSelf = join(basePath, '..', declearedComponentPath) === basePath;
+        result[componentName] = isSelf ? '__SELF__' : resolveComponentPath(
+          declearedComponentPath,
           projectPath,
           basePath
         );
