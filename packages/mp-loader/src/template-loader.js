@@ -56,6 +56,10 @@ module.exports = function templateLoader(content) {
         const loadComponentsHub = 'require(' + stringifyRequest(this, runtimeHelpers.componentsHub) + ')';
 
         if (isSelf) {
+          /**
+           * Delay getting component,
+           * ensure component is registered.
+           */
           registerPageComponent += `
             Object.defineProperty(__components_ref__, '${componentName}', {
               get: function() {
