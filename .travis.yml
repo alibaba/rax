@@ -8,8 +8,8 @@ before_install:
 node_js:
   - "8"
   - "9"
-  - "10
-  - "11"""
+  - "10"
+  - "11"
 
 before_script:
   - npm run setup
