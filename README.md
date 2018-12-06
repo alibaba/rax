@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-The fastest way to build cross-contianer application.
+The fastest way to build cross-container application.
 </p>
 
 <p align="center">
