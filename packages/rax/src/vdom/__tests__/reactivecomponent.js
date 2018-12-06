@@ -7,14 +7,13 @@ import {createElement} from '../../element';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 import renderToString from '../../server/renderToString';
 
 function StatelessComponent(props) {
   return <div>{props.name}</div>;
 }
 
-describe('StatelessComponent', function() {
+describe('ReactiveComponent', function() {
   beforeEach(function() {
     Host.driver = ServerDriver;
   });
