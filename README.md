@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-A hyperscript render engine.
+The fastest way to build cross-container application.
 </p>
 
 <p align="center">
@@ -95,8 +95,16 @@ const styles = {
 };
 ```
 
+```js
+// app.js
+import {render} from 'rax';
+import Hello from './Hello';
+
+render(<Hello name="world" />);
+```
+
 ### SFC(Single File Component) DSL
-> SFC is a Vue-like DSL that will compile to JSX DSL.
+> SFC is a Vue-like DSL that will compile to rax component.
 
 ```html
 <!-- hello.html -->
@@ -141,6 +149,45 @@ import {render} from 'rax';
 import Hello from './hello';
 
 render(<Hello name="world" />);
+```
+
+### MP(Mini Program) DSL
+> MP DSL will compile to rax component.
+
+```js
+Component({
+  data: {
+    name: 'world'
+  },
+  methods: {
+    onChange(e) {
+      this.setData({
+        name: 'rax' 
+      });
+    }
+  }
+});
+```
+
+```css
+/* index.acss */
+.hello {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 40px;
+  text-align: center;
+}
+```
+
+```html
+<!-- index.axml -->
+<view class="hello">
+  <text class="title" onClick="change">Hello {{name}}</text>
+</view>
 ```
 
 ## Rax Renderers
@@ -261,8 +308,8 @@ Then, you can run several commands:
       <td align="center" valign="top">
         <img width="128" height="128" src="https://github.com/noyobo.png?s=128">
         <br>
-        <a href="https://github.com/noyobo">@noyobo</a>
-        <p>Webpack Plugins</p>
+        <a href="https://github.com/wssgcg1213">@wssgcg1213</a>
+        <p>DSL Runtimes &amp; Loaders</p>
       </td>
      </tr>
   </tbody>
