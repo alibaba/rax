@@ -104,7 +104,7 @@ render(<Hello name="world" />);
 ```
 
 ### SFC(Single File Component) DSL
-> SFC is a Vue-like DSL that will compile to Rax component.
+> SFC is a Vue-like DSL that will compile to rax component.
 
 ```html
 <!-- hello.html -->
@@ -152,7 +152,7 @@ render(<Hello name="world" />);
 ```
 
 ### MP(Mini Program) DSL
-> MP DSL will compile to Rax component.
+> MP DSL will compile to rax component.
 
 ```js
 Component({
