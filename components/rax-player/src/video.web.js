@@ -53,14 +53,14 @@ class Video extends Component {
    */
   switch = () => {
     let video = this.refs.video;
-    if (this.switchStatus) {
+    let switchStatus = this.state.pause;
+    if (!switchStatus) { 
       video && video.pause();
     } else {
       video && video.play();
     }
-    this.switchStatus = !this.switchStatus;
     this.setState({
-      pause: this.switchStatus
+      pause: !switchStatus
     });
   }
 
