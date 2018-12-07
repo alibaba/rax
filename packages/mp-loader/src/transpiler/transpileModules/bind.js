@@ -1,4 +1,11 @@
-const { getAndRemoveAttr, addAttr, normalizeMustache } = require('../helpers');
+const {
+  getAndRemoveAttr,
+  addAttr,
+  normalizeMustache,
+  camelize,
+  isDataset,
+  isAriaProperty
+} = require('../helpers');
 
 const IS_BIND_REG = /\W*\{\{/;
 const IS_DETECTIVE = /^a\:/;
@@ -29,9 +36,12 @@ function transformNode(el) {
       return;
     }
 
+
     if (IS_BIND_REG.test(value)) {
       const exp = getAndRemoveAttr(el, name);
-      addAttr(el, name, exp, '');
+      const transformedName = (isDataset(name) || isAriaProperty(name))
+        ? name: camelize(name);
+      addAttr(el, transformedName, exp, '');
     }
   }
 }
