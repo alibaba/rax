@@ -5,7 +5,7 @@ const { camelize, isDataset, isAriaProperty } = require('../helpers');
  *  <view foo-bar="val" />
  *   ->
  *  `props.fooBar`
- *  @NOTE dataset
+ *  @NOTE data-* and aria-* is ignored to camlize.
  */
 function transformNode(el) {
   if (Array.isArray(el.attrsList)) {
