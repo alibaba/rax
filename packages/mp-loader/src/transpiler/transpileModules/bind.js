@@ -39,8 +39,8 @@ function transformNode(el) {
 
     if (IS_BIND_REG.test(value)) {
       const exp = getAndRemoveAttr(el, name);
-      const transformedName = (isDataset(name) || isAriaProperty(name))
-        ? name: camelize(name);
+      const transformedName = isDataset(name) || isAriaProperty(name)
+        ? name : camelize(name);
       addAttr(el, transformedName, exp, '');
     }
   }
