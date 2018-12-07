@@ -477,6 +477,10 @@ function genProps(props) {
   let res = '';
   for (let i = 0; i < props.length; i++) {
     const prop = props[i];
+    // { 'x-y': val }, { x: val }
+    if (/[-\s]/.test(prop.name)) {
+      prop.name = JSON.stringify(prop.name);
+    }
     const scope = typeof prop.scope === 'string' ? props.scope : 'this';
 
     const isVariablePath = simplePathRE.test(prop.value);
@@ -490,12 +494,12 @@ function genProps(props) {
         prop.value = `${scope}['${prop.value}']`;
       } else if (isPreveredIdentifier(prop.value)) {
         // prevered id like `true,false,null,undefined...`
+        prop.value = prop.value;
       } else {
         prop.value = `${scope}.${prop.value}`;
       }
     }
-    // Camelcase all keys: foo-bar -> fooBar
-    res += `${camelize(prop.name)}:${transformSpecialNewlines(prop.value)},`;
+    res += `${prop.name}:${transformSpecialNewlines(prop.value)},`;
   }
 
   return res.slice(0, -1);

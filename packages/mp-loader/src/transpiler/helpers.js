@@ -163,3 +163,41 @@ function isInFor(el) {
     return !!el.for;
   }
 }
+
+/**
+ * Create a cached version of a pure function.
+ */
+const cached = exports.cached = function cached(fn) {
+  var cache = Object.create(null);
+  return function cachedFn(str) {
+    var hit = cache[str];
+    return hit || (cache[str] = fn(str));
+  };
+};
+
+/**
+ * Camelize a hyphen-delimited string.
+ */
+const camelizeRE = /-(\w)/g;
+const camelize = exports.camelize = cached(function(str) {
+  return str.replace(camelizeRE, function(_, c) {
+    return c ? c.toUpperCase() : '';
+  });
+});
+
+/**
+ * Detect whether name is a dataset.
+ */
+const DATASET_REG = /^data-/;
+exports.isDataset = cached(function(name) {
+  return DATASET_REG.test(name);
+});
+
+/**
+ * Detect whether name is an aria property.
+ */
+const ARIA_REG = /^aria-/;
+exports.isAriaProperty = cached(function(name) {
+  return ARIA_REG.test(name);
+});
+

@@ -28,6 +28,7 @@ function transformNode(el) {
     if (IS_DETECTIVE.test(name)) {
       return;
     }
+
     if (IS_BIND_REG.test(value)) {
       const exp = getAndRemoveAttr(el, name);
       addAttr(el, name, exp, '');
