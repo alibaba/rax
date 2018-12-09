@@ -341,7 +341,39 @@ describe('CompositeComponent', function() {
     ]);
   });
 
-  it('working correct on siblings of a component that throws', () => {
+  it('rendering correct on siblings of a component that throws', () => {
+    let container = createNodeElement('div');
+    function BrokenRender() {
+      throw new Error('Hello');
+    }
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <div>{`Caught an error: ${this.state.error.message}.`}</div>
+          );
+        }
+        return (
+          <div>
+            <span>siblings</span>
+            <BrokenRender />
+            <span>siblings</span>
+          </div>
+        );
+      }
+    }
+
+    render(
+      <ErrorBoundary />, container);
+    expect(container.childNodes.length).toBe(1);
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
+  it('working correct with fragment when a component that throw error', () => {
     let container = createNodeElement('div');
     class ErrorBoundary extends Component {
       state = {error: null};
@@ -354,7 +386,11 @@ describe('CompositeComponent', function() {
             <span>{`Caught an error: ${this.state.error.message}.`}</span>
           );
         }
-        return this.props.children;
+        return [
+          <span>siblings</span>,
+          <BrokenRender />,
+          <span>siblings</span>
+        ];
       }
     }
 
@@ -363,11 +399,7 @@ describe('CompositeComponent', function() {
     }
 
     render(
-      <ErrorBoundary>
-        <span>siblings</span>
-        <BrokenRender />
-        <span>siblings</span>
-      </ErrorBoundary>, container);
+      <ErrorBoundary />, container);
     expect(container.childNodes.length).toBe(1);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
