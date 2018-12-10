@@ -33,7 +33,8 @@ function handleError(instance, error) {
   }
 
   if (boundary) {
-    if (boundary  && boundary._internal) {
+    // should not attempt to recover an unmounting error boundary
+    if (boundary._internal) {
       let callbackQueue =
       boundary._internal._pendingCallbacks ||
       (boundary._internal._pendingCallbacks = []);
