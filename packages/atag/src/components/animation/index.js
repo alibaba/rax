@@ -56,7 +56,6 @@ export default class Animation extends PolymerElement {
     return ['_observerMultiple(keyframes, direction, duration, delay, easing, iterations)'];
   }
 
-  // @TODO: diff keyframes
   _observerMultiple(keyframes, direction, duration, delay, easing, iterations) {
     this.timeline.update(keyframes, {
       direction,
