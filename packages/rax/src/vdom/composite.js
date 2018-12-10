@@ -33,7 +33,7 @@ function handleError(instance, error) {
   }
 
   if (boundary) {
-    if (boundary._internal) {
+    if (boundary  && boundary._internal) {
       let callbackQueue =
       boundary._internal._pendingCallbacks ||
       (boundary._internal._pendingCallbacks = []);
