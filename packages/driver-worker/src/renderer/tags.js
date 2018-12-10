@@ -27,7 +27,8 @@ const customTags = {
   'scroll-view': true,
   switch: true,
   'web-view': true,
-  page: true
+  page: true,
+  animation: true
 };
 
 const w3cTags = {
