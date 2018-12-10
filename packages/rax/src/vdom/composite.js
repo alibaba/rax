@@ -186,13 +186,6 @@ class CompositeComponent {
       Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
     }
 
-    // Trigger setState callback in componentWillMount or boundary callback after rendered
-    let callbacks = this._pendingCallbacks;
-    if (callbacks) {
-      this._pendingCallbacks = null;
-      updater.runCallbacks(callbacks, instance);
-    }
-
     if (instance.componentDidMount) {
       performInSandbox(() => {
         if (process.env.NODE_ENV !== 'production') {
@@ -203,6 +196,13 @@ class CompositeComponent {
           instance.componentDidMount();
         }
       }, instance);
+    }
+
+    // Trigger setState callback in componentWillMount or boundary callback after rendered
+    let callbacks = this._pendingCallbacks;
+    if (callbacks) {
+      this._pendingCallbacks = null;
+      updater.runCallbacks(callbacks, instance);
     }
 
     Host.hook.Reconciler.mountComponent(this);

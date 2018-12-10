@@ -413,6 +413,12 @@ describe('CompositeComponent', function() {
       componentDidCatch(error) {
         this.setState({error});
       }
+      componentDidMount() {
+        logs.push('componentDidMountErrorBoundary');
+      }
+      componentDidUpdate() {
+        logs.push('componentDidUpdateErrorBoundary');
+      }
       render() {
         if (this.state.error) {
           return (
@@ -508,9 +514,11 @@ describe('CompositeComponent', function() {
       'componentWillMount3',
       'render3',
       'componentDidMount3',
+      'componentDidMountErrorBoundary',
       'componentWillUnmount1',
       'componentWillUnmount2',
-      'componentWillUnmount3'
+      'componentWillUnmount3',
+      'componentDidUpdateErrorBoundary'
     ]);
   });
 
