@@ -1,5 +1,5 @@
 import colors from './colors';
-import normalizeColor from './normalizeColor';
+import colorToRgba from './colorToRgba';
 
 // Problem: https://github.com/animatedjs/animated/pull/102
 // Solution: https://stackoverflow.com/questions/638565/parsing-scientific-notation-sensibly/658662
@@ -9,17 +9,6 @@ const stringShapeRegex = /[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
 const colorRegex = /(#(?:[0-9a-f]{2}){2,4}|(#[0-9a-f]{3})|(rgb|hsl)a?\((-?\d+%?[,\s]+){2,3}\s*[\d\.]+%?\))/gi;
 // Covers color names (transparent, blue, etc.)
 const colorNamesRegex = new RegExp(`(${Object.keys(colors).join('|')})`, 'g');
-
-function colorToRgba(input) {
-  let int32Color = normalizeColor(input);
-  if (int32Color === null) return input;
-  int32Color = int32Color || 0;
-  let r = (int32Color & 0xff000000) >>> 24;
-  let g = (int32Color & 0x00ff0000) >>> 16;
-  let b = (int32Color & 0x0000ff00) >>> 8;
-  let a = (int32Color & 0x000000ff) / 255;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
 
 /**
  * 将字符串转成对象
