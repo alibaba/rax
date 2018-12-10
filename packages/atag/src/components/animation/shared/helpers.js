@@ -30,10 +30,16 @@ export function converStyleString(string) {
   return object;
 }
 
-export function generateTemplate(params, string) {
+/**
+ * 将模板字符串转成普通字符串
+ * @param {object} params template object
+ * @param {string} templateString template string
+ * background-color: ${frame.bgColor}; => background-color: rgba(255, 0, 0, 1);
+ */
+export function generateTemplate(params, templateString) {
   const names = Object.keys(params);
   const vals = Object.values(params);
-  return new Function(...names, `return \`${string}\`;`)(...vals);
+  return new Function(...names, `return \`${templateString}\`;`)(...vals);
 }
 
 export function vec3(x, y, z) {
@@ -48,10 +54,12 @@ export function range(min, max, value) {
   return (value - min) / (max - min);
 }
 
+// lerp value: 10
 export function lerp(startValue, endValue, t) {
   return startValue * (1 - t) + endValue * t;
 }
 
+// lerp array: [10, 10, 10]
 export function lerpArray(startValue, endValue, t) {
   const len = Math.min(startValue.length, endValue.length);
   const out = new Array(len);
