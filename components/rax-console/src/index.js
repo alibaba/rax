@@ -2,7 +2,7 @@ import {createElement, Component} from 'rax';
 import FilterBar from './FilterBar';
 import ConsoleOutput from './ConsoleOutput';
 import getMessageVisibility from './getMessageVisibility';
-import consoleIconSource from 'image-source-loader!./images/webconsole.svg';
+import consoleIconSource from './images/webconsole.svg';
 import './index.css';
 import {
   DEFAULT_FILTERS,
