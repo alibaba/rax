@@ -25,8 +25,10 @@ class GestureViewOnWeb extends Component {
   panType;
 
   onTouchStart = (e) => {
+    const {onTouchStart} = this.props;
     this.startX = e.changedTouches[0].clientX;
     this.startY = e.changedTouches[0].clientY;
+    onTouchStart && onTouchStart(e);
   }
 
   reset() {
@@ -42,7 +44,7 @@ class GestureViewOnWeb extends Component {
   }
 
   onTouchMove = (e) => {
-    let {onHorizontalPan, onVerticalPan} = this.props;
+    let {onHorizontalPan, onVerticalPan, onTouchMove} = this.props;
     let deltaX = e.changedTouches[0].clientX - this.startX;
     let deltaY = e.changedTouches[0].clientY - this.startY;
 
@@ -81,10 +83,12 @@ class GestureViewOnWeb extends Component {
       }
       onVerticalPan && onVerticalPan(e);
     }
+
+    onTouchMove && onTouchMove(e);
   }
 
   onTouchEnd = (e) => {
-    let {onHorizontalPan, onVerticalPan} = this.props;
+    let {onHorizontalPan, onVerticalPan, onTouchEnd} = this.props;
     e.state = 'end';
     e.changedTouches[0].deltaX = e.changedTouches[0].clientX - this.startX;
     e.changedTouches[0].deltaY = e.changedTouches[0].clientY - this.startY;
@@ -94,10 +98,11 @@ class GestureViewOnWeb extends Component {
       onVerticalPan && onVerticalPan(e);
     }
     this.reset();
+    onTouchEnd && onTouchEnd(e);
   }
 
   onTouchCancel = (e) => {
-    let {onHorizontalPan, onVerticalPan} = this.props;
+    let {onHorizontalPan, onVerticalPan, onTouchCancel} = this.props;
     e.state = 'cancel';
     e.changedTouches[0].deltaX = e.changedTouches[0].clientX - this.startX;
     e.changedTouches[0].deltaY = e.changedTouches[0].clientY - this.startY;
@@ -107,6 +112,7 @@ class GestureViewOnWeb extends Component {
       onVerticalPan && onVerticalPan(e);
     }
     this.reset();
+    onTouchCancel && onTouchCancel(e);
   }
 
   render() {

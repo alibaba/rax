@@ -7,7 +7,9 @@ import View from 'rax-view';
 
 class GestureViewOnWeex extends Component {
   onTouchStart = (e) => {
+    const {onTouchStart} = this.props;
     this.startX = e.changedTouches[0].clientX;
+    onTouchStart && onTouchStart(e);
   }
 
   onHorizontalPan = (e) => {
