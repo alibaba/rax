@@ -50,14 +50,14 @@ describe('#Keyframes', function() {
 
   it('should return next keyframe with near time', () => {
     const keyframe = new Keyframes(keyframes);
-    const value = keyframe.next(0.3); 
+    const value = keyframe.next(0.3);
     expect(value.value).to.equal(0.5);
     expect(value.time).to.equal(0.5);
   });
 
   it('should return previous keyframe with near time', () => {
     const keyframe = new Keyframes(keyframes);
-    const value = keyframe.previous(0.3); 
+    const value = keyframe.previous(0.3);
     expect(value.value).to.equal(1);
     expect(value.time).to.equal(0);
   });
