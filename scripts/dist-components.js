@@ -87,6 +87,14 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
             loader: 'stylesheet-loader'
           }
         ],
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'image-source-loader'
+          }
+        ]
       }]
     }
   };
