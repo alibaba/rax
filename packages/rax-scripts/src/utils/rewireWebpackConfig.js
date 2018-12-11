@@ -6,13 +6,13 @@ const pathExists = require('path-exists');
 
 /**
  * Method for providing user to modify webpack config
- * apply webpackConfig to path.join(process.cwc(), webpack.config.update.js);
+ * apply webpackConfig to path.join(process.cwc(), webpack.config.rewire.js);
  *
  * @param  {Object} webpackConfig webpack config
- * @return {Object}               webpack cofnig with webpack.config.update.js
+ * @return {Object}               webpack cofnig with webpack.config.rewire.js
  */
 module.exports = webpackConfig => {
-  const UPDATE_FILE_NAME = 'webpack.config.update.js';
+  const UPDATE_FILE_NAME = 'webpack.config.rewire.js';
   const webpackConfigUpdatePath = path.join(process.cwd(), UPDATE_FILE_NAME);
 
   if (pathExists.sync(webpackConfigUpdatePath)) {

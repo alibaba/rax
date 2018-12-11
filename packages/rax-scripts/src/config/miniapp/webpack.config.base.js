@@ -5,12 +5,8 @@ const colors = require('chalk');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 
-const pathConfig = require('./path.config');
-
-const babelOptions = {
-  presets: [require.resolve('babel-preset-es2015'), require.resolve('babel-preset-rax')],
-  plugins: [require.resolve('rax-hot-loader/babel')],
-};
+const pathConfig = require('../path.config');
+const babelConfig = require('../babel.config');
 
 const publicPath = process.env.PUBLIC_PATH || '/';
 const publicUrl = publicPath.replace(/\/$/, '');
@@ -26,7 +22,7 @@ module.exports = {
     publicPath: publicPath,
   },
   resolve: {
-    extensions: ['.js', '.json', '.jsx', '.html', '.vue'],
+    extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc'],
   },
   externals: [
     function(context, request, callback) {
@@ -75,7 +71,7 @@ module.exports = {
         use: [
           {
             loader: require.resolve('babel-loader'),
-            options: babelOptions,
+            options: babelConfig,
           },
         ],
       },
@@ -86,7 +82,7 @@ module.exports = {
         use: [
           {
             loader: require.resolve('babel-loader'),
-            options: babelOptions,
+            options: babelConfig,
           },
           {
             loader: require.resolve('miniapp-manifest-loader'),
@@ -94,7 +90,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.html$/,
+        test: /\.(html|vue|sfc)$/,
         use: [
           {
             loader: require.resolve('sfc-loader'),

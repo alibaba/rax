@@ -7,9 +7,9 @@ const qrcode = require('qrcode-terminal');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 
-const webpackConfigBase = require('./webpack.config.miniapp.base');
-const envConfig = require('./env.config');
-const pathConfig = require('./path.config');
+const webpackConfigBase = require('./webpack.config.sfc.base');
+const envConfig = require('../env.config');
+const pathConfig = require('../path.config');
 
 const ipv4 = address.ip();
 const port = envConfig.port;

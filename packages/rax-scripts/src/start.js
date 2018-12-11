@@ -14,15 +14,15 @@ const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 
 const webpackConfigMap = {
-  rax: './config/webpack.config.dev',
-  miniapp: './config/webpack.config.miniapp.dev',
+  app: './config/webpack.config.dev',
+  miniapp: './config/miniapp/webpack.config.dev',
 };
 
 /**
  * run webpack dev server
  */
 
-module.exports = function start(type = 'rax') {
+module.exports = function start(type = 'app') {
   const config = require(webpackConfigMap[type]);
   const compiler = createWebpackCompiler(config);
 
