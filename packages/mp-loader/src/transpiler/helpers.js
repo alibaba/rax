@@ -167,19 +167,19 @@ function isInFor(el) {
 /**
  * Create a cached version of a pure function.
  */
-function cached(fn) {
-  var cache = Object.create(null);
-  return function cachedFn(str) {
-    var hit = cache[str];
+function memorize(fn) {
+  let cache = Object.create(null);
+  return function memorizedFn(str) {
+    let hit = cache[str];
     return hit || (cache[str] = fn(str));
   };
-};
+}
 
 /**
  * Camelize a hyphen-delimited string.
  */
 const camelizeRE = /-(\w)/g;
-const camelize = exports.camelize = cached(function(str) {
+exports.camelize = memorize(function(str) {
   return str.replace(camelizeRE, function(_, c) {
     return c ? c.toUpperCase() : '';
   });
@@ -189,7 +189,7 @@ const camelize = exports.camelize = cached(function(str) {
  * Detect whether name is a dataset.
  */
 const DATASET_REG = /^data-/;
-exports.isDataset = cached(function(name) {
+const isDataset = memorize(function(name) {
   return DATASET_REG.test(name);
 });
 
@@ -197,7 +197,13 @@ exports.isDataset = cached(function(name) {
  * Detect whether name is an aria property.
  */
 const ARIA_REG = /^aria-/;
-exports.isAriaProperty = cached(function(name) {
+const isAriaProperty = memorize(function(name) {
   return ARIA_REG.test(name);
 });
 
+/**
+ * Detect whether name is need to transform
+ */
+exports.isPreservedPropName = function(name) {
+  return isDataset(name) || isAriaProperty(name);
+};

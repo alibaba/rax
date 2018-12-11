@@ -1,4 +1,4 @@
-const { camelize, isDataset, isAriaProperty } = require('../helpers');
+const { camelize, isPreservedPropName } = require('../helpers');
 
 /**
  * Camelize passed props.
@@ -11,7 +11,7 @@ function transformNode(el) {
   if (Array.isArray(el.attrsList)) {
     for (let i = 0, l = el.attrsList.length; i < l; i++) {
       const attr = el.attrsList[i];
-      if (!isDataset(attr.name) && !isAriaProperty(attr.name)) {
+      if (isPreservedPropName(name)) {
         attr.name = camelize(attr.name);
       }
     }
