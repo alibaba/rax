@@ -1,5 +1,5 @@
 import { requestFrame, cancelFrame, lerpValues, now } from './shared/helpers';
-import Keyframes from './keyframes';
+import Keyframes from './Keyframes';
 
 // 时序变化
 export default class Timeline {
