@@ -88,7 +88,7 @@ export interface SliderProps extends BaseProps {
      * change event
      * @param {SliderChangeEvent} event
      */
-    onChange: (event: SliderChangeEvent) => void;
+    onChange?: (event: SliderChangeEvent) => void;
 
 }
 
