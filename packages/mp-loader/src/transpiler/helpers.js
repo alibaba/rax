@@ -167,7 +167,7 @@ function isInFor(el) {
 /**
  * Create a cached version of a pure function.
  */
-const cached = exports.cached = function cached(fn) {
+function cached(fn) {
   var cache = Object.create(null);
   return function cachedFn(str) {
     var hit = cache[str];
