@@ -11,7 +11,7 @@ function transformNode(el) {
   if (Array.isArray(el.attrsList)) {
     for (let i = 0, l = el.attrsList.length; i < l; i++) {
       const attr = el.attrsList[i];
-      if (isPreservedPropName(name)) {
+      if (isPreservedPropName(attr.name)) {
         attr.name = camelize(attr.name);
       }
     }
