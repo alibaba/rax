@@ -29,11 +29,11 @@ function buildCompiler(config) {
 }
 
 const webpackConfigMap = {
-  app: './config/webpack.config.prod',
+  webapp: './config/webpack.config.prod',
   miniapp: './config/miniapp/webpack.config.prod',
 };
 
-module.exports = function build(type = 'app') {
+module.exports = function build(type = 'webapp') {
   rimraf(pathConfig.appBuild, (err) => {
     if (err) {
       throw err;

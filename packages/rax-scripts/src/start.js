@@ -14,7 +14,7 @@ const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 
 const webpackConfigMap = {
-  app: './config/webpack.config.dev',
+  webapp: './config/webpack.config.dev',
   miniapp: './config/miniapp/webpack.config.dev',
 };
 
@@ -22,7 +22,7 @@ const webpackConfigMap = {
  * run webpack dev server
  */
 
-module.exports = function start(type = 'app') {
+module.exports = function start(type = 'webapp') {
   const config = require(webpackConfigMap[type]);
   const compiler = createWebpackCompiler(config);
 
