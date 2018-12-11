@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-The fastest way to build cross-container application.
+[🚧 Work In Progress v1.0] The fastest way to build cross-container application.
 </p>
 
 <p align="center">
@@ -55,9 +55,49 @@ $ cd YourProjectName
 $ npm run start
 ```
 
-## Example
+## Project Support
+* WebApp Project
+* MiniApp Project
 
-### JSX DSL
+### WebApp Project
+```
+.
+├── package.json
+├── src
+│   └── index.js
+└── public
+    └── index.html
+```
+
+### MiniApp Project
+```
+.
+├── app.acss
+├── app.js
+├── app.json
+├── package.json
+└── pages
+    ├── page1
+    │   ├── page1.acss
+    │   ├── page1.axml
+    │   ├── page1.js
+    │   └── page1.json
+    └── page2
+        ├── page2.acss
+        ├── page2.axml
+        ├── page2.js
+        └── page2.json
+```
+
+## DSL Support
+
+* JSX(XML-like syntax extension to ECMAScript) DSL
+* SFC(Single File Component) DSL
+* MP(Mini Program) DSL
+
+### JSX(XML-like syntax extension to ECMAScript) DSL
+> Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
+
 ```jsx
 // Hello.jsx
 import {createElement, Component} from 'rax';
