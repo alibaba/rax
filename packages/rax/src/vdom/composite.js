@@ -34,10 +34,9 @@ function handleError(instance, error) {
 
   if (boundary) {
     // should not attempt to recover an unmounting error boundary
-    if (boundary._internal) {
-      let callbackQueue =
-      boundary._internal._pendingCallbacks ||
-      (boundary._internal._pendingCallbacks = []);
+    const boundaryInternal = boundary._internal;
+    if (boundaryInternal) {
+      let callbackQueue = boundaryInternal._pendingCallbacks || (boundaryInternal._pendingCallbacks = []);
       callbackQueue.push(() => boundary.componentDidCatch(error));
     }
   } else {
