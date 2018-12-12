@@ -42,10 +42,12 @@ function styleResolver(id, basedir, importOptions) {
 
 module.exports = (projectDir, opts) => {
   return {
+    devtool: opts.isDevServer ? 'eval-source-map' : false,
     output: {
       path: join(projectDir, 'build'),
       // show at devtool console panel
-      devtoolModuleFilenameTemplate: '[resource-path]',
+      devtoolModuleFilenameTemplate: 'webpack://[namespace]/[resource-path]',
+      devtoolNamespace: 'miniapp',
     },
     module: {
       rules: [
@@ -67,12 +69,14 @@ module.exports = (projectDir, opts) => {
             {
               loader: require.resolve('css-loader'),
               options: {
+                sourceMap: true,
                 importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
               }
             },
             {
               loader: require.resolve('postcss-loader'),
               options: {
+                sourceMap: true,
                 plugins: [
                   require('postcss-import')({ resolve: styleResolver }),
                   require('../plugins/PostcssPluginRpx2rem'),
