@@ -33,7 +33,12 @@ function handleError(instance, error) {
   }
 
   if (boundary) {
-    boundary.componentDidCatch(error);
+    // should not attempt to recover an unmounting error boundary
+    const boundaryInternal = boundary._internal;
+    if (boundaryInternal) {
+      let callbackQueue = boundaryInternal._pendingCallbacks || (boundaryInternal._pendingCallbacks = []);
+      callbackQueue.push(() => boundary.componentDidCatch(error));
+    }
   } else {
     if (Host.sandbox) {
       setTimeout(() => {
@@ -193,7 +198,7 @@ class CompositeComponent {
       }, instance);
     }
 
-    // Trigger setState callback in componentWillMount after rendered
+    // Trigger setState callback in componentWillMount or boundary callback after rendered
     let callbacks = this._pendingCallbacks;
     if (callbacks) {
       this._pendingCallbacks = null;
@@ -412,9 +417,9 @@ class CompositeComponent {
       instance.context = nextContext;
     }
 
-    // Flush setState callbacks set in componentWillReceiveProps
-    if (hasReceived) {
-      let callbacks = this._pendingCallbacks;
+    // Flush setState callbacks set in componentWillReceiveProps or boundary callback
+    let callbacks = this._pendingCallbacks;
+    if (callbacks) {
       this._pendingCallbacks = null;
       updater.runCallbacks(callbacks, instance);
     }
