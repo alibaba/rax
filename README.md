@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://alibaba.github.io/rax">
-    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/39803702-603fd170-53a4-11e8-994d-bffc24e9fb07.png" width="56">
+    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/49848760-999e7d00-fe11-11e8-978f-264ea31f6739.png" width="56">
   </a>
 </p>
 
