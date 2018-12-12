@@ -5,8 +5,8 @@ const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 
-const pathConfig = require('./path.config');
-const webpackConfigBase = require('./webpack.config.miniapp.base');
+const pathConfig = require('../path.config');
+const webpackConfigBase = require('./webpack.config.base');
 
 const registerServiceWorker = `<script>
 if ('serviceWorker' in navigator) {

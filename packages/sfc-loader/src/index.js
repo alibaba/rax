@@ -10,7 +10,10 @@ const transformLoader = require.resolve('./transform/loader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const rawLoader = require.resolve('./raw-loader');
 const compiler = createCompiler(Object.assign({}, baseOptions, { modules }));
-const raxModuleName = JSON.stringify('@core/rax');
+const builtInRaxModuleName = JSON.stringify('@core/rax');
+const builtInRuntimeModuleName = JSON.stringify('@core/runtime');
+const runtimeModuleName = JSON.stringify(require.resolve('./helpers/runtime'));
+const raxModuleName = JSON.stringify('rax');
 
 module.exports = function(rawContent) {
   this.cacheable();
@@ -76,13 +79,7 @@ module.exports = function(rawContent) {
     `${loadStyleString}!${filePath}`
   );
 
-  let sfcRuntimeModuleName;
-
-  if (userOptions.builtInRuntime) {
-    sfcRuntimeModuleName = JSON.stringify('@core/runtime');
-  } else {
-    sfcRuntimeModuleName = JSON.stringify(require.resolve('./helpers/runtime'));
-  }
+  const sfcRuntimeModuleName = userOptions.builtInRuntime ? builtInRuntimeModuleName : runtimeModuleName;
 
   /**
    * support ESModules / commonjs exportation
@@ -104,7 +101,7 @@ module.exports = function(rawContent) {
       typeof ${declarationName} === 'undefined' ? {} : ${declarationName},
       ${renderFn},
       require(${loadStyleRequest}),
-      require(${raxModuleName})
+      require(${userOptions.builtInRax ? builtInRaxModuleName : raxModuleName})
     );`;
 
   // whether webpack's devtool is configured

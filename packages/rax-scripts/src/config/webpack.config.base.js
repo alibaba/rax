@@ -7,6 +7,7 @@ const RaxWebpackPlugin = require('rax-webpack-plugin');
 const webpack = require('webpack');
 
 const pathConfig = require('./path.config');
+const babelConfig = require('./babel.config');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -16,10 +17,6 @@ const publicPath = process.env.PUBLIC_PATH || '/';
 // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
 const publicUrl = publicPath.replace(/\/$/, '');
 
-const babelOptions = {
-  presets: [require.resolve('babel-preset-es2015'), require.resolve('babel-preset-rax')],
-  plugins: [require.resolve('rax-hot-loader/babel')],
-};
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -48,7 +45,7 @@ module.exports = {
     publicPath: publicPath,
   },
   resolve: {
-    extensions: ['.js', '.json', '.jsx', '.html', '.vue'],
+    extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc'],
   },
   plugins: [
     new RaxWebpackPlugin({
@@ -110,22 +107,20 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader',
-            options: babelOptions,
+            options: babelConfig,
           },
         ],
       },
       {
-        test: /\.(vue|html)$/,
+        test: /\.(sfc|vue|html)$/,
         use: [
           {
-            loader: 'sfc-loader',
+            loader: require.resolve('sfc-loader'),
             options: {
               builtInRuntime: false,
+              builtInRax: false,
               preserveWhitespace: false,
-              module: 'commonjs',
-              // weexGlobalComponents: {
-              //   button: 'rax-button'
-              // },
+              module: 'commonjs'
             },
           },
         ],
@@ -151,7 +146,7 @@ module.exports = {
       },
       // load inline images using image-source-loader for Image
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(svg|png|jpe?g|gif)$/i,
         use: [
           {
             loader: 'image-source-loader',
