@@ -337,16 +337,16 @@ Then, you can run several commands:
         <img width="128" height="128" src="https://github.com/yacheng.png?s=128">
         <br>
         <a href="https://github.com/yacheng">@yacheng</a>
-        <p>Components</p>
+        <p>Universals &amp; Components</p>
       </td>
       <td align="center" valign="top">
         <img width="128" height="128" src="https://github.com/boiawang.png?s=128">
         <br>
         <a href="https://github.com/boiawang">@boiawang</a>
-        <p>Babel Loaders &amp; Plugins</p>
+        <p>Loaders &amp; Plugins</p>
       </td>
       <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/noyobo.png?s=128">
+        <img width="128" height="128" src="https://github.com/wssgcg1213.png?s=128">
         <br>
         <a href="https://github.com/wssgcg1213">@wssgcg1213</a>
         <p>DSL Runtimes &amp; Loaders</p>
