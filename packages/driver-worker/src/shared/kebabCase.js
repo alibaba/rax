@@ -15,9 +15,6 @@ export default function kebabCase(string) {
       kebab += '-';
     }
   }
-  if (kebab[0] === '-') {
-    kebab = kebab.slice(1);
-  }
 
   return KebabCache[string] = kebab;
 }
