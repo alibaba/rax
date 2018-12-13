@@ -1,6 +1,6 @@
 {
   "name": "miniapp-builder",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Miniapp build kit for developers",
   "main": "src/index.js",
   "bin": {
@@ -62,7 +62,7 @@
     "koa-webpack": "^3.0.2",
     "lodash": "^4.17.10",
     "mkdirp": "^0.5.1",
-    "mp-loader": "^0.7.9",
+    "mp-loader": "^0.7.10",
     "null-loader": "^0.1.1",
     "postcss": "^7.0.5",
     "postcss-import": "^12.0.1",
