@@ -1,5 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { converStyleString, generateTemplate } from './shared/helpers';
+import { converStyleString, generateTemplate } from './helpers';
 import Event from './Event';
 import Timeline from './Timeline';
 

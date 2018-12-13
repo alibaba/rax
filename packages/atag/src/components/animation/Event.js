@@ -1,4 +1,4 @@
-import { requestFrame } from './shared/helpers';
+import { requestFrame } from './helpers';
 import Pan from './Pan';
 import Orientation from './Orientation';
 

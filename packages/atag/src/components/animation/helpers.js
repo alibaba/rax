@@ -1,5 +1,4 @@
-import colors from './colors';
-import colorToRgba from './colorToRgba';
+import { colors, colorToRgba } from './normalizeColor';
 
 // Problem: https://github.com/animatedjs/animated/pull/102
 // Solution: https://stackoverflow.com/questions/638565/parsing-scientific-notation-sensibly/658662

@@ -1,5 +1,5 @@
-import { vec3, range, lerpValues } from './shared/helpers';
-import { parseEasingFunction } from './shared/eases';
+import { vec3, range, lerpValues } from './helpers';
+import { parseEasingFunction } from './eases';
 
 export default class Keyframes {
   constructor(keyframeList, easing) {

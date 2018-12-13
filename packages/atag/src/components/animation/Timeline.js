@@ -1,4 +1,4 @@
-import { requestFrame, cancelFrame, lerpValues, now } from './shared/helpers';
+import { requestFrame, cancelFrame, now } from './helpers';
 import Keyframes from './Keyframes';
 
 // 时序变化
