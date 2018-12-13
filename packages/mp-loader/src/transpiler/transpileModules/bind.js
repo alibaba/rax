@@ -35,7 +35,6 @@ function transformNode(el) {
       return;
     }
 
-
     if (IS_BIND_REG.test(value)) {
       const exp = getAndRemoveAttr(el, name);
       const transformedName = isPreservedPropName(name) ? name : camelize(name);
