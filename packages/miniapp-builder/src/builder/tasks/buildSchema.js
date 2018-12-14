@@ -17,7 +17,6 @@ const MOCK_DATA = 'mock-data.json';
 module.exports = function(destDir, projectDir) {
   const schemaSource = join(projectDir, 'schema');
   return (done) => {
-
     const schemaDest = join(destDir, '.schema');
     mkdirp.sync(schemaDest);
 
