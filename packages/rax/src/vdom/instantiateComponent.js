@@ -17,7 +17,7 @@ function instantiateComponent(element) {
   } else if (typeof element === 'string' || typeof element === 'number') {
     instance = new Host.TextComponent(element);
   } else {
-    throw new Error(`Invalid element type: ${element}. (keys: ${Object.keys(element)})`);
+    throw new Error(`Invalid element type: ${element}. (current: ${typeof element === 'object' && Object.keys(element) || typeof element})`);
   }
 
   instance._mountIndex = 0;

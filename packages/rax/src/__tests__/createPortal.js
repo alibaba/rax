@@ -1,6 +1,5 @@
 /* @jsx createElement */
 
-import findDOMNode from '../findDOMNode';
 import Component from '../component';
 import PropTypes from '../proptypes';
 import {createElement} from '../element';

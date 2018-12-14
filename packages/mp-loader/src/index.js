@@ -1,4 +1,4 @@
-const { stringifyRequest, getOptions } = require('loader-utils');
+const { stringifyRequest } = require('loader-utils');
 const { join, relative } = require('path');
 const { existsSync } = require('fs');
 const querystring = require('querystring');

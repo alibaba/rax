@@ -1,11 +1,11 @@
 <p align="center">
   <a href="https://alibaba.github.io/rax">
-    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/39803702-603fd170-53a4-11e8-994d-bffc24e9fb07.png" width="56">
+    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/49848760-999e7d00-fe11-11e8-978f-264ea31f6739.png" width="56">
   </a>
 </p>
 
 <p align="center">
-A hyperscript render engine.
+[🚧 Work In Progress v1.0] The fastest way to build cross-container application.
 </p>
 
 <p align="center">
@@ -55,9 +55,49 @@ $ cd YourProjectName
 $ npm run start
 ```
 
-## Example
+## Project Support
+* WebApp Project
+* MiniApp Project
 
-### JSX DSL
+### WebApp Project
+```
+.
+├── package.json
+├── src
+│   └── index.js
+└── public
+    └── index.html
+```
+
+### MiniApp Project
+```
+.
+├── app.acss
+├── app.js
+├── app.json
+├── package.json
+└── pages
+    ├── page1
+    │   ├── page1.acss
+    │   ├── page1.axml
+    │   ├── page1.js
+    │   └── page1.json
+    └── page2
+        ├── page2.acss
+        ├── page2.axml
+        ├── page2.js
+        └── page2.json
+```
+
+## DSL Support
+
+* JSX(XML-like syntax extension to ECMAScript) DSL
+* SFC(Single File Component) DSL
+* MP(Mini Program) DSL
+
+### JSX(XML-like syntax extension to ECMAScript) DSL
+> Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
+
 ```jsx
 // Hello.jsx
 import {createElement, Component} from 'rax';
@@ -95,8 +135,16 @@ const styles = {
 };
 ```
 
+```js
+// app.js
+import {render} from 'rax';
+import Hello from './Hello';
+
+render(<Hello name="world" />);
+```
+
 ### SFC(Single File Component) DSL
-> SFC is a Vue-like DSL that will compile to JSX DSL.
+> SFC is a Vue-like DSL that will compile to rax component.
 
 ```html
 <!-- hello.html -->
@@ -141,6 +189,45 @@ import {render} from 'rax';
 import Hello from './hello';
 
 render(<Hello name="world" />);
+```
+
+### MP(Mini Program) DSL
+> MP DSL will compile to rax component.
+
+```js
+Component({
+  data: {
+    name: 'world'
+  },
+  methods: {
+    onChange(e) {
+      this.setData({
+        name: 'rax' 
+      });
+    }
+  }
+});
+```
+
+```css
+/* index.acss */
+.hello {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 40px;
+  text-align: center;
+}
+```
+
+```html
+<!-- index.axml -->
+<view class="hello">
+  <text class="title" onClick="change">Hello {{name}}</text>
+</view>
 ```
 
 ## Rax Renderers
@@ -261,8 +348,8 @@ Then, you can run several commands:
       <td align="center" valign="top">
         <img width="128" height="128" src="https://github.com/noyobo.png?s=128">
         <br>
-        <a href="https://github.com/noyobo">@noyobo</a>
-        <p>Webpack Plugins</p>
+        <a href="https://github.com/wssgcg1213">@wssgcg1213</a>
+        <p>DSL Runtimes &amp; Loaders</p>
       </td>
      </tr>
   </tbody>

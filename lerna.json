@@ -4,7 +4,8 @@
   "packages": [
     "packages/*",
     "components/*",
-    "universal/*"
+    "universal/*",
+    "examples/*"
   ],
   "commands": {
     "bootstrap": {

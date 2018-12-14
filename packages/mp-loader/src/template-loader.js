@@ -1,5 +1,6 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
+const { relative } = require('path');
 const { createRequire, renderHelperVars, prerveredVars } = require('./utils');
 const transpiler = require('./transpiler');
 const runtimeHelpers = require('./runtimeHelpers');
@@ -9,60 +10,83 @@ const ComponentLoaderPath = require.resolve('./component-loader');
 const PluginLoaderPath = require.resolve('./plugin-loader');
 const PLUGIN_REG = /^plugin:\/\//;
 
+<<<<<<< HEAD
 module.exports = function templateLoader(content) {
   const { resourcePath } = this;
-  const options = getOptions(this) || {};
-  const isEntryTemplate = options && options.isEntryTemplate;
-  const dependencyComponents = options && options.dependencyComponents && JSON.parse(options.dependencyComponents);
+=======
+    module.exports = function templateLoader(content, map) {
+    >>>>>>> master
+      const options = getOptions(this) || {};
+      const isEntryTemplate = options && options.isEntryTemplate;
+      const dependencyComponents = options && options.dependencyComponents && JSON.parse(options.dependencyComponents);
 
-  content = `<template>${content}</template>`; // Wrap <tempalte> when user define more then one nodes at root
+      content = `<template>${content}</template>`; // Wrap <tempalte> when user define more then one nodes at root
 
-  const { ast, renderFn, dependencies, tplAlias } = transpiler(content, {
-    templatePath: this.resourcePath,
-  });
+      const { ast, renderFn, dependencies, tplAlias } = transpiler(content, {
+        templatePath: this.resourcePath,
+      });
 
-  let render = renderFn;
-  const requireCssList = [];
-  const { cssPath, appCssPath } = options;
-  if (existsSync(appCssPath)) {
-    requireCssList.push(createRequire(stringifyRequest(this, appCssPath)));
-    // Adds css file as dependency of the loader result in order to make them watchable.
-    this.addDependency(appCssPath);
-  }
-  if (existsSync(cssPath)) {
-    requireCssList.push(createRequire(stringifyRequest(this, cssPath)));
-    this.addDependency(cssPath);
-  }
+      let render = renderFn;
+      const requireCssList = [];
+      const { cssPath, appCssPath, componentBasePath } = options;
+      if (existsSync(appCssPath)) {
+        requireCssList.push(createRequire(stringifyRequest(this, appCssPath)));
+        // Adds css file as dependency of the loader result in order to make them watchable.
+        this.addDependency(appCssPath);
+      }
+      if (existsSync(cssPath)) {
+        requireCssList.push(createRequire(stringifyRequest(this, cssPath)));
+        this.addDependency(cssPath);
+      }
 
-  // Make css-loader processed object to string.
-  const css = requireCssList.map((str) => str + '.toString()').join(' + ');
-  const style = css ? `_c('style', null, ${css})` : null;
-  if (isEntryTemplate) {
-    /**
-     * NOTE: Should config css-loader and postcss-loader in webpack.config.js
-     * Wrap page for "page" css selector.
-     * Mark data-userview-root for site build usage.
-     */
-    render = `_c('page', { 'data-userview-root': 'true' }, ${style}, ${renderFn})`;
-  } else {
-    // Prepend style tag to template
-    render = style ? `[${style}, ${renderFn}]` : renderFn;
-  }
+      // Make css-loader processed object to string.
+      const css = requireCssList.map((str) => str + '.toString()').join(' + ');
+      const style = css ? `_c('style', null, ${css})` : null;
+      if (isEntryTemplate) {
+        /**
+         * NOTE: Should config css-loader and postcss-loader in webpack.config.js
+         * Wrap page for "page" css selector.
+         * Mark data-userview-root for site build usage.
+         */
+        render = `_c('page', { 'data-userview-root': 'true' }, ${style}, ${renderFn})`;
+      } else {
+        // Prepend style tag to template
+        render = style ? `[${style}, ${renderFn}]` : renderFn;
+      }
 
-  let registerPageComponent = '';
-  if (dependencyComponents) {
-    for (let componentName in dependencyComponents) {
-      if (dependencyComponents.hasOwnProperty(componentName)) {
-        const depPath = dependencyComponents[componentName];
-        if (PLUGIN_REG.test(depPath)) {
-          const pluginComponentPath = depPath.replace(PLUGIN_REG, '');
-          registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${PluginLoaderPath}?type=component&path=${encodeURIComponent(pluginComponentPath)}!${resourcePath}`)) + ';';
-        } else {
-          registerPageComponent += `__components_ref__['${componentName}'] = ` + createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${depPath}.js`)) + '(__render__);';
+      let registerPageComponent = '';
+      if (dependencyComponents) {
+        for (let componentName in dependencyComponents) {
+          const isSelf = dependencyComponents[componentName] === '__SELF__';
+          const depPath = dependencyComponents[componentName];
+
+          if (PLUGIN_REG.test(depPath)) {
+            const pluginComponentPath = depPath.replace(PLUGIN_REG, '');
+            registerPageComponent += `__components_ref__['${componentName}'] = `
+              + createRequire(stringifyRequest(this, `${PluginLoaderPath}?type=component&path=${encodeURIComponent(pluginComponentPath)}!${resourcePath}`))
+              + ';';
+          } else {
+            const loadComponent = createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`));
+            const loadComponentsHub = 'require(' + stringifyRequest(this, runtimeHelpers.componentsHub) + ')';
+            if (isSelf) {
+              /**
+               * Delay getting component,
+               * ensure component is registered.
+               */
+              registerPageComponent += `
+                Object.defineProperty(__components_ref__, '${componentName}', {
+                  get: function() {
+                    return (${loadComponentsHub}).getComponent('${componentBasePath}');
+                  }
+                });
+              `;
+            } else {
+              registerPageComponent += `__components_ref__['${componentName}'] = ${loadComponent}(__render__);`;
+            }
+          }
         }
       }
     }
-  }
 
   const requireRenderHelpers = createRequire(stringifyRequest(this, runtimeHelpers.renderHelpers));
   const renderFnScopeVariables = withScope(renderFn, prerveredVars, 'data'); // => var state = data.state;

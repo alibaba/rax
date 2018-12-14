@@ -23,6 +23,14 @@ class Slider extends Component {
     this.refs.content.switchTo(index, options, callback);
   }
 
+  stopAutoPlay() {
+    this.refs.content.stopAutoPlay();
+  }
+
+  autoPlay() {
+    this.refs.content.autoPlay();
+  }
+
   render() {
     let {style = {}, useListView} = this.props;
 

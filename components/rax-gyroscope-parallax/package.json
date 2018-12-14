@@ -22,7 +22,7 @@
   "dependencies": {
     "rax-view": "0.x.x",
     "universal-env": "0.x.x",
-    "weex-bindingx": "^0.0.44"
+    "weex-bindingx": "^0.0.49"
   },
   "peerDependencies": {
     "rax": "0.x"

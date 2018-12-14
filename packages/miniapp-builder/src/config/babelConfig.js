@@ -1,5 +1,6 @@
 module.exports = {
   babelrc: false,
+  sourceMaps: true,
   presets: [
     [
       require.resolve('@babel/preset-env'),

@@ -58,10 +58,12 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
         pageName,
         pageUrl
       };
-      // merge page config json
+
+      // Merge page config json to `window` property.
       const independentPageConfigPath = resolve(projectDir, pageName + '.json');
       if (existsSync(independentPageConfigPath)) {
-        Object.assign(pageConfig, JSON.parse(readFileSync(independentPageConfigPath)));
+        const independentPageConfig = JSON.parse(readFileSync(independentPageConfigPath));
+        Object.assign(pageConfig, independentPageConfig);
       }
 
       pages.push(pageConfig);
