@@ -9,6 +9,7 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
   const mergeConfig = {
     entry: getEntry(projectDir),
     mode: process.env.NODE_ENV || 'development',
+    context: projectDir,
   };
 
   if (miniappType === 'sfc') {

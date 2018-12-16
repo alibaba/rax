@@ -139,6 +139,13 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
 
   result.tabBar = tabBar;
 
+  /**
+   * Add plugin definition to app config.
+   */
+  if (opts.plugins) {
+    result.plugins = opts.plugins;
+  }
+
   return result;
 };
 

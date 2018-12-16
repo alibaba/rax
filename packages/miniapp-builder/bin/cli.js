@@ -19,6 +19,7 @@ const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
   sfc: 'SFC Framework',
   mp: 'Mini Program',
+  'mp-plugin': 'Mini Program Plugin',
 };
 
 program
@@ -54,6 +55,7 @@ program
       rendererInspectHost,
       rendererInspectPort,
       rendererUrl,
+      miniappType,
     };
     const defaultFrameworkVersion = require('../src/config/frameworkVersion');
     const getFrameworkVersion = require('../src/config/getFrameworkVersion');
