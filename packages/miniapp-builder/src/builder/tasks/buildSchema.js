@@ -1,9 +1,10 @@
 const mkdirp = require('mkdirp');
 const { join, extname } = require('path');
-const { existsSync, readdirSync } = require('fs');
+const { existsSync, readdirSync, renameSync } = require('fs');
 const copy = require('../copy');
 
 const APP_CONFIG = 'app.config.json';
+const DATA_JSON = 'data.json';
 const SCHEMA_CONFIG = 'schema.json';
 const MOCK_DATA = 'mock-data.json';
 
@@ -37,18 +38,18 @@ module.exports = function(destDir, projectDir) {
     copyFolder(schemaSource, schemaDest, (filename) => extname(filename) === '.json');
 
     /**
-     * Copy schema/data.json -> .schema/schema.json
+     * Rename .schema/data.json -> .schema/schema.json
      */
-    copyIfExists(
-      join(schemaSource, 'data.json'),
-      join(schemaDest, SCHEMA_CONFIG),
-    );
+    const schemaDestData = join(schemaDest, DATA_JSON);
+    if (existsSync(schemaDestData)) {
+      renameSync(schemaDestData, join(schemaDest, SCHEMA_CONFIG));
+    }
 
     /**
      * Copy mock/data.json -> .schema/mock-data.json
      */
     copyIfExists(
-      join(mockSource, 'data.json'),
+      join(mockSource, DATA_JSON),
       join(schemaDest, MOCK_DATA),
     );
 
