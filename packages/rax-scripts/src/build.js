@@ -29,7 +29,7 @@ function buildCompiler(config) {
 }
 
 const webpackConfigMap = {
-  webapp: './config/webpack.config.prod',
+  webapp: './config/webapp/webpack.config.prod',
   miniapp: './config/miniapp/webpack.config.prod',
 };
 

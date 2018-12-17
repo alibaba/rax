@@ -1,4 +1,5 @@
 module.exports = function(source) {
+
   const manifestJson = typeof source === 'string' ? JSON.parse(source) : source;
   const pages = manifestJson.pages;
   // Resolve to miniapp-web-renderer local absolute path
@@ -9,14 +10,14 @@ module.exports = function(source) {
   }
 
   return `
-import { render } from '${webRendererAbsolutePath}';
+const miniAppwebRenderer = require('${webRendererAbsolutePath}');
 
-function _requireReturnDefault(obj) { return obj && obj.__esModule ? obj.default : obj; }
+function _r(obj) { return obj && obj.__esModule ? obj.default : obj; }
 
 const pagesMap = {
   ${
   Object.keys(pages).map((page) => {
-    return `  "${page}" : _requireReturnDefault(require('./${pages[page]}'))`;
+    return `'${page}' : _r(require('./${pages[page]}'))`;
   }).join(',\n')
 }
 };
@@ -27,6 +28,6 @@ const manifestData = ${
     .replace(/\u2029/g, '\\u2029')
 };
 
-render(manifestData, pagesMap);
+_r(miniAppwebRenderer).render(manifestData, pagesMap);
 `;
 };
