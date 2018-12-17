@@ -18,6 +18,7 @@ const nodePaths = (process.env.NODE_PATH || '')
 
 const paths = {
   appBuild: resolveApp('build'),
+  appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   appIndexJs: resolveApp('src/index.js'),

@@ -17,15 +17,14 @@ const MOCK_DATA = 'mock-data.json';
 module.exports = function(destDir, projectDir) {
   const schemaSource = join(projectDir, 'schema');
   return (done) => {
-    if (!existsSync(schemaSource)) {
-      done();
-      return;
-    }
-
     const schemaDest = join(destDir, '.schema');
     mkdirp.sync(schemaDest);
 
-    copyIfExists(
+    /**
+     * Must ensure .schema/app.config.json exists,
+     * for server to read.
+     */
+    copy(
       join(destDir, APP_CONFIG),
       join(schemaDest, APP_CONFIG)
     );
