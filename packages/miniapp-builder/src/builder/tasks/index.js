@@ -13,6 +13,9 @@ exports.registerGulpTasks = function({ appConfig, projectDir, destDir }) {
   // Entry of app build task
   gulp.task('build-app', require('./buildApp')(projectDir, destDir));
 
+  // Entry of plugin build task
+  gulp.task('build-plugin', require('./buildPlugin')(projectDir, destDir));
+
   // Entry of config build task
   gulp.task('build-config', require('./buildConfig')(destDir, appConfig));
 
@@ -30,6 +33,9 @@ exports.registerGulpTasks = function({ appConfig, projectDir, destDir }) {
 
   // Bundle zip file
   gulp.task('bundle', require('./bundle')(destDir));
+
+  // Bundle plugin zip file
+  gulp.task('bundle-plugin', require('./bundlePlugin')(destDir));
 
   // collect static assets
   gulp.task('collect-assets', require('./collectAssets')(destDir, projectDir));

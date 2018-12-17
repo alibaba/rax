@@ -29,7 +29,8 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
   } else if (existsSync(appDotJSONFilePath)) {
     Object.assign(appJSON, readJSONSync(appDotJSONFilePath));
   } else {
-    throw new Error('不存在以下文件: app.json | manifest.json');
+    console.error('Cannot find one of following files: app.json | manifest.json');
+    return null;
   }
 
   const nativeRendererUrl = getNativeRendererUrl(

@@ -19,7 +19,7 @@ const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
   sfc: 'SFC Framework',
   mp: 'Mini Program',
-  'mp-plugin': 'Mini Program Plugin',
+  plugin: 'Mini Program Plugin',
 };
 
 program
@@ -68,6 +68,7 @@ program
       })
       .catch((err) => {
         console.warn('Update FrameworkVersion Failed, fallback to default verison:', defaultFrameworkVersion);
+        console.log(err);
         executeCommand(cmd, options);
       });
   });

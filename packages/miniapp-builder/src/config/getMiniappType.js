@@ -20,7 +20,7 @@ module.exports = function getMiniappType(projectDir) {
   }
 
   if (existsSync(join(projectDir, 'plugin.json'))) {
-    return 'mp-plugin'; // 小程序 mini program 插件
+    return 'plugin'; // 小程序 mini program 插件
   }
 
   return null;

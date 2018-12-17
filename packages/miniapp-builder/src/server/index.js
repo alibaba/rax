@@ -8,6 +8,7 @@ const webpack = require('webpack');
 const createDevMiddleware = require('./middlewares/dev');
 const registerWatcher = require('./service/registerWatcher');
 const registerRouter = require('./router');
+const { getAppConfig } = require('../config/getAppConfig');
 const getWebpackConfig = require('../config/getWebpackConfig');
 const getPluginWebpackConfig = require('../config/getPluginWebpackConfig');
 
@@ -21,10 +22,12 @@ module.exports = function startDevServer(opts) {
 
   let pluginWebpackConfig;
   let pluginDir;
-  if (miniappType === 'mp-plugin') {
+  if (miniappType === 'plugin') {
     pluginDir = projectDir;
     projectDir = resolve(projectDir, 'miniprogram');
-    pluginWebpackConfig = getPluginWebpackConfig(projectDir, pluginDir);
+    pluginWebpackConfig = getPluginWebpackConfig(pluginDir, {
+      pluginName: getDevPluginName(getAppConfig(projectDir).plugins),
+    });
   }
 
   const webpackConfig = getWebpackConfig(projectDir, true);
@@ -57,7 +60,7 @@ module.exports = function startDevServer(opts) {
     return next();
   });
   app.use(devMiddleware);
-  if (miniappType === 'mp-plugin') {
+  if (miniappType === 'plugin') {
     const pluginDevServer = createDevMiddleware({
       compiler: webpack(pluginWebpackConfig),
       dev: {
@@ -91,3 +94,15 @@ module.exports = function startDevServer(opts) {
     console.log(`Local bundle Scan QR of http://${ip}:${port}/app/bundle.zip?_wml_debug=true`);
   });
 };
+
+/**
+ * Get dev mode plugin name.
+ */
+function getDevPluginName(plugins = {}) {
+  for (let key in plugins) {
+    if (plugins.hasOwnProperty(key) && plugins[key].version === 'dev') {
+      return key;
+    }
+  }
+  return 'unknown';
+}

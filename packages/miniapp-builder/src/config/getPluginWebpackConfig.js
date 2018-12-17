@@ -12,11 +12,10 @@ const babelLoaderConfig = {
   options: babelConfig,
 };
 
-module.exports = function(projectDir, pluginDir) {
-  const appConfig = getAppConfig(projectDir);
+module.exports = function(pluginDir, options) {
+  const { pluginName } = options;
   const pluginConfigPath = resolve(pluginDir, 'plugin.json');
   const pluginConfig = require(pluginConfigPath);
-  const pluginName = getDevPluginName(appConfig.plugins);
   const pluginWebpackConfig = {
     entry: {
       index: pluginLoader + '?pluginName=' + pluginName + '&pluginConfig=' + encodeURIComponent(pluginConfigPath) + '!' + pluginConfig.main || 'index.js',
@@ -74,15 +73,3 @@ module.exports = function(projectDir, pluginDir) {
     pluginWebpackConfig
   );
 };
-
-/**
- * Get dev mode plugin name.
- */
-function getDevPluginName(plugins = {}) {
-  for (let key in plugins) {
-    if (plugins.hasOwnProperty(key) && plugins[key].version === 'dev') {
-      return key;
-    }
-  }
-  return 'unknown';
-}
