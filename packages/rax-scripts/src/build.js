@@ -14,6 +14,7 @@ const colors = require('chalk');
 const rimraf = require('rimraf');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
+var componentCompiler = require('./utils/componentCompiler');
 const pathConfig = require('./config/path.config');
 
 function buildCompiler(config) {
@@ -31,14 +32,28 @@ function buildCompiler(config) {
 const webpackConfigMap = {
   webapp: './config/webpack.config.prod',
   miniapp: './config/miniapp/webpack.config.prod',
+  component: './config/webpack.config.dist.prod',
 };
 
 module.exports = function build(type = 'webapp') {
-  rimraf(pathConfig.appBuild, (err) => {
-    if (err) {
-      throw err;
-    }
-    const config = require(webpackConfigMap[type]);
-    buildCompiler(config);
-  });
+  const appPackage = require(pathConfig.appPackageJson);
+
+  if (appPackage.keywords.indexOf('rax-component')) { // build component
+    var webpackConfigComponentDistProd = require(webpackConfigMap.component);
+    componentCompiler(appPackage.name);
+    rimraf(pathConfig.appDist, function(err) {
+      if (err) {
+        throw err;
+      }
+      buildCompiler(webpackConfigComponentDistProd);
+    });
+  } else {
+    rimraf(pathConfig.appBuild, (err) => {
+      if (err) {
+        throw err;
+      }
+      const config = require(webpackConfigMap[type]);
+      buildCompiler(config);
+    });
+  }
 };
