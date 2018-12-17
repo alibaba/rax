@@ -31,11 +31,6 @@ export default class Lottie extends PolymerElement {
         value: false,
         observer: '_observerAutoReverse'
       },
-      // 0 - 100
-      frame: {
-        type: Number,
-        value: 0
-      },
       speed: {
         type: Number,
         value: 1,
