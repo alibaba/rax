@@ -66,6 +66,7 @@
 
 <body>
   <a-page>
+
     <div class="card">
       <h4 class="title">a-text</h4>
       <div class="demo">
@@ -1026,6 +1027,20 @@
       </div>
     </div>
 
+    <div class="card">
+      <h4 class="title">a-lottie</h4>
+      <a-lottie
+        id="lottieDemo"
+        ref="lottie"
+        repeatCount="{{ 5 }}"
+        autoReverse="{{ false }}"
+        autoplay="{{ true }}"
+        speed="{{ speed }}"
+        path="https://labs.nearpod.com/bodymovin/demo/ik/data.json"
+        onAnimationRepeat="onLoopComplete"
+        onAnimationEnd="onComplete"
+      ></a-lottie>
+    </div>
   </a-page>
 </body>
 
