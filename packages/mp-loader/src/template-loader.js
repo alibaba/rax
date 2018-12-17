@@ -70,12 +70,12 @@ module.exports = function templateLoader(content) {
            * ensure component is registered.
            */
           registerPageComponent += `
-                Object.defineProperty(__components_ref__, '${componentName}', {
-                  get: function() {
-                    return (${loadComponentsHub}).getComponent('${componentBasePath}');
-                  }
-                });
-              `;
+            Object.defineProperty(__components_ref__, '${componentName}', {
+              get: function() {
+                return (${loadComponentsHub}).getComponent('${componentBasePath}');
+              }
+            });
+          `;
         } else {
           registerPageComponent += `__components_ref__['${componentName}'] = ${loadComponent}(__render__);`;
         }
@@ -122,7 +122,8 @@ module.exports = function templateLoader(content) {
     return ${tplAlias ? subTemplateRender : 'render'};
   }
   
-  ${webviewHelpers}`;
+  ${webviewHelpers}
+  `;
 
   return source;
 };

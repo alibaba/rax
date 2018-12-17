@@ -77,6 +77,7 @@ program.parse(process.argv);
 function executeCommand(cmd, options) {
   switch (cmd) {
     case 'start': {
+      // Do this before start dev server, so that code reading it knows the right env.
       process.env.NODE_ENV = 'development';
       require('../src/server')(options);
       break;
