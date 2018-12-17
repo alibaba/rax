@@ -1,6 +1,6 @@
 const mkdirp = require('mkdirp');
-const { join } = require('path');
-const { existsSync } = require('fs');
+const { join, extname } = require('path');
+const { existsSync, readdirSync } = require('fs');
 const copy = require('../copy');
 
 const APP_CONFIG = 'app.config.json';
@@ -11,11 +11,12 @@ const MOCK_DATA = 'mock-data.json';
  * Build Schema Files for template miniapp
  *   |---- .schema
  *   |     |----app.config.json  // same to miniapp config
- *   |     |----mock-data.json  // template mock data
- *   |     |----schema.json     // template schema
+ *   |     |----mock-data.json  // template mock data, from mock/data.json
+ *   |     |----schema.json     // template schema, from schema/data.json
  */
 module.exports = function(destDir, projectDir) {
   const schemaSource = join(projectDir, 'schema');
+  const mockSource = join(projectDir, 'mock');
   return (done) => {
     const schemaDest = join(destDir, '.schema');
     mkdirp.sync(schemaDest);
@@ -28,14 +29,29 @@ module.exports = function(destDir, projectDir) {
       join(destDir, APP_CONFIG),
       join(schemaDest, APP_CONFIG)
     );
+
+    /**
+     * Copy folder: schema => .schema
+     * Only copy json file.
+     */
+    copyFolder(schemaSource, schemaDest, (filename) => extname(filename) === '.json');
+
+    /**
+     * Copy schema/data.json -> .schema/schema.json
+     */
     copyIfExists(
-      join(schemaSource, SCHEMA_CONFIG),
+      join(schemaSource, 'data.json'),
       join(schemaDest, SCHEMA_CONFIG),
     );
+
+    /**
+     * Copy mock/data.json -> .schema/schema.json
+     */
     copyIfExists(
-      join(schemaSource, MOCK_DATA),
+      join(mockSource, 'data.json'),
       join(schemaDest, MOCK_DATA),
     );
+
     done();
   };
 };
@@ -43,5 +59,18 @@ module.exports = function(destDir, projectDir) {
 function copyIfExists(from, to) {
   if (existsSync(from)) {
     copy(from, to);
+  }
+}
+
+function copyFolder(fromFolder, toFolder, filter = () => true) {
+  const files = readdirSync(fromFolder);
+  if (Array.isArray(files)) {
+    for (let i = 0, l = files.length; i < l; i ++) {
+      if (filter(files[i])) {
+        const from = join(fromFolder, files[i]);
+        const to = join(toFolder, files[i]);
+        copy(from, to);
+      }
+    }
   }
 }
