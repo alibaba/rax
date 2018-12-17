@@ -263,9 +263,9 @@ export default class NativeMap extends PolymerElement {
       circles: this.circles,
       controls: this.controls,
       polygon: this.polygon,
-      includePoints: this.includePoints,
-      showLocation: this.showLocation,
-      showMapText: this.showMapText,
+      'include-points': this.includePoints,
+      'show-location': this.showLocation,
+      'show-map-text': this.showMapText,
     });
   }
 
