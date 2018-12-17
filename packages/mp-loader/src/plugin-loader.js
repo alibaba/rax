@@ -54,7 +54,7 @@ module.exports = function APILoader(content) {
 };
 
 /**
- * Read JSON without
+ * Read JSON without throwing error.
  * @param {String} path to a JSON file.
  * @returns {Object} JavaScript PlainObject or null.
  */
