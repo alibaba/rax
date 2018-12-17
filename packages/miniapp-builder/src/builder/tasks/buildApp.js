@@ -4,11 +4,15 @@ const merge = require('webpack-merge');
 const getWebpackConfig = require('../../config/getWebpackConfig');
 
 module.exports = function(projectDir, destDir) {
-  const baseConfig = getWebpackConfig(projectDir);
-  const config = merge(baseConfig, {
-    mode: 'production',
-    devtool: false,
-    output: { path: destDir }
+  const baseConfigs = getWebpackConfig(projectDir);
+  const config = [];
+
+  baseConfigs.map((baseConfig) => {
+    config.push(merge(baseConfig, {
+      mode: 'production',
+      devtool: false,
+      output: { path: destDir }
+    }));
   });
 
   return done => {

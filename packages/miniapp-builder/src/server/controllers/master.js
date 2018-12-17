@@ -1,37 +1,49 @@
 const path = require('path');
 const address = require('address');
 const ejs = require('ejs');
+const axios = require('axios');
+const { existsSync } = require('fs');
+
 const { getAppConfig } = require('../../config/getAppConfig');
-const { getH5Master, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
+const { getMaster, getMasterView, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
-const localIP = address.ip();
-const masterTemplateFilePath = path.resolve(__dirname, '../views/master.ejs');
+let cachedMasterView = null;
 
-module.exports = function masterRoute(ctx, next) {
+module.exports = async function masterRoute(ctx, next) {
   const appConfig = getAppConfig(ctx.projectDir);
-  let h5Master = getH5Master(appConfig.frameworkVersion || FRAMEWORK_VERSION);
+  const frameworkVersion = appConfig.frameworkVersion || FRAMEWORK_VERSION;
+  const type = ctx.request.url === '/app/index.html' ? 'web' : 'ide';
+  const isDebug = ctx.isDebug;
 
-  if (ctx.isDebug) {
-    h5Master = `http://${localIP}:8003/h5/master.js`;
+  const masterPath = getMaster(frameworkVersion, type, isDebug);
+  const masterViewPath = getMasterView(frameworkVersion, type, isDebug);
+
+  const hasInjectApi = existsSync(path.resolve(ctx.projectDir, 'public/index.js'));
+  const injectApiScript = `<script src="http://${address.ip()}:${ctx.port}/build/api.js"></script>`;
+
+  if (!cachedMasterView) {
+    try {
+      const response = await axios(masterViewPath);
+      cachedMasterView = response.data;
+    } catch (err) {
+      console.error(err);
+      ctx.body = err;
+    }
   }
 
   appConfig.homepage =
     ctx.query.wml_path || ctx.query.homepage || appConfig.homepage;
   appConfig.h5Assets = `http://${address.ip()}:${ctx.port}/build/app.web.js`;
 
-  ejs.renderFile(
-    masterTemplateFilePath,
-    {
+  try {
+    const content = ejs.render(cachedMasterView, {
       appConfig: JSON.stringify(appConfig, null, 2),
-      h5Master,
-    },
-    {},
-    (err, str) => {
-      if (err) {
-        ctx.body = err;
-      } else {
-        ctx.body = str;
-      }
-    },
-  );
+      h5Master: masterPath,
+      injectApi: hasInjectApi ? injectApiScript : ''
+    });
+
+    ctx.body = content;
+  } catch (err) {
+    ctx.body = err;
+  }
 };

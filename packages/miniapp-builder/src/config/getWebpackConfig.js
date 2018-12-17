@@ -1,7 +1,10 @@
+const { existsSync } = require('fs');
+const { resolve} = require('path');
 const merge = require('webpack-merge');
 const webpackBaseConfig = require('./webpackBaseConfig');
 const getEntry = require('./getEntry');
 const getMiniappType = require('../config/getMiniappType');
+const webpackApiConfig = require('./getInjectAPIConfig');
 
 // devtool: 'eval-source-map',
 module.exports = function getWebpackConfig(projectDir, isDevServer) {
@@ -11,23 +14,35 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
     mode: process.env.NODE_ENV || 'development',
   };
 
+  const config = [];
+
   if (miniappType === 'sfc') {
-    return merge(
+    config.push(merge(
       webpackBaseConfig,
       require('./getSFCConfig')(projectDir, {
         isDevServer,
       }),
       mergeConfig,
-    );
+    ));
   } else if (miniappType === 'mp') {
-    return merge(
+    config.push(merge(
       webpackBaseConfig,
       require('./getMiniProgramConfig')(projectDir, {
         isDevServer,
       }),
       mergeConfig,
-    );
+    ));
   } else {
     throw new Error('Cannot recognize MiniApp Type!');
   }
+
+  const injectApiPath = resolve(projectDir, 'public/index.js');
+  if (existsSync(injectApiPath)) {
+    config.push(merge(
+      webpackBaseConfig,
+      webpackApiConfig(projectDir)
+    ));
+  }
+
+  return config;
 };

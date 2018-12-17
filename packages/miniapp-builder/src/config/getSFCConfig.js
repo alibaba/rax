@@ -23,6 +23,8 @@ module.exports = (projectDir, opts) => {
           loader: SFCLoader,
           options: {
             cssInJS: true,
+            builtInRax: true,
+            module: 'commonjs',
           },
         },
         {

@@ -43,6 +43,7 @@ module.exports = function startDevServer(opts) {
     ctx.rendererInspectHost = rendererInspectHost;
     ctx.rendererInspectPort = rendererInspectPort;
     ctx.rendererUrl = rendererUrl;
+
     return next();
   });
   app.use(devMiddleware);

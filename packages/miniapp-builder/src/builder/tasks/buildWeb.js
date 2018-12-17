@@ -1,9 +1,9 @@
-const { readFileSync, writeFileSync } = require('fs');
+const { readFileSync, writeFileSync, existsSync } = require('fs');
 const { join } = require('path');
 const ejs = require('ejs');
 const axios = require('axios');
 const {
-  getH5MasterView,
+  getMasterView,
   FRAMEWORK_VERSION
 } = require('../../config/getFrameworkCDNUrl');
 
@@ -19,7 +19,7 @@ module.exports = function buildWeb(destDir, appConfig) {
     frameworkVersion = FRAMEWORK_VERSION;
   }
 
-  const frameworkMasterURL = getH5MasterView(frameworkVersion);
+  const frameworkMasterURL = getMasterView(frameworkVersion, 'web', true);
 
   return done => {
     axios(frameworkMasterURL).then(response => {
@@ -33,9 +33,14 @@ module.exports = function buildWeb(destDir, appConfig) {
       const webDistFilePath = join(destDir, 'app.web.js');
       writeFileSync(webDistFilePath, webDistFileContent, 'utf-8');
 
+      const hasInjectApi = existsSync(join(destDir, 'api.js'));
+      const InjectApiScript = '<script src="/build/api.js"></script>';
+
       const htmlFileContent = ejs.render(response.data, {
-        appConfig: JSON.stringify(appConfig)
+        appConfig: JSON.stringify(appConfig),
+        injectApi: hasInjectApi ? InjectApiScript : ''
       });
+
       const htmlFilePath = join(destDir, 'index.html');
       writeFileSync(htmlFilePath, htmlFileContent, 'utf-8');
       done();
