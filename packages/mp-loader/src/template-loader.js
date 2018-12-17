@@ -7,7 +7,7 @@ const runtimeHelpers = require('./runtimeHelpers');
 const { withScope } = require('sfc-compiler');
 
 const ComponentLoaderPath = require.resolve('./component-loader');
-const PluginLoaderPath = require.resolve('./plugin-loader');
+const getPluginLoaderPath = require.resolve('./get-plugin-loader');
 const PLUGIN_REG = /^plugin:\/\//;
 
 module.exports = function templateLoader(content) {
@@ -59,8 +59,8 @@ module.exports = function templateLoader(content) {
       if (PLUGIN_REG.test(depPath)) {
         const pluginComponentPath = depPath.replace(PLUGIN_REG, '');
         registerPageComponent += `__components_ref__['${componentName}'] = `
-          + createRequire(stringifyRequest(this, `${PluginLoaderPath}?type=component&path=${encodeURIComponent(pluginComponentPath)}!${resourcePath}`))
-          + ';';
+          + createRequire(stringifyRequest(this, `${getPluginLoaderPath}?type=component&path=${encodeURIComponent(pluginComponentPath)}!${resourcePath}`))
+          + '(__render__);';
       } else {
         const loadComponent = createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`));
         const loadComponentsHub = 'require(' + stringifyRequest(this, runtimeHelpers.componentsHub) + ')';
@@ -107,12 +107,12 @@ module.exports = function templateLoader(content) {
     ${registerPageComponent}
   
     ${dependencies.map((subTemplate) => {
-      if (!existsSync(subTemplate)) {
-        return '';
-      }
-      const subTemplatePath = stringifyRequest(this, `${__filename}!${subTemplate}`);
-      return `require(${subTemplatePath})(__render__, __templates_ref__);`;
-    }).join(';\n')}
+    if (!existsSync(subTemplate)) {
+      return '';
+    }
+    const subTemplatePath = stringifyRequest(this, `${__filename}!${subTemplate}`);
+    return `require(${subTemplatePath})(__render__, __templates_ref__);`;
+  }).join(';\n')}
   
     function render(data) {
       ${renderFnScopeVariables}
@@ -125,5 +125,5 @@ module.exports = function templateLoader(content) {
   ${webviewHelpers}`;
 
   return source;
-}
+};
 

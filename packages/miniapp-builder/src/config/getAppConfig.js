@@ -19,7 +19,7 @@ const DEFAULT_CONFIG = {
 /**
  * Get configuration for app.
  */
-const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, opts) {
+const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, opts = {}) {
   const manifestFilePath = join(projectDir, 'manifest.json');
   const appDotJSONFilePath = join(projectDir, 'app.json');
   const appJSON = Object.assign({}, DEFAULT_CONFIG);
@@ -142,8 +142,8 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
   /**
    * Add plugin definition to app config.
    */
-  if (opts.plugins) {
-    result.plugins = opts.plugins;
+  if (opts.pluginAssets) {
+    result.pluginAssets = opts.pluginAssets;
   }
 
   return result;

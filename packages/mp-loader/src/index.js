@@ -18,7 +18,7 @@ module.exports = function(content) {
   const jsPath = this.resourcePath;
   let cssPath = jsPath.replace(JS_EXT, CSS_EXT);
   const relativePath = relative(this.rootContext, jsPath);
-  
+
   if (!existsSync(cssPath)) {
     cssPath = null;
   }

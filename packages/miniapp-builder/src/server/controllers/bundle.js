@@ -42,6 +42,8 @@ module.exports = function bundleCtrl(ctx, next) {
 
   function zipFiles(pattern) {
     if (!pattern) return;
+    if (Array.isArray(pattern)) return pattern.map(zipFiles);
+
     let fileList = glob.sync(pattern, globOpts);
     if (!Array.isArray(fileList)) return;
     for (let i = 0, len = fileList.length; i < len; i++) {

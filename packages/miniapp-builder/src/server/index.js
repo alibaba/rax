@@ -19,10 +19,12 @@ const app = new Koa();
 module.exports = function startDevServer(opts) {
   let { projectDir, port, rendererInspect, rendererInspectHost, rendererInspectPort, rendererUrl, miniappType } = opts;
 
-  let pluginWebpackConfig = null;
+  let pluginWebpackConfig;
+  let pluginDir;
   if (miniappType === 'mp-plugin') {
-    pluginWebpackConfig = getPluginWebpackConfig(projectDir);
-    projectDir = resolve(projectDir, 'demo');
+    pluginDir = projectDir;
+    projectDir = resolve(projectDir, 'miniprogram');
+    pluginWebpackConfig = getPluginWebpackConfig(projectDir, pluginDir);
   }
 
   const webpackConfig = getWebpackConfig(projectDir, true);

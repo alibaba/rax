@@ -77,10 +77,12 @@ program.parse(process.argv);
 function executeCommand(cmd, options) {
   switch (cmd) {
     case 'start': {
+      process.env.NODE_ENV = 'development';
       require('../src/server')(options);
       break;
     }
     case 'build': {
+      process.env.NODE_ENV = 'production';
       require('../src/builder')(options);
       break;
     }
