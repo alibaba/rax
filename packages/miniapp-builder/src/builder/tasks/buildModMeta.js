@@ -20,9 +20,11 @@ module.exports = function(destDir, projectDir) {
         JSON.parse(readFileSync(join(projectDir, 'abc.json'), 'utf8'))
           .projectinfo.ext
       );
+      appJSON.appId; // Make sure appJSON is not null;
     } catch (err) {
       console.log('[Warn] Skipping Build Mod.');
       done();
+      return;
     }
 
     const pageMeta = {
