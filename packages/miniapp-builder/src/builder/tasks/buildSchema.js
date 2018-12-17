@@ -45,7 +45,7 @@ module.exports = function(destDir, projectDir) {
     );
 
     /**
-     * Copy mock/data.json -> .schema/schema.json
+     * Copy mock/data.json -> .schema/mock-data.json
      */
     copyIfExists(
       join(mockSource, 'data.json'),
