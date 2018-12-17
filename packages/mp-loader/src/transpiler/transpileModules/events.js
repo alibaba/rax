@@ -21,7 +21,11 @@ function transformNode(node) {
   for (let i = 0, l = attrsList.length; i < l; i++) {
     let { name, value } = attrsList[i];
     if (EVENT_REG.test(name)) {
-      const rawEvtName = name.slice(2).toLowerCase();
+      let rawEvtName = name.slice(2);
+      if (rawEvtName.length > 0) {
+        rawEvtName = rawEvtName[0].toLowerCase() + rawEvtName.slice(1);
+      }
+
       const evtName = EVENT_MAPPING[rawEvtName] || rawEvtName;
       toSplice.push(i);
 

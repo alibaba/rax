@@ -3,7 +3,7 @@
   "version": "0.7.3",
   "description": "Worker driver for Rax",
   "license": "BSD-3-Clause",
-  "main": "dist/driver.worker.min.js",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"

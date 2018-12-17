@@ -107,4 +107,12 @@ export default class MutationHandler {
       context[method].apply(context, args);
     }
   }
+
+  lottieRenderingContext({ target, method, args }) {
+    let lottie = sharedNodeMap.get(target);
+
+    if (method) {
+      lottie[method].apply(lottie, args);
+    }
+  }
 }

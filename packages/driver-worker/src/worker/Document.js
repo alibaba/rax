@@ -3,11 +3,13 @@ import MutationObserver from './MutationObserver';
 import Node from './Node';
 import Element, { createElement, createElementNS, registerElement } from './Element';
 import CanvasElement from './CanvasElement';
+import LottieElement from './LottieElement';
 import Text from './Text';
 import Event from './Event';
 import Comment from './Comment';
 
 registerElement('canvas', CanvasElement);
+registerElement('lottie', LottieElement);
 
 export function createDocument() {
   const document = new Document();
@@ -19,7 +21,7 @@ export function createDocument() {
 
 export default class Document extends Element {
   constructor() {
-    super(DOCUMENT_NODE, '#document', null);
+    super(DOCUMENT_NODE, '#DOCUMENT', null);
 
     this.defaultView = {
       document: this,

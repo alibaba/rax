@@ -1,13 +1,9 @@
 const { getAndRemoveAttr } = require('../helpers');
 const expressionHelpers = require('../expression');
 
-const IS_BIND_REG = /\W*\{\{/;
-
 /**
- * transpile class
- * @param {*} attr
- * @param {*} itemKey
- * @param {*} indexKey
+ * Transpile style attribute for mp.
+ * @param {*} node
  */
 function transformNode(node) {
   const { attrsMap } = node;
@@ -25,6 +21,18 @@ function transformNode(node) {
   }
 }
 
+function genData(el) {
+  if (el.staticStyle || el.styleBinding) {
+    const styleBinding = el.styleBinding ? el.styleBinding : 'null';
+    const staticStyle = el.staticStyle ? el.staticStyle : 'null';
+    return `style:_cx(${styleBinding},${staticStyle}),`;
+  } else {
+    return '';
+  }
+}
+
 module.exports = {
+  staticKeys: ['style'],
   transformNode,
+  genData,
 };

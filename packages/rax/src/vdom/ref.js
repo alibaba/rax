@@ -26,6 +26,8 @@ export default {
     let instance = component.getPublicInstance();
     if (typeof ref === 'function') {
       ref(instance);
+    } else if (typeof ref === 'object') {
+      ref.current = instance;
     } else {
       ownerComponent._instance.refs[ref] = instance;
     }
@@ -37,7 +39,10 @@ export default {
     } else {
       // Must match component and ref could detach the ref on owner when A's before ref is B's current ref
       let instance = component.getPublicInstance();
-      if (ownerComponent._instance.refs[ref] === instance) {
+
+      if (typeof ref === 'object' && ref.current === instance) {
+        ref.current = null;
+      } else if (ownerComponent._instance.refs[ref] === instance) {
         delete ownerComponent._instance.refs[ref];
       }
     }

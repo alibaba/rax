@@ -14,13 +14,12 @@ module.exports = function(api) {
       '@babel/plugin-proposal-export-default-from',
       ['@babel/plugin-proposal-class-properties', { 'loose': false }],
       'babel-plugin-transform-jsx-stylesheet',
-      'babel-plugin-add-module-exports',
       ['@babel/plugin-proposal-decorators', { 'legacy': true }],
     ],
     'ignore': [
       'src/generator/templates',
       '__mockc__',
       'dist'
-    ]
+    ],
   };
 };

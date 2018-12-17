@@ -26,7 +26,7 @@
     "rax-view": "^0.6.5",
     "universal-env": "^0.6.5",
     "universal-transition": "^0.6.5",
-    "weex-bindingx": "^0.0.23"
+    "weex-bindingx": "^0.0.49"
   },
   "peerDependencies": {
     "rax": "0.x"

@@ -28,6 +28,7 @@ const customTags = {
   switch: true,
   'web-view': true,
   page: true,
+  animation: true,
   lottie: true
 };
 

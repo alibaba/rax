@@ -18,9 +18,9 @@ export default class Lottie extends PolymerElement {
       name: {
         type: String
       },
-      loop: {
-        type: Boolean,
-        value: false
+      repeatCount: {
+        type: Number,
+        value: 0
       },
       autoplay: {
         type: Boolean,
@@ -35,12 +35,6 @@ export default class Lottie extends PolymerElement {
       frame: {
         type: Number,
         value: 0
-      },
-      // 用来控制动画状态 play/stop/pause
-      status: {
-        type: String,
-        value: '',
-        observer: '_observerStatus'
       },
       speed: {
         type: Number,
@@ -57,11 +51,14 @@ export default class Lottie extends PolymerElement {
   ready() {
     super.ready();
     const date = new Date();
+    // 循环次数
+    this._count = 0;
+    this.direction = 1;
     // 生成 lottie name，每个实例都会有固定的 name
     this.name = this.name || 'lottieAnim' + date.getTime();
     const animationData = {
       animType: this.rendererType,
-      loop: this.loop,
+      loop: true,
       autoplay: this.autoplay,
       path: this.path,
       name: this.name,
@@ -70,7 +67,7 @@ export default class Lottie extends PolymerElement {
     this.animation = lottie.loadAnimation(animationData);
     this.totalFrame = this.animation.getDuration(true);
     if (this.autoReverse) {
-      lottie.setDirection(-1);
+      this.setDirection(-1);
     }
     if (this.quality !== 'high') {
       lottie.setQuality(this.quality);
@@ -82,37 +79,17 @@ export default class Lottie extends PolymerElement {
 
     this.animation.addEventListener('complete', this._handleComplete, true);
     this.animation.addEventListener('loopComplete', this._handleLoopComplete, true);
+    this.animation.addEventListener('data_ready', this._handleDataReady, true);
+    this.animation.addEventListener('data_failed', this._handleDataFailed, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
-    this.animation.addEventListener('complete', this._handleComplete);
-    this.animation.addEventListener('loopComplete', this._handleLoopComplete);
-  }
-
-  _observerStatus() {
-    switch (this.status) {
-      case 'play':
-        this.play();
-        break;
-      case 'goToAndPlay':
-        const startTotalFrame = this.animation.getDuration(true);
-        const startFrame = startTotalFrame * this.frame / 100;
-        this.animation.goToAndPlay(startFrame, true);
-        break;
-      case 'goToAndStop':
-        const stopTotalFrame = this.animation.getDuration(true);
-        const stopFrame = stopTotalFrame * this.frame / 100;
-        this.animation.goToAndStop(stopFrame, true);
-        break;
-      case 'pause':
-        this.pause();
-        break;
-      case 'stop':
-        this.stop();
-        break;
-    }
+    this.animation.removeEventListener('complete', this._handleComplete);
+    this.animation.removeEventListener('loopComplete', this._handleLoopComplete);
+    this.animation.removeEventListener('data_ready', this._handleDataReady);
+    this.animation.removeEventListener('data_failed', this._handleDataFailed);
   }
 
   _observerSpeed() {
@@ -125,14 +102,31 @@ export default class Lottie extends PolymerElement {
   }
 
   _handleComplete = (event) => {
-    this.fire('complete', event);
+    this.fire('animationend', event);
   }
 
   _handleLoopComplete = (event) => {
-    this.fire('loopcomplete', event);
+    this._count++;
+    if (this._count > this.repeatCount) {
+      this.stop();
+      this._handleComplete({
+        type: 'complete',
+        direction: this.direction
+      });
+    } else {
+      this.fire('animationrepeat', event);
+    }
   }
 
-  fire(name, data) {
+  _handleDataReady = () => {
+    this.fire('dataready');
+  }
+
+  _handleDataFailed = () => {
+    this.fire('datafailed');
+  }
+
+  fire(name, data = {}) {
     this.dispatchEvent(
       new CustomEvent(name, {
         detail: {
@@ -142,12 +136,21 @@ export default class Lottie extends PolymerElement {
     );
   }
 
+  getDuration(inFrames) {
+    return this.animation.getDuration(inFrames);
+  }
+
   play() {
     lottie.play(this.name);
+    this.fire('animationstart');
   }
 
   goToAndPlay(value) {
-    lottie.play(value, true);
+    this.animation.goToAndPlay(value, true);
+  }
+
+  goToAndStop(value) {
+    this.animation.goToAndStop(value, true);
   }
 
   pause() {
@@ -155,7 +158,9 @@ export default class Lottie extends PolymerElement {
   }
 
   stop() {
+    this._count = 0;
     lottie.stop(this.name);
+    this.fire('animationcancel');
   }
 
   setSpeed(value = 1) {
@@ -163,7 +168,29 @@ export default class Lottie extends PolymerElement {
   }
 
   setDirection(direction = 1) {
+    this.direction = direction;
     lottie.setDirection(direction, this.name);
+  }
+
+  playSegments(segments) {
+    this.animation.playSegments(segments);
+  }
+
+  // 最小帧 ~ 最大帧
+  playFromMinToMaxFrame(min, max) {
+    this.playSegments([min, max]);
+  }
+
+  // 0.0 ~ 1.0
+  playFromMinToMaxProgress(min, max) {
+    const frames = this.getDuration(true);
+    const minFrame = frames * min;
+    const maxFrame = frames * max;
+    this.playSegments([minFrame, maxFrame]);
+  }
+
+  destroy() {
+    lottie.destroy(this.name);
   }
 
   static get template() {

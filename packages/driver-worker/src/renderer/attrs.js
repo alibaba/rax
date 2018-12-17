@@ -1,5 +1,6 @@
 import { setStyle } from './styles';
 import camelCase from '../shared/camelCase';
+import kebabCase from '../shared/kebabCase';
 
 const STYLE = 'style';
 const INVALID_ATTRS_MAP = {
@@ -31,6 +32,7 @@ export function setAttribute(node, attrName, value) {
      */
     node[camelCase(attrName)] = value;
   } else {
+    attrName = kebabCase(attrName);
     if (value == null) {
       node.removeAttribute(attrName);
     } else {

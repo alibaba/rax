@@ -8,6 +8,7 @@ import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
 import findDOMNode from '../../findDOMNode';
+import createRef from '../../createRef';
 import renderToString from '../../server/renderToString';
 
 describe('Ref', function() {
@@ -156,7 +157,7 @@ describe('Ref', function() {
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
   });
 
-  it('always has a value for this.refs', function() {
+  it('Always has a value for this.refs', function() {
     class MyComponent extends Component {
       render() {
         return <div />;
@@ -165,5 +166,33 @@ describe('Ref', function() {
 
     let instance = render(<MyComponent />);
     expect(instance.refs).toEqual({});
+  });
+
+  it('Allow ref accept createRef object', function() {
+    class MyComponent extends Component {
+      constructor(props) {
+        super(props);
+        this.myRef = createRef();
+      }
+      render() {
+        return <div ref={this.myRef} />;
+      }
+    }
+
+    let instance = render(<MyComponent />);
+    expect(instance.myRef.current.tagName).toEqual('DIV');
+  });
+
+  it('Allow createRef object in function object', function() {
+    let myRef = createRef();
+
+    function MyComponent(props) {
+      return (
+        <div ref={myRef} />
+      );
+    }
+
+    render(<MyComponent />);
+    expect(myRef.current.tagName).toEqual('DIV');
   });
 });

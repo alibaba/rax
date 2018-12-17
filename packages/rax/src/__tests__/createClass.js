@@ -7,7 +7,6 @@ import createClass from '../createClass';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../findDOMNode';
 
 describe('createClass', () => {
   function createNodeElement(tagName) {

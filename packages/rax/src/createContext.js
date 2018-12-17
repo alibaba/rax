@@ -61,6 +61,9 @@ export default function createContext(defaultValue) {
     }
   }
 
+  Provider.contextProp = contextProp;
+  Provider.defaultValue = defaultValue;
+
   class Consumer extends Component {
     state = {
       value: this.readContext(this.context)

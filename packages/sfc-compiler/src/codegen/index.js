@@ -257,7 +257,7 @@ function genData(el, state) {
   }
   // module data generation functions
   for (let i = 0; i < state.dataGenFns.length; i++) {
-    data += state.dataGenFns[i](el);
+    data += state.dataGenFns[i](el, state);
   }
   // attributes
   if (el.attrs) {

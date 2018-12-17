@@ -1,9 +1,10 @@
-const { join } = require('path');
+const { join, extname } = require('path');
 const WebpackWrapPlugin = require('../plugins/WebpackWrapPlugin');
 const WebpackMiniProgramPlugin = require('../plugins/WebpackMiniProgramPlugin');
 const babelConfig = require('./babelConfig');
 
 const SFCLoader = require.resolve('sfc-loader');
+
 
 /**
  * SFC DSL webpack config
@@ -18,14 +19,11 @@ module.exports = (projectDir, opts) => {
     module: {
       rules: [
         {
-          test: /\.(vue|html)$/,
-          use: [
-            {
-              loader: SFCLoader,
-              /* 使用 framework 中自带的 runtime 以减小体积 */
-              options: { builtInRuntime: true },
-            },
-          ],
+          test: /\.(sfc|vue|html)$/,
+          loader: SFCLoader,
+          options: {
+            cssInJS: true,
+          },
         },
         {
           test: /\.jsx?$/,

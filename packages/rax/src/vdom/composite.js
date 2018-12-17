@@ -1,4 +1,4 @@
-import StatelessComponent from './stateless';
+import ReactiveComponent from './reactivecomponent';
 import updater from './updater';
 import Host from './host';
 import Ref from './ref';
@@ -33,7 +33,12 @@ function handleError(instance, error) {
   }
 
   if (boundary) {
-    boundary.componentDidCatch(error);
+    // should not attempt to recover an unmounting error boundary
+    const boundaryInternal = boundary._internal;
+    if (boundaryInternal) {
+      let callbackQueue = boundaryInternal._pendingCallbacks || (boundaryInternal._pendingCallbacks = []);
+      callbackQueue.push(() => boundary.componentDidCatch(error));
+    }
   } else {
     if (Host.sandbox) {
       setTimeout(() => {
@@ -97,14 +102,19 @@ class CompositeComponent {
     let instance;
     let renderedElement;
 
-    if (isComponentClass || isStatelessClass) {
-      // Component instance
-      instance = new Component(publicProps, publicContext, updater);
-    } else if (typeof Component === 'function') {
-      // Functional stateless component without state and lifecycles
-      instance = new StatelessComponent(Component);
-    } else {
-      throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
+    try {
+      if (isComponentClass || isStatelessClass) {
+        // Component instance
+        instance = new Component(publicProps, publicContext, updater);
+      } else if (typeof Component === 'function') {
+        // Functional reactive component with hooks
+        instance = new ReactiveComponent(Component);
+      } else {
+        throw new Error(`Invalid component type: ${Component}. (current: ${typeof Component === 'object' && Object.keys(Component) || typeof Component})`);
+      }
+    } catch (e) {
+      handleError(parentInstance, e);
+      return instance;
     }
 
     // These should be set up in the constructor, but as a convenience for
@@ -176,13 +186,6 @@ class CompositeComponent {
       Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
     }
 
-    // Trigger setState callback in componentWillMount after rendered
-    let callbacks = this._pendingCallbacks;
-    if (callbacks) {
-      this._pendingCallbacks = null;
-      updater.runCallbacks(callbacks, instance);
-    }
-
     if (instance.componentDidMount) {
       performInSandbox(() => {
         if (process.env.NODE_ENV !== 'production') {
@@ -193,6 +196,13 @@ class CompositeComponent {
           instance.componentDidMount();
         }
       }, instance);
+    }
+
+    // Trigger setState callback in componentWillMount or boundary callback after rendered
+    let callbacks = this._pendingCallbacks;
+    if (callbacks) {
+      this._pendingCallbacks = null;
+      updater.runCallbacks(callbacks, instance);
     }
 
     Host.hook.Reconciler.mountComponent(this);
@@ -206,6 +216,10 @@ class CompositeComponent {
 
   unmountComponent(notRemoveChild) {
     let instance = this._instance;
+
+    if (!instance) {
+      return;
+    }
 
     if (instance.componentWillUnmount) {
       performInSandbox(() => {
@@ -403,9 +417,9 @@ class CompositeComponent {
       instance.context = nextContext;
     }
 
-    // Flush setState callbacks set in componentWillReceiveProps
-    if (hasReceived) {
-      let callbacks = this._pendingCallbacks;
+    // Flush setState callbacks set in componentWillReceiveProps or boundary callback
+    let callbacks = this._pendingCallbacks;
+    if (callbacks) {
       this._pendingCallbacks = null;
       updater.runCallbacks(callbacks, instance);
     }
@@ -510,7 +524,7 @@ class CompositeComponent {
   getPublicInstance() {
     let instance = this._instance;
     // The Stateless components cannot be given refs
-    if (instance instanceof StatelessComponent) {
+    if (instance instanceof ReactiveComponent) {
       return null;
     }
     return instance;

@@ -36,6 +36,7 @@ function createWatcher(vm, expOrFn, handler, options) {
 
 function $watch(expOrFn, cb, options) {
   const vm = this;
+
   if (isPlainObject(cb)) {
     return createWatcher(vm, expOrFn, cb, options);
   }

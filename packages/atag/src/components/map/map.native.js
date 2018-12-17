@@ -219,14 +219,18 @@ export default class NativeMap extends PolymerElement {
     });
   }
 
+  _updatePosition = debounce(() => {
+    this._callNativeControl('moveTo', {
+      latitude: this.latitude,
+      longitude: this.longitude,
+    });
+  }, NATIVE_UPDATE_DEBOUNCE_TIME);
+
   _updateParamWithAndroid(key, value) {
     switch (key) {
       case 'longitude':
       case 'latitude':
-        this._callNativeControl('moveTo', {
-          latitude: this.latitude,
-          longitude: this.longitude,
-        });
+        this._updatePosition();
         break;
 
       case 'scale':

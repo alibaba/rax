@@ -1,5 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 let uid = 0;
 
@@ -40,6 +39,7 @@ export default class Input extends PolymerElement {
       focus: {
         type: Boolean,
         value: false,
+        observer: '_observeFocus',
       },
     };
   }
@@ -64,6 +64,11 @@ export default class Input extends PolymerElement {
     window.removeEventListener('focus', this._handleFocus, true);
     window.removeEventListener('blur', this._handleBlur, true);
     window.removeEventListener('_formReset', this._handleReset, true);
+  }
+
+  _observeFocus(focus) {
+    const method = focus ? 'focus' : 'blur';
+    this.$.input[method]();
   }
 
   _handleInput = (evt) => {
@@ -180,7 +185,7 @@ export default class Input extends PolymerElement {
       <input 
         id="input" 
         placeholder="[[placeholder]]" 
-        value$="[[value]]" 
+        value="[[value]]" 
         type$="[[type]]" 
         disabled$="[[disabled]]"
         autofocus$="[[focus]]" 
