@@ -31,6 +31,7 @@ program
   .option('--renderer-inspect-host <rendererInspectHost>', '<String> Inspect host for renderer, default to local ip')
   .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Inspect port for renderer, default to 8080')
   .option('--renderer-url <rendererUrl>', '<String> Renderer url for debug')
+  .option('--debug', 'Use local framework for debug')
   .action(function(cmd, env) {
     const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
     const port = program.port || DEFAULT_PORT;
@@ -54,6 +55,7 @@ program
       rendererInspectHost,
       rendererInspectPort,
       rendererUrl,
+      isDebug: program.debug
     };
     const defaultFrameworkVersion = require('../src/config/frameworkVersion');
     const getFrameworkVersion = require('../src/config/getFrameworkVersion');
