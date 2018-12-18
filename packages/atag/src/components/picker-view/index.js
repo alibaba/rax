@@ -32,7 +32,7 @@ export default class PickerView extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     this._valueChanged(this.value, null);
-    this.addEventListener('touchmove', this._preventTouchPenetrate, false);
+    this.addEventListener('touchmove', this._preventScrollPenetrate, false);
     this.addEventListener('_columnChange', this._handleChange);
     window.addEventListener('_formReset', this._handleReset, true);
   }
