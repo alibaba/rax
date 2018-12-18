@@ -126,7 +126,7 @@ function askProjectInformaction(name, verbose) {
       choices: [{
         name: 'WebApp',
         value: 'webapp'
-      },{
+      }, {
         name: 'MiniApp',
         value: 'miniapp'
       }],

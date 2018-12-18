@@ -9,7 +9,7 @@ import Container from './components/Container';
 import ErrorPage from './components/ErrorPage';
 import PagesManager from './PagesManager';
 
-BrowserDriver.setTagNamePrefix(function(type){
+BrowserDriver.setTagNamePrefix(function(type) {
   return type === 'style' ? '' : 'a-';
 });
 

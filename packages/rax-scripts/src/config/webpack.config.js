@@ -52,4 +52,4 @@ module.exports = {
     // See https://github.com/facebookincubator/create-react-app/issues/240
     caseSensitivePaths: new CaseSensitivePathsPlugin()
   }
-}
+};

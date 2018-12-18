@@ -1,5 +1,4 @@
 module.exports = function(source) {
-
   const manifestJson = typeof source === 'string' ? JSON.parse(source) : source;
   const pages = manifestJson.pages;
   // Resolve to miniapp-web-renderer local absolute path
