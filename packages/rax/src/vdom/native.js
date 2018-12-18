@@ -285,12 +285,16 @@ class NativeComponent {
         let name = getElementKeyName(nextChildren, nextElement, index);
         let prevChild = prevChildren && prevChildren[name];
         let prevElement = prevChild && prevChild._currentElement;
+        let prevContext = prevChild && prevChild._context;
 
         if (prevChild != null && shouldUpdateComponent(prevElement,
           nextElement)) {
-          // Pass the same context when updating chidren
-          prevChild.updateComponent(prevElement, nextElement, context,
-            context);
+          if (prevElement !== nextElement || prevContext !== context) {
+            // Pass the same context when updating chidren
+            prevChild.updateComponent(prevElement, nextElement, context,
+              context);
+          }
+
           nextChildren[name] = prevChild;
         } else {
           // Unmount the prevChild when nextChild is different element type.

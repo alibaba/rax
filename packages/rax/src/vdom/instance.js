@@ -62,12 +62,15 @@ export default {
       let prevElement = prevRenderedComponent._currentElement;
       if (shouldUpdateComponent(prevElement, element)) {
         let prevUnmaskedContext = prevRenderedComponent._context;
-        prevRenderedComponent.updateComponent(
-          prevElement,
-          element,
-          prevUnmaskedContext,
-          parentContext || prevUnmaskedContext
-        );
+        let nextUnmaskedContext = parentContext || prevUnmaskedContext;
+        if (prevElement !== element || prevUnmaskedContext !== nextUnmaskedContext) {
+          prevRenderedComponent.updateComponent(
+            prevElement,
+            element,
+            prevUnmaskedContext,
+            nextUnmaskedContext
+          );
+        }
 
         return prevRootInstance;
       } else {

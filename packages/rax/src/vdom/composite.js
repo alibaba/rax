@@ -456,12 +456,17 @@ class CompositeComponent {
     Host.component = null;
 
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
-      prevRenderedComponent.updateComponent(
-        prevRenderedElement,
-        nextRenderedElement,
-        prevRenderedComponent._context,
-        this._processChildContext(context)
-      );
+      const prevRenderedUnmaskedContext = prevRenderedComponent._context;
+      const nextRenderedUnmaskedContext = this._processChildContext(context);
+      if (prevRenderedElement !== nextRenderedElement || prevRenderedUnmaskedContext !== nextRenderedUnmaskedContext) {
+        prevRenderedComponent.updateComponent(
+          prevRenderedElement,
+          nextRenderedElement,
+          prevRenderedUnmaskedContext,
+          nextRenderedUnmaskedContext
+        );
+      }
+
       if (process.env.NODE_ENV !== 'production') {
         Host.measurer && Host.measurer.recordOperation({
           instanceID: this._mountID,
