@@ -57,6 +57,7 @@ module.exports = function startDevServer(opts) {
     ctx.rendererInspectHost = rendererInspectHost;
     ctx.rendererInspectPort = rendererInspectPort;
     ctx.rendererUrl = rendererUrl;
+    ctx.miniappType = miniappType;
     return next();
   });
   app.use(devMiddleware);

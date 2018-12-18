@@ -8,10 +8,13 @@ const localIP = address.ip();
 const masterTemplateFilePath = path.resolve(__dirname, '../views/master.ejs');
 
 module.exports = function masterRoute(ctx, next) {
+  const pluginAssets = [];
+  if (ctx.miniappType === 'plugin') {
+    pluginAssets.push(`http://${localIP}:${ctx.port}/build-plugin/index.js`);
+  }
+
   const appConfig = getAppConfig(ctx.projectDir, {
-    pluginAssets: [
-      `http://${localIP}:${ctx.port}/build-plugin/index.js`,
-    ],
+    pluginAssets,
   });
   let h5Master = getH5Master(appConfig.frameworkVersion || FRAMEWORK_VERSION);
 

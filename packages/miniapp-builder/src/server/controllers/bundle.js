@@ -6,7 +6,18 @@ const { getAppConfig } = require('../../config/getAppConfig');
 const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
 /**
- * Output bundle.zip
+ * Controller for local debug.
+ * Output a miniapp bundle.zip, whose structure is similar
+ * to build output.
+ *
+ * bundle.zip
+ * ---
+ *   - app.js
+ *   - app.config.json
+ *   - .schema
+ *     - app.config.json
+ *   - other image assets
+ *   - ?pluginX.js
  */
 module.exports = function bundleCtrl(ctx, next) {
   const zip = new Jszip();
