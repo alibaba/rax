@@ -1,4 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
+import debounce from '../../shared/debounce';
 
 export default class CheckboxGroupElement extends PolymerElement {
   static get is() {
@@ -16,6 +17,12 @@ export default class CheckboxGroupElement extends PolymerElement {
         notify: true
       }
     };
+  }
+
+  constructor() {
+    super();
+    // Prevent frequent change event.
+    this.changeHandler = debounce(this.changeHandler);
   }
 
   connectedCallback() {
