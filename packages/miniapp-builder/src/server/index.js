@@ -21,12 +21,14 @@ module.exports = function startDevServer(opts) {
   let { projectDir, port, rendererInspect, rendererInspectHost, rendererInspectPort, rendererUrl, miniappType } = opts;
 
   let pluginWebpackConfig;
+  let pluginName;
   let pluginDir;
   if (miniappType === 'plugin') {
     pluginDir = projectDir;
     projectDir = resolve(projectDir, 'miniprogram');
+    pluginName = getDevPluginName(getAppConfig(projectDir).plugins);
     pluginWebpackConfig = getPluginWebpackConfig(pluginDir, {
-      pluginName: getDevPluginName(getAppConfig(projectDir).plugins),
+      pluginName,
     });
   }
 
@@ -58,6 +60,7 @@ module.exports = function startDevServer(opts) {
     ctx.rendererInspectPort = rendererInspectPort;
     ctx.rendererUrl = rendererUrl;
     ctx.miniappType = miniappType;
+    ctx.pluginName = pluginName;
     return next();
   });
   app.use(devMiddleware);

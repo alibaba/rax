@@ -69,8 +69,14 @@ module.exports = function bundleCtrl(ctx, next) {
   const { includeFiles } = appJSON;
   zipFiles(includeFiles);
 
+  // Only support one plugin now.
+  if (ctx.miniappType === 'plugin' && ctx.pluginName) {
+    zip.file('plugin.js', global.AppPluginContent);
+    appJSON.plugins[ctx.pluginName].bundlePath = 'plugin.js';
+  }
   zip.file('app.config.json', JSON.stringify(appJSON, null, 2));
   zip.file('app.js', global.AppJSContent);
+
 
   // stream mode output
   ctx.body = zip.generateNodeStream({

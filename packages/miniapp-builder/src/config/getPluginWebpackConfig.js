@@ -66,6 +66,17 @@ module.exports = function(pluginDir, options) {
         },
       ],
     },
+    plugins: [
+      new class {
+        apply(compiler) {
+          compiler.hooks.compilation.tap('compilation', (compilation) => {
+            compilation.hooks.optimizeAssets.tap('MiniAppPlugin', () => {
+              global.AppPluginContent = compilation.assets['index.js'].source();
+            });
+          });
+        }
+      }
+    ],
   };
 
   return merge(
