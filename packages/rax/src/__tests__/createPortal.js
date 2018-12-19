@@ -164,6 +164,7 @@ describe('createPortal', () => {
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
     expect(updatedCount).toBe(1);
 
+    // nothing can be changed
     render(<Parent />, container);
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
@@ -175,7 +176,13 @@ describe('createPortal', () => {
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('changed');
     expect(updatedCount).toBe(2);
 
-    // change context -> none
+    // change context -> null
+    render(<Parent />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
+    expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
+    expect(updatedCount).toBe(3);
+
+    // nothing can be changed
     render(<Parent />, container);
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
