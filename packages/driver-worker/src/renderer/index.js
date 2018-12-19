@@ -1,4 +1,4 @@
-/* global __CLIENT_BASE__ */
+/* global DEVICE_WITDH */
 import MutationHandler from './MutationHandler';
 import EvaluationHandler from './EvaluationHandler';
 import LocationHandler from './LocationHandler';
@@ -26,16 +26,16 @@ export default ({ worker }) => {
   worker.postMessage({
     type: 'init',
     url: location.href,
-    width: getBaseWidth(),
+    width: getDeviceWidth(),
   });
 };
 
 /**
- * Get client base width
+ * Get device base width
  * @return {number}
  */
-function getBaseWidth() {
-  return typeof __CLIENT_BASE__ !== 'undefined'
-    ? __CLIENT_BASE__
+function getDeviceWidth() {
+  return typeof DEVICE_WITDH !== 'undefined'
+    ? DEVICE_WITDH
     : document.documentElement.clientWidth;
 }
