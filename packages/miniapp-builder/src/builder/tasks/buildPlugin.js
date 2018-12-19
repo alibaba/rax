@@ -13,7 +13,7 @@ module.exports = function(projectDir, destDir) {
   return done => {
     const pluginConfigFile = join(projectDir, PLUGIN_CONFIG);
     if (!existsSync(pluginConfigFile)) {
-      throw new Error(PLUGIN_CONFIG + ' 文件不存在.');
+      throw new Error(PLUGIN_CONFIG + ' file not exists.');
     }
 
     const pluginName = require(pluginConfigFile).name;
