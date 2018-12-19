@@ -9,8 +9,9 @@ module.exports = function(args) {
   var projectDir = args.root;
   var projectName = args.projectName;
   var projectAuthor = args.projectAuthor;
+  var projectType = args.projectType;
 
-  var templates = path.join(__dirname, 'templates');
+  var templates = path.join(__dirname, projectType);
   var pkgPath = path.join(projectDir, 'package.json');
   easyfile.copy(templates, projectDir, {
     force: true,

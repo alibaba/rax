@@ -1,7 +1,7 @@
 'use strict';
 /* eslint no-console: 0 */
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const RaxWebpackPlugin = require('rax-webpack-plugin');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
@@ -12,9 +12,18 @@ module.exports = {
   // Compile target should "web" when use hot reload
   target: webpackConfig.target,
   entry: webpackConfig.entry,
-  output: webpackConfig.output,
+  output: Object.assign({
+    pathinfo: true,
+  }, webpackConfig.output),
+
   resolve: webpackConfig.resolve,
+
   plugins: [
+    new RaxWebpackPlugin({
+      target: 'bundle',
+      externalBuiltinModules: false,
+    }),
+    // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
       template: pathConfig.appHtml,
@@ -24,6 +33,15 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        use: [
+          {
+            loader: require.resolve('ts-loader'),
+          },
+        ],
+      },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
@@ -35,21 +53,7 @@ module.exports = {
         ],
       },
       {
-        test: /manifest\.json$/,
-        type: 'javascript/auto',
-        exclude: /(node_modules|bower_components)/,
-        use: [
-          {
-            loader: require.resolve('babel-loader'),
-            options: babelConfig,
-          },
-          {
-            loader: require.resolve('miniapp-manifest-loader'),
-          },
-        ],
-      },
-      {
-        test: /\.(html|vue|sfc)$/,
+        test: /\.(sfc|vue|html)$/,
         use: [
           {
             loader: require.resolve('sfc-loader'),
@@ -64,14 +68,29 @@ module.exports = {
         exclude: [pathConfig.appHtml],
       },
       {
+        test: /\.css$/,
+        use: [
+          {
+            loader: require.resolve('stylesheet-loader'),
+          },
+        ],
+      },
+      // JSON is not enabled by default in Webpack but both Node and Browserify
+      // allow it implicitly so we also enable it.
+      {
+        test: /\.json$/,
+        use: [
+          {
+            loader: require.resolve('json-loader'),
+          },
+        ],
+      },
+      // load inline images using image-source-loader for Image
+      {
         test: /\.(svg|png|webp|jpe?g|gif)$/i,
         use: [
-          // TODO: maybe use image-source-loader
           {
-            loader: require.resolve('file-loader'),
-            options: {
-              name: 'images/[name]-[hash:8].[ext]',
-            },
+            loader: require.resolve('image-source-loader'),
           },
         ],
       },

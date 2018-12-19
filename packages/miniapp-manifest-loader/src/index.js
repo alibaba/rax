@@ -9,24 +9,24 @@ module.exports = function(source) {
   }
 
   return `
-import { render } from '${webRendererAbsolutePath}';
+function _r(obj) { return obj && obj.__esModule ? obj.default : obj; }
 
-function _requireReturnDefault(obj) { return obj && obj.__esModule ? obj.default : obj; }
+const WebRenderer = _r(require('${webRendererAbsolutePath}'));
 
-const pagesMap = {
+const pages = {
   ${
   Object.keys(pages).map((page) => {
-    return `  "${page}" : _requireReturnDefault(require('./${pages[page]}'))`;
+    return `'${page}' : _r(require('./${pages[page]}'))`;
   }).join(',\n')
 }
 };
 
-const manifestData = ${
+const manifest = ${
   JSON.stringify(manifestJson, null, 2)
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029')
 };
 
-render(manifestData, pagesMap);
+WebRenderer.render(manifest, pages);
 `;
 };

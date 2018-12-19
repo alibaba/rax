@@ -2,11 +2,11 @@
 
 var path = require('path');
 var webpack = require('webpack');
-var pathConfig = require('./path.config');
+var pathConfig = require('../path.config');
 var uppercamelcase = require('uppercamelcase');
 var RaxPlugin = require('rax-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-var babelOptions = require('./babel.config');
+var babelOptions = require('../babel.config');
 
 var appPackage = require(pathConfig.appPackageJson);
 
@@ -16,29 +16,6 @@ var entryName = packageName.split('-')[1];
 var entry = {};
 entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
 var globalName = uppercamelcase(packageName);
-
-var webpackConfigProd = getConfig(
-  entry,
-  {
-    path: path.resolve(process.cwd(), 'dist'),
-    filename: '[name].js',
-    sourceMapFilename: '[name].map',
-    pathinfo: false,
-  },
-  {
-    externalBuiltinModules: true,
-    builtinModules: Object.assign({
-      mobx: ['mobx'],
-      redux: ['redux']
-    }, RaxPlugin.BuiltinModules),
-    moduleName: packageName,
-    globalName: globalName,
-  },
-  babelOptions
-);
-
-module.exports = webpackConfigProd;
-
 
 function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
   // Webpack need an absolute path
@@ -72,25 +49,47 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
       rules: [{
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
+        loader: require.resolve('babel-loader'), // 'babel-loader' is also a legal name to reference
         options: babelLoaderQuery
       },
       {
         test: /\.css$/,
         use: [
           {
-            loader: 'stylesheet-loader'
+            loader: require.resolve('stylesheet-loader')
           }
         ],
       },
       {
-        test: /\.svg$/,
+        test: /\.(svg|png|webp|jpe?g|gif)$/i,
         use: [
           {
-            loader: 'image-source-loader'
+            loader: require.resolve('image-source-loader')
           }
         ]
       }]
     }
   };
 }
+
+var webpackConfigProd = getConfig(
+  entry,
+  {
+    path: path.resolve(process.cwd(), 'dist'),
+    filename: '[name].js',
+    sourceMapFilename: '[name].map',
+    pathinfo: false,
+  },
+  {
+    externalBuiltinModules: true,
+    builtinModules: Object.assign({
+      mobx: ['mobx'],
+      redux: ['redux']
+    }, RaxPlugin.BuiltinModules),
+    moduleName: packageName,
+    globalName: globalName,
+  },
+  babelOptions
+);
+
+module.exports = webpackConfigProd;

@@ -10,7 +10,7 @@ updateNotifier({pkg: pkg}).notify();
 const chalk = require('chalk');
 const semver = require('semver');
 
-if (!semver.satisfies(process.version, '>=6')) {
+if (!semver.satisfies(process.version, '>=8')) {
   const message = 'You are currently running Node.js ' +
     chalk.red(process.version) + '.\n' +
     '\n' +
@@ -30,7 +30,6 @@ const path = require('path');
 const execSync = require('child_process').execSync;
 const spawn = require('cross-spawn');
 const inquirer = require('inquirer');
-const chalk = require('chalk');
 const cli = require('../src/');
 const argv = require('minimist')(process.argv.slice(2));
 
@@ -121,8 +120,21 @@ function askProjectInformaction(name, verbose) {
       default: name
     },
     {
+      type: 'list',
+      name: 'projectType',
+      message: 'What\'s your project type?',
+      choices: [{
+        name: 'WebApp',
+        value: 'webapp'
+      }, {
+        name: 'MiniApp',
+        value: 'miniapp'
+      }],
+      default: 'webapp'
+    },
+    {
       type: 'input',
-      name: 'author',
+      name: 'projectAuthor',
       message: 'What\'s author\'s name?',
       default: 'rax'
     },
@@ -140,7 +152,6 @@ function createProject(name, verbose, userAnswers) {
   var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   var root = path.resolve(name);
   var projectName = userAnswers.projectName;
-  var projectAuthor = userAnswers.author;
   var autoInstallModules = userAnswers.autoInstallModules;
 
   console.log(
@@ -157,7 +168,8 @@ function createProject(name, verbose, userAnswers) {
     root: root,
     directoryName: name,
     projectName: projectName,
-    projectAuthor: projectAuthor,
+    projectType: userAnswers.projectType,
+    projectAuthor: userAnswers.projectAuthor,
     verbose: verbose,
   }).then(function(directory) {
     if (autoInstallModules) {
