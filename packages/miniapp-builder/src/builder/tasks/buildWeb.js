@@ -11,7 +11,7 @@ const {
  * build web version of miniapp
  * @param {*} appConfig
  */
-module.exports = function buildWeb(destDir, appConfig) {
+module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/', isDebug) {
   let frameworkVersion;
   if (appConfig.frameworkVersion) {
     frameworkVersion = appConfig.frameworkVersion;
@@ -19,11 +19,11 @@ module.exports = function buildWeb(destDir, appConfig) {
     frameworkVersion = FRAMEWORK_VERSION;
   }
 
-  const frameworkMasterURL = getMasterView(frameworkVersion, 'web', true);
+  const frameworkMasterURL = getMasterView(frameworkVersion, 'web', isDebug);
 
   return done => {
     axios(frameworkMasterURL).then(response => {
-      appConfig.h5Assets = '/build/app.web.js';
+      appConfig.h5Assets = publicPath + 'app.web.js';
 
       const webDistFileContent = [
         '__register_pages__(function(require){',
@@ -34,7 +34,7 @@ module.exports = function buildWeb(destDir, appConfig) {
       writeFileSync(webDistFilePath, webDistFileContent, 'utf-8');
 
       const hasInjectApi = existsSync(join(destDir, 'api.js'));
-      const InjectApiScript = '<script src="/build/api.js"></script>';
+      const InjectApiScript = `<script src="${publicPath}api.js"></script>`;
 
       const htmlFileContent = ejs.render(response.data, {
         appConfig: JSON.stringify(appConfig),

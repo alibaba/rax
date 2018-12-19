@@ -6,11 +6,13 @@ const { registerGulpTasks } = require('./tasks');
 const { BUILD_DEST } = process.env;
 
 module.exports = function(opts) {
-  const { projectDir } = opts;
+  const { projectDir, publicPath, isDebug } = opts;
   registerGulpTasks({
     appConfig: getAppConfig(projectDir),
     projectDir,
     destDir: join(projectDir, BUILD_DEST || 'build'),
+    publicPath,
+    isDebug
   });
 
   runSequence(

@@ -31,6 +31,7 @@ program
   .option('--renderer-inspect-host <rendererInspectHost>', '<String> Inspect host for renderer, default to local ip')
   .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Inspect port for renderer, default to 8080')
   .option('--renderer-url <rendererUrl>', '<String> Renderer url for debug')
+  .option('--public-path <publicPath>', '<String> public path for assets')
   .option('--debug', 'Use local framework for debug')
   .action(function(cmd, env) {
     const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
@@ -39,6 +40,7 @@ program
     const rendererInspectHost = program.rendererInspectHost || address.ip();
     const rendererInspectPort = program.rendererInspectPort || 8080;
     const rendererUrl = program.rendererUrl;
+    const publicPath = program.publicPath;
 
     const miniappType = getMiniappType(projectDir);
     if (!miniappType) {
@@ -55,7 +57,8 @@ program
       rendererInspectHost,
       rendererInspectPort,
       rendererUrl,
-      isDebug: program.debug
+      isDebug: program.debug,
+      publicPath
     };
     const defaultFrameworkVersion = require('../src/config/frameworkVersion');
     const getFrameworkVersion = require('../src/config/getFrameworkVersion');

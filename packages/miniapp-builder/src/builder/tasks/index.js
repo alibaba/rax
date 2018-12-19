@@ -3,7 +3,7 @@ const gulp = require('gulp');
 /**
  * Register all gulp tasks
  */
-exports.registerGulpTasks = function({ appConfig, projectDir, destDir }) {
+exports.registerGulpTasks = function({ appConfig, projectDir, destDir, publicPath, isDebug }) {
   // Make sure build folder exists
   gulp.task('ensure-dir', require('./ensureDir')(destDir));
 
@@ -17,7 +17,7 @@ exports.registerGulpTasks = function({ appConfig, projectDir, destDir }) {
   gulp.task('build-config', require('./buildConfig')(destDir, appConfig));
 
   // Entry of web build task
-  gulp.task('build-web', require('./buildWeb')(destDir, appConfig));
+  gulp.task('build-web', require('./buildWeb')(destDir, appConfig, publicPath, isDebug));
 
   // Build schema for template miniapp
   gulp.task('build-schema', require('./buildSchema')(destDir, projectDir));
