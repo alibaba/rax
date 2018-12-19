@@ -315,16 +315,16 @@ Then, you can run several commands:
 
 
 ## Users
-
-<img src="https://user-images.githubusercontent.com/677114/49876501-81088400-fe5e-11e8-95bc-ee9468a58eec.png" height="60"/>
-<img src="https://user-images.githubusercontent.com/677114/49876598-a7c6ba80-fe5e-11e8-8fe8-d2fc28df69fd.png" height="60"/>
-<img src="https://user-images.githubusercontent.com/677114/49876742-f07e7380-fe5e-11e8-8bfa-ba2c6d0d8536.png" height="60"/>
-<img src="https://user-images.githubusercontent.com/677114/49876872-33404b80-fe5f-11e8-8244-b5598900e3f6.png" height="60"/>
-<img src="https://user-images.githubusercontent.com/677114/49876953-5b2faf00-fe5f-11e8-8789-7f1787495b2a.png" height="60"/>
-<img src="https://user-images.githubusercontent.com/677114/49877220-e8730380-fe5f-11e8-8579-e622b3f0f5a6.png" height="60"/>
-<img src="https://user-images.githubusercontent.com/677114/49877650-d80f5880-fe60-11e8-9dd8-93dfd4330bfe.png" height="60"/>
-<img src="https://user-images.githubusercontent.com/677114/49877658-db0a4900-fe60-11e8-880b-61f316163fe4.png" height="60"/>
-
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/677114/49876501-81088400-fe5e-11e8-95bc-ee9468a58eec.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876598-a7c6ba80-fe5e-11e8-8fe8-d2fc28df69fd.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876742-f07e7380-fe5e-11e8-8bfa-ba2c6d0d8536.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876872-33404b80-fe5f-11e8-8244-b5598900e3f6.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876953-5b2faf00-fe5f-11e8-8789-7f1787495b2a.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49877220-e8730380-fe5f-11e8-8579-e622b3f0f5a6.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49877650-d80f5880-fe60-11e8-9dd8-93dfd4330bfe.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49877658-db0a4900-fe60-11e8-880b-61f316163fe4.png" height="60"/>
+</p>
 
 ---
 **[⬆ back to top](#top)**
