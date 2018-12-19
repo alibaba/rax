@@ -125,7 +125,7 @@ describe('createPortal', () => {
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
 
-  it('should update portal if context or react element change', () => {
+  it('should update portal if context or element change', () => {
     const container = createNodeElement('div');
     const portalContainer = createNodeElement('div');
     let updatedCount = 0;

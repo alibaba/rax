@@ -79,7 +79,7 @@ describe('render', () => {
     });
   });
 
-  it('should not re-render when react element is same in same root', function() {
+  it('should not re-render when element is same in same root', function() {
     let container = createNodeElement('container');
     let updatedCount = 0;
     let App = function() {
