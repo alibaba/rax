@@ -8,6 +8,11 @@ const localIP = address.ip();
 const masterTemplateFilePath = path.resolve(__dirname, '../views/master.ejs');
 
 module.exports = function masterRoute(ctx, next) {
+  /**
+   * Declear assets to load plugins
+   *   pluginAssets: Array[URL<String>]
+   * Each url will be loaded asynchronously or synchronously before app.js.
+   */
   const pluginAssets = [];
   if (ctx.miniappType === 'plugin') {
     pluginAssets.push(`http://${localIP}:${ctx.port}/build-plugin/index.js`);
@@ -25,15 +30,6 @@ module.exports = function masterRoute(ctx, next) {
   appConfig.homepage =
     ctx.query.wml_path || ctx.query.homepage || appConfig.homepage;
   appConfig.h5Assets = `http://${address.ip()}:${ctx.port}/build/app.web.js`;
-
-  /**
-   * Declear assets to load plugins
-   *   pluginAssets: Array[URL<String>]
-   * Each url will be loaded asynchronously or synchronously before app.js.
-   */
-  // appConfig.pluginAssets = [
-  //   // 'http://192.168.31.42:9988/build/plugin.js',
-  // ];
 
   ejs.renderFile(
     masterTemplateFilePath,
