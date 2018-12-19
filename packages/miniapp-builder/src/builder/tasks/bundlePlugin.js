@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const zip = require('gulp-zip');
 
 module.exports = function(destDir) {
-  return () => gulp.src(['**', '!**/app.web.js'], {
+  return () => gulp.src(['*.js', 'plugin.json'], {
     cwd: destDir,
     dot: true,
     nodir: true,

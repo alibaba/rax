@@ -19,6 +19,7 @@ const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
   sfc: 'SFC Framework',
   mp: 'Mini Program',
+  plugin: 'Mini Program Plugin',
 };
 
 program
@@ -54,6 +55,7 @@ program
       rendererInspectHost,
       rendererInspectPort,
       rendererUrl,
+      miniappType,
     };
     const defaultFrameworkVersion = require('../src/config/frameworkVersion');
     const getFrameworkVersion = require('../src/config/getFrameworkVersion');
@@ -66,6 +68,7 @@ program
       })
       .catch((err) => {
         console.warn('Update FrameworkVersion Failed, fallback to default verison:', defaultFrameworkVersion);
+        console.log(err);
         executeCommand(cmd, options);
       });
   });
@@ -75,10 +78,13 @@ program.parse(process.argv);
 function executeCommand(cmd, options) {
   switch (cmd) {
     case 'start': {
+      // Do this before start dev server, so that code reading it knows the right env.
+      process.env.NODE_ENV = 'development';
       require('../src/server')(options);
       break;
     }
     case 'build': {
+      process.env.NODE_ENV = 'production';
       require('../src/builder')(options);
       break;
     }

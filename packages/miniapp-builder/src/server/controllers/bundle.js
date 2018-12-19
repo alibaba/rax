@@ -6,7 +6,18 @@ const { getAppConfig } = require('../../config/getAppConfig');
 const { getNativeRendererUrl, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
 
 /**
- * Output bundle.zip
+ * Controller for local debug.
+ * Output a miniapp bundle.zip, whose structure is similar
+ * to build output.
+ *
+ * bundle.zip
+ * ---
+ *   - app.js
+ *   - app.config.json
+ *   - .schema
+ *     - app.config.json
+ *   - other image assets
+ *   - ?pluginX.js
  */
 module.exports = function bundleCtrl(ctx, next) {
   const zip = new Jszip();
@@ -42,6 +53,8 @@ module.exports = function bundleCtrl(ctx, next) {
 
   function zipFiles(pattern) {
     if (!pattern) return;
+    if (Array.isArray(pattern)) return pattern.map(zipFiles);
+
     let fileList = glob.sync(pattern, globOpts);
     if (!Array.isArray(fileList)) return;
     for (let i = 0, len = fileList.length; i < len; i++) {
@@ -56,8 +69,14 @@ module.exports = function bundleCtrl(ctx, next) {
   const { includeFiles } = appJSON;
   zipFiles(includeFiles);
 
+  // Only support one plugin now.
+  if (ctx.miniappType === 'plugin' && ctx.pluginName) {
+    zip.file('plugin.js', global.AppPluginContent);
+    appJSON.plugins[ctx.pluginName].bundlePath = 'plugin.js';
+  }
   zip.file('app.config.json', JSON.stringify(appJSON, null, 2));
   zip.file('app.js', global.AppJSContent);
+
 
   // stream mode output
   ctx.body = zip.generateNodeStream({
