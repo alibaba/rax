@@ -30,7 +30,7 @@ function buildMiniApp(projectDir) {
       'build-config',
       'build-app',
       'build-schema',
-      'build-mod-meta',
+      'build-module',
       'collect-assets',
       'build-include-files',
     ],
