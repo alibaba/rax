@@ -124,4 +124,67 @@ describe('createPortal', () => {
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
+
+  it('should update portal if context or react element change', () => {
+    const container = createNodeElement('div');
+    const portalContainer = createNodeElement('div');
+    let updatedCount = 0;
+
+    class Sub extends Component {
+      static contextTypes = {
+        foo: PropTypes.string.isRequired,
+      };
+
+      render() {
+        updatedCount++;
+        return <div>{ this.context.foo || 'initial' }</div>;
+      }
+    }
+    const CacheSub = <Sub />;
+
+    class Parent extends Component {
+      static childContextTypes = {
+        foo: PropTypes.string.isRequired,
+      };
+
+      getChildContext() {
+        if (!this.props.hasContext) return null;
+        return {
+          foo: this.props.bar,
+        };
+      }
+
+      render() {
+        return createPortal(this.props.newElement ? <Sub /> : CacheSub, portalContainer);
+      }
+    }
+
+    render(<Parent />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
+    expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
+    expect(updatedCount).toBe(1);
+
+    render(<Parent />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
+    expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
+    expect(updatedCount).toBe(1);
+
+    // Context change
+    render(<Parent bar="changed" hasContext={true} />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
+    expect(portalContainer.childNodes[0].childNodes[0].data).toBe('changed');
+    expect(updatedCount).toBe(2);
+
+    // change context -> none
+    render(<Parent />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
+    expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
+    expect(updatedCount).toBe(3);
+
+    // element change
+    render(<Parent newElement={true} />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
+    expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
+    expect(updatedCount).toBe(4);
+  });
 });
