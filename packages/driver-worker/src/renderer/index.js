@@ -1,3 +1,4 @@
+/* global __CLIENT_BASE__ */
 import MutationHandler from './MutationHandler';
 import EvaluationHandler from './EvaluationHandler';
 import LocationHandler from './LocationHandler';
@@ -25,6 +26,16 @@ export default ({ worker }) => {
   worker.postMessage({
     type: 'init',
     url: location.href,
-    width: document.documentElement.clientWidth
+    width: getBaseWidth(),
   });
 };
+
+/**
+ * Get client base width
+ * @return {number}
+ */
+function getBaseWidth() {
+  return typeof __CLIENT_BASE__ !== 'undefined'
+    ? __CLIENT_BASE__
+    : document.documentElement.clientWidth;
+}
