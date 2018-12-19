@@ -9,11 +9,11 @@ module.exports = function(source) {
   }
 
   return `
-const miniAppwebRenderer = require('${webRendererAbsolutePath}');
-
 function _r(obj) { return obj && obj.__esModule ? obj.default : obj; }
 
-const pagesMap = {
+const WebRenderer = _r(require('${webRendererAbsolutePath}'));
+
+const pages = {
   ${
   Object.keys(pages).map((page) => {
     return `'${page}' : _r(require('./${pages[page]}'))`;
@@ -21,12 +21,12 @@ const pagesMap = {
 }
 };
 
-const manifestData = ${
+const manifest = ${
   JSON.stringify(manifestJson, null, 2)
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029')
 };
 
-_r(miniAppwebRenderer).render(manifestData, pagesMap);
+WebRenderer.render(manifest, pages);
 `;
 };
