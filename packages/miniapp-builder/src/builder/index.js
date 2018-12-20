@@ -16,12 +16,11 @@ module.exports = function(opts) {
   }
 };
 
-function buildMiniApp({ projectDir, publicPath, isDebug }) {
+function buildMiniApp({ projectDir, publicPath }) {
   registerGulpTasks({
     projectDir,
     destDir: join(projectDir, BUILD_DEST || 'build'),
     publicPath,
-    isDebug,
     appConfig: getAppConfig(projectDir),
   });
 

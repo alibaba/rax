@@ -12,7 +12,7 @@ const {
  * @param {*} appConfig
  */
 
-module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/', isDebug) {
+module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/') {
   return done => {
     let frameworkVersion;
     if (appConfig.frameworkVersion) {
@@ -21,7 +21,7 @@ module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/', i
       frameworkVersion = FRAMEWORK_VERSION;
     }
 
-    const frameworkMasterURL = getMasterView(frameworkVersion, 'web', isDebug);
+    const frameworkMasterURL = getMasterView(frameworkVersion, 'web');
 
     axios(frameworkMasterURL).then(response => {
       appConfig.h5Assets = publicPath + 'app.web.js';

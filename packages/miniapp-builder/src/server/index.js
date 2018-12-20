@@ -19,7 +19,7 @@ const app = new Koa();
  */
 module.exports = function startDevServer(opts) {
 
-  let { projectDir, port, rendererInspect, rendererInspectHost, rendererInspectPort, rendererUrl, miniappType, isDebug } = opts;
+  let { projectDir, port, rendererInspect, rendererInspectHost, rendererInspectPort, rendererUrl, miniappType } = opts;
 
   let pluginWebpackConfig;
   let pluginName;
@@ -60,7 +60,6 @@ module.exports = function startDevServer(opts) {
     ctx.rendererInspectHost = rendererInspectHost;
     ctx.rendererInspectPort = rendererInspectPort;
     ctx.rendererUrl = rendererUrl;
-    ctx.isDebug = isDebug;
     ctx.miniappType = miniappType;
     ctx.pluginName = pluginName;
     return next();

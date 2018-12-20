@@ -26,10 +26,9 @@ module.exports = async function masterRoute(ctx, next) {
 
   const frameworkVersion = appConfig.frameworkVersion || FRAMEWORK_VERSION;
   const type = ctx.request.url === '/app/index.html' ? 'web' : 'ide';
-  const isDebug = ctx.isDebug;
 
-  const masterPath = getMaster(frameworkVersion, type, isDebug);
-  const masterViewPath = getMasterView(frameworkVersion, type, isDebug);
+  const masterPath = getMaster(frameworkVersion, type);
+  const masterViewPath = getMasterView(frameworkVersion, type);
 
   const hasInjectApi = existsSync(path.resolve(ctx.projectDir, 'api.js'));
   const injectApiScript = `<script src="http://${address.ip()}:${ctx.port}/build/api.js"></script>`;

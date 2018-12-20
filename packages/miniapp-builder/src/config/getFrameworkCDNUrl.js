@@ -31,16 +31,16 @@ const getNativeRendererUrl = exports.getNativeRendererUrl = function(version) {
 };
 exports.nativeRendererUrl = getNativeRendererUrl(FRAMEWORK_VERSION);
 
-exports.getMaster = function(version, type, debug) {
-  if (debug) {
+exports.getMaster = function(version, type) {
+  if (process.env.DEBUG === 'true') {
     return LOCAL_PREFIX + MASTER[type];
   }
 
   return FRAMEWORK_CDN_PREFIX + version + FRAMEWORK_CDN_SUFFIX + MASTER[type];
 };
 
-exports.getMasterView = function(version, type, debug) {
-  if (debug) {
+exports.getMasterView = function(version, type) {
+  if (process.env.DEBUG === 'true') {
     return LOCAL_PREFIX + VIEW[type];
   }
 

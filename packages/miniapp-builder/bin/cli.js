@@ -33,7 +33,6 @@ program
   .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Inspect port for renderer, default to 8080')
   .option('--renderer-url <rendererUrl>', '<String> Renderer url for debug')
   .option('--public-path <publicPath>', '<String> public path for assets')
-  .option('--debug', 'Use local framework for debug')
   .action(function(cmd, env) {
     const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
     const port = program.port || DEFAULT_PORT;
@@ -58,7 +57,6 @@ program
       rendererInspectHost,
       rendererInspectPort,
       rendererUrl,
-      isDebug: program.debug,
       publicPath,
       miniappType,
     };
