@@ -37,7 +37,7 @@ module.exports = function(destDir, projectDir) {
       filter: (src) => {
         // Pass folder itself
         if (src === schemaSource) return true;
-        return extname(src) === '.json'
+        return extname(src) === '.json';
       }
     });
 

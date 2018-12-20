@@ -4,7 +4,7 @@ const { existsSync } = require('fs');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const getPluginWebpackConfig = require('../../config/getPluginWebpackConfig');
-const copy = require('../copy');
+const { copySync } = require('fs-extra');
 
 const PLUGIN_CONFIG = 'plugin.json';
 const DEMO_PROJECT = 'miniprogram';
@@ -17,7 +17,7 @@ module.exports = function(projectDir, destDir) {
     }
 
     const pluginName = require(pluginConfigFile).name;
-    copy(pluginConfigFile, join(destDir, PLUGIN_CONFIG));
+    copySync(pluginConfigFile, join(destDir, PLUGIN_CONFIG));
     webpack(merge(getPluginWebpackConfig(projectDir, { pluginName }), {
       output: {
         path: destDir,
