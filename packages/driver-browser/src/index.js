@@ -80,7 +80,7 @@ const Driver = {
     if (this.isSVGMode) {
       node = document.createElementNS(SVG_NS, component.type);
     } else if (this.tagNamePrefix) {
-      let tagNamePrefix = typeof this.tagNamePrefix === 'function' ? this.tagNamePrefix(component.type) : tagNamePrefix;
+      let tagNamePrefix = typeof this.tagNamePrefix === 'function' ? this.tagNamePrefix(component.type) : this.tagNamePrefix;
       node = document.createElement(tagNamePrefix + component.type);
     } else {
       node = document.createElement(component.type);
