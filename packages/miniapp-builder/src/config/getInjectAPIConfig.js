@@ -1,7 +1,7 @@
 const { join, resolve} = require('path');
 const babelConfig = require('./babelConfig');
 
-const assetsLoader = require.resolve('../loaders/InjectAPILoader');
+const apiLoader = require.resolve('../loaders/InjectAPILoader');
 
 /**
  * CUSTOM API webpack config
@@ -9,10 +9,10 @@ const assetsLoader = require.resolve('../loaders/InjectAPILoader');
 module.exports = (projectDir, opts) => {
   return {
     entry: {
-      api: assetsLoader + '!' + resolve(projectDir, 'api.js')
+      api: apiLoader + '!' + resolve(projectDir, 'api.js')
     },
     output: {
-      path: join(projectDir, 'build/pages'),
+      path: join(projectDir, 'build'),
       filename: '[name].js',
     },
     mode: process.env.NODE_ENV || 'development',

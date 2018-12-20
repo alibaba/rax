@@ -1,4 +1,3 @@
-
 const address = require('address');
 let FRAMEWORK_VERSION = exports.FRAMEWORK_VERSION = require('./frameworkVersion');
 
