@@ -80,14 +80,16 @@ export default class Event {
    */
   destroy() {
     if (this.type === 'pan') {
-      this.pan.off('pan', this._onPan);
-      this.pan.off('panstart', this._onPanStart);
-      this.pan.off('panend', this._onPanEnd);
-      this.pan.destroy();
+      if (this.pan) {
+        this.pan.off('pan', this._onPan);
+        this.pan.off('panstart', this._onPanStart);
+        this.pan.off('panend', this._onPanEnd);
+        this.pan.destroy();
+      }
     } else if (this.type === 'orientation') {
-      this.orientation.destroy();
+      this.orientation && this.orientation.destroy();
     } else {
-      this.element.removeEventListener(this.type, this.callback);
+      this.element && this.element.removeEventListener(this.type, this.callback);
     }
   }
 }
