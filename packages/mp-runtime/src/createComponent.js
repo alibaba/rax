@@ -61,7 +61,7 @@ export default function createComponent(renderFactory, render, config, component
 
     setData = (data, callback) => {
       if (data == null) return;
-      this.setState(computeChangedData(this.data, data), callback);
+      this.setState(computeChangedData(this.state, data), callback);
     };
 
     transformChildrenToSlots = (children) => {
