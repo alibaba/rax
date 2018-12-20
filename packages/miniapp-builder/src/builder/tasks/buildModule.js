@@ -7,30 +7,47 @@ const getMiniappType = require('../../config/getMiniappType');
 module.exports = function(destDir, projectDir) {
   return done => {
     const miniappType = getMiniappType(projectDir);
+    const assetBuildConfigPath = join(projectDir, 'abc.json');
 
-    if (miniappType !== 'mp' || !existsSync(join(projectDir, 'abc.json'))) {
+    if (miniappType !== 'mp') {
       done();
       return;
     }
 
-    let appJSON;
+    if (!existsSync(assetBuildConfigPath)) {
+      console.log(colors.green('[Skip] abc.json not exists, skip building template module.'));
+      done();
+      return;
+    }
+
+    let appExtraInfo;
+    let assetBuildConfig;
+    try {
+      assetBuildConfig = JSON.parse(readFileSync(assetBuildConfigPath, 'utf8'));
+    } catch (err) {
+      console.log(colors.red('[ERR] Reading or parsing abc.json'));
+      done();
+      return;
+    }
 
     try {
-      appJSON = JSON.parse(
-        JSON.parse(readFileSync(join(projectDir, 'abc.json'), 'utf8'))
-          .projectinfo.ext
-      );
-      appJSON.appId; // Make sure appJSON is not null;
+      appExtraInfo = JSON.parse(assetBuildConfig.projectinfo.ext);
     } catch (err) {
-      console.log('[Warn] Skipping Build Mod.');
+      console.log(colors.red('[ERR] Reading or parsing extra info from abc.json, please check projectinfo.ext field.'));
+      done();
+      return;
+    }
+
+    if (!appExtraInfo) {
+      console.log(colors.red('[ERR] App extra info empty, please check projectinfo.ext field in abc.json.'));
       done();
       return;
     }
 
     const pageMeta = {
-      appId: appJSON.appId,
-      name: appJSON.name,
-      type: appJSON.type,
+      appId: appExtraInfo.appId,
+      name: appExtraInfo.name,
+      type: appExtraInfo.type,
       pages: {},
       modules: []
     };

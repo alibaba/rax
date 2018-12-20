@@ -8,7 +8,7 @@ const INCLUDE_FILES = 'includeFiles';
  */
 module.exports = function(destDir, projectDir, appConfig) {
   return () => {
-    if (INCLUDE_FILES in appConfig) {
+    if (appConfig && INCLUDE_FILES in appConfig) {
       return gulp
         .src(appConfig[INCLUDE_FILES], {
           base: projectDir,
