@@ -8,7 +8,7 @@ const runtimeHelpers = require('./runtimeHelpers');
 const pageLoader = require.resolve('./page-loader');
 const CSS_EXT = '.acss';
 const JS_EXT = '.js';
-const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
+const EXTERNAL_PAGE_URL_REG = /^(https?|plugin):\/\//;
 
 /**
  * App loader

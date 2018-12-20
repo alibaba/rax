@@ -2,12 +2,15 @@ const { join } = require('path');
 
 const RELATIVE_PATH_REG = /^\./;
 const ABSOLUTE_PATH_REG = /^\//;
+const PLGUIN_PATH_REG = /^plugin:\/\//;
 
 function resolveComponentPath(componentPath, projectPath, pagePath) {
   if (RELATIVE_PATH_REG.test(componentPath)) {
     return join(pagePath, '..', componentPath);
   } else if (ABSOLUTE_PATH_REG.test(componentPath)) {
     return join(projectPath, componentPath);
+  } else if (PLGUIN_PATH_REG.test(componentPath)) {
+    return componentPath;
   } else {
     return join(projectPath, 'node_modules', componentPath);
   }

@@ -10,7 +10,20 @@ const { getMaster, getMasterView, FRAMEWORK_VERSION } = require('../../config/ge
 let cachedMasterView = null;
 
 module.exports = async function masterRoute(ctx, next) {
-  const appConfig = getAppConfig(ctx.projectDir);
+  /**
+   * Declear assets to load plugins
+   *   pluginAssets: Array[URL<String>]
+   * Each url will be loaded asynchronously or synchronously before app.js.
+   */
+  const pluginAssets = [];
+  if (ctx.miniappType === 'plugin') {
+    pluginAssets.push(`http://${localIP}:${ctx.port}/build-plugin/index.js`);
+  }
+
+  const appConfig = getAppConfig(ctx.projectDir, {
+    pluginAssets,
+  });
+
   const frameworkVersion = appConfig.frameworkVersion || FRAMEWORK_VERSION;
   const type = ctx.request.url === '/app/index.html' ? 'web' : 'ide';
   const isDebug = ctx.isDebug;

@@ -9,13 +9,12 @@
   },
   "dependencies": {
     "rax": "^0.6.5",
-    "rax-view": "^0.6.5",
-    "rax-text": "^0.6.5"
+    "atag": "^0.1.31"
   },
   "devDependencies": {
-    "rax-scripts": "^0.6.5",
-    "babel-eslint": "^8.2.2",
-    "eslint": "^4.18.1",
-    "eslint-plugin-react": "^7.7.0"
+    "rax-scripts": "^1.0.0-beta.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-plugin-react": "^7.11.1"
   }
 }

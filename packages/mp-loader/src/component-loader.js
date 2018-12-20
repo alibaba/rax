@@ -14,6 +14,7 @@ const CONFIG_EXT = '.json';
 
 module.exports = function(content) {
   const { resourcePath } = this;
+
   const basePath = resourcePath.replace(extname(resourcePath), '');
   let cssPath = basePath + CSS_EXT;
   let templatePath = basePath + TEMPLATE_EXT;
