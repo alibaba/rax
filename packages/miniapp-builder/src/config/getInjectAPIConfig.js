@@ -9,7 +9,7 @@ const assetsLoader = require.resolve('../loaders/InjectAPILoader');
 module.exports = (projectDir, opts) => {
   return {
     entry: {
-      api: assetsLoader + '!' + resolve(projectDir, 'public/index.js')
+      api: assetsLoader + '!' + resolve(projectDir, 'api.js')
     },
     output: {
       path: join(projectDir, 'build/pages'),

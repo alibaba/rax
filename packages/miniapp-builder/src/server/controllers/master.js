@@ -18,7 +18,7 @@ module.exports = async function masterRoute(ctx, next) {
   const masterPath = getMaster(frameworkVersion, type, isDebug);
   const masterViewPath = getMasterView(frameworkVersion, type, isDebug);
 
-  const hasInjectApi = existsSync(path.resolve(ctx.projectDir, 'public/index.js'));
+  const hasInjectApi = existsSync(path.resolve(ctx.projectDir, 'api.js'));
   const injectApiScript = `<script src="http://${address.ip()}:${ctx.port}/build/api.js"></script>`;
 
   if (!cachedMasterView) {

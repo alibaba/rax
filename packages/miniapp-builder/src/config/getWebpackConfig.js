@@ -36,7 +36,7 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
     throw new Error('Cannot recognize MiniApp Type!');
   }
 
-  const injectApiPath = resolve(projectDir, 'public/index.js');
+  const injectApiPath = resolve(projectDir, 'api.js');
   if (existsSync(injectApiPath)) {
     config.push(merge(
       webpackBaseConfig,
