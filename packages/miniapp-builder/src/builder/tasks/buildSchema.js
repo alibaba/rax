@@ -1,7 +1,5 @@
-const mkdirp = require('mkdirp');
 const { join, extname } = require('path');
-const { existsSync, readdirSync, renameSync } = require('fs');
-const copy = require('../copy');
+const { copySync, mkdirpSync, existsSync, renameSync } = require('fs-extra');
 
 const APP_CONFIG = 'app.config.json';
 const DATA_JSON = 'data.json';
@@ -20,13 +18,13 @@ module.exports = function(destDir, projectDir) {
   const mockSource = join(projectDir, 'mock');
   return (done) => {
     const schemaDest = join(destDir, '.schema');
-    mkdirp.sync(schemaDest);
+    mkdirpSync(schemaDest);
 
     /**
      * Must ensure .schema/app.config.json exists,
      * for server to read.
      */
-    copy(
+    copySync(
       join(destDir, APP_CONFIG),
       join(schemaDest, APP_CONFIG)
     );
@@ -35,7 +33,13 @@ module.exports = function(destDir, projectDir) {
      * Copy folder: schema => .schema
      * Only copy json file.
      */
-    copyFolder(schemaSource, schemaDest, (filename) => extname(filename) === '.json');
+    copyIfExists(schemaSource, schemaDest, {
+      filter: (src) => {
+        // Pass folder itself
+        if (src === schemaSource) return true;
+        return extname(src) === '.json'
+      }
+    });
 
     /**
      * Rename .schema/data.json -> .schema/schema.json
@@ -57,21 +61,8 @@ module.exports = function(destDir, projectDir) {
   };
 };
 
-function copyIfExists(from, to) {
+function copyIfExists(from, to, opts) {
   if (existsSync(from)) {
-    copy(from, to);
-  }
-}
-
-function copyFolder(fromFolder, toFolder, filter = () => true) {
-  const files = readdirSync(fromFolder);
-  if (Array.isArray(files)) {
-    for (let i = 0, l = files.length; i < l; i ++) {
-      if (filter(files[i])) {
-        const from = join(fromFolder, files[i]);
-        const to = join(toFolder, files[i]);
-        copy(from, to);
-      }
-    }
+    copySync(from, to, opts);
   }
 }
