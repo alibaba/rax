@@ -2,7 +2,7 @@
   "private": true,
   "devEngines": {
     "node": "8.x || 9.x || 10.x || 11.x",
-    "npm": "5.x"
+    "npm": "6.x"
   },
   "devDependencies": {
     "@babel/core": "7.2.0",
