@@ -11,7 +11,6 @@ const {
  * build web version of miniapp
  * @param {*} appConfig
  */
-
 module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/') {
   return done => {
     let frameworkVersion;
