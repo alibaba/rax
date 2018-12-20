@@ -128,4 +128,38 @@ describe('NativeComponent', function() {
     expect(childNodes[1].data).toBe('hello1');
     expect(childNodes[2].data).toBe('hello2');
   });
+
+  it('should rendering correct even if child did not update when element is same', function() {
+    let container = createNodeElement('div');
+    const child1 = <div key="a">a</div>;
+    const child2 = <div>b</div>;
+    const child3 = <div key="c">c</div>;
+
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count === 0
+                ? [<div>d</div>, child1, <div>e</div>, child2, child3]
+                : [child3, <div>e</div>, child2, child1, <div>d</div>]
+            }
+          </div>
+        );
+      }
+    }
+    const instance = render(<App />, container);
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('d');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('a');
+    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('e');
+    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('b');
+    expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('c');
+    instance.setState({count: 1});
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('c');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('e');
+    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('b');
+    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('a');
+    expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('d');
+  });
 });
