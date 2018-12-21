@@ -103,6 +103,10 @@ export default class NativeMap extends PolymerElement {
         type: Number,
         observer: '_observeRouteConfig',
       },
+      routeSearchType: {
+        type: String,
+        observer: '_observeRouteSearchType',
+      },
     };
   }
 
@@ -216,6 +220,8 @@ export default class NativeMap extends PolymerElement {
       'route-end': this.routeEnd,
       'route-width': this.routeWidth,
       'route-color': this.routeColor,
+      'search-type': this.routeSearchType,
+      'addition-param': this.routeAdditionParam,
     });
   }
 
@@ -243,6 +249,7 @@ export default class NativeMap extends PolymerElement {
           routeEnd: this.routeEnd,
           routeColor: this.routeColor,
           routeWidth: this.routeWidth,
+          searchType: this.routeSearchType,
         });
         break;
 
@@ -354,5 +361,29 @@ export default class NativeMap extends PolymerElement {
     } else {
       this._windVaneReadyCallbacks.push(execute);
     }
+  }
+
+  _createOnceEventCallback(eventName, callback) {
+    let handler;
+    this.addEventListener(eventName, handler = (evt) => {
+      callback && callback(evt);
+      this.removeEventListener(eventName, handler);
+    });
+  }
+
+  /**
+   * Get map center location, api exposed.
+   */
+  getCenterLocation = (callback) => {
+    this._createOnceEventCallback('centerPosition', callback);
+    this._callNativeControl('getCenterLocation');
+  }
+
+  /**
+   * Move the marker to some position
+   */
+  translateMarker = (opts, callback) => {
+    this._createOnceEventCallback('translateMarkerEnd', callback);
+    this._callNativeControl('translateMarker', opts);
   }
 }
