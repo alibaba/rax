@@ -23,6 +23,7 @@ export default class CheckboxElement extends PolymerElement {
         type: Boolean,
         value: false,
         notify: true,
+        reflectToAttribute: true,
       },
       color: {
         type: String,

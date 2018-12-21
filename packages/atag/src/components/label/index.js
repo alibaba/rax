@@ -67,7 +67,7 @@ export default class Label extends PolymerElement {
       case 'a-radio':
         if (!forEl.checked && !forEl.disabled) {
           forEl.checked = !forEl.checked;
-          forEl.dispatchChange(forEl.checked);
+          forEl._dispatchChange(forEl.checked);
         }
         break;
       default:
