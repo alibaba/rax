@@ -78,10 +78,6 @@ export default class Animation extends PolymerElement {
     this.styleProp = 'animation-style';
   }
 
-  ready() {
-    super.ready();
-  }
-
   connectedCallback() {
     super.connectedCallback();
     this.event = new Event({

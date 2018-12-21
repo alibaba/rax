@@ -53,14 +53,6 @@ export default class Progress extends PolymerElement {
     };
   }
 
-  constructor() {
-    super();
-  }
-
-  ready() {
-    super.ready();
-  }
-
   connectedCallback() {
     super.connectedCallback();
     if (this.active) {

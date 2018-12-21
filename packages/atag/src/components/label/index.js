@@ -14,14 +14,6 @@ export default class Label extends PolymerElement {
     };
   }
 
-  constructor() {
-    super();
-  }
-
-  ready() {
-    super.ready();
-  }
-
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('click', this._handleClick);
