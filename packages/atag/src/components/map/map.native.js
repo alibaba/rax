@@ -263,9 +263,9 @@ export default class NativeMap extends PolymerElement {
       circles: this.circles,
       controls: this.controls,
       polygon: this.polygon,
-      includePoints: this.includePoints,
-      showLocation: this.showLocation,
-      showMapText: this.showMapText,
+      'include-points': this.includePoints,
+      'show-location': this.showLocation,
+      'show-map-text': this.showMapText,
     });
   }
 
@@ -293,8 +293,10 @@ export default class NativeMap extends PolymerElement {
     if (bridgeId === this.uniqueId) {
       // Transform native event name: onRegionChange -> regionchange
       let eventName = eventType.replace(/^on/, '').toLowerCase();
-      // All tap event listened will be normalized to click in process.
-      if (eventName === 'tap') eventName = 'click';
+      if (eventName === 'tap') {
+        // At the same time trigger click event.
+        this._dispatchEvent('click', eventDetail);
+      }
       this._dispatchEvent(eventName, eventDetail);
     }
   }
