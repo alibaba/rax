@@ -364,6 +364,8 @@ export default class NativeMap extends PolymerElement {
   }
 
   _createOnceEventCallback(eventName, callback) {
+    // All dom event will be lowercased
+    eventName = String(eventName).toLowerCase();
     let handler;
     this.addEventListener(eventName, handler = (evt) => {
       callback && callback(evt);
@@ -376,7 +378,11 @@ export default class NativeMap extends PolymerElement {
    */
   getCenterLocation = (callback) => {
     this._createOnceEventCallback('centerPosition', callback);
-    this._callNativeControl('getCenterLocation');
+    if (isIOS) {
+      this._createOrUpdateParam('getCenterLocation', Date.now());
+    } else {
+      this._callNativeControl('getCenterLocation');
+    }
   }
 
   /**
@@ -384,6 +390,10 @@ export default class NativeMap extends PolymerElement {
    */
   translateMarker = (opts, callback) => {
     this._createOnceEventCallback('translateMarkerEnd', callback);
-    this._callNativeControl('translateMarker', opts);
+    if (isIOS) {
+      this._createOrUpdateParam('translateMarker', opts);
+    } else {
+      this._callNativeControl('translateMarker', opts);
+    }
   }
 }
