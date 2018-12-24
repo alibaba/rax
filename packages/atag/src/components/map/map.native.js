@@ -211,7 +211,7 @@ export default class NativeMap extends PolymerElement {
   }
 
   _observeRouteConfig() {
-    this._createOrUpdateParam('route-config', {
+    this._createOrUpdateParam('routeConfig', {
       'route-start': this.routeStart,
       'route-end': this.routeEnd,
       'route-width': this.routeWidth,
@@ -241,7 +241,7 @@ export default class NativeMap extends PolymerElement {
         this._callNativeControl('animateBounds', value);
         break;
 
-      case 'route-config':
+      case 'routeConfig':
         this._callNativeControl('drawRoute', {
           routeStart: this.routeStart,
           routeEnd: this.routeEnd,
