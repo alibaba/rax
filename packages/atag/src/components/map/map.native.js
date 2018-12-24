@@ -237,6 +237,10 @@ export default class NativeMap extends PolymerElement {
         this._callNativeControl('zoomTo', { zoomLevel: value });
         break;
 
+      case 'includePoints':
+        this._callNativeControl('animateBounds', value);
+        break;
+
       case 'route-config':
         this._callNativeControl('drawRoute', {
           routeStart: this.routeStart,
@@ -267,6 +271,13 @@ export default class NativeMap extends PolymerElement {
       'show-location': this.showLocation,
       'show-map-text': this.showMapText,
     });
+    /**
+     * Update will clean all items on map, route-config as same.
+     * Call drawing route after updated.
+     */
+    if (this.routeStart && this.routeEnd) {
+      this._updateParamWithAndroid('route-config');
+    }
   }
 
 
