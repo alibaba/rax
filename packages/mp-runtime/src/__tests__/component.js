@@ -76,9 +76,7 @@ describe('Mini Program Component', () => {
       },
     });
     const tree = renderer.create(createElement(Comp, { bar: 1 }));
-    setTimeout(() => {
-      tree.unmount();
-    }, 500);
+    tree.unmount();
   });
 
   it('should works well with setData', (done) => {
@@ -109,9 +107,7 @@ describe('Mini Program Component', () => {
       },
     });
     const tree = renderer.create(createElement(Comp, { bar: 1 }));
-    setTimeout(() => {
-      tree.unmount();
-    }, 500);
+    tree.unmount();
   });
 
   it('should works well with named slot', () => {
@@ -145,13 +141,13 @@ describe('Mini Program Component', () => {
       didMount() {
         this.countAdd();
       },
+      didUnmount() {
+        done();
+      },
     });
     const tree = renderer.create(createElement(Comp, {}));
-
-    setTimeout(() => {
-      expect(tree.toJSON()).toMatchSnapshot();
-      done();
-    }, 500);
+    expect(tree.toJSON()).toMatchSnapshot();
+    tree.unmount();
   });
 
   it('should works well with register components', () => {
