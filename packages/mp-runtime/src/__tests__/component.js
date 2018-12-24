@@ -165,4 +165,38 @@ describe('Mini Program Component', () => {
     const Comp = createComponent(renderFactory, Rax, {}, componentPath);
     expect(getComponent(componentPath)).toEqual(Comp);
   });
+
+  it('should get componet is, $page, $id', (done) => {
+    const $page = Symbol('$page');
+
+    function renderFactory(Rax) {
+      return function(data) {
+        return createElement('view', {}, data.count);
+      };
+    }
+    const compPath = 'path/to/component';
+    const Comp = createComponent(renderFactory, Rax, {
+      data: { count: 0 },
+      didMount() {
+        expect(this.is).toEqual(compPath);
+        expect(typeof this.$id).toEqual('number');
+        expect(this.$page).toEqual($page);
+        done();
+      },
+    }, compPath);
+
+    class Page extends Rax.Component {
+      static contextTypes = { $page: null };
+
+      getChildContext() {
+        return { $page };
+      }
+
+      render() {
+        return createElement('view', {}, [createElement(Comp)]);
+      }
+    }
+
+    renderer.create(createElement(Page));
+  });
 });
