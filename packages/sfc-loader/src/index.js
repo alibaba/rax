@@ -36,9 +36,11 @@ module.exports = function(rawContent) {
 
   const { render, ast } = compiler.compile(template.content, {
     scopeRefIdentifiers: scopeIdentifiers,
-    // rax prefer false to make it more similar to JSX
-    // undefined means true
-    preserveWhitespace: userOptions.preserveWhitespace,
+    /**
+     * Rax prefer false to make it more similar to JSX,
+     * default to false.
+     */
+    preserveWhitespace: !!userOptions.preserveWhitespace,
     cssInJS: userOptions && userOptions.cssInJS,
   });
 
