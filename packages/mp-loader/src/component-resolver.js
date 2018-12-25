@@ -1,10 +1,24 @@
 const { join } = require('path');
-const { warn } = require('./utils');
 
 const RELATIVE_PATH_REG = /^\./;
 const ABSOLUTE_PATH_REG = /^\//;
 const PLGUIN_PATH_REG = /^plugin:\/\//;
+const NODE_MODULES = 'node_modules';
 
+/**
+ * Get request path for webpack to resolve.
+ * eg:
+ *   /path/to/project/foo
+ *   -> webpack will automaticlly search for entry file in order:
+ *      foo.js
+ *      foo/index.js
+ *      foo/index/index.js
+ *      ...
+ * @param componentPath {String} Requested component path.
+ * @param projectPath {String} Base path for project.
+ * @param pagePath {String} Path to page file.
+ * @return {String} Request path.
+ */
 function resolveComponentPath(componentPath, projectPath, pagePath) {
   if (RELATIVE_PATH_REG.test(componentPath)) {
     return join(pagePath, '..', componentPath);
@@ -13,35 +27,8 @@ function resolveComponentPath(componentPath, projectPath, pagePath) {
   } else if (PLGUIN_PATH_REG.test(componentPath)) {
     return componentPath;
   } else {
-    return resolveNpmModule(componentPath, {
-      basePath: projectPath
-    });
+    return join(projectPath, NODE_MODULES, componentPath);
   }
-}
-
-function resolveNpmModule(moduleName, opts = {}) {
-  const basePath = opts.basePath || process.cwd();
-  const modulePath = join(basePath, 'node_modules', moduleName);
-  if (!existsSync(modulePath)) {
-    throw new Error(`${modulePath} is not a valid path or not exists. Please check ${moduleName} is installed by npm.`)
-  }
-
-  let resolved = join(modulePath, 'index.js');
-  const packageJsonPath = join(modulePath, 'package.json');
-  let pkgInfo;
-  if (existsSync(packageJsonPath)) {
-    try {
-      pkgInfo = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-    } catch(err) {
-      warn(`Parsing JSON error while reading: ${packageJsonPath}.`);
-    }
-  }
-
-  if (pkgInfo && pkgInfo.main) {
-    resolved = join(modulePath, pkgInfo.main);
-  }
-
-  return resolved;
 }
 
 module.exports = function resolveDependencyComponents(config, projectPath, basePath) {

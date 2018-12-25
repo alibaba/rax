@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`component resolver should resolve config properly 1`] = `
+Object {
+  "absolute": "/Users/zhuoling/workspace/rax/packages/mp-loader/src/__tests__/test-project/components/foo/index",
+  "npm": "/Users/zhuoling/workspace/rax/packages/mp-loader/src/__tests__/test-project/node_modules/npm-pkg/es/card/index",
+  "plugin": "plugin://foo-plugin/foo-component",
+  "relative": "/Users/zhuoling/workspace/rax/packages/mp-loader/src/__tests__/test-project/components/foo/index",
+  "self": "__SELF__",
+}
+`;

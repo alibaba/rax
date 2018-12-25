@@ -1,31 +1,55 @@
 const { join } = require('path');
-const { resolveComponentPath } = require('../component-resolver');
+const resolveDependencyComponents = require('../component-resolver');
 
-const projectPath = join(__dirname, '__files__/test-project');
+const { resolveComponentPath } = resolveDependencyComponents;
+
+const projectPath = join(__dirname, 'test-project'); // mocked path
 const pagePath = join(projectPath, 'pages/foo/foo.js');
 const componentPath = join(projectPath, '/components/foo/foo');
-const subComponentPath = join(pagePath, '/sub-component/index');
+const npmPkgPath = join(projectPath, 'node_modules/npm-pkg');
+const subComponentPath = join(projectPath, 'pages/foo/sub-component/index');
+const pluginComponentPath = 'plugin://foo-plugin/foo-component';
 
 describe('component resolver', () => {
   const r = resolveComponentPath;
-  it('should resolve component path', () => {
+  it('should resolve absolute component path', () => {
     expect(
       r('/components/foo/foo', projectPath, pagePath)
     ).toEqual(componentPath);
+  });
 
+  it('should resolve relative compoennt path', () => {
     expect(
       r('../../components/foo/foo', projectPath, pagePath)
     ).toEqual(componentPath);
 
     expect(
-      r('./sub-component', projectPath, pagePath)
+      r('./sub-component/index', projectPath, pagePath)
     ).toEqual(subComponentPath);
   });
 
-  // todo: npm add to git
   it('should resolve npm component', () => {
     expect(
       r('npm-pkg', projectPath, pagePath)
-    ).toEqual(componentPath);
+    ).toEqual(npmPkgPath);
+  });
+
+  it('should support plugin component', () => {
+    expect(
+      r(pluginComponentPath, projectPath, pagePath)
+    ).toEqual(pluginComponentPath);
+  });
+
+  it('should resolve config properly', () => {
+    const usingComponents = {
+      npm: 'npm-pkg/es/card/index',
+      plugin: pluginComponentPath,
+      relative: '../../components/foo/index',
+      absolute: '/components/foo/index',
+      self: './foo.js',
+    };
+    expect(
+      resolveDependencyComponents({ usingComponents }, projectPath, pagePath)
+    ).toMatchSnapshot();
   });
 });
