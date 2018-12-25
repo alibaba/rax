@@ -1,19 +1,16 @@
 const modules = require('./transpileModules');
 const { baseOptions, generate } = require('sfc-compiler');
 
-module.exports = function(ast) {
+module.exports = function(ast, opts) {
   const options = Object.assign(
     {
-      // 完全字符串节点
-      originalTag: true,
+      originalTag: true, // reserve original tag name
+      modules
     },
-    baseOptions
+    baseOptions,
+    opts
   );
-  if (options.modules) {
-    options.modules = options.modules.concat(modules);
-  } else {
-    options.modules = modules;
-  }
+
   const generated = generate(ast, options);
 
   return {
