@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://alibaba.github.io/rax">
-    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/49848760-999e7d00-fe11-11e8-978f-264ea31f6739.png" width="56">
+    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/49848760-999e7d00-fe11-11e8-978f-264ea31f6739.png" width="66">
   </a>
 </p>
 
@@ -315,32 +315,32 @@ Then, you can run several commands:
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top">
-        <img height="60" src="https://github.com/yuanyan.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/yuanyan.png?s=128">
         <br>
         <a href="https://github.com/yuanyan">@yuanyan</a>
         <p>Core</p>
       </td>
-      <td align="center" valign="top">
-        <img height="60" src="https://github.com/imsobear.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/imsobear.png?s=128">
         <br>
         <a href="https://github.com/imsobear">@imsobear</a>
         <p>Development</p>
       </td>
-      <td align="center" valign="top">
-        <img height="60" src="https://github.com/yacheng.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/yacheng.png?s=128">
         <br>
         <a href="https://github.com/yacheng">@yacheng</a>
         <p>Universals &amp; Components</p>
       </td>
-      <td align="center" valign="top">
-        <img height="60" src="https://github.com/boiawang.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/boiawang.png?s=128">
         <br>
         <a href="https://github.com/boiawang">@boiawang</a>
         <p>Loaders &amp; Plugins</p>
       </td>
-      <td align="center" valign="top">
-        <img height="60" src="https://github.com/wssgcg1213.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/wssgcg1213.png?s=128">
         <br>
         <a href="https://github.com/wssgcg1213">@wssgcg1213</a>
         <p>DSL Runtimes &amp; Loaders</p>
@@ -358,8 +358,9 @@ Then, you can run several commands:
   <img src="https://user-images.githubusercontent.com/677114/49876872-33404b80-fe5f-11e8-8244-b5598900e3f6.png" height="60"/>
   <img src="https://user-images.githubusercontent.com/677114/49876953-5b2faf00-fe5f-11e8-8789-7f1787495b2a.png" height="60"/>
   <img src="https://user-images.githubusercontent.com/677114/49877220-e8730380-fe5f-11e8-8579-e622b3f0f5a6.png" height="60"/>
-  <img src="https://user-images.githubusercontent.com/677114/49877650-d80f5880-fe60-11e8-9dd8-93dfd4330bfe.png" height="60"/>
-  <img src="https://user-images.githubusercontent.com/677114/49877658-db0a4900-fe60-11e8-880b-61f316163fe4.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414430-84354400-0850-11e9-8352-7c0f44c01561.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414676-d88cf380-0851-11e9-9f20-307ae81ef5eb.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414379-43d5c600-0850-11e9-8dc6-133465db54dc.png" height="60"/>
 </p>
 
 ---
