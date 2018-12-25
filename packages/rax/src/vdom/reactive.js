@@ -6,7 +6,7 @@ import { scheduleImmediateCallback } from '../scheduler';
  * Functional Reactive Component Class Wrapper
  */
 class ReactiveComponent extends Component {
-  constructor(pureRender) {
+  constructor(pureRender, ref) {
     super();
     // A pure function
     this.pureRender = pureRender;
@@ -16,11 +16,24 @@ class ReactiveComponent extends Component {
     this.didUpdateHandlers = [];
     this.willUnmountHandlers = [];
 
-    // A memo compare
-    const compare = pureRender.compare;
-    if (compare) {
+    if (pureRender.forwardRef) {
+      this.prevForwardRef = this.forwardRef = ref;
+    }
+
+    const compares = pureRender.compares;
+    if (compares) {
       this.shouldComponentUpdate = (nextProps) => {
-        return !pureRender.compare(this.props, nextProps);
+        // Process composed compare
+        let arePropsEqual = true;
+
+        // Compare push in and pop out
+        for (let i = compares.length - 1; i > -1; i--) {
+          if (arePropsEqual = compares[i](this.props, nextProps)) {
+            break;
+          };
+        }
+
+        return !arePropsEqual || this.prevForwardRef !== this.forwardRef;
       };
     }
   }
@@ -89,7 +102,7 @@ class ReactiveComponent extends Component {
       Host.measurer && Host.measurer.beforeRender();
     }
     this.hooksIndex = 0;
-    return this.pureRender(this.props, this.context);
+    return this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
   }
 }
 
