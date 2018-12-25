@@ -11,11 +11,11 @@ module.exports = (projectDir) => {
   }
 
   const externalApiPath = resolve(projectDir, externalApi);
-    
+
   if (existsSync(externalApiPath)) {
     return true;
   } else {
     console.error('Cannot find this extenal api file : ' + externalApi);
     return false;
   }
-}
+};

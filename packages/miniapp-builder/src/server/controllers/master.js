@@ -16,6 +16,7 @@ module.exports = async function masterRoute(ctx, next) {
    *   pluginAssets: Array[URL<String>]
    * Each url will be loaded asynchronously or synchronously before app.js.
    */
+  const localIP = address.ip();
   const pluginAssets = [];
   if (ctx.miniappType === 'plugin') {
     pluginAssets.push(`http://${localIP}:${ctx.port}/build-plugin/index.js`);

@@ -7,7 +7,7 @@ module.exports = function(projectDir, destDir) {
   return done => {
     const baseConfigs = getWebpackConfig(projectDir);
     const config = [];
-  
+
     baseConfigs.map((baseConfig) => {
       config.push(merge(baseConfig, {
         mode: 'production',
