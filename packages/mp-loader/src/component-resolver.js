@@ -1,4 +1,5 @@
 const { join } = require('path');
+const { warn } = require('./utils');
 
 const RELATIVE_PATH_REG = /^\./;
 const ABSOLUTE_PATH_REG = /^\//;
@@ -12,8 +13,35 @@ function resolveComponentPath(componentPath, projectPath, pagePath) {
   } else if (PLGUIN_PATH_REG.test(componentPath)) {
     return componentPath;
   } else {
-    return join(projectPath, 'node_modules', componentPath);
+    return resolveNpmModule(componentPath, {
+      basePath: projectPath
+    });
   }
+}
+
+function resolveNpmModule(moduleName, opts = {}) {
+  const basePath = opts.basePath || process.cwd();
+  const modulePath = join(basePath, 'node_modules', moduleName);
+  if (!existsSync(modulePath)) {
+    throw new Error(`${modulePath} is not a valid path or not exists. Please check ${moduleName} is installed by npm.`)
+  }
+
+  let resolved = join(modulePath, 'index.js');
+  const packageJsonPath = join(modulePath, 'package.json');
+  let pkgInfo;
+  if (existsSync(packageJsonPath)) {
+    try {
+      pkgInfo = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+    } catch(err) {
+      warn(`Parsing JSON error while reading: ${packageJsonPath}.`);
+    }
+  }
+
+  if (pkgInfo && pkgInfo.main) {
+    resolved = join(modulePath, pkgInfo.main);
+  }
+
+  return resolved;
 }
 
 module.exports = function resolveDependencyComponents(config, projectPath, basePath) {
@@ -33,3 +61,5 @@ module.exports = function resolveDependencyComponents(config, projectPath, baseP
   }
   return result;
 };
+
+module.exports.resolveComponentPath = resolveComponentPath;
