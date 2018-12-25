@@ -2,10 +2,10 @@
 
 exports[`component resolver should resolve config properly 1`] = `
 Object {
-  "absolute": "/Users/zhuoling/workspace/rax/packages/mp-loader/src/__tests__/test-project/components/foo/index",
-  "npm": "/Users/zhuoling/workspace/rax/packages/mp-loader/src/__tests__/test-project/node_modules/npm-pkg/es/card/index",
+  "absolute": "/@mock-path@/test-project/components/foo/index",
+  "npm": "/@mock-path@/test-project/node_modules/npm-pkg/es/card/index",
   "plugin": "plugin://foo-plugin/foo-component",
-  "relative": "/Users/zhuoling/workspace/rax/packages/mp-loader/src/__tests__/test-project/components/foo/index",
+  "relative": "/@mock-path@/test-project/components/foo/index",
   "self": "__SELF__",
 }
 `;

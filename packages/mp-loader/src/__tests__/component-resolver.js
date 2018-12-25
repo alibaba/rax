@@ -3,7 +3,8 @@ const resolveDependencyComponents = require('../component-resolver');
 
 const { resolveComponentPath } = resolveDependencyComponents;
 
-const projectPath = join(__dirname, 'test-project'); // mocked path
+const mockPwd = '/@mock-path@/';
+const projectPath = join(mockPwd, 'test-project'); // mocked path
 const pagePath = join(projectPath, 'pages/foo/foo.js');
 const componentPath = join(projectPath, '/components/foo/foo');
 const npmPkgPath = join(projectPath, 'node_modules/npm-pkg');
