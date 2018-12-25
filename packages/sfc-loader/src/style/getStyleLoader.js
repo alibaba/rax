@@ -1,5 +1,5 @@
-const loaderUtils = require('loader-utils');
 /**
+ * Get style content by resourcePath
  * for windows issues
  * c:\xxxx\xx.js is not equal to C:\xxxx\xx.js
  * but pointing to the same file content
@@ -10,14 +10,10 @@ const loaderUtils = require('loader-utils');
 const CACHE_KEY = '__sfc_style_cache__';
 const cache = global[CACHE_KEY] || (global[CACHE_KEY] = {});
 
-module.exports = function(content) {
+module.exports = function() {
   this.cacheable();
-  const options = loaderUtils.getOptions(this);
-  if (Object.hasOwnProperty.call(options, 'id')) {
-    this.callback(null, cache[options.id]);
-  } else {
-    this.callback(null, '');
-  }
+  const id = this.resourcePath;
+  this.callback(null, cache[id] || '');
 };
 
 module.exports.setCache = function(id, content) {
