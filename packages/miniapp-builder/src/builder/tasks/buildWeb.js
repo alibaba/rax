@@ -11,7 +11,7 @@ const {
  * build web version of miniapp
  * @param {*} appConfig
  */
-module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/') {
+module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/', target) {
   return done => {
     let frameworkVersion;
     if (appConfig.frameworkVersion) {
@@ -20,7 +20,7 @@ module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/') {
       frameworkVersion = FRAMEWORK_VERSION;
     }
 
-    const frameworkMasterURL = getMasterView(frameworkVersion, 'web');
+    const frameworkMasterURL = getMasterView(frameworkVersion, target);
 
     axios(frameworkMasterURL).then(response => {
       appConfig.h5Assets = publicPath + 'app.web.js';

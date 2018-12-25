@@ -33,6 +33,7 @@ program
   .option('--renderer-inspect-port <rendererInspectPort>', '<Number> Inspect port for renderer, default to 8080')
   .option('--renderer-url <rendererUrl>', '<String> Renderer url for debug')
   .option('--public-path <publicPath>', '<String> public path for assets')
+  .option('--target <target>', '<String> target type for assets')
   .action(function(cmd, env) {
     const projectDir = program.dir ? resolveDir(program.dir) : DEFAULT_WORKDIR;
     const port = program.port || DEFAULT_PORT;
@@ -41,6 +42,7 @@ program
     const rendererInspectPort = program.rendererInspectPort || 8080;
     const rendererUrl = program.rendererUrl;
     const publicPath = program.publicPath;
+    const target = program.target;
 
     const miniappType = getMiniappType(projectDir);
     if (!miniappType) {
@@ -59,6 +61,7 @@ program
       rendererUrl,
       publicPath,
       miniappType,
+      target
     };
     const defaultFrameworkVersion = require('../src/config/frameworkVersion');
     const getFrameworkVersion = require('../src/config/getFrameworkVersion');

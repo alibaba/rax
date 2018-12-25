@@ -18,7 +18,7 @@ const app = new Koa();
  * Start MiniApp Dev Server
  */
 module.exports = function startDevServer(opts) {
-  let { projectDir, port, rendererInspect, rendererInspectHost, rendererInspectPort, rendererUrl, miniappType } = opts;
+  let { projectDir, port, rendererInspect, rendererInspectHost, rendererInspectPort, rendererUrl, miniappType, target } = opts;
 
   let pluginWebpackConfig;
   let pluginName;
@@ -61,6 +61,7 @@ module.exports = function startDevServer(opts) {
     ctx.rendererUrl = rendererUrl;
     ctx.miniappType = miniappType;
     ctx.pluginName = pluginName;
+    ctx.target = target;
     return next();
   });
   app.use(devMiddleware);

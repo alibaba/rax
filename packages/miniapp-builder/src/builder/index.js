@@ -16,13 +16,31 @@ module.exports = function(opts) {
   }
 };
 
-function buildMiniApp({ projectDir, publicPath }) {
+function buildMiniApp({ projectDir, publicPath, target}) {
   registerGulpTasks({
     projectDir,
     destDir: join(projectDir, BUILD_DEST || 'build'),
     publicPath,
     appConfig: getAppConfig(projectDir),
+    target
   });
+
+  if (target === 'web') {
+    runSequence(
+      'clean',
+      'ensure-dir',
+      [
+        'build-config',
+        'build-app',
+        'build-schema',
+        'build-module',
+        'collect-assets',
+        'build-include-files',
+      ],
+      'build-web',
+    );
+    return;
+  }
 
   runSequence(
     'clean',

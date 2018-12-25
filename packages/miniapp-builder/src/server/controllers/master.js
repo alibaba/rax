@@ -26,10 +26,9 @@ module.exports = async function masterRoute(ctx, next) {
   });
 
   const frameworkVersion = appConfig.frameworkVersion || FRAMEWORK_VERSION;
-  const type = ctx.request.url === '/app/index.html' ? 'web' : 'ide';
 
-  const masterPath = getMaster(frameworkVersion, type);
-  const masterViewPath = getMasterView(frameworkVersion, type);
+  const masterPath = getMaster(frameworkVersion, ctx.target);
+  const masterViewPath = getMasterView(frameworkVersion, ctx.target);
 
   const hasExternalApi = checkExternalApi(ctx.projectDir);
   const externalApiScript = `<script src="http://${address.ip()}:${ctx.port}/build/api.js"></script>`;
