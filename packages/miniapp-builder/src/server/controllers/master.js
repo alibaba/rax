@@ -6,6 +6,7 @@ const { existsSync } = require('fs');
 
 const { getAppConfig } = require('../../config/getAppConfig');
 const { getMaster, getMasterView, FRAMEWORK_VERSION } = require('../../config/getFrameworkCDNUrl');
+const checkExternalApi = require('../../config/checkExternalApi');
 
 let cachedMasterView = null;
 
@@ -30,8 +31,8 @@ module.exports = async function masterRoute(ctx, next) {
   const masterPath = getMaster(frameworkVersion, type);
   const masterViewPath = getMasterView(frameworkVersion, type);
 
-  const hasInjectApi = existsSync(path.resolve(ctx.projectDir, 'api.js'));
-  const injectApiScript = `<script src="http://${address.ip()}:${ctx.port}/build/api.js"></script>`;
+  const hasExternalApi = checkExternalApi(ctx.projectDir);
+  const externalApiScript = `<script src="http://${address.ip()}:${ctx.port}/build/api.js"></script>`;
 
   if (!cachedMasterView) {
     try {
@@ -51,7 +52,7 @@ module.exports = async function masterRoute(ctx, next) {
     const content = ejs.render(cachedMasterView, {
       appConfig: JSON.stringify(appConfig, null, 2),
       h5Master: masterPath,
-      injectApi: hasInjectApi ? injectApiScript : ''
+      externalApi: hasExternalApi ? externalApiScript : ''
     });
 
     ctx.body = content;

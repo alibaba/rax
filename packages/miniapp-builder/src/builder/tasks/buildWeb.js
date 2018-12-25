@@ -33,12 +33,12 @@ module.exports = function buildWeb(destDir, appConfig, publicPath = '/build/') {
       const webDistFilePath = join(destDir, 'app.web.js');
       writeFileSync(webDistFilePath, webDistFileContent, 'utf-8');
 
-      const hasInjectApi = existsSync(join(destDir, 'api.js'));
-      const InjectApiScript = `<script src="${publicPath}api.js"></script>`;
+      const hasExternalApi = existsSync(join(destDir, 'api.js'));
+      const ExternalApiScript = `<script src="${publicPath}api.js"></script>`;
 
       const htmlFileContent = ejs.render(response.data, {
         appConfig: JSON.stringify(appConfig),
-        injectApi: hasInjectApi ? InjectApiScript : ''
+        externalApi: hasExternalApi ? ExternalApiScript : ''
       });
 
       const htmlFilePath = join(destDir, 'index.html');

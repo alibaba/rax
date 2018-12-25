@@ -1,15 +1,17 @@
 const { join, resolve} = require('path');
 const babelConfig = require('./babelConfig');
-
-const apiLoader = require.resolve('../loaders/InjectAPILoader');
+const { getAppConfig } = require('./getAppConfig');
+const apiLoader = require.resolve('../loaders/ExternalAPILoader');
 
 /**
  * CUSTOM API webpack config
  */
-module.exports = (projectDir, opts) => {
+module.exports = (projectDir) => {
+  const appConfig = getAppConfig(projectDir);
+
   return {
     entry: {
-      api: apiLoader + '!' + resolve(projectDir, 'api.js')
+      api: apiLoader + '!' + resolve(projectDir, appConfig.externalApi)
     },
     output: {
       path: join(projectDir, 'build'),

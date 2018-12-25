@@ -13,7 +13,7 @@ module.exports = (projectDir, opts) => {
   return {
     output: {
       libraryTarget: 'commonjs2',
-      path: join(projectDir, 'build/pages'),
+      path: join(projectDir, 'build'),
       filename: '[name].js',
     },
     module: {

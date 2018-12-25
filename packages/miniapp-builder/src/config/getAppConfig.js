@@ -147,6 +147,10 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
     result.pluginAssets = opts.pluginAssets;
   }
 
+  // 自定义 api
+  if (appJSON.externalApi) {
+    result.externalApi = appJSON.externalApi;
+  }
   return result;
 };
 

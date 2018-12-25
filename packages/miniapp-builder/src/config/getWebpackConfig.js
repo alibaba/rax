@@ -1,10 +1,9 @@
-const { existsSync } = require('fs');
-const { resolve} = require('path');
 const merge = require('webpack-merge');
 const webpackBaseConfig = require('./webpackBaseConfig');
 const getEntry = require('./getEntry');
 const getMiniappType = require('../config/getMiniappType');
-const webpackApiConfig = require('./getInjectAPIConfig');
+const webpackApiConfig = require('./getExternalAPIConfig');
+const checkExternalApi = require('./checkExternalApi');
 
 // devtool: 'eval-source-map',
 module.exports = function getWebpackConfig(projectDir, isDevServer) {
@@ -37,8 +36,8 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
     throw new Error('Cannot recognize MiniApp Type!');
   }
 
-  const injectApiPath = resolve(projectDir, 'api.js');
-  if (existsSync(injectApiPath)) {
+  const hasExternalApi = checkExternalApi(projectDir);
+  if (hasExternalApi) {
     config.push(merge(
       webpackBaseConfig,
       webpackApiConfig(projectDir)
