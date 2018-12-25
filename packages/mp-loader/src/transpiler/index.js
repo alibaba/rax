@@ -15,7 +15,7 @@ module.exports = function transpiler(content, opts) {
       });
   }
 
-  const { render, ast } = generate(templateAST, {});
+  const { render, ast } = generate(templateAST, opts);
 
   return {
     renderFn: render,

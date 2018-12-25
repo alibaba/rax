@@ -9,8 +9,10 @@ const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
  * Interface of mp page
  */
 class Page {
-  constructor(vnode, config) {
+  constructor(vnode, config, opts = {}) {
     this.vnode = vnode;
+    this.route = opts.pageName;
+    this.$viewId = opts.viewId;
 
     // Copy methods and other keys
     Object.keys(config).forEach(key => {
@@ -51,7 +53,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   const pageEventEmitter = requireCoreModule('@core/page');
   const Rax = requireCoreModule('@core/rax');
 
-  const { document, location, evaluator, pageQuery, pageName } = pageContext;
+  const { document, location, evaluator, pageQuery, pageName, clientId } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
   const render = getWebViewSource
@@ -79,7 +81,10 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
       super(props, context);
 
       // create Page instance, initialize data and setData
-      this.pageInstance = new Page(this, config);
+      this.pageInstance = new Page(this, config, {
+        viewId: clientId,
+        pageName,
+      });
       /**
        * willMount: [fn],
        * didMount: [fn],
@@ -134,6 +139,14 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     // type: [{ type, fn }]
     // remember cycle to remove while being destroyed
     cycleListeners = [];
+
+    /**
+     * Pass page instance to context
+     * for component to ref by $page.
+     */
+    getChildContext() {
+      return { $page: this.pageInstance };
+    }
 
     componentWillMount() {
       /**

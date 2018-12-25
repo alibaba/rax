@@ -1,6 +1,5 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
-const { relative } = require('path');
 const { createRequire, renderHelperVars, prerveredVars } = require('./utils');
 const transpiler = require('./transpiler');
 const runtimeHelpers = require('./runtimeHelpers');
