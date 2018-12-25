@@ -55,6 +55,42 @@ $ cd YourProjectName
 $ npm run start
 ```
 
+## Rax API (v1.0)
+
+#### Creating Elements
+* createElement()
+* createFactory()
+
+#### Manipulating Elements
+* cloneElement()
+* isValidElement()
+* Children
+
+#### Fragments
+* Fragment
+
+#### Refs
+* createRef()
+* forwardRef()
+
+#### Hooks
+* useState()
+* useContext()
+* useEffect()
+* useLayoutEffect()
+* useRef()
+* useCallback()
+* useMemo()
+* useReducer()
+* useImperativeMethods()
+
+#### Performance
+* memo()
+
+#### Rendering Elements
+* render()
+* hydrate()
+
 ## Project Support
 * WebApp Project
 * MiniApp Project
@@ -280,31 +316,31 @@ Then, you can run several commands:
   <tbody>
     <tr>
       <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/yuanyan.png?s=128">
+        <img height="60" src="https://github.com/yuanyan.png?s=128">
         <br>
         <a href="https://github.com/yuanyan">@yuanyan</a>
         <p>Core</p>
       </td>
       <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/imsobear.png?s=128">
+        <img height="60" src="https://github.com/imsobear.png?s=128">
         <br>
         <a href="https://github.com/imsobear">@imsobear</a>
         <p>Development</p>
       </td>
       <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/yacheng.png?s=128">
+        <img height="60" src="https://github.com/yacheng.png?s=128">
         <br>
         <a href="https://github.com/yacheng">@yacheng</a>
         <p>Universals &amp; Components</p>
       </td>
       <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/boiawang.png?s=128">
+        <img height="60" src="https://github.com/boiawang.png?s=128">
         <br>
         <a href="https://github.com/boiawang">@boiawang</a>
         <p>Loaders &amp; Plugins</p>
       </td>
       <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/wssgcg1213.png?s=128">
+        <img height="60" src="https://github.com/wssgcg1213.png?s=128">
         <br>
         <a href="https://github.com/wssgcg1213">@wssgcg1213</a>
         <p>DSL Runtimes &amp; Loaders</p>

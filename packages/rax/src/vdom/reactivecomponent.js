@@ -15,6 +15,14 @@ class ReactiveComponent extends Component {
     this.didMountHandlers = [];
     this.didUpdateHandlers = [];
     this.willUnmountHandlers = [];
+
+    // A memo compare
+    const compare = pureRender.compare;
+    if (compare) {
+      this.shouldComponentUpdate = (nextProps) => {
+        return !pureRender.compare(this.props, nextProps);
+      };
+    }
   }
 
   getCurrentHookId() {
