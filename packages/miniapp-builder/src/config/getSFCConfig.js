@@ -9,6 +9,7 @@ const SFCLoader = require.resolve('sfc-loader');
  * SFC DSL webpack config
  */
 module.exports = (projectDir, opts) => {
+  const { appConfig } = opts;
   return {
     output: {
       libraryTarget: 'commonjs2',
@@ -55,6 +56,7 @@ module.exports = (projectDir, opts) => {
               options: {
                 builtInRax: true,
                 module: 'commonjs',
+                cssInJS: !appConfig.enableCSS,
               },
             }
           ],
