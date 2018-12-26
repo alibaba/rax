@@ -2,11 +2,10 @@ const { stringifyRequest, getOptions } = require('loader-utils');
 const { relative } = require('path');
 const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
-const setStyleCache = require('./style/setStyleCache');
 const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
 const modules = require('./modules');
 
-const getStyleLoader = require.resolve('./style/getStyleLoader');
+const sfcLoader = require.resolve('.');
 const sfcStyleLoader = require.resolve('./sfcStyleLoader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
 const compiler = createCompiler(Object.assign({}, baseOptions, { modules }));
@@ -16,16 +15,22 @@ const runtimeModuleName = JSON.stringify(require.resolve('./helpers/runtime'));
 const raxModuleName = JSON.stringify('rax');
 
 module.exports = function(rawContent) {
-  this.cacheable();
-
-  const callback = this.async();
   const context = this;
+  const callback = this.async();
   const contextPath = this.rootContext || this.options && this.options.context || process.cwd();
   const filePath = this.resourcePath;
   const userOptions = getOptions(this) || {};
   const relativePath = relative(contextPath, filePath);
 
   const { template, script, styles } = parseSFCParts(rawContent);
+
+  /**
+   * If `part` passed, return SFC's pointed part.
+   */
+  if (userOptions.part === 'style') {
+    return callback(null, styles ? styles.content : '');
+  }
+
   const declarationName = '__sfc_module_declaration__';
   const { declarationCode, sourceMap, scopeIdentifiers } = transformScript(
     script.content,
@@ -62,8 +67,6 @@ module.exports = function(rawContent) {
     })
     : 'function() { return function() { return ""; } }';
 
-  setStyleCache(styles.content, filePath);
-
   /**
    * By default, sfc loader will create style tag for CSS text.
    * if RN/Weex style CSS is needed, enable `cssInJS` in loader option.
@@ -71,9 +74,10 @@ module.exports = function(rawContent) {
   let loadStyleRequest;
   if (userOptions.cssInJS === true) {
     const styleLoader = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true`;
+    // prefix -! means stop any pitching loaders
     loadStyleRequest = stringifyRequest(
       context,
-      `${styleLoader}!${getStyleLoader}!${filePath}`
+      `-!${styleLoader}!${sfcLoader}?part=style!${filePath}`
     );
   } else {
     loadStyleRequest = stringifyRequest(

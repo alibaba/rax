@@ -4,7 +4,6 @@ const WebpackMiniProgramPlugin = require('../plugins/WebpackMiniProgramPlugin');
 const babelConfig = require('./babelConfig');
 
 const SFCLoader = require.resolve('sfc-loader');
-const getStyleLoader = require.resolve('sfc-loader/src/style/getStyleLoader');
 
 /**
  * SFC DSL webpack config
@@ -43,7 +42,12 @@ module.exports = (projectDir, opts) => {
                     ]
                   }
                 },
-                { loader: getStyleLoader }
+                {
+                  loader: SFCLoader,
+                  options: {
+                    part: 'style',
+                  },
+                }
               ]
             },
             {
