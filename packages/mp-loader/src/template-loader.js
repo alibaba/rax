@@ -61,7 +61,7 @@ module.exports = function templateLoader(content) {
           + createRequire(stringifyRequest(this, `${getPluginLoaderPath}?type=component&path=${encodeURIComponent(pluginComponentPath)}!${resourcePath}`))
           + '(__render__);';
       } else {
-        const loadComponent = createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}.js`));
+        const loadComponent = createRequire(stringifyRequest(this, `${ComponentLoaderPath}!${dependencyComponents[componentName]}`));
         const loadComponentsHub = 'require(' + stringifyRequest(this, runtimeHelpers.componentsHub) + ')';
         if (isSelf) {
           /**
