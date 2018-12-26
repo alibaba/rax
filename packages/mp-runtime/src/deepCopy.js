@@ -7,8 +7,11 @@ export default function deepCopy(o) {
   if (Array.isArray(o)) return cloneArray(o, deepCopy);
   const o2 = {};
   for (var k in o) {
-    var cur = o[k];
-    if (typeof cur !== 'object' || cur === null) {
+    var propDesc = Object.getOwnPropertyDescriptor(o, k);
+    var cur = propDesc.value;
+    if (propDesc.get || propDesc.set) {
+      Object.defineProperty(o2, k, propDesc);
+    } else if (typeof cur !== 'object' || cur === null) {
       o2[k] = cur;
     } else if (cur instanceof Date) {
       o2[k] = new Date(cur);
