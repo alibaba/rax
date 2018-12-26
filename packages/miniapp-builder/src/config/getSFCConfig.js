@@ -1,10 +1,9 @@
-const { join, extname } = require('path');
+const { join } = require('path');
 const WebpackWrapPlugin = require('../plugins/WebpackWrapPlugin');
 const WebpackMiniProgramPlugin = require('../plugins/WebpackMiniProgramPlugin');
 const babelConfig = require('./babelConfig');
 
 const SFCLoader = require.resolve('sfc-loader');
-
 
 /**
  * SFC DSL webpack config
@@ -20,10 +19,46 @@ module.exports = (projectDir, opts) => {
       rules: [
         {
           test: /\.(sfc|vue|html)$/,
-          loader: SFCLoader,
-          options: {
-            cssInJS: true,
-          },
+          oneOf: [
+            {
+              resourceQuery: /\?style/,
+              use: [
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    sourceMap: true,
+                    importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
+                  }
+                },
+                {
+                  loader: require.resolve('postcss-loader'),
+                  options: {
+                    sourceMap: true,
+                    plugins: [
+                      require('postcss-import')({ resolve: require('./styleResolver') }),
+                      require('../plugins/PostcssPluginRpx2rem'),
+                      require('../plugins/PostcssPluginTagPrefix'),
+                      require('autoprefixer')({ remove: false }),
+                    ]
+                  }
+                },
+                {
+                  loader: SFCLoader,
+                  options: {
+                    part: 'style',
+                  },
+                }
+              ]
+            },
+            {
+              loader: SFCLoader,
+              options: {
+                builtInRax: true,
+                module: 'commonjs',
+              },
+            }
+          ],
+
         },
         {
           test: /\.jsx?$/,

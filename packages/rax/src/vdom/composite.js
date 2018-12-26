@@ -1,4 +1,4 @@
-import ReactiveComponent from './reactivecomponent';
+import ReactiveComponent from './reactive';
 import updater from './updater';
 import Host from './host';
 import Ref from './ref';
@@ -88,8 +88,10 @@ class CompositeComponent {
       Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
-    let Component = this._currentElement.type;
-    let publicProps = this._currentElement.props;
+    let currentElement = this._currentElement;
+    let Component = currentElement.type;
+    let ref = currentElement.ref;
+    let publicProps = currentElement.props;
     let isClass = Component.prototype;
     let isComponentClass = isClass && Component.prototype.isComponentClass;
     // Class stateless component without state but have lifecycles
@@ -108,7 +110,7 @@ class CompositeComponent {
         instance = new Component(publicProps, publicContext, updater);
       } else if (typeof Component === 'function') {
         // Functional reactive component with hooks
-        instance = new ReactiveComponent(Component);
+        instance = new ReactiveComponent(Component, ref);
       } else {
         throw new Error(`Invalid component type: ${Component}. (current: ${typeof Component === 'object' && Object.keys(Component) || typeof Component})`);
       }
@@ -182,8 +184,8 @@ class CompositeComponent {
       handleError(instance, error);
     }
 
-    if (this._currentElement && this._currentElement.ref) {
-      Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
+    if (!this._currentElement.type.forwardRef && ref) {
+      Ref.attach(currentElement._owner, ref, this);
     }
 
     if (instance.componentDidMount) {
@@ -233,7 +235,7 @@ class CompositeComponent {
 
     if (this._renderedComponent != null) {
       let ref = this._currentElement.ref;
-      if (ref) {
+      if (!this._currentElement.type.forwardRef && ref) {
         Ref.detach(this._currentElement._owner, ref, this);
       }
 
@@ -356,7 +358,12 @@ class CompositeComponent {
     }
 
     // Update refs
-    Ref.update(prevElement, nextElement, this);
+    if (this._currentElement.type.forwardRef) {
+      instance.prevForwardRef = prevElement.ref;
+      instance.forwardRef = nextElement.ref;
+    } else {
+      Ref.update(prevElement, nextElement, this);
+    }
 
     // Shoud update always default
     let shouldUpdate = true;
