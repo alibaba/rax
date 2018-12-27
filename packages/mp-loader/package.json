@@ -43,6 +43,7 @@
     "@babel/preset-env": "^7.0.0",
     "autoprefixer": "^9.3.1",
     "babel-loader": "^8.0.2",
+    "babylon": "^6.18.0",
     "css-loader": "^1.0.1",
     "miniapp-builder": "^0.1.11",
     "postcss": "^7.0.5",
