@@ -20,6 +20,7 @@ class Slider extends Component {
   }
 
   onChange = (e) => {
+    this.setState({index:e.currentTarget.attr.index});
     this.props.onChange(e);
   }
 
