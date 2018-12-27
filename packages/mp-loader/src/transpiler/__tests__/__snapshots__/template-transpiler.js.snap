@@ -249,6 +249,63 @@ Object {
 
 exports[`Transpiler parse nested 2`] = `"_c(__components_ref__['view']||'view',{foo:\\"bar\\"},[_c(__components_ref__['text']||'text',[_v(\\"hello\\")]),_c(__components_ref__['text']||'text',[_v(\\"world\\")])])"`;
 
+exports[`Transpiler parse should parse instant array expression 1`] = `
+Object {
+  "alias": "item",
+  "attrs": Array [
+    Object {
+      "name": "empty",
+      "scope": "",
+      "value": "(1)",
+    },
+  ],
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "a:for": "{{[{},{},{},{}]}}",
+    "empty": "{{1}}",
+  },
+  "children": Array [],
+  "for": "([{}, {}, {}, {}])",
+  "iterator1": "index",
+  "parent": undefined,
+  "plain": false,
+  "tag": "single-item",
+  "type": 1,
+}
+`;
+
+exports[`Transpiler parse should parse instant array expression 2`] = `
+Object {
+  "ast": Object {
+    "alias": "item",
+    "attrs": Array [
+      Object {
+        "name": "empty",
+        "scope": "",
+        "value": "(1)",
+      },
+    ],
+    "attrsList": Array [],
+    "attrsMap": Object {
+      "a:for": "{{[{},{},{},{}]}}",
+      "empty": "{{1}}",
+    },
+    "children": Array [],
+    "for": "([{}, {}, {}, {}])",
+    "forProcessed": true,
+    "iterator1": "index",
+    "parent": undefined,
+    "plain": false,
+    "tag": "single-item",
+    "tagHelperMap": Object {
+      "single-item": "single-item",
+    },
+    "type": 1,
+  },
+  "render": "_l.call(this,(([{}, {}, {}, {}])),function(item,index){return _c(__components_ref__['single-item']||'single-item',{empty:(1)})})",
+}
+`;
+
 exports[`Transpiler parse should use a:for with other rules 1`] = `
 Object {
   "alias": "item",

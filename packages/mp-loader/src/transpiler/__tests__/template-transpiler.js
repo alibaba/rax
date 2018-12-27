@@ -130,9 +130,10 @@ describe('Transpiler parse', () => {
         empty="{{1}}"></single-item>
     `;
     const ast = parse(content, transpilerOptions);
-    // expect(ast).toMatchSnapshot();
+    expect(ast).toMatchSnapshot();
 
     const generated = generate(ast, transpilerOptions);
     expect(checkValidJavaScriptStr(generated.render)).toBe(true);
+    expect(generated).toMatchSnapshot();
   });
 });
