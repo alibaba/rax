@@ -9,7 +9,7 @@ function toLiteralString(str) {
 
 // not allow {{x:{y:1}}}
 // or use complex parser
-const expressionTagReg = /\{\{([^}]+)\}\}/g;
+const expressionTagReg = /{{(.*?)}}/g;
 const fullExpressionTagReg = /^\{\{([^}]+)\}\}$/;
 const spreadReg = /^\.\.\.[\w$_]/;
 const objReg = /^[\w$_](?:[\w$_\d\s]+)?:/;
@@ -122,6 +122,7 @@ function transformCode(code_, rmlScope, config) {
       }
     }
   };
+
   var expression = parseExpression(codeStr, babylonConfig);
   var start = expression.start,
     end = expression.end;
