@@ -145,5 +145,5 @@ describe('Transpiler parse', () => {
     const generated = generate(ast, transpilerOptions);
     expect(checkValidJavaScriptStr(generated.render)).toBe(true);
     expect(generated).toMatchSnapshot();
-  })
+  });
 });
