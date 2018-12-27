@@ -118,7 +118,9 @@ export default class ImageElement extends PolymerElement {
   _load() {
     this.state = LOADING;
     const image = this.image = new Image();
-
+    // Decode the image asynchronously to reduce delay in presenting other content.
+    image.decoding = 'async';
+    
     image.onload = (evt) => {
       this.state = DONE;
 
@@ -169,6 +171,7 @@ export default class ImageElement extends PolymerElement {
   }
 
   isReady = false;
+
   ready() {
     super.ready();
     this.isReady = true;
