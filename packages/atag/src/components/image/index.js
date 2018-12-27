@@ -120,7 +120,7 @@ export default class ImageElement extends PolymerElement {
     const image = this.image = new Image();
     // Decode the image asynchronously to reduce delay in presenting other content.
     image.decoding = 'async';
-    
+
     image.onload = (evt) => {
       this.state = DONE;
 
