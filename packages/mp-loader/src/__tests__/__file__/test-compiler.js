@@ -5,16 +5,16 @@ const MemoryFS = require('memory-fs');
 const mpLoader = require.resolve('./index');
 
 module.exports = function compile(fixture) {
-  const context = path.resolve(__dirname, '__tests__/fixtures', fixture);
+  const context = path.resolve(__dirname, '../fixtures', fixture);
   const config = {
     mode: 'development',
     context,
     entry: {
       app: path.resolve(context, 'app.js'),
     },
-    devtool: false, //'cheap-eval-source-map',
+    devtool: false, // 'cheap-eval-source-map',
     output: {
-      path: path.resolve(__dirname, '__tests__/output'),
+      path: path.resolve(__dirname, '../output'),
       filename: '[name].js',
     },
     module: {
