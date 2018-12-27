@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MemoryFS = require('memory-fs');
 
-const mpLoader = require.resolve('./index');
+const mpLoader = require.resolve('../../index');
 
 module.exports = function compile(fixture) {
   const context = path.resolve(__dirname, '../fixtures', fixture);
