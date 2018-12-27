@@ -7,10 +7,15 @@ function toLiteralString(str) {
   return JSON.stringify(str);
 }
 
-// not allow {{x:{y:1}}}
-// or use complex parser
+/**
+ * Test cases
+ *   {{x:{y:1}}}
+ *   {{[{},{}]}}
+ *   {{x}} {{y}}
+ * @type {RegExp}
+ */
 const expressionTagReg = /{{(.*?)}}/g;
-const fullExpressionTagReg = /^\{\{([^}]+)\}\}$/;
+const fullExpressionTagReg = /^{{(.*?)}}$/;
 const spreadReg = /^\.\.\.[\w$_]/;
 const objReg = /^[\w$_](?:[\w$_\d\s]+)?:/;
 const es2015ObjReg = /^[\w$_](?:[\w$_\d\s]+)?,/;
@@ -83,17 +88,12 @@ function transformCode(code_, rmlScope, config) {
           members.push(root);
           root = root.object;
         }
-        var isSJS = findScope(this.rmlScope, root.name) === 'sjs';
-        if (!isSJS && this.strictDataMember) {
+        if (this.strictDataMember) {
           return;
         }
-        // TODO. use https://www.npmjs.com/package/babel-plugin-transform-optional-chaining
-        var memberFn = isSJS ? '$getSJSMember' : '$getLooseDataMember';
+        var memberFn = '$getLooseDataMember';
         members.reverse();
         var args = [root];
-        if (isSJS) {
-          root.__rmlSkipped = 1;
-        }
         if (root.type === 'ThisExpression') {
           args.pop();
           args.push(members.shift());
@@ -165,6 +165,7 @@ function transformExpressionByPart(str_, scope, config) {
   if (!str.match(expressionTagReg)) {
     return [toLiteralString(str_)];
   }
+  console.log(str);
   var match = str.match(fullExpressionTagReg);
   if (match) {
     return [transformCode(match[1], scope, config)];

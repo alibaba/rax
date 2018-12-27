@@ -136,4 +136,14 @@ describe('Transpiler parse', () => {
     expect(checkValidJavaScriptStr(generated.render)).toBe(true);
     expect(generated).toMatchSnapshot();
   });
+
+  it('should parse instant nested object expression', () => {
+    const content = `
+      <view foo="{{x:{y:2}}}"></view>
+    `;
+    const ast = parse(content, transpilerOptions);
+    const generated = generate(ast, transpilerOptions);
+    expect(checkValidJavaScriptStr(generated.render)).toBe(true);
+    expect(generated).toMatchSnapshot();
+  })
 });

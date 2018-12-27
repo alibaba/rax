@@ -306,6 +306,41 @@ Object {
 }
 `;
 
+exports[`Transpiler parse should parse instant nested object expression 1`] = `
+Object {
+  "ast": Object {
+    "attrs": Array [
+      Object {
+        "name": "foo",
+        "scope": "",
+        "value": "(({
+  x: {
+    y: 2
+  }
+}))",
+      },
+    ],
+    "attrsList": Array [],
+    "attrsMap": Object {
+      "foo": "{{x:{y:2}}}",
+    },
+    "children": Array [],
+    "parent": undefined,
+    "plain": false,
+    "tag": "view",
+    "tagHelperMap": Object {
+      "view": "view",
+    },
+    "type": 1,
+  },
+  "render": "_c(__components_ref__['view']||'view',{foo:(({
+  x: {
+    y: 2
+  }
+}))})",
+}
+`;
+
 exports[`Transpiler parse should use a:for with other rules 1`] = `
 Object {
   "alias": "item",
