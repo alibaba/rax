@@ -165,7 +165,6 @@ function transformExpressionByPart(str_, scope, config) {
   if (!str.match(expressionTagReg)) {
     return [toLiteralString(str_)];
   }
-  console.log(str);
   var match = str.match(fullExpressionTagReg);
   if (match) {
     return [transformCode(match[1], scope, config)];
