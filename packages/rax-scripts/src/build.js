@@ -33,6 +33,7 @@ function buildCompiler(config) {
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   miniapp: './config/miniapp/webpack.config.prod',
+  miniprogram: './config/miniprogram/webpack.config.prod',
   component: './config/component/webpack.config.prod',
 };
 
