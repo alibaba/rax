@@ -54,11 +54,6 @@ export default class Swiper extends PolymerElement {
         type: String,
         value: 'rgb(0, 0, 0)',
       },
-      nested: {
-        type: Boolean,
-        value: true,
-        observer: '_observeNested',
-      },
       _indicatorDotStyle: {
         type: String,
         computed: '_computeIndicatorDotStyle(current)',
@@ -175,14 +170,6 @@ export default class Swiper extends PolymerElement {
     let realCurrent = this.circular ? this.current + 1 : this.current;
     const offset = this._getOffset(realCurrent);
     this._setRealItem(offset, 0);
-  }
-
-  _observeNested(nested) {
-    if (nested) {
-      this.setAttribute('nested-swiper', 'true');
-    } else {
-      this.removeAttribute('nested-swiper');
-    }
   }
 
   _observeAutoplay(autoplay) {
