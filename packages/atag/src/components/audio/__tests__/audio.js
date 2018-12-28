@@ -4,7 +4,7 @@ describe('audio', () => {
   let page;
   beforeAll(async() => {
     page = await global.__BROWSER__.newPage();
-    await page.goto('http://localhost:9002/');
+    await page.goto('http://localhost:9002/components/audio/__tests__/index.html');
   }, timeout);
 
   afterAll(async() => {
