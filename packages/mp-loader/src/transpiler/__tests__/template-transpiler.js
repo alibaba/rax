@@ -162,6 +162,6 @@ describe('Transpiler parse', () => {
     const ast = parse(content, transpilerOptions);
     const generated = generate(ast, transpilerOptions);
     expect(checkValidJavaScriptStr(generated.render)).toBe(true);
-    // expect(generated).toMatchSnapshot();
+    expect(generated).toMatchSnapshot();
   });
 });
