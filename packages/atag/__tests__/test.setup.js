@@ -1,8 +1,8 @@
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const kill = require('kill-port')
-const mkdirp = require('mkdirp');
+const kill = require('kill-port');
+const mkdirp = require('mkdirp'); // eslint-disable-line
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -26,7 +26,7 @@ module.exports = async function() {
 
 function startDevServer(port) {
   port = port || 9002;
-  return new Promise((resolve => {
+  return new Promise(resolve => {
     const handle = spawn(require.resolve('webpack-dev-server/bin/webpack-dev-server.js'), [
       '--config',
       require.resolve('../config/webpack.config.dev.js'),
@@ -47,5 +47,5 @@ function startDevServer(port) {
         resolve(handle);
       }
     });
-  }));
+  });
 }
