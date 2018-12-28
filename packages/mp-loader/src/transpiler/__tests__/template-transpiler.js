@@ -146,4 +146,22 @@ describe('Transpiler parse', () => {
     expect(checkValidJavaScriptStr(generated.render)).toBe(true);
     expect(generated).toMatchSnapshot();
   });
+
+  it('expression with special chars', () => {
+    const content = `
+      <template a:if="{{orderData.operationConfirm}}" data="{{
+        btnText: defaultData.confirm,
+        action: 'confirmOrder',
+        btnType: btnType.green
+      }}">
+      </template>
+      <view 
+        data-info="{{item.name}},{{item.order_item_id}}"
+      ></view>
+    `;
+    const ast = parse(content, transpilerOptions);
+    const generated = generate(ast, transpilerOptions);
+    expect(checkValidJavaScriptStr(generated.render)).toBe(true);
+    // expect(generated).toMatchSnapshot();
+  });
 });
