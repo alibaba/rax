@@ -442,16 +442,13 @@ export default class Swiper extends PolymerElement {
   };
 
   _handleTrack = (evt) => {
-    // console.log(evt.target)
-    let nestedSwiper;
-    if ((nestedSwiper = this.querySelector('[nested-swiper]'))
-      && nestedSwiper.contains(evt.target)) {
+    /**
+     * If nested swiper, only inner component handle the event.
+     */
+    if (evt._eventHandled) {
       return;
     }
-    // if (this.hasAttribute('nested')) {
-    //   evt.stopPropagation();
-    // }
-    // evt.stopPropagation();
+
     const { detail } = evt;
     if (detail.state === 'start') {
       const dx = detail.dx;
@@ -462,6 +459,7 @@ export default class Swiper extends PolymerElement {
         this._handleTrackStart(detail);
       }
     }
+    evt._eventHandled = true;
   }
 
   static get template() {
