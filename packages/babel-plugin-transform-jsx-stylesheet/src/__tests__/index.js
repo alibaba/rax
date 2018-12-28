@@ -66,12 +66,13 @@ const getStyleFunctionTemplete = `function _getStyle(classNameExpression) {
   return style;
 }`;
 
+function getTransfromCode(code) {
+  return transform(code, {
+    plugins: [jSXStylePlugin, syntaxJSX]
+  }).code;
+}
+
 describe('jsx style plugin', () => {
-  function getTransfromCode(code) {
-    return transform(code, {
-      plugins: [jSXStylePlugin, syntaxJSX]
-    }).code;
-  }
 
   it('transform only one className to style as member', () => {
     expect(getTransfromCode(`
@@ -272,5 +273,31 @@ import appStyleSheet from './app.css';
 
 var _styleSheet = appStyleSheet;
 render(<div style={_styleSheet["header"]} />);`);
+  });
+});
+
+describe('test development env', () => {
+  let lastEnv;
+  beforeEach(() => {
+    lastEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+  });
+
+  it('transform constant element in development env', () => {
+    expect(getTransfromCode(`
+import { createElement, render } from 'rax';
+import './app.css';
+
+render(<div className="header" />);
+`)).toBe(`
+import { createElement, render } from 'rax';
+import appStyleSheet from './app.css';
+
+var _styleSheet = appStyleSheet;
+render(<div __class="header" style={_styleSheet["header"]} />);`);
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = lastEnv;
   });
 });
