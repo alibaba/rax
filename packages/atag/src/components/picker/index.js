@@ -300,7 +300,7 @@ export default class Picker extends PolymerElement {
           box-sizing: border-box;
         }
       </style>
-      <div id="mask" style="display: none;"></div>
+      <div id="mask" style="display: none;" on-touchmove="false"></div>
       <div id="container" style="display: none;">
         <div id="content">
           <div id="header">
