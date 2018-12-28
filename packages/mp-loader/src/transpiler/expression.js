@@ -199,7 +199,7 @@ function toLiteralString(str) {
 function isValidJSExp(exp) {
   try {
     parseExpression(exp, babylonConfig);
-  } catch(err) {
+  } catch (err) {
     return false;
   }
   return true;
