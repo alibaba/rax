@@ -50,7 +50,8 @@ module.exports = (projectDir, opts) => {
                   require('../plugins/PostcssPluginRpx2rem'),
                   require('../plugins/PostcssPluginTagPrefix'),
                   require('autoprefixer')({
-                    remove: false, browsers: ['ios_saf 8'],
+                    remove: false,
+                    browsers: ['ios_saf 8'],
                   }),
                 ]
               }
