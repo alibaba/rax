@@ -23,7 +23,6 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
     index: [pathConfig.miniappEntry]
   },
   output: {
-    publicPath: '/',
     // show at devtool console panel
     devtoolModuleFilenameTemplate: 'webpack://[namespace]/[resource-path]',
     devtoolNamespace: 'miniapp',

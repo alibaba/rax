@@ -36,7 +36,7 @@ module.exports = {
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
     new MiniAppWebpackPlugin({
-      target: 'web',
+      target: process.env.TARGET || 'web',
     }),
   ],
   module: {
