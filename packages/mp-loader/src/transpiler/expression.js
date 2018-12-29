@@ -38,7 +38,7 @@ function findScope(scope, name) {
 
 function transformCode(code_, rmlScope, config) {
   let codeStr = code_;
-  if (config.forceObject || isObject(codeStr)) {
+  if (config.forceObject || isObjectLikeString(codeStr)) {
     codeStr = '{' + codeStr + '}';
   }
   const visitor = {
@@ -186,7 +186,7 @@ function hasExpression(str) {
   return str.match(expressionTagReg);
 }
 
-function isObject(str_) {
+function isObjectLikeString(str_) {
   let str = str_.trim();
   return str.match(spreadReg) || str.match(objReg) || str.match(es2015ObjReg);
 }
