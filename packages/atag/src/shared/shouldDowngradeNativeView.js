@@ -1,8 +1,9 @@
 /* global __embed_view_manager__ */
 import getEnvironmentObject from './getEnvironmentObject';
 
-const IOS8_REG = /iPhone OS 8/;
-const isIOS = /iPhone|iPod|iPad/i.test(navigator.userAgent);
+const IOS_REG = /iPhone|iPod|iPad/i;
+const IOS_VER_REG = /iPhone OS (\d+)/;
+const isIOS = IOS_REG.test(navigator.userAgent);
 const embedViewManager =
   typeof __embed_view_manager__ !== 'undefined' ? __embed_view_manager__ : null;
 
@@ -14,10 +15,10 @@ const embedViewManager =
 export default function shouldDowngradeNativeView() {
   if (isIOS) {
     /**
-     * iOS8 not support native view render.
+     * iOS version <= 8 not support native view render.
      */
-    const isIOS8 = IOS8_REG.test(navigator.userAgent);
-    if (isIOS8) {
+    const iOSRegExpMatch = IOS_VER_REG.exec(navigator.userAgent);
+    if (iOSRegExpMatch && parseInt(iOSRegExpMatch[1]) <= 8) {
       return true;
     } else {
       return embedViewManager ? embedViewManager.shouldDowngrade() : false;
