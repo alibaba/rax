@@ -40,7 +40,7 @@ const webpackConfigMap = {
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
 
-  if (appPackage.keywords.indexOf('rax-component')) { // build component
+  if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
     componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {
