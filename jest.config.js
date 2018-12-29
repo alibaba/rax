@@ -18,5 +18,6 @@ module.exports = {
     '/lib/',
     '/dist/',
     'sfc-loader',
+    'atag'
   ]
 };

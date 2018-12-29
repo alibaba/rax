@@ -1,8 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const chalk = require('chalk');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const kill = require('kill-port');
-const mkdirp = require('mkdirp'); // eslint-disable-line
+const mkdirp = require('mkdirp');
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');

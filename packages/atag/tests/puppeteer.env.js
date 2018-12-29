@@ -1,5 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const chalk = require('chalk');
-const NodeEnvironment = require('jest-environment-node'); // eslint-disable-line
+const NodeEnvironment = require('jest-environment-node');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const os = require('os');
