@@ -1,9 +1,6 @@
 const webpack = require("webpack");
 const MemoryFS = require('memory-fs');
-const { resolve } = require('path');
 const { existsSync } = require('fs');
-
-const { getAppConfig } = require('../utils/getAppConfig');
 const apiLoader = require.resolve('../loaders/ExternalAPILoader');
 
 module.exports = class WebpackExternalApiPlugin {
@@ -19,9 +16,9 @@ module.exports = class WebpackExternalApiPlugin {
     compiler.hooks.emit.tapAsync('WebpackExternalApiPlugin', (compilation, callback) => {
       const options = compiler.options;
       const outputPath = options.output.path;
-      const fs = new MemoryFS();
 
       const config = {
+        watch: true,
         entry: {
           api: apiLoader + '!' + this.api
         },
@@ -34,9 +31,10 @@ module.exports = class WebpackExternalApiPlugin {
       };
 
       const apiCompiler = webpack(config);
+      const fs = new MemoryFS();
       apiCompiler.outputFileSystem = fs;
-      
-      apiCompiler.run((err, stats) => {
+
+      apiCompiler.watch(null, (err, stats) => {
         if (err) {
           throw err;
         }
