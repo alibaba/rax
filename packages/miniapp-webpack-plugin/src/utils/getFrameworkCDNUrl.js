@@ -30,7 +30,7 @@ const getNativeRendererUrl = exports.getNativeRendererUrl = function(version) {
 };
 exports.nativeRendererUrl = getNativeRendererUrl(FRAMEWORK_VERSION);
 
-exports.getMaster = function(version, type = 'ide') {
+exports.getMaster = function(version, type = 'web') {
   if (process.env.DEBUG === 'true') {
     return LOCAL_PREFIX + MASTER[type];
   }
@@ -38,7 +38,7 @@ exports.getMaster = function(version, type = 'ide') {
   return FRAMEWORK_CDN_PREFIX + version + FRAMEWORK_CDN_SUFFIX + MASTER[type];
 };
 
-exports.getMasterView = function(version, type = 'ide') {
+exports.getMasterView = function(version, type = 'web') {
   if (process.env.DEBUG === 'true') {
     return LOCAL_PREFIX + VIEW[type];
   }

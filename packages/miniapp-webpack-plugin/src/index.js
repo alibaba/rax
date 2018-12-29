@@ -1,3 +1,5 @@
+const path = require('path');
+
 const WebpackAssetsPlugin = require('./plugins/WebpackAssetsPlugin');
 const WebpackHtmlPlugin = require('./plugins/WebpackHtmlPlugin');
 const WebpackWrapPlugin = require('./plugins/WebpackWrapPlugin');
@@ -10,14 +12,19 @@ const PostcssPluginTagPrefix = require('./plugins/PostcssPluginTagPrefix');
 const LocalAssetLoader = require('./loaders/LocalAssetLoader');
 const styleResolver = require('./utils/styleResolver');
 
+const { getAppConfig } = require('./utils/getAppConfig');
+
 class MiniAppWebpackPlugin {
   constructor(opts = {}) {
     this.options = Object.assign({
       target: 'web'
-    }, opts)
+    }, opts);
   }
 
   apply(compiler) {
+    const projectDir = options.context;
+    const appConfig = getAppConfig(projectDir);
+
     const {
       target
     } = this.options;
@@ -28,8 +35,11 @@ class MiniAppWebpackPlugin {
       compiler.apply(new WebpackHtmlPlugin());
     }
 
-    if (target === 'web') {
-      compiler.apply(new WebpackExternalApiPlugin());
+    if (target === 'web' && appConfig.externalApi) {
+      const apiPath = path.resolve(projectDir, appConfig.externalApi);
+      compiler.apply(new WebpackExternalApiPlugin({
+        api: apiPath
+      }));
     }
   }
 };

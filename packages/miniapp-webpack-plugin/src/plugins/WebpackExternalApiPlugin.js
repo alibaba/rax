@@ -1,30 +1,32 @@
 const webpack = require("webpack");
-
-const geExternalApi = require('../utils/getExternalApi');
-const apiLoader = require.resolve('../loaders/ExternalAPILoader');
 const MemoryFS = require('memory-fs');
+const { resolve } = require('path');
+const { existsSync } = require('fs');
+
+const { getAppConfig } = require('../utils/getAppConfig');
+const apiLoader = require.resolve('../loaders/ExternalAPILoader');
 
 module.exports = class WebpackExternalApiPlugin {
   constructor(options) {
-    this.options = options;
+    this.api = options.api;
   }
 
   apply(compiler) {
-    compiler.hooks.emit.tapAsync('Extenal', (compilation, callback) => {
+    if (!existsSync(this.api)) {
+      throw new Error('WebpackExternalApiPlugin: could not load file ' + this.api);
+    }
+
+    compiler.hooks.emit.tapAsync('WebpackExternalApiPlugin', (compilation, callback) => {
       const options = compiler.options;
+      const outputPath = options.output.path;
+      const fs = new MemoryFS();
 
-      const apiPath = geExternalApi();
-
-      if (!apiPath) {
-        return;
-      }
-      
       const config = {
         entry: {
-          api: apiLoader + '!' +apiPath
+          api: apiLoader + '!' + this.api
         },
         output: {
-          path: options.output.path,
+          path: outputPath,
           filename: '[name].js',
         },
         mode: options.mode,
@@ -32,16 +34,14 @@ module.exports = class WebpackExternalApiPlugin {
       };
 
       const apiCompiler = webpack(config);
-      const fs = new MemoryFS();
       apiCompiler.outputFileSystem = fs;
-
+      
       apiCompiler.run((err, stats) => {
         if (err) {
           throw err;
         }
 
-        const content = fs.readFileSync(options.output.path + '/api.js');
-
+        const content = fs.readFileSync(outputPath + '/api.js');
         compilation.assets['api.js'] = {
           source: () => content,
           size: () => content.length
