@@ -1,4 +1,5 @@
 const { stringifyRequest, getOptions } = require('loader-utils');
+const { relative } = require('path');
 const { existsSync } = require('fs');
 const { createRequire, renderHelperVars, prerveredVars } = require('./utils');
 const transpiler = require('./transpiler');
@@ -8,6 +9,7 @@ const { withScope } = require('sfc-compiler');
 const ComponentLoaderPath = require.resolve('./component-loader');
 const getPluginLoaderPath = require.resolve('./get-plugin-loader');
 const PLUGIN_REG = /^plugin:\/\//;
+const NODE_MODULES_REG = /^node_modules\//;
 
 module.exports = function templateLoader(content) {
   const { resourcePath } = this;
@@ -68,10 +70,16 @@ module.exports = function templateLoader(content) {
            * Delay getting component,
            * ensure component is registered.
            */
+          let componentPath = relative(this.rootContext, componentBasePath);
+          if (NODE_MODULES_REG.test(componentPath)) {
+            componentPath = componentPath.replace(NODE_MODULES_REG, '');
+          } else {
+            componentPath = '/' + componentPath;
+          }
           registerPageComponent += `
             Object.defineProperty(__components_ref__, '${componentName}', {
               get: function() {
-                return (${loadComponentsHub}).getComponent('${componentBasePath}');
+                return (${loadComponentsHub}).getComponent('${componentPath}');
               }
             });
           `;
