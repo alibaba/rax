@@ -73,7 +73,6 @@ function getTransfromCode(code) {
 }
 
 describe('jsx style plugin', () => {
-
   it('transform only one className to style as member', () => {
     expect(getTransfromCode(`
 import { createElement, Component } from 'rax';
