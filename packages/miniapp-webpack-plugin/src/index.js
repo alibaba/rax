@@ -24,9 +24,11 @@ class MiniAppWebpackPlugin {
     
     compiler.apply(new WebpackAssetsPlugin());
 
-    if (target === 'web') {
+    if (target === 'web' || target === 'ide') {
       compiler.apply(new WebpackHtmlPlugin());
+    }
 
+    if (target === 'web') {
       compiler.apply(new WebpackExternalApiPlugin());
     }
   }
