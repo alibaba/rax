@@ -25,7 +25,9 @@ class MiniAppWebpackPlugin {
       target
     } = this.options;
     
-    compiler.apply(new WebpackAssetsPlugin());
+    compiler.apply(new WebpackAssetsPlugin({
+      target
+    }));
 
     if (target === 'web' || target === 'ide') {
       compiler.apply(new WebpackHtmlPlugin({

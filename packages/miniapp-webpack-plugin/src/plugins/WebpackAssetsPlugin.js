@@ -19,11 +19,10 @@ const globalPolyfills = [
 ];
 
 module.exports = class WebpackMiniProgramPlugin {
-  constructor(opts) {
-    if (opts && opts.isH5) {
-      this.isH5 = true;
-    }
+  constructor(opts = {}) {
+    this.target = opts.target || 'web';
   }
+
   apply(compiler) {
     compiler.hooks.compilation.tap('compilation', (compilation) => {
       compilation.hooks.optimizeAssets.tap('MiniAppPlugin', () => {
@@ -63,7 +62,7 @@ module.exports = class WebpackMiniProgramPlugin {
           }
         }
 
-        compilation.assets['app.web.js'] = new ConcatSource(
+        compilation.assets[`app.${this.target}.js`] = new ConcatSource(
           webRegisterWrapper[0],
           app,
           injectSchemaMockData ? injectSchemaMockData : '',
