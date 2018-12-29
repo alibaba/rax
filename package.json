@@ -24,7 +24,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.10.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react": "~7.11.1",
     "findup": "^0.1.5",
     "ghooks": "^2.0.4",
     "glob": "^7.1.3",
