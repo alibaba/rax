@@ -1,7 +1,6 @@
 const axios = require('axios');
 const ejs = require('ejs');
 
-const { getAppConfig } = require('../utils/getAppConfig');
 const { getMaster, getMasterView, FRAMEWORK_VERSION } = require('../utils/getFrameworkCDNUrl');
 
 /**
@@ -11,21 +10,21 @@ module.exports = class WebpackHtmlPlugin {
   constructor(options) {
     this.options = Object.assign({
       target: 'web',
+      appConfig: {}
     }, options);
   }
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync('WebpackHtmlPlugin', (compilation, callback) => {
       const {
-        target
+        target,
+        appConfig
       } = this.options;
 
-      const projectDir = compilation.compiler.context;
       const compilationHash = compilation.hash;
       const webpackPublicPath = compilation.mainTemplate.getPublicPath({hash: compilationHash});
       const publicPath = webpackPublicPath.trim() !== '' ? webpackPublicPath : '/';
 
-      const appConfig = getAppConfig(projectDir);
       appConfig.h5Assets = `${publicPath}app.${target}.js`;
 
       const frameworkVersion = appConfig.frameworkVersion || FRAMEWORK_VERSION;

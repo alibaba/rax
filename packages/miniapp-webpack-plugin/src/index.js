@@ -22,7 +22,7 @@ class MiniAppWebpackPlugin {
   }
 
   apply(compiler) {
-    const projectDir = options.context;
+    const projectDir = compiler.context;
     const appConfig = getAppConfig(projectDir);
 
     const {
@@ -32,7 +32,10 @@ class MiniAppWebpackPlugin {
     compiler.apply(new WebpackAssetsPlugin());
 
     if (target === 'web' || target === 'ide') {
-      compiler.apply(new WebpackHtmlPlugin());
+      compiler.apply(new WebpackHtmlPlugin({
+        target,
+        appConfig
+      }));
     }
 
     if (target === 'web' && appConfig.externalApi) {
