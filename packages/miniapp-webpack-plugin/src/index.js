@@ -2,14 +2,10 @@ const path = require('path');
 
 const WebpackAssetsPlugin = require('./plugins/WebpackAssetsPlugin');
 const WebpackHtmlPlugin = require('./plugins/WebpackHtmlPlugin');
-const WebpackWrapPlugin = require('./plugins/WebpackWrapPlugin');
 const WebpackExternalApiPlugin = require('./plugins/WebpackExternalApiPlugin');
 
-const BabelPluginRootImport = require('./plugins/BabelPluginRootImport');
 const PostcssPluginRpx2rem = require('./plugins/PostcssPluginRpx2rem');
 const PostcssPluginTagPrefix = require('./plugins/PostcssPluginTagPrefix');
-
-const LocalAssetLoader = require('./loaders/LocalAssetLoader');
 const styleResolver = require('./utils/styleResolver');
 
 const { getAppConfig } = require('./utils/getAppConfig');
@@ -49,9 +45,7 @@ class MiniAppWebpackPlugin {
 
 module.exports = {
   MiniAppWebpackPlugin,
-  BabelPluginRootImport,
   PostcssPluginRpx2rem,
   PostcssPluginTagPrefix,
-  LocalAssetLoader,
   styleResolver
 }

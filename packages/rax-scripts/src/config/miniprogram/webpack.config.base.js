@@ -2,7 +2,8 @@
 /* eslint no-console: 0 */
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
-const babelConfig = require('../babel.config');
+const babelConfig = require('./babel.config');
+
 const { 
   MiniAppWebpackPlugin, 
   PostcssPluginRpx2rem, 
@@ -51,20 +52,6 @@ module.exports = {
         test: /\.axml$/,
         enforce: 'post',
         use: [babelLoaderConfig],
-      },  
-      {
-        test: /manifest\.json$/,
-        type: 'javascript/auto',
-        exclude: /(node_modules|bower_components)/,
-        use: [
-          {
-            loader: require.resolve('babel-loader'),
-            options: babelConfig,
-          },
-          {
-            loader: require.resolve('miniapp-manifest-loader'),
-          },
-        ],
       },
       {
         test: /\.(html|vue|sfc)$/,

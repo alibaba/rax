@@ -1,5 +1,3 @@
-const { BabelPluginRootImport } = require('miniapp-webpack-plugin');
-
 module.exports = {
   babelrc: false,
   sourceMaps: true,
@@ -23,12 +21,6 @@ module.exports = {
     allowImportExportEverywhere: true,
   },
   plugins: [
-    [
-      require.resolve(BabelPluginRootImport),
-      {
-        rootPathPrefix: '/',
-      },
-    ],
     // Stage 0
     require.resolve('@babel/plugin-proposal-function-bind'),
     // Stage 1
