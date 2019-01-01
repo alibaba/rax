@@ -568,4 +568,96 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('22');
     });
   });
+
+  describe('useReducer', () => {
+    it('simple mount and update', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      const DECREMENT = 'DECREMENT';
+
+      function reducer(state, action) {
+        switch (action) {
+          case 'INCREMENT':
+            return state + 1;
+          case 'DECREMENT':
+            return state - 1;
+          default:
+            return state;
+        }
+      }
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeMethods(ref, () => ({dispatch}));
+        return <span>{count}</span>;
+      }
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('0');
+
+      counter.current.dispatch(INCREMENT);
+      jest.runAllTimers();
+      expect(container.childNodes[0].childNodes[0].data).toEqual('1');
+
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(DECREMENT);
+      jest.runAllTimers();
+      expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
+
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(INCREMENT);
+      counter.current.dispatch(INCREMENT);
+      counter.current.dispatch(INCREMENT);
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(INCREMENT);
+      jest.runAllTimers();
+      expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
+    });
+
+    it('accepts an initial action', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      const DECREMENT = 'DECREMENT';
+
+      function reducer(state, action) {
+        switch (action) {
+          case 'INITIALIZE':
+            return 10;
+          case 'INCREMENT':
+            return state + 1;
+          case 'DECREMENT':
+            return state - 1;
+          default:
+            return state;
+        }
+      }
+
+      const initialAction = 'INITIALIZE';
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0, initialAction);
+        useImperativeMethods(ref, () => ({dispatch}));
+        return <span>{count}</span>;
+      }
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      jest.runAllTimers();
+      expect(container.childNodes[0].childNodes[0].data).toEqual('10');
+
+      counter.current.dispatch(INCREMENT);
+      jest.runAllTimers();
+      expect(container.childNodes[0].childNodes[0].data).toEqual('11');
+
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(DECREMENT);
+      counter.current.dispatch(DECREMENT);
+      jest.runAllTimers();
+      expect(container.childNodes[0].childNodes[0].data).toEqual('8');
+    });
+  });
 });

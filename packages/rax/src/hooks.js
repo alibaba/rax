@@ -193,8 +193,8 @@ export function useReducer(reducer, initialState, initialAction) {
 
     const dispatch = action => {
       const hook = hooks[hookId];
-      hook[2] = action;
-
+      const queue = hook[2];
+      queue.push(action);
       if (Host.component && Host.component._instance === currentInstance) {
         currentInstance.didScheduleRenderPhaseUpdate = true;
       } else {
@@ -205,11 +205,16 @@ export function useReducer(reducer, initialState, initialAction) {
     return hooks[hookId] = [
       initialState,
       dispatch,
-      initialAction
+      []
     ];
   }
   const hook = hooks[hookId];
-  const next = reducer(hook[0], hook[2]);
+  const queue = hook[2];
+  let next = hook[0];
+  for (let i = 0; i < queue.length; i++) {
+    next = reducer(next, queue[i]);
+  }
   hook[0] = next;
+  hook[2] = [];
   return hooks[hookId];
 }
