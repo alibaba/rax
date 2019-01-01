@@ -15,6 +15,7 @@ class ReactiveComponent extends Component {
     this.didMountHandlers = [];
     this.didUpdateHandlers = [];
     this.willUnmountHandlers = [];
+    this.didScheduleRenderPhaseUpdate = false;
 
     if (pureRender.forwardRef) {
       this.prevForwardRef = this.forwardRef = ref;
@@ -102,7 +103,13 @@ class ReactiveComponent extends Component {
       Host.measurer && Host.measurer.beforeRender();
     }
     this.hooksIndex = 0;
-    return this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+    let children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+    while (this.didScheduleRenderPhaseUpdate) {
+      this.hooksIndex = 0;
+      this.didScheduleRenderPhaseUpdate = false;
+      children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+    }
+    return children;
   }
 }
 

@@ -30,7 +30,7 @@ export function useState(initialState) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     // state lazy initializer
     if (typeof initialState === 'function') {
       initialState = initialState();
@@ -45,7 +45,11 @@ export function useState(initialState) {
 
       if (newState !== current) {
         hooks[hookId][0] = newState;
-        currentInstance.update();
+        if (Host.component && Host.component._instance === currentInstance) {
+          currentInstance.didScheduleRenderPhaseUpdate = true;
+        } else {
+          currentInstance.update();
+        }
       }
     };
 
@@ -76,7 +80,7 @@ function useEffectImpl(effect, inputs, defered) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     const create = (immediately) => {
       if (!immediately && defered) return scheduleIdleCallback(() => create(true));
       const { current } = create;
@@ -146,7 +150,7 @@ export function useRef(initialValue) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     hooks[hookId] = {
       current: initialValue
     };
@@ -164,7 +168,7 @@ export function useMemo(create, inputs) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     hooks[hookId] = [create(), inputs];
   } else {
     const hook = hooks[hookId];
@@ -182,27 +186,30 @@ export function useReducer(reducer, initialState, initialAction) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     if (initialAction) {
       initialState = reducer(initialState, initialAction);
     }
 
     const dispatch = action => {
       const hook = hooks[hookId];
-      const current = hook[0];
-      const next = reducer(current, action);
+      hook[2] = action;
 
-      if (next !== current) {
-        hook[0] = next;
+      if (Host.component && Host.component._instance === currentInstance) {
+        currentInstance.didScheduleRenderPhaseUpdate = true;
+      } else {
         currentInstance.update();
       }
     };
 
-    hooks[hookId] = [
+    return hooks[hookId] = [
       initialState,
       dispatch,
+      initialAction
     ];
   }
-
+  const hook = hooks[hookId];
+  const next = reducer(hook[0], hook[2]);
+  hook[0] = next;
   return hooks[hookId];
 }
