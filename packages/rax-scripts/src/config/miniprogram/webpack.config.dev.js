@@ -18,7 +18,7 @@ qrcode.generate(webUrl, { small: true });
 console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n');
 
 const webpackConfigDev = webpackMerge(webpackConfigBase, {
-  devtool: 'eval-source-map',
+  devtool: 'cheap-eval-source-map',
   entry: {
     index: [pathConfig.miniappEntry]
   },
