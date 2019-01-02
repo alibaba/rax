@@ -105,19 +105,20 @@ class ReactiveComponent extends Component {
       Host.measurer && Host.measurer.beforeRender();
     }
     this.hooksIndex = 0;
+    this.numberOfReRenders = 0;
+    this.didScheduleRenderPhaseUpdate = false;
     let children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
     while (this.didScheduleRenderPhaseUpdate) {
-      this.hooksIndex = 0;
-      this.didScheduleRenderPhaseUpdate = false;
       this.numberOfReRenders++;
       if (this.numberOfReRenders > RE_RENDER_LIMIT) {
-        this.numberOfReRenders = 0;
         throw new Error('Too many re-renders. React limits the number of renders to prevent ' +
         'an infinite loop.');
       }
+
+      this.hooksIndex = 0;
+      this.didScheduleRenderPhaseUpdate = false;
       children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
-    this.numberOfReRenders = 0;
     return children;
   }
 }
