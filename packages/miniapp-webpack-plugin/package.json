@@ -1,6 +1,6 @@
 {
   "name": "miniapp-webpack-plugin",
-  "version": "0.6.5",
+  "version": "0.1.0",
   "description": "Webpack plugin for miniapp.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -34,6 +34,7 @@
     "find-root": "^1.0.0",
     "loader-utils": "^0.2.16",
     "lodash.clonedeep": "^4.5.0",
+    "memory-fs": "^0.4.1",
     "postcss": "^7.0.7",
     "postcss-selector-parser": "^5.0.0",
     "source-map": "^0.6.1",

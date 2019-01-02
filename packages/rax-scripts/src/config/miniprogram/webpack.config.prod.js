@@ -3,6 +3,7 @@ const webpackMerge = require('webpack-merge');
 
 const pathConfig = require('../path.config');
 const webpackConfigBase = require('./webpack.config.base');
+
 const isDebug = process.env.DEBUG;
 
 const webpackConfigProd = webpackMerge(webpackConfigBase, {

@@ -1,6 +1,7 @@
-const webpack = require("webpack");
+const webpack = require('webpack');
 const MemoryFS = require('memory-fs');
 const { existsSync } = require('fs');
+
 const apiLoader = require.resolve('../loaders/ExternalAPILoader');
 
 module.exports = class WebpackExternalApiPlugin {
@@ -49,4 +50,4 @@ module.exports = class WebpackExternalApiPlugin {
       });
     });
   }
-}
+};

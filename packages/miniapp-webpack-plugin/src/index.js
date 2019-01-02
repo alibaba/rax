@@ -24,7 +24,7 @@ class MiniAppWebpackPlugin {
     const {
       target
     } = this.options;
-    
+
     compiler.apply(new WebpackAssetsPlugin({
       target
     }));
@@ -50,4 +50,4 @@ module.exports = {
   PostcssPluginRpx2rem,
   PostcssPluginTagPrefix,
   styleResolver
-}
+};

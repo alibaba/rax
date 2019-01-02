@@ -4,10 +4,10 @@ const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('./babel.config');
 
-const { 
-  MiniAppWebpackPlugin, 
-  PostcssPluginRpx2rem, 
-  PostcssPluginTagPrefix, 
+const {
+  MiniAppWebpackPlugin,
+  PostcssPluginRpx2rem,
+  PostcssPluginTagPrefix,
   styleResolver
 } = require('miniapp-webpack-plugin');
 
