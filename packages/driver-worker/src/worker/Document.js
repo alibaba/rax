@@ -19,7 +19,7 @@ export function createDocument() {
 
 export default class Document extends Element {
   constructor() {
-    super(DOCUMENT_NODE, '#document', null);
+    super(DOCUMENT_NODE, '#DOCUMENT', null);
 
     this.defaultView = {
       document: this,

@@ -12,16 +12,16 @@ const {
  * @param {*} appConfig
  */
 module.exports = function buildWeb(destDir, appConfig) {
-  let frameworkVersion;
-  if (appConfig.frameworkVersion) {
-    frameworkVersion = appConfig.frameworkVersion;
-  } else {
-    frameworkVersion = FRAMEWORK_VERSION;
-  }
-
-  const frameworkMasterURL = getH5MasterView(frameworkVersion);
-
   return done => {
+    let frameworkVersion;
+    if (appConfig.frameworkVersion) {
+      frameworkVersion = appConfig.frameworkVersion;
+    } else {
+      frameworkVersion = FRAMEWORK_VERSION;
+    }
+
+    const frameworkMasterURL = getH5MasterView(frameworkVersion);
+
     axios(frameworkMasterURL).then(response => {
       appConfig.h5Assets = '/build/app.web.js';
 

@@ -1,3 +1,4 @@
+import deepCopy from './deepCopy';
 import computeChangedData from './computeChangedData';
 import { pushPage, unlinkPage, popupPage } from './pageHub';
 
@@ -8,8 +9,10 @@ const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
  * Interface of mp page
  */
 class Page {
-  constructor(vnode, config) {
+  constructor(vnode, config, opts = {}) {
     this.vnode = vnode;
+    this.route = opts.pageName;
+    this.$viewId = opts.viewId;
 
     // Copy methods and other keys
     Object.keys(config).forEach(key => {
@@ -25,7 +28,9 @@ class Page {
   }
   set data(val) {
     // Warn: not commanded usage of assigning state directly
-    this.vnode.state = val;
+    this.vnode.state = typeof val === 'function'
+      ? val.call(this)
+      : deepCopy(val);
   }
 
   /**
@@ -48,7 +53,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   const pageEventEmitter = requireCoreModule('@core/page');
   const Rax = requireCoreModule('@core/rax');
 
-  const { document, location, evaluator, pageQuery, pageName } = pageContext;
+  const { document, location, evaluator, pageQuery, pageName, clientId } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
   const render = getWebViewSource
@@ -76,7 +81,10 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
       super(props, context);
 
       // create Page instance, initialize data and setData
-      this.pageInstance = new Page(this, config);
+      this.pageInstance = new Page(this, config, {
+        viewId: clientId,
+        pageName,
+      });
       /**
        * willMount: [fn],
        * didMount: [fn],
@@ -88,9 +96,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         unMount: []
       };
 
-      const { data, onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
-
-      if (data) this.state = data;
+      const { onLoad, onHide, onUnload, onPageScroll, onPullIntercept, onPullDownRefresh } = config;
 
       // trigger while loaded，pageQuery passed to cycle
       if ('function' === typeof onLoad) {
@@ -116,13 +122,19 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         this.cycleListeners.push({ type: 'pullIntercept', fn: cycleFn });
         pageEventEmitter.on('pullIntercept', cycleFn);
       }
+      // Fire pullDownRefresh event by native.
+      if ('function' === typeof onPullDownRefresh) {
+        const cycleFn = onPullDownRefresh.bind(this.pageInstance);
+        this.cycleListeners.push({ type: 'pullDownRefresh', fn: cycleFn });
+        pageEventEmitter.on('pullDownRefresh', cycleFn);
+      }
 
       // in web-view page
       if (getWebViewOnMessage) {
         const onMessageMethod = getWebViewOnMessage.call(this.pageInstance, this.state);
         if (typeof config[onMessageMethod] === 'function') {
           const cycleFn = (evt) => {
-            config[onMessageMethod].call(this.pageInstance, { detail: { data: evt.data } });
+            config[onMessageMethod].call(this.pageInstance, { detail: evt.data });
           };
           this.cycleListeners.push({ type: WEBVIEW_MESSAGE_NAME, fn: cycleFn });
           pageEventEmitter.on(WEBVIEW_MESSAGE_NAME, cycleFn);
@@ -133,6 +145,14 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     // type: [{ type, fn }]
     // remember cycle to remove while being destroyed
     cycleListeners = [];
+
+    /**
+     * Pass page instance to context
+     * for component to ref by $page.
+     */
+    getChildContext() {
+      return { $page: this.pageInstance };
+    }
 
     componentWillMount() {
       /**
@@ -209,7 +229,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
 
       this.state = {
         ...this.state,
-        ...data
+        ...data,
       };
 
       // In case component is not mounted
@@ -223,7 +243,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     }
 
     render() {
-      return render.call(this.pageInstance, this.pageInstance.data);
+      return render.call(this.pageInstance, this.state);
     }
   };
 }

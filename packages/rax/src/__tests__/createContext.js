@@ -1,14 +1,11 @@
 /* @jsx createElement */
 
-import findDOMNode from '../findDOMNode';
 import Component from '../component';
-import PropTypes from '../proptypes';
 import {createElement} from '../element';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
-import unmountComponentAtNode from '../unmountComponentAtNode';
 
 describe('createContext', () => {
   function createNodeElement(tagName) {

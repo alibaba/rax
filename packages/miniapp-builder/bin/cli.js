@@ -19,6 +19,7 @@ const DEFAULT_WORKDIR = cwd;
 const TYPE_MAP = {
   sfc: 'SFC Framework',
   mp: 'Mini Program',
+  plugin: 'Mini Program Plugin',
 };
 
 program
@@ -47,36 +48,63 @@ program
       console.log(`Detect ${TYPE_MAP[miniappType]} type project.`);
     }
 
-    switch (cmd) {
-      case 'start': {
-        require('../src/server')({
-          projectDir,
-          port,
-          rendererInspect,
-          rendererInspectHost,
-          rendererInspectPort,
-          rendererUrl,
-        });
-        break;
-      }
-      case 'build': {
-        require('../src/builder')({
-          projectDir,
-        });
-        break;
-      }
-      default:
-        break;
-    }
+    const options = {
+      projectDir,
+      port,
+      rendererInspect,
+      rendererInspectHost,
+      rendererInspectPort,
+      rendererUrl,
+      miniappType,
+    };
+    const defaultFrameworkVersion = require('../src/config/frameworkVersion');
+    const getFrameworkVersion = require('../src/config/getFrameworkVersion');
+    const { updateFrameworkVersion } = require('../src/config/getFrameworkCDNUrl');
+    getFrameworkVersion()
+      .then((version) => {
+        updateFrameworkVersion(version);
+        console.log('Using latest framework version:', version);
+        executeCommand(cmd, options);
+      })
+      .catch((err) => {
+        console.warn('Update FrameworkVersion Failed, fallback to default verison:', defaultFrameworkVersion);
+        console.log(err);
+        executeCommand(cmd, options);
+      });
   });
 
 program.parse(process.argv);
 
+function executeCommand(cmd, options) {
+  switch (cmd) {
+    case 'start': {
+      // Do this before start dev server, so that code reading it knows the right env.
+      process.env.NODE_ENV = 'development';
+      require('../src/server')(options);
+      break;
+    }
+    case 'build': {
+      process.env.NODE_ENV = 'production';
+      require('../src/builder')(options);
+      break;
+    }
+    default:
+      console.warn('Unknown Command: ' + cmd);
+      break;
+  }
+}
+
+/**
+ * Resolve incoming dir
+ * @NOTE in windows, user may pass dir like `D:\path\to\project`,
+ *       need to transform to `D:/path/to/project` by path.resolve,
+ *       or webpack will throw error accroding to wrong path.
+ */
 function resolveDir(dir) {
   if (!dir) {
     return cwd;
   } else if (isAbsolute(dir)) {
-    return dir;
+    return resolve(dir);
   } else {
     return resolve(cwd, dir);
   }

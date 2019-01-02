@@ -27,11 +27,13 @@ export default function transition(node, styles, options, callback) {
       needLayout: options.needLayout || false
     }, callback || function() {});
   } else if (isWeb) {
-    const property = Object.keys(styles).join(',');
+    const properties = Object.keys(styles);
     const duration = options.duration || 0; // ms
     const timingFunction = options.timingFunction || 'linear';
     const delay = options.delay || 0; // ms
-    const transitionValue = `${property} ${duration}ms ${timingFunction} ${delay}ms`;
+    const transitionValue = properties.length ?
+      properties.map((property) => `${property} ${duration}ms ${timingFunction} ${delay}ms`).join(',') :
+      `all ${duration}ms ${timingFunction} ${delay}ms`;
 
     node.style.transition = transitionValue;
     node.style.webkitTransition = transitionValue;

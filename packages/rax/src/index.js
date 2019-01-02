@@ -1,18 +1,35 @@
 import './debug/devtools';
 import {createElement, cloneElement, isValidElement, createFactory} from './element';
+import {useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeMethods} from './hooks';
+import Component from './component';
+import PureComponent from './purecomponent';
+import PropTypes from './proptypes';
+import render from './render';
+import hydrate from './hydrate';
+import createPortal from './createPortal';
+import findDOMNode from './findDOMNode';
+import unmountComponentAtNode from './unmountComponentAtNode';
+import findComponentInstance from './findComponentInstance';
+import setNativeProps from './setNativeProps';
+import version from './version';
+import Children from './children';
+import createContext from './createContext';
+import createRef from './createRef';
+import memo from './memo';
+import Fragment from './fragment';
 
-export {createElement, cloneElement, isValidElement, createFactory};
-export Component from './component';
-export PureComponent from './purecomponent';
-export PropTypes from './proptypes';
-export render from './render';
-export hydrate from './hydrate';
-export createPortal from './createPortal';
-export findDOMNode from './findDOMNode';
-export unmountComponentAtNode from './unmountComponentAtNode';
-export findComponentInstance from './findComponentInstance';
-export setNativeProps from './setNativeProps';
-export version from './version';
-export Children from './children';
-export createContext from './createContext';
-export createRef from './createRef';
+export {
+  createElement, cloneElement, isValidElement, createFactory, createRef, createPortal, createContext,
+  useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeMethods,
+  findDOMNode, unmountComponentAtNode, findComponentInstance, setNativeProps,
+  PropTypes, Children, Component, PureComponent, Fragment, memo,
+  render, hydrate, version
+};
+
+export default {
+  createElement, cloneElement, isValidElement, createFactory, createRef, createPortal, createContext,
+  useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeMethods,
+  findDOMNode, unmountComponentAtNode, findComponentInstance, setNativeProps,
+  PropTypes, Children, Component, PureComponent, Fragment, memo,
+  render, hydrate, version
+};

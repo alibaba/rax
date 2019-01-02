@@ -1,4 +1,5 @@
-import { PolymerElement, html } from '@polymer/polymer';
+/* global __renderer_to_worker__ */
+import { PolymerElement } from '@polymer/polymer';
 
 class Navigator extends PolymerElement {
   static get is() {
@@ -15,14 +16,21 @@ class Navigator extends PolymerElement {
     };
   }
 
-  ready() {
-    super.ready();
-    this.addEventListener('click', this.handleClick);
-    this.addEventListener('touchstart', this.handleTouchStart);
-    this.addEventListener('touchend', this.handleTouchEnd);
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('click', this._handleClick);
+    this.addEventListener('touchstart', this._handleTouchStart);
+    this.addEventListener('touchend', this._handleTouchEnd);
   }
 
-  handleTouchStart() {
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('click', this._handleClick);
+    this.removeEventListener('touchstart', this._handleTouchStart);
+    this.removeEventListener('touchend', this._handleTouchEnd);
+  }
+
+  _handleTouchStart = () => {
     if (this['hover-style']) {
       this.touchTimer = setTimeout(() => {
         this.prevStyle = this.getAttribute('style') || '';
@@ -31,7 +39,7 @@ class Navigator extends PolymerElement {
     }
   }
 
-  handleTouchEnd() {
+  _handleTouchEnd = () => {
     clearTimeout(this.touchTimer);
 
     if (this['hover-style']) {
@@ -41,37 +49,22 @@ class Navigator extends PolymerElement {
     }
   }
 
-  handleClick() {
+  _handleClick = () => {
     // default val is navigate
     const openType = this['open-type'] || 'navigate';
 
     // in miniapp env to trigger navigate event to worker
-    this.callWorker({
+    this._callWorker({
       type: 'navigate',
       navigateType: openType,
       navigateTo: this.url
     });
   }
 
-  callWorker(args) {
+  _callWorker(args) {
     if (typeof __renderer_to_worker__ === 'function') {
-      /* eslint-disable no-undef */
       __renderer_to_worker__(args);
     }
-  }
-
-  disconnectedCallback() {
-    this.removeEventListener('click', this.handleClick);
-    this.removeEventListener('touchstart', this.handleTouchStart);
-    this.removeEventListener('touchend', this.handleTouchEnd);
-  }
-
-  static get template() {
-    return html`
-    <span>
-      <slot></slot>
-    </span>
-    `;
   }
 }
 

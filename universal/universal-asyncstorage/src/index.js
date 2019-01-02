@@ -10,8 +10,8 @@ if (isWeex) {
   storage = localStorage;
 }
 
-class AsyncStorage {
-  static getItem(key) {
+var AsyncStorage = {
+  getItem: (key) => {
     return new Promise(function(resolve, reject) {
       if (storage.getItem) {
         if (isWeex) {
@@ -28,9 +28,8 @@ class AsyncStorage {
         }
       }
     });
-  }
-
-  static setItem(key, value) {
+  },
+  setItem: function(key, value) {
     return new Promise(function(resolve, reject) {
       if (storage.setItem) {
         if (isWeex) {
@@ -47,9 +46,8 @@ class AsyncStorage {
         }
       }
     });
-  }
-
-  static removeItem(key) {
+  },
+  removeItem: function(key) {
     return new Promise(function(resolve, reject) {
       if (storage.removeItem) {
         if (isWeex) {
@@ -66,9 +64,8 @@ class AsyncStorage {
         }
       }
     });
-  }
-
-  static getAllKeys() {
+  },
+  getAllKeys: function() {
     return new Promise(function(resolve, reject) {
       if (isWeex) {
         storage.getAllKeys(function({data, result}) {
@@ -84,9 +81,8 @@ class AsyncStorage {
         }
       }
     });
-  }
-
-  static clear() {
+  },
+  clear: function() {
     return new Promise(function(resolve, reject) {
       if (storage.clear) {
         storage.clear();
@@ -99,9 +95,8 @@ class AsyncStorage {
         });
       }
     });
-  }
-
-  static length() {
+  },
+  length: function() {
     return new Promise(function(resolve, reject) {
       if (isWeex) {
         storage.length(function({data, result}) {
@@ -118,6 +113,7 @@ class AsyncStorage {
       }
     });
   }
-}
+};
+
 
 export default AsyncStorage;

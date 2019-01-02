@@ -1,7 +1,7 @@
 import adapterComponent from '../adapterComponent';
-import * as Rax from 'rax';
+import Rax from 'rax';
 import testRenderer from 'rax-test-renderer';
-import * as renderHelpers from 'render-helpers';
+import renderHelpers from 'render-helpers';
 
 const { _c, _r } = renderHelpers;
 _r(Rax);

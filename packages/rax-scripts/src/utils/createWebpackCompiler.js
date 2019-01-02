@@ -2,7 +2,7 @@
 /* eslint no-console: 0 */
 const colors = require('chalk');
 
-const updateWebpackConfig = require('./updateWebpackConfig');
+const rewireWebpackConfig = require('./rewireWebpackConfig');
 const webpack = require('webpack');
 
 /**
@@ -16,7 +16,7 @@ const webpack = require('webpack');
 module.exports = (webpackConfig) => {
   let compiler;
 
-  const config = updateWebpackConfig(webpackConfig);
+  const config = rewireWebpackConfig(webpackConfig);
 
   try {
     compiler = webpack(config);

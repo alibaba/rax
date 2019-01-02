@@ -177,8 +177,13 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
 
 
         if (hasClassName) {
-          // Remove origin className
-          attributes.splice(attributes.indexOf(classNameAttribute), 1);
+          // development env: change className to __class
+          if (process.env.NODE_ENV === 'development' && classNameAttribute.name) {
+            classNameAttribute.name.name = '__class';
+          } else {
+            // Remove origin className
+            attributes.splice(attributes.indexOf(classNameAttribute), 1);
+          }
 
           if (
             classNameAttribute.value &&

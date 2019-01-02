@@ -1,6 +1,6 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import autosize from './autosize';
+import debounce from '../../shared/debounce';
 import UnicodeCharString from './unicodeCharString';
 
 let uid = 0;
@@ -38,6 +38,7 @@ export default class Textarea extends PolymerElement {
       focus: {
         type: Boolean,
         value: false,
+        observer: '_observeFocus',
       },
       autoHeight: {
         type: Boolean,
@@ -75,10 +76,18 @@ export default class Textarea extends PolymerElement {
     };
   }
 
-  /**
-   * If IME is writing, do not response to value change.
-   */
-  _isCompositing = false;
+  constructor() {
+    super();
+    /**
+     * If IME is writing, do not response to value change.
+     */
+    this._isCompositing = false;
+
+    /**
+     * In case of calling focus or blur more than once in a moment.
+     */
+    this._observeFocus = debounce(this._observeFocus);
+  }
 
   ready() {
     super.ready();
@@ -135,6 +144,10 @@ export default class Textarea extends PolymerElement {
     }
   }
 
+  _observeFocus() {
+    const method = this.focus ? 'focus' : 'blur';
+    this.$.textarea[method]();
+  }
 
   _handleInput = (evt) => {
     if (!(evt instanceof CustomEvent)) {
@@ -292,7 +305,7 @@ export default class Textarea extends PolymerElement {
       <textarea 
         id="textarea"
         placeholder="[[placeholder]]"
-        value="[[value]]"
+        value$="[[value]]"
         disabled$="[[disabled]]"
         readonly$="[[readonly]]"
         autofocus$="[[focus]]"

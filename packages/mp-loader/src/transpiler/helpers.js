@@ -90,8 +90,6 @@ function addHandler(el, name, value, modifiers, important, warn) {
 
 exports.getBindingAttr = getBindingAttr;
 function getBindingAttr(el, name, getStatic) {
-  const dynamicValue =
-    getAndRemoveAttr(el, ':' + name) || getAndRemoveAttr(el, 'v-bind:' + name);
   if (getStatic !== false) {
     const staticValue = getAndRemoveAttr(el, name);
     if (staticValue != null) {
@@ -163,3 +161,47 @@ function isInFor(el) {
     return !!el.for;
   }
 }
+
+/**
+ * Create a cached version of a pure function.
+ */
+function memorize(fn) {
+  let cache = Object.create(null);
+  return function memorizedFn(str) {
+    let hit = cache[str];
+    return hit || (cache[str] = fn(str));
+  };
+}
+
+/**
+ * Camelize a hyphen-delimited string.
+ */
+const camelizeRE = /-(\w)/g;
+exports.camelize = memorize(function(str) {
+  return str.replace(camelizeRE, function(_, c) {
+    return c ? c.toUpperCase() : '';
+  });
+});
+
+/**
+ * Detect whether name is a dataset.
+ */
+const DATASET_REG = /^data-/;
+const isDataset = memorize(function(name) {
+  return DATASET_REG.test(name);
+});
+
+/**
+ * Detect whether name is an aria property.
+ */
+const ARIA_REG = /^aria-/;
+const isAriaProperty = memorize(function(name) {
+  return ARIA_REG.test(name);
+});
+
+/**
+ * Detect whether name is need to transform
+ */
+exports.isPreservedPropName = function(name) {
+  return isDataset(name) || isAriaProperty(name);
+};

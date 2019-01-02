@@ -98,7 +98,7 @@ class App extends Component {
         loop={true}
         showsPagination={true}
         paginationStyle={styles.paginationStyle}
-        autoplayTimeout={3000}
+        autoPlayInterval={3000}
         onChange={this.onchange}>
         <View style={styles.itemWrap}>
           <Image style={styles.image} source={{uri: '//gw.alicdn.com/tfs/TB19NbqKFXXXXXLXVXXXXXXXXXX-750-500.png'}} />
