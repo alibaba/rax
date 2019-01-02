@@ -90,8 +90,6 @@ function addHandler(el, name, value, modifiers, important, warn) {
 
 exports.getBindingAttr = getBindingAttr;
 function getBindingAttr(el, name, getStatic) {
-  const dynamicValue =
-    getAndRemoveAttr(el, ':' + name) || getAndRemoveAttr(el, 'v-bind:' + name);
   if (getStatic !== false) {
     const staticValue = getAndRemoveAttr(el, name);
     if (staticValue != null) {
