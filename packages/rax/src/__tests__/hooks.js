@@ -475,6 +475,25 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('12');
     });
 
+    it('throws after too many iterations', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Counter({row: newRow}) {
+        let [count, setCount] = useState(0);
+        setCount(count + 1);
+        logs.push('Render: ' + count);
+        return <span>{count}</span>;
+      }
+      // render(<Counter />, container);
+      expect(() => {
+        render(<Counter />, container);
+        jest.runAllTimers();
+      }).toThrowError(
+        'Too many re-renders. React limits the number of renders to prevent ' +
+          'an infinite loop.',
+      );
+    });
+
     it('works with useReducer', () => {
       const container = createNodeElement('div');
       let logs = [];

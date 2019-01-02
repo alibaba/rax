@@ -2,6 +2,7 @@ import Host from './host';
 import Component from '../component';
 import { scheduleImmediateCallback } from '../scheduler';
 
+const RE_RENDER_LIMIT = 25;
 /**
  * Functional Reactive Component Class Wrapper
  */
@@ -16,6 +17,7 @@ class ReactiveComponent extends Component {
     this.didUpdateHandlers = [];
     this.willUnmountHandlers = [];
     this.didScheduleRenderPhaseUpdate = false;
+    this.numberOfReRenders = 0;
 
     if (pureRender.forwardRef) {
       this.prevForwardRef = this.forwardRef = ref;
@@ -107,6 +109,12 @@ class ReactiveComponent extends Component {
     while (this.didScheduleRenderPhaseUpdate) {
       this.hooksIndex = 0;
       this.didScheduleRenderPhaseUpdate = false;
+      this.numberOfReRenders++;
+      if (this.numberOfReRenders > RE_RENDER_LIMIT) {
+        this.numberOfReRenders = 0;
+        throw new Error('Too many re-renders. React limits the number of renders to prevent ' +
+        'an infinite loop.');
+      }
       children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
     return children;
