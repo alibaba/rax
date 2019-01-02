@@ -98,7 +98,10 @@ module.exports = {
                 require('postcss-import')({ resolve: styleResolver }),
                 PostcssPluginRpx2rem,
                 PostcssPluginTagPrefix,
-                require('autoprefixer')({ remove: false }),
+                require('autoprefixer')({
+                  remove: false,
+                  browsers: ['ios_saf 8'],
+                }),
               ]
             }
           },
