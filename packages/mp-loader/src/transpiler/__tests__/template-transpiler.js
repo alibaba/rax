@@ -1,8 +1,24 @@
 const { parse } = require('../parser');
 const generate = require('../generate');
 const modules = require('../transpileModules');
+const babylon = require('babylon');
 
 const transpilerOptions = { modules };
+
+/**
+ * Check whether a js string is valid.
+ */
+function checkValidJavaScriptStr(str) {
+  try {
+    babylon.parseExpression(str, {
+      allowImportExportEverywhere: true,
+      plugins: ['objectRestSpread'],
+    });
+  } catch (err) {
+    return false;
+  }
+  return true;
+}
 
 describe('Transpiler parse', () => {
   it('nested', () => {
@@ -105,5 +121,29 @@ describe('Transpiler parse', () => {
 
     const generated = generate(ast, transpilerOptions);
     expect(generated.render).toMatchSnapshot();
+  });
+
+  it('should parse instant array expression', () => {
+    const content = `
+      <single-item
+        a:for="{{[{},{},{},{}]}}"
+        empty="{{1}}"></single-item>
+    `;
+    const ast = parse(content, transpilerOptions);
+    expect(ast).toMatchSnapshot();
+
+    const generated = generate(ast, transpilerOptions);
+    expect(checkValidJavaScriptStr(generated.render)).toBe(true);
+    expect(generated).toMatchSnapshot();
+  });
+
+  it('should parse instant nested object expression', () => {
+    const content = `
+      <view foo="{{x:{y:2}}}"></view>
+    `;
+    const ast = parse(content, transpilerOptions);
+    const generated = generate(ast, transpilerOptions);
+    expect(checkValidJavaScriptStr(generated.render)).toBe(true);
+    expect(generated).toMatchSnapshot();
   });
 });
