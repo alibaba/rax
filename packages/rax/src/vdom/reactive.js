@@ -117,6 +117,7 @@ class ReactiveComponent extends Component {
       }
       children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
+    this.numberOfReRenders = 0;
     return children;
   }
 }
