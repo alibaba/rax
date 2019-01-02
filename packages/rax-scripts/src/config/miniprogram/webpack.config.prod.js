@@ -7,7 +7,7 @@ const webpackConfigBase = require('./webpack.config.base');
 const isDebug = process.env.DEBUG;
 
 const webpackConfigProd = webpackMerge(webpackConfigBase, {
-  devtool: isDebug ? 'eval-source-map' : 'none',
+  devtool: isDebug ? 'cheap-eval-source-map' : false,
   entry: {
     'index.min': [pathConfig.miniappEntry],
   },

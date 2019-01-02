@@ -18,7 +18,7 @@ const globalPolyfills = [
   "typeof polyfill === 'function' && polyfill(__global__);",
 ];
 
-module.exports = class WebpackMiniProgramPlugin {
+module.exports = class WebpackAssetsPlugin {
   constructor(opts = {}) {
     this.target = opts.target || 'web';
   }
