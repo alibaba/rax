@@ -13,9 +13,11 @@ const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
  * And "childList" if it was a mutation to the tree of nodes.
  */
 export default class MutationHandler {
-  constructor(sender, options = {}) {
-    this.eventHandler = new EventHandler(sender, options);
-    this.mountNode = options.mountNode || document.body;
+  constructor(sender, mountNode) {
+    this.eventHandler = new EventHandler(sender, {
+      mountNode
+    });
+    this.mountNode = mountNode || document.body;
 
     this.sharedNodeMap = new NodeMap();
     this.sharedNodeMap._setMountNode(this.mountNode);
