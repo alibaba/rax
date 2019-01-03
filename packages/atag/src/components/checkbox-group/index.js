@@ -1,6 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
-import throttle from '../../shared/throttle';
+import debounce from '../../shared/debounce';
 
 export default class CheckboxGroupElement extends PolymerElement {
   static get is() {
@@ -20,9 +19,20 @@ export default class CheckboxGroupElement extends PolymerElement {
     };
   }
 
-  ready() {
-    super.ready();
+  constructor() {
+    super();
+    // Prevent frequent change event.
+    this.changeHandler = debounce(this.changeHandler);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
     this.addEventListener('_checkboxChange', this.changeHandler);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('_checkboxChange', this.changeHandler);
   }
 
   changeHandler = e => {
@@ -30,7 +40,7 @@ export default class CheckboxGroupElement extends PolymerElement {
     const checkboxList = this.querySelectorAll('a-checkbox');
     for (let i = 0; i < checkboxList.length; i++) {
       const node = checkboxList[i];
-      node.isChecked && value.push(node.value);
+      node.checked && value.push(node.value);
     }
     const event = new CustomEvent('change', {
       detail: {
@@ -40,10 +50,6 @@ export default class CheckboxGroupElement extends PolymerElement {
     this.dispatchEvent(event);
     e.stopPropagation();
   };
-
-  disconnectedCallback() {
-    this.removeEventListener('_checkboxChange', this.changeHandler);
-  }
 
   static get template() {
     return html`

@@ -1,4 +1,0 @@
-<!-- item.axml -->
-<template name="item">
-  <view>{{ text }}</view>
-</template>

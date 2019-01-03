@@ -1,6 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
-import throttle from '../../shared/throttle';
 
 export default class CanvasElement extends PolymerElement {
   static get is() {

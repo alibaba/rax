@@ -6,6 +6,7 @@ const UNSENT = 0;
 const LOADING = 1;
 const DONE = 2;
 const IS_HTTP_REG = /^(https?:)?\/{2}/;
+const IS_BASE64_DATA_REG = /^data:/;
 /**
  * Local files:
  *   eg: /foo/bar.png
@@ -46,8 +47,19 @@ export default class ImageElement extends PolymerElement {
       lazyload: {
         type: Boolean,
         value: false,
+        computed: '_computeLazyLoad(lazyload)',
       },
     };
+  }
+
+  /**
+   * Compatible with lazyload and lazyLoad
+   *   for previous versions, we use `lazyload` prop,
+   *   but to compatible with `lazy-load` or `lazyLoad`
+   *   in other mini-program standard image components.
+   */
+  _computeLazyLoad(lazyload) {
+    return Boolean(lazyload || this.lazyLoad);
   }
 
   connectedCallback() {
@@ -92,7 +104,7 @@ export default class ImageElement extends PolymerElement {
     const fileSchemaPrefix = getFileSchemaPrefix() || '';
     if (IS_ABS_REG.test(this.src)) {
       return fileSchemaPrefix + this.src;
-    } else if (IS_HTTP_REG.test(this.src)) {
+    } else if (IS_HTTP_REG.test(this.src) || IS_BASE64_DATA_REG.test(this.src)) {
       return this.src;
     } else {
       return fileSchemaPrefix + '/' + this.src;
@@ -106,6 +118,8 @@ export default class ImageElement extends PolymerElement {
   _load() {
     this.state = LOADING;
     const image = this.image = new Image();
+    // Decode the image asynchronously to reduce delay in presenting other content.
+    image.decoding = 'async';
 
     image.onload = (evt) => {
       this.state = DONE;
@@ -157,6 +171,7 @@ export default class ImageElement extends PolymerElement {
   }
 
   isReady = false;
+
   ready() {
     super.ready();
     this.isReady = true;

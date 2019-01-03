@@ -1,5 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
 
 export default class RadioElement extends PolymerElement {
   static get is() {
@@ -43,8 +42,8 @@ export default class RadioElement extends PolymerElement {
     };
   }
 
-  ready() {
-    super.ready();
+  connectedCallback() {
+    super.connectedCallback();
 
     // label target
     this.setAttribute('a-label-target', '');

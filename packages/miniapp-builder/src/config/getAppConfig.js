@@ -19,7 +19,7 @@ const DEFAULT_CONFIG = {
 /**
  * Get configuration for app.
  */
-const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, opts) {
+const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, opts = {}) {
   const manifestFilePath = join(projectDir, 'manifest.json');
   const appDotJSONFilePath = join(projectDir, 'app.json');
   const appJSON = Object.assign({}, DEFAULT_CONFIG);
@@ -29,7 +29,8 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
   } else if (existsSync(appDotJSONFilePath)) {
     Object.assign(appJSON, readJSONSync(appDotJSONFilePath));
   } else {
-    throw new Error('不存在以下文件: app.json | manifest.json');
+    console.error('Cannot find one of following files: app.json | manifest.json');
+    return null;
   }
 
   const nativeRendererUrl = getNativeRendererUrl(
@@ -58,10 +59,12 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
         pageName,
         pageUrl
       };
-      // merge page config json
+
+      // Merge page config json to `window` property.
       const independentPageConfigPath = resolve(projectDir, pageName + '.json');
       if (existsSync(independentPageConfigPath)) {
-        Object.assign(pageConfig, JSON.parse(readFileSync(independentPageConfigPath)));
+        const independentPageConfig = JSON.parse(readFileSync(independentPageConfigPath));
+        Object.assign(pageConfig, independentPageConfig);
       }
 
       pages.push(pageConfig);
@@ -136,6 +139,13 @@ const getAppConfig = exports.getAppConfig = function getAppConfig(projectDir, op
   }
 
   result.tabBar = tabBar;
+
+  /**
+   * Add plugin definition to app config.
+   */
+  if (opts.pluginAssets) {
+    result.pluginAssets = opts.pluginAssets;
+  }
 
   return result;
 };

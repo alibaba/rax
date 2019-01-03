@@ -1,11 +1,11 @@
 <p align="center">
   <a href="https://alibaba.github.io/rax">
-    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/39803702-603fd170-53a4-11e8-994d-bffc24e9fb07.png" width="56">
+    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/49848760-999e7d00-fe11-11e8-978f-264ea31f6739.png" width="66">
   </a>
 </p>
 
 <p align="center">
-A hyperscript render engine.
+[🚧 Work In Progress v1.0] The fastest way to build cross-container application.
 </p>
 
 <p align="center">
@@ -55,9 +55,89 @@ $ cd YourProjectName
 $ npm run start
 ```
 
-## Example
+## Rax API (v1.0)
 
-### JSX DSL
+#### Creating Elements
+* createElement()
+* createFactory()
+
+#### Manipulating Elements
+* cloneElement()
+* isValidElement()
+* Children
+
+#### Fragments
+* Fragment
+
+#### Refs
+* createRef()
+* forwardRef()
+
+#### Hooks
+* useState()
+* useContext()
+* useEffect()
+* useLayoutEffect()
+* useRef()
+* useCallback()
+* useMemo()
+* useReducer()
+* useImperativeMethods()
+
+#### Performance
+* memo()
+
+#### Rendering Elements
+* render()
+* hydrate()
+
+## Project Support
+* WebApp Project
+* MiniApp Project
+
+### WebApp Project
+```
+.
+├── package.json
+├── .gitignore
+├── .eslintrc.js
+├── src
+│   └── index.js
+└── public
+    └── index.html
+```
+
+### MiniApp Project
+```
+.
+├── app.acss
+├── app.js
+├── app.json
+├── package.json
+├── .gitignore
+├── .eslintrc.js
+└── pages
+    ├── page1
+    │   ├── page1.acss
+    │   ├── page1.axml
+    │   ├── page1.js
+    │   └── page1.json
+    └── page2
+        ├── page2.acss
+        ├── page2.axml
+        ├── page2.js
+        └── page2.json
+```
+
+## DSL Support
+
+* JSX(XML-like syntax extension to ECMAScript) DSL
+* SFC(Single File Component) DSL
+* MP(Mini Program) DSL
+
+### JSX(XML-like syntax extension to ECMAScript) DSL
+> Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
+
 ```jsx
 // Hello.jsx
 import {createElement, Component} from 'rax';
@@ -95,8 +175,16 @@ const styles = {
 };
 ```
 
+```js
+// app.js
+import {render} from 'rax';
+import Hello from './Hello';
+
+render(<Hello name="world" />);
+```
+
 ### SFC(Single File Component) DSL
-> SFC is a Vue-like DSL that will compile to JSX DSL.
+> SFC is a Vue-like DSL that will compile to rax component.
 
 ```html
 <!-- hello.html -->
@@ -143,56 +231,49 @@ import Hello from './hello';
 render(<Hello name="world" />);
 ```
 
+### MP(Mini Program) DSL
+> MP DSL will compile to rax component.
+
+```js
+Component({
+  data: {
+    name: 'world'
+  },
+  methods: {
+    onChange(e) {
+      this.setData({
+        name: 'rax' 
+      });
+    }
+  }
+});
+```
+
+```css
+/* index.acss */
+.hello {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 40px;
+  text-align: center;
+}
+```
+
+```html
+<!-- index.axml -->
+<view class="hello">
+  <text class="title" onClick="change">Hello {{name}}</text>
+</view>
+```
+
 ## Rax Renderers
 
 * :traffic_light: [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
 * :computer: [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
-
-## Compatible with React Components
-
-Usage with Webpack or Babel makes React-based components work with Rax, without any code changes.
-
-#### Usage with Webpack
-
-Add an alias for `react` and `react-dom`:
-
-```js
-{
-  // ...
-  resolve: {
-    alias: {
-      'react': 'rax',
-      'react-dom': 'rax-dom',
-      // Not necessary unless you consume a module using `createClass`
-      'create-react-class': "rax/lib/createClass"
-    }
-  }
-  // ...
-}
-```
-#### Usage with Babel
-
-Install the babel plugin for aliasing: `npm install --save-dev babel-plugin-module-resolver`
-
-Add an alias for `react` and `react-dom` in your .babelrc:
-
-```js
-{
-  // ...
-  "plugins": [
-    ["module-resolver", {
-      "root": ["."],
-      "alias": {
-        "react": "rax",
-        "react-dom": "rax-dom",
-        // Not necessary unless you consume a module using `createClass`
-        "create-react-class": "rax/lib/createClass"
-      }
-    }]
-  ]
-  // ...
-}
-```
 
 ## Developer Tools
 
@@ -234,39 +315,53 @@ Then, you can run several commands:
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/yuanyan.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/yuanyan.png?s=128">
         <br>
         <a href="https://github.com/yuanyan">@yuanyan</a>
         <p>Core</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/imsobear.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/imsobear.png?s=128">
         <br>
         <a href="https://github.com/imsobear">@imsobear</a>
         <p>Development</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/yacheng.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/yacheng.png?s=128">
         <br>
         <a href="https://github.com/yacheng">@yacheng</a>
-        <p>Components</p>
+        <p>Universals &amp; Components</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/boiawang.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/boiawang.png?s=128">
         <br>
         <a href="https://github.com/boiawang">@boiawang</a>
-        <p>Babel Loaders &amp; Plugins</p>
+        <p>Loaders &amp; Plugins</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/noyobo.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/wssgcg1213.png?s=128">
         <br>
-        <a href="https://github.com/noyobo">@noyobo</a>
-        <p>Webpack Plugins</p>
+        <a href="https://github.com/wssgcg1213">@wssgcg1213</a>
+        <p>DSL Runtimes &amp; Loaders</p>
       </td>
      </tr>
   </tbody>
 </table>
+
+
+## Users
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/677114/49876501-81088400-fe5e-11e8-95bc-ee9468a58eec.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876598-a7c6ba80-fe5e-11e8-8fe8-d2fc28df69fd.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876742-f07e7380-fe5e-11e8-8bfa-ba2c6d0d8536.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876872-33404b80-fe5f-11e8-8244-b5598900e3f6.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876953-5b2faf00-fe5f-11e8-8789-7f1787495b2a.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49877220-e8730380-fe5f-11e8-8579-e622b3f0f5a6.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414430-84354400-0850-11e9-8352-7c0f44c01561.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414676-d88cf380-0851-11e9-9f20-307ae81ef5eb.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414379-43d5c600-0850-11e9-8dc6-133465db54dc.png" height="60"/>
+</p>
 
 ---
 **[⬆ back to top](#top)**

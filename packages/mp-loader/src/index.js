@@ -1,4 +1,4 @@
-const { stringifyRequest, getOptions } = require('loader-utils');
+const { stringifyRequest } = require('loader-utils');
 const { join, relative } = require('path');
 const { existsSync } = require('fs');
 const querystring = require('querystring');
@@ -8,7 +8,7 @@ const runtimeHelpers = require('./runtimeHelpers');
 const pageLoader = require.resolve('./page-loader');
 const CSS_EXT = '.acss';
 const JS_EXT = '.js';
-const EXTERNAL_PAGE_URL_REG = /^https?:\/\//;
+const EXTERNAL_PAGE_URL_REG = /^(https?|plugin):\/\//;
 
 /**
  * App loader
@@ -46,7 +46,7 @@ module.exports = function(content) {
      */
     source = `import App from ${createAppRequest};
       ${content}
-      ${requireAppPages}`;
+      ;${requireAppPages}`;
   }
 
   return source;

@@ -13,9 +13,9 @@ import {
   CONSOLE_CLOSE,
   TIMESTAMPS_TOGGLE,
 } from './const';
-import clearIconSource from 'image-source-loader!./images/clear.svg';
-import closeIconSource from 'image-source-loader!./images/close.svg';
-import filterIconSource from 'image-source-loader!./images/filter.svg';
+import clearIconSource from './images/clear.svg';
+import closeIconSource from './images/close.svg';
+import filterIconSource from './images/filter.svg';
 import './index.css';
 
 class ClearButton extends Component {

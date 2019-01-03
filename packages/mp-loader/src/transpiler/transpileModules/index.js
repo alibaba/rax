@@ -1,3 +1,4 @@
+const attrs = require('./attrs');
 const key = require('./key');
 const style = require('./style');
 const events = require('./events');
@@ -9,4 +10,10 @@ const checked = require('./checked');
 const template = require('./template');
 const webView = require('./web-view');
 
-module.exports = [key, style, checked, events, list, condition, bind, template, tagName, webView];
+/**
+ * @NOTE:
+ *   Modules are execed in order.
+ *   if you wants to use a:for with `bind`, `condition`,
+ *   and other rules at same time, must put `list` rule first.
+ */
+module.exports = [list, style, events, key, condition, checked, bind, template, tagName, webView, attrs];

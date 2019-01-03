@@ -1,7 +1,0 @@
-<!-- objectCombine -->
-<template name="objectCombine">
-  <view>{{foo}}</view>
-  <view>{{bar}}</view>
-
-  <view>{{a}} {{b}} {{c}} {{d}} {{e}}</view>
-</template>

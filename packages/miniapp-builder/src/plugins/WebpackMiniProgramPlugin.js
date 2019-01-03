@@ -3,7 +3,11 @@
  * 合并所有页面文件到 app.js
  * 并增加执行的 wrapper
  */
+const { readFileSync, existsSync } = require('fs');
+const { join } = require('path');
 const { ConcatSource } = require('webpack-sources');
+
+const SCHEMA_VAR = '__SCHEMA_MOCK_DATA__';
 
 const webRegisterWrapper = [
   '__register_pages__(function(require){',
@@ -41,9 +45,28 @@ module.exports = class WebpackMiniProgramPlugin {
         compilation.assets['app.js'] = app;
         global.AppJSContent = app.source();
 
+        let injectSchemaMockData;
+        const mockDataPath = join(compiler.context, 'schema/mock-data.json');
+        if (existsSync(mockDataPath)) {
+          try {
+            const mockData = JSON.parse(readFileSync(mockDataPath));
+            // Inject schema data
+            injectSchemaMockData = `
+            try {
+              ${SCHEMA_VAR} = ${JSON.stringify(mockData)};
+            } catch(err) { 
+              console.warn('Inject schema data with error', err); 
+            }
+          `;
+          } catch (err) {
+            throw new Error('Please check schema/mock-data.json is a valid JSON string.');
+          }
+        }
+
         compilation.assets['app.web.js'] = new ConcatSource(
           webRegisterWrapper[0],
           app,
+          injectSchemaMockData ? injectSchemaMockData : '',
           webRegisterWrapper[1]
         );
       });

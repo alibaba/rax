@@ -1,1 +1,1 @@
-export { adapterComponent as default } from 'sfc-runtime';
+module.exports = require('sfc-runtime').adapterComponent;

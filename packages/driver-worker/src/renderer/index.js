@@ -1,3 +1,4 @@
+/* global DEVICE_WIDTH */
 import MutationHandler from './MutationHandler';
 import EvaluationHandler from './EvaluationHandler';
 import LocationHandler from './LocationHandler';
@@ -25,6 +26,16 @@ export default ({ worker, mountNode }) => {
   worker.postMessage({
     type: 'init',
     url: location.href,
-    width: document.documentElement.clientWidth
+    width: getDeviceWidth(),
   });
 };
+
+/**
+ * Get device base width
+ * @return {number}
+ */
+function getDeviceWidth() {
+  return typeof DEVICE_WIDTH !== 'undefined'
+    ? DEVICE_WIDTH
+    : document.documentElement.clientWidth;
+}

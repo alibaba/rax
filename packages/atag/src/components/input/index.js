@@ -1,3 +1,4 @@
+import debounce from '../../shared/debounce';
 import { PolymerElement, html } from '@polymer/polymer';
 
 let uid = 0;
@@ -39,8 +40,17 @@ export default class Input extends PolymerElement {
       focus: {
         type: Boolean,
         value: false,
+        observer: '_observeFocus',
       },
     };
+  }
+
+  constructor() {
+    super();
+    /**
+     * In case of calling focus or blur more than once in a moment.
+     */
+    this._observeFocus = debounce(this._observeFocus);
   }
 
   ready() {
@@ -63,6 +73,11 @@ export default class Input extends PolymerElement {
     window.removeEventListener('focus', this._handleFocus, true);
     window.removeEventListener('blur', this._handleBlur, true);
     window.removeEventListener('_formReset', this._handleReset, true);
+  }
+
+  _observeFocus() {
+    const method = this.focus ? 'focus' : 'blur';
+    this.$.input[method]();
   }
 
   _handleInput = (evt) => {
@@ -179,7 +194,7 @@ export default class Input extends PolymerElement {
       <input 
         id="input" 
         placeholder="[[placeholder]]" 
-        value="[[value]]" 
+        value$="[[value]]"
         type$="[[type]]" 
         disabled$="[[disabled]]"
         autofocus$="[[focus]]" 
