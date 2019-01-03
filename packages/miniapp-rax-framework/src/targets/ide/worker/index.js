@@ -60,7 +60,10 @@ self.__register_pages__ = self.$REG_PAGE = function(fn) {
     registerPages.callbacks[i]();
   }
   registerPages.ready = true;
-  postMessage({ type: 'r$' });
+  postMessage({
+    target: 'AppContainer',
+    payload: { type: 'r$' },
+  });
   return true;
 };
 
@@ -75,10 +78,16 @@ function ready(cb) {
 }
 
 addEventListener('message', ({ data }) => {
-  const { type, pageName, clientId } = data || {};
+  const { target, payload } = data;
+  if (target !== 'AppWorker') {
+    console.error('AppWorker get illegal data', data)
+    return;
+  }
+
+  const { type, pageName, clientId } = payload || {};
   switch (type) {
     case 'importScripts':
-      importScripts(data.url);
+      importScripts(payload.url);
       break;
 
     case 'init':
@@ -97,10 +106,13 @@ addEventListener('message', ({ data }) => {
              *   worker2renderer
              */
             postMessage({
-              type: 'w2r',
-              pageName,
-              clientId,
-              data: message,
+              target: clientId,
+              payload: {
+                type: 'w2r',
+                pageName,
+                clientId,
+                data: message,
+              },
             });
           },
           addEventListener(evtName, callback) {
@@ -127,7 +139,8 @@ addEventListener('message', ({ data }) => {
             })
           );
         }
-        emitToClient(clientId, 'message', { data });
+
+        emitToClient(clientId, 'message', { data: payload });
         // 页面加载时触发
         $emitPageLifecycle('load', clientId, data.pageQuery);
         render(createElement(component, {}), null, {

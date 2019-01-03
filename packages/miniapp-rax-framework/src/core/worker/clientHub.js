@@ -23,7 +23,7 @@ export function on(clientId, evtName, callback) {
 }
 
 export function emit(clientId, evtName, payload) {
-  debug('emit event', clientId, evtName, payload, listeners[clientId]);
+  debug('Emit event:', clientId, evtName, payload);
   if (!listeners[clientId] || !listeners[clientId][evtName]) {
     debug(
       `emit an unregistered event, clientId: ${clientId}, evtName: ${evtName}`

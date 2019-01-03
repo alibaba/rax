@@ -1,13 +1,12 @@
 import { getDOMRender } from './domRender';
+import { getMessageProxy } from '../container/MessageProxy';
 import { createConsoleHandler } from '../../../core/renderer/ConsoleHandler';
 import { createModuleAPIHandler } from './ModuleAPIHandler';
 import { setupAppear } from '../../../core/renderer/appear';
 import { setupTheme } from '../../../core/renderer/atagTheme';
-import { getMessageChanel } from '../WorkerMessageChanel';
-import getAppConfig from '../container/getAppConfig';
 import { setupTap } from '../../../core/renderer/tap';
 
-export default function initRenderer(window, clientId, pageQuery) {
+export default function initRenderer(window, clientId, pageQuery, themeConfig) {
   const { document } = window;
   /**
    * @HACK: fix safari mobile click events aren't fired.
@@ -22,9 +21,12 @@ export default function initRenderer(window, clientId, pageQuery) {
 
   setupAppear(window);
   setupTap(window);
-  setupTheme(getAppConfig().themeConfig, window);
+  if (themeConfig) {
+    setupTheme(themeConfig, window);
+  }
 
-  const workerHandler = getMessageChanel(clientId);
+
+  const workerHandler = getMessageProxy(clientId);
   getDOMRender(window)({
     worker: workerHandler,
     tagNamePrefix: 'a-',

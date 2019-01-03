@@ -1,8 +1,8 @@
 import { warn } from '../../core/debugger';
-import getAppConfig from './container/getAppConfig';
+// import getAppConfig from './container/getAppConfig';
 
 
-const appConfig = getAppConfig();
+// const appConfig = getAppConfig();
 
 const PageLifecycle = {
   emit(type, clientId) {
