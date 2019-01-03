@@ -16,7 +16,7 @@ class ReactiveComponent extends Component {
     this.didMountHandlers = [];
     this.didUpdateHandlers = [];
     this.willUnmountHandlers = [];
-    this.didScheduleRenderPhaseUpdate = false;
+    this.isRenderScheduled = false;
     this.numberOfReRenders = 0;
 
     if (pureRender.forwardRef) {
@@ -79,10 +79,6 @@ class ReactiveComponent extends Component {
     return Provider.defaultValue;
   }
 
-  isComponentRendered() {
-    return Boolean(this._internal._renderedComponent);
-  }
-
   componentDidMount() {
     this.didMountHandlers.forEach(handler => handler());
   }
@@ -106,17 +102,17 @@ class ReactiveComponent extends Component {
     }
     this.hooksIndex = 0;
     this.numberOfReRenders = 0;
-    this.didScheduleRenderPhaseUpdate = false;
+    this.isRenderScheduled = false;
     let children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
-    while (this.didScheduleRenderPhaseUpdate) {
+    while (this.isRenderScheduled) {
       this.numberOfReRenders++;
       if (this.numberOfReRenders > RE_RENDER_LIMIT) {
-        throw new Error('Too many re-renders. React limits the number of renders to prevent ' +
+        throw new Error('Too many re-renders. rax limits the number of renders to prevent ' +
         'an infinite loop.');
       }
 
       this.hooksIndex = 0;
-      this.didScheduleRenderPhaseUpdate = false;
+      this.isRenderScheduled = false;
       children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
     return children;

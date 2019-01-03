@@ -45,8 +45,9 @@ export function useState(initialState) {
 
       if (newState !== current) {
         hooks[hookId][0] = newState;
+        // This is a render phase update.  After this render pass, we'll restart
         if (Host.component && Host.component._instance === currentInstance) {
-          currentInstance.didScheduleRenderPhaseUpdate = true;
+          currentInstance.isRenderScheduled = true;
         } else {
           currentInstance.update();
         }
@@ -193,10 +194,13 @@ export function useReducer(reducer, initialState, initialAction) {
 
     const dispatch = action => {
       const hook = hooks[hookId];
+      // reducer will get in the next render, before that we add all
+      // actions to the queue
       const queue = hook[2];
       queue.push(action);
+      // This is a render phase update.  After this render pass, we'll restart
       if (Host.component && Host.component._instance === currentInstance) {
-        currentInstance.didScheduleRenderPhaseUpdate = true;
+        currentInstance.isRenderScheduled = true;
       } else {
         currentInstance.update();
       }
