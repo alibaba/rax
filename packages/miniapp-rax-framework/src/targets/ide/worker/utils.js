@@ -21,22 +21,19 @@ export function createRax() {
 }
 
 import createErrorPage from '../../../../packages/error-page';
-import require from './getModule';
+import getModule from './getModule';
+
 /**
  * create component by factory
  */
 export function applyFactory(factory, context = {}) {
   const module = { exports: null };
   factory(module, module.exports, function(mod) {
-    if (mod === '@core/context') {
-      return context;
-    } else {
-      return require.call(context, mod);
-    }
+    return getModule.call(context, mod);
   });
   const component = interopRequire(module.exports);
   return (null === component && context.rax) ? createErrorPage({
-    require,
+    require: getModule,
     createElement: context.rax.createElement,
     message: '找不到页面'
   }) : component;

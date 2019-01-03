@@ -1,7 +1,12 @@
 import { debug, warn } from '../debugger';
+import createErrorPage from '../../../packages/error-page';
+
+const PAGES = {};
 
 /**
- * 提供给 bundle 的 __init_page__ 方法
+ * Register a page.
+ * @param pageDescriptor
+ * @param factory
  */
 export function register(pageDescriptor, factory) {
   const { page: pageName } = pageDescriptor;
@@ -12,10 +17,8 @@ export function register(pageDescriptor, factory) {
   });
 }
 
-const PAGES = {};
-
 /**
- * 注册页面
+ * Store a page.
  */
 export function setPage(pageName, page) {
   if (PAGES[pageName]) {
@@ -25,25 +28,16 @@ export function setPage(pageName, page) {
 }
 
 /**
- * 获取页面
+ * Get a stored page.
  */
-export function getPage(pageName, rax) {
-  return (
-    PAGES[pageName] || {
-      page: '$unknown',
-      factory: getUnknownPageFactory(rax, {
-        message: '找不到页面'
-      })
-    }
-  );
+export function getPage(pageName) {
+  return PAGES[pageName];
 }
 
-import createErrorPage from '../../../packages/error-page';
-
 /**
- * 兜底错误页面
+ * Get error page factory.
  */
-export function getUnknownPageFactory(rax, { message }) {
+export function getUnknownPageFactory(rax, message) {
   const { createElement } = rax;
   return function(module, exports, require) {
     const args = {

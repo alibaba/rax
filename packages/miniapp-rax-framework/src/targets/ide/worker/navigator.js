@@ -1,8 +1,7 @@
 /**
- * 
- * navigate	对应 my.navigateTo 的功能	
- * redirect	对应 my.redirectTo 的功能	
- * switchTab	对应 my.switchTab 的功能	
+ * navigate	对应 my.navigateTo 的功能
+ * redirect	对应 my.redirectTo 的功能
+ * switchTab	对应 my.switchTab 的功能
  * navigateBack	对应 my.navigateBack 的功能
  */
 const navigator = {
@@ -43,7 +42,21 @@ const navigator = {
     });
     return Promise.resolve(params);
   },
-
+  /**
+   * Low level navigate to some page.
+   * @param navigateType
+   * @param navigateTo
+   */
+  _navigate(navigateType, navigateTo) {
+    postMessage({
+      target: 'AppContainer',
+      payload: {
+        type: 'navigator',
+        navigateType,
+        navigateTo,
+      },
+    });
+  }
 };
 
 // alias

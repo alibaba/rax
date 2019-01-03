@@ -1,7 +1,6 @@
 import { debug, warn } from '../../../core/debugger';
 // import { onRoute } from '../routes';
 import renderContainerShell from './view';
-import { createMessageProxy } from './MessageProxy';
 
 export default class MessageRouter {
   /**
@@ -25,16 +24,6 @@ export default class MessageRouter {
     this._channels[channelName] = proxy;
   }
 
-  // /**
-  //  * Send message from worker to renderer.
-  //  * @param messageChanel
-  //  * @param data
-  //  */
-  // w2r(data) {
-  //   const { clientId } = data;
-  //   debug(`w->r@${clientId}`, data);
-  //   // this._worker.onmessage(this._worker, data);
-  // }
 
   /**
    * Navigate message.

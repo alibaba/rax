@@ -100,7 +100,7 @@ function createIframe(onLoad) {
   iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-modals allow-popups allow-forms');
   iframe.setAttribute('scrolling', 'yes');
   iframe.setAttribute('data-iframe', 'true');
-  iframe.setAttribute('src-doc', iframeContent);
+  iframe.setAttribute('srcDoc', iframeContent);
   iframe.addEventListener('load', onLoad);
 
   return iframe;

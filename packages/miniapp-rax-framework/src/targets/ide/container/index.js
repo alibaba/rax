@@ -1,4 +1,5 @@
 import spawnWorker from 'worker-loader?inline&fallback=false!babel-loader!../worker';
+import Router from './Router';
 import MessageRouter from './MessageRouter';
 
 const hasOwn = {}.hasOwnProperty;
@@ -17,6 +18,7 @@ export default function startMiniApp(appConfig, mountNode = document.body) {
 
   const rootWorker = spawnWorker();
   const messageRouter = new MessageRouter(rootWorker, appConfig, mountNode);
+
   rootWorker.postMessage({
     target: 'AppWorker',
     payload: {

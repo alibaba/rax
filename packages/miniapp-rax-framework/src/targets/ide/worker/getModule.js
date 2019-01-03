@@ -1,111 +1,10 @@
-import { error } from '../../../core/debugger';
-import navigator from './modules/navigator';
-import app from './modules/app';
-import page from './modules/page';
-// import { adapterComponent } from 'sfc-runtime';
-// import Console from '../../../core/console';
-// import decycle from '../../../core/decycle';
-// import MODULE_LIST from '../../vendor/available_modules.json';
-
-const PERSISTANCE_BRIDGE_METHODS = [
-  'device.onShake',
-  'webSocket.onOpen',
-  'webSocket.onMessage',
-  'webSocket.onClose',
-  'webSocket.onError',
-  'connection.onChange',
-  'broadcast.onMessage',
-];
-/**
- * 模块列表
- */
-const Modules = {};
-let callCount = 0;
-function noop() {}
-function $call(modKey, params, onSuccess = noop, onFail = noop) {
-  const [module, method] = modKey.split('.');
-
-  const callId = ++callCount;
-  function callEndHandler(evt) {
-    if (
-      evt &&
-      evt.data &&
-      evt.data.type === 'callEnd' &&
-      evt.data.callId === callId
-    ) {
-      if (PERSISTANCE_BRIDGE_METHODS.indexOf(modKey) === -1) {
-        removeEventListener('message', callEndHandler);
-      }
-
-      const { status, result, err } = evt.data;
-      if (status === 'resolved') {
-        onSuccess(result);
-      } else {
-        error(
-          `failed to exec ${module}.${method}(${JSON.stringify(
-            params,
-            null,
-            2
-          )})`
-        );
-        onFail(err);
-      }
-    }
-  }
-
-  addEventListener('message', callEndHandler);
-
-  postMessage({
-    type: 'call',
-    module,
-    method,
-    params,
-    callId,
-  });
-}
-
-function getSchemaData(successCallback = noop, errorCallback = noop) {
-  $call(
-    'memoryStorage.getItem',
-    {
-      key: 'schemaData',
-    },
-    successCallback,
-    errorCallback
-  );
-}
-
-const consoleCache = {};
-function createOrFindConsole(clientId) {
-  return (
-    consoleCache[clientId] ||
-    (consoleCache[clientId] = new Console({
-      sender: function sender(type, args = []) {
-        let payload = {};
-        if (type === '$switch') {
-          payload = {
-            type: 'switch',
-            value: args,
-          };
-        } else {
-          payload = {
-            type,
-            args: args.map(arg => decycle(arg)),
-          };
-        }
-        postMessage({
-          type: 'console',
-          clientId,
-          payload,
-        });
-      },
-    }))
-  );
-}
+import * as app from './app';
+import { register } from '../../../core/worker/page';
 
 const VALID_MOD_REG = /^@core\//;
+
 /**
- * 用户的 require 函数
+ * `require` function in user env.
  */
 export default function moduleRequire(mod) {
   if (!VALID_MOD_REG.test(mod)) {
@@ -113,48 +12,33 @@ export default function moduleRequire(mod) {
       `unknown module ${mod}, only core modules allowed!`
     );
   }
-  switch (mod) {
-    case '@core/runtime':
-      // for sfc-loader using commonjs2
-      return { default: adapterComponent };
+  // @NOTE: pass context by this.
+  const context = this;
 
+  switch (mod) {
     case '@core/rax':
-      if (this) {
-        return this.rax;
-      } else {
-        return {};
-      }
+      return context.raxInstance;
+
+    case '@core/context':
+      return context;
 
     case '@core/app':
       return app;
 
+    /**
+     * If no context provided, only can register a page.
+     */
     case '@core/page':
-      if (this) {
-        return {
-          ...page,
-          _context: this,
-        };
-      } else {
-        return page;
-      }
-    case '@core/navigator':
-      return navigator;
+      return context ? context.page : { register } ;
 
-    case '@core/console':
-      if (this && this.clientId) {
-        return createOrFindConsole(this.clientId);
-      } else {
-        return console;
-      }
+    // case '@core/console':
+    //   if (this && this.clientId) {
+    //     return createOrFindConsole(this.clientId);
+    //   } else {
+    //     return console;
+    //   }
 
-    case '@core/getSchemaData':
-      return getSchemaData;
-
-    case '@core/call':
-      return $call;
-
-    default:
-      const moduleName = mod.slice(6);
-      return Modules[moduleName] || null;
+    // case '@core/getSchemaData':
+      // return getSchemaData;
   }
 }
