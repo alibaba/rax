@@ -4,7 +4,7 @@ const address = require('address');
 const ejs = require('ejs');
 
 const { version: atagVersion } = require('atag/package.json');
-const getFrameworkVersion = require('../../utils/getFrameworkVersion');
+const getFrameworkVersion = require('../utils/getFrameworkVersion');
 
 /**
  * 基于 framework 中的 view 生成 html 页面
@@ -47,7 +47,7 @@ module.exports = class WebpackHtmlPlugin {
       const hasExternalApi = target === 'web' && appConfig.externalApi;
       const externalApiScript = hasExternalApi ? `<script src="${publicPath}api.js"></script>` : '';
 
-      const templatePath = resolve(__dirname, '../../utils/template.ejs');
+      const templatePath = resolve(__dirname, '../utils/template.ejs');
 
       if (!existsSync(templatePath)) {
         throw new Error('HtmlWebpackPlugin: could not load file ' + templatePath);
