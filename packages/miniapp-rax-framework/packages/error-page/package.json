@@ -1,0 +1,9 @@
+{
+  "name": "miniapp-error-page",
+  "version": "0.1.0",
+  "description": "Error Page for MiniApp",
+  "main": "src/index.js",
+  "keywords": [],
+  "author": "RaxTeam",
+  "license": "MIT"
+}
