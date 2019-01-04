@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, useState, createContext, useContext, useEffect} from 'rax';
+import {createElement} from 'rax';
 import {renderToString} from '../index';
 
 describe('renderToString', () => {
@@ -39,27 +39,6 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyComponent />);
     expect(str).toBe('hi');
-  });
-
-  it('render composite component', () => {
-    function OtherComponent() {
-      const [foo, setFoo] = useState('');
-      const [bar, setBar] = useState('bar');
-      useEffect(() => {
-        setFoo('foo');
-      });
-      return <div foo={foo} bar={bar} />;
-    }
-
-    function MyComponent() {
-      return <main>
-        <OtherComponent />
-        <div />
-      </main>;
-    }
-
-    let str = renderToString(<MyComponent />);
-    expect(str).toBe('<main><div foo="foo" bar="bar"></div><div></div></main>');
   });
 
   it('render stateless component', () => {
@@ -111,30 +90,5 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyComponent />);
     expect(str).toBe('<input type="radio" checked="checked">');
-  });
-
-  it('render with context', () => {
-    const BazContext = createContext();
-
-    function OtherComponent(props) {
-      const [foo, setFoo] = useState('');
-      const [bar, setBar] = useState('bar');
-      const baz = useContext(BazContext);
-      useEffect(function() {
-        setFoo('foo');
-      }, []);
-      return <div className={props.className} foo={foo} bar={bar} baz={baz} />;
-    }
-
-    function MyComponent() {
-      return (
-        <BazContext.Provider value="baz">
-          <OtherComponent className="hello" />
-        </BazContext.Provider>
-      );
-    }
-
-    let str = renderToString(<MyComponent />);
-    expect(str).toBe('<div class="hello" foo="foo" bar="bar" baz="baz"></div>');
   });
 });
