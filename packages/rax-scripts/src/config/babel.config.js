@@ -1,12 +1,20 @@
+const type = process.env.TYPE;
+
 module.exports = {
   presets: [
     require.resolve('@babel/preset-flow'),
-    require.resolve('@babel/preset-env'),
-    [require.resolve('@babel/preset-react'), {
-      'pragma': 'createElement'
-    }]
+    require.resolve('@babel/preset-env')
   ],
   plugins: [
+    [
+      require.resolve("@babel/plugin-transform-runtime"),
+      {
+        "corejs": false,
+        "helpers": false,
+        "regenerator": true,
+        "useESModules": false
+      }
+    ],
     // Stage 0
     require.resolve('@babel/plugin-proposal-function-bind'),
     // Stage 1
@@ -26,10 +34,6 @@ module.exports = {
     [
       require.resolve('@babel/plugin-proposal-class-properties'),
       { loose: false },
-    ],
-    // JSX
-    require.resolve('babel-plugin-transform-jsx-stylesheet'),
-    // RAX
-    require.resolve('rax-hot-loader/babel')
+    ]
   ]
 };
