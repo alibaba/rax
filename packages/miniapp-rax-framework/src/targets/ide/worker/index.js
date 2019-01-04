@@ -1,3 +1,4 @@
+/* global importScripts */
 import Client from './Client';
 import { warn } from '../../../core/debugger';
 import { emit as emitToClient, addClient, getClient } from '../../../core/worker/clientHub';
@@ -16,7 +17,7 @@ addEventListener('message', ({ data }) => {
   const { target, payload } = data;
 
   if (target !== 'AppWorker') {
-    console.error('AppWorker get illegal data', data)
+    console.error('AppWorker get illegal data', data);
     return;
   }
 
@@ -56,7 +57,7 @@ addEventListener('message', ({ data }) => {
     }
   } else if (payload.type === 'navigate') {
     const { navigateType, navigateTo } = payload;
-    navigator._navigate(navigateType, navigateTo)
+    navigator._navigate(navigateType, navigateTo);
   } else if (payload.type === 'updatePageData') {
     const client = getClient(payload.clientId);
     client.emitEvent('updatePageData', payload.data);

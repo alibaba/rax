@@ -19,7 +19,7 @@ const wmlRuntimeAPI = {
       clientId
     });
   }
-}
+};
 
 const globalObject = {
   require: getModule,

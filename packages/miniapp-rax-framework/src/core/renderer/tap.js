@@ -81,7 +81,7 @@ class SimulateTap {
     this.touchStartY = touch.pageY;
 
     // Prevent phantom clicks on fast double-tap (issue #36)
-    if ((evt.timeStamp - this.lastClickTime) < TAP_DELAY) {
+    if (evt.timeStamp - this.lastClickTime < TAP_DELAY) {
       evt.preventDefault();
     }
   }
@@ -112,13 +112,13 @@ class SimulateTap {
     if (!this.trackingClick) return true;
 
     // Prevent from fast tap more than once.
-    if ((evt.timeStamp - this.lastClickTime) < TAP_DELAY) {
+    if (evt.timeStamp - this.lastClickTime < TAP_DELAY) {
       this.cancelNextClick = true;
       return true;
     }
 
     // Cancel tap if time between start and end is over timeout.
-    if ((evt.timeStamp - this.trackingClickStart) > TAP_TIMEOUT) {
+    if (evt.timeStamp - this.trackingClickStart > TAP_TIMEOUT) {
       return true;
     }
 

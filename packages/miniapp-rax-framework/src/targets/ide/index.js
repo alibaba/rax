@@ -27,13 +27,13 @@ class MiniApp {
  */
 (function universalModuleDefinition(root, factory) {
   // CommonJS2
-  if(typeof exports === 'object' && typeof module === 'object')
+  if (typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
   // AMD
-  else if(typeof define === 'function' && define.amd)
+  else if (typeof define === 'function' && define.amd)
     define([LIBRARY_NAME], factory);
   // CommonJS
-  else if(typeof exports === 'object')
+  else if (typeof exports === 'object')
     exports[LIBRARY_NAME] = factory();
   // Global
   else

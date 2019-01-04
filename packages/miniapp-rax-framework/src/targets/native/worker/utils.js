@@ -29,7 +29,7 @@ export function applyFactory(factory, context = {}) {
     }
   });
   const component = interopRequire(module.exports);
-  return (null === component && context.rax) ? createErrorPage({
+  return null === component && context.rax ? createErrorPage({
     require,
     createElement: context.rax.createElement,
     message: '找不到页面'

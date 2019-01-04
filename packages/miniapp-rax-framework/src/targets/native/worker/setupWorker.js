@@ -1,6 +1,6 @@
-import { debug } from "../../../core/debugger";
-import * as AppRuntimeGlobal from "./AppRuntime/global";
-import * as PluginRuntimeGlobal from "./PluginRuntime/global";
+import { debug } from '../../../core/debugger';
+import * as AppRuntimeGlobal from './AppRuntime/global';
+import * as PluginRuntimeGlobal from './PluginRuntime/global';
 
 const REGISTER_DSL = '__REGISTER_DSL_FRAMEWORK_IN_WORKER__';
 const registerDSL = global[REGISTER_DSL];
@@ -10,7 +10,7 @@ const registerDSL = global[REGISTER_DSL];
  */
 export default function setupWorker() {
   if (process.env.NODE_ENV !== 'production') {
-    debug(`Setup MiniApp framework in worker.`);
+    debug('Setup MiniApp framework in worker.');
   }
 
   /*

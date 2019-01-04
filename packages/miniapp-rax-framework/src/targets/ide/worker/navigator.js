@@ -1,8 +1,8 @@
 /**
- * navigate	对应 my.navigateTo 的功能
- * redirect	对应 my.redirectTo 的功能
- * switchTab	对应 my.switchTab 的功能
- * navigateBack	对应 my.navigateBack 的功能
+ * navigate 对应 my.navigateTo 的功能
+ * redirect 对应 my.redirectTo 的功能
+ * switchTab 对应 my.switchTab 的功能
+ * navigateBack 对应 my.navigateBack 的功能
  */
 const navigator = {
   push(params) {

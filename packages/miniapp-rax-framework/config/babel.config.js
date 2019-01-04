@@ -57,4 +57,4 @@ module.exports = {
     ],
     require('@babel/plugin-proposal-json-strings'),
   ],
-}
+};

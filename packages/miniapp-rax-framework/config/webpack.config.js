@@ -1,9 +1,9 @@
 const { NODE_ENV, DEBUG } = process.env;
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { resolve } = require('path');
 const webpack = require('webpack');
 const address = require('address');
-const chalk = require('chalk');
+const chalk = require('chalk'); // eslint-disable-line
 const dayjs = require('dayjs');
 
 const atagVersion = '0.1.34';
@@ -81,8 +81,8 @@ module.exports = new Promise((done) => {
          * Use dist rax.
          */
         rax: NODE_ENV === 'development'
-            ? 'rax/dist/rax.js'
-            : 'rax/dist/rax.min.js',
+          ? 'rax/dist/rax.js'
+          : 'rax/dist/rax.min.js',
       },
     },
     externals: [

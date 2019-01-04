@@ -115,7 +115,7 @@ function serializeStyle(obj) {
   let css = '';
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
-      css += `${kebabCase(key)}:${obj[key]};`
+      css += `${kebabCase(key)}:${obj[key]};`;
     }
   }
   return css;
@@ -149,7 +149,7 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
     appConfig.tabBar.list.forEach((item) => {
       tabBarEl.appendChild(
         createTabBarItem(item.pageName, item.iconPath, item.text, onTabBarItemClick)
-      )
+      );
     });
   }
 

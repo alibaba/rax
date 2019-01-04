@@ -58,7 +58,7 @@ appWorker.$on('r2w', event => {
  * Handle renderer ready event.
  * @param event
  */
-function onRendererReady(event){
+function onRendererReady(event) {
   let { origin: clientId } = event;
   if (process.env.NODE_ENV !== 'production') {
     debug(`renderer ready ${JSON.stringify(event)}`);

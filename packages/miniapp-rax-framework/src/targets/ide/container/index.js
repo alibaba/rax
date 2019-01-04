@@ -38,8 +38,6 @@ if (hasOwn.call(window, COMPATIBLE_APP_CONFIG_KEY)) {
 }
 
 
-
-
 /**
  * Get the web asset url.
  * @param appConfig {Object} AppConfig.

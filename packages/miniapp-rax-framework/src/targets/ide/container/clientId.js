@@ -5,5 +5,5 @@ let id = 0;
  * @return {String} clientId
  */
 export function createClientId() {
-  return 'client-' + (id ++);
+  return 'client-' + id ++;
 }

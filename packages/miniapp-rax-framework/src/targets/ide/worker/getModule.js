@@ -29,7 +29,7 @@ export default function moduleRequire(mod) {
      * If no context provided, only can register a page.
      */
     case '@core/page':
-      return context ? context.page : { register } ;
+      return context ? context.page : { register };
 
     // case '@core/console':
     //   if (this && this.clientId) {

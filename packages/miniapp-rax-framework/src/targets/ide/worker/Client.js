@@ -14,7 +14,7 @@ export default class Client {
     this.raxInstance = createRax();
     this.eventListeners = {};
 
-    this.setup()
+    this.setup();
   }
 
   setup() {
@@ -88,7 +88,7 @@ export default class Client {
   on(evtName, callback) {
     const { eventListeners } = this;
 
-    const cycles = (eventListeners[evtName] = eventListeners[evtName] || []);
+    const cycles = eventListeners[evtName] = eventListeners[evtName] || [];
     cycles.push(callback);
   }
 
@@ -100,7 +100,7 @@ export default class Client {
   off(evtName, callback) {
     const { eventListeners } = this;
 
-    const cycles = (eventListeners[evtName] = eventListeners[evtName] || []);
+    const cycles = eventListeners[evtName] = eventListeners[evtName] || [];
     const idx = cycles.indexOf(callback);
     if (idx > -1) {
       cycles.splice(idx, 1);

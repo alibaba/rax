@@ -7,11 +7,11 @@ const MODULE_GETTER = '__WINDMILL_MODULE_GETTER__';
 const getNativeModule = global[MODULE_GETTER];
 
 /**
- * getSchemaData
- * @param {*} successCallback
- * @param {*} errorCallback
+ * Get schema data.
+ * @param {Function} successCallback
+ * @param {Function} errorCallback
  */
-function getSchemaData(successCallback = noop, errorCallback = noop) {
+function getSchemaData(successCallback, errorCallback) {
   getAppWorker().$call('memoryStorage.getItem', {
     key: 'schemaData'
   }, successCallback, errorCallback);

@@ -37,7 +37,6 @@ const defaultThemes = {
  * @param {Window} rendererWindow
  */
 export function setupTheme(themeConfig, rendererWindow) {
-
   let themeName = themeConfig && themeConfig.themeName;
   let themeVars = defaultThemes[themeName];
 
