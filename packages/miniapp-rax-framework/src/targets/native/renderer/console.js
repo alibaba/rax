@@ -1,6 +1,6 @@
-import Promise from 'runtime-shared/lib/promise';
 import retrocycle from '../../../core/retrocycle';
-const BUNDLE_CONSOLE = 'https://g.alicdn.com/miniapp/miniapp-console/rax-console.js?r=' + Date.now();
+import Promise from 'runtime-shared/lib/promise';
+const CONSOLE_BUNDLE_URL = 'https://g.alicdn.com/miniapp/miniapp-console/rax-console.js?r=' + Date.now();
 
 let consoleCtx = null;
 function loadConsole() {
@@ -19,7 +19,7 @@ function loadConsole() {
     };
     script.charset = 'utf-8';
     script.onerror = reject;
-    script.src = BUNDLE_CONSOLE;
+    script.src = CONSOLE_BUNDLE_URL;
     document.head.appendChild(script);
   });
 }

@@ -10,7 +10,7 @@ const PAGES = {};
  */
 export function register(pageDescriptor, factory) {
   const { page: pageName } = pageDescriptor;
-  debug(`[Reg Page] ${pageName}`);
+  debug(`[Register Page] ${pageName}`);
   setPage(pageName, {
     ...pageDescriptor,
     factory

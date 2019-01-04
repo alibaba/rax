@@ -11,21 +11,22 @@ const ASSET_KEY = 'h5Assets';
  * @param appConfig {Object} MiniApp config.
  * @param mountNode {HTMLElement} Default to document.body.
  */
-export default function startMiniApp(appConfig, mountNode = document.body) {
+export default function startMiniApp(appConfig, mountNode) {
   if (!appConfig) {
     throw new Error('App config not load properly, please check your arguments passed to startMiniApp.');
   }
 
-  const rootWorker = spawnWorker();
-  const messageRouter = new MessageRouter(rootWorker, appConfig, mountNode);
+  const worker = spawnWorker();
+  const messageRouter = new MessageRouter(worker, appConfig, mountNode);
 
-  rootWorker.postMessage({
+  worker.postMessage({
     target: 'AppWorker',
     payload: {
       type: 'importScripts',
       url: getAssetUrl(appConfig),
     },
   });
+  return { worker, messageRouter };
 }
 
 /**

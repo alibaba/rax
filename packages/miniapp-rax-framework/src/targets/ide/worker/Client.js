@@ -1,6 +1,6 @@
 import createDriver from 'driver-worker';
 import { error } from '../../../core/debugger';
-import { getPage, getUnknownPageFactory } from '../../../core/worker/page';
+import { getPage, getUnknownPageFactory } from '../../../core/worker/pageHub';
 import { on as addClientEvent } from '../../../core/worker/clientHub';
 import { createRax, applyFactory } from './utils';
 

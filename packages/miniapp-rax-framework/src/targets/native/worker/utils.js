@@ -3,7 +3,7 @@
  */
 export function noop() { }
 
-import raxCode from '!!raw-loader!RAX_SOURCE';
+import raxCode from '!!raw-loader!rax';
 
 const genRax = new Function('module', 'exports', raxCode);
 
@@ -14,8 +14,8 @@ export function createRax() {
   return applyFactory(genRax);
 }
 
-import createErrorPage from '../../../../../packages/error-page';
-import require from '../require';
+import createErrorPage from '../../../../packages/error-page/src';
+import require from './getModule';
 /**
  * create component by factory
  */

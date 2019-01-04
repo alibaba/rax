@@ -1,6 +1,5 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <meta id="viewport" name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,viewport-fit=cover">
@@ -43,12 +42,6 @@
   <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <script src="https://g.alicdn.com/mtb/lib-windvane/3.0.0/windvane.js"></script>
 
-<% if (isDebug) { %>
-  <script src="<%= debugAtagURL %>?random=<%= Math.random() %>"></script>
-  <script src="<%= debugFrameworkNativeRendererURL %>?random=<%= Math.random() %>"></script>
-<% } else { %>
-  <script src="https://g.alicdn.com/code/npm/??atag/<%= atagVersion %>/dist/atag.js,miniapp-framework/<%= frameworkVersion %>/dist/native/renderer.js"></script>
-<% } %>
+  <%= injectScripts %>
 </body>
-
 </html>

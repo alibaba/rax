@@ -1,4 +1,5 @@
 const { NODE_ENV, DEBUG } = process.env;
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { resolve } = require('path');
 const webpack = require('webpack');
 const address = require('address');
@@ -12,15 +13,18 @@ const { version: frameworkVersion } = require('../package.json');
  * If debug mode is enabled,
  * it will use local ip to provide atag.js
  */
-const isDebug = DEBUG === 'true';
-const localIP = address.ip();
-
+const isDebugMode = DEBUG === 'true';
+const LOCAL_IP = address.ip();
 const LOCAL_ATAG_SERVE_PORT = 9001;
 const LOCAL_FRAMEWORK_SERVE_PORT = 8003;
 
-const ATAG_URL = isDebug
-  ? `http://${localIP}:${LOCAL_ATAG_SERVE_PORT}/atag.js`
+const ATAG_URL = isDebugMode
+  ? `http://${LOCAL_IP}:${LOCAL_ATAG_SERVE_PORT}/atag.js`
   : `https://g.alicdn.com/code/npm/atag/${atagVersion}/dist/atag.js`;
+
+if (isDebugMode) {
+  console.log(chalk.bgRed('DEBUG MODE ON'));
+}
 
 console.log(`
 -----
@@ -73,8 +77,10 @@ module.exports = new Promise((done) => {
         vendors: resolve('vendors'),
         packages: resolve('packages'),
 
-        RAX_SOURCE:
-          NODE_ENV === 'development'
+        /**
+         * Use dist rax.
+         */
+        rax: NODE_ENV === 'development'
             ? 'rax/dist/rax.js'
             : 'rax/dist/rax.min.js',
       },
@@ -88,7 +94,7 @@ module.exports = new Promise((done) => {
         callback();
       },
     ],
-    // disable dev server all!!
+    // Disable dev server.
     // for Native JSC can not run sockjs
     devServer: {
       hot: false,
@@ -101,47 +107,21 @@ module.exports = new Promise((done) => {
       new webpack.DefinePlugin({
         ATAG_URL: JSON.stringify(ATAG_URL),
       }),
-      //
-      // /**
-      //  * native renderer.html
-      //  */
-      // new HtmlWebpackPlugin({
-      //   filename: 'native/renderer.html',
-      //   template: 'native/renderer.ejs.html',
-      //   inject: false,
-      //   templateParameters(compilation) {
-      //     const data = {
-      //       isDebug,
-      //       atagVersion,
-      //       frameworkVersion,
-      //     };
-      //
-      //     if (isDebug) {
-      //       Object.assign(data, {
-      //         debugAtagURL: `http://${localIP}:${LOCAL_ATAG_SERVE_PORT}/atag.js`,
-      //         debugFrameworkNativeRendererURL: `http://${localIP}:${LOCAL_FRAMEWORK_SERVE_PORT}/native/renderer.js`
-      //       });
-      //     }
-      //
-      //     return data;
-      //   },
-      // }),
-      //
-      // /**
-      //  * h5 master.ejs
-      //  */
-      // new HtmlWebpackPlugin({
-      //   filename: 'h5/master.html',
-      //   template: 'h5/master.ejs.html',
-      //   inject: false,
-      //   templateParameters(compilation) {
-      //     return {
-      //       injectManifestCode:
-      //         'window.APP_MANIFEST = <%- appConfig %>;',
-      //       frameworkVersion,
-      //     };
-      //   },
-      // }),
+      /**
+       * native renderer.html
+       */
+      new HtmlWebpackPlugin({
+        filename: 'native/renderer.html',
+        template: 'src/targets/native/renderer/index.html',
+        inject: false,
+        templateParameters(compilation) {
+          return {
+            injectScripts: `
+              <script src="https://g.alicdn.com/code/npm/??atag/${atagVersion}/dist/atag.js,miniapp-framework/${frameworkVersion}/dist/native/renderer.js"></script>
+            `.trim()
+          };
+        },
+      }),
 
       new webpack.BannerPlugin({
         banner: `MiniApp Framework: ${frameworkVersion} Bulit at: ${dayjs().format('YYYY.MM.DD HH:mm:ss')}`,

@@ -1,5 +1,4 @@
-import { debug, warn } from '../../../core/debugger';
-// import { onRoute } from '../routes';
+import { warn } from '../../../core/debugger';
 import renderContainerShell from './view';
 
 export default class MessageRouter {
@@ -24,24 +23,18 @@ export default class MessageRouter {
     this._channels[channelName] = proxy;
   }
 
-
   /**
    * Navigate message.
-   * @param messageChanel
    * @param data
    */
-  navigator(messageChanel, data) {
-    this.appShell.onRoute(data);
+  navigator(data) {
   }
 
-  console(messageChanel, data) {
-    messageChanel.onConsole(data);
-  }
-
-  call(messageChanel, data) {
-    const { module, method, params, callId } = data;
-    // TODO: api
-    console.error('TODO API CALL');
+  /**
+   * Console message.
+   * @param data
+   */
+  console(data) {
   }
 
   handleMessageFromWorker(data) {

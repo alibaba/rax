@@ -1,5 +1,5 @@
 import * as app from './app';
-import { register } from '../../../core/worker/page';
+import { register } from '../../../core/worker/pageHub';
 
 const VALID_MOD_REG = /^@core\//;
 

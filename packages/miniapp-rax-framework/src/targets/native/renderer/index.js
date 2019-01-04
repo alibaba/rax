@@ -1,6 +1,6 @@
-import createWindmill from '../../../vendors/windmill-renderer.min';
-import { getClientId, getPageName, parsePageQuery } from './utils';
-import render from './render';
+import createWindmill from '../../../../vendors/windmill-renderer.min';
+import { getClientId, getPageName, parsePageQuery } from './env';
+import domRender from './domRender';
 import { debug, error } from '../../../core/debugger';
 import { consoleDataCusumer } from './console';
 import startRemoteInspect from './remoteInspect';
@@ -62,7 +62,7 @@ windmill.$on('r#', event => {
     return;
   }
 
-  render(windmill);
+  domRender(windmill);
 
   rendererStatus.inited = true;
 });
