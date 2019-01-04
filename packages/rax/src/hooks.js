@@ -1,5 +1,5 @@
 import Host from './vdom/host';
-import { scheduleIdleCallback } from './scheduler';
+import { scheduleIdleCallback } from './vdom/scheduler';
 
 function getCurrentRenderingInstance() {
   const currentInstance = Host.component._instance;

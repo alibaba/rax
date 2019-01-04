@@ -1,6 +1,6 @@
 import Host from './host';
 import Component from '../component';
-import { scheduleImmediateCallback } from '../scheduler';
+import { scheduleImmediateCallback } from './scheduler';
 
 /**
  * Functional Reactive Component Class Wrapper

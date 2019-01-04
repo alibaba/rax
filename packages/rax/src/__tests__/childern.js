@@ -1,6 +1,7 @@
 /* @jsx createElement */
 
-import {createElement, cloneElement} from '../element';
+import createElement from '../createElement';
+import cloneElement from '../cloneElement';
 import Component from '../component';
 import Children from '../children';
 

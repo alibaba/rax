@@ -1,13 +1,36 @@
 import Host from './vdom/host';
-import flattenChildren from './flattenChildren';
 import {isWeex} from 'universal-env';
 
-const RESERVED_PROPS = {
+export const RESERVED_PROPS = {
   key: true,
   ref: true,
 };
 
-function getRenderErrorInfo() {
+function traverseChildren(children, result) {
+  if (Array.isArray(children)) {
+    for (let i = 0, l = children.length; i < l; i++) {
+      traverseChildren(children[i], result);
+    }
+  } else {
+    result.push(children);
+  }
+}
+
+export function flattenChildren(children) {
+  if (children == null) {
+    return children;
+  }
+  let result = [];
+  traverseChildren(children, result);
+
+  if (result.length === 1) {
+    result = result[0];
+  }
+
+  return result;
+}
+
+export function getRenderErrorInfo() {
   if (Host.component) {
     var name = Host.component.getName();
     if (name) {
@@ -17,7 +40,7 @@ function getRenderErrorInfo() {
   return '';
 }
 
-function Element(type, key, ref, props, owner) {
+export function Element(type, key, ref, props, owner) {
   if (isWeex) {
     props = filterProps(type, props);
   }
@@ -32,8 +55,6 @@ function Element(type, key, ref, props, owner) {
     _owner: owner,
   };
 };
-
-export default Element;
 
 function flattenStyle(style) {
   if (!style) {
@@ -86,7 +107,7 @@ function filterProps(type, props) {
   return props;
 }
 
-export function createElement(type, config, children) {
+export default function createElement(type, config, children) {
   if (type == null) {
     throw Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
   }
@@ -146,74 +167,3 @@ export function createElement(type, config, children) {
   );
 }
 
-export function createFactory(type) {
-  const factory = createElement.bind(null, type);
-  // Expose the type on the factory and the prototype so that it can be
-  // easily accessed on elements. E.g. `<Foo />.type === Foo`.
-  // This should not be named `constructor` since this may not be the function
-  // that created the element, and it may not even be a constructor.
-  factory.type = type;
-  return factory;
-}
-
-export function cloneElement(element, config, ...children) {
-  if (!isValidElement(element)) {
-    throw Error('cloneElement: not a valid element.' + getRenderErrorInfo());
-  }
-
-  // Original props are copied
-  const props = Object.assign({}, element.props);
-
-  // Reserved names are extracted
-  let key = element.key;
-  let ref = element.ref;
-
-  // Owner will be preserved, unless ref is overridden
-  let owner = element._owner;
-
-  if (config) {
-    // Should reset ref and owner if has a new ref
-    if (config.ref !== undefined) {
-      ref = config.ref;
-      owner = Host.component;
-    }
-
-    if (config.key !== undefined) {
-      key = String(config.key);
-    }
-
-    // Resolve default props
-    let defaultProps;
-    if (element.type && element.type.defaultProps) {
-      defaultProps = element.type.defaultProps;
-    }
-    // Remaining properties override existing props
-    let propName;
-    for (propName in config) {
-      if (config.hasOwnProperty(propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
-        if (config[propName] === undefined && defaultProps !== undefined) {
-          // Resolve default props
-          props[propName] = defaultProps[propName];
-        } else {
-          props[propName] = config[propName];
-        }
-      }
-    }
-  }
-
-  if (children.length) {
-    props.children = flattenChildren(children);
-  }
-
-  return new Element(
-    element.type,
-    key,
-    ref,
-    props,
-    owner
-  );
-};
-
-export function isValidElement(object) {
-  return typeof object === 'object' && object !== null && object.type && object.props;
-}

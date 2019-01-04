@@ -1,13 +1,13 @@
 import { isWeb, isWeex } from 'universal-env';
-import Host from './vdom/host';
-import EmptyComponent from './vdom/empty';
-import NativeComponent from './vdom/native';
-import TextComponent from './vdom/text';
-import CompositeComponent from './vdom/composite';
-import FragmentComponent from './vdom/fragment';
+import Host from './host';
+import EmptyComponent from './empty';
+import NativeComponent from './native';
+import TextComponent from './text';
+import CompositeComponent from './composite';
+import FragmentComponent from './fragment';
 import WeexDriver from 'driver-weex';
 import BrowserDriver from 'driver-browser';
-import Hook from './debug/hook';
+import Hook from '../debug/hook';
 
 export default function inject({ driver, hook, measurer, deviceWidth, viewportWidth, eventRegistry, bodyType, bodyProps}) {
   // Inject component class

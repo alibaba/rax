@@ -13,30 +13,14 @@
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
+  <a href="https://unpkg.com/rax/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax/dist/rax.min.js?compression=gzip" alt="gzip size"></a>
 </p>
-
----
-
-<p align="center">
-Community
-</p>
-
-* [![Join the chat at https://gitter.im/alibaba/rax](https://badges.gitter.im/alibaba/rax.svg)](https://gitter.im/alibaba/rax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
-
-* [Stack Overflow](http://stackoverflow.com/questions/tagged/rax)
-
-* [中文论坛](http://react-china.org/c/rax)
-
-* <details>
-  <summary>钉钉群</summary>
-  <a href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,kvz0NeXx/rsf/3KhrDQU9J1ZxS0DvkGbL8vvKpCsm04=&_dt_no_comment=1&origin=11"><img alt="Join the chat at dingtalk" src="https://user-images.githubusercontent.com/677114/41036929-486fd78a-69c4-11e8-9eb7-cd69b89821c1.png"></a>
-</details>
 
 ---
 
 :zap: **Fast:** blazing fast virtual DOM.
 
-:dart: **Tiny:** 12.6 KB minified + gzipped.
+:dart: **Tiny:** ~12 KB minified + gzipped.
 
 :art: **Universal:** works in browsers, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
@@ -58,123 +42,295 @@ $ npm run start
 ## Rax API (v1.0)
 
 #### Creating Elements
-* createElement()
-* createFactory()
-
-#### Manipulating Elements
-* cloneElement()
-* isValidElement()
-* Children
+* createElement(type, [props], [...children])
+ ```jsx
+ createElement('div', { id: 'foo' }, createElement('p', null, 'hello world'));
+ ```
 
 #### Fragments
 * Fragment
+  ```jsx
+  <Fragment>
+    <header>A heading</header>
+    <footer>A footer</footer>
+  </Fragment>
+  ```
 
 #### Refs
 * createRef()
+  ```jsx
+  const inputRef = createRef();
+  function MyComponent() {
+    return <input type="text" ref={inputRef} />;
+  }
+  ```
 * forwardRef()
+  ```jsx
+  const MyButton = forwardRef((props, ref) => (
+    <button ref={ref}>
+      {props.children}
+    </button>
+  ));
+
+  // You can get a ref directly to the DOM button:
+  const ref = createRef();
+  <MyButton ref={ref}>Click me!</MyButton>;
+  ```
 
 #### Hooks
 * useState()
-* useContext()
+  ```jsx
+  function Example() {
+    // Declare a new state variable, which we'll call "count"
+    const [count, setCount] = useState(0);
+
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+  ```
 * useEffect()
+  ```jsx
+  function Example() {
+    const [count, setCount] = useState(0);
+
+    // Similar to componentDidMount and componentDidUpdate:
+    useEffect(() => {
+      document.title = `You clicked ${count} times`;
+    });
+
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+  ```
 * useLayoutEffect()
+  ```jsx
+  function Example() {
+    const [count, setCount] = useState(0);
+
+    useLayoutEffect(() => {
+      // Fires in the same phase as componentDidMount and componentDidUpdate
+    });
+
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+  ```
+* useContext()
+  ```jsx
+  // Create a Context
+  const NumberContext = createContext();
+
+  function Example() {
+    const value = useContext(NumberContext);
+    return <div>The answer is {value}.</div>;
+  }
+  ```
 * useRef()
+  ```jsx
+  function TextInputWithFocusButton() {
+    const inputEl = useRef(null);
+    const onButtonClick = () => {
+      // `current` points to the mounted text input element
+      inputEl.current.focus();
+    };
+    return (
+      <>
+        <input ref={inputEl} type="text" />
+        <button onClick={onButtonClick}>Focus the input</button>
+      </>
+    );
+  }
+  ```
 * useCallback()
+  ```jsx
+  const memoizedCallback = useCallback(
+    () => {
+      doSomething(a, b);
+    },
+    [a, b],
+  );
+  ```
 * useMemo()
+  ```jsx
+  const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+  ```
 * useReducer()
+  ```jsx
+  const initialState = {count: 0};
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'reset':
+        return initialState;
+      case 'increment':
+        return {count: state.count + 1};
+      case 'decrement':
+        return {count: state.count - 1};
+      default:
+        // A reducer must always return a valid state.
+        // Alternatively you can throw an error if an invalid action is dispatched.
+        return state;
+    }
+  }
+
+  function Counter({initialCount}) {
+    const [state, dispatch] = useReducer(reducer, {count: initialCount});
+    return (
+      <>
+        Count: {state.count}
+        <button onClick={() => dispatch({type: 'reset'})}>
+          Reset
+        </button>
+        <button onClick={() => dispatch({type: 'increment'})}>+</button>
+        <button onClick={() => dispatch({type: 'decrement'})}>-</button>
+      </>
+    );
+  }
+  ```
 * useImperativeMethods()
+  ```jsx
+  function FancyInput(props, ref) {
+    const inputRef = useRef();
+    useImperativeMethods(ref, () => ({
+      focus: () => {
+        inputRef.current.focus();
+      }
+    }));
+    return <input ref={inputRef} />;
+  }
+  FancyInput = forwardRef(FancyInput);
+  ```
 
 #### Performance
 * memo()
+  ```jsx
+  function MyComponent(props) {
+    /* render using props */
+  }
+  function areEqual(prevProps, nextProps) {
+    /* 
+      return true if passing nextProps to render would return
+      the same result as passing prevProps to render,
+      otherwise return false
+    */
+  }
+  export default memo(MyComponent, areEqual);
+  ```
 
 #### Rendering Elements
-* render()
-* hydrate()
+* render(element [, container] [, callback])
+  ```jsx
+  render(<HelloMessage name="world" />)
+  ```
 
-## Project Type Support
-* WebApp Project
-```
-.
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-├── src
-│   └── index.js
-└── public
-    └── index.html
-```
-* MiniApp Project
-```
-.
-├── manifest.json
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-├── src
-│   ├── app.js
-│   ├── app.css
-│   ├── pages
-│   │   ├── page1.html
-│   │   └── page2.html
-│   └── components
-│       ├── component1.html
-│       └── component2.html
-└── public
-    └── index.html
-```
-* Mini Program Project
-```
-.
-├── app.js
-├── app.acss
-├── app.json
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-└── pages
-    ├── page1
-    │   ├── page1.acss
-    │   ├── page1.axml
-    │   ├── page1.js
-    │   └── page1.json
-    └── page2
-        ├── page2.acss
-        ├── page2.axml
-        ├── page2.js
-        └── page2.json
-```
+#### Version
+* version
 
-## DSL Support
+## Rax Legacy API (v1.0)
 
-* JSX(XML-like syntax extension to ECMAScript) DSL
-* SFC(Single File Component) DSL
-* MP(Mini Program) DSL
+### rax-children
+* Children
+  * Children.map(children, function[(thisArg)])
+  * Children.forEach(children, function[(thisArg)])
+  * Children.count(children)
+  * Children.only(children)
+  * Children.toArray(children)
 
-### JSX(XML-like syntax extension to ECMAScript) DSL
+### rax-proptypes
+* PropTypes
+  * PropTypes.array
+  * PropTypes.bool
+  * PropTypes.func
+  * PropTypes.number
+  * PropTypes.object
+  * PropTypes.string
+  * PropTypes.symbol
+  * PropTypes.element
+  * PropTypes.node
+  * PropTypes.any
+  * PropTypes.arrayOf
+  * PropTypes.instanceOf
+  * PropTypes.objectOf
+  * PropTypes.oneOf
+  * PropTypes.oneOfType
+  * PropTypes.shape
+
+### rax-component
+* Component
+
+### rax-purecomponent
+* PureComponent
+
+### rax-isvalidelement
+* isValidElement(object)
+
+### rax-cloneelment
+* cloneElement(element, [props], [...children])
+
+### rax-createfactory
+* createFactory(type)
+
+### rax-createportal
+* createPortal(child, container)
+
+### rax-hydrate
+* hydrate(element, container[, callback])
+
+### rax-createclass
+* createClass()
+
+### rax-setnativeprops
+* setNativeProps()
+
+### rax-findcomponentinstance
+* findComponentInstance()
+
+### rax-finddomnode
+* findDOMNode(component)
+
+### rax-unmountcomponentatnode
+* unmountComponentAtNode(container)
+
+### 
+
+
+## JSX(XML-like syntax extension to ECMAScript) DSL
 > Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
 
 ```jsx
 // Hello.jsx
-import {createElement, Component} from 'rax';
+import {createElement, useState} from 'rax';
 
-export default class extends Component {
-  state = {
-    name: 'world'
+export default (props) => {
+  const [name, setName] = useState('world');
+  const handleClick = () = {
+    setName('rax');
   };
-  onChange = ()=>{
-    this.setState({
-      name: 'rax'
-    });
-  };
-  render() {
-    return (
-      <view style={styles.hello}>
-        <text style={styles.title} onClick={this.onChange}>
-        Hello {this.state.name}
-        </text>
-      </view>
-    );
-  }
+  return (
+    <view style={styles.hello}>
+      <text style={styles.title} onClick={this.handleClick}>
+      Hello {name}
+      </text>
+    </view>
+  );
 }
 
 const styles = {
@@ -196,93 +352,6 @@ import {render} from 'rax';
 import Hello from './Hello';
 
 render(<Hello name="world" />);
-```
-
-### SFC(Single File Component) DSL
-> SFC is a Vue-like DSL that will compile to rax component.
-
-```html
-<!-- hello.html -->
-<template>
-  <view class="hello">
-    <text class="title" @click="change">Hello {{name}}</text>
-  </view>
-</template>
-
-<script>
-  export default {
-    data: function () {
-      return {
-        name: 'world'
-      }
-    },
-    methods: {
-      change () {
-        this.name = 'rax';
-      }
-    }
-  }
-</script>
-
-<style>
-  .hello {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .title {
-    font-size: 40px;
-    text-align: center;
-  }
-</style>
-```
-
-```js
-// app.js
-import {render} from 'rax';
-import Hello from './hello';
-
-render(<Hello name="world" />);
-```
-
-### MP(Mini Program) DSL
-> MP DSL will compile to rax component.
-
-```js
-Component({
-  data: {
-    name: 'world'
-  },
-  methods: {
-    onChange(e) {
-      this.setData({
-        name: 'rax' 
-      });
-    }
-  }
-});
-```
-
-```css
-/* index.acss */
-.hello {
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.title {
-  font-size: 40px;
-  text-align: center;
-}
-```
-
-```html
-<!-- index.axml -->
-<view class="hello">
-  <text class="title" onClick="change">Hello {{name}}</text>
-</view>
 ```
 
 ## Rax Renderers
@@ -323,7 +392,6 @@ Then, you can run several commands:
 * `npm test <pattern>` runs tests with matching filenames.
 * `npm run build` creates `lib` and `dist` folder with all the packages.
 * `npm start` start local server with `examples` folder.
-
 
 ## Core Team
 
