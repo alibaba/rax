@@ -2,6 +2,7 @@ import Host from './host';
 import Component from '../component';
 import { scheduleImmediateCallback } from './scheduler';
 
+const RE_RENDER_LIMIT = 24;
 /**
  * Functional Reactive Component Class Wrapper
  */
@@ -15,6 +16,8 @@ class ReactiveComponent extends Component {
     this.didMountHandlers = [];
     this.didUpdateHandlers = [];
     this.willUnmountHandlers = [];
+    this.isRenderScheduled = false;
+    this.numberOfReRenders = 0;
 
     if (pureRender.forwardRef) {
       this.prevForwardRef = this.forwardRef = ref;
@@ -76,10 +79,6 @@ class ReactiveComponent extends Component {
     return Provider.defaultValue;
   }
 
-  isComponentRendered() {
-    return Boolean(this._internal._renderedComponent);
-  }
-
   componentDidMount() {
     this.didMountHandlers.forEach(handler => handler());
   }
@@ -102,7 +101,21 @@ class ReactiveComponent extends Component {
       Host.measurer && Host.measurer.beforeRender();
     }
     this.hooksIndex = 0;
-    return this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+    this.numberOfReRenders = 0;
+    this.isRenderScheduled = false;
+    let children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+    while (this.isRenderScheduled) {
+      this.numberOfReRenders++;
+      if (this.numberOfReRenders > RE_RENDER_LIMIT) {
+        throw new Error('Too many re-renders. rax limits the number of renders to prevent ' +
+        'an infinite loop.');
+      }
+
+      this.hooksIndex = 0;
+      this.isRenderScheduled = false;
+      children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+    }
+    return children;
   }
 }
 

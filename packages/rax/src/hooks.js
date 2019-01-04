@@ -30,7 +30,7 @@ export function useState(initialState) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     // state lazy initializer
     if (typeof initialState === 'function') {
       initialState = initialState();
@@ -45,7 +45,12 @@ export function useState(initialState) {
 
       if (newState !== current) {
         hooks[hookId][0] = newState;
-        currentInstance.update();
+        // This is a render phase update.  After this render pass, we'll restart
+        if (Host.component && Host.component._instance === currentInstance) {
+          currentInstance.isRenderScheduled = true;
+        } else {
+          currentInstance.update();
+        }
       }
     };
 
@@ -76,7 +81,7 @@ function useEffectImpl(effect, inputs, defered) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     const create = (immediately) => {
       if (!immediately && defered) return scheduleIdleCallback(() => create(true));
       const { current } = create;
@@ -146,7 +151,7 @@ export function useRef(initialValue) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     hooks[hookId] = {
       current: initialValue
     };
@@ -164,7 +169,7 @@ export function useMemo(create, inputs) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     hooks[hookId] = [create(), inputs];
   } else {
     const hook = hooks[hookId];
@@ -182,27 +187,38 @@ export function useReducer(reducer, initialState, initialAction) {
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
 
-  if (!currentInstance.isComponentRendered()) {
+  if (!hooks[hookId]) {
     if (initialAction) {
       initialState = reducer(initialState, initialAction);
     }
 
     const dispatch = action => {
       const hook = hooks[hookId];
-      const current = hook[0];
-      const next = reducer(current, action);
-
-      if (next !== current) {
-        hook[0] = next;
+      // reducer will get in the next render, before that we add all
+      // actions to the queue
+      const queue = hook[2];
+      queue.push(action);
+      // This is a render phase update.  After this render pass, we'll restart
+      if (Host.component && Host.component._instance === currentInstance) {
+        currentInstance.isRenderScheduled = true;
+      } else {
         currentInstance.update();
       }
     };
 
-    hooks[hookId] = [
+    return hooks[hookId] = [
       initialState,
       dispatch,
+      []
     ];
   }
-
+  const hook = hooks[hookId];
+  const queue = hook[2];
+  let next = hook[0];
+  for (let i = 0; i < queue.length; i++) {
+    next = reducer(next, queue[i]);
+  }
+  hook[0] = next;
+  hook[2] = [];
   return hooks[hookId];
 }
