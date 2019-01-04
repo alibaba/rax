@@ -309,9 +309,6 @@ $ npm run start
 ### rax-unmountcomponentatnode
 * unmountComponentAtNode(container)
 
-### 
-
-
 ## JSX(XML-like syntax extension to ECMAScript) DSL
 > Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
 

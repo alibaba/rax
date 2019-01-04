@@ -11,12 +11,10 @@ $ npm install --save rax
 ## Usage
 
 ```jsx
-import {createElement, Component, render} from 'rax';
+import {createElement, render} from 'rax';
 
-class MyComponent extends Component {
-  render() {
-    return <div>Hello World</div>;
-  }
+function MyComponent() {
+  return <div>Hello World</div>;
 }
 
 render(<MyComponent />);
