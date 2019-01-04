@@ -7,12 +7,12 @@ module.exports = {
   ],
   plugins: [
     [
-      require.resolve("@babel/plugin-transform-runtime"),
+      require.resolve('@babel/plugin-transform-runtime'),
       {
-        "corejs": false,
-        "helpers": false,
-        "regenerator": true,
-        "useESModules": false
+        'corejs': false,
+        'helpers': false,
+        'regenerator': true,
+        'useESModules': false
       }
     ],
     // Stage 0
