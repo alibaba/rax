@@ -488,8 +488,7 @@ describe('hooks', () => {
         render(<Counter />, container);
         jest.runAllTimers();
       }).toThrowError(
-        'Too many re-renders. rax limits the number of renders to prevent ' +
-          'an infinite loop.',
+        'Too many re-renders, the number of renders is limited to prevent an infinite loop.'
       );
     });
 

@@ -100,15 +100,16 @@ class ReactiveComponent extends Component {
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.beforeRender();
     }
+
     this.hooksIndex = 0;
     this.numberOfReRenders = 0;
     this.isRenderScheduled = false;
     let children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+
     while (this.isRenderScheduled) {
       this.numberOfReRenders++;
       if (this.numberOfReRenders > RE_RENDER_LIMIT) {
-        throw new Error('Too many re-renders. rax limits the number of renders to prevent ' +
-        'an infinite loop.');
+        throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
       }
 
       this.hooksIndex = 0;
