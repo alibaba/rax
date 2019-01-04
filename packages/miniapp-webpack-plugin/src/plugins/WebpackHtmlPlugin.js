@@ -63,7 +63,7 @@ module.exports = class WebpackHtmlPlugin {
         isDebug: process.env.DEBUG,
         atagVersion,
         debugFrameworkURL: `http://${localIP}:8003/web/master.js`
-      }
+      };
 
       const finalOutputName = 'index.html';
 
@@ -71,12 +71,12 @@ module.exports = class WebpackHtmlPlugin {
         options.frameworkVersion = frameworkVersion;
 
         const content = ejs.render(template, options);
-  
+
         compilation.assets[finalOutputName] = {
           source: () => content,
           size: () => content.length
         };
-  
+
         callback();
       }).catch(e => {
         console.log(e);
