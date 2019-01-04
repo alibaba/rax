@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, Component} from 'rax';
+import {createElement, useState, createContext, useContext, useEffect} from 'rax';
 import {renderToString} from '../index';
 
 describe('renderToString', () => {
@@ -42,27 +42,20 @@ describe('renderToString', () => {
   });
 
   it('render composite component', () => {
-    class OtherComponent extends Component {
-      state = {
-        bar: 'bar'
-      };
-      componentWillMount() {
-        this.setState({
-          foo: 'foo'
-        });
-      }
-      render() {
-        return <div foo={this.state.foo} bar={this.state.bar} />;
-      }
+    function OtherComponent() {
+      const [foo, setFoo] = useState('');
+      const [bar, setBar] = useState('bar');
+      useEffect(() => {
+        setFoo('foo');
+      });
+      return <div foo={foo} bar={bar} />;
     }
 
-    class MyComponent {
-      render() {
-        return <main>
-          <OtherComponent />
-          <div />
-        </main>;
-      }
+    function MyComponent() {
+      return <main>
+        <OtherComponent />
+        <div />
+      </main>;
     }
 
     let str = renderToString(<MyComponent />);
@@ -121,29 +114,24 @@ describe('renderToString', () => {
   });
 
   it('render with context', () => {
-    class OtherComponent extends Component {
-      state = {
-        bar: 'bar'
-      };
-      componentWillMount() {
-        this.setState({
-          foo: 'foo'
-        });
-      }
-      render() {
-        return <div className={this.props.className} foo={this.state.foo} bar={this.state.bar} baz={this.context.baz} />;
-      }
+    const BazContext = createContext();
+
+    function OtherComponent(props) {
+      const [foo, setFoo] = useState('');
+      const [bar, setBar] = useState('bar');
+      const baz = useContext(BazContext);
+      useEffect(function() {
+        setFoo('foo');
+      }, []);
+      return <div className={props.className} foo={foo} bar={bar} baz={baz} />;
     }
 
-    class MyComponent {
-      getChildContext() {
-        return {
-          baz: 'baz'
-        };
-      }
-      render() {
-        return <OtherComponent className="hello" />;
-      }
+    function MyComponent() {
+      return (
+        <BazContext.Provider value="baz">
+          <OtherComponent className="hello" />
+        </BazContext.Provider>
+      );
     }
 
     let str = renderToString(<MyComponent />);
