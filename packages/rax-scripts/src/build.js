@@ -27,6 +27,7 @@ function buildCompiler(config) {
     }
 
     console.log(colors.green('\nBuild successfully.'));
+    process.exit();
   });
 }
 
