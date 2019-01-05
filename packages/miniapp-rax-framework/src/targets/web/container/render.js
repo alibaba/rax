@@ -1,11 +1,13 @@
-import * as routes from './routes';
+import MiniAppRouter from './routes';
 import { findHomePage } from './utils';
 import { setupTheme } from '../../../core/renderer/atagTheme';
 
 /**
- * DOM with master
+ * DOM Operation in container.
  */
 export default function render(appManifest) {
+  const router = new MiniAppRouter();
+
   const tabbarContainer = document.querySelector('#tabBar');
   const mainContainer = document.querySelector('#main');
   const tabbarItemTemplate = document.querySelector(
@@ -78,7 +80,7 @@ export default function render(appManifest) {
             }
             selectedTab = pageName;
           }
-          routes.switchTab({
+          router.switchTab({
             pageName,
           });
         });
@@ -90,7 +92,7 @@ export default function render(appManifest) {
 
   document
     .querySelector('#prev')
-    .addEventListener('click', routes.navigateBack);
+    .addEventListener('click', router.navigateBack);
 
   // 根据项目配置初始化 css 变量
   const themeConfig = window.APP_MANIFEST ? window.APP_MANIFEST.themeConfig : {};
@@ -104,7 +106,7 @@ export default function render(appManifest) {
 
   // init homepage's tabbar
   initHomePage();
-  routes.navigate({
+  router.navigateTo({
     pageName: homepage,
   });
 

@@ -1,11 +1,3 @@
-export function getManifest() {
-  const APP_MANIFEST = window.APP_MANIFEST;
-  if (typeof APP_MANIFEST === 'undefined' || !APP_MANIFEST.h5Assets) {
-    throw new Error('页面信息未加载');
-  }
-  return APP_MANIFEST;
-}
-
 export function getContainer() {
   return document.querySelector('#main') || document.body;
 }

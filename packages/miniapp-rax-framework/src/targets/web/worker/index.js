@@ -9,10 +9,11 @@ import {
 } from '../../../core/worker/clientHub';
 import { $emit as $emitAppLifecycle } from './lifecycle';
 import { $emit as $emitPageLifecycle } from './modules/page';
-import { registerApis } from './my';
-import globalObject from './globalObject';
+import { my } from './api';
+import { call } from './remoteCall';
+import { setupGlobalObject } from './globalObject';
 
-Object.assign(global, globalObject);
+setupGlobalObject(global);
 
 function registerPages() {
   const url = global.location.origin + '/build/app.js';
@@ -22,7 +23,7 @@ function registerPages() {
       // inject global context
       const fn = new Function('require', 'my', code);
       try {
-        fn(require, self.my);
+        fn(require, self.api);
       } catch (err) {
         log('执行 app.js bundle 错误!');
         err.url = url;
@@ -47,47 +48,25 @@ function registerPages() {
     });
 }
 
-self.__register_pages__ = self.$REG_PAGE = function(fn) {
-  try {
-    fn(require);
-  } catch (err) {
-    log('execute app.js bundle with error!', err);
-    throw err;
-  } finally {
-    // app launch 事件
-    $emitAppLifecycle('launch', {});
-    // 第一次页面展示
-    $emitAppLifecycle('show');
-  }
-
-  for (let i = 0, l = registerPages.callbacks.length; i < l; i++) {
-    registerPages.callbacks[i]();
-  }
-  registerPages.ready = true;
-  postMessage({ type: 'registered' });
-  return true;
-};
-
-registerPages.callbacks = [];
-
-function ready(cb) {
-  if (registerPages.ready) {
-    cb();
-  } else {
-    registerPages.callbacks.push(cb);
-  }
-}
-
 addEventListener('message', ({ data }) => {
   const { type, pageName, clientId } = data || {};
   switch (type) {
-    case 'register-pages':
-      // master tell worker to load pages
+    case 'importScripts':
       importScripts(data.url); // eslint-disable-line
+      if (data.urlType === 'app') {
+        postMessage({ type: 'AppRegistered' });
+      }
       break;
 
-    case 'register-apis':
-      registerApis(data.apis);
+    case 'registerAPI':
+      data.apis.forEach(method => {
+        my._registerAPI(method, (params = {}, successCallback, failCallback) => {
+          const { success, fail, complete, ...methodParams } = params;
+          const callKey = `my.${method}`;
+          return call(callKey, methodParams, successCallback, failCallback);
+        });
+      });
+      postMessage({ type: 'APIRegistered' });
       break;
 
     case 'init':

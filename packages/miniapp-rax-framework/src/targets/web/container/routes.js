@@ -1,11 +1,11 @@
 import Renderer from './Renderer';
-import { createClientId, getManifest } from './utils';
+import { createClientId } from './utils';
 import { warn } from '../../../core/debugger';
 import qs from 'querystring';
 import resolvePathname from 'resolve-pathname';
 
 const ROUTE_HASH_PREFIX = '!/';
-const APP_MANIFEST = getManifest();
+// const APP_MANIFEST = getManifest();
 
 const PREV_EL = document.querySelector('#prev');
 function showPrev() {
@@ -14,7 +14,7 @@ function showPrev() {
 function hidePrev() {
   PREV_EL.style.visibility = 'hidden';
 }
-hidePrev();
+// hidePrev();
 
 const PageLifecycle = {
   emit(type, clientId) {
@@ -156,4 +156,13 @@ function getTabBarList() {
 export function checkPathInTabBar(pageName) {
   const list = getTabBarList();
   return list.some(item => item.pageName === pageName);
+}
+
+export default class MiniAppRouter {
+
+  navigateTo() {}
+  navigateBack() {}
+  redirect() {}
+  switchTab() {}
+
 }
