@@ -2,6 +2,7 @@
 import * as tabBar from './tabbar';
 import navigation from './navigation';
 
+const hasOwn = {}.hasOwnProperty;
 const my = Object.assign({}, tabBar, navigation);
 
 // 用户自定义 api
@@ -10,9 +11,9 @@ if (typeof EXTERNAL_API === 'object') {
 }
 
 Object.assign(my, {
-  canIUse: (params, resolveCallback, rejectCallback) => {
+  canIUse: (params, resolveCallback) => {
     resolveCallback({
-      supported: my[params.name] ? true : false
+      supported: hasOwn.call(my, params.name)
     });
   }
 });

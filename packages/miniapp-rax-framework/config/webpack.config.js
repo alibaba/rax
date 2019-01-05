@@ -116,9 +116,9 @@ module.exports = new Promise((done) => {
         inject: false,
         templateParameters(compilation) {
           return {
-            injectScripts: `
-              <script src="https://g.alicdn.com/code/npm/??atag/${atagVersion}/dist/atag.js,miniapp-framework/${frameworkVersion}/dist/native/renderer.js"></script>
-            `.trim()
+            injectScripts: isDebugMode
+              ? `<script src="https://g.alicdn.com/code/npm/??atag/${atagVersion}/dist/atag.js,miniapp-framework/${frameworkVersion}/dist/native/renderer.js"></script>`
+              : `<script src="${ATAG_URL}"></script><script src="http://localhost:${LOCAL_FRAMEWORK_SERVE_PORT}/native/renderer.js"></script>`,
           };
         },
       }),
@@ -132,11 +132,11 @@ module.exports = new Promise((done) => {
         inject: false,
         templateParameters(compilation) {
           return {
-            atagVersion,
-            frameworkVersion,
-            injectManifestCode:
-              'window.APP_MANIFEST = <%- appConfig %>;',
+            injectScripts: isDebugMode
+              ? `<script src="https://g.alicdn.com/code/npm/??atag/${atagVersion}/dist/atag.js,miniapp-framework/${frameworkVersion}/dist/native/renderer.js"></script>`
+              : `<script src="${ATAG_URL}"></script><script src="http://localhost:${LOCAL_FRAMEWORK_SERVE_PORT}/web/index.js"></script>`,
             externalApi: '<%- externalApi %>',
+            miniappBootstrap: '<%- miniappBootstrap %>',
           };
         },
       }),

@@ -1,6 +1,5 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <meta id="viewport" name="viewport"  content="width=device-width" />
@@ -152,12 +151,9 @@
       </div>
     </template>
   </div>
-
-  <script><%= injectManifestCode %></script>
-
   <%= externalApi %>
-
-  <script src="https://g.alicdn.com/code/npm/??atag/<%= atagVersion %>/dist/atag.js,miniapp-framework/<%= frameworkVersion %>/dist/web/master.js"></script>
+  <%= injectScripts %>
+  <script><%= miniappBootstrap %></script>
 </body>
 
 </html>

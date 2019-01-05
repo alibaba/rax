@@ -12,10 +12,10 @@ import { $emit as $emitPageLifecycle } from './modules/page';
 import { registerApis } from './modules/my';
 import globalObject from './globalObject';
 
-Object.assign(self, globalObject);
+Object.assign(global, globalObject);
 
 function registerPages() {
-  const url = self.location.origin + '/build/app.js';
+  const url = global.location.origin + '/build/app.js';
   return fetch(url)
     .then(res => res.text())
     .then(code => {
