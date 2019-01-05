@@ -38,4 +38,4 @@ class MiniApp {
   // Global
   else
     root[LIBRARY_NAME] = factory();
-})(this, () => MiniApp);
+})(global, () => MiniApp);
