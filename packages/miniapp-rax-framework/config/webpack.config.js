@@ -131,7 +131,7 @@ module.exports = new Promise((done) => {
         template: 'src/targets/web/index.html',
         inject: false,
         templateParameters(compilation) {
-          return  {
+          return {
             atagVersion,
             frameworkVersion,
             injectManifestCode:

@@ -41,6 +41,6 @@ export default class Renderer {
     }
     this.hide();
     this.renderer.parentElement.removeChild(this.renderer);
-    return (this.destroyed = true);
+    return this.destroyed = true;
   }
 }

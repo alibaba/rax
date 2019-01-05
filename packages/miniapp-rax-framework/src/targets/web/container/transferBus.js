@@ -15,7 +15,7 @@ export function createTransferBus(clientId, pageName) {
 }
 
 export function set(clientId, bus) {
-  return (transferBus[clientId] = bus);
+  return transferBus[clientId] = bus;
 }
 
 export function get(clientId) {

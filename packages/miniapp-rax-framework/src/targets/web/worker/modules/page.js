@@ -17,8 +17,8 @@ export default {
     if (this._context) {
       const { clientId } = this._context;
       lifecycles[clientId] = lifecycles[clientId] || {};
-      const cycles = (lifecycles[clientId][evtName] =
-        lifecycles[clientId][evtName] || []);
+      const cycles = lifecycles[clientId][evtName] =
+        lifecycles[clientId][evtName] || [];
       cycles.push(callback);
     }
   },
@@ -26,8 +26,8 @@ export default {
     if (this._context) {
       const { clientId } = this._context;
       lifecycles[clientId] = lifecycles[clientId] || {};
-      const cycles = (lifecycles[clientId][evtName] =
-        lifecycles[clientId][evtName] || []);
+      const cycles = lifecycles[clientId][evtName] =
+        lifecycles[clientId][evtName] || [];
       let idx = -1;
       for (let i = 0, l = cycles.length; i < l; i++) {
         if (callback === cycles[i]) {

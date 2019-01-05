@@ -12,7 +12,7 @@ export function $call(moduleName, method, params, resolveCallback, rejectCallbac
     return;
   }
 
-  if (!module[method] || (typeof module[method] !== 'function')) {
+  if (!module[method] || typeof module[method] !== 'function') {
     console.error('Module method not exists or supported.');
     return;
   }

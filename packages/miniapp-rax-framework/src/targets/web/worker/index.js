@@ -88,7 +88,7 @@ addEventListener('message', ({ data }) => {
 
     case 'register-apis':
       registerApis(data.apis);
-    break;
+      break;
 
     case 'init':
       // 初始化

@@ -1,7 +1,7 @@
 import * as utils from '../utils';
 import * as routes from '../routes';
 
-export function switchTab ({ url }) {
+export function switchTab({ url }) {
   routes.switchTab({
     pageName: url
   });

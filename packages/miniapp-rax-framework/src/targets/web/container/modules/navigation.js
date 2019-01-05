@@ -22,20 +22,20 @@ const navigaiton = {
     try {
       const headerBar = utils.getHeaderBar();
       const title = headerBar.querySelector('.title');
-  
+
       if (params.title) {
         title.innerText = params.title;
       }
-  
+
       if (params.backgroundColor) {
         headerBar.style.backgroundColor = params.backgroundColor;
       }
-  
+
       if (params.reset) {
         headerBar.style.backgroundColor = 'rgb(255, 255, 255)';
       }
       resolveCallback();
-    } catch(e) {
+    } catch (e) {
       rejectCallback(e);
     }
   },
