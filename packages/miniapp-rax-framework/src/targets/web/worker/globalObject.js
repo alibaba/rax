@@ -1,4 +1,4 @@
-import my from './modules/my';
+import my from './my';
 
 export default {
   my

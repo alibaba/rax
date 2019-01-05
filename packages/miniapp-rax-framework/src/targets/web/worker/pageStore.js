@@ -1,7 +1,7 @@
 import createDriver from 'driver-worker';
 import { log } from '../../../core/debugger';
 import { addMessageListener } from './pageListeners';
-import workerRequire from './require';
+import workerRequire from './getModule';
 import { createElement } from 'rax';
 
 const pages = {};

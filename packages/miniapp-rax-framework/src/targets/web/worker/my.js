@@ -1,9 +1,7 @@
 /**
  * my api
  */
-import ctxRequire from '../require';
-
-const $call = ctxRequire('@core/my');
+import { call } from './remoteCall';
 
 const my = {};
 
@@ -12,12 +10,12 @@ export function registerApis(apiList) {
     my[method] = (params = {}, successCallback, failCallback) => {
       const {success, fail, complete, ...methodParams} = params;
       const callKey = `my.${method}`;
-      return $call(callKey, methodParams, successCallback, failCallback);
+      return call(callKey, methodParams, successCallback, failCallback);
     };
   });
 
   postMessage({ type: 'api-registered' });
-};
+}
 
 export default my;
 

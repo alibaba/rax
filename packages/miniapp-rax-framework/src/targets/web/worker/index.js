@@ -1,7 +1,7 @@
 import { getPage, getUnknownPageFactory } from '../../../core/worker/pageHub';
 import { log, warn } from '../../../core/debugger';
 import { createRax, applyFactory } from './utils';
-import require from './require';
+import require from './getModule';
 import createDriver from 'driver-worker';
 import {
   on as clientOn,
@@ -9,7 +9,7 @@ import {
 } from '../../../core/worker/clientHub';
 import { $emit as $emitAppLifecycle } from './lifecycle';
 import { $emit as $emitPageLifecycle } from './modules/page';
-import { registerApis } from './modules/my';
+import { registerApis } from './my';
 import globalObject from './globalObject';
 
 Object.assign(global, globalObject);

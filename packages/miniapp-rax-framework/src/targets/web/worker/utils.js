@@ -21,7 +21,7 @@ export function createRax() {
 }
 
 import createErrorPage from '../../../../packages/error-page';
-import require from './require';
+import require from './getModule';
 /**
  * create component by factory
  */
