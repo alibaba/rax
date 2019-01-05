@@ -6,5 +6,6 @@ module.exports = {
   'native/renderer': require.resolve('../src/targets/native/renderer'),
 
   'ide/index': require.resolve('../src/targets/ide/index'),
-  // 'web/index': require.resolve('../targets/web'),
+
+  'web/index': require.resolve('../src/targets/web/index'),
 };

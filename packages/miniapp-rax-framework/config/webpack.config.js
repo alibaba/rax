@@ -108,7 +108,7 @@ module.exports = new Promise((done) => {
         ATAG_URL: JSON.stringify(ATAG_URL),
       }),
       /**
-       * native renderer.html
+       * Native renderer.html
        */
       new HtmlWebpackPlugin({
         filename: 'native/renderer.html',
@@ -119,6 +119,24 @@ module.exports = new Promise((done) => {
             injectScripts: `
               <script src="https://g.alicdn.com/code/npm/??atag/${atagVersion}/dist/atag.js,miniapp-framework/${frameworkVersion}/dist/native/renderer.js"></script>
             `.trim()
+          };
+        },
+      }),
+
+      /**
+       * Web Container
+       */
+      new HtmlWebpackPlugin({
+        filename: 'web/index.html',
+        template: 'src/targets/web/index.html',
+        inject: false,
+        templateParameters(compilation) {
+          return  {
+            atagVersion,
+            frameworkVersion,
+            injectManifestCode:
+              'window.APP_MANIFEST = <%- appConfig %>;',
+            externalApi: '<%- externalApi %>',
           };
         },
       }),
