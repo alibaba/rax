@@ -1,10 +1,11 @@
 'use strict';
 /* eslint no-console: 0 */
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
+
+const SFCLoader = require.resolve('sfc-loader');
 
 module.exports = {
   mode: webpackConfig.mode,
@@ -50,16 +51,47 @@ module.exports = {
       },
       {
         test: /\.(html|vue|sfc)$/,
-        use: [
+        oneOf: [
           {
-            loader: require.resolve('sfc-loader'),
-            options: {
-              builtInRuntime: false,
-              builtInRax: false,
-              preserveWhitespace: false,
-              module: 'commonjs'
-            },
+            resourceQuery: /\?style/,
+            use: [
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  sourceMap: true,
+                  importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
+                }
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  sourceMap: true,
+                  plugins: [
+                    require('postcss-import')({ resolve: require('./styleResolver') }),
+                    require('../plugins/PostcssPluginRpx2rem'),
+                    require('../plugins/PostcssPluginTagPrefix'),
+                    require('autoprefixer')({
+                      remove: false,
+                      browsers: ['ios_saf 8'],
+                    }),
+                  ]
+                }
+              },
+              {
+                loader: SFCLoader,
+                options: {
+                  part: 'style',
+                },
+              }
+            ]
           },
+          {
+            loader: SFCLoader,
+            options: {
+              builtInRax: true,
+              module: 'commonjs',
+            },
+          }
         ],
         exclude: [pathConfig.appHtml],
       },
