@@ -40,26 +40,26 @@ export default function startMiniAppWeb(appConfig, mountNode) {
       case 'call':
         const { module, method, params, callId } = data;
 
-      function resolveCallback(result) {
-        worker.postMessage({
-          type: 'callEnd',
-          status: 'resolved',
-          result,
-          callId,
-        });
-      }
-      function rejectCallback(err) {
-        worker.postMessage({
-          type: 'callEnd',
-          status: 'reject',
-          err: {
-            message: err.message,
-            type: err.type,
-            stack: err.stack,
-          },
-          callId,
-        });
-      }
+        function resolveCallback(result) {
+          worker.postMessage({
+            type: 'callEnd',
+            status: 'resolved',
+            result,
+            callId,
+          });
+        }
+        function rejectCallback(err) {
+          worker.postMessage({
+            type: 'callEnd',
+            status: 'reject',
+            err: {
+              message: err.message,
+              type: err.type,
+              stack: err.stack,
+            },
+            callId,
+          });
+        }
 
         $call(module, method, params, resolveCallback, rejectCallback);
         break;
@@ -120,5 +120,4 @@ export default function startMiniAppWeb(appConfig, mountNode) {
     type: 'registerAPI',
     apis: Object.keys(my),
   });
-
 }

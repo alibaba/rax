@@ -159,10 +159,8 @@ export function checkPathInTabBar(pageName) {
 }
 
 export default class MiniAppRouter {
-
   navigateTo() {}
   navigateBack() {}
   redirect() {}
   switchTab() {}
-
 }

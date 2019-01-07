@@ -1,4 +1,4 @@
-import getModule  from './getModule';
+import getModule from './getModule';
 import { my } from './api';
 
 const globalObject = {
