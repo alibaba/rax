@@ -1,6 +1,6 @@
 {
   "name": "driver-worker",
-  "version": "0.7.6-0",
+  "version": "0.7.6",
   "description": "Worker driver for Rax",
   "license": "BSD-3-Clause",
   "main": "dist/driver.worker.min.js",
