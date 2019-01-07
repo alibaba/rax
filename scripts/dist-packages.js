@@ -2,62 +2,9 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const uppercamelcase = require('uppercamelcase');
 const RaxPlugin = require('rax-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const fs = require('fs');
-
-const PACKAGES_DIR = path.resolve(__dirname, '../packages');
 const babelOptions = require('../babel.config')();
-
-const GLOBAL_NAME = {
-  'rax-dom': 'RaxDOM',
-};
-
-function normalizeGlobalName(name) {
-  return GLOBAL_NAME[name] || uppercamelcase(name);
-}
-
-fs.readdirSync(PACKAGES_DIR)
-  .forEach(function(packageName) {
-    var main = path.join(PACKAGES_DIR, packageName + '/src/index.js');
-
-    if (
-      !/^universal-/.test(packageName) ||
-      /(mobx|rax)/.test(packageName) ||
-      /webpack/.test(packageName) ||
-      /cli/.test(packageName) ||
-      /loader/.test(packageName) ||
-      /rax-test-renderer/.test(packageName) ||
-      /rax-scripts/.test(packageName) ||
-      !fs.existsSync(main)
-    ) {
-      console.log('Ignore dist', packageName);
-      return;
-    }
-
-    var entryName = packageName.split('-')[1];
-    var globalName = normalizeGlobalName(packageName);
-
-    var entry = {};
-    entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
-    dist(getConfig(
-      entry,
-      {
-        path: './packages/' + packageName + '/dist/',
-        filename: '[name].js',
-        sourceMapFilename: '[name].map',
-        pathinfo: false,
-      },
-      {
-        externalBuiltinModules: true,
-        builtinModules: RaxPlugin.BuiltinModules,
-        moduleName: packageName,
-        globalName: globalName,
-      },
-      babelOptions
-    ));
-  });
 
 dist(getConfig(
   {
@@ -76,7 +23,20 @@ dist(getConfig(
     globalName: 'Rax',
     factoryGlobals: ['__weex_document__', 'document']
   },
-  babelOptions
+  {
+    presets: ['@babel/preset-env'],
+    plugins: [
+      [
+        "@babel/plugin-transform-runtime",
+        {
+          "corejs": false,
+          "helpers": true,
+          "regenerator": true,
+          "useESModules": false
+        }
+      ]
+    ]
+  }
 )).then(() => {
   return dist(getConfig(
     {

@@ -1,7 +1,7 @@
 {
-  "name": "rax-native",
+  "name": "rax-weex",
   "version": "1.0.0-beta.0",
-  "description": "Rax package for working with the Native.",
+  "description": "Rax package for working with the Weex.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -16,9 +16,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "driver-dom": "^1.0.0-beta",
-    "driver-weex": "^0.6.5",
-    "universal-env": "^0.6.5"
+    "driver-weex": "^0.6.5"
   },
   "peerDependencies": {
     "rax": "^1.0.0-beta"

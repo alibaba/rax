@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
-  <a href="https://unpkg.com/rax/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax/dist/rax.min.js?compression=gzip" alt="gzip size"></a>
+  <a href="https://unpkg.com/rax/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip" alt="gzip size"></a>
 </p>
 
 ---
@@ -289,7 +289,7 @@ render(<Hello name="world" />);
 #### rax-dom
 * render()
 
-#### rax-native
+#### rax-weex
 * render()
 
 #### rax-children
