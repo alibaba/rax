@@ -1,7 +1,7 @@
 {
-  "name": "driver-browser",
-  "version": "0.6.7",
-  "description": "Browser driver for Rax",
+  "name": "driver-dom",
+  "version": "1.0.0-beta.0",
+  "description": "DOM driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -16,6 +16,6 @@
     "style-unit": "^0.6.5"
   },
   "devDependencies": {
-    "rax": "^0.6.5"
+    "rax": "^1.0.0-beta"
   }
 }

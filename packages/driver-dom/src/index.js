@@ -18,11 +18,12 @@ const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
 const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in document ? 'textContent' : 'nodeValue';
 
-const Driver = {
+const getClientWidth = () => document.documentElement.clientWidth;
 
+const Driver = {
   tagNamePrefix: '',
   deviceWidth: typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || null,
-  viewportWidth: typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || 750,
+  viewportWidth: typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || null,
   eventRegistry: {},
 
   setTagNamePrefix(prefix) {
@@ -30,7 +31,7 @@ const Driver = {
   },
 
   getDeviceWidth() {
-    return this.deviceWidth || document.documentElement.clientWidth;
+    return this.deviceWidth || getClientWidth();
   },
 
   setDeviceWidth(width) {
@@ -38,7 +39,7 @@ const Driver = {
   },
 
   getViewportWidth() {
-    return this.viewportWidth;
+    return this.viewportWidth || getClientWidth();
   },
 
   setViewportWidth(width) {

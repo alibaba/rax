@@ -4,6 +4,4 @@
 
 ### API
 
-* render
-* findDOMNode
-* unmountComponentAtNode
+* render(element [, container] [, callback])

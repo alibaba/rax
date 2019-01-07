@@ -1,7 +1,7 @@
 {
-  "name": "rax-dom",
+  "name": "rax-native",
   "version": "1.0.0-beta.0",
-  "description": "Rax package for working with the DOM.",
+  "description": "Rax package for working with the Native.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -15,8 +15,12 @@
   "engines": {
     "npm": ">=3.0.0"
   },
+  "dependencies": {
+    "driver-dom": "^1.0.0-beta",
+    "driver-weex": "^0.6.5",
+    "universal-env": "^0.6.5"
+  },
   "peerDependencies": {
-    "rax": "^1.0.0-beta",
-    "driver-dom": "^1.0.0-beta"
+    "rax": "^1.0.0-beta"
   }
 }

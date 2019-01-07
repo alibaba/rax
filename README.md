@@ -20,9 +20,9 @@
 
 :zap: **Fast:** blazing fast virtual DOM.
 
-:dart: **Tiny:** ~12 KB minified + gzipped.
+:dart: **Tiny:** ~8 KB minified + gzipped.
 
-:art: **Universal:** works in browsers, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
+:art: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
 ## Quick Start
 
@@ -37,6 +37,48 @@ Start local server to launch project:
 ```sh
 $ cd YourProjectName
 $ npm run start
+```
+
+### With JSX(XML-like syntax extension to ECMAScript)
+> Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
+
+```jsx
+// Hello.jsx
+import {createElement, useState} from 'rax';
+
+export default (props) => {
+  const [name, setName] = useState('world');
+  const handleClick = () = {
+    setName('rax');
+  };
+  return (
+    <view style={styles.hello}>
+      <text style={styles.title} onClick={this.handleClick}>
+      Hello {name}
+      </text>
+    </view>
+  );
+}
+
+const styles = {
+  hello: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  title: {
+    fontSize: '40px',
+    textAlign: 'center'
+  }
+};
+```
+
+```js
+// app.js
+import {render} from 'rax-dom';
+import Hello from './Hello';
+
+render(<Hello name="world" />);
 ```
 
 ## Rax API (v1.0)
@@ -244,9 +286,13 @@ $ npm run start
 #### Version
 * version
 
-## Rax Legacy API (v1.0)
+#### rax-dom
+* render()
 
-### rax-children
+#### rax-native
+* render()
+
+#### rax-children
 * Children
   * Children.map(children, function[(thisArg)])
   * Children.forEach(children, function[(thisArg)])
@@ -254,7 +300,7 @@ $ npm run start
   * Children.only(children)
   * Children.toArray(children)
 
-### rax-proptypes
+#### rax-proptypes
 * PropTypes
   * PropTypes.array
   * PropTypes.bool
@@ -273,77 +319,38 @@ $ npm run start
   * PropTypes.oneOfType
   * PropTypes.shape
 
-### rax-component
-* Component
-
-### rax-pure-component
-* PureComponent
-
-### rax-is-valid-element
+#### rax-is-valid-element
 * isValidElement(object)
 
-### rax-clone-elment
+#### rax-clone-elment
 * cloneElement(element, [props], [...children])
 
-### rax-create-factory
+#### rax-create-factory
 * createFactory(type)
 
-### rax-create-portal
+#### rax-create-portal
 * createPortal(child, container)
 
-### rax-hydrate
+#### rax-hydrate
 * hydrate(element, container[, callback])
 
-### rax-create-class
-* createClass()
-
-### rax-find-dom-node
+#### rax-find-dom-node
 * findDOMNode(component)
 
-### rax-unmount-component-at-node
+#### rax-unmount-component-at-node
 * unmountComponentAtNode(container)
 
-## JSX(XML-like syntax extension to ECMAScript) DSL
-> Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
+## Rax Legacy API (v1.0)
 
-```jsx
-// Hello.jsx
-import {createElement, useState} from 'rax';
+#### rax-component
+* Component
 
-export default (props) => {
-  const [name, setName] = useState('world');
-  const handleClick = () = {
-    setName('rax');
-  };
-  return (
-    <view style={styles.hello}>
-      <text style={styles.title} onClick={this.handleClick}>
-      Hello {name}
-      </text>
-    </view>
-  );
-}
+#### rax-pure-component
+* PureComponent
 
-const styles = {
-  hello: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  title: {
-    fontSize: '40px',
-    textAlign: 'center'
-  }
-};
-```
+#### rax-create-class
+* createClass()
 
-```js
-// app.js
-import {render} from 'rax';
-import Hello from './Hello';
-
-render(<Hello name="world" />);
-```
 
 ## Rax Renderers
 

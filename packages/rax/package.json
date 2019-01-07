@@ -16,9 +16,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "driver-browser": "^0.6.5",
     "driver-server": "^0.6.5",
-    "driver-weex": "^0.6.5",
     "universal-env": "^0.6.5"
   },
   "devDependencies": {
