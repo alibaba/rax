@@ -1,3 +1,5 @@
 module.exports = function(source) {
-  return `${source} window.EXTERNAL_API = _default;`;
+  const jsPath = this.resourcePath;
+
+  return `import api from '${jsPath}'; window.EXTERNAL_API = api;`;
 };

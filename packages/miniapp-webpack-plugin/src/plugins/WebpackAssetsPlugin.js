@@ -26,18 +26,22 @@ module.exports = class WebpackAssetsPlugin {
   apply(compiler) {
     compiler.hooks.compilation.tap('compilation', (compilation) => {
       compilation.hooks.optimizeAssets.tap('MiniAppPlugin', () => {
-        const args = Object.values(compilation.assets);
+        const reg = new RegExp(/\.js$/);
+        const args = [];
+
+        // 删除原 assets
+        Object.keys(compilation.assets).forEach((key) => {
+          if (reg.test(key)) {
+            args.push(compilation.assets[key]);
+            delete compilation.assets[key];
+          }
+        });
 
         // polyfill global context
         args.unshift(new ConcatSource(globalPolyfills.join('')));
         args.unshift(ConcatSource);
 
         const app = new (ConcatSource.bind.apply(ConcatSource, args))();
-
-        // 删除原 assets
-        Object.keys(compilation.assets).forEach((key) => {
-          delete compilation.assets[key];
-        });
 
         // 增加 app.js
         // wrapper for app.js

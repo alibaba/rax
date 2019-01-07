@@ -1,6 +1,12 @@
 const webpack = require('webpack');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const pathConfig = require('./path.config');
+const path = require('path');
+
+const getBabelRuntimePath = () => {
+  const pkgJsonPath = require.resolve('@babel/runtime/package.json');
+  return path.dirname(pkgJsonPath);
+};
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -17,6 +23,9 @@ module.exports = {
   context: process.cwd(),
   entry: {},
   resolve: {
+    alias: {
+      '@babel/runtime': getBabelRuntimePath()
+    },
     extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc'],
   },
   output: {

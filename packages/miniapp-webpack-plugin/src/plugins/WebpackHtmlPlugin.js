@@ -1,7 +1,10 @@
-const axios = require('axios');
+const { resolve } = require('path');
+const { readFileSync, existsSync } = require('fs');
+const address = require('address');
 const ejs = require('ejs');
 
-const { getMaster, getMasterView, FRAMEWORK_VERSION } = require('../utils/getFrameworkCDNUrl');
+const { version: atagVersion } = require('atag/package.json');
+const getFrameworkVersion = require('../utils/getFrameworkVersion');
 
 /**
  * 基于 framework 中的 view 生成 html 页面
@@ -12,6 +15,20 @@ module.exports = class WebpackHtmlPlugin {
       target: 'web',
       appConfig: {}
     }, options);
+  }
+
+  getFrameworkVersion() {
+    const {
+      appConfig
+    } = this.options;
+
+    if (appConfig.frameworkVersion) {
+      return new Promise(resolve => {
+        resolve(appConfig.frameworkVersion);
+      });
+    }
+
+    return getFrameworkVersion();
   }
 
   apply(compiler) {
@@ -27,35 +44,44 @@ module.exports = class WebpackHtmlPlugin {
 
       appConfig.h5Assets = `${publicPath}app.${target}.js`;
 
-      const frameworkVersion = appConfig.frameworkVersion || FRAMEWORK_VERSION;
-      const masterPath = getMaster(frameworkVersion, target);
-      const masterViewPath = getMasterView(frameworkVersion, target);
-
       const hasExternalApi = target === 'web' && appConfig.externalApi;
       const externalApiScript = hasExternalApi ? `<script src="${publicPath}api.js"></script>` : '';
 
-      axios(masterViewPath)
-        .then((response) => {
-          const template = response.data;
+      const templatePath = resolve(__dirname, '../utils/template.ejs');
 
-          const content = ejs.render(template, {
-            appConfig: JSON.stringify(appConfig, null, 2),
-            h5Master: masterPath,
-            externalApi: externalApiScript
-          });
+      if (!existsSync(templatePath)) {
+        throw new Error('HtmlWebpackPlugin: could not load file ' + templatePath);
+      }
 
-          const finalOutputName = 'index.html';
+      const template = readFileSync(templatePath, 'utf-8');
 
-          compilation.assets[finalOutputName] = {
-            source: () => content,
-            size: () => content.length
-          };
-          callback();
-        })
-        .catch((e) => {
-          console.error(e);
-          throw new Error('HtmlWebpackPlugin: could not load file ' + masterViewPath);
-        });
+      const localIP = address.ip();
+
+      const options = {
+        appConfig: JSON.stringify(appConfig, null, 2),
+        externalApi: externalApiScript,
+        isDebug: process.env.DEBUG,
+        atagVersion,
+        debugFrameworkURL: `http://${localIP}:8003/web/master.js`
+      };
+
+      const finalOutputName = 'index.html';
+
+      this.getFrameworkVersion().then((frameworkVersion) => {
+        options.frameworkVersion = frameworkVersion;
+
+        const content = ejs.render(template, options);
+
+        compilation.assets[finalOutputName] = {
+          source: () => content,
+          size: () => content.length
+        };
+
+        callback();
+      }).catch(e => {
+        console.log(e);
+        throw new Error('HtmlWebpackPlugin: generate error');
+      });
     });
   }
 };
