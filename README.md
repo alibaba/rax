@@ -276,37 +276,31 @@ $ npm run start
 ### rax-component
 * Component
 
-### rax-purecomponent
+### rax-pure-component
 * PureComponent
 
-### rax-isvalidelement
+### rax-is-valid-element
 * isValidElement(object)
 
-### rax-cloneelment
+### rax-clone-elment
 * cloneElement(element, [props], [...children])
 
-### rax-createfactory
+### rax-create-factory
 * createFactory(type)
 
-### rax-createportal
+### rax-create-portal
 * createPortal(child, container)
 
 ### rax-hydrate
 * hydrate(element, container[, callback])
 
-### rax-createclass
+### rax-create-class
 * createClass()
 
-### rax-setnativeprops
-* setNativeProps()
-
-### rax-findcomponentinstance
-* findComponentInstance()
-
-### rax-finddomnode
+### rax-find-dom-node
 * findDOMNode(component)
 
-### rax-unmountcomponentatnode
+### rax-unmount-component-at-node
 * unmountComponentAtNode(container)
 
 ## JSX(XML-like syntax extension to ECMAScript) DSL

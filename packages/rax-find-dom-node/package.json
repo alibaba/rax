@@ -1,7 +1,7 @@
 {
-  "name": "rax",
+  "name": "rax-find-dom-node",
   "version": "1.0.0-beta.0",
-  "description": "A universal React-compatible render engine.",
+  "description": "rax-find-dom-node",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -15,13 +15,7 @@
   "engines": {
     "npm": ">=3.0.0"
   },
-  "dependencies": {
-    "driver-browser": "^0.6.5",
-    "driver-server": "^0.6.5",
-    "driver-weex": "^0.6.5",
-    "universal-env": "^0.6.5"
-  },
-  "devDependencies": {
-    "style-unit": "^0.6.5"
+  "peerDependencies": {
+    "rax": "^1.0.0-beta"
   }
 }
