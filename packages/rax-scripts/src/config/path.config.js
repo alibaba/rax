@@ -17,6 +17,7 @@ const nodePaths = (process.env.NODE_PATH || '')
   .map(resolveApp);
 
 const paths = {
+  appDirectory: appDirectory,
   appBuild: resolveApp('build'),
   appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
