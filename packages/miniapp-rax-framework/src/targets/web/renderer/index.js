@@ -1,33 +1,24 @@
 import domRenderer from 'driver-worker/lib/renderer';
+import { getMessageProxy } from '../container/MessageProxy';
 
 export default function initRenderer(mountNode, clientId, pageQuery) {
-  const worker = self.$$workerTransfers[clientId];
-  if (!worker) {
-    throw new Error(
-      '无法找到 transfer worker, clientId: ' + clientId
-    );
-  }
+  const workerHandler = getMessageProxy(clientId);
 
-  const postMessage = worker.postMessage;
-  worker.postMessage = msg => {
+  const postMessage = workerHandler.postMessage;
+  workerHandler.postMessage = msg => {
     if (msg.type === 'init') {
       msg.pageQuery = pageQuery;
     }
-    postMessage.call(worker, msg);
+    postMessage.call(workerHandler, msg);
   };
 
   domRenderer({
-    worker,
+    worker: workerHandler,
     tagNamePrefix: 'a-',
     mountNode
   });
 
-  /* hook for ready */
-  if (typeof __ready === 'function') {
-    __ready(); // eslint-disable-line
-  }
-
-  worker.onModuleAPIEvent = ({ data: payload }) => {
+  workerHandler.onModuleAPIEvent = ({ data: payload }) => {
     const { type, data } = payload;
     switch (type) {
       case 'pageScrollTo': {

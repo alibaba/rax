@@ -1,8 +1,9 @@
 import Renderer from './Renderer';
-import { createClientId } from './utils';
 import { warn } from '../../../core/debugger';
 import qs from 'querystring';
 import resolvePathname from 'resolve-pathname';
+import { createMessageProxy } from './MessageProxy';
+import { createClientId } from './clientId';
 
 const ROUTE_HASH_PREFIX = '!/';
 // const APP_MANIFEST = getManifest();
@@ -30,43 +31,7 @@ let currentClient = null;
 const container = document.querySelector('#main');
 
 export function navigate({ pageName }) {
-  if (/^([\w\d]+:)\/\//.test(pageName)) {
-    // is url
-    location.href = pageName;
-    return;
-  } else if (pageName[0] === '/') {
-    pageName = pageName.slice(1);
-  } else if (pageName[0] === '.') {
-    pageName = resolvePathname(pageName, currentClient.renderer.pageName);
-  }
-  location.hash = ROUTE_HASH_PREFIX + pageName;
 
-  let query = {};
-  if (/\?/.test(pageName)) {
-    const [_pageName, queryString] = pageName.split('?');
-    pageName = _pageName;
-    query = qs.parse(queryString);
-  }
-
-  const clientId = createClientId();
-  const renderer = new Renderer(pageName, clientId, {
-    currentClientId: getClientId(currentClient),
-    pageQuery: query
-  });
-  const client = createClient(clientId, renderer);
-
-  if (currentClient) {
-    PageLifecycle.emit('hide', currentClient.clientId);
-    currentClient.renderer.hide();
-    showPrev();
-    PageLifecycle.emit('show', clientId);
-    currentClient.nextClient = client;
-  }
-
-  // 初始化的 show 事件由 worker render 后直接触发
-  renderer.mount(container);
-  client.prevClient = currentClient;
-  currentClient = client;
 }
 
 export function redirect({ pageName }) {
@@ -159,7 +124,50 @@ export function checkPathInTabBar(pageName) {
 }
 
 export default class MiniAppRouter {
-  navigateTo() {}
+  constructor(messageRouter) {
+    this.messageRouter = messageRouter;
+  }
+
+  navigateTo({ pageName }) {
+    const container = document.querySelector('#main');
+    if (/^([\w\d]+:)\/\//.test(pageName)) {
+      // is url
+      location.href = pageName;
+      return;
+    } else if (pageName[0] === '/') {
+      pageName = pageName.slice(1);
+    } else if (pageName[0] === '.') {
+      pageName = resolvePathname(pageName, currentClient.renderer.pageName);
+    }
+    location.hash = ROUTE_HASH_PREFIX + pageName;
+
+    let query = {};
+    if (/\?/.test(pageName)) {
+      const [_pageName, queryString] = pageName.split('?');
+      pageName = _pageName;
+      query = qs.parse(queryString);
+    }
+
+    const clientId = createClientId();
+    const renderer = new Renderer(pageName, clientId, {
+      currentClientId: getClientId(currentClient),
+      pageQuery: query
+    });
+    const messageProxy = createMessageProxy(this.messageRouter, clientId, pageName);
+
+    if (currentClient) {
+      PageLifecycle.emit('hide', currentClient.clientId);
+      currentClient.renderer.hide();
+      showPrev();
+      PageLifecycle.emit('show', clientId);
+      // currentClient.nextClient = client;
+    }
+
+    // 初始化的 show 事件由 worker render 后直接触发
+    renderer.mount(container);
+    // client.prevClient = currentClient;
+    // currentClient = client;
+  }
   navigateBack() {}
   redirect() {}
   switchTab() {}

@@ -1,4 +1,4 @@
-import { set as setBus, createTransferBus } from './transferBus';
+import { getMessageProxy } from './MessageProxy';
 import initRenderer from '../renderer';
 
 export default class Renderer {
@@ -15,8 +15,7 @@ export default class Renderer {
     renderer.setAttribute('data-client-id', clientId);
     this.renderer = renderer;
 
-    this.transferBus = createTransferBus(clientId, pageName);
-    setBus(clientId, this.transferBus);
+    this.transferBus = getMessageProxy(clientId);
   }
 
   hide() {
@@ -31,8 +30,8 @@ export default class Renderer {
 
   mount(container, callback = () => { }) {
     container.appendChild(this.renderer);
-    callback();
     initRenderer(this.renderer, this.clientId, this.pageQuery || {});
+    callback();
   }
 
   destroy() {
