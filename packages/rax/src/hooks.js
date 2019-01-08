@@ -97,9 +97,6 @@ function useEffectImpl(effect, inputs, defered) {
       if (current) {
         current();
         destory.current = null;
-      } else if (defered) {
-        create(true);
-        destory(true);
       }
     };
 
@@ -117,7 +114,7 @@ function useEffectImpl(effect, inputs, defered) {
     currentInstance.didUpdateHandlers.push(() => {
       const { prevInputs, inputs, create } = hooks[hookId];
       if (prevInputs == null || !areInputsEqual(inputs, prevInputs)) {
-        destory(true);
+        destory();
         create();
       }
     });

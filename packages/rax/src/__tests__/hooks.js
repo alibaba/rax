@@ -171,14 +171,14 @@ describe('hooks', () => {
     jest.runAllTimers();
     expect(logs).toEqual([
       'render', 'create2', 'create1',
-      'render', 'destory1', 'destory2', 'create2', 'create1']);
+      'render', 'destory2', 'create2', 'destory1', 'create1']);
 
     render(<Counter count={2} />, container);
     jest.runAllTimers();
     expect(logs).toEqual([
       'render', 'create2', 'create1',
-      'render', 'destory1', 'destory2', 'create2', 'create1',
-      'render', 'destory1', 'destory2', 'create2', 'create1']);
+      'render', 'destory2', 'create2', 'destory1', 'create1',
+      'render', 'destory2', 'create2', 'destory1', 'create1']);
   });
 
   it('mount and update a function component with useEffect', () => {
@@ -678,5 +678,28 @@ describe('hooks', () => {
       jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('8');
     });
+  });
+
+
+  it('simple mount and update', () => {
+    const container = createNodeElement('div');
+    let logs = [];
+    function Counter(props) {
+      useEffect(() => {
+        logs.push(`Did commit [${props.count}]`);
+      });
+      return <span>{props.count}</span>;
+    }
+    render(<Counter count={0} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('0');
+    jest.runAllTimers();
+    expect(logs).toEqual(['Did commit [0]']);
+
+    logs = [];
+    render(<Counter count={1} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('1');
+    // Effects are deferred until after the commit
+    jest.runAllTimers();
+    expect(logs).toEqual(['Did commit [1]']);
   });
 });
