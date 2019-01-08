@@ -42,7 +42,10 @@ module.exports = class WebpackHtmlPlugin {
       const webpackPublicPath = compilation.mainTemplate.getPublicPath({hash: compilationHash});
       const publicPath = webpackPublicPath.trim() !== '' ? webpackPublicPath : '/';
 
-      appConfig.h5Assets = `${publicPath}app.${target}.js`;
+      /**
+       * Use app.js in common
+       */
+      appConfig.h5Assets = `${publicPath}app.js`;
 
       const hasExternalApi = target === 'web' && appConfig.externalApi;
       const externalApiScript = hasExternalApi ? `<script src="${publicPath}api.js"></script>` : '';
@@ -62,7 +65,7 @@ module.exports = class WebpackHtmlPlugin {
         externalApi: externalApiScript,
         isDebug: process.env.DEBUG,
         atagVersion,
-        debugFrameworkURL: `http://${localIP}:8003/web/master.js`
+        debugFrameworkURL: `http://${localIP}:8003/web/index.js`
       };
 
       const finalOutputName = 'index.html';

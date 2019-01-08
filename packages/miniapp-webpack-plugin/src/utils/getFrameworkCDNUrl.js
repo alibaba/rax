@@ -9,8 +9,8 @@ const FRAMEWORK_RENDERER = '/native/renderer.js';
 const FRAMEWORK_RENDERER_VIEW = '/native/renderer.html';
 
 const MASTER = {
-  'web': '/web/master.js',
-  'ide': '/h5/master.js'
+  'web': '/web/index.js',
+  'ide': '/ide/index.js'
 };
 
 const VIEW = {

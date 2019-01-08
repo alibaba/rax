@@ -23,7 +23,7 @@ module.exports = function buildWeb(destDir, appConfig) {
     const frameworkMasterURL = getH5MasterView(frameworkVersion);
 
     axios(frameworkMasterURL).then(response => {
-      appConfig.h5Assets = '/build/app.web.js';
+      appConfig.h5Assets = '/build/app.js';
 
       const webDistFileContent = [
         '__register_pages__(function(require){',

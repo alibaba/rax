@@ -28,11 +28,6 @@ module.exports = class WebpackMiniProgramPlugin {
         });
 
         compilation.assets['app.js'] = app;
-        compilation.assets['app.web.js'] = new ConcatSource(
-          '__register_pages__(function(require){',
-          app,
-          '});',
-        );
       });
     });
   }

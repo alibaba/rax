@@ -55,23 +55,23 @@ module.exports = class WebpackAssetsPlugin {
             const mockData = JSON.parse(readFileSync(mockDataPath));
             // Inject schema data
             injectSchemaMockData = `
-            try {
-              ${SCHEMA_VAR} = ${JSON.stringify(mockData)};
-            } catch(err) { 
-              console.warn('Inject schema data with error', err); 
-            }
-          `;
+              try {
+                ${SCHEMA_VAR} = ${JSON.stringify(mockData)};
+              } catch(err) { 
+                console.warn('Inject schema data with error', err); 
+              }
+            `;
           } catch (err) {
             throw new Error('Please check schema/mock-data.json is a valid JSON string.');
           }
         }
 
-        compilation.assets[`app.${this.target}.js`] = new ConcatSource(
-          webRegisterWrapper[0],
-          app,
-          injectSchemaMockData ? injectSchemaMockData : '',
-          webRegisterWrapper[1]
-        );
+        if (injectSchemaMockData) {
+          compilation.assets['app.js'] =  new ConcatSource(
+            injectSchemaMockData,
+            compilation.assets['app.js']
+          );
+        }
       });
     });
   }
