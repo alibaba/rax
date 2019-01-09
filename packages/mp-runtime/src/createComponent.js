@@ -1,5 +1,6 @@
 import computeChangedData from './computeChangedData';
 import deepCopy from './deepCopy';
+import { registerComponent } from './componentsHub';
 
 function getSlotName(item) {
   if (item && Object.hasOwnProperty.call(item, 'props')) {
@@ -17,14 +18,22 @@ function injectSlot(child, $slots) {
   $slots[slotName].push(child);
 }
 
-export default function createComponent(renderFactory, render, config) {
+// Count of component instance numbers.
+let componentCount = 0;
+
+export default function createComponent(renderFactory, render, config, componentPath) {
   const templateRender = renderFactory(render);
 
-  return class extends render.Component {
-    constructor() {
-      super();
+  const component = class extends render.Component {
+    static contextTypes = {
+      $page: null,
+    };
+
+    constructor(props, context) {
+      super(props, context);
       this.state = deepCopy(config.data);
       this.publicInstance = this._createPublicInstance();
+      this.componentId = ++componentCount;
     }
 
     static defaultProps = config.props;
@@ -55,12 +64,24 @@ export default function createComponent(renderFactory, render, config) {
         get: () => this.transformChildrenToSlots(this.props.children),
       });
 
+      Object.defineProperty(scope, 'is', {
+        get: () => componentPath,
+      });
+
+      Object.defineProperty(scope, '$page', {
+        get: () => this.context.$page,
+      });
+
+      Object.defineProperty(scope, '$id', {
+        get: () => this.componentId,
+      });
+
       return scope;
     }
 
     setData = (data, callback) => {
       if (data == null) return;
-      this.setState(computeChangedData(this.data, data), callback);
+      this.setState(computeChangedData(this.state, data), callback);
     };
 
     transformChildrenToSlots = (children) => {
@@ -94,8 +115,16 @@ export default function createComponent(renderFactory, render, config) {
     }
 
     render() {
-      const { $slots, props, data } = this.publicInstance;
-      return templateRender.call(this.publicInstance, { $slots, ...props, ...data });
+      const { $slots, $id, props, data } = this.publicInstance;
+      return templateRender.call(this.publicInstance, {
+        $id, $slots, ...props, ...data
+      });
     }
   };
+
+  if (componentPath !== undefined) {
+    registerComponent(componentPath, component);
+  }
+
+  return component;
 }

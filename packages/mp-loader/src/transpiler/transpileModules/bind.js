@@ -1,4 +1,10 @@
-const { getAndRemoveAttr, addAttr, normalizeMustache } = require('../helpers');
+const {
+  getAndRemoveAttr,
+  addAttr,
+  normalizeMustache,
+  camelize,
+  isPreservedPropName
+} = require('../helpers');
 
 const IS_BIND_REG = /\W*\{\{/;
 const IS_DETECTIVE = /^a\:/;
@@ -28,9 +34,11 @@ function transformNode(el) {
     if (IS_DETECTIVE.test(name)) {
       return;
     }
+
     if (IS_BIND_REG.test(value)) {
       const exp = getAndRemoveAttr(el, name);
-      addAttr(el, name, exp, '');
+      const transformedName = isPreservedPropName(name) ? name : camelize(name);
+      addAttr(el, transformedName, exp, '');
     }
   }
 }

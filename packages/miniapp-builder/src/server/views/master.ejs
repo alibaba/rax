@@ -67,12 +67,11 @@
 		.headerInfo {
 			font-size: 4.3vw;
 			color: #272727;
-			margin-top: 1.6vw;
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
-			padding: 0 3.7vw;
 			height: 10vw;
+      line-height: 10vw;
 		}
 
 		.title {
@@ -109,6 +108,10 @@
 			line-height: 1em;
 		}
 
+    .icon-close {
+      width: 5vw;
+    }
+
 	</style>
 </head>
 
@@ -116,11 +119,17 @@
 <div id="headerBar">
 	<div class="headerInfo">
 		<div id="prev" style="width: 26vw;">
-			<img src="https://gw.alicdn.com/tfs/TB1cNCCqTtYBeNjy1XdXXXXyVXa-38-66.png" style="width: 2.5vw; margin-top: 1.5vw;" />
+			<img src="https://gw.alicdn.com/tfs/TB1cNCCqTtYBeNjy1XdXXXXyVXa-38-66.png" style="width: 2.5vw; margin-top: 2.6vw; margin-left: 4vw;" />
 		</div>
 		<div class="title"></div>
 
-		<div style="width: 26vw;"></div>
+		<div style="width: 26vw;">
+      <div style="border: 1px solid #ccc; border-radius: 16vw;position: absolute;right: 3vw; padding: 0 2vw; line-height: 10vw; height: 6vw; margin-top: 1.7vw; display: flex;">
+        <svg style="cursor: pointer; width: 5vw; margin-right: 2vw;" viewBox="0 0 1024 1024"><path d="M768 448c-35.36 0-64 28.64-64 64s28.64 64 64 64 64-28.64 64-64-28.64-64-64-64m-256 0c-35.36 0-64 28.64-64 64s28.64 64 64 64 64-28.64 64-64-28.64-64-64-64m-256 0c-35.36 0-64 28.64-64 64s28.64 64 64 64 64-28.64 64-64-28.64-64-64-64" fill="#888888"/></svg>
+
+        <svg onclick="location.hash='';location.reload()" style="cursor: pointer; width: 5vw;" viewBox="0 0 1024 1024"><path d="M764.8 312.256l-53.12-53.12L512 458.88 312.256 259.136l-53.12 53.12L458.88 512 259.136 711.68l53.12 53.12L512 565.12 711.68 764.8l53.12-53.12L565.12 512 764.8 312.256zm0 0" fill="#888888"/></svg>
+      </div>
+    </div>
 	</div>
 </div>
 <div id="main" data-main></div>

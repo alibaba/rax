@@ -18,6 +18,7 @@ const nodePaths = (process.env.NODE_PATH || '')
 
 const paths = {
   appBuild: resolveApp('build'),
+  appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   appIndexJs: resolveApp('src/index.js'),
@@ -26,6 +27,7 @@ const paths = {
   appManifest: resolveApp('manifest.json'),
   appNodeModules: resolveApp('node_modules'),
   nodePaths: nodePaths,
+  miniappEntry: resolveApp('app.js'),
 };
 
 module.exports = paths;

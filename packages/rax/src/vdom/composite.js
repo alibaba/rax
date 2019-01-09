@@ -1,4 +1,4 @@
-import StatelessComponent from './stateless';
+import ReactiveComponent from './reactive';
 import updater from './updater';
 import Host from './host';
 import Ref from './ref';
@@ -33,7 +33,12 @@ function handleError(instance, error) {
   }
 
   if (boundary) {
-    boundary.componentDidCatch(error);
+    // should not attempt to recover an unmounting error boundary
+    const boundaryInternal = boundary._internal;
+    if (boundaryInternal) {
+      let callbackQueue = boundaryInternal._pendingCallbacks || (boundaryInternal._pendingCallbacks = []);
+      callbackQueue.push(() => boundary.componentDidCatch(error));
+    }
   } else {
     if (Host.sandbox) {
       setTimeout(() => {
@@ -83,8 +88,10 @@ class CompositeComponent {
       Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
-    let Component = this._currentElement.type;
-    let publicProps = this._currentElement.props;
+    let currentElement = this._currentElement;
+    let Component = currentElement.type;
+    let ref = currentElement.ref;
+    let publicProps = currentElement.props;
     let isClass = Component.prototype;
     let isComponentClass = isClass && Component.prototype.isComponentClass;
     // Class stateless component without state but have lifecycles
@@ -102,10 +109,10 @@ class CompositeComponent {
         // Component instance
         instance = new Component(publicProps, publicContext, updater);
       } else if (typeof Component === 'function') {
-        // Functional stateless component without state and lifecycles
-        instance = new StatelessComponent(Component);
+        // Functional reactive component with hooks
+        instance = new ReactiveComponent(Component, ref);
       } else {
-        throw new Error(`Invalid component type: ${Component}. (keys: ${Object.keys(Component)})`);
+        throw new Error(`Invalid component type: ${Component}. (current: ${typeof Component === 'object' && Object.keys(Component) || typeof Component})`);
       }
     } catch (e) {
       handleError(parentInstance, e);
@@ -177,15 +184,8 @@ class CompositeComponent {
       handleError(instance, error);
     }
 
-    if (this._currentElement && this._currentElement.ref) {
-      Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
-    }
-
-    // Trigger setState callback in componentWillMount after rendered
-    let callbacks = this._pendingCallbacks;
-    if (callbacks) {
-      this._pendingCallbacks = null;
-      updater.runCallbacks(callbacks, instance);
+    if (!this._currentElement.type.forwardRef && ref) {
+      Ref.attach(currentElement._owner, ref, this);
     }
 
     if (instance.componentDidMount) {
@@ -198,6 +198,13 @@ class CompositeComponent {
           instance.componentDidMount();
         }
       }, instance);
+    }
+
+    // Trigger setState callback in componentWillMount or boundary callback after rendered
+    let callbacks = this._pendingCallbacks;
+    if (callbacks) {
+      this._pendingCallbacks = null;
+      updater.runCallbacks(callbacks, instance);
     }
 
     Host.hook.Reconciler.mountComponent(this);
@@ -228,7 +235,7 @@ class CompositeComponent {
 
     if (this._renderedComponent != null) {
       let ref = this._currentElement.ref;
-      if (ref) {
+      if (!this._currentElement.type.forwardRef && ref) {
         Ref.detach(this._currentElement._owner, ref, this);
       }
 
@@ -351,7 +358,12 @@ class CompositeComponent {
     }
 
     // Update refs
-    Ref.update(prevElement, nextElement, this);
+    if (this._currentElement.type.forwardRef) {
+      instance.prevForwardRef = prevElement.ref;
+      instance.forwardRef = nextElement.ref;
+    } else {
+      Ref.update(prevElement, nextElement, this);
+    }
 
     // Shoud update always default
     let shouldUpdate = true;
@@ -412,9 +424,9 @@ class CompositeComponent {
       instance.context = nextContext;
     }
 
-    // Flush setState callbacks set in componentWillReceiveProps
-    if (hasReceived) {
-      let callbacks = this._pendingCallbacks;
+    // Flush setState callbacks set in componentWillReceiveProps or boundary callback
+    let callbacks = this._pendingCallbacks;
+    if (callbacks) {
       this._pendingCallbacks = null;
       updater.runCallbacks(callbacks, instance);
     }
@@ -451,12 +463,17 @@ class CompositeComponent {
     Host.component = null;
 
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
-      prevRenderedComponent.updateComponent(
-        prevRenderedElement,
-        nextRenderedElement,
-        prevRenderedComponent._context,
-        this._processChildContext(context)
-      );
+      const prevRenderedUnmaskedContext = prevRenderedComponent._context;
+      const nextRenderedUnmaskedContext = this._processChildContext(context);
+      if (prevRenderedElement !== nextRenderedElement || prevRenderedUnmaskedContext !== nextRenderedUnmaskedContext) {
+        prevRenderedComponent.updateComponent(
+          prevRenderedElement,
+          nextRenderedElement,
+          prevRenderedUnmaskedContext,
+          nextRenderedUnmaskedContext
+        );
+      }
+
       if (process.env.NODE_ENV !== 'production') {
         Host.measurer && Host.measurer.recordOperation({
           instanceID: this._mountID,
@@ -519,7 +536,7 @@ class CompositeComponent {
   getPublicInstance() {
     let instance = this._instance;
     // The Stateless components cannot be given refs
-    if (instance instanceof StatelessComponent) {
+    if (instance instanceof ReactiveComponent) {
       return null;
     }
     return instance;

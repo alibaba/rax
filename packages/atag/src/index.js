@@ -27,4 +27,5 @@ import 'components/canvas';
 import 'components/audio';
 import 'components/navigator';
 import 'components/form';
+import 'components/animation';
 import 'components/unknown';

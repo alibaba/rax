@@ -1,6 +1,0 @@
-<!-- B.axml -->
-<import src="./a.axml"/>
-<template name="B">
-  <template is="A" />
-  <view> B template </view>
-</template>

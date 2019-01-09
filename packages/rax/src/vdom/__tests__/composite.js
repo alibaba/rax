@@ -301,6 +301,227 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
+  it('should not attempt to recover an unmounting error boundary', () => {
+    let container = createNodeElement('div');
+    let logs = [];
+    class Parent extends Component {
+      componentWillUnmount() {
+        logs.push('Parent componentWillUnmount');
+      }
+      render() {
+        return <Boundary />;
+      }
+    }
+
+    class Boundary extends Component {
+      componentDidCatch(e) {
+        logs.push(`Caught error: ${e.message}`);
+      }
+      render() {
+        return <ThrowsOnUnmount />;
+      }
+    }
+
+    class ThrowsOnUnmount extends Component {
+      componentWillUnmount() {
+        logs.push('ThrowsOnUnmount componentWillUnmount');
+        throw new Error('unmount error');
+      }
+      render() {
+        return null;
+      }
+    }
+
+    render(<Parent />, container);
+    render(<div />, container);
+    expect(logs).toEqual([
+      // Parent unmounts before the error is thrown.
+      'Parent componentWillUnmount',
+      'ThrowsOnUnmount componentWillUnmount',
+    ]);
+  });
+
+  it('rendering correct on siblings of a component that throws', () => {
+    let container = createNodeElement('div');
+    function BrokenRender() {
+      throw new Error('Hello');
+    }
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <div>{`Caught an error: ${this.state.error.message}.`}</div>
+          );
+        }
+        return (
+          <div>
+            <span>siblings</span>
+            <BrokenRender />
+            <span>siblings</span>
+          </div>
+        );
+      }
+    }
+
+    render(
+      <ErrorBoundary />, container);
+    expect(container.childNodes.length).toBe(1);
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
+  it('working correct with fragment when a component that throw error', () => {
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <span>{`Caught an error: ${this.state.error.message}.`}</span>
+          );
+        }
+        return [
+          <span>siblings</span>,
+          <BrokenRender />,
+          <span>siblings</span>
+        ];
+      }
+    }
+
+    function BrokenRender() {
+      throw new Error('Hello');
+    }
+
+    render(
+      <ErrorBoundary />, container);
+    expect(container.childNodes.length).toBe(1);
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
+  it('Life cycle method invocation sequence should be correct', () => {
+    let logs = [];
+
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      componentDidMount() {
+        logs.push('componentDidMountErrorBoundary');
+      }
+      componentDidUpdate() {
+        logs.push('componentDidUpdateErrorBoundary');
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <span>{`Caught an error: ${this.state.error.message}.`}</span>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    class Life1 extends Component {
+      componentWillMount() {
+        logs.push('componentWillMount1');
+      }
+      render() {
+        logs.push('render1');
+        return null;
+      }
+      componentDidMount() {
+        logs.push('componentDidMount1');
+      }
+
+      componentWillUpdate() {
+        logs.push('componentWillUpdata1');
+      }
+      componentDidUpdate() {
+        logs.push('componentDidUpdate1');
+      }
+      componentWillUnmount() {
+        logs.push('componentWillUnmount1');
+      }
+    }
+
+    class Life2 extends Component {
+      componentWillMount() {
+        logs.push('componentWillMount2');
+      }
+      render() {
+        logs.push('render2');
+        throw new Error();
+        return null;
+      }
+      componentDidMount() {
+        logs.push('componentDidMount2');
+      }
+      componentWillUpdate() {
+        logs.push('componentWillUpdate2');
+      }
+      componentDidUpdate() {
+        logs.push('componentDidUpdate2');
+      }
+      componentWillUnmount() {
+        logs.push('componentWillUnmount2');
+      }
+    }
+
+    class Life3 extends Component {
+      componentWillMount() {
+        logs.push('componentWillMount3');
+      }
+      render() {
+        logs.push('render3');
+        return null;
+      }
+      componentDidMount() {
+        logs.push('componentDidMount3');
+      }
+      componentWillUpdata() {
+        logs.push('componentWillUpdata3');
+      }
+      componentDidUpdate() {
+        logs.push('componentDidUpdate3');
+      }
+      componentWillUnmount() {
+        logs.push('componentWillUnmount3');
+      }
+    }
+
+    render(
+      <ErrorBoundary>
+        <Life1 />
+        <Life2 />
+        <Life3 />
+      </ErrorBoundary>, container);
+
+    expect(logs).toEqual([
+      'componentWillMount1',
+      'render1',
+      'componentDidMount1',
+      'componentWillMount2',
+      'render2',
+      'componentDidMount2',
+      'componentWillMount3',
+      'render3',
+      'componentDidMount3',
+      'componentDidMountErrorBoundary',
+      'componentWillUnmount1',
+      'componentWillUnmount2',
+      'componentWillUnmount3',
+      'componentDidUpdateErrorBoundary'
+    ]);
+  });
+
   it('should render correct when prevRenderedComponent did not generate nodes', () => {
     let container = createNodeElement('div');
     class Frag extends Component {

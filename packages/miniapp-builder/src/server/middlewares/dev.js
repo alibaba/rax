@@ -3,56 +3,6 @@
 const path = require('path');
 const devMiddleware = require('webpack-dev-middleware');
 
-let dev = null;
-/**
- * @method koaDevware
- * @desc   Middleware for Koa to proxy webpack-dev-middleware
- **/
-function koaDevware(compiler) {
-  /**
-   * @method waitMiddleware
-   * @desc   Provides blocking for the Webpack processes to complete.
-   **/
-  function waitMiddleware(context) {
-    return new Promise((resolve, reject) => {
-      dev.waitUntilValid(() => {
-        resolve(true);
-      });
-
-      function tapHook(comp) {
-        comp.hooks.failed.tap('KoaWebpack', (error) => {
-          reject(error);
-        });
-      }
-
-      if (compiler.compilers) {
-        for (const child of compiler.compilers) {
-          tapHook(child);
-        }
-      } else {
-        tapHook(compiler);
-      }
-    });
-  }
-
-  return (context, next) => {
-    return Promise.all([
-      waitMiddleware(context),
-      new Promise((resolve) => {
-        dev(context.req, {
-          end: (content) => {
-            context.body = content; // eslint-disable-line no-param-reassign
-            resolve();
-          },
-          setHeader: context.set.bind(context),
-          locals: context.state
-        }, () => resolve(next()));
-      })
-    ]);
-  };
-}
-
-
 /**
  * The entry point for the Koa middleware.
  **/
@@ -73,7 +23,55 @@ module.exports = function createDevMiddleware(opts) {
     options.dev.publicPath = publicPath;
   }
 
-  dev = devMiddleware(compiler, options.dev);
+  let dev = devMiddleware(compiler, options.dev);
+
+  /**
+   * @method koaDevware
+   * @desc   Middleware for Koa to proxy webpack-dev-middleware
+   **/
+  function koaDevware(compiler) {
+    /**
+     * @method waitMiddleware
+     * @desc   Provides blocking for the Webpack processes to complete.
+     **/
+    function waitMiddleware(context) {
+      return new Promise((resolve, reject) => {
+        dev.waitUntilValid(() => {
+          resolve(true);
+        });
+
+        function tapHook(comp) {
+          comp.hooks.failed.tap('KoaWebpack', (error) => {
+            reject(error);
+          });
+        }
+
+        if (compiler.compilers) {
+          for (const child of compiler.compilers) {
+            tapHook(child);
+          }
+        } else {
+          tapHook(compiler);
+        }
+      });
+    }
+
+    return (context, next) => {
+      return Promise.all([
+        waitMiddleware(context),
+        new Promise((resolve) => {
+          dev(context.req, {
+            end: (content) => {
+              context.body = content; // eslint-disable-line no-param-reassign
+              resolve();
+            },
+            setHeader: context.set.bind(context),
+            locals: context.state
+          }, () => resolve(next()));
+        })
+      ]);
+    };
+  }
 
   return Object.assign(koaDevware(compiler), {
     dev() {

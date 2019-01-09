@@ -1,9 +1,13 @@
 export default class NodeMap {
   _map = new Map();
 
+  _setMountNode(mountNode) {
+    this.mountNode = mountNode;
+  }
+
   get(vnode) {
     if (!vnode) return null;
-    if (vnode.nodeName === 'BODY') return document.body;
+    if (vnode.nodeName === 'BODY') return this.mountNode;
     return this._map.get(vnode.$$id);
   }
 
@@ -17,5 +21,3 @@ export default class NodeMap {
     return this._map.delete(vnode.$$id);
   }
 }
-
-export const sharedNodeMap = new NodeMap();

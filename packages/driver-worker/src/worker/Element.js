@@ -33,11 +33,6 @@ function createAttributeFilter(ns, name) {
   return o => o.ns === ns && String(o.name).toLowerCase() === String(name).toLowerCase();
 }
 
-function isProperty(node, prop, val) {
-  const valType = typeof val;
-  return valType === 'object' || valType === 'boolean';
-}
-
 export default class Element extends Node {
   attributes = [];
   _style = {};
@@ -121,14 +116,7 @@ export default class Element extends Node {
     let attr = findWhere(this.attributes, createAttributeFilter(ns, name));
     if (!attr) this.attributes.push(attr = { ns, name });
 
-    // array, plain object and boolean will pass
-    // through, instead of calling `toString`
-    // null has been filtered before
-    if (isProperty(this, name, value)) {
-      attr.value = value;
-    } else {
-      attr.value = String(value);
-    }
+    attr.value = value;
     mutate(this, 'attributes', { attributeName: name, newValue: value });
   }
 

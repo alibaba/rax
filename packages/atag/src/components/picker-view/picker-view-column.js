@@ -30,10 +30,6 @@ export default class PickerViewColumn extends PolymerElement {
   _lastOffset = 0;
   _initOffset = 0;
 
-  ready() {
-    super.ready();
-  }
-
   connectedCallback() {
     super.connectedCallback();
     Gestures.addListener(this, 'track', this.handleTrack);

@@ -2,6 +2,17 @@ import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
+const style = document.createElement('style');
+style.innerText = `
+  a-view {
+    display: block;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-overflow-scrolling: touch;
+  }
+`;
+document.head.appendChild(style);
+
 export default class ViewElement extends PolymerElement {
   static get is() {
     return 'a-view';
@@ -147,20 +158,6 @@ export default class ViewElement extends PolymerElement {
       this._hoverActiveState = false;
       this._removeHoverAttrs();
     }, delay);
-  }
-
-  static get template() {
-    return html`
-      <style>
-        :host {
-          display: block;
-          -webkit-user-select: none;
-          user-select: none;
-          -webkit-overflow-scrolling: touch;
-        }
-      </style>
-      <slot></slot>
-    `;
   }
 }
 

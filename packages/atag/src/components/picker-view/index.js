@@ -32,14 +32,25 @@ export default class PickerView extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     this._valueChanged(this.value, null);
+    this.addEventListener('touchmove', this._preventScrollPenetrate, false);
     this.addEventListener('_columnChange', this._handleChange);
     window.addEventListener('_formReset', this._handleReset, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeEventListener('touchmove', this._preventScrollPenetrate, false);
     this.removeEventListener('_columnChange', this._handleChange);
     window.removeEventListener('_formReset', this._handleReset, true);
+  }
+
+  /**
+   * Stop scroll penetrate in iOS
+   * @param evt
+   * @private
+   */
+  _preventScrollPenetrate = (evt) => {
+    evt.preventDefault();
   }
 
   _handleChange = (evt) => {

@@ -2,10 +2,10 @@ const { resolve } = require('path');
 const getMiniappType = require('./getMiniappType');
 const { getPages } = require('./getAppConfig');
 
-const mpLoaderPath = require.resolve('mp-loader');
+const PLUGIN_REG = /^plugin:\/\//;
 
 /**
- * 获取 webpack entry
+ * Get webpack entry
  * @param {String} projectDir 项目路径
  */
 module.exports = function getEntry(projectDir) {
@@ -18,6 +18,7 @@ module.exports = function getEntry(projectDir) {
     entry.$app = resolve(projectDir, 'app.js');
     /* page entry */
     appPages.forEach(({ pagePath, pageName }) => {
+      if (isPluginPage(pageName)) return;
       entry[pageName] = resolve(projectDir, pagePath);
     });
   } else if (miniappType === 'mp') {
@@ -27,3 +28,12 @@ module.exports = function getEntry(projectDir) {
 
   return entry;
 };
+
+/**
+ * Determin which page name is a plugin page.
+ * @param pageName
+ * @returns {boolean}
+ */
+function isPluginPage(pageName) {
+  return PLUGIN_REG.test(pageName);
+}

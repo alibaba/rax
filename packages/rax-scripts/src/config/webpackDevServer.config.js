@@ -1,8 +1,12 @@
 'use strict';
 
-const config = require('./webpack.config.prod');
+const webpackConfig = require('./webpack.config');
 const pathConfig = require('./path.config');
 const envConfig = require('./env.config');
+
+// Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = 'development';
+process.env.NODE_ENV = 'development';
 
 module.exports = {
   // Enable gzip compression of generated files.
@@ -35,7 +39,7 @@ module.exports = {
   hot: true,
   // It is important to tell WebpackDevServer to use the same "root" path
   // as we specified in the config. In development, we always serve from /.
-  publicPath: config.output.publicPath,
+  publicPath: webpackConfig.output.publicPath,
   // WebpackDevServer is noisy by default so we emit custom message instead
   // by listening to the compiler events with `compiler.plugin` calls above.
   quiet: true,

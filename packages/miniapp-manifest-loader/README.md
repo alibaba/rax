@@ -1,3 +1,2 @@
 # miniapp-manifest-loader
-
-> Miniapp Manifest Loader for Webpack"
+> MiniApp Manifest Loader for Webpack
