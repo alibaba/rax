@@ -50,6 +50,7 @@ export default class MessageRouter {
     //   const [type, clientId] = data.type.split('@');
     //   // messageChanel.onModuleAPIEvent({ ...data, type });
     // }
+    console.log('落入 default message handler', data);
   }
 
   /**

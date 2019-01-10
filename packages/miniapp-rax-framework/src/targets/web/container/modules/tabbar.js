@@ -1,5 +1,5 @@
 import * as utils from '../utils';
-import * as routes from '../routes';
+import * as routes from '../Router';
 
 export function switchTab({ url }) {
   routes.switchTab({

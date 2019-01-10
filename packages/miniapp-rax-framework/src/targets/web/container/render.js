@@ -1,4 +1,4 @@
-import MiniAppRouter from './routes';
+import MiniAppRouter from './Router';
 import { findHomePage } from './utils';
 import { setupTheme } from '../../../core/renderer/atagTheme';
 

@@ -1,4 +1,4 @@
-import * as routes from '../routes';
+import * as routes from '../Router';
 import * as utils from '../utils';
 
 const navigaiton = {

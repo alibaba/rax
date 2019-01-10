@@ -1,19 +1,16 @@
 import kebabCase from 'kebab-case';
 import baseCSS from 'raw-loader!./container.css';
 import initRenderer from '../../renderer';
-import { createClientId } from '../clientId';
 import { createMessageProxy } from '../MessageProxy';
 import { findHomePage } from "../utils";
-import MiniAppRouter from "../routes";
+import MiniAppRouter from "../Router";
 
 const styles = {
   main: {
-    display: 'flex',
     position: 'absolute',
     left: 0,
     right: 0,
     margin: 0,
-    background: '#f4f4f4',
   },
   iframe: {
     width: '100%',
@@ -92,7 +89,7 @@ function createTabBarItem(pageName, imageUrl, textContent, onClick) {
 /**
  * Serialize Style Object
  * @param obj {Object}
- * @return {String}
+ * @return {CSSStyleDeclaration}
  */
 function serializeStyle(obj) {
   let css = '';
