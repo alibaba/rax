@@ -31,7 +31,14 @@ export default function createComponent(renderFactory, render, config, component
 
     constructor(props, context) {
       super(props, context);
-      this.state = deepCopy(config.data);
+      /**
+       * If not defined `data` field in config,
+       * then default val will be an empty plain object,
+       * else data will be deep copied.
+       */
+      this.state = {}.hasOwnProperty.call(config, 'data')
+        ? deepCopy(config.data)
+        : {};
       this.publicInstance = this._createPublicInstance();
       this.componentId = ++componentCount;
     }
