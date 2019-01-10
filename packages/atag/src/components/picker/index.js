@@ -179,6 +179,14 @@ export default class Picker extends PolymerElement {
     }
   };
 
+  /**
+   * Stop scroll penetrate
+   * @private
+   */
+  _preventScroll = (evt) => {
+    evt.preventDefault();
+  };
+
   static get template() {
     return html`
       <style>
@@ -300,10 +308,14 @@ export default class Picker extends PolymerElement {
           box-sizing: border-box;
         }
       </style>
-      <div id="mask" style="display: none;"></div>
+      <div id="mask" style="display: none;" on-touchmove="_preventScroll"></div>
       <div id="container" style="display: none;">
         <div id="content">
-          <div id="header">
+          <!--
+            Header area and mask area are two seperated view, which will be effect
+             by iOS scroll penetrate(bug), fix it by calling touchmove's event.preventDefault method.
+          -->
+          <div id="header" on-touchmove="_preventScroll">
             <button id="cancel">取消</button>
             <button id="confirm">确定</button>
           </div>
