@@ -146,12 +146,13 @@ export default class VideoElement extends PolymerElement {
     this.handlePlay();
     this.delayHideControls();
     this.handleSeekBar();
+  }
 
-    afterNextRender(this, () => {
-      this.$.image.addEventListener('click', this.handlePlay);
-      this.$.fullscreen.addEventListener('click', this.fullscreen);
-      this.$.video.addEventListener('click', this.showPause);
-    });
+  connectedCallback() {
+    super.connectedCallback();
+    this.$.image.addEventListener('click', this.handlePlay);
+    this.$.fullscreen.addEventListener('click', this.fullscreen);
+    this.$.video.addEventListener('click', this.showPause);
   }
 
   disconnectedCallback() {

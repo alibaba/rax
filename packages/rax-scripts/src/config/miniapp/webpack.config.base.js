@@ -1,67 +1,27 @@
 'use strict';
 /* eslint no-console: 0 */
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const colors = require('chalk');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
 
-const publicPath = process.env.PUBLIC_PATH || '/';
-const publicUrl = publicPath.replace(/\/$/, '');
+const SFCLoader = require.resolve('sfc-loader');
 
 module.exports = {
-  mode: process.env.NODE_ENV,
-  context: process.cwd(),
-  target: 'web',
-  entry: {},
-  output: {
-    path: pathConfig.appBuild,
-    filename: 'js/[name].js',
-    publicPath: publicPath,
-  },
-  resolve: {
-    extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc'],
-  },
-  externals: [
-    function(context, request, callback) {
-      if (/^@(core|schema)\//.test(request)) {
-        return callback(null, `commonjs2 ${request}`);
-      }
-      callback();
-    },
-  ],
+  mode: webpackConfig.mode,
+  context: webpackConfig.context,
+  // Compile target should "web" when use hot reload
+  target: webpackConfig.target,
+  entry: webpackConfig.entry,
+  output: webpackConfig.output,
+  resolve: webpackConfig.resolve,
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-        PUBLIC_URL: JSON.stringify(publicUrl),
-      },
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: pathConfig.appHtml,
     }),
-    new CopyWebpackPlugin([
-      {
-        from: pathConfig.appPublic, // copy static assets in public folder
-        to: pathConfig.appBuild,
-        ignore: ['.*', '*.html'],
-      },
-      {
-        from: pathConfig.appManifest, // cppy manifest.json
-        to: pathConfig.appBuild,
-      },
-    ]),
-    new CaseSensitivePathsPlugin(),
-    new webpack.ProgressPlugin(function(percentage, msg) {
-      const stream = process.stderr;
-      if (stream.isTTY && percentage < 0.71) {
-        stream.cursorTo(0);
-        stream.write(`webpack: ${msg}...`);
-        stream.clearLine(1);
-      } else if (percentage === 1) {
-        console.log('');
-        console.log(colors.green('webpack: bundle build is now finished.'));
-      }
-    }),
+    webpackConfig.plugins.define,
+    webpackConfig.plugins.caseSensitivePaths,
   ],
   module: {
     rules: [
@@ -91,20 +51,54 @@ module.exports = {
       },
       {
         test: /\.(html|vue|sfc)$/,
-        use: [
+        oneOf: [
           {
-            loader: require.resolve('sfc-loader'),
-            options: {
-              builtInRuntime: false,
-              preserveWhitespace: false,
-            },
+            resourceQuery: /\?style/,
+            use: [
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  sourceMap: true,
+                  importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
+                }
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  sourceMap: true,
+                  plugins: [
+                    require('postcss-import')({ resolve: require('./styleResolver') }),
+                    require('../plugins/PostcssPluginRpx2rem'),
+                    require('../plugins/PostcssPluginTagPrefix'),
+                    require('autoprefixer')({
+                      remove: false,
+                      browsers: ['ios_saf 8'],
+                    }),
+                  ]
+                }
+              },
+              {
+                loader: SFCLoader,
+                options: {
+                  part: 'style',
+                },
+              }
+            ]
           },
+          {
+            loader: SFCLoader,
+            options: {
+              builtInRax: true,
+              module: 'commonjs',
+            },
+          }
         ],
         exclude: [pathConfig.appHtml],
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(svg|png|webp|jpe?g|gif)$/i,
         use: [
+          // TODO: maybe use image-source-loader
           {
             loader: require.resolve('file-loader'),
             options: {
@@ -114,29 +108,5 @@ module.exports = {
         ],
       },
     ],
-  },
-  optimization: {
-    namedModules: true,
-    mergeDuplicateChunks: true,
-    splitChunks: {
-      cacheGroups: {
-        atag: {
-          test: /[\\/]atag[\\/]/,
-          name: 'atag',
-          chunks: 'all',
-          minSize: 0,
-          minChunks: 1,
-          reuseExistingChunk: true,
-          enforce: true,
-          priority: -10,
-        },
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
-          chunks: 'all',
-          priority: -20,
-        },
-      },
-    },
   },
 };

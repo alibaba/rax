@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://alibaba.github.io/rax">
-    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/49848760-999e7d00-fe11-11e8-978f-264ea31f6739.png" width="56">
+    <img alt="Rax" src="https://user-images.githubusercontent.com/677114/49848760-999e7d00-fe11-11e8-978f-264ea31f6739.png" width="66">
   </a>
 </p>
 
@@ -55,27 +55,82 @@ $ cd YourProjectName
 $ npm run start
 ```
 
-## Project Support
-* WebApp Project
-* MiniApp Project
+## Rax API (v1.0)
 
-### WebApp Project
+#### Creating Elements
+* createElement()
+* createFactory()
+
+#### Manipulating Elements
+* cloneElement()
+* isValidElement()
+* Children
+
+#### Fragments
+* Fragment
+
+#### Refs
+* createRef()
+* forwardRef()
+
+#### Hooks
+* useState()
+* useContext()
+* useEffect()
+* useLayoutEffect()
+* useRef()
+* useCallback()
+* useMemo()
+* useReducer()
+* useImperativeMethods()
+
+#### Performance
+* memo()
+
+#### Rendering Elements
+* render()
+* hydrate()
+
+## Project Type Support
+* WebApp Project
 ```
 .
 ├── package.json
+├── .gitignore
+├── .eslintrc.js
 ├── src
 │   └── index.js
 └── public
     └── index.html
 ```
-
-### MiniApp Project
+* MiniApp Project
 ```
 .
-├── app.acss
+├── manifest.json
+├── package.json
+├── .gitignore
+├── .eslintrc.js
+├── src
+│   ├── app.js
+│   ├── app.css
+│   ├── pages
+│   │   ├── page1.html
+│   │   └── page2.html
+│   └── components
+│       ├── component1.html
+│       └── component2.html
+└── public
+    └── index.html
+```
+* Mini Program Project
+```
+.
 ├── app.js
+├── app.acss
 ├── app.json
 ├── package.json
+├── .gitignore
+├── .eslintrc.js
 └── pages
     ├── page1
     │   ├── page1.acss
@@ -235,52 +290,6 @@ Component({
 * :traffic_light: [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
 * :computer: [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
 
-## Compatible with React Components
-
-Usage with Webpack or Babel makes React-based components work with Rax, without any code changes.
-
-#### Usage with Webpack
-
-Add an alias for `react` and `react-dom`:
-
-```js
-{
-  // ...
-  resolve: {
-    alias: {
-      'react': 'rax',
-      'react-dom': 'rax-dom',
-      // Not necessary unless you consume a module using `createClass`
-      'create-react-class': "rax/lib/createClass"
-    }
-  }
-  // ...
-}
-```
-#### Usage with Babel
-
-Install the babel plugin for aliasing: `npm install --save-dev babel-plugin-module-resolver`
-
-Add an alias for `react` and `react-dom` in your .babelrc:
-
-```js
-{
-  // ...
-  "plugins": [
-    ["module-resolver", {
-      "root": ["."],
-      "alias": {
-        "react": "rax",
-        "react-dom": "rax-dom",
-        // Not necessary unless you consume a module using `createClass`
-        "create-react-class": "rax/lib/createClass"
-      }
-    }]
-  ]
-  // ...
-}
-```
-
 ## Developer Tools
 
 * [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
@@ -321,32 +330,32 @@ Then, you can run several commands:
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/yuanyan.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/yuanyan.png?s=128">
         <br>
         <a href="https://github.com/yuanyan">@yuanyan</a>
         <p>Core</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/imsobear.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/imsobear.png?s=128">
         <br>
         <a href="https://github.com/imsobear">@imsobear</a>
         <p>Development</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/yacheng.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/yacheng.png?s=128">
         <br>
         <a href="https://github.com/yacheng">@yacheng</a>
-        <p>Components</p>
+        <p>Universals &amp; Components</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/boiawang.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/boiawang.png?s=128">
         <br>
         <a href="https://github.com/boiawang">@boiawang</a>
-        <p>Babel Loaders &amp; Plugins</p>
+        <p>Loaders &amp; Plugins</p>
       </td>
-      <td align="center" valign="top">
-        <img width="128" height="128" src="https://github.com/noyobo.png?s=128">
+      <td align="center" width="80" valign="top">
+        <img height="80" src="https://github.com/wssgcg1213.png?s=128">
         <br>
         <a href="https://github.com/wssgcg1213">@wssgcg1213</a>
         <p>DSL Runtimes &amp; Loaders</p>
@@ -354,6 +363,20 @@ Then, you can run several commands:
      </tr>
   </tbody>
 </table>
+
+
+## Users
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/677114/49876501-81088400-fe5e-11e8-95bc-ee9468a58eec.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876598-a7c6ba80-fe5e-11e8-8fe8-d2fc28df69fd.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876742-f07e7380-fe5e-11e8-8bfa-ba2c6d0d8536.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876872-33404b80-fe5f-11e8-8244-b5598900e3f6.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49876953-5b2faf00-fe5f-11e8-8789-7f1787495b2a.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/49877220-e8730380-fe5f-11e8-8579-e622b3f0f5a6.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414430-84354400-0850-11e9-8352-7c0f44c01561.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414676-d88cf380-0851-11e9-9f20-307ae81ef5eb.png" height="60"/>
+  <img src="https://user-images.githubusercontent.com/677114/50414379-43d5c600-0850-11e9-8dc6-133465db54dc.png" height="60"/>
+</p>
 
 ---
 **[⬆ back to top](#top)**

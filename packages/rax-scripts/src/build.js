@@ -1,12 +1,13 @@
 'use strict';
 /* eslint no-console: 0 */
 // Do this as the first thing so that any code reading it knows the right env.
+process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
   throw err;
 });
 
@@ -26,19 +27,21 @@ function buildCompiler(config) {
     }
 
     console.log(colors.green('\nBuild successfully.'));
+    process.exit();
   });
 }
 
 const webpackConfigMap = {
-  webapp: './config/webpack.config.prod',
+  webapp: './config/webapp/webpack.config.prod',
   miniapp: './config/miniapp/webpack.config.prod',
-  component: './config/webpack.config.dist.prod',
+  miniprogram: './config/miniprogram/webpack.config.prod',
+  component: './config/component/webpack.config.prod',
 };
 
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
 
-  if (appPackage.keywords.indexOf('rax-component')) { // build component
+  if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
     componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {

@@ -78,10 +78,6 @@ export default class Animation extends PolymerElement {
     this.styleProp = 'animation-style';
   }
 
-  ready() {
-    super.ready();
-  }
-
   connectedCallback() {
     super.connectedCallback();
     this.event = new Event({
@@ -105,7 +101,7 @@ export default class Animation extends PolymerElement {
       ...event
     });
     // no keyframes, use gesture
-    if (this.keyframes.length === 0) {
+    if (!this.keyframes || this.keyframes.length === 0) {
       this.update(event, false);
     } else {
       this.timeline.play();

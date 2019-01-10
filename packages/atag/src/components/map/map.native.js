@@ -211,7 +211,7 @@ export default class NativeMap extends PolymerElement {
   }
 
   _observeRouteConfig() {
-    this._createOrUpdateParam('route-config', {
+    this._createOrUpdateParam('routeConfig', {
       'route-start': this.routeStart,
       'route-end': this.routeEnd,
       'route-width': this.routeWidth,
@@ -237,7 +237,11 @@ export default class NativeMap extends PolymerElement {
         this._callNativeControl('zoomTo', { zoomLevel: value });
         break;
 
-      case 'route-config':
+      case 'includePoints':
+        this._callNativeControl('animateBounds', value);
+        break;
+
+      case 'routeConfig':
         this._callNativeControl('drawRoute', {
           routeStart: this.routeStart,
           routeEnd: this.routeEnd,
@@ -263,10 +267,17 @@ export default class NativeMap extends PolymerElement {
       circles: this.circles,
       controls: this.controls,
       polygon: this.polygon,
-      includePoints: this.includePoints,
-      showLocation: this.showLocation,
-      showMapText: this.showMapText,
+      'include-points': this.includePoints,
+      'show-location': this.showLocation,
+      'show-map-text': this.showMapText,
     });
+    /**
+     * Update will clean all items on map, route-config as same.
+     * Call drawing route after updated.
+     */
+    if (this.routeStart && this.routeEnd) {
+      this._updateParamWithAndroid('route-config');
+    }
   }
 
 
@@ -293,8 +304,10 @@ export default class NativeMap extends PolymerElement {
     if (bridgeId === this.uniqueId) {
       // Transform native event name: onRegionChange -> regionchange
       let eventName = eventType.replace(/^on/, '').toLowerCase();
-      // All tap event listened will be normalized to click in process.
-      if (eventName === 'tap') eventName = 'click';
+      if (eventName === 'tap') {
+        // At the same time trigger click event.
+        this._dispatchEvent('click', eventDetail);
+      }
       this._dispatchEvent(eventName, eventDetail);
     }
   }

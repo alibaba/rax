@@ -78,4 +78,21 @@ describe('render', () => {
       done();
     });
   });
+
+  it('should not re-render when element is same in same root', function() {
+    let container = createNodeElement('container');
+    let updatedCount = 0;
+    let App = function() {
+      updatedCount++;
+      return <div />;
+    };
+    let CacheApp = <App />;
+
+    render(CacheApp, container);
+    expect(container.childNodes[0].tagName).toBe('DIV');
+    expect(updatedCount).toBe(1);
+    render(CacheApp, container);
+    expect(container.childNodes[0].tagName).toBe('DIV');
+    expect(updatedCount).toBe(1);
+  });
 });

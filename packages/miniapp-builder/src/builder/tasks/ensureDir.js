@@ -1,8 +1,8 @@
-const mkdirp = require('mkdirp');
+const { mkdirpSync } = require('fs-extra');
 
 module.exports = function ensureDir(dir) {
   return (done) => {
-    mkdirp.sync(dir);
+    mkdirpSync(dir);
     done();
   };
 };

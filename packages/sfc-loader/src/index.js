@@ -2,13 +2,12 @@ const { stringifyRequest, getOptions } = require('loader-utils');
 const { relative } = require('path');
 const parseSFCParts = require('./sfc/parser');
 const transformScript = require('./transform/script');
-const transformStyle = require('./transform/style');
 const { createCompiler, createRenderFn, baseOptions } = require('sfc-compiler');
 const modules = require('./modules');
 
-const transformLoader = require.resolve('./transform/loader');
+const sfcLoader = require.resolve('.');
+const sfcStyleLoader = require.resolve('./sfcStyleLoader');
 const stylesheetLoader = require.resolve('stylesheet-loader');
-const rawLoader = require.resolve('./raw-loader');
 const compiler = createCompiler(Object.assign({}, baseOptions, { modules }));
 const builtInRaxModuleName = JSON.stringify('@core/rax');
 const builtInRuntimeModuleName = JSON.stringify('@core/runtime');
@@ -16,16 +15,22 @@ const runtimeModuleName = JSON.stringify(require.resolve('./helpers/runtime'));
 const raxModuleName = JSON.stringify('rax');
 
 module.exports = function(rawContent) {
-  this.cacheable();
-
-  const callback = this.async();
   const context = this;
+  const callback = this.async();
   const contextPath = this.rootContext || this.options && this.options.context || process.cwd();
   const filePath = this.resourcePath;
   const userOptions = getOptions(this) || {};
   const relativePath = relative(contextPath, filePath);
 
   const { template, script, styles } = parseSFCParts(rawContent);
+
+  /**
+   * If `part` passed, return SFC's pointed part.
+   */
+  if (userOptions.part === 'style') {
+    return callback(null, styles ? styles.content : '');
+  }
+
   const declarationName = '__sfc_module_declaration__';
   const { declarationCode, sourceMap, scopeIdentifiers } = transformScript(
     script.content,
@@ -36,9 +41,11 @@ module.exports = function(rawContent) {
 
   const { render, ast } = compiler.compile(template.content, {
     scopeRefIdentifiers: scopeIdentifiers,
-    // rax prefer false to make it more similar to JSX
-    // undefined means true
-    preserveWhitespace: userOptions.preserveWhitespace,
+    /**
+     * Rax prefer false to make it more similar to JSX,
+     * default to false.
+     */
+    preserveWhitespace: !!userOptions.preserveWhitespace,
     cssInJS: userOptions && userOptions.cssInJS,
   });
 
@@ -60,24 +67,24 @@ module.exports = function(rawContent) {
     })
     : 'function() { return function() { return ""; } }';
 
-  transformStyle(styles.content, filePath);
-
   /**
    * By default, sfc loader will create style tag for CSS text.
    * if RN/Weex style CSS is needed, enable `cssInJS` in loader option.
    */
-  let styleLoader = '';
+  let loadStyleRequest;
   if (userOptions.cssInJS === true) {
-    styleLoader = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true`;
+    const styleLoader = `${stylesheetLoader}?disableLog=true&transformDescendantCombinator=true`;
+    // prefix -! means stop any pitching loaders
+    loadStyleRequest = stringifyRequest(
+      context,
+      `-!${styleLoader}!${sfcLoader}?part=style!${filePath}`
+    );
   } else {
-    styleLoader = rawLoader;
+    loadStyleRequest = stringifyRequest(
+      context,
+      `${sfcStyleLoader}!${filePath}?style`
+    );
   }
-
-  const loadStyleString = `${styleLoader}!${transformLoader}?id=${filePath}`;
-  const loadStyleRequest = stringifyRequest(
-    context,
-    `${loadStyleString}!${filePath}`
-  );
 
   const sfcRuntimeModuleName = userOptions.builtInRuntime ? builtInRuntimeModuleName : runtimeModuleName;
 

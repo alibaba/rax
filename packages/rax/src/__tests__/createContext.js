@@ -7,7 +7,6 @@ import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
 
-
 describe('createContext', () => {
   function createNodeElement(tagName) {
     return {

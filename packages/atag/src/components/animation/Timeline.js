@@ -43,8 +43,10 @@ export default class Timeline {
 
     this.totalDuration = duration / 1000;
 
-    this.data = this.convertKeyframes(data);
-    this.properties = this.getProperties();
+    if (Array.isArray(data)) {
+      this.data = this.convertKeyframes(data);
+      this.properties = this.getProperties();
+    }
   }
 
   /**

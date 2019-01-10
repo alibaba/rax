@@ -15,17 +15,21 @@ import version from './version';
 import Children from './children';
 import createContext from './createContext';
 import createRef from './createRef';
+import memo from './memo';
+import Fragment from './fragment';
 
 export {
-  createElement, cloneElement, isValidElement, createFactory,
+  createElement, cloneElement, isValidElement, createFactory, createRef, createPortal, createContext,
   useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeMethods,
-  createRef, Component, PureComponent, PropTypes, render, hydrate, createPortal, createContext, version,
-  findDOMNode, unmountComponentAtNode, findComponentInstance, setNativeProps, Children
+  findDOMNode, unmountComponentAtNode, findComponentInstance, setNativeProps,
+  PropTypes, Children, Component, PureComponent, Fragment, memo,
+  render, hydrate, version
 };
 
 export default {
-  createElement, cloneElement, isValidElement, createFactory,
+  createElement, cloneElement, isValidElement, createFactory, createRef, createPortal, createContext,
   useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeMethods,
-  createRef, Component, PureComponent, PropTypes, render, hydrate, createPortal, createContext, version,
-  findDOMNode, unmountComponentAtNode, findComponentInstance, setNativeProps, Children
+  findDOMNode, unmountComponentAtNode, findComponentInstance, setNativeProps,
+  PropTypes, Children, Component, PureComponent, Fragment, memo,
+  render, hydrate, version
 };
