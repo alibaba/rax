@@ -1,4 +1,4 @@
-import '@polymer/polymer/lib/elements/dom-repeat.js';
+import '@polymer/polymer/lib/elements/dom-repeat';
 import { PolymerElement, html } from '@polymer/polymer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 

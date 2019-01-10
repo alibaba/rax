@@ -1,5 +1,5 @@
 /**
- * List of atag components
+ * List of atag common components
  */
 import 'components/view';
 import 'components/text';
@@ -27,5 +27,4 @@ import 'components/canvas';
 import 'components/audio';
 import 'components/navigator';
 import 'components/form';
-import 'components/animation';
 import 'components/unknown';
