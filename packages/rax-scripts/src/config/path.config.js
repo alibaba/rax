@@ -27,6 +27,7 @@ const paths = {
   appManifest: resolveApp('manifest.json'),
   appNodeModules: resolveApp('node_modules'),
   nodePaths: nodePaths,
+  miniappEntry: resolveApp('app.js'),
 };
 
 module.exports = paths;

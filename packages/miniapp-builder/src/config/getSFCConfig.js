@@ -38,7 +38,10 @@ module.exports = (projectDir, opts) => {
                       require('postcss-import')({ resolve: require('./styleResolver') }),
                       require('../plugins/PostcssPluginRpx2rem'),
                       require('../plugins/PostcssPluginTagPrefix'),
-                      require('autoprefixer')({ remove: false }),
+                      require('autoprefixer')({
+                        remove: false,
+                        browsers: ['ios_saf 8'],
+                      }),
                     ]
                   }
                 },
