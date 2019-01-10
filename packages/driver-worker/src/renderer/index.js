@@ -3,11 +3,11 @@ import MutationHandler from './MutationHandler';
 import EvaluationHandler from './EvaluationHandler';
 import LocationHandler from './LocationHandler';
 
-export default ({ worker }) => {
+export default ({ worker, mountNode }) => {
   const postMessage = worker.postMessage.bind(worker);
 
   const handlers = {
-    MutationRecord: new MutationHandler(postMessage),
+    MutationRecord: new MutationHandler(postMessage, mountNode),
     EvaluationRecord: new EvaluationHandler(postMessage),
 
     // Deprecated handler.
