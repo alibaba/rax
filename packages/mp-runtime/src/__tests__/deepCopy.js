@@ -8,7 +8,9 @@ describe('deepCopy', () => {
         world: 'world'
       },
       items: [0, 1, 2, 3],
-      fn: () => { return 1; },
+      fn: () => {
+        return 1;
+      },
     };
 
     data.data = data;
