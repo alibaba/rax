@@ -11,5 +11,7 @@ export default {
   // Inject
   hook: null,
   driver: null,
-  monitor: null
+  monitor: null,
+  // Hook
+  inEffect: false
 };

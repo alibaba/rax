@@ -1,3 +1,5 @@
+import { flushPassiveEffects } from '../scheduler';
+
 function enqueueCallback(internal, callback) {
   if (callback) {
     let callbackQueue =
@@ -62,6 +64,7 @@ const Updater = {
     let prevUnmaskedContext = internal._context;
 
     if (internal._pendingStateQueue || internal._pendingForceUpdate) {
+      flushPassiveEffects();
       internal.updateComponent(
         prevElement,
         prevElement,

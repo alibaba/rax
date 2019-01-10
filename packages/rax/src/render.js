@@ -1,6 +1,7 @@
 import inject from './inject';
 import instance from './vdom/instance';
 import Host from './vdom/host';
+import { flushPassiveEffects } from './scheduler';
 
 function render(element, container, options, callback) {
   // Compatible with `render(element, container, callback)`
@@ -12,6 +13,11 @@ function render(element, container, options, callback) {
   options = options || {};
   // Init inject
   inject(options);
+
+  // renderPortal should not triggle
+  if (!options.parent) {
+    flushPassiveEffects();
+  }
 
   let rootComponent = instance.mount(element, container, options.parent);
   let componentInstance = rootComponent.getPublicInstance();

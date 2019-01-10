@@ -1,6 +1,6 @@
 import Host from './host';
 import Component from '../component';
-import { scheduleImmediateCallback } from '../scheduler';
+import { scheduleBeforeNextRenderCallback } from '../scheduler';
 
 const RE_RENDER_LIMIT = 24;
 /**
@@ -91,9 +91,18 @@ class ReactiveComponent extends Component {
     this.willUnmountHandlers.forEach(handler => handler());
   }
 
-  // Async update
+  // maybe Async update
   update() {
-    scheduleImmediateCallback(() => this.forceUpdate());
+    if (!Host.inEffect) {
+      this._update();
+    } else {
+      // schedule update in then effect will deferred until next render (in a single batch)
+      scheduleBeforeNextRenderCallback(this._update, true);
+    }
+  }
+
+  _update = () => {
+    this.forceUpdate();
   }
 
   render() {
