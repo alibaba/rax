@@ -11,6 +11,7 @@ const IGNORED_TAG = [
 ];
 const ATAG_PREFIX = 'a-';
 
+const SCRIPT_LOAD_STATE = {};
 /**
  * Load js assets in DOM.
  * @param url {URL | String} JS asset url.
@@ -18,9 +19,21 @@ const ATAG_PREFIX = 'a-';
  * @param onFail {Function} Fail callback.
  */
 function loadScript(url, onSuccess = noop(), onFail = noop()) {
+  /**
+   * Perevent from loading a same url.
+   */
+  if (SCRIPT_LOAD_STATE[url] === 'loading') return;
   const script = document.createElement('script');
-  script.onload = onSuccess;
-  script.onerror = onFail;
+  SCRIPT_LOAD_STATE[url] = 'loading';
+
+  script.onload = () => {
+    SCRIPT_LOAD_STATE[url] = 'loaded';
+    onSuccess();
+  };
+  script.onerror = () => {
+    SCRIPT_LOAD_STATE[url] = 'failed';
+    onFail();
+  };
   script.src = url;
   document.body.appendChild(script);
 }
