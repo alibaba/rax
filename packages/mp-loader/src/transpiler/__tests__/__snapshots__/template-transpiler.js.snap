@@ -193,6 +193,49 @@ Object {
 
 exports[`Transpiler parse bind props 2`] = `"_c(__components_ref__['view']||'view',{foo:(\\"bar \\") + (data['someVal']) + (\\" \\") + (data['otherVal'])},[_c(__components_ref__['text']||'text',[_v(\\"hello\\")]),_c(__components_ref__['text']||'text',[_v(\\"world\\")])])"`;
 
+exports[`Transpiler parse expression with special chars 1`] = `
+Object {
+  "ast": Object {
+    "attrs": Array [
+      Object {
+        "name": "data",
+        "scope": "",
+        "value": "(({
+  btnText: data['defaultData'].confirm,
+  action: 'confirmOrder',
+  btnType: data['btnType'].green
+}))",
+      },
+    ],
+    "attrsList": Array [],
+    "attrsMap": Object {
+      "a:if": "{{orderData.operationConfirm}}",
+      "data": "{{
+        btnText: defaultData.confirm,
+        action: 'confirmOrder',
+        btnType: btnType.green
+      }}",
+    },
+    "children": Array [],
+    "if": "(data['orderData'].operationConfirm)",
+    "ifConditions": Array [
+      Object {
+        "block": [Circular],
+        "exp": "(data['orderData'].operationConfirm)",
+      },
+    ],
+    "ifProcessed": true,
+    "parent": undefined,
+    "plain": false,
+    "slotScope": undefined,
+    "tag": "template",
+    "tagHelperMap": Object {},
+    "type": 1,
+  },
+  "render": "((data['orderData'].operationConfirm))?void 0:_e()",
+}
+`;
+
 exports[`Transpiler parse nested 1`] = `
 Object {
   "attrs": Array [
