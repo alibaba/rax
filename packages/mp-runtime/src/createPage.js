@@ -96,7 +96,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         unMount: []
       };
 
-      const { onLoad, onHide, onUnload, onPageScroll, onPullIntercept } = config;
+      const { onLoad, onHide, onUnload, onPageScroll, onPullIntercept, onPullDownRefresh } = config;
 
       // trigger while loaded，pageQuery passed to cycle
       if ('function' === typeof onLoad) {
@@ -121,6 +121,12 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         const cycleFn = onPullIntercept.bind(this.pageInstance);
         this.cycleListeners.push({ type: 'pullIntercept', fn: cycleFn });
         pageEventEmitter.on('pullIntercept', cycleFn);
+      }
+      // Fire pullDownRefresh event by native.
+      if ('function' === typeof onPullDownRefresh) {
+        const cycleFn = onPullDownRefresh.bind(this.pageInstance);
+        this.cycleListeners.push({ type: 'pullDownRefresh', fn: cycleFn });
+        pageEventEmitter.on('pullDownRefresh', cycleFn);
       }
 
       // in web-view page

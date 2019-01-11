@@ -3,35 +3,31 @@ const traverse = require('babel-traverse').default;
 const generate = require('babel-generator').default;
 const t = require('babel-types');
 
-function toLiteralString(str) {
-  return JSON.stringify(str);
-}
-
 /**
  * Test cases
- *   {{x:{y:1}}}
- *   {{[{},{}]}}
- *   {{x}} {{y}}
+ *   1. nested object {{x:{y:1}}}
+ *   2. nested object and array {{[{},{}]}}
+ *   3. multi expressions{{x}} {{y}}
+ *   4. expression with special chars
+ *     {{
+ *       a: 1
+ *     }}
  * @type {RegExp}
  */
-const expressionTagReg = /{{(.*?)}}/g;
-const fullExpressionTagReg = /^{{(.*?)}}$/;
+const expressionTagReg = /{{((?:.|\n)+?)}}/g;
+const fullExpressionTagReg = /^{{([\s\S]*?)}}$/;
 const spreadReg = /^\.\.\.[\w$_]/;
 const objReg = /^[\w$_](?:[\w$_\d\s]+)?:/;
 const es2015ObjReg = /^[\w$_](?:[\w$_\d\s]+)?,/;
 
-exports.isObject = isObject;
-function isObject(str_) {
-  var str = str_.trim();
-  return str.match(spreadReg) || str.match(objReg) || str.match(es2015ObjReg);
-}
 const babylonConfig = {
   plugins: ['objectRestSpread']
 };
+
 function findScope(scope, name) {
   if (scope) {
-    for (var i = 0; i < scope.length; i++) {
-      var s = scope[i];
+    for (let i = 0; i < scope.length; i++) {
+      let s = scope[i];
       if (s[name]) {
         return s[name];
       }
@@ -41,49 +37,35 @@ function findScope(scope, name) {
 }
 
 function transformCode(code_, rmlScope, config) {
-  var codeStr = code_;
-  if (config.forceObject || isObject(codeStr)) {
+  let codeStr = code_;
+  if (config.forceObject || isObjectLikeString(codeStr)) {
     codeStr = '{' + codeStr + '}';
   }
   const visitor = {
     noScope: 1,
     ReferencedIdentifier: function ReferencedIdentifier(path) {
-      var node = path.node,
+      let node = path.node,
         parent = path.parent;
       if (node.__rmlSkipped) {
         return;
       }
-      var nameScope = findScope(this.rmlScope, node.name);
-      if (nameScope === 'sjs') {
-        var parentType = parent && parent.type;
-        if (node.type === 'Identifier' && !(parentType === 'MemberExpression' && parent.object === node)) {
-          var args = [t.arrayExpression([node])];
-          if (parentType === 'CallExpression' && parent.callee === node) {
-            args.push(t.numericLiteral(1));
-          }
-          var newNode = t.callExpression(t.identifier('$getSJSMember'), args);
-          newNode.callee.__rmlSkipped = 1;
-          path.replaceWith(newNode);
-          path.skip();
-        }
-        return;
-      }
+      let nameScope = findScope(this.rmlScope, node.name);
       if (!nameScope) {
         node.name = config.scope ? config.scope + '[\'' + node.name + '\']' : node.name;
       }
     },
     MemberExpression: function MemberExpression(path) {
-      var parent = path.parent,
+      let parent = path.parent,
         node = path.node;
-      var parentType = parent && parent.type;
+      let parentType = parent && parent.type;
       // do not transform function call
       // skip call callee x[y.q]
       if (
       // root member node
         parentType !== 'MemberExpression') {
         // allow {{x.y.z}} even x is undefined
-        var members = [node];
-        var root = node.object;
+        let members = [node];
+        let root = node.object;
         while (root.type === 'MemberExpression') {
           members.push(root);
           root = root.object;
@@ -91,9 +73,9 @@ function transformCode(code_, rmlScope, config) {
         if (this.strictDataMember) {
           return;
         }
-        var memberFn = '$getLooseDataMember';
+        let memberFn = '$getLooseDataMember';
         members.reverse();
-        var args = [root];
+        let args = [root];
         if (root.type === 'ThisExpression') {
           args.pop();
           args.push(members.shift());
@@ -110,11 +92,11 @@ function transformCode(code_, rmlScope, config) {
             args.push(t.stringLiteral(m.property.name));
           }
         });
-        var callArgs = [t.arrayExpression(args)];
+        let callArgs = [t.arrayExpression(args)];
         if (parent.callee === node) {
           callArgs.push(t.numericLiteral(1));
         }
-        var newNode = t.callExpression(t.identifier(memberFn), callArgs);
+        let newNode = t.callExpression(t.identifier(memberFn), callArgs);
         newNode.callee.__rmlSkipped = 1;
         // will process a.v of x.y[a.v]
         path.replaceWith(newNode);
@@ -123,10 +105,10 @@ function transformCode(code_, rmlScope, config) {
     }
   };
 
-  var expression = parseExpression(codeStr, babylonConfig);
-  var start = expression.start,
+  let expression = parseExpression(codeStr, babylonConfig);
+  let start = expression.start,
     end = expression.end;
-  var ast = {
+  let ast = {
     type: 'File',
     start: start,
     end: end,
@@ -150,7 +132,7 @@ function transformCode(code_, rmlScope, config) {
     strictDataMember: config.strictDataMember !== false
   });
   // }
-  var _generate = generate(ast),
+  let _generate = generate(ast),
     code = _generate.code;
   if (code.charAt(code.length - 1) === ';') {
     code = code.slice(0, -1);
@@ -161,20 +143,20 @@ function transformExpressionByPart(str_, scope, config) {
   if (typeof str_ !== 'string') {
     return [str_];
   }
-  var str = str_.trim();
+  let str = str_.trim();
   if (!str.match(expressionTagReg)) {
     return [toLiteralString(str_)];
   }
-  var match = str.match(fullExpressionTagReg);
-  if (match) {
+  let match = str.match(fullExpressionTagReg);
+  if (match && isValidJSExp('{' + match[1] + '}')) {
     return [transformCode(match[1], scope, config)];
   }
-  var totalLength = str.length;
-  var lastIndex = 0;
-  var gen = [];
+  let totalLength = str.length;
+  let lastIndex = 0;
+  let gen = [];
   /* eslint no-cond-assign:0 */
   while (match = expressionTagReg.exec(str)) {
-    var code = match[1];
+    let code = match[1];
     if (match.index !== lastIndex) {
       gen.push(toLiteralString(str.slice(lastIndex, match.index)));
     }
@@ -187,10 +169,9 @@ function transformExpressionByPart(str_, scope, config) {
   return gen;
 }
 
-exports.transformExpression = transformExpression;
 function transformExpression(str_, scope) {
-  var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var ret = transformExpressionByPart(str_, scope, config);
+  let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  let ret = transformExpressionByPart(str_, scope, config);
   if ('text' in config) {
     return ret.length > 1 ? '[' + ret.join(', ') + ']' : ret[0];
   }
@@ -201,7 +182,28 @@ function addParentheses(c) {
   return '(' + c + ')';
 }
 
-exports.hasExpression = hasExpression;
 function hasExpression(str) {
   return str.match(expressionTagReg);
 }
+
+function isObjectLikeString(str_) {
+  let str = str_.trim();
+  return str.match(spreadReg) || str.match(objReg) || str.match(es2015ObjReg);
+}
+
+
+function toLiteralString(str) {
+  return JSON.stringify(str);
+}
+
+function isValidJSExp(exp) {
+  try {
+    parseExpression(exp, babylonConfig);
+  } catch (err) {
+    return false;
+  }
+  return true;
+}
+
+exports.hasExpression = hasExpression;
+exports.transformExpression = transformExpression;
