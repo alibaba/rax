@@ -9,7 +9,7 @@ describe('Text fixture break warp.', () => {
     await page.goto('http://localhost:9002/components/text/__tests__/index.html');
   }, timeout);
 
-  it ('should replace \\n to br tag', async () => {
+  it('should replace \\n to br tag', async() => {
     let text = await page.evaluate(() => {
       const node = document.querySelector('.break-wrap-with-text-break');
       return node.innerHTML;
@@ -17,7 +17,7 @@ describe('Text fixture break warp.', () => {
     expect(text).toEqual('This is a paragraph with <br> break lines.');
   });
 
-  it ('should replace LF to br tag', async () => {
+  it('should replace LF to br tag', async() => {
     let text = await page.evaluate(() => {
       const node = document.querySelector('.break-wrap-with-lf');
       return node.innerHTML;
