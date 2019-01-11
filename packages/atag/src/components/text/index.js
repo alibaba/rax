@@ -36,24 +36,34 @@ export default class TextElement extends PolymerElement {
     this.childrenObserver.disconnect();
   }
 
+  /**
+   * Replace text node value's \n or '\n' to <br/>
+   * @note \n and '\n' is different.
+   * @param node {Node} Text node.
+   * @private
+   */
+  _replaceWrap(node) {
+    let contents = node.textContent.split(/\n|\\n/);
+    if (contents.length > 1) {
+      const fragment = document.createDocumentFragment();
+      for (let j = 0; j < contents.length; j++) {
+        const textNode = document.createTextNode(contents[j]);
+        fragment.appendChild(textNode);
+        // Append br at each gap
+        if (j !== contents.length - 1) {
+          fragment.appendChild(document.createElement('br'));
+        }
+      }
+      node.parentNode.replaceChild(fragment, node);
+    }
+  }
+
   _observeChildren({ addedNodes, target }) {
     if (this === target && addedNodes.length > 0) {
       for (let i = 0; i < addedNodes.length; i++) {
         const node = addedNodes[i];
         if (node.nodeType === document.TEXT_NODE) {
-          let contents = node.textContent.split('\\n');
-          if (contents.length > 1) {
-            const fragment = document.createDocumentFragment();
-            for (let j = 0; j < contents.length; j++) {
-              const textNode = document.createTextNode(contents[j]);
-              fragment.appendChild(textNode);
-              // Append br at each gap
-              if (j !== contents.length - 1) {
-                fragment.appendChild(document.createElement('br'));
-              }
-            }
-            node.parentNode.replaceChild(fragment, node);
-          }
+          this._replaceWrap(node);
         }
       }
     }
