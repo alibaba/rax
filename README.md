@@ -52,11 +52,11 @@ export default (props) => {
     setName('rax');
   };
   return (
-    <view style={styles.hello}>
-      <text style={styles.title} onClick={this.handleClick}>
+    <div style={styles.hello}>
+      <span style={styles.title} onClick={this.handleClick}>
       Hello {name}
-      </text>
-    </view>
+      </span>
+    </div>
   );
 }
 
