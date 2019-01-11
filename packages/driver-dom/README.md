@@ -11,7 +11,7 @@ $ npm install --save driver-dom
 ## Use
 
 ```jsx
-import {createElement, Component, render} from 'rax';
+import {createElement, render} from 'rax';
 import DomDriver from 'driver-dom';
 
 function Example() {

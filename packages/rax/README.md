@@ -12,10 +12,11 @@ $ npm install --save rax
 
 ```jsx
 import {createElement, render} from 'rax';
+import DomDriver from 'driver-dom';
 
 function MyComponent() {
   return <div>Hello World</div>;
 }
 
-render(<MyComponent />);
+render(<MyComponent />, document.body, { driver: DomDriver });
 ```

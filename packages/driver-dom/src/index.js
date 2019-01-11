@@ -1,5 +1,5 @@
 /**
- * Web Browser driver
+ * Driver for Web DOM
  **/
 
 /* global DEVICE_WIDTH, VIEWPORT_WIDTH */
