@@ -5,11 +5,6 @@ const { parseFilters } = require('./filter-parser');
 const { cached, no, camelize } = require('../utils');
 const { genAssignmentCode } = require('../directives/model');
 
-const isIE = false;
-const isEdge = false;
-const isServerRendering = false;
-// const { isIE, isEdge, isServerRendering } = require('core/util/env');
-
 const {
   addProp,
   addAttr,
@@ -67,6 +62,7 @@ function parse(template, options) {
 
   const stack = [];
   const preserveWhitespace = options.preserveWhitespace !== false;
+  const trimTextWhitespace = options.trimTextWhitespace;
 
   let root;
   let currentParent;
@@ -104,12 +100,6 @@ function parse(template, options) {
       const ns =
         currentParent && currentParent.ns || platformGetTagNamespace(tag);
 
-      // handle IE svg bug
-      /* istanbul ignore if */
-      if (isIE && ns === 'svg') {
-        attrs = guardIESVGBug(attrs);
-      }
-
       const element = {
         type: 1,
         tag,
@@ -122,7 +112,7 @@ function parse(template, options) {
         element.ns = ns;
       }
 
-      if (isForbiddenTag(element) && !isServerRendering()) {
+      if (isForbiddenTag(element)) {
         element.forbidden = true;
         process.env.NODE_ENV !== 'production' &&
           warn(
@@ -261,15 +251,7 @@ function parse(template, options) {
         }
         return;
       }
-      // IE textarea placeholder bug
-      /* istanbul ignore if */
-      if (
-        isIE &&
-        currentParent.tag === 'textarea' &&
-        currentParent.attrsMap.placeholder === text
-      ) {
-        return;
-      }
+
       const children = currentParent.children;
       text =
         inPre || text.trim()
@@ -280,6 +262,12 @@ function parse(template, options) {
           preserveWhitespace && children.length
             ? ' '
             : '';
+
+      // Trim text node
+      if (trimTextWhitespace) {
+        text = text.trim();
+      }
+
       if (text) {
         let expression;
         if (
@@ -584,9 +572,7 @@ function makeAttrsMap(attrs) {
   for (let i = 0, l = attrs.length; i < l; i++) {
     if (
       process.env.NODE_ENV !== 'production' &&
-      map[attrs[i].name] &&
-      !isIE &&
-      !isEdge
+      map[attrs[i].name]
     ) {
       warn('duplicate attribute: ' + attrs[i].name);
     }
@@ -606,22 +592,6 @@ function isForbiddenTag(el) {
     el.tag === 'script' &&
     (!el.attrsMap.type || el.attrsMap.type === 'text/javascript')
   );
-}
-
-const ieNSBug = /^xmlns:NS\d+/;
-const ieNSPrefix = /^NS\d+:/;
-
-/* istanbul ignore next */
-function guardIESVGBug(attrs) {
-  const res = [];
-  for (let i = 0; i < attrs.length; i++) {
-    const attr = attrs[i];
-    if (!ieNSBug.test(attr.name)) {
-      attr.name = attr.name.replace(ieNSPrefix, '');
-      res.push(attr);
-    }
-  }
-  return res;
 }
 
 function checkForAliasModel(el, value) {
