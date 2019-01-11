@@ -75,10 +75,11 @@ const styles = {
 
 ```js
 // app.js
-import {render} from 'rax-dom';
+import {render} from 'rax';
+import DomDriver from 'driver-dom';
 import Hello from './Hello';
 
-render(<Hello name="world" />);
+render(<Hello name="world" />, document.body, { driver: DomDriver });
 ```
 
 ## Rax API (v1.0)
@@ -278,19 +279,13 @@ render(<Hello name="world" />);
   ```
 
 #### Rendering Elements
-* render(element [, container] [, callback])
+* render(element [, container] [, options] [, callback])
   ```jsx
-  render(<HelloMessage name="world" />)
+  render(<HelloMessage name="world" />, document.body, { driver: DomDriver })
   ```
 
 #### Version
 * version
-
-#### rax-dom
-* render()
-
-#### rax-weex
-* render()
 
 #### rax-children
 * Children
