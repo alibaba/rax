@@ -276,7 +276,7 @@ export default class NativeMap extends PolymerElement {
      * Call drawing route after updated.
      */
     if (this.routeStart && this.routeEnd) {
-      this._updateParamWithAndroid('route-config');
+      this._updateParamWithAndroid('routeConfig');
     }
   }
 
