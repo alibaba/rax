@@ -91,9 +91,8 @@ class ReactiveComponent extends Component {
     this.willUnmountHandlers.forEach(handler => handler());
   }
 
-  // Async update
   update() {
-    scheduleImmediateCallback(() => this.forceUpdate());
+    this.forceUpdate();
   }
 
   render() {

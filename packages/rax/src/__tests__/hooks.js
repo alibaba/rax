@@ -44,7 +44,6 @@ describe('hooks', () => {
     }
 
     render(<App value={2} />, container);
-    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
   });
 
@@ -60,11 +59,9 @@ describe('hooks', () => {
     }
 
     render(<Counter initialState={1} />, container);
-    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
 
     stateUpdater(10);
-    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('10');
   });
 
@@ -77,17 +74,14 @@ describe('hooks', () => {
       return <span>{count}</span>;
     }
     render(<Counter />, container);
-    jest.runAllTimers();
 
     expect(container.childNodes[0].childNodes[0].data).toEqual('0');
 
     updaters[0](1);
-    jest.runAllTimers();
 
     expect(container.childNodes[0].childNodes[0].data).toEqual('1');
 
     updaters[0](count => count + 10);
-    jest.runAllTimers();
 
     expect(container.childNodes[0].childNodes[0].data).toEqual('11');
 
@@ -116,19 +110,16 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(1);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={1} />, container);
-    jest.runAllTimers();
     expect(renderCounter).toEqual(2);
     expect(effectCounter).toEqual(2);
     expect(cleanupCounter).toEqual(1);
 
     render(<Counter count={2} />, container);
-    jest.runAllTimers();
     expect(renderCounter).toEqual(3);
     expect(effectCounter).toEqual(3);
     expect(cleanupCounter).toEqual(2);
@@ -244,19 +235,16 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={0} />, container);
-    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(3);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={1} />, container);
-    jest.runAllTimers();
     expect(effectCounter).toEqual(2);
     expect(renderCounter).toEqual(4);
     expect(cleanupCounter).toEqual(1);
@@ -328,7 +316,6 @@ describe('hooks', () => {
     }
 
     render(<Counter />, container);
-    jest.runAllTimers();
     expect(effectCounter).toEqual(2);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(1);
@@ -358,7 +345,6 @@ describe('hooks', () => {
     }
 
     render(<Counter />, container);
-    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(0);
@@ -385,12 +371,10 @@ describe('hooks', () => {
     }
 
     render(<App value={2} />, container);
-    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
 
     // Update
     render(<App value={3} />, container);
-    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('3');
   });
 
@@ -409,12 +393,10 @@ describe('hooks', () => {
     }
 
     render(<Counter />, container);
-    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('val');
     expect(renderCounter).toEqual(1);
 
     render(<Counter foo="bar" />, container);
-    jest.runAllTimers();
     expect(renderCounter).toEqual(2);
     expect(container.childNodes[0].childNodes[0].data).toEqual('val');
   });
@@ -574,9 +556,6 @@ describe('hooks', () => {
       // Test that it works on update, too. This time the log is a bit different
       // because we started with reducerB instead of reducerA.
       counter.current.dispatch('reset');
-      // jest.runAllTimers();
-      logs = [];
-      render(<Counter ref={counter} />, container);
       expect(logs).toEqual([
         'Render: 0',
         'Render: 1',
@@ -616,13 +595,11 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('0');
 
       counter.current.dispatch(INCREMENT);
-      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('1');
 
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
-      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
 
       counter.current.dispatch(DECREMENT);
@@ -633,7 +610,6 @@ describe('hooks', () => {
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(INCREMENT);
-      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
     });
 
@@ -665,17 +641,14 @@ describe('hooks', () => {
       Counter = forwardRef(Counter);
       const counter = createRef(null);
       render(<Counter ref={counter} />, container);
-      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('10');
 
       counter.current.dispatch(INCREMENT);
-      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('11');
 
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
-      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('8');
     });
   });
