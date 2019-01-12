@@ -13,7 +13,7 @@ const webpackConfigProd = webpackMerge(webpackConfigBase, {
     'index.min': [pathConfig.miniappEntry],
   },
   output: {
-    path: path.resolve(pathConfig.appDirectory, process.env.BUILD_DEST || 'build'),
+    path: path.resolve(pathConfig.appDirectory, process.env.OUTPUT_PATH || 'build'),
     publicPath: process.env.PUBLIC_PATH || '/',
   },
   optimization: {
