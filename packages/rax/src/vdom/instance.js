@@ -58,32 +58,24 @@ export default {
     let hasPrevRootInstance = prevRootInstance && prevRootInstance.isRootComponent;
 
     if (hasPrevRootInstance) {
-      let prevRenderedComponent = prevRootInstance.getRenderedComponent();
-      let prevElement = prevRenderedComponent._currentElement;
-      if (shouldUpdateComponent(prevElement, element)) {
-        let prevUnmaskedContext = prevRenderedComponent._context;
-        let nextUnmaskedContext = parentContext || prevUnmaskedContext;
-        if (prevElement !== element || prevUnmaskedContext !== nextUnmaskedContext) {
-          prevRenderedComponent.updateComponent(
-            prevElement,
-            element,
-            prevUnmaskedContext,
-            nextUnmaskedContext
-          );
-        }
-
-        return prevRootInstance;
-      } else {
-        Host.hook.Reconciler.unmountComponent(prevRootInstance);
-        unmountComponentAtNode(container);
+      if (parentContext) {
+        // using _penddingContext to pass new context
+        prevRootInstance._internal._penddingContext = parentContext;
       }
+      prevRootInstance.setState({
+        element
+      });
+      return prevRootInstance;
     }
 
-    let wrappedElement = createElement(Root, null, element);
+    let wrappedElement = createElement(Root, null, null);
     let renderedComponent = instantiateComponent(wrappedElement);
     let defaultContext = parentContext || {};
     let rootInstance = renderedComponent.mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
+    rootInstance.setState({
+      element,
+    });
 
     // After render callback
     Host.driver.afterRender && Host.driver.afterRender(rootInstance);

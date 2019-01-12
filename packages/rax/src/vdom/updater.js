@@ -1,3 +1,5 @@
+import Host from './host';
+
 function enqueueCallback(internal, callback) {
   if (callback) {
     let callbackQueue =
@@ -16,6 +18,60 @@ function enqueueState(internal, partialState) {
   }
 }
 
+function runCallbacks(callbacks, context) {
+  if (callbacks) {
+    for (let i = 0; i < callbacks.length; i++) {
+      callbacks[i].call(context);
+    }
+  }
+}
+
+function runUpdate(component) {
+  let internal = component._internal;
+  if (!internal) {
+    return;
+  }
+
+  Host.isRendering = true;
+
+  // If updateComponent happens to enqueue any new updates, we
+  // shouldn't execute the callbacks until the next render happens, so
+  // stash the callbacks first
+  let callbacks = internal._pendingCallbacks;
+  internal._pendingCallbacks = null;
+
+  let prevElement = internal._currentElement;
+  let prevUnmaskedContext = internal._context;
+  let nextUnmaskedContext = internal._penddingContext || prevUnmaskedContext;
+  internal._penddingContext = undefined;
+
+  if (internal._pendingStateQueue || internal._pendingForceUpdate) {
+    internal.updateComponent(
+      prevElement,
+      prevElement,
+      prevUnmaskedContext,
+      nextUnmaskedContext
+    );
+  }
+
+  runCallbacks(callbacks, component);
+  Host.isRendering = false;
+}
+
+function scheduleWork(component) {
+  const dirtyComponents = Host.dirtyComponents;
+  if (dirtyComponents.indexOf(component) < 0) {
+    dirtyComponents.push(component);
+  }
+  if (Host.isRendering) {
+    return;
+  }
+
+  while (component = dirtyComponents.pop()) {
+    runUpdate(component);
+  }
+}
+
 const Updater = {
   setState: function(component, partialState, callback) {
     let internal = component._internal;
@@ -29,7 +85,7 @@ const Updater = {
 
     // pending in componentWillReceiveProps and componentWillMount
     if (!internal._pendingState && internal._renderedComponent) {
-      this.runUpdate(component);
+      scheduleWork(component);
     }
   },
 
@@ -45,42 +101,11 @@ const Updater = {
     enqueueCallback(internal, callback);
     // pending in componentWillMount
     if (internal._renderedComponent) {
-      this.runUpdate(component);
+      scheduleWork(component);
     }
   },
 
-  runUpdate: function(component) {
-    let internal = component._internal;
-
-    // If updateComponent happens to enqueue any new updates, we
-    // shouldn't execute the callbacks until the next render happens, so
-    // stash the callbacks first
-    let callbacks = internal._pendingCallbacks;
-    internal._pendingCallbacks = null;
-
-    let prevElement = internal._currentElement;
-    let prevUnmaskedContext = internal._context;
-
-    if (internal._pendingStateQueue || internal._pendingForceUpdate) {
-      internal.updateComponent(
-        prevElement,
-        prevElement,
-        prevUnmaskedContext,
-        prevUnmaskedContext
-      );
-    }
-
-    this.runCallbacks(callbacks, component);
-  },
-
-  runCallbacks(callbacks, context) {
-    if (callbacks) {
-      for (let i = 0; i < callbacks.length; i++) {
-        callbacks[i].call(context);
-      }
-    }
-  }
-
+  runCallbacks: runCallbacks
 };
 
 export default Updater;
