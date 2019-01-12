@@ -9,5 +9,3 @@ if (isWeb || isDowngrade) {
 } else {
   customElements.define(NativeMap.is, NativeMap);
 }
-
-
