@@ -154,19 +154,19 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(logs).toEqual([
       'render', 'create2', 'create1'
     ]);
 
     render(<Counter count={1} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(logs).toEqual([
       'render', 'create2', 'create1',
       'render', 'destory2', 'create2', 'destory1', 'create1']);
 
     render(<Counter count={2} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(logs).toEqual([
       'render', 'create2', 'create1',
       'render', 'destory2', 'create2', 'destory1', 'create1',
@@ -194,19 +194,19 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(1);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={1} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(renderCounter).toEqual(2);
     expect(effectCounter).toEqual(2);
     expect(cleanupCounter).toEqual(1);
 
     render(<Counter count={2} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(renderCounter).toEqual(3);
     expect(effectCounter).toEqual(3);
     expect(cleanupCounter).toEqual(2);
@@ -275,19 +275,19 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={0} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(3);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={1} />, container);
-    jest.runAllTimers();
+    flushPassiveEffects();
     expect(effectCounter).toEqual(2);
     expect(renderCounter).toEqual(4);
     expect(cleanupCounter).toEqual(1);
@@ -684,7 +684,7 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
       // Now fire the effects
       logs = [];
-      jest.runAllTimers();
+      flushPassiveEffects();
       // There were multiple updates, but there should only be a
       // single render
       expect(logs).toEqual(['Count: 0']);
@@ -722,7 +722,7 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
       // Now fire the effects
       logs = [];
-      jest.runAllTimers();
+      flushPassiveEffects();
       // There were multiple updates, but there should only be a
       // single render
       expect(logs).toEqual(['Count: 7']);
@@ -742,14 +742,14 @@ describe('hooks', () => {
       }
       render(<Counter count={0} />, container);
       expect(container.childNodes[0].childNodes[0].data).toEqual('0');
-      jest.runAllTimers();
+      flushPassiveEffects();
       expect(logs).toEqual(['Did commit [0]']);
 
       logs = [];
       render(<Counter count={1} />, container);
       expect(container.childNodes[0].childNodes[0].data).toEqual('1');
       // Effects are deferred until after the commit
-      jest.runAllTimers();
+      flushPassiveEffects();
       expect(logs).toEqual(['Did commit [1]']);
     });
 
@@ -786,7 +786,7 @@ describe('hooks', () => {
 
       // (No effects are left to flush.)
       logs = [];
-      jest.runAllTimers();
+      flushPassiveEffects();
       expect(logs).toEqual([]);
     });
 
@@ -813,7 +813,7 @@ describe('hooks', () => {
         return <span>Layout</span>;
       }
       render([<PassiveEffect key="p" />, <LayoutEffect key="l" />], container);
-      jest.runAllTimers();
+      flushPassiveEffects();
       expect(logs).toEqual([
         'Passive',
         'Layout',
@@ -860,7 +860,7 @@ describe('hooks', () => {
         expect(container.childNodes[0].childNodes[0].data).toEqual('1');
 
         logs = [];
-        jest.runAllTimers();
+        flushPassiveEffects();
         expect(logs).toEqual([
           'Committed state when effect was fired: 1',
         ]);
