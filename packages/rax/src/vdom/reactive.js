@@ -1,6 +1,5 @@
 import Host from './host';
 import Component from '../component';
-import { scheduleImmediateCallback } from '../scheduler';
 
 const RE_RENDER_LIMIT = 24;
 /**

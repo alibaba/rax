@@ -7,6 +7,7 @@ import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
 import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeMethods} from '../hooks';
+import { flushPassiveEffects } from '../vdom/updater';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
 
@@ -653,26 +654,217 @@ describe('hooks', () => {
     });
   });
 
+  it(
+    'in sync mode, useEffect is deferred and updates finish synchronously ' +
+      '(in a single batch)',
+    () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Counter(props) {
+        const [count, updateCount] = useState('(empty)');
+        useEffect(
+          () => {
+            // Update multiple times. These should all be batched together in
+            // a single render.
+            updateCount(props.count);
+            updateCount(props.count);
+            updateCount(props.count);
+            updateCount(props.count);
+            updateCount(props.count);
+            updateCount(props.count);
+          },
+          [props.count],
+        );
+        logs.push('Count: ' + count);
+        return <span>{'Count: ' + count}</span>;
+      }
+      render(<Counter count={0} />, container);
+      // Even in sync mode, effects are deferred until after paint
+      expect(logs).toEqual(['Count: (empty)']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
+      // Now fire the effects
+      logs = [];
+      jest.runAllTimers();
+      // There were multiple updates, but there should only be a
+      // single render
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+    },
+  );
 
-  it('simple mount and update', () => {
-    const container = createNodeElement('div');
-    let logs = [];
-    function Counter(props) {
-      useEffect(() => {
-        logs.push(`Did commit [${props.count}]`);
-      });
-      return <span>{props.count}</span>;
-    }
-    render(<Counter count={0} />, container);
-    expect(container.childNodes[0].childNodes[0].data).toEqual('0');
-    jest.runAllTimers();
-    expect(logs).toEqual(['Did commit [0]']);
+  it(
+    'in sync mode, useEffect is deferred and updates finish synchronously ' +
+      '(in a single batch)',
+    () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Counter(props) {
+        const [count, updateCount] = useState('(empty)');
+        useEffect(
+          () => {
+            // Update multiple times. These should all be batched together in
+            // a single render.
+            updateCount(2);
+            updateCount(3);
+            updateCount(4);
+            updateCount(5);
+            updateCount(6);
+            updateCount(7);
+          },
+          [props.count],
+        );
+        logs.push('Count: ' + count);
+        return <span>{'Count: ' + count}</span>;
+      }
+      render(<Counter count={0} />, container);
+      // Even in sync mode, effects are deferred until after paint
+      expect(logs).toEqual(['Count: (empty)']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
+      // Now fire the effects
+      logs = [];
+      jest.runAllTimers();
+      // There were multiple updates, but there should only be a
+      // single render
+      expect(logs).toEqual(['Count: 7']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 7');
+    },
+  );
 
-    logs = [];
-    render(<Counter count={1} />, container);
-    expect(container.childNodes[0].childNodes[0].data).toEqual('1');
-    // Effects are deferred until after the commit
-    jest.runAllTimers();
-    expect(logs).toEqual(['Did commit [1]']);
+  describe('useEffect', () => {
+    it('simple mount and update', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Counter(props) {
+        useEffect(() => {
+          logs.push(`Did commit [${props.count}]`);
+        });
+        return <span>{props.count}</span>;
+      }
+      render(<Counter count={0} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('0');
+      jest.runAllTimers();
+      expect(logs).toEqual(['Did commit [0]']);
+
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('1');
+      // Effects are deferred until after the commit
+      jest.runAllTimers();
+      expect(logs).toEqual(['Did commit [1]']);
+    });
+
+
+    it('flushes passive effects even with sibling deletions', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function LayoutEffect(props) {
+        useLayoutEffect(() => {
+          logs.push('Layout effect');
+        });
+        logs.push('Layout');
+        return <span>Layout</span>;
+      }
+      function PassiveEffect(props) {
+        useEffect(() => {
+          logs.push('Passive effect');
+        }, []);
+        logs.push('Passive');
+        return <span>Passive</span>;
+      }
+      let passive = <PassiveEffect key="p" />;
+      render([<LayoutEffect key="l" />, passive], container);
+      expect(logs).toEqual(['Layout', 'Layout effect', 'Passive']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Layout');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('Passive');
+
+      logs = [];
+      // Destroying the first child shouldn't prevent the passive effect from
+      // being executed
+      render([passive], container);
+      expect(logs).toEqual(['Passive effect']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Passive');
+
+      // (No effects are left to flush.)
+      logs = [];
+      jest.runAllTimers();
+      expect(logs).toEqual([]);
+    });
+
+    it('flushes passive effects even if siblings schedule an update', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function PassiveEffect(props) {
+        useEffect(() => {
+          logs.push('Passive effect');
+        });
+        logs.push('Passive');
+        return <span>Passive</span>;
+      }
+      function LayoutEffect(props) {
+        let [count, setCount] = useState(0);
+        useLayoutEffect(() => {
+          // Scheduling work shouldn't interfere with the queued passive effect
+          if (count === 0) {
+            setCount(1);
+          }
+          logs.push('Layout effect ' + count);
+        });
+        logs.push('Layout');
+        return <span>Layout</span>;
+      }
+      render([<PassiveEffect key="p" />, <LayoutEffect key="l" />], container);
+      jest.runAllTimers();
+      expect(logs).toEqual([
+        'Passive',
+        'Layout',
+        'Layout effect 0',
+        'Passive effect',
+        'Layout',
+        'Layout effect 1',
+      ]);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Passive');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('Layout');
+    });
+
+    it(
+      'flushes effects serially by flushing old effects before flushing ' +
+        "new ones, if they haven't already fired",
+      () => {
+        const container = createNodeElement('div');
+        let logs = [];
+        function getCommittedText() {
+          return container.childNodes[0].childNodes[0].data;
+        }
+
+        function Counter(props) {
+          useEffect(() => {
+            logs.push(
+              `Committed state when effect was fired: ${getCommittedText()}`,
+            );
+          });
+          logs.push(props.count);
+          return <span>{props.count}</span>;
+        }
+        render(<Counter count={0} />, container);
+        expect(logs).toEqual([0]);
+        expect(container.childNodes[0].childNodes[0].data).toEqual('0');
+
+        // Before the effects have a chance to flush, schedule another update
+        logs = [];
+        render(<Counter count={1} />, container);
+        expect(logs).toEqual([
+          // The previous effect flushes before the reconciliation
+          'Committed state when effect was fired: 0',
+          1,
+        ]);
+        expect(container.childNodes[0].childNodes[0].data).toEqual('1');
+
+        logs = [];
+        jest.runAllTimers();
+        expect(logs).toEqual([
+          'Committed state when effect was fired: 1',
+        ]);
+      },
+    );
   });
 });

@@ -1,5 +1,5 @@
 import Host from './vdom/host';
-import { scheduleIdleCallback } from './scheduler';
+import { scheduleBeforeNextRenderCallback } from './scheduler';
 
 function getCurrentRenderingInstance() {
   const currentInstance = Host.component._instance;
@@ -83,20 +83,28 @@ function useEffectImpl(effect, inputs, defered) {
 
   if (!hooks[hookId]) {
     const create = (immediately) => {
-      if (!immediately && defered) return scheduleIdleCallback(() => create(true));
+      if (!immediately && defered) return scheduleBeforeNextRenderCallback(() => create(true));
       const { current } = create;
       if (current) {
+        // Set this to true to prevent re-entrancy
+        const previousIsRendering = Host.isRendering;
+        Host.isRendering = true;
         destory.current = current();
         create.current = null;
+        Host.isRendering = previousIsRendering;
       }
     };
 
     const destory = (immediately) => {
-      if (!immediately && defered) return scheduleIdleCallback(() => destory(true));
+      if (!immediately && defered) return scheduleBeforeNextRenderCallback(() => destory(true));
       const { current } = destory;
       if (current) {
+        // Set this to true to prevent re-entrancy
+        const previousIsRendering = Host.isRendering;
+        Host.isRendering = true;
         current();
         destory.current = null;
+        Host.isRendering = previousIsRendering;
       }
     };
 

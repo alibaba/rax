@@ -1,4 +1,5 @@
 import Host from './host';
+import { flushNextRenderCallbacks } from '../scheduler';
 
 function enqueueCallback(internal, callback) {
   if (callback) {
@@ -58,18 +59,28 @@ function runUpdate(component) {
   Host.isRendering = false;
 }
 
+export function performWork() {
+  if (Host.isRendering) {
+    return;
+  }
+  const dirtyComponents = Host.dirtyComponents;
+  let component;
+  while (component = dirtyComponents.pop()) {
+    flushPassiveEffects();
+    runUpdate(component);
+  }
+}
+
 function scheduleWork(component) {
   const dirtyComponents = Host.dirtyComponents;
   if (dirtyComponents.indexOf(component) < 0) {
     dirtyComponents.push(component);
   }
-  if (Host.isRendering) {
-    return;
-  }
+  performWork();
+}
 
-  while (component = dirtyComponents.pop()) {
-    runUpdate(component);
-  }
+export function flushPassiveEffects() {
+  flushNextRenderCallbacks();
 }
 
 const Updater = {
