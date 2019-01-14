@@ -10,7 +10,7 @@ const isDebug = process.env.DEBUG;
 const webpackConfigProd = webpackMerge(webpackConfigBase, {
   devtool: isDebug ? 'cheap-eval-source-map' : false,
   entry: {
-    'index.min': [pathConfig.miniappEntry],
+    'index.min': [pathConfig.miniProgramIndexJs],
   },
   output: {
     path: path.resolve(pathConfig.appDirectory, process.env.OUTPUT_PATH || 'build'),
