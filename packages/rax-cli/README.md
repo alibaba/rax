@@ -13,3 +13,58 @@ $ npm install -g rax-cli
 ```sh
 $ rax init <ProjectName> [--verbose]
 ```
+
+
+## Project Type Support
+* WebApp Project
+```
+.
+├── package.json
+├── .gitignore
+├── .eslintrc.js
+├── src
+│   └── index.js
+└── public
+    └── index.html
+```
+* MiniApp Project
+```
+.
+├── manifest.json
+├── package.json
+├── .gitignore
+├── .eslintrc.js
+├── src
+│   ├── app.js
+│   ├── app.css
+│   ├── pages
+│   │   ├── page1.html
+│   │   └── page2.html
+│   └── components
+│       ├── component1.html
+│       └── component2.html
+└── public
+    └── index.html
+```
+* Mini Program Project
+```
+.
+├── app.js
+├── app.acss
+├── app.json
+├── package.json
+├── .gitignore
+├── .eslintrc.js
+└── pages
+    ├── page1
+    │   ├── page1.acss
+    │   ├── page1.axml
+    │   ├── page1.js
+    │   └── page1.json
+    └── page2
+        ├── page2.acss
+        ├── page2.axml
+        ├── page2.js
+        └── page2.json
+```
+

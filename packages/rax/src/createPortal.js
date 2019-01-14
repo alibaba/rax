@@ -1,7 +1,7 @@
 import Component from './component';
 import render from './render';
 import unmountComponentAtNode from './unmountComponentAtNode';
-import {createElement} from './element';
+import createElement from './createElement';
 
 class Portal extends Component {
   constructor(props, context) {

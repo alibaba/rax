@@ -1,5 +1,4 @@
 import Component from './component';
-import PropTypes from './proptypes';
 
 class ValueEmitter {
   constructor(defaultValue) {
@@ -29,7 +28,7 @@ export default function createContext(defaultValue) {
     emitter = new ValueEmitter(defaultValue);
 
     static childContextTypes = {
-      [contextProp]: PropTypes.object
+      [contextProp]: () => {}
     };
 
     getChildContext() {
@@ -70,7 +69,7 @@ export default function createContext(defaultValue) {
     }
 
     static contextTypes = {
-      [contextProp]: PropTypes.object
+      [contextProp]: () => {}
     };
 
     onUpdate = value => this.state.value !== value && this.setState({value});

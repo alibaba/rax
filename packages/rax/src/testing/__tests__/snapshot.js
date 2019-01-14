@@ -1,4 +1,4 @@
-import {createElement} from '../../element';
+import createElement from '../../createElement';
 import Component from '../../component';
 import renderer from '../renderer';
 

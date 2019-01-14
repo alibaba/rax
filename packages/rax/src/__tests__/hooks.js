@@ -1,7 +1,6 @@
 /* @jsx createElement */
 
-import Component from '../component';
-import {createElement} from '../element';
+import createElement from '../createElement';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
@@ -489,8 +488,7 @@ describe('hooks', () => {
         render(<Counter />, container);
         jest.runAllTimers();
       }).toThrowError(
-        'Too many re-renders. rax limits the number of renders to prevent ' +
-          'an infinite loop.',
+        'Too many re-renders, the number of renders is limited to prevent an infinite loop.'
       );
     });
 
