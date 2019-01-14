@@ -5,6 +5,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import findDOMNode from '../findDOMNode';
+import Component from '../component';
 
 describe('render', () => {
   function createNodeElement(tagName) {
@@ -94,5 +95,30 @@ describe('render', () => {
     render(CacheApp, container);
     expect(container.childNodes[0].tagName).toBe('DIV');
     expect(updatedCount).toBe(1);
+  });
+
+  it('render in the life cycle should in a batch', function() {
+    let container = createNodeElement('div');
+    let container2 = createNodeElement('div');
+
+    const Child = jest.fn(function(props) {
+      return <span>{props.number}</span>;
+    });
+
+    class App extends Component {
+      componentDidMount() {
+        render(<Child number="1" />, container2);
+        render(<Child number="2" />, container2);
+        render(<Child number="3" />, container2);
+        render(<Child number="4" />, container2);
+        expect(container2.childNodes).toBe([]);
+      }
+      render() {
+        return <span />;
+      }
+    }
+    render(<App />, container);
+    expect(Child).toHaveBeenCalledTimes(1);
+    expect(container2.childNodes[0].childNodes[0].data).toBe('4');
   });
 });
