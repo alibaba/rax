@@ -11,7 +11,7 @@ npm install --save rax-redux
 
 ```js
 import {createElement, render} from 'rax';
-import {render} from 'rax-redux';
+import {Provider} from 'rax-redux';
 
 import store from './store';
 import App from './App';
