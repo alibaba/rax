@@ -1,5 +1,5 @@
 import Host from './host';
-import { flushNextRenderCallbacks } from '../scheduler';
+import { flushNextRenderCallbacks } from './scheduler';
 
 function enqueueCallback(internal, callback) {
   if (callback) {

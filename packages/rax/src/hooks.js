@@ -1,5 +1,5 @@
 import Host from './vdom/host';
-import { scheduleBeforeNextRenderCallback } from './scheduler';
+import { scheduleBeforeNextRenderCallback } from './vdom/scheduler';
 import { flushPassiveEffects } from './vdom/updater';
 
 function getCurrentRenderingInstance() {

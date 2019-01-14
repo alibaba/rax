@@ -42,7 +42,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|mjs)$/,
         use: [babelLoaderConfig],
       },
       /**
@@ -108,7 +108,7 @@ module.exports = {
         ]
       },
       {
-        test: /app\.js$/,
+        test: /app\.(js|mjs)$/,
         loader: require.resolve('mp-loader'),
       },
     ],

@@ -20,7 +20,7 @@ console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n'
 const webpackConfigDev = webpackMerge(webpackConfigBase, {
   devtool: 'cheap-eval-source-map',
   entry: {
-    index: [pathConfig.miniappEntry]
+    index: [pathConfig.miniProgramIndexJs]
   },
   output: {
     // show at devtool console panel

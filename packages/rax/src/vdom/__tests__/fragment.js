@@ -3,7 +3,7 @@
 'use strict';
 
 import Component from '../../component';
-import {createElement} from '../../element';
+import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';

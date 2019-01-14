@@ -1,7 +1,5 @@
-import inject from './inject';
+import inject from './vdom/inject';
 import instance from './vdom/instance';
-import Host from './vdom/host';
-import { flushPassiveEffects } from './vdom/updater';
 
 function render(element, container, options, callback) {
   // Compatible with `render(element, container, callback)`

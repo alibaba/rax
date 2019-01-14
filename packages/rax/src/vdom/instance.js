@@ -1,5 +1,5 @@
 import Host from './host';
-import {createElement} from '../element';
+import createElement from '../createElement';
 import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';

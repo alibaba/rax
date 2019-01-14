@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, Component} from 'rax';
+import {createElement} from 'rax';
 import {renderToString} from '../index';
 
 describe('renderToString', () => {
@@ -39,34 +39,6 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyComponent />);
     expect(str).toBe('hi');
-  });
-
-  it('render composite component', () => {
-    class OtherComponent extends Component {
-      state = {
-        bar: 'bar'
-      };
-      componentWillMount() {
-        this.setState({
-          foo: 'foo'
-        });
-      }
-      render() {
-        return <div foo={this.state.foo} bar={this.state.bar} />;
-      }
-    }
-
-    class MyComponent {
-      render() {
-        return <main>
-          <OtherComponent />
-          <div />
-        </main>;
-      }
-    }
-
-    let str = renderToString(<MyComponent />);
-    expect(str).toBe('<main><div foo="foo" bar="bar"></div><div></div></main>');
   });
 
   it('render stateless component', () => {
@@ -118,35 +90,5 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyComponent />);
     expect(str).toBe('<input type="radio" checked="checked">');
-  });
-
-  it('render with context', () => {
-    class OtherComponent extends Component {
-      state = {
-        bar: 'bar'
-      };
-      componentWillMount() {
-        this.setState({
-          foo: 'foo'
-        });
-      }
-      render() {
-        return <div className={this.props.className} foo={this.state.foo} bar={this.state.bar} baz={this.context.baz} />;
-      }
-    }
-
-    class MyComponent {
-      getChildContext() {
-        return {
-          baz: 'baz'
-        };
-      }
-      render() {
-        return <OtherComponent className="hello" />;
-      }
-    }
-
-    let str = renderToString(<MyComponent />);
-    expect(str).toBe('<div class="hello" foo="foo" bar="bar" baz="baz"></div>');
   });
 });

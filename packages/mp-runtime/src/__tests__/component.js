@@ -195,4 +195,28 @@ describe('Mini Program Component', () => {
 
     renderer.create(createElement(Page));
   });
+
+  it('should have default val for data', (done) => {
+    function renderFactory(Rax) {
+      return function(data) {
+        return createElement('view', {
+          foo: data.foo,
+        });
+      };
+    }
+    const Comp = createComponent(renderFactory, Rax, {
+      // data field is empty.
+      didMount() {
+        this.someMethod();
+        done();
+      },
+      methods: {
+        someMethod() {
+          expect(this.data).toEqual({});
+        },
+      }
+    });
+
+    renderer.create(createElement(Comp, { bar: 'from prop' }));
+  });
 });
