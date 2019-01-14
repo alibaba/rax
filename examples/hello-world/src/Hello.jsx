@@ -12,7 +12,7 @@ export default (props) => {
       </span>
     </div>
   );
-}
+};
 
 const styles = {
   hello: {
