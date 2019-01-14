@@ -48,12 +48,66 @@ export default class Event {
     }
   }
 
+  /**
+   * get node translateXY
+   * @param {object} node element
+   */
+  getComputedTranslateXY = (node) => {
+    const transformArray = [];
+    if (!window.getComputedStyle) return transformArray;
+    const style = getComputedStyle(node);
+    const { transform } = style;
+
+    let matrix = transform.match(/^matrix3d\((.+)\)$/);
+    if (matrix) {
+      // 3d
+      transformArray.push(parseFloat(matrix[1].split(', ')[12]));
+      transformArray.push(parseFloat(matrix[1].split(', ')[13]));
+      return transformArray;
+    } else {
+      // 2d
+      matrix = transform.match(/^matrix\((.+)\)$/);
+      matrix ? transformArray.push(parseFloat(matrix[1].split(', ')[4])) : 0;
+      matrix ? transformArray.push(parseFloat(matrix[1].split(', ')[5])) : 0;
+      return transformArray;
+    }
+  }
+
+  /**
+   * get transform data
+   * @param {boolean} start is start status
+   * @return {object} transform data
+   *   {number} startTranslateX touch start translateX
+   *   {number} startTranslateY touch start translateY
+   *   {number} translateX touch translateX
+   *   {number} translateY touch translateY
+   */
+  getTransformData(start = false) {
+    const transform = {};
+    // event type is pan, add transform data
+    const translate = this.getComputedTranslateXY(this.element);
+    const translateX = translate[0] ? translate[0] : 0;
+    const translateY = translate[1] ? translate[1] : 0;
+    transform.translateX = translateX;
+    transform.translateY = translateY;
+    // start transform data
+    if (start) {
+      this.element.startTranslateX = translateX;
+      this.element.startTranslateY = translateY;
+    }
+    transform.startTranslateX = this.element.startTranslateX;
+    transform.startTranslateY = this.element.startTranslateY;
+
+    return transform;
+  }
+
   _onPan = (e) => {
     this.callback({
       x: e.deltaX,
       y: e.deltaY,
       clientX: e.touches[0].clientX,
       clientY: e.touches[0].clientY,
+      ...this.getTransformData()
     });
   }
 
@@ -63,7 +117,8 @@ export default class Event {
       y: 0,
       clientX: e.touches[0].clientX,
       clientY: e.touches[0].clientY,
-      state: 'start'
+      state: 'start',
+      ...this.getTransformData(true)
     });
   }
 
@@ -71,7 +126,8 @@ export default class Event {
     this.callback({
       x: e.deltaX,
       y: e.deltaY,
-      state: 'end'
+      state: 'end',
+      ...this.getTransformData()
     });
   }
 
