@@ -10,6 +10,7 @@ import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, us
 import { flushPassiveEffects } from '../vdom/updater';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
+import memo from '../memo';
 
 describe('hooks', () => {
   function createNodeElement(tagName) {
@@ -654,82 +655,6 @@ describe('hooks', () => {
     });
   });
 
-  it(
-    'in sync mode, useEffect is deferred and updates finish synchronously ' +
-      '(in a single batch)',
-    () => {
-      const container = createNodeElement('div');
-      let logs = [];
-      function Counter(props) {
-        const [count, updateCount] = useState('(empty)');
-        useEffect(
-          () => {
-            // Update multiple times. These should all be batched together in
-            // a single render.
-            updateCount(props.count);
-            updateCount(props.count);
-            updateCount(props.count);
-            updateCount(props.count);
-            updateCount(props.count);
-            updateCount(props.count);
-          },
-          [props.count],
-        );
-        logs.push('Count: ' + count);
-        return <span>{'Count: ' + count}</span>;
-      }
-      render(<Counter count={0} />, container);
-      // Even in sync mode, effects are deferred until after paint
-      expect(logs).toEqual(['Count: (empty)']);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
-      // Now fire the effects
-      logs = [];
-      flushPassiveEffects();
-      // There were multiple updates, but there should only be a
-      // single render
-      expect(logs).toEqual(['Count: 0']);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
-    },
-  );
-
-  it(
-    'in sync mode, useEffect is deferred and updates finish synchronously ' +
-      '(in a single batch)',
-    () => {
-      const container = createNodeElement('div');
-      let logs = [];
-      function Counter(props) {
-        const [count, updateCount] = useState('(empty)');
-        useEffect(
-          () => {
-            // Update multiple times. These should all be batched together in
-            // a single render.
-            updateCount(2);
-            updateCount(3);
-            updateCount(4);
-            updateCount(5);
-            updateCount(6);
-            updateCount(7);
-          },
-          [props.count],
-        );
-        logs.push('Count: ' + count);
-        return <span>{'Count: ' + count}</span>;
-      }
-      render(<Counter count={0} />, container);
-      // Even in sync mode, effects are deferred until after paint
-      expect(logs).toEqual(['Count: (empty)']);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
-      // Now fire the effects
-      logs = [];
-      flushPassiveEffects();
-      // There were multiple updates, but there should only be a
-      // single render
-      expect(logs).toEqual(['Count: 7']);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 7');
-    },
-  );
-
   describe('useEffect', () => {
     it('simple mount and update', () => {
       const container = createNodeElement('div');
@@ -826,12 +751,50 @@ describe('hooks', () => {
       expect(container.childNodes[1].childNodes[0].data).toEqual('Layout');
     });
 
+    it('flushes passive effects even if siblings schedule a new root', () => {
+      const container = createNodeElement('div');
+      const container2 = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function PassiveEffect(props) {
+        useEffect(() => {
+          logs.push('Passive effect');
+        }, []);
+        return <Text text="Passive" />;
+      }
+      function LayoutEffect(props) {
+        useLayoutEffect(() => {
+          logs.push('Layout effect');
+          // Scheduling work shouldn't interfere with the queued passive effect
+          render(<Text text="New Root" />, container2);
+        });
+        return <Text text="Layout" />;
+      }
+      render([<PassiveEffect key="p" />, <LayoutEffect key="l" />], container);
+      expect(logs).toEqual([
+        'Passive',
+        'Layout',
+        'Layout effect',
+        'Passive effect',
+        'New Root',
+      ]);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Passive');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('Layout');
+    });
+
     it(
       'flushes effects serially by flushing old effects before flushing ' +
         "new ones, if they haven't already fired",
       () => {
         const container = createNodeElement('div');
         let logs = [];
+        function Text(props) {
+          logs.push(props.text);
+          return <span>{props.text}</span>;
+        }
         function getCommittedText() {
           return container.childNodes[0].childNodes[0].data;
         }
@@ -842,8 +805,7 @@ describe('hooks', () => {
               `Committed state when effect was fired: ${getCommittedText()}`,
             );
           });
-          logs.push(props.count);
-          return <span>{props.count}</span>;
+          return <Text text={props.count} />;
         }
         render(<Counter count={0} />, container);
         expect(logs).toEqual([0]);
@@ -866,5 +828,482 @@ describe('hooks', () => {
         ]);
       },
     );
+
+    it('updates have async priority', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter(props) {
+        const [count, updateCount] = useState('(empty)');
+        useEffect(
+          () => {
+            logs.push(`Schedule update [${props.count}]`);
+            updateCount(props.count);
+          },
+          [props.count],
+        );
+        return <Text text={'Count: ' + count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: (empty)']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Schedule update [0]', 'Count: 0']);
+
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Schedule update [1]', 'Count: 1']);
+    });
+
+    it('updates have async priority even if effects are flushed early', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter(props) {
+        const [count, updateCount] = useState('(empty)');
+        useEffect(
+          () => {
+            logs.push(`Schedule update [${props.count}]`);
+            updateCount(props.count);
+          },
+          [props.count],
+        );
+        return <Text text={'Count: ' + count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: (empty)']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
+
+      logs = [];
+      // Rendering again should flush the previous commit's effects
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual(['Schedule update [0]', 'Count: 0', 'Count: 0']);
+
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Schedule update [1]', 'Count: 1']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+    });
+
+    it('flushes serial effects before enqueueing work', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      let _updateCount;
+      function Counter(props) {
+        const [count, updateCount] = useState(0);
+        _updateCount = updateCount;
+        useEffect(() => {
+          logs.push('Will set count to 1');
+          updateCount(1);
+        }, []);
+        return <Text text={'Count: ' + count} />;
+      }
+
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+
+      logs = [];
+      // Enqueuing this update forces the passive effect to be flushed --
+      // updateCount(1) happens first, so 2 wins.
+      _updateCount(2);
+      expect(logs).toEqual(['Will set count to 1', 'Count: 1', 'Count: 2']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 2');
+    });
+
+    it(
+      'in sync mode, useEffect is deferred and updates finish synchronously ' +
+        '(in a single batch)',
+      () => {
+        const container = createNodeElement('div');
+        let logs = [];
+        function Counter(props) {
+          const [count, updateCount] = useState('(empty)');
+          useEffect(
+            () => {
+              // Update multiple times. These should all be batched together in
+              // a single render.
+              updateCount(props.count);
+              updateCount(props.count);
+              updateCount(props.count);
+              updateCount(props.count);
+              updateCount(props.count);
+              updateCount(props.count);
+            },
+            [props.count],
+          );
+          logs.push('Count: ' + count);
+          return <span>{'Count: ' + count}</span>;
+        }
+        render(<Counter count={0} />, container);
+        // Even in sync mode, effects are deferred until after paint
+        expect(logs).toEqual(['Count: (empty)']);
+        expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
+        // Now fire the effects
+        logs = [];
+        flushPassiveEffects();
+        // There were multiple updates, but there should only be a
+        // single render
+        expect(logs).toEqual(['Count: 0']);
+        expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      },
+    );
+
+    it(
+      'in sync mode, useEffect is deferred and updates finish synchronously ' +
+        '(in a single batch with different state)',
+      () => {
+        const container = createNodeElement('div');
+        let logs = [];
+        function Counter(props) {
+          const [count, updateCount] = useState('(empty)');
+          useEffect(
+            () => {
+              // Update multiple times. These should all be batched together in
+              // a single render.
+              updateCount(2);
+              updateCount(3);
+              updateCount(4);
+              updateCount(5);
+              updateCount(6);
+              updateCount(7);
+            },
+            [props.count],
+          );
+          logs.push('Count: ' + count);
+          return <span>{'Count: ' + count}</span>;
+        }
+        render(<Counter count={0} />, container);
+        // Even in sync mode, effects are deferred until after paint
+        expect(logs).toEqual(['Count: (empty)']);
+        expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
+        // Now fire the effects
+        logs = [];
+        flushPassiveEffects();
+        // There were multiple updates, but there should only be a
+        // single render
+        expect(logs).toEqual(['Count: 7']);
+        expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 7');
+      },
+    );
+
+    it('unmounts previous effect', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter(props) {
+        useEffect(() => {
+          logs.push(`Did create [${props.count}]`);
+          return () => {
+            logs.push(`Did destroy [${props.count}]`);
+          };
+        });
+        return <Text text={'Count: ' + props.count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did create [0]']);
+
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual(['Count: 1']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual([
+        'Did destroy [0]',
+        'Did create [1]',
+      ]);
+    });
+
+    it('unmounts on deletion', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter(props) {
+        useEffect(() => {
+          logs.push(`Did create [${props.count}]`);
+          return () => {
+            logs.push(`Did destroy [${props.count}]`);
+          };
+        });
+        return <Text text={'Count: ' + props.count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did create [0]']);
+
+      logs = [];
+      render(<div />, container);
+      // TODO
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did destroy [0]']);
+      // TODO
+      expect(container.childNodes[0].tagName).toEqual('DIV');
+    });
+
+    it('unmounts on deletion after skipped effect', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter(props) {
+        useEffect(() => {
+          logs.push(`Did create [${props.count}]`);
+          return () => {
+            logs.push(`Did destroy [${props.count}]`);
+          };
+        }, []);
+        return <Text text={'Count: ' + props.count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did create [0]']);
+
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual(['Count: 1']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual([]);
+
+      logs = [];
+      render([], container);
+      // TODO
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did destroy [0]']);
+      expect(container.childNodes).toEqual([]);
+    });
+
+    it('skips effect if constructor has not changed', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function effect() {
+        logs.push('Did mount');
+        return () => {
+          logs.push('Did unmount');
+        };
+      }
+      function Counter(props) {
+        useEffect(effect);
+        return <Text text={'Count: ' + props.count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did mount']);
+
+      logs = [];
+      render(<Counter count={1} />, container);
+      // No effect, because constructor was hoisted outside render
+      expect(logs).toEqual(['Count: 1']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+
+      logs = [];
+      render([], container);
+      // TODO
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did unmount']);
+      expect(container.childNodes).toEqual([]);
+    });
+
+    it('multiple effects', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter(props) {
+        useEffect(() => {
+          logs.push(`Did commit 1 [${props.count}]`);
+        });
+        useEffect(() => {
+          logs.push(`Did commit 2 [${props.count}]`);
+        });
+        return <Text text={'Count: ' + props.count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual([
+        'Did commit 1 [0]',
+        'Did commit 2 [0]',
+      ]);
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual(['Count: 1']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual([
+        'Did commit 1 [1]',
+        'Did commit 2 [1]',
+      ]);
+    });
+
+    it('unmounts all previous effects before creating any new ones', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter(props) {
+        useEffect(() => {
+          logs.push(`Mount A [${props.count}]`);
+          return () => {
+            logs.push(`Unmount A [${props.count}]`);
+          };
+        });
+        useEffect(() => {
+          logs.push(`Mount B [${props.count}]`);
+          return () => {
+            logs.push(`Unmount B [${props.count}]`);
+          };
+        });
+        return <Text text={'Count: ' + props.count} />;
+      }
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Mount A [0]', 'Mount B [0]']);
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual(['Count: 1']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual([
+        'Unmount A [0]',
+        'Mount A [1]',
+        'Unmount B [0]',
+        'Mount B [1]',
+      ]);
+    });
+
+    it('works with memo', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function Counter({count}) {
+        useLayoutEffect(() => {
+          logs.push('Mount: ' + count);
+          return () => logs.push('Unmount: ' + count);
+        });
+        return <Text text={'Count: ' + count} />;
+      }
+      Counter = memo(Counter);
+
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Count: 0', 'Mount: 0']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual(['Count: 1', 'Unmount: 0', 'Mount: 1']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+
+      logs = [];
+      render([], container);
+      // TODO
+      flushPassiveEffects();
+      expect(logs).toEqual(['Unmount: 1']);
+      expect(container.childNodes).toEqual([]);
+    });
+  });
+
+  describe('useLayoutEffect', () => {
+    it('force flushes passive effects before firing new layout effects', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+      let committedText = '(empty)';
+      function Counter(props) {
+        useLayoutEffect(() => {
+          // Normally this would go in a mutation effect, but this test
+          // intentionally omits a mutation effect.
+          committedText = props.count + '';
+
+          logs.push(`Mount layout [current: ${committedText}]`);
+          return () => {
+            logs.push(`Unmount layout [current: ${committedText}]`);
+          };
+        });
+        useEffect(() => {
+          logs.push(`Mount normal [current: ${committedText}]`);
+          return () => {
+            logs.push(`Unmount normal [current: ${committedText}]`);
+          };
+        });
+        return null;
+      }
+
+      render(<Counter count={0} />, container);
+      expect(logs).toEqual(['Mount layout [current: 0]']);
+      expect(committedText).toEqual('0');
+
+      logs = [];
+      render(<Counter count={1} />, container);
+      expect(logs).toEqual([
+        'Mount normal [current: 0]',
+        'Unmount layout [current: 0]',
+        'Mount layout [current: 1]',
+      ]);
+      expect(committedText).toEqual('1');
+
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual([
+        'Unmount normal [current: 1]',
+        'Mount normal [current: 1]',
+      ]);
+    });
   });
 });

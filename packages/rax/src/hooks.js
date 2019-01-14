@@ -1,5 +1,6 @@
 import Host from './vdom/host';
 import { scheduleBeforeNextRenderCallback } from './scheduler';
+import { flushPassiveEffects } from './vdom/updater';
 
 function getCurrentRenderingInstance() {
   const currentInstance = Host.component._instance;
@@ -44,11 +45,13 @@ export function useState(initialState) {
       }
 
       if (newState !== current) {
-        hooks[hookId][0] = newState;
         // This is a render phase update.  After this render pass, we'll restart
         if (Host.component && Host.component._instance === currentInstance) {
+          hooks[hookId][0] = newState;
           currentInstance.isRenderScheduled = true;
         } else {
+          !Host.isRendering && flushPassiveEffects();
+          hooks[hookId][0] = newState;
           currentInstance.update();
         }
       }
@@ -80,6 +83,7 @@ function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
   const hookId = currentInstance.getCurrentHookId();
   const hooks = currentInstance.hooks;
+  inputs = inputs != null ? inputs : [effect];
 
   if (!hooks[hookId]) {
     const create = (immediately) => {
@@ -202,11 +206,13 @@ export function useReducer(reducer, initialState, initialAction) {
       // reducer will get in the next render, before that we add all
       // actions to the queue
       const queue = hook[2];
-      queue.push(action);
       // This is a render phase update.  After this render pass, we'll restart
       if (Host.component && Host.component._instance === currentInstance) {
+        queue.push(action);
         currentInstance.isRenderScheduled = true;
       } else {
+        !Host.isRendering && flushPassiveEffects();
+        queue.push(action);
         currentInstance.update();
       }
     };
