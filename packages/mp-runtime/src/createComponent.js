@@ -4,11 +4,11 @@ import { registerComponent } from './componentsHub';
 
 /**
  * Returns a boolean indicating whether the object has the specified property as its own property.
- * @param {Object} obj
- * @param {String} key
+ * @param {Object} object
+ * @param {String} property
  */
-function hasOwnProperty(obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
+function hasOwnProperty(object, property) {
+  return Object.prototype.hasOwnProperty.call(object, property);
 }
 
 function getSlotName(item) {
