@@ -194,7 +194,7 @@ export default class Input extends PolymerElement {
       <input 
         id="input" 
         placeholder="[[placeholder]]" 
-        value$="[[value]]"
+        value="{{value}}"
         type$="[[type]]" 
         disabled$="[[disabled]]"
         autofocus$="[[focus]]" 
