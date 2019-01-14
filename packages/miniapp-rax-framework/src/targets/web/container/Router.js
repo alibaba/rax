@@ -18,7 +18,7 @@ export default class ContainerRouter {
   }
 
   navigateTo(params) {
-    const { pageName } = params;
+    let { pageName } = params;
     const container = document.querySelector('#main');
     if (isUrl(pageName)) {
       location.href = pageName;
