@@ -1,6 +1,7 @@
 import MiniAppRouter from './Router';
 import { findHomePage } from './utils';
 import { setupTheme } from '../../../core/renderer/atagTheme';
+import { initReachBottom } from '../../../core/renderer/reachBottom';
 
 /**
  * DOM Operation in container.
@@ -97,6 +98,8 @@ export default function render(appManifest) {
   // 根据项目配置初始化 css 变量
   const themeConfig = window.APP_MANIFEST ? window.APP_MANIFEST.themeConfig : {};
   setupTheme(themeConfig, window);
+
+  initReachBottom(window);
 
   // Correct the page font-size
   document.documentElement.style.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';

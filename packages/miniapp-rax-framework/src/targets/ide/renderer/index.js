@@ -5,6 +5,7 @@ import { createModuleAPIHandler } from './ModuleAPIHandler';
 import { setupAppear } from '../../../core/renderer/appear';
 import { setupTheme } from '../../../core/renderer/atagTheme';
 import { setupTap } from '../../../core/renderer/tap';
+import { initReachBottom } from '../../../core/renderer/reachBottom';
 
 export default function initRenderer(window, clientId, pageQuery, themeConfig) {
   const { document } = window;
@@ -21,6 +22,7 @@ export default function initRenderer(window, clientId, pageQuery, themeConfig) {
 
   setupAppear(window);
   setupTap(window);
+  initReachBottom(window);
   if (themeConfig) {
     setupTheme(themeConfig, window);
   }

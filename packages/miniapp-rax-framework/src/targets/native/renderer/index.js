@@ -7,9 +7,11 @@ import startRemoteInspect from './remoteInspect';
 import { setupAppear } from '../../../core/renderer/appear';
 import { setupTap } from '../../../core/renderer/tap';
 import { setupTheme } from '../../../core/renderer/atagTheme';
+import { initReachBottom } from '../../../core/renderer/reachBottom';
 
 setupAppear(window);
 setupTap(window);
+initReachBottom(window);
 
 const windmill = createWindmill({});
 const pageName = getPageName();
