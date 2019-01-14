@@ -3,7 +3,16 @@ const type = process.env.TYPE;
 module.exports = {
   presets: [
     require.resolve('@babel/preset-flow'),
-    require.resolve('@babel/preset-env')
+    [
+      require.resolve('@babel/preset-env'),
+      {
+        targets: {
+          chrome: '49',
+          ios: '8'
+        },
+        modules: type === 'miniprogram' ? 'commonjs' : 'auto'
+      }
+    ]
   ],
   plugins: [
     [

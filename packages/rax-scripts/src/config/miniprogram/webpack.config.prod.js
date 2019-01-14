@@ -1,3 +1,4 @@
+const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 
@@ -12,7 +13,8 @@ const webpackConfigProd = webpackMerge(webpackConfigBase, {
     'index.min': [pathConfig.miniappEntry],
   },
   output: {
-    publicPath: process.env.PUBLIC_PATH || '/build/',
+    path: path.resolve(pathConfig.appDirectory, process.env.OUTPUT_PATH || 'build'),
+    publicPath: process.env.PUBLIC_PATH || '/',
   },
   optimization: {
     minimize: isDebug ? false : true,
