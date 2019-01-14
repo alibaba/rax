@@ -3,36 +3,40 @@ import { performWork } from './updater';
 const setImmediatePolyfill = job => {
   return setTimeout(job, 0);
 }; // 0s
-const scheduleImmediateCallback = typeof setImmediate !== 'undefined' ? setImmediatePolyfill : setImmediate;
 
-const cancelImmediateCallback = typeof clearImmediate !== 'undefined' ? clearTimeout : clearImmediate;
+const scheduleImmediateCallback = typeof setImmediate === 'undefined' ?
+  setImmediatePolyfill : setImmediate;
+
+const cancelImmediateCallback = typeof clearImmediate === 'undefined' ?
+  clearTimeout : clearImmediate;
 
 const requestIdleCallbackPolyfill = job => setTimeout(job, 99); // 99ms
-const scheduleIdleCallback = typeof requestIdleCallback === 'undefined' ? requestIdleCallbackPolyfill : requestIdleCallback;
+const scheduleIdleCallback = typeof requestIdleCallback === 'undefined' ?
+  requestIdleCallbackPolyfill : requestIdleCallback;
 
 let beforeNextRenderCallbacks = [];
 let beforeNextRenderCallbackId;
-const scheduleBeforeNextRenderCallback = (callback, unique) => {
+
+const scheduleBeforeNextRenderCallback = (callback) => {
   if (beforeNextRenderCallbacks.length === 0) {
-    beforeNextRenderCallbackId = scheduleImmediateCallback(commitNextRenderCallbacks);
+    beforeNextRenderCallbackId = scheduleImmediateCallback(commitBeforeNextRenderCallbacks);
   }
-  if (!unique || beforeNextRenderCallbacks.indexOf(callback) < 0) {
-    beforeNextRenderCallbacks.push(callback);
-  }
+  beforeNextRenderCallbacks.push(callback);
 };
 
-function commitNextRenderCallbacks() {
+function commitBeforeNextRenderCallbacks() {
   let preCallbacks = beforeNextRenderCallbacks;
   beforeNextRenderCallbacks = [];
   preCallbacks.forEach(callback => callback());
   preCallbacks = null;
+  // exec callback maybe schedule a work
   performWork();
 }
 
-function flushNextRenderCallbacks() {
+function flushBeforeNextRenderCallbacks() {
   if (beforeNextRenderCallbacks.length !== 0) {
     cancelImmediateCallback(beforeNextRenderCallbackId);
-    commitNextRenderCallbacks();
+    commitBeforeNextRenderCallbacks();
   }
 }
 
@@ -40,5 +44,5 @@ export {
   scheduleImmediateCallback,
   scheduleIdleCallback,
   scheduleBeforeNextRenderCallback,
-  flushNextRenderCallbacks
+  flushBeforeNextRenderCallbacks
 };

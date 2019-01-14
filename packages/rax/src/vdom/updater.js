@@ -1,5 +1,5 @@
 import Host from './host';
-import { flushNextRenderCallbacks } from './scheduler';
+import { flushBeforeNextRenderCallbacks } from './scheduler';
 
 function enqueueCallback(internal, callback) {
   if (callback) {
@@ -89,7 +89,7 @@ function scheduleWork(component) {
 }
 
 export function flushPassiveEffects() {
-  flushNextRenderCallbacks();
+  flushBeforeNextRenderCallbacks();
 }
 
 const Updater = {
