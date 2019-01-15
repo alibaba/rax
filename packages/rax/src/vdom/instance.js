@@ -55,27 +55,22 @@ export default {
     }
 
     let prevRootInstance = this.get(container);
-    let hasPrevRootInstance = prevRootInstance && prevRootInstance.isRootComponent;
+    let hasPrevRootInstance = prevRootInstance && prevRootInstance.rootID;
 
     if (hasPrevRootInstance) {
       if (parentContext) {
-        // using _penddingContext to pass new context
+        // Using _penddingContext to pass new context
         prevRootInstance._internal._penddingContext = parentContext;
       }
-      prevRootInstance.setState({
-        element
-      });
+      prevRootInstance.update(element);
       return prevRootInstance;
     }
 
-    let wrappedElement = createElement(Root, null, null);
+    let wrappedElement = createElement(Root, null, element);
     let renderedComponent = instantiateComponent(wrappedElement);
     let defaultContext = parentContext || {};
     let rootInstance = renderedComponent.mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
-    rootInstance.setState({
-      element,
-    });
 
     // After render callback
     Host.driver.afterRender && Host.driver.afterRender(rootInstance);
