@@ -19,7 +19,10 @@ describe('audio', () => {
     expect(audioConstructor).toEqual('Audio');
 
     const image = await page.screenshot();
-    expect(image).toMatchImageSnapshot();
+    expect(image).toMatchImageSnapshot({
+      failureThreshold: '0.01',
+      failureThresholdType: 'percent',
+    });
   });
 },
 timeout

@@ -10,4 +10,4 @@ global.__VIEWPORT__ = {
   isMobile: true,
   hasTouch: true,
   isLandscape: false,
-}
+};
