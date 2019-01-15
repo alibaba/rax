@@ -38,6 +38,14 @@ describe('createElement', () => {
     expect(render(el)).toMatchSnapshot();
   });
 
+  it('generate empty element while template is invalid', () => {
+    const el = createElement(
+      '$template',
+      ['hello world']
+    );
+    expect(el).toBeNull();
+  });
+
   it('supports template for MiniApp', () => {
     const pageInstance = Symbol('pageInstance');
     const data = Symbol('data');
