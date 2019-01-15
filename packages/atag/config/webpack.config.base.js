@@ -3,6 +3,8 @@ const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const DEV_SERVER_PORT = process.env.PORT || 9001;
+
 module.exports = () => {
   return new Promise(done => {
     const entry = {
@@ -53,14 +55,18 @@ module.exports = () => {
       },
       devServer: {
         // contentBase: resolve(fs.realpathSync(process.cwd()), 'demo'),
-        port: 9001,
+        port: DEV_SERVER_PORT,
         before(app, server) {
           const base = resolve(__dirname, '../src');
           app.get(/\.html/, function(req, res) {
             const filepath = join(base, req.path);
             const TEST_TEMPLATE = fs.readFileSync(join(__dirname, '../tests/template.html'), 'utf-8');
             if (fs.existsSync(filepath)) {
-              res.end(TEST_TEMPLATE.replace('__PLACEHOLDER__', fs.readFileSync(filepath)));
+              res.end(
+                TEST_TEMPLATE
+                  .replace('__PLACEHOLDER__', fs.readFileSync(filepath))
+                  .replace('__PORT__', DEV_SERVER_PORT)
+              );
             }
           });
         },

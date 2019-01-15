@@ -11,7 +11,6 @@ module.exports = async function() {
     console.log(chalk.green('Teardown WebpackDevServer'));
     global.__WEBPACK_DEV_SERVER__.kill();
   }
-
   console.log(chalk.green('Teardown Puppeteer'));
   await global.__BROWSER_GLOBAL__.close();
   rimraf.sync(DIR);

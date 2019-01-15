@@ -25,25 +25,26 @@ module.exports = async function() {
   fs.writeFileSync(path.join(DIR, 'wsEndpoint'), browser.wsEndpoint());
 };
 
+
 function startDevServer(port) {
   port = port || 9002;
+
   return new Promise(resolve => {
     const handle = spawn(require.resolve('webpack-dev-server/bin/webpack-dev-server.js'), [
       '--config',
       require.resolve('../config/webpack.config.dev.js'),
       '--content-base=' + path.resolve(__dirname, '../src'),
       '--host=0.0.0.0',
-      '--port=' + port,
       '--hot=false',
     ], {
       env: Object.assign({}, process.env, {
         NODE_ENV: 'development',
+        PORT: port
       }),
       // stdio: 'inherit',
     });
     handle.stdout.on('data', (data) => {
       const str = data.toString();
-      console.log(str);
       if (str.indexOf('Compiled successfully.') !== -1) {
         resolve(handle);
       }
