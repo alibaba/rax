@@ -1,4 +1,4 @@
-const hasOwn = Object.prototype.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function flatClassNames() {
   let classes = [];
@@ -14,7 +14,7 @@ function flatClassNames() {
       classes.push(flatClassNames.apply(null, arg));
     } else if (argType === 'object') {
       for (let key in arg) {
-        if (hasOwn.call(arg, key) && arg[key]) {
+        if (hasOwnProperty.call(arg, key) && arg[key]) {
           classes.push(key);
         }
       }
@@ -56,7 +56,7 @@ export default function renderStyle(styleBinding, staticStyle) {
 
     for (let i = 0, l = validClassNames.length; i < l; i ++) {
       const className = validClassNames[i];
-      if (hasOwn.call(styleObject, className)) {
+      if (hasOwnProperty.call(styleObject, className)) {
         Object.assign(style, styleObject[className]);
       }
     }

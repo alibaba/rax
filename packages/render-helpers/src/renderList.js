@@ -31,9 +31,9 @@ export default function renderList(val, render) {
 
 /**
  * Whether a value is a plain object.
- * @param val {Object} Value.
+ * @param obj {Object} Value.
  * @return {boolean}
  */
-function isPlainObject(val) {
-  return ObjetProtoToString.call(val) === '[object Object]';
+function isPlainObject(obj) {
+  return ObjetProtoToString.call(obj) === '[object Object]';
 }

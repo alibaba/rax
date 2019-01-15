@@ -1,8 +1,8 @@
 /**
  * Create MiniApp text element.
- * @param val {String|Number} Value.
+ * @param text {String|Number} Value.
  * @return {String}
  */
-export default function(val) {
-  return '' + val;
+export default function(text) {
+  return '' + text;
 };
