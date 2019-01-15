@@ -33,5 +33,5 @@ exports.baseOptions = {
    * if this flag is on, node will be: { type:3, tag: 'text', children: 'hello world' },
    * or node will be: { type:3, tag: 'text', children: '\n  hello world\n' }
    */
-  trimTextWhitespace: false,
+  trimTextWhitespace: true,
 };
