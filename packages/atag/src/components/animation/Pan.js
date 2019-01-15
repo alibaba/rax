@@ -27,7 +27,6 @@ export default class Pan {
   }
 
   handlePanStart = (e) => {
-    e.preventDefault();
     if (this.panStartX === null || this.panStartY === null) {
       this.panStartX = e.touches[0].pageX;
       this.panStartY = e.touches[0].pageY;
@@ -55,7 +54,6 @@ export default class Pan {
 
     switch (touchAction) {
       case 'auto':
-        e.preventDefault();
         if (Math.abs(dx) >= thresholdX || Math.abs(dy) >= thresholdY) {
           this.handlePanStart(e);
         }
