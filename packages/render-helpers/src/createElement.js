@@ -19,13 +19,6 @@ export default function(type, props, ...children) {
     props = undefined;
   }
 
-  // For array mutation
-  for (let prop in props) {
-    if (Array.isArray(props[prop])) {
-      props[prop] = [...props[prop]];
-    }
-  }
-
   return Host.render.createElement(type, props, ...children);
 }
 
