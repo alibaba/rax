@@ -6,7 +6,7 @@ const SLOT_KEY = '$slots';
  * @param slotName {String} Slot name, default to 'default'.
  */
 export default function renderSlot(viewModel, slotName = 'default') {
-  return (viewModel && SLOT_KEY in viewModel)
+  return viewModel && SLOT_KEY in viewModel
     ? viewModel[SLOT_KEY][slotName]
     : null;
 }

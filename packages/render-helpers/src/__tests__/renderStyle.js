@@ -65,5 +65,5 @@ describe('renderStyle', () => {
         height: '200rpx',
       });
     });
-  })
+  });
 });

@@ -19,7 +19,7 @@ describe('toString', () => {
     });
 
     it('should accept object', () => {
-      expect(toString({ a: 1 })).toEqual(JSON.stringify({ a : 1 }, null, 2));
+      expect(toString({ a: 1 })).toEqual(JSON.stringify({ a: 1 }, null, 2));
     });
 
     it('should accept array', () => {
@@ -27,7 +27,9 @@ describe('toString', () => {
     });
 
     it('should accept function', () => {
-      expect(toString(function() { return 'hello world'; }))
+      expect(toString(function() {
+        return 'hello world';
+      }))
         .toMatchSnapshot();
     });
   });
