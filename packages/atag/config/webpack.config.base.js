@@ -4,13 +4,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { version } = require('../package');
 
-const baseEntry = [
-  resolve('vendors/intersection-observer.js'),
-  resolve('vendors/custom-elements-es5-adapter.js'),
-  resolve('vendors/es-polyfills'),
-  resolve('src/externals')
-];
-
 const componentEntries = {};
 fs.readdirSync(resolve('src/components')).forEach((name) => {
   const componentDir = resolve('src/components', name);
@@ -24,35 +17,15 @@ module.exports = () => {
       /*
        * Default version and entry of npm.
        */
-      get atag() {
-        return entry['atag.common'];
-      },
-
-      /**
-       * Full version of atag distribution
-       */
-      'atag.full': [
-        ...baseEntry,
-        resolve('src/entry/full'),
-      ],
-      /**
-       * Minimal version of atag distribution,
-       * only including a polyfill + CDN loader.
-       */
-      'atag.minimal': [
-        ...baseEntry,
+      atag: [
+        resolve('vendors/intersection-observer.js'),
+        resolve('vendors/custom-elements-es5-adapter.js'),
+        resolve('vendors/es-polyfills'),
+        resolve('src/externals'),
+        resolve('src/index'),
         resolve('src/dynamicLoader'),
       ],
 
-      /**
-       * Common version of atag distribution,
-       * including commonly used components.
-       */
-      'atag.common': [
-        ...baseEntry,
-        resolve('src/entry/common'),
-        resolve('src/dynamicLoader'),
-      ],
       /**
        * Each component register.
        */
@@ -97,10 +70,10 @@ module.exports = () => {
         },
       },
       externals: {
-        '@polymer/polymer': 'window.__Polymer__',
-        '@polymer/polymer/lib/utils/gestures': 'window.__Polymer_Gestures__',
-        '@polymer/polymer/lib/utils/render-status': 'window.__Polymer_Render_Status__',
-        '@polymer/polymer/lib/elements/dom-repeat': 'window.__Polymer_DOMRepeat__',
+        '@polymer/polymer': 'Polymer',
+        '@polymer/polymer/lib/utils/gestures': 'PolymerGestures',
+        '@polymer/polymer/lib/utils/render-status': 'PolymerRenderStatus',
+        '@polymer/polymer/lib/elements/dom-repeat': 'PolymerDOMRepeat',
       },
       devServer: {
         contentBase: resolve(fs.realpathSync(process.cwd()), 'demo'),
