@@ -1,4 +1,8 @@
-// react text node is a string
-module.exports = function(text) {
-  return '' + text;
+/**
+ * Create MiniApp text element.
+ * @param textLike {String} Text like string or anything.
+ * @return {String}
+ */
+export default function(textLike) {
+  return '' + textLike;
 };
