@@ -11,10 +11,13 @@ const { spawn } = require('child_process');
 const DIR = path.join(os.tmpdir(), 'jest_puppeteer_global_setup');
 const DEV_PORT = 9002;
 
+kill(DEV_PORT);
+
 module.exports = async function() {
-  kill(DEV_PORT);
   console.log(chalk.green('Setup WebpackDevServer at ' + DEV_PORT));
-  global.__WEBPACK_DEV_SERVER__ = await startDevServer(DEV_PORT);
+  if (!global.__WEBPACK_DEV_SERVER__) {
+    global.__WEBPACK_DEV_SERVER__ = await startDevServer(DEV_PORT);
+  }
 
   console.log(chalk.green('Setup Puppeteer'));
   const browser = await puppeteer.launch({});
@@ -24,7 +27,6 @@ module.exports = async function() {
   mkdirp.sync(DIR);
   fs.writeFileSync(path.join(DIR, 'wsEndpoint'), browser.wsEndpoint());
 };
-
 
 function startDevServer(port) {
   port = port || 9002;
