@@ -60,15 +60,19 @@ export default class Event {
 
     let matrix = transform.match(/^matrix3d\((.+)\)$/);
     if (matrix) {
+      const matrixs = matrix[1].split(', ');
       // 3d
-      transformArray.push(parseFloat(matrix[1].split(', ')[12]));
-      transformArray.push(parseFloat(matrix[1].split(', ')[13]));
+      transformArray.push(parseFloat(matrixs[12]));
+      transformArray.push(parseFloat(matrixs[13]));
       return transformArray;
     } else {
       // 2d
       matrix = transform.match(/^matrix\((.+)\)$/);
-      matrix ? transformArray.push(parseFloat(matrix[1].split(', ')[4])) : 0;
-      matrix ? transformArray.push(parseFloat(matrix[1].split(', ')[5])) : 0;
+      if (matrix) {
+        const matrixs = matrix[1].split(', ');
+        transformArray.push(parseFloat(matrixs[4]));
+        transformArray.push(parseFloat(matrixs[5]));
+      }
       return transformArray;
     }
   }
@@ -86,8 +90,8 @@ export default class Event {
     const transform = {};
     // event type is pan, add transform data
     const translate = this.getComputedTranslateXY(this.element);
-    const translateX = translate[0] ? translate[0] : 0;
-    const translateY = translate[1] ? translate[1] : 0;
+    const translateX = translate[0] || 0;
+    const translateY = translate[1] || 0;
     transform.translateX = translateX;
     transform.translateY = translateY;
     // start transform data
