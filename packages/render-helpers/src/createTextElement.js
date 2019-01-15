@@ -1,8 +1,8 @@
 /**
  * Create MiniApp text element.
- * @param textLike {String} Text like string or anything.
+ * @param val {String|Number} Value.
  * @return {String}
  */
-export default function(textLike) {
-  return '' + textLike;
+export default function(val) {
+  return '' + val;
 };
