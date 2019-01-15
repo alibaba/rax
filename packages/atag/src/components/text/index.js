@@ -49,7 +49,7 @@ export default class TextElement extends PolymerElement {
         type: String,
         value: 'false',
       },
-    }
+    };
   }
 
   constructor() {
@@ -76,7 +76,7 @@ export default class TextElement extends PolymerElement {
   }
 
   _processText(text) {
-    text = text.replace(stripLFReg, '')
+    text = text.replace(stripLFReg, '');
     if (this.space === 'false') {
       // by default space equal false
       return text.replace(continuousSpaceReg, ' ');
