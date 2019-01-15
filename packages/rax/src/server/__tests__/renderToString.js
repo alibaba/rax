@@ -3,7 +3,7 @@
 /* eslint react/no-did-update-set-state: "off" */
 
 import Component from '../../component';
-import {createElement} from '../../element';
+import createElement from '../../createElement';
 import renderToString from '../renderToString';
 import PropTypes from '../../proptypes';
 

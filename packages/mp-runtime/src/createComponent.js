@@ -2,8 +2,17 @@ import computeChangedData from './computeChangedData';
 import deepCopy from './deepCopy';
 import { registerComponent } from './componentsHub';
 
+/**
+ * Returns a boolean indicating whether the object has the specified property as its own property.
+ * @param {Object} object
+ * @param {String} property
+ */
+function hasOwnProperty(object, property) {
+  return Object.prototype.hasOwnProperty.call(object, property);
+}
+
 function getSlotName(item) {
-  if (item && Object.hasOwnProperty.call(item, 'props')) {
+  if (item && hasOwnProperty(item, 'props')) {
     return item.props.slot || 'default';
   } else {
     return 'default';
@@ -31,7 +40,14 @@ export default function createComponent(renderFactory, render, config, component
 
     constructor(props, context) {
       super(props, context);
-      this.state = deepCopy(config.data);
+      /**
+       * If not defined `data` field in config,
+       * then default val will be an empty plain object,
+       * else data will be deep copied.
+       */
+      this.state = hasOwnProperty(config, 'data')
+        ? deepCopy(config.data)
+        : {};
       this.publicInstance = this._createPublicInstance();
       this.componentId = ++componentCount;
     }
@@ -43,7 +59,7 @@ export default function createComponent(renderFactory, render, config, component
 
       if (config.methods != null) {
         for (let key in config.methods) {
-          if (Object.prototype.hasOwnProperty.call(config.methods, key)) {
+          if (hasOwnProperty(config.methods, key)) {
             scope[key] = config.methods[key].bind(scope);
           }
         }

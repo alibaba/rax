@@ -26,7 +26,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(js|mjs|jsx)$/,
         exclude: /(node_modules|bower_components)/,
         use: [
           {
