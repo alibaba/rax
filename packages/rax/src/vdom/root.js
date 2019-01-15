@@ -9,15 +9,19 @@ class Root extends Component {
     element: []
   };
   rootID = rootCounter++;
-  isRootComponent() {}
-  render() {
-    return this.state.element;
-  }
   getPublicInstance() {
     return this.getRenderedComponent().getPublicInstance();
   }
   getRenderedComponent() {
     return this._internal._renderedComponent;
+  }
+  update(element) {
+    this.setState({
+      element
+    });
+  }
+  render() {
+    return this.state.element;
   }
 }
 
