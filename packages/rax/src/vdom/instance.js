@@ -54,10 +54,9 @@ export default {
       parentContext = parentInternal._processChildContext(parentInternal._context);
     }
 
+    // Update root component 
     let prevRootInstance = this.get(container);
-    let hasPrevRootInstance = prevRootInstance && prevRootInstance.rootID;
-
-    if (hasPrevRootInstance) {
+    if (prevRootInstance && prevRootInstance.rootID) {
       if (parentContext) {
         // Using _penddingContext to pass new context
         prevRootInstance._internal._penddingContext = parentContext;
@@ -66,11 +65,13 @@ export default {
       return prevRootInstance;
     }
 
-    let wrappedElement = createElement(Root, null, element);
-    let renderedComponent = instantiateComponent(wrappedElement);
+    // Init root component with empty children
+    let renderedComponent = instantiateComponent(createElement(Root));
     let defaultContext = parentContext || {};
     let rootInstance = renderedComponent.mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
+    // Mount new element through update queue avoid when there is in rendering phase
+    rootInstance.update(element);
 
     // After render callback
     Host.driver.afterRender && Host.driver.afterRender(rootInstance);
