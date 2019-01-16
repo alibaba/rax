@@ -24,7 +24,6 @@ const spaces = {
 };
 const continuousSpaceReg = /[\u0020\u2002\u2023\f\r\t\v]+/g;
 const spaceReg = /[\u0020\u2002\u2023\f\r\t\v]/g;
-const stripLFReg = /^\n|\n$/;
 
 export default class TextElement extends PolymerElement {
   static get is() {
@@ -76,7 +75,6 @@ export default class TextElement extends PolymerElement {
   }
 
   _processText(text) {
-    text = text.replace(stripLFReg, '');
     if (this.space === 'false') {
       // by default space equal false
       return text.replace(continuousSpaceReg, ' ');
