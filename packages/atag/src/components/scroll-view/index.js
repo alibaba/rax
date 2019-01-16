@@ -20,13 +20,13 @@ export default class ScrollViewElement extends PolymerElement {
       scrollX: {
         type: Boolean,
         value: false,
-        computed: '_getBoolPropFromAttr("scroll-x", scrollX)',
+        computed: '_getBoolPropFromAttr("scroll-x", scrollX, prevent)',
         observer: '_observeScrollX',
       },
       scrollY: {
         type: Boolean,
         value: false,
-        computed: '_getBoolPropFromAttr("scroll-y", scrollY)',
+        computed: '_getBoolPropFromAttr("scroll-y", scrollY, prevent)',
         observer: '_observeScrollY',
       },
       'scroll-left': Number,
@@ -52,10 +52,16 @@ export default class ScrollViewElement extends PolymerElement {
         type: Number,
         value: 50,
       },
+      prevent: {
+        type: Boolean,
+        value: false,
+      },
     };
   }
 
-  _getBoolPropFromAttr(attr, fallbackVal) {
+  _getBoolPropFromAttr(attr, fallbackVal, prevent) {
+    if (prevent) return false;
+
     if (this.hasAttribute(attr)) {
       const value = this.getAttribute(attr);
       return value === 'true';

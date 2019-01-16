@@ -1,7 +1,8 @@
 import './swiper-item';
 import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
-import * as Gestures from '@polymer/polymer/lib/utils/gestures';
+
+const MOUSE_EVENTS = ['mousedown', 'mousemove', 'mouseup', 'click'];
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -106,15 +107,130 @@ export default class Swiper extends PolymerElement {
     super.connectedCallback();
     this._childrenObserver = new FlattenedNodesObserver(this, this._handleChildrenChanged);
     this._render();
-    Gestures.addListener(this, 'track', this._handleTrack);
-    Gestures.setTouchAction(this, 'auto');
+
+    this.addEventListener('mousedown', this._handleMouseDown);
+    this.addEventListener('touchstart', this._handleTouchStart);
+    this.addEventListener('touchmove', this._handleTouchMove);
+    this.addEventListener('touchend', this._handleTouchEnd);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    Gestures.removeListener(this, 'track', this._handleTrack);
+
+    this.removeEventListener('mousedown', this._handleMouseDown);
+    this.removeEventListener('touchstart', this._handleTouchStart);
+    this.removeEventListener('touchmove', this._handleTouchMove);
+    this.removeEventListener('touchend', this._handleTouchEnd);
     this._childrenObserver.disconnect();
   }
+
+  _trackingState = {
+    // touch/mouse point position
+    x: 0,
+    y: 0,
+    // start/tracking/end
+    state: 'start',
+    // touch/mouse points
+    moves: [],
+  };
+
+  _handleMouseDown = (evt) => {
+    if (!hasLeftMouseButton(evt)) {
+      return;
+    }
+
+    // Stop scroll nested.
+    evt.stopPropagation();
+
+    const x = this._trackingState.x = evt.clientX;
+    const y = this._trackingState.y = evt.clientY;
+    this._trackingState.moves.push({ x, y });
+    this._trackingState.state = 'start';
+
+    const tempMouseMoveHandler = (evt) => {
+      const x = evt.clientX;
+      const y = evt.clientY;
+      const dx = x - this._trackingState.x;
+      const dy = y - this._trackingState.y;
+      this.dragging = true;
+
+      if (this.timer !== null) {
+        clearTimeout(this.timer);
+      }
+
+      this.startTranslate = this._getOffset(this.circular ? this.current + 1 : this.current);
+      this.startTime = new Date().getTime();
+      this.transitionDuration = 0;
+
+      // TODO: add performanceMode desc
+      if (!this.performanceMode) {
+        this._setTranslate(this.startTranslate + (this.vertical ? dy : dx));
+        this._trackingState.moves.push({ x, y });
+      }
+    };
+    const tempMouseUpHandler = (evt) => {
+      const x = evt.clientX;
+      const y = evt.clientY;
+      const dx = x - this._trackingState.x;
+      const dy = y - this._trackingState.y;
+      this._determinMove({ dx, dy });
+
+      document.documentElement.removeEventListener('mousemove', tempMouseMoveHandler, true);
+      document.documentElement.removeEventListener('mouseup', tempMouseUpHandler, true);
+    };
+
+    document.documentElement.addEventListener('mousemove', tempMouseMoveHandler, true);
+    document.documentElement.addEventListener('mouseup', tempMouseUpHandler, true);
+  };
+
+  _handleTouchStart = (evt) => {
+    const currentTouch = evt.changedTouches[0];
+    const x = this._trackingState.x = currentTouch.clientX;
+    const y = this._trackingState.y = currentTouch.clientY;
+    this._trackingState.moves.push({ x, y });
+    this._trackingState.state = 'start';
+
+    // Find parent scroll view, stop its' scroll.
+    const parentScrollViews = findParentElements(this, 'a-scroll-view');
+    this._trackingState.scrollElements = parentScrollViews;
+    if (parentScrollViews.length) {
+      parentScrollViews.forEach((el) => {
+        // A scroll element protocol, if prevent is true, do not response.
+        el.prevent = true;
+      });
+    }
+  };
+
+  _handleTouchMove = (evt) => {
+    if (this.prevent) return;
+
+    const currentTouch = evt.changedTouches[0];
+    const moves = this._trackingState.moves;
+    this._trackingState.state = 'track';
+
+    const x = currentTouch.clientX;
+    const y = currentTouch.clientY;
+
+    const dx = x - moves[moves.length - 1].x;
+    const dy = y - moves[moves.length - 1].y;
+    const direction = Math.abs(dy) - Math.abs(dx);
+    // this._trackingState.moves.push({ x, y });
+
+    if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
+      this._handleTrackStart({ x, y });
+    }
+
+    evt.stopPropagation();
+  };
+
+  _handleTouchEnd = (evt) => {
+    this._trackingState.state = 'end';
+    if (this._trackingState.scrollElements) {
+      this._trackingState.scrollElements.forEach((el) => {
+        el.prevent = false;
+      });
+    }
+  };
 
   _handleChildrenChanged({ addedNodes }) {
     if (addedNodes && addedNodes.every((item) => {
@@ -208,7 +324,7 @@ export default class Swiper extends PolymerElement {
     }
   };
 
-  _handleTrackStart = ({ x, y }) => {
+  _handleTrackStart = (evt) => {
     this.dragging = true;
 
     if (this.timer !== null) {
@@ -219,28 +335,37 @@ export default class Swiper extends PolymerElement {
     this.startTime = new Date().getTime();
     this.transitionDuration = 0;
 
-    Gestures.addListener(document.documentElement, 'track', this._handleGlobalTrack);
-    // Avoid to disable document scroll
-    Gestures.setTouchAction(document.documentElement, null);
+    document.documentElement.addEventListener('touchmove', this._handleGlobalMove, true);
+    document.documentElement.addEventListener('touchend', this._handleGlobalEnd, true);
   };
 
-  _handleGlobalTrack = ({detail}) => {
-    if (detail.state === 'end') {
-      this._handleGlobalEnd(detail);
-    } else {
-      // Move when start or track state
-      this._handleGlobalMove(detail);
-    }
-  };
+  _handleGlobalMove = (evt) => {
+    const touch = evt.changedTouches[0];
+    const dx = touch.clientX - this._trackingState.x;
+    const dy = touch.clientY - this._trackingState.y;
 
-  _handleGlobalMove = ({dx, dy}) => {
     // TODO: add performanceMode desc
     if (!this.performanceMode) {
       this._setTranslate(this.startTranslate + (this.vertical ? dy : dx));
+      this._trackingState.moves.push({
+        x: touch.clientX,
+        y: touch.clientY,
+      });
     }
   };
 
-  _handleGlobalEnd = ({dx, dy}) => {
+  _handleGlobalEnd = (evt) => {
+    const touch = evt.changedTouches[0];
+    const dx = touch.clientX - this._trackingState.x;
+    const dy = touch.clientY - this._trackingState.y;
+    this._determinMove({ dx, dy });
+
+    // To prevent event bubble is stopped.
+    document.documentElement.removeEventListener('touchmove', this._handleGlobalMove, true);
+    document.documentElement.removeEventListener('touchend', this._handleGlobalEnd, true);
+  };
+
+  _determinMove({ dx, dy }) {
     this.dragging = false;
 
     this.transitionDuration = this.duration;
@@ -268,9 +393,7 @@ export default class Swiper extends PolymerElement {
         this._activeAutoplay();
       }, this.duration);
     }
-
-    Gestures.removeListener(document.documentElement, 'track', this._handleGlobalTrack);
-  };
+  }
 
   _next = () => {
     const itemsCount = this.itemsCount;
@@ -428,27 +551,6 @@ export default class Swiper extends PolymerElement {
     }, this.interval);
   };
 
-  _handleTrack = (evt) => {
-    /**
-     * If nested swiper, only inner component handle the event.
-     */
-    if (evt._eventHandled) {
-      return;
-    }
-
-    const { detail } = evt;
-    if (detail.state === 'start') {
-      const dx = detail.dx;
-      const dy = detail.dy;
-      const direction = Math.abs(dy) - Math.abs(dx);
-
-      if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
-        this._handleTrackStart(detail);
-      }
-    }
-    evt._eventHandled = true;
-  }
-
   static get template() {
     return html`
       <style>
@@ -528,6 +630,51 @@ export default class Swiper extends PolymerElement {
       </div>
     `;
   }
+}
+
+function isMouseEvent(name) {
+  return MOUSE_EVENTS.indexOf(name) > -1;
+}
+
+function hasLeftMouseButton(ev) {
+  let type = ev.type;
+  // exit early if the event is not a mouse event
+  if (!isMouseEvent(type)) {
+    return false;
+  }
+  // ev.button is not reliable for mousemove (0 is overloaded as both left button and no buttons)
+  // instead we use ev.buttons (bitmask of buttons) or fall back to ev.which (deprecated, 0 for no buttons, 1 for left button)
+  if (type === 'mousemove') {
+    // allow undefined for testing events
+    let buttons = ev.buttons === undefined ? 1 : ev.buttons;
+    // buttons is a bitmask, check that the left button bit is set (1)
+    return Boolean(buttons & 1);
+  } else {
+    // allow undefined for testing events
+    let button = ev.button === undefined ? 0 : ev.button;
+    // ev.button is 0 in mousedown/mouseup/click for left button activation
+    return button === 0;
+  }
+}
+
+/**
+ * Get special in parent DOM Tree
+ * @param element {Element} Base element
+ * @param name {String} Lowercased tag name.
+ * @return {HTMLElement[]} result.
+ */
+function findParentElements(element, name) {
+  const result = [];
+
+  let parent = element.parentElement;
+  while (parent) {
+    if (parent.tagName.toLowerCase() === name) {
+      result.push(parent);
+    }
+
+    parent = parent.parentElement;
+  }
+  return result;
 }
 
 customElements.define(Swiper.is, Swiper);
