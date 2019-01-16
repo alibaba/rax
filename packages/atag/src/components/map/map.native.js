@@ -377,23 +377,43 @@ export default class NativeMap extends PolymerElement {
    * Get map center location, api exposed.
    */
   getCenterLocation = (callback) => {
-    this._createOnceEventCallback('centerPosition', callback);
-    if (isIOS) {
-      this._createOrUpdateParam('getCenterLocation', Date.now());
-    } else {
-      this._callNativeControl('getCenterLocation');
-    }
+    this._createNativeEventProxy(
+      'centerPosition',
+      Date.now(),
+      'getCenterLocation',
+      callback
+    );
   }
 
   /**
    * Move the marker to some position
    */
-  translateMarker = (opts, callback) => {
-    this._createOnceEventCallback('translateMarkerEnd', callback);
+  translateMarker = (option, callback) => {
+    this._createNativeEventProxy(
+      'translateMarkerEnd',
+      option,
+      'translateMarker',
+      callback
+    );
+  }
+
+  /**
+   * Proxy a native event, in following steps:
+   *  1. Fire an event to native.
+   *  2. Native handle with staff, then emit an event to tag.
+   *  3. Invock callback with data sent by native.
+   * @param emitEventName {String} First step event name.
+   * @param emitEventOption {Object|Number|String} First step event data.
+   * @param callbackEventName {String} Second step event name.
+   * @param callback {Function} Callback to invock.
+   * @private
+   */
+  _createNativeEventProxy(emitEventName, emitEventOption, callbackEventName, callback) {
+    this._createOnceEventCallback(emitEventName, callback);
     if (isIOS) {
-      this._createOrUpdateParam('translateMarker', opts);
+      this._createOrUpdateParam(callbackEventName, emitEventOption);
     } else {
-      this._callNativeControl('translateMarker', opts);
+      this._callNativeControl(callbackEventName, emitEventOption);
     }
   }
 }
