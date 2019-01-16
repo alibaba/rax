@@ -54,7 +54,7 @@ export default {
       parentContext = parentInternal._processChildContext(parentInternal._context);
     }
 
-    // Update root component 
+    // Update root component
     let prevRootInstance = this.get(container);
     if (prevRootInstance && prevRootInstance.rootID) {
       if (parentContext) {
