@@ -4,7 +4,8 @@ let rootCounter = 1;
 
 class Root extends Component {
   state = {
-    element: this.props.children
+    // Using fragment instead of null for avoid create a comment node when init mount
+    element: []
   };
   rootID = rootCounter++;
   getPublicInstance() {
