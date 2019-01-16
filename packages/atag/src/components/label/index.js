@@ -14,14 +14,6 @@ export default class Label extends PolymerElement {
     };
   }
 
-  constructor() {
-    super();
-  }
-
-  ready() {
-    super.ready();
-  }
-
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('click', this._handleClick);
@@ -67,7 +59,7 @@ export default class Label extends PolymerElement {
       case 'a-radio':
         if (!forEl.checked && !forEl.disabled) {
           forEl.checked = !forEl.checked;
-          forEl.dispatchChange(forEl.checked);
+          forEl._dispatchChange(forEl.checked);
         }
         break;
       default:

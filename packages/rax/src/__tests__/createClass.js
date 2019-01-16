@@ -1,7 +1,7 @@
 /* @jsx createElement */
 /* eslint react/prefer-es6-class: "off" */
 
-import {createElement} from '../element';
+import createElement from '../createElement';
 import PropTypes from '../proptypes';
 import createClass from '../createClass';
 import Host from '../vdom/host';

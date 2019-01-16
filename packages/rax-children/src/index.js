@@ -1,0 +1,1 @@
+module.exports = require('rax/lib/children').default;

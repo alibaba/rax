@@ -27,19 +27,21 @@ function buildCompiler(config) {
     }
 
     console.log(colors.green('\nBuild successfully.'));
+    process.exit();
   });
 }
 
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   miniapp: './config/miniapp/webpack.config.prod',
+  miniprogram: './config/miniprogram/webpack.config.prod',
   component: './config/component/webpack.config.prod',
 };
 
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
 
-  if (appPackage.keywords.indexOf('rax-component')) { // build component
+  if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
     componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {

@@ -3,17 +3,14 @@ const {
   mustUseProp,
   isReservedTag,
   getTagNamespace,
-  genStaticKeys,
   isUnaryTag,
   canBeLeftOpenTag
 } = require('./utils');
 
-const defaultModules = [];
 const directives = require('./directives');
 
 exports.baseOptions = {
   expectHTML: true,
-  modules: defaultModules,
   directives,
   isPreTag,
   isUnaryTag,
@@ -21,8 +18,20 @@ exports.baseOptions = {
   canBeLeftOpenTag,
   isReservedTag,
   getTagNamespace,
-  // Whether add whitespace between tags.
-  // Rax prefer false to make it more similar to JSX
+  /**
+   *  Whether add whitespace between tags.
+   *  Rax prefer false to make it more similar to JSX
+   */
   preserveWhitespace: false,
-  staticKeys: genStaticKeys(defaultModules)
+
+  /**
+   * Trim text node whitespaces
+   * @example
+   * <text>
+   *   hello world
+   * </text>
+   * if this flag is on, node will be: { type:3, tag: 'text', children: 'hello world' },
+   * or node will be: { type:3, tag: 'text', children: '\n  hello world\n' }
+   */
+  trimTextWhitespace: true,
 };

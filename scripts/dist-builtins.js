@@ -7,26 +7,18 @@ const RaxPlugin = require('rax-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const fs = require('fs');
 
-// build components and packages
-const COMPONENTS_NAME = 'components';
-const COMPONENTS_DIR = path.resolve(__dirname, `../${COMPONENTS_NAME}`);
+// build packages
 const PACKAGES_NAME = 'packages';
 const PACKAGES_DIR = path.resolve(__dirname, `../${PACKAGES_NAME}`);
 const babelOptions = require('../babel.config')();
 
-let componentList = fs.readdirSync(COMPONENTS_DIR);
 let packageList = fs.readdirSync(PACKAGES_DIR);
 let buildinObj = {};
-componentList.map((item) => {
-  buildinObj[item] = item;
-});
+
 packageList.map((item) => {
   buildinObj[item] = item;
 });
 
-fs.readdirSync(COMPONENTS_DIR).forEach(function(packageName) {
-  creatBuildinModules(packageName, COMPONENTS_DIR, COMPONENTS_NAME);
-});
 fs.readdirSync(PACKAGES_DIR).forEach(function(packageName) {
   creatBuildinModules(packageName, PACKAGES_DIR, PACKAGES_NAME);
 });

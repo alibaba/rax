@@ -2,8 +2,17 @@ import computeChangedData from './computeChangedData';
 import deepCopy from './deepCopy';
 import { registerComponent } from './componentsHub';
 
+/**
+ * Returns a boolean indicating whether the object has the specified property as its own property.
+ * @param {Object} object
+ * @param {String} property
+ */
+function hasOwnProperty(object, property) {
+  return Object.prototype.hasOwnProperty.call(object, property);
+}
+
 function getSlotName(item) {
-  if (item && Object.hasOwnProperty.call(item, 'props')) {
+  if (item && hasOwnProperty(item, 'props')) {
     return item.props.slot || 'default';
   } else {
     return 'default';
@@ -18,14 +27,29 @@ function injectSlot(child, $slots) {
   $slots[slotName].push(child);
 }
 
+// Count of component instance numbers.
+let componentCount = 0;
+
 export default function createComponent(renderFactory, render, config, componentPath) {
   const templateRender = renderFactory(render);
 
   const component = class extends render.Component {
-    constructor() {
-      super();
-      this.state = deepCopy(config.data);
+    static contextTypes = {
+      $page: null,
+    };
+
+    constructor(props, context) {
+      super(props, context);
+      /**
+       * If not defined `data` field in config,
+       * then default val will be an empty plain object,
+       * else data will be deep copied.
+       */
+      this.state = hasOwnProperty(config, 'data')
+        ? deepCopy(config.data)
+        : {};
       this.publicInstance = this._createPublicInstance();
+      this.componentId = ++componentCount;
     }
 
     static defaultProps = config.props;
@@ -35,7 +59,7 @@ export default function createComponent(renderFactory, render, config, component
 
       if (config.methods != null) {
         for (let key in config.methods) {
-          if (Object.prototype.hasOwnProperty.call(config.methods, key)) {
+          if (hasOwnProperty(config.methods, key)) {
             scope[key] = config.methods[key].bind(scope);
           }
         }
@@ -54,6 +78,18 @@ export default function createComponent(renderFactory, render, config, component
 
       Object.defineProperty(scope, '$slots', {
         get: () => this.transformChildrenToSlots(this.props.children),
+      });
+
+      Object.defineProperty(scope, 'is', {
+        get: () => componentPath,
+      });
+
+      Object.defineProperty(scope, '$page', {
+        get: () => this.context.$page,
+      });
+
+      Object.defineProperty(scope, '$id', {
+        get: () => this.componentId,
       });
 
       return scope;
@@ -95,8 +131,10 @@ export default function createComponent(renderFactory, render, config, component
     }
 
     render() {
-      const { $slots, props, data } = this.publicInstance;
-      return templateRender.call(this.publicInstance, { $slots, ...props, ...data });
+      const { $slots, $id, props, data } = this.publicInstance;
+      return templateRender.call(this.publicInstance, {
+        $id, $slots, ...props, ...data
+      });
     }
   };
 

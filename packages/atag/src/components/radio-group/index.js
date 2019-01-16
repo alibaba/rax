@@ -1,5 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
 
 export default class RadioGroupElement extends PolymerElement {
   static get is() {
@@ -19,8 +18,8 @@ export default class RadioGroupElement extends PolymerElement {
     };
   }
 
-  ready() {
-    super.ready();
+  connectedCallback() {
+    super.connectedCallback();
     this.addEventListener('_radioChange', this.changeHandler);
   }
 

@@ -94,11 +94,17 @@ function executeCommand(cmd, options) {
   }
 }
 
+/**
+ * Resolve incoming dir
+ * @NOTE in windows, user may pass dir like `D:\path\to\project`,
+ *       need to transform to `D:/path/to/project` by path.resolve,
+ *       or webpack will throw error accroding to wrong path.
+ */
 function resolveDir(dir) {
   if (!dir) {
     return cwd;
   } else if (isAbsolute(dir)) {
-    return dir;
+    return resolve(dir);
   } else {
     return resolve(cwd, dir);
   }

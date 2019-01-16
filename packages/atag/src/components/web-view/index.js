@@ -16,21 +16,19 @@ export default class WebView extends PolymerElement {
 
   static get template() {
     return html`
-    <style>
-      :host {
-        display: block;
-        overflow: auto;
-      }
-
-      :host,
-      #iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-      }
-    </style>
-    <iframe id="iframe" src="{{src}}"></iframe>
-    `;
+      <style>
+        :host {
+          display: block;
+          overflow: auto;
+        }
+  
+        :host,
+        #iframe {
+          width: 100%;
+          height: 100%;
+          border: 0;
+        }
+      </style><iframe id="iframe" src="{{src}}"></iframe>`;
   }
 }
 
