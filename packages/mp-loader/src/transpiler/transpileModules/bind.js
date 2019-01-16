@@ -1,7 +1,6 @@
 const {
   getAndRemoveAttr,
   addAttr,
-  normalizeMustache,
   camelize,
   isPreservedPropName
 } = require('../helpers');
@@ -11,11 +10,6 @@ const IS_DETECTIVE = /^a\:/;
 
 function transformNode(el) {
   const { attrsList, attrsMap } = el;
-
-  if (el.hasOwnProperty('key') && IS_BIND_REG.test(el.key)) {
-    const exp = normalizeMustache(el.key, el);
-    addAttr(el, 'key', exp);
-  }
 
   if (!attrsList) {
     return;

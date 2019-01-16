@@ -1,10 +1,22 @@
 {
   "name": "render-helpers",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Render helpers for mp and sfc loader",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "keywords": [
     "helpers"
   ],
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "rax": "^0.6.7",
+    "rax-test-renderer": "^0.6.5"
+  }
 }

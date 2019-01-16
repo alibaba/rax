@@ -1,4 +1,4 @@
-import flattenChildren from './flattenChildren';
+import {flattenChildren} from './createElement';
 
 function convertChildrenToArray(children) {
   // flatten children

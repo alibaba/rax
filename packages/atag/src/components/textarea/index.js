@@ -305,7 +305,7 @@ export default class Textarea extends PolymerElement {
       <textarea 
         id="textarea"
         placeholder="[[placeholder]]"
-        value$="[[value]]"
+        value="{{value}}"
         disabled$="[[disabled]]"
         readonly$="[[readonly]]"
         autofocus$="[[focus]]"

@@ -6,6 +6,17 @@ const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
 
+babelConfig.presets.push([
+  require.resolve('@babel/preset-react'), {
+    'pragma': 'createElement'
+  }
+]);
+
+babelConfig.plugins.push(
+  require.resolve('babel-plugin-transform-jsx-stylesheet'),
+  require.resolve('rax-hot-loader/babel')
+);
+
 module.exports = {
   mode: webpackConfig.mode,
   context: webpackConfig.context,
@@ -43,7 +54,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.jsx?$/,
+        test: /\.(js|mjs|jsx)$/,
         exclude: /(node_modules|bower_components)/,
         use: [
           {

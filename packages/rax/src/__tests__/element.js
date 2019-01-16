@@ -1,7 +1,9 @@
 /* @jsx createElement */
 
 import Component from '../component';
-import {createElement, createFactory, cloneElement} from '../element';
+import createElement from '../createElement';
+import createFactory from '../createFactory';
+import cloneElement from '../cloneElement';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';

@@ -1,4 +1,4 @@
-import inject from '../inject';
+import inject from '../vdom/inject';
 import instance from '../vdom/instance';
 import ServerDriver from 'driver-server';
 import Serializer from '../server/serializer';

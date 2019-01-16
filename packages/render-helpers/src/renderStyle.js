@@ -1,11 +1,11 @@
-const hasOwn = {}.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function flatClassNames() {
-  var classes = [];
-  for (var i = 0; i < arguments.length; i++) {
-    var arg = arguments[i];
+  let classes = [];
+  for (let i = 0; i < arguments.length; i++) {
+    let arg = arguments[i];
     if (!arg) continue;
-    var argType = typeof arg;
+    let argType = typeof arg;
     if (argType === 'string') {
       classes = classes.concat(arg.split(' '));
     } else if (argType === 'number') {
@@ -13,8 +13,8 @@ function flatClassNames() {
     } else if (Array.isArray(arg)) {
       classes.push(flatClassNames.apply(null, arg));
     } else if (argType === 'object') {
-      for (var key in arg) {
-        if (hasOwn.call(arg, key) && arg[key]) {
+      for (let key in arg) {
+        if (hasOwnProperty.call(arg, key) && arg[key]) {
           classes.push(key);
         }
       }
@@ -39,7 +39,7 @@ function transformCSSStyleObject(str) {
  *   1. static inline style
  *   2. inline style with binding
  *   3. CSS Selector style
- * @param styleBinding
+ * @param styleBinding {Object}
  * @param staticStyle
  */
 export default function renderStyle(styleBinding, staticStyle) {
@@ -56,7 +56,7 @@ export default function renderStyle(styleBinding, staticStyle) {
 
     for (let i = 0, l = validClassNames.length; i < l; i ++) {
       const className = validClassNames[i];
-      if (hasOwn.call(styleObject, className)) {
+      if (hasOwnProperty.call(styleObject, className)) {
         Object.assign(style, styleObject[className]);
       }
     }

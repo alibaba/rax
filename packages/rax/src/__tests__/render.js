@@ -1,10 +1,9 @@
 /* @jsx createElement */
 
-import {createElement} from '../element';
+import createElement from '../createElement';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../findDOMNode';
 
 describe('render', () => {
   function createNodeElement(tagName) {

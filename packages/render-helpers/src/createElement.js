@@ -1,5 +1,13 @@
 import Host from './host';
+import createEmptyElement from './createEmptyElement';
 
+/**
+ * Create MiniApp element.
+ * @param type {String|Object} element type.
+ * @param props {Object} element props.
+ * @param children {Element|Array<Element>} child elements.
+ * @return {Element} element.
+ */
 export default function(type, props, ...children) {
   if (typeof type === 'object' && type.__esModule) {
     type = type.default;
@@ -7,7 +15,7 @@ export default function(type, props, ...children) {
     if (props.is) {
       return props.is.call(props.pageInstance, props.data);
     } else {
-      return null;
+      return createEmptyElement();
     }
   }
 
@@ -17,13 +25,6 @@ export default function(type, props, ...children) {
   if (Array.isArray(props)) {
     children = props;
     props = undefined;
-  }
-
-  // For array mutation
-  for (let prop in props) {
-    if (Array.isArray(props[prop])) {
-      props[prop] = [...props[prop]];
-    }
   }
 
   return Host.render.createElement(type, props, ...children);
