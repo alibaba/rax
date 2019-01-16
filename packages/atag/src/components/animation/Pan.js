@@ -27,7 +27,6 @@ export default class Pan {
   }
 
   handlePanStart = (e) => {
-    e.preventDefault();
     if (this.panStartX === null || this.panStartY === null) {
       this.panStartX = e.touches[0].pageX;
       this.panStartY = e.touches[0].pageY;
@@ -41,8 +40,7 @@ export default class Pan {
   onTouchStart = (e) => {
     this.startX = e.touches[0].pageX;
     this.startY = e.touches[0].pageY;
-    this.panStartX = e.touches[0].pageX;
-    this.panStartY = e.touches[0].pageY;
+    this.handlePanStart(e);
   };
 
   onTouchMove = (e) => {
@@ -56,7 +54,6 @@ export default class Pan {
 
     switch (touchAction) {
       case 'auto':
-        e.preventDefault();
         if (Math.abs(dx) >= thresholdX || Math.abs(dy) >= thresholdY) {
           this.handlePanStart(e);
         }
@@ -101,6 +98,8 @@ export default class Pan {
   onTouchEnd = (e) => {
     e.deltaX = this.deltaX;
     e.deltaY = this.deltaY;
+    this.panStartX = null;
+    this.panStartY = null;
     this.events.panend.forEach((handler) => {
       handler(e);
     });
@@ -109,6 +108,8 @@ export default class Pan {
   onTouchCancel = (e) => {
     e.deltaX = this.deltaX;
     e.deltaY = this.deltaY;
+    this.panStartX = null;
+    this.panStartY = null;
     this.events.pancancel.forEach((handler) => {
       handler(e);
     });
