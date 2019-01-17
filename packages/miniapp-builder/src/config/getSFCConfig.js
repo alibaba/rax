@@ -26,14 +26,17 @@ module.exports = (projectDir, opts) => {
                 {
                   loader: require.resolve('css-loader'),
                   options: {
-                    sourceMap: true,
+                    /**
+                     * @NOTE This sourceMap option can override webpack's devtool.
+                     */
+                    sourceMap: !!opts.isDevServer,
                     importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
                   }
                 },
                 {
                   loader: require.resolve('postcss-loader'),
                   options: {
-                    sourceMap: true,
+                    sourceMap: !!opts.isDevServer,
                     plugins: [
                       require('postcss-import')({ resolve: require('./styleResolver') }),
                       require('../plugins/PostcssPluginRpx2rem'),
