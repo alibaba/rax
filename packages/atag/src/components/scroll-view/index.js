@@ -93,14 +93,19 @@ export default class ScrollViewElement extends PolymerElement {
         if (this.scrollWithAnimation) {
           this._smoothScrollToX(newVal);
         } else {
-          this.scrollLeft = newVal;
+          // Delay to scroll, after dom is ready;
+          requestAnimationFrame(() => {
+            this.scrollLeft = newVal;
+          });
         }
         break;
       case 'scroll-top':
         if (this.scrollWithAnimation) {
           this._smoothScrollToY(newVal);
         } else {
-          this.scrollTop = newVal;
+          requestAnimationFrame(() => {
+            this.scrollTop = newVal;
+          });
         }
         break;
     }
