@@ -54,7 +54,6 @@ module.exports = () => {
         },
       },
       devServer: {
-        // contentBase: resolve(fs.realpathSync(process.cwd()), 'demo'),
         port: DEV_SERVER_PORT,
         before(app, server) {
           const base = resolve(__dirname, '../src');
@@ -64,8 +63,10 @@ module.exports = () => {
             if (fs.existsSync(filepath)) {
               res.end(
                 TEST_TEMPLATE
-                  .replace('__PLACEHOLDER__', fs.readFileSync(filepath))
-                  .replace('__PORT__', DEV_SERVER_PORT)
+                  // HTML test fixture code.
+                  .replace(/@TEST_FIXTURE/, fs.readFileSync(filepath))
+                  // Dev server port.
+                  .replace(/@SERVER_PORT/, DEV_SERVER_PORT)
               );
             }
           });
