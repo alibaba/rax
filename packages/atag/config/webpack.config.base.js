@@ -64,9 +64,9 @@ module.exports = () => {
               res.end(
                 TEST_TEMPLATE
                   // HTML test fixture code.
-                  .replace(/@TEST_FIXTURE/, fs.readFileSync(filepath))
+                  .replace(/@TEST_FIXTURE/g, fs.readFileSync(filepath))
                   // Dev server port.
-                  .replace(/@SERVER_PORT/, DEV_SERVER_PORT)
+                  .replace(/@SERVER_PORT/g, DEV_SERVER_PORT)
               );
             }
           });
