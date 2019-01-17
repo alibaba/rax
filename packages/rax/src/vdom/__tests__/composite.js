@@ -544,4 +544,84 @@ describe('CompositeComponent', function() {
     instance.setState({count: 1});
     expect(container.childNodes[0].tagName).toBe('DIV');
   });
+
+  it('schedules sync updates when inside componentDidMount/Update', () => {
+    let container = createNodeElement('div');
+    let instance;
+    let ops = [];
+
+    class Foo extends Component {
+      state = {tick: 0};
+
+      componentDidMount() {
+        ops.push('componentDidMount (before setState): ' + this.state.tick);
+        this.setState({tick: 1}); // eslint-disable-line
+        // We're in a batch. Update hasn't flushed yet.
+        ops.push('componentDidMount (after setState): ' + this.state.tick);
+      }
+
+      componentDidUpdate() {
+        ops.push('componentDidUpdate: ' + this.state.tick);
+        if (this.state.tick === 2) {
+          ops.push('componentDidUpdate (before setState): ' + this.state.tick);
+          this.setState({tick: 3}); // eslint-disable-line
+          ops.push('componentDidUpdate (after setState): ' + this.state.tick);
+          // We're in a batch. Update hasn't flushed yet.
+        }
+      }
+
+      render() {
+        ops.push('render: ' + this.state.tick);
+        instance = this;
+        return <span prop={this.state.tick} />;
+      }
+    }
+
+    render(<Foo />, container);
+
+    expect(ops).toEqual([
+      'render: 0',
+      'componentDidMount (before setState): 0',
+      'componentDidMount (after setState): 0',
+      // If the setState inside componentDidMount were deferred, there would be
+      // no more ops. Because it has Task priority, we get these ops, too:
+      'render: 1',
+      'componentDidUpdate: 1',
+    ]);
+
+    ops = [];
+    instance.setState({tick: 2});
+
+    expect(ops).toEqual([
+      'render: 2',
+      'componentDidUpdate: 2',
+      'componentDidUpdate (before setState): 2',
+      'componentDidUpdate (after setState): 2',
+      // If the setState inside componentDidUpdate were deferred, there would be
+      // no more ops. Because it has Task priority, we get these ops, too:
+      'render: 3',
+      'componentDidUpdate: 3',
+    ]);
+  });
+
+  it('performs Task work in the callback', () => {
+    let container = createNodeElement('div');
+    class Foo extends Component {
+      state = {step: 1};
+      componentDidMount() {
+        this.setState({step: 2}, () => { // eslint-disable-line
+          this.setState({step: 3}, () => {
+            this.setState({step: 4}, () => {
+              this.setState({step: 5});
+            });
+          });
+        });
+      }
+      render() {
+        return <span>{this.state.step}</span>;
+      }
+    }
+    render(<Foo />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('5');
+  });
 });
