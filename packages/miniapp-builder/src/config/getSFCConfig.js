@@ -9,7 +9,9 @@ const SFCLoader = require.resolve('sfc-loader');
  * SFC DSL webpack config
  */
 module.exports = (projectDir, opts) => {
+  const shouldEnableSourceMap = opts && opts.isDevServer === true;
   return {
+    devtool: shouldEnableSourceMap ? 'eval-source-map' : false,
     output: {
       libraryTarget: 'commonjs2',
       path: join(projectDir, 'build/pages'),
@@ -29,14 +31,14 @@ module.exports = (projectDir, opts) => {
                     /**
                      * @NOTE This sourceMap option can override webpack's devtool.
                      */
-                    sourceMap: !!opts.isDevServer,
+                    sourceMap: shouldEnableSourceMap,
                     importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
                   }
                 },
                 {
                   loader: require.resolve('postcss-loader'),
                   options: {
-                    sourceMap: !!opts.isDevServer,
+                    sourceMap: shouldEnableSourceMap,
                     plugins: [
                       require('postcss-import')({ resolve: require('./styleResolver') }),
                       require('../plugins/PostcssPluginRpx2rem'),
