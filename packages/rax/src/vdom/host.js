@@ -4,6 +4,8 @@
 export default {
   component: null,
   mountID: 1,
+  isRendering: false,
+  dirtyComponents: [],
   sandbox: true,
   // Roots
   rootComponents: {},

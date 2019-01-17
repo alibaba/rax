@@ -9,8 +9,9 @@ const babelLoaderConfig = {
 };
 
 module.exports = (projectDir, opts) => {
+  const shouldEnableSourceMap = opts && opts.isDevServer === true;
   return {
-    devtool: opts.isDevServer ? 'eval-source-map' : false,
+    devtool: shouldEnableSourceMap ? 'eval-source-map' : false,
     output: {
       path: join(projectDir, 'build'),
       // show at devtool console panel
@@ -37,14 +38,17 @@ module.exports = (projectDir, opts) => {
             {
               loader: require.resolve('css-loader'),
               options: {
-                sourceMap: true,
+                /**
+                 * @NOTE This sourceMap option can override webpack's devtool.
+                 */
+                sourceMap: shouldEnableSourceMap,
                 importLoaders: 1 // 0 => no loaders (default); 1 => postcss-loader; 2 => postcss-loader, sass-loader
               }
             },
             {
               loader: require.resolve('postcss-loader'),
               options: {
-                sourceMap: true,
+                sourceMap: shouldEnableSourceMap,
                 plugins: [
                   require('postcss-import')({ resolve: styleResolver }),
                   require('../plugins/PostcssPluginRpx2rem'),
