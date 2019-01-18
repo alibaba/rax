@@ -347,6 +347,45 @@ render(<Hello name="world" />, document.body, { driver: DomDriver });
 #### rax-create-class
 * createClass()
 
+## Rax Official Hooks
+
+#### Asynchronous Operation 
+```jsx
+import usePromise from 'rax-use-promise';
+
+const fetchData = () => fetch('https://httpbin.org/get').then(res => res.json());
+
+function Example() {
+  const [data, error] = usePromise(fetchData);
+  if (erro) {
+    return <p>error</p>
+  } else if (data) {
+    return <p>{data.foo}</p>
+  }
+}
+```
+
+#### Fetch Data 
+```jsx
+import useFetch from 'rax-use-fetch';
+
+function Example() {
+  const [data, error] = useFetch('https://httpbin.org/get', { method: 'GET' }, 'json');
+  if (error) {
+    return <p>error</p>
+  } else if (data) {
+    return <p>{data.foo}</p>
+  } else {
+    return <p>loading</p>
+  }
+}
+```
+
+## Rax Official Drivers
+* driver-dom
+* driver-weex
+* driver-webgl
+* driver-worker
 
 ## Rax Renderers
 
