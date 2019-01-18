@@ -108,6 +108,10 @@ export default class Swiper extends PolymerElement {
     this._render();
     Gestures.addListener(this, 'track', this._handleTrack);
     Gestures.setTouchAction(this, 'auto');
+
+    this.parentScrollView = this._getNearestParentElement(this, (el) => {
+      return el && el.tagName.toLowerCase() === 'a-scroll-view';
+    });
   }
 
   disconnectedCallback() {
@@ -224,7 +228,34 @@ export default class Swiper extends PolymerElement {
     Gestures.setTouchAction(document.documentElement, null);
   };
 
-  _handleGlobalTrack = ({detail}) => {
+  /**
+   * Find nearnet parent swiper element.
+   * @param el {HTMLElement} Element.
+   * @param isTarget {Function} If is target return true.
+   * @private
+   */
+  _getNearestParentElement(el, isTarget) {
+    while (el) {
+      if (!el || isTarget(el)) {
+        return el;
+      }
+
+      el = el.parentElement;
+    }
+  }
+
+  _handleGlobalTrack = (evt) => {
+    const { detail } = evt;
+
+    /**
+     * If swiper nested, only handle with nearest parent swiper,
+     * in case of all swipers trigger scroll.
+     */
+    const targetSwiper = this._getNearestParentElement(evt.target, (el) => {
+      return el && el.tagName.toLowerCase() === 'a-swiper';
+    });
+    if (targetSwiper !== this) return;
+
     if (detail.state === 'end') {
       this._handleGlobalEnd(detail);
     } else {
@@ -428,7 +459,8 @@ export default class Swiper extends PolymerElement {
     }, this.interval);
   };
 
-  _handleTrack = ({detail}) => {
+  _handleTrack = (evt) => {
+    const { detail } = evt;
     if (detail.state === 'start') {
       const dx = detail.dx;
       const dy = detail.dy;
@@ -436,6 +468,15 @@ export default class Swiper extends PolymerElement {
 
       if (!this.vertical && direction < 0 || this.vertical && direction > 0) {
         this._handleTrackStart(detail);
+      }
+
+      // Prevent parent scroll view
+      if (this.parentScrollView) {
+        this.parentScrollView.prevent = true;
+      }
+    } else if (detail.state === 'end') {
+      if (this.parentScrollView) {
+        this.parentScrollView.prevent = false;
       }
     }
   }

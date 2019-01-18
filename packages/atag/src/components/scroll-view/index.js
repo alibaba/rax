@@ -55,7 +55,27 @@ export default class ScrollViewElement extends PolymerElement {
     };
   }
 
+  /**
+   * If prevented, do not response to any user actions.
+   * @type {boolean}
+   * @private
+   */
+  _prevent = false;
+
+  get prevent() {
+    return this._prevent;
+  }
+
+  set prevent(val) {
+    this._prevent = val;
+    // Recalc computed properties.
+    this.scrollX = this._getBoolPropFromAttr('scroll-x', this.scrollX);
+    this.scrollY = this._getBoolPropFromAttr('scroll-y', this.scrollY);
+  }
+
   _getBoolPropFromAttr(attr, fallbackVal) {
+    if (this.prevent) return false;
+
     if (this.hasAttribute(attr)) {
       const value = this.getAttribute(attr);
       return value === 'true';
