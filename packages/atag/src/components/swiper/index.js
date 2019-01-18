@@ -234,9 +234,9 @@ export default class Swiper extends PolymerElement {
   };
 
   /**
-   * Find nearnet parent swiper element.
-   * @param el {HTMLElement} Element.
-   * @param isTarget {Function} If is target return true.
+   * Find nearnet parent element.
+   * @param el {HTMLElement} Base element.
+   * @param isTarget {Function} Judge the right element, return true if is target.
    * @private
    */
   _getNearestParentElement(el, isTarget) {
@@ -458,6 +458,7 @@ export default class Swiper extends PolymerElement {
 
   _handleTrack = (evt) => {
     const { detail } = evt;
+    // Early return to improve performance.
     if (detail.state === 'track') return;
 
     const parentScrollElement = this._getNearestParentElement(
@@ -474,7 +475,7 @@ export default class Swiper extends PolymerElement {
         this._handleTrackStart(detail);
       }
 
-      // Prevent parent scroll view
+      // Prevent parent scroll element.
       if (parentScrollElement) {
         parentScrollElement._prevent = true;
       }
