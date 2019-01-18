@@ -370,7 +370,7 @@ function Example() {
 import useFetch from 'rax-use-fetch';
 
 function Example() {
-  const [data, error] = useFetch('https://httpbin.org/get', { method: 'GET' }, 'json');
+  const [data, error] = useFetch('https://httpbin.org/get');
   if (error) {
     return <p>error</p>
   } else if (data) {
