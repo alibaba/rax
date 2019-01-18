@@ -110,7 +110,7 @@ export default class Swiper extends PolymerElement {
     Gestures.setTouchAction(this, 'auto');
 
     this.parentScrollView = this._getNearestParentElement(this, (el) => {
-      return el && el.tagName.toLowerCase() === 'a-scroll-view';
+      return el.tagName === 'A-SCROLL-VIEW';
     });
   }
 
@@ -252,7 +252,7 @@ export default class Swiper extends PolymerElement {
      * in case of all swipers trigger scroll.
      */
     const targetSwiper = this._getNearestParentElement(evt.target, (el) => {
-      return el && el.tagName.toLowerCase() === 'a-swiper';
+      return el.tagName === 'A-SWIPER';
     });
     if (targetSwiper !== this) return;
 
