@@ -2,6 +2,7 @@ import './swiper-item';
 import { PolymerElement, html } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class Swiper extends PolymerElement {
   static get is() {
@@ -65,6 +66,14 @@ export default class Swiper extends PolymerElement {
     };
   }
 
+  /**
+   * Mark scrollable element.
+   * @type {boolean}
+   * @private
+   */
+  _scrollable = true;
+  _prevent = false;
+
   constructor() {
     super();
     this.translateX = 0;
@@ -108,10 +117,6 @@ export default class Swiper extends PolymerElement {
     this._render();
     Gestures.addListener(this, 'track', this._handleTrack);
     Gestures.setTouchAction(this, 'auto');
-
-    this.parentScrollView = this._getNearestParentElement(this, (el) => {
-      return el.tagName === 'A-SCROLL-VIEW';
-    });
   }
 
   disconnectedCallback() {
@@ -236,25 +241,15 @@ export default class Swiper extends PolymerElement {
    */
   _getNearestParentElement(el, isTarget) {
     while (el) {
-      if (!el || isTarget(el)) {
-        return el;
-      }
-
       el = el.parentElement;
+      if (!el || isTarget(el)) return el;
     }
   }
 
   _handleGlobalTrack = (evt) => {
     const { detail } = evt;
 
-    /**
-     * If swiper nested, only handle with nearest parent swiper,
-     * in case of all swipers trigger scroll.
-     */
-    const targetSwiper = this._getNearestParentElement(evt.target, (el) => {
-      return el.tagName === 'A-SWIPER';
-    });
-    if (targetSwiper !== this) return;
+    if (this._prevent) return;
 
     if (detail.state === 'end') {
       this._handleGlobalEnd(detail);
@@ -272,6 +267,8 @@ export default class Swiper extends PolymerElement {
   };
 
   _handleGlobalEnd = ({dx, dy}) => {
+    if (this._prevent) return;
+
     this.dragging = false;
 
     this.transitionDuration = this.duration;
@@ -461,6 +458,13 @@ export default class Swiper extends PolymerElement {
 
   _handleTrack = (evt) => {
     const { detail } = evt;
+    if (detail.state === 'track') return;
+
+    const parentScrollElement = this._getNearestParentElement(
+      this,
+      (el) => el._scrollable === true
+    );
+
     if (detail.state === 'start') {
       const dx = detail.dx;
       const dy = detail.dy;
@@ -471,12 +475,15 @@ export default class Swiper extends PolymerElement {
       }
 
       // Prevent parent scroll view
-      if (this.parentScrollView) {
-        this.parentScrollView.prevent = true;
+      if (parentScrollElement) {
+        parentScrollElement._prevent = true;
       }
     } else if (detail.state === 'end') {
-      if (this.parentScrollView) {
-        this.parentScrollView.prevent = false;
+      if (parentScrollElement) {
+        // @NOTE: After all event handler is done, the render function is done, then set _prevent.
+        afterNextRender(this, () => {
+          parentScrollElement._prevent = false;
+        });
       }
     }
   }
