@@ -1,3 +1,4 @@
+import Heap from './ComponentHeap';
 /*
  * Stateful things in runtime
  */
@@ -5,7 +6,7 @@ export default {
   component: null,
   mountID: 1,
   isRendering: false,
-  dirtyComponents: [],
+  dirtyComponents: new Heap(),
   sandbox: true,
   // Roots
   rootComponents: {},

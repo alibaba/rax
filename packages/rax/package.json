@@ -16,9 +16,10 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
+    "@babel/runtime": "^7.2.0",
     "driver-server": "^0.6.5",
-    "universal-env": "^0.6.5",
-    "@babel/runtime": "^7.2.0"
+    "tinyqueue": "^2.0.0",
+    "universal-env": "^0.6.5"
   },
   "devDependencies": {
     "style-unit": "^0.6.5"

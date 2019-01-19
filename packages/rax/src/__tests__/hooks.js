@@ -1256,6 +1256,50 @@ describe('hooks', () => {
       expect(logs).toEqual(['Unmount: 1']);
       expect(container.childNodes).toEqual([]);
     });
+
+    it('does not update one component twice (update' +
+    'by props or setState should be merge)', () => {
+      let container = createNodeElement('div');
+      let logs = [];
+      let updateChild;
+      let updateParent;
+      let updateChildCountNum = 0;
+      let updateParentCountNum = 0;
+
+      const Child = function(props) {
+        updateChildCountNum++;
+        const [count, updateCount] = useState(0);
+        updateChild = updateCount;
+        return <span>{count}</span>;
+      };
+
+      const Parent = function(props) {
+        updateParentCountNum++;
+        const [count, updateCount] = useState(0);
+        updateParent = updateCount;
+        return [<span>{count}</span>, <Child />];
+      };
+
+      function App() {
+        useEffect(() => {
+          updateChild(1);
+          updateChild(2);
+          updateParent(3);
+          updateChild(4);
+        });
+        return <Parent />;
+      }
+      render(<App />, container);
+      expect(updateChildCountNum).toEqual(1);
+      expect(updateParentCountNum).toEqual(1);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('0');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('0');
+      flushPassiveEffects();
+      expect(updateChildCountNum).toEqual(2);
+      expect(updateParentCountNum).toEqual(2);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('3');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('4');
+    });
   });
 
   describe('useLayoutEffect', () => {

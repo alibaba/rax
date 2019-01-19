@@ -624,4 +624,197 @@ describe('CompositeComponent', function() {
     render(<Foo />, container);
     expect(container.childNodes[0].childNodes[0].data).toBe('5');
   });
+
+  it('should batch child/parent state updates together', () => {
+    let container = createNodeElement('div');
+    let container2 = createNodeElement('div');
+
+    var parentUpdateCount = 0;
+
+    class Parent extends Component {
+      state = {x: 0};
+
+      componentDidUpdate() {
+        parentUpdateCount++;
+      }
+
+      render() {
+        return <div><Child ref="child" x={this.state.x} /></div>;
+      }
+    }
+
+    var childUpdateCount = 0;
+
+    class Child extends Component {
+      state = {y: 0};
+
+      componentDidUpdate() {
+        childUpdateCount++;
+      }
+
+      render() {
+        return <div>{this.props.x + this.state.y}</div>;
+      }
+    }
+
+    var instance = render(<Parent />, container);
+    var child = instance.refs.child;
+    expect(instance.state.x).toBe(0);
+    expect(child.state.y).toBe(0);
+
+    function Batch() {
+      child.setState({y: 2});
+      instance.setState({x: 1});
+      expect(instance.state.x).toBe(0);
+      expect(child.state.y).toBe(0);
+      expect(parentUpdateCount).toBe(0);
+      expect(childUpdateCount).toBe(0);
+      return null;
+    }
+
+    render(<Batch />, container2);
+
+    expect(instance.state.x).toBe(1);
+    expect(child.state.y).toBe(2);
+    expect(parentUpdateCount).toBe(1);
+
+    // Batching reduces the number of updates here to 1.
+    expect(childUpdateCount).toBe(1);
+  });
+
+  it('does not call render after a component as been deleted', () => {
+    let container = createNodeElement('div');
+    let container2 = createNodeElement('div');
+    var renderCount = 0;
+    var componentB = null;
+
+    class B extends Component {
+      state = {updates: 0};
+
+      componentDidMount() {
+        componentB = this;
+      }
+
+      render() {
+        renderCount++;
+        return <div />;
+      }
+    }
+
+    class A extends Component {
+      state = {showB: true};
+
+      render() {
+        return this.state.showB ? <B /> : <div />;
+      }
+    }
+
+    var component = render(<A />, container);
+    function Batch() {
+      // B will have scheduled an update but the batching should ensure that its
+      // update never fires.
+      componentB.setState({updates: 1});
+      component.setState({showB: false});
+    }
+
+    render(<Batch />, container2);
+    expect(renderCount).toBe(1);
+  });
+
+  it('does not update one component twice when schedule in the rendering phase', () => {
+    let container = createNodeElement('div');
+    let logs = [];
+
+    class Child1 extends Component {
+      state = {
+        count: 0
+      };
+      componentDidUpdate() {
+        logs.push('Child1');
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+        this.setState({count: 3}); // eslint-disable-line
+      }
+      render() {
+        return (
+          [
+            <span>{this.props.count}</span>,
+            <span>{this.state.count}</span>
+          ]
+        );
+      }
+    }
+
+    class Parent1 extends Component {
+      state = {
+        count: 0
+      }
+      componentDidUpdate() {
+        logs.push('Parent1');
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+      }
+      render() {
+        return <Child1 count={this.state.count} />;
+      }
+    }
+
+    class Child2 extends Component {
+      state = {
+        count: 0
+      };
+      componentDidUpdate() {
+        logs.push('Child2');
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+        this.setState({count: 3}); // eslint-disable-line
+      }
+      render() {
+        return (
+          [
+            <span>{this.props.count}</span>,
+            <span>{this.state.count}</span>
+          ]
+        );
+      }
+    }
+
+    class Parent2 extends Component {
+      state = {
+        count: 0
+      }
+      shouldComponentUpdate() {
+        return false;
+      }
+      componentDidUpdate() {
+        logs.push('Parent2');
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+      }
+      render() {
+        return <Child2 count={this.state.count} />;
+      }
+    }
+
+    class App extends Component {
+      render() {
+        return [<Parent1 />, <Parent2 />];
+      }
+    }
+    render(<App />, container);
+    // Child1 appears only once
+    expect(logs).toEqual(['Child1', 'Parent1', 'Child2']);
+    expect(container.childNodes[0].childNodes[0].data).toBe('2');
+    expect(container.childNodes[1].childNodes[0].data).toBe('3');
+    expect(container.childNodes[2].childNodes[0].data).toBe('0');
+    expect(container.childNodes[3].childNodes[0].data).toBe('3');
+  });
 });
