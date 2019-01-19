@@ -639,7 +639,7 @@ describe('CompositeComponent', function() {
       }
 
       render() {
-        return <div><Child ref="child" x={this.state.x} /></div>;
+        return <div><Child ref="child" x={this.state.x} /><Child2 ref="child2" x={this.state.x} /></div>;
       }
     }
 
@@ -657,18 +657,37 @@ describe('CompositeComponent', function() {
       }
     }
 
+    var child2UpdateCount = 0;
+
+    class Child2 extends Component {
+      state = {y: 0};
+
+      componentDidUpdate() {
+        child2UpdateCount++;
+      }
+
+      render() {
+        return <div>{this.props.x + this.state.y}</div>;
+      }
+    }
+
     var instance = render(<Parent />, container);
     var child = instance.refs.child;
+    var child2 = instance.refs.child2;
     expect(instance.state.x).toBe(0);
     expect(child.state.y).toBe(0);
+    expect(child2.state.y).toBe(0);
 
     function Batch() {
       child.setState({y: 2});
       instance.setState({x: 1});
+      child2.setState({y: 2});
       expect(instance.state.x).toBe(0);
       expect(child.state.y).toBe(0);
+      expect(child2.state.y).toBe(0);
       expect(parentUpdateCount).toBe(0);
       expect(childUpdateCount).toBe(0);
+      expect(child2UpdateCount).toBe(0);
       return null;
     }
 
@@ -676,10 +695,12 @@ describe('CompositeComponent', function() {
 
     expect(instance.state.x).toBe(1);
     expect(child.state.y).toBe(2);
+    expect(child2.state.y).toBe(2);
     expect(parentUpdateCount).toBe(1);
 
     // Batching reduces the number of updates here to 1.
     expect(childUpdateCount).toBe(1);
+    expect(child2UpdateCount).toBe(1);
   });
 
   it('does not call render after a component as been deleted', () => {
@@ -767,6 +788,9 @@ describe('CompositeComponent', function() {
       state = {
         count: 0
       }
+      shouldComponentUpdate() {
+        return false;
+      }
       componentDidUpdate() {
         logs.push('Parent2');
       }
@@ -775,47 +799,21 @@ describe('CompositeComponent', function() {
         this.setState({count: 2}); // eslint-disable-line
       }
       render() {
-        if (this.state.count === 0) {
-          this.setState({count: 1}); // eslint-disable-line
-          this.setState({count: 2}); // eslint-disable-line
-          expect(this.state.count).toBe(0);
-        }
         return <Child count={this.state.count} child="Child2" />;
-      }
-    }
-
-    class Parent3 extends Component {
-      state = {
-        count: 0
-      }
-      shouldComponentUpdate() {
-        return false;
-      }
-      componentDidUpdate() {
-        logs.push('Parent3');
-      }
-      componentDidMount() {
-        this.setState({count: 1}); // eslint-disable-line
-        this.setState({count: 2}); // eslint-disable-line
-      }
-      render() {
-        return <Child count={this.state.count} child="Child3" />;
       }
     }
 
     class App extends Component {
       render() {
-        return [<Parent1 />, <Parent2 />, <Parent3 />];
+        return [<Parent1 />, <Parent2 />];
       }
     }
     render(<App />, container);
-    // Child1, Child2, Child3 appears only once
-    expect(logs).toEqual(['Child1', 'Parent1', 'Child2', 'Parent2', 'Child3']);
+    // Child1  Child2 appears only once
+    expect(logs).toEqual(['Child1', 'Parent1', 'Child2']);
     expect(container.childNodes[0].childNodes[0].data).toBe('2');
     expect(container.childNodes[1].childNodes[0].data).toBe('3');
-    expect(container.childNodes[2].childNodes[0].data).toBe('2');
+    expect(container.childNodes[2].childNodes[0].data).toBe('0');
     expect(container.childNodes[3].childNodes[0].data).toBe('3');
-    expect(container.childNodes[4].childNodes[0].data).toBe('0');
-    expect(container.childNodes[5].childNodes[0].data).toBe('3');
   });
 });
