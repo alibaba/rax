@@ -725,12 +725,12 @@ describe('CompositeComponent', function() {
     let container = createNodeElement('div');
     let logs = [];
 
-    class Child1 extends Component {
+    class Child extends Component {
       state = {
         count: 0
       };
       componentDidUpdate() {
-        logs.push('Child1');
+        logs.push(this.props.child);
       }
       componentDidMount() {
         this.setState({count: 1}); // eslint-disable-line
@@ -759,38 +759,13 @@ describe('CompositeComponent', function() {
         this.setState({count: 2}); // eslint-disable-line
       }
       render() {
-        return <Child1 count={this.state.count} />;
-      }
-    }
-
-    class Child2 extends Component {
-      state = {
-        count: 0
-      };
-      componentDidUpdate() {
-        logs.push('Child2');
-      }
-      componentDidMount() {
-        this.setState({count: 1}); // eslint-disable-line
-        this.setState({count: 2}); // eslint-disable-line
-        this.setState({count: 3}); // eslint-disable-line
-      }
-      render() {
-        return (
-          [
-            <span>{this.props.count}</span>,
-            <span>{this.state.count}</span>
-          ]
-        );
+        return <Child count={this.state.count} child="Child1" />;
       }
     }
 
     class Parent2 extends Component {
       state = {
         count: 0
-      }
-      shouldComponentUpdate() {
-        return false;
       }
       componentDidUpdate() {
         logs.push('Parent2');
@@ -800,21 +775,47 @@ describe('CompositeComponent', function() {
         this.setState({count: 2}); // eslint-disable-line
       }
       render() {
-        return <Child2 count={this.state.count} />;
+        if (this.state.count === 0) {
+          this.setState({count: 1}); // eslint-disable-line
+          this.setState({count: 2}); // eslint-disable-line
+          expect(this.state.count).toBe(0);
+        }
+        return <Child count={this.state.count} child="Child2" />;
+      }
+    }
+
+    class Parent3 extends Component {
+      state = {
+        count: 0
+      }
+      shouldComponentUpdate() {
+        return false;
+      }
+      componentDidUpdate() {
+        logs.push('Parent3');
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+      }
+      render() {
+        return <Child count={this.state.count} child="Child3" />;
       }
     }
 
     class App extends Component {
       render() {
-        return [<Parent1 />, <Parent2 />];
+        return [<Parent1 />, <Parent2 />, <Parent3 />];
       }
     }
     render(<App />, container);
-    // Child1 appears only once
-    expect(logs).toEqual(['Child1', 'Parent1', 'Child2']);
+    // Child1, Child2, Child3 appears only once
+    expect(logs).toEqual(['Child1', 'Parent1', 'Child2', 'Parent2', 'Child3']);
     expect(container.childNodes[0].childNodes[0].data).toBe('2');
     expect(container.childNodes[1].childNodes[0].data).toBe('3');
-    expect(container.childNodes[2].childNodes[0].data).toBe('0');
+    expect(container.childNodes[2].childNodes[0].data).toBe('2');
     expect(container.childNodes[3].childNodes[0].data).toBe('3');
+    expect(container.childNodes[4].childNodes[0].data).toBe('0');
+    expect(container.childNodes[5].childNodes[0].data).toBe('3');
   });
 });

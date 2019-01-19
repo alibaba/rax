@@ -1261,44 +1261,54 @@ describe('hooks', () => {
     'by props or setState should be merge)', () => {
       let container = createNodeElement('div');
       let logs = [];
-      let updateChild;
-      let updateParent;
-      let updateChildCountNum = 0;
-      let updateParentCountNum = 0;
+      let updateChildA, updateChildB, updateParent;
+      let childAUpdateNum, childBUpdateNum, parentUpdateNum;
+      childAUpdateNum = childBUpdateNum = parentUpdateNum = 0;
 
-      const Child = function(props) {
-        updateChildCountNum++;
+      const ChildA = function(props) {
+        childAUpdateNum++;
         const [count, updateCount] = useState(0);
-        updateChild = updateCount;
+        updateChildA = updateCount;
+        return <span>{count}</span>;
+      };
+
+      const ChildB = function(props) {
+        childBUpdateNum++;
+        const [count, updateCount] = useState(0);
+        updateChildB = updateCount;
         return <span>{count}</span>;
       };
 
       const Parent = function(props) {
-        updateParentCountNum++;
+        parentUpdateNum++;
         const [count, updateCount] = useState(0);
         updateParent = updateCount;
-        return [<span>{count}</span>, <Child />];
+        return [<span>{count}</span>, <ChildA />, <ChildB />];
       };
 
       function App() {
         useEffect(() => {
-          updateChild(1);
-          updateChild(2);
+          updateChildA(1);
+          updateChildA(2);
           updateParent(3);
-          updateChild(4);
+          updateChildB(4);
         });
         return <Parent />;
       }
       render(<App />, container);
-      expect(updateChildCountNum).toEqual(1);
-      expect(updateParentCountNum).toEqual(1);
+      expect(childAUpdateNum).toEqual(1);
+      expect(parentUpdateNum).toEqual(1);
+      expect(childBUpdateNum).toEqual(1);
       expect(container.childNodes[0].childNodes[0].data).toEqual('0');
       expect(container.childNodes[1].childNodes[0].data).toEqual('0');
+      expect(container.childNodes[2].childNodes[0].data).toEqual('0');
       flushPassiveEffects();
-      expect(updateChildCountNum).toEqual(2);
-      expect(updateParentCountNum).toEqual(2);
+      expect(childAUpdateNum).toEqual(2);
+      expect(parentUpdateNum).toEqual(2);
+      expect(childBUpdateNum).toEqual(2);
       expect(container.childNodes[0].childNodes[0].data).toEqual('3');
-      expect(container.childNodes[1].childNodes[0].data).toEqual('4');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('2');
+      expect(container.childNodes[2].childNodes[0].data).toEqual('4');
     });
   });
 
