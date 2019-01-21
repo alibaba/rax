@@ -1,18 +1,16 @@
 # rax-use-fetch
 
 ```jsx
-import useFetch from 'rax-use-fetch';
-
-const init = { method: 'GET' };
+import { createElement, useMemo } from 'rax';
+import usePromise from 'rax-use-promise';
 
 function Example() {
-  const [data, error] = useFetch('https://httpbin.org/get', init, 'json');
-  if (error) {
+  const fetchData = useMemo(() => fetch('https://httpbin.org/get').then(res => res.json()), []);
+  const [data, error] = usePromise(fetchData);
+  if (erro) {
     return <p>error</p>
   } else if (data) {
     return <p>{data.foo}</p>
-  } else {
-    return <p>loading</p>
   }
 }
 ```
