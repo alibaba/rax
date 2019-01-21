@@ -62,26 +62,8 @@ export default class ScrollViewElement extends PolymerElement {
    */
   _scrollable = true;
 
-  /**
-   * If prevented, do not response to any user actions.
-   * @type {boolean}
-   * @private
-   */
-  __prevent = false;
-
-  get _prevent() {
-    return this.__prevent;
-  }
-
-  set _prevent(val) {
-    this.__prevent = val;
-    // Recalc computed properties.
-    this.scrollX = this._getBoolPropFromAttr('scroll-x', this.scrollX);
-    this.scrollY = this._getBoolPropFromAttr('scroll-y', this.scrollY);
-  }
-
   _getBoolPropFromAttr(attr, fallbackVal) {
-    if (this.__prevent) return false;
+    if (this._prevent) return false;
 
     if (this.hasAttribute(attr)) {
       const value = this.getAttribute(attr);
@@ -105,6 +87,22 @@ export default class ScrollViewElement extends PolymerElement {
 
     // Add a unique id for element to avoid style pollution.
     this._id = `scroll-view-${++uid}`;
+
+    /**
+     * If prevented, do not response to any user actions.
+     * @type {boolean}
+     * @private
+     */
+    let _prevent = false;
+    Object.defineProperty(this, '_prevent', {
+      get: () => _prevent,
+      set: (val) => {
+        _prevent = val;
+        // Recalc computed properties.
+        this.scrollX = this._getBoolPropFromAttr('scroll-x', this.scrollX);
+        this.scrollY = this._getBoolPropFromAttr('scroll-y', this.scrollY);
+      }
+    });
   }
 
   get _scrollTop() {
