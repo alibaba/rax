@@ -43,7 +43,7 @@ describe('swiper nested', () => {
 
     const image = await page.screenshot();
     expect(image).toMatchImageSnapshot({
-      failureThreshold: '0.01',
+      failureThreshold: '0.1',
       failureThresholdType: 'percent',
     });
 
