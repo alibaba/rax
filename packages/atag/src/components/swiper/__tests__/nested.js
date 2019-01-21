@@ -13,9 +13,6 @@ describe('swiper nested', () => {
   });
 
   it('should only scroll inner swiper in nested swiper', async() => {
-    await page.waitFor(1000);
-
-    // Only inner swiper changed.
     const innerSwiper = await page.$('#innerSwiper');
     const outerSwiper = await page.$('#outerSwiper');
     const innerSwiperBox = await innerSwiper.boundingBox();
@@ -51,15 +48,22 @@ describe('swiper nested', () => {
   });
 
   it('should only scroll swiper in nested swiper and scroll-view', async() => {
+    const swiper = await page.$('#scrollViewSwiper');
+    const swiperBox = await swiper.boundingBox();
 
+    await page.mouse.move(swiperBox.x + swiperBox.width / 2, swiperBox.y + swiperBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(0, swiperBox.y + swiperBox.height / 2, { steps: 1 });
+    await page.mouse.up();
+
+    // Wait for animation end.
+    await page.waitFor(500);
+
+    // Make sure scroll-view doesn't moved.
+    expect(
+      await page.$eval('#nestedScrollView', el => el.scrollLeft)
+    ).toEqual(0);
   });
 },
 timeout
 );
-
-
-function wait(time) {
-  return new Promise((done) => {
-    setTimeout(done, time);
-  });
-}

@@ -1,7 +1,7 @@
 <!-- swiper > swiper -->
 <a-swiper id="outerSwiper" indicator-dots=true style="height:300px">
   <a-swiper-item style="height:300px">
-    <a-swiper id="innerSwiper" indicator-dots=true nested="true">
+    <a-swiper id="innerSwiper" indicator-dots=true>
       <a-swiper-item>
         <a-view style="display: block;height: 150px;background-color: red">1-1</a-view>
       </a-swiper-item>
@@ -23,7 +23,7 @@
 
 <!-- scroll-view > swiper -->
 <a-scroll-view id="nestedScrollView" scroll-x="true" style="width: 100%;">
-  <a-swiper indicator-dots=true>
+  <a-swiper indicator-dots=true id="scrollViewSwiper">
     <a-swiper-item>
       <a-view style="display: block;height: 150px;background-color: red">1-1</a-view>
     </a-swiper-item>
