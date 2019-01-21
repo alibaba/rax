@@ -1,18 +1,23 @@
 const timeout = 10000;
 
 describe('swiper nested', () => {
-  let page;
-  beforeAll(async() => {
-    page = await global.__BROWSER__.newPage();
+  const pages = [];
+  async function initPage() {
+    const page = await global.__BROWSER__.newPage();
     await page.setViewport(global.__VIEWPORT__);
     await page.goto('http://localhost:9002/components/swiper/__tests__/nested.html');
-  }, timeout);
+    pages.push(page);
+    return page;
+  }
 
   afterAll(async() => {
-    await page.close();
+    for (let i = 0, l = pages.length; i < l; i++ ) {
+      await pages[i].close();
+    }
   });
 
   it('should only scroll inner swiper in nested swiper', async() => {
+    const page = await initPage();
     const innerSwiper = await page.$('#innerSwiper');
     const outerSwiper = await page.$('#outerSwiper');
     const innerSwiperBox = await innerSwiper.boundingBox();
@@ -48,6 +53,7 @@ describe('swiper nested', () => {
   });
 
   it('should only scroll swiper in nested swiper and scroll-view', async() => {
+    const page = await initPage();
     const swiper = await page.$('#scrollViewSwiper');
     const swiperBox = await swiper.boundingBox();
 
