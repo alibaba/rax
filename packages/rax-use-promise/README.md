@@ -8,7 +8,7 @@ const fetchData = () => fetch('https://httpbin.org/get').then(res => res.json())
 
 function Example() {
   const [data, error] = usePromise(useMemo(fetchData));
-  if (erro) {
+  if (error) {
     return <p>error</p>
   } else if (data) {
     return <p>{data.foo}</p>
