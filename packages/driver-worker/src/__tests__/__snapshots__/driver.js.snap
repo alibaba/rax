@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`driver-worker should postMessage by driver 1`] = `
+Object {
+  "mutations": Array [
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "1",
+          "attributes": Array [],
+          "nodeName": "VIEW",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "$$id": "2",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+  ],
+  "type": "MutationRecord",
+}
+`;
