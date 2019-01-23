@@ -1,5 +1,5 @@
 import WorkerDriver from './WorkerDriver';
 
-export default function createDriver({ postMessage, addEventListener }) {
-  return new WorkerDriver({ postMessage, addEventListener });
+export default function createDriver({ postMessage, addEventListener, rendererType }) {
+  return new WorkerDriver({ postMessage, addEventListener, rendererType });
 };

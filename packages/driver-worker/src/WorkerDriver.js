@@ -6,6 +6,7 @@ const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const BODY = 'BODY';
+const STYLE_ELEMENT = 'STYLE';
 const IS_TOUCH_EVENTS = /^touch/;
 const TO_SANITIZE = [
   'target',
@@ -16,13 +17,18 @@ const TO_SANITIZE = [
 ];
 
 export default class WorkerDriver extends Driver {
-  constructor({ postMessage, addEventListener }) {
+  constructor({ postMessage, addEventListener, rendererType }) {
     const workerGlobalScope = createWorkerGlobalScope();
     super(workerGlobalScope.document);
 
     this.evaluator = new Evaluator(postMessage);
     this.nodesMap = new Map();
     this.nodeCounter = 0;
+    /**
+     * Can enable some performance effect by judging redndererType.
+     *
+     */
+    this.redndererType = rendererType;
 
     let mutationObserver = this.createMutationObserver(postMessage);
     mutationObserver.observe(this.document, { subtree: true });
@@ -65,6 +71,8 @@ export default class WorkerDriver extends Driver {
     }
   };
 
+  _cacheStyleText = {};
+
   /**
    * Serialize instruction.
    */
@@ -74,7 +82,12 @@ export default class WorkerDriver extends Driver {
     }
 
     if (Array.isArray(node)) {
-      return node.map(n => this.sanitize(n, prop));
+      let ret = new Array(node.length);
+      for (let i = 0, l = node.length; i < l; i ++) {
+        ret[i] = this.sanitize(node[i], prop);
+        if (ret[i] === null) ret.splice(i, 1);
+      }
+      return ret;
     }
 
     if (!node.$$id) {
@@ -95,10 +108,21 @@ export default class WorkerDriver extends Driver {
       switch (nodeType) {
         case ELEMENT_NODE:
           result.nodeName = node.nodeName;
+          if (this.rendererType === 'webview'
+            && node.nodeName === STYLE_ELEMENT
+            && node.childNodes) {
+            let textStyle;
+            for (let i = 0, l = node.childNodes.length; i < l; i++) {
+              textStyle = node.childNodes[i].nodeType === TEXT_NODE
+                ? node.childNodes[i].data
+                : '';
+            }
+            if (this._cacheStyleText[textStyle]) return null;
+            this._cacheStyleText[textStyle] = node;
+          }
 
           const events = node._getEvents();
           if (events.length > 0) result.events = events;
-
           if (node.attributes) result.attributes = node.attributes;
           if (Object.keys(node.style).length > 0) result.style = node.style;
           break;
