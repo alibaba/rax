@@ -544,4 +544,276 @@ describe('CompositeComponent', function() {
     instance.setState({count: 1});
     expect(container.childNodes[0].tagName).toBe('DIV');
   });
+
+  it('schedules sync updates when inside componentDidMount/Update', () => {
+    let container = createNodeElement('div');
+    let instance;
+    let ops = [];
+
+    class Foo extends Component {
+      state = {tick: 0};
+
+      componentDidMount() {
+        ops.push('componentDidMount (before setState): ' + this.state.tick);
+        this.setState({tick: 1}); // eslint-disable-line
+        // We're in a batch. Update hasn't flushed yet.
+        ops.push('componentDidMount (after setState): ' + this.state.tick);
+      }
+
+      componentDidUpdate() {
+        ops.push('componentDidUpdate: ' + this.state.tick);
+        if (this.state.tick === 2) {
+          ops.push('componentDidUpdate (before setState): ' + this.state.tick);
+          this.setState({tick: 3}); // eslint-disable-line
+          ops.push('componentDidUpdate (after setState): ' + this.state.tick);
+          // We're in a batch. Update hasn't flushed yet.
+        }
+      }
+
+      render() {
+        ops.push('render: ' + this.state.tick);
+        instance = this;
+        return <span prop={this.state.tick} />;
+      }
+    }
+
+    render(<Foo />, container);
+
+    expect(ops).toEqual([
+      'render: 0',
+      'componentDidMount (before setState): 0',
+      'componentDidMount (after setState): 0',
+      // If the setState inside componentDidMount were deferred, there would be
+      // no more ops. Because it has Task priority, we get these ops, too:
+      'render: 1',
+      'componentDidUpdate: 1',
+    ]);
+
+    ops = [];
+    instance.setState({tick: 2});
+
+    expect(ops).toEqual([
+      'render: 2',
+      'componentDidUpdate: 2',
+      'componentDidUpdate (before setState): 2',
+      'componentDidUpdate (after setState): 2',
+      // If the setState inside componentDidUpdate were deferred, there would be
+      // no more ops. Because it has Task priority, we get these ops, too:
+      'render: 3',
+      'componentDidUpdate: 3',
+    ]);
+  });
+
+  it('performs Task work in the callback', () => {
+    let container = createNodeElement('div');
+    class Foo extends Component {
+      state = {step: 1};
+      componentDidMount() {
+        this.setState({step: 2}, () => { // eslint-disable-line
+          this.setState({step: 3}, () => {
+            this.setState({step: 4}, () => {
+              this.setState({step: 5});
+            });
+          });
+        });
+      }
+      render() {
+        return <span>{this.state.step}</span>;
+      }
+    }
+    render(<Foo />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('5');
+  });
+
+  it('should batch child/parent state updates together', () => {
+    let container = createNodeElement('div');
+    let container2 = createNodeElement('div');
+
+    var parentUpdateCount = 0;
+
+    class Parent extends Component {
+      state = {x: 0};
+
+      componentDidUpdate() {
+        parentUpdateCount++;
+      }
+
+      render() {
+        return <div><Child ref="child" x={this.state.x} /><Child2 ref="child2" x={this.state.x} /></div>;
+      }
+    }
+
+    var childUpdateCount = 0;
+
+    class Child extends Component {
+      state = {y: 0};
+
+      componentDidUpdate() {
+        childUpdateCount++;
+      }
+
+      render() {
+        return <div>{this.props.x + this.state.y}</div>;
+      }
+    }
+
+    var child2UpdateCount = 0;
+
+    class Child2 extends Component {
+      state = {y: 0};
+
+      componentDidUpdate() {
+        child2UpdateCount++;
+      }
+
+      render() {
+        return <div>{this.props.x + this.state.y}</div>;
+      }
+    }
+
+    var instance = render(<Parent />, container);
+    var child = instance.refs.child;
+    var child2 = instance.refs.child2;
+    expect(instance.state.x).toBe(0);
+    expect(child.state.y).toBe(0);
+    expect(child2.state.y).toBe(0);
+
+    function Batch() {
+      child.setState({y: 2});
+      instance.setState({x: 1});
+      child2.setState({y: 2});
+      expect(instance.state.x).toBe(0);
+      expect(child.state.y).toBe(0);
+      expect(child2.state.y).toBe(0);
+      expect(parentUpdateCount).toBe(0);
+      expect(childUpdateCount).toBe(0);
+      expect(child2UpdateCount).toBe(0);
+      return null;
+    }
+
+    render(<Batch />, container2);
+
+    expect(instance.state.x).toBe(1);
+    expect(child.state.y).toBe(2);
+    expect(child2.state.y).toBe(2);
+    expect(parentUpdateCount).toBe(1);
+
+    // Batching reduces the number of updates here to 1.
+    expect(childUpdateCount).toBe(1);
+    expect(child2UpdateCount).toBe(1);
+  });
+
+  it('does not call render after a component as been deleted', () => {
+    let container = createNodeElement('div');
+    let container2 = createNodeElement('div');
+    var renderCount = 0;
+    var componentB = null;
+
+    class B extends Component {
+      state = {updates: 0};
+
+      componentDidMount() {
+        componentB = this;
+      }
+
+      render() {
+        renderCount++;
+        return <div />;
+      }
+    }
+
+    class A extends Component {
+      state = {showB: true};
+
+      render() {
+        return this.state.showB ? <B /> : <div />;
+      }
+    }
+
+    var component = render(<A />, container);
+    function Batch() {
+      // B will have scheduled an update but the batching should ensure that its
+      // update never fires.
+      componentB.setState({updates: 1});
+      component.setState({showB: false});
+    }
+
+    render(<Batch />, container2);
+    expect(renderCount).toBe(1);
+  });
+
+  it('does not update one component twice when schedule in the rendering phase', () => {
+    let container = createNodeElement('div');
+    let logs = [];
+
+    class Child extends Component {
+      state = {
+        count: 0
+      };
+      componentDidUpdate() {
+        logs.push(this.props.child);
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+        this.setState({count: 3}); // eslint-disable-line
+      }
+      render() {
+        return (
+          [
+            <span>{this.props.count}</span>,
+            <span>{this.state.count}</span>
+          ]
+        );
+      }
+    }
+
+    class Parent1 extends Component {
+      state = {
+        count: 0
+      }
+      componentDidUpdate() {
+        logs.push('Parent1');
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+      }
+      render() {
+        return <Child count={this.state.count} child="Child1" />;
+      }
+    }
+
+    class Parent2 extends Component {
+      state = {
+        count: 0
+      }
+      shouldComponentUpdate() {
+        return false;
+      }
+      componentDidUpdate() {
+        logs.push('Parent2');
+      }
+      componentDidMount() {
+        this.setState({count: 1}); // eslint-disable-line
+        this.setState({count: 2}); // eslint-disable-line
+      }
+      render() {
+        return <Child count={this.state.count} child="Child2" />;
+      }
+    }
+
+    class App extends Component {
+      render() {
+        return [<Parent1 />, <Parent2 />];
+      }
+    }
+    render(<App />, container);
+    // Child1  Child2 appears only once
+    expect(logs).toEqual(['Child1', 'Parent1', 'Child2']);
+    expect(container.childNodes[0].childNodes[0].data).toBe('2');
+    expect(container.childNodes[1].childNodes[0].data).toBe('3');
+    expect(container.childNodes[2].childNodes[0].data).toBe('0');
+    expect(container.childNodes[3].childNodes[0].data).toBe('3');
+  });
 });

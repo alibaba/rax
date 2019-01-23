@@ -24,6 +24,7 @@ module.exports = {
         'useESModules': false
       }
     ],
+    require.resolve('@babel/plugin-syntax-dynamic-import'),
     // Stage 0
     require.resolve('@babel/plugin-proposal-function-bind'),
     // Stage 1
