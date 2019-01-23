@@ -100,7 +100,9 @@ export default class Element extends Node {
 
   setAttribute(key, value) {
     if (value !== this.getAttribute(key)) {
-      this.setAttributeNS(null, key, value);
+      let attr = findWhere(this.attributes, createAttributeFilter(undefined, key));
+      if (!attr) this.attributes.push({ name: key, value });
+      mutate(this, 'attributes', { attributeName: key, newValue: value });
     }
   }
 

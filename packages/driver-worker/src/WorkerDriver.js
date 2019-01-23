@@ -37,7 +37,8 @@ export default class WorkerDriver extends Driver {
         let mutation = mutations[i];
         for (let j = TO_SANITIZE.length; j--;) {
           let prop = TO_SANITIZE[j];
-          mutation[prop] = this.sanitize(mutation[prop], prop);
+          const value = this.sanitize(mutation[prop], prop);
+          if (value) mutation[prop] = value;
         }
       }
 
@@ -93,13 +94,13 @@ export default class WorkerDriver extends Driver {
 
       switch (nodeType) {
         case ELEMENT_NODE:
-          Object.assign(result, {
-            events: node._getEvents(),
-            attributes: node.attributes,
-            nodeName: node.nodeName,
-            style: node.style,
-            // childNodes: node.childNodes && node.childNodes.map((node) => this.sanitize(node, prop)),
-          });
+          result.nodeName = node.nodeName;
+
+          const events = node._getEvents();
+          if (events.length > 0) result.events = events;
+
+          if (node.attributes) result.attributes = node.attributes;
+          if (Object.keys(node.style).length > 0) result.style = node.style;
           break;
 
         case TEXT_NODE:
