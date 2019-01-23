@@ -7,6 +7,7 @@ const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const ADD_EVENT = 'addEvent';
 const REMOVE_EVENT = 'removeEvent';
+const EMPTY_CONTENT = '';
 
 /**
  * Implement rax driver interface for worker driver
@@ -53,7 +54,7 @@ export default class Driver {
   }
 
   createEmpty() {
-    return this.createComment(' empty ');
+    return this.createComment(EMPTY_CONTENT);
   }
 
   createText(text) {
