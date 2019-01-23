@@ -16,8 +16,22 @@ const TO_SANITIZE = [
   'previousSibling',
 ];
 
+function getChildText(node) {
+  let text = '';
+  if (node && node.childNodes) {
+    // Only get the first child text.
+    for (let i = 0, l = node.childNodes.length; i < l; i++) {
+      if (node.childNodes[i].nodeType === TEXT_NODE) {
+        text = node.childNodes[i].data;
+        break;
+      }
+    }
+  }
+  return text;
+}
+
 export default class WorkerDriver extends Driver {
-  constructor({ postMessage, addEventListener, rendererType }) {
+  constructor({ postMessage, addEventListener, deduplicateStyle }) {
     const workerGlobalScope = createWorkerGlobalScope();
     super(workerGlobalScope.document);
 
@@ -25,10 +39,9 @@ export default class WorkerDriver extends Driver {
     this.nodesMap = new Map();
     this.nodeCounter = 0;
     /**
-     * Can enable some performance effect by judging redndererType.
-     *
+     * Deduplicate same style tags.
      */
-    this.redndererType = rendererType;
+    this.deduplicateStyle = deduplicateStyle;
 
     let mutationObserver = this.createMutationObserver(postMessage);
     mutationObserver.observe(this.document, { subtree: true });
@@ -71,7 +84,7 @@ export default class WorkerDriver extends Driver {
     }
   };
 
-  _cacheStyleText = {};
+  hitStyle = {};
 
   /**
    * Serialize instruction.
@@ -108,17 +121,10 @@ export default class WorkerDriver extends Driver {
       switch (nodeType) {
         case ELEMENT_NODE:
           result.nodeName = node.nodeName;
-          if (this.rendererType === 'webview'
-            && node.nodeName === STYLE_ELEMENT
-            && node.childNodes) {
-            let textStyle;
-            for (let i = 0, l = node.childNodes.length; i < l; i++) {
-              textStyle = node.childNodes[i].nodeType === TEXT_NODE
-                ? node.childNodes[i].data
-                : '';
-            }
-            if (this._cacheStyleText[textStyle]) return null;
-            this._cacheStyleText[textStyle] = node;
+          if (this.deduplicateStyle && node.nodeName === STYLE_ELEMENT) {
+            const textStyle = getChildText(node);
+            if (this.hitStyle[textStyle]) return null;
+            this.hitStyle[textStyle] = node;
           }
 
           const events = node._getEvents();
