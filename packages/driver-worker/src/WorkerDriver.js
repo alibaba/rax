@@ -129,7 +129,7 @@ export default class WorkerDriver extends Driver {
 
           const events = node._getEvents();
           if (events.length > 0) result.events = events;
-          if (node.attributes) result.attributes = node.attributes;
+          if (node.attributes && node.attributes.length > 0) result.attributes = node.attributes;
           if (Object.keys(node.style).length > 0) result.style = node.style;
           break;
 

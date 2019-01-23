@@ -140,7 +140,7 @@ export default class Driver {
   }
 
   removeAllEventListeners(node) {
-    // noop
+    node._eventListeners = {};
   }
 
   removeAttribute(node, propKey) {
