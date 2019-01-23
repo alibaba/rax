@@ -349,7 +349,7 @@ render(<Hello name="world" />, document.body, { driver: DomDriver });
 
 #### Router
 ```jsx
-import { createElement } from 'rax';
+import { createElement, Fragment } from 'rax';
 import { useRouter, push } from 'rax-use-router';
 import Foo from './Foo';
 
@@ -388,7 +388,7 @@ const routes = [{
 ];
 
 export default function Example() {
-  var component = useRouter(routes, '/hi');
+  var component = useRouter(routes, '/home');
   return component;
 }
 ```
