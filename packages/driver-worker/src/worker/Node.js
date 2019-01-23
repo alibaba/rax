@@ -41,6 +41,8 @@ export default class Node extends EventTarget {
     return child;
   }
   insertBefore(child, ref) {
+    if (child === null) return child;
+
     child.remove();
     child.parentNode = this;
 

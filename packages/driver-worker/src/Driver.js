@@ -80,6 +80,9 @@ export default class Driver {
   }
 
   removeChild(node, parent) {
+    // node may be null
+    if (node === null) return;
+
     parent = parent || node.parentNode;
     // Maybe has been removed when remove child
     if (parent) {

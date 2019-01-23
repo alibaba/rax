@@ -42,8 +42,12 @@ export default class Document extends Element {
     return createElementNS(namespaceURI, tagName);
   }
 
+  /**
+   * Return null to improve performance.
+   * @return {null}
+   */
   createComment(content) {
-    return new Comment(content);
+    return null;
   }
 
   createTextNode(text) {
