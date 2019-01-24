@@ -1,14 +1,12 @@
 import Host from './host';
 import createElement from '../createElement';
-import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
-import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 
 /**
  * Instance manager
  */
-const KEY = '$$instance';
+const KEY = '__r';
 
 export default {
   set(node, instance) {
@@ -39,12 +37,14 @@ export default {
       Host.measurer && Host.measurer.beforeRender();
     }
 
+    const driver =  Host.driver;
+
     // Before render callback
-    Host.driver.beforeRender && Host.driver.beforeRender();
+    driver.beforeRender && driver.beforeRender();
 
     // Real native root node is body
     if (container == null) {
-      container = Host.driver.createBody();
+      container = driver.createBody();
     }
 
     // Get the context from the conceptual parent component.
@@ -74,7 +74,7 @@ export default {
     rootInstance.update(element);
 
     // After render callback
-    Host.driver.afterRender && Host.driver.afterRender(rootInstance);
+    driver.afterRender && driver.afterRender(rootInstance);
 
     // Devtool render new root hook
     Host.hook.Mount._renderNewRootComponent(rootInstance._internal);

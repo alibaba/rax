@@ -151,6 +151,7 @@ class NativeComponent {
     let propKey;
     let styleName;
     let styleUpdates;
+    let driver = Host.driver;
     for (propKey in prevProps) {
       if (propKey === CHILDREN ||
         nextProps.hasOwnProperty(propKey) ||
@@ -169,11 +170,11 @@ class NativeComponent {
         this._prevStyleCopy = null;
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         if (typeof prevProps[propKey] === 'function') {
-          Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(
+          driver.removeEventListener(this.getNativeNode(), propKey.slice(
             2).toLowerCase(), prevProps[propKey]);
         }
       } else {
-        Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[
+        driver.removeAttribute(this.getNativeNode(), propKey, prevProps[
           propKey]);
       }
     }
@@ -224,20 +225,20 @@ class NativeComponent {
         let eventName = propKey.slice(2).toLowerCase();
 
         if (typeof prevProp === 'function') {
-          Host.driver.removeEventListener(this.getNativeNode(), eventName, prevProp, nextProps);
+          driver.removeEventListener(this.getNativeNode(), eventName, prevProp, nextProps);
         }
 
         if (typeof nextProp === 'function') {
-          Host.driver.addEventListener(this.getNativeNode(), eventName, nextProp, nextProps);
+          driver.addEventListener(this.getNativeNode(), eventName, nextProp, nextProps);
         }
       } else {
         // Update other property
         let payload = {};
         payload[propKey] = nextProp;
         if (nextProp != null) {
-          Host.driver.setAttribute(this.getNativeNode(), propKey, nextProp);
+          driver.setAttribute(this.getNativeNode(), propKey, nextProp);
         } else {
-          Host.driver.removeAttribute(this.getNativeNode(), propKey,
+          driver.removeAttribute(this.getNativeNode(), propKey,
             prevProps[propKey]);
         }
         if (process.env.NODE_ENV !== 'production') {
@@ -258,13 +259,14 @@ class NativeComponent {
           payload: styleUpdates
         });
       }
-      Host.driver.setStyles(this.getNativeNode(), styleUpdates);
+      driver.setStyles(this.getNativeNode(), styleUpdates);
     }
   }
 
   updateChildren(nextChildrenElements, context) {
     // prev rendered children
     let prevChildren = this._renderedChildren;
+    let driver = Host.driver;
 
     if (nextChildrenElements == null && prevChildren == null) {
       return;
@@ -365,7 +367,7 @@ class NativeComponent {
             }
 
             for (let i = prevChildNativeNode.length - 1; i >= 0; i--) {
-              Host.driver.insertAfter(prevChildNativeNode[i], lastPlacedNode);
+              driver.insertAfter(prevChildNativeNode[i], lastPlacedNode);
             }
           }
 
@@ -415,17 +417,17 @@ class NativeComponent {
                   // Should reverse order when insert new child after lastPlacedNode:
                   // [lastPlacedNode, *newChild1, *newChild2]
                   for (let i = newChild.length - 1; i >= 0; i--) {
-                    Host.driver.insertAfter(newChild[i], lastPlacedNode);
+                    driver.insertAfter(newChild[i], lastPlacedNode);
                   }
                 } else if (prevFirstNativeNode) {
                   // [*newChild1, *newChild2, prevFirstNativeNode]
                   for (let i = 0; i < newChild.length; i++) {
-                    Host.driver.insertBefore(newChild[i], prevFirstNativeNode);
+                    driver.insertBefore(newChild[i], prevFirstNativeNode);
                   }
                 } else {
                   // [*newChild1, *newChild2]
                   for (let i = 0; i < newChild.length; i++) {
-                    Host.driver.appendChild(newChild[i], parent);
+                    driver.appendChild(newChild[i], parent);
                   }
                 }
               }
@@ -438,7 +440,7 @@ class NativeComponent {
 
                 if (prevChild._mountIndex < lastIndex) {
                   for (let i = 0; i < oldChild.length; i++) {
-                    Host.driver.removeChild(oldChild[i]);
+                    driver.removeChild(oldChild[i]);
                   }
 
                   insertNewChild(newChild);
@@ -449,9 +451,9 @@ class NativeComponent {
                   for (let i = 0; i < newChild.length; i++) {
                     let child = newChild[i];
                     if (oldChild[i]) {
-                      Host.driver.replaceChild(child, oldChild[i]);
+                      driver.replaceChild(child, oldChild[i]);
                     } else {
-                      Host.driver.insertAfter(child, lastNewChild);
+                      driver.insertAfter(child, lastNewChild);
                     }
                     lastNewChild = child;
                   }
@@ -460,7 +462,7 @@ class NativeComponent {
                   // [oldChild1, oldChild2, oldChild3] => [newChild1, newChild2]
                   if (newChild.length < oldChild.length) {
                     for (let i = newChild.length; i < oldChild.length; i++) {
-                      Host.driver.removeChild(oldChild[i]);
+                      driver.removeChild(oldChild[i]);
                     }
                   }
                 }
