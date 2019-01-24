@@ -164,4 +164,16 @@ describe('Transpiler parse', () => {
     expect(checkValidJavaScriptStr(generated.render)).toBe(true);
     expect(generated).toMatchSnapshot();
   });
+
+  it('test for scoped-slot', () => {
+    const ast = parse(`
+      <component onTap="handler">
+        <view slot="item" slot-scope="props">
+          <text>{{props.item.text}}</text>
+        </view>
+      </component>
+    `, transpilerOptions);
+
+    expect(ast).toMatchSnapshot();
+  });
 });

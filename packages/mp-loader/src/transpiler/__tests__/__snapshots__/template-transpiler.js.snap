@@ -437,3 +437,55 @@ Object {
 `;
 
 exports[`Transpiler parse style and class 2`] = `"_c(__components_ref__['view']||'view',{style:_cx( (\\"color: red; \\") + (style),null),class:(\\"staticClass \\") + (data['dynamicClass'])})"`;
+
+exports[`Transpiler parse test for scoped-slot 1`] = `
+Object {
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "onTap": "handler",
+  },
+  "children": Array [],
+  "events": Object {
+    "click": Object {
+      "scope": "this.",
+      "value": "handler",
+    },
+  },
+  "parent": undefined,
+  "plain": false,
+  "scopedSlots": Object {
+    "\\"item\\"": Object {
+      "attrsList": Array [],
+      "attrsMap": Object {
+        "slot": "item",
+        "slot-scope": "props",
+      },
+      "children": Array [
+        Object {
+          "attrsList": Array [],
+          "attrsMap": Object {},
+          "children": Array [
+            Object {
+              "expression": "_s(props.item.text)",
+              "text": "{{props.item.text}}",
+              "type": 2,
+            },
+          ],
+          "parent": [Circular],
+          "plain": true,
+          "tag": "text",
+          "type": 1,
+        },
+      ],
+      "parent": [Circular],
+      "plain": false,
+      "slotScope": "props",
+      "slotTarget": "\\"item\\"",
+      "tag": "view",
+      "type": 1,
+    },
+  },
+  "tag": "component",
+  "type": 1,
+}
+`;
