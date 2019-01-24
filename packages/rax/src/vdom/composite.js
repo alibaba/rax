@@ -40,13 +40,10 @@ function handleError(instance, error) {
       callbackQueue.push(() => boundary.componentDidCatch(error));
     }
   } else {
-    if (Host.sandbox) {
-      setTimeout(() => {
-        throw error;
-      }, 0);
-    } else {
+    // Do not break when error happens
+    setTimeout(() => {
       throw error;
-    }
+    }, 0);
   }
 }
 
