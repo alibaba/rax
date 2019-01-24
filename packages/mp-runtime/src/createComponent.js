@@ -1,7 +1,7 @@
 import computeChangedData from './computeChangedData';
 import deepCopy from './deepCopy';
 import { registerComponent } from './componentsHub';
-import {normalizeScopedSlots} from './normalizeScopedSlots';
+import { normalizeScopedSlots } from './normalizeScopedSlots';
 
 /**
  * Returns a boolean indicating whether the object has the specified property as its own property.
