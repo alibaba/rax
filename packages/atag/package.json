@@ -1,6 +1,6 @@
 {
   "name": "atag",
-  "version": "0.1.38",
+  "version": "0.1.39",
   "description": "A UI Web Components Library",
   "main": "dist/atag.js",
   "scripts": {
