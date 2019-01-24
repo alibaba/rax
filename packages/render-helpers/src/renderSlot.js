@@ -1,17 +1,25 @@
 const SLOT_KEY = '$slots';
-const objectProtoHasOwnProperty = Object.prototype.hasOwnProperty;
-function hasOwnProperty(object, prop) {
-  return objectProtoHasOwnProperty.call(object, prop);
-}
+const SCOPED_SLOT_KEY = '$scopedSlots';
 
 /**
  * Render slots.
  * @param viewModel {Object} ViewModel that contains slots.
  * @param slotName {String} Slot name, default to 'default'.
- * @param defaultSlot {Element} Default slot element.
+ * @param fallback {?Element[]} Default slot element.
+ * @param props {?Object} Default slot element.
+ * @param bindObject {?Object} Only works in SFC, with bind of properties.
  */
-export default function renderSlot(viewModel, slotName = 'default', defaultSlot) {
-  return viewModel && hasOwnProperty(viewModel, SLOT_KEY) && hasOwnProperty(viewModel[SLOT_KEY], slotName)
-    ? viewModel[SLOT_KEY][slotName]
-    : defaultSlot;
+export default function renderSlot(viewModel, slotName = 'default', fallback, props, bindObject) {
+  const scopedSlotFn = viewModel[SCOPED_SLOT_KEY][slotName];
+  let slotNodes;
+  if (scopedSlotFn) { // scoped slot
+    props = props || {};
+    if (bindObject) {
+      props = { ...bindObject, ...props };
+    }
+    slotNodes = scopedSlotFn(props) || fallback;
+  } else {
+    slotNodes = viewModel[SLOT_KEY][slotName] || fallback;
+  }
+  return slotNodes;
 }

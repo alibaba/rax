@@ -378,14 +378,14 @@ function genScopedSlot(key, el, state) {
   if (el.for && !el.forProcessed) {
     return genForScopedSlot(key, el, state);
   }
-  return (
-    `{key:${key},fn:function(${String(el.attrsMap.scope)}){` +
-    `return ${
-      el.tag === 'template'
-        ? genChildren(el, state) || 'void 0'
-        : genElement(el, state)
-    }}}`
-  );
+  const fn = `function(${String(el.slotScope)}){` +
+    `return ${el.tag === 'template'
+      ? el.if
+        ? `(${el.if})?${genChildren(el, state) || 'undefined'}:undefined`
+        : genChildren(el, state) || 'undefined'
+      : genElement(el, state)
+    }}`;
+  return `{key:${key},fn:${fn}}`;
 }
 
 function genForScopedSlot(key, el, state) {
