@@ -5,8 +5,8 @@ const SCOPED_SLOT_KEY = '$scopedSlots';
  * Render slots.
  * @param viewModel {Object} ViewModel that contains slots.
  * @param slotName {String} Slot name, default to 'default'.
- * @param fallback {?Element[]} Default slot element.
- * @param props {?Object} Default slot element.
+ * @param fallback {?Element[]} Fallback slot element.
+ * @param props {?Object} Scoped slot property.
  * @param bindObject {?Object} Only works in SFC, with bind of properties.
  */
 export default function renderSlot(viewModel, slotName = 'default', fallback, props, bindObject) {
