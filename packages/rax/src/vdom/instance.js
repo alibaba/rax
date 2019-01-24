@@ -37,7 +37,7 @@ export default {
       Host.measurer && Host.measurer.beforeRender();
     }
 
-    const driver =  Host.driver;
+    const driver = Host.driver;
 
     // Before render callback
     driver.beforeRender && driver.beforeRender();
