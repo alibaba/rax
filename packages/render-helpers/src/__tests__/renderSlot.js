@@ -18,4 +18,13 @@ describe('renderSlot', () => {
   it('should render empty slot', () => {
     expect(renderSlot(viewModel, 'notExists')).toBeFalsy();
   });
+
+  it('should render component default slot', () => {
+    expect(
+      renderSlot({ $slots: {} }, 'default', 'defaultSlot')
+    ).toEqual('defaultSlot');
+    expect(
+      renderSlot({ $slots: { default: 'someValue'} }, 'default', 'defaultSlot')
+    ).toEqual('someValue');
+  });
 });
