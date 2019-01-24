@@ -31,7 +31,8 @@ function getChildText(node) {
 }
 
 export default class WorkerDriver extends Driver {
-  constructor({ postMessage, addEventListener, deduplicateStyle }) {
+  constructor(options = {}) {
+    const { postMessage, addEventListener } = options;
     const workerGlobalScope = createWorkerGlobalScope();
     super(workerGlobalScope.document);
 
@@ -40,8 +41,11 @@ export default class WorkerDriver extends Driver {
     this.nodeCounter = 0;
     /**
      * Deduplicate same style tags.
+     * Default to true, due to most of worker-driver is rendered by WebView.
      */
-    this.deduplicateStyle = deduplicateStyle;
+    this.deduplicateStyle = options.hasOwnProperty('deduplicateStyle')
+      ? options.deduplicateStyle
+      : true;
 
     let mutationObserver = this.createMutationObserver(postMessage);
     mutationObserver.observe(this.document, { subtree: true });
