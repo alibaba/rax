@@ -27,12 +27,27 @@ describe('scroll-view', () => {
         `,
     });
     const scrollViewHandle = await page.$('#scrollView');
-    const overflowX = await page.evaluate(el => el.style.overflowX, scrollViewHandle);
-    const overflowY = await page.evaluate(el => el.style.overflowY, scrollViewHandle);
-    const scrollX = await page.evaluate(el => el.scrollX, scrollViewHandle);
-    const scrollY = await page.evaluate(el => el.scrollY, scrollViewHandle);
+    let overflowX = await page.evaluate(el => el.style.overflowX, scrollViewHandle);
+    let overflowY = await page.evaluate(el => el.style.overflowY, scrollViewHandle);
+    let scrollX = await page.evaluate(el => el.scrollX, scrollViewHandle);
+    let scrollY = await page.evaluate(el => el.scrollY, scrollViewHandle);
     // overflowX/Y are overrided.
     expect(overflowX).toEqual('hidden');
+    expect(overflowY).toEqual('hidden');
+    // scrollX and scrollY property dones't changed.
+    expect(scrollX).toEqual(true);
+    expect(scrollY).toEqual(false);
+
+    // Restore prevent
+    await page.addScriptTag({
+      content: `scrollView._prevent = false;`,
+    });
+    overflowX = await page.evaluate(el => el.style.overflowX, scrollViewHandle);
+    overflowY = await page.evaluate(el => el.style.overflowY, scrollViewHandle);
+    scrollX = await page.evaluate(el => el.scrollX, scrollViewHandle);
+    scrollY = await page.evaluate(el => el.scrollY, scrollViewHandle);
+    // overflowX/Y are restored.
+    expect(overflowX).toEqual('auto');
     expect(overflowY).toEqual('hidden');
     // scrollX and scrollY property dones't changed.
     expect(scrollX).toEqual(true);
