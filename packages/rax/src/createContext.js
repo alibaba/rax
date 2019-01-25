@@ -26,6 +26,7 @@ export default function createContext(defaultValue) {
 
   class Provider extends Component {
     constructor() {
+      super();
       this.emitter = new ValueEmitter(defaultValue);
     }
 
@@ -65,8 +66,8 @@ export default function createContext(defaultValue) {
   Provider.defaultValue = defaultValue;
 
   class Consumer extends Component {
-    constructor() {
-      super();
+    constructor(props, context) {
+      super(props, context);
       this.state = {
         value: this.readContext(this.context)
       };
