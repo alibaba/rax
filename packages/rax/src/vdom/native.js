@@ -32,7 +32,7 @@ class NativeComponent {
       type,
       props,
     };
-    let appendType = props.append; // Default is node
+    let appendType = props.append || TREE; // Default is node
 
     this._instance = instance;
 
