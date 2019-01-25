@@ -6,6 +6,7 @@ const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const BODY = 'BODY';
+const STYLE_ELEMENT = 'STYLE';
 const IS_TOUCH_EVENTS = /^touch/;
 const TO_SANITIZE = [
   'target',
@@ -15,8 +16,23 @@ const TO_SANITIZE = [
   'previousSibling',
 ];
 
+function getChildText(node) {
+  let text = '';
+  if (node && node.childNodes) {
+    // Only get the first child text.
+    for (let i = 0, l = node.childNodes.length; i < l; i++) {
+      if (node.childNodes[i].nodeType === TEXT_NODE) {
+        text = node.childNodes[i].data;
+        break;
+      }
+    }
+  }
+  return text;
+}
+
 export default class WorkerDriver extends Driver {
-  constructor({ postMessage, addEventListener }) {
+  constructor(options = {}) {
+    const { postMessage, addEventListener } = options;
     const workerGlobalScope = createWorkerGlobalScope();
     super(workerGlobalScope.document);
 
@@ -37,7 +53,8 @@ export default class WorkerDriver extends Driver {
         let mutation = mutations[i];
         for (let j = TO_SANITIZE.length; j--;) {
           let prop = TO_SANITIZE[j];
-          mutation[prop] = this.sanitize(mutation[prop], prop);
+          const value = this.sanitize(mutation[prop], prop);
+          if (value) mutation[prop] = value;
         }
       }
 
@@ -64,6 +81,8 @@ export default class WorkerDriver extends Driver {
     }
   };
 
+  hitStyle = {};
+
   /**
    * Serialize instruction.
    */
@@ -73,7 +92,12 @@ export default class WorkerDriver extends Driver {
     }
 
     if (Array.isArray(node)) {
-      return node.map(n => this.sanitize(n, prop));
+      let ret = new Array(node.length);
+      for (let i = 0, l = node.length; i < l; i ++) {
+        ret[i] = this.sanitize(node[i], prop);
+        if (ret[i] === null) ret.splice(i, 1);
+      }
+      return ret;
     }
 
     if (!node.$$id) {
@@ -93,13 +117,21 @@ export default class WorkerDriver extends Driver {
 
       switch (nodeType) {
         case ELEMENT_NODE:
-          Object.assign(result, {
-            events: node._getEvents(),
-            attributes: node.attributes,
-            nodeName: node.nodeName,
-            style: node.style,
-            childNodes: node.childNodes && node.childNodes.map((node) => this.sanitize(node, prop)),
-          });
+          result.nodeName = node.nodeName;
+          /**
+           * @NOTE: Performance purpose.
+           * Deduplicate same style tags.
+           */
+          if (node.nodeName === STYLE_ELEMENT) {
+            const textStyle = getChildText(node);
+            if (this.hitStyle[textStyle]) return null;
+            this.hitStyle[textStyle] = node;
+          }
+
+          const events = node._getEvents();
+          if (events.length > 0) result.events = events;
+          if (node.attributes && node.attributes.length > 0) result.attributes = node.attributes;
+          if (Object.keys(node.style).length > 0) result.style = node.style;
           break;
 
         case TEXT_NODE:
