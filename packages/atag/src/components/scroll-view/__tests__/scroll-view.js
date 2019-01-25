@@ -40,7 +40,7 @@ describe('scroll-view', () => {
 
     // Restore prevent
     await page.addScriptTag({
-      content: `scrollView._prevent = false;`,
+      content: 'scrollView._prevent = false;',
     });
     overflowX = await page.evaluate(el => el.style.overflowX, scrollViewHandle);
     overflowY = await page.evaluate(el => el.style.overflowY, scrollViewHandle);
