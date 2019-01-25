@@ -66,6 +66,7 @@ export default function createContext(defaultValue) {
 
   class Consumer extends Component {
     constructor() {
+      super();
       this.state = {
         value: this.readContext(this.context)
       };
