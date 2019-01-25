@@ -39,13 +39,6 @@ export default class WorkerDriver extends Driver {
     this.evaluator = new Evaluator(postMessage);
     this.nodesMap = new Map();
     this.nodeCounter = 0;
-    /**
-     * Deduplicate same style tags.
-     * Default to true, due to most of worker-driver is rendered by WebView.
-     */
-    this.deduplicateStyle = options.hasOwnProperty('deduplicateStyle')
-      ? options.deduplicateStyle
-      : true;
 
     let mutationObserver = this.createMutationObserver(postMessage);
     mutationObserver.observe(this.document, { subtree: true });
@@ -125,7 +118,11 @@ export default class WorkerDriver extends Driver {
       switch (nodeType) {
         case ELEMENT_NODE:
           result.nodeName = node.nodeName;
-          if (this.deduplicateStyle && node.nodeName === STYLE_ELEMENT) {
+          /**
+           * @NOTE: Performance purpose.
+           * Deduplicate same style tags.
+           */
+          if (node.nodeName === STYLE_ELEMENT) {
             const textStyle = getChildText(node);
             if (this.hitStyle[textStyle]) return null;
             this.hitStyle[textStyle] = node;
