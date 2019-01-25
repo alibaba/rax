@@ -98,9 +98,13 @@ export default class ScrollViewElement extends PolymerElement {
       get: () => _prevent,
       set: (val) => {
         _prevent = val;
-        // Recalc computed properties.
-        this.scrollX = this._getBoolPropFromAttr('scroll-x', this.scrollX);
-        this.scrollY = this._getBoolPropFromAttr('scroll-y', this.scrollY);
+        // If prevented, stop scroll by overrides CSS overflow.
+        if (val) {
+          this.style.overflowX = this.style.overflowY = 'hidden';
+        } else {
+          this.style.overflowX = this.scrollX ? 'auto' : 'hidden';
+          this.style.overflowY = this.scrollY ? 'auto' : 'hidden';
+        }
       }
     });
   }
