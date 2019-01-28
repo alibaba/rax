@@ -131,7 +131,29 @@ export default class ScrollViewElement extends PolymerElement {
         }
         : true
     );
+
+    this._parentScrollElement = this._getNearestParentElement(
+      this,
+      (el) => el._scrollable === true
+    );
+
+    window.addEventListener('touchstart', this._handleTouchStart, true);
+    window.addEventListener('touchend', this._handleTouchEnd, true);
+    window.addEventListener('touchcancel', this._handleTouchEnd, true);
   }
+
+  _handleTouchStart = (evt) => {
+    if (this._parentScrollElement && this.contains(evt.target)) {
+      evt.stopPropagation();
+      this._parentScrollElement._prevent = true;
+    }
+  };
+  _handleTouchEnd = (evt) => {
+    if (this._parentScrollElement && this.contains(evt.target)) {
+      evt.stopPropagation();
+      this._parentScrollElement._prevent = false;
+    }
+  };
 
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -145,6 +167,9 @@ export default class ScrollViewElement extends PolymerElement {
         }
         : true
     );
+    window.removeEventListener('touchstart', this._handleTouchStart, true);
+    window.removeEventListener('touchend', this._handleTouchEnd, true);
+    window.removeEventListener('touchcancel', this._handleTouchEnd, true);
   }
 
   _observeScrollX() {
@@ -225,6 +250,19 @@ export default class ScrollViewElement extends PolymerElement {
       }, 16);
     } else {
       this.scrollTop = value;
+    }
+  }
+
+  /**
+   * Find nearnet parent element.
+   * @param el {HTMLElement} Base element.
+   * @param isTarget {Function} Judge the right element, return true if is target.
+   * @private
+   */
+  _getNearestParentElement(el, isTarget) {
+    while (el) {
+      el = el.parentElement;
+      if (!el || isTarget(el)) return el;
     }
   }
 
