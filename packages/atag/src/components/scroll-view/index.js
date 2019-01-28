@@ -166,19 +166,19 @@ export default class ScrollViewElement extends PolymerElement {
       (el) => el._scrollable === true
     );
 
-    window.addEventListener('touchstart', this._handleTouchStart, true);
-    window.addEventListener('touchend', this._handleTouchEnd, true);
-    window.addEventListener('touchcancel', this._handleTouchEnd, true);
+    this.addEventListener('touchstart', this._handleTouchStart, false);
+    this.addEventListener('touchend', this._handleTouchEnd, false);
+    this.addEventListener('touchcancel', this._handleTouchEnd, false);
   }
 
   _handleTouchStart = (evt) => {
-    if (this._parentScrollElement && this.contains(evt.target)) {
+    if (this._parentScrollElement) {
       evt.stopPropagation();
       this._parentScrollElement._prevent = true;
     }
   };
   _handleTouchEnd = (evt) => {
-    if (this._parentScrollElement && this.contains(evt.target)) {
+    if (this._parentScrollElement) {
       evt.stopPropagation();
       this._parentScrollElement._prevent = false;
     }
@@ -196,9 +196,9 @@ export default class ScrollViewElement extends PolymerElement {
         }
         : true
     );
-    window.removeEventListener('touchstart', this._handleTouchStart, true);
-    window.removeEventListener('touchend', this._handleTouchEnd, true);
-    window.removeEventListener('touchcancel', this._handleTouchEnd, true);
+    this.removeEventListener('touchstart', this._handleTouchStart, true);
+    this.removeEventListener('touchend', this._handleTouchEnd, true);
+    this.removeEventListener('touchcancel', this._handleTouchEnd, true);
   }
 
   _observeScrollX() {
