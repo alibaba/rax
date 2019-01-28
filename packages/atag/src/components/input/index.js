@@ -222,6 +222,14 @@ export default class Input extends PolymerElement {
            */
           -webkit-user-select: auto;
           user-select: auto;
+         
+          /**
+           * Reset unset all.
+           * In iOS 9, default appearance is textfield, border is 1px solid #000.
+           */
+          -webkit-appearance: none;
+          appearance: none; 
+          border-width: 0;
         }
   
       </style>
