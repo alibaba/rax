@@ -1,4 +1,4 @@
-import Rax, { Component, render, createElement, useState } from 'rax';
+import { render, createElement } from 'rax';
 import createDriver from '../index';
 
 describe('driver-worker', () => {
@@ -9,7 +9,7 @@ describe('driver-worker', () => {
       done();
     };
     const driver = createDriver({ addEventListener, postMessage });
-    Rax.render(Rax.createElement('view'), null, { driver });
+    render(createElement('view'), null, { driver });
   });
 
   it('should works with dom operation', (done) => {

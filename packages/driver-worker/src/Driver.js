@@ -22,8 +22,7 @@ export default class Driver {
   }
 
   getDeviceWidth() {
-    const { document } = this;
-    return this.deviceWidth || document.documentElement.clientWidth;
+    return this.deviceWidth || this.document.documentElement.clientWidth;
   }
 
   setDeviceWidth(width) {
@@ -39,8 +38,7 @@ export default class Driver {
   }
 
   getElementById(id) {
-    const { document } = this;
-    return document.getElementById(id);
+    return this.document.getElementById(id);
   }
 
   createBody() {
@@ -58,8 +56,7 @@ export default class Driver {
   }
 
   createText(text) {
-    const { document } = this;
-    return document.createTextNode(text);
+    return this.document.createTextNode(text);
   }
 
   updateText(node, text) {
@@ -67,8 +64,7 @@ export default class Driver {
   }
 
   createElement(component) {
-    const { document } = this;
-    let node = document.createElement(component.type);
+    let node = this.document.createElement(component.type);
     let props = component.props;
 
     this.setNativeProps(node, props);
