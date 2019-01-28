@@ -280,6 +280,20 @@ export default class Textarea extends PolymerElement {
           -webkit-user-select: auto;
           user-select: auto;
           
+          /**
+           * Reset webkit appearance in iOS.
+           */
+          -webkit-appearance: none;
+          appearance: none;
+          
+          /**
+           * Some special properties in textarea is not default,
+           * reset these props to fix unset all.
+           */
+          -webkit-nbsp-mode: space;
+          line-break: after-white-space;
+          white-space: pre-wrap;
+          
           display: block;
           outline: none;
           border: none;
