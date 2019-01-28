@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="format-detection" content="telephone=no">
-  <title>Demo</title>
+  <title>Atag Demo</title>
   <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
   <style>
     html {
@@ -659,6 +659,50 @@
       });
 
     </script>
+
+    <div class="card">
+      <h4 class="title">a-swiper nested</h4>
+      <div class="demo">
+        <p>swiper nest swiper</p>
+        <a-swiper indicator-dots=true style="height:300px">
+          <a-swiper-item style="height:300px">
+            <a-swiper indicator-dots=true nested="true">
+              <a-swiper-item>
+                <a-view style="display: block;height: 150px;background-color: red">1-1</a-view>
+              </a-swiper-item>
+              <a-swiper-item>
+                <a-view style="display: block;height: 150px;background-color: blue">1-2</a-view>
+              </a-swiper-item>
+              <a-swiper-item>
+                <a-view style="display: block;height: 150px;background-color: yellow">1-3</a-view>
+              </a-swiper-item>
+            </a-swiper>
+          </a-swiper-item>
+          <a-swiper-item style="height:300px">
+            <a-view style="display: block;height: 150px;background-color: blue">2</a-view>
+          </a-swiper-item>
+          <a-swiper-item style="height:300px">
+            <a-view style="display: block;height: 150px;background-color: yellow">3</a-view>
+          </a-swiper-item>
+        </a-swiper>
+
+        <p>scroll-view nest swiper</p>
+        <a-scroll-view scroll-x="true" style="width: 100%;">
+          <a-swiper indicator-dots=true>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red">1-1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue">1-2</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: yellow">1-3</a-view>
+            </a-swiper-item>
+          </a-swiper>
+          <div style="width: 1000px;">PADDING</div>
+        </a-scroll-view>
+      </div>
+    </div>
 
     <div class="card">
       <h4 class="title">a-audio</h4>

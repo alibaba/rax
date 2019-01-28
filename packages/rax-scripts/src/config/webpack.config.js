@@ -3,6 +3,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const pathConfig = require('./path.config');
 const path = require('path');
 
+const tsLoader = require.resolve('ts-loader');
 const getBabelRuntimePath = () => {
   const pkgJsonPath = require.resolve('@babel/runtime/package.json');
   return path.dirname(pkgJsonPath);
@@ -26,7 +27,7 @@ module.exports = {
     alias: {
       '@babel/runtime': getBabelRuntimePath()
     },
-    extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc'],
+    extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts'],
   },
   output: {
     // Next line is not used in dev but WebpackDevServer crashes without it:
@@ -37,6 +38,15 @@ module.exports = {
     filename: 'js/[name].js',
     // This is the URL that app is served from. We use "/" in development.
     publicPath: publicPath,
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: tsLoader,
+      }
+    ],
   },
 
   plugins: {

@@ -9,6 +9,7 @@ import renderList from './renderList';
 import createNotImplWarn from './createNotImplWarn';
 import renderSlot from './renderSlot';
 import renderStyle from './renderStyle';
+import resolveScopedSlots from './resolveScopedSlots';
 import setRender from './setRender';
 
 export default {
@@ -27,7 +28,7 @@ export default {
   // _b: bindObjectProps,
   _v: createTextElement,
   _e: createEmptyElement,
-  // _u: resolveScopedSlots,
+  _u: resolveScopedSlots,
   // _g: bindObjectListeners,
   _cx: renderStyle,
 };

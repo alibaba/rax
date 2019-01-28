@@ -1,7 +1,8 @@
+const PROTO = '__proto__';
 const supportWeakSet = typeof WeakSet !== 'undefined';
 const supportWeakMap = typeof WeakMap !== 'undefined';
-
 const cache = new WeakMap();
+
 /**
  * Deep Copy from rfdc(really fast deep copy)
  */
@@ -32,6 +33,8 @@ export default function deepCopy(o) {
 
   for (let k in o) {
     let propDesc = Object.getOwnPropertyDescriptor(o, k);
+    // For in loop will find prototype target, while getOwnPropertyDescriptor only gets its' own.
+    if (propDesc === undefined) continue;
     let cur = propDesc.value;
     if (propDesc.get || propDesc.set) {
       Object.defineProperty(o2, k, propDesc);
@@ -44,6 +47,11 @@ export default function deepCopy(o) {
     }
   }
 
+  // Shallow copy object prototype.
+  if (o[PROTO] !== Object.prototype) {
+    o2[PROTO] = o[PROTO];
+  }
+
   // Delete cache, or deepCopy the same object more than once will get a same ref.
   cache.delete(o);
   return o2;
@@ -52,7 +60,7 @@ export default function deepCopy(o) {
 function cloneArray(a, fn) {
   const keys = Object.keys(a);
   const a2 = new Array(keys.length);
-  for (var i = 0; i < keys.length; i++) {
+  for (let i = 0, l = keys.length; i < l; i++) {
     const k = keys[i];
     const cur = a[k];
     if (typeof cur !== 'object' || cur === null) {

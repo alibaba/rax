@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
-  <a href="https://unpkg.com/rax/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip" alt="gzip size"></a>
+  <a href="https://unpkg.com/rax@beta/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip" alt="gzip size"></a>
 </p>
 
 ---
@@ -249,11 +249,11 @@ render(<Hello name="world" />, document.body, { driver: DomDriver });
     );
   }
   ```
-* useImperativeMethods()
+* useImperativeHandle()
   ```jsx
   function FancyInput(props, ref) {
     const inputRef = useRef();
-    useImperativeMethods(ref, () => ({
+    useImperativeHandle(ref, () => ({
       focus: () => {
         inputRef.current.focus();
       }
@@ -347,6 +347,71 @@ render(<Hello name="world" />, document.body, { driver: DomDriver });
 #### rax-create-class
 * createClass()
 
+#### Router
+```jsx
+import { createElement } from 'rax';
+import { useRouter, push } from 'rax-use-router';
+import Foo from './Foo';
+
+const routes = [{
+  path: '/home',
+  children: [
+    {
+      path: '',                   // www.example.com/home
+      action: () => <>
+        <button onClick={() => push('/foo')}>go foo</button>
+        <button onClick={() => push('/bar')}>go bar</button>
+        <button onClick={() => push('/home/jack')}>go jack</button>
+      </>,
+    },
+    {
+      path: '/:username',         // www.example.com/home/xxx
+      action: (params) => <>
+        <p>{params.username}</p>
+        <button onClick={ () => push('/home') }>Go home</button>
+      </>
+    }
+  ]},
+  {
+    path: '/bar',
+    children: [
+      {
+        path: '',                 // www.example.com/bar
+        action: () => import(/* webpackChunkName: "bar" */ './Bar'),
+      },
+    ],
+  },
+  {
+    path: '/foo',                 // www.example.com/foo
+    action: () => <Foo />,  
+  },
+];
+
+export default function Example() {
+  var component = useRouter(routes, '/hi');
+  return component;
+}
+```
+
+```jsx
+// Foo.jsx
+import { createElement } from 'rax';
+import { push } from 'rax-use-router';
+
+export default function Foo() {
+  return <button onClick={ () => push('/home') }>Go home</button>
+}
+```
+
+```jsx
+// Bar.jsx
+import { createElement } from 'rax';
+import { push } from 'rax-use-router';
+
+export default function Bar() {
+  return <button onClick={ () => push('/home') }>Go home</button>
+}
+```
 
 ## Rax Renderers
 

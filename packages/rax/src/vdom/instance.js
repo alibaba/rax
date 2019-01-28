@@ -1,14 +1,12 @@
 import Host from './host';
 import createElement from '../createElement';
-import unmountComponentAtNode from '../unmountComponentAtNode';
 import instantiateComponent from './instantiateComponent';
-import shouldUpdateComponent from './shouldUpdateComponent';
 import Root from './root';
 
 /**
  * Instance manager
  */
-const KEY = '$$instance';
+const KEY = '__r';
 
 export default {
   set(node, instance) {
@@ -39,12 +37,14 @@ export default {
       Host.measurer && Host.measurer.beforeRender();
     }
 
+    const driver = Host.driver;
+
     // Before render callback
-    Host.driver.beforeRender && Host.driver.beforeRender();
+    driver.beforeRender && driver.beforeRender();
 
     // Real native root node is body
     if (container == null) {
-      container = Host.driver.createBody();
+      container = driver.createBody();
     }
 
     // Get the context from the conceptual parent component.
@@ -54,39 +54,27 @@ export default {
       parentContext = parentInternal._processChildContext(parentInternal._context);
     }
 
+    // Update root component
     let prevRootInstance = this.get(container);
-    let hasPrevRootInstance = prevRootInstance && prevRootInstance.isRootComponent;
-
-    if (hasPrevRootInstance) {
-      let prevRenderedComponent = prevRootInstance.getRenderedComponent();
-      let prevElement = prevRenderedComponent._currentElement;
-      if (shouldUpdateComponent(prevElement, element)) {
-        let prevUnmaskedContext = prevRenderedComponent._context;
-        let nextUnmaskedContext = parentContext || prevUnmaskedContext;
-        if (prevElement !== element || prevUnmaskedContext !== nextUnmaskedContext) {
-          prevRenderedComponent.updateComponent(
-            prevElement,
-            element,
-            prevUnmaskedContext,
-            nextUnmaskedContext
-          );
-        }
-
-        return prevRootInstance;
-      } else {
-        Host.hook.Reconciler.unmountComponent(prevRootInstance);
-        unmountComponentAtNode(container);
+    if (prevRootInstance && prevRootInstance.rootID) {
+      if (parentContext) {
+        // Using _penddingContext to pass new context
+        prevRootInstance._internal._penddingContext = parentContext;
       }
+      prevRootInstance.update(element);
+      return prevRootInstance;
     }
 
-    let wrappedElement = createElement(Root, null, element);
-    let renderedComponent = instantiateComponent(wrappedElement);
+    // Init root component with empty children
+    let renderedComponent = instantiateComponent(createElement(Root));
     let defaultContext = parentContext || {};
     let rootInstance = renderedComponent.mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
+    // Mount new element through update queue avoid when there is in rendering phase
+    rootInstance.update(element);
 
     // After render callback
-    Host.driver.afterRender && Host.driver.afterRender(rootInstance);
+    driver.afterRender && driver.afterRender(rootInstance);
 
     // Devtool render new root hook
     Host.hook.Mount._renderNewRootComponent(rootInstance._internal);

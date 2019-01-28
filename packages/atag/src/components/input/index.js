@@ -13,6 +13,7 @@ export default class Input extends PolymerElement {
       value: {
         type: String,
         value: '',
+        observer: '_observeValue',
       },
       type: {
         type: String,
@@ -80,23 +81,56 @@ export default class Input extends PolymerElement {
     this.$.input[method]();
   }
 
+  /**
+   * Sync a-input value to real input value.
+   * @private
+   */
+  _observeValue() {
+    this.$.input.value = this.value;
+  }
+
+  /**
+   * Sync input value to a-input, and dispatch custom input event at mean time.
+   * @param evt {InputEvent} event.
+   * @private
+   */
   _handleInput = (evt) => {
     if (!(evt instanceof CustomEvent)) {
       evt.stopPropagation();
+
+      // If inputType is insertCompositionText, user doesnt's really
+      // input something in value, do not sync value.
+      // ref: https://w3c.github.io/input-events/#dom-inputevent-inputtype
+      if (evt.inputType === 'insertCompositionText') return;
+
       if (evt.target === this) {
-        this.value = this.$.input.value;
+        const value = this.value = this.$.input.value;
         const customEvent = new CustomEvent('input', {
           bubbles: false,
           cancelable: true,
           detail: {
-            value: this.$.input.value,
-            cursor: this.$.input.selectionStart,
+            value,
+            cursor: this._getSelectionStart(),
           },
         });
         this.dispatchEvent(customEvent);
       }
     }
   };
+
+  /**
+   * In some case, you will not be allowed to access selectionStart value in DOM.
+   * For instance, input with type of password and number.
+   * @return {number} Selection start.
+   * @private
+   */
+  _getSelectionStart() {
+    try {
+      return this.$.input.selectionStart;
+    } catch (err) {
+      return 0;
+    }
+  }
 
   _handleFocus = (evt) => {
     if (!(evt instanceof CustomEvent)) {
@@ -194,7 +228,6 @@ export default class Input extends PolymerElement {
       <input 
         id="input" 
         placeholder="[[placeholder]]" 
-        value="{{value}}"
         type$="[[type]]" 
         disabled$="[[disabled]]"
         autofocus$="[[focus]]" 
