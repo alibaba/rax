@@ -3,7 +3,7 @@ import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nod
 import debounce from '../../shared/debounce';
 
 const style = document.createElement('style');
-style.innerText = `
+style.innerHTML = `
   a-text {
     -webkit-user-select: none;
     user-select: none;
