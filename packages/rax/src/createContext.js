@@ -25,11 +25,10 @@ export default function createContext(defaultValue) {
   const contextProp = '__context_' + uniqueId++ + '__';
 
   class Provider extends Component {
-    emitter = new ValueEmitter(defaultValue);
-
-    static childContextTypes = {
-      [contextProp]: () => {}
-    };
+    constructor() {
+      super();
+      this.emitter = new ValueEmitter(defaultValue);
+    }
 
     getChildContext() {
       return {
@@ -60,19 +59,21 @@ export default function createContext(defaultValue) {
     }
   }
 
+  Provider.childContextTypes = {
+    [contextProp]: () => {}
+  };
   Provider.contextProp = contextProp;
   Provider.defaultValue = defaultValue;
 
   class Consumer extends Component {
-    state = {
-      value: this.readContext(this.context)
+    constructor(props, context) {
+      super(props, context);
+      this.state = {
+        value: this.readContext(this.context)
+      };
+
+      this.onUpdate = value => this.state.value !== value && this.setState({value});
     }
-
-    static contextTypes = {
-      [contextProp]: () => {}
-    };
-
-    onUpdate = value => this.state.value !== value && this.setState({value});
 
     readContext(context) {
       return context[contextProp] ? context[contextProp].value : defaultValue;
@@ -107,6 +108,10 @@ export default function createContext(defaultValue) {
       }
     }
   }
+
+  Consumer.contextTypes = {
+    [contextProp]: () => {}
+  };
 
   return {
     Provider,
