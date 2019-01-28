@@ -56,11 +56,11 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   /**
-   * Mark the scrollable element.
-   * @type {boolean}
+   * Mark the scrollable element and direction.
    * @private
    */
   _scrollable = true;
+  _scrollDirection = 'x';
 
   _getBoolPropFromAttr(attr, fallbackVal) {
     if (this._prevent) return false;
@@ -161,26 +161,25 @@ export default class ScrollViewElement extends PolymerElement {
         : true
     );
 
-    this._parentScrollElement = this._getNearestParentElement(
-      this,
-      (el) => el._scrollable === true
-    );
-
     this.addEventListener('touchstart', this._handleTouchStart, false);
     this.addEventListener('touchend', this._handleTouchEnd, false);
     this.addEventListener('touchcancel', this._handleTouchEnd, false);
   }
 
   _handleTouchStart = (evt) => {
-    if (this._parentScrollElement) {
+    this._parentSameDirectionScrollElement = this._getNearestParentElement(
+      this,
+      (el) => el._scrollable === true && el._scrollDirection === this._scrollDirection
+    );
+    if (this._parentSameDirectionScrollElement) {
       evt.stopPropagation();
-      this._parentScrollElement._prevent = true;
+      this._parentSameDirectionScrollElement._prevent = true;
     }
   };
   _handleTouchEnd = (evt) => {
-    if (this._parentScrollElement) {
+    if (this._parentSameDirectionScrollElement) {
       evt.stopPropagation();
-      this._parentScrollElement._prevent = false;
+      this._parentSameDirectionScrollElement._prevent = false;
     }
   };
 
@@ -203,10 +202,16 @@ export default class ScrollViewElement extends PolymerElement {
 
   _observeScrollX() {
     this.style.overflowX = this.scrollX ? 'auto' : 'hidden';
+    if (this.scrollX) {
+      this._scrollDirection = 'x';
+    }
   }
 
   _observeScrollY() {
     this.style.overflowY = this.scrollY ? 'auto' : 'hidden';
+    if (this.scrollY) {
+      this._scrollDirection = 'y';
+    }
   }
 
   _observeScrollIntoView() {
