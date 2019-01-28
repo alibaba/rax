@@ -249,11 +249,11 @@ render(<Hello name="world" />, document.body, { driver: DomDriver });
     );
   }
   ```
-* useImperativeMethods()
+* useImperativeHandle()
   ```jsx
   function FancyInput(props, ref) {
     const inputRef = useRef();
-    useImperativeMethods(ref, () => ({
+    useImperativeHandle(ref, () => ({
       focus: () => {
         inputRef.current.focus();
       }

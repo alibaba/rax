@@ -5,7 +5,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
-import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeMethods} from '../hooks';
+import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle} from '../hooks';
 import { flushPassiveEffects } from '../vdom/updater';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
@@ -526,7 +526,7 @@ describe('hooks', () => {
       function Counter({row: newRow}, ref) {
         let [reducer, setReducer] = useState(() => reducerA);
         let [count, dispatch] = useReducer(reducer, 0);
-        useImperativeMethods(ref, () => ({dispatch}));
+        useImperativeHandle(ref, () => ({dispatch}));
         if (count < 20) {
           dispatch('increment');
           // Swap reducers each time we increment
@@ -586,7 +586,7 @@ describe('hooks', () => {
 
       function Counter(props, ref) {
         const [count, dispatch] = useReducer(reducer, 0);
-        useImperativeMethods(ref, () => ({dispatch}));
+        useImperativeHandle(ref, () => ({dispatch}));
         return <span>{count}</span>;
       }
       Counter = forwardRef(Counter);
@@ -635,7 +635,7 @@ describe('hooks', () => {
 
       function Counter(props, ref) {
         const [count, dispatch] = useReducer(reducer, 0, initialAction);
-        useImperativeMethods(ref, () => ({dispatch}));
+        useImperativeHandle(ref, () => ({dispatch}));
         return <span>{count}</span>;
       }
       Counter = forwardRef(Counter);
