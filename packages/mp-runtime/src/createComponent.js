@@ -117,6 +117,23 @@ export default function createComponent(renderFactory, render, config, component
       return $slots;
     };
 
+    hasDiff(prevObj, nextObj) {
+      let isUpdated = false;
+      let isDeleted = false;
+      Object.keys(prevObj).forEach((prevKey) => {
+        if (!(prevKey in nextObj)) {
+          isDeleted = true;
+        } else if (prevObj[prevKey] !== nextObj[prevKey]) {
+          isUpdated = true;
+        }
+      });
+      Object.keys(nextObj).forEach((key) => {
+        if (!(key in prevObj)) isUpdated = true;
+      });
+
+      return isDeleted || isUpdated;
+    }
+
     componentDidMount() {
       if (typeof config.didMount === 'function') {
         config.didMount.call(this.publicInstance);
@@ -125,7 +142,10 @@ export default function createComponent(renderFactory, render, config, component
 
     componentDidUpdate(prevProps, prevState) {
       if (typeof config.didUpdate === 'function') {
-        config.didUpdate.call(this.publicInstance, prevProps, prevState);
+        if (this.hasDiff(prevProps, this.props)
+          || this.hasDiff(prevState, this.state)) {
+          config.didUpdate.call(this.publicInstance, prevProps, prevState);
+        }
       }
     }
 

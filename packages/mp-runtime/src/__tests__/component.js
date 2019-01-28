@@ -219,4 +219,36 @@ describe('Mini Program Component', () => {
 
     renderer.create(createElement(Comp, { bar: 'from prop' }));
   });
+
+
+  it('should run didUpdate but not fall into infinite recursion', (done) => {
+    function renderFactory(Rax) {
+      return function(data) {
+        return createElement('view', {
+          foo: data.foo,
+        });
+      };
+    }
+    let runCount = 0;
+    const Comp = createComponent(renderFactory, Rax, {
+      data: { foo: 'from data' },
+      didMount() {
+        this.setData({ foo: 'Hello World' });
+      },
+      didUpdate() {
+        runCount ++;
+        this.setData({ foo: this.data.foo.slice(0, -1) });
+      },
+      didUnmount() {
+        expect(this.data.foo).toEqual('');
+        expect(runCount).toEqual(12); // Limited didUpdate
+        // if did unmount not triggered, task will not be done.
+        done();
+      },
+    });
+    const tree = renderer.create(createElement(Comp, {}));
+    setTimeout(() => {
+      tree.unmount();
+    });
+  });
 });
