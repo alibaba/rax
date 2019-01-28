@@ -56,11 +56,11 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   /**
-   * Mark the scrollable element.
-   * @type {boolean}
+   * Mark the scrollable element and direction.
    * @private
    */
   _scrollable = true;
+  _scrollDirection = 'x';
 
   _getBoolPropFromAttr(attr, fallbackVal) {
     if (this._prevent) return false;
@@ -160,7 +160,28 @@ export default class ScrollViewElement extends PolymerElement {
         }
         : true
     );
+
+    this.addEventListener('touchstart', this._handleTouchStart, false);
+    this.addEventListener('touchend', this._handleTouchEnd, false);
+    this.addEventListener('touchcancel', this._handleTouchEnd, false);
   }
+
+  _handleTouchStart = (evt) => {
+    this._parentSameDirectionScrollElement = this._getNearestParentElement(
+      this,
+      (el) => el._scrollable === true && el._scrollDirection === this._scrollDirection
+    );
+    if (this._parentSameDirectionScrollElement) {
+      evt.stopPropagation();
+      this._parentSameDirectionScrollElement._prevent = true;
+    }
+  };
+  _handleTouchEnd = (evt) => {
+    if (this._parentSameDirectionScrollElement) {
+      evt.stopPropagation();
+      this._parentSameDirectionScrollElement._prevent = false;
+    }
+  };
 
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -174,14 +195,23 @@ export default class ScrollViewElement extends PolymerElement {
         }
         : true
     );
+    this.removeEventListener('touchstart', this._handleTouchStart, true);
+    this.removeEventListener('touchend', this._handleTouchEnd, true);
+    this.removeEventListener('touchcancel', this._handleTouchEnd, true);
   }
 
   _observeScrollX() {
     this.style.overflowX = this.scrollX ? 'auto' : 'hidden';
+    if (this.scrollX) {
+      this._scrollDirection = 'x';
+    }
   }
 
   _observeScrollY() {
     this.style.overflowY = this.scrollY ? 'auto' : 'hidden';
+    if (this.scrollY) {
+      this._scrollDirection = 'y';
+    }
   }
 
   _observeScrollIntoView() {
@@ -254,6 +284,19 @@ export default class ScrollViewElement extends PolymerElement {
       }, 16);
     } else {
       this.scrollTop = value;
+    }
+  }
+
+  /**
+   * Find nearnet parent element.
+   * @param el {HTMLElement} Base element.
+   * @param isTarget {Function} Judge the right element, return true if is target.
+   * @private
+   */
+  _getNearestParentElement(el, isTarget) {
+    while (el) {
+      el = el.parentElement;
+      if (!el || isTarget(el)) return el;
     }
   }
 
