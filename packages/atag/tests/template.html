@@ -25,10 +25,6 @@
       height: 100%;
       /* HACK: >= iOS 11 make body at least 100vh height to avoid tap highlight */
       min-height: 100vh;
-    }
-
-    /* Correction fontSize to avoid rem effects */
-    a-page {
       font-size: 16px;
     }
   </style>
@@ -42,27 +38,6 @@
     // Set rem
     documentElementStyle.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';
   </script>
-
-  <style>
-    .card {
-      border: 1px solid #d6d7da;
-      margin: 10px;
-      background-color: #fff;
-      border-radius: 4px;
-    }
-
-    .title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 10px;
-      border-bottom: 1px solid #d6d7da;
-    }
-
-    .demo {
-      padding: 10px;
-    }
-  </style>
 </head>
 
 <body>

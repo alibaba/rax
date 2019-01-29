@@ -11,6 +11,25 @@ export default class Button extends PolymerElement {
    */
   static get properties() {
     return {
+      /**
+       * Size of button, can be default or mini.
+       */
+      size: {
+        type: String,
+        value: 'default',
+        reflectToAttribute: true,
+      },
+      /**
+       * Type of button, can be default, primary, warn.
+       */
+      type: {
+        type: String,
+        value: 'default',
+        reflectToAttribute: true,
+      },
+      /**
+       * Disable
+       */
       disabled: {
         type: Boolean,
         value: false,
