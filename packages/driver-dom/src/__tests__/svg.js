@@ -1,5 +1,5 @@
 import { createElement, render } from 'rax';
-import BrowserDirver from '../';
+import * as DriverDOM from '../../';
 
 describe('svg', () => {
   let container;
@@ -19,7 +19,7 @@ describe('svg', () => {
         Sorry, your browser does not support inline SVG.
       </svg>
     ), container, {
-      driver: BrowserDirver
+      driver: DriverDOM
     });
     let svgNode = container.children[0];
     expect(svgNode.namespaceURI).toEqual('http://www.w3.org/2000/svg');
