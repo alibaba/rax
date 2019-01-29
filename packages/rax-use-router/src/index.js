@@ -12,7 +12,7 @@ function decodeParam(val) {
 }
 
 function matchPath(route, pathname, parentParams) {
-  const end = !route.children; // When true the regexp will matched to the end of the string
+  const end = !route.routes; // When true the regexp will matched to the end of the string
   const routePath = route.path || '';
 
   const cacheKey = `${routePath}|${end}`;
@@ -73,10 +73,10 @@ function matchRoute(route, baseUrl, pathname, parentParams) {
         }
       }
 
-      if (matched && route.children) {
-        while (childIndex < route.children.length) {
+      if (matched && route.routes) {
+        while (childIndex < route.routes.length) {
           if (!childMatches) {
-            const childRoute = route.children[childIndex];
+            const childRoute = route.routes[childIndex];
             childRoute.parent = route;
 
             childMatches = matchRoute(
@@ -107,14 +107,25 @@ function matchRoute(route, baseUrl, pathname, parentParams) {
 
 
 const router = {
-  changeHandler() { },
+  handles: [],
   errorHandler() { },
+  setHandle(handle) {
+    return router.handles.push(handle);
+  },
+  clearHandle(handleId) {
+    router.handles[handleId - 1] = null;
+  },
+  triggerHandles(component) {
+    router.handles.map((handle) => {
+      handle && handle(component);
+    });
+  },
   match(fullpath) {
     if (fullpath == null) return;
 
     const matched = matchRoute(
       router.root,
-      '',
+      router.root.path,
       fullpath
     );
 
@@ -136,11 +147,11 @@ const router = {
         // Lazy loading component by import('./Foo')
         component.then((component) => {
           component = component.__esModule ? component.default : component;
-          router.changeHandler(component);
+          router.triggerHandles(component);
         });
         return;
-      } else if (component !== null && component !== undefined) {
-        router.changeHandler(component);
+      } else if (component != null) {
+        router.triggerHandles(component);
         return component;
       } else {
         return next(parent);
@@ -151,20 +162,22 @@ const router = {
   }
 };
 
-export function useRouter(routes, initPathname) {
-  router.root = Array.isArray(routes) ? { path: '', children: routes } : routes;
+export function route(config) {
+  router.root = Array.isArray(config) ? { path: '', routes: config } : config;
+}
 
+export function useComponent(initPathname) {
   const [component, setComponent] = useState([]);
 
   useEffect(() => {
-    router.changeHandler = (component) => {
+    const handleId = router.setHandle((component) => {
       setComponent(component);
-    };
+    });
 
-    router.matched(initPathname);
+    router.match(initPathname);
 
     return () => {
-      router.changeHandler = () => {};
+      router.clearHandle(handleId);
     };
   }, []);
 
