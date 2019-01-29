@@ -9,7 +9,7 @@ describe('canvas', () => {
     return page;
   }
 
-  afterAll(async () => {
+  afterAll(async() => {
     for (let i = 0, l = pages.length; i < l; i++) {
       await pages[i].close();
     }

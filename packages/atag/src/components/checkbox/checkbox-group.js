@@ -67,5 +67,3 @@ export default class CheckboxGroupElement extends PolymerElement {
     `;
   }
 }
-
-customElements.define(CheckboxGroupElement.is, CheckboxGroupElement);

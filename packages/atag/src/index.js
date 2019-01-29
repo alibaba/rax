@@ -14,7 +14,6 @@ import 'components/switch';
 import 'components/web-view';
 import 'components/scroll-view';
 import 'components/checkbox';
-import 'components/checkbox-group';
 import 'components/radio';
 import 'components/radio-group';
 import 'components/label';
