@@ -5,7 +5,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
-import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeMethods} from '../hooks';
+import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle} from '../hooks';
 import { flushPassiveEffects } from '../vdom/updater';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
@@ -526,7 +526,7 @@ describe('hooks', () => {
       function Counter({row: newRow}, ref) {
         let [reducer, setReducer] = useState(() => reducerA);
         let [count, dispatch] = useReducer(reducer, 0);
-        useImperativeMethods(ref, () => ({dispatch}));
+        useImperativeHandle(ref, () => ({dispatch}));
         if (count < 20) {
           dispatch('increment');
           // Swap reducers each time we increment
@@ -586,7 +586,7 @@ describe('hooks', () => {
 
       function Counter(props, ref) {
         const [count, dispatch] = useReducer(reducer, 0);
-        useImperativeMethods(ref, () => ({dispatch}));
+        useImperativeHandle(ref, () => ({dispatch}));
         return <span>{count}</span>;
       }
       Counter = forwardRef(Counter);
@@ -635,7 +635,7 @@ describe('hooks', () => {
 
       function Counter(props, ref) {
         const [count, dispatch] = useReducer(reducer, 0, initialAction);
-        useImperativeMethods(ref, () => ({dispatch}));
+        useImperativeHandle(ref, () => ({dispatch}));
         return <span>{count}</span>;
       }
       Counter = forwardRef(Counter);
@@ -1255,6 +1255,60 @@ describe('hooks', () => {
       flushPassiveEffects();
       expect(logs).toEqual(['Unmount: 1']);
       expect(container.childNodes).toEqual([]);
+    });
+
+    it('does not update one component twice (update' +
+    'by props or setState should be merge)', () => {
+      let container = createNodeElement('div');
+      let logs = [];
+      let updateChildA, updateChildB, updateParent;
+      let childAUpdateNum, childBUpdateNum, parentUpdateNum;
+      childAUpdateNum = childBUpdateNum = parentUpdateNum = 0;
+
+      const ChildA = function(props) {
+        childAUpdateNum++;
+        const [count, updateCount] = useState(0);
+        updateChildA = updateCount;
+        return <span>{count}</span>;
+      };
+
+      const ChildB = function(props) {
+        childBUpdateNum++;
+        const [count, updateCount] = useState(0);
+        updateChildB = updateCount;
+        return <span>{count}</span>;
+      };
+
+      const Parent = function(props) {
+        parentUpdateNum++;
+        const [count, updateCount] = useState(0);
+        updateParent = updateCount;
+        return [<span>{count}</span>, <ChildA />, <ChildB />];
+      };
+
+      function App() {
+        useEffect(() => {
+          updateChildA(1);
+          updateChildA(2);
+          updateParent(3);
+          updateChildB(4);
+        });
+        return <Parent />;
+      }
+      render(<App />, container);
+      expect(childAUpdateNum).toEqual(1);
+      expect(parentUpdateNum).toEqual(1);
+      expect(childBUpdateNum).toEqual(1);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('0');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('0');
+      expect(container.childNodes[2].childNodes[0].data).toEqual('0');
+      flushPassiveEffects();
+      expect(childAUpdateNum).toEqual(2);
+      expect(parentUpdateNum).toEqual(2);
+      expect(childBUpdateNum).toEqual(2);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('3');
+      expect(container.childNodes[1].childNodes[0].data).toEqual('2');
+      expect(container.childNodes[2].childNodes[0].data).toEqual('4');
     });
   });
 

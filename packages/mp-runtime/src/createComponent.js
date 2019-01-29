@@ -1,6 +1,7 @@
 import computeChangedData from './computeChangedData';
 import deepCopy from './deepCopy';
 import { registerComponent } from './componentsHub';
+import { normalizeScopedSlots } from './normalizeScopedSlots';
 
 /**
  * Returns a boolean indicating whether the object has the specified property as its own property.
@@ -78,6 +79,10 @@ export default function createComponent(renderFactory, render, config, component
 
       Object.defineProperty(scope, '$slots', {
         get: () => this.transformChildrenToSlots(this.props.children),
+      });
+
+      Object.defineProperty(scope, '$scopedSlots', {
+        get: () => normalizeScopedSlots(this.props.scopedSlots, scope.$slots),
       });
 
       Object.defineProperty(scope, 'is', {

@@ -356,8 +356,8 @@ describe('Element', () => {
       createElement(undefined);
     }).toThrow();
 
+    jest.useFakeTimers();
 
-    Host.sandbox = false;
     expect(function() {
       class ParentComp {
         render() {
@@ -366,11 +366,14 @@ describe('Element', () => {
       }
 
       var component = render(<ParentComp />);
+
+      jest.runAllTimers();
     }).toThrowError(
       'createElement: type should not be null or undefined. Check ' +
       'the render method of `ParentComp`.'
     );
-    Host.sandbox = true;
+
+    jest.useRealTimers();
   });
 
   it('should extract null key and ref', function() {

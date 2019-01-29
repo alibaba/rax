@@ -10,10 +10,6 @@ const scheduleImmediateCallback = typeof setImmediate === 'undefined' ?
 const cancelImmediateCallback = typeof clearImmediate === 'undefined' ?
   clearTimeout : clearImmediate;
 
-const requestIdleCallbackPolyfill = job => setTimeout(job, 99); // 99ms
-const scheduleIdleCallback = typeof requestIdleCallback === 'undefined' ?
-  requestIdleCallbackPolyfill : requestIdleCallback;
-
 let beforeNextRenderCallbacks = [];
 let beforeNextRenderCallbackId;
 
@@ -41,8 +37,6 @@ function flushBeforeNextRenderCallbacks() {
 }
 
 export {
-  scheduleImmediateCallback,
-  scheduleIdleCallback,
   scheduleBeforeNextRenderCallback,
   flushBeforeNextRenderCallbacks
 };

@@ -150,7 +150,8 @@ function parse(template, options) {
         element.plain = !element.key && !attrs.length;
 
         processRef(element);
-        processSlot(element);
+        processSlotContent(element);
+        processSlotOutlet(element);
         processComponent(element);
         for (let i = 0; i < transforms.length; i++) {
           transforms[i](element, options);
@@ -434,30 +435,41 @@ function processOnce(el) {
   }
 }
 
-function processSlot(el) {
+// handle content being passed to a component as slot,
+// e.g. <template slot="xxx">, <div slot-scope="xxx">
+function processSlotContent(el) {
+  let slotScope;
+  if (el.tag === 'template') {
+    slotScope = getAndRemoveAttr(el, 'scope');
+    el.slotScope = slotScope || getAndRemoveAttr(el, 'slot-scope');
+  } else if (slotScope = getAndRemoveAttr(el, 'slot-scope')) {
+    el.slotScope = slotScope;
+  }
+
+  // slot="xxx"
+  const slotTarget = getBindingAttr(el, 'slot');
+  if (slotTarget) {
+    el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget;
+    // preserve slot as an attribute for native shadow DOM compat
+    // only for non-scoped slots.
+    if (el.tag !== 'template' && !el.slotScope) {
+      addAttr(el, 'slot', slotTarget, getBindingAttr(el, 'slot'));
+    }
+  }
+
+  // TODO: v-slot syntax for SFC.
+}
+
+// handle <slot/> outlets
+function processSlotOutlet(el) {
   if (el.tag === 'slot') {
     el.slotName = getBindingAttr(el, 'name');
-    if (process.env.NODE_ENV !== 'production' && el.key) {
-      warn(
-        '`key` does not work on <slot> because slots are abstract outlets ' +
-        'and can possibly expand into multiple elements. ' +
-        'Use the key on a wrapping element instead.'
-      );
-    }
-  } else {
-    const slotTarget = getBindingAttr(el, 'slot');
-    if (slotTarget) {
-      el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget;
-    }
-    if (el.tag === 'template') {
-      el.slotScope = getAndRemoveAttr(el, 'scope');
-    }
   }
 }
 
 function processComponent(el) {
-  let binding;
-  if (binding = getBindingAttr(el, 'is')) {
+  let binding = getBindingAttr(el, 'is');
+  if (binding) {
     el.component = binding;
   }
   if (getAndRemoveAttr(el, 'inline-template') != null) {

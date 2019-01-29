@@ -1,0 +1,18 @@
+<style>
+  a-text {
+    font-size: 12px;
+  }
+</style>
+
+<a-picker id="picker" value="0" range="[1,2,3,4,5,6,7,8,9,10]">
+  <a-text id="callOutPicker">Normal Picker</a-text>
+  <script>
+    document.querySelector('#picker').addEventListener('change', (evt) => {
+      document.querySelector('#callOutPicker').innerHTML = evt.detail.value;
+    });
+  </script>
+</a-picker>
+
+<a-picker id="disabledPicker" value="0" range="[1,2,3,4,5]" disabled=true>
+  <a-text id="callOutDisabledPicker">disabled pick</a-text>
+</a-picker>

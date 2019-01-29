@@ -130,4 +130,20 @@ describe('deepCopy', () => {
       expect(data).toEqual(result);
     });
   });
+
+  it('can copy custom instance', () => {
+    const list = {
+      foo: '1',
+      __proto__: {
+        bar: '2',
+      },
+    };
+
+    expect(() => {
+      deepCopy(list);
+    }).not.toThrowError();
+    const newList = deepCopy(list);
+    expect(newList.foo).toEqual('1');
+    expect(newList.bar).toEqual('2');
+  });
 });

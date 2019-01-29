@@ -95,7 +95,7 @@ export default class Button extends PolymerElement {
         /* primary */
         :host([type="primary"]) {
           color: white;
-          color: var(--button-warn-text-color, white);
+          color: var(--button-primary-text-color, white);
           background: linear-gradient(to right, #ff8800, #ff5500);
           background: linear-gradient(to right, var(--button-primary-background-color-from, #ff8800), var(--button-primary-background-color-to, #ff5500));
         }

@@ -139,7 +139,7 @@ function useEffectImpl(effect, inputs, defered) {
   }
 }
 
-export function useImperativeMethods(ref, create, inputs) {
+export function useImperativeHandle(ref, create, inputs) {
   const nextInputs = inputs != null ? inputs.concat([ref]) : [ref, create];
 
   useLayoutEffect(() => {

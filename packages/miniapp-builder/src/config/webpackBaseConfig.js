@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 
 const cwd = process.cwd();
+const tsLoader = require.resolve('ts-loader');
 
 module.exports = {
   devServer: {
@@ -13,7 +14,15 @@ module.exports = {
   },
   resolve: {
     modules: ['node_modules', cwd],
-    extensions: ['.js', '.html', '.json'],
+    extensions: ['.js', '.json', '.ts', '.html', '.sfc'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: tsLoader,
+      },
+    ],
   },
   externals: [
     function(context, request, callback) {
