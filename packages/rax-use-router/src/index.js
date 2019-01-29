@@ -133,14 +133,14 @@ const router = {
       const current = matched.next();
 
       if (current.done) {
-        const error = new Error('Route not found');
+        const error = new Error(`No match for ${fullpath}`);
         return router.errorHandler(error, { pathname: fullpath });
       }
 
       let component;
-      const action = current.$.route.action;
-      if (typeof action === 'function') {
-        component = action(current.$.params, { pathname: fullpath });
+      const component = current.$.route.component;
+      if (typeof component === 'function') {
+        component = component(current.$.params, { pathname: fullpath });
       }
 
       if (component instanceof Promise) {
