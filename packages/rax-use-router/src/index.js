@@ -137,19 +137,17 @@ const router = {
         return router.errorHandler(error, { pathname: fullpath });
       }
 
-      let component;
-      const component = current.$.route.component;
+      let component = current.$.route.component;
       if (typeof component === 'function') {
         component = component(current.$.params, { pathname: fullpath });
       }
 
       if (component instanceof Promise) {
         // Lazy loading component by import('./Foo')
-        component.then((component) => {
+        return component.then((component) => {
           component = component.__esModule ? component.default : component;
           router.triggerHandles(component);
         });
-        return;
       } else if (component != null) {
         router.triggerHandles(component);
         return component;
