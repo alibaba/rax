@@ -100,43 +100,43 @@ export function flushPassiveEffects() {
   flushBeforeNextRenderCallbacks();
 }
 
+function updateState(component, partialState, callback) {
+  let internal = component._internal;
+
+  if (!internal) {
+    return;
+  }
+
+  !Host.isRendering && flushPassiveEffects();
+
+  enqueueCallback(internal, callback);
+
+  const hasComponentRendered = internal._renderedComponent;
+
+  // setState
+  if (partialState) {
+    enqueueState(internal, partialState);
+
+    // State pending in componentWillReceiveProps and componentWillMount
+    if (!internal._pendingState && hasComponentRendered) {
+      scheduleWork(component);
+    }
+  } else {
+    // forceUpdate
+    internal._pendingForceUpdate = true;
+
+    if (hasComponentRendered) {
+      scheduleWork(component);
+    }
+  }
+}
+
 setPerformWork(performWork);
 
 const Updater = {
-  setState: function(component, partialState, callback) {
-    let internal = component._internal;
-
-    if (!internal) {
-      return;
-    }
-
-    !Host.isRendering && flushPassiveEffects();
-
-    enqueueState(internal, partialState);
-    enqueueCallback(internal, callback);
-
-    // pending in componentWillReceiveProps and componentWillMount
-    if (!internal._pendingState && internal._renderedComponent) {
-      scheduleWork(component);
-    }
-  },
-
+  setState: updateState,
   forceUpdate: function(component, callback) {
-    let internal = component._internal;
-
-    if (!internal) {
-      return;
-    }
-
-    !Host.isRendering && flushPassiveEffects();
-
-    internal._pendingForceUpdate = true;
-
-    enqueueCallback(internal, callback);
-    // pending in componentWillMount
-    if (internal._renderedComponent) {
-      scheduleWork(component);
-    }
+    updateState(component, null, callback);
   },
 
   runCallbacks: runCallbacks
