@@ -133,7 +133,7 @@ export default class Textarea extends PolymerElement {
 
   _observeAutoHeight(autoHeight) {
     if (autoHeight) {
-      autosize(this.$.textarea)
+      autosize(this.$.textarea);
       autosize.update(this.$.textarea);
     }
   }
