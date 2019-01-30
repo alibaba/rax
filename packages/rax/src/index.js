@@ -15,11 +15,3 @@ export {
   render,
   version
 };
-
-export default {
-  createElement, createRef, createContext,
-  useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeHandle,
-  Fragment, memo,
-  render,
-  version
-};
