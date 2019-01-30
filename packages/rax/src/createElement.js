@@ -1,5 +1,4 @@
 import Host from './vdom/host';
-import {isWeex} from 'universal-env';
 
 export const RESERVED_PROPS = {
   key: true,
@@ -41,10 +40,6 @@ export function getRenderErrorInfo() {
 }
 
 export function Element(type, key, ref, props, owner) {
-  if (isWeex) {
-    props = filterProps(type, props);
-  }
-
   return {
     // Built-in properties that belong on the element
     type,
@@ -55,57 +50,6 @@ export function Element(type, key, ref, props, owner) {
     _owner: owner,
   };
 };
-
-function flattenStyle(style) {
-  if (!style) {
-    return undefined;
-  }
-
-  if (!Array.isArray(style)) {
-    return style;
-  } else {
-    let result = {};
-    for (let i = 0; i < style.length; ++i) {
-      let computedStyle = flattenStyle(style[i]);
-      if (computedStyle) {
-        for (let key in computedStyle) {
-          result[key] = computedStyle[key];
-        }
-      }
-    }
-    return result;
-  }
-}
-
-// TODO: move to weex-drvier
-function filterProps(type, props) {
-  // Only for weex text
-  if (type === 'text') {
-    let children = props.children;
-    let value = props.value;
-
-    // Value is first
-    if (value == null && children != null) {
-      if (Array.isArray(children)) {
-        children = children.map(function(val) {
-          if (typeof val === 'number' || typeof val === 'string') {
-            return val;
-          } else {
-            return '';
-          }
-        }).join('');
-      } else if (typeof children !== 'number' && typeof children !== 'string') {
-        children = '';
-      }
-
-      props.value = String(children);
-    }
-
-    props.children = null;
-  }
-
-  return props;
-}
 
 export default function createElement(type, config, children) {
   if (type == null) {
@@ -152,10 +96,6 @@ export default function createElement(type, config, children) {
         props[propName] = defaultProps[propName];
       }
     }
-  }
-
-  if (props.style && (Array.isArray(props.style) || typeof props.style === 'object')) {
-    props.style = flattenStyle(props.style);
   }
 
   return new Element(

@@ -1,4 +1,4 @@
-import { performWork } from './updater';
+let performWork = null;
 
 const setImmediatePolyfill = job => {
   return setTimeout(job, 0);
@@ -10,14 +10,10 @@ const scheduleImmediateCallback = typeof setImmediate === 'undefined' ?
 const cancelImmediateCallback = typeof clearImmediate === 'undefined' ?
   clearTimeout : clearImmediate;
 
-const requestIdleCallbackPolyfill = job => setTimeout(job, 99); // 99ms
-const scheduleIdleCallback = typeof requestIdleCallback === 'undefined' ?
-  requestIdleCallbackPolyfill : requestIdleCallback;
-
 let beforeNextRenderCallbacks = [];
 let beforeNextRenderCallbackId;
 
-const scheduleBeforeNextRenderCallback = (callback) => {
+export const scheduleBeforeNextRenderCallback = (callback) => {
   if (beforeNextRenderCallbacks.length === 0) {
     beforeNextRenderCallbackId = scheduleImmediateCallback(commitBeforeNextRenderCallbacks);
   }
@@ -33,16 +29,13 @@ function commitBeforeNextRenderCallbacks() {
   performWork();
 }
 
-function flushBeforeNextRenderCallbacks() {
+export function flushBeforeNextRenderCallbacks() {
   if (beforeNextRenderCallbacks.length !== 0) {
     cancelImmediateCallback(beforeNextRenderCallbackId);
     commitBeforeNextRenderCallbacks();
   }
 }
 
-export {
-  scheduleImmediateCallback,
-  scheduleIdleCallback,
-  scheduleBeforeNextRenderCallback,
-  flushBeforeNextRenderCallbacks
-};
+export function setPerformWork(handle) {
+  performWork = handle;
+}

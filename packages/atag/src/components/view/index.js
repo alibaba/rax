@@ -3,7 +3,7 @@ import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
 const style = document.createElement('style');
-style.innerText = `
+style.innerHTML = `
   a-view {
     display: block;
     -webkit-user-select: none;

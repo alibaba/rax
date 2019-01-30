@@ -1,4 +1,4 @@
-import Rax from 'rax';
+import * as Rax from 'rax';
 import renderer from 'rax-test-renderer';
 import setRender from '../setRender';
 import createElement from '../createElement';

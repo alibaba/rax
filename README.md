@@ -13,19 +13,20 @@
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
-  <a href="https://unpkg.com/rax/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip" alt="gzip size"></a>
+  <a href="https://unpkg.com/rax@beta/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip&style=flat" alt="gzip size"></a>
 </p>
 
 ---
 
 :zap: **Fast:** blazing fast virtual DOM.
 
-:dart: **Tiny:** ~8 KB minified + gzipped.
+:dart: **Tiny:** ~7 KB minified + gzipped.
 
 :art: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
 ## Quick Start
 
+### Using via CLI
 Install the Rax CLI tools to init project:
 
 ```sh
@@ -39,7 +40,36 @@ $ cd YourProjectName
 $ npm run start
 ```
 
-### With JSX(XML-like syntax extension to ECMAScript)
+### Using via CDN
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/rax@1.0.0-beta.5/dist/rax.js"></script>
+    <script src="https://unpkg.com/driver-dom@1.0.0-beta.3/dist/driver-dom.js"></script>
+    
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // @jsx Rax.createElement
+      Rax.render(
+        <h1>Hello, world!</h1>,
+        document.getElementById('root'),
+        { driver: DriverDOM }
+      );
+
+    </script>
+  </body>
+</html>
+```
+
+### About JSX(XML-like syntax extension to ECMAScript)
 > Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
 
 ```jsx
@@ -76,12 +106,11 @@ const styles = {
 ```js
 // app.js
 import {render} from 'rax';
-import DomDriver from 'driver-dom';
+import DriverDOM from 'driver-dom';
 import Hello from './Hello';
 
-render(<Hello name="world" />, document.body, { driver: DomDriver });
+render(<Hello name="world" />, document.body, { driver: DriverDOM });
 ```
-
 
 ## Rax API (v1.0)
 
@@ -249,11 +278,11 @@ render(<Hello name="world" />, document.body, { driver: DomDriver });
     );
   }
   ```
-* useImperativeMethods()
+* useImperativeHandle()
   ```jsx
   function FancyInput(props, ref) {
     const inputRef = useRef();
-    useImperativeMethods(ref, () => ({
+    useImperativeHandle(ref, () => ({
       focus: () => {
         inputRef.current.focus();
       }

@@ -1,4 +1,4 @@
-import Rax from 'rax';
+import * as Rax from 'rax';
 import setRender from '../setRender';
 import renderList from '../renderList';
 import createElement from '../createElement';

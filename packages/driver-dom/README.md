@@ -12,7 +12,7 @@ $ npm install --save driver-dom
 
 ```jsx
 import {createElement, render} from 'rax';
-import DomDriver from 'driver-dom';
+import DriverDOM from 'driver-dom';
 
 function Example() {
   return (
@@ -23,7 +23,7 @@ function Example() {
 }
 
 render(<Example />, null, {
-  driver: DomDriver
+  driver: DriverDOM
 });
 ```
 
@@ -34,9 +34,9 @@ render(<Example />, null, {
 Set tag prefix for custom elements.
 
 ```js
-import DomDriver from 'driver-dom';
+import DriverDOM from 'driver-dom';
 
-DomDriver.setTagNamePrefix('a-');
+DriverDOM.setTagNamePrefix('a-');
 ```
 
 

@@ -67,11 +67,11 @@ export default class Swiper extends PolymerElement {
   }
 
   /**
-   * Mark scrollable element.
-   * @type {boolean}
+   * Mark scrollable element and direction.
    * @private
    */
   _scrollable = true;
+  _scrollDirection = 'x';
   _prevent = false;
 
   constructor() {
@@ -179,6 +179,7 @@ export default class Swiper extends PolymerElement {
     let realCurrent = this.circular ? this.current + 1 : this.current;
     const offset = this._getOffset(realCurrent);
     this._setRealItem(offset, 0);
+    this._scrollDirection = vertical ? 'y' : 'x';
   }
 
   _observeAutoplay(autoplay) {
@@ -461,9 +462,9 @@ export default class Swiper extends PolymerElement {
     // Early return to improve performance.
     if (detail.state === 'track') return;
 
-    const parentScrollElement = this._getNearestParentElement(
+    const parentSameDirectionScrollElement = this._getNearestParentElement(
       this,
-      (el) => el._scrollable === true
+      (el) => el._scrollable === true && el._scrollDirection === this._scrollDirection
     );
 
     if (detail.state === 'start') {
@@ -475,15 +476,15 @@ export default class Swiper extends PolymerElement {
         this._handleTrackStart(detail);
       }
 
-      // Prevent parent scroll element.
-      if (parentScrollElement) {
-        parentScrollElement._prevent = true;
+      // Prevent parent same direction scroll element.
+      if (parentSameDirectionScrollElement) {
+        parentSameDirectionScrollElement._prevent = true;
       }
     } else if (detail.state === 'end') {
-      if (parentScrollElement) {
+      if (parentSameDirectionScrollElement) {
         // @NOTE: After all event handler is done, the render function is done, then set _prevent.
         afterNextRender(this, () => {
-          parentScrollElement._prevent = false;
+          parentSameDirectionScrollElement._prevent = false;
         });
       }
     }
