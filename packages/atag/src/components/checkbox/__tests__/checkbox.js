@@ -23,7 +23,7 @@ describe('checkbox', () => {
     await checkbox.click();
     expect(await page.$eval('#checkbox', el => el.checked)).toEqual(true);
     expect(await page.screenshot()).toMatchImageSnapshot({
-      failureThreshold: '0.001',
+      failureThreshold: '0.1',
       failureThresholdType: 'percent',
     });
   });
