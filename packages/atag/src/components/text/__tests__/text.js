@@ -15,7 +15,19 @@ describe('text', () => {
     }
   });
 
-  it('', async() => {
+  it('selectable', async() => {
+    const getUserSelctableCommand = 'getComputedStyle(document.querySelector(\'#text\')).userSelect';
 
+    const page = await createPage();
+    expect(await page.$eval('#text', el => el.selectable)).toEqual(false);
+    expect(await page.evaluate(getUserSelctableCommand)).toEqual('none');
+
+    await page.evaluate(`
+      text.innerText = 'HELLO WORLD';
+      text.selectable = true;
+    `);
+
+    expect(await page.$eval('#text', el => el.selectable)).toEqual(true);
+    expect(await page.evaluate(getUserSelctableCommand)).toEqual('all');
   });
 });
