@@ -15,7 +15,6 @@ import 'components/web-view';
 import 'components/scroll-view';
 import 'components/checkbox';
 import 'components/radio';
-import 'components/radio-group';
 import 'components/label';
 import 'components/slider';
 import 'components/progress';

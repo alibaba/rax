@@ -1,4 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
+import RadioGroupElement from './radio-group';
 
 export default class RadioElement extends PolymerElement {
   static get is() {
@@ -49,7 +50,7 @@ export default class RadioElement extends PolymerElement {
     this.setAttribute('a-label-target', '');
     this.radio = this.$.radio;
     this._initialValue = this.checked;
-    this.addEventListener('click', this.clickHandler);
+    this.addEventListener('click', this._clickHandler);
     window.addEventListener('_formReset', this._handlerReset, true);
   }
 
@@ -65,7 +66,7 @@ export default class RadioElement extends PolymerElement {
     e.stopPropagation();
   };
 
-  _dispatchChange = value => {
+  _dispatchChange = (value) => {
     const customEvent = new CustomEvent('_radioChange', {
       bubbles: true,
       cancelable: true,
@@ -174,3 +175,4 @@ export default class RadioElement extends PolymerElement {
 }
 
 customElements.define(RadioElement.is, RadioElement);
+customElements.define(RadioGroupElement.is, RadioGroupElement);

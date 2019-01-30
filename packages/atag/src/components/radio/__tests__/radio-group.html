@@ -1,0 +1,10 @@
+<a-radio-group id="radioGroup">
+  <a-radio value="hello" id="hello"></a-radio>
+  <a-radio value="world" id="world"></a-radio>
+</a-radio-group>
+<script>
+  const radioGroup = document.querySelector('#radioGroup');
+  radioGroup.addEventListener('change', (evt) => {
+    window.__radio_group_change_value__ = evt.detail.value;
+  });
+</script>

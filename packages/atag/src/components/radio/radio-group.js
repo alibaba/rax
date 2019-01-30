@@ -1,4 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
+import debounce from '../../shared/debounce';
 
 export default class RadioGroupElement extends PolymerElement {
   static get is() {
@@ -18,28 +19,33 @@ export default class RadioGroupElement extends PolymerElement {
     };
   }
 
+  constructor() {
+    super();
+    this._changeHandler = debounce(this._changeHandler);
+  }
+
   connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('_radioChange', this.changeHandler);
+    this.addEventListener('_radioChange', this._changeHandler);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('_radioChange', this.changeHandler);
+    this.removeEventListener('_radioChange', this._changeHandler);
   }
 
-  changeHandler = (e) => {
-    e.stopPropagation();
+  _changeHandler = (evt) => {
+    evt.stopPropagation();
     const checkboxList = this.querySelectorAll('a-radio');
     for (let i = 0; i < checkboxList.length; i++) {
       const node = checkboxList[i];
-      if (node !== e.target) {
+      if (node !== evt.target) {
         node.checked = false;
       }
     }
     const event = new CustomEvent('change', {
       detail: {
-        value: e.target.value
+        value: evt.target.value
       }
     });
     this.dispatchEvent(event);
@@ -61,4 +67,3 @@ export default class RadioGroupElement extends PolymerElement {
   }
 }
 
-customElements.define(RadioGroupElement.is, RadioGroupElement);
