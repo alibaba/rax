@@ -1,9 +1,9 @@
 {
   "name": "rax",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
-  "main": "dist/rax.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"

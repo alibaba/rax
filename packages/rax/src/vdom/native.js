@@ -67,7 +67,9 @@ class NativeComponent {
       }
     }
 
-    Host.hook.Reconciler.mountComponent(this);
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.mountComponent(this);
+    }
 
     return instance;
   }
@@ -121,7 +123,9 @@ class NativeComponent {
 
     this.unmountChildren(notRemoveChild);
 
-    Host.hook.Reconciler.unmountComponent(this);
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.unmountComponent(this);
+    }
 
     this._currentElement = null;
     this._nativeNode = null;
@@ -144,7 +148,9 @@ class NativeComponent {
     this.updateProperties(prevProps, nextProps);
     this.updateChildren(nextProps.children, nextContext);
 
-    Host.hook.Reconciler.receiveComponent(this);
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.receiveComponent(this);
+    }
   }
 
   updateProperties(prevProps, nextProps) {

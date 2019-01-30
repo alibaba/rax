@@ -1,4 +1,3 @@
-import './debug/devtools';
 import createElement from './createElement';
 import createContext from './createContext';
 import createRef from './createRef';

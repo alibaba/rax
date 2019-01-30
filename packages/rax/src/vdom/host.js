@@ -10,7 +10,5 @@ export default {
   rootComponents: {},
   rootInstances: {},
   // Inject
-  hook: null,
   driver: null,
-  monitor: null,
 };
