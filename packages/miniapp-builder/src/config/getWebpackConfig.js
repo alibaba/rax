@@ -1,10 +1,12 @@
 const merge = require('webpack-merge');
 const webpackBaseConfig = require('./webpackBaseConfig');
 const getEntry = require('./getEntry');
+const { getAppConfig } = require('./getAppConfig');
 const getMiniappType = require('../config/getMiniappType');
 
 // devtool: 'eval-source-map',
 module.exports = function getWebpackConfig(projectDir, isDevServer) {
+  const appConfig = getAppConfig(projectDir);
   const miniappType = getMiniappType(projectDir);
   const mergeConfig = {
     entry: getEntry(projectDir),
@@ -17,6 +19,7 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
       webpackBaseConfig,
       require('./getSFCConfig')(projectDir, {
         isDevServer,
+        appConfig,
       }),
       mergeConfig,
     );
@@ -25,6 +28,7 @@ module.exports = function getWebpackConfig(projectDir, isDevServer) {
       webpackBaseConfig,
       require('./getMiniProgramConfig')(projectDir, {
         isDevServer,
+        appConfig,
       }),
       mergeConfig,
     );

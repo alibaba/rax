@@ -9,7 +9,8 @@ const SFCLoader = require.resolve('sfc-loader');
  * SFC DSL webpack config
  */
 module.exports = (projectDir, opts) => {
-  const shouldEnableSourceMap = opts && opts.isDevServer === true;
+  const { appConfig, isDevServer } = opts;
+  const shouldEnableSourceMap = isDevServer === true;
   return {
     devtool: shouldEnableSourceMap ? 'eval-source-map' : false,
     output: {
@@ -63,6 +64,7 @@ module.exports = (projectDir, opts) => {
               options: {
                 builtInRax: true,
                 module: 'commonjs',
+                cssInJS: !appConfig.enableCSS,
               },
             }
           ],
