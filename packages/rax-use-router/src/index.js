@@ -127,6 +127,8 @@ const router = {
   match(fullpath) {
     if (fullpath == null) return;
 
+    router.fullpath = fullpath;
+
     const parent = router.root;
     const matched = matchRoute(
       parent,
@@ -151,7 +153,10 @@ const router = {
         // Lazy loading component by import('./Foo')
         return component.then((component) => {
           component = component.__esModule ? component.default : component;
-          router.triggerHandles(component);
+          // Check current fullpath avoid router has changed before lazy laoding complete
+          if (fullpath === router.fullpath) {
+            router.triggerHandles(component);
+          }
         });
       } else if (component != null) {
         router.triggerHandles(component);
