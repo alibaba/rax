@@ -17,9 +17,9 @@ describe('form', () => {
 
   it('submit', async() => {
     const page = await createPage();
-    await page.click('#radioTarget')
-    await page.click('#checkboxTarget')
-    await page.click('#input')
+    await page.click('#radioTarget');
+    await page.click('#checkboxTarget');
+    await page.click('#input');
     await page.keyboard.sendCharacter('hello world');
     await page.click('#submit');
 
@@ -29,9 +29,9 @@ describe('form', () => {
 
   it('reset', async() => {
     const page = await createPage();
-    await page.click('#radioTarget')
-    await page.click('#checkboxTarget')
-    await page.click('#input')
+    await page.click('#radioTarget');
+    await page.click('#checkboxTarget');
+    await page.click('#input');
     await page.keyboard.sendCharacter('hello world');
     await page.click('#reset');
 
