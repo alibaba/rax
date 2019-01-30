@@ -47,7 +47,7 @@ describe('swiper', () => {
       `,
     });
 
-    await page.waitFor(100);
+    await page.waitFor(200);
     expect(await page.$eval('#swiper', el => el.current)).toEqual(1);
     expect(await page.evaluate('window.__swiper_transition_duration__')).toEqual(0.1);
   });
