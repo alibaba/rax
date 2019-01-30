@@ -7,13 +7,18 @@ export default class Evaluator {
   }
 
   apply(data) {
-    const { resolve, reject } = this._taskPending[data.id];
-    if (data.type === 'success') {
-      resolve(data.success);
-    } else if (data.type === 'error') {
-      reject(data.error);
+    const task = this._taskPending[data.id];
+    // Task only can be resolved once.
+    if (task) {
+      const { resolve, reject } = task;
+      if (data.type === 'success') {
+        resolve(data.success);
+      } else if (data.type === 'error') {
+        reject(data.error);
+      }
+
+      this._taskPending[data.id] = null;
     }
-    this._taskPending[data.id] = null;
   }
 
   _send(data) {
@@ -62,8 +67,8 @@ export default class Evaluator {
   _eval({ code }) {
     const id = this._generateId();
     return new Promise((resolve, reject) => {
-      this._send({ type: 'eval', id, code });
       this._taskPending[id] = { resolve, reject };
+      this._send({ type: 'eval', id, code });
     });
   }
 

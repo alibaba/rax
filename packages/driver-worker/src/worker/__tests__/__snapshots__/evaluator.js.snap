@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Evaluator call with error 1`] = `
+Object {
+  "data": Object {
+    "code": "foo.bar(123,\\"hello\\")",
+    "id": 0,
+    "type": "eval",
+  },
+  "type": "EvaluationRecord",
+}
+`;
+
+exports[`Evaluator call with success 1`] = `
+Object {
+  "data": Object {
+    "code": "foo.bar(123,\\"hello\\")",
+    "id": 0,
+    "type": "eval",
+  },
+  "type": "EvaluationRecord",
+}
+`;
+
+exports[`Evaluator delete 1`] = `
+Object {
+  "data": Object {
+    "code": "delete foo.bar",
+    "id": 0,
+    "type": "eval",
+  },
+  "type": "EvaluationRecord",
+}
+`;
+
+exports[`Evaluator get 1`] = `
+Object {
+  "data": Object {
+    "code": "document.body.clientWidth",
+    "id": 0,
+    "type": "eval",
+  },
+  "type": "EvaluationRecord",
+}
+`;
+
+exports[`Evaluator set 1`] = `
+Object {
+  "data": Object {
+    "code": "document.body.innerHTML=\\"hello world\\"",
+    "id": 0,
+    "type": "eval",
+  },
+  "type": "EvaluationRecord",
+}
+`;

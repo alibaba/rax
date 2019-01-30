@@ -1,5 +1,5 @@
 import Node from '../Node';
-import { ELEMENT_NODE} from "../NodeTypes";
+import { ELEMENT_NODE} from '../NodeTypes';
 
 describe('Node', () => {
   it('node type', () => {
