@@ -9,6 +9,7 @@ export default class SwitchElement extends PolymerElement {
     return {
       color: {
         type: String,
+        value: '',
         reflectToAttribute: true
       },
       checked: {
