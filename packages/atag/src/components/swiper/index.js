@@ -14,6 +14,7 @@ export default class Swiper extends PolymerElement {
       current: {
         type: Number,
         value: 0,
+        observer: '_observeCurrent',
       },
       currentItemId: {
         type: String,
@@ -32,6 +33,7 @@ export default class Swiper extends PolymerElement {
       duration: {
         type: Number,
         value: 500,
+        observer: '_observeDuration',
       },
       autoplay: {
         type: Boolean,
@@ -82,7 +84,10 @@ export default class Swiper extends PolymerElement {
     this.dragging = false;
     this.startPos = null;
     this._current = 0;
-    this.transitionDuration = 500;
+  }
+
+  _observeDuration(duration) {
+    this.transitionDuration = duration;
   }
 
   _computeCircular(circular) {
@@ -189,20 +194,14 @@ export default class Swiper extends PolymerElement {
     }
   }
 
-  attributeChangedCallback(key, oldVal, newVal) {
-    super.attributeChangedCallback(key, oldVal, newVal);
-    switch (key) {
-      case 'current': {
-        const current = newVal;
-        if (this.isReady && current > -1 && current < this.itemsCount) {
-          clearTimeout(this.timer);
-          const realCurrent = this.circular ? current + 1 : current;
-          this._setTranslate(this._getOffset(realCurrent));
+  _observeCurrent(current) {
+    if (this.isReady && current > -1 && current < this.itemsCount) {
+      clearTimeout(this.timer);
+      const realCurrent = this.circular ? current + 1 : current;
+      this._setTranslate(this._getOffset(realCurrent));
 
-          if (this.autoplay) {
-            this._activeAutoplay();
-          }
-        }
+      if (this.autoplay) {
+        this._activeAutoplay();
       }
     }
   }
