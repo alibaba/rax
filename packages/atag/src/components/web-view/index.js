@@ -9,8 +9,8 @@ export default class WebView extends PolymerElement {
     return {
       src: {
         type: String,
-        notify: true
-      }
+        notify: true,
+      },
     };
   }
 
