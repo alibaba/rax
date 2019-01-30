@@ -15,12 +15,16 @@ function matchPath(route, pathname, parentParams) {
   const end = !route.routes; // When true the regexp will matched to the end of the string
   const routePath = route.path || '';
 
-  const cacheKey = `${routePath}|${end}`;
-  let regexp = cache[cacheKey];
-  let keys = [];
+  const regexpCacheKey = `${routePath}|${end}`;
+  const keysCacheKey = regexpCacheKey + '|';
+
+  let regexp = cache[regexpCacheKey];
+  let keys = cache[keysCacheKey] || [];
+
   if (!regexp) {
     regexp = pathToRegexp(routePath, keys, { end });
-    cache[cacheKey] = regexp;
+    cache[regexpCacheKey] = regexp;
+    cache[keysCacheKey] = keys;
   }
 
   const result = regexp.exec(pathname);
@@ -123,9 +127,10 @@ const router = {
   match(fullpath) {
     if (fullpath == null) return;
 
+    const parent = router.root;
     const matched = matchRoute(
-      router.root,
-      router.root.path,
+      parent,
+      parent.path,
       fullpath
     );
 
@@ -156,7 +161,7 @@ const router = {
       }
     }
 
-    return next(router.root);
+    return next(parent);
   }
 };
 
