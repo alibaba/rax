@@ -1,7 +1,6 @@
 const { genHandlers } = require('./events');
-const baseDirectives = require('../directives');
 const { baseWarn, pluckModuleFunction } = require('../helpers');
-const { camelize, no, extend, makeMap, isReservedTagName, isPreveredIdentifier, globalComponentsRefName } = require('../utils');
+const { camelize, no, extend, isReservedTagName, isPreveredIdentifier, globalComponentsRefName } = require('../utils');
 
 const fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 const simplePathRE = /^\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?']|\[".*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*\s*$/;
@@ -19,12 +18,9 @@ class CodegenState {
   constructor(options) {
     this.options = options;
     this.warn = options.warn || baseWarn;
-    this.isScopedIdentifier = makeMap(
-      options.scopeRefIdentifiers ? options.scopeRefIdentifiers.join(',') : ''
-    );
     this.transforms = pluckModuleFunction(options.modules, 'transformCode');
     this.dataGenFns = pluckModuleFunction(options.modules, 'genData');
-    this.directives = extend(extend({}, baseDirectives), options.directives);
+    this.directives = extend({}, options.directives);
     const isReservedTag = options.isReservedTag || no;
     this.maybeComponent = el => !isReservedTag(el.tag);
     this.onceId = 0;
@@ -34,26 +30,18 @@ class CodegenState {
 }
 exports.CodegenState = CodegenState;
 
-// export type CodegenResult = {
-//   render: string,
-//   staticRenderFns: Array<string>
-// };
-
 exports.generate = generate;
 function generate(ast, options) {
   const state = new CodegenState(options);
   const code = ast ? genElement(ast, state) : '';
   return {
     render: code,
-    // render: `with($scope){return ${code}}`,
     staticRenderFns: state.staticRenderFns
   };
 }
 
 /**
- * 找到 AST 的根节点
- * @param node
- * @returns {*}
+ * Find root node of element.
  */
 function findRootNode(node) {
   if (undefined === node.parent) {

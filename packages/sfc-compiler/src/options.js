@@ -7,11 +7,9 @@ const {
   canBeLeftOpenTag
 } = require('./utils');
 
-const directives = require('./directives');
 
 exports.baseOptions = {
   expectHTML: true,
-  directives,
   isPreTag,
   isUnaryTag,
   mustUseProp,

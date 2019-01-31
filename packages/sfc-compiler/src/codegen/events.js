@@ -1,5 +1,6 @@
 const uppercamelcase = require('uppercamelcase');
-const addThis = require('./addThis');
+const { makeMap } = require('../utils');
+const memberIdentifier = require('./memberIdentifier');
 
 const fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 const simplePathRE = /^\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?']|\[".*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*\s*$/;
@@ -37,7 +38,6 @@ const modifierCode = {
 
 exports.genHandlers = genHandlers;
 function genHandlers(events, isNative, warn, opts) {
-  // let res = isNative ? 'nativeOn:{' : 'on:{';
   let res = '';
   for (const name in events) {
     const handler = events[name];
@@ -88,16 +88,31 @@ function genHandler(name, handler, opts) {
   const isFunctionExpression = fnExpRE.test(handler.value);
 
   if (!handler.modifiers) {
-    return isMethodPath || isFunctionExpression
-      ? // foo-bar will be treated as `this.foo - this.bar` fn expression
+    if (isMethodPath || isFunctionExpression) {
+      // foo-bar will be treated as `this.foo - this.bar` fn expression
       // so only need handle `this.fooo`
-      (typeof handler.scope === 'string' ? handler.scope : 'this.') + handler.value
-      : // add this. for all identifiers
-      `function($event){${handler.disableAddThis ? handler.value : addThis(
-        handler.value,
-        opts.state.isScopedIdentifier,
-        opts.el
-      )}}.bind(this)`; // inline statement
+      return (typeof handler.scope === 'string' ? handler.scope : 'this.') + handler.value;
+    } else {
+      /**
+       * Handle with inline event expression statement
+       * Add this. for all identifiers
+       */
+      const skipIdentifiers = ['$event'];
+
+      // v-for iterator identifier should skip
+      const iters = getIters(opts.el);
+      Object.keys(iters).forEach((k) => skipIdentifiers.push(k));
+
+      return `function($event){${
+        handler.disableAddThis
+          ? handler.value
+          : memberIdentifier(
+            handler.value,
+            makeMap(skipIdentifiers.join(',')),
+            'this'
+          )
+      }}.bind(this)`;
+    }
   } else {
     let code = '';
     let genModifierCode = '';
@@ -145,4 +160,22 @@ function genFilterCode(key) {
   return `_k($event.keyCode,${JSON.stringify(key)}${
     alias ? ',' + JSON.stringify(alias) : ''
   })`;
+}
+
+function getIters(el, iters = {}) {
+  if (!el) {
+    return iters;
+  } else {
+    const { alias, iterator1, iterator2 } = el;
+    if (alias) {
+      iters[alias] = true;
+    }
+    if (iterator1) {
+      iters[iterator1] = true;
+    }
+    if (iterator2) {
+      iters[iterator2] = true;
+    }
+    return Object.assign({}, iters, getIters(el.parent));
+  }
 }

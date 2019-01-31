@@ -11,7 +11,7 @@ const traverse = require('babel-traverse').default;
 const t = require('babel-types');
 
 /**
- * like with, for identifier add scope binding
+ * Like with, for identifier add scope binding
  * eg. _c(foo) --> _c(this.foo)
  * @param {String} code source of the code
  * @param {Function} isPrevered whitelist

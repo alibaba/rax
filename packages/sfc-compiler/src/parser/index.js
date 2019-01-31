@@ -3,7 +3,6 @@ const { parseHTML } = require('./html-parser');
 const { parseText } = require('./text-parser');
 const { parseFilters } = require('./filter-parser');
 const { cached, no, camelize } = require('../utils');
-const { genAssignmentCode } = require('../directives/model');
 
 const {
   addProp,
@@ -505,13 +504,13 @@ function processAttrs(el) {
           if (modifiers.camel) {
             name = camelize(name);
           }
-          if (modifiers.sync) {
-            addHandler(
-              el,
-              `update:${camelize(name)}`,
-              genAssignmentCode(value, '$event')
-            );
-          }
+          // if (modifiers.sync) {
+          //   addHandler(
+          //     el,
+          //     `update:${camelize(name)}`,
+          //     genAssignmentCode(value, '$event')
+          //   );
+          // }
         }
         if (
           !el.component &&
