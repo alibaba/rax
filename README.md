@@ -376,6 +376,43 @@ render(<Hello name="world" />, document.body, { driver: DriverDOM });
 #### rax-create-class
 * createClass()
 
+
+## Rax Official Hooks
+
+#### Asynchronous Operation 
+```jsx
+import { createElement, useMemo } from 'rax';
+import usePromise from 'rax-use-promise';
+
+const fetchData = () => fetch('https://httpbin.org/get').then(res => res.json());
+
+function Example() {
+  const [data, error] = usePromise(useMemo(fetchData));
+  if (error) {
+    return <p>error</p>
+  } else if (data) {
+    return <p>{data.foo}</p>
+  }
+}
+```
+
+#### Fetch Data 
+```jsx
+import { createElement } from 'rax';
+import useFetch from 'rax-use-fetch';
+
+function Example() {
+  const [data, error] = useFetch('https://httpbin.org/get');
+  if (error) {
+    return <p>error</p>
+  } else if (data) {
+    return <p>{data.foo}</p>
+  } else {
+    return <p>loading</p>
+  }
+}
+```
+
 #### Router
 ```jsx
 import { createElement } from 'rax';
@@ -441,6 +478,13 @@ export default function Bar() {
   return <button onClick={ () => push('/home') }>Go home</button>
 }
 ```
+
+
+## Rax Official Drivers
+* driver-dom
+* driver-weex
+* driver-webgl
+* driver-worker
 
 ## Rax Renderers
 
