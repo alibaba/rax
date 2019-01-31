@@ -354,18 +354,22 @@ class NativeComponent {
         let nextChild = nextChildren[name];
         let prevChild = prevChildren && prevChildren[name];
 
+        if (prevChild) {
+          // Update `lastIndex` before `_mountIndex` gets unset by unmounting.
+          lastIndex = Math.max(prevChild._mountIndex, lastIndex);
+        }
+
         if (prevChild === nextChild) {
           let prevChildNativeNode = prevChild.getNativeNode();
+
+          // FIXME: If only change like 1,2,3,4,5,6 -> 1,6,3,4,5,2
+          // will insert 3 after 6, insert 4 after 3, insert 5 after 4, insert 2 after 5
+          // that is not fast
 
           // If the index of `child` is less than `lastIndex`, then it needs to
           // be moved. Otherwise, we do not need to move it because a child will be
           // inserted or moved before `child`.
           if (prevChild._mountIndex < lastIndex) {
-            // Get the last child
-            if (Array.isArray(lastPlacedNode)) {
-              lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
-            }
-
             // Convert to array type
             if (!Array.isArray(prevChildNativeNode)) {
               prevChildNativeNode = [prevChildNativeNode];
@@ -378,15 +382,9 @@ class NativeComponent {
 
           nextNativeNode = nextNativeNode.concat(prevChildNativeNode);
 
-          lastIndex = Math.max(prevChild._mountIndex, lastIndex);
           // Update to the latest mount order
           prevChild._mountIndex = nextIndex;
         } else {
-          if (prevChild != null) {
-            // Update `lastIndex` before `_mountIndex` gets unset by unmounting.
-            lastIndex = Math.max(prevChild._mountIndex, lastIndex);
-          }
-
           let parent = this.getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
           if (Array.isArray(parent)) {
@@ -404,11 +402,6 @@ class NativeComponent {
               }
 
               function insertNewChild(newChild) {
-                // Get the last child
-                if (Array.isArray(lastPlacedNode)) {
-                  lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
-                }
-
                 let prevFirstNativeNode;
 
                 if (firstPrevChild && !lastPlacedNode) {
@@ -484,7 +477,12 @@ class NativeComponent {
         }
 
         nextIndex++;
+
+        // Get the last child
         lastPlacedNode = nextChild.getNativeNode();
+        if (Array.isArray(lastPlacedNode)) {
+          lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
+        }
       }
 
       // Sync update native refs

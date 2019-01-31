@@ -492,7 +492,7 @@ class CompositeComponent {
           if (!Array.isArray(newChild)) {
             newChild = [newChild];
           }
-          
+
           // oldChild or newChild all maybe fragment
           if (!Array.isArray(oldChild)) {
             oldChild = [oldChild];
