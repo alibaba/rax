@@ -11,29 +11,21 @@ const traverse = require('babel-traverse').default;
 const t = require('babel-types');
 
 /**
- * Like with, for identifier add scope binding
- * eg. _c(foo) --> _c(this.foo)
+ * Scan code expression, and declear identifier
+ * eg. _c('view') -> `var _c = renderHelpers._c`;
  * @param {String} code source of the code
- * @param {Function} isPrevered whitelist
- * @param {String} scope
+ * @param isPrevented {Function} isPrevered whitelist
+ * @param scope {String} Scope identifier.
+ * @return {String} Code.
  */
-module.exports = function(code, isPrevered = no, scope = 'this') {
-  let ast;
-  try {
-    ast = babylon.parse(code, {
-      plugins: ['objectRestSpread']
-    });
-  } catch (err) {
-    console.warn(code);
-    throw new Error('Babylon parse err at with scope: ' + err.message);
-  }
-
+module.exports = function(code, isPrevented = no, scope = 'this') {
+  const ast = parseAST(code);
   const recordIds = {};
 
   function add(node) {
     if (
       t.isIdentifier(node) &&
-      !isPrevered(node.name) &&
+      !isPrevented(node.name) &&
       !isPreveredIdentifier(node.name) &&
       !isPreveredGlobalObject(node.name) &&
       !isSFCInternalIdentifier(node.name) &&
@@ -110,13 +102,31 @@ module.exports = function(code, isPrevered = no, scope = 'this') {
 
   traverse(ast, visitor);
 
-  // generate scope binding code
-  return Object.keys(recordIds)
-    .map(
-      name =>
-        `var ${name} = ${scope}${
-          isValidIdentifier(name) ? '.' + name : "['" + name + "']"
-        };`
-    )
-    .join('');
+  // Generate scope binding code
+  return generateCode(recordIds, scope);
 };
+
+function parseAST(code) {
+  try {
+    return babylon.parse(code, {
+      plugins: ['objectRestSpread']
+    });
+  } catch (err) {
+    console.warn(code);
+    throw new Error('Babylon parse err at with scope: ' + err.message);
+  }
+}
+
+function generateCode(keys, scope) {
+  let code = '';
+  for (let name in keys) {
+    if (keys.hasOwnProperty(name)) {
+      code += `var ${name} = ${scope}${
+        isValidIdentifier(name) 
+          ? '.' + name 
+          : "['" + name + "']"
+      };`
+    }
+  }
+  return code;
+}
