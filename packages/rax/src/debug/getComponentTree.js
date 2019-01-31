@@ -53,9 +53,9 @@ export default function getComponentTree(element) {
       if (name === null) {
         name = 'No display name';
       }
-    } else if (element._stringText) {
+    } else if (element._text) {
       nodeType = 'Text';
-      text = element._stringText;
+      text = element._text;
     } else {
       name = type.displayName || type.name || 'Unknown';
     }

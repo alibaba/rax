@@ -48,7 +48,7 @@ $ npm run start
   <head>
     <meta charset="UTF-8" />
     <title>Hello World</title>
-    <script src="https://unpkg.com/rax@1.0.0-beta.5/dist/rax.js"></script>
+    <script src="https://unpkg.com/rax@1.0.0-beta.6/dist/rax.js"></script>
     <script src="https://unpkg.com/driver-dom@1.0.0-beta.3/dist/driver-dom.js"></script>
     
     <!-- Don't use this in production: -->

@@ -28,7 +28,7 @@ function areInputsEqual(inputs, prevInputs) {
 
 export function useState(initialState) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {
@@ -81,7 +81,7 @@ export function useLayoutEffect(effect, inputs) {
 
 function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
   inputs = inputs != null ? inputs : [effect];
 
@@ -157,7 +157,7 @@ export function useImperativeHandle(ref, create, inputs) {
 
 export function useRef(initialValue) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {
@@ -175,7 +175,7 @@ export function useCallback(callback, inputs) {
 
 export function useMemo(create, inputs) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {
@@ -193,7 +193,7 @@ export function useMemo(create, inputs) {
 
 export function useReducer(reducer, initialState, initialAction) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {

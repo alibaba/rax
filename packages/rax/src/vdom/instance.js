@@ -76,10 +76,10 @@ export default {
     // After render callback
     driver.afterRender && driver.afterRender(rootInstance);
 
-    // Devtool render new root hook
-    Host.hook.Mount._renderNewRootComponent(rootInstance._internal);
-
     if (process.env.NODE_ENV !== 'production') {
+      // Devtool render new root hook
+      Host.hook.Mount._renderNewRootComponent(rootInstance._internal);
+
       Host.measurer && Host.measurer.afterRender();
     }
 

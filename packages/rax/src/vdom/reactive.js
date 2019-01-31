@@ -40,7 +40,7 @@ class ReactiveComponent extends Component {
     }
   }
 
-  getCurrentHookId() {
+  getHookId() {
     return ++this.hooksIndex;
   }
 
