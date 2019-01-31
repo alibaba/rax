@@ -60,6 +60,7 @@ export default class Element extends Node {
   }
 
   set animation(queues) {
+    this.setAttribute('animation', queues);
     if (Array.isArray(queues) && queues.length > 0) {
       const handleAnimationQueue = () => {
         if (queues.length > 0) {

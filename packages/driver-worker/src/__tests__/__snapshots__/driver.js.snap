@@ -1,5 +1,74 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`driver-worker convertTouchTarget 1`] = `
+Event {
+  "bubbles": false,
+  "cancelable": false,
+  "changedTouches": Array [
+    Object {
+      "target": "FOO",
+    },
+  ],
+  "defaultPrevented": false,
+  "touches": Array [
+    Object {
+      "target": "FOO",
+    },
+  ],
+  "type": "touchstart",
+}
+`;
+
+exports[`driver-worker sanitize 1`] = `
+Object {
+  "$$id": "1",
+  "attributes": Array [
+    Object {
+      "name": "foo",
+      "value": "bar",
+    },
+  ],
+  "nodeName": "FOO",
+  "nodeType": 1,
+  "style": Object {
+    "color": "red",
+  },
+}
+`;
+
+exports[`driver-worker sanitize 2`] = `
+Array [
+  Object {
+    "$$id": "1",
+    "attributes": Array [
+      Object {
+        "name": "foo",
+        "value": "bar",
+      },
+    ],
+    "nodeName": "FOO",
+    "nodeType": 1,
+    "style": Object {
+      "color": "red",
+    },
+  },
+  Object {
+    "$$id": "1",
+    "attributes": Array [
+      Object {
+        "name": "foo",
+        "value": "bar",
+      },
+    ],
+    "nodeName": "FOO",
+    "nodeType": 1,
+    "style": Object {
+      "color": "red",
+    },
+  },
+]
+`;
+
 exports[`driver-worker should be drived by rax 1`] = `
 Object {
   "mutations": Array [

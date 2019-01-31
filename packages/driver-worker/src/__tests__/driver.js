@@ -1,4 +1,5 @@
 import { render, createElement } from 'rax';
+import Event from '../worker/Event';
 import createDriver from '../index';
 
 describe('driver-worker', () => {
@@ -176,5 +177,52 @@ describe('driver-worker', () => {
       number: 0,
     });
     body.appendChild(el);
+  });
+
+  it('sanitize', () => {
+    const addEventListener = (event, handler) => { };
+    const postMessage = (message) => {};
+    const driver = createDriver({ addEventListener, postMessage });
+    const el = driver.createElement({ type: 'foo' });
+    el.setAttribute('foo', 'bar');
+    el.style = { color: 'red' };
+
+    expect(driver.sanitize(el, 'addedNodes')).toMatchSnapshot();
+    expect(driver.sanitize([el, el], 'addedNodes')).toMatchSnapshot();
+  });
+
+  it('convertTouchTarget', () => {
+    const addEventListener = (event, handler) => { };
+    const postMessage = (message) => {};
+    const driver = createDriver({ addEventListener, postMessage });
+    const event = new Event('touchstart');
+    driver.nodesMap.set('0', 'FOO');
+    const touch = {
+      $$id: '0',
+    };
+    event.touches = [touch];
+    event.changedTouches = [touch];
+    expect(driver.convertTouchTarget(event)).toMatchSnapshot();
+  });
+
+  it('appendChild', () => {
+    const addEventListener = (event, handler) => { };
+    const postMessage = (message) => {};
+    const driver = createDriver({ addEventListener, postMessage });
+    const parent = driver.createElement({ type: 'parent' });
+    const son = driver.createElement({ type: 'son' });
+    driver.appendChild(son, parent);
+    expect(son.parentNode).toEqual(parent);
+  });
+
+  it('removeChild', () => {
+    const addEventListener = (event, handler) => { };
+    const postMessage = (message) => {};
+    const driver = createDriver({ addEventListener, postMessage });
+    const parent = driver.createElement({ type: 'parent' });
+    const son = driver.createElement({ type: 'son' });
+    parent.appendChild(son);
+    driver.removeChild(son, parent);
+    expect(parent.childNodes.length).toEqual(0);
   });
 });
