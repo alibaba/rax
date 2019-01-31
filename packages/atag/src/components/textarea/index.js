@@ -15,6 +15,7 @@ export default class Textarea extends PolymerElement {
       value: {
         type: String,
         value: '',
+        observer: '_observeValue',
       },
       placeholder: {
         type: String,
@@ -43,6 +44,7 @@ export default class Textarea extends PolymerElement {
       autoHeight: {
         type: Boolean,
         value: false,
+        observer: '_observeAutoHeight',
       },
       readonly: {
         type: Boolean,
@@ -59,6 +61,7 @@ export default class Textarea extends PolymerElement {
         type: Boolean,
         value: true,
         observer: '_changeCustomStyle',
+        computed: '_computedShowCount(showCount)',
       },
       _valueLength: {
         type: Number,
@@ -128,20 +131,23 @@ export default class Textarea extends PolymerElement {
     autosize.destroy(this.$.textarea);
   }
 
-  attributeChangedCallback(key, oldVal, newVal) {
-    super.attributeChangedCallback(key, oldVal, newVal);
-
-    switch (key) {
-      case 'show-count': {
-        this.showCount = newVal !== 'false';
-        break;
-      }
-      case 'value': {
-        this.value = newVal;
-        this._valueUnicodeCharString = new UnicodeCharString(newVal, this.maxlength);
-        break;
-      }
+  _observeAutoHeight(autoHeight) {
+    if (autoHeight) {
+      autosize(this.$.textarea);
+      autosize.update(this.$.textarea);
     }
+  }
+
+  _observeValue(value) {
+    this.value = value;
+    this._valueUnicodeCharString = new UnicodeCharString(value, this.maxlength);
+    if (this.autoHeight) {
+      autosize.update(this.$.textarea);
+    }
+  }
+
+  _computedShowCount(showCount) {
+    return showCount !== 'false';
   }
 
   _observeFocus() {

@@ -1,18 +1,34 @@
-/* global __renderer_to_worker__ */
 import { PolymerElement } from '@polymer/polymer';
 
-class Navigator extends PolymerElement {
+const WORKER_TUNNEL = '__renderer_to_worker__';
+
+class NavigatorElement extends PolymerElement {
   static get is() {
     return 'a-navigator';
   }
 
   static get properties() {
     return {
-      'hover-style': String,
-      'hover-start-time': Number,
-      'hover-stay-time': Number,
-      url: String,
-      'open-type': String
+      hoverStyle: {
+        type: String,
+        value: '',
+      },
+      hoverStartTime: {
+        type: Number,
+        value: 50,
+      },
+      hoverStayTime: {
+        type: Number,
+        value: 600,
+      },
+      url: {
+        type: String,
+        value: '',
+      },
+      openType: {
+        type: String,
+        value: 'navigate',
+      },
     };
   }
 
@@ -31,41 +47,38 @@ class Navigator extends PolymerElement {
   }
 
   _handleTouchStart = () => {
-    if (this['hover-style']) {
+    if (this.hoverStyle) {
       this.touchTimer = setTimeout(() => {
         this.prevStyle = this.getAttribute('style') || '';
-        this.setAttribute('style', this.prevStyle + this['hover-style']);
-      }, this['hover-start-time'] || 200);
+        this.setAttribute('style', this.prevStyle + this.hoverStyle);
+      }, this.hoverStartTime);
     }
   }
 
   _handleTouchEnd = () => {
     clearTimeout(this.touchTimer);
 
-    if (this['hover-style']) {
+    if (this.hoverStyle) {
       setTimeout(() => {
         this.setAttribute('style', this.prevStyle);
-      }, this['hover-stay-time'] || 200);
+      }, this.hoverStayTime);
     }
   }
 
   _handleClick = () => {
-    // default val is navigate
-    const openType = this['open-type'] || 'navigate';
-
     // in miniapp env to trigger navigate event to worker
     this._callWorker({
       type: 'navigate',
-      navigateType: openType,
+      navigateType: this.openType,
       navigateTo: this.url
     });
   }
 
   _callWorker(args) {
-    if (typeof __renderer_to_worker__ === 'function') {
-      __renderer_to_worker__(args);
+    if (typeof window[WORKER_TUNNEL] === 'function') {
+      window[WORKER_TUNNEL](args);
     }
   }
 }
 
-customElements.define(Navigator.is, Navigator);
+customElements.define(NavigatorElement.is, NavigatorElement);

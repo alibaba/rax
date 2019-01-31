@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`form reset 1`] = `
+Object {
+  "value": Object {
+    "checkbox": Array [
+      "checkbox1",
+    ],
+    "input": "",
+    "radio": "",
+    "slider": 50,
+    "switch": false,
+  },
+}
+`;
+
+exports[`form submit 1`] = `
+Object {
+  "value": Object {
+    "checkbox": Array [
+      "checkbox1",
+      "checkbox2",
+    ],
+    "input": "hello world",
+    "radio": "radio1",
+    "slider": 50,
+    "switch": false,
+  },
+}
+`;

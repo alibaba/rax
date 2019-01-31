@@ -7,24 +7,24 @@ export default class CanvasElement extends PolymerElement {
 
   static get properties() {
     return {
+      /**
+       * Width, px, default to 300px.
+       */
       width: {
         type: String,
         value: '300'
       },
+      /**
+       * Height, px, default to 225px.
+       */
       height: {
         type: String,
-        value: '150'
-      }
+        value: '225'
+      },
     };
   }
 
-  ready() {
-    super.ready();
-    this.width = this.width / 750 * document.body.clientWidth;
-    this.height = this.height / 750 * document.body.clientHeight;
-  }
-
-  getContext(type) {
+  getContext(type = '2d') {
     if (type === '2d') {
       return this.context2d || (this.context2d = this.$.canvasEl.getContext('2d'));
     } else {
@@ -33,9 +33,7 @@ export default class CanvasElement extends PolymerElement {
   }
 
   static get template() {
-    return html`
-    <canvas id="canvasEl" width="{{width}}" height="{{height}}"></canvas>
-    `;
+    return html`<canvas id="canvasEl" width="{{width}}" height="{{height}}"></canvas>`;
   }
 }
 

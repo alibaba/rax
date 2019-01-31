@@ -36,7 +36,7 @@ module.exports = () => {
             loader: 'babel-loader',
             options: {
               babelrc: true,
-              extends: join(__dirname + '/../.babelrc'),
+              extends: join(__dirname + '/../babel.config.js'),
             },
             exclude: [resolve('vendors')],
           },

@@ -9,8 +9,8 @@ export default class Label extends PolymerElement {
     return {
       for: {
         type: String,
-        value: ''
-      }
+        value: '',
+      },
     };
   }
 
@@ -68,14 +68,11 @@ export default class Label extends PolymerElement {
   }
 
   static get template() {
-    return html`
-    <style>
-      :host {
-        display: inline-block;
-      }
-    </style>
-    <slot></slot>
-    `;
+    return html`<style>
+        :host {
+          display: inline-block;
+        }
+      </style><slot></slot>`;
   }
 }
 
