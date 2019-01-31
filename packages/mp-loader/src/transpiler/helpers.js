@@ -1,22 +1,13 @@
-exports.baseWarn = baseWarn;
-function baseWarn(msg) {
-  console.error(`[compiler]: ${msg}`);
-}
+const { cached } = require('../utils');
+const { hasExpression, transformExpression } = require('./expression');
 
-exports.pluckModuleFunction = pluckModuleFunction;
-function pluckModuleFunction(modules, key) {
-  return modules ? modules.map(m => m[key]).filter(_ => _) : [];
-}
-
-exports.addProp = addProp;
-function addProp(el, name, value) {
-  (el.props || (el.props = [])).push({
-    name,
-    value
-  });
-}
-
-exports.addAttr = addAttr;
+/**
+ * Add an attr to element.
+ * @param el
+ * @param name
+ * @param value
+ * @param scope
+ */
 function addAttr(el, name, value, scope = 'this.data') {
   (el.attrs || (el.attrs = [])).push({
     name,
@@ -25,79 +16,12 @@ function addAttr(el, name, value, scope = 'this.data') {
   });
 }
 
-exports.addDirective = addDirective;
-function addDirective(el, name, rawName, value, arg, modifiers) {
-  (el.directives || (el.directives = [])).push({
-    name,
-    rawName,
-    value,
-    arg,
-    modifiers
-  });
-}
-
-exports.addHandler = addHandler;
-function addHandler(el, name, value, modifiers, important, warn) {
-  // warn prevent and passive modifier
-  /* istanbul ignore if */
-  if (
-    process.env.NODE_ENV !== 'production' &&
-    warn &&
-    modifiers &&
-    modifiers.prevent &&
-    modifiers.passive
-  ) {
-    warn(
-      "passive and prevent can't be used together. " +
-      "Passive handler can't prevent default event."
-    );
-  }
-  // check capture modifier
-  if (modifiers && modifiers.capture) {
-    delete modifiers.capture;
-    name = '!' + name; // mark the event as captured
-  }
-  if (modifiers && modifiers.once) {
-    delete modifiers.once;
-    name = '~' + name; // mark the event as once
-  }
-  /* istanbul ignore if */
-  if (modifiers && modifiers.passive) {
-    delete modifiers.passive;
-    name = '&' + name; // mark the event as passive
-  }
-  let events;
-  if (modifiers && modifiers.native) {
-    delete modifiers.native;
-    events = el.nativeEvents || (el.nativeEvents = {});
-  } else {
-    events = el.events || (el.events = {});
-  }
-  const newHandler = {
-    value,
-    modifiers
-  };
-  const handlers = events[name];
-  /* istanbul ignore if */
-  if (Array.isArray(handlers)) {
-    important ? handlers.unshift(newHandler) : handlers.push(newHandler);
-  } else if (handlers) {
-    events[name] = important ? [newHandler, handlers] : [handlers, newHandler];
-  } else {
-    events[name] = newHandler;
-  }
-}
-
-exports.getBindingAttr = getBindingAttr;
-function getBindingAttr(el, name, getStatic) {
-  if (getStatic !== false) {
-    const staticValue = getAndRemoveAttr(el, name);
-    if (staticValue != null) {
-      return JSON.stringify(staticValue);
-    }
-  }
-}
-exports.getAndRemoveAttr = getAndRemoveAttr;
+/**
+ * Get and remove an attr from element.
+ * @param el {Element} Element.
+ * @param name {String} Name of attr.
+ * @return {*}
+ */
 function getAndRemoveAttr(el, name) {
   let val;
   if ((val = el.attrsMap[name]) != null) {
@@ -112,41 +36,35 @@ function getAndRemoveAttr(el, name) {
   return normalizeMustache(val, el);
 }
 
-const MUSTACHE_REG = /\W*\{\{([^}]+)\}\}/;
-const SPREAD_REG = /^\.\.\.[\w$_]/;
-const OBJ_REG = /^[\w$_](?:[\w$_\d\s]+)?:/;
-const ES2015_OBJ_REG = /^[\w$_](?:[\w$_\d\s]+)?,/;
-const IDENTIFIER_REG = /^\(([\w\d_-]+)\)$/;
 
-const expressionHelper = require('./expression');
-
-exports.normalizeMustache = normalizeMustache;
+/**
+ * Pluck mustache template to ES expression.
+ * @param exp
+ * @param el
+ * @return {*}
+ */
 function normalizeMustache(exp, el) {
   /**
-   * it's so strange that wx/alipay
+   * It's so strange that wx/alipay
    * support both {{ a: 1 }} or {{ data }}
    * shouldn't it be {{{ a: 1 }}} and {{ data }} ?
    */
   let result = exp;
-  if (exp && expressionHelper.hasExpression(exp)) {
+  if (exp && hasExpression(exp)) {
     const isInScope = isInFor(el);
-    result = expressionHelper.transformExpression(exp, undefined, {
+    result = transformExpression(exp, undefined, {
       scope: isInScope ? '' : 'data'
     });
   }
-
-  // /**
-  //  * (method) -> method
-  //  */
-  // let idMatch = IDENTIFIER_REG.exec(result);
-  // if (idMatch) {
-  //   result = idMatch[1];
-  // }
-
   return result;
 }
 
-exports.getRootEl = function getRootEl(el) {
+/**
+ * Get the root of one element.
+ * @param el {Element}  Some element.
+ * @return {Element} Root element.
+ */
+function getRootEl(el) {
   if (!el.parent) {
     return el;
   } else {
@@ -154,6 +72,11 @@ exports.getRootEl = function getRootEl(el) {
   }
 };
 
+/**
+ * Check an element is in for loop.
+ * @param el {Element} Element.
+ * @return {Boolean} Is in for loop.
+ */
 function isInFor(el) {
   if (el.parent) {
     return !!el.for || isInFor(el.parent);
@@ -163,21 +86,10 @@ function isInFor(el) {
 }
 
 /**
- * Create a cached version of a pure function.
- */
-function memorize(fn) {
-  let cache = Object.create(null);
-  return function memorizedFn(str) {
-    let hit = cache[str];
-    return hit || (cache[str] = fn(str));
-  };
-}
-
-/**
  * Camelize a hyphen-delimited string.
  */
 const camelizeRE = /-(\w)/g;
-exports.camelize = memorize(function(str) {
+const camelize = cached(function(str) {
   return str.replace(camelizeRE, function(_, c) {
     return c ? c.toUpperCase() : '';
   });
@@ -187,7 +99,7 @@ exports.camelize = memorize(function(str) {
  * Detect whether name is a dataset.
  */
 const DATASET_REG = /^data-/;
-const isDataset = memorize(function(name) {
+const isDataset = cached(function(name) {
   return DATASET_REG.test(name);
 });
 
@@ -195,13 +107,20 @@ const isDataset = memorize(function(name) {
  * Detect whether name is an aria property.
  */
 const ARIA_REG = /^aria-/;
-const isAriaProperty = memorize(function(name) {
+const isAriaProperty = cached(function(name) {
   return ARIA_REG.test(name);
 });
 
 /**
  * Detect whether name is need to transform
  */
-exports.isPreservedPropName = function(name) {
+function isPreservedPropName(name) {
   return isDataset(name) || isAriaProperty(name);
-};
+}
+
+exports.addAttr = addAttr;
+exports.getRootEl = getRootEl;
+exports.getAndRemoveAttr = getAndRemoveAttr;
+exports.normalizeMustache = normalizeMustache;
+exports.isPreservedPropName = isPreservedPropName;
+exports.camelize = camelize;
