@@ -72,6 +72,7 @@ export default function createElement(type, config, children) {
     }
   }
 
+  // Children arguments can be more than one
   const childrenLength = arguments.length - 2;
   if (childrenLength > 0) {
     if (childrenLength === 1 && !Array.isArray(children)) {

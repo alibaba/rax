@@ -492,22 +492,23 @@ class CompositeComponent {
           if (!Array.isArray(newChild)) {
             newChild = [newChild];
           }
-
+          
           // oldChild or newChild all maybe fragment
           if (!Array.isArray(oldChild)) {
             oldChild = [oldChild];
           }
 
+          const driver = Host.driver;
           // If newChild count large then oldChild
           let lastNewChild;
           for (let i = 0; i < newChild.length; i++) {
             let child = newChild[i];
             if (oldChild[i]) {
-              Host.driver.replaceChild(child, oldChild[i]);
+              driver.replaceChild(child, oldChild[i]);
             } else if (lastNewChild) {
-              Host.driver.insertAfter(child, lastNewChild);
+              driver.insertAfter(child, lastNewChild);
             } else {
-              Host.driver.appendChild(child, parent);
+              driver.appendChild(child, parent);
             }
             lastNewChild = child;
           }
@@ -515,7 +516,7 @@ class CompositeComponent {
           // If newChild count less then oldChild
           if (newChild.length < oldChild.length) {
             for (let i = newChild.length; i < oldChild.length; i++) {
-              Host.driver.removeChild(oldChild[i]);
+              driver.removeChild(oldChild[i]);
             }
           }
         }

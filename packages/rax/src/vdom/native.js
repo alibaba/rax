@@ -287,16 +287,14 @@ class NativeComponent {
       }
 
       // Update next children elements
-      for (let index = 0, length = nextChildrenElements.length; index <
-        length; index++) {
+      for (let index = 0, length = nextChildrenElements.length; index < length; index++) {
         let nextElement = nextChildrenElements[index];
         let name = getElementKeyName(nextChildren, nextElement, index);
         let prevChild = prevChildren && prevChildren[name];
         let prevElement = prevChild && prevChild._currentElement;
         let prevContext = prevChild && prevChild._context;
 
-        if (prevChild != null && shouldUpdateComponent(prevElement,
-          nextElement)) {
+        if (prevChild != null && shouldUpdateComponent(prevElement, nextElement)) {
           if (prevElement !== nextElement || prevContext !== context) {
             // Pass the same context when updating chidren
             prevChild.updateComponent(prevElement, nextElement, context,
@@ -358,10 +356,6 @@ class NativeComponent {
 
         if (prevChild === nextChild) {
           let prevChildNativeNode = prevChild.getNativeNode();
-          // Convert to array type
-          if (!Array.isArray(prevChildNativeNode)) {
-            prevChildNativeNode = [prevChildNativeNode];
-          }
 
           // If the index of `child` is less than `lastIndex`, then it needs to
           // be moved. Otherwise, we do not need to move it because a child will be
@@ -370,6 +364,11 @@ class NativeComponent {
             // Get the last child
             if (Array.isArray(lastPlacedNode)) {
               lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
+            }
+
+            // Convert to array type
+            if (!Array.isArray(prevChildNativeNode)) {
+              prevChildNativeNode = [prevChildNativeNode];
             }
 
             for (let i = prevChildNativeNode.length - 1; i >= 0; i--) {
