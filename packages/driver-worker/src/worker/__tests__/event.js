@@ -14,13 +14,13 @@ describe('Event', () => {
   it('stopPropagation', () => {
     const event = new Event('input');
     event.stopPropagation();
-    expect(event._stop).toEqual(true);
+    expect(event.bubbles).toEqual(false);
   });
 
   it('stopImmediatePropagation', () => {
     const event = new Event('input');
     event.stopImmediatePropagation();
-    expect(event._stop).toEqual(true);
+    expect(event.bubbles).toEqual(false);
     expect(event._end).toEqual(true);
   });
 

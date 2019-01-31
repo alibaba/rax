@@ -1,15 +1,16 @@
 export default class Event {
   constructor(type, options = {}) {
-    this.type = type;
+    this.type = type.toLowerCase();
     this.bubbles = !!options.bubbles;
     this.cancelable = !!options.cancelable;
     this.defaultPrevented = false;
   }
   stopPropagation() {
-    this._stop = true;
+    this.bubbles = false;
   }
   stopImmediatePropagation() {
-    this._end = this._stop = true;
+    this.bubbles = false;
+    this._end = true;
   }
   preventDefault() {
     this.defaultPrevented = true;
