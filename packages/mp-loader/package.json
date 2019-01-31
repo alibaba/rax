@@ -18,7 +18,7 @@
     "mp-runtime": "^0.7.12",
     "render-helpers": "^0.1.0",
     "resolve-pathname": "^2.2.0",
-    "sfc-compiler": "^0.7.4",
+    "sfc-compiler": "^0.7.5",
     "source-map": "^0.7.3"
   },
   "devDependencies": {
@@ -45,6 +45,7 @@
     "babel-loader": "^8.0.2",
     "babylon": "^6.18.0",
     "css-loader": "^1.0.1",
+    "loader-runner": "^3.0.0",
     "memory-fs": "^0.4.1",
     "miniapp-builder": "^0.1.11",
     "postcss": "^7.0.5",

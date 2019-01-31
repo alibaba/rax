@@ -7,7 +7,7 @@ const t = require('babel-types');
  * Test cases
  *   1. nested object {{x:{y:1}}}
  *   2. nested object and array {{[{},{}]}}
- *   3. multi expressions{{x}} {{y}}
+ *   3. multi expressions {{x}} {{y}}
  *   4. expression with special chars
  *     {{
  *       a: 1
