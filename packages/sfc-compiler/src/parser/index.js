@@ -495,23 +495,7 @@ function processAttrs(el) {
         name = name.replace(bindRE, '');
         value = parseFilters(value);
         isProp = false;
-        if (modifiers) {
-          if (modifiers.prop) {
-            isProp = true;
-            name = camelize(name);
-            if (name === 'innerHtml') name = 'innerHTML';
-          }
-          if (modifiers.camel) {
-            name = camelize(name);
-          }
-          // if (modifiers.sync) {
-          //   addHandler(
-          //     el,
-          //     `update:${camelize(name)}`,
-          //     genAssignmentCode(value, '$event')
-          //   );
-          // }
-        }
+
         if (
           !el.component &&
           (isProp || platformMustUseProp(el.tag, el.attrsMap.type, name))

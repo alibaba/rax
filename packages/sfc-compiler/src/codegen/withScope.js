@@ -122,10 +122,10 @@ function generateCode(keys, scope) {
   for (let name in keys) {
     if (keys.hasOwnProperty(name)) {
       code += `var ${name} = ${scope}${
-        isValidIdentifier(name) 
-          ? '.' + name 
+        isValidIdentifier(name)
+          ? '.' + name
           : "['" + name + "']"
-      };`
+      };`;
     }
   }
   return code;
