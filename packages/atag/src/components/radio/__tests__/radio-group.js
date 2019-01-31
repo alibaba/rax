@@ -20,6 +20,7 @@ describe('radio-group', () => {
 
     const worldHandle = await page.$('#world');
     await worldHandle.click();
+    await page.waitFor(200);
 
     expect(await page.evaluate('__radio_group_change_value__')).toEqual('world');
   });

@@ -76,6 +76,6 @@ describe('textarea', () => {
     // Auto calculate height
     expect(await page.evaluate(`
       document.querySelector('#textarea').getBoundingClientRect().height
-    `)).toBeGreaterThan(200);
+    `)).toBeGreaterThan(190);
   });
 });
