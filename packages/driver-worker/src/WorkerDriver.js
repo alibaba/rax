@@ -16,20 +16,6 @@ const TO_SANITIZE = [
   'previousSibling',
 ];
 
-function getChildText(node) {
-  let text = '';
-  if (node && node.childNodes) {
-    // Only get the first child text.
-    for (let i = 0, l = node.childNodes.length; i < l; i++) {
-      if (node.childNodes[i].nodeType === TEXT_NODE) {
-        text = node.childNodes[i].data;
-        break;
-      }
-    }
-  }
-  return text;
-}
-
 export default class WorkerDriver extends Driver {
   constructor(options = {}) {
     const { postMessage, addEventListener } = options;
@@ -100,6 +86,11 @@ export default class WorkerDriver extends Driver {
       return ret;
     }
 
+    /**
+     * Mark the node should not perform mutation.
+     */
+    if (node._stopMutate) return null;
+
     if (!node.$$id) {
       node.$$id = String(++this.nodeCounter);
       this.nodesMap.set(node.$$id, node);
@@ -111,6 +102,9 @@ export default class WorkerDriver extends Driver {
 
     if (node.nodeName === BODY) {
       result.nodeName = BODY;
+    } else if (prop === 'removedNodes' && node.nodeName === STYLE_ELEMENT) {
+      // Do not remove style tags.
+      return null;
     } else if (prop === 'addedNodes') {
       const nodeType = node.nodeType;
       result.nodeType = nodeType;
@@ -121,11 +115,18 @@ export default class WorkerDriver extends Driver {
           /**
            * @NOTE: Performance purpose.
            * Deduplicate same style tags.
+           * Use tree mode, instead of node.
            */
           if (node.nodeName === STYLE_ELEMENT) {
-            const textStyle = getChildText(node);
-            if (this.hitStyle[textStyle]) return null;
-            this.hitStyle[textStyle] = node;
+            const textNode = node.childNodes[0];
+            const textStyle = textNode.data;
+            if (this.hitStyle[textStyle]) {
+              return null;
+            } else {
+              this.hitStyle[textStyle] = true;
+              result.childNodes = this.sanitize(node.childNodes, prop);
+              textNode._stopMutate = true;
+            }
           }
 
           const events = node._getEvents();
