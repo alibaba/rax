@@ -13,6 +13,11 @@ export default class Event {
     this._end = true;
   }
   preventDefault() {
-    this.defaultPrevented = true;
+    if (this.cancelable) {
+      this.defaultPrevented = true;
+    } else {
+      // Calling preventDefault in uncancelable event should produce errors,
+      // but in chrome and safari, which not throw or console errors, follow behaviors here.
+    }
   }
 }
