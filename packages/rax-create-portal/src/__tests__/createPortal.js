@@ -1,13 +1,13 @@
 /* @jsx createElement */
 
-import Component from '../component';
-import PropTypes from '../proptypes';
-import createElement from '../createElement';
-import Host from '../vdom/host';
-import render from '../render';
+import Component from 'rax-component';
+import PropTypes from 'rax-proptypes';
+import { createElement, render, shared } from 'rax';
 import ServerDriver from 'driver-server';
-import createPortal from '../createPortal';
-import unmountComponentAtNode from '../unmountComponentAtNode';
+import unmountComponentAtNode from 'rax-unmount-component-at-node';
+import createPortal from '../';
+
+const { Host } = shared;
 
 describe('createPortal', () => {
   function createNodeElement(tagName) {

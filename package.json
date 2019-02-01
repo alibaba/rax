@@ -63,7 +63,7 @@
     "build": "npm run build:compile && npm run build:dist && npm run build:examples && npm run build:templates",
     "watch:compile": "node ./scripts/compile-packages.js --watch",
     "test": "npm run test:core && npm run test:atag",
-    "test:core": "jest",
+    "test:core": "jest --logHeapUsage --detectOpenHandles",
     "test:atag": "cd packages/atag && npm test",
     "start:examples": "cd examples/components && npm install && npm start",
     "start": "npm run start:examples",

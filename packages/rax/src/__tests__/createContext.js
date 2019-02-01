@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import Component from '../component';
+import Component from '../vdom/component';
 import createElement from '../createElement';
 import Host from '../vdom/host';
 import render from '../render';

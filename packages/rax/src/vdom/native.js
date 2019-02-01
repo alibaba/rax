@@ -3,7 +3,7 @@ import Ref from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
-import instance from './instance';
+import Instance from './instance';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -114,7 +114,7 @@ class NativeComponent {
         Ref.detach(this._currentElement._owner, ref, this);
       }
 
-      instance.remove(this._nativeNode);
+      Instance.remove(this._nativeNode);
       if (!notRemoveChild) {
         Host.driver.removeChild(this._nativeNode, this._parent);
       }
@@ -505,7 +505,7 @@ class NativeComponent {
   getNativeNode() {
     if (this._nativeNode == null) {
       this._nativeNode = Host.driver.createElement(this._instance);
-      instance.set(this._nativeNode, this._instance);
+      Instance.set(this._nativeNode, this._instance);
     }
 
     return this._nativeNode;

@@ -1,9 +1,9 @@
 /* @jsx createElement */
 
-import createElement from '../createElement';
-import Host from '../vdom/host';
-import render from '../render';
-import unmountComponentAtNode from '../unmountComponentAtNode';
+import { createElement, render, shared } from 'rax';
+import unmountComponentAtNode from '../';
+
+const { Host } = shared;
 
 describe('unmountComponentAtNode', () => {
   beforeEach(() => {

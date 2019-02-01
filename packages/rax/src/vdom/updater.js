@@ -1,22 +1,18 @@
 import Host from './host';
-import { flushBeforeNextRenderCallbacks, setPerformWork } from './scheduler';
+import { flush, setUpdater } from './scheduler';
 
 function enqueueCallback(internal, callback) {
-  if (callback) {
-    let callbackQueue =
-      internal._pendingCallbacks ||
-      (internal._pendingCallbacks = []);
-    callbackQueue.push(callback);
-  }
+  let callbackQueue =
+    internal._pendingCallbacks ||
+    (internal._pendingCallbacks = []);
+  callbackQueue.push(callback);
 }
 
 function enqueueState(internal, partialState) {
-  if (partialState) {
-    let stateQueue =
-      internal._pendingStateQueue ||
-      (internal._pendingStateQueue = []);
-    stateQueue.push(partialState);
-  }
+  let stateQueue =
+    internal._pendingStateQueue ||
+    (internal._pendingStateQueue = []);
+  stateQueue.push(partialState);
 }
 
 function runCallbacks(callbacks, context) {
@@ -33,7 +29,7 @@ function runUpdate(component) {
     return;
   }
 
-  Host.isRendering = true;
+  Host.isUpdating = true;
 
   // If updateComponent happens to enqueue any new updates, we
   // shouldn't execute the callbacks until the next render happens, so
@@ -56,15 +52,16 @@ function runUpdate(component) {
   }
 
   runCallbacks(callbacks, component);
-  Host.isRendering = false;
+  
+  Host.isUpdating = false;
 }
 
 function mountOrderComparator(c1, c2) {
   return c2._internal._mountID - c1._internal._mountID;
 }
 
-function performWork() {
-  if (Host.isRendering) {
+function performUpdate() {
+  if (Host.isUpdating) {
     return;
   }
 
@@ -72,7 +69,7 @@ function performWork() {
   let component;
   while (Host.dirtyComponents.length > 0) {
     // Before next render, we will flush all the PassiveEffects
-    flushPassiveEffects();
+    flush();
     // Stash the dirtyComponents first
     dirtyComponents = Host.dirtyComponents;
     // Since reconciling a component higher in the owner hierarchy usually (not
@@ -88,28 +85,26 @@ function performWork() {
   }
 }
 
-function scheduleWork(component) {
+function scheduleUpdate(component) {
   const dirtyComponents = Host.dirtyComponents;
   if (dirtyComponents.indexOf(component) < 0) {
     dirtyComponents.push(component);
   }
-  performWork();
+  performUpdate();
 }
 
-export function flushPassiveEffects() {
-  flushBeforeNextRenderCallbacks();
-}
-
-function updateState(component, partialState, callback) {
+function requestUpdate(component, partialState, callback) {
   let internal = component._internal;
 
   if (!internal) {
     return;
   }
 
-  !Host.isRendering && flushPassiveEffects();
-
-  enqueueCallback(internal, callback);
+  !Host.isUpdating && flush();
+  
+  if (callback) {
+    enqueueCallback(internal, callback);
+  }
 
   const hasComponentRendered = internal._renderedComponent;
 
@@ -119,24 +114,24 @@ function updateState(component, partialState, callback) {
 
     // State pending in componentWillReceiveProps and componentWillMount
     if (!internal._pendingState && hasComponentRendered) {
-      scheduleWork(component);
+      scheduleUpdate(component);
     }
   } else {
     // forceUpdate
     internal._pendingForceUpdate = true;
 
     if (hasComponentRendered) {
-      scheduleWork(component);
+      scheduleUpdate(component);
     }
   }
 }
 
-setPerformWork(performWork);
+setUpdater(performUpdate);
 
 const Updater = {
-  setState: updateState,
+  setState: requestUpdate,
   forceUpdate: function(component, callback) {
-    updateState(component, null, callback);
+    requestUpdate(component, null, callback);
   },
 
   runCallbacks: runCallbacks

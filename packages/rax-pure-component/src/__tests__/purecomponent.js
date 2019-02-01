@@ -1,11 +1,11 @@
 /* @jsx createElement */
 
-import PureComponent from '../purecomponent';
-import Component from '../component';
-import createElement from '../createElement';
-import Host from '../vdom/host';
-import render from '../render';
+import PureComponent from '../';
+import Component from 'rax-component';
+import { createElement, render, shared } from 'rax';
 import ServerDriver from 'driver-server';
+
+const { Host } = shared;
 
 describe('PureComponent', function() {
   beforeEach(function() {

@@ -6,7 +6,7 @@ import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
 import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle} from '../hooks';
-import { flushPassiveEffects } from '../vdom/updater';
+import { flush as flushPassiveEffects } from '../vdom/scheduler';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
 import memo from '../memo';

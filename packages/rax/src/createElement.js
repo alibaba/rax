@@ -1,55 +1,22 @@
 import Host from './vdom/host';
+import Element from './vdom/element';
+import flattenChildren from './vdom/flattenChildren';
 
-export const RESERVED_PROPS = {
+const RESERVED_PROPS = {
   key: true,
   ref: true,
 };
 
-function traverseChildren(children, result) {
-  if (Array.isArray(children)) {
-    for (let i = 0, l = children.length; i < l; i++) {
-      traverseChildren(children[i], result);
-    }
-  } else {
-    result.push(children);
-  }
-}
-
-export function flattenChildren(children) {
-  if (children == null) {
-    return children;
-  }
-  let result = [];
-  traverseChildren(children, result);
-
-  if (result.length === 1) {
-    result = result[0];
-  }
-
-  return result;
-}
-
-export function getRenderErrorInfo() {
-  if (Host.component) {
-    var name = Host.component.getName();
+function getRenderErrorInfo() {
+  const component = Host.component;
+  if (component) {
+    var name = component.getName();
     if (name) {
       return ' Check the render method of `' + name + '`.';
     }
   }
   return '';
 }
-
-export function Element(type, key, ref, props, owner) {
-  return {
-    // Built-in properties that belong on the element
-    type,
-    key,
-    ref,
-    props,
-    // Record the component responsible for creating this element.
-    _owner: owner,
-  };
-};
 
 export default function createElement(type, config, children) {
   if (type == null) {

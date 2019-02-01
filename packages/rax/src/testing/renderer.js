@@ -1,8 +1,7 @@
 import inject from '../vdom/inject';
-import instance from '../vdom/instance';
+import Instance from '../vdom/instance';
 import ServerDriver from 'driver-server';
 import Serializer from '../server/serializer';
-import unmountComponentAtNode from '../unmountComponentAtNode';
 
 // Init
 inject({
@@ -12,7 +11,7 @@ inject({
 export default {
   create(element) {
     let container = ServerDriver.createBody();
-    let rootComponent = instance.mount(element, container);
+    let rootComponent = Instance.mount(element, container);
     let renderedComponent = rootComponent.getRenderedComponent();
 
     renderedComponent.toJSON = () => {
@@ -24,11 +23,20 @@ export default {
     };
 
     renderedComponent.update = (element) => {
-      instance.mount(element, container);
+      Instance.mount(element, container);
     };
 
     renderedComponent.unmount = () => {
-      unmountComponentAtNode(container);
+      let component = Instance.get(container);
+
+      if (!component) {
+        return false;
+      }
+
+      Instance.remove(container);
+      component._internal.unmountComponent();
+
+      return true;
     };
 
     return renderedComponent;

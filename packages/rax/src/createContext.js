@@ -1,4 +1,4 @@
-import Component from './component';
+import Component from './vdom/component';
 
 class ValueEmitter {
   constructor(defaultValue) {

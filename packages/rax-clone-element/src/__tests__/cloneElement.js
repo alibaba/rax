@@ -1,15 +1,15 @@
+
 /* @jsx createElement */
 
-import Component from '../component';
-import createElement from '../createElement';
-import createFactory from '../createFactory';
-import cloneElement from '../cloneElement';
-import Host from '../vdom/host';
-import render from '../render';
+import cloneElement from '../';
+import { createElement, render, shared } from 'rax';
+import createFactory from 'rax-create-factory';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../findDOMNode';
+import Component from 'rax-component';
 
-describe('Element', () => {
+const { Host } = shared;
+
+describe('cloneElement', () => {
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -35,67 +35,6 @@ describe('Element', () => {
     }
   }
 
-  it('createElement', () => {
-    function Foo(props) {
-      return <props.tag />;
-    }
-    let foo = <Foo tag="Foo" />;
-    expect(foo.props.tag).toBe('Foo');
-  });
-
-  it('returns a complete element according to spec', function() {
-    let element = createFactory(ComponentClass)();
-    expect(element.type).toBe(ComponentClass);
-    expect(element.key).toBe(null);
-    expect(element.ref).toBe(null);
-    // expect(Object.isFrozen(element)).toBe(true);
-    // expect(Object.isFrozen(element.props)).toBe(true);
-    expect(element.props).toEqual({});
-  });
-
-  it('coerces the key to a string', function() {
-    let element = createFactory(ComponentClass)({
-      key: 12,
-      foo: '56',
-    });
-    expect(element.type).toBe(ComponentClass);
-    expect(element.key).toBe('12');
-    expect(element.ref).toBe(null);
-    // expect(Object.isFrozen(element)).toBe(true);
-    // expect(Object.isFrozen(element.props)).toBe(true);
-    expect(element.props).toEqual({foo: '56'});
-  });
-
-  it('merges an additional argument onto the children prop', function() {
-    let a = 1;
-    let element = createFactory(ComponentClass)({
-      children: 'text',
-    }, a);
-    expect(element.props.children).toBe(a);
-  });
-
-  it('does not override children if no rest args are provided', function() {
-    let element = createFactory(ComponentClass)({
-      children: 'text',
-    });
-    expect(element.props.children).toBe('text');
-  });
-
-  it('overrides children if null is provided as an argument', function() {
-    let element = createFactory(ComponentClass)({
-      children: 'text',
-    }, null);
-    expect(element.props.children).toBe(null);
-  });
-
-  it('merges rest arguments onto the children prop in an array', function() {
-    let a = 1;
-    let b = 2;
-    let c = 3;
-    let element = createFactory(ComponentClass)(null, a, b, c);
-    expect(element.props.children).toEqual([1, 2, 3]);
-  });
-
   it('should use the same key for a cloned element', function() {
     var instance =
       <div>
@@ -110,6 +49,7 @@ describe('Element', () => {
   });
 
   it('should clone a DOM component with new props', function() {
+    const container = createNodeElement('div');
     class Grandparent {
       render() {
         return <Parent child={<div className="child" />} />;
@@ -126,11 +66,13 @@ describe('Element', () => {
       }
     }
 
-    var component = render(<Grandparent />);
-    expect(findDOMNode(component).childNodes[0].attributes.class).toBe('xyz');
+    render(<Grandparent />, container);
+    expect(container.childNodes[0].childNodes[0].attributes.class).toBe('xyz');
   });
 
   it('should clone a composite component with new props', function() {
+    const container = createNodeElement('div');
+
     class Child {
       render() {
         return <div className={this.props.className} />;
@@ -153,8 +95,8 @@ describe('Element', () => {
       }
     }
 
-    var component = render(<Grandparent />);
-    expect(findDOMNode(component).childNodes[0].attributes.class).toBe('xyz');
+    render(<Grandparent />, container);
+    expect(container.childNodes[0].childNodes[0].attributes.class).toBe('xyz');
   });
 
   it('should keep the original ref if it is not overridden', function() {
@@ -345,35 +287,6 @@ describe('Element', () => {
     expect(clone.key).toBe('12');
     expect(clone.ref).toBe('34');
     expect(clone.props).toEqual({foo: 'ef'});
-  });
-
-  it('throws when passing null, undefined', function() {
-    expect(function() {
-      createElement(null);
-    }).toThrow();
-
-    expect(function() {
-      createElement(undefined);
-    }).toThrow();
-
-    jest.useFakeTimers();
-
-    expect(function() {
-      class ParentComp {
-        render() {
-          return createElement(null);
-        }
-      }
-
-      var component = render(<ParentComp />);
-
-      jest.runAllTimers();
-    }).toThrowError(
-      'createElement: type should not be null or undefined. Check ' +
-      'the render method of `ParentComp`.'
-    );
-
-    jest.useRealTimers();
   });
 
   it('should extract null key and ref', function() {

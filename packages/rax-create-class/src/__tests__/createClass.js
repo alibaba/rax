@@ -1,12 +1,12 @@
 /* @jsx createElement */
 /* eslint react/prefer-es6-class: "off" */
 
-import createElement from '../createElement';
-import PropTypes from '../proptypes';
-import createClass from '../createClass';
-import Host from '../vdom/host';
-import render from '../render';
+import { createElement, render, shared } from 'rax';
+import PropTypes from 'rax-proptypes';
 import ServerDriver from 'driver-server';
+import createClass from '../';
+
+const { Host } = shared;
 
 describe('createClass', () => {
   function createNodeElement(tagName) {
