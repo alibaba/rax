@@ -44,8 +44,34 @@ export default class WorkerDriver extends Driver {
         }
       }
 
-      callback({ type: 'MutationRecord', mutations });
+      callback({
+        type: 'MutationRecord',
+        mutations: this.excludeEmptyMutations(mutations),
+      });
     });
+  }
+
+  /**
+   * Reduce size of mutations, exclude empty operation.
+   */
+  excludeEmptyMutations(mutations) {
+    const results = [];
+    for (let i = 0, l = mutations.length; i < l; i++) {
+      const mutation = mutations[i];
+
+      if (mutation.hasOwnProperty('addedNodes')
+        && mutation.addedNodes.length === 0) {
+        continue;
+      }
+
+      if (mutation.hasOwnProperty('removedNodes')
+        && mutation.removedNodes.length === 0) {
+        continue;
+      }
+
+      results.push(mutation);
+    }
+    return results;
   }
 
   /**
@@ -78,18 +104,13 @@ export default class WorkerDriver extends Driver {
     }
 
     if (Array.isArray(node)) {
-      let ret = new Array(node.length);
+      let ret = [];
       for (let i = 0, l = node.length; i < l; i ++) {
-        ret[i] = this.sanitize(node[i], prop);
-        if (ret[i] === null) ret.splice(i, 1);
+        const sanitized = this.sanitize(node[i], prop);
+        if (sanitized !== null) ret.push(sanitized);
       }
       return ret;
     }
-
-    /**
-     * Mark the node should not perform mutation.
-     */
-    if (node._stopMutate) return null;
 
     if (!node.$$id) {
       node.$$id = String(++this.nodeCounter);
@@ -102,9 +123,9 @@ export default class WorkerDriver extends Driver {
 
     if (node.nodeName === BODY) {
       result.nodeName = BODY;
-    } else if (prop === 'removedNodes' && node.nodeName === STYLE_ELEMENT) {
+    } else if (prop === 'removedNodes') {
       // Do not remove style tags.
-      return null;
+      if (node.nodeName === STYLE_ELEMENT) return null;
     } else if (prop === 'addedNodes') {
       const nodeType = node.nodeType;
       result.nodeType = nodeType;
@@ -125,8 +146,7 @@ export default class WorkerDriver extends Driver {
                 return null;
               } else {
                 this.hitStyle[textStyle] = true;
-                result.childNodes = this.sanitize(node.childNodes, prop);
-                textNode._stopMutate = true;
+                result.childNodes = [{ nodeType: TEXT_NODE, data: textStyle }];
               }
             }
           }
@@ -138,6 +158,8 @@ export default class WorkerDriver extends Driver {
           break;
 
         case TEXT_NODE:
+          if (node.parentNode
+            && node.parentNode.nodeName === STYLE_ELEMENT) return null; // fall through
         case COMMENT_NODE:
           result.data = node.data;
           break;
