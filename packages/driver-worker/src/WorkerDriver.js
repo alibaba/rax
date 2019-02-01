@@ -33,7 +33,7 @@ export default class WorkerDriver extends Driver {
   }
 
   createMutationObserver(callback) {
-    let MutationObserver = this.document.defaultView.MutationObserver;
+    const MutationObserver = this.document.defaultView.MutationObserver;
     return new MutationObserver(mutations => {
       for (let i = mutations.length; i--;) {
         let mutation = mutations[i];
@@ -118,14 +118,16 @@ export default class WorkerDriver extends Driver {
            * Use tree mode, instead of node.
            */
           if (node.nodeName === STYLE_ELEMENT) {
-            const textNode = node.childNodes[0];
-            const textStyle = textNode.data;
-            if (this.hitStyle[textStyle]) {
-              return null;
-            } else {
-              this.hitStyle[textStyle] = true;
-              result.childNodes = this.sanitize(node.childNodes, prop);
-              textNode._stopMutate = true;
+            if (node.firstChild && node.firstChild.nodeType === TEXT_NODE) {
+              const textNode = node.firstChild;
+              const textStyle = textNode.data;
+              if (this.hitStyle[textStyle]) {
+                return null;
+              } else {
+                this.hitStyle[textStyle] = true;
+                result.childNodes = this.sanitize(node.childNodes, prop);
+                textNode._stopMutate = true;
+              }
             }
           }
 
