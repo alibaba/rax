@@ -51,12 +51,13 @@ export default class EventTarget {
     let i;
     do {
       listeners = target._eventListeners && target._eventListeners[type];
-      if (listeners)
+      if (listeners) {
         for (i = listeners.length; i--;) {
           if ((listeners[i].call(target, event) === false || event._end) && cancelable) break;
         }
+      }
     } while (
-      event.bubbles && !cancelable &&
+      event.bubbles && !event.defaultPrevented &&
       (event.currentTarget = target = target.parentNode)
     );
     return !event.defaultPrevented;
