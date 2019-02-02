@@ -1,6 +1,8 @@
 import createWorkerGlobalScope from './worker/createWorkerGlobalScope';
 import Evaluator from './worker/Evaluator';
+import Event from './worker/Event';
 import Driver from './Driver';
+import memorized from './shared/memorized';
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -15,6 +17,7 @@ const TO_SANITIZE = [
   'nextSibling',
   'previousSibling',
 ];
+const isTouchEvent = memorized((type) => IS_TOUCH_EVENTS.test(type));
 
 export default class WorkerDriver extends Driver {
   constructor(options = {}) {
@@ -46,7 +49,7 @@ export default class WorkerDriver extends Driver {
 
       callback({
         type: 'MutationRecord',
-        mutations: this.excludeEmptyMutations(mutations),
+        mutations: this.optimizeMutations(mutations),
       });
     });
   }
@@ -54,24 +57,40 @@ export default class WorkerDriver extends Driver {
   /**
    * Reduce size of mutations, exclude empty operation.
    */
-  excludeEmptyMutations(mutations) {
-    const results = [];
+  optimizeMutations(mutations) {
+    const ret = [];
     for (let i = 0, l = mutations.length; i < l; i++) {
       const mutation = mutations[i];
 
-      if (mutation.hasOwnProperty('addedNodes')
-        && mutation.addedNodes.length === 0) {
-        continue;
+      if (mutation.type === 'childList') {
+        /**
+         * Style tag be added to body, to prevent be removed by it's parent node.
+         */
+        let addedNode;
+        if (mutation.hasOwnProperty('addedNodes')
+          && (addedNode = mutation.addedNodes[0])
+          && addedNode.nodeType === ELEMENT_NODE
+          && addedNode.nodeName === STYLE_ELEMENT
+        ) {
+          mutation.target.nodeName = BODY;
+          delete mutation.target.$$id;
+          delete mutation.nextSibling; // No need of it.
+        }
+
+        if (mutation.hasOwnProperty('addedNodes')
+          && mutation.addedNodes.length === 0) {
+          continue;
+        }
+
+        if (mutation.hasOwnProperty('removedNodes')
+          && mutation.removedNodes.length === 0) {
+          continue;
+        }
       }
 
-      if (mutation.hasOwnProperty('removedNodes')
-        && mutation.removedNodes.length === 0) {
-        continue;
-      }
-
-      results.push(mutation);
+      ret.push(mutation);
     }
-    return results;
+    return ret;
   }
 
   /**
@@ -146,7 +165,11 @@ export default class WorkerDriver extends Driver {
                 return null;
               } else {
                 this.hitStyle[textStyle] = true;
-                result.childNodes = [{ nodeType: TEXT_NODE, data: textStyle }];
+                result.childNodes = [{
+                  $$id: textNode.$$id,
+                  nodeType: TEXT_NODE,
+                  data: textStyle,
+                }];
               }
             }
           }
@@ -178,15 +201,17 @@ export default class WorkerDriver extends Driver {
     return this.nodesMap.get(id);
   }
 
-  handleEvent(event) {
-    const target = this.getNode(event.target);
-
-    if (IS_TOUCH_EVENTS.test(event.type)) {
-      event = this.convertTouchTarget(event);
-    }
+  handleEvent(rawEventObject) {
+    const target = this.getNode(rawEventObject.target);
 
     if (target) {
-      event.target = target;
+      const { type } = rawEventObject;
+      const event = new Event(type, rawEventObject);
+
+      if (isTouchEvent(type)) {
+        this.convertTouchTarget(event);
+      }
+
       target.dispatchEvent(event);
     }
   }
@@ -210,13 +235,12 @@ export default class WorkerDriver extends Driver {
   /**
    * Extract touches and currentTouches
    */
-  convertTouchTarget(evt) {
-    if (evt.touches) {
-      this.extractTouchListTarget(evt.touches);
+  convertTouchTarget(event) {
+    if (event.touches) {
+      this.extractTouchListTarget(event.touches);
     }
-    if (evt.changedTouches) {
-      this.extractTouchListTarget(evt.changedTouches);
+    if (event.changedTouches) {
+      this.extractTouchListTarget(event.changedTouches);
     }
-    return evt;
   }
 }

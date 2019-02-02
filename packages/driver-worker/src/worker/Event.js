@@ -1,9 +1,11 @@
 export default class Event {
   constructor(type, options = {}) {
-    this.type = type.toLowerCase();
+    Object.assign(this, options); // extend event.
+
+    this.defaultPrevented = false;
     this.bubbles = !!options.bubbles;
     this.cancelable = !!options.cancelable;
-    this.defaultPrevented = false;
+    this.type = type.toLowerCase();
   }
   stopPropagation() {
     this.bubbles = false;
