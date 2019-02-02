@@ -279,7 +279,6 @@ class NativeComponent {
     }
 
     let nextChildren = {};
-    let oldNodes = {};
 
     if (nextChildrenElements != null) {
       if (!Array.isArray(nextChildrenElements)) {
@@ -294,6 +293,8 @@ class NativeComponent {
         let prevElement = prevChild && prevChild._currentElement;
         let prevContext = prevChild && prevChild._context;
 
+        // Try to update between the two of some name that has some element type,
+        // and move child in next children loop if need
         if (prevChild != null && shouldUpdateComponent(prevElement, nextElement)) {
           if (prevElement !== nextElement || prevContext !== context) {
             // Pass the same context when updating chidren
@@ -303,12 +304,10 @@ class NativeComponent {
 
           nextChildren[name] = prevChild;
         } else {
-          // Unmount the prevChild when nextChild is different element type.
+          // Unmount the prevChild when some name with nextChild but different element type,
+          // and move child node in next children loop
           if (prevChild) {
-            let oldNativeNode = prevChild.getNativeNode();
-            // Delay remove child
-            prevChild.unmountComponent(true);
-            oldNodes[name] = oldNativeNode;
+            prevChild._unmount = true;
           }
           // The child must be instantiated before it's mounted.
           nextChildren[name] = instantiateComponent(nextElement);
@@ -316,8 +315,10 @@ class NativeComponent {
       }
     }
 
-    let firstPrevChild;
-    let delayRemoveFirstPrevChild;
+    let prevFirstChild;
+    let prevFirstNativeNode;
+    let shouldUnmountPrevFirstChild;
+
     // Unmount children that are no longer present.
     if (prevChildren != null) {
       for (let name in prevChildren) {
@@ -326,22 +327,25 @@ class NativeComponent {
         }
 
         let prevChild = prevChildren[name];
-        let shouldRemove = !nextChildren[name];
+        let shouldUnmount = prevChild._unmount || !nextChildren[name];
 
         // Store old first child ref for append node ahead and maybe delay remove it
-        if (!firstPrevChild) {
-          firstPrevChild = prevChild;
-          delayRemoveFirstPrevChild = shouldRemove;
-        } else if (shouldRemove) {
+        if (!prevFirstChild) {
+          shouldUnmountPrevFirstChild = shouldUnmount;
+          prevFirstChild = prevChild;
+          prevFirstNativeNode = prevFirstChild.getNativeNode();
+
+          if (Array.isArray(prevFirstNativeNode)) {
+            prevFirstNativeNode = prevFirstNativeNode[0];
+          }
+        } else if (shouldUnmount) {
           prevChild.unmountComponent();
         }
       }
     }
 
     if (nextChildren != null) {
-      // `nextIndex` will increment for each child in `nextChildren`, but
-      // `lastIndex` will be the last index visited in `prevChildren`.
-      let lastIndex = 0;
+      // `nextIndex` will increment for each child in `nextChildren`
       let nextIndex = 0;
       let lastPlacedNode = null;
       let nextNativeNode = [];
@@ -354,29 +358,24 @@ class NativeComponent {
         let nextChild = nextChildren[name];
         let prevChild = prevChildren && prevChildren[name];
 
-        if (prevChild) {
-          // Update `lastIndex` before `_mountIndex` gets unset by unmounting.
-          lastIndex = Math.max(prevChild._mountIndex, lastIndex);
-        }
-
+        // Try to move the some key prevChild but current not at the some position
         if (prevChild === nextChild) {
           let prevChildNativeNode = prevChild.getNativeNode();
 
-          // FIXME: If only change like 1,2,3,4,5,6 -> 1,6,3,4,5,2
-          // will insert 3 after 6, insert 4 after 3, insert 5 after 4, insert 2 after 5
-          // that is not fast
-
-          // If the index of `child` is less than `lastIndex`, then it needs to
-          // be moved. Otherwise, we do not need to move it because a child will be
-          // inserted or moved before `child`.
-          if (prevChild._mountIndex < lastIndex) {
-            // Convert to array type
+          if (prevChild._mountIndex !== nextIndex) {
+            // The prevChild maybe fragment, so convert to array type
             if (!Array.isArray(prevChildNativeNode)) {
               prevChildNativeNode = [prevChildNativeNode];
             }
 
-            for (let i = prevChildNativeNode.length - 1; i >= 0; i--) {
-              driver.insertAfter(prevChildNativeNode[i], lastPlacedNode);
+            if (lastPlacedNode) {
+              for (let i = prevChildNativeNode.length - 1; i >= 0; i--) {
+                driver.insertAfter(prevChildNativeNode[i], lastPlacedNode);
+              }
+            } else {
+              for (let i = 0; i < prevChildNativeNode.length; i++) {
+                driver.insertBefore(prevChildNativeNode[i], prevFirstNativeNode);
+              }
             }
           }
 
@@ -385,6 +384,8 @@ class NativeComponent {
           // Update to the latest mount order
           prevChild._mountIndex = nextIndex;
         } else {
+          // Mount nextChild that in prevChildren there has no some name
+
           let parent = this.getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
           if (Array.isArray(parent)) {
@@ -395,82 +396,33 @@ class NativeComponent {
             parent,
             this._instance,
             context, (newChild, parent) => {
-              // TODO: Rework the duplicate code
-              let oldChild = oldNodes[name];
               if (!Array.isArray(newChild)) {
                 newChild = [newChild];
               }
 
-              function insertNewChild(newChild) {
-                let prevFirstNativeNode;
+              // Insert child at a specific index
 
-                if (firstPrevChild && !lastPlacedNode) {
-                  prevFirstNativeNode = firstPrevChild.getNativeNode();
-                  if (Array.isArray(prevFirstNativeNode)) {
-                    prevFirstNativeNode = prevFirstNativeNode[0];
-                  }
+              if (lastPlacedNode) {
+                // Should reverse order when insert new child after lastPlacedNode:
+                // [lastPlacedNode, *newChild1, *newChild2]
+                for (let i = newChild.length - 1; i >= 0; i--) {
+                  driver.insertAfter(newChild[i], lastPlacedNode);
                 }
-
-                if (lastPlacedNode) {
-                  // Should reverse order when insert new child after lastPlacedNode:
-                  // [lastPlacedNode, *newChild1, *newChild2]
-                  for (let i = newChild.length - 1; i >= 0; i--) {
-                    driver.insertAfter(newChild[i], lastPlacedNode);
-                  }
-                } else if (prevFirstNativeNode) {
-                  // [*newChild1, *newChild2, prevFirstNativeNode]
-                  for (let i = 0; i < newChild.length; i++) {
-                    driver.insertBefore(newChild[i], prevFirstNativeNode);
-                  }
-                } else {
-                  // [*newChild1, *newChild2]
-                  for (let i = 0; i < newChild.length; i++) {
-                    driver.appendChild(newChild[i], parent);
-                  }
-                }
-              }
-
-              if (oldChild) {
-                // The oldChild or newChild all maybe fragment
-                if (!Array.isArray(oldChild)) {
-                  oldChild = [oldChild];
-                }
-
-                if (prevChild._mountIndex < lastIndex) {
-                  for (let i = 0; i < oldChild.length; i++) {
-                    driver.removeChild(oldChild[i]);
-                  }
-
-                  insertNewChild(newChild);
-                } else {
-                  // If newChild count large then oldChild:
-                  // [oldChild1, oldChild2] => [newChild1, newChild2, newChild3]
-                  let lastNewChild;
-                  for (let i = 0; i < newChild.length; i++) {
-                    let child = newChild[i];
-                    if (oldChild[i]) {
-                      driver.replaceChild(child, oldChild[i]);
-                    } else {
-                      driver.insertAfter(child, lastNewChild);
-                    }
-                    lastNewChild = child;
-                  }
-
-                  // If newChild count less then oldChild
-                  // [oldChild1, oldChild2, oldChild3] => [newChild1, newChild2]
-                  if (newChild.length < oldChild.length) {
-                    for (let i = newChild.length; i < oldChild.length; i++) {
-                      driver.removeChild(oldChild[i]);
-                    }
-                  }
+              } else if (prevFirstNativeNode) {
+                // [*newChild1, *newChild2, prevFirstNativeNode]
+                for (let i = 0; i < newChild.length; i++) {
+                  driver.insertBefore(newChild[i], prevFirstNativeNode);
                 }
               } else {
-                // Insert child at a specific index
-                insertNewChild(newChild);
+                // [*newChild1, *newChild2]
+                for (let i = 0; i < newChild.length; i++) {
+                  driver.appendChild(newChild[i], parent);
+                }
               }
 
               nextNativeNode = nextNativeNode.concat(newChild);
             }
+
           );
           // Update to the latest mount order
           nextChild._mountIndex = nextIndex;
@@ -495,8 +447,8 @@ class NativeComponent {
       }
     }
 
-    if (delayRemoveFirstPrevChild) {
-      firstPrevChild.unmountComponent();
+    if (shouldUnmountPrevFirstChild) {
+      prevFirstChild.unmountComponent();
     }
 
     this._renderedChildren = nextChildren;
