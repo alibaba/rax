@@ -47,7 +47,7 @@ class Page {
   }
 }
 
-export default function createPage(renderFactory, requireCoreModule, config = {}) {
+export default function createPage(renderFactory, requireCoreModule, config = {}, cssTexts) {
   // each page has unique vars that can not be shared
   const pageContext = requireCoreModule('@core/context');
   const pageEventEmitter = requireCoreModule('@core/page');
@@ -55,6 +55,18 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
 
   const { document, location, evaluator, pageQuery, pageName, clientId } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
+
+  if (Array.isArray(cssTexts)) {
+    for (let i = 0, l = cssTexts.length; i < l; i++) {
+      if (typeof cssTexts[i] === 'object') {
+        const cssTextNode = document.createTextNode(cssTexts[i].toString());
+        console.log(cssTextNode.data);
+        const styleNode = document.createElement('style');
+        styleNode.appendChild(cssTextNode);
+        document.body.appendChild(styleNode);
+      }
+    }
+  }
 
   const render = getWebViewSource
     ? (data) => {
@@ -80,6 +92,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     constructor(props, context) {
       super(props, context);
 
+      this._document = document;
       // create Page instance, initialize data and setData
       this.pageInstance = new Page(this, config, {
         viewId: clientId,

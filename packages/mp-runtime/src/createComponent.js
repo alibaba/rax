@@ -31,9 +31,8 @@ function injectSlot(child, $slots) {
 // Count of component instance numbers.
 let componentCount = 0;
 
-export default function createComponent(renderFactory, render, config, componentPath) {
+export default function createComponent(renderFactory, render, config, componentPath, cssText) {
   const templateRender = renderFactory(render);
-
   const component = class extends render.Component {
     static contextTypes = {
       $page: null,
@@ -41,6 +40,13 @@ export default function createComponent(renderFactory, render, config, component
 
     constructor(props, context) {
       super(props, context);
+      const document = context.$page.vnode._document;
+      if (cssText && (cssText = String(cssText))) {
+        const cssTextNode = document.createTextNode(cssText);
+        const styleNode = document.createElement('style');
+        styleNode.appendChild(cssTextNode);
+        document.body.appendChild(styleNode);
+      }
       /**
        * If not defined `data` field in config,
        * then default val will be an empty plain object,

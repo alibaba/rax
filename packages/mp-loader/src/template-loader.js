@@ -50,6 +50,7 @@ module.exports = function templateLoader(content) {
     // Prepend style tag to template
     render = style ? `[${style}, ${renderFn}]` : renderFn;
   }
+  console.log(render);
 
   let registerPageComponent = '';
   if (dependencyComponents) {
