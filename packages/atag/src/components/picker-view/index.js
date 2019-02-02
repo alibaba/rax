@@ -1,5 +1,6 @@
 import './picker-view-column';
 import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 
 export default class PickerView extends PolymerElement {
   static get is() {
@@ -11,7 +12,7 @@ export default class PickerView extends PolymerElement {
       value: {
         type: Array,
         value: [],
-        observer: '_valueChanged'
+        observer: '_observeValue',
       },
       indicatorStyle: {
         type: String,
@@ -31,7 +32,6 @@ export default class PickerView extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._valueChanged(this.value, null);
     this.addEventListener('touchmove', this._preventScrollPenetrate, false);
     this.addEventListener('_columnChange', this._handleChange);
     window.addEventListener('_formReset', this._handleReset, true);
@@ -70,13 +70,13 @@ export default class PickerView extends PolymerElement {
     });
   }
 
-  _valueChanged(value, oldVal) {
-    if (oldVal !== undefined) {
-      let columns = this.children;
+  _observeValue(value) {
+    afterNextRender(this, () => {
+      const columns = Array.prototype.filter.call(this.children, (el) => el.nodeName === 'A-PICKER-VIEW-COLUMN');
       for (let i = 0; i < columns.length; i++) {
         columns[i].setAttribute('selected-index', value[i] || 0);
       }
-    }
+    });
   }
 
   _dispatchEvent(name) {

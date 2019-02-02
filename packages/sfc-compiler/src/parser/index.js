@@ -2,13 +2,7 @@ const he = require('he');
 const { parseHTML } = require('./html-parser');
 const { parseText } = require('./text-parser');
 const { parseFilters } = require('./filter-parser');
-const { cached, no, camelize } = require('../utils');
-const { genAssignmentCode } = require('../directives/model');
-
-const isIE = false;
-const isEdge = false;
-const isServerRendering = false;
-// const { isIE, isEdge, isServerRendering } = require('core/util/env');
+const { cached, no, camelize, extend } = require('../utils');
 
 const {
   addProp,
@@ -23,12 +17,14 @@ const {
 
 const onRE = /^@|^v-on:/;
 const dirRE = /^v-|^@|^:/;
-const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
-const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/;
+const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+const stripParensRE = /^\(|\)$/g;
 exports.onRE = onRE;
 exports.dirRE = dirRE;
 exports.forAliasRE = forAliasRE;
 exports.forIteratorRE = forIteratorRE;
+exports.stripParensRE = stripParensRE;
 
 const argRE = /:(.*)$/;
 const bindRE = /^:|^v-bind:/;
@@ -67,6 +63,7 @@ function parse(template, options) {
 
   const stack = [];
   const preserveWhitespace = options.preserveWhitespace !== false;
+  const trimTextWhitespace = options.trimTextWhitespace;
 
   let root;
   let currentParent;
@@ -104,12 +101,6 @@ function parse(template, options) {
       const ns =
         currentParent && currentParent.ns || platformGetTagNamespace(tag);
 
-      // handle IE svg bug
-      /* istanbul ignore if */
-      if (isIE && ns === 'svg') {
-        attrs = guardIESVGBug(attrs);
-      }
-
       const element = {
         type: 1,
         tag,
@@ -122,7 +113,7 @@ function parse(template, options) {
         element.ns = ns;
       }
 
-      if (isForbiddenTag(element) && !isServerRendering()) {
+      if (isForbiddenTag(element)) {
         element.forbidden = true;
         process.env.NODE_ENV !== 'production' &&
           warn(
@@ -160,7 +151,8 @@ function parse(template, options) {
         element.plain = !element.key && !attrs.length;
 
         processRef(element);
-        processSlot(element);
+        processSlotContent(element);
+        processSlotOutlet(element);
         processComponent(element);
         for (let i = 0; i < transforms.length; i++) {
           transforms[i](element, options);
@@ -261,15 +253,7 @@ function parse(template, options) {
         }
         return;
       }
-      // IE textarea placeholder bug
-      /* istanbul ignore if */
-      if (
-        isIE &&
-        currentParent.tag === 'textarea' &&
-        currentParent.attrsMap.placeholder === text
-      ) {
-        return;
-      }
+
       const children = currentParent.children;
       text =
         inPre || text.trim()
@@ -280,6 +264,12 @@ function parse(template, options) {
           preserveWhitespace && children.length
             ? ' '
             : '';
+
+      // Trim text node
+      if (trimTextWhitespace) {
+        text = text.trim();
+      }
+
       if (text) {
         let expression;
         if (
@@ -360,25 +350,35 @@ function processRef(el) {
 function processFor(el) {
   let exp;
   if (exp = getAndRemoveAttr(el, 'v-for')) {
-    const inMatch = exp.match(forAliasRE);
-    if (!inMatch) {
-      process.env.NODE_ENV !== 'production' &&
-        warn(`Invalid v-for expression: ${exp}`);
-      return;
-    }
-    el.for = inMatch[2].trim();
-    const alias = inMatch[1].trim();
-    const iteratorMatch = alias.match(forIteratorRE);
-    if (iteratorMatch) {
-      el.alias = iteratorMatch[1].trim();
-      el.iterator1 = iteratorMatch[2].trim();
-      if (iteratorMatch[3]) {
-        el.iterator2 = iteratorMatch[3].trim();
-      }
-    } else {
-      el.alias = alias;
+    const res = parseFor(exp);
+    if (res) {
+      extend(el, res);
+    } else if (process.env.NODE_ENV !== 'production') {
+      warn(
+        `Invalid v-for expression: ${exp}`,
+        el.attrsMap['v-for']
+      );
     }
   }
+}
+
+function parseFor(exp) {
+  const inMatch = exp.match(forAliasRE);
+  if (!inMatch) return;
+  const res = {};
+  res.for = inMatch[2].trim();
+  const alias = inMatch[1].trim().replace(stripParensRE, '');
+  const iteratorMatch = alias.match(forIteratorRE);
+  if (iteratorMatch) {
+    res.alias = alias.replace(forIteratorRE, '').trim();
+    res.iterator1 = iteratorMatch[1].trim();
+    if (iteratorMatch[2]) {
+      res.iterator2 = iteratorMatch[2].trim();
+    }
+  } else {
+    res.alias = alias;
+  }
+  return res;
 }
 
 function processIf(el) {
@@ -446,30 +446,41 @@ function processOnce(el) {
   }
 }
 
-function processSlot(el) {
+// handle content being passed to a component as slot,
+// e.g. <template slot="xxx">, <div slot-scope="xxx">
+function processSlotContent(el) {
+  let slotScope;
+  if (el.tag === 'template') {
+    slotScope = getAndRemoveAttr(el, 'scope');
+    el.slotScope = slotScope || getAndRemoveAttr(el, 'slot-scope');
+  } else if (slotScope = getAndRemoveAttr(el, 'slot-scope')) {
+    el.slotScope = slotScope;
+  }
+
+  // slot="xxx"
+  const slotTarget = getBindingAttr(el, 'slot');
+  if (slotTarget) {
+    el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget;
+    // preserve slot as an attribute for native shadow DOM compat
+    // only for non-scoped slots.
+    if (el.tag !== 'template' && !el.slotScope) {
+      addAttr(el, 'slot', slotTarget, getBindingAttr(el, 'slot'));
+    }
+  }
+
+  // TODO: v-slot syntax for SFC.
+}
+
+// handle <slot/> outlets
+function processSlotOutlet(el) {
   if (el.tag === 'slot') {
     el.slotName = getBindingAttr(el, 'name');
-    if (process.env.NODE_ENV !== 'production' && el.key) {
-      warn(
-        '`key` does not work on <slot> because slots are abstract outlets ' +
-        'and can possibly expand into multiple elements. ' +
-        'Use the key on a wrapping element instead.'
-      );
-    }
-  } else {
-    const slotTarget = getBindingAttr(el, 'slot');
-    if (slotTarget) {
-      el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget;
-    }
-    if (el.tag === 'template') {
-      el.slotScope = getAndRemoveAttr(el, 'scope');
-    }
   }
 }
 
 function processComponent(el) {
-  let binding;
-  if (binding = getBindingAttr(el, 'is')) {
+  let binding = getBindingAttr(el, 'is');
+  if (binding) {
     el.component = binding;
   }
   if (getAndRemoveAttr(el, 'inline-template') != null) {
@@ -496,23 +507,7 @@ function processAttrs(el) {
         name = name.replace(bindRE, '');
         value = parseFilters(value);
         isProp = false;
-        if (modifiers) {
-          if (modifiers.prop) {
-            isProp = true;
-            name = camelize(name);
-            if (name === 'innerHtml') name = 'innerHTML';
-          }
-          if (modifiers.camel) {
-            name = camelize(name);
-          }
-          if (modifiers.sync) {
-            addHandler(
-              el,
-              `update:${camelize(name)}`,
-              genAssignmentCode(value, '$event')
-            );
-          }
-        }
+
         if (
           !el.component &&
           (isProp || platformMustUseProp(el.tag, el.attrsMap.type, name))
@@ -584,9 +579,7 @@ function makeAttrsMap(attrs) {
   for (let i = 0, l = attrs.length; i < l; i++) {
     if (
       process.env.NODE_ENV !== 'production' &&
-      map[attrs[i].name] &&
-      !isIE &&
-      !isEdge
+      map[attrs[i].name]
     ) {
       warn('duplicate attribute: ' + attrs[i].name);
     }
@@ -606,22 +599,6 @@ function isForbiddenTag(el) {
     el.tag === 'script' &&
     (!el.attrsMap.type || el.attrsMap.type === 'text/javascript')
   );
-}
-
-const ieNSBug = /^xmlns:NS\d+/;
-const ieNSPrefix = /^NS\d+:/;
-
-/* istanbul ignore next */
-function guardIESVGBug(attrs) {
-  const res = [];
-  for (let i = 0; i < attrs.length; i++) {
-    const attr = attrs[i];
-    if (!ieNSBug.test(attr.name)) {
-      attr.name = attr.name.replace(ieNSPrefix, '');
-      res.push(attr);
-    }
-  }
-  return res;
 }
 
 function checkForAliasModel(el, value) {

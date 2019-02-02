@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`navigator open-type 1`] = `
+Object {
+  "navigateTo": "foo",
+  "navigateType": "redirect",
+  "type": "navigate",
+}
+`;
+
+exports[`navigator url 1`] = `
+Object {
+  "navigateTo": "foo",
+  "navigateType": "navigate",
+  "type": "navigate",
+}
+`;

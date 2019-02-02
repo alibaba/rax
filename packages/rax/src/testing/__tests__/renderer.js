@@ -1,6 +1,6 @@
 /* eslint-disable react/no-did-mount-set-state */
 
-import {createElement} from '../../element';
+import createElement from '../../createElement';
 import Component from '../../component';
 import renderer from '../renderer';
 

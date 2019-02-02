@@ -1,0 +1,34 @@
+<a-form id="form">
+  <a-switch name="switch"></a-switch>
+  <a-radio-group name="radio">
+    <a-label id="radioTarget">
+      <a-radio value="radio1"></a-radio>选项一</a-label>
+    <a-label>
+      <a-radio value="radio2"></a-radio>选项二</a-label>
+  </a-radio-group>
+
+  <a-checkbox-group name="checkbox">
+    <a-label>
+      <a-checkbox value="checkbox1" checked></a-checkbox>选项一</a-label>
+    <a-label id="checkboxTarget">
+      <a-checkbox value="checkbox2"></a-checkbox>选项二</a-label>
+  </a-checkbox-group>
+
+  <a-slider value="50" name="slider" show-value></a-slider>
+
+  <a-input id="input" name="input" placeholder="这是一个输入框"></a-input>
+
+  <a-button id="submit" form-type="submit">Submit</a-button>
+  <a-button id="reset" form-type="reset">Reset</a-button>
+</a-form>
+
+<script>
+  const form = document.querySelector('#form');
+  form.addEventListener('submit', (evt) => {
+    window.__submit_event__ = true;
+    window.__submit_event_detail__ = evt.detail;
+  });
+  form.addEventListener('reset', (evt) => {
+    window.__reset_event__ = true;
+  });
+</script>

@@ -11,6 +11,25 @@ export default class Button extends PolymerElement {
    */
   static get properties() {
     return {
+      /**
+       * Size of button, can be default or mini.
+       */
+      size: {
+        type: String,
+        value: 'default',
+        reflectToAttribute: true,
+      },
+      /**
+       * Type of button, can be default, primary, warn.
+       */
+      type: {
+        type: String,
+        value: 'default',
+        reflectToAttribute: true,
+      },
+      /**
+       * Disable
+       */
       disabled: {
         type: Boolean,
         value: false,
@@ -95,7 +114,7 @@ export default class Button extends PolymerElement {
         /* primary */
         :host([type="primary"]) {
           color: white;
-          color: var(--button-warn-text-color, white);
+          color: var(--button-primary-text-color, white);
           background: linear-gradient(to right, #ff8800, #ff5500);
           background: linear-gradient(to right, var(--button-primary-background-color-from, #ff8800), var(--button-primary-background-color-to, #ff5500));
         }

@@ -4,6 +4,7 @@ import { createNode, getTagName } from './nodes';
 import { setAttribute } from './attrs';
 import { setStyle } from './styles';
 
+const STYLE_ELEMENT = 'STYLE';
 const TEXT_CONTENT = 'textContent';
 const TEXT_CONTENT_ATTR = TEXT_CONTENT in document ? TEXT_CONTENT : 'nodeValue';
 
@@ -44,8 +45,17 @@ export default class MutationHandler {
     if (removedNodes) {
       for (let i = removedNodes.length; i--;) {
         let node = sharedNodeMap.get(removedNodes[i]);
-        sharedNodeMap.delete(node);
-        if (parent && node) {
+        /**
+         * @NOTE For performance:
+         *   do not remove style element or textContent of style element.
+         */
+        if (
+          parent
+          && parent.nodeName !== STYLE_ELEMENT
+          && node
+          && node.nodeName !== STYLE_ELEMENT
+        ) {
+          sharedNodeMap.delete(node);
           parent.removeChild(node);
         }
       }
@@ -58,8 +68,21 @@ export default class MutationHandler {
           newNode = this.createNode(addedNodes[i]);
         }
 
+        /**
+         * @NOTE Append style element to document.body, to prevent from
+         *   being removed by it's parent was removed.
+         */
+        if (newNode.nodeName === STYLE_ELEMENT) {
+          parent = document.body;
+          nextSibling = null;
+        }
+
         if (parent) {
-          parent.insertBefore(newNode, nextSibling && sharedNodeMap.get(nextSibling) || null);
+          let siblingElement = nextSibling && sharedNodeMap.get(nextSibling) || null;
+          if (siblingElement && siblingElement.nodeName === STYLE_ELEMENT) {
+            siblingElement = null;
+          }
+          parent.insertBefore(newNode, siblingElement);
         }
       }
     }

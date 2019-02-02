@@ -103,6 +103,10 @@ export default class NativeMap extends PolymerElement {
         type: Number,
         observer: '_observeRouteConfig',
       },
+      routeSearchType: {
+        type: String,
+        observer: '_observeRouteSearchType',
+      },
     };
   }
 
@@ -216,6 +220,8 @@ export default class NativeMap extends PolymerElement {
       'route-end': this.routeEnd,
       'route-width': this.routeWidth,
       'route-color': this.routeColor,
+      'search-type': this.routeSearchType,
+      'addition-param': this.routeAdditionParam,
     });
   }
 
@@ -247,6 +253,7 @@ export default class NativeMap extends PolymerElement {
           routeEnd: this.routeEnd,
           routeColor: this.routeColor,
           routeWidth: this.routeWidth,
+          searchType: this.routeSearchType,
         });
         break;
 
@@ -276,7 +283,7 @@ export default class NativeMap extends PolymerElement {
      * Call drawing route after updated.
      */
     if (this.routeStart && this.routeEnd) {
-      this._updateParamWithAndroid('route-config');
+      this._updateParamWithAndroid('routeConfig');
     }
   }
 
@@ -366,6 +373,60 @@ export default class NativeMap extends PolymerElement {
       execute();
     } else {
       this._windVaneReadyCallbacks.push(execute);
+    }
+  }
+
+  _createOnceEventCallback(eventName, callback) {
+    // All dom event will be lowercased
+    eventName = String(eventName).toLowerCase();
+    let handler;
+    this.addEventListener(eventName, handler = (evt) => {
+      callback && callback(evt);
+      this.removeEventListener(eventName, handler);
+    });
+  }
+
+  /**
+   * Get map center location, api exposed.
+   */
+  getCenterLocation = (callback) => {
+    this._createNativeEventProxy(
+      'centerPosition',
+      Date.now(),
+      'getCenterLocation',
+      callback
+    );
+  }
+
+  /**
+   * Move the marker to some position
+   */
+  translateMarker = (option, callback) => {
+    this._createNativeEventProxy(
+      'translateMarkerEnd',
+      option,
+      'translateMarker',
+      callback
+    );
+  }
+
+  /**
+   * Proxy a native event, in following steps:
+   *  1. Fire an event to native.
+   *  2. Native handle with staff, then emit an event to tag.
+   *  3. Invock callback with data sent by native.
+   * @param emitEventName {String} First step event name.
+   * @param emitEventOption {Object|Number|String} First step event data.
+   * @param callbackEventName {String} Second step event name.
+   * @param callback {Function} Callback to invock.
+   * @private
+   */
+  _createNativeEventProxy(emitEventName, emitEventOption, callbackEventName, callback) {
+    this._createOnceEventCallback(emitEventName, callback);
+    if (isIOS) {
+      this._createOrUpdateParam(callbackEventName, emitEventOption);
+    } else {
+      this._callNativeControl(callbackEventName, emitEventOption);
     }
   }
 }

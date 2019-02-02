@@ -3,7 +3,16 @@ const type = process.env.TYPE;
 module.exports = {
   presets: [
     require.resolve('@babel/preset-flow'),
-    require.resolve('@babel/preset-env')
+    [
+      require.resolve('@babel/preset-env'),
+      {
+        targets: {
+          chrome: '49',
+          ios: '8'
+        },
+        modules: type === 'miniprogram' ? 'commonjs' : 'auto'
+      }
+    ]
   ],
   plugins: [
     [
@@ -15,6 +24,7 @@ module.exports = {
         'useESModules': false
       }
     ],
+    require.resolve('@babel/plugin-syntax-dynamic-import'),
     // Stage 0
     require.resolve('@babel/plugin-proposal-function-bind'),
     // Stage 1

@@ -1,5 +1,6 @@
 import Host from './vdom/host';
-import { scheduleIdleCallback } from './scheduler';
+import { scheduleBeforeNextRenderCallback } from './vdom/scheduler';
+import { flushPassiveEffects } from './vdom/updater';
 
 function getCurrentRenderingInstance() {
   const currentInstance = Host.component._instance;
@@ -27,7 +28,7 @@ function areInputsEqual(inputs, prevInputs) {
 
 export function useState(initialState) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {
@@ -44,11 +45,13 @@ export function useState(initialState) {
       }
 
       if (newState !== current) {
-        hooks[hookId][0] = newState;
         // This is a render phase update.  After this render pass, we'll restart
         if (Host.component && Host.component._instance === currentInstance) {
+          hooks[hookId][0] = newState;
           currentInstance.isRenderScheduled = true;
         } else {
+          !Host.isRendering && flushPassiveEffects();
+          hooks[hookId][0] = newState;
           currentInstance.update();
         }
       }
@@ -78,28 +81,34 @@ export function useLayoutEffect(effect, inputs) {
 
 function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
+  inputs = inputs != null ? inputs : [effect];
 
   if (!hooks[hookId]) {
     const create = (immediately) => {
-      if (!immediately && defered) return scheduleIdleCallback(() => create(true));
+      if (!immediately && defered) return scheduleBeforeNextRenderCallback(() => create(true));
       const { current } = create;
       if (current) {
+        // Set this to true to prevent re-entrancy
+        const previousIsRendering = Host.isRendering;
+        Host.isRendering = true;
         destory.current = current();
         create.current = null;
+        Host.isRendering = previousIsRendering;
       }
     };
 
     const destory = (immediately) => {
-      if (!immediately && defered) return scheduleIdleCallback(() => destory(true));
+      if (!immediately && defered) return scheduleBeforeNextRenderCallback(() => destory(true));
       const { current } = destory;
       if (current) {
+        // Set this to true to prevent re-entrancy
+        const previousIsRendering = Host.isRendering;
+        Host.isRendering = true;
         current();
         destory.current = null;
-      } else if (defered) {
-        create(true);
-        destory(true);
+        Host.isRendering = previousIsRendering;
       }
     };
 
@@ -117,7 +126,7 @@ function useEffectImpl(effect, inputs, defered) {
     currentInstance.didUpdateHandlers.push(() => {
       const { prevInputs, inputs, create } = hooks[hookId];
       if (prevInputs == null || !areInputsEqual(inputs, prevInputs)) {
-        destory(true);
+        destory();
         create();
       }
     });
@@ -130,7 +139,7 @@ function useEffectImpl(effect, inputs, defered) {
   }
 }
 
-export function useImperativeMethods(ref, create, inputs) {
+export function useImperativeHandle(ref, create, inputs) {
   const nextInputs = inputs != null ? inputs.concat([ref]) : [ref, create];
 
   useLayoutEffect(() => {
@@ -148,7 +157,7 @@ export function useImperativeMethods(ref, create, inputs) {
 
 export function useRef(initialValue) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {
@@ -166,7 +175,7 @@ export function useCallback(callback, inputs) {
 
 export function useMemo(create, inputs) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {
@@ -184,7 +193,7 @@ export function useMemo(create, inputs) {
 
 export function useReducer(reducer, initialState, initialAction) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getCurrentHookId();
+  const hookId = currentInstance.getHookId();
   const hooks = currentInstance.hooks;
 
   if (!hooks[hookId]) {
@@ -197,11 +206,13 @@ export function useReducer(reducer, initialState, initialAction) {
       // reducer will get in the next render, before that we add all
       // actions to the queue
       const queue = hook[2];
-      queue.push(action);
       // This is a render phase update.  After this render pass, we'll restart
       if (Host.component && Host.component._instance === currentInstance) {
+        queue.push(action);
         currentInstance.isRenderScheduled = true;
       } else {
+        !Host.isRendering && flushPassiveEffects();
+        queue.push(action);
         currentInstance.update();
       }
     };

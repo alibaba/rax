@@ -1,16 +1,23 @@
 export default class Event {
-  constructor(type, opts) {
-    this.type = type;
-    this.bubbles = !!opts.bubbles;
-    this.cancelable = !!opts.cancelable;
+  constructor(type, options = {}) {
+    this.type = type.toLowerCase();
+    this.bubbles = !!options.bubbles;
+    this.cancelable = !!options.cancelable;
+    this.defaultPrevented = false;
   }
   stopPropagation() {
-    this._stop = true;
+    this.bubbles = false;
   }
   stopImmediatePropagation() {
-    this._end = this._stop = true;
+    this.bubbles = false;
+    this._end = true;
   }
   preventDefault() {
-    this.defaultPrevented = true;
+    if (this.cancelable) {
+      this.defaultPrevented = true;
+    } else {
+      // Calling preventDefault in uncancelable event should produce errors,
+      // but in chrome and safari, which not throw or console errors, follow behaviors here.
+    }
   }
 }

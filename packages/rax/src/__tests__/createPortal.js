@@ -2,7 +2,7 @@
 
 import Component from '../component';
 import PropTypes from '../proptypes';
-import {createElement} from '../element';
+import createElement from '../createElement';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';

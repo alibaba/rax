@@ -8,7 +8,8 @@ const babelConfig = require('../babel.config');
 
 babelConfig.presets.push([
   require.resolve('@babel/preset-react'), {
-    'pragma': 'createElement'
+    'pragma': 'createElement',
+    'pragmaFrag': 'Fragment'
   }
 ]);
 
@@ -54,7 +55,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.jsx?$/,
+        test: /\.(js|mjs|jsx)$/,
         exclude: /(node_modules|bower_components)/,
         use: [
           {

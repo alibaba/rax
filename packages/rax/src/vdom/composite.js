@@ -40,13 +40,10 @@ function handleError(instance, error) {
       callbackQueue.push(() => boundary.componentDidCatch(error));
     }
   } else {
-    if (Host.sandbox) {
-      setTimeout(() => {
-        throw error;
-      }, 0);
-    } else {
+    // Do not break when error happens
+    setTimeout(() => {
       throw error;
-    }
+    }, 0);
   }
 }
 
@@ -207,9 +204,8 @@ class CompositeComponent {
       updater.runCallbacks(callbacks, instance);
     }
 
-    Host.hook.Reconciler.mountComponent(this);
-
     if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.mountComponent(this);
       Host.measurer && Host.measurer.afterMountComponent(this._mountID);
     }
 
@@ -229,7 +225,9 @@ class CompositeComponent {
       }, instance);
     }
 
-    Host.hook.Reconciler.unmountComponent(this);
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.unmountComponent(this);
+    }
 
     instance._internal = null;
 
@@ -433,9 +431,8 @@ class CompositeComponent {
 
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.afterUpdateComponent(this._mountID);
+      Host.hook.Reconciler.receiveComponent(this);
     }
-
-    Host.hook.Reconciler.receiveComponent(this);
   }
 
   /**

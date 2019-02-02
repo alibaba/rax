@@ -1,6 +1,5 @@
 import { isValidW3CTag, isValidCustomTags } from './tags';
 
-
 const CUSTOM_TAG_PREFIX = 'a-';
 
 /**

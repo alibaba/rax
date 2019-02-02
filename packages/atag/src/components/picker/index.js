@@ -68,6 +68,9 @@ export default class Picker extends PolymerElement {
     this.$.cancel.addEventListener('click', this._handleHide);
     this.$.confirm.addEventListener('click', this._handleConfirm);
 
+    // @NOTE: Prevent touch move penetrate in iOS.
+    this.addEventListener('touchmove', this._preventScroll);
+
     if (this.value > 0) {
       this._setSelected(this.value);
     }
@@ -83,6 +86,8 @@ export default class Picker extends PolymerElement {
     this.$.mask.removeEventListener('click', this._handleHide);
     this.$.cancel.removeEventListener('click', this._handleHide);
     this.$.confirm.removeEventListener('click', this._handleConfirm);
+
+    this.removeEventListener('touchmove', this._preventScroll);
   }
 
   _selectedIndexChange(newIndex, oldIndex) {
@@ -177,6 +182,14 @@ export default class Picker extends PolymerElement {
       }
       parentElement = parentElement.parentElement;
     }
+  };
+
+  /**
+   * Stop scroll penetrate
+   * @private
+   */
+  _preventScroll = (evt) => {
+    evt.preventDefault();
   };
 
   static get template() {
@@ -303,6 +316,10 @@ export default class Picker extends PolymerElement {
       <div id="mask" style="display: none;"></div>
       <div id="container" style="display: none;">
         <div id="content">
+          <!--
+            Header area and mask area are two seperated view, which will be effect
+             by iOS scroll penetrate(bug), fix it by calling touchmove's event.preventDefault method.
+          -->
           <div id="header">
             <button id="cancel">取消</button>
             <button id="confirm">确定</button>

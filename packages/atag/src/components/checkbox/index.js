@@ -1,5 +1,5 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
+import CheckboxGroupElement from './checkbox-group';
 
 export default class CheckboxElement extends PolymerElement {
   static get is() {
@@ -171,8 +171,10 @@ export default class CheckboxElement extends PolymerElement {
       <div class="circle" style$="[[_circleCheckedStyle]]">
         <div class="dot" style$="[[_dotCheckedStyle]]"></div>
       </div>
+      <slot></slot>
     `;
   }
 }
 
 customElements.define(CheckboxElement.is, CheckboxElement);
+customElements.define(CheckboxGroupElement.is, CheckboxGroupElement);

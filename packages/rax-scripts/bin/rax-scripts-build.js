@@ -9,6 +9,7 @@ program
   .option('--debug', 'enabled debug mode', false)
   .option('--target <target>', 'set project path')
   .option('--public-path <publicPath>', 'set bundle assets public path end with `/`', '/')
+  .option('--output-path <outputPath>', 'set output path', 'build')
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     require('../src/build')(program.type);

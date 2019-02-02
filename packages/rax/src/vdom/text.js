@@ -6,7 +6,8 @@ import Host from './host';
 class TextComponent {
   constructor(element) {
     this._currentElement = element;
-    this._stringText = String(element);
+    // Text string
+    this._text = String(element);
   }
 
   mountComponent(parent, parentInstance, context, childMounter) {
@@ -28,7 +29,9 @@ class TextComponent {
       _internal: this
     };
 
-    Host.hook.Reconciler.mountComponent(this);
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.mountComponent(this);
+    }
 
     return instance;
   }
@@ -38,14 +41,16 @@ class TextComponent {
       Host.driver.removeChild(this._nativeNode, this._parent);
     }
 
-    Host.hook.Reconciler.unmountComponent(this);
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.unmountComponent(this);
+    }
 
     this._currentElement = null;
     this._nativeNode = null;
     this._parent = null;
     this._parentInstance = null;
     this._context = null;
-    this._stringText = null;
+    this._text = null;
   }
 
   updateComponent(prevElement, nextElement, context) {
@@ -54,15 +59,18 @@ class TextComponent {
       // Replace current element
       this._currentElement = nextElement;
       // Devtool read the latest stringText value
-      this._stringText = String(nextElement);
-      Host.driver.updateText(this.getNativeNode(), this._stringText);
-      Host.hook.Reconciler.receiveComponent(this);
+      this._text = String(nextElement);
+      Host.driver.updateText(this.getNativeNode(), this._text);
+
+      if (process.env.NODE_ENV !== 'production') {
+        Host.hook.Reconciler.receiveComponent(this);
+      }
     }
   }
 
   getNativeNode() {
     if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createText(this._stringText);
+      this._nativeNode = Host.driver.createText(this._text);
     }
     return this._nativeNode;
   }

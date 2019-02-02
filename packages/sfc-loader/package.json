@@ -1,6 +1,6 @@
 {
   "name": "sfc-loader",
-  "version": "0.7.2-beta.0",
+  "version": "0.7.2",
   "description": "Loader for SFC.",
   "main": "src/index.js",
   "scripts": {

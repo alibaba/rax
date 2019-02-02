@@ -3,7 +3,6 @@
   "version": "0.6.5",
   "packages": [
     "packages/*",
-    "components/*",
     "universal/*",
     "examples/*"
   ],

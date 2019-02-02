@@ -1,6 +1,5 @@
 import Host from './host';
 import Component from '../component';
-import { scheduleImmediateCallback } from '../scheduler';
 
 const RE_RENDER_LIMIT = 24;
 /**
@@ -41,7 +40,7 @@ class ReactiveComponent extends Component {
     }
   }
 
-  getCurrentHookId() {
+  getHookId() {
     return ++this.hooksIndex;
   }
 
@@ -91,24 +90,24 @@ class ReactiveComponent extends Component {
     this.willUnmountHandlers.forEach(handler => handler());
   }
 
-  // Async update
   update() {
-    scheduleImmediateCallback(() => this.forceUpdate());
+    this.forceUpdate();
   }
 
   render() {
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.beforeRender();
     }
+
     this.hooksIndex = 0;
     this.numberOfReRenders = 0;
     this.isRenderScheduled = false;
     let children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+
     while (this.isRenderScheduled) {
       this.numberOfReRenders++;
       if (this.numberOfReRenders > RE_RENDER_LIMIT) {
-        throw new Error('Too many re-renders. rax limits the number of renders to prevent ' +
-        'an infinite loop.');
+        throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
       }
 
       this.hooksIndex = 0;

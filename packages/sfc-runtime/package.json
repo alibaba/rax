@@ -1,6 +1,6 @@
 {
   "name": "sfc-runtime",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "main": "lib/index.js",
   "description": "SFC DSL Runtime",
   "files": [
@@ -20,7 +20,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "camelcase": "^5.0.0",
-    "render-helpers": "^0.0.6",
+    "render-helpers": "^0.1.0",
     "universal-env": "^0.6.5",
     "uppercamelcase": "^3.0.0"
   },
@@ -29,6 +29,7 @@
     "@babel/preset-env": "^7.0.0-rc.1",
     "babel-loader": "^8.0.0-beta.4",
     "rax-test-renderer": "^0.6.5",
+    "rax": "^0.6.5",
     "webpack": "^4.8.3",
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.1.4"

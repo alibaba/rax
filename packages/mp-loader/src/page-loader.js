@@ -1,12 +1,13 @@
-const { relative, extname, join } = require('path');
+const { relative, extname } = require('path');
 const { existsSync, readFileSync } = require('fs');
 const querystring = require('querystring');
 const { stringifyRequest, getOptions } = require('loader-utils');
-const { createRequire } = require('./utils');
+const { createRequire, error } = require('./utils');
 const runtimeHelpers = require('./runtimeHelpers');
 const resolveDependencyComponents = require('./component-resolver');
 
 const templateLoader = require.resolve('./template-loader');
+const JS_EXT = '.js';
 const CSS_EXT = '.acss';
 const TEMPLATE_EXT = '.axml';
 const CONFIG_EXT = '.json';
@@ -19,15 +20,20 @@ module.exports = function(content) {
   const jsPath = this.resourcePath;
   const relativePath = relative(this.rootContext, jsPath);
 
-  let basePath = jsPath.replace('.js', '');
+  let basePath = jsPath.replace(JS_EXT, '');
   let cssPath = basePath + CSS_EXT;
   let templatePath = basePath + TEMPLATE_EXT;
   let configPath = basePath + CONFIG_EXT;
 
   let config = {};
+  this.addDependency(configPath);
   if (existsSync(configPath)) {
-    config = JSON.parse(readFileSync(configPath, 'utf-8'));
-    this.addDependency(configPath);
+    try {
+      config = JSON.parse(readFileSync(configPath, 'utf-8'));
+    } catch (err) {
+      const relativeConfigPath = relativePath.replace(JS_EXT, CONFIG_EXT);
+      error(`Can not parse ${relativeConfigPath}, please check the page config is a valid JSON.`);
+    }
   }
 
   const dependencyComponents = resolveDependencyComponents(config, this.rootContext, basePath);

@@ -2,14 +2,13 @@
  * Stateful things in runtime
  */
 export default {
-  component: null,
   mountID: 1,
-  sandbox: true,
+  component: null,
+  isRendering: false,
+  dirtyComponents: [],
   // Roots
   rootComponents: {},
   rootInstances: {},
   // Inject
-  hook: null,
   driver: null,
-  monitor: null
 };

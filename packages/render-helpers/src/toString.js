@@ -1,4 +1,9 @@
-module.exports = function(val) {
+/**
+ * Stringify an value.
+ * @param val {String|Object|Function|Array} value.
+ * @return {String}
+ */
+export default function toString(val) {
   if (val === undefined || val === null) {
     return '';
   } else {

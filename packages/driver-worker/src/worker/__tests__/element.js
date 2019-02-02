@@ -1,4 +1,10 @@
-import Element from '../Element';
+import Element, {
+  registerElement,
+  createElement,
+  createElementNS,
+  isElement
+} from '../Element';
+import Text from '../Text';
 import { ELEMENT_NODE, TEXT_NODE } from '../NodeTypes';
 
 describe('workerDOM element', () => {
@@ -49,5 +55,41 @@ describe('workerDOM element', () => {
 
     v.removeAttribute('key');
     expect(v.getAttribute('key')).toEqual(undefined);
+  });
+
+  it('children', () => {
+    const parent = createElement('view');
+    const child1 = createElement('view');
+    const child2 = createElement('view');
+    const child3 = new Text('hello');
+    parent.appendChild(child1);
+    parent.appendChild(child2);
+    parent.appendChild(child3);
+
+    expect(parent.children).toEqual([child1, child2]);
+  });
+
+  it('registerElement', (done) => {
+    registerElement('foo', class Foo {
+      constructor() {
+        done();
+      }
+    });
+    createElement('foo');
+  });
+
+  it('createElement', () => {
+    const el = createElement('view');
+    expect(el).toBeInstanceOf(Element);
+  });
+
+  it('createElementNS', () => {
+    const el = createElementNS('namespaceURI', 'view');
+    expect(el).toBeInstanceOf(Element);
+  });
+
+  it('isElement', () => {
+    const el = createElement('view');
+    expect(isElement(el)).toEqual(true);
   });
 });

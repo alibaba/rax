@@ -1,0 +1,251 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`driver-worker convertTouchTarget 1`] = `
+Event {
+  "bubbles": false,
+  "cancelable": false,
+  "changedTouches": Array [
+    Object {
+      "target": "FOO",
+    },
+  ],
+  "defaultPrevented": false,
+  "touches": Array [
+    Object {
+      "target": "FOO",
+    },
+  ],
+  "type": "touchstart",
+}
+`;
+
+exports[`driver-worker sanitize 1`] = `
+Object {
+  "$$id": "1",
+  "attributes": Array [
+    Object {
+      "name": "foo",
+      "value": "bar",
+    },
+  ],
+  "nodeName": "FOO",
+  "nodeType": 1,
+  "style": Object {
+    "color": "red",
+  },
+}
+`;
+
+exports[`driver-worker sanitize 2`] = `
+Array [
+  Object {
+    "$$id": "1",
+    "attributes": Array [
+      Object {
+        "name": "foo",
+        "value": "bar",
+      },
+    ],
+    "nodeName": "FOO",
+    "nodeType": 1,
+    "style": Object {
+      "color": "red",
+    },
+  },
+  Object {
+    "$$id": "1",
+    "attributes": Array [
+      Object {
+        "name": "foo",
+        "value": "bar",
+      },
+    ],
+    "nodeName": "FOO",
+    "nodeType": 1,
+    "style": Object {
+      "color": "red",
+    },
+  },
+]
+`;
+
+exports[`driver-worker should be drived by rax 1`] = `
+Object {
+  "mutations": Array [
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "1",
+          "nodeName": "VIEW",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "$$id": "2",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+  ],
+  "type": "MutationRecord",
+}
+`;
+
+exports[`driver-worker should work with setNativeProps 1`] = `
+Object {
+  "mutations": Array [
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "1",
+          "attributes": Array [
+            Object {
+              "name": "foo",
+              "value": "bar",
+            },
+            Object {
+              "name": "number",
+              "value": 0,
+            },
+          ],
+          "events": Array [
+            "click",
+          ],
+          "nodeName": "VIEW",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "$$id": "2",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+  ],
+  "type": "MutationRecord",
+}
+`;
+
+exports[`driver-worker should works with dom operation 1`] = `
+Object {
+  "mutations": Array [
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "6",
+          "attributes": Array [
+            Object {
+              "name": "count",
+              "value": 0,
+            },
+          ],
+          "nodeName": "VIEW",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "$$id": "3",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "1",
+          "data": "empty",
+          "nodeType": 8,
+        },
+      ],
+      "target": Object {
+        "$$id": "6",
+      },
+      "type": "childList",
+    },
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "5",
+          "nodeName": "BE-REMOVE",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "$$id": "3",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+    Object {
+      "removedNodes": Array [
+        Object {
+          "$$id": "5",
+        },
+      ],
+      "target": Object {
+        "$$id": "3",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+    Object {
+      "removedNodes": Array [
+        Object {
+          "$$id": "5",
+        },
+      ],
+      "target": Object {
+        "$$id": "3",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "5",
+          "nodeName": "BE-REMOVE",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "$$id": "3",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "4",
+          "nodeName": "BE-INSERT-AFTER",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "$$id": "3",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "2",
+          "nodeName": "BE-INSERT-BEFORE",
+          "nodeType": 1,
+        },
+      ],
+      "nextSibling": Object {
+        "$$id": "1",
+      },
+      "target": Object {
+        "$$id": "3",
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+  ],
+  "type": "MutationRecord",
+}
+`;

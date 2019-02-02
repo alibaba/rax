@@ -175,7 +175,7 @@ const globalComponentsRefName = exports.globalComponentsRefName = '__components_
 const componentDifinitionName = exports.componentDifinitionName = '__difinition__';
 const renderHelperName = exports.renderHelperName = '__render_helpers__';
 const styleObjectName = exports.styleObjectName = '__styles__';
-const renderHelpers = exports.renderHelpers = '_c,_cx,_e,_s,_l,_t,_m,_v';
+const renderHelpers = exports.renderHelpers = '_c,_cx,_e,_s,_l,_t,_m,_v,_u';
 exports.isRenderHelperFns = makeMap(renderHelpers);
 exports.isSFCInternalIdentifier = makeMap([
   sfcModuleDeclarationName,

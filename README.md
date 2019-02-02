@@ -13,35 +13,20 @@
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
+  <a href="https://unpkg.com/rax@beta/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip&style=flat" alt="gzip size"></a>
 </p>
-
----
-
-<p align="center">
-Community
-</p>
-
-* [![Join the chat at https://gitter.im/alibaba/rax](https://badges.gitter.im/alibaba/rax.svg)](https://gitter.im/alibaba/rax?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
-
-* [Stack Overflow](http://stackoverflow.com/questions/tagged/rax)
-
-* [中文论坛](http://react-china.org/c/rax)
-
-* <details>
-  <summary>钉钉群</summary>
-  <a href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,kvz0NeXx/rsf/3KhrDQU9J1ZxS0DvkGbL8vvKpCsm04=&_dt_no_comment=1&origin=11"><img alt="Join the chat at dingtalk" src="https://user-images.githubusercontent.com/677114/41036929-486fd78a-69c4-11e8-9eb7-cd69b89821c1.png"></a>
-</details>
 
 ---
 
 :zap: **Fast:** blazing fast virtual DOM.
 
-:dart: **Tiny:** 12.6 KB minified + gzipped.
+:dart: **Tiny:** ~7 KB minified + gzipped.
 
-:art: **Universal:** works in browsers, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
+:art: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
 ## Quick Start
 
+### Using via CLI
 Install the Rax CLI tools to init project:
 
 ```sh
@@ -55,126 +40,54 @@ $ cd YourProjectName
 $ npm run start
 ```
 
-## Rax API (v1.0)
+### Using via CDN
 
-#### Creating Elements
-* createElement()
-* createFactory()
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/rax@1.0.0-beta.6/dist/rax.js"></script>
+    <script src="https://unpkg.com/driver-dom@1.0.0-beta.3/dist/driver-dom.js"></script>
+    
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // @jsx Rax.createElement
+      Rax.render(
+        <h1>Hello, world!</h1>,
+        document.getElementById('root'),
+        { driver: DriverDOM }
+      );
 
-#### Manipulating Elements
-* cloneElement()
-* isValidElement()
-* Children
-
-#### Fragments
-* Fragment
-
-#### Refs
-* createRef()
-* forwardRef()
-
-#### Hooks
-* useState()
-* useContext()
-* useEffect()
-* useLayoutEffect()
-* useRef()
-* useCallback()
-* useMemo()
-* useReducer()
-* useImperativeMethods()
-
-#### Performance
-* memo()
-
-#### Rendering Elements
-* render()
-* hydrate()
-
-## Project Type Support
-* WebApp Project
-```
-.
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-├── src
-│   └── index.js
-└── public
-    └── index.html
-```
-* MiniApp Project
-```
-.
-├── manifest.json
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-├── src
-│   ├── app.js
-│   ├── app.css
-│   ├── pages
-│   │   ├── page1.html
-│   │   └── page2.html
-│   └── components
-│       ├── component1.html
-│       └── component2.html
-└── public
-    └── index.html
-```
-* Mini Program Project
-```
-.
-├── app.js
-├── app.acss
-├── app.json
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-└── pages
-    ├── page1
-    │   ├── page1.acss
-    │   ├── page1.axml
-    │   ├── page1.js
-    │   └── page1.json
-    └── page2
-        ├── page2.acss
-        ├── page2.axml
-        ├── page2.js
-        └── page2.json
+    </script>
+  </body>
+</html>
 ```
 
-## DSL Support
-
-* JSX(XML-like syntax extension to ECMAScript) DSL
-* SFC(Single File Component) DSL
-* MP(Mini Program) DSL
-
-### JSX(XML-like syntax extension to ECMAScript) DSL
+### About JSX(XML-like syntax extension to ECMAScript)
 > Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
 
 ```jsx
 // Hello.jsx
-import {createElement, Component} from 'rax';
+import {createElement, useState} from 'rax';
 
-export default class extends Component {
-  state = {
-    name: 'world'
+export default (props) => {
+  const [name, setName] = useState(props.name);
+  const handleClick = () => {
+    setName('rax');
   };
-  onChange = ()=>{
-    this.setState({
-      name: 'rax'
-    });
-  };
-  render() {
-    return (
-      <view style={styles.hello}>
-        <text style={styles.title} onClick={this.onChange}>
-        Hello {this.state.name}
-        </text>
-      </view>
-    );
-  }
+  return (
+    <div style={styles.hello}>
+      <span style={styles.title} onClick={handleClick}>
+      Hello {name}
+      </span>
+    </div>
+  );
 }
 
 const styles = {
@@ -193,97 +106,385 @@ const styles = {
 ```js
 // app.js
 import {render} from 'rax';
+import DriverDOM from 'driver-dom';
 import Hello from './Hello';
 
-render(<Hello name="world" />);
+render(<Hello name="world" />, document.body, { driver: DriverDOM });
 ```
 
-### SFC(Single File Component) DSL
-> SFC is a Vue-like DSL that will compile to rax component.
+## Rax API (v1.0)
 
-```html
-<!-- hello.html -->
-<template>
-  <view class="hello">
-    <text class="title" @click="change">Hello {{name}}</text>
-  </view>
-</template>
+#### Creating Elements
+* createElement(type, [props], [...children])
+ ```jsx
+ createElement('div', { id: 'foo' }, createElement('p', null, 'hello world'));
+ ```
 
-<script>
-  export default {
-    data: function () {
-      return {
-        name: 'world'
-      }
+#### Fragments
+* Fragment
+  ```jsx
+  <Fragment>
+    <header>A heading</header>
+    <footer>A footer</footer>
+  </Fragment>
+  ```
+
+#### Refs
+* createRef()
+  ```jsx
+  const inputRef = createRef();
+  function MyComponent() {
+    return <input type="text" ref={inputRef} />;
+  }
+  ```
+* forwardRef()
+  ```jsx
+  const MyButton = forwardRef((props, ref) => (
+    <button ref={ref}>
+      {props.children}
+    </button>
+  ));
+
+  // You can get a ref directly to the DOM button:
+  const ref = createRef();
+  <MyButton ref={ref}>Click me!</MyButton>;
+  ```
+
+#### Hooks
+* useState()
+  ```jsx
+  function Example() {
+    // Declare a new state variable, which we'll call "count"
+    const [count, setCount] = useState(0);
+
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+  ```
+* useEffect()
+  ```jsx
+  function Example() {
+    const [count, setCount] = useState(0);
+
+    // Similar to componentDidMount and componentDidUpdate:
+    useEffect(() => {
+      document.title = `You clicked ${count} times`;
+    });
+
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+  ```
+* useLayoutEffect()
+  ```jsx
+  function Example() {
+    const [count, setCount] = useState(0);
+
+    useLayoutEffect(() => {
+      // Fires in the same phase as componentDidMount and componentDidUpdate
+    });
+
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    );
+  }
+  ```
+* useContext()
+  ```jsx
+  // Create a Context
+  const NumberContext = createContext();
+
+  function Example() {
+    const value = useContext(NumberContext);
+    return <div>The answer is {value}.</div>;
+  }
+  ```
+* useRef()
+  ```jsx
+  function TextInputWithFocusButton() {
+    const inputEl = useRef(null);
+    const onButtonClick = () => {
+      // `current` points to the mounted text input element
+      inputEl.current.focus();
+    };
+    return (
+      <>
+        <input ref={inputEl} type="text" />
+        <button onClick={onButtonClick}>Focus the input</button>
+      </>
+    );
+  }
+  ```
+* useCallback()
+  ```jsx
+  const memoizedCallback = useCallback(
+    () => {
+      doSomething(a, b);
     },
-    methods: {
-      change () {
-        this.name = 'rax';
+    [a, b],
+  );
+  ```
+* useMemo()
+  ```jsx
+  const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+  ```
+* useReducer()
+  ```jsx
+  const initialState = {count: 0};
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'reset':
+        return initialState;
+      case 'increment':
+        return {count: state.count + 1};
+      case 'decrement':
+        return {count: state.count - 1};
+      default:
+        // A reducer must always return a valid state.
+        // Alternatively you can throw an error if an invalid action is dispatched.
+        return state;
+    }
+  }
+
+  function Counter({initialCount}) {
+    const [state, dispatch] = useReducer(reducer, {count: initialCount});
+    return (
+      <>
+        Count: {state.count}
+        <button onClick={() => dispatch({type: 'reset'})}>
+          Reset
+        </button>
+        <button onClick={() => dispatch({type: 'increment'})}>+</button>
+        <button onClick={() => dispatch({type: 'decrement'})}>-</button>
+      </>
+    );
+  }
+  ```
+* useImperativeHandle()
+  ```jsx
+  function FancyInput(props, ref) {
+    const inputRef = useRef();
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current.focus();
       }
+    }));
+    return <input ref={inputRef} />;
+  }
+  FancyInput = forwardRef(FancyInput);
+  ```
+
+#### Performance
+* memo()
+  ```jsx
+  function MyComponent(props) {
+    /* render using props */
+  }
+  function areEqual(prevProps, nextProps) {
+    /* 
+      return true if passing nextProps to render would return
+      the same result as passing prevProps to render,
+      otherwise return false
+    */
+  }
+  export default memo(MyComponent, areEqual);
+  ```
+
+#### Rendering Elements
+* render(element [, container] [, options] [, callback])
+  ```jsx
+  render(<HelloMessage name="world" />, document.body, { driver: DomDriver })
+  ```
+
+#### Version
+* version
+
+#### rax-children
+* Children
+  * Children.map(children, function[(thisArg)])
+  * Children.forEach(children, function[(thisArg)])
+  * Children.count(children)
+  * Children.only(children)
+  * Children.toArray(children)
+
+#### rax-proptypes
+* PropTypes
+  * PropTypes.array
+  * PropTypes.bool
+  * PropTypes.func
+  * PropTypes.number
+  * PropTypes.object
+  * PropTypes.string
+  * PropTypes.symbol
+  * PropTypes.element
+  * PropTypes.node
+  * PropTypes.any
+  * PropTypes.arrayOf
+  * PropTypes.instanceOf
+  * PropTypes.objectOf
+  * PropTypes.oneOf
+  * PropTypes.oneOfType
+  * PropTypes.shape
+
+#### rax-is-valid-element
+* isValidElement(object)
+
+#### rax-clone-elment
+* cloneElement(element, [props], [...children])
+
+#### rax-create-factory
+* createFactory(type)
+
+#### rax-create-portal
+* createPortal(child, container)
+
+#### rax-hydrate
+* hydrate(element, container[, callback])
+
+#### rax-find-dom-node
+* findDOMNode(component)
+
+#### rax-unmount-component-at-node
+* unmountComponentAtNode(container)
+
+## Rax Legacy API (v1.0)
+
+#### rax-component
+* Component
+
+#### rax-pure-component
+* PureComponent
+
+#### rax-create-class
+* createClass()
+
+
+## Rax Official Hooks
+
+#### Asynchronous Operation 
+```jsx
+import { createElement, useMemo } from 'rax';
+import usePromise from 'rax-use-promise';
+
+const fetchData = () => fetch('https://httpbin.org/get').then(res => res.json());
+
+function Example() {
+  const [data, error] = usePromise(useMemo(fetchData));
+  if (error) {
+    return <p>error</p>
+  } else if (data) {
+    return <p>{data.foo}</p>
+  }
+}
+```
+
+#### Fetch Data 
+```jsx
+import { createElement } from 'rax';
+import useFetch from 'rax-use-fetch';
+
+function Example() {
+  const [data, error] = useFetch('https://httpbin.org/get');
+  if (error) {
+    return <p>error</p>
+  } else if (data) {
+    return <p>{data.foo}</p>
+  } else {
+    return <p>loading</p>
+  }
+}
+```
+
+#### Router
+```jsx
+import { createElement, Fragment } from 'rax';
+import { route, useComponent, push } from 'rax-use-router';
+import Foo from './Foo';
+
+route([{
+  path: '/home',
+  routes: [
+    {
+      path: '',                   // www.example.com/home
+      component: () => <>
+        <button onClick={() => push('/foo')}>go foo</button>
+        <button onClick={() => push('/bar')}>go bar</button>
+        <button onClick={() => push('/home/jack')}>go jack</button>
+      </>,
+    },
+    {
+      path: '/:username',         // www.example.com/home/xxx
+      component: (params) => <>
+        <p>{params.username}</p>
+        <button onClick={ () => push('/home') }>Go home</button>
+      </>
     }
-  }
-</script>
-
-<style>
-  .hello {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .title {
-    font-size: 40px;
-    text-align: center;
-  }
-</style>
-```
-
-```js
-// app.js
-import {render} from 'rax';
-import Hello from './hello';
-
-render(<Hello name="world" />);
-```
-
-### MP(Mini Program) DSL
-> MP DSL will compile to rax component.
-
-```js
-Component({
-  data: {
-    name: 'world'
+  ]},
+  {
+    path: '/bar',
+    routes: [
+      {
+        path: '',                 // www.example.com/bar
+        component: () => import(/* webpackChunkName: "bar" */ './Bar'),
+      },
+    ],
   },
-  methods: {
-    onChange(e) {
-      this.setData({
-        name: 'rax' 
-      });
-    }
-  }
-});
-```
+  {
+    path: '/foo',                 // www.example.com/foo
+    component: () => <Foo />,  
+  },
+]);
 
-```css
-/* index.acss */
-.hello {
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.title {
-  font-size: 40px;
-  text-align: center;
+export default function Example() {
+  var component = useComponent('/home');
+  return component;
 }
 ```
 
-```html
-<!-- index.axml -->
-<view class="hello">
-  <text class="title" onClick="change">Hello {{name}}</text>
-</view>
+```jsx
+// Foo.jsx
+import { createElement } from 'rax';
+import { push } from 'rax-use-router';
+
+export default function Foo() {
+  return <button onClick={ () => push('/home') }>Go home</button>
+}
 ```
+
+```jsx
+// Bar.jsx
+import { createElement } from 'rax';
+import { push } from 'rax-use-router';
+
+export default function Bar() {
+  return <button onClick={ () => push('/home') }>Go home</button>
+}
+```
+
+
+## Rax Official Drivers
+* driver-dom
+* driver-weex
+* driver-webgl
+* driver-worker
 
 ## Rax Renderers
 
@@ -323,7 +524,6 @@ Then, you can run several commands:
 * `npm test <pattern>` runs tests with matching filenames.
 * `npm run build` creates `lib` and `dist` folder with all the packages.
 * `npm start` start local server with `examples` folder.
-
 
 ## Core Team
 
