@@ -20,7 +20,7 @@ function performInSandbox(fn, instance, callback) {
 
 function handleError(instance, error) {
   let boundary;
- 
+
   while (instance) {
     let internal = instance._internal;
     if (typeof instance.componentDidCatch === 'function') {

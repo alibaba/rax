@@ -52,7 +52,7 @@ function runUpdate(component) {
   }
 
   runCallbacks(callbacks, component);
-  
+
   Host.isUpdating = false;
 }
 
@@ -101,7 +101,7 @@ function requestUpdate(component, partialState, callback) {
   }
 
   !Host.isUpdating && flush();
-  
+
   if (callback) {
     enqueueCallback(internal, callback);
   }
