@@ -40,8 +40,8 @@ export default function createComponent(renderFactory, render, config, component
 
     constructor(props, context) {
       super(props, context);
-      const document = context.$page.vnode._document;
-      if (cssText && (cssText = String(cssText))) {
+      if (context.$page && cssText && (cssText = String(cssText))) {
+        const document = context.$page.vnode._document;
         const cssTextNode = document.createTextNode(cssText);
         const styleNode = document.createElement('style');
         styleNode.appendChild(cssTextNode);
