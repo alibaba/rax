@@ -22,11 +22,12 @@ function handleError(instance, error) {
   let boundary;
 
   while (instance) {
+    let internal = instance._internal;
     if (typeof instance.componentDidCatch === 'function') {
       boundary = instance;
       break;
-    } else if (instance._internal && instance._internal._parentInstance) {
-      instance = instance._internal._parentInstance;
+    } else if (internal && internal._parentInstance) {
+      instance = internal._parentInstance;
     } else {
       break;
     }
@@ -66,7 +67,8 @@ class CompositeComponent {
 
   getName() {
     let type = this._currentElement.type;
-    let constructor = this._instance && this._instance.constructor;
+    let instance = this._instance;
+    let constructor = instance && instance.constructor;
     return (
       type.displayName || constructor && constructor.displayName ||
       type.name || constructor && constructor.name ||
@@ -181,7 +183,7 @@ class CompositeComponent {
       handleError(instance, error);
     }
 
-    if (!this._currentElement.type.forwardRef && ref) {
+    if (!currentElement.type.forwardRef && ref) {
       Ref.attach(currentElement._owner, ref, this);
     }
 
@@ -232,9 +234,10 @@ class CompositeComponent {
     instance._internal = null;
 
     if (this._renderedComponent != null) {
-      let ref = this._currentElement.ref;
-      if (!this._currentElement.type.forwardRef && ref) {
-        Ref.detach(this._currentElement._owner, ref, this);
+      let currentElement = this._currentElement;
+      let ref = currentElement.ref;
+      if (!currentElement.type.forwardRef && ref) {
+        Ref.detach(currentElement._owner, ref, this);
       }
 
       this._renderedComponent.unmountComponent(notRemoveChild);
@@ -498,16 +501,17 @@ class CompositeComponent {
             oldChild = [oldChild];
           }
 
+          const driver = Host.driver;
           // If newChild count large then oldChild
           let lastNewChild;
           for (let i = 0; i < newChild.length; i++) {
             let child = newChild[i];
             if (oldChild[i]) {
-              Host.driver.replaceChild(child, oldChild[i]);
+              driver.replaceChild(child, oldChild[i]);
             } else if (lastNewChild) {
-              Host.driver.insertAfter(child, lastNewChild);
+              driver.insertAfter(child, lastNewChild);
             } else {
-              Host.driver.appendChild(child, parent);
+              driver.appendChild(child, parent);
             }
             lastNewChild = child;
           }
@@ -515,7 +519,7 @@ class CompositeComponent {
           // If newChild count less then oldChild
           if (newChild.length < oldChild.length) {
             for (let i = newChild.length; i < oldChild.length; i++) {
-              Host.driver.removeChild(oldChild[i]);
+              driver.removeChild(oldChild[i]);
             }
           }
         }

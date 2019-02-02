@@ -4,7 +4,7 @@ import createElement from '../createElement';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
-import Component from '../component';
+import Component from '../vdom/component';
 
 describe('render', () => {
   function createNodeElement(tagName) {

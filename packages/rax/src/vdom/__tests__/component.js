@@ -1,7 +1,7 @@
 /* @jsx createElement */
 
 import Component from '../component';
-import createElement from '../createElement';
+import createElement from '../../createElement';
 
 describe('Component', () => {
   it('preserves the name of the class', () => {

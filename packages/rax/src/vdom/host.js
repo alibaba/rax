@@ -4,7 +4,7 @@
 export default {
   mountID: 1,
   component: null,
-  isRendering: false,
+  isUpdating: false,
   dirtyComponents: [],
   // Roots
   rootComponents: {},

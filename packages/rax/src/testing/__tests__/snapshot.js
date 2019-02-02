@@ -1,5 +1,5 @@
 import createElement from '../../createElement';
-import Component from '../../component';
+import Component from '../../vdom/component';
 import renderer from '../renderer';
 
 const STATUS = {

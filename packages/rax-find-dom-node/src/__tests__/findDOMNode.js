@@ -1,12 +1,12 @@
 /* @jsx createElement */
 
-import findDOMNode from '../findDOMNode';
-import Component from '../component';
-import createElement from '../createElement';
-import Host from '../vdom/host';
-import render from '../render';
+import findDOMNode from '../';
+import Component from 'rax-component';
+import {createElement, render, shared} from 'rax';
 import ServerDriver from 'driver-server';
-import unmountComponentAtNode from '../unmountComponentAtNode';
+import unmountComponentAtNode from 'rax-unmount-component-at-node';
+
+const { Host } = shared;
 
 describe('findDOMNode', () => {
   function createNodeElement(tagName) {

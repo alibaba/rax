@@ -6,11 +6,23 @@ import memo from './memo';
 import Fragment from './fragment';
 import render from './render';
 import version from './version';
+import Host from './vdom/host';
+import Instance from './vdom/instance';
+import Element from './vdom/element';
+import flattenChildren from './vdom/flattenChildren';
+
+const shared = {
+  Host,
+  Instance,
+  Element,
+  flattenChildren
+};
 
 export {
   createElement, createRef, createContext,
   useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeHandle,
   Fragment, memo,
   render,
-  version
+  version,
+  shared
 };

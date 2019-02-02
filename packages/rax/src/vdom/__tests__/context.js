@@ -1,13 +1,12 @@
 'use strict';
 /* @jsx createElement */
 
-import Component from '../../component';
-import PropTypes from '../../proptypes';
+import Component from '../component';
+import PropTypes from 'rax-proptypes';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 import renderToString from '../../server/renderToString';
 
 describe('Context', function() {

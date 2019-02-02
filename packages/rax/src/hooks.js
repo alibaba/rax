@@ -1,6 +1,5 @@
 import Host from './vdom/host';
-import { scheduleBeforeNextRenderCallback } from './vdom/scheduler';
-import { flushPassiveEffects } from './vdom/updater';
+import { schedule, flush } from './vdom/scheduler';
 
 function getCurrentRenderingInstance() {
   const currentInstance = Host.component._instance;
@@ -28,17 +27,17 @@ function areInputsEqual(inputs, prevInputs) {
 
 export function useState(initialState) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getHookId();
-  const hooks = currentInstance.hooks;
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
 
-  if (!hooks[hookId]) {
+  if (!hooks[hookID]) {
     // state lazy initializer
     if (typeof initialState === 'function') {
       initialState = initialState();
     }
 
     const setState = newState => {
-      const current = hooks[hookId][0];
+      const current = hooks[hookID][0];
 
       if (typeof newState === 'function') {
         newState = newState(current);
@@ -47,23 +46,23 @@ export function useState(initialState) {
       if (newState !== current) {
         // This is a render phase update.  After this render pass, we'll restart
         if (Host.component && Host.component._instance === currentInstance) {
-          hooks[hookId][0] = newState;
-          currentInstance.isRenderScheduled = true;
+          hooks[hookID][0] = newState;
+          currentInstance.isScheduled = true;
         } else {
-          !Host.isRendering && flushPassiveEffects();
-          hooks[hookId][0] = newState;
+          !Host.isUpdating && flush();
+          hooks[hookID][0] = newState;
           currentInstance.update();
         }
       }
     };
 
-    hooks[hookId] = [
+    hooks[hookID] = [
       initialState,
       setState,
     ];
   }
 
-  return hooks[hookId];
+  return hooks[hookID];
 }
 
 export function useContext(context) {
@@ -81,57 +80,57 @@ export function useLayoutEffect(effect, inputs) {
 
 function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getHookId();
-  const hooks = currentInstance.hooks;
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
   inputs = inputs != null ? inputs : [effect];
 
-  if (!hooks[hookId]) {
+  if (!hooks[hookID]) {
     const create = (immediately) => {
-      if (!immediately && defered) return scheduleBeforeNextRenderCallback(() => create(true));
+      if (!immediately && defered) return schedule(() => create(true));
       const { current } = create;
       if (current) {
         // Set this to true to prevent re-entrancy
-        const previousIsRendering = Host.isRendering;
-        Host.isRendering = true;
+        const previousIsRendering = Host.isUpdating;
+        Host.isUpdating = true;
         destory.current = current();
         create.current = null;
-        Host.isRendering = previousIsRendering;
+        Host.isUpdating = previousIsRendering;
       }
     };
 
     const destory = (immediately) => {
-      if (!immediately && defered) return scheduleBeforeNextRenderCallback(() => destory(true));
+      if (!immediately && defered) return schedule(() => destory(true));
       const { current } = destory;
       if (current) {
         // Set this to true to prevent re-entrancy
-        const previousIsRendering = Host.isRendering;
-        Host.isRendering = true;
+        const previousIsRendering = Host.isUpdating;
+        Host.isUpdating = true;
         current();
         destory.current = null;
-        Host.isRendering = previousIsRendering;
+        Host.isUpdating = previousIsRendering;
       }
     };
 
     create.current = effect;
 
-    currentInstance.hooks[hookId] = {
+    hooks[hookID] = {
       create,
       destory,
       prevInputs: inputs,
       inputs
     };
 
-    currentInstance.didMountHandlers.push(create);
-    currentInstance.willUnmountHandlers.push(destory);
-    currentInstance.didUpdateHandlers.push(() => {
-      const { prevInputs, inputs, create } = hooks[hookId];
+    currentInstance.didMount.push(create);
+    currentInstance.willUnmount.push(destory);
+    currentInstance.didUpdate.push(() => {
+      const { prevInputs, inputs, create } = hooks[hookID];
       if (prevInputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
         create();
       }
     });
   } else {
-    const hook = hooks[hookId];
+    const hook = hooks[hookID];
     const { create, inputs: prevInputs } = hook;
     hook.inputs = inputs;
     hook.prevInputs = prevInputs;
@@ -157,16 +156,16 @@ export function useImperativeHandle(ref, create, inputs) {
 
 export function useRef(initialValue) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getHookId();
-  const hooks = currentInstance.hooks;
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
 
-  if (!hooks[hookId]) {
-    hooks[hookId] = {
+  if (!hooks[hookID]) {
+    hooks[hookID] = {
       current: initialValue
     };
   }
 
-  return hooks[hookId];
+  return hooks[hookID];
 }
 
 export function useCallback(callback, inputs) {
@@ -175,55 +174,55 @@ export function useCallback(callback, inputs) {
 
 export function useMemo(create, inputs) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getHookId();
-  const hooks = currentInstance.hooks;
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
 
-  if (!hooks[hookId]) {
-    hooks[hookId] = [create(), inputs];
+  if (!hooks[hookID]) {
+    hooks[hookID] = [create(), inputs];
   } else {
-    const hook = hooks[hookId];
+    const hook = hooks[hookID];
     const prevInputs = hook[1];
     if (!areInputsEqual(inputs, prevInputs)) {
       hook[0] = create();
     }
   }
 
-  return hooks[hookId][0];
+  return hooks[hookID][0];
 }
 
 export function useReducer(reducer, initialState, initialAction) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookId = currentInstance.getHookId();
-  const hooks = currentInstance.hooks;
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
 
-  if (!hooks[hookId]) {
+  if (!hooks[hookID]) {
     if (initialAction) {
       initialState = reducer(initialState, initialAction);
     }
 
     const dispatch = action => {
-      const hook = hooks[hookId];
+      const hook = hooks[hookID];
       // reducer will get in the next render, before that we add all
       // actions to the queue
       const queue = hook[2];
       // This is a render phase update.  After this render pass, we'll restart
       if (Host.component && Host.component._instance === currentInstance) {
         queue.push(action);
-        currentInstance.isRenderScheduled = true;
+        currentInstance.isScheduled = true;
       } else {
-        !Host.isRendering && flushPassiveEffects();
+        !Host.isUpdating && flush();
         queue.push(action);
         currentInstance.update();
       }
     };
 
-    return hooks[hookId] = [
+    return hooks[hookID] = [
       initialState,
       dispatch,
       []
     ];
   }
-  const hook = hooks[hookId];
+  const hook = hooks[hookID];
   const queue = hook[2];
   let next = hook[0];
   for (let i = 0; i < queue.length; i++) {
@@ -231,5 +230,5 @@ export function useReducer(reducer, initialState, initialAction) {
   }
   hook[0] = next;
   hook[2] = [];
-  return hooks[hookId];
+  return hooks[hookID];
 }

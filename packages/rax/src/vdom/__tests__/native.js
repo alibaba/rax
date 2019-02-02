@@ -2,12 +2,11 @@
 
 'use strict';
 
-import Component from '../../component';
+import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 
 describe('NativeComponent', function() {
   function createNodeElement(tagName) {
@@ -33,16 +32,16 @@ describe('NativeComponent', function() {
     let el = createNodeElement('div');
     let inst = render(<div><span />{'foo'}{'bar'}</div>, el);
 
-    let foo = findDOMNode(inst).childNodes[1];
-    let bar = findDOMNode(inst).childNodes[2];
+    let foo = el.childNodes[0].childNodes[1];
+    let bar = el.childNodes[0].childNodes[2];
     expect(foo.data).toBe('foo');
     expect(bar.data).toBe('bar');
 
     inst = render(<div><span />{'baz'}{'qux'}</div>, el);
     // After the update, the text nodes should have stayed in place (as opposed
     // to getting unmounted and remounted)
-    expect(findDOMNode(inst).childNodes[1]).toBe(foo);
-    expect(findDOMNode(inst).childNodes[2]).toBe(bar);
+    expect(el.childNodes[0].childNodes[1]).toBe(foo);
+    expect(el.childNodes[0].childNodes[2]).toBe(bar);
     expect(foo.data).toBe('baz');
     expect(bar.data).toBe('qux');
   });
@@ -51,19 +50,19 @@ describe('NativeComponent', function() {
     let el = createNodeElement('div');
     let inst = render(<div>{'foo'}<div />{'bar'}</div>, el);
 
-    let container = findDOMNode(inst);
+    let container = el.childNodes[0];
     let childDiv = container.childNodes[1];
     let childNodes = container.childNodes;
     expect(childNodes.length).toBe(3);
 
     inst = render(<div>{null}<div />{null}</div>, el);
-    container = findDOMNode(inst);
+    container = el.childNodes[0];
     childNodes = container.childNodes;
     expect(childNodes.length).toBe(3);
     expect(childNodes[1]).toBe(childDiv);
 
     inst = render(<div>{'foo'}<div />{'bar'}</div>, el);
-    container = findDOMNode(inst);
+    container = el.childNodes[0];
     childNodes = container.childNodes;
 
     expect(childNodes.length).toBe(3);
@@ -110,7 +109,7 @@ describe('NativeComponent', function() {
 
     let inst = render(<MyComponent />, el);
 
-    let container = findDOMNode(inst);
+    let container = el.childNodes[0];
     let childNodes = container.childNodes;
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].data).toBe('foo');

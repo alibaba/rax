@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import PropTypes from '../proptypes';
+import PropTypes from '../';
 
 describe('PropTypes', () => {
   it('Primitive types should be defined', () => {

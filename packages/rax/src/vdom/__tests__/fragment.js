@@ -2,12 +2,11 @@
 
 'use strict';
 
-import Component from '../../component';
+import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 
 describe('FragmentComponent', function() {
   function createNodeElement(tagName) {
@@ -53,12 +52,12 @@ describe('FragmentComponent', function() {
     }
 
     let beforeInst = render(<Hello message="world" />, el);
-    let beforeContainer = findDOMNode(beforeInst)[0];
+    let beforeContainer = el.childNodes[0];
     let beforeDiv = beforeContainer.childNodes[0];
     let beforeSpan = beforeDiv.childNodes[0];
 
     let inst = render(<Hello message="rax" />, el);
-    let container = findDOMNode(inst)[0];
+    let container = el.childNodes[0];
     let div = container.childNodes[0];
     let span = div.childNodes[0];
 
@@ -104,7 +103,7 @@ describe('FragmentComponent', function() {
 
     let inst = render(<MyComponent />, el);
 
-    let container = findDOMNode(inst);
+    let container = el.childNodes[0];
     let childNodes = container.childNodes;
 
     expect(childNodes.length).toBe(5);
@@ -170,7 +169,7 @@ describe('FragmentComponent', function() {
 
     let inst = render(<MyComponent />, el);
 
-    let container = findDOMNode(inst);
+    let container = el.childNodes[0];
     let childNodes = container.childNodes;
 
     expect(childNodes.length).toBe(4);
@@ -198,15 +197,15 @@ describe('FragmentComponent', function() {
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
     expect(childNodes[1].childNodes[0].data).toBe('World');
 
     inst = render(<MyComponent condition={true} />, el);
-    let container = findDOMNode(inst);
-    expect(container.tagName).toBe('DIV');
+    expect(childNodes.length).toBe(1);
+    expect(childNodes[0].childNodes[0].data).toBe('Hello');
   });
 
   it('should render correct when switching to a nested array', function() {
@@ -227,7 +226,7 @@ describe('FragmentComponent', function() {
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -235,8 +234,8 @@ describe('FragmentComponent', function() {
     expect(childNodes[2].tagName).toBe('DIV');
 
     inst = render(<MyComponent condition={true} />, el);
-    let container = findDOMNode(inst);
-    expect(container.tagName).toBe('DIV');
+    expect(childNodes.length).toBe(1);
+    expect(childNodes[0].childNodes[0].data).toBe('Hello');
   });
 
   it('should render correct if an implicit key slot switches from/to null', function() {
@@ -259,7 +258,7 @@ describe('FragmentComponent', function() {
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -269,7 +268,6 @@ describe('FragmentComponent', function() {
     expect(instanceA).not.toBe(null);
 
     inst = render(<MyComponent condition={true} />, el);
-    childNodes = findDOMNode(inst);
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].data).toBe(' empty ');
@@ -279,7 +277,6 @@ describe('FragmentComponent', function() {
     // expect(instanceB).toBe(instanceA);
 
     inst = render(<MyComponent condition={false} />, el);
-    childNodes = findDOMNode(inst);
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -307,7 +304,7 @@ describe('FragmentComponent', function() {
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -315,7 +312,6 @@ describe('FragmentComponent', function() {
     expect(childNodes[2].tagName).toBe('DIV');
 
     inst = render(<MyComponent condition={true} />, el);
-    childNodes = findDOMNode(inst);
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('World');
@@ -344,7 +340,7 @@ describe('FragmentComponent', function() {
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('1');

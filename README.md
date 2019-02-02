@@ -52,7 +52,7 @@ $ npm run start
     <script src="https://unpkg.com/driver-dom@1.0.0-beta.3/dist/driver-dom.js"></script>
     
     <!-- Don't use this in production: -->
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   </head>
   <body>
     <div id="root"></div>
