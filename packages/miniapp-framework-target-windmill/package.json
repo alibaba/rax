@@ -1,0 +1,10 @@
+{
+  "name": "miniapp-framework-target-windmill",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/worker/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alibaba/rax.git"
+  }
+}
