@@ -80,15 +80,19 @@ class NativeComponent {
     }
 
     let renderedChildren = this._renderedChildren = {};
-
+    const nativeNode = this.getNativeNode();
+    
     let renderedChildrenImage = children.map((element, index) => {
       let renderedChild = instantiateComponent(element);
       let name = getElementKeyName(renderedChildren, element, index);
       renderedChildren[name] = renderedChild;
       renderedChild._mountIndex = index;
       // Mount
-      let mountImage = renderedChild.mountComponent(this.getNativeNode(),
-        this._instance, context, null);
+      let mountImage = renderedChild.mountComponent(
+        nativeNode,
+        this._instance,
+        context
+      );
       return mountImage;
     });
 
@@ -157,7 +161,9 @@ class NativeComponent {
     let propKey;
     let styleName;
     let styleUpdates;
-    let driver = Host.driver;
+    const driver = Host.driver;
+    const nativeNode = this.getNativeNode();
+
     for (propKey in prevProps) {
       if (propKey === CHILDREN ||
         nextProps.hasOwnProperty(propKey) ||
@@ -176,12 +182,18 @@ class NativeComponent {
         this._prevStyleCopy = null;
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         if (typeof prevProps[propKey] === 'function') {
-          driver.removeEventListener(this.getNativeNode(), propKey.slice(
-            2).toLowerCase(), prevProps[propKey]);
+          driver.removeEventListener(
+            nativeNode,
+            propKey.slice(2).toLowerCase(),
+            prevProps[propKey]
+          );
         }
       } else {
-        driver.removeAttribute(this.getNativeNode(), propKey, prevProps[
-          propKey]);
+        driver.removeAttribute(
+          nativeNode,
+          propKey,
+          prevProps[propKey]
+        );
       }
     }
 
@@ -231,21 +243,28 @@ class NativeComponent {
         let eventName = propKey.slice(2).toLowerCase();
 
         if (typeof prevProp === 'function') {
-          driver.removeEventListener(this.getNativeNode(), eventName, prevProp, nextProps);
+          driver.removeEventListener(nativeNode, eventName, prevProp, nextProps);
         }
 
         if (typeof nextProp === 'function') {
-          driver.addEventListener(this.getNativeNode(), eventName, nextProp, nextProps);
+          driver.addEventListener(nativeNode, eventName, nextProp, nextProps);
         }
       } else {
         // Update other property
         let payload = {};
         payload[propKey] = nextProp;
         if (nextProp != null) {
-          driver.setAttribute(this.getNativeNode(), propKey, nextProp);
+          driver.setAttribute(
+            nativeNode,
+            propKey,
+            nextProp
+          );
         } else {
-          driver.removeAttribute(this.getNativeNode(), propKey,
-            prevProps[propKey]);
+          driver.removeAttribute(
+            nativeNode,
+            propKey,
+            prevProps[propKey]
+          );
         }
         if (process.env.NODE_ENV !== 'production') {
           Host.measurer && Host.measurer.recordOperation({
@@ -265,7 +284,7 @@ class NativeComponent {
           payload: styleUpdates
         });
       }
-      driver.setStyles(this.getNativeNode(), styleUpdates);
+      driver.setStyles(nativeNode, styleUpdates);
     }
   }
 
