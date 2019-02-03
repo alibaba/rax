@@ -1,4 +1,4 @@
-# Driver Spec `0.3`
+# Driver Spec `1.0`
 
 Driver is the key concept that make the application cross-container running.
 Rax have been implemented [browser driver](../../packages/driver-browser/src/index.js), [server driver](../../packages/driver-server/src/index.js) and [weex driver](../../packages/driver-weex/src/index.js).
@@ -18,9 +18,8 @@ The driver should implement follow method:
 * insertBefore(node, before, parent)
 * addEventListener(node, eventName, eventHandler)
 * removeEventListener(node, eventName, eventHandler)
-* removeAllEventListeners(node)
-* removeAttribute(node, propKey)
 * setAttribute(node, propKey, propValue)
+* removeAttribute(node, propKey)
 * setStyles(node, styles)
 * getWindowWidth()
 * beforeRender()

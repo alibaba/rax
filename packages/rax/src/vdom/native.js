@@ -122,7 +122,6 @@ class NativeComponent {
       if (!notRemoveChild) {
         Host.driver.removeChild(this._nativeNode, this._parent);
       }
-      Host.driver.removeAllEventListeners(this._nativeNode);
     }
 
     this.unmountChildren(notRemoveChild);
