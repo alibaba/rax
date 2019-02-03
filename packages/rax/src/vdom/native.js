@@ -390,11 +390,6 @@ class NativeComponent {
           if (prevChild._mountIndex !== nextIndex) {
             insertNodes(prevChildNativeNode);
           }
-
-          nextNativeNode = nextNativeNode.concat(prevChildNativeNode);
-
-          // Update to the latest mount order
-          prevChild._mountIndex = nextIndex;
         } else {
           // Mount nextChild that in prevChildren there has no some name
 
@@ -407,21 +402,19 @@ class NativeComponent {
           nextChild.mountComponent(
             parent,
             this._instance,
-            context, (newChildNode, parent) => {
-              // Insert child at a specific index
-              insertNodes(newChildNode, parent);
-              nextNativeNode = nextNativeNode.concat(newChildNode);
-            }
-
+            context,
+            insertNodes // Insert nodes mounter
           );
-          // Update to the latest mount order
-          nextChild._mountIndex = nextIndex;
         }
 
-        nextIndex++;
+        // Update to the latest mount order
+        nextChild._mountIndex = nextIndex++;
 
         // Get the last child
         lastPlacedNode = nextChild.getNativeNode();
+        // Push to nextNativeNode
+        nextNativeNode = nextNativeNode.concat(lastPlacedNode);
+
         if (Array.isArray(lastPlacedNode)) {
           lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
         }
