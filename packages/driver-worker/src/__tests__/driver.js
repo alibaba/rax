@@ -202,7 +202,9 @@ describe('driver-worker', () => {
     };
     event.touches = [touch];
     event.changedTouches = [touch];
-    expect(driver.convertTouchTarget(event)).toMatchSnapshot();
+    driver.convertTouchTarget(event);
+
+    expect(event).toMatchSnapshot();
   });
 
   it('appendChild', () => {

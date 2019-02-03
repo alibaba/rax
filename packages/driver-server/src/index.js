@@ -158,10 +158,6 @@ const Driver = {
     delete node.eventListeners[eventName];
   },
 
-  removeAllEventListeners(node) {
-    node.eventListeners = {};
-  },
-
   removeAttribute(node, propKey, propValue) {
     if (propKey === 'className') {
       propKey = 'class';

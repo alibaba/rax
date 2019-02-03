@@ -17,5 +17,10 @@
   },
   "peerDependencies": {
     "rax": "^1.0.0-beta"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0-beta",
+    "rax-component": "^1.0.0-beta",
+    "rax-clone-element": "^1.0.0-beta"
   }
 }

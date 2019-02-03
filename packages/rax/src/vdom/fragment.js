@@ -1,6 +1,6 @@
 import Host from './host';
 import NativeComponent from './native';
-import instance from './instance';
+import Instance from './instance';
 import instantiateComponent from './instantiateComponent';
 import getElementKeyName from './getElementKeyName';
 
@@ -74,7 +74,7 @@ class FragmentComponent extends NativeComponent {
 
   unmountComponent(notRemoveChild) {
     if (this._nativeNode) {
-      instance.remove(this._nativeNode);
+      Instance.remove(this._nativeNode);
       if (!notRemoveChild) {
         for (let i = 0; i < this._nativeNode.length; i++) {
           Host.driver.removeChild(this._nativeNode[i]);

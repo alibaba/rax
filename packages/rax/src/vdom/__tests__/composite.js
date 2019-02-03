@@ -1,12 +1,10 @@
 /* @jsx createElement */
 
-import Component from '../../component';
+import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
-import unmountComponentAtNode from '../../unmountComponentAtNode';
 
 describe('CompositeComponent', function() {
   function createNodeElement(tagName) {
@@ -44,10 +42,10 @@ describe('CompositeComponent', function() {
     }
 
     let component = render(<MyComponent />);
-    expect(findDOMNode(component.refs.x).tagName).toBe('A');
+    expect(component.refs.x.tagName).toBe('A');
 
     component.toggleActivatedState();
-    expect(findDOMNode(component.refs.x).tagName).toBe('B');
+    expect(component.refs.x.tagName).toBe('B');
   });
 
 
@@ -156,14 +154,14 @@ describe('CompositeComponent', function() {
       }
     }
 
-    render(<Foo value="foo" />, container);
+    render(<div><Foo value="foo" /></div>, container);
     expect(lifeCycles).toEqual([
       'will-mount',
       'render',
       'did-mount'
     ]);
     lifeCycles = []; // reset
-    render(<Foo value="bar" />, container);
+    render(<div><Foo value="bar" /></div>, container);
     expect(lifeCycles).toEqual([
       'receive-props', {value: 'bar'},
       'should-update', {value: 'bar'}, {value: 'bar'},
@@ -173,7 +171,7 @@ describe('CompositeComponent', function() {
       'receive-props-callback'
     ]);
     lifeCycles = []; // reset
-    unmountComponentAtNode(container);
+    render(<div />, container);
     expect(lifeCycles).toEqual([
       'will-unmount',
     ]);

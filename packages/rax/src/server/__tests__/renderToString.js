@@ -2,10 +2,10 @@
 
 /* eslint react/no-did-update-set-state: "off" */
 
-import Component from '../../component';
+import Component from '../../vdom/component';
 import createElement from '../../createElement';
 import renderToString from '../renderToString';
-import PropTypes from '../../proptypes';
+import PropTypes from 'rax-proptypes';
 
 describe('Server renderToString', () => {
   it('renders based on state', () => {

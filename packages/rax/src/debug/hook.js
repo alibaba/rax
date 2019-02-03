@@ -1,10 +1,10 @@
-import instance from '../vdom/instance';
+import Instance from '../vdom/instance';
 import Host from '../vdom/host';
 
 export default {
   ComponentTree: {
     getClosestInstanceFromNode(node) {
-      return instance.get(node);
+      return Instance.get(node);
     },
     getNodeFromInstance(inst) {
       // inst is an internal instance (but could be a composite)

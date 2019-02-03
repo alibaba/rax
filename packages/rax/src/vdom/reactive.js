@@ -1,5 +1,5 @@
 import Host from './host';
-import Component from '../component';
+import Component from './component';
 
 const RE_RENDER_LIMIT = 24;
 /**
@@ -9,14 +9,18 @@ class ReactiveComponent extends Component {
   constructor(pureRender, ref) {
     super();
     // A pure function
-    this.pureRender = pureRender;
-    this.hooksIndex = 0;
-    this.hooks = {};
-    this.didMountHandlers = [];
-    this.didUpdateHandlers = [];
-    this.willUnmountHandlers = [];
-    this.isRenderScheduled = false;
-    this.numberOfReRenders = 0;
+    this._render = pureRender;
+    this._hookID = 0;
+    // Number of rerenders
+    this._reRenders = 0;
+    this._hooks = {};
+    // Handles store
+    this.didMount = [];
+    this.didUpdate = [];
+    this.willUnmount = [];
+    // Is render scheduled
+    this.isScheduled = false;
+
 
     if (pureRender.forwardRef) {
       this.prevForwardRef = this.forwardRef = ref;
@@ -40,8 +44,12 @@ class ReactiveComponent extends Component {
     }
   }
 
-  getHookId() {
-    return ++this.hooksIndex;
+  getHooks() {
+    return this._hooks;
+  }
+
+  getHookID() {
+    return ++this._hookID;
   }
 
   readContext(context) {
@@ -66,7 +74,7 @@ class ReactiveComponent extends Component {
 
         contextEmitter.on(contextUpdater);
 
-        this.willUnmountHandlers.push(() => {
+        this.willUnmount.push(() => {
           delete contextEmitter[mountId];
           contextEmitter.off(contextUpdater);
         });
@@ -79,15 +87,15 @@ class ReactiveComponent extends Component {
   }
 
   componentDidMount() {
-    this.didMountHandlers.forEach(handler => handler());
+    this.didMount.forEach(handler => handler());
   }
 
   componentDidUpdate() {
-    this.didUpdateHandlers.forEach(handler => handler());
+    this.didUpdate.forEach(handler => handler());
   }
 
   componentWillUnmount() {
-    this.willUnmountHandlers.forEach(handler => handler());
+    this.willUnmount.forEach(handler => handler());
   }
 
   update() {
@@ -99,20 +107,20 @@ class ReactiveComponent extends Component {
       Host.measurer && Host.measurer.beforeRender();
     }
 
-    this.hooksIndex = 0;
-    this.numberOfReRenders = 0;
-    this.isRenderScheduled = false;
-    let children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+    this._hookID = 0;
+    this._reRenders = 0;
+    this.isScheduled = false;
+    let children = this._render(this.props, this.forwardRef ? this.forwardRef : this.context);
 
-    while (this.isRenderScheduled) {
-      this.numberOfReRenders++;
-      if (this.numberOfReRenders > RE_RENDER_LIMIT) {
+    while (this.isScheduled) {
+      this._reRenders++;
+      if (this._reRenders > RE_RENDER_LIMIT) {
         throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
       }
 
-      this.hooksIndex = 0;
-      this.isRenderScheduled = false;
-      children = this.pureRender(this.props, this.forwardRef ? this.forwardRef : this.context);
+      this._hookID = 0;
+      this.isScheduled = false;
+      children = this._render(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
     return children;
   }

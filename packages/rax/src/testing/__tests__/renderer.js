@@ -1,7 +1,7 @@
 /* eslint-disable react/no-did-mount-set-state */
 
 import createElement from '../../createElement';
-import Component from '../../component';
+import Component from '../../vdom/component';
 import renderer from '../renderer';
 
 describe('renderer', () => {

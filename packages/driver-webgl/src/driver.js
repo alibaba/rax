@@ -89,10 +89,6 @@ const Driver = {
     return node;
   },
 
-  removeAllEventListeners(node) {
-    // Noop
-  },
-
   removeAttribute(node, propKey, propValue) {
     // Noop
   },

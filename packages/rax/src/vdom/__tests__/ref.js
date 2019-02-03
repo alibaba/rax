@@ -1,15 +1,12 @@
 'use strict';
 /* @jsx createElement */
 
-import Component from '../../component';
-import PropTypes from '../../proptypes';
+import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 import createRef from '../../createRef';
-import renderToString from '../../server/renderToString';
 
 describe('Ref', function() {
   beforeEach(function() {
@@ -57,9 +54,9 @@ describe('Ref', function() {
 
     let refHopsAround = render(<RefHopsAround />);
 
-    let firstDiv = findDOMNode('first');
-    let secondDiv = findDOMNode('second');
-    let thirdDiv = findDOMNode('third');
+    let firstDiv = Host.driver.getElementById('first');
+    let secondDiv = Host.driver.getElementById('second');
+    let thirdDiv = Host.driver.getElementById('third');
 
     expect(refHopsAround.refs.hopRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);

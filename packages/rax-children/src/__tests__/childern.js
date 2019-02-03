@@ -1,9 +1,9 @@
 /* @jsx createElement */
 
-import createElement from '../createElement';
-import cloneElement from '../cloneElement';
-import Component from '../component';
-import Children from '../children';
+import { createElement } from 'rax';
+import cloneElement from 'rax-clone-element';
+import Component from 'rax-component';
+import Children from '../';
 
 describe('Children', () => {
   class WrapComponent extends Component {

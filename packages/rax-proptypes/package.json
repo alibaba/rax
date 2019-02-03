@@ -14,8 +14,5 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "engines": {
     "npm": ">=3.0.0"
-  },
-  "peerDependencies": {
-    "rax": "^1.0.0-beta"
   }
 }
