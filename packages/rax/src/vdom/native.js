@@ -81,7 +81,7 @@ class NativeComponent {
 
     let renderedChildren = this._renderedChildren = {};
     const nativeNode = this.getNativeNode();
-    
+
     let renderedChildrenImage = children.map((element, index) => {
       let renderedChild = instantiateComponent(element);
       let name = getElementKeyName(renderedChildren, element, index);
