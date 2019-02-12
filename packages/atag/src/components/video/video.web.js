@@ -1,9 +1,13 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import afterNextRender from '../../shared/afterNextRender';
+import pauseImage from './images/pause.png';
+import playImage from './images/play.png';
+import fullscreenImage from './images/fullscreen.png';
 
-const pauseImage = require('./images/pause.png');
-const playImage = require('./images/play.png');
-const fullscreenImage = require('./images/fullscreen.png');
+console.log({
+  pauseImage,
+  playImage,
+  fullscreenImage,
+});
 
 export default class VideoElement extends PolymerElement {
   static get is() {

@@ -1,4 +1,4 @@
-var isObject = require('./isObject');
+import isObject from './isObject';
 
 /** Used as references for various `Number` constants. */
 var NAN = 0 / 0;
@@ -41,7 +41,7 @@ var freeParseInt = parseInt;
  * _.toNumber('3.2');
  * // => 3.2
  */
-function toNumber(value) {
+export default function toNumber(value) {
   if (typeof value == 'number') {
     return value;
   }
@@ -61,5 +61,3 @@ function toNumber(value) {
     ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
     : reIsBadHex.test(value) ? NAN : +value;
 }
-
-module.exports = toNumber;
