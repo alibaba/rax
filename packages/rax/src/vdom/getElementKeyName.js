@@ -1,9 +1,9 @@
 export default (children, element, index) => {
   const elementKey = element && element.key;
-  const hasKey = typeof elementKey === 'string';
-  const defaultName = '.' + index.toString(36);
+  const defaultName = '.' + index.toString(36); // Inner child name default format fallback
 
-  if (hasKey) {
+  // Key should must be string type
+  if (typeof elementKey === 'string') {
     let keyName = '$' + elementKey;
     // Child keys must be unique.
     let keyUnique = children[keyName] === undefined;
