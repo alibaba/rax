@@ -64,10 +64,11 @@ export default class PickerView extends PolymerElement {
   }
 
   _pickerViewColumnStyleChange(indicatorStyle) {
-    let columns = [...this.querySelectorAll('a-picker-view-column')];
-    columns.forEach(column => {
+    const columns = this.querySelectorAll('a-picker-view-column');
+    for (let i = 0, l = columns.length; i < l; i++) {
+      const column = columns[i];
       column.setAttribute('indicator-style', indicatorStyle);
-    });
+    }
   }
 
   _observeValue(value) {
