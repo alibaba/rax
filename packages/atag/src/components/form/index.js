@@ -37,7 +37,7 @@ export default class Form extends PolymerElement {
         case 'a-checkbox-group':
           const checkboxes = node.querySelectorAll('a-checkbox');
           const arr = Array.prototype
-            .filter.call(checkboxes,checkbox => checkbox.checked);
+            .filter.call(checkboxes, checkbox => checkbox.checked);
           value[name] = arr.map(checkbox => checkbox.value);
           break;
         case 'a-switch':
