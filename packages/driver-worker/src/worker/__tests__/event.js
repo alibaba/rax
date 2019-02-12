@@ -25,8 +25,12 @@ describe('Event', () => {
   });
 
   it('preventDefault', () => {
-    const event = new Event('input');
-    event.preventDefault();
-    expect(event.defaultPrevented).toEqual(true);
+    const cancelableEvent = new Event('input', { cancelable: true });
+    cancelableEvent.preventDefault();
+    expect(cancelableEvent.defaultPrevented).toEqual(true);
+
+    const uncancelableEvent = new Event('input', { cancelable: false });
+    uncancelableEvent.preventDefault();
+    expect(uncancelableEvent.defaultPrevented).toEqual(false);
   });
 });

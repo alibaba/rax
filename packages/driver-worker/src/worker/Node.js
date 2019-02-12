@@ -51,6 +51,7 @@ export default class Node extends EventTarget {
       this.childNodes.push(child);
       mutate(this, 'childList', { addedNodes: [child] });
     }
+    mutateChildNodes(child);
 
     return child;
   }

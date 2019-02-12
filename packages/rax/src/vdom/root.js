@@ -1,6 +1,6 @@
-import Component from '../component';
+import Component from './component';
 
-let rootCounter = 1;
+let rootID = 1;
 
 class Root extends Component {
   constructor() {
@@ -9,7 +9,7 @@ class Root extends Component {
       // Using fragment instead of null for avoid create a comment node when init mount
       element: []
     };
-    this.rootID = rootCounter++;
+    this.rootID = rootID++;
   }
 
   getPublicInstance() {

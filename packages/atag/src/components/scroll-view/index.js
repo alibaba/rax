@@ -167,9 +167,15 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   _handleTouchStart = (evt) => {
+    /**
+     * @Note: Same direction scroll-view handled by webview automaticlly.
+     * Otherwise, parent scroll-view overflow hidden, child scroll-view also stop scrolls.
+     */
     this._parentSameDirectionScrollElement = this._getNearestParentElement(
       this,
-      (el) => el._scrollable === true && el._scrollDirection === this._scrollDirection
+      (el) => el._scrollable === true
+        && el._scrollDirection === this._scrollDirection
+        && !el instanceof ScrollViewElement
     );
     if (this._parentSameDirectionScrollElement) {
       evt.stopPropagation();

@@ -45,18 +45,19 @@ export default class EventTarget {
   dispatchEvent(event) {
     let type = event.type;
     let target = event.target = event.currentTarget = this;
-    let cancelable = event.cancelable;
 
     let listeners;
     let i;
     do {
       listeners = target._eventListeners && target._eventListeners[type];
-      if (listeners)
+      if (listeners) {
         for (i = listeners.length; i--;) {
-          if ((listeners[i].call(target, event) === false || event._end) && cancelable) break;
+          const handlerResult = listeners[i].call(target, event);
+          if (handlerResult === false || event._end) break;
         }
+      }
     } while (
-      event.bubbles && !cancelable &&
+      event.bubbles && !event.defaultPrevented &&
       (event.currentTarget = target = target.parentNode)
     );
     return !event.defaultPrevented;

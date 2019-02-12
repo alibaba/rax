@@ -52,7 +52,7 @@ $ npm run start
     <script src="https://unpkg.com/driver-dom@1.0.0-beta.3/dist/driver-dom.js"></script>
     
     <!-- Don't use this in production: -->
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   </head>
   <body>
     <div id="root"></div>
@@ -415,16 +415,16 @@ function Example() {
 
 #### Router
 ```jsx
-import { createElement } from 'rax';
-import { useRouter, push } from 'rax-use-router';
+import { createElement, Fragment } from 'rax';
+import { route, useComponent, push } from 'rax-use-router';
 import Foo from './Foo';
 
-const routes = [{
+route([{
   path: '/home',
-  children: [
+  routes: [
     {
       path: '',                   // www.example.com/home
-      action: () => <>
+      component: () => <>
         <button onClick={() => push('/foo')}>go foo</button>
         <button onClick={() => push('/bar')}>go bar</button>
         <button onClick={() => push('/home/jack')}>go jack</button>
@@ -432,7 +432,7 @@ const routes = [{
     },
     {
       path: '/:username',         // www.example.com/home/xxx
-      action: (params) => <>
+      component: (params) => <>
         <p>{params.username}</p>
         <button onClick={ () => push('/home') }>Go home</button>
       </>
@@ -440,21 +440,21 @@ const routes = [{
   ]},
   {
     path: '/bar',
-    children: [
+    routes: [
       {
         path: '',                 // www.example.com/bar
-        action: () => import(/* webpackChunkName: "bar" */ './Bar'),
+        component: () => import(/* webpackChunkName: "bar" */ './Bar'),
       },
     ],
   },
   {
     path: '/foo',                 // www.example.com/foo
-    action: () => <Foo />,  
+    component: () => <Foo />,  
   },
-];
+]);
 
 export default function Example() {
-  var component = useRouter(routes, '/hi');
+  var component = useComponent('/home');
   return component;
 }
 ```

@@ -144,10 +144,6 @@ const Driver = {
     return node.removeEvent(eventName, eventHandler);
   },
 
-  removeAllEventListeners(node) {
-    // Noop
-  },
-
   removeAttribute(node, propKey, propValue) {
     if (propKey == ID) {
       nodeMaps[propValue] = null;

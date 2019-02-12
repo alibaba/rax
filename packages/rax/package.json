@@ -1,6 +1,6 @@
 {
   "name": "rax",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0-beta.7",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,6 +20,7 @@
     "@babel/runtime": "^7.2.0"
   },
   "devDependencies": {
-    "style-unit": "^1.0.0"
+    "style-unit": "^1.0.0",
+    "rax-proptypes": "^1.0.0-beta"
   }
 }

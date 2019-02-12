@@ -43,7 +43,7 @@ describe('EventTarget', () => {
     eventTarget1.addEventListener('foo', (evt) => {
       done();
     });
-    eventTarget2.dispatchEvent(new Event('foo', { bubbles: true }));
+    eventTarget2.dispatchEvent(new Event('foo', { bubbles: true, cancelable: true }));
   });
 
   it('stopPropagation', (done) => {

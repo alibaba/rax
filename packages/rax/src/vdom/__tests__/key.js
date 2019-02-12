@@ -2,12 +2,11 @@
 
 'use strict';
 
-import Component from '../../component';
+import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 
 describe('Key', function() {
   function createNodeElement(tagName) {

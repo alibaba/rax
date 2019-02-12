@@ -1,9 +1,11 @@
 export default class Event {
   constructor(type, options = {}) {
-    this.type = type.toLowerCase();
+    Object.assign(this, options); // extend event.
+
+    this.defaultPrevented = false;
     this.bubbles = !!options.bubbles;
     this.cancelable = !!options.cancelable;
-    this.defaultPrevented = false;
+    this.type = type.toLowerCase();
   }
   stopPropagation() {
     this.bubbles = false;
@@ -13,6 +15,11 @@ export default class Event {
     this._end = true;
   }
   preventDefault() {
-    this.defaultPrevented = true;
+    if (this.cancelable) {
+      this.defaultPrevented = true;
+    } else {
+      // Calling preventDefault in uncancelable event should produce errors,
+      // but in chrome and safari, which not throw or console errors, follow behaviors here.
+    }
   }
 }

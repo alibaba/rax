@@ -167,10 +167,6 @@ export function removeEventListener(node, eventName, eventHandler, props) {
   }
 }
 
-export function removeAllEventListeners(node) {
-  // noop
-}
-
 export function removeAttribute(node, propKey) {
   if (propKey === DANGEROUSLY_SET_INNER_HTML) {
     return node.innerHTML = null;

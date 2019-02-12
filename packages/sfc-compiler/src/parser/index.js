@@ -2,8 +2,7 @@ const he = require('he');
 const { parseHTML } = require('./html-parser');
 const { parseText } = require('./text-parser');
 const { parseFilters } = require('./filter-parser');
-const { cached, no, camelize } = require('../utils');
-const { genAssignmentCode } = require('../directives/model');
+const { cached, no, camelize, extend } = require('../utils');
 
 const {
   addProp,
@@ -18,12 +17,14 @@ const {
 
 const onRE = /^@|^v-on:/;
 const dirRE = /^v-|^@|^:/;
-const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
-const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/;
+const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+const stripParensRE = /^\(|\)$/g;
 exports.onRE = onRE;
 exports.dirRE = dirRE;
 exports.forAliasRE = forAliasRE;
 exports.forIteratorRE = forIteratorRE;
+exports.stripParensRE = stripParensRE;
 
 const argRE = /:(.*)$/;
 const bindRE = /^:|^v-bind:/;
@@ -349,25 +350,35 @@ function processRef(el) {
 function processFor(el) {
   let exp;
   if (exp = getAndRemoveAttr(el, 'v-for')) {
-    const inMatch = exp.match(forAliasRE);
-    if (!inMatch) {
-      process.env.NODE_ENV !== 'production' &&
-        warn(`Invalid v-for expression: ${exp}`);
-      return;
-    }
-    el.for = inMatch[2].trim();
-    const alias = inMatch[1].trim();
-    const iteratorMatch = alias.match(forIteratorRE);
-    if (iteratorMatch) {
-      el.alias = iteratorMatch[1].trim();
-      el.iterator1 = iteratorMatch[2].trim();
-      if (iteratorMatch[3]) {
-        el.iterator2 = iteratorMatch[3].trim();
-      }
-    } else {
-      el.alias = alias;
+    const res = parseFor(exp);
+    if (res) {
+      extend(el, res);
+    } else if (process.env.NODE_ENV !== 'production') {
+      warn(
+        `Invalid v-for expression: ${exp}`,
+        el.attrsMap['v-for']
+      );
     }
   }
+}
+
+function parseFor(exp) {
+  const inMatch = exp.match(forAliasRE);
+  if (!inMatch) return;
+  const res = {};
+  res.for = inMatch[2].trim();
+  const alias = inMatch[1].trim().replace(stripParensRE, '');
+  const iteratorMatch = alias.match(forIteratorRE);
+  if (iteratorMatch) {
+    res.alias = alias.replace(forIteratorRE, '').trim();
+    res.iterator1 = iteratorMatch[1].trim();
+    if (iteratorMatch[2]) {
+      res.iterator2 = iteratorMatch[2].trim();
+    }
+  } else {
+    res.alias = alias;
+  }
+  return res;
 }
 
 function processIf(el) {
@@ -496,23 +507,7 @@ function processAttrs(el) {
         name = name.replace(bindRE, '');
         value = parseFilters(value);
         isProp = false;
-        if (modifiers) {
-          if (modifiers.prop) {
-            isProp = true;
-            name = camelize(name);
-            if (name === 'innerHtml') name = 'innerHTML';
-          }
-          if (modifiers.camel) {
-            name = camelize(name);
-          }
-          if (modifiers.sync) {
-            addHandler(
-              el,
-              `update:${camelize(name)}`,
-              genAssignmentCode(value, '$event')
-            );
-          }
-        }
+
         if (
           !el.component &&
           (isProp || platformMustUseProp(el.tag, el.attrsMap.type, name))

@@ -17,5 +17,11 @@
   },
   "peerDependencies": {
     "rax": "^1.0.0-beta"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0-beta",
+    "driver-server": "^0.6.5",
+    "rax-component": "^1.0.0-beta",
+    "rax-unmount-component-at-node": "^1.0.0-beta"
   }
 }
