@@ -7,8 +7,7 @@
     "start": "cross-env NODE_ENV=development rollup -w -c config/rollup.config.dev.js",
     "build": "cross-env NODE_ENV=production rollup -c config/rollup.config.prod.js",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "prepublish": "npm run build"
+    "test:watch": "jest --watch"
   },
   "author": "Alibaba inc.",
   "license": "BSD-3-Clause",
