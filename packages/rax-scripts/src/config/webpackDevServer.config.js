@@ -53,4 +53,5 @@ module.exports = {
   host: envConfig.host,
   public: envConfig.host,
   overlay: false,
+  disableHostCheck: true
 };
