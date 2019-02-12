@@ -1,6 +1,7 @@
 import { readFile, readFileSync } from 'fs';
 import { createServer } from 'http';
 import { resolve } from 'path';
+import chalk from 'chalk';
 import mime from 'mime';
 import opener from 'opener';
 
@@ -85,6 +86,8 @@ function serve(options = { contentBase: '' }) {
         if (options.open) {
           opener(url + options.openPage);
         }
+
+        console.log(chalk.green('Compiled successfully.'));
       }
     }
   };

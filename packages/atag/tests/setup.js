@@ -32,12 +32,9 @@ function startDevServer(port) {
   port = port || 9002;
 
   return new Promise(resolve => {
-    const handle = spawn(require.resolve('webpack-dev-server/bin/webpack-dev-server.js'), [
-      '--config',
-      require.resolve('../config/webpack.config.dev.js'),
-      '--content-base=' + path.resolve(__dirname, '../src'),
-      '--host=0.0.0.0',
-      '--hot=false',
+    const handle = spawn(require.resolve('rollup/bin/rollup'), [
+      '-c',
+      require.resolve('../config/rollup.config.dev.js'),
     ], {
       env: Object.assign({}, process.env, {
         NODE_ENV: 'development',
