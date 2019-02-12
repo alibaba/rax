@@ -3,12 +3,6 @@ import pauseImage from './images/pause.png';
 import playImage from './images/play.png';
 import fullscreenImage from './images/fullscreen.png';
 
-console.log({
-  pauseImage,
-  playImage,
-  fullscreenImage,
-});
-
 export default class VideoElement extends PolymerElement {
   static get is() {
     return 'a-video';
