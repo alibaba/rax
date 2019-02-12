@@ -12,7 +12,6 @@ const banner =
   ' * Released under the MIT License.\n' +
   ' */';
 
-// 支持输出 []
 export default [
   {
     ...baseConfig,
