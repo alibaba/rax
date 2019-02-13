@@ -73,8 +73,8 @@ export default function debounce(func, wait, options) {
   }
 
   function invokeFunc(time) {
-    let args = lastArgs,
-      thisArg = lastThis;
+    let args = lastArgs;
+    let thisArg = lastThis;
 
     lastArgs = lastThis = undefined;
     lastInvokeTime = time;
@@ -92,9 +92,9 @@ export default function debounce(func, wait, options) {
   }
 
   function remainingWait(time) {
-    let timeSinceLastCall = time - lastCallTime,
-      timeSinceLastInvoke = time - lastInvokeTime,
-      timeWaiting = wait - timeSinceLastCall;
+    let timeSinceLastCall = time - lastCallTime;
+    let timeSinceLastInvoke = time - lastInvokeTime;
+    let timeWaiting = wait - timeSinceLastCall;
 
     return maxing
       ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
@@ -102,8 +102,8 @@ export default function debounce(func, wait, options) {
   }
 
   function shouldInvoke(time) {
-    let timeSinceLastCall = time - lastCallTime,
-      timeSinceLastInvoke = time - lastInvokeTime;
+    let timeSinceLastCall = time - lastCallTime;
+    let timeSinceLastInvoke = time - lastInvokeTime;
 
     // Either this is the first call, activity has stopped and we're at the
     // trailing edge, the system time has gone backwards and we're treating
@@ -146,8 +146,8 @@ export default function debounce(func, wait, options) {
   }
 
   function debounced() {
-    let time = now(),
-      isInvoking = shouldInvoke(time);
+    let time = now();
+    let isInvoking = shouldInvoke(time);
 
     lastArgs = arguments;
     lastThis = this;
