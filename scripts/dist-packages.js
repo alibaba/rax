@@ -76,28 +76,6 @@ dist(getConfig(
   babelOptions
 ));
 
-dist(getConfig(
-  {
-    'driver.worker': './packages/driver-worker/src/index.js',
-    'driver.worker.min': './packages/driver-worker/src/index.js',
-    'driver.worker.renderer': './packages/driver-worker/src/renderer/index.js',
-    'driver.worker.renderer.min': './packages/driver-worker/src/renderer/index.js',
-  },
-  {
-    path: './packages/driver-worker/dist/',
-    filename: '[name].js',
-    sourceMapFilename: '[name].map',
-    pathinfo: false,
-  },
-  {
-    // target: 'bundle',
-    bundle: null,
-    frameworkComment: '',
-    libraryTarget: 'umd',
-  },
-  babelOptions
-));
-
 function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
   // Webpack need an absolute path
   output.path = path.resolve(__dirname, '..', output.path);
