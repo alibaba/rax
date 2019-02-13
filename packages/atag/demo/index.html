@@ -1,695 +1,630 @@
-<!doctype html>
-<html>
+<style>
+  /* Correction fontSize to avoid rem effects */
+  a-page {
+    font-size: 16px;
+  }
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="format-detection" content="telephone=no">
-  <title>Atag Demo</title>
-  <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
-  <script src="http://localhost:@SERVER_PORT/atag.js"></script>
-  <style>
-    html {
-      /* HACK: fix safari mobile click events aren't fired https://developer.mozilla.org/en-US/docs/Web/Events/click#Safari_Mobile */
-      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
-      -webkit-text-size-adjust: 100%;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-user-select: none;
-      user-select: none;
-    }
+  .card {
+    border: 1px solid #d6d7da;
+    margin: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+  }
 
-    body {
-      margin: 0;
-      height: 100%;
-      /* HACK: >= iOS 11 make body at least 100vh height to avoid tap highlight */
-      min-height: 100vh;
-    }
+  .title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px;
+    border-bottom: 1px solid #d6d7da;
+  }
 
-    /* Correction fontSize to avoid rem effects */
-    a-page {
-      font-size: 16px;
-    }
-  </style>
+  .demo {
+    padding: 10px;
+  }
+</style>
+<a-page>
+  <div class="card">
+    <h4 class="title">a-text</h4>
+    <div class="demo">
+      <a-text>Hello Rax,</a-text>
+      <a-text style="color: blue">
+        <a-text style="color: green">Hello Atag</a-text>,
+        Hello
+        World
+      </a-text>
+      <a-text style="line-height: 10px; font-size: 12px;">line-height: 10px; font-size: 12px; line-height: 10px;
+        font-size: 12px; line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px;</a-text>
+      <a-text style="line-height: 18px; font-size: 20px;">line-height: 18px; font-size: 20px; line-height: 18px;
+        font-size: 20px;</a-text>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-view</h4>
+    <div class="demo">
+      <a-view style="height: 100px; width: 100px; background: green;"></a-view>
+      <a-view hover-style="background: yellow;" style="height: 100px; width: 100px; background: red;"></a-view>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-button</h4>
+    <div class="demo" style="background-color: #eee">
+
+      <a-button style="margin: 8px">Default Button</a-button>
+      <a-button style="margin: 8px" type="primary">Primary Button</a-button>
+      <a-button style="margin: 8px" type="warn">Warn Button</a-button>
+
+      <a-button style="margin: 8px" size="mini">Mini Default Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="primary">Mini Primary Button</a-button>
+      <a-button style="margin: 8px" size="mini" type="warn">Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain>Plain Default Button</a-button>
+      <a-button style="margin: 8px" plain type="primary">Plain Primary Button</a-button>
+      <a-button style="margin: 8px" plain type="warn">Plain Warn Button</a-button>
+
+      <a-button style="margin: 8px" plain size="mini">Plain Mini Default Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="primary">Plain Mini Primary Button</a-button>
+      <a-button style="margin: 8px" plain size="mini" type="warn">Plain Mini Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled>Dsabled Default Button</a-button>
+      <a-button style="margin: 8px" disabled type="primary">Dsabled Primary Button</a-button>
+      <a-button style="margin: 8px" disabled type="warn">Dsabled Warn Button</a-button>
+
+      <a-button style="margin: 8px" disabled plain>Dsabled Plain Default Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="primary">Dsabled Plain Primary Button</a-button>
+      <a-button style="margin: 8px" disabled plain type="warn">Dsabled Plain Warn Button</a-button>
+
+
+      <a-button style="margin: 8px" loading>Loading Default Button</a-button>
+      <a-button style="margin: 8px" loading type="primary">Loading Primary Button</a-button>
+      <a-button style="margin: 8px" loading type="warn">Loading Warn Button</a-button>
+
+      <a-button style="margin: 8px" loading plain>Loading Plain Button</a-button>
+      <a-button style="margin: 8px" loading plain type="primary">Loading Plain Primary Button</a-button>
+      <a-button style="margin: 8px" loading plain type="warn">Loading Plain Warn Button</a-button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="title">a-image</h4>
+    <div class="demo">
+      <p>Mode: scaleToFill 150x150</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="scaleToFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFit</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFit" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: aspectFill</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFill" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <p>Mode: widthFix</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="widthFix" style="display: block; width: 100%;"></a-image>
+
+      <p>Mode: top</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: center</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="center" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: top right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top right" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom left</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom left" style="display: block; width: 150px; height: 150px;"></a-image>
+      <p>Mode: bottom right</p>
+      <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom right" style="display: block; width: 150px; height: 150px;"></a-image>
+
+      <a-image id="image" mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif"></a-image>
+      <p>
+        Load Event: <span id="imageLoad"></span>
+      </p>
+      <a-image id="errorImage" mode="scaleToFill" style="border: 2px solid red;" src="https://path-to-error.com"></a-image>
+      <p>
+        Error Event: <span id="imageError"></span>
+      </p>
+      <a-image id="asyncImage" mode="scaleToFill" style="border: 2px solid red;" src=""></a-image>
+      <p>
+        Load Event: <span id="asyncImageLoad"></span>
+      </p>
+
+      <p>lazyLoad:</p>
+      <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
+      <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
+      <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
+    </div>
+  </div>
 
   <script>
-    var documentElementStyle = document.documentElement.style;
-    var isTouchDevice = 'ontouchstart' in window || 'onmsgesturechange' in window;
-    if (isTouchDevice) {
-      documentElementStyle.cursor = 'pointer';
-    }
-    // Set rem
-    documentElementStyle.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';
+    image.addEventListener('load', function (e) {
+      imageLoad.innerHTML = JSON.stringify(e.detail);
+    });
+    errorImage.addEventListener('error', function (e) {
+      imageError.innerHTML = e.detail.errMsg;
+    });
+    image.addEventListener('click', function (e) {
+      image.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    });
+    asyncImage.addEventListener('click', function (e) {
+      asyncImage.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
+    });
+    asyncImage.addEventListener('load', function (e) {
+      asyncImageLoad.innerHTML = JSON.stringify(e.detail);
+    });
   </script>
 
-  <style>
-    .card {
-      border: 1px solid #d6d7da;
-      margin: 10px;
-      background-color: #fff;
-      border-radius: 4px;
-    }
-
-    .title {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 10px;
-      border-bottom: 1px solid #d6d7da;
-    }
-
-    .demo {
-      padding: 10px;
-    }
-  </style>
-</head>
-
-<body>
-  <a-page>
-    <div class="card">
-      <h4 class="title">a-text</h4>
-      <div class="demo">
-        <a-text>Hello Rax,</a-text>
-        <a-text style="color: blue">
-          <a-text style="color: green">Hello Atag</a-text>,
-          Hello
-          World
-        </a-text>
-        <a-text style="line-height: 10px; font-size: 12px;">line-height: 10px; font-size: 12px; line-height: 10px;
-          font-size: 12px; line-height: 10px; font-size: 12px; line-height: 10px; font-size: 12px;</a-text>
-        <a-text style="line-height: 18px; font-size: 20px;">line-height: 18px; font-size: 20px; line-height: 18px;
-          font-size: 20px;</a-text>
-      </div>
+  <div class="card">
+    <h4 class="title">a-icon</h4>
+    <div class="demo">
+      <a-icon type="success"></a-icon>
+      <a-icon type="success" color="#ff5000" size="30"></a-icon>
+      <a-icon type="warn" size="50"></a-icon>
+      <a-icon type="info" size="70"></a-icon>
     </div>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-view</h4>
-      <div class="demo">
-        <a-view style="height: 100px; width: 100px; background: green;"></a-view>
-        <a-view hover-style="background: yellow;" style="height: 100px; width: 100px; background: red;"></a-view>
-      </div>
+  <div class="card">
+    <h4 class="title">a-input</h4>
+    <div class="demo">
+      <p>event:</p>
+      <a-input id="input" placeholder="input placeholder" placeholder-style="color: red;" focus=true></a-input>
+      <p style="overflow-wrap: break-word;">
+        Input Event: <span id="inputInput">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Focus Event: <span id="inputFocus">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Blur Event: <span id="inputBlur">null</span>
+      </p>
+      <p>custom style:</p>
+      <a-input style="text-align: center;font-weight: bold;padding: 10px;color: red" placeholder="input placeholder"></a-input>
     </div>
+    <p>placeholder style:</p>
+    <a-input placeholder-style="color: green" auto-height=true placeholder="styled placeholder"></a-input>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-button</h4>
-      <div class="demo" style="background-color: #eee">
-
-        <a-button style="margin: 8px">Default Button</a-button>
-        <a-button style="margin: 8px" type="primary">Primary Button</a-button>
-        <a-button style="margin: 8px" type="warn">Warn Button</a-button>
-
-        <a-button style="margin: 8px" size="mini">Mini Default Button</a-button>
-        <a-button style="margin: 8px" size="mini" type="primary">Mini Primary Button</a-button>
-        <a-button style="margin: 8px" size="mini" type="warn">Mini Warn Button</a-button>
-
-        <a-button style="margin: 8px" plain>Plain Default Button</a-button>
-        <a-button style="margin: 8px" plain type="primary">Plain Primary Button</a-button>
-        <a-button style="margin: 8px" plain type="warn">Plain Warn Button</a-button>
-
-        <a-button style="margin: 8px" plain size="mini">Plain Mini Default Button</a-button>
-        <a-button style="margin: 8px" plain size="mini" type="primary">Plain Mini Primary Button</a-button>
-        <a-button style="margin: 8px" plain size="mini" type="warn">Plain Mini Warn Button</a-button>
-
-        <a-button style="margin: 8px" disabled>Dsabled Default Button</a-button>
-        <a-button style="margin: 8px" disabled type="primary">Dsabled Primary Button</a-button>
-        <a-button style="margin: 8px" disabled type="warn">Dsabled Warn Button</a-button>
-
-        <a-button style="margin: 8px" disabled plain>Dsabled Plain Default Button</a-button>
-        <a-button style="margin: 8px" disabled plain type="primary">Dsabled Plain Primary Button</a-button>
-        <a-button style="margin: 8px" disabled plain type="warn">Dsabled Plain Warn Button</a-button>
+  <script>
+    input.addEventListener('input', function (e) {
+      inputInput.innerHTML = e.detail.value || 'null';
+    });
+    input.addEventListener('focus', function (e) {
+      inputFocus.innerHTML = e.detail.value || 'null';
+    });
+    input.addEventListener('blur', function (e) {
+      inputBlur.innerHTML = e.detail.value || 'null';
+    });
+  </script>
 
 
-        <a-button style="margin: 8px" loading>Loading Default Button</a-button>
-        <a-button style="margin: 8px" loading type="primary">Loading Primary Button</a-button>
-        <a-button style="margin: 8px" loading type="warn">Loading Warn Button</a-button>
-
-        <a-button style="margin: 8px" loading plain>Loading Plain Button</a-button>
-        <a-button style="margin: 8px" loading plain type="primary">Loading Plain Primary Button</a-button>
-        <a-button style="margin: 8px" loading plain type="warn">Loading Plain Warn Button</a-button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h4 class="title">a-image</h4>
-      <div class="demo">
-        <p>Mode: scaleToFill 150x150</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="scaleToFill" style="display: block; width: 150px; height: 150px;"></a-image>
-
-        <p>Mode: aspectFit</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFit" style="display: block; width: 150px; height: 150px;"></a-image>
-
-        <p>Mode: aspectFill</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="aspectFill" style="display: block; width: 150px; height: 150px;"></a-image>
-
-        <p>Mode: widthFix</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="widthFix" style="display: block; width: 100%;"></a-image>
-
-        <p>Mode: top</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: bottom</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: center</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="center" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: left</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="left" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: right</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="right" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: top left</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top left" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: top right</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="top right" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: bottom left</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom left" style="display: block; width: 150px; height: 150px;"></a-image>
-        <p>Mode: bottom right</p>
-        <a-image src="https://gw.alicdn.com/tfs/TB1JJVNtYwrBKNjSZPcXXXpapXa-1294-1586.png_500x500.jpg" mode="bottom right" style="display: block; width: 150px; height: 150px;"></a-image>
-
-        <a-image id="image" mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif"></a-image>
-        <p>
-          Load Event: <span id="imageLoad"></span>
-        </p>
-        <a-image id="errorImage" mode="scaleToFill" style="border: 2px solid red;" src="https://path-to-error.com"></a-image>
-        <p>
-          Error Event: <span id="imageError"></span>
-        </p>
-        <a-image id="asyncImage" mode="scaleToFill" style="border: 2px solid red;" src=""></a-image>
-        <p>
-          Load Event: <span id="asyncImageLoad"></span>
-        </p>
-
-        <p>lazyLoad:</p>
-        <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
-        <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
-        <a-image mode="widthFix" style="width: 150px; border: 2px solid red;" src="https://techcrunch.com/wp-content/uploads/2014/06/babygif.gif" lazyload></a-image>
-      </div>
-    </div>
-
-    <script>
-      image.addEventListener('load', function (e) {
-        imageLoad.innerHTML = JSON.stringify(e.detail);
-      });
-      errorImage.addEventListener('error', function (e) {
-        imageError.innerHTML = e.detail.errMsg;
-      });
-      image.addEventListener('click', function (e) {
-        image.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
-      });
-      asyncImage.addEventListener('click', function (e) {
-        asyncImage.src = 'https://media.giphy.com/media/wQx0TNAF580Du/giphy.gif';
-      });
-      asyncImage.addEventListener('load', function (e) {
-        asyncImageLoad.innerHTML = JSON.stringify(e.detail);
-      });
-    </script>
-
-    <div class="card">
-      <h4 class="title">a-icon</h4>
-      <div class="demo">
-        <a-icon type="success"></a-icon>
-        <a-icon type="success" color="#ff5000" size="30"></a-icon>
-        <a-icon type="warn" size="50"></a-icon>
-        <a-icon type="info" size="70"></a-icon>
-      </div>
-    </div>
-
-    <div class="card">
-      <h4 class="title">a-input</h4>
-      <div class="demo">
-        <p>event:</p>
-        <a-input id="input" placeholder="input placeholder" placeholder-style="color: red;" focus=true></a-input>
-        <p style="overflow-wrap: break-word;">
-          Input Event: <span id="inputInput">null</span>
-        </p>
-        <p style="overflow-wrap: break-word;">
-          Focus Event: <span id="inputFocus">null</span>
-        </p>
-        <p style="overflow-wrap: break-word;">
-          Blur Event: <span id="inputBlur">null</span>
-        </p>
-        <p>custom style:</p>
-        <a-input style="text-align: center;font-weight: bold;padding: 10px;color: red" placeholder="input placeholder"></a-input>
-      </div>
+  <div class="card">
+    <h4 class="title">a-textarea</h4>
+    <div class="demo">
+      <p>event:</p>
+      <a-textarea id="textarea" class="textarea" placeholder="textarea placeholder"></a-textarea>
+      <a-button id="textareaValChange" style="margin-bottom: 10px;">Change Textarea Value</a-button>
+      <a-button id="textareaPlaceholderChange">Change Placeholder Value</a-button>
+      <p style="overflow-wrap: break-word;">
+        Input Event: <span id="textareaInput">null</span>
+      </p>
+      <p style="overflow-wrap: break-word;">
+        Blur Event: <span id="textareaBlur">null</span>
+      </p>
+      <p>custom style:</p>
+      <a-textarea style="text-align: center;font-weight: bold;padding: 10px; color: red" auto-height=true placeholder="textarea placeholder" show-count="false"></a-textarea>
       <p>placeholder style:</p>
-      <a-input placeholder-style="color: green" auto-height=true placeholder="styled placeholder"></a-input>
+      <a-textarea placeholder-style="color: green" auto-height=true placeholder="styled placeholder" count-style="color: red;" show-count maxlength="70"></a-textarea>
     </div>
+  </div>
 
-    <script>
-      input.addEventListener('input', function (e) {
-        inputInput.innerHTML = e.detail.value || 'null';
-      });
-      input.addEventListener('focus', function (e) {
-        inputFocus.innerHTML = e.detail.value || 'null';
-      });
-      input.addEventListener('blur', function (e) {
-        inputBlur.innerHTML = e.detail.value || 'null';
-      });
-    </script>
+  <script>
+    var textarea = document.getElementById('textarea');
+    textarea.addEventListener('input',function(e) {
+      textareaInput.innerHTML=e.detail.value||'null';
+    });
+    textarea.addEventListener('blur', function (e) {
+      textareaBlur.innerHTML = e.detail.value || 'null';
+    });
+    textareaValChange.addEventListener('click', function(e) {
+      textarea.setAttribute('value', 'hello world');
+    });
+    textareaPlaceholderChange.addEventListener('click', function(e) {
+      textarea.setAttribute('placeholder', 'hello placeholder!');
+    });
+  </script>
 
-
-    <div class="card">
-      <h4 class="title">a-textarea</h4>
-      <div class="demo">
-        <p>event:</p>
-        <a-textarea id="textarea" class="textarea" placeholder="textarea placeholder"></a-textarea>
-        <a-button id="textareaValChange" style="margin-bottom: 10px;">Change Textarea Value</a-button>
-        <a-button id="textareaPlaceholderChange">Change Placeholder Value</a-button>
-        <p style="overflow-wrap: break-word;">
-          Input Event: <span id="textareaInput">null</span>
-        </p>
-        <p style="overflow-wrap: break-word;">
-          Blur Event: <span id="textareaBlur">null</span>
-        </p>
-        <p>custom style:</p>
-        <a-textarea style="text-align: center;font-weight: bold;padding: 10px; color: red" auto-height=true placeholder="textarea placeholder" show-count="false"></a-textarea>
-        <p>placeholder style:</p>
-        <a-textarea placeholder-style="color: green" auto-height=true placeholder="styled placeholder" count-style="color: red;" show-count maxlength="70"></a-textarea>
-      </div>
+  <div class="card">
+    <h4 class="title">a-checkbox</h4>
+    <div class="demo">
+      <a-checkbox-group>
+        <a-label>
+          <a-checkbox value="foo" checked></a-checkbox>
+          <a-text>checked</a-text>
+        </a-label>
+        <a-label>
+          <a-checkbox value="baz"></a-checkbox>
+          <a-text>unchecked</a-text>
+        </a-label>
+        <a-label>
+          <a-checkbox value="bar" disabled></a-checkbox>
+          <a-text>disabled</a-text>
+        </a-label>
+      </a-checkbox-group>
     </div>
+  </div>
 
-    <script>
-      var textarea = document.getElementById('textarea');
-      textarea.addEventListener('input',function(e) {
-        textareaInput.innerHTML=e.detail.value||'null';
-      });
-      textarea.addEventListener('blur', function (e) {
-        textareaBlur.innerHTML = e.detail.value || 'null';
-      });
-      textareaValChange.addEventListener('click', function(e) {
-        textarea.setAttribute('value', 'hello world');
-      });
-      textareaPlaceholderChange.addEventListener('click', function(e) {
-        textarea.setAttribute('placeholder', 'hello placeholder!');
-      });
-    </script>
-
-    <div class="card">
-      <h4 class="title">a-checkbox</h4>
-      <div class="demo">
-        <a-checkbox-group>
-          <a-label>
-            <a-checkbox value="foo" checked></a-checkbox>
-            <a-text>checked</a-text>
-          </a-label>
-          <a-label>
-            <a-checkbox value="baz"></a-checkbox>
-            <a-text>unchecked</a-text>
-          </a-label>
-          <a-label>
-            <a-checkbox value="bar" disabled></a-checkbox>
-            <a-text>disabled</a-text>
-          </a-label>
-        </a-checkbox-group>
-      </div>
+  <div class="card">
+    <h4 class="title">a-radio</h4>
+    <div class="demo">
+      <a-radio-group id="radioGroup">
+        <a-label>
+          <a-radio value="foo" checked></a-radio>
+          <a-text>foo</a-text>
+        </a-label>
+        <a-label>
+          <a-radio value="baz"></a-radio>
+          <a-text>baz</a-text>
+        </a-label>
+        <a-label>
+          <a-radio value="bar" disabled></a-radio>
+          <a-text>disabled</a-text>
+        </a-label>
+      </a-radio-group>
+      <p style="overflow-wrap: break-word;">
+        Change Event: <span id="radioChange">null</span>
+      </p>
     </div>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-radio</h4>
-      <div class="demo">
-        <a-radio-group id="radioGroup">
-          <a-label>
-            <a-radio value="foo" checked></a-radio>
-            <a-text>foo</a-text>
-          </a-label>
-          <a-label>
-            <a-radio value="baz"></a-radio>
-            <a-text>baz</a-text>
-          </a-label>
-          <a-label>
-            <a-radio value="bar" disabled></a-radio>
-            <a-text>disabled</a-text>
-          </a-label>
-        </a-radio-group>
-        <p style="overflow-wrap: break-word;">
-          Change Event: <span id="radioChange">null</span>
-        </p>
-      </div>
+  <script>
+    radioGroup.addEventListener('change', e => {
+      radioChange.innerHTML = e.detail.value;
+    });
+  </script>
+
+  <div class="card">
+    <h4 class="title">a-slider</h4>
+    <div class="demo">
+      <a-slider step="5" show-value></a-slider>
+      <a-slider value="50" show-value></a-slider>
+      <a-slider min="50" max="200" show-value></a-slider>
     </div>
+  </div>
 
-    <script>
-      radioGroup.addEventListener('change', e => {
-        radioChange.innerHTML = e.detail.value;
-      });
-    </script>
-
-    <div class="card">
-      <h4 class="title">a-slider</h4>
-      <div class="demo">
-        <a-slider step="5" show-value></a-slider>
-        <a-slider value="50" show-value></a-slider>
-        <a-slider min="50" max="200" show-value></a-slider>
-      </div>
+  <div class="card">
+    <h4 class="title">a-switch</h4>
+    <div class="demo">
+      <a-switch checked></a-switch>
+      <a-switch color="#508EDC"></a-switch>
+      Disabled:
+      <a-switch disabled></a-switch>
     </div>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-switch</h4>
-      <div class="demo">
-        <a-switch checked></a-switch>
-        <a-switch color="#508EDC"></a-switch>
-        Disabled:
-        <a-switch disabled></a-switch>
-      </div>
+  <div class="card">
+    <h4 class="title">a-picker</h4>
+    <div class="demo">
+      <a-view>
+        <a-picker value="0" range="[1,2,3,4,5,6,7,8,9,10]" id="picker">
+          <a-text style="line-height: 50px;" id="pickerResult">pick me</a-text>
+        </a-picker>
+      </a-view>
+      <a-view>
+        <a-picker value="0" range="[1,2,3,4,5]" disabled=true>
+          <a-text>disalbed pick</a-text>
+        </a-picker>
+      </a-view>
     </div>
+  </div>
+  <script>
+    picker.addEventListener('change', e => {
+      pickerResult.innerHTML = 'picked ' + e.detail.value;
+    });
+  </script>
 
-    <div class="card">
-      <h4 class="title">a-picker</h4>
-      <div class="demo">
-        <a-view>
-          <a-picker value="0" range="[1,2,3,4,5,6,7,8,9,10]" id="picker">
-            <a-text style="line-height: 50px;" id="pickerResult">pick me</a-text>
-          </a-picker>
+  <div class="card">
+    <h4 class="title">a-form</h4>
+    <div class="demo">
+      <a-form id="form">
+        <a-view style="margin: 8px">
+          <a-view>switch</a-view>
+          <a-switch name="switch"></a-switch>
         </a-view>
-        <a-view>
-          <a-picker value="0" range="[1,2,3,4,5]" disabled=true>
-            <a-text>disalbed pick</a-text>
-          </a-picker>
+        <a-view style="margin: 8px">
+          <a-view>slider</a-view>
+          <a-slider name="slider" show-value></a-slider>
         </a-view>
-      </div>
+        <a-view style="margin: 8px">
+          <a-view>input</a-view>
+          <a-input name="input" placeholder="please input here" />
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>radio</a-view>
+          <a-radio-group name="radio-group">
+            <a-label>
+              <a-radio value="radio1"></a-radio>radio1
+            </a-label>
+            <a-label>
+              <a-radio value="radio2"></a-radio>radio2
+            </a-label>
+            </radio-group>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-view>checkbox</a-view>
+          <a-checkbox-group name="checkbox">
+            <a-label>
+              <a-checkbox value="checkbox1"></a-checkbox>checkbox1
+            </a-label>
+            <a-label>
+              <a-checkbox value="checkbox2"></a-checkbox>checkbox2
+            </a-label>
+          </a-checkbox-group>
+        </a-view>
+        <a-view style="margin: 8px">
+          <a-button style="margin: 8px" form-type="submit">Submit</a-button>
+          <a-button style="margin: 8px" form-type="reset">Reset</a-button>
+        </a-view>
+        <p style="overflow-wrap: break-word;">
+          Submit Event: <pre id="formSubmit">null</pre>
+        </p>
+        <p style="overflow-wrap: break-word;">
+          Reset Event: <pre id="formReset">null</pre>
+        </p>
+      </a-form>
     </div>
-    <script>
-      picker.addEventListener('change', e => {
-        pickerResult.innerHTML = 'picked ' + e.detail.value;
-      });
-    </script>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-form</h4>
-      <div class="demo">
-        <a-form id="form">
-          <a-view style="margin: 8px">
-            <a-view>switch</a-view>
-            <a-switch name="switch"></a-switch>
-          </a-view>
-          <a-view style="margin: 8px">
-            <a-view>slider</a-view>
-            <a-slider name="slider" show-value></a-slider>
-          </a-view>
-          <a-view style="margin: 8px">
-            <a-view>input</a-view>
-            <a-input name="input" placeholder="please input here" />
-          </a-view>
-          <a-view style="margin: 8px">
-            <a-view>radio</a-view>
-            <a-radio-group name="radio-group">
-              <a-label>
-                <a-radio value="radio1"></a-radio>radio1
-              </a-label>
-              <a-label>
-                <a-radio value="radio2"></a-radio>radio2
-              </a-label>
-              </radio-group>
-          </a-view>
-          <a-view style="margin: 8px">
-            <a-view>checkbox</a-view>
-            <a-checkbox-group name="checkbox">
-              <a-label>
-                <a-checkbox value="checkbox1"></a-checkbox>checkbox1
-              </a-label>
-              <a-label>
-                <a-checkbox value="checkbox2"></a-checkbox>checkbox2
-              </a-label>
-            </a-checkbox-group>
-          </a-view>
-          <a-view style="margin: 8px">
-            <a-button style="margin: 8px" form-type="submit">Submit</a-button>
-            <a-button style="margin: 8px" form-type="reset">Reset</a-button>
-          </a-view>
-          <p style="overflow-wrap: break-word;">
-            Submit Event: <pre id="formSubmit">null</pre>
-          </p>
-          <p style="overflow-wrap: break-word;">
-            Reset Event: <pre id="formReset">null</pre>
-          </p>
-        </a-form>
-      </div>
+  <script>
+    form.addEventListener('submit', function(e) {
+      formSubmit.innerHTML = JSON.stringify(e.detail.value, null, 2);
+    });
+    form.addEventListener('reset', function(e) {
+      formReset.innerHTML = String(new Date);
+    });
+  </script>
+
+  <div class="card">
+    <h4 class="title">a-progress</h4>
+    <div class="demo">
+      <a-progress class="progress-item" percent="30"></a-progress>
+      <a-progress class="progress-item" percent="50" show-info></a-progress>
+      <a-progress class="progress-item" percent="100" show-info stroke-width="3" background-color="#999" active-color="blue"></a-progress>
     </div>
+  </div>
 
-    <script>
-      form.addEventListener('submit', function(e) {
-        formSubmit.innerHTML = JSON.stringify(e.detail.value, null, 2);
-      });
-      form.addEventListener('reset', function(e) {
-        formReset.innerHTML = String(new Date);
-      });
-    </script>
+  <div class="card">
+    <h4 class="title">a-swiper</h4>
+    <div class="demo">
+      <a-view>current=1</a-view>
+      <a-swiper current=1 indicator-dots=true>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
 
-    <div class="card">
-      <h4 class="title">a-progress</h4>
-      <div class="demo">
-        <a-progress class="progress-item" percent="30"></a-progress>
-        <a-progress class="progress-item" percent="50" show-info></a-progress>
-        <a-progress class="progress-item" percent="100" show-info stroke-width="3" background-color="#999" active-color="blue"></a-progress>
-      </div>
-    </div>
-
-    <div class="card">
-      <h4 class="title">a-swiper</h4>
-      <div class="demo">
-        <a-view>current=1</a-view>
-        <a-swiper current=1 indicator-dots=true>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: red"></a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: blue"></a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
-          </a-swiper-item>
-        </a-swiper>
-
-        <a-view>current=1, add childNodes after 3s. Except(idx:1).</a-view>
-        <a-swiper id="lazyLoadSwiperItems" current="1"></a-swiper>
-        <style>
-          .swiper-item {
-            background: grey;
-            width: 100%;
-            height: 150px;
-          }
-        </style>
-        <script>
-          var lazyLoadSwiperItems = document.querySelector('#lazyLoadSwiperItems');
-          setTimeout(() => {
-            lazyLoadSwiperItems.innerHTML = `
+      <a-view>current=1, add childNodes after 3s. Except(idx:1).</a-view>
+      <a-swiper id="lazyLoadSwiperItems" current="1"></a-swiper>
+      <style>
+        .swiper-item {
+          background: grey;
+          width: 100%;
+          height: 150px;
+        }
+      </style>
+      <script>
+        var lazyLoadSwiperItems = document.querySelector('#lazyLoadSwiperItems');
+        setTimeout(() => {
+          lazyLoadSwiperItems.innerHTML = `
           <a-swiper-item><a-view class="swiper-item">idx: 0</a-view></a-swiper-item>
           <a-swiper-item><a-view class="swiper-item">idx: 1</a-view></a-swiper-item>
           <a-swiper-item><a-view class="swiper-item">idx: 2</a-view></a-swiper-item>
         `;
-          }, 3000);
-        </script>
+        }, 3000);
+      </script>
 
-        <a-view>current-item-id="green"</a-view>
-        <a-swiper current-item-id="green" indicator-dots=true>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: red"></a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: blue"></a-view>
-          </a-swiper-item>
-          <a-swiper-item item-id="green">
-            <a-view style="display: block;height: 150px;background-color: green"></a-view>
-          </a-swiper-item>
-        </a-swiper>
+      <a-view>current-item-id="green"</a-view>
+      <a-swiper current-item-id="green" indicator-dots=true>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item item-id="green">
+          <a-view style="display: block;height: 150px;background-color: green"></a-view>
+        </a-swiper-item>
+      </a-swiper>
 
-        <a-view>circular=true</a-view>
-        <a-swiper circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: red"></a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: blue"></a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
-          </a-swiper-item>
-        </a-swiper>
+      <a-view>circular=true</a-view>
+      <a-swiper circular=true indicator-dots=true autoplay=true interval=2000 duration=500>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue"></a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
 
-        <a-view>vertical=true</a-view>
-        <a-swiper id="swiper" vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
-          </a-swiper-item>
-        </a-swiper>
+      <a-view>vertical=true</a-view>
+      <a-swiper id="swiper" vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+        </a-swiper-item>
+      </a-swiper>
 
-        <p style="overflow-wrap: break-word;">
-          Change Event: <span id="swiperChangeEvent">null</span>
-        </p>
+      <p style="overflow-wrap: break-word;">
+        Change Event: <span id="swiperChangeEvent">null</span>
+      </p>
 
-        <a-button style="margin: 8px" id="swiperPrevButton">Prev</a-button>
-        <a-button style="margin: 8px" id="swiperNextButton">Next</a-button>
+      <a-button style="margin: 8px" id="swiperPrevButton">Prev</a-button>
+      <a-button style="margin: 8px" id="swiperNextButton">Next</a-button>
 
-        <a-view>scroll-view nested</a-view>
-        <a-swiper style="height: 300px;">
-          <a-swiper-item>
-            <a-scroll-view style="display: block;height: 300px;background-color: red" scroll-y=true>
-              <a-view style="background: linear-gradient(to bottom, red, white); width: 100%;height: 600px;color: #fff;"></a-view>
-            </a-scroll-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-scroll-view style="display: block;height: 300px;background-color: blue" scroll-y=true>
-              <a-view style="background: linear-gradient(to bottom, blue, white); width: 100%;height: 600px;color: #fff;"></a-view>
-            </a-scroll-view>
-          </a-swiper-item>
-        </a-swiper>
+      <a-view>scroll-view nested</a-view>
+      <a-swiper style="height: 300px;">
+        <a-swiper-item>
+          <a-scroll-view style="display: block;height: 300px;background-color: red" scroll-y=true>
+            <a-view style="background: linear-gradient(to bottom, red, white); width: 100%;height: 600px;color: #fff;"></a-view>
+          </a-scroll-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-scroll-view style="display: block;height: 300px;background-color: blue" scroll-y=true>
+            <a-view style="background: linear-gradient(to bottom, blue, white); width: 100%;height: 600px;color: #fff;"></a-view>
+          </a-scroll-view>
+        </a-swiper-item>
+      </a-swiper>
 
-        <a-view>swiper children changes</a-view>
-        <a-button id="btnAddSwiperItem" style="margin-bottom: 15px;">Add Swiper Item</a-button>
-        <a-swiper id="dynamicSwiper" circular=true indicator-dots=true autoplay=true interval=4000 duration=500>
-          <a-swiper-item>
-            <a-view style="background: red; height: 100%;">1</a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="background: green; height: 100%;">2</a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="background: blue; height: 100%;">3</a-view>
-          </a-swiper-item>
-        </a-swiper>
+      <a-view>swiper children changes</a-view>
+      <a-button id="btnAddSwiperItem" style="margin-bottom: 15px;">Add Swiper Item</a-button>
+      <a-swiper id="dynamicSwiper" circular=true indicator-dots=true autoplay=true interval=4000 duration=500>
+        <a-swiper-item>
+          <a-view style="background: red; height: 100%;">1</a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="background: green; height: 100%;">2</a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="background: blue; height: 100%;">3</a-view>
+        </a-swiper-item>
+      </a-swiper>
 
-        <p>scroll x with vertical swiper</p>
-        <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
-          <a-view>
-            <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
-              </a-swiper-item>
-            </a-swiper>
-          </a-view>
-        </a-scroll-view>
+      <p>scroll x with vertical swiper</p>
+      <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
+        <a-view>
+          <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
 
-        <p>scroll x with hortical swiper</p>
-        <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
-          <a-view>
-            <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
-              </a-swiper-item>
-            </a-swiper>
-          </a-view>
-        </a-scroll-view>
+      <p>scroll x with hortical swiper</p>
+      <a-scroll-view scroll-x="true" style="width: 100%; background: grey;">
+        <a-view>
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
 
-        <p>scroll y with vertical swiper</p>
-        <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
-          <a-view>
-            <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
-              </a-swiper-item>
-            </a-swiper>
-          </a-view>
-        </a-scroll-view>
+      <p>scroll y with vertical swiper</p>
+      <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          <a-swiper vertical=true circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
 
-        <p>scroll y with hortical swiper</p>
-        <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
-          <a-view>
-            <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
-              </a-swiper-item>
-            </a-swiper>
-          </a-view>
-        </a-scroll-view>
+      <p>scroll y with hortical swiper</p>
+      <a-scroll-view scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
 
-        <p>scroll x + y with hortical swiper</p>
-        <a-scroll-view scroll-x="true" scroll-y="true" style="width: 100%; background: grey; height: 180px;">
-          <a-view>
-            <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
-              </a-swiper-item>
-            </a-swiper>
-          </a-view>
-        </a-scroll-view>
-      </div>
+      <p>scroll x + y with hortical swiper</p>
+      <a-scroll-view scroll-x="true" scroll-y="true" style="width: 100%; background: grey; height: 180px;">
+        <a-view>
+          <a-swiper circular=true indicator-dots=true autoplay=true interval=4000 duration=500 style="width: 150vw;">
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: red; color: white; text-align: center;">0</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: blue; color: white; text-align: center;">1</a-view>
+            </a-swiper-item>
+            <a-swiper-item>
+              <a-view style="display: block;height: 150px;background-color: green; color: white; text-align: center;">2</a-view>
+            </a-swiper-item>
+          </a-swiper>
+        </a-view>
+      </a-scroll-view>
     </div>
+  </div>
 
-    <script>
-      swiper.addEventListener('change', function (event) {
-        swiperChangeEvent.innerHTML = event.detail.current;
-      });
+  <script>
+    swiper.addEventListener('change', function (event) {
+      swiperChangeEvent.innerHTML = event.detail.current;
+    });
 
-      swiperPrevButton.addEventListener('click', function (event) {
-        swiper.setAttribute('current', swiper.current - 1);
-      });
+    swiperPrevButton.addEventListener('click', function (event) {
+      swiper.setAttribute('current', swiper.current - 1);
+    });
 
-      swiperNextButton.addEventListener('click', function (event) {
-        swiper.setAttribute('current', swiper.current + 1);
-      });
+    swiperNextButton.addEventListener('click', function (event) {
+      swiper.setAttribute('current', swiper.current + 1);
+    });
 
-      btnAddSwiperItem.addEventListener('click', function (event) {
-        dynamicSwiper.innerHTML += `
+    btnAddSwiperItem.addEventListener('click', function (event) {
+      dynamicSwiper.innerHTML += `
         <a-swiper-item>
           <a-view style="height: 100%;">` + (dynamicSwiper.children.length + 1) + `</a-view>
         </a-swiper-item>
       `;
-      });
+    });
 
-    </script>
+  </script>
 
-    <div class="card">
-      <h4 class="title">a-swiper nested</h4>
-      <div class="demo">
-        <p>swiper nest swiper</p>
-        <a-swiper indicator-dots=true style="height:300px">
-          <a-swiper-item style="height:300px">
-            <a-swiper indicator-dots=true nested="true">
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: red">1-1</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: blue">1-2</a-view>
-              </a-swiper-item>
-              <a-swiper-item>
-                <a-view style="display: block;height: 150px;background-color: yellow">1-3</a-view>
-              </a-swiper-item>
-            </a-swiper>
-          </a-swiper-item>
-          <a-swiper-item style="height:300px">
-            <a-view style="display: block;height: 150px;background-color: blue">2</a-view>
-          </a-swiper-item>
-          <a-swiper-item style="height:300px">
-            <a-view style="display: block;height: 150px;background-color: yellow">3</a-view>
-          </a-swiper-item>
-        </a-swiper>
-
-        <p>scroll-view nest swiper</p>
-        <a-scroll-view scroll-x="true" style="width: 100%;">
-          <a-swiper indicator-dots=true>
+  <div class="card">
+    <h4 class="title">a-swiper nested</h4>
+    <div class="demo">
+      <p>swiper nest swiper</p>
+      <a-swiper indicator-dots=true style="height:300px">
+        <a-swiper-item style="height:300px">
+          <a-swiper indicator-dots=true nested="true">
             <a-swiper-item>
               <a-view style="display: block;height: 150px;background-color: red">1-1</a-view>
             </a-swiper-item>
@@ -700,317 +635,237 @@
               <a-view style="display: block;height: 150px;background-color: yellow">1-3</a-view>
             </a-swiper-item>
           </a-swiper>
-          <div style="width: 1000px;">PADDING</div>
-        </a-scroll-view>
-      </div>
+        </a-swiper-item>
+        <a-swiper-item style="height:300px">
+          <a-view style="display: block;height: 150px;background-color: blue">2</a-view>
+        </a-swiper-item>
+        <a-swiper-item style="height:300px">
+          <a-view style="display: block;height: 150px;background-color: yellow">3</a-view>
+        </a-swiper-item>
+      </a-swiper>
+
+      <p>scroll-view nest swiper</p>
+      <a-scroll-view scroll-x="true" style="width: 100%;">
+        <a-swiper indicator-dots=true>
+          <a-swiper-item>
+            <a-view style="display: block;height: 150px;background-color: red">1-1</a-view>
+          </a-swiper-item>
+          <a-swiper-item>
+            <a-view style="display: block;height: 150px;background-color: blue">1-2</a-view>
+          </a-swiper-item>
+          <a-swiper-item>
+            <a-view style="display: block;height: 150px;background-color: yellow">1-3</a-view>
+          </a-swiper-item>
+        </a-swiper>
+        <div style="width: 1000px;">PADDING</div>
+      </a-scroll-view>
     </div>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-audio</h4>
-      <div class="demo">
-        <a-audio
-          controls
-          loop
-          name="Move"
-          author="NuG"
-          src="http://www.bandguru.com/mp3/move.mp3"
-          poster="http://www.bandguru.com/images/nug.jpg"
-        ></a-audio>
-      </div>
+  <div class="card">
+    <h4 class="title">a-audio</h4>
+    <div class="demo">
+      <a-audio
+        controls
+        loop
+        name="Move"
+        author="NuG"
+        src="http://www.bandguru.com/mp3/move.mp3"
+        poster="http://www.bandguru.com/images/nug.jpg"
+      ></a-audio>
     </div>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-video</h4>
-      <div class="demo">
-        <a-video src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"></a-video>
-      </div>
+  <div class="card">
+    <h4 class="title">a-video</h4>
+    <div class="demo">
+      <a-video src="http://cloud.video.taobao.com/play/u/2780279213/p/1/e/6/t/1/d/ld/36255062.mp4"></a-video>
     </div>
+  </div>
 
-    <div class="card">
-      <h4 class="title">a-scroll-view</h4>
-      <div class="demo">
-        <a-scroll-view id="scrollview" scroll-y="true" scroll-top="100" scroll-into-view="red" style="height: 200px;"
-                       scroll-with-animation>
-          <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view id="red" style="background:red; width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
-          <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
-        </a-scroll-view>
+  <div class="card">
+    <h4 class="title">a-scroll-view</h4>
+    <div class="demo">
+      <a-scroll-view id="scrollview" scroll-y="true" scroll-top="100" scroll-into-view="red" style="height: 200px;"
+                     scroll-with-animation>
+        <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view id="red" style="background:red; width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;width: 100%;height: 50px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;width: 100%;height: 50px;color: #fff;"></a-view>
+      </a-scroll-view>
 
-        <p style="overflow-wrap: break-word;">
-          Scroll Event: <span id="scrollEvent">null</span>
-        </p>
-        <p>
-          Scroll To Upper Event: <span id="scrolltoupperEvent">null</span>
-        </p>
-        <a-button id="scrollToUpper">Scroll To Upper</a-button>
+      <p style="overflow-wrap: break-word;">
+        Scroll Event: <span id="scrollEvent">null</span>
+      </p>
+      <p>
+        Scroll To Upper Event: <span id="scrolltoupperEvent">null</span>
+      </p>
+      <a-button id="scrollToUpper">Scroll To Upper</a-button>
 
-        <p>
-          Scroll to Lower Event: <span id="scrolltolowerEvent">null</span>
-        </p>
+      <p>
+        Scroll to Lower Event: <span id="scrolltolowerEvent">null</span>
+      </p>
 
-        <a-button id="scrollToLower">Scroll To Lower</a-button>
+      <a-button id="scrollToLower">Scroll To Lower</a-button>
 
-        <p>
-          Scrolling status: <span id="scrollingStatus">enable</span>
-        </p>
-        <a-button id="toggleScroll">Toggle Scroll</a-button>
+      <p>
+        Scrolling status: <span id="scrollingStatus">enable</span>
+      </p>
+      <a-button id="toggleScroll">Toggle Scroll</a-button>
 
 
-        <p>Horizental scroll view</p>
-        <a-scroll-view id="horScrollView" scroll-x="true" hide-scroll-bar style="display: flex; height: 200px;" scroll-with-animation scroll-into-view="red">
-          <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view id="red" style="background:red; min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
-          <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
-        </a-scroll-view>
-        <a-button onclick="horScrollView.setAttribute('scroll-left', 500)">Set Scroll Left</a-button>
-      </div>
+      <p>Horizental scroll view</p>
+      <a-scroll-view id="horScrollView" scroll-x="true" hide-scroll-bar style="display: flex; height: 200px;" scroll-with-animation scroll-into-view="red">
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view id="red" style="background:red; min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #24b0fc;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #f56264;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #1fb822;min-width: 200px;height: 200px;color: #fff;"></a-view>
+        <a-view style="background: #F0E68C;min-width: 200px;height: 200px;color: #fff;"></a-view>
+      </a-scroll-view>
+      <a-button onclick="horScrollView.setAttribute('scroll-left', 500)">Set Scroll Left</a-button>
     </div>
+  </div>
 
+  <script>
+    var toggleScrolling = true;
+    toggleScroll.addEventListener('click', function () {
+      scrollingStatus.innerHTML = (toggleScrolling = !toggleScrolling) ? 'enable' : 'disable';
+      scrollview.setAttribute('scroll-y', toggleScrolling);
+    });
+
+    scrollview.addEventListener('scroll', function (e) {
+      scrollEvent.innerHTML = JSON.stringify(e.detail);
+    });
+
+    scrollview.addEventListener('scrolltoupper', function (e) {
+      scrolltoupperEvent.innerHTML = +new Date;
+    });
+
+    scrollview.addEventListener('scrolltolower', function (e) {
+      scrolltolowerEvent.innerHTML = +new Date;
+    });
+
+    scrollToUpper.addEventListener('click', function (e) {
+      scrollview.setAttribute('scroll-top', 0);
+    });
+
+    scrollToLower.addEventListener('click', function (e) {
+      scrollview.setAttribute('scroll-top', 10000);
+    });
+  </script>
+
+  <div class="card">
+    <h4 class="title">a-picker-view</h4>
+    <div class="demo">
+      <a-picker-view id="pickerView" style="height:333px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+        <a-picker-view-column>
+          <a-view value="1998">1998年</a-view>
+          <a-view value="1999">1999年</a-view>
+          <a-view value="2000">2000年</a-view>
+          <a-view value="2001">2001年</a-view>
+          <a-view value="2002">2002年</a-view>
+          <a-view value="2003">2003年</a-view>
+          <a-view value="2004">2004年</a-view>
+          <a-view value="2005">2005年</a-view>
+          <a-view value="2006">2006年</a-view>
+          <a-view value="2007">2007年</a-view>
+          <a-view value="2008">2008年</a-view>
+          <a-view value="2009">2009年</a-view>
+          <a-view value="2010">2010年</a-view>
+          <a-view value="2011">2011年</a-view>
+          <a-view value="2012">2012年</a-view>
+          <a-view value="2013">2013年</a-view>
+          <a-view value="2014">2014年</a-view>
+          <a-view value="2015">2015年</a-view>
+          <a-view value="2016">2016年</a-view>
+          <a-view value="2017">2017年</a-view>
+        </a-picker-view-column>
+        <a-picker-view-column>
+          <a-view value="1">1月</a-view>
+          <a-view value="2">2月</a-view>
+          <a-view value="3">3月</a-view>
+          <a-view value="4">4月</a-view>
+          <a-view value="5">5月</a-view>
+          <a-view value="6">6月</a-view>
+          <a-view value="7">7月</a-view>
+          <a-view value="8">8月</a-view>
+          <a-view value="9">9月</a-view>
+          <a-view value="10">10月</a-view>
+          <a-view value="11">11月</a-view>
+          <a-view value="12">12月</a-view>
+        </a-picker-view-column>
+        <a-picker-view-column>
+          <a-view value="1">1日</a-view>
+          <a-view value="2">2日</a-view>
+          <a-view value="3">3日</a-view>
+          <a-view value="4">4日</a-view>
+          <a-view value="5">5日</a-view>
+          <a-view value="6">6日</a-view>
+          <a-view value="7">7日</a-view>
+          <a-view value="8">8日</a-view>
+          <a-view value="9">9日</a-view>
+          <a-view value="10">10日</a-view>
+          <a-view value="11">11日</a-view>
+          <a-view value="12">12日</a-view>
+          <a-view value="13">13日</a-view>
+          <a-view value="14">14日</a-view>
+          <a-view value="15">15日</a-view>
+          <a-view value="16">16日</a-view>
+          <a-view value="17">17日</a-view>
+          <a-view value="18">18日</a-view>
+          <a-view value="19">19日</a-view>
+          <a-view value="20">20日</a-view>
+          <a-view value="21">21日</a-view>
+          <a-view value="22">22日</a-view>
+          <a-view value="23">23日</a-view>
+          <a-view value="24">24日</a-view>
+          <a-view value="25">25日</a-view>
+          <a-view value="26">26日</a-view>
+          <a-view value="27">27日</a-view>
+          <a-view value="28">28日</a-view>
+          <a-view value="29">29日</a-view>
+          <a-view value="30">30日</a-view>
+          <a-view value="31">31日</a-view>
+        </a-picker-view-column>
+      </a-picker-view>
+    </div>
     <script>
-      var toggleScrolling = true;
-      toggleScroll.addEventListener('click', function () {
-        scrollingStatus.innerHTML = (toggleScrolling = !toggleScrolling) ? 'enable' : 'disable';
-        scrollview.setAttribute('scroll-y', toggleScrolling);
-      });
+      pickerView.setAttribute('value', '[9, 9, 9]');
 
-      scrollview.addEventListener('scroll', function (e) {
-        scrollEvent.innerHTML = JSON.stringify(e.detail);
-      });
-
-      scrollview.addEventListener('scrolltoupper', function (e) {
-        scrolltoupperEvent.innerHTML = +new Date;
-      });
-
-      scrollview.addEventListener('scrolltolower', function (e) {
-        scrolltolowerEvent.innerHTML = +new Date;
-      });
-
-      scrollToUpper.addEventListener('click', function (e) {
-        scrollview.setAttribute('scroll-top', 0);
-      });
-
-      scrollToLower.addEventListener('click', function (e) {
-        scrollview.setAttribute('scroll-top', 10000);
-      });
+      setTimeout(() => {
+        // Error case
+        pickerView.setAttribute('value', '[999, 999, 999]');
+      }, 2000);
     </script>
-
-    <div class="card">
-      <h4 class="title">a-picker-view</h4>
-      <div class="demo">
-        <a-picker-view id="pickerView" style="height:333px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
-          <a-picker-view-column>
-            <a-view value="1998">1998年</a-view>
-            <a-view value="1999">1999年</a-view>
-            <a-view value="2000">2000年</a-view>
-            <a-view value="2001">2001年</a-view>
-            <a-view value="2002">2002年</a-view>
-            <a-view value="2003">2003年</a-view>
-            <a-view value="2004">2004年</a-view>
-            <a-view value="2005">2005年</a-view>
-            <a-view value="2006">2006年</a-view>
-            <a-view value="2007">2007年</a-view>
-            <a-view value="2008">2008年</a-view>
-            <a-view value="2009">2009年</a-view>
-            <a-view value="2010">2010年</a-view>
-            <a-view value="2011">2011年</a-view>
-            <a-view value="2012">2012年</a-view>
-            <a-view value="2013">2013年</a-view>
-            <a-view value="2014">2014年</a-view>
-            <a-view value="2015">2015年</a-view>
-            <a-view value="2016">2016年</a-view>
-            <a-view value="2017">2017年</a-view>
-          </a-picker-view-column>
-          <a-picker-view-column>
-            <a-view value="1">1月</a-view>
-            <a-view value="2">2月</a-view>
-            <a-view value="3">3月</a-view>
-            <a-view value="4">4月</a-view>
-            <a-view value="5">5月</a-view>
-            <a-view value="6">6月</a-view>
-            <a-view value="7">7月</a-view>
-            <a-view value="8">8月</a-view>
-            <a-view value="9">9月</a-view>
-            <a-view value="10">10月</a-view>
-            <a-view value="11">11月</a-view>
-            <a-view value="12">12月</a-view>
-          </a-picker-view-column>
-          <a-picker-view-column>
-            <a-view value="1">1日</a-view>
-            <a-view value="2">2日</a-view>
-            <a-view value="3">3日</a-view>
-            <a-view value="4">4日</a-view>
-            <a-view value="5">5日</a-view>
-            <a-view value="6">6日</a-view>
-            <a-view value="7">7日</a-view>
-            <a-view value="8">8日</a-view>
-            <a-view value="9">9日</a-view>
-            <a-view value="10">10日</a-view>
-            <a-view value="11">11日</a-view>
-            <a-view value="12">12日</a-view>
-            <a-view value="13">13日</a-view>
-            <a-view value="14">14日</a-view>
-            <a-view value="15">15日</a-view>
-            <a-view value="16">16日</a-view>
-            <a-view value="17">17日</a-view>
-            <a-view value="18">18日</a-view>
-            <a-view value="19">19日</a-view>
-            <a-view value="20">20日</a-view>
-            <a-view value="21">21日</a-view>
-            <a-view value="22">22日</a-view>
-            <a-view value="23">23日</a-view>
-            <a-view value="24">24日</a-view>
-            <a-view value="25">25日</a-view>
-            <a-view value="26">26日</a-view>
-            <a-view value="27">27日</a-view>
-            <a-view value="28">28日</a-view>
-            <a-view value="29">29日</a-view>
-            <a-view value="30">30日</a-view>
-            <a-view value="31">31日</a-view>
-          </a-picker-view-column>
-        </a-picker-view>
-      </div>
-      <script>
-        pickerView.setAttribute('value', '[9, 9, 9]');
-
-        setTimeout(() => {
-          // Error case
-          pickerView.setAttribute('value', '[999, 999, 999]');
-        }, 2000);
-      </script>
-    </div>
-    <div class="card">
-      <h4 class="title">a-swiper composite</h4>
-      <div class="demo">
-        <p>Row</p>
-        <a-swiper>
-          <a-swiper-item>
-            <a-view style="display: block;height: 130px;background-color: red; padding-top: 20px">
-              <a-slider min="0" max="100" style="width: 200px"></a-slider>
-            </a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;">
-              <a-picker-view style="height:150px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
-                <a-picker-view-column>
-                  <a-view value="2010">2010年</a-view>
-                  <a-view value="2011">2011年</a-view>
-                  <a-view value="2012">2012年</a-view>
-                  <a-view value="2013">2013年</a-view>
-                  <a-view value="2014">2014年</a-view>
-                  <a-view value="2015">2015年</a-view>
-                  <a-view value="2016">2016年</a-view>
-                  <a-view value="2017">2017年</a-view>
-                </a-picker-view-column>
-                <a-picker-view-column>
-                  <a-view value="1">1月</a-view>
-                  <a-view value="2">2月</a-view>
-                  <a-view value="3">3月</a-view>
-                  <a-view value="4">4月</a-view>
-                  <a-view value="5">5月</a-view>
-                  <a-view value="6">6月</a-view>
-                  <a-view value="7">7月</a-view>
-                  <a-view value="8">8月</a-view>
-                  <a-view value="9">9月</a-view>
-                  <a-view value="10">10月</a-view>
-                  <a-view value="11">11月</a-view>
-                  <a-view value="12">12月</a-view>
-                </a-picker-view-column>
-                <a-picker-view-column>
-                  <a-view value="1">1日</a-view>
-                  <a-view value="2">2日</a-view>
-                  <a-view value="3">3日</a-view>
-                  <a-view value="4">4日</a-view>
-                  <a-view value="5">5日</a-view>
-                  <a-view value="6">6日</a-view>
-                  <a-view value="7">7日</a-view>
-                  <a-view value="8">8日</a-view>
-                  <a-view value="9">9日</a-view>
-                  <a-view value="10">10日</a-view>
-                </a-picker-view-column>
-              </a-picker-view>
-            </a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
-          </a-swiper-item>
-        </a-swiper>
-        <p>Column</p>
-        <a-swiper vertical=true circular=true>
-          <a-swiper-item>
-            <a-view style="display: block;height: 180px;background-color: red; padding-top: 20px">
-              <a-slider min="0" max="100" style="width: 200px"></a-slider>
-            </a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 200pxpx;">
-              <a-picker-view style="height:120px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
-                <a-picker-view-column>
-                  <a-view value="2010">2010年</a-view>
-                  <a-view value="2011">2011年</a-view>
-                  <a-view value="2012">2012年</a-view>
-                  <a-view value="2013">2013年</a-view>
-                  <a-view value="2014">2014年</a-view>
-                  <a-view value="2015">2015年</a-view>
-                  <a-view value="2016">2016年</a-view>
-                  <a-view value="2017">2017年</a-view>
-                </a-picker-view-column>
-                <a-picker-view-column>
-                  <a-view value="1">1月</a-view>
-                  <a-view value="2">2月</a-view>
-                  <a-view value="3">3月</a-view>
-                  <a-view value="4">4月</a-view>
-                  <a-view value="5">5月</a-view>
-                  <a-view value="6">6月</a-view>
-                  <a-view value="7">7月</a-view>
-                  <a-view value="8">8月</a-view>
-                  <a-view value="9">9月</a-view>
-                  <a-view value="10">10月</a-view>
-                  <a-view value="11">11月</a-view>
-                  <a-view value="12">12月</a-view>
-                </a-picker-view-column>
-                <a-picker-view-column>
-                  <a-view value="1">1日</a-view>
-                  <a-view value="2">2日</a-view>
-                  <a-view value="3">3日</a-view>
-                  <a-view value="4">4日</a-view>
-                  <a-view value="5">5日</a-view>
-                  <a-view value="6">6日</a-view>
-                  <a-view value="7">7日</a-view>
-                  <a-view value="8">8日</a-view>
-                  <a-view value="9">9日</a-view>
-                  <a-view value="10">10日</a-view>
-                </a-picker-view-column>
-              </a-picker-view>
-            </a-view>
-          </a-swiper-item>
-          <a-swiper-item>
-            <a-view style="display: block;height: 200px;background-color: yellow"></a-view>
-          </a-swiper-item>
-        </a-swiper>
-      </div>
-      <div class="card">
-        <h4 class="title">a-scroll-view composite</h4>
-        <div class="demo">
-          <a-scroll-view style="display: block;height: 300px;" scroll-y=true>
-            <a-picker-view style="height:250px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+  </div>
+  <div class="card">
+    <h4 class="title">a-swiper composite</h4>
+    <div class="demo">
+      <p>Row</p>
+      <a-swiper>
+        <a-swiper-item>
+          <a-view style="display: block;height: 130px;background-color: red; padding-top: 20px">
+            <a-slider min="0" max="100" style="width: 200px"></a-slider>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;">
+            <a-picker-view style="height:150px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
               <a-picker-view-column>
                 <a-view value="2010">2010年</a-view>
                 <a-view value="2011">2011年</a-view>
@@ -1048,30 +903,129 @@
                 <a-view value="10">10日</a-view>
               </a-picker-view-column>
             </a-picker-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-            <a-view>我是下面的元素</a-view>
-          </a-scroll-view>
-        </div>
-      </div>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 150px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
+      <p>Column</p>
+      <a-swiper vertical=true circular=true>
+        <a-swiper-item>
+          <a-view style="display: block;height: 180px;background-color: red; padding-top: 20px">
+            <a-slider min="0" max="100" style="width: 200px"></a-slider>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 200pxpx;">
+            <a-picker-view style="height:120px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+              <a-picker-view-column>
+                <a-view value="2010">2010年</a-view>
+                <a-view value="2011">2011年</a-view>
+                <a-view value="2012">2012年</a-view>
+                <a-view value="2013">2013年</a-view>
+                <a-view value="2014">2014年</a-view>
+                <a-view value="2015">2015年</a-view>
+                <a-view value="2016">2016年</a-view>
+                <a-view value="2017">2017年</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1月</a-view>
+                <a-view value="2">2月</a-view>
+                <a-view value="3">3月</a-view>
+                <a-view value="4">4月</a-view>
+                <a-view value="5">5月</a-view>
+                <a-view value="6">6月</a-view>
+                <a-view value="7">7月</a-view>
+                <a-view value="8">8月</a-view>
+                <a-view value="9">9月</a-view>
+                <a-view value="10">10月</a-view>
+                <a-view value="11">11月</a-view>
+                <a-view value="12">12月</a-view>
+              </a-picker-view-column>
+              <a-picker-view-column>
+                <a-view value="1">1日</a-view>
+                <a-view value="2">2日</a-view>
+                <a-view value="3">3日</a-view>
+                <a-view value="4">4日</a-view>
+                <a-view value="5">5日</a-view>
+                <a-view value="6">6日</a-view>
+                <a-view value="7">7日</a-view>
+                <a-view value="8">8日</a-view>
+                <a-view value="9">9日</a-view>
+                <a-view value="10">10日</a-view>
+              </a-picker-view-column>
+            </a-picker-view>
+          </a-view>
+        </a-swiper-item>
+        <a-swiper-item>
+          <a-view style="display: block;height: 200px;background-color: yellow"></a-view>
+        </a-swiper-item>
+      </a-swiper>
     </div>
-
     <div class="card">
-      <h4 class="title">a-unknown</h4>
+      <h4 class="title">a-scroll-view composite</h4>
       <div class="demo">
-        Should show nothing below.
-        <a-unknown>hello world</a-unknown>
+        <a-scroll-view style="display: block;height: 300px;" scroll-y=true>
+          <a-picker-view style="height:250px;overflow:hidden;background:#fff;" mask-style="background-color: red;">
+            <a-picker-view-column>
+              <a-view value="2010">2010年</a-view>
+              <a-view value="2011">2011年</a-view>
+              <a-view value="2012">2012年</a-view>
+              <a-view value="2013">2013年</a-view>
+              <a-view value="2014">2014年</a-view>
+              <a-view value="2015">2015年</a-view>
+              <a-view value="2016">2016年</a-view>
+              <a-view value="2017">2017年</a-view>
+            </a-picker-view-column>
+            <a-picker-view-column>
+              <a-view value="1">1月</a-view>
+              <a-view value="2">2月</a-view>
+              <a-view value="3">3月</a-view>
+              <a-view value="4">4月</a-view>
+              <a-view value="5">5月</a-view>
+              <a-view value="6">6月</a-view>
+              <a-view value="7">7月</a-view>
+              <a-view value="8">8月</a-view>
+              <a-view value="9">9月</a-view>
+              <a-view value="10">10月</a-view>
+              <a-view value="11">11月</a-view>
+              <a-view value="12">12月</a-view>
+            </a-picker-view-column>
+            <a-picker-view-column>
+              <a-view value="1">1日</a-view>
+              <a-view value="2">2日</a-view>
+              <a-view value="3">3日</a-view>
+              <a-view value="4">4日</a-view>
+              <a-view value="5">5日</a-view>
+              <a-view value="6">6日</a-view>
+              <a-view value="7">7日</a-view>
+              <a-view value="8">8日</a-view>
+              <a-view value="9">9日</a-view>
+              <a-view value="10">10日</a-view>
+            </a-picker-view-column>
+          </a-picker-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+          <a-view>我是下面的元素</a-view>
+        </a-scroll-view>
       </div>
     </div>
+  </div>
 
-  </a-page>
-</body>
+  <div class="card">
+    <h4 class="title">a-unknown</h4>
+    <div class="demo">
+      Should show nothing below.
+      <a-unknown>hello world</a-unknown>
+    </div>
+  </div>
 
-</html>
+</a-page>
