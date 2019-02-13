@@ -34,7 +34,7 @@ export default [
         },
         minify
       ),
-      filesize()
+      filesize(),
     ]
   }
 ];
