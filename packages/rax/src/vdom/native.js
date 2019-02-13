@@ -365,6 +365,7 @@ class NativeComponent {
     if (nextChildren != null) {
       // `nextIndex` will increment for each child in `nextChildren`
       let nextIndex = 0;
+      let lastIndex = 0;
       let lastPlacedNode = null;
       let nextNativeNode = [];
 
@@ -405,8 +406,10 @@ class NativeComponent {
         if (prevChild === nextChild) {
           let prevChildNativeNode = prevChild.getNativeNode();
 
-          if (prevChild._mountIndex !== nextIndex) {
+          if (prevChild._mountIndex < lastIndex) {
             insertNodes(prevChildNativeNode);
+          } else {
+            lastIndex = prevChild._mountIndex;
           }
         } else {
           // Mount nextChild that in prevChildren there has no some name
