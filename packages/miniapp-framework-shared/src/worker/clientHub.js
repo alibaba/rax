@@ -1,4 +1,4 @@
-import { log, debug } from '../debugger';
+import { log, debug } from '../logger';
 
 const listeners = {};
 const CLIENTS = {};

@@ -1,4 +1,4 @@
-import { debug } from '../../debugger';
+import { debug } from '../../logger';
 import applyFactory from '../../applyFactory';
 
 const componentsHub = {};

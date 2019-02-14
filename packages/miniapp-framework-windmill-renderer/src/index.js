@@ -1,10 +1,5 @@
-import { debug } from 'miniapp-framework/src/debugger';
-import {
-  setupAppear,
-  setupTap,
-  setupTheme,
-  setupReachBottom
-} from 'miniapp-framework-shared/src/renderer';
+import { debug } from 'miniapp-framework-shared';
+import { setupAppear, setupTap, setupTheme, setupReachBottom } from 'miniapp-framework-shared/src/renderer';
 import { getClientId, getPageName, parsePageQuery } from './env';
 import { compat } from './compatible';
 import setupDriverHandler from './setupDriverHandler';

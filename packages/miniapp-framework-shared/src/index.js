@@ -1,3 +1,4 @@
+import { log, debug } from './logger';
 import global from './global';
 import decycle from './decycle';
 import retrocycle from './retrocycle';
@@ -15,5 +16,9 @@ export {
   global,
   decycle,
   retrocycle,
+
   worker,
+
+  log,
+  debug,
 };

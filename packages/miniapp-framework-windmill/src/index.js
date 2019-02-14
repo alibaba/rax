@@ -1,17 +1,12 @@
 import createDriverWorker from 'driver-worker';
+import { worker, debug, log } from 'miniapp-framework-shared';
 import global from './global';
 import polyfillES from 'miniapp-framework-shared/src/polyfill';
-import { debug, log } from 'miniapp-framework-shared/src/debugger';
 import setupWorker from './setupWorker';
-// import { getPage, getUnknownPageFactory } from '../../miniapp-framework-shared/src/worker/pageHub';
-// import { createRax, applyFactory } from './utils.js';
-// import {
-//   addClient,
-//   getClient,
-//   on as clientOn,
-//   emit as emitToClient,
-// } from 'miniapp-framework-shared/src/worker/clientHub';
+import { createRax, applyFactory } from './utils';
 
+const { getPage, getUnknownPageFactory } = worker.pageHub;
+const { on: clientOn, emit: emitToClient } = worker.clientHub;
 
 /**
  * Polyfill AppWorker Env.
@@ -33,10 +28,30 @@ try {
 
 /**
  * Create a page instance when renderer is ready.
+ * If some client is ready, mark clientReadyState's key to clientId, value to true.
+ *
+ * clientReadyState: {
+ *   [clientId]: undefined/true
+ * }
+ *
+ * pendingMessages: {
+ *   [clientId]: undefined/[function]
+ * }
  */
 const clientReadyEvent = 'r$';
-function handleClientReady() {
-  // TODO
+const clientReadyState = {};
+const pendingMessages = {};
+function handleClientReady(event) {
+  const { origin: clientId } = event;
+  if (!clientReadyState[clientId]) {
+    clientReadyState[clientId] = true;
+    if (Array.isArray(pendingMessages[clientId])) {
+      let fn;
+      while (fn = pendingMessages[clientId].shift()) {
+        fn();
+      }
+    }
+  }
 }
 appWorker.$on(clientReadyEvent, handleClientReady);
 
@@ -47,22 +62,46 @@ appWorker.$on(EVENT_BEFORE_PAGE_CREATE, handleBeforePageCreate);
 appWorker.$on(EVENT_RENDER_TO_WORKER, handleRenderToWorker);
 function handleBeforePageCreate(event) {
   const { data, origin: clientId } = event;
+  const { pageName } = data;
+
+  debug('Start render page in worker, clientId: %s, pageName: %s', clientId, pageName);
+
+  // todo with native: add pageQuery to data.
+  const rax = createRax();
+
+  function postMessage (message) {
+    const payload = { data: message };
+    if (clientReadyState[clientId]) {
+      appWorker.$emit(EVENT_WORKER_TO_RENDER, payload, clientId);
+    } else {
+      pendingMessages[clientId] = pendingMessages[clientId] || [];
+      pendingMessages[clientId].push(
+        appWorker.$emit.bind(appWorker, EVENT_WORKER_TO_RENDER, payload, clientId)
+      );
+    }
+  }
+  function addEventListener(eventName, callback) {
+    clientOn(clientId, eventName, callback);
+  }
+  const driver = createDriverWorker({ postMessage, addEventListener });
+  const { document, evaluator } = driver;
+  const { factory } = getPage(pageName, rax);
+  const PageComponent = applyFactory(factory, {
+    clientId,
+    pageName,
+    raxInstance: rax,
+    pageQuery: {},
+    document,
+    evaluator,
+  });
+  rax.render(rax.createElement(PageComponent), null, {
+    driver,
+  });
 }
 function handleRenderToWorker(event) {
   const { data, origin: clientId } = event;
 
-  // emitToClient(clientId, 'message', data);
-
-  // if (data.data.type === 'init') {
-  //   const { render, createElement, component, driver } = getClient(
-  //     clientId
-  //   );
-  //   debug(`start render fn, clientId: ${clientId}`);
-  //
-  //   render(createElement(component, {}), null, {
-  //     driver,
-  //   });
-  // }
+  emitToClient(clientId, 'message', data);
 }
 
 /**
@@ -130,8 +169,8 @@ function handleRenderToWorker(event) {
 //    */
 //   appWorker.$emit('r#', { clientId }, clientId);
 // }
-//
+
 export { appWorker };
-// export function getAppWorker() {
-//   return appWorker;
-// }
+export function getAppWorker() {
+  return appWorker;
+}

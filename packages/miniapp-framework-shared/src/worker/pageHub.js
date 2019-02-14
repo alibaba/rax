@@ -1,4 +1,4 @@
-import { debug } from '../debugger';
+import { debug } from '../logger';
 import createErrorPage from '../../packages/error-page/src';
 
 const PAGES = {};

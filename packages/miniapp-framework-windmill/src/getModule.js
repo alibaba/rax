@@ -1,10 +1,7 @@
-import { log } from 'miniapp-framework-shared/src/debugger';
-// import { getAppWorker } from './index';
+import { global, log, debug } from 'miniapp-framework-shared';
 import app from './app';
 import { registerPage, createPage } from './page';
-
-const MODULE_GETTER = '__WINDMILL_MODULE_GETTER__';
-const getNativeModule = global[MODULE_GETTER];
+import { getAppWorker } from './index';
 
 /**
  * Get schema data.

@@ -1,4 +1,4 @@
-import { debug } from 'miniapp-framework-shared/src/debugger';
+import { debug, global } from 'miniapp-framework-shared';
 import * as AppRuntimeGlobal from './AppRuntime/global';
 import * as PluginRuntimeGlobal from './PluginRuntime/global';
 
