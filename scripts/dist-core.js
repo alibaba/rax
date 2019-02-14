@@ -3,6 +3,9 @@ const resolve = require('rollup-plugin-node-resolve');
 const babel = require('rollup-plugin-babel');
 const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
+const filesize = require('rollup-plugin-filesize');
+const commonjs = require('rollup-plugin-commonjs');
+const string = require('./rollup-plugin-string');
 
 function build(packageName, name, shouldMinify) {
   const output = {
@@ -16,8 +19,9 @@ function build(packageName, name, shouldMinify) {
     input: './packages/' + packageName + '/src/index.js',
     plugins: [
       resolve(),
+      string(),
       babel({
-        exclude: 'node_modules/**', // only transpile our source code
+        exclude: [/node_modules/, /vendors/], // only transpile our source code
         presets: [
           ['@babel/preset-env', {
             modules: false,
@@ -28,10 +32,14 @@ function build(packageName, name, shouldMinify) {
           }]
         ],
       }),
+      commonjs({
+        include: [/node_modules/, /vendors/],
+      }),
       replace({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
       shouldMinify ? uglify() : null,
+      filesize(),
     ]
   }).then(bundle => {
     if (shouldMinify) {
@@ -60,8 +68,13 @@ function build(packageName, name, shouldMinify) {
 
 console.log('Build...');
 
-build('rax', 'Rax');
-build('rax', 'Rax', true);
-
-build('driver-dom', 'DriverDOM');
-build('driver-dom', 'DriverDOM', true);
+// build('rax', 'Rax');
+// build('rax', 'Rax', true);
+//
+// build('driver-dom', 'DriverDOM');
+// build('driver-dom', 'DriverDOM', true);
+//
+// build('miniapp-framework-ide', 'MiniApp', true);
+// build('miniapp-framework-web', 'MiniApp', true);
+build('miniapp-framework-windmill', 'MiniAppWindmill');
+build('miniapp-framework-windmill-renderer', 'MiniAppWindmillRenderer', true);
