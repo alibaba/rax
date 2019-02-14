@@ -1,7 +1,7 @@
-var isObject = require('./isObject'),
-  now = () => Date.now(),
-  toNumber = require('./toNumber');
+import isObject from './isObject';
+import toNumber from './toNumber';
 
+const now = () => Date.now();
 /** Error message constants. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -63,7 +63,7 @@ var nativeMax = Math.max,
  * // Cancel the trailing debounced invocation.
  * jQuery(window).on('popstate', debounced.cancel);
  */
-function debounce(func, wait, options) {
+export default function debounce(func, wait, options) {
   var lastArgs,
     lastThis,
     maxWait,
@@ -187,4 +187,3 @@ function debounce(func, wait, options) {
   return debounced;
 }
 
-module.exports = debounce;

@@ -4,6 +4,7 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: 'iOS >= 8',
+        loose: true,
       },
     ],
   ],
@@ -24,6 +25,10 @@ module.exports = {
     '@babel/plugin-proposal-export-namespace-from',
     '@babel/plugin-proposal-export-default-from',
     '@babel/plugin-proposal-function-bind',
+    [
+      '@babel/plugin-transform-computed-properties',
+      { loose: true }
+    ]
   ],
   env: {
     test: {
