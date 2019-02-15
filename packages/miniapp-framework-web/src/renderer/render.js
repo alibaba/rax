@@ -1,5 +1,5 @@
 /* global ATAG_URL */
-import css from 'raw-loader!../../../miniapp-framework-shared/src/renderer/global.css'; // eslint-disable-line
+import css from '!!raw-loader!miniapp-framework-shared/src/renderer/global.css'; // eslint-disable-line
 
 const webcomponentsPolyfillURL = 'https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js';
 

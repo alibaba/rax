@@ -1,4 +1,4 @@
-import { warn } from '../../../miniapp-framework-shared/src/debugger';
+import { log } from 'miniapp-framework-shared';
 import renderContainerShell from './view';
 
 export default class MessageRouter {
@@ -63,7 +63,7 @@ export default class MessageRouter {
      */
     const { data } = evt;
     if (!data) {
-      warn('Receive illegal data', evt);
+      log('Receive illegal data', evt);
       return;
     }
 

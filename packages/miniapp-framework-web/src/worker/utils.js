@@ -20,7 +20,7 @@ export function createRax() {
   return applyFactory(genRax);
 }
 
-import createErrorPage from '../../../miniapp-framework-shared/packages/error-page/src';
+import createErrorPage from 'miniapp-framework-shared/src/errorPage';
 import require from './getModule';
 /**
  * create component by factory

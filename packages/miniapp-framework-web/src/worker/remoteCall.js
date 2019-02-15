@@ -1,5 +1,3 @@
-import { error } from '../../../miniapp-framework-shared/src/debugger';
-
 const noop = () => {};
 let callCount = 0;
 

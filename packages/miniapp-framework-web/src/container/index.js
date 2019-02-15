@@ -1,7 +1,6 @@
 import spawnWorker from 'worker-loader?inline&fallback=false!babel-loader!../worker';
 import MessageRouter from './MessageRouter';
 import my from './modules/my';
-import startMiniApp from '../../../miniapp-framework-ide/src/container';
 
 const hasOwn = {}.hasOwnProperty;
 const COMPATIBLE_APP_CONFIG_KEY = 'APP_MANIFEST';
@@ -44,7 +43,7 @@ export default function startMiniAppWeb(appConfig, mountNode) {
  * If APP_MANIFEST exists in window, automaticlly init miniapp.
  */
 if (hasOwn.call(window, COMPATIBLE_APP_CONFIG_KEY)) {
-  startMiniApp(window[COMPATIBLE_APP_CONFIG_KEY]);
+  startMiniAppWeb(window[COMPATIBLE_APP_CONFIG_KEY]);
 }
 
 /**

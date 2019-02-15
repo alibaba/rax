@@ -1,5 +1,6 @@
-import { register } from '../../../../miniapp-framework-shared/src/worker/pageHub';
+import { worker } from 'miniapp-framework-shared';
 
+const registerPage = worker.pageHub.register;
 const lifecycles = {
   // [clientId]: {
   //   [eventName]
@@ -40,5 +41,5 @@ export default {
       }
     }
   },
-  register,
+  register: registerPage,
 };

@@ -1,7 +1,6 @@
 import MiniAppRouter from './Router';
 import { findHomePage } from './utils';
-import { setupTheme } from '../../../miniapp-framework-shared/src/renderer/atagTheme';
-import { initReachBottom } from '../../../miniapp-framework-shared/src/renderer/reachBottom';
+import { setupTheme, setupReachBottom } from 'miniapp-framework-shared/src/renderer';
 
 /**
  * DOM Operation in container.
@@ -99,7 +98,7 @@ export default function render(appManifest) {
   const themeConfig = window.APP_MANIFEST ? window.APP_MANIFEST.themeConfig : {};
   setupTheme(themeConfig, window);
 
-  initReachBottom(window);
+  setupReachBottom(window);
 
   // Correct the page font-size
   document.documentElement.style.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';

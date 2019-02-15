@@ -1,5 +1,5 @@
 import createDriver from 'driver-worker';
-import { log } from '../../../miniapp-framework-shared/src/debugger';
+import { log } from 'miniapp-framework-shared';
 import { addMessageListener } from './pageListeners';
 import workerRequire from './getModule';
 import { createElement } from 'rax';

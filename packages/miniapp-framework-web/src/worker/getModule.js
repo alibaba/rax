@@ -1,7 +1,7 @@
 import app from './modules/app';
 import page from './modules/page';
-import Console from '../../../miniapp-framework-shared/src/console';
-import decycle from '../../../miniapp-framework-shared/src/decycle';
+import Console from 'miniapp-framework-shared/src/console';
+import { decycle } from 'miniapp-framework-shared';
 
 const consoleCache = {};
 function createOrFindConsole(clientId) {

@@ -1,13 +1,12 @@
-import { warn } from '../../../miniapp-framework-shared/src/debugger';
-import {
-  emit as emitToClient, addClient, getClient
-} from '../../../miniapp-framework-shared/src/worker/clientHub';
+import { log, worker } from 'miniapp-framework-shared';
 import { my } from './api';
 import { call } from './remoteCall';
 import { setupGlobalObject } from './globalObject';
-import Client from '../../../miniapp-framework-ide/src/worker/Client';
-import {emit as emitAppLifecycle} from '../../../miniapp-framework-ide/src/worker/app';
-import navigator from '../../../miniapp-framework-ide/src/worker/navigator';
+import Client from './Client';
+import { emit as emitAppLifecycle } from './app';
+import navigator from './modules/navigator';
+
+const { emit: emitToClient, addClient, getClient } = worker.clientHub;
 
 setupGlobalObject(global);
 const CURRENT_CLIENT_ID = '__current_client_id__';
@@ -71,6 +70,6 @@ addEventListener('message', ({ data }) => {
     const client = getClient(payload.clientId);
     client.emitEvent('updatePageData', payload.data);
   } else {
-    warn('Can not recognize message', data);
+    log('Can not recognize message', data);
   }
 });

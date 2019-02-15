@@ -68,13 +68,11 @@ function build(packageName, name, shouldMinify) {
 
 console.log('Build...');
 
-// build('rax', 'Rax');
-// build('rax', 'Rax', true);
-//
-// build('driver-dom', 'DriverDOM');
-// build('driver-dom', 'DriverDOM', true);
-//
-// build('miniapp-framework-ide', 'MiniApp', true);
-// build('miniapp-framework-web', 'MiniApp', true);
-build('miniapp-framework-windmill', 'MiniAppWindmill');
+build('rax', 'Rax');
+build('rax', 'Rax', true);
+
+build('driver-dom', 'DriverDOM');
+build('driver-dom', 'DriverDOM', true);
+
+build('miniapp-framework-windmill', 'MiniAppWindmill', true);
 build('miniapp-framework-windmill-renderer', 'MiniAppWindmillRenderer', true);

@@ -1,4 +1,4 @@
-import { debug, warn } from '../../../miniapp-framework-shared/src/debugger';
+import { debug, log } from 'miniapp-framework-shared';
 
 const PROXIES = {};
 
@@ -25,7 +25,7 @@ export function createMessageProxy(messageRouter, clientId, pageName) {
      * onmesssage should be override.
      */
     onmessage() {
-      warn(`w->r@${clientId}`, 'Unespected handler of message.');
+      log(`w->r@${clientId}`, 'Unexpected handler of message.');
     },
   };
 }

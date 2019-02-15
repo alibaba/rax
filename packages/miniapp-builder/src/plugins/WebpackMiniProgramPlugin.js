@@ -32,7 +32,7 @@ module.exports = class WebpackMiniAppPlugin {
   /**
    * Inject schema data for ide mode.
    */
-  _injectSchemaMock(compilation) {
+  _injectSchemaMock(compiler, compilation) {
     let injectSchemaMockData;
     const mockDataPath = join(compiler.context, 'schema/mock-data.json');
     if (existsSync(mockDataPath)) {
@@ -81,7 +81,7 @@ module.exports = class WebpackMiniAppPlugin {
         global.AppJSContent = app.source();
 
         if (this.injectSchemaMock) {
-          this._injectSchemaMock(compilation);
+          this._injectSchemaMock(compiler, compilation);
         }
       });
     });
