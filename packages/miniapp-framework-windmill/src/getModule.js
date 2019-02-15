@@ -1,7 +1,9 @@
 import { global, log, debug } from 'miniapp-framework-shared';
-import app from './app';
-import { registerPage, createPage } from './page';
-import { getAppWorker } from './index';
+import appLifecycle from './modules/app';
+import { registerPage, createPage } from './modules/page';
+
+const WORKER_INSTANCE = '__WINDMILL_INSTANCE__';
+const VALID_MOD_REG = /^@core\//;
 
 /**
  * Get schema data.
@@ -9,12 +11,11 @@ import { getAppWorker } from './index';
  * @param {Function} errorCallback
  */
 function getSchemaData(successCallback, errorCallback) {
-  getAppWorker().$call('memoryStorage.getItem', {
+  const runtime = global[WORKER_INSTANCE];
+  if (runtime) runtime.$call('memoryStorage.getItem', {
     key: 'schemaData'
   }, successCallback, errorCallback);
 }
-
-const VALID_MOD_REG = /^@core\//;
 
 /**
  * Get module by name.
@@ -30,7 +31,7 @@ export default function getModule(mod) {
 
   switch (mod) {
     case '@core/app':
-      return app;
+      return appLifecycle;
 
     case '@core/page':
       if (context && context.clientId) {

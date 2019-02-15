@@ -2,8 +2,8 @@ import kebabCase from 'kebab-case';
 import baseCSS from 'raw-loader!./container.css';
 import initRenderer from '../../renderer';
 import { createMessageProxy } from '../MessageProxy';
-import { findHomePage } from "../utils";
-import MiniAppRouter from "../Router";
+import { findHomePage } from '../utils';
+import MiniAppRouter from '../Router';
 
 const styles = {
   main: {

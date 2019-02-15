@@ -67,7 +67,7 @@ module.exports = class WebpackAssetsPlugin {
         }
 
         if (injectSchemaMockData) {
-          compilation.assets['app.js'] =  new ConcatSource(
+          compilation.assets['app.js'] = new ConcatSource(
             injectSchemaMockData,
             compilation.assets['app.js']
           );

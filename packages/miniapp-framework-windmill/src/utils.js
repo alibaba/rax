@@ -1,6 +1,6 @@
-import createErrorPage from 'miniapp-framework-shared/packages/error-page/src';
+import createErrorPage from 'miniapp-framework-shared/src/errorPage';
 import raxCode from 'text!../node_modules/rax/dist/rax.min.js';
-import require from './getModule';
+import getModule from './getModule';
 
 const generateRax = new Function('module', 'exports', raxCode);
 
@@ -12,7 +12,7 @@ export function createRax() {
 }
 
 /**
- * create component by factory
+ * Create component by factory
  */
 export function applyFactory(factory, context = {}) {
   const module = { exports: null };
@@ -20,22 +20,20 @@ export function applyFactory(factory, context = {}) {
     if (mod === '@core/context') {
       return context;
     } else {
-      return require.call(context, mod);
+      return getModule.call(context, mod);
     }
   });
   const component = interopRequire(module.exports);
   return null === component && context.rax ? createErrorPage({
-    require,
+    require: getModule,
     createElement: context.rax.createElement,
     message: '找不到页面'
   }) : component;
 }
 
 /**
- * compatible with ES Modules -> commonjs2
+ * Compatible with ES Modules -> commonjs2
  */
 function interopRequire(obj) {
   return obj && typeof obj.default !== 'undefined' ? obj.default : obj;
 }
-
-export function noop() { }

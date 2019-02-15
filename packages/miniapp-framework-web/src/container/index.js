@@ -1,7 +1,7 @@
 import spawnWorker from 'worker-loader?inline&fallback=false!babel-loader!../worker';
 import MessageRouter from './MessageRouter';
 import my from './modules/my';
-import startMiniApp from "../../../miniapp-framework-ide/src/container";
+import startMiniApp from '../../../miniapp-framework-ide/src/container';
 
 const hasOwn = {}.hasOwnProperty;
 const COMPATIBLE_APP_CONFIG_KEY = 'APP_MANIFEST';

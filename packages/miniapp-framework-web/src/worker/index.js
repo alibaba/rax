@@ -5,9 +5,9 @@ import {
 import { my } from './api';
 import { call } from './remoteCall';
 import { setupGlobalObject } from './globalObject';
-import Client from "../../../miniapp-framework-ide/src/worker/Client";
-import {emit as emitAppLifecycle} from "../../../miniapp-framework-ide/src/worker/app";
-import navigator from "../../../miniapp-framework-ide/src/worker/navigator";
+import Client from '../../../miniapp-framework-ide/src/worker/Client';
+import {emit as emitAppLifecycle} from '../../../miniapp-framework-ide/src/worker/app';
+import navigator from '../../../miniapp-framework-ide/src/worker/navigator';
 
 setupGlobalObject(global);
 const CURRENT_CLIENT_ID = '__current_client_id__';

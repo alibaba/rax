@@ -1,10 +1,20 @@
 /* expose host global object for JSC Worker */
-import { getPluginPart } from 'miniapp-framework-shared/src/worker/plugin';
-import global from '../global';
+import { global, worker } from 'miniapp-framework-shared';
+import regeneratorRuntime from 'regenerator-runtime';
 
+const getPluginPart = worker.plugin.getPluginPart;
 const MODULE_API = '__WINDMILL_MODULE_API__';
 const moduleAPI = global[MODULE_API];
-// Generate my api instance.
+
+/**
+ * Compatible with regenerator runtime to support async-await.
+ * TODO: deperate reference at runtime.
+ */
+export { regeneratorRuntime };
+
+/**
+ * Generate my api instance.
+ */
 export const { my } = moduleAPI.getAPIs();
 
 /**

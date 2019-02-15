@@ -1,8 +1,7 @@
 import createDriverWorker from 'driver-worker';
-import { worker, debug, log } from 'miniapp-framework-shared';
-import global from './global';
+import { worker, global, debug, log } from 'miniapp-framework-shared';
 import polyfillES from 'miniapp-framework-shared/src/polyfill';
-import setupWorker from './setupWorker';
+import setupRuntime from './runtime';
 import { createRax, applyFactory } from './utils';
 
 const { getPage, getUnknownPageFactory } = worker.pageHub;
@@ -19,7 +18,7 @@ let appWorker;
  * AppWorker entry.
  */
 try {
-  appWorker = setupWorker();
+  appWorker = setupRuntime();
   debug('Worker Successfully setup!');
 } catch (err) {
   log('Error: Setup worker with error.');
@@ -27,50 +26,88 @@ try {
 }
 
 /**
- * Create a page instance when renderer is ready.
- * If some client is ready, mark clientReadyState's key to clientId, value to true.
- *
- * clientReadyState: {
- *   [clientId]: undefined/true
- * }
- *
- * pendingMessages: {
- *   [clientId]: undefined/[function]
- * }
+ * Render timing control.
  */
-const clientReadyEvent = 'r$';
+const EVENT_BEFORE_PAGE_CREATE = 'beforePageCreate';
+const EVENT_PRERENDER_READY = 'renderReady';
+const EVENT_CLIENT_READY = 'r$';
+const EVENT_COMPATIBLE_WORKER_READY = 'r#';
+const EVENT_RENDER_TO_WORKER = 'r2w';
+const EVENT_WORKER_TO_RENDER = 'w2r';
+/**
+ * Mark client is ready to revice message.
+ * @type {{clientId: Boolean}}
+ */
 const clientReadyState = {};
+/**
+ * Store pending messages
+ * @type {{clientId: [Function]}}
+ */
 const pendingMessages = {};
+
+appWorker.$on(EVENT_CLIENT_READY, handleClientReady);
+appWorker.$on(EVENT_PRERENDER_READY, handleClientReady);
+appWorker.$on(EVENT_BEFORE_PAGE_CREATE, handleBeforePageCreate);
+appWorker.$on(EVENT_RENDER_TO_WORKER, handleRenderToWorker);
+
+/**
+ * Time to send message, if message is ready before moment,
+ * messages are pending to send here.
+ */
 function handleClientReady(event) {
-  const { origin: clientId } = event;
+  const { origin: clientId, data = {} } = event;
+
+  /**
+   * @Note: Compatible to old render timing procedure,
+   * must emit a r# event to make DOM listeners start working.
+   */
+  appWorker.$emit(EVENT_COMPATIBLE_WORKER_READY, { clientId }, clientId);
+
   if (!clientReadyState[clientId]) {
     clientReadyState[clientId] = true;
     if (Array.isArray(pendingMessages[clientId])) {
       let fn;
-      while (fn = pendingMessages[clientId].shift()) {
-        fn();
-      }
+      while (fn = pendingMessages[clientId].shift()) fn();
     }
+  } else {
+    // In case of renderer page refresh
+    const { pageQuery, pageName } = data;
+    renderPage(pageName, clientId, pageQuery);
   }
 }
-appWorker.$on(clientReadyEvent, handleClientReady);
 
-const EVENT_BEFORE_PAGE_CREATE = 'beforePageCreate';
-const EVENT_RENDER_TO_WORKER = 'r2w';
-const EVENT_WORKER_TO_RENDER = 'w2r';
-appWorker.$on(EVENT_BEFORE_PAGE_CREATE, handleBeforePageCreate);
-appWorker.$on(EVENT_RENDER_TO_WORKER, handleRenderToWorker);
+/**
+ * Trigger render page at the same time of
+ * client(webview) start init.
+ */
 function handleBeforePageCreate(event) {
+  const { data = {}, origin: clientId } = event;
+  const { pageName, pageQuery } = data;
+  renderPage(pageName, clientId, pageQuery);
+}
+
+/**
+ * Receive message from render to worker.
+ */
+function handleRenderToWorker(event) {
   const { data, origin: clientId } = event;
-  const { pageName } = data;
+  emitToClient(clientId, 'message', data);
+}
 
+/**
+ * Start worker rendering.
+ * @param pageName {String}
+ * @param clientId {String}
+ * @param pageQuery {Object|null}
+ */
+function renderPage(pageName, clientId, pageQuery = {}) {
   debug('Start render page in worker, clientId: %s, pageName: %s', clientId, pageName);
-
-  // todo with native: add pageQuery to data.
   const rax = createRax();
 
-  function postMessage (message) {
-    const payload = { data: message };
+  // Make sure messages are arrived in order.
+  let order = 0;
+  function postMessage(message) {
+    const payload = { data: message, order: order++ };
     if (clientReadyState[clientId]) {
       appWorker.$emit(EVENT_WORKER_TO_RENDER, payload, clientId);
     } else {
@@ -86,89 +123,35 @@ function handleBeforePageCreate(event) {
   const driver = createDriverWorker({ postMessage, addEventListener });
   const { document, evaluator } = driver;
   const { factory } = getPage(pageName, rax);
-  const PageComponent = applyFactory(factory, {
-    clientId,
-    pageName,
-    raxInstance: rax,
-    pageQuery: {},
-    document,
-    evaluator,
-  });
+
+  let PageComponent;
+  // Try to instansition page.
+  try {
+    PageComponent = applyFactory(factory, {
+      clientId,
+      pageName,
+      raxInstance: rax,
+      pageQuery,
+      document,
+      evaluator,
+    });
+  } catch (err) {
+    /**
+     * In case of user code throw errors,
+     * or page is not defined.
+     */
+    PageComponent = applyFactory(
+      getUnknownPageFactory(
+        rax,
+        { message: `${err.message}` }
+      )
+    );
+  }
+
   rax.render(rax.createElement(PageComponent), null, {
     driver,
   });
 }
-function handleRenderToWorker(event) {
-  const { data, origin: clientId } = event;
-
-  emitToClient(clientId, 'message', data);
-}
-
-/**
- * Handle renderer ready event.
- * @param event
- */
-// function onRendererReady(event) {
-//   let { origin: clientId } = event;
-//   if (process.env.NODE_ENV !== 'production') {
-//     debug(`renderer ready ${JSON.stringify(event)}`);
-//   }
-//   let { pageName, pageQuery } = event.data;
-//   clientId = decodeURIComponent(clientId);
-//   pageName = decodeURIComponent(pageName);
-//
-//   if (!clientId) {
-//     error(`can not get clientId ${clientId}`);
-//   }
-//
-//   const raxInstance = createRax();
-//   const { createElement, render } = raxInstance;
-//   const { factory } = getPage(pageName, raxInstance);
-//
-//   const driver = createDriver({
-//     postMessage(message) {
-//       appWorker.$emit('w2r', { data: message }, clientId);
-//     },
-//     addEventListener(evtName, callback) {
-//       clientOn(clientId, evtName, callback);
-//     },
-//   });
-//   const { document, evaluator } = driver;
-//
-//   let component;
-//   try {
-//     component = applyFactory(factory, {
-//       clientId,
-//       pageName,
-//       raxInstance,
-//       pageQuery,
-//       document,
-//       evaluator,
-//     });
-//   } catch (err) {
-//     component = applyFactory(
-//       getUnknownPageFactory(raxInstance, {
-//         message: `${err.message}`,
-//       })
-//     );
-//   }
-//
-//   addClient(clientId, {
-//     createElement,
-//     render,
-//     component,
-//     driver,
-//   });
-//
-//   if (process.env.NODE_ENV !== 'production') {
-//     debug('Emit renderer-init');
-//   }
-//
-//   /**
-//    * Tell worker to render dom.
-//    */
-//   appWorker.$emit('r#', { clientId }, clientId);
-// }
 
 export { appWorker };
 export function getAppWorker() {

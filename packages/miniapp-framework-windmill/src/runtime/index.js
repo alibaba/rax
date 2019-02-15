@@ -1,17 +1,16 @@
 import { debug, global } from 'miniapp-framework-shared';
-import * as AppRuntimeGlobal from './AppRuntime/global';
-import * as PluginRuntimeGlobal from './PluginRuntime/global';
+import * as AppRuntimeGlobal from './app';
+import * as PluginRuntimeGlobal from './plugin';
 
 const REGISTER_DSL = '__REGISTER_DSL_FRAMEWORK_IN_WORKER__';
+const WORKER_INSTANCE = '__WINDMILL_INSTANCE__';
 const registerDSL = global[REGISTER_DSL];
 
 /**
- * Setup AppWorker
+ * Setup AppWorker.
  */
-export default function setupWorker() {
-  if (process.env.NODE_ENV !== 'production') {
-    debug('Setup MiniApp framework in worker.');
-  }
+export default function setupRuntime() {
+  debug('Setup MiniApp Framework Worker Runtime.');
 
   /*
    * Setup Windmill Runtime.
@@ -26,5 +25,6 @@ export default function setupWorker() {
     },
   });
 
+  global[WORKER_INSTANCE] = appWorker;
   return appWorker;
 }

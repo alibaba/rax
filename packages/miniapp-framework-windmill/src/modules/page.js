@@ -1,6 +1,6 @@
-import { appWorker } from './index';
-import { worker } from 'miniapp-framework-shared';
+import { worker, global } from 'miniapp-framework-shared';
 
+const WORKER_INSTANCE = '__WINDMILL_INSTANCE__';
 const PAGE_LIFECYCLES = {
   load: 'page:load',
   ready: 'page:ready',
@@ -8,10 +8,6 @@ const PAGE_LIFECYCLES = {
   hide: 'page:hide',
   unload: 'page:unload',
 };
-
-function normalizeEventName(evtName, clientId) {
-  return `page@${clientId}:${evtName}`;
-}
 
 const cache = {};
 export const registerPage = worker.pageHub.register;
@@ -21,11 +17,12 @@ export function createPage(clientId) {
     cache[clientId] ||
     (cache[clientId] = {
       on(evtName, callback) {
+        const runtime = global[WORKER_INSTANCE];
         if (PAGE_LIFECYCLES[evtName]) {
           const event = normalizeEventName(evtName, clientId);
-          appWorker.$cycle(event, callback);
+          runtime.$cycle(event, callback);
         } else {
-          appWorker.$on(evtName, function realCallback(data) {
+          runtime.$on(evtName, function realCallback(data) {
             if (data && data.origin === clientId) {
               callback(data);
               callback.realCallback = realCallback;
@@ -34,11 +31,12 @@ export function createPage(clientId) {
         }
       },
       off(evtName, callback) {
+        const runtime = global[WORKER_INSTANCE];
         if (PAGE_LIFECYCLES[evtName]) {
           const event = normalizeEventName(evtName, clientId);
-          appWorker.$decycle(event, callback);
+          runtime.$decycle(event, callback);
         } else {
-          appWorker.$off(
+          runtime.$off(
             evtName,
             callback && callback.realCallback
               ? callback.realCallback
@@ -51,3 +49,6 @@ export function createPage(clientId) {
   );
 }
 
+function normalizeEventName(evtName, clientId) {
+  return `page@${clientId}:${evtName}`;
+}

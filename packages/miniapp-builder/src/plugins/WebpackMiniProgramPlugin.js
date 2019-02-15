@@ -21,7 +21,6 @@ const POLYFILL_CODE = [
 const SCHEMA_VAR = '__SCHEMA_MOCK_DATA__';
 
 module.exports = class WebpackMiniAppPlugin {
-
   /**
    * WebpackMiniAppPlugin
    * @param {Boolean} options.injectSchemaMock Try to inject schema mock data.

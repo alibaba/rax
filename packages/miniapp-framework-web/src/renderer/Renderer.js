@@ -19,7 +19,7 @@ export default class WebRenderer {
     worker.onModuleAPIEvent = this.onModuleAPIEvent;
   }
 
-  onModuleAPIEvent({ data: payload })  {
+  onModuleAPIEvent({ data: payload }) {
     const { type, data } = payload;
     switch (type) {
       case 'pageScrollTo': {
