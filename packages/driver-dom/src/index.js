@@ -140,7 +140,7 @@ export function insertAfter(node, after, parent) {
   parent = parent || after.parentNode;
   const nextSibling = after.nextSibling;
   if (nextSibling) {
-    // Performance improve when node has been existed before nextSibing
+    // Performance improve when node has been existed before nextSibling
     if (nextSibling !== node) {
       parent.insertBefore(node, nextSibling);
     }
