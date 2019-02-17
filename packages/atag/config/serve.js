@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import chalk from 'chalk';
 import mime from 'mime';
 import opener from 'opener';
+import address from 'address';
 
 const TEMPLATE_PATH = resolve('tests/template.html');
 let server;
@@ -110,6 +111,7 @@ function readFileFromContentBase(contentBase, urlPath, callback) {
           .toString()
           // HTML test fixture code.
           .replace(/@TEST_FIXTURE/g, readFileSync(filePath))
+          .replace(/@SERVER_IP/g, address.ip())
           // Dev server port.
           .replace(/@SERVER_PORT/g, server.port);
       } catch (err) {
