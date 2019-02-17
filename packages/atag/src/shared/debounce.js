@@ -1,13 +1,21 @@
 import isObject from './isObject';
 import toNumber from './toNumber';
 
+/**
+ * Get current timestamp.
+ */
 const now = () => Date.now();
-/** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max,
-  nativeMin = Math.min;
+/**
+ * Error message constants.
+ */
+const FUNC_ERROR_TEXT = 'Expected a function';
+
+/**
+ * Built-in method references for those with the same name as other `lodash` methods.
+ */
+const nativeMax = Math.max;
+const nativeMin = Math.min;
 
 /**
  * Creates a debounced function that delays invoking `func` until after `wait`
@@ -28,12 +36,8 @@ var nativeMax = Math.max,
  * until to the next tick, similar to `setTimeout` with a timeout of `0`.
  *
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
- * for details over the differences between `_.debounce` and `_.throttle`.
+ * for details over the differences between `debounce` and `throttle`.
  *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Function
  * @param {Function} func The function to debounce.
  * @param {number} [wait=0] The number of milliseconds to delay.
  * @param {Object} [options={}] The options object.
@@ -44,27 +48,9 @@ var nativeMax = Math.max,
  * @param {boolean} [options.trailing=true]
  *  Specify invoking on the trailing edge of the timeout.
  * @returns {Function} Returns the new debounced function.
- * @example
- *
- * // Avoid costly calculations while the window size is in flux.
- * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
- *
- * // Invoke `sendMail` when clicked, debouncing subsequent calls.
- * jQuery(element).on('click', _.debounce(sendMail, 300, {
- *   'leading': true,
- *   'trailing': false
- * }));
- *
- * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
- * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
- * var source = new EventSource('/stream');
- * jQuery(source).on('message', debounced);
- *
- * // Cancel the trailing debounced invocation.
- * jQuery(window).on('popstate', debounced.cancel);
  */
 export default function debounce(func, wait, options) {
-  var lastArgs,
+  let lastArgs,
     lastThis,
     maxWait,
     result,
@@ -87,8 +73,8 @@ export default function debounce(func, wait, options) {
   }
 
   function invokeFunc(time) {
-    var args = lastArgs,
-      thisArg = lastThis;
+    let args = lastArgs;
+    let thisArg = lastThis;
 
     lastArgs = lastThis = undefined;
     lastInvokeTime = time;
@@ -106,9 +92,9 @@ export default function debounce(func, wait, options) {
   }
 
   function remainingWait(time) {
-    var timeSinceLastCall = time - lastCallTime,
-      timeSinceLastInvoke = time - lastInvokeTime,
-      timeWaiting = wait - timeSinceLastCall;
+    let timeSinceLastCall = time - lastCallTime;
+    let timeSinceLastInvoke = time - lastInvokeTime;
+    let timeWaiting = wait - timeSinceLastCall;
 
     return maxing
       ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
@@ -116,8 +102,8 @@ export default function debounce(func, wait, options) {
   }
 
   function shouldInvoke(time) {
-    var timeSinceLastCall = time - lastCallTime,
-      timeSinceLastInvoke = time - lastInvokeTime;
+    let timeSinceLastCall = time - lastCallTime;
+    let timeSinceLastInvoke = time - lastInvokeTime;
 
     // Either this is the first call, activity has stopped and we're at the
     // trailing edge, the system time has gone backwards and we're treating
@@ -127,7 +113,7 @@ export default function debounce(func, wait, options) {
   }
 
   function timerExpired() {
-    var time = now();
+    let time = now();
     if (shouldInvoke(time)) {
       return trailingEdge(time);
     }
@@ -160,8 +146,8 @@ export default function debounce(func, wait, options) {
   }
 
   function debounced() {
-    var time = now(),
-      isInvoking = shouldInvoke(time);
+    let time = now();
+    let isInvoking = shouldInvoke(time);
 
     lastArgs = arguments;
     lastThis = this;

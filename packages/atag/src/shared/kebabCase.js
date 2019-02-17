@@ -1,3 +1,8 @@
+/**
+ * Convert string to kebeb cased.
+ * @param string {String} The input string.
+ * @return {String} Kebab cased string.
+ */
 export default function kebabCase(string) {
   let kebab = '';
   for (let i = 0, l = string.length; i < l; i++) {
