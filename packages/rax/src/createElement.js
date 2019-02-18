@@ -34,7 +34,7 @@ export default function createElement(type, config, children) {
     key = config.key === undefined ? null : String(config.key);
 
     if (typeof ref === 'string' && !component) {
-      throw Error('createElement: adding a string ref outside the component’s render() method.');
+      console.warn('createElement: adding a string ref outside the component’s render() method.');
     }
 
     // Remaining properties are added to a new props object
