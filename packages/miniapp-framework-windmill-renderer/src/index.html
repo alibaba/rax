@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta id="viewport" name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <style>
+    html {
+      font-family: -apple-system, PingFang SC, Helvetica Neue, sans-serif;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      height: 100%;
+      /* HACK: >= iOS 11 make body at least 100vh height to avoid tap highlight */
+      min-height: 100vh;
+    }
+
+    /*
+     * Correct the page font-size
+     */
+    body {
+      font-size: 16px;
+    }
+
+    /**
+     * Unknown html element is inline by default, normalize to block;
+     */
+    a-page {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="https://g.alicdn.com/code/npm/@webcomponents/webcomponentsjs/2.0.4/bundles/webcomponents-sd-ce-pf.js"></script>
+  <script src="https://g.alicdn.com/mtb/lib-windvane/3.0.0/windvane.js"></script>
+
+  <%= injectScripts %>
+</body>
+</html>
