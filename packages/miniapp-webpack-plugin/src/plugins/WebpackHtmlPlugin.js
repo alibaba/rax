@@ -42,7 +42,7 @@ module.exports = class WebpackHtmlPlugin {
       const webpackPublicPath = compilation.mainTemplate.getPublicPath({hash: compilationHash});
       const publicPath = webpackPublicPath.trim() !== '' ? webpackPublicPath : '/';
 
-      appConfig.h5Assets = `${publicPath}app.${target}.js`;
+      appConfig.h5Assets = `${publicPath}app.js`;
 
       const hasExternalApi = target === 'web' && appConfig.externalApi;
       const externalApiScript = hasExternalApi ? `<script src="${publicPath}api.js"></script>` : '';

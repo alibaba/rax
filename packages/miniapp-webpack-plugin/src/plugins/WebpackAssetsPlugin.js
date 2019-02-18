@@ -39,14 +39,6 @@ module.exports = class WebpackAssetsPlugin {
 
         // polyfill global context
         args.unshift(new ConcatSource(globalPolyfills.join('')));
-        args.unshift(ConcatSource);
-
-        const app = new (ConcatSource.bind.apply(ConcatSource, args))();
-
-        // 增加 app.js
-        // wrapper for app.js
-        compilation.assets['app.js'] = app;
-        global.AppJSContent = app.source();
 
         let injectSchemaMockData;
         const mockDataPath = join(compiler.context, 'schema/mock-data.json');
@@ -66,12 +58,21 @@ module.exports = class WebpackAssetsPlugin {
           }
         }
 
-        compilation.assets[`app.${this.target}.js`] = new ConcatSource(
-          webRegisterWrapper[0],
-          app,
-          injectSchemaMockData ? injectSchemaMockData : '',
-          webRegisterWrapper[1]
-        );
+        if (injectSchemaMockData) {
+          args.unshift(injectSchemaMockData);
+        }
+
+        args.unshift(ConcatSource); // firstArg for apply
+        const app = new (ConcatSource.bind.apply(ConcatSource, args))();
+        compilation.assets['app.js'] = app;
+        global.AppJSContent = app.source();
+
+        // compilation.assets[`app.${this.target}.js`] = new ConcatSource(
+        //   webRegisterWrapper[0],
+        //   app,
+        //   injectSchemaMockData ? injectSchemaMockData : '',
+        //   webRegisterWrapper[1]
+        // );
       });
     });
   }

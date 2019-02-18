@@ -1,13 +1,11 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <meta id="viewport" name="viewport"  content="width=device-width" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="format-detection" content="telephone=no">
-  <title>MiniApp Example in IDE</title>
   <style>
     html {
       -ms-text-size-adjust: 100%;
@@ -24,7 +22,6 @@
       bottom: 0;
       left: 0;
       right: 0;
-      margin: 0;
     }
 
     a img {
@@ -135,38 +132,9 @@
 </head>
 
 <body>
-  <div id="headerBar">
-    <div class="headerInfo">
-      <div id="prev" style="width: 26vw;">
-        <img src="https://gw.alicdn.com/tfs/TB1cNCCqTtYBeNjy1XdXXXXyVXa-38-66.png" style="width: 2.5vw; margin-top: 1.5vw;" />
-      </div>
-      <div class="title"></div>
-
-      <div style="width: 26vw;"></div>
-    </div>
-  </div>
-  <div id="main"></div>
-  <div id="tabBar">
-    <template id="tabBarItemTemplate">
-      <div class="tabbarItem" id="tabbar-page-$3" data-page-name="$3">
-        <img src="$1" class="icon" aria-hidden="true" />
-        <div class="tabbar-item-text">$2</div>
-      </div>
-    </template>
-  </div>
-  <%- externalApi %>
-
-  <% if (isDebug) { %>
-  <script src="https://g.alicdn.com/code/npm/??atag/<%= atagVersion %>/dist/atag.js"></script>
-  <script src="<%= debugFrameworkURL %>?random=<%= Math.random() %>"></script>
-  <% } else { %>
-  <script src="https://g.alicdn.com/code/npm/atag/<%= atagVersion %>/dist/atag.js"></script>
-  <script src="https://g.alicdn.com/code/npm/miniapp-framework-web/<%= frameworkVersion %>/dist/miniapp-framework-web.min.js"></script>
-  <% } %>
-
-  <script>
-    new MiniApp(<%- appConfig %>, document.body);
-  </script>
+  <%= externalApi %>
+  <%= injectScripts %>
+  <script><%= miniappBootstrap %></script>
 </body>
 
 </html>
