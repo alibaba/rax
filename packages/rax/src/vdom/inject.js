@@ -8,11 +8,11 @@ import Hook from '../debug/hook';
 
 export default function inject({ driver, measurer }) {
   // Inject component class
-  Host.EmptyComponent = EmptyComponent;
-  Host.NativeComponent = NativeComponent;
-  Host.TextComponent = TextComponent;
-  Host.FragmentComponent = FragmentComponent;
-  Host.CompositeComponent = CompositeComponent;
+  Host.Empty = EmptyComponent;
+  Host.Native = NativeComponent;
+  Host.Text = TextComponent;
+  Host.Fragment = FragmentComponent;
+  Host.Composite = CompositeComponent;
 
   // Inject render driver
   Host.driver = driver || Host.driver;

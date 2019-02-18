@@ -4,18 +4,18 @@ function instantiateComponent(element) {
   let instance;
 
   if (element === undefined || element === null || element === false || element === true) {
-    instance = new Host.EmptyComponent();
+    instance = new Host.Empty();
   } else if (Array.isArray(element)) {
-    instance = new Host.FragmentComponent(element);
+    instance = new Host.Fragment(element);
   } else if (typeof element === 'object' && element.type) {
     // Special case string values
     if (typeof element.type === 'string') {
-      instance = new Host.NativeComponent(element);
+      instance = new Host.Native(element);
     } else {
-      instance = new Host.CompositeComponent(element);
+      instance = new Host.Composite(element);
     }
   } else if (typeof element === 'string' || typeof element === 'number') {
-    instance = new Host.TextComponent(element);
+    instance = new Host.Text(element);
   } else {
     throwInvalidComponentError(element);
   }

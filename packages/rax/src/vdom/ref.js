@@ -17,7 +17,7 @@ export default {
   },
   attach(ownerComponent, ref, component) {
     if (!ownerComponent) {
-      throw Error('Multiple (conflicting) copies of Rax loaded.');
+      throw Error('Multiple version of Rax used in project.');
     }
 
     let instance = component.getPublicInstance();
