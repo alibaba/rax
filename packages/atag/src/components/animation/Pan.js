@@ -98,8 +98,7 @@ export default class Pan {
   onTouchEnd = (e) => {
     e.deltaX = this.deltaX;
     e.deltaY = this.deltaY;
-    this.panStartX = null;
-    this.panStartY = null;
+    this.reset();
     this.events.panend.forEach((handler) => {
       handler(e);
     });
@@ -108,8 +107,7 @@ export default class Pan {
   onTouchCancel = (e) => {
     e.deltaX = this.deltaX;
     e.deltaY = this.deltaY;
-    this.panStartX = null;
-    this.panStartY = null;
+    this.reset();
     this.events.pancancel.forEach((handler) => {
       handler(e);
     });
@@ -118,6 +116,13 @@ export default class Pan {
   on(fn, handler) {
     if (!this.events[fn]) return;
     this.events[fn].push(handler);
+  }
+
+  reset() {
+    this.panStartX = null;
+    this.panStartY = null;
+    this.deltaX = 0;
+    this.deltaY = 0;
   }
 
   destroy() {
