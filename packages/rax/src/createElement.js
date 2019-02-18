@@ -27,10 +27,16 @@ export default function createElement(type, config, children) {
   let propName;
   let key = null;
   let ref = null;
+  const component = Host.component;
 
   if (config != null) {
     ref = config.ref === undefined ? null : config.ref;
     key = config.key === undefined ? null : String(config.key);
+
+    if (typeof ref === 'string' && !component) {
+      throw Error('createElement: adding a string ref outside the component’s render() method.');
+    }
+
     // Remaining properties are added to a new props object
     for (propName in config) {
       if (!RESERVED_PROPS[propName]) {
@@ -71,7 +77,7 @@ export default function createElement(type, config, children) {
     key,
     ref,
     props,
-    Host.component
+    component
   );
 }
 

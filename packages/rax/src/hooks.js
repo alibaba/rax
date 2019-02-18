@@ -6,7 +6,7 @@ function getCurrentRenderingInstance() {
   if (currentInstance) {
     return currentInstance;
   } else {
-    throw new Error('Hooks can only be called inside a component.');
+    throw Error('Hooks can only be called inside a component.');
   }
 }
 

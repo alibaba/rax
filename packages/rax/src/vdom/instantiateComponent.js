@@ -17,12 +17,16 @@ function instantiateComponent(element) {
   } else if (typeof element === 'string' || typeof element === 'number') {
     instance = new Host.TextComponent(element);
   } else {
-    throw new Error(`Invalid element type: ${element}. (current: ${typeof element === 'object' && Object.keys(element) || typeof element})`);
+    throwInvalidComponentError(element);
   }
 
   instance._mountIndex = 0;
 
   return instance;
+}
+
+export function throwInvalidComponentError(element) {
+  throw Error(`Invalid element type: ${element}. (current: ${typeof element === 'object' && Object.keys(element) || typeof element})`);
 }
 
 export default instantiateComponent;
