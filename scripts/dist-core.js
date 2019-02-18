@@ -68,5 +68,5 @@ build('driver-dom', 'DriverDOM', true);
 
 build('driver-worker', 'DriverWorker');
 build('driver-worker', 'DriverWorker', true);
-build('driver-worker-renderer-webview', 'DriverWorkerRendererWebview');
-build('driver-worker-renderer-webview', 'DriverWorkerRendererWebview', true);
+build('renderer-worker', 'RendererWorker');
+build('renderer-worker', 'RendererWorker', true);

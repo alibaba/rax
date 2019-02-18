@@ -1,9 +1,9 @@
 {
-  "name": "driver-worker-renderer-webview",
+  "name": "renderer-worker",
   "version": "1.0.0",
-  "description": "Worker driver renderer webview.",
+  "description": "Web renderer for worker.",
   "license": "BSD-3-Clause",
-  "main": "dist/driver-worker-renderer-webview.min.js",
+  "main": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
