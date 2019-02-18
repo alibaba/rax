@@ -6,97 +6,97 @@ const RaxPlugin = require('rax-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const babelOptions = require('../babel.config')();
 
-// dist(getConfig(
-//   {
-//     'shared.function': './packages/runtime-shared/src/index.js',
-//   },
-//   {
-//     path: './packages/runtime-shared/dist/',
-//     filename: '[name].js',
-//     pathinfo: false,
-//   },
-//   {
-//     // Empty
-//   },
-//   {
-//     presets: ['@babel/preset-env']
-//   },
-//   null,
-//   'hidden-source-map'
-// ));
-//
-// dist(getConfig(
-//   {
-//     'framework.web': './packages/web-rax-framework/src/index.js',
-//     'framework.web.min': './packages/web-rax-framework/src/index.js'
-//   },
-//   {
-//     path: './packages/web-rax-framework/dist/',
-//     filename: '[name].js',
-//     sourceMapFilename: '[name].map',
-//     pathinfo: false,
-//   },
-//   {
-//     target: 'bundle',
-//     bundle: null,
-//     frameworkComment: '',
-//   },
-//   babelOptions
-// ));
-//
-// dist(getConfig(
-//   {
-//     'framework.weex': './packages/weex-rax-framework/src/index.js'
-//   },
-//   {
-//     path: './packages/weex-rax-framework/dist/',
-//     filename: '[name].js',
-//     sourceMapFilename: '[name].map',
-//     pathinfo: true,
-//   },
-//   {
-//     target: 'module'
-//   },
-//   babelOptions
-// ));
-//
-// dist(getConfig(
-//   {
-//     'api.weex': './packages/weex-rax-framework-api/src/index.js'
-//   },
-//   {
-//     path: './packages/weex-rax-framework-api/dist/',
-//     filename: '[name].js',
-//     sourceMapFilename: '[name].map',
-//     pathinfo: true,
-//   },
-//   {
-//     target: 'module'
-//   },
-//   babelOptions
-// ));
-//
-// dist(getConfig(
-//   {
-//     'driver.worker': './packages/driver-worker/src/index.js',
-//     'driver.worker.min': './packages/driver-worker/src/index.js',
-//     'driver.worker.renderer': './packages/driver-worker/src/renderer/index.js',
-//     'driver.worker.renderer.min': './packages/driver-worker/src/renderer/index.js',
-//   },
-//   {
-//     path: './packages/driver-worker/dist/',
-//     filename: '[name].js',
-//     sourceMapFilename: '[name].map',
-//     pathinfo: false,
-//   },
-//   {
-//     // target: 'bundle',
-//     bundle: null,
-//     frameworkComment: '',
-//     libraryTarget: 'umd',
-//   },
-//   babelOptions
-// ));
+dist(getConfig(
+  {
+    'shared.function': './packages/runtime-shared/src/index.js',
+  },
+  {
+    path: './packages/runtime-shared/dist/',
+    filename: '[name].js',
+    pathinfo: false,
+  },
+  {
+    // Empty
+  },
+  {
+    presets: ['@babel/preset-env']
+  },
+  null,
+  'hidden-source-map'
+));
+
+dist(getConfig(
+  {
+    'framework.web': './packages/web-rax-framework/src/index.js',
+    'framework.web.min': './packages/web-rax-framework/src/index.js'
+  },
+  {
+    path: './packages/web-rax-framework/dist/',
+    filename: '[name].js',
+    sourceMapFilename: '[name].map',
+    pathinfo: false,
+  },
+  {
+    target: 'bundle',
+    bundle: null,
+    frameworkComment: '',
+  },
+  babelOptions
+));
+
+dist(getConfig(
+  {
+    'framework.weex': './packages/weex-rax-framework/src/index.js'
+  },
+  {
+    path: './packages/weex-rax-framework/dist/',
+    filename: '[name].js',
+    sourceMapFilename: '[name].map',
+    pathinfo: true,
+  },
+  {
+    target: 'module'
+  },
+  babelOptions
+));
+
+dist(getConfig(
+  {
+    'api.weex': './packages/weex-rax-framework-api/src/index.js'
+  },
+  {
+    path: './packages/weex-rax-framework-api/dist/',
+    filename: '[name].js',
+    sourceMapFilename: '[name].map',
+    pathinfo: true,
+  },
+  {
+    target: 'module'
+  },
+  babelOptions
+));
+
+dist(getConfig(
+  {
+    'driver.worker': './packages/driver-worker/src/index.js',
+    'driver.worker.min': './packages/driver-worker/src/index.js',
+    'driver.worker.renderer': './packages/driver-worker/src/renderer/index.js',
+    'driver.worker.renderer.min': './packages/driver-worker/src/renderer/index.js',
+  },
+  {
+    path: './packages/driver-worker/dist/',
+    filename: '[name].js',
+    sourceMapFilename: '[name].map',
+    pathinfo: false,
+  },
+  {
+    // target: 'bundle',
+    bundle: null,
+    frameworkComment: '',
+    libraryTarget: 'umd',
+  },
+  babelOptions
+));
 
 dist(getConfig(
   {
