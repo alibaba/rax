@@ -11,6 +11,14 @@ const {
   styleResolver
 } = require('miniapp-webpack-plugin');
 
+// Babel plugin to add the opportunity to use import and require with root based paths.
+babelConfig.plugins.push([
+  require.resolve('babel-plugin-root-import'),
+  {
+    rootPathPrefix: '/',
+  },
+]);
+
 const babelLoaderConfig = {
   loader: require.resolve('babel-loader'),
   options: babelConfig,

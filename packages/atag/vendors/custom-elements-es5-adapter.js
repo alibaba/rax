@@ -1,5 +1,5 @@
 /**
- @license @nocompile
+ @license
  Copyright (c) 2018 The Polymer Project Authors. All rights reserved.
  This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
  The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
@@ -10,7 +10,7 @@
 (function() {
   if (
     // No Reflect, no classes, no need for shim because native custom elements
-  // require ES2015 classes or Reflect.
+    // require ES2015 classes or Reflect.
     window.Reflect === undefined ||
     window.customElements === undefined ||
     // The webcomponentsjs custom elements polyfill doesn't require

@@ -140,7 +140,10 @@ export function insertAfter(node, after, parent) {
   parent = parent || after.parentNode;
   const nextSibling = after.nextSibling;
   if (nextSibling) {
-    parent.insertBefore(node, nextSibling);
+    // Performance improve when node has been existed before nextSibling
+    if (nextSibling !== node) {
+      parent.insertBefore(node, nextSibling);
+    }
   } else {
     parent.appendChild(node);
   }
@@ -165,10 +168,6 @@ export function removeEventListener(node, eventName, eventHandler, props) {
   } else {
     return node.removeEventListener(eventName, eventHandler);
   }
-}
-
-export function removeAllEventListeners(node) {
-  // noop
 }
 
 export function removeAttribute(node, propKey) {

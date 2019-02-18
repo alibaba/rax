@@ -1,5 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import playIcon from './images/play.svg';
 
 export default class Audio extends PolymerElement {
   static get is() {
@@ -50,11 +49,6 @@ export default class Audio extends PolymerElement {
 
   ready() {
     super.ready();
-
-    /**
-     * Initial play icon inline url
-     */
-    this.$.playIcon.src = playIcon;
 
     if (this.autoplay) this.play();
   }
@@ -235,7 +229,9 @@ export default class Audio extends PolymerElement {
     <div class="audio-container">
       <div class="audio-thumb" id="thumb">
         <div class="audio-thumb-img" style="background-image: url([[poster]]);"></div>
-        <img class="audio-play" id="playIcon" />
+        <div class="audio-play" id="playIcon">
+          <svg viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><circle id="b" cx="30" cy="30" r="30"/><filter x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" id="a"><feOffset in="SourceAlpha" result="shadowOffsetOuter1"/><feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1"/><feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" in="shadowBlurOuter1"/></filter></defs><g fill="none" fill-rule="evenodd"><g fill="#000" transform="translate(8 8)"><use filter="url(#a)" xlink:href="#b"/><circle stroke="#FFF" stroke-width="3" stroke-linejoin="square" fill-opacity=".2" cx="30" cy="30" r="28.5"/></g><path d="M46.093 40.572l-10.216 6.13a3 3 0 0 1-4.544-2.572V31.87a3 3 0 0 1 4.544-2.572l10.216 6.13a3 3 0 0 1 0 5.144z" fill="#FFF"/></g></svg>
+        </div>
       </div>
       <div class="audio-content">
         <div class="audio-name">{{name}}</div>

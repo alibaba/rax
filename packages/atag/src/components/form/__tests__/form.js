@@ -22,8 +22,7 @@ describe('form', () => {
     await page.click('#input');
     await page.keyboard.sendCharacter('hello world');
     await page.click('#submit');
-
-    const submitEventDetail = await page.evaluate('__submit_event_detail__');
+    const submitEventDetail = await page.evaluate('window.__submit_event_detail__');
     expect(submitEventDetail).toMatchSnapshot();
   });
 
@@ -38,7 +37,7 @@ describe('form', () => {
     expect(await page.evaluate('__reset_event__')).toEqual(true);
 
     await page.click('#submit');
-    const submitEventDetail = await page.evaluate('__submit_event_detail__');
+    const submitEventDetail = await page.evaluate('window.__submit_event_detail__');
     expect(submitEventDetail).toMatchSnapshot();
   });
 });
