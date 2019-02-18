@@ -60,7 +60,6 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     for (let i = 0, l = cssTexts.length; i < l; i++) {
       if (typeof cssTexts[i] === 'object') {
         const cssTextNode = document.createTextNode(cssTexts[i].toString());
-        console.log(cssTextNode.data);
         const styleNode = document.createElement('style');
         styleNode.appendChild(cssTextNode);
         document.body.appendChild(styleNode);
