@@ -38,13 +38,10 @@
     "lerna": "2.0.0",
     "minimatch": "^3.0.4",
     "minimist": "^1.2.0",
-    "raw-loader": "^1.0.0",
     "rax-webpack-plugin": "^0.6.5",
     "rimraf": "^2.6.2",
     "rollup": "^1.1.2",
     "rollup-plugin-babel": "^4.3.2",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-filesize": "^6.0.1",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-replace": "^2.1.0",
     "rollup-plugin-uglify": "^6.0.2",
@@ -52,8 +49,7 @@
     "stylesheet-loader": "^0.6.5",
     "uglifyjs-webpack-plugin": "^2.0.1",
     "uppercamelcase": "^3.0.0",
-    "webpack": "^4.27.1",
-    "worker-loader": "^2.0.0"
+    "webpack": "^4.27.1"
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
