@@ -30,13 +30,14 @@ export default class Form extends PolymerElement {
     const form = this;
     const formFields = form.querySelectorAll('[name]');
     const value = Object.create(null);
-    [...formFields].forEach(node => {
+    for (let i = 0, l = formFields.length; i < l; i++) {
+      const node = formFields[i];
       const name = node.getAttribute('name');
       switch (node.localName) {
         case 'a-checkbox-group':
-          const arr = [...node.querySelectorAll('a-checkbox')].filter(
-            checkbox => checkbox.checked
-          );
+          const checkboxes = node.querySelectorAll('a-checkbox');
+          const arr = Array.prototype
+            .filter.call(checkboxes, checkbox => checkbox.checked);
           value[name] = arr.map(checkbox => checkbox.value);
           break;
         case 'a-switch':
@@ -53,7 +54,7 @@ export default class Form extends PolymerElement {
         default:
           value[name] = node.value;
       }
-    });
+    }
     const evt = new CustomEvent('submit', {
       bubbles: true,
       composed: true,

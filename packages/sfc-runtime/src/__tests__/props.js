@@ -1,6 +1,6 @@
 import adapterComponent from '../adapterComponent';
 import Rax from 'rax';
-import testRenderer from 'rax-test-renderer';
+import testRenderer from 'rax-test-renderer'; // eslint-disable-line
 import renderHelpers from 'render-helpers';
 
 const { _c, _r } = renderHelpers;
