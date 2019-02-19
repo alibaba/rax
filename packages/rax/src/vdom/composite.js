@@ -536,7 +536,7 @@ class CompositeComponent {
 
   getPublicInstance() {
     let instance = this._instance;
-    // The Stateless components cannot be given refs
+    // The functional components cannot be given refs
     if (instance instanceof ReactiveComponent) {
       return null;
     }
