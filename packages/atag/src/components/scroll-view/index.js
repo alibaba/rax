@@ -175,7 +175,7 @@ export default class ScrollViewElement extends PolymerElement {
       this,
       (el) => el._scrollable === true
         && el._scrollDirection === this._scrollDirection
-        && !el instanceof ScrollViewElement
+        && !(el instanceof ScrollViewElement)
     );
     if (this._parentSameDirectionScrollElement) {
       evt.stopPropagation();
