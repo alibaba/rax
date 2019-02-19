@@ -56,13 +56,13 @@ describe('CompositeComponent', function() {
       }
     }
 
-    expect(Host.component).toBe(null);
+    expect(Host.owner).toBe(null);
 
     expect(function() {
       render(<BadComponent />);
     }).not.toThrow();
 
-    expect(Host.component).toBe(null);
+    expect(Host.owner).toBe(null);
   });
 
   it('donot call render when setState in componentWillMount', function() {

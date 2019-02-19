@@ -2,7 +2,7 @@ import Host from './vdom/host';
 import { schedule, flush } from './vdom/scheduler';
 
 function getCurrentRenderingInstance() {
-  const currentInstance = Host.component._instance;
+  const currentInstance = Host.owner._instance;
   if (currentInstance) {
     return currentInstance;
   } else {
@@ -45,7 +45,7 @@ export function useState(initialState) {
 
       if (newState !== current) {
         // This is a render phase update.  After this render pass, we'll restart
-        if (Host.component && Host.component._instance === currentInstance) {
+        if (Host.owner && Host.owner._instance === currentInstance) {
           hooks[hookID][0] = newState;
           currentInstance.isScheduled = true;
         } else {
@@ -206,7 +206,7 @@ export function useReducer(reducer, initialState, initialAction) {
       // actions to the queue
       const queue = hook[2];
       // This is a render phase update.  After this render pass, we'll restart
-      if (Host.component && Host.component._instance === currentInstance) {
+      if (Host.owner && Host.owner._instance === currentInstance) {
         queue.push(action);
         currentInstance.isScheduled = true;
       } else {

@@ -25,46 +25,52 @@ class NativeComponent {
     this._context = context;
     this._mountID = Host.mountID++;
 
-    let props = this._currentElement.props;
-    let type = this._currentElement.type;
+    const currentElement = this._currentElement;
+    const props = currentElement.props;
+    const type = currentElement.type;
+    const children = props.children;
+    const appendType = props.append || TREE; // Default is tree
+
+    // Clone a copy for style diff
+    this._prevStyleCopy = Object.assign({}, props.style);
+
     let instance = {
       _internal: this,
       type,
       props,
     };
-    let appendType = props.append || TREE; // Default is node
 
     this._instance = instance;
 
-    // Clone a copy for style diff
-    this._prevStyleCopy = Object.assign({}, props.style);
+    let mountChild = () => {
+      let nativeNode = this.getNativeNode();
 
-    let nativeNode = this.getNativeNode();
-
-    if (appendType !== TREE) {
       if (childMounter) {
         childMounter(nativeNode, parent);
       } else {
         Host.driver.appendChild(nativeNode, parent);
       }
-    }
+    };
 
-    if (this._currentElement && this._currentElement.ref) {
-      Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
-    }
-
-    // Process children
-    let children = props.children;
-    if (children != null) {
-      this.mountChildren(children, context);
-    }
+    let mountChildren = () => {
+      if (children != null) {
+        this.mountChildren(children, context);
+      }
+    };
 
     if (appendType === TREE) {
-      if (childMounter) {
-        childMounter(nativeNode, parent);
-      } else {
-        Host.driver.appendChild(nativeNode, parent);
-      }
+      // Should after process children when mount child by tree mode
+      mountChildren();
+      mountChild();
+    } else {
+      // Should before process children when mount child by node mode
+      mountChild();
+      mountChildren();
+    }
+
+    // Ref acttach
+    if (currentElement && currentElement.ref) {
+      Ref.attach(currentElement._owner, currentElement.ref, this);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -119,6 +125,7 @@ class NativeComponent {
       }
 
       Instance.remove(this._nativeNode);
+
       if (!notRemoveChild) {
         Host.driver.removeChild(this._nativeNode, this._parent);
       }
@@ -164,30 +171,36 @@ class NativeComponent {
     const nativeNode = this.getNativeNode();
 
     for (propKey in prevProps) {
-      if (propKey === CHILDREN ||
-        nextProps.hasOwnProperty(propKey) ||
-        !prevProps.hasOwnProperty(propKey) ||
-        prevProps[propKey] == null) {
+      // Continue children and null value prop or nextProps has some propKey that do noting
+      if (
+        propKey === CHILDREN ||
+        prevProps[propKey] == null ||
+        nextProps.hasOwnProperty(propKey)
+      ) {
         continue;
       }
+
       if (propKey === STYLE) {
+        // Remove all style
         let lastStyle = this._prevStyleCopy;
         for (styleName in lastStyle) {
-          if (lastStyle.hasOwnProperty(styleName)) {
-            styleUpdates = styleUpdates || {};
-            styleUpdates[styleName] = '';
-          }
+          styleUpdates = styleUpdates || {};
+          styleUpdates[styleName] = '';
         }
         this._prevStyleCopy = null;
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
-        if (typeof prevProps[propKey] === 'function') {
+        // Remove event
+        const eventListener = prevProps[propKey];
+
+        if (typeof eventListener === 'function') {
           driver.removeEventListener(
             nativeNode,
             propKey.slice(2).toLowerCase(),
-            prevProps[propKey]
+            eventListener
           );
         }
       } else {
+        // Remove attribute
         driver.removeAttribute(
           nativeNode,
           propKey,
@@ -198,15 +211,18 @@ class NativeComponent {
 
     for (propKey in nextProps) {
       let nextProp = nextProps[propKey];
-      let prevProp =
-        propKey === STYLE ? this._prevStyleCopy :
-          prevProps != null ? prevProps[propKey] : undefined;
-      if (propKey === CHILDREN ||
-        !nextProps.hasOwnProperty(propKey) ||
-        nextProp === prevProp ||
-        nextProp == null && prevProp == null) {
+      let prevProp = propKey === STYLE ? this._prevStyleCopy :
+        prevProps != null ? prevProps[propKey] : undefined;
+
+      // Continue children or prevProp equal nextProp
+      if (
+        propKey === CHILDREN ||
+        prevProp === nextProp ||
+        nextProp == null && prevProp == null
+      ) {
         continue;
       }
+
       // Update style
       if (propKey === STYLE) {
         if (nextProp) {
@@ -219,16 +235,14 @@ class NativeComponent {
         if (prevProp != null) {
           // Unset styles on `prevProp` but not on `nextProp`.
           for (styleName in prevProp) {
-            if (prevProp.hasOwnProperty(styleName) &&
-              (!nextProp || !nextProp.hasOwnProperty(styleName))) {
+            if (!nextProp || !nextProp[styleName]) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = '';
             }
           }
           // Update styles that changed since `prevProp`.
           for (styleName in nextProp) {
-            if (nextProp.hasOwnProperty(styleName) &&
-              prevProp[styleName] !== nextProp[styleName]) {
+            if (prevProp[styleName] !== nextProp[styleName]) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = nextProp[styleName];
             }
@@ -250,8 +264,6 @@ class NativeComponent {
         }
       } else {
         // Update other property
-        let payload = {};
-        payload[propKey] = nextProp;
         if (nextProp != null) {
           driver.setAttribute(
             nativeNode,
@@ -265,11 +277,14 @@ class NativeComponent {
             prevProps[propKey]
           );
         }
+
         if (process.env.NODE_ENV !== 'production') {
           Host.measurer && Host.measurer.recordOperation({
             instanceID: this._mountID,
             type: 'update attribute',
-            payload: payload
+            payload: {
+              [propKey]: nextProp
+            }
           });
         }
       }
@@ -283,6 +298,7 @@ class NativeComponent {
           payload: styleUpdates
         });
       }
+
       driver.setStyles(nativeNode, styleUpdates);
     }
   }

@@ -34,7 +34,7 @@ function handleError(instance, error) {
   }
 
   if (boundary) {
-    // should not attempt to recover an unmounting error boundary
+    // Should not attempt to recover an unmounting error boundary
     const boundaryInternal = boundary._internal;
     if (boundaryInternal) {
       let callbackQueue = boundaryInternal._pendingCallbacks || (boundaryInternal._pendingCallbacks = []);
@@ -91,10 +91,7 @@ class CompositeComponent {
     let Component = currentElement.type;
     let ref = currentElement.ref;
     let publicProps = currentElement.props;
-    let isClass = Component.prototype;
-    let isComponentClass = isClass && Component.prototype.isComponentClass;
-    // Class stateless component without state but have lifecycles
-    let isStatelessClass = isClass && Component.prototype.render;
+    let componentPrototype = Component.prototype;
 
     // Context process
     let publicContext = this._processContext(context);
@@ -104,9 +101,9 @@ class CompositeComponent {
     let renderedElement;
 
     try {
-      if (isComponentClass || isStatelessClass) {
-        // Component instance
-        instance = new Component(publicProps, publicContext, updater);
+      if (componentPrototype && componentPrototype.render) {
+        // Class Component instance
+        instance = new Component(publicProps, publicContext);
       } else if (typeof Component === 'function') {
         // Functional reactive component with hooks
         instance = new ReactiveComponent(Component, ref);
@@ -154,7 +151,7 @@ class CompositeComponent {
     }
 
     if (renderedElement == null) {
-      Host.component = this;
+      Host.owner = this;
       // Process pending state when call setState in componentWillMount
       instance.state = this._processPendingState(publicProps, publicContext);
 
@@ -168,7 +165,7 @@ class CompositeComponent {
         }
       }, instance, errorCallback);
 
-      Host.component = null;
+      Host.owner = null;
     }
 
     this._renderedComponent = instantiateComponent(renderedElement);
@@ -249,10 +246,10 @@ class CompositeComponent {
     this._parentInstance = null;
 
     // Reset pending fields
-    // Even if this component is scheduled for another update in ReactUpdates,
+    // Even if this component is scheduled for another async update,
     // it would still be ignored because these fields are reset.
     this._pendingStateQueue = null;
-    this._pendingForceUpdate = false;
+    this._isPendingForceUpdate = false;
 
     // These fields do not really need to be reset since this object is no
     // longer accessible.
@@ -351,11 +348,11 @@ class CompositeComponent {
 
     if (hasReceived) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
-      this._pendingState = true;
+      this._isPendingState = true;
       performInSandbox(() => {
         instance.componentWillReceiveProps(nextProps, nextContext);
       }, instance);
-      this._pendingState = false;
+      this._isPendingState = false;
     }
 
     // Update refs
@@ -366,7 +363,7 @@ class CompositeComponent {
       Ref.update(prevElement, nextElement, this);
     }
 
-    // Shoud update always default
+    // Shoud update default
     let shouldUpdate = true;
     let prevProps = instance.props;
     let prevState = instance.state;
@@ -374,20 +371,20 @@ class CompositeComponent {
     let nextState = this._processPendingState(nextProps, nextContext);
 
     // ShouldComponentUpdate is not called when forceUpdate is used
-    if (!this._pendingForceUpdate) {
+    if (!this._isPendingForceUpdate) {
       if (instance.shouldComponentUpdate) {
         shouldUpdate = performInSandbox(() => {
-          return instance.shouldComponentUpdate(nextProps, nextState,
-            nextContext);
+          return instance.shouldComponentUpdate(nextProps, nextState, nextContext);
         }, instance);
-      } else if (instance.isPureComponentClass) {
-        shouldUpdate = !shallowEqual(prevProps, nextProps) || !shallowEqual(
-          prevState, nextState);
+      } else if (instance.isPureComponent) {
+        // Pure Component
+        shouldUpdate = !shallowEqual(prevProps, nextProps) ||
+          !shallowEqual(prevState, nextState);
       }
     }
 
     if (shouldUpdate) {
-      this._pendingForceUpdate = false;
+      this._isPendingForceUpdate = false;
       // Will set `this.props`, `this.state` and `this.context`.
       let prevContext = instance.context;
 
@@ -448,7 +445,7 @@ class CompositeComponent {
     let instance = this._instance;
     let nextRenderedElement;
 
-    Host.component = this;
+    Host.owner = this;
 
     performInSandbox(() => {
       if (process.env.NODE_ENV !== 'production') {
@@ -460,7 +457,7 @@ class CompositeComponent {
       }
     }, instance);
 
-    Host.component = null;
+    Host.owner = null;
 
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
       const prevRenderedUnmaskedContext = prevRenderedComponent._context;
