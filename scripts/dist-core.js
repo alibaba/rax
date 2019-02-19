@@ -68,5 +68,5 @@ build('driver-dom', 'DriverDOM', true);
 
 build('driver-worker', 'DriverWorker');
 build('driver-worker', 'DriverWorker', true);
-build('renderer-worker', 'RendererWorker');
-build('renderer-worker', 'RendererWorker', true);
+build('rax-miniapp-renderer', 'RaxMiniappRenderer');
+build('rax-miniapp-renderer', 'RaxMiniappRenderer', true);

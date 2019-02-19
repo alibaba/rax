@@ -1,18 +1,18 @@
-# renderer-worker
+# rax-miniapp-renderer
 
-> Web renderer for worker.
+> Rax renderer for miniapp.
 
 ## Install
 
 ```bash
-$ npm install --save renderer-worker
+$ npm install --save rax-miniapp-renderer
 ```
 
 ## Usage
 
 `render.js`
 ```js
-import domRender from 'renderer-worker';
+import domRender from 'rax-miniapp-renderer';
 import spawnWorker from 'worker-loader?inline!./worker.js';
 
 const worker = spawnWorker();

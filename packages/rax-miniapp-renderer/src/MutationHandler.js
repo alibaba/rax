@@ -68,20 +68,8 @@ export default class MutationHandler {
           newNode = this.createNode(addedNodes[i]);
         }
 
-        /**
-         * @NOTE Append style element to document.body, to prevent from
-         *   being removed by it's parent was removed.
-         */
-        if (newNode.nodeName === STYLE_ELEMENT) {
-          parent = document.body;
-          nextSibling = null;
-        }
-
         if (parent) {
           let siblingElement = nextSibling && sharedNodeMap.get(nextSibling) || null;
-          if (siblingElement && siblingElement.nodeName === STYLE_ELEMENT) {
-            siblingElement = null;
-          }
           parent.insertBefore(newNode, siblingElement);
         }
       }
