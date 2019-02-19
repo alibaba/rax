@@ -1,8 +1,6 @@
 import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
-import instantiateComponent from './instantiateComponent';
-import getElementKeyName from './getElementKeyName';
 
 /**
  * Fragment Component
@@ -42,42 +40,29 @@ class FragmentComponent extends NativeComponent {
     return instance;
   }
 
-
   mountChildren(children, context) {
-    let renderedChildren = this._renderedChildren = {};
     let fragment = this.getNativeNode();
 
-    let renderedChildrenImage = children.map((element, index) => {
-      let renderedChild = instantiateComponent(element);
-      let name = getElementKeyName(renderedChildren, element, index);
-      renderedChildren[name] = renderedChild;
-      renderedChild._mountIndex = index;
-      // Mount
-      let mountImage = renderedChild.mountComponent(
-        this._parent,
-        this._instance,
-        context, (nativeNode) => {
-          if (Array.isArray(nativeNode)) {
-            for (let i = 0; i < nativeNode.length; i++) {
-              fragment.push(nativeNode[i]);
-            }
-          } else {
-            fragment.push(nativeNode);
-          }
-        }
-      );
-      return mountImage;
-    });
+    return this._mountChildren(this._parent, children, context, (nativeNode) => {
+      if (!Array.isArray(nativeNode)) {
+        nativeNode = [nativeNode];
+      }
 
-    return renderedChildrenImage;
+      for (let i = 0; i < nativeNode.length; i++) {
+        fragment.push(nativeNode[i]);
+      }
+    });
   }
 
   unmountComponent(notRemoveChild) {
-    if (this._nativeNode) {
-      Instance.remove(this._nativeNode);
+    let nativeNode = this._nativeNode;
+
+    if (nativeNode) {
+      Instance.remove(nativeNode);
+
       if (!notRemoveChild) {
-        for (let i = 0; i < this._nativeNode.length; i++) {
-          Host.driver.removeChild(this._nativeNode[i]);
+        for (let i = 0; i < nativeNode.length; i++) {
+          Host.driver.removeChild(nativeNode[i]);
         }
       }
     }

@@ -85,19 +85,24 @@ class NativeComponent {
       children = [children];
     }
 
-    let renderedChildren = this._renderedChildren = {};
     const nativeNode = this.getNativeNode();
+    return this._mountChildren(nativeNode, children, context);
+  }
+
+  _mountChildren(parent, children, context, childMounter) {
+    let renderedChildren = this._renderedChildren = {};
 
     let renderedChildrenImage = children.map((element, index) => {
       let renderedChild = instantiateComponent(element);
       let name = getElementKeyName(renderedChildren, element, index);
       renderedChildren[name] = renderedChild;
       renderedChild._mountIndex = index;
-      // Mount
+      // Mount children
       let mountImage = renderedChild.mountComponent(
-        nativeNode,
+        parent,
         this._instance,
-        context
+        context,
+        childMounter
       );
       return mountImage;
     });
@@ -175,6 +180,7 @@ class NativeComponent {
       if (
         propKey === CHILDREN ||
         prevProps[propKey] == null ||
+        // Use hasOwnProperty here for avoid propKey name is some with method name in object proptotype
         nextProps.hasOwnProperty(propKey)
       ) {
         continue;
@@ -356,10 +362,6 @@ class NativeComponent {
     // Unmount children that are no longer present.
     if (prevChildren != null) {
       for (let name in prevChildren) {
-        if (!prevChildren.hasOwnProperty(name)) {
-          continue;
-        }
-
         let prevChild = prevChildren[name];
         let shouldUnmount = prevChild._unmount || !nextChildren[name];
 
@@ -410,10 +412,6 @@ class NativeComponent {
       }
 
       for (let name in nextChildren) {
-        if (!nextChildren.hasOwnProperty(name)) {
-          continue;
-        }
-
         let nextChild = nextChildren[name];
         let prevChild = prevChildren && prevChildren[name];
 
