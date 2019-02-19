@@ -1,9 +1,6 @@
 import kebabCase from 'kebab-case';
 import baseCSS from '!!raw-loader!./container.css';
 import { log } from 'miniapp-framework-shared';
-import initRenderer from '../../renderer';
-import { createMessageProxy } from '../MessageProxy';
-import { findHomePage } from '../utils';
 import Router from '../Router';
 
 const styles = {
@@ -165,5 +162,15 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
       router.switchTab({ pageName });
     }
   }
+}
 
+function findHomePage(APP_MANIFEST) {
+  const hashRoute = location.hash.replace(/^#?!\//, '');
+  if (hashRoute !== '') {
+    return hashRoute;
+  }
+  if ('homepage' in APP_MANIFEST) {
+    return APP_MANIFEST.homepage;
+  }
+  return Object.keys(APP_MANIFEST.pages)[0];
 }

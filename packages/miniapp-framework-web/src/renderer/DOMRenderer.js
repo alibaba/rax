@@ -1,11 +1,11 @@
-import domRenderer from 'driver-worker/lib/renderer';
+import domRenderer from 'driver-worker-renderer-webview';
 
 const TAG_NAME_PREFIX = 'a-';
 
 /**
  * WebRenderer
  */
-export default class WebRenderer {
+export default class DOMRenderer {
   constructor(worker, mountNode, win = window) {
     this.worker = worker;
     this.mountNode = mountNode;
@@ -17,6 +17,8 @@ export default class WebRenderer {
      * @type {WebRenderer.onModuleAPIEvent}
      */
     worker.onModuleAPIEvent = this.onModuleAPIEvent;
+
+    this.render();
   }
 
   onModuleAPIEvent({ data: payload }) {

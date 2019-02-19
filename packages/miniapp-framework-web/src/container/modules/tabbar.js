@@ -1,4 +1,3 @@
-import * as utils from '../utils';
 import * as routes from '../Router';
 
 export function switchTab({ url }) {
@@ -8,8 +7,8 @@ export function switchTab({ url }) {
 }
 
 export function showTabBar(params, resolveCallback, rejectCallback) {
-  const tabbarContainer = utils.getTabBar();
-  const mainContainer = utils.getContainer();
+  const tabbarContainer = getTabBar();
+  const mainContainer = getContainer();
 
   if (tabbarContainer) {
     tabbarContainer.style.display = 'flex';
@@ -23,8 +22,8 @@ export function showTabBar(params, resolveCallback, rejectCallback) {
 }
 
 export function hideTabBar(params, resolveCallback, rejectCallback) {
-  const tabbarContainer = utils.getTabBar();
-  const mainContainer = utils.getContainer();
+  const tabbarContainer = getTabBar();
+  const mainContainer = getContainer();
 
   if (tabbarContainer) {
     tabbarContainer.style.display = 'none';
@@ -38,7 +37,7 @@ export function hideTabBar(params, resolveCallback, rejectCallback) {
 }
 
 export function setTabBarBadge(params, resolveCallback, rejectCallback) {
-  const tabbarContainer = utils.getTabBar();
+  const tabbarContainer = getTabBar();
   const items = tabbarContainer.children;
   const item = items[params.index];
 
@@ -56,7 +55,7 @@ export function setTabBarBadge(params, resolveCallback, rejectCallback) {
 }
 
 export function removeTabBarBadge(params, resolveCallback, rejectCallback) {
-  const tabbarContainer = utils.getTabBar();
+  const tabbarContainer = getTabBar();
   const items = tabbarContainer.children;
   const item = items[params.index];
 
@@ -69,7 +68,7 @@ export function removeTabBarBadge(params, resolveCallback, rejectCallback) {
 }
 
 export function showTabBarRedDot(params, resolveCallback, rejectCallback) {
-  const tabbarContainer = utils.getTabBar();
+  const tabbarContainer = getTabBar();
   const items = tabbarContainer.children;
   const item = items[params.index];
 
@@ -84,7 +83,7 @@ export function showTabBarRedDot(params, resolveCallback, rejectCallback) {
 }
 
 export function hideTabBarRedDot(params, resolveCallback, rejectCallback) {
-  const tabbarContainer = utils.getTabBar();
+  const tabbarContainer = getTabBar();
   const items = tabbarContainer.children;
   const item = items[params.index];
 
@@ -95,3 +94,12 @@ export function hideTabBarRedDot(params, resolveCallback, rejectCallback) {
 
   resolveCallback();
 }
+
+function getContainer() {
+  return document.querySelector('#main') || document.body;
+}
+
+function getTabBar() {
+  return document.querySelector('#tabBar');
+}
+

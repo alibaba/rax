@@ -1,5 +1,5 @@
 import { getMessageProxy } from './MessageProxy';
-import initRenderer from '../renderer';
+import renderDOM from '../renderer';
 
 export default class WebRenderer {
   constructor(pageName, clientId, opts) {
@@ -30,7 +30,7 @@ export default class WebRenderer {
 
   mount(container, callback = () => { }) {
     container.appendChild(this.renderer);
-    initRenderer(this.renderer, this.clientId, this.pageQuery || {});
+    renderDOM(this.renderer, this.clientId, this.pageQuery);
     callback();
   }
 

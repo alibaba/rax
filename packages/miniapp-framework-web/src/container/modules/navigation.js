@@ -1,5 +1,4 @@
 import * as routes from '../Router';
-import * as utils from '../utils';
 
 const navigaiton = {
   navigateTo({ url }) {
@@ -20,7 +19,7 @@ const navigaiton = {
 
   setNavigationBar(params = {}, resolveCallback, rejectCallback) {
     try {
-      const headerBar = utils.getHeaderBar();
+      const headerBar = getHeaderBar();
       const title = headerBar.querySelector('.title');
 
       if (params.title) {
@@ -41,12 +40,16 @@ const navigaiton = {
   },
 
   getNavigationBarHeight(params, resolveCallback, rejectCallback) {
-    const headerBar = utils.getHeaderBar();
+    const headerBar = getHeaderBar();
     resolveCallback({
       height: headerBar ? headerBar.clientHeight : 0
     });
   }
 
 };
+
+function getHeaderBar() {
+  return document.querySelector('#headerBar');
+}
 
 export default navigaiton;

@@ -51,26 +51,27 @@ export default class Router {
     const messageProxy = createMessageProxy(this.messageRouter, client.clientId, pageName);
     this.messageRouter.addChannel(client.clientId, messageProxy);
 
-    if (this.currentClient) {
-      // PageLifecycle.emit('hide', currentClient.clientId);
-      this.currentClient.hide();
-      // PageLifecycle.emit('show', clientId);
-      // currentClient.nextClient = client;
-    }
+    if (this.currentClient) this.currentClient.hide();
 
-    // 初始化的 show 事件由 worker render 后直接触发
     client.mount(this.container);
     client.prevClient = this.currentClient;
     this.currentClient = client;
   }
-  navigateBack() {}
-  redirect() {}
+
+  navigateBack() {
+    // TODO
+  }
+
+  redirect() {
+    // TODO
+  }
 
   switchTab(params) {
     const { pageName } = this.parseRouterParam(params);
     if (this.tabClients[pageName]) {
       this.currentClient && this.currentClient.hide();
       const client = this.currentClient = this.tabClients[pageName];
+      location.hash = ROUTE_HASH_PREFIX + pageName;
       client.show();
     } else {
       this.navigateTo({
