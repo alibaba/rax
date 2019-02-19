@@ -1,11 +1,9 @@
-import Renderer from './Renderer';
-import qs from 'querystring';
 import resolvePathname from 'resolve-pathname';
 import { createMessageProxy } from './MessageProxy';
-import RendererClient, { createClientId } from './Client';
+import Client from './Client';
 
 const ROUTE_HASH_PREFIX = '!/';
-export default class ContainerRouter {
+export default class Router {
   /**
    * Container Router
    * @param container {HTMLElement} Element to render miniapp.
@@ -14,51 +12,73 @@ export default class ContainerRouter {
   constructor(container = document.body, messageRouter) {
     this.container = container;
     this.messageRouter = messageRouter;
+    this.clients = [];
+    this.tabClients = {}; // pageName -> client
     this.currentClient = null;
   }
 
-  navigateTo(params) {
+  parseRouterParam(params = {}) {
     let { pageName } = params;
-    const container = document.querySelector('#main');
-    if (isUrl(pageName)) {
-      location.href = pageName;
-    } else if (pageName[0] === '/') {
+    const pageQuery = {};
+    if (pageName[0] === '/') {
       pageName = pageName.slice(1);
     } else if (pageName[0] === '.') {
       pageName = resolvePathname(pageName, this.currentClient.renderer.pageName);
     }
-    location.hash = ROUTE_HASH_PREFIX + pageName;
 
-    let query = {};
     if (/\?/.test(pageName)) {
-      const [_pageName, queryString] = pageName.split('?');
-      pageName = _pageName;
-      query = qs.parse(queryString);
+      let queryString;
+      [pageName, queryString] = pageName.split('?');
+      Object.assign(pageQuery, decodeQuerystring(queryString));
     }
 
-    const clientId = createClientId();
-    const renderer = new Renderer(pageName, clientId, {
-      currentClientId: this.currentClient.clientId,
-      pageQuery: query
+    return { pageName, pageQuery };
+  }
+
+  navigateTo(params) {
+    const { pageName, pageQuery } = this.parseRouterParam(params);
+    location.hash = ROUTE_HASH_PREFIX + pageName;
+
+    const client = new Client(pageName, {
+      prevClientId: this.currentClient ? this.currentClient.clientId : null,
+      pageQuery,
     });
-    const messageProxy = createMessageProxy(this.messageRouter, clientId, pageName);
-    this.messageRouter.addChannel(clientId, messageProxy);
+    this.clients.push(client);
+    if (params.isTab) {
+      this.tabClients[pageName] = client;
+    }
+
+    const messageProxy = createMessageProxy(this.messageRouter, client.clientId, pageName);
+    this.messageRouter.addChannel(client.clientId, messageProxy);
 
     if (this.currentClient) {
       // PageLifecycle.emit('hide', currentClient.clientId);
-      this.currentClient.renderer.hide();
+      this.currentClient.hide();
       // PageLifecycle.emit('show', clientId);
       // currentClient.nextClient = client;
     }
 
     // 初始化的 show 事件由 worker render 后直接触发
-    renderer.mount(container);
-    // client.prevClient = currentClient;
-    // currentClient = client;
+    client.mount(this.container);
+    client.prevClient = this.currentClient;
+    this.currentClient = client;
   }
   navigateBack() {}
   redirect() {}
-  switchTab() {}
+
+  switchTab(params) {
+    const { pageName } = this.parseRouterParam(params);
+    if (this.tabClients[pageName]) {
+      this.currentClient && this.currentClient.hide();
+      const client = this.currentClient = this.tabClients[pageName];
+      client.show();
+    } else {
+      this.navigateTo({
+        ...params,
+        isTab: true,
+      });
+    }
+  }
 }
 
 function isPluginName(str) {
@@ -68,3 +88,53 @@ function isPluginName(str) {
 function isUrl(str) {
   return /^([\w\d]+:)\/\//.test(str);
 }
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+function decodeQuerystring(qs) {
+  const sep = '&';
+  const eq = '=';
+  let obj = {};
+
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
+  }
+
+  let regexp = /\+/g;
+  qs = qs.split(sep);
+  let maxKeys = 1000;
+  let len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
+  }
+
+  for (let i = 0; i < len; ++i) {
+    let x = qs[i].replace(regexp, '%20'),
+      idx = x.indexOf(eq),
+      kstr, vstr, k, v;
+
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
+    } else {
+      kstr = x;
+      vstr = '';
+    }
+
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
+
+    if (!hasOwnProperty(obj, k)) {
+      obj[k] = v;
+    } else if (Array.isArray(obj[k])) {
+      obj[k].push(v);
+    } else {
+      obj[k] = [obj[k], v];
+    }
+  }
+
+  return obj;
+};

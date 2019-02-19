@@ -1,9 +1,10 @@
 import kebabCase from 'kebab-case';
 import baseCSS from '!!raw-loader!./container.css';
+import { log } from 'miniapp-framework-shared';
 import initRenderer from '../../renderer';
 import { createMessageProxy } from '../MessageProxy';
 import { findHomePage } from '../utils';
-import MiniAppRouter from '../Router';
+import Router from '../Router';
 
 const styles = {
   main: {
@@ -89,7 +90,7 @@ function createTabBarItem(pageName, imageUrl, textContent, onClick) {
 /**
  * Serialize Style Object
  * @param obj {Object}
- * @return {CSSStyleDeclaration}
+ * @return css {CSSStyleDeclaration}
  */
 function serializeStyle(obj) {
   let css = '';
@@ -102,8 +103,7 @@ function serializeStyle(obj) {
 }
 
 export default function renderContainerShell(messageRouter, appConfig, mountNode) {
-  const router = new MiniAppRouter(messageRouter);
-  const {
+    const {
     defaultTitle,
     navigationBarBackgroundColor,
     navigationBarTextStyle,
@@ -116,15 +116,7 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
 
   let showHeaderBar = false;
   let showTabBar = false;
-  if (appConfig.tabBar && Array.isArray(appConfig.tabBar.list) && appConfig.tabBar.list.length > 0) {
-    /**
-     * pageName, pageName, iconPath, selectedIconPath
-     */
-    appConfig.tabBar.list.forEach((item) => {
-      tabBarEl.appendChild(
-        createTabBarItem(item.pageName, item.iconPath, item.text, onTabBarItemClick)
-      );
-    });
+  if (appConfig.tabBar && Array.isArray(appConfig.tabBar.list)) {
     showTabBar = true;
   }
 
@@ -141,19 +133,37 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
     ${showTabBar ? tabBarTpl : ''}
   `;
 
+  if (showTabBar) {
+    /**
+     * Init Tabbar
+     * { pageName, pageName, iconPath, selectedIconPath }
+     */
+    const tabBarEl = document.querySelector('#tabBar');
+    appConfig.tabBar.list.forEach(({ pageName, iconPath, text }) => {
+      tabBarEl.appendChild(createTabBarItem(pageName, iconPath, text, onTabBarItemClick));
+    });
+  }
+
   // Correct the page font-size
   document.documentElement.style.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';
 
   // main, homepage
+  const mainEl = document.querySelector('#main');
   const homepage = findHomePage(appConfig);
-  router.navigateTo({
+  const router = new Router(mainEl, messageRouter);
+  router.switchTab({
     pageName: homepage,
   });
-}
 
-function onTabBarItemClick(evt) {
-  const { pageName } = evt.currentTarget.dataset;
-  if (!pageName) return;
-  console.log('change to tab', pageName);
-}
+  function onTabBarItemClick(evt) {
+    const { pageName } = evt.currentTarget.dataset;
+    if (!pageName) {
+      log('Can not redirect to empty page.')
+    } else if (router.currentClient.pageName === pageName) {
+      log('Can not redirect to same page.')
+    } else {
+      router.switchTab({ pageName });
+    }
+  }
 
+}

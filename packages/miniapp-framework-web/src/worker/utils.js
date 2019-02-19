@@ -9,7 +9,7 @@ export function getGlobalContext() {
   }
 }
 
-import raxCode from '!!raw-loader!rax';
+import raxCode from '!!raw-loader!rax/dist/rax.min.js';
 
 const genRax = new Function('module', 'exports', raxCode);
 

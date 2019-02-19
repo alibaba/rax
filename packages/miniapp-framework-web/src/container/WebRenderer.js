@@ -1,17 +1,17 @@
 import { getMessageProxy } from './MessageProxy';
 import initRenderer from '../renderer';
 
-export default class Renderer {
+export default class WebRenderer {
   constructor(pageName, clientId, opts) {
     this.pageName = pageName;
     this.clientId = clientId;
     this.pageQuery = opts.pageQuery;
-    const { currentClientId } = opts;
+    const { prevClientId } = opts;
 
     const renderer = document.createElement('div');
     renderer.setAttribute('class', 'renderer');
     // 给 Element 打标
-    renderer.setAttribute('data-prev-client-id', currentClientId);
+    renderer.setAttribute('data-prev-client-id', prevClientId);
     renderer.setAttribute('data-client-id', clientId);
     this.renderer = renderer;
 

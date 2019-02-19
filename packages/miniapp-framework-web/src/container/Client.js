@@ -1,8 +1,10 @@
+import WebRenderer from './WebRenderer';
 let clinetCount = 0;
 
-export default class RendererClient {
-  constructor() {
-
+export default class Client extends WebRenderer {
+  constructor(pageName, options = {}) {
+    const clientId = createClientId();
+    super(pageName, clientId, options);
   }
 }
 
@@ -11,6 +13,6 @@ export default class RendererClient {
  * Get unique client id.
  * @return {String} clientId
  */
-export function createClientId() {
+function createClientId() {
   return 'client-' + clinetCount ++;
 }

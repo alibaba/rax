@@ -44,7 +44,7 @@ export default class Client {
         page: this,
         clientId: this.clientId,
         pageName: this.pageName,
-        raxInstance: this.raxInstance,
+        rax: this.raxInstance,
         pageQuery: this.pageQuery,
         document,
         evaluator,
