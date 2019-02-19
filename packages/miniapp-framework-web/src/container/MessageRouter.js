@@ -28,6 +28,7 @@ export default class MessageRouter {
    * @param data
    */
   navigator(data) {
+    console.error('navigator protocol', data);
   }
 
   /**

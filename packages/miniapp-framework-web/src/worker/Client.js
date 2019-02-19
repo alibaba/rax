@@ -1,7 +1,9 @@
+import raxCode from '!!raw-loader!rax/dist/rax.min.js';
 import createDriver from 'driver-worker';
 import { log, worker } from 'miniapp-framework-shared';
-import { createRax, applyFactory } from './utils';
+import { applyFactory } from './getModule';
 
+const raxFactory = new Function('module', 'exports', raxCode);
 const { getPage, getUnknownPageFactory } = worker.pageHub;
 const { on: addClientEvent } = worker.clientHub;
 const CURRENT_CLIENT_ID = '__current_client_id__';
@@ -125,4 +127,12 @@ export default class Client {
       driver: this.driver,
     });
   }
+}
+
+/**
+ * Generate a unique rax instance.
+ * @return {Object} Rax instance.
+ */
+function createRax() {
+  return applyFactory(raxFactory);
 }

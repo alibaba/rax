@@ -1,75 +1,121 @@
+/* global importScripts */
 import { log, worker } from 'miniapp-framework-shared';
 import { my } from './api';
 import { call } from './remoteCall';
-import { setupGlobalObject } from './globalObject';
+import * as appLifecycle from './lifecycles/app';
 import Client from './Client';
-import { emit as emitAppLifecycle } from './app';
-import navigator from './modules/navigator';
+import getModule from './getModule';
+
+setupGlobalObject({ my, require: getModule });
+addEventListener('message', messageHandler);
 
 const { emit: emitToClient, addClient, getClient } = worker.clientHub;
-
-setupGlobalObject(global);
 const CURRENT_CLIENT_ID = '__current_client_id__';
+const EVENT_IMPORT_SCRIPTS = 'importScripts';
+const EVENT_REGISTER_API = 'registerAPI';
+const EVENT_START_RENDER = 'init';
+const EVENT_EVALUATOR_EVENT = 'event';
+const EVENT_EVALUATOR_RETURN = 'return';
+const EVENT_CYCLE_APP = 'app:lifecycle';
+const EVENT_CYCLE_PAGE = 'page:lifecycle';
+const EVENT_NAVIGATOR = 'navigate';
+const EVENT_UPDATE_PAGEDATA = 'updatePageData';
 
-addEventListener('message', ({ data }) => {
+/**
+ * Worker message handler.
+ * @param data
+ */
+function messageHandler({ data }) {
   const { target, payload } = data;
 
   if (target !== 'AppWorker') {
-    console.error('AppWorker get illegal data', data);
+    log('AppWorker get illegal data', data);
     return;
   }
 
-
-  if (payload.type === 'importScripts') {
-    // Todo: support of plugins.
-    importScripts(payload.url);
-    // Tell AppContainer that worker is ready.
-    postMessage({
-      target: 'AppContainer',
-      payload: { type: 'r$' },
-    });
-  } else if (payload.type === 'registerAPI') {
-    Array.isArray(payload.apis) && payload.apis.forEach(method => {
-      my._registerAPI(method, (params = {}, successCallback, failCallback) => {
-        const { success, fail, complete, ...methodParams } = params;
-        const callKey = `my.${method}`;
-        return call(callKey, methodParams, successCallback, failCallback);
-      });
-    });
-    postMessage({ type: 'APIRegistered' });
-  } else if (payload.type === 'init') {
-    /**
-     * DOM Render will trigger init, which means start render a page.
-     */
-    const { clientId, pageName, pageQuery } = payload;
-    const client = new Client(clientId, pageName, pageQuery);
-    client.render();
-
-    addClient(clientId, client);
-    emitToClient(payload.clientId, 'message', { data: payload });
-  } else if (payload.type === 'event' || payload.type === 'return') {
-    /**
-     * Evaluator message type.
-     */
-    emitToClient(payload.clientId, 'message', { data: payload });
-  } else if (payload.type === 'app:lifecycle') {
-    emitAppLifecycle(payload.lifecycle, {});
-  } else if (payload.type === 'page:lifecycle') {
-    const { clientId, lifecycle } = payload;
-    const client = getClient(clientId);
-    client.emitEvent(lifecycle, clientId, {});
-
-    // Mark current client id.
-    if (lifecycle === 'show') {
-      global[CURRENT_CLIENT_ID] = clientId;
+  switch (payload.type) {
+    case EVENT_IMPORT_SCRIPTS: {
+      importScripts(payload.url);
+      break;
     }
-  } else if (payload.type === 'navigate') {
-    const { navigateType, navigateTo } = payload;
-    navigator._navigate(navigateType, navigateTo);
-  } else if (payload.type === 'updatePageData') {
-    const client = getClient(payload.clientId);
-    client.emitEvent('updatePageData', payload.data);
-  } else {
-    log('Can not recognize message', data);
+
+    case EVENT_REGISTER_API: {
+      Array.isArray(payload.apis) && payload.apis.forEach(method => {
+        my._registerAPI(method, (params = {}, successCallback, failCallback) => {
+          const { success, fail, complete, ...methodParams } = params;
+          return call(`my.${method}`, methodParams, successCallback, failCallback);
+        });
+      });
+      // Tell AppContainer that worker is ready.
+      postMessage({
+        target: 'AppContainer',
+        payload: { type: 'r$' },
+      });
+      break;
+    }
+
+    case EVENT_START_RENDER: {
+      /**
+       * DOM Render will trigger init, which means start render a page.
+       */
+      const { clientId, pageName, pageQuery } = payload;
+      const client = new Client(clientId, pageName, pageQuery);
+      client.render();
+
+      addClient(clientId, client);
+      emitToClient(payload.clientId, 'message', { data: payload });
+      break;
+    }
+
+    case EVENT_EVALUATOR_EVENT:
+    case EVENT_EVALUATOR_RETURN:
+      /**
+       * Evaluator message type.
+       */
+      emitToClient(payload.clientId, 'message', { data: payload });
+      break;
+
+    case EVENT_CYCLE_APP: {
+      appLifecycle.emit(payload.lifecycle, {});
+      break;
+    }
+
+    case EVENT_CYCLE_PAGE: {
+      const { clientId, lifecycle } = payload;
+      const client = getClient(clientId);
+      client.emitEvent(lifecycle, clientId, {});
+
+      // Mark current client id.
+      if (lifecycle === 'show') global[CURRENT_CLIENT_ID] = clientId;
+      break;
+    }
+
+    case EVENT_NAVIGATOR: {
+      const { navigateType, navigateTo } = payload;
+      my[navigateType]({ url: navigateTo });
+      break;
+    }
+
+    case EVENT_UPDATE_PAGEDATA: {
+      const client = getClient(payload.clientId);
+      client.emitEvent('updatePageData', payload.data);
+      break;
+    }
+
+    default:
+      log('Can not recognize message', data);
   }
-});
+}
+
+/**
+ * Setup global object.
+ * @param object {Object} Assigning object.
+ * @param root {Object} Root object.
+ */
+function setupGlobalObject(object, root = global) {
+  for (let key in object) {
+    if (object.hasOwnProperty(key)) {
+      root[key] = object[key];
+    }
+  }
+}

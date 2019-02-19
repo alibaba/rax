@@ -1,4 +1,3 @@
-/* global module, exports, define */
 import startMiniApp from './container';
 
 export default class MiniApp {

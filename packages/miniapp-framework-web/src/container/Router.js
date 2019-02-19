@@ -138,4 +138,4 @@ function decodeQuerystring(qs) {
   }
 
   return obj;
-};
+}

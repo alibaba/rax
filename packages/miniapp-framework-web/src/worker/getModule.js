@@ -1,8 +1,10 @@
-import app from './modules/app';
-import page from './modules/page';
+import * as app from './lifecycles/app';
+import * as page from './lifecycles/page';
 import Console from 'miniapp-framework-shared/src/console';
-import { decycle } from 'miniapp-framework-shared';
+import { worker, decycle } from 'miniapp-framework-shared';
+import createErrorPage from 'miniapp-framework-shared/src/errorPage';
 
+const registerPage = worker.pageHub.register;
 const consoleCache = {};
 function createOrFindConsole(clientId) {
   return (
@@ -32,10 +34,19 @@ function createOrFindConsole(clientId) {
 }
 
 const VALID_MOD_REG = /^@core\//;
-/**
- * 用户的 require 函数
- */
-export default function moduleRequire(mod) {
+
+const appModule = {
+  on: app.on,
+  off: app.off,
+  register: registerApp,
+};
+const pageModule = {
+  on: page.on,
+  off: page.off,
+  register: registerPage,
+};
+
+export default function getModule(mod) {
   if (!VALID_MOD_REG.test(mod)) {
     throw new Error(
       `unknown module ${mod}, only core modules allowed!`
@@ -49,16 +60,16 @@ export default function moduleRequire(mod) {
       return context && context.rax;
 
     case '@core/app':
-      return app;
+      return appModule;
 
     case '@core/page':
       if (context) {
         return {
-          ...page,
+          ...pageModule,
           _context: context,
         };
       } else {
-        return page;
+        return pageModule;
       }
 
     case '@core/console':
@@ -68,4 +79,34 @@ export default function moduleRequire(mod) {
         return console;
       }
   }
+}
+
+/**
+ * Execute factory immediately
+ * @param description {Any}
+ * @param factory {Function}
+ */
+function registerApp(description, factory) {
+  applyFactory(factory);
+}
+
+export function applyFactory(factory, context = {}) {
+  const module = { exports: null };
+  factory(module, module.exports, function(mod) {
+    if (mod === '@core/context') {
+      return context;
+    } else {
+      return getModule.call(context, mod);
+    }
+  });
+  const component = interopRequire(module.exports);
+  return null === component && context.rax ? createErrorPage({
+    require: getModule,
+    createElement: context.rax.createElement,
+    message: '找不到页面'
+  }) : component;
+}
+
+function interopRequire(obj) {
+  return obj && typeof obj.default !== 'undefined' ? obj.default : obj;
 }

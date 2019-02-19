@@ -100,7 +100,7 @@ function serializeStyle(obj) {
 }
 
 export default function renderContainerShell(messageRouter, appConfig, mountNode) {
-    const {
+  const {
     defaultTitle,
     navigationBarBackgroundColor,
     navigationBarTextStyle,
@@ -148,6 +148,7 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
   const mainEl = document.querySelector('#main');
   const homepage = findHomePage(appConfig);
   const router = new Router(mainEl, messageRouter);
+
   router.switchTab({
     pageName: homepage,
   });
@@ -155,9 +156,9 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
   function onTabBarItemClick(evt) {
     const { pageName } = evt.currentTarget.dataset;
     if (!pageName) {
-      log('Can not redirect to empty page.')
+      log('Can not redirect to empty page.');
     } else if (router.currentClient.pageName === pageName) {
-      log('Can not redirect to same page.')
+      log('Can not redirect to same page.');
     } else {
       router.switchTab({ pageName });
     }

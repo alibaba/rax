@@ -1,12 +1,16 @@
-/* global EXTERNAL_API */
-import * as tabBar from './tabbar';
-import navigation from './navigation';
+// import * as tabBar from './tabbar';
+// import navigation from './navigation';
 
-const my = Object.assign({}, tabBar, navigation);
+const EXTERNAL_API_NAMESPACE = 'EXTERNAL_API';
+const my = {};
 
-// 用户自定义 api
-if (typeof EXTERNAL_API === 'object') {
-  Object.assign(my, EXTERNAL_API);
+// Object.assign(my, navigation);
+
+/**
+ * User defined api.
+ */
+if (typeof global[EXTERNAL_API_NAMESPACE] === 'object') {
+  Object.assign(my, global[EXTERNAL_API_NAMESPACE]);
 }
 
 export default my;
