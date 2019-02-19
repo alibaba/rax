@@ -11,12 +11,16 @@ export default class MiniApp {
    * @param options.mountNode {HTMLElement} Default to document.body.
    */
   constructor(appConfig, options = {}) {
+    if (!appConfig) {
+      throw new Error('App config not load properly, please check your args.');
+    }
+
     const mountNode = options.mountNode || document.body;
     this.mountNode = mountNode;
     this.context = startMiniApp(appConfig, mountNode);
   }
 
-  desctoy() {
+  destory() {
     this.context.worker.terminate();
     this.mountNode.innerHTML = '';
   }

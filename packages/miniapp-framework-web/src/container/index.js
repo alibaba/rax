@@ -5,6 +5,7 @@ import my from './modules/my';
 const hasOwn = {}.hasOwnProperty;
 const COMPATIBLE_APP_CONFIG_KEY = 'APP_MANIFEST';
 const ASSET_KEY = 'h5Assets';
+const TARGET_WORKER = 'AppWorker';
 
 /**
  * Initialize MiniApp Web.
@@ -12,28 +13,22 @@ const ASSET_KEY = 'h5Assets';
  * @param mountNode {HTMLElement} Default to document.body.
  */
 export default function startMiniAppWeb(appConfig, mountNode) {
-  if (!appConfig) {
-    throw new Error('App config not load properly, please check your arguments passed to startMiniApp.');
-  }
-
   const worker = spawnWorker();
   const messageRouter = new MessageRouter(worker, appConfig, mountNode);
+  function send(type, data, target) {
+    worker.postMessage({
+      target,
+      payload: { type, ...data },
+    });
+  }
 
-  worker.postMessage({
-    target: 'AppWorker',
-    payload: {
-      type: 'importScripts',
-      url: getAssetUrl(appConfig),
-    },
-  });
+  send('importScripts', {
+    url: getAssetUrl(appConfig),
+  }, TARGET_WORKER);
+  send('registerAPI', {
+    apis: Object.keys(my),
+  }, TARGET_WORKER);
 
-  worker.postMessage({
-    target: 'AppWorker',
-    payload: {
-      type: 'registerAPI',
-      apis: Object.keys(my),
-    },
-  });
   return { worker, messageRouter };
 }
 

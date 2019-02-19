@@ -5,7 +5,10 @@ module.exports = {
   mode: 'development',
   entry: resolve('src/index.js'),
   output: {
-    filename: 'miniapp-framework-web.js'
+    filename: 'miniapp-framework-web.js',
+    library: 'MiniApp',
+    libraryTarget: 'umd',
+    libraryExport: 'default',
   },
   module: {
     rules: [
