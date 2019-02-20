@@ -35,16 +35,6 @@ class NativeComponent extends BaseComponent {
 
     this._instance = instance;
 
-    let mountChild = () => {
-      let nativeNode = this.getNativeNode();
-
-      if (nativeNodeMounter) {
-        nativeNodeMounter(nativeNode, parent);
-      } else {
-        Host.driver.appendChild(nativeNode, parent);
-      }
-    };
-
     let mountChildren = () => {
       if (children != null) {
         this.mountChildren(children, context);
@@ -52,12 +42,12 @@ class NativeComponent extends BaseComponent {
     };
 
     if (appendType === TREE) {
-      // Should after process children when mount child by tree mode
+      // Should after process children when mount by tree mode
       mountChildren();
-      mountChild();
+      this.mountNativeNode(nativeNodeMounter);
     } else {
-      // Should before process children when mount child by node mode
-      mountChild();
+      // Should before process children when mount by node mode
+      this.mountNativeNode(nativeNodeMounter);
       mountChildren();
     }
 
