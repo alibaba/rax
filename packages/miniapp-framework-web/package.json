@@ -1,6 +1,6 @@
 {
   "name": "miniapp-framework-web",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "MiniApp framework for Web.",
   "main": "dist/miniapp-framework-web.min.js",
   "scripts": {
@@ -20,6 +20,7 @@
     "resolve-pathname": "^3.0.0"
   },
   "devDependencies": {
+    "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1"
