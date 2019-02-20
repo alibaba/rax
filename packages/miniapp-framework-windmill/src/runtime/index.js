@@ -20,8 +20,14 @@ export default function setupRuntime() {
     getContext() {
       return AppRuntimeGlobal;
     },
-    getPluginContext() {
-      return PluginRuntimeGlobal;
+    getPluginContext(context) {
+      const MODULE_API = '__WINDMILL_MODULE_API__';
+      const moduleAPI = global[MODULE_API];
+      return {
+        ...PluginRuntimeGlobal,
+        // Pass context to get plugined api expose.
+        ...moduleAPI.getAPIs({ context }),
+      };
     },
   });
 
