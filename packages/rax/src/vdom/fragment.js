@@ -1,6 +1,7 @@
 import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
+import toArray from './toArray';
 
 /**
  * Fragment Component
@@ -14,18 +15,16 @@ class FragmentComponent extends NativeComponent {
     };
     this._instance = instance;
 
-    let fragment = this.getNativeNode();
-    let children = this._currentElement;
+    // Mount children
+    this.mountChildren(this._currentElement, context);
 
-    // Process children
-    this.mountChildren(children, context);
+    let fragment = this.getNativeNode();
 
     if (nativeNodeMounter) {
       nativeNodeMounter(fragment, parent);
     } else {
       for (let i = 0; i < fragment.length; i++) {
-        let child = fragment[i];
-        Host.driver.appendChild(child, parent);
+        Host.driver.appendChild(fragment[i], parent);
       }
     }
 
@@ -36,9 +35,7 @@ class FragmentComponent extends NativeComponent {
     let fragment = this.getNativeNode();
 
     return this._mountChildren(this._parent, children, context, (nativeNode) => {
-      if (!Array.isArray(nativeNode)) {
-        nativeNode = [nativeNode];
-      }
+      nativeNode = toArray(nativeNode);
 
       for (let i = 0; i < nativeNode.length; i++) {
         fragment.push(nativeNode[i]);

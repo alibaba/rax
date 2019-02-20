@@ -5,6 +5,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
 import BaseComponent from './base';
+import toArray from './toArray';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -64,9 +65,7 @@ class NativeComponent extends BaseComponent {
   }
 
   mountChildren(children, context) {
-    if (!Array.isArray(children)) {
-      children = [children];
-    }
+    children = toArray(children);
 
     const nativeNode = this.getNativeNode();
     return this._mountChildren(nativeNode, children, context);
@@ -295,9 +294,7 @@ class NativeComponent extends BaseComponent {
     let nextChildren = {};
 
     if (nextChildrenElements != null) {
-      if (!Array.isArray(nextChildrenElements)) {
-        nextChildrenElements = [nextChildrenElements];
-      }
+      nextChildrenElements = toArray(nextChildrenElements);
 
       // Update next children elements
       for (let index = 0, length = nextChildrenElements.length; index < length; index++) {
@@ -362,9 +359,7 @@ class NativeComponent extends BaseComponent {
 
       function insertNodes(nativeNodes, parent) {
         // The nativeNodes maybe fragment, so convert to array type
-        if (!Array.isArray(nativeNodes)) {
-          nativeNodes = [nativeNodes];
-        }
+        nativeNodes = toArray(nativeNodes);
 
         if (lastPlacedNode) {
           // Should reverse order when insert new child after lastPlacedNode:

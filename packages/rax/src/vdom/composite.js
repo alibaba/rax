@@ -6,6 +6,7 @@ import instantiateComponent, { throwInvalidComponentError } from './instantiateC
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
+import toArray from './toArray';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -286,14 +287,13 @@ class CompositeComponent extends BaseComponent {
   ) {
     let instance = this._instance;
 
-    if (process.env.NODE_ENV !== 'production') {
-      Host.measurer && Host.measurer.beforeUpdateComponent(this._mountID, this);
+    // Maybe update component that has already been unmounted or failed mount.
+    if (!instance) {
+      return;
     }
 
-    if (!instance) {
-      console.error(
-        `Update component '${this.getName()}' that has already been unmounted (or failed to mount).`
-      );
+    if (process.env.NODE_ENV !== 'production') {
+      Host.measurer && Host.measurer.beforeUpdateComponent(this._mountID, this);
     }
 
     let willReceive = false;
@@ -454,7 +454,7 @@ class CompositeComponent extends BaseComponent {
         });
       }
     } else {
-      let oldChild = prevRenderedComponent.getNativeNode();
+      let prevNativeNode = prevRenderedComponent.getNativeNode();
       prevRenderedComponent.unmountComponent(true);
 
       this._renderedComponent = instantiateComponent(nextRenderedElement);
@@ -462,36 +462,30 @@ class CompositeComponent extends BaseComponent {
         this._parent,
         instance,
         this._processChildContext(context),
-        (newChild, parent) => {
-          // TODO: Duplicate code in native component file
-          if (!Array.isArray(newChild)) {
-            newChild = [newChild];
-          }
-
-          // oldChild or newChild all maybe fragment
-          if (!Array.isArray(oldChild)) {
-            oldChild = [oldChild];
-          }
+        (newNativeNode, parent) => {
+          prevNativeNode = toArray(prevNativeNode);
+          newNativeNode = toArray(newNativeNode);
 
           const driver = Host.driver;
-          // If newChild count large then oldChild
-          let lastNewChild;
-          for (let i = 0; i < newChild.length; i++) {
-            let child = newChild[i];
-            if (oldChild[i]) {
-              driver.replaceChild(child, oldChild[i]);
-            } else if (lastNewChild) {
-              driver.insertAfter(child, lastNewChild);
+
+          // If the new length large then prev
+          let lastNativeNode;
+          for (let i = 0; i < newNativeNode.length; i++) {
+            let nativeNode = newNativeNode[i];
+            if (prevNativeNode[i]) {
+              driver.replaceChild(nativeNode, prevNativeNode[i]);
+            } else if (lastNativeNode) {
+              driver.insertAfter(nativeNode, lastNativeNode);
             } else {
-              driver.appendChild(child, parent);
+              driver.appendChild(nativeNode, parent);
             }
-            lastNewChild = child;
+            lastNativeNode = nativeNode;
           }
 
-          // If newChild count less then oldChild
-          if (newChild.length < oldChild.length) {
-            for (let i = newChild.length; i < oldChild.length; i++) {
-              driver.removeChild(oldChild[i]);
+          // If the new length less then prev
+          if (newNativeNode.length < prevNativeNode.length) {
+            for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
+              driver.removeChild(prevNativeNode[i]);
             }
           }
         }
@@ -500,6 +494,7 @@ class CompositeComponent extends BaseComponent {
   }
 
   getNativeNode() {
+    // 123
     let renderedComponent = this._renderedComponent;
     if (renderedComponent) {
       return renderedComponent.getNativeNode();
