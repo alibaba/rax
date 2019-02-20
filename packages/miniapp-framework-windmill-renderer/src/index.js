@@ -6,9 +6,8 @@ import setupDriverHandler from './setupDriverHandler';
 import setupAPIAdapter from './apiAdapter';
 import setupRenderToWorker from './renderToWorker';
 import createWindmill from '../vendors/windmill-renderer.min';
-
-// import { consoleDataCusumer } from './console';
-// import startRemoteInspect from './remoteInspect';
+import { consoleDataCusumer } from './console';
+import startRemoteInspect from './remoteInspect';
 
 compat();
 setupAppear(window);
@@ -46,16 +45,23 @@ windmill.$call('miniApp.getConfig', {}, function(response) {
   debug('Error: miniApp.getConfig', err);
 });
 
-// /**
-//  * console api
-//  */
-// windmill.$on('console', event => {
-//   consoleDataCusumer(event.data);
-// });
+/**
+ * Console debugger.
+ */
+windmill.$on('console', ({ data }) => {
+  consoleDataCusumer(data);
+});
 
-// /**
-//  * Start remote debugger
-//  */
-// if (pageQuery.remoteInspectUrl) {
-//   startRemoteInspect(pageQuery.remoteInspectUrl);
-// }
+/**
+ * Start remote debugger
+ */
+if (hasOwnProperty(clientReadyPayload.pageQuery, 'remoteInspectUrl')) {
+  startRemoteInspect(clientReadyPayload.pageQuery.remoteInspectUrl);
+}
+
+/**
+ * Has own property of an object.
+ */
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
