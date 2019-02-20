@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Rax renderer for miniapp.",
   "license": "BSD-3-Clause",
-  "main": "",
+  "main": "dist/rax-miniapp-renderer.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
