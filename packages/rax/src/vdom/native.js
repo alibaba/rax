@@ -4,6 +4,7 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
+import BaseComponent from './base';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -13,17 +14,9 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 /**
  * Native Component
  */
-class NativeComponent {
-  constructor(element) {
-    this._currentElement = element;
-  }
-
+class NativeComponent extends BaseComponent {
   mountComponent(parent, parentInstance, context, childMounter) {
-    // Parent native element
-    this._parent = parent;
-    this._parentInstance = parentInstance;
-    this._context = context;
-    this._mountID = Host.mountID++;
+    this.initComponent(parent, parentInstance, context);
 
     const currentElement = this._currentElement;
     const props = currentElement.props;
@@ -110,19 +103,19 @@ class NativeComponent {
     return renderedChildrenImage;
   }
 
-  unmountChildren(notRemoveChild) {
+  unmountChildren(shouldNotRemoveChild) {
     let renderedChildren = this._renderedChildren;
 
     if (renderedChildren) {
       for (let name in renderedChildren) {
         let renderedChild = renderedChildren[name];
-        renderedChild.unmountComponent(notRemoveChild);
+        renderedChild.unmountComponent(shouldNotRemoveChild);
       }
       this._renderedChildren = null;
     }
   }
 
-  unmountComponent(notRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     if (this._nativeNode) {
       let ref = this._currentElement.ref;
       if (ref) {
@@ -131,24 +124,15 @@ class NativeComponent {
 
       Instance.remove(this._nativeNode);
 
-      if (!notRemoveChild) {
+      if (!shouldNotRemoveChild) {
         Host.driver.removeChild(this._nativeNode, this._parent);
       }
     }
 
-    this.unmountChildren(notRemoveChild);
+    this.unmountChildren(shouldNotRemoveChild);
 
-    if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.unmountComponent(this);
-    }
-
-    this._currentElement = null;
-    this._nativeNode = null;
-    this._parent = null;
-    this._parentInstance = null;
-    this._context = null;
-    this._instance = null;
     this._prevStyleCopy = null;
+    this.destoryComponent();
   }
 
   updateComponent(prevElement, nextElement, prevContext, nextContext) {
@@ -469,21 +453,10 @@ class NativeComponent {
     this._renderedChildren = nextChildren;
   }
 
-  getNativeNode() {
-    if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createElement(this._instance);
-      Instance.set(this._nativeNode, this._instance);
-    }
-
-    return this._nativeNode;
-  }
-
-  getPublicInstance() {
-    return this.getNativeNode();
-  }
-
-  getName() {
-    return this._currentElement.type;
+  createNativeNode() {
+    var nativeNode = Host.driver.createElement(this._instance);
+    Instance.set(nativeNode, this._instance);
+    return nativeNode;
   }
 }
 

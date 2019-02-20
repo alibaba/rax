@@ -5,6 +5,7 @@ import Ref from './ref';
 import instantiateComponent, { throwInvalidComponentError } from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
+import BaseComponent from './base';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -60,27 +61,9 @@ if (process.env.NODE_ENV !== 'production') {
 /**
  * Composite Component
  */
-class CompositeComponent {
-  constructor(element) {
-    this._currentElement = element;
-  }
-
-  getName() {
-    let type = this._currentElement.type;
-    let instance = this._instance;
-    let constructor = instance && instance.constructor;
-    return (
-      type.displayName || constructor && constructor.displayName ||
-      type.name || constructor && constructor.name ||
-      null
-    );
-  }
-
+class CompositeComponent extends BaseComponent {
   mountComponent(parent, parentInstance, context, childMounter) {
-    this._parent = parent;
-    this._parentInstance = parentInstance;
-    this._context = context;
-    this._mountID = Host.mountID++;
+    this.initComponent(parent, parentInstance, context);
     this._updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
@@ -111,8 +94,7 @@ class CompositeComponent {
         throwInvalidComponentError(Component);
       }
     } catch (e) {
-      handleError(parentInstance, e);
-      return instance;
+      return handleError(parentInstance, e);
     }
 
     // These should be set up in the constructor, but as a convenience for
@@ -211,39 +193,28 @@ class CompositeComponent {
     return instance;
   }
 
-  unmountComponent(notRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     let instance = this._instance;
 
-    if (!instance) {
-      return;
-    }
-
-    if (instance.componentWillUnmount) {
+    // Unmounting a composite component maybe not complete mounted
+    // when throw error in component constructor stage
+    if (instance && instance.componentWillUnmount) {
       performInSandbox(() => {
         instance.componentWillUnmount();
       }, instance);
     }
 
-    if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.unmountComponent(this);
-    }
-
-    instance._internal = null;
-
     if (this._renderedComponent != null) {
       let currentElement = this._currentElement;
       let ref = currentElement.ref;
+
       if (!currentElement.type.forwardRef && ref) {
         Ref.detach(currentElement._owner, ref, this);
       }
 
-      this._renderedComponent.unmountComponent(notRemoveChild);
+      this._renderedComponent.unmountComponent(shouldNotRemoveChild);
       this._renderedComponent = null;
-      this._instance = null;
     }
-
-    this._currentElement = null;
-    this._parentInstance = null;
 
     // Reset pending fields
     // Even if this component is scheduled for another async update,
@@ -251,9 +222,7 @@ class CompositeComponent {
     this._pendingStateQueue = null;
     this._isPendingForceUpdate = false;
 
-    // These fields do not really need to be reset since this object is no
-    // longer accessible.
-    this._context = null;
+    this.destoryComponent();
   }
 
   /**
@@ -263,9 +232,11 @@ class CompositeComponent {
   _processContext(context) {
     let Component = this._currentElement.type;
     let contextTypes = Component.contextTypes;
+
     if (!contextTypes) {
       return {};
     }
+
     let maskedContext = {};
     for (let contextName in contextTypes) {
       maskedContext[contextName] = context[contextName];
@@ -275,10 +246,13 @@ class CompositeComponent {
 
   _processChildContext(currentContext) {
     let instance = this._instance;
+    // The getChildContext method context should be current instance
     let childContext = instance.getChildContext && instance.getChildContext();
+
     if (childContext) {
       return Object.assign({}, currentContext, childContext);
     }
+
     return currentContext;
   }
 
@@ -462,6 +436,7 @@ class CompositeComponent {
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
       const prevRenderedUnmaskedContext = prevRenderedComponent._context;
       const nextRenderedUnmaskedContext = this._processChildContext(context);
+
       if (prevRenderedElement !== nextRenderedElement || prevRenderedUnmaskedContext !== nextRenderedUnmaskedContext) {
         prevRenderedComponent.updateComponent(
           prevRenderedElement,

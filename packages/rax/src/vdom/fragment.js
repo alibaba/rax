@@ -6,16 +6,8 @@ import Instance from './instance';
  * Fragment Component
  */
 class FragmentComponent extends NativeComponent {
-  constructor(element) {
-    super(element);
-  }
-
   mountComponent(parent, parentInstance, context, childMounter) {
-    // Parent native element
-    this._parent = parent;
-    this._parentInstance = parentInstance;
-    this._context = context;
-    this._mountID = Host.mountID++;
+    this.initComponent(parent, parentInstance, context);
 
     let instance = {
       _internal: this,
@@ -54,13 +46,13 @@ class FragmentComponent extends NativeComponent {
     });
   }
 
-  unmountComponent(notRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     let nativeNode = this._nativeNode;
 
     if (nativeNode) {
       Instance.remove(nativeNode);
 
-      if (!notRemoveChild) {
+      if (!shouldNotRemoveChild) {
         for (let i = 0; i < nativeNode.length; i++) {
           Host.driver.removeChild(nativeNode[i]);
         }
@@ -70,12 +62,7 @@ class FragmentComponent extends NativeComponent {
     // Do not need remove child when their parent is removed
     this.unmountChildren(true);
 
-    this._currentElement = null;
-    this._nativeNode = null;
-    this._parent = null;
-    this._parentInstance = null;
-    this._context = null;
-    this._instance = null;
+    this.destoryComponent();
   }
 
   updateComponent(prevElement, nextElement, prevContext, nextContext) {
@@ -84,16 +71,8 @@ class FragmentComponent extends NativeComponent {
     this.updateChildren(this._currentElement, nextContext);
   }
 
-  getNativeNode() {
-    if (this._nativeNode == null) {
-      this._nativeNode = [];
-    }
-
-    return this._nativeNode;
-  }
-
-  getPublicInstance() {
-    return this.getNativeNode();
+  createNativeNode() {
+    return [];
   }
 
   getName() {
