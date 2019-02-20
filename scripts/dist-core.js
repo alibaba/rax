@@ -55,8 +55,7 @@ async function build(packageName, { name, shouldMinify = false, format = 'umd' }
       level: 6
     });
 
-    console.log(file, `${(size/1024).toPrecision(3)}kb (gzip)`);
-
+    console.log(file, `${(size / 1024).toPrecision(3)}kb (gzip)`);
   } else {
     const ext = format === 'esm' ? '.mjs' : '.js';
     await bundle.write({
