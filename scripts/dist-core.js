@@ -3,8 +3,9 @@ const resolve = require('rollup-plugin-node-resolve');
 const babel = require('rollup-plugin-babel');
 const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
+const gzipSize = require('gzip-size');
 
-function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
+async function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
   const output = {
     name,
     exports: 'named',
@@ -12,7 +13,7 @@ function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
   };
 
   // For development
-  rollup.rollup({
+  const bundle = await rollup.rollup({
     input: './packages/' + packageName + '/src/index.js',
     plugins: [
       resolve(),
@@ -31,29 +32,40 @@ function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
       replace({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
-      shouldMinify ? uglify() : null,
+      shouldMinify ? uglify({
+        compress: {
+          loops: false,
+          keep_fargs: false,
+          unsafe: true,
+          pure_getters: true
+        }
+      }) : null,
     ]
-  }).then(bundle => {
-    if (shouldMinify) {
-      bundle.write({
-        ...output,
-        format,
-        file: `./packages/${packageName}/dist/${packageName}.min.js`,
-      });
-    } else {
-      const ext = format === 'esm' ? '.mjs' : '.js';
-      bundle.write({
-        ...output,
-        format,
-        file: `./packages/${packageName}/dist/${packageName}${ext}`,
-      });
-    }
-  }).catch(error => {
-    console.error(error);
   });
-}
 
-console.log('Build...');
+  if (shouldMinify) {
+    const file = `./packages/${packageName}/dist/${packageName}.min.js`;
+    await bundle.write({
+      ...output,
+      format,
+      file,
+    });
+
+    const size = gzipSize.fileSync(file, {
+      level: 6
+    });
+
+    console.log(file, `${(size/1024).toPrecision(3)}kb (gzip)`);
+
+  } else {
+    const ext = format === 'esm' ? '.mjs' : '.js';
+    await bundle.write({
+      ...output,
+      format,
+      file: `./packages/${packageName}/dist/${packageName}${ext}`,
+    });
+  }
+}
 
 build('rax', { name: 'Rax' });
 build('rax', { name: 'Rax', format: 'esm' });
