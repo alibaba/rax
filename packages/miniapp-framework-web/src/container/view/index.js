@@ -28,6 +28,7 @@ const styles = {
     left: '0',
     bottom: '0',
     borderTop: '1px solid #eee',
+    fontSize: '16px',
   },
   tabBarItem: {
     textAlign: 'center',

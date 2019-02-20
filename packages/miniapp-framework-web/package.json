@@ -4,7 +4,8 @@
   "description": "MiniApp framework for Web.",
   "main": "dist/miniapp-framework-web.min.js",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.dev.js"
+    "start": "webpack-dev-server --config config/webpack.config.dev.js",
+    "build": "webpack --config config/webpack.config.prod.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.1.14",
+    "webpack-merge": "^4.2.1"
   }
 }

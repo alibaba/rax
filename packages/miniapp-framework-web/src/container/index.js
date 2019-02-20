@@ -38,7 +38,7 @@ export default function startMiniAppWeb(appConfig, mountNode) {
  * If APP_MANIFEST exists in window, automaticlly init miniapp.
  */
 if (hasOwn.call(window, COMPATIBLE_APP_CONFIG_KEY)) {
-  startMiniAppWeb(window[COMPATIBLE_APP_CONFIG_KEY]);
+  startMiniAppWeb(window[COMPATIBLE_APP_CONFIG_KEY], document.body);
 }
 
 /**
