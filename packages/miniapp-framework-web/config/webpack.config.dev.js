@@ -1,4 +1,4 @@
-const webpack = require('webpack');
+const webpack = require('webpack'); // eslint-disable-line
 const { resolve } = require('path');
 const getBabelConfig = require('../../../babel.config');
 
