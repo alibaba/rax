@@ -2,7 +2,7 @@ import ReactiveComponent from './reactive';
 import updater from './updater';
 import Host from './host';
 import Ref from './ref';
-import instantiateComponent from './instantiateComponent';
+import instantiateComponent, { throwInvalidComponentError } from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 
@@ -111,7 +111,7 @@ class CompositeComponent {
         // Functional reactive component with hooks
         instance = new ReactiveComponent(Component, ref);
       } else {
-        throw new Error(`Invalid component type: ${Component}. (current: ${typeof Component === 'object' && Object.keys(Component) || typeof Component})`);
+        throwInvalidComponentError(Component);
       }
     } catch (e) {
       handleError(parentInstance, e);
