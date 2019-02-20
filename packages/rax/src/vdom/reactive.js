@@ -115,7 +115,7 @@ class ReactiveComponent extends Component {
     while (this.isScheduled) {
       this._reRenders++;
       if (this._reRenders > RE_RENDER_LIMIT) {
-        throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
+        throw Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
       }
 
       this._hookID = 0;
