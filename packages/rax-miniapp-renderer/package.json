@@ -1,7 +1,7 @@
 {
   "name": "rax-miniapp-renderer",
   "version": "0.1.0",
-  "description": "Web renderer for worker.",
+  "description": "Rax renderer for miniapp.",
   "license": "BSD-3-Clause",
   "main": "",
   "repository": {

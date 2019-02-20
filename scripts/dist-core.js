@@ -4,7 +4,7 @@ const babel = require('rollup-plugin-babel');
 const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 
-function build(packageName, name, shouldMinify) {
+function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
   const output = {
     name,
     exports: 'named',
@@ -37,20 +37,15 @@ function build(packageName, name, shouldMinify) {
     if (shouldMinify) {
       bundle.write({
         ...output,
-        format: 'umd',
+        format,
         file: `./packages/${packageName}/dist/${packageName}.min.js`,
       });
     } else {
+      const ext = format === 'esm' ? '.mjs' : '.js';
       bundle.write({
         ...output,
-        format: 'umd',
-        file: `./packages/${packageName}/dist/${packageName}.js`,
-      });
-
-      bundle.write({
-        ...output,
-        format: 'esm',
-        file: `./packages/${packageName}/dist/${packageName}.mjs`,
+        format,
+        file: `./packages/${packageName}/dist/${packageName}${ext}`,
       });
     }
   }).catch(error => {
@@ -60,13 +55,17 @@ function build(packageName, name, shouldMinify) {
 
 console.log('Build...');
 
-build('rax', 'Rax');
-build('rax', 'Rax', true);
+build('rax', { name: 'Rax' });
+build('rax', { name: 'Rax', format: 'esm' });
+build('rax', { name: 'Rax', shouldMinify: true });
 
-build('driver-dom', 'DriverDOM');
-build('driver-dom', 'DriverDOM', true);
+build('driver-dom', { name: 'DriverDOM' });
+build('driver-dom', { name: 'DriverDOM', format: 'esm' });
+build('driver-dom', { name: 'DriverDOM', shouldMinify: true });
 
-build('driver-worker', 'DriverWorker');
-build('driver-worker', 'DriverWorker', true);
-build('rax-miniapp-renderer', 'RaxMiniappRenderer');
-build('rax-miniapp-renderer', 'RaxMiniappRenderer', true);
+build('driver-worker', { name: 'DriverWorker' });
+build('driver-worker', { name: 'DriverWorker', format: 'esm' });
+build('driver-worker', { name: 'DriverWorker', shouldMinify: true });
+
+build('rax-miniapp-renderer', { format: 'cjs' });
+build('rax-miniapp-renderer', { format: 'cjs', shouldMinify: true });
