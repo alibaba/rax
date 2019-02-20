@@ -15,7 +15,7 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
  * Native Component
  */
 class NativeComponent extends BaseComponent {
-  mountComponent(parent, parentInstance, context, childMounter) {
+  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.initComponent(parent, parentInstance, context);
 
     const currentElement = this._currentElement;
@@ -38,8 +38,8 @@ class NativeComponent extends BaseComponent {
     let mountChild = () => {
       let nativeNode = this.getNativeNode();
 
-      if (childMounter) {
-        childMounter(nativeNode, parent);
+      if (nativeNodeMounter) {
+        nativeNodeMounter(nativeNode, parent);
       } else {
         Host.driver.appendChild(nativeNode, parent);
       }
@@ -82,7 +82,7 @@ class NativeComponent extends BaseComponent {
     return this._mountChildren(nativeNode, children, context);
   }
 
-  _mountChildren(parent, children, context, childMounter) {
+  _mountChildren(parent, children, context, nativeNodeMounter) {
     let renderedChildren = this._renderedChildren = {};
 
     let renderedChildrenImage = children.map((element, index) => {
@@ -95,7 +95,7 @@ class NativeComponent extends BaseComponent {
         parent,
         this._instance,
         context,
-        childMounter
+        nativeNodeMounter
       );
       return mountImage;
     });

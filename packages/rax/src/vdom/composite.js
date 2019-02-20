@@ -62,7 +62,7 @@ if (process.env.NODE_ENV !== 'production') {
  * Composite Component
  */
 class CompositeComponent extends BaseComponent {
-  mountComponent(parent, parentInstance, context, childMounter) {
+  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.initComponent(parent, parentInstance, context);
     this._updateCount = 0;
 
@@ -155,7 +155,7 @@ class CompositeComponent extends BaseComponent {
       this._parent,
       instance,
       this._processChildContext(context),
-      childMounter
+      nativeNodeMounter
     );
 
     if (error) {

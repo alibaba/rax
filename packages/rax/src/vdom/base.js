@@ -32,8 +32,31 @@ class BaseComponent {
     }
   }
 
+  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.initComponent(parent, parentInstance, context);
+    this.mountNativeNode(nativeNodeMounter);
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.hook.Reconciler.mountComponent(this);
+    }
+
+    let instance = {
+      _internal: this
+    };
+
+    return instance;
+  }
+
   updateComponent() {
     // Noop
+  }
+
+  unmountComponent(shouldNotRemoveChild) {
+    if (this._nativeNode && !shouldNotRemoveChild) {
+      Host.driver.removeChild(this._nativeNode, this._parent);
+    }
+
+    this.destoryComponent();
   }
 
   getName() {
@@ -51,6 +74,17 @@ class BaseComponent {
       type || // Native component's name is type
       currentElement
     );
+  }
+
+  mountNativeNode(nativeNodeMounter) {
+    let nativeNode = this.getNativeNode();
+    let parent = this._parent;
+
+    if (nativeNodeMounter) {
+      nativeNodeMounter(nativeNode, parent);
+    } else {
+      Host.driver.appendChild(nativeNode, parent);
+    }
   }
 
   getNativeNode() {

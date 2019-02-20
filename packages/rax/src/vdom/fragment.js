@@ -6,7 +6,7 @@ import Instance from './instance';
  * Fragment Component
  */
 class FragmentComponent extends NativeComponent {
-  mountComponent(parent, parentInstance, context, childMounter) {
+  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.initComponent(parent, parentInstance, context);
 
     let instance = {
@@ -20,8 +20,8 @@ class FragmentComponent extends NativeComponent {
     // Process children
     this.mountChildren(children, context);
 
-    if (childMounter) {
-      childMounter(fragment, parent);
+    if (nativeNodeMounter) {
+      nativeNodeMounter(fragment, parent);
     } else {
       for (let i = 0; i < fragment.length; i++) {
         let child = fragment[i];
