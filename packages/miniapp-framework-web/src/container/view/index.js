@@ -1,3 +1,4 @@
+/* global frameworkType */
 import kebabCase from 'kebab-case';
 import baseCSS from '!!raw-loader!./container.css';
 import { log } from 'miniapp-framework-shared';
@@ -39,6 +40,22 @@ const styles = {
     whiteSpace: 'nowrap',
     lineHeight: '1em',
   },
+  headerBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '10vw',
+    backgroundColor: '#f9f9f9',
+  },
+  headerInfo: {
+    fontSize: '16px',
+    color: '#272727',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: '10vw',
+  },
   icon: {
     width: '16px',
   },
@@ -46,8 +63,8 @@ const styles = {
 
 const baseStyleTpl = `<style>${baseCSS}</style>`;
 const headerBarTpl = `
-  <div id="headerBar">
-    <div class="headerInfo">
+  <div id="headerBar" style="${serializeStyle(styles.headerBar)}">
+    <div class="headerInfo" style="${serializeStyle(styles.headerInfo)}">
       <div id="prev" style="width: 26vw;">
         <img src="https://gw.alicdn.com/tfs/TB1cNCCqTtYBeNjy1XdXXXXyVXa-38-66.png" style="width: 2.5vw; margin-top: 2.6vw; margin-left: 4vw;" />
       </div>
@@ -112,7 +129,7 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
     color: navigationBarTextStyle || '#000',
   };
 
-  let showHeaderBar = false;
+  let showHeaderBar = frameworkType === 'ide';
   let showTabBar = false;
   if (appConfig.tabBar && Array.isArray(appConfig.tabBar.list)) {
     showTabBar = true;
@@ -164,6 +181,8 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
       router.switchTab({ pageName });
     }
   }
+
+  return { router };
 }
 
 function findHomePage(APP_MANIFEST) {

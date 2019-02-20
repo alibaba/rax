@@ -24,14 +24,6 @@ export default class MessageRouter {
   }
 
   /**
-   * Navigate message.
-   * @param data
-   */
-  navigator(data) {
-    console.error('navigator protocol', data);
-  }
-
-  /**
    * Console message.
    * @param data
    */
@@ -41,9 +33,31 @@ export default class MessageRouter {
   handleMessageFromWorker(data) {
     switch (data.type) {
       case 'r$':
-        renderContainerShell(this, this._appConfig, this._mountNode);
+        const { router } = renderContainerShell(this, this._appConfig, this._mountNode);
+        this._router = router;
+        break;
+      case 'call':
+        this.handleRemoteCall(data);
+    }
+  }
+
+  handleRemoteCall(data) {
+    switch (data.method) {
+      case 'navigateTo':
+        this._router.navigateTo({ pageName: data.params.url });
+        this.callbackRemoteCall(data.callId, null, null);
+        break;
+      case 'navigateBack':
+        this._router.navigateBack(data.params);
+        this.callbackRemoteCall(data.callId, null, null);
         break;
     }
+  }
+
+  callbackRemoteCall(callId, error, result) {
+    this._worker.postMessage({
+      type: 'callEnd', callId, error, result
+    });
   }
 
   defaultHandler(data) {

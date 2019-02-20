@@ -22,11 +22,11 @@ export function call(modKey, params, onSuccess = noop, onFail = noop) {
         removeEventListener('message', callEndHandler);
       }
 
-      const { status, result, err } = evt.data;
-      if (status === 'resolved') {
+      const { result, error } = evt.data;
+      if (result) {
         onSuccess(result);
       } else {
-        onFail(err);
+        onFail(error);
       }
     }
   }
@@ -34,10 +34,13 @@ export function call(modKey, params, onSuccess = noop, onFail = noop) {
   addEventListener('message', callEndHandler);
 
   postMessage({
-    type: 'call',
-    module,
-    method,
-    params,
-    callId,
+    target: 'AppContainer',
+    payload: {
+      type: 'call',
+      module,
+      method,
+      params,
+      callId,
+    },
   });
 }

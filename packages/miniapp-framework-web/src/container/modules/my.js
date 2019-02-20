@@ -4,7 +4,11 @@
 const EXTERNAL_API_NAMESPACE = 'EXTERNAL_API';
 const my = {};
 
-// Object.assign(my, navigation);
+const internalAPIs = [
+  'navigateTo',
+  'navigateBack',
+];
+internalAPIs.forEach((apiName) => my[apiName] = true);
 
 /**
  * User defined api.

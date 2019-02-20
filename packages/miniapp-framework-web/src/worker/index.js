@@ -27,11 +27,7 @@ const EVENT_UPDATE_PAGEDATA = 'updatePageData';
  */
 function messageHandler({ data }) {
   const { target, payload } = data;
-
-  if (target !== 'AppWorker') {
-    log('AppWorker get illegal data', data);
-    return;
-  }
+  if (target !== 'AppWorker') return;
 
   switch (payload.type) {
     case EVENT_IMPORT_SCRIPTS: {

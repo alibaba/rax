@@ -13,10 +13,10 @@
   },
   "dependencies": {
     "driver-worker": "^0.7.9",
-    "driver-worker-renderer-webview": "^1.0.0-0",
     "kebab-case": "^1.0.0",
     "miniapp-framework-shared": "^0.0.0",
     "rax": "^0.6.7",
+    "rax-miniapp-renderer": "^0.1.0-0",
     "resolve-pathname": "^3.0.0"
   },
   "devDependencies": {

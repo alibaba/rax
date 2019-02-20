@@ -1,4 +1,5 @@
 import resolvePathname from 'resolve-pathname';
+import { log } from 'miniapp-framework-shared';
 import { createMessageProxy } from './MessageProxy';
 import Client from './Client';
 
@@ -58,11 +59,30 @@ export default class Router {
     this.currentClient = client;
   }
 
-  navigateBack() {
-    // TODO
+  /**
+   * Back to prev client page.
+   * @param params.delta {Number} The number of back pages.
+   */
+  navigateBack(params = {}) {
+    let delta = params.delta || 1;
+    let prevClient = this.currentClient;
+    do {
+      prevClient = prevClient.prevClient;
+    } while (--delta && prevClient);
+
+    if (prevClient) {
+      this.currentClient.hide();
+      this.currentClient = prevClient;
+      this.currentClient.show();
+    } else {
+      log('No prev page at all.');
+    }
   }
 
-  redirect() {
+  /**
+   * Redirect to some page, instead of current page.
+   */
+  redirectTo(params) {
     // TODO
   }
 

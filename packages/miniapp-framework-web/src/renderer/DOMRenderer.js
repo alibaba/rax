@@ -1,9 +1,10 @@
-import domRenderer from 'driver-worker-renderer-webview';
+import domRenderer from 'rax-miniapp-renderer';
+import handleModuleAPIEvent from './moduleAPIEvent';
 
 const TAG_NAME_PREFIX = 'a-';
 
 /**
- * WebRenderer
+ * DOMRenderer
  */
 export default class DOMRenderer {
   constructor(worker, mountNode, win = window) {
@@ -11,31 +12,19 @@ export default class DOMRenderer {
     this.mountNode = mountNode;
     this.window = win;
     this.document = win.document;
+    const { documentElement } = this.document;
+    /**
+     * Handle with module API events.
+     */
+    worker.onModuleAPIEvent = handleModuleAPIEvent;
 
     /**
-     * Module Event
-     * @type {WebRenderer.onModuleAPIEvent}
+     * Correct the page font-size
      */
-    worker.onModuleAPIEvent = this.onModuleAPIEvent;
+    documentElement.style.fontSize = documentElement.clientWidth / 750 * 100 + 'px';
 
     this.render();
   }
-
-  onModuleAPIEvent({ data: payload }) {
-    const { type, data } = payload;
-    switch (type) {
-      case 'pageScrollTo': {
-        const { behavior, scrollTop } = data;
-        window.scrollTo({
-          top: scrollTop || 0,
-          behavior: behavior || 'auto',
-        });
-        break;
-      }
-      default:
-        break;
-    }
-  };
 
   render() {
     domRenderer({
