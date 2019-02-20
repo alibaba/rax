@@ -78,4 +78,27 @@ describe('textarea', () => {
       document.querySelector('#textarea').getBoundingClientRect().height
     `)).toBeGreaterThan(190);
   });
+
+  it('show-count', async() => {
+    const page = await createPage();
+
+    // Default value to true.
+    expect(await page.$eval('#textarea', el => el.showCount)).toEqual(true);
+    expect(await page.evaluate(`
+      getComputedStyle(textarea.$.count).display
+    `)).toEqual('block');
+
+    // Set to false.
+    await page.addScriptTag({
+      content: `
+        const textarea = document.querySelector('#textarea');
+        textarea.showCount = false;
+      `,
+    });
+
+    expect(await page.$eval('#textarea', el => el.showCount)).toEqual(false);
+    expect(await page.evaluate(`
+      getComputedStyle(textarea.$.count).display
+    `)).toEqual('none');
+  });
 });

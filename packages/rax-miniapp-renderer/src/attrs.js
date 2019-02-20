@@ -1,6 +1,6 @@
 import { setStyle } from './styles';
-import camelCase from '../shared/camelCase';
-import kebabCase from '../shared/kebabCase';
+import camelCase from './camelCase';
+import kebabCase from './kebabCase';
 
 const STYLE = 'style';
 const INVALID_ATTRS_MAP = {
