@@ -61,16 +61,11 @@ class BaseComponent {
 
   getName() {
     let currentElement = this._currentElement;
-    let instance = this._instance;
-
     let type = currentElement && currentElement.type;
-    let constructor = instance && instance.constructor;
 
     return (
       type && type.displayName ||
-      constructor && constructor.displayName ||
       type && type.name ||
-      constructor && constructor.name ||
       type || // Native component's name is type
       currentElement
     );

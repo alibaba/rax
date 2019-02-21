@@ -1,5 +1,6 @@
 import Host from './vdom/host';
 import { schedule, flush } from './vdom/scheduler';
+import { is } from './vdom/shallowEqual';
 
 function getCurrentRenderingInstance() {
   const currentInstance = Host.owner._instance;
@@ -11,13 +12,12 @@ function getCurrentRenderingInstance() {
 }
 
 function areInputsEqual(inputs, prevInputs) {
+  if (inputs.length !== prevInputs.length) {
+    return false;
+  }
+
   for (let i = 0; i < inputs.length; i++) {
-    const val1 = inputs[i];
-    const val2 = prevInputs[i];
-    if (
-      val1 === val2 && (val1 !== 0 || 1 / val1 === 1 / val2) ||
-      val1 !== val1 && val2 !== val2 // eslint-disable-line no-self-compare
-    ) {
+    if (is(inputs[i], prevInputs[i])) {
       continue;
     }
     return false;
