@@ -1,15 +1,17 @@
 /* global frameworkType */
-import WebRenderer from './WebRenderer';
-import IDERenderer from './IDERenderer';
+import WebRenderer from '../renderer/WebRenderer';
+import IframeRenderer from '../renderer/IframeRenderer';
 
 let clinetCount = 0;
-const BaseRenderer = frameworkType === 'web' ? WebRenderer : IDERenderer;
+const BaseRenderer = frameworkType === 'web' ? WebRenderer : IframeRenderer;
 
 export default class Client extends BaseRenderer {
   constructor(pageName, options = {}) {
     const clientId = createClientId();
     super(pageName, clientId, options);
   }
+
+  channel = {};
 
   show() {
     super.show();

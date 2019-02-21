@@ -1,12 +1,11 @@
-import { getMessageProxy } from './MessageProxy';
-import renderDOM from '../renderer';
-import { generateHTML } from './IDERenderer/html';
+import { generateHTML } from './html';
+import renderDOM from './renderDOM';
 
 const rendererDocHTML = generateHTML({
   viewport: screen.width / 750,
 });
 
-export default class IDERenderer {
+export default class IframeRenderer {
   constructor(pageName, clientId, opts) {
     this.pageName = pageName;
     this.clientId = clientId;
@@ -20,8 +19,6 @@ export default class IDERenderer {
     renderer.setAttribute('data-client-id', clientId);
     this.renderer = renderer;
     this.initIframe(renderer);
-
-    this.transferBus = getMessageProxy(clientId);
   }
 
   initIframe(iframeEl) {
@@ -58,7 +55,7 @@ export default class IDERenderer {
         needInit = this.renderer.contentWindow.location.href === 'about:srcdoc';
       } catch (e) {}
       if (needInit) {
-        renderDOM(this.renderer.contentDocument.body, this.clientId, this.pageQuery, this.renderer.contentWindow);
+        renderDOM(this.channel, this.renderer.contentDocument.body, this.clientId, this.pageQuery, this.renderer.contentWindow);
       }
       callback();
     };

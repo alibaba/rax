@@ -1,10 +1,12 @@
-import { log } from 'miniapp-framework-shared';
+import { debug, log } from 'miniapp-framework-shared';
 import renderContainerShell from './view';
 
 export default class MessageRouter {
   /**
    * Worker handle.
    * @param workerHandle {Object}
+   * @param appConfig {Object}
+   * @param mountNode {HTMLElement}
    */
   constructor(workerHandle, appConfig, mountNode) {
     this._worker = workerHandle;
@@ -15,12 +17,32 @@ export default class MessageRouter {
   }
 
   /**
-   * Add a route channel for message.
-   * @param channelName
-   * @param proxy {Object}
+   * Create a message chennel, which is an object with following protocol:
+   *   onmessage: [MessageEventHandler]
+   *   postMessage: [PostMessageToAnotherPoint]
    */
-  addChannel(channelName, proxy) {
-    this._channels[channelName] = proxy;
+  createMessageChannel(channelName, { clientId, pageName }) {
+    const messageRouter = this;
+    return this._channels[channelName] = {
+      /**
+       * Send message from renderer to worker.
+       * @param message
+       */
+      postMessage(message) {
+        // add clientId and pageName for payload.
+        const payload = { pageName, clientId, ...message };
+        const data = { target: 'AppWorker', payload };
+        debug(`r@${clientId}->w`, data);
+        messageRouter.eventHandler({ data });
+      },
+      /**
+       * Send message from worker to renderer.
+       * onmesssage should be override.
+       */
+      onmessage() {
+        log(`w->r@${clientId}`, 'Unexpected handler of message.');
+      },
+    };
   }
 
   /**

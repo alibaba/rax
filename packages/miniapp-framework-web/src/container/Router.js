@@ -1,6 +1,5 @@
 import resolvePathname from 'resolve-pathname';
 import { log } from 'miniapp-framework-shared';
-import { createMessageProxy } from './MessageProxy';
 import Client from './Client';
 
 const ROUTE_HASH_PREFIX = '!/';
@@ -49,8 +48,10 @@ export default class Router {
       this.tabClients[pageName] = client;
     }
 
-    const messageProxy = createMessageProxy(this.messageRouter, client.clientId, pageName);
-    this.messageRouter.addChannel(client.clientId, messageProxy);
+    const clientId = client.clientId;
+    client.channel = this.messageRouter.createMessageChannel(clientId, {
+      clientId, pageName,
+    });
 
     if (this.currentClient) this.currentClient.hide();
 

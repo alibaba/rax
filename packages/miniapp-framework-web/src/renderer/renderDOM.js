@@ -3,10 +3,21 @@ import handleModuleAPIEvent from './moduleAPIEvent';
 
 const TAG_NAME_PREFIX = 'a-';
 
+export default function renderDOM(workerHandle, mountNode, clientId, pageQuery = {}, window) {
+  const postMessage = workerHandle.postMessage;
+  // Hook postMessage
+  workerHandle.postMessage = (msg) => {
+    if (msg.type === 'init') msg.pageQuery = pageQuery;
+    postMessage.call(workerHandle, msg);
+  };
+
+  return new DOMRenderer(workerHandle, mountNode, window);
+}
+
 /**
  * DOMRenderer
  */
-export default class DOMRenderer {
+class DOMRenderer {
   constructor(worker, mountNode, win = window) {
     this.worker = worker;
     this.mountNode = mountNode;

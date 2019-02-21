@@ -1,5 +1,4 @@
-import { getMessageProxy } from './MessageProxy';
-import renderDOM from '../renderer';
+import renderDOM from './renderDOM';
 
 export default class WebRenderer {
   constructor(pageName, clientId, opts) {
@@ -14,8 +13,6 @@ export default class WebRenderer {
     renderer.setAttribute('data-prev-client-id', prevClientId);
     renderer.setAttribute('data-client-id', clientId);
     this.renderer = renderer;
-
-    this.transferBus = getMessageProxy(clientId);
   }
 
   hide() {
@@ -30,7 +27,7 @@ export default class WebRenderer {
 
   mount(container, callback = () => { }) {
     container.appendChild(this.renderer);
-    renderDOM(this.renderer, this.clientId, this.pageQuery);
+    renderDOM(this.channel, this.renderer, this.clientId, this.pageQuery);
     callback();
   }
 
