@@ -3,8 +3,9 @@ const resolve = require('rollup-plugin-node-resolve');
 const babel = require('rollup-plugin-babel');
 const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
+const gzipSize = require('gzip-size');
 
-function build(packageName, name, shouldMinify) {
+async function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
   const output = {
     name,
     exports: 'named',
@@ -12,7 +13,7 @@ function build(packageName, name, shouldMinify) {
   };
 
   // For development
-  rollup.rollup({
+  const bundle = await rollup.rollup({
     input: './packages/' + packageName + '/src/index.js',
     plugins: [
       resolve(),
@@ -31,37 +32,51 @@ function build(packageName, name, shouldMinify) {
       replace({
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
-      shouldMinify ? uglify() : null,
+      shouldMinify ? uglify({
+        compress: {
+          loops: false,
+          keep_fargs: false,
+          unsafe: true,
+          pure_getters: true
+        }
+      }) : null,
     ]
-  }).then(bundle => {
-    if (shouldMinify) {
-      bundle.write({
-        ...output,
-        format: 'umd',
-        file: `./packages/${packageName}/dist/${packageName}.min.js`,
-      });
-    } else {
-      bundle.write({
-        ...output,
-        format: 'umd',
-        file: `./packages/${packageName}/dist/${packageName}.js`,
-      });
-
-      bundle.write({
-        ...output,
-        format: 'esm',
-        file: `./packages/${packageName}/dist/${packageName}.mjs`,
-      });
-    }
-  }).catch(error => {
-    console.error(error);
   });
+
+  if (shouldMinify) {
+    const file = `./packages/${packageName}/dist/${packageName}.min.js`;
+    await bundle.write({
+      ...output,
+      format,
+      file,
+    });
+
+    const size = gzipSize.fileSync(file, {
+      level: 6
+    });
+
+    console.log(file, `${(size / 1024).toPrecision(3)}kb (gzip)`);
+  } else {
+    const ext = format === 'esm' ? '.mjs' : '.js';
+    await bundle.write({
+      ...output,
+      format,
+      file: `./packages/${packageName}/dist/${packageName}${ext}`,
+    });
+  }
 }
 
-console.log('Build...');
+build('rax', { name: 'Rax' });
+build('rax', { name: 'Rax', format: 'esm' });
+build('rax', { name: 'Rax', shouldMinify: true });
 
-build('rax', 'Rax');
-build('rax', 'Rax', true);
+build('driver-dom', { name: 'DriverDOM' });
+build('driver-dom', { name: 'DriverDOM', format: 'esm' });
+build('driver-dom', { name: 'DriverDOM', shouldMinify: true });
 
-build('driver-dom', 'DriverDOM');
-build('driver-dom', 'DriverDOM', true);
+build('driver-worker', { name: 'DriverWorker' });
+build('driver-worker', { name: 'DriverWorker', format: 'esm' });
+build('driver-worker', { name: 'DriverWorker', shouldMinify: true });
+
+build('rax-miniapp-renderer', { format: 'cjs' });
+build('rax-miniapp-renderer', { format: 'cjs', shouldMinify: true });

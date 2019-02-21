@@ -1,6 +1,6 @@
 {
   "name": "rax-scripts",
-  "version": "1.0.0-beta.9",
+  "version": "1.0.0-beta.10",
   "license": "BSD-3-Clause",
   "description": "Configuration and scripts for Rax App.",
   "bin": {

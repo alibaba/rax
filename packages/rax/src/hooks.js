@@ -1,8 +1,9 @@
 import Host from './vdom/host';
 import { schedule, flush } from './vdom/scheduler';
+import { is } from './vdom/shallowEqual';
 
 function getCurrentRenderingInstance() {
-  const currentInstance = Host.component._instance;
+  const currentInstance = Host.owner._instance;
   if (currentInstance) {
     return currentInstance;
   } else {
@@ -11,13 +12,12 @@ function getCurrentRenderingInstance() {
 }
 
 function areInputsEqual(inputs, prevInputs) {
+  if (inputs.length !== prevInputs.length) {
+    return false;
+  }
+
   for (let i = 0; i < inputs.length; i++) {
-    const val1 = inputs[i];
-    const val2 = prevInputs[i];
-    if (
-      val1 === val2 && (val1 !== 0 || 1 / val1 === 1 / val2) ||
-      val1 !== val1 && val2 !== val2 // eslint-disable-line no-self-compare
-    ) {
+    if (is(inputs[i], prevInputs[i])) {
       continue;
     }
     return false;
@@ -45,7 +45,7 @@ export function useState(initialState) {
 
       if (newState !== current) {
         // This is a render phase update.  After this render pass, we'll restart
-        if (Host.component && Host.component._instance === currentInstance) {
+        if (Host.owner && Host.owner._instance === currentInstance) {
           hooks[hookID][0] = newState;
           currentInstance.isScheduled = true;
         } else {
@@ -206,7 +206,7 @@ export function useReducer(reducer, initialState, initialAction) {
       // actions to the queue
       const queue = hook[2];
       // This is a render phase update.  After this render pass, we'll restart
-      if (Host.component && Host.component._instance === currentInstance) {
+      if (Host.owner && Host.owner._instance === currentInstance) {
         queue.push(action);
         currentInstance.isScheduled = true;
       } else {

@@ -26,7 +26,7 @@ export default function cloneElement(element, config, ...children) {
     // Should reset ref and owner if has a new ref
     if (config.ref !== undefined) {
       ref = config.ref;
-      owner = Host.component;
+      owner = Host.owner;
     }
 
     if (config.key !== undefined) {

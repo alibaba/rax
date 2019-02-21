@@ -40,6 +40,7 @@ module.exports = {
     "jasmine": true
   },
   "rules": {
+    "max-len": "off",
     // ES6
     "prefer-const": "off",
     "no-const-assign": "error",

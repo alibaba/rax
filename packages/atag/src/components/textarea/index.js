@@ -61,7 +61,6 @@ export default class Textarea extends PolymerElement {
         type: Boolean,
         value: true,
         observer: '_changeCustomStyle',
-        computed: '_computedShowCount(showCount)',
       },
       _valueLength: {
         type: Number,
@@ -144,10 +143,6 @@ export default class Textarea extends PolymerElement {
     if (this.autoHeight) {
       autosize.update(this.$.textarea);
     }
-  }
-
-  _computedShowCount(showCount) {
-    return showCount !== 'false';
   }
 
   _observeFocus() {
