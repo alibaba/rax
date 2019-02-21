@@ -4,17 +4,29 @@ import { flush, setUpdater } from './scheduler';
 // Dirty components store
 let dirtyComponents = [];
 
+function getPendingCallbacks(internal) {
+  return internal._pendingCallbacks;
+}
+
+function setPendingCallbacks(internal, callbacks) {
+  return internal._pendingCallbacks = callbacks;
+}
+
+function getPendingStateQueue(internal) {
+  return internal._pendingStateQueue;
+}
+
+function setPendingStateQueue(internal, partialState) {
+  return internal._pendingStateQueue = partialState;
+}
+
 function enqueueCallback(internal, callback) {
-  let callbackQueue =
-    internal._pendingCallbacks ||
-    (internal._pendingCallbacks = []);
+  let callbackQueue = getPendingCallbacks(internal) || setPendingCallbacks(internal, []);
   callbackQueue.push(callback);
 }
 
 function enqueueState(internal, partialState) {
-  let stateQueue =
-    internal._pendingStateQueue ||
-    (internal._pendingStateQueue = []);
+  let stateQueue = getPendingStateQueue(internal) || setPendingStateQueue(internal, []);
   stateQueue.push(partialState);
 }
 
@@ -37,15 +49,15 @@ function runUpdate(component) {
   // If updateComponent happens to enqueue any new updates, we
   // shouldn't execute the callbacks until the next render happens, so
   // stash the callbacks first
-  let callbacks = internal._pendingCallbacks;
-  internal._pendingCallbacks = null;
+  let callbacks = getPendingCallbacks(internal);
+  setPendingCallbacks(internal, null);
 
   let prevElement = internal._currentElement;
   let prevUnmaskedContext = internal._context;
   let nextUnmaskedContext = internal._penddingContext || prevUnmaskedContext;
   internal._penddingContext = undefined;
 
-  if (internal._pendingStateQueue || internal._pendingForceUpdate) {
+  if (getPendingStateQueue(internal) || internal._isPendingForceUpdate) {
     internal.updateComponent(
       prevElement,
       prevElement,
@@ -113,13 +125,15 @@ function requestUpdate(component, partialState, callback) {
   if (partialState) {
     enqueueState(internal, partialState);
 
-    // State pending in componentWillReceiveProps and componentWillMount
-    if (!internal._pendingState && hasComponentRendered) {
+    // State pending when request update in componentWillMount and componentWillReceiveProps,
+    // isPendingState default is false value (false or null) and set to true after componentWillReceiveProps,
+    // _renderedComponent is null when componentWillMount exec.
+    if (!internal._isPendingState && hasComponentRendered) {
       scheduleUpdate(component);
     }
   } else {
     // forceUpdate
-    internal._pendingForceUpdate = true;
+    internal._isPendingForceUpdate = true;
 
     if (hasComponentRendered) {
       scheduleUpdate(component);

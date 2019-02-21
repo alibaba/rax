@@ -8,9 +8,9 @@ const RESERVED_PROPS = {
 };
 
 function getRenderErrorInfo() {
-  const component = Host.component;
-  if (component) {
-    var name = component.getName();
+  const ownerComponent = Host.owner;
+  if (ownerComponent) {
+    var name = ownerComponent.getName();
     if (name) {
       return ' Check the render method of `' + name + '`.';
     }
@@ -27,13 +27,13 @@ export default function createElement(type, config, children) {
   let propName;
   let key = null;
   let ref = null;
-  const component = Host.component;
+  const ownerComponent = Host.owner;
 
   if (config != null) {
     ref = config.ref === undefined ? null : config.ref;
     key = config.key === undefined ? null : String(config.key);
 
-    if (typeof ref === 'string' && !component) {
+    if (typeof ref === 'string' && !ownerComponent) {
       console.warn('createElement: adding a string ref outside the component’s render() method.');
     }
 
@@ -77,7 +77,7 @@ export default function createElement(type, config, children) {
     key,
     ref,
     props,
-    component
+    ownerComponent
   );
 }
 
