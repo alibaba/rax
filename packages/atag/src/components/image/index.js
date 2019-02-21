@@ -62,14 +62,6 @@ export default class ImageElement extends PolymerElement {
     return Boolean(lazyload || this.lazyLoad);
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-
-    afterNextRender(this, () => {
-      this._init();
-    });
-  }
-
   _init() {
     if (!this.src) return;
 
