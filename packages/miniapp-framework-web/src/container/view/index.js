@@ -162,6 +162,16 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
   // Correct the page font-size
   document.documentElement.style.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';
 
+  messageRouter.eventHandler({
+    data: {
+      target: 'AppWorker',
+      payload: {
+        type: 'app:lifecycle',
+        lifecycle: 'show'
+      }
+    }
+  });
+
   // main, homepage
   const mainEl = document.querySelector('#main');
   const homepage = findHomePage(appConfig);

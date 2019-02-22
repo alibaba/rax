@@ -35,7 +35,7 @@ export default class WebRenderer {
     if (this.destroyed) {
       return false;
     }
-    
+
     this.renderer.parentElement.removeChild(this.renderer);
     return this.destroyed = true;
   }

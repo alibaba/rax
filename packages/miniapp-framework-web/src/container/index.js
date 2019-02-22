@@ -25,8 +25,13 @@ export default function startMiniAppWeb(appConfig, mountNode) {
   send('importScripts', {
     url: getAssetUrl(appConfig),
   }, TARGET_WORKER);
+
   send('registerAPI', {
     apis: Object.keys(my),
+  }, TARGET_WORKER);
+
+  send('app:lifecycle', {
+    lifecycle: 'launch',
   }, TARGET_WORKER);
 
   return { worker, messageRouter };
