@@ -47,10 +47,6 @@ class BaseComponent {
     return instance;
   }
 
-  updateComponent() {
-    // Noop
-  }
-
   unmountComponent(shouldNotRemoveChild) {
     if (this._nativeNode && !shouldNotRemoveChild) {
       Host.driver.removeChild(this._nativeNode, this._parent);

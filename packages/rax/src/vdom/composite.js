@@ -494,7 +494,6 @@ class CompositeComponent extends BaseComponent {
   }
 
   getNativeNode() {
-    // 123
     let renderedComponent = this._renderedComponent;
     if (renderedComponent) {
       return renderedComponent.getNativeNode();

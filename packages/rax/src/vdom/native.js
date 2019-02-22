@@ -278,7 +278,7 @@ class NativeComponent extends BaseComponent {
         });
       }
 
-      driver.setStyles(nativeNode, styleUpdates);
+      driver.setStyle(nativeNode, styleUpdates);
     }
   }
 
@@ -439,8 +439,9 @@ class NativeComponent extends BaseComponent {
   }
 
   createNativeNode() {
-    var nativeNode = Host.driver.createElement(this._instance);
-    Instance.set(nativeNode, this._instance);
+    const instance = this._instance;
+    const nativeNode = Host.driver.createElement(instance.type, instance.props, this);
+    Instance.set(nativeNode, instance);
     return nativeNode;
   }
 }

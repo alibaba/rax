@@ -58,7 +58,7 @@ const Driver = {
   },
 
   createEmpty() {
-    return this.createComment(' empty ');
+    return this.createComment(' _ ');
   },
 
   createText(text) {
@@ -74,13 +74,13 @@ const Driver = {
     this.setAttribute(node, 'value', content);
   },
 
-  createElement(component) {
-    const htmlElement = w3cElements[component.type];
+  createElement(type, props) {
+    const htmlElement = w3cElements[type];
+    let component = { type, props };
     if (htmlElement) {
       component = htmlElement.parse(component);
     }
 
-    let props = component.props;
     let events = [];
     let style = {};
     let originStyle = props[STYLE];

@@ -14,50 +14,22 @@ const STYLE = 'style';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const ADD_EVENT = 'addEvent';
-const REMOVE_EVENT = 'removeEvent';
 const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in document ? 'textContent' : 'nodeValue';
 
 const getClientWidth = () => document.documentElement.clientWidth;
 
 let tagNamePrefix = '';
-let deviceWidth = typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || null;
-let viewportWidth = typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || null;
-
-const eventRegistry = {
-  change: function(eventType, node, eventName, eventHandler, props) {
-    let tagName = node.tagName.toLowerCase();
-
-    if (
-      tagName === 'textarea' ||
-      tagName === 'input' && (!props.type || props.type === 'text' || props.type === 'password')
-    ) {
-      eventName = 'input';
-    }
-
-    if (eventType === ADD_EVENT) {
-      return node.addEventListener(eventName, eventHandler);
-    } else {
-      return node.removeEventListener(eventName, eventHandler);
-    }
-  },
-  doubleclick: function(eventType, node, eventName, eventHandler, props) {
-    eventName = 'dblclick';
-
-    if (eventType === ADD_EVENT) {
-      return node.addEventListener(eventName, eventHandler);
-    } else {
-      return node.removeEventListener(eventName, eventHandler);
-    }
-  }
-};
+let deviceWidth = null;
+let viewportWidth = null;
+// driver's flag indicating if the diff is currently within an SVG
+let isSVGMode = false;
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
 }
 
 function getDeviceWidth() {
-  return deviceWidth || getClientWidth();
+  return deviceWidth || typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || getClientWidth();
 }
 
 export function setDeviceWidth(width) {
@@ -65,30 +37,22 @@ export function setDeviceWidth(width) {
 }
 
 function getViewportWidth() {
-  return viewportWidth || getClientWidth();
+  return viewportWidth || typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || getClientWidth();
 }
 
 export function setViewportWidth(width) {
   viewportWidth = width;
 }
 
-export function getElementById(id) {
-  return document.getElementById(id);
-}
-
 export function createBody() {
   return document.body;
 }
 
-export function createComment(content) {
-  return document.createComment(content);
+export function createEmpty(component) {
+  return document.createComment(' _ ');
 }
 
-export function createEmpty() {
-  return createComment(' empty ');
-}
-
-export function createText(text) {
+export function createText(text, component) {
   return document.createTextNode(text);
 }
 
@@ -96,24 +60,20 @@ export function updateText(node, text) {
   node[TEXT_CONTENT_ATTR] = text;
 }
 
-// driver's flag indicating if the diff is currently within an SVG
-let isSVGMode = false;
-
-export function createElement(component) {
-  const parent = component._internal._parent;
-  isSVGMode = component.type === 'svg' || parent && parent.namespaceURI === SVG_NS;
+export function createElement(type, props, component) {
+  const parent = component._parent;
+  isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
 
   let node;
   if (isSVGMode) {
-    node = document.createElementNS(SVG_NS, component.type);
+    node = document.createElementNS(SVG_NS, type);
   } else if (tagNamePrefix) {
-    let tagNamePrefix = typeof tagNamePrefix === 'function' ? tagNamePrefix(component.type) : tagNamePrefix;
-    node = document.createElement(tagNamePrefix + component.type);
+    let tagNamePrefix = typeof tagNamePrefix === 'function' ? tagNamePrefix(type) : tagNamePrefix;
+    node = document.createElement(tagNamePrefix + type);
   } else {
-    node = document.createElement(component.type);
+    node = document.createElement(type);
   }
 
-  let props = component.props;
   setNativeProps(node, props);
 
   return node;
@@ -142,10 +102,10 @@ export function insertAfter(node, after, parent) {
   if (nextSibling) {
     // Performance improve when node has been existed before nextSibling
     if (nextSibling !== node) {
-      parent.insertBefore(node, nextSibling);
+      insertBefore(node, nextSibling, parent);
     }
   } else {
-    parent.appendChild(node);
+    appendChild(node, parent);
   }
 }
 
@@ -154,20 +114,31 @@ export function insertBefore(node, before, parent) {
   parent.insertBefore(node, before);
 }
 
-export function addEventListener(node, eventName, eventHandler, props) {
-  if (eventRegistry[eventName]) {
-    return eventRegistry[eventName](ADD_EVENT, node, eventName, eventHandler, props);
-  } else {
-    return node.addEventListener(eventName, eventHandler);
+function normalizeEventName(node, eventName, component) {
+  const tagName = node.tagName.toLowerCase();
+  const instance = component._instance;
+  const props = instance.props;
+
+  if (
+    eventName === 'change' &&
+    (tagName === 'textarea' ||
+    tagName === 'input' && (!props.type || props.type === 'text' || props.type === 'password'))
+  ) {
+    eventName = 'input';
+  } else if (eventName === 'doubleclick') {
+    eventName = 'dblclick';
   }
+  return eventName;
 }
 
-export function removeEventListener(node, eventName, eventHandler, props) {
-  if (eventRegistry[eventName]) {
-    return eventRegistry[eventName](REMOVE_EVENT, node, eventName, eventHandler, props);
-  } else {
-    return node.removeEventListener(eventName, eventHandler);
-  }
+export function addEventListener(node, eventName, eventHandler, component) {
+  eventName = normalizeEventName(node, eventName, component);
+  return node.addEventListener(eventName, eventHandler);
+}
+
+export function removeEventListener(node, eventName, eventHandler, component) {
+  eventName = normalizeEventName(node, eventName, component);
+  return node.removeEventListener(eventName, eventHandler);
 }
 
 export function removeAttribute(node, propKey) {
@@ -210,20 +181,25 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
-function setStyles(node, styles) {
-  let tranformedStyles = {};
+export function beforeRender() {
+  // Init rem unit
+  setRem(getDeviceWidth() / getViewportWidth());
+}
 
-  for (let prop in styles) {
-    let val = styles[prop];
+export function setStyle(node, style) {
+  let tranformedStyle = {};
+
+  for (let prop in style) {
+    let val = style[prop];
     if (flexbox.isFlexProp(prop)) {
-      flexbox[prop](val, tranformedStyles);
+      flexbox[prop](val, tranformedStyle);
     } else {
-      tranformedStyles[prop] = convertUnit(val, prop);
+      tranformedStyle[prop] = convertUnit(val, prop);
     }
   }
 
-  for (let prop in tranformedStyles) {
-    const transformValue = tranformedStyles[prop];
+  for (let prop in tranformedStyle) {
+    const transformValue = tranformedStyle[prop];
     // hack handle compatibility issue
     if (Array.isArray(transformValue)) {
       for (let i = 0; i < transformValue.length; i++) {
@@ -235,12 +211,7 @@ function setStyles(node, styles) {
   }
 }
 
-export function beforeRender() {
-  // Init rem unit
-  setRem(getDeviceWidth() / getViewportWidth());
-}
-
-export function setNativeProps(node, props) {
+function setNativeProps(node, props) {
   for (let prop in props) {
     let value = props[prop];
     if (prop === CHILDREN) {
@@ -249,7 +220,7 @@ export function setNativeProps(node, props) {
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyles(node, value);
+        setStyle(node, value);
       } else if (EVENT_PREFIX_REGEXP.test(prop)) {
         let eventName = prop.slice(2).toLowerCase();
         addEventListener(node, eventName, value);

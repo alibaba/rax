@@ -132,7 +132,7 @@ function renderElementToString(element, context, options) {
   if (typeof element === 'string') {
     return escapeText(element);
   } else if (element == null || element === false || element === true) {
-    return '<!-- empty -->';
+    return '<!-- _ -->';
   } else if (typeof element === 'number') {
     return String(element);
   } else if (Array.isArray(element)) {

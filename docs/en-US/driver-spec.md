@@ -5,12 +5,11 @@ Rax have been implemented [browser driver](../../packages/driver-browser/src/ind
 If want Rax works on other container, only need implement the driver specification.
 The driver should implement follow method:
 
-* getElementById(id)
 * createBody()
-* createEmpty()
-* createText(text)
+* createEmpty(component)
+* createText(text, component)
 * updateText(node, text)
-* createElement(component: {type, props})
+* createElement(type, props, component)
 * appendChild(node, parent)
 * removeChild(node, parent)
 * replaceChild(newChild, oldChild, parent)
@@ -20,8 +19,6 @@ The driver should implement follow method:
 * removeEventListener(node, eventName, eventHandler)
 * setAttribute(node, propKey, propValue)
 * removeAttribute(node, propKey)
-* setStyles(node, styles)
-* getWindowWidth()
-* beforeRender()
-* afterRender()
-* setNativeProps(node, props)
+* setStyle(node, styleObject)
+* *beforeRender()
+* *afterRender()
