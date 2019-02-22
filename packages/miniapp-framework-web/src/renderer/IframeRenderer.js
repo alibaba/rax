@@ -65,7 +65,7 @@ export default class IframeRenderer {
     if (this.destroyed) {
       return false;
     }
-    this.hide();
+
     this.renderer.parentElement.removeChild(this.renderer);
     return this.destroyed = true;
   }

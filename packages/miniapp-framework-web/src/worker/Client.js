@@ -2,6 +2,7 @@ import raxCode from '!!raw-loader!rax/dist/rax.min.js';
 import createDriver from 'driver-worker';
 import { log, worker } from 'miniapp-framework-shared';
 import { applyFactory } from './getModule';
+import { emit as emitPageLifecycle } from './lifecycles/page';
 
 const raxFactory = new Function('module', 'exports', raxCode);
 const { getPage, getUnknownPageFactory } = worker.pageHub;
@@ -115,10 +116,11 @@ export default class Client {
    * @param payload
    */
   emitEvent(eventName, payload) {
-    const { eventListeners } = this;
-    if (Array.isArray(eventListeners[eventName])) {
-      eventListeners[eventName].forEach(callback => callback(payload));
-    }
+    // const { eventListeners } = this;
+    // if (Array.isArray(eventListeners[eventName])) {
+    //   eventListeners[eventName].forEach(callback => callback(payload));
+    // }
+    emitPageLifecycle(eventName, this.clientId, {});
   }
 
   render() {

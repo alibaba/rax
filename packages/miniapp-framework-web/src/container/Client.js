@@ -13,12 +13,26 @@ export default class Client extends BaseRenderer {
 
   channel = {};
 
+  emitLifeCycle(type) {
+    this.channel.postMessage && this.channel.postMessage({
+      type: 'page:lifecycle',
+      lifecycle: type
+    });
+  }
+
   show() {
     super.show();
+    this.emitLifeCycle('show');
   }
 
   hide() {
     super.hide();
+    this.emitLifeCycle('hide');
+  }
+
+  destroy() {
+    super.destroy();
+    this.emitLifeCycle('unload');
   }
 }
 
