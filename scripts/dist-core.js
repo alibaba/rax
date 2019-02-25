@@ -84,11 +84,11 @@ build('driver-worker', { name: 'DriverWorker', format: 'esm' });
 build('driver-worker', { name: 'DriverWorker', shouldMinify: true });
 
 
-build('miniapp-framework-native', { format: 'cjs' });
-build('miniapp-framework-native', { format: 'cjs', shouldMinify: true });
+build('miniapp-framework-native', { format: 'iife' });
+build('miniapp-framework-native', { format: 'iife', shouldMinify: true });
 
-build('miniapp-framework-native-renderer', { format: 'cjs' });
-build('miniapp-framework-native-renderer', { format: 'cjs', shouldMinify: true });
+build('miniapp-framework-native-renderer', { format: 'iife' });
+build('miniapp-framework-native-renderer', { format: 'iife', shouldMinify: true });
 
 build('rax-miniapp-renderer', { format: 'cjs' });
 build('rax-miniapp-renderer', { format: 'cjs', shouldMinify: true });

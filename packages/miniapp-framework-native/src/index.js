@@ -55,7 +55,8 @@ appWorker.$on(EVENT_RENDER_TO_WORKER, handleRenderToWorker);
  * messages are pending to send here.
  */
 function handleClientReady(event) {
-  const { origin: clientId, data = {} } = event;
+  const { type, origin: clientId, data = {} } = event;
+  debug('handleClientReady trigger event type:', type);
 
   /**
    * @Note: Compatible to old render timing procedure,
@@ -63,6 +64,7 @@ function handleClientReady(event) {
    */
   appWorker.$emit(EVENT_COMPATIBLE_WORKER_READY, { clientId }, clientId);
 
+  debug('clientReadyState', clientId, clientReadyState[clientId]);
   if (!clientReadyState[clientId]) {
     clientReadyState[clientId] = true;
     if (Array.isArray(pendingMessages[clientId])) {
@@ -83,6 +85,8 @@ function handleClientReady(event) {
 function handleBeforePageCreate(event) {
   const { data = {}, origin: clientId } = event;
   const { pageName, pageQuery } = data;
+
+  debug(`beforePageCreate with clientId: ${clientId}, pageName: ${pageName}`);
   renderPage(pageName, clientId, pageQuery);
 }
 
@@ -151,9 +155,4 @@ function renderPage(pageName, clientId, pageQuery = {}) {
   rax.render(rax.createElement(PageComponent), null, {
     driver,
   });
-}
-
-export { appWorker };
-export function getAppWorker() {
-  return appWorker;
 }

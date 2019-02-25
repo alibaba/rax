@@ -5,7 +5,7 @@ import { compat } from './compatible';
 import setupDriverHandler from './setupDriverHandler';
 import setupAPIAdapter from './apiAdapter';
 import setupRenderToWorker from './renderToWorker';
-import createWindmill from '../vendors/windmill-renderer.min';
+import createRuntime from '../vendors/windmill-renderer.min';
 import { consoleDataCusumer } from './console';
 import startRemoteInspect from './remoteInspect';
 
@@ -18,10 +18,10 @@ setupReachBottom(window);
  * Create a handle to communicate with worker.
  * @Note: pass an empty object as first arg.
  */
-const windmill = createWindmill({});
-setupDriverHandler(windmill);
-setupAPIAdapter(windmill);
-setupRenderToWorker(windmill, { pageName: getPageName() });
+const runtime = createRuntime({});
+setupDriverHandler(runtime);
+setupAPIAdapter(runtime);
+setupRenderToWorker(runtime, { pageName: getPageName() });
 
 /**
  * Emit an clientReady event from renderer to worker
@@ -33,12 +33,12 @@ const clientReadyPayload = {
   pageName: getPageName(),
   pageQuery: parsePageQuery(),
 };
-windmill.$emit(clientReadyEvent, clientReadyPayload, 'AppWorker');
+runtime.$emit(clientReadyEvent, clientReadyPayload, 'AppWorker');
 
 /**
  * Theme: init CSS variables
  */
-windmill.$call('miniApp.getConfig', {}, function(response) {
+runtime.$call('miniApp.getConfig', {}, function(response) {
   const themeConfig = response ? response.themeConfig : {};
   setupTheme(themeConfig, window);
 }, (err) => {
@@ -48,7 +48,7 @@ windmill.$call('miniApp.getConfig', {}, function(response) {
 /**
  * Console debugger.
  */
-windmill.$on('console', ({ data }) => {
+runtime.$on('console', ({ data }) => {
   consoleDataCusumer(data);
 });
 
