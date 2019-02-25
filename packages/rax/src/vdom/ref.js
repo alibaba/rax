@@ -17,10 +17,7 @@ export default {
   },
   attach(ownerComponent, ref, component) {
     if (!ownerComponent) {
-      throw new Error(
-        'You might be adding a ref to a component that was not created inside a component\'s ' +
-        '`render` method, or you have multiple copies of Rax loaded.'
-      );
+      throw Error('Multiple version of Rax used in project.');
     }
 
     let instance = component.getPublicInstance();

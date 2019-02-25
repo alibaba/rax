@@ -78,23 +78,17 @@ dist(getConfig(
 
 dist(getConfig(
   {
-    'driver.worker': './packages/driver-worker/src/index.js',
-    'driver.worker.min': './packages/driver-worker/src/index.js',
-    'driver.worker.renderer': './packages/driver-worker/src/renderer/index.js',
-    'driver.worker.renderer.min': './packages/driver-worker/src/renderer/index.js',
+    'miniapp-framework-web': './packages/miniapp-framework-web/src/index.js',
   },
   {
-    path: './packages/driver-worker/dist/',
-    filename: '[name].js',
-    sourceMapFilename: '[name].map',
+    path: './packages/miniapp-framework-web/dist/',
+    filename: '[name].min.js',
+    library: 'MiniApp',
+    libraryTarget: 'umd',
+    sourceMapFilename: '[name].min.js.map',
     pathinfo: false,
   },
-  {
-    // target: 'bundle',
-    bundle: null,
-    frameworkComment: '',
-    libraryTarget: 'umd',
-  },
+  null,
   babelOptions
 ));
 
@@ -119,7 +113,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
         'process.env.NODE_ENV': JSON.stringify('production'),
       }),
       new webpack.NoEmitOnErrorsPlugin(),
-      new RaxPlugin(moduleOptions),
+      moduleOptions ? new RaxPlugin(moduleOptions) : () => {},
       new webpack.optimize.ModuleConcatenationPlugin(),
       new UglifyJSPlugin({
         include: /\.min\.js$/,

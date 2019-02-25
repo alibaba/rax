@@ -6,9 +6,8 @@ import Component from 'rax-component';
 class PureComponent extends Component {
   constructor(props, context) {
     super(props, context);
+    this.isPureComponent = true;
   }
-
-  isPureComponentClass() {}
 }
 
 export default PureComponent;

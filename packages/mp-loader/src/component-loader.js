@@ -39,7 +39,6 @@ module.exports = function(content) {
 
   const dependencyComponents = resolveDependencyComponents(config, this.rootContext, basePath);
   const templateLoaderQueryString = querystring.stringify({
-    cssPath,
     isEntryTemplate: false,
     componentBasePath: basePath,
     dependencyComponents: JSON.stringify(dependencyComponents),
@@ -62,6 +61,11 @@ module.exports = function(content) {
     componentPath = '/' + componentPath;
   }
 
+  let cssRequirement = '""';
+  if (existsSync(cssPath)) {
+    cssRequirement = createRequire(stringifyRequest(this, cssPath));
+  }
+
   /**
    * Call and register a component.
    *   createComponent(renderFactory, RenderEngine, config, componentPath);
@@ -74,7 +78,8 @@ module.exports = function(content) {
         ${requireTemplate}, 
         __render__, 
         Component.__config,
-        '${componentPath}'
+        '${componentPath}',
+        ${cssRequirement}
       );
     };
   `;

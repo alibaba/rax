@@ -8,7 +8,6 @@ const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const BODY = 'BODY';
-const STYLE_ELEMENT = 'STYLE';
 const IS_TOUCH_EVENTS = /^touch/;
 const TO_SANITIZE = [
   'target',
@@ -63,20 +62,6 @@ export default class WorkerDriver extends Driver {
       const mutation = mutations[i];
 
       if (mutation.type === 'childList') {
-        /**
-         * Style tag be added to body, to prevent be removed by it's parent node.
-         */
-        let addedNode;
-        if (mutation.hasOwnProperty('addedNodes')
-          && (addedNode = mutation.addedNodes[0])
-          && addedNode.nodeType === ELEMENT_NODE
-          && addedNode.nodeName === STYLE_ELEMENT
-        ) {
-          mutation.target.nodeName = BODY;
-          delete mutation.target.$$id;
-          delete mutation.nextSibling; // No need of it.
-        }
-
         if (mutation.hasOwnProperty('addedNodes')
           && mutation.addedNodes.length === 0) {
           continue;
@@ -112,8 +97,6 @@ export default class WorkerDriver extends Driver {
     }
   };
 
-  hitStyle = {};
-
   /**
    * Serialize instruction.
    */
@@ -142,9 +125,6 @@ export default class WorkerDriver extends Driver {
 
     if (node.nodeName === BODY) {
       result.nodeName = BODY;
-    } else if (prop === 'removedNodes') {
-      // Do not remove style tags.
-      if (node.nodeName === STYLE_ELEMENT) return null;
     } else if (prop === 'addedNodes') {
       const nodeType = node.nodeType;
       result.nodeType = nodeType;
@@ -152,27 +132,6 @@ export default class WorkerDriver extends Driver {
       switch (nodeType) {
         case ELEMENT_NODE:
           result.nodeName = node.nodeName;
-          /**
-           * @NOTE: Performance purpose.
-           * Deduplicate same style tags.
-           * Use tree mode, instead of node.
-           */
-          if (node.nodeName === STYLE_ELEMENT) {
-            if (node.firstChild && node.firstChild.nodeType === TEXT_NODE) {
-              const textNode = node.firstChild;
-              const textStyle = textNode.data;
-              if (this.hitStyle[textStyle]) {
-                return null;
-              } else {
-                this.hitStyle[textStyle] = true;
-                result.childNodes = [{
-                  $$id: textNode.$$id,
-                  nodeType: TEXT_NODE,
-                  data: textStyle,
-                }];
-              }
-            }
-          }
 
           const events = node._getEvents();
           if (events.length > 0) result.events = events;
@@ -181,8 +140,6 @@ export default class WorkerDriver extends Driver {
           break;
 
         case TEXT_NODE:
-          if (node.parentNode
-            && node.parentNode.nodeName === STYLE_ELEMENT) return null; // fall through
         case COMMENT_NODE:
           result.data = node.data;
           break;
