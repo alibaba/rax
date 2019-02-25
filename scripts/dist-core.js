@@ -6,7 +6,6 @@ const replace = require('rollup-plugin-replace');
 const filesize = require('rollup-plugin-filesize');
 const commonjs = require('rollup-plugin-commonjs');
 const string = require('./rollup-plugin-string');
-const gzipSize = require('gzip-size');
 
 async function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
   const output = {
@@ -47,7 +46,11 @@ async function build(packageName, { name, shouldMinify = false, format = 'umd' }
           pure_getters: true
         }
       }) : null,
-      filesize(),
+      filesize({
+        render(options, bundle, { gzipSize, bundleSize }) {
+          return `Built: ${bundle.file}, BundleSize: ${bundleSize}, Gzipped: ${gzipSize}.`;
+        }
+      }),
     ]
   });
 
@@ -58,12 +61,6 @@ async function build(packageName, { name, shouldMinify = false, format = 'umd' }
       format,
       file,
     });
-
-    const size = gzipSize.fileSync(file, {
-      level: 6
-    });
-
-    console.log(file, `${(size / 1024).toPrecision(3)}kb (gzip)`);
   } else {
     const ext = format === 'esm' ? '.mjs' : '.js';
     await bundle.write({
