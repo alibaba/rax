@@ -1,10 +1,15 @@
-const DEBUG_MESSAGE_PREFIX = '[MiniAppFrameworkDebug]';
+const DEBUG_MESSAGE_PREFIX = '[MiniApp]';
 
 /**
  * Always log message.
+ * @Note: Only pass one param, for native log only receive first param.
  */
 export function log(...args) {
-  console.log(DEBUG_MESSAGE_PREFIX, ...args);
+  let str = DEBUG_MESSAGE_PREFIX;
+  for (let i = 0, l = args.length; i < l; i++) {
+    str += args[i];
+  }
+  console.log(str);
 }
 
 /**
@@ -12,6 +17,10 @@ export function log(...args) {
  */
 export function debug(...args) {
   if (process.env.NODE_ENV === 'development') {
-    console.warn(DEBUG_MESSAGE_PREFIX, ...args);
+    let str = DEBUG_MESSAGE_PREFIX;
+    for (let i = 0, l = args.length; i < l; i++) {
+      str += args[i];
+    }
+    console.warn(str);
   }
 }
