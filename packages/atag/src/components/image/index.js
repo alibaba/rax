@@ -1,5 +1,4 @@
 import { PolymerElement, html } from '@polymer/polymer';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import getFileSchemaPrefix from '../../shared/getFileSchemaPrefix';
 
 const UNSENT = 0;
@@ -7,6 +6,17 @@ const LOADING = 1;
 const DONE = 2;
 const IS_HTTP_REG = /^(https?:)?\/{2}/;
 const IS_BASE64_DATA_REG = /^data:/;
+const POSITIONS = [
+  'top',
+  'bottom',
+  'center',
+  'left',
+  'right',
+  'top left',
+  'top right',
+  'bottom left',
+  'bottom right',
+];
 /**
  * Local files:
  *   eg: /foo/bar.png
@@ -31,18 +41,39 @@ export default class ImageElement extends PolymerElement {
     return 'a-image';
   }
 
+  /**
+   * Methods used to determine when this element is in the visible viewport
+   */
+  static _intersectListeners = new Map();
+
+  static _observer = new IntersectionObserver(handleIntersect, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0,
+  });
+
+  static addIntersectListener(element, intersectCallback) {
+    ImageElement._intersectListeners.set(element, intersectCallback);
+    ImageElement._observer.observe(element);
+  }
+
+  static removeIntersectListener(element) {
+    if (element) ImageElement._observer.unobserve(element);
+  }
+
   static get properties() {
     return {
       src: {
         type: String,
         value: '',
         reflectToAttribute: true,
+        observer: '_observeSrc'
       },
       mode: {
         type: String,
         value: 'scaleToFill',
         reflectToAttribute: true,
-        observer: 'observerMode',
+        observer: '_observeMode',
       },
       lazyload: {
         type: Boolean,
@@ -50,6 +81,61 @@ export default class ImageElement extends PolymerElement {
         computed: '_computeLazyLoad(lazyload)',
       },
     };
+  }
+
+  isReady = false;
+
+  ready() {
+    super.ready();
+    this.isReady = true;
+    this._init();
+  }
+
+
+  _observeSrc(newVal) {
+    // If the src is changed then we need to reset and start again
+    this._reset();
+    if (this.isReady) {
+      this._init();
+    }
+  }
+
+  _observeMode(newVal, oldVal) {
+    if (oldVal === undefined) return;
+
+    const container = this.$.container;
+    const containerStyle = container.style;
+
+    if (oldVal === 'widthFix') {
+      this.style.height = this.initialHeight;
+    }
+
+    if (POSITIONS.indexOf(newVal) > -1) {
+      containerStyle.backgroundSize = 'auto';
+      containerStyle.backgroundPosition = `${newVal}`;
+    } else {
+      switch (newVal) {
+        case 'scaleToFill':
+          containerStyle.backgroundSize = '100% 100%';
+          containerStyle.backgroundPosition = '0% 0%';
+          break;
+        case 'aspectFit':
+          containerStyle.backgroundSize = 'contain';
+          containerStyle.backgroundPosition = 'center center';
+          break;
+        case 'aspectFill':
+          containerStyle.backgroundSize = 'cover';
+          containerStyle.backgroundPosition = 'center center';
+          break;
+        case 'widthFix':
+          if (this.state < DONE) {
+            this._needAdaptHeight = true;
+          } else {
+            this._adaptHeight();
+          }
+          break;
+      }
+    }
   }
 
   /**
@@ -60,14 +146,6 @@ export default class ImageElement extends PolymerElement {
    */
   _computeLazyLoad(lazyload) {
     return Boolean(lazyload || this.lazyLoad);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    afterNextRender(this, () => {
-      this._init();
-    });
   }
 
   _init() {
@@ -93,7 +171,7 @@ export default class ImageElement extends PolymerElement {
    */
   _render() {
     if (this._rendered === true) return;
-    this.observerMode(this.mode, '');
+    this._observeMode(this.mode, '');
     const containerStyle = this.$.container.style;
     containerStyle.backgroundImage = `url(${this._getSourceUrl()})`;
     // Flag as rendered
@@ -153,101 +231,6 @@ export default class ImageElement extends PolymerElement {
     };
     image.src = this._getSourceUrl();
     this._render();
-  }
-
-  attributeChangedCallback(name, oldVal, newVal) {
-    super.attributeChangedCallback(name, oldVal, newVal);
-    // If nothing has changed then just return
-    if (newVal === oldVal) return;
-    switch (name) {
-      case 'src':
-        // If the src is changed then we need to reset and start again
-        this._reset();
-        if (this.isReady) {
-          this._init();
-        }
-        break;
-    }
-  }
-
-  isReady = false;
-
-  ready() {
-    super.ready();
-    this.isReady = true;
-    this._init();
-  }
-
-  /**
-   * Methods used to determine when this element is in the visible viewport
-   */
-  static _intersectListeners = new Map();
-
-  static _observer = new IntersectionObserver(handleIntersect, {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0,
-  });
-
-  static addIntersectListener(element, intersectCallback) {
-    ImageElement._intersectListeners.set(element, intersectCallback);
-    ImageElement._observer.observe(element);
-  }
-
-  static removeIntersectListener(element) {
-    if (element) ImageElement._observer.unobserve(element);
-  }
-
-  observerMode(newVal, oldVal) {
-    if (oldVal === undefined) return;
-
-    const container = this.$.container;
-    const containerStyle = container.style;
-
-    if (oldVal === 'widthFix') {
-      this.style.height = this.initialHeight;
-    }
-
-    const positions = [
-      'top',
-      'bottom',
-      'center',
-      'left',
-      'right',
-      'top left',
-      'top right',
-      'bottom left',
-      'bottom right',
-    ];
-
-    if (positions.indexOf(newVal) > -1) {
-      containerStyle.backgroundSize = 'auto';
-      containerStyle.backgroundPosition = `${newVal}`;
-    } else {
-      switch (newVal) {
-        case 'scaleToFill':
-          containerStyle.backgroundSize = '100% 100%';
-          containerStyle.backgroundPosition = '0% 0%';
-          break;
-        case 'aspectFit':
-          containerStyle.backgroundSize = 'contain';
-          containerStyle.backgroundPosition = 'center center';
-          break;
-        case 'aspectFill':
-          containerStyle.backgroundSize = 'cover';
-          containerStyle.backgroundPosition = 'center center';
-          break;
-        case 'widthFix':
-          if (this.state < DONE) {
-            this._needAdaptHeight = true;
-          } else {
-            this._adaptHeight();
-          }
-          break;
-        default:
-          break;
-      }
-    }
   }
 
   /**
