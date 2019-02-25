@@ -1,4 +1,4 @@
-import { setupAppear } from './appear';
+import { setupAppear } from 'runtime-shared/src/appear';
 import { setupTap } from './tap';
 import { setupTheme } from './theme';
 import { setupReachBottom } from './reachBottom';

@@ -1,11 +1,11 @@
-import { polyfill as polyfillArrayES6 } from 'runtime-shared/lib/array.es6';
-import { polyfill as polyfillArrayES7 } from 'runtime-shared/lib/array.es7';
-import { polyfill as polyfillNumber } from 'runtime-shared/lib/number.es6';
-import { polyfill as polyfillObjectES6 } from 'runtime-shared/lib/object.es6';
-import { polyfill as polyfillObjectES8 } from 'runtime-shared/lib/object.es8';
-import { polyfill as polyfillStringES6 } from 'runtime-shared/lib/string.es6';
-import { polyfill as polyfillStringES7 } from 'runtime-shared/lib/string.es7';
-import PolyfilledPromise from 'runtime-shared/lib/promise';
+import { polyfill as polyfillArrayES6 } from 'runtime-shared/src/array.es6';
+import { polyfill as polyfillArrayES7 } from 'runtime-shared/src/array.es7';
+import { polyfill as polyfillNumber } from 'runtime-shared/src/number.es6';
+import { polyfill as polyfillObjectES6 } from 'runtime-shared/src/object.es6';
+import { polyfill as polyfillObjectES8 } from 'runtime-shared/src/object.es8';
+import { polyfill as polyfillStringES6 } from 'runtime-shared/src/string.es6';
+import { polyfill as polyfillStringES7 } from 'runtime-shared/src/string.es7';
+import PolyfilledPromise from 'runtime-shared/src/promise';
 import PolyfilledSetImmediate from './setImmediate';
 import * as PolyfilledNativeTimer from './NativeTimer';
 

@@ -1,6 +1,5 @@
 /**
  * Simulate appear & disappear events.
- * ref. https://github.com/alibaba/rax/blob/master/packages/web-rax-framework/src/appear.js
  */
 
 import Registry, { config, pushElement } from './appearRegistry';
