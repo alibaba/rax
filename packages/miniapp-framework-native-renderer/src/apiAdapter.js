@@ -1,11 +1,11 @@
 /**
  * Handler for my api context.
  */
-export default function setupAPIAdapter(windmill) {
+export default function setupAPIAdapter(runtime) {
   /**
    * Video context protocol
    */
-  windmill.$on('[[VideoContextAction]]', ({ data }) => {
+  runtime.$on('[[VideoContextAction]]', ({ data }) => {
     const { action, id, args } = data;
     let videoInstance = document.getElementById(id);
     if (videoInstance !== null) {
@@ -16,7 +16,7 @@ export default function setupAPIAdapter(windmill) {
   /**
    * Module api event protocol
    */
-  windmill.$on('[[ModuleAPIEvent]]', ({ data: payload }) => {
+  runtime.$on('[[ModuleAPIEvent]]', ({ data: payload }) => {
     const { type, data } = payload;
     switch (type) {
       case 'pageScrollTo': {

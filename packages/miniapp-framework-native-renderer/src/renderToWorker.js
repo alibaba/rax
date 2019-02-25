@@ -3,9 +3,9 @@
  */
 const RENDER_TO_WORKER_NS = '__renderer_to_worker__';
 
-export default function setupRenderToWorker(windmill, extraPayload = {}) {
+export default function setupRenderToWorker(runtime, extraPayload = {}) {
   function renderToWorker(payload) {
-    windmill.$emit(
+    runtime.$emit(
       payload.type,
       {
         ...extraPayload,
