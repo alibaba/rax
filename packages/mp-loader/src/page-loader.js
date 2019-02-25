@@ -38,8 +38,6 @@ module.exports = function(content) {
 
   const dependencyComponents = resolveDependencyComponents(config, this.rootContext, basePath);
   const templateLoaderQueryString = querystring.stringify({
-    appCssPath,
-    cssPath,
     isEntryTemplate: true,
     dependencyComponents: JSON.stringify(dependencyComponents),
   });
@@ -52,12 +50,24 @@ module.exports = function(content) {
   pageName = String(pageName).replace(/\\/g, '/'); // Compatible for windows
 
   const pageDescriptor = options.pageDescriptor || { page: pageName };
+  let cssRequirements = [];
+  if (existsSync(appCssPath)) {
+    cssRequirements.push(createRequire(stringifyRequest(this, appCssPath)));
+  }
+  if (existsSync(cssPath)) {
+    cssRequirements.push(createRequire(stringifyRequest(this, cssPath)));
+  }
 
   // "getApp" is global injected
   let source = `var Page = function(config) { Page.__config = config; };
     ${content}
     ${pageRegister}(${JSON.stringify(pageDescriptor)}, function(__module, __exports, __require){
-      __module.exports = ${requireCreatePage}(${requirePageTemplate}, __require, Page.__config);
+      __module.exports = ${requireCreatePage}(
+        ${requirePageTemplate}, 
+        __require, 
+        Page.__config,
+        [${cssRequirements.join(',')}]
+      );
     });`;
 
   return source;

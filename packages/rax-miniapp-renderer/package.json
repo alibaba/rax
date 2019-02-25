@@ -1,9 +1,9 @@
 {
-  "name": "driver-worker",
-  "version": "0.7.7",
-  "description": "Worker driver for Rax",
+  "name": "rax-miniapp-renderer",
+  "version": "0.1.0",
+  "description": "Rax renderer for miniapp.",
   "license": "BSD-3-Clause",
-  "main": "dist/driver-worker.min.js",
+  "main": "dist/rax-miniapp-renderer.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
@@ -13,9 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "style-unit": "^1.0.0"
-  },
-  "devDependencies": {
-    "rax": "^0.6.7"
+    "driver-worker": "^0.7.9"
   }
 }

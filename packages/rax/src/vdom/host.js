@@ -3,9 +3,9 @@
  */
 export default {
   mountID: 1,
-  component: null,
+  // Current owner component
+  owner: null,
   isUpdating: false,
-  dirtyComponents: [],
   // Roots
   rootComponents: {},
   rootInstances: {},

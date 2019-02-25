@@ -4,6 +4,8 @@ import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
+import BaseComponent from './base';
+import toArray from './toArray';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -13,58 +15,46 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 /**
  * Native Component
  */
-class NativeComponent {
-  constructor(element) {
-    this._currentElement = element;
-  }
+class NativeComponent extends BaseComponent {
+  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.initComponent(parent, parentInstance, context);
 
-  mountComponent(parent, parentInstance, context, childMounter) {
-    // Parent native element
-    this._parent = parent;
-    this._parentInstance = parentInstance;
-    this._context = context;
-    this._mountID = Host.mountID++;
+    const currentElement = this._currentElement;
+    const props = currentElement.props;
+    const type = currentElement.type;
+    const children = props.children;
+    const appendType = props.append || TREE; // Default is tree
 
-    let props = this._currentElement.props;
-    let type = this._currentElement.type;
+    // Clone a copy for style diff
+    this._prevStyleCopy = Object.assign({}, props.style);
+
     let instance = {
       _internal: this,
       type,
       props,
     };
-    let appendType = props.append || TREE; // Default is node
 
     this._instance = instance;
 
-    // Clone a copy for style diff
-    this._prevStyleCopy = Object.assign({}, props.style);
-
-    let nativeNode = this.getNativeNode();
-
-    if (appendType !== TREE) {
-      if (childMounter) {
-        childMounter(nativeNode, parent);
-      } else {
-        Host.driver.appendChild(nativeNode, parent);
+    let mountChildren = () => {
+      if (children != null) {
+        this.mountChildren(children, context);
       }
-    }
-
-    if (this._currentElement && this._currentElement.ref) {
-      Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
-    }
-
-    // Process children
-    let children = props.children;
-    if (children != null) {
-      this.mountChildren(children, context);
-    }
+    };
 
     if (appendType === TREE) {
-      if (childMounter) {
-        childMounter(nativeNode, parent);
-      } else {
-        Host.driver.appendChild(nativeNode, parent);
-      }
+      // Should after process children when mount by tree mode
+      mountChildren();
+      this.mountNativeNode(nativeNodeMounter);
+    } else {
+      // Should before process children when mount by node mode
+      this.mountNativeNode(nativeNodeMounter);
+      mountChildren();
+    }
+
+    // Ref acttach
+    if (currentElement && currentElement.ref) {
+      Ref.attach(currentElement._owner, currentElement.ref, this);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -75,23 +65,26 @@ class NativeComponent {
   }
 
   mountChildren(children, context) {
-    if (!Array.isArray(children)) {
-      children = [children];
-    }
+    children = toArray(children);
 
-    let renderedChildren = this._renderedChildren = {};
     const nativeNode = this.getNativeNode();
+    return this._mountChildren(nativeNode, children, context);
+  }
+
+  _mountChildren(parent, children, context, nativeNodeMounter) {
+    let renderedChildren = this._renderedChildren = {};
 
     let renderedChildrenImage = children.map((element, index) => {
       let renderedChild = instantiateComponent(element);
       let name = getElementKeyName(renderedChildren, element, index);
       renderedChildren[name] = renderedChild;
       renderedChild._mountIndex = index;
-      // Mount
+      // Mount children
       let mountImage = renderedChild.mountComponent(
-        nativeNode,
+        parent,
         this._instance,
-        context
+        context,
+        nativeNodeMounter
       );
       return mountImage;
     });
@@ -99,19 +92,19 @@ class NativeComponent {
     return renderedChildrenImage;
   }
 
-  unmountChildren(notRemoveChild) {
+  unmountChildren(shouldNotRemoveChild) {
     let renderedChildren = this._renderedChildren;
 
     if (renderedChildren) {
       for (let name in renderedChildren) {
         let renderedChild = renderedChildren[name];
-        renderedChild.unmountComponent(notRemoveChild);
+        renderedChild.unmountComponent(shouldNotRemoveChild);
       }
       this._renderedChildren = null;
     }
   }
 
-  unmountComponent(notRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     if (this._nativeNode) {
       let ref = this._currentElement.ref;
       if (ref) {
@@ -119,24 +112,16 @@ class NativeComponent {
       }
 
       Instance.remove(this._nativeNode);
-      if (!notRemoveChild) {
+
+      if (!shouldNotRemoveChild) {
         Host.driver.removeChild(this._nativeNode, this._parent);
       }
     }
 
-    this.unmountChildren(notRemoveChild);
+    this.unmountChildren(shouldNotRemoveChild);
 
-    if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.unmountComponent(this);
-    }
-
-    this._currentElement = null;
-    this._nativeNode = null;
-    this._parent = null;
-    this._parentInstance = null;
-    this._context = null;
-    this._instance = null;
     this._prevStyleCopy = null;
+    this.destoryComponent();
   }
 
   updateComponent(prevElement, nextElement, prevContext, nextContext) {
@@ -164,30 +149,37 @@ class NativeComponent {
     const nativeNode = this.getNativeNode();
 
     for (propKey in prevProps) {
-      if (propKey === CHILDREN ||
-        nextProps.hasOwnProperty(propKey) ||
-        !prevProps.hasOwnProperty(propKey) ||
-        prevProps[propKey] == null) {
+      // Continue children and null value prop or nextProps has some propKey that do noting
+      if (
+        propKey === CHILDREN ||
+        prevProps[propKey] == null ||
+        // Use hasOwnProperty here for avoid propKey name is some with method name in object proptotype
+        nextProps.hasOwnProperty(propKey)
+      ) {
         continue;
       }
+
       if (propKey === STYLE) {
+        // Remove all style
         let lastStyle = this._prevStyleCopy;
         for (styleName in lastStyle) {
-          if (lastStyle.hasOwnProperty(styleName)) {
-            styleUpdates = styleUpdates || {};
-            styleUpdates[styleName] = '';
-          }
+          styleUpdates = styleUpdates || {};
+          styleUpdates[styleName] = '';
         }
         this._prevStyleCopy = null;
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
-        if (typeof prevProps[propKey] === 'function') {
+        // Remove event
+        const eventListener = prevProps[propKey];
+
+        if (typeof eventListener === 'function') {
           driver.removeEventListener(
             nativeNode,
             propKey.slice(2).toLowerCase(),
-            prevProps[propKey]
+            eventListener
           );
         }
       } else {
+        // Remove attribute
         driver.removeAttribute(
           nativeNode,
           propKey,
@@ -198,15 +190,18 @@ class NativeComponent {
 
     for (propKey in nextProps) {
       let nextProp = nextProps[propKey];
-      let prevProp =
-        propKey === STYLE ? this._prevStyleCopy :
-          prevProps != null ? prevProps[propKey] : undefined;
-      if (propKey === CHILDREN ||
-        !nextProps.hasOwnProperty(propKey) ||
-        nextProp === prevProp ||
-        nextProp == null && prevProp == null) {
+      let prevProp = propKey === STYLE ? this._prevStyleCopy :
+        prevProps != null ? prevProps[propKey] : undefined;
+
+      // Continue children or prevProp equal nextProp
+      if (
+        propKey === CHILDREN ||
+        prevProp === nextProp ||
+        nextProp == null && prevProp == null
+      ) {
         continue;
       }
+
       // Update style
       if (propKey === STYLE) {
         if (nextProp) {
@@ -219,16 +214,14 @@ class NativeComponent {
         if (prevProp != null) {
           // Unset styles on `prevProp` but not on `nextProp`.
           for (styleName in prevProp) {
-            if (prevProp.hasOwnProperty(styleName) &&
-              (!nextProp || !nextProp.hasOwnProperty(styleName))) {
+            if (!nextProp || !nextProp[styleName]) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = '';
             }
           }
           // Update styles that changed since `prevProp`.
           for (styleName in nextProp) {
-            if (nextProp.hasOwnProperty(styleName) &&
-              prevProp[styleName] !== nextProp[styleName]) {
+            if (prevProp[styleName] !== nextProp[styleName]) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = nextProp[styleName];
             }
@@ -250,8 +243,6 @@ class NativeComponent {
         }
       } else {
         // Update other property
-        let payload = {};
-        payload[propKey] = nextProp;
         if (nextProp != null) {
           driver.setAttribute(
             nativeNode,
@@ -265,11 +256,14 @@ class NativeComponent {
             prevProps[propKey]
           );
         }
+
         if (process.env.NODE_ENV !== 'production') {
           Host.measurer && Host.measurer.recordOperation({
             instanceID: this._mountID,
             type: 'update attribute',
-            payload: payload
+            payload: {
+              [propKey]: nextProp
+            }
           });
         }
       }
@@ -283,6 +277,7 @@ class NativeComponent {
           payload: styleUpdates
         });
       }
+
       driver.setStyles(nativeNode, styleUpdates);
     }
   }
@@ -299,9 +294,7 @@ class NativeComponent {
     let nextChildren = {};
 
     if (nextChildrenElements != null) {
-      if (!Array.isArray(nextChildrenElements)) {
-        nextChildrenElements = [nextChildrenElements];
-      }
+      nextChildrenElements = toArray(nextChildrenElements);
 
       // Update next children elements
       for (let index = 0, length = nextChildrenElements.length; index < length; index++) {
@@ -340,10 +333,6 @@ class NativeComponent {
     // Unmount children that are no longer present.
     if (prevChildren != null) {
       for (let name in prevChildren) {
-        if (!prevChildren.hasOwnProperty(name)) {
-          continue;
-        }
-
         let prevChild = prevChildren[name];
         let shouldUnmount = prevChild._unmount || !nextChildren[name];
 
@@ -370,9 +359,7 @@ class NativeComponent {
 
       function insertNodes(nativeNodes, parent) {
         // The nativeNodes maybe fragment, so convert to array type
-        if (!Array.isArray(nativeNodes)) {
-          nativeNodes = [nativeNodes];
-        }
+        nativeNodes = toArray(nativeNodes);
 
         if (lastPlacedNode) {
           // Should reverse order when insert new child after lastPlacedNode:
@@ -394,10 +381,6 @@ class NativeComponent {
       }
 
       for (let name in nextChildren) {
-        if (!nextChildren.hasOwnProperty(name)) {
-          continue;
-        }
-
         let nextChild = nextChildren[name];
         let prevChild = prevChildren && prevChildren[name];
 
@@ -455,21 +438,10 @@ class NativeComponent {
     this._renderedChildren = nextChildren;
   }
 
-  getNativeNode() {
-    if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createElement(this._instance);
-      Instance.set(this._nativeNode, this._instance);
-    }
-
-    return this._nativeNode;
-  }
-
-  getPublicInstance() {
-    return this.getNativeNode();
-  }
-
-  getName() {
-    return this._currentElement.type;
+  createNativeNode() {
+    var nativeNode = Host.driver.createElement(this._instance);
+    Instance.set(nativeNode, this._instance);
+    return nativeNode;
   }
 }
 

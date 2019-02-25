@@ -1,18 +1,25 @@
-import { isValidW3CTag, isValidCustomTags } from './tags';
-
 const CUSTOM_TAG_PREFIX = 'a-';
 
 /**
- * Only node name that in whitelist can be created.
+ * Whitelist that declear w3c standard tag names.
+ */
+const w3cTags = {
+  style: true,
+};
+
+function isValidW3CTag(tagName) {
+  return w3cTags.hasOwnProperty(tagName);
+}
+
+/**
+ * Format tag name.
  */
 export function getTagName(nodeName) {
   const tagName = String(nodeName).toLowerCase();
   if (isValidW3CTag(tagName)) {
     return tagName;
-  } else if (isValidCustomTags(tagName)) {
-    return CUSTOM_TAG_PREFIX + tagName;
   } else {
-    return 'a-unknown';
+    return CUSTOM_TAG_PREFIX + tagName;
   }
 }
 

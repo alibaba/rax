@@ -12,7 +12,8 @@ describe('Component', () => {
   it('check a component is class type', () => {
     class Foo extends Component { }
     let foo = new Foo();
-    expect(foo.isComponentClass).toBeDefined();
+    expect(foo.setState).toBeDefined();
+    expect(foo.forceUpdate).toBeDefined();
   });
 
   it('create a component with prop', () => {
