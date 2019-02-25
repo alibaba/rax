@@ -84,11 +84,11 @@ build('driver-worker', { name: 'DriverWorker', format: 'esm' });
 build('driver-worker', { name: 'DriverWorker', shouldMinify: true });
 
 
-build('miniapp-framework-windmill', { format: 'cjs' });
-build('miniapp-framework-windmill', { format: 'cjs', shouldMinify: true });
+build('miniapp-framework-native', { format: 'cjs' });
+build('miniapp-framework-native', { format: 'cjs', shouldMinify: true });
 
-build('miniapp-framework-windmill-renderer', { format: 'cjs' });
-build('miniapp-framework-windmill-renderer', { format: 'cjs', shouldMinify: true });
+build('miniapp-framework-native-renderer', { format: 'cjs' });
+build('miniapp-framework-native-renderer', { format: 'cjs', shouldMinify: true });
 
 build('rax-miniapp-renderer', { format: 'cjs' });
 build('rax-miniapp-renderer', { format: 'cjs', shouldMinify: true });

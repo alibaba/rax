@@ -1,3 +1,0 @@
-# miniapp-framework-windmill
-
-

@@ -1,0 +1,16 @@
+{
+  "name": "miniapp-framework-native-renderer",
+  "version": "0.0.1",
+  "description": "Miniapp renderer for native.",
+  "main": "dist/miniapp-framework-native-renderer.min.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:alibaba/rax.git"
+  },
+  "dependencies": {
+    "miniapp-framework-shared": "^0.0.0",
+    "querystring": "^0.2.0",
+    "rax-miniapp-renderer": "^0.1.0-0",
+    "runtime-shared": "^0.6.5"
+  }
+}

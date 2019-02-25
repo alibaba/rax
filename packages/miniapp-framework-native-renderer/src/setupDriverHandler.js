@@ -1,4 +1,4 @@
-import render from 'driver-worker-renderer-webview';
+import render from 'rax-miniapp-renderer';
 
 const TAG_PREFIX = 'a-';
 const EVENT_WORKER_TO_RENDER = 'w2r';
