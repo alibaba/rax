@@ -203,7 +203,7 @@ const Driver = {
     }
   },
 
-  setNativeProps(node, props, skipsetStyle) {
+  setNativeProps(node, props, shouldIgnoreStyleProp) {
     for (let prop in props) {
       let value = props[prop];
       if (prop === CHILDREN) {
@@ -212,7 +212,7 @@ const Driver = {
 
       if (value != null) {
         if (prop === STYLE) {
-          if (skipsetStyle) {
+          if (shouldIgnoreStyleProp) {
             continue;
           }
           this.setStyle(node, value);

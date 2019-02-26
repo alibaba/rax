@@ -1,47 +1,56 @@
 /**
  * Driver for Web DOM
  **/
-
-/* global DEVICE_WIDTH, VIEWPORT_WIDTH */
-
-import { convertUnit, setRem } from 'style-unit';
-import flexbox from './flexbox';
-
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
+const TEXT_CONTENT_ATTR = 'textContent';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const TEXT_CONTENT_ATTR = typeof document === 'object' && 'textContent' in document ? 'textContent' : 'nodeValue';
+const TEXT_NODE = 3;
+const COMMENT_NODE = 8;
+const TRUE = true;
+const EMPTY = '';
+const HYBRATION_INDEX = '__i';
+const HYBRATION_APPEND = '__a';
+const UNITLESS_NUMBER_PROPS = {
+  animationIterationCount: TRUE,
+  borderImageOutset: TRUE,
+  borderImageSlice: TRUE,
+  borderImageWidth: TRUE,
+  boxFlex: TRUE,
+  boxFlexGroup: TRUE,
+  boxOrdinalGroup: TRUE,
+  columnCount: TRUE,
+  flex: TRUE,
+  flexGrow: TRUE,
+  flexPositive: TRUE,
+  flexShrink: TRUE,
+  flexNegative: TRUE,
+  flexOrder: TRUE,
+  gridRow: TRUE,
+  gridColumn: TRUE,
+  fontWeight: TRUE,
+  lineClamp: TRUE,
+  lineHeight: TRUE,
+  opacity: TRUE,
+  order: TRUE,
+  orphans: TRUE,
+  tabSize: TRUE,
+  widows: TRUE,
+  zIndex: TRUE,
+  zoom: TRUE
+};
 
-const getClientWidth = () => document.documentElement.clientWidth;
-
-let tagNamePrefix = '';
-let deviceWidth = null;
-let viewportWidth = null;
-// driver's flag indicating if the diff is currently within an SVG
+let tagNamePrefix = EMPTY;
+// Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
+let isHybrating = false;
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
-}
-
-function getDeviceWidth() {
-  return deviceWidth || typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || getClientWidth();
-}
-
-export function setDeviceWidth(width) {
-  deviceWidth = width;
-}
-
-function getViewportWidth() {
-  return viewportWidth || typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || getClientWidth();
-}
-
-export function setViewportWidth(width) {
-  viewportWidth = width;
 }
 
 export function createBody() {
@@ -49,15 +58,68 @@ export function createBody() {
 }
 
 export function createEmpty(component) {
-  return document.createComment(' _ ');
+  const parent = component._parent;
+  let node;
+
+  if (isHybrating) {
+    const hybrationChild = findHybrationChild(parent);
+
+    if (hybrationChild) {
+      if (hybrationChild.nodeType === COMMENT_NODE) {
+        return hybrationChild;
+      } else {
+        node = document.createComment(EMPTY);
+        replaceChild(node, hybrationChild, parent);
+      }
+    } else {
+      node = document.createComment(EMPTY);
+      node[HYBRATION_APPEND] = true;
+    }
+  } else {
+    node = document.createComment(EMPTY);
+  }
+
+  return node;
 }
 
 export function createText(text, component) {
-  return document.createTextNode(text);
+  const parent = component._parent;
+  let node;
+
+  if (isHybrating) {
+    const hybrationChild = findHybrationChild(parent);
+
+    if (hybrationChild) {
+      if (hybrationChild.nodeType === TEXT_NODE) {
+        if (text !== hybrationChild[TEXT_CONTENT_ATTR]) {
+          hybrationChild[TEXT_CONTENT_ATTR] = text;
+        }
+        return hybrationChild;
+      } else {
+        node = document.createTextNode(text);
+        replaceChild(node, hybrationChild, parent);
+      }
+    } else {
+      node = document.createTextNode(text);
+      node[HYBRATION_APPEND] = true;
+    }
+  } else {
+    node = document.createTextNode(text);
+  }
+
+  return node;
 }
 
 export function updateText(node, text) {
   node[TEXT_CONTENT_ATTR] = text;
+}
+
+function findHybrationChild(parent) {
+  if (parent[HYBRATION_INDEX] == null) {
+    parent[HYBRATION_INDEX] = 0;
+  }
+
+  return parent.childNodes[parent[HYBRATION_INDEX]++];
 }
 
 export function createElement(type, props, component) {
@@ -65,22 +127,89 @@ export function createElement(type, props, component) {
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
 
   let node;
-  if (isSVGMode) {
-    node = document.createElementNS(SVG_NS, type);
-  } else if (tagNamePrefix) {
-    let tagNamePrefix = typeof tagNamePrefix === 'function' ? tagNamePrefix(type) : tagNamePrefix;
-    node = document.createElement(tagNamePrefix + type);
-  } else {
-    node = document.createElement(type);
+  let hybrationChild = null;
+
+  function createNode() {
+    if (isSVGMode) {
+      node = document.createElementNS(SVG_NS, type);
+    } else if (tagNamePrefix) {
+      let tagNamePrefix = typeof tagNamePrefix === 'function' ? tagNamePrefix(type) : tagNamePrefix;
+      node = document.createElement(tagNamePrefix + type);
+    } else {
+      node = document.createElement(type);
+    }
   }
 
-  setNativeProps(node, props);
+  if (isHybrating) {
+    hybrationChild = findHybrationChild(parent);
+
+    if (hybrationChild) {
+      if (type === hybrationChild.nodeName.toLowerCase()) {
+        for (let attributes = hybrationChild.attributes, i = attributes.length; i--;) {
+          const attribute = attributes[i];
+          const attributeName = attribute.name;
+          const propValue = props[attributeName];
+
+          if (
+            // The class or className prop all not in props
+            attributeName === CLASS && props[CLASS_NAME] == null && propValue == null ||
+            // The style prop is empty object or not in props
+            attributeName === STYLE && (propValue == null || Object.keys(propValue).length === 0) ||
+            // Remove rendered node attribute that not existed
+            attributeName !== CLASS && attributeName !== STYLE && propValue == null
+          ) {
+            hybrationChild.removeAttribute(attributeName);
+            continue;
+          }
+
+          if (attributeName === STYLE) {
+            // Remove invalid style prop, and direct reset style to child avoid diff style
+            for (let i = 0; i < hybrationChild.style.length; i++) {
+              let stylePropName = hybrationChild.style[i];
+              if (!propValue[stylePropName]) {
+                hybrationChild.style[stylePropName] = EMPTY;
+              }
+            }
+          }
+        }
+
+        node = hybrationChild;
+      } else {
+        createNode();
+        replaceChild(node, hybrationChild, parent);
+      }
+    } else {
+      createNode();
+      node[HYBRATION_APPEND] = true;
+    }
+  } else {
+    createNode();
+  }
+
+  for (let prop in props) {
+    let value = props[prop];
+    if (prop === CHILDREN) {
+      continue;
+    }
+
+    if (value != null) {
+      if (prop === STYLE) {
+        setStyle(node, value);
+      } else if (EVENT_PREFIX_REGEXP.test(prop)) {
+        addEventListener(node, prop.slice(2).toLowerCase(), value, component);
+      } else {
+        setAttribute(node, prop, value);
+      }
+    }
+  }
 
   return node;
 }
 
 export function appendChild(node, parent) {
-  return parent.appendChild(node);
+  if (!isHybrating || node[HYBRATION_APPEND]) {
+    return parent.appendChild(node);
+  }
 }
 
 export function removeChild(node, parent) {
@@ -114,30 +243,11 @@ export function insertBefore(node, before, parent) {
   parent.insertBefore(node, before);
 }
 
-function normalizeEventName(node, eventName, component) {
-  const tagName = node.tagName.toLowerCase();
-  const instance = component._instance;
-  const props = instance.props;
-
-  if (
-    eventName === 'change' &&
-    (tagName === 'textarea' ||
-    tagName === 'input' && (!props.type || props.type === 'text' || props.type === 'password'))
-  ) {
-    eventName = 'input';
-  } else if (eventName === 'doubleclick') {
-    eventName = 'dblclick';
-  }
-  return eventName;
-}
-
-export function addEventListener(node, eventName, eventHandler, component) {
-  eventName = normalizeEventName(node, eventName, component);
+export function addEventListener(node, eventName, eventHandler) {
   return node.addEventListener(eventName, eventHandler);
 }
 
-export function removeEventListener(node, eventName, eventHandler, component) {
-  eventName = normalizeEventName(node, eventName, component);
+export function removeEventListener(node, eventName, eventHandler) {
   return node.removeEventListener(eventName, eventHandler);
 }
 
@@ -162,7 +272,10 @@ export function removeAttribute(node, propKey) {
 
 export function setAttribute(node, propKey, propValue) {
   if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-    return node.innerHTML = propValue.__html;
+    const html = propValue.__html;
+    if (node.innerHTML !== html) {
+      return node.innerHTML = html;
+    }
   }
 
   if (propKey === CLASS_NAME) {
@@ -181,53 +294,36 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
-export function beforeRender() {
-  // Init rem unit
-  setRem(getDeviceWidth() / getViewportWidth());
-}
-
 export function setStyle(node, style) {
-  let tranformedStyle = {};
-
+  let nodeStyle = node.style;
   for (let prop in style) {
-    let val = style[prop];
-    if (flexbox.isFlexProp(prop)) {
-      flexbox[prop](val, tranformedStyle);
-    } else {
-      tranformedStyle[prop] = convertUnit(val, prop);
-    }
-  }
-
-  for (let prop in tranformedStyle) {
-    const transformValue = tranformedStyle[prop];
-    // hack handle compatibility issue
-    if (Array.isArray(transformValue)) {
-      for (let i = 0; i < transformValue.length; i++) {
-        node.style[prop] = transformValue[i];
-      }
-    } else {
-      node.style[prop] = transformValue;
-    }
+    let propValue = style[prop];
+    nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop] ? propValue + 'px' : propValue;
   }
 }
 
-function setNativeProps(node, props) {
-  for (let prop in props) {
-    let value = props[prop];
-    if (prop === CHILDREN) {
-      continue;
-    }
+export function beforeRender({ hybrate }) {
+  isHybrating = hybrate;
+}
 
-    if (value != null) {
-      if (prop === STYLE) {
-        setStyle(node, value);
-      } else if (EVENT_PREFIX_REGEXP.test(prop)) {
-        let eventName = prop.slice(2).toLowerCase();
-        addEventListener(node, eventName, value);
-      } else {
-        setAttribute(node, prop, value);
-      }
+function recolectHybrationChild(hybrationParent) {
+  const nativeLength = hybrationParent.childNodes.length;
+  const vdomLength = hybrationParent[HYBRATION_INDEX];
+  if (nativeLength - vdomLength > 0) {
+    for (let i = nativeLength - 1; i >= vdomLength; i-- ) {
+      hybrationParent.removeChild(hybrationParent.childNodes[i]);
     }
+  }
+
+  for (let j = hybrationParent.childNodes.length - 1; j >= 0; j--) {
+    recolectHybrationChild(hybrationParent.childNodes[j]);
   }
 }
 
+export function afterRender({ container }) {
+  if (isHybrating) {
+    // Remove native node when more then vdom node
+    recolectHybrationChild(container);
+    isHybrating = false;
+  }
+}
