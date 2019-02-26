@@ -23,7 +23,7 @@ export default {
     };
 
     renderedComponent.update = (element) => {
-      Instance.mount(element, container);
+      Instance.mount(element, container, {});
     };
 
     renderedComponent.unmount = () => {

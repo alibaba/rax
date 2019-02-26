@@ -13,8 +13,8 @@ const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const TRUE = true;
 const EMPTY = '';
-const HYBRATION_INDEX = '__i';
-const HYBRATION_APPEND = '__a';
+const HYDRATION_INDEX = '__i';
+const HYDRATION_APPEND = '__a';
 const UNITLESS_NUMBER_PROPS = {
   animationIterationCount: TRUE,
   borderImageOutset: TRUE,
@@ -47,7 +47,7 @@ const UNITLESS_NUMBER_PROPS = {
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
-let isHybrating = false;
+let isHydrating = false;
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
@@ -61,19 +61,19 @@ export function createEmpty(component) {
   const parent = component._parent;
   let node;
 
-  if (isHybrating) {
-    const hybrationChild = findHybrationChild(parent);
+  if (isHydrating) {
+    const hydrationChild = findHydrationChild(parent);
 
-    if (hybrationChild) {
-      if (hybrationChild.nodeType === COMMENT_NODE) {
-        return hybrationChild;
+    if (hydrationChild) {
+      if (hydrationChild.nodeType === COMMENT_NODE) {
+        return hydrationChild;
       } else {
         node = document.createComment(EMPTY);
-        replaceChild(node, hybrationChild, parent);
+        replaceChild(node, hydrationChild, parent);
       }
     } else {
       node = document.createComment(EMPTY);
-      node[HYBRATION_APPEND] = true;
+      node[HYDRATION_APPEND] = true;
     }
   } else {
     node = document.createComment(EMPTY);
@@ -86,22 +86,22 @@ export function createText(text, component) {
   const parent = component._parent;
   let node;
 
-  if (isHybrating) {
-    const hybrationChild = findHybrationChild(parent);
+  if (isHydrating) {
+    const hydrationChild = findHydrationChild(parent);
 
-    if (hybrationChild) {
-      if (hybrationChild.nodeType === TEXT_NODE) {
-        if (text !== hybrationChild[TEXT_CONTENT_ATTR]) {
-          hybrationChild[TEXT_CONTENT_ATTR] = text;
+    if (hydrationChild) {
+      if (hydrationChild.nodeType === TEXT_NODE) {
+        if (text !== hydrationChild[TEXT_CONTENT_ATTR]) {
+          hydrationChild[TEXT_CONTENT_ATTR] = text;
         }
-        return hybrationChild;
+        return hydrationChild;
       } else {
         node = document.createTextNode(text);
-        replaceChild(node, hybrationChild, parent);
+        replaceChild(node, hydrationChild, parent);
       }
     } else {
       node = document.createTextNode(text);
-      node[HYBRATION_APPEND] = true;
+      node[HYDRATION_APPEND] = true;
     }
   } else {
     node = document.createTextNode(text);
@@ -114,12 +114,12 @@ export function updateText(node, text) {
   node[TEXT_CONTENT_ATTR] = text;
 }
 
-function findHybrationChild(parent) {
-  if (parent[HYBRATION_INDEX] == null) {
-    parent[HYBRATION_INDEX] = 0;
+function findHydrationChild(parent) {
+  if (parent[HYDRATION_INDEX] == null) {
+    parent[HYDRATION_INDEX] = 0;
   }
 
-  return parent.childNodes[parent[HYBRATION_INDEX]++];
+  return parent.childNodes[parent[HYDRATION_INDEX]++];
 }
 
 export function createElement(type, props, component) {
@@ -127,7 +127,7 @@ export function createElement(type, props, component) {
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
 
   let node;
-  let hybrationChild = null;
+  let hydrationChild = null;
 
   function createNode() {
     if (isSVGMode) {
@@ -140,12 +140,12 @@ export function createElement(type, props, component) {
     }
   }
 
-  if (isHybrating) {
-    hybrationChild = findHybrationChild(parent);
+  if (isHydrating) {
+    hydrationChild = findHydrationChild(parent);
 
-    if (hybrationChild) {
-      if (type === hybrationChild.nodeName.toLowerCase()) {
-        for (let attributes = hybrationChild.attributes, i = attributes.length; i--;) {
+    if (hydrationChild) {
+      if (type === hydrationChild.nodeName.toLowerCase()) {
+        for (let attributes = hydrationChild.attributes, i = attributes.length; i--;) {
           const attribute = attributes[i];
           const attributeName = attribute.name;
           const propValue = props[attributeName];
@@ -158,29 +158,29 @@ export function createElement(type, props, component) {
             // Remove rendered node attribute that not existed
             attributeName !== CLASS && attributeName !== STYLE && propValue == null
           ) {
-            hybrationChild.removeAttribute(attributeName);
+            hydrationChild.removeAttribute(attributeName);
             continue;
           }
 
           if (attributeName === STYLE) {
             // Remove invalid style prop, and direct reset style to child avoid diff style
-            for (let i = 0; i < hybrationChild.style.length; i++) {
-              let stylePropName = hybrationChild.style[i];
+            for (let i = 0; i < hydrationChild.style.length; i++) {
+              let stylePropName = hydrationChild.style[i];
               if (!propValue[stylePropName]) {
-                hybrationChild.style[stylePropName] = EMPTY;
+                hydrationChild.style[stylePropName] = EMPTY;
               }
             }
           }
         }
 
-        node = hybrationChild;
+        node = hydrationChild;
       } else {
         createNode();
-        replaceChild(node, hybrationChild, parent);
+        replaceChild(node, hydrationChild, parent);
       }
     } else {
       createNode();
-      node[HYBRATION_APPEND] = true;
+      node[HYDRATION_APPEND] = true;
     }
   } else {
     createNode();
@@ -207,7 +207,7 @@ export function createElement(type, props, component) {
 }
 
 export function appendChild(node, parent) {
-  if (!isHybrating || node[HYBRATION_APPEND]) {
+  if (!isHydrating || node[HYDRATION_APPEND]) {
     return parent.appendChild(node);
   }
 }
@@ -302,28 +302,28 @@ export function setStyle(node, style) {
   }
 }
 
-export function beforeRender({ hybrate }) {
-  isHybrating = hybrate;
+export function beforeRender({ hydrate }) {
+  isHydrating = hydrate;
 }
 
-function recolectHybrationChild(hybrationParent) {
-  const nativeLength = hybrationParent.childNodes.length;
-  const vdomLength = hybrationParent[HYBRATION_INDEX];
+function recolectHydrationChild(hydrationParent) {
+  const nativeLength = hydrationParent.childNodes.length;
+  const vdomLength = hydrationParent[HYDRATION_INDEX];
   if (nativeLength - vdomLength > 0) {
     for (let i = nativeLength - 1; i >= vdomLength; i-- ) {
-      hybrationParent.removeChild(hybrationParent.childNodes[i]);
+      hydrationParent.removeChild(hydrationParent.childNodes[i]);
     }
   }
 
-  for (let j = hybrationParent.childNodes.length - 1; j >= 0; j--) {
-    recolectHybrationChild(hybrationParent.childNodes[j]);
+  for (let j = hydrationParent.childNodes.length - 1; j >= 0; j--) {
+    recolectHydrationChild(hydrationParent.childNodes[j]);
   }
 }
 
 export function afterRender({ container }) {
-  if (isHybrating) {
+  if (isHydrating) {
     // Remove native node when more then vdom node
-    recolectHybrationChild(container);
-    isHybrating = false;
+    recolectHydrationChild(container);
+    isHydrating = false;
   }
 }

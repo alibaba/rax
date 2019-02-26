@@ -32,7 +32,7 @@ export default {
       }
     }
   },
-  mount(element, container, { parent, hybrate }) {
+  mount(element, container, { parent, hydrate }) {
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.beforeRender();
     }
@@ -47,7 +47,7 @@ export default {
     const renderOptions = {
       element,
       container,
-      hybrate
+      hydrate
     };
 
     // Before render callback
