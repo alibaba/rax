@@ -1,4 +1,3 @@
-import { PolymerElement } from '@polymer/polymer';
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
 import debounce from '../../shared/debounce';
 
@@ -24,31 +23,39 @@ const spaces = {
 };
 const continuousSpaceReg = /[\u0020\u2002\u2023\f\r\t\v]+/g;
 const spaceReg = /[\u0020\u2002\u2023\f\r\t\v]/g;
+const SPACE = 'space';
+const SELECTABLE = 'selectable';
 
-export default class TextElement extends PolymerElement {
+export default class TextElement extends HTMLElement {
   static get is() {
     return 'a-text';
   }
 
-  static get properties() {
-    return {
-      selectable: {
-        type: Boolean,
-        /**
-         * Reflect to attribute to apply CSS style.
-         */
-        reflectToAttribute: true,
-        value: false,
-      },
-      /**
-       * Allow continuous spaces
-       *  @enum space: false, ensp, emsp, nbsp
-       */
-      space: {
-        type: String,
-        value: 'false',
-      },
-    };
+  /**
+   * Allow continuous spaces.
+   * @type {String}
+   * @enum space: false, ensp, emsp, nbsp
+   */
+  get space() {
+    return this.getAttribute(SPACE) || 'false';
+  }
+  set space(val) {
+    this.setAttribute(SPACE, val);
+  }
+
+  /**
+   * Reflect to attribute to apply CSS style.
+   * @type {Boolean}
+   */
+  get selectable() {
+    return this.getAttribute(SELECTABLE) === 'true';
+  }
+  set selectable(val) {
+    if (val) {
+      this.setAttribute(SELECTABLE, val);
+    } else {
+      this.removeAttribute(SELECTABLE);
+    }
   }
 
   constructor() {
@@ -57,40 +64,29 @@ export default class TextElement extends PolymerElement {
   }
 
   connectedCallback() {
-    super.connectedCallback();
     this.childrenObserver = new FlattenedNodesObserver(this, this._observeChildren);
 
     if (this.childNodes.length > 0) {
+      const space = this.space;
       for (let i = 0, l = this.childNodes.length; i < l; i++) {
         if (this.childNodes[i].nodeType === document.TEXT_NODE) {
-          this.childNodes[i].textContent = this._processText(this.childNodes[i].textContent);
+          this.childNodes[i].textContent = processText(this.childNodes[i].textContent, space);
         }
       }
     }
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
     this.childrenObserver.disconnect();
-  }
-
-  _processText(text) {
-    if (this.space === 'false') {
-      // by default space equal false
-      return text.replace(continuousSpaceReg, ' ');
-    } else {
-      const space = spaces[this.space];
-      if (space === undefined) return text; // illegal space perperty
-      return text.replace(spaceReg, space);
-    }
   }
 
   _observeChildren({ addedNodes, target }) {
     if (this === target && addedNodes.length > 0) {
-      for (let i = 0; i < addedNodes.length; i++) {
+      const space = this.space;
+      for (let i = 0, l = addedNodes.length; i < l; i++) {
         const node = addedNodes[i];
         if (node.nodeType === document.TEXT_NODE) {
-          node.textContent = this._processText(node.textContent);
+          node.textContent = processText(node.textContent, space);
         }
       }
     }
@@ -98,3 +94,20 @@ export default class TextElement extends PolymerElement {
 }
 
 customElements.define(TextElement.is, TextElement);
+
+/**
+ * Handle with text spaces.
+ * @param text
+ * @param propSpace
+ * @return {String}
+ */
+function processText(text, propSpace) {
+  if (propSpace === 'false') {
+    // by default space equal false
+    return text.replace(continuousSpaceReg, ' ');
+  } else {
+    const space = spaces[propSpace];
+    if (space === undefined) return text; // illegal space perperty
+    return text.replace(spaceReg, space);
+  }
+}
