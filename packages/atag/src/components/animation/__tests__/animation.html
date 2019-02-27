@@ -1,0 +1,21 @@
+<div class="touch-move-box" id="box">
+  <a-animation id="animation">
+    <div id="animation-first-child" animation-style="opacity: ${frame.opacity}" style="opacity: 0;">
+      HI
+    </div>
+    <script>
+      document.querySelector('#animation').keyframes = [{
+        opacity: 0,
+        list: [0, 0, 0],
+        color: 'red'
+      }, {
+        opacity: 0.4,
+        offset: 0.6
+      }, {
+        opacity: 1,
+        list: [1, 2, 4],
+        color: 'green'
+      }];
+    </script>
+  </a-animation>
+</div>

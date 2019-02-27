@@ -29,6 +29,11 @@ export function converStyleString(string) {
   return object;
 }
 
+function getObjectValues(object) {
+  return Object.keys(object).map(function(key) {
+    return object[key];
+  });
+}
 /**
  * 将模板字符串转成普通字符串
  * @param {object} params template object
@@ -37,7 +42,7 @@ export function converStyleString(string) {
  */
 export function generateTemplate(params, templateString) {
   const names = Object.keys(params);
-  const vals = Object.values(params);
+  const vals = getObjectValues(params);
   return new Function(...names, `return \`${templateString}\`;`)(...vals);
 }
 
