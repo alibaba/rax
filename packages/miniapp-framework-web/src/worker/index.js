@@ -1,4 +1,4 @@
-/* global importScripts */
+/* global importScripts, frameworkType */
 import { log, worker } from 'miniapp-framework-shared';
 import { my } from './api';
 import { call } from './remoteCall';
@@ -6,7 +6,14 @@ import * as appLifecycle from './lifecycles/app';
 import Client from './Client';
 import getModule from './getModule';
 
-setupGlobalObject({ my, require: getModule });
+setupGlobalObject({
+  my,
+  require: getModule,
+  /**
+   * @Note: Internal varibale to judge IDE/Web env.
+   */
+  __framework_type__: frameworkType,
+});
 addEventListener('message', messageHandler);
 
 const { emit: emitToClient, addClient, getClient } = worker.clientHub;
