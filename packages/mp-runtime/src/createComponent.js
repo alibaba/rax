@@ -3,6 +3,8 @@ import deepCopy from './deepCopy';
 import { registerComponent } from './componentsHub';
 import { normalizeScopedSlots } from './normalizeScopedSlots';
 
+const STYLE_FLAG_KEY = '_appendedComponentStyle';
+
 /**
  * Returns a boolean indicating whether the object has the specified property as its own property.
  * @param {Object} object
@@ -33,15 +35,22 @@ let componentCount = 0;
 
 export default function createComponent(renderFactory, render, config, componentPath, cssText) {
   const templateRender = renderFactory(render);
-  const component = class extends render.Component {
+  const component = class RaxComponent extends render.Component {
     static contextTypes = {
       $page: null,
     };
 
     constructor(props, context) {
       super(props, context);
-      if (context.$page && cssText && (cssText = String(cssText))) {
-        const document = context.$page.vnode._document;
+
+      /**
+       * One component's style can only be append once in each docuemnt(page).
+       * Use a flag in document object to mark.
+       */
+      const document = context.$page.vnode._document;
+      const styleFlag = document[STYLE_FLAG_KEY] = document[STYLE_FLAG_KEY] || {};
+      if (!styleFlag[componentPath] && context.$page && cssText && (cssText = String(cssText))) {
+        styleFlag[componentPath] = true;
         const cssTextNode = document.createTextNode(cssText);
         const styleNode = document.createElement('style');
         styleNode.appendChild(cssTextNode);
