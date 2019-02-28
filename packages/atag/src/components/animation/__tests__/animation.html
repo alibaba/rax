@@ -1,4 +1,56 @@
-<div class="touch-move-box" id="box">
+<div id="box">
+  <a-animation event-type="pan" event-origin="image" id="animation-pan">
+    <a-image
+      id="image"
+      src="https://drscdn.500px.org/photo/435236/q%3D80_m%3D1500/v2?webp=true&sig=67031bdff6f582f3e027311e2074be452203ab637c0bd21d89128844becf8e40"
+      style="width: 300px;height: 300px;"
+      animation-style="transform: perspective(600px) rotateX(${event.state === 'end' ? 0 : -(event.clientY - 250 / 2) / 25}deg) rotateY(${event.state === 'end' ? 0 : (event.clientX - 175) / 4}deg) scale(${event.state === 'end' ? 1 : 1.02})"
+      class="image"
+    />
+  </a-animation>
+
+  <div>
+    <button id="button">点击开始动画</button>
+    <a-animation easing="ease-in" id="animation-button" event-type="click" event-origin="button" iterations="2" duration="5000">
+      <div animation-style="background-color: ${frame.bgColor};" class="box" id="animation-button-box">
+        <span animation-style="opacity: ${frame.opacity};" class="text" id="animation-button-text">hello world</span>
+        <div animation-style="width: ${frame.width}%;" class="bottomBox" id="animation-bottomBox-text"></div>
+      </div>
+    </a-animation>
+    <script>
+      document.querySelector('#animation-button').keyframes = [{
+        opacity: 0,
+        width: 0,
+        bgColor: '#ffff00'
+      }, {
+        opacity: 1,
+        width: 100,
+        bgColor: '#00ffff'
+      }];
+    </script>
+    <style>
+      .box {
+        position: relative;
+        width: 375px;
+        height: 100px;
+      }
+
+      .text {
+        font-size: 25px;
+        font-weight: bold;
+      }
+
+      .bottomBox {
+        position: absolute;
+        z-index: 1000;
+        left: 0px;
+        bottom: 0px;
+        height: 10px;
+        background-color: rgb(255, 213, 0);
+      }
+    </style>
+  </div>
+
   <a-animation id="animation">
     <div id="animation-first-child" animation-style="opacity: ${frame.opacity}" style="opacity: 0;">
       HI
