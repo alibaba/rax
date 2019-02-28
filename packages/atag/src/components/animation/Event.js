@@ -56,7 +56,7 @@ export default class Event {
     const transformArray = [];
     if (!window.getComputedStyle) return transformArray;
     const style = getComputedStyle(node);
-    const { transform } = style;
+    const transform = style.transform || style['-webkit-transform'];
 
     let matrix = transform.match(/^matrix3d\((.+)\)$/);
     if (matrix) {

@@ -37,7 +37,7 @@ export function converStyleString(string) {
  */
 export function generateTemplate(params, templateString) {
   const names = Object.keys(params);
-  const vals = Object.values(params);
+  const vals = names.map(key => params[key]);
   return new Function(...names, `return \`${templateString}\`;`)(...vals);
 }
 

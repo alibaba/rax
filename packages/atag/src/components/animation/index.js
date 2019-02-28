@@ -136,7 +136,8 @@ export default class Animation extends PolymerElement {
    * update node style
    */
   updateStyle = (nodeList, value) => {
-    nodeList.forEach((node) => {
+    for (let index = 0; index < nodeList.length; index++) {
+      const node = nodeList[index];
       if (node.getAttribute) {
         const style = node.getAttribute(this.styleProp);
         if (style) {
@@ -153,7 +154,7 @@ export default class Animation extends PolymerElement {
       if (node.childNodes) {
         this.updateStyle(node.childNodes, value);
       }
-    });
+    }
   };
 
   setNodeStyle = (node, styleObject) => {
