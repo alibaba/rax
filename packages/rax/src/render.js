@@ -12,7 +12,7 @@ function render(element, container, options, callback) {
   // Init inject
   inject(options);
 
-  let rootComponent = Instance.mount(element, container, options.parent);
+  let rootComponent = Instance.mount(element, container, options);
   let componentInstance = rootComponent.getPublicInstance();
 
   if (callback) {

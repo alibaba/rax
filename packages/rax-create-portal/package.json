@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "rax": "^1.0.0-beta",
-    "driver-server": "^0.6.5",
+    "driver-server": "^1.0.0-beta",
     "rax-proptypes": "^1.0.0-beta"
   }
 }

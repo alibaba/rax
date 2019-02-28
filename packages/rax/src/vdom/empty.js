@@ -6,7 +6,7 @@ import BaseComponent from './base';
  */
 class EmptyComponent extends BaseComponent {
   createNativeNode() {
-    return Host.driver.createEmpty();
+    return Host.driver.createEmpty(this);
   }
 }
 

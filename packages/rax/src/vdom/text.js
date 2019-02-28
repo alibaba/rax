@@ -20,7 +20,7 @@ class TextComponent extends BaseComponent {
   }
 
   createNativeNode() {
-    return Host.driver.createText(this._currentElement);
+    return Host.driver.createText(this._currentElement, this);
   }
 }
 

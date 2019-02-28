@@ -20,8 +20,6 @@ function instantiateComponent(element) {
     throwInvalidComponentError(element);
   }
 
-  instance._mountIndex = 0;
-
   return instance;
 }
 
