@@ -1,4 +1,3 @@
-import { PolymerElement, html } from '@polymer/polymer';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import * as Gestures from '@polymer/polymer/lib/utils/gestures';
 
@@ -13,60 +12,80 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-export default class ViewElement extends PolymerElement {
+export default class ViewElement extends HTMLElement {
   static get is() {
     return 'a-view';
   }
 
-  static get properties() {
-    return {
-      /**
-       * Whether to prevent scrolling pages in the area
-       * Boolean, default falsex
-       */
-      disableScroll: {
-        type: Boolean,
-        value: false,
-      },
-      /**
-       * How long after clicking and holding, the click state, in ms
-       * Number, default 50
-       */
-      hoverStartTime: {
-        type: Number,
-        value: 50,
-      },
-      /**
-       * Hover state retention time after the finger is released, in milliseconds
-       * Number, default 400
-       */
-      hoverStayTime: {
-        type: Number,
-        value: 400,
-      },
-      /**
-       * Specifies whether to prevent the ancestor node of this node from hovering
-       * Boolean, default false
-       */
-      hoverStopPropagation: {
-        type: Boolean,
-        value: false,
-      },
-      hoverStyle: {
-        type: String,
-        value: '',
-      },
-      hoverClass: {
-        type: String,
-        value: '',
-      },
-    };
-  }
+  /**
+   * Whether to prevent scrolling pages in the area
+   * @type Boolean, default to false
+   */
+  disableScroll = false;
+
+  /**
+   * How long after clicking and holding, the click state, in ms
+   * Number, default 50
+   */
+  hoverStartTime = 50;
+
+  /**
+   * Hover state retention time after the finger is released, in milliseconds
+   * Number, default 400
+   */
+  hoverStayTime = 400;
+
+  /**
+   * Specifies whether to prevent the ancestor node of this node from hovering
+   * Boolean, default false
+   */
+  hoverStopPropagation = false;
+
+  hoverStyle = '';
+  hoverClass = '';
 
   _hoverActiveState = false;
 
+  static get observedAttributes() {
+    return [
+      'disable-scroll',
+      'hover-start-time',
+      'hover-stay-time',
+      'hover-stop-propagation',
+      'hover-style',
+      'hover-class',
+    ];
+  }
+
+  attributeChangedCallback(prop, oldValue, newValue) {
+    switch (prop) {
+      case 'disable-scroll':
+        this.disableScroll = !!newValue;
+        break;
+
+      case 'hover-start-time':
+        this.hoverStartTime = Number(newValue) || 50;
+        break;
+
+      case 'hover-stay-time':
+        this.hoverStartTime = Number(newValue) || 400;
+        break;
+
+      case 'hover-stop-propagation':
+        this.hoverStopPropagation = !!newValue;
+        break;
+
+      case 'hover-style':
+        this.hoverStyle = String(newValue);
+        break;
+
+      case 'hover-class':
+        this.hoverClass = String(newValue);
+        break;
+    }
+  }
+
   connectedCallback() {
-    super.connectedCallback();
     afterNextRender(this, () => {
       Gestures.addListener(this, 'down', this._handleHoverStart);
       Gestures.addListener(this, 'up', this._handleHoverEnd);
@@ -75,7 +94,6 @@ export default class ViewElement extends PolymerElement {
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
     Gestures.addListener(this, 'down', this._handleHoverStart);
     Gestures.addListener(this, 'up', this._handleHoverEnd);
     this.removeEventListener('touchmove', this._handleTouchmove);

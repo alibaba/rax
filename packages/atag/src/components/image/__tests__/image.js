@@ -22,6 +22,35 @@ describe('input', () => {
     expect(height).toEqual(225);
   });
 
+  const IMAGE_URL = 'https://gw.alicdn.com/tfs/TB1VBforHSYBuNjSspfXXcZCpXa-510-370.png';
+  it('src from empty to url', async() => {
+    const page = await createPage();
+    await page.addScriptTag({ content: `
+      emptyImage.onload = function() {
+        window.__image_loaded__ = true;
+      };
+      emptyImage.src = '${IMAGE_URL}';
+    ` });
+    await page.waitFor(500);
+    expect(await page.evaluate('window.__image_loaded__'))
+      .toEqual(true);
+  });
+
+  it('src from one to another', async() => {
+    const page = await createPage();
+    await page.addScriptTag({
+      content: `
+          image.onload = function() {
+            window.__image_loaded__ = true;
+          };
+          image.src = '${IMAGE_URL}';
+        `,
+    });
+    await page.waitFor(500);
+    expect(await page.evaluate('window.__image_loaded__'))
+      .toEqual(true);
+  });
+
   it('mode', async() => {
     jest.setTimeout(50000);
     const modes = [
