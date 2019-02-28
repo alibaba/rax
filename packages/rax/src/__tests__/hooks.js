@@ -1401,4 +1401,113 @@ describe('hooks', () => {
       expect(logs).toEqual(['compute B', 'B']);
     });
   });
+
+  describe('useImperativeHandle', () => {
+    it('does not update when deps are the same', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(ref, () => ({count, dispatch}), []);
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      // Intentionally not updated because of [] deps:
+      expect(counter.current.count).toBe(0);
+    });
+
+    it('automatically updates when deps are not specified', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(ref, () => ({count, dispatch}));
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+    });
+
+    it('updates when deps are different', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      let totalRefUpdates = 0;
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(
+          ref,
+          () => {
+            totalRefUpdates++;
+            return {count, dispatch};
+          },
+          [count],
+        );
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+      expect(totalRefUpdates).toBe(1);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+      expect(totalRefUpdates).toBe(2);
+
+      // Update that doesn't change the ref dependencies
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+      expect(totalRefUpdates).toBe(2); // Should not increase since last time
+    });
+  });
 });
