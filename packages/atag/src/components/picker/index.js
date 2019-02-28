@@ -62,7 +62,7 @@ export default class Picker extends PolymerElement {
 
     window.addEventListener('_formReset', this._handleReset, true);
     Gestures.addListener(this.$.body, 'track', this._handleTrack);
-    Gestures.addListener(this.$.slots, 'tap', this._handleShow);
+    Gestures.addListener(this.$.slotContainer, 'tap', this._handleShow);
 
     this.$.mask.addEventListener('click', this._handleHide);
     this.$.cancel.addEventListener('click', this._handleHide);
@@ -81,7 +81,7 @@ export default class Picker extends PolymerElement {
 
     window.removeEventListener('_formReset', this._handleReset, true);
     Gestures.removeListener(this.$.body, 'track', this._handleTrack);
-    Gestures.removeListener(this.$.slots, 'tap', this._handleShow);
+    Gestures.removeListener(this.$.slotContainer, 'tap', this._handleShow);
 
     this.$.mask.removeEventListener('click', this._handleHide);
     this.$.cancel.removeEventListener('click', this._handleHide);
@@ -336,7 +336,7 @@ export default class Picker extends PolymerElement {
         </div>
       </div>
       <!-- In some polyfill implementation of web-components, slot is cloned elements, so we could not add event listener on slot element, use a warpper element instead. -->
-      <span id="slots"><slot></slot></span>
+      <span id="slotContainer"><slot></slot></span>
     `;
   }
 }
