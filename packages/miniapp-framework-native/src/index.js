@@ -112,13 +112,18 @@ function renderPage(pageName, clientId, pageQuery = {}) {
   let order = 0;
   function postMessage(message) {
     const payload = { data: message, order: order++ };
-    if (clientReadyState[clientId]) {
+    function _send() {
       appWorker.$emit(EVENT_WORKER_TO_RENDER, payload, clientId);
+      if (process.env.NODE_ENV === 'development') {
+        logPerformance('Order: ' + payload.order);
+      }
+    }
+
+    if (clientReadyState[clientId]) {
+      _send();
     } else {
       pendingMessages[clientId] = pendingMessages[clientId] || [];
-      pendingMessages[clientId].push(
-        appWorker.$emit.bind(appWorker, EVENT_WORKER_TO_RENDER, payload, clientId)
-      );
+      pendingMessages[clientId].push(_send);
     }
   }
   function addEventListener(eventName, callback) {
@@ -155,4 +160,8 @@ function renderPage(pageName, clientId, pageQuery = {}) {
   rax.render(rax.createElement(PageComponent), null, {
     driver,
   });
+}
+
+function logPerformance(str) {
+  console.log('[PERFORMANCE]: WORKER-SEND' + str + ' Ts: ' + Date.now());
 }
