@@ -40,31 +40,27 @@ describe('animation', () => {
     expect(await page.$eval('#animation', el => el.timeline.properties[0].keyframe.keyframeList.length)).toEqual(3);
   });
 
-  it('animation timeline', async(done) => {
+  it('animation timeline', async() => {
     const page = await createPage();
 
-    setTimeout(async() => {
-      expect(await page.$eval('#animation', el => Math.round(el.timeline.currentValue.opacity * 10) / 10)).toEqual(0.1);
-      expect(await page.$eval('#animation', el => el.timeline.currentValue.list.map(num => {
-        return Math.round(num * 10) / 10;
-      }))).toEqual([0.2, 0.4, 0.8]);
-    }, 200);
+    await page.waitFor(200);
+    expect(await page.$eval('#animation', el => Math.round(el.timeline.currentValue.opacity * 10) / 10)).toEqual(0.1);
+    expect(await page.$eval('#animation', el => el.timeline.currentValue.list.map(num => {
+      return Math.round(num * 10) / 10;
+    }))).toEqual([0.2, 0.4, 0.8]);
 
-    setTimeout(async() => {
-      expect(await page.$eval('#animation', el => Math.round(el.timeline.currentValue.opacity * 10) / 10)).toEqual(0.4);
-      expect(await page.$eval('#animation', el => el.timeline.currentValue.list.map(num => {
-        return Math.round(num * 10) / 10;
-      }))).toEqual([0.6, 1.2, 2.4]);
-    }, 600);
+    await page.waitFor(400);
+    expect(await page.$eval('#animation', el => Math.round(el.timeline.currentValue.opacity * 10) / 10)).toEqual(0.4);
+    expect(await page.$eval('#animation', el => el.timeline.currentValue.list.map(num => {
+      return Math.round(num * 10) / 10;
+    }))).toEqual([0.6, 1.2, 2.5]);
 
-    setTimeout(async() => {
-      expect(await page.$eval('#animation', el => Math.round(el.timeline.currentValue.opacity * 10) / 10)).toEqual(1);
-      expect(await page.$eval('#animation', el => el.timeline.currentValue.list.map(num => {
-        return Math.round(num * 10) / 10;
-      }))).toEqual([1, 2, 4]);
-      expect(await page.$eval('#animation', el => el.timeline.currentValue.color)).toEqual('green');
-      done();
-    }, 1200);
+    await page.waitFor(600);
+    expect(await page.$eval('#animation', el => Math.round(el.timeline.currentValue.opacity * 10) / 10)).toEqual(1);
+    expect(await page.$eval('#animation', el => el.timeline.currentValue.list.map(num => {
+      return Math.round(num * 10) / 10;
+    }))).toEqual([1, 2, 4]);
+    expect(await page.$eval('#animation', el => el.timeline.currentValue.color)).toEqual('green');
   });
 
   it('default animation pan props', async() => {
@@ -83,7 +79,7 @@ describe('animation', () => {
     expect(await page.$eval('#animation-button', el => el.timeline.easing)).toEqual('ease-in');
   });
 
-  it('animation button click', async(done) => {
+  it('animation button click', async() => {
     const page = await createPage();
     const button = await page.$('#button');
     const buttonBox = await page.$('#animation-button-box');
@@ -91,11 +87,10 @@ describe('animation', () => {
     const rect = await button.boundingBox();
 
     await page.mouse.click(rect.x + rect.width / 2, rect.y + rect.height / 2);
-    setTimeout(async() => {
-      expect(await page.$eval('#animation-button', el => el.timeline.currentValue.bgColor)).toEqual('rgba(254, 255, 1, 1)');
-      expect(await page.$eval('#animation-button', el => Math.round(el.timeline.currentValue.width * 10) / 10)).toEqual(0.3);
-      expect(await page.$eval('#animation-button', el => Math.round(el.timeline.currentValue.opacity * 1000) / 1000)).toEqual(0.003);
-      done();
-    }, 210);
+
+    await page.waitFor(210);
+    expect(await page.$eval('#animation-button', el => el.timeline.currentValue.bgColor)).toEqual('rgba(254, 255, 1, 1)');
+    expect(await page.$eval('#animation-button', el => Math.round(el.timeline.currentValue.width * 10) / 10)).toEqual(0.3);
+    expect(await page.$eval('#animation-button', el => Math.round(el.timeline.currentValue.opacity * 1000) / 1000)).toEqual(0.003);
   });
 });
