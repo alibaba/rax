@@ -35,7 +35,7 @@ let componentCount = 0;
 
 export default function createComponent(renderFactory, render, config, componentPath, cssText) {
   const templateRender = renderFactory(render);
-  const component = class RaxComponent extends render.Component {
+  const component = class extends render.Component {
     static contextTypes = {
       $page: null,
     };
