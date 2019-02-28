@@ -3,6 +3,7 @@ import kebabCase from 'kebab-case';
 import baseCSS from '!!raw-loader!./container.css';
 import { log } from 'miniapp-framework-shared';
 import Router from '../Router';
+import Tabbar from './Tabbar';
 
 const styles = {
   main: {
@@ -177,6 +178,11 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
   const homepage = findHomePage(appConfig);
   const router = new Router(mainEl, messageRouter);
 
+  const tabbar = new Tabbar({
+    mainEl: mainEl,
+    tabBarEl: document.querySelector('#tabBar'),
+  });
+
   router.switchTab({
     pageName: homepage,
   });
@@ -192,7 +198,7 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
     }
   }
 
-  return { router };
+  return { router, tabbar };
 }
 
 function findHomePage(APP_MANIFEST) {

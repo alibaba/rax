@@ -55,14 +55,15 @@ module.exports = class WebpackHtmlPlugin {
 
       const template = readFileSync(templatePath, 'utf-8');
 
-      const localIP = address.ip();
+      // const localIP = address.ip();
+      const localIP = '0.0.0.0'
 
       const options = {
         appConfig: JSON.stringify(appConfig, null, 2),
         externalApi: externalApiScript,
         isDebug: process.env.DEBUG,
         atagVersion,
-        debugFrameworkURL: `http://${localIP}:8003/web/master.js`
+        debugFrameworkURL: `http://${localIP}:9002/miniapp-framework-web.js`
       };
 
       const finalOutputName = 'index.html';

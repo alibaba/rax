@@ -1,5 +1,6 @@
 import { debug, log } from 'miniapp-framework-shared';
 import renderContainerShell from './view';
+import my from './modules/my';
 
 export default class MessageRouter {
   /**
@@ -55,8 +56,9 @@ export default class MessageRouter {
   handleMessageFromWorker(data) {
     switch (data.type) {
       case 'r$':
-        const { router } = renderContainerShell(this, this._appConfig, this._mountNode);
+        const { router, tabbar } = renderContainerShell(this, this._appConfig, this._mountNode);
         this._router = router;
+        this._tabbar = tabbar;
         break;
       case 'call':
         this.handleRemoteCall(data);
@@ -64,15 +66,67 @@ export default class MessageRouter {
   }
 
   handleRemoteCall(data) {
-    switch (data.method) {
+    const {
+      method,
+      params,
+      callId
+    } = data;
+
+    switch (method) {
       case 'navigateTo':
-        this._router.navigateTo({ pageName: data.params.url });
-        this.callbackRemoteCall(data.callId, null, null);
+        this._router.navigateTo({ pageName: params.url });
+        this.callbackRemoteCall(callId, null, null);
         break;
       case 'navigateBack':
-        this._router.navigateBack(data.params);
-        this.callbackRemoteCall(data.callId, null, null);
+        this._router.navigateBack(params);
+        this.callbackRemoteCall(callId, null, null);
         break;
+      case 'redirectTo': 
+        this._router.redirectTo(params);
+        this.callbackRemoteCall(callId, null, null);
+      case 'switchTab':
+        this._router.switchTab(params);
+        this.callbackRemoteCall(callId, null, null);
+        break;
+      case 'showTabBar':
+        this._tabbar.showTabBar(params);
+        this.callbackRemoteCall(callId, null, null);
+        break;
+      case 'hideTabBar':
+        this._tabbar.hideTabBar(params);
+        this.callbackRemoteCall(callId, null, null);
+        break;
+      case 'setTabBarBadge':
+        this._tabbar.setTabBarBadge(params);
+        this.callbackRemoteCall(callId, null, null);
+        break;
+      case 'removeTabBarBadge':
+        this._tabbar.setTabBarBadge(params);
+        this.callbackRemoteCall(callId, null, null);
+        break;
+      case 'showTabBarRedDot':
+        this._tabbar.setTabBarBadge(params);
+        this.callbackRemoteCall(callId, null, null);
+        break;
+      case 'hideTabBarRedDot':
+        this._tabbar.setTabBarBadge(params);
+        this.callbackRemoteCall(callId, null, null);
+        break;
+
+      default:
+        function resolveCallback(result) {
+          this.callbackRemoteCall(callId, result, null);
+        }
+
+        function rejectCallback(err) {
+          this.callbackRemoteCall(callId, null, err);
+        }
+
+        if (my[method]) {
+          my[method](params, resolveCallback, rejectCallback);
+        } else {
+          console.warn('API Module not exists or supported.');
+        }
     }
   }
 

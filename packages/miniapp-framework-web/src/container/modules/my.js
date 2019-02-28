@@ -1,13 +1,19 @@
-// import * as tabBar from './tabbar';
-// import navigation from './navigation';
-
 const EXTERNAL_API_NAMESPACE = 'EXTERNAL_API';
 const my = {};
 
 const internalAPIs = [
   'navigateTo',
   'navigateBack',
+  'redirectTo',
+  'switchTab',
+  'showTabBar',
+  'hideTabBar',
+  'setTabBarBadge',
+  'removeTabBarBadge',
+  'showTabBarRedDot',
+  'hideTabBarRedDot'
 ];
+
 internalAPIs.forEach((apiName) => my[apiName] = true);
 
 /**

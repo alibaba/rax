@@ -22,3 +22,26 @@ a {
   text-decoration: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+
+.hot-dot {
+  position: absolute;
+  top: -0.4vw;
+  right: 0.2vw;
+  width: 3.2vw;
+  height: 3.2vw;
+  border-radius: 3.2vw;
+  background: #f00;
+}
+
+.badge {
+  position: absolute;
+  top: -1vw;
+  left: 4.8vw;
+  background: #f00;
+  color: #fff;
+  height: 4.8vw;
+  min-width: 2.8vw;
+  padding: 0 1vw;
+  border-radius: 4.8vw;
+  font-size: 3.2vw;
+}
