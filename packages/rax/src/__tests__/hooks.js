@@ -5,7 +5,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
-import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle} from '../hooks';
+import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle, useMemo} from '../hooks';
 import { flush as flushPassiveEffects } from '../vdom/scheduler';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
@@ -1107,7 +1107,7 @@ describe('hooks', () => {
       expect(container.childNodes).toEqual([]);
     });
 
-    it('skips effect if constructor has not changed', () => {
+    it('always fires effects if no dependencies are provided', () => {
       const container = createNodeElement('div');
       let logs = [];
       function Text(props) {
@@ -1115,9 +1115,9 @@ describe('hooks', () => {
         return <span>{props.text}</span>;
       }
       function effect() {
-        logs.push('Did mount');
+        logs.push('Did create');
         return () => {
-          logs.push('Did unmount');
+          logs.push('Did destroy');
         };
       }
       function Counter(props) {
@@ -1129,19 +1129,21 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
       flushPassiveEffects();
-      expect(logs).toEqual(['Did mount']);
+      expect(logs).toEqual(['Did create']);
 
       logs = [];
       render(<Counter count={1} />, container);
-      // No effect, because constructor was hoisted outside render
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did destroy', 'Did create']);
 
       logs = [];
       render([], container);
       // TODO
       flushPassiveEffects();
-      expect(logs).toEqual(['Did unmount']);
+      expect(logs).toEqual(['Did destroy']);
       expect(container.childNodes).toEqual([]);
     });
 
@@ -1356,6 +1358,47 @@ describe('hooks', () => {
         'Unmount normal [current: 1]',
         'Mount normal [current: 1]',
       ]);
+    });
+  });
+
+  describe('useMemo', () => {
+    it('always re-computes if no inputs are provided', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function LazyCompute(props) {
+        const computed = useMemo(props.compute);
+        return <Text text={computed} />;
+      }
+
+      function computeA() {
+        logs.push('compute A');
+        return 'A';
+      }
+
+      function computeB() {
+        logs.push('compute B');
+        return 'B';
+      }
+
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeB} />, container);
+      expect(logs).toEqual(['compute B', 'B']);
     });
   });
 });
