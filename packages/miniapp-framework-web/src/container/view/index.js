@@ -4,6 +4,7 @@ import baseCSS from '!!raw-loader!./container.css';
 import { log } from 'miniapp-framework-shared';
 import Router from '../Router';
 import Tabbar from './Tabbar';
+import { relative } from 'path';
 
 const styles = {
   main: {
@@ -34,6 +35,7 @@ const styles = {
   },
   tabBarItem: {
     textAlign: 'center',
+    position: 'relative'
   },
   tabBarItemText: {
     fontSize: '12px',

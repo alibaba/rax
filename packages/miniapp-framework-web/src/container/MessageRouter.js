@@ -85,7 +85,7 @@ export default class MessageRouter {
         this._router.redirectTo(params);
         this.callbackRemoteCall(callId, null, null);
       case 'switchTab':
-        this._router.switchTab(params);
+        this._router.switchTab({pageName: params.url});
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'showTabBar':
@@ -101,15 +101,15 @@ export default class MessageRouter {
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'removeTabBarBadge':
-        this._tabbar.setTabBarBadge(params);
+        this._tabbar.removeTabBarBadge(params);
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'showTabBarRedDot':
-        this._tabbar.setTabBarBadge(params);
+        this._tabbar.showTabBarRedDot(params);
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'hideTabBarRedDot':
-        this._tabbar.setTabBarBadge(params);
+        this._tabbar.hideTabBarRedDot(params);
         this.callbackRemoteCall(callId, null, null);
         break;
 
