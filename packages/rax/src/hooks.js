@@ -181,10 +181,9 @@ export function useMemo(create, inputs) {
   if (!hooks[hookID]) {
     hooks[hookID] = [create(), inputs];
   } else {
-    const hook = hooks[hookID];
-    const prevInputs = hook[1];
+    const prevInputs = hooks[hookID][1];
     if (inputs === null || !areInputsEqual(inputs, prevInputs)) {
-      hook[0] = create();
+      hooks[hookID] = [create(), inputs];
     }
   }
 

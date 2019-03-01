@@ -1362,6 +1362,47 @@ describe('hooks', () => {
   });
 
   describe('useMemo', () => {
+    it('memoizes value by comparing to previous inputs', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function CapitalizedText(props) {
+        const text = props.text;
+        const capitalizedText = useMemo(
+          () => {
+            logs.push(`Capitalize '${text}'`);
+            return text.toUpperCase();
+          },
+          [text],
+        );
+        return <Text text={capitalizedText} />;
+      }
+
+      render(<CapitalizedText text="hello" />, container);
+      expect(logs).toEqual(["Capitalize 'hello'", 'HELLO']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HELLO');
+
+      logs = [];
+      render(<CapitalizedText text="hi" />, container);
+      expect(logs).toEqual(["Capitalize 'hi'", 'HI']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HI');
+
+      logs = [];
+      render(<CapitalizedText text="hi" />, container);
+      expect(logs).toEqual(['HI']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HI');
+
+      logs = [];
+      render(<CapitalizedText text="goodbye" />, container);
+      expect(logs).toEqual(["Capitalize 'goodbye'", 'GOODBYE']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('GOODBYE');
+    });
+
     it('always re-computes if no inputs are provided', () => {
       const container = createNodeElement('div');
       let logs = [];
@@ -1398,6 +1439,42 @@ describe('hooks', () => {
 
       logs = [];
       render(<LazyCompute compute={computeB} />, container);
+      expect(logs).toEqual(['compute B', 'B']);
+    });
+
+    it('should not invoke memoized function during re-renders unless inputs change', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function LazyCompute(props) {
+        const computed = useMemo(() => props.compute(props.input), [
+          props.input,
+        ]);
+        const [count, setCount] = useState(0);
+        if (count < 3) {
+          setCount(count + 1);
+        }
+        return <Text text={computed} />;
+      }
+
+      function compute(val) {
+        logs.push('compute ' + val);
+        return val;
+      }
+
+      render(<LazyCompute compute={compute} input="A" />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={compute} input="A" />, container);
+      expect(logs).toEqual(['A']);
+
+      logs = [];
+      render(<LazyCompute compute={compute} input="B" />, container);
       expect(logs).toEqual(['compute B', 'B']);
     });
   });
