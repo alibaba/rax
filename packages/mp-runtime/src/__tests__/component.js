@@ -229,7 +229,7 @@ describe('Mini Program Component', () => {
         });
       };
     }
-    const cssText = `.foo { color: red; }`;
+    const cssText = '.foo { color: red; }';
     const Comp = createComponent(renderFactory, Rax, {}, 'path/to/component', cssText);
 
     global.setImmediate = null;
@@ -258,7 +258,7 @@ describe('Mini Program Component', () => {
           createElement(Comp),
           createElement(Comp),
           createElement(Comp),
-        ])
+        ]);
       }
     }
 
