@@ -27,19 +27,26 @@ Object {
       "addedNodes": Array [
         Object {
           "$$id": "2",
-          "childNodes": Array [
-            Object {
-              "$$id": "1",
-              "data": ".foo { color: red; }",
-              "nodeType": 3,
-            },
-          ],
           "nodeName": "STYLE",
           "nodeType": 1,
         },
       ],
       "target": Object {
+        "$$id": "3",
         "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "1",
+          "data": ".foo { color: red; }",
+          "nodeType": 3,
+        },
+      ],
+      "target": Object {
+        "$$id": "2",
       },
       "type": "childList",
     },
