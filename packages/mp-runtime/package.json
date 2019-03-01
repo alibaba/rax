@@ -12,6 +12,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-0": "^6.24.1",
     "cross-env": "^5.1.5",
+    "driver-worker": "^0.7.9",
     "rax": "^0.6.7",
     "rax-test-renderer": "^0.6.5",
     "webpack": "^4.8.3",

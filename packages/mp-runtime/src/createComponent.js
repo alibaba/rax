@@ -47,15 +47,18 @@ export default function createComponent(renderFactory, render, config, component
        * One component's style can only be append once in each docuemnt(page).
        * Use a flag in document object to mark.
        */
-      const document = context.$page.vnode._document;
-      const styleFlag = document[STYLE_FLAG_KEY] = document[STYLE_FLAG_KEY] || {};
-      if (!styleFlag[componentPath] && context.$page && cssText && (cssText = String(cssText))) {
-        styleFlag[componentPath] = true;
-        const cssTextNode = document.createTextNode(cssText);
-        const styleNode = document.createElement('style');
-        styleNode.appendChild(cssTextNode);
-        document.body.appendChild(styleNode);
+      if (context.$page && context.$page.vnode) {
+        const document = context.$page.vnode._document;
+        const styleFlag = document[STYLE_FLAG_KEY] = document[STYLE_FLAG_KEY] || {};
+        if (!styleFlag[componentPath] && context.$page && cssText && (cssText = String(cssText))) {
+          styleFlag[componentPath] = true;
+          const cssTextNode = document.createTextNode(cssText);
+          const styleNode = document.createElement('style');
+          styleNode.appendChild(cssTextNode);
+          document.body.appendChild(styleNode);
+        }
       }
+
       /**
        * If not defined `data` field in config,
        * then default val will be an empty plain object,

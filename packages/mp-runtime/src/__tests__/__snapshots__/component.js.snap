@@ -20,6 +20,34 @@ Object {
 }
 `;
 
+exports[`Mini Program Component should render style once 1`] = `
+Object {
+  "mutations": Array [
+    Object {
+      "addedNodes": Array [
+        Object {
+          "$$id": "2",
+          "childNodes": Array [
+            Object {
+              "$$id": "1",
+              "data": ".foo { color: red; }",
+              "nodeType": 3,
+            },
+          ],
+          "nodeName": "STYLE",
+          "nodeType": 1,
+        },
+      ],
+      "target": Object {
+        "nodeName": "BODY",
+      },
+      "type": "childList",
+    },
+  ],
+  "type": "MutationRecord",
+}
+`;
+
 exports[`Mini Program Component should works well with didMount lifecycle 1`] = `
 Object {
   "attributes": Object {
