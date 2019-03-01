@@ -12,7 +12,7 @@ function getCurrentRenderingInstance() {
 }
 
 function areInputsEqual(inputs, prevInputs) {
-  if (inputs.length !== prevInputs.length) {
+  if (prevInputs === null || inputs.length !== prevInputs.length) {
     return false;
   }
 
@@ -82,7 +82,7 @@ function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
-  inputs = inputs != null ? inputs : [effect];
+  inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
     const create = (immediately) => {
@@ -124,7 +124,7 @@ function useEffectImpl(effect, inputs, defered) {
     currentInstance.willUnmount.push(destory);
     currentInstance.didUpdate.push(() => {
       const { prevInputs, inputs, create } = hooks[hookID];
-      if (prevInputs == null || !areInputsEqual(inputs, prevInputs)) {
+      if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
         create();
       }
@@ -139,7 +139,7 @@ function useEffectImpl(effect, inputs, defered) {
 }
 
 export function useImperativeHandle(ref, create, inputs) {
-  const nextInputs = inputs != null ? inputs.concat([ref]) : [ref, create];
+  const nextInputs = inputs != null ? inputs.concat([ref]) : null;
 
   useLayoutEffect(() => {
     if (typeof ref === 'function') {
@@ -176,14 +176,14 @@ export function useMemo(create, inputs) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
+  inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
     hooks[hookID] = [create(), inputs];
   } else {
-    const hook = hooks[hookID];
-    const prevInputs = hook[1];
-    if (!areInputsEqual(inputs, prevInputs)) {
-      hook[0] = create();
+    const prevInputs = hooks[hookID][1];
+    if (inputs === null || !areInputsEqual(inputs, prevInputs)) {
+      hooks[hookID] = [create(), inputs];
     }
   }
 

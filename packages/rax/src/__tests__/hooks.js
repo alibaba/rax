@@ -5,7 +5,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
-import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle} from '../hooks';
+import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle, useMemo} from '../hooks';
 import { flush as flushPassiveEffects } from '../vdom/scheduler';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
@@ -1107,7 +1107,7 @@ describe('hooks', () => {
       expect(container.childNodes).toEqual([]);
     });
 
-    it('skips effect if constructor has not changed', () => {
+    it('always fires effects if no dependencies are provided', () => {
       const container = createNodeElement('div');
       let logs = [];
       function Text(props) {
@@ -1115,9 +1115,9 @@ describe('hooks', () => {
         return <span>{props.text}</span>;
       }
       function effect() {
-        logs.push('Did mount');
+        logs.push('Did create');
         return () => {
-          logs.push('Did unmount');
+          logs.push('Did destroy');
         };
       }
       function Counter(props) {
@@ -1129,19 +1129,21 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
       flushPassiveEffects();
-      expect(logs).toEqual(['Did mount']);
+      expect(logs).toEqual(['Did create']);
 
       logs = [];
       render(<Counter count={1} />, container);
-      // No effect, because constructor was hoisted outside render
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did destroy', 'Did create']);
 
       logs = [];
       render([], container);
       // TODO
       flushPassiveEffects();
-      expect(logs).toEqual(['Did unmount']);
+      expect(logs).toEqual(['Did destroy']);
       expect(container.childNodes).toEqual([]);
     });
 
@@ -1356,6 +1358,233 @@ describe('hooks', () => {
         'Unmount normal [current: 1]',
         'Mount normal [current: 1]',
       ]);
+    });
+  });
+
+  describe('useMemo', () => {
+    it('memoizes value by comparing to previous inputs', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function CapitalizedText(props) {
+        const text = props.text;
+        const capitalizedText = useMemo(
+          () => {
+            logs.push(`Capitalize '${text}'`);
+            return text.toUpperCase();
+          },
+          [text],
+        );
+        return <Text text={capitalizedText} />;
+      }
+
+      render(<CapitalizedText text="hello" />, container);
+      expect(logs).toEqual(["Capitalize 'hello'", 'HELLO']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HELLO');
+
+      logs = [];
+      render(<CapitalizedText text="hi" />, container);
+      expect(logs).toEqual(["Capitalize 'hi'", 'HI']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HI');
+
+      logs = [];
+      render(<CapitalizedText text="hi" />, container);
+      expect(logs).toEqual(['HI']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HI');
+
+      logs = [];
+      render(<CapitalizedText text="goodbye" />, container);
+      expect(logs).toEqual(["Capitalize 'goodbye'", 'GOODBYE']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('GOODBYE');
+    });
+
+    it('always re-computes if no inputs are provided', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function LazyCompute(props) {
+        const computed = useMemo(props.compute);
+        return <Text text={computed} />;
+      }
+
+      function computeA() {
+        logs.push('compute A');
+        return 'A';
+      }
+
+      function computeB() {
+        logs.push('compute B');
+        return 'B';
+      }
+
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeB} />, container);
+      expect(logs).toEqual(['compute B', 'B']);
+    });
+
+    it('should not invoke memoized function during re-renders unless inputs change', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function LazyCompute(props) {
+        const computed = useMemo(() => props.compute(props.input), [
+          props.input,
+        ]);
+        const [count, setCount] = useState(0);
+        if (count < 3) {
+          setCount(count + 1);
+        }
+        return <Text text={computed} />;
+      }
+
+      function compute(val) {
+        logs.push('compute ' + val);
+        return val;
+      }
+
+      render(<LazyCompute compute={compute} input="A" />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={compute} input="A" />, container);
+      expect(logs).toEqual(['A']);
+
+      logs = [];
+      render(<LazyCompute compute={compute} input="B" />, container);
+      expect(logs).toEqual(['compute B', 'B']);
+    });
+  });
+
+  describe('useImperativeHandle', () => {
+    it('does not update when deps are the same', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(ref, () => ({count, dispatch}), []);
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      // Intentionally not updated because of [] deps:
+      expect(counter.current.count).toBe(0);
+    });
+
+    it('automatically updates when deps are not specified', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(ref, () => ({count, dispatch}));
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+    });
+
+    it('updates when deps are different', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      let totalRefUpdates = 0;
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(
+          ref,
+          () => {
+            totalRefUpdates++;
+            return {count, dispatch};
+          },
+          [count],
+        );
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+      expect(totalRefUpdates).toBe(1);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+      expect(totalRefUpdates).toBe(2);
+
+      // Update that doesn't change the ref dependencies
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+      expect(totalRefUpdates).toBe(2); // Should not increase since last time
     });
   });
 });
