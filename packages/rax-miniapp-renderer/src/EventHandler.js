@@ -38,7 +38,7 @@ export default class EventHandler {
       if (!registeredCount) {
         this.registeredEventCounts[name] = 1;
         // Top-level register
-        this.mountNode.addEventListener(name, this.eventProxyHandler.bind(this), EVENT_OPTIONS);
+        this.mountNode.addEventListener(name, this.eventProxyHandler, EVENT_OPTIONS);
       } else {
         this.registeredEventCounts[name]++;
       }
@@ -51,7 +51,7 @@ export default class EventHandler {
     } else {
       this.registeredEventCounts[name]--;
       if (this.registeredEventCounts[name] === 0) {
-        this.mountNode.removeEventListener(name, this.eventProxyHandler.bind(this));
+        this.mountNode.removeEventListener(name, this.eventProxyHandler);
       }
     }
   }
@@ -84,7 +84,7 @@ export default class EventHandler {
     }
   }
 
-  eventProxyHandler(e) {
+  eventProxyHandler = (e) => {
     if (e.type === 'click' && this.touch) return false;
 
     let event = { type: e.type };
