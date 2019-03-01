@@ -51,7 +51,7 @@ export default class EventHandler {
     } else {
       this.registeredEventCounts[name]--;
       if (this.registeredEventCounts[name] === 0) {
-        this.mountNode.removeEventListener(name, this.eventProxyHandler);
+        this.mountNode.removeEventListener(name, this.eventProxyHandler, EVENT_OPTIONS);
       }
     }
   }
