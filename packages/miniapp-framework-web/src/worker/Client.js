@@ -39,10 +39,10 @@ export default class Client {
   }
 
   instantiatePage() {
-    const { document, evaluator } = this.driver;
-    const { factory } = getPage(this.pageName, this.raxInstance);
     let component;
     try {
+      const { document, evaluator } = this.driver;
+      const { factory } = getPage(this.pageName, this.raxInstance);
       component = applyFactory(factory, {
         page: this,
         clientId: this.clientId,
