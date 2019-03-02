@@ -2,7 +2,7 @@ import resolvePathname from 'resolve-pathname';
 import { log } from 'miniapp-framework-shared';
 import Client from './Client';
 
-const ROUTE_HASH_PREFIX = '!/';
+const ROUTE_HASH_PREFIX = '#!/';
 export default class Router {
   /**
    * Container Router
@@ -15,6 +15,36 @@ export default class Router {
     this.clients = [];
     this.tabClients = {}; // pageName -> client
     this.currentClient = null;
+
+    // 监听浏览器的回退/前进事件
+    window.addEventListener('popstate', e => {
+      this.onPopState(e);
+    });
+  }
+
+  onPopState(event) {
+    const state = event.state;
+    if (
+      state
+      && state.clientId
+      && this.currentClient
+      && this.currentClient.prevClient
+      && this.currentClient.prevClient.clientId
+      && state.clientId === this.currentClient.prevClient.clientId
+    ) {
+      this.navigateBack();
+      return;
+    }
+
+    let hash = location.hash;
+    if (hash && hash.indexOf(ROUTE_HASH_PREFIX)) {
+      hash = hash.slice(3);
+    }
+
+    this.navigateTo({
+      pageName: hash,
+      replaceHash: true
+    });
   }
 
   parseRouterParam(params = {}) {
@@ -37,7 +67,6 @@ export default class Router {
 
   navigateTo(params) {
     const { pageName, pageQuery } = this.parseRouterParam(params);
-    location.hash = ROUTE_HASH_PREFIX + pageName;
 
     const client = new Client(pageName, {
       prevClientId: this.currentClient ? this.currentClient.clientId : null,
@@ -57,6 +86,14 @@ export default class Router {
 
     client.mount(this.container);
     client.prevClient = this.currentClient;
+
+    const hash = ROUTE_HASH_PREFIX + pageName;
+    if (params.replaceHash || !this.currentClient) {
+      history.replaceState({clientId}, null, hash);
+    } else {
+      history.pushState({clientId}, null, hash);
+    }
+
     this.currentClient = client;
   }
 
@@ -72,7 +109,7 @@ export default class Router {
     } while (--delta && prevClient);
 
     if (prevClient) {
-      this.currentClient.hide();
+      this.currentClient.destroy();
       this.currentClient = prevClient;
       this.currentClient.show();
     } else {
@@ -84,7 +121,14 @@ export default class Router {
    * Redirect to some page, instead of current page.
    */
   redirectTo(params) {
-    // TODO
+    const prevClient = this.currentClient.prevClient;
+    this.currentClient.destroy();
+    this.currentClient = prevClient;
+    
+    navigate({ 
+      pageName: params.pageName,
+      replaceHash: true
+    });
   }
 
   switchTab(params) {
@@ -92,7 +136,10 @@ export default class Router {
     if (this.tabClients[pageName]) {
       this.currentClient && this.currentClient.hide();
       const client = this.currentClient = this.tabClients[pageName];
-      location.hash = ROUTE_HASH_PREFIX + pageName;
+
+      const hash = ROUTE_HASH_PREFIX + pageName;
+      history.replaceState({clientId: client.clientId}, null, hash);
+
       client.show();
     } else {
       this.navigateTo({

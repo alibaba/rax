@@ -13,8 +13,8 @@ export default class Navigation {
     }
   }
 
-  navigateBack() {
-    this.router.navigateBack();
+  navigateBack(params) {
+    history.back(params);
   }
 
   redirectTo(params) {
