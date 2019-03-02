@@ -1,10 +1,9 @@
 /* global frameworkType */
 import kebabCase from 'kebab-case';
 import baseCSS from '!!raw-loader!./container.css';
-import { log } from 'miniapp-framework-shared';
 import Router from '../Router';
 import Tabbar from './Tabbar';
-import { relative } from 'path';
+import Navigation from './Navigation';
 
 const styles = {
   main: {
@@ -18,30 +17,6 @@ const styles = {
     height: '100%',
     overflow: 'auto',
     borderWidth: 0,
-  },
-  tabBar: {
-    width: '100%',
-    height: '12.8vw',
-    backgroundColor: '#fff',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    position: 'absolute',
-    left: '0',
-    bottom: '0',
-    borderTop: '1px solid #eee',
-    fontSize: '16px',
-  },
-  tabBarItem: {
-    textAlign: 'center',
-    position: 'relative'
-  },
-  tabBarItemText: {
-    fontSize: '12px',
-    color: '#686868',
-    whiteSpace: 'nowrap',
-    lineHeight: '1em',
   },
   headerBar: {
     position: 'absolute',
@@ -84,26 +59,6 @@ const headerBarTpl = `
 `;
 const mainTpl = `<div id="main" data-main style="${serializeStyle(styles.main)}"></div>`;
 const tabBarTpl = `<div id="tabBar" style="${serializeStyle(styles.tabBar)}"></div>`;
-
-function createTabBarItem(pageName, imageUrl, textContent, onClick) {
-  const tabBarItem = document.createElement('div');
-  tabBarItem.style = serializeStyle(styles.tabBarItem);
-  tabBarItem.dataset.pageName = pageName;
-
-  const img = document.createElement('img');
-  img.ariaHidden = true;
-  img.style = serializeStyle(styles.icon);
-  img.src = imageUrl;
-
-  const text = document.createElement('div');
-  text.innerText = textContent;
-  text.style = serializeStyle(styles.tabBarItemText);
-  tabBarItem.appendChild(img);
-  tabBarItem.appendChild(text);
-
-  tabBarItem.addEventListener('click', onClick);
-  return tabBarItem;
-}
 
 /**
  * Serialize Style Object
@@ -151,17 +106,6 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
     ${showTabBar ? tabBarTpl : ''}
   `;
 
-  if (showTabBar) {
-    /**
-     * Init Tabbar
-     * { pageName, pageName, iconPath, selectedIconPath }
-     */
-    const tabBarEl = document.querySelector('#tabBar');
-    appConfig.tabBar.list.forEach(({ pageName, iconPath, text }) => {
-      tabBarEl.appendChild(createTabBarItem(pageName, iconPath, text, onTabBarItemClick));
-    });
-  }
-
   // Correct the page font-size
   document.documentElement.style.fontSize = document.documentElement.clientWidth / 750 * 100 + 'px';
 
@@ -180,27 +124,16 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
   const homepage = findHomePage(appConfig);
   const router = new Router(mainEl, messageRouter);
 
-  const tabbar = new Tabbar({
-    mainEl: mainEl,
-    tabBarEl: document.querySelector('#tabBar'),
-  });
+  const tabbarList = showTabBar ? appConfig.tabBar.list : [];
+  const tabbarEl = document.querySelector('#tabBar');
+  const tabbar = new Tabbar(tabbarList, router, tabbarEl, mainEl);
 
-  router.switchTab({
+  const navigation = new Navigation(router, tabbar);
+  navigation.navigateTo({
     pageName: homepage,
   });
 
-  function onTabBarItemClick(evt) {
-    const { pageName } = evt.currentTarget.dataset;
-    if (!pageName) {
-      log('Can not redirect to empty page.');
-    } else if (router.currentClient.pageName === pageName) {
-      log('Can not redirect to same page.');
-    } else {
-      router.switchTab({ pageName });
-    }
-  }
-
-  return { router, tabbar };
+  return { navigation, tabbar };
 }
 
 function findHomePage(APP_MANIFEST) {

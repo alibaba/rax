@@ -56,8 +56,8 @@ export default class MessageRouter {
   handleMessageFromWorker(data) {
     switch (data.type) {
       case 'r$':
-        const { router, tabbar } = renderContainerShell(this, this._appConfig, this._mountNode);
-        this._router = router;
+        const { navigation, tabbar } = renderContainerShell(this, this._appConfig, this._mountNode);
+        this._navigation = navigation;
         this._tabbar = tabbar;
         break;
       case 'call':
@@ -74,18 +74,19 @@ export default class MessageRouter {
 
     switch (method) {
       case 'navigateTo':
-        this._router.navigateTo({ pageName: params.url });
+        this._navigation.navigateTo({ pageName: params.url });
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'navigateBack':
-        this._router.navigateBack(params);
+        this._navigation.navigateBack(params);
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'redirectTo': 
-        this._router.redirectTo(params);
+        this._navigation.redirectTo(params);
         this.callbackRemoteCall(callId, null, null);
+        break;
       case 'switchTab':
-        this._router.switchTab({pageName: params.url});
+        this._tabbar.switchTab({pageName: params.url});
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'showTabBar':
