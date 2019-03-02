@@ -15,6 +15,17 @@ export default class MessageRouter {
     this._mountNode = mountNode;
     this._channels = {};
     workerHandle.addEventListener('message', this.eventHandler);
+
+    // 兼容 atag 中 navigator 的调用
+    window.__renderer_to_worker__ = (payload) => {
+      /* protocol for renderer to worker */
+      this.eventHandler({
+        data: {
+          target: 'AppWorker',
+          payload
+        }
+      });
+    };
   }
 
   /**
@@ -82,7 +93,7 @@ export default class MessageRouter {
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'redirectTo': 
-        this._navigation.redirectTo(params);
+        this._navigation.redirectTo({pageName: params.url});
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'switchTab':
