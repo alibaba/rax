@@ -50,9 +50,9 @@ export default function createComponent(renderFactory, render, config, component
       if (context.$page && context.$page.vnode) {
         const document = context.$page.vnode._document;
         const styleFlag = document[STYLE_FLAG_KEY] = document[STYLE_FLAG_KEY] || {};
-        if (!styleFlag[componentPath] && context.$page && cssText && (cssText = String(cssText))) {
+        if (!styleFlag[componentPath] && cssText) {
           styleFlag[componentPath] = true;
-          const cssTextNode = document.createTextNode(cssText);
+          const cssTextNode = document.createTextNode(String(cssText));
           const styleNode = document.createElement('style');
           styleNode.appendChild(cssTextNode);
           document.body.insertBefore(styleNode);
