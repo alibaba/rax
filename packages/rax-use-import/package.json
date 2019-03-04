@@ -1,7 +1,7 @@
 {
-  "name": "rax-hydrate",
-  "version": "1.0.0-beta.1",
-  "description": "Rax hydration render",
+  "name": "rax-use-import",
+  "version": "1.0.0-beta.0",
+  "description": "Rax useImport hook",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -14,9 +14,6 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "engines": {
     "npm": ">=3.0.0"
-  },
-  "dependencies": {
-    "driver-dom": "^1.0.0-beta"
   },
   "peerDependencies": {
     "rax": "^1.0.0-beta"

@@ -24,7 +24,85 @@
 
 :art: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
+---
+
+- [Quick Start](#getting-started)
+  - [Install via NPM](#install-via-npm)
+  - [Using via CLI](#using-via-cli)
+  - [Using via CDN](#using-via-cdn)
+- [Guides](#guides)
+  - [Server-side render and hydration](#server-side-render-and-hydration)
+  - [App Router](#app-router)
+  - [Fetch Data](#fetch-data)
+  - [Asynchronous Operation](#asynchronous-operation)
+  - [Code Splitting](#code-splitting)
+  - [Testing](#testing)
+  - [Developer Tools](#developer-tools)
+  - [React compatibility](#react-compatibility)
+- [API Reference](#api-reference)
+  - [render()](#rendering-elements)
+  - [createElement()](#creating-elements)
+  - [createRef()](#refs)
+  - [forwardRef()](#refs)
+  - [memo()](#performance)
+  - [Hooks](#hooks)
+    - [useState()](#hooks)
+    - [useEffect()](#hooks)
+    - [useLayoutEffect()](#hooks)
+    - [useRef()](#hooks)
+    - [useContext()](#hooks)
+    - [useCallback()](#hooks)
+    - [useReducer()](#hooks)
+    - [useImperativeHandle()](#hooks)
+    - [useMemo()](#hooks)
+  - [Fragment](#fragments)
+  - [Component](#class-component)
+  - [PureComponent](#class-component)
+  - [version](#version)
+  - [rax-children](#rax-children)
+  - [rax-hydrate](#rax-hydrate)
+  - [rax-proptypes](#rax-proptypes)
+  - [rax-is-valid-element](#rax-proptypes)
+  - [rax-clone-element](#rax-clone-element)
+  - [rax-create-factory](#rax-create-factory)
+  - [rax-find-dom-node](#rax-find-dom-node)
+  - [rax-unmount-component-at-node](#rax-unmount-component-at-node)
+---
+
 ## Quick Start
+
+### Install via NPM
+Quickly add rax to your project:
+
+```sh
+$ npm install rax
+$ npm install driver-dom
+```
+
+#### Starter template
+```jsx
+// Hello.jsx
+import {createElement, useState} from 'rax';
+
+export default (props) => {
+  const [name, setName] = useState(props.name);
+  const handleClick = () => {
+    setName('rax');
+  };
+  return (
+    <h1 onClick={handleClick}> Hello {name}</h1>
+  );
+}
+```
+
+```js
+// app.jsx
+import {render} from 'rax';
+import DriverDOM from 'driver-dom';
+import Hello from './Hello';
+
+render(<Hello name="world" />, document.body, { driver: DriverDOM });
+```
 
 ### Using via CLI
 Install the Rax CLI tools to init project:
@@ -63,56 +141,235 @@ $ npm run start
         document.getElementById('root'),
         { driver: DriverDOM }
       );
-
     </script>
   </body>
 </html>
 ```
 
-### About JSX(XML-like syntax extension to ECMAScript)
-> Each JSX element is just syntactic sugar for calling `createElement(component, props, ...children)`. So, anything you can do with JSX can also be done with just plain JavaScript.
+## Guides
+
+### Server-side render and hydration
+
+Use `renderToString()` to generate HTML on the server and send the markup down on the initial request for faster page loads and to allow search engines to crawl your pages for SEO purposes.
 
 ```jsx
-// Hello.jsx
-import {createElement, useState} from 'rax';
-
-export default (props) => {
-  const [name, setName] = useState(props.name);
-  const handleClick = () => {
-    setName('rax');
-  };
-  return (
-    <div style={styles.hello}>
-      <span style={styles.title} onClick={handleClick}>
-      Hello {name}
-      </span>
-    </div>
-  );
+// MyComponent.jsx
+function MyComponent(props) {
+  return <h1>Hello world</h1>;
 }
-
-const styles = {
-  hello: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  title: {
-    fontSize: '40px',
-    textAlign: 'center'
-  }
-};
 ```
 
 ```js
-// app.js
-import {render} from 'rax';
-import DriverDOM from 'driver-dom';
-import Hello from './Hello';
+import express from 'express';
+import renderer from 'rax-server-renderer';
+import {createElement} from 'rax';
+import MyComponent from './MyComponent';
 
-render(<Hello name="world" />, document.body, { driver: DriverDOM });
+const app = express();
+app.listen(8080);
+
+app.get('/hello', (req, res) => {
+  let html = renderer.renderToString(createElement(MyComponent));
+  res.send(`<!DOCTYPE html><html><body>${html}</body></html>`);
+});
 ```
 
-## Rax API (v1.0)
+If you call `hydrate()` on a node that already has this server-rendered markup, Rax will preserve it and only attach event handlers, allowing you to have a very performant first-load experience.
+
+```js
+import hydrate from 'rax-hydrate';
+import MyComponent from './MyComponent';
+
+hydrate(<MyComponent />, document.body);
+```
+
+### App Router
+
+```jsx
+import { createElement, Fragment } from 'rax';
+import { route, useComponent, push } from 'rax-use-router';
+import Foo from './Foo';
+
+route([{
+  path: '/home',
+  routes: [
+    {
+      path: '',                   // www.example.com/home
+      component: () => <>
+        <button onClick={() => push('/foo')}>go foo</button>
+        <button onClick={() => push('/bar')}>go bar</button>
+        <button onClick={() => push('/home/jack')}>go jack</button>
+      </>,
+    },
+    {
+      path: '/:username',         // www.example.com/home/xxx
+      component: (params) => <>
+        <p>{params.username}</p>
+        <button onClick={ () => push('/home') }>Go home</button>
+      </>
+    }
+  ]},
+  {
+    path: '/bar',
+    routes: [
+      {
+        path: '',                 // www.example.com/bar
+        component: () => import(/* webpackChunkName: "bar" */ './Bar'),
+      },
+    ],
+  },
+  {
+    path: '/foo',                 // www.example.com/foo
+    component: () => <Foo />,  
+  },
+]);
+
+export default function Example() {
+  var component = useComponent('/home');
+  return component;
+}
+```
+
+```jsx
+// Foo.jsx
+import { createElement } from 'rax';
+import { push } from 'rax-use-router';
+
+export default function Foo() {
+  return <button onClick={ () => push('/home') }>Go home</button>
+}
+```
+
+```jsx
+// Bar.jsx
+import { createElement } from 'rax';
+import { push } from 'rax-use-router';
+
+export default function Bar() {
+  return <button onClick={ () => push('/home') }>Go home</button>
+}
+```
+
+### Asynchronous Operation
+```jsx
+import { createElement, useMemo } from 'rax';
+import usePromise from 'rax-use-promise';
+
+const fetchData = () => fetch('https://httpbin.org/get').then(res => res.json());
+
+function Example() {
+  const [data, error] = usePromise(useMemo(fetchData));
+  if (error) {
+    return <p>error</p>
+  } else if (data) {
+    return <p>{data.foo}</p>
+  }
+}
+```
+
+### Fetch Data
+```jsx
+import { createElement } from 'rax';
+import useFetch from 'rax-use-fetch';
+
+function Example() {
+  const [data, error] = useFetch('https://httpbin.org/get');
+  if (error) {
+    return <p>error</p>;
+  } else if (data) {
+    return <p>{data.foo}</p>;
+  } else {
+    return <p>loading</p>;
+  }
+}
+```
+
+### Code Splitting
+
+Code-Splitting allows you to split your code into various bundles which can then be loaded on demand or in parallel. It can be used to achieve smaller bundles and control resource load prioritization which, if used correctly, can have a major impact on load time.
+
+Code-Splitting is supported by `Webpack` which can create multiple bundles that can be dynamically loaded at runtime.
+
+```jsx
+
+function App() {
+  const [Bar, error] = useImport(() => import(/* webpackChunkName: "bar" */ './Bar'));
+  if (error) {
+    return <p>error</p>;
+  } else if (Bar) {
+    return <Bar />
+  } else {
+    return <p>loading</p>;
+  }
+}
+```
+
+### Testing
+
+`rax-test-renderer` provides an renderer that can be used to render Rax components to pure JavaScript objects, without depending on the DOM or a native mobile environment:
+
+```jsx
+import {createElement} from 'rax';
+import renderer from 'rax-test-renderer';
+
+const tree = renderer.create(
+  <Link page="https://example.com/">Example</Link>
+);
+
+console.log(tree.toJSON());
+// { tagName: 'A',
+//   attributes: { href: 'https://example.com/' },
+//   children: [ 'Example' ] }
+```
+
+You can also use Jest's snapshot testing feature to automatically save a copy of the JSON tree to a file and check in your tests that it hasn't changed: http://facebook.github.io/jest/blog/2016/07/27/jest-14.html.
+
+```jsx
+import {createElement} from 'rax';
+import renderer from 'rax-test-renderer';
+
+test('Link renders correctly', () => {
+  const tree = renderer.create(
+    <Link page="https://example.com">Example</Link>
+  ).toJSON();
+  expect(tree).toMatchSnapshot();
+});
+```
+
+### Developer Tools
+
+* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
+
+<p align="center">
+<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
+</p>
+
+* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
+  1. Use the `rax-redux` module in your app
+  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
+
+<p align="center">
+<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
+</p>
+
+### React compatibility
+
+Add an alias for `react` and `react-dom` in webpack config that makes React-based modules work with Rax, without any code changes:
+
+```json
+{
+  // ...
+  resolve: {
+    alias: {
+      'react': 'rax',
+      'react-dom': 'rax-dom'
+    }
+  }
+  // ...
+}
+```
+
+## API Reference
 
 #### Creating Elements
 * createElement(type, [props], [...children])
@@ -314,7 +571,7 @@ render(<Hello name="world" />, document.body, { driver: DriverDOM });
   render(<HelloMessage name="world" />, document.body, { driver: DomDriver })
   ```
 
-#### Component
+#### Class Component
 * Component
 * PureComponent
 
@@ -351,7 +608,7 @@ render(<Hello name="world" />, document.body, { driver: DriverDOM });
 #### rax-is-valid-element
 * isValidElement(object)
 
-#### rax-clone-elment
+#### rax-clone-element
 * cloneElement(element, [props], [...children])
 
 #### rax-create-factory
@@ -369,158 +626,14 @@ render(<Hello name="world" />, document.body, { driver: DriverDOM });
 #### rax-unmount-component-at-node
 * unmountComponentAtNode(container)
 
-## Rax Legacy API (v1.0)
+## Legacy API
 
 #### rax-create-class
 * createClass()
 
-## Rax Official Hooks
-
-#### Asynchronous Operation 
-```jsx
-import { createElement, useMemo } from 'rax';
-import usePromise from 'rax-use-promise';
-
-const fetchData = () => fetch('https://httpbin.org/get').then(res => res.json());
-
-function Example() {
-  const [data, error] = usePromise(useMemo(fetchData));
-  if (error) {
-    return <p>error</p>
-  } else if (data) {
-    return <p>{data.foo}</p>
-  }
-}
-```
-
-#### Fetch Data 
-```jsx
-import { createElement } from 'rax';
-import useFetch from 'rax-use-fetch';
-
-function Example() {
-  const [data, error] = useFetch('https://httpbin.org/get');
-  if (error) {
-    return <p>error</p>
-  } else if (data) {
-    return <p>{data.foo}</p>
-  } else {
-    return <p>loading</p>
-  }
-}
-```
-
-#### Router
-```jsx
-import { createElement, Fragment } from 'rax';
-import { route, useComponent, push } from 'rax-use-router';
-import Foo from './Foo';
-
-route([{
-  path: '/home',
-  routes: [
-    {
-      path: '',                   // www.example.com/home
-      component: () => <>
-        <button onClick={() => push('/foo')}>go foo</button>
-        <button onClick={() => push('/bar')}>go bar</button>
-        <button onClick={() => push('/home/jack')}>go jack</button>
-      </>,
-    },
-    {
-      path: '/:username',         // www.example.com/home/xxx
-      component: (params) => <>
-        <p>{params.username}</p>
-        <button onClick={ () => push('/home') }>Go home</button>
-      </>
-    }
-  ]},
-  {
-    path: '/bar',
-    routes: [
-      {
-        path: '',                 // www.example.com/bar
-        component: () => import(/* webpackChunkName: "bar" */ './Bar'),
-      },
-    ],
-  },
-  {
-    path: '/foo',                 // www.example.com/foo
-    component: () => <Foo />,  
-  },
-]);
-
-export default function Example() {
-  var component = useComponent('/home');
-  return component;
-}
-```
-
-```jsx
-// Foo.jsx
-import { createElement } from 'rax';
-import { push } from 'rax-use-router';
-
-export default function Foo() {
-  return <button onClick={ () => push('/home') }>Go home</button>
-}
-```
-
-```jsx
-// Bar.jsx
-import { createElement } from 'rax';
-import { push } from 'rax-use-router';
-
-export default function Bar() {
-  return <button onClick={ () => push('/home') }>Go home</button>
-}
-```
-
-
-## Rax Official Drivers
-* driver-dom
-* driver-weex
-* driver-webgl
-* driver-worker
-
-## Rax Renderers
-
-* :traffic_light: [rax-test-renderer](/packages/rax-test-renderer): Rax renderer for snapshot testing.
-* :computer: [rax-server-renderer](/packages/rax-server-renderer): Rax renderer for server-side render.
-
-## Developer Tools
-
-* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
-
-<p align="center">
-<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
-</p>
-
-* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
-  1. Use the `rax-redux` module in your app
-  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
-
-<p align="center">
-<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
-</p>
-
 ## Contributing
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
-
-
-### Development Workflow
-
-After cloning rax, run `npm install` to fetch its dependencies.  
-Run `npm run setup` link and bootstrap project before development.
-Then, you can run several commands:
-
-* `npm run lint` checks the code style.
-* `npm test` runs the complete test suite.
-* `npm test -- --watch` runs an interactive test watcher.
-* `npm test <pattern>` runs tests with matching filenames.
-* `npm run build` creates `lib` and `dist` folder with all the packages.
-* `npm start` start local server with `examples` folder.
 
 ## Core Team
 
