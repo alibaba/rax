@@ -613,15 +613,21 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
     });
 
-    it('accepts an initial action', () => {
+    it('lazy init', () => {
       const container = createNodeElement('div');
+      const logs = [];
+      logs.yield = logs.push;
+      logs.flush = function() {
+        const result = [...logs];
+        logs.length = 0;
+        return result;
+      };
+
       const INCREMENT = 'INCREMENT';
       const DECREMENT = 'DECREMENT';
 
       function reducer(state, action) {
         switch (action) {
-          case 'INITIALIZE':
-            return 10;
           case 'INCREMENT':
             return state + 1;
           case 'DECREMENT':
@@ -631,25 +637,124 @@ describe('hooks', () => {
         }
       }
 
-      const initialAction = 'INITIALIZE';
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
 
       function Counter(props, ref) {
-        const [count, dispatch] = useReducer(reducer, 0, initialAction);
+        const [count, dispatch] = useReducer(reducer, props, p => {
+          logs.yield('Init');
+          return p.initialCount;
+        });
         useImperativeHandle(ref, () => ({dispatch}));
-        return <span>{count}</span>;
+        return <Text text={'Count: ' + count} />;
       }
       Counter = forwardRef(Counter);
       const counter = createRef(null);
-      render(<Counter ref={counter} />, container);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('10');
+      render(<Counter initialCount={10} ref={counter} />, container);
+      expect(logs.flush()).toEqual(['Init', 'Count: 10']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 10');
 
       counter.current.dispatch(INCREMENT);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('11');
+      expect(logs.flush()).toEqual(['Count: 11']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 11');
 
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('8');
+
+      expect(logs.flush()).toEqual(['Count: 10', 'Count: 9', 'Count: 8']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 8');
+    });
+
+    it('works with effect', () => {
+      const container = createNodeElement('div');
+      const logs = [];
+      logs.yield = logs.push;
+      logs.flush = function() {
+        const result = [...logs];
+        logs.length = 0;
+        return result;
+      };
+
+      function Child({text}) {
+        logs.yield('Child: ' + text);
+        return text;
+      }
+
+      function reducer(state, action) {
+        return action;
+      }
+
+      let batchUpdate = function() {};
+      function act(callback) {
+        batchUpdate = callback;
+        flushPassiveEffects();
+      }
+
+      let setCounter1;
+      let setCounter2;
+      function Parent() {
+        const [counter1, _setCounter1] = useReducer(reducer, 0);
+        setCounter1 = _setCounter1;
+        const [counter2, _setCounter2] = useReducer(reducer, 0);
+        setCounter2 = _setCounter2;
+
+        const text = `${counter1}, ${counter2}`;
+        logs.yield(`Parent: ${text}`);
+        useLayoutEffect(() => {
+          logs.yield(`Effect: ${text}`);
+        });
+        useEffect(() => {
+          batchUpdate();
+        });
+        return <Child text={text} />;
+      }
+
+      const root = render(<Parent />, container);
+      expect(logs.flush()).toEqual([
+        'Parent: 0, 0',
+        'Child: 0, 0',
+        'Effect: 0, 0',
+      ]);
+      expect(container.childNodes[0].data).toEqual('0, 0');
+
+      // Normal update
+      act(() => {
+        setCounter1(1);
+        setCounter1(2);
+        setCounter1(2);
+        setCounter1(3);
+        setCounter2(2);
+        setCounter1(3);
+        setCounter1(3);
+        setCounter2(4);
+      });
+
+      expect(logs.flush()).toEqual([
+        'Parent: 3, 4',
+        'Child: 3, 4',
+        'Effect: 3, 4',
+      ]);
+
+      act(() => {
+        setCounter1(2);
+        setCounter2(2);
+      });
+
+      expect(logs.flush()).toEqual([
+        'Parent: 2, 2',
+        'Child: 2, 2',
+        'Effect: 2, 2',
+      ]);
+
+      act(() => {
+        setCounter1(2);
+        setCounter2(2);
+      });
+
+      expect(logs.flush()).toEqual([]);
     });
   });
 

@@ -190,28 +190,34 @@ export function useMemo(create, inputs) {
   return hooks[hookID][0];
 }
 
-export function useReducer(reducer, initialState, initialAction) {
+export function useReducer(reducer, initialArg, init) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
-    if (initialAction) {
-      initialState = reducer(initialState, initialAction);
-    }
+    const initialState = init !== undefined ? init(initialArg) : initialArg;
 
     const dispatch = action => {
       const hook = hooks[hookID];
-      // reducer will get in the next render, before that we add all
+      // reducer will update in the next render, before that we add all
       // actions to the queue
       const queue = hook[2];
       // This is a render phase update.  After this render pass, we'll restart
       if (Host.owner && Host.owner._instance === currentInstance) {
-        queue.push(action);
+        queue.actions.push(action);
         currentInstance.isScheduled = true;
       } else {
         !Host.isUpdating && flush();
-        queue.push(action);
+
+        const currentState = queue.eagerState;
+        const eagerReducer = queue.eagerReducer;
+        const eagerState = eagerReducer(currentState, action);
+        if (is(eagerState, currentState)) {
+          return;
+        }
+        queue.eagerState = eagerState;
+        queue.actions.push(action);
         currentInstance.update();
       }
     };
@@ -219,16 +225,30 @@ export function useReducer(reducer, initialState, initialAction) {
     return hooks[hookID] = [
       initialState,
       dispatch,
-      []
+      {
+        actions: [],
+        eagerReducer: reducer,
+        eagerState: initialState
+      }
     ];
   }
   const hook = hooks[hookID];
   const queue = hook[2];
   let next = hook[0];
-  for (let i = 0; i < queue.length; i++) {
-    next = reducer(next, queue[i]);
+
+  if (currentInstance._reRenders > 0 || queue.eagerReducer != reducer) {
+    for (let i = 0; i < queue.actions.length; i++) {
+      next = reducer(next, queue.actions[i]);
+    }
+  } else {
+    next = queue.eagerState;
   }
+
+  queue.eagerReducer = reducer;
+  queue.eagerState = next;
+  queue.actions.length = 0;
+
   hook[0] = next;
-  hook[2] = [];
+  hook[2] = queue;
   return hooks[hookID];
 }
