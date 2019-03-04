@@ -81,7 +81,7 @@ export default class MessageRouter {
         this._router.navigateBack(params);
         this.callbackRemoteCall(callId, null, null);
         break;
-      case 'redirectTo': 
+      case 'redirectTo':
         this._router.redirectTo(params);
         this.callbackRemoteCall(callId, null, null);
       case 'switchTab':

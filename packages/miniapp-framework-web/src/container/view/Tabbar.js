@@ -29,7 +29,7 @@ export default class Tabbar {
 
     const items = this.tabBarEl.children;
     const item = items[params.index];
-  
+
     const prevBadge = item.querySelector('.badge');
     if (prevBadge) {
       prevBadge.innerHTML = params.text;
@@ -48,7 +48,7 @@ export default class Tabbar {
 
     const items = this.tabBarEl.children;
     const item = items[params.index];
-  
+
     const prevBadge = item.querySelector('.badge');
     if (prevBadge) {
       prevBadge.remove();
@@ -62,7 +62,7 @@ export default class Tabbar {
 
     const items = this.tabBarEl.children;
     const item = items[params.index];
-  
+
     const prevDot = item.querySelector('.hot-dot');
     if (!prevDot) {
       const prevDot = document.createElement('div');
@@ -75,10 +75,10 @@ export default class Tabbar {
     if (!this.tabBarEl) {
       return;
     }
-    
+
     const items = this.tabBarEl.children;
     const item = items[params.index];
-  
+
     const prevDot = item.querySelector('.hot-dot');
     if (prevDot) {
       prevDot.remove();
