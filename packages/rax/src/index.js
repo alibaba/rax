@@ -5,6 +5,7 @@ import {useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, u
 import memo from './memo';
 import Fragment from './fragment';
 import render from './render';
+import Component, { PureComponent } from './vdom/component';
 import version from './version';
 import Host from './vdom/host';
 import Instance from './vdom/instance';
@@ -21,6 +22,7 @@ const shared = {
 export {
   createElement, createRef, createContext,
   useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeHandle,
+  Component, PureComponent,
   Fragment, memo,
   render,
   version,

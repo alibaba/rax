@@ -314,6 +314,10 @@ render(<Hello name="world" />, document.body, { driver: DriverDOM });
   render(<HelloMessage name="world" />, document.body, { driver: DomDriver })
   ```
 
+#### Component
+* Component
+* PureComponent
+
 #### Version
 * version
 
@@ -367,15 +371,8 @@ render(<Hello name="world" />, document.body, { driver: DriverDOM });
 
 ## Rax Legacy API (v1.0)
 
-#### rax-component
-* Component
-
-#### rax-pure-component
-* PureComponent
-
 #### rax-create-class
 * createClass()
-
 
 ## Rax Official Hooks
 

@@ -18,4 +18,14 @@ class Component {
   }
 }
 
+/**
+ * Pure component class.
+ */
+export class PureComponent extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.isPureComponent = true;
+  }
+}
+
 export default Component;

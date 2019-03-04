@@ -2,10 +2,9 @@
 /* @jsx createElement */
 
 import cloneElement from '../';
-import { createElement, render, shared } from 'rax';
+import { createElement, Component, render, shared } from 'rax';
 import createFactory from 'rax-create-factory';
 import ServerDriver from 'driver-server';
-import Component from 'rax-component';
 
 const { Host } = shared;
 
