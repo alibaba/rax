@@ -27,7 +27,7 @@ export default class WebRenderer {
 
   mount(container, callback = () => { }) {
     container.appendChild(this.renderer);
-    renderDOM(this.channel, this.renderer, this.clientId, this.pageQuery);
+    this.unmount = renderDOM(this.channel, this.renderer, this.clientId, this.pageQuery);
     callback();
   }
 
@@ -36,7 +36,7 @@ export default class WebRenderer {
       return false;
     }
 
-    this.renderer.parentElement.removeChild(this.renderer);
+    this.unmount && this.unmount();
     return this.destroyed = true;
   }
 }

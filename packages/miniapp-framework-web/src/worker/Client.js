@@ -42,7 +42,7 @@ export default class Client {
     let component;
     try {
       const { document, evaluator } = this.driver;
-      const { factory } = getPage(this.pageName, this.raxInstance);
+      let { factory } = getPage(this.pageName, this.raxInstance);
       component = applyFactory(factory, {
         page: this,
         clientId: this.clientId,
@@ -53,12 +53,9 @@ export default class Client {
         evaluator,
       });
     } catch (err) {
-      log('Instantite page with error', err);
-      component = applyFactory(
-        getUnknownPageFactory(this.raxInstance, {
-          message: '加载出现了错误',
-        })
-      );
+      log('Instantite page with error, catch and show error page.');
+      console.error(err);
+      component = applyFactory(getUnknownPageFactory(this.raxInstance, '加载出现了错误'));
     }
     return component;
   }

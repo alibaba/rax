@@ -11,37 +11,20 @@ export default function renderDOM(workerHandle, mountNode, clientId, pageQuery =
     postMessage.call(workerHandle, msg);
   };
 
-  return new DOMRenderer(workerHandle, mountNode, window);
-}
+  /**
+   * Handle with module API events.
+   */
+  workerHandle.onModuleAPIEvent = handleModuleAPIEvent;
 
-/**
- * DOMRenderer
- */
-class DOMRenderer {
-  constructor(worker, mountNode, win = window) {
-    this.worker = worker;
-    this.mountNode = mountNode;
-    this.window = win;
-    this.document = win.document;
-    const { documentElement } = this.document;
-    /**
-     * Handle with module API events.
-     */
-    worker.onModuleAPIEvent = handleModuleAPIEvent;
+  /**
+   * Correct the page font-size
+   */
+  const { documentElement } = window.document;
+  documentElement.style.fontSize = documentElement.clientWidth / 750 * 100 + 'px';
 
-    /**
-     * Correct the page font-size
-     */
-    documentElement.style.fontSize = documentElement.clientWidth / 750 * 100 + 'px';
-
-    this.render();
-  }
-
-  render() {
-    domRenderer({
-      worker: this.worker,
-      tagNamePrefix: TAG_NAME_PREFIX,
-      mountNode: this.mountNode,
-    });
-  }
+  return domRenderer({
+    worker: workerHandle,
+    tagNamePrefix: TAG_NAME_PREFIX,
+    mountNode,
+  });
 }

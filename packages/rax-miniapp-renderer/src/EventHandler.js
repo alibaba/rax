@@ -21,11 +21,13 @@ const NO_BUBBLES_EVENTS = {
   invalid: true
 };
 const TOUCH_EVENTS = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
+const EVENT_LISTENERS = '__event_listeners__';
 
 export default class EventHandler {
   constructor(handler, options = {}) {
     this.postMessage = handler;
     this.registeredEventCounts = {};
+    this.nobubbleEventNodes = [];
     this.mountNode = options.mountNode || document;
     this.touch = null;
   }
@@ -45,6 +47,27 @@ export default class EventHandler {
     }
   }
 
+  removeAllEvents() {
+    // Remove no-bubbles events.
+    let noBubblesEventNode;
+    while (noBubblesEventNode = this.nobubbleEventNodes.pop()) {
+      if (noBubblesEventNode[EVENT_LISTENERS]) {
+        const eventNames = Object.keys(noBubblesEventNode[EVENT_LISTENERS]);
+        for (let i = 0, l = eventNames.length; i < l; i++) {
+          this.removeNoBubblesEventListener(noBubblesEventNode, eventNames[i]);
+        }
+      }
+    }
+
+    // Remove regular events.
+    const events = Object.keys(this.registeredEventCounts);
+    for (let i = 0, l = events.length; i < l; i++) {
+      const name = events[i];
+      this.mountNode.removeEventListener(name, this.eventProxyHandler, EVENT_OPTIONS);
+      delete this.registeredEventCounts[name];
+    }
+  }
+
   removeEvent(node, name) {
     if (NO_BUBBLES_EVENTS[name]) {
       this.removeNoBubblesEventListener(node, name);
@@ -57,12 +80,9 @@ export default class EventHandler {
   }
 
   addNoBubblesEventListener(node, name) {
-    const _this = this;
-    function listener(evt) {
-      const target = {
-        $$id: node.$$id
-      };
-      _this.postMessage({
+    const listener = (evt) => {
+      const target = {$$id: node.$$id};
+      this.postMessage({
         type: 'event',
         event: {
           type: name,
@@ -72,16 +92,21 @@ export default class EventHandler {
         }
       });
     };
-    node[`__$${name}_listener__`] = listener;
-    node.addEventListener(name, listener);
+    const listeners = node[EVENT_LISTENERS] = node[EVENT_LISTENERS] || {};
+    listeners[name] = listeners[name] || [];
+    listeners[name].push(listener);
+    if (this.nobubbleEventNodes.indexOf(node) !== -1) this.nobubbleEventNodes.push(node);
+    node.addEventListener(name, listener, EVENT_OPTIONS);
   }
 
   removeNoBubblesEventListener(node, name) {
-    const listener = node[`__$${name}_listener__`];
-    if (listener) {
-      node.removeEventListener(name, listener);
-      node[`__$${name}_listener__`] = null;
+    if (node[EVENT_LISTENERS] && node[EVENT_LISTENERS][name]) {
+      for (let i = 0, l = node[EVENT_LISTENERS][name].length; i < l; i++) {
+        node.removeEventListener(name, node[EVENT_LISTENERS][name][i], EVENT_OPTIONS);
+      }
+      delete node[EVENT_LISTENERS][name];
     }
+    this.nobubbleEventNodes.splice(this.nobubbleEventNodes.indexOf(node), 1);
   }
 
   eventProxyHandler = (e) => {
