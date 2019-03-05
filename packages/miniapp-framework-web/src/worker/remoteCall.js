@@ -23,10 +23,10 @@ export function call(modKey, params, onSuccess = noop, onFail = noop) {
       }
 
       const { result, error } = evt.data;
-      if (result) {
-        onSuccess(result);
-      } else {
+      if (error) {
         onFail(error);
+      } else {
+        onSuccess(result);
       }
     }
   }
