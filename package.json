@@ -55,7 +55,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "setup": "npm run build:compile && npm run bootstrap && npm run build:dist",
-    "build:compile": "npm run clean:compile && npm run build:compile:packages",
+    "build:compile": "npm run clean:compile && npm run build:compile:packages && node ./scripts/compile-universal.js",
     "build:compile:packages": "node ./scripts/compile-packages.js",
     "build:dist": "npm run clean:dist && node ./scripts/dist-core.js",
     "build": "npm run build:compile && npm run build:dist",
