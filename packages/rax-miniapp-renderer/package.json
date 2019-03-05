@@ -1,6 +1,6 @@
 {
   "name": "rax-miniapp-renderer",
-  "version": "0.1.0",
+  "version": "0.1.0-2",
   "description": "Rax renderer for miniapp.",
   "license": "BSD-3-Clause",
   "main": "dist/rax-miniapp-renderer.min.js",

@@ -36,8 +36,6 @@ export default class Node extends EventTarget {
   }
   appendChild(child) {
     this.insertBefore(child);
-    // If fragment appended, the childNodes need to be mutated.
-    mutateChildNodes(child);
     return child;
   }
   insertBefore(child, ref) {
@@ -51,8 +49,8 @@ export default class Node extends EventTarget {
       this.childNodes.push(child);
       mutate(this, 'childList', { addedNodes: [child] });
     }
-    mutateChildNodes(child);
 
+    mutateChildNodes(child);
     return child;
   }
   replaceChild(child, ref) {
