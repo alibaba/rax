@@ -402,6 +402,310 @@ describe('hooks', () => {
     expect(container.childNodes[0].childNodes[0].data).toEqual('val');
   });
 
+  it('bails out in the render phase if all of the state is the same', () => {
+    const container = createNodeElement('div');
+    const logs = [];
+    logs.yield = logs.push;
+    logs.flush = function() {
+      const result = [...logs];
+      logs.length = 0;
+      return result;
+    };
+
+    let batchUpdate = function() {};
+    function act(callback) {
+      batchUpdate = callback;
+      flushPassiveEffects();
+    }
+
+    function Child({text}) {
+      logs.yield('Child: ' + text);
+      return text;
+    }
+
+    let setCounter1;
+    let setCounter2;
+    function Parent() {
+      const [counter1, _setCounter1] = useState(0);
+      setCounter1 = _setCounter1;
+      const [counter2, _setCounter2] = useState(0);
+      setCounter2 = _setCounter2;
+
+      const text = `${counter1}, ${counter2}`;
+      logs.yield(`Parent: ${text}`);
+      useLayoutEffect(() => {
+        logs.yield(`Effect: ${text}`);
+      });
+      useEffect(() => {
+        batchUpdate();
+      });
+      return <Child text={text} />;
+    }
+
+    const root = render(<Parent />, container);
+    expect(logs.flush()).toEqual([
+      'Parent: 0, 0',
+      'Child: 0, 0',
+      'Effect: 0, 0',
+    ]);
+    expect(container.childNodes[0].data).toEqual('0, 0');
+
+    // Normal update
+    act(() => {
+      setCounter1(1);
+      setCounter2(1);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 1',
+      'Child: 1, 1',
+      'Effect: 1, 1',
+    ]);
+
+    // This time, one of the state updates but the other one doesn't. So we
+    // can't bail out.
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 2',
+      'Child: 1, 2',
+      'Effect: 1, 2',
+    ]);
+
+    // Lots of updates that eventually resolve to the current values.
+    act(() => {
+      setCounter1(9);
+      setCounter2(3);
+      setCounter1(4);
+      setCounter2(7);
+      setCounter1(1);
+      setCounter2(2);
+    });
+
+    // Because the final values are the same as the current values, the
+    // component bails out.
+    expect(logs.flush()).toEqual(['Parent: 1, 2', 'Effect: 1, 2']);
+
+    // prepare to check SameValue
+    act(() => {
+      setCounter1(0 / -1);
+      setCounter2(NaN);
+    });
+    expect(logs.flush()).toEqual([
+      'Parent: 0, NaN',
+      'Child: 0, NaN',
+      'Effect: 0, NaN',
+    ]);
+
+    // check if re-setting to negative 0 / NaN still bails out
+    act(() => {
+      setCounter1(0 / -1);
+      setCounter2(NaN);
+      setCounter2(Infinity);
+      setCounter2(NaN);
+    });
+
+    expect(logs.flush()).toEqual(['Parent: 0, NaN', 'Effect: 0, NaN']);
+
+    // check if changing negative 0 to positive 0 does not bail out
+    act(() => {
+      setCounter1(0);
+    });
+    expect(logs.flush()).toEqual([
+      'Parent: 0, NaN',
+      'Child: 0, NaN',
+      'Effect: 0, NaN',
+    ]);
+  });
+
+  it('bails out in render phase if all the state is the same and props bail out with memo', () => {
+    const container = createNodeElement('div');
+    const logs = [];
+    logs.yield = logs.push;
+    logs.flush = function() {
+      const result = [...logs];
+      logs.length = 0;
+      return result;
+    };
+
+    let batchUpdate = function() {};
+    function act(callback) {
+      batchUpdate = callback;
+      flushPassiveEffects();
+    }
+
+    function Child({text}) {
+      logs.yield('Child: ' + text);
+      return text;
+    }
+
+    let setCounter1;
+    let setCounter2;
+    function Parent({theme}) {
+      const [counter1, _setCounter1] = useState(0);
+      setCounter1 = _setCounter1;
+      const [counter2, _setCounter2] = useState(0);
+      setCounter2 = _setCounter2;
+
+      const text = `${counter1}, ${counter2} (${theme})`;
+      logs.yield(`Parent: ${text}`);
+      useEffect(() => {
+        batchUpdate();
+      });
+      return <Child text={text} />;
+    }
+
+    Parent = memo(Parent);
+
+    const root = render(<Parent theme="light" />, container);
+    expect(logs.flush()).toEqual([
+      'Parent: 0, 0 (light)',
+      'Child: 0, 0 (light)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('0, 0 (light)');
+
+    // Normal update
+    act(() => {
+      setCounter1(1);
+      setCounter2(1);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 1 (light)',
+      'Child: 1, 1 (light)',
+    ]);
+
+    // This time, one of the state updates but the other one doesn't. So we
+    // can't bail out.
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 2 (light)',
+      'Child: 1, 2 (light)',
+    ]);
+
+    // Updates bail out, but component still renders because props
+    // have changed
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+      render(<Parent theme="dark" />, container);
+    });
+
+    expect(logs.flush()).toEqual(['Parent: 1, 2 (dark)', 'Child: 1, 2 (dark)']);
+
+    // Both props and state bail out
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+      render(<Parent theme="dark" />, container);
+    });
+
+    expect(logs.flush()).toEqual([]);
+  });
+
+  it('never bails out if context has changed', () => {
+    const container = createNodeElement('div');
+    const logs = [];
+    logs.yield = logs.push;
+    logs.flush = function() {
+      const result = [...logs];
+      logs.length = 0;
+      return result;
+    };
+
+    let batchUpdate = function() {};
+    function act(callback) {
+      batchUpdate = callback;
+      flushPassiveEffects();
+    }
+
+    const ThemeContext = createContext('light');
+
+    let setTheme;
+    function ThemeProvider({children}) {
+      const [theme, _setTheme] = useState('light');
+      logs.yield('Theme: ' + theme);
+      setTheme = _setTheme;
+      return (
+        <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+      );
+    }
+
+    function Child({text}) {
+      logs.yield('Child: ' + text);
+      return text;
+    }
+
+    let setCounter;
+    function Parent() {
+      const [counter, _setCounter] = useState(0);
+      setCounter = _setCounter;
+
+      const theme = useContext(ThemeContext);
+
+      const text = `${counter} (${theme})`;
+      logs.yield(`Parent: ${text}`);
+      useLayoutEffect(() => {
+        logs.yield(`Effect: ${text}`);
+      });
+      useEffect(() => {
+        batchUpdate();
+      });
+      return <Child text={text} />;
+    }
+
+    const root = render(
+      <ThemeProvider>
+        <Parent />
+      </ThemeProvider>
+      , container);
+
+    expect(logs.flush()).toEqual([
+      'Theme: light',
+      'Parent: 0 (light)',
+      'Child: 0 (light)',
+      'Effect: 0 (light)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('0 (light)');
+
+    // Updating the theme to the same value doesn't cause the consumers
+    // to re-render.
+    setTheme('light');
+    expect(logs.flush()).toEqual([]);
+    expect(container.childNodes[0].data).toEqual('0 (light)');
+
+    // Normal update
+    setCounter(1);
+    expect(logs.flush()).toEqual([
+      'Parent: 1 (light)',
+      'Child: 1 (light)',
+      'Effect: 1 (light)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('1 (light)');
+
+    // Update that doesn't change state, but the context changes, too, so it
+    // can't bail out
+    act(() => {
+      setCounter(1);
+      setTheme('dark');
+    });
+
+    expect(logs.flush()).toEqual([
+      'Theme: dark',
+      'Parent: 1 (dark)',
+      'Child: 1 (dark)',
+      'Effect: 1 (dark)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('1 (dark)');
+  });
+
   describe('updates during the render phase', () => {
     it('restarts the render function and applies the new updates on top', () => {
       const container = createNodeElement('div');
