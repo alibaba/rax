@@ -1,9 +1,9 @@
 import {createElement, Component} from 'rax';
 import renderer from 'rax-test-renderer';
-import Index from '../';
+import Mod from '../';
 
-describe('Icon', () => {
-  it('test typeof Icon', () => {
-    expect(typeof Index).toEqual('function');
+describe('Mod', () => {
+  it('test typeof Mod', () => {
+    expect(typeof Mod).toEqual('function');
   });
 });

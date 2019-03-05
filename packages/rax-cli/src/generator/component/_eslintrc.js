@@ -1,6 +1,6 @@
 /* eslint quotes: off */
 
-module.exports ={
+module.exports = {
   "root": true,
   "parser": "babel-eslint",
   "env": {
@@ -16,7 +16,8 @@ module.exports ={
   ],
   "settings": {
     "react": {
-      "pragma": "createElement",  // Pragma to use, default to "React"
+      // Pragma to use, default to "React"
+      "pragma": "createElement",
     }
   },
   "parserOptions": {
