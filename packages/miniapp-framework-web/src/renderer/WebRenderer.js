@@ -27,7 +27,7 @@ export default class WebRenderer {
 
   mount(container, callback = () => { }) {
     container.appendChild(this.renderer);
-    this.unmount = renderDOM(this.channel, this.renderer, this.clientId, this.pageQuery);
+    this.unmount = renderDOM(this.channel, this.renderer, this.clientId, this.pageQuery, window);
     callback();
   }
 

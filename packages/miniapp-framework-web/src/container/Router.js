@@ -73,6 +73,7 @@ export default class Router {
     this.clients.push(client);
     if (params.isTab) {
       this.tabClients[pageName] = client;
+      client.isTab = true;
     }
 
     const clientId = client.clientId;
