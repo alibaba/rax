@@ -92,7 +92,7 @@ export default class MessageRouter {
         this._navigation.navigateBack(params);
         this.callbackRemoteCall(callId, null, null);
         break;
-      case 'redirectTo': 
+      case 'redirectTo':
         this._navigation.redirectTo({pageName: params.url});
         this.callbackRemoteCall(callId, null, null);
         break;

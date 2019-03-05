@@ -124,8 +124,8 @@ export default class Router {
     const prevClient = this.currentClient.prevClient;
     this.currentClient.destroy();
     this.currentClient = prevClient;
-    
-    this.navigateTo({ 
+
+    this.navigateTo({
       pageName: params.pageName,
       replaceHash: true
     });

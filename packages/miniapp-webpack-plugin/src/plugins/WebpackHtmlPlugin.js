@@ -55,8 +55,7 @@ module.exports = class WebpackHtmlPlugin {
 
       const template = readFileSync(templatePath, 'utf-8');
 
-      // const localIP = address.ip();
-      const localIP = '0.0.0.0'
+      const localIP = address.ip();
 
       const options = {
         appConfig: JSON.stringify(appConfig, null, 2),
