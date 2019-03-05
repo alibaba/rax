@@ -1,21 +1,20 @@
-# universal-perf [![npm](https://img.shields.io/npm/v/universal-perf.svg)](https://www.npmjs.com/package/universal-perf)
+# perf-measurer
 
 ## Install
 
 ```bash
-npm install --save universal-perf
+npm install --save perf-measurer
 ```
 
 ## Usage
 
 ```js
 import {createElement, Component, render} from 'rax';
-import {Text} from 'rax-components';
-import Perf from 'universal-perf';
+import Perf from 'perf-measurer';
 
 class PerfTest extends Component {
   render() {
-    return <Text style={styles.title}>Hello {this.props.name}</Text>;
+    return <h1 style={styles.title}>Hello {this.props.name}</h1>;
   }
 }
 

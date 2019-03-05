@@ -2,8 +2,12 @@ import Host from './vdom/host';
 import { schedule, flush } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
 
+function getCurrentInstance() {
+  return Host.owner && Host.owner._instance;
+}
+
 function getCurrentRenderingInstance() {
-  const currentInstance = Host.owner._instance;
+  const currentInstance = getCurrentInstance();
   if (currentInstance) {
     return currentInstance;
   } else {
@@ -31,26 +35,31 @@ export function useState(initialState) {
   const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
-    // state lazy initializer
+    // If the initial state is the result of an expensive computation,
+    // you may provide a function instead for lazy initial state.
     if (typeof initialState === 'function') {
       initialState = initialState();
     }
 
     const setState = newState => {
-      const eagerState = hooks[hookID][2];
-
+      const hook = hooks[hookID];
+      const eagerState = hook[2];
+      // function updater
       if (typeof newState === 'function') {
         newState = newState(eagerState);
       }
 
       if (!is(newState, eagerState)) {
-        // This is a render phase update.  After this render pass, we'll restart
-        if (Host.owner && Host.owner._instance === currentInstance) {
-          hooks[hookID][2] = newState;
+        // Current instance is in render update phase.
+        // After this one render finish, will containue run.
+        if (getCurrentInstance() === currentInstance) {
+          hook[2] = newState;
+          // Marked as is scheduled that could finish hooks.
           currentInstance.isScheduled = true;
         } else {
           !Host.isUpdating && flush();
-          hooks[hookID][2] = newState;
+
+          hook[2] = newState;
           currentInstance.update();
         }
       }
@@ -62,11 +71,14 @@ export function useState(initialState) {
       initialState
     ];
   }
-  if (!is(hooks[hookID][0], hooks[hookID][2])) {
-    hooks[hookID][0] = hooks[hookID][2];
-    currentInstance.didReceiveUpdate = true;
+
+  const hook = hooks[hookID];
+  if (!is(hook[0], hook[2])) {
+    hook[0] = hook[2];
+    currentInstance.shouldUpdate = true;
   }
-  return hooks[hookID];
+
+  return hook;
 }
 
 export function useContext(context) {
@@ -204,11 +216,11 @@ export function useReducer(reducer, initialArg, init) {
 
     const dispatch = action => {
       const hook = hooks[hookID];
-      // reducer will update in the next render, before that we add all
+      // Reducer will update in the next render, before that we add all
       // actions to the queue
       const queue = hook[2];
-      // This is a render phase update.  After this render pass, we'll restart
-      if (Host.owner && Host.owner._instance === currentInstance) {
+
+      if (getCurrentInstance() === currentInstance) {
         queue.actions.push(action);
         currentInstance.isScheduled = true;
       } else {
@@ -236,6 +248,7 @@ export function useReducer(reducer, initialArg, init) {
       }
     ];
   }
+
   const hook = hooks[hookID];
   const queue = hook[2];
   let next = hook[0];
@@ -250,7 +263,7 @@ export function useReducer(reducer, initialArg, init) {
 
   if (!is(next, hook[0])) {
     hook[0] = next;
-    currentInstance.didReceiveUpdate = true;
+    currentInstance.shouldUpdate = true;
   }
 
   queue.eagerReducer = reducer;
