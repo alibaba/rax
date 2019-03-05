@@ -132,11 +132,11 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
 
   if (showHeaderBar) {
     tabbar.switchTab({
-      pageName: homepage
+      url: homepage
     });
   } else {
     navigation.navigateTo({
-      pageName: homepage
+      url: homepage
     });
   }
 

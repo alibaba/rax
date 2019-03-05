@@ -85,43 +85,19 @@ export default class MessageRouter {
 
     switch (method) {
       case 'navigateTo':
-        this._navigation.navigateTo({ pageName: params.url });
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'navigateBack':
-        this._navigation.navigateBack(params);
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'redirectTo':
-        this._navigation.redirectTo({pageName: params.url});
+        this._navigation[method](params);
         this.callbackRemoteCall(callId, null, null);
         break;
       case 'switchTab':
-        this._tabbar.switchTab({pageName: params.url});
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'showTabBar':
-        this._tabbar.showTabBar(params);
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'hideTabBar':
-        this._tabbar.hideTabBar(params);
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'setTabBarBadge':
-        this._tabbar.setTabBarBadge(params);
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'removeTabBarBadge':
-        this._tabbar.removeTabBarBadge(params);
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'showTabBarRedDot':
-        this._tabbar.showTabBarRedDot(params);
-        this.callbackRemoteCall(callId, null, null);
-        break;
       case 'hideTabBarRedDot':
-        this._tabbar.hideTabBarRedDot(params);
+        this._tabbar[method](params);
         this.callbackRemoteCall(callId, null, null);
         break;
 

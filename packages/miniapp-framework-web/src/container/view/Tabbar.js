@@ -92,7 +92,7 @@ export default class Tabbar {
   }
 
   switchTab(params) {
-    const { pageName } = params;
+    const { url: pageName } = params;
 
     if (!pageName) {
       log('Can not redirect to empty page.');
@@ -146,7 +146,9 @@ export default class Tabbar {
       this.selectedTab = pageName;
     }
 
-    this.router.switchTab(params);
+    this.router.switchTab({
+      pageName
+    });
   }
 
   showTabBar() {

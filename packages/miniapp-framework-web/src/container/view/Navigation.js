@@ -8,7 +8,7 @@ export default class Navigation {
   }
 
   navigateTo(params) {
-    this.router.navigateTo(params);
+    this.router.navigateTo({ pageName: params.url });
   }
 
   navigateBack(params) {
@@ -16,6 +16,6 @@ export default class Navigation {
   }
 
   redirectTo(params) {
-    this.router.redirectTo(params);
+    this.router.redirectTo({ pageName: params.url });
   }
 }
