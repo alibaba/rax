@@ -1,6 +1,6 @@
 import { debug, log } from 'miniapp-framework-shared';
 import renderContainerShell from './view';
-import my from './modules/my';
+import my from './my';
 
 export default class MessageRouter {
   /**

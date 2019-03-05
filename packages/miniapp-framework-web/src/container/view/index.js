@@ -1,6 +1,6 @@
 /* global frameworkType */
 import kebabCase from 'kebab-case';
-import baseCSS from '!!raw-loader!./container.css';
+import baseCSS from '!!raw-loader!./assets/container.css';
 import Router from '../Router';
 import Tabbar from './Tabbar';
 import Navigation from './Navigation';

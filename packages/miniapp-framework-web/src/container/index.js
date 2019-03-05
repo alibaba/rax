@@ -1,6 +1,6 @@
 import spawnWorker from 'worker-loader?inline&fallback=false!babel-loader!../worker';
 import MessageRouter from './MessageRouter';
-import my from './modules/my';
+import my from './my';
 
 const hasOwn = {}.hasOwnProperty;
 const COMPATIBLE_APP_CONFIG_KEY = 'APP_MANIFEST';
