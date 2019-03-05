@@ -39,6 +39,7 @@
   - [Testing](#testing)
   - [Developer Tools](#developer-tools)
   - [React compatibility](#react-compatibility)
+  - [Use TypeScript](#use-typescript)
 - [API Reference](#api-reference)
   - [render()](#rendering-elements)
   - [createElement()](#creating-elements)
@@ -367,6 +368,66 @@ Add an alias for `react` and `react-dom` in webpack config that makes React-base
   }
   // ...
 }
+```
+
+### Use TypeScript
+
+Install TypeScript:
+```sh
+$ npm install typescript --save-dev
+```
+
+Install TypeScript loader for webpack:
+
+```sh
+$ npm install ts-loader --save-dev
+```
+
+Create or update `webpack.config.js`:
+```js
+module.exports = {
+  mode: "development",
+  devtool: "inline-source-map",
+  entry: "./app.tsx",
+  output: {
+    filename: "bundle.js"
+  },
+  resolve: {
+    // Add `.ts` and `.tsx` as a resolvable extension.
+    extensions: [".ts", ".tsx", ".js"]
+  },
+  module: {
+    rules: [
+      // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+      { test: /\.tsx?$/, loader: "ts-loader" }
+    ]
+  }
+};
+```
+
+Add a `tsconfig.json` file:
+```json
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "jsx": "react",
+    "jsxFactory": "createElement"
+  }
+}
+```
+
+Write your first TypeScript file using Rax:
+
+```tsx
+// app.tsx
+import { createElement, render } from 'rax';
+import * as DriverDOM from 'driver-dom';
+
+interface HelloProps { compiler: string; framework: string; }
+
+const Hello = (props: HelloProps) => <h1>Hello from {props.compiler} and {props.framework}!</h1>;
+
+render(<Hello compiler="TypeScript" framework="React" />, document.body, { driver: DriverDOM});
 ```
 
 ## API Reference
