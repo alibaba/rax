@@ -2,6 +2,7 @@ import Rax, { createElement } from 'rax';
 import renderer from 'rax-test-renderer';
 import createComponent from '../createComponent';
 import { getComponent } from '../componentsHub';
+import createWorkerDriver from 'driver-worker';
 
 describe('Mini Program Component', () => {
   it('should render default slots', () => {
@@ -219,4 +220,49 @@ describe('Mini Program Component', () => {
 
     renderer.create(createElement(Comp, { bar: 'from prop' }));
   });
+
+  it('should render style once', (done) => {
+    function renderFactory(Rax) {
+      return function(data) {
+        return createElement('view', {
+          className: 'foo',
+        });
+      };
+    }
+    const cssText = '.foo { color: red; }';
+    const Comp = createComponent(renderFactory, Rax, {}, 'path/to/component', cssText);
+
+    global.setImmediate = null;
+    const driver = createWorkerDriver({
+      postMessage(message) {
+        expect(message).toMatchSnapshot();
+        done();
+      },
+      addEventListener() {},
+    });
+
+    class Page extends Rax.Component {
+      static contextTypes = { $page: null };
+
+      getChildContext() {
+        const $page = {
+          vnode: { _document: driver.document }
+        };
+        return { $page };
+      }
+
+      render() {
+        // Render Comp 4 times.
+        return createElement('view', null, [
+          createElement(Comp),
+          createElement(Comp),
+          createElement(Comp),
+          createElement(Comp),
+        ]);
+      }
+    }
+
+    Rax.render(createElement(Page), null, { driver });
+  });
 });
+
