@@ -16,35 +16,31 @@ export default class Router {
     this.tabClients = {}; // pageName -> client
     this.currentClient = null;
 
-    // 监听浏览器的回退/前进事件
-    window.addEventListener('popstate', e => {
-      this.onPopState(e);
-    });
+    /**
+     * Listen to browser's history events.
+     */
+    window.addEventListener('popstate', this.onPopState);
   }
 
-  onPopState(event) {
+  onPopState = (event) => {
     const state = event.state;
     if (
-      state
-      && state.clientId
-      && this.currentClient
-      && this.currentClient.prevClient
-      && this.currentClient.prevClient.clientId
+      state && state.clientId
+      && this.currentClient && this.currentClient.prevClient
       && state.clientId === this.currentClient.prevClient.clientId
     ) {
       this.navigateBack();
-      return;
-    }
+    } else {
+      let hash = location.hash;
+      if (hash && hash.indexOf(ROUTE_HASH_PREFIX) === 0) {
+        hash = hash.slice(ROUTE_HASH_PREFIX.length);
+      }
 
-    let hash = location.hash;
-    if (hash && hash.indexOf(ROUTE_HASH_PREFIX)) {
-      hash = hash.slice(3);
+      this.navigateTo({
+        pageName: hash,
+        replaceHash: true,
+      });
     }
-
-    this.navigateTo({
-      pageName: hash,
-      replaceHash: true
-    });
   }
 
   parseRouterParam(params = {}) {
@@ -89,7 +85,7 @@ export default class Router {
 
     const hash = ROUTE_HASH_PREFIX + pageName;
     if (params.replaceHash || !this.currentClient) {
-      history.replaceState({clientId}, null, hash);
+      history.replaceState({ clientId }, null, hash);
     } else {
       history.pushState({clientId}, null, hash);
     }
@@ -100,9 +96,16 @@ export default class Router {
   /**
    * Back to prev client page.
    * @param params.delta {Number} The number of back pages.
+   * @param params.replaceState {Boolean} Weather to replace state of history.
+   *
    */
   navigateBack(params = {}) {
     let delta = params.delta || 1;
+
+    if (!params.replaceState) {
+      history.go(-delta);
+    }
+
     let prevClient = this.currentClient;
     do {
       prevClient = prevClient.prevClient;

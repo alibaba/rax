@@ -1,3 +1,6 @@
+/**
+ * Navigation
+ */
 export default class Navigation {
   constructor(router, tabbar) {
     this.router = router;
@@ -5,16 +8,11 @@ export default class Navigation {
   }
 
   navigateTo(params) {
-    const isInTabbar = this.tabbar.check(params);
-    if (isInTabbar) {
-      this.tabbar.switchTab(params);
-    } else {
-      this.router.navigateTo(params);
-    }
+    this.router.navigateTo(params);
   }
 
   navigateBack(params) {
-    history.back(params);
+    this.router.navigateBack(params);
   }
 
   redirectTo(params) {

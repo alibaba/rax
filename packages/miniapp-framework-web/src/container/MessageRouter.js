@@ -126,13 +126,12 @@ export default class MessageRouter {
         break;
 
       default:
-        function resolveCallback(result) {
+        const resolveCallback = () => {
           this.callbackRemoteCall(callId, result, null);
-        }
-
-        function rejectCallback(err) {
+        };
+        const rejectCallback = () => {
           this.callbackRemoteCall(callId, null, err);
-        }
+        };
 
         if (my[method]) {
           my[method](params, resolveCallback, rejectCallback);
