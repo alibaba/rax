@@ -44,9 +44,9 @@ function messageHandler({ data }) {
 
     case EVENT_REGISTER_API: {
       Array.isArray(payload.apis) && payload.apis.forEach(method => {
-        my._registerAPI(method, (params = {}, successCallback, failCallback) => {
+        my._registerAPI(method, (params = {}) => {
           const { success, fail, complete, ...methodParams } = params;
-          return call(`my.${method}`, methodParams, successCallback, failCallback);
+          return call(`my.${method}`, methodParams, success, fail);
         });
       });
       // Tell AppContainer that worker is ready.
