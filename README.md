@@ -292,8 +292,10 @@ Code-Splitting allows you to split your code into various bundles which can then
 Code-Splitting is supported by `Webpack` which can create multiple bundles that can be dynamically loaded at runtime.
 
 ```jsx
+import { createElement } from 'rax';
+import useImport from 'rax-use-promise';
 
-function App() {
+export default function App() {
   const [Bar, error] = useImport(() => import(/* webpackChunkName: "bar" */ './Bar'));
   if (error) {
     return <p>error</p>;

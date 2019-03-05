@@ -6,11 +6,14 @@ import findDOMNode from 'rax-find-dom-node';
 import createPortal from 'rax-create-portal';
 
 export default {
-  render: (element, container, callback) => {
-    render(element, container, {
+  render: (element, container, callback) => render(
+    element,
+    container,
+    {
       driver: DriverDOM
-    }, callback);
-  },
+    },
+    callback
+  ),
   hydrate,
   unmountComponentAtNode,
   findDOMNode,

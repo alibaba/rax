@@ -1,17 +1,17 @@
 # rax-use-import
 
 ```jsx
-import { createElement, useMemo } from 'rax';
-import usePromise from 'rax-use-promise';
+import { createElement } from 'rax';
+import useImport from 'rax-use-promise';
 
-const fetchData = () => fetch('https://httpbin.org/get').then(res => res.json());
-
-function Example() {
-  const [data, error] = usePromise(useMemo(fetchData));
+export default function App() {
+  const [Bar, error] = useImport(() => import(/* webpackChunkName: "bar" */ './Bar'));
   if (error) {
-    return <p>error</p>
-  } else if (data) {
-    return <p>{data.foo}</p>
+    return <p>error</p>;
+  } else if (Bar) {
+    return <Bar />
+  } else {
+    return <p>loading</p>;
   }
 }
 ```
