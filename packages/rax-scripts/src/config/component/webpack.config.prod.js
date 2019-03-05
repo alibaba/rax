@@ -72,6 +72,10 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
   };
 }
 
+
+babelOptions.presets[1][1].modules = 'commonjs';
+babelOptions.plugins.push('add-module-exports');
+
 var webpackConfigProd = getConfig(
   entry,
   {
