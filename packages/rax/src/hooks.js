@@ -37,20 +37,20 @@ export function useState(initialState) {
     }
 
     const setState = newState => {
-      const current = hooks[hookID][0];
+      const eagerState = hooks[hookID][2];
 
       if (typeof newState === 'function') {
-        newState = newState(current);
+        newState = newState(eagerState);
       }
 
-      if (newState !== current) {
+      if (!is(newState, eagerState)) {
         // This is a render phase update.  After this render pass, we'll restart
         if (Host.owner && Host.owner._instance === currentInstance) {
-          hooks[hookID][0] = newState;
+          hooks[hookID][2] = newState;
           currentInstance.isScheduled = true;
         } else {
           !Host.isUpdating && flush();
-          hooks[hookID][0] = newState;
+          hooks[hookID][2] = newState;
           currentInstance.update();
         }
       }
@@ -59,9 +59,13 @@ export function useState(initialState) {
     hooks[hookID] = [
       initialState,
       setState,
+      initialState
     ];
   }
-
+  if (!is(hooks[hookID][0], hooks[hookID][2])) {
+    hooks[hookID][0] = hooks[hookID][2];
+    currentInstance.didReceiveUpdate = true;
+  }
   return hooks[hookID];
 }
 
@@ -244,11 +248,13 @@ export function useReducer(reducer, initialArg, init) {
     next = queue.eagerState;
   }
 
+  if (!is(next, hook[0])) {
+    hook[0] = next;
+    currentInstance.didReceiveUpdate = true;
+  }
+
   queue.eagerReducer = reducer;
   queue.eagerState = next;
   queue.actions.length = 0;
-
-  hook[0] = next;
-  hook[2] = queue;
   return hooks[hookID];
 }
