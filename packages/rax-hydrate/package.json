@@ -15,6 +15,9 @@
   "engines": {
     "npm": ">=3.0.0"
   },
+  "dependencies": {
+    "driver-dom": "^1.0.0-beta"
+  },
   "peerDependencies": {
     "rax": "^1.0.0-beta"
   }

@@ -1,10 +1,9 @@
 
 /* @jsx createElement */
 
-import { createElement, render, shared } from 'rax';
+import { createElement, Component, shared } from 'rax';
 import createFactory from '../';
 import ServerDriver from 'driver-server';
-import Component from 'rax-component';
 
 const { Host } = shared;
 

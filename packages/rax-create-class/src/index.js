@@ -1,4 +1,4 @@
-import Component from 'rax-component';
+import { Component } from 'rax';
 
 const AUTOBIND_BLACKLIST = {
   render: 1,

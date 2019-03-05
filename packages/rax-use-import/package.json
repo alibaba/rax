@@ -1,7 +1,7 @@
 {
-  "name": "rax-pure-component",
+  "name": "rax-use-import",
   "version": "1.0.0-beta.0",
-  "description": "rax-pure-component",
+  "description": "Rax useImport hook",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -15,11 +15,7 @@
   "engines": {
     "npm": ">=3.0.0"
   },
-  "dependencies": {
-    "rax-component": "^1.0.0-beta"
-  },
-  "devDependencies": {
-    "rax": "^1.0.0-beta",
-    "driver-server": "^1.0.0-beta"
+  "peerDependencies": {
+    "rax": "^1.0.0-beta"
   }
 }

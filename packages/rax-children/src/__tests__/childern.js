@@ -1,8 +1,7 @@
 /* @jsx createElement */
 
-import { createElement } from 'rax';
+import { createElement, Component } from 'rax';
 import cloneElement from 'rax-clone-element';
-import Component from 'rax-component';
 import Children from '../';
 
 describe('Children', () => {
