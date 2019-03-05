@@ -5,7 +5,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
-import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle} from '../hooks';
+import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle, useMemo} from '../hooks';
 import { flush as flushPassiveEffects } from '../vdom/scheduler';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
@@ -402,6 +402,310 @@ describe('hooks', () => {
     expect(container.childNodes[0].childNodes[0].data).toEqual('val');
   });
 
+  it('bails out in the render phase if all of the state is the same', () => {
+    const container = createNodeElement('div');
+    const logs = [];
+    logs.yield = logs.push;
+    logs.flush = function() {
+      const result = [...logs];
+      logs.length = 0;
+      return result;
+    };
+
+    let batchUpdate = function() {};
+    function act(callback) {
+      batchUpdate = callback;
+      flushPassiveEffects();
+    }
+
+    function Child({text}) {
+      logs.yield('Child: ' + text);
+      return text;
+    }
+
+    let setCounter1;
+    let setCounter2;
+    function Parent() {
+      const [counter1, _setCounter1] = useState(0);
+      setCounter1 = _setCounter1;
+      const [counter2, _setCounter2] = useState(0);
+      setCounter2 = _setCounter2;
+
+      const text = `${counter1}, ${counter2}`;
+      logs.yield(`Parent: ${text}`);
+      useLayoutEffect(() => {
+        logs.yield(`Effect: ${text}`);
+      });
+      useEffect(() => {
+        batchUpdate();
+      });
+      return <Child text={text} />;
+    }
+
+    const root = render(<Parent />, container);
+    expect(logs.flush()).toEqual([
+      'Parent: 0, 0',
+      'Child: 0, 0',
+      'Effect: 0, 0',
+    ]);
+    expect(container.childNodes[0].data).toEqual('0, 0');
+
+    // Normal update
+    act(() => {
+      setCounter1(1);
+      setCounter2(1);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 1',
+      'Child: 1, 1',
+      'Effect: 1, 1',
+    ]);
+
+    // This time, one of the state updates but the other one doesn't. So we
+    // can't bail out.
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 2',
+      'Child: 1, 2',
+      'Effect: 1, 2',
+    ]);
+
+    // Lots of updates that eventually resolve to the current values.
+    act(() => {
+      setCounter1(9);
+      setCounter2(3);
+      setCounter1(4);
+      setCounter2(7);
+      setCounter1(1);
+      setCounter2(2);
+    });
+
+    // Because the final values are the same as the current values, the
+    // component bails out.
+    expect(logs.flush()).toEqual(['Parent: 1, 2', 'Effect: 1, 2']);
+
+    // prepare to check SameValue
+    act(() => {
+      setCounter1(0 / -1);
+      setCounter2(NaN);
+    });
+    expect(logs.flush()).toEqual([
+      'Parent: 0, NaN',
+      'Child: 0, NaN',
+      'Effect: 0, NaN',
+    ]);
+
+    // check if re-setting to negative 0 / NaN still bails out
+    act(() => {
+      setCounter1(0 / -1);
+      setCounter2(NaN);
+      setCounter2(Infinity);
+      setCounter2(NaN);
+    });
+
+    expect(logs.flush()).toEqual(['Parent: 0, NaN', 'Effect: 0, NaN']);
+
+    // check if changing negative 0 to positive 0 does not bail out
+    act(() => {
+      setCounter1(0);
+    });
+    expect(logs.flush()).toEqual([
+      'Parent: 0, NaN',
+      'Child: 0, NaN',
+      'Effect: 0, NaN',
+    ]);
+  });
+
+  it('bails out in render phase if all the state is the same and props bail out with memo', () => {
+    const container = createNodeElement('div');
+    const logs = [];
+    logs.yield = logs.push;
+    logs.flush = function() {
+      const result = [...logs];
+      logs.length = 0;
+      return result;
+    };
+
+    let batchUpdate = function() {};
+    function act(callback) {
+      batchUpdate = callback;
+      flushPassiveEffects();
+    }
+
+    function Child({text}) {
+      logs.yield('Child: ' + text);
+      return text;
+    }
+
+    let setCounter1;
+    let setCounter2;
+    function Parent({theme}) {
+      const [counter1, _setCounter1] = useState(0);
+      setCounter1 = _setCounter1;
+      const [counter2, _setCounter2] = useState(0);
+      setCounter2 = _setCounter2;
+
+      const text = `${counter1}, ${counter2} (${theme})`;
+      logs.yield(`Parent: ${text}`);
+      useEffect(() => {
+        batchUpdate();
+      });
+      return <Child text={text} />;
+    }
+
+    Parent = memo(Parent);
+
+    const root = render(<Parent theme="light" />, container);
+    expect(logs.flush()).toEqual([
+      'Parent: 0, 0 (light)',
+      'Child: 0, 0 (light)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('0, 0 (light)');
+
+    // Normal update
+    act(() => {
+      setCounter1(1);
+      setCounter2(1);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 1 (light)',
+      'Child: 1, 1 (light)',
+    ]);
+
+    // This time, one of the state updates but the other one doesn't. So we
+    // can't bail out.
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+    });
+
+    expect(logs.flush()).toEqual([
+      'Parent: 1, 2 (light)',
+      'Child: 1, 2 (light)',
+    ]);
+
+    // Updates bail out, but component still renders because props
+    // have changed
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+      render(<Parent theme="dark" />, container);
+    });
+
+    expect(logs.flush()).toEqual(['Parent: 1, 2 (dark)', 'Child: 1, 2 (dark)']);
+
+    // Both props and state bail out
+    act(() => {
+      setCounter1(1);
+      setCounter2(2);
+      render(<Parent theme="dark" />, container);
+    });
+
+    expect(logs.flush()).toEqual([]);
+  });
+
+  it('never bails out if context has changed', () => {
+    const container = createNodeElement('div');
+    const logs = [];
+    logs.yield = logs.push;
+    logs.flush = function() {
+      const result = [...logs];
+      logs.length = 0;
+      return result;
+    };
+
+    let batchUpdate = function() {};
+    function act(callback) {
+      batchUpdate = callback;
+      flushPassiveEffects();
+    }
+
+    const ThemeContext = createContext('light');
+
+    let setTheme;
+    function ThemeProvider({children}) {
+      const [theme, _setTheme] = useState('light');
+      logs.yield('Theme: ' + theme);
+      setTheme = _setTheme;
+      return (
+        <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+      );
+    }
+
+    function Child({text}) {
+      logs.yield('Child: ' + text);
+      return text;
+    }
+
+    let setCounter;
+    function Parent() {
+      const [counter, _setCounter] = useState(0);
+      setCounter = _setCounter;
+
+      const theme = useContext(ThemeContext);
+
+      const text = `${counter} (${theme})`;
+      logs.yield(`Parent: ${text}`);
+      useLayoutEffect(() => {
+        logs.yield(`Effect: ${text}`);
+      });
+      useEffect(() => {
+        batchUpdate();
+      });
+      return <Child text={text} />;
+    }
+
+    const root = render(
+      <ThemeProvider>
+        <Parent />
+      </ThemeProvider>
+      , container);
+
+    expect(logs.flush()).toEqual([
+      'Theme: light',
+      'Parent: 0 (light)',
+      'Child: 0 (light)',
+      'Effect: 0 (light)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('0 (light)');
+
+    // Updating the theme to the same value doesn't cause the consumers
+    // to re-render.
+    setTheme('light');
+    expect(logs.flush()).toEqual([]);
+    expect(container.childNodes[0].data).toEqual('0 (light)');
+
+    // Normal update
+    setCounter(1);
+    expect(logs.flush()).toEqual([
+      'Parent: 1 (light)',
+      'Child: 1 (light)',
+      'Effect: 1 (light)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('1 (light)');
+
+    // Update that doesn't change state, but the context changes, too, so it
+    // can't bail out
+    act(() => {
+      setCounter(1);
+      setTheme('dark');
+    });
+
+    expect(logs.flush()).toEqual([
+      'Theme: dark',
+      'Parent: 1 (dark)',
+      'Child: 1 (dark)',
+      'Effect: 1 (dark)',
+    ]);
+    expect(container.childNodes[0].data).toEqual('1 (dark)');
+  });
+
   describe('updates during the render phase', () => {
     it('restarts the render function and applies the new updates on top', () => {
       const container = createNodeElement('div');
@@ -613,15 +917,21 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
     });
 
-    it('accepts an initial action', () => {
+    it('lazy init', () => {
       const container = createNodeElement('div');
+      const logs = [];
+      logs.yield = logs.push;
+      logs.flush = function() {
+        const result = [...logs];
+        logs.length = 0;
+        return result;
+      };
+
       const INCREMENT = 'INCREMENT';
       const DECREMENT = 'DECREMENT';
 
       function reducer(state, action) {
         switch (action) {
-          case 'INITIALIZE':
-            return 10;
           case 'INCREMENT':
             return state + 1;
           case 'DECREMENT':
@@ -631,25 +941,124 @@ describe('hooks', () => {
         }
       }
 
-      const initialAction = 'INITIALIZE';
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
 
       function Counter(props, ref) {
-        const [count, dispatch] = useReducer(reducer, 0, initialAction);
+        const [count, dispatch] = useReducer(reducer, props, p => {
+          logs.yield('Init');
+          return p.initialCount;
+        });
         useImperativeHandle(ref, () => ({dispatch}));
-        return <span>{count}</span>;
+        return <Text text={'Count: ' + count} />;
       }
       Counter = forwardRef(Counter);
       const counter = createRef(null);
-      render(<Counter ref={counter} />, container);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('10');
+      render(<Counter initialCount={10} ref={counter} />, container);
+      expect(logs.flush()).toEqual(['Init', 'Count: 10']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 10');
 
       counter.current.dispatch(INCREMENT);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('11');
+      expect(logs.flush()).toEqual(['Count: 11']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 11');
 
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
-      expect(container.childNodes[0].childNodes[0].data).toEqual('8');
+
+      expect(logs.flush()).toEqual(['Count: 10', 'Count: 9', 'Count: 8']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 8');
+    });
+
+    it('works with effect', () => {
+      const container = createNodeElement('div');
+      const logs = [];
+      logs.yield = logs.push;
+      logs.flush = function() {
+        const result = [...logs];
+        logs.length = 0;
+        return result;
+      };
+
+      function Child({text}) {
+        logs.yield('Child: ' + text);
+        return text;
+      }
+
+      function reducer(state, action) {
+        return action;
+      }
+
+      let batchUpdate = function() {};
+      function act(callback) {
+        batchUpdate = callback;
+        flushPassiveEffects();
+      }
+
+      let setCounter1;
+      let setCounter2;
+      function Parent() {
+        const [counter1, _setCounter1] = useReducer(reducer, 0);
+        setCounter1 = _setCounter1;
+        const [counter2, _setCounter2] = useReducer(reducer, 0);
+        setCounter2 = _setCounter2;
+
+        const text = `${counter1}, ${counter2}`;
+        logs.yield(`Parent: ${text}`);
+        useLayoutEffect(() => {
+          logs.yield(`Effect: ${text}`);
+        });
+        useEffect(() => {
+          batchUpdate();
+        });
+        return <Child text={text} />;
+      }
+
+      const root = render(<Parent />, container);
+      expect(logs.flush()).toEqual([
+        'Parent: 0, 0',
+        'Child: 0, 0',
+        'Effect: 0, 0',
+      ]);
+      expect(container.childNodes[0].data).toEqual('0, 0');
+
+      // Normal update
+      act(() => {
+        setCounter1(1);
+        setCounter1(2);
+        setCounter1(2);
+        setCounter1(3);
+        setCounter2(2);
+        setCounter1(3);
+        setCounter1(3);
+        setCounter2(4);
+      });
+
+      expect(logs.flush()).toEqual([
+        'Parent: 3, 4',
+        'Child: 3, 4',
+        'Effect: 3, 4',
+      ]);
+
+      act(() => {
+        setCounter1(2);
+        setCounter2(2);
+      });
+
+      expect(logs.flush()).toEqual([
+        'Parent: 2, 2',
+        'Child: 2, 2',
+        'Effect: 2, 2',
+      ]);
+
+      act(() => {
+        setCounter1(2);
+        setCounter2(2);
+      });
+
+      expect(logs.flush()).toEqual([]);
     });
   });
 
@@ -1107,7 +1516,7 @@ describe('hooks', () => {
       expect(container.childNodes).toEqual([]);
     });
 
-    it('skips effect if constructor has not changed', () => {
+    it('always fires effects if no dependencies are provided', () => {
       const container = createNodeElement('div');
       let logs = [];
       function Text(props) {
@@ -1115,9 +1524,9 @@ describe('hooks', () => {
         return <span>{props.text}</span>;
       }
       function effect() {
-        logs.push('Did mount');
+        logs.push('Did create');
         return () => {
-          logs.push('Did unmount');
+          logs.push('Did destroy');
         };
       }
       function Counter(props) {
@@ -1129,19 +1538,21 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
       flushPassiveEffects();
-      expect(logs).toEqual(['Did mount']);
+      expect(logs).toEqual(['Did create']);
 
       logs = [];
       render(<Counter count={1} />, container);
-      // No effect, because constructor was hoisted outside render
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      logs = [];
+      flushPassiveEffects();
+      expect(logs).toEqual(['Did destroy', 'Did create']);
 
       logs = [];
       render([], container);
       // TODO
       flushPassiveEffects();
-      expect(logs).toEqual(['Did unmount']);
+      expect(logs).toEqual(['Did destroy']);
       expect(container.childNodes).toEqual([]);
     });
 
@@ -1356,6 +1767,233 @@ describe('hooks', () => {
         'Unmount normal [current: 1]',
         'Mount normal [current: 1]',
       ]);
+    });
+  });
+
+  describe('useMemo', () => {
+    it('memoizes value by comparing to previous inputs', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function CapitalizedText(props) {
+        const text = props.text;
+        const capitalizedText = useMemo(
+          () => {
+            logs.push(`Capitalize '${text}'`);
+            return text.toUpperCase();
+          },
+          [text],
+        );
+        return <Text text={capitalizedText} />;
+      }
+
+      render(<CapitalizedText text="hello" />, container);
+      expect(logs).toEqual(["Capitalize 'hello'", 'HELLO']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HELLO');
+
+      logs = [];
+      render(<CapitalizedText text="hi" />, container);
+      expect(logs).toEqual(["Capitalize 'hi'", 'HI']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HI');
+
+      logs = [];
+      render(<CapitalizedText text="hi" />, container);
+      expect(logs).toEqual(['HI']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('HI');
+
+      logs = [];
+      render(<CapitalizedText text="goodbye" />, container);
+      expect(logs).toEqual(["Capitalize 'goodbye'", 'GOODBYE']);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('GOODBYE');
+    });
+
+    it('always re-computes if no inputs are provided', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function LazyCompute(props) {
+        const computed = useMemo(props.compute);
+        return <Text text={computed} />;
+      }
+
+      function computeA() {
+        logs.push('compute A');
+        return 'A';
+      }
+
+      function computeB() {
+        logs.push('compute B');
+        return 'B';
+      }
+
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeA} />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={computeB} />, container);
+      expect(logs).toEqual(['compute B', 'B']);
+    });
+
+    it('should not invoke memoized function during re-renders unless inputs change', () => {
+      const container = createNodeElement('div');
+      let logs = [];
+
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+      function LazyCompute(props) {
+        const computed = useMemo(() => props.compute(props.input), [
+          props.input,
+        ]);
+        const [count, setCount] = useState(0);
+        if (count < 3) {
+          setCount(count + 1);
+        }
+        return <Text text={computed} />;
+      }
+
+      function compute(val) {
+        logs.push('compute ' + val);
+        return val;
+      }
+
+      render(<LazyCompute compute={compute} input="A" />, container);
+      expect(logs).toEqual(['compute A', 'A']);
+
+      logs = [];
+      render(<LazyCompute compute={compute} input="A" />, container);
+      expect(logs).toEqual(['A']);
+
+      logs = [];
+      render(<LazyCompute compute={compute} input="B" />, container);
+      expect(logs).toEqual(['compute B', 'B']);
+    });
+  });
+
+  describe('useImperativeHandle', () => {
+    it('does not update when deps are the same', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(ref, () => ({count, dispatch}), []);
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      // Intentionally not updated because of [] deps:
+      expect(counter.current.count).toBe(0);
+    });
+
+    it('automatically updates when deps are not specified', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(ref, () => ({count, dispatch}));
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+    });
+
+    it('updates when deps are different', () => {
+      const container = createNodeElement('div');
+      const INCREMENT = 'INCREMENT';
+      let logs = [];
+      function Text(props) {
+        logs.push(props.text);
+        return <span>{props.text}</span>;
+      }
+
+      function reducer(state, action) {
+        return action === INCREMENT ? state + 1 : state;
+      }
+
+      let totalRefUpdates = 0;
+      function Counter(props, ref) {
+        const [count, dispatch] = useReducer(reducer, 0);
+        useImperativeHandle(
+          ref,
+          () => {
+            totalRefUpdates++;
+            return {count, dispatch};
+          },
+          [count],
+        );
+        return <Text text={'Count: ' + count} />;
+      }
+
+      Counter = forwardRef(Counter);
+      const counter = createRef(null);
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
+      expect(counter.current.count).toBe(0);
+      expect(totalRefUpdates).toBe(1);
+
+      counter.current.dispatch(INCREMENT);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+      expect(totalRefUpdates).toBe(2);
+
+      // Update that doesn't change the ref dependencies
+      render(<Counter ref={counter} />, container);
+      expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
+      expect(counter.current.count).toBe(1);
+      expect(totalRefUpdates).toBe(2); // Should not increase since last time
     });
   });
 });

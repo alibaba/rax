@@ -32,25 +32,31 @@ export default {
       }
     }
   },
-  mount(element, container, parentInstance) {
+  mount(element, container, { parent, hydrate }) {
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.beforeRender();
     }
 
     const driver = Host.driver;
 
-    // Before render callback
-    driver.beforeRender && driver.beforeRender();
-
     // Real native root node is body
     if (container == null) {
       container = driver.createBody();
     }
 
+    const renderOptions = {
+      element,
+      container,
+      hydrate
+    };
+
+    // Before render callback
+    driver.beforeRender && driver.beforeRender(renderOptions);
+
     // Get the context from the conceptual parent component.
     let parentContext;
-    if (parentInstance) {
-      let parentInternal = parentInstance._internal;
+    if (parent) {
+      let parentInternal = parent._internal;
       parentContext = parentInternal._processChildContext(parentInternal._context);
     }
 
@@ -74,7 +80,7 @@ export default {
     rootInstance.update(element);
 
     // After render callback
-    driver.afterRender && driver.afterRender(rootInstance);
+    driver.afterRender && driver.afterRender(renderOptions);
 
     if (process.env.NODE_ENV !== 'production') {
       // Devtool render new root hook

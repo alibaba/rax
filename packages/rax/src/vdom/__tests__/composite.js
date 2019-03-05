@@ -56,13 +56,13 @@ describe('CompositeComponent', function() {
       }
     }
 
-    expect(Host.component).toBe(null);
+    expect(Host.owner).toBe(null);
 
     expect(function() {
       render(<BadComponent />);
     }).not.toThrow();
 
-    expect(Host.component).toBe(null);
+    expect(Host.owner).toBe(null);
   });
 
   it('donot call render when setState in componentWillMount', function() {
@@ -813,5 +813,71 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[1].childNodes[0].data).toBe('3');
     expect(container.childNodes[2].childNodes[0].data).toBe('0');
     expect(container.childNodes[3].childNodes[0].data).toBe('3');
+  });
+
+  it('should update fragment to right position', function() {
+    let el = createNodeElement('div');
+    class Hello1 extends Component {
+      render() {
+        if (this.props.show) {
+          return 'hello1';
+        }
+        return null;
+      }
+    }
+
+    class Text extends Component {
+      render() {
+        return this.props.children;
+      }
+    }
+
+    class Hello2 extends Component {
+      render() {
+        if (this.props.show) {
+          return [<Text key="1">1</Text>, <Text key="2">2</Text>, <Text key="3">3</Text>];
+        } else {
+          return [<Text key="1">1</Text>, <Text key="2">2</Text>];
+        }
+      }
+    }
+
+    class MyComponent extends Component {
+      state = {
+        show: false
+      }
+      render() {
+        return (
+          <div>
+            {'foo'}
+            <Hello1 show={this.state.show} />
+            <Hello2 show={this.state.show} />
+          </div>
+        );
+      }
+    }
+
+    let inst = render(<MyComponent />, el);
+
+    let container = el.childNodes[0];
+    let childNodes = container.childNodes;
+    expect(childNodes.length).toBe(4);
+    expect(childNodes[0].data).toBe('foo');
+    expect(childNodes[1].data).toBe(' empty ');
+    expect(childNodes[2].data).toBe('1');
+    expect(childNodes[3].data).toBe('2');
+
+    inst.setState({
+      show: true
+    });
+
+    childNodes = container.childNodes;
+
+    expect(childNodes.length).toBe(5);
+    expect(childNodes[0].data).toBe('foo');
+    expect(childNodes[1].data).toBe('hello1');
+    expect(childNodes[2].data).toBe('1');
+    expect(childNodes[3].data).toBe('2');
+    expect(childNodes[4].data).toBe('3');
   });
 });

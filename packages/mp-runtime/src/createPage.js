@@ -5,6 +5,11 @@ import { pushPage, unlinkPage, popupPage } from './pageHub';
 const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
 const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
 
+const STATE_CONSTRUCTOR = 0;
+const STATE_WILLMOUNT = 1;
+const STATE_DIDMOUNT = 2;
+const STATE_UNMOUNT = 3;
+
 /**
  * Interface of mp page
  */
@@ -43,11 +48,23 @@ class Page {
       return;
     }
 
-    this.vnode.mergeState(computeChangedData(this.data, expData), callback);
+    const newData = computeChangedData(this.data, expData);
+    this.vnode.state = {
+      ...this.vnode.state,
+      ...newData,
+    };
+
+    if (this.vnode._lifecycle <= STATE_WILLMOUNT) {
+      this.vnode.cycleHooks.didMount.push(
+        this.vnode.setState.bind(this.vnode, newData, callback)
+      );
+    } else {
+      this.vnode.setState(newData, callback);
+    }
   }
 }
 
-export default function createPage(renderFactory, requireCoreModule, config = {}) {
+export default function createPage(renderFactory, requireCoreModule, config = {}, cssTexts) {
   // each page has unique vars that can not be shared
   const pageContext = requireCoreModule('@core/context');
   const pageEventEmitter = requireCoreModule('@core/page');
@@ -55,6 +72,17 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
 
   const { document, location, evaluator, pageQuery, pageName, clientId } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
+
+  if (Array.isArray(cssTexts)) {
+    for (let i = 0, l = cssTexts.length; i < l; i++) {
+      if (typeof cssTexts[i] === 'object') {
+        const cssTextNode = document.createTextNode(cssTexts[i].toString());
+        const styleNode = document.createElement('style');
+        styleNode.appendChild(cssTextNode);
+        document.body.appendChild(styleNode);
+      }
+    }
+  }
 
   const render = getWebViewSource
     ? (data) => {
@@ -79,7 +107,9 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   return class extends Rax.Component {
     constructor(props, context) {
       super(props, context);
+      this._lifecycle = STATE_CONSTRUCTOR;
 
+      this._document = document;
       // create Page instance, initialize data and setData
       this.pageInstance = new Page(this, config, {
         viewId: clientId,
@@ -88,12 +118,12 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
       /**
        * willMount: [fn],
        * didMount: [fn],
-       * unMount: []
+       * unMount: [fn],
        */
       this.cycleHooks = {
         willMount: [],
         didMount: [],
-        unMount: []
+        unMount: [],
       };
 
       const { onLoad, onHide, onUnload, onPageScroll, onPullIntercept, onPullDownRefresh } = config;
@@ -155,6 +185,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     }
 
     componentWillMount() {
+      this._lifecycle = STATE_WILLMOUNT;
       /**
        * Add page instance to page stack.
        * When page shown, popup page instance.
@@ -198,10 +229,12 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     }
 
     componentDidMount() {
+      this._lifecycle = STATE_DIDMOUNT;
       this.runCycleHooks('didMount');
     }
 
     componentWillUnmount() {
+      this._lifecycle = STATE_UNMOUNT;
       unlinkPage(this.pageInstance);
       for (let i = 0, l = this.cycleListeners.length; i < l; i++) {
         pageEventEmitter.off(this.cycleListeners[i].type, this.cycleListeners[i].fn);
@@ -215,30 +248,6 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         while (fn = this.cycleHooks[cycleName].shift()) {
           fn();
         }
-      }
-    }
-
-    /**
-     * merge data to state
-     * before first render
-     */
-    mergeState(data, callback) {
-      if (data == null) {
-        return;
-      }
-
-      this.state = {
-        ...this.state,
-        ...data,
-      };
-
-      // In case component is not mounted
-      if (this.updater === undefined) {
-        if (typeof callback === 'function') {
-          this.cycleHooks.didMount.push(callback.bind(this.pageInstance));
-        }
-      } else {
-        this.setState(this.state, callback);
       }
     }
 

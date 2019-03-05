@@ -24,6 +24,7 @@
   }
 </style>
 <a-page>
+
   <div class="card">
     <h4 class="title">a-text</h4>
     <div class="demo">
@@ -1028,4 +1029,18 @@
     </div>
   </div>
 
+  <div class="card">
+    <h4 class="title">a-animation</h4>
+    <div class="demo">
+      <a-animation event-type="pan" event-origin="image">
+        <a-image
+          id="image"
+          src="https://img.alicdn.com/tfs/TB1OiSDJjDpK1RjSZFrXXa78VXa-500-759.png"
+          style="display: flex;width: 300px;height: 300px;transition: transform 0.1s;"
+          animation-style="transform: perspective(600px) rotateX(${event.state === 'end' ? 0 : -(event.clientY - 250 / 2) / 25}deg) rotateY(${event.state === 'end' ? 0 : (event.clientX - 175) / 4}deg) scale(${event.state === 'end' ? 1 : 1.02})"
+          class="image"
+        />
+      </a-animation>
+    </div>
+  </div>
 </a-page>

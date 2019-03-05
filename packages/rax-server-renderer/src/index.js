@@ -1,34 +1,32 @@
 const EMPTY_OBJECT = {};
+const TRUE = true;
 const UNITLESS_NUMBER_PROPS = {
-  animationIterationCount: true,
-  borderImageOutset: true,
-  borderImageSlice: true,
-  borderImageWidth: true,
-  boxFlex: true,
-  boxFlexGroup: true,
-  boxOrdinalGroup: true,
-  columnCount: true,
-  flex: true,
-  flexGrow: true,
-  flexPositive: true,
-  flexShrink: true,
-  flexNegative: true,
-  flexOrder: true,
-  gridRow: true,
-  gridColumn: true,
-  fontWeight: true,
-  lineClamp: true,
-  // We make lineHeight default is px that is diff with w3c spec
-  // lineHeight: true,
-  opacity: true,
-  order: true,
-  orphans: true,
-  tabSize: true,
-  widows: true,
-  zIndex: true,
-  zoom: true,
-  // Weex only
-  lines: true,
+  animationIterationCount: TRUE,
+  borderImageOutset: TRUE,
+  borderImageSlice: TRUE,
+  borderImageWidth: TRUE,
+  boxFlex: TRUE,
+  boxFlexGroup: TRUE,
+  boxOrdinalGroup: TRUE,
+  columnCount: TRUE,
+  flex: TRUE,
+  flexGrow: TRUE,
+  flexPositive: TRUE,
+  flexShrink: TRUE,
+  flexNegative: TRUE,
+  flexOrder: TRUE,
+  gridRow: TRUE,
+  gridColumn: TRUE,
+  fontWeight: TRUE,
+  lineClamp: TRUE,
+  lineHeight: TRUE,
+  opacity: TRUE,
+  order: TRUE,
+  orphans: TRUE,
+  tabSize: TRUE,
+  widows: TRUE,
+  zIndex: TRUE,
+  zoom: TRUE
 };
 
 const VOID_ELEMENTS = {
@@ -132,7 +130,7 @@ function renderElementToString(element, context, options) {
   if (typeof element === 'string') {
     return escapeText(element);
   } else if (element == null || element === false || element === true) {
-    return '<!-- empty -->';
+    return '<!-- _ -->';
   } else if (typeof element === 'number') {
     return String(element);
   } else if (Array.isArray(element)) {

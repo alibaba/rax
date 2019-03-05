@@ -15,12 +15,10 @@ function instantiateComponent(element) {
       instance = new Host.Composite(element);
     }
   } else if (typeof element === 'string' || typeof element === 'number') {
-    instance = new Host.Text(element);
+    instance = new Host.Text(String(element));
   } else {
     throwInvalidComponentError(element);
   }
-
-  instance._mountIndex = 0;
 
   return instance;
 }

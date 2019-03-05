@@ -10,7 +10,10 @@ module.exports = {
           chrome: '49',
           ios: '8'
         },
-        modules: type === 'miniprogram' ? 'commonjs' : 'auto'
+        modules: type === 'miniprogram' ? 'commonjs' : 'auto',
+        include: [
+          'transform-computed-properties'
+        ]
       }
     ]
   ],

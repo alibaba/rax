@@ -16,11 +16,11 @@
     "npm": ">=3.0.0"
   },
   "peerDependencies": {
-    "rax": "^1.0.0-beta.0"
+    "rax": "^1.0.0-beta"
   },
   "devDependencies": {
-    "rax": "^1.0.0-beta.0",
-    "driver-server": "^0.6.5"
+    "rax": "^1.0.0-beta",
+    "driver-server": "^1.0.0-beta"
   },
   "dependencies": {
     "path-to-regexp": "^3.0.0"

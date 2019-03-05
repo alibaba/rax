@@ -3,6 +3,8 @@ import deepCopy from './deepCopy';
 import { registerComponent } from './componentsHub';
 import { normalizeScopedSlots } from './normalizeScopedSlots';
 
+const STYLE_FLAG_KEY = '_appendedComponentStyle';
+
 /**
  * Returns a boolean indicating whether the object has the specified property as its own property.
  * @param {Object} object
@@ -31,9 +33,8 @@ function injectSlot(child, $slots) {
 // Count of component instance numbers.
 let componentCount = 0;
 
-export default function createComponent(renderFactory, render, config, componentPath) {
+export default function createComponent(renderFactory, render, config, componentPath, cssText) {
   const templateRender = renderFactory(render);
-
   const component = class extends render.Component {
     static contextTypes = {
       $page: null,
@@ -41,6 +42,23 @@ export default function createComponent(renderFactory, render, config, component
 
     constructor(props, context) {
       super(props, context);
+
+      /**
+       * One component's style can only be append once in each docuemnt(page).
+       * Use a flag in document object to mark.
+       */
+      if (context.$page && context.$page.vnode) {
+        const document = context.$page.vnode._document;
+        const styleFlag = document[STYLE_FLAG_KEY] = document[STYLE_FLAG_KEY] || {};
+        if (!styleFlag[componentPath] && cssText) {
+          styleFlag[componentPath] = true;
+          const cssTextNode = document.createTextNode(String(cssText));
+          const styleNode = document.createElement('style');
+          styleNode.appendChild(cssTextNode);
+          document.body.insertBefore(styleNode);
+        }
+      }
+
       /**
        * If not defined `data` field in config,
        * then default val will be an empty plain object,
