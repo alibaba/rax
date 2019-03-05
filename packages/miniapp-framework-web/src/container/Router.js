@@ -29,7 +29,9 @@ export default class Router {
       && this.currentClient && this.currentClient.prevClient
       && state.clientId === this.currentClient.prevClient.clientId
     ) {
-      this.navigateBack();
+      this.navigateBack({
+        replaceState: true
+      });
     } else {
       let hash = location.hash;
       if (hash && hash.indexOf(ROUTE_HASH_PREFIX) === 0) {
@@ -38,7 +40,7 @@ export default class Router {
 
       this.navigateTo({
         pageName: hash,
-        replaceHash: true,
+        replaceState: true,
       });
     }
   }
@@ -84,7 +86,7 @@ export default class Router {
     client.prevClient = this.currentClient;
 
     const hash = ROUTE_HASH_PREFIX + pageName;
-    if (params.replaceHash || !this.currentClient) {
+    if (params.replaceState || !this.currentClient) {
       history.replaceState({ clientId }, null, hash);
     } else {
       history.pushState({clientId}, null, hash);
@@ -130,7 +132,7 @@ export default class Router {
 
     this.navigateTo({
       pageName: params.pageName,
-      replaceHash: true
+      replaceState: true
     });
   }
 

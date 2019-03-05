@@ -129,9 +129,16 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
   const tabbar = new Tabbar(tabbarList, router, tabbarEl, mainEl);
 
   const navigation = new Navigation(router, tabbar);
-  navigation.navigateTo({
-    pageName: homepage,
-  });
+
+  if (showHeaderBar) {
+    tabbar.switchTab({
+      pageName: homepage
+    });
+  } else {
+    navigation.navigateTo({
+      pageName: homepage
+    });
+  }
 
   return { navigation, tabbar };
 }
