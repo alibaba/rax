@@ -112,7 +112,7 @@ export default class MessageRouter {
         if (my[method]) {
           my[method](params, resolveCallback, rejectCallback);
         } else {
-          console.warn('API Module not exists or supported.');
+          log('WARN: API Module not exists or supported.');
         }
     }
   }
