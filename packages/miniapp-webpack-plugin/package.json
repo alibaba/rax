@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "address": "^1.0.3",
-    "atag": "^0.1.41",
     "axios": "^0.18.0",
     "babel-code-frame": "^6.22.0",
     "babel-generator": "^6.19.0",

@@ -3,7 +3,6 @@ const { readFileSync, existsSync } = require('fs');
 const address = require('address');
 const ejs = require('ejs');
 
-const { version: atagVersion } = require('atag/package.json');
 const getFrameworkVersion = require('../utils/getFrameworkVersion');
 
 const NATIVE_FRAMEWORK_NAME = 'miniapp-framework';
@@ -66,17 +65,7 @@ module.exports = class WebpackHtmlPlugin {
       }
 
       const template = readFileSync(templatePath, 'utf-8');
-
       const localIP = address.ip();
-
-      const options = {
-        appConfig: JSON.stringify(appConfig, null, 2),
-        externalApi: externalApiScript,
-        isDebug: process.env.DEBUG,
-        atagVersion,
-        debugFrameworkURL: `http://${localIP}:9002/miniapp-framework-web.js`
-      };
-
       const finalOutputName = 'index.html';
       const frameworkName = this.options.target === 'web'
         ? WEB_FRAMEWORK_NAME
@@ -87,13 +76,19 @@ module.exports = class WebpackHtmlPlugin {
         getFrameworkVersion('atag')
       ])
         .then(([frameworkVersion, atagVersion]) => {
-          options.externalScripts = [
-            `https://g.alicdn.com/code/npm/atag/${atagVersion}/dist/atag.js`,
-            `https://g.alicdn.com/code/npm/${frameworkName}/${frameworkVersion}/dist/${frameworkName}.min.js`,
-          ];
+          const options = {
+            appConfig: JSON.stringify(appConfig, null, 2),
+            externalApi: externalApiScript,
+            isDebug: process.env.DEBUG,
+            atagVersion,
+            externalScripts: [
+              `https://g.alicdn.com/code/npm/atag/${atagVersion}/dist/atag.js`,
+              `https://g.alicdn.com/code/npm/${frameworkName}/${frameworkVersion}/dist/${frameworkName}.min.js`,
+            ],
+            debugFrameworkURL: `http://${localIP}:9002/miniapp-framework-web.js`
+          };
 
           const content = ejs.render(template, options);
-
           compilation.assets[finalOutputName] = {
             source: () => content,
             size: () => content.length
