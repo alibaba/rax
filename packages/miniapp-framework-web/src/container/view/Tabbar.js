@@ -70,6 +70,14 @@ export default class Tabbar {
         tabBarEl.appendChild(createTabBarItem(pageName, iconPath, text, this._onTabBarItemClick));
       });
     }
+
+    router.listen((client) => {
+      if (client.isTab) {
+        this.showTabBar();
+      } else {
+        this.hideTabBar();
+      }
+    });
   }
 
   _onTabBarItemClick = (evt) => {

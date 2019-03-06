@@ -15,6 +15,7 @@ export default class Router {
     this.clients = [];
     this.tabClients = {}; // pageName -> client
     this.currentClient = null;
+    this.listeners = [];
 
     /**
      * Listen to browser's history events.
@@ -94,6 +95,8 @@ export default class Router {
     }
 
     this.currentClient = client;
+
+    this.notifyListeners();
   }
 
   /**
@@ -107,6 +110,7 @@ export default class Router {
 
     if (!params.replaceState) {
       history.go(-delta);
+      return;
     }
 
     let prevClient = this.currentClient;
@@ -121,6 +125,8 @@ export default class Router {
     } else {
       log('No prev page at all.');
     }
+
+    this.notifyListeners();
   }
 
   /**
@@ -147,12 +153,31 @@ export default class Router {
       history.replaceState({clientId: client.clientId}, null, hash);
 
       client.show();
+
+      this.notifyListeners();
     } else {
       this.navigateTo({
         ...params,
         isTab: true,
       });
     }
+  }
+
+  notifyListeners() {
+    this.listeners.forEach(listener => {
+      listener && listener(this.currentClient)
+    });
+  }
+
+  removeListener(index) {
+    this.listeners[index] = null;
+  }
+
+  listen(fn) {
+    this.listeners.push(fn);
+    return () => {
+      this.removeListener(this.listeners.length);
+    };
   }
 }
 
