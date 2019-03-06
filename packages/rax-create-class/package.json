@@ -15,9 +15,6 @@
   "engines": {
     "npm": ">=3.0.0"
   },
-  "dependencies": {
-    "rax-component": "^1.0.0-beta"
-  },
   "peerDependencies": {
     "rax": "^1.0.0-beta"
   },

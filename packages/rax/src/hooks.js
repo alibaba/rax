@@ -12,7 +12,7 @@ function getCurrentRenderingInstance() {
 }
 
 function areInputsEqual(inputs, prevInputs) {
-  if (inputs.length !== prevInputs.length) {
+  if (prevInputs === null || inputs.length !== prevInputs.length) {
     return false;
   }
 
@@ -37,20 +37,20 @@ export function useState(initialState) {
     }
 
     const setState = newState => {
-      const current = hooks[hookID][0];
+      const eagerState = hooks[hookID][2];
 
       if (typeof newState === 'function') {
-        newState = newState(current);
+        newState = newState(eagerState);
       }
 
-      if (newState !== current) {
+      if (!is(newState, eagerState)) {
         // This is a render phase update.  After this render pass, we'll restart
         if (Host.owner && Host.owner._instance === currentInstance) {
-          hooks[hookID][0] = newState;
+          hooks[hookID][2] = newState;
           currentInstance.isScheduled = true;
         } else {
           !Host.isUpdating && flush();
-          hooks[hookID][0] = newState;
+          hooks[hookID][2] = newState;
           currentInstance.update();
         }
       }
@@ -59,9 +59,13 @@ export function useState(initialState) {
     hooks[hookID] = [
       initialState,
       setState,
+      initialState
     ];
   }
-
+  if (!is(hooks[hookID][0], hooks[hookID][2])) {
+    hooks[hookID][0] = hooks[hookID][2];
+    currentInstance.didReceiveUpdate = true;
+  }
   return hooks[hookID];
 }
 
@@ -82,7 +86,7 @@ function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
-  inputs = inputs != null ? inputs : [effect];
+  inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
     const create = (immediately) => {
@@ -124,7 +128,7 @@ function useEffectImpl(effect, inputs, defered) {
     currentInstance.willUnmount.push(destory);
     currentInstance.didUpdate.push(() => {
       const { prevInputs, inputs, create } = hooks[hookID];
-      if (prevInputs == null || !areInputsEqual(inputs, prevInputs)) {
+      if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
         create();
       }
@@ -139,7 +143,7 @@ function useEffectImpl(effect, inputs, defered) {
 }
 
 export function useImperativeHandle(ref, create, inputs) {
-  const nextInputs = inputs != null ? inputs.concat([ref]) : [ref, create];
+  const nextInputs = inputs != null ? inputs.concat([ref]) : null;
 
   useLayoutEffect(() => {
     if (typeof ref === 'function') {
@@ -176,42 +180,48 @@ export function useMemo(create, inputs) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
+  inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
     hooks[hookID] = [create(), inputs];
   } else {
-    const hook = hooks[hookID];
-    const prevInputs = hook[1];
-    if (!areInputsEqual(inputs, prevInputs)) {
-      hook[0] = create();
+    const prevInputs = hooks[hookID][1];
+    if (inputs === null || !areInputsEqual(inputs, prevInputs)) {
+      hooks[hookID] = [create(), inputs];
     }
   }
 
   return hooks[hookID][0];
 }
 
-export function useReducer(reducer, initialState, initialAction) {
+export function useReducer(reducer, initialArg, init) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
-    if (initialAction) {
-      initialState = reducer(initialState, initialAction);
-    }
+    const initialState = init !== undefined ? init(initialArg) : initialArg;
 
     const dispatch = action => {
       const hook = hooks[hookID];
-      // reducer will get in the next render, before that we add all
+      // reducer will update in the next render, before that we add all
       // actions to the queue
       const queue = hook[2];
       // This is a render phase update.  After this render pass, we'll restart
       if (Host.owner && Host.owner._instance === currentInstance) {
-        queue.push(action);
+        queue.actions.push(action);
         currentInstance.isScheduled = true;
       } else {
         !Host.isUpdating && flush();
-        queue.push(action);
+
+        const currentState = queue.eagerState;
+        const eagerReducer = queue.eagerReducer;
+        const eagerState = eagerReducer(currentState, action);
+        if (is(eagerState, currentState)) {
+          return;
+        }
+        queue.eagerState = eagerState;
+        queue.actions.push(action);
         currentInstance.update();
       }
     };
@@ -219,16 +229,32 @@ export function useReducer(reducer, initialState, initialAction) {
     return hooks[hookID] = [
       initialState,
       dispatch,
-      []
+      {
+        actions: [],
+        eagerReducer: reducer,
+        eagerState: initialState
+      }
     ];
   }
   const hook = hooks[hookID];
   const queue = hook[2];
   let next = hook[0];
-  for (let i = 0; i < queue.length; i++) {
-    next = reducer(next, queue[i]);
+
+  if (currentInstance._reRenders > 0 || queue.eagerReducer != reducer) {
+    for (let i = 0; i < queue.actions.length; i++) {
+      next = reducer(next, queue.actions[i]);
+    }
+  } else {
+    next = queue.eagerState;
   }
-  hook[0] = next;
-  hook[2] = [];
+
+  if (!is(next, hook[0])) {
+    hook[0] = next;
+    currentInstance.didReceiveUpdate = true;
+  }
+
+  queue.eagerReducer = reducer;
+  queue.eagerState = next;
+  queue.actions.length = 0;
   return hooks[hookID];
 }
