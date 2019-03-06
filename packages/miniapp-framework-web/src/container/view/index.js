@@ -37,6 +37,19 @@ const styles = {
   icon: {
     width: '16px',
   },
+  tabBar: {
+    width: '100%',
+    height: '12.8vw',
+    backgroundColor: '#fff',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    borderTop: '1px solid #eee',
+  },
 };
 
 const baseStyleTpl = `<style>${baseCSS}</style>`;

@@ -5,6 +5,9 @@ const ejs = require('ejs');
 
 const { version: atagVersion } = require('atag/package.json');
 const getFrameworkVersion = require('../utils/getFrameworkVersion');
+const NATIVE_FRAMEWORK_NAME = 'miniapp-framework';
+const WEB_FRAMEWORK_NAME = 'miniapp-framework-web';
+const IDE_FRAMEWORK_NAME = 'miniapp-framework-ide';
 
 /**
  * 基于 framework 中的 view 生成 html 页面
@@ -18,17 +21,25 @@ module.exports = class WebpackHtmlPlugin {
   }
 
   getFrameworkVersion() {
-    const {
-      appConfig
-    } = this.options;
+    const { appConfig, target } = this.options;
 
-    if (appConfig.frameworkVersion) {
-      return new Promise(resolve => {
-        resolve(appConfig.frameworkVersion);
-      });
+    switch (target) {
+      case 'web': {
+        return appConfig.frameworkWebVersion
+          ? Promise.resolve(appConfig.frameworkWebVersion)
+          : getFrameworkVersion(WEB_FRAMEWORK_NAME);
+      }
+      case 'ide': {
+        return appConfig.frameworkIdeVersion
+          ? Promise.resolve(appConfig.frameworkIdeVersion)
+          : getFrameworkVersion(IDE_FRAMEWORK_NAME);
+      }
+      default: {
+        return appConfig.frameworkVersion
+          ? Promise.resolve(appConfig.frameworkVersion)
+          : getFrameworkVersion(NATIVE_FRAMEWORK_NAME);
+      }
     }
-
-    return getFrameworkVersion();
   }
 
   apply(compiler) {
@@ -62,13 +73,23 @@ module.exports = class WebpackHtmlPlugin {
         externalApi: externalApiScript,
         isDebug: process.env.DEBUG,
         atagVersion,
-        debugFrameworkURL: 'http://localhost:9002/miniapp-framework-web.js'
+        debugFrameworkURL: `http://${localIP}:9002/miniapp-framework-web.js`
       };
 
       const finalOutputName = 'index.html';
+      const frameworkName = this.options.target === 'web'
+        ? WEB_FRAMEWORK_NAME
+        : this.options.target === 'ide' ? IDE_FRAMEWORK_NAME : NATIVE_FRAMEWORK_NAME;
 
-      this.getFrameworkVersion().then((frameworkVersion) => {
-        options.frameworkVersion = frameworkVersion;
+      Promise.all([
+        this.getFrameworkVersion(),
+        getFrameworkVersion('atag')
+      ])
+        .then(([frameworkVersion, atagVersion]) => {
+        options.externalScripts = [
+          `https://g.alicdn.com/code/npm/atag/${atagVersion}/dist/atag.js`,
+          `https://g.alicdn.com/code/npm/${frameworkName}/${frameworkVersion}/dist/${frameworkName}.min.js`,
+        ];
 
         const content = ejs.render(template, options);
 
