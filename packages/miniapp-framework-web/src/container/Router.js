@@ -108,7 +108,7 @@ export default class Router {
   navigateBack(params = {}) {
     let delta = params.delta || 1;
 
-     /**
+    /**
      * While executing navigateBack method, call histroy.go to sync browser's navigator.
      */
     if (!params.replaceState) {
@@ -168,7 +168,7 @@ export default class Router {
 
   notifyListeners() {
     this.listeners.forEach(listener => {
-      listener && listener(this.currentClient)
+      listener && listener(this.currentClient);
     });
   }
 
