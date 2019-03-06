@@ -62,7 +62,7 @@ module.exports = class WebpackHtmlPlugin {
         externalApi: externalApiScript,
         isDebug: process.env.DEBUG,
         atagVersion,
-        debugFrameworkURL: `http://${localIP}:9002/miniapp-framework-web.js`
+        debugFrameworkURL: `http://localhost:9002/miniapp-framework-web.js`
       };
 
       const finalOutputName = 'index.html';

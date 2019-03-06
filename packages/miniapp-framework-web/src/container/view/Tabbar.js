@@ -75,13 +75,11 @@ export default class Tabbar {
   _onTabBarItemClick = (evt) => {
     const { pageName } = evt.currentTarget.dataset;
     this.switchTab({
-      pageName
+      url: pageName
     });
   }
 
-  check(params) {
-    const { pageName } = params;
-
+  check(pageName) {
     const item = this.data.find((item) => {
       if (item.pageName === pageName) {
         return true;
@@ -97,9 +95,21 @@ export default class Tabbar {
     if (!pageName) {
       log('Can not redirect to empty page.');
       return;
-    } else if (this.router.currentClient && this.router.currentClient.pageName === pageName) {
-      log('Can not redirect to same page.');
+    }
+
+    if (!this.check(pageName)) {
+      log('Can not redirect to a page without tabbar.');
       return;
+    }
+
+    if (this.router.currentClient) {
+      if (this.router.currentClient.pageName === pageName) {
+        log('Can not redirect to same page.');
+        return;
+      } else if (!this.check(this.router.currentClient.pageName)) {
+        log('Can not call switchTab in a page without tabbar.');
+        return;
+      }
     }
 
     const data = this.data;
