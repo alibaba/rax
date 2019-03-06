@@ -1,7 +1,7 @@
 {
-  "name": "rax-component",
+  "name": "rax-dom",
   "version": "1.0.0-beta.0",
-  "description": "rax-component",
+  "description": "Rax DOM render",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -14,6 +14,13 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "engines": {
     "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "driver-dom": "^1.0.0-beta",
+    "rax-hydrate": "^1.0.0-beta",
+    "rax-unmount-component-at-node": "^1.0.0-beta",
+    "rax-find-dom-node": "^1.0.0-beta",
+    "rax-create-portal": "^1.0.0-beta"
   },
   "peerDependencies": {
     "rax": "^1.0.0-beta"

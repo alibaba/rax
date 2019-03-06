@@ -1,5 +1,4 @@
-import Component from 'rax-component';
-import { render, createElement } from 'rax';
+import { Component, render, createElement } from 'rax';
 import unmountComponentAtNode from 'rax-unmount-component-at-node';
 
 class Portal extends Component {

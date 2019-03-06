@@ -21,7 +21,6 @@
   "devDependencies": {
     "rax": "^1.0.0-beta",
     "driver-server": "^1.0.0-beta",
-    "rax-component": "^1.0.0-beta",
     "rax-unmount-component-at-node": "^1.0.0-beta"
   }
 }
