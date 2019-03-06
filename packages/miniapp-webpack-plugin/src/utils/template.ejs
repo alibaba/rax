@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="format-detection" content="telephone=no">
-  <title>MiniApp Example in IDE</title>
+  <title>MiniApp</title>
   <style>
     html {
       -ms-text-size-adjust: 100%;
@@ -35,137 +35,24 @@
       text-decoration: none;
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
-
-    #main {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      position: absolute;
-      top: 10vw;
-      bottom: 12.8vw;
-      left: 0;
-      right: 0;
-      margin: 0;
-    }
-
-    #headerBar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 10vw;
-      background-color: #f9f9f9;
-    }
-
-    .headerInfo {
-      font-size: 4.3vw;
-      color: #272727;
-      margin-top: 1.6vw;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      padding: 0 3.7vw;
-      height: 10vw;
-    }
-
-    .title {
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    #tabBar {
-      width: 100%;
-      height: 12.8vw;
-      background-color: #fff;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: center;
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      border-top: 1px solid #eee;
-    }
-
-    .tabbarItem {
-      text-align: center;
-      position: relative;
-    }
-
-    .tabbarItem .icon {
-      width: 4.2vw;
-    }
-
-    .tabbar-item-text {
-      font-size: 3.2vw;
-      color: #686868;
-      white-space: nowrap;
-      line-height: 1em;
-    }
-
-    .hot-dot {
-      position: absolute;
-      top: -0.4vw;
-      right: 0.2vw;
-      width: 3.2vw;
-      height: 3.2vw;
-      border-radius: 3.2vw;
-      background: #f00;
-    }
-
-    .badge {
-      position: absolute;
-      top: -1vw;
-      left: 4.8vw;
-      background: #f00;
-      color: #fff;
-      height: 4.8vw;
-      min-width: 2.8vw;
-      padding: 0 1vw;
-      border-radius: 4.8vw;
-      font-size: 3.2vw;
-    }
-
-    .renderer {
-      background-color: #f4f4f4;
-      width: 100%;
-      overflow-y: scroll;
-    }
   </style>
 </head>
 
 <body>
-  <div id="headerBar">
-    <div class="headerInfo">
-      <div id="prev" style="width: 26vw;">
-        <img src="https://gw.alicdn.com/tfs/TB1cNCCqTtYBeNjy1XdXXXXyVXa-38-66.png" style="width: 2.5vw; margin-top: 1.5vw;" />
-      </div>
-      <div class="title"></div>
-
-      <div style="width: 26vw;"></div>
-    </div>
-  </div>
-  <div id="main"></div>
-  <div id="tabBar">
-    <template id="tabBarItemTemplate">
-      <div class="tabbarItem" id="tabbar-page-$3" data-page-name="$3">
-        <img src="$1" class="icon" aria-hidden="true" />
-        <div class="tabbar-item-text">$2</div>
-      </div>
-    </template>
-  </div>
-
-  <script>window.APP_MANIFEST = <%- appConfig %>;</script>
-
   <%- externalApi %>
 
   <% if (isDebug) { %>
   <script src="https://g.alicdn.com/code/npm/??atag/<%= atagVersion %>/dist/atag.js"></script>
   <script src="<%= debugFrameworkURL %>?random=<%= Math.random() %>"></script>
   <% } else { %>
-  <script src="https://g.alicdn.com/code/npm/??atag/<%= atagVersion %>/dist/atag.js,miniapp-framework/<%= frameworkVersion %>/dist/web/master.js"></script>
+    <% for (var i = 0; i < externalScripts.length; i++) {%>
+      <script src="<%= externalScripts[i] %>"></script>
+    <% } %>
   <% } %>
 
+  <script>
+    new MiniApp(<%- appConfig %>, document.body);
+  </script>
 </body>
 
 </html>
