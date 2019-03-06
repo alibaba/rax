@@ -1,6 +1,6 @@
 {
   "name": "miniapp-framework-shared",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Framework shared libs for MiniApp.",
   "main": "src/index.js",
   "repository": {
@@ -8,9 +8,9 @@
     "url": "git@github.com:alibaba/rax.git"
   },
   "dependencies": {
-    "driver-worker": "^0.7.6",
+    "driver-worker": "^0.7.9",
     "kebab-case": "^1.0.0",
-    "rax": "^0.6.4",
-    "runtime-shared": "^0.6.6-0"
+    "rax": "^0.6.7",
+    "runtime-shared": "^0.6.6-1"
   }
 }
