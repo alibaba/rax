@@ -1,25 +1,48 @@
-## <%= answers.name%>  综述
+## <%= answers.name%>
 <%= answers.description %>
 
-## 初始化组件
-    
+## Install
+
+```
+$ npm install your-component-name --save
+```
+
+## Import
+
+```
+import Picture from 'your-component-name';
+```
 
 ## API说明
 
-### 属性
+### Props
 
-|名称|类型|默认值|描述|
+|name|type|default|describe|
 |:---------------|:--------|:----|:----------|
-|name|String|''|名称|
+|name|String|''|describe|
 
-### 方法
+### Function
 
-|名称|参数|返回值|描述|
+|name|param|return|describe|
 |:---------------|:--------|:----|:----------|
-|show|/|/|展现|
+|name|Object|/|describe|
 
-### 事件
+## Example
 
-|名称|参数|描述|
-|:---------------|:--------|:----------|
-|click|/|点击|
+```
+// demo
+import {createElement, Component, render} from 'rax';
+import View from 'rax-view';
+
+class App extends Component {
+  render() {
+    return (
+      <View>
+      	{ /* your code */ } 
+      </View>
+    );
+  }
+}
+
+render(<App />);
+```

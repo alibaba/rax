@@ -5,11 +5,16 @@
   "author": "__AuthorName__",
   "main": "src/index.js",
   "scripts": {
-    "start": "rax-scripts start -p 8000",
+    "start": "rax-scripts start --type 'component' -p 8000",
     "build": "rax-scripts build",
     "test": "jest",
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
+  "files": [
+    "dist",
+    "lib",
+    "src"
+  ],
   "keywords": [
     "Rax",
     "rax-component"
