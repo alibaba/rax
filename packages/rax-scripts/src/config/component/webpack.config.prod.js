@@ -6,7 +6,7 @@ var pathConfig = require('../path.config');
 var uppercamelcase = require('uppercamelcase');
 var RaxPlugin = require('rax-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-var babelOptions = require('../babel.config');
+var babelOptions = require('./babel.config');
 
 var appPackage = require(pathConfig.appPackageJson);
 
@@ -71,10 +71,6 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
     }
   };
 }
-
-
-babelOptions.presets[1][1].modules = 'commonjs';
-babelOptions.plugins.push('add-module-exports');
 
 var webpackConfigProd = getConfig(
   entry,
