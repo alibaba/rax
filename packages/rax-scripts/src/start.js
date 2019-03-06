@@ -21,7 +21,8 @@ const envConfig = require('./config/env.config');
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
   miniapp: './config/miniapp/webpack.config.dev',
-  miniprogram: './config/miniprogram/webpack.config.dev'
+  miniprogram: './config/miniprogram/webpack.config.dev',
+  component: './config/component/webpack.config.dev'
 };
 
 /**
