@@ -1,7 +1,7 @@
 import inject from '../vdom/inject';
 import Instance from '../vdom/instance';
 import ServerDriver from 'driver-server';
-import Serializer from '../server/serializer';
+import Serializer from './serializer';
 
 // Init
 inject({
