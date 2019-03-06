@@ -1,9 +1,9 @@
-import domRenderer from 'rax-miniapp-renderer';
+import domRenderer from 'rax-miniapp-renderer/src';
 import handleModuleAPIEvent from './moduleAPIEvent';
 
 const TAG_NAME_PREFIX = 'a-';
 
-export default function renderDOM(workerHandle, mountNode, clientId, pageQuery = {}, window) {
+export default function renderDOM(workerHandle, mountNode, clientId, pageQuery = {}, globalThis = window) {
   const postMessage = workerHandle.postMessage;
   // Hook postMessage
   workerHandle.postMessage = (msg) => {
@@ -19,7 +19,7 @@ export default function renderDOM(workerHandle, mountNode, clientId, pageQuery =
   /**
    * Correct the page font-size
    */
-  const { documentElement } = window.document;
+  const { documentElement } = globalThis.document;
   documentElement.style.fontSize = documentElement.clientWidth / 750 * 100 + 'px';
 
   return domRenderer({
