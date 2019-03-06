@@ -94,7 +94,12 @@ function messageHandler({ data }) {
     }
 
     case EVENT_NAVIGATOR: {
-      const { navigateType, navigateTo } = payload;
+      let { navigateType, navigateTo } = payload;
+      /**
+       * @Note: if navigateType is `navigate`, which means
+       * it is navigateTo, others are the right types.
+       */
+      if (!navigateType || navigateType === 'navigate') navigateType = 'navigateTo';
       my[navigateType]({ url: navigateTo });
       break;
     }
