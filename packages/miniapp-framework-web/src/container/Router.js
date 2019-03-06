@@ -50,7 +50,7 @@ export default class Router {
       }
     }
 
-      // Reset flag after event is fired.
+    // Reset flag after event is fired.
     this._ineternalOperating = false;
   }
 
