@@ -50,6 +50,11 @@ export default class NativeMap extends PolymerElement {
         observer: '_observeScale',
         computed: '_computeScale(scale)',
       },
+      abroad: {
+        type: Boolean,
+        value: false,
+        observer: '_observeAbroad',
+      },
       markers: {
         type: Array,
         observer: '_observeMarkers',
