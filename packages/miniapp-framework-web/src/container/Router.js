@@ -24,35 +24,26 @@ export default class Router {
   }
 
   onPopState = (event) => {
-    /**
-     * While executing navigateBack method, this flag will be true,
-     * do not response to pop state event.
-     */
-    if (!this._ineternalOperating) {
-      const state = event.state;
-      if (
-        state && state.clientId
-        && this.currentClient && this.currentClient.prevClient
-        && state.clientId === this.currentClient.prevClient.clientId
-      ) {
-        this.navigateBack({
-          replaceState: true
-        });
-      } else {
-        let hash = location.hash;
-        if (hash && hash.indexOf(ROUTE_HASH_PREFIX) === 0) {
-          hash = hash.slice(ROUTE_HASH_PREFIX.length);
-        }
-
-        this.navigateTo({
-          pageName: hash,
-          replaceState: true,
-        });
+    const state = event.state;
+    if (
+      state && state.clientId
+      && this.currentClient && this.currentClient.prevClient
+      && state.clientId === this.currentClient.prevClient.clientId
+    ) {
+      this.navigateBack({
+        replaceState: true
+      });
+    } else {
+      let hash = location.hash;
+      if (hash && hash.indexOf(ROUTE_HASH_PREFIX) === 0) {
+        hash = hash.slice(ROUTE_HASH_PREFIX.length);
       }
-    }
 
-    // Reset flag after event is fired.
-    this._ineternalOperating = false;
+      this.navigateTo({
+        pageName: hash,
+        replaceState: true,
+      });
+    }
   }
 
   parseRouterParam(params = {}) {
@@ -115,9 +106,11 @@ export default class Router {
    *
    */
   navigateBack(params = {}) {
-    this._ineternalOperating = true;
-
     let delta = params.delta || 1;
+
+     /**
+     * While executing navigateBack method, call histroy.go to sync browser's navigator.
+     */
     if (!params.replaceState) {
       history.go(-delta);
       return;
