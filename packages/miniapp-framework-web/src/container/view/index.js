@@ -130,7 +130,7 @@ export default function renderContainerShell(messageRouter, appConfig, mountNode
 
   const navigation = new Navigation(router, tabbar);
 
-  if (showTabBar) {
+  if (showTabBar && tabbar.check(homepage)) {
     tabbar.switchTab({
       url: homepage
     });

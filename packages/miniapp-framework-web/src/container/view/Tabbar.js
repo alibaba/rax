@@ -79,7 +79,7 @@ export default class Tabbar {
     });
   }
 
-  _inTabbar(pageName) {
+  check(pageName) {
     const item = this.data.find((item) => {
       if (item.pageName === pageName) {
         return true;
@@ -97,8 +97,8 @@ export default class Tabbar {
       return;
     }
 
-    if (!this._inTabbar(pageName)) {
-      log('Can not redirect to a page does not have tabbar.');
+    if (!this.check(pageName)) {
+      log('Can not redirect to a page without tabbar.');
       return;
     }
 
@@ -106,8 +106,8 @@ export default class Tabbar {
       if (this.router.currentClient.pageName === pageName) {
         log('Can not redirect to same page.');
         return;
-      } else if (!this._inTabbar(this.router.currentClient.pageName)) {
-        log('Can not call switchTab in a page does not have tabbar.');
+      } else if (!this.check(this.router.currentClient.pageName)) {
+        log('Can not call switchTab in a page without tabbar.');
         return;
       }
     }
