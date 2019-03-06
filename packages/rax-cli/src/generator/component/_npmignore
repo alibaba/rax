@@ -1,0 +1,9 @@
+*.swp
+*.log
+
+.DS_Store
+.idea/
+package-lock.json
+coverage/
+node_modules/
+build/
