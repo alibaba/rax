@@ -124,11 +124,7 @@ export default class MessageRouter {
   }
 
   defaultHandler(data) {
-    // if (data.type) {
-    //   const [type, clientId] = data.type.split('@');
-    //   // messageChanel.onModuleAPIEvent({ ...data, type });
-    // }
-    console.log('落入 default message handler', data);
+    console.warn('Can not recognize message handler', data);
   }
 
   /**
