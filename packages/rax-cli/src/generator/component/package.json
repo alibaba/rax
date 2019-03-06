@@ -8,7 +8,7 @@
     "start": "rax-scripts start --type 'component' -p 8000",
     "build": "rax-scripts build",
     "test": "jest",
-    "lint": "eslint --ext .js --ext .jsx ./src"
+    "lint": "rax-scripts lint"
   },
   "files": [
     "dist",
@@ -41,9 +41,6 @@
     "babel-preset-rax": "^0.6.5",
     "babel-jest": "^23.6.0",
     "babel-eslint": "10.0.1",
-    "eslint": "^5.10.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-react": "~7.11.1",
     "jest": "^23.6.0",
     "jest-localstorage-mock": "^2.3.0"
   }
