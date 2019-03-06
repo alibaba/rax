@@ -5,6 +5,7 @@ const ejs = require('ejs');
 
 const { version: atagVersion } = require('atag/package.json');
 const getFrameworkVersion = require('../utils/getFrameworkVersion');
+
 const NATIVE_FRAMEWORK_NAME = 'miniapp-framework';
 const WEB_FRAMEWORK_NAME = 'miniapp-framework-web';
 const IDE_FRAMEWORK_NAME = 'miniapp-framework-ide';
@@ -86,23 +87,23 @@ module.exports = class WebpackHtmlPlugin {
         getFrameworkVersion('atag')
       ])
         .then(([frameworkVersion, atagVersion]) => {
-        options.externalScripts = [
-          `https://g.alicdn.com/code/npm/atag/${atagVersion}/dist/atag.js`,
-          `https://g.alicdn.com/code/npm/${frameworkName}/${frameworkVersion}/dist/${frameworkName}.min.js`,
-        ];
+          options.externalScripts = [
+            `https://g.alicdn.com/code/npm/atag/${atagVersion}/dist/atag.js`,
+            `https://g.alicdn.com/code/npm/${frameworkName}/${frameworkVersion}/dist/${frameworkName}.min.js`,
+          ];
 
-        const content = ejs.render(template, options);
+          const content = ejs.render(template, options);
 
-        compilation.assets[finalOutputName] = {
-          source: () => content,
-          size: () => content.length
-        };
+          compilation.assets[finalOutputName] = {
+            source: () => content,
+            size: () => content.length
+          };
 
-        callback();
-      }).catch(e => {
-        console.log(e);
-        throw new Error('HtmlWebpackPlugin: generate error');
-      });
+          callback();
+        }).catch(e => {
+          console.log(e);
+          throw new Error('HtmlWebpackPlugin: generate error');
+        });
     });
   }
 };
