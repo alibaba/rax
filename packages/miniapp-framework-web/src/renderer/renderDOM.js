@@ -1,4 +1,4 @@
-import domRenderer from 'rax-miniapp-renderer';
+import domRenderer from 'rax-miniapp-renderer/src';
 import handleModuleAPIEvent from './moduleAPIEvent';
 
 const TAG_NAME_PREFIX = 'a-';

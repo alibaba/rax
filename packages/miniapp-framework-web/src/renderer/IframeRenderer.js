@@ -55,7 +55,7 @@ export default class IframeRenderer {
         needInit = this.renderer.contentWindow.location.href === 'about:srcdoc';
       } catch (e) {}
       if (needInit) {
-        renderDOM(this.channel, this.renderer.contentDocument.body, this.clientId, this.pageQuery, this.renderer.contentWindow);
+        this.unmount = renderDOM(this.channel, this.renderer.contentDocument.body, this.clientId, this.pageQuery, this.renderer.contentWindow);
       }
       callback();
     };
@@ -66,7 +66,7 @@ export default class IframeRenderer {
       return false;
     }
 
-    this.renderer.parentElement.removeChild(this.renderer);
+    this.unmount && this.unmount();
     return this.destroyed = true;
   }
 }
