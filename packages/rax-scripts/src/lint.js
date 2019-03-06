@@ -1,5 +1,5 @@
 /* eslint quotes: off */
-var cliObject ={
+var cliObject = {
   'root': true,
   'parser': 'babel-eslint',
   'env': {
@@ -15,7 +15,7 @@ var cliObject ={
   ],
   'settings': {
     'react': {
-      'pragma': 'createElement',  // Pragma to use, default to 'React'
+      'pragma': 'createElement', // Pragma to use, default to 'React'
     }
   },
   'parserOptions': {
@@ -38,7 +38,7 @@ var cliObject ={
     'webkitCancelAnimationFrame',
     'jasmine'
   ],
-  
+
   'rules': {
     // ES6
     'prefer-const': 'off',
