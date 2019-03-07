@@ -5,6 +5,10 @@ function shouldUpdateComponent(prevElement, nextElement) {
     return prevEmpty === nextEmpty;
   }
 
+  if (Array.isArray(prevElement) && Array.isArray(nextElement)) {
+    return true;
+  }
+
   let prevType = typeof prevElement;
   let nextType = typeof nextElement;
   if (prevType === 'string' || prevType === 'number') {

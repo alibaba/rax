@@ -341,25 +341,23 @@ test('Link renders correctly', () => {
 
 ### Developer Tools
 
-* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
+You can inspect and modify the state of your Rax components at runtime using the
+[React Developer Tools](https://github.com/facebook/react-devtools) browser extension.
 
-<p align="center">
-<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
-</p>
+1. Install the [React Developer Tools](https://github.com/facebook/react-devtools) extension
+2. Import the "rax/lib/devtools" module in your app
+  ```js
+  import 'rax/lib/devtools';
+  ```
+3. Set `process.env.NODE_ENV` to 'development'
+4. Reload and go to the 'React' tab in the browser's development tools
 
-* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
-  1. Use the `rax-redux` module in your app
-  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
-
-<p align="center">
-<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
-</p>
 
 ### React compatibility
 
 Add an alias for `react` and `react-dom` in webpack config that makes React-based modules work with Rax, without any code changes:
 
-```json
+```
 {
   // ...
   resolve: {
