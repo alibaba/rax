@@ -8,8 +8,8 @@ const DEFAULT_REGISTRIES = [
   'https://registry.npmjs.com',
 ];
 
-function getFrameworkVersion(tag = 'latest') {
-  return getRemotePackage(NPM_NAME, tag, process.env.NPM_REGISTRY)
+function getFrameworkVersion(npmName = NPM_NAME, tag = 'latest') {
+  return getRemotePackage(npmName, tag, process.env.NPM_REGISTRY)
     .then((response) => {
       return response && response.version || defaultFrameworkVersion;
     });

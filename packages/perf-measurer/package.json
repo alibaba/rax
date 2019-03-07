@@ -1,7 +1,7 @@
 {
-  "name": "runtime-shared",
-  "version": "0.6.6-1",
-  "description": "Shared Runtime.",
+  "name": "perf-measurer",
+  "version": "0.6.5",
+  "description": "A render perf measurer.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
