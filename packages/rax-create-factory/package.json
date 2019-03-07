@@ -1,7 +1,7 @@
 {
   "name": "rax-create-factory",
-  "version": "1.0.0-beta.0",
-  "description": "rax-create-factory",
+  "version": "1.0.0",
+  "description": "Rax createFactory",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -16,10 +16,10 @@
     "npm": ">=3.0.0"
   },
   "devDependencies": {
-    "rax": "^1.0.0-beta",
-    "driver-server": "^1.0.0-beta"
+    "rax": "^1.0.0",
+    "driver-server": "^1.0.0"
   },
   "peerDependencies": {
-    "rax": "^1.0.0-beta"
+    "rax": "^1.0.0"
   }
 }

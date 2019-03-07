@@ -1,6 +1,6 @@
 {
   "name": "rax-use-fetch",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0",
   "description": "Rax useFetch hook",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,9 +16,9 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-use-promise": "^1.0.0-beta"
+    "rax-use-promise": "^1.0.0"
   },
   "peerDependencies": {
-    "rax": "^1.0.0-beta"
+    "rax": "^1.0.0"
   }
 }

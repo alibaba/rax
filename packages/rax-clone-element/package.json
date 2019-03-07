@@ -1,7 +1,7 @@
 {
   "name": "rax-clone-element",
-  "version": "1.0.0-beta.1",
-  "description": "rax-clone-element",
+  "version": "1.0.0",
+  "description": "Rax cloneElement",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -16,14 +16,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-is-valid-element": "^1.0.0-beta"
+    "rax-is-valid-element": "^1.0.0"
   },
   "devDependencies": {
-    "rax": "^1.0.0-beta",
-    "driver-server": "^1.0.0-beta",
-    "rax-create-factory": "^1.0.0-beta"
+    "rax": "^1.0.0",
+    "driver-server": "^1.0.0",
+    "rax-create-factory": "^1.0.0"
   },
   "peerDependencies": {
-    "rax": "^1.0.0-beta"
+    "rax": "^1.0.0"
   }
 }
