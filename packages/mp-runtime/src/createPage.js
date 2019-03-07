@@ -73,13 +73,14 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   const { document, location, evaluator, pageQuery, pageName, clientId } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
+  const styleNodes = [];
   if (Array.isArray(cssTexts)) {
     for (let i = 0, l = cssTexts.length; i < l; i++) {
       if (typeof cssTexts[i] === 'object') {
         const cssTextNode = document.createTextNode(cssTexts[i].toString());
         const styleNode = document.createElement('style');
         styleNode.appendChild(cssTextNode);
-        document.body.appendChild(styleNode);
+        styleNodes.push(styleNode);
       }
     }
   }
@@ -251,7 +252,16 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
       }
     }
 
+    /**
+     * Render style node at first time render is called.
+     */
+    styleNodesRendered = false;
     render() {
+      if (this.styleNodesRendered === false) {
+        let i = 0, l = styleNodes.length;
+        for (; i < l; i++) document.body.appendChild(styleNodes[i]);
+        styleNodes.styleNodesRendered = true;
+      }
       return render.call(this.pageInstance, this.state);
     }
   };
