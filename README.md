@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
-  <a href="https://unpkg.com/rax@beta/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip&?maxAge=3600" alt="gzip size"></a>
+  <a href="https://unpkg.com/rax/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax/dist/rax.min.js?compression=gzip&?maxAge=3600" alt="gzip size"></a>
 </p>
 
 ---
@@ -127,8 +127,8 @@ $ npm run start
   <head>
     <meta charset="UTF-8" />
     <title>Hello World</title>
-    <script src="https://unpkg.com/rax@1.0.0-beta.13/dist/rax.js"></script>
-    <script src="https://unpkg.com/driver-dom@1.0.0-beta.4/dist/driver-dom.js"></script>
+    <script src="https://unpkg.com/rax@1.0.0/dist/rax.js"></script>
+    <script src="https://unpkg.com/driver-dom@1.0.0/dist/driver-dom.js"></script>
     
     <!-- Don't use this in production: -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
