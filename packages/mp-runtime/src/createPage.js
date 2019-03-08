@@ -246,20 +246,17 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
     styleNodesRendered = false;
     renderStyleOnce() {
       // Side effect operation only run once.
-      if (this.styleNodesRendered === false) {
-        if (Array.isArray(cssTexts)) {
-          for (let i = 0, l = cssTexts.length; i < l; i++) {
-            if (typeof cssTexts[i] === 'object') {
-              const cssTextNode = document.createTextNode(cssTexts[i].toString());
-              const styleNode = document.createElement('style');
-              styleNode.appendChild(cssTextNode);
-              document.body.appendChild(styleNode);
-            }
-          }
+      if (this.styleNodesRendered === false && Array.isArray(cssTexts)) {
+        for (let i = 0, l = cssTexts.length; i < l; i++) {
+          const cssText = typeof cssTexts[i] === 'object' ? cssTexts[i].toString() : String(cssTexts[i]);
+          const cssTextNode = document.createTextNode(cssText);
+          const styleNode = document.createElement('style');
+          styleNode.appendChild(cssTextNode);
+          document.body.appendChild(styleNode);
         }
-        // Mark the rendered flag.
-        this.styleNodesRendered = true;
       }
+      // Mark the rendered flag.
+      this.styleNodesRendered = true;
     }
 
     render() {
