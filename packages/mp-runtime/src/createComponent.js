@@ -42,23 +42,6 @@ export default function createComponent(renderFactory, render, config, component
 
     constructor(props, context) {
       super(props, context);
-
-      /**
-       * One component's style can only be append once in each docuemnt(page).
-       * Use a flag in document object to mark.
-       */
-      if (context.$page && context.$page.vnode) {
-        const document = context.$page.vnode._document;
-        const styleFlag = document[STYLE_FLAG_KEY] = document[STYLE_FLAG_KEY] || {};
-        if (!styleFlag[componentPath] && cssText) {
-          styleFlag[componentPath] = true;
-          const cssTextNode = document.createTextNode(String(cssText));
-          const styleNode = document.createElement('style');
-          styleNode.appendChild(cssTextNode);
-          document.body.insertBefore(styleNode);
-        }
-      }
-
       /**
        * If not defined `data` field in config,
        * then default val will be an empty plain object,
@@ -153,7 +136,34 @@ export default function createComponent(renderFactory, render, config, component
       }
     }
 
+    /**
+     * Render style node at first time render is called.
+     */
+    styleNodesRendered = false;
+    renderStyleOnce() {
+      /**
+       * Side effect operation only run once.
+       * One component's style can only be append once in each docuemnt(page).
+       * Use a flag in document object to mark.
+       */
+      if (this.styleNodesRendered === false && this.context.$page && this.context.$page.vnode) {
+        const document = this.context.$page.vnode._document;
+        const styleFlag = document[STYLE_FLAG_KEY] = document[STYLE_FLAG_KEY] || {};
+        if (!styleFlag[componentPath] && cssText) {
+          styleFlag[componentPath] = true;
+          const cssTextNode = document.createTextNode(String(cssText));
+          const styleNode = document.createElement('style');
+          styleNode.appendChild(cssTextNode);
+          document.body.appendChild(styleNode);
+        }
+      }
+      // Mark the rendered flag.
+      this.styleNodesRendered = true;
+    }
+
     render() {
+      this.renderStyleOnce();
+
       const { $slots, $id, props, data } = this.publicInstance;
       return templateRender.call(this.publicInstance, {
         $id, $slots, ...props, ...data
