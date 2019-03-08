@@ -73,18 +73,6 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   const { document, location, evaluator, pageQuery, pageName, clientId } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
-  const styleNodes = [];
-  if (Array.isArray(cssTexts)) {
-    for (let i = 0, l = cssTexts.length; i < l; i++) {
-      if (typeof cssTexts[i] === 'object') {
-        const cssTextNode = document.createTextNode(cssTexts[i].toString());
-        const styleNode = document.createElement('style');
-        styleNode.appendChild(cssTextNode);
-        styleNodes.push(styleNode);
-      }
-    }
-  }
-
   const render = getWebViewSource
     ? (data) => {
       const url = getWebViewSource(data);
@@ -257,9 +245,18 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
      */
     styleNodesRendered = false;
     renderStyleOnce() {
+      // Side effect operation only run once.
       if (this.styleNodesRendered === false) {
-        const styleLength = styleNodes.length;
-        for (let i = 0; i < styleLength; i++) document.body.appendChild(styleNodes[i]);
+        if (Array.isArray(cssTexts)) {
+          for (let i = 0, l = cssTexts.length; i < l; i++) {
+            if (typeof cssTexts[i] === 'object') {
+              const cssTextNode = document.createTextNode(cssTexts[i].toString());
+              const styleNode = document.createElement('style');
+              styleNode.appendChild(cssTextNode);
+              document.body.appendChild(styleNode);
+            }
+          }
+        }
         // Mark the rendered flag.
         this.styleNodesRendered = true;
       }
