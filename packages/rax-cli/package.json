@@ -1,8 +1,8 @@
 {
   "name": "rax-cli",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0",
   "license": "BSD-3-Clause",
-  "description": "The Rax CLI tools",
+  "description": "Command line interface for Rax",
   "main": "src/index.js",
   "repository": {
     "type": "git",

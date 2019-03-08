@@ -1,5 +1,6 @@
 'use strict';
 /* eslint no-console: 0 */
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
@@ -46,7 +47,8 @@ module.exports = {
     new MiniAppWebpackPlugin({
       target: process.env.TARGET || 'web',
     }),
-  ],
+    process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
+  ].filter(Boolean),
   module: {
     rules: [
       {
