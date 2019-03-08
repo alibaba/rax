@@ -256,11 +256,11 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
      * Render style node at first time render is called.
      */
     styleNodesRendered = false;
-
     renderStyleOnce() {
-      const styleLength = styleNodes.length;
       if (this.styleNodesRendered === false) {
+        const styleLength = styleNodes.length;
         for (let i = 0; i < styleLength; i++) document.body.appendChild(styleNodes[i]);
+        // Mark the rendered flag.
         this.styleNodesRendered = true;
       }
     }
