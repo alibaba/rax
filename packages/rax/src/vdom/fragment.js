@@ -28,6 +28,11 @@ class FragmentComponent extends NativeComponent {
       }
     }
 
+    if (process.env.NODE_ENV !== 'production') {
+      this._currentElement.type = FragmentComponent;
+      Host.reconciler.mountComponent(this);
+    }
+
     return instance;
   }
 
@@ -66,15 +71,20 @@ class FragmentComponent extends NativeComponent {
     // Replace current element
     this._currentElement = nextElement;
     this.updateChildren(this._currentElement, nextContext);
+
+    if (process.env.NODE_ENV !== 'production') {
+      this._currentElement.type = FragmentComponent;
+      Host.reconciler.receiveComponent(this);
+    }
   }
 
   createNativeNode() {
     return [];
   }
+}
 
-  getName() {
-    return 'fragment';
-  }
+if (process.env.NODE_ENV !== 'production') {
+  FragmentComponent.displayName = 'Fragment';
 }
 
 export default FragmentComponent;

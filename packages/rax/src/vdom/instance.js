@@ -84,7 +84,7 @@ export default {
 
     if (process.env.NODE_ENV !== 'production') {
       // Devtool render new root hook
-      Host.hook.Mount._renderNewRootComponent(rootInstance._internal);
+      Host.reconciler.renderNewRootComponent(rootInstance._internal._renderedComponent);
 
       Host.measurer && Host.measurer.afterRender();
     }

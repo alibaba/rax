@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
-  <a href="https://unpkg.com/rax@beta/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax@beta/dist/rax.min.js?compression=gzip&?maxAge=3600" alt="gzip size"></a>
+  <a href="https://unpkg.com/rax/dist/rax.min.js"><img src="https://img.badgesize.io/https://unpkg.com/rax/dist/rax.min.js?compression=gzip&?maxAge=3600" alt="gzip size"></a>
 </p>
 
 ---
@@ -127,8 +127,8 @@ $ npm run start
   <head>
     <meta charset="UTF-8" />
     <title>Hello World</title>
-    <script src="https://unpkg.com/rax@1.0.0-beta.13/dist/rax.js"></script>
-    <script src="https://unpkg.com/driver-dom@1.0.0-beta.4/dist/driver-dom.js"></script>
+    <script src="https://unpkg.com/rax@1.0.0/dist/rax.js"></script>
+    <script src="https://unpkg.com/driver-dom@1.0.0/dist/driver-dom.js"></script>
     
     <!-- Don't use this in production: -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
@@ -341,25 +341,23 @@ test('Link renders correctly', () => {
 
 ### Developer Tools
 
-* [React Developer Tools](https://github.com/facebook/react-devtools): Allow you inspect and modify the state of your Rax components at runtime in Chrome Developer Tools.
+You can inspect and modify the state of your Rax components at runtime using the
+[React Developer Tools](https://github.com/facebook/react-devtools) browser extension.
 
-<p align="center">
-<img alt="React Developer Tools" src="https://cloud.githubusercontent.com/assets/677114/21539681/0a442c54-cde4-11e6-89cd-687dbc244d94.png" width="400">
-</p>
+1. Install the [React Developer Tools](https://github.com/facebook/react-devtools) extension
+2. Import the "rax/lib/devtools" module in your app
+  ```js
+  import 'rax/lib/devtools';
+  ```
+3. Set `process.env.NODE_ENV` to 'development'
+4. Reload and go to the 'React' tab in the browser's development tools
 
-* [Redux DevTools extension](https://github.com/zalmoxisus/redux-devtools-extension): Provide power-ups for your Redux development workflow.
-  1. Use the `rax-redux` module in your app
-  2. Simply replace code follow the [Redux DevTools extension usage doc](https://github.com/zalmoxisus/redux-devtools-extension#usage)
-
-<p align="center">
-<img alt="Redux DevTools extension" src="https://cloud.githubusercontent.com/assets/677114/21539902/f66d25a8-cde5-11e6-8f68-f0fadbff66b7.png" width="400">
-</p>
 
 ### React compatibility
 
 Add an alias for `react` and `react-dom` in webpack config that makes React-based modules work with Rax, without any code changes:
 
-```json
+```
 {
   // ...
   resolve: {

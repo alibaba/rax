@@ -1,6 +1,6 @@
 {
   "name": "rax-hydrate",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "Rax hydration render",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,9 +16,9 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "driver-dom": "^1.0.0-beta"
+    "driver-dom": "^1.0.0"
   },
   "peerDependencies": {
-    "rax": "^1.0.0-beta"
+    "rax": "^1.0.0"
   }
 }
