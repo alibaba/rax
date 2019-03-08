@@ -8,7 +8,8 @@
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^1.0.0"
+    "rax": "^1.0.0",
+    "driver-dom": "^1.0.0"
   },
   "devDependencies": {
     "rax-scripts": "^1.0.0",
