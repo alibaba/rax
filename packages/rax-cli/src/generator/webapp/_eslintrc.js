@@ -14,6 +14,7 @@ module.exports = {
   'settings': {
     'react': {
       'pragma': 'createElement', // Pragma to use, default to "React"
+      'version': 'latest',
     }
   },
   'parserOptions': {
