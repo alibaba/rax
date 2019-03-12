@@ -15,19 +15,20 @@ const colors = require('chalk');
 const rimraf = require('rimraf');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
-var componentCompiler = require('./utils/componentCompiler');
-const pathConfig = require('./config/path.config');
+const componentCompiler = require('./utils/componentCompiler');
+const optionConfig = require('./config/option.config');
 
-function buildCompiler(config) {
+function buildCompiler(config, callbackConfig) {
   const compiler = createWebpackCompiler(config);
 
   compiler.run((err) => {
     if (err) {
+      callbackConfig.onError && callbackConfig.onError(err);
       throw err;
     }
 
+    callbackConfig.onSuccess && callbackConfig.onSuccess();
     console.log(colors.green('\nBuild successfully.'));
-    process.exit();
   });
 }
 
@@ -38,7 +39,10 @@ const webpackConfigMap = {
   component: './config/component/webpack.config.prod',
 };
 
-module.exports = function build(type = 'webapp') {
+module.exports = function build(options) {
+  optionConfig.setOption(options);
+
+  const pathConfig = require('./config/path.config');
   const appPackage = require(pathConfig.appPackageJson);
 
   if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
@@ -48,15 +52,21 @@ module.exports = function build(type = 'webapp') {
       if (err) {
         throw err;
       }
-      buildCompiler(webpackConfigComponentDistProd);
+      buildCompiler(webpackConfigComponentDistProd, {
+        onSuccess: options.onSuccess,
+        onError: options.onError,
+      });
     });
   } else {
     rimraf(pathConfig.appBuild, (err) => {
       if (err) {
         throw err;
       }
-      const config = require(webpackConfigMap[type]);
-      buildCompiler(config);
+      const config = require(webpackConfigMap[options.type]);
+      buildCompiler(config, {
+        onSuccess: options.onSuccess,
+        onError: options.onError,
+      });
     });
   }
 };

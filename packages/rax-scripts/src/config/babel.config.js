@@ -1,4 +1,4 @@
-const type = process.env.TYPE;
+const optionConfig = require('./option.config');
 
 module.exports = {
   presets: [
@@ -10,7 +10,7 @@ module.exports = {
           chrome: '49',
           ios: '8'
         },
-        modules: type === 'miniprogram' ? 'commonjs' : 'auto',
+        modules: optionConfig.type === 'miniprogram' ? 'commonjs' : 'auto',
         include: [
           'transform-computed-properties'
         ]

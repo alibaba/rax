@@ -3,6 +3,7 @@
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
+const optionConfig = require('../option.config');
 
 const {
   MiniAppWebpackPlugin,
@@ -44,7 +45,8 @@ module.exports = {
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
     new MiniAppWebpackPlugin({
-      target: process.env.TARGET || 'web',
+      target: optionConfig.target || 'web',
+      debug: optionConfig.debug
     }),
   ],
   module: {

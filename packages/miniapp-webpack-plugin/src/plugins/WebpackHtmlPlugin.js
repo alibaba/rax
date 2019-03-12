@@ -16,6 +16,7 @@ module.exports = class WebpackHtmlPlugin {
   constructor(options) {
     this.options = Object.assign({
       target: 'web',
+      debug: false,
       appConfig: {}
     }, options);
   }
@@ -46,6 +47,7 @@ module.exports = class WebpackHtmlPlugin {
     compiler.hooks.emit.tapAsync('WebpackHtmlPlugin', (compilation, callback) => {
       const {
         target,
+        debug,
         appConfig
       } = this.options;
 
@@ -79,7 +81,7 @@ module.exports = class WebpackHtmlPlugin {
           const options = {
             appConfig: JSON.stringify(appConfig, null, 2),
             externalApi: externalApiScript,
-            isDebug: process.env.DEBUG,
+            isDebug: debug,
             atagVersion,
             externalScripts: [
               `https://g.alicdn.com/code/npm/atag/${atagVersion}/dist/atag.js`,

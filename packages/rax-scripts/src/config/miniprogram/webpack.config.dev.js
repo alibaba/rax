@@ -7,12 +7,12 @@ const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 
 const webpackConfigBase = require('./webpack.config.base');
-const envConfig = require('../env.config');
 const pathConfig = require('../path.config');
+const optionConfig = require('../option.config');
 
-const ipv4 = address.ip();
-const port = envConfig.port;
-const webUrl = envConfig.protocol + '//' + ipv4 + ':' + port;
+const host = optionConfig.host;
+const port = optionConfig.port;
+const webUrl = optionConfig.protocol + '://' + host + ':' + port;
 
 qrcode.generate(webUrl, { small: true });
 console.log('Web: scan above QRCode ' + webUrl + ' or direct open in browser.\n');
@@ -29,7 +29,7 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
-    process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
+    optionConfig.analyzer ? new BundleAnalyzerPlugin() : null,
   ].filter(Boolean),
 });
 

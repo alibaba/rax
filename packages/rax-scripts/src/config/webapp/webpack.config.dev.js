@@ -8,12 +8,12 @@ const webpackMerge = require('webpack-merge');
 
 const pathConfig = require('../path.config');
 const webpackConfigBase = require('./webpack.config.base');
-const envConfig = require('../env.config');
+const optionConfig = require('../option.config');
 
-const ipv4 = address.ip();
-const port = envConfig.port;
-const webUrl = 'http://' + ipv4 + ':' + port;
-const bundleUrl = 'http://' + ipv4 + ':' + port + '/js/index.bundle.js';
+const host = optionConfig.host;
+const port = optionConfig.port;
+const webUrl = 'http://' + host + ':' + port;
+const bundleUrl = 'http://' + host + ':' + port + '/js/index.bundle.js';
 const weexBundleUrl = `${bundleUrl}?_wx_tpl=${bundleUrl}`;
 
 qrcode.generate(webUrl, { small: true });

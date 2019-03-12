@@ -2,7 +2,7 @@
 
 const webpackConfig = require('./webpack.config');
 const pathConfig = require('./path.config');
-const envConfig = require('./env.config');
+const optionConfig = require('./option.config');
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'development';
@@ -49,8 +49,8 @@ module.exports = {
     ignored: /node_modules/,
   },
   // Enable HTTPS if the HTTPS environment variable is set to 'true'
-  https: envConfig.protocol === 'https:',
-  host: envConfig.host,
-  public: envConfig.host,
+  https: optionConfig.protocol === 'https',
+  host: optionConfig.host,
+  public: optionConfig.host,
   overlay: false,
 };

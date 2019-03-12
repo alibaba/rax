@@ -15,8 +15,7 @@ const colors = require('chalk');
 const WebpackDevServer = require('webpack-dev-server');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
-const webpackDevServerConfig = require('./config/webpackDevServer.config');
-const envConfig = require('./config/env.config');
+const optionConfig = require('./config/option.config');
 
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
@@ -27,22 +26,25 @@ const webpackConfigMap = {
 /**
  * run webpack dev server
  */
-module.exports = function start(type = 'webapp') {
-  const config = require(webpackConfigMap[type]);
+module.exports = function start(options) {
+  optionConfig.setOption(options);
+
+  const webpackDevServerConfig = require('./config/webpackDevServer.config');
+  const config = require(webpackConfigMap[options.type]);
   const compiler = createWebpackCompiler(config);
 
   const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
 
   // Launch WebpackDevServer.
-  devServer.listen(envConfig.port, envConfig.hostname, (err) => {
+  devServer.listen(optionConfig.port, optionConfig.host, (err) => {
     if (err) {
       console.log(colors.red('[ERR]: Failed to webpack dev server'));
       console.error(err.message || err);
       process.exit(1);
     }
 
-    const serverUrl = `${envConfig.protocol}//${envConfig.host}:${
-      envConfig.port
+    const serverUrl = `${optionConfig.protocol}://${optionConfig.host}:${
+      optionConfig.port
     }/`;
 
     console.log('');

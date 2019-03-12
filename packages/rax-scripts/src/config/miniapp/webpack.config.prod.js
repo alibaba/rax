@@ -6,12 +6,13 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 
 const pathConfig = require('../path.config');
+const optionConfig = require('../option.config');
 const webpackConfigBase = require('./webpack.config.base');
 
 const registerServiceWorker = `<script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('${process.env.PUBLIC_PATH}service-worker.js').then(registration => {
+    navigator.serviceWorker.register('${optionConfig.publicPath}service-worker.js').then(registration => {
       console.log('SW registered');
     }).catch(registrationError => {
       console.log('SW registration failed: ', registrationError);
@@ -21,7 +22,7 @@ if ('serviceWorker' in navigator) {
 </script>`;
 
 const webpackConfigProd = webpackMerge(webpackConfigBase, {
-  devtool: process.env.DEBUG ? 'module-source-map' : 'none',
+  devtool: optionConfig.debug ? 'module-source-map' : 'none',
   entry: {
     'index.min': [pathConfig.appManifest],
   },
@@ -51,7 +52,7 @@ const webpackConfigProd = webpackMerge(webpackConfigBase, {
     }),
   ],
   optimization: {
-    minimize: process.env.DEBUG ? false : true,
+    minimize: optionConfig.debug ? false : true,
     minimizer: [
       new UglifyJsPlugin({
         cache: true,

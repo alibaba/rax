@@ -3,9 +3,10 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 
 const pathConfig = require('../path.config');
+const optionConfig = require('../option.config');
 const webpackConfigBase = require('./webpack.config.base');
 
-const isDebug = process.env.DEBUG;
+const isDebug = optionConfig.debug;
 
 const webpackConfigProd = webpackMerge(webpackConfigBase, {
   devtool: isDebug ? 'cheap-eval-source-map' : false,
@@ -13,8 +14,8 @@ const webpackConfigProd = webpackMerge(webpackConfigBase, {
     'index.min': [pathConfig.miniProgramIndexJs],
   },
   output: {
-    path: path.resolve(pathConfig.appDirectory, process.env.OUTPUT_PATH || 'build'),
-    publicPath: process.env.PUBLIC_PATH || '/',
+    path: path.resolve(pathConfig.appDirectory, optionConfig.outputPath || 'build'),
+    publicPath: optionConfig.publicPath || '/',
   },
   optimization: {
     minimize: isDebug ? false : true,

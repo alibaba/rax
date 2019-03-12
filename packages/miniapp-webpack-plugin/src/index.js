@@ -13,7 +13,8 @@ const { getAppConfig } = require('./utils/getAppConfig');
 class MiniAppWebpackPlugin {
   constructor(opts = {}) {
     this.options = Object.assign({
-      target: 'web'
+      target: 'web',
+      debug: false
     }, opts);
   }
 
@@ -22,7 +23,8 @@ class MiniAppWebpackPlugin {
     const appConfig = getAppConfig(projectDir);
 
     const {
-      target
+      target,
+      debug
     } = this.options;
 
     compiler.apply(new WebpackAssetsPlugin({
@@ -32,6 +34,7 @@ class MiniAppWebpackPlugin {
     if (target === 'web' || target === 'ide') {
       compiler.apply(new WebpackHtmlPlugin({
         target,
+        debug,
         appConfig
       }));
     }
