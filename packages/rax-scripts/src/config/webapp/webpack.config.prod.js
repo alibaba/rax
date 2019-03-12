@@ -7,7 +7,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const webpackConfigProd = webpackMerge(webpackConfigBase, {
   target: 'node',
   entry: {
-    'index.bundle.min': [pathConfig.appIndexJs],
+    'index.min': [pathConfig.appIndexJs],
   },
   plugins: [
     new UglifyJSPlugin({
