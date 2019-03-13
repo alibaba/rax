@@ -103,10 +103,10 @@ export default class MessageRouter {
 
       default:
         const resolveCallback = (result) => {
-          this.callbackRemoteCall(callId, result, null);
+          this.callbackRemoteCall(callId, null, result);
         };
         const rejectCallback = (err) => {
-          this.callbackRemoteCall(callId, null, err);
+          this.callbackRemoteCall(callId, err, null);
         };
 
         if (my[method]) {
