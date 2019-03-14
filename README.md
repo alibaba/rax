@@ -149,7 +149,7 @@ $ npm run start
 
 ## Guides
 
-### Server-side render and hydration
+### Server-side rendering and hydration
 
 Use `renderToString()` to generate HTML on the server and send the markup down on the initial request for faster page loads and to allow search engines to crawl your pages for SEO purposes.
 
@@ -362,7 +362,7 @@ Add an alias for `react` and `react-dom` in webpack config that makes React-base
   // ...
   resolve: {
     alias: {
-      'react': 'rax',
+      'react': 'rax/lib/compat',
       'react-dom': 'rax-dom'
     }
   }
