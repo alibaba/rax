@@ -1,3 +1,6 @@
+import { shared } from 'rax';
+import HookInstance from './hookInstance';
+
 const EMPTY_OBJECT = {};
 const TRUE = true;
 const UNITLESS_NUMBER_PROPS = {
@@ -146,7 +149,6 @@ function renderElementToString(element, context, options) {
 
   if (type) {
     const props = element.props || EMPTY_OBJECT;
-
     if (type.prototype && type.prototype.render) {
       const instance = new type(props, context, updater); // eslint-disable-line new-cap
       let currentContext = instance.context = context;
@@ -182,7 +184,12 @@ function renderElementToString(element, context, options) {
       var renderedElement = instance.render();
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
-      var renderedElement = type(props, context);
+      const instance = new HookInstance();
+      shared.Host.owner = {
+        _instance: instance
+      };
+
+      const renderedElement = type(props, context);
       return renderElementToString(renderedElement, context, options);
     } else if (typeof type === 'string') {
       const isVoidElement = VOID_ELEMENTS[type];
