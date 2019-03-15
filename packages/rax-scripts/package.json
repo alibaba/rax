@@ -1,6 +1,6 @@
 {
   "name": "rax-scripts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "BSD-3-Clause",
   "description": "Configuration and scripts for Rax App.",
   "bin": {
@@ -48,7 +48,6 @@
     "css-loader": "^2.1.0",
     "decamelize": "^2.0.0",
     "file-loader": "^2.0.0",
-    "ghooks": "^2.0.4",
     "glob": "^7.1.3",
     "html-webpack-plugin": "^3.2.0",
     "image-source-loader": "^0.6.5",

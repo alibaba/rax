@@ -20,7 +20,7 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
     process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
-  ],
+  ].filter(Boolean),
 });
 
 module.exports = webpackConfigDev;
