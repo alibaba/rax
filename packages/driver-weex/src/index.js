@@ -1,15 +1,23 @@
 /**
  * Weex driver
  */
-import {convertUnit, setRem} from 'style-unit';
-import w3cElements from './elements';
-
 const STYLE = 'style';
 const ID = 'id';
 const TEXT = 'text';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const ARIA_PREFIX_REGEXP = /^aria-/;
+const HYPHEN_REGEXP = /\-(\w)/;
+const EMPTY = '';
+
+function updateWeexTextValue(node) {
+  const value = node.children.map(function(child) {
+    // Comment node type
+    return child.nodeType === 8 ? child.value : EMPTY;
+  }).join(EMPTY);
+
+  node.setAttr('value', value);
+}
 
 const nodeMaps = {};
 /* global __weex_document__ */
@@ -17,204 +25,167 @@ const document = typeof __weex_document__ === 'object' ?
   __weex_document__ : typeof document === 'object' ?
     document : null;
 
-const Driver = {
-  deviceWidth: 750,
-  viewportWidth: 750,
+export function getElementById(id) {
+  return nodeMaps[id];
+}
 
-  getDeviceWidth() {
-    return this.deviceWidth;
-  },
+export function createBody(type, props) {
+  if (document.body) {
+    return document.body;
+  }
 
-  setDeviceWidth(width) {
-    this.deviceWidth = width;
-  },
+  let documentElement = document.documentElement;
+  let body = document.createBody(type, props);
+  documentElement.appendChild(body);
 
-  getViewportWidth() {
-    return this.viewportWidth;
-  },
+  return body;
+}
 
-  setViewportWidth(width) {
-    this.viewportWidth = width;
-  },
+export function createComment(content) {
+  return document.createComment(content);
+}
 
-  getElementById(id) {
-    return nodeMaps[id];
-  },
+export function createEmpty() {
+  return createComment(EMPTY);
+}
 
-  createBody() {
-    if (document.body) {
-      return document.body;
+export function createText(text) {
+  // Use comment node type mock text node
+  return createComment(text);
+}
+
+export function updateText(node, text) {
+  node.value = text;
+  updateWeexTextValue(node.parentNode);
+}
+
+export function createElement(type, props = {}) {
+  let node = document.createElement(type, {
+    style: props[STYLE],
+  });
+
+  for (let prop in props) {
+    let value = props[prop];
+    if (prop === CHILDREN) {
+      continue;
     }
-
-    let documentElement = document.documentElement;
-    let body = document.createBody(Driver.bodyType, Driver.bodyProps);
-    documentElement.appendChild(body);
-
-    return body;
-  },
-
-  createComment(content) {
-    return document.createComment(content);
-  },
-
-  createEmpty() {
-    return this.createComment(' _ ');
-  },
-
-  createText(text) {
-    return Driver.createElement({
-      type: TEXT,
-      props: {
-        value: text,
-      }
-    });
-  },
-
-  updateText(node, content) {
-    this.setAttribute(node, 'value', content);
-  },
-
-  createElement(type, props) {
-    const htmlElement = w3cElements[type];
-    let component = { type, props };
-    if (htmlElement) {
-      component = htmlElement.parse(component);
-    }
-
-    let events = [];
-    let style = {};
-    let originStyle = props[STYLE];
-    for (let prop in originStyle) {
-      style[prop] = convertUnit(originStyle[prop], prop);
-    }
-
-    let node = document.createElement(component.type, {
-      style,
-    });
-
-    this.setNativeProps(node, props, true);
-
-    return node;
-  },
-
-  appendChild(node, parent) {
-    return parent.appendChild(node);
-  },
-
-  removeChild(node, parent) {
-    parent = parent || node.parentNode;
-    let id = node.attr && node.attr[ID];
-    if (id != null) {
-      nodeMaps[id] = null;
-    }
-    return parent.removeChild(node);
-  },
-
-  replaceChild(newChild, oldChild, parent) {
-    parent = parent || oldChild.parentNode;
-    let previousSibling = oldChild.previousSibling;
-    let nextSibling = oldChild.nextSibling;
-    this.removeChild(oldChild, parent);
-
-    if (previousSibling) {
-      this.insertAfter(newChild, previousSibling, parent);
-    } else if (nextSibling) {
-      this.insertBefore(newChild, nextSibling, parent);
-    } else {
-      this.appendChild(newChild, parent);
-    }
-  },
-
-  insertAfter(node, after, parent) {
-    parent = parent || after.parentNode;
-    return parent.insertAfter(node, after);
-  },
-
-  insertBefore(node, before, parent) {
-    parent = parent || before.parentNode;
-    return parent.insertBefore(node, before);
-  },
-
-  addEventListener(node, eventName, eventHandler, props) {
-    let params = props[eventName + 'EventParams'];
-    return node.addEvent(eventName, eventHandler, params);
-  },
-
-  removeEventListener(node, eventName, eventHandler) {
-    return node.removeEvent(eventName, eventHandler);
-  },
-
-  removeAttribute(node, propKey, propValue) {
-    if (propKey == ID) {
-      nodeMaps[propValue] = null;
-    }
-    // Weex native will crash when pass null value
-    return node.setAttr(propKey, undefined, false);
-  },
-
-  setAttribute(node, propKey, propValue) {
-    if (propKey == ID) {
-      nodeMaps[propValue] = node;
-    }
-
-    // Weex only support `ariaLabel` format, convert `aria-label` format to camelcase
-    if (ARIA_PREFIX_REGEXP.test(propKey)) {
-      propKey = propKey.replace(/\-(\w)/, function(m, p1) {
-        return p1.toUpperCase();
-      });
-    }
-
-    return node.setAttr(propKey, propValue, false);
-  },
-
-  setStyles(node, styles) {
-    // TODO if more then one style update, call setStyles will be better performance
-    for (let key in styles) {
-      let val = styles[key];
-      val = convertUnit(val, key);
-      node.setStyle(key, val);
-    }
-  },
-
-  beforeRender() {
-    // Turn off batched updates
-    document.open();
-
-    // Init rem unit
-    setRem( this.getDeviceWidth() / this.getViewportWidth() );
-  },
-
-  afterRender() {
-    if (document.listener && document.listener.createFinish) {
-      document.listener.createFinish();
-    }
-
-    // Turn on batched updates
-    document.close();
-  },
-
-  setNativeProps(node, props, skipSetStyles) {
-    for (let prop in props) {
-      let value = props[prop];
-      if (prop === CHILDREN) {
+    if (value != null) {
+      if (prop === STYLE) {
         continue;
-      }
-
-      if (value != null) {
-        if (prop === STYLE) {
-          if (skipSetStyles) {
-            continue;
-          }
-          this.setStyles(node, value);
-        } else if (EVENT_PREFIX_REGEXP.test(prop)) {
-          let eventName = prop.slice(2).toLowerCase();
-          this.addEventListener(node, eventName, value, props);
-        } else {
-          this.setAttribute(node, prop, value);
-        }
+      } else if (EVENT_PREFIX_REGEXP.test(prop)) {
+        let eventName = prop.slice(2).toLowerCase();
+        addEventListener(node, eventName, value, props);
+      } else {
+        setAttribute(node, prop, value);
       }
     }
   }
-};
 
-export default Driver;
+  return node;
+}
+
+export function appendChild(node, parent) {
+  parent.appendChild(node);
+
+  if (parent.type === TEXT) {
+    updateWeexTextValue(parent);
+  }
+}
+
+export function removeChild(node, parent) {
+  parent = parent || node.parentNode;
+  let id = node.attr && node.attr[ID];
+  if (id != null) {
+    nodeMaps[id] = null;
+  }
+
+  parent.removeChild(node);
+
+  if (parent.type === TEXT) {
+    updateWeexTextValue(parent);
+  }
+}
+
+export function replaceChild(newChild, oldChild, parent) {
+  parent = parent || oldChild.parentNode;
+  let previousSibling = oldChild.previousSibling;
+  let nextSibling = oldChild.nextSibling;
+  removeChild(oldChild, parent);
+
+  if (previousSibling) {
+    insertAfter(newChild, previousSibling, parent);
+  } else if (nextSibling) {
+    insertBefore(newChild, nextSibling, parent);
+  } else {
+    appendChild(newChild, parent);
+  }
+}
+
+export function insertAfter(node, after, parent) {
+  parent = parent || after.parentNode;
+  parent.insertAfter(node, after);
+
+  if (parent.type === TEXT) {
+    updateWeexTextValue(parent);
+  }
+}
+
+export function insertBefore(node, before, parent) {
+  parent = parent || before.parentNode;
+  parent.insertBefore(node, before);
+
+  if (parent.type === TEXT) {
+    updateWeexTextValue(parent);
+  }
+}
+
+export function addEventListener(node, eventName, eventHandler, props) {
+  // https://github.com/apache/incubator-weex/blob/master/runtime/vdom/Element.js#L421
+  let params = props[eventName + 'EventParams'];
+  return node.addEvent(eventName, eventHandler, params);
+}
+
+export function removeEventListener(node, eventName, eventHandler) {
+  return node.removeEvent(eventName, eventHandler);
+}
+
+export function removeAttribute(node, propKey, propValue) {
+  if (propKey == ID) {
+    nodeMaps[propValue] = null;
+  }
+  // Weex native will crash when pass null value
+  return node.setAttr(propKey, undefined, false);
+}
+
+export function setAttribute(node, propKey, propValue) {
+  if (propKey == ID) {
+    nodeMaps[propValue] = node;
+  }
+
+  // Weex only support `ariaLabel` format, convert `aria-label` format to camelcase
+  if (ARIA_PREFIX_REGEXP.test(propKey)) {
+    propKey = propKey.replace(HYPHEN_REGEXP, function(m, p) {
+      return p.toUpperCase();
+    });
+  }
+
+  return node.setAttr(propKey, propValue, false);
+}
+
+export function setStyle(node, style) {
+  node.setStyles(style);
+}
+
+export function beforeRender() {
+  // Turn off batched updates
+  document.open();
+}
+
+export function afterRender() {
+  if (document.listener && document.listener.createFinish) {
+    document.listener.createFinish();
+  }
+
+  // Turn on batched updates
+  document.close();
+}

@@ -3,16 +3,18 @@
   "author": "__AuthorName__",
   "version": "0.0.0",
   "scripts": {
-    "start": "rax-scripts start --type=miniapp",
-    "build": "rax-scripts build --type=miniapp",
+    "start": "rax-scripts start --type=weexapp",
+    "build": "rax-scripts build --type=weexapp",
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^1.0.0"
+    "rax": "^1.0.0",
+    "driver-weex": "^1.0.0"
   },
   "devDependencies": {
     "rax-scripts": "^1.1.0-beta",
     "eslint": "^5.15.1",
-    "babel-eslint": "^10.0.1"
+    "babel-eslint": "^10.0.1",
+    "eslint-plugin-react": "^7.12.4"
   }
 }

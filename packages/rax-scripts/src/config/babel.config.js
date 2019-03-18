@@ -10,6 +10,7 @@ module.exports = {
           chrome: '49',
           ios: '8'
         },
+        loose: true,
         modules: type === 'miniprogram' ? 'commonjs' : 'auto',
         include: [
           'transform-computed-properties'
@@ -34,11 +35,11 @@ module.exports = {
     require.resolve('@babel/plugin-proposal-export-default-from'),
     [
       require.resolve('@babel/plugin-proposal-optional-chaining'),
-      { loose: false },
+      { loose: true },
     ],
     [
       require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
-      { loose: false },
+      { loose: true },
     ],
     // Stage 2
     [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
@@ -46,7 +47,7 @@ module.exports = {
     // Stage 3
     [
       require.resolve('@babel/plugin-proposal-class-properties'),
-      { loose: false },
+      { loose: true },
     ]
   ]
 };

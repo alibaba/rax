@@ -1,10 +1,10 @@
 'use strict';
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
+const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
 
 babelConfig.presets.push([
   require.resolve('@babel/preset-react'), {
@@ -23,15 +23,13 @@ module.exports = {
   // Compile target should "web" when use hot reload
   target: webpackConfig.target,
   entry: webpackConfig.entry,
-  output: webpackConfig.output,
+  output: Object.assign(webpackConfig.output, {
+    filename: '[name].js'
+  }),
   resolve: webpackConfig.resolve,
 
   plugins: [
-    // Generates an `index.html` file with the <script> injected.
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: pathConfig.appHtml,
-    }),
+    new WeexFrameworkBanner(),
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
     process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
