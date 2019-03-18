@@ -4,7 +4,7 @@ import NativeComponent from './native';
 import TextComponent from './text';
 import CompositeComponent from './composite';
 import FragmentComponent from './fragment';
-import Hook from '../debug/hook';
+import reconciler from '../devtools/reconciler';
 
 export default function inject({ driver, measurer }) {
   // Inject component class
@@ -22,8 +22,8 @@ export default function inject({ driver, measurer }) {
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    // Inject devtool hook
-    Host.hook = Hook;
+    // Inject devtool renderer hook
+    Host.reconciler = reconciler;
 
     // Inject performance measurer
     Host.measurer = measurer;

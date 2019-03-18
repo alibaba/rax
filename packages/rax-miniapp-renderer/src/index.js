@@ -6,7 +6,7 @@ import LocationHandler from './LocationHandler';
 export default ({ worker, mountNode }) => {
   const postMessage = worker.postMessage.bind(worker);
 
-  const handlers = {
+  let handlers = {
     MutationRecord: new MutationHandler(postMessage, mountNode),
     EvaluationRecord: new EvaluationHandler(postMessage),
 
@@ -28,6 +28,12 @@ export default ({ worker, mountNode }) => {
     url: location.href,
     width: getDeviceWidth(),
   });
+
+  return function unmount() {
+    handlers.MutationRecord.destroy();
+    worker.onmessage = noop;
+    handlers = null;
+  };
 };
 
 /**
@@ -39,3 +45,5 @@ function getDeviceWidth() {
     ? DEVICE_WIDTH
     : document.documentElement.clientWidth;
 }
+
+function noop() {}

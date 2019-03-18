@@ -1,7 +1,7 @@
 {
   "name": "rax-create-class",
-  "version": "1.0.0-beta.0",
-  "description": "rax-create-class",
+  "version": "1.0.0",
+  "description": "Rax createClass",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -15,15 +15,12 @@
   "engines": {
     "npm": ">=3.0.0"
   },
-  "dependencies": {
-    "rax-component": "^1.0.0-beta"
-  },
   "peerDependencies": {
-    "rax": "^1.0.0-beta"
+    "rax": "^1.0.0"
   },
   "devDependencies": {
-    "rax": "^1.0.0-beta",
-    "driver-server": "^1.0.0-beta",
-    "rax-proptypes": "^1.0.0-beta"
+    "rax": "^1.0.0",
+    "driver-server": "^1.0.0",
+    "rax-proptypes": "^1.0.0"
   }
 }

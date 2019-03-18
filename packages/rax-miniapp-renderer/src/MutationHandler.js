@@ -162,4 +162,10 @@ export default class MutationHandler {
       context[method].apply(context, args);
     }
   }
+
+  destroy() {
+    this.eventHandler.removeAllEvents();
+    this.sharedNodeMap = null;
+    this.mountNode.parentElement.removeChild(this.mountNode);
+  }
 }

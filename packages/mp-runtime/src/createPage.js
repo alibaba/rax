@@ -73,17 +73,6 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   const { document, location, evaluator, pageQuery, pageName, clientId } = pageContext;
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
-  if (Array.isArray(cssTexts)) {
-    for (let i = 0, l = cssTexts.length; i < l; i++) {
-      if (typeof cssTexts[i] === 'object') {
-        const cssTextNode = document.createTextNode(cssTexts[i].toString());
-        const styleNode = document.createElement('style');
-        styleNode.appendChild(cssTextNode);
-        document.body.appendChild(styleNode);
-      }
-    }
-  }
-
   const render = getWebViewSource
     ? (data) => {
       const url = getWebViewSource(data);
@@ -251,7 +240,27 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
       }
     }
 
+    /**
+     * Render style node at first time render is called.
+     */
+    styleNodesRendered = false;
+    renderStyleOnce() {
+      // Side effect operation only run once.
+      if (this.styleNodesRendered === false && Array.isArray(cssTexts)) {
+        for (let i = 0, l = cssTexts.length; i < l; i++) {
+          const cssText = typeof cssTexts[i] === 'object' ? cssTexts[i].toString() : String(cssTexts[i]);
+          const cssTextNode = document.createTextNode(cssText);
+          const styleNode = document.createElement('style');
+          styleNode.appendChild(cssTextNode);
+          document.body.appendChild(styleNode);
+        }
+      }
+      // Mark the rendered flag.
+      this.styleNodesRendered = true;
+    }
+
     render() {
+      this.renderStyleOnce();
       return render.call(this.pageInstance, this.state);
     }
   };

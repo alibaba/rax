@@ -55,7 +55,7 @@ export default function createComponent(renderFactory, render, config, component
           const cssTextNode = document.createTextNode(String(cssText));
           const styleNode = document.createElement('style');
           styleNode.appendChild(cssTextNode);
-          document.body.insertBefore(styleNode);
+          document.body.appendChild(styleNode);
         }
       }
 

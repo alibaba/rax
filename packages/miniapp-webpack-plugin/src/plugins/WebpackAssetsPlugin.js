@@ -8,11 +8,6 @@ const { join } = require('path');
 const { ConcatSource } = require('webpack-sources');
 
 const SCHEMA_VAR = '__SCHEMA_MOCK_DATA__';
-
-const webRegisterWrapper = [
-  '__register_pages__(function(require){',
-  '})',
-];
 const globalPolyfills = [
   "var __global__ = typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : new Function('return this')();",
   "typeof polyfill === 'function' && polyfill(__global__);",
@@ -39,14 +34,6 @@ module.exports = class WebpackAssetsPlugin {
 
         // polyfill global context
         args.unshift(new ConcatSource(globalPolyfills.join('')));
-        args.unshift(ConcatSource);
-
-        const app = new (ConcatSource.bind.apply(ConcatSource, args))();
-
-        // 增加 app.js
-        // wrapper for app.js
-        compilation.assets['app.js'] = app;
-        global.AppJSContent = app.source();
 
         let injectSchemaMockData;
         const mockDataPath = join(compiler.context, 'schema/mock-data.json');
@@ -66,12 +53,14 @@ module.exports = class WebpackAssetsPlugin {
           }
         }
 
-        compilation.assets[`app.${this.target}.js`] = new ConcatSource(
-          webRegisterWrapper[0],
-          app,
-          injectSchemaMockData ? injectSchemaMockData : '',
-          webRegisterWrapper[1]
-        );
+        if (injectSchemaMockData) {
+          args.unshift(injectSchemaMockData);
+        }
+
+        args.unshift(ConcatSource); // firstArg for apply
+        const app = new (ConcatSource.bind.apply(ConcatSource, args))();
+        compilation.assets['app.js'] = app;
+        global.AppJSContent = app.source();
       });
     });
   }

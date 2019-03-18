@@ -6,13 +6,24 @@ import PropTypes from 'rax-proptypes';
 import createElement from '../../createElement';
 import Host from '../host';
 import ServerDriver from 'driver-server';
-import renderToString from '../../server/renderToString';
+import render from '../../render';
 
 function StatelessComponent(props) {
   return <div>{props.name}</div>;
 }
 
 describe('ReactiveComponent', function() {
+  function createNodeElement(tagName) {
+    return {
+      nodeType: 1,
+      tagName: tagName.toUpperCase(),
+      attributes: {},
+      style: {},
+      childNodes: [],
+      parentNode: null
+    };
+  }
+
   beforeEach(function() {
     Host.driver = ServerDriver;
   });
@@ -22,36 +33,43 @@ describe('ReactiveComponent', function() {
   });
 
   it('should render functional stateless component', function() {
-    let html = renderToString(<StatelessComponent name="A" />);
-    expect(html).toBe('<div data-rendered="server">A</div>');
+    let container = createNodeElement('div');
+    render(<StatelessComponent name="A" />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('A');
   });
 
   it('should render class stateless component', function() {
+    let container = createNodeElement('div');
+
     class MyComponent {
       render() {
         return <StatelessComponent {...this.props} />;
       }
     }
 
-    let html = renderToString(<MyComponent name="A" />);
-    expect(html).toBe('<div data-rendered="server">A</div>');
+    render(<MyComponent name="A" />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('A');
   });
 
   it('should update stateless component', function() {
+    let container = createNodeElement('div');
+
     class Parent extends Component {
       render() {
         return <StatelessComponent {...this.props} />;
       }
     }
 
-    let html = renderToString(<Parent name="A" />);
-    expect(html).toBe('<div data-rendered="server">A</div>');
+    render(<Parent name="A" />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('A');
 
-    let html2 = renderToString(<Parent name="B" />);
-    expect(html2).toBe('<div data-rendered="server">B</div>');
+    render(<Parent name="B" />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('B');
   });
 
   it('should pass context thru stateless component', function() {
+    let container = createNodeElement('div');
+
     class Child extends Component {
       static contextTypes = {
         test: PropTypes.string.isRequired,
@@ -80,28 +98,30 @@ describe('ReactiveComponent', function() {
       }
     }
 
+    render(<GrandParent test="foo" />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('foo');
 
-    let html = renderToString(<GrandParent test="test" />);
-    expect(html).toBe('<div data-rendered="server">test</div>');
-
-
-    let html2 = renderToString(<GrandParent test="mest" />);
-    expect(html2).toBe('<div data-rendered="server">mest</div>');
+    render(<GrandParent test="bar" />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('bar');
   });
 
 
   it('should support default props and prop types', function() {
+    let container = createNodeElement('div');
+
     function Child(props) {
       return <div>{props.test}</div>;
     }
     Child.defaultProps = {test: 'test'};
     Child.propTypes = {test: PropTypes.string};
 
-    let html = renderToString(<Child />);
-    expect(html).toBe('<div data-rendered="server">test</div>');
+    render(<Child test="foo" />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('foo');
   });
 
   it('should receive context', function() {
+    let container = createNodeElement('div');
+
     class Parent extends Component {
       static childContextTypes = {
         lang: PropTypes.string,
@@ -122,23 +142,28 @@ describe('ReactiveComponent', function() {
 
     Child.contextTypes = {lang: PropTypes.string};
 
-    let html = renderToString(<Parent />);
-    expect(html).toBe('<div data-rendered="server">en</div>');
+    render(<Parent />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('en');
   });
 
   it('should allow simple functions to return null', function() {
+    let container = createNodeElement('div');
+
     function Child() {
       return null;
     };
-    let html = renderToString(<Child />);
-    expect(html).toBe('<!-- empty -->');
+
+    render(<Child />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
   });
 
   it('should allow simple functions to return false', function() {
+    let container = createNodeElement('div');
     function Child() {
       return false;
     }
-    let html = renderToString(<Child />);
-    expect(html).toBe('<!-- empty -->');
+
+    render(<Child />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
   });
 });

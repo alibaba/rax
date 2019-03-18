@@ -20,7 +20,8 @@ class ReactiveComponent extends Component {
     this.willUnmount = [];
     // Is render scheduled
     this.isScheduled = false;
-
+    this.shouldUpdate = false;
+    this._children = null;
 
     if (pureRender.forwardRef) {
       this.prevForwardRef = this.forwardRef = ref;
@@ -86,8 +87,16 @@ class ReactiveComponent extends Component {
     return Provider.defaultValue;
   }
 
+  componentWillMount() {
+    this.shouldUpdate = true;
+  }
+
   componentDidMount() {
     this.didMount.forEach(handler => handler());
+  }
+
+  componentWillReceiveProps() {
+    this.shouldUpdate = true;
   }
 
   componentDidUpdate() {
@@ -122,7 +131,13 @@ class ReactiveComponent extends Component {
       this.isScheduled = false;
       children = this._render(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
-    return children;
+
+    if (this.shouldUpdate) {
+      this._children = children;
+      this.shouldUpdate = false;
+    }
+
+    return this._children;
   }
 }
 
