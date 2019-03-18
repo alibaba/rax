@@ -1,5 +1,6 @@
 'use strict';
 /* eslint no-console: 0 */
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
@@ -22,7 +23,8 @@ module.exports = {
     }),
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
-  ],
+    process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
+  ].filter(Boolean),
   module: {
     rules: [
       {

@@ -1,7 +1,7 @@
 'use strict';
 /* eslint no-console: 0 */
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const RaxWebpackPlugin = require('rax-webpack-plugin');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
@@ -31,10 +31,6 @@ module.exports = {
   resolve: webpackConfig.resolve,
 
   plugins: [
-    new RaxWebpackPlugin({
-      target: 'bundle',
-      externalBuiltinModules: false,
-    }),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
@@ -42,7 +38,8 @@ module.exports = {
     }),
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
-  ],
+    process.env.ANALYZER ? new BundleAnalyzerPlugin() : null,
+  ].filter(Boolean),
   module: {
     rules: [
       {

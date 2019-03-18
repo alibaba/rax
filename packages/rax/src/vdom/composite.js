@@ -187,7 +187,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.mountComponent(this);
+      Host.reconciler.mountComponent(this);
       Host.measurer && Host.measurer.afterMountComponent(this._mountID);
     }
 
@@ -405,7 +405,7 @@ class CompositeComponent extends BaseComponent {
 
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.afterUpdateComponent(this._mountID);
-      Host.hook.Reconciler.receiveComponent(this);
+      Host.reconciler.receiveComponent(this);
     }
   }
 

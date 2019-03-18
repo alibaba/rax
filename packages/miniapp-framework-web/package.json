@@ -1,6 +1,6 @@
 {
   "name": "miniapp-framework-web",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MiniApp framework for Web.",
   "main": "dist/miniapp-framework-web.min.js",
   "scripts": {

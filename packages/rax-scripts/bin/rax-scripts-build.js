@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const program = require('commander');
-const optionsAttachToEnv = require('../src/config/optionsAttachToEnv');
+const optionsAttachToEnv = require('../src/utils/optionsAttachToEnv');
 
 program
   .option('--type <type>', 'set application type, Enum: ["webapp", "miniapp", "miniprogram"].', /^(webapp|miniapp|miniprogram)$/i, 'webapp')
@@ -10,6 +10,7 @@ program
   .option('--target <target>', 'set project path')
   .option('--public-path <publicPath>', 'set bundle assets public path end with `/`', '/')
   .option('--output-path <outputPath>', 'set output path', 'build')
+  .option('--analyzer', 'enabled webpack bundle analyzer', false)
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     require('../src/build')(program.type);

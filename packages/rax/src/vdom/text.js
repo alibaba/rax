@@ -14,12 +14,16 @@ class TextComponent extends BaseComponent {
       Host.driver.updateText(this.getNativeNode(), this._currentElement);
 
       if (process.env.NODE_ENV !== 'production') {
-        Host.hook.Reconciler.receiveComponent(this);
+        this._stringText = this._currentElement;
+        Host.reconciler.receiveComponent(this);
       }
     }
   }
 
   createNativeNode() {
+    if (process.env.NODE_ENV !== 'production') {
+      this._stringText = this._currentElement;
+    }
     return Host.driver.createText(this._currentElement, this);
   }
 }

@@ -58,7 +58,7 @@ class NativeComponent extends BaseComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.mountComponent(this);
+      Host.reconciler.mountComponent(this);
     }
 
     return instance;
@@ -137,7 +137,7 @@ class NativeComponent extends BaseComponent {
     this.updateChildren(nextProps.children, nextContext);
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.receiveComponent(this);
+      Host.reconciler.receiveComponent(this);
     }
   }
 

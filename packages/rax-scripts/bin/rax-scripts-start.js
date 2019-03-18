@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const program = require('commander');
-const optionsAttachToEnv = require('../src/config/optionsAttachToEnv');
+const optionsAttachToEnv = require('../src/utils/optionsAttachToEnv');
 
 program
   .option('--type <type>', 'set application type, Enum: ["webapp", "miniapp", "miniprogram"].', /^(webapp|miniapp|miniprogram)$/i, 'webapp')

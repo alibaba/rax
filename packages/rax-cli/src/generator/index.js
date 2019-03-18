@@ -1,7 +1,5 @@
 var path = require('path');
-var chalk = require('chalk');
 var fs = require('fs');
-var spawn = require('cross-spawn');
 var easyfile = require('easyfile');
 var path = require('path');
 

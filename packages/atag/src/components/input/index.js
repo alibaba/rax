@@ -83,10 +83,15 @@ export default class Input extends PolymerElement {
 
   /**
    * Sync a-input value to real input value.
+   * @NOTE: If assign value to DOM Element directly, some iOS version of
+   *   webview can not handle properly and to determintae insert composition process.
+   *   To fix this, should judge value is equal first.
    * @private
    */
-  _observeValue() {
-    this.$.input.value = this.value;
+  _observeValue(newValue) {
+    if (this.$.input.value !== newValue) {
+      this.$.input.value = newValue;
+    }
   }
 
   /**

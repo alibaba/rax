@@ -17,7 +17,7 @@ class BaseComponent {
 
   destoryComponent() {
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.unmountComponent(this);
+      Host.reconciler.unmountComponent(this);
     }
 
     this._currentElement = null;
@@ -37,7 +37,7 @@ class BaseComponent {
     this.mountNativeNode(nativeNodeMounter);
 
     if (process.env.NODE_ENV !== 'production') {
-      Host.hook.Reconciler.mountComponent(this);
+      Host.reconciler.mountComponent(this);
     }
 
     let instance = {

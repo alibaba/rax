@@ -1,6 +1,6 @@
 {
   "name": "perf-measurer",
-  "version": "0.6.5",
+  "version": "0.0.1",
   "description": "A render perf measurer.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

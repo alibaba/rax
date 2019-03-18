@@ -1,5 +1,4 @@
 import styleToCSS from '../styleToCSS';
-import {setRem} from 'style-unit';
 
 describe('StyleToCSS', () => {
   it('convert unitless style to css', () => {
@@ -11,8 +10,6 @@ describe('StyleToCSS', () => {
   });
 
   it('convert rem unit style to css', () => {
-    setRem(1);
-
     let css = styleToCSS({
       width: '750rem'
     });

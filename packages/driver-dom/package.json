@@ -1,6 +1,6 @@
 {
   "name": "driver-dom",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0",
   "description": "DOM driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -12,10 +12,7 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "dependencies": {
-    "style-unit": "^1.0.0"
-  },
   "devDependencies": {
-    "rax": "^1.0.0-beta"
+    "rax": "^1.0.0"
   }
 }
