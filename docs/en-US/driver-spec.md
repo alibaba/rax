@@ -1,7 +1,7 @@
 # Driver Spec `1.0`
 
 Driver is the key concept that make the application cross-container running.
-Rax have been implemented [browser driver](../../packages/driver-browser/src/index.js), [server driver](../../packages/driver-server/src/index.js) and [weex driver](../../packages/driver-weex/src/index.js).
+Rax have been implemented [dom driver](../../packages/driver-dom/src/index.js), [server driver](../../packages/driver-server/src/index.js) and [weex driver](../../packages/driver-weex/src/index.js).
 If want Rax works on other container, only need implement the driver specification.
 The driver should implement follow method:
 
