@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement} from 'rax';
+import {createElement, useState, useEffect} from 'rax';
 import {renderToString} from '../index';
 
 describe('renderToString', () => {
@@ -90,5 +90,35 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyComponent />);
     expect(str).toBe('<input type="radio" checked="checked">');
+  });
+
+  it('render with state hook', () => {
+    function MyComponent(props) {
+      const [name, setName] = useState(props.name);
+    
+      return (
+        <h1> Hello {name}</h1>
+      );
+    };
+
+    let str = renderToString(<MyComponent name="rax" />);
+    expect(str).toBe('<h1> Hello rax</h1>');
+  });
+
+  it('render with effect hook', () => {
+    function MyComponent(props) {
+      const [name, setName] = useState(props.name);
+    
+      useEffect(() => {
+        // ...
+      });
+
+      return (
+        <h1> Hello {name}</h1>
+      );
+    };
+
+    let str = renderToString(<MyComponent name="rax" />);
+    expect(str).toBe('<h1> Hello rax</h1>');
   });
 });
