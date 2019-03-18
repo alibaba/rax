@@ -1,5 +1,5 @@
 import { shared } from 'rax';
-import HookInstance from './hookInstance';
+import ReactiveComponent from './ReactiveComponent';
 
 const EMPTY_OBJECT = {};
 const TRUE = true;
@@ -184,12 +184,15 @@ function renderElementToString(element, context, options) {
       var renderedElement = instance.render();
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
-      const instance = new HookInstance();
+      const instance = new ReactiveComponent(type);
+      instance.props = props;
+      instance.context = context;
+
       shared.Host.owner = {
         _instance: instance
       };
 
-      const renderedElement = type(props, context);
+      const renderedElement = instance.render();
       return renderElementToString(renderedElement, context, options);
     } else if (typeof type === 'string') {
       const isVoidElement = VOID_ELEMENTS[type];
