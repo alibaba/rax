@@ -35,7 +35,7 @@ export default function startMiniAppWeb(appConfig, mountNode) {
       const { bundlePath } = plguinConfig[plugins[i]];
       if (!bundlePath) continue;
       send('importScripts', {
-        url: normalizeURL(bundlePath),
+        url: normalizePathToURL(bundlePath),
       }, TARGET_WORKER);
     }
   }
