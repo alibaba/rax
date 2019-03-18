@@ -1,0 +1,12 @@
+<script>
+  const t = performance.now();
+  Array(1000)
+    .fill(0)
+    .forEach((_, index) => {
+      const text = document.createElement('a-text');
+      text.innerText = `text-${index}`;
+      document.body.appendChild(text);
+    });
+  const result = performance.now() - t;
+  console.log(result.toFixed(2) + 'ms');
+</script>
