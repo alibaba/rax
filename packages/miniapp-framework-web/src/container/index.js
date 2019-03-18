@@ -1,5 +1,6 @@
 import spawnWorker from 'worker-loader?inline&fallback=false!babel-loader!../worker';
 import MessageRouter from './MessageRouter';
+import resolvePathname from './resolve-pathname';
 import my from './my';
 
 const hasOwn = {}.hasOwnProperty;
@@ -57,16 +58,26 @@ function getAssetUrl(appConfig) {
   }
 
   const url = appConfig[ASSET_KEY];
-  return /^https?:\/\//.test(url) ? url : normalizeURL(url);
+  return normalizePathToURL(url);
 }
 
 /**
- * Normalize reletive url by location
- * @param url {String} Original URL.
+ * Normalize asset path to absolute url.
+ * eg: 1. relative path like `app.js` or `../app.js` or `path/to/app.js`
+ *     2. absolute path like `/app.js`
+ *     3. cross origin path like `https://path.to/app.js`
+ * @param path {String} Original path.
  * @return {String} Normalized URL.
  */
-function normalizeURL(url) {
-  let h5AssetsAbsoluteUrl = new URL(location.origin);
-  h5AssetsAbsoluteUrl.pathname = url;
-  return h5AssetsAbsoluteUrl.toString();
+function normalizePathToURL(path) {
+  if (isRemoteOriginPath(path)) {
+    return path;
+  } else {
+    return location.origin + resolvePathname(path, location.pathname);
+  }
+}
+
+const REMOTE_ORIGIN_RE = /^https?:\/\//;
+function isRemoteOriginPath(path) {
+  return REMOTE_ORIGIN_RE.test(path);
 }
