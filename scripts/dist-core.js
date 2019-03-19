@@ -74,6 +74,10 @@ build({ package: 'driver-dom', name: 'DriverDOM' });
 build({ package: 'driver-dom', name: 'DriverDOM', format: 'esm' });
 build({ package: 'driver-dom', name: 'DriverDOM', shouldMinify: true });
 
+build({ package: 'driver-weex', name: 'DriverWeex' });
+build({ package: 'driver-weex', name: 'DriverWeex', format: 'esm' });
+build({ package: 'driver-weex', name: 'DriverWeex', shouldMinify: true });
+
 build({ package: 'driver-worker', name: 'DriverWorker' });
 build({ package: 'driver-worker', name: 'DriverWorker', format: 'esm' });
 build({ package: 'driver-worker', name: 'DriverWorker', shouldMinify: true });

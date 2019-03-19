@@ -30,6 +30,7 @@ module.exports = {
     extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts'],
   },
   output: {
+    pathinfo: process.env.NODE_ENV === 'development',
     // Next line is not used in dev but WebpackDevServer crashes without it:
     path: pathConfig.appBuild,
     // This does not produce a real file. It's just the virtual path that is
