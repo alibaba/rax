@@ -6,6 +6,7 @@ import my from './my';
 const hasOwn = {}.hasOwnProperty;
 const COMPATIBLE_APP_CONFIG_KEY = 'APP_MANIFEST';
 const ASSET_KEY = 'h5Assets';
+const PLUGIN_KEY = 'plugins';
 const TARGET_WORKER = 'AppWorker';
 
 /**
@@ -26,6 +27,18 @@ export default function startMiniAppWeb(appConfig, mountNode) {
   send('importScripts', {
     url: getAssetUrl(appConfig),
   }, TARGET_WORKER);
+
+  if (PLUGIN_KEY in appConfig) {
+    const plguinConfig = appConfig[PLUGIN_KEY];
+    const plugins = Object.keys(plguinConfig);
+    for (let i = 0, l = plugins.length; i < l; i++) {
+      const { bundlePath } = plguinConfig[plugins[i]];
+      if (!bundlePath) continue;
+      send('importScripts', {
+        url: normalizePathToURL(bundlePath),
+      }, TARGET_WORKER);
+    }
+  }
 
   send('registerAPI', {
     apis: Object.keys(my),
