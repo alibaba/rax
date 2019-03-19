@@ -1,4 +1,4 @@
-# rax-starter-kit
+# WeexApp Starter Kit
 
 ## Getting Started
 

@@ -1,4 +1,4 @@
-# rax-starter-kit
+# WebApp Starter Kit
 
 ## Getting Started
 
