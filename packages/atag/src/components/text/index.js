@@ -1,4 +1,5 @@
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status';
 import debounce from '../../shared/debounce';
 
 const style = document.createElement('style');
@@ -64,7 +65,9 @@ export default class TextElement extends HTMLElement {
   }
 
   connectedCallback() {
-    this.childrenObserver = new FlattenedNodesObserver(this, this._observeChildren);
+    afterNextRender(this, () => {
+      this.childrenObserver = new FlattenedNodesObserver(this, this._observeChildren);
+    });
 
     if (this.childNodes.length > 0) {
       const space = this.space;
@@ -77,7 +80,9 @@ export default class TextElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.childrenObserver.disconnect();
+    afterNextRender(this, () => {
+      this.childrenObserver.disconnect();
+    });
   }
 
   _observeChildren({ addedNodes, target }) {
