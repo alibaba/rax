@@ -6,6 +6,7 @@ import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
+import { flush } from '../scheduler';
 import ServerDriver from 'driver-server';
 
 describe('Key', function() {
@@ -144,7 +145,10 @@ describe('Key', function() {
     let instance = render(<App />, container);
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('1');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('2');
+
     instance.setState({count: 1});
+    flush();
+
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('2');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('3');
   });

@@ -7,6 +7,7 @@ import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
 import createRef from '../../createRef';
+import { flush } from '../scheduler';
 
 describe('Ref', function() {
   beforeEach(function() {
@@ -63,11 +64,15 @@ describe('Ref', function() {
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    flush();
+
     expect(refHopsAround.refs.divOneRef).toEqual(firstDiv);
     expect(refHopsAround.refs.hopRef).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    flush();
+
     expect(refHopsAround.refs.divOneRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);
     expect(refHopsAround.refs.hopRef).toEqual(thirdDiv);
@@ -77,6 +82,8 @@ describe('Ref', function() {
      * refs are completely restored.
      */
     refHopsAround.moveRef();
+    flush();
+
     expect(refHopsAround.refs.hopRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
@@ -135,11 +142,15 @@ describe('Ref', function() {
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    flush();
+
     expect(refHopsAround.refs.divOneRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.hopRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    flush();
+
     expect(refHopsAround.refs.divOneRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.hopRef.id).toEqual(thirdDiv);
@@ -149,6 +160,8 @@ describe('Ref', function() {
      * refs are completely restored.
      */
     refHopsAround.moveRef();
+    flush();
+
     expect(refHopsAround.refs.hopRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);

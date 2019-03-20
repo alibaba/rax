@@ -5,6 +5,7 @@ import PropTypes from 'rax-proptypes';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
+import { flush } from '../scheduler';
 import ServerDriver from 'driver-server';
 
 describe('Context', function() {
@@ -132,7 +133,10 @@ describe('Context', function() {
 
     var instance = render(<Parent />, container);
     expect(container.childNodes[0].childNodes[0].data).toBe('initial-initial');
+
     instance.setState({bar: 'changed'});
+    flush();
+
     expect(container.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
 });

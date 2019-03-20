@@ -1,6 +1,7 @@
 import createElement from '../../createElement';
 import Component from '../../vdom/component';
 import renderer from '../renderer';
+import { flush } from '../../vdom/scheduler';
 
 const STATUS = {
   NORMAL: 'normal',
@@ -51,11 +52,13 @@ test('Link changes the class when hovered', () => {
   tree.eventListeners.mouseenter();
   // re-rendering
   tree = component.toJSON();
+  flush();
   expect(tree).toMatchSnapshot();
 
   // manually trigger the callback
   tree.eventListeners.mouseleave();
   // re-rendering
   tree = component.toJSON();
+  flush();
   expect(tree).toMatchSnapshot();
 });

@@ -7,6 +7,7 @@ import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
+import { flush } from '../scheduler';
 
 describe('NativeComponent', function() {
   function createNodeElement(tagName) {
@@ -119,6 +120,7 @@ describe('NativeComponent', function() {
     inst.setState({
       show: true
     });
+    flush();
 
     childNodes = container.childNodes;
 
@@ -154,7 +156,10 @@ describe('NativeComponent', function() {
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('e');
     expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('b');
     expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('c');
+
     instance.setState({count: 1});
+    flush();
+
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('c');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('e');
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('b');

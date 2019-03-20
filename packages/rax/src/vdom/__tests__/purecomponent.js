@@ -4,6 +4,7 @@ import Component, { PureComponent } from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
+import { flush } from '../scheduler';
 import ServerDriver from 'driver-server';
 
 describe('PureComponent', function() {
@@ -30,12 +31,15 @@ describe('PureComponent', function() {
     expect(renders).toBe(1);
 
     component.setState({type: 'foo'});
+    flush();
     expect(renders).toBe(1);
 
     component.setState({type: 'bar'});
+    flush();
     expect(renders).toBe(2);
 
     component.setState({type: 'bar'});
+    flush();
     expect(renders).toBe(2);
   });
 
@@ -55,7 +59,7 @@ describe('PureComponent', function() {
 
     let component = render(<MyComponent />);
     component.setState({type: 'foo'});
-
+    flush();
     expect(renders).toBe(2);
   });
 

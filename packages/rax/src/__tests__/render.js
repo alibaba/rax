@@ -5,6 +5,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import Component from '../vdom/component';
+import { flush } from '../vdom/scheduler';
 
 describe('render', () => {
   function createNodeElement(tagName) {
@@ -117,6 +118,7 @@ describe('render', () => {
       }
     }
     render(<App />, container);
+    flush();
     expect(Child).toHaveBeenCalledTimes(1);
     expect(container2.childNodes[0].childNodes[0].data).toBe('4');
   });

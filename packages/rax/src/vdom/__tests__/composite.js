@@ -5,6 +5,7 @@ import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
+import { flush } from '../scheduler';
 
 describe('CompositeComponent', function() {
   function createNodeElement(tagName) {
@@ -45,6 +46,9 @@ describe('CompositeComponent', function() {
     expect(component.refs.x.tagName).toBe('A');
 
     component.toggleActivatedState();
+
+    flush();
+
     expect(component.refs.x.tagName).toBe('B');
   });
 
@@ -203,6 +207,7 @@ describe('CompositeComponent', function() {
         <BrokenRender />
       </ErrorBoundary>, container);
 
+    flush();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -238,7 +243,7 @@ describe('CompositeComponent', function() {
       <ErrorBoundary>
         <BrokenRender />
       </ErrorBoundary>, container);
-
+    flush();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -274,7 +279,7 @@ describe('CompositeComponent', function() {
       <ErrorBoundary>
         <BrokenRender />
       </ErrorBoundary>, container);
-
+    flush();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -296,6 +301,7 @@ describe('CompositeComponent', function() {
     }
 
     render(<BrokenRender />, container);
+    flush();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -365,8 +371,8 @@ describe('CompositeComponent', function() {
       }
     }
 
-    render(
-      <ErrorBoundary />, container);
+    render(<ErrorBoundary />, container);
+    flush();
     expect(container.childNodes.length).toBe(1);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
@@ -396,8 +402,8 @@ describe('CompositeComponent', function() {
       throw new Error('Hello');
     }
 
-    render(
-      <ErrorBoundary />, container);
+    render(<ErrorBoundary />, container);
+    flush();
     expect(container.childNodes.length).toBe(1);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
@@ -457,7 +463,6 @@ describe('CompositeComponent', function() {
       render() {
         logs.push('render2');
         throw new Error();
-        return null;
       }
       componentDidMount() {
         logs.push('componentDidMount2');
@@ -502,6 +507,7 @@ describe('CompositeComponent', function() {
         <Life3 />
       </ErrorBoundary>, container);
 
+    flush();
     expect(logs).toEqual([
       'componentWillMount1',
       'render1',
@@ -540,6 +546,7 @@ describe('CompositeComponent', function() {
     const instance = render(<App />, container);
     expect(container.childNodes.length).toBe(0);
     instance.setState({count: 1});
+    flush();
     expect(container.childNodes[0].tagName).toBe('DIV');
   });
 
@@ -577,6 +584,7 @@ describe('CompositeComponent', function() {
 
     render(<Foo />, container);
 
+    flush();
     expect(ops).toEqual([
       'render: 0',
       'componentDidMount (before setState): 0',
@@ -589,7 +597,7 @@ describe('CompositeComponent', function() {
 
     ops = [];
     instance.setState({tick: 2});
-
+    flush();
     expect(ops).toEqual([
       'render: 2',
       'componentDidUpdate: 2',
@@ -620,6 +628,7 @@ describe('CompositeComponent', function() {
       }
     }
     render(<Foo />, container);
+    flush();
     expect(container.childNodes[0].childNodes[0].data).toBe('5');
   });
 
@@ -690,7 +699,7 @@ describe('CompositeComponent', function() {
     }
 
     render(<Batch />, container2);
-
+    flush();
     expect(instance.state.x).toBe(1);
     expect(child.state.y).toBe(2);
     expect(child2.state.y).toBe(2);
@@ -870,6 +879,7 @@ describe('CompositeComponent', function() {
     inst.setState({
       show: true
     });
+    flush();
 
     childNodes = container.childNodes;
 

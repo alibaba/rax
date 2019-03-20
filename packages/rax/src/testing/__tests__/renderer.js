@@ -3,6 +3,7 @@
 import createElement from '../../createElement';
 import Component from '../../vdom/component';
 import renderer from '../renderer';
+import { flush } from '../../vdom/scheduler';
 
 describe('renderer', () => {
   it('renders a simple component', () => {
@@ -86,6 +87,7 @@ describe('renderer', () => {
     };
 
     var component = renderer.create(<MyComponent />);
+    flush();
     expect(component.toJSON()).toEqual({
       tagName: 'DIV',
       attributes: { class: 'purple' },
@@ -121,6 +123,8 @@ describe('renderer', () => {
 
     var mouse = component.getInstance();
     mouse.handleMoose();
+    flush();
+
     expect(component.toJSON()).toEqual({
       tagName: 'DIV',
       children: ['moose'],

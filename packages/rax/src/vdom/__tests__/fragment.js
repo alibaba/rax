@@ -7,6 +7,7 @@ import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
+import { flush } from '../scheduler';
 
 describe('FragmentComponent', function() {
   function createNodeElement(tagName) {
@@ -117,6 +118,8 @@ describe('FragmentComponent', function() {
       show: true
     });
 
+    flush();
+
     childNodes = container.childNodes;
 
     expect(childNodes.length).toBe(5);
@@ -171,6 +174,7 @@ describe('FragmentComponent', function() {
 
     let container = el.childNodes[0];
     let childNodes = container.childNodes;
+    flush();
 
     expect(childNodes.length).toBe(4);
     expect(childNodes[0].childNodes[0].data).toBe('1');
@@ -351,6 +355,8 @@ describe('FragmentComponent', function() {
       list: [1, 2, 3, 7, 8, 9]
     });
 
+    flush();
+
     expect(childNodes.length).toBe(6);
     expect(childNodes[0].childNodes[0].data).toBe('1');
     expect(childNodes[1].childNodes[0].data).toBe('2');
@@ -362,6 +368,7 @@ describe('FragmentComponent', function() {
     inst.setState({
       list: [4, 5, 6]
     });
+    flush();
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('4');
@@ -393,9 +400,12 @@ describe('FragmentComponent', function() {
     }
     let instance = render(<App />, el);
     expect(el.childNodes[0].childNodes).toEqual([]);
+
     instance.setState({
       count: 1
     });
+    flush();
+
     expect(el.childNodes[0].childNodes[0].data).toBe('1');
     expect(el.childNodes[0].childNodes[1].data).toBe('2');
     expect(el.childNodes[0].childNodes[2].data).toBe('3');
@@ -428,6 +438,9 @@ describe('FragmentComponent', function() {
     instance.setState({
       count: 1
     });
+
+    flush();
+
     expect(el.childNodes[0].childNodes[0].data).toBe('1');
     expect(el.childNodes[0].childNodes[1].data).toBe('2');
     expect(el.childNodes[0].childNodes[2].data).toBe('3');
