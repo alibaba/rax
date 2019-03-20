@@ -38,7 +38,7 @@ function getTemplate(ast) {
           const [, error] = renderPath.node.body.body.filter(s => t.isReturnStatement(s));
           if (error) {
             // TODO: 报错需要带文件和行列信息
-            throw Error( 'Only one return is allow in render method.')
+            throw Error( 'Only one return is allow in render method.');
           }
 
           const renderBody = renderPath.get('body');
@@ -48,7 +48,7 @@ function getTemplate(ast) {
             const ast = parse(returnElement);
             template = generateElement(ast);
           } else {
-            throw new Error('Render method only return JSXElement.')
+            throw new Error('Render method only return JSXElement.');
           }
 
           // Remove render method path at last.
@@ -155,7 +155,7 @@ function getComponentJSCode(ast) {
             ],
           )
         )
-      )
+      );
     },
 
     ExportDefaultDeclaration(path) {

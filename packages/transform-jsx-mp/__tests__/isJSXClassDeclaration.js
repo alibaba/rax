@@ -4,7 +4,6 @@ const isJSXClassDeclaration = require('../isJSXClassDeclaration');
 const { parserOption } = require('../options');
 
 describe('isJSXClassDeclaration', () => {
-
   it('#1', () => {
     const code = `
       import Rax, { Component } from 'rax';
@@ -40,4 +39,4 @@ describe('isJSXClassDeclaration', () => {
       }
     });
   });
-})
+});

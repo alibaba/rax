@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+
 const RAX_MODULE = 'rax';
 const RAX_COMPONENT = 'Component';
 

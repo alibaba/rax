@@ -1,32 +1,32 @@
 const { generateElement } = require('../codegen');
 
 describe('Generate template', () => {
-  it ('should generate template', () => {
+  it('should generate template', () => {
     const node = {
       tag: 'text',
       attrs: {
-        foo: "{{bar}}",
+        foo: '{{bar}}',
       },
       children: ['hello']
     };
     expect(generateElement(node)).toEqual('<text foo="{{bar}}">hello</text>');
   });
 
-  it ('should generate self-close tag', () => {
+  it('should generate self-close tag', () => {
     const node = {
       tag: 'import',
       attrs: {
-        src: "./foo.axml",
+        src: './foo.axml',
       },
     };
     expect(generateElement(node)).toEqual('<import src="./foo.axml" />');
   });
 
-  it ('should generate nested', () => {
+  it('should generate nested', () => {
     const node = {
       tag: 'view',
       attrs: {
-        foo: "{{bar}}",
+        foo: '{{bar}}',
       },
       children: [{
         tag: 'text',

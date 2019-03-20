@@ -109,7 +109,7 @@ module.exports = function transformJSXToMiniProgram(sourcePath, distPath) {
         if (isPage(relativePath)) {
           const pageConfig = readJSONSync(sourceFilePath);
           const usingComponents = pageConfig.usingComponents = pageConfig.usingComponents || {};
-          usingComponents['page'] = './components/page'; // Add a page component config.
+          usingComponents.page = './components/page'; // Add a page component config.
           writeJSONSync(distFilePath, pageConfig);
         } else {
           copySync(sourceFilePath, distFilePath);
@@ -134,7 +134,7 @@ module.exports = function transformJSXToMiniProgram(sourcePath, distPath) {
     const fileNameWithoutExt = relativeFilePath.slice(0, -extname(relativeFilePath).length);
     return appConfig.pages.some((path) => path === fileNameWithoutExt);
   }
-}
+};
 
 function getFileContent(filepath) {
   return readFileSync(filepath, 'utf-8');

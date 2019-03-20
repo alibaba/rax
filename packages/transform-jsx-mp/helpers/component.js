@@ -3,7 +3,7 @@ const lifecycleMapping = {
   componentDidMount: 'didMount',
   componentWillReceiveProps: 'didUpdate',
   componentWillMount: 'didUnmount',
-}
+};
 
 export function createComponent(Klass) {
   const instance = new Klass();
