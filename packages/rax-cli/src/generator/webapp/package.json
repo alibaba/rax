@@ -2,6 +2,10 @@
   "name": "__YourProjectName__",
   "author": "__AuthorName__",
   "version": "0.0.0",
+  "browserslist": [
+    "last 1 version",
+    "> 1%"
+  ],
   "scripts": {
     "start": "rax-scripts start",
     "build": "rax-scripts build",
@@ -12,7 +16,7 @@
     "driver-dom": "^1.0.0"
   },
   "devDependencies": {
-    "rax-scripts": "^1.1.0",
+    "rax-scripts": "^1.2.0",
     "eslint": "^5.15.1",
     "babel-eslint": "^10.0.1",
     "eslint-plugin-react": "^7.12.4"
