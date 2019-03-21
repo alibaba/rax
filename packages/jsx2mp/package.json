@@ -1,6 +1,6 @@
 {
-  "name": "transform-jsx-mp",
-  "version": "0.0.0",
+  "name": "jsx2mp",
+  "version": "0.0.0-beta0",
   "license": "BSD-3-Clause",
   "description": "A cli tool to transform Rax JSX based project to MiniApp.",
   "bin": {
