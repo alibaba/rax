@@ -1,7 +1,6 @@
 import createElement from '../../createElement';
 import Component from '../../vdom/component';
 import renderer from '../renderer';
-import { flush } from '../../vdom/scheduler';
 
 const STATUS = {
   NORMAL: 'normal',
@@ -41,24 +40,36 @@ class Link extends Component {
   }
 }
 
-test('Link changes the class when hovered', () => {
-  const component = renderer.create(
-    <Link page="https://example.com">Example</Link>
-  );
-  let tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+describe('snapshot', () => {
+  beforeEach(function() {
+    jest.useFakeTimers();
+  });
 
-  // manually trigger the callback
-  tree.eventListeners.mouseenter();
-  // re-rendering
-  tree = component.toJSON();
-  flush();
-  expect(tree).toMatchSnapshot();
+  afterEach(function() {
+    jest.useRealTimers();
+  });
 
-  // manually trigger the callback
-  tree.eventListeners.mouseleave();
-  // re-rendering
-  tree = component.toJSON();
-  flush();
-  expect(tree).toMatchSnapshot();
+  test('Link changes the class when hovered', () => {
+    const component = renderer.create(
+      <Link page="https://example.com">Example</Link>
+    );
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  
+    // manually trigger the callback
+    tree.eventListeners.mouseenter();
+    jest.runAllTimers();
+    // re-rendering
+    tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  
+    // manually trigger the callback
+    tree.eventListeners.mouseleave();
+    jest.runAllTimers();
+    // re-rendering
+    tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
 });
+

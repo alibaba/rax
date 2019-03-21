@@ -3,9 +3,16 @@
 import createElement from '../../createElement';
 import Component from '../../vdom/component';
 import renderer from '../renderer';
-import { flush } from '../../vdom/scheduler';
 
 describe('renderer', () => {
+  beforeEach(function() {
+    jest.useFakeTimers();
+  });
+
+  afterEach(function() {
+    jest.useRealTimers();
+  });
+  
   it('renders a simple component', () => {
     function Link() {
       return <a role="link" />;
@@ -87,7 +94,7 @@ describe('renderer', () => {
     };
 
     var component = renderer.create(<MyComponent />);
-    flush();
+    jest.runAllTimers();
     expect(component.toJSON()).toEqual({
       tagName: 'DIV',
       attributes: { class: 'purple' },
@@ -123,7 +130,7 @@ describe('renderer', () => {
 
     var mouse = component.getInstance();
     mouse.handleMoose();
-    flush();
+    jest.runAllTimers();
 
     expect(component.toJSON()).toEqual({
       tagName: 'DIV',
