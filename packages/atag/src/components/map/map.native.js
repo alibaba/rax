@@ -1,5 +1,6 @@
 /* global WindVane */
 import { PolymerElement } from '@polymer/polymer';
+import debounce from '../../shared/debounce';
 import kebabCase from '../../shared/kebabCase';
 
 // Debounce native params update
