@@ -82,7 +82,7 @@ function performUpdate() {
 
   let component;
   let dirties = dirtyComponents;
-  while (dirties.length > 0) {
+  if (dirties.length > 0) {
     // Before next render, we will flush all the effects
     flushEffect();
     dirtyComponents = [];
