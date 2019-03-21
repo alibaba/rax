@@ -1,0 +1,1 @@
+<view onTap="handleClick">Click Me!</view>

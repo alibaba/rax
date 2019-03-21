@@ -38,4 +38,16 @@ describe('isJSXClassDeclaration', () => {
       }
     });
   });
+
+  it('#4', () => {
+    const code = `
+      import React, { Component } from 'react';
+      export default class {}
+    `;
+    traverse(parse(code), {
+      ClassDeclaration(path) {
+        expect(isJSXClassDeclaration(path)).toBeFalsy();
+      }
+    });
+  });
 });

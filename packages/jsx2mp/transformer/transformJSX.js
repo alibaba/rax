@@ -3,6 +3,14 @@ const traverse = require('@babel/traverse').default;
 const isJSXClassDeclaration = require('./isJSXClassDeclaration');
 const { parse, parseJSX } = require('../parser');
 const { generateElement, generateCodeByExpression } = require('../codegen');
+const {
+  RAX_COMPONENT,
+  SAFE_RAX_COMPONENT,
+  CREATE_COMPONENT,
+  SAFE_CREATE_COMPONENT,
+  EXPORTED_CLASS_DEF,
+  HELPER_COMPONENT
+} = require('../constant');
 
 /**
  * Seperate JSX code into parts.
@@ -124,31 +132,32 @@ function getComponentJSCode(ast) {
      * 3. Add Component call expression.
      */
     Program(path) {
-      const importedIdentifier = t.identifier('createComponent');
-      const localIdentifier = t.identifier('__create_component__');
+      const importedIdentifier = t.identifier(CREATE_COMPONENT);
+      const localIdentifier = t.identifier(SAFE_CREATE_COMPONENT);
 
       // import { createComponent as __create_component__ } from "/__helpers/component";
       path.node.body.unshift(
         t.importDeclaration(
           [t.importSpecifier(localIdentifier, importedIdentifier)],
-          t.stringLiteral('/__helpers/component')
+          t.stringLiteral(HELPER_COMPONENT)
         )
       );
 
       // Rename Component ref.
-      if (path.scope.hasBinding('Component')) {
-        path.scope.rename('Component', '_Component');
+      if (path.scope.hasBinding(RAX_COMPONENT)) {
+        // Add __ as safe prefix to avoid scope binding duplicate.
+        path.scope.rename(RAX_COMPONENT, SAFE_RAX_COMPONENT);
       }
 
       // Component(__create_component__(__class_def__));
       path.node.body.push(
         t.expressionStatement(
           t.callExpression(
-            t.identifier('Component'),
+            t.identifier(RAX_COMPONENT),
             [
               t.callExpression(
-                t.identifier('__create_component__'),
-                [t.identifier('__class_def__')]
+                t.identifier(SAFE_CREATE_COMPONENT),
+                [t.identifier(EXPORTED_CLASS_DEF)]
               )
             ],
           )
@@ -163,7 +172,7 @@ function getComponentJSCode(ast) {
         path.replaceWith(
           t.variableDeclaration('var', [
             t.variableDeclarator(
-              t.identifier('__class_def__'),
+              t.identifier(EXPORTED_CLASS_DEF),
               t.classExpression(id, superClass, body, decorators)
             )
           ])

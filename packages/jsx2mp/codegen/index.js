@@ -13,7 +13,10 @@ const SELF_CLOSE_TAGS = new Set([
  * @param children? {Array>} Child nodes.
  */
 function generateElement({ tag, attrs, children }) {
-  let ret = `<${tag} ${generateAttrs(attrs)}`;
+  let ret = `<${tag}`;
+
+  const attrRet = generateAttrs(attrs);
+  if (attrRet) ret += ' ' + attrRet;
 
   if (SELF_CLOSE_TAGS.has(tag)) {
     ret += ' />';

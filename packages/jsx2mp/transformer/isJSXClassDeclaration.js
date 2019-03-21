@@ -1,7 +1,5 @@
 const t = require('@babel/types');
-
-const RAX_MODULE = 'rax';
-const RAX_COMPONENT = 'Component';
+const { RAX_PACKAGE, RAX_COMPONENT } = require('../constant');
 
 /**
  * Judge a NodePath is a Rax JSX class declaration.
@@ -29,7 +27,7 @@ function isJSXClassDeclaration(path) {
   if (importModuleBinding && importModuleBinding.kind === 'module') {
     const bindingPath = importModuleBinding.path.parentPath;
     if (t.isImportDeclaration(bindingPath.node)) {
-      return t.isStringLiteral(bindingPath.node.source, { value: RAX_MODULE });
+      return t.isStringLiteral(bindingPath.node.source, { value: RAX_PACKAGE });
     }
   }
   return false;

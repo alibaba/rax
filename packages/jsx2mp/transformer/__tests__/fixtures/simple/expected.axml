@@ -1,0 +1,1 @@
+<view>Hello {{value}}</view>

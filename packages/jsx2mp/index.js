@@ -1,7 +1,18 @@
-const { readFileSync, existsSync, lstatSync, copySync, mkdirpSync, writeFileSync, removeSync, readJSONSync, writeJSONSync } = require('fs-extra');
+const {
+  readFileSync,
+  existsSync,
+  lstatSync,
+  copySync,
+  mkdirpSync,
+  writeFileSync,
+  removeSync,
+  readJSONSync,
+  writeJSONSync,
+} = require('fs-extra');
 const { resolve, relative, extname, dirname } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
+const glob = require('glob');
 const transformJSX = require('./transformer/transformJSX');
 
 const JSX_FILE = '.jsx';
@@ -10,26 +21,13 @@ const STYLE_FILE = '.css';
 const TEMPLATE_FILE = '.axml';
 const CONFIG_FILE = '.json';
 
-function startWatching(sourcePath, distPath, onFileChange) {
-  const watcherPaths = [sourcePath];
-  const watcher = chokidar.watch(watcherPaths, {
-    ignored: [/(^|[/\\])\../, distPath],
-    persistent: true,
-    ignoreInitial: false,
-  });
-  printLog(colors.green('监听以下路径变更'), watcherPaths);
-
-  return watcher
-    .on('add', onFileChange)
-    .on('change', onFileChange);
-}
-
 /**
- * Transform a jsx file
+ * Transform a jsx project.
  * @param sourcePath {String} Absolute path to source path.
  * @param distPath {String} Absolute distPath to source path.
+ * @param enableWatch {Boolean} Watch file changes.
  */
-module.exports = function transformJSXToMiniProgram(sourcePath, distPath) {
+function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
   if (!isDirectory(sourcePath)) throw new Error('Not a valid path.');
 
   if (existsSync(distPath)) {
@@ -44,7 +42,22 @@ module.exports = function transformJSXToMiniProgram(sourcePath, distPath) {
 
   mkdirpSync(distPath);
   printLog(colors.green('创建目录'), 'dist/');
-  startWatching(sourcePath, distPath, handleFileChange);
+  if (enableWatch) {
+    startWatching(sourcePath, distPath, handleFileChange)
+    printLog(colors.green('监听以下路径的文件变更'), sourcePath);
+  } else {
+    const globOption = {
+      cwd: sourcePath,
+      nodir: true,
+      dot: true,
+      ignore: ['node_modules', 'dist/**', '.DS_Store'],
+      absolute: true,
+    };
+    const files = glob.sync('**/*', globOption);
+    for (let i = 0, l = files.length; i < l; i++) {
+      handleFileChange(files[i]);
+    }
+  }
 
   const localHelperPath = resolve(__dirname, 'helpers');
   // In case of duplicated name.
@@ -133,7 +146,27 @@ module.exports = function transformJSXToMiniProgram(sourcePath, distPath) {
     const fileNameWithoutExt = relativeFilePath.slice(0, -extname(relativeFilePath).length);
     return appConfig.pages.some((path) => path === fileNameWithoutExt);
   }
-};
+}
+
+/**
+ * Start watching files
+ * @param sourcePath {String} Absolute source path.
+ * @param distPath {String} Absolute dist path.
+ * @param onFileChange {Function} Callback to handle files.
+ * @return watcher {chokidar.Watcher}
+ */
+function startWatching(sourcePath, distPath, onFileChange) {
+  const watcherPaths = [sourcePath];
+  const watcher = chokidar.watch(watcherPaths, {
+    ignored: [/(^|[/\\])\../, distPath],
+    persistent: true,
+    ignoreInitial: false,
+  });
+
+  return watcher
+    .on('add', onFileChange)
+    .on('change', onFileChange);
+}
 
 /**
  * Get file content as utf-8 text.
@@ -159,3 +192,5 @@ function isDirectory(path) {
 function printLog(...logs) {
   console.log.apply(console, logs);
 }
+
+module.exports = transformJSXToMiniProgram;

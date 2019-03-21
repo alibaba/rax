@@ -1,6 +1,7 @@
 const t = require('@babel/types');
 const Node = require('./Node');
 const { generateCodeByExpression } = require('../codegen');
+const { builtInTags } = require('../constant');
 
 /**
  * Parse JSXElements to Node.
@@ -120,9 +121,13 @@ function parseAttrs(attributes) {
   return ret;
 }
 
-function isCustomComponent(name) {
-  // TODO: need a Set.
-  return ['view', 'text'].indexOf(name) === -1;
+/**
+ * Whether a tag name is built-in.
+ * @param tagName {String}
+ * @return {Boolean}
+ */
+function isCustomComponent(tagName) {
+  return !builtInTags.has(tagName.toLowerCase());
 }
 
 
