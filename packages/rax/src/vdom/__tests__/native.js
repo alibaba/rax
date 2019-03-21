@@ -7,7 +7,6 @@ import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import { flush } from '../scheduler';
 
 describe('NativeComponent', function() {
   function createNodeElement(tagName) {
@@ -23,10 +22,12 @@ describe('NativeComponent', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('updates a mounted text component in place', function() {
@@ -120,7 +121,7 @@ describe('NativeComponent', function() {
     inst.setState({
       show: true
     });
-    flush();
+    jest.runAllTimers();
 
     childNodes = container.childNodes;
 
@@ -158,7 +159,7 @@ describe('NativeComponent', function() {
     expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('c');
 
     instance.setState({count: 1});
-    flush();
+    jest.runAllTimers();
 
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('c');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('e');

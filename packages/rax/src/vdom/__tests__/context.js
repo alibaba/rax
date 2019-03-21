@@ -22,10 +22,12 @@ describe('Context', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should pass context when rendering subtree elsewhere', function() {
@@ -135,7 +137,7 @@ describe('Context', function() {
     expect(container.childNodes[0].childNodes[0].data).toBe('initial-initial');
 
     instance.setState({bar: 'changed'});
-    flush();
+    jest.runAllTimers();
 
     expect(container.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });

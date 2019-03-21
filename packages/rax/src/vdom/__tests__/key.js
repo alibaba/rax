@@ -6,7 +6,6 @@ import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
-import { flush } from '../scheduler';
 import ServerDriver from 'driver-server';
 
 describe('Key', function() {
@@ -23,10 +22,12 @@ describe('Key', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should unmount and remount if the key changes', function() {
@@ -147,7 +148,7 @@ describe('Key', function() {
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('2');
 
     instance.setState({count: 1});
-    flush();
+    jest.runAllTimers();
 
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('2');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('3');

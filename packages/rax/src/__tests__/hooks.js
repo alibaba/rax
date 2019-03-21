@@ -6,7 +6,6 @@ import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
 import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, useImperativeHandle, useMemo} from '../hooks';
-import { flush } from '../vdom/scheduler';
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
 import memo from '../memo';
@@ -63,7 +62,7 @@ describe('hooks', () => {
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
 
     stateUpdater(10);
-    flush();
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('10');
   });
 
@@ -80,11 +79,11 @@ describe('hooks', () => {
     expect(container.childNodes[0].childNodes[0].data).toEqual('0');
 
     updaters[0](1);
-    flush();
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('1');
 
     updaters[0](count => count + 10);
-    flush();
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('11');
 
     expect(updaters).toEqual([updaters[0], updaters[0], updaters[0]]);
@@ -155,19 +154,19 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    flush();
+    jest.runAllTimers();
     expect(logs).toEqual([
       'render', 'create2', 'create1'
     ]);
 
     render(<Counter count={1} />, container);
-    flush();
+    jest.runAllTimers();
     expect(logs).toEqual([
       'render', 'create2', 'create1',
       'render', 'destory2', 'create2', 'destory1', 'create1']);
 
     render(<Counter count={2} />, container);
-    flush();
+    jest.runAllTimers();
     expect(logs).toEqual([
       'render', 'create2', 'create1',
       'render', 'destory2', 'create2', 'destory1', 'create1',
@@ -195,19 +194,19 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(1);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={1} />, container);
-    flush();
+    jest.runAllTimers();
     expect(renderCounter).toEqual(2);
     expect(effectCounter).toEqual(2);
     expect(cleanupCounter).toEqual(1);
 
     render(<Counter count={2} />, container);
-    flush();
+    jest.runAllTimers();
     expect(renderCounter).toEqual(3);
     expect(effectCounter).toEqual(3);
     expect(cleanupCounter).toEqual(2);
@@ -237,19 +236,19 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={0} />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(3);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={1} />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(2);
     expect(renderCounter).toEqual(4);
     expect(cleanupCounter).toEqual(1);
@@ -279,19 +278,19 @@ describe('hooks', () => {
     }
 
     render(<Counter count={0} />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={0} />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(3);
     expect(cleanupCounter).toEqual(0);
 
     render(<Counter count={1} />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(2);
     expect(renderCounter).toEqual(4);
     expect(cleanupCounter).toEqual(1);
@@ -321,7 +320,7 @@ describe('hooks', () => {
     }
 
     render(<Counter />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(2);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(1);
@@ -351,7 +350,7 @@ describe('hooks', () => {
     }
 
     render(<Counter />, container);
-    flush();
+    jest.runAllTimers();
     expect(effectCounter).toEqual(1);
     expect(renderCounter).toEqual(2);
     expect(cleanupCounter).toEqual(0);
@@ -418,12 +417,6 @@ describe('hooks', () => {
       return result;
     };
 
-    let batchUpdate = function() {};
-    function act(callback) {
-      batchUpdate = callback;
-      flush();
-    }
-
     function Child({text}) {
       logs.push('Child: ' + text);
       return text;
@@ -442,9 +435,7 @@ describe('hooks', () => {
       useLayoutEffect(() => {
         logs.push(`Effect: ${text}`);
       });
-      useEffect(() => {
-        batchUpdate();
-      });
+
       return <Child text={text} />;
     }
 
@@ -457,10 +448,9 @@ describe('hooks', () => {
     expect(container.childNodes[0].data).toEqual('0, 0');
 
     // Normal update
-    act(() => {
-      setCounter1(1);
-      setCounter2(1);
-    });
+    setCounter1(1);
+    setCounter2(1);
+    jest.runAllTimers();
 
     expect(logs.flush()).toEqual([
       'Parent: 1, 1',
@@ -470,10 +460,10 @@ describe('hooks', () => {
 
     // This time, one of the state updates but the other one doesn't. So we
     // can't bail out.
-    act(() => {
-      setCounter1(1);
-      setCounter2(2);
-    });
+
+    setCounter1(1);
+    setCounter2(2);
+    jest.runAllTimers();
 
     expect(logs.flush()).toEqual([
       'Parent: 1, 2',
@@ -482,24 +472,25 @@ describe('hooks', () => {
     ]);
 
     // Lots of updates that eventually resolve to the current values.
-    act(() => {
-      setCounter1(9);
-      setCounter2(3);
-      setCounter1(4);
-      setCounter2(7);
-      setCounter1(1);
-      setCounter2(2);
-    });
+
+    setCounter1(9);
+    setCounter2(3);
+    setCounter1(4);
+    setCounter2(7);
+    setCounter1(1);
+    setCounter2(2);
+    jest.runAllTimers();
 
     // Because the final values are the same as the current values, the
     // component bails out.
     expect(logs.flush()).toEqual(['Parent: 1, 2', 'Effect: 1, 2']);
 
     // prepare to check SameValue
-    act(() => {
-      setCounter1(0 / -1);
-      setCounter2(NaN);
-    });
+
+    setCounter1(0 / -1);
+    setCounter2(NaN);
+    jest.runAllTimers();
+
     expect(logs.flush()).toEqual([
       'Parent: 0, NaN',
       'Child: 0, NaN',
@@ -507,19 +498,20 @@ describe('hooks', () => {
     ]);
 
     // check if re-setting to negative 0 / NaN still bails out
-    act(() => {
-      setCounter1(0 / -1);
-      setCounter2(NaN);
-      setCounter2(Infinity);
-      setCounter2(NaN);
-    });
+
+    setCounter1(0 / -1);
+    setCounter2(NaN);
+    setCounter2(Infinity);
+    setCounter2(NaN);
+    jest.runAllTimers();
 
     expect(logs.flush()).toEqual(['Parent: 0, NaN', 'Effect: 0, NaN']);
 
     // check if changing negative 0 to positive 0 does not bail out
-    act(() => {
-      setCounter1(0);
-    });
+
+    setCounter1(0);
+    jest.runAllTimers();
+
     expect(logs.flush()).toEqual([
       'Parent: 0, NaN',
       'Child: 0, NaN',
@@ -568,7 +560,7 @@ describe('hooks', () => {
 
     setCounter1(1);
     setCounter2(1);
-    flush();
+    jest.runAllTimers();
     expect(logs.flush()).toEqual([
       'Parent: 1, 1 (light)',
       'Child: 1, 1 (light)',
@@ -579,7 +571,7 @@ describe('hooks', () => {
 
     setCounter1(1);
     setCounter2(2);
-    flush();
+    jest.runAllTimers();
     expect(logs.flush()).toEqual([
       'Parent: 1, 2 (light)',
       'Child: 1, 2 (light)',
@@ -590,14 +582,14 @@ describe('hooks', () => {
     setCounter1(1);
     setCounter2(2);
     render(<Parent theme="dark" />, container);
-    flush();
+    jest.runAllTimers();
     expect(logs.flush()).toEqual(['Parent: 1, 2 (dark)', 'Child: 1, 2 (dark)']);
 
     // Both props and state bail out
     setCounter1(1);
     setCounter2(2);
     render(<Parent theme="dark" />, container);
-    flush();
+    jest.runAllTimers();
     expect(logs.flush()).toEqual([]);
   });
 
@@ -610,12 +602,6 @@ describe('hooks', () => {
       logs.length = 0;
       return result;
     };
-
-    let batchUpdate = function() {};
-    function act(callback) {
-      batchUpdate = callback;
-      flush();
-    }
 
     const ThemeContext = createContext('light');
 
@@ -646,9 +632,6 @@ describe('hooks', () => {
       useLayoutEffect(() => {
         logs.push(`Effect: ${text}`);
       });
-      useEffect(() => {
-        batchUpdate();
-      });
       return <Child text={text} />;
     }
 
@@ -674,7 +657,7 @@ describe('hooks', () => {
 
     // Normal update
     setCounter(1);
-    flush();
+    jest.runAllTimers();
     expect(logs.flush()).toEqual([
       'Parent: 1 (light)',
       'Child: 1 (light)',
@@ -684,10 +667,10 @@ describe('hooks', () => {
 
     // Update that doesn't change state, but the context changes, too, so it
     // can't bail out
-    act(() => {
-      setCounter(1);
-      setTheme('dark');
-    });
+
+    setCounter(1);
+    setTheme('dark');
+    jest.runAllTimers();
 
     expect(logs.flush()).toEqual([
       'Theme: dark',
@@ -852,7 +835,7 @@ describe('hooks', () => {
       // Test that it works on update, too. This time the log is a bit different
       // because we started with reducerB instead of reducerA.
       counter.current.dispatch('reset');
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Render: 0',
         'Render: 1',
@@ -892,13 +875,13 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('0');
 
       counter.current.dispatch(INCREMENT);
-      flush();
+      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('1');
 
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
-      flush();
+      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
 
       counter.current.dispatch(DECREMENT);
@@ -909,7 +892,7 @@ describe('hooks', () => {
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(INCREMENT);
-      flush();
+      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('-2');
     });
 
@@ -957,15 +940,14 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 10');
 
       counter.current.dispatch(INCREMENT);
-      flush();
+      jest.runAllTimers();
       expect(logs.flush()).toEqual(['Count: 11']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 11');
 
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
       counter.current.dispatch(DECREMENT);
-      flush();
-      // FIXME: React will logs ['Count: 10', 'Count: 9', 'Count: 8']
+      jest.runAllTimers();
       expect(logs.flush()).toEqual(['Count: 8']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 8');
     });
@@ -989,12 +971,6 @@ describe('hooks', () => {
         return action;
       }
 
-      let batchUpdate = function() {};
-      function act(callback) {
-        batchUpdate = callback;
-        flush();
-      }
-
       let setCounter1;
       let setCounter2;
       function Parent() {
@@ -1008,9 +984,6 @@ describe('hooks', () => {
         useLayoutEffect(() => {
           logs.push(`Effect: ${text}`);
         });
-        useEffect(() => {
-          batchUpdate();
-        });
         return <Child text={text} />;
       }
 
@@ -1023,16 +996,15 @@ describe('hooks', () => {
       expect(container.childNodes[0].data).toEqual('0, 0');
 
       // Normal update
-      act(() => {
-        setCounter1(1);
-        setCounter1(2);
-        setCounter1(2);
-        setCounter1(3);
-        setCounter2(2);
-        setCounter1(3);
-        setCounter1(3);
-        setCounter2(4);
-      });
+      setCounter1(1);
+      setCounter1(2);
+      setCounter1(2);
+      setCounter1(3);
+      setCounter2(2);
+      setCounter1(3);
+      setCounter1(3);
+      setCounter2(4);
+      jest.runAllTimers();
 
       expect(logs.flush()).toEqual([
         'Parent: 3, 4',
@@ -1040,10 +1012,10 @@ describe('hooks', () => {
         'Effect: 3, 4',
       ]);
 
-      act(() => {
-        setCounter1(2);
-        setCounter2(2);
-      });
+
+      setCounter1(2);
+      setCounter2(2);
+      jest.runAllTimers();
 
       expect(logs.flush()).toEqual([
         'Parent: 2, 2',
@@ -1051,10 +1023,9 @@ describe('hooks', () => {
         'Effect: 2, 2',
       ]);
 
-      act(() => {
-        setCounter1(2);
-        setCounter2(2);
-      });
+      setCounter1(2);
+      setCounter2(2);
+      jest.runAllTimers();
 
       expect(logs.flush()).toEqual([]);
     });
@@ -1072,14 +1043,14 @@ describe('hooks', () => {
       }
       render(<Counter count={0} />, container);
       expect(container.childNodes[0].childNodes[0].data).toEqual('0');
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did commit [0]']);
 
       logs = [];
       render(<Counter count={1} />, container);
       expect(container.childNodes[0].childNodes[0].data).toEqual('1');
       // Effects are deferred until after the commit
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did commit [1]']);
     });
 
@@ -1111,12 +1082,13 @@ describe('hooks', () => {
       // Destroying the first child shouldn't prevent the passive effect from
       // being executed
       render([passive], container);
+      jest.runAllTimers();
       expect(logs).toEqual(['Passive effect']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Passive');
 
       // (No effects are left to flush.)
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([]);
     });
 
@@ -1143,7 +1115,7 @@ describe('hooks', () => {
         return <span>Layout</span>;
       }
       render([<PassiveEffect key="p" />, <LayoutEffect key="l" />], container);
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Passive',
         'Layout',
@@ -1179,7 +1151,7 @@ describe('hooks', () => {
         return <Text text="Layout" />;
       }
       render([<PassiveEffect key="p" />, <LayoutEffect key="l" />], container);
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Passive',
         'Layout',
@@ -1228,7 +1200,7 @@ describe('hooks', () => {
         expect(container.childNodes[0].childNodes[0].data).toEqual('1');
 
         logs = [];
-        flush();
+        jest.runAllTimers();
         expect(logs).toEqual([
           'Committed state when effect was fired: 1',
         ]);
@@ -1257,7 +1229,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: (empty)']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Schedule update [0]', 'Count: 0']);
 
       logs = [];
@@ -1265,7 +1237,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 0']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Schedule update [1]', 'Count: 1']);
     });
 
@@ -1293,13 +1265,13 @@ describe('hooks', () => {
 
       logs = [];
       // Rendering again should flush the previous commit's effects
-      flush();
+      jest.runAllTimers();
       render(<Counter count={1} />, container);
       expect(logs).toEqual(['Schedule update [0]', 'Count: 0', 'Count: 0']);
 
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Schedule update [1]', 'Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
     });
@@ -1329,8 +1301,7 @@ describe('hooks', () => {
       // Enqueuing this update forces the passive effect to be flushed --
       // updateCount(1) happens first, so 2 wins.
       _updateCount(2);
-      flush();
-      // FIXME: React will logs ['Will set count to 1', 'Count: 1', 'Count: 2']
+      jest.runAllTimers();
       expect(logs).toEqual(['Will set count to 1', 'Count: 2']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 2');
     });
@@ -1365,7 +1336,7 @@ describe('hooks', () => {
         expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
         // Now fire the effects
         logs = [];
-        flush();
+        jest.runAllTimers();
         // There were multiple updates, but there should only be a
         // single render
         expect(logs).toEqual(['Count: 0']);
@@ -1403,7 +1374,7 @@ describe('hooks', () => {
         expect(container.childNodes[0].childNodes[0].data).toEqual('Count: (empty)');
         // Now fire the effects
         logs = [];
-        flush();
+        jest.runAllTimers();
         // There were multiple updates, but there should only be a
         // single render
         expect(logs).toEqual(['Count: 7']);
@@ -1431,7 +1402,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 0']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did create [0]']);
 
       logs = [];
@@ -1439,7 +1410,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Did destroy [0]',
         'Did create [1]',
@@ -1466,13 +1437,13 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 0']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did create [0]']);
 
       logs = [];
       render(<div />, container);
       // TODO
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did destroy [0]']);
       // TODO
       expect(container.childNodes[0].tagName).toEqual('DIV');
@@ -1498,7 +1469,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 0']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did create [0]']);
 
       logs = [];
@@ -1506,13 +1477,13 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([]);
 
       logs = [];
       render([], container);
       // TODO
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did destroy [0]']);
       expect(container.childNodes).toEqual([]);
     });
@@ -1538,7 +1509,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 0']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did create']);
 
       logs = [];
@@ -1546,13 +1517,13 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did destroy', 'Did create']);
 
       logs = [];
       render([], container);
       // TODO
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Did destroy']);
       expect(container.childNodes).toEqual([]);
     });
@@ -1577,7 +1548,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 0']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Did commit 1 [0]',
         'Did commit 2 [0]',
@@ -1587,7 +1558,7 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Did commit 1 [1]',
         'Did commit 2 [1]',
@@ -1620,14 +1591,14 @@ describe('hooks', () => {
       expect(logs).toEqual(['Count: 0']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 0');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Mount A [0]', 'Mount B [0]']);
       logs = [];
       render(<Counter count={1} />, container);
       expect(logs).toEqual(['Count: 1']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Unmount A [0]',
         'Mount A [1]',
@@ -1664,7 +1635,7 @@ describe('hooks', () => {
       logs = [];
       render([], container);
       // TODO
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual(['Unmount: 1']);
       expect(container.childNodes).toEqual([]);
     });
@@ -1714,7 +1685,7 @@ describe('hooks', () => {
       expect(container.childNodes[0].childNodes[0].data).toEqual('0');
       expect(container.childNodes[1].childNodes[0].data).toEqual('0');
       expect(container.childNodes[2].childNodes[0].data).toEqual('0');
-      flush();
+      jest.runAllTimers();
       expect(childAUpdateNum).toEqual(2);
       expect(parentUpdateNum).toEqual(2);
       expect(childBUpdateNum).toEqual(2);
@@ -1763,7 +1734,7 @@ describe('hooks', () => {
       expect(committedText).toEqual('1');
 
       logs = [];
-      flush();
+      jest.runAllTimers();
       expect(logs).toEqual([
         'Unmount normal [current: 1]',
         'Mount normal [current: 1]',
@@ -1916,7 +1887,7 @@ describe('hooks', () => {
       expect(counter.current.count).toBe(0);
 
       counter.current.dispatch(INCREMENT);
-      flush();
+      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       // Intentionally not updated because of [] deps:
       expect(counter.current.count).toBe(0);
@@ -1948,7 +1919,7 @@ describe('hooks', () => {
       expect(counter.current.count).toBe(0);
 
       counter.current.dispatch(INCREMENT);
-      flush();
+      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       expect(counter.current.count).toBe(1);
     });
@@ -1988,13 +1959,14 @@ describe('hooks', () => {
       expect(totalRefUpdates).toBe(1);
 
       counter.current.dispatch(INCREMENT);
-      flush();
+      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       expect(counter.current.count).toBe(1);
       expect(totalRefUpdates).toBe(2);
 
       // Update that doesn't change the ref dependencies
       render(<Counter ref={counter} />, container);
+      jest.runAllTimers();
       expect(container.childNodes[0].childNodes[0].data).toEqual('Count: 1');
       expect(counter.current.count).toBe(1);
       expect(totalRefUpdates).toBe(2); // Should not increase since last time

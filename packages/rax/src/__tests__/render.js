@@ -5,7 +5,6 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import Component from '../vdom/component';
-import { flush } from '../vdom/scheduler';
 
 describe('render', () => {
   function createNodeElement(tagName) {
@@ -19,12 +18,14 @@ describe('render', () => {
     };
   }
 
-  beforeEach(() => {
+  beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
-  afterEach(() => {
+  afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('render to default container', () => {
@@ -111,14 +112,14 @@ describe('render', () => {
         render(<Child number="2" />, container2);
         render(<Child number="3" />, container2);
         render(<Child number="4" />, container2);
-        expect(container2.childNodes).toBe([]);
+        expect(container2.childNodes).toEqual([]);
       }
       render() {
         return <span />;
       }
     }
     render(<App />, container);
-    flush();
+    jest.runAllTimers();
     expect(Child).toHaveBeenCalledTimes(1);
     expect(container2.childNodes[0].childNodes[0].data).toBe('4');
   });
