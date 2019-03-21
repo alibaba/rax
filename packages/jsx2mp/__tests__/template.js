@@ -38,6 +38,8 @@ describe('Generate template', () => {
       }]
     };
     expect(generateElement(node))
-      .toEqual('<view foo="{{bar}}"><text a:if="{{condition}}">aaaa</text></view>');
+      .toEqual(`<view foo="{{bar}}">
+  <text a:if="{{condition}}">aaaa</text>
+</view>`);
   });
 });

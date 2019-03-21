@@ -61,10 +61,32 @@ function parseJSXText(el) {
  *   {this.state.foo} -> '{{foo}}'
  */
 function parseJSXExpressionContainer(el) {
-  let code = generateCodeByExpression(el.expression);
-  // Simple redirect props/state to miniapp's data scope.
-  code = code.replace(/this\.(state|props)\./g, '');
-  return '{{' + code + '}}';
+  const { expression } = el;
+
+  switch (expression.type) {
+    case 'Identifier':
+    case 'MemberExpression':
+    {
+      let code = generateCodeByExpression(expression);
+      // Simple redirect props/state to miniapp's data scope.
+      code = code.replace(/this\.(state|props)\./g, '');
+      return '{{' + code + '}}';
+    }
+
+    case 'ConditionalExpression': {
+      const { test, consequent, alternate } = expression;
+      const ret = [];
+      const consequentNode = parseJSX(consequent);
+      consequentNode.attrs['a:if'] = generateCodeByExpression(test);
+      ret.push(consequentNode);
+
+      const alternateNode = parseJSX(alternate);
+      alternateNode.attrs['a:else'] = true;
+      ret.push(alternateNode);
+
+      return ret;
+    }
+  }
 }
 
 /**
@@ -74,7 +96,7 @@ function parseJSXExpressionContainer(el) {
  * Examples:
  *   1. <tag foo="bar" /> String Literial
  *   2. <tag foo={bar} /> Reference, consider function and props
- *   3. <tag foo={true} />  Literial with Boolean/Null/undefined=
+ *   3. <tag foo={true} />  Literial with Boolean/Null/undefined
  *   4. <tag foo={{ a: 1 }} /> Object Literial
  *   5. <tag foo={() => {}} /> Function: NOT SUPPORT NOW
  *   6. <tag foo={foo ? '0' : '1'} /> Expressions
@@ -96,21 +118,49 @@ function parseAttrs(attributes) {
       const { expression } = value;
       switch (expression.type) {
         case 'BooleanLiteral': {
-          ret[name.name] = expression.value; break;
+          ret[name.name] = '{{' + expression.value + '}}'; break;
         }
         case 'NullLiteral': {
-          ret[name.name] = null; break;
+          ret[name.name] = '{{null}}'; break;
         }
         case 'Identifier': {
           // undefined is included.
-          ret[name.name] = value.name; break;
+          const id = expression.name.replace(/this.(state|props)\./, '');
+          ret[name.name] = '{{' + id + '}}'; break;
+        }
+        case 'ObjectExpression': {
+          ret[name.name] = '{' + generateCodeByExpression(expression, {
+            retainLines: true,
+          }).trim() + '}';
+          break;
         }
         case 'MemberExpression': {
           let code = generateCodeByExpression(expression);
-          // Simple handle with onTap={this.xxx} -> onTap="xxx"
-          code = code.replace(/this\./g, '');
-          ret[name.name] = code; break;
+          if (/^on/.test(name.name)) {
+            // Simple handle with onTap={this.xxx} -> onTap="xxx"
+            code = code
+              .replace(/this\./g, '');
+          } else {
+            code = code
+              .replace(/this\.(props|state)\./g, '');
+            code = '{{' + code + '}}';
+          }
+
+          ret[name.name] = code;
+          break;
         }
+
+        case 'BinaryExpression':
+        case 'ConditionalExpression': {
+          ret[name.name] = '{{' + generateCodeByExpression(expression, { retainLines: true }).trim() + '}}';
+          break;
+        }
+
+        case 'CallExpression': {
+          console.error('Calling function in JSX attribute is NOT supported yet.');
+          break;
+        }
+
         default: {
           console.warn('Not handled attr:', expression);
         }

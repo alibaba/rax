@@ -1,19 +1,22 @@
 const generate = require('@babel/generator').default;
 const generateOption = require('./option');
+const { SELF_CLOSE_TAGS, SPACE_INDENT } = require('../constant');
 
-const SELF_CLOSE_TAGS = new Set([
-  'import',
-  'input',
-]);
+const EMPTY_STR_REG = /^[\n|\s]+$/;
 
 /**
  * Create axml template string.
- * @param tag {String} Tag name.
- * @param attrs {Object}  Attributes.
- * @param children? {Array>} Child nodes.
+ * @param node {Node}
+ * @param node.tag {String} Tag name.
+ * @param node.attrs {Object}  Attributes.
+ * @param node.children? {Array} Child nodes.
+ * @param depth {Number} Indent depth.
  */
-function generateElement({ tag, attrs, children }) {
-  let ret = `<${tag}`;
+function generateElement(node, depth = 0) {
+  if (Array.isArray(node)) return node.map((n) => generateElement(n, depth)).join('\n');
+
+  const { tag, attrs, children } = node;
+  let ret = SPACE_INDENT.repeat(depth) + `<${tag}`;
 
   const attrRet = generateAttrs(attrs);
   if (attrRet) ret += ' ' + attrRet;
@@ -27,11 +30,13 @@ function generateElement({ tag, attrs, children }) {
 
   if (Array.isArray(children) && children.length > 0) {
     for (let i = 0, l = children.length; i < l; i++) {
-      // Consider to format indentation?
-      if (typeof children[i] === 'string') {
-        ret += children[i];
+      const child = children[i];
+      if (typeof child === 'string') {
+        // Remove empty JSXString between JSX Elements.
+        if (EMPTY_STR_REG.test(child)) continue;
+        ret += child;
       } else {
-        ret += generateElement(children[i]);
+        ret += '\n' + generateElement(child, depth + 1) + '\n';
       }
     }
   }
@@ -56,9 +61,11 @@ function generateAttrs(attrs = {}) {
 
     if (value === false) {
       continue;
+    } else if (value === true) {
+      ret += `${key}`;
+    } else {
+      ret += `${key}="${value}"`;
     }
-
-    ret += `${key}="${value}"`;
 
     if (i !== l - 1) {
       ret += ' ';
@@ -70,10 +77,11 @@ function generateAttrs(attrs = {}) {
 
 /**
  * @param expression {Expression}
+ * @param overridesOption {Object}
  * @return {String}
  */
-function generateCodeByExpression(expression) {
-  const { code } = generate(expression, generateOption);
+function generateCodeByExpression(expression, overridesOption) {
+  const { code } = generate(expression, Object.assign({}, generateOption, overridesOption));
   return code;
 }
 
