@@ -1,8 +1,0 @@
-{
-  "pages": [
-    "pages/index/index"
-  ],
-  "window": {
-    "defaultTitle": "MiniApp"
-  }
-}
