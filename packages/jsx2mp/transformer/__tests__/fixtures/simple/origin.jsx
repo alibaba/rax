@@ -1,4 +1,4 @@
-import Rax, { Component } from 'rax';
+import { createElement, Component } from 'rax';
 
 export default class extends Component {
   state = {

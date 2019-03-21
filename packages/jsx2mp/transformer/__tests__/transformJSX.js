@@ -12,7 +12,7 @@ const fixtures = readdirSync(fixturesDirPath);
 
 describe('transformJSX', () => {
   for (let i = 0, l = fixtures.length; i < l; i ++) {
-    it (fixtures[i], () => {
+    it(fixtures[i], () => {
       const originPath = resolve(fixturesDirPath, fixtures[i], ORIGIN_JSX);
       const expectedTemplatePath = resolve(fixturesDirPath, fixtures[i], EXPECTED_TEMPLATE);
       const expectedJSPath = resolve(fixturesDirPath, fixtures[i], EXPECTED_JS);

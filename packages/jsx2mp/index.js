@@ -43,7 +43,7 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
   mkdirpSync(distPath);
   printLog(colors.green('创建目录'), 'dist/');
   if (enableWatch) {
-    startWatching(sourcePath, distPath, handleFileChange)
+    startWatching(sourcePath, distPath, handleFileChange);
     printLog(colors.green('监听以下路径的文件变更'), sourcePath);
   } else {
     const globOption = {
