@@ -7,7 +7,7 @@ const { generateCodeByExpression } = require('../codegen');
  * @param el {JSXElement|JSXText} Root el.
  * @return result {Node|String}
  */
-function parse(el) {
+function parseJSX(el) {
   if (t.isJSXElement(el)) {
     return parseJSXElement(el);
   } else if (t.isJSXText(el)) {
@@ -40,7 +40,7 @@ function parseJSXElement(el) {
     return new Node(
       tagName,
       parseAttrs(attributes),
-      children.map(parse)
+      children.map(parseJSX)
     );
   }
 }
@@ -126,4 +126,4 @@ function isCustomComponent(name) {
 }
 
 
-module.exports = parse;
+module.exports = parseJSX;

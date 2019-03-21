@@ -1,1 +1,13 @@
-exports.parse = require('./parse');
+const babelParser = require('@babel/parser');
+const parserOption = require('./option');
+
+/**
+ * Parse JS code by babel parser.
+ * @param code {String} JS code.
+ */
+function parse(code) {
+  return babelParser.parse(code, parserOption);
+}
+
+exports.parse = parse;
+exports.parseJSX = require('./parseJSX');

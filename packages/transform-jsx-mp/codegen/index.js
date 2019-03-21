@@ -1,5 +1,5 @@
 const generate = require('@babel/generator').default;
-const { generateOption } = require('./options');
+const generateOption = require('./option');
 
 const SELF_CLOSE_TAGS = new Set([
   'import',

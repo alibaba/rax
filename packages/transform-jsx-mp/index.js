@@ -1,8 +1,8 @@
-const { readFileSync, existsSync, lstatSync, copySync, mkdirpSync, ensureFileSync, writeFileSync, removeSync, readJSONSync, writeJSONSync } = require('fs-extra');
+const { readFileSync, existsSync, lstatSync, copySync, mkdirpSync, writeFileSync, removeSync, readJSONSync, writeJSONSync } = require('fs-extra');
 const { resolve, relative, extname, dirname } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
-const transformJSX = require('./transformJSX');
+const transformJSX = require('./transformer/transformJSX');
 
 const JSX_FILE = '.jsx';
 const JS_FILE = '.js';
@@ -23,7 +23,6 @@ function startWatching(sourcePath, distPath, onFileChange) {
     .on('add', onFileChange)
     .on('change', onFileChange);
 }
-
 
 /**
  * Transform a jsx file
@@ -136,14 +135,27 @@ module.exports = function transformJSXToMiniProgram(sourcePath, distPath) {
   }
 };
 
-function getFileContent(filepath) {
-  return readFileSync(filepath, 'utf-8');
+/**
+ * Get file content as utf-8 text.
+ * @param path {String} Absolute path to a text file.
+ */
+function getFileContent(path) {
+  return readFileSync(path, 'utf-8');
 }
 
+/**
+ * Judge a path is a directory.
+ * @param path {String} Absolute path to a file or directory.
+ * @return {Boolean}
+ */
 function isDirectory(path) {
   return lstatSync(path).isDirectory();
 }
 
+/**
+ * Standard method to print logs.
+ * @param logs
+ */
 function printLog(...logs) {
   console.log.apply(console, logs);
 }

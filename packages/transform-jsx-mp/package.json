@@ -4,7 +4,7 @@
   "license": "BSD-3-Clause",
   "description": "A cli tool to transform Rax JSX based project to MiniApp.",
   "bin": {
-    "jsx": "bin.js"
+    "jsx": "bin/cli.js"
   },
   "scripts": {
     "test": "jest"

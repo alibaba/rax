@@ -1,7 +1,6 @@
-const { parse } = require('@babel/parser');
 const { default: traverse } = require('@babel/traverse');
 const isJSXClassDeclaration = require('../isJSXClassDeclaration');
-const { parserOption } = require('../options');
+const { parse } = require('../../parser');
 
 describe('isJSXClassDeclaration', () => {
   it('#1', () => {
@@ -9,7 +8,7 @@ describe('isJSXClassDeclaration', () => {
       import Rax, { Component } from 'rax';
       export default class extends Component {}
     `;
-    traverse(parse(code, parserOption), {
+    traverse(parse(code), {
       ClassDeclaration(path) {
         expect(isJSXClassDeclaration(path)).toBeTruthy();
       }
@@ -21,7 +20,7 @@ describe('isJSXClassDeclaration', () => {
       import RaxRef from 'rax';
       export default class extends RaxRef.Component {}
     `;
-    traverse(parse(code, parserOption), {
+    traverse(parse(code), {
       ClassDeclaration(path) {
         expect(isJSXClassDeclaration(path)).toBeTruthy();
       }
@@ -33,7 +32,7 @@ describe('isJSXClassDeclaration', () => {
       import React, { Component } from 'react';
       export default class extends Component {}
     `;
-    traverse(parse(code, parserOption), {
+    traverse(parse(code), {
       ClassDeclaration(path) {
         expect(isJSXClassDeclaration(path)).toBeFalsy();
       }

@@ -1,4 +1,7 @@
-const parserOption = {
+/**
+ * Babel parser option.
+ */
+module.exports = {
   sourceType: 'module',
   plugins: [
     'classProperties',
@@ -14,8 +17,3 @@ const parserOption = {
     'dynamicImport'
   ],
 };
-
-const generateOption = {};
-
-exports.parserOption = parserOption;
-exports.generateOption = generateOption;

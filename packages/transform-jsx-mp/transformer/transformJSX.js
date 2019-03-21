@@ -1,10 +1,8 @@
 const t = require('@babel/types');
-const babelParser = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
-const { parserOption } = require('./options');
 const isJSXClassDeclaration = require('./isJSXClassDeclaration');
-const { parse } = require('./parser');
-const { generateElement, generateCodeByExpression } = require('./codegen');
+const { parse, parseJSX } = require('../parser');
+const { generateElement, generateCodeByExpression } = require('../codegen');
 
 /**
  * Seperate JSX code into parts.
@@ -12,7 +10,7 @@ const { generateElement, generateCodeByExpression } = require('./codegen');
  * @return result {JSXParts}
  */
 function transformJSX(code) {
-  const ast = babelParser.parse(code, parserOption);
+  const ast = parse(code);
   // TODO: Refactor not to modified ast to remove render method.
   const template = getTemplate(ast);
   const jsCode = getComponentJSCode(ast);
@@ -45,8 +43,8 @@ function getTemplate(ast) {
           const returnElement = findReturnElement(renderBody).node;
 
           if (t.isJSXElement(returnElement)) {
-            const ast = parse(returnElement);
-            template = generateElement(ast);
+            const node = parseJSX(returnElement);
+            template = generateElement(node);
           } else {
             throw new Error('Render method only return JSXElement.');
           }
