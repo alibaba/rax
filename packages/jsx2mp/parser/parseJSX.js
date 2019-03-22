@@ -120,7 +120,7 @@ function parseJSXExpressionContainer(el) {
       } else if (t.isFunction(callee)) {
 
       }
-      debugger
+      debugger;
       break;
     }
 
