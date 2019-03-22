@@ -1,7 +1,8 @@
 const t = require('@babel/types');
-const traverse = require('@babel/traverse').default;
+const { default: traverse, NodePath } = require('@babel/traverse');
 const isJSXClassDeclaration = require('./isJSXClassDeclaration');
 const { parse, parseJSX } = require('../parser');
+const findReturnElement = require('./findReturnElement');
 const { generateElement, generateCodeByExpression } = require('../codegen');
 const {
   RAX_COMPONENT,
@@ -105,21 +106,6 @@ function getRenderMethod(path) {
 }
 
 /**
- * Find reutrn statement element.
- * @param path {NodePath}
- * @return {NodePath}
- */
-function findReturnElement(path) {
-  let result = null;
-  path.traverse({
-    ReturnStatement(returnStatementPath) {
-      result = returnStatementPath.get('argument');
-    },
-  });
-  return result;
-}
-
-/**
  * Get miniapp component js code from babel AST.
  * @param ast {ASTElement} Babel AST structure.
  * @return {String} Miniapp component js code.
@@ -184,4 +170,4 @@ function getComponentJSCode(ast) {
   return generateCodeByExpression(ast);
 }
 
-module.exports = transformJSX;
+exports.transformJSX = transformJSX;

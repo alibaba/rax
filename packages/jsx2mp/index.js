@@ -13,7 +13,7 @@ const { resolve, relative, extname, dirname } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
 const glob = require('glob');
-const transformJSX = require('./transformer/transformJSX');
+const { transformJSX } = require('./transformer/transformJSX');
 
 const JSX_FILE = '.jsx';
 const JS_FILE = '.js';

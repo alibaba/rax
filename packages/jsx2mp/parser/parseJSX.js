@@ -1,5 +1,6 @@
 const t = require('@babel/types');
 const Node = require('./Node');
+const findReturnElement = require('../transformer/findReturnElement');
 const { generateCodeByExpression } = require('../codegen');
 const { builtInTags } = require('../constant');
 
@@ -85,6 +86,46 @@ function parseJSXExpressionContainer(el) {
       ret.push(alternateNode);
 
       return ret;
+    }
+
+    case 'CallExpression': {
+      const { callee, arguments: args } = expression;
+
+      if (t.isMemberExpression(callee)) {
+        if (t.isIdentifier(callee.property, { name: 'map' })) {
+          // { foo.map(fn) }
+          let childNode = null;
+          if (t.isFunction(args[0])) {
+            // { foo.map(() => {}) }
+            const returnEl = t.isBlockStatement(args[0].body)
+              // () => { return xxx }
+              ? findReturnElement(args[0].body).node
+              // () => (<jsx></jsx)
+              : args[0].body;
+            childNode = parseJSX(returnEl);
+          } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
+            // { foo.map(this.xxx) }
+          }
+          return new Node(
+            'block',
+            { 'a:for': generateCodeByExpression(callee.object) },
+            [childNode]
+          );
+        } else {
+          // { foo.method(args)
+
+        }
+      } else if (t.isIdentifier(callee)) {
+        // { foo(args) }
+      } else if (t.isFunction(callee)) {
+
+      }
+      debugger
+      break;
+    }
+
+    default: {
+      debugger;
     }
   }
 }

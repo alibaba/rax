@@ -1,6 +1,6 @@
 const { readdirSync, readFileSync } = require('fs-extra');
 const { resolve } = require('path');
-const transformJSX = require('../transformJSX');
+const { transformJSX } = require('../transformJSX');
 
 
 const ORIGIN_JSX = 'origin.jsx';
