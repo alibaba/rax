@@ -125,13 +125,10 @@ export default class NativeMap extends PolymerElement {
      * All observers are automaticlly generated.
      */
     Object.keys(NativeMap.properties).forEach((attr) => {
-      this['_observe' + attr[0].toUpperCase() + attr.slice(1)] = debounce((val) => {
+      this['_observe' + attr[0].toUpperCase() + attr.slice(1)] = (val) => {
         this._createOrUpdateParam(attr, val);
-      }, NATIVE_UPDATE_DEBOUNCE_TIME);
+      };
     });
-
-    this._callNativeUpdate = debounce(this._callNativeUpdate, NATIVE_UPDATE_DEBOUNCE_TIME);
-    this._observeRouteConfig = debounce(this._observeRouteConfig, NATIVE_UPDATE_DEBOUNCE_TIME);
   }
 
   ready() {
