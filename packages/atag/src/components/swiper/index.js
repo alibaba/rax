@@ -128,10 +128,14 @@ export default class Swiper extends PolymerElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    document.removeEventListener('scroll', this._handleGlobalScroll);
     Gestures.removeListener(this, 'track', this._handleTrack);
     this._childrenObserver.disconnect();
   }
 
+  /**
+   * If global scrolling is trigging, add a flag to avoid conflic to swiping.
+   */
   _handleGlobalScroll = (event) => {
     this._scrolling = true;
   };
