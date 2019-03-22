@@ -107,12 +107,8 @@ function useEffectImpl(effect, inputs, defered) {
       if (!immediately && defered) return scheduleEffect(() => create(true));
       const { current } = create;
       if (current) {
-        // Set this to true to prevent re-entrancy
-        const previousIsRendering = Host.isUpdating;
-        Host.isUpdating = true;
         destory.current = current();
         create.current = null;
-        Host.isUpdating = previousIsRendering;
       }
     };
 
@@ -120,12 +116,8 @@ function useEffectImpl(effect, inputs, defered) {
       if (!immediately && defered) return scheduleEffect(() => destory(true));
       const { current } = destory;
       if (current) {
-        // Set this to true to prevent re-entrancy
-        const previousIsRendering = Host.isUpdating;
-        Host.isUpdating = true;
         current();
         destory.current = null;
-        Host.isUpdating = previousIsRendering;
       }
     };
 
