@@ -12,7 +12,7 @@ describe('renderer', () => {
   afterEach(function() {
     jest.useRealTimers();
   });
-  
+
   it('renders a simple component', () => {
     function Link() {
       return <a role="link" />;

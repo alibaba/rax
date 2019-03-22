@@ -55,14 +55,14 @@ describe('snapshot', () => {
     );
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
-  
+
     // manually trigger the callback
     tree.eventListeners.mouseenter();
     jest.runAllTimers();
     // re-rendering
     tree = component.toJSON();
     expect(tree).toMatchSnapshot();
-  
+
     // manually trigger the callback
     tree.eventListeners.mouseleave();
     jest.runAllTimers();
@@ -70,6 +70,5 @@ describe('snapshot', () => {
     tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
-
 });
 
