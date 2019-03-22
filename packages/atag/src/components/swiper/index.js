@@ -122,6 +122,7 @@ export default class Swiper extends PolymerElement {
     this._childrenObserver = new FlattenedNodesObserver(this, this._handleChildrenChanged);
     this._render();
     document.addEventListener('scroll', this._handleGlobalScroll);
+    document.addEventListener('_scrollviewscroll', this._handleGlobalScroll);
     Gestures.addListener(this, 'track', this._handleTrack);
     Gestures.setTouchAction(this, 'auto');
   }
@@ -129,6 +130,7 @@ export default class Swiper extends PolymerElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     document.removeEventListener('scroll', this._handleGlobalScroll);
+    document.removeEventListener('_scrollviewscroll', this._handleGlobalScroll);
     Gestures.removeListener(this, 'track', this._handleTrack);
     this._childrenObserver.disconnect();
   }

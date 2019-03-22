@@ -344,6 +344,14 @@ export default class ScrollViewElement extends PolymerElement {
     });
     this.dispatchEvent(scrollEvent);
 
+    /**
+     * To trigger a bubble event to indicate that a scrolling is happening.
+     * For swiper, when a scrolling is happening, disable all inner dragging.
+     */
+    this.dispatchEvent(new CustomEvent('_scrollviewscroll', {
+      bubbles: true,
+    }));
+
     this.lastScrollTop = this.scrollTop;
     this.lastScrollLeft = this.scrollLeft;
     if (evt.timeStamp - this.lastScrollTime < 10) {
