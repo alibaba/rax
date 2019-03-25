@@ -1,7 +1,6 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
-import { lerpValues } from '../animation/helpers';
 
 const supportSmoothScroll =
   'webkitScrollBehavior' in document.documentElement.style ||
