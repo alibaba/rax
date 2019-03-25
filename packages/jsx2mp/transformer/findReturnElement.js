@@ -19,11 +19,11 @@ function findReturnElement(path) {
   if (path instanceof NodePath) {
     path.traverse(plugin);
   } else {
+    // Wrap a file > program to statement.
     traverse(t.file(t.program([path])), plugin);
   }
 
   return result;
 }
-
 
 module.exports = findReturnElement;

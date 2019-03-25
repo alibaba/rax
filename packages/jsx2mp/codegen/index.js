@@ -36,7 +36,12 @@ function generateElement(node, depth = 0) {
         if (EMPTY_STR_REG.test(child)) continue;
         ret += child;
       } else {
-        ret += '\n' + generateElement(child, depth + 1) + '\n' + SPACE_INDENT.repeat(depth);
+        ret += [
+          '\n',
+          generateElement(child, depth + 1),
+          '\n',
+          SPACE_INDENT.repeat(depth),
+        ].join('');
       }
     }
   }
