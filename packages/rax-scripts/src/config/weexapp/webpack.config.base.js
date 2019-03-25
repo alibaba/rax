@@ -63,16 +63,6 @@ module.exports = {
           },
         ],
       },
-      // JSON is not enabled by default in Webpack but both Node and Browserify
-      // allow it implicitly so we also enable it.
-      {
-        test: /\.json$/,
-        use: [
-          {
-            loader: require.resolve('json-loader'),
-          },
-        ],
-      },
       // load inline images using image-source-loader for Image
       {
         test: /\.(svg|png|webp|jpe?g|gif)$/i,
