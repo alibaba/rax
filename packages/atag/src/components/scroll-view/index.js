@@ -1,9 +1,11 @@
 import { PolymerElement, html } from '@polymer/polymer';
 import easeInOutCubic from '../../shared/easeInOutCubic';
 import supportsPassive from '../../shared/supportsPassive';
+import { lerpValues } from '../animation/helpers';
 
-const supportSmoothScroll = 'webkitScrollBehavior' in document.documentElement.style
-  || 'scrollBehavior' in document.documentElement.style;
+const supportSmoothScroll =
+  'webkitScrollBehavior' in document.documentElement.style ||
+  'scrollBehavior' in document.documentElement.style;
 let uid = 0;
 
 export default class ScrollViewElement extends PolymerElement {
@@ -38,6 +40,8 @@ export default class ScrollViewElement extends PolymerElement {
       scrollWithAnimation: {
         type: Boolean,
         value: false,
+        computed:
+          '_getBoolPropFromAttr("scroll-with-animation", scrollWithAnimation)',
       },
       hideScrollBar: {
         type: Boolean,
@@ -64,10 +68,9 @@ export default class ScrollViewElement extends PolymerElement {
 
   _getBoolPropFromAttr(attr, fallbackVal) {
     if (this._prevent) return false;
-
     if (this.hasAttribute(attr)) {
       const value = this.getAttribute(attr);
-      return value === 'true';
+      return value === 'true' || value === '';
     } else {
       return fallbackVal;
     }
@@ -96,7 +99,7 @@ export default class ScrollViewElement extends PolymerElement {
     let _prevent = false;
     Object.defineProperty(this, '_prevent', {
       get: () => _prevent,
-      set: (val) => {
+      set: val => {
         _prevent = val;
         // If prevented, stop scroll by overrides CSS overflow.
         if (val) {
@@ -105,7 +108,7 @@ export default class ScrollViewElement extends PolymerElement {
           this.style.overflowX = this.scrollX ? 'auto' : 'hidden';
           this.style.overflowY = this.scrollY ? 'auto' : 'hidden';
         }
-      }
+      },
     });
   }
 
@@ -124,7 +127,10 @@ export default class ScrollViewElement extends PolymerElement {
         } else {
           // Delay to scroll, after dom is ready;
           requestAnimationFrame(() => {
-            this.scrollLeft = newVal;
+            this.scrollTo({
+              left: newVal,
+              behavior: 'instant',
+            });
           });
         }
         break;
@@ -133,7 +139,10 @@ export default class ScrollViewElement extends PolymerElement {
           this._smoothScrollToY(newVal);
         } else {
           requestAnimationFrame(() => {
-            this.scrollTop = newVal;
+            this.scrollTo({
+              top: newVal,
+              behavior: 'instant',
+            });
           });
         }
         break;
@@ -155,10 +164,10 @@ export default class ScrollViewElement extends PolymerElement {
       this._handleScroll,
       supportsPassive
         ? {
-          capture: true,
-          passive: true,
-        }
-        : true
+            capture: true,
+            passive: true,
+          }
+        : true,
     );
 
     this.addEventListener('touchstart', this._handleTouchStart, false);
@@ -166,23 +175,24 @@ export default class ScrollViewElement extends PolymerElement {
     this.addEventListener('touchcancel', this._handleTouchEnd, false);
   }
 
-  _handleTouchStart = (evt) => {
+  _handleTouchStart = evt => {
     /**
      * @Note: Same direction scroll-view handled by webview automaticlly.
      * Otherwise, parent scroll-view overflow hidden, child scroll-view also stop scrolls.
      */
     this._parentSameDirectionScrollElement = this._getNearestParentElement(
       this,
-      (el) => el._scrollable === true
-        && el._scrollDirection === this._scrollDirection
-        && !(el instanceof ScrollViewElement)
+      el =>
+        el._scrollable === true &&
+        el._scrollDirection === this._scrollDirection &&
+        !(el instanceof ScrollViewElement),
     );
     if (this._parentSameDirectionScrollElement) {
       evt.stopPropagation();
       this._parentSameDirectionScrollElement._prevent = true;
     }
   };
-  _handleTouchEnd = (evt) => {
+  _handleTouchEnd = evt => {
     if (this._parentSameDirectionScrollElement) {
       evt.stopPropagation();
       this._parentSameDirectionScrollElement._prevent = false;
@@ -196,10 +206,10 @@ export default class ScrollViewElement extends PolymerElement {
       this._handleScroll,
       supportsPassive
         ? {
-          capture: true,
-          passive: true,
-        }
-        : true
+            capture: true,
+            passive: true,
+          }
+        : true,
     );
     this.removeEventListener('touchstart', this._handleTouchStart, true);
     this.removeEventListener('touchend', this._handleTouchEnd, true);
@@ -221,25 +231,45 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   _observeScrollIntoView() {
-    if (this.scrollIntoView) {
-      const targetNode = this.querySelector(`#${this.scrollIntoView}`);
-      if (targetNode) {
-        const containerRect = this.getBoundingClientRect();
-        const targetNodeRect = targetNode.getBoundingClientRect();
+    // get the target node, when dom is ready
+    requestAnimationFrame(() => {
+      if (this.scrollIntoView) {
+        const targetNode = this.querySelector(`#${this.scrollIntoView}`);
+        if (targetNode) {
+          const containerRect = this.getBoundingClientRect();
+          const targetNodeRect = targetNode.getBoundingClientRect();
 
-        if (this.scrollX) {
-          this._smoothScrollToX(this.scrollLeft + targetNodeRect.left - containerRect.left);
-        }
+          if (this.scrollX) {
+            const offset =
+              this.scrollLeft + targetNodeRect.left - containerRect.left;
+            if (this.scrollWithAnimation) {
+              this._smoothScrollToX(offset);
+            } else {
+              this.scrollTo({
+                left: offset,
+                behavior: 'instant',
+              });
+            }
+          }
 
-        if (this.scrollY) {
-          this._smoothScrollToY(this.scrollTop + targetNodeRect.top - containerRect.top);
+          if (this.scrollY) {
+            const offset =
+              this.scrollTop + targetNodeRect.top - containerRect.top;
+            if (this.scrollWithAnimation) {
+              this._smoothScrollToY(offet);
+            } else {
+              this.scrollTo({
+                top: offset,
+                behavior: 'instant',
+              });
+            }
+          }
         }
+      } else {
+        this.scrollTop = this.scrollLeft = 0;
       }
-    } else {
-      this.scrollTop = this.scrollLeft = 0;
-    }
+    });
   }
-
   /**
    * If smooth scrolling works, use Element.scrollTop/scrollLeft
    */
@@ -269,7 +299,7 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   _smoothScrollToY(value) {
-    if (!this.scrollWithAnimation) {
+    if (!supportSmoothScroll) {
       if (this.timerY) {
         clearInterval(this.timerY);
         this.timerY = 0;
@@ -306,7 +336,7 @@ export default class ScrollViewElement extends PolymerElement {
     }
   }
 
-  _handleScroll = (evt) => {
+  _handleScroll = evt => {
     /**
      * Because it is captured on the window, it is necessary to judge
      * whether it is really its own rolling event.
@@ -352,8 +382,8 @@ export default class ScrollViewElement extends PolymerElement {
     this.lastScrollTime = evt.timeStamp;
 
     if (
-      deltaX < 0 && this.scrollLeft <= this.upperThreshold
-      || deltaY < 0 && this.scrollTop <= this.upperThreshold
+      (deltaX < 0 && this.scrollLeft <= this.upperThreshold) ||
+      (deltaY < 0 && this.scrollTop <= this.upperThreshold)
     ) {
       if (!this.scrolledToUpper) {
         const scrollToUpperEvent = new CustomEvent('scrolltoupper');
@@ -365,8 +395,12 @@ export default class ScrollViewElement extends PolymerElement {
     }
 
     if (
-      deltaX > 0 && this.scrollWidth - this.scrollLeft - this.clientWidth <= this.lowerThreshold ||
-      deltaY > 0 && this.scrollHeight - this.scrollTop - this.clientHeight <= this.lowerThreshold
+      (deltaX > 0 &&
+        this.scrollWidth - this.scrollLeft - this.clientWidth <=
+          this.lowerThreshold) ||
+      (deltaY > 0 &&
+        this.scrollHeight - this.scrollTop - this.clientHeight <=
+          this.lowerThreshold)
     ) {
       if (!this.scrolledToLower) {
         const scrollToLowerEvent = new CustomEvent('scrolltolower');
@@ -412,7 +446,7 @@ export default class ScrollViewElement extends PolymerElement {
           position: relative;
           display: block;
           box-sizing: border-box;
-          
+
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
         }
