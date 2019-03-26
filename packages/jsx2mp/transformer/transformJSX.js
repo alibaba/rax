@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { resolve, extname } = require('path');
+const { resolve, extname, relative } = require('path');
 const { existsSync, readFileSync } = require('fs-extra');
 const kebabCase = require('kebab-case');
 const { default: traverse, NodePath } = require('@babel/traverse');
@@ -23,9 +23,9 @@ const {
  * @return result {JSXParts}
  */
 function transformJSX(code, options = {}) {
-  const { filePath } = options;
+  const { filePath, rootContext } = options;
   const ast = parse(code);
-  const customComponents = getCustomComponents(ast, { filePath });
+  const customComponents = getCustomComponents(ast, { filePath, rootContext });
   const style = getStyle(ast, { filePath });
   const template = getTemplate(ast);
   const jsCode = getComponentJSCode(ast);
@@ -60,7 +60,7 @@ function getStyle(ast, { filePath }) {
   return ret;
 }
 
-function getCustomComponents(ast, { filePath }) {
+function getCustomComponents(ast, { filePath, rootContext }) {
   /**
    * The mapping of custom components.
    * {
@@ -77,6 +77,11 @@ function getCustomComponents(ast, { filePath }) {
         const name = specifiers[0].local.name;
         let jsxFilePath = resolve(filePath, '..', source.value);
         if (extname(jsxFilePath) === '.jsx' || existsSync(jsxFilePath = jsxFilePath + '.jsx')) {
+          let absModulePath = relative(rootContext, jsxFilePath);
+          absModulePath = absModulePath.slice(0, -extname(absModulePath).length);
+          // Rebase import module path.
+          source.value = '/' + absModulePath;
+
           ret[name] = {
             filePath: jsxFilePath,
             tagName: normalizeComponentName(name),

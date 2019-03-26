@@ -28,7 +28,7 @@ module.exports = class TransformerPage extends Watcher {
     const pageStyle = existsSync(pageStylePath) ? readFileSync(pageStylePath, 'utf-8') : '';
 
     // { template, jsCode, customComponents,, style }
-    const transformed = transformJSX(jsxCode, { filePath: pageJSXPath });
+    const transformed = transformJSX(jsxCode, { filePath: pageJSXPath, rootContext });
 
     const delegateComponentPath = resolve(distPagePath, 'components');
     this._delegateComponent = new TransformerComponent({

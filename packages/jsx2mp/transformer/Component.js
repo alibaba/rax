@@ -38,7 +38,7 @@ module.exports = class TransformerComponent extends Watcher {
 
       const sourceJSXPath = componentSourcePath + '.jsx';
       const jsxFileContent = readFileSync(sourceJSXPath, 'utf-8');
-      const transformed = transformJSX(jsxFileContent, { filePath: sourceJSXPath });
+      const transformed = transformJSX(jsxFileContent, { filePath: sourceJSXPath, rootContext });
 
       const componentDep = new TransformerComponent({
         script: transformed.jsCode,
