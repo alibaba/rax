@@ -103,11 +103,6 @@ export default class Input extends PolymerElement {
     if (!(evt instanceof CustomEvent)) {
       evt.stopPropagation();
 
-      // If inputType is insertCompositionText, user doesnt's really
-      // input something in value, do not sync value.
-      // ref: https://w3c.github.io/input-events/#dom-inputevent-inputtype
-      if (evt.inputType === 'insertCompositionText') return;
-
       if (evt.target === this) {
         const value = this.value = this.$.input.value;
         const customEvent = new CustomEvent('input', {
