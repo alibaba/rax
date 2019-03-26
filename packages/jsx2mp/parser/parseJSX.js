@@ -130,6 +130,7 @@ function parseJSXExpressionContainer(el) {
             childNode = parseJSX(returnEl);
           } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
             // { foo.map(this.xxx) }
+            throw new Error(`目前暂不支持对 ${generateCodeByExpression(expression)} 的语法转换，请使用内联函数。`);
           }
           return new Node(
             'block',
@@ -137,13 +138,14 @@ function parseJSXExpressionContainer(el) {
             [childNode]
           );
         } else {
-          // { foo.method(args)
-
+          // { foo.method(args) }
+          throw new Error(`目前暂不支持在 JSX 模板中使用 ${generateCodeByExpression(expression)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
         }
       } else if (t.isIdentifier(callee)) {
         // { foo(args) }
+        throw new Error(`目前暂不支持在 JSX 模板中使用 ${generateCodeByExpression(expression)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
       } else if (t.isFunction(callee)) {
-
+        throw new Error(`目前暂不支持在 JSX 模板中使用 IIFE: ${generateCodeByExpression(expression)} 。`);
       }
       break;
     }
