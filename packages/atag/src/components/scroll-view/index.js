@@ -98,6 +98,8 @@ export default class ScrollViewElement extends PolymerElement {
       [SCROLL_TOP]: null,
     };
 
+    // Anmation frame id
+    this._animationFrameId = 0;
     /**
      * If prevented, do not response to any user actions.
      * @type {boolean}
@@ -135,13 +137,9 @@ export default class ScrollViewElement extends PolymerElement {
     super.attributeChangedCallback(key, oldVal, newVal);
     switch (key) {
       case SCROLL_TOP:
-        this._dispatchAction(SCROLL_TOP, newVal);
-        break;
       case SCROLL_LEFT:
-        this._dispatchAction(SCROLL_LEFT, newVal);
-        break;
       case SCROLL_INTO_VIEW:
-        this._dispatchAction(SCROLL_INTO_VIEW, newVal);
+        this._dispatchAction(key, newVal);
         break;
     }
   }
@@ -213,37 +211,41 @@ export default class ScrollViewElement extends PolymerElement {
    */
   _dispatchAction(action, value) {
     this._actionMap[action] = value;
-    requestAnimationFrame(() => {
+    cancelAnimationFrame(this._animationFrameId);
+    this._animationFrameId = requestAnimationFrame(() => {
       const isScrollTop = this._actionMap[SCROLL_TOP] !== null;
       const isScrollLeft = this._actionMap[SCROLL_LEFT] !== null;
-
       if (isScrollTop || isScrollLeft) {
+        const offset = isScrollTop ? this._actionMap[SCROLL_TOP] : this._actionMap[SCROLL_LEFT];
         if (this.scrollWithAnimation) {
-          isScrollTop ? this._smoothScrollToY(value) : this._smoothScrollToX(value);
+          isScrollTop ? this._smoothScrollToY(offset) : this._smoothScrollToX(offset);
         } else {
           const DIREACTION = isScrollTop ? 'top' : 'left';
           this.scrollTo({
-            [DIREACTION]: value,
+            [DIREACTION]: offset,
             behavior: 'instant',
           });
         }
-      } else if (this._actionMap[SCROLL_INTO_VIEW] !== null) {
-        const targetNode = document.getElementById(value);
-        if (targetNode) {
-          const containerRect = this.getBoundingClientRect();
-          const targetNodeRect = targetNode.getBoundingClientRect();
+      } else {
+        const scrollIntoViewId = this._actionMap[SCROLL_INTO_VIEW];
+        if (scrollIntoViewId !== null) {
+          const targetNode = document.getElementById(scrollIntoViewId);
+          if (targetNode) {
+            const containerRect = this.getBoundingClientRect();
+            const targetNodeRect = targetNode.getBoundingClientRect();
 
-          const offset = this.scrollX ? this.scrollLeft + targetNodeRect.left - containerRect.left
-            : this.scrollTop + targetNodeRect.top - containerRect.top;
+            const offset = this.scrollX ? this.scrollLeft + targetNodeRect.left - containerRect.left
+              : this.scrollTop + targetNodeRect.top - containerRect.top;
 
-          if (this.scrollWithAnimation) {
-            this.scrollX ? this._smoothScrollToX(offset) : this._smoothScrollToY(offset);
-          } else {
-            const DIREACTION = this.scrollX ? 'top' : 'left';
-            this.scrollTo({
-              [DIREACTION]: offset,
-              behavior: 'instant',
-            });
+            if (this.scrollWithAnimation) {
+              this.scrollX ? this._smoothScrollToX(offset) : this._smoothScrollToY(offset);
+            } else {
+              const DIREACTION = this.scrollX ? 'top' : 'left';
+              this.scrollTo({
+                [DIREACTION]: offset,
+                behavior: 'instant',
+              });
+            }
           }
         }
       }
