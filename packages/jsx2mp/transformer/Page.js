@@ -55,7 +55,7 @@ module.exports = class TransformerPage extends Watcher {
     const usingComponents = {};
     Object.keys(customComponents).forEach((name) => {
       let { tagName, filePath } = customComponents[name];
-      // remove ext
+      // Remove extension.
       filePath = filePath.replace(extname(filePath), '') + '/index';
       usingComponents[tagName] = '/' + relative(this.rootContext, filePath);
     });

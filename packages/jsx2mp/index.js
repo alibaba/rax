@@ -4,23 +4,13 @@ const {
   lstatSync,
   copySync,
   mkdirpSync,
-  writeFileSync,
-  removeSync,
   readJSONSync,
-  writeJSONSync,
 } = require('fs-extra');
-const { resolve, relative, extname, dirname } = require('path');
+const { resolve, extname } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
 const glob = require('glob');
-const { transformJSX } = require('./transformer/transformJSX');
 const TransformerPage = require('./transformer/Page');
-
-const JSX_FILE = '.jsx';
-const JS_FILE = '.js';
-const STYLE_FILE = '.css';
-const TEMPLATE_FILE = '.axml';
-const CONFIG_FILE = '.json';
 
 /**
  * Transform a jsx project.
@@ -77,80 +67,6 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
   // In case of duplicated name.
   copySync(localHelperPath, resolve(distPath, '__helpers'));
   printLog(colors.green('复制 Helpers'), 'dist/helpers');
-
-  function handleFileChange(sourceFilePath) {
-    // Only handle files.
-    if (isDirectory(sourceFilePath)) return;
-
-    let relativePath = relative(sourcePath, sourceFilePath);
-    let distFilePath = resolve(distPath, relativePath);
-
-    // Make sure dist file's directory is created.
-    mkdirpSync(dirname(distFilePath));
-
-    switch (extname(sourceFilePath)) {
-      case JSX_FILE: {
-        const jsxCode = getFileContent(sourceFilePath);
-        const { template, jsCode, customComponents } = transformJSX(jsxCode, { filePath: sourceFilePath });
-
-        if (isPage(relativePath)) {
-          const distFileDir = resolve(dirname(distFilePath), 'components');
-          mkdirpSync(distFileDir);
-
-          const distComponentTemplateFilePath = resolve(distFileDir, 'page.axml');
-          writeFileSync(distComponentTemplateFilePath, template);
-
-          const distComponentConfigFilePath = resolve(distFileDir, 'page.json');
-          writeJSONSync(distComponentConfigFilePath, { component: true });
-
-          const distComponentJSFilePath = resolve(distFileDir, 'page.js');
-          writeFileSync(distComponentJSFilePath, jsCode);
-
-          const distPageTemplateFilePath = distFilePath.replace(JSX_FILE, TEMPLATE_FILE);
-          writeFileSync(distPageTemplateFilePath, '<page></page>');
-          printLog(colors.green('生成模板'), `${relativePath.replace(JSX_FILE, TEMPLATE_FILE)}`);
-        } else {
-          // is component
-
-        }
-
-        break;
-      }
-
-      case JS_FILE: {
-        copySync(sourceFilePath, distFilePath);
-        printLog(colors.green('复制 JS'), `${relativePath} -> dist/${relativePath}`);
-        break;
-      }
-
-      case STYLE_FILE: {
-        let distRelativePath = relativePath.replace(STYLE_FILE, '.acss');
-        distFilePath = distFilePath.replace(STYLE_FILE, '.acss');
-        copySync(sourceFilePath, distFilePath);
-
-        printLog(colors.green('复制样式'), `${relativePath} -> dist/${distRelativePath}`);
-        break;
-      }
-
-      case CONFIG_FILE: {
-        if (isPage(relativePath)) {
-          const pageConfig = readJSONSync(sourceFilePath);
-          const usingComponents = pageConfig.usingComponents = pageConfig.usingComponents || {};
-          usingComponents.page = './components/page'; // Add a page component config.
-          writeJSONSync(distFilePath, pageConfig);
-        } else {
-          copySync(sourceFilePath, distFilePath);
-        }
-        printLog(colors.green('复制配置'), `${relativePath} -> dist/${relativePath}`);
-        break;
-      }
-
-      default: {
-        copySync(sourceFilePath, distFilePath);
-        printLog(colors.green('复制文件'), `${relativePath} -> dist/${relativePath}`);
-      }
-    }
-  }
 
   /**
    * Judge whether a file path is belonging to a page.
