@@ -34,8 +34,8 @@ export default class ScrollViewElement extends PolymerElement {
         computed: '_getBoolPropFromAttr("scroll-y", scrollY)',
         observer: '_observeScrollY',
       },
-      'scroll-left': Number,
-      'scroll-top': Number,
+      [SCROLL_LEFT]: Number,
+      [SCROLL_TOP]: Number,
       scrollIntoView: String,
       scrollWithAnimation: {
         type: Boolean,
@@ -98,8 +98,6 @@ export default class ScrollViewElement extends PolymerElement {
       [SCROLL_TOP]: null,
     };
 
-    // Action timer
-    this.actionTimer = null;
     /**
      * If prevented, do not response to any user actions.
      * @type {boolean}
@@ -122,10 +120,10 @@ export default class ScrollViewElement extends PolymerElement {
   }
 
   get _scrollTop() {
-    return this['scroll-top'];
+    return this[SCROLL_TOP];
   }
   get _scrollLeft() {
-    return this['scroll-left'];
+    return this[SCROLL_LEFT];
   }
 
   ready() {
@@ -137,13 +135,13 @@ export default class ScrollViewElement extends PolymerElement {
     super.attributeChangedCallback(key, oldVal, newVal);
     switch (key) {
       case SCROLL_TOP:
-        this.collectAction(SCROLL_TOP, newVal);
+        this._dispatchAction(SCROLL_TOP, newVal);
         break;
       case SCROLL_LEFT:
-        this.collectAction(SCROLL_LEFT, newVal);
+        this._dispatchAction(SCROLL_LEFT, newVal);
         break;
       case SCROLL_INTO_VIEW:
-        this.collectAction(SCROLL_INTO_VIEW, newVal);
+        this._dispatchAction(SCROLL_INTO_VIEW, newVal);
         break;
     }
   }
@@ -208,88 +206,76 @@ export default class ScrollViewElement extends PolymerElement {
     this.removeEventListener('touchcancel', this._handleTouchEnd, true);
   }
 
-  collectAction(action, value) {
-    // Collect actions in 16ms
+  /**
+   * Dispatch actions in a frame
+   * @param {String} action
+   * @param {String|Number} value
+   */
+  _dispatchAction(action, value) {
     this.actionMap[action] = value;
-    clearTimeout(this.actionTimer);
-    this.actionTimer = setTimeout(() => {
+    requestAnimationFrame(() => {
       switch (true) {
         case this.actionMap[SCROLL_TOP] !== null:
-          this.dispatchAction(SCROLL_TOP, this.actionMap[SCROLL_TOP]);
+          if (this.scrollWithAnimation) {
+            this._smoothScrollToY(value);
+          } else {
+            this.scrollTo({
+              top: value,
+              behavior: 'instant',
+            });
+          }
           break;
         case this.actionMap[SCROLL_LEFT] !== null:
-          this.dispatchAction(SCROLL_TOP, this.actionMap[SCROLL_LEFT]);
+          if (this.scrollWithAnimation) {
+            this._smoothScrollToX(value);
+          } else {
+          // Delay to scroll, after dom is ready;
+            this.scrollTo({
+              left: value,
+              behavior: 'instant',
+            });
+          }
           break;
         case this.actionMap[SCROLL_INTO_VIEW] !== null:
-          this.dispatchAction(SCROLL_INTO_VIEW, this.actionMap[SCROLL_INTO_VIEW]);
+          const targetNode = document.getElementById(value);
+          if (targetNode) {
+            const containerRect = this.getBoundingClientRect();
+            const targetNodeRect = targetNode.getBoundingClientRect();
+
+            if (this.scrollX) {
+              const offset =
+              this.scrollLeft + targetNodeRect.left - containerRect.left;
+              if (this.scrollWithAnimation) {
+                this._smoothScrollToX(offset);
+              } else {
+                this.scrollTo({
+                  left: offset,
+                  behavior: 'instant',
+                });
+              }
+            }
+
+            if (this.scrollY) {
+              const offset =
+              this.scrollTop + targetNodeRect.top - containerRect.top;
+              if (this.scrollWithAnimation) {
+                this._smoothScrollToY(offset);
+              } else {
+                this.scrollTo({
+                  top: offset,
+                  behavior: 'instant',
+                });
+              }
+            }
+          }
           break;
       }
-    }, 16);
-  }
-
-  dispatchAction(action, value) {
-    switch (action) {
-      case SCROLL_INTO_VIEW:
-        const targetNode = document.getElementById(value);
-        if (targetNode) {
-          const containerRect = this.getBoundingClientRect();
-          const targetNodeRect = targetNode.getBoundingClientRect();
-
-          if (this.scrollX) {
-            const offset =
-              this.scrollLeft + targetNodeRect.left - containerRect.left;
-            if (this.scrollWithAnimation) {
-              this._smoothScrollToX(offset);
-            } else {
-              this.scrollTo({
-                left: offset,
-                behavior: 'instant',
-              });
-            }
-          }
-
-          if (this.scrollY) {
-            const offset =
-              this.scrollTop + targetNodeRect.top - containerRect.top;
-            if (this.scrollWithAnimation) {
-              this._smoothScrollToY(offset);
-            } else {
-              this.scrollTo({
-                top: offset,
-                behavior: 'instant',
-              });
-            }
-          }
-        }
-        break;
-      case SCROLL_LEFT:
-        if (this.scrollWithAnimation) {
-          this._smoothScrollToX(value);
-        } else {
-          // Delay to scroll, after dom is ready;
-          this.scrollTo({
-            left: value,
-            behavior: 'instant',
-          });
-        }
-        break;
-      case SCROLL_TOP:
-        if (this.scrollWithAnimation) {
-          this._smoothScrollToY(value);
-        } else {
-          this.scrollTo({
-            top: value,
-            behavior: 'instant',
-          });
-        }
-        break;
-    }
-    // After dispatch action, reset actionMap
-    this.actionMap = {
-      [SCROLL_INTO_VIEW]: null,
-      [SCROLL_LEFT]: null,
-      [SCROLL_TOP]: null,
-    };
+      this.actionMap = {
+        [SCROLL_INTO_VIEW]: null,
+        [SCROLL_LEFT]: null,
+        [SCROLL_TOP]: null,
+      };
+    });
   }
 
   _observeScrollX() {
