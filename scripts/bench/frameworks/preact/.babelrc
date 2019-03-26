@@ -1,0 +1,11 @@
+{
+    "presets": [
+        ["env", {
+          "targets": {
+            "browsers": ["last 1 chrome versions"]
+          }
+        }],
+        "react"
+    ],
+    "plugins": []
+}

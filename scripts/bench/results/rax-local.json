@@ -1,0 +1,294 @@
+[
+  {
+    "framework": "rax-local",
+    "benchmark": "01_run1k",
+    "type": "cpu",
+    "min": 174.229,
+    "max": 212.872,
+    "mean": 188.62166666666667,
+    "median": 178.764,
+    "geometricMean": 187.8623206157932,
+    "standardDeviation": 21.123459857072024,
+    "values": [
+      212.872,
+      178.764,
+      174.229
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "02_replace1k",
+    "type": "cpu",
+    "min": 149.206,
+    "max": 156.265,
+    "mean": 152.164,
+    "median": 151.021,
+    "geometricMean": 152.13475819446336,
+    "standardDeviation": 3.6656796095676434,
+    "values": [
+      151.021,
+      149.206,
+      156.265
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "03_update10th1k_x16",
+    "type": "cpu",
+    "min": 349.578,
+    "max": 364.704,
+    "mean": 359.51,
+    "median": 364.248,
+    "geometricMean": 359.4407115065462,
+    "standardDeviation": 8.60438562594682,
+    "values": [
+      349.578,
+      364.704,
+      364.248
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "04_select1k",
+    "type": "cpu",
+    "min": 145.573,
+    "max": 150.926,
+    "mean": 147.98,
+    "median": 147.441,
+    "geometricMean": 147.96342898017855,
+    "standardDeviation": 2.7168995196731043,
+    "values": [
+      150.926,
+      145.573,
+      147.441
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "05_swap1k",
+    "type": "cpu",
+    "min": 84.314,
+    "max": 94.985,
+    "mean": 89.56599999999999,
+    "median": 89.399,
+    "geometricMean": 89.46004805743193,
+    "standardDeviation": 5.337459789075702,
+    "values": [
+      94.985,
+      84.314,
+      89.399
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "06_remove-one-1k",
+    "type": "cpu",
+    "min": 49.286,
+    "max": 52.065,
+    "mean": 50.62166666666667,
+    "median": 50.514,
+    "geometricMean": 50.608919875161924,
+    "standardDeviation": 1.3926249794303303,
+    "values": [
+      52.065,
+      50.514,
+      49.286
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "07_create10k",
+    "type": "cpu",
+    "min": 1842.419,
+    "max": 1950.321,
+    "mean": 1911.4346666666668,
+    "median": 1941.564,
+    "geometricMean": 1910.800753344325,
+    "standardDeviation": 59.92948311418451,
+    "values": [
+      1941.564,
+      1950.321,
+      1842.419
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "08_create1k-after1k_x2",
+    "type": "cpu",
+    "min": 378.592,
+    "max": 420.269,
+    "mean": 405.4046666666666,
+    "median": 417.353,
+    "geometricMean": 404.9494153766782,
+    "standardDeviation": 23.266178980084675,
+    "values": [
+      417.353,
+      420.269,
+      378.592
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "09_clear1k_x8",
+    "type": "cpu",
+    "min": 277.807,
+    "max": 364.459,
+    "mean": 330.285,
+    "median": 348.589,
+    "geometricMean": 328.02115043904655,
+    "standardDeviation": 46.13479801624799,
+    "values": [
+      277.807,
+      364.459,
+      348.589
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "21_ready-memory",
+    "type": "memory",
+    "min": 2.1919708251953125,
+    "max": 4.146873474121094,
+    "mean": 3.2276941935221353,
+    "median": 3.34423828125,
+    "geometricMean": 3.1209316394837914,
+    "standardDeviation": 0.982648454424317,
+    "values": [
+      2.1919708251953125,
+      3.34423828125,
+      4.146873474121094
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "22_run-memory",
+    "type": "memory",
+    "min": 8.296844482421875,
+    "max": 9.692642211914062,
+    "mean": 8.994796752929688,
+    "median": 8.994903564453125,
+    "geometricMean": 8.976710396179755,
+    "standardDeviation": 0.6978988708762986,
+    "values": [
+      8.296844482421875,
+      8.994903564453125,
+      9.692642211914062
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "23_update5-memory",
+    "type": "memory",
+    "min": 9.101127624511719,
+    "max": 11.092636108398438,
+    "mean": 10.196250915527344,
+    "median": 10.394989013671875,
+    "geometricMean": 10.162128177639767,
+    "standardDeviation": 1.0105192398409708,
+    "values": [
+      9.101127624511719,
+      10.394989013671875,
+      11.092636108398438
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "24_run5-memory",
+    "type": "memory",
+    "min": 9.307952880859375,
+    "max": 10.482040405273438,
+    "mean": 9.956954956054688,
+    "median": 10.08087158203125,
+    "geometricMean": 9.944875777012626,
+    "standardDeviation": 0.5967720472602976,
+    "values": [
+      9.307952880859375,
+      10.08087158203125,
+      10.482040405273438
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "25_run-clear-memory",
+    "type": "memory",
+    "min": 4.486541748046875,
+    "max": 6.0966949462890625,
+    "mean": 5.45355224609375,
+    "median": 5.7774200439453125,
+    "geometricMean": 5.406464729697669,
+    "standardDeviation": 0.8525350979967345,
+    "values": [
+      4.486541748046875,
+      5.7774200439453125,
+      6.0966949462890625
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "31_startup-ci",
+    "type": "startup",
+    "min": 2029.144,
+    "max": 2105.224,
+    "mean": 2067.248875,
+    "median": 2067.3137500000003,
+    "geometricMean": 2066.9033297030082,
+    "standardDeviation": 43.64303146050357,
+    "values": [
+      2029.7635,
+      2104.864,
+      2029.144,
+      2105.224
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "32_startup-bt",
+    "type": "startup",
+    "min": 16,
+    "max": 16,
+    "mean": 16,
+    "median": 16,
+    "geometricMean": 16,
+    "standardDeviation": 0,
+    "values": [
+      16,
+      16,
+      16,
+      16
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "33_startup-mainthreadcost",
+    "type": "startup",
+    "min": 338.6359999999999,
+    "max": 345.5079999999999,
+    "mean": 342.96999999999997,
+    "median": 343.868,
+    "geometricMean": 342.9587273793325,
+    "standardDeviation": 3.205479475315176,
+    "values": [
+      345.28000000000003,
+      338.6359999999999,
+      345.5079999999999,
+      342.45599999999996
+    ]
+  },
+  {
+    "framework": "rax-local",
+    "benchmark": "34_startup-totalbytes",
+    "type": "startup",
+    "min": 181.6083984375,
+    "max": 181.6083984375,
+    "mean": 181.6083984375,
+    "median": 181.6083984375,
+    "geometricMean": 181.6083984375,
+    "standardDeviation": 0,
+    "values": [
+      181.6083984375,
+      181.6083984375,
+      181.6083984375,
+      181.6083984375
+    ]
+  }
+]

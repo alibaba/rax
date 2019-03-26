@@ -1,0 +1,38 @@
+{
+  "name": "js-framework-benchmark-rax-local",
+  "version": "1.1.1",
+  "description": "Rax demo",
+  "main": "index.js",
+  "js-framework-benchmark": {
+    "frameworkVersionFromPackage": "rax"
+  },
+  "scripts": {
+    "build-dev": "webpack --watch",
+    "build-prod": "webpack"
+  },
+  "keywords": [
+    "rax",
+    "webpack"
+  ],
+  "author": "Stefan Krause",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/krausest/js-framework-benchmark",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krausest/js-framework-benchmark.git"
+  },
+  "devDependencies": {
+    "@babel/core": "7.1.2",
+    "@babel/preset-env": "7.1.0",
+    "@babel/preset-react": "7.0.0",
+    "@babel/plugin-proposal-class-properties": "7.1.0",
+    "babel-loader": "8.0.4",
+    "terser-webpack-plugin": "1.1.0",
+    "webpack": "4.22.0",
+    "webpack-cli": "3.1.2"
+  },
+  "dependencies": {
+    "driver-dom": "^1.0.0",
+    "rax": "^1.0.0"
+  }
+}
