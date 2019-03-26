@@ -92,7 +92,7 @@ export default class ScrollViewElement extends PolymerElement {
     this._id = `scroll-view-${++uid}`;
 
     // Action Map
-    this.actionMap = {
+    this._actionMap = {
       [SCROLL_INTO_VIEW]: null,
       [SCROLL_LEFT]: null,
       [SCROLL_TOP]: null,
@@ -212,10 +212,10 @@ export default class ScrollViewElement extends PolymerElement {
    * @param {String|Number} value
    */
   _dispatchAction(action, value) {
-    this.actionMap[action] = value;
+    this._actionMap[action] = value;
     requestAnimationFrame(() => {
-      const isScrollTop = this.actionMap[SCROLL_TOP] !== null;
-      const isScrollLeft = this.actionMap[SCROLL_LEFT] !== null;
+      const isScrollTop = this._actionMap[SCROLL_TOP] !== null;
+      const isScrollLeft = this._actionMap[SCROLL_LEFT] !== null;
 
       if (isScrollTop || isScrollLeft) {
         if (this.scrollWithAnimation) {
@@ -227,7 +227,7 @@ export default class ScrollViewElement extends PolymerElement {
             behavior: 'instant',
           });
         }
-      } else if (this.actionMap[SCROLL_INTO_VIEW] !== null) {
+      } else if (this._actionMap[SCROLL_INTO_VIEW] !== null) {
         const targetNode = document.getElementById(value);
         if (targetNode) {
           const containerRect = this.getBoundingClientRect();
@@ -247,7 +247,7 @@ export default class ScrollViewElement extends PolymerElement {
           }
         }
       }
-      this.actionMap = {
+      this._actionMap = {
         [SCROLL_INTO_VIEW]: null,
         [SCROLL_LEFT]: null,
         [SCROLL_TOP]: null,
