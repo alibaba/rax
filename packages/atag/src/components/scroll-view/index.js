@@ -214,61 +214,38 @@ export default class ScrollViewElement extends PolymerElement {
   _dispatchAction(action, value) {
     this.actionMap[action] = value;
     requestAnimationFrame(() => {
-      switch (true) {
-        case this.actionMap[SCROLL_TOP] !== null:
+      const isScrollTop = this.actionMap[SCROLL_TOP] !== null;
+      const isScrollLeft = this.actionMap[SCROLL_LEFT] !== null;
+
+      if (isScrollTop || isScrollLeft) {
+        if (this.scrollWithAnimation) {
+          isScrollTop ? this._smoothScrollToY(value) : this._smoothScrollToX(value);
+        } else {
+          const DIREACTION = isScrollTop ? 'top' : 'left';
+          this.scrollTo({
+            [DIREACTION]: value,
+            behavior: 'instant',
+          });
+        }
+      } else if (this.actionMap[SCROLL_INTO_VIEW] !== null) {
+        const targetNode = document.getElementById(value);
+        if (targetNode) {
+          const containerRect = this.getBoundingClientRect();
+          const targetNodeRect = targetNode.getBoundingClientRect();
+
+          const offset = this.scrollX ? this.scrollLeft + targetNodeRect.left - containerRect.left
+            : this.scrollTop + targetNodeRect.top - containerRect.top;
+
           if (this.scrollWithAnimation) {
-            this._smoothScrollToY(value);
+            this.scrollX ? this._smoothScrollToX(offset) : this._smoothScrollToY(offset);
           } else {
+            const DIREACTION = this.scrollX ? 'top' : 'left';
             this.scrollTo({
-              top: value,
+              [DIREACTION]: offset,
               behavior: 'instant',
             });
           }
-          break;
-        case this.actionMap[SCROLL_LEFT] !== null:
-          if (this.scrollWithAnimation) {
-            this._smoothScrollToX(value);
-          } else {
-          // Delay to scroll, after dom is ready;
-            this.scrollTo({
-              left: value,
-              behavior: 'instant',
-            });
-          }
-          break;
-        case this.actionMap[SCROLL_INTO_VIEW] !== null:
-          const targetNode = document.getElementById(value);
-          if (targetNode) {
-            const containerRect = this.getBoundingClientRect();
-            const targetNodeRect = targetNode.getBoundingClientRect();
-
-            if (this.scrollX) {
-              const offset =
-              this.scrollLeft + targetNodeRect.left - containerRect.left;
-              if (this.scrollWithAnimation) {
-                this._smoothScrollToX(offset);
-              } else {
-                this.scrollTo({
-                  left: offset,
-                  behavior: 'instant',
-                });
-              }
-            }
-
-            if (this.scrollY) {
-              const offset =
-              this.scrollTop + targetNodeRect.top - containerRect.top;
-              if (this.scrollWithAnimation) {
-                this._smoothScrollToY(offset);
-              } else {
-                this.scrollTo({
-                  top: offset,
-                  behavior: 'instant',
-                });
-              }
-            }
-          }
-          break;
+        }
       }
       this.actionMap = {
         [SCROLL_INTO_VIEW]: null,
