@@ -5,6 +5,16 @@ const findReturnElement = require('../transformer/findReturnElement');
 const { generateCodeByExpression } = require('../codegen');
 const { builtInTags } = require('../constant');
 
+const parserAdapter = {
+  if: 'a:if',
+  else: 'a:else',
+  elseif: 'a:elif',
+  for: 'a:for',
+  forItem: 'a:for-item',
+  forIndex: 'a:for-index',
+  key: 'a:key',
+};
+
 /**
  * Parse JSXElements to Node.
  * @param el {JSXElement|JSXText} Root el.
@@ -84,9 +94,8 @@ function parseJSXExpressionContainer(el) {
     } // else fall through.
     case 'MemberExpression':
     {
-      let code = generateCodeByExpression(expression);
       // Simple redirect props/state to miniapp's data scope.
-      code = code.replace(/this\.(state|props)\./g, '');
+      const code = normalizeBindingIdentifier(generateCodeByExpression(expression));
       return '{{' + code + '}}';
     }
 
@@ -94,11 +103,11 @@ function parseJSXExpressionContainer(el) {
       const { test, consequent, alternate } = expression;
       const ret = [];
       const consequentNode = parseJSX(consequent);
-      consequentNode.attrs['a:if'] = generateCodeByExpression(test);
+      consequentNode.attrs[parserAdapter.if] = generateCodeByExpression(test);
       ret.push(consequentNode);
 
       const alternateNode = parseJSX(alternate);
-      alternateNode.attrs['a:else'] = true;
+      alternateNode.attrs[parserAdapter.else] = true;
       ret.push(alternateNode);
 
       return ret;
@@ -124,7 +133,7 @@ function parseJSXExpressionContainer(el) {
           }
           return new Node(
             'block',
-            { 'a:for': generateCodeByExpression(callee.object) },
+            { [parserAdapter.for]: generateCodeByExpression(callee.object) },
             [childNode]
           );
         } else {
@@ -137,10 +146,6 @@ function parseJSXExpressionContainer(el) {
 
       }
       break;
-    }
-
-    default: {
-      debugger;
     }
   }
 }
@@ -169,7 +174,7 @@ function parseAttrs(attributes) {
 
     // Normal attr.
     if (t.isStringLiteral(value)) {
-      ret[name.name] = value.value;
+      ret[normalizeProp(name.name)] = value.value;
     } else if (t.isJSXExpressionContainer(value)) {
       const { expression } = value;
       switch (expression.type) {
@@ -181,8 +186,8 @@ function parseAttrs(attributes) {
         }
         case 'Identifier': {
           // undefined is included.
-          const id = expression.name.replace(/this.(state|props)\./, '');
-          ret[name.name] = '{{' + id + '}}'; break;
+          const id = normalizeBindingIdentifier(expression.name);
+          ret[normalizeProp(name.name)] = '{{' + id + '}}'; break;
         }
         case 'ObjectExpression': {
           ret[name.name] = '{' + generateCodeByExpression(expression, {
@@ -192,17 +197,19 @@ function parseAttrs(attributes) {
         }
         case 'MemberExpression': {
           let code = generateCodeByExpression(expression);
+          let key = name.name;
           if (/^on/.test(name.name)) {
             // Simple handle with onTap={this.xxx} -> onTap="xxx"
             code = code
               .replace(/this\./g, '');
+            key = normalizeEventName(key);
           } else {
             code = code
               .replace(/this\.(props|state)\./g, '');
             code = '{{' + code + '}}';
           }
 
-          ret[name.name] = code;
+          ret[key] = code;
           break;
         }
 
@@ -242,6 +249,44 @@ function isCustomComponent(tagName) {
  */
 function normalizeComponentName(tagName) {
   return kebabCase(tagName).replace(/^-/, '');
+}
+
+const propMapping = {
+  className: 'class',
+  key: 'a:key',
+};
+/**
+ * Normalize prop, eg: className -> class
+ * @param prop {String}
+ */
+function normalizeProp(prop) {
+  if (propMapping.hasOwnProperty(prop)) {
+    prop = propMapping[prop];
+  }
+  return prop;
+}
+
+/**
+ * Normalize identifier binding, eg: this.state.foo -> foo
+ * @param code {String}
+ */
+function normalizeBindingIdentifier(code) {
+  return code.replace(/this.(state|props)\./, '');
+}
+
+const eventNameMapping = {
+  onClick: 'onTap',
+  onDblclick: 'onDoubleTap',
+};
+/**
+ * Normalize event key.
+ * @param eventName {String}
+ */
+function normalizeEventName(eventName) {
+  if (eventNameMapping.hasOwnProperty(eventName)) {
+    eventName = eventNameMapping[eventName];
+  }
+  return eventName;
 }
 
 module.exports = parseJSX;
