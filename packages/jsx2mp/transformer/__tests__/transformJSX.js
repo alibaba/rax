@@ -17,7 +17,7 @@ describe('transformJSX', () => {
       const expectedTemplatePath = resolve(fixturesDirPath, fixtures[i], EXPECTED_TEMPLATE);
       const expectedJSPath = resolve(fixturesDirPath, fixtures[i], EXPECTED_JS);
 
-      const { template, jsCode } = transformJSX(getFileContent(originPath));
+      const { template, jsCode } = transformJSX(getFileContent(originPath), { filePath: originPath });
 
       expect(template).toEqual(getFileContent(expectedTemplatePath));
       expect(jsCode).toEqual(getFileContent(expectedJSPath));

@@ -1,4 +1,7 @@
 const t = require('@babel/types');
+const { resolve, extname } = require('path');
+const { existsSync, readFileSync } = require('fs-extra');
+const kebabCase = require('kebab-case');
 const { default: traverse, NodePath } = require('@babel/traverse');
 const isJSXClassDeclaration = require('./isJSXClassDeclaration');
 const { parse, parseJSX } = require('../parser');
@@ -16,17 +19,75 @@ const {
 /**
  * Seperate JSX code into parts.
  * @param code {String} JSX Code.
+ * @param options {Object} Options.
  * @return result {JSXParts}
  */
-function transformJSX(code) {
+function transformJSX(code, options = {}) {
+  const { filePath } = options;
   const ast = parse(code);
-  // TODO: Refactor not to modified ast to remove render method.
+  const customComponents = getCustomComponents(ast, { filePath });
+  const style = getStyle(ast, { filePath });
   const template = getTemplate(ast);
   const jsCode = getComponentJSCode(ast);
   return {
     template,
     jsCode,
+    customComponents,
+    style,
   };
+}
+
+/**
+ * Get style content from import declaration.
+ * @param ast
+ * @param filePath
+ * @return {string}
+ */
+function getStyle(ast, { filePath }) {
+  let ret = '';
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const { node } = path;
+      const { source } = node;
+      filePath = resolve(filePath, '..', source.value);
+      if (extname(filePath) === '.css' || existsSync(filePath = filePath + '.css')) {
+        ret += readFileSync(filePath, 'utf-8');
+        // Remove import declaration, for 小程序开发工具 not support import a css file.
+        path.remove();
+      }
+    },
+  });
+  return ret;
+}
+
+function getCustomComponents(ast, { filePath }) {
+  /**
+   * The mapping of custom components.
+   * {
+   *   "CustomBottom": "/component/CustomBottom.jsx"
+   * }
+   */
+  const ret = {};
+
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const { node } = path;
+      const { source, specifiers } = node;
+      if (specifiers.length > 0) {
+        const name = specifiers[0].local.name;
+        let jsxFilePath = resolve(filePath, '..', source.value);
+        if (extname(jsxFilePath) === '.jsx' || existsSync(jsxFilePath = jsxFilePath + '.jsx')) {
+          ret[name] = {
+            filePath: jsxFilePath,
+            tagName: normalizeComponentName(name),
+            name,
+          };
+        }
+      }
+    },
+  });
+
+  return ret;
 }
 
 /**
@@ -168,6 +229,10 @@ function getComponentJSCode(ast) {
   });
 
   return generateCodeByExpression(ast);
+}
+
+function normalizeComponentName(tagName) {
+  return kebabCase(tagName).replace(/^-/, '');
 }
 
 exports.transformJSX = transformJSX;

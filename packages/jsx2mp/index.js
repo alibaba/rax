@@ -14,6 +14,7 @@ const colors = require('colors');
 const chokidar = require('chokidar');
 const glob = require('glob');
 const { transformJSX } = require('./transformer/transformJSX');
+const TransformerPage = require('./transformer/Page');
 
 const JSX_FILE = '.jsx';
 const JS_FILE = '.js';
@@ -43,19 +44,32 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
   mkdirpSync(distPath);
   printLog(colors.green('创建目录'), 'dist/');
   if (enableWatch) {
-    startWatching(sourcePath, distPath, handleFileChange);
-    printLog(colors.green('监听以下路径的文件变更'), sourcePath);
+    // startWatching(sourcePath, distPath, handleFileChange);
+    // printLog(colors.green('监听以下路径的文件变更'), sourcePath);
   } else {
     const globOption = {
       cwd: sourcePath,
       nodir: true,
       dot: true,
       ignore: ['node_modules', 'dist/**', '.DS_Store'],
-      absolute: true,
+      absolute: false,
     };
-    const files = glob.sync('**/*', globOption);
+    const files = glob.sync('*', globOption);
     for (let i = 0, l = files.length; i < l; i++) {
-      handleFileChange(files[i]);
+      const filename = files[i];
+      copySync(resolve(sourcePath, filename), resolve(distPath, filename));
+    }
+    // todo: watch these files.
+
+    const { pages } = appConfig;
+    for (let i = 0, l = pages.length; i < l; i++) {
+      new TransformerPage({
+        rootContext: sourcePath,
+        context: resolve(sourcePath, pages[i]),
+        distRoot: distPath,
+        distPagePath: resolve(distPath, pages[i], '..'),
+        watch: enableWatch,
+      });
     }
   }
 
@@ -77,7 +91,7 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
     switch (extname(sourceFilePath)) {
       case JSX_FILE: {
         const jsxCode = getFileContent(sourceFilePath);
-        const { template, jsCode } = transformJSX(jsxCode);
+        const { template, jsCode, customComponents } = transformJSX(jsxCode, { filePath: sourceFilePath });
 
         if (isPage(relativePath)) {
           const distFileDir = resolve(dirname(distFilePath), 'components');
@@ -96,6 +110,7 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
           writeFileSync(distPageTemplateFilePath, '<page></page>');
           printLog(colors.green('生成模板'), `${relativePath.replace(JSX_FILE, TEMPLATE_FILE)}`);
         } else {
+          // is component
 
         }
 

@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const kebabCase = require('kebab-case');
 const Node = require('./Node');
 const findReturnElement = require('../transformer/findReturnElement');
 const { generateCodeByExpression } = require('../codegen');
@@ -24,6 +25,7 @@ function parseJSX(el) {
 }
 
 /**
+ * parseJSXElement
  * @param el {JSXElement}
  * @return {Node}
  */
@@ -37,7 +39,12 @@ function parseJSXElement(el) {
 
   const tagName = name.name;
   if (isCustomComponent(tagName)) {
-    // Todo: handle with custom components.
+    const componentName = normalizeComponentName(tagName);
+    return new Node(
+      componentName,
+      parseAttrs(attributes),
+      children.map(parseJSX)
+    );
   } else {
     return new Node(
       tagName,
@@ -48,6 +55,7 @@ function parseJSXElement(el) {
 }
 
 /**
+ * parseJSXText
  * @param el {JSXText}
  * @return {String}
  */
@@ -56,6 +64,7 @@ function parseJSXText(el) {
 }
 
 /**
+ * parseJSXExpressionContainer
  * @param el
  * @return {String}
  * Example:
@@ -65,7 +74,14 @@ function parseJSXExpressionContainer(el) {
   const { expression } = el;
 
   switch (expression.type) {
-    case 'Identifier':
+    case 'Identifier': {
+      /**
+       * Alia children to slot.
+       */
+      if (expression.name === 'children') {
+        return new Node('slot');
+      }
+    } // else fall through.
     case 'MemberExpression':
     {
       let code = generateCodeByExpression(expression);
@@ -120,7 +136,6 @@ function parseJSXExpressionContainer(el) {
       } else if (t.isFunction(callee)) {
 
       }
-      debugger;
       break;
     }
 
@@ -221,5 +236,12 @@ function isCustomComponent(tagName) {
   return !builtInTags.has(tagName.toLowerCase());
 }
 
+/**
+ * Get component name from imported identifier name.
+ * @param tagName {String}
+ */
+function normalizeComponentName(tagName) {
+  return kebabCase(tagName).replace(/^-/, '');
+}
 
 module.exports = parseJSX;
