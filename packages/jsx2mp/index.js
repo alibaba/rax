@@ -47,7 +47,11 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
     const files = glob.sync('*', globOption);
     for (let i = 0, l = files.length; i < l; i++) {
       const filename = files[i];
-      copySync(resolve(sourcePath, filename), resolve(distPath, filename));
+      let from = resolve(sourcePath, filename);
+      let to = resolve(distPath, filename);
+      // transform .css to .acss
+      if (extname(to) === '.css') to = to.replace(/\.css/, '.acss');
+      copySync(from, to);
     }
     // todo: watch these files.
 
