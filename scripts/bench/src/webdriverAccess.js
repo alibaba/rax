@@ -1,5 +1,5 @@
-const { By, Condition } = require("selenium-webdriver");
-const config = require("./config");
+const { By, Condition } = require('selenium-webdriver');
+const config = require('./config');
 
 let useShadowRoot = false;
 function setUseShadowRoot(val) {
@@ -35,11 +35,11 @@ async function testTextContains(driver, xpath, text, timeout = config.TIMEOUT) {
         return v && v.indexOf(text) > -1;
       } catch (err) {
         console.log(
-          "ignoring error in testTextContains for xpath = " +
+          'ignoring error in testTextContains for xpath = ' +
             xpath +
-            " text = " +
+            ' text = ' +
             text,
-          err.toString().split("\n")[0]
+          err.toString().split('\n')[0]
         );
       }
     },
@@ -59,11 +59,11 @@ function testTextNotContained(driver, xpath, text, timeout = config.TIMEOUT) {
         return v && v.indexOf(text) == -1;
       } catch (err) {
         console.log(
-          "ignoring error in testTextNotContained for xpath = " +
+          'ignoring error in testTextNotContained for xpath = ' +
             xpath +
-            " text = " +
+            ' text = ' +
             text,
-          err.toString().split("\n")[0]
+          err.toString().split('\n')[0]
         );
       }
     },
@@ -79,15 +79,15 @@ function testClassContains(driver, xpath, text, timeout = config.TIMEOUT) {
         let elem = await shadowRoot(driver);
         elem = await findByXPath(elem, xpath);
         if (elem == null) return false;
-        let v = await elem.getAttribute("class");
+        let v = await elem.getAttribute('class');
         return v && v.indexOf(text) > -1;
       } catch (err) {
         console.log(
-          "ignoring error in testClassContains for xpath = " +
+          'ignoring error in testClassContains for xpath = ' +
             xpath +
-            " text = " +
+            ' text = ' +
             text,
-          err.toString().split("\n")[0]
+          err.toString().split('\n')[0]
         );
       }
     },
@@ -105,7 +105,7 @@ function testElementLocatedByXpath(driver, xpath, timeout = config.TIMEOUT) {
         return elem ? true : false;
       } catch (err) {
         console.log(
-          "ignoring error in testElementLocatedByXpath for xpath = " + xpath,
+          'ignoring error in testElementLocatedByXpath for xpath = ' + xpath,
           err.toString()
         );
       }
@@ -124,8 +124,8 @@ function testElementNotLocatedByXPath(driver, xpath, timeout = config.TIMEOUT) {
         return elem ? false : true;
       } catch (err) {
         console.log(
-          "ignoring error in testElementNotLocatedByXPath for xpath = " + xpath,
-          err.toString().split("\n")[0]
+          'ignoring error in testElementNotLocatedByXPath for xpath = ' + xpath,
+          err.toString().split('\n')[0]
         );
       }
     },
@@ -154,7 +154,7 @@ async function retry(retryCount, driver, fun) {
     try {
       return fun(driver, i);
     } catch (err) {
-      console.log("retry failed");
+      console.log('retry failed');
     }
   }
 }
@@ -171,7 +171,7 @@ function clickElementById(driver, id) {
 function clickElementByXPath(driver, xpath) {
   return retry(5, driver, async function(driver, count) {
     if (count > 1 && config.LOG_DETAILS)
-      console.log("clickElementByXPath ", xpath, " attempt #", count);
+      console.log('clickElementByXPath ', xpath, ' attempt #', count);
     let elem = await shadowRoot(driver);
     elem = await findByXPath(elem, xpath);
     await elem.click();
@@ -183,7 +183,7 @@ function clickElementByXPath(driver, xpath) {
 async function getTextByXPath(driver, xpath) {
   return await retry(5, driver, async function(driver, count) {
     if (count > 1 && config.LOG_DETAILS)
-      console.log("getTextByXPath ", xpath, " attempt #", count);
+      console.log('getTextByXPath ', xpath, ' attempt #', count);
     let elem = await shadowRoot(driver);
     elem = await findByXPath(elem, xpath);
     return await elem.getText();
@@ -193,9 +193,9 @@ async function getTextByXPath(driver, xpath) {
 async function shadowRoot(driver) {
   return useShadowRoot
     ? await driver.executeScript(
-        'return document.querySelector("main-element").shadowRoot'
-      )
-    : await driver.findElement(By.tagName("body"));
+      'return document.querySelector("main-element").shadowRoot'
+    )
+    : await driver.findElement(By.tagName('body'));
 }
 
 module.exports = {
@@ -209,4 +209,4 @@ module.exports = {
   clickElementById,
   clickElementByXPath,
   getTextByXPath
-}
+};

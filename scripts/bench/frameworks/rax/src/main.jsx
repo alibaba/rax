@@ -4,14 +4,16 @@
 import { createElement, memo, useReducer, useCallback, render } from 'rax';
 import * as DriverDOM from 'driver-dom';
 
-function random(max) { return Math.round(Math.random() * 1000) % max; }
+function random(max) {
+  return Math.round(Math.random() * 1000) % max;
+}
 
-const A = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean",
-  "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive",
-  "cheap", "expensive", "fancy"];
-const C = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
-const N = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse",
-  "keyboard"];
+const A = ['pretty', 'large', 'big', 'small', 'tall', 'short', 'long', 'handsome', 'plain', 'quaint', 'clean',
+  'elegant', 'easy', 'angry', 'crazy', 'helpful', 'mushy', 'odd', 'unsightly', 'adorable', 'important', 'inexpensive',
+  'cheap', 'expensive', 'fancy'];
+const C = ['red', 'yellow', 'blue', 'green', 'pink', 'brown', 'purple', 'brown', 'white', 'black', 'orange'];
+const N = ['table', 'chair', 'house', 'bbq', 'desk', 'car', 'pony', 'cookie', 'sandwich', 'burger', 'pizza', 'mouse',
+  'keyboard'];
 
 let nextId = 1;
 
@@ -39,7 +41,7 @@ function listReducer(state, action) {
       const newData = data.slice(0);
       for (let i = 0; i < newData.length; i += 10) {
         const r = newData[i];
-        newData[i] = { id: r.id, label: r.label + " !!!" };
+        newData[i] = { id: r.id, label: r.label + ' !!!' };
       }
       return { data: newData, selected };
     case 'CLEAR':
@@ -55,17 +57,17 @@ function listReducer(state, action) {
   return state;
 }
 
-const GlyphIcon = <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>;
+const GlyphIcon = <span className="glyphicon glyphicon-remove" aria-hidden="true" />;
 
 const Row = memo(({ selected, item, dispatch }) => {
   const select = useCallback(() => dispatch({ type: 'SELECT', id: item.id }), []),
     remove = useCallback(() => dispatch({ type: 'REMOVE', id: item.id }), []);
 
-  return (<tr className={selected ? "danger" : ""}>
+  return (<tr className={selected ? 'danger' : ''}>
     <td className="col-md-1">{item.id}</td>
     <td className="col-md-4"><a onClick={select}>{item.label}</a></td>
     <td className="col-md-1"><a onClick={remove}>{GlyphIcon}</a></td>
-    <td className="col-md-6"></td>
+    <td className="col-md-6" />
   </tr>);
 });
 
@@ -105,8 +107,8 @@ const Main = () => {
         <Row key={item.id} item={item} selected={state.selected === item.id} dispatch={dispatch} />
       ))}
     </tbody></table>
-    <span className="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+    <span className="preloadicon glyphicon glyphicon-remove" aria-hidden="true" />
   </div>);
-}
+};
 
 render(<Main />, document.getElementById('main'), { driver: DriverDOM });

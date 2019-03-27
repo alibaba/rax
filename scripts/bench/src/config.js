@@ -13,7 +13,7 @@ const config = {
   STARTUP_DURATION_FROM_EVENTLOG: true,
   STARTUP_SLEEP_DURATION: 1000,
   FORK_CHROMEDRIVER: true
-}
+};
 
 module.exports = config;
 

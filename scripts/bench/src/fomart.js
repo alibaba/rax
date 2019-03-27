@@ -29,11 +29,11 @@ module.exports = function(data) {
       if (!results[type]) {
         results[type] = {};
       }
-  
+
       if (!results[type][benchmark]) {
         results[type][benchmark] = {};
       }
-  
+
       results[type][benchmark][framework] = item;
     });
   });
@@ -44,18 +44,18 @@ module.exports = function(data) {
       const frameworks = Object.keys(benchmarkResults);
 
       let min = frameworks.reduce((min, result) => {
-        return result === null ? min : Math.min(min, benchmarkResults[result].mean)
+        return result === null ? min : Math.min(min, benchmarkResults[result].mean);
       }, Number.POSITIVE_INFINITY);
-      
+
       frameworks.map((f) => {
         const result = benchmarkResults[f];
         result.factor = result.mean / min;
-        result.deviation = (result.standardDeviation || 0)/result.mean * 100.0;
+        result.deviation = (result.standardDeviation || 0) / result.mean * 100.0;
       });
-    })
+    });
   });
 
   return results;
-}
+};
 
 

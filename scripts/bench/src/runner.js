@@ -1,17 +1,17 @@
-"use strict";
+'use strict';
 
-const chrome = require("selenium-webdriver/chrome");
-const selenium_webdriver = require("selenium-webdriver");
-const lighthouse = require("lighthouse");
-const chromeLauncher = require("chrome-launcher");
-const fs = require("fs");
-const path = require("path");
-const R = require("ramda");
-const jStat = require("jstat").jStat;
+const chrome = require('selenium-webdriver/chrome');
+const selenium_webdriver = require('selenium-webdriver');
+const lighthouse = require('lighthouse');
+const chromeLauncher = require('chrome-launcher');
+const fs = require('fs');
+const path = require('path');
+const R = require('ramda');
+const jStat = require('jstat').jStat;
 
-const { BenchmarkType, benchmarks } = require("./benchmarks");
-const webdriverAccess = require("./webdriverAccess");
-const config = require("./config");
+const { BenchmarkType, benchmarks } = require('./benchmarks');
+const webdriverAccess = require('./webdriverAccess');
+const config = require('./config');
 
 require('chromedriver');
 
@@ -23,31 +23,31 @@ function extractRelevantEvents(entries) {
   entries.forEach(x => {
     let e = JSON.parse(x.message).message;
     if (config.LOG_DETAILS) console.log(JSON.stringify(e));
-    if (e.method === "Tracing.dataCollected") {
+    if (e.method === 'Tracing.dataCollected') {
       protocolEvents.push(e);
     }
     if (
       e.method &&
-      (e.method.startsWith("Page") || e.method.startsWith("Network"))
+      (e.method.startsWith('Page') || e.method.startsWith('Network'))
     ) {
       protocolEvents.push(e);
-    } else if (e.params.name === "EventDispatch") {
-      if (e.params.args.data.type === "click") {
+    } else if (e.params.name === 'EventDispatch') {
+      if (e.params.args.data.type === 'click') {
         if (config.LOG_TIMELINE)
-          console.log("CLICK ", JSON.stringify(e));
+          console.log('CLICK ', JSON.stringify(e));
         filteredEvents.push({
-          type: "click",
+          type: 'click',
           ts: +e.params.ts,
           dur: +e.params.dur,
           end: +e.params.ts + e.params.dur
         });
       }
     } else if (
-      e.params.name === "TimeStamp" &&
-      (e.params.args.data.message === "afterBenchmark" ||
-        e.params.args.data.message === "finishedBenchmark" ||
-        e.params.args.data.message === "runBenchmark" ||
-        e.params.args.data.message === "initBenchmark")
+      e.params.name === 'TimeStamp' &&
+      (e.params.args.data.message === 'afterBenchmark' ||
+        e.params.args.data.message === 'finishedBenchmark' ||
+        e.params.args.data.message === 'runBenchmark' ||
+        e.params.args.data.message === 'initBenchmark')
     ) {
       filteredEvents.push({
         type: e.params.args.data.message,
@@ -56,34 +56,34 @@ function extractRelevantEvents(entries) {
         end: +e.params.ts
       });
       if (config.LOG_TIMELINE)
-        console.log("TIMESTAMP ", JSON.stringify(e));
-    } else if (e.params.name === "navigationStart") {
+        console.log('TIMESTAMP ', JSON.stringify(e));
+    } else if (e.params.name === 'navigationStart') {
       filteredEvents.push({
-        type: "navigationStart",
+        type: 'navigationStart',
         ts: +e.params.ts,
         dur: 0,
         end: +e.params.ts
       });
       if (config.LOG_TIMELINE)
-        console.log("NAVIGATION START ", JSON.stringify(e));
-    } else if (e.params.name === "Paint") {
+        console.log('NAVIGATION START ', JSON.stringify(e));
+    } else if (e.params.name === 'Paint') {
       if (config.LOG_TIMELINE)
-        console.log("PAINT ", JSON.stringify(e));
+        console.log('PAINT ', JSON.stringify(e));
       filteredEvents.push({
-        type: "paint",
+        type: 'paint',
         ts: +e.params.ts,
         dur: +e.params.dur,
         end: +e.params.ts + e.params.dur,
         evt: JSON.stringify(e)
       });
-    } else if (e.params.name === "MajorGC" && e.params.args.usedHeapSizeAfter) {
+    } else if (e.params.name === 'MajorGC' && e.params.args.usedHeapSizeAfter) {
       filteredEvents.push({
-        type: "gc",
+        type: 'gc',
         ts: +e.params.ts,
         end: +e.params.ts,
         mem: Number(e.params.args.usedHeapSizeAfter) / 1024 / 1024
       });
-      if (config.LOG_TIMELINE) console.log("GC ", JSON.stringify(e));
+      if (config.LOG_TIMELINE) console.log('GC ', JSON.stringify(e));
     }
   });
   return { filteredEvents, protocolEvents };
@@ -114,15 +114,15 @@ function type_neq(requiredType) {
 }
 
 function asString(res) {
-  return res.reduce((old, cur) => old + "\n" + JSON.stringify(cur), "");
+  return res.reduce((old, cur) => old + '\n' + JSON.stringify(cur), '');
 }
 
 function extractRawValue(results, id) {
   let audits = results.audits;
   if (!audits) return null;
   let audit_with_id = audits[id];
-  if (typeof audit_with_id === "undefined") return null;
-  if (typeof audit_with_id.rawValue === "undefined") return null;
+  if (typeof audit_with_id === 'undefined') return null;
+  if (typeof audit_with_id.rawValue === 'undefined') return null;
   return audit_with_id.rawValue;
 }
 
@@ -144,34 +144,34 @@ function rmDir(dirPath) {
 async function runLighthouse(framework, benchmarkOptions) {
   const opts = {
     chromeFlags: [
-      "--headless",
-      "--no-sandbox",
-      "--no-first-run",
-      "--enable-automation",
-      "--disable-infobars",
-      "--disable-background-networking",
-      "--disable-background-timer-throttling",
-      "--disable-cache",
-      "--disable-translate",
-      "--disable-sync",
-      "--disable-extensions",
-      "--disable-default-apps",
-      "--window-size=1200,800"
+      '--headless',
+      '--no-sandbox',
+      '--no-first-run',
+      '--enable-automation',
+      '--disable-infobars',
+      '--disable-background-networking',
+      '--disable-background-timer-throttling',
+      '--disable-cache',
+      '--disable-translate',
+      '--disable-sync',
+      '--disable-extensions',
+      '--disable-default-apps',
+      '--window-size=1200,800'
     ],
-    onlyCategories: ["performance"],
-    port: ""
+    onlyCategories: ['performance'],
+    port: ''
   };
 
   try {
-    if (fs.existsSync("prefs")) rmDir("prefs");
-    fs.mkdirSync("prefs");
-    fs.mkdirSync("prefs/Default");
-    fs.copyFileSync("chromePreferences.json", "prefs/Default/Preferences");
+    if (fs.existsSync('prefs')) rmDir('prefs');
+    fs.mkdirSync('prefs');
+    fs.mkdirSync('prefs/Default');
+    fs.copyFileSync('chromePreferences.json', 'prefs/Default/Preferences');
 
     let options = {
       chromeFlags: opts.chromeFlags,
-      logLevel: "info",
-      userDataDir: "prefs"
+      logLevel: 'info',
+      userDataDir: 'prefs'
     };
     if (benchmarkOptions.chromeBinaryPath)
       options.chromePath = benchmarkOptions.chromeBinaryPath;
@@ -187,22 +187,22 @@ async function runLighthouse(framework, benchmarkOptions) {
     let LighthouseData = {
       TimeToConsistentlyInteractive: extractRawValue(
         results.lhr,
-        "interactive"
+        'interactive'
       ),
       ScriptBootUpTtime: Math.max(
         16,
-        extractRawValue(results.lhr, "bootup-time")
+        extractRawValue(results.lhr, 'bootup-time')
       ),
       MainThreadWorkCost: extractRawValue(
         results.lhr,
-        "mainthread-work-breakdown"
+        'mainthread-work-breakdown'
       ),
       TotalKiloByteWeight:
-        extractRawValue(results.lhr, "total-byte-weight") / 1024.0
+        extractRawValue(results.lhr, 'total-byte-weight') / 1024.0
     };
     return LighthouseData;
   } catch (error) {
-    console.log("error running lighthouse", error);
+    console.log('error running lighthouse', error);
     throw error;
   }
 }
@@ -218,43 +218,43 @@ async function computeResultsCPU(
     .manage()
     .logs()
     .get(selenium_webdriver.logging.Type.BROWSER);
-  if (config.LOG_DEBUG) console.log("browser entries", entriesBrowser);
+  if (config.LOG_DEBUG) console.log('browser entries', entriesBrowser);
   const perfLogEvents = await fetchEventsFromPerformanceLog(driver);
   let filteredEvents = perfLogEvents.timingResults;
   if (config.LOG_DEBUG)
-    console.log("filteredEvents ", asString(filteredEvents));
-  let remaining = R.dropWhile(type_eq("initBenchmark"))(filteredEvents);
+    console.log('filteredEvents ', asString(filteredEvents));
+  let remaining = R.dropWhile(type_eq('initBenchmark'))(filteredEvents);
   let results = [];
   while (remaining.length > 0) {
-    let evts = R.splitWhen(type_eq("finishedBenchmark"))(remaining);
-    if (R.find(type_neq("runBenchmark"))(evts[0]) && evts[1].length > 0) {
-      let eventsDuringBenchmark = R.dropWhile(type_neq("runBenchmark"))(
+    let evts = R.splitWhen(type_eq('finishedBenchmark'))(remaining);
+    if (R.find(type_neq('runBenchmark'))(evts[0]) && evts[1].length > 0) {
+      let eventsDuringBenchmark = R.dropWhile(type_neq('runBenchmark'))(
         evts[0]
       );
       if (config.LOG_DEBUG)
-        console.log("eventsDuringBenchmark ", eventsDuringBenchmark);
-      let clicks = R.filter(type_eq("click"))(eventsDuringBenchmark);
+        console.log('eventsDuringBenchmark ', eventsDuringBenchmark);
+      let clicks = R.filter(type_eq('click'))(eventsDuringBenchmark);
       if (clicks.length !== 1) {
         console.log(
-          "exactly one click event is expected",
+          'exactly one click event is expected',
           eventsDuringBenchmark
         );
-        throw "exactly one click event is expected";
+        throw 'exactly one click event is expected';
       }
-      let eventsAfterClick = R.dropWhile(type_neq("click"))(
+      let eventsAfterClick = R.dropWhile(type_neq('click'))(
         eventsDuringBenchmark
       );
       if (config.LOG_DEBUG)
-        console.log("eventsAfterClick", eventsAfterClick);
-      let paints = R.filter(type_eq("paint"))(eventsAfterClick);
+        console.log('eventsAfterClick', eventsAfterClick);
+      let paints = R.filter(type_eq('paint'))(eventsAfterClick);
       if (paints.length == 0) {
         console.log(
-          "at least one paint event is expected after the click event",
+          'at least one paint event is expected after the click event',
           eventsAfterClick
         );
-        throw "at least one paint event is expected after the click event";
+        throw 'at least one paint event is expected after the click event';
       }
-      console.log("# of paint events ", paints.length);
+      console.log('# of paint events ', paints.length);
       if (paints.length > 2) {
         warnings.push(
           `For framework ${framework.name} and benchmark ${
@@ -272,10 +272,10 @@ async function computeResultsCPU(
         );
       }
       paints.forEach(p => {
-        console.log("duration to paint ", (p.end - clicks[0].ts) / 1000.0);
+        console.log('duration to paint ', (p.end - clicks[0].ts) / 1000.0);
       });
       let lastPaint = R.reduce(
-        (max, elem) => (max.end > elem.end ? max : elem),
+        (max, elem) => max.end > elem.end ? max : elem,
         { end: 0 },
         paints
       );
@@ -284,24 +284,24 @@ async function computeResultsCPU(
         1000.0;
       let duration = (lastPaint.end - clicks[0].ts) / 1000.0;
       console.log(
-        "*** duration",
+        '*** duration',
         duration,
-        "upper bound ",
+        'upper bound ',
         upperBoundForSoundnessCheck
       );
       if (duration < 0) {
         console.log(
-          "soundness check failed. reported duration is less 0",
+          'soundness check failed. reported duration is less 0',
           asString(eventsDuringBenchmark)
         );
-        throw "soundness check failed. reported duration is less 0";
+        throw 'soundness check failed. reported duration is less 0';
       }
       if (duration > upperBoundForSoundnessCheck) {
         console.log(
-          "soundness check failed. reported duration is bigger than whole benchmark duration",
+          'soundness check failed. reported duration is bigger than whole benchmark duration',
           asString(eventsDuringBenchmark)
         );
-        throw "soundness check failed. reported duration is bigger than whole benchmark duration";
+        throw 'soundness check failed. reported duration is bigger than whole benchmark duration';
       }
       results.push(duration);
     }
@@ -333,23 +333,23 @@ async function computeResultsMEM(
     .manage()
     .logs()
     .get(selenium_webdriver.logging.Type.BROWSER);
-  if (config.LOG_DEBUG) console.log("browser entries", entriesBrowser);
+  if (config.LOG_DEBUG) console.log('browser entries', entriesBrowser);
   let filteredEvents = (await fetchEventsFromPerformanceLog(driver))
     .timingResults;
-  if (config.LOG_DEBUG) console.log("filteredEvents ", filteredEvents);
-  let remaining = R.dropWhile(type_eq("initBenchmark"))(filteredEvents);
+  if (config.LOG_DEBUG) console.log('filteredEvents ', filteredEvents);
+  let remaining = R.dropWhile(type_eq('initBenchmark'))(filteredEvents);
   let results = [];
   while (remaining.length > 0) {
-    let evts = R.splitWhen(type_eq("finishedBenchmark"))(remaining);
-    if (R.find(type_neq("runBenchmark"))(evts[0]) && evts[1].length > 0) {
-      let eventsDuringBenchmark = R.dropWhile(type_neq("runBenchmark"))(
+    let evts = R.splitWhen(type_eq('finishedBenchmark'))(remaining);
+    if (R.find(type_neq('runBenchmark'))(evts[0]) && evts[1].length > 0) {
+      let eventsDuringBenchmark = R.dropWhile(type_neq('runBenchmark'))(
         evts[0]
       );
       if (config.LOG_DEBUG)
-        console.log("eventsDuringBenchmark ", eventsDuringBenchmark);
-      let gcs = R.filter(type_eq("gc"))(eventsDuringBenchmark);
+        console.log('eventsDuringBenchmark ', eventsDuringBenchmark);
+      let gcs = R.filter(type_eq('gc'))(eventsDuringBenchmark);
       let mem = R.last(gcs).mem;
-      console.log("*** memory", mem);
+      console.log('*** memory', mem);
       results.push(mem);
     }
     remaining = R.drop(1, evts[1]);
@@ -381,46 +381,46 @@ function buildDriver(benchmarkOptions) {
   );
   let options = new chrome.Options();
   if (benchmarkOptions.headless) {
-    options = options.addArguments("--headless");
-    options = options.addArguments("--disable-gpu"); // https://bugs.chromium.org/p/chromium/issues/detail?id=737678
+    options = options.addArguments('--headless');
+    options = options.addArguments('--disable-gpu'); // https://bugs.chromium.org/p/chromium/issues/detail?id=737678
   }
-  options = options.addArguments("--js-flags=--expose-gc");
-  options = options.addArguments("--no-sandbox");
-  options = options.addArguments("--no-first-run");
-  options = options.addArguments("--enable-automation");
-  options = options.addArguments("--disable-infobars");
-  options = options.addArguments("--disable-background-networking");
-  options = options.addArguments("--disable-background-timer-throttling");
-  options = options.addArguments("--disable-cache");
-  options = options.addArguments("--disable-translate");
-  options = options.addArguments("--disable-sync");
-  options = options.addArguments("--disable-extensions");
-  options = options.addArguments("--disable-default-apps");
-  options = options.addArguments("--window-size=1200,800");
+  options = options.addArguments('--js-flags=--expose-gc');
+  options = options.addArguments('--no-sandbox');
+  options = options.addArguments('--no-first-run');
+  options = options.addArguments('--enable-automation');
+  options = options.addArguments('--disable-infobars');
+  options = options.addArguments('--disable-background-networking');
+  options = options.addArguments('--disable-background-timer-throttling');
+  options = options.addArguments('--disable-cache');
+  options = options.addArguments('--disable-translate');
+  options = options.addArguments('--disable-sync');
+  options = options.addArguments('--disable-extensions');
+  options = options.addArguments('--disable-default-apps');
+  options = options.addArguments('--window-size=1200,800');
   if (benchmarkOptions.chromeBinaryPath)
     options = options.setChromeBinaryPath(benchmarkOptions.chromeBinaryPath);
   options = options.setLoggingPrefs(logPref);
   options = options.setPerfLoggingPrefs({
     enableNetwork: true,
     enablePage: true,
-    traceCategories: lighthouse.traceCategories.join(", ")
+    traceCategories: lighthouse.traceCategories.join(', ')
   });
   // Do the following lines really cause https://github.com/krausest/js-framework-benchmark/issues/303 ?
   // let service = new chrome.ServiceBuilder(args.chromeDriver).build();
   // return chrome.Driver.createSession(options, service);
   return new selenium_webdriver.Builder()
-    .forBrowser("chrome")
+    .forBrowser('chrome')
     .setChromeOptions(options)
     .build();
 }
 
 async function forceGC(framework, driver) {
-  if (framework.startsWith("angular-v4")) {
+  if (framework.startsWith('angular-v4')) {
     // workaround for window.gc for angular 4 - closure rewrites windows.gc");
-    await driver.executeScript("window.Angular4PreservedGC();");
+    await driver.executeScript('window.Angular4PreservedGC();');
   } else {
     for (let i = 0; i < 5; i++) {
-      await driver.executeScript("window.gc();");
+      await driver.executeScript('window.gc();');
     }
   }
 }
@@ -428,7 +428,7 @@ async function forceGC(framework, driver) {
 async function runBenchmark(driver, benchmark, framework) {
   await benchmark.run(driver, framework);
   if (config.LOG_PROGRESS)
-    console.log("after run ", benchmark.id, benchmark.type, framework);
+    console.log('after run ', benchmark.id, benchmark.type, framework);
   if (benchmark.type === BenchmarkType.MEM) {
     await forceGC(framework, driver);
   }
@@ -439,7 +439,7 @@ async function afterBenchmark(driver, benchmark, framework) {
     await benchmark.after(driver, framework);
     if (config.LOG_PROGRESS)
       console.log(
-        "after benchmark ",
+        'after benchmark ',
         benchmark.id,
         benchmark.type,
         framework.name
@@ -451,7 +451,7 @@ async function initBenchmark(driver, benchmark, framework) {
   await benchmark.init(driver, framework);
   if (config.LOG_PROGRESS)
     console.log(
-      "after initialized ",
+      'after initialized ',
       benchmark.id,
       benchmark.type,
       framework.name
@@ -471,13 +471,13 @@ function formatResult(res, dir) {
 
   switch (benchmark.type) {
     case BenchmarkType.CPU:
-      type = "cpu";
+      type = 'cpu';
       break;
     case BenchmarkType.MEM:
-      type = "memory";
+      type = 'memory';
       break;
     case BenchmarkType.STARTUP:
-      type = "startup";
+      type = 'startup';
       break;
   }
   for (let resultKind of benchmark.resultKinds()) {
@@ -509,11 +509,11 @@ function formatResult(res, dir) {
 }
 
 async function registerError(driver, framework, benchmark, error) {
-  let fileName = "error-" + framework + "-" + benchmark.id + ".png";
-  console.error("Benchmark failed", error);
+  let fileName = 'error-' + framework + '-' + benchmark.id + '.png';
+  console.error('Benchmark failed', error);
   let image = await driver.takeScreenshot();
   console.error(`Writing screenshot ${fileName}`);
-  fs.writeFileSync(fileName, image, { encoding: "base64" });
+  fs.writeFileSync(fileName, image, { encoding: 'base64' });
   return { imageFile: fileName, exception: error };
 }
 const wait = (delay = 1000) => new Promise(res => setTimeout(res, delay));
@@ -522,7 +522,7 @@ async function runMemOrCPUBenchmark(framework, benchmark, benchmarkOptions) {
   let errors = [];
   let warnings = [];
   let data = [];
-  console.log("benchmarking ", framework, benchmark.id);
+  console.log('benchmarking ', framework, benchmark.id);
   let driver = buildDriver(benchmarkOptions);
   try {
     for (let i = 0; i < benchmarkOptions.numIterationsForAllBenchmarks; i++) {
@@ -541,16 +541,16 @@ async function runMemOrCPUBenchmark(framework, benchmark, benchmarkOptions) {
         await driver.executeScript("console.timeStamp('initBenchmark')");
         await initBenchmark(driver, benchmark, framework);
         if (benchmark.throttleCPU) {
-          console.log("CPU slowdown", benchmark.throttleCPU);
-          await driver.sendDevToolsCommand("Emulation.setCPUThrottlingRate", {
+          console.log('CPU slowdown', benchmark.throttleCPU);
+          await driver.sendDevToolsCommand('Emulation.setCPUThrottlingRate', {
             rate: benchmark.throttleCPU
           });
         }
         await driver.executeScript("console.timeStamp('runBenchmark')");
         await runBenchmark(driver, benchmark, framework);
         if (benchmark.throttleCPU) {
-          console.log("resetting CPU slowdown");
-          await driver.sendDevToolsCommand("Emulation.setCPUThrottlingRate", {
+          console.log('resetting CPU slowdown');
+          await driver.sendDevToolsCommand('Emulation.setCPUThrottlingRate', {
             rate: 1
           });
         }
@@ -559,7 +559,7 @@ async function runMemOrCPUBenchmark(framework, benchmark, benchmarkOptions) {
         await driver.executeScript("console.timeStamp('afterBenchmark')");
       } catch (e) {
         errors.push({
-          imageFile: `${framework}-${benchmark.id}`, 
+          imageFile: `${framework}-${benchmark.id}`,
           exception: e
         });
         throw e;
@@ -568,32 +568,32 @@ async function runMemOrCPUBenchmark(framework, benchmark, benchmarkOptions) {
     let results =
       benchmark.type === BenchmarkType.CPU
         ? await computeResultsCPU(
-            driver,
-            benchmarkOptions,
-            framework,
-            benchmark,
-            warnings
-          )
+          driver,
+          benchmarkOptions,
+          framework,
+          benchmark,
+          warnings
+        )
         : await computeResultsMEM(
-            driver,
-            benchmarkOptions,
-            framework,
-            benchmark,
-            warnings
-          );
-      data = await formatResult(
+          driver,
+          benchmarkOptions,
+          framework,
+          benchmark,
+          warnings
+        );
+    data = await formatResult(
       { framework: framework, results: results, benchmark: benchmark },
       benchmarkOptions.outputDirectory
     );
-    console.log("QUIT");
+    console.log('QUIT');
     await driver.close();
     await driver.quit();
   } catch (e) {
-    console.log("ERROR:", e);
+    console.log('ERROR:', e);
     await driver.close();
     await driver.quit();
     if (config.EXIT_ON_ERROR) {
-      throw "Benchmarking failed";
+      throw 'Benchmarking failed';
     }
   }
 
@@ -601,7 +601,7 @@ async function runMemOrCPUBenchmark(framework, benchmark, benchmarkOptions) {
 }
 
 async function runStartupBenchmark(framework, benchmark, benchmarkOptions) {
-  console.log("benchmarking startup", framework, benchmark.id);
+  console.log('benchmarking startup', framework, benchmark.id);
   let errors = [];
   let results = [];
   for (let i = 0; i < benchmarkOptions.numIterationsForStartupBenchmark; i++) {

@@ -1,20 +1,20 @@
-"use strict";
-const { join } = require("path");
-const { readdirSync, statSync, writeFileSync, existsSync, readFileSync } = require("fs");
-const yargs = require("yargs");
+'use strict';
+const { join } = require('path');
+const { readdirSync, statSync, writeFileSync, existsSync, readFileSync } = require('fs');
+const yargs = require('yargs');
 const debug = require('debug');
 
-const { benchmarks } = require("./benchmarks");
-const { executeBenchmark } = require("./runner");
-const config = require("./config");
-const format = require("./fomart");
+const { benchmarks } = require('./benchmarks');
+const { executeBenchmark } = require('./runner');
+const config = require('./config');
+const format = require('./fomart');
 const print = require('./print');
-const createHTTPServer = require("./server");
-const { buildBundles } = require("./build");
+const createHTTPServer = require('./server');
+const { buildBundles } = require('./build');
 
 function getFrameworkNames() {
-  return readdirSync(join(__dirname, "../frameworks")).filter(file =>
-    statSync(join(__dirname, "../frameworks", file)).isDirectory()
+  return readdirSync(join(__dirname, '../frameworks')).filter(file =>
+    statSync(join(__dirname, '../frameworks', file)).isDirectory()
   );
 }
 
@@ -27,7 +27,7 @@ async function runBench(framework, benchmarks, local, skipBuild) {
 
   if (local && existsSync(resultJSON)) {
     const data = JSON.parse(readFileSync(resultJSON, {
-      encoding:'utf-8'
+      encoding: 'utf-8'
     }));
 
     return {
@@ -52,7 +52,7 @@ async function runBench(framework, benchmarks, local, skipBuild) {
         numIterationsForAllBenchmarks: config.REPEAT_RUN,
         numIterationsForStartupBenchmark: config.REPEAT_RUN_STARTUP
       };
-      
+
       const results = await executeBenchmark(
         framework,
         benchmark,
@@ -76,7 +76,7 @@ async function runBench(framework, benchmarks, local, skipBuild) {
     writeFileSync(
       resultJSON,
       JSON.stringify(data, null, 2),
-      { encoding: "utf8" }
+      { encoding: 'utf8' }
     );
   }
 
@@ -103,8 +103,8 @@ async function run(frameworkNames, benchmarkNames, local, skipBuild) {
     benchmarkNames.some(name => b.id.toLowerCase().indexOf(name) > -1)
   );
 
-  console.log("Frameworks that will be benchmarked", runFrameworks);
-  console.log("Benchmarks that will be run", runBenchmarks.map(b => b.id));
+  console.log('Frameworks that will be benchmarked', runFrameworks);
+  console.log('Benchmarks that will be run', runBenchmarks.map(b => b.id));
 
   for (let i = 0; i < runFrameworks.length; i++) {
     const framework = runFrameworks[i];
@@ -135,52 +135,52 @@ async function run(frameworkNames, benchmarkNames, local, skipBuild) {
   print(formatedData, runFrameworks, allBenchmarks);
 
   if (warnings.length > 0) {
-    console.log("================================");
-    console.log("The following warnings were logged:");
-    console.log("================================");
+    console.log('================================');
+    console.log('The following warnings were logged:');
+    console.log('================================');
     warnings.forEach(e => {
       console.log(e);
     });
   }
   if (errors.length > 0) {
-    console.log("================================");
-    console.log("The following benchmarks failed:");
-    console.log("================================");
+    console.log('================================');
+    console.log('The following benchmarks failed:');
+    console.log('================================');
     errors.forEach(e => {
-      console.log("[" + e.imageFile + "]");
+      console.log('[' + e.imageFile + ']');
       console.log(e.exception);
       console.log();
     });
-    throw "Benchmarking failed with errors";
+    throw 'Benchmarking failed with errors';
   }
 }
 
 const args = yargs(process.argv)
   .usage(
-    "$0 [--framework Framework1 Framework2 ...] [--benchmark Benchmark1 Benchmark2 ...] [--count n] [--exitOnError]"
+    '$0 [--framework Framework1 Framework2 ...] [--benchmark Benchmark1 Benchmark2 ...] [--count n] [--exitOnError]'
   )
-  .help("help")
-  .default("check", "false")
-  .default("fork", "true")
-  .default("exitOnError", "false")
-  .default("count", config.REPEAT_RUN)
-  .default("port", config.PORT)
-  .string("chromeBinary")
-  .string("chromeDriver")
-  .boolean("headless")
-  .boolean("skipBuild")
-  .boolean("local")
-  .array("framework")
-  .array("benchmark").argv;
+  .help('help')
+  .default('check', 'false')
+  .default('fork', 'true')
+  .default('exitOnError', 'false')
+  .default('count', config.REPEAT_RUN)
+  .default('port', config.PORT)
+  .string('chromeBinary')
+  .string('chromeDriver')
+  .boolean('headless')
+  .boolean('skipBuild')
+  .boolean('local')
+  .array('framework')
+  .array('benchmark').argv;
 
 config.PORT = Number(args.port);
 config.REPEAT_RUN = Number(args.count);
-config.EXIT_ON_ERROR = args.exitOnError === "true";
+config.EXIT_ON_ERROR = args.exitOnError === 'true';
 
 const runBenchmarks =
-  args.benchmark && args.benchmark.length > 0 ? args.benchmark : [""];
+  args.benchmark && args.benchmark.length > 0 ? args.benchmark : [''];
 const runFrameworks =
-  args.framework && args.framework.length > 0 ? args.framework : [""];
+  args.framework && args.framework.length > 0 ? args.framework : [''];
 
 debug('args')(args);
 
@@ -189,10 +189,10 @@ if (args.help) {
 } else {
   run(runFrameworks, runBenchmarks, args.local, args.skipBuild)
     .then(_ => {
-      console.log("successful run");
+      console.log('successful run');
     })
     .catch(error => {
       console.log(error);
-      console.log("run was not completely sucessful");
+      console.log('run was not completely sucessful');
     });
 }

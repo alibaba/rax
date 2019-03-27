@@ -28,7 +28,7 @@ module.exports = function(data, frameworks, benchmarks) {
           if (result[framework].warning) {
             row.push(chalk.red(mean));
             return;
-          } 
+          }
 
           if (result[framework].factor > 1.5) {
             row.push(chalk.yellow(mean));
@@ -44,4 +44,4 @@ module.exports = function(data, frameworks, benchmarks) {
   });
 
   console.log(table.toString());
-}
+};
