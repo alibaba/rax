@@ -34,37 +34,36 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
   mkdirpSync(distPath);
   printLog(colors.green('创建目录'), 'dist/');
   if (enableWatch) {
-    // startWatching(sourcePath, distPath, handleFileChange);
-    // printLog(colors.green('监听以下路径的文件变更'), sourcePath);
-  } else {
-    const globOption = {
-      cwd: sourcePath,
-      nodir: true,
-      dot: true,
-      ignore: ['node_modules', 'dist/**', '.DS_Store'],
-      absolute: false,
-    };
-    const files = glob.sync('*', globOption);
-    for (let i = 0, l = files.length; i < l; i++) {
-      const filename = files[i];
-      let from = resolve(sourcePath, filename);
-      let to = resolve(distPath, filename);
-      // transform .css to .acss
-      if (extname(to) === '.css') to = to.replace(/\.css/, '.acss');
-      copySync(from, to);
-    }
-    // todo: watch these files.
+    printLog(colors.green('监听以下路径的文件变更'), sourcePath);
+  }
 
-    const { pages } = appConfig;
-    for (let i = 0, l = pages.length; i < l; i++) {
-      new TransformerPage({
-        rootContext: sourcePath,
-        context: resolve(sourcePath, pages[i]),
-        distRoot: distPath,
-        distPagePath: resolve(distPath, pages[i], '..'),
-        watch: enableWatch,
-      });
-    }
+  const globOption = {
+    cwd: sourcePath,
+    nodir: true,
+    dot: true,
+    ignore: ['node_modules', 'dist/**', '.DS_Store'],
+    absolute: false,
+  };
+  const files = glob.sync('*', globOption);
+  for (let i = 0, l = files.length; i < l; i++) {
+    const filename = files[i];
+    let from = resolve(sourcePath, filename);
+    let to = resolve(distPath, filename);
+    // transform .css to .acss
+    if (extname(to) === '.css') to = to.replace(/\.css/, '.acss');
+    copySync(from, to);
+  }
+  // todo: watch these files.
+
+  const { pages } = appConfig;
+  for (let i = 0, l = pages.length; i < l; i++) {
+    new TransformerPage({
+      rootContext: sourcePath,
+      context: resolve(sourcePath, pages[i]),
+      distRoot: distPath,
+      distPagePath: resolve(distPath, pages[i], '..'),
+      watch: enableWatch,
+    });
   }
 
   const localHelperPath = resolve(__dirname, 'helpers');
