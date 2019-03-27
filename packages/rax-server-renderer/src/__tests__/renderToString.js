@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, useState, useEffect} from 'rax';
+import {createElement, useState, useEffect, createContext, useContext, useReducer} from 'rax';
 import {renderToString} from '../index';
 
 describe('renderToString', () => {
@@ -95,7 +95,7 @@ describe('renderToString', () => {
   it('render with state hook', () => {
     function MyComponent(props) {
       const [name, setName] = useState(props.name);
-    
+
       return (
         <h1> Hello {name}</h1>
       );
@@ -108,7 +108,7 @@ describe('renderToString', () => {
   it('render with effect hook', () => {
     function MyComponent(props) {
       const [name, setName] = useState(props.name);
-    
+
       useEffect(() => {
         // ...
       });
@@ -120,5 +120,49 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyComponent name="rax" />);
     expect(str).toBe('<h1> Hello rax</h1>');
+  });
+
+  it('render with context hook', () => {
+    const NumberContext = createContext(5);
+
+    function MyComponent() {
+      const value = useContext(NumberContext);
+
+      return (
+        <div>The answer is {value}.</div>
+      );
+    };
+
+    let str = renderToString(<MyComponent />);
+    expect(str).toBe('<div>The answer is 5.</div>');
+  });
+
+  it('render with reducer hook', () => {
+    const initialState = {count: 0};
+
+    function reducer(state, action) {
+      switch (action.type) {
+        case 'reset':
+          return initialState;
+        case 'increment':
+          return {count: state.count + 1};
+        case 'decrement':
+          return {count: state.count - 1};
+        default:
+        // A reducer must always return a valid state.
+        // Alternatively you can throw an error if an invalid action is dispatched.
+          return state;
+      }
+    }
+
+    function MyComponent({initialCount}) {
+      const [state] = useReducer(reducer, {count: initialCount});
+      return (
+        <div>Count: {state.count}</div>
+      );
+    }
+
+    let str = renderToString(<MyComponent initialCount={0} />);
+    expect(str).toBe('<div>Count: 0</div>');
   });
 });

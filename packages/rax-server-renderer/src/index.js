@@ -1,5 +1,4 @@
 import { shared } from 'rax';
-import ReactiveComponent from './ReactiveComponent';
 
 const EMPTY_OBJECT = {};
 const TRUE = true;
@@ -128,6 +127,44 @@ const updater = {
     // Noop
   }
 };
+
+/**
+ * Functional Reactive Component Class Wrapper
+ */
+class ReactiveComponent {
+  constructor(pureRender) {
+    // A pure function
+    this._render = pureRender;
+    this._hookID = 0;
+    this._hooks = {};
+    // Handles store
+    this.didMount = [];
+    this.didUpdate = [];
+    this.willUnmount = [];
+  }
+
+  getHooks() {
+    return this._hooks;
+  }
+
+  getHookID() {
+    return ++this._hookID;
+  }
+
+  readContext(context) {
+    const Provider = context.Provider;
+
+    return Provider.defaultValue;
+  }
+
+  render() {
+    this._hookID = 0;
+
+    let children = this._render(this.props, this.context);
+
+    return children;
+  }
+}
 
 function renderElementToString(element, context, options) {
   if (typeof element === 'string') {
