@@ -16,16 +16,13 @@ node_js:
   - "11.10.1"
 
 # https://docs.travis-ci.com/user/gui-and-headless-browsers/#Starting-a-Web-Server
-# https://github.com/travis-ci/travis-ci/issues/7313#issuecomment-279914149
 before_script:
   - npm run setup
   - export DISPLAY=:99.0
-  - if [ "${TRAVIS_OS_NAME}" = "osx"   ]; then (sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok)& fi
+  - sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok
   - sleep 3                             # give xvfb some time to start
 
 script:
   - npm run lint:nofix
   - npm run test
-  - cd scripts/bench
-  - npm install
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then (npm start -- --local) fi
+  - npm run bench

@@ -2,3 +2,5 @@ node_modules
 dist
 prefs
 errors
+
+package-lock.json
