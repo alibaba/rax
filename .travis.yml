@@ -2,7 +2,6 @@ sudo: required
 
 os:
   - osx
-  - linux
 
 language: node_js
 
