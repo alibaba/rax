@@ -1,24 +1,24 @@
-const Table = require("cli-table");
-const chalk = require("chalk");
+const Table = require('cli-table');
+const chalk = require('chalk');
 
 module.exports = function(data, frameworks, benchmarks) {
   const table = new Table({
     chars: {
-      top: "",
-      "top-mid": "",
-      "top-left": "",
-      "top-right": "",
-      bottom: "",
-      "bottom-mid": "",
-      "bottom-left": "",
-      "bottom-right": "",
-      left: "",
-      "left-mid": "",
-      mid: " ",
-      "mid-mid": "",
-      right: "",
-      "right-mid": "",
-      middle: "│"
+      top: '',
+      'top-mid': '',
+      'top-left': '',
+      'top-right': '',
+      bottom: '',
+      'bottom-mid': '',
+      'bottom-left': '',
+      'bottom-right': '',
+      left: '',
+      'left-mid': '',
+      mid: ' ',
+      'mid-mid': '',
+      right: '',
+      'right-mid': '',
+      middle: '│'
     }
   });
 
@@ -40,7 +40,7 @@ module.exports = function(data, frameworks, benchmarks) {
 
       row[title] = frameworks.map(framework => {
         if (!result[framework]) {
-          row.push("-");
+          row.push('-');
         } else {
           const mean = result[framework].mean.toFixed(2);
           if (result[framework].warning) {
