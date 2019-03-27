@@ -7,7 +7,7 @@ const {
   readJSONSync,
   writeFileSync
 } = require('fs-extra');
-const { resolve, extname, relative } = require('path');
+const { resolve, extname } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
 const glob = require('glob');
