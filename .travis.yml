@@ -19,7 +19,7 @@ node_js:
 before_script:
   - npm run setup
   - export DISPLAY=:99.0
-  - sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok
+  - if [ "${TRAVIS_OS_NAME}" = "osx"   ]; then (sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok)& fi
   - sleep 3                             # give xvfb some time to start
 
 script:
