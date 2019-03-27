@@ -72,13 +72,13 @@ async function runBench(framework, benchmarks, local, skipBuild) {
     }
   }
 
-  // if (framework !== 'rax-local') {
+  if (framework !== 'rax-local') {
     writeFileSync(
       resultJSON,
       JSON.stringify(data, null, 2),
       { encoding: "utf8" }
     );
-  // }
+  }
 
   return {
     errors,
