@@ -1,4 +1,4 @@
-# MiniApp Starter Kit
+# WeexApp Starter Kit
 
 ## Getting Started
 

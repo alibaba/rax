@@ -2,18 +2,14 @@
   "name": "__YourProjectName__",
   "author": "__AuthorName__",
   "version": "0.0.0",
-  "browserslist": [
-    "last 1 version",
-    "> 1%"
-  ],
   "scripts": {
-    "start": "rax-scripts start",
-    "build": "rax-scripts build",
+    "start": "rax-scripts start --type=weexapp",
+    "build": "rax-scripts build --type=weexapp",
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
     "rax": "^1.0.0",
-    "driver-dom": "^1.0.0"
+    "driver-weex": "^1.0.0"
   },
   "devDependencies": {
     "rax-scripts": "^1.2.0",

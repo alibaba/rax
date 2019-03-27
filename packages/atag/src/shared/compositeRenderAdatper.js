@@ -1,12 +1,7 @@
 import { PolymerElement } from '@polymer/polymer';
-import debounce from './debounce';
 import { isAndroid, isIOS } from './device';
 
 const DATA_TIMESTAMP = 'data-timestamp';
-/**
- * Debounce native params update.
- */
-const NATIVE_UPDATE_DEBOUNCE_TIME = 16;
 
 /**
  * Debug output.
@@ -137,10 +132,10 @@ function compositeClassFactory(config) {
        */
       for (let i = 0, l = propKeys.length; i < l; i++) {
         const key = propKeys[i];
-        this['_observe' + key] = debounce((val) => {
+        this['_observe' + key] = (val) => {
           const nativeAttr = props[key].nativeAttr;
           this._createOrUpdateParam(nativeAttr, val);
-        }, NATIVE_UPDATE_DEBOUNCE_TIME);
+        };
       }
 
       super.connectedCallback();

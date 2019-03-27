@@ -9,12 +9,12 @@ module.exports = {
     'commonjs': true
   },
   'plugins': [
-    'react',
-    'import'
+    'react'
   ],
   'settings': {
     'react': {
       'pragma': 'createElement', // Pragma to use, default to "React"
+      'version': 'latest',
     }
   },
   'parserOptions': {
@@ -26,24 +26,7 @@ module.exports = {
       'experimentalObjectRestSpread': true
     }
   },
-  'globals': {
-    'App': true,
-    'Page': true,
-    'getApp': true,
-    'Component': true,
-    'my': true,
-    '__weex_data__': true,
-    '__weex_options__': true,
-    '__weex_downgrade__': true,
-    '__weex_define__': true,
-    '__weex_require__': true,
-    'WXEnvironment': true,
-    'webkitRequestAnimationFrame': true,
-    'webkitCancelAnimationFrame': true,
-    'jasmine': true
-  },
   'rules': {
-    'max-len': 'off',
     // ES6
     'prefer-const': 'off',
     'no-const-assign': 'error',
@@ -112,20 +95,18 @@ module.exports = {
     'eol-last': 'off',
     'func-names': 'off',
     'new-cap': ['error', {
-      'capIsNewExceptions': ['App', 'Page', 'Component']
+      'newIsCap': true
     }],
     'key-spacing': ['error', {
       'beforeColon': false,
       'afterColon': true
     }],
-    'no-mixed-spaces-and-tabs': 'error',
     'no-multi-spaces': 'error',
     'no-multiple-empty-lines': 'error',
     'no-new-object': 'error',
     'no-spaced-func': 'error',
-    'no-tabs': 'error',
     'no-trailing-spaces': 'error',
-    'no-extra-parens': ['error', 'all', { ignoreJSX: 'all' }],
+    'no-extra-parens': 'error',
     'padded-blocks': ['error', 'never'],
     'semi': 'error',
     'semi-spacing': 'error',
@@ -144,27 +125,6 @@ module.exports = {
         'balanced': true
       }
     }],
-
-    /**
-     * Import
-     */
-    'import/newline-after-import': 'error',
-    'import/no-duplicates': 'error',
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        'peerDependencies': true,
-        'devDependencies': [
-          '**/scripts/*.js',
-          '**/__tests__/*.js',
-          '**/__tests__/**/*.js',
-          '**/*.config.js',
-          '**/config/*.js',
-          '**/*.conf.js',
-          '**/tests/*.test.js'
-        ]
-      }
-    ],
 
     /**
      * React & JSX
@@ -190,7 +150,7 @@ module.exports = {
     'react/no-children-prop': 'error',
     'react/no-did-mount-set-state': 'error',
     'react/no-did-update-set-state': 'error',
-    'react/no-unknown-property': 'off',
+    'react/no-unknown-property': 'error',
     'react/style-prop-object': 'error',
     'react/react-in-jsx-scope': 'error',
     'react/self-closing-comp': 'error',

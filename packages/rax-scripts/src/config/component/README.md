@@ -1,0 +1,1 @@
+Webpack config for rax component
