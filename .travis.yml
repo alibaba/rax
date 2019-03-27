@@ -22,10 +22,11 @@ before_script:
   - npm run setup
   - export DISPLAY=:99.0
   - if [ "${TRAVIS_OS_NAME}" = "osx"   ]; then (sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok)& fi
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then (sh -e /etc/init.d/xvfb start) fi
   - sleep 3                             # give xvfb some time to start
 
 script:
   - npm run lint:nofix
   - npm run test
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then (npm run bench) fi
+  - cd scripts/bench
+  - npm install
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then (npm start -- --local) fi
