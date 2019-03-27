@@ -48,7 +48,7 @@ module.exports = function start(type = 'webapp') {
 
       const serverUrl = `${envConfig.protocol}//${envConfig.host}:${
         envConfig.port
-        }/`;
+      }/`;
 
       console.log('');
       console.log(colors.green('Starting the development server at:'));
