@@ -5,7 +5,7 @@ const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
 
-async function build(packageName, { name, shouldMinify = false, format = 'umd' }) {
+async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd' }) {
   const output = {
     name,
     exports: 'named',
@@ -14,7 +14,7 @@ async function build(packageName, { name, shouldMinify = false, format = 'umd' }
 
   // For development
   const bundle = await rollup.rollup({
-    input: './packages/' + packageName + '/src/index.js',
+    input: `./packages/${packageName}/${entry}`,
     plugins: [
       resolve(),
       babel({
@@ -66,17 +66,21 @@ async function build(packageName, { name, shouldMinify = false, format = 'umd' }
   }
 }
 
-build('rax', { name: 'Rax' });
-build('rax', { name: 'Rax', format: 'esm' });
-build('rax', { name: 'Rax', shouldMinify: true });
+build({ package: 'rax', name: 'Rax' });
+build({ package: 'rax', name: 'Rax', format: 'esm' });
+build({ package: 'rax', name: 'Rax', shouldMinify: true });
 
-build('driver-dom', { name: 'DriverDOM' });
-build('driver-dom', { name: 'DriverDOM', format: 'esm' });
-build('driver-dom', { name: 'DriverDOM', shouldMinify: true });
+build({ package: 'driver-dom', name: 'DriverDOM' });
+build({ package: 'driver-dom', name: 'DriverDOM', format: 'esm' });
+build({ package: 'driver-dom', name: 'DriverDOM', shouldMinify: true });
 
-build('driver-worker', { name: 'DriverWorker' });
-build('driver-worker', { name: 'DriverWorker', format: 'esm' });
-build('driver-worker', { name: 'DriverWorker', shouldMinify: true });
+build({ package: 'driver-weex', name: 'DriverWeex' });
+build({ package: 'driver-weex', name: 'DriverWeex', format: 'esm' });
+build({ package: 'driver-weex', name: 'DriverWeex', shouldMinify: true });
 
-build('rax-miniapp-renderer', { format: 'cjs' });
-build('rax-miniapp-renderer', { format: 'cjs', shouldMinify: true });
+build({ package: 'driver-worker', name: 'DriverWorker' });
+build({ package: 'driver-worker', name: 'DriverWorker', format: 'esm' });
+build({ package: 'driver-worker', name: 'DriverWorker', shouldMinify: true });
+
+build({ package: 'rax-miniapp-renderer', format: 'cjs' });
+build({ package: 'rax-miniapp-renderer', format: 'cjs', shouldMinify: true });

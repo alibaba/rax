@@ -1,3 +1,4 @@
+
 export default class NodeMap {
   _map = new Map();
 
@@ -18,6 +19,22 @@ export default class NodeMap {
 
   delete(vnode) {
     if (!vnode) return null;
-    return this._map.delete(vnode.$$id);
+    const node = this._map.get(vnode.$$id);
+    if (node) traverseNodes(node, el => el.$$id && this._map.delete(el.$$id));
   }
+}
+
+/**
+ * Traverse HTML Node in DFS (trailing call).
+ * @param node {Node}
+ * @param effect {Function}
+ */
+function traverseNodes(node, effect) {
+  if (node.childNodes.length > 0) {
+    for (let i = 0, l = node.childNodes.length; i < l; i++) {
+      traverseNodes(node.childNodes[i], effect);
+      effect(node.childNodes[i]);
+    }
+  }
+  effect(node);
 }
