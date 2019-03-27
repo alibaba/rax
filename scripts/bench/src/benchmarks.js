@@ -320,7 +320,7 @@ const benchUpdate5Memory = new class extends Benchmark {
   constructor() {
     super({
       id: '23_update5-memory',
-      label: 'update eatch 10th row for 1k rows (5 cycles)',
+      label: 'update memory', // update eatch 10th row for 1k rows (5 cycles)
       description: 'Memory usage after clicking update every 10th row 5 times',
       type: BenchmarkType.MEM
     });
@@ -341,7 +341,7 @@ const benchReplace5Memory = new class extends Benchmark {
   constructor() {
     super({
       id: '24_run5-memory',
-      label: 'replace 1k rows (5 cycles)',
+      label: 'replace memory', // replace 1k rows (5 cycles)
       description: 'Memory usage after clicking create 1000 rows 5 times',
       type: BenchmarkType.MEM
     });
@@ -365,7 +365,7 @@ const benchCreateClear5Memory = new class extends Benchmark {
   constructor() {
     super({
       id: '25_run-clear-memory',
-      label: 'creating/clearing 1k rows (5 cycles)',
+      label: 'clear memory', // creating/clearing 1k rows (5 cycles)
       description: 'Memory usage after creating and clearing 1000 rows 5 times',
       type: BenchmarkType.MEM
     });
