@@ -24,7 +24,7 @@ module.exports = function(data, frameworks, benchmarks) {
         if (!result[framework]) {
           row.push('-');
         } else {
-          const mean = result[framework].mean.toFixed(2) + ' +- ' + result[framework].deviation.toFixed(2);
+          const mean = result[framework].mean.toFixed(2);
           if (result[framework].warning) {
             row.push(chalk.red(mean));
             return;
