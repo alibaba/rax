@@ -5,8 +5,9 @@ const {
   copySync,
   mkdirpSync,
   readJSONSync,
+  writeFileSync
 } = require('fs-extra');
-const { resolve, extname } = require('path');
+const { resolve, extname, relative } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
 const glob = require('glob');
@@ -47,7 +48,17 @@ function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
     const files = glob.sync('*', globOption);
     for (let i = 0, l = files.length; i < l; i++) {
       const filename = files[i];
-      copySync(resolve(sourcePath, filename), resolve(distPath, filename));
+      if (filename !== 'app.css') {
+        copySync(resolve(sourcePath, filename), resolve(distPath, filename));
+      } else {
+        // transform app.css
+        const appStylePath = resolve(sourcePath, 'app.css');
+        if (existsSync(appStylePath)) {
+          const appStyle = readFileSync(appStylePath);
+          printLog(colors.green('Write'), 'dist/app.acss');
+          writeFileSync(resolve(sourcePath, 'dist/app.acss'), appStyle, 'utf-8');
+        }
+      }
     }
     // todo: watch these files.
 
