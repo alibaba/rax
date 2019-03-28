@@ -1,4 +1,8 @@
 <view onTap="handleClick">
-  <text a:if="show">Show!</text>
-  <text a:else>Not show!</text>
+  <block a:if="{{show}}">
+    <text>Show!</text>
+  </block>
+  <block a:else>
+    <text>Not show!</text>
+  </block>
 </view>

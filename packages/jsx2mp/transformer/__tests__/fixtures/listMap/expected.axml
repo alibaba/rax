@@ -1,9 +1,9 @@
 <view onTap="handleClick">
-  <block a:for="arr">
+  <block a:for="{{arr}}" a:for-item="n" a:for-index="index">
     <view>{{n}}</view>
   </block>
 
-  <block a:for="arr">
+  <block a:for="{{arr}}" a:for-item="n" a:for-index="index">
     <view>{{n}}</view>
   </block>
 </view>
