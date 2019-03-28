@@ -8,6 +8,13 @@ module.exports = {
     'jest': true,
     'commonjs': true
   },
+  'globals': {
+    'App': true,
+    'Page': true,
+    'getApp': true,
+    'Component': true,
+    'my': true
+  },
   'parserOptions': {
     'sourceType': 'module',
     'ecmaVersion': 6,
@@ -85,7 +92,7 @@ module.exports = {
     'eol-last': 'off',
     'func-names': 'off',
     'new-cap': ['error', {
-      'newIsCap': true
+      'capIsNewExceptions': ['App', 'Page', 'Component']
     }],
     'key-spacing': ['error', {
       'beforeColon': false,

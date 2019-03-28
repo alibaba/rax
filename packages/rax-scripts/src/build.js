@@ -15,8 +15,8 @@ const colors = require('chalk');
 const rimraf = require('rimraf');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
-var componentCompiler = require('./utils/componentCompiler');
 const pathConfig = require('./config/path.config');
+const componentCompiler = require('./utils/componentCompiler');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -33,8 +33,7 @@ function buildCompiler(config) {
 
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
-  miniapp: './config/miniapp/webpack.config.prod',
-  miniprogram: './config/miniprogram/webpack.config.prod',
+  weexapp: './config/weexapp/webpack.config.prod',
   component: './config/component/webpack.config.prod',
 };
 

@@ -1,10 +1,11 @@
 'use strict';
-/* eslint no-console: 0 */
+
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 babelConfig.presets.push([
   require.resolve('@babel/preset-react'), {
@@ -13,21 +14,13 @@ babelConfig.presets.push([
   }
 ]);
 
-babelConfig.plugins.push(
-  require.resolve('babel-plugin-transform-jsx-stylesheet'),
-  require.resolve('rax-hot-loader/babel')
-);
-
 module.exports = {
   mode: webpackConfig.mode,
   context: webpackConfig.context,
   // Compile target should "web" when use hot reload
   target: webpackConfig.target,
   entry: webpackConfig.entry,
-  output: Object.assign({
-    pathinfo: true,
-  }, webpackConfig.output),
-
+  output: webpackConfig.output,
   resolve: webpackConfig.resolve,
 
   plugins: [
@@ -35,6 +28,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: true,
       template: pathConfig.appHtml,
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].css',
+      chunkFilename: 'css/[id].css',
     }),
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
@@ -62,37 +59,29 @@ module.exports = {
         ],
       },
       {
-        test: /\.(sfc|vue|html)$/,
-        use: [
-          {
-            loader: require.resolve('sfc-loader'),
-            options: {
-              builtInRuntime: false,
-              builtInRax: false,
-              preserveWhitespace: false,
-              module: 'commonjs'
-            },
-          },
-        ],
-        exclude: [pathConfig.appHtml],
-      },
-      {
         test: /\.css$/,
         use: [
           {
-            loader: require.resolve('stylesheet-loader'),
+            loader: MiniCssExtractPlugin.loader,
           },
-        ],
-      },
-      // JSON is not enabled by default in Webpack but both Node and Browserify
-      // allow it implicitly so we also enable it.
-      {
-        test: /\.json$/,
-        use: [
           {
-            loader: require.resolve('json-loader'),
+            loader: require.resolve('css-loader'),
           },
-        ],
+          {
+            loader: require.resolve('postcss-loader'),
+            options: {
+              ident: 'postcss',
+              plugins: () => [
+                require('postcss-preset-env')({
+                  autoprefixer: {
+                    flexbox: 'no-2009',
+                  },
+                  stage: 3,
+                }),
+              ],
+            }
+          },
+        ]
       },
       // load inline images using image-source-loader for Image
       {

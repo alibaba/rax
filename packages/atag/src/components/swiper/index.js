@@ -78,11 +78,12 @@ export default class Swiper extends PolymerElement {
 
   constructor() {
     super();
-    this.translateX = 0;
-    this.translateY = 0;
-    this.startTranslate = 0;
-    this.dragging = false;
-    this.startPos = null;
+    this._translateX = 0;
+    this._translateY = 0;
+    this._startTranslate = 0;
+    this._dragging = false;
+    this._scrolling = false;
+    this._startPos = null;
     this._current = 0;
   }
 
@@ -120,15 +121,26 @@ export default class Swiper extends PolymerElement {
     super.connectedCallback();
     this._childrenObserver = new FlattenedNodesObserver(this, this._handleChildrenChanged);
     this._render();
+    document.addEventListener('scroll', this._handleGlobalScroll);
+    document.addEventListener('_scrollviewscroll', this._handleGlobalScroll);
     Gestures.addListener(this, 'track', this._handleTrack);
     Gestures.setTouchAction(this, 'auto');
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    document.removeEventListener('scroll', this._handleGlobalScroll);
+    document.removeEventListener('_scrollviewscroll', this._handleGlobalScroll);
     Gestures.removeListener(this, 'track', this._handleTrack);
     this._childrenObserver.disconnect();
   }
+
+  /**
+   * If global scrolling is trigging, add a flag to avoid conflic to swiping.
+   */
+  _handleGlobalScroll = (event) => {
+    this._scrolling = true;
+  };
 
   _handleChildrenChanged({ addedNodes }) {
     if (addedNodes && addedNodes.every((item) => {
@@ -211,20 +223,20 @@ export default class Swiper extends PolymerElement {
   }
 
   _handleSwiperTouchMove = event => {
-    // Prevent scrolling in swipper when user is dragging
-    if (this.dragging) {
+    // Prevent scrolling in swipper when user is _dragging
+    if (this._dragging) {
       event.preventDefault();
     }
   };
 
   _handleTrackStart = ({ x, y }) => {
-    this.dragging = true;
+    this._dragging = true;
 
     if (this.timer !== null) {
       clearTimeout(this.timer);
     }
 
-    this.startTranslate = this._getOffset(this.circular ? this.current + 1 : this.current);
+    this._startTranslate = this._getOffset(this.circular ? this.current + 1 : this.current);
     this.startTime = new Date().getTime();
     this.transitionDuration = 0;
 
@@ -260,16 +272,19 @@ export default class Swiper extends PolymerElement {
   };
 
   _handleGlobalMove = ({dx, dy}) => {
+    if (this._scrolling) return;
+
     // TODO: add performanceMode desc
     if (!this.performanceMode) {
-      this._setTranslate(this.startTranslate + (this.vertical ? dy : dx));
+      this._setTranslate(this._startTranslate + (this.vertical ? dy : dx));
     }
   };
 
   _handleGlobalEnd = ({dx, dy}) => {
     if (this._prevent) return;
 
-    this.dragging = false;
+    this._dragging = false;
+    this._scrolling = false;
 
     this.transitionDuration = this.duration;
     const isQuickAction = new Date().getTime() - this.startTime < 1000;
@@ -355,18 +370,18 @@ export default class Swiper extends PolymerElement {
 
   _setTranslate(offset, duration) {
     if (this.vertical) {
-      this.translateX = 0;
-      this.translateY = offset;
+      this._translateX = 0;
+      this._translateY = offset;
     } else {
-      this.translateX = offset;
-      this.translateY = 0;
+      this._translateX = offset;
+      this._translateY = 0;
     }
 
     const { swiperItems } = this.$;
     const transitionDuration = duration != null ? duration : this.transitionDuration;
 
     swiperItems.style.transitionDuration = swiperItems.style.webkitTransitionDuration = `${transitionDuration}ms`;
-    swiperItems.style.transform = swiperItems.style.webkitTransform = `translate3d(${this.translateX}px, ${this.translateY}px, 0)`;
+    swiperItems.style.transform = swiperItems.style.webkitTransform = `translate3d(${this._translateX}px, ${this._translateY}px, 0)`;
   }
 
   /**
@@ -480,6 +495,7 @@ export default class Swiper extends PolymerElement {
         parentSameDirectionScrollElement._prevent = true;
       }
     } else if (detail.state === 'end') {
+      this._scrolling = false;
       if (parentSameDirectionScrollElement) {
         // @NOTE: After all event handler is done, the render function is done, then set _prevent.
         afterNextRender(this, () => {

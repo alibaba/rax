@@ -1,4 +1,4 @@
-# rax-starter-kit
+# WebApp Starter Kit
 
 ## Getting Started
 
@@ -17,3 +17,8 @@ You will see the lint errors in the console.
 ### `npm run build`
 
 Builds the app for production to the `build` folder.
+
+
+## Post-Processing CSS
+
+You can customize your target support browsers by adjusting the `browserslist` key in `package.json` according to the [Browserslist specification](https://github.com/browserslist/browserslist#readme).
