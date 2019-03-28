@@ -240,7 +240,7 @@ export default class ScrollViewElement extends PolymerElement {
             if (this.scrollWithAnimation) {
               this.scrollX ? this._smoothScrollToX(offset) : this._smoothScrollToY(offset);
             } else {
-              const DIREACTION = this.scrollX ? 'top' : 'left';
+              const DIREACTION = this.scrollX ? 'left' : 'top';
               this.scrollTo({
                 [DIREACTION]: offset,
                 behavior: 'instant',
