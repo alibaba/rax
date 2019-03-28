@@ -76,6 +76,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
 
   const render = getWebViewSource
     ? function(data) {
+      const pageInstance = this;
       const url = getWebViewSource(data);
       if (url) {
         if (location) {
@@ -87,12 +88,11 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
            * `render` method will be executed everytime data has changed.
            * To avoid send evaluator more than one time, cache the current webview
            * url to detect.
-           * @NOTE `this` reference to page instance object.
            */
-          if (this[CURRENT_WV_URL] !== url) {
+          if (pageInstance[CURRENT_WV_URL] !== url) {
             evaluator.call('location.replace', url);
           }
-          this[CURRENT_WV_URL] = url;
+          pageInstance[CURRENT_WV_URL] = url;
           return null;
         } else {
           // Downgrade to compatible with unsupport version of miniapp framework
