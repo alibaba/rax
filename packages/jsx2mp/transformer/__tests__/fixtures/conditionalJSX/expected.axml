@@ -1,4 +1,0 @@
-<view onTap="handleClick">
-  <text a:if="show">Show!</text>
-  <text a:else>Not show!</text>
-</view>

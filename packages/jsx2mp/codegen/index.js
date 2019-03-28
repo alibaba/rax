@@ -14,6 +14,7 @@ const EMPTY_STR_REG = /^[\n|\s]+$/;
  */
 function generateElement(node, depth = 0) {
   if (Array.isArray(node)) return node.map((n) => generateElement(n, depth)).join('\n');
+  if (node === undefined || node === null) return '';
 
   const { tag, attrs, children } = node;
   let ret = SPACE_INDENT.repeat(depth) + `<${tag}`;

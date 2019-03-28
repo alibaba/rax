@@ -17,7 +17,7 @@ const parserAdapter = {
 
 /**
  * Parse JSXElements to Node.
- * @param el {JSXElement|JSXText} Root el.
+ * @param el {JSXElement|JSXText|JSXExpression} Root el.
  * @return result {Node|String}
  */
 function parseJSX(el) {
@@ -27,7 +27,10 @@ function parseJSX(el) {
     return parseJSXText(el);
   } else if (t.isJSXExpressionContainer(el)) {
     // Expression interpolation in JSX.
-    return parseJSXExpressionContainer(el);
+    const { expression } = el;
+    return parseJSXExpression(expression);
+  } else if (t.expressionStatement(el)) {
+    return parseJSXExpression(el);
   } else {
     console.warn('Can not parse', el);
     return null;
@@ -74,15 +77,13 @@ function parseJSXText(el) {
 }
 
 /**
- * parseJSXExpressionContainer
- * @param el
+ * parseJSXExpression
+ * @param expression
  * @return {String}
  * Example:
  *   {this.state.foo} -> '{{foo}}'
  */
-function parseJSXExpressionContainer(el) {
-  const { expression } = el;
-
+function parseJSXExpression(expression) {
   switch (expression.type) {
     case 'Identifier': {
       /**
@@ -102,12 +103,22 @@ function parseJSXExpressionContainer(el) {
     case 'ConditionalExpression': {
       const { test, consequent, alternate } = expression;
       const ret = [];
-      const consequentNode = parseJSX(consequent);
-      consequentNode.attrs[parserAdapter.if] = generateCodeByExpression(test);
+      /**
+       * Todo:
+       * 1. check consequent is a map, optimizate block structure
+       * 2. check condition order, like: { condition ? node : null } or { condition ? null : node }
+       */
+      const consequentNode = new Node('block', {
+        [parserAdapter.if]: '{{' + generateCodeByExpression(test) + '}}',
+      }, [parseJSX(consequent)]);
+
       ret.push(consequentNode);
 
-      const alternateNode = parseJSX(alternate);
-      alternateNode.attrs[parserAdapter.else] = true;
+      const alternateChildNode = parseJSX(alternate);
+      const alternateNode = alternateChildNode ? new Node('block', {
+        [parserAdapter.else]: true,
+      }, [alternateChildNode]) : null;
+
       ret.push(alternateNode);
 
       return ret;
@@ -120,6 +131,8 @@ function parseJSXExpressionContainer(el) {
         if (t.isIdentifier(callee.property, { name: 'map' })) {
           // { foo.map(fn) }
           let childNode = null;
+          let itemName = 'item';
+          let indexName = 'index';
           if (t.isFunction(args[0])) {
             // { foo.map(() => {}) }
             const returnEl = t.isBlockStatement(args[0].body)
@@ -128,13 +141,21 @@ function parseJSXExpressionContainer(el) {
               // () => (<jsx></jsx)
               : args[0].body;
             childNode = parseJSX(returnEl);
+            const itemParam = args[0].params[0];
+            const indexParam = args[0].params[1];
+            if (itemParam) itemName = itemParam.name;
+            if (indexParam) indexName = indexParam.name;
           } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
             // { foo.map(this.xxx) }
             throw new Error(`目前暂不支持对 ${generateCodeByExpression(expression)} 的语法转换，请使用内联函数。`);
           }
+
           return new Node(
             'block',
-            { [parserAdapter.for]: generateCodeByExpression(callee.object) },
+            { [parserAdapter.for]: '{{' + generateCodeByExpression(callee.object) + '}}',
+              [parserAdapter.forItem]: itemName,
+              [parserAdapter.forIndex]: indexName
+            },
             [childNode]
           );
         } else {
