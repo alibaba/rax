@@ -14,5 +14,8 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "peerDependencies": {
     "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0"
   }
 }

@@ -17,10 +17,17 @@ export default {
   },
   attach(ownerComponent, ref, component) {
     if (!ownerComponent) {
-      throw Error('Multiple version of Rax used in project.');
+      return console.error('ref: multiple version of Rax used in project.');
     }
 
     let instance = component.getPublicInstance();
+
+    if (process.env.NODE_ENV !== 'production') {
+      if (instance == null) {
+        console.error('ref: do not attach ref to function components because they don’t have instances.');
+      }
+    }
+
     if (typeof ref === 'function') {
       ref(instance);
     } else if (typeof ref === 'object') {
