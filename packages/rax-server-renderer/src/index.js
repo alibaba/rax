@@ -1,3 +1,5 @@
+import { shared } from 'rax';
+
 const EMPTY_OBJECT = {};
 const TRUE = true;
 const UNITLESS_NUMBER_PROPS = {
@@ -126,6 +128,44 @@ const updater = {
   }
 };
 
+/**
+ * Functional Reactive Component Class Wrapper
+ */
+class ReactiveComponent {
+  constructor(pureRender) {
+    // A pure function
+    this._render = pureRender;
+    this._hookID = 0;
+    this._hooks = {};
+    // Handles store
+    this.didMount = [];
+    this.didUpdate = [];
+    this.willUnmount = [];
+  }
+
+  getHooks() {
+    return this._hooks;
+  }
+
+  getHookID() {
+    return ++this._hookID;
+  }
+
+  readContext(context) {
+    const Provider = context.Provider;
+
+    return Provider.defaultValue;
+  }
+
+  render() {
+    this._hookID = 0;
+
+    let children = this._render(this.props, this.context);
+
+    return children;
+  }
+}
+
 function renderElementToString(element, context, options) {
   if (typeof element === 'string') {
     return escapeText(element);
@@ -146,7 +186,6 @@ function renderElementToString(element, context, options) {
 
   if (type) {
     const props = element.props || EMPTY_OBJECT;
-
     if (type.prototype && type.prototype.render) {
       const instance = new type(props, context, updater); // eslint-disable-line new-cap
       let currentContext = instance.context = context;
@@ -182,7 +221,15 @@ function renderElementToString(element, context, options) {
       var renderedElement = instance.render();
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
-      var renderedElement = type(props, context);
+      const instance = new ReactiveComponent(type);
+      instance.props = props;
+      instance.context = context;
+
+      shared.Host.owner = {
+        _instance: instance
+      };
+
+      const renderedElement = instance.render();
       return renderElementToString(renderedElement, context, options);
     } else if (typeof type === 'string') {
       const isVoidElement = VOID_ELEMENTS[type];
