@@ -86,7 +86,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
         } else if (evaluator) {
           /**
            * `render` method will be executed everytime data has changed.
-           * To avoid send evaluator more than one time, cache the current webview
+           * To avoid send evaluator more than once at sametime, cache the current webview
            * url to detect.
            */
           if (pageInstance[CURRENT_WV_URL] !== url) {
