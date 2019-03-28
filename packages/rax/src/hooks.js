@@ -42,7 +42,7 @@ export function useState(initialState) {
     }
 
     const setState = newState => {
-      // Flush effects first when not in effect
+      // Flush all effects first before update state
       if (!Host.isUpdating) {
         flushEffect();
       }
@@ -209,7 +209,7 @@ export function useReducer(reducer, initialArg, init) {
     const initialState = init !== undefined ? init(initialArg) : initialArg;
 
     const dispatch = action => {
-      // Flush effects first when not in effect
+      // Flush all effects first before update state
       if (!Host.isUpdating) {
         flushEffect();
       }

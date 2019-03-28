@@ -1,5 +1,6 @@
 let scheduler;
 if (process.env.NODE_ENV !== 'production') {
+  // For jest hijack timers
   scheduler = (callback) => {
     setTimeout(callback);
   };
@@ -7,7 +8,6 @@ if (process.env.NODE_ENV !== 'production') {
   scheduler = typeof Promise == 'function' ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
 }
 
-let performUpdate = null;
 let updateCallbacks = [];
 let effectCallbacks = [];
 
@@ -21,13 +21,10 @@ export function schedule(callback) {
 
 // Flush before next render
 export function flush() {
-  flushEffect();
   let callbacks = updateCallbacks;
   if (callbacks.length !== 0) {
     updateCallbacks = [];
     callbacks.forEach(callback => callback());
-    // Exec callback maybe schedule a work
-    performUpdate();
   }
 }
 
@@ -44,8 +41,4 @@ export function flushEffect() {
     effectCallbacks = [];
     callbacks.forEach(callback => callback());
   }
-}
-
-export function setUpdater(handle) {
-  performUpdate = handle;
 }

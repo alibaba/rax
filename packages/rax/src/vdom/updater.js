@@ -1,5 +1,5 @@
 import Host from './host';
-import { flushEffect, schedule, setUpdater } from './scheduler';
+import { flushEffect, schedule } from './scheduler';
 
 // Dirty components store
 let dirtyComponents = [];
@@ -147,10 +147,14 @@ function requestUpdate(component, partialState, callback) {
   }
 }
 
-setUpdater(performUpdate);
-
 const Updater = {
-  setState: requestUpdate,
+  setState: function(component, partialState, callback) {
+    // Flush all effects first before update state
+    if (!Host.isUpdating) {
+      flushEffect();
+    }
+    requestUpdate(component, partialState, callback);
+  },
   forceUpdate: function(component, callback) {
     requestUpdate(component, null, callback);
   },
