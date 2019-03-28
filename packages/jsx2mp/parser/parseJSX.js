@@ -141,10 +141,10 @@ function parseJSXExpression(expression) {
               // () => (<jsx></jsx)
               : args[0].body;
             childNode = parseJSX(returnEl);
-            const itemParam = args[0].params[0].name;
-            const indexParam = args[0].params[1].name;
-            if (itemParam) itemName = itemParam;
-            if (indexParam) indexName = indexParam;
+            const itemParam = args[0].params[0];
+            const indexParam = args[0].params[1];
+            if (itemParam) itemName = itemParam.name;
+            if (indexParam) indexName = indexParam.name;
           } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
             // { foo.map(this.xxx) }
             throw new Error(`目前暂不支持对 ${generateCodeByExpression(expression)} 的语法转换，请使用内联函数。`);

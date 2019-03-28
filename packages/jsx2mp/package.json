@@ -7,7 +7,7 @@
     "jsx2mp": "bin/cli.js"
   },
   "scripts": {
-    "test": "jest --coverage --testPathIgnorePatterns=fixtures",
+    "test": "jest --coverage --testPathIgnorePatterns=stripIndent",
     "test:watch": "npm run test -- --watchAll"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
