@@ -1,4 +1,5 @@
 module.exports = function stripIndent(template) {
+  if (typeof template !== 'string') return template;
   const match = template.match(/^[^\S]*(?=\S)/gm);
   const indent = match && Math.min(...match.map(el => el.length));
 
@@ -8,4 +9,4 @@ module.exports = function stripIndent(template) {
   }
 
   return template.trim();
-}
+};

@@ -2,6 +2,8 @@ const generate = require('@babel/generator').default;
 const generateOption = require('./option');
 const { SELF_CLOSE_TAGS, SPACE_INDENT } = require('../constant');
 
+const Node = require('../parser/Node');
+
 const EMPTY_STR_REG = /^[\n|\s]+$/;
 
 /**
@@ -16,6 +18,9 @@ function generateElement(node, depth = 0) {
   if (Array.isArray(node)) return node.map((n) => generateElement(n, depth)).join('\n');
   if (node === undefined || node === null) return '';
 
+  if (!(node instanceof Node) && (typeof node === 'number' || typeof node === 'string') ) {
+    return node;
+  }
   const { tag, attrs, children } = node;
   let ret = SPACE_INDENT.repeat(depth) + `<${tag}`;
 

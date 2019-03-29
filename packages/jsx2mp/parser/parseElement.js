@@ -14,12 +14,17 @@ const parserAdapter = {
   forIndex: 'a:for-index',
   key: 'a:key',
 };
-
+/**
+ * Choose parse method
+ * @param {JSXElement|String|Number} el
+ */
 function parseElement(el) {
   if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
     return parseBaseStructure(el);
   } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el)) {
     return null;
+  } else if (t.isArrayExpression(el)) {
+    return parseElementArray(el);
   } else {
     return parseJSX(el);
   }
@@ -273,6 +278,11 @@ function parseBaseStructure(el) {
   } else {
     return null;
   }
+}
+
+function parseElementArray(el) {
+  const { elements } = el;
+  return elements.map(element => parseElement(element));
 }
 
 /**
