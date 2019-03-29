@@ -1,6 +1,6 @@
 'use strict';
 const { join } = require('path');
-const { readdirSync, statSync, writeFileSync, existsSync, readFileSync } = require('fs');
+const { readdirSync, statSync, writeFileSync, existsSync, mkdirSync, readFileSync } = require('fs');
 const yargs = require('yargs');
 const debug = require('debug');
 
@@ -23,7 +23,8 @@ async function runBench(framework, benchmarks, local, skipBuild) {
   const warnings = [];
   const data = [];
 
-  const resultJSON = `./results/${framework}.json`;
+  const resultFolder = './results';
+  const resultJSON = `${resultFolder}/${framework}.json`;
 
   if (local && existsSync(resultJSON)) {
     const data = JSON.parse(readFileSync(resultJSON, {
@@ -72,13 +73,15 @@ async function runBench(framework, benchmarks, local, skipBuild) {
     }
   }
 
-  if (framework !== 'rax-local') {
-    writeFileSync(
-      resultJSON,
-      JSON.stringify(data, null, 2),
-      { encoding: 'utf8' }
-    );
+  if (!existsSync(resultFolder)) {
+    mkdirSync(resultFolder);
   }
+
+  writeFileSync(
+    resultJSON,
+    JSON.stringify(data, null, 2),
+    { encoding: 'utf8' }
+  );
 
   return {
     errors,

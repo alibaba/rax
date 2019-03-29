@@ -49,7 +49,7 @@ module.exports = function(data) {
 
       frameworks.map((f) => {
         const result = benchmarkResults[f];
-        result.factor = result.mean / min;
+        result.factor = (result.mean / min).toFixed(2);
         result.deviation = (result.standardDeviation || 0) / result.mean * 100.0;
       });
     });
