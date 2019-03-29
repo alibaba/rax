@@ -214,7 +214,7 @@ class NativeComponent extends BaseComponent {
         if (prevProp != null) {
           // Unset styles on `prevProp` but not on `nextProp`.
           for (styleName in prevProp) {
-            if (!nextProp || !nextProp[styleName]) {
+            if (!nextProp || !nextProp[styleName] && nextProp[styleName] !== 0) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = '';
             }
