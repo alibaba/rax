@@ -41,19 +41,20 @@ module.exports = function(data, frameworks, benchmarks) {
       row[title] = frameworks.map(framework => {
         if (!result[framework]) {
           row.push('-');
-        } else {
+        } else { 
           const mean = result[framework].mean.toFixed(2);
+          const factor = result[framework].factor;
           if (result[framework].warning) {
-            row.push(chalk.red(mean));
+            row.push(`${chalk.red(mean)}(${factor})`);
             return;
           }
 
           if (result[framework].factor > 1.5) {
-            row.push(chalk.yellow(mean));
+            row.push(`${chalk.yellow(mean)}(${factor})`);
             return;
           }
 
-          row.push(mean);
+          row.push(`${mean}(${factor})`);
         }
       });
 
