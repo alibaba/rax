@@ -5,10 +5,8 @@ let rootID = 1;
 class Root extends Component {
   constructor() {
     super();
-    this.state = {
-      // Using fragment instead of null for avoid create a comment node when init mount
-      element: []
-    };
+    // Using fragment instead of null for avoid create a comment node when init mount
+    this.element = [];
     this.rootID = rootID++;
   }
 
@@ -21,13 +19,12 @@ class Root extends Component {
   }
 
   update(element) {
-    this.setState({
-      element
-    });
+    this.element = element;
+    this.forceUpdate();
   }
 
   render() {
-    return this.state.element;
+    return this.element;
   }
 }
 

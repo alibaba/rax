@@ -240,7 +240,7 @@ export default class ScrollViewElement extends PolymerElement {
             if (this.scrollWithAnimation) {
               this.scrollX ? this._smoothScrollToX(offset) : this._smoothScrollToY(offset);
             } else {
-              const DIREACTION = this.scrollX ? 'top' : 'left';
+              const DIREACTION = this.scrollX ? 'left' : 'top';
               this.scrollTo({
                 [DIREACTION]: offset,
                 behavior: 'instant',
@@ -306,7 +306,7 @@ export default class ScrollViewElement extends PolymerElement {
       }
       let startTime = Date.now();
       let duration = 400;
-      let initialValue = this._scrollTop;
+      let initialValue = this.scrollTop;
       this.timerY = setInterval(() => {
         let deltaTime = Date.now() - startTime;
         if (deltaTime > duration) {
