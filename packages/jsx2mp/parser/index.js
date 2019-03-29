@@ -10,4 +10,4 @@ function parse(code) {
 }
 
 exports.parse = parse;
-exports.parseJSX = require('./parseJSX');
+exports.parseElement = require('./parseElement');

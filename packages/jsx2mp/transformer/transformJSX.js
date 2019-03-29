@@ -4,7 +4,7 @@ const { existsSync, readFileSync } = require('fs-extra');
 const kebabCase = require('kebab-case');
 const { default: traverse, NodePath } = require('@babel/traverse');
 const isJSXClassDeclaration = require('./isJSXClassDeclaration');
-const { parse, parseJSX } = require('../parser');
+const { parse, parseElement } = require('../parser');
 const findReturnElement = require('./findReturnElement');
 const { generateElement, generateCodeByExpression } = require('../codegen');
 const {
@@ -118,7 +118,7 @@ function getTemplate(ast) {
           const returnElement = findReturnElement(renderBody).node;
 
           if (t.isJSXElement(returnElement)) {
-            const node = parseJSX(returnElement);
+            const node = parseElement(returnElement);
             template = generateElement(node);
           } else {
             throw new Error('Render method only return JSXElement.');
