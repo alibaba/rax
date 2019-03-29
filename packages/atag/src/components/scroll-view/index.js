@@ -306,7 +306,7 @@ export default class ScrollViewElement extends PolymerElement {
       }
       let startTime = Date.now();
       let duration = 400;
-      let initialValue = this._scrollTop;
+      let initialValue = this.scrollTop;
       this.timerY = setInterval(() => {
         let deltaTime = Date.now() - startTime;
         if (deltaTime > duration) {
