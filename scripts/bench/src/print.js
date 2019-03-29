@@ -41,7 +41,7 @@ module.exports = function(data, frameworks, benchmarks) {
       row[title] = frameworks.map(framework => {
         if (!result[framework]) {
           row.push('-');
-        } else { 
+        } else {
           const mean = result[framework].mean.toFixed(2);
           const factor = result[framework].factor;
           if (result[framework].warning) {
