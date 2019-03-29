@@ -105,6 +105,7 @@ function getTemplate(ast) {
   traverse(ast, {
     ClassDeclaration(classDeclarationPath) {
       if (isJSXClassDeclaration(classDeclarationPath)) {
+        // Todo: parse render function content
         const renderPath = getRenderMethod(classDeclarationPath);
         if (renderPath) {
           // Rule restrict: allow one return statement.
@@ -116,8 +117,8 @@ function getTemplate(ast) {
 
           const renderBody = renderPath.get('body');
           const returnElement = findReturnElement(renderBody).node;
-
-          if (t.isJSXElement(returnElement)) {
+          // Not only support JSXElement, but also support Number|String|Array
+          if (isSupportTransfrom(returnElement)) {
             const node = parseElement(returnElement);
             template = generateElement(node);
           } else {
@@ -238,6 +239,16 @@ function getComponentJSCode(ast) {
 
 function normalizeComponentName(tagName) {
   return kebabCase(tagName).replace(/^-/, '');
+}
+
+function isSupportTransfrom(el) {
+  const typeCheckMethods = [
+    'isJSXElement',
+    'isStringLiteral',
+    'isNumericLiteral',
+    'isArrayExpression'
+  ];
+  return typeCheckMethods.some(method => t[method](el));
 }
 
 exports.transformJSX = transformJSX;
