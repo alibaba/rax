@@ -22,10 +22,12 @@ describe('NativeComponent', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('updates a mounted text component in place', function() {
@@ -119,6 +121,7 @@ describe('NativeComponent', function() {
     inst.setState({
       show: true
     });
+    jest.runAllTimers();
 
     childNodes = container.childNodes;
 
@@ -154,7 +157,10 @@ describe('NativeComponent', function() {
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('e');
     expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('b');
     expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('c');
+
     instance.setState({count: 1});
+    jest.runAllTimers();
+
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('c');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('e');
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('b');

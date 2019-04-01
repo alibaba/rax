@@ -23,6 +23,8 @@ class ReactiveComponent extends Component {
     this.shouldUpdate = false;
     this._children = null;
 
+    this.state = {};
+
     if (pureRender.forwardRef) {
       this.prevForwardRef = this.forwardRef = ref;
     }
@@ -37,7 +39,7 @@ class ReactiveComponent extends Component {
         for (let i = compares.length - 1; i > -1; i--) {
           if (arePropsEqual = compares[i](this.props, nextProps)) {
             break;
-          };
+          }
         }
 
         return !arePropsEqual || this.prevForwardRef !== this.forwardRef;
@@ -108,7 +110,8 @@ class ReactiveComponent extends Component {
   }
 
   update() {
-    this.forceUpdate();
+    this._internal._isPendingForceUpdate = true;
+    this.setState({});
   }
 
   render() {

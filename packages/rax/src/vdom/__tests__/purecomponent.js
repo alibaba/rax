@@ -9,10 +9,12 @@ import ServerDriver from 'driver-server';
 describe('PureComponent', function() {
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should render', function() {
@@ -30,12 +32,15 @@ describe('PureComponent', function() {
     expect(renders).toBe(1);
 
     component.setState({type: 'foo'});
+    jest.runAllTimers();
     expect(renders).toBe(1);
 
     component.setState({type: 'bar'});
+    jest.runAllTimers();
     expect(renders).toBe(2);
 
     component.setState({type: 'bar'});
+    jest.runAllTimers();
     expect(renders).toBe(2);
   });
 
@@ -55,7 +60,7 @@ describe('PureComponent', function() {
 
     let component = render(<MyComponent />);
     component.setState({type: 'foo'});
-
+    jest.runAllTimers();
     expect(renders).toBe(2);
   });
 
