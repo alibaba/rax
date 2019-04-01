@@ -21,7 +21,7 @@ const parserAdapter = {
 function parseElement(el) {
   if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
     return parseBaseStructure(el);
-  } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el)) {
+  } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el) || el.type === 'Identifier' && el.name === 'undefined') {
     return null;
   } else if (t.isArrayExpression(el)) {
     return parseElementArray(el);
@@ -123,18 +123,29 @@ function parseJSXExpression(expression) {
        * 1. check consequent is a map, optimizate block structure
        * 2. check condition order, like: { condition ? node : null } or { condition ? null : node }
        */
+      const conditionValue = generateCodeByExpression(test);
+      const consequentChildNode = parseElement(consequent);
       const consequentNode = new Node('block', {
-        [parserAdapter.if]: '{{' + generateCodeByExpression(test) + '}}',
-      }, [parseElement(consequent)]);
-
-      ret.push(consequentNode);
-
+        [parserAdapter.if]: '{{' + conditionValue + '}}',
+      });
       const alternateChildNode = parseElement(alternate);
-      const alternateNode = alternateChildNode ? new Node('block', {
-        [parserAdapter.else]: true,
-      }, [alternateChildNode]) : null;
 
-      ret.push(alternateNode);
+      if (consequentChildNode) {
+        ret.push(consequentNode);
+        const alternateNode = alternateChildNode ? new Node('block', {
+          [parserAdapter.else]: true,
+        }, [alternateChildNode]) : null;
+        ret.push(alternateNode);
+        return ret;
+      }
+
+      if (!consequentChildNode && alternateChildNode) {
+        const alternateNode = new Node('block', {
+          [parserAdapter.if]: '{{!' + conditionValue + '}}',
+        }, [alternateChildNode]);
+        ret.push(alternateNode);
+        return ret;
+      }
 
       return ret;
     }

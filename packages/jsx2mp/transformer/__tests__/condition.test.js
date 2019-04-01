@@ -76,4 +76,35 @@ describe('transform condition expression', () => {
     });
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
+  it('alternate is undefined', () => {
+    const originJSX = `
+        import { createElement, Component } from 'rax';
+  
+        export default class extends Component {
+          state = {
+            show: false,
+          }
+        
+          render() {
+            const { show } = this.state;
+            return (
+              <view>
+                { show ? <text>Show!</text> : undefined }
+              </view>
+            );
+          }
+        }`;
+    const expectedTemplate = `
+      \\<view>
+         <block a:if="{{show}}">
+           <text>Show!</text>
+         </block>
+
+      \\</view>
+      `;
+    const { template } = transformJSX(originJSX, {
+      filePath: sourcePath
+    });
+    expect(template).toEqual(stripIndent(expectedTemplate));
+  });
 });
