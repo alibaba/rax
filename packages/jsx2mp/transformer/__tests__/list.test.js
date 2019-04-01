@@ -1,6 +1,6 @@
 const { transformJSX } = require('../transformJSX');
 const { resolve } = require('path');
-const stripIndent = require('./stripIndent');
+const stripIndent = require('./__modules__/stripIndent');
 
 const sourcePath = resolve(__dirname);
 
