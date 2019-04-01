@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const { join } = require('path');
 const MemoryFS = require('memory-fs');
 const { existsSync } = require('fs');
 
@@ -40,11 +41,21 @@ module.exports = class WebpackExternalApiPlugin {
           throw err;
         }
 
-        const content = fs.readFileSync(outputPath + '/api.js');
-        compilation.assets['api.js'] = {
-          source: () => content,
-          size: () => content.length
-        };
+        // Export compile result.
+        console.log('API Built.');
+        console.log(stats.toString({
+          colors: true
+        }));
+
+        try {
+          const content = fs.readFileSync(join(outputPath, 'api.js'));
+          compilation.assets['api.js'] = {
+            source: () => content,
+            size: () => content.length
+          };
+        } catch(err) {
+          console.log('Can not read compile output', err);
+        }
 
         callback();
       });
