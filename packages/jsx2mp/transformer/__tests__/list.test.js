@@ -91,12 +91,16 @@ describe('transfrom list', () => {
         }
       }`;
     const expectedTemplate = `
-      <block a:if="{{arr.length > 2}}" a:for="{{arr}}" a:for-item="item" a:for-index="index">
-        <text>{item}</text>
-      </block>
-      <block a:else>
-        <text>Nothing!</text>
-      </block>`;
+      <view>
+        <block a:if="{{arr.length > 2}}">
+          <block a:for="{{arr}}" a:for-item="item" a:for-index="index">
+            <text>{{item}}</text>
+          </block>
+        </block>
+        <block a:else>
+          <text>Nothing!</text>
+        </block>
+      </view>`;
     const { template } = transformJSX(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
@@ -118,9 +122,13 @@ describe('transfrom list', () => {
         }
       }`;
     const expectedTemplate = `
-      <block a:if="{{arr.length > 2}}" a:for="{{arr}}" a:for-item="item" a:for-index="index">
-        <text>{item}</text>
-      </block>`;
+      <view>
+        <block a:if="{{arr.length > 2}}">
+          <block a:for="{{arr}}" a:for-item="item" a:for-index="index">
+            <text>{{item}}</text>
+          </block>
+        </block>
+      </view>`;
     const { template } = transformJSX(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
@@ -142,9 +150,16 @@ describe('transfrom list', () => {
         }
       }`;
     const expectedTemplate = `
-      <block a:if="{{!(arr.length > 2)}}" a:for="{{arr}}" a:for-item="item" a:for-index="index">
-        <text>{item}</text>
-      </block>`;
+      <view>
+        <block a:if="{{arr.length > 2}}">
+
+        </block>
+        <block a:else>
+          <block a:for="{{arr}}" a:for-item="item" a:for-index="index">
+            <text>{{item}}</text>
+          </block>
+        </block>
+      </view>`;
     const { template } = transformJSX(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });

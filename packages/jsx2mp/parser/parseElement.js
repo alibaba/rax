@@ -14,6 +14,21 @@ const parserAdapter = {
   forIndex: 'a:for-index',
   key: 'a:key',
 };
+/**
+ * Choose parse method
+ * @param {JSXElement|String|Number} el
+ */
+function parseElement(el) {
+  if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
+    return parseBaseStructure(el);
+  } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el)) {
+    return null;
+  } else if (t.isArrayExpression(el)) {
+    return parseElementArray(el);
+  } else {
+    return parseJSX(el);
+  }
+}
 
 /**
  * Parse JSXElements to Node.
@@ -110,17 +125,16 @@ function parseJSXExpression(expression) {
        */
       const consequentNode = new Node('block', {
         [parserAdapter.if]: '{{' + generateCodeByExpression(test) + '}}',
-      }, [parseJSX(consequent)]);
+      }, [parseElement(consequent)]);
 
       ret.push(consequentNode);
 
-      const alternateChildNode = parseJSX(alternate);
+      const alternateChildNode = parseElement(alternate);
       const alternateNode = alternateChildNode ? new Node('block', {
         [parserAdapter.else]: true,
       }, [alternateChildNode]) : null;
 
       ret.push(alternateNode);
-
       return ret;
     }
 
@@ -140,7 +154,7 @@ function parseJSXExpression(expression) {
               ? findReturnElement(args[0].body).node
               // () => (<jsx></jsx)
               : args[0].body;
-            childNode = parseJSX(returnEl);
+            childNode = parseElement(returnEl);
             const itemParam = args[0].params[0];
             const indexParam = args[0].params[1];
             if (itemParam) itemName = itemParam.name;
@@ -257,6 +271,19 @@ function parseAttrs(attributes) {
   return ret;
 }
 
+function parseBaseStructure(el) {
+  if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
+    return el.value;
+  } else {
+    return null;
+  }
+}
+
+function parseElementArray(el) {
+  const { elements } = el;
+  return elements.map(element => parseElement(element));
+}
+
 /**
  * Whether a tag name is built-in.
  * @param tagName {String}
@@ -312,4 +339,4 @@ function normalizeEventName(eventName) {
   return eventName;
 }
 
-module.exports = parseJSX;
+module.exports = parseElement;

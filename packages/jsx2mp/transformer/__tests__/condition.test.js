@@ -38,4 +38,42 @@ describe('transform condition expression', () => {
     });
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
+
+  it('should transform nested condition', () => {
+    const originJSX = `
+    import { createElement, Component } from 'rax';
+
+    export default class extends Component {
+      state = {
+        a: true,
+        b: false
+      }
+    
+      render() {
+        const { a, b } = this.state;
+        return (
+          <view> { a ? b ? <text>'b true'</text> : <text>'b false'</text> : <text>'a false'</text>} </view>
+        );
+      }
+    }`;
+    const expectedTemplate = `
+      <view>
+        <block a:if="{{a}}">
+          <block a:if="{{b}}">
+            <text>'b true'</text>
+          </block>
+          <block a:else>
+            <text>'b false'</text>
+          </block>
+        </block>
+        <block a:else>
+          <text>'a false'</text>
+        </block>
+      </view>
+    `;
+    const { template } = transformJSX(originJSX, {
+      filePath: sourcePath
+    });
+    expect(template).toEqual(stripIndent(expectedTemplate));
+  });
 });

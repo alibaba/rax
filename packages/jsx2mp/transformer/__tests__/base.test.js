@@ -38,4 +38,61 @@ describe('transfrom simple example', () => {
     expect(template).toEqual(stripIndent(expectedTemplate));
     expect(jsCode).toEqual(stripIndent(expectedScript));
   });
+
+  it('should render pure number', () => {
+    const originJSX = `
+      import { createElement, Component } from 'rax';
+
+      export default class extends Component {
+        render() {
+          return 1;
+        }
+      }`;
+    const expectedTemplate = 1;
+    const { template } = transformJSX(originJSX, {
+      filePath: sourcePath
+    });
+    expect(template).toEqual(stripIndent(expectedTemplate));
+  });
+
+  it('should render pure string', () => {
+    const originJSX = `
+      import { createElement, Component } from 'rax';
+
+      export default class extends Component {
+        render() {
+          return 'Hello World!';
+        }
+      }`;
+    const expectedTemplate = 'Hello World!';
+    let { template } = transformJSX(originJSX, {
+      filePath: sourcePath
+    });
+    if (typeof template === 'string') template = String(template);
+    expect(template).toEqual(stripIndent(expectedTemplate));
+  });
+
+  it('should render array', () => {
+    const originJSX = `
+      import { createElement, Component } from 'rax';
+
+      export default class extends Component {
+        render() {
+          return (
+            [
+              'Hello World!',
+              <view>Hi!</view>
+            ]
+          )
+        }
+      }`;
+    const expectedTemplate = `
+      Hello World!
+      <view>Hi!</view>
+    `;
+    const { template } = transformJSX(originJSX, {
+      filePath: sourcePath
+    });
+    expect(template).toEqual(stripIndent(expectedTemplate));
+  });
 });
