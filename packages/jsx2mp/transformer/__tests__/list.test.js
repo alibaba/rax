@@ -128,6 +128,7 @@ describe('transfrom list', () => {
             <text>{{item}}</text>
           </block>
         </block>
+
       </view>`;
     const { template } = transformJSX(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));

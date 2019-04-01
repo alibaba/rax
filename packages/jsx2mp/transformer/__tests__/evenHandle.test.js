@@ -20,7 +20,7 @@ describe('transfrom event handle', () => {
           );
         }
       }`;
-    const expectedTemplate = '<view onTap="handleClick">Click Me!</view> ';
+    const expectedTemplate = '<view onTap="handleClick">Click Me!</view>';
     const expectedScript = `
       import { createComponent as __create_component__ } from "/__helpers/component";
       import { createElement, Component as __rax_component__ } from 'rax';
