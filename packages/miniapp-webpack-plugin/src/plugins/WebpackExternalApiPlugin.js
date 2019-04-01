@@ -53,7 +53,7 @@ module.exports = class WebpackExternalApiPlugin {
             source: () => content,
             size: () => content.length
           };
-        } catch(err) {
+        } catch (error) {
           console.log('Can not read compile output', err);
         }
 
