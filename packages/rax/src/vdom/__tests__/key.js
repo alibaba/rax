@@ -22,10 +22,12 @@ describe('Key', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should unmount and remount if the key changes', function() {
@@ -144,7 +146,10 @@ describe('Key', function() {
     let instance = render(<App />, container);
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('1');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('2');
+
     instance.setState({count: 1});
+    jest.runAllTimers();
+
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('2');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('3');
   });

@@ -22,10 +22,12 @@ describe('createPortal', () => {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should render one portal', () => {
@@ -37,6 +39,7 @@ describe('createPortal', () => {
       container
     );
 
+    jest.runAllTimers();
     expect(container.childNodes[0].tagName).toBe('DIV');
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('portal');
 
@@ -78,6 +81,8 @@ describe('createPortal', () => {
     }
 
     render(<Parent />, container);
+
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('bar');
   });
@@ -116,10 +121,12 @@ describe('createPortal', () => {
     }
 
     render(<Parent bar="initial" />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial-initial');
 
     render(<Parent bar="changed" />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
@@ -159,36 +166,42 @@ describe('createPortal', () => {
     }
 
     render(<Parent />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
     expect(updatedCount).toBe(1);
 
     // nothing can be changed
     render(<Parent />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
     expect(updatedCount).toBe(1);
 
     // Context change
     render(<Parent bar="changed" hasContext={true} />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('changed');
     expect(updatedCount).toBe(2);
 
     // change context -> null
     render(<Parent />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
     expect(updatedCount).toBe(3);
 
     // nothing can be changed
     render(<Parent />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
     expect(updatedCount).toBe(3);
 
     // element change
     render(<Parent newElement={true} />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
     expect(updatedCount).toBe(4);

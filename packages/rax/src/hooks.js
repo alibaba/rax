@@ -1,5 +1,5 @@
 import Host from './vdom/host';
-import { schedule, flush } from './vdom/scheduler';
+import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
 
 function getCurrentInstance() {
@@ -42,6 +42,11 @@ export function useState(initialState) {
     }
 
     const setState = newState => {
+      // Flush all effects first before update state
+      if (!Host.isUpdating) {
+        flushEffect();
+      }
+
       const hook = hooks[hookID];
       const eagerState = hook[2];
       // function updater
@@ -52,14 +57,11 @@ export function useState(initialState) {
       if (!is(newState, eagerState)) {
         // Current instance is in render update phase.
         // After this one render finish, will containue run.
+        hook[2] = newState;
         if (getCurrentInstance() === currentInstance) {
-          hook[2] = newState;
           // Marked as is scheduled that could finish hooks.
           currentInstance.isScheduled = true;
         } else {
-          !Host.isUpdating && flush();
-
-          hook[2] = newState;
           currentInstance.update();
         }
       }
@@ -102,28 +104,20 @@ function useEffectImpl(effect, inputs, defered) {
 
   if (!hooks[hookID]) {
     const create = (immediately) => {
-      if (!immediately && defered) return schedule(() => create(true));
+      if (!immediately && defered) return scheduleEffect(() => create(true));
       const { current } = create;
       if (current) {
-        // Set this to true to prevent re-entrancy
-        const previousIsRendering = Host.isUpdating;
-        Host.isUpdating = true;
         destory.current = current();
         create.current = null;
-        Host.isUpdating = previousIsRendering;
       }
     };
 
     const destory = (immediately) => {
-      if (!immediately && defered) return schedule(() => destory(true));
+      if (!immediately && defered) return scheduleEffect(() => destory(true));
       const { current } = destory;
       if (current) {
-        // Set this to true to prevent re-entrancy
-        const previousIsRendering = Host.isUpdating;
-        Host.isUpdating = true;
         current();
         destory.current = null;
-        Host.isUpdating = previousIsRendering;
       }
     };
 
@@ -215,6 +209,11 @@ export function useReducer(reducer, initialArg, init) {
     const initialState = init !== undefined ? init(initialArg) : initialArg;
 
     const dispatch = action => {
+      // Flush all effects first before update state
+      if (!Host.isUpdating) {
+        flushEffect();
+      }
+
       const hook = hooks[hookID];
       // Reducer will update in the next render, before that we add all
       // actions to the queue
@@ -224,8 +223,6 @@ export function useReducer(reducer, initialArg, init) {
         queue.actions.push(action);
         currentInstance.isScheduled = true;
       } else {
-        !Host.isUpdating && flush();
-
         const currentState = queue.eagerState;
         const eagerReducer = queue.eagerReducer;
         const eagerState = eagerReducer(currentState, action);

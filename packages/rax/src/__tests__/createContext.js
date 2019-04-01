@@ -21,10 +21,12 @@ describe('createContext', () => {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('simple mount and update', () => {
@@ -112,11 +114,13 @@ describe('createContext', () => {
 
     // Update
     render(<App value={3} />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('3');
     expect(container.childNodes[1].childNodes[0].data).toEqual('6');
 
     // Another update
     render(<App value={4} />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toEqual('4');
     expect(container.childNodes[1].childNodes[0].data).toEqual('8');
   });
@@ -167,6 +171,7 @@ describe('createContext', () => {
 
     // Update
     render(<App value={3} />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toEqual('3');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toEqual('3');
   });
@@ -202,6 +207,7 @@ describe('createContext', () => {
     const spyConsumerRender = jest.spyOn(instance.refs.consumer, 'render');
     const spyConsumerWithIndirection = jest.spyOn(instance.refs.consumerWithIndirection, 'render');
     render(<App value={3} />, container);
+    jest.runAllTimers();
     expect(spyConsumerRender).toHaveBeenCalledTimes(1);
     expect(spyConsumerWithIndirection).toHaveBeenCalledTimes(1);
   });

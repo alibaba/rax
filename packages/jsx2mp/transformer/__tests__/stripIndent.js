@@ -1,12 +1,23 @@
-module.exports = function stripIndent(template) {
-  if (typeof template !== 'string') return template;
-  const match = template.match(/^[^\S]*(?=\S)/gm);
-  const indent = match && Math.min(...match.map(el => el.length));
+function minIndent(str) {
+  const match = str.match(/^[ \t]*(?=\S)/gm);
 
-  if (indent) {
-    const regexp = new RegExp(`^.{${indent}}`, 'gm');
-    template = template.replace(regexp, '');
+  if (!match) {
+    return 0;
   }
 
-  return template.trim();
+  return Math.min.apply(Math, match.map(x => x.length));
+}
+
+module.exports = function stripIndent(template) {
+  if (typeof template !== 'string') return template;
+
+  const indent = minIndent(template);
+
+  if (indent === 0) {
+    return template;
+  }
+
+  const re = new RegExp(`^[ \\t]{${indent}}`, 'gm');
+
+  return template.replace(re, '').trim();
 };

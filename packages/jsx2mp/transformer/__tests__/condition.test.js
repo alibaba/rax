@@ -95,12 +95,12 @@ describe('transform condition expression', () => {
           }
         }`;
     const expectedTemplate = `
-      \\<view>
+      <view>
          <block a:if="{{show}}">
            <text>Show!</text>
          </block>
 
-      \\</view>
+      </view>
       `;
     const { template } = transformJSX(originJSX, {
       filePath: sourcePath

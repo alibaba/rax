@@ -18,12 +18,14 @@ describe('render', () => {
     };
   }
 
-  beforeEach(() => {
+  beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
-  afterEach(() => {
+  afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('render to default container', () => {
@@ -110,13 +112,14 @@ describe('render', () => {
         render(<Child number="2" />, container2);
         render(<Child number="3" />, container2);
         render(<Child number="4" />, container2);
-        expect(container2.childNodes).toBe([]);
+        expect(container2.childNodes).toEqual([]);
       }
       render() {
         return <span />;
       }
     }
     render(<App />, container);
+    jest.runAllTimers();
     expect(Child).toHaveBeenCalledTimes(1);
     expect(container2.childNodes[0].childNodes[0].data).toBe('4');
   });

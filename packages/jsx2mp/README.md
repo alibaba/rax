@@ -9,15 +9,15 @@ A cli tool to transform Rax JSX based project to MiniApp.
 	rax init myApp --type=miniapp
 	```
 	
-2. Install transform-jsx-mp
+2. Install jsx2mp
 	```bash
-	npm install transform-jsx-mp -g
+	npm install jsx2mp -g
 	```
 	
 3. Transform your project.
 	```bash
 	cd myApp
-	jsx
+	jsx2mp
 	```
 	The tool will keep watching your source files before being interpreted by `Ctrl + C`.
 	

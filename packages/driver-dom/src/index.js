@@ -308,7 +308,7 @@ export function beforeRender({ hydrate }) {
 
 function recolectHydrationChild(hydrationParent) {
   const nativeLength = hydrationParent.childNodes.length;
-  const vdomLength = hydrationParent[HYDRATION_INDEX];
+  const vdomLength = hydrationParent[HYDRATION_INDEX] || 0;
   if (nativeLength - vdomLength > 0) {
     for (let i = nativeLength - 1; i >= vdomLength; i-- ) {
       hydrationParent.removeChild(hydrationParent.childNodes[i]);
