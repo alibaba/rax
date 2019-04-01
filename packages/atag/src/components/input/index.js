@@ -110,6 +110,7 @@ export default class Input extends PolymerElement {
           cancelable: true,
           detail: {
             value,
+            inputType: evt.inputType,
             cursor: this._getSelectionStart(),
           },
         });
