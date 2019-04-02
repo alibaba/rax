@@ -124,7 +124,8 @@ export default class Swiper extends PolymerElement {
     document.addEventListener('scroll', this._handleGlobalScroll);
     document.addEventListener('_scrollviewscroll', this._handleGlobalScroll);
     Gestures.addListener(this, 'track', this._handleTrack);
-    Gestures.setTouchAction(this, 'auto');
+    // ios9 gesture handleTouchAction doesn't support 'auto'
+    Gestures.setTouchAction(this, this.vertical ? 'pan-x' : 'pan-y');
   }
 
   disconnectedCallback() {
@@ -191,12 +192,17 @@ export default class Swiper extends PolymerElement {
     this.$.indicator.style.display = newVal ? 'block' : 'none';
   }
 
-  _observeVertical(vertical) {
+  _observeVertical(vertical, oldVertical) {
     // Set init current item
     let realCurrent = this.circular ? this.current + 1 : this.current;
     const offset = this._getOffset(realCurrent);
     this._setRealItem(offset, 0);
     this._scrollDirection = vertical ? 'y' : 'x';
+    console.log(oldVertical);
+    // ios9 gesture handleTouchAction doesn't support 'auto'
+    if (oldVertical !== undefined) {
+      Gestures.setTouchAction(this, vertical ? 'pan-x' : 'pan-y');
+    }
   }
 
   _observeAutoplay(autoplay) {
