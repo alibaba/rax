@@ -198,7 +198,6 @@ export default class Swiper extends PolymerElement {
     const offset = this._getOffset(realCurrent);
     this._setRealItem(offset, 0);
     this._scrollDirection = vertical ? 'y' : 'x';
-    console.log(oldVertical);
     // ios9 gesture handleTouchAction doesn't support 'auto'
     if (oldVertical !== undefined) {
       Gestures.setTouchAction(this, vertical ? 'pan-x' : 'pan-y');
