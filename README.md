@@ -31,7 +31,7 @@
   - [Using via CLI](#using-via-cli)
   - [Using via CDN](#using-via-cdn)
 - [Guides](#guides)
-  - [Server-side render and hydration](#server-side-render-and-hydration)
+  - [Server-side rendering and hydration](#server-side-rendering-and-hydration)
   - [App Router](#app-router)
   - [Fetch Data](#fetch-data)
   - [Asynchronous Operation](#asynchronous-operation)
