@@ -21,7 +21,7 @@ const parserAdapter = {
 function parseElement(el) {
   if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
     return parseBaseStructure(el);
-  } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el) || t.isIdentifiner(el, { name: 'undefined' } )) {
+  } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el) || t.isIdentifier(el, { name: 'undefined' } )) {
     return null;
   } else if (t.isArrayExpression(el)) {
     return parseElementArray(el);
