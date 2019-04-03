@@ -4,7 +4,7 @@ const { existsSync, readFileSync } = require('fs-extra');
 const kebabCase = require('kebab-case');
 const { default: traverse, NodePath } = require('@babel/traverse');
 const isJSXClassDeclaration = require('./isJSXClassDeclaration');
-const { parse, parseElement } = require('../parser');
+const { parse } = require('../parser');
 const { generateElement, generateCodeByExpression } = require('../codegen');
 const parseRender = require('../parser/parseRender');
 const {

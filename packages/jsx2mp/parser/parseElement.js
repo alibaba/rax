@@ -351,4 +351,5 @@ function normalizeEventName(eventName) {
   return eventName;
 }
 
-module.exports = parseElement;
+exports.parseElement = parseElement;
+exports.parserAdapter = parserAdapter;
