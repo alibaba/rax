@@ -115,14 +115,19 @@ function parseRender(path) {
       }
     },
     ReturnStatement: {
-      enter(returnElementPath) {
-        const { node: returnElement } = returnElementPath.get('argument');
-        if (isSupportTransfrom(returnElement)) {
-          // transfrom returnElement
-          // 需要替换变量的值
-          resultNode = parseElement(returnElement);
-        } else {
-          throw new Error('Render method only return JSXElement.');
+      exit(returnElementPath) {
+        const { node: returnElement, scope: {
+          block: parentNode
+        } } = returnElementPath.get('argument');
+
+        if (t.isClassMethod(parentNode) && parentNode.key.name === 'render') {
+          if (isSupportTransfrom(returnElement)) {
+            // transfrom returnElement
+            // 需要替换变量的值
+            resultNode = parseElement(returnElement);
+          } else {
+            throw new Error('Render method only return JSXElement.');
+          }
         }
       }
     }
