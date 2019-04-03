@@ -1,6 +1,6 @@
 const { transformJSX } = require('../transformJSX');
 const { resolve } = require('path');
-const stripIndent = require('./stripIndent');
+const stripIndent = require('./__modules__/stripIndent');
 
 const sourcePath = resolve(__dirname);
 
@@ -96,9 +96,9 @@ describe('transform condition expression', () => {
         }`;
     const expectedTemplate = `
       <view>
-         <block a:if="{{show}}">
-           <text>Show!</text>
-         </block>
+        <block a:if="{{show}}">
+          <text>Show!</text>
+        </block>
 
       </view>
       `;

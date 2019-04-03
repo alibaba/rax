@@ -1,6 +1,6 @@
 const { transformJSX } = require('../transformJSX');
 const { resolve } = require('path');
-const stripIndent = require('./stripIndent');
+const stripIndent = require('./__modules__/stripIndent');
 
 const sourcePath = resolve(__dirname);
 
@@ -152,10 +152,7 @@ describe('transfrom list', () => {
       }`;
     const expectedTemplate = `
       <view>
-        <block a:if="{{arr.length > 2}}">
-
-        </block>
-        <block a:else>
+        <block a:if="{{!(arr.length > 2)}}">
           <block a:for="{{arr}}" a:for-item="item" a:for-index="index">
             <text>{{item}}</text>
           </block>

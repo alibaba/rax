@@ -21,7 +21,7 @@ const parserAdapter = {
 function parseElement(el) {
   if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
     return parseBaseStructure(el);
-  } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el) || el.type === 'Identifier' && el.name === 'undefined') {
+  } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el) || t.isIdentifiner(el, { name: 'undefined' } )) {
     return null;
   } else if (t.isArrayExpression(el)) {
     return parseElementArray(el);
@@ -127,7 +127,7 @@ function parseJSXExpression(expression) {
       const consequentChildNode = parseElement(consequent);
       const consequentNode = new Node('block', {
         [parserAdapter.if]: '{{' + conditionValue + '}}',
-      });
+      }, [consequentChildNode]);
       const alternateChildNode = parseElement(alternate);
 
       if (consequentChildNode) {
@@ -141,7 +141,7 @@ function parseJSXExpression(expression) {
 
       if (!consequentChildNode && alternateChildNode) {
         const alternateNode = new Node('block', {
-          [parserAdapter.if]: '{{!' + conditionValue + '}}',
+          [parserAdapter.if]: '{{!(' + conditionValue + ')}}',
         }, [alternateChildNode]);
         ret.push(alternateNode);
         return ret;
