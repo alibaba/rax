@@ -5,11 +5,13 @@ const {
   copySync,
   mkdirpSync,
   readJSONSync,
+  removeSync,
 } = require('fs-extra');
 const { resolve, extname } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
 const glob = require('glob');
+const inquirer = require('inquirer');
 const TransformerPage = require('./transformer/Page');
 
 /**
@@ -18,11 +20,15 @@ const TransformerPage = require('./transformer/Page');
  * @param distPath {String} Absolute distPath to source path.
  * @param enableWatch {Boolean} Watch file changes.
  */
-function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
+async function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
   if (!isDirectory(sourcePath)) throw new Error('Not a valid path.');
 
   if (existsSync(distPath)) {
-    // TODO: 提示是否需要删除
+    const needClean = await ask('发现目标目录 dist 已存在，是否需要清理?');
+    if (needClean) {
+      removeSync(distPath);
+      printLog(colors.green('清理完成'), 'dist/');
+    }
   }
 
   const appConfigPath = resolve(sourcePath, 'app.json');
@@ -125,6 +131,19 @@ function isDirectory(path) {
  */
 function printLog(...logs) {
   console.log.apply(console, logs);
+}
+
+
+/**
+ * Create an ask prase.
+ * @param message {String}
+ * @return {Promise} Answer true or false.
+ */
+function ask(message) {
+  const name = '_NAME_';
+  return inquirer.prompt([
+    { type: 'confirm', name, message }
+  ]).then(answers => answers[name]);
 }
 
 module.exports = transformJSXToMiniProgram;

@@ -4,7 +4,7 @@
   "license": "BSD-3-Clause",
   "description": "A cli tool to transform Rax JSX based project to MiniApp.",
   "bin": {
-    "jsx2mp": "bin/cli.js"
+    "jsx2mp": "bin/jsx2mp.js"
   },
   "scripts": {
     "test": "jest --coverage --testPathIgnorePatterns=__modules__",
@@ -23,8 +23,10 @@
     "@babel/types": "^7.3.4",
     "chokidar": "^2.1.2",
     "colors": "^1.3.3",
+    "commander": "^2.20.0",
     "fs-extra": "^7.0.1",
     "glob": "^7.1.3",
+    "inquirer": "^6.2.2",
     "kebab-case": "^1.0.0"
   },
   "devDependencies": {
