@@ -124,8 +124,7 @@ export default class Swiper extends PolymerElement {
     document.addEventListener('scroll', this._handleGlobalScroll);
     document.addEventListener('_scrollviewscroll', this._handleGlobalScroll);
     Gestures.addListener(this, 'track', this._handleTrack);
-    // Allow backward-facing touch events to bubble
-    Gestures.setTouchAction(this, this.vertical ? 'pan-x' : 'pan-y');
+    this._allowBackwardFaceTouchEvent();
   }
 
   disconnectedCallback() {
@@ -198,10 +197,7 @@ export default class Swiper extends PolymerElement {
     const offset = this._getOffset(realCurrent);
     this._setRealItem(offset, 0);
     this._scrollDirection = vertical ? 'y' : 'x';
-    // Allow backward-facing touch events to bubble
-    if (oldVertical !== undefined) {
-      Gestures.setTouchAction(this, vertical ? 'pan-x' : 'pan-y');
-    }
+    this._allowBackwardFaceTouchEvent();
   }
 
   _observeAutoplay(autoplay) {
@@ -508,6 +504,11 @@ export default class Swiper extends PolymerElement {
         });
       }
     }
+  }
+
+  _allowBackwardFaceTouchEvent() {
+    // Allow backward-facing touch events to bubble
+    Gestures.setTouchAction(this, this.vertical ? 'pan-x' : 'pan-y');
   }
 
   static get template() {
