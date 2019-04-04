@@ -4,16 +4,8 @@ const Node = require('./Node');
 const findReturnElement = require('../transformer/findReturnElement');
 const { generateCodeByExpression } = require('../codegen');
 const { builtInTags } = require('../constant');
+const parserAdapter = require('./parserAdapter');
 
-const parserAdapter = {
-  if: 'a:if',
-  else: 'a:else',
-  elseif: 'a:elif',
-  for: 'a:for',
-  forItem: 'a:for-item',
-  forIndex: 'a:for-index',
-  key: 'a:key',
-};
 /**
  * Choose parse method
  * @param {JSXElement|String|Number} el
