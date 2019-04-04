@@ -1,4 +1,3 @@
-const Watcher = require('./Watcher');
 const { resolve, relative, extname } = require('path');
 const { existsSync, ensureFileSync, readFileSync, readJSONSync, writeFileSync } = require('fs-extra');
 const TransformerComponent = require('./Component');
@@ -9,9 +8,8 @@ const colors = require('colors');
  * Abstract of miniapp page.
  * @type {module.TransformerPage}
  */
-module.exports = class TransformerPage extends Watcher {
+module.exports = class TransformerPage {
   constructor(options) {
-    super();
     const { rootContext, context, distRoot, distPagePath, watch } = options;
     this.rootContext = rootContext;
     this.context = context;
@@ -24,7 +22,7 @@ module.exports = class TransformerPage extends Watcher {
 
     const jsxCode = readFileSync(pageJSXPath, 'utf-8');
     const scriptCode = readFileSync(pageScriptPath, 'utf-8');
-    const pageConfig = readJSONSync(pageConfigPath);
+    const pageConfig = existsSync(pageConfigPath) ? readJSONSync(pageConfigPath) : {};
     const pageStyle = existsSync(pageStylePath) ? readFileSync(pageStylePath, 'utf-8') : '';
 
     // { template, jsCode, customComponents,, style }
@@ -46,9 +44,6 @@ module.exports = class TransformerPage extends Watcher {
     });
 
     this.write();
-    if (options.watch) {
-      this.watch();
-    }
   }
 
   generateComponentConfig(customComponents) {

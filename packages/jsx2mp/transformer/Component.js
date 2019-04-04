@@ -1,6 +1,5 @@
 const { ensureFileSync, writeFileSync, readJSONSync, existsSync, readFileSync } = require('fs-extra');
 const { join, resolve, relative } = require('path');
-const Watcher = require('./Watcher');
 const { transformJSX } = require('./transformJSX');
 const colors = require('colors');
 
@@ -8,9 +7,8 @@ const colors = require('colors');
  * Abstract of miniapp component.
  * @type {module.TransformerComponent}
  */
-module.exports = class TransformerComponent extends Watcher {
+module.exports = class TransformerComponent {
   constructor({ script, template, style = '', config = {} }, options = {}) {
-    super();
     const { rootContext, context, distRoot, distPath } = options;
     this.rootContext = rootContext;
     this.context = context;
@@ -48,10 +46,6 @@ module.exports = class TransformerComponent extends Watcher {
       }, { rootContext, context: componentSourcePath, distRoot, distPath: componentDistPath });
       this.deps.push(componentDep);
     });
-
-    if (options.watch) {
-      this.watch();
-    }
   }
 
   write() {

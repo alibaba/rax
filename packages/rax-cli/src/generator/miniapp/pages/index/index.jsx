@@ -16,7 +16,7 @@ export default class extends Component {
     return (
       <view className="app">
         <Header>
-          <image mode="widthFix" src="https://gw.alicdn.com/tfs/TB1omutPwHqK1RjSZFkXXX.WFXa-498-498.png" className="app-logo"></image>
+          <image mode="widthFix" src="https://gw.alicdn.com/tfs/TB1omutPwHqK1RjSZFkXXX.WFXa-498-498.png" className="app-logo" />
           <text className="app-title" onTap={this.handleTap}>Welcome to {this.state.name}</text>
         </Header>
         <view class="app-intro">To get started, edit and rebuild.</view>

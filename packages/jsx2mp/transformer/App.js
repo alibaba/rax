@@ -1,76 +1,56 @@
-const { join } = require('path');
-const { writeFileSync, writeJSONSync, readJSONSync } = require('fs-extra');
+const { join, resolve } = require('path');
+const { readFileSync, writeFileSync, writeJSONSync, readJSONSync, existsSync } = require('fs-extra');
 const TransformerPage = require('./Page');
 // const Watcher = require('./Watcher');
 
-const CONFIG_FILE = 'app.json';
-const SCRIPT_FILE = 'app.js';
-const STYLE_FILE = 'app.css';
-
-class App /* extends Watcher */ {
+class App {
   /**
    * @param sourcePath {String} path to source directory.
-   * @param transformerOption {TransformerOption}
+   * @param transformerOption {Object}
    */
   constructor(sourcePath, transformerOption) {
-    // super();
-    const appConfigPath = resolve(sourcePath, CONFIG_FILE);
+    const { watch, appDirectory, distDirectory } = transformerOption;
+    this.appDirectory = appDirectory;
+    this.distDirectory = distDirectory;
 
-    if (!existsSync(appConfigPath)) {
+    const sourceScriptPath = join(appDirectory, 'app.js');
+    const sourceStylePath = join(appDirectory, 'app.css');
+    const sourceConfigPath = join(appDirectory, 'app.json');
+    const sourcePackageJSON = join(appDirectory, 'package.json');
+    if (!existsSync(sourceConfigPath)) {
       throw new Error('app.json not exists.');
     }
-    const appConfig = this.config = readJSONSync(appConfigPath);
 
+    const config = this.config = readJSONSync(sourceConfigPath);
+    const packageConfig = this.packageConfig = readJSONSync(sourcePackageJSON);
+    const script = this.script = readFileSync(sourceScriptPath, 'utf-8');
+    const style = this.style = readFileSync(sourceStylePath, 'utf-8');
 
-    const { watch, appDirectory, distDirectory } = transformerOption;
-    // this.script = script;
-    // this.style = style;
-
-    // this.scriptPath = join(distDirectory, 'app.js');
-    // this.stylePath = join(distDirectory, 'app.acss');
-    // this.configPath = join(distDirectory, 'app.json');
+    // Add rax as dependencies.
+    ;(packageConfig.dependencies = packageConfig.dependencies || {}).rax = '^1.0.0';
 
     this.dependencyPages = [];
-    const { pages } = appConfig;
+    const { pages } = config;
     for (let i = 0, l = pages.length; i < l; i++) {
       const pageInstance = new TransformerPage({
         rootContext: sourcePath,
         context: resolve(sourcePath, pages[i]),
-        distRoot: distPath,
-        distPagePath: resolve(distPath, pages[i], '..'),
-        watch: enableWatch,
+        distRoot: distDirectory,
+        distPagePath: resolve(distDirectory, pages[i], '..'),
+        watch,
       });
       this.dependencyPages.push(pageInstance);
     }
+
+    this.write();
   }
 
   write() {
-    writeFileSync(this.scriptPath, this.script);
-    writeFileSync(this.stylePath, this.style);
-    writeJSONSync(this.configPath, this.config);
+    writeFileSync(join(this.distDirectory, 'app.js'), this.script);
+    writeFileSync(join(this.distDirectory, 'app.acss'), this.style);
+    writeJSONSync(join(this.distDirectory, 'app.json'), this.config);
+    writeJSONSync(join(this.distDirectory, 'package.json'), this.packageConfig);
   }
 }
-
-/**
- * App source declaration.
- */
-class AppSource {
-  constructor({
-    script,
-    config,
-    style = '', // optional
-  }) {
-    // Content of app.js
-    this.script = script;
-
-    // Content of app.acss
-    this.style = style;
-
-    // JS Object, app config.
-    this.config = config;
-  }
-}
-
-App.AppSource = AppSource;
 
 module.exports = App;

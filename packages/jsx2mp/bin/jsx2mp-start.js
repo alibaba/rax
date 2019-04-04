@@ -3,13 +3,13 @@ const { resolve } = require('path');
 const program = require('commander');
 
 program
-  .option('-w, --watch', 'Enable watch.', true)
+  // .option('-w, --watch', 'Enable watch.', true)
   .action((cmd) => {
-    process.env.NODE_ENV = 'development';
     const workDirectory = resolve(process.env.CWD || process.cwd());
     const distDirectory = resolve(workDirectory, 'dist');
 
-    const enableWatch = !'watch' in cmd || cmd.watch;
+    // const enableWatch = (!'watch' in cmd) || cmd.watch;
+    const enableWatch = false; // In developing.
     require('..')(workDirectory, distDirectory, enableWatch);
   });
 

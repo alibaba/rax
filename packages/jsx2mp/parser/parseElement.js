@@ -112,7 +112,11 @@ function parseJSXExpression(expression) {
     {
       // Simple redirect props/state to miniapp's data scope.
       const code = normalizeBindingIdentifier(generateCodeByExpression(expression));
-      return '{{' + code + '}}';
+      if (code === 'children') {
+        return new Node('slot');
+      } else {
+        return '{{' + code + '}}';
+      }
     }
 
     case 'ConditionalExpression': {
