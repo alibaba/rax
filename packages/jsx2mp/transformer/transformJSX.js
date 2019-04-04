@@ -4,9 +4,9 @@ const { existsSync, readFileSync } = require('fs-extra');
 const kebabCase = require('kebab-case');
 const { default: traverse, NodePath } = require('@babel/traverse');
 const isJSXClassDeclaration = require('./isJSXClassDeclaration');
-const { parse, parseElement } = require('../parser');
-const findReturnElement = require('./findReturnElement');
+const { parse } = require('../parser');
 const { generateElement, generateCodeByExpression } = require('../codegen');
+const parseRender = require('../parser/parseRender');
 const {
   RAX_COMPONENT,
   SAFE_RAX_COMPONENT,
@@ -115,15 +115,8 @@ function getTemplate(ast) {
             throw Error( 'Only one return is allow in render method.');
           }
 
-          const renderBody = renderPath.get('body');
-          const returnElement = findReturnElement(renderBody).node;
-          // Not only support JSXElement, but also support Number|String|Array
-          if (isSupportTransfrom(returnElement)) {
-            const node = parseElement(returnElement);
-            template = generateElement(node);
-          } else {
-            throw new Error('Render method only return JSXElement.');
-          }
+          const returnNode = parseRender(renderPath);
+          template = generateElement(returnNode);
 
           // Remove render method path at last.
           renderPath.remove();
@@ -239,16 +232,6 @@ function getComponentJSCode(ast) {
 
 function normalizeComponentName(tagName) {
   return kebabCase(tagName).replace(/^-/, '');
-}
-
-function isSupportTransfrom(el) {
-  const typeCheckMethods = [
-    'isJSXElement',
-    'isStringLiteral',
-    'isNumericLiteral',
-    'isArrayExpression'
-  ];
-  return typeCheckMethods.some(method => t[method](el));
 }
 
 exports.transformJSX = transformJSX;
