@@ -2,7 +2,7 @@ const INSTANCE = '__rax_instance__';
 const CYCLE_MAP = {
   componentDidMount: 'didMount',
   componentWillReceiveProps: 'didUpdate',
-  componentWillMount: 'didUnmount',
+  componentWillUnmount: 'didUnmount',
 };
 
 function hasOwn(object, prop) {
