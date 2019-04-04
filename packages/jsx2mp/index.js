@@ -4,15 +4,14 @@ const {
   lstatSync,
   copySync,
   mkdirpSync,
-  readJSONSync,
   removeSync,
 } = require('fs-extra');
+const { spawnSync } = require('child_process');
 const { resolve, extname } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
-const glob = require('glob');
 const inquirer = require('inquirer');
-const TransformerPage = require('./transformer/Page');
+const TransformerApp = require('./transformer/App');
 
 /**
  * Transform a jsx project.
@@ -31,61 +30,35 @@ async function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = fal
     }
   }
 
-  const appConfigPath = resolve(sourcePath, 'app.json');
-  if (!existsSync(appConfigPath)) {
-    throw new Error('app.json should exists.');
-  }
-  const appConfig = readJSONSync(appConfigPath);
-
+  // Make sure dist directory created.
   mkdirpSync(distPath);
   printLog(colors.green('创建目录'), 'dist/');
-  if (enableWatch) {
-    printLog(colors.green('监听以下路径的文件变更'), sourcePath);
-  }
 
-  const globOption = {
-    cwd: sourcePath,
-    nodir: true,
-    dot: true,
-    ignore: ['node_modules', 'dist/**', '.DS_Store'],
-    absolute: false,
-  };
-  const files = glob.sync('*', globOption);
-  for (let i = 0, l = files.length; i < l; i++) {
-    const filename = files[i];
-    let from = resolve(sourcePath, filename);
-    let to = resolve(distPath, filename);
-    // transform .css to .acss
-    if (extname(to) === '.css') to = to.replace(/\.css/, '.acss');
-    copySync(from, to);
-  }
-  // todo: watch these files.
+  const app = new TransformerApp(sourcePath, {
+    appDirectory: sourcePath,
+    distDirectory: distPath,
+  });
 
-  const { pages } = appConfig;
-  for (let i = 0, l = pages.length; i < l; i++) {
-    new TransformerPage({
-      rootContext: sourcePath,
-      context: resolve(sourcePath, pages[i]),
-      distRoot: distPath,
-      distPagePath: resolve(distPath, pages[i], '..'),
-      watch: enableWatch,
-    });
-  }
+  if (enableWatch) printLog(colors.green('将监听以下路径的文件变更'), sourcePath);
 
   const localHelperPath = resolve(__dirname, 'helpers');
   // In case of duplicated name.
   copySync(localHelperPath, resolve(distPath, '__helpers'));
   printLog(colors.green('复制 Helpers'), 'dist/helpers');
 
-  /**
-   * Judge whether a file path is belonging to a page.
-   * @param relativeFilePath {String}
-   * @return isPage {Boolean}
-   */
-  function isPage(relativeFilePath) {
-    const fileNameWithoutExt = relativeFilePath.slice(0, -extname(relativeFilePath).length);
-    return appConfig.pages.some((path) => path === fileNameWithoutExt);
+  const shouldInstallDistNPM = await ask('是否需要自动安装 npm 到构建目录中?');
+  if (shouldInstallDistNPM) {
+    invokeNpmInstall(distPath);
   }
+}
+
+function invokeNpmInstall(path) {
+  printLog(colors.green('运行'), 'npm install --production');
+  return spawnSync('npm', ['install', '--production'], {
+    cwd: path,
+    env: process.env,
+    stdio: 'inherit'
+  });
 }
 
 /**
