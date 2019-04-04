@@ -17,6 +17,7 @@ const rimraf = require('rimraf');
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
 const componentCompiler = require('./utils/componentCompiler');
+const jsx2mp = require('jsx2mp');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -31,6 +32,7 @@ function buildCompiler(config) {
   });
 }
 
+const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   weexapp: './config/weexapp/webpack.config.prod',
@@ -40,7 +42,9 @@ const webpackConfigMap = {
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
 
-  if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
+  if (type === MINIAPP) {
+    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
+  } else if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
     componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {
