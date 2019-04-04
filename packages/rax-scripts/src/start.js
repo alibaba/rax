@@ -20,7 +20,7 @@ const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
 
-const MINI_PROGRAM = 'miniprogram';
+const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
   weexapp: './config/weexapp/webpack.config.dev',
@@ -30,7 +30,7 @@ const webpackConfigMap = {
  * run webpack dev server
  */
 module.exports = function start(type = 'webapp') {
-  if (type === MINI_PROGRAM) {
+  if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, true);
   } else {
     const config = require(webpackConfigMap[type]);

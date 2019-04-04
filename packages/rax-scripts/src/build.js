@@ -32,7 +32,7 @@ function buildCompiler(config) {
   });
 }
 
-const MINI_PROGRAM = 'miniprogram';
+const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   weexapp: './config/weexapp/webpack.config.prod',
@@ -42,7 +42,7 @@ const webpackConfigMap = {
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
 
-  if (type === MINI_PROGRAM) {
+  if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
   } else if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
