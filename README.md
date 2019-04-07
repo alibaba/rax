@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-[🚧 Work In Progress v1.0] The fastest way to build cross-container application.
+The fastest way to build universal application.
 </p>
 
 <p align="center">
@@ -18,11 +18,15 @@
 
 ---
 
-:zap: **Fast:** blazing fast virtual DOM.
+:christmas_tree: **Familiar:** React compatibility API with Class Component and Hooks.
 
-:dart: **Tiny:** ~7 KB minified + gzipped.
+:candy: **Tiny:** ~7 KB minified + gzipped.
 
-:art: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
+:earth_asia: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
+
+ :banana: **Easy:** using via `rax-cli` with zero configuration, one codebase with universal UI toolkit & APIs.
+
+:lollipop: **Friendly:** developer tools for Rax development.
 
 ---
 
