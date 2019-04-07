@@ -24,7 +24,7 @@ The fastest way to build universal application.
 
 :earth_asia: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
 
- :banana: **Easy:** using via `rax-cli` with zero configuration, one codebase with universal UI toolkit & APIs.
+:banana: **Easy:** using via `rax-cli` with zero configuration, one codebase with universal UI toolkit & APIs.
 
 :lollipop: **Friendly:** developer tools for Rax development.
 
