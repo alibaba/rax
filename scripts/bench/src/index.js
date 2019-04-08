@@ -3,6 +3,7 @@ const { join } = require('path');
 const { readdirSync, statSync, writeFileSync, existsSync, mkdirSync, readFileSync } = require('fs');
 const yargs = require('yargs');
 const debug = require('debug');
+const chalk = require('chalk');
 
 const { benchmarks } = require('./benchmarks');
 const { executeBenchmark } = require('./runner');
@@ -192,7 +193,9 @@ if (args.help) {
 } else {
   run(runFrameworks, runBenchmarks, args.local, args.skipBuild)
     .then(_ => {
-      console.log('successful run');
+      console.log();
+      console.log(chalk.green('successful run'));
+      console.log();
     })
     .catch(error => {
       console.log(error);

@@ -1,5 +1,6 @@
 const Table = require('cli-table');
 const chalk = require('chalk');
+const { loadFrameworkVersionInformation } = require('./common');
 
 const TABLE_CONFIG = {
   chars: {
@@ -22,6 +23,8 @@ const TABLE_CONFIG = {
 };
 
 module.exports = function(data, frameworks, benchmarks) {
+  const frameworksInfo = loadFrameworkVersionInformation(frameworks);
+
   Object.keys(data).map(type => {
     console.log();
     console.log(data[type].info);
@@ -32,7 +35,9 @@ module.exports = function(data, frameworks, benchmarks) {
     // header
     const rowHeader = [chalk.white.bold(type)];
     frameworks.map(framework => {
-      rowHeader.push(chalk.white.bold(framework));
+      const frameworkInfo = frameworksInfo[framework];
+      const title = frameworkInfo.version ? `${frameworkInfo.name}@${frameworkInfo.version}` : frameworkInfo.name;
+      rowHeader.push(chalk.white.bold(title));
     });
     table.push(rowHeader);
 
