@@ -1,3 +1,5 @@
+const { BenchmarkTypeInfo } = require('./benchmarks');
+
 /**
 const results = {
   "CPU": {
@@ -31,7 +33,8 @@ module.exports = function(data, frameworks) {
       if (!results[type]) {
         results[type] = {
           benchmarks: {},
-          mean: {}
+          mean: {},
+          info: BenchmarkTypeInfo[type.toUpperCase()]
         };
       }
 

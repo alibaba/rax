@@ -1,28 +1,34 @@
 const Table = require('cli-table');
 const chalk = require('chalk');
 
-module.exports = function(data, frameworks, benchmarks) {
-  const table = new Table({
-    chars: {
-      top: '',
-      'top-mid': '',
-      'top-left': '',
-      'top-right': '',
-      bottom: '',
-      'bottom-mid': '',
-      'bottom-left': '',
-      'bottom-right': '',
-      left: '',
-      'left-mid': '',
-      mid: ' ',
-      'mid-mid': '',
-      right: '',
-      'right-mid': '',
-      middle: '│'
-    }
-  });
+const TABLE_CONFIG = {
+  chars: {
+    top: '',
+    'top-mid': '',
+    'top-left': '',
+    'top-right': '',
+    bottom: '',
+    'bottom-mid': '',
+    'bottom-left': '',
+    'bottom-right': '',
+    left: '',
+    'left-mid': '',
+    mid: ' ',
+    'mid-mid': '',
+    right: '',
+    'right-mid': '',
+    middle: '│'
+  }
+};
 
+module.exports = function(data, frameworks, benchmarks) {
   Object.keys(data).map(type => {
+    console.log();
+    console.log(data[type].info);
+    console.log();
+
+    const table = new Table(TABLE_CONFIG);
+
     // header
     const rowHeader = [chalk.white.bold(type)];
     frameworks.map(framework => {
@@ -77,7 +83,7 @@ module.exports = function(data, frameworks, benchmarks) {
     });
 
     table.push(row);
-  });
 
-  console.log(table.toString());
+    console.log(table.toString());
+  });
 };

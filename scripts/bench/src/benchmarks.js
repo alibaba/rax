@@ -19,7 +19,14 @@ const BenchmarkType = {
   STARTUP: 'STARTUP'
 };
 
+const BenchmarkTypeInfo = {
+  CPU: 'Duration in milliseconds ± 95% confidence interval (Slowdown = Duration / Fastest)',
+  MEMORY: 'Memory allocation in MBs ± 95% confidence interval',
+  STARTUP: 'Startup metrics (lighthouse with mobile simulation)'
+};
+
 exports.BenchmarkType = BenchmarkType;
+exports.BenchmarkTypeInfo = BenchmarkTypeInfo;
 
 class Benchmark {
   constructor(benchmarkInfo) {

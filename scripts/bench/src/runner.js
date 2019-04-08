@@ -9,7 +9,7 @@ const path = require('path');
 const R = require('ramda');
 const jStat = require('jstat').jStat;
 
-const { BenchmarkType, benchmarks } = require('./benchmarks');
+const { BenchmarkType } = require('./benchmarks');
 const webdriverAccess = require('./webdriverAccess');
 const config = require('./config');
 
