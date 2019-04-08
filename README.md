@@ -190,6 +190,8 @@ hydrate(<MyComponent />, document.body);
 
 ### App Router
 
+Use `route` to config routing rules, typically should only call once in app. Each route map to a component.
+
 ```jsx
 import { createElement, Fragment } from 'rax';
 import { route, useComponent, push } from 'rax-use-router';
