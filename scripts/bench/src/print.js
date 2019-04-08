@@ -27,13 +27,13 @@ module.exports = function(data, frameworks, benchmarks) {
 
   Object.keys(data).map(type => {
     console.log();
-    console.log(data[type].info);
+    console.log(chalk.green(data[type].info));
     console.log();
 
     const table = new Table(TABLE_CONFIG);
 
     // header
-    const rowHeader = [chalk.white.bold(type)];
+    const rowHeader = [chalk.white.bold('Name')];
     frameworks.map(framework => {
       const frameworkInfo = frameworksInfo[framework];
       const title = frameworkInfo.version ? `${frameworkInfo.name}@${frameworkInfo.version}` : frameworkInfo.name;
