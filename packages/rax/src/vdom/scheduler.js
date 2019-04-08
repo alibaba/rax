@@ -1,15 +1,13 @@
-let scheduler;
+let updateCallbacks = [];
+let effectCallbacks = [];
+let scheduler = setTimeout;
+
 if (process.env.NODE_ENV !== 'production') {
-  // For jest hijack timers
+  // Wrapper timer for hijack timers in jest
   scheduler = (callback) => {
     setTimeout(callback);
   };
-} else {
-  scheduler = typeof Promise == 'function' ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
 }
-
-let updateCallbacks = [];
-let effectCallbacks = [];
 
 // Schedule before next render
 export function schedule(callback) {
