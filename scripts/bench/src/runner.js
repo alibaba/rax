@@ -283,12 +283,16 @@ async function computeResultsCPU(
         (R.last(eventsDuringBenchmark).end - eventsDuringBenchmark[0].ts) /
         1000.0;
       let duration = (lastPaint.end - clicks[0].ts) / 1000.0;
-      console.log(
-        '*** duration',
-        duration,
-        'upper bound ',
-        upperBoundForSoundnessCheck
-      );
+
+      if (config.LOG_DEBUG) {
+        console.log(
+          '*** duration',
+          duration,
+          'upper bound ',
+          upperBoundForSoundnessCheck
+        );
+      }
+
       if (duration < 0) {
         console.log(
           'soundness check failed. reported duration is less 0',
@@ -586,6 +590,7 @@ async function runMemOrCPUBenchmark(framework, benchmark, benchmarkOptions) {
       benchmarkOptions.outputDirectory
     );
     console.log('QUIT');
+    console.log();
     await driver.close();
     await driver.quit();
   } catch (e) {
@@ -602,6 +607,7 @@ async function runMemOrCPUBenchmark(framework, benchmark, benchmarkOptions) {
 
 async function runStartupBenchmark(framework, benchmark, benchmarkOptions) {
   console.log('benchmarking startup', framework, benchmark.id);
+
   let errors = [];
   let results = [];
   for (let i = 0; i < benchmarkOptions.numIterationsForStartupBenchmark; i++) {

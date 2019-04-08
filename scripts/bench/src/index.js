@@ -109,6 +109,7 @@ async function run(frameworkNames, benchmarkNames, local, skipBuild) {
 
   console.log('Frameworks that will be benchmarked', runFrameworks);
   console.log('Benchmarks that will be run', runBenchmarks.map(b => b.id));
+  console.log();
 
   for (let i = 0; i < runFrameworks.length; i++) {
     const framework = runFrameworks[i];

@@ -18,6 +18,11 @@ function executeCommand(command) {
 async function buildBundles(framework) {
   const frameworkPath = join(__dirname, `../frameworks/${framework}`);
 
+  console.log(`building ${framework} in directory ${frameworkPath}`);
+  console.log();
+  console.log('running npm install && npm run build-prod');
+  console.log();
+
   return await executeCommand(
     `cd ${frameworkPath} && rm -rf node_modules && rm -rf dist && npm install && npm run build-prod`
   );
