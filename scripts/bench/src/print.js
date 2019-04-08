@@ -1,6 +1,7 @@
 const Table = require('cli-table');
 const chalk = require('chalk');
-const { loadFrameworkVersionInformation } = require('./common');
+const { loadFrameworkVersionInformation, getOSInformation } = require('./common');
+
 
 const TABLE_CONFIG = {
   chars: {
@@ -23,8 +24,14 @@ const TABLE_CONFIG = {
 };
 
 module.exports = function(data, frameworks, benchmarks) {
-  const frameworksInfo = loadFrameworkVersionInformation(frameworks);
+  const osInformation = getOSInformation();
 
+  console.log('The benchmark was run on:');
+  Object.keys(osInformation).map(info => {
+    console.log('   ' + info.toUpperCase() + ': ' + osInformation[info]);
+  });
+
+  const frameworksInfo = loadFrameworkVersionInformation(frameworks);
   Object.keys(data).map(type => {
     console.log();
     console.log(chalk.green(data[type].info));

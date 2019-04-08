@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 function loadFrameworkVersionInformation(frameworks) {
   const results = {};
@@ -36,6 +37,15 @@ function loadFrameworkVersionInformation(frameworks) {
   return results;
 }
 
+function getOSInformation() {
+  return {
+    platform: os.platform() + ' ' + os.release(),
+    cpu: os.cpus()[0].model,
+    'system memory': os.totalmem() / ( 1024 * 1024 * 1024 ) + 'GB',
+  };
+}
+
 module.exports = {
-  loadFrameworkVersionInformation
+  loadFrameworkVersionInformation,
+  getOSInformation
 };
