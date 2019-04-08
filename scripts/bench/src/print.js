@@ -37,7 +37,7 @@ module.exports = function(data, frameworks, benchmarks) {
       const result = benchmarksResult[benchmark];
 
       const benchmarkInfo = benchmarks[benchmark];
-      const title = benchmarkInfo.label;
+      const title = benchmarkInfo.title || benchmarkInfo.label;
       const row = [chalk.gray(title)];
 
       frameworks.map(framework => {

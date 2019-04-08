@@ -48,6 +48,7 @@ const benchRun = new class extends Benchmark {
       id: '01_run1k',
       label: 'create rows',
       description: 'creating 1,000 rows',
+      title: 'creating 1,000 rows',
       type: BenchmarkType.CPU
     });
   }
@@ -67,6 +68,7 @@ const benchReplaceAll = new class extends Benchmark {
       label: 'replace all rows',
       description:
         'updating all 1,000 rows (' + config.WARMUP_COUNT + ' warmup runs).',
+      title: 'updating all 1,000 rows',
       type: BenchmarkType.CPU
     });
   }
@@ -94,6 +96,7 @@ const benchUpdate = new class extends Benchmark {
       label: 'partial update',
       description:
         'updating every 10th row for 1,000 rows (3 warmup runs). 16x CPU slowdown.',
+      title: 'updating every 10th row',
       type: BenchmarkType.CPU,
       throttleCPU: 16
     });
@@ -130,6 +133,7 @@ const benchSelect = new class extends Benchmark {
         'highlighting a selected row. (' +
         config.WARMUP_COUNT +
         ' warmup runs). 16x CPU slowdown.',
+      title: 'select one row',
       type: BenchmarkType.CPU,
       throttleCPU: 16
     });
@@ -157,6 +161,7 @@ const benchSwapRows = new class extends Benchmark {
         'swap 2 rows for table with 1,000 rows. (' +
         config.WARMUP_COUNT +
         ' warmup runs). 4x CPU slowdown.',
+      title: 'swap 2 rows',
       type: BenchmarkType.CPU,
       throttleCPU: 4
     });
@@ -185,6 +190,7 @@ const benchRemove = new class extends Benchmark {
       label: 'remove row',
       description:
         'removing one row. (' + config.WARMUP_COUNT + ' warmup runs).',
+      title: 'removing one row',
       type: BenchmarkType.CPU
     });
   }
@@ -223,6 +229,7 @@ const benchRunBig = new class extends Benchmark {
       id: '07_create10k',
       label: 'create many rows',
       description: 'creating 10,000 rows',
+      title: 'creating 10,000 rows',
       type: BenchmarkType.CPU
     });
   }
@@ -241,6 +248,7 @@ const benchAppendToManyRows = new class extends Benchmark {
       id: '08_create1k-after1k_x2',
       label: 'append rows to large table',
       description: 'appending 1,000 to a table of 10,000 rows. 2x CPU slowdown',
+      title: 'appending 1,000 rows',
       type: BenchmarkType.CPU,
       throttleCPU: 2
     });
@@ -262,6 +270,7 @@ const benchClear = new class extends Benchmark {
       id: '09_clear1k_x8',
       label: 'clear rows',
       description: 'clearing a table with 1,000 rows. 8x CPU slowdown',
+      title: 'clearing a table with 1,000 rows',
       type: BenchmarkType.CPU,
       throttleCPU: 8
     });
@@ -283,6 +292,7 @@ const benchReadyMemory = new class extends Benchmark {
       id: '21_ready-memory',
       label: 'ready memory',
       description: 'Memory usage after page load.',
+      title: 'Memory usage after page load',
       type: BenchmarkType.MEM
     });
   }
@@ -304,6 +314,7 @@ const benchRunMemory = new class extends Benchmark {
       id: '22_run-memory',
       label: 'run memory',
       description: 'Memory usage after adding 1000 rows.',
+      title: 'Memory usage after adding 1000 rows',
       type: BenchmarkType.MEM
     });
   }
@@ -322,6 +333,7 @@ const benchUpdate5Memory = new class extends Benchmark {
       id: '23_update5-memory',
       label: 'update eatch 10th row for 1k rows (5 cycles)',
       description: 'Memory usage after clicking update every 10th row 5 times',
+      title: 'update every 10th row 5 times',
       type: BenchmarkType.MEM
     });
   }
@@ -343,6 +355,7 @@ const benchReplace5Memory = new class extends Benchmark {
       id: '24_run5-memory',
       label: 'replace 1k rows (5 cycles) ',
       description: 'Memory usage after clicking create 1000 rows 5 times',
+      title: 'replace 1k rows 5 cycles',
       type: BenchmarkType.MEM
     });
   }
@@ -367,6 +380,7 @@ const benchCreateClear5Memory = new class extends Benchmark {
       id: '25_run-clear-memory',
       label: 'creating/clearing 1k rows (5 cycles)',
       description: 'Memory usage after creating and clearing 1000 rows 5 times',
+      title: 'creating/clearing 1k rows 5 cycles',
       type: BenchmarkType.MEM
     });
   }
