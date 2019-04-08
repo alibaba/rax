@@ -131,7 +131,7 @@ async function run(frameworkNames, benchmarkNames, local, skipBuild) {
 
   debug('results')(data);
 
-  const formatedData = format(data);
+  const formatedData = format(data, runFrameworks, allBenchmarks);
 
   debug('formatedData')(formatedData);
 

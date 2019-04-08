@@ -23,14 +23,16 @@ module.exports = function(data, frameworks, benchmarks) {
   });
 
   Object.keys(data).map(type => {
+    // header
     const rowHeader = [chalk.white.bold(type)];
     frameworks.map(framework => {
       rowHeader.push(chalk.white.bold(framework));
     });
     table.push(rowHeader);
 
-    const benchmarksResult = data[type];
+    const benchmarksResult = data[type].benchmarks;
 
+    // benchmark results
     Object.keys(benchmarksResult).map(benchmark => {
       const result = benchmarksResult[benchmark];
 
@@ -38,28 +40,43 @@ module.exports = function(data, frameworks, benchmarks) {
       const title = benchmarkInfo.label;
       const row = [chalk.gray(title)];
 
-      row[title] = frameworks.map(framework => {
+      frameworks.map(framework => {
         if (!result[framework]) {
           row.push('-');
         } else {
           const mean = result[framework].mean.toFixed(2);
           const factor = result[framework].factor;
           if (result[framework].warning) {
-            row.push(`${chalk.red(mean)}(${factor})`);
+            row.push(`${mean} ${chalk.red('(' + factor + ')')}`);
             return;
           }
 
           if (result[framework].factor > 1.5) {
-            row.push(`${chalk.yellow(mean)}(${factor})`);
+            row.push(`${mean} ${chalk.yellow('(' + factor + ')')}`);
             return;
           }
 
-          row.push(`${mean}(${factor})`);
+          row.push(`${mean} ${chalk.gray('(' + factor + ')')}`);
         }
       });
 
       table.push(row);
     });
+
+    // geometric mean
+    const meanResult = data[type].mean;
+    const row = [chalk.gray('slowdown geometric mean')];
+    frameworks.map(framework => {
+      const result = meanResult[framework];
+      if (result > 1.5) {
+        row.push(`${chalk.yellow(result)}`);
+        return;
+      }
+
+      row.push(result);
+    });
+
+    table.push(row);
   });
 
   console.log(table.toString());
