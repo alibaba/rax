@@ -14,9 +14,10 @@ before_script:
 
 jobs: 
   include:
-    script:
-      - npm run lint:nofix
-      - npm run test
+    - stage:
+      script:
+        - npm run lint:nofix
+        - npm run test
     - stage: bench
       addons:
         apt:
