@@ -30,3 +30,9 @@ jobs:
         - sh -e /etc/init.d/xvfb start
         - sleep 3                   # give xvfb some time to start
       script: npm run bench
+
+stages:
+  - test # default stage
+  - name: bench
+    # require the branch name to be master (note for PRs this is the base branch name)
+    if: branch = master
