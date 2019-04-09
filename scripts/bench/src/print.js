@@ -26,6 +26,7 @@ const TABLE_CONFIG = {
 module.exports = function(data, frameworks, benchmarks) {
   const osInformation = getOSInformation();
 
+  console.log();
   console.log('The benchmark was run on:');
   Object.keys(osInformation).map(info => {
     console.log('   ' + info.toUpperCase() + ': ' + osInformation[info]);
