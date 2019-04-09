@@ -9,22 +9,22 @@ node_js:
   - "8"
   - "11.10.1"
 
-before_script:
-  - npm run setup
-
-script:
-  - npm run lint:nofix
-  - npm run test
-
 jobs: 
   include:
-    - stage: deploy
+    - stage: test
+      before_script:
+        - npm run setup
+      script:
+        - npm run lint:nofix
+        - npm run test
+    - stage: bench
       addons:
         apt:
           sources: google-chrome
           packages: google-chrome-stable
       skip_cleanup: true
       before_script:
+        - npm run setup
         - export DISPLAY=:99.0
         - sh -e /etc/init.d/xvfb start
         - sleep 3                   # give xvfb some time to start
