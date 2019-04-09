@@ -35,4 +35,4 @@ stages:
   - test # default stage
   - name: bench
     # require the branch name to be master (note for PRs this is the base branch name)
-    if: branch = master AND type != pull_request
+    if: (branch = master AND type != pull_request) OR branch =~ ^bench
