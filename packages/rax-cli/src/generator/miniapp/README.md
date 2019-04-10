@@ -6,8 +6,6 @@
 
 Runs the app in development mode.
 
-Open [http://localhost:9999](http://localhost:9999) to view it in the browser.
-
 The page will reload if you make edits.
 
 ### `npm run lint`

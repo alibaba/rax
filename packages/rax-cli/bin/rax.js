@@ -131,6 +131,10 @@ function askProjectInformaction(name, verbose) {
         {
           name: 'WeexApp',
           value: 'weexapp'
+        },
+        {
+          name: 'MiniApp',
+          value: 'miniapp'
         }
       ],
       default: 'webapp'

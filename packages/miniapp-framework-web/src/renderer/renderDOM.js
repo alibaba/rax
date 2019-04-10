@@ -1,3 +1,4 @@
+/* global VIEWPORT_WIDTH */
 import domRenderer from 'rax-miniapp-renderer/src';
 import handleModuleAPIEvent from './moduleAPIEvent';
 
@@ -20,7 +21,9 @@ export default function renderDOM(workerHandle, mountNode, clientId, pageQuery =
    * Correct the page font-size
    */
   const { documentElement } = globalThis.document;
-  documentElement.style.fontSize = documentElement.clientWidth / 750 * 100 + 'px';
+  // Correct the page font-size
+  const clientWidth = typeof VIEWPORT_WIDTH !== 'undefined' ? VIEWPORT_WIDTH : documentElement.clientWidth;
+  documentElement.style.fontSize = clientWidth / 750 * 100 + 'px';
 
   return domRenderer({
     worker: workerHandle,

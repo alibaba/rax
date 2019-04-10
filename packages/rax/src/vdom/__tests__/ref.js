@@ -11,10 +11,12 @@ import createRef from '../../createRef';
 describe('Ref', function() {
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('Allow refs to hop around children correctly', function() {
@@ -63,11 +65,15 @@ describe('Ref', function() {
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef).toEqual(firstDiv);
     expect(refHopsAround.refs.hopRef).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);
     expect(refHopsAround.refs.hopRef).toEqual(thirdDiv);
@@ -77,6 +83,8 @@ describe('Ref', function() {
      * refs are completely restored.
      */
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.hopRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
@@ -135,11 +143,15 @@ describe('Ref', function() {
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.hopRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.hopRef.id).toEqual(thirdDiv);
@@ -149,6 +161,8 @@ describe('Ref', function() {
      * refs are completely restored.
      */
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.hopRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
