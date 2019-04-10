@@ -57,7 +57,7 @@ function listReducer(state, action) {
   return state;
 }
 
-const GlyphIcon = <span className="glyphicon glyphicon-remove" aria-hidden="true" />;
+const GlyphIcon = <span className="glyphicon glyphicon-remove" aria-hidden="true">delete</span>;
 
 const Row = memo(({ selected, item, dispatch }) => {
   const select = useCallback(() => dispatch({ type: 'SELECT', id: item.id }), []),

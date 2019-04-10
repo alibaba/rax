@@ -46,7 +46,7 @@
                 </tr>
             </tbody>
         </table>
-        <span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true">delete</span>
     </div>
 </template>
 
