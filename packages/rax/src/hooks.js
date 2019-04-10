@@ -250,7 +250,7 @@ export function useReducer(reducer, initialArg, init) {
   const queue = hook[2];
   let next = hook[0];
 
-  if (currentInstance._reRenders > 0 || queue.eagerReducer != reducer) {
+  if (currentInstance._reRenders > 0) {
     for (let i = 0; i < queue.actions.length; i++) {
       next = reducer(next, queue.actions[i]);
     }
