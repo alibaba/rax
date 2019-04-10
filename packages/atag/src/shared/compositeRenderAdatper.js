@@ -1,6 +1,8 @@
 import { PolymerElement } from '@polymer/polymer';
 import { isAndroid, isIOS } from './device';
+import shouldDowngradeNativeView from './shouldDowngradeNativeView';
 
+const DOWNGRAGEDED = shouldDowngradeNativeView();
 const DATA_TIMESTAMP = 'data-timestamp';
 
 /**
@@ -120,12 +122,15 @@ function compositeClassFactory(config) {
     }
 
     connectedCallback() {
+      if (DOWNGRAGEDED) {
+        this._dispatchEvent('downgrade', null);
+        return;
+      }
       embedEventTarget.addEventListener('embedviewevent', this._handleEmbedMapEvent);
 
       if (isAndroid) {
         document.addEventListener('WVEmbed.Ready', this._handleNativeReady);
       }
-      this._container = document.createElement('object');
       this._createLightDOM();
       /**
        * All observers are automaticlly generated.
@@ -143,6 +148,8 @@ function compositeClassFactory(config) {
 
     disconnectedCallback() {
       super.disconnectedCallback();
+      if (DOWNGRAGEDED) return;
+
       embedEventTarget.removeEventListener('embedviewevent', this._handleEmbedMapEvent);
       if (isAndroid) {
         document.removeEventListener('WVEmbed.Ready', this._handleNativeReady);
