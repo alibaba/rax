@@ -1,0 +1,27 @@
+{
+  "name": "__YourProjectName__",
+  "author": "__AuthorName__",
+  "version": "0.0.0",
+  "browserslist": [
+    "last 1 version",
+    "> 1%"
+  ],
+  "scripts": {
+    "start": "rax-scripts start --type=universalapp",
+    "build": "rax-scripts build --type=universalapp",
+    "lint": "eslint --ext .js --ext .jsx ./src"
+  },
+  "dependencies": {
+    "rax": "^1.0.0",
+    "driver-universal": "^1.0.0",
+    "rax-text": "^1.0.0",
+    "rax-view": "^1.0.0",
+    "rax-image": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax-scripts": "^1.2.0",
+    "eslint": "^5.15.1",
+    "babel-eslint": "^10.0.1",
+    "eslint-plugin-react": "^7.12.4"
+  }
+}

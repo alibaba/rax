@@ -1,20 +1,10 @@
 import { createElement, Component } from 'rax';
-import './Header.css';
+import './index.css';
 
 export default class extends Component {
-  state = {
-    name: 'world'
-  }
-
-  handleTap() {
-    this.setState({
-      name: 'miniapp'
-    });
-  }
-
   render() {
     return (
-      <view className="app-header">
+      <view className="header">
         {this.props.children}
       </view>
     );

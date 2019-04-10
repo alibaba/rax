@@ -9,6 +9,11 @@ module.exports = {
     'commonjs': true
   },
   'globals': {
+    'App': true,
+    'Page': true,
+    'getApp': true,
+    'Component': true,
+    'my': true,
     'weex': true
   },
   'plugins': [

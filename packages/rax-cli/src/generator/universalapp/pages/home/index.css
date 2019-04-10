@@ -1,0 +1,18 @@
+page {
+  
+}
+
+.logo {
+  width: 150rpx;
+}
+
+.intro {
+  margin: 50rpx;
+}
+
+.title {
+  color: #fff;
+  font-weight: bold;
+  font-size: 45rpx;
+  margin: 50rpx 0 0;
+}
