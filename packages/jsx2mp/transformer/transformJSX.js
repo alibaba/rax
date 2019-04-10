@@ -7,13 +7,16 @@ const isJSXClassDeclaration = require('./isJSXClassDeclaration');
 const { parse } = require('../parser');
 const { generateElement, generateCodeByExpression } = require('../codegen');
 const parseRender = require('../parser/parseRender');
+const moduleResolve = require('./moduleResolve');
 const {
   RAX_COMPONENT,
   SAFE_RAX_COMPONENT,
   CREATE_COMPONENT,
   SAFE_CREATE_COMPONENT,
   EXPORTED_CLASS_DEF,
-  HELPER_COMPONENT
+  HELPER_COMPONENT,
+  RAX_UMD_BUNDLE,
+  RAX_PACKAGE
 } = require('../constant');
 
 /**
@@ -29,6 +32,7 @@ function transformJSX(code, options = {}) {
   const style = getStyle(ast, { filePath });
   const template = getTemplate(ast);
   const jsCode = getComponentJSCode(ast);
+
   return {
     template,
     jsCode,
@@ -49,9 +53,11 @@ function getStyle(ast, { filePath }) {
     ImportDeclaration(path) {
       const { node } = path;
       const { source } = node;
-      filePath = resolve(filePath, '..', source.value);
-      if (extname(filePath) === '.css' || existsSync(filePath = filePath + '.css')) {
-        ret += readFileSync(filePath, 'utf-8');
+      let currentFilePath = filePath;
+      currentFilePath = resolve(currentFilePath, '..', source.value);
+      if (extname(currentFilePath) === '.css'
+        || existsSync(currentFilePath = currentFilePath + '.css')) {
+        ret += readFileSync(currentFilePath, 'utf-8');
         // Remove import declaration, for 小程序开发工具 not support import a css file.
         path.remove();
       }
@@ -75,8 +81,8 @@ function getCustomComponents(ast, { filePath, rootContext }) {
       const { source, specifiers } = node;
       if (specifiers.length > 0) {
         const name = specifiers[0].local.name;
-        let jsxFilePath = resolve(filePath, '..', source.value);
-        if (extname(jsxFilePath) === '.jsx' || existsSync(jsxFilePath = jsxFilePath + '.jsx')) {
+        let jsxFilePath = moduleResolve(filePath, source.value, '.jsx');
+        if (jsxFilePath && extname(jsxFilePath) === '.jsx') {
           let absModulePath = relative(rootContext, jsxFilePath);
           absModulePath = absModulePath.slice(0, -extname(absModulePath).length);
           // Rebase import module path.
@@ -176,6 +182,7 @@ function getComponentJSCode(ast) {
      * 1. Add import declaration of helper lib.
      * 2. Rename scope's Component to other id.
      * 3. Add Component call expression.
+     * 4. Transform 'rax' to 'rax/dist/rax.min.js' in case of 小程序开发者工具 not support `process`.
      */
     Program(path) {
       const importedIdentifier = t.identifier(CREATE_COMPONENT);
@@ -211,6 +218,14 @@ function getComponentJSCode(ast) {
       );
     },
 
+    ImportDeclaration(path) {
+      if (t.isStringLiteral(path.node.source, { value: RAX_PACKAGE })) {
+        path.get('source').replaceWith(
+          t.stringLiteral(RAX_UMD_BUNDLE)
+        );
+      }
+    },
+
     ExportDefaultDeclaration(path) {
       const declarationPath = path.get('declaration');
       if (isJSXClassDeclaration(declarationPath)) {
@@ -224,7 +239,7 @@ function getComponentJSCode(ast) {
           ])
         );
       }
-    }
+    },
   });
 
   return generateCodeByExpression(ast);

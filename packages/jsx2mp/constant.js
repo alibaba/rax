@@ -44,6 +44,7 @@ exports.SELF_CLOSE_TAGS = new Set([
 ]);
 
 exports.RAX_PACKAGE = 'rax';
+exports.RAX_UMD_BUNDLE = 'rax/dist/rax.min.js';
 exports.RAX_COMPONENT = 'Component';
 exports.SAFE_RAX_COMPONENT = '__rax_component__';
 
