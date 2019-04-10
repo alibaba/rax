@@ -2,6 +2,10 @@
   "name": "js-framework-benchmark-rax-local",
   "version": "1.0.0",
   "description": "Benchmark for rax(local)",
+  "scripts": {
+    "build-dev": "webpack --watch",
+    "build-prod": "webpack"
+  },
   "devDependencies": {
     "@babel/core": "7.1.2",
     "@babel/preset-env": "7.1.0",

@@ -1,8 +1,8 @@
 /**
  * @jsx createElement
  */
-import { createElement, memo, useReducer, useCallback, render } from '../../../../../packages/rax/lib';
-import * as DriverDOM from '../../../../../packages/driver-dom/lib';
+import { createElement, memo, useReducer, useCallback, render } from '../../../../../packages/rax';
+import * as DriverDOM from '../../../../../packages/driver-dom';
 
 function random(max) {
   return Math.round(Math.random() * 1000) % max;
