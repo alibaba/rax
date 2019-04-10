@@ -23,7 +23,7 @@ describe('transfrom event handle', () => {
     const expectedTemplate = '<view onTap="handleClick">Click Me!</view>';
     const expectedScript = `
       import { createComponent as __create_component__ } from "/__helpers/component";
-      import { createElement, Component as __rax_component__ } from 'rax';
+      import { createElement, Component as __rax_component__ } from "rax/dist/rax.min.js";
 
       var __class_def__ = class extends __rax_component__ {
         handleClick(evt) {// do sth.
