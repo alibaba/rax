@@ -1,25 +1,10 @@
 {
   "name": "js-framework-benchmark-vanillajs",
-  "version": "1.1.1",
-  "description": "Vanilla.JS demo",
-  "main": "index.js",
-  "js-framework-benchmark": {
-    "frameworkVersion": ""
-  },
+  "version": "1.0.0",
+  "description": "Benchmark for vanillajs",
   "scripts": {
     "build-dev": "webpack -w -d",
     "build-prod": "webpack -p"
-  },
-  "keywords": [
-    "react",
-    "webpack"
-  ],
-  "author": "Stefan Krause",
-  "license": "Apache-2.0",
-  "homepage": "https://github.com/krausest/js-framework-benchmark",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/krausest/js-framework-benchmark.git"
   },
   "devDependencies": {
     "babel-core": "6.24.1",
