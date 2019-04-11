@@ -29,7 +29,7 @@ export class Row extends Component {
       <td className="col-md-4">
         <a onClick={this.onClick}>{data.label}</a>
       </td>
-      <td className="col-md-1"><a onClick={this.onDelete}><span className="glyphicon glyphicon-remove" aria-hidden="true" />delete</a></td>
+      <td className="col-md-1"><a onClick={this.onDelete}><span className="glyphicon glyphicon-remove" aria-hidden="true">delete</span></a></td>
       <td className="col-md-6" />
     </tr>);
   }

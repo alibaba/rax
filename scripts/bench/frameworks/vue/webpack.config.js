@@ -30,6 +30,7 @@ const extensions = [
 ];
 
 module.exports = [{
+  mode: 'production',
   cache: cache,
   module: {
     rules: loaders

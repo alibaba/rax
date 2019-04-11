@@ -18,6 +18,7 @@ const extensions = [
 ];
 
 module.exports = [{
+  mode: 'production',
   module: {
     rules: loaders
   },
