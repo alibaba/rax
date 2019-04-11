@@ -4,4 +4,4 @@ prefs
 errors
 results
 
-package-lock.json
+frameworks/*/package-lock.json
