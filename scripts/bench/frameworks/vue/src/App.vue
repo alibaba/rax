@@ -3,7 +3,7 @@
         <div class="jumbotron">
             <div class="row">
                 <div class="col-md-6">
-                    <h1>Vue.js (keyed)</h1>
+                    <h1>Vue.js</h1>
                 </div>
                 <div class="col-md-6">
                     <div class="row">
@@ -39,14 +39,14 @@
                     <td class="col-md-1">
                         <a>
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"
-                                data-action="remove" :data-id="item.id"></span>
+                                data-action="remove" :data-id="item.id">delete</span>
                         </a>
                     </td>
                     <td class="col-md-6"></td>
                 </tr>
             </tbody>
         </table>
-        <span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true">delete</span>
+        <span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span>
     </div>
 </template>
 

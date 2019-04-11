@@ -1,10 +1,10 @@
 'use strict';
-var path = require('path');
-var webpack = require('webpack');
-var VueLoaderPlugin = require('vue-loader/lib/plugin');
+const path = require('path');
+const webpack = require('webpack');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-var cache = {};
-var loaders = [
+const cache = {};
+const loaders = [
   {
     test: /\.js$/,
     loader: 'babel-loader',
@@ -25,7 +25,7 @@ var loaders = [
     }
   }
 ];
-var extensions = [
+const extensions = [
   '.js', '.jsx', '.es6.js', '.msx'
 ];
 
@@ -51,6 +51,11 @@ module.exports = [{
     extensions: extensions
   },
   plugins: [
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    })
   ]
 }];

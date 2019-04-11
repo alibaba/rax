@@ -1,11 +1,15 @@
 {
-    "presets": [
-        ["env", {
-          "targets": {
-            "browsers": ["last 1 chrome versions"]
-          }
-        }],
-        "react"
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": ["last 1 chrome versions"]
+        },
+        "loose": true
+      }
     ],
-    "plugins": []
+    "@babel/preset-react"
+  ],
+  "plugins": []
 }

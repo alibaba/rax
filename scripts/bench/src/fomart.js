@@ -56,13 +56,15 @@ module.exports = function(data, frameworks) {
       const benchmarkResults = resultsForType.benchmarks[benchmark];
 
       let min = frameworks.reduce((min, framework) => {
-        return benchmarkResults[framework] === null ? min : Math.min(min, benchmarkResults[framework].mean);
+        return benchmarkResults[framework] ? Math.min(min, benchmarkResults[framework].mean) : min;
       }, Number.POSITIVE_INFINITY);
 
       frameworks.map((framework) => {
         const result = benchmarkResults[framework];
-        result.factor = (result.mean / min).toFixed(2);
-        result.deviation = (result.standardDeviation || 0) / result.mean * 100.0;
+        if (result) {
+          result.factor = (result.mean / min).toFixed(2);
+          result.deviation = (result.standardDeviation || 0) / result.mean * 100.0;
+        }
       });
     });
 
@@ -84,7 +86,7 @@ module.exports = function(data, frameworks) {
 function computeGeometricMean(resultsForFramework) {
   let count = 0.0;
   let gMean = resultsForFramework.reduce((gMean, r) => {
-    if (r !== null) {
+    if (r) {
       count++;
       gMean *= r.factor;
     }

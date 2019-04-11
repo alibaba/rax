@@ -1,25 +1,21 @@
 'use strict';
-var path = require('path');
+const path = require('path');
+const webpack = require('webpack');
 
-var cache = {};
-var loaders = [
+const rules = [
   {
     test: /\.js$/,
     loader: 'babel-loader'
-  },
-  {
-    test: /\.css$/,
-    loader: 'style-loader!css-loader'
   }
 ];
-var extensions = [
+const extensions = [
   '.js', '.jsx', '.es6.js'
 ];
 
 module.exports = [{
-  cache: cache,
+  mode: 'production',
   module: {
-    loaders: loaders
+    rules: rules
   },
   entry: {
     main: './src/Main.js',
@@ -37,5 +33,10 @@ module.exports = [{
     ],
     alias: {
     }
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': { NODE_ENV: JSON.stringify('production') }
+    })
+  ],
 }];

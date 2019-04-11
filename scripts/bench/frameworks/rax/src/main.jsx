@@ -81,7 +81,7 @@ const Jumbotron = memo(({ dispatch }) =>
   <div className="jumbotron">
     <div className="row">
       <div className="col-md-6">
-        <h1>Rax Hooks keyed</h1>
+        <h1>Rax</h1>
       </div>
       <div className="col-md-6">
         <div className="row">

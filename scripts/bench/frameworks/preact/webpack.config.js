@@ -1,11 +1,9 @@
 'use strict';
-require('babel-plugin-syntax-jsx');
-var path = require('path');
-const MinifyPlugin = require('babel-minify-webpack-plugin');
-var webpack = require('webpack');
 
-var cache = {};
-var loaders = [
+const path = require('path');
+const webpack = require('webpack');
+
+const loaders = [
   {
     test: /\.jsx$/,
     loader: 'babel-loader'
@@ -13,20 +11,15 @@ var loaders = [
   {
     test: /\.es6\.js$/,
     loader: 'babel-loader'
-  },
-  {
-    test: /\.css$/,
-    loader: 'style-loader!css-loader'
   }
 ];
-var extensions = [
+const extensions = [
   '.js', '.jsx', '.es6.js', '.msx'
 ];
 
 module.exports = [{
-  cache: cache,
   module: {
-    loaders: loaders
+    rules: loaders
   },
   entry: {
     main: './src/Main.jsx',
@@ -52,7 +45,6 @@ module.exports = [{
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
-    }),
-    new MinifyPlugin()
+    })
   ]
 }];
