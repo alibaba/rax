@@ -1,3 +1,4 @@
+/* global __windmill_environment__ */
 import deepCopy from './deepCopy';
 import computeChangedData from './computeChangedData';
 import { pushPage, unlinkPage, popupPage } from './pageHub';
@@ -97,7 +98,7 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
             if (
               typeof __windmill_environment__ !== 'undefined'
               && __windmill_environment__.platform === 'iOS'
-              && /^10/.test(__windmill_environment__.systemVersion)) {
+              && parseFloat(__windmill_environment__.systemVersion) < 11) {
               evaluator._eval({
                 code: `setTimeout(function(){ location.replace("${url}"); }, 0);`
               });
