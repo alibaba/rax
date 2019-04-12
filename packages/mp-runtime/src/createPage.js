@@ -90,7 +90,20 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
            * url to detect.
            */
           if (pageInstance[CURRENT_WV_URL] !== url) {
-            evaluator.call('location.replace', url);
+            /**
+             * @HACK In WindMill env & iOS 10, message sent to redirect webview
+             * must be setTimeout to avoid BUG.
+             */
+            if (
+              typeof __windmill_environment__ !== 'undefined'
+              && __windmill_environment__.platform === 'iOS'
+              && /^10/.test(__windmill_environment__.systemVersion)) {
+              evaluator._eval({
+                code: `setTimeout(function(){ location.replace("${url}"); }, 0);`
+              });
+            } else {
+              evaluator.call('location.replace', url);
+            }
           }
           pageInstance[CURRENT_WV_URL] = url;
           return null;
