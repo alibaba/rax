@@ -10,7 +10,6 @@ const parseRender = require('../parser/parseRender');
 const moduleResolve = require('./moduleResolve');
 const {
   RAX_COMPONENT,
-  SAFE_RAX_COMPONENT,
   CREATE_COMPONENT,
   SAFE_CREATE_COMPONENT,
   EXPORTED_CLASS_DEF,
@@ -196,12 +195,6 @@ function getComponentJSCode(ast) {
         )
       );
 
-      // Rename Component ref.
-      if (path.scope.hasBinding(RAX_COMPONENT)) {
-        // Add __ as safe prefix to avoid scope binding duplicate.
-        path.scope.rename(RAX_COMPONENT, SAFE_RAX_COMPONENT);
-      }
-
       // Component(__create_component__(__class_def__));
       path.node.body.push(
         t.expressionStatement(
@@ -218,26 +211,26 @@ function getComponentJSCode(ast) {
       );
     },
 
-    ImportDeclaration(path) {
-      if (t.isStringLiteral(path.node.source, { value: RAX_PACKAGE })) {
-        path.get('source').replaceWith(
-          t.stringLiteral(RAX_UMD_BUNDLE)
-        );
-      }
-    },
-
     ExportDefaultDeclaration(path) {
       const declarationPath = path.get('declaration');
       if (isJSXClassDeclaration(declarationPath)) {
-        const { id, superClass, body, decorators } = declarationPath.node;
+        const { id, body, decorators } = declarationPath.node;
         path.replaceWith(
           t.variableDeclaration('var', [
             t.variableDeclarator(
               t.identifier(EXPORTED_CLASS_DEF),
-              t.classExpression(id, superClass, body, decorators)
+              t.classExpression(id, null, body, decorators)
             )
           ])
         );
+
+        // Remove import rax declaration.
+        if (path.scope.hasBinding(RAX_COMPONENT)) {
+          const raxComponentBinding = path.scope.getBinding(RAX_COMPONENT);
+          if (raxComponentBinding.path.parentPath && raxComponentBinding.path.parentPath.node.type === 'ImportDeclaration') {
+            raxComponentBinding.path.parentPath.remove();
+          }
+        }
       }
     },
   });
