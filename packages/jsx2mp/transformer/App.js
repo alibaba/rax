@@ -3,6 +3,9 @@ const { readFileSync, writeFileSync, writeJSONSync, readJSONSync, existsSync } =
 const TransformerPage = require('./Page');
 // const Watcher = require('./Watcher');
 
+const DEP = 'dependencies';
+const DEV_DEP = 'devDependencies';
+
 class App {
   /**
    * @param sourcePath {String} path to source directory.
@@ -26,8 +29,14 @@ class App {
     const script = this.script = readFileSync(sourceScriptPath, 'utf-8');
     const style = this.style = readFileSync(sourceStylePath, 'utf-8');
 
-    // Add rax as dependencies.
-    ;(packageConfig.dependencies = packageConfig.dependencies || {}).rax = '^1.0.0';
+    // Remove rax in dependencies.
+    if (packageConfig[DEP] && packageConfig[DEP].hasOwnProperty('rax')) {
+      delete packageConfig[DEP].rax;
+    }
+    // Remove devDeps.
+    if (packageConfig[DEV_DEP]) {
+      delete packageConfig[DEV_DEP];
+    }
 
     this.dependencyPages = [];
     const { pages } = config;
