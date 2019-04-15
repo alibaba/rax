@@ -1,3 +1,4 @@
+/* global __windmill_environment__ */
 import deepCopy from './deepCopy';
 import computeChangedData from './computeChangedData';
 import { pushPage, unlinkPage, popupPage } from './pageHub';
@@ -90,7 +91,21 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
            * url to detect.
            */
           if (pageInstance[CURRENT_WV_URL] !== url) {
-            evaluator.call('location.replace', url);
+            /**
+             * @HACK: In WindMill env & iOS 10, message sent to redirect webview
+             * must be setTimeout to avoid BUG.
+             * @NOTE: 2000ms at least to break through.
+             */
+            if (
+              typeof __windmill_environment__ !== 'undefined'
+              && __windmill_environment__.platform === 'iOS'
+              && parseFloat(__windmill_environment__.systemVersion) < 11) {
+              evaluator._eval({
+                code: `setTimeout(function(){ location.replace("${url}"); }, 2000);`
+              });
+            } else {
+              evaluator.call('location.replace', url);
+            }
           }
           pageInstance[CURRENT_WV_URL] = url;
           return null;
