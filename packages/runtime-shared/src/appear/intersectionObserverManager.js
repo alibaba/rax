@@ -1,7 +1,18 @@
-import IntersectionObserver from './IntersectionObserver';
+import PolyfilledIntersectionObserver from './IntersectionObserver';
 
 // Shared intersectionObserver instance.
 let intersectionObserver;
+const IntersectionObserver = (function(window) {
+  if ('IntersectionObserver' in window &&
+    'IntersectionObserverEntry' in window &&
+    'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
+    // features are natively supported
+    return window.IntersectionObserver;
+  } else {
+    // polyfilled IntersectionObserver
+    return PolyfilledIntersectionObserver;
+  }
+})(window);
 const defaultOptions = {
   root: null,
   rootMargin: '0px',
