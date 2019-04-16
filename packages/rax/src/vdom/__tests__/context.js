@@ -5,6 +5,7 @@ import PropTypes from 'rax-proptypes';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
+import { flush } from '../scheduler';
 import ServerDriver from 'driver-server';
 
 describe('Context', function() {
@@ -21,10 +22,12 @@ describe('Context', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should pass context when rendering subtree elsewhere', function() {
@@ -132,7 +135,10 @@ describe('Context', function() {
 
     var instance = render(<Parent />, container);
     expect(container.childNodes[0].childNodes[0].data).toBe('initial-initial');
+
     instance.setState({bar: 'changed'});
+    jest.runAllTimers();
+
     expect(container.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
 });

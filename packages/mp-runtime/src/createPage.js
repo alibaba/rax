@@ -1,8 +1,10 @@
+/* global __windmill_environment__ */
 import deepCopy from './deepCopy';
 import computeChangedData from './computeChangedData';
 import { pushPage, unlinkPage, popupPage } from './pageHub';
 
 const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
+const CURRENT_WV_URL = '__CURRENT_WEBVIEW_URL__';
 const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
 
 const STATE_CONSTRUCTOR = 0;
@@ -74,7 +76,8 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
   const { getWebViewSource, getWebViewOnMessage } = renderFactory;
 
   const render = getWebViewSource
-    ? (data) => {
+    ? function(data) {
+      const pageInstance = this;
       const url = getWebViewSource(data);
       if (url) {
         if (location) {
@@ -82,7 +85,29 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
           location.replace(url);
           return null;
         } else if (evaluator) {
-          evaluator.call('location.replace', url);
+          /**
+           * `render` method will be executed everytime data has changed.
+           * To avoid send evaluator more than once at sametime, cache the current webview
+           * url to detect.
+           */
+          if (pageInstance[CURRENT_WV_URL] !== url) {
+            /**
+             * @HACK: In WindMill env & iOS 10, message sent to redirect webview
+             * must be setTimeout to avoid BUG.
+             * @NOTE: 2000ms at least to break through.
+             */
+            if (
+              typeof __windmill_environment__ !== 'undefined'
+              && __windmill_environment__.platform === 'iOS'
+              && parseFloat(__windmill_environment__.systemVersion) < 11) {
+              evaluator._eval({
+                code: `setTimeout(function(){ location.replace("${url}"); }, 2000);`
+              });
+            } else {
+              evaluator.call('location.replace', url);
+            }
+          }
+          pageInstance[CURRENT_WV_URL] = url;
           return null;
         } else {
           // Downgrade to compatible with unsupport version of miniapp framework

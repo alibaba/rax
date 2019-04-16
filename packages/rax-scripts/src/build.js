@@ -15,8 +15,9 @@ const colors = require('chalk');
 const rimraf = require('rimraf');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
-var componentCompiler = require('./utils/componentCompiler');
 const pathConfig = require('./config/path.config');
+const componentCompiler = require('./utils/componentCompiler');
+const jsx2mp = require('jsx2mp');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -31,17 +32,19 @@ function buildCompiler(config) {
   });
 }
 
+const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
-  miniapp: './config/miniapp/webpack.config.prod',
-  miniprogram: './config/miniprogram/webpack.config.prod',
+  weexapp: './config/weexapp/webpack.config.prod',
   component: './config/component/webpack.config.prod',
 };
 
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
 
-  if (appPackage.keywords && (appPackage.keywords.indexOf('rax-component') || appPackage.keywords.indexOf('universal'))) { // build component
+  if (type === MINIAPP) {
+    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
+  } else if (appPackage.keywords && (appPackage.keywords.indexOf('rax-component') || appPackage.keywords.indexOf('universal'))) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
     componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {

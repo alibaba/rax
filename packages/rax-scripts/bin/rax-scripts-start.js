@@ -4,7 +4,7 @@ const program = require('commander');
 const optionsAttachToEnv = require('../src/utils/optionsAttachToEnv');
 
 program
-  .option('--type <type>', 'set application type, Enum: ["webapp", "miniapp", "miniprogram", "component"].', /^(webapp|miniapp|miniprogram|component)$/i, 'webapp')
+  .option('--type <type>', 'set application type', 'webapp')
   .option('-p, --port <port>', 'set server port', 9999)
   .option('--host <host>', 'set server host')
   .option('--dir <dir>', 'set project path')

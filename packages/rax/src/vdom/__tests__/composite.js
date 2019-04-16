@@ -20,10 +20,12 @@ describe('CompositeComponent', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should rewire refs when rendering to different child types', function() {
@@ -45,24 +47,9 @@ describe('CompositeComponent', function() {
     expect(component.refs.x.tagName).toBe('A');
 
     component.toggleActivatedState();
+
+    jest.runAllTimers();
     expect(component.refs.x.tagName).toBe('B');
-  });
-
-
-  it('should cleanup even if render() fatals', function() {
-    class BadComponent extends Component {
-      render() {
-        throw new Error();
-      }
-    }
-
-    expect(Host.owner).toBe(null);
-
-    expect(function() {
-      render(<BadComponent />);
-    }).not.toThrow();
-
-    expect(Host.owner).toBe(null);
   });
 
   it('donot call render when setState in componentWillMount', function() {
@@ -203,6 +190,7 @@ describe('CompositeComponent', function() {
         <BrokenRender />
       </ErrorBoundary>, container);
 
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -238,7 +226,7 @@ describe('CompositeComponent', function() {
       <ErrorBoundary>
         <BrokenRender />
       </ErrorBoundary>, container);
-
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -274,7 +262,7 @@ describe('CompositeComponent', function() {
       <ErrorBoundary>
         <BrokenRender />
       </ErrorBoundary>, container);
-
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -296,6 +284,7 @@ describe('CompositeComponent', function() {
     }
 
     render(<BrokenRender />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
@@ -365,8 +354,8 @@ describe('CompositeComponent', function() {
       }
     }
 
-    render(
-      <ErrorBoundary />, container);
+    render(<ErrorBoundary />, container);
+    jest.runAllTimers();
     expect(container.childNodes.length).toBe(1);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
@@ -396,8 +385,8 @@ describe('CompositeComponent', function() {
       throw new Error('Hello');
     }
 
-    render(
-      <ErrorBoundary />, container);
+    render(<ErrorBoundary />, container);
+    jest.runAllTimers();
     expect(container.childNodes.length).toBe(1);
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
@@ -457,7 +446,6 @@ describe('CompositeComponent', function() {
       render() {
         logs.push('render2');
         throw new Error();
-        return null;
       }
       componentDidMount() {
         logs.push('componentDidMount2');
@@ -502,6 +490,7 @@ describe('CompositeComponent', function() {
         <Life3 />
       </ErrorBoundary>, container);
 
+    jest.runAllTimers();
     expect(logs).toEqual([
       'componentWillMount1',
       'render1',
@@ -540,6 +529,7 @@ describe('CompositeComponent', function() {
     const instance = render(<App />, container);
     expect(container.childNodes.length).toBe(0);
     instance.setState({count: 1});
+    jest.runAllTimers();
     expect(container.childNodes[0].tagName).toBe('DIV');
   });
 
@@ -577,6 +567,7 @@ describe('CompositeComponent', function() {
 
     render(<Foo />, container);
 
+    jest.runAllTimers();
     expect(ops).toEqual([
       'render: 0',
       'componentDidMount (before setState): 0',
@@ -589,7 +580,7 @@ describe('CompositeComponent', function() {
 
     ops = [];
     instance.setState({tick: 2});
-
+    jest.runAllTimers();
     expect(ops).toEqual([
       'render: 2',
       'componentDidUpdate: 2',
@@ -620,6 +611,7 @@ describe('CompositeComponent', function() {
       }
     }
     render(<Foo />, container);
+    jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('5');
   });
 
@@ -690,7 +682,7 @@ describe('CompositeComponent', function() {
     }
 
     render(<Batch />, container2);
-
+    jest.runAllTimers();
     expect(instance.state.x).toBe(1);
     expect(child.state.y).toBe(2);
     expect(child2.state.y).toBe(2);
@@ -807,6 +799,7 @@ describe('CompositeComponent', function() {
       }
     }
     render(<App />, container);
+    jest.runAllTimers();
     // Child1  Child2 appears only once
     expect(logs).toEqual(['Child1', 'Parent1', 'Child2']);
     expect(container.childNodes[0].childNodes[0].data).toBe('2');
@@ -870,6 +863,7 @@ describe('CompositeComponent', function() {
     inst.setState({
       show: true
     });
+    jest.runAllTimers();
 
     childNodes = container.childNodes;
 

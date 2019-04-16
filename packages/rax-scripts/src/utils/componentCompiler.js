@@ -8,7 +8,6 @@ const babel = require('@babel/core');
 const chalk = require('chalk');
 const glob = require('glob');
 const minimatch = require('minimatch');
-const chokidar = require('chokidar');
 
 const SRC_DIR = 'src';
 const BUILD_DIR = 'lib';
@@ -18,7 +17,6 @@ const IGNORE_PATTERN = '**/__tests__/**';
 const babelOptions = require('../config/babel.config');
 
 babelOptions.babelrc = false;
-// babelOptions.sourceMaps = 'inline';
 
 const fixedWidth = str => {
   const WIDTH = 80;

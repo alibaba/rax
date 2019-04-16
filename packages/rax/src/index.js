@@ -1,30 +1,22 @@
-import createElement from './createElement';
-import createContext from './createContext';
-import createRef from './createRef';
-import {useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeHandle} from './hooks';
-import memo from './memo';
-import Fragment from './fragment';
-import render from './render';
-import Component, { PureComponent } from './vdom/component';
-import version from './version';
+export createElement from './createElement';
+export createContext from './createContext';
+export createRef from './createRef';
+export forwardRef from './forwardRef';
+export {useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeHandle} from './hooks';
+export memo from './memo';
+export Fragment from './fragment';
+export render from './render';
+export Component, { PureComponent } from './vdom/component';
+export version from './version';
+
 import Host from './vdom/host';
 import Instance from './vdom/instance';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
 
-const shared = {
+export const shared = {
   Host,
   Instance,
   Element,
   flattenChildren
-};
-
-export {
-  createElement, createRef, createContext,
-  useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeHandle,
-  Component, PureComponent,
-  Fragment, memo,
-  render,
-  version,
-  shared
 };

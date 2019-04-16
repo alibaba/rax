@@ -1,12 +1,9 @@
 import { PolymerElement } from '@polymer/polymer';
-import debounce from './debounce';
 import { isAndroid, isIOS } from './device';
+import shouldDowngradeNativeView from './shouldDowngradeNativeView';
 
+const DOWNGRAGEDED = shouldDowngradeNativeView();
 const DATA_TIMESTAMP = 'data-timestamp';
-/**
- * Debounce native params update.
- */
-const NATIVE_UPDATE_DEBOUNCE_TIME = 16;
 
 /**
  * Debug output.
@@ -125,22 +122,25 @@ function compositeClassFactory(config) {
     }
 
     connectedCallback() {
+      if (DOWNGRAGEDED) {
+        this._dispatchEvent('downgrade', null);
+        return;
+      }
       embedEventTarget.addEventListener('embedviewevent', this._handleEmbedMapEvent);
 
       if (isAndroid) {
         document.addEventListener('WVEmbed.Ready', this._handleNativeReady);
       }
-      this._container = document.createElement('object');
       this._createLightDOM();
       /**
        * All observers are automaticlly generated.
        */
       for (let i = 0, l = propKeys.length; i < l; i++) {
         const key = propKeys[i];
-        this['_observe' + key] = debounce((val) => {
+        this['_observe' + key] = (val) => {
           const nativeAttr = props[key].nativeAttr;
           this._createOrUpdateParam(nativeAttr, val);
-        }, NATIVE_UPDATE_DEBOUNCE_TIME);
+        };
       }
 
       super.connectedCallback();
@@ -148,6 +148,8 @@ function compositeClassFactory(config) {
 
     disconnectedCallback() {
       super.disconnectedCallback();
+      if (DOWNGRAGEDED) return;
+
       embedEventTarget.removeEventListener('embedviewevent', this._handleEmbedMapEvent);
       if (isAndroid) {
         document.removeEventListener('WVEmbed.Ready', this._handleNativeReady);

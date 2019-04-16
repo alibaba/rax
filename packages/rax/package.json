@@ -1,9 +1,9 @@
 {
   "name": "rax",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
@@ -17,7 +17,11 @@
   },
   "dependencies": {
     "driver-server": "^1.0.0",
-    "@babel/runtime": "^7.2.0"
+    "@babel/runtime": "^7.2.0",
+    "rax-is-valid-element": "^1.0.0",
+    "rax-clone-element": "^1.0.0",
+    "rax-children": "^1.0.0",
+    "rax-create-factory": "^1.0.0"
   },
   "devDependencies": {
     "rax-proptypes": "^1.0.0"

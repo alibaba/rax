@@ -1,44 +1,42 @@
-let performUpdate = null;
+let updateCallbacks = [];
+let effectCallbacks = [];
+let scheduler = setTimeout;
 
-const setImmediatePolyfill = job => {
-  return setTimeout(job, 0);
-}; // 0s
-
-const scheduleImmediateCallback = typeof setImmediate === 'undefined' ?
-  setImmediatePolyfill : setImmediate;
-
-const cancelImmediateCallback = typeof clearImmediate === 'undefined' ?
-  clearTimeout : clearImmediate;
-
-let beforeNextRenderCallbacks = [];
-let beforeNextRenderCallbackId;
-
-// Commit before next render
-function commit() {
-  let preCallbacks = beforeNextRenderCallbacks;
-  beforeNextRenderCallbacks = [];
-  preCallbacks.forEach(callback => callback());
-  preCallbacks = null;
-  // Exec callback maybe schedule a work
-  performUpdate();
+if (process.env.NODE_ENV !== 'production') {
+  // Wrapper timer for hijack timers in jest
+  scheduler = (callback) => {
+    setTimeout(callback);
+  };
 }
 
 // Schedule before next render
-export const schedule = (callback) => {
-  if (beforeNextRenderCallbacks.length === 0) {
-    beforeNextRenderCallbackId = scheduleImmediateCallback(commit);
+export function schedule(callback) {
+  if (updateCallbacks.length === 0) {
+    scheduler(flush);
   }
-  beforeNextRenderCallbacks.push(callback);
-};
+  updateCallbacks.push(callback);
+}
 
 // Flush before next render
 export function flush() {
-  if (beforeNextRenderCallbacks.length !== 0) {
-    cancelImmediateCallback(beforeNextRenderCallbackId);
-    commit();
+  let callbacks = updateCallbacks;
+  if (callbacks.length !== 0) {
+    updateCallbacks = [];
+    callbacks.forEach(callback => callback());
   }
 }
 
-export function setUpdater(handle) {
-  performUpdate = handle;
+export function scheduleEffect(callback) {
+  if (effectCallbacks.length === 0) {
+    scheduler(flushEffect);
+  }
+  effectCallbacks.push(callback);
+}
+
+export function flushEffect() {
+  let callbacks = effectCallbacks;
+  if (callbacks.length !== 0) {
+    effectCallbacks = [];
+    callbacks.forEach(callback => callback());
+  }
 }

@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-[🚧 Work In Progress v1.0] The fastest way to build cross-container application.
+The fastest way to build universal application.
 </p>
 
 <p align="center">
@@ -18,11 +18,15 @@
 
 ---
 
-:zap: **Fast:** blazing fast virtual DOM.
+:christmas_tree: **Familiar:** React compatible API with Class Component and Hooks.
 
-:dart: **Tiny:** ~7 KB minified + gzipped.
+:candy: **Tiny:** ~7 KB minified + gzipped.
 
-:art: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implement [driver specification](./docs/en-US/driver-spec.md).
+:earth_asia: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implements [driver specification](./docs/en-US/driver-spec.md).
+
+:banana: **Easy:** using via `rax-cli` with zero configuration, one codebase with universal UI toolkit & APIs.
+
+:lollipop: **Friendly:** developer tools for Rax development.
 
 ---
 
@@ -31,7 +35,7 @@
   - [Using via CLI](#using-via-cli)
   - [Using via CDN](#using-via-cdn)
 - [Guides](#guides)
-  - [Server-side render and hydration](#server-side-render-and-hydration)
+  - [Server-side rendering and hydration](#server-side-rendering-and-hydration)
   - [App Router](#app-router)
   - [Fetch Data](#fetch-data)
   - [Asynchronous Operation](#asynchronous-operation)
@@ -149,7 +153,7 @@ $ npm run start
 
 ## Guides
 
-### Server-side render and hydration
+### Server-side rendering and hydration
 
 Use `renderToString()` to generate HTML on the server and send the markup down on the initial request for faster page loads and to allow search engines to crawl your pages for SEO purposes.
 
@@ -362,7 +366,7 @@ Add an alias for `react` and `react-dom` in webpack config that makes React-base
   // ...
   resolve: {
     alias: {
-      'react': 'rax',
+      'react': 'rax/lib/compat',
       'react-dom': 'rax-dom'
     }
   }

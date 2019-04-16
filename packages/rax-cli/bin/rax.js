@@ -123,16 +123,24 @@ function askProjectInformaction(name, verbose) {
       type: 'list',
       name: 'projectType',
       message: 'What\'s your project type?',
-      choices: [{
-        name: 'WebApp',
-        value: 'webapp'
-      }, {
-        name: 'MiniApp',
-        value: 'miniapp'
-      }, {
-        name: 'Component',
-        value: 'component'
-      }],
+      choices: [
+        {
+          name: 'WebApp',
+          value: 'webapp'
+        },
+        {
+          name: 'WeexApp',
+          value: 'weexapp'
+        },
+        {
+          name: 'MiniApp',
+          value: 'miniapp'
+        },
+        {
+          name: 'Component',
+          value: 'component'
+        }
+      ],
       default: 'webapp'
     },
     {
@@ -186,7 +194,7 @@ function createProject(name, verbose, userAnswers) {
     if (!isAutoInstalled) {
       console.log(chalk.white('   ' + (pkgManager === 'npm' ? 'npm install' : 'yarn')));
     }
-    console.log(chalk.white('   ' + pkgManager + ' run start'));
+    console.log(chalk.white('   ' + pkgManager + ' start'));
   });
 }
 
