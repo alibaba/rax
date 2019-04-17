@@ -25,9 +25,6 @@
   "devDependencies": {
     "rax": "^1.0.0",
     "@babel/core": "7.2.0",
-    "@babel/preset-env": "7.2.0",
-    "@babel/preset-react": "7.0.0",
-    "babel-plugin-transform-jsx-stylesheet": "0.6.5",
     "rax-scripts": "^1.2.0",
     "rax-test-renderer": "^1.0.0",
     "babel-preset-rax": "^1.0.0-beta.0",

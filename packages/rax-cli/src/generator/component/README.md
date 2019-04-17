@@ -30,7 +30,6 @@ import Picture from 'your-component-name';
 ## Example
 
 ```
-// demo
 import {createElement, Component, render} from 'rax';
 import View from 'rax-view';
 
