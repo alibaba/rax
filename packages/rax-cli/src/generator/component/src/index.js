@@ -18,4 +18,4 @@ export default (props) => {
       <div style={styles.containerBody}>hello world</div>
     </div>
   );
-}
+};
