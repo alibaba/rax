@@ -1,4 +1,4 @@
-import {Component, createElement, PropTypes, render} from 'rax';
+import { createElement } from 'rax';
 
 const styles = {
   container: {
@@ -12,12 +12,10 @@ const styles = {
   }
 };
 
-export default class extends Component {
-  render() {
-    return (
-      <div style={styles.container}>
-        <div style={styles.containerBody}>hello world</div>
-      </div>
-    );
-  }
+export default (props) => {
+  return (
+    <div style={styles.container}>
+      <div style={styles.containerBody}>hello world</div>
+    </div>
+  );
 }

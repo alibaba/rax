@@ -6,7 +6,7 @@ var pathConfig = require('../path.config');
 var uppercamelcase = require('uppercamelcase');
 var RaxPlugin = require('rax-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-var babelOptions = require('./babel.config');
+var babelOptions = require('../babel.config');
 
 var appPackage = require(pathConfig.appPackageJson);
 

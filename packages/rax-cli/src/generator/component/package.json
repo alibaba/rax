@@ -8,7 +8,7 @@
     "start": "rax-scripts start --type 'component' -p 8000",
     "build": "rax-scripts build",
     "test": "jest",
-    "lint": "rax-scripts lint"
+    "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "keywords": [
     "Rax",
@@ -18,25 +18,25 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax-image": "^0.6.5",
-    "rax-text": "^0.6.5",
-    "rax-view": "^0.6.5",
-    "universal-env": "^0.6.5"
   },
   "peerDependencies": {
-    "rax": "0.x"
+    "rax": "^1.0.0"
   },
   "devDependencies": {
+    "rax": "^1.0.0",
     "@babel/core": "7.2.0",
-    "babel-plugin-transform-jsx-stylesheet": "0.6.5",
     "@babel/preset-env": "7.2.0",
     "@babel/preset-react": "7.0.0",
-    "rax-scripts": "^1.0.0-beta.2",
-    "rax-test-renderer": "^0.6.5",
-    "babel-preset-rax": "^0.6.5",
+    "babel-plugin-transform-jsx-stylesheet": "0.6.5",
+    "rax-scripts": "^1.2.0",
+    "rax-test-renderer": "^1.0.0",
+    "babel-preset-rax": "^1.0.0-beta.0",
     "babel-jest": "^23.6.0",
     "babel-eslint": "10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-react": "~7.11.1",
     "jest": "^23.6.0",
-    "jest-localstorage-mock": "^2.3.0"
+    "jest-localstorage-mock": "^2.3.0",
   }
 }

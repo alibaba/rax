@@ -1,9 +1,9 @@
-import {createElement, Component} from 'rax';
+import { createElement } from 'rax';
 import renderer from 'rax-test-renderer';
-import Mod from '../';
+import MyComponent from '../';
 
-describe('Mod', () => {
-  it('test typeof Mod', () => {
-    expect(typeof Mod).toEqual('function');
+describe('MyComponent', () => {
+  it('typeof MyComponent is "function"', () => {
+    expect(typeof MyComponent).toEqual('function');
   });
 });

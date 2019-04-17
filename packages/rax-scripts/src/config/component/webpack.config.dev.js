@@ -11,7 +11,7 @@ const webpackConfigBase = require('./webpack.config.base');
 const webpackConfigDev = webpackMerge(webpackConfigBase, {
   devtool: 'inline-module-source-map',
   entry: {
-    index: [pathConfig.appIndexJs],
+    index: [pathConfig.componentIndexJs],
   },
   output: {
     publicPath: '/',

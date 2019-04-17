@@ -65,21 +65,6 @@ module.exports = {
         ],
       },
       {
-        test: /\.(sfc|vue|html)$/,
-        use: [
-          {
-            loader: require.resolve('sfc-loader'),
-            options: {
-              builtInRuntime: false,
-              builtInRax: false,
-              preserveWhitespace: false,
-              module: 'commonjs'
-            },
-          },
-        ],
-        exclude: [pathConfig.appHtml],
-      },
-      {
         test: /\.css$/,
         use: [
           {
