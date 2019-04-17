@@ -37,6 +37,6 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-react": "~7.11.1",
     "jest": "^23.6.0",
-    "jest-localstorage-mock": "^2.3.0",
+    "jest-localstorage-mock": "^2.3.0"
   }
 }
