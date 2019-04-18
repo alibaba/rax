@@ -1,4 +1,4 @@
-// Inspired by universal-router
+// Inspired by react-router and universal-router
 import { useState, useEffect } from 'rax';
 import pathToRegexp from 'path-to-regexp';
 
@@ -12,17 +12,24 @@ function decodeParam(val) {
 }
 
 function matchPath(route, pathname, parentParams) {
-  const end = !route.routes; // When true the regexp will matched to the end of the string
-  const routePath = route.path || '';
+  let { path, routes, exact: end = true, strict = false, sensitive = false } = route;
+  // If not has path or has routes that should do not exact match
+  if (path == null || routes) {
+    end = false;
+  }
 
-  const regexpCacheKey = `${routePath}|${end}`;
+  const regexpCacheKey = `${path}|${end}|${strict}|${sensitive}`;
   const keysCacheKey = regexpCacheKey + '|';
 
   let regexp = cache[regexpCacheKey];
   let keys = cache[keysCacheKey] || [];
 
   if (!regexp) {
-    regexp = pathToRegexp(routePath, keys, { end });
+    regexp = pathToRegexp(path || '', keys, {
+      end,
+      strict,
+      sensitive
+    });
     cache[regexpCacheKey] = regexp;
     cache[keysCacheKey] = keys;
   }
@@ -32,7 +39,7 @@ function matchPath(route, pathname, parentParams) {
     return null;
   }
 
-  const path = result[0];
+  const url = result[0];
   const params = { ...parentParams };
 
   for (let i = 1; i < result.length; i++) {
@@ -49,7 +56,7 @@ function matchPath(route, pathname, parentParams) {
   }
 
   return {
-    path: !end && path.charAt(path.length - 1) === '/' ? path.substr(1) : path,
+    path: !end && url.charAt(url.length - 1) === '/' ? url.substr(1) : url,
     params,
   };
 }
@@ -111,12 +118,13 @@ function matchRoute(route, baseUrl, pathname, parentParams) {
 
 
 const router = {
+  history: null,
   handles: [],
   errorHandler() { },
-  setHandle(handle) {
+  addHandle(handle) {
     return router.handles.push(handle);
   },
-  clearHandle(handleId) {
+  removeHandle(handleId) {
     router.handles[handleId - 1] = null;
   },
   triggerHandles(component) {
@@ -141,12 +149,12 @@ const router = {
 
       if (current.done) {
         const error = new Error(`No match for ${fullpath}`);
-        return router.errorHandler(error, { pathname: fullpath });
+        return router.errorHandler(error, router.history.location);
       }
 
       let component = current.$.route.component;
       if (typeof component === 'function') {
-        component = component(current.$.params, { pathname: fullpath });
+        component = component(current.$.params, router.history.location);
       }
 
       if (component instanceof Promise) {
@@ -170,28 +178,52 @@ const router = {
   }
 };
 
-export function route(config) {
-  router.root = Array.isArray(config) ? { path: '', routes: config } : config;
+function matchLocation({pathname, search}) {
+  router.match(`${pathname}${search}`);
 }
 
-export function useComponent(initPathname) {
+export function useRouter(routerConfig) {
   const [component, setComponent] = useState([]);
 
   useEffect(() => {
-    const handleId = router.setHandle((component) => {
+    if (typeof routerConfig === 'function') {
+      routerConfig = routerConfig();
+    }
+
+    const history = routerConfig.history;
+    const routes = routerConfig.routes;
+
+    router.history = history;
+    router.root = Array.isArray(routes) ? { routes } : routes;
+
+    const handleId = router.addHandle((component) => {
       setComponent(component);
     });
 
-    router.match(initPathname);
+    // Init path match
+    matchLocation(history.location);
+
+    const unlisten = history.listen((location, action) => {
+      matchLocation(location);
+    });
 
     return () => {
-      router.clearHandle(handleId);
+      router.removeHandle(handleId);
+      unlisten();
     };
   }, []);
 
-  return component;
+  return { component };
 }
 
 export function push(fullpath) {
-  router.match(fullpath);
+  router.history.push(fullpath);
+}
+
+export function replace(fullpath) {
+  router.history.replace(fullpath);
+}
+
+export function go(n) {
+  router.history.go(n);
 }
