@@ -1,5 +1,5 @@
 // Inspired by react-router and universal-router
-import { useState, useEffect } from 'rax';
+import { useState, useLayoutEffect } from 'rax';
 import pathToRegexp from 'path-to-regexp';
 
 const cache = {};
@@ -185,7 +185,7 @@ function matchLocation({pathname, search}) {
 export function useRouter(routerConfig) {
   const [component, setComponent] = useState([]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof routerConfig === 'function') {
       routerConfig = routerConfig();
     }
