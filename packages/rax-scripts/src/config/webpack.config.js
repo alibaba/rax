@@ -27,7 +27,7 @@ module.exports = {
     alias: {
       '@babel/runtime': getBabelRuntimePath()
     },
-    extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts'],
+    extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts', '.tsx'],
   },
   output: {
     pathinfo: process.env.NODE_ENV === 'development',
@@ -44,7 +44,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         loader: tsLoader,
       }
     ],
