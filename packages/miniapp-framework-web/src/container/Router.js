@@ -87,11 +87,13 @@ export default class Router {
     client.mount(this.container);
     client.prevClient = this.currentClient;
 
-    const hash = ROUTE_HASH_PREFIX + pageName;
+    // @Note: Use origin path from `params.pageName`, or the querystring will be dropped.
+    const originPath = params.pageName[0] === '/' ? params.pageName.slice(1) : params.pageName;
+    const hash = ROUTE_HASH_PREFIX + originPath;
     if (params.replaceState || !this.currentClient) {
       history.replaceState({ clientId }, null, hash);
     } else {
-      history.pushState({clientId}, null, hash);
+      history.pushState({ clientId }, null, hash);
     }
 
     this.currentClient = client;
