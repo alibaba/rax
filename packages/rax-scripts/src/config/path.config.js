@@ -39,7 +39,7 @@ const nodePaths = (process.env.NODE_PATH || '')
 
 const paths = {
   appDirectory: appDirectory,
-  appBuild: resolveApp('build'),
+  appBuild: resolveApp(process.env.OUTPUT_PATH || 'build'),
   appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
