@@ -8,6 +8,7 @@ const raxFactory = new Function('module', 'exports', raxCode);
 const { getPage, getUnknownPageFactory } = worker.pageHub;
 const { on: addClientEvent } = worker.clientHub;
 const CURRENT_CLIENT_ID = '__current_client_id__';
+const MINIAPP_ENV = '__miniapp_env__';
 
 export default class Client {
   constructor(clientId, pageName, pageQuery = {}) {
@@ -26,6 +27,8 @@ export default class Client {
       postMessage: this.sendMessageToRenderer,
       addEventListener: this.addClientEvent,
     });
+    driver.setDeviceWidth(global[MINIAPP_ENV].windowWidth);
+
     const component = this.component = this.instantiatePage();
     // 页面加载时触发
     this.emitEvent('load', this.pageQuery);
