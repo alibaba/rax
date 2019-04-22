@@ -48,6 +48,7 @@ function messageHandler({ data }) {
       setupGlobalObject({
         [MINIAPP_ENV]: payload.env,
       });
+      break;
     }
 
     case EVENT_REGISTER_API: {
