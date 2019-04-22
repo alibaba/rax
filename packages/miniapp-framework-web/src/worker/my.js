@@ -18,7 +18,7 @@ const my = {
       params.success.call(this, my.getSystemInfoSync());
     }
     if (typeof params.complete === 'function') {
-      params.complete.call(this, my.getSystemInfoSync());
+      params.complete.call(this);
     }
   },
 
