@@ -1,6 +1,7 @@
 import spawnWorker from 'worker-loader?inline&fallback=false!babel-loader!../worker';
 import MessageRouter from './MessageRouter';
 import resolvePathname from './resolve-pathname';
+import { getMiniAppEnv } from './env';
 import my from './my';
 
 const hasOwn = {}.hasOwnProperty;
@@ -23,6 +24,8 @@ export default function startMiniAppWeb(appConfig, mountNode) {
       payload: { type, ...data },
     });
   }
+
+  send('setEnv', { env: getMiniAppEnv() }, TARGET_WORKER);
 
   send('importScripts', {
     url: getAssetUrl(appConfig),
