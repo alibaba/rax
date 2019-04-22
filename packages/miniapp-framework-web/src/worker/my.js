@@ -24,7 +24,6 @@ const my = {
 
   /**
    * Get system info.
-   * @return {{sync: boolean}}
    */
   getSystemInfoSync() {
     return global[WORKER_SYSTEM_INFO];
