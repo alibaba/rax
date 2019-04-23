@@ -16,12 +16,6 @@ module.exports = {
           'transform-computed-properties'
         ]
       }
-    ],
-    [
-      '@babel/preset-react',
-      {
-        'pragma': 'createElement'
-      }
     ]
   ],
   plugins: [

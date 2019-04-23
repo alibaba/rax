@@ -17,6 +17,14 @@ var entry = {};
 entry[entryName] = entry[entryName + '.min'] = entry[entryName + '.factory'] = main;
 var globalName = uppercamelcase(packageName);
 
+babelOptions.presets.push([
+  require.resolve('@babel/preset-react'), {
+    'pragma': 'createElement',
+    'pragmaFrag': 'Fragment'
+  }
+]);
+
+
 function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool) {
   // Webpack need an absolute path
   output.path = path.resolve(__dirname, '..', output.path);

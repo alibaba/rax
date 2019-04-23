@@ -3,7 +3,6 @@
 /* eslint no-console: 0 */
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
-
 const pathConfig = require('../path.config');
 const webpackConfigBase = require('./webpack.config.base');
 
