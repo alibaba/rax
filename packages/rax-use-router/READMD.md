@@ -206,7 +206,7 @@ Default `true`, when `false`, will not match if the path matches the `location.p
 
 ##### strict
 
-Defalut `false`, when `true`, a `path` that has a trailing slash will only match a `location.pathname` with a trailing slash. This has no effect when there are additional URL segments in the `location.pathname`.
+Default `false`, when `true`, a `path` that has a trailing slash will only match a `location.pathname` with a trailing slash. This has no effect when there are additional URL segments in the `location.pathname`.
 
 ```jsx
 {
@@ -241,7 +241,7 @@ Defalut `false`, when `true`, a `path` that has a trailing slash will only match
 
 ##### sensitive
 
-Defalut `false`, when `true`, will match if the path is **case sensitive**.
+Default `false`, when `true`, will match if the path is **case sensitive**.
 
 ```jsx
 {
