@@ -68,3 +68,21 @@ $ rax init <ProjectName> [--verbose]
         └── page2.json
 ```
 
+* Componen Project
+```
+.
+├── package.json
+├── .gitignore
+├── ._eslintignore
+├── _travis.yml
+├── jest.config.js
+├── public
+│   ├── index.html
+│   └── index.js
+└── src
+    ├── __tests__
+    │   └── index.js
+    ├── index.d.ts
+    └── index.js
+```
+
