@@ -18,6 +18,9 @@ function matchPath(route, pathname, parentParams) {
     end = false;
   }
 
+  // Default path is empty
+  path = path || '';
+
   const regexpCacheKey = `${path}|${end}|${strict}|${sensitive}`;
   const keysCacheKey = regexpCacheKey + '|';
 
@@ -25,7 +28,7 @@ function matchPath(route, pathname, parentParams) {
   let keys = cache[keysCacheKey] || [];
 
   if (!regexp) {
-    regexp = pathToRegexp(path || '', keys, {
+    regexp = pathToRegexp(path, keys, {
       end,
       strict,
       sensitive
