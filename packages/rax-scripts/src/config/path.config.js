@@ -48,7 +48,7 @@ const paths = {
   appSrc: resolveApp('src'),
   appManifest: resolveApp('manifest.json'),
   appNodeModules: resolveApp('node_modules'),
-  componentDemoJs: resolveModule(resolveApp, 'public/index'),
+  componentDemoJs: resolveModule(resolveApp, 'demo/index'),
   nodePaths: nodePaths,
   miniProgramIndexJs: resolveModule(resolveApp, 'app'),
 };
