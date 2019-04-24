@@ -75,7 +75,6 @@ $ rax init <ProjectName> [--verbose]
 ├── .gitignore
 ├── ._eslintignore
 ├── _travis.yml
-├── .babelrc
 ├── public
 │   └── index.html
 ├── demo

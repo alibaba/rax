@@ -8,4 +8,6 @@ program
   .usage('<command> [options]')
   .command('build', 'Build project in production mode')
   .command('start', 'Start a web server in development mode (hot-reload and inline-module-source-map is enable default)')
+  .command('lint', 'Lint for component code')
+  .command('test', 'Test for component code')
   .parse(process.argv);
