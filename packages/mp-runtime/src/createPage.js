@@ -7,6 +7,7 @@ const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
 const CURRENT_WV_URL = '__CURRENT_WEBVIEW_URL__';
 const API_REPLACE_WEBVIEW = '__replace_webview_render__';
 const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
+const replaceWebView = global[API_REPLACE_WEBVIEW];
 
 const STATE_CONSTRUCTOR = 0;
 const STATE_WILLMOUNT = 1;
@@ -85,13 +86,13 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
           // Compatible with previous version of miniapp framework
           location.replace(url);
           return null;
-        } else if (global[API_REPLACE_WEBVIEW] || evaluator) {
+        } else if (replaceWebView || evaluator) {
           if (pageInstance[CURRENT_WV_URL] !== url) {
-            if (global[API_REPLACE_WEBVIEW]) {
+            if (replaceWebView) {
               /**
                * Use runtime provided API to replace webview instance.
                */
-              global[API_REPLACE_WEBVIEW](url, clientId, pageName);
+              replaceWebView(url, clientId, pageName);
             } else {
               /**
                * `render` method will be executed everytime data has changed.
