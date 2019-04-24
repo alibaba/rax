@@ -1,9 +1,6 @@
 import "./jsx";
 
-export = Rax;
-export as namespace Rax;
-
-declare namespace Rax {
+export declare namespace Rax {
 
   //
   // Rax Element
@@ -118,7 +115,7 @@ declare namespace Rax {
   //
   // Hooks
   // ----------------------------------------------------------------------
-  
+
   function useContext<T>(context: RaxContext<T>): T;
 
   type SetStateAction<S> = (value: S | ((prevState: S) => S)) => void;
@@ -128,7 +125,7 @@ declare namespace Rax {
   type Reducer<S, A> = (prevState: S, action: A) => S;
   function useReducer<S, A>(reducer: Reducer<S, A>, initialState: S): [S, (action: A) => void];
   function useReducer<S, A, I>(reducer: Reducer<S, A>, initialArg: I, init: (arg: I) => S): [S, (action: A) => void];
-  
+
   type MutableRefObject<T> = { readonly current?: T; }
   function useRef<T>(initialValue: T|null): RefObject<T>;
   function useRef<T = unknown>(): MutableRefObject<T>;
