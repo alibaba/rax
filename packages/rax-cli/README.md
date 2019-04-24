@@ -75,9 +75,10 @@ $ rax init <ProjectName> [--verbose]
 ├── .gitignore
 ├── ._eslintignore
 ├── _travis.yml
-├── jest.config.js
+├── .babelrc
 ├── public
-│   ├── index.html
+│   └── index.html
+├── demo
 │   └── index.js
 └── src
     ├── __tests__
