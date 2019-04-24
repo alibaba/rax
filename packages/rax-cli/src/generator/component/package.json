@@ -6,9 +6,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "rax-scripts start --type 'component' -p 8000",
-    "build": "rax-scripts build",
-    "test": "rax-scripts jest",
-    "lint": "rax-scripts lint"
+    "build": "rax-scripts build --type 'component'",
+    "test": "rax-scripts test --type 'component'",
+    "lint": "rax-scripts lint --type 'component'"
   },
   "keywords": [
     "Rax",
