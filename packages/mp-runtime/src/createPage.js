@@ -85,20 +85,21 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
           // Compatible with previous version of miniapp framework
           location.replace(url);
           return null;
-        } else if (typeof global[API_REPLACE_WEBVIEW] === 'function') {
-          /**
-           * Use runtime provided API to replace webview instance.
-           */
-          global[API_REPLACE_WEBVIEW](url, clientId, pageName);
-          return null;
-        } else if (evaluator) {
-          /**
-           * `render` method will be executed everytime data has changed.
-           * To avoid send evaluator more than once at sametime, cache the current webview
-           * url to detect.
-           */
+        } else if (global[API_REPLACE_WEBVIEW] || evaluator) {
           if (pageInstance[CURRENT_WV_URL] !== url) {
-            evaluator.call('location.replace', url);
+            if (global[API_REPLACE_WEBVIEW]) {
+              /**
+               * Use runtime provided API to replace webview instance.
+               */
+              global[API_REPLACE_WEBVIEW](url, clientId, pageName);
+            } else {
+              /**
+               * `render` method will be executed everytime data has changed.
+               * To avoid send evaluator more than once at sametime, cache the current webview
+               * url to detect.
+               */
+              evaluator.call('location.replace', url);
+            }
           }
           pageInstance[CURRENT_WV_URL] = url;
           return null;
