@@ -4,13 +4,13 @@
 ## Install
 
 ```
-$ npm install your-component-name --save
+$ npm install <%= answers.name%> --save
 ```
 
 ## Import
 
 ```
-import Picture from 'your-component-name';
+import MyComponent from '<%= answers.name%>';
 ```
 
 ## API说明
