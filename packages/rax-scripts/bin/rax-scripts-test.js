@@ -6,7 +6,7 @@ const optionsAttachToEnv = require('../src/utils/optionsAttachToEnv');
 program
   .action((cmd) => {
     optionsAttachToEnv(cmd);
-    require('../src/test')();
+    require('../src/jest')();
   });
 
 program.parse(process.argv);
