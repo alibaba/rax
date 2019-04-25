@@ -1,4 +1,4 @@
-var cliObject = {
+var eslintConfig = {
   'root': true,
   'parser': 'babel-eslint',
   'env': {
@@ -206,7 +206,7 @@ var cliObject = {
 
 module.exports = function lint(type = 'component') {
   var CLIEngine = require('eslint').CLIEngine;
-  var cli = new CLIEngine(cliObject);
+  var cli = new CLIEngine(eslintConfig);
   var report = cli.executeOnFiles(['src/']);
   var formatter = cli.getFormatter();
   console.log(formatter(report.results));
