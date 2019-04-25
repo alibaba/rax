@@ -73,8 +73,8 @@ $ rax init <ProjectName> [--verbose]
 .
 ├── package.json
 ├── .gitignore
-├── ._eslintignore
-├── _travis.yml
+├── .eslintignore
+├── .travis.yml
 ├── public
 │   └── index.html
 ├── demo
