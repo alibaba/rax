@@ -1,4 +1,4 @@
-const { transformJSX } = require('../transformJSX');
+const transform = require('../');
 const { resolve } = require('path');
 const stripIndent = require('./__modules__/stripIndent');
 
@@ -22,7 +22,7 @@ describe('transfrom simple example', () => {
       }`;
     const expectedTemplate = '<view>Hello {{value}}</view>';
     const expectedScript = `
-      import { createComponent as __create_component__ } from "/__helpers/component";
+      import { createComponent as __create_component__ } from "jsx2mp-runtime";
       
       var __class_def__ = class {
         state = {
@@ -31,7 +31,7 @@ describe('transfrom simple example', () => {
       };
       
       Component(__create_component__(__class_def__));`;
-    const { template, jsCode } = transformJSX(originJSX, {
+    const { template, jsCode } = transform(originJSX, {
       filePath: sourcePath
     });
     expect(template).toEqual(stripIndent(expectedTemplate));
@@ -48,7 +48,7 @@ describe('transfrom simple example', () => {
         }
       }`;
     const expectedTemplate = 1;
-    const { template } = transformJSX(originJSX, {
+    const { template } = transform(originJSX, {
       filePath: sourcePath
     });
     expect(template).toEqual(stripIndent(expectedTemplate));
@@ -64,7 +64,7 @@ describe('transfrom simple example', () => {
         }
       }`;
     const expectedTemplate = 'Hello World!';
-    let { template } = transformJSX(originJSX, {
+    let { template } = transform(originJSX, {
       filePath: sourcePath
     });
     if (typeof template === 'string') template = String(template);
@@ -73,7 +73,7 @@ describe('transfrom simple example', () => {
 
   it('should render array', () => {
     const originJSX = `
-      import { createElement, Component } from "rax/dist/rax.min.js";
+      import { createElement, Component } from "rax";
 
       export default class extends Component {
         render() {
@@ -89,7 +89,7 @@ describe('transfrom simple example', () => {
       Hello World!
       <view>Hi!</view>
     `;
-    const { template } = transformJSX(originJSX, {
+    const { template } = transform(originJSX, {
       filePath: sourcePath
     });
     expect(template).toEqual(stripIndent(expectedTemplate));

@@ -1,9 +1,9 @@
-const { transformJSX } = require('../transformJSX');
+const transform = require('../index');
 
-describe('transformJSX', () => {
+describe('transform JSX', () => {
   it('should throw error with JSX inline method ref.', () => {
     expect(() => {
-      transformJSX(`
+      transform(`
         import { Component } from 'rax';
         export default class extends Component {
           render() {
@@ -20,7 +20,7 @@ describe('transformJSX', () => {
 
   it('should throw error with JSX + IIFE', () => {
     expect(() => {
-      transformJSX(`
+      transform(`
         import { Component } from 'rax';
         export default class extends Component {
           render() {
