@@ -3,6 +3,8 @@
 var path = require('path');
 var webpack = require('webpack');
 var pathConfig = require('../path.config');
+var webpackMerge = require('webpack-merge');
+var webpackConfigBase = require('./webpack.config.base');
 var uppercamelcase = require('uppercamelcase');
 var RaxPlugin = require('rax-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -21,7 +23,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
   // Webpack need an absolute path
   output.path = path.resolve(__dirname, '..', output.path);
 
-  return {
+  return webpackConfigProd = webpackMerge(webpackConfigBase, {
     mode: 'production',
     target: target || 'node',
     devtool: devtool || 'source-map',
@@ -69,7 +71,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
         ]
       }]
     }
-  };
+  });
 }
 
 var webpackConfigProd = getConfig(

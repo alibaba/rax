@@ -33,6 +33,7 @@ function buildCompiler(config) {
 }
 
 const MINIAPP = 'miniapp';
+const COMPONENT = 'component';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   weexapp: './config/weexapp/webpack.config.prod',
@@ -44,7 +45,7 @@ module.exports = function build(type = 'webapp') {
 
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
-  } else if (appPackage.keywords && appPackage.keywords.indexOf('rax-component')) { // build component
+  } else if (type === COMPONENT) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
     componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {
