@@ -1,4 +1,4 @@
-const { generateElement } = require('../codegen');
+const { generateElement } = require('../../jsx-compiler/codegen');
 
 describe('Generate template', () => {
   it('should generate template', () => {

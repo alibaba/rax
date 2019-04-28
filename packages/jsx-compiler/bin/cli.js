@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { readFileSync } = require('fs-extra');
+const { readFileSync, writeFileSync } = require('fs-extra');
 const { join } = require('path');
 const compiler = require('../');
 
@@ -12,7 +12,6 @@ const code = getFileContent(filePath);
 const ret = compiler(code, { filePath, rootContext: cwd });
 
 console.log(ret);
-debugger;
 
 
 /**

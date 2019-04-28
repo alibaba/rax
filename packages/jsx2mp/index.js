@@ -7,11 +7,11 @@ const {
   removeSync,
 } = require('fs-extra');
 const { spawnSync } = require('child_process');
-const { resolve, extname } = require('path');
+const { resolve } = require('path');
 const colors = require('colors');
 const chokidar = require('chokidar');
 const inquirer = require('inquirer');
-const TransformerApp = require('./transformer/App');
+const App = require('./transformer/App');
 
 /**
  * Transform a jsx project.
@@ -34,19 +34,22 @@ async function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = fal
   mkdirpSync(distPath);
   printLog(colors.green('创建目录'), 'dist/');
 
-  const app = new TransformerApp(sourcePath, {
+  const app = new App(sourcePath, {
     appDirectory: sourcePath,
     distDirectory: distPath,
   });
 
-  if (enableWatch) printLog(colors.green('将监听以下路径的文件变更'), sourcePath);
+  if (enableWatch) {
+    printLog(colors.green('将监听以下路径的文件变更'), sourcePath);
+    app.watch();
+  }
 
-  const localHelperPath = resolve(__dirname, 'helpers');
-  // In case of duplicated name.
-  copySync(localHelperPath, resolve(distPath, '__helpers'));
-  printLog(colors.green('复制 Helpers'), 'dist/helpers');
+  // const localHelperPath = resolve(__dirname, 'helpers');
+  // // In case of duplicated name.
+  // copySync(localHelperPath, resolve(distPath, '__helpers'));
+  // printLog(colors.green('复制 Helpers'), 'dist/helpers');
 
-  const shouldInstallDistNPM = await ask('是否需要自动安装 npm 到构建目录中?');
+  const shouldInstallDistNPM = await ask('是否需要自动安装 npm 到构建目录中?', false);
   if (shouldInstallDistNPM) {
     invokeNpmInstall(distPath);
   }
@@ -106,16 +109,15 @@ function printLog(...logs) {
   console.log.apply(console, logs);
 }
 
-
 /**
  * Create an ask prase.
  * @param message {String}
  * @return {Promise} Answer true or false.
  */
-function ask(message) {
+function ask(message, defaultVal = true) {
   const name = '_NAME_';
   return inquirer.prompt([
-    { type: 'confirm', name, message }
+    { type: 'confirm', name, message, default: defaultVal }
   ]).then(answers => answers[name]);
 }
 

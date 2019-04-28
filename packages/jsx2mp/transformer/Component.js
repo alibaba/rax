@@ -1,13 +1,13 @@
 const { ensureFileSync, writeFileSync, readJSONSync, existsSync, readFileSync } = require('fs-extra');
 const { join, resolve, relative } = require('path');
-const { transformJSX } = require('./transformJSX');
+const transform = require('jsx-compiler');
 const colors = require('colors');
 
 /**
  * Abstract of miniapp component.
- * @type {module.TransformerComponent}
+ * @type {module.Component}
  */
-module.exports = class TransformerComponent {
+module.exports = class Component {
   constructor({ script, template, style = '', config = {} }, options = {}) {
     const { rootContext, context, distRoot, distPath } = options;
     this.rootContext = rootContext;
@@ -36,9 +36,9 @@ module.exports = class TransformerComponent {
 
       const sourceJSXPath = componentSourcePath + '.jsx';
       const jsxFileContent = readFileSync(sourceJSXPath, 'utf-8');
-      const transformed = transformJSX(jsxFileContent, { filePath: sourceJSXPath, rootContext });
+      const transformed = transform(jsxFileContent, { filePath: sourceJSXPath, rootContext });
 
-      const componentDep = new TransformerComponent({
+      const componentDep = new Component({
         script: transformed.jsCode,
         template: transformed.template,
         style: transformed.style,
@@ -48,14 +48,14 @@ module.exports = class TransformerComponent {
     });
   }
 
-  write() {
+  _writeFiles() {
     this._writeStyle();
     this._writeTemplate();
     this._writeScript();
     this._writeConfig();
 
     for (let i = 0, l = this.deps.length; i < l; i++ ) {
-      this.deps[i].write();
+      this.deps[i]._writeFiles();
     }
   }
 

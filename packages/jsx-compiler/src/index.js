@@ -30,12 +30,13 @@ function transform(code, options = {}) {
   const jsCode = getComponentJSCode(ast);
 
   return {
+    path: relative(rootContext, filePath),
     template,
     templateNode: node,
     jsCode,
     // customComponents,
     dependencies: {
-      'View': {}
+
     },
     style,
   };
@@ -58,7 +59,7 @@ function getTemplate(ast) {
           const [, error] = renderFnPath.node.body.body.filter(s => t.isReturnStatement(s));
           if (error) {
             // TODO: 报错需要带文件和行列信息
-            throw Error( 'Only one return is allow in render method.');
+            throw Error('Only one return is allow in render method.');
           }
 
           const returnNode = node = parseRender(renderFnPath);

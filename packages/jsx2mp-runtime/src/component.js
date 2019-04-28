@@ -26,48 +26,61 @@ function forceUpdate(callback) {
   return setState.call(this, {}, callback);
 }
 
+const methods = {
+  setState,
+  forceUpdate,
+};
+
 /**
  * Bridge from RaxComponent Klass to MiniApp Component constructor.
- * @param Klass {RaxComponent}
+ * @param exported {RaxComponent}
+ * @param isFunctionComponent {Boolean}
  * @return {Object} MiniApp Component constructor's first arg.
  */
-export function createComponent(Klass) {
-  const { prototype: klassPrototype, mixins, defaultProps } = Klass;
+export function createComponent(exported, isFunctionComponent = false) {
+  if (isFunctionComponent) {
+    const config = {
+      didMount() {
+        this.setData(exported.call(this, this.props, this.data));
+      },
+      methods,
+    };
+    return config;
+  } else {
+    const { prototype: klassPrototype, mixins, defaultProps } = exported;
 
-  /**
-   * Expose config of component.
-   */
-  const config = {
-    mixins,
-    props: defaultProps,
-    data() {
-      const instance = new Klass({}, null);
-      config[INSTANCE] = instance;
-      return instance.state;
-    },
-    methods: {
-      setState,
-      forceUpdate,
-    },
-  };
+    /**
+     * Expose config of component.
+     */
+    const config = {
+      mixins,
+      props: defaultProps,
+      data() {
+        const instance = new exported({}, null);
+        config[INSTANCE] = instance;
+        return instance.state;
+      },
+      methods,
+    };
 
-  /**
-   * Bind function class methods into methods or cycles.
-   */
-  const classMethods = Object.getOwnPropertyNames(klassPrototype);
-  for (let i = 0, l = classMethods.length; i < l; i++) {
-    const methodName = classMethods[i];
-    if ('constructor' === methodName) continue;
+    /**
+     * Bind function class methods into methods or cycles.
+     */
+    const classMethods = Object.getOwnPropertyNames(klassPrototype);
+    for (let i = 0, l = classMethods.length; i < l; i++) {
+      const methodName = classMethods[i];
+      if ('constructor' === methodName) continue;
 
-    if (typeof klassPrototype[methodName] === 'function') {
-      const fn = klassPrototype[methodName];
-      if (hasOwn(CYCLE_MAP, methodName)) {
-        config[CYCLE_MAP[methodName]] = fn;
-      } else {
-        config.methods[methodName] = fn;
+      if (typeof klassPrototype[methodName] === 'function') {
+        const fn = klassPrototype[methodName];
+        if (hasOwn(CYCLE_MAP, methodName)) {
+          config[CYCLE_MAP[methodName]] = fn;
+        } else {
+          config.methods[methodName] = fn;
+        }
       }
     }
-  }
 
-  return config;
+    return config;
+  }
 }
