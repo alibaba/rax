@@ -11,7 +11,7 @@ const internalAPIs = [
   'setTabBarBadge',
   'removeTabBarBadge',
   'showTabBarRedDot',
-  'hideTabBarRedDot'
+  'hideTabBarRedDot',
 ];
 
 internalAPIs.forEach((apiName) => my[apiName] = true);

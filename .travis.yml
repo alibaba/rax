@@ -15,3 +15,24 @@ before_script:
 script:
   - npm run lint:nofix
   - npm run test
+
+jobs: 
+  include:
+    - stage: bench
+      addons:
+        apt:
+          sources: google-chrome
+          packages: google-chrome-stable
+      skip_cleanup: true
+      before_script:
+        - npm run setup
+        - export DISPLAY=:99.0
+        - sh -e /etc/init.d/xvfb start
+        - sleep 3                   # give xvfb some time to start
+      script: npm run bench
+
+stages:
+  - test # default stage
+  - name: bench
+    # require the branch name to be master (note for PRs this is the base branch name)
+    if: (branch = master AND type != pull_request) OR branch =~ ^bench

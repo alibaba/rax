@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
 const getBabelConfig = require('../../../babel.config');
+const { version } = require('../package.json');
 
 function getConfig(type) {
   return {
@@ -25,7 +26,8 @@ function getConfig(type) {
     },
     plugins: [
       new webpack.DefinePlugin({
-        atagVersion: JSON.stringify('0.1.41'),
+        atagVersion: JSON.stringify('0.1.52'),
+        frameworkVersion: JSON.stringify(version),
         frameworkType: JSON.stringify(type),
       }),
     ],

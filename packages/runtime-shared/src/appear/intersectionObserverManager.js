@@ -1,46 +1,61 @@
-const options = {
+import PolyfilledIntersectionObserver from './IntersectionObserver';
+
+// Shared intersectionObserver instance.
+let intersectionObserver;
+const IntersectionObserver = (function(window) {
+  if ('IntersectionObserver' in window &&
+    'IntersectionObserverEntry' in window &&
+    'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
+    // features are natively supported
+    return window.IntersectionObserver;
+  } else {
+    // polyfilled IntersectionObserver
+    return PolyfilledIntersectionObserver;
+  }
+})(window);
+const defaultOptions = {
   root: null,
   rootMargin: '0px',
   threshold: 0.0
 };
-let appearEvt, disappearEvt;
-let intersectionObserver;
 
-function initIntersection() {
-  appearEvt = document.createEvent('HTMLEvents');
-  disappearEvt = document.createEvent('HTMLEvents');
-  appearEvt.initEvent('appear', false, true);
-  disappearEvt.initEvent('disappear', false, true);
-
+export function createIntersectionObserver(options = defaultOptions) {
   intersectionObserver = new IntersectionObserver(handleIntersect, options);
+}
+
+export function destroyIntersectionObserver() {
+  if (intersectionObserver) {
+    intersectionObserver.disconnect();
+    intersectionObserver = null;
+  }
+}
+
+export function observerElement(element) {
+  if (!intersectionObserver) createIntersectionObserver();
+
+  if (element === document) element = document.documentElement;
+
+  intersectionObserver.observe(element);
 }
 
 function handleIntersect(entries) {
   entries.forEach((entry) => {
-    const { target, boundingClientRect, intersectionRatio } = entry;
+    const { target, intersectionRatio } = entry;
 
-    // is inview
+    // is in view
     if (intersectionRatio > 0) {
       target.dataset.appeared = true;
-      target.dispatchEvent(appearEvt);
+      target.dispatchEvent(createEvent('appear'));
     } else if (target.dataset.appeared) {
       target.dataset.appeared = false;
-      target.dispatchEvent(disappearEvt);
+      target.dispatchEvent(createEvent('disappear'));
     }
   });
 }
 
-export function observerElement(element) {
-  if (element === document) {
-    element = document.documentElement;
-  }
-  intersectionObserver.observe(element);
-}
-
-export function isExistIntersection() {
-  return typeof IntersectionObserver === 'function';
-}
-
-export default function createIntersectionObserver() {
-  initIntersection();
+function createEvent(eventName) {
+  return new CustomEvent(eventName, {
+    bubbles: false,
+    cancelable: true,
+  });
 }

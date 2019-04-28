@@ -22,7 +22,7 @@ The fastest way to build universal application.
 
 :candy: **Tiny:** ~7 KB minified + gzipped.
 
-:earth_asia: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could works more container that implements [driver specification](./docs/en-US/driver-spec.md).
+:earth_asia: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could work more container that implements [driver specification](./docs/en-US/driver-spec.md).
 
 :banana: **Easy:** using via `rax-cli` with zero configuration, one codebase with universal UI toolkit & APIs.
 
