@@ -41,7 +41,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
         },
         mangle: {
           properties: {
-            regex: /^_/,
+            regex: /^_[a-zA-Z]/,
             reserved: ['_render', '_hookID', '_hooks', '_instance', '_parent'] // this properties are used across packages
           }
         },
