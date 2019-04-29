@@ -38,7 +38,13 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
           keep_fargs: false,
           unsafe: true,
           pure_getters: true
-        }
+        },
+        mangle: {
+          properties: {
+            regex: /^_/,
+            reserved: ['_render', '_hookID', '_hooks', '_instance', '_parent'] // this properties are used across packages
+          }
+        },
       }) : null,
     ]
   });
