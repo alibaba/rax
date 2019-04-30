@@ -5,7 +5,7 @@ const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
 
-async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, mangleProps = false, format = 'umd' }) {
+async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, shouldMangleProps = false, format = 'umd' }) {
   const output = {
     name,
     exports: 'named',
@@ -39,7 +39,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
           unsafe: true,
           pure_getters: true
         },
-        mangle: mangleProps ? {
+        mangle: shouldMangleProps ? {
           properties: {
             regex: /^_[a-zA-Z]/,
             reserved: ['_render', '_hookID', '_hooks', '_instance', '_parent'], // this properties are used across packages
@@ -74,7 +74,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
 
 build({ package: 'rax', name: 'Rax' });
 build({ package: 'rax', name: 'Rax', format: 'esm' });
-build({ package: 'rax', name: 'Rax', shouldMinify: true, mangleProps: true});
+build({ package: 'rax', name: 'Rax', shouldMinify: true, shouldMangleProps: true});
 
 build({ package: 'driver-dom', name: 'DriverDOM' });
 build({ package: 'driver-dom', name: 'DriverDOM', format: 'esm' });
