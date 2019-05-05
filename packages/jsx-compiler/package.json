@@ -4,10 +4,8 @@
   "license": "BSD-3-Clause",
   "description": "Parser for JSX Statements.",
   "main": "src/index.js",
-  "bin": {
-    "jsx_compiler": "bin/cli.js"
-  },
   "scripts": {
+    "example": "node example/run.js",
     "test": "jest --coverage --testPathIgnorePatterns=__modules__",
     "test:watch": "npm run test -- --watchAll"
   },

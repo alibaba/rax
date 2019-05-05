@@ -1,10 +1,5 @@
-/**
- * Self closed tag, eg: <tag />
- */
-exports.SELF_CLOSE_TAGS = new Set([
-  'import',
-  'input',
-]);
+
+// exports.;
 
 exports.RAX_PACKAGE = 'rax';
 exports.RAX_COMPONENT = 'Component';

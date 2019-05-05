@@ -1,5 +1,5 @@
-const t = require('@babel/types');
-const { default: traverse, NodePath } = require('@babel/traverse');
+const t = require('_@babel_types@7.1.3@@babel/types/lib/index');
+const { default: traverse, NodePath } = require('_@babel_traverse@7.1.4@@babel/traverse');
 
 /**
  * Find reutrn statement element.
