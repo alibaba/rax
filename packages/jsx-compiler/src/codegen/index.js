@@ -1,17 +1,14 @@
-const generate = require('@babel/generator').default;
 const invokeModules = require('../utils/invokeModules');
+const genCode = require('./genCode');
 
 function generate(parsed, options) {
-  const { ast } = parsed;
-
+  const { code, map } = genCode(parsed.ast);
   const ret = {
-    // template: genElement(),
-    // jsCode: genCode(),
-    style: '',
-    config: {},
+    code, map,
+    // config, template, style and others should be generated in plugin modules.
   };
 
-  invokeModules(options.modules, ret, 'generate');
+  invokeModules(options.modules,'generate', ret, parsed, options);
   return ret;
 }
 

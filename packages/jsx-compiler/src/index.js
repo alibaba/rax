@@ -8,8 +8,9 @@ const { parse } = require('./parser');
 function compile(template, options) {
   const parsed = parse(template.trim(), options);
   const generated = generate(parsed, options);
+  const { ast, imported, exported } = parsed;
 
-  return Object.assign({ ast }, generated);
+  return Object.assign({ ast, imported, exported }, generated);
 }
 
 module.exports = exports = compile;

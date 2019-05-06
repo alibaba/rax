@@ -3,6 +3,9 @@ const { resolve } = require('path');
 const compile = require('../');
 const { baseOptions } = require('../src/options');
 
-const template = readFileSync(resolve(__dirname, 'example.jsx'), 'utf-8');
-const ret = compile(template, baseOptions);
+const path = resolve(__dirname, 'example.jsx');
+const template = readFileSync(path, 'utf-8');
+const ret = compile(template, Object.assign({}, baseOptions, {
+  cwd: __dirname,
+}));
 console.log(ret);

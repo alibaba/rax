@@ -1,4 +1,5 @@
 exports.baseOptions = {
+  cwd: process.cwd(),
   modules: require('./modules'),
   targetAdapter: require('./targetAdapter'),
   /**
