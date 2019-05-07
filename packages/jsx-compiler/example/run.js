@@ -8,4 +8,5 @@ const template = readFileSync(path, 'utf-8');
 const ret = compile(template, Object.assign({}, baseOptions, {
   cwd: __dirname,
 }));
-console.log(ret);
+
+console.log('ResultObject', ret);
