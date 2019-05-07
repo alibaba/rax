@@ -1,5 +1,7 @@
 const generateAttrs = require('./genAttrs');
 
+const SPACE_INDENT = '  ';
+
 /**
  * Self closed tag, like: <input />
  */

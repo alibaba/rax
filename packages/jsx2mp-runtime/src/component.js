@@ -56,7 +56,7 @@ export function createComponent(exported, isFunctionComponent = false) {
       mixins,
       props: defaultProps,
       data() {
-        const instance = new exported({}, null);
+        const instance = new exported({}, null); // eslint-disable-line
         config[INSTANCE] = instance;
         return instance.state;
       },
