@@ -8,7 +8,7 @@ function generate(parsed, options) {
     // config, template, style and others should be generated in plugin modules.
   };
 
-  invokeModules(options.modules,'generate', ret, parsed, options);
+  invokeModules(options.modules, 'generate', ret, parsed, options);
   return ret;
 }
 

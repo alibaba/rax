@@ -16,4 +16,4 @@ module.exports = function traverseNodePath(nodeOrPath, visitor) {
     const file = t.file(t.program([nodeOrPath]));
     traverse(file, visitor);
   }
-}
+};

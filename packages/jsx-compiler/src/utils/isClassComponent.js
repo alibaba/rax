@@ -40,4 +40,4 @@ module.exports = function isClassComponent(path) {
     }
     return false;
   }
-}
+};

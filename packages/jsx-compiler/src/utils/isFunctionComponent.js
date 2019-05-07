@@ -24,4 +24,4 @@ module.exports = function isFunctionComponent(path) {
   } else {
     return t.isFunction(node);
   }
-}
+};

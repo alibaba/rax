@@ -4,4 +4,4 @@ module.exports = class Node {
     this.attrs = attrs;
     this.children = children;
   }
-}
+};

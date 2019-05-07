@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+
 const PARAM = 'exportedRaxComponentType';
 
 // Example module.
@@ -12,7 +13,7 @@ module.exports = {
     } else if (t.isClassDeclaration(node)) {
       ret[PARAM] = 'class';
     } else {
-      throw new Error('Should default export something like function or class.')
+      throw new Error('Should default export something like function or class.');
     }
   },
 

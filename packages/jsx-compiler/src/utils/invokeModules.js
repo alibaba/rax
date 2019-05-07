@@ -12,4 +12,4 @@ module.exports = function invokeModules(modules, key, ...args) {
       }
     }
   }
-}
+};

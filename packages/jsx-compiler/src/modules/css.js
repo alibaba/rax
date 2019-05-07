@@ -15,7 +15,7 @@ module.exports = {
           parsed.css += readFileSync(resolvedPath, 'utf-8');
         }
       }
-    })
+    });
   },
   generate(ret, parsed, options) {
     if (parsed.css) {

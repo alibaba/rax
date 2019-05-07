@@ -22,4 +22,4 @@ const parserAdapters = {
   },
 };
 
-module.exports = parserAdapters['ali'];
+module.exports = parserAdapters.ali;

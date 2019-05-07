@@ -1,4 +1,5 @@
 const traverse = require('../utils/traverseNodePath');
+
 const PARAM = 'templateJSX';
 /**
  * Extract JSX template
@@ -8,12 +9,13 @@ module.exports = {
     const { defaultExportedPath } = parsed;
     if (!defaultExportedPath) return;
 
-    traverse(ast, {
+    // TODO: generate template.
+    traverse(parsed.ast, {
 
     });
   },
   generate(ret, parsed, options) {
-    ret.template = templateJSX;
+    ret.template = parsed[PARAM];
   },
 };
 
