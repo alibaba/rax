@@ -1,6 +1,6 @@
-const { default: traverse } = require('@babel/traverse');
 const isClassComponent = require('../isClassComponent');
 const { parse } = require('../../parser');
+const traverse = require('../traverseNodePath');
 
 describe('isClassComponent', () => {
   it('#1', (done) => {
@@ -8,7 +8,7 @@ describe('isClassComponent', () => {
       import Rax, { Component } from 'rax';
       export default class extends Component {}
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         expect(isClassComponent(path.get('declaration'))).toBeTruthy();
         done();
@@ -21,7 +21,7 @@ describe('isClassComponent', () => {
       import RaxRef from 'rax';
       export default class extends RaxRef.Component {}
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         expect(isClassComponent(path.get('declaration'))).toBeTruthy();
         done();
@@ -34,7 +34,7 @@ describe('isClassComponent', () => {
       import React, { Component } from 'react';
       export default class extends Component {}
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         const declarationPath = path.get('declaration');
         expect(isClassComponent(declarationPath)).toBeFalsy();
@@ -48,7 +48,7 @@ describe('isClassComponent', () => {
       import React, { Component } from 'react';
       export default class {}
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         expect(isClassComponent(path.get('declaration'))).toBeFalsy();
         done();
@@ -62,7 +62,7 @@ describe('isClassComponent', () => {
       const foo = class extends Component {};
       export default foo;
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         expect(isClassComponent(path.get('declaration'))).toBeTruthy();
         done();
@@ -76,7 +76,7 @@ describe('isClassComponent', () => {
       class foo extends Component {}
       export default foo;
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         expect(isClassComponent(path.get('declaration'))).toBeTruthy();
         done();

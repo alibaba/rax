@@ -1,7 +1,8 @@
 const invokeModules = require('../utils/invokeModules');
 const genCode = require('./genCode');
+const { baseOptions } = require('../options');
 
-function generate(parsed, options) {
+function generate(parsed, options = baseOptions) {
   const { code, map } = genCode(parsed.ast);
   const ret = {
     code, map,
@@ -9,6 +10,7 @@ function generate(parsed, options) {
   };
 
   invokeModules(options.modules, 'generate', ret, parsed, options);
+
   return ret;
 }
 

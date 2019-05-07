@@ -12,10 +12,6 @@ module.exports = [
    */
   require('./css'),
   /**
-   * Restrict to only have one return in render.
-   */
-  require('./onlyOneReturn'),
-  /**
    * Extract JSX template.
    */
   require('./extractJSXTemplate'),
