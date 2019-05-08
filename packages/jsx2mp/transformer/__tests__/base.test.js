@@ -23,9 +23,8 @@ describe('transfrom simple example', () => {
     const expectedTemplate = '<view>Hello {{value}}</view>';
     const expectedScript = `
       import { createComponent as __create_component__ } from "/__helpers/component";
-      import { createElement, Component as __rax_component__ } from 'rax';
       
-      var __class_def__ = class extends __rax_component__ {
+      var __class_def__ = class {
         state = {
           value: 'world'
         };
@@ -74,7 +73,7 @@ describe('transfrom simple example', () => {
 
   it('should render array', () => {
     const originJSX = `
-      import { createElement, Component } from 'rax';
+      import { createElement, Component } from "rax/dist/rax.min.js";
 
       export default class extends Component {
         render() {

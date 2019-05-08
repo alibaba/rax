@@ -1,5 +1,5 @@
 import { render } from 'rax';
-import DriverDOM from 'driver-dom';
+import * as DriverDOM from 'driver-dom';
 
 export default (element, container, callback) => {
   render(element, container, {

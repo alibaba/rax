@@ -24,6 +24,7 @@ const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
   weexapp: './config/weexapp/webpack.config.dev',
+  component: './config/component/webpack.config.dev'
 };
 
 /**

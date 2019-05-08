@@ -1,10 +1,13 @@
+/* global __windmill_environment__ */
 import deepCopy from './deepCopy';
 import computeChangedData from './computeChangedData';
 import { pushPage, unlinkPage, popupPage } from './pageHub';
 
 const WEBVIEW_MESSAGE_NAME = '__WEBVIEW_MESSAGE_EVENT_NAME__@';
 const CURRENT_WV_URL = '__CURRENT_WEBVIEW_URL__';
+const API_REPLACE_WEBVIEW = '__replace_webview_render__';
 const WEBVIEW_STYLE = { width: '100vw', height: '100vh' };
+const replaceWebView = global[API_REPLACE_WEBVIEW];
 
 const STATE_CONSTRUCTOR = 0;
 const STATE_WILLMOUNT = 1;
@@ -83,14 +86,21 @@ export default function createPage(renderFactory, requireCoreModule, config = {}
           // Compatible with previous version of miniapp framework
           location.replace(url);
           return null;
-        } else if (evaluator) {
-          /**
-           * `render` method will be executed everytime data has changed.
-           * To avoid send evaluator more than once at sametime, cache the current webview
-           * url to detect.
-           */
+        } else if (replaceWebView || evaluator) {
           if (pageInstance[CURRENT_WV_URL] !== url) {
-            evaluator.call('location.replace', url);
+            if (replaceWebView) {
+              /**
+               * Use runtime provided API to replace webview instance.
+               */
+              replaceWebView(url, clientId, pageName);
+            } else {
+              /**
+               * `render` method will be executed everytime data has changed.
+               * To avoid send evaluator more than once at sametime, cache the current webview
+               * url to detect.
+               */
+              evaluator.call('location.replace', url);
+            }
           }
           pageInstance[CURRENT_WV_URL] = url;
           return null;

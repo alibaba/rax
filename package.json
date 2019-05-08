@@ -60,9 +60,8 @@
     "build:dist": "npm run clean:dist && node ./scripts/dist-core.js",
     "build": "npm run build:compile && npm run build:dist",
     "watch:compile": "node ./scripts/compile-packages.js --watch",
-    "test": "npm run test:core && npm run test:atag",
+    "test": "npm run test:core",
     "test:core": "jest --logHeapUsage --detectOpenHandles",
-    "test:atag": "cd packages/atag && npm test",
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --ext .js --ext .jsx ./",
     "coverage": "npm run test -- --coverage",
@@ -73,7 +72,8 @@
     "clean:coverage": "rm -rf ./coverage",
     "clean:modules": "rm -rf ./packages/*/node_modules",
     "clean": "jest --clearCache && npm run clean:modules & npm run clean:compile & npm run clean:dist & npm run clean:coverage",
-    "clear": "git clean -xfd"
+    "clear": "git clean -xfd",
+    "bench": "cd scripts/bench && npm install && npm start"
   },
   "config": {
     "ghooks": {

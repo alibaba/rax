@@ -39,7 +39,7 @@ const nodePaths = (process.env.NODE_PATH || '')
 
 const paths = {
   appDirectory: appDirectory,
-  appBuild: resolveApp('build'),
+  appBuild: resolveApp(process.env.OUTPUT_PATH || 'build'),
   appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
@@ -48,6 +48,7 @@ const paths = {
   appSrc: resolveApp('src'),
   appManifest: resolveApp('manifest.json'),
   appNodeModules: resolveApp('node_modules'),
+  componentDemoJs: resolveModule(resolveApp, 'demo/index'),
   nodePaths: nodePaths,
   miniProgramIndexJs: resolveModule(resolveApp, 'app'),
 };

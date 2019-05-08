@@ -18,6 +18,7 @@ addEventListener('message', messageHandler);
 
 const { emit: emitToClient, addClient, getClient } = worker.clientHub;
 const CURRENT_CLIENT_ID = '__current_client_id__';
+const MINIAPP_ENV = '__miniapp_env__';
 const EVENT_IMPORT_SCRIPTS = 'importScripts';
 const EVENT_REGISTER_API = 'registerAPI';
 const EVENT_START_RENDER = 'init';
@@ -27,6 +28,7 @@ const EVENT_CYCLE_APP = 'app:lifecycle';
 const EVENT_CYCLE_PAGE = 'page:lifecycle';
 const EVENT_NAVIGATOR = 'navigate';
 const EVENT_UPDATE_PAGEDATA = 'updatePageData';
+const EVENT_SET_ENV = 'setEnv';
 
 /**
  * Worker message handler.
@@ -39,6 +41,13 @@ function messageHandler({ data }) {
   switch (payload.type) {
     case EVENT_IMPORT_SCRIPTS: {
       importScripts(payload.url);
+      break;
+    }
+
+    case EVENT_SET_ENV: {
+      setupGlobalObject({
+        [MINIAPP_ENV]: payload.env,
+      });
       break;
     }
 
