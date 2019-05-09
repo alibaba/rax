@@ -1,13 +1,11 @@
-import { createElement, Component } from 'rax';
+import { createElement } from 'rax';
 import View from 'rax-view';
 import './index.css';
 
-export default class extends Component {
-  render() {
-    return (
-      <View className="header">
-        {this.props.children}
-      </View>
-    );
-  }
+export default function(props) {
+  return (
+    <View className="header">
+      {props.children}
+    </View>
+  );
 }
