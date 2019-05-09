@@ -1,4 +1,5 @@
 const generateAttrs = require('./genAttrs');
+const Node = require('../Node');
 
 const SPACE_INDENT = '  ';
 

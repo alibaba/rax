@@ -12,7 +12,11 @@ module.exports = [
    */
   require('./css'),
   /**
-   * Extract JSX template.
+   * Handle code.
    */
-  require('./extractTemplate'),
+  require('./code'),
+  /**
+   * Handle JSX template.
+   */
+  require('./template'),
 ];

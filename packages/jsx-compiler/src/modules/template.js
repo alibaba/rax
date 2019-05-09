@@ -3,7 +3,11 @@ const { NodePath } = require('@babel/traverse');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const isClassComponent = require('../utils/isClassComponent');
 const traverse = require('../utils/traverseNodePath');
-const TEMPLATE_PATH = 'templatePath';
+const parseElement = require('../parser/parseElement');
+const genElement = require('../codegen/genElement');
+
+const TEMPLATE_AST = 'templateAST';
+const TEMPLATE_NODES = 'templateNodes';
 
 /**
  * Extract JSXElement path.
@@ -15,16 +19,22 @@ module.exports = {
 
     if (isFunctionComponent(defaultExportedPath)) {
       const returnPath = getReturnElementPath(defaultExportedPath);
-      parsed[TEMPLATE_PATH] = returnPath;
+      parsed[TEMPLATE_AST] = returnPath.node;
+      parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
+
+      returnPath.remove();
     } else if (isClassComponent(defaultExportedPath)) {
       const renderFnPath = getRenderMethodPath(defaultExportedPath);
       const returnPath = getReturnElementPath(renderFnPath);
-      parsed[TEMPLATE_PATH] = returnPath;
+      parsed[TEMPLATE_AST] = returnPath.node;
+      parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
+
+      renderFnPath.remove();
     }
   },
   generate(ret, parsed, options) {
-    if (parsed[TEMPLATE_PATH]) {
-      ret.template = generate(parsed[TEMPLATE_PATH]);
+    if (parsed[TEMPLATE_NODES]) {
+      ret.template = genElement(parsed[TEMPLATE_NODES]);
     }
   },
 };
