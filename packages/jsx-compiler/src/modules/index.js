@@ -14,5 +14,5 @@ module.exports = [
   /**
    * Extract JSX template.
    */
-  require('./extractJSXTemplate'),
+  require('./extractTemplate'),
 ];
