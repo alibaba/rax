@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-### `npm run start`
+### `npm start`
 
 Runs the app in development mode.
 
