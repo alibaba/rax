@@ -87,7 +87,7 @@ function buildCompiler(config) {
 function cleanFolder(path) {
   return new Promise((resolve, reject) => {
     rimraf(path, function(err) {
-      if (err) reject(err)
+      if (err) reject(err);
       else resolve();
     });
   });
@@ -103,7 +103,7 @@ function handleBuildSuccess(stats) {
 
 function handleBuildError(err) {
   if (err.stats) {
-    err.stats.toString({ colors: true })
+    err.stats.toString({ colors: true });
   }
   console.log(colors.green('\nBuild with error.'));
   process.exit(1);
