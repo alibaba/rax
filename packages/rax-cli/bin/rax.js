@@ -137,6 +137,10 @@ function askProjectInformaction(name, verbose) {
           value: 'miniapp'
         },
         {
+          name: 'PWA App',
+          value: 'pwaapp'
+        },
+        {
           name: 'Component',
           value: 'component'
         }

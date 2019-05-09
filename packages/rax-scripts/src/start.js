@@ -23,6 +23,7 @@ const pathConfig = require('./config/path.config');
 const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
+  pwaapp: './config/pwaapp/webpack.config.dev',
   weexapp: './config/weexapp/webpack.config.dev',
   component: './config/component/webpack.config.dev'
 };

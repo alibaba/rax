@@ -7,7 +7,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const webpackConfigProd = webpackMerge(webpackConfigBase, {
-  target: 'node',
+  target: 'web',
   devtool: 'source-map',
   entry: {
     'index.min': [pathConfig.appIndexJs],

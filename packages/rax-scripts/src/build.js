@@ -36,6 +36,7 @@ const MINIAPP = 'miniapp';
 const COMPONENT = 'component';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
+  pwaapp: './config/pwaapp/webpack.config.prod',
   weexapp: './config/weexapp/webpack.config.prod',
   component: './config/component/webpack.config.prod',
 };
