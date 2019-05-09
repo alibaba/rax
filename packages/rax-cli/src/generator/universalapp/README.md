@@ -4,7 +4,7 @@
 
 ### `npm start`
 
-Runs the app in development mode.
+Run the app in development mode.
 
 Open [http://localhost:9999](http://localhost:9999) to view it in the browser.
 
@@ -16,7 +16,7 @@ You will see the lint errors in the console.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.
+Build the app for production to the `build` folder.
 
 
 ## Post-Processing CSS
