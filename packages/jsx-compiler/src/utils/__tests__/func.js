@@ -1,4 +1,4 @@
-const isFunctionComponent = require('../iqsFunctionComponent');
+const isFunctionComponent = require('../isFunctionComponent');
 const { parse } = require('../../parser');
 const traverse = require('../traverseNodePath');
 
