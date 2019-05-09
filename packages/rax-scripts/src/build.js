@@ -14,25 +14,13 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const rimraf = require('rimraf');
 
+const jsx2mp = require('jsx2mp');
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
-const componentCompiler = require('./utils/componentCompiler');
-const jsx2mp = require('jsx2mp');
-
-function buildCompiler(config) {
-  const compiler = createWebpackCompiler(config);
-
-  compiler.run((err) => {
-    if (err) {
-      throw err;
-    }
-
-    console.log(colors.green('\nBuild successfully.'));
-    process.exit();
-  });
-}
+const compileComponent = require('./utils/componentCompiler');
 
 const MINIAPP = 'miniapp';
+const UNIVERSALAPP = 'universalapp';
 const COMPONENT = 'component';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
@@ -46,21 +34,77 @@ module.exports = function build(type = 'webapp') {
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
   } else if (type === COMPONENT) { // build component
-    var webpackConfigComponentDistProd = require(webpackConfigMap.component);
-    componentCompiler(appPackage.name);
-    rimraf(pathConfig.appDist, function(err) {
-      if (err) {
-        throw err;
-      }
-      buildCompiler(webpackConfigComponentDistProd);
-    });
+    const webpackConfigComponentDistProd = require(webpackConfigMap.component);
+    compileComponent(appPackage.name);
+    cleanFolder(pathConfig.appDist)
+      .then(() => buildCompiler(webpackConfigComponentDistProd))
+      .then(handleBuildSuccess)
+      .catch(handleBuildError);
+  } else if (type === UNIVERSALAPP) {
+    cleanFolder(pathConfig.appBuild)
+      .then(() => {
+        const buildMiniApp = () => jsx2mp(pathConfig.appDirectory, 'dist-miniapp', false);
+        const tasks = ['webapp', 'weexapp']
+          .map((type) => {
+            const config = require(webpackConfigMap[type]);
+            config.output.path = 'dist-' + type;
+            const compiler = createWebpackCompiler(config);
+            return buildCompiler(compiler);
+          })
+          .concat(buildMiniApp);
+        return Promise.all(tasks);
+      })
+      .then(handleBuildSuccess)
+      .catch(handleBuildError);
   } else {
-    rimraf(pathConfig.appBuild, (err) => {
-      if (err) {
-        throw err;
-      }
-      const config = require(webpackConfigMap[type]);
-      buildCompiler(config);
-    });
+    cleanFolder(pathConfig.appBuild)
+      .then(() => {
+        const config = require(webpackConfigMap[type]);
+        return buildCompiler(config);
+      })
+      .then(handleBuildSuccess)
+      .catch(handleBuildError);
   }
 };
+
+function buildCompiler(config) {
+  const compiler = createWebpackCompiler(config);
+  return new Promise((resolve, reject) => {
+    compiler.run((err, stats) => {
+      if (err) {
+        reject(err);
+      } else if (stats.hasError()) {
+        const err = new Error('Build with error.');
+        err.stats = stats;
+        reject(err);
+      } else {
+        resolve(stats);
+      }
+    });
+  });
+}
+
+function cleanFolder(path) {
+  return new Promise((resolve, reject) => {
+    rimraf(path, function(err) {
+      if (err) reject(err)
+      else resolve();
+    });
+  });
+}
+
+function handleBuildSuccess(stats) {
+  console.log(stats.toString({
+    colors: true,
+  }));
+  console.log(colors.green('\nBuild successfully.'));
+  process.exit();
+}
+
+function handleBuildError(err) {
+  if (err.stats) {
+    err.stats.toString({ colors: true })
+  }
+  console.log(colors.green('\nBuild with error.'));
+  process.exit(1);
+}

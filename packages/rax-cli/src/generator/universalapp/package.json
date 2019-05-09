@@ -9,6 +9,8 @@
   "scripts": {
     "start": "rax-scripts start --type=universalapp",
     "build": "rax-scripts build --type=universalapp",
+    "start:miniapp": "rax-scripts start --type=miniapp",
+    "build:miniapp": "rax-scripts build --type=miniapp",
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
