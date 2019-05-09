@@ -57,11 +57,12 @@ const config = () => {
         routes: [
           {
             path: '',                 // www.example.com/bar
-            component: () => import(/* webpackChunkName: "bar" */ './Bar')
+            component: () => import(/* webpackChunkName: "bar" */ './Bar').then((Bar) => {
               // interop-require see: https://www.npmjs.com/package/interop-require
-              .then(obj => obj && obj.__esModule ? obj.default : obj)
+              Bar = Bar.__esModule ? Bar.default : Bar;
               // return a created element
-              .then(Bar => <Bar />),
+              return <Bar />;
+            }),
           },
         ],
       },
