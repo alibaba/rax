@@ -1,12 +1,12 @@
-import { parse as parseUrl } from 'url';
-import { parse as parseQs } from 'querystring';
-import { createElement } from 'rax';
-import renderer from 'rax-server-renderer';
-import handlebars from 'handlebars';
+const url = require('url');
+const qs = require('querystring');
+const { createElement } = require('rax');
+const renderer = require('rax-server-renderer');
+const handlebars = require('handlebars');
 
-import '@babel/polyfill';
+const ErrorComponent = require('./lib/Error');
 
-export default class Server {
+module.exports = class Server {
   constructor(options = {}) {
     const {
       template,
@@ -25,16 +25,20 @@ export default class Server {
 
     this.pages = pages || {};
     this.layout = layout;
+
+    this.render = this.render.bind(this);
+    this.renderToHTML = this.renderToHTML.bind(this);
+    this.renderErrorToHTML = this.renderErrorToHTML.bind(this);
   }
 
-  render = async(page, req, res, options) => {
+  async render(page, req, res, options) {
     const html = await this.renderToHTML(page, req, res, options);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.end(html);
   }
 
-  renderToHTML = async(page, req, res, options = {}) => {
+  async renderToHTML(page, req, res, options = {}) {
     let pageComponent;
 
     if (this.pages[page] && this.pages[page].bundle) {
@@ -50,7 +54,7 @@ export default class Server {
       query
     } = options;
 
-    const parsedUrl = getParsedUrl(req, res, pathname, query);
+    const parsedUrl = getParsedUrl(req, pathname, query);
 
     try {
       const html = await renderToHTML(req, res, {
@@ -67,23 +71,20 @@ export default class Server {
     }
   }
 
-  renderErrorToHTML = async(err, req, res, parsedUrl) => {
+  async renderErrorToHTML(err, req, res, parsedUrl) {
     let errorComponent;
 
     if (this.pages._error && this.pages._error.bundle) {
       errorComponent = this.pages._error.bundle;
     } else {
-      errorComponent = (
-        <p>
-          `An error ${err.statusCode} occurred on server`
-        </p>
-      );
+      errorComponent = ErrorComponent;
     }
 
     const html = await renderToHTML(req, res, {
       Component: errorComponent,
       template: this.pages._error.template || this.template,
-      ...parsedUrl
+      ...parsedUrl,
+      err
     });
 
     return html;
@@ -92,15 +93,14 @@ export default class Server {
   logError(err) {
     console.log(err);
   }
-}
+};
 
-function getParsedUrl(req, res, pathname, query) {
+function getParsedUrl(req, pathname, query) {
   if (!pathname || !query) {
-    const url = req.url;
-    const parsedUrl = parseUrl(url);
+    const parsedUrl = url.parse(req.url);
 
     pathname = pathname || parsedUrl.pathname;
-    query = query || parseQs(parsedUrl.query);
+    query = query || qs.parse(parsedUrl.query);
   }
 
   return {
@@ -120,10 +120,11 @@ async function renderToHTML(req, res, options) {
     Component,
     template,
     pathname,
-    query
+    query,
+    err
   } = options;
 
-  const ctx = { req, res, pathname, query };
+  const ctx = { req, res, pathname, query, err };
 
   let props;
 

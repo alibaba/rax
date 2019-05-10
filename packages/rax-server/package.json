@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Rax server.",
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
