@@ -1,11 +1,12 @@
 const { generate } = require('./codegen');
 const { parse } = require('./parser');
+const { baseOptions } = require('./options');
 
 /**
  * @param template {String} Template string.
  * @param options {Object} Compiler options.
  */
-function compile(template, options) {
+function compile(template, options = baseOptions) {
   const parsed = parse(template.trim(), options);
   const generated = generate(parsed, options);
   const { ast, imported, exported } = parsed;
