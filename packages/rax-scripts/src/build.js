@@ -47,12 +47,13 @@ module.exports = function build(type = 'webapp') {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
   } else if (type === COMPONENT) { // build component
     var webpackConfigComponentDistProd = require(webpackConfigMap.component);
-    componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {
       if (err) {
         throw err;
       }
-      buildCompiler(webpackConfigComponentDistProd);
+      componentCompiler(function() {
+        buildCompiler(webpackConfigComponentDistProd);
+      });
     });
   } else {
     rimraf(pathConfig.appBuild, (err) => {

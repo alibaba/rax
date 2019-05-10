@@ -3,6 +3,7 @@
 /* eslint no-console: 0 */
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const pathConfig = require('../path.config');
 const webpackConfigBase = require('./webpack.config.base');
 
@@ -10,17 +11,21 @@ const webpackConfigBase = require('./webpack.config.base');
 const webpackConfigDev = webpackMerge(webpackConfigBase, {
   devtool: 'inline-module-source-map',
   entry: {
-    index: [pathConfig.componentDemoJs],
+    index: [pathConfig.componentDemoJs]
   },
   output: {
-    publicPath: '/',
+    publicPath: '/'
   },
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin(),
-  ],
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: pathConfig.appHtml
+    }),
+    new webpack.NoEmitOnErrorsPlugin()
+  ]
 });
 
-Object.keys(webpackConfigDev.entry).forEach((point) => {
+Object.keys(webpackConfigDev.entry).forEach(point => {
   // hot reaload client.
   webpackConfigDev.entry[point].unshift(require.resolve('../../hmr/webpackHotDevClient.entry'));
 });

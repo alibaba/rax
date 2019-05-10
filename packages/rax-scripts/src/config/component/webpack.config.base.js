@@ -1,22 +1,8 @@
 'use strict';
 /* eslint no-console: 0 */
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const webpackConfig = require('../webpack.config');
-const pathConfig = require('../path.config');
-const babelConfig = require('../babel.config');
-
-babelConfig.presets.push([
-  require.resolve('@babel/preset-react'), {
-    'pragma': 'createElement',
-    'pragmaFrag': 'Fragment'
-  }
-]);
-
-babelConfig.plugins.push(
-  require.resolve('babel-plugin-transform-jsx-stylesheet'),
-  require.resolve('rax-hot-loader/babel')
-);
+const babelConfig = require('./babel.config');
 
 module.exports = {
   mode: webpackConfig.mode,
@@ -24,24 +10,22 @@ module.exports = {
   // Compile target should "web" when use hot reload
   target: webpackConfig.target,
   entry: webpackConfig.entry,
-  output: Object.assign({
-    pathinfo: true,
-  }, webpackConfig.output),
+  output: Object.assign(
+    {
+      pathinfo: true
+    },
+    webpackConfig.output
+  ),
 
   resolve: webpackConfig.resolve,
 
   plugins: [
     new RaxWebpackPlugin({
       target: 'bundle',
-      externalBuiltinModules: false,
-    }),
-    // Generates an `index.html` file with the <script> injected.
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: pathConfig.appHtml,
+      externalBuiltinModules: false
     }),
     webpackConfig.plugins.define,
-    webpackConfig.plugins.caseSensitivePaths,
+    webpackConfig.plugins.caseSensitivePaths
   ],
   module: {
     rules: [
@@ -50,9 +34,18 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         use: [
           {
-            loader: require.resolve('ts-loader'),
+            loader: require.resolve('babel-loader'),
+            options: babelConfig
           },
-        ],
+          {
+            loader: require.resolve('ts-loader'),
+            options: {
+              compilerOptions: {
+                rootDir: process.cwd()
+              }
+            }
+          }
+        ]
       },
       {
         test: /\.(js|mjs|jsx)$/,
@@ -60,27 +53,27 @@ module.exports = {
         use: [
           {
             loader: require.resolve('babel-loader'),
-            options: babelConfig,
-          },
-        ],
+            options: babelConfig
+          }
+        ]
       },
       {
         test: /\.css$/,
         use: [
           {
-            loader: require.resolve('stylesheet-loader'),
-          },
-        ],
+            loader: require.resolve('stylesheet-loader')
+          }
+        ]
       },
       // load inline images using image-source-loader for Image
       {
         test: /\.(svg|png|webp|jpe?g|gif)$/i,
         use: [
           {
-            loader: require.resolve('image-source-loader'),
-          },
-        ],
-      },
-    ],
-  },
+            loader: require.resolve('image-source-loader')
+          }
+        ]
+      }
+    ]
+  }
 };
