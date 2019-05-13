@@ -25,5 +25,5 @@ module.exports = [
    * Handle Rax base components.
    * Order: parse in front of template.
    */
-  require('./rax-components'),
+  require('./components'),
 ];

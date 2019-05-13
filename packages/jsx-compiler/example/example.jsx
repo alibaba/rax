@@ -1,7 +1,7 @@
 import { createElement, useState, Component } from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
-import Container from './components/Container';
+import Button from './src/components/Button';
 import './example.css';
 
 const number = 23;
@@ -19,6 +19,9 @@ const defaultBar = number;
 
 export default class extends Component {
   render() {
-    return <View><Text>Hello World</Text></View>;
+    return <View>
+        <Button></Button>;
+        <Text>Hello World</Text>
+      </View>;
   }
 }

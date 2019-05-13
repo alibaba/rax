@@ -31,7 +31,8 @@ module.exports = {
       parsed[TEMPLATE_NODES] = parseElement(returnPath.node, {
         tagName(rawTagName) {
           if (parsed.usingComponents && parsed.usingComponents.has(rawTagName)) {
-            return parsed.usingComponents.get(rawTagName);
+            const { tagName } = parsed.usingComponents.get(rawTagName);
+            return tagName;
           } else {
             return kebabCase(rawTagName).replace(/^-/, '');
           }
