@@ -10,6 +10,8 @@ const parserAdapters = {
     forItem: 'a:for-item',
     forIndex: 'a:for-index',
     key: 'a:key',
+
+    modulePathSuffix: '/lib/miniapp/index',
   },
   'wechat': {
     if: 'wx:if',
@@ -19,7 +21,9 @@ const parserAdapters = {
     forItem: 'wx:for-item',
     forIndex: 'wx:for-index',
     key: 'wx:key',
+
+    modulePathSuffix: '/lib/miniapp-wx/index',
   },
 };
 
-module.exports = parserAdapters.ali;
+module.exports = parserAdapters['ali'];

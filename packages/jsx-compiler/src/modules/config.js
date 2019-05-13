@@ -7,8 +7,8 @@ module.exports = {
     const usingComponents = {};
     for (let [key, value] of parsed.usingComponents) {
       if (value.external) {
-        // eg: 'rax-view/miniapp-ali'
-        usingComponents[value.tagName] = value.from + '/miniapp-ali';
+        // eg: 'rax-view/lib/miniapp/index'
+        usingComponents[value.tagName] = value.from + options.targetAdapter.modulePathSuffix;
       } else {
         usingComponents[value.tagName] = value.from;
       }
