@@ -1,0 +1,2 @@
+<web-view src="{{src}}" onMessage="onMessage">
+</web-view>

@@ -1,5 +1,6 @@
 const t = require('@babel/types');
 const { NodePath } = require('@babel/traverse');
+const kebabCase = require('kebab-case');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const isClassComponent = require('../utils/isClassComponent');
 const traverse = require('../utils/traverseNodePath');
@@ -27,7 +28,15 @@ module.exports = {
       const renderFnPath = getRenderMethodPath(defaultExportedPath);
       const returnPath = getReturnElementPath(renderFnPath);
       parsed[TEMPLATE_AST] = returnPath.node;
-      parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
+      parsed[TEMPLATE_NODES] = parseElement(returnPath.node, {
+        tagName(rawTagName) {
+          if (parsed.usingComponents && parsed.usingComponents.has(rawTagName)) {
+            return parsed.usingComponents.get(rawTagName);
+          } else {
+            return kebabCase(rawTagName).replace(/^-/, '');
+          }
+        },
+      });
 
       renderFnPath.remove();
     }

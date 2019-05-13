@@ -18,15 +18,15 @@ const parserAdapter = {
  * Choose parse method
  * @param {JSXElement|String|Number} el
  */
-function parseElement(el) {
+function parseElement(el, options) {
   if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
-    return parseBaseStructure(el);
+    return parseBaseStructure(el, options);
   } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el) || t.isIdentifier(el, { name: 'undefined' } )) {
     return null;
   } else if (t.isArrayExpression(el)) {
-    return parseElementArray(el);
+    return parseElementArray(el, options);
   } else {
-    return parseJSX(el);
+    return parseJSX(el, options);
   }
 }
 
@@ -35,17 +35,17 @@ function parseElement(el) {
  * @param el {JSXElement|JSXText|JSXExpression} Root el.
  * @return result {Node|String}
  */
-function parseJSX(el) {
+function parseJSX(el, options) {
   if (t.isJSXElement(el)) {
-    return parseJSXElement(el);
+    return parseJSXElement(el, options);
   } else if (t.isJSXText(el)) {
-    return parseJSXText(el);
+    return parseJSXText(el, options);
   } else if (t.isJSXExpressionContainer(el)) {
     // Expression interpolation in JSX.
     const { expression } = el;
-    return parseJSXExpression(expression);
+    return parseJSXExpression(expression, options);
   } else if (t.expressionStatement(el)) {
-    return parseJSXExpression(el);
+    return parseJSXExpression(el, options);
   } else {
     console.warn('Can not parse', el);
     return null;
@@ -57,7 +57,7 @@ function parseJSX(el) {
  * @param el {JSXElement}
  * @return {Node}
  */
-function parseJSXElement(el) {
+function parseJSXElement(el, options) {
   const { children = [] } = el;
   const { attributes, name } = el.openingElement;
   if (t.isJSXMemberExpression(name)) {
@@ -67,17 +67,23 @@ function parseJSXElement(el) {
 
   const tagName = name.name;
   if (isCustomComponent(tagName)) {
-    const componentName = normalizeComponentName(tagName);
+    let componentName;
+    if (options && options.tagName) {
+      componentName = options.tagName(tagName);
+    } else {
+      componentName = normalizeComponentName(tagName);
+    }
+
     return new Node(
       componentName,
       parseAttrs(attributes),
-      children.map(parseJSX)
+      children.map((child) => parseJSX(child, options))
     );
   } else {
     return new Node(
       tagName,
       parseAttrs(attributes),
-      children.map(parseJSX)
+      children.map((child) => parseJSX(child, options))
     );
   }
 }

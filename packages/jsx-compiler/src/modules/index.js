@@ -15,8 +15,15 @@ module.exports = [
    * Handle code.
    */
   require('./code'),
+
   /**
    * Handle JSX template.
    */
   require('./template'),
+
+  /**
+   * Handle Rax base components.
+   * Order: parse in front of template.
+   */
+  require('./rax-components'),
 ];
