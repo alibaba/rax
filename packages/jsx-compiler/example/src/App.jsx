@@ -10,7 +10,7 @@ export default () => {
   return (
     <View onClick={handleClick}>
       Hello {name}
-      <Button></Button>
+      <Button />
     </View>
   );
 };

@@ -20,8 +20,8 @@ const defaultBar = number;
 export default class extends Component {
   render() {
     return <View>
-        <Button></Button>;
-        <Text>Hello World</Text>
-      </View>;
+      <Button />;
+      <Text>Hello World</Text>
+    </View>;
   }
 }

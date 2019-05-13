@@ -1,11 +1,12 @@
 import fmtEvent from '../_util/fmtEvent';
+
 Component({
   data: {
-    direction: "vertical"
+    direction: 'vertical'
   },
   props: {
     className: '',
-    style: "",
+    style: '',
     horizontal: false,
     vertical: true,
     endReachedThreshold: 500,

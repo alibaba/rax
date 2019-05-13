@@ -1,9 +1,10 @@
 import fmtEvent from '../_util/fmtEvent';
+
 Component({
   data: {},
   props: {
     className: '',
-    style: "",
+    style: '',
     onClick: function onClick() {},
     onLongpress: function onLongpress() {},
     onAppear: function onAppear() {},

@@ -19,19 +19,19 @@ module.exports = function cleanJSXElementStringLiteral(rawString = '') {
     const isFirstLine = i === 0;
     const isLastLine = i === lines.length - 1;
     const isLastNonEmptyLine = i === lastNonEmptyLine;
-    let trimmedLine = line.replace(/\t/g, " ");
+    let trimmedLine = line.replace(/\t/g, ' ');
     if (!isFirstLine) {
-      trimmedLine = trimmedLine.replace(/^[ ]+/, "");
+      trimmedLine = trimmedLine.replace(/^[ ]+/, '');
     }
     if (!isLastLine) {
-      trimmedLine = trimmedLine.replace(/[ ]+$/, "");
+      trimmedLine = trimmedLine.replace(/[ ]+$/, '');
     }
     if (trimmedLine) {
       if (!isLastNonEmptyLine) {
-        trimmedLine += " ";
+        trimmedLine += ' ';
       }
       str += trimmedLine;
     }
   }
   return str;
-}
+};
