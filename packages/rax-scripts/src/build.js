@@ -59,7 +59,6 @@ function getPWAWebpackConfig() {
     configs.push(require(webpackConfigMap.pwa.serverless));
   }
 
-  console.log(configs);
   return configs;
 }
 

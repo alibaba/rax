@@ -72,6 +72,7 @@
     "postcss-preset-env": "^6.6.0",
     "rax-hot-loader": "^0.6.5",
     "rax-hot-module-replacement-webpack-plugin": "^0.6.5",
+    "rax-server": "^1.0.0-0",
     "rax-webpack-plugin": "^0.6.5",
     "rimraf": "^2.6.2",
     "strip-ansi": "^5.0.0",

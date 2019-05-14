@@ -10,6 +10,7 @@ const webpackConfig = webpackMerge(webpackConfigBase, {
   entry: getEntries(), // serverless loader
   output: {
     filename: 'serverless/[name].js',
+    libraryTarget: 'commonjs2',
   }
 });
 

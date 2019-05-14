@@ -10,6 +10,7 @@ const webpackConfig = webpackMerge(webpackConfigBase, {
   entry: getEntries(),
   output: {
     filename: 'server/[name].js',
+    libraryTarget: 'commonjs2',
   },
   externals: {
     rax: 'rax',
