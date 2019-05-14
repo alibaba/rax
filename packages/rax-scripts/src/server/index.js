@@ -4,6 +4,7 @@ const express = require('express');
 const RaxServer = require('rax-server');
 const getEntries = require('../utils/getEntries');
 const pathConfig = require('../config/path.config');
+
 class DevServer {
   constructor() {
     this.setupApp();
@@ -13,6 +14,7 @@ class DevServer {
     const PORT = 8080;
     const app = express();
 
+    // eslint-disable-next-line new-cap
     const router = express.Router();
 
     const entries = Object.keys(getEntries());
