@@ -14,6 +14,7 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
+const SSRDevServer = require('./server/index');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
@@ -24,7 +25,12 @@ const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
   weexapp: './config/weexapp/webpack.config.dev',
-  component: './config/component/webpack.config.dev'
+  component: './config/component/webpack.config.dev',
+  pwa: {
+    client: './config/pwa/client/webpack.config.dev',
+    server: './config/pwa/server/webpack.config.dev',
+    serverless: './config/pwa/serverless/webpack.config.dev'
+  }
 };
 
 /**
@@ -34,6 +40,14 @@ module.exports = function start(type = 'webapp') {
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, true);
   } else {
+    if (envConfig.pwa) {
+      const pwaManifest = require(pathConfig.pwaManifest);
+      if (pwaManifest.ssr) {
+        new SSRDevServer(webpackConfigMap.pwa);
+        return;
+      }
+    }
+
     const config = require(webpackConfigMap[type]);
     const compiler = createWebpackCompiler(config);
 

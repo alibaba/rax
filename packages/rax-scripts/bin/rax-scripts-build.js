@@ -11,6 +11,7 @@ program
   .option('--public-path <publicPath>', 'set bundle assets public path end with `/`', '/')
   .option('--output-path <outputPath>', 'set output path', 'build')
   .option('--analyzer', 'enabled webpack bundle analyzer', false)
+  .option('--pwa', 'enabled pwa features', false)
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     require('../src/build')(program.type);

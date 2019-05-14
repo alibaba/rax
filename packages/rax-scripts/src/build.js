@@ -18,6 +18,7 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
 const componentCompiler = require('./utils/componentCompiler');
 const jsx2mp = require('jsx2mp');
+const envConfig = require('./config/env.config');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -38,7 +39,29 @@ const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   weexapp: './config/weexapp/webpack.config.prod',
   component: './config/component/webpack.config.prod',
+  pwa: {
+    client: './config/pwa/client/webpack.config.prod',
+    server: './config/pwa/server/webpack.config.prod',
+    serverless: './config/pwa/serverless/webpack.config.prod'
+  }
 };
+
+function getPWAWebpackConfig() {
+  let configs = [
+    require(webpackConfigMap.pwa.client)
+  ];
+
+  const pwaManifest = require(pathConfig.pwaManifest);
+  if (pwaManifest.ssr) {
+    configs.push(require(webpackConfigMap.pwa.server));
+  }
+  if (pwaManifest.serverless) {
+    configs.push(require(webpackConfigMap.pwa.serverless));
+  }
+
+  console.log(configs);
+  return configs;
+}
 
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
@@ -55,11 +78,17 @@ module.exports = function build(type = 'webapp') {
       buildCompiler(webpackConfigComponentDistProd);
     });
   } else {
+    let config;
+    if (envConfig.pwa) {
+      config = getPWAWebpackConfig();
+    } else {
+      config = require(webpackConfigMap[type]);
+    }
+
     rimraf(pathConfig.appBuild, (err) => {
       if (err) {
         throw err;
       }
-      const config = require(webpackConfigMap[type]);
       buildCompiler(config);
     });
   }

@@ -49,7 +49,7 @@ module.exports = (webpackConfig) => {
     );
   });
 
-  compiler.hooks.failed.call('failed', (err) => {
+  compiler.hooks.failed && compiler.hooks.failed.call('failed', (err) => {
     throw err;
   });
 

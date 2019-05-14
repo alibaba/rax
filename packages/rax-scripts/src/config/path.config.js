@@ -51,6 +51,7 @@ const paths = {
   componentDemoJs: resolveModule(resolveApp, 'demo/index'),
   nodePaths: nodePaths,
   miniProgramIndexJs: resolveModule(resolveApp, 'app'),
+  pwaManifest: resolveApp('pwa.json')
 };
 
 module.exports = paths;

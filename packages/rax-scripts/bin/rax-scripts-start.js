@@ -10,6 +10,7 @@ program
   .option('--dir <dir>', 'set project path')
   .option('--https', 'enabled https protocol', false)
   .option('--analyzer', 'enabled webpack bundle analyzer', false)
+  .option('--pwa', 'enabled pwa features', false)
   .action((cmd) => {
     optionsAttachToEnv(cmd);
     require('../src/start')(program.type);
