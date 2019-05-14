@@ -26,5 +26,8 @@
     "minimist": "^1.2.0",
     "semver": "^5.6.0",
     "update-notifier": "^2.5.0"
+  },
+  "devDependencies": {
+    "eslint-config-rax": "^0.0.0"
   }
 }
