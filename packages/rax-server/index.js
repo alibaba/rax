@@ -35,10 +35,17 @@ module.exports = class Server {
     const html = await this.renderToHTML(page, req, res, options);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.end(html);
+    res.send(html);
   }
 
   async renderToHTML(page, req, res, options = {}) {
+    const {
+      pathname,
+      query
+    } = options;
+
+    const parsedUrl = getParsedUrl(req, pathname, query);
+
     let pageComponent;
 
     if (this.pages[page] && this.pages[page].bundle) {
@@ -48,13 +55,6 @@ module.exports = class Server {
       const err = pageNotFoundError(page);
       return this.renderErrorToHTML(err, req, res, parsedUrl);
     }
-
-    const {
-      pathname,
-      query
-    } = options;
-
-    const parsedUrl = getParsedUrl(req, pathname, query);
 
     try {
       const html = await renderToHTML(req, res, {
@@ -72,17 +72,20 @@ module.exports = class Server {
   }
 
   async renderErrorToHTML(err, req, res, parsedUrl) {
-    let errorComponent;
+    let component;
+    let template;
 
-    if (this.pages._error && this.pages._error.bundle) {
-      errorComponent = this.pages._error.bundle;
+    if (this.pages._error) {
+      component = this.pages._error.bundle ? this.pages._error.bundle : ErrorComponent;
+      template = this.pages._error.template ? this.pages._error.template : this.template;
     } else {
-      errorComponent = ErrorComponent;
+      component = ErrorComponent;
+      template = this.template;
     }
 
     const html = await renderToHTML(req, res, {
-      Component: errorComponent,
-      template: this.pages._error.template || this.template,
+      Component: component,
+      template: template,
       ...parsedUrl,
       err
     });
