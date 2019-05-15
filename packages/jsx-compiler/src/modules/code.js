@@ -1,16 +1,14 @@
 const t = require('@babel/types');
-const genExpression = require('../codegen/genExpression');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 
 const RAX_PACKAGE = 'rax';
 const RAX_COMPONENT = 'Component';
-const SAFE_RAX_COMPONENT = '__rax_component__';
 const CREATE_COMPONENT = 'createComponent';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const EXPORTED_CLASS_DEF = '__class_def__';
-const HELPER_COMPONENT = '/__helpers/component';
+const HELPER_COMPONENT = 'jsx2mp-runtime';
 
 /**
  * Module code transform.
