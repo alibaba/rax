@@ -13,7 +13,7 @@ module.exports = {
 
     Object.keys(imported).forEach((rawPath) => {
       if (isFilenameCSS(rawPath)) {
-        const resolvedPath = moduleResolve(options.cwd + '/index.jsx', rawPath);
+        const resolvedPath = moduleResolve(options.filePath, rawPath);
         if (resolvedPath) {
           parsed.cssFiles.push({
             rawPath,
