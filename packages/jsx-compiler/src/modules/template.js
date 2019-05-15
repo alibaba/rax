@@ -20,13 +20,19 @@ module.exports = {
 
     if (isFunctionComponent(defaultExportedPath)) {
       const returnPath = getReturnElementPath(defaultExportedPath);
+      if (!returnPath) return;
+
       parsed[TEMPLATE_AST] = returnPath.node;
       parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
 
       returnPath.remove();
     } else if (isClassComponent(defaultExportedPath)) {
       const renderFnPath = getRenderMethodPath(defaultExportedPath);
+      if (!renderFnPath) return;
+
       const returnPath = getReturnElementPath(renderFnPath);
+      if (!returnPath) return;
+
       parsed[TEMPLATE_AST] = returnPath.node;
       parsed[TEMPLATE_NODES] = parseElement(returnPath.node, {
         tagName(rawTagName) {

@@ -1,25 +1,21 @@
 const isFunctionComponent = require('../isFunctionComponent');
-const { parse } = require('../../parser');
-const traverse = require('../traverseNodePath');
+const { astParser } = require('../../parser');
+const getDefaultExportedPath = require('../getDefaultExportedPath');
 
 describe('isFunctionComponent', () => {
-  it('#1', (done) => {
+  it('#1', () => {
     const code = `
       import Rax from 'rax';
       export default function foo() {
         return (<view></view>);
       }
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        const declarationPath = path.get('declaration');
-        expect(isFunctionComponent(declarationPath)).toBeTruthy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isFunctionComponent(defaultExportedPath)).toBeTruthy();
   });
 
-  it('#2', (done) => {
+  it('#2', () => {
     const code = `
       function foo() {
         return (<view></view>);
@@ -27,28 +23,23 @@ describe('isFunctionComponent', () => {
       
       export default foo;
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        const declarationPath = path.get('declaration');
-        expect(isFunctionComponent(declarationPath)).toBeTruthy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isFunctionComponent(defaultExportedPath)).toBeTruthy();
   });
 
-  it('#3', (done) => {
+  /**
+   * Support React Now.
+   */
+  it('#3', () => {
     const code = `
       import React from 'react';
       
       const foo = () => <view></view>;
       export default foo;
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        const declarationPath = path.get('declaration');
-        expect(isFunctionComponent(declarationPath)).toBeTruthy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isFunctionComponent(defaultExportedPath)).toBeTruthy();
   });
 });

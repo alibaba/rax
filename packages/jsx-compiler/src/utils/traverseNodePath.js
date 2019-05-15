@@ -7,6 +7,8 @@ const t = require('@babel/types');
  * @param visitor
  */
 module.exports = function traverseNodePath(nodeOrPath, visitor) {
+  if (nodeOrPath == null) return;
+
   if (nodeOrPath instanceof NodePath) {
     nodeOrPath.traverse(visitor);
   } else if (t.isFile(nodeOrPath)) {

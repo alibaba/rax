@@ -4,6 +4,8 @@
 module.exports = {
   parse(parsed, code, options) {
     const config = parsed.config = { component: true };
+    if (!parsed.usingComponents) return;
+
     const usingComponents = {};
     for (let [key, value] of parsed.usingComponents) {
       if (value.external) {

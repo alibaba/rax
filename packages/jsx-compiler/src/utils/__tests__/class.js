@@ -1,86 +1,67 @@
 const isClassComponent = require('../isClassComponent');
-const { parse } = require('../../parser');
-const traverse = require('../traverseNodePath');
+const getDefaultExportedPath = require('../getDefaultExportedPath');
+const { astParser } = require('../../parser');
 
 describe('isClassComponent', () => {
-  it('#1', (done) => {
+  it('#1', () => {
     const code = `
       import Rax, { Component } from 'rax';
       export default class extends Component {}
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        expect(isClassComponent(path.get('declaration'))).toBeTruthy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 
-  it('#2', (done) => {
+  it('#2', () => {
     const code = `
       import RaxRef from 'rax';
       export default class extends RaxRef.Component {}
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        expect(isClassComponent(path.get('declaration'))).toBeTruthy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 
-  it('#3', (done) => {
+  it('#3', () => {
     const code = `
       import React, { Component } from 'react';
       export default class extends Component {}
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        const declarationPath = path.get('declaration');
-        expect(isClassComponent(declarationPath)).toBeFalsy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isClassComponent(defaultExportedPath)).toBeFalsy();
   });
 
-  it('#4', (done) => {
+  it('#4', () => {
     const code = `
       import React, { Component } from 'react';
       export default class {}
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        expect(isClassComponent(path.get('declaration'))).toBeFalsy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isClassComponent(defaultExportedPath)).toBeFalsy();
   });
 
-  it('#5', (done) => {
+  it('#5', () => {
     const code = `
       import Rax, { Component } from 'rax';
       const foo = class extends Component {};
       export default foo;
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        expect(isClassComponent(path.get('declaration'))).toBeTruthy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 
-  it('#6', (done) => {
+  it('#6', () => {
     const code = `
       import Rax, { Component } from 'rax';
       class foo extends Component {}
       export default foo;
     `;
-    traverse(parse(code).ast, {
-      ExportDefaultDeclaration(path) {
-        expect(isClassComponent(path.get('declaration'))).toBeTruthy();
-        done();
-      }
-    });
+
+    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 });

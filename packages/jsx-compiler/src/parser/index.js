@@ -2,6 +2,7 @@ const t = require('@babel/types');
 const babelParser = require('@babel/parser');
 const invokeModules = require('../utils/invokeModules');
 const traverse = require('../utils/traverseNodePath');
+const getDefaultExportedPath = require('../utils/getDefaultExportedPath');
 const parserOption = require('./option');
 const { baseOptions } = require('../options');
 
@@ -65,20 +66,6 @@ function getExported(ast) {
 }
 
 /**
- * Get default exported path.
- * @param ast
- */
-function getDefaultExportedPath(ast) {
-  let exportedDeclaration = null;
-  traverse(ast, {
-    ExportDefaultDeclaration(path) {
-      exportedDeclaration = path.get('declaration');
-    },
-  });
-  return exportedDeclaration;
-}
-
-/**
  * @param code
  * @param options {Object} Parser options.
  */
@@ -102,3 +89,4 @@ function parse(code, options = baseOptions) {
 }
 
 exports.parse = parse;
+exports.astParser = astParser;
