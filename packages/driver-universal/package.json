@@ -1,6 +1,6 @@
 {
   "name": "driver-universal",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.0",
   "description": "Driver for Universal App.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
