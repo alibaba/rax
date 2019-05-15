@@ -63,4 +63,4 @@ module.exports = class App {
   watch() {
     // TODO: 实现 watch 功能
   }
-}
+};

@@ -13,6 +13,8 @@ const t = require('@babel/types');
  *  3. const foo = (props) => (<view></view>)
  */
 module.exports = function isFunctionComponent(path) {
+  if (!path) return false;
+
   const { node, scope } = path;
   if (t.isIdentifier(node)) {
     const binding = scope.getBinding(node.name);
@@ -21,7 +23,9 @@ module.exports = function isFunctionComponent(path) {
     } else {
       return isFunctionComponent(binding.path);
     }
+  } else if (node == null) {
+    return false;
   } else {
     return t.isFunction(node);
   }
-}
+};

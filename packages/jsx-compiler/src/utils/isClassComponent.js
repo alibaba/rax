@@ -1,5 +1,7 @@
 const t = require('@babel/types');
-const { RAX_PACKAGE, RAX_COMPONENT } = require('../constant');
+
+const RAX_PACKAGE = 'rax';
+const RAX_COMPONENT = 'Component';
 
 /**
  * Judge a NodePath is a Rax JSX class declaration.
@@ -9,6 +11,8 @@ const { RAX_PACKAGE, RAX_COMPONENT } = require('../constant');
  *  2. class xxx extends Component {}
  */
 module.exports = function isClassComponent(path) {
+  if (!path) return false;
+
   const { node, scope } = path;
   if (t.isIdentifier(node)) {
     const binding = scope.getBinding(node.name);
@@ -40,4 +44,4 @@ module.exports = function isClassComponent(path) {
     }
     return false;
   }
-}
+};
