@@ -1,9 +1,8 @@
 const t = require('@babel/types');
 const kebabCase = require('kebab-case');
 const Node = require('./Node');
-const findReturnElement = require('../transformer/findReturnElement');
+const findReturnElement = require('../findReturnElement');
 const { generateCodeByExpression } = require('../codegen');
-const { builtInTags } = require('../constant');
 const parserAdapter = require('./parserAdapter');
 
 /**
@@ -298,7 +297,7 @@ function parseElementArray(el) {
  * @return {Boolean}
  */
 function isCustomComponent(tagName) {
-  return !builtInTags.has(tagName.toLowerCase());
+  return !/a-z-/.test(tagName);
 }
 
 /**
@@ -313,6 +312,7 @@ const propMapping = {
   className: 'class',
   key: 'a:key',
 };
+
 /**
  * Normalize prop, eg: className -> class
  * @param prop {String}

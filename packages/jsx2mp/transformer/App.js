@@ -1,12 +1,11 @@
 const { join, resolve } = require('path');
 const { readFileSync, writeFileSync, writeJSONSync, readJSONSync, existsSync } = require('fs-extra');
-const TransformerPage = require('./Page');
-// const Watcher = require('./Watcher');
+const Page = require('./Page');
 
 const DEP = 'dependencies';
 const DEV_DEP = 'devDependencies';
 
-class App {
+module.exports = class App {
   /**
    * @param sourcePath {String} path to source directory.
    * @param transformerOption {Object}
@@ -41,7 +40,7 @@ class App {
     this.dependencyPages = [];
     const { pages } = config;
     for (let i = 0, l = pages.length; i < l; i++) {
-      const pageInstance = new TransformerPage({
+      const pageInstance = new Page({
         rootContext: sourcePath,
         context: resolve(sourcePath, pages[i]),
         distRoot: distDirectory,
@@ -51,15 +50,17 @@ class App {
       this.dependencyPages.push(pageInstance);
     }
 
-    this.write();
+    this._writeFiles();
   }
 
-  write() {
+  _writeFiles() {
     writeFileSync(join(this.distDirectory, 'app.js'), this.script);
     writeFileSync(join(this.distDirectory, 'app.acss'), this.style);
     writeJSONSync(join(this.distDirectory, 'app.json'), this.config);
     writeJSONSync(join(this.distDirectory, 'package.json'), this.packageConfig);
   }
-}
 
-module.exports = App;
+  watch() {
+    // TODO: 实现 watch 功能
+  }
+}

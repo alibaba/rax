@@ -1,14 +1,14 @@
 const { resolve, relative, extname } = require('path');
 const { existsSync, ensureFileSync, readFileSync, readJSONSync, writeFileSync } = require('fs-extra');
-const TransformerComponent = require('./Component');
-const { transformJSX } = require('./transformJSX');
+const transform = require('jsx-compiler');
+const Component = require('./Component');
 const colors = require('colors');
 
 /**
  * Abstract of miniapp page.
- * @type {module.TransformerPage}
+ * @type {module.Page}
  */
-module.exports = class TransformerPage {
+module.exports = class Page {
   constructor(options) {
     const { rootContext, context, distRoot, distPagePath, watch } = options;
     this.rootContext = rootContext;
@@ -26,10 +26,10 @@ module.exports = class TransformerPage {
     const pageStyle = existsSync(pageStylePath) ? readFileSync(pageStylePath, 'utf-8') : '';
 
     // { template, jsCode, customComponents,, style }
-    const transformed = transformJSX(jsxCode, { filePath: pageJSXPath, rootContext });
+    const transformed = transform(jsxCode, { filePath: pageJSXPath, rootContext });
 
     const delegateComponentPath = resolve(distPagePath, 'components');
-    this._delegateComponent = new TransformerComponent({
+    this._delegateComponent = new Component({
       script: transformed.jsCode,
       style: transformed.style || '',
       config: this.generateComponentConfig(transformed.customComponents),
@@ -43,10 +43,10 @@ module.exports = class TransformerPage {
       usingComponents: { page: './components/index'},
     });
 
-    this.write();
+    this._writeFiles();
   }
 
-  generateComponentConfig(customComponents) {
+  generateComponentConfig(customComponents = {}) {
     const usingComponents = {};
     Object.keys(customComponents).forEach((name) => {
       let { tagName, filePath } = customComponents[name];
@@ -60,8 +60,8 @@ module.exports = class TransformerPage {
     };
   }
 
-  write() {
-    this._delegateComponent.write();
+  _writeFiles() {
+    this._delegateComponent._writeFiles();
     this._writeConfig();
     this._writeStyle();
     this._writeTemplate();

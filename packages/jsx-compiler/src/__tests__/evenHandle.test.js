@@ -1,4 +1,4 @@
-const { transformJSX } = require('../transformJSX');
+const transform = require('../index');
 const { resolve } = require('path');
 const stripIndent = require('./__modules__/stripIndent');
 
@@ -22,7 +22,7 @@ describe('transfrom event handle', () => {
       }`;
     const expectedTemplate = '<view onTap="handleClick">Click Me!</view>';
     const expectedScript = `
-      import { createComponent as __create_component__ } from "/__helpers/component";
+      import { createComponent as __create_component__ } from "jsx2mp-runtime";
 
       var __class_def__ = class {
         handleClick(evt) {// do sth.
@@ -31,7 +31,7 @@ describe('transfrom event handle', () => {
       };
 
       Component(__create_component__(__class_def__));`;
-    const { template, jsCode } = transformJSX(originJSX, {
+    const { template, jsCode } = transform(originJSX, {
       filePath: sourcePath
     });
     expect(template).toEqual(stripIndent(expectedTemplate));

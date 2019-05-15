@@ -1,4 +1,4 @@
-const { transformJSX } = require('../transformJSX');
+const transform = require('../index');
 const { resolve } = require('path');
 const stripIndent = require('./__modules__/stripIndent');
 
@@ -36,7 +36,7 @@ describe('transfrom list', () => {
         </block>
       </view>  
       `;
-    const { template } = transformJSX(originJSX, transformJSXOptions);
+    const { template } = transform(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
 
@@ -70,7 +70,7 @@ describe('transfrom list', () => {
           </view>
         </block>
       </view>`;
-    const { template } = transformJSX(originJSX, transformJSXOptions);
+    const { template } = transform(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
 
@@ -101,7 +101,7 @@ describe('transfrom list', () => {
           <text>Nothing!</text>
         </block>
       </view>`;
-    const { template } = transformJSX(originJSX, transformJSXOptions);
+    const { template } = transform(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
 
@@ -130,7 +130,7 @@ describe('transfrom list', () => {
         </block>
 
       </view>`;
-    const { template } = transformJSX(originJSX, transformJSXOptions);
+    const { template } = transform(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
 
@@ -158,7 +158,7 @@ describe('transfrom list', () => {
           </block>
         </block>
       </view>`;
-    const { template } = transformJSX(originJSX, transformJSXOptions);
+    const { template } = transform(originJSX, transformJSXOptions);
     expect(template).toEqual(stripIndent(expectedTemplate));
   });
 });

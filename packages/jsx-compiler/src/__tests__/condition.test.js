@@ -1,4 +1,4 @@
-const { transformJSX } = require('../transformJSX');
+const transform = require('../');
 const { resolve } = require('path');
 const stripIndent = require('./__modules__/stripIndent');
 
@@ -33,7 +33,7 @@ describe('transform condition expression', () => {
         </block>
       </view>
     `;
-    const { template } = transformJSX(originJSX, {
+    const { template } = transform(originJSX, {
       filePath: sourcePath
     });
     expect(template).toEqual(stripIndent(expectedTemplate));
@@ -71,7 +71,7 @@ describe('transform condition expression', () => {
         </block>
       </view>
     `;
-    const { template } = transformJSX(originJSX, {
+    const { template } = transform(originJSX, {
       filePath: sourcePath
     });
     expect(template).toEqual(stripIndent(expectedTemplate));
@@ -102,7 +102,7 @@ describe('transform condition expression', () => {
 
       </view>
       `;
-    const { template } = transformJSX(originJSX, {
+    const { template } = transform(originJSX, {
       filePath: sourcePath
     });
     expect(template).toEqual(stripIndent(expectedTemplate));
