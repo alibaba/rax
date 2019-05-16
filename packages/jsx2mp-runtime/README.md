@@ -26,6 +26,7 @@ provide runtime support for react code in applet environments
   ```
 - api
   ```
-  hooks
+  hooks,
+  env
   ...
   ```
