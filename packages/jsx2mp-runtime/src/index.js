@@ -1,10 +1,12 @@
 import { createComponent } from './Component';
-import { useEffect } from './hooks';
+import { checkEnv } from './env';
+
+checkEnv();
 
 export {
   /* Base Components */
   createComponent,
-
-  /* hooks */
-  useEffect,
 };
+
+/* hooks */
+export * from './hooks';
