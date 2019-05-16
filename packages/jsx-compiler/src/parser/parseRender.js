@@ -1,7 +1,7 @@
 const { default: traverse, NodePath } = require('@babel/traverse');
 const t = require('@babel/types');
 const { parseElement, parserAdapter } = require('./parseElement');
-const Node = require('./Node');
+const Node = require('../Node');
 const { generateCodeByExpression } = require('../codegen');
 
 /**

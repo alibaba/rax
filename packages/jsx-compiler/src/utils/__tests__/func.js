@@ -1,6 +1,6 @@
-const { default: traverse } = require('@babel/traverse');
 const isFunctionComponent = require('../isFunctionComponent');
 const { parse } = require('../../parser');
+const traverse = require('../traverseNodePath');
 
 describe('isFunctionComponent', () => {
   it('#1', (done) => {
@@ -10,7 +10,7 @@ describe('isFunctionComponent', () => {
         return (<view></view>);
       }
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         const declarationPath = path.get('declaration');
         expect(isFunctionComponent(declarationPath)).toBeTruthy();
@@ -27,7 +27,7 @@ describe('isFunctionComponent', () => {
       
       export default foo;
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         const declarationPath = path.get('declaration');
         expect(isFunctionComponent(declarationPath)).toBeTruthy();
@@ -43,7 +43,7 @@ describe('isFunctionComponent', () => {
       const foo = () => <view></view>;
       export default foo;
     `;
-    traverse(parse(code), {
+    traverse(parse(code).ast, {
       ExportDefaultDeclaration(path) {
         const declarationPath = path.get('declaration');
         expect(isFunctionComponent(declarationPath)).toBeTruthy();

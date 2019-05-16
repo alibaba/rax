@@ -1,23 +1,32 @@
 const t = require('@babel/types');
 const kebabCase = require('kebab-case');
-const Node = require('./Node');
-const findReturnElement = require('../findReturnElement');
-const { generateCodeByExpression } = require('../codegen');
-const parserAdapter = require('./parserAdapter');
+const Node = require('../Node');
+const findReturnElement = require('../utils/findReturnElement');
+const genExpression = require('../codegen/genExpression');
+
+const parserAdapter = {
+  if: 'a:if',
+  else: 'a:else',
+  elseif: 'a:elif',
+  for: 'a:for',
+  forItem: 'a:for-item',
+  forIndex: 'a:for-index',
+  key: 'a:key',
+};
 
 /**
  * Choose parse method
  * @param {JSXElement|String|Number} el
  */
-function parseElement(el) {
+function parseElement(el, options) {
   if (t.isStringLiteral(el) || t.isNumericLiteral(el)) {
-    return parseBaseStructure(el);
+    return parseBaseStructure(el, options);
   } else if (t.isNullLiteral(el) || t.isBooleanLiteral(el) || t.isIdentifier(el, { name: 'undefined' } )) {
     return null;
   } else if (t.isArrayExpression(el)) {
-    return parseElementArray(el);
+    return parseElementArray(el, options);
   } else {
-    return parseJSX(el);
+    return parseJSX(el, options);
   }
 }
 
@@ -26,17 +35,17 @@ function parseElement(el) {
  * @param el {JSXElement|JSXText|JSXExpression} Root el.
  * @return result {Node|String}
  */
-function parseJSX(el) {
+function parseJSX(el, options) {
   if (t.isJSXElement(el)) {
-    return parseJSXElement(el);
+    return parseJSXElement(el, options);
   } else if (t.isJSXText(el)) {
-    return parseJSXText(el);
+    return parseJSXText(el, options);
   } else if (t.isJSXExpressionContainer(el)) {
     // Expression interpolation in JSX.
     const { expression } = el;
-    return parseJSXExpression(expression);
+    return parseJSXExpression(expression, options);
   } else if (t.expressionStatement(el)) {
-    return parseJSXExpression(el);
+    return parseJSXExpression(el, options);
   } else {
     console.warn('Can not parse', el);
     return null;
@@ -48,7 +57,7 @@ function parseJSX(el) {
  * @param el {JSXElement}
  * @return {Node}
  */
-function parseJSXElement(el) {
+function parseJSXElement(el, options) {
   const { children = [] } = el;
   const { attributes, name } = el.openingElement;
   if (t.isJSXMemberExpression(name)) {
@@ -58,17 +67,23 @@ function parseJSXElement(el) {
 
   const tagName = name.name;
   if (isCustomComponent(tagName)) {
-    const componentName = normalizeComponentName(tagName);
+    let componentName;
+    if (options && options.tagName) {
+      componentName = options.tagName(tagName);
+    } else {
+      componentName = normalizeComponentName(tagName);
+    }
+
     return new Node(
       componentName,
       parseAttrs(attributes),
-      children.map(parseJSX)
+      children.map((child) => parseJSX(child, options))
     );
   } else {
     return new Node(
       tagName,
       parseAttrs(attributes),
-      children.map(parseJSX)
+      children.map((child) => parseJSX(child, options))
     );
   }
 }
@@ -102,7 +117,7 @@ function parseJSXExpression(expression) {
     case 'MemberExpression':
     {
       // Simple redirect props/state to miniapp's data scope.
-      const code = normalizeBindingIdentifier(generateCodeByExpression(expression));
+      const code = normalizeBindingIdentifier(genExpression(expression));
       if (code === 'children') {
         return new Node('slot');
       } else {
@@ -118,7 +133,7 @@ function parseJSXExpression(expression) {
        * 1. check consequent is a map, optimizate block structure
        * 2. check condition order, like: { condition ? node : null } or { condition ? null : node }
        */
-      const conditionValue = generateCodeByExpression(test);
+      const conditionValue = genExpression(test);
       const consequentChildNode = parseElement(consequent);
       const consequentNode = new Node('block', {
         [parserAdapter.if]: '{{' + conditionValue + '}}',
@@ -168,12 +183,12 @@ function parseJSXExpression(expression) {
             if (indexParam) indexName = indexParam.name;
           } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
             // { foo.map(this.xxx) }
-            throw new Error(`目前暂不支持对 ${generateCodeByExpression(expression)} 的语法转换，请使用内联函数。`);
+            throw new Error(`目前暂不支持对 ${genExpression(expression)} 的语法转换，请使用内联函数。`);
           }
 
           return new Node(
             'block',
-            { [parserAdapter.for]: '{{' + generateCodeByExpression(callee.object) + '}}',
+            { [parserAdapter.for]: '{{' + genExpression(callee.object) + '}}',
               [parserAdapter.forItem]: itemName,
               [parserAdapter.forIndex]: indexName
             },
@@ -181,13 +196,13 @@ function parseJSXExpression(expression) {
           );
         } else {
           // { foo.method(args) }
-          throw new Error(`目前暂不支持在 JSX 模板中使用 ${generateCodeByExpression(expression)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
+          throw new Error(`目前暂不支持在 JSX 模板中使用 ${genExpression(expression)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
         }
       } else if (t.isIdentifier(callee)) {
         // { foo(args) }
-        throw new Error(`目前暂不支持在 JSX 模板中使用 ${generateCodeByExpression(expression)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
+        throw new Error(`目前暂不支持在 JSX 模板中使用 ${genExpression(expression)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
       } else if (t.isFunction(callee)) {
-        throw new Error(`目前暂不支持在 JSX 模板中使用 IIFE: ${generateCodeByExpression(expression)} 。`);
+        throw new Error(`目前暂不支持在 JSX 模板中使用 IIFE: ${genExpression(expression)} 。`);
       }
       break;
     }
@@ -234,13 +249,13 @@ function parseAttrs(attributes) {
           ret[normalizeProp(name.name)] = '{{' + id + '}}'; break;
         }
         case 'ObjectExpression': {
-          ret[name.name] = '{' + generateCodeByExpression(expression, {
+          ret[name.name] = '{' + genExpression(expression, {
             retainLines: true,
           }).trim() + '}';
           break;
         }
         case 'MemberExpression': {
-          let code = generateCodeByExpression(expression);
+          let code = genExpression(expression);
           let key = name.name;
           if (/^on/.test(name.name)) {
             // Simple handle with onTap={this.xxx} -> onTap="xxx"
@@ -259,7 +274,7 @@ function parseAttrs(attributes) {
 
         case 'BinaryExpression':
         case 'ConditionalExpression': {
-          ret[name.name] = '{{' + generateCodeByExpression(expression, { retainLines: true }).trim() + '}}';
+          ret[name.name] = '{{' + genExpression(expression, { retainLines: true }).trim() + '}}';
           break;
         }
 
@@ -267,6 +282,9 @@ function parseAttrs(attributes) {
           console.error('Calling function in JSX attribute is NOT supported yet.');
           break;
         }
+
+        case 'ArrowFunctionExpression':
+          break;
 
         default: {
           console.warn('Not handled attr:', expression);
@@ -347,5 +365,4 @@ function normalizeEventName(eventName) {
   return eventName;
 }
 
-exports.parseElement = parseElement;
-exports.parserAdapter = parserAdapter;
+module.exports = parseElement;
