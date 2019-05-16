@@ -1,4 +1,5 @@
-import { createComponent } from './Component';
+import { createComponent } from './component';
+import { createPage } from './page'
 import { checkEnv } from './env';
 
 checkEnv();
@@ -6,6 +7,7 @@ checkEnv();
 export {
   /* Base Components */
   createComponent,
+  createPage
 };
 
 /* hooks */
