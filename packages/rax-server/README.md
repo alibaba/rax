@@ -32,15 +32,14 @@ app.listen(PORT, () => {
 #### new RaxServer(options)
 
 options:
-* template <String>  mustache template content
-* pages <Object>
+* template: mustache template content
+* pages:
   * key: page name 
-  * value: <Object>
-    * bundle <Class> bundle for page
-    * template <String>  template for page （Optional）
+  * value:
+    * bundle: bundle for page
+    * template: template for page（optional）
 
 ```js
-
 const { readFileSync } = require('fs');
 const express = require('express');
 const RaxServer = require('rax-server');
@@ -79,10 +78,9 @@ app.listen(PORT, () => {
 
 #### server.render(page, req, res[, options])
 
-options: <Object>
-
- * pathname <String>
- * query <Object>
+options:
+ * pathname 
+ * query
 
 ```js
 server.render(page, req, res);
