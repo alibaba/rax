@@ -5,7 +5,7 @@ const qs = require('querystring');
 const webpackMerge = require('webpack-merge');
 const webpackConfigBase = require('../../webapp/webpack.config.base');
 const pathConfig = require('../../path.config');
-const getEntries = require('../../../utils/getEntries');
+const getEntries = require('../../../utils/getPWAEntries');
 
 const ServerlessLoader = require.resolve('rax-ssr-webpack-plugin/lib/ServerlessLoader');
 

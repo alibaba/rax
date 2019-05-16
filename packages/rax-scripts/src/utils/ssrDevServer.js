@@ -6,7 +6,7 @@ const webpack = require('webpack');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
-const getEntries = require('../utils/getEntries');
+const getEntries = require('./getPWAEntries');
 const pathConfig = require('../config/path.config');
 
 class DevServer {
