@@ -2,7 +2,7 @@
 
 export function checkEnv() {
   if (typeof my === 'undefined') {
-    throw new Error('You are not run in ali miniapp environment.')
+    throw new Error('You are not run in ali miniapp environment.');
   }
 
   if (!my.canIUse('component2')) {
