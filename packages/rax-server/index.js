@@ -48,7 +48,9 @@ module.exports = class Server {
 
     let pageComponent;
 
-    if (this.pages[page] && this.pages[page].bundle) {
+    if (options.Component) {
+      pageComponent = options.Component;
+    } else if (this.pages[page] && this.pages[page].bundle) {
       pageComponent = this.pages[page].bundle;
     } else {
       res.statusCode = 404;
@@ -59,7 +61,7 @@ module.exports = class Server {
     try {
       const html = await renderToHTML(req, res, {
         Component: pageComponent,
-        template: this.pages[page].template || this.template,
+        template: this.pages[page] && this.pages[page].template ? this.pages[page].template : this.template,
         ...options,
         ...parsedUrl
       });
