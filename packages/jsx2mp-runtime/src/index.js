@@ -1,5 +1,5 @@
 import { createComponent } from './component';
-import { createPage } from './page'
+import { createPage } from './page';
 import { checkEnv } from './env';
 
 checkEnv();

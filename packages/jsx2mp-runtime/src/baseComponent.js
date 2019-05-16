@@ -7,7 +7,7 @@ class MiniComponent {
     this.props = props;
     this._mini_route = {
       params: {},
-      path: ""
+      path: ''
     };
   }
   setState(state, callback) {}

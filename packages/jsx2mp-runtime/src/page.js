@@ -1,5 +1,5 @@
-import { setState, forceUpdate, hasOwn } from "./common/utils";
-import { pageEventHandleList, pageCycleList } from "./common/cycleConfig";
+import { setState, forceUpdate, hasOwn } from './common/utils';
+import { pageEventHandleList, pageCycleList } from './common/cycleConfig';
 /**
  * Bridge from RaxPageComponent Klass to MiniApp RaxPageComponent constructor.
  * @param Klass {RaxPageComponent}
@@ -49,12 +49,12 @@ export function createPage(Klass) {
   for (let i = 0, l = classMethods.length; i < l; i++) {
     const methodName = classMethods[i];
     const fn = klassPrototype[methodName];
-    if ("constructor" === methodName) continue;
+    if ('constructor' === methodName) continue;
     if (pageEventHandleList.includes(methodName)) {
       pageConfig.events[methodName] = fn;
     }
     if (
-      typeof klassPrototype[methodName] === "function" &&
+      typeof klassPrototype[methodName] === 'function' &&
       !pageCycleList.includes(methodName)
     ) {
       pageConfig[methodName] = fn;

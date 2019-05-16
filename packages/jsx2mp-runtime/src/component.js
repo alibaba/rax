@@ -1,6 +1,7 @@
-import { setState, forceUpdate, hasOwn } from "./common/utils";
-import { componentCytleMap as CYCLE_MAP } from "./common/cycle-config";
-const INSTANCE = "__rax_instance__";
+import { setState, forceUpdate, hasOwn } from './common/utils';
+import { componentCytleMap as CYCLE_MAP } from './common/cycle-config';
+
+const INSTANCE = '__rax_instance__';
 /**
  * Bridge from RaxComponent Klass to MiniApp Component constructor.
  * @param Klass {RaxComponent}
@@ -31,8 +32,8 @@ export function createComponent(Klass) {
   const classMethods = Object.getOwnPropertyNames(klassPrototype);
   for (let i = 0, l = classMethods.length; i < l; i++) {
     const methodName = classMethods[i];
-    if ("constructor" === methodName) continue;
-    if (typeof klassPrototype[methodName] === "function") {
+    if ('constructor' === methodName) continue;
+    if (typeof klassPrototype[methodName] === 'function') {
       const fn = klassPrototype[methodName];
       if (hasOwn(CYCLE_MAP, methodName)) {
         config[CYCLE_MAP[methodName]] = fn;
