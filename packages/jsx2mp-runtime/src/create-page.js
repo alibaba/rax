@@ -37,11 +37,11 @@ export function createPage(Klass) {
         klassPrototype.componentWillUnmount.call(this);
     },
     onReachBottom() {
-      klassPrototype.componentWillUnmount &&
+      klassPrototype.onReachBottom &&
         klassPrototype.onReachBottom.call(this);
     },
     onShareAppMessage(options) {
-      klassPrototype.componentWillUnmount &&
+      klassPrototype.onShareAppMessage &&
         klassPrototype.onShareAppMessage.call(this, options);
     },
     setState,
