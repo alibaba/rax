@@ -85,6 +85,9 @@ function init(name, verbose) {
       return askProjectInformaction(name, verbose);
     })
     .then(function(answers) {
+      if (answers.openPWA) {
+        answers.projectType = 'pwa';
+      }
       return createProject(name, verbose, answers);
     })
     .catch(function(err) {
@@ -142,6 +145,18 @@ function askProjectInformaction(name, verbose) {
         }
       ],
       default: 'webapp'
+    },
+    {
+      type: 'confirm',
+      name: 'openPWA',
+      when: function (answers) {
+        if(answers.projectType === 'webapp'){
+          return true;
+        }
+        return false;
+      },
+      message: 'Do you want to use rax-pwa improve your webapp ?',
+      default: false
     },
     {
       type: 'input',

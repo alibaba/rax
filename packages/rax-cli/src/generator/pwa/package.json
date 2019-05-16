@@ -1,0 +1,25 @@
+{
+  "name": "raxTest01",
+  "author": "rax",
+  "version": "0.0.0",
+  "browserslist": [
+    "last 1 version",
+    "> 1%"
+  ],
+  "scripts": {
+    "start": "rax-scripts start --type=webapp --pwa",
+    "build": "rax-scripts build --type=webapp --pwa",
+    "lint": "eslint --ext .js --ext .jsx ./src"
+  },
+  "dependencies": {
+    "driver-dom": "^1.0.0",
+    "history": "^4.9.0",
+    "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.15.1",
+    "eslint-plugin-react": "^7.12.4",
+    "rax-scripts": "^1.2.0"
+  }
+}
