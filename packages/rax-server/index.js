@@ -52,7 +52,7 @@ module.exports = class Server {
       pageComponent = this.pages[page].bundle;
     } else {
       res.statusCode = 404;
-      const err = pageNotFoundError(page);
+      const err = new PageNotFoundError(page);
       return this.renderErrorToHTML(err, req, res, parsedUrl);
     }
 
@@ -112,10 +112,11 @@ function getParsedUrl(req, pathname, query) {
   };
 }
 
-function pageNotFoundError(page) {
-  const err = new Error(`Cannot find module for page: ${page}`);
-  err.code = 'ENOENT';
-  return err;
+class PageNotFoundError extends Error {
+  constructor(page) {
+    this.message = `Cannot find module for page: ${page}`;
+    this.code = 'ENOENT';
+  }
 }
 
 async function renderToHTML(req, res, options) {
