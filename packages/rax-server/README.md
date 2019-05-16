@@ -1,18 +1,10 @@
-### 提供能力
-
-* 错误处理
-* 数据预取
-* 模板拼装
-* 缓存
-* 流式渲染
-
-### 安装
+### Install
 
 ```bash
 npm install rax-server --save
 ```
 
-### 基础用法
+### Usage
 
 ```js
 const http = require('http');
@@ -40,15 +32,12 @@ app.listen(PORT, () => {
 #### new RaxServer(options)
 
 options:
-* template <string> 页面模板  必选
-* pages <Object> 必选
-  * key 为 page name ，值为 _error 时 表示指定为错误页
-  * vaue 为 page 的对应的描述信息 <Object>
-    * bundle <Class> page 对应的 bundle
-    * template 页面模板，可选，可覆盖默认 template
-    * cache 是否开启缓存
-
-示例
+* template <String>  mustache template content
+* pages <Object>
+  * key: page name 
+  * value: <Object>
+    * bundle <Class> bundle for page
+    * template <String>  template for page （Optional）
 
 ```js
 
@@ -90,10 +79,10 @@ app.listen(PORT, () => {
 
 #### server.render(page, req, res[, options])
 
-options: <Object> 可选
+options: <Object>
 
- * pathname <String> 可选，默认从 req.pathname 中获取有此值时，以这个值为准，
- * query <Object> 可选
+ * pathname <String>
+ * query <Object>
 
 ```js
 server.render(page, req, res);
@@ -101,15 +90,13 @@ server.render(page, req, res);
 
 #### server.renderToHTML(page, req, res[, options])
 
-返回值: html
-
 ```js
 const html = await server.renderToHTML(page, req, res);
 ```
 
-### 结合其他框架使用
+### Use with frameworks
 
-express 示例
+eg. express
 
 ```js
 const express = require('express');
@@ -130,6 +117,3 @@ app.listen(PORT, () => {
   console.log(`SSR running on port ${PORT}`);
 });
 ```
-
-### Serverless
-
