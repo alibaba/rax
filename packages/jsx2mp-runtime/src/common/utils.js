@@ -22,5 +22,3 @@ export function forceUpdate(callback) {
 export function hasOwn(object, prop) {
   return Object.hasOwnProperty.call(object, prop);
 }
-
-

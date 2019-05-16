@@ -1,5 +1,5 @@
-import { setState, forceUpdate, hasOwn } from './common/utils';
-import { pageEventHandleList, pageCycleList} from './common/cycle-config';
+import { setState, forceUpdate, hasOwn } from "./common/utils";
+import { pageEventHandleList, pageCycleList } from "./common/cycle-config";
 /**
  * Bridge from RaxPageComponent Klass to MiniApp RaxPageComponent constructor.
  * @param Klass {RaxPageComponent}
@@ -10,43 +10,54 @@ export function createPage(Klass) {
   const { prototype: klassPrototype, defaultProps } = Klass;
   const { props, state } = _page;
   const classMethods = Object.getOwnPropertyNames(klassPrototype);
-  const initData = Object.assign({}, defaultProps, props, state)
+  const initData = Object.assign({}, defaultProps, props, state);
   const pageConfig = {
     data: initData,
+    state: initData,
+    props: Object.assign({}, props, defaultProps),
     onLoad(query) {
-      const app = getApp();
       // todo: set query
-      klassPrototype.componentWillMount && klassPrototype.componentWillMount()
+      klassPrototype.componentWillMount &&
+        klassPrototype.componentWillMount.call(this);
     },
     onShow() {
-      klassPrototype.componentOnShow && klassPrototype.componentOnShow()
+      klassPrototype.componentOnShow &&
+        klassPrototype.componentOnShow.call(this);
     },
     onReady() {
-      klassPrototype.componentDidMount && klassPrototype.componentDidMount()
+      klassPrototype.componentDidMount &&
+        klassPrototype.componentDidMount.call(this);
     },
     onHide() {
-      klassPrototype.componentOnHide && klassPrototype.componentOnHide()
+      klassPrototype.componentOnHide &&
+        klassPrototype.componentOnHide.call(this);
     },
     onUnload() {
-      klassPrototype.componentWillUnmount && klassPrototype.componentWillUnmount()
+      klassPrototype.componentWillUnmount &&
+        klassPrototype.componentWillUnmount.call(this);
     },
     onReachBottom() {
-      klassPrototype.componentWillUnmount && klassPrototype.onReachBottom()
+      klassPrototype.componentWillUnmount &&
+        klassPrototype.onReachBottom.call(this);
     },
     onShareAppMessage(options) {
-      klassPrototype.componentWillUnmount && klassPrototype.onShareAppMessage(options)
+      klassPrototype.componentWillUnmount &&
+        klassPrototype.onShareAppMessage.call(this, options);
     },
     setState,
     forceUpdate
-  }
+  };
   for (let i = 0, l = classMethods.length; i < l; i++) {
     const methodName = classMethods[i];
     const fn = klassPrototype[methodName];
-    if ('constructor' === methodName) continue;
+    if ("constructor" === methodName) continue;
     if (pageEventHandleList.includes(methodName)) {
-        pageConfig.events[methodName] = fn;
+      pageConfig.events[methodName] = fn;
     }
-    if (typeof klassPrototype[methodName] === 'function' && !(pageCycleList.includes(methodName))) {
+    if (
+      typeof klassPrototype[methodName] === "function" &&
+      !pageCycleList.includes(methodName)
+    ) {
       pageConfig[methodName] = fn;
     }
   }

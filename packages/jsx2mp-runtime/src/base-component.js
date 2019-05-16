@@ -3,21 +3,15 @@
  */
 class MiniComponent {
   constructor(props = {}) {
-    this.state = {}
-    this.props = props
+    this.state = {};
+    this.props = props;
     this._mini_route = {
       params: {},
-      path: ''
-    }
+      path: ""
+    };
   }
-  setState(state, callback) {
-    
-  }
-  forceUpdate(callback) {
-
-  }
+  setState(state, callback) {}
+  forceUpdate(callback) {}
 }
 
-export {
-  MiniComponent
-}
+export { MiniComponent };
