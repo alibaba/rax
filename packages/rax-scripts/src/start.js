@@ -29,7 +29,6 @@ const webpackConfigMap = {
   pwa: {
     client: './config/pwa/client/webpack.config.dev',
     server: './config/pwa/server/webpack.config.dev',
-    serverless: './config/pwa/serverless/webpack.config.dev'
   }
 };
 
@@ -39,43 +38,55 @@ const webpackConfigMap = {
 module.exports = function start(type = 'webapp') {
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, true);
-  } else {
-    if (envConfig.pwa) {
-      const pwaManifest = require(pathConfig.pwaManifest);
-      if (pwaManifest.ssr) {
-        new SSRDevServer(webpackConfigMap.pwa);
-        return;
-      }
+    return;
+  }
+
+  let config;
+
+  if (envConfig.pwa) {
+    const pwaManifest = require(pathConfig.pwaManifest);
+
+    if (pwaManifest.ssr) {
+      const targets = Object.keys(webpackConfigMap.pwa);
+      const configs = targets.map((target) => {
+        return require(webpackConfigMap.pwa[target]);
+      });
+
+      new SSRDevServer(configs);
+      return;
     }
 
-    const config = require(webpackConfigMap[type]);
-    const compiler = createWebpackCompiler(config);
+    config = require(webpackConfigMap.pwa.client);
+  } else {
+    config = require(webpackConfigMap[type]);
+  }
 
-    const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+  const compiler = createWebpackCompiler(config);
 
-    // Launch WebpackDevServer.
-    devServer.listen(envConfig.port, envConfig.hostname, (err) => {
-      if (err) {
-        console.log(colors.red('[ERR]: Failed to webpack dev server'));
-        console.error(err.message || err);
-        process.exit(1);
-      }
+  const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
 
-      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${
-        envConfig.port
-      }/`;
+  // Launch WebpackDevServer.
+  devServer.listen(envConfig.port, envConfig.hostname, (err) => {
+    if (err) {
+      console.log(colors.red('[ERR]: Failed to webpack dev server'));
+      console.error(err.message || err);
+      process.exit(1);
+    }
 
-      console.log('');
-      console.log(colors.green('Starting the development server at:'));
-      console.log(`    ${colors.underline.white(serverUrl)}`);
-      console.log('');
+    const serverUrl = `${envConfig.protocol}//${envConfig.host}:${
+      envConfig.port
+    }/`;
 
-      ['SIGINT', 'SIGTERM'].forEach(function(sig) {
-        process.on(sig, function() {
-          devServer.close();
-          process.exit();
-        });
+    console.log('');
+    console.log(colors.green('Starting the development server at:'));
+    console.log(`    ${colors.underline.white(serverUrl)}`);
+    console.log('');
+
+    ['SIGINT', 'SIGTERM'].forEach(function(sig) {
+      process.on(sig, function() {
+        devServer.close();
+        process.exit();
       });
     });
-  }
+  });
 };
