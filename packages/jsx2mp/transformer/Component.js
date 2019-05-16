@@ -1,6 +1,6 @@
 const { ensureFileSync, writeFileSync, readJSONSync, existsSync, readFileSync } = require('fs-extra');
 const { join, resolve, relative } = require('path');
-const transform = require('jsx-compiler');
+const compiler = require('jsx-compiler');
 const colors = require('colors');
 
 /**
@@ -8,71 +8,56 @@ const colors = require('colors');
  * @type {module.Component}
  */
 module.exports = class Component {
-  constructor({ script, template, style = '', config = {} }, options = {}) {
-    const { rootContext, context, distRoot, distPath } = options;
+  constructor(config = {}, options = {}) {
+    const { rootContext, context, distPath } = options;
     this.rootContext = rootContext;
     this.context = context;
 
-    this.scriptPath = resolve(distPath, 'index.js');
-    this.templatePath = resolve(distPath, 'index.axml');
-    this.stylePath = resolve(distPath, 'index.acss');
-    this.configPath = resolve(distPath, 'index.json');
-
-    this.deps = [];
-    this.script = script;
-    this.template = template;
-    this.style = style;
-    this.config = config;
-
     const { usingComponents = {} } = config;
-    Object.keys(usingComponents).forEach((tagName) => {
-      const sourcePath = usingComponents[tagName].replace(/\/index$/, '');
-      const componentSourcePath = join(rootContext, sourcePath);
-      const componentDistPath = join(distRoot, sourcePath);
 
-      const sourceConfigPath = componentSourcePath + '.json';
-      const sourceConfig = existsSync(sourceConfigPath) ? readJSONSync(sourceConfigPath) : {};
-      const depConfig = Object.assign({}, sourceConfig, { component: true });
+    for (let [key, value] of usingComponents) {
+      if (!value.external) {
+        const componentDistPath = join(distPath, value.from);
+        const componentSourcePath = value.absolutePath;
 
-      const sourceJSXPath = componentSourcePath + '.jsx';
-      const jsxFileContent = readFileSync(sourceJSXPath, 'utf-8');
-      const transformed = transform(jsxFileContent, { filePath: sourceJSXPath, rootContext });
+        const sourceJSXPath = componentSourcePath;
+        const jsxFileContent = readFileSync(sourceJSXPath, 'utf-8');
+        const transformed = compiler(jsxFileContent, Object.assign({}, compiler.baseOptions, {
+          filePath: sourceJSXPath,
+          type: 'component',
+        }));
 
-      const componentDep = new Component({
-        script: transformed.jsCode,
-        template: transformed.template,
-        style: transformed.style,
-        config: depConfig,
-      }, { rootContext, context: componentSourcePath, distRoot, distPath: componentDistPath });
-      this.deps.push(componentDep);
-    });
-  }
+        const scriptPath = componentDistPath + '.js';
+        const templatePath = componentDistPath + '.axml';
+        const stylePath = componentDistPath + '.acss';
+        const configPath = componentDistPath + '.json';
 
-  _writeFiles() {
-    this._writeStyle();
-    this._writeTemplate();
-    this._writeScript();
-    this._writeConfig();
+        this._writeTemplate(templatePath, transformed.template);
+        this._writeConfig(configPath, transformed.config);
+        this._writeScript(scriptPath, transformed.code);
+        this._writeStyle(stylePath, transformed.style);
 
-    for (let i = 0, l = this.deps.length; i < l; i++ ) {
-      this.deps[i]._writeFiles();
+        new Component(
+          {usingComponents: transformed.usingComponents},
+          { rootContext, context, distPath});
+      }
     }
   }
 
-  _writeTemplate() {
-    this._writeFile(this.templatePath, this.template);
+  _writeTemplate(templatePath, template) {
+    this._writeFile(templatePath, template);
   }
 
-  _writeStyle() {
-    this._writeFile(this.stylePath, this.style);
+  _writeStyle(stylePath, style) {
+    this._writeFile(stylePath, style);
   }
 
-  _writeScript() {
-    this._writeFile(this.scriptPath, this.script);
+  _writeScript(scriptPath, script) {
+    this._writeFile(scriptPath, script);
   }
 
-  _writeConfig() {
-    this._writeFile(this.configPath, JSON.stringify(this.config, null, 2) + '\n');
+  _writeConfig(configPath, config) {
+    this._writeFile(configPath, JSON.stringify(config, null, 2) + '\n');
   }
 
   /**

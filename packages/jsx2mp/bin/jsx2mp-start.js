@@ -9,7 +9,7 @@ program
     const distDirectory = resolve(workDirectory, 'dist');
 
     // const enableWatch = (!'watch' in cmd) || cmd.watch;
-    const enableWatch = false; // In developing.
+    const enableWatch = true; // In developing.
     require('..')(workDirectory, distDirectory, enableWatch);
   });
 

@@ -1,6 +1,6 @@
-const { resolve, relative, extname } = require('path');
-const { existsSync, ensureFileSync, readFileSync, readJSONSync, writeFileSync } = require('fs-extra');
-const transform = require('jsx-compiler');
+const { resolve, relative } = require('path');
+const { ensureFileSync, readFileSync, writeFileSync } = require('fs-extra');
+const compiler = require('jsx-compiler');
 const Component = require('./Component');
 const colors = require('colors');
 
@@ -10,58 +10,33 @@ const colors = require('colors');
  */
 module.exports = class Page {
   constructor(options) {
-    const { rootContext, context, distRoot, distPagePath, watch } = options;
+    const { rootContext, context, distRoot, distPagePath } = options;
     this.rootContext = rootContext;
     this.context = context;
     this.distPagePath = distPagePath;
 
-    const pageConfigPath = context + '.json';
-    const pageScriptPath = context + '.js';
     const pageJSXPath = context + '.jsx';
-    const pageStylePath = context + '.acss';
-
     const jsxCode = readFileSync(pageJSXPath, 'utf-8');
-    const scriptCode = readFileSync(pageScriptPath, 'utf-8');
-    const pageConfig = existsSync(pageConfigPath) ? readJSONSync(pageConfigPath) : {};
-    const pageStyle = existsSync(pageStylePath) ? readFileSync(pageStylePath, 'utf-8') : '';
 
-    // { template, jsCode, customComponents,, style }
-    const transformed = transform(jsxCode, { filePath: pageJSXPath, rootContext });
+    // { template, code, customComponents, config, style }
+    const transformed = compiler(jsxCode, Object.assign({}, compiler.baseOptions, {
+      filePath: pageJSXPath,
+      type: 'page',
+    }));
 
-    const delegateComponentPath = resolve(distPagePath, 'components');
-    this._delegateComponent = new Component({
-      script: transformed.jsCode,
-      style: transformed.style || '',
-      config: this.generateComponentConfig(transformed.customComponents),
-      template: transformed.template,
-    }, { rootContext, context, distRoot, distPath: delegateComponentPath });
+    new Component(
+      {usingComponents: transformed.usingComponents},
+      { rootContext, context, distPath: distPagePath });
 
-    this.script = scriptCode;
-    this.template = '<page></page>';
-    this.style = pageStyle;
-    this.config = Object.assign({}, pageConfig, {
-      usingComponents: { page: './components/index'},
-    });
+    this.script = transformed.code;
+    this.template = transformed.template;
+    this.style = transformed.style;
+    this.config = transformed.config;
 
     this._writeFiles();
   }
 
-  generateComponentConfig(customComponents = {}) {
-    const usingComponents = {};
-    Object.keys(customComponents).forEach((name) => {
-      let { tagName, filePath } = customComponents[name];
-      // Remove extension.
-      filePath = filePath.replace(extname(filePath), '') + '/index';
-      usingComponents[tagName] = '/' + relative(this.rootContext, filePath);
-    });
-    return {
-      component: true,
-      usingComponents,
-    };
-  }
-
   _writeFiles() {
-    this._delegateComponent._writeFiles();
     this._writeConfig();
     this._writeStyle();
     this._writeTemplate();
@@ -80,7 +55,6 @@ module.exports = class Page {
   _writeScript() {
     this._writeFile(resolve(this.distPagePath, 'index.js'), this.script);
   }
-
 
   /**
    * Write file and ensure folder exists.

@@ -1,6 +1,8 @@
 const { join, resolve } = require('path');
-const { readFileSync, writeFileSync, writeJSONSync, readJSONSync, existsSync } = require('fs-extra');
+const { readFileSync, writeFileSync, writeJSONSync, readJSONSync, existsSync, readdir } = require('fs-extra');
+const { statSync, readdirSync } = require('fs');
 const Page = require('./Page');
+const Component = require('./Component');
 
 const DEP = 'dependencies';
 const DEV_DEP = 'devDependencies';
@@ -11,7 +13,7 @@ module.exports = class App {
    * @param transformerOption {Object}
    */
   constructor(sourcePath, transformerOption) {
-    const { watch, appDirectory, distDirectory } = transformerOption;
+    const { appDirectory, distDirectory } = transformerOption;
     this.appDirectory = appDirectory;
     this.distDirectory = distDirectory;
 
@@ -37,17 +39,15 @@ module.exports = class App {
       delete packageConfig[DEV_DEP];
     }
 
-    this.dependencyPages = [];
-    const { pages } = config;
+    const pages = config.pages;
+
     for (let i = 0, l = pages.length; i < l; i++) {
       const pageInstance = new Page({
         rootContext: sourcePath,
         context: resolve(sourcePath, pages[i]),
         distRoot: distDirectory,
-        distPagePath: resolve(distDirectory, pages[i], '..'),
-        watch,
+        distPagePath: resolve(distDirectory, pages[i], '..')
       });
-      this.dependencyPages.push(pageInstance);
     }
 
     this._writeFiles();
@@ -58,9 +58,5 @@ module.exports = class App {
     writeFileSync(join(this.distDirectory, 'app.acss'), this.style);
     writeJSONSync(join(this.distDirectory, 'app.json'), this.config);
     writeJSONSync(join(this.distDirectory, 'package.json'), this.packageConfig);
-  }
-
-  watch() {
-    // TODO: 实现 watch 功能
   }
 };
