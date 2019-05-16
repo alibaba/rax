@@ -154,7 +154,7 @@ async function getInitialProps(Component, ctx) {
 
   const props = await Component.getInitialProps(ctx);
 
-  if (!props) {
+  if (!props || typeof props !== 'object') {
     const message = `"getInitialProps()" should resolve to an object. But found "${props}" instead.`;
     throw new Error(message);
   }
