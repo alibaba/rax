@@ -1,4 +1,4 @@
-import { createComponent } from './Component';
+import { createComponent } from './component';
 import { checkEnv } from './env';
 
 checkEnv();

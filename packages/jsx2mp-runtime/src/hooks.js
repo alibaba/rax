@@ -29,7 +29,7 @@ function areInputsEqual(inputs, prevInputs) {
   return true;
 }
 
-export function useState(initialState) {
+export function useState(initialState, stateKey) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
@@ -56,13 +56,10 @@ export function useState(initialState) {
 
       if (!sameValue(newState, eagerState)) {
         // Current instance is in render update phase.
-        // After this one render finish, will containue run.
+        // After this one render finish, will continue run.
         hook[2] = newState;
-        if (getCurrentInstance() === currentInstance) {
-          // Marked as is scheduled that could finish hooks.
-          currentInstance.isScheduled = true;
-        } else {
-          currentInstance.update();
+        if (stateKey !== undefined) {
+          currentInstance._update({ [stateKey]: newState });
         }
       }
     };
@@ -78,6 +75,14 @@ export function useState(initialState) {
   if (!sameValue(hook[0], hook[2])) {
     hook[0] = hook[2];
     currentInstance.shouldUpdate = true;
+  }
+
+  if (stateKey !== undefined) {
+    if (currentInstance._internal) {
+      currentInstance._internal.setData({ [stateKey]: hook[0] });
+    } else {
+      currentInstance._state[stateKey] = hook[0];
+    }
   }
 
   return hook;
@@ -130,9 +135,9 @@ function useEffectImpl(effect, inputs, defered) {
       inputs
     };
 
-    currentInstance.didMount.push(create);
-    currentInstance.willUnmount.push(destory);
-    currentInstance.didUpdate.push(() => {
+    currentInstance._registerLifeCycle('didMount', create);
+    currentInstance._registerLifeCycle('willUnmount', destory);
+    currentInstance._registerLifeCycle('didUpdate', () => {
       const { prevInputs, inputs, create } = hooks[hookID];
       if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
