@@ -59,7 +59,7 @@ module.exports = class Server {
     }
 
     try {
-      const html = await renderToHTML(req, res, {
+      const html = await renderToHTML(page, req, res, {
         Component: pageComponent,
         template: this.pages[page] && this.pages[page].template ? this.pages[page].template : this.template,
         ...options,
@@ -85,7 +85,7 @@ module.exports = class Server {
       template = this.template;
     }
 
-    const html = await renderToHTML(req, res, {
+    const html = await renderToHTML('_error', req, res, {
       Component: component,
       template: template,
       ...parsedUrl,
@@ -121,7 +121,7 @@ class PageNotFoundError extends Error {
   }
 }
 
-async function renderToHTML(req, res, options) {
+async function renderToHTML(page, req, res, options) {
   const {
     Component,
     template,
@@ -143,6 +143,7 @@ async function renderToHTML(req, res, options) {
   });
 
   const html = template({
+    page,
     data: JSON.stringify(props),
     content,
     pathname
