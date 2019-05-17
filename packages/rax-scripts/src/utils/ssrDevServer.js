@@ -47,7 +47,8 @@ class DevServer {
 
     app.use(
       devMiddleware(compiler, {
-        serverSideRender: true
+        serverSideRender: true,
+        index: false
       })
     );
 
