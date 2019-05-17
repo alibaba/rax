@@ -12,7 +12,9 @@
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^1.0.0"
+    "driver-dom": "^1.0.0",
+    "rax": "^1.0.0",
+    "rax-hydrate": "^1.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
