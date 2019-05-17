@@ -12,7 +12,6 @@ const webpackConfigProd = webpackMerge(webpackConfigBase, {
     minimize: true,
     minimizer: [
       new UglifyJSPlugin({
-        include: /\.min\.js$/,
         cache: true,
         sourceMap: true,
       }),
