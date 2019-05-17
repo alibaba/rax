@@ -1,6 +1,6 @@
 {
-  "name": "raxTest01",
-  "author": "rax",
+  "name": "__YourProjectName__",
+  "author": "__AuthorName__",
   "version": "0.0.0",
   "browserslist": [
     "last 1 version",
@@ -12,8 +12,6 @@
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "driver-dom": "^1.0.0",
-    "history": "^4.9.0",
     "rax": "^1.0.0"
   },
   "devDependencies": {

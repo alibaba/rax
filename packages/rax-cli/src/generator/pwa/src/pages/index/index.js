@@ -1,27 +1,11 @@
-import { createElement, render } from 'rax';
-import * as DriverDOM from 'driver-dom';
+import {createElement, useState} from 'rax';
 
-function Index(props) {
+export default (props) => {
+  const [name, setName] = useState(props.name);
+  const handleClick = () => {
+    setName('rax');
+  };
   return (
-    <div>
-      <h1>Page {props.data.title}</h1>
-    </div>
+    <h1 onClick={handleClick}> Hello {name}</h1>
   );
-}
-
-Index.getInitialProps = async function() {
-  return { data: { title: 'Index' } };
 };
-
-export default Index;
-
-// just for test
-// webpack plugin entry part. not exist in develop env.
-if (Index.getInitialProps) {
-  Index.getInitialProps().then((props = {}) => {
-    render(<Index {...props} />, document.body, { driver: DriverDOM });
-  });
-} else {
-  render(<Index />, document.body, { driver: DriverDOM });
-}
-
