@@ -30,7 +30,7 @@ export default class extends Component {
   render() {
     return <View>
       <Text>Hello World</Text>
-      {this.state.list.map(o => {
+      {this.state.list.map((row, idx) => {
         return <View onClick={() => {console.log('this is function');}}>
           <View style={{
             width: 750,
@@ -39,7 +39,9 @@ export default class extends Component {
             alignItems: 'center',
           }}>
             <Image className='horizontal' source={this.state.bgImage} />
-            <Text>{o.name}</Text>
+            {row.name === 'aaa' ? <View>bbb</View> : <View>bbbb</View>}
+            {row.name === 'bbb' ? null : <View>bbbb</View>}
+            <Text key={idx}>{row.name}</Text>
             <Touchable onPress={this.onPress}>点击跳转</Touchable>
           </View>
         </View>;

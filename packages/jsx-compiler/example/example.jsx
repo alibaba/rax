@@ -18,32 +18,10 @@ const defaultBar = number;
 // }
 
 export default class extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      list: [{ name: 'aaa' }, { name: 'bbb' }, { name: 'ccc' }],
-      bgHeight: 100,
-      bgImage: 'www.picture.com'
-    };
-  }
-
   render() {
     return <View>
+      <Button />;
       <Text>Hello World</Text>
-      {this.state.list.map(o => {
-        return <View onClick={() => {console.log('this is function');}}>
-          <View style={{
-            width: 750,
-            height: parseInt(this.state.bgHeight),
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-            <Image className='horizontal' source={this.state.bgImage} />
-            <Text>{o.name}</Text>
-            <Touchable onPress={this.onPress}>点击跳转</Touchable>
-          </View>
-        </View>;
-      })}
     </View>;
   }
 }
