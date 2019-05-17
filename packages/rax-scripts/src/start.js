@@ -14,22 +14,19 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
-const SSRDevServer = require('./utils/ssrDevServer');
+const SSRDevServer = require('./utils/SSRDevServer');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
+const getPWAWebpackConfig = require('./utils/getPWAWebpackConfig');
 
 const MINIAPP = 'miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
   weexapp: './config/weexapp/webpack.config.dev',
   component: './config/component/webpack.config.dev',
-  pwa: {
-    client: './config/pwa/client/webpack.config.dev',
-    server: './config/pwa/server/webpack.config.dev',
-  }
 };
 
 /**
@@ -42,28 +39,26 @@ module.exports = function start(type = 'webapp') {
   }
 
   let config;
+  let devServer;
+  let isSSR;
 
   if (envConfig.pwa) {
     const pwaManifest = require(pathConfig.pwaManifest);
-
-    if (pwaManifest.ssr) {
-      const targets = Object.keys(webpackConfigMap.pwa);
-      const configs = targets.map((target) => {
-        return require(webpackConfigMap.pwa[target]);
-      });
-
-      new SSRDevServer(configs);
-      return;
+    if (pwaManifest && pwaManifest.ssr) {
+      isSSR = true;
     }
-
-    config = require(webpackConfigMap.pwa.client);
+    config = getPWAWebpackConfig('dev');
   } else {
     config = require(webpackConfigMap[type]);
   }
 
   const compiler = createWebpackCompiler(config);
 
-  const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+  if (isSSR) {
+    devServer = new SSRDevServer(compiler);
+  } else {
+    devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+  }
 
   // Launch WebpackDevServer.
   devServer.listen(envConfig.port, envConfig.hostname, (err) => {

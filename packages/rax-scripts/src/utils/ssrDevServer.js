@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const RaxServer = require('rax-server');
-const webpack = require('webpack');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
@@ -10,15 +9,12 @@ const getEntries = require('./getPWAEntries');
 const pathConfig = require('../config/path.config');
 
 class DevServer {
-  constructor(configs) {
-    this.setupApp(configs);
+  constructor(compiler) {
+    this.setupApp(compiler);
   }
 
-  setupApp(configs) {
-    const PORT = 8080;
+  setupApp(compiler) {
     const app = express();
-
-    const compiler = webpack(configs);
 
     // eslint-disable-next-line new-cap
     const router = express.Router();
@@ -58,9 +54,14 @@ class DevServer {
 
     app.use(router);
 
-    app.listen(PORT, () => {
-      console.log(`SSR running on port ${PORT}`);
-    });
+    this.app = app;
+  }
+
+  close() {}
+
+  listen(port, hostname, callback) {
+    this.hostname = hostname;
+    this.app.listen(port, callback);
   }
 
   loadComponent(page, res) {

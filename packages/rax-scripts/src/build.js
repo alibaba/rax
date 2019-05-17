@@ -19,6 +19,7 @@ const pathConfig = require('./config/path.config');
 const componentCompiler = require('./utils/componentCompiler');
 const jsx2mp = require('jsx2mp');
 const envConfig = require('./config/env.config');
+const getPWAWebpackConfig = require('./utils/getPWAWebpackConfig');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -38,29 +39,8 @@ const COMPONENT = 'component';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   weexapp: './config/weexapp/webpack.config.prod',
-  component: './config/component/webpack.config.prod',
-  pwa: {
-    client: './config/pwa/client/webpack.config.prod',
-    server: './config/pwa/server/webpack.config.prod',
-    serverless: './config/pwa/serverless/webpack.config.prod'
-  }
+  component: './config/component/webpack.config.prod'
 };
-
-function getPWAWebpackConfig() {
-  let configs = [
-    require(webpackConfigMap.pwa.client)
-  ];
-
-  const pwaManifest = require(pathConfig.pwaManifest);
-  if (pwaManifest.ssr) {
-    configs.push(require(webpackConfigMap.pwa.server));
-  }
-  if (pwaManifest.serverless) {
-    configs.push(require(webpackConfigMap.pwa.serverless));
-  }
-
-  return configs;
-}
 
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
