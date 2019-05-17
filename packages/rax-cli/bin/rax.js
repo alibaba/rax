@@ -149,8 +149,8 @@ function askProjectInformaction(name, verbose) {
     {
       type: 'confirm',
       name: 'openPWA',
-      when: function (answers) {
-        if(answers.projectType === 'webapp'){
+      when: function(answers) {
+        if (answers.projectType === 'webapp') {
           return true;
         }
         return false;
