@@ -1,8 +1,6 @@
 const babel = require('gulp-babel');
 const gulp = require('gulp');
-const less = require('gulp-less');
 const path = require('path');
-const rename = require('gulp-rename');
 const rimraf = require('rimraf');
 const source = require('vinyl-source-stream');
 const vinylBuffer = require('vinyl-buffer');
@@ -11,7 +9,7 @@ const babelConfig = require('./babel.config');
 const cwd = process.cwd();
 const FILES_PATTERN = `${cwd}/+(src|demo)/miniapp/**/*`;
 const dist = path.resolve(cwd, './_miniapp');
-const extTypes = ['ts', 'less', 'json', 'axml'];
+const extTypes = ['ts', 'json', 'axml'];
 
 babelConfig.presets.unshift(require.resolve('@babel/preset-typescript'));
 
@@ -19,25 +17,10 @@ gulp.task('clean', function(done) {
   rimraf(dist, done);
 });
 
-gulp.task('less', () => {
-  return gulp
-    .src(`${FILES_PATTERN}.less`)
-    .pipe(less())
-    .pipe(
-      rename({
-        extname: '.acss'
-      })
-    )
-    .pipe(gulp.dest(dist));
-});
-
 gulp.task('ts', () => {
   return gulp
     .src(`${FILES_PATTERN}.ts`)
     .pipe(babel(babelConfig))
-    .on('error', err => {
-      console.log(err);
-    })
     .pipe(gulp.dest(dist));
 });
 
@@ -110,7 +93,7 @@ gulp.task(
   'default',
   gulp.series(
     'clean',
-    gulp.parallel('less', 'ts', 'json', 'axml', 'app file'),
+    gulp.parallel('ts', 'json', 'axml', 'app file'),
     gulp.series('watch')
   )
 );

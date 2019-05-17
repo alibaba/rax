@@ -36,8 +36,7 @@ const MINIAPP = 'miniapp';
 const COMPONENT = 'component';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
-  weexapp: './config/weexapp/webpack.config.prod',
-  component: './config/component/webpack.config.prod',
+  weexapp: './config/weexapp/webpack.config.prod'
 };
 
 module.exports = function build(type = 'webapp') {
@@ -46,14 +45,11 @@ module.exports = function build(type = 'webapp') {
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
   } else if (type === COMPONENT) { // build component
-    var webpackConfigComponentDistProd = require(webpackConfigMap.component);
     rimraf(pathConfig.appDist, function(err) {
       if (err) {
         throw err;
       }
-      componentCompiler(function() {
-        buildCompiler(webpackConfigComponentDistProd);
-      });
+      componentCompiler();
     });
   } else {
     rimraf(pathConfig.appBuild, (err) => {

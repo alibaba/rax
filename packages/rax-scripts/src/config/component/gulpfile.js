@@ -7,8 +7,6 @@ const babel = require('gulp-babel');
 const rimraf = require('rimraf');
 
 const babelConfig = require('./babel.config');
-const webpackConfig = require('./webpack.config.prod');
-const createWebpackCompiler = require('../../utils/createWebpackCompiler');
 const pathConfig = require('../path.config');
 
 const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
@@ -51,17 +49,8 @@ gulp.task('other', function() {
     .pipe(gulp.dest(BUILD_DIR));
 });
 
-gulp.task('webpack', function(done) {
-  createWebpackCompiler(webpackConfig).run(function(err) {
-    if (err) {
-      throw err;
-    }
-    done();
-  });
-});
-
 gulp.task('default', function(done) {
-  gulp.series('clean', gulp.parallel(['babel', 'ts', 'other', 'webpack']))(function() {
+  gulp.series('clean', gulp.parallel(['babel', 'ts', 'other']))(function() {
     console.log(colors.green('\n🎉  Build successfully.'));
     done();
   });
