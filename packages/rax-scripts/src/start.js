@@ -38,22 +38,18 @@ module.exports = function start(type = 'webapp') {
     return;
   }
 
-  let config;
-  let devServer;
-  let isSSR;
+  const config = envConfig.pwa ? getPWAWebpackConfig('dev') : require(webpackConfigMap[type]);
+  const compiler = createWebpackCompiler(config);
 
+  let isSSR;
   if (envConfig.pwa) {
     const pwaManifest = require(pathConfig.pwaManifest);
     if (pwaManifest && pwaManifest.ssr) {
       isSSR = true;
     }
-    config = getPWAWebpackConfig('dev');
-  } else {
-    config = require(webpackConfigMap[type]);
   }
 
-  const compiler = createWebpackCompiler(config);
-
+  let devServer;
   if (isSSR) {
     devServer = new SSRDevServer(compiler);
   } else {

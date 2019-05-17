@@ -39,7 +39,7 @@ const COMPONENT = 'component';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.prod',
   weexapp: './config/weexapp/webpack.config.prod',
-  component: './config/component/webpack.config.prod'
+  component: './config/component/webpack.config.prod',
 };
 
 module.exports = function build(type = 'webapp') {
@@ -57,17 +57,11 @@ module.exports = function build(type = 'webapp') {
       buildCompiler(webpackConfigComponentDistProd);
     });
   } else {
-    let config;
-    if (envConfig.pwa) {
-      config = getPWAWebpackConfig();
-    } else {
-      config = require(webpackConfigMap[type]);
-    }
-
     rimraf(pathConfig.appBuild, (err) => {
       if (err) {
         throw err;
       }
+      const config = envConfig.pwa ? getPWAWebpackConfig() : require(webpackConfigMap[type]);
       buildCompiler(config);
     });
   }
