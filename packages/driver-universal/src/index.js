@@ -4,9 +4,9 @@ import * as DriverWeex from 'driver-weex';
 
 let DriverUniversal;
 if (isWeex) {
-  DriverUniversal = DriverDOM;
-} else if (isWeb) {
   DriverUniversal = DriverWeex;
+} else if (isWeb) {
+  DriverUniversal = DriverDOM;
 } else {
   throw new Error('Your environment not supported by driver-universal.');
 }
