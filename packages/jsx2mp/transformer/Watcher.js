@@ -1,10 +1,12 @@
 const chokidar = require('chokidar');
-const compiler = require('jsx-compiler');
 const { statSync, readdirSync} = require('fs');
 const {mkdirpSync, removeSync} = require('fs-extra');
 const App = require('./App');
 
 module.exports = class Watcher {
+  /**
+   * @param options {Object}
+   */
   constructor(options) {
     const { sourcePath, distPath } = options;
     const files = this._getAllFilePath(sourcePath, distPath);
@@ -12,11 +14,17 @@ module.exports = class Watcher {
     this.watcher = chokidar.watch(files);
     this.watcher.on('change', (file) => {
       console.log('File changed:', file);
-      if (this.handleFileChanged) this.handleFileChanged(file, sourcePath, distPath);
+      this._handleFileChanged(file, sourcePath, distPath);
     });
   }
 
-  handleFileChanged(file, sourcePath, distPath) {
+  /**
+   * refresh all transformed files
+   * @param sourcePath {String} Absolute source path.
+   * @param distPath {String} Absolute dist path.
+   * @param file {String} Absolute changed file path.
+   */
+  _handleFileChanged(file, sourcePath, distPath) {
     removeSync(distPath);
     mkdirpSync(distPath);
 
@@ -26,6 +34,12 @@ module.exports = class Watcher {
     });
   }
 
+  /**
+   * all watching files
+   * @param sourcePath {String} Absolute source path.
+   * @param distPath {String} Absolute dist path.
+   * @return files {Array}
+   */
   _getAllFilePath(sourcePath, distPath) {
     let files = [];
     let sourcePathFiles = readdirSync(sourcePath);
@@ -43,27 +57,5 @@ module.exports = class Watcher {
       }
     }
     return files;
-  }
-
-  /**
-   * Add watch files.
-   * @param files
-   */
-  watch(files) {
-    for (let i = 0, l = files.length; i < l; i ++) {
-      const file = files[i];
-      if (this.watchedFiles.indexOf(file) > -1) continue;
-      this.watcher.add(file);
-      this.watchedFiles.push(file);
-    }
-  }
-
-  /**
-   * Unwatch all files.
-   */
-  unwatch() {
-    this.watchedFiles = [];
-    this.watcher.unwatch('**/*');
-    this.watcher = null;
   }
 };

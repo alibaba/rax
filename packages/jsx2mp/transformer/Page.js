@@ -1,70 +1,60 @@
-const { resolve, relative } = require('path');
-const { ensureFileSync, readFileSync, writeFileSync } = require('fs-extra');
+const { resolve } = require('path');
+const { readFileSync } = require('fs-extra');
 const compiler = require('jsx-compiler');
 const Component = require('./Component');
-const colors = require('colors');
+const { writeFile } = require('../utils/file');
 
 /**
  * Abstract of miniapp page.
  * @type {module.Page}
  */
 module.exports = class Page {
+  /**
+   * @param options {Object}
+   */
   constructor(options) {
     const { rootContext, context, distRoot, distPagePath } = options;
     this.rootContext = rootContext;
     this.context = context;
     this.distPagePath = distPagePath;
 
-    const pageJSXPath = context + '.jsx';
-    const jsxCode = readFileSync(pageJSXPath, 'utf-8');
-
-    // { template, code, customComponents, config, style }
-    const transformed = compiler(jsxCode, Object.assign({}, compiler.baseOptions, {
-      filePath: pageJSXPath,
-      type: 'page',
-    }));
-
-    new Component(
-      {usingComponents: transformed.usingComponents},
-      { rootContext, context, distPath: distPagePath });
-
-    this.script = transformed.code;
-    this.template = transformed.template;
-    this.style = transformed.style;
-    this.config = transformed.config;
-
+    this._transformJSX();
+    this._creatComponents();
     this._writeFiles();
   }
 
-  _writeFiles() {
-    this._writeConfig();
-    this._writeStyle();
-    this._writeTemplate();
-    this._writeScript();
-  }
+  /**
+   * Read jsx file & transform jsx code by compiler
+   * @private
+   */
+  _transformJSX() {
+    const pageJSXPath = this.context + '.jsx';
+    const jsxCode = readFileSync(pageJSXPath, 'utf-8');
 
-  _writeConfig() {
-    this._writeFile(resolve(this.distPagePath, 'index.json'), JSON.stringify(this.config, null, 2) + '\n');
-  }
-  _writeStyle() {
-    this._writeFile(resolve(this.distPagePath, 'index.acss'), this.style);
-  }
-  _writeTemplate() {
-    this._writeFile(resolve(this.distPagePath, 'index.axml'), this.template);
-  }
-  _writeScript() {
-    this._writeFile(resolve(this.distPagePath, 'index.js'), this.script);
+    this.transformed = compiler(jsxCode, Object.assign({}, compiler.baseOptions, {
+      filePath: pageJSXPath,
+      type: 'page',
+    }));
   }
 
   /**
-   * Write file and ensure folder exists.
-   * @param path {String} File path.
-   * @param content {String} File content.
+   * Creat components
    * @private
    */
-  _writeFile(path, content) {
-    ensureFileSync(path);
-    console.log(colors.green('Write'), relative(this.rootContext, path));
-    writeFileSync(path, content, 'utf-8');
+  _creatComponents() {
+    new Component(
+      {usingComponents: this.transformed.usingComponents},
+      { rootContext: this.rootContext, context: this.context, distPath: this.distPagePath });
+  }
+
+  /**
+   * Write file
+   * @private
+   */
+  _writeFiles() {
+    writeFile(resolve(this.distPagePath, 'index.json'), JSON.stringify(this.transformed.config, null, 2) + '\n', this.rootContext);
+    writeFile(resolve(this.distPagePath, 'index.acss'), this.transformed.style, this.rootContext);
+    writeFile(resolve(this.distPagePath, 'index.axml'), this.transformed.template, this.rootContext);
+    writeFile(resolve(this.distPagePath, 'index.js'), this.transformed.code, this.rootContext);
   }
 };
