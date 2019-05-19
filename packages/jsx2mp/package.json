@@ -14,7 +14,7 @@
   "engine": {
     "node": ">=8"
   },
-  "author": "Rax Team",
+  "author": "Rax Team ",
   "dependencies": {
     "@babel/code-frame": "^7.0.0",
     "@babel/generator": "^7.3.4",
