@@ -1,8 +1,3 @@
-/**************************************************
- * Created by kaili on 2019/5/17 下午8:41.
- **************************************************/
-const generate = require('@babel/generator').default;
-const chalk = require('chalk');
 const { EVENT_MAPS, ATTR_MAPS } = require('./config-attr');
 const { genJSXObjectAst } = require('../../utils/astUtils');
 const renderBuilder = require('../render-base/render-builder');
@@ -23,10 +18,8 @@ function getVarExpression(expression) {
 function traverseRenderAst(ast, context) {
   traverse(ast, {
     enter(path) {
-      //ATTR_MAPS 将JSX中的属性替换为appx属性；
       if (path.node.type === 'JSXAttribute') {
-
-        //for onClick => onTap ; source => src;
+        // for onClick => onTap ; source => src;
         let attrName = path.node.name.name;
         path.node.name.name = ATTR_MAPS[attrName] || EVENT_MAPS[attrName] || attrName;
 
@@ -40,22 +33,21 @@ function traverseRenderAst(ast, context) {
         }
       }
       if (path.node && path.node.type === 'JSXExpressionContainer') {
-
-        //for {this.props.name} => {{name}}
+        // for {this.props.name} => {{name}}
         if (path.node.expression.type === 'MemberExpression') {
           let bindName = getMemberExpression(path.node.expression);
           path.node.expression = genJSXObjectAst(bindName);
           context[STATE_DATA][bindName] = '';
         }
 
-        //for {name} => {{name}}
+        // for {name} => {{name}}
         if (path.node.expression.type === 'Identifier') {
           let bindName = getVarExpression(path.node.expression);
           path.node.expression = genJSXObjectAst(bindName);
           context[STATE_DATA][bindName] = '';
         }
 
-        //for {{test: name}} => {{name}}
+        // for {{test: name}} => {{name}}
         if (path.node.expression.properties && path.node.expression.properties.length === 1) {
           let property = path.node.expression.properties[0];
           if (property.value.type === 'Identifier') {
@@ -67,10 +59,8 @@ function traverseRenderAst(ast, context) {
           }
           if (property.value.type === 'MemberExpression') {
             property.key.name = '___replace___';
-            //todo 解析为 "{{}}"字符串
-            //输出的时候会格式化调，解决jsx语法不兼容{{item.img}}的情况
+            // todo parse "{{}}" string
           }
-
         }
       }
     }
@@ -86,9 +76,5 @@ module.exports = renderBuilder({
     traverseRenderAst(renderAst, parsed);
   },
   generate(ret, parsed, options) {
-    console.log('STATE_DATA');
-    console.log(chalk.yellow(JSON.stringify(parsed[STATE_DATA])));
-    console.log('CSS_STYLES');
-    console.log(chalk.yellow(JSON.stringify(parsed[CSS_STYLES])));
   },
 });

@@ -23,12 +23,9 @@ function buildJSXExpressionAst(expressionAst) {
 }
 
 function replaceAssign(originObject, newObject) {
-
   let originKey = Object.keys(originObject);
   let newKeys = Object.keys(newObject);
-  //删除原始对象，不在新对象中的属性
   originKey.filter(key => !!~newKeys.indexOf(key)).forEach(key => delete originObject[key]);
-  //赋值原始对象
   newKeys.forEach(key => originObject[key] = newObject[key]);
 }
 
