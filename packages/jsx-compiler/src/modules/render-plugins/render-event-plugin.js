@@ -2,8 +2,8 @@ const generate = require('@babel/generator').default;
 const renderBuilder = require('../render-base/render-builder');
 const traverse = require('../../utils/traverseNodePath');
 const { getJSXStringAst } = require('../../utils/astUtils');
-
 const { EVENT_MAPS } = require('./config-attr');
+
 const DYNAMIC_EVENTS = 'DYNAMIC_EVENTS';
 
 function getFnName(dynamicEvents) {
