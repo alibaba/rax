@@ -11,16 +11,6 @@ const PAGE_EVENTS = [
   'onResize'
 ];
 
-const PAGE_CYCLES = [
-  'componentDidMount',
-  'componentDidUpdate',
-  'componentWillMount',
-  'componentWillReceiveProps',
-  'componentWillUnmount',
-  'componentWillUpdate',
-  'shouldComponentUpdate'
-];
-
 /**
  * Bridge from Rax page component class to MiniApp Component constructor.
  * @param Klass {RaxComponent} Rax page component.
@@ -42,16 +32,16 @@ export function createPage(Klass) {
         klassPrototype.componentWillMount.call(this);
     },
     onShow() {
-      klassPrototype.componentOnShow &&
-        klassPrototype.componentOnShow.call(this);
+      klassPrototype.onShow &&
+        klassPrototype.onShow.call(this);
     },
     onReady() {
       klassPrototype.componentDidMount &&
         klassPrototype.componentDidMount.call(this);
     },
     onHide() {
-      klassPrototype.componentOnHide &&
-        klassPrototype.componentOnHide.call(this);
+      klassPrototype.onHide &&
+        klassPrototype.onHide.call(this);
     },
     onUnload() {
       klassPrototype.componentWillUnmount &&
@@ -65,19 +55,15 @@ export function createPage(Klass) {
         klassPrototype.onShareAppMessage.call(this, options);
     },
     setState,
-    forceUpdate
+    forceUpdate,
   };
   for (let i = 0, l = classMethods.length; i < l; i++) {
     const methodName = classMethods[i];
     const fn = klassPrototype[methodName];
     if ('constructor' === methodName) continue;
-    if (PAGE_EVENTS.includes(methodName)) {
+    if (PAGE_EVENTS.indexOf(methodName) > -1) {
       pageConfig.events[methodName] = fn;
-    }
-    if (
-      typeof klassPrototype[methodName] === 'function' &&
-      !PAGE_CYCLES.includes(methodName)
-    ) {
+    } else if (typeof klassPrototype[methodName] === 'function') {
       pageConfig[methodName] = fn;
     }
   }
