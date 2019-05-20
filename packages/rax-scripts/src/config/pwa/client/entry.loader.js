@@ -14,12 +14,18 @@ module.exports = function(source) {
     code += `
       import hydrate from 'rax-hydrate';
       window.onload = function(){
-        if (${functionName}.getInitialProps) {
+        var data = null;
+        try {
+          data = JSON.parse(document.querySelector("[data-from='server']").innerHTML).data;
+        } catch (e) {
+          // ignore
+        }
+        if (data !== null || !${functionName}.getInitialProps) {
+          hydrate(createElement(${functionName}, data || {}), document.getElementById('root'));
+        } else {
           ${functionName}.getInitialProps().then((props = {}) => {
             hydrate(createElement(${functionName}, props), document.getElementById('root'));
           });
-        } else {
-          hydrate(createElement(${functionName}), document.getElementById('root'));
         }
       }
     `;
@@ -34,7 +40,6 @@ module.exports = function(source) {
       } else {
         render(createElement(${functionName}), document.getElementById('root'), { driver: DriverDOM });
       }
-      console.log(1);
     `;
   }
 
