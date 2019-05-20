@@ -1,6 +1,6 @@
 const { resolve } = require('path');
 const { transformJSX, writeFiles } = require('./Transformer');
-const { creatComponents } = require('./Component');
+const { createComponent } = require('./Component');
 
 /**
  * Creat page files
@@ -8,12 +8,12 @@ const { creatComponents } = require('./Component');
  * @param config {Object} has usingComponents
  * @param rootContext {String} root Path
  */
-const creatPage = function(rootContext, context, distPagePath) {
+const createPage = function(rootContext, context, distPagePath) {
   const transformed = transformJSX(context + '.jsx', 'page');
-  creatComponents(rootContext, distPagePath, {usingComponents: transformed.usingComponents});
+  createComponent(rootContext, distPagePath, {usingComponents: transformed.usingComponents});
   writeFiles(resolve(distPagePath, 'index'), transformed, rootContext);
 };
 
 module.exports = {
-  creatPage
+  createPage
 };

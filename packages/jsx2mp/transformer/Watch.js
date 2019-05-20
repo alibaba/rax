@@ -1,7 +1,7 @@
 const chokidar = require('chokidar');
 const { statSync, readdirSync } = require('fs');
 const { mkdirpSync, removeSync } = require('fs-extra');
-const { creatApp } = require('./App');
+const { createApp } = require('./App');
 
 /**
  * all watching files
@@ -37,7 +37,7 @@ const getAllFilePath = function(sourcePath, distPath) {
 const handleFileChanged = function(file, sourcePath, distPath) {
   removeSync(distPath);
   mkdirpSync(distPath);
-  creatApp(sourcePath, distPath);
+  createApp(sourcePath, distPath);
 };
 
 /**

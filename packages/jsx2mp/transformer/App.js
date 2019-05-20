@@ -1,22 +1,22 @@
 const { join, resolve } = require('path');
 const { readFileSync, readJSONSync, existsSync } = require('fs-extra');
-const { creatPage } = require('./Page');
+const { createPage } = require('./Page');
 const { writeFile } = require('../utils/file');
 
 const DEP = 'dependencies';
 const DEV_DEP = 'devDependencies';
 
 /**
- * Creat page files
+ * Create page files
  * @param appDirectory {String} Absolute app path.
  * @param distDirectory {String} Absolute dist path.
  */
-const creatChildPage = function(appDirectory, distDirectory) {
+const createChildPage = function(appDirectory, distDirectory) {
   const sourceConfigPath = join(appDirectory, 'app.json');
   const config = readJSONSync(sourceConfigPath);
   const pages = config.pages;
   for (let i = 0, l = pages.length; i < l; i++) {
-    creatPage(appDirectory, resolve(appDirectory, pages[i]), resolve(distDirectory, pages[i], '..'));
+    createPage(appDirectory, resolve(appDirectory, pages[i]), resolve(distDirectory, pages[i], '..'));
   }
 };
 
@@ -55,15 +55,15 @@ const copyAppFiles = function(appDirectory, distDirectory) {
 };
 
 /**
- * Creat app
+ * Create app
  * @param appDirectory {String} Absolute app path.
  * @param distDirectory {String} Absolute dist path.
  */
-const creatApp = function(appDirectory, distDirectory) {
+const createApp = function(appDirectory, distDirectory) {
   copyAppFiles(appDirectory, distDirectory);
-  creatChildPage(appDirectory, distDirectory);
+  createChildPage(appDirectory, distDirectory);
 };
 
 module.exports = {
-  creatApp
+  createApp
 };
