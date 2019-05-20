@@ -28,6 +28,7 @@
     "md5": "^2.2.1"
   },
   "devDependencies": {
+    "chalk": "^2.4.2",
     "jest": "^24.5.0"
   }
 }
