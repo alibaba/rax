@@ -34,7 +34,7 @@ function traverseRenderAst(ast) {
         if (node.expression.type === 'ConditionalExpression') {
           logicExp = node.expression.test;
           logicExp = ` a:if="{{${generate(logicExp).code}}}"`;
-          InsertExp = `a:elif`;
+          InsertExp = 'a:elif';
           if (node.expression.consequent.type === 'JSXElement') {
             jsxExp = node.expression.consequent;
           }

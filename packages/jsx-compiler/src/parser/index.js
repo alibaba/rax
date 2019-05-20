@@ -68,7 +68,7 @@ function getExported(ast) {
  * @param code
  * @param options {Object} Parser options.
  */
-function parse(code, options = baseOptions) {
+function parse(code, options) {
   if (!options) {
     const { baseOptions } = require('../options');
     options = baseOptions;

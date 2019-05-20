@@ -20,9 +20,9 @@ function isEventAttr(event) {
 function traverseRenderAst(ast, parsed) {
   traverse(ast, {
     enter(path) {
-      //for <view onClick={()=>{let a=1;}}/> => <view onTap='_events0'})
-      //for <view onClick={function (){ let a=1;}}/> => <view onTap='_events0'})
-      //for <view onClick={this.onClick}/> => <view onTap='_events0'})
+      // for <view onClick={()=>{let a=1;}}/> => <view onTap='_events0'})
+      // for <view onClick={function (){ let a=1;}}/> => <view onTap='_events0'})
+      // for <view onClick={this.onClick}/> => <view onTap='_events0'})
       if (path.node && path.node.type === 'JSXAttribute'
           && isEventAttr(path.node.name.name)
           && path.node.value.type === 'JSXExpressionContainer'

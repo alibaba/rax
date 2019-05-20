@@ -3,6 +3,7 @@ const isFunctionComponent = require('../../utils/isFunctionComponent');
 const isClassComponent = require('../../utils/isClassComponent');
 const traverse = require('../../utils/traverseNodePath');
 const { buildJSXExpressionAst } = require('../../utils/astUtils');
+
 const FULL_RETURN_AST = 'FULL_RETURN_AST';
 
 function renderBuilder({ name, parse, generate }) {

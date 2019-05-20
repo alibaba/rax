@@ -33,7 +33,6 @@ function traverseRenderAst(ast, context) {
         }
       }
       if (path.node && path.node.type === 'JSXExpressionContainer') {
-
         // for {this.props.name} => {{name}}
         if (path.node.expression.type === 'MemberExpression') {
           let bindName = getMemberExpression(path.node.expression);
@@ -62,7 +61,6 @@ function traverseRenderAst(ast, context) {
             property.key.name = '___replace___';
             // todo parse "{{}}" string
           }
-
         }
       }
     }

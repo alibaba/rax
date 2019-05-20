@@ -1,5 +1,6 @@
 const renderBuilder = require('../render-base/render-builder');
 const generate = require('@babel/generator').default;
+
 const TEMPLATE_AST = 'templateAST';
 
 module.exports = renderBuilder({
