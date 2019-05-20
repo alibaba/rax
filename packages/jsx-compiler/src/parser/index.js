@@ -4,7 +4,6 @@ const invokeModules = require('../utils/invokeModules');
 const traverse = require('../utils/traverseNodePath');
 const getDefaultExportedPath = require('../utils/getDefaultExportedPath');
 const parserOption = require('./option');
-const { baseOptions } = require('../options');
 
 /**
  * Parse JS code by babel parser.
@@ -69,7 +68,12 @@ function getExported(ast) {
  * @param code
  * @param options {Object} Parser options.
  */
-function parse(code, options = baseOptions) {
+function parse(code, options) {
+  if (!options) {
+    const { baseOptions } = require('../options');
+    options = baseOptions;
+  }
+
   const ast = astParser(code);
   const imported = getImported(ast);
   const exported = getExported(ast);

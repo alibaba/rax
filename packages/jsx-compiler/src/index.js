@@ -17,3 +17,4 @@ function compile(template, options = baseOptions) {
 module.exports = exports = compile;
 exports.parse = parse;
 exports.generate = generate;
+exports.baseOptions = baseOptions;
