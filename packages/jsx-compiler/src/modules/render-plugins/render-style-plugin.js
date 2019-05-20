@@ -4,6 +4,7 @@ const renderBuilder = require('../render-base/render-builder');
 const traverse = require('../../utils/traverseNodePath');
 const { parseAst, parseAstExpression } = require('../../utils/parserUtils');
 const { genJSXObjectAst, styleConvert } = require('../../utils/astUtils');
+
 const DYNAMIC_STYLES = 'DYNAMIC_STYLES';
 const pixelStyle = ['height', 'width', 'fontSize', 'border'];
 
@@ -15,7 +16,7 @@ function getStyleName(dynamicStyles) {
 function traverseRenderAst(ast, context) {
   traverse(ast, {
     enter(path) {
-      //for <view style={{width: 100}}/> => <view style={{_style0001}}> && let _style0 = {width: 100} this.setData({_statle0})
+      // for <view style={{width: 100}}/> => <view style={{_style0001}}> && let _style0 = {width: 100} this.setData({_statle0})
       if (path.node && path.node.type === 'JSXAttribute'
           && path.node.name.name === 'style'
           && path.node.value.type === 'JSXExpressionContainer'
