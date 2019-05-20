@@ -1,16 +1,11 @@
-/**************************************************
- * Created by kaili on 2019/5/16 下午6:08.
- **************************************************/
 const t = require('@babel/types');
-const babelGenerate = require('@babel/generator').default;
 const isFunctionComponent = require('../../utils/isFunctionComponent');
 const isClassComponent = require('../../utils/isClassComponent');
 const traverse = require('../../utils/traverseNodePath');
 const { buildJSXExpressionAst } = require('../../utils/astUtils');
-const chalk = require('chalk');
 const FULL_RETURN_AST = 'FULL_RETURN_AST';
 
-module.exports = function RenderBuilder({ name, parse, generate }) {
+function renderBuilder({ name, parse, generate }) {
   return {
     parse(parsed, code, options) {
       const { defaultExportedPath } = parsed;
@@ -20,13 +15,7 @@ module.exports = function RenderBuilder({ name, parse, generate }) {
       if (!returnPath) return;
 
       let renderAst = returnPath.node;
-      console.log(chalk.yellow(`Loading Plugin:[${name}]........`));
-      console.log(chalk.red(`Source Code:\n`));
-      console.log(chalk.blue(babelGenerate(renderAst).code));
-      // console.log(chalk.blue(generate(renderAst).code));
       parse(parsed, buildJSXExpressionAst(renderAst), returnPath);
-      console.log(chalk.red(`Parsed Code:\n`));
-      console.log(chalk.green(babelGenerate(renderAst).code));
     },
     generate(ret, parsed, options) {
       generate(ret, parsed, options);
@@ -101,3 +90,5 @@ function getRenderMethodPath(path) {
 
   return renderMethodPath;
 }
+
+module.exports = renderBuilder;

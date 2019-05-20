@@ -1,12 +1,8 @@
-/**************************************************
- * Created by kaili on 2019/5/16 下午5:26.
- **************************************************/
 const { TAG_MAPS } = require('./config-tag');
 const t = require('@babel/types');
 const renderBuilder = require('../render-base/render-builder');
 const traverse = require('../../utils/traverseNodePath');
 const generate = require('@babel/generator').default;
-const chalk = require('chalk');
 const TEMPLATE_AST = 'templateAST';
 
 function traverseRenderAst(ast) {

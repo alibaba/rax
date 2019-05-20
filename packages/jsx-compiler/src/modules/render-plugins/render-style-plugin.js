@@ -1,9 +1,5 @@
-/**************************************************
- * Created by kaili on 2019/5/17 下午9:02.
- **************************************************/
 const generate = require('@babel/generator').default;
 const t = require('@babel/types');
-const chalk = require('chalk');
 const renderBuilder = require('../render-base/render-builder');
 const traverse = require('../../utils/traverseNodePath');
 const { parseAst, parseAstExpression } = require('../../utils/parserUtils');
@@ -24,7 +20,6 @@ function traverseRenderAst(ast, context) {
           && path.node.name.name === 'style'
           && path.node.value.type === 'JSXExpressionContainer'
           && path.node.value.expression.type === 'ObjectExpression' | path.node.value.expression.type === 'ArrayExpression') {
-        //获取表达式
         let styleObjectExpression = path.node.value.expression;
         let defStyle = styleConvert(path.parent.name.name);
         if (styleObjectExpression.type === 'ArrayExpression') {
@@ -81,8 +76,7 @@ module.exports = renderBuilder({
     traverseRenderAst(renderAst, parsed);
   },
   generate(ret, parsed, options) {
-    // todo parsed[DYNAMIC_STYLES] 需要被插入到初始化函数中，setData();
+    // todo parsed[DYNAMIC_STYLES] should be insert to appx didMount lifeCycle;
     // let code = generate(parsed[DYNAMIC_STYLES]).code;
-    // console.log(chalk.yellow(code));
   },
 });

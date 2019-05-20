@@ -1,9 +1,5 @@
-/**************************************************
- * Created by kaili on 2019/3/27 下午6:01.
- **************************************************/
 const t = require('@babel/types');
 const generate = require('@babel/generator').default;
-const chalk = require('chalk');
 const { parseAstBody } = require('../../utils/parserUtils');
 const { getJsxMapFnBody, replaceAssign } = require('../../utils/astUtils');
 const renderBuilder = require('../render-base/render-builder');
@@ -22,7 +18,7 @@ function traverseRenderAst(ast) {
       let node = path.node;
 
       if (node.type === 'JSXExpressionContainer') {
-        //逻辑表达式 list && list.length > 0 && list.map(item => <View/>) || aa && <View/>
+        // logic expression list && list.length > 0 && list.map(item => <View/>) || aa && <View/>
         if (node.expression.type === 'LogicalExpression') {
           logicExp = node.expression.left;
           logicExp = ` a:if="{{${generate(logicExp).code}}}"`;
@@ -33,7 +29,8 @@ function traverseRenderAst(ast) {
             jsxExp = node.expression.right;
           }
         }
-        //三元表达式 list ? '<View style={{width: 750,border: 2}}>HAHAHA</View>':'<View style={{width: 750,border: 2}}>HAHAHA</View>';
+        // The ternary expression
+        // list ? '<View style={{width: 750,border: 2}}></View>':'<View style={{width: 150}}></View>';
         if (node.expression.type === 'ConditionalExpression') {
           logicExp = node.expression.test;
           logicExp = ` a:if="{{${generate(logicExp).code}}}"`;
@@ -48,17 +45,17 @@ function traverseRenderAst(ast) {
             }
           }
         }
-        //调用表达式 list.map(item => <View/>)
+        // call expression list.map(item => <View/>)
         if (node.expression.type === 'CallExpression') {
           callExp = node.expression;
         }
-        //替换节点
+        // replace node
         if (jsxExp) {
           let jsxBlock = parseAstBody('<block ' + logicExp + '></block>').expression;
           jsxBlock.children.push(jsxExp);
           replaceAssign(path.node, jsxBlock);
         }
-        //插入同级节点
+        // insert node to current path
         if (jsxInsert) {
           let insert = parseAstBody('<block ' + InsertExp + '></block>').expression;
           insert.children.push(jsxInsert);
@@ -70,7 +67,7 @@ function traverseRenderAst(ast) {
           && callExp.callee.property.type === 'Identifier'
           && callExp.callee.property.name === 'map'
         ) {
-          let fnBody = getJsxMapFnBody(callExp.arguments[0]);//获取.
+          let fnBody = getJsxMapFnBody(callExp.arguments[0]);
           let logicExp = !!fnBody.iftest ? ` a:if="{{${generate(fnBody.iftest).code}}}"` : '';
           let calleeName = callExp.callee.object.name || callExp.callee.object.property.name;
           let code = '<block  a:for="{{' + calleeName + '}}" a:for-index="' + fnBody.itemIndex + '" a:for-item="' + fnBody.itemName + '"></block>';

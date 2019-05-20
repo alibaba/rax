@@ -1,9 +1,4 @@
-/**************************************************
- * Created by kaili on 2019/3/27 下午8:58.
- **************************************************/
 const generate = require('@babel/generator').default;
-const chalk = require('chalk');
-
 const renderBuilder = require('../render-base/render-builder');
 const traverse = require('../../utils/traverseNodePath');
 const { getJSXStringAst } = require('../../utils/astUtils');
@@ -40,7 +35,6 @@ function traverseRenderAst(ast, parsed) {
           key: { type: 'Identifier', name: fnName },
         };
         parsed[DYNAMIC_EVENTS].push(objectMethodAst);
-        //替换变量
         path.node.value = getJSXStringAst(fnName);
       }
       if (path.node && path.node.type === 'JSXAttribute'
@@ -63,6 +57,5 @@ module.exports = renderBuilder({
   },
   generate(ret, parsed, options) {
     // let code = generate(parsed[DYNAMIC_EVENTS]).code;
-    // console.log(chalk.yellow(code));
   },
 });
