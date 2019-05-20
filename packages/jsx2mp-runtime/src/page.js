@@ -1,14 +1,35 @@
-import { setState, forceUpdate, hasOwn } from './common/utils';
-import { pageEventHandleList, pageCycleList } from './common/cycleConfig';
+const PAGE_EVENTS = [
+  'onBack',
+  'onKeyboardHeight',
+  'onOptionMenuClick',
+  'onPopMenuClick',
+  'onPullIntercept',
+  'onPullDownRefresh',
+  'onTitleClick',
+  'onTabItemTap',
+  'beforeTabItemTap',
+  'onResize'
+];
+
+const PAGE_CYCLES = [
+  'componentDidMount',
+  'componentDidUpdate',
+  'componentWillMount',
+  'componentWillReceiveProps',
+  'componentWillUnmount',
+  'componentWillUpdate',
+  'shouldComponentUpdate'
+];
+
 /**
- * Bridge from RaxPageComponent Klass to MiniApp RaxPageComponent constructor.
- * @param Klass {RaxPageComponent}
+ * Bridge from Rax page component class to MiniApp Component constructor.
+ * @param Klass {RaxComponent} Rax page component.
  * @return {Object} MiniApp Page constructor's config.
  */
 export function createPage(Klass) {
-  const _page = new Klass({}, null);
+  const instance = new Klass({}, null);
   const { prototype: klassPrototype, defaultProps } = Klass;
-  const { props, state } = _page;
+  const { props, state } = instance;
   const classMethods = Object.getOwnPropertyNames(klassPrototype);
   const initData = Object.assign({}, defaultProps, props, state);
   const pageConfig = {
@@ -16,7 +37,7 @@ export function createPage(Klass) {
     state: initData,
     props: Object.assign({}, props, defaultProps),
     onLoad(query) {
-      // todo: set query
+      // TODO: set query to component instance.
       klassPrototype.componentWillMount &&
         klassPrototype.componentWillMount.call(this);
     },
@@ -50,15 +71,31 @@ export function createPage(Klass) {
     const methodName = classMethods[i];
     const fn = klassPrototype[methodName];
     if ('constructor' === methodName) continue;
-    if (pageEventHandleList.includes(methodName)) {
+    if (PAGE_EVENTS.includes(methodName)) {
       pageConfig.events[methodName] = fn;
     }
     if (
       typeof klassPrototype[methodName] === 'function' &&
-      !pageCycleList.includes(methodName)
+      !PAGE_CYCLES.includes(methodName)
     ) {
       pageConfig[methodName] = fn;
     }
   }
   return pageConfig;
+}
+
+/**
+ * Bridge setState directly to setData. `this` is bound to component instance.
+ * @param particialState {Object|Function}
+ * @param callback? {Function}
+ */
+export function setState(particialState, callback) {
+  return this.setData(particialState, callback);
+}
+/**
+ * Bridge to forceUpdate.
+ * @param callback? {Function}
+ */
+export function forceUpdate(callback) {
+  return setState.call(this, {}, callback);
 }
