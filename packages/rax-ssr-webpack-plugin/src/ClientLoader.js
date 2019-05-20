@@ -16,7 +16,7 @@ module.exports = function(source) {
       window.onload = function(){
         var data = null;
         try {
-          data = JSON.parse(document.querySelector("[data-from='server']").innerHTML).data;
+          data = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
         } catch (e) {
           // ignore
         }
