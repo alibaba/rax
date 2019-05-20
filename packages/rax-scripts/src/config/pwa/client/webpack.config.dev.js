@@ -13,10 +13,4 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
   ],
 });
 
-Object.keys(webpackConfigDev.entry).forEach((point) => {
-  webpackConfigDev.entry[point] = [webpackConfigDev.entry[point]];
-  // hot reaload client.
-  webpackConfigDev.entry[point].unshift(require.resolve('webpack-hot-middleware/client'));
-});
-
 module.exports = webpackConfigDev;
