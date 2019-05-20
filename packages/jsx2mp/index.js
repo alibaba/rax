@@ -4,11 +4,11 @@ const {
   removeSync,
 } = require('fs-extra');
 const colors = require('colors');
-const App = require('./transformer/App');
-const Watch = require('./transformer/Watcher');
-const {isDirectory} = require('./utils/file');
-const {printLog, ask} = require('./utils/log');
-const {invokeNpmInstall} = require('./utils/npm');
+const { creatApp } = require('./transformer/App');
+const { startWatching } = require('./transformer/Watcher');
+const { isDirectory } = require('./utils/file');
+const { printLog, ask } = require('./utils/log');
+const { invokeNpmInstall } = require('./utils/npm');
 
 /**
  * Transform a jsx project.
@@ -30,15 +30,11 @@ async function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = fal
   // Make sure dist directory created.
   mkdirpSync(distPath);
   printLog(colors.green('创建目录'), 'dist/');
-
-  new App(sourcePath, {
-    appDirectory: sourcePath,
-    distDirectory: distPath,
-  });
+  creatApp(sourcePath, distPath);
 
   if (enableWatch) {
     printLog(colors.green('将监听以下路径的文件变更'), sourcePath);
-    new Watch({sourcePath, distPath});
+    startWatching(sourcePath, distPath);
   }
 
   // const shouldInstallDistNPM = await ask('是否需要自动安装 npm 到构建目录中?', false);

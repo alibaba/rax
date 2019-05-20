@@ -1,60 +1,19 @@
 const { resolve } = require('path');
-const { readFileSync } = require('fs-extra');
-const compiler = require('jsx-compiler');
-const Component = require('./Component');
-const { writeFile } = require('../utils/file');
+const { transformJSX, writeFiles } = require('./Transformer');
+const { creatComponents } = require('./Component');
 
 /**
- * Abstract of miniapp page.
- * @type {module.Page}
+ * Creat page files
+ * @param distPagePath {String} dist Path
+ * @param config {Object} has usingComponents
+ * @param rootContext {String} root Path
  */
-module.exports = class Page {
-  /**
-   * @param options {Object}
-   */
-  constructor(options) {
-    const { rootContext, context, distRoot, distPagePath } = options;
-    this.rootContext = rootContext;
-    this.context = context;
-    this.distPagePath = distPagePath;
+const creatPage = function(rootContext, context, distPagePath) {
+  const transformed = transformJSX(context + '.jsx', 'page');
+  creatComponents(rootContext, distPagePath, {usingComponents: transformed.usingComponents});
+  writeFiles(resolve(distPagePath, 'index'), transformed, rootContext);
+};
 
-    this._transformJSX();
-    this._creatComponents();
-    this._writeFiles();
-  }
-
-  /**
-   * Read jsx file & transform jsx code by compiler
-   * @private
-   */
-  _transformJSX() {
-    const pageJSXPath = this.context + '.jsx';
-    const jsxCode = readFileSync(pageJSXPath, 'utf-8');
-
-    this.transformed = compiler(jsxCode, Object.assign({}, compiler.baseOptions, {
-      filePath: pageJSXPath,
-      type: 'page',
-    }));
-  }
-
-  /**
-   * Creat components
-   * @private
-   */
-  _creatComponents() {
-    new Component(
-      {usingComponents: this.transformed.usingComponents},
-      { rootContext: this.rootContext, context: this.context, distPath: this.distPagePath });
-  }
-
-  /**
-   * Write file
-   * @private
-   */
-  _writeFiles() {
-    writeFile(resolve(this.distPagePath, 'index.json'), JSON.stringify(this.transformed.config, null, 2) + '\n', this.rootContext);
-    writeFile(resolve(this.distPagePath, 'index.acss'), this.transformed.style, this.rootContext);
-    writeFile(resolve(this.distPagePath, 'index.axml'), this.transformed.template, this.rootContext);
-    writeFile(resolve(this.distPagePath, 'index.js'), this.transformed.code, this.rootContext);
-  }
+module.exports = {
+  creatPage
 };

@@ -1,4 +1,4 @@
-const {printLog} = require('./log');
+const { printLog } = require('./log');
 const { spawnSync } = require('child_process');
 const colors = require('colors');
 
