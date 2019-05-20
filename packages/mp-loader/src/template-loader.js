@@ -20,7 +20,8 @@ module.exports = function templateLoader(content) {
   content = `<template>${content}</template>`; // Wrap <tempalte> when user define more then one nodes at root
 
   const { ast, renderFn, dependencies, tplAlias } = transpiler(content, {
-    templatePath: this.resourcePath,
+    templatePath: resourcePath,
+    mpTpye: options && options.mpType || 'alipay'
   });
 
   let render = renderFn;

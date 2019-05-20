@@ -1,11 +1,12 @@
 const { dirname, isAbsolute, join } = require('path');
-const { parse } = require('./parser');
-const generate = require('./generate');
+const createAdapter = require('../adapters');
 
 module.exports = function transpiler(content, opts) {
-  const templateAST = parse(content.trim(), opts);
-  const { templatePath } = opts;
+  const { templatePath, mpType } = opts;
   let dependencies = [];
+  const { generate, parse } = createAdapter(mpType);
+  const templateAST = parse(content.trim(), opts);
+
 
   if (Array.isArray(templateAST.templates)) {
     templateAST.templates

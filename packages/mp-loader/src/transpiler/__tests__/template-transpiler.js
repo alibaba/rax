@@ -1,10 +1,8 @@
-const { parse } = require('../parser');
-const generate = require('../generate');
-const modules = require('../transpileModules');
 const babylon = require('babylon');
+const createAdapter = require('../../adapters');
 
 const transpilerOptions = { modules };
-
+const { generate, parse, modules } = createAdapter();
 /**
  * Check whether a js string is valid.
  */
