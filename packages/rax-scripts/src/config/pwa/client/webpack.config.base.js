@@ -19,6 +19,23 @@ const webpackConfig = webpackMerge(webpackConfigBase, {
   entry,
   output: {
     filename: 'client/[name].js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|mjs|jsx)$/,
+        exclude: /(node_modules|bower_components)/,
+        enforce: 'pre',
+        use: [
+          {
+            loader: require.resolve('rax-webpack-plugin/lib/PlatformLoader'),
+            options: {
+              platform: 'web'
+            }
+          },
+        ],
+      }
+    ]
   }
 });
 

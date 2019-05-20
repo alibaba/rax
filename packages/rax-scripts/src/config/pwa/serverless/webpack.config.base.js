@@ -41,6 +41,18 @@ const webpackConfig = webpackMerge(webpackConfigBase, {
       use: {
         loader: require.resolve('html-loader')
       }
+    }, {
+      test: /\.(js|mjs|jsx)$/,
+      exclude: /(node_modules|bower_components)/,
+      enforce: 'pre',
+      use: [
+        {
+          loader: require.resolve('rax-webpack-plugin/lib/PlatformLoader'),
+          options: {
+            platform: 'node'
+          }
+        },
+      ],
     }]
   }
 });
