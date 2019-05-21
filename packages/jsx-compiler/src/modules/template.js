@@ -3,6 +3,7 @@ const { NodePath } = require('@babel/traverse');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const isClassComponent = require('../utils/isClassComponent');
 const traverse = require('../utils/traverseNodePath');
+const getReturnElementPath = require('../utils/getReturnElementPath');
 const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
@@ -44,23 +45,6 @@ module.exports = {
     }
   },
 };
-
-/**
- * Get reutrn statement element.
- */
-function getReturnElementPath(path) {
-  let result = null;
-
-  traverse(path, {
-    ReturnStatement: {
-      exit(returnStatementPath) {
-        result = returnStatementPath;
-      }
-    },
-  });
-
-  return result;
-}
 
 /**
  * Get the render function path from class component declaration..

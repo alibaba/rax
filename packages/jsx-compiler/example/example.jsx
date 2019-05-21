@@ -10,9 +10,11 @@ const defaultBar = number;
 export default function(props) {
   const [ bar, setBar ] = useState(defaultBar);
   return (
-    <View className="container"
-    >
+    <View className="container">
       <Button>Child Nodes</Button>
+      {bar.arr.map((a, b) => {
+        return <view data-a={a} data-b={b}>{a}</view>;
+      })}
       <Text>hello world: {bar}</Text>
     </View>
   );

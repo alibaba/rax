@@ -1,7 +1,7 @@
 const t = require('@babel/types');
 const kebabCase = require('kebab-case');
 const Node = require('../Node');
-const findReturnElement = require('../utils/findReturnElement');
+const findReturnElement = require('../utils/getReturnElementPath');
 const genExpression = require('../codegen/genExpression');
 
 const parserAdapter = {

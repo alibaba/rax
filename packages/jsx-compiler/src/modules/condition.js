@@ -1,42 +1,11 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
+const createJSX = require('../utils/createJSX');
+const createJSXBinding = require('../utils/createJSXBinding');
 const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
-
-function createJSX(tag, attrs = {}, children = []) {
-  const attributes = [];
-  Object.keys(attrs).forEach((key) => {
-    attributes.push(t.jsxAttribute(
-      t.jsxIdentifier(key),
-      attrs[key],
-    ));
-  });
-  const jsxOpeningElement = t.jsxOpeningElement(
-    t.jsxIdentifier(tag),
-    attributes
-  );
-  const jsxClosingElement = t.jsxClosingElement(t.jsxIdentifier(tag));
-  return t.jsxElement(jsxOpeningElement, jsxClosingElement, children);
-}
-
-function createJSXBinding(string) {
-  const id = t.identifier(string);
-  return t.jsxExpressionContainer(t.objectExpression([
-    t.objectProperty(id, id, false, true)
-  ]));
-}
-
-function isSupportTransfrom(el) {
-  const typeCheckMethods = [
-    'isJSXElement',
-    'isStringLiteral',
-    'isNumericLiteral',
-    'isArrayExpression'
-  ];
-  return typeCheckMethods.some(method => t[method](el));
-}
 
 function transformRenderFunction(ast, adapter) {
   const templateVariables = {};
@@ -55,19 +24,23 @@ function transformRenderFunction(ast, adapter) {
               break;
 
             case 'ObjectPattern':
-              id.properties.map(objProperty => {
-                templateVariables[objProperty.value.name] = {
-                  source: init.property.name
-                };
-              });
+              if (Array.isArray(id.properties)) {
+                id.properties.forEach(objProperty => {
+                  templateVariables[objProperty.value.name] = {
+                    source: init.property.name
+                  };
+                });
+              }
               break;
 
             case 'ArrayPattern':
-              id.elememts.map((el, index) => {
-                if (t.isIdentifier(el)) {
-                  templateVariables[el.name] = init.elememts[index].value;
-                }
-              });
+              if (Array.isArray(id.elememts)) {
+                id.elememts.forEach((el, index) => {
+                  if (t.isIdentifier(el)) {
+                    templateVariables[el.name] = init.elememts[index].value;
+                  }
+                });
+              }
               break;
           }
         });
