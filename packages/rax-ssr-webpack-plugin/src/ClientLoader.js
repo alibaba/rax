@@ -8,7 +8,7 @@ module.exports = function(source) {
   } = query;
 
   const functionName = '_PWA_page_component_';
-  let code = source.replace('export default', `const ${functionName} =`);
+  let code = source.replace('export default', `var ${functionName} =`);
 
   if (ssr === 'true') {
     code += `
@@ -23,8 +23,8 @@ module.exports = function(source) {
         if (data !== null || !${functionName}.getInitialProps) {
           hydrate(createElement(${functionName}, data || {}), document.getElementById('root'));
         } else {
-          ${functionName}.getInitialProps().then((props = {}) => {
-            hydrate(createElement(${functionName}, props), document.getElementById('root'));
+          ${functionName}.getInitialProps().then(function(props) {
+            hydrate(createElement(${functionName}, props || {}), document.getElementById('root'));
           });
         }
       }
@@ -34,8 +34,8 @@ module.exports = function(source) {
       import {render} from 'rax';
       import * as DriverDOM from 'driver-dom';
       if (${functionName}.getInitialProps) {
-        ${functionName}.getInitialProps().then((props = {}) => {
-          render(createElement(${functionName}, props), document.getElementById('root'), { driver: DriverDOM });
+        ${functionName}.getInitialProps().then(function(props) {
+          render(createElement(${functionName}, props || ), document.getElementById('root'), { driver: DriverDOM });
         });
       } else {
         render(createElement(${functionName}), document.getElementById('root'), { driver: DriverDOM });
