@@ -4,7 +4,7 @@ exports['template-loader Template 1'] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
-    var __render_helpers__ = (function() { var obj = require(\\"../../node_modules/render-helpers/src/index.js\\"); return obj && obj.__esModule ? obj.default : obj; })();
+    var __render_helpers__ = (function() { var obj = require(\\"../../../render-helpers/src/index.js\\"); return obj && obj.__esModule ? obj.default : obj; })();
     __render_helpers__._r(__render__);
     var _c = __render_helpers__._c;var _s = __render_helpers__._s;var _l = __render_helpers__._l;var _t = __render_helpers__._t;var _m = __render_helpers__._m;var _v = __render_helpers__._v;var _e = __render_helpers__._e;var _cx = __render_helpers__._cx;var _u = __render_helpers__._u;;
   
@@ -35,7 +35,7 @@ exports['template-loader options 1'] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
-    var __render_helpers__ = (function() { var obj = require(\\"../node_modules/render-helpers/src/index.js\\"); return obj && obj.__esModule ? obj.default : obj; })();
+    var __render_helpers__ = (function() { var obj = require(\\"../../render-helpers/src/index.js\\"); return obj && obj.__esModule ? obj.default : obj; })();
     __render_helpers__._r(__render__);
     var _c = __render_helpers__._c;var _s = __render_helpers__._s;var _l = __render_helpers__._l;var _t = __render_helpers__._t;var _m = __render_helpers__._m;var _v = __render_helpers__._v;var _e = __render_helpers__._e;var _cx = __render_helpers__._cx;var _u = __render_helpers__._u;;
   
@@ -66,7 +66,7 @@ exports['template-loader web-view 1'] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
-    var __render_helpers__ = (function() { var obj = require(\\"../../node_modules/render-helpers/src/index.js\\"); return obj && obj.__esModule ? obj.default : obj; })();
+    var __render_helpers__ = (function() { var obj = require(\\"../../../render-helpers/src/index.js\\"); return obj && obj.__esModule ? obj.default : obj; })();
     __render_helpers__._r(__render__);
     var _c = __render_helpers__._c;var _s = __render_helpers__._s;var _l = __render_helpers__._l;var _t = __render_helpers__._t;var _m = __render_helpers__._m;var _v = __render_helpers__._v;var _e = __render_helpers__._e;var _cx = __render_helpers__._cx;var _u = __render_helpers__._u;;
   
