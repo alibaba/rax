@@ -13,5 +13,6 @@ module.exports = renderBuilder({
     let code = generate(parsed[TEMPLATE_AST]).code;
     code = code.replace(/(\{\{)\s*([\w\:\.]+\s*[\w\:\.]+)\s*(\}\})/g, '$1$2$3');
     code = code.replace(/___replace___:\s*/g, '');
+    console.log(code)
   }
 });

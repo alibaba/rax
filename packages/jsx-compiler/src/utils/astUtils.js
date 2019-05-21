@@ -1,23 +1,4 @@
-const { parseAstBody } = require('./parserUtils');
-
-/**
- * generate base ast for traverse
- */
-function buildJSXExpressionAst(expressionAst) {
-  return {
-    'type': 'File',
-    'program': {
-      'type': 'Program',
-      'sourceType': 'module',
-      'interpreter': null,
-      'body': [{
-        'type': 'ExpressionStatement',
-        'expression': expressionAst
-      }],
-      'directives': []
-    },
-  };
-}
+const { parseBody } = require('./parserUtils');
 
 function replaceAssign(originObject, newObject) {
   let originKey = Object.keys(originObject);
@@ -57,37 +38,20 @@ function getJsxMapFnBody(node) {
   }
 }
 
-function getJSXStringAst(name) {
-  let ast = parseAstBody(`<view onTap="${name}"/>`);
+function getJSXString(name) {
+  let ast = parseBody(`<view onTap="${name}" />`);
   return ast.expression.openingElement.attributes[0].value;
 }
 
-function genJSXObjectAst(name) {
-  let ast = parseAstBody(`<view onTap={{${name}}}/>`);
+function genJSXObject(name) {
+  let ast = parseBody(`<view onTap={{${name}}}/>`);
   return ast.expression.openingElement.attributes[0].value.expression;
 }
 
-/**
- *  Rax style default value auto complete
- */
-function styleConvert(type) {
-  let def = {
-    border: '0 solid black', position: 'relative', boxSizing: 'border-box', display: 'flex',
-    flexDirection: 'column', alignContent: 'flex-start', flexShrink: 0
-  };
-  const data = {
-    view: def,
-    image: Object.assign(def, { backgroundRepeat: 'no-repeat', backgroundPosition: 'center center' }),
-    text: Object.assign(def, { whiteSpace: 'pre-wrap', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }),
-  };
-  return data[type];
-}
-
 module.exports = {
-  buildJSXExpressionAst,
+  // buildJSXExpressionAst,
   replaceAssign,
   getJsxMapFnBody,
-  getJSXStringAst,
-  genJSXObjectAst,
-  styleConvert
+  getJSXString,
+  genJSXObject,
 };

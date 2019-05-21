@@ -1,14 +1,11 @@
 const t = require('@babel/types');
 const { NodePath } = require('@babel/traverse');
-const kebabCase = require('kebab-case');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const isClassComponent = require('../utils/isClassComponent');
 const traverse = require('../utils/traverseNodePath');
-const parseElement = require('../parser/parseElement');
-const genElement = require('../codegen/genElement');
+const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
-const TEMPLATE_NODES = 'templateNodes';
 
 /**
  * Extract JSXElement path.
@@ -23,7 +20,7 @@ module.exports = {
       if (!returnPath) return;
 
       parsed[TEMPLATE_AST] = returnPath.node;
-      parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
+      // parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
 
       returnPath.remove();
     } else if (isClassComponent(defaultExportedPath)) {
@@ -34,23 +31,23 @@ module.exports = {
       if (!returnPath) return;
 
       parsed[TEMPLATE_AST] = returnPath.node;
-      parsed[TEMPLATE_NODES] = parseElement(returnPath.node, {
-        tagName(rawTagName) {
-          if (parsed.usingComponents && parsed.usingComponents.has(rawTagName)) {
-            const { tagName } = parsed.usingComponents.get(rawTagName);
-            return tagName;
-          } else {
-            return kebabCase(rawTagName).replace(/^-/, '');
-          }
-        },
-      });
+      // parsed[TEMPLATE_NODES] = parseElement(returnPath.node, {
+      //   tagName(rawTagName) {
+      //     if (parsed.usingComponents && parsed.usingComponents.has(rawTagName)) {
+      //       const { tagName } = parsed.usingComponents.get(rawTagName);
+      //       return tagName;
+      //     } else {
+      //       return kebabCase(rawTagName).replace(/^-/, '');
+      //     }
+      //   },
+      // });
 
       renderFnPath.remove();
     }
   },
   generate(ret, parsed, options) {
-    if (parsed[TEMPLATE_NODES]) {
-      ret.template = genElement(parsed[TEMPLATE_NODES]);
+    if (parsed[TEMPLATE_AST]) {
+      ret.template = genExpression(parsed[TEMPLATE_AST]);
     }
   },
 };

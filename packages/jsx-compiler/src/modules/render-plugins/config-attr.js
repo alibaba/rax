@@ -10,5 +10,5 @@ const ATTR_MAPS = {
 
 module.exports = {
   EVENT_MAPS,
-  ATTR_MAPS
+  ATTR_MAPS,
 };

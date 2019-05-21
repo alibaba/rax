@@ -36,7 +36,7 @@ function traverseRenderAst(ast, parsed) {
           key: { type: 'Identifier', name: fnName },
         };
         parsed[DYNAMIC_EVENTS].push(objectMethodAst);
-        path.node.value = getJSXStringAst(fnName);
+        path.node.value = getJSXString(fnName);
       }
       if (path.node && path.node.type === 'JSXAttribute'
           && isEventAttr(path.node.name.name)

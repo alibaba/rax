@@ -1,35 +1,14 @@
-const t = require('@babel/types');
+const t = require('_@babel_types@7.1.3@@babel/types/lib/index');
 const isFunctionComponent = require('../../utils/isFunctionComponent');
 const isClassComponent = require('../../utils/isClassComponent');
 const traverse = require('../../utils/traverseNodePath');
-const { buildJSXExpressionAst } = require('../../utils/astUtils');
-
-const FULL_RETURN_AST = 'FULL_RETURN_AST';
-
-function renderBuilder({ name, parse, generate }) {
-  return {
-    parse(parsed, code, options) {
-      const { defaultExportedPath } = parsed;
-      if (!defaultExportedPath) return;
-
-      let returnPath = getReturnAstPath(defaultExportedPath);
-      if (!returnPath) return;
-
-      let renderAst = returnPath.node;
-      parse(parsed, buildJSXExpressionAst(renderAst), returnPath);
-    },
-    generate(ret, parsed, options) {
-      generate(ret, parsed, options);
-    },
-  };
-};
 
 /**
- * Get Function or Class Return JSX Ast
+ * Get Function or Class Return JSX NodePath
  * @param defaultExportedPath
- * @returns {*}
+ * @returns {NodePath|void}
  */
-function getReturnAstPath(defaultExportedPath) {
+function getReturnPath(defaultExportedPath) {
   if (isFunctionComponent(defaultExportedPath)) {
     return getReturnElementPath(defaultExportedPath);
   } else if (isClassComponent(defaultExportedPath)) {
@@ -92,4 +71,19 @@ function getRenderMethodPath(path) {
   return renderMethodPath;
 }
 
-module.exports = renderBuilder;
+module.exports = function createTemplatePlugin({ parse, generate }) {
+  return {
+    parse(parsed, code, options) {
+      const { defaultExportedPath } = parsed;
+      if (!defaultExportedPath) return;
+
+      let returnPath = getReturnPath(defaultExportedPath);
+      if (!returnPath) return;
+
+      parse(parsed, returnPath);
+    },
+    generate(ret, parsed, options) {
+      generate(ret, parsed, options);
+    },
+  };
+};

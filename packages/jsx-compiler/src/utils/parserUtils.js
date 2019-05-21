@@ -1,24 +1,19 @@
-const { astParser } = require('../parser/index');
+const { parseCode } = require('../parser/index');
 
-function parseAst(code) {
-  return astParser(code);
+function parseProgram(code) {
+  return parseCode(code).program;
 }
 
-function parseAstProgram(code) {
-  return parseAst(code).program;
+function parseBody(code) {
+  return parseCode(code).program.body[0];
 }
 
-function parseAstBody(code) {
-  return parseAst(code).program.body[0];
-}
-
-function parseAstExpression(code) {
-  return parseAst(code).program.body[0].expression;
+function parseExpression(code) {
+  return parseCode(code).program.body[0].expression;
 }
 
 module.exports = {
-  parseAst,
-  parseAstBody,
-  parseAstExpression,
-  parseAstProgram,
+  parseBody,
+  parseExpression,
+  parseProgram,
 };

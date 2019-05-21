@@ -19,8 +19,9 @@ const defaultBar = number;
 
 export default class extends Component {
   render() {
-    return <View>
-      <Button />;
+    const styleObj = { width: 100 };
+    return <View style={{ color: 'red' }}>
+      <Button style={styleObj} />
       <Text>Hello World</Text>
     </View>;
   }
