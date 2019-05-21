@@ -1,7 +1,7 @@
-const { transformNodeWrapper} = require('../../../transpiler/transpileModules/web-view');
+const { createTransformNode } = require('../../../transpiler/transformCreator/web-view');
 
 const MESSAGE_ATTRIBUTE = 'bindmessage';
 
 module.exports = {
-  transformNode: transformNodeWrapper(MESSAGE_ATTRIBUTE)
+  transformNode: createTransformNode(MESSAGE_ATTRIBUTE)
 };

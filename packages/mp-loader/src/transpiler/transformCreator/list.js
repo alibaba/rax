@@ -3,7 +3,7 @@ const { getAndRemoveAttr, addAttr } = require('../helpers');
 const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
 const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/;
 
-function transformNodeWrapper(attributes) {
+function createTransformNode(attributes) {
   return function(el) {
     if (el.type !== 1) return;
     let forKey = getAndRemoveAttr(el, attributes.FOR);
@@ -34,5 +34,5 @@ function transformNodeWrapper(attributes) {
 }
 
 module.exports = {
-  transformNodeWrapper
+  createTransformNode
 };

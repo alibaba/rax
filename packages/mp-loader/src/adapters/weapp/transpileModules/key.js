@@ -1,7 +1,7 @@
-const { transformNodeWrapper} = require('../../../transpiler/transpileModules/key');
+const { createTransformNode } = require('../../../transpiler/transformCreator/key');
 
 const ATTR_KEY = 'wx:key';
 
 module.exports = {
-  transformNode: transformNodeWrapper(ATTR_KEY)
+  transformNode: createTransformNode(ATTR_KEY)
 };

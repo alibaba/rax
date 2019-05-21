@@ -1,9 +1,9 @@
-const { createParse } = require('./parser');
-const { createGenerate } = require('./generate');
+const createParse = require('../transpiler/createParse');
+const createGenerate = require('../transpiler/createGenerate');
 
 module.exports = function createAdapter(mpType) {
-  if (mpType === 'wx') {
-    // return weapp extension & parse & generate
+  if (mpType === 'weixin') {
+    // return weapp extension & parse & generate & transform modules
     const modules = require('./weapp/transpileModules');
     return {
       extension: {
@@ -12,10 +12,11 @@ module.exports = function createAdapter(mpType) {
         CONFIG_EXT: 'json'
       },
       parse: createParse(modules),
-      generate: createGenerate(modules)
+      generate: createGenerate(modules),
+      modules
     };
   } else {
-    // return alipay mp extension & parse & generate
+    // return alipay mp extension & parse & generate & transform modules
     const modules = require('./alipay/transpileModules');
     return {
       extension: {
@@ -24,7 +25,8 @@ module.exports = function createAdapter(mpType) {
         CONFIG_EXT: 'json'
       },
       parse: createParse(modules),
-      generate: createGenerate(modules)
+      generate: createGenerate(modules),
+      modules
     };
   }
 };

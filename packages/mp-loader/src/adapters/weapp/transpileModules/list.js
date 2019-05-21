@@ -1,4 +1,4 @@
-const { transformNodeWrapper} = require('../../../transpiler/transpileModules/list');
+const { createTransformNode } = require('../../../transpiler/transformCreator/list');
 
 const ATTRIBUTES = {
   FOR: 'wx:for',
@@ -7,5 +7,5 @@ const ATTRIBUTES = {
 };
 
 module.exports = {
-  transformNode: transformNodeWrapper(ATTRIBUTES)
+  transformNode: createTransformNode(ATTRIBUTES)
 };

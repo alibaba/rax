@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { transformNode, genData } = require('../template');
+const { transformNode, genData } = require('../../common/transpileModules/template.js');
 
 describe('Transpile module: template', () => {
   it('import', () => {

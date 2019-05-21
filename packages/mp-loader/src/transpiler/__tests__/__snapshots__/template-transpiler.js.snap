@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Transpiler parse a:for 1`] = `
+exports['Transpiler parse a:for 1'] = `
 Object {
   "alias": "item",
   "attrsList": Array [],
@@ -17,9 +17,9 @@ Object {
 }
 `;
 
-exports[`Transpiler parse a:for 2`] = `"_l.call(this,(todos),function(item,index){return _c(__components_ref__['view']||'view',{})})"`;
+exports['Transpiler parse a:for 2'] = '"_l.call(this,(todos),function(item,index){return _c(__components_ref__[\'view\']||\'view\',{})})"';
 
-exports[`Transpiler parse a:for with a:if and a:key 1`] = `
+exports['Transpiler parse a:for with a:if and a:key 1'] = `
 Object {
   "alias": "item",
   "attrs": Array [
@@ -54,9 +54,9 @@ Object {
 }
 `;
 
-exports[`Transpiler parse a:for with a:if and a:key 2`] = `"_l.call(this,(todos),function(item,index){return ((item.checked))?_c(__components_ref__['view']||'view',{key:(item.id),checked:(item.checked)}):_e()})"`;
+exports['Transpiler parse a:for with a:if and a:key 2'] = '"_l.call(this,(todos),function(item,index){return ((item.checked))?_c(__components_ref__[\'view\']||\'view\',{key:(item.id),checked:(item.checked)}):_e()})"';
 
-exports[`Transpiler parse a:if 1`] = `
+exports['Transpiler parse a:if 1'] = `
 Object {
   "attrsList": Array [],
   "attrsMap": Object {
@@ -122,9 +122,77 @@ Object {
 }
 `;
 
-exports[`Transpiler parse a:if 2`] = `"((data['condition']))?_c(__components_ref__['view']||'view',{},[_v(\\"IF\\")]):((data['anotherCondition']))?_c(__components_ref__['view']||'view',{},[_v(\\"ELSEIF\\")]):_c(__components_ref__['view']||'view',{},[_v(\\"ELSE\\")])"`;
+exports['Transpiler parse a:if 2'] = '"((data[\'condition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"IF\\")]):((data[\'anotherCondition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSEIF\\")]):_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSE\\")])"';
 
-exports[`Transpiler parse a:key 1`] = `
+exports['Transpiler parse wx:if 1'] = `
+Object {
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "wx:if": "{{condition}}",
+  },
+  "children": Array [
+    Object {
+      "text": "IF",
+      "type": 3,
+    },
+  ],
+  "if": "(data['condition'])",
+  "ifConditions": Array [
+    Object {
+      "block": [Circular],
+      "exp": "(data['condition'])",
+    },
+    Object {
+      "block": Object {
+        "attrsList": Array [],
+        "attrsMap": Object {
+          "wx:elif": "{{anotherCondition}}",
+        },
+        "children": Array [
+          Object {
+            "text": "ELSEIF",
+            "type": 3,
+          },
+        ],
+        "elseif": "(data['anotherCondition'])",
+        "parent": undefined,
+        "plain": false,
+        "tag": "view",
+        "type": 1,
+      },
+      "exp": "(data['anotherCondition'])",
+    },
+    Object {
+      "block": Object {
+        "attrsList": Array [],
+        "attrsMap": Object {
+          "wx:else": "",
+        },
+        "children": Array [
+          Object {
+            "text": "ELSE",
+            "type": 3,
+          },
+        ],
+        "else": true,
+        "parent": undefined,
+        "plain": false,
+        "tag": "view",
+        "type": 1,
+      },
+      "exp": undefined,
+    },
+  ],
+  "parent": undefined,
+  "plain": false,
+  "tag": "view",
+  "type": 1,
+}
+`;
+
+exports['Transpiler parse wx:if 2'] = '"((data[\'condition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"IF\\")]):((data[\'anotherCondition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSEIF\\")]):_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSE\\")])"';
+
+exports['Transpiler parse a:key 1'] = `
 Object {
   "attrsList": Array [],
   "attrsMap": Object {
@@ -139,9 +207,26 @@ Object {
 }
 `;
 
-exports[`Transpiler parse a:key 2`] = `"_c(__components_ref__['view']||'view',{key:(data['key'])})"`;
+exports['Transpiler parse a:key 2'] = '"_c(__components_ref__[\'view\']||\'view\',{key:(data[\'key\'])})"';
 
-exports[`Transpiler parse bind props 1`] = `
+exports['Transpiler parse wx:key 1'] = `
+Object {
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "wx:key": "{{key}}",
+  },
+  "children": Array [],
+  "key": "(data['key'])",
+  "parent": undefined,
+  "plain": false,
+  "tag": "view",
+  "type": 1,
+}
+`;
+
+exports['Transpiler parse wx:key 2'] = '"_c(__components_ref__[\'view\']||\'view\',{key:(data[\'key\'])})"';
+
+exports['Transpiler parse bind props 1'] = `
 Object {
   "attrs": Array [
     Object {
@@ -191,9 +276,9 @@ Object {
 }
 `;
 
-exports[`Transpiler parse bind props 2`] = `"_c(__components_ref__['view']||'view',{foo:(\\"bar \\") + (data['someVal']) + (\\" \\") + (data['otherVal'])},[_c(__components_ref__['text']||'text',[_v(\\"hello\\")]),_c(__components_ref__['text']||'text',[_v(\\"world\\")])])"`;
+exports['Transpiler parse bind props 2'] = '"_c(__components_ref__[\'view\']||\'view\',{foo:(\\"bar \\") + (data[\'someVal\']) + (\\" \\") + (data[\'otherVal\'])},[_c(__components_ref__[\'text\']||\'text\',[_v(\\"hello\\")]),_c(__components_ref__[\'text\']||\'text\',[_v(\\"world\\")])])"';
 
-exports[`Transpiler parse expression with special chars 1`] = `
+exports['Transpiler parse expression with special chars 1'] = `
 Object {
   "ast": Object {
     "attrs": Array [
@@ -236,7 +321,7 @@ Object {
 }
 `;
 
-exports[`Transpiler parse nested 1`] = `
+exports['Transpiler parse nested 1'] = `
 Object {
   "attrs": Array [
     Object {
@@ -290,9 +375,9 @@ Object {
 }
 `;
 
-exports[`Transpiler parse nested 2`] = `"_c(__components_ref__['view']||'view',{foo:\\"bar\\"},[_c(__components_ref__['text']||'text',[_v(\\"hello\\")]),_c(__components_ref__['text']||'text',[_v(\\"world\\")])])"`;
+exports['Transpiler parse nested 2'] = '"_c(__components_ref__[\'view\']||\'view\',{foo:\\"bar\\"},[_c(__components_ref__[\'text\']||\'text\',[_v(\\"hello\\")]),_c(__components_ref__[\'text\']||\'text\',[_v(\\"world\\")])])"';
 
-exports[`Transpiler parse should parse instant array expression 1`] = `
+exports['Transpiler parse should parse instant array expression 1'] = `
 Object {
   "alias": "item",
   "attrs": Array [
@@ -317,7 +402,7 @@ Object {
 }
 `;
 
-exports[`Transpiler parse should parse instant array expression 2`] = `
+exports['Transpiler parse should parse instant array expression 2'] = `
 Object {
   "ast": Object {
     "alias": "item",
@@ -349,7 +434,7 @@ Object {
 }
 `;
 
-exports[`Transpiler parse should parse instant nested object expression 1`] = `
+exports['Transpiler parse should parse instant nested object expression 1'] = `
 Object {
   "ast": Object {
     "attrs": Array [
@@ -384,7 +469,7 @@ Object {
 }
 `;
 
-exports[`Transpiler parse should use a:for with other rules 1`] = `
+exports['Transpiler parse should use a:for with other rules 1'] = `
 Object {
   "alias": "item",
   "attrs": Array [
@@ -411,9 +496,9 @@ Object {
 }
 `;
 
-exports[`Transpiler parse should use a:for with other rules 2`] = `"_l.call(this,(todos),function(item,index){return _c(__components_ref__['view']||'view',{key:(item.id),checked:(item.checked)})})"`;
+exports['Transpiler parse should use a:for with other rules 2'] = '"_l.call(this,(todos),function(item,index){return _c(__components_ref__[\'view\']||\'view\',{key:(item.id),checked:(item.checked)})})"';
 
-exports[`Transpiler parse style and class 1`] = `
+exports['Transpiler parse style and class 1'] = `
 Object {
   "attrs": Array [
     Object {
@@ -436,9 +521,9 @@ Object {
 }
 `;
 
-exports[`Transpiler parse style and class 2`] = `"_c(__components_ref__['view']||'view',{style:_cx( (\\"color: red; \\") + (style),null),class:(\\"staticClass \\") + (data['dynamicClass'])})"`;
+exports['Transpiler parse style and class 2'] = '"_c(__components_ref__[\'view\']||\'view\',{style:_cx( (\\"color: red; \\") + (style),null),class:(\\"staticClass \\") + (data[\'dynamicClass\'])})"';
 
-exports[`Transpiler parse test for scoped-slot 1`] = `
+exports['Transpiler parse test for scoped-slot 1'] = `
 Object {
   "attrsList": Array [],
   "attrsMap": Object {

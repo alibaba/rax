@@ -1,15 +1,14 @@
-const attrs = require('../../../transpiler/transpileModules/attrs');
-const style = require('../../../transpiler/transpileModules/style');
-const list = require('../../../transpiler/transpileModules/list');
-const tagName = require('../../../transpiler/transpileModules/tagName');
-const checked = require('../../../transpiler/transpileModules/checked');
-const template = require('../../../transpiler/transpileModules/template');
+const attrs = require('../../common/transpileModules/attrs');
+const tagName = require('../../common/transpileModules/tagName');
+const checked = require('../../common/transpileModules/checked');
+const template = require('../../common/transpileModules/template');
+const style = require('../../common/transpileModules/style');
+const list = require('./list');
 const bind = require('./bind');
 const key = require('./key');
 const condition = require('./condition');
 const events = require('./events');
 const webView = require('./web-view');
-
 /**
  * @NOTE:
  *   Modules are execed in order.

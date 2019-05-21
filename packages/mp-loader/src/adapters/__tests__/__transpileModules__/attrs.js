@@ -1,4 +1,4 @@
-const { transformNode } = require('../attrs');
+const { transformNode } = require('../../common/transpileModules/attrs');
 
 describe('Transpile module: attrs', () => {
   it('should transform attr', () => {

@@ -1,7 +1,7 @@
-const { transformNodeWrapper} = require('../../../transpiler/transpileModules/events');
+const { createTransformNode } = require('../../../transpiler/transformCreator/events');
 
 const LISTENER_ACTION = 'on';
 
 module.exports = {
-  transformNode: transformNodeWrapper(LISTENER_ACTION)
+  transformNode: createTransformNode(LISTENER_ACTION)
 };

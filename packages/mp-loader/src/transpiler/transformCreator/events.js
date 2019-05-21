@@ -5,7 +5,7 @@ const EVENT_MAPPING = {
 };
 const IS_EVENT_BINDING_REG = /{{(.*)}}/;
 
-function transformNodeWrapper(listenerAction) {
+function createTransformNode(listenerAction) {
   const EVENT_REG = new RegExp(`^${listenerAction}`);
   /**
    * transpile bindXxx to onXxxx
@@ -78,5 +78,5 @@ function splice(arr, i) {
 }
 
 module.exports = {
-  transformNodeWrapper
+  createTransformNode
 };

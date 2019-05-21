@@ -7,7 +7,7 @@ const {
 
 const IS_BIND_REG = /\W*\{\{/;
 
-function transformNodeWrapper(detectiveReg) {
+function createTransformNode(detectiveReg) {
   return function(el) {
     const { attrsList, attrsMap } = el;
 
@@ -40,5 +40,5 @@ function transformNodeWrapper(detectiveReg) {
 
 
 module.exports = {
-  transformNodeWrapper
+  createTransformNode
 };

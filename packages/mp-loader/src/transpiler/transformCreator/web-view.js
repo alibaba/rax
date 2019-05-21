@@ -3,7 +3,7 @@ const { getRootEl, getAndRemoveAttr } = require('../helpers');
 const IS_BIND_REG = /\W*\{\{/;
 const WEBVIEW_TAG = 'web-view';
 
-function transformNodeWrapper(messageAttribute) {
+function createTransformNode(messageAttribute) {
   return function(el) {
     const rootEl = getRootEl(el);
     const { src } = el.attrsMap;
@@ -29,5 +29,5 @@ function transformNodeWrapper(messageAttribute) {
 }
 
 module.exports = {
-  transformNodeWrapper,
+  createTransformNode,
 };

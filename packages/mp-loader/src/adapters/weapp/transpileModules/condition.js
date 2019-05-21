@@ -1,4 +1,4 @@
-const { transformNodeWrapper} = require('../../../transpiler/transpileModules/condition');
+const { createTransformNode } = require('../../../transpiler/transformCreator/condition');
 
 const ATTRIBUTES = {
   IF: 'wx:if',
@@ -7,5 +7,5 @@ const ATTRIBUTES = {
 };
 
 module.exports = {
-  transformNode: transformNodeWrapper(ATTRIBUTES)
+  transformNode: createTransformNode(ATTRIBUTES)
 };

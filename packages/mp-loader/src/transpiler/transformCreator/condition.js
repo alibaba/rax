@@ -1,6 +1,6 @@
 const { getAndRemoveAttr } = require('../helpers');
 
-function transformNodeWrapper(attributes) {
+function createTransformNode(attributes) {
   return function(el, options) {
     const { attrsMap, attrsList } = el || {};
     if (!Array.isArray(attrsList)) {
@@ -34,5 +34,5 @@ function transformNodeWrapper(attributes) {
 }
 
 module.exports = {
-  transformNodeWrapper
+  createTransformNode
 };

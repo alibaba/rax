@@ -2,7 +2,7 @@ const { getAndRemoveAttr, normalizeMustache } = require('../helpers');
 
 const IS_BIND_REG = /\W*\{\{/;
 
-function transformNodeWrapper(attrKey) {
+function createTransformNode(attrKey) {
   return function(el) {
     let key;
     if (el.hasOwnProperty('key') && IS_BIND_REG.test(el.key)) {
@@ -18,5 +18,5 @@ function transformNodeWrapper(attrKey) {
 }
 
 module.exports = {
-  transformNodeWrapper
+  createTransformNode
 };

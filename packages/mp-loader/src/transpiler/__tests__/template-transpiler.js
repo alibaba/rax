@@ -1,8 +1,13 @@
 const babylon = require('babylon');
 const createAdapter = require('../../adapters');
 
-const transpilerOptions = { modules };
+// alipay adapter
 const { generate, parse, modules } = createAdapter();
+const transpilerOptions = { modules };
+
+// weixin adapter
+const { generate: wxGenerate, parse: wxParse, modules: wxModules } = createAdapter('weixin');
+const wxTranspilerOptions = { modules: wxModules };
 /**
  * Check whether a js string is valid.
  */
@@ -40,6 +45,7 @@ describe('Transpiler parse', () => {
         <text>world</text>
       </view>
     `;
+
     const ast = parse(content, transpilerOptions);
     expect(ast).toMatchSnapshot();
 
@@ -55,6 +61,17 @@ describe('Transpiler parse', () => {
     expect(ast).toMatchSnapshot();
 
     const generated = generate(ast, transpilerOptions);
+    expect(generated.render).toMatchSnapshot();
+  });
+
+  it('wx:key', () => {
+    const content = `
+      <view wx:key="{{key}}"></view>
+    `;
+    const ast = wxParse(content, wxTranspilerOptions);
+    expect(ast).toMatchSnapshot();
+
+    const generated = wxGenerate(ast, transpilerOptions);
     expect(generated.render).toMatchSnapshot();
   });
 
@@ -83,6 +100,19 @@ describe('Transpiler parse', () => {
     expect(generated.render).toMatchSnapshot();
   });
 
+  it('wx:if', () => {
+    const content = `
+      <view wx:if="{{condition}}">IF</view>
+      <view wx:elif="{{anotherCondition}}">ELSEIF</view>
+      <view wx:else>ELSE</view>
+    `;
+    const ast = wxParse(content, wxTranspilerOptions);
+    expect(ast).toMatchSnapshot();
+
+    const generated = wxGenerate(ast, wxTranspilerOptions);
+    expect(generated.render).toMatchSnapshot();
+  });
+
   it('a:for', () => {
     const content = `
       <view a:for="todos"></view>
@@ -96,7 +126,7 @@ describe('Transpiler parse', () => {
 
   it('a:for with a:if and a:key', () => {
     const content = `
-      <view 
+      <view
         a:key="{{item.id}}"
         a:for="todos"
         a:if="{{item.checked}}"
@@ -153,7 +183,7 @@ describe('Transpiler parse', () => {
         btnType: btnType.green
       }}">
       </template>
-      <view 
+      <view
         data-info="{{item.name}},{{item.order_item_id}}"
       ></view>
     `;

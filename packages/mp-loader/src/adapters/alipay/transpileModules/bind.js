@@ -1,7 +1,7 @@
-const { transformNodeWrapper} = require('../../../transpiler/transpileModules/bind');
+const { createTransformNode } = require('../../../transpiler/transformCreator/bind');
 
 const IS_DETECTIVE = /^a\:/;
 
 module.exports = {
-  transformNode: transformNodeWrapper(IS_DETECTIVE)
+  transformNode: createTransformNode(IS_DETECTIVE)
 };

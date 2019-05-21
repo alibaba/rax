@@ -1,6 +1,6 @@
 const { baseOptions, generate } = require('sfc-compiler');
 
-exports.createGenerate = function(modules) {
+module.exports = function(modules) {
   return function(ast, opts) {
     const options = Object.assign(
       {},
