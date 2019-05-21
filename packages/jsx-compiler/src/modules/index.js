@@ -3,34 +3,22 @@
  *   The later registered module is called early in parse, but later in generate.
  */
 module.exports = [
-  /**
-   * Generate config.
-   */
+  // Generate JSON config.
   require('./config'),
-  /**
-   * Generate css from files.
-   */
+  // Extract css from files.
   require('./css'),
-  /**
-   * Handle code.
-   */
+  // Handle js code.
   require('./code'),
-
-  /**
-   * Handle JSX template.
-   */
-
+  // Handle template attrs
   require('./attrs'),
+  // Handle template style attr
   require('./style'),
-
+  // Directive a:if
   require('./condition'),
+  // Directive a:for
   require('./list'),
-
-  /**
-   * Handle Rax base components.
-   * Order: parse in front of template.
-   */
+  // Handle Rax base components.
   require('./components'),
-
+  // Parse and generate template.
   require('./template'),
 ];
