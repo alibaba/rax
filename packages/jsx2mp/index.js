@@ -35,7 +35,6 @@ async function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = fal
     printLog(colors.green('将监听以下路径的文件变更'), sourcePath);
     startWatching(sourcePath, distPath);
   }
-
 }
 
 module.exports = transformJSXToMiniProgram;
