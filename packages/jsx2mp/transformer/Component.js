@@ -1,89 +1,26 @@
-const { ensureFileSync, writeFileSync, readJSONSync, existsSync, readFileSync } = require('fs-extra');
-const { join, resolve, relative } = require('path');
-const transform = require('jsx-compiler');
-const colors = require('colors');
+const { join } = require('path');
+const { transformJSX, writeFiles } = require('./Transformer');
 
 /**
- * Abstract of miniapp component.
- * @type {module.Component}
+ * Create component files
+ * @param distPath {String} dist Path
+ * @param config {Object} has usingComponents
+ * @param rootContext {String} root Path
  */
-module.exports = class Component {
-  constructor({ script, template, style = '', config = {} }, options = {}) {
-    const { rootContext, context, distRoot, distPath } = options;
-    this.rootContext = rootContext;
-    this.context = context;
+const createComponent = function(rootContext, distPath, config) {
+  const { usingComponents = {} } = config;
+  for (let [key, value] of usingComponents) {
+    if (!value.external) {
+      const componentDistPath = join(distPath, value.from);
+      const componentSourcePath = value.absolutePath;
 
-    this.scriptPath = resolve(distPath, 'index.js');
-    this.templatePath = resolve(distPath, 'index.axml');
-    this.stylePath = resolve(distPath, 'index.acss');
-    this.configPath = resolve(distPath, 'index.json');
-
-    this.deps = [];
-    this.script = script;
-    this.template = template;
-    this.style = style;
-    this.config = config;
-
-    const { usingComponents = {} } = config;
-    Object.keys(usingComponents).forEach((tagName) => {
-      const sourcePath = usingComponents[tagName].replace(/\/index$/, '');
-      const componentSourcePath = join(rootContext, sourcePath);
-      const componentDistPath = join(distRoot, sourcePath);
-
-      const sourceConfigPath = componentSourcePath + '.json';
-      const sourceConfig = existsSync(sourceConfigPath) ? readJSONSync(sourceConfigPath) : {};
-      const depConfig = Object.assign({}, sourceConfig, { component: true });
-
-      const sourceJSXPath = componentSourcePath + '.jsx';
-      const jsxFileContent = readFileSync(sourceJSXPath, 'utf-8');
-      const transformed = transform(jsxFileContent, { filePath: sourceJSXPath, rootContext });
-
-      const componentDep = new Component({
-        script: transformed.jsCode,
-        template: transformed.template,
-        style: transformed.style,
-        config: depConfig,
-      }, { rootContext, context: componentSourcePath, distRoot, distPath: componentDistPath });
-      this.deps.push(componentDep);
-    });
-  }
-
-  _writeFiles() {
-    this._writeStyle();
-    this._writeTemplate();
-    this._writeScript();
-    this._writeConfig();
-
-    for (let i = 0, l = this.deps.length; i < l; i++ ) {
-      this.deps[i]._writeFiles();
+      const transformed = transformJSX(componentSourcePath, 'component');
+      writeFiles(componentDistPath, transformed, rootContext);
+      createComponent(rootContext, distPath, { usingComponents: transformed.usingComponents });
     }
   }
+};
 
-  _writeTemplate() {
-    this._writeFile(this.templatePath, this.template);
-  }
-
-  _writeStyle() {
-    this._writeFile(this.stylePath, this.style);
-  }
-
-  _writeScript() {
-    this._writeFile(this.scriptPath, this.script);
-  }
-
-  _writeConfig() {
-    this._writeFile(this.configPath, JSON.stringify(this.config, null, 2) + '\n');
-  }
-
-  /**
-   * Write file and ensure folder exists.
-   * @param path {String} File path.
-   * @param content {String} File content.
-   * @private
-   */
-  _writeFile(path, content) {
-    ensureFileSync(path);
-    console.log(colors.green('Write'), relative(this.rootContext, path));
-    writeFileSync(path, content, 'utf-8');
-  }
+module.exports = {
+  createComponent
 };
