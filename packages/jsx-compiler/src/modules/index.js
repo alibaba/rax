@@ -20,11 +20,11 @@ module.exports = [
    * Handle JSX template.
    */
   // require('./render-plugins/render-generate-plugin'),
-  // require('./render-plugins/render-attr-plugin'),
+
   // require('./render-plugins/render-event-plugin'),
   // require('./render-plugins/render-logic-plugin'),
   // require('./render-plugins/render-tag-plugin'),
-  // require('./render-plugins/render-style-plugin'),
+  require('./attrs'),
   require('./style'),
 
   /**

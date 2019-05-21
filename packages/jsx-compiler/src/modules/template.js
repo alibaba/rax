@@ -6,6 +6,7 @@ const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
+const RENDER_FN_PATH = 'renderFunctionPath';
 
 /**
  * Extract JSXElement path.
@@ -19,9 +20,8 @@ module.exports = {
       const returnPath = getReturnElementPath(defaultExportedPath);
       if (!returnPath) return;
 
-      parsed[TEMPLATE_AST] = returnPath.node;
-      // parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
-
+      parsed[TEMPLATE_AST] = returnPath.get('argument').node;
+      parsed[RENDER_FN_PATH] = defaultExportedPath;
       returnPath.remove();
     } else if (isClassComponent(defaultExportedPath)) {
       const renderFnPath = getRenderMethodPath(defaultExportedPath);
@@ -30,14 +30,14 @@ module.exports = {
       const returnPath = getReturnElementPath(renderFnPath);
       if (!returnPath) return;
 
-      parsed[TEMPLATE_AST] = returnPath.node;
-
-      renderFnPath.remove();
+      parsed[TEMPLATE_AST] = returnPath.get('argument').node;
+      parsed[RENDER_FN_PATH] = renderFnPath;
+      returnPath.remove();
     }
   },
   generate(ret, parsed, options) {
     if (parsed[TEMPLATE_AST]) {
-      ret.template = genExpression(parsed[TEMPLATE_AST]);
+      ret.template = genExpression(parsed[TEMPLATE_AST], { comments: false });
     }
   },
 };
@@ -51,7 +51,7 @@ function getReturnElementPath(path) {
   traverse(path, {
     ReturnStatement: {
       exit(returnStatementPath) {
-        result = returnStatementPath.get('argument');
+        result = returnStatementPath;
       }
     },
   });
