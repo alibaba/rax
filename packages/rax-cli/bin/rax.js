@@ -85,7 +85,7 @@ function init(name, verbose) {
       return askProjectInformaction(name, verbose);
     })
     .then(function(answers) {
-      if (answers.openPWA) {
+      if (answers.enablePWA) {
         answers.projectType = 'pwa';
       }
       return createProject(name, verbose, answers);
@@ -148,14 +148,14 @@ function askProjectInformaction(name, verbose) {
     },
     {
       type: 'confirm',
-      name: 'openPWA',
+      name: 'enablePWA',
       when: function(answers) {
         if (answers.projectType === 'webapp') {
           return true;
         }
         return false;
       },
-      message: 'Do you want to use rax-pwa improve your webapp ?',
+      message: 'Do you want to init a progressive web app (PWA)?',
       default: false
     },
     {
@@ -196,6 +196,7 @@ function createProject(name, verbose, userAnswers) {
     projectName: projectName,
     projectType: userAnswers.projectType,
     projectAuthor: userAnswers.projectAuthor,
+    pwaFeatures: userAnswers.pwaFeatures,
     verbose: verbose,
   }).then(function(directory) {
     if (autoInstallModules) {
