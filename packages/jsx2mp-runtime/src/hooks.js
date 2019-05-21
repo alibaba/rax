@@ -29,7 +29,7 @@ function areInputsEqual(inputs, prevInputs) {
   return true;
 }
 
-export function useState(initialState) {
+export function useState(initialState, stateKey) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
@@ -56,6 +56,7 @@ export function useState(initialState) {
 
       if (!sameValue(newState, eagerState)) {
         // Current instance is in render update phase.
+<<<<<<< HEAD
         // After this one render finish, will containue run.
         hook[2] = newState;
         if (getCurrentInstance() === currentInstance) {
@@ -63,6 +64,12 @@ export function useState(initialState) {
           currentInstance.isScheduled = true;
         } else {
           currentInstance.update();
+=======
+        // After this one render finish, will continue run.
+        hook[2] = newState;
+        if (stateKey !== undefined) {
+          currentInstance._update({ [stateKey]: newState });
+>>>>>>> jsx2mp/dev
         }
       }
     };
@@ -80,6 +87,17 @@ export function useState(initialState) {
     currentInstance.shouldUpdate = true;
   }
 
+<<<<<<< HEAD
+=======
+  if (stateKey !== undefined) {
+    if (currentInstance._internal) {
+      currentInstance._internal.setData({ [stateKey]: hook[0] });
+    } else {
+      currentInstance._state[stateKey] = hook[0];
+    }
+  }
+
+>>>>>>> jsx2mp/dev
   return hook;
 }
 
@@ -130,9 +148,15 @@ function useEffectImpl(effect, inputs, defered) {
       inputs
     };
 
+<<<<<<< HEAD
     currentInstance.didMount.push(create);
     currentInstance.willUnmount.push(destory);
     currentInstance.didUpdate.push(() => {
+=======
+    currentInstance._registerLifeCycle('didMount', create);
+    currentInstance._registerLifeCycle('willUnmount', destory);
+    currentInstance._registerLifeCycle('didUpdate', () => {
+>>>>>>> jsx2mp/dev
       const { prevInputs, inputs, create } = hooks[hookID];
       if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
