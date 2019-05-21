@@ -182,8 +182,8 @@ function transformTemplate(ast, adapter, templateVariables) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const templateVariables = transformRenderFunction(parsed[RENDER_FN_PATH], options.targetAdapter);
-    transformTemplate(parsed[TEMPLATE_AST], options.targetAdapter, templateVariables);
+    const templateVariables = transformRenderFunction(parsed[RENDER_FN_PATH], options.adapter);
+    transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
   },
 };
 
