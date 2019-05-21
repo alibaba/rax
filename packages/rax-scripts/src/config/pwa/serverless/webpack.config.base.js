@@ -35,6 +35,11 @@ const webpackConfig = webpackMerge(webpackConfigBase, {
     filename: 'serverless/[name].js',
     libraryTarget: 'commonjs2',
   },
+  resolve: {
+    alias: {
+      'rax-server': require.resolve('rax-server')
+    }
+  },
   module: {
     rules: [{
       test: /\.(html)$/,

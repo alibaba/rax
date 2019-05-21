@@ -7,11 +7,10 @@ module.exports = function(source) {
     page,
     appPath,
     templatePath,
-    raxServerPath
   } = query;
 
   return `
-    import RAXServer from '${raxServerPath}';
+    import RAXServer from 'rax-server';
 
     import App from '${appPath}';
     import template from '${templatePath}';
