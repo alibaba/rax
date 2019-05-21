@@ -34,7 +34,6 @@ function transformAttrs(ast) {
       if (!parentPath.isJSXAttribute()) return;
 
       switch (node.expression.type) {
-
         case 'StringLiteral': {
           path.replaceWith(t.stringLiteral(node.expression.value));
           break;
@@ -46,7 +45,7 @@ function transformAttrs(ast) {
         case 'BooleanLiteral':
         case 'Identifier': {
           const value = node.expression.name || node.expression.value;
-          path.replaceWith(t.stringLiteral(createBinding(value)))
+          path.replaceWith(t.stringLiteral(createBinding(value)));
           break;
         }
 
@@ -62,7 +61,7 @@ function transformAttrs(ast) {
           exp = exp
             .replace(/this.props./, '')
             .replace(/this.state./, '');
-          path.replaceWith(t.stringLiteral(createBinding(exp)))
+          path.replaceWith(t.stringLiteral(createBinding(exp)));
           break;
         }
 

@@ -44,7 +44,7 @@ module.exports = {
       }
     }
 
-    traverse(parsed['templateAST'], {
+    traverse(parsed.templateAST, {
       JSXOpeningElement(path) {
         const { node, parent } = path;
 

@@ -22,7 +22,7 @@ function createJSX(tag, attrs = {}, children = []) {
 }
 
 function createJSXBinding(string) {
-  const id = t.identifier(string)
+  const id = t.identifier(string);
   return t.jsxExpressionContainer(t.objectExpression([
     t.objectProperty(id, id, false, true)
   ]));
@@ -105,8 +105,8 @@ function transformRenderFunction(ast, adapter) {
             const rightNode = expression.right;
             const containerNode = rightNode && !t.isNullLiteral(rightNode)
               ? createJSX('block', {
-                  [testAttrName]: t.stringLiteral('{{' + testValue + '}}'),
-                }, [rightNode])
+                [testAttrName]: t.stringLiteral('{{' + testValue + '}}'),
+              }, [rightNode])
               : null;
 
             templateVariables[varName].value.children.push(containerNode);
@@ -138,7 +138,6 @@ function transformRenderFunction(ast, adapter) {
 }
 
 function transformTemplate(ast, adapter, templateVariables) {
-
   traverse(ast, {
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
@@ -159,7 +158,7 @@ function transformTemplate(ast, adapter, templateVariables) {
           replacement.push(createJSX('block', {
             [adapter.else]: null,
           }, [alternate]));
-          path.replaceWithMultiple(replacement)
+          path.replaceWithMultiple(replacement);
           break;
         }
 
