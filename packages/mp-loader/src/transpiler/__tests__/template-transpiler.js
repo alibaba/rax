@@ -1,12 +1,17 @@
 const babylon = require('babylon');
-const createAdapter = require('../../adapters');
-
+const createTransformModules = require('../transformModules');
+const createGenerate = require('../createGenerate');
+const createParse = require('../createParse');
 // alipay adapter
-const { generate, parse, modules } = createAdapter();
+const modules = createTransformModules();
+const generate = createGenerate(modules);
+const parse = createParse(modules);
 const transpilerOptions = { modules };
 
 // weixin adapter
-const { generate: wxGenerate, parse: wxParse, modules: wxModules } = createAdapter('weixin');
+const wxModules = createTransformModules('weixin');
+const wxGenerate = createGenerate(wxModules);
+const wxParse = createParse(wxModules);
 const wxTranspilerOptions = { modules: wxModules };
 /**
  * Check whether a js string is valid.

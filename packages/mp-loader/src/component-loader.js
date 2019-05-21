@@ -8,7 +8,7 @@ const resolveDependencyComponents = require('./component-resolver');
 
 const templateLoaderPath = require.resolve('./template-loader');
 const requireCreateComponent = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
-const createAdapter = require('./adapters');
+const extensionAdapter = require('./extensionAdapter');
 
 const NODE_MODULES_REG = /^node_modules\//;
 
@@ -25,9 +25,7 @@ module.exports = function(content) {
   const { resourcePath, rootContext, resourceQuery } = this;
   const mpType = resourceQuery ? parseQuery(resourceQuery).mpType || 'alipay' : 'alipay';
   const basePath = resourcePath.replace(extname(resourcePath), '');
-  const { extension: {
-    CSS_EXT, TEMPLATE_EXT, CONFIG_EXT
-  } } = createAdapter(mpType);
+  const { CSS_EXT, TEMPLATE_EXT, CONFIG_EXT } = extensionAdapter(mpType);
   let cssPath = basePath + CSS_EXT;
   let templatePath = basePath + TEMPLATE_EXT;
   let configPath = basePath + CONFIG_EXT;
