@@ -1,5 +1,5 @@
 const isFunctionComponent = require('../isFunctionComponent');
-const { astParser } = require('../../parser');
+const { parseCode } = require('../../parser');
 const getDefaultExportedPath = require('../getDefaultExportedPath');
 
 describe('isFunctionComponent', () => {
@@ -11,7 +11,7 @@ describe('isFunctionComponent', () => {
       }
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isFunctionComponent(defaultExportedPath)).toBeTruthy();
   });
 
@@ -24,7 +24,7 @@ describe('isFunctionComponent', () => {
       export default foo;
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isFunctionComponent(defaultExportedPath)).toBeTruthy();
   });
 
@@ -39,7 +39,7 @@ describe('isFunctionComponent', () => {
       export default foo;
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isFunctionComponent(defaultExportedPath)).toBeTruthy();
   });
 });
