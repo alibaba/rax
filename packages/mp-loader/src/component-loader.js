@@ -23,9 +23,9 @@ function isNodeModule(p) {
 
 module.exports = function(content) {
   const { resourcePath, rootContext, resourceQuery } = this;
-  const mpType = resourceQuery ? parseQuery(resourceQuery).mpType || 'alipay' : 'alipay';
+  const type = resourceQuery ? parseQuery(resourceQuery).type || 'alipay' : 'alipay';
   const basePath = resourcePath.replace(extname(resourcePath), '');
-  const { CSS_EXT, TEMPLATE_EXT, CONFIG_EXT } = extensionAdapter(mpType);
+  const { CSS_EXT, TEMPLATE_EXT, CONFIG_EXT } = extensionAdapter(type);
   let cssPath = basePath + CSS_EXT;
   let templatePath = basePath + TEMPLATE_EXT;
   let configPath = basePath + CONFIG_EXT;
@@ -38,7 +38,7 @@ module.exports = function(content) {
 
   const dependencyComponents = resolveDependencyComponents(config, this.rootContext, basePath);
   const templateLoaderQueryString = querystring.stringify({
-    mpType,
+    type,
     isEntryTemplate: false,
     componentBasePath: basePath,
     dependencyComponents: JSON.stringify(dependencyComponents),

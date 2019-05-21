@@ -1,12 +1,14 @@
 const { dirname, isAbsolute, join } = require('path');
-const createTransformModules = require('./transformModules');
-const createGenerate = require('./createGenerate');
-const createParse = require('./createParse');
+const createGenerate = require('./createGenerator');
+const createParse = require('./createParser');
+const createAdapter = require('./adapter');
 
 module.exports = function transpiler(content, opts) {
-  const { templatePath, mpType } = opts;
+  const { templatePath, type } = opts;
   let dependencies = [];
-  const modules = createTransformModules(mpType);
+  // create adapter
+  createAdapter(type);
+  const modules = require('./transformModules');
   const parse = createParse(modules);
   const generate = createGenerate(modules);
   const templateAST = parse(content.trim(), opts);

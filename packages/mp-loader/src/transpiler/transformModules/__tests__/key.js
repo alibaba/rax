@@ -1,4 +1,4 @@
-const { transformNode } = require('../alipay/key');
+const { transformNode } = require('../key');
 
 describe('Transpile module: key', () => {
   it('should transform static key', () => {

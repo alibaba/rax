@@ -124,74 +124,6 @@ Object {
 
 exports['Transpiler parse a:if 2'] = '"((data[\'condition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"IF\\")]):((data[\'anotherCondition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSEIF\\")]):_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSE\\")])"';
 
-exports['Transpiler parse wx:if 1'] = `
-Object {
-  "attrsList": Array [],
-  "attrsMap": Object {
-    "wx:if": "{{condition}}",
-  },
-  "children": Array [
-    Object {
-      "text": "IF",
-      "type": 3,
-    },
-  ],
-  "if": "(data['condition'])",
-  "ifConditions": Array [
-    Object {
-      "block": [Circular],
-      "exp": "(data['condition'])",
-    },
-    Object {
-      "block": Object {
-        "attrsList": Array [],
-        "attrsMap": Object {
-          "wx:elif": "{{anotherCondition}}",
-        },
-        "children": Array [
-          Object {
-            "text": "ELSEIF",
-            "type": 3,
-          },
-        ],
-        "elseif": "(data['anotherCondition'])",
-        "parent": undefined,
-        "plain": false,
-        "tag": "view",
-        "type": 1,
-      },
-      "exp": "(data['anotherCondition'])",
-    },
-    Object {
-      "block": Object {
-        "attrsList": Array [],
-        "attrsMap": Object {
-          "wx:else": "",
-        },
-        "children": Array [
-          Object {
-            "text": "ELSE",
-            "type": 3,
-          },
-        ],
-        "else": true,
-        "parent": undefined,
-        "plain": false,
-        "tag": "view",
-        "type": 1,
-      },
-      "exp": undefined,
-    },
-  ],
-  "parent": undefined,
-  "plain": false,
-  "tag": "view",
-  "type": 1,
-}
-`;
-
-exports['Transpiler parse wx:if 2'] = '"((data[\'condition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"IF\\")]):((data[\'anotherCondition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSEIF\\")]):_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSE\\")])"';
-
 exports['Transpiler parse a:key 1'] = `
 Object {
   "attrsList": Array [],
@@ -208,23 +140,6 @@ Object {
 `;
 
 exports['Transpiler parse a:key 2'] = '"_c(__components_ref__[\'view\']||\'view\',{key:(data[\'key\'])})"';
-
-exports['Transpiler parse wx:key 1'] = `
-Object {
-  "attrsList": Array [],
-  "attrsMap": Object {
-    "wx:key": "{{key}}",
-  },
-  "children": Array [],
-  "key": "(data['key'])",
-  "parent": undefined,
-  "plain": false,
-  "tag": "view",
-  "type": 1,
-}
-`;
-
-exports['Transpiler parse wx:key 2'] = '"_c(__components_ref__[\'view\']||\'view\',{key:(data[\'key\'])})"';
 
 exports['Transpiler parse bind props 1'] = `
 Object {

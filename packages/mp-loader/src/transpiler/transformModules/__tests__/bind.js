@@ -1,4 +1,4 @@
-const { transformNode } = require('../alipay/bind');
+const { transformNode } = require('../bind');
 
 describe('Transpile module: bind', () => {
   it('should transform attr', () => {

@@ -1,18 +1,14 @@
 const babylon = require('babylon');
-const createTransformModules = require('../transformModules');
-const createGenerate = require('../createGenerate');
-const createParse = require('../createParse');
-// alipay adapter
-const modules = createTransformModules();
+const createGenerate = require('../createGenerator');
+const createParse = require('../createParser');
+const createAdapter = require('../adapter');
+
+createAdapter();
+const modules = require('../transformModules');
+
 const generate = createGenerate(modules);
 const parse = createParse(modules);
-const transpilerOptions = { modules };
-
-// weixin adapter
-const wxModules = createTransformModules('weixin');
-const wxGenerate = createGenerate(wxModules);
-const wxParse = createParse(wxModules);
-const wxTranspilerOptions = { modules: wxModules };
+const transpilerOptions = { modules: modules };
 /**
  * Check whether a js string is valid.
  */
@@ -69,17 +65,6 @@ describe('Transpiler parse', () => {
     expect(generated.render).toMatchSnapshot();
   });
 
-  it('wx:key', () => {
-    const content = `
-      <view wx:key="{{key}}"></view>
-    `;
-    const ast = wxParse(content, wxTranspilerOptions);
-    expect(ast).toMatchSnapshot();
-
-    const generated = wxGenerate(ast, transpilerOptions);
-    expect(generated.render).toMatchSnapshot();
-  });
-
   it('style and class', () => {
     const content = `
       <view style="color: red; {{style}}" class="staticClass {{dynamicClass}}"></view>
@@ -102,19 +87,6 @@ describe('Transpiler parse', () => {
     expect(ast).toMatchSnapshot();
 
     const generated = generate(ast, transpilerOptions);
-    expect(generated.render).toMatchSnapshot();
-  });
-
-  it('wx:if', () => {
-    const content = `
-      <view wx:if="{{condition}}">IF</view>
-      <view wx:elif="{{anotherCondition}}">ELSEIF</view>
-      <view wx:else>ELSE</view>
-    `;
-    const ast = wxParse(content, wxTranspilerOptions);
-    expect(ast).toMatchSnapshot();
-
-    const generated = wxGenerate(ast, wxTranspilerOptions);
     expect(generated.render).toMatchSnapshot();
   });
 
