@@ -19,13 +19,12 @@ module.exports = [
   /**
    * Handle JSX template.
    */
-  // require('./render-plugins/render-generate-plugin'),
 
-  // require('./render-plugins/render-event-plugin'),
-  // require('./render-plugins/render-logic-plugin'),
-  // require('./render-plugins/render-tag-plugin'),
   require('./attrs'),
   require('./style'),
+
+  require('./condition'),
+  require('./list'),
 
   /**
    * Handle Rax base components.
@@ -34,5 +33,4 @@ module.exports = [
   require('./components'),
 
   require('./template'),
-
 ];

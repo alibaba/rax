@@ -1,19 +1,6 @@
 const t = require('@babel/types');
-const { EVENT_MAPS, ATTR_MAPS } = require('./render-plugins/config-attr');
 const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
-
-const DYNAMIC_EVENTS = 'dynamicEvents';
-const STATE_DATA = 'data';
-const CSS_STYLES = 'cssStyle';
-
-function getMemberExpression(expression) {
-  return expression.type === 'MemberExpression' ? expression.property.name : '';
-}
-
-function getVarExpression(expression) {
-  return expression.type === 'Identifier' ? expression.name : '';
-}
 
 function createBinding(key) {
   return '{{' + key + '}}';
@@ -23,6 +10,7 @@ let ids = 0;
 function applyId() {
   return '_dynamicVal' + ids++;
 }
+
 let events = 0;
 function applyEvent() {
   return '_event' + events++;
@@ -41,7 +29,9 @@ function transformAttrs(ast) {
       }
     },
     JSXExpressionContainer(path) {
-      const { node } = path;
+      const { node, parentPath } = path;
+      // Only process under JSXAttribute
+      if (!parentPath.isJSXAttribute()) return;
 
       switch (node.expression.type) {
 

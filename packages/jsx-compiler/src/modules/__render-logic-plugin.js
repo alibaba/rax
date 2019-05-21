@@ -1,11 +1,10 @@
-const t = require('@babel/types');
+
 const generate = require('@babel/generator').default;
 const { parseAstBody } = require('../../utils/parserUtils');
 const { getJsxMapFnBody, replaceAssign } = require('../../utils/astUtils');
 const renderBuilder = require('../render-base/render-builder');
-const traverse = require('../../utils/traverseNodePath');
+const traverse = require('../utils/traverseNodePath');
 
-const TEMPLATE_AST = 'templateAST';
 
 function traverseRenderAst(ast) {
   traverse(ast, {

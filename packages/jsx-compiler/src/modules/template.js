@@ -37,7 +37,10 @@ module.exports = {
   },
   generate(ret, parsed, options) {
     if (parsed[TEMPLATE_AST]) {
-      ret.template = genExpression(parsed[TEMPLATE_AST], { comments: false });
+      ret.template = genExpression(parsed[TEMPLATE_AST], {
+        comments: false, // Remove template comments.
+        concise: true, // Reduce whitespace, but not to disable all.
+      });
     }
   },
 };

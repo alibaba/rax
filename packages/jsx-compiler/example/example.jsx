@@ -28,7 +28,16 @@ const defaultBar = number;
 
 export default class extends Component {
   render() {
+    let block;
+    if (foo === 1) {
+      block = <view></view>
+    } else if (foo === 2) {
+      block = <image />;
+    } else {
+      block = <text></text>
+    }
     const styleObj = { width: 100 };
+    const str = "hello world";
     return <View
       style={{ color: 'red' }}
       call1={fn()}
@@ -50,7 +59,7 @@ export default class extends Component {
       foo={bar}
       onClick={() => setBar(bar + 1)}
     >
-      <Button style={styleObj} />
+      { str }
       <Text>Hello World</Text>
     </View>;
   }
