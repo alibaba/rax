@@ -31,16 +31,6 @@ module.exports = {
       if (!returnPath) return;
 
       parsed[TEMPLATE_AST] = returnPath.node;
-      // parsed[TEMPLATE_NODES] = parseElement(returnPath.node, {
-      //   tagName(rawTagName) {
-      //     if (parsed.usingComponents && parsed.usingComponents.has(rawTagName)) {
-      //       const { tagName } = parsed.usingComponents.get(rawTagName);
-      //       return tagName;
-      //     } else {
-      //       return kebabCase(rawTagName).replace(/^-/, '');
-      //     }
-      //   },
-      // });
 
       renderFnPath.remove();
     }

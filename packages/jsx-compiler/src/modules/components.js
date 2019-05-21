@@ -3,7 +3,6 @@ const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
-const md5 = require('md5');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 
@@ -47,12 +46,14 @@ module.exports = {
 
     traverse(parsed['templateAST'], {
       JSXOpeningElement(path) {
-        const { node } = path;
+        const { node, parent } = path;
 
         if (t.isJSXIdentifier(node.name)) { // <View />
           const alias = getComponentAlias(node.name.name);
           if (alias) {
             node.name = t.jsxIdentifier(alias.name);
+            // handle with close tag too.
+            if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(alias.name);
             usingComponents[alias.name] = getComponentPath(alias);
           }
         } else if (t.isJSXMemberExpression(node.name)) { // <RecyclerView.Cell />
@@ -67,6 +68,3 @@ module.exports = {
   },
 };
 
-function getTagName(str) {
-  return 'c-' + md5(str).slice(0, 6);
-}
