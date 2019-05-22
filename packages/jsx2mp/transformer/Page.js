@@ -11,12 +11,10 @@ const resolveModule = require('../utils/moduleResolve');
  */
 const createPage = function(rootContext, distContext, sourcePath) {
 
-  const sourceFilePath = resolveModule(rootContext + '/index.js', './' + sourcePath, '.jsx') || resolveModule(rootContext + '/index.js', './' + sourcePath, '.js'); //TODO: 改一下
+  const sourceFilePath = resolveModule(rootContext + '/index.js', './' + sourcePath, '.jsx') || resolveModule(rootContext + '/index.js', './' + sourcePath, '.js'); 
 
   const transformed = transformJSX(sourceFilePath, 'page');
-  createComponent(rootContext, distContext, {
-    usingComponents: transformed.usingComponents,
-  });
+  createComponent(rootContext, distContext, transformed.usingComponents);
   writeFiles(resolve(distContext, sourcePath), transformed, rootContext);
 };
 
