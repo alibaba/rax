@@ -104,13 +104,21 @@ function parse(code, options) {
   };
 
   // Reverse to call parse.
-  invokeModules(options.modules.reverse(), 'parse', ret, code, options);
+  invokeModules(reverse(options.modules), 'parse', ret, code, options);
 
   return ret;
 }
 
 function parseExpression(code) {
   return parseCode(code).program.body[0].expression;
+}
+
+/**
+ * Reverse an array without effects.
+ */
+function reverse(arr) {
+  const copied = Array.prototype.slice.call(arr);
+  return copied.reverse();
 }
 
 exports.parse = parse;
