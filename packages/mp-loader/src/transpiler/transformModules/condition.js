@@ -6,7 +6,7 @@ const adapter = createAdapter();
 
 function transformNode(el, options) {
   const { attrsMap, attrsList } = el || {};
-  const { IF_ATTRIBUTES } = adapter.consts;
+  const { IF_ATTRIBUTES } = adapter;
   if (!Array.isArray(attrsList)) {
     return;
   }

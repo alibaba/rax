@@ -8,7 +8,7 @@ const adapter = createAdapter();
 
 function transformNode(el) {
   if (el.type !== 1) return;
-  const { FOR_ATTRIBUTES } = adapter.consts;
+  const { FOR_ATTRIBUTES } = adapter;
   let forKey = getAndRemoveAttr(el, FOR_ATTRIBUTES.FOR);
   if (forKey) {
     const forItem = getAndRemoveAttr(el, FOR_ATTRIBUTES.FOR_ITEM) || 'item';

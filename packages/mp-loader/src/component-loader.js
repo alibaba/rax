@@ -23,7 +23,7 @@ function isNodeModule(p) {
 
 module.exports = function(content) {
   const { resourcePath, rootContext, resourceQuery } = this;
-  const type = resourceQuery ? parseQuery(resourceQuery).type || 'alipay' : 'alipay';
+  const type = resourceQuery ? parseQuery(resourceQuery).type || 'ali' : 'ali';
   const basePath = resourcePath.replace(extname(resourcePath), '');
   const { CSS_EXT, TEMPLATE_EXT, CONFIG_EXT } = extensionAdapter(type);
   let cssPath = basePath + CSS_EXT;

@@ -6,7 +6,7 @@ module.exports = function(type) {
         TEMPLATE_EXT: '.wxml',
         CONFIG_EXT: 'json'
       };
-    case 'alipay':
+    case 'ali':
     default:
       return {
         CSS_EXT: '.acss',

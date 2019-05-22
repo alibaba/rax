@@ -13,7 +13,7 @@ const adapter = createAdapter();
 
 function transformNode(el) {
   const { attrsList, attrsMap } = el;
-  const { IS_DETECTIVE } = adapter.consts;
+  const { IS_DETECTIVE } = adapter;
   if (!attrsList) {
     return;
   }

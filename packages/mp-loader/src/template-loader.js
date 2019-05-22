@@ -21,7 +21,7 @@ module.exports = function templateLoader(content) {
 
   const { ast, renderFn, dependencies, tplAlias } = transpiler(content, {
     templatePath: resourcePath,
-    type: options && options.type || 'alipay'
+    type: options && options.type || 'ali'
   });
 
   let render = renderFn;

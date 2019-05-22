@@ -8,7 +8,7 @@ const createAdapter = require('../adapter');
 const adapter = createAdapter();
 
 function transformNode(el) {
-  const { MESSAGE_ATTRIBUTE } = adapter.consts;
+  const { MESSAGE_ATTRIBUTE } = adapter;
   const rootEl = getRootEl(el);
   const { src } = el.attrsMap;
   const onMessage = el.attrsMap[MESSAGE_ATTRIBUTE];

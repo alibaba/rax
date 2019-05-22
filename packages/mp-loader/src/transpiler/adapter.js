@@ -32,25 +32,17 @@ const alipayConsts = {
   MESSAGE_ATTRIBUTE: 'onMessage'
 };
 
-let adapterInstance;
+let adapter;
 
-class Adapter {
-  constructor(type) {
+module.exports = function(type = 'ali') {
+  if (!adapter) {
     switch (type) {
       case 'weixin':
-        this.consts = wxConsts;
-        break;
-      case 'alipay':
+        return adapter = wxConsts;
+      case 'ali':
       default:
-        this.consts = alipayConsts;
-        break;
+        return adapter = alipayConsts;
     }
   }
-};
-
-module.exports = function(type = 'alipay') {
-  if (!adapterInstance) {
-    return adapterInstance = new Adapter(type);
-  }
-  return adapterInstance;
+  return adapter;
 };

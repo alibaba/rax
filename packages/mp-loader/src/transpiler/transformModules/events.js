@@ -14,7 +14,7 @@ const adapter = createAdapter();
  * @param {*} node
  */
 function transformNode(node) {
-  const { LISTENER_ACTION } = adapter.consts;
+  const { LISTENER_ACTION } = adapter;
   const EVENT_REG = new RegExp(`^${LISTENER_ACTION}`);
 
   const { attrsList } = node;
