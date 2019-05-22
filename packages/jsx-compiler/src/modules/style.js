@@ -57,8 +57,4 @@ module.exports = {
 
     parsed[DYNAMIC_STYLES] = dynamicStyles;
   },
-  generate(ret, parsed, options) {
-    // TODO: dynamicStyles should be inserted to didMount lifeCycle
-    // let code = generate(parsed[DYNAMIC_STYLES]).code;
-  },
 };
