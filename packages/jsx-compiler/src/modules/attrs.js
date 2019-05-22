@@ -1,10 +1,7 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
-
-function createBinding(key) {
-  return '{{' + key + '}}';
-}
+const createBinding = require('../utils/createBinding');
 
 let ids = 0;
 function applyId() {

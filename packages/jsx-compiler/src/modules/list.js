@@ -2,6 +2,7 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
+const createBinding = require('../utils/createBinding');
 const genExpression = require('../codegen/genExpression');
 
 function transformList(ast, adapter) {
@@ -34,9 +35,9 @@ function transformList(ast, adapter) {
 
           parentPath.replaceWith(
             createJSX('block', {
-              [adapter.for]: t.stringLiteral(genExpression(callee.object)),
-              [adapter.forItem]: t.stringLiteral(itemName),
-              [adapter.forIndex]: t.stringLiteral(indexName),
+              [adapter.for]: t.stringLiteral(createBinding(genExpression(callee.object))),
+              [adapter.forItem]: t.stringLiteral(createBinding(itemName)),
+              [adapter.forIndex]: t.stringLiteral(createBinding(indexName)),
             }, [childNode])
           );
         } else {
