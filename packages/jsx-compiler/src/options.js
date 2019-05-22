@@ -1,7 +1,7 @@
 exports.baseOptions = {
   cwd: process.cwd(),
   modules: require('./modules'),
-  targetAdapter: require('./targetAdapter'),
+  adapter: require('./adapter'),
   /**
    * Whether add whitespace between tags.
    */

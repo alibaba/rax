@@ -1,6 +1,6 @@
 const isClassComponent = require('../isClassComponent');
 const getDefaultExportedPath = require('../getDefaultExportedPath');
-const { astParser } = require('../../parser');
+const { parseCode } = require('../../parser');
 
 describe('isClassComponent', () => {
   it('#1', () => {
@@ -20,7 +20,7 @@ describe('isClassComponent', () => {
       }
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 
@@ -30,7 +30,7 @@ describe('isClassComponent', () => {
       export default class extends RaxRef.Component {}
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 
@@ -40,7 +40,7 @@ describe('isClassComponent', () => {
       export default class extends Component {}
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isClassComponent(defaultExportedPath)).toBeFalsy();
   });
 
@@ -50,7 +50,7 @@ describe('isClassComponent', () => {
       export default class {}
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isClassComponent(defaultExportedPath)).toBeFalsy();
   });
 
@@ -61,7 +61,7 @@ describe('isClassComponent', () => {
       export default foo;
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 
@@ -72,7 +72,7 @@ describe('isClassComponent', () => {
       export default foo;
     `;
 
-    const defaultExportedPath = getDefaultExportedPath(astParser(code));
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 });

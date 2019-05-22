@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`template attrs should handle expressions 1`] = `
+"{
+  _event0: event => {
+    console.log(event);
+  },
+  _event1: event => console.log(event),
+  _event2: function (event) {
+    console.log(event);
+  },
+  _dynamicVal0: fn(),
+  _dynamicVal1: foo.method(),
+  _dynamicVal2: a ? 1 : 2,
+  _dynamicVal3: ~a,
+  _dynamicVal4: new Foo(),
+  _dynamicVal5: delete foo.bar,
+  _dynamicVal6: typeof aaa,
+  _dynamicVal7: { ...{
+      a: 1
+    }
+  }
+}"
+`;
+
+exports[`template attrs should handle literial types 1`] = `
+"{
+  _dynamicVal0: /a-z/,
+  _event0: event => {
+    console.log(event);
+  },
+  _dynamicVal1: {
+    a: 1
+  },
+  _dynamicVal2: [0, 1, 2]
+}"
+`;
