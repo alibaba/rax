@@ -17,7 +17,7 @@ const createPage = function(rootContext, distContext, sourcePath) {
   createComponent(rootContext, distContext, {
     usingComponents: transformed.usingComponents,
   });
-  writeFiles(resolve(distContext, 'index'), transformed, rootContext);
+  writeFiles(resolve(distContext, sourcePath), transformed, rootContext);
 };
 
 module.exports = {

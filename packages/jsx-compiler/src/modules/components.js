@@ -50,10 +50,12 @@ module.exports = {
 
     traverse(parsed.templateAST, {
       JSXOpeningElement(path) {
-        const { node, parent } = path;
+        const { node, scope, parent } = path;
 
         if (t.isJSXIdentifier(node.name)) { // <View />
           const alias = getComponentAlias(node.name.name);
+          // TODO: remove import statment.
+          // parsed.defaultExportedPath.scope.getBinding('Text').path.remove()
           if (alias) {
             node.name = t.jsxIdentifier(alias.name);
             // handle with close tag too.
