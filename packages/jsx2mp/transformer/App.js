@@ -16,7 +16,11 @@ const createChildPage = function(appDirectory, distDirectory) {
   const config = readJSONSync(sourceConfigPath);
   const pages = config.pages;
   for (let i = 0, l = pages.length; i < l; i++) {
-    createPage(appDirectory, resolve(appDirectory, pages[i]), resolve(distDirectory, pages[i], '..'));
+    createPage(
+      appDirectory,
+      distDirectory,
+      pages[i]
+    );
   }
 };
 

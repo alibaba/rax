@@ -1,25 +1,39 @@
-const { join } = require('path');
+const { resolve, relative, extname } = require('path');
 const { transformJSX, writeFiles } = require('./Transformer');
 
 /**
  * Create component files
- * @param distPath {String} dist Path
  * @param config {Object} has usingComponents
+ * @param distPath {String} dist Path
  * @param rootContext {String} root Path
  */
 const createComponent = function(rootContext, distPath, config) {
   const { usingComponents = {} } = config;
-  for (let [key, value] of usingComponents) {
-    if (!value.external) {
-      const componentDistPath = join(distPath, value.from);
-      const componentSourcePath = value.absolutePath;
+  for (let [key, value] of Object.entries(usingComponents)) {
+    if (isCustomComponent(value)) {
+      const relativePath = relative(rootContext, value);
+      const componentDistPath = resolve(distPath, relativePath);
+      console.log({rootContext,distPath,relativePath,componentDistPath});
 
-      const transformed = transformJSX(componentSourcePath, 'component');
+      // return;
+      // const componentSourcePath = value.absolutePath;
+return;
+
+      const transformed = transformJSX(value, 'component');
       writeFiles(componentDistPath, transformed, rootContext);
       createComponent(rootContext, distPath, { usingComponents: transformed.usingComponents });
     }
   }
 };
+
+function isCustomComponent(path) {
+  return /^[/.]/.test(path);
+}
+
+function removeExt(path){
+  const ext = extname(path);
+  return path.slice(0, path.length - ext.length);
+}
 
 module.exports = {
   createComponent

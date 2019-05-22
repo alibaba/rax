@@ -35,7 +35,11 @@ module.exports = {
         return filename;
       } else {
         // npm module
-        const pkg = readJSONSync(moduleResolve(options.filePath, join(alias.from, 'package.json')));
+        const pkgPath = moduleResolve(options.filePath, join(alias.from, 'package.json'));
+        if (!pkgPath) {
+          throw new Error('Execute npm install first.');
+        }
+        const pkg = readJSONSync(pkgPath);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
           return join(alias.from, pkg.miniappConfig.main);
         } else {
