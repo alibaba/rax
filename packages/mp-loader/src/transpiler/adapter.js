@@ -15,7 +15,7 @@ const wxConsts = {
   MESSAGE_ATTRIBUTE: 'bindmessage'
 };
 
-const alipayConsts = {
+const aliConsts = {
   IS_DETECTIVE: /^a\:/,
   IF_ATTRIBUTES: {
     IF: 'a:if',
@@ -41,7 +41,7 @@ module.exports = function(type = 'ali') {
         return adapter = wxConsts;
       case 'ali':
       default:
-        return adapter = alipayConsts;
+        return adapter = aliConsts;
     }
   }
   return adapter;
