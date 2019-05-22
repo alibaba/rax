@@ -30,7 +30,7 @@ function transformList(ast, adapter) {
             if (indexParam) indexName = indexParam.name;
           } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
             // { foo.map(this.xxx) }
-            throw new Error(`目前暂不支持对 ${genExpression(node)} 的语法转换，请使用内联函数。`);
+            throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
           }
 
           parentPath.replaceWith(
@@ -42,13 +42,13 @@ function transformList(ast, adapter) {
           );
         } else {
           // { foo.method(args) }
-          throw new Error(`目前暂不支持在 JSX 模板中使用 ${genExpression(node)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
+          throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
         }
       } else if (t.isIdentifier(callee)) {
         // { foo(args) }
-        throw new Error(`目前暂不支持在 JSX 模板中使用 ${genExpression(node)} 的语法转换，可以使用静态模板或提前计算 state 的方式代替。`);
+        throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
       } else if (t.isFunction(callee)) {
-        throw new Error(`目前暂不支持在 JSX 模板中使用 IIFE: ${genExpression(node)} 。`);
+        throw new Error(`Currently using IIFE in JSX templates is not supported: ${genExpression(node)} 。`);
       }
     }
   });
