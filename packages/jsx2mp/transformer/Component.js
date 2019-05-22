@@ -1,5 +1,5 @@
 const { resolve, relative, extname } = require('path');
-const { transformJSX, writeFiles } = require('./Transformer');
+const { transformJSX, writeFiles, isCustomComponent } = require('./Transformer');
 
 /**
  * Create component files
@@ -11,17 +11,13 @@ const createComponent = function(rootContext, distPath, usingComponents) {
   for (let [key, value] of Object.entries(usingComponents)) {
     if (isCustomComponent(value)) {
       const relativePath = relative(rootContext, value);
-      const componentDistPath = resolve(distPath, relativePath);
+      const componentDistPath = resolve(distPath, relativePath,'..');
       const transformed = transformJSX(value, 'component');
       writeFiles(componentDistPath, transformed, rootContext);
       createComponent(rootContext, distPath, { usingComponents: transformed.usingComponents });
     }
   }
 };
-
-function isCustomComponent(path) {
-  return /^[/.]/.test(path);
-}
 
 module.exports = {
   createComponent
