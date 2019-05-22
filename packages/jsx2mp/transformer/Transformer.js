@@ -30,7 +30,12 @@ const transformJSX = function(sourcePath, type) {
   return transformed;
 };
 
-function formatConfing(config, rootPath){
+/**
+ * usingComponents change custom component path
+ * @param rootPath {String} root Path
+ * @param config {Object} has usingComponents
+ */
+function formatConfing(config, rootPath) {
   for (let [key, value] of Object.entries(config.usingComponents)) {
     if (isCustomComponent(value)) {
       let path = resolve(value, '..');
@@ -42,6 +47,10 @@ function formatConfing(config, rootPath){
   return config;
 }
 
+/**
+ * is custom component
+ * @param path {String} Path
+ */
 function isCustomComponent(path) {
   return /^[/.]/.test(path);
 }

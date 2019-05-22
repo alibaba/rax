@@ -1,5 +1,5 @@
 const { resolve } = require('path');
-const { transformJSX, writeFiles ,formatConfing } = require('./Transformer');
+const { transformJSX, writeFiles, formatConfing } = require('./Transformer');
 const { createComponent } = require('./Component');
 const resolveModule = require('../utils/moduleResolve');
 
@@ -10,8 +10,7 @@ const resolveModule = require('../utils/moduleResolve');
  * @param sourcePath {String} User defined path.
  */
 const createPage = function(rootContext, distContext, sourcePath) {
-
-  const sourceFilePath = resolveModule(rootContext + '/index.js', './' + sourcePath, '.jsx') || resolveModule(rootContext + '/index.js', './' + sourcePath, '.js'); 
+  const sourceFilePath = resolveModule(rootContext + '/index.js', './' + sourcePath, '.jsx') || resolveModule(rootContext + '/index.js', './' + sourcePath, '.js');
 
   const transformed = transformJSX(sourceFilePath, 'page');
   createComponent(rootContext, distContext, transformed.usingComponents);
