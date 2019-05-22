@@ -14,13 +14,10 @@ const createPage = function(rootContext, distContext, sourcePath) {
   const sourceFilePath = resolveModule(rootContext + '/index.js', './' + sourcePath, '.jsx') || resolveModule(rootContext + '/index.js', './' + sourcePath, '.js'); //TODO: 改一下
 
   const transformed = transformJSX(sourceFilePath, 'page');
-  console.log({
-    transformed
-  })
-  // createComponent(rootContext, distPagePath, {
-  //   usingComponents: transformed.usingComponents,
-  // });
-  // writeFiles(resolve(distPagePath, 'index'), transformed, rootContext);
+  createComponent(rootContext, distContext, {
+    usingComponents: transformed.usingComponents,
+  });
+  writeFiles(resolve(distContext, 'index'), transformed, rootContext);
 };
 
 module.exports = {
