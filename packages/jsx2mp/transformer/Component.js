@@ -11,7 +11,7 @@ const createComponent = function(rootContext, distPath, usingComponents) {
   for (let [key, value] of Object.entries(usingComponents)) {
     if (isCustomComponent(value)) {
       const relativePath = relative(rootContext, value);
-      const componentDistPath = resolve(distPath, relativePath, '..');
+      const componentDistPath = removeExt(resolve(distPath, relativePath));
       const transformed = transformJSX(value, 'component');
       transformed.config = formatConfing(transformed.config, rootContext);
       writeFiles(componentDistPath, transformed, rootContext);
@@ -19,6 +19,11 @@ const createComponent = function(rootContext, distPath, usingComponents) {
     }
   }
 };
+
+function removeExt(path) {
+  const ext = extname(path);
+  return path.slice(0, path.length - ext.length);
+}
 
 module.exports = {
   createComponent
