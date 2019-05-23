@@ -54,8 +54,7 @@ module.exports = {
 
         if (t.isJSXIdentifier(node.name)) { // <View />
           const alias = getComponentAlias(node.name.name);
-          // TODO: remove import statment.
-          // parsed.defaultExportedPath.scope.getBinding('Text').path.remove()
+          removeImport(alias);
           if (alias) {
             node.name = t.jsxIdentifier(alias.name);
             // handle with close tag too.
@@ -68,6 +67,17 @@ module.exports = {
         }
       },
     });
+
+    function removeImport(alias) {
+      traverse(parsed.ast, {
+        ImportDeclaration(path) {
+          const { node } = path;
+          if (t.isStringLiteral(node.source) && node.source.value === alias.from) {
+            path.remove();
+          }
+        }
+      });
+    }
   },
   generate(ret, parsed, options) {
     ret.usingComponents = parsed.usingComponents;
