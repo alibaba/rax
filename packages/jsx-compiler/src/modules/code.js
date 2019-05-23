@@ -59,6 +59,10 @@ function addComponentDefine(ast, type, userDefineType) {
   const safeCreateInstanceId = t.identifier(type === 'page' ? SAFE_CREATE_PAGE : SAFE_CREATE_COMPONENT);
 
   traverse(ast, {
+    Super(path) {
+      const { parentPath } = path;
+      parentPath.remove();
+    },
     Program(path) {
       const importedIdentifier = t.identifier(type === 'page' ? CREATE_PAGE : CREATE_COMPONENT);
       const localIdentifier = safeCreateInstanceId;
