@@ -196,7 +196,6 @@ function createProject(name, verbose, userAnswers) {
     projectName: projectName,
     projectType: userAnswers.projectType,
     projectAuthor: userAnswers.projectAuthor,
-    pwaFeatures: userAnswers.pwaFeatures,
     verbose: verbose,
   }).then(function(directory) {
     if (autoInstallModules) {
