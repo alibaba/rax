@@ -47,11 +47,11 @@ const paths = {
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appManifest: resolveApp('manifest.json'),
+  appJSON: resolveApp('app.json'),
   appNodeModules: resolveApp('node_modules'),
   componentDemoJs: resolveModule(resolveApp, 'demo/index'),
   nodePaths: nodePaths,
-  miniProgramIndexJs: resolveModule(resolveApp, 'app'),
-  pwaManifest: resolveApp('pwa.json')
+  miniProgramIndexJs: resolveModule(resolveApp, 'app')
 };
 
 module.exports = paths;
