@@ -43,8 +43,8 @@ module.exports = function start(type = 'webapp') {
 
   let isSSR;
   if (envConfig.pwa) {
-    const pwaManifest = require(pathConfig.pwaManifest);
-    if (pwaManifest && pwaManifest.ssr) {
+    const appJSON = require(pathConfig.appJSON);
+    if (appJSON && appJSON.ssr) {
       isSSR = true;
     }
   }

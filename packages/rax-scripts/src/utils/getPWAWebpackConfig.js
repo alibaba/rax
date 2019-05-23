@@ -14,17 +14,17 @@ const webpackConfigMap = {
 };
 
 module.exports = (env = 'prod') => {
-  const pwaManifest = require(pathConfig.pwaManifest);
+  const appJSON = require(pathConfig.appJSON);
   const config = webpackConfigMap[env];
 
   let result = [
     require(config.client)
   ];
 
-  if (pwaManifest.ssr) {
+  if (appJSON.ssr) {
     result.push(require(config.server));
   }
-  if (pwaManifest.serverless) {
+  if (appJSON.serverless) {
     result.push(require(config.serverless));
   }
 
