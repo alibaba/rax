@@ -35,7 +35,11 @@ module.exports = {
         return filename;
       } else {
         // npm module
-        const pkg = readJSONSync(moduleResolve(options.filePath, join(alias.from, 'package.json')));
+        const pkgPath = moduleResolve(options.filePath, join(alias.from, 'package.json'));
+        if (!pkgPath) {
+          throw new Error('Execute npm install first.');
+        }
+        const pkg = readJSONSync(pkgPath);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
           return join(alias.from, pkg.miniappConfig.main);
         } else {
@@ -46,10 +50,11 @@ module.exports = {
 
     traverse(parsed.templateAST, {
       JSXOpeningElement(path) {
-        const { node, parent } = path;
+        const { node, scope, parent } = path;
 
         if (t.isJSXIdentifier(node.name)) { // <View />
           const alias = getComponentAlias(node.name.name);
+          removeImport(alias);
           if (alias) {
             node.name = t.jsxIdentifier(alias.name);
             // handle with close tag too.
@@ -62,6 +67,17 @@ module.exports = {
         }
       },
     });
+
+    function removeImport(alias) {
+      traverse(parsed.ast, {
+        ImportDeclaration(path) {
+          const { node } = path;
+          if (t.isStringLiteral(node.source) && node.source.value === alias.from) {
+            path.remove();
+          }
+        }
+      });
+    }
   },
   generate(ret, parsed, options) {
     ret.usingComponents = parsed.usingComponents;
