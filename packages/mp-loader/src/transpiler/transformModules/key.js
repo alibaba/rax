@@ -1,9 +1,9 @@
 const { getAndRemoveAttr, normalizeMustache } = require('../helpers');
 
 const IS_BIND_REG = /\W*\{\{/;
-const createAdapter = require('../adapter');
+const { getAdapter } = require('../adapter');
 
-const adapter = createAdapter();
+const adapter = getAdapter();
 
 
 function transformNode(el) {

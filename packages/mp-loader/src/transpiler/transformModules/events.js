@@ -5,9 +5,9 @@ const EVENT_MAPPING = {
 };
 const IS_EVENT_BINDING_REG = /{{(.*)}}/;
 
-const createAdapter = require('../adapter');
+const { getAdapter } = require('../adapter');
 
-const adapter = createAdapter();
+const adapter = getAdapter();
 
 /**
  * transpile bindXxx to onXxxx

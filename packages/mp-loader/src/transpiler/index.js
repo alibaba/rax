@@ -1,7 +1,7 @@
 const { dirname, isAbsolute, join } = require('path');
 const createGenerate = require('./createGenerator');
 const createParse = require('./createParser');
-const createAdapter = require('./adapter');
+const { createAdapter } = require('./adapter');
 
 module.exports = function transpiler(content, opts) {
   const { templatePath, type } = opts;

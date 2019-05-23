@@ -34,7 +34,7 @@ const aliConsts = {
 
 let adapter;
 
-module.exports = function(type = 'ali') {
+exports.createAdapter = function(type = 'ali') {
   if (!adapter) {
     switch (type) {
       case 'weixin':
@@ -45,4 +45,12 @@ module.exports = function(type = 'ali') {
     }
   }
   return adapter;
+};
+
+exports.getAdapter = function() {
+  if (!adapter) {
+    throw new Error('Please initialize adapter first');
+  } else {
+    return adapter;
+  }
 };

@@ -7,9 +7,9 @@ const {
 
 const IS_BIND_REG = /\W*\{\{/;
 
-const createAdapter = require('../adapter');
+const { getAdapter } = require('../adapter');
 
-const adapter = createAdapter();
+const adapter = getAdapter();
 
 function transformNode(el) {
   const { attrsList, attrsMap } = el;

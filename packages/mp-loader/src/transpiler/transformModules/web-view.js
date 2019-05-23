@@ -3,9 +3,9 @@ const { getRootEl, getAndRemoveAttr } = require('../helpers');
 const IS_BIND_REG = /\W*\{\{/;
 const WEBVIEW_TAG = 'web-view';
 
-const createAdapter = require('../adapter');
+const { getAdapter } = require('../adapter');
 
-const adapter = createAdapter();
+const adapter = getAdapter();
 
 function transformNode(el) {
   const { MESSAGE_ATTRIBUTE } = adapter;

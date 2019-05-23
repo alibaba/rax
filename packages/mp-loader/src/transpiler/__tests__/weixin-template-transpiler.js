@@ -1,7 +1,7 @@
 const babylon = require('babylon');
 const createGenerate = require('../createGenerator');
 const createParse = require('../createParser');
-const createAdapter = require('../adapter');
+const { createAdapter } = require('../adapter');
 
 createAdapter('weixin');
 const modules = require('../transformModules');

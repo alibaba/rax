@@ -1,8 +1,8 @@
 const { getAndRemoveAttr } = require('../helpers');
 
-const createAdapter = require('../adapter');
+const { getAdapter } = require('../adapter');
 
-const adapter = createAdapter();
+const adapter = getAdapter();
 
 function transformNode(el, options) {
   const { attrsMap, attrsList } = el || {};

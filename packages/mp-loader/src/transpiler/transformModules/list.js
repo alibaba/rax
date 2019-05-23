@@ -2,9 +2,9 @@ const { getAndRemoveAttr, addAttr } = require('../helpers');
 
 const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
 const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/;
-const createAdapter = require('../adapter');
+const { getAdapter } = require('../adapter');
 
-const adapter = createAdapter();
+const adapter = getAdapter();
 
 function transformNode(el) {
   if (el.type !== 1) return;
