@@ -2,6 +2,7 @@ import computeChangedData from './computeChangedData';
 import deepCopy from './deepCopy';
 import { registerComponent } from './componentsHub';
 import { normalizeScopedSlots } from './normalizeScopedSlots';
+import createLifecycleAdapter from './lifecycleAdapter';
 
 const STYLE_FLAG_KEY = '_appendedComponentStyle';
 
@@ -33,8 +34,18 @@ function injectSlot(child, $slots) {
 // Count of component instance numbers.
 let componentCount = 0;
 
-export default function createComponent(renderFactory, render, config, componentPath, cssText) {
+export default function createComponent(renderFactory, render, config, componentPath, cssText, type = 'ali') {
   const templateRender = renderFactory(render);
+  let props;
+  switch (type) {
+    case 'weixin':
+      props = config.properties;
+      break;
+    case 'ali':
+    default:
+      props = config.props;
+      break;
+  }
   const component = class extends render.Component {
     static contextTypes = {
       $page: null,
@@ -42,7 +53,6 @@ export default function createComponent(renderFactory, render, config, component
 
     constructor(props, context) {
       super(props, context);
-
       /**
        * One component's style can only be append once in each docuemnt(page).
        * Use a flag in document object to mark.
@@ -69,9 +79,11 @@ export default function createComponent(renderFactory, render, config, component
         : {};
       this.publicInstance = this._createPublicInstance();
       this.componentId = ++componentCount;
+      this.lifecycleAdapter = createLifecycleAdapter(this.publicInstance, config, type);
+      this.lifecycleAdapter._constructor();
     }
 
-    static defaultProps = config.props;
+    static defaultProps = props;
 
     _createPublicInstance() {
       const scope = {};
@@ -135,21 +147,39 @@ export default function createComponent(renderFactory, render, config, component
       return $slots;
     };
 
+    componentWillMount() {
+      if (this.lifecycleAdapter.componentWillMount) {
+        this.lifecycleAdapter.componentWillMount(this.props);
+      }
+    }
+
     componentDidMount() {
-      if (typeof config.didMount === 'function') {
-        config.didMount.call(this.publicInstance);
+      if (this.lifecycleAdapter.componentDidMount) {
+        this.lifecycleAdapter.componentDidMount();
+      }
+    }
+
+    componentWillUpdate(nextProps) {
+      if (this.lifecycleAdapter.componentWillUpdate) {
+        this.lifecycleAdapter.componentWillUpdate(nextProps);
       }
     }
 
     componentDidUpdate(prevProps, prevState) {
-      if (typeof config.didUpdate === 'function') {
-        config.didUpdate.call(this.publicInstance, prevProps, prevState);
+      if (this.lifecycleAdapter.componentDidUpdate) {
+        this.lifecycleAdapter.componentDidUpdate(prevProps, prevState);
+      }
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if (this.lifecycleAdapter.componentWillReceiveProps) {
+        this.lifecycleAdapter.componentWillReceiveProps(nextProps);
       }
     }
 
     componentWillUnmount() {
-      if (typeof config.didUnmount === 'function') {
-        config.didUnmount.call(this.publicInstance);
+      if (this.lifecycleAdapter.componentWillUnmount) {
+        this.lifecycleAdapter.componentWillUnmount();
       }
     }
 

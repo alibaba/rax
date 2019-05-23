@@ -1,16 +1,15 @@
 const querystring = require('querystring');
 const { extname, relative } = require('path');
 const { readFileSync, existsSync } = require('fs');
-const { stringifyRequest } = require('loader-utils');
+const { stringifyRequest, parseQuery } = require('loader-utils');
 const { createRequire } = require('./utils');
 const runtimeHelpers = require('./runtimeHelpers');
 const resolveDependencyComponents = require('./component-resolver');
 
 const templateLoaderPath = require.resolve('./template-loader');
 const requireCreateComponent = createRequire(stringifyRequest(this, runtimeHelpers.createComponent));
-const CSS_EXT = '.acss';
-const TEMPLATE_EXT = '.axml';
-const CONFIG_EXT = '.json';
+const extensionAdapter = require('./extensionAdapter');
+
 const NODE_MODULES_REG = /^node_modules\//;
 
 /**
@@ -23,13 +22,13 @@ function isNodeModule(p) {
 }
 
 module.exports = function(content) {
-  const { resourcePath, rootContext } = this;
-
+  const { resourcePath, rootContext, resourceQuery } = this;
+  const type = resourceQuery ? parseQuery(resourceQuery).type || 'ali' : 'ali';
   const basePath = resourcePath.replace(extname(resourcePath), '');
+  const { CSS_EXT, TEMPLATE_EXT, CONFIG_EXT } = extensionAdapter(type);
   let cssPath = basePath + CSS_EXT;
   let templatePath = basePath + TEMPLATE_EXT;
   let configPath = basePath + CONFIG_EXT;
-
   // Component dependents components
   let config = {};
   if (existsSync(configPath)) {
@@ -39,6 +38,7 @@ module.exports = function(content) {
 
   const dependencyComponents = resolveDependencyComponents(config, this.rootContext, basePath);
   const templateLoaderQueryString = querystring.stringify({
+    type,
     isEntryTemplate: false,
     componentBasePath: basePath,
     dependencyComponents: JSON.stringify(dependencyComponents),
@@ -79,7 +79,8 @@ module.exports = function(content) {
         __render__, 
         Component.__config,
         '${componentPath}',
-        ${cssRequirement}
+        ${cssRequirement},
+        '${type}'
       );
     };
   `;

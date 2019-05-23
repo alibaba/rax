@@ -80,7 +80,7 @@ function transformNode(el, state) {
       });
     }
   }
-}
+};
 
 function genData(el) {
   // template usage

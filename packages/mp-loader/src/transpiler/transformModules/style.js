@@ -1,10 +1,6 @@
 const { getAndRemoveAttr } = require('../helpers');
 const expressionHelpers = require('../expression');
 
-/**
- * Transpile style attribute for mp.
- * @param {*} node
- */
 function transformNode(node) {
   const { attrsMap } = node;
   if (attrsMap && attrsMap.hasOwnProperty('style')) {
@@ -19,7 +15,7 @@ function transformNode(node) {
       node.staticStyle = JSON.stringify(styleExp);
     }
   }
-}
+};
 
 function genData(el) {
   if (el.staticStyle || el.styleBinding) {

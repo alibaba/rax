@@ -16,8 +16,8 @@ function transformNode(el) {
       }
     }
   }
-}
+};
 
 module.exports = {
-  transformNode,
+  transformNode
 };

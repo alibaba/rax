@@ -1,4 +1,4 @@
-import { cached, extend, no, log, warn, error, makeMap } from '../utils';
+const { cached, extend, no, log, warn, error, makeMap } = require('../utils');
 
 describe('utils', () => {
   it('cached', () => {

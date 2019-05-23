@@ -15,7 +15,7 @@ function transformNode(el) {
       addAttr(el, key, exp === '' ? 'true' : exp);
     }
   });
-}
+};
 
 module.exports = {
   transformNode

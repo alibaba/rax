@@ -1,20 +1,18 @@
 const { getAndRemoveAttr, addAttr } = require('../helpers');
 
-const ATTRIBUTES = {
-  FOR: 'a:for',
-  FOR_ITEM: 'a:for-item',
-  FOR_IDX: 'a:for-index'
-};
-
 const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
 const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/;
+const { getAdapter } = require('../adapter');
 
-function transformNode(el, modules) {
+const adapter = getAdapter();
+
+function transformNode(el) {
   if (el.type !== 1) return;
-  let forKey = getAndRemoveAttr(el, ATTRIBUTES.FOR);
+  const { FOR_ATTRIBUTES } = adapter;
+  let forKey = getAndRemoveAttr(el, FOR_ATTRIBUTES.FOR);
   if (forKey) {
-    const forItem = getAndRemoveAttr(el, ATTRIBUTES.FOR_ITEM) || 'item';
-    const forIdx = getAndRemoveAttr(el, ATTRIBUTES.FOR_IDX) || 'index';
+    const forItem = getAndRemoveAttr(el, FOR_ATTRIBUTES.FOR_ITEM) || 'item';
+    const forIdx = getAndRemoveAttr(el, FOR_ATTRIBUTES.FOR_IDX) || 'index';
     let exp = `(${forItem},${forIdx}) in ${forKey}`;
     const inMatch = exp.match(forAliasRE);
     if (!inMatch) {
@@ -35,7 +33,7 @@ function transformNode(el, modules) {
       el.alias = alias;
     }
   }
-}
+};
 
 module.exports = {
   transformNode
