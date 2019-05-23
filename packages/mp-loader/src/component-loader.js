@@ -79,7 +79,8 @@ module.exports = function(content) {
         __render__, 
         Component.__config,
         '${componentPath}',
-        ${cssRequirement}
+        ${cssRequirement},
+        '${type}'
       );
     };
   `;

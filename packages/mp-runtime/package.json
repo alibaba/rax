@@ -3,10 +3,6 @@
   "version": "0.7.17",
   "description": "mp dsl runtime",
   "main": "src/index.js",
-  "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --config webpack.config.js",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js"
-  },
   "devDependencies": {
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
