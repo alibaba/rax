@@ -1,9 +1,6 @@
 const generate = require('@babel/generator').default;
 
-const generateOptions = {
-  comments: false, // Remove template comments.
-  concise: true, // Reduce whitespace, but not to disable all.
-};
+const generateOptions = {};
 
 /**
  * Generate code and map from babel ast.
