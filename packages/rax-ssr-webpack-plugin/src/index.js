@@ -1,7 +1,7 @@
-const EntryLoader = require('./EntryLoader');
+const ClientLoader = require('./ClientLoader');
 const ServerlessLoader = require('./ServerlessLoader');
 
 module.exports = {
-  EntryLoader,
+  ClientLoader,
   ServerlessLoader
 };
