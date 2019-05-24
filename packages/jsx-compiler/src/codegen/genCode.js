@@ -6,8 +6,8 @@ const generateOptions = {};
  * Generate code and map from babel ast.
  * @param ast
  */
-function genCode(ast) {
-  return generate(ast, generateOptions);
+function genCode(ast, options) {
+  return generate(ast, Object.assign({}, generateOptions, options));
 }
 
 module.exports = genCode;
