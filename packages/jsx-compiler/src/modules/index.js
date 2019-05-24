@@ -10,7 +10,7 @@ module.exports = [
   // Handle js code.
   require('./code'),
   // Handle template attrs
-  require('./attrs'),
+  require('./element'),
   // Handle template style attr
   require('./style'),
   // Directive a:if

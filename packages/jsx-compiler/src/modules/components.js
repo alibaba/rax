@@ -1,8 +1,10 @@
 const { join } = require('path');
 const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
+const genExpression = require('../codegen/genExpression');
 const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
+const createJSX = require('../utils/createJSX');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 
@@ -66,9 +68,22 @@ module.exports = {
           throw new Error('Not support of sub components.');
         }
       },
+      JSXExpressionContainer(path) {
+        const { node, parentPath } = path;
+        // Only process under JSXEelement
+        if (parentPath.isJSXElement()) {
+          if ([
+            'this.props.children',
+            'children'
+          ].indexOf(genExpression(node.expression)) > -1) {
+            path.replaceWith(createJSX('slot'));
+          }
+        }
+      },
     });
 
     function removeImport(alias) {
+      if (!alias) return;
       traverse(parsed.ast, {
         ImportDeclaration(path) {
           const { node } = path;

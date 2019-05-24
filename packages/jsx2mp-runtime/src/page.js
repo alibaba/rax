@@ -17,71 +17,90 @@ const PAGE_EVENTS = [
  * @return {Object} MiniApp Page constructor's config.
  */
 export function createPage(Klass) {
-  const instance = new Klass({}, null);
   const { prototype: klassPrototype, defaultProps } = Klass;
-  const { props, state } = instance;
-  const classMethods = Object.getOwnPropertyNames(klassPrototype);
-  const initData = Object.assign({}, defaultProps, props, state);
-  const pageConfig = {
-    data: initData,
-    state: initData,
+  const props = klassPrototype.props = klassPrototype.props || {};
+  const instance = new Klass(props, null);
+  const data = Object.assign({}, defaultProps, props, instance.state);
+  let _internal; // AppX Page instance object.
+
+  function invokeMethod(method, args = []) {
+    if (typeof instance[method] === 'function') {
+      return instance[method].apply(instance, args);
+    }
+  }
+
+  const { methods, events } = getClassMethods(Klass);
+  const config = {
+    data,
+    events,
     props: Object.assign({}, props, defaultProps),
+
+    /**
+     * Bridge setState directly to setData. `this` is bound to component instance.
+     * @param particialState {Object|Function}
+     * @param callback? {Function}
+     */
+    setState(particialState, callback) {
+      if (typeof instance.render === 'function') {
+        const dynamicState = instance.render();
+        return this.setData(Object.assign({}, particialState, dynamicState), callback);
+      } else {
+        return this.setData(particialState, callback);
+      }
+    },
+
+    /**
+     * Bridge to forceUpdate.
+     * @param callback? {Function}
+     */
+    forceUpdate(callback) {
+      return this.setState({}, callback);
+    },
+
     onLoad(query) {
-      // TODO: set query to component instance.
-      klassPrototype.componentWillMount &&
-        klassPrototype.componentWillMount.call(this);
+      _internal = this;
+      props.query = query;
+
+      invokeMethod('componentWillMount');
+      this.forceUpdate(); // Call render.
     },
     onShow() {
-      klassPrototype.onShow &&
-        klassPrototype.onShow.call(this);
+      invokeMethod('onShow');
     },
     onReady() {
-      klassPrototype.componentDidMount &&
-        klassPrototype.componentDidMount.call(this);
+      invokeMethod('componentDidMount');
     },
     onHide() {
-      klassPrototype.onHide &&
-        klassPrototype.onHide.call(this);
+      invokeMethod('onHide');
     },
     onUnload() {
-      klassPrototype.componentWillUnmount &&
-        klassPrototype.componentWillUnmount.call(this);
+      invokeMethod('componentWillUnmount');
     },
     onReachBottom() {
-      klassPrototype.onReachBottom && klassPrototype.onReachBottom.call(this);
+      invokeMethod('onReachBottom');
     },
     onShareAppMessage(options) {
-      klassPrototype.onShareAppMessage &&
-        klassPrototype.onShareAppMessage.call(this, options);
+      return invokeMethod('onShareAppMessage', [options]);
     },
-    setState,
-    forceUpdate,
   };
+
+  return Object.assign(config, methods);
+}
+
+function getClassMethods(Klass) {
+  const { prototype: klassPrototype } = Klass;
+  const classMethods = Object.getOwnPropertyNames(klassPrototype);
+  const events = {};
+  const methods = {};
   for (let i = 0, l = classMethods.length; i < l; i++) {
     const methodName = classMethods[i];
     const fn = klassPrototype[methodName];
     if ('constructor' === methodName) continue;
     if (PAGE_EVENTS.indexOf(methodName) > -1) {
-      pageConfig.events[methodName] = fn;
+      events[methodName] = fn;
     } else if (typeof klassPrototype[methodName] === 'function') {
-      pageConfig[methodName] = fn;
+      methods[methodName] = fn;
     }
   }
-  return pageConfig;
-}
-
-/**
- * Bridge setState directly to setData. `this` is bound to component instance.
- * @param particialState {Object|Function}
- * @param callback? {Function}
- */
-export function setState(particialState, callback) {
-  return this.setData(particialState, callback);
-}
-/**
- * Bridge to forceUpdate.
- * @param callback? {Function}
- */
-export function forceUpdate(callback) {
-  return setState.call(this, {}, callback);
+  return { events, methods };
 }
