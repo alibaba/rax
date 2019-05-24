@@ -1,7 +1,7 @@
 const t = require('@babel/types');
 const { _transform } = require('../element');
 const { parseExpression } = require('../../parser');
-const genCode = require('../../codegen/genInlineCode');
+const genCode = require('../../codegen/genCode');
 
 function genInlineCode(ast) {
   return genCode(ast, {
