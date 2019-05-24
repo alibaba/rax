@@ -6,5 +6,10 @@
   <title>WebApp</title>
 </head>
 <body>
+  <div id="root">{{{content}}}</div>
+
+  <script src="./client/{{page}}.js" ></script>
+  
+  <script data-from='server' type="application/json">{{{data}}}</script>
 </body>
 </html>

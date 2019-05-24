@@ -85,9 +85,6 @@ function init(name, verbose) {
       return askProjectInformaction(name, verbose);
     })
     .then(function(answers) {
-      if (answers.enablePWA) {
-        answers.projectType = 'pwa';
-      }
       return createProject(name, verbose, answers);
     })
     .catch(function(err) {
@@ -147,15 +144,18 @@ function askProjectInformaction(name, verbose) {
       default: 'webapp'
     },
     {
-      type: 'confirm',
-      name: 'enablePWA',
+      type: 'checkbox',
+      name: 'projectFeatures',
       when: function(answers) {
-        if (answers.projectType === 'webapp') {
-          return true;
-        }
-        return false;
+        return answers.projectType === 'webapp';
       },
-      message: 'Do you want to init a progressive web app (PWA)?',
+      message: 'Do you want to enable these features?',
+      choices: [
+        {
+          name: 'server sider rendering (ssr)',
+          value: 'ssr'
+        }
+      ],
       default: false
     },
     {
@@ -195,6 +195,7 @@ function createProject(name, verbose, userAnswers) {
     directoryName: name,
     projectName: projectName,
     projectType: userAnswers.projectType,
+    projectFeatures: userAnswers.projectFeatures,
     projectAuthor: userAnswers.projectAuthor,
     verbose: verbose,
   }).then(function(directory) {
