@@ -5,12 +5,17 @@ const traverse = require('../utils/traverseNodePath');
 
 const RAX_PACKAGE = 'rax';
 const RAX_COMPONENT = 'Component';
+
+const CREATE_APP = 'createApp';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
+
+const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
-const EXPORTED_CLASS_DEF = '__class_def__';
-const HELPER_COMPONENT = 'jsx2mp-runtime';
+
+const EXPORTED_DEF = '__def__';
+const RUNTIME = 'jsx2mp-runtime';
 
 function getConstructor(type) {
   switch (type) {
@@ -32,8 +37,18 @@ module.exports = {
     const { defaultExportedPath } = parsed;
     let userDefineType;
 
-    // replace with class def.
-    if (isFunctionComponent(defaultExportedPath)) {
+    if (options.type === 'app') {
+      userDefineType = 'class';
+      const { id, superClass, body, decorators } = defaultExportedPath.node;
+      defaultExportedPath.parentPath.replaceWith(
+        t.variableDeclaration('var', [
+          t.variableDeclarator(
+            t.identifier(EXPORTED_DEF),
+            t.classExpression(id, superClass, body, decorators)
+          )
+        ])
+      );
+    } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
     } else if (isClassComponent(defaultExportedPath)) {
       userDefineType = 'class';
@@ -43,20 +58,35 @@ module.exports = {
       defaultExportedPath.parentPath.replaceWith(
         t.variableDeclaration('var', [
           t.variableDeclarator(
-            t.identifier(EXPORTED_CLASS_DEF),
+            t.identifier(EXPORTED_DEF),
             t.classExpression(id, null, body, decorators)
           )
         ])
       );
     }
 
-    addComponentDefine(parsed.ast, options.type, userDefineType);
+    addDefine(parsed.ast, options.type, userDefineType);
     removeRaxImports(parsed.ast);
   },
 };
 
-function addComponentDefine(ast, type, userDefineType) {
-  const safeCreateInstanceId = t.identifier(type === 'page' ? SAFE_CREATE_PAGE : SAFE_CREATE_COMPONENT);
+function addDefine(ast, type, userDefineType) {
+  let safeCreateInstanceId;
+  let importedIdentifier;
+  switch (type) {
+    case 'app':
+      safeCreateInstanceId = SAFE_CREATE_APP;
+      importedIdentifier = CREATE_APP;
+      break;
+    case 'page':
+      safeCreateInstanceId = SAFE_CREATE_PAGE;
+      importedIdentifier = CREATE_PAGE;
+      break;
+    case 'component':
+      safeCreateInstanceId = SAFE_CREATE_COMPONENT;
+      importedIdentifier = CREATE_COMPONENT;
+      break;
+  }
 
   traverse(ast, {
     Super(path) {
@@ -64,14 +94,13 @@ function addComponentDefine(ast, type, userDefineType) {
       parentPath.remove();
     },
     Program(path) {
-      const importedIdentifier = t.identifier(type === 'page' ? CREATE_PAGE : CREATE_COMPONENT);
-      const localIdentifier = safeCreateInstanceId;
+      const localIdentifier = t.identifier(safeCreateInstanceId);
 
       // import { createComponent as __create_component__ } from "/__helpers/component";
       path.node.body.unshift(
         t.importDeclaration(
-          [t.importSpecifier(localIdentifier, importedIdentifier)],
-          t.stringLiteral(HELPER_COMPONENT)
+          [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))],
+          t.stringLiteral(RUNTIME)
         )
       );
 
@@ -82,8 +111,8 @@ function addComponentDefine(ast, type, userDefineType) {
             t.identifier(getConstructor(type)),
             [
               t.callExpression(
-                safeCreateInstanceId,
-                [t.identifier(EXPORTED_CLASS_DEF), t.stringLiteral(userDefineType)]
+                t.identifier(safeCreateInstanceId),
+                [t.identifier(EXPORTED_DEF)]
               )
             ],
           )

@@ -252,14 +252,16 @@ function isEventHandler(propKey) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const dynamicValue = transformTemplate(parsed.templateAST);
-    const properties = [];
-    Object.keys(dynamicValue).forEach((key) => {
-      properties.push(t.objectProperty(t.identifier(key), dynamicValue[key]));
-    });
-    parsed.renderFunctionPath.node.body.body.push(
-      t.returnStatement(t.objectExpression(properties))
-    );
+    if (parsed.renderFunctionPath) {
+      const dynamicValue = transformTemplate(parsed.templateAST);
+      const properties = [];
+      Object.keys(dynamicValue).forEach((key) => {
+        properties.push(t.objectProperty(t.identifier(key), dynamicValue[key]));
+      });
+      parsed.renderFunctionPath.node.body.body.push(
+        t.returnStatement(t.objectExpression(properties))
+      );
+    }
   },
   // For test export.
   _transform: transformTemplate,

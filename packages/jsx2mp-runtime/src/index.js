@@ -1,5 +1,6 @@
-import { createComponent } from './component';
+import { createApp } from './app';
 import { createPage } from './page';
+import { createComponent } from './component';
 import { checkEnv } from './env';
 
 /**
@@ -8,9 +9,10 @@ import { checkEnv } from './env';
 checkEnv();
 
 export {
+  createApp,
+  createPage,
   /* Base Components */
   createComponent,
-  createPage,
 };
 
 /* hooks */
