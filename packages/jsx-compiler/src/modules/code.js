@@ -10,6 +10,7 @@ const CREATE_APP = 'createApp';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
 
+const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
@@ -68,7 +69,7 @@ module.exports = {
         t.variableDeclaration('const', [
           t.variableDeclarator(
             t.identifier(EXPORTED_DEF),
-            t.classExpression(id, t.identifier(SUPER_COMPONENT), body, decorators)
+            t.classExpression(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
           )
         ])
       );
@@ -108,7 +109,10 @@ function addDefine(ast, type, userDefineType) {
       // import { createComponent as __create_component__ } from "/__helpers/component";
       const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
       if ((type === 'page' || type === 'component') && userDefineType === 'class') {
-        specifiers.push(t.importSpecifier(t.identifier(SUPER_COMPONENT), t.identifier(SUPER_COMPONENT)));
+        specifiers.push(t.importSpecifier(
+          t.identifier(SAFE_SUPER_COMPONENT),
+          t.identifier(SUPER_COMPONENT)
+        ));
       }
       path.node.body.unshift(
         t.importDeclaration(
