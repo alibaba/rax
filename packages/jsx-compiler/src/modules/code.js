@@ -4,7 +4,7 @@ const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 
 const RAX_PACKAGE = 'rax';
-const RAX_COMPONENT = 'Component';
+const SUPER_COMPONENT = 'Component';
 
 const CREATE_APP = 'createApp';
 const CREATE_COMPONENT = 'createComponent';
@@ -50,16 +50,25 @@ module.exports = {
       );
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
+      const { id, generator, async, params, body } = defaultExportedPath.node;
+      defaultExportedPath.parentPath.replaceWith(
+        t.variableDeclaration('const', [
+          t.variableDeclarator(
+            t.identifier(EXPORTED_DEF),
+            t.functionExpression(id, params, body, generator, async)
+          )
+        ])
+      );
     } else if (isClassComponent(defaultExportedPath)) {
       userDefineType = 'class';
 
       const { id, superClass, body, decorators } = defaultExportedPath.node;
       // @NOTE: Remove superClass due to useless of Component base class.
       defaultExportedPath.parentPath.replaceWith(
-        t.variableDeclaration('var', [
+        t.variableDeclaration('const', [
           t.variableDeclarator(
             t.identifier(EXPORTED_DEF),
-            t.classExpression(id, null, body, decorators)
+            t.classExpression(id, t.identifier(SUPER_COMPONENT), body, decorators)
           )
         ])
       );
@@ -97,9 +106,13 @@ function addDefine(ast, type, userDefineType) {
       const localIdentifier = t.identifier(safeCreateInstanceId);
 
       // import { createComponent as __create_component__ } from "/__helpers/component";
+      const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
+      if ((type === 'page' || type === 'component') && userDefineType === 'class') {
+        specifiers.push(t.importSpecifier(t.identifier(SUPER_COMPONENT), t.identifier(SUPER_COMPONENT)));
+      }
       path.node.body.unshift(
         t.importDeclaration(
-          [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))],
+          specifiers,
           t.stringLiteral(RUNTIME)
         )
       );
