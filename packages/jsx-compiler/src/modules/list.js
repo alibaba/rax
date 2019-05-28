@@ -36,8 +36,8 @@ function transformList(ast, adapter) {
           parentPath.replaceWith(
             createJSX('block', {
               [adapter.for]: t.stringLiteral(createBinding(genExpression(callee.object))),
-              [adapter.forItem]: t.stringLiteral(createBinding(itemName)),
-              [adapter.forIndex]: t.stringLiteral(createBinding(indexName)),
+              [adapter.forItem]: t.stringLiteral(itemName),
+              [adapter.forIndex]: t.stringLiteral(indexName),
             }, [childNode])
           );
         } else {
@@ -58,4 +58,7 @@ module.exports = {
   parse(parsed, code, options) {
     transformList(parsed.templateAST, options.adapter);
   },
+
+  // For test cases.
+  _transformList: transformList,
 };

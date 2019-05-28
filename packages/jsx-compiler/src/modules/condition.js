@@ -158,5 +158,9 @@ module.exports = {
     const templateVariables = transformRenderFunction(parsed[RENDER_FN_PATH], options.adapter);
     transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
   },
+
+  // For test cases.
+  _transformRenderFunction: transformRenderFunction,
+  _transformTemplate: transformTemplate,
 };
 
