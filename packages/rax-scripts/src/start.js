@@ -14,6 +14,7 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
+const path = require('path');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
@@ -21,6 +22,7 @@ const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
 
 const MINIAPP = 'miniapp';
+const COMPONENT_MINIAPP = 'component-miniapp';
 const webpackConfigMap = {
   webapp: './config/webapp/webpack.config.dev',
   weexapp: './config/weexapp/webpack.config.dev',
@@ -33,6 +35,10 @@ const webpackConfigMap = {
 module.exports = function start(type = 'webapp') {
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, true);
+  } else if (type === COMPONENT_MINIAPP) {
+    process.argv.push('--gulpfile', path.resolve(__dirname, './config/component/gulpfile-miniapp.js'));
+    process.argv.push('--cwd', process.cwd());
+    require('gulp-cli')();
   } else {
     const config = require(webpackConfigMap[type]);
     const compiler = createWebpackCompiler(config);
@@ -40,16 +46,14 @@ module.exports = function start(type = 'webapp') {
     const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
 
     // Launch WebpackDevServer.
-    devServer.listen(envConfig.port, envConfig.hostname, (err) => {
+    devServer.listen(envConfig.port, envConfig.hostname, err => {
       if (err) {
         console.log(colors.red('[ERR]: Failed to webpack dev server'));
         console.error(err.message || err);
         process.exit(1);
       }
 
-      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${
-        envConfig.port
-      }/`;
+      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}/`;
 
       console.log('');
       console.log(colors.green('Starting the development server at:'));
