@@ -12,10 +12,9 @@ const DEV_DEP = 'devDependencies';
  * @param appDirectory {String} Absolute app path.
  * @param distDirectory {String} Absolute dist path.
  */
-const createChildPage = function(appDirectory, distDirectory) {
-  const sourceConfigPath = join(appDirectory, 'app.json');
-  const config = readJSONSync(sourceConfigPath);
-  const pages = config.pages;
+const createChildPage = function(appDirectory, distDirectory, transformed) {
+  const { config = {} } = transformed;
+  const pages = config.pages || [];
   for (let i = 0, l = pages.length; i < l; i++) {
     createPage(
       appDirectory,
@@ -30,11 +29,9 @@ const createChildPage = function(appDirectory, distDirectory) {
  * @param appDirectory {String} Absolute app path.
  * @param distDirectory {String} Absolute dist path.
  */
-const copyAppFiles = function(appDirectory, distDirectory) {
-  const sourceScriptPath = join(appDirectory, 'app.js');
+const copyAppFiles = function(appDirectory, distDirectory, transformed) {
   const sourceStylePath = join(appDirectory, 'app.css');
   const sourcePackageJSON = join(appDirectory, 'package.json');
-  const transformed = transformJSX(sourceScriptPath, 'app');
   const { config = {}, code = '' } = transformed;
 
   const packageConfig = readJSONSync(sourcePackageJSON);
@@ -68,8 +65,10 @@ const copyAppFiles = function(appDirectory, distDirectory) {
  * @param distDirectory {String} Absolute dist path.
  */
 const createApp = function(appDirectory, distDirectory) {
-  copyAppFiles(appDirectory, distDirectory);
-  createChildPage(appDirectory, distDirectory);
+  const sourceScriptPath = join(appDirectory, 'app.js');
+  const transformed = transformJSX(sourceScriptPath, 'app');
+  copyAppFiles(appDirectory, distDirectory, transformed);
+  createChildPage(appDirectory, distDirectory, transformed);
 };
 
 module.exports = {
