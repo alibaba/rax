@@ -3,7 +3,7 @@
  */
 import Host from './host';
 
-class MiniComponent {
+class Component {
   constructor(state, props, type) {
     this.state = {};
     this.props = {};
@@ -50,5 +50,5 @@ class MiniComponent {
     this.scope.setData(this.state, callback);
   }
 }
-MiniComponent.prototype.isClassComponent = {};
-export { MiniComponent };
+Component.prototype.isClassComponent = true;
+export default { Component };

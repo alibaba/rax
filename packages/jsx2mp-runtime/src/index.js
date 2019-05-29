@@ -1,6 +1,6 @@
 import { createApp } from './app';
-import { createPage } from './page';
-import { createComponent } from './component';
+import { createPage, createComponent } from './page';
+import { Component } from './baseComponent';
 import { checkEnv } from './env';
 
 /**
@@ -11,7 +11,7 @@ checkEnv();
 export {
   createApp,
   createPage,
-  /* Base Components */
+  Component,
   createComponent,
 };
 
