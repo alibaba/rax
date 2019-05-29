@@ -86,7 +86,9 @@ const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
 
-function styleToCSS(style, remRatio) {
+function styleToCSS(style, options = {}) {
+  let defaultUnit = options.defaultUnit || 'px';
+  let remRatio = options.remRatio;
   let css = '';
   // Use var avoid v8 warns "Unsupported phi use of const or let variable"
   for (var prop in style) {
@@ -96,8 +98,8 @@ function styleToCSS(style, remRatio) {
     if (UNITLESS_NUMBER_PROPS[prop]) {
       // Noop
     } else if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
-      unit = 'rem';
-    } else if (typeof val === 'string' && val.indexOf('rem') > -1) {
+      unit = defaultUnit;
+    } else if (remRatio && typeof val === 'string' && val.indexOf('rem') > -1) {
       // stylesheet-loader will transform padding: 40 to paddingTop: '40rem' ...
       val = parseFloat(val);
       unit = 'rem';
@@ -242,7 +244,7 @@ function renderElementToString(element, context, options) {
         if (prop === 'children') {
           // Ignore children prop
         } else if (prop === 'style') {
-          html = html + ` style="${styleToCSS(value, options.remRatio)}"`;
+          html = html + ` style="${styleToCSS(value, options)}"`;
         } else if (prop === 'className') {
           html = html + ` class="${escapeText(value)}"`;
         } else if (prop === 'defaultValue') {

@@ -10,10 +10,12 @@ module.exports = class Server {
     const {
       template,
       pages,
+      renderOpts
     } = options;
 
     this.template = template;
     this.pages = pages || {};
+    this.renderOpts = renderOpts;
   }
 
   async render(req, res, options) {
@@ -51,8 +53,9 @@ module.exports = class Server {
         page,
         component,
         template,
+        renderOpts: this.renderOpts,
         ...options,
-        ...parsedUrl
+        ...parsedUrl,
       });
       return html;
     } catch (err) {
@@ -71,6 +74,7 @@ module.exports = class Server {
 
     const html = await renderToHTML(req, res, {
       page: '_error',
+      renderOpts: this.renderOpts,
       ...options,
       component,
       template,
@@ -124,16 +128,15 @@ async function renderToHTML(req, res, options) {
     component,
     pathname,
     query,
-    err
+    err,
+    renderOpts
   } = options;
 
   const ctx = { req, res, pathname, query, err };
 
   const pageProps = await getInitialProps(component, { ctx });
   const pageElement = createElement(component, pageProps);
-  const pageContent = renderer.renderToString(pageElement, {
-    remRatio: 100
-  });
+  const pageContent = renderer.renderToString(pageElement, renderOpts);
 
   if (!template) {
     return pageContent;
