@@ -14,8 +14,8 @@ module.exports = {
   resolve: webpackConfig.resolve,
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-      chunkFilename: 'css/[id].css',
+      filename: 'client/[name].css',
+      chunkFilename: 'client/[id].css',
     }),
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
