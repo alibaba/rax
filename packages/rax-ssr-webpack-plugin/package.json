@@ -15,8 +15,8 @@
   "engines": {
     "npm": ">=3.0.0"
   },
-  "dependencies": {
-    "loader-utils": "^1.2.3",
+  "peerDependencies": {
     "rax": "^1.0.4",
+    "rax-hydrate": "^1.0.1"
   }
 }

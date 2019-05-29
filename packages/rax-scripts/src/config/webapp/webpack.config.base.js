@@ -1,18 +1,8 @@
 'use strict';
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpackConfig = require('../webpack.config');
-const pathConfig = require('../path.config');
-const babelConfig = require('../babel.config');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-babelConfig.presets.push([
-  require.resolve('@babel/preset-react'), {
-    'pragma': 'createElement',
-    'pragmaFrag': 'Fragment'
-  }
-]);
 
 module.exports = {
   mode: webpackConfig.mode,
@@ -22,13 +12,7 @@ module.exports = {
   entry: webpackConfig.entry,
   output: webpackConfig.output,
   resolve: webpackConfig.resolve,
-
   plugins: [
-    // Generates an `index.html` file with the <script> injected.
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: pathConfig.appHtml,
-    }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
       chunkFilename: 'css/[id].css',
@@ -45,16 +29,6 @@ module.exports = {
         use: [
           {
             loader: require.resolve('ts-loader'),
-          },
-        ],
-      },
-      {
-        test: /\.(js|mjs|jsx)$/,
-        exclude: /(node_modules|bower_components)/,
-        use: [
-          {
-            loader: require.resolve('babel-loader'),
-            options: babelConfig,
           },
         ],
       },

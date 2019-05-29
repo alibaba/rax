@@ -2,7 +2,6 @@ const url = require('url');
 const qs = require('querystring');
 const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
-const handlebars = require('handlebars');
 
 const ErrorComponent = require('./lib/Error');
 
@@ -11,57 +10,47 @@ module.exports = class Server {
     const {
       template,
       pages,
-      layout
     } = options;
 
-    if (template) {
-      try {
-        this.template = handlebars.compile(template);
-      } catch (err) {
-        console.log(err);
-        throw new Error('template compile error');
-      }
-    }
-
+    this.template = template;
     this.pages = pages || {};
-    this.layout = layout;
-
-    this.render = this.render.bind(this);
-    this.renderToHTML = this.renderToHTML.bind(this);
-    this.renderErrorToHTML = this.renderErrorToHTML.bind(this);
   }
 
-  async render(page, req, res, options) {
-    const html = await this.renderToHTML(page, req, res, options);
+  async render(req, res, options) {
+    const html = await this.renderToHTML(req, res, options);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   }
 
-  async renderToHTML(page, req, res, options = {}) {
+  async renderToHTML(req, res, options = {}) {
     const {
+      page,
       pathname,
       query
     } = options;
 
     const parsedUrl = getParsedUrl(req, pathname, query);
 
-    let pageComponent;
+    const component = this.getComponent(page) || options.component;
 
-    if (options.Component) {
-      pageComponent = options.Component;
-    } else if (this.pages[page] && this.pages[page].bundle) {
-      pageComponent = this.pages[page].bundle;
-    } else {
+    if (!component) {
       res.statusCode = 404;
       const err = new PageNotFoundError(page);
-      return this.renderErrorToHTML(err, req, res, parsedUrl);
+      this.logError(err);
+      return this.renderErrorToHTML(req, res, {
+        err,
+        ...options
+      });
     }
 
+    const template = this.getTemplate();
+
     try {
-      const html = await renderToHTML(page, req, res, {
-        Component: pageComponent,
-        template: this.pages[page] && this.pages[page].template ? this.pages[page].template : this.template,
+      const html = await renderToHTML(req, res, {
+        page,
+        component,
+        template,
         ...options,
         ...parsedUrl
       });
@@ -69,30 +58,38 @@ module.exports = class Server {
     } catch (err) {
       this.logError(err);
       res.statusCode = 500;
-      return this.renderErrorToHTML(err, req, res, parsedUrl);
+      return this.renderErrorToHTML(req, res, {
+        err,
+        ...options
+      });
     }
   }
 
-  async renderErrorToHTML(err, req, res, parsedUrl) {
-    let component;
-    let template;
+  async renderErrorToHTML(req, res, options = {}) {
+    const component = this.getComponent('_error') || ErrorComponent;
+    const template = this.getComponent('_error');
 
-    if (this.pages._error) {
-      component = this.pages._error.bundle ? this.pages._error.bundle : ErrorComponent;
-      template = this.pages._error.template ? this.pages._error.template : this.template;
-    } else {
-      component = ErrorComponent;
-      template = this.template;
-    }
-
-    const html = await renderToHTML('_error', req, res, {
-      Component: component,
-      template: template,
-      ...parsedUrl,
-      err
+    const html = await renderToHTML(req, res, {
+      page: '_error',
+      ...options,
+      component,
+      template,
     });
 
     return html;
+  }
+
+  getTemplate(page) {
+    if (page && this.pages && this.pages[page] && this.pages[page].template) {
+      return this.pages[page].template;
+    }
+    return this.template;
+  }
+
+  getComponent(page) {
+    if (this.pages && this.pages[page] && this.pages[page].component) {
+      return this.pages[page].component;
+    }
   }
 
   logError(err) {
@@ -121,10 +118,10 @@ class PageNotFoundError extends Error {
   }
 }
 
-async function renderToHTML(page, req, res, options) {
+async function renderToHTML(req, res, options) {
   const {
-    Component,
     template,
+    component,
     pathname,
     query,
     err
@@ -132,22 +129,24 @@ async function renderToHTML(page, req, res, options) {
 
   const ctx = { req, res, pathname, query, err };
 
-  let props;
-
-  props = await getInitialProps(Component, { ctx });
-
-  const element = createElement(Component, props);
-
-  const content = renderer.renderToString(element, {
+  const pageProps = await getInitialProps(component, { ctx });
+  const pageElement = createElement(component, pageProps);
+  const pageContent = renderer.renderToString(pageElement, {
     remRatio: 100
   });
 
-  const html = template({
-    page,
-    data: JSON.stringify(props),
-    content,
-    pathname
+  if (!template) {
+    return pageContent;
+  }
+
+  const templateProps = await getInitialProps(template, { ctx });
+  const templateElement = createElement(template, {
+    pageContent,
+    pageProps: JSON.stringify(pageProps),
+    templateProps
   });
+
+  const html = '<!doctype html>' + renderer.renderToString(templateElement);
 
   return html;
 }

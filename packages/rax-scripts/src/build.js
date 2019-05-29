@@ -18,8 +18,7 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
 const componentCompiler = require('./utils/componentCompiler');
 const jsx2mp = require('jsx2mp');
-const envConfig = require('./config/env.config');
-const getPWAWebpackConfig = require('./utils/getPWAWebpackConfig');
+const getWebpackConfig = require('./utils/getWebpackConfig');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -36,11 +35,6 @@ function buildCompiler(config) {
 
 const MINIAPP = 'miniapp';
 const COMPONENT = 'component';
-const webpackConfigMap = {
-  webapp: './config/webapp/webpack.config.prod',
-  weexapp: './config/weexapp/webpack.config.prod',
-  component: './config/component/webpack.config.prod',
-};
 
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
@@ -48,7 +42,7 @@ module.exports = function build(type = 'webapp') {
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
   } else if (type === COMPONENT) { // build component
-    var webpackConfigComponentDistProd = require(webpackConfigMap.component);
+    const webpackConfigComponentDistProd = getWebpackConfig(type);
     componentCompiler(appPackage.name);
     rimraf(pathConfig.appDist, function(err) {
       if (err) {
@@ -61,7 +55,7 @@ module.exports = function build(type = 'webapp') {
       if (err) {
         throw err;
       }
-      const config = envConfig.pwa ? getPWAWebpackConfig() : require(webpackConfigMap[type]);
+      const config = getWebpackConfig(type);
       buildCompiler(config);
     });
   }

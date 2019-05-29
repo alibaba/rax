@@ -10,23 +10,25 @@ module.exports = function(source) {
   } = query;
 
   return `
-    import RAXServer from 'rax-server';
+    import RaxServer from 'rax-server';
 
     import App from '${appPath}';
     import template from '${templatePath}';
 
-    const server = new RAXServer({
+    const server = new RaxServer({
       template: template,
       pages: {
         '${page}': {
-          bundle: App
+          component: App
         }
       }
     });
 
     export async function render(req, res) {
       try {
-        server.render('${page}', req, res);
+        server.render(req, res, {
+          page: '${page}'
+        });
       } catch (err) {
         console.error(err);
         res.statusCode = 500;

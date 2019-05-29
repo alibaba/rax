@@ -5,7 +5,7 @@ const RaxServer = require('rax-server');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
-const getEntries = require('./getPWAEntries');
+const getEntries = require('./getEntries');
 const pathConfig = require('../config/path.config');
 
 class DevServer {
@@ -19,24 +19,26 @@ class DevServer {
     // eslint-disable-next-line new-cap
     const router = express.Router();
 
-    const server = new RaxServer({
-      template: fs.readFileSync(pathConfig.appHtml, {encoding: 'utf8'})
-    });
+    const server = new RaxServer();
 
     const entries = getEntries();
 
     Object.keys(entries).map(entry => {
       router.get(`/${entry}`, (req, res) => {
-        server.render(entry, req, res, {
-          Component: this.loadComponent(entry, res)
+        server.render(req, res, {
+          page: entry,
+          template: this.loadComponent('_template', res),
+          component: this.loadComponent(entry, res)
         });
       });
     });
 
     if (entries.index) {
       router.get('/', (req, res) => {
-        server.render('index', req, res, {
-          Component: this.loadComponent('index', res)
+        server.render(req, res, {
+          page: 'index',
+          template: this.loadComponent('_template', res),
+          component: this.loadComponent('index', res)
         });
       });
     }

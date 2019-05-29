@@ -20,14 +20,10 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
-const getPWAWebpackConfig = require('./utils/getPWAWebpackConfig');
+const getAppConfig = require('./utils/getAppConfig');
+const getWebpackConfig = require('./utils/getWebpackConfig');
 
 const MINIAPP = 'miniapp';
-const webpackConfigMap = {
-  webapp: './config/webapp/webpack.config.dev',
-  weexapp: './config/weexapp/webpack.config.dev',
-  component: './config/component/webpack.config.dev',
-};
 
 /**
  * run webpack dev server
@@ -38,19 +34,12 @@ module.exports = function start(type = 'webapp') {
     return;
   }
 
-  const config = envConfig.pwa ? getPWAWebpackConfig('dev') : require(webpackConfigMap[type]);
-  const compiler = createWebpackCompiler(config);
-
-  let isSSR;
-  if (envConfig.pwa) {
-    const appJSON = require(pathConfig.appJSON);
-    if (appJSON && appJSON.ssr) {
-      isSSR = true;
-    }
-  }
+  const appConfig = getAppConfig() || {};
+  const webpackConfig = getWebpackConfig(type, 'dev');
+  const compiler = createWebpackCompiler(webpackConfig);
 
   let devServer;
-  if (isSSR) {
+  if (appConfig.ssr) {
     devServer = new SSRDevServer(compiler);
   } else {
     devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
