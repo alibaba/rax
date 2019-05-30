@@ -39,7 +39,7 @@ module.exports = function(args) {
     .readFileSync(readmePath, 'utf-8')
     .replace(/__YourProjectName__/g, projectName);
   fs.writeFileSync(readmePath, replaceReadme);
-  
+
   process.chdir(projectDir);
   return Promise.resolve(projectDir);
 };
