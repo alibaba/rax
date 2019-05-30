@@ -18,6 +18,7 @@ module.exports = {
     '/lib/',
     '/dist/',
     'sfc-loader',
+    'rax-cli/src/generator/',
     'atag'
   ]
 };
