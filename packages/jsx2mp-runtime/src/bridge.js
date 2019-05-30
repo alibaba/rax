@@ -1,4 +1,4 @@
-import { Component } from './component';
+import Component from './component';
 import Host from './host';
 
 const PAGE_EVENTS_HANDLE_LIST = [
@@ -202,7 +202,7 @@ export function createApp(Klass) {
  * @return {Object} MiniApp Page constructor's config.
  */
 export function createPage(ComponentClass) {
-  const isClass = ComponentClass.prototype.isClassComponent;
+  const isClass = ComponentClass.prototype.getIsComponentClass();
   let handleEventsList = [];
   let componentConfig = {};
   if (isClass) {

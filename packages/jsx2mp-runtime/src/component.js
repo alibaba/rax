@@ -3,9 +3,8 @@
  */
 import Host from './host';
 
+const _isClassComponent = true;
 export default class Component {
-  isClassComponent = true;
-
   constructor(state, props, type) {
     this.state = {};
     this.props = {};
@@ -33,6 +32,9 @@ export default class Component {
   }
   getHookID() {
     return ++this._hookID;
+  }
+  getIsComponentClass() {
+    return _isClassComponent;
   }
   _update(patialState) {
     Host.isUpdating = true;
