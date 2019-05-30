@@ -1,4 +1,4 @@
-import { Component } from './baseComponent';
+import { Component } from './component';
 import Host from './host';
 
 const PAGE_EVENTS_HANDLE_LIST = [
@@ -56,7 +56,7 @@ function getCurrentPageUrl() {
 /**
  * bind scope from componentClass to miniApp and init global instance.
  * @param {Object} options miniApp page options.
- * @param {Object or Function} ComponentClass current componentClass.
+ * @param {Class|Function} ComponentClass current componentClass.
  * @param {Boolean} isClass is a Class or a Function.
  *
  */
@@ -67,11 +67,6 @@ function initInstance(options = {}, ComponentClass, isClass) {
     this.instance = ComponentClass;
   }
   this.instance.scopeInit(this);
-  this.instance.miniRoute = {
-    params: options,
-    // eslint-disable-next-line no-undef
-    path: getCurrentPageUrl()
-  };
   this.instance._isReady = true;
 }
 /**
@@ -191,6 +186,16 @@ function transformComponentCicyle(ComponentClass, isClass) {
     }
   });
 }
+
+/**
+ * Bridge App definition.
+ * @param Klass
+ * @return instance
+ */
+export function createApp(Klass) {
+  return new Klass();
+}
+
 /**
  * Bridge from Rax page component class to MiniApp Component constructor.
  * @param {RaxComponent} ComponentClass Rax page component.
@@ -242,6 +247,7 @@ export function createPage(ComponentClass) {
   });
   return componentConfig;
 }
+
 export function createComponent(ComponentClass) {
   const isClass = ComponentClass.prototype.isClassComponent;
   let handleEventsList = [];

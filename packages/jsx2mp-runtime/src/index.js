@@ -1,6 +1,5 @@
-import { createApp } from './app';
-import { createPage, createComponent } from './page';
-import { Component } from './baseComponent';
+import { createApp, createPage, createComponent } from './bridge';
+import Component from './component';
 import { checkEnv } from './env';
 
 /**
@@ -11,8 +10,9 @@ checkEnv();
 export {
   createApp,
   createPage,
-  Component,
   createComponent,
+
+  Component,
 };
 
 /* hooks */
