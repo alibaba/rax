@@ -212,6 +212,7 @@ function transformTemplate(ast) {
       }
 
       // Special to avoid loop.
+      case 'JSXEmptyExpression':
       case 'ObjectExpression':
         break;
 
