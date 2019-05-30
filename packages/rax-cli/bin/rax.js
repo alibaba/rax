@@ -4,17 +4,15 @@
 const updateNotifier = require('update-notifier');
 const pkg = require('../package.json');
 
-updateNotifier({ pkg: pkg }).notify();
+updateNotifier({pkg: pkg}).notify();
 
 // Check node version
 const chalk = require('chalk');
 const semver = require('semver');
 
 if (!semver.satisfies(process.version, '>=8')) {
-  const message =
-    'You are currently running Node.js ' +
-    chalk.red(process.version) +
-    '.\n' +
+  const message = 'You are currently running Node.js ' +
+    chalk.red(process.version) + '.\n' +
     '\n' +
     'Rax runs on Node 6.0 or newer. There are several ways to ' +
     'upgrade Node.js depending on your preference.\n' +
@@ -35,7 +33,12 @@ const inquirer = require('inquirer');
 const cli = require('../src/');
 const argv = require('minimist')(process.argv.slice(2));
 
-const RAX_PACKAGE_JSON_PATH = path.resolve(process.cwd(), 'node_modules', 'rax', 'package.json');
+const RAX_PACKAGE_JSON_PATH = path.resolve(
+  process.cwd(),
+  'node_modules',
+  'rax',
+  'package.json'
+);
 
 checkForVersionArgument();
 
@@ -43,21 +46,28 @@ checkForVersionArgument();
 const commands = argv._;
 
 if (commands.length === 0) {
-  console.error('You did not pass any commands, did you mean to run `rax init`?');
+  console.error(
+    'You did not pass any commands, did you mean to run `rax init`?'
+  );
   process.exit(1);
 }
 
 switch (commands[0]) {
   case 'init':
     if (!commands[1]) {
-      console.error('Usage: rax init <ProjectName> [--verbose]');
+      console.error(
+        'Usage: rax init <ProjectName> [--verbose]'
+      );
       process.exit(1);
     } else {
       init(commands[1], argv.verbose, argv.version);
     }
     break;
   default:
-    console.error('Command `%s` unrecognized.', commands[0]);
+    console.error(
+      'Command `%s` unrecognized.',
+      commands[0]
+    );
     process.exit(1);
     break;
 }
@@ -106,13 +116,13 @@ function askProjectInformaction(name, verbose) {
     {
       type: 'input',
       name: 'projectName',
-      message: "What's your project name?",
+      message: 'What\'s your project name?',
       default: name
     },
     {
       type: 'list',
       name: 'projectType',
-      message: "What's your project type?",
+      message: 'What\'s your project type?',
       choices: [
         {
           name: 'WebApp',
@@ -136,7 +146,7 @@ function askProjectInformaction(name, verbose) {
     {
       type: 'input',
       name: 'projectAuthor',
-      message: "What's author's name?",
+      message: 'What\'s author\'s name?',
       default: 'rax'
     },
     {
@@ -150,42 +160,42 @@ function askProjectInformaction(name, verbose) {
 }
 
 function createProject(name, verbose, userAnswers) {
-  var pkgManager = shouldUseYarn() ? 'yarn' : 'tnpm';
+  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   var root = path.resolve(name);
   var projectName = userAnswers.projectName;
   var autoInstallModules = userAnswers.autoInstallModules;
 
-  console.log('Creating a new Rax project in', root);
+  console.log(
+    'Creating a new Rax project in',
+    root
+  );
 
   if (!fs.existsSync(root)) {
     fs.mkdirSync(root);
   }
   process.chdir(root);
 
-  cli
-    .init({
-      root: root,
-      directoryName: name,
-      projectName: projectName,
-      projectType: userAnswers.projectType,
-      projectAuthor: userAnswers.projectAuthor,
-      verbose: verbose
-    })
-    .then(function(directory) {
-      if (autoInstallModules) {
-        return install(directory, verbose);
-      } else {
-        return false;
-      }
-    })
-    .then(function(isAutoInstalled) {
-      console.log(chalk.white.bold('To run your app:'));
-      console.log(chalk.white('   cd ' + projectName));
-      if (!isAutoInstalled) {
-        console.log(chalk.white('   ' + (pkgManager === 'tnpm' ? 'tnpm install' : 'yarn')));
-      }
-      console.log(chalk.white('   ' + pkgManager + ' start'));
-    });
+  cli.init({
+    root: root,
+    directoryName: name,
+    projectName: projectName,
+    projectType: userAnswers.projectType,
+    projectAuthor: userAnswers.projectAuthor,
+    verbose: verbose,
+  }).then(function(directory) {
+    if (autoInstallModules) {
+      return install(directory, verbose);
+    } else {
+      return false;
+    }
+  }).then(function(isAutoInstalled) {
+    console.log(chalk.white.bold('To run your app:'));
+    console.log(chalk.white('   cd ' + projectName));
+    if (!isAutoInstalled) {
+      console.log(chalk.white('   ' + (pkgManager === 'npm' ? 'npm install' : 'yarn')));
+    }
+    console.log(chalk.white('   ' + pkgManager + ' start'));
+  });
 }
 
 function checkForVersionArgument() {
@@ -202,7 +212,7 @@ function checkForVersionArgument() {
 
 function shouldUseYarn() {
   try {
-    execSync('yarn --version', { stdio: 'ignore' });
+    execSync('yarn --version', {stdio: 'ignore'});
     return true;
   } catch (e) {
     return false;
@@ -218,14 +228,14 @@ function shouldUseYarn() {
 function install(directory, verbose) {
   console.log(chalk.white.bold('Install dependencies:'));
 
-  var pkgManager = shouldUseYarn() ? 'yarn' : 'tnpm';
+  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   var args = ['install'];
   if (verbose) {
     args.push('--verbose');
   }
 
   return new Promise(function(resolve) {
-    var proc = spawn(pkgManager, args, { stdio: 'inherit', cwd: directory });
+    var proc = spawn(pkgManager, args, {stdio: 'inherit', cwd: directory});
 
     proc.on('close', function(code) {
       if (code !== 0) {
