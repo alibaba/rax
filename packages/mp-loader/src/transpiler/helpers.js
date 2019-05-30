@@ -45,7 +45,7 @@ function getAndRemoveAttr(el, name) {
  */
 function normalizeMustache(exp, el) {
   /**
-   * It's so strange that wx/alipay
+   * It's so strange that wx/ali
    * support both {{ a: 1 }} or {{ data }}
    * shouldn't it be {{{ a: 1 }}} and {{ data }} ?
    */

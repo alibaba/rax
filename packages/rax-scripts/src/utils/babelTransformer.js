@@ -1,9 +1,11 @@
-module.exports = require('babel-jest').createTransformer({
-  'presets': [
-    '@babel/preset-env',
-    ['@babel/preset-react', {
-      'pragma': 'createElement',
-      'pragmaFrag': 'Fragment'
-    }]
-  ]
-});
+const babelConfig = require('../config/babel.config');
+
+babelConfig.presets.push([
+  require.resolve('@babel/preset-react'),
+  {
+    pragma: 'createElement',
+    pragmaFrag: 'Fragment'
+  }
+]);
+babelConfig.presets.push(require.resolve('@babel/preset-typescript'));
+module.exports = require('babel-jest').createTransformer(babelConfig);

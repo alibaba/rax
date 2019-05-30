@@ -1,3 +1,6 @@
+const { createAdapter } = require('../../adapter');
+
+createAdapter();
 const { transformNode } = require('../bind');
 
 describe('Transpile module: bind', () => {

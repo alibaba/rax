@@ -97,7 +97,7 @@ function styleToCSS(style, remRatio) {
       // Noop
     } else if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
       unit = 'rem';
-    } else if (val.indexOf('rem') > -1) {
+    } else if (typeof val === 'string' && val.indexOf('rem') > -1) {
       // stylesheet-loader will transform padding: 40 to paddingTop: '40rem' ...
       val = parseFloat(val);
       unit = 'rem';

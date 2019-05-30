@@ -1,6 +1,6 @@
 {
   "name": "rax-use-router",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Rax useRouter hook.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -19,8 +19,9 @@
     "rax": "^1.0.0"
   },
   "devDependencies": {
-    "rax": "^1.0.0",
-    "driver-server": "^1.0.0"
+    "driver-server": "^1.0.0",
+    "history": "^4.9.0",
+    "rax": "^1.0.0"
   },
   "dependencies": {
     "path-to-regexp": "^3.0.0"
