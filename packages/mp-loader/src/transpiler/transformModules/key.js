@@ -1,10 +1,14 @@
 const { getAndRemoveAttr, normalizeMustache } = require('../helpers');
 
-const ATTR_KEY = 'a:key';
 const IS_BIND_REG = /\W*\{\{/;
+const { getAdapter } = require('../adapter');
+
+const adapter = getAdapter();
+
 
 function transformNode(el) {
   let key;
+  const { ATTR_KEY } = adapter;
   if (el.hasOwnProperty('key') && IS_BIND_REG.test(el.key)) {
     key = normalizeMustache(el.key, el);
   } else if (el.attrsMap && el.attrsMap.hasOwnProperty(ATTR_KEY)) {
@@ -14,7 +18,7 @@ function transformNode(el) {
   if (key) {
     el.key = key;
   }
-}
+};
 
 module.exports = {
   transformNode

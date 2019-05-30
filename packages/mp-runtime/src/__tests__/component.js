@@ -264,5 +264,25 @@ describe('Mini Program Component', () => {
 
     Rax.render(createElement(Page), null, { driver });
   });
+
+  it('should render weixin component props', () => {
+    function renderFactory(Rax) {
+      return function(data) {
+        return createElement('view', {
+          bar: data.bar,
+        });
+      };
+    }
+    const Comp = createComponent(renderFactory, Rax, {
+      properties: {
+        bar: {
+          type: String,
+          value: 'from prop'
+        }
+      },
+    }, null, null, 'weixin');
+    const tree = renderer.create(createElement(Comp));
+    expect(tree).toMatchSnapshot();
+  });
 });
 

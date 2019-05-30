@@ -6,15 +6,17 @@ const {
 } = require('../helpers');
 
 const IS_BIND_REG = /\W*\{\{/;
-const IS_DETECTIVE = /^a\:/;
+
+const { getAdapter } = require('../adapter');
+
+const adapter = getAdapter();
 
 function transformNode(el) {
   const { attrsList, attrsMap } = el;
-
+  const { IS_DETECTIVE } = adapter;
   if (!attrsList) {
     return;
   }
-
   const keys = attrsList.map(({name}) => name);
   for (let i = 0, l = keys.length; i < l; i++) {
     transformAttr({
@@ -35,7 +37,8 @@ function transformNode(el) {
       addAttr(el, transformedName, exp, '');
     }
   }
-}
+};
+
 
 module.exports = {
   transformNode

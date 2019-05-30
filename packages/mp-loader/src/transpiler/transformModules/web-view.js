@@ -3,10 +3,15 @@ const { getRootEl, getAndRemoveAttr } = require('../helpers');
 const IS_BIND_REG = /\W*\{\{/;
 const WEBVIEW_TAG = 'web-view';
 
-function transformNode(el, state) {
-  const rootEl = getRootEl(el);
-  const { src, onMessage } = el.attrsMap;
+const { getAdapter } = require('../adapter');
 
+const adapter = getAdapter();
+
+function transformNode(el) {
+  const { MESSAGE_ATTRIBUTE } = adapter;
+  const rootEl = getRootEl(el);
+  const { src } = el.attrsMap;
+  const onMessage = el.attrsMap[MESSAGE_ATTRIBUTE];
   if (el.tag === WEBVIEW_TAG) {
     rootEl.isWebView = true;
 

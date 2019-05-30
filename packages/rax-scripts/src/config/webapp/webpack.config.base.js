@@ -44,6 +44,10 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         use: [
           {
+            loader: require.resolve('babel-loader'),
+            options: babelConfig,
+          },
+          {
             loader: require.resolve('ts-loader'),
           },
         ],

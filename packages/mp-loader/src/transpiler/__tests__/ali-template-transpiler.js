@@ -1,10 +1,14 @@
-const { parse } = require('../parser');
-const generate = require('../generate');
-const modules = require('../transpileModules');
 const babylon = require('babylon');
+const createGenerate = require('../createGenerator');
+const createParse = require('../createParser');
+const { createAdapter } = require('../adapter');
 
-const transpilerOptions = { modules };
+createAdapter();
+const modules = require('../transformModules');
 
+const generate = createGenerate(modules);
+const parse = createParse(modules);
+const transpilerOptions = { modules: modules };
 /**
  * Check whether a js string is valid.
  */
@@ -42,6 +46,7 @@ describe('Transpiler parse', () => {
         <text>world</text>
       </view>
     `;
+
     const ast = parse(content, transpilerOptions);
     expect(ast).toMatchSnapshot();
 
@@ -98,7 +103,7 @@ describe('Transpiler parse', () => {
 
   it('a:for with a:if and a:key', () => {
     const content = `
-      <view 
+      <view
         a:key="{{item.id}}"
         a:for="todos"
         a:if="{{item.checked}}"
@@ -155,7 +160,7 @@ describe('Transpiler parse', () => {
         btnType: btnType.green
       }}">
       </template>
-      <view 
+      <view
         data-info="{{item.name}},{{item.order_item_id}}"
       ></view>
     `;

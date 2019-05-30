@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Mini Program Component should render data and props 1`] = `
+exports['Mini Program Component should render data and props 1'] = `
 Object {
   "attributes": Object {
     "bar": "from prop",
@@ -10,7 +10,7 @@ Object {
 }
 `;
 
-exports[`Mini Program Component should render default slots 1`] = `
+exports['Mini Program Component should render default slots 1'] = `
 Object {
   "children": Array [
     "Hello ",
@@ -20,7 +20,7 @@ Object {
 }
 `;
 
-exports[`Mini Program Component should render style once 1`] = `
+exports['Mini Program Component should render style once 1'] = `
 Object {
   "mutations": Array [
     Object {
@@ -55,7 +55,7 @@ Object {
 }
 `;
 
-exports[`Mini Program Component should works well with didMount lifecycle 1`] = `
+exports['Mini Program Component should works well with didMount lifecycle 1'] = `
 Object {
   "attributes": Object {
     "foo": "modified in didMount",
@@ -64,7 +64,7 @@ Object {
 }
 `;
 
-exports[`Mini Program Component should works well with methods 1`] = `
+exports['Mini Program Component should works well with methods 1'] = `
 Object {
   "children": Array [
     "1",
@@ -73,7 +73,7 @@ Object {
 }
 `;
 
-exports[`Mini Program Component should works well with named slot 1`] = `
+exports['Mini Program Component should works well with named slot 1'] = `
 Object {
   "children": Array [
     "child",
@@ -87,6 +87,15 @@ Object {
       "tagName": "TEXT",
     },
   ],
+  "tagName": "VIEW",
+}
+`;
+
+exports['Mini Program Component should render weixin component props 1'] = `
+Object {
+  "attributes": Object {
+    "bar": "from prop",
+  },
   "tagName": "VIEW",
 }
 `;
