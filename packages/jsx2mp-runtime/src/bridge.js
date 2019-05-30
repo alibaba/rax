@@ -1,5 +1,5 @@
-import { Component } from './component';
 import Host from './host';
+import Component from './component';
 
 const PAGE_EVENTS_HANDLE_LIST = [
   'onShareAppMessage',
@@ -202,7 +202,7 @@ export function createApp(Klass) {
  * @return {Object} MiniApp Page constructor's config.
  */
 export function createPage(ComponentClass) {
-  const isClass = ComponentClass.prototype.isClassComponent;
+  const isClass = ComponentClass.prototype.__proto__ === Component.prototype;
   let handleEventsList = [];
   let componentConfig = {};
   if (isClass) {
@@ -249,7 +249,7 @@ export function createPage(ComponentClass) {
 }
 
 export function createComponent(ComponentClass) {
-  const isClass = ComponentClass.prototype.isClassComponent;
+  const isClass = ComponentClass.prototype.__proto__ === Component.prototype;
   let handleEventsList = [];
   let componentConfig = {};
   if (isClass) {

@@ -4,8 +4,6 @@
 import Host from './host';
 
 export default class Component {
-  isClassComponent = true;
-
   constructor(state, props, type) {
     this.state = {};
     this.props = {};
