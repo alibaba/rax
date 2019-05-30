@@ -6,13 +6,8 @@ declare namespace Component {
   }
 
   interface BaseProps<D extends AnyObject = any> {
-    /** 组件内部状态 */
     data?: D;
-
-    /** 组件外部传入属性 */
     props?: D;
-
-    /** 更新组件数据 */
     setData?<K extends keyof D>(
       data: D | Pick<D, K>,
       callback?: () => void,
@@ -24,13 +19,9 @@ declare namespace Component {
     T extends AnyObject = any
   > extends BaseProps<D> {
     didMount?(): void;
-
     didUpdate?(prevProps: AnyObject, prevData: AnyObject): void;
-
     didUnmount?(): void;
-
     methods?: Methods;
-
     [propName: string]: any;
   }
 
