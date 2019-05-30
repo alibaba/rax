@@ -36,10 +36,17 @@ let componentCount = 0;
 
 export default function createComponent(renderFactory, render, config, componentPath, cssText, type = 'ali') {
   const templateRender = renderFactory(render);
-  let props;
+  let props = {};
   switch (type) {
     case 'weixin':
-      props = config.properties;
+      if (config.properties && typeof config.properties === 'object') {
+        Object.keys(config.properties).forEach(property => {
+          const propValue = config.properties[property];
+          if (typeof propValue === 'object' && propValue.value !== undefined) {
+            props[property] = propValue.value;
+          }
+        });
+      }
       break;
     case 'ali':
     default:
