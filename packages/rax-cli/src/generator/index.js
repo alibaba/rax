@@ -7,13 +7,15 @@ module.exports = function(args) {
   var projectDir = args.root;
   var projectName = args.projectName;
   var projectAuthor = args.projectAuthor;
+  var projectDesc = args.projectAuthor;
   var projectType = args.projectType;
 
   var templates = path.join(__dirname, projectType);
   var pkgPath = path.join(projectDir, 'package.json');
+  var readmePath = path.join(projectDir, 'README.md');
   easyfile.copy(templates, projectDir, {
     force: true,
-    backup: true,
+    backup: true
   });
 
   // Rename files start with '_'
@@ -28,11 +30,17 @@ module.exports = function(args) {
     }
   });
 
-  var replacedPkg = fs.readFileSync(pkgPath, 'utf-8')
+  var replacedPkg = fs
+    .readFileSync(pkgPath, 'utf-8')
     .replace('__YourProjectName__', projectName)
     .replace('__AuthorName__', projectAuthor);
   fs.writeFileSync(pkgPath, replacedPkg);
 
+  var replaceReadme = fs
+    .readFileSync(readmePath, 'utf-8')
+    .replace(/__YourProjectName__/g, projectName);
+  fs.writeFileSync(readmePath, replaceReadme);
+  
   process.chdir(projectDir);
   return Promise.resolve(projectDir);
 };
