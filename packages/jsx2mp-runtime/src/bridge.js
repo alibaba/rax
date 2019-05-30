@@ -202,7 +202,7 @@ export function createApp(Klass) {
  * @return {Object} MiniApp Page constructor's config.
  */
 export function createPage(ComponentClass) {
-  const isClass = ComponentClass.prototype.getIsComponentClass();
+  const isClass = ComponentClass.prototype.__proto__ === Component.prototype;
   let handleEventsList = [];
   let componentConfig = {};
   if (isClass) {
