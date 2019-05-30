@@ -4,10 +4,11 @@
 import Host from './host';
 
 export default class Component {
-  constructor(state, props, type) {
+  constructor(ops) {
+    const { state, props, functionClass } = ops;
     this.state = {};
     this.props = {};
-    this.componentType = type;
+    this.functionClass = functionClass;
     this.callbacksQueue = [];
     this.shouldUpdate = false;
 
