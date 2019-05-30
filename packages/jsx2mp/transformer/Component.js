@@ -1,5 +1,6 @@
-const { resolve, relative, extname } = require('path');
+const { resolve, relative } = require('path');
 const { transformJSX, writeFiles, isCustomComponent, formatConfing } = require('./Transformer');
+const removeExt = require('../utils/removeExt');
 
 /**
  * Create component files
@@ -19,11 +20,6 @@ const createComponent = function(rootContext, distPath, usingComponents) {
     }
   }
 };
-
-function removeExt(path) {
-  const ext = extname(path);
-  return path.slice(0, path.length - ext.length);
-}
 
 module.exports = {
   createComponent

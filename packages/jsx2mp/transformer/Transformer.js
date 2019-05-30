@@ -1,7 +1,8 @@
-const { writeFile } = require('../utils/file');
 const compiler = require('jsx-compiler');
 const { readFileSync } = require('fs-extra');
 const { resolve, relative } = require('path');
+const { writeFile } = require('../utils/file');
+const removeExt = require('../utils/removeExt');
 
 /**
  * Write files
@@ -38,10 +39,9 @@ const transformJSX = function(sourcePath, type) {
 function formatConfing(config, rootPath) {
   for (let [key, value] of Object.entries(config.usingComponents)) {
     if (isCustomComponent(value)) {
-      let path = resolve(value, '..');
-      path = path + '/index';
-      path = relative(rootPath, path);
-      config.usingComponents[key] = '/' + path;
+      let result = relative(rootPath, value); // components/Repo.jsx
+      result = removeExt(result); // components/Repo
+      config.usingComponents[key] = '/' + result;
     }
   }
   return config;
