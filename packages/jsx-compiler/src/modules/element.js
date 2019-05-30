@@ -213,6 +213,9 @@ function transformTemplate(ast) {
 
       // Special to avoid loop.
       case 'JSXEmptyExpression':
+        path.remove();
+        break;
+
       case 'ObjectExpression':
         break;
 
