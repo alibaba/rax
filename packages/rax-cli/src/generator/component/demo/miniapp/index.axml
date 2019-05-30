@@ -1,0 +1,3 @@
+<rax-demo className="testClass" style="height:300rpx;width:300rpx;background:red">
+  hello world
+</rax-demo>

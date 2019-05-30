@@ -1,0 +1,6 @@
+{
+  "defaultTitle": "小程序Rax demo 组件",
+  "usingComponents": {
+    "rax-demo": "../../src/miniapp/index"
+  }
+}

@@ -3,12 +3,17 @@
   "version": "0.0.1",
   "description": "",
   "author": "__AuthorName__",
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "miniappConfig": {
+    "main": "lib/miniapp/index"
+  },
   "scripts": {
     "start": "rax-scripts start --type 'component' -p 8000",
+    "start:miniapp": "rax-scripts start --type 'component-miniapp'",
     "build": "rax-scripts build --type 'component'",
-    "test": "rax-scripts test --type 'component'",
-    "lint": "rax-scripts lint --type 'component'"
+    "test": "rax-scripts test",
+    "lint": "eslint --ext .js --ext .jsx --ext .ts --ext .tsx ./src"
   },
   "keywords": [
     "Rax",
@@ -18,14 +23,23 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
+    "universal-env": "^0.6.6"
   },
   "peerDependencies": {
     "rax": "^1.0.0"
   },
   "devDependencies": {
-    "rax": "^1.0.0",
-    "rax-scripts": "^1.2.0",
+    "@types/jest": "^24.0.12",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.7.0",
+    "csstype": "^2.6.4",
     "driver-dom": "^1.0.0",
-    "rax-test-renderer": "^1.0.0"
+    "driver-weex": "^1.0.0",
+    "eslint": "^5.16.0",
+    "eslint-config-rax": "^0.0.0",
+    "rax": "^1.0.0",
+    "rax-scripts": "^1.2.1-beta.2",
+    "rax-test-renderer": "^1.0.0",
+    "@rax-types/rax": "^1.0.0"
   }
 }
