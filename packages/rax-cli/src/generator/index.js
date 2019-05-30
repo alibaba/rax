@@ -7,7 +7,6 @@ module.exports = function(args) {
   var projectDir = args.root;
   var projectName = args.projectName;
   var projectAuthor = args.projectAuthor;
-  var projectDesc = args.projectAuthor;
   var projectType = args.projectType;
 
   var templates = path.join(__dirname, projectType);
