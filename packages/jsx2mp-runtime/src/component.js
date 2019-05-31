@@ -4,7 +4,7 @@
 import Host from './host';
 
 export default class Component {
-  constructor(ops) {
+  constructor(ops = {}) {
     const { state, props, functionClass } = ops;
     this.state = {};
     this.props = {};

@@ -163,7 +163,10 @@ function transformComponentCicyle(ComponentClass, isClass) {
           this.instance = ComponentClass;
         }
         initInstance.apply(this, [{}, ComponentClass, isClass]);
-        this.instance.functionClass(this.props);
+        this.instance.setState({
+          props: this.props,
+          ...this.instance.functionClass(this.props)
+        });
         triggerCicyleEvent(this.instance, 'componentWillMount');
       },
       deriveDataFromProps(nextProps) {
@@ -188,6 +191,7 @@ function transformComponentCicyle(ComponentClass, isClass) {
           props: this.props,
           ...this.instance.functionClass(this.props)
         });
+        console.log(this)
         triggerCicyleEvent(this.instance, 'componentDidMount');
       }
     };
