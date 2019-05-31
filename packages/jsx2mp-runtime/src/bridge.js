@@ -78,20 +78,26 @@ function initInstance(options = {}, ComponentClass, isClass) {
  * @return {Array} an array containing custom events
  */
 function initMethods(args) {
-  const { componentConfig, ComponentClass, isClass, baseComponent } = args;
+  const {
+    componentConfig,
+    ComponentClass,
+    isClass,
+    baseComponent,
+    events
+  } = args;
   const componentClass = ComponentClass;
+  const handleEventsList = [];
   let currentClass = {};
   let classProto = {};
   let classMethods = [];
-  const handleEventsList = [];
   if (isClass) {
     classMethods = Object.getOwnPropertyNames(componentClass.prototype);
     currentClass = componentClass;
     classProto = componentClass.prototype;
   } else {
-    classMethods = Object.keys(componentClass());
+    classMethods = events || [];
     currentClass = baseComponent;
-    classProto = componentClass();
+    classProto = componentClass({});
   }
   classMethods.forEach(methodName => {
     if ('constructor' === methodName || PAGE_CICYLES.indexOf(methodName) > -1)
@@ -150,6 +156,7 @@ function transformComponentCicyle(ComponentClass, isClass) {
           this.instance = ComponentClass;
         }
         initInstance.apply(this, [{}, ComponentClass, isClass]);
+        this.instance.functionClass(this.props);
         triggerCicyleEvent(this.instance, 'componentWillMount');
       },
       deriveDataFromProps(nextProps) {
@@ -170,6 +177,11 @@ function transformComponentCicyle(ComponentClass, isClass) {
           this.instance = ComponentClass;
         }
         initInstance.apply(this, [{}, ComponentClass, isClass]);
+        const obj = { ...this.props };
+        this.instance.setState({
+          props: this.props,
+          ...this.instance.functionClass(this.props)
+        });
         triggerCicyleEvent(this.instance, 'componentDidMount');
       }
     };
@@ -248,8 +260,9 @@ export function createPage(ComponentClass) {
   return componentConfig;
 }
 
-export function createComponent(ComponentClass) {
+export function createComponent(ComponentClass, options = {}) {
   const isClass = ComponentClass.prototype.__proto__ === Component.prototype;
+  const { events } = options;
   let handleEventsList = [];
   let componentConfig = {};
   if (isClass) {
@@ -274,22 +287,24 @@ export function createComponent(ComponentClass) {
       transformComponentCicyle(ComponentClass, isClass)
     );
   } else {
-    const baseComponent = new Component();
     const componentClass = ComponentClass;
+    const baseComponent = new Component({
+      functionClass: componentClass
+    });
     Host.current = baseComponent;
     handleEventsList = initMethods({
       componentConfig,
       ComponentClass,
       isClass,
-      baseComponent
+      baseComponent,
+      events
     });
-    const instance = Object.assign(...componentClass(), baseComponent);
     componentConfig = Object.assign(
       {
         methods: {}
       },
       componentConfig,
-      transformComponentCicyle(instance, isClass)
+      transformComponentCicyle(baseComponent, isClass)
     );
   }
   bindEvents({
