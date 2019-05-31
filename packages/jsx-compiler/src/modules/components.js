@@ -1,74 +1,101 @@
-const { resolve } = require('path');
-const { readdirSync } = require('fs-extra');
+const { join } = require('path');
+const { readJSONSync } = require('fs-extra');
+const t = require('@babel/types');
+const genExpression = require('../codegen/genExpression');
 const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
-const md5 = require('md5');
+const createJSX = require('../utils/createJSX');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
-const RAX_COMP_REG = /^rax-/;
-const RAX_COMPONENTS = new Set(
-  readdirSync(resolve(__dirname, 'rax-components'))
-    .filter(filename => RAX_COMP_REG.test(filename))
-);
-
-function existsRaxComponent(imported) {
-  const keys = Object.keys(imported);
-  for (let i = 0, l = keys.length; i < l; i ++) {
-    if (RAX_COMPONENTS.has(keys[i])) return true;
-  }
-  return false;
-}
 
 /**
  * Rax components.
  */
 module.exports = {
   parse(parsed, code, options) {
-    parsed.usingComponents = new Map();
-    if (!existsRaxComponent(parsed.imported)) return;
-    traverse(parsed.ast, {
-      ImportDeclaration(path) {
-        const { node, scope } = path;
-        if (RAX_COMPONENTS.has(node.source.value)) {
-          // Rax base components.
-          parsed.imported[node.source.value].forEach(({ local }) => {
-            if (local) {
-              parsed.usingComponents.set(local, {
-                external: true,
-                from: node.source.value,
-                tagName: node.source.value,
-              });
-            }
-          });
-          path.remove();
-        } else if (RELATIVE_COMPONENTS_REG.test(node.source.value)) {
-          // Local jsx components.
-          parsed.imported[node.source.value].forEach(({ local }) => {
-            if (local) {
-              if (!options.filePath) {
-                throw new Error('`filePath` must be passed to calc dependency path.');
-              }
-              const filename = moduleResolve(options.filePath, node.source.value, '.jsx')
-                || moduleResolve(options.filePath, node.source.value, '.js');
+    const usingComponents = parsed.usingComponents = {};
 
-              parsed.usingComponents.set(local, {
-                external: false,
-                from: node.source.value,
-                absolutePath: filename,
-                tagName: getTagName(filename),
-              });
-            }
-          });
-          path.remove();
+    function getComponentAlias(tagName) {
+      if (parsed.imported) {
+        for (let [key, value] of Object.entries(parsed.imported)) {
+          for (let i = 0, l = value.length; i < l; i++) {
+            if (value[i].local === tagName) return { from: key, ...value[i] };
+          }
         }
       }
+    }
+
+    function getComponentPath(alias) {
+      if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
+        // alias.local
+        if (!options.filePath) {
+          throw new Error('`filePath` must be passed to calc dependency path.');
+        }
+
+        const filename = moduleResolve(options.filePath, alias.from, '.jsx')
+          || moduleResolve(options.filePath, alias.from, '.js');
+        return filename;
+      } else {
+        // npm module
+        const pkgPath = moduleResolve(options.filePath, join(alias.from, 'package.json'));
+        if (!pkgPath) {
+          throw new Error('Execute npm install first.');
+        }
+        const pkg = readJSONSync(pkgPath);
+        if (pkg.miniappConfig && pkg.miniappConfig.main) {
+          return join(alias.from, pkg.miniappConfig.main);
+        } else {
+          console.warn('Not found compatible npm component "' + pkg.name + '".');
+        }
+      }
+    }
+
+    traverse(parsed.templateAST, {
+      JSXOpeningElement(path) {
+        const { node, scope, parent } = path;
+
+        if (t.isJSXIdentifier(node.name)) { // <View />
+          const alias = getComponentAlias(node.name.name);
+          removeImport(alias);
+          if (alias) {
+            node.name = t.jsxIdentifier(alias.name);
+            // handle with close tag too.
+            if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(alias.name);
+            usingComponents[alias.name] = getComponentPath(alias);
+          }
+        } else if (t.isJSXMemberExpression(node.name)) { // <RecyclerView.Cell />
+          // TODO: handle sub components.
+          throw new Error('Not support of sub components.');
+        }
+      },
+      JSXExpressionContainer(path) {
+        const { node, parentPath } = path;
+        // Only process under JSXEelement
+        if (parentPath.isJSXElement()) {
+          if ([
+            'this.props.children',
+            'children'
+          ].indexOf(genExpression(node.expression)) > -1) {
+            path.replaceWith(createJSX('slot'));
+          }
+        }
+      },
     });
+
+    function removeImport(alias) {
+      if (!alias) return;
+      traverse(parsed.ast, {
+        ImportDeclaration(path) {
+          const { node } = path;
+          if (t.isStringLiteral(node.source) && node.source.value === alias.from) {
+            path.remove();
+          }
+        }
+      });
+    }
   },
   generate(ret, parsed, options) {
-    if (parsed.usingComponents) ret.usingComponents = parsed.usingComponents;
+    ret.usingComponents = parsed.usingComponents;
   },
 };
 
-function getTagName(str) {
-  return 'c-' + md5(str).slice(0, 6);
-}

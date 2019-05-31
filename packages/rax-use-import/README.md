@@ -2,7 +2,7 @@
 
 ```jsx
 import { createElement } from 'rax';
-import useImport from 'rax-use-promise';
+import useImport from 'rax-use-import';
 
 export default function App() {
   const [Bar, error] = useImport(() => import(/* webpackChunkName: "bar" */ './Bar'));

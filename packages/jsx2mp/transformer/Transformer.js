@@ -1,6 +1,8 @@
-const { writeFile } = require('../utils/file');
 const compiler = require('jsx-compiler');
 const { readFileSync } = require('fs-extra');
+const { resolve, relative } = require('path');
+const { writeFile } = require('../utils/file');
+const removeExt = require('../utils/removeExt');
 
 /**
  * Write files
@@ -29,7 +31,33 @@ const transformJSX = function(sourcePath, type) {
   return transformed;
 };
 
+/**
+ * usingComponents change custom component path
+ * @param rootPath {String} root Path
+ * @param config {Object} has usingComponents
+ */
+function formatConfing(config, rootPath) {
+  for (let [key, value] of Object.entries(config.usingComponents)) {
+    if (isCustomComponent(value)) {
+      let result = relative(rootPath, value); // components/Repo.jsx
+      result = removeExt(result); // components/Repo
+      config.usingComponents[key] = '/' + result;
+    }
+  }
+  return config;
+}
+
+/**
+ * is custom component
+ * @param path {String} Path
+ */
+function isCustomComponent(path) {
+  return /^[/.]/.test(path);
+}
+
 module.exports = {
   transformJSX,
-  writeFiles
+  writeFiles,
+  formatConfing,
+  isCustomComponent
 };

@@ -190,47 +190,78 @@ hydrate(<MyComponent />, document.body);
 
 ### App Router
 
+Use `useRouter` to config routing rules, each route map to a component.
+
 ```jsx
 import { createElement, Fragment } from 'rax';
-import { route, useComponent, push } from 'rax-use-router';
+import { useRouter, push } from 'rax-use-router';
+import { createHashHistory } from 'history';
 import Foo from './Foo';
+import NotFound from './NotFound';
 
-route([{
-  path: '/home',
-  routes: [
-    {
-      path: '',                   // www.example.com/home
-      component: () => <>
-        <button onClick={() => push('/foo')}>go foo</button>
-        <button onClick={() => push('/bar')}>go bar</button>
-        <button onClick={() => push('/home/jack')}>go jack</button>
-      </>,
-    },
-    {
-      path: '/:username',         // www.example.com/home/xxx
-      component: (params) => <>
-        <p>{params.username}</p>
-        <button onClick={ () => push('/home') }>Go home</button>
-      </>
-    }
-  ]},
-  {
-    path: '/bar',
+const config = () => {
+  return {
+    history: createHashHistory(),
     routes: [
+      // Static Component
       {
-        path: '',                 // www.example.com/bar
-        component: () => import(/* webpackChunkName: "bar" */ './Bar'),
+        path: '',
+        component: <>
+          <button onClick={() => push('/home')}>go home</button>
+          <button onClick={() => push('/404')}>go 404</button>
+        </>,
       },
-    ],
-  },
-  {
-    path: '/foo',                 // www.example.com/foo
-    component: () => <Foo />,  
-  },
-]);
+      {
+        path: '/home',
+        routes: [
+          // Dynamic Component 
+          {
+            path: '',                  // www.example.com/home
+            component: () => <>
+              <button onClick={() => push('/foo')}>go foo</button>
+              <button onClick={() => push('/bar')}>go bar</button>
+              <button onClick={() => push('/home/jack')}>go jack</button>
+            </>,
+          },
+          // URL Parameters
+          {
+            path: '/:username',        // www.example.com/home/xxx
+            component: (params) => <>
+              <p>{params.username}</p>
+              <button onClick={ () => push('/home') }>Go home</button>
+            </>
+          }
+        ]
+      },
+      // Code Splitting
+      {
+        path: '/bar',
+        routes: [
+          {
+            path: '',                 // www.example.com/bar
+            component: () => import(/* webpackChunkName: "bar" */ './Bar').then((Bar) => {
+              // interop-require see: https://www.npmjs.com/package/interop-require
+              Bar = Bar.__esModule ? Bar.default : Bar;
+              // return a created element
+              return <Bar />;
+            }),
+          },
+        ],
+      },
+      {
+        path: '/foo',                 // www.example.com/foo
+        component: () => <Foo />,  
+      },
+      // No match (404)
+      {
+        component: () => <NotFound />,
+      }
+    ]
+  }
+};
 
 export default function Example() {
-  var component = useComponent('/home');
+  const { component } = useRouter(config);
   return component;
 }
 ```
@@ -252,6 +283,16 @@ import { push } from 'rax-use-router';
 
 export default function Bar() {
   return <button onClick={ () => push('/home') }>Go home</button>
+}
+```
+
+```jsx
+// NotFound.jsx
+import { createElement } from 'rax';
+import { replace } from 'rax-use-router';
+
+export default function NotFound() {
+  return <button onClick={ () => replace('/home') }>Go home</button>
 }
 ```
 
@@ -297,7 +338,7 @@ Code-Splitting is supported by `Webpack` which can create multiple bundles that 
 
 ```jsx
 import { createElement } from 'rax';
-import useImport from 'rax-use-promise';
+import useImport from 'rax-use-import';
 
 export default function App() {
   const [Bar, error] = useImport(() => import(/* webpackChunkName: "bar" */ './Bar'));

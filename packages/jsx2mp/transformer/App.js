@@ -2,6 +2,7 @@ const { join, resolve } = require('path');
 const { readFileSync, readJSONSync, existsSync } = require('fs-extra');
 const { createPage } = require('./Page');
 const { writeFile } = require('../utils/file');
+const { transformJSX } = require('./Transformer');
 
 const DEP = 'dependencies';
 const DEV_DEP = 'devDependencies';
@@ -11,12 +12,15 @@ const DEV_DEP = 'devDependencies';
  * @param appDirectory {String} Absolute app path.
  * @param distDirectory {String} Absolute dist path.
  */
-const createChildPage = function(appDirectory, distDirectory) {
-  const sourceConfigPath = join(appDirectory, 'app.json');
-  const config = readJSONSync(sourceConfigPath);
-  const pages = config.pages;
+const createChildPage = function(appDirectory, distDirectory, transformed) {
+  const { config = {} } = transformed;
+  const pages = config.pages || [];
   for (let i = 0, l = pages.length; i < l; i++) {
-    createPage(appDirectory, resolve(appDirectory, pages[i]), resolve(distDirectory, pages[i], '..'));
+    createPage(
+      appDirectory,
+      distDirectory,
+      pages[i]
+    );
   }
 };
 
@@ -25,19 +29,17 @@ const createChildPage = function(appDirectory, distDirectory) {
  * @param appDirectory {String} Absolute app path.
  * @param distDirectory {String} Absolute dist path.
  */
-const copyAppFiles = function(appDirectory, distDirectory) {
-  const sourceScriptPath = join(appDirectory, 'app.js');
+const copyAppFiles = function(appDirectory, distDirectory, transformed) {
   const sourceStylePath = join(appDirectory, 'app.css');
-  const sourceConfigPath = join(appDirectory, 'app.json');
   const sourcePackageJSON = join(appDirectory, 'package.json');
-  if (!existsSync(sourceConfigPath)) {
-    throw new Error('app.json not exists.');
-  }
+  const { config = {}, code = '' } = transformed;
 
-  const config = readJSONSync(sourceConfigPath);
   const packageConfig = readJSONSync(sourcePackageJSON);
-  const script = readFileSync(sourceScriptPath, 'utf-8');
-  const style = readFileSync(sourceStylePath, 'utf-8');
+
+  let style;
+  if (existsSync(sourceStylePath)) {
+    style = readFileSync(sourceStylePath, 'utf-8');
+  }
 
   // Remove rax in dependencies.
   if (packageConfig[DEP] && packageConfig[DEP].hasOwnProperty('rax')) {
@@ -48,10 +50,13 @@ const copyAppFiles = function(appDirectory, distDirectory) {
     delete packageConfig[DEV_DEP];
   }
 
-  writeFile(join(distDirectory, 'app.js'), script, appDirectory);
-  writeFile(join(distDirectory, 'app.acss'), style, appDirectory);
+  writeFile(join(distDirectory, 'app.js'), code, appDirectory);
   writeFile(join(distDirectory, 'app.json'), JSON.stringify(config, null, 2), appDirectory);
   writeFile(join(distDirectory, 'package.json'), JSON.stringify(packageConfig, null, 2), appDirectory);
+
+  if (style) {
+    writeFile(join(distDirectory, 'app.acss'), style, appDirectory);
+  }
 };
 
 /**
@@ -60,8 +65,10 @@ const copyAppFiles = function(appDirectory, distDirectory) {
  * @param distDirectory {String} Absolute dist path.
  */
 const createApp = function(appDirectory, distDirectory) {
-  copyAppFiles(appDirectory, distDirectory);
-  createChildPage(appDirectory, distDirectory);
+  const sourceScriptPath = join(appDirectory, 'app.js');
+  const transformed = transformJSX(sourceScriptPath, 'app');
+  copyAppFiles(appDirectory, distDirectory, transformed);
+  createChildPage(appDirectory, distDirectory, transformed);
 };
 
 module.exports = {

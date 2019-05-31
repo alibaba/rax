@@ -6,6 +6,8 @@ export function checkEnv() {
   }
 
   if (!my.canIUse('component2')) {
-    throw new Error('You should enable component2 with following docs: https://docs.alipay.com/mini/framework/custom-component-overview');
+    console.warn(
+      'You should enable component2 with following docs: https://docs.alipay.com/mini/framework/custom-component-overview'
+    );
   }
 }

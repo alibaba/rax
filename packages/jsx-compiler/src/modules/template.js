@@ -1,14 +1,13 @@
 const t = require('@babel/types');
 const { NodePath } = require('@babel/traverse');
-const kebabCase = require('kebab-case');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const isClassComponent = require('../utils/isClassComponent');
 const traverse = require('../utils/traverseNodePath');
-const parseElement = require('../parser/parseElement');
-const genElement = require('../codegen/genElement');
+const getReturnElementPath = require('../utils/getReturnElementPath');
+const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
-const TEMPLATE_NODES = 'templateNodes';
+const RENDER_FN_PATH = 'renderFunctionPath';
 
 /**
  * Extract JSXElement path.
@@ -22,55 +21,30 @@ module.exports = {
       const returnPath = getReturnElementPath(defaultExportedPath);
       if (!returnPath) return;
 
-      parsed[TEMPLATE_AST] = returnPath.node;
-      parsed[TEMPLATE_NODES] = parseElement(returnPath.node);
-
+      parsed[TEMPLATE_AST] = returnPath.get('argument').node;
+      parsed[RENDER_FN_PATH] = defaultExportedPath;
       returnPath.remove();
     } else if (isClassComponent(defaultExportedPath)) {
       const renderFnPath = getRenderMethodPath(defaultExportedPath);
       if (!renderFnPath) return;
 
       const returnPath = getReturnElementPath(renderFnPath);
-      if (!returnPath) return;
+      if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.filePath);
 
-      parsed[TEMPLATE_AST] = returnPath.node;
-      parsed[TEMPLATE_NODES] = parseElement(returnPath.node, {
-        tagName(rawTagName) {
-          if (parsed.usingComponents && parsed.usingComponents.has(rawTagName)) {
-            const { tagName } = parsed.usingComponents.get(rawTagName);
-            return tagName;
-          } else {
-            return kebabCase(rawTagName).replace(/^-/, '');
-          }
-        },
-      });
-
-      renderFnPath.remove();
+      parsed[TEMPLATE_AST] = returnPath.get('argument').node;
+      parsed[RENDER_FN_PATH] = renderFnPath;
+      returnPath.remove();
     }
   },
   generate(ret, parsed, options) {
-    if (parsed[TEMPLATE_NODES]) {
-      ret.template = genElement(parsed[TEMPLATE_NODES]);
+    if (parsed[TEMPLATE_AST]) {
+      ret.template = genExpression(parsed[TEMPLATE_AST], {
+        comments: false, // Remove template comments.
+        concise: true, // Reduce whitespace, but not to disable all.
+      });
     }
   },
 };
-
-/**
- * Get reutrn statement element.
- */
-function getReturnElementPath(path) {
-  let result = null;
-
-  traverse(path, {
-    ReturnStatement: {
-      exit(returnStatementPath) {
-        result = returnStatementPath.get('argument');
-      }
-    },
-  });
-
-  return result;
-}
 
 /**
  * Get the render function path from class component declaration..

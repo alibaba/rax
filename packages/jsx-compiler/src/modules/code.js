@@ -4,12 +4,28 @@ const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 
 const RAX_PACKAGE = 'rax';
-const RAX_COMPONENT = 'Component';
-const CREATE_COMPONENT = 'createComponent';
-const SAFE_CREATE_COMPONENT = '__create_component__';
-const EXPORTED_CLASS_DEF = '__class_def__';
-const HELPER_COMPONENT = 'jsx2mp-runtime';
+const SUPER_COMPONENT = 'Component';
 
+const CREATE_APP = 'createApp';
+const CREATE_COMPONENT = 'createComponent';
+const CREATE_PAGE = 'createPage';
+
+const SAFE_SUPER_COMPONENT = '__component__';
+const SAFE_CREATE_APP = '__create_app__';
+const SAFE_CREATE_COMPONENT = '__create_component__';
+const SAFE_CREATE_PAGE = '__create_page__';
+
+const EXPORTED_DEF = '__def__';
+const RUNTIME = 'jsx2mp-runtime';
+
+function getConstructor(type) {
+  switch (type) {
+    case 'app': return 'App';
+    case 'page': return 'Page';
+    case 'component':
+    default: return 'Component';
+  }
+}
 /**
  * Module code transform.
  * 1. Add import declaration of helper lib.
@@ -20,39 +36,84 @@ const HELPER_COMPONENT = 'jsx2mp-runtime';
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath } = parsed;
+    let userDefineType;
 
-    // replace with class def.
-    if (isFunctionComponent(defaultExportedPath)) {
-
-    } else if (isClassComponent(defaultExportedPath)) {
+    if (options.type === 'app') {
+      userDefineType = 'class';
       const { id, superClass, body, decorators } = defaultExportedPath.node;
-      // @NOTE: Remove superClass due to useless of Component base class.
       defaultExportedPath.parentPath.replaceWith(
         t.variableDeclaration('var', [
           t.variableDeclarator(
-            t.identifier(EXPORTED_CLASS_DEF),
-            t.classExpression(id, null, body, decorators)
+            t.identifier(EXPORTED_DEF),
+            t.classExpression(id, superClass, body, decorators)
+          )
+        ])
+      );
+    } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
+      userDefineType = 'function';
+      const { id, generator, async, params, body } = defaultExportedPath.node;
+      defaultExportedPath.parentPath.replaceWith(
+        t.variableDeclaration('const', [
+          t.variableDeclarator(
+            t.identifier(EXPORTED_DEF),
+            t.functionExpression(id, params, body, generator, async)
+          )
+        ])
+      );
+    } else if (isClassComponent(defaultExportedPath)) {
+      userDefineType = 'class';
+
+      const { id, superClass, body, decorators } = defaultExportedPath.node;
+      // @NOTE: Remove superClass due to useless of Component base class.
+      defaultExportedPath.parentPath.replaceWith(
+        t.variableDeclaration('const', [
+          t.variableDeclarator(
+            t.identifier(EXPORTED_DEF),
+            t.classExpression(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
           )
         ])
       );
     }
 
-    addComponentDefine(parsed.ast);
+    addDefine(parsed.ast, options.type, userDefineType);
     removeRaxImports(parsed.ast);
   },
 };
 
-function addComponentDefine(ast) {
+function addDefine(ast, type, userDefineType) {
+  let safeCreateInstanceId;
+  let importedIdentifier;
+  switch (type) {
+    case 'app':
+      safeCreateInstanceId = SAFE_CREATE_APP;
+      importedIdentifier = CREATE_APP;
+      break;
+    case 'page':
+      safeCreateInstanceId = SAFE_CREATE_PAGE;
+      importedIdentifier = CREATE_PAGE;
+      break;
+    case 'component':
+      safeCreateInstanceId = SAFE_CREATE_COMPONENT;
+      importedIdentifier = CREATE_COMPONENT;
+      break;
+  }
+
   traverse(ast, {
     Program(path) {
-      const importedIdentifier = t.identifier(CREATE_COMPONENT);
-      const localIdentifier = t.identifier(SAFE_CREATE_COMPONENT);
+      const localIdentifier = t.identifier(safeCreateInstanceId);
 
       // import { createComponent as __create_component__ } from "/__helpers/component";
+      const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
+      if ((type === 'page' || type === 'component') && userDefineType === 'class') {
+        specifiers.push(t.importSpecifier(
+          t.identifier(SAFE_SUPER_COMPONENT),
+          t.identifier(SUPER_COMPONENT)
+        ));
+      }
       path.node.body.unshift(
         t.importDeclaration(
-          [t.importSpecifier(localIdentifier, importedIdentifier)],
-          t.stringLiteral(HELPER_COMPONENT)
+          specifiers,
+          t.stringLiteral(RUNTIME)
         )
       );
 
@@ -60,11 +121,11 @@ function addComponentDefine(ast) {
       path.node.body.push(
         t.expressionStatement(
           t.callExpression(
-            t.identifier(RAX_COMPONENT),
+            t.identifier(getConstructor(type)),
             [
               t.callExpression(
-                t.identifier(SAFE_CREATE_COMPONENT),
-                [t.identifier(EXPORTED_CLASS_DEF)]
+                t.identifier(safeCreateInstanceId),
+                [t.identifier(EXPORTED_DEF)]
               )
             ],
           )

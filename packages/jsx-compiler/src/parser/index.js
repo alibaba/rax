@@ -4,13 +4,19 @@ const invokeModules = require('../utils/invokeModules');
 const traverse = require('../utils/traverseNodePath');
 const getDefaultExportedPath = require('../utils/getDefaultExportedPath');
 const parserOption = require('./option');
-const { baseOptions } = require('../options');
+const md5 = require('md5');
+
+const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
+
+function getTagName(str) {
+  return 'c-' + md5(str).slice(0, 6);
+}
 
 /**
  * Parse JS code by babel parser.
  * @param code {String} JS code.
  */
-function astParser(code) {
+function parseCode(code) {
   return babelParser.parse(code, parserOption);
 }
 
@@ -33,6 +39,16 @@ function getImported(ast) {
         const ret = { local, default: t.isImportDefaultSpecifier(specifier) };
         if (ret.default === false) {
           ret.importFrom = specifier.imported.name;
+        }
+
+        if (RELATIVE_COMPONENTS_REG.test(source)) {
+          // alias = 'c-xxxxx'
+          ret.name = getTagName(source);
+          ret.external = false;
+        } else {
+          // alias = 'rax-view'
+          ret.name = source;
+          ret.external = true;
         }
         imported[source].push(ret);
       });
@@ -69,8 +85,13 @@ function getExported(ast) {
  * @param code
  * @param options {Object} Parser options.
  */
-function parse(code, options = baseOptions) {
-  const ast = astParser(code);
+function parse(code, options) {
+  if (!options) {
+    const { baseOptions } = require('../options');
+    options = baseOptions;
+  }
+
+  const ast = parseCode(code);
   const imported = getImported(ast);
   const exported = getExported(ast);
   const defaultExportedPath = getDefaultExportedPath(ast);
@@ -83,10 +104,23 @@ function parse(code, options = baseOptions) {
   };
 
   // Reverse to call parse.
-  invokeModules(options.modules.reverse(), 'parse', ret, code, options);
+  invokeModules(reverse(options.modules), 'parse', ret, code, options);
 
   return ret;
 }
 
+function parseExpression(code) {
+  return parseCode(code).program.body[0].expression;
+}
+
+/**
+ * Reverse an array without effects.
+ */
+function reverse(arr) {
+  const copied = Array.prototype.slice.call(arr);
+  return copied.reverse();
+}
+
 exports.parse = parse;
-exports.astParser = astParser;
+exports.parseCode = parseCode;
+exports.parseExpression = parseExpression;

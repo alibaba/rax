@@ -23,34 +23,42 @@ describe('router', () => {
   it('should clone a DOM component with new props', function() {
     // HACK: require here for hijack timers in rax
     const { createElement, render, Fragment } = require('rax');
-    const { route, useComponent, push} = require('../');
-    const container = createNodeElement('div');
+    const createMemoryHistory = require('history').createMemoryHistory;
 
-    route([{
-      path: '/home',
-      routes: [
-        {
-          path: '',
-          component: () => <p>home</p>,
-        },
-        {
-          path: '/:username',
-          component: (params) => <p>{params.username}</p>
-        }
-      ]},
-    {
-      path: '/foo',
-      component: () => <p>foo</p>,
-    },
-    ]);
+    const { useRouter, push } = require('../');
+    const container = createNodeElement('div');
+    const config = () => {
+      return {
+        history: createMemoryHistory(),
+        routes: [
+          {
+            path: '/home',
+            routes: [
+              {
+                path: '',
+                component: () => <p>home</p>,
+              },
+              {
+                path: '/:username',
+                component: (params) => <p>{params.username}</p>
+              }
+            ]
+          },
+          {
+            path: '/foo',
+            component: () => <p>foo</p>,
+          },
+        ]
+      };
+    };
 
     function Example() {
-      var component = useComponent('/home');
+      var { component } = useRouter(config);
       return component;
     }
 
     render(<Example />, container, { driver: DriverServer });
-
+    push('/home');
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('home');
 
