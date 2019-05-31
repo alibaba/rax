@@ -35,8 +35,6 @@ const getAllFilePath = function(sourcePath, distPath) {
  * @param file {String} Absolute changed file path.
  */
 const handleFileChanged = function(file, sourcePath, distPath) {
-  removeSync(distPath);
-  mkdirpSync(distPath);
   createApp(sourcePath, distPath);
 };
 
@@ -48,10 +46,14 @@ const handleFileChanged = function(file, sourcePath, distPath) {
 const startWatching = function(sourcePath, distPath) {
   const files = getAllFilePath(sourcePath, distPath);
   const watcher = chokidar.watch(files);
-  watcher.on('change', (file) => {
-    console.log('File changed:', file);
-    handleFileChanged(file, sourcePath, distPath);
-  });
+  watcher
+    .on('change', (file) => {
+      console.log('File changed:', file);
+      handleFileChanged(file, sourcePath, distPath);
+    })
+    .on('error', (error) => {
+      console.log('Error happened', error);
+    });
 };
 
 module.exports = {
