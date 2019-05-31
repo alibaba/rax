@@ -99,10 +99,6 @@ function addDefine(ast, type, userDefineType) {
   }
 
   traverse(ast, {
-    Super(path) {
-      const { parentPath } = path;
-      parentPath.remove();
-    },
     Program(path) {
       const localIdentifier = t.identifier(safeCreateInstanceId);
 
