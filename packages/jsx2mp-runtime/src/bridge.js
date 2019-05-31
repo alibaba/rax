@@ -60,12 +60,19 @@ function getCurrentPageUrl() {
  * @param {Boolean} isClass is a Class or a Function.
  *
  */
-function initInstance(options = {}, ComponentClass, isClass) {
+function initInstance(options = {}, ComponentClass, isClass, isPage) {
   if (isClass) {
     this.instance = new ComponentClass({});
   } else {
     this.instance = ComponentClass;
   }
+  if (isPage) {
+    this.instance.props.route = {
+      path: getCurrentPageUrl(),
+      query: options
+    };
+  }
+
   this.instance.scopeInit(this);
   this.instance._isReady = true;
 }
@@ -125,7 +132,7 @@ function transformCicyle(ComponentClass, isClass) {
       if (isClass) {
         this.instance = ComponentClass;
       }
-      initInstance.apply(this, [options, ComponentClass, isClass]);
+      initInstance.apply(this, [options, ComponentClass, isClass, true]);
       triggerCicyleEvent(this.instance, 'componentWillMount');
     },
     onReady() {
@@ -177,7 +184,6 @@ function transformComponentCicyle(ComponentClass, isClass) {
           this.instance = ComponentClass;
         }
         initInstance.apply(this, [{}, ComponentClass, isClass]);
-        const obj = { ...this.props };
         this.instance.setState({
           props: this.props,
           ...this.instance.functionClass(this.props)
