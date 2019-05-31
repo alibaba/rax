@@ -97,7 +97,7 @@ function initMethods(args) {
   } else {
     classMethods = events || [];
     currentClass = baseComponent;
-    classProto = componentClass();
+    classProto = componentClass({});
   }
   classMethods.forEach(methodName => {
     if ('constructor' === methodName || PAGE_CICYLES.indexOf(methodName) > -1)
@@ -177,7 +177,11 @@ function transformComponentCicyle(ComponentClass, isClass) {
           this.instance = ComponentClass;
         }
         initInstance.apply(this, [{}, ComponentClass, isClass]);
-        this.instance.functionClass(this.props);
+        const obj = { ...this.props };
+        this.instance.setState({
+          props: this.props,
+          ...this.instance.functionClass(this.props)
+        });
         triggerCicyleEvent(this.instance, 'componentDidMount');
       }
     };
