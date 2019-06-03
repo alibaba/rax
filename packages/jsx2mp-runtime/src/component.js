@@ -43,7 +43,7 @@ export default class Component {
           ...nextProps
         },
         () => {
-          this.scope.props = nextProps;
+          Object.assign(this.scope.props, nextProps)
         }
       );
     });

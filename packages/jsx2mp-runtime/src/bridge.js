@@ -42,15 +42,12 @@ function bindEvents(args) {
 
 function processEvent(eventHandlerName, obj, isPage) {
   const currentMethod = isPage ? obj : obj.methods;
-  currentMethod[eventHandlerName] = function(event = {}) {
-    const scope = this.instance;
+  currentMethod[eventHandlerName] = function(...args) {
+    const event = args[args.length - 1];
+    let scope = this.instance;
+
     const dataset = event.target ? event.target.dataset : {};
-    let args = [];
     const argsName = Object.keys(dataset);
-    // check is use event
-    if (argsName.indexOf('arg-event') > -1) {
-      args.push(event);
-    }
     // is universal event args
     if (argsName && argsName.length > 0) {
       const argsValue = Object.values(dataset);
@@ -58,13 +55,18 @@ function processEvent(eventHandlerName, obj, isPage) {
     } else {
       // is props event args
       const props = this.instance.props;
-      for (const name in props) {
-        const prop = props[name];
-        if (/^data-arg/.test(name)) {
-          args.push(prop);
+      const _args = [];
+      Object.keys(props).forEach((key) => {
+        if ('data-arg-context' === key) {
+          scope = props[key];
+          if (scope === 'this') scope = this.instance;
+        } else if (/data-arg-\d+/.test(key)) {
+          _args[key.slice(9)] = props[key];
         }
-      }
+      })
+      args = _args.concat(args);
     }
+
     return (
       scope[eventHandlerName] && scope[eventHandlerName].apply(scope, args)
     );
