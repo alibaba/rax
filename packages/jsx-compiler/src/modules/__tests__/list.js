@@ -12,4 +12,15 @@ describe('Transform list', () => {
 
     expect(genCode(ast).code).toEqual('<View><block a:for="{{arr}}" a:for-item="val" a:for-index="idx"><item data-value={val} data-key={idx} /></block></View>');
   });
+
+  it('bind props', () => {
+    const ast = parseExpression(`
+      <View>{arr.map((val, idx) => <item
+        onClick={props.onClick.bind(this, item, 1)}
+      />)}</View>
+    `);
+    _transformList(ast, adapter);
+
+    expect(genCode(ast).code).toEqual('<View><block a:for="{{arr}}" a:for-item="val" a:for-index="idx"><item onClick={props.onClick} data-arg-context="this" data-arg-0="{{item}}" data-arg-1="{{1}}" /></block></View>');
+  });
 });

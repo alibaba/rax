@@ -33,20 +33,38 @@ const PAGE_CICYLES = [
   'componentWillUpdate',
   'shouldComponentUpdate'
 ];
-
 function bindEvents(args) {
   const { componentConfig, handleEventsList, isPage } = args;
   handleEventsList.forEach(eventName => {
     processEvent(eventName, componentConfig, isPage);
   });
 }
+
 function processEvent(eventHandlerName, obj, isPage) {
   const currentMethod = isPage ? obj : obj.methods;
-  console.log('4444', eventHandlerName)
-  currentMethod[eventHandlerName] = function(event) {
+  currentMethod[eventHandlerName] = function(event = {}) {
     const scope = this.instance;
-    const args = [];
-    // TODO: Analysis args from event function, need compile support
+    const dataset = event.target ? event.target.dataset : {};
+    let args = [];
+    const argsName = Object.keys(dataset);
+    // check is use event
+    if (argsName.indexOf('arg-event') > -1) {
+      args.push(event);
+    }
+    // is universal event args
+    if (argsName && argsName.length > 0) {
+      const argsValue = Object.values(dataset);
+      args = args.concat(argsValue);
+    } else {
+      // is props event args
+      const props = this.instance.props;
+      for (const name in props) {
+        const prop = props[name];
+        if (/^data-arg/.test(name)) {
+          args.push(prop);
+        }
+      }
+    }
     return (
       scope[eventHandlerName] && scope[eventHandlerName].apply(scope, args)
     );
@@ -122,7 +140,6 @@ function setComponentMethdos(Klass, events = [], config) {
       Klass.prototype[eventName] = eventHandler;
     }
   });
-  console.log('setComponentMethdos', config)
   return config;
 }
 /**
