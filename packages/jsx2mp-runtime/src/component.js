@@ -32,9 +32,20 @@ export default class Component {
   setState(state, callback) {
     // TODO: add shouldComponentUpdate before setData
     this.scope.setData(state, callback);
+    this.state = state;
     nextTick(() => {
-      this.props = this.scope.props;
-      this.render(this.scope.props);
+      const props = this.scope.props;
+      this.props = props;
+      const nextProps = this.render(props);
+      Object.assign(this, nextProps);
+      this.scope.setData(
+        {
+          ...nextProps
+        },
+        () => {
+          this.scope.props = nextProps;
+        }
+      );
     });
   }
   getHooks() {

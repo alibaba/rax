@@ -42,6 +42,7 @@ function bindEvents(args) {
 }
 function processEvent(eventHandlerName, obj, isPage) {
   const currentMethod = isPage ? obj : obj.methods;
+  console.log('4444', eventHandlerName)
   currentMethod[eventHandlerName] = function(event) {
     const scope = this.instance;
     const args = [];
@@ -113,6 +114,7 @@ function setComponentMethdos(Klass, events = [], config) {
         }
         default: {
           config.methods[eventName] = eventHandler;
+          config.data[eventName] = eventHandler;
           config[eventName] = eventHandler;
           break;
         }
@@ -120,6 +122,7 @@ function setComponentMethdos(Klass, events = [], config) {
       Klass.prototype[eventName] = eventHandler;
     }
   });
+  console.log('setComponentMethdos', config)
   return config;
 }
 /**

@@ -35,7 +35,7 @@ function getConstructor(type) {
  */
 module.exports = {
   parse(parsed, code, options) {
-    const { defaultExportedPath } = parsed;
+    const { defaultExportedPath, eventHandlers = [] } = parsed;
     let userDefineType;
 
     if (options.type === 'app') {
@@ -75,12 +75,12 @@ module.exports = {
       );
     }
 
-    addDefine(parsed.ast, options.type, userDefineType);
+    addDefine(parsed.ast, options.type, userDefineType, eventHandlers);
     removeRaxImports(parsed.ast);
   },
 };
 
-function addDefine(ast, type, userDefineType) {
+function addDefine(ast, type, userDefineType, eventHandlers) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -125,7 +125,12 @@ function addDefine(ast, type, userDefineType) {
             [
               t.callExpression(
                 t.identifier(safeCreateInstanceId),
-                [t.identifier(EXPORTED_DEF)]
+                [
+                  t.identifier(EXPORTED_DEF),
+                  t.objectExpression([
+                    t.objectProperty(t.identifier('events'), t.arrayExpression(eventHandlers.map(e => t.stringLiteral(e))))
+                  ])
+                ]
               )
             ],
           )
