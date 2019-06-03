@@ -24,8 +24,8 @@ describe('Transform JSXElement', () => {
       const ast = parseExpression('<View foo={bar} />');
       const dynamicValue = _transform(ast);
       const code = genInlineCode(ast).code;
-      expect(code).toEqual('<View foo="{{bar}}" />');
-      expect(dynamicValue).toEqual({});
+      expect(code).toEqual('<View foo="{{_d0}}" />');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ _d0: bar }');
     });
 
     it('should handle literial types', () => {
@@ -86,16 +86,32 @@ describe('Transform JSXElement', () => {
         _transform(parseExpression('<View assign={a = 1} />'));
       }).toThrowError();
     });
+  });
 
-    it('eventHandler', () => {
+  describe('event handlers', () => {
+    it('class methods', () => {
       const ast = parseExpression(`
-      <View 
-        onClick={this.handleClick}
-      />
-    `);
+        <View 
+          onClick={this.handleClick}
+        />
+      `);
+      /**
+       * { _e0: this.handleClick }
+       */
+      const dynamicValue = _transform(ast);
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ _e0: this.handleClick }');
+      expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
+    });
+
+    it('prop methods', () => {
+      const ast = parseExpression(`
+        <View 
+          onClick={props.onClick}
+        />
+      `);
       _transform(ast);
 
-      expect(genInlineCode(ast).code).toEqual('<View onClick="handleClick" />');
+      expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
     });
   });
 
