@@ -1,5 +1,15 @@
 import Host from './host';
 import Component from './component';
+import {
+  willMount,
+  didMount,
+  didUpdate,
+  didUnmount,
+  deriveDataFromProps,
+  onShow,
+  onHide,
+  onUnload
+} from './cicyles';
 
 const PAGE_EVENTS_HANDLE_LIST = [
   'onShareAppMessage',
@@ -23,24 +33,22 @@ const PAGE_CICYLES = [
   'componentWillUpdate',
   'shouldComponentUpdate'
 ];
-function triggerCicyleEvent(instance, cicyleName, args = {}) {
-  instance[cicyleName] &&
-    typeof instance[cicyleName] === 'function' &&
-    instance[cicyleName].call(instance, ...args);
-}
+
 function bindEvents(args) {
-  const { componentConfig, handleEventsList, isComponent } = args;
+  const { componentConfig, handleEventsList, isPage } = args;
   handleEventsList.forEach(eventName => {
-    processEvent(eventName, componentConfig, isComponent);
+    processEvent(eventName, componentConfig, isPage);
   });
 }
-function processEvent(eventHandlerName, obj, isComponent) {
-  const currentMethod = isComponent ? obj.methods : obj;
+function processEvent(eventHandlerName, obj, isPage) {
+  const currentMethod = isPage ? obj : obj.methods;
   currentMethod[eventHandlerName] = function(event) {
     const scope = this.instance;
     const args = [];
     // TODO: Analysis args from event function, need compile support
-    return scope[eventHandlerName].apply(scope, args);
+    return (
+      scope[eventHandlerName] && scope[eventHandlerName].apply(scope, args)
+    );
   };
 }
 function addLeadingSlash(path) {
@@ -60,65 +68,59 @@ function getCurrentPageUrl() {
  * @param {Boolean} isClass is a Class or a Function.
  *
  */
-function initInstance(options = {}, ComponentClass, isClass, isPage) {
-  if (isClass) {
-    this.instance = new ComponentClass({});
-  } else {
-    this.instance = ComponentClass;
-  }
+function initInstance(options = {}, ComponentClass, isPage) {
+  this.instance = new ComponentClass({});
   if (isPage) {
     this.instance.props.route = {
       path: getCurrentPageUrl(),
       query: options
     };
   }
-
   this.instance.scopeInit(this);
   this.instance._isReady = true;
 }
-/**
- * synchronize methods in the rax component to the miniApp component config
- * @param {Object} componentConfig miniApp config.
- * @param {Object or Function} ComponentClass current componentClass.
- * @param {Boolean} isClass is a Class or a Function.
- * @param {Class} baseComponent function Component is necessary.
- * @return {Array} an array containing custom events
- */
-function initMethods(args) {
-  const {
-    componentConfig,
-    ComponentClass,
-    isClass,
-    baseComponent,
-    events
-  } = args;
-  const componentClass = ComponentClass;
-  const handleEventsList = [];
-  let currentClass = {};
-  let classProto = {};
-  let classMethods = [];
-  if (isClass) {
-    classMethods = Object.getOwnPropertyNames(componentClass.prototype);
-    currentClass = componentClass;
-    classProto = componentClass.prototype;
-  } else {
-    classMethods = events || [];
-    currentClass = baseComponent;
-    classProto = componentClass({});
+function judgeEventType(name) {
+  switch (name) {
+    case PAGE_EVENTS_HANDLE_LIST.includes(name): {
+      return 'PAGE_EVENT_HANDLE';
+      break;
+    }
+    case EVENTS_LIST.includes(name): {
+      return 'PAGE_EVENT';
+      break;
+    }
+    default: {
+      return 'CUSTOM_EVENT';
+      break;
+    }
   }
-  classMethods.forEach(methodName => {
-    if ('constructor' === methodName || PAGE_CICYLES.indexOf(methodName) > -1)
-      return;
-    if (PAGE_EVENTS_HANDLE_LIST.indexOf(methodName) > -1) {
-      componentConfig[methodName] = classProto[methodName];
-    } else if (EVENTS_LIST.indexOf(methodName) > -1) {
-      componentConfig.events[methodName] = classProto[methodName];
-    } else {
-      currentClass[methodName] = classProto[methodName];
-      handleEventsList.push(methodName);
+}
+function setComponentMethdos(Klass, events = [], config) {
+  const current = new Klass();
+  const currentReturns = current.render({});
+  events.forEach(eventName => {
+    const eventHandler = currentReturns[eventName];
+    const eventType = judgeEventType(eventName);
+    if (eventHandler && typeof eventHandler === 'function') {
+      switch (eventType) {
+        case 'PAGE_EVENT_HANDLE': {
+          config[eventName] = eventHandler;
+          break;
+        }
+        case 'PAGE_EVENT': {
+          config.events[eventName] = eventHandler;
+          break;
+        }
+        default: {
+          config.methods[eventName] = eventHandler;
+          config[eventName] = eventHandler;
+          break;
+        }
+      }
+      Klass.prototype[eventName] = eventHandler;
     }
   });
-  return handleEventsList;
+  return config;
 }
 /**
  * convert rax lifecycle to miniApp configuration
@@ -126,88 +128,94 @@ function initMethods(args) {
  * @param {Boolean} isClass is a Class or a Function.
  * @return {Object} miniApp config
  */
-function transformCicyle(ComponentClass, isClass) {
+function getPageCicyle(Klass) {
   return {
     onLoad(options = {}) {
-      if (isClass) {
-        this.instance = ComponentClass;
-      }
-      initInstance.apply(this, [options, ComponentClass, isClass, true]);
-      triggerCicyleEvent(this.instance, 'componentWillMount');
+      this.instance = new Klass();
+      initInstance.apply(this, [options, Klass, true, true]);
+      this.instance.setState({
+        props: this.props,
+        ...this.instance.render(this.props)
+      });
+      willMount(this.instance);
     },
-    onReady() {
-      triggerCicyleEvent(this.instance, 'componentDidMount');
-    },
-    onUnload() {
-      triggerCicyleEvent(this.instance, 'componentWillUnmount');
-    },
-    onShow() {
-      triggerCicyleEvent(this.instance, 'componentDidShow');
-    },
-    onHide() {
-      triggerCicyleEvent(this.instance, 'componentDidHide');
-    }
+    onReady: didMount,
+    onUnload,
+    onShow,
+    onHide
   };
 }
 /**
  *
- * @param {Object | Function} ComponentClass
- * @param {Boolean} isClass
+ * @param {Object} ComponentClass
  */
-function transformComponentCicyle(ComponentClass, isClass) {
-  let _componentConfig = {};
-  if (my !== undefined && my.canIUse('component2')) {
-    _componentConfig = {
-      onInit() {
-        if (isClass) {
-          this.instance = ComponentClass;
-        }
-        initInstance.apply(this, [{}, ComponentClass, isClass]);
-        this.instance.setState({
-          props: this.props,
-          ...this.instance.functionClass(this.props)
-        });
-        triggerCicyleEvent(this.instance, 'componentWillMount');
-      },
-      deriveDataFromProps(nextProps) {
-        const nextState = this.instance.state;
-        triggerCicyleEvent(this.instance, 'componentWillReceiveProps', {
-          nextState,
-          nextProps
-        });
-      },
-      didMount() {
-        triggerCicyleEvent(this.instance, 'componentDidMount');
-      }
+function getComponentCicyles(Klass) {
+  const canUseComponent2 = my !== undefined && my.canIUse('component2');
+  const init = function() {
+    this.instance = new Klass();
+    initInstance.apply(this, [{}, Klass, true]);
+    this.instance.setState({
+      props: this.props,
+      ...this.instance.render(this.props)
+    });
+    if (canUseComponent2) {
+      willMount(this.instance);
+    } else {
+      didMount(this.instance);
+    }
+  };
+  const config = {
+    didUpdate,
+    didUnmount
+  };
+  if (canUseComponent2) {
+    return {
+      onInit: init,
+      deriveDataFromProps,
+      didMount,
+      ...config
     };
   } else {
-    _componentConfig = {
-      didMount() {
-        if (isClass) {
-          this.instance = ComponentClass;
-        }
-        initInstance.apply(this, [{}, ComponentClass, isClass]);
-        this.instance.setState({
-          props: this.props,
-          ...this.instance.functionClass(this.props)
-        });
-        triggerCicyleEvent(this.instance, 'componentDidMount');
+    return {
+      didMount: init,
+      ...config
+    };
+  }
+}
+function isClassComponent(Klass) {
+  return Klass.prototype.__proto__ === Component.prototype;
+}
+
+/**
+ * Bridge from Rax page component class to MiniApp Component constructor.
+ * @param {RaxComponent} ComponentClass Rax page component.
+ * @return {Object} MiniApp Page constructor's config.
+ */
+function createConfig(componentClass, options = {}, isPage) {
+  let Klass = componentClass;
+  const { events = [] } = options;
+  if (!isClassComponent(Klass)) {
+    Klass = class extends Component {
+      render(props = {}) {
+        return componentClass(props);
       }
     };
   }
-  return Object.assign({}, _componentConfig, {
-    didUpdate(prevProps, prevData) {
-      triggerCicyleEvent(this.instance, 'componentDidUpdate', {
-        prevProps,
-        prevData
-      });
-    },
-    didUnmount() {
-      triggerCicyleEvent(this.instance, 'componentWillUnmount');
-    }
+  const cicyles = isPage ? getPageCicyle(Klass) : getComponentCicyles(Klass);
+  const config = setComponentMethdos(Klass, events, {
+    data: {},
+    props: {},
+    methods: {},
+    ...cicyles
   });
+  Host.current = Klass;
+  bindEvents({
+    componentConfig: config,
+    handleEventsList: events,
+    isPage
+  });
+  return config;
 }
-
 /**
  * Bridge App definition.
  * @param Klass
@@ -216,110 +224,10 @@ function transformComponentCicyle(ComponentClass, isClass) {
 export function createApp(Klass) {
   return new Klass();
 }
-
-/**
- * Bridge from Rax page component class to MiniApp Component constructor.
- * @param {RaxComponent} ComponentClass Rax page component.
- * @return {Object} MiniApp Page constructor's config.
- */
-export function createPage(ComponentClass) {
-  const isClass = ComponentClass.prototype.__proto__ === Component.prototype;
-  let handleEventsList = [];
-  let componentConfig = {};
-  if (isClass) {
-    const componentInstance = new ComponentClass({});
-    const { prototype: componentPrototype, defaultProps } = ComponentClass;
-    const { props, state } = componentInstance;
-    const initData = Object.assign({}, defaultProps, props, state);
-    handleEventsList = initMethods({
-      componentConfig,
-      ComponentClass,
-      isClass
-    });
-    componentConfig = Object.assign(
-      {
-        data: initData,
-        state: state,
-        props: Object.assign({}, props, defaultProps),
-        events: {}
-      },
-      transformCicyle(ComponentClass, isClass)
-    );
-  } else {
-    const baseComponent = new Component();
-    const componentClass = ComponentClass;
-    Host.current = baseComponent;
-    componentConfig = {
-      events: {},
-      data: baseComponent._state
-    };
-    handleEventsList = initMethods({
-      componentConfig,
-      ComponentClass,
-      isClass,
-      baseComponent
-    });
-    const instance = Object.assign(...componentClass(), baseComponent);
-    Object.assign(componentConfig, transformCicyle(instance, isClass));
-  }
-  bindEvents({
-    componentConfig,
-    handleEventsList
-  });
-  return componentConfig;
+export function createPage(Klass, options = {}) {
+  return createConfig(Klass, options, true);
 }
 
-export function createComponent(ComponentClass, options = {}) {
-  const isClass = ComponentClass.prototype.__proto__ === Component.prototype;
-  const { events } = options;
-  let handleEventsList = [];
-  let componentConfig = {};
-  if (isClass) {
-    const componentInstance = new ComponentClass({});
-    const { prototype: componentPrototype, defaultProps } = ComponentClass;
-    const { props, state, mixins } = componentInstance;
-    const initData = Object.assign({}, defaultProps, props, state);
-    handleEventsList = initMethods({
-      componentConfig,
-      ComponentClass,
-      isClass
-    });
-    componentConfig = Object.assign(
-      {
-        data: initData,
-        state: state,
-        props: Object.assign({}, props, defaultProps),
-        methods: {},
-        mixins: mixins || []
-      },
-      componentConfig,
-      transformComponentCicyle(ComponentClass, isClass)
-    );
-  } else {
-    const componentClass = ComponentClass;
-    const baseComponent = new Component({
-      functionClass: componentClass
-    });
-    Host.current = baseComponent;
-    handleEventsList = initMethods({
-      componentConfig,
-      ComponentClass,
-      isClass,
-      baseComponent,
-      events
-    });
-    componentConfig = Object.assign(
-      {
-        methods: {}
-      },
-      componentConfig,
-      transformComponentCicyle(baseComponent, isClass)
-    );
-  }
-  bindEvents({
-    componentConfig,
-    handleEventsList,
-    isComponent: true
-  });
-  return componentConfig;
+export function createComponent(Klass, options = {}) {
+  return createConfig(Klass, options, false);
 }

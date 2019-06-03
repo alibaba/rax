@@ -3,6 +3,12 @@
  */
 import Host from './host';
 
+const nextTick = (fn, ...args) => {
+  fn = typeof fn === 'function' ? fn.bind(null, ...args) : fn;
+  const timerFunc = setTimeout;
+  timerFunc(fn);
+};
+
 export default class Component {
   constructor(ops = {}) {
     const { state, props, functionClass } = ops;
@@ -26,6 +32,10 @@ export default class Component {
   setState(state, callback) {
     // TODO: add shouldComponentUpdate before setData
     this.scope.setData(state, callback);
+    nextTick(() => {
+      this.props = this.scope.props;
+      this.render(this.scope.props);
+    });
   }
   getHooks() {
     return this._hooks;
