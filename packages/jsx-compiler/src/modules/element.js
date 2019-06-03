@@ -50,7 +50,13 @@ function transformTemplate(ast) {
       case 'Identifier': {
         if (node.expression.name === 'undefined') {
           path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
-        } else {
+        } else if (isEventHandler(genExpression(parentPath.node.name))) {
+          // <tag onClick={handleClick} />
+          // => <tag onClick="_e0" />
+          const id = applyEventHandler();
+          dynamicValue[id] = node.expression;
+          path.replaceWith(t.stringLiteral(id));
+        } else  {
           const id = applyDynamicValue();
           dynamicValue[id] = node.expression;
           path.replaceWith(t.stringLiteral(createBinding(id)));
