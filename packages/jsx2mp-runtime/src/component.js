@@ -34,7 +34,8 @@ export default class Component {
     this.scope.setData(state, callback);
     nextTick(() => {
       this.props = this.scope.props;
-      this.render(this.scope.props);
+      const updated = this.render(this.scope.props);
+      Object.assign(this, updated);
     });
   }
   getHooks() {

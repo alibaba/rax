@@ -56,7 +56,7 @@ function transformTemplate(ast) {
           const id = applyEventHandler();
           dynamicValue[id] = node.expression;
           path.replaceWith(t.stringLiteral(id));
-        } else  {
+        } else {
           const id = applyDynamicValue();
           dynamicValue[id] = node.expression;
           path.replaceWith(t.stringLiteral(createBinding(id)));
