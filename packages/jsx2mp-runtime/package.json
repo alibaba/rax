@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-runtime",
-  "version": "0.0.0-beta.2",
+  "version": "0.0.0-beta.3",
   "description": "Runtime for jsx2mp.",
   "main": "dist/jsx2mp-runtime.esm.js",
   "files": [
