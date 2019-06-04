@@ -74,6 +74,7 @@ module.exports = {
         if (parentPath.isJSXElement()) {
           if ([
             'this.props.children',
+            'props.children',
             'children'
           ].indexOf(genExpression(node.expression)) > -1) {
             path.replaceWith(createJSX('slot'));

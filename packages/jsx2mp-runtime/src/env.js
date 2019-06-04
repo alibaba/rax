@@ -1,13 +1,21 @@
 /* global my */
+let warned = false;
 
-export function checkEnv() {
+export function supportComponent2() {
   if (typeof my === 'undefined') {
-    throw new Error('You are not run in ali miniapp environment.');
+    throw new Error('You are not running in miniapp environment.');
   }
 
-  if (!my.canIUse('component2')) {
-    console.warn(
-      'You should enable component2 with following docs: https://docs.alipay.com/mini/framework/custom-component-overview'
-    );
+  return my.canIUse('component2');
+}
+
+export function checkEnv() {
+  if (!supportComponent2()) {
+    if (warned === false) {
+      console.warn(
+        'You shall enable component2 to get performance improved! Follow the docs: https://docs.alipay.com/mini/framework/custom-component-overview'
+      );
+    }
+    warned = true;
   }
 }

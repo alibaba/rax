@@ -33,8 +33,7 @@ function transformTemplate(ast) {
       // <tag key={key} n={10} />
       // => <tag key="{{key}}" n="{{10}}" />
       case 'NumericLiteral':
-      case 'BooleanLiteral':
-      case 'Identifier': {
+      case 'BooleanLiteral': {
         const value = node.expression.name || node.expression.value;
         path.replaceWith(t.stringLiteral(createBinding(value)));
         break;
@@ -45,15 +44,33 @@ function transformTemplate(ast) {
         break;
       }
 
+      // <tag style={style} />
+      // =>
+      // <tag style="{{_d0}}" />
+      case 'Identifier': {
+        if (node.expression.name === 'undefined') {
+          path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
+        } else if (isEventHandler(genExpression(parentPath.node.name))) {
+          // <tag onClick={handleClick} />
+          // => <tag onClick="_e0" />
+          const id = applyEventHandler();
+          dynamicValue[id] = node.expression;
+          path.replaceWith(t.stringLiteral(id));
+        } else {
+          const id = applyDynamicValue();
+          dynamicValue[id] = node.expression;
+          path.replaceWith(t.stringLiteral(createBinding(id)));
+        }
+        break;
+      }
+
       case 'MemberExpression': {
         if (isEventHandler(genExpression(parentPath.node.name))) {
           // <tag onClick={this.handleClick} />
-          // => <tag onClick="handleClick" />
-          if (t.isThisExpression(node.expression.object)) {
-            path.replaceWith(t.stringLiteral(genExpression(node.expression.property)));
-          } else {
-            path.replaceWith(t.stringLiteral(genExpression(node.expression)));
-          }
+          // => <tag onClick="_e0" />
+          const id = applyEventHandler();
+          dynamicValue[id] = node.expression;
+          path.replaceWith(t.stringLiteral(id));
         } else {
           // <tag key={this.props.name} key2={a.b} />
           // => <tag key="{{name}}" key2="{{a.b}}" />
@@ -88,7 +105,7 @@ function transformTemplate(ast) {
       }
 
       // <tag onClick={() => {}} />
-      // => <tag onClick="_event0" />
+      // => <tag onClick="_e0" />
       case 'ArrowFunctionExpression':
       case 'FunctionExpression': {
         const id = applyEventHandler();
@@ -185,7 +202,7 @@ function transformTemplate(ast) {
       }
 
       // <tag onClick={() => {}} />
-      // => <tag onClick="_event0" />
+      // => <tag onClick="_e0" />
       case 'ArrowFunctionExpression':
       case 'FunctionExpression': {
         const id = applyEventHandler();
@@ -258,8 +275,12 @@ module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       const dynamicValue = transformTemplate(parsed.templateAST);
+      const eventHandlers = parsed.eventHandlers = [];
       const properties = [];
       Object.keys(dynamicValue).forEach((key) => {
+        if (/^_e\d+/.test(key)) {
+          eventHandlers.push(key);
+        }
         properties.push(t.objectProperty(t.identifier(key), dynamicValue[key]));
       });
       parsed.renderFunctionPath.node.body.body.push(
