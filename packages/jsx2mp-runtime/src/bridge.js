@@ -1,222 +1,165 @@
-import Host from './host';
+/* global getCurrentPages */
 import Component from './component';
+import { supportComponent2 } from './env';
 import {
-  willMount,
-  didMount,
-  didUpdate,
-  didUnmount,
-  deriveDataFromProps,
-  onShow,
-  onHide,
-  onUnload
-} from './cicyles';
+  RENDER,
+  ON_SHOW,
+  ON_HIDE,
+  COMPONENT_DID_MOUNT,
+  COMPONENT_DID_UPDATE,
+  COMPONENT_WILL_MOUNT,
+  COMPONENT_WILL_RECEIVE_PROPS,
+  COMPONENT_WILL_UNMOUNT,
+} from './cycles';
 
-const PAGE_EVENTS_HANDLE_LIST = [
-  'onShareAppMessage',
-  'onTitleClick',
-  'onOptionMenuClick',
-  'onPopMenuClick',
-  'onPullDownRefresh',
-  'onTabItemTap',
-  'onPageScroll',
-  'onReachBottom',
-  'beforeTabItemTap',
-  'onResize'
-];
-const EVENTS_LIST = ['onBack', 'onKeyboardHeight', 'onPullIntercept'];
-const PAGE_CICYLES = [
-  'componentDidMount',
-  'componentDidUpdate',
-  'componentWillMount',
-  'componentWillReceiveProps',
-  'componentWillUnmount',
-  'componentWillUpdate',
-  'shouldComponentUpdate'
-];
-
-function bindEvents(args) {
-  const { componentConfig, handleEventsList, isPage } = args;
-  handleEventsList.forEach(eventName => {
-    processEvent(eventName, componentConfig, isPage);
-  });
-}
-function processEvent(eventHandlerName, obj, isPage) {
-  const currentMethod = isPage ? obj : obj.methods;
-  currentMethod[eventHandlerName] = function(event) {
-    const scope = this.instance;
-    const args = [];
-    // TODO: Analysis args from event function, need compile support
-    return (
-      scope[eventHandlerName] && scope[eventHandlerName].apply(scope, args)
-    );
+/**
+ * Reference relationship.
+ * page/component instance          Rax instance
+ *    instance    -------------->      *self
+ *      *self     <--------------   _internal
+ *      props     <----getter----     props
+ *      data      <----getter----     state
+ *    setData     <--------------    setState
+ */
+function getPageCycles(Klass) {
+  return {
+    onLoad(options) {
+      this.instance = new Klass(this.props);
+      // Reverse sync from state to data.
+      this.instance._setInternal(this);
+      // Add route information for page.
+      this.instance.props.route = {
+        path: getCurrentPageUrl(),
+        query: options,
+      };
+      this.setData(this.instance.state);
+      this.instance._trigger(COMPONENT_WILL_MOUNT);
+      this.instance._trigger(RENDER);
+    },
+    onReady() {
+      this.instance._trigger(COMPONENT_DID_MOUNT);
+    },
+    onUnload() {
+      this.instance._trigger(COMPONENT_WILL_UNMOUNT);
+    },
+    onShow() {
+      this.instance._trigger(ON_SHOW);
+    },
+    onHide() {
+      this.instance._trigger(ON_HIDE);
+    },
   };
 }
-function addLeadingSlash(path) {
-  return path.charAt(0) === '/' ? path : '/' + path;
-}
 
-function getCurrentPageUrl() {
-  // eslint-disable-next-line no-undef
-  const pages = getCurrentPages();
-  const currentPage = pages[pages.length - 1];
-  return addLeadingSlash(currentPage.route || currentPage.__route__);
-}
-/**
- * bind scope from componentClass to miniApp and init global instance.
- * @param {Object} options miniApp page options.
- * @param {Class|Function} ComponentClass current componentClass.
- * @param {Boolean} isClass is a Class or a Function.
- *
- */
-function initInstance(options = {}, ComponentClass, isPage) {
-  this.instance = new ComponentClass({});
-  if (isPage) {
-    this.instance.props.route = {
-      path: getCurrentPageUrl(),
-      query: options
+function getComponentCycles(Klass) {
+  const isSupportComponent2 = supportComponent2();
+  function onInit() {
+    // `this` point to page/component insatnce.
+    this.instance = new Klass(this.props);
+    this.instance._setInternal(this);
+    this.setData(this.instance.state);
+    this.instance._trigger(COMPONENT_WILL_MOUNT);
+    this.instance._trigger(RENDER);
+    if (!isSupportComponent2) {
+      this.instance._trigger(COMPONENT_DID_MOUNT);
+    }
+  }
+
+  const cycles = {
+    didMount: onInit,
+    didUpdate() {
+      this.instance._trigger(COMPONENT_DID_UPDATE);
+    },
+    didUnmount() {
+      this.instance._trigger(COMPONENT_WILL_UNMOUNT);
+    },
+  };
+
+  if (isSupportComponent2) {
+    cycles.onInit = onInit;
+    cycles.didMount = function() {
+      this.instance._trigger(COMPONENT_DID_MOUNT);
+    };
+    cycles.deriveDataFromProps = function(nextProps) {
+      const nextState = this.instance.state;
+      this.instance._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps, nextState);
     };
   }
-  this.instance.scopeInit(this);
-  this.instance._isReady = true;
+  return cycles;
 }
-function judgeEventType(name) {
-  switch (name) {
-    case PAGE_EVENTS_HANDLE_LIST.includes(name): {
-      return 'PAGE_EVENT_HANDLE';
-      break;
-    }
-    case EVENTS_LIST.includes(name): {
-      return 'PAGE_EVENT';
-      break;
-    }
-    default: {
-      return 'CUSTOM_EVENT';
-      break;
-    }
-  }
-}
-function setComponentMethdos(Klass, events = [], config) {
-  const current = new Klass();
-  const currentReturns = current.render({});
-  events.forEach(eventName => {
-    const eventHandler = currentReturns[eventName];
-    const eventType = judgeEventType(eventName);
-    if (eventHandler && typeof eventHandler === 'function') {
-      switch (eventType) {
-        case 'PAGE_EVENT_HANDLE': {
-          config[eventName] = eventHandler;
-          break;
+
+function createProxyMethods(events) {
+  const methods = {};
+  if (Array.isArray(events)) {
+    events.forEach(eventName => {
+      methods[eventName] = function(...args) {
+        // `this` point to page/component instance.
+        const event = args[args.length - 1];
+        let context = this.instance; // Context default to Rax component instance.
+
+        const dataset = event.target.dataset;
+        // Universal event args
+        if (Object.keys(dataset).length > 0) {
+          // TODO with universal event args.
+        } else {
+          const datasetArgs = [];
+          Object.keys(this.props).forEach(key => {
+            if ('data-arg-context' === key) {
+              context = this.props[key] === 'this' ? this.instance : this.props[key];
+            } else if (isDatasetArg(key)) {
+              datasetArgs[key.slice(9)] = this.props[key];
+            }
+          });
+          args = datasetArgs.concat(args);
         }
-        case 'PAGE_EVENT': {
-          config.events[eventName] = eventHandler;
-          break;
+
+        if (this.instance._methods[eventName]) {
+          return this.instance._methods[eventName].apply(context, args);
+        } else {
+          console.warn(`instance._methods['${eventName}'] not exists.`);
         }
-        default: {
-          config.methods[eventName] = eventHandler;
-          config.data[eventName] = eventHandler;
-          config[eventName] = eventHandler;
-          break;
-        }
-      }
-      Klass.prototype[eventName] = eventHandler;
-    }
-  });
-  return config;
-}
-/**
- * convert rax lifecycle to miniApp configuration
- * @param {Object | Function} ComponentClass current componentClass.
- * @param {Boolean} isClass is a Class or a Function.
- * @return {Object} miniApp config
- */
-function getPageCicyle(Klass) {
-  return {
-    onLoad(options = {}) {
-      this.instance = new Klass();
-      initInstance.apply(this, [options, Klass, true, true]);
-      this.instance.setState({
-        props: this.props,
-        ...this.instance.render(this.props)
-      });
-      willMount(this.instance);
-    },
-    onReady: didMount,
-    onUnload,
-    onShow,
-    onHide
-  };
-}
-/**
- *
- * @param {Object} ComponentClass
- */
-function getComponentCicyles(Klass) {
-  const canUseComponent2 = my !== undefined && my.canIUse('component2');
-  const init = function() {
-    this.instance = new Klass();
-    initInstance.apply(this, [{}, Klass, true]);
-    this.instance.setState({
-      props: this.props,
-      ...this.instance.render(this.props)
+      };
     });
-    if (canUseComponent2) {
-      willMount(this.instance);
-    } else {
-      didMount(this.instance);
-    }
-  };
-  const config = {
-    didUpdate,
-    didUnmount
-  };
-  if (canUseComponent2) {
-    return {
-      onInit: init,
-      deriveDataFromProps,
-      didMount,
-      ...config
+  }
+  return methods;
+}
+
+/**
+ * Bridge from Rax component class to MiniApp Component constructor.
+ * @param {Class|Function} component Rax component definition.
+ * @param {Object} options.
+ * @return {Object} MiniApp constructor's config.
+ */
+function createConfig(component, options) {
+  let Klass;
+  if (!isClassComponent(component)) {
+    Klass = class extends Component {
+      render(props) {
+        return component(props);
+      }
     };
   } else {
-    return {
-      didMount: init,
-      ...config
-    };
+    Klass = component;
   }
-}
-function isClassComponent(Klass) {
-  return Klass.prototype.__proto__ === Component.prototype;
-}
 
-/**
- * Bridge from Rax page component class to MiniApp Component constructor.
- * @param {RaxComponent} ComponentClass Rax page component.
- * @return {Object} MiniApp Page constructor's config.
- */
-function createConfig(componentClass, options = {}, isPage) {
-  let Klass = componentClass;
-  const { events = [] } = options;
-  if (!isClassComponent(Klass)) {
-    Klass = class extends Component {
-      render(props = {}) {
-        return componentClass(props);
-      }
-    };
-  }
-  const cicyles = isPage ? getPageCicyle(Klass) : getComponentCicyles(Klass);
-  const config = setComponentMethdos(Klass, events, {
-    data: {},
+  const { events, isPage } = options;
+  const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
+  const config = {
+    data() {},
     props: {},
-    methods: {},
-    ...cicyles
-  });
-  Host.current = Klass;
-  bindEvents({
-    componentConfig: config,
-    handleEventsList: events,
-    isPage
-  });
+    ...cycles,
+  };
+
+  const proxiedMethods = createProxyMethods(events);
+  if (isPage) {
+    Object.assign(config, proxiedMethods);
+  } else {
+    config.methods = proxiedMethods;
+  }
+
   return config;
 }
+
 /**
  * Bridge App definition.
  * @param Klass
@@ -225,10 +168,31 @@ function createConfig(componentClass, options = {}, isPage) {
 export function createApp(Klass) {
   return new Klass();
 }
-export function createPage(Klass, options = {}) {
-  return createConfig(Klass, options, true);
+
+export function createPage(definition, options = {}) {
+  options.isPage = true;
+  return createConfig(definition, options);
 }
 
-export function createComponent(Klass, options = {}) {
-  return createConfig(Klass, options, false);
+export function createComponent(definition, options = {}) {
+  return createConfig(definition, options);
+}
+
+function isClassComponent(Klass) {
+  return Klass.prototype.__proto__ === Component.prototype;
+}
+
+const DATASET_ARG_REG = /data-arg-\d+/;
+function isDatasetArg(str) {
+  return DATASET_ARG_REG.test(str);
+}
+
+function addLeadingSlash(str) {
+  return str[0] === '/' ? str : '/' + str;
+}
+
+function getCurrentPageUrl() {
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1];
+  return addLeadingSlash(currentPage.route);
 }
