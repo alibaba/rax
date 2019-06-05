@@ -1,12 +1,16 @@
-.app-logo {
+.page-home {
+  flex-direction: column;
+}
+
+.home-logo {
   width: 150rpx;
 }
 
-.app-intro {
+.home-intro {
   margin: 50rpx;
 }
 
-.app-title {
+.home-title {
   color: #fff;
   font-weight: bold;
   font-size: 45rpx;

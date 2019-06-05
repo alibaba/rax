@@ -3,12 +3,14 @@
   "author": "__AuthorName__",
   "version": "0.0.0",
   "scripts": {
-    "start": "rax-scripts start --type=miniapp",
-    "build": "rax-scripts build --type=miniapp",
+    "build:miniapp": "rax-scripts build --type=miniapp",
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "rax": "^1.0.0"
+    "rax": "^1.0.0",
+    "rax-view": "miniapp-beta",
+    "rax-text": "miniapp-beta",
+    "rax-image": "miniapp-beta"
   },
   "devDependencies": {
     "rax-scripts": "^1.2.0",

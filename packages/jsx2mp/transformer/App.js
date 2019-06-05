@@ -4,6 +4,7 @@ const { createPage } = require('./Page');
 const { writeFile } = require('../utils/file');
 const { transformJSX } = require('./Transformer');
 
+const RUNTIME = 'jsx2mp-runtime';
 const DEP = 'dependencies';
 const DEV_DEP = 'devDependencies';
 
@@ -48,6 +49,11 @@ const copyAppFiles = function(appDirectory, distDirectory, transformed) {
   // Remove devDeps.
   if (packageConfig[DEV_DEP]) {
     delete packageConfig[DEV_DEP];
+  }
+  // Add jsx2mp-runtime as dep
+  if (!packageConfig[DEP]) packageConfig[DEP] = {};
+  if (!packageConfig[DEP].hasOwnProperty(RUNTIME)) {
+    packageConfig[DEP][RUNTIME] = 'latest';
   }
 
   writeFile(join(distDirectory, 'app.js'), code, appDirectory);
