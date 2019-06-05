@@ -6,6 +6,8 @@ const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
 const getEntries = require('./getEntries');
+const getAppConfig = require('./getAppConfig');
+const evnConfig = require('../config/env.config');
 const pathConfig = require('../config/path.config');
 
 class DevServer {
@@ -24,22 +26,21 @@ class DevServer {
     const entries = getEntries();
 
     Object.keys(entries).map(entry => {
+      // _document, _shell
+      if (entry.indexOf('_') > -1) {
+        return;
+      }
+
       router.get(`/${entry}`, (req, res) => {
-        server.render(req, res, {
-          page: entry,
-          template: this.loadComponent('_template', res),
-          component: this.loadComponent(entry, res)
-        });
+        const pageConfig = this.getPageConfig(res, entry, entries);
+        server.render(req, res, pageConfig);
       });
     });
 
     if (entries.index) {
       router.get('/', (req, res) => {
-        server.render(req, res, {
-          page: 'index',
-          template: this.loadComponent('_template', res),
-          component: this.loadComponent('index', res)
-        });
+        const pageConfig = this.getPageConfig(res, 'index', entries);
+        server.render(req, res, pageConfig);
       });
     }
 
@@ -66,10 +67,36 @@ class DevServer {
     this.app.listen(port, callback);
   }
 
+  getPageConfig(res, page, entries) {
+    const appConfig = getAppConfig();
+    const pageConfig = {
+      page,
+      component: this.loadComponent(page, res),
+      scripts: {
+        es5: [`${evnConfig.publicPath || './'}client/${page}.js`]
+      },
+      document: {
+        title: appConfig.title
+      }
+    };
+
+    if (entries._shell) {
+      pageConfig.shell = {
+        component: this.loadComponent('_shell', res)
+      };
+    }
+
+    if (entries._document) {
+      pageConfig.document.component = this.loadComponent('_document', res);
+    }
+
+    return pageConfig;
+  }
+
   loadComponent(page, res) {
     const fs = res.locals.fs;
-    const bundelPath = path.join(pathConfig.appBuild, 'server', `${page}.js`);
-    const bundleContent = fs.readFileSync(bundelPath, 'utf8');
+    const bundlePath = path.join(pathConfig.appBuild, 'server', `${page}.js`);
+    const bundleContent = fs.readFileSync(bundlePath, 'utf8');
     const mod = eval(bundleContent);
     return interopDefault(mod);
   }

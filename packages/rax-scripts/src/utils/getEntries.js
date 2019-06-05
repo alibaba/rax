@@ -6,7 +6,7 @@ module.exports = () => {
   const appDirectory = pathConfig.appDirectory;
   const appSrc = pathConfig.appSrc;
 
-  const pages = {};
+  const entries = {};
 
   const files = fs.readdirSync(path.join(appSrc, 'pages'));
   files.map((file) => {
@@ -15,9 +15,19 @@ module.exports = () => {
 
     if (pathStat.isDirectory()) {
       const relativePath = path.relative(appDirectory, absolutePath);
-      pages[file] = './' + path.join(relativePath, 'index.jsx');
+      entries[file] = './' + path.join(relativePath, 'index.jsx');
     }
   });
 
-  return pages;
+  const documentPath = pathConfig.appDocument;
+  if (fs.existsSync(documentPath)) {
+    entries._document = documentPath;
+  }
+
+  const shellPath = pathConfig.appShell;
+  if (fs.existsSync(shellPath)) {
+    entries._shell = shellPath;
+  }
+
+  return entries;
 };

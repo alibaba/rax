@@ -1,3 +1,5 @@
+# rax-server
+
 ### Install
 
 ```bash
@@ -16,7 +18,9 @@ const server = new RaxServer({
 
 const app = new http.createServer((req, res) => {
   if (req.pathname === '/index') {
-    server.render('index', req, res);
+    server.render(req, res, {
+      page: 'index'
+    });
   } else {
     // ...
   }
@@ -32,12 +36,21 @@ app.listen(PORT, () => {
 #### new RaxServer(options)
 
 options:
-* template: mustache template content
-* pages:
-  * key: page name 
-  * value:
-    * bundle: bundle for page
+* document
+  * component
+* shell（optional）
+  * component
+* pages
+  * [pageName]
+    * title
+    * component: component for page
     * template: template for page（optional）
+    * style: styles for page
+    * scripts: response for different browser
+      * es5
+      * es6
+      * esm
+* renderOpts: config for rax-server-renderer
 
 ```js
 const { readFileSync } = require('fs');
@@ -47,49 +60,70 @@ const RaxServer = require('rax-server');
 const PORT = 8080;
 const app = express();
 
-const server = new RaxServer({
-  template: readFileSync('./dist/index.html'),
+const options = {
+  document: {
+    component: require('./dist/server/document.js'),
+  },
+  shell: {
+    component: require('./dist/server/shell.js'),
+  },
   pages: {
     index: {
-      template: readFileSync('./dist/index.html'),
-      bundle: require('./dist/server/index.js')
-    },
-    foo: {
-      bundle: require('./dist/server/foo.js')
+      title: 'Index',
+      component: require('./dist/server/index.js'),
+      styles: ['./client/index.css'],
+      scripts: {
+        es5: ['./client/index.js']
+      }
     },
     bar: {
-      bundle: require('./dsit2/server/bar.js')
+      component: require('./dsit2/server/bar.js')
     }
   }
-});
+};
+
+const server = new RaxServer(options);
 
 app.get('/', (req, res) => {
-  server.render('index', req, res);
+  server.render(req, res, {
+    page: 'index'
+  });
 });
 
 app.get('/foo/bar/baz', (req, res) => {
-  server.render('bar', req, res);
+  server.render(req, res, {
+    page: 'bar'
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`SSR running on port ${PORT}`);
+  console.log(`app listening on port ${PORT}`);
 });
 ```
 
-#### server.render(page, req, res[, options])
+#### server.render(req, res[, options])
 
 options:
+ * page
  * pathname 
  * query
+ * component
+ * styles
+ * scripts
+ * title
 
 ```js
-server.render(page, req, res);
+server.render(req, res, {
+  page: 'index'
+});
 ```
 
-#### server.renderToHTML(page, req, res[, options])
+#### server.renderToHTML(req, res[, options])
 
 ```js
-const html = await server.renderToHTML(page, req, res);
+const html = await server.renderToHTML(req, res, {
+  page: 'index'
+});
 ```
 
 ### Use with frameworks
@@ -108,10 +142,12 @@ const server = new RaxServer({
 });
 
 app.get('/index', (req, res) => {
-  server.render('index', req, res);
+  server.render(req, res, {
+    page: 'index'
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`SSR running on port ${PORT}`);
+  console.log(`app listening on port ${PORT}`);
 });
 ```

@@ -1,5 +1,4 @@
 'use strict';
-
 const webpackMerge = require('webpack-merge');
 const webpackConfigBase = require('../webpack.config.base');
 const getEntries = require('../../../utils/getEntries');
@@ -7,7 +6,6 @@ const babelConfig = require('../../babel.config');
 const pathConfig = require('../../../config/path.config');
 
 const entries = getEntries();
-entries._template = pathConfig.appTemplate;
 
 const webpackConfig = webpackMerge(webpackConfigBase, {
   target: 'node',

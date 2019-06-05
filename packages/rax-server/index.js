@@ -2,20 +2,17 @@ const url = require('url');
 const qs = require('querystring');
 const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
-
-const ErrorComponent = require('./lib/Error');
+const { Document, Error: _Error} = require('rax-pwa');
 
 module.exports = class Server {
   constructor(options = {}) {
     const {
-      template,
       pages,
-      renderOpts
+      ...baseConfig
     } = options;
 
-    this.template = template;
-    this.pages = pages || {};
-    this.renderOpts = renderOpts;
+    this.pagesConfig = pages;
+    this.baseConfig = baseConfig;
   }
 
   async render(req, res, options) {
@@ -28,71 +25,31 @@ module.exports = class Server {
   async renderToHTML(req, res, options = {}) {
     const {
       page,
-      pathname,
-      query
     } = options;
 
-    const parsedUrl = getParsedUrl(req, pathname, query);
-
-    const component = this.getComponent(page) || options.component;
-
-    if (!component) {
-      res.statusCode = 404;
-      const err = new PageNotFoundError(page);
-      this.logError(err);
-      return this.renderErrorToHTML(req, res, {
-        err,
-        ...options
-      });
-    }
-
-    const template = this.getTemplate();
+    const baseConfig = this.baseConfig || {};
+    const pagesConfig = this.pagesConfig || {};
 
     try {
-      const html = await renderToHTML(req, res, {
-        page,
-        component,
-        template,
-        renderOpts: this.renderOpts,
-        ...options,
-        ...parsedUrl,
-      });
-      return html;
-    } catch (err) {
-      this.logError(err);
-      res.statusCode = 500;
-      return this.renderErrorToHTML(req, res, {
-        err,
+      const pageConfig = pagesConfig[page] || {};
+
+      return renderToHTML(req, res, {
+        ...baseConfig,
+        ...pageConfig,
         ...options
       });
-    }
-  }
+    } catch (err) {
+      res.statusCode = err.code === 'ENOENT' ? '404' : '500';
+      this.logError(err);
+      const errorPageConfig = pagesConfig.error || {};
 
-  async renderErrorToHTML(req, res, options = {}) {
-    const component = this.getComponent('_error') || ErrorComponent;
-    const template = this.getComponent('_error');
-
-    const html = await renderToHTML(req, res, {
-      page: '_error',
-      renderOpts: this.renderOpts,
-      ...options,
-      component,
-      template,
-    });
-
-    return html;
-  }
-
-  getTemplate(page) {
-    if (page && this.pages && this.pages[page] && this.pages[page].template) {
-      return this.pages[page].template;
-    }
-    return this.template;
-  }
-
-  getComponent(page) {
-    if (this.pages && this.pages[page] && this.pages[page].component) {
-      return this.pages[page].component;
+      return renderToHTML(req, res, {
+        err,
+        component: _Error,
+        ...baseConfig,
+        ...errorPageConfig,
+        ...options
+      });
     }
   }
 
@@ -124,34 +81,88 @@ class PageNotFoundError extends Error {
 
 async function renderToHTML(req, res, options) {
   const {
-    template,
-    component,
+    err,
+    page,
     pathname,
     query,
-    err,
+    title,
+    component,
+    styles,
+    scripts,
+    document,
+    shell,
     renderOpts
   } = options;
 
-  const ctx = { req, res, pathname, query, err };
-
-  const pageProps = await getInitialProps(component, { ctx });
-  const pageElement = createElement(component, pageProps);
-  const pageContent = renderer.renderToString(pageElement, renderOpts);
-
-  if (!template) {
-    return pageContent;
+  if (!component) {
+    throw new PageNotFoundError(page);
   }
 
-  const templateProps = await getInitialProps(template, { ctx });
-  const templateElement = createElement(template, {
-    pageContent,
-    pageProps: JSON.stringify(pageProps),
-    templateProps
+  const parsedUrl = getParsedUrl(req, pathname, query);
+  const ctx = { req, res, ...parsedUrl, err };
+
+  let pageData;
+  let pageHtml;
+
+  if (shell && shell.component) {
+    const result = await renderShell({
+      ctx,
+      shell,
+      component,
+      renderOpts
+    });
+    pageData = result.data;
+    pageHtml = result.html;
+  } else {
+    pageData = await getInitialProps(component, ctx);
+    const pageElement = createElement(component, pageData);
+    pageHtml = renderer.renderToString(pageElement, renderOpts);
+  }
+
+  const documentComponent = document.component || Document;
+  const pageTitle = title || document.title;
+
+  const esType = 'es5';
+
+  const documentData = await getInitialProps(documentComponent, ctx);
+  const documentElement = createElement(documentComponent, {
+    title: pageTitle,
+    pageHtml,
+    pageData,
+    styles,
+    scripts: scripts[esType],
+    ...documentData
   });
 
-  const html = '<!doctype html>' + renderer.renderToString(templateElement);
+  const html = '<!doctype html>' + renderer.renderToString(documentElement, renderOpts);
 
   return html;
+}
+
+async function renderShell(options) {
+  const {
+    ctx,
+    shell,
+    component,
+    renderOpts
+  } = options;
+
+  const shellComponent = shell.component;
+  const data = await getInitialProps(shellComponent, {
+    ...ctx,
+    Component: component
+  });
+
+  const shellElement = createElement(shellComponent, {
+    ...data,
+    Component: component
+  });
+  const html = renderer.renderToString(shellElement, renderOpts);
+
+  return {
+    data,
+    html
+  };
 }
 
 async function getInitialProps(Component, ctx) {

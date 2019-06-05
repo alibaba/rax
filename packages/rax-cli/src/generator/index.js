@@ -35,16 +35,17 @@ module.exports = function(args) {
   fs.writeFileSync(pkgPath, replacedPkg);
 
   if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
-    fs.unlinkSync(path.join(projectDir, 'src/index.jsx'));
+    fs.unlinkSync(path.join(projectDir, 'src/index.js'));
 
-    var appJSON = {};
+    var appJSONPath = path.join(projectDir, 'app.json');
+    var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
+    var appJSON = JSON.parse(appJSONContent);
 
     projectFeatures.forEach((feature) => {
       appJSON[feature] = true;
     });
 
     var jsonString = JSON.stringify(appJSON, null, 2);
-    var appJSONPath = path.join(projectDir, 'app.json');
     fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
   }
 
