@@ -1,65 +1,82 @@
 const { join, resolve } = require('path');
-const { readFileSync, writeFileSync, writeJSONSync, readJSONSync, existsSync } = require('fs-extra');
-const TransformerPage = require('./Page');
-// const Watcher = require('./Watcher');
+const { readFileSync, readJSONSync, existsSync } = require('fs-extra');
+const { createPage } = require('./Page');
+const { writeFile } = require('../utils/file');
+const { transformJSX } = require('./Transformer');
 
+const RUNTIME = 'jsx2mp-runtime';
 const DEP = 'dependencies';
 const DEV_DEP = 'devDependencies';
 
-class App {
-  /**
-   * @param sourcePath {String} path to source directory.
-   * @param transformerOption {Object}
-   */
-  constructor(sourcePath, transformerOption) {
-    const { watch, appDirectory, distDirectory } = transformerOption;
-    this.appDirectory = appDirectory;
-    this.distDirectory = distDirectory;
+/**
+ * Create page files
+ * @param appDirectory {String} Absolute app path.
+ * @param distDirectory {String} Absolute dist path.
+ */
+const createChildPage = function(appDirectory, distDirectory, transformed) {
+  const { config = {} } = transformed;
+  const pages = config.pages || [];
+  for (let i = 0, l = pages.length; i < l; i++) {
+    createPage(
+      appDirectory,
+      distDirectory,
+      pages[i]
+    );
+  }
+};
 
-    const sourceScriptPath = join(appDirectory, 'app.js');
-    const sourceStylePath = join(appDirectory, 'app.css');
-    const sourceConfigPath = join(appDirectory, 'app.json');
-    const sourcePackageJSON = join(appDirectory, 'package.json');
-    if (!existsSync(sourceConfigPath)) {
-      throw new Error('app.json not exists.');
-    }
+/**
+ * copy app files to dist
+ * @param appDirectory {String} Absolute app path.
+ * @param distDirectory {String} Absolute dist path.
+ */
+const copyAppFiles = function(appDirectory, distDirectory, transformed) {
+  const sourceStylePath = join(appDirectory, 'app.css');
+  const sourcePackageJSON = join(appDirectory, 'package.json');
+  const { config = {}, code = '' } = transformed;
 
-    const config = this.config = readJSONSync(sourceConfigPath);
-    const packageConfig = this.packageConfig = readJSONSync(sourcePackageJSON);
-    const script = this.script = readFileSync(sourceScriptPath, 'utf-8');
-    const style = this.style = readFileSync(sourceStylePath, 'utf-8');
+  const packageConfig = readJSONSync(sourcePackageJSON);
 
-    // Remove rax in dependencies.
-    if (packageConfig[DEP] && packageConfig[DEP].hasOwnProperty('rax')) {
-      delete packageConfig[DEP].rax;
-    }
-    // Remove devDeps.
-    if (packageConfig[DEV_DEP]) {
-      delete packageConfig[DEV_DEP];
-    }
-
-    this.dependencyPages = [];
-    const { pages } = config;
-    for (let i = 0, l = pages.length; i < l; i++) {
-      const pageInstance = new TransformerPage({
-        rootContext: sourcePath,
-        context: resolve(sourcePath, pages[i]),
-        distRoot: distDirectory,
-        distPagePath: resolve(distDirectory, pages[i], '..'),
-        watch,
-      });
-      this.dependencyPages.push(pageInstance);
-    }
-
-    this.write();
+  let style;
+  if (existsSync(sourceStylePath)) {
+    style = readFileSync(sourceStylePath, 'utf-8');
   }
 
-  write() {
-    writeFileSync(join(this.distDirectory, 'app.js'), this.script);
-    writeFileSync(join(this.distDirectory, 'app.acss'), this.style);
-    writeJSONSync(join(this.distDirectory, 'app.json'), this.config);
-    writeJSONSync(join(this.distDirectory, 'package.json'), this.packageConfig);
+  // Remove rax in dependencies.
+  if (packageConfig[DEP] && packageConfig[DEP].hasOwnProperty('rax')) {
+    delete packageConfig[DEP].rax;
   }
-}
+  // Remove devDeps.
+  if (packageConfig[DEV_DEP]) {
+    delete packageConfig[DEV_DEP];
+  }
+  // Add jsx2mp-runtime as dep
+  if (!packageConfig[DEP]) packageConfig[DEP] = {};
+  if (!packageConfig[DEP].hasOwnProperty(RUNTIME)) {
+    packageConfig[DEP][RUNTIME] = 'latest';
+  }
 
-module.exports = App;
+  writeFile(join(distDirectory, 'app.js'), code, appDirectory);
+  writeFile(join(distDirectory, 'app.json'), JSON.stringify(config, null, 2), appDirectory);
+  writeFile(join(distDirectory, 'package.json'), JSON.stringify(packageConfig, null, 2), appDirectory);
+
+  if (style) {
+    writeFile(join(distDirectory, 'app.acss'), style, appDirectory);
+  }
+};
+
+/**
+ * Create app
+ * @param appDirectory {String} Absolute app path.
+ * @param distDirectory {String} Absolute dist path.
+ */
+const createApp = function(appDirectory, distDirectory) {
+  const sourceScriptPath = join(appDirectory, 'app.js');
+  const transformed = transformJSX(sourceScriptPath, 'app');
+  copyAppFiles(appDirectory, distDirectory, transformed);
+  createChildPage(appDirectory, distDirectory, transformed);
+};
+
+module.exports = {
+  createApp
+};

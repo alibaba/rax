@@ -1,4 +1,3 @@
-var path = require('path');
 var fs = require('fs');
 var easyfile = require('easyfile');
 var path = require('path');
@@ -20,7 +19,6 @@ module.exports = function(args) {
   var files = easyfile.readdir(projectDir);
   files.forEach(function(filename) {
     if (filename[0] === '_') {
-      var filepath = path.join(projectDir, filename);
       easyfile.rename(
         path.join(projectDir, filename),
         path.join(projectDir, filename.replace(/^_/, '.'))

@@ -1,0 +1,18 @@
+.page-home {
+  flex-direction: column;
+}
+
+.home-logo {
+  width: 150rpx;
+}
+
+.home-intro {
+  margin: 50rpx;
+}
+
+.home-title {
+  color: #fff;
+  font-weight: bold;
+  font-size: 45rpx;
+  margin: 50rpx 0 0;
+}

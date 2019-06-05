@@ -125,16 +125,16 @@ function askProjectInformaction(name, verbose) {
       message: 'What\'s your project type?',
       choices: [
         {
-          name: 'WebApp',
+          name: 'WebApp (For build app that only works in broswers.)',
           value: 'webapp'
         },
         {
-          name: 'WeexApp',
+          name: 'WeexApp (For build app that only works in Weex.)',
           value: 'weexapp'
         },
         {
-          name: 'MiniApp',
-          value: 'miniapp'
+          name: 'UniversalApp (For build cross platform application.)',
+          value: 'univeraslapp'
         },
         {
           name: 'Component',
