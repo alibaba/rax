@@ -6,11 +6,11 @@ export default class App {
    * App config.
    */
   static config = {
-    "pages": [
-      "pages/home"
+    'pages': [
+      'pages/home'
     ],
-    "window": {
-      "defaultTitle": "MiniApp"
+    'window': {
+      'defaultTitle': 'MiniApp'
     }
   };
 
