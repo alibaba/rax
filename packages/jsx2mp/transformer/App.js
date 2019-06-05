@@ -1,5 +1,5 @@
 const { join, resolve } = require('path');
-const { readFileSync, readJSONSync, existsSync } = require('fs-extra');
+const { readFileSync, readJSONSync, existsSync, mkdirpSync, copySync } = require('fs-extra');
 const { createPage } = require('./Page');
 const { writeFile } = require('../utils/file');
 const { transformJSX } = require('./Transformer');
@@ -33,6 +33,8 @@ const createChildPage = function(appDirectory, distDirectory, transformed) {
 const copyAppFiles = function(appDirectory, distDirectory, transformed) {
   const sourceStylePath = join(appDirectory, 'app.css');
   const sourcePackageJSON = join(appDirectory, 'package.json');
+  const assetsPath = join(appDirectory, 'assets');
+  const utilsPath = join(appDirectory, 'utils');
   const { config = {}, code = '' } = transformed;
 
   const packageConfig = readJSONSync(sourcePackageJSON);
@@ -40,6 +42,18 @@ const copyAppFiles = function(appDirectory, distDirectory, transformed) {
   let style;
   if (existsSync(sourceStylePath)) {
     style = readFileSync(sourceStylePath, 'utf-8');
+  }
+
+  if (existsSync(assetsPath)) {
+    const assetsDistPath = join(distDirectory, 'assets');
+    mkdirpSync(assetsDistPath);
+    copySync(assetsPath, assetsDistPath);
+  }
+
+  if (existsSync(utilsPath)) {
+    const utilsDistPath = join(distDirectory, 'utils');
+    mkdirpSync(utilsDistPath);
+    copySync(utilsPath, utilsDistPath);
   }
 
   // Remove rax in dependencies.

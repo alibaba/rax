@@ -3,6 +3,7 @@ const {
   mkdirpSync,
   removeSync,
 } = require('fs-extra');
+const { join } = require('path');
 const colors = require('colors');
 const { createApp } = require('./transformer/App');
 const { startWatching } = require('./transformer/Watch');
@@ -17,6 +18,12 @@ const { printLog, ask } = require('./utils/log');
  */
 async function transformJSXToMiniProgram(sourcePath, distPath, enableWatch = false) {
   if (!isDirectory(sourcePath)) throw new Error('Not a valid path.');
+
+  const sourceScriptPath = join(sourcePath, 'app.js');
+  if (!existsSync(sourceScriptPath)) {
+    printLog(colors.red('非可转换工程，请到转换工程目录下执行'));
+    return;
+  }
 
   if (existsSync(distPath)) {
     const needClean = await ask('发现目标目录 dist 已存在，是否需要清理?');
