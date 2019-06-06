@@ -55,6 +55,15 @@ const copyAppFiles = function(appDirectory, distDirectory, transformed) {
     mkdirpSync(utilsDistPath);
     copySync(utilsPath, utilsDistPath);
   }
+  // Add jsx2mp-runtime as dep
+  if (!packageConfig[DEP]) packageConfig[DEP] = {};
+  if (!packageConfig[DEP].hasOwnProperty(RUNTIME)) {
+    packageConfig[DEP][RUNTIME] = 'latest';
+  }
+
+  writeFile(join(distDirectory, 'app.js'), code, appDirectory);
+  writeFile(join(distDirectory, 'app.json'), JSON.stringify(config, null, 2), appDirectory);
+  writeFile(join(distDirectory, 'package.json'), JSON.stringify(packageConfig, null, 2), appDirectory);
 
   // Remove rax in dependencies.
   if (packageConfig[DEP] && packageConfig[DEP].hasOwnProperty('rax')) {
