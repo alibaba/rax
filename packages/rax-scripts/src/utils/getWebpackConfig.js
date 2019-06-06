@@ -21,10 +21,10 @@ module.exports = (type, env = 'prod') => {
 
     if (appConfig.ssr) {
       config.push(require(`${webpackConfigMap.webapp.server}.${env}`));
-    }
 
-    if (appConfig.serverless) {
-      config.push(require(`${webpackConfigMap.webapp.serverless}.${env}`));
+      if (appConfig.ssr.serverless) {
+        config.push(require(`${webpackConfigMap.webapp.serverless}.${env}`));
+      }
     }
 
     return config;

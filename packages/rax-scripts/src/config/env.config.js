@@ -12,7 +12,6 @@ const host = process.env.HOST || address.ip();
 const dir = process.env.DIR || process.cwd();
 const debug = process.env.DEBUG === 'true' || process.env.DEBUG === true;
 const port = parseInt(process.env.PORT, 10) || 9999;
-const pwa = process.env.PWA === 'true';
 
 module.exports = {
   host,
@@ -20,5 +19,4 @@ module.exports = {
   port,
   dir,
   debug,
-  pwa,
 };

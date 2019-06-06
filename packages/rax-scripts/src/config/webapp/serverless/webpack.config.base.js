@@ -12,24 +12,31 @@ const ServerlessLoader = require.resolve('rax-ssr-webpack-plugin/lib/ServerlessL
 
 const entries = getEntries();
 const appDirectory = pathConfig.appDirectory;
-const templatePath = pathConfig.appTemplate;
+const outputPath = webpackConfigBase.output.publicPath;
 
+const pages = {};
 Object.keys(entries).map((entry) => {
+  if (entry.indexOf('_') > -1) {
+    return;
+  }
+
   const entryPath = entries[entry];
   const absoluteEntryPath = path.join(appDirectory, entryPath);
-
   const query = {
     page: entry,
     appPath: absoluteEntryPath,
-    templatePath
+    appConfigPath: pathConfig.appConfig,
+    appDocumentPath: entries._document ? entries._document : '',
+    appShellPath: entries._shell ? entries._shell : '',
+    publicPath: outputPath,
   };
 
-  entries[entry] = `${ServerlessLoader}?${qs.stringify(query)}!${entries[entry]}`;
+  pages[entry] = `${ServerlessLoader}?${qs.stringify(query)}!${entries[entry]}`;
 });
 
 const webpackConfig = webpackMerge(webpackConfigBase, {
   target: 'node',
-  entry: entries,
+  entry: pages,
   output: {
     filename: 'serverless/[name].js',
     libraryTarget: 'commonjs2',
