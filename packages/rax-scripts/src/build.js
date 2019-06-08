@@ -41,7 +41,7 @@ module.exports = function build(type = 'webapp') {
 
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
-  } else if (type === COMPONENT) { // build component master
+  } else if (type === COMPONENT) { // build component
     rimraf(pathConfig.appDist, function(err) {
       if (err) {
         throw err;
