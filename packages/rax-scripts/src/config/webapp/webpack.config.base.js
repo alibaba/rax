@@ -3,6 +3,7 @@
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const webpackConfig = require('../webpack.config');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const babelConfig = require('../babel.config');
 
 module.exports = {
   mode: webpackConfig.mode,
@@ -27,6 +28,10 @@ module.exports = {
         test: /\.tsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: [
+          {
+            loader: require.resolve('babel-loader'),
+            options: babelConfig,
+          },
           {
             loader: require.resolve('ts-loader'),
           },

@@ -1,5 +1,0 @@
-Page({
-  onLoad(query) {
-
-  },
-});

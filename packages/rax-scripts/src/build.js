@@ -41,14 +41,12 @@ module.exports = function build(type = 'webapp') {
 
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
-  } else if (type === COMPONENT) { // build component
-    const webpackConfigComponentDistProd = getWebpackConfig(type);
-    componentCompiler(appPackage.name);
+  } else if (type === COMPONENT) { // build component master
     rimraf(pathConfig.appDist, function(err) {
       if (err) {
         throw err;
       }
-      buildCompiler(webpackConfigComponentDistProd);
+      componentCompiler();
     });
   } else {
     rimraf(pathConfig.appBuild, (err) => {

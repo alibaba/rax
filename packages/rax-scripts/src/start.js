@@ -15,6 +15,7 @@ const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
 const SSRDevServer = require('./utils/SSRDevServer');
+const path = require('path');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
@@ -24,6 +25,7 @@ const getAppConfig = require('./utils/getAppConfig');
 const getWebpackConfig = require('./utils/getWebpackConfig');
 
 const MINIAPP = 'miniapp';
+const COMPONENT_MINIAPP = 'component-miniapp';
 
 /**
  * run webpack dev server
@@ -31,42 +33,43 @@ const MINIAPP = 'miniapp';
 module.exports = function start(type = 'webapp') {
   if (type === MINIAPP) {
     jsx2mp(pathConfig.appDirectory, pathConfig.appDist, true);
-    return;
-  }
-
-  const appConfig = getAppConfig() || {};
-  const webpackConfig = getWebpackConfig(type, 'dev');
-  const compiler = createWebpackCompiler(webpackConfig);
-
-  let devServer;
-  if (appConfig.ssr) {
-    devServer = new SSRDevServer(compiler);
+  } else if (type === COMPONENT_MINIAPP) {
+    process.argv.push('--gulpfile', path.resolve(__dirname, './config/component/gulpfile-miniapp.js'));
+    process.argv.push('--cwd', process.cwd());
+    require('gulp-cli')();
   } else {
-    devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
-  }
+    const appConfig = getAppConfig() || {};
+    const webpackConfig = getWebpackConfig(type, 'dev');
+    const compiler = createWebpackCompiler(webpackConfig);
 
-  // Launch WebpackDevServer.
-  devServer.listen(envConfig.port, envConfig.hostname, (err) => {
-    if (err) {
-      console.log(colors.red('[ERR]: Failed to webpack dev server'));
-      console.error(err.message || err);
-      process.exit(1);
+    let devServer;
+    if (appConfig.ssr) {
+      devServer = new SSRDevServer(compiler);
+    } else {
+      devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
     }
 
-    const serverUrl = `${envConfig.protocol}//${envConfig.host}:${
-      envConfig.port
-    }/`;
+    // Launch WebpackDevServer.
+    devServer.listen(envConfig.port, envConfig.hostname, (err) => {
+      if (err) {
+        console.log(colors.red('[ERR]: Failed to webpack dev server'));
+        console.error(err.message || err);
+        process.exit(1);
+      }
 
-    console.log('');
-    console.log(colors.green('Starting the development server at:'));
-    console.log(`    ${colors.underline.white(serverUrl)}`);
-    console.log('');
+      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}/`;
 
-    ['SIGINT', 'SIGTERM'].forEach(function(sig) {
-      process.on(sig, function() {
-        devServer.close();
-        process.exit();
+      console.log('');
+      console.log(colors.green('Starting the development server at:'));
+      console.log(`    ${colors.underline.white(serverUrl)}`);
+      console.log('');
+
+      ['SIGINT', 'SIGTERM'].forEach(function(sig) {
+        process.on(sig, function() {
+          devServer.close();
+          process.exit();
+        });
       });
     });
-  });
+  }
 };

@@ -239,7 +239,12 @@ const config = () => {
         routes: [
           {
             path: '',                 // www.example.com/bar
-            component: () => import(/* webpackChunkName: "bar" */ './Bar'),
+            component: () => import(/* webpackChunkName: "bar" */ './Bar').then((Bar) => {
+              // interop-require see: https://www.npmjs.com/package/interop-require
+              Bar = Bar.__esModule ? Bar.default : Bar;
+              // return a created element
+              return <Bar />;
+            }),
           },
         ],
       },

@@ -1,5 +1,0 @@
-App({
-  onLaunch(options) {
-
-  },
-});

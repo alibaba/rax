@@ -1,0 +1,20 @@
+{
+  "name": "__YourProjectName__",
+  "author": "__AuthorName__",
+  "version": "0.0.0",
+  "scripts": {
+    "build:miniapp": "rax-scripts build --type=miniapp",
+    "lint": "eslint --ext .js --ext .jsx ./src"
+  },
+  "dependencies": {
+    "rax": "^1.0.0",
+    "rax-view": "miniapp-beta",
+    "rax-text": "miniapp-beta",
+    "rax-image": "miniapp-beta"
+  },
+  "devDependencies": {
+    "rax-scripts": "^1.2.0",
+    "eslint": "^5.15.1",
+    "babel-eslint": "^10.0.1"
+  }
+}

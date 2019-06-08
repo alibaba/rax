@@ -1,0 +1,305 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+exports['Transpiler parse wx:if 1'] = `
+Object {
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "wx:if": "{{condition}}",
+  },
+  "children": Array [
+    Object {
+      "text": "IF",
+      "type": 3,
+    },
+  ],
+  "if": "(data['condition'])",
+  "ifConditions": Array [
+    Object {
+      "block": [Circular],
+      "exp": "(data['condition'])",
+    },
+    Object {
+      "block": Object {
+        "attrsList": Array [],
+        "attrsMap": Object {
+          "wx:elif": "{{anotherCondition}}",
+        },
+        "children": Array [
+          Object {
+            "text": "ELSEIF",
+            "type": 3,
+          },
+        ],
+        "elseif": "(data['anotherCondition'])",
+        "parent": undefined,
+        "plain": false,
+        "tag": "view",
+        "type": 1,
+      },
+      "exp": "(data['anotherCondition'])",
+    },
+    Object {
+      "block": Object {
+        "attrsList": Array [],
+        "attrsMap": Object {
+          "wx:else": "",
+        },
+        "children": Array [
+          Object {
+            "text": "ELSE",
+            "type": 3,
+          },
+        ],
+        "else": true,
+        "parent": undefined,
+        "plain": false,
+        "tag": "view",
+        "type": 1,
+      },
+      "exp": undefined,
+    },
+  ],
+  "parent": undefined,
+  "plain": false,
+  "tag": "view",
+  "type": 1,
+}
+`;
+
+exports['Transpiler parse wx:if 2'] = '"((data[\'condition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"IF\\")]):((data[\'anotherCondition\']))?_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSEIF\\")]):_c(__components_ref__[\'view\']||\'view\',{},[_v(\\"ELSE\\")])"';
+
+exports['Transpiler parse wx:key 1'] = `
+Object {
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "wx:key": "{{key}}",
+  },
+  "children": Array [],
+  "key": "(data['key'])",
+  "parent": undefined,
+  "plain": false,
+  "tag": "view",
+  "type": 1,
+}
+`;
+
+exports['Transpiler parse wx:key 2'] = '"_c(__components_ref__[\'view\']||\'view\',{key:(data[\'key\'])})"';
+
+exports['Transpiler parse bind props 1'] = `
+Object {
+  "attrs": Array [
+    Object {
+      "name": "foo",
+      "scope": "",
+      "value": "(\\"bar \\") + (data['someVal']) + (\\" \\") + (data['otherVal'])",
+    },
+  ],
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "foo": "bar {{someVal}} {{otherVal}}",
+  },
+  "children": Array [
+    Object {
+      "attrsList": Array [],
+      "attrsMap": Object {},
+      "children": Array [
+        Object {
+          "text": "hello",
+          "type": 3,
+        },
+      ],
+      "parent": [Circular],
+      "plain": true,
+      "tag": "text",
+      "type": 1,
+    },
+    Object {
+      "attrsList": Array [],
+      "attrsMap": Object {},
+      "children": Array [
+        Object {
+          "text": "world",
+          "type": 3,
+        },
+      ],
+      "parent": [Circular],
+      "plain": true,
+      "tag": "text",
+      "type": 1,
+    },
+  ],
+  "parent": undefined,
+  "plain": false,
+  "tag": "view",
+  "type": 1,
+}
+`;
+
+exports['Transpiler parse bind props 2'] = '"_c(__components_ref__[\'view\']||\'view\',{foo:(\\"bar \\") + (data[\'someVal\']) + (\\" \\") + (data[\'otherVal\'])},[_c(__components_ref__[\'text\']||\'text\',[_v(\\"hello\\")]),_c(__components_ref__[\'text\']||\'text\',[_v(\\"world\\")])])"';
+
+exports['Transpiler parse nested 1'] = `
+Object {
+  "attrs": Array [
+    Object {
+      "name": "foo",
+      "value": "\\"bar\\"",
+    },
+  ],
+  "attrsList": Array [
+    Object {
+      "name": "foo",
+      "value": "bar",
+    },
+  ],
+  "attrsMap": Object {
+    "foo": "bar",
+  },
+  "children": Array [
+    Object {
+      "attrsList": Array [],
+      "attrsMap": Object {},
+      "children": Array [
+        Object {
+          "text": "hello",
+          "type": 3,
+        },
+      ],
+      "parent": [Circular],
+      "plain": true,
+      "tag": "text",
+      "type": 1,
+    },
+    Object {
+      "attrsList": Array [],
+      "attrsMap": Object {},
+      "children": Array [
+        Object {
+          "text": "world",
+          "type": 3,
+        },
+      ],
+      "parent": [Circular],
+      "plain": true,
+      "tag": "text",
+      "type": 1,
+    },
+  ],
+  "parent": undefined,
+  "plain": false,
+  "tag": "view",
+  "type": 1,
+}
+`;
+
+exports['Transpiler parse nested 2'] = '"_c(__components_ref__[\'view\']||\'view\',{foo:\\"bar\\"},[_c(__components_ref__[\'text\']||\'text\',[_v(\\"hello\\")]),_c(__components_ref__[\'text\']||\'text\',[_v(\\"world\\")])])"';
+
+exports['Transpiler parse should parse instant nested object expression 1'] = `
+Object {
+  "ast": Object {
+    "attrs": Array [
+      Object {
+        "name": "foo",
+        "scope": "",
+        "value": "(({
+  x: {
+    y: 2
+  }
+}))",
+      },
+    ],
+    "attrsList": Array [],
+    "attrsMap": Object {
+      "foo": "{{x:{y:2}}}",
+    },
+    "children": Array [],
+    "parent": undefined,
+    "plain": false,
+    "tag": "view",
+    "tagHelperMap": Object {
+      "view": "view",
+    },
+    "type": 1,
+  },
+  "render": "_c(__components_ref__['view']||'view',{foo:(({
+  x: {
+    y: 2
+  }
+}))})",
+}
+`;
+
+exports['Transpiler parse style and class 1'] = `
+Object {
+  "attrs": Array [
+    Object {
+      "name": "class",
+      "scope": "",
+      "value": "(\\"staticClass \\") + (data['dynamicClass'])",
+    },
+  ],
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "class": "staticClass {{dynamicClass}}",
+    "style": "color: red; {{style}}",
+  },
+  "children": Array [],
+  "parent": undefined,
+  "plain": false,
+  "styleBinding": " (\\"color: red; \\") + (style)",
+  "tag": "view",
+  "type": 1,
+}
+`;
+
+exports['Transpiler parse style and class 2'] = '"_c(__components_ref__[\'view\']||\'view\',{style:_cx( (\\"color: red; \\") + (style),null),class:(\\"staticClass \\") + (data[\'dynamicClass\'])})"';
+
+exports['Transpiler parse test for scoped-slot 1'] = `
+Object {
+  "attrsList": Array [],
+  "attrsMap": Object {
+    "bindtap": "handler",
+  },
+  "children": Array [],
+  "events": Object {
+    "click": Object {
+      "scope": "this.",
+      "value": "handler",
+    },
+  },
+  "parent": undefined,
+  "plain": false,
+  "scopedSlots": Object {
+    "\\"item\\"": Object {
+      "attrsList": Array [],
+      "attrsMap": Object {
+        "slot": "item",
+        "slot-scope": "props",
+      },
+      "children": Array [
+        Object {
+          "attrsList": Array [],
+          "attrsMap": Object {},
+          "children": Array [
+            Object {
+              "expression": "_s(props.item.text)",
+              "text": "{{props.item.text}}",
+              "type": 2,
+            },
+          ],
+          "parent": [Circular],
+          "plain": true,
+          "tag": "text",
+          "type": 1,
+        },
+      ],
+      "parent": [Circular],
+      "plain": false,
+      "slotScope": "props",
+      "slotTarget": "\\"item\\"",
+      "tag": "view",
+      "type": 1,
+    },
+  },
+  "tag": "component",
+  "type": 1,
+}
+`;

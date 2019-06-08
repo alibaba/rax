@@ -1,4 +1,4 @@
-import { runLoaders } from 'loader-runner';
+const { runLoaders } = require('loader-runner');
 
 const templateLoaderPath = require.resolve('../template-loader');
 

@@ -6,7 +6,7 @@
 
 #### 渲染阶段
 
-- componentWillMount：该方法在首次渲染之前调用，也是再 `render` 方法调用之前修改 `state` 的最后一次机会。
+- componentWillMount：该方法在首次渲染之前调用，也是在 `render` 方法调用之前修改 `state` 的最后一次机会。
 - render：该方法会创建一个虚拟 DOM，用来表示组件的输出。对于一个组件来讲，`render` 方法是唯一一个必需的方法。`render`方法需要满足下面几点：
   1. 只能通过 `this.props` 和 this.state 访问数据（不能修改）
   2. 可以返回 `null` 或者任何 `Rax` 组件
