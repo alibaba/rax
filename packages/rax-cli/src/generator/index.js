@@ -34,6 +34,8 @@ module.exports = function(args) {
 
   if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
     fs.unlinkSync(path.join(projectDir, 'src/index.js'));
+    fs.unlinkSync(path.join(projectDir, 'public/index.html'));
+    fs.rmdirSync(path.join(projectDir, 'public'));
 
     var appJSONPath = path.join(projectDir, 'app.json');
     var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');

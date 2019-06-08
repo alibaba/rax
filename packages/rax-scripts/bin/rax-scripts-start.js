@@ -3,7 +3,6 @@
 const program = require('commander');
 const optionsAttachToEnv = require('../src/utils/optionsAttachToEnv');
 
-debugger;
 program
   .option('--type <type>', 'set application type', 'webapp')
   .option('-p, --port <port>', 'set server port', 9999)
@@ -12,7 +11,6 @@ program
   .option('--https', 'enabled https protocol', false)
   .option('--analyzer', 'enabled webpack bundle analyzer', false)
   .action((cmd) => {
-    debugger;
     optionsAttachToEnv(cmd);
     require('../src/start')(program.type);
   });
