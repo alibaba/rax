@@ -7,7 +7,7 @@ const getWebpackConfigBase = require('../webpack.config.base');
 const pathConfig = require('../../path.config');
 const getEntries = require('../../../utils/getEntries');
 
-const ServerlessLoader = require.resolve('rax-ssr-webpack-plugin/lib/ServerlessLoader');
+const ServerlessLoader = require.resolve('rax-pwa-webpack-plugin/lib/ServerlessLoader');
 
 const webpackConfigBase = getWebpackConfigBase({
   target: 'web'

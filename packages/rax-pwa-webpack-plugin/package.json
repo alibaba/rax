@@ -1,5 +1,5 @@
 {
-  "name": "rax-ssr-webpack-plugin",
+  "name": "rax-pwa-webpack-plugin",
   "version": "1.0.0-0",
   "description": "Webpack plugin for Rax SSR.",
   "license": "BSD-3-Clause",

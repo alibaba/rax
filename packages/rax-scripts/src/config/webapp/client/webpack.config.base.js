@@ -9,7 +9,7 @@ const getWebpackConfigBase = require('../webpack.config.base');
 const getEntries = require('../../../utils/getEntries');
 const getAppConfig = require('../../../utils/getAppConfig');
 
-const ClientLoader = require.resolve('rax-ssr-webpack-plugin/lib/ClientLoader');
+const ClientLoader = require.resolve('rax-pwa-webpack-plugin/lib/ClientLoader');
 
 const appConfig = getAppConfig() || {};
 
