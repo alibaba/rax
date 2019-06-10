@@ -9,8 +9,12 @@ module.exports = function(source) {
     appConfigPath,
     appDocumentPath,
     appShellPath,
-    publicPath
+    scripts,
+    styles,
   } = query;
+
+  const styleList = typeof styles === 'string' ? [styles] : styles;
+  const scriptList = typeof scripts === 'string' ? [scripts] : scripts;
 
   return `
     import RaxServer from 'rax-server';
@@ -32,14 +36,8 @@ module.exports = function(source) {
         '${page}': {
           title: AppConfig.pages && AppConfig.pages[${page}] ? AppConfig.pages[${page}].title : '',
           component: App,
-          styles: [
-            '${publicPath}client/${page}.css'
-          ],
-          scripts: {
-            es5: [
-              '${publicPath}client/${page}.js'
-            ]
-          }
+          styles: ${JSON.stringify(styleList)},
+          scripts: ${JSON.stringify(scriptList)},
         }
       }
     });
@@ -57,7 +55,6 @@ module.exports = function(source) {
     }
 
     export function initializer(context, callback) {
-      console.log('initializer invoked');
       callback(null, '');
     }
   `;

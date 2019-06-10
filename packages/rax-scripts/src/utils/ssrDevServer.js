@@ -7,7 +7,7 @@ const hotMiddleware = require('webpack-hot-middleware');
 
 const getEntries = require('./getEntries');
 const getAppConfig = require('./getAppConfig');
-const evnConfig = require('../config/env.config');
+const envConfig = require('../config/env.config');
 const pathConfig = require('../config/path.config');
 
 class DevServer {
@@ -72,9 +72,7 @@ class DevServer {
     const pageConfig = {
       page,
       component: this.loadComponent(page, res),
-      scripts: {
-        es5: [`${evnConfig.publicPath || './'}client/${page}.js`]
-      },
+      scripts: [`${envConfig.publicPath}client/${page}.js`],
       document: {
         title: appConfig.title
       }

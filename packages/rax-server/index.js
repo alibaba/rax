@@ -88,7 +88,7 @@ async function renderToHTML(req, res, options) {
     title,
     component,
     styles = [],
-    scripts,
+    scripts = [],
     document,
     shell,
     renderOpts
@@ -121,16 +121,13 @@ async function renderToHTML(req, res, options) {
 
   const documentComponent = document.component || Document;
   const pageTitle = title || document.title;
-
-  const esType = 'es5';
-
   const documentData = await getInitialProps(documentComponent, ctx);
   const documentElement = createElement(documentComponent, {
     title: pageTitle,
     pageHtml,
     pageData: JSON.stringify(pageData),
     styles,
-    scripts: scripts[esType] || [],
+    scripts,
     ...documentData
   });
 

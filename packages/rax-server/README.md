@@ -46,10 +46,7 @@ options:
     * component: component for page
     * template: template for page（optional）
     * style: styles for page
-    * scripts: response for different browser
-      * es5
-      * es6
-      * esm
+    * scripts: scripts for page
 * renderOpts: config for rax-server-renderer
 
 ```js
@@ -72,9 +69,7 @@ const options = {
       title: 'Index',
       component: require('./dist/server/index.js'),
       styles: ['./client/index.css'],
-      scripts: {
-        es5: ['./client/index.js']
-      }
+      scripts: ['./client/index.js']
     },
     bar: {
       component: require('./dsit2/server/bar.js')
