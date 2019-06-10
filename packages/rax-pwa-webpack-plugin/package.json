@@ -1,7 +1,7 @@
 {
   "name": "rax-pwa-webpack-plugin",
   "version": "1.0.0-0",
-  "description": "Webpack plugin for Rax SSR.",
+  "description": "Webpack plugins for rax pwa project.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
