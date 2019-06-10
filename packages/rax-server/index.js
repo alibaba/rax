@@ -87,7 +87,7 @@ async function renderToHTML(req, res, options) {
     query,
     title,
     component,
-    styles,
+    styles = [],
     scripts,
     document,
     shell,
@@ -128,9 +128,9 @@ async function renderToHTML(req, res, options) {
   const documentElement = createElement(documentComponent, {
     title: pageTitle,
     pageHtml,
-    pageData,
+    pageData: JSON.stringify(pageData),
     styles,
-    scripts: scripts[esType],
+    scripts: scripts[esType] || [],
     ...documentData
   });
 
