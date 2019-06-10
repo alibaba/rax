@@ -12,9 +12,4 @@ const webpackConfigDev = webpackMerge(webpackConfigBase, {
   ],
 });
 
-// Object.keys(webpackConfigDev.entry).forEach((point) => {
-//   // hot reaload client.
-//   webpackConfigDev.entry[point].unshift(require.resolve('../../../hmr/webpackHotDevClient.entry'));
-// });
-
 module.exports = webpackConfigDev;

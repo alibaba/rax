@@ -15,7 +15,7 @@ module.exports = () => {
 
     if (pathStat.isDirectory()) {
       const relativePath = path.relative(appDirectory, absolutePath);
-      entries[file] = './' + path.join(relativePath, 'index.jsx');
+      entries[file] = './' + path.join(relativePath, '/');
     }
   });
 
