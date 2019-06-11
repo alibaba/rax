@@ -1,4 +1,5 @@
-const runSequence = require('run-sequence');
+const gulp = require('gulp');
+const runSequence = require('run-sequence').use(gulp);
 const { join } = require('path');
 const { getAppConfig } = require('../config/getAppConfig');
 const getMiniappType = require('../config/getMiniappType');
