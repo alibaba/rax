@@ -115,9 +115,10 @@ class NativeComponent extends BaseComponent {
 
       if (!shouldNotRemoveChild) {
         Host.driver.removeChild(this._nativeNode, this._parent);
+
+        // If the parent node has been removed, child node don't need to be removed
+        shouldNotRemoveChild = true;
       }
-      // If the parent node has been removed, child node don't need to be removed
-      shouldNotRemoveChild = true;
     }
 
     this.unmountChildren(shouldNotRemoveChild);
