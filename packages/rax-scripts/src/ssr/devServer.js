@@ -5,8 +5,8 @@ const RaxServer = require('rax-server');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
-const getEntries = require('./getEntries');
-const getAppConfig = require('./getAppConfig');
+const getEntries = require('../utils/getEntries');
+const getAppConfig = require('../utils/getAppConfig');
 const envConfig = require('../config/env.config');
 const pathConfig = require('../config/path.config');
 

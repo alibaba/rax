@@ -14,7 +14,7 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
-const SSRDevServer = require('./utils/ssrDevServer');
+const SSRDevServer = require('./ssr/devServer');
 const path = require('path');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
