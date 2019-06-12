@@ -1,4 +1,4 @@
-const { join, resolve } = require('path');
+const { join } = require('path');
 const { readFileSync, readJSONSync, existsSync } = require('fs-extra');
 const { createPage } = require('./Page');
 const { writeFile } = require('../utils/file');

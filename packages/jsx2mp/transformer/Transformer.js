@@ -1,6 +1,6 @@
 const compiler = require('jsx-compiler');
 const { readFileSync } = require('fs-extra');
-const { resolve, relative } = require('path');
+const { relative } = require('path');
 const { writeFile } = require('../utils/file');
 const removeExt = require('../utils/removeExt');
 
