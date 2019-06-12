@@ -24,9 +24,10 @@ const pathConfig = require('./config/path.config');
 const MINIAPP = 'miniapp';
 const COMPONENT_MINIAPP = 'component-miniapp';
 const webpackConfigMap = {
+  universalapp: './config/universalapp/webpack.config.dev', // Provide both web/weex server
   webapp: './config/webapp/webpack.config.dev',
   weexapp: './config/weexapp/webpack.config.dev',
-  component: './config/component/webpack.config.dev'
+  component: './config/component/webpack.config.dev',
 };
 
 /**
