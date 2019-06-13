@@ -18,5 +18,14 @@
   "peerDependencies": {
     "rax": "^1.0.4",
     "rax-hydrate": "^1.0.1"
+  },
+  "dependencies": {
+    "css-loader": "^2.1.1",
+    "loader-utils": "^1.2.3",
+    "path-to-regexp": "^3.0.0",
+    "postcss-loader": "^3.0.0",
+    "rax": "^1.0.4",
+    "rax-server-renderer": "^1.0.1",
+    "webpack": "^4.32.2"
   }
 }
