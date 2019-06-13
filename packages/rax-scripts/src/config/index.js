@@ -62,4 +62,4 @@ exports.getEntries = () => {
   }
 
   return entries;
-}
+};
