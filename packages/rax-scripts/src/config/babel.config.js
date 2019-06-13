@@ -16,6 +16,12 @@ module.exports = {
           'transform-computed-properties'
         ]
       }
+    ],
+    [
+      require.resolve('@babel/preset-react'), {
+        'pragma': 'createElement',
+        'pragmaFrag': 'Fragment'
+      }
     ]
   ],
   plugins: [

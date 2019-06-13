@@ -7,6 +7,7 @@ module.exports = function(args) {
   var projectName = args.projectName;
   var projectAuthor = args.projectAuthor;
   var projectType = args.projectType;
+  var projectFeatures = args.projectFeatures;
 
   var templates = path.join(__dirname, projectType);
   var pkgPath = path.join(projectDir, 'package.json');
@@ -30,6 +31,23 @@ module.exports = function(args) {
     .replace('__YourProjectName__', projectName)
     .replace('__AuthorName__', projectAuthor);
   fs.writeFileSync(pkgPath, replacedPkg);
+
+  if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
+    fs.unlinkSync(path.join(projectDir, 'src/index.js'));
+    fs.unlinkSync(path.join(projectDir, 'public/index.html'));
+    fs.rmdirSync(path.join(projectDir, 'public'));
+
+    var appJSONPath = path.join(projectDir, 'app.json');
+    var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
+    var appJSON = JSON.parse(appJSONContent);
+
+    projectFeatures.forEach((feature) => {
+      appJSON[feature] = true;
+    });
+
+    var jsonString = JSON.stringify(appJSON, null, 2);
+    fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
+  }
 
   process.chdir(projectDir);
   return Promise.resolve(projectDir);

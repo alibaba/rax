@@ -18,6 +18,7 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
 const componentCompiler = require('./utils/componentCompiler');
 const jsx2mp = require('jsx2mp');
+const { getWebpackConfig } = require('./config/');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);
@@ -34,10 +35,6 @@ function buildCompiler(config) {
 
 const MINIAPP = 'miniapp';
 const COMPONENT = 'component';
-const webpackConfigMap = {
-  webapp: './config/webapp/webpack.config.prod',
-  weexapp: './config/weexapp/webpack.config.prod'
-};
 
 module.exports = function build(type = 'webapp') {
   const appPackage = require(pathConfig.appPackageJson);
@@ -56,7 +53,7 @@ module.exports = function build(type = 'webapp') {
       if (err) {
         throw err;
       }
-      const config = require(webpackConfigMap[type]);
+      const config = getWebpackConfig(type);
       buildCompiler(config);
     });
   }

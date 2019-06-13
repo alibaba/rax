@@ -1,9 +1,9 @@
 {
-  "name": "rax-server-renderer",
-  "version": "1.0.3",
-  "description": "Rax renderer for server-side render.",
+  "name": "rax-server",
+  "version": "1.0.0",
+  "description": "Rax server.",
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
@@ -17,5 +17,11 @@
   },
   "devDependencies": {
     "rax": "^1.0.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "path-to-regexp": "^3.0.0",
+    "rax-pwa": "^1.0.0",
+    "rax-server-renderer": "^1.0.1"
   }
 }

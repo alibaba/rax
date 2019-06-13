@@ -1,7 +1,7 @@
 {
-  "name": "rax-server-renderer",
-  "version": "1.0.3",
-  "description": "Rax renderer for server-side render.",
+  "name": "rax-pwa-webpack-plugin",
+  "version": "1.0.0",
+  "description": "Webpack plugins for rax pwa project.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -12,10 +12,11 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "peerDependencies": {
-    "rax": "^1.0.0"
+  "engines": {
+    "npm": ">=3.0.0"
   },
-  "devDependencies": {
-    "rax": "^1.0.0"
+  "peerDependencies": {
+    "rax": "^1.0.4",
+    "rax-hydrate": "^1.0.1"
   }
 }

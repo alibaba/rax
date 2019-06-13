@@ -46,11 +46,13 @@ const paths = {
   appIndexJs: resolveModule(resolveApp, 'src/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
+  appDocument: resolveApp('src/document/index.js'),
+  appShell: resolveApp('src/shell/index.js'),
   appManifest: resolveApp('manifest.json'),
+  appConfig: resolveApp('app.json'),
   appNodeModules: resolveApp('node_modules'),
   componentDemoJs: resolveModule(resolveApp, 'demo/index'),
   nodePaths: nodePaths,
-  miniProgramIndexJs: resolveModule(resolveApp, 'app'),
 };
 
 module.exports = paths;
