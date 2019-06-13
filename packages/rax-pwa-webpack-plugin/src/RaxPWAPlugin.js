@@ -9,6 +9,7 @@ const renderer = require('rax-server-renderer');
 const _ = require('./utils/index');
 const getAssets = require('./utils/getAssets');
 const getConfig = require('./utils/getConfig');
+const getPagesConfig = require('./utils/getPagesConfig');
 const { getEntryCodeStr, getRouterCodeStr } = require('./utils/SPACodeStr');
 
 const PLUGIN_NAME = 'rax-pwa-webpack-plugin';
@@ -46,15 +47,31 @@ class RaxPWAPlugin {
      * 
      */
     if (withSPA) {
-      const entryCodeStr = getEntryCodeStr({ pathConfig, withAppShell, tempRouterFilePath: pathConfig.appSrc + '/_router' })
-      // skeletonTemplate = SPAInfo.skeletonTemplate;
-      fs.writeFileSync(tempIndexFilePath, entryCodeStr);
-
-
+      const pagesConfig = getPagesConfig(appConfig, pathConfig);
       const newEntry = {
         // pathConfig.appIndexJs
         index: tempIndexFilePath
-      }
+      };
+
+      const entryCodeStr = getEntryCodeStr({
+        pathConfig,
+        withAppShell,
+        tempRouterFilePath
+        // : pathConfig.appSrc + '/_router'
+      });
+      const routerCodeStr = getRouterCodeStr({
+        appConfig,
+        pathConfig,
+        pagesConfig,
+        withSSR,
+        withSPAPageSplitting
+      });
+
+      console.log(routerCodeStr);
+      // skeletonTemplate = SPAInfo.skeletonTemplate;
+      fs.writeFileSync(tempIndexFilePath, entryCodeStr);
+      fs.writeFileSync(tempRouterFilePath, routerCodeStr);
+
       compiler.options.entry = newEntry
     }
 
@@ -90,8 +107,13 @@ class RaxPWAPlugin {
 
       // destroy
       try {
-        if (withAppShell) { fs.unlinkSync(tempShellFilePath); }
-        if (withSPA) { fs.unlinkSync(tempIndexFilePath); }
+        if (withAppShell) {
+          fs.unlinkSync(tempShellFilePath);
+        }
+        if (withSPA) {
+          fs.unlinkSync(tempIndexFilePath);
+          // fs.unlinkSync(tempRouterFileName);
+        }
       } catch (e) {
         // ignore 
       }

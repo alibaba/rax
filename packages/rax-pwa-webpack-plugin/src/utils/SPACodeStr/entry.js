@@ -1,13 +1,13 @@
-module.exports = function getEntryCodeStr(options) {
 
+const getEntryCodeStr = (options) => {
   const { pathConfig, tempRouterFilePath, withAppShell } = options;
 
-  let importTemplate = '';
-  let renderTemplate = 'render(<pageComponent t="test" />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });';
+  let importsCodeStr = '';
+  let renderCodeStr = 'render(<pageComponent t="test" />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });';
 
   if (withAppShell) {
-    importTemplate += `import Shell from '${pathConfig.appShell}';`;
-    renderTemplate = 'render(<Shell Component={pageComponent} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });'
+    importsCodeStr += `import Shell from '${pathConfig.appShell}';`;
+    renderCodeStr = 'render(<Shell Component={pageComponent} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });'
   }
 
   return `
@@ -15,7 +15,7 @@ module.exports = function getEntryCodeStr(options) {
     import { createElement, render } from 'rax';
 
     import Router from '${tempRouterFilePath}';
-    ${importTemplate}
+    ${importsCodeStr}
     
     const pageComponent = (props) => {
       return <div id="root-page" ><Router {...props} /></div>;
@@ -25,6 +25,8 @@ module.exports = function getEntryCodeStr(options) {
       document.getElementById('root-page').innerHTML = '';
     }
     
-    ${renderTemplate}
+    ${renderCodeStr}
   `;
 }
+
+module.exports = getEntryCodeStr;

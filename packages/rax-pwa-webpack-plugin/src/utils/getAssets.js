@@ -1,11 +1,3 @@
-/**
- * @type {{
-    publicPath: string,
-    js: Array<string>,
-    css: Array<string>
-  }}
-  */
-
 const getAssets = (compilation) => {
 
   const compilationHash = compilation.hash;
@@ -29,8 +21,8 @@ const getAssets = (compilation) => {
   for (let i = 0; i < entryNames.length; i++) {
     const entryName = entryNames[i];
     const entryPointFiles = compilation.entrypoints.get(entryName).getFiles();
+
     // Prepend the publicPath and append the hash depending on the
-    // E.g. bundle.js -> /bundle.js?hash
     const entryPointPublicPaths = entryPointFiles
       .map(chunkFile => {
         const entryPointPublicPath = publicPath + chunkFile;

@@ -1,8 +1,6 @@
 const path = require('path');
 
-
-
-module.exports = function getConfig(pathConfig) {
+const getConfig = (pathConfig) => {
   return {
     target: 'node',
     mode: 'development',
@@ -71,3 +69,6 @@ module.exports = function getConfig(pathConfig) {
     }
   };
 };
+
+
+module.exports = getConfig;
