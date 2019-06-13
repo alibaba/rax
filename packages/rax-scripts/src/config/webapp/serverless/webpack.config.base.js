@@ -5,7 +5,7 @@ const qs = require('querystring');
 const webpackMerge = require('webpack-merge');
 const getWebpackConfigBase = require('../webpack.config.base');
 const pathConfig = require('../../path.config');
-const getEntries = require('../../../utils/getEntries');
+const { getEntries } = require('../../index');
 const envConfig = require('../../env.config');
 
 const ServerlessLoader = require.resolve('rax-pwa-webpack-plugin/lib/ServerlessLoader');

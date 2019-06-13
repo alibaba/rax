@@ -6,12 +6,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const pathConfig = require('../../path.config');
 const getWebpackConfigBase = require('../webpack.config.base');
-const getEntries = require('../../../utils/getEntries');
-const getAppConfig = require('../../../utils/getAppConfig');
+const appConfig = require('../../app.config');
+const { getEntries } = require('../../index');
 
 const ClientLoader = require.resolve('rax-pwa-webpack-plugin/lib/ClientLoader');
-
-const appConfig = getAppConfig() || {};
 
 const entryMap = {};
 if (appConfig.ssr) {
