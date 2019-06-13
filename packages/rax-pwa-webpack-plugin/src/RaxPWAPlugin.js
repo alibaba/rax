@@ -46,13 +46,7 @@ class RaxPWAPlugin {
      * 
      */
     if (withSPA) {
-      const entryCodeStr = getEntryCodeStr({
-        appConfig,
-        pathConfig,
-        withAppShell,
-        withSSR,
-        withSPAPageSplitting
-      })
+      const entryCodeStr = getEntryCodeStr({ pathConfig, withAppShell, tempRouterFilePath: pathConfig.appSrc + '/_router' })
       // skeletonTemplate = SPAInfo.skeletonTemplate;
       fs.writeFileSync(tempIndexFilePath, entryCodeStr);
 
