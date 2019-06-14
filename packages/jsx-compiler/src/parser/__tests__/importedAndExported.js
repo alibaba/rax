@@ -51,8 +51,9 @@ describe('Parse exported', () => {
 
   it('should parse named exported inline', () => {
     expect(getExported(parseCode(`
-      export const foo = 1;
-      export const bar = 2;
-    `))).toEqual(['foo', 'bar']);
+      export function foo1() {};
+      export class foo2 {};
+      export var bar1 = 1, bar2 = 2;
+    `))).toEqual(['foo1', 'foo2', 'bar1', 'bar2']);
   });
 });
