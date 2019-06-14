@@ -6,6 +6,13 @@ const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
 
+babelConfig.presets.push([
+  require.resolve('@babel/preset-react'), {
+    'pragma': 'createElement',
+    'pragmaFrag': 'Fragment'
+  }
+]);
+
 babelConfig.plugins.push(
   require.resolve('babel-plugin-transform-jsx-stylesheet')
 );
