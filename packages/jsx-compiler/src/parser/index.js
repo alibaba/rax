@@ -75,7 +75,24 @@ function getExported(ast) {
           exported.push(specifier.local.name);
         });
       }
-      exported.push(path.node.name.name);
+      if (node.declaration !== null) {
+        switch (node.declaration.type) {
+          case 'ClassDeclaration':
+          case 'FunctionDeclaration':
+            exported.push(node.declaration.id.name);
+            break;
+          case 'VariableDeclaration':
+            if (node.declaration.declarations.length > 0) {
+              node.declaration.declarations.forEach((declarator) => {
+                exported.push(declarator.id.name);
+              });
+            }
+            break;
+        }
+      }
+      if (t.isIdentifier(node.name)) {
+        exported.push(node.name.name);
+      }
     },
   });
   return exported;
@@ -124,3 +141,5 @@ function reverse(arr) {
 exports.parse = parse;
 exports.parseCode = parseCode;
 exports.parseExpression = parseExpression;
+exports.getImported = getImported;
+exports.getExported = getExported;

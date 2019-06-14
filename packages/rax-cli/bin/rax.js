@@ -144,6 +144,21 @@ function askProjectInformaction(name, verbose) {
       default: 'webapp'
     },
     {
+      type: 'checkbox',
+      name: 'projectFeatures',
+      when: function(answers) {
+        return answers.projectType === 'webapp';
+      },
+      message: 'Do you want to enable these features?',
+      choices: [
+        {
+          name: 'server sider rendering (ssr)',
+          value: 'ssr'
+        }
+      ],
+      default: false
+    },
+    {
       type: 'input',
       name: 'projectAuthor',
       message: 'What\'s author\'s name?',
@@ -180,6 +195,7 @@ function createProject(name, verbose, userAnswers) {
     directoryName: name,
     projectName: projectName,
     projectType: userAnswers.projectType,
+    projectFeatures: userAnswers.projectFeatures,
     projectAuthor: userAnswers.projectAuthor,
     verbose: verbose,
   }).then(function(directory) {
