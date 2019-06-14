@@ -24,4 +24,4 @@ module.exports = function convertAstExpressionToVariable(node) {
   } else if (t.isJSXExpressionContainer(node)) {
     return convertAstExpressionToVariable(node.expression);
   }
-}
+};

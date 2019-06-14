@@ -1,6 +1,6 @@
 const babelParser = require('@babel/parser');
 
-const parserOptions =  {
+const parserOptions = {
   sourceType: 'module',
   plugins: [
     'classProperties',
@@ -19,4 +19,4 @@ const parserOptions =  {
 
 module.exports = function parse(code) {
   return babelParser.parse(code, parserOptions);
-}
+};
