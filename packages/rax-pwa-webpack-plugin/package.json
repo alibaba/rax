@@ -25,6 +25,7 @@
     "path-to-regexp": "^3.0.0",
     "postcss-loader": "^3.0.0",
     "rax": "^1.0.4",
+    "rax-pwa": "^1.0.0",
     "rax-server-renderer": "^1.0.1",
     "webpack": "^4.32.2"
   }

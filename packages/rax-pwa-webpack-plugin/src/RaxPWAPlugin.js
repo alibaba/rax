@@ -34,7 +34,7 @@ class RaxPWAPlugin {
     const withSSR = !!appConfig.ssr;
     const withSPA = !!appConfig.spa;
     const withSPAPageSplitting = appConfig.spa && appConfig.spa.pageSplitting;
-    const withDocumentJs = fs.existsSync(pathConfig.appDocument);
+    const withDocumentJs = fs.existsSync(pathConfig.appDocument) || !fs.existsSync(pathConfig.appHtml);
 
     // temp files
     const tempShellFileName = 'tempShell';
@@ -53,6 +53,13 @@ class RaxPWAPlugin {
     // Mark the current environment
     const isProductionLikeMode = compiler.options.mode === 'production' || !compiler.options.mode;
 
+    let documentJsFilePath = '';
+    if (withDocumentJs) {
+      documentJsFilePath = fs.existsSync(pathConfig.appDocument) ?
+        pathConfig.appDocument :
+        require.resolve('rax-pwa/lib/Document');
+    }
+
     /**
      * Project Code pre-processing when SPA function is turned on
      * 1. Update the project entry file from multiple to one main entry
@@ -68,7 +75,7 @@ class RaxPWAPlugin {
 
       // Dev mode for hot reload
       if (!isProductionLikeMode && withDocumentJs) {
-        newEntry._document = pathConfig.appDocument
+        newEntry._document = documentJsFilePath;
       }
 
       const entryCodeStr = getEntryCodeStr({
@@ -138,7 +145,7 @@ class RaxPWAPlugin {
 
       if (withDocumentJs) {
         const webpackHtmlConfig = getConfig(pathConfig);
-        webpackHtmlConfig.entry[tempHtmlFileName] = pathConfig.appDocument;
+        webpackHtmlConfig.entry[tempHtmlFileName] = documentJsFilePath;
         webpack(webpackHtmlConfig).run();
       }
     });
@@ -174,7 +181,7 @@ class RaxPWAPlugin {
           .replace('</head>', `${cssTagStr}</head>`)
           .replace('</body>', `${jsTagStr}</body>`);
       } else {
-        _htmlPath = pathConfig.appDocument;
+        _htmlPath = documentJsFilePath;
         _htmlValue = renderer.renderToString(
           createElement(_.interopRequire(require(tempHtmlFilePath)), {
             scripts: _htmlAssets.js,
