@@ -8,8 +8,8 @@ export default (props) => {
   };
   return (
     <div>
-      <button onClick={() => push('/hello')}>Go hello</button>
       <h1 onClick={handleClick}> Hello {name}</h1>
+      <button onClick={() => push('/about')}>Go about</button>
     </div>
   );
 };

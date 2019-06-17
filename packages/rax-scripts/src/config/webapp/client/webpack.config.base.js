@@ -10,7 +10,6 @@ const getWebpackConfigBase = require('../webpack.config.base');
 const appConfig = require('../../app.config');
 const { getEntries } = require('../../index');
 
-const ClientLoader = require.resolve('rax-pwa-webpack-plugin/lib/ClientLoader');
 const RaxPWAPlugin = require('rax-pwa-webpack-plugin/lib/RaxPWAPlugin');
 
 const entryMap = {};
@@ -20,7 +19,7 @@ if (appConfig.ssr) {
     if (!appConfig.spa && key.indexOf('_') > -1) {
       return;
     }
-    entryMap[key] = [`${ClientLoader}?${qs.stringify({ ssr: true })}!${entries[key]}`];
+    entryMap[key] = [entries[key]];
   });
 } else {
   entryMap.index = [pathConfig.appIndexJs];

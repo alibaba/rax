@@ -2,6 +2,43 @@ var fs = require('fs');
 var easyfile = require('easyfile');
 var path = require('path');
 
+var processPWAProject = (projectDir, projectType, projectFeatures, replacedPkg) => {
+  var appJSON;
+  if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
+    fs.unlinkSync(path.join(projectDir, 'src/index.js'));
+    fs.unlinkSync(path.join(projectDir, 'public/index.html'));
+    fs.rmdirSync(path.join(projectDir, 'public'));
+
+    var appJSONPath = path.join(projectDir, 'app.json');
+    var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
+    appJSON = JSON.parse(appJSONContent);
+
+    projectFeatures.forEach((feature) => {
+      appJSON[feature] = true;
+    });
+
+    var jsonString = JSON.stringify(appJSON, null, 2);
+    fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
+  }
+
+  if (appJSON && appJSON.spa) {
+    // SPA
+    replacedPkg = replacedPkg.replace(', "__ExtPkgName__": "__ExtPkgVersion"',
+      '"history": "^4.9.0", "rax-use-router": "^2.0.0"'
+    );
+    var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js')
+    fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
+    fs.unlinkSync(spaIndexPath);
+  } else {
+    replacedPkg = replacedPkg.replace(', "__ExtPkgName__": "__ExtPkgVersion"', '');
+    fs.unlinkSync(path.join(projectDir, 'src/pages/about/index.js'));
+    fs.rmdirSync(path.join(projectDir, 'src/pages/about'));
+    fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
+  }
+
+  return replacedPkg;
+}
+
 module.exports = function (args) {
   var projectDir = args.root;
   var projectName = args.projectName;
@@ -31,37 +68,7 @@ module.exports = function (args) {
     .replace('__YourProjectName__', projectName)
     .replace('__AuthorName__', projectAuthor);
 
-  var appJSON;
-  if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
-    fs.unlinkSync(path.join(projectDir, 'src/index.js'));
-    fs.unlinkSync(path.join(projectDir, 'public/index.html'));
-    fs.rmdirSync(path.join(projectDir, 'public'));
-
-    var appJSONPath = path.join(projectDir, 'app.json');
-    var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
-    appJSON = JSON.parse(appJSONContent);
-
-    projectFeatures.forEach((feature) => {
-      appJSON[feature] = true;
-    });
-
-    var jsonString = JSON.stringify(appJSON, null, 2);
-    fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
-  }
-
-  if (appJSON && appJSON.spa) {
-    replacedPkg = replacedPkg.replace('"__ExtPkgName__": "__ExtPkgVersion"',
-      '"history": "^4.9.0", "rax-use-router": "^2.0.0"'
-    );
-    var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js')
-    fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
-    fs.unlinkSync(spaIndexPath);
-  } else {
-    replacedPkg = replacedPkg.replace('"__ExtPkgName__": "__ExtPkgVersion"', '');
-    fs.unlinkSync(path.join(projectDir, 'src/pages/hello/index.js'));
-    fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
-  }
-
+  replacedPkg = processPWAProject(projectDir, projectType, projectFeatures, replacedPkg);
   fs.writeFileSync(pkgPath, replacedPkg);
 
   process.chdir(projectDir);
