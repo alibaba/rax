@@ -69,7 +69,7 @@ const getRouterPageAliveCodeStr = (options) => {
   return `
     import { createElement,useState } from 'rax';
     import { createHashHistory, createBrowserHistory } from 'history';
-    import { useRouter, updateChildrenProps } from '$rax-use-router';
+    import { useRouter, updateChildrenProps } from 'rax-use-router';
     
     ${importsCodeStr}
     ${interopRequireCodeStr}

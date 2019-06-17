@@ -63,7 +63,6 @@ class RaxPWAPlugin {
     if (withSPA) {
       const pagesConfig = getPagesConfig(appConfig, pathConfig);
       const newEntry = {
-        // pathConfig.appIndexJs
         index: tempIndexFilePath
       };
 
