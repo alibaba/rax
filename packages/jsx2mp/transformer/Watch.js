@@ -1,6 +1,5 @@
 const chokidar = require('chokidar');
-const { statSync, readdirSync } = require('fs');
-const { mkdirpSync, removeSync } = require('fs-extra');
+const { statSync, readdirSync } = require('fs-extra');
 const { createApp } = require('./App');
 
 /**

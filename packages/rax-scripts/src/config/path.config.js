@@ -53,7 +53,6 @@ const paths = {
   appNodeModules: resolveApp('node_modules'),
   componentDemoJs: resolveModule(resolveApp, 'demo/index'),
   nodePaths: nodePaths,
-  miniProgramIndexJs: resolveModule(resolveApp, 'app')
 };
 
 module.exports = paths;

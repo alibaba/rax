@@ -18,7 +18,8 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const pathConfig = require('./config/path.config');
 const componentCompiler = require('./utils/componentCompiler');
 const jsx2mp = require('jsx2mp');
-const getWebpackConfig = require('./utils/getWebpackConfig');
+
+const { getWebpackConfig } = require('./config/');
 
 function buildCompiler(config) {
   const compiler = createWebpackCompiler(config);

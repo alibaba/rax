@@ -21,8 +21,9 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
-const getAppConfig = require('./utils/getAppConfig');
-const getWebpackConfig = require('./utils/getWebpackConfig');
+
+const appConfig = require('./config/app.config');
+const { getWebpackConfig } = require('./config/');
 
 const MINIAPP = 'miniapp';
 const COMPONENT_MINIAPP = 'component-miniapp';
@@ -38,7 +39,6 @@ module.exports = function start(type = 'webapp') {
     process.argv.push('--cwd', process.cwd());
     require('gulp-cli')();
   } else {
-    const appConfig = getAppConfig() || {};
     const webpackConfig = getWebpackConfig(type, 'dev');
     const compiler = createWebpackCompiler(webpackConfig);
 

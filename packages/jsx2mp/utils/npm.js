@@ -7,7 +7,7 @@ const colors = require('colors');
  * @param path {String} Absolute path to a text file.
  */
 const invokeNpmInstall = function(path) {
-  printLog(colors.green('运行'), 'npm install --production');
+  printLog(colors.green('Execute'), 'npm install --production');
   return spawnSync('npm', ['install', '--production'], {
     cwd: path,
     env: process.env,

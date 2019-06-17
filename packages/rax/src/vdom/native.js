@@ -115,6 +115,9 @@ class NativeComponent extends BaseComponent {
 
       if (!shouldNotRemoveChild) {
         Host.driver.removeChild(this._nativeNode, this._parent);
+
+        // If the parent node has been removed, child node don't need to be removed
+        shouldNotRemoveChild = true;
       }
     }
 
@@ -134,7 +137,13 @@ class NativeComponent extends BaseComponent {
     let nextProps = nextElement.props;
 
     this.updateProperties(prevProps, nextProps);
-    this.updateChildren(nextProps.children, nextContext);
+
+    // If the prevElement has no child, mount children directly
+    if (prevProps.children && prevProps.children.length === 0) {
+      this.mountChildren(nextProps.children, nextContext);
+    } else {
+      this.updateChildren(nextProps.children, nextContext);
+    }
 
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.receiveComponent(this);

@@ -5,8 +5,9 @@ const RaxServer = require('rax-server');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
-const getEntries = require('../utils/getEntries');
-const getAppConfig = require('../utils/getAppConfig');
+
+const { getEntries } = require('../config/');
+const appConfig = require('../config/app.config');
 const envConfig = require('../config/env.config');
 const pathConfig = require('../config/path.config');
 
@@ -68,7 +69,6 @@ class DevServer {
   }
 
   getPageConfig(res, page, entries) {
-    const appConfig = getAppConfig();
     const pageConfig = {
       page,
       component: this.loadComponent(page, res),
