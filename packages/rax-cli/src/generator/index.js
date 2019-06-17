@@ -2,7 +2,7 @@ var fs = require('fs');
 var easyfile = require('easyfile');
 var path = require('path');
 
-module.exports = function(args) {
+module.exports = function (args) {
   var projectDir = args.root;
   var projectName = args.projectName;
   var projectAuthor = args.projectAuthor;
@@ -18,7 +18,7 @@ module.exports = function(args) {
 
   // Rename files start with '_'
   var files = easyfile.readdir(projectDir);
-  files.forEach(function(filename) {
+  files.forEach(function (filename) {
     if (filename[0] === '_') {
       easyfile.rename(
         path.join(projectDir, filename),
@@ -30,8 +30,8 @@ module.exports = function(args) {
   var replacedPkg = fs.readFileSync(pkgPath, 'utf-8')
     .replace('__YourProjectName__', projectName)
     .replace('__AuthorName__', projectAuthor);
-  fs.writeFileSync(pkgPath, replacedPkg);
 
+  var appJSON;
   if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
     fs.unlinkSync(path.join(projectDir, 'src/index.js'));
     fs.unlinkSync(path.join(projectDir, 'public/index.html'));
@@ -39,7 +39,7 @@ module.exports = function(args) {
 
     var appJSONPath = path.join(projectDir, 'app.json');
     var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
-    var appJSON = JSON.parse(appJSONContent);
+    appJSON = JSON.parse(appJSONContent);
 
     projectFeatures.forEach((feature) => {
       appJSON[feature] = true;
@@ -48,6 +48,21 @@ module.exports = function(args) {
     var jsonString = JSON.stringify(appJSON, null, 2);
     fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
   }
+
+  if (appJSON && appJSON.spa) {
+    replacedPkg = replacedPkg.replace('"__ExtPkgName__": "__ExtPkgVersion"',
+      '"history": "^4.9.0", "rax-use-router": "^2.0.0"'
+    );
+    var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js')
+    fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
+    fs.unlinkSync(spaIndexPath);
+  } else {
+    replacedPkg = replacedPkg.replace('"__ExtPkgName__": "__ExtPkgVersion"', '');
+    fs.unlinkSync(path.join(projectDir, 'src/pages/hello/index.js'));
+    fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
+  }
+
+  fs.writeFileSync(pkgPath, replacedPkg);
 
   process.chdir(projectDir);
   return Promise.resolve(projectDir);

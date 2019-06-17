@@ -1,5 +1,6 @@
 const _ = require('../index');
 const pathToRegexp = require('path-to-regexp');
+const { interopRequireCodeStr } = require('./_common');
 const { getRouterItemCodeStrObj } = require('./router.base');
 
 const getRouterPageAliveCodeStr = (options) => {
@@ -25,7 +26,8 @@ const getRouterPageAliveCodeStr = (options) => {
       routesCacheCodeStr += `
         ${pageName}: {
           path: '${pagesConfig[pageName].path}',
-          regexp: ${pathToRegexp(pagesConfig[pageName].path).toString()},
+          ${pagesConfig[pageName].title ? `title: '${pagesConfig[pageName].title}',` : ''}
+          regexp: ${pagesConfig[pageName]._regexp},
           ${withSPAPageSplitting ? `_setChunkName: ()=> {import(/* webpackChunkName: 'pages.${pageName}' */ '${pathConfig.appSrc}/pages/${pageName}/index')},` : ''}
           component: null
         },
@@ -60,23 +62,20 @@ const getRouterPageAliveCodeStr = (options) => {
     importsCodeStr += errorRouterItemCodeStrObj.importsCodeStr;
     routesCodeStr += `{component: ${errorRouterItemCodeStrObj.componentCodeStr}},`;
   } else {
-    importTemplate += `import { Error } from '${pathConfig.appSrc}/_rax-pwa';`;
-    routesCodeStr += `component: () => <Error />`;
+    importsCodeStr += `import { Error } from 'rax-pwa';`;
+    routesCodeStr += `{component: () => <Error />}`;
   }
 
   return `
     import { createElement,useState } from 'rax';
     import { createHashHistory, createBrowserHistory } from 'history';
-    import { useRouter, updateChildrenProps } from '${pathConfig.appSrc}/_rax-use-router';
+    import { useRouter, updateChildrenProps } from '$rax-use-router';
     
     ${importsCodeStr}
+    ${interopRequireCodeStr}
     
     const pageHistory = ${ withSSR ? 'createBrowserHistory();' : 'createHashHistory();'}
-    const interopRequire = (obj) => {
-      return obj && obj.__esModule ? obj.default : obj;
-    };
     
-
     let routerProps = null;
     let routerConfig = null;
     const getRouterConfig = () => {
@@ -141,13 +140,16 @@ const getRouterPageAliveCodeStr = (options) => {
         <div style={{ position: 'relative' }}>
           {Object.keys(pageCache).map((pageName) => {
             const {pathname, hash} = window.location;
-            const isMatched = function (a, t) {
-                return 'hash' === t ? a.test(hash.replace('#', '')) : 'history' === t && a.test(pathname)
+            const isMatched = function (regexp, type) {
+                return 'hash' === type ? regexp.test(hash.replace('#', '')) : 'history' === type && regexp.test(pathname);
             };
             cachePageMatched = isMatched(pageCache[pageName].regexp, "${withSSR ? 'history' : 'hash'}");
             const element = pageCache[pageName].component;
             if (cachePageMatched && element === null) {
               updatePageCacheComponent(pageName);
+            }
+            if (cachePageMatched && pageCache[pageName].title) {
+              document.title = pageCache[pageName].title;
             }
             return <div style={{ display: cachePageMatched ? 'block' : 'none' }}>{element}</div>;
           })}

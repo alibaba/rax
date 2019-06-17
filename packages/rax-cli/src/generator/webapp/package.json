@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "rax": "^1.0.0",
-    "driver-dom": "^1.0.0"
+    "driver-dom": "^1.0.0",
+    "__ExtPkgName__": "__ExtPkgVersion"
   },
   "devDependencies": {
     "rax-scripts": "^1.3.0-1",

@@ -22,6 +22,8 @@ describe('SPA entry file code string test', () => {
   it('should have a shell component with App Shell', function () {
     const withAppShell = true;
     const tempRouterFilePath = 'TestTempRouterFilePath'
+
+
     const expectResult = filterCodeStr(`
       import * as DriverDOM from 'driver-dom';
       import { createElement, render } from 'rax';
@@ -29,7 +31,7 @@ describe('SPA entry file code string test', () => {
       import Router from 'TestTempRouterFilePath';
       import Shell from 'TestAppShell';
       
-      const pageComponent = (props) => {
+      const PageComponent = (props) => {
         return <div id="root-page" ><Router {...props} /></div>;
       };
       
@@ -37,11 +39,17 @@ describe('SPA entry file code string test', () => {
         document.getElementById('root-page').innerHTML = '';
       }
       
-      render(<Shell Component={pageComponent} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });
+      let initialProps;
+      try {
+        initialProps = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
+      } catch (e) {
+        initialProps = {};
+      }
+
+      render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });
     `);
 
     expect(filterCodeStr(getEntryCodeStr({ pathConfig, tempRouterFilePath, withAppShell }))).toBe(expectResult);
   })
-
 })
 

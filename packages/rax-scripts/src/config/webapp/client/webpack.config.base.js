@@ -10,6 +10,7 @@ const getEntries = require('../../../utils/getEntries');
 const getAppConfig = require('../../../utils/getAppConfig');
 
 const ClientLoader = require.resolve('rax-pwa-webpack-plugin/lib/ClientLoader');
+const RaxPWAPlugin = require('rax-pwa-webpack-plugin/lib/RaxPWAPlugin');
 
 const appConfig = getAppConfig() || {};
 
@@ -17,7 +18,7 @@ const entryMap = {};
 if (appConfig.ssr) {
   const entries = getEntries();
   Object.keys(entries).forEach((key) => {
-    if (key.indexOf('_') > -1) {
+    if (!appConfig.spa && key.indexOf('_') > -1) {
       return;
     }
     entryMap[key] = [`${ClientLoader}?${qs.stringify({ ssr: true })}!${entries[key]}`];
@@ -36,7 +37,7 @@ const webpackConfig = webpackMerge(webpackConfigBase, {
   output: {
     filename: 'client/[name].js'
   },
-  plugins: appConfig.ssr ? [] : [
+  plugins: appConfig.ssr || appConfig.spa ? [new RaxPWAPlugin({ pathConfig, appConfig })] : [
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,

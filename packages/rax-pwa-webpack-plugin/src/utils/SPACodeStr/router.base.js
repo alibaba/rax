@@ -1,4 +1,5 @@
 const _ = require('../index');
+const { interopRequireCodeStr } = require('./_common');
 
 const getRouterBaseCodeStr = (options) => {
 
@@ -30,21 +31,19 @@ const getRouterBaseCodeStr = (options) => {
     importsCodeStr += errorRouterItemCodeStrObj.importsCodeStr;
     routesCodeStr += `{component: ${errorRouterItemCodeStrObj.componentCodeStr}},`;
   } else {
-    importTemplate += `import { Error } from '${pathConfig.appSrc}/_rax-pwa';`;
-    routesCodeStr += `component: () => <Error />`;
+    importsCodeStr += `import { Error } from 'rax-pwa';`;
+    routesCodeStr += `{component: () => <Error />}`;
   }
 
   return `
     import { createElement } from 'rax';
     import { createHashHistory, createBrowserHistory } from 'history';
-    import { useRouter, updateChildrenProps } from '${pathConfig.appSrc}/_rax-use-router';
+    import { useRouter, updateChildrenProps } from 'rax-use-router';
     
     ${importsCodeStr}
+    ${interopRequireCodeStr}
     
     const pageHistory = ${ withSSR ? 'createBrowserHistory();' : 'createHashHistory();'}
-    const interopRequire = (obj) => {
-      return obj && obj.__esModule ? obj.default : obj;
-    };
     
     let routerProps = null;
     let routerConfig = null;
@@ -114,11 +113,12 @@ const getRouterItemCodeStrObj = (pageName, modeName, configs) => {
       })
     `;
   } else {
-    componentCodeStr = `() => {
+    componentCodeStr = `
+      () => {
         ${commonCodeStr}
-        return <${modeName} />
-      }`
-
+        return <${modeName} {...routerProps}/>
+      }
+    `;
     // add import
     const importSrt = `import ${modeName} from '${pathConfig.appSrc}/pages/${pageName}/index';`
     if (importsCodeStr.indexOf(importSrt) === -1) {
