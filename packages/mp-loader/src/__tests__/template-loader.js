@@ -44,6 +44,21 @@ describe('template-loader', () => {
     });
   });
 
+  it('slot', (done) => {
+    runLoaders({
+      resource: __filename,
+      loaders: [templateLoaderPath],
+      readResource: (file, callback) => {
+        callback(null, `
+          <view slot="hello"></view>
+        `);
+      },
+    }, (err, resource) => {
+      expect(resource.result[0]).toMatch('return [_c(__components_ref__[\'view\']||\'view\',{slot:"hello"})];');
+      done(err);
+    });
+  });
+
   it('options', (done) => {
     runLoaders({
       resource: 'template.axml',
