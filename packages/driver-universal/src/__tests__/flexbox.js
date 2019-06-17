@@ -1,4 +1,4 @@
-import flexbox from '../flexbox';
+import * as flexbox from '../flexbox';
 
 describe('flexbox', () => {
   it('convert flex style to polyfill', () => {
