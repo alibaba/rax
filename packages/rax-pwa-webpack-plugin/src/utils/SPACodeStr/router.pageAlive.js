@@ -16,6 +16,9 @@ const getRouterPageAliveCodeStr = (options) => {
   // process router config
   Object.keys(pagesConfig).forEach((pageName) => {
     if (pageName === '_error') return;
+    const routerItemModName = _.firstUpperCase(pageName);
+    const routerItemCodeStrObj = getRouterItemCodeStrObj(pageName,routerItemModName , routerItemFnConfigs);
+    importsCodeStr += routerItemCodeStrObj.importsCodeStr;
     if (pagesConfig[pageName].pageAlive === true) {
       routesCodeStr += `
         {
@@ -29,12 +32,10 @@ const getRouterPageAliveCodeStr = (options) => {
           ${pagesConfig[pageName].title ? `title: '${pagesConfig[pageName].title}',` : ''}
           regexp: ${pagesConfig[pageName]._regexp},
           ${withSPAPageSplitting ? `_setChunkName: ()=> {import(/* webpackChunkName: 'pages.${pageName}' */ '${pathConfig.appSrc}/pages/${pageName}/index')},` : ''}
-          component: null
+          component: ${withSPAPageSplitting ? 'null' : `<${routerItemModName} />`}
         },
       `;
     } else {
-      const routerItemCodeStrObj = getRouterItemCodeStrObj(pageName, _.firstUpperCase(pageName), routerItemFnConfigs);
-      importsCodeStr += routerItemCodeStrObj.importsCodeStr;
       routesCodeStr += `
         {
           path: '${pagesConfig[pageName].path}', 
