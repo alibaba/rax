@@ -23,4 +23,13 @@ describe('Transform list', () => {
 
     expect(genCode(ast).code).toEqual('<View><block a:for="{{arr}}" a:for-item="val" a:for-index="idx"><item onClick={props.onClick} data-arg-context="this" data-arg-0="{{item}}" data-arg-1="{{1}}" /></block></View>');
   });
+
+  it('bind loop variable', () => {
+    const ast = parseExpression(`
+      <View>{arr.map((item, idx) => <image source={{ uri: item.picUrl }} resizeMode={resizeMode} />)}</View>
+    `);
+    _transformList(ast, adapter);
+
+    expect(genCode(ast).code).toEqual('<View><block a:for="{{arr}}" a:for-item="item" a:for-index="idx"><image source="{{ uri: item.picUrl }}" resizeMode={resizeMode} /></block></View>');
+  });
 });

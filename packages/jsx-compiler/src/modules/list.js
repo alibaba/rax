@@ -42,6 +42,16 @@ function transformList(ast, adapter) {
                 [adapter.forIndex]: t.stringLiteral(indexName),
               }, [childNode])
             );
+            traverse(path, {
+              JSXExpressionContainer(path) {
+                const { node } = path;
+                switch (node.expression.type) {
+                  case 'ObjectExpression':
+                    path.replaceWith(t.stringLiteral(genExpression(t.jsxExpressionContainer(node.expression), { concise: true })))
+                    break;
+                }
+              }
+            });
           } else {
             throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
           }
@@ -81,10 +91,9 @@ function transformList(ast, adapter) {
             });
           }
           path.replaceWith(callee.object);
-          debugger;
         }
       }
-    }
+    },
   });
 }
 

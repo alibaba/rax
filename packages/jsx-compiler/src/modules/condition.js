@@ -1,7 +1,6 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
-const createJSXBinding = require('../utils/createJSXBinding');
 const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
