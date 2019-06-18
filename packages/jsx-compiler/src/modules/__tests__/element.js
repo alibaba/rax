@@ -121,7 +121,7 @@ describe('Transform JSXElement', () => {
       const dynamicValue = _transform(ast);
       const code = genInlineCode(ast).code;
       expect(code).toEqual('<View>{{ foo }}</View>');
-      expect(dynamicValue).toEqual({});
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ foo: foo }');
     });
 
     it('should handle literial types', () => {
