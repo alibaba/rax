@@ -160,8 +160,9 @@ function transformTemplate(ast) {
           path.remove();
         } else {
           const value = node.expression.name || node.expression.value;
-          dynamicValue[value] = node.expression;
           path.replaceWith(createJSXBinding('' + value));
+          // Only idenfitier should be listed in dynamic values.
+          if (t.isIdentifier(node.expression)) dynamicValue[value] = node.expression;
         }
         break;
       }

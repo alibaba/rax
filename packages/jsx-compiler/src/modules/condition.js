@@ -141,9 +141,6 @@ function transformTemplate(ast, adapter, templateVariables) {
           if (templateVariables[id] && t.isJSXElement(templateVariables[id].value)) {
             // => <block a:if="xxx">
             path.replaceWith(templateVariables[id].value);
-          } else {
-            // => {{ foo }}
-            path.replaceWith(createJSXBinding(id));
           }
 
           break;
