@@ -47,7 +47,7 @@ function transformList(ast, adapter) {
                 const { node } = path;
                 switch (node.expression.type) {
                   case 'ObjectExpression':
-                    path.replaceWith(t.stringLiteral(genExpression(t.jsxExpressionContainer(node.expression), { concise: true })))
+                    path.replaceWith(t.stringLiteral(genExpression(t.jsxExpressionContainer(node.expression), { concise: true })));
                     break;
                 }
               }
