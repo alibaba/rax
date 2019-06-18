@@ -10,7 +10,7 @@ describe('Transform list', () => {
     `);
     _transformList(ast, adapter);
 
-    expect(genCode(ast).code).toEqual('<View><block a:for="{{arr}}" a:for-item="val" a:for-index="idx"><item data-value={val} data-key={idx} /></block></View>');
+    expect(genCode(ast).code).toEqual('<View><block a:for="{{arr}}" a:for-item="val" a:for-index="idx"><item data-value="{{val}}" data-key="{{idx}}" /></block></View>');
   });
 
   it('bind props', () => {

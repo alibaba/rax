@@ -43,14 +43,20 @@ function transformList(ast, adapter) {
               }, [childNode])
             );
             traverse(path, {
-              JSXExpressionContainer(path) {
-                const { node } = path;
+              JSXExpressionContainer(childPath) {
+                const { node } = childPath;
                 switch (node.expression.type) {
                   case 'ObjectExpression':
-                    path.replaceWith(t.stringLiteral(genExpression(t.jsxExpressionContainer(node.expression), { concise: true })));
+                    childPath.replaceWith(t.stringLiteral(genExpression(t.jsxExpressionContainer(node.expression), { concise: true })));
                     break;
+
+                  case 'Identifier':
+                    if (node.expression.name === itemName || node.expression.name === indexName) {
+                      childPath.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
+                    }
+                    break
                 }
-              }
+              },
             });
           } else {
             throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);

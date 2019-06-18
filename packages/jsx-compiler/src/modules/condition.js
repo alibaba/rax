@@ -1,6 +1,7 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
+const createBinding = require('../utils/createBinding');
 const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
@@ -121,7 +122,7 @@ function transformTemplate(ast, adapter, templateVariables) {
       switch (node.expression.type) {
         case 'ConditionalExpression': {
           let { test, consequent, alternate } = node.expression;
-          const conditionValue = genExpression(test);
+          const conditionValue = t.isStringLiteral(test) ? test.value : createBinding(genExpression(test));
           const replacement = [];
 
           // Transform from string listrial to JSXText Node
@@ -141,7 +142,7 @@ function transformTemplate(ast, adapter, templateVariables) {
           }
 
           replacement.push(createJSX('block', {
-            [adapter.if]: t.stringLiteral('{{' + conditionValue + '}}'),
+            [adapter.if]: t.stringLiteral(conditionValue),
           }, [consequent]));
 
           replacement.push(createJSX('block', {
