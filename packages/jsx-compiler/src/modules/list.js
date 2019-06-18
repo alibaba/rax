@@ -54,7 +54,7 @@ function transformList(ast, adapter) {
                     if (node.expression.name === itemName || node.expression.name === indexName) {
                       childPath.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
                     }
-                    break
+                    break;
                 }
               },
             });
