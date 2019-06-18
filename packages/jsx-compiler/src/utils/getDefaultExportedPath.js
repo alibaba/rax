@@ -14,7 +14,11 @@ module.exports = function getDefaultExportedPath(ast) {
         const id = exportedDeclaration.node.name;
         const binding = exportedDeclaration.scope.getBinding(id);
         if (binding) {
-          exportedDeclaration = binding.path;
+          if (t.isVariableDeclarator(binding.path.node)) {
+            exportedDeclaration = binding.path.get('init');
+          } else {
+            exportedDeclaration = binding.path;
+          }
         } else {
           exportedDeclaration = null;
         }
