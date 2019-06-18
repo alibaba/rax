@@ -120,16 +120,34 @@ function transformTemplate(ast, adapter, templateVariables) {
 
       switch (node.expression.type) {
         case 'ConditionalExpression': {
-          const { test, consequent, alternate } = node.expression;
+          let { test, consequent, alternate } = node.expression;
           const conditionValue = genExpression(test);
           const replacement = [];
+
+          // Transform from string listrial to JSXText Node
+          if (t.isStringLiteral(consequent)) {
+            consequent = t.jsxText(consequent.value);
+          }
+          if (t.isStringLiteral(alternate)) {
+            alternate = t.jsxText(alternate.value);
+          }
+
+          // Transform from `'s' + str` to `{{ 's' + str }}`
+          if (t.isBinaryExpression(consequent)) {
+            consequent = t.jsxExpressionContainer(consequent);
+          }
+          if (t.isBinaryExpression(alternate)) {
+            alternate = t.jsxExpressionContainer(alternate);
+          }
 
           replacement.push(createJSX('block', {
             [adapter.if]: t.stringLiteral('{{' + conditionValue + '}}'),
           }, [consequent]));
+
           replacement.push(createJSX('block', {
             [adapter.else]: null,
           }, [alternate]));
+
           path.replaceWithMultiple(replacement);
           break;
         }
