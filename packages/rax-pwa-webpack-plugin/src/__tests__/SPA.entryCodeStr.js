@@ -51,7 +51,7 @@ describe('SPA entry file code string test', () => {
 
       const Router = createRouter(pagesConfig, false);
       const PageComponent = (props) => {
-        return <div id="root-page" ><Router {...props} t="222"/></div>;
+        return <div id="root-page" ><Router {...props}/></div>;
       };
       
       if (document.getElementById('root-page')) {
