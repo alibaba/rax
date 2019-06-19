@@ -1,4 +1,4 @@
-const { getEntryCodeStr } = require('../utils/SPACodeStr');
+const getEntryCodeStr = require('../lib/getEntryCodeStr');
 
 const appConfig = {
   spa: true
@@ -12,6 +12,15 @@ const pathConfig = {
   appShell: 'TestAppShell'
 }
 
+const pagesConfig = {
+  index: {
+    path: '/index',
+    title: 'index',
+    _regexp: '/^/index(?:/)?$/i',
+    _filePath: 'testPagesIndex'
+  }
+};
+
 // https://stackoverflow.com/questions/51605469/jest-how-to-compare-two-strings-with-different-format
 const filterCodeStr = (codeStr) => {
   return codeStr.replace(/\s/g, '');
@@ -20,19 +29,30 @@ const filterCodeStr = (codeStr) => {
 describe('SPA entry file code string test', () => {
 
   it('should have a shell component with App Shell', function () {
+    const withSSR = false;
     const withAppShell = true;
-    const tempRouterFilePath = 'TestTempRouterFilePath'
-
 
     const expectResult = filterCodeStr(`
       import * as DriverDOM from 'driver-dom';
-      import { createElement, render } from 'rax';
-
-      import Router from 'TestTempRouterFilePath';
+      import { createElement, render, useState } from 'rax';
+      import { createRouter } from 'rax-pwa';
       import Shell from 'TestAppShell';
+
+      const pagesConfig = {
       
+        index: {
+          path: '/index', 
+          regexp: /^\/index(?:\/)?$/i,
+          pageAlive: false,
+          component: () => import(/* webpackChunkName: "pages.index" */ 'TestAppSrc/pages/index/index'),
+          title: "index",
+        },
+      
+      };
+
+      const Router = createRouter(pagesConfig, false);
       const PageComponent = (props) => {
-        return <div id="root-page" ><Router {...props} /></div>;
+        return <div id="root-page" ><Router {...props} t="222"/></div>;
       };
       
       if (document.getElementById('root-page')) {
@@ -49,7 +69,7 @@ describe('SPA entry file code string test', () => {
       render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });
     `);
 
-    expect(filterCodeStr(getEntryCodeStr({ pathConfig, tempRouterFilePath, withAppShell }))).toBe(expectResult);
+    expect(filterCodeStr(getEntryCodeStr({ appConfig, pathConfig, pagesConfig, withSSR, withAppShell }))).toBe(expectResult);
   })
 })
 

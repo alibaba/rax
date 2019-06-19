@@ -12,11 +12,12 @@ const webpack = require('webpack');
 const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
 
-const _ = require('./utils/index');
-const getAssets = require('./utils/getAssets');
-const getConfig = require('./utils/getConfig');
-const getPagesConfig = require('./utils/getPagesConfig');
-const { getEntryCodeStr, getRouterCodeStr } = require('./utils/SPACodeStr');
+const _ = require('./res/util');
+const getAssets = require('./res/getAssets');
+const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
+const getPagesConfig = require('./res/getPagesConfig');
+const getEntryCodeStr = require('./res/getEntryCodeStr');
+const purgeRequireCache = require('./res/purgeRequireCache');
 
 const PLUGIN_NAME = 'rax-pwa-webpack-plugin';
 
@@ -33,7 +34,6 @@ class RaxPWAPlugin {
     const withAppShell = fs.existsSync(pathConfig.appShell);
     const withSSR = !!appConfig.ssr;
     const withSPA = !!appConfig.spa;
-    const withSPAPageSplitting = appConfig.spa && appConfig.spa.pageSplitting;
     const withDocumentJs = fs.existsSync(pathConfig.appDocument) || !fs.existsSync(pathConfig.appHtml);
 
     // temp files
@@ -41,8 +41,6 @@ class RaxPWAPlugin {
     const tempShellFilePath = path.resolve(pathConfig.appBuild, tempShellFileName + '.js');
     const tempIndexFileName = 'tempIndex';
     const tempIndexFilePath = path.resolve(tempIndexFileName + '.js');
-    const tempRouterFileName = 'tempRouter';
-    const tempRouterFilePath = path.resolve(tempRouterFileName + '.js');
     const tempHtmlFileName = 'tempHtml';
     const tempHtmlFilePath = path.resolve(pathConfig.appBuild, tempHtmlFileName + '.js');
 
@@ -70,7 +68,7 @@ class RaxPWAPlugin {
     if (withSPA) {
       const pagesConfig = getPagesConfig(appConfig, pathConfig);
       const newEntry = {
-        index: tempIndexFilePath
+        entry: tempIndexFilePath
       };
 
       // Dev mode for hot reload
@@ -79,16 +77,11 @@ class RaxPWAPlugin {
       }
 
       const entryCodeStr = getEntryCodeStr({
-        pathConfig,
-        withAppShell,
-        tempRouterFilePath
-      });
-      const routerCodeStr = getRouterCodeStr({
         appConfig,
         pathConfig,
         pagesConfig,
         withSSR,
-        withSPAPageSplitting
+        withAppShell,
       });
 
       // Prepare the skeleton diagram code, match the routing information when the page is initialized, 
@@ -112,42 +105,30 @@ class RaxPWAPlugin {
       })
 
       fs.writeFileSync(tempIndexFilePath, entryCodeStr);
-      fs.writeFileSync(tempRouterFilePath, routerCodeStr);
 
       compiler.options.entry = newEntry
     }
 
     /**
      * Replace code before Build
-     * 1. Compile the App Shell file. The string node after render string is inserted into HTML
-     * 2. Custom document/index. js compilation. Render tostring becomes the HTML file of the container
+     * 1. Custom document/index. js compilation. Render tostring becomes the HTML file of the container
+     * 2. Compile the App Shell file. The string node after render string is inserted into HTML
      */
     compiler.hooks.beforeCompile.tapAsync(PLUGIN_NAME, (compilationParams, callback) => {
-      if (withAppShell) {
-        const webpackShellConfig = getConfig(pathConfig);
-        webpackShellConfig.entry[tempShellFileName] = pathConfig.appShell;
-        webpack(webpackShellConfig).run((err) => {
-          if (err) {
-            return false;
-          }
-          appShellTemplate = renderer.renderToString(
-            createElement(_.interopRequire(require(tempShellFilePath)), {
-              Component: () => createElement('div', { id: 'root-page' })
-            })
-          );
-          // remove cache
-          _.purgeRequireCache(tempShellFilePath);
-          callback();
-        });
-      } else {
-        callback();
-      }
 
       if (withDocumentJs) {
-        const webpackHtmlConfig = getConfig(pathConfig);
+        const webpackHtmlConfig = getWebpackNodeConfig(pathConfig);
         webpackHtmlConfig.entry[tempHtmlFileName] = documentJsFilePath;
         webpack(webpackHtmlConfig).run();
       }
+
+      if (withAppShell) {
+        const webpackShellConfig = getWebpackNodeConfig(pathConfig);
+        webpackShellConfig.entry[tempShellFileName] = pathConfig.appShell;
+        webpack(webpackShellConfig).run();
+      }
+
+      callback();
     });
 
     /**
@@ -159,6 +140,16 @@ class RaxPWAPlugin {
       let _htmlValue;
       let _htmlPath;
       const _htmlAssets = getAssets(compilation);
+
+      if (withAppShell) {
+        appShellTemplate = renderer.renderToString(
+          createElement(_.interopRequire(require(tempShellFilePath)), {
+            Component: () => createElement('div', { id: 'root-page' })
+          })
+        );
+        // remove cache
+        purgeRequireCache(tempShellFilePath);
+      }
 
       if (!withDocumentJs) {
         _htmlPath = pathConfig.appHtml;
@@ -192,7 +183,7 @@ class RaxPWAPlugin {
           })
         );
         // remove cache
-        _.purgeRequireCache(tempHtmlFilePath);
+        purgeRequireCache(tempHtmlFilePath);
       }
 
       compilation.fileDependencies.add(_htmlPath);
