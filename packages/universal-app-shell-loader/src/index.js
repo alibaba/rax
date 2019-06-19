@@ -19,11 +19,21 @@ module.exports = function(content) {
 
   if (this.data.appConfig !== null) {
     let { pages = [], historyType = 'hash' } = this.data.appConfig;
+    let fixRootStyle = '';
     /**
      * Weex only support memory history.
      */
     if (options.type === 'weex') historyType = 'memory';
-
+    /**
+     * Web only compatible with 750rpx.
+     */
+    if (options.type === 'web') {
+      const mutiple = options.mutiple || 100;
+      fixRootStyle = `
+        const html = document.documentElement;
+        html.style.fontSize = html.clientWidth / 750 * ${mutiple} + 'px';
+      `;
+    }
     const requestPages = pages
       .map((path, index) => `import Page${index} from './${path}';`)
       .join('\n');
@@ -68,7 +78,8 @@ module.exports = function(content) {
         const { component } = useRouter(getRouteConfig);
         return component;
       }
-
+      
+      ${fixRootStyle}
       render(createElement(Entry), null, { driver: DriverUniversal });
     `;
     return source;
