@@ -37,10 +37,13 @@ const MINIAPP = 'miniapp';
 const COMPONENT = 'component';
 
 module.exports = function build(type = 'webapp') {
-  const appPackage = require(pathConfig.appPackageJson);
-
   if (type === MINIAPP) {
-    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, false);
+    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, {
+      enableWatch: false,
+      type: 'project',
+      dist: 'dist',
+      entry: pathConfig.universalAppEntry,
+    });
   } else if (type === COMPONENT) { // build component
     rimraf(pathConfig.appDist, function(err) {
       if (err) {
