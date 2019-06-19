@@ -16,8 +16,8 @@ babelConfig.plugins.push(
 const webpackConfigDev = webpackMerge(webpackConfigBase, {
   devtool: 'inline-module-source-map',
   entry: {
-    'index.web': [UNIVERSAL_APP_SHELL_LOADER + '?type=web!' + pathConfig.miniProgramIndexJs],
-    'index.weex': [UNIVERSAL_APP_SHELL_LOADER + '?type=weex!' + pathConfig.miniProgramIndexJs],
+    'index.web': [UNIVERSAL_APP_SHELL_LOADER + '?type=web!' + pathConfig.universalAppEntry],
+    'index.weex': [UNIVERSAL_APP_SHELL_LOADER + '?type=weex!' + pathConfig.universalAppEntry],
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
