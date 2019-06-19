@@ -24,7 +24,7 @@ var processPWAProject = (projectDir, projectType, projectFeatures, replacedPkg) 
   if (appJSON && appJSON.spa) {
     // SPA
     replacedPkg = replacedPkg.replace(', "__ExtPkgName__": "__ExtPkgVersion"',
-      '"history": "^4.9.0", "rax-use-router": "^2.0.0"'
+      ', "history": "^4.9.0", "rax-use-router": "^2.0.0"'
     );
     var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js')
     fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');

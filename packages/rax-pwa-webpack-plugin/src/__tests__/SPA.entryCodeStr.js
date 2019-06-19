@@ -1,4 +1,4 @@
-const getEntryCodeStr = require('../lib/getEntryCodeStr');
+const getEntryCodeStr = require('../res/getEntryCodeStr');
 
 const appConfig = {
   spa: true

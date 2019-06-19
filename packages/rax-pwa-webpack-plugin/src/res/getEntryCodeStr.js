@@ -8,7 +8,6 @@ const getEntryCodeStr = (options) => {
    */
 
   const { appConfig, pathConfig, pagesConfig, withSSR, withAppShell } = options;
-  console.log(pagesConfig);
   let importsCodeStr = '';
   let renderCodeStr = '';
   let pagesConfigCodeStr = '';
@@ -59,7 +58,7 @@ const getEntryCodeStr = (options) => {
 
     const Router = createRouter(pagesConfig, ${withSSR});
     const PageComponent = (props) => {
-      return <div id="root-page" ><Router {...props} t="222"/></div>;
+      return <div id="root-page" ><Router {...props}/></div>;
     };
     
     if (document.getElementById('root-page')) {
