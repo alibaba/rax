@@ -1,6 +1,6 @@
 /**
  * PWA Plugin 
- * Add or modify some project files according to the configuration of project app. json, 
+ * Add or modify some project files according to the configuration of project app.json, 
  * update the construction configuration, and achieve the purpose of experience enhancement
  * 
  */
@@ -36,7 +36,7 @@ class RaxPWAPlugin {
     const withSPA = !!appConfig.spa;
     const withDocumentJs = fs.existsSync(pathConfig.appDocument) || !fs.existsSync(pathConfig.appHtml);
 
-    // temp files
+    // Temp files
     const tempShellFileName = 'tempShell';
     const tempShellFilePath = path.resolve(pathConfig.appBuild, tempShellFileName + '.js');
     const tempIndexFileName = 'tempIndex';
@@ -59,11 +59,11 @@ class RaxPWAPlugin {
     }
 
     /**
-     * Project Code pre-processing when SPA function is turned on
+     * Project Code pre-processing when SPA is turned on
      * 1. Update the project entry file from multiple to one main entry
-     * 2. prepare the code for the main entrance and router
+     * 2. prepare the code for the main entry file
      * 3. prepare the skeleton map
-     * 4. write temporary files, index and router.
+     * 4. write temporary files, entry.
      */
     if (withSPA) {
       const pagesConfig = getPagesConfig(appConfig, pathConfig);
@@ -111,7 +111,7 @@ class RaxPWAPlugin {
 
     /**
      * Replace code before Build
-     * 1. Custom document/index. js compilation. Render tostring becomes the HTML file of the container
+     * 1. Custom document/index.js compilation. 
      * 2. Compile the App Shell file. The string node after render string is inserted into HTML
      */
     compiler.hooks.beforeCompile.tapAsync(PLUGIN_NAME, (compilationParams, callback) => {
@@ -134,7 +134,7 @@ class RaxPWAPlugin {
     /**
      * Generate code that really works
      * 1. Insert the App Shell file into HTML
-     * 2. Custom document/index. js handles HTML files into containers
+     * 2. Custom document/index.js handles HTML files into containers
      */
     compiler.hooks.emit.tapAsync(PLUGIN_NAME, (compilation, callback) => {
       let _htmlValue;

@@ -1,7 +1,7 @@
 const getEntryCodeStr = (options) => {
 
   /**
-   * Generate index. js for SPA
+   * Generate index.js for SPA
    * Features to be implemented:
    * 1. Insert App Shell and SPA router into the template
    * 2. receive data injected by SSR
