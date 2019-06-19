@@ -32,10 +32,6 @@ const driver = Object.assign({}, DriverDOM, {
   },
   beforeRender(options) {
     // Init rem unit
-    console.log({
-      dw: getDeviceWidth(),
-      vw: getViewportWidth(),
-    });
     setRem(getDeviceWidth() / getViewportWidth());
     return DriverDOM.beforeRender(options);
   },
