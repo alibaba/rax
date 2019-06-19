@@ -61,7 +61,7 @@ class DevServer {
     this.app = app;
   }
 
-  close() {}
+  close() { }
 
   listen(port, hostname, callback) {
     this.hostname = hostname;
@@ -77,6 +77,10 @@ class DevServer {
         title: appConfig.title
       }
     };
+
+    if (appConfig.spa) {
+      pageConfig.scripts = [`${envConfig.publicPath}client/entry.js`];
+    }
 
     if (entries._shell) {
       pageConfig.shell = {

@@ -8,16 +8,13 @@
 
 const fs = require('fs');
 const path = require('path');
-const webpack = require('webpack');
-const { createElement } = require('rax');
-const renderer = require('rax-server-renderer');
+
+const AppShellHandler = require('./AppShellHandler');
+const DocumentHandler = require('./DocumentHandler');
 
 const _ = require('./res/util');
-const getAssets = require('./res/getAssets');
-const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
 const getPagesConfig = require('./res/getPagesConfig');
 const getEntryCodeStr = require('./res/getEntryCodeStr');
-const purgeRequireCache = require('./res/purgeRequireCache');
 
 const PLUGIN_NAME = 'rax-pwa-webpack-plugin';
 
@@ -36,13 +33,9 @@ class RaxPWAPlugin {
     const withSPA = !!appConfig.spa;
     const withDocumentJs = fs.existsSync(pathConfig.appDocument) || !fs.existsSync(pathConfig.appHtml);
 
-    // Temp files
-    const tempShellFileName = 'tempShell';
-    const tempShellFilePath = path.resolve(pathConfig.appBuild, tempShellFileName + '.js');
+    // Temp file
     const tempIndexFileName = 'tempIndex';
     const tempIndexFilePath = path.resolve(tempIndexFileName + '.js');
-    const tempHtmlFileName = 'tempHtml';
-    const tempHtmlFilePath = path.resolve(pathConfig.appBuild, tempHtmlFileName + '.js');
 
     // String template for injecting HTML
     let appShellTemplate = '';
@@ -51,12 +44,8 @@ class RaxPWAPlugin {
     // Mark the current environment
     const isProductionLikeMode = compiler.options.mode === 'production' || !compiler.options.mode;
 
-    let documentJsFilePath = '';
-    if (withDocumentJs) {
-      documentJsFilePath = fs.existsSync(pathConfig.appDocument) ?
-        pathConfig.appDocument :
-        require.resolve('rax-pwa/lib/Document');
-    }
+    const appShellHandler = new AppShellHandler({ pathConfig });
+    const documentHandler = new DocumentHandler({ pathConfig });
 
     /**
      * Project Code pre-processing when SPA is turned on
@@ -72,8 +61,8 @@ class RaxPWAPlugin {
       };
 
       // Dev mode for hot reload
-      if (!isProductionLikeMode && withDocumentJs) {
-        newEntry._document = documentJsFilePath;
+      if (!isProductionLikeMode && withDocumentJs && fs.existsSync(pathConfig.appDocument)) {
+        newEntry._document = pathConfig.appDocument;
       }
 
       const entryCodeStr = getEntryCodeStr({
@@ -112,19 +101,15 @@ class RaxPWAPlugin {
     /**
      * Replace code before Build
      * 1. Custom document/index.js compilation.
-     * 2. Compile the App Shell file. The string node after render string is inserted into HTML
+     * 2. Compile the App Shell file. The string node after render string is inserted into HTML.
      */
     compiler.hooks.beforeCompile.tapAsync(PLUGIN_NAME, (compilationParams, callback) => {
-      if (withDocumentJs) {
-        const webpackHtmlConfig = getWebpackNodeConfig(pathConfig);
-        webpackHtmlConfig.entry[tempHtmlFileName] = documentJsFilePath;
-        webpack(webpackHtmlConfig).run();
+      if (withAppShell) {
+        appShellHandler.build();
       }
 
-      if (withAppShell) {
-        const webpackShellConfig = getWebpackNodeConfig(pathConfig);
-        webpackShellConfig.entry[tempShellFileName] = pathConfig.appShell;
-        webpack(webpackShellConfig).run();
+      if (withDocumentJs) {
+        documentHandler.build();
       }
 
       callback();
@@ -136,72 +121,32 @@ class RaxPWAPlugin {
      * 2. Custom document/index.js handles HTML files into containers
      */
     compiler.hooks.emit.tapAsync(PLUGIN_NAME, (compilation, callback) => {
-      let _htmlValue;
-      let _htmlPath;
-      const _htmlAssets = getAssets(compilation);
-
+      // Process app shell
       if (withAppShell) {
-        appShellTemplate = renderer.renderToString(
-          createElement(_.interopRequire(require(tempShellFilePath)), {
-            Component: () => createElement('div', { id: 'root-page' })
-          })
-        );
-        // remove cache
-        purgeRequireCache(tempShellFilePath);
+        appShellTemplate = appShellHandler.getContent();
       }
 
-      if (!withDocumentJs) {
-        _htmlPath = pathConfig.appHtml;
-        _htmlValue = fs.readFileSync(_htmlPath, 'utf8');
-        _htmlValue = _htmlValue.replace(
-          '<div id="root"></div>',
-          `<div id="root">${appShellTemplate}</div>`
-        );
-
-        if (withSkeleton) {
-          _htmlValue = _htmlValue.replace(
-            '</body>',
-            `<script>${skeletonTemplate}</script></body>`
-          );
-        }
-
-        const jsTagStr = _htmlAssets.js.map(src => `<script src="${src}"></script>`) || '';
-        const cssTagStr = _htmlAssets.css.map(src => `<link rel="stylesheet" href="${src}" />`) || '';
-        _htmlValue = _htmlValue
-          .replace('</head>', `${cssTagStr}</head>`)
-          .replace('</body>', `${jsTagStr}</body>`);
-      } else {
-        _htmlPath = documentJsFilePath;
-        _htmlValue = renderer.renderToString(
-          createElement(_.interopRequire(require(tempHtmlFilePath)), {
-            scripts: _htmlAssets.js,
-            styles: _htmlAssets.css,
-            title: appConfig.title,
-            pageData: {},
-            pageHtml: appShellTemplate
-          })
-        );
-        // remove cache
-        purgeRequireCache(tempHtmlFilePath);
-      }
-
-      compilation.fileDependencies.add(_htmlPath);
+      // Process html
+      const document = documentHandler.getDocument(
+        compilation, appShellTemplate, skeletonTemplate, appConfig.title
+      );
+      compilation.fileDependencies.add(document.path);
       compilation.assets['index.html'] = {
-        source: () => _htmlValue,
-        size: () => _htmlValue.length
+        source: () => document.html,
+        size: () => document.html.length
       };
 
       // destroy
       if (isProductionLikeMode) {
         try {
           if (withAppShell) {
-            fs.unlinkSync(tempShellFilePath);
+            appShellHandler.clearTempFile();
+          }
+          if (withDocumentJs) {
+            documentHandler.clearTempFile();
           }
           if (withSPA) {
             fs.unlinkSync(tempIndexFilePath);
-          }
-          if (withDocumentJs) {
-            fs.unlinkSync(tempHtmlFilePath);
           }
         } catch (e) {
           // ignore

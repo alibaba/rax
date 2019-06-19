@@ -20,7 +20,7 @@ const getEntryCodeStr = (options) => {
         path: '${pagesConfig[pageName].path}', 
         regexp: ${pagesConfig[pageName]._regexp},
         pageAlive: ${!!pagesConfig[pageName].pageAlive},
-        component: () => import(/* webpackChunkName: "pages.${pageName}" */ '${pathConfig.appSrc}/pages/${pageName}/index'),
+        component: () => import(/* webpackChunkName: "${pageName}" */ '${pathConfig.appSrc}/pages/${pageName}/index'),
         ${pagesConfig[pageName].skeleton ? `skeleton: "${pagesConfig[pageName].skeleton}",` : ''}
         ${pagesConfig[pageName].title || appConfig.title ? `title: "${pagesConfig[pageName].title || appConfig.title}",` : ''}
       },
@@ -30,7 +30,7 @@ const getEntryCodeStr = (options) => {
   if (pagesConfig._error) {
     pagesConfigCodeStr += `
       _error: {
-        component: () => import(/* webpackChunkName: "pages._error" */ '${pathConfig.appSrc}/pages/_error/index')
+        component: () => import(/* webpackChunkName: "_error" */ '${pathConfig.appSrc}/pages/_error/index')
       }
     `;
   }

@@ -43,7 +43,7 @@ describe('SPA entry file code string test', () => {
           path: '/index', 
           regexp: /^\/index(?:\/)?$/i,
           pageAlive: false,
-          component: () => import(/* webpackChunkName: "pages.index" */ 'TestAppSrc/pages/index/index'),
+          component: () => import(/* webpackChunkName: "index" */ 'TestAppSrc/pages/index/index'),
           title: "index",
         },
       
