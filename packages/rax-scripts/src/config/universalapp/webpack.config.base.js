@@ -7,13 +7,6 @@ const pathConfig = require('../path.config');
 const babelConfig = require('../babel.config');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-babelConfig.presets.push([
-  require.resolve('@babel/preset-react'), {
-    'pragma': 'createElement',
-    'pragmaFrag': 'Fragment'
-  }
-]);
-
 module.exports = {
   mode: webpackConfig.mode,
   context: webpackConfig.context,
@@ -31,8 +24,8 @@ module.exports = {
       template: pathConfig.appHtml,
     }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-      chunkFilename: 'css/[id].css',
+      filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
     webpackConfig.plugins.define,
     webpackConfig.plugins.caseSensitivePaths,
