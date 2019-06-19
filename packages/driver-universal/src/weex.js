@@ -10,7 +10,7 @@ const driver = Object.assign({}, DriverWeex, {
   },
   createElement(type, props = {}) {
     const style = {};
-    const originStyle = props['style'];
+    const originStyle = props.style;
     if (originStyle) {
       for (let prop in originStyle) {
         style[prop] = convertUnit(originStyle[prop], prop);
