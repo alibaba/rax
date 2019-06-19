@@ -4,12 +4,12 @@ const chalk = require('chalk');
 /**
  * Replace rpx to rem.
  */
-module.exports = postcss.plugin('postcss-plugin-rpx2rem', function (opts) {
+module.exports = postcss.plugin('postcss-plugin-rpx2rem', function(opts) {
   opts = opts || {};
   const multiple = opts.multiple || 100;
   const transform = (str) => parseFloat(str) / multiple + 'rem';
   // Work with options here
-  return function (root) {
+  return function(root) {
     // Transform CSS AST here
     root.walkRules(rule => {
       // rem / 100, rpx to rem.
@@ -23,5 +23,5 @@ module.exports = postcss.plugin('postcss-plugin-rpx2rem', function (opts) {
         return str;
       });
     });
-  }
+  };
 });
