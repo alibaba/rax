@@ -20,7 +20,7 @@ const babelConfigWeb = babelMerge.all([{
 const babelConfigWeex = babelMerge.all([{
   plugins: [
     require.resolve('babel-plugin-transform-jsx-stylesheet'),
-    require.resolve('rax-hot-loader/babel')
+    require.resolve('rax-hot-loader/babel'),
   ],
 }, babelConfig]);
 
