@@ -32,7 +32,12 @@ const COMPONENT_MINIAPP = 'component-miniapp';
  */
 module.exports = function start(type = 'webapp') {
   if (type === MINIAPP) {
-    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, true);
+    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, {
+      enableWatch: true,
+      type: 'project',
+      dist: 'dist',
+      entry: pathConfig.universalAppEntry,
+    });
   } else if (type === COMPONENT_MINIAPP) {
     process.argv.push('--gulpfile', path.resolve(__dirname, './config/component/gulpfile-miniapp.js'));
     process.argv.push('--cwd', process.cwd());
