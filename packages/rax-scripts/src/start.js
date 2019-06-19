@@ -14,20 +14,18 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
+const SSRDevServer = require('./ssr/devServer');
 const path = require('path');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
+const appConfig = require('./config/app.config');
+const { getWebpackConfig } = require('./config/');
 
 const MINIAPP = 'miniapp';
 const COMPONENT_MINIAPP = 'component-miniapp';
-const webpackConfigMap = {
-  webapp: './config/webapp/webpack.config.dev',
-  weexapp: './config/weexapp/webpack.config.dev',
-  component: './config/component/webpack.config.dev'
-};
 
 /**
  * run webpack dev server
@@ -40,13 +38,18 @@ module.exports = function start(type = 'webapp') {
     process.argv.push('--cwd', process.cwd());
     require('gulp-cli')();
   } else {
-    const config = require(webpackConfigMap[type]);
-    const compiler = createWebpackCompiler(config);
+    const webpackConfig = getWebpackConfig(type, 'dev');
+    const compiler = createWebpackCompiler(webpackConfig);
 
-    const devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+    let devServer;
+    if (appConfig.ssr) {
+      devServer = new SSRDevServer(compiler);
+    } else {
+      devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+    }
 
     // Launch WebpackDevServer.
-    devServer.listen(envConfig.port, envConfig.hostname, err => {
+    devServer.listen(envConfig.port, envConfig.hostname, (err) => {
       if (err) {
         console.log(colors.red('[ERR]: Failed to webpack dev server'));
         console.error(err.message || err);

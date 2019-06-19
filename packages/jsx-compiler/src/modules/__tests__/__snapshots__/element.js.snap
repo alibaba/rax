@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Transform JSXElement attrs should handle expressions 1`] = `"{ _e0: event => { console.log(event); }, _e1: event => console.log(event), _e2: function (event) { console.log(event); }, _d0: fn(), _d1: foo.method(), _d2: a ? 1 : 2, _d3: ~a, _d4: new Foo(), _d5: delete foo.bar, _d6: typeof aaa, _d7: { ...{ a: 1 } } }"`;
+
+exports[`Transform JSXElement attrs should handle literial types 1`] = `"{ _d0: /a-z/, _e0: event => { console.log(event); }, _d1: { a: 1 }, _d2: [0, 1, 2] }"`;
+
+exports[`Transform JSXElement element should handle expressions 1`] = `"{ _e0: event => { console.log(event); }, _e1: event => console.log(event), _e2: function (event) { console.log(event); }, _d0: fn(), _d1: foo.method(), _d2: a ? 1 : 2, _d3: ~a, _d4: new Foo(), _d5: delete foo.bar, _d6: typeof aaa }"`;
+
+exports[`Transform JSXElement element should handle literial types 1`] = `"{ _d0: /a-z/, _e0: event => { console.log(event); }, _d1: [0, 1, 2] }"`;

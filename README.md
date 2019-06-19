@@ -239,7 +239,12 @@ const config = () => {
         routes: [
           {
             path: '',                 // www.example.com/bar
-            component: () => import(/* webpackChunkName: "bar" */ './Bar'),
+            component: () => import(/* webpackChunkName: "bar" */ './Bar').then((Bar) => {
+              // interop-require see: https://www.npmjs.com/package/interop-require
+              Bar = Bar.__esModule ? Bar.default : Bar;
+              // return a created element
+              return <Bar />;
+            }),
           },
         ],
       },
@@ -333,7 +338,7 @@ Code-Splitting is supported by `Webpack` which can create multiple bundles that 
 
 ```jsx
 import { createElement } from 'rax';
-import useImport from 'rax-use-promise';
+import useImport from 'rax-use-import';
 
 export default function App() {
   const [Bar, error] = useImport(() => import(/* webpackChunkName: "bar" */ './Bar'));

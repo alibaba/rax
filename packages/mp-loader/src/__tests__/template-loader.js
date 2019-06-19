@@ -1,4 +1,4 @@
-import { runLoaders } from 'loader-runner';
+const { runLoaders } = require('loader-runner');
 
 const templateLoaderPath = require.resolve('../template-loader');
 
@@ -41,6 +41,21 @@ describe('template-loader', () => {
       expect(cacheable).toBeTruthy();
       expect(result).toMatchSnapshot();
       done();
+    });
+  });
+
+  it('slot', (done) => {
+    runLoaders({
+      resource: __filename,
+      loaders: [templateLoaderPath],
+      readResource: (file, callback) => {
+        callback(null, `
+          <view slot="hello"></view>
+        `);
+      },
+    }, (err, resource) => {
+      expect(resource.result[0]).toMatch('return [_c(__components_ref__[\'view\']||\'view\',{slot:"hello"})];');
+      done(err);
     });
   });
 

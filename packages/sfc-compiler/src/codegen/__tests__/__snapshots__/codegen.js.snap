@@ -14,7 +14,7 @@ exports[`codegen generate single slot 1`] = `"_c(__components_ref__['view']||'vi
 
 exports[`codegen generate slot fallback content 1`] = `"_c(__components_ref__['view']||'view',[_t(this,\\"default\\",[_c(__components_ref__['view']||'view',[_v(\\"hi\\")])])])"`;
 
-exports[`codegen generate slot target 1`] = `"_c(__components_ref__['view']||'view',{slot:\\"one\\",slot:\\"one\\"},[_v(\\"hello world\\")])"`;
+exports[`codegen generate slot target 1`] = `"_c(__components_ref__['view']||'view',{slot:\\"one\\"},[_v(\\"hello world\\")])"`;
 
 exports[`codegen generate template 1`] = `"_c(__components_ref__['view']||'view')"`;
 

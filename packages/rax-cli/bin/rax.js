@@ -125,16 +125,16 @@ function askProjectInformaction(name, verbose) {
       message: 'What\'s your project type?',
       choices: [
         {
-          name: 'WebApp',
+          name: 'WebApp (For build app that only works in broswers.)',
           value: 'webapp'
         },
         {
-          name: 'WeexApp',
+          name: 'WeexApp (For build app that only works in Weex.)',
           value: 'weexapp'
         },
         {
-          name: 'MiniApp',
-          value: 'miniapp'
+          name: 'UniversalApp (For build cross platform application.)',
+          value: 'univeraslapp'
         },
         {
           name: 'Component',
@@ -142,6 +142,21 @@ function askProjectInformaction(name, verbose) {
         }
       ],
       default: 'webapp'
+    },
+    {
+      type: 'checkbox',
+      name: 'projectFeatures',
+      when: function(answers) {
+        return answers.projectType === 'webapp';
+      },
+      message: 'Do you want to enable these features?',
+      choices: [
+        {
+          name: 'server sider rendering (ssr)',
+          value: 'ssr'
+        }
+      ],
+      default: false
     },
     {
       type: 'input',
@@ -180,6 +195,7 @@ function createProject(name, verbose, userAnswers) {
     directoryName: name,
     projectName: projectName,
     projectType: userAnswers.projectType,
+    projectFeatures: userAnswers.projectFeatures,
     projectAuthor: userAnswers.projectAuthor,
     verbose: verbose,
   }).then(function(directory) {

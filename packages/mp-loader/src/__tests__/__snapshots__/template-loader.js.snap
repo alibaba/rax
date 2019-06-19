@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`template-loader Template 1`] = `
+exports['template-loader Template 1'] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
@@ -31,7 +31,7 @@ Array [
 ]
 `;
 
-exports[`template-loader options 1`] = `
+exports['template-loader options 1'] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
@@ -62,7 +62,7 @@ Array [
 ]
 `;
 
-exports[`template-loader web-view 1`] = `
+exports['template-loader web-view 1'] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first

@@ -62,7 +62,7 @@ describe('renderToString', () => {
     }
 
     let str = renderToString(<MyComponent />);
-    expect(str).toBe('<div style="flex:1;font-size:16rem;width:100%;"></div>');
+    expect(str).toBe('<div style="flex:1;font-size:16px;width:100%;"></div>');
   });
 
   it('render with dangerouslySetInnerHTML', () => {

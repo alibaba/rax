@@ -3,14 +3,20 @@ const { resolve } = require('path');
 const program = require('commander');
 
 program
-  // .option('-w, --watch', 'Enable watch.', true)
+  .option('--entry <entry>', 'set entry of component', 'index')
+  .option('--type <type>', 'set type of project|component', 'project')
+  .option('--dist <dist>', 'set export path', 'dist')
   .action((cmd) => {
     const workDirectory = resolve(process.env.CWD || process.cwd());
-    const distDirectory = resolve(workDirectory, 'dist');
+    const distDirectory = resolve(workDirectory, cmd.dist);
+    const enableWatch = true;
 
-    // const enableWatch = (!'watch' in cmd) || cmd.watch;
-    const enableWatch = false; // In developing.
-    require('..')(workDirectory, distDirectory, enableWatch);
+    require('..')(workDirectory, distDirectory, {
+      enableWatch,
+      type: cmd.type,
+      dist: cmd.dist,
+      entry: cmd.entry,
+    });
   });
 
 program.parse(process.argv);
