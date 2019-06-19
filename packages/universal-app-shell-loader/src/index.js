@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const { getOptions } = require('loader-utils');
 const parse = require('./parse');
 const traverse = require('./traverse');
 const getDefaultExportedPath = require('./getDefaultExportedPath');
@@ -14,8 +15,15 @@ const historyMemory = {
  * Universal App Shell Loader for Rax.
  */
 module.exports = function(content) {
+  const options = getOptions(this) || {};
+
   if (this.data.appConfig !== null) {
-    const { pages = [], historyType = 'hash' } = this.data.appConfig;
+    let { pages = [], historyType = 'hash' } = this.data.appConfig;
+    /**
+     * Weex only support memory history.
+     */
+    if (options.type === 'weex') historyType = 'memory';
+
     const requestPages = pages
       .map((path, index) => `import Page${index} from './${path}';`)
       .join('\n');
