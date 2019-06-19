@@ -22,13 +22,13 @@ const driver = Object.assign({}, DriverDOM, {
       return DriverDOM.createElement(type, props, component);
     }
   },
-  addEventListener(node, eventName, eventHandler, component) {
-    eventName = normalizeEventName(node, eventName, component);
-    return DriverDOM.addEventListener(node, eventName, eventHandler, component);
+  addEventListener(node, eventName, eventHandler, props) {
+    eventName = normalizeEventName(node, eventName, props);
+    return DriverDOM.addEventListener(node, eventName, eventHandler, props);
   },
-  removeEventListener(node, eventName, eventHandler, component) {
-    eventName = normalizeEventName(node, eventName, component);
-    return DriverDOM.removeEventListener(node, eventName, eventHandler, component);
+  removeEventListener(node, eventName, eventHandler, props) {
+    eventName = normalizeEventName(node, eventName, props);
+    return DriverDOM.removeEventListener(node, eventName, eventHandler, props);
   },
   beforeRender(options) {
     // Init rem unit
@@ -67,10 +67,8 @@ const driver = Object.assign({}, DriverDOM, {
   },
 });
 
-function normalizeEventName(node, eventName, component) {
+function normalizeEventName(node, eventName, props) {
   const tagName = node.tagName.toLowerCase();
-  const instance = component._instance;
-  const props = instance.props;
 
   if (
     eventName === 'change' &&
