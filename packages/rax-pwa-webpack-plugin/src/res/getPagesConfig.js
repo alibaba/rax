@@ -13,6 +13,6 @@ const getPagesConfig = (appConfig, pathConfig) => {
     }
   });
   return pagesConfig;
-}
+};
 
-module.exports = getPagesConfig
+module.exports = getPagesConfig;

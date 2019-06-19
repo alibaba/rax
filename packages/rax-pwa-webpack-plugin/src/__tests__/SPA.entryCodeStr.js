@@ -2,7 +2,7 @@ const getEntryCodeStr = require('../res/getEntryCodeStr');
 
 const appConfig = {
   spa: true
-}
+};
 
 const pathConfig = {
   appDirectory: 'TestAppDirectory',
@@ -10,7 +10,7 @@ const pathConfig = {
   appSrc: 'TestAppSrc',
   appDocument: 'TestAppDocument',
   appShell: 'TestAppShell'
-}
+};
 
 const pagesConfig = {
   index: {
@@ -24,11 +24,10 @@ const pagesConfig = {
 // https://stackoverflow.com/questions/51605469/jest-how-to-compare-two-strings-with-different-format
 const filterCodeStr = (codeStr) => {
   return codeStr.replace(/\s/g, '');
-}
+};
 
 describe('SPA entry file code string test', () => {
-
-  it('should have a shell component with App Shell', function () {
+  it('should have a shell component with App Shell', function() {
     const withSSR = false;
     const withAppShell = true;
 
@@ -70,6 +69,6 @@ describe('SPA entry file code string test', () => {
     `);
 
     expect(filterCodeStr(getEntryCodeStr({ appConfig, pathConfig, pagesConfig, withSSR, withAppShell }))).toBe(expectResult);
-  })
-})
+  });
+});
 

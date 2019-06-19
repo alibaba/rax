@@ -2,7 +2,7 @@ var fs = require('fs');
 var easyfile = require('easyfile');
 var path = require('path');
 
-var processPWAProject = (projectDir, projectType, projectFeatures, replacedPkg) => {
+var processPWAProject = (projectDir, projectType, projectFeatures) => {
   var appJSON;
   if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
     fs.unlinkSync(path.join(projectDir, 'src/index.js'));
@@ -23,23 +23,17 @@ var processPWAProject = (projectDir, projectType, projectFeatures, replacedPkg) 
 
   if (appJSON && appJSON.spa) {
     // SPA
-    replacedPkg = replacedPkg.replace(', "__ExtPkgName__": "__ExtPkgVersion"',
-      ', "history": "^4.9.0", "rax-use-router": "^2.0.0"'
-    );
-    var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js')
+    var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js');
     fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
     fs.unlinkSync(spaIndexPath);
   } else {
-    replacedPkg = replacedPkg.replace(', "__ExtPkgName__": "__ExtPkgVersion"', '');
     fs.unlinkSync(path.join(projectDir, 'src/pages/about/index.js'));
     fs.rmdirSync(path.join(projectDir, 'src/pages/about'));
     fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
   }
+};
 
-  return replacedPkg;
-}
-
-module.exports = function (args) {
+module.exports = function(args) {
   var projectDir = args.root;
   var projectName = args.projectName;
   var projectAuthor = args.projectAuthor;
@@ -55,7 +49,7 @@ module.exports = function (args) {
 
   // Rename files start with '_'
   var files = easyfile.readdir(projectDir);
-  files.forEach(function (filename) {
+  files.forEach(function(filename) {
     if (filename[0] === '_') {
       easyfile.rename(
         path.join(projectDir, filename),
@@ -67,9 +61,8 @@ module.exports = function (args) {
   var replacedPkg = fs.readFileSync(pkgPath, 'utf-8')
     .replace('__YourProjectName__', projectName)
     .replace('__AuthorName__', projectAuthor);
-
-  replacedPkg = processPWAProject(projectDir, projectType, projectFeatures, replacedPkg);
   fs.writeFileSync(pkgPath, replacedPkg);
+  processPWAProject(projectDir, projectType, projectFeatures);
 
   process.chdir(projectDir);
   return Promise.resolve(projectDir);

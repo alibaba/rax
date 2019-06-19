@@ -9,7 +9,6 @@ const interopRequire = (obj) => {
 };
 
 export default function createRouter(pagesConfig, withSSR = false) {
-
   let pageHistory = withSSR ? createBrowserHistory() : createHashHistory();
 
   // page alive
@@ -28,7 +27,7 @@ export default function createRouter(pagesConfig, withSSR = false) {
     const route = {
       path: pagesConfig[page].path,
       component: null
-    }
+    };
 
     if (pagesConfig[page].pageAlive) {
       withPageAlive = true;
@@ -40,8 +39,7 @@ export default function createRouter(pagesConfig, withSSR = false) {
         title: pagesConfig[page].title || null,
         component: null,
         getComponent: pagesConfig[page].component
-      }
-
+      };
     } else {
       route.component = pagesConfig[page].component().then(interopRequire)
         .then((Page) => {
@@ -49,12 +47,12 @@ export default function createRouter(pagesConfig, withSSR = false) {
             document.title = pagesConfig[page].title;
           }
           return <Page {...routerProps} />;
-        })
+        });
     }
 
     if (page === 'index') {
       routerConfig.routes.push({
-        ...route, path: ""
+        ...route, path: ''
       });
       routerConfig.routes.push(route);
     } else if (page === '_error') {
@@ -112,7 +110,7 @@ export default function createRouter(pagesConfig, withSSR = false) {
   });
 
 
-  return function (props) {
+  return function(props) {
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
     routerProps = props;
@@ -125,7 +123,7 @@ export default function createRouter(pagesConfig, withSSR = false) {
         <div style={{ position: 'relative' }}>
           {Object.keys(alivePageCache).map((pageName) => {
             const { pathname, hash } = window.location;
-            const isMatched = function (regexp, type) {
+            const isMatched = function(regexp, type) {
               return 'hash' === type ? regexp.test(hash.replace('#', '')) : 'history' === type && regexp.test(pathname);
             };
             cachePageMatched = isMatched(alivePageCache[pageName].regexp, withSSR ? 'history' : 'hash');
@@ -142,5 +140,5 @@ export default function createRouter(pagesConfig, withSSR = false) {
         </div>
       );
     }
-  }
+  };
 }

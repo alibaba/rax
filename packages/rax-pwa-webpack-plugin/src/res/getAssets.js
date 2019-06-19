@@ -1,5 +1,4 @@
 const getAssets = (compilation) => {
-
   const compilationHash = compilation.hash;
   const entryNames = Array.from(compilation.entrypoints.keys());
   let publicPath = compilation.mainTemplate.getPublicPath({ hash: compilationHash });
@@ -45,6 +44,6 @@ const getAssets = (compilation) => {
     });
   }
   return assets;
-}
+};
 
 module.exports = getAssets;

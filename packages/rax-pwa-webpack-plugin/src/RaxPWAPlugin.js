@@ -1,8 +1,8 @@
 /**
- * PWA Plugin 
- * Add or modify some project files according to the configuration of project app.json, 
+ * PWA Plugin
+ * Add or modify some project files according to the configuration of project app.json,
  * update the construction configuration, and achieve the purpose of experience enhancement
- * 
+ *
  */
 
 
@@ -84,7 +84,7 @@ class RaxPWAPlugin {
         withAppShell,
       });
 
-      // Prepare the skeleton diagram code, match the routing information when the page is initialized, 
+      // Prepare the skeleton diagram code, match the routing information when the page is initialized,
       // and insert the skeleton diagram of the corresponding page into the blank area of the page
       skeletonTemplate += `
         var pathname = window.location.pathname;
@@ -102,20 +102,19 @@ class RaxPWAPlugin {
             }
           `;
         }
-      })
+      });
 
       fs.writeFileSync(tempIndexFilePath, entryCodeStr);
 
-      compiler.options.entry = newEntry
+      compiler.options.entry = newEntry;
     }
 
     /**
      * Replace code before Build
-     * 1. Custom document/index.js compilation. 
+     * 1. Custom document/index.js compilation.
      * 2. Compile the App Shell file. The string node after render string is inserted into HTML
      */
     compiler.hooks.beforeCompile.tapAsync(PLUGIN_NAME, (compilationParams, callback) => {
-
       if (withDocumentJs) {
         const webpackHtmlConfig = getWebpackNodeConfig(pathConfig);
         webpackHtmlConfig.entry[tempHtmlFileName] = documentJsFilePath;
@@ -200,13 +199,12 @@ class RaxPWAPlugin {
           }
           if (withSPA) {
             fs.unlinkSync(tempIndexFilePath);
-            fs.unlinkSync(tempRouterFilePath);
           }
           if (withDocumentJs) {
             fs.unlinkSync(tempHtmlFilePath);
           }
         } catch (e) {
-          // ignore 
+          // ignore
         }
       }
       callback();

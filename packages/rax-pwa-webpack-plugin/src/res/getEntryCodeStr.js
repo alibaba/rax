@@ -1,5 +1,4 @@
 const getEntryCodeStr = (options) => {
-
   /**
    * Generate index.js for SPA
    * Features to be implemented:
@@ -23,7 +22,7 @@ const getEntryCodeStr = (options) => {
         pageAlive: ${!!pagesConfig[pageName].pageAlive},
         component: () => import(/* webpackChunkName: "pages.${pageName}" */ '${pathConfig.appSrc}/pages/${pageName}/index'),
         ${pagesConfig[pageName].skeleton ? `skeleton: "${pagesConfig[pageName].skeleton}",` : ''}
-        ${(pagesConfig[pageName].title || appConfig.title) ? `title: "${pagesConfig[pageName].title || appConfig.title}",` : ''}
+        ${pagesConfig[pageName].title || appConfig.title ? `title: "${pagesConfig[pageName].title || appConfig.title}",` : ''}
       },
     `;
   });
@@ -37,13 +36,12 @@ const getEntryCodeStr = (options) => {
   }
 
 
-
   // process App Shell
   if (withAppShell) {
     importsCodeStr += `import Shell from '${pathConfig.appShell}';`;
-    renderCodeStr += 'render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });'
+    renderCodeStr += 'render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });';
   } else {
-    renderCodeStr += 'render(<PageComponent {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });'
+    renderCodeStr += 'render(<PageComponent {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });';
   }
 
   return `
@@ -74,6 +72,6 @@ const getEntryCodeStr = (options) => {
 
     ${renderCodeStr}
   `;
-}
+};
 
 module.exports = getEntryCodeStr;
