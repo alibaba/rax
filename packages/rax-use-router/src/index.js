@@ -1,5 +1,5 @@
 // Inspired by react-router and universal-router
-import { createElement, useState, useLayoutEffect } from 'rax';
+import { useState, useLayoutEffect } from 'rax';
 import pathToRegexp from 'path-to-regexp';
 
 const cache = {};
@@ -124,7 +124,6 @@ const router = {
   history: null,
   handles: [],
   errorHandler() { },
-  childrenPropsRouter: null,
   addHandle(handle) {
     return router.handles.push(handle);
   },
@@ -164,7 +163,6 @@ const router = {
       if (component instanceof Promise) {
         // Lazy loading component by import('./Foo')
         return component.then((component) => {
-          component = component.__esModule ? component.default : component;
           // Check current fullpath avoid router has changed before lazy laoding complete
           if (fullpath === router.fullpath) {
             router.triggerHandles(component);
@@ -182,7 +180,7 @@ const router = {
   }
 };
 
-function matchLocation({ pathname, search }) {
+function matchLocation({pathname, search}) {
   router.match(`${pathname}${search}`);
 }
 
@@ -211,12 +209,6 @@ export function useRouter(routerConfig) {
       matchLocation(location);
     });
 
-    // Init childrenPropsRouter
-    updateChildrenProps({
-      history,
-      location: history.location,
-    });
-
     return () => {
       router.removeHandle(handleId);
       unlisten();
@@ -236,15 +228,4 @@ export function replace(fullpath) {
 
 export function go(n) {
   router.history.go(n);
-}
-
-export function withRouter(component) {
-  return (props) => {
-    const ComposedComponent = component;
-    return <ComposedComponent router={router.childrenPropsRouter} {...props} />;
-  };
-}
-
-export function updateChildrenProps(props) {
-  router.childrenPropsRouter = Object.assign({}, router.childrenPropsRouter, props);
 }

@@ -21,7 +21,6 @@ const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
-
 const appConfig = require('./config/app.config');
 const { getWebpackConfig } = require('./config/');
 

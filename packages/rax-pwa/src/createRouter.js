@@ -8,8 +8,17 @@ const interopRequire = (obj) => {
   return obj && obj.__esModule ? obj.default : obj;
 };
 
+// Mark if the page is loaded for the first time.
+// If it is the first time to load, pageInitialProps is taken from the scripts. If the SPA has switched routes then each sub-component needs to run getInitialProps
+let isFirstRendered = true;
+
 export default function createRouter(pagesConfig, withSSR = false) {
   let pageHistory = withSSR ? createBrowserHistory() : createHashHistory();
+
+  pageHistory.listen(() => {
+    // After routing switching, it is considered not the first rendering.
+    isFirstRendered = false;
+  });
 
   // page alive
   let withPageAlive = false;
@@ -18,6 +27,10 @@ export default function createRouter(pagesConfig, withSSR = false) {
 
   // base config
   let routerProps = {};
+  const childrenPropsRouter = {
+    history: pageHistory,
+    location: pageHistory.location
+  };
   const routerConfig = {
     history: pageHistory,
     routes: []
@@ -42,11 +55,20 @@ export default function createRouter(pagesConfig, withSSR = false) {
       };
     } else {
       route.component = pagesConfig[page].component().then(interopRequire)
-        .then((Page) => {
+        .then(async(Page) => {
           if (pagesConfig[page].title) {
             document.title = pagesConfig[page].title;
           }
-          return <Page {...routerProps} />;
+          let pageInitialProps = {};
+          if (Page.getInitialProps) {
+            try {
+              pageInitialProps = await Page.getInitialProps();
+            } catch (e) {
+              console.log(`${page} pageInitialProps error: ` + e);
+              pageInitialProps = {};
+            }
+          }
+          return <Page {...routerProps} {...pageInitialProps} />;
         });
     }
 
@@ -74,46 +96,59 @@ export default function createRouter(pagesConfig, withSSR = false) {
 
     alivePageCache[pageName].getComponent()
       .then(interopRequire)
-      .then(Page => {
-        alivePageCache[pageName].component = <Page {...routerProps} />;
+      .then(async(Page) => {
+        let pageInitialProps = {};
+        if (Page.getInitialProps) {
+          try {
+            pageInitialProps = await Page.getInitialProps();
+          } catch (e) {
+            console.log(`${pageName} pageInitialProps error: ` + e);
+            pageInitialProps = {};
+          }
+        }
+        alivePageCache[pageName].component = <Page {...routerProps} {...pageInitialProps} />;
         updateComponentTrigger(pageHistory.location.pathname + pageName);
       });
   };
 
-  updateChildrenProps({
-    preload: (config) => {
-      if (config.page) {
+
+  childrenPropsRouter.preload = (config) => {
+    if (config.page) {
+      pagesConfig[config.page].component();
+    } else {
+      const linkElement = document.createElement('link');
+      linkElement.rel = 'preload';
+      linkElement.as = config.as;
+      linkElement.href = config.href;
+      config.crossorigin && (linkElement.crossorigin = true);
+      document.head.appendChild(linkElement);
+    }
+  };
+
+  childrenPropsRouter.prerender = (config) => {
+    if (config.page) {
+      if (withPageAlive) {
+        activateAlivePageComponent(config.page);
+      } else {
         pagesConfig[config.page].component();
-      } else {
-        const linkElement = document.createElement('link');
-        linkElement.rel = 'preload';
-        linkElement.as = config.as;
-        linkElement.href = config.href;
-        config.crossorigin && (linkElement.crossorigin = true);
-        document.head.appendChild(linkElement);
       }
-    },
-    prerender: (config) => {
-      if (config.page) {
-        if (withPageAlive) {
-          activateAlivePageComponent(config.page);
-        } else {
-          pagesConfig[config.page].component();
-        }
-      } else {
-        const linkElement = document.createElement('link');
-        linkElement.rel = 'prerender';
-        linkElement.href = config.href;
-        document.head.appendChild(linkElement);
-      }
-    },
-  });
+    } else {
+      const linkElement = document.createElement('link');
+      linkElement.rel = 'prerender';
+      linkElement.href = config.href;
+      document.head.appendChild(linkElement);
+    }
+  };
 
 
   return function(props) {
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
-    routerProps = props;
+    if (!isFirstRendered) {
+      routerProps = { ...props, router: childrenPropsRouter };
+    } else {
+      routerProps = { router: childrenPropsRouter };
+    }
     updateComponentTrigger = setUpdateTemp;
     if (!withPageAlive) {
       return component;

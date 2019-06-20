@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
 
-const _ = require('./res/util');
+const interopRequire = require('./res/interopRequire');
 const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
 const purgeRequireCache = require('./res/purgeRequireCache');
 
@@ -24,7 +24,7 @@ class AppShellHandler {
 
   getContent() {
     const content = renderer.renderToString(
-      createElement(_.interopRequire(require(this.tempShellFilePath)), {
+      createElement(interopRequire(require(this.tempShellFilePath)), {
         Component: () => createElement('div', { id: 'root-page' })
       })
     );

@@ -17,7 +17,7 @@ var processPWAProject = (projectDir, projectType, projectFeatures) => {
       appJSON[feature] = true;
     });
 
-    var jsonString = JSON.stringify(appJSON, null, 2);
+    var jsonString = JSON.stringify(appJSON, null, 2) + '\n';
     fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
   }
 

@@ -12,7 +12,6 @@ const path = require('path');
 const AppShellHandler = require('./AppShellHandler');
 const DocumentHandler = require('./DocumentHandler');
 
-const _ = require('./res/util');
 const getPagesConfig = require('./res/getPagesConfig');
 const getEntryCodeStr = require('./res/getEntryCodeStr');
 

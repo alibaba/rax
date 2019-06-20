@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
 
-const _ = require('./res/util');
+const interopRequire = require('./res/interopRequire');
 const getAssets = require('./res/getAssets');
 const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
 const purgeRequireCache = require('./res/purgeRequireCache');
@@ -45,7 +45,7 @@ class DocumentHandler {
       _htmlPath = pathConfig.appHtml;
       _htmlValue = fs.readFileSync(_htmlPath, 'utf8');
       _htmlValue = _htmlValue.replace(
-        '<div id="root"></div>',
+        /<div(.*?) id=\"root\">(.*?)<\/div>/,
         `<div id="root">${appShellTemplate}</div>`
       );
 
@@ -65,7 +65,7 @@ class DocumentHandler {
       // Use document.js
       _htmlPath = this.documentJsFilePath;
       _htmlValue = renderer.renderToString(
-        createElement(_.interopRequire(require(this.tempHtmlFilePath)), {
+        createElement(interopRequire(require(this.tempHtmlFilePath)), {
           scripts: _htmlAssets.js,
           styles: _htmlAssets.css,
           title: title,
