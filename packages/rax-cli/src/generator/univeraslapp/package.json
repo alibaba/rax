@@ -9,12 +9,12 @@
     "lint": "eslint --ext .js --ext .jsx ./src"
   },
   "dependencies": {
-    "driver-universal": "^1.0.0-beta.4",
+    "driver-universal": "^1.0.0",
     "history": "^4.9.0",
     "rax": "^1.0.0",
-    "rax-view": "miniapp-beta",
-    "rax-text": "miniapp-beta",
-    "rax-image": "miniapp-beta",
+    "rax-view": "next",
+    "rax-text": "next",
+    "rax-image": "next",
     "rax-use-router": "^2.0.0"
   },
   "devDependencies": {
