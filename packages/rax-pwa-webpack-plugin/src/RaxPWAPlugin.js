@@ -86,7 +86,7 @@ class RaxPWAPlugin {
           withSkeleton = true;
           skeletonTemplate += `
             if (isMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}")) {
-              document.getElementById("root-page").innerHTML = '<img src="${pagesConfig[pageName].skeleton}"/>';
+              document.getElementById(${withAppShell ? 'root-page' : 'root'}).innerHTML = '<img src="${pagesConfig[pageName].skeleton}"/>';
             }
           `;
         }

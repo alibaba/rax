@@ -2,7 +2,7 @@
 import { createElement, useState } from 'rax';
 import Error from './Error';
 import { createHashHistory, createBrowserHistory } from 'history';
-import { useRouter, updateChildrenProps } from 'rax-use-router';
+import { useRouter } from 'rax-use-router';
 
 const interopRequire = (obj) => {
   return obj && obj.__esModule ? obj.default : obj;

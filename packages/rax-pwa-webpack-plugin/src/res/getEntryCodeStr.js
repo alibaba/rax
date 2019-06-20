@@ -56,7 +56,7 @@ const getEntryCodeStr = (options) => {
 
     const Router = createRouter(pagesConfig, ${withSSR});
     const PageComponent = (props) => {
-      return <div id="root-page" ><Router {...props}/></div>;
+      ${withAppShell ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
     };
     
     if (document.getElementById('root-page')) {
