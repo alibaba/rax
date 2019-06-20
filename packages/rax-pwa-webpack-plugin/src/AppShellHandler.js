@@ -6,7 +6,6 @@ const renderer = require('rax-server-renderer');
 
 const interopRequire = require('./res/interopRequire');
 const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
-const purgeRequireCache = require('./res/purgeRequireCache');
 
 class AppShellHandler {
   constructor(options) {
@@ -24,12 +23,10 @@ class AppShellHandler {
 
   getContent() {
     const content = renderer.renderToString(
-      createElement(interopRequire(require(this.tempShellFilePath)), {
+      createElement(interopRequire(eval(fs.readFileSync(this.tempShellFilePath, 'utf-8'))), {
         Component: () => createElement('div', { id: 'root-page' })
       })
     );
-    // remove cache
-    purgeRequireCache(this.tempShellFilePath);
     return content;
   }
 

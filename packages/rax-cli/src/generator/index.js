@@ -2,7 +2,7 @@ var fs = require('fs');
 var easyfile = require('easyfile');
 var path = require('path');
 
-var processPWAProject = (projectDir, projectType, projectFeatures) => {
+var processPWAProject = (projectDir, projectType, projectFeatures, replacedPkg) => {
   var appJSON;
   if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
     fs.unlinkSync(path.join(projectDir, 'src/index.js'));
@@ -26,11 +26,15 @@ var processPWAProject = (projectDir, projectType, projectFeatures) => {
     var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js');
     fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
     fs.unlinkSync(spaIndexPath);
+    var packageJSON = JSON.parse(replacedPkg);
+    packageJSON.dependencies['rax-pwa'] = '^1.0.0';
+    replacedPkg = JSON.stringify(packageJSON, null, 2) + '\n';
   } else {
     fs.unlinkSync(path.join(projectDir, 'src/pages/about/index.js'));
     fs.rmdirSync(path.join(projectDir, 'src/pages/about'));
     fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
   }
+  return replacedPkg;
 };
 
 module.exports = function(args) {
@@ -61,8 +65,8 @@ module.exports = function(args) {
   var replacedPkg = fs.readFileSync(pkgPath, 'utf-8')
     .replace('__YourProjectName__', projectName)
     .replace('__AuthorName__', projectAuthor);
+  replacedPkg = processPWAProject(projectDir, projectType, projectFeatures, replacedPkg);
   fs.writeFileSync(pkgPath, replacedPkg);
-  processPWAProject(projectDir, projectType, projectFeatures);
 
   process.chdir(projectDir);
   return Promise.resolve(projectDir);

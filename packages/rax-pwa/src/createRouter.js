@@ -12,7 +12,7 @@ const interopRequire = (obj) => {
 // If it is the first time to load, pageInitialProps is taken from the scripts. If the SPA has switched routes then each sub-component needs to run getInitialProps
 let isFirstRendered = true;
 
-export default function createRouter(pagesConfig, withSSR = false) {
+function createRouter(pagesConfig, withSSR = false) {
   let pageHistory = withSSR ? createBrowserHistory() : createHashHistory();
 
   pageHistory.listen(() => {
@@ -177,3 +177,6 @@ export default function createRouter(pagesConfig, withSSR = false) {
     }
   };
 }
+
+
+export default createRouter;

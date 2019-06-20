@@ -7,7 +7,6 @@ const renderer = require('rax-server-renderer');
 const interopRequire = require('./res/interopRequire');
 const getAssets = require('./res/getAssets');
 const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
-const purgeRequireCache = require('./res/purgeRequireCache');
 
 class DocumentHandler {
   constructor(options) {
@@ -65,7 +64,7 @@ class DocumentHandler {
       // Use document.js
       _htmlPath = this.documentJsFilePath;
       _htmlValue = renderer.renderToString(
-        createElement(interopRequire(require(this.tempHtmlFilePath)), {
+        createElement(interopRequire(eval(fs.readFileSync(this.tempHtmlFilePath, 'utf-8'))), {
           scripts: _htmlAssets.js,
           styles: _htmlAssets.css,
           title: title,
@@ -73,8 +72,6 @@ class DocumentHandler {
           pageHtml: appShellTemplate
         })
       );
-      // remove cache
-      purgeRequireCache(this.tempHtmlFilePath);
     }
     return { html: _htmlValue, path: _htmlPath };
   }
