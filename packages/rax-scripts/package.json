@@ -42,7 +42,6 @@
     "babel-merge": "^3.0.0",
     "babel-plugin-root-import": "^6.1.0",
     "babel-plugin-transform-jsx-stylesheet": "0.6.5",
-    "babel-preset-rax": "^1.0.0-beta.0",
     "camelcase": "^5.0.0",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.1",
