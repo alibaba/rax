@@ -63,9 +63,9 @@ module.exports = function start(type = 'webapp') {
 
       const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}`;
 
-      function tipWeex() {
+      function tipWeex(bundlePath) {
         console.log(colors.green('[Weex] Scan the weex bundle url:'));
-        console.log(`    ${colors.underline.white(serverUrl + '/index.js?wh_weex=true')}`);
+        console.log(`    ${colors.underline.white(serverUrl + bundlePath + '?wh_weex=true')}`);
       }
 
       function tipWeb() {
@@ -75,13 +75,13 @@ module.exports = function start(type = 'webapp') {
 
       console.log('');
       if (type === 'weexapp') {
-        tipWeex();
+        tipWeex('/index.js');
       } else if (type === 'webapp') {
         tipWeb();
       } else if (type === 'universalapp') {
         tipWeb();
         console.log('');
-        tipWeex();
+        tipWeex('/index.weex.js');
       }
       console.log('');
 
