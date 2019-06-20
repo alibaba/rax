@@ -48,9 +48,6 @@ const driver = Object.assign({}, DriverDOM, {
         if (Flexbox.isFlexProp(prop)) {
           Flexbox[prop](val, tranformedStyle);
         } else {
-          if (typeof val === 'string' && isNumberString(val)) {
-            val = Number(val);
-          }
           tranformedStyle[prop] = convertUnit(val, prop);
         }
       }
@@ -103,11 +100,6 @@ function getViewportWidth() {
 
 export function setViewportWidth(width) {
   viewportWidth = width;
-}
-
-const NUMBER_REGEXP = /^\d+\.?\d+$/;
-function isNumberString(str) {
-  return NUMBER_REGEXP.test(str);
 }
 
 export default driver;
