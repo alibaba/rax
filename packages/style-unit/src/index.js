@@ -99,7 +99,7 @@ export function convertUnit(val, prop, remUnit = getRem()) {
   if (prop && isUnitNumber(val, prop)) {
     return calcUnitNumber(val, remUnit);
   } else if (isRem(val)) {
-    return calcRem(val, remUnit, );
+    return calcRem(val, remUnit);
   } else {
     return val;
   }
