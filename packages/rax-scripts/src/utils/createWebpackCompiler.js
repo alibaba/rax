@@ -41,7 +41,6 @@ module.exports = (webpackConfig) => {
       stats.toString({
         assets: true,
         colors: true,
-        children: false,
         chunks: false,
         entrypoints: false,
         modules: false,

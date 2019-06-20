@@ -19,22 +19,29 @@ export default class extends Component {
     name: 'Rax'
   };
 
-  handleClick(evt) {
+  handleClick = (event) => {
     this.setState({
       name: 'MiniApp'
     });
-  }
+  };
 
   render() {
+    // You can access app from page's props.
+    console.log('App:', this.props.app);
+
     const { name } = this.state;
-    const source = { uri: logo };
+    const source = {
+      uri: logo,
+      width: 150,
+      height: 150,
+    };
     return (
       <View className="page-home">
         <Header>
           <Image source={source} className="home-logo" />
           <Text className="home-title" onClick={this.handleClick}>Welcome to {name}</Text>
         </Header>
-        <View class="home-intro">To get started, edit and rebuild.</View>
+        <View class="home-intro"><Text>To get started, edit and rebuild.</Text></View>
       </View>
     );
   }

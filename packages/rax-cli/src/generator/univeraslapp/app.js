@@ -14,5 +14,9 @@ export default class App {
     }
   };
 
+  constructor() {
+    this.sellerId = 0;
+  }
+
   onLaunch(options) {}
 }
