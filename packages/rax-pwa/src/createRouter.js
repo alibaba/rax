@@ -55,20 +55,23 @@ function createRouter(pagesConfig, withSSR = false) {
       };
     } else {
       route.component = pagesConfig[page].component().then(interopRequire)
-        .then(async(Page) => {
+        .then((Page) => {
           if (pagesConfig[page].title) {
             document.title = pagesConfig[page].title;
           }
-          let pageInitialProps = {};
           if (Page.getInitialProps) {
             try {
-              pageInitialProps = await Page.getInitialProps();
+              return Page.getInitialProps().then((props) => {
+                return <Page {...routerProps} {...props} />;
+              }).catch((e) => {
+                console.log(`${page} pageInitialProps error: ` + e);
+                return <Page {...routerProps} />;
+              });
             } catch (e) {
               console.log(`${page} pageInitialProps error: ` + e);
-              pageInitialProps = {};
             }
           }
-          return <Page {...routerProps} {...pageInitialProps} />;
+          return <Page {...routerProps} />;
         });
     }
 
@@ -96,18 +99,24 @@ function createRouter(pagesConfig, withSSR = false) {
 
     alivePageCache[pageName].getComponent()
       .then(interopRequire)
-      .then(async(Page) => {
-        let pageInitialProps = {};
+      .then((Page) => {
         if (Page.getInitialProps) {
           try {
-            pageInitialProps = await Page.getInitialProps();
+            Page.getInitialProps().then((props) => {
+              alivePageCache[pageName].component = <Page {...routerProps} {...props} />;
+              updateComponentTrigger(pageHistory.location.pathname + pageName);
+            }).catch((e) => {
+              console.log(`${pageName} pageInitialProps error: ` + e);
+              alivePageCache[pageName].component = <Page {...routerProps} />;
+              updateComponentTrigger(pageHistory.location.pathname + pageName);
+            });
           } catch (e) {
             console.log(`${pageName} pageInitialProps error: ` + e);
-            pageInitialProps = {};
           }
+        } else {
+          alivePageCache[pageName].component = <Page {...routerProps} />;
+          updateComponentTrigger(pageHistory.location.pathname + pageName);
         }
-        alivePageCache[pageName].component = <Page {...routerProps} {...pageInitialProps} />;
-        updateComponentTrigger(pageHistory.location.pathname + pageName);
       });
   };
 
