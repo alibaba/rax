@@ -15,7 +15,6 @@ export default class App {
   };
 
   constructor() {
-    console.log('App entry.');
     this.sellerId = 0;
   }
 
