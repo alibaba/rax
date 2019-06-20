@@ -32,8 +32,7 @@ const UNITLESS_NUMBER_PROPS = {
   // Weex only
   lines: true
 };
-const IS_REM_REG = /\d+(rem|rpx)/;
-const REM_REG = /[-+]?\d*\.?\d+(rem|rpx)/g;
+const REM_REG = /[-+]?\d*\.?\d+(rem|rpx)?/g;
 const GLOBAL_REM_UNIT = '__global_rem_unit__';
 const global =
   typeof window === 'object'
@@ -55,7 +54,7 @@ if (getRem() === undefined) {
  * @returns {Boolean}
  */
 export function isRem(str) {
-  return IS_REM_REG.test(str);
+  return typeof str === 'string' && REM_REG.test(str);
 }
 
 /**
@@ -99,7 +98,7 @@ export function convertUnit(val, prop, remUnit = getRem()) {
   if (prop && isUnitNumber(val, prop)) {
     return calcUnitNumber(val, remUnit);
   } else if (isRem(val)) {
-    return calcRem(val, remUnit, );
+    return calcRem(val, remUnit);
   } else {
     return val;
   }
