@@ -30,7 +30,11 @@ describe('style-unit', () => {
 
     it('should recognize 0', () => {
       expect(convertUnit('0', 'width')).toEqual('0px');
-      expect(convertUnit(0, 'width')).toEqual(0);
+      expect(convertUnit(0, 'width')).toEqual('0px');
+    });
+
+    it('should ignore unitless prop', () => {
+      expect(convertUnit(1, 'flex')).toEqual(1);
     });
   });
 });
