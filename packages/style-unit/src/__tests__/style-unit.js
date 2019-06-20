@@ -29,7 +29,7 @@ describe('style-unit', () => {
     });
 
     it('should recognize 0', () => {
-      expect(convertUnit('0', 'width')).toEqual('0');
+      expect(convertUnit('0', 'width')).toEqual('0px');
       expect(convertUnit(0, 'width')).toEqual(0);
     });
   });
