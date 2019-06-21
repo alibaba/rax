@@ -177,7 +177,7 @@ function getReplacer(defaultExportedPath) {
      * export default Foo;
      */
     return defaultExportedPath;
-  } else if (defaultExportedPath.parentPath.isVariableDeclarator()){
+  } else if (defaultExportedPath.parentPath.isVariableDeclarator()) {
     /**
      * var Foo = class {}
      * export default Foo;
