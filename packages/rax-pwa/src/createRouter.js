@@ -12,7 +12,7 @@ const interopRequire = (obj) => {
 // If it is the first time to load, pageInitialProps is taken from the scripts. If the SPA has switched routes then each sub-component needs to run getInitialProps
 let isFirstRendered = true;
 
-function createRouter(pagesConfig, withSSR = false) {
+function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   let pageHistory = withSSR ? createBrowserHistory() : createHashHistory();
 
   pageHistory.listen(() => {
@@ -36,6 +36,11 @@ function createRouter(pagesConfig, withSSR = false) {
     routes: []
   };
 
+
+  if (initialComponent) {
+    routerConfig.initialComponent = initialComponent;
+  }
+
   Object.keys(pagesConfig).forEach((page) => {
     const route = {
       path: pagesConfig[page].path,
@@ -54,7 +59,7 @@ function createRouter(pagesConfig, withSSR = false) {
         getComponent: pagesConfig[page].component
       };
     } else {
-      route.component = pagesConfig[page].component().then(interopRequire)
+      route.component = () => pagesConfig[page].component().then(interopRequire)
         .then((Page) => {
           if (pagesConfig[page].title) {
             document.title = pagesConfig[page].title;
@@ -149,7 +154,6 @@ function createRouter(pagesConfig, withSSR = false) {
     }
   };
 
-
   return function(props) {
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
@@ -166,7 +170,8 @@ function createRouter(pagesConfig, withSSR = false) {
       return (
         <div style={{ position: 'relative' }}>
           {Object.keys(alivePageCache).map((pageName) => {
-            const { pathname, hash } = window.location;
+            const pathname = window.location.pathname + window.location.search;
+            const hash = window.location.hash;
             const isMatched = function(regexp, type) {
               return 'hash' === type ? regexp.test(hash.replace('#', '')) : 'history' === type && regexp.test(pathname);
             };

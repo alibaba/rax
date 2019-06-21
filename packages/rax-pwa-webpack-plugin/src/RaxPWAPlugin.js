@@ -75,7 +75,7 @@ class RaxPWAPlugin {
       // Prepare the skeleton diagram code, match the routing information when the page is initialized,
       // and insert the skeleton diagram of the corresponding page into the blank area of the page
       skeletonTemplate += `
-        var pathname = window.location.pathname;
+        var pathname = window.location.pathname + window.location.search;
         var hash = window.location.hash;
         var isMatched = function (regexp, type) {
           return "hash" === type ? regexp.test(hash.replace("#", "")) : "history" === type && regexp.test(pathname);

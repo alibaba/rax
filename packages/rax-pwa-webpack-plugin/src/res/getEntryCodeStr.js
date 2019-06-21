@@ -47,18 +47,14 @@ const getEntryCodeStr = (options) => {
   return `
     import * as DriverDOM from 'driver-dom';
     import { createElement, render, useState } from 'rax';
-    import { createRouter } from 'rax-pwa';
+    import { createRouter, getRouterInitialComponent } from 'rax-pwa';
     ${importsCodeStr}
 
     const pagesConfig = {
       ${pagesConfigCodeStr}
     };
-
-    const Router = createRouter(pagesConfig, ${withSSR});
-    const PageComponent = (props) => {
-      ${withAppShell ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
-    };
     
+    // Clear skeleton
     if (document.getElementById('root-page')) {
       document.getElementById('root-page').innerHTML = '';
     }
@@ -70,7 +66,20 @@ const getEntryCodeStr = (options) => {
       initialProps = {};
     }
 
-    ${renderCodeStr}
+    // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
+    // Match the first component for hydrate
+    getRouterInitialComponent(pagesConfig)().then((InitialComponent) => {
+      if (InitialComponent === null) {
+        document.getElementById('root').innerHTML = '';
+      } else {
+        InitialComponent = InitialComponent.__esModule ? InitialComponent.default : InitialComponent;
+      }
+      const Router = createRouter(pagesConfig, ${withSSR}, InitialComponent);
+      const PageComponent = (props) => {
+        ${withAppShell ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
+      };
+      ${renderCodeStr}
+    });
   `;
 };
 

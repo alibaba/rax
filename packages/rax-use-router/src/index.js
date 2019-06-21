@@ -180,12 +180,35 @@ const router = {
   }
 };
 
-function matchLocation({pathname, search}) {
+function matchLocation({ pathname, search }) {
   router.match(`${pathname}${search}`);
 }
 
+let routerInitialized = false;
+function getInitialComponent(routerConfig) {
+  if (routerInitialized) {
+    return [];
+  }
+
+  if (typeof routerConfig === 'function') {
+    routerConfig = routerConfig();
+  }
+
+  let initialComponent = [];
+  if (routerConfig.initialComponent) {
+    initialComponent = routerConfig.initialComponent;
+    if (initialComponent instanceof Promise) {
+      initialComponent = [];
+    } else if (typeof initialComponent === 'function') {
+      initialComponent = initialComponent({});
+    }
+  }
+
+  return initialComponent;
+}
+
 export function useRouter(routerConfig) {
-  const [component, setComponent] = useState([]);
+  const [component, setComponent] = useState(getInitialComponent(routerConfig));
 
   useLayoutEffect(() => {
     if (typeof routerConfig === 'function') {

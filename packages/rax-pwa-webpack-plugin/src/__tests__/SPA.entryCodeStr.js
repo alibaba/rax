@@ -34,7 +34,7 @@ describe('SPA entry file code string test', () => {
     const expectResult = filterCodeStr(`
       import * as DriverDOM from 'driver-dom';
       import { createElement, render, useState } from 'rax';
-      import { createRouter } from 'rax-pwa';
+      import { createRouter, getRouterInitialComponent  } from 'rax-pwa';
       import Shell from 'TestAppShell';
 
       const pagesConfig = {
@@ -48,12 +48,8 @@ describe('SPA entry file code string test', () => {
         },
       
       };
-
-      const Router = createRouter(pagesConfig, false);
-      const PageComponent = (props) => {
-        return <div id="root-page" ><Router {...props}/></div>;
-      };
       
+      // Clear skeleton
       if (document.getElementById('root-page')) {
         document.getElementById('root-page').innerHTML = '';
       }
@@ -65,7 +61,22 @@ describe('SPA entry file code string test', () => {
         initialProps = {};
       }
 
-      render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });
+      // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
+      // Match the first component for hydrate
+      getRouterInitialComponent(pagesConfig)().then((InitialComponent) => {
+        if (InitialComponent === null) {
+          document.getElementById('root').innerHTML = '';
+        } else {
+          InitialComponent = InitialComponent.__esModule ? InitialComponent.default : InitialComponent;
+        }
+        const Router = createRouter(pagesConfig, false, InitialComponent);
+        const PageComponent = (props) => {
+          return <div id="root-page" ><Router {...props}/></div>;     
+        };
+        render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });
+      });
+
+      
     `);
 
     expect(filterCodeStr(getEntryCodeStr({ appConfig, pathConfig, pagesConfig, withSSR, withAppShell }))).toBe(expectResult);
