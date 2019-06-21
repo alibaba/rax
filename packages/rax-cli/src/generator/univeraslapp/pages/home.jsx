@@ -41,7 +41,7 @@ export default class extends Component {
           <Image source={source} className="home-logo" />
           <Text className="home-title" onClick={this.handleClick}>Welcome to {name}</Text>
         </Header>
-        <View class="home-intro"><Text>To get started, edit and rebuild.</Text></View>
+        <View className="home-intro"><Text>To get started, edit and rebuild.</Text></View>
       </View>
     );
   }
