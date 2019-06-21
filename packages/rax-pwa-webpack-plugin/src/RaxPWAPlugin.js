@@ -134,19 +134,21 @@ class RaxPWAPlugin {
 
       // destroy
       if (isProductionLikeMode) {
-        try {
-          if (withAppShell) {
-            appShellHandler.clearTempFile();
+        setTimeout(() => {
+          try {
+            if (withAppShell) {
+              appShellHandler.clearTempFile();
+            }
+            if (withDocumentJs) {
+              documentHandler.clearTempFile();
+            }
+            if (withSPA) {
+              fs.unlinkSync(tempIndexFilePath);
+            }
+          } catch (e) {
+            // ignore
           }
-          if (withDocumentJs) {
-            documentHandler.clearTempFile();
-          }
-          if (withSPA) {
-            fs.unlinkSync(tempIndexFilePath);
-          }
-        } catch (e) {
-          // ignore
-        }
+        }, 100);
       }
       callback();
     });
