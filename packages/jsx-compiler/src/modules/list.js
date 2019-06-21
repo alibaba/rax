@@ -3,6 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
+const createJSXBinding = require('../utils/createJSXBinding');
 const genExpression = require('../codegen/genExpression');
 
 function transformList(ast, adapter) {
@@ -45,14 +46,30 @@ function transformList(ast, adapter) {
             traverse(path, {
               JSXExpressionContainer(childPath) {
                 const { node } = childPath;
+
                 switch (node.expression.type) {
                   case 'ObjectExpression':
-                    childPath.replaceWith(t.stringLiteral(genExpression(t.jsxExpressionContainer(node.expression), { concise: true })));
+                     if (childPath.parentPath.isJSXAttribute()) {
+                      // <Image source={{ uri: item.picUrl }} />
+                      // ->
+                      // <Image source="{{ uri: item.picUrl }}" />
+                       childPath.replaceWith(
+                         t.stringLiteral(
+                           genExpression(t.jsxExpressionContainer(node.expression), { concise: true })
+                         )
+                       );
+                     }
                     break;
 
                   case 'Identifier':
                     if (node.expression.name === itemName || node.expression.name === indexName) {
-                      childPath.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
+                      if (childPath.parentPath.isJSXElement()) {
+                        // <Text>{id}</Text> -> <Text>{{ id }}</Text>
+                        childPath.replaceWith(createJSXBinding(node.expression.name));
+                      } else if (childPath.parentPath.isJSXAttribute()) {
+                        // <Text id={id} /> -> <Text id="{{id}}" />
+                        childPath.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
+                      }
                     }
                     break;
                 }

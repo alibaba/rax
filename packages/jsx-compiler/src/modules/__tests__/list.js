@@ -41,4 +41,13 @@ describe('Transform list', () => {
     _transformList(ast, adapter);
     expect(genCode(ast).code).toEqual('<View class="coupon-list"><block a:for="{{couponList}}" a:for-item="coupon" a:for-index="index"><Coupon coupon="{{coupon}}" onClick={this.handleClick} data-arg-context="this" data-arg-0="{{coupon}}" /></block></View>');
   });
+
+  it('loop elements', () => {
+    const raw = `<View>{[1,2,3].map((val, idx) => {
+      return <Text>{idx}</Text>;
+    })}</View>`;
+    const ast = parseExpression(raw);
+    _transformList(ast, adapter);
+    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for="{{[1, 2, 3]}}" a:for-item="val" a:for-index="idx"><Text>{{ idx }}</Text></block></View>');
+  });
 });
