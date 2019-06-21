@@ -19,7 +19,7 @@ module.exports = {
       if (parsed.imported) {
         for (let [key, value] of Object.entries(parsed.imported)) {
           for (let i = 0, l = value.length; i < l; i++) {
-            if (value[i].local === tagName) return { from: key, ...value[i] };
+            if (value[i].local === tagName) return Object.assign({ from: key }, value[i]);
           }
         }
       }
