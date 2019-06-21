@@ -103,15 +103,12 @@ class RaxPWAPlugin {
      * 2. Compile the App Shell file. The string node after render string is inserted into HTML.
      */
     compiler.hooks.beforeCompile.tapAsync(PLUGIN_NAME, (compilationParams, callback) => {
-      if (withAppShell) {
-        appShellHandler.build();
+      if (withAppShell || withDocumentJs) {
+        withAppShell && appShellHandler.build(callback);
+        withDocumentJs && documentHandler.build(callback);
+      } else {
+        callback();
       }
-
-      if (withDocumentJs) {
-        documentHandler.build();
-      }
-
-      callback();
     });
 
     /**

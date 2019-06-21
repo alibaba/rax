@@ -14,11 +14,13 @@ class AppShellHandler {
     this.tempShellFilePath = path.resolve(this.options.pathConfig.appBuild, this.tempShellFileName + '.js');
   }
 
-  build() {
+  build(callback) {
     const { pathConfig } = this.options;
     const webpackShellConfig = getWebpackNodeConfig(pathConfig);
     webpackShellConfig.entry[this.tempShellFileName] = pathConfig.appShell;
-    webpack(webpackShellConfig).run();
+    webpack(webpackShellConfig).run(() => {
+      callback();
+    });
   }
 
   getContent() {

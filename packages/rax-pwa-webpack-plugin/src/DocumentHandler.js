@@ -26,11 +26,13 @@ class DocumentHandler {
     }
   }
 
-  build() {
+  build(callback) {
     const { pathConfig } = this.options;
     const webpackHtmlConfig = getWebpackNodeConfig(pathConfig);
     webpackHtmlConfig.entry[this.tempHtmlFileName] = this.documentJsFilePath;
-    webpack(webpackHtmlConfig).run();
+    webpack(webpackHtmlConfig).run(() => {
+      callback();
+    });
   }
 
   getDocument(compilation, appShellTemplate = '', skeletonTemplate = '', title = 'WebApp') {
