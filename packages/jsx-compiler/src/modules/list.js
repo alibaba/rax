@@ -49,16 +49,16 @@ function transformList(ast, adapter) {
 
                 switch (node.expression.type) {
                   case 'ObjectExpression':
-                     if (childPath.parentPath.isJSXAttribute()) {
+                    if (childPath.parentPath.isJSXAttribute()) {
                       // <Image source={{ uri: item.picUrl }} />
                       // ->
                       // <Image source="{{ uri: item.picUrl }}" />
-                       childPath.replaceWith(
-                         t.stringLiteral(
-                           genExpression(t.jsxExpressionContainer(node.expression), { concise: true })
-                         )
-                       );
-                     }
+                      childPath.replaceWith(
+                        t.stringLiteral(
+                          genExpression(t.jsxExpressionContainer(node.expression), { concise: true })
+                        )
+                      );
+                    }
                     break;
 
                   case 'Identifier':
