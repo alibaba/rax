@@ -68,7 +68,7 @@ const getSPAEntryCodeStr = (options) => {
 
     // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
     // Match the first component for hydrate
-    getRouterInitialComponent(pagesConfig)().then((InitialComponent) => {
+    getRouterInitialComponent(pagesConfig, ${withSSR})().then((InitialComponent) => {
       if (InitialComponent === null) {
         document.getElementById('root').innerHTML = '';
       } else {
