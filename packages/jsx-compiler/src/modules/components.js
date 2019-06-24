@@ -39,13 +39,14 @@ module.exports = {
         // npm module
         const pkgPath = moduleResolve(options.filePath, join(alias.from, 'package.json'));
         if (!pkgPath) {
-          throw new Error('Execute npm install first.');
+          console.log(chalk.yellow(`Can not resolve rax component "${alias.from}", please check you have this module installed.`));
+          throw new Error('MODULE_NOT_RESOLVE');
         }
         const pkg = readJSONSync(pkgPath);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
           return join(alias.from, pkg.miniappConfig.main);
         } else {
-          console.warn('Not found compatible npm component "' + pkg.name + '".');
+          console.warn('Can not found compatible rax miniapp component "' + pkg.name + '".');
         }
       }
     }
