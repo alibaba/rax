@@ -1,4 +1,4 @@
-# MiniApp Starter Kit
+# UniversalApp Starter Kit
 
 ## Getting Started
 

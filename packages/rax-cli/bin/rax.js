@@ -125,23 +125,19 @@ function askProjectInformaction(name, verbose) {
       message: 'What\'s your project type?',
       choices: [
         {
-          name: 'WebApp (For build app that only works in broswers.)',
-          value: 'webapp'
-        },
-        {
-          name: 'WeexApp (For build app that only works in Weex.)',
-          value: 'weexapp'
-        },
-        {
-          name: 'UniversalApp (For build cross platform application.)',
+          name: 'UniversalApp (Build application that works multi-platform)',
           value: 'univeraslapp'
         },
         {
-          name: 'Component',
+          name: 'WebApp (Build application that only works in broswers)',
+          value: 'webapp'
+        },
+        {
+          name: 'Component (Build component for universal application include web)',
           value: 'component'
         }
       ],
-      default: 'webapp'
+      default: 'univeraslapp'
     },
     {
       type: 'checkbox',

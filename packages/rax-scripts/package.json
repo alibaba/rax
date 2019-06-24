@@ -1,6 +1,6 @@
 {
   "name": "rax-scripts",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "license": "BSD-3-Clause",
   "description": "Project scripts for Rax.",
   "bin": {
@@ -88,6 +88,7 @@
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.4",
     "uglifyjs-webpack-plugin": "^2.1.2",
+    "universal-app-shell-loader": "^0.1.1",
     "uppercamelcase": "^3.0.0",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",
