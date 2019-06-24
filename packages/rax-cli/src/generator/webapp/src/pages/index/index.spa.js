@@ -1,7 +1,7 @@
 import { createElement, useState } from 'rax';
+import { router } from 'rax-pwa';
 
 export default (props) => {
-  const { router } = props;
   const [name, setName] = useState(props.name);
   const handleClick = () => {
     setName('rax');
@@ -9,7 +9,7 @@ export default (props) => {
   return (
     <div>
       <h1 onClick={handleClick}> Hello {name}</h1>
-      <button onClick={() => router.history.push('/about')}>Go about</button>
+      <button onClick={() => router.push('/about')}>Go about</button>
     </div>
   );
 };

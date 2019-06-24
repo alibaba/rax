@@ -2,7 +2,7 @@
 import { createElement, useState } from 'rax';
 import Error from './Error';
 import { createHashHistory, createBrowserHistory } from 'history';
-import { useRouter } from 'rax-use-router';
+import { useRouter, push, replace, go } from 'rax-use-router';
 
 const interopRequire = (obj) => {
   return obj && obj.__esModule ? obj.default : obj;
@@ -11,6 +11,11 @@ const interopRequire = (obj) => {
 // Mark if the page is loaded for the first time.
 // If it is the first time to load, pageInitialProps is taken from the scripts. If the SPA has switched routes then each sub-component needs to run getInitialProps
 let isFirstRendered = true;
+const router = {
+  history: null,
+  location: null,
+  push, replace, go
+};
 
 function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   let pageHistory = withSSR ? createBrowserHistory() : createHashHistory();
@@ -27,10 +32,9 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
 
   // base config
   let routerProps = {};
-  const childrenPropsRouter = {
-    history: pageHistory,
-    location: pageHistory.location
-  };
+  router.history = pageHistory;
+  router.location = pageHistory.location;
+
   const routerConfig = {
     history: pageHistory,
     routes: []
@@ -126,7 +130,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   };
 
 
-  childrenPropsRouter.preload = (config) => {
+  router.preload = (config) => {
     if (config.page) {
       pagesConfig[config.page].component();
     } else {
@@ -139,7 +143,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
     }
   };
 
-  childrenPropsRouter.prerender = (config) => {
+  router.prerender = (config) => {
     if (config.page) {
       if (withPageAlive) {
         activateAlivePageComponent(config.page);
@@ -158,9 +162,9 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
     if (!isFirstRendered) {
-      routerProps = { ...props, router: childrenPropsRouter };
+      routerProps = { ...props, router };
     } else {
-      routerProps = { router: childrenPropsRouter };
+      routerProps = { router };
     }
     updateComponentTrigger = setUpdateTemp;
     if (!withPageAlive) {
@@ -193,4 +197,4 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
 }
 
 
-export default createRouter;
+export { createRouter, router };

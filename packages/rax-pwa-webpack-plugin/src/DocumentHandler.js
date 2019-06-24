@@ -70,7 +70,7 @@ class DocumentHandler {
           scripts: _htmlAssets.js,
           styles: _htmlAssets.css,
           title: title,
-          pageData: {},
+          pageData: JSON.stringify({}),
           pageHtml: appShellTemplate
         })
       );
