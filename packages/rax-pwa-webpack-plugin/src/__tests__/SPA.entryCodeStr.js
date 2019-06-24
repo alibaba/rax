@@ -1,4 +1,4 @@
-const getSPAEntryCodeStr = require('../res/getSPAEntryCodeStr');
+const getSPAEntryCodeStr = require('../utils/getSPAEntryCodeStr');
 
 const appConfig = {
   spa: true
@@ -34,7 +34,7 @@ describe('SPA entry file code string test', () => {
     const expectResult = filterCodeStr(`
       import * as DriverDOM from 'driver-dom';
       import { createElement, render, useState } from 'rax';
-      import { createRouter, getRouterInitialComponent  } from 'rax-pwa';
+      import { createRouter, getCurrentComponent  } from 'rax-pwa';
       import Shell from 'TestAppShell';
 
       const pagesConfig = {
@@ -63,7 +63,7 @@ describe('SPA entry file code string test', () => {
 
       // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
       // Match the first component for hydrate
-      getRouterInitialComponent(pagesConfig, false)().then((InitialComponent) => {
+      getCurrentComponent(pagesConfig, false)().then((InitialComponent) => {
         if (InitialComponent === null) {
           document.getElementById('root').innerHTML = '';
         } else {

@@ -47,7 +47,7 @@ const getSPAEntryCodeStr = (options) => {
   return `
     import * as DriverDOM from 'driver-dom';
     import { createElement, render, useState } from 'rax';
-    import { createRouter, getRouterInitialComponent } from 'rax-pwa';
+    import { createRouter, getCurrentComponent } from 'rax-pwa';
     ${importsCodeStr}
 
     const pagesConfig = {
@@ -68,7 +68,7 @@ const getSPAEntryCodeStr = (options) => {
 
     // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
     // Match the first component for hydrate
-    getRouterInitialComponent(pagesConfig, ${withSSR})().then((InitialComponent) => {
+    getCurrentComponent(pagesConfig, ${withSSR})().then((InitialComponent) => {
       if (InitialComponent === null) {
         document.getElementById('root').innerHTML = '';
       } else {
@@ -76,7 +76,7 @@ const getSPAEntryCodeStr = (options) => {
       }
       const Router = createRouter(pagesConfig, ${withSSR}, InitialComponent);
       const PageComponent = (props) => {
-        ${withAppShell ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
+        ${withAppShell && !withSSR ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
       };
       ${renderCodeStr}
     });

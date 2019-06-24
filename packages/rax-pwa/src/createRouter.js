@@ -1,6 +1,7 @@
 
 import { createElement, useState } from 'rax';
 import Error from './Error';
+import isMatched from './isMatched';
 import { createHashHistory, createBrowserHistory } from 'history';
 import { useRouter, push, replace, go } from 'rax-use-router';
 
@@ -15,6 +16,20 @@ const router = {
   history: null,
   location: null,
   push, replace, go
+};
+
+const processGetInitialProps = (name, Component, routerProps) => {
+  try {
+    return Component.getInitialProps().then((props) => {
+      return <Component {...routerProps} {...props} />;
+    }).catch((e) => {
+      console.log(`${name} pageInitialProps error: ` + e);
+      return <Component {...routerProps} />;
+    });
+  } catch (e) {
+    console.log(`${name} pageInitialProps error: ` + e);
+    return <Component {...routerProps} />;
+  }
 };
 
 function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
@@ -53,8 +68,9 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
 
     if (pagesConfig[page].pageAlive) {
       withPageAlive = true;
+      // router return empty element
       route.component = () => <div />;
-
+      // add alive page to cache
       alivePageCache[page] = {
         path: pagesConfig[page].path,
         regexp: pagesConfig[page].regexp,
@@ -69,16 +85,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
             document.title = pagesConfig[page].title;
           }
           if (Page.getInitialProps) {
-            try {
-              return Page.getInitialProps().then((props) => {
-                return <Page {...routerProps} {...props} />;
-              }).catch((e) => {
-                console.log(`${page} pageInitialProps error: ` + e);
-                return <Page {...routerProps} />;
-              });
-            } catch (e) {
-              console.log(`${page} pageInitialProps error: ` + e);
-            }
+            return processGetInitialProps(page, Page, routerProps);
           }
           return <Page {...routerProps} />;
         });
@@ -110,18 +117,10 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
       .then(interopRequire)
       .then((Page) => {
         if (Page.getInitialProps) {
-          try {
-            Page.getInitialProps().then((props) => {
-              alivePageCache[pageName].component = <Page {...routerProps} {...props} />;
-              updateComponentTrigger(pageHistory.location.pathname + pageName);
-            }).catch((e) => {
-              console.log(`${pageName} pageInitialProps error: ` + e);
-              alivePageCache[pageName].component = <Page {...routerProps} />;
-              updateComponentTrigger(pageHistory.location.pathname + pageName);
-            });
-          } catch (e) {
-            console.log(`${pageName} pageInitialProps error: ` + e);
-          }
+          processGetInitialProps(pageName, Page, routerProps).then((Component) => {
+            alivePageCache[pageName].component = Component;
+            updateComponentTrigger(pageHistory.location.pathname + pageName);
+          });
         } else {
           alivePageCache[pageName].component = <Page {...routerProps} />;
           updateComponentTrigger(pageHistory.location.pathname + pageName);
@@ -174,12 +173,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
       return (
         <div style={{ position: 'relative' }}>
           {Object.keys(alivePageCache).map((pageName) => {
-            const pathname = window.location.pathname + window.location.search;
-            const hash = window.location.hash;
-            const isMatched = function(regexp, type) {
-              return 'hash' === type ? regexp.test(hash.replace('#', '')) : 'history' === type && regexp.test(pathname);
-            };
-            cachePageMatched = isMatched(alivePageCache[pageName].regexp, withSSR ? 'history' : 'hash');
+            cachePageMatched = isMatched(withSSR ? 'history' : 'hash', alivePageCache[pageName].regexp, pageName);
             const element = alivePageCache[pageName].component;
             if (cachePageMatched && element === null) {
               activateAlivePageComponent(pageName);

@@ -9,11 +9,11 @@ const fs = require('fs');
 const path = require('path');
 const qs = require('querystring');
 
-const AppShellHandler = require('./AppShellHandler');
-const DocumentHandler = require('./DocumentHandler');
+const AppShellHandler = require('./utils/AppShellHandler');
+const DocumentHandler = require('./utils/DocumentHandler');
 
-const getPagesConfig = require('./res/getPagesConfig');
-const getSPAEntryCodeStr = require('./res/getSPAEntryCodeStr');
+const getPagesConfig = require('./utils/getPagesConfig');
+const getSPAEntryCodeStr = require('./utils/getSPAEntryCodeStr');
 
 const PLUGIN_NAME = 'rax-pwa-webpack-plugin';
 
@@ -32,7 +32,7 @@ class RaxPWAPlugin {
     const withDocumentJs = fs.existsSync(pathConfig.appDocument) || !fs.existsSync(pathConfig.appHtml);
 
     // Temp file
-    const tempIndexFileName = 'tempIndex';
+    const tempIndexFileName = '_index';
     const tempIndexFilePath = path.resolve(pathConfig.appDirectory, '.temp', tempIndexFileName + '.js');
 
     // String template for injecting HTML
@@ -42,8 +42,15 @@ class RaxPWAPlugin {
     // Mark the current environment
     const isProductionLikeMode = compiler.options.mode === 'production' || !compiler.options.mode;
 
-    const appShellHandler = new AppShellHandler({ pathConfig });
-    const documentHandler = new DocumentHandler({ pathConfig });
+    const appShellHandler = new AppShellHandler({
+      appDirectory: pathConfig.appDirectory,
+      appShell: pathConfig.appShell
+    });
+    const documentHandler = new DocumentHandler({
+      appDocument: pathConfig.appDocument,
+      appHtml: pathConfig.appHtml,
+      appDirectory: pathConfig.appDirectory
+    });
 
     try {
       fs.mkdirSync(pathConfig.appDirectory + '/.temp');
@@ -117,7 +124,7 @@ class RaxPWAPlugin {
      * 2. Compile the App Shell file. The string node after render string is inserted into HTML.
      */
     compiler.hooks.beforeCompile.tapAsync(PLUGIN_NAME, (compilationParams, callback) => {
-      if (withAppShell || withDocumentJs) {
+      if (!withSSR && (withAppShell || withDocumentJs)) {
         withAppShell && appShellHandler.build(callback);
         withDocumentJs && documentHandler.build(callback);
       } else {
@@ -131,20 +138,22 @@ class RaxPWAPlugin {
      * 2. Custom document/index.js handles HTML files into containers
      */
     compiler.hooks.emit.tapAsync(PLUGIN_NAME, (compilation, callback) => {
-      // Process app shell
-      if (withAppShell) {
-        appShellTemplate = appShellHandler.getContent();
-      }
+      if (!withSSR) {
+        // Process app shell
+        if (withAppShell) {
+          appShellTemplate = appShellHandler.getContent();
+        }
 
-      // Process html
-      const document = documentHandler.getDocument(
-        compilation, appShellTemplate, skeletonTemplate, appConfig.title
-      );
-      compilation.fileDependencies.add(document.path);
-      compilation.assets['index.html'] = {
-        source: () => document.html,
-        size: () => document.html.length
-      };
+        // Process html
+        const document = documentHandler.getDocument(
+          compilation, appShellTemplate, skeletonTemplate, appConfig.title
+        );
+        compilation.fileDependencies.add(document.path);
+        compilation.assets['index.html'] = {
+          source: () => document.html,
+          size: () => document.html.length
+        };
+      }
 
       callback();
     });

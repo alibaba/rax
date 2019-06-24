@@ -4,20 +4,21 @@ const webpack = require('webpack');
 const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
 
-const interopRequire = require('./res/interopRequire');
-const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
+const interopRequire = require('./interopRequire');
+const getWebpackNodeConfig = require('./getWebpackNodeConfig');
 
 class AppShellHandler {
   constructor(options) {
     this.options = options;
-    this.tempShellFileName = 'tempShell';
-    this.tempShellFilePath = path.resolve(this.options.pathConfig.appDirectory, '.temp', this.tempShellFileName + '.js');
+    const { appDirectory } = this.options;
+    this.tempShellFileName = '_shell';
+    this.tempShellFilePath = path.resolve(appDirectory, '.temp', this.tempShellFileName + '.js');
   }
 
   build(callback) {
-    const { pathConfig } = this.options;
-    const webpackShellConfig = getWebpackNodeConfig(pathConfig);
-    webpackShellConfig.entry[this.tempShellFileName] = pathConfig.appShell;
+    const { appDirectory, appShell } = this.options;
+    const webpackShellConfig = getWebpackNodeConfig(appDirectory);
+    webpackShellConfig.entry[this.tempShellFileName] = appShell;
     webpack(webpackShellConfig).run(() => {
       callback();
     });

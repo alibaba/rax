@@ -4,31 +4,29 @@ const webpack = require('webpack');
 const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
 
-const interopRequire = require('./res/interopRequire');
-const getAssets = require('./res/getAssets');
-const getWebpackNodeConfig = require('./res/getWebpackNodeConfig');
+const interopRequire = require('./interopRequire');
+const getAssets = require('./getAssets');
+const getWebpackNodeConfig = require('./getWebpackNodeConfig');
 
 class DocumentHandler {
   constructor(options) {
     this.options = options;
 
-    const { pathConfig } = this.options;
+    const { appDocument, appHtml, appDirectory } = this.options;
     this.documentJsFilePath;
-    this.withDocumentJs = fs.existsSync(pathConfig.appDocument) || !fs.existsSync(pathConfig.appHtml);
+    this.withDocumentJs = fs.existsSync(appDocument) || !fs.existsSync(appHtml);
     // Temp File
-    this.tempHtmlFileName = 'tempHtml';
-    this.tempHtmlFilePath = path.resolve(pathConfig.appDirectory, '.temp', this.tempHtmlFileName + '.js');
+    this.tempHtmlFileName = '_document';
+    this.tempHtmlFilePath = path.resolve(appDirectory, '.temp', this.tempHtmlFileName + '.js');
 
     if (this.withDocumentJs) {
-      this.documentJsFilePath = fs.existsSync(pathConfig.appDocument) ?
-        pathConfig.appDocument :
-        require.resolve('rax-pwa/lib/Document');
+      this.documentJsFilePath = fs.existsSync(appDocument) ? appDocument : require.resolve('rax-pwa/lib/Document');
     }
   }
 
   build(callback) {
-    const { pathConfig } = this.options;
-    const webpackHtmlConfig = getWebpackNodeConfig(pathConfig);
+    const { appDirectory } = this.options;
+    const webpackHtmlConfig = getWebpackNodeConfig(appDirectory);
     webpackHtmlConfig.entry[this.tempHtmlFileName] = this.documentJsFilePath;
     webpack(webpackHtmlConfig).run(() => {
       callback();
@@ -39,11 +37,11 @@ class DocumentHandler {
     let _htmlValue;
     let _htmlPath;
     const _htmlAssets = getAssets(compilation);
-    const { pathConfig } = this.options;
+    const { appHtml } = this.options;
 
     if (!this.withDocumentJs) {
       // Use public/index.html
-      _htmlPath = pathConfig.appHtml;
+      _htmlPath = appHtml;
       _htmlValue = fs.readFileSync(_htmlPath, 'utf8');
       _htmlValue = _htmlValue.replace(
         /<div(.*?) id=\"root\">(.*?)<\/div>/,

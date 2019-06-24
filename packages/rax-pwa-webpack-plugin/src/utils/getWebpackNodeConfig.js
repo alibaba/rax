@@ -1,12 +1,10 @@
-const path = require('path');
-
-const getConfig = (pathConfig) => {
+const getConfig = (appDirectory) => {
   return {
     target: 'node',
     mode: 'development',
     entry: {},
     output: {
-      path: pathConfig.appDirectory + '/.temp',
+      path: appDirectory + '/.temp',
       filename: '[name].js',
       libraryTarget: 'commonjs2',
     },
