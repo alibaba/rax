@@ -4,17 +4,17 @@ const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 
-function transformTemplate(ast) {
+function transformTemplate(ast, scope = null) {
   const dynamicValue = {};
 
   let ids = 0;
   function applyDynamicValue() {
-    return '_d' + ids++;
+    return (scope ? scope : '') + '_d' + ids++;
   }
 
   let events = 0;
   function applyEventHandler() {
-    return '_e' + events++;
+    return (scope ? scope : '') + '_e' + events++;
   }
 
   // Handle attributes.
@@ -41,6 +41,12 @@ function transformTemplate(ast) {
 
       case 'NullLiteral': {
         path.replaceWith(t.stringLiteral(createBinding('null')));
+        break;
+      }
+
+      case 'TemplateLiteral': {
+        console.log(genExpression(node.expression));
+        path.replaceWith(t.stringLiteral('aaa'))
         break;
       }
 
@@ -276,14 +282,14 @@ function isEventHandler(propKey) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      const dynamicValue = transformTemplate(parsed.templateAST);
+      const dynamicValue = Object.assign({}, parsed.dynamicValue, transformTemplate(parsed.templateAST));
       const eventHandlers = parsed.eventHandlers = [];
       const properties = [];
       Object.keys(dynamicValue).forEach((key) => {
-        if (/^_e\d+/.test(key)) {
+        if (/_e\d+$/.test(key)) {
           eventHandlers.push(key);
         }
-        properties.push(t.objectProperty(t.identifier(key), dynamicValue[key]));
+        properties.push(t.objectProperty(t.stringLiteral(key), dynamicValue[key]));
       });
       parsed.renderFunctionPath.node.body.body.push(
         t.returnStatement(t.objectExpression(properties))

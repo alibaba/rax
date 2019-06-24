@@ -1,10 +1,13 @@
 const { join } = require('path');
 const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
+const chalk = require('chalk');
+const { _transform: transformTemplate } = require('./element');
 const genExpression = require('../codegen/genExpression');
 const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
+
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 
@@ -25,6 +28,15 @@ module.exports = {
       }
     }
 
+    function getComponentConfig(pkgName) {
+      const pkgPath = moduleResolve(options.filePath, join(pkgName, 'package.json'));
+      if (!pkgPath) {
+        console.log(chalk.yellow(`Can not resolve rax component "${pkgName}", please check you have this module installed.`));
+        throw new Error('MODULE_NOT_RESOLVE');
+      }
+      return readJSONSync(pkgPath);
+    }
+
     function getComponentPath(alias) {
       if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
         // alias.local
@@ -37,12 +49,7 @@ module.exports = {
         return filename;
       } else {
         // npm module
-        const pkgPath = moduleResolve(options.filePath, join(alias.from, 'package.json'));
-        if (!pkgPath) {
-          console.log(chalk.yellow(`Can not resolve rax component "${alias.from}", please check you have this module installed.`));
-          throw new Error('MODULE_NOT_RESOLVE');
-        }
-        const pkg = readJSONSync(pkgPath);
+        const pkg = getComponentConfig(alias.from);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
           return join(alias.from, pkg.miniappConfig.main);
         } else {
@@ -63,6 +70,47 @@ module.exports = {
             // handle with close tag too.
             if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(alias.name);
             usingComponents[alias.name] = getComponentPath(alias);
+
+            /**
+             * Handle with special attrs.
+             */
+            if (!RELATIVE_COMPONENTS_REG.test(alias.from)) {
+              const pkg = getComponentConfig(alias.from);
+              if (pkg && pkg.miniappConfig && Array.isArray(pkg.miniappConfig.renderSlotProps)) {
+                path.traverse({
+                  JSXAttribute(attrPath) {
+                    const { node } = attrPath;
+                    if (pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1) {
+                      if (t.isJSXExpressionContainer(node.value)) {
+                        let fnExp;
+                        if (t.isFunction(node.value.expression)) {
+                          fnExp = node.value.expression;
+                        } else if (t.isIdentifier(node.value.expression)) {
+                          const binding = attrPath.scope.getBinding(node.value.expression.name);
+                          fnExp = binding.path.node;
+                        } else if (t.isMemberExpression(node.value.expression)) {
+                          console.log(chalk.red(`Not support MemberExpression at render function: "${genExpression(node)}", please use anonymous function instead.`));
+                          throw new Error('NOT_SUPPORTED');
+                        }
+
+                        if (fnExp) {
+                          const { params, body } = fnExp;
+                          let jsxEl = body;
+                          if (t.isBlockStatement(body)) {
+                            const returnEl = body.body.filter(el => t.isReturnStatement(el))[0];
+                            if (returnEl) jsxEl = returnEl.argument;
+                          }
+                          const { node: slotComponentNode, dynamicValue } = createSlotComponent(jsxEl, node.name.name, params);
+                          parsed.dynamicValue = Object.assign({}, parsed.dynamicValue, dynamicValue);
+                          path.parentPath.node.children.push(slotComponentNode);
+                        }
+                        attrPath.remove();
+                      }
+                    }
+                  },
+                });
+              }
+            }
           }
         } else if (t.isJSXMemberExpression(node.name)) { // <RecyclerView.Cell />
           // TODO: handle sub components.
@@ -101,3 +149,37 @@ module.exports = {
   },
 };
 
+function createSlotComponent(jsxEl, slotName, args) {
+  const params = {};
+  if (Array.isArray(args)) {
+    args.forEach(id => params[id.name] = true);
+  }
+
+  const dynamicValue = transformTemplate(jsxEl, slotName);
+  // Remove dynamicValue that created by params.
+  Object.keys(dynamicValue).forEach((key) => {
+    if (params.hasOwnProperty(key)) delete dynamicValue[key];
+  });
+
+  let enableScopeSlot = false;
+
+  traverse(jsxEl, {
+    Identifier(path) {
+      if (params[path.node.name]) {
+        path.replaceWith(t.identifier(`props.${path.node.name}`));
+        enableScopeSlot = true;
+      }
+    },
+  });
+
+
+  if (enableScopeSlot) {
+    // Add scope slot
+    jsxEl.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('slot-scope'), t.stringLiteral('props')));
+  }
+
+  // Add slot attr
+  jsxEl.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('slot'), t.stringLiteral(slotName)));
+
+  return { dynamicValue, node: jsxEl };
+}
