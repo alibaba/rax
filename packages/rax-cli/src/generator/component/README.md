@@ -7,13 +7,13 @@
 $ npm install <%= answers.name%> --save
 ```
 
-## Import
+## Usage
 
 ```
 import MyComponent from '<%= answers.name%>';
 ```
 
-## API说明
+## API
 
 ### Props
 
