@@ -45,8 +45,42 @@ function transformTemplate(ast, scope = null) {
       }
 
       case 'TemplateLiteral': {
-        console.log(genExpression(node.expression));
-        path.replaceWith(t.stringLiteral('aaa'))
+        if (path.isTaggedTemplateExpression()) break;
+
+        const { quasis, expressions } = node.expression;
+        const nodes = [];
+        let index = 0;
+
+        for (const elem of quasis) {
+          if (elem.value.cooked) {
+            nodes.push(t.stringLiteral(elem.value.cooked));
+          }
+
+          if (index < expressions.length) {
+            const expr = expressions[index++];
+            if (!t.isStringLiteral(expr, { value: '' })) {
+              nodes.push(expr);
+            }
+          }
+        }
+
+        if (!t.isStringLiteral(nodes[0]) && !t.isStringLiteral(nodes[1])) {
+          nodes.unshift(t.stringLiteral(''));
+        }
+
+
+        let retString = '';
+        // let root = nodes[0]
+        for (let i = 0; i < nodes.length; i++) {
+          if (t.isStringLiteral(nodes[i])) {
+            retString += nodes[i].value;
+          } else {
+            retString += createBinding(genExpression(nodes[i], { concise: true }));
+          }
+        }
+
+        path.replaceWith(t.stringLiteral(retString));
+        console.log(genExpression(t.stringLiteral(retString)));
         break;
       }
 

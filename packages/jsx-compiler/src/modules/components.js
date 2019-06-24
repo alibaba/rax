@@ -155,12 +155,6 @@ function createSlotComponent(jsxEl, slotName, args) {
     args.forEach(id => params[id.name] = true);
   }
 
-  const dynamicValue = transformTemplate(jsxEl, slotName);
-  // Remove dynamicValue that created by params.
-  Object.keys(dynamicValue).forEach((key) => {
-    if (params.hasOwnProperty(key)) delete dynamicValue[key];
-  });
-
   let enableScopeSlot = false;
 
   traverse(jsxEl, {
@@ -172,6 +166,11 @@ function createSlotComponent(jsxEl, slotName, args) {
     },
   });
 
+  const dynamicValue = transformTemplate(jsxEl, slotName);
+  // Remove dynamicValue that created by params.
+  Object.keys(dynamicValue).forEach((key) => {
+    if (params.hasOwnProperty(key) || /^props\./.test(key)) delete dynamicValue[key];
+  });
 
   if (enableScopeSlot) {
     // Add scope slot
