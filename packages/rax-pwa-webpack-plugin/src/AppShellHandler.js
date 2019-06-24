@@ -11,7 +11,7 @@ class AppShellHandler {
   constructor(options) {
     this.options = options;
     this.tempShellFileName = 'tempShell';
-    this.tempShellFilePath = path.resolve(this.options.pathConfig.appBuild, this.tempShellFileName + '.js');
+    this.tempShellFilePath = path.resolve(this.options.pathConfig.appDirectory, '.temp', this.tempShellFileName + '.js');
   }
 
   build(callback) {
@@ -30,10 +30,6 @@ class AppShellHandler {
       })
     );
     return content;
-  }
-
-  clearTempFile() {
-    fs.unlinkSync(this.tempShellFilePath);
   }
 }
 

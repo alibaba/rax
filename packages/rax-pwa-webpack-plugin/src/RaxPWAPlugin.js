@@ -26,7 +26,6 @@ class RaxPWAPlugin {
     const { appConfig, pathConfig } = this.options;
 
     // Mark optimization function points on PWA
-    let withSkeleton = false;
     const withAppShell = fs.existsSync(pathConfig.appShell);
     const withSSR = !!appConfig.ssr;
     const withSPA = !!appConfig.spa;
@@ -34,7 +33,7 @@ class RaxPWAPlugin {
 
     // Temp file
     const tempIndexFileName = 'tempIndex';
-    const tempIndexFilePath = path.resolve(tempIndexFileName + '.js');
+    const tempIndexFilePath = path.resolve(pathConfig.appDirectory, '.temp', tempIndexFileName + '.js');
 
     // String template for injecting HTML
     let appShellTemplate = '';
@@ -45,6 +44,12 @@ class RaxPWAPlugin {
 
     const appShellHandler = new AppShellHandler({ pathConfig });
     const documentHandler = new DocumentHandler({ pathConfig });
+
+    try {
+      fs.mkdirSync(pathConfig.appDirectory + '/.temp');
+    } catch (e) {
+
+    }
 
     /**
      * Project Code pre-processing when SPA is turned on
@@ -83,7 +88,6 @@ class RaxPWAPlugin {
       `;
       Object.keys(pagesConfig).forEach((pageName) => {
         if (pagesConfig[pageName].skeleton) {
-          withSkeleton = true;
           skeletonTemplate += `
             if (isMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}")) {
               document.getElementById(${withAppShell ? 'root-page' : 'root'}).innerHTML = '<img src="${pagesConfig[pageName].skeleton}"/>';
@@ -142,24 +146,6 @@ class RaxPWAPlugin {
         size: () => document.html.length
       };
 
-      // destroy
-      if (isProductionLikeMode) {
-        setTimeout(() => {
-          try {
-            if (withAppShell) {
-              appShellHandler.clearTempFile();
-            }
-            if (withDocumentJs) {
-              documentHandler.clearTempFile();
-            }
-            if (withSPA) {
-              fs.unlinkSync(tempIndexFilePath);
-            }
-          } catch (e) {
-            // ignore
-          }
-        }, 100);
-      }
       callback();
     });
   }

@@ -6,7 +6,7 @@ const getConfig = (pathConfig) => {
     mode: 'development',
     entry: {},
     output: {
-      path: pathConfig.appBuild,
+      path: pathConfig.appDirectory + '/.temp',
       filename: '[name].js',
       libraryTarget: 'commonjs2',
     },

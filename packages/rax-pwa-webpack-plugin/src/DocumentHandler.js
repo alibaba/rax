@@ -17,7 +17,7 @@ class DocumentHandler {
     this.withDocumentJs = fs.existsSync(pathConfig.appDocument) || !fs.existsSync(pathConfig.appHtml);
     // Temp File
     this.tempHtmlFileName = 'tempHtml';
-    this.tempHtmlFilePath = path.resolve(pathConfig.appBuild, this.tempHtmlFileName + '.js');
+    this.tempHtmlFilePath = path.resolve(pathConfig.appDirectory, '.temp', this.tempHtmlFileName + '.js');
 
     if (this.withDocumentJs) {
       this.documentJsFilePath = fs.existsSync(pathConfig.appDocument) ?
@@ -76,10 +76,6 @@ class DocumentHandler {
       );
     }
     return { html: _htmlValue, path: _htmlPath };
-  }
-
-  clearTempFile() {
-    fs.unlinkSync(this.tempHtmlFilePath);
   }
 }
 
