@@ -80,7 +80,6 @@ function transformTemplate(ast, scope = null) {
         }
 
         path.replaceWith(t.stringLiteral(retString));
-        console.log(genExpression(t.stringLiteral(retString)));
         break;
       }
 

@@ -113,8 +113,23 @@ module.exports = {
             }
           }
         } else if (t.isJSXMemberExpression(node.name)) { // <RecyclerView.Cell />
-          // TODO: handle sub components.
-          throw new Error('Not support of sub components.');
+          const { object, property } = node.name;
+          if (t.isJSXIdentifier(object) && t.isJSXIdentifier(property)) {
+            const alias = getComponentAlias(object.name);
+            removeImport(alias);
+            if (alias) {
+              const pkg = getComponentConfig(alias.from);
+              if (pkg && pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name]) {
+                node.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
+                if (path.parentPath.node.closingElement) {
+                  path.parentPath.node.closingElement.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
+                }
+              }
+            }
+          } else {
+            console.log(chalk.red('Unsupported type of sub components.' + genExpression(node)));
+            throw new Error('NOT_SUPPORTED');
+          }
         }
       },
       JSXExpressionContainer(path) {
