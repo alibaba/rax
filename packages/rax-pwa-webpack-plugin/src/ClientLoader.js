@@ -5,15 +5,20 @@ module.exports = function(source) {
 
   const {
     ssr,
+    withAppShell,
   } = query;
-
-  const functionName = '_PWA_page_component_';
-  let code = source.replace('export default', `var ${functionName} =`);
+  let code = source;
 
   if (ssr === 'true') {
+    const functionName = '_PWA_page_component_';
+    const renderCodeStr = withAppShell ?
+      `render(createElement(AppShell, {...data, Component: (props) => createElement(${functionName}, props || {})}), document.getElementById('root'), { driver: DriverDOM, hydrate: true });` :
+      `render(createElement(${functionName}, data || {}), document.getElementById('root'), { driver: DriverDOM, hydrate: true });`;
+    code = source.replace('export default', `var ${functionName} =`);
     code += `
       import {render} from 'rax';
       import * as DriverDOM from 'driver-dom';
+      ${withAppShell ? "import AppShell from '../../shell/';" : ''}
       window.onload = function(){
         var data = null;
         try {
@@ -22,25 +27,12 @@ module.exports = function(source) {
           // ignore
         }
         if (data !== null || !${functionName}.getInitialProps) {
-          render(createElement(${functionName}, data || {}), document.getElementById('root'), { driver: DriverDOM, hydrate: true });
-
+          ${renderCodeStr}
         } else {
-          ${functionName}.getInitialProps().then(function(props) {
-            render(createElement(${functionName}, props || {}), document.getElementById("root"), { driver: DriverDOM, hydrate: true });
+          ${functionName}.getInitialProps().then(function(data) {
+            ${renderCodeStr}
           });
         }
-      }
-    `;
-  } else {
-    code += `
-      import {render} from 'rax';
-      import * as DriverDOM from 'driver-dom';
-      if (${functionName}.getInitialProps) {
-        ${functionName}.getInitialProps().then(function(props) {
-          render(createElement(${functionName}, props || ), document.getElementById('root'), { driver: DriverDOM });
-        });
-      } else {
-        render(createElement(${functionName}), document.getElementById('root'), { driver: DriverDOM });
       }
     `;
   }

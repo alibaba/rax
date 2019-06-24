@@ -160,7 +160,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   return function(props) {
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
-    if (!isFirstRendered) {
+    if (isFirstRendered) {
       routerProps = { ...props, router };
     } else {
       routerProps = { router };

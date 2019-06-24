@@ -113,7 +113,7 @@ class RaxPWAPlugin {
       Object.keys(entries).forEach((key) => {
         const mainEntryFile = entries[key][0];
         if (mainEntryFile.indexOf(ClientLoader) === -1) {
-          entries[key][0] = `${ClientLoader}?${qs.stringify({ ssr: true })}!${mainEntryFile}`;
+          entries[key][0] = `${ClientLoader}?${qs.stringify({ ssr: true, withAppShell: withAppShell })}!${mainEntryFile}`;
         }
       });
     }
