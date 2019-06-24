@@ -12,7 +12,8 @@ module.exports = function(source) {
 
   if (ssr === 'true') {
     code += `
-      import hydrate from 'rax-hydrate';
+      import {render} from 'rax';
+      import * as DriverDOM from 'driver-dom';
       window.onload = function(){
         var data = null;
         try {
@@ -21,10 +22,11 @@ module.exports = function(source) {
           // ignore
         }
         if (data !== null || !${functionName}.getInitialProps) {
-          hydrate(createElement(${functionName}, data || {}), document.getElementById('root'));
+          render(createElement(${functionName}, data || {}), document.getElementById('root'), { driver: DriverDOM, hydrate: true });
+
         } else {
           ${functionName}.getInitialProps().then(function(props) {
-            hydrate(createElement(${functionName}, props || {}), document.getElementById('root'));
+            render(createElement(${functionName}, props || {}), document.getElementById("root"), { driver: DriverDOM, hydrate: true });
           });
         }
       }

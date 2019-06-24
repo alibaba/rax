@@ -1,4 +1,4 @@
-const getEntryCodeStr = require('../res/getEntryCodeStr');
+const getSPAEntryCodeStr = require('../res/getSPAEntryCodeStr');
 
 const appConfig = {
   spa: true
@@ -79,7 +79,7 @@ describe('SPA entry file code string test', () => {
       
     `);
 
-    expect(filterCodeStr(getEntryCodeStr({ appConfig, pathConfig, pagesConfig, withSSR, withAppShell }))).toBe(expectResult);
+    expect(filterCodeStr(getSPAEntryCodeStr({ appConfig, pathConfig, pagesConfig, withSSR, withAppShell }))).toBe(expectResult);
   });
 });
 

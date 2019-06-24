@@ -5,15 +5,15 @@
  *
  */
 
-
 const fs = require('fs');
 const path = require('path');
+const qs = require('querystring');
 
 const AppShellHandler = require('./AppShellHandler');
 const DocumentHandler = require('./DocumentHandler');
 
 const getPagesConfig = require('./res/getPagesConfig');
-const getEntryCodeStr = require('./res/getEntryCodeStr');
+const getSPAEntryCodeStr = require('./res/getSPAEntryCodeStr');
 
 const PLUGIN_NAME = 'rax-pwa-webpack-plugin';
 
@@ -64,7 +64,7 @@ class RaxPWAPlugin {
         newEntry._document = pathConfig.appDocument;
       }
 
-      const entryCodeStr = getEntryCodeStr({
+      const entryCodeStr = getSPAEntryCodeStr({
         appConfig,
         pathConfig,
         pagesConfig,
@@ -95,6 +95,16 @@ class RaxPWAPlugin {
       fs.writeFileSync(tempIndexFilePath, entryCodeStr);
 
       compiler.options.entry = newEntry;
+    } else if (withSSR) {
+      // SSR entry add ClientLoader
+      const ClientLoader = require.resolve('./ClientLoader.js');
+      const entries = compiler.options.entry;
+      Object.keys(entries).forEach((key) => {
+        const mainEntryFile = entries[key][0];
+        if (mainEntryFile.indexOf(ClientLoader) === -1) {
+          entries[key][0] = `${ClientLoader}?${qs.stringify({ ssr: true })}!${mainEntryFile}`;
+        }
+      });
     }
 
     /**

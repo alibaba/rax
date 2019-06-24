@@ -1,4 +1,4 @@
-const getEntryCodeStr = (options) => {
+const getSPAEntryCodeStr = (options) => {
   /**
    * Generate index.js for SPA
    * Features to be implemented:
@@ -83,4 +83,4 @@ const getEntryCodeStr = (options) => {
   `;
 };
 
-module.exports = getEntryCodeStr;
+module.exports = getSPAEntryCodeStr;
