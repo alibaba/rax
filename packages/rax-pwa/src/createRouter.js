@@ -19,16 +19,20 @@ const router = {
 };
 
 const processGetInitialProps = (name, Component, routerProps) => {
-  try {
-    return Component.getInitialProps().then((props) => {
-      return <Component {...routerProps} {...props} />;
-    }).catch((e) => {
+  if (isFirstRendered) {
+    return <Component {...routerProps} />;
+  } else {
+    try {
+      return Component.getInitialProps().then((props) => {
+        return <Component {...routerProps} {...props} />;
+      }).catch((e) => {
+        console.log(`${name} pageInitialProps error: ` + e);
+        return <Component {...routerProps} />;
+      });
+    } catch (e) {
       console.log(`${name} pageInitialProps error: ` + e);
       return <Component {...routerProps} />;
-    });
-  } catch (e) {
-    console.log(`${name} pageInitialProps error: ` + e);
-    return <Component {...routerProps} />;
+    }
   }
 };
 
