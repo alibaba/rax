@@ -74,7 +74,9 @@ function transformTemplate(ast, scope = null) {
           if (t.isStringLiteral(nodes[i])) {
             retString += nodes[i].value;
           } else {
-            retString += createBinding(genExpression(nodes[i], { concise: true }));
+            const id = genExpression(nodes[i], { concise: true });
+            dynamicValue[id] = nodes[i];
+            retString += createBinding(id);
           }
         }
 
