@@ -1,4 +1,4 @@
-const { resolve, relative } = require('path');
+const { resolve, relative, join } = require('path');
 const { transformJSX, writeFiles, isCustomComponent, formatConfing } = require('./Transformer');
 const removeExt = require('../utils/removeExt');
 
@@ -14,9 +14,9 @@ const createComponent = function(rootContext, distPath, usingComponents) {
       const relativePath = relative(rootContext, value);
       const componentDistPath = removeExt(resolve(distPath, relativePath));
       const transformed = transformJSX(value, 'component');
+      createComponent(rootContext, distPath, transformed.config.usingComponents);
       transformed.config = formatConfing(transformed.config, rootContext);
       writeFiles(componentDistPath, transformed, rootContext);
-      createComponent(rootContext, distPath, { usingComponents: transformed.usingComponents });
     }
   }
 };
