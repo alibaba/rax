@@ -10,8 +10,9 @@ const interopRequire = (obj) => {
 };
 
 // Mark if the page is loaded for the first time.
-// If it is the first time to load, pageInitialProps is taken from the scripts. If the SPA has switched routes then each sub-component needs to run getInitialProps
-let isFirstRendered = true;
+// If it is the first time to load, SSR pageInitialProps is taken from the scripts.
+// If the SPA has switched routes then each sub-component needs to run getInitialProps
+let isFirstLoadFromSSR = true;
 const router = {
   history: null,
   location: null,
@@ -19,7 +20,7 @@ const router = {
 };
 
 const processGetInitialProps = (name, Component, routerProps) => {
-  if (isFirstRendered) {
+  if (isFirstLoadFromSSR) {
     return <Component {...routerProps} />;
   } else {
     try {
@@ -38,10 +39,10 @@ const processGetInitialProps = (name, Component, routerProps) => {
 
 function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   let pageHistory = withSSR ? createBrowserHistory() : createHashHistory();
-
+  if (!withSSR) isFirstLoadFromSSR = false;
   pageHistory.listen(() => {
     // After routing switching, it is considered not the first rendering.
-    isFirstRendered = false;
+    isFirstLoadFromSSR = false;
   });
 
   // page alive
@@ -164,7 +165,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   return function(props) {
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
-    if (isFirstRendered) {
+    if (isFirstLoadFromSSR) {
       routerProps = { ...props, router };
     } else {
       routerProps = { router };
