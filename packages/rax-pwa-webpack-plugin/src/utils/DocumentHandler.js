@@ -55,8 +55,8 @@ class DocumentHandler {
         );
       }
 
-      const jsTagStr = _htmlAssets.js.map(src => `<script src="${src}"></script>`) || '';
-      const cssTagStr = _htmlAssets.css.map(src => `<link rel="stylesheet" href="${src}" />`) || '';
+      const jsTagStr = _htmlAssets.js.map(src => `<script src="${src}"></script>`).join('') || '';
+      const cssTagStr = _htmlAssets.css.map(src => `<link rel="stylesheet" href="${src}" />`).join('') || '';
       _htmlValue = _htmlValue
         .replace('</head>', `${cssTagStr}</head>`)
         .replace('</body>', `${jsTagStr}</body>`);

@@ -54,32 +54,36 @@ const getSPAEntryCodeStr = (options) => {
       ${pagesConfigCodeStr}
     };
     
-    // Clear skeleton
-    if (document.getElementById('root-page')) {
-      document.getElementById('root-page').innerHTML = '';
-    }
-    
-    let initialProps;
-    try {
-      initialProps = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
-    } catch (e) {
-      initialProps = {};
+    const app = () => {
+      // Clear skeleton
+      if (document.getElementById('root-page')) {
+        document.getElementById('root-page').innerHTML = '';
+      }
+      
+      let initialProps;
+      try {
+        initialProps = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
+      } catch (e) {
+        initialProps = {};
+      }
+
+      // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
+      // Match the first component for hydrate
+      getCurrentComponent(pagesConfig, ${withSSR})().then((InitialComponent) => {
+        if (InitialComponent === null) {
+          document.getElementById('root').innerHTML = '';
+        } else {
+          InitialComponent = InitialComponent.__esModule ? InitialComponent.default : InitialComponent;
+        }
+        const Router = createRouter(pagesConfig, ${withSSR}, InitialComponent);
+        const PageComponent = (props) => {
+          ${withAppShell && !withSSR ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
+        };
+        ${renderCodeStr}
+      });
     }
 
-    // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
-    // Match the first component for hydrate
-    getCurrentComponent(pagesConfig, ${withSSR})().then((InitialComponent) => {
-      if (InitialComponent === null) {
-        document.getElementById('root').innerHTML = '';
-      } else {
-        InitialComponent = InitialComponent.__esModule ? InitialComponent.default : InitialComponent;
-      }
-      const Router = createRouter(pagesConfig, ${withSSR}, InitialComponent);
-      const PageComponent = (props) => {
-        ${withAppShell && !withSSR ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
-      };
-      ${renderCodeStr}
-    });
+    ${withSSR}? window.onload = app : app();
   `;
 };
 
