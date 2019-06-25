@@ -14,6 +14,7 @@
   },
   "author": "Rax Team",
   "dependencies": {
+    "@babel/code-frame": "^7.0.0",
     "@babel/generator": "^7.3.4",
     "@babel/parser": "^7.3.4",
     "@babel/traverse": "^7.3.4",
