@@ -1,4 +1,4 @@
-const { resolve, relative, join } = require('path');
+const { resolve, relative } = require('path');
 const { transformJSX, writeFiles, isCustomComponent, formatConfing } = require('./Transformer');
 const removeExt = require('../utils/removeExt');
 

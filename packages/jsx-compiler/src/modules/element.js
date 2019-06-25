@@ -70,7 +70,6 @@ function transformTemplate(ast, scope = null) {
 
 
         let retString = '';
-        // let root = nodes[0]
         for (let i = 0; i < nodes.length; i++) {
           if (t.isStringLiteral(nodes[i])) {
             retString += nodes[i].value;
