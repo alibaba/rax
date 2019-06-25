@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Code Error should throw error 1`] = `
+"
+[0m [90m 1 | [39m[36mclass[39m [33mFoo[39m {[0m
+[0m[31m[1m>[22m[39m[90m 2 | [39m  constructor() {[0m
+[0m [90m   | [39m               [31m[1m^[22m[39m [31m[1mhello[22m[39m[0m
+[0m [90m 3 | [39m    console[33m.[39mlog([32m\\"hello\\"[39m)[33m;[39m[0m
+[0m [90m 4 | [39m  }[0m
+[0m [90m 5 | [39m}[0m"
+`;
