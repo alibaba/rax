@@ -141,6 +141,10 @@ function transformTemplate(ast, adapter, templateVariables) {
             alternate = t.jsxExpressionContainer(alternate);
           }
 
+          // Empty value to replace null literial.
+          if (t.isNullLiteral(consequent)) consequent = t.jsxText('');
+          if (t.isNullLiteral(alternate)) alternate = t.jsxText('');
+
           replacement.push(createJSX('block', {
             [adapter.if]: t.stringLiteral(conditionValue),
           }, [consequent]));
