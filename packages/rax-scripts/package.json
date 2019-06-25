@@ -81,6 +81,7 @@
     "rax-pwa-webpack-plugin": "^1.0.0-0",
     "rax-server": "^1.0.0-3",
     "rax-webpack-plugin": "^0.6.5",
+    "remark": "^10.0.1",
     "rimraf": "^2.6.2",
     "strip-ansi": "^5.0.0",
     "stylesheet-loader": "^0.6.5",
