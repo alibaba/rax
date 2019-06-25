@@ -4,6 +4,9 @@ const { relative } = require('path');
 const { writeFile } = require('../utils/file');
 const removeExt = require('../utils/removeExt');
 
+// Make .jsx be resolved by require.resolve.
+require.extensions['.jsx'] = require.extensions['.js'];
+
 /**
  * Write files
  * @param distPath {String} dist Path
@@ -23,6 +26,7 @@ const writeFiles = function(distPath, transformed, rootContext) {
  * @param type {String} transform file type
  */
 const transformJSX = function(sourcePath, type) {
+  sourcePath = require.resolve(sourcePath);
   const jsxFileContent = readFileSync(sourcePath, 'utf-8');
   const transformed = compiler(jsxFileContent, Object.assign({}, compiler.baseOptions, {
     filePath: sourcePath,
