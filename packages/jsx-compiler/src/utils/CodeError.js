@@ -5,7 +5,7 @@ function createErrorMessage(sourceCode, node, loc, extraMessage) {
   const rawLines = sourceCode ? sourceCode : generate(node).code;
   try {
     return codeFrameColumns(rawLines, loc, { highlightCode: true, message: extraMessage });
-  } catch(err) {
+  } catch (err) {
     return 'Failed to locate source code position.';
   }
 }

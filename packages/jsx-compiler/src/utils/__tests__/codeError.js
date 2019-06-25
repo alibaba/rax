@@ -1,7 +1,6 @@
 const CodeError = require('../CodeError');
 
 describe('Code Error', () => {
-
   it('should throw error', () => {
     expect(() => {
       throw new CodeError(`class Foo {
