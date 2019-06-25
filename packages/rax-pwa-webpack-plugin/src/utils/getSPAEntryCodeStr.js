@@ -81,7 +81,7 @@ const getSPAEntryCodeStr = (options) => {
         };
         ${renderCodeStr}
       });
-    }
+    };
 
     ${withSSR}? window.onload = app : app();
   `;

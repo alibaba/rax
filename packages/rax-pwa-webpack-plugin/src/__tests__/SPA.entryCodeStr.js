@@ -48,34 +48,35 @@ describe('SPA entry file code string test', () => {
         },
       
       };
-      
-      // Clear skeleton
-      if (document.getElementById('root-page')) {
-        document.getElementById('root-page').innerHTML = '';
-      }
-      
-      let initialProps;
-      try {
-        initialProps = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
-      } catch (e) {
-        initialProps = {};
-      }
-
-      // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
-      // Match the first component for hydrate
-      getCurrentComponent(pagesConfig, false)().then((InitialComponent) => {
-        if (InitialComponent === null) {
-          document.getElementById('root').innerHTML = '';
-        } else {
-          InitialComponent = InitialComponent.__esModule ? InitialComponent.default : InitialComponent;
+      const app = () => {
+        // Clear skeleton
+        if (document.getElementById('root-page')) {
+          document.getElementById('root-page').innerHTML = '';
         }
-        const Router = createRouter(pagesConfig, false, InitialComponent);
-        const PageComponent = (props) => {
-          return <div id="root-page" ><Router {...props}/></div>;     
-        };
-        render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });
-      });
+        
+        let initialProps;
+        try {
+          initialProps = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
+        } catch (e) {
+          initialProps = {};
+        }
 
+        // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
+        // Match the first component for hydrate
+        getCurrentComponent(pagesConfig, false)().then((InitialComponent) => {
+          if (InitialComponent === null) {
+            document.getElementById('root').innerHTML = '';
+          } else {
+            InitialComponent = InitialComponent.__esModule ? InitialComponent.default : InitialComponent;
+          }
+          const Router = createRouter(pagesConfig, false, InitialComponent);
+          const PageComponent = (props) => {
+            return <div id="root-page" ><Router {...props}/></div>;     
+          };
+          render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });
+        });
+      };
+      false?window.onload=app:app();
       
     `);
 
