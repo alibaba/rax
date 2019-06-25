@@ -97,7 +97,7 @@ class RaxPWAPlugin {
         if (pagesConfig[pageName].skeleton) {
           skeletonTemplate += `
             if (isMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}")) {
-              document.getElementById(${withAppShell ? 'root-page' : 'root'}).innerHTML = '<img src="${pagesConfig[pageName].skeleton}"/>';
+              document.getElementById("${withAppShell ? 'root-page' : 'root'}").innerHTML = '<img src="${pagesConfig[pageName].skeleton}"/>';
             }
           `;
         }
@@ -124,11 +124,37 @@ class RaxPWAPlugin {
      * 2. Compile the App Shell file. The string node after render string is inserted into HTML.
      */
     compiler.hooks.beforeCompile.tapAsync(PLUGIN_NAME, (compilationParams, callback) => {
-      if (!withSSR && (withAppShell || withDocumentJs)) {
-        withAppShell && appShellHandler.build(callback);
-        withDocumentJs && documentHandler.build(callback);
-      } else {
+      // callback must run only once
+      let callbackCalled = false;
+      const runCallback = () => {
+        if (callbackCalled) return;
+        callbackCalled = true;
         callback();
+      };
+
+      if (!withSSR && (withAppShell || withDocumentJs)) {
+        if (withAppShell && withDocumentJs) {
+          let appShellOk = false;
+          let documentOk = false;
+          function next(type) {
+            if (type === 'appShell') {
+              appShellOk = true;
+            }
+            if (type === 'document') {
+              documentOk = true;
+            }
+            if (appShellOk && documentOk) {
+              runCallback();
+            }
+          }
+          withAppShell && appShellHandler.build(next);
+          withDocumentJs && documentHandler.build(next);
+        } else {
+          withAppShell && appShellHandler.build(runCallback);
+          withDocumentJs && documentHandler.build(runCallback);
+        }
+      } else {
+        runCallback();
       }
     });
 

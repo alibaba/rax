@@ -24,12 +24,12 @@ class DocumentHandler {
     }
   }
 
-  build(callback) {
+  build(next) {
     const { appDirectory } = this.options;
     const webpackHtmlConfig = getWebpackNodeConfig(appDirectory);
     webpackHtmlConfig.entry[this.tempHtmlFileName] = this.documentJsFilePath;
     webpack(webpackHtmlConfig).run(() => {
-      callback();
+      next('document');
     });
   }
 
@@ -72,6 +72,12 @@ class DocumentHandler {
           pageHtml: appShellTemplate
         })
       );
+      if (skeletonTemplate) {
+        _htmlValue = _htmlValue.replace(
+          '<script',
+          `<script>${skeletonTemplate}</script><script`
+        );
+      }
     }
     return { html: _htmlValue, path: _htmlPath };
   }
