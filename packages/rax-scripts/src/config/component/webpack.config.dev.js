@@ -1,28 +1,68 @@
 'use strict';
-
-/* eslint no-console: 0 */
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const fs = require('fs');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
+const glob = require('glob');
+const parseMD = require('../../utils/parseMd');
 const webpackConfig = require('../webpack.config');
 const pathConfig = require('../path.config');
 const babelConfig = require('./babel.config');
 
+const loadersPath = path.join(__dirname, '../../loaders');
+const packageInfo = require(path.resolve(process.cwd(), 'package.json'));
+
+const entrys = {};
+const HTMLs = [];
+const demos = [];
+
+glob.sync(path.join(process.cwd(), 'demo/*.md')).forEach((filename) => {  
+  const name = filename.substring(filename.lastIndexOf('/') + 1, filename.indexOf('.md'));
+  const result = parseMD(name, fs.readFileSync(filename, 'utf8'), filename);
+  entrys[name] = filename;
+  HTMLs.push(new HtmlWebpackPlugin({
+    inject: true,
+    template: path.resolve(__dirname, './public/index.html'),
+    title: name,
+    filename: `demo/${name}.html`,
+    chunks: [name],
+  }));
+
+  demos.push({
+    ...result.meta
+  });
+});
+
 const webpackConfigDev = {
   devtool: 'inline-module-source-map',
   entry: {
-    index: [pathConfig.componentDemoJs]
+    index: pathConfig.componentDemoJs,
+    ...entrys,
   },
   output: Object.assign(webpackConfig.output, {
     publicPath: '/',
-    pathinfo: true
+    pathinfo: true,
+    chunkFilename: 'js/[name].chunk.js',
   }),
   mode: webpackConfig.mode,
   context: webpackConfig.context,
   // Compile target should "web" when use hot reload
   target: webpackConfig.target,
-  resolve: webpackConfig.resolve,
+  resolve: {
+    ...webpackConfig.resolve,
+    alias: {
+      ...webpackConfig.resolve.alias,
+      [packageInfo.name]: path.resolve(process.cwd(), 'src/index')
+    }
+  },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: 'all',
+  //     name: false,
+  //   },
+  //   runtimeChunk: true
+  // },
   plugins: [
     new RaxWebpackPlugin({
       target: 'bundle',
@@ -32,10 +72,20 @@ const webpackConfigDev = {
     webpackConfig.plugins.caseSensitivePaths,
     new HtmlWebpackPlugin({
       inject: true,
-      template: path.resolve(__dirname, './public/index.html')
+      title: 'index',
+      template: path.resolve(__dirname, './public/index.html'),
+      filename: 'index.html',
+      chunks: ['index'],
+      demos,
     }),
+    ...HTMLs,
     new webpack.NoEmitOnErrorsPlugin()
   ],
+  resolveLoader: {
+    alias: {
+      'demo-loader': path.join(loadersPath, 'demo.js')
+    },
+  },
   module: {
     rules: [
       {
@@ -67,6 +117,19 @@ const webpackConfigDev = {
         ]
       },
       {
+        test: /demo\/.+\.md$/,
+        use: [
+          {
+            loader: require.resolve('babel-loader'),
+            options: babelConfig
+          },
+          {
+            loader: 'demo-loader',
+            options: {}
+          }
+        ]
+      },
+      {
         test: /\.css$/,
         use: [
           {
@@ -88,6 +151,9 @@ const webpackConfigDev = {
 };
 
 Object.keys(webpackConfigDev.entry).forEach(point => {
+  if (!Array.isArray(webpackConfigDev.entry[point])) {
+    webpackConfigDev.entry[point] = [webpackConfigDev.entry[point]];
+  }
   // hot reaload client.
   webpackConfigDev.entry[point].unshift(require.resolve('../../hmr/webpackHotDevClient.entry'));
 });

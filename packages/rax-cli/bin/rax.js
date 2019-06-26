@@ -139,6 +139,10 @@ function askProjectInformaction(name, verbose) {
         {
           name: 'Component',
           value: 'component'
+        },
+        {
+          name: 'Rax UI Component (For Build Rax UI Component)',
+          value: 'rax-ui-component'
         }
       ],
       default: 'webapp'
