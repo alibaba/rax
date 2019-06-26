@@ -22,6 +22,7 @@ class RaxDocumentPlugin {
     const { appConfig, pathConfig } = this.options;
 
     // Mark optimization function points on PWA
+    let withSkeleton = false;
     const withSPA = !!appConfig.spa;
     const withSSR = !!appConfig.ssr;
     const withAppShell = fs.existsSync(pathConfig.appShell);
@@ -55,15 +56,9 @@ class RaxDocumentPlugin {
 
       // Prepare the skeleton diagram code, match the routing information when the page is initialized,
       // and insert the skeleton diagram of the corresponding page into the blank area of the page
-      skeletonTemplate += `
-        var pathname = window.location.pathname + window.location.search;
-        var hash = window.location.hash.replace("#", "");
-        var isMatched = function (regexp, type) {
-          return "hash" === type ? regexp.test(hash) : "history" === type && regexp.test(pathname);
-        };
-      `;
       Object.keys(pagesConfig).forEach((pageName) => {
         if (pagesConfig[pageName].skeleton) {
+          withSkeleton = true;
           if (pageName === 'index') {
             skeletonTemplate += `
               if (isMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}") || (${withSSR} && pathname === '/') || (${!withSSR} && hash === '/')) {
@@ -79,6 +74,15 @@ class RaxDocumentPlugin {
           }
         }
       });
+      if (withSkeleton) {
+        skeletonTemplate = `
+          var pathname = window.location.pathname + window.location.search;
+          var hash = window.location.hash.replace("#", "");
+          var isMatched = function (regexp, type) {
+            return "hash" === type ? regexp.test(hash) : "history" === type && regexp.test(pathname);
+          };
+        ` + skeletonTemplate;
+      }
     }
 
     /**
