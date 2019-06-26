@@ -17,7 +17,7 @@ const entrys = {};
 const HTMLs = [];
 const demos = [];
 
-glob.sync(path.join(process.cwd(), 'demo/*.md')).forEach((filename) => {  
+glob.sync(path.join(process.cwd(), 'demo/*.md')).forEach((filename) => {
   const name = filename.substring(filename.lastIndexOf('/') + 1, filename.indexOf('.md'));
   const result = parseMD(name, fs.readFileSync(filename, 'utf8'), filename);
   entrys[name] = filename;

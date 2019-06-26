@@ -8,7 +8,7 @@ const DemoList = ({ demos = [] }) => {
     <div>
       <h1 style={{
         fontSize: '24px'
-      }}>{Name}</h1>
+      }}>Demos</h1>
       {
         demos.map(({name, title}) => (
           <a style={{display: 'block'}} href={`demo/${name}.html`}>{name} {title}</a>

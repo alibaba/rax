@@ -52,11 +52,11 @@ module.exports = (name, content, filePath) => {
           const index = metaItemStr.indexOf(':');
           result.meta[metaItemStr.substring(0, index).trim()] = metaItemStr.substring(index + 1).trim();
         });
-    })
+    });
   }
 
   // title
-  const titleNode = AST.children.find((child) => child.type === 'heading' && child.depth === 1);  
+  const titleNode = AST.children.find((child) => child.type === 'heading' && child.depth === 1);
   if (titleNode && titleNode.children && titleNode.children[0]) {
     result.meta.title = titleNode.children[0].value;
   }
