@@ -14,75 +14,8 @@ $ npm install -g rax-cli
 $ rax init <ProjectName> [--verbose]
 ```
 
-
 ## Project Type Support
-* WebApp Project
-```
-.
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-├── src
-│   └── index.js
-└── public
-    └── index.html
-```
-* MiniApp Project
-```
-.
-├── manifest.json
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-├── src
-│   ├── app.js
-│   ├── app.css
-│   ├── pages
-│   │   ├── page1.html
-│   │   └── page2.html
-│   └── components
-│       ├── component1.html
-│       └── component2.html
-└── public
-    └── index.html
-```
-* Mini Program Project
-```
-.
-├── app.js
-├── app.acss
-├── app.json
-├── package.json
-├── .gitignore
-├── .eslintrc.js
-└── pages
-    ├── page1
-    │   ├── page1.acss
-    │   ├── page1.axml
-    │   ├── page1.js
-    │   └── page1.json
-    └── page2
-        ├── page2.acss
-        ├── page2.axml
-        ├── page2.js
-        └── page2.json
-```
-
-* Componen Project
-```
-.
-├── package.json
-├── .gitignore
-├── .eslintignore
-├── .travis.yml
-├── public
-│   └── index.html
-├── demo
-│   └── index.js
-└── src
-    ├── __tests__
-    │   └── index.js
-    ├── index.d.ts
-    └── index.js
-```
+* Universal Project: Build application that works multi-platform
+* WebApp Project: Build application that only works in broswers
+* Component Project: Build component for universal application include web
 

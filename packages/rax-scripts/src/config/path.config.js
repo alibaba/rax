@@ -49,6 +49,7 @@ const paths = {
   appDocument: resolveApp('src/document/index.js'),
   appShell: resolveApp('src/shell/index.js'),
   appManifest: resolveApp('manifest.json'),
+  universalAppEntry: resolveApp('app.js'),
   appConfig: resolveApp('app.json'),
   appNodeModules: resolveApp('node_modules'),
   componentDemoJs: resolveModule(resolveApp, 'demo/index'),

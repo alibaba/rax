@@ -6,13 +6,13 @@
 $ npm install __YourProjectName__ --save
 ```
 
-## Import
+## Usage
 
 ```
 import MyComponent from '__YourProjectName__';
 ```
 
-## API说明
+## API
 
 ### Props
 

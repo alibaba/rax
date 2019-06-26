@@ -6,7 +6,7 @@ const GET_STYLE_FUNC_NAME = '_getStyle';
 const MERGE_STYLES_FUNC_NAME = '_mergeStyles';
 const GET_CLS_NAME_FUNC_NAME = '_getClassName';
 const NAME_SUFFIX = 'StyleSheet';
-const cssSuffixs = ['.css', '.scss', '.sass', '.less'];
+const cssSuffixs = ['.css', '.scss', '.sass', '.less', '.styl'];
 
 export default function({ types: t, template }) {
   const mergeStylesFunctionTemplate = template(`
@@ -51,7 +51,7 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
 }
   `);
   const getStyleFunctionTemplete = template(`
-function ${GET_STYLE_FUNC_NAME}(classNameExpression) { 
+function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
   var cache = ${STYLE_SHEET_NAME}.__cache || (${STYLE_SHEET_NAME}.__cache = {});
   var className = ${GET_CLS_NAME_FUNC_NAME}(classNameExpression);
   var classNameArr = className.split(/\\s+/);

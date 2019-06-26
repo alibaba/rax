@@ -32,7 +32,12 @@ const COMPONENT_MINIAPP = 'component-miniapp';
  */
 module.exports = function start(type = 'webapp') {
   if (type === MINIAPP) {
-    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, true);
+    jsx2mp(pathConfig.appDirectory, pathConfig.appDist, {
+      enableWatch: true,
+      type: 'project',
+      dist: 'dist',
+      entry: pathConfig.universalAppEntry,
+    });
   } else if (type === COMPONENT_MINIAPP) {
     process.argv.push('--gulpfile', path.resolve(__dirname, './config/component/gulpfile-miniapp.js'));
     process.argv.push('--cwd', process.cwd());
@@ -56,11 +61,28 @@ module.exports = function start(type = 'webapp') {
         process.exit(1);
       }
 
-      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}/`;
+      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}`;
+
+      function tipWeex(bundlePath) {
+        console.log(colors.green('[Weex] Scan the weex bundle url:'));
+        console.log(`    ${colors.underline.white(serverUrl + bundlePath + '?wh_weex=true')}`);
+      }
+
+      function tipWeb() {
+        console.log(colors.green('[Web] Starting the development server at:'));
+        console.log(`    ${colors.underline.white(serverUrl)}`);
+      }
 
       console.log('');
-      console.log(colors.green('Starting the development server at:'));
-      console.log(`    ${colors.underline.white(serverUrl)}`);
+      if (type === 'weexapp') {
+        tipWeex('/index.js');
+      } else if (type === 'webapp') {
+        tipWeb();
+      } else if (type === 'universalapp') {
+        tipWeb();
+        console.log('');
+        tipWeex('/index.weex.js');
+      }
       console.log('');
 
       ['SIGINT', 'SIGTERM'].forEach(function(sig) {

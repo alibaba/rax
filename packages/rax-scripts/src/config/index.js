@@ -11,6 +11,7 @@ const webpackConfigMap = {
   },
   weexapp: './weexapp/webpack.config',
   component: './component/webpack.config',
+  universalapp: './universalapp/webpack.config',
 };
 
 exports.getWebpackConfig = (type, env = 'prod') => {
