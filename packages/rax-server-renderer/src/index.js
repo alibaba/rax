@@ -155,8 +155,8 @@ class ReactiveComponent {
 
   readContext(context) {
     const Provider = context.Provider;
-
-    return Provider.defaultValue;
+    const contextProp = Provider.contextProp;
+    return this.context[contextProp] ? this.context[contextProp].value : Provider.defaultValue;
   }
 
   render() {

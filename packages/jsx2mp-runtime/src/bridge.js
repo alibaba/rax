@@ -98,20 +98,30 @@ function createProxyMethods(events) {
         let context = this.instance; // Context default to Rax component instance.
 
         const dataset = event.target.dataset;
+        const datasetArgs = [];
         // Universal event args
-        if (Object.keys(dataset).length > 0) {
-          // TODO with universal event args.
+        const datasetKeys = Object.keys(dataset);
+        if (datasetKeys.length > 0) {
+          datasetKeys.forEach((key) => {
+            if ('argContext' === key) {
+              context = dataset[key] === 'this' ? this.instance : dataset[key];
+            } else if (isDatasetArg(key)) {
+              // eg. arg0, arg1
+              datasetArgs[key.slice(3)] = dataset[key];
+            }
+          });
         } else {
-          const datasetArgs = [];
           Object.keys(this.props).forEach(key => {
             if ('data-arg-context' === key) {
               context = this.props[key] === 'this' ? this.instance : this.props[key];
-            } else if (isDatasetArg(key)) {
+            } else if (isDatasetKebabArg(key)) {
+              // `data-arg-` length is 9.
               datasetArgs[key.slice(9)] = this.props[key];
             }
           });
-          args = datasetArgs.concat(args);
         }
+        // Concat args.
+        args = datasetArgs.concat(args);
 
         if (this.instance._methods[eventName]) {
           return this.instance._methods[eventName].apply(context, args);
@@ -182,7 +192,12 @@ function isClassComponent(Klass) {
   return Klass.prototype.__proto__ === Component.prototype;
 }
 
-const DATASET_ARG_REG = /data-arg-\d+/;
+const DATASET_KEBAB_ARG_REG = /data-arg-\d+/;
+function isDatasetKebabArg(str) {
+  return DATASET_KEBAB_ARG_REG.test(str);
+}
+
+const DATASET_ARG_REG = /arg\d+/;
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
 }

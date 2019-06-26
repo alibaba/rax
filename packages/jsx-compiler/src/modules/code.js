@@ -52,31 +52,38 @@ module.exports = {
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
       const { id, generator, async, params, body } = defaultExportedPath.node;
-      defaultExportedPath.parentPath.replaceWith(
-        t.variableDeclaration('const', [
-          t.variableDeclarator(
-            t.identifier(EXPORTED_DEF),
-            t.functionExpression(id, params, body, generator, async)
-          )
-        ])
-      );
+      const replacer = getReplacer(defaultExportedPath);
+      if (replacer) {
+        replacer.replaceWith(
+          t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.identifier(EXPORTED_DEF),
+              t.functionExpression(id, params, body, generator, async)
+            )
+          ])
+        );
+      }
     } else if (isClassComponent(defaultExportedPath)) {
       userDefineType = 'class';
 
       const { id, superClass, body, decorators } = defaultExportedPath.node;
+      const replacer = getReplacer(defaultExportedPath);
       // @NOTE: Remove superClass due to useless of Component base class.
-      defaultExportedPath.parentPath.replaceWith(
-        t.variableDeclaration('const', [
-          t.variableDeclarator(
-            t.identifier(EXPORTED_DEF),
-            t.classExpression(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
-          )
-        ])
-      );
+      if (replacer) {
+        replacer.replaceWith(
+          t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.identifier(EXPORTED_DEF),
+              t.classExpression(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
+            )
+          ])
+        );
+      }
     }
 
     addDefine(parsed.ast, options.type, userDefineType, eventHandlers);
     removeRaxImports(parsed.ast);
+    removeDefaultImports(parsed.ast);
   },
 };
 
@@ -148,4 +155,35 @@ function removeRaxImports(ast) {
       }
     },
   });
+}
+
+function removeDefaultImports(ast) {
+  traverse(ast, {
+    ExportDefaultDeclaration(path) {
+      path.remove();
+    },
+  });
+}
+
+function getReplacer(defaultExportedPath) {
+  if (defaultExportedPath.parentPath.isExportDefaultDeclaration()) {
+    /**
+     * export default class {};
+     */
+    return defaultExportedPath.parentPath;
+  } else if (defaultExportedPath.parentPath.isProgram()) {
+    /**
+     * class Foo {}
+     * export default Foo;
+     */
+    return defaultExportedPath;
+  } else if (defaultExportedPath.parentPath.isVariableDeclarator()) {
+    /**
+     * var Foo = class {}
+     * export default Foo;
+     */
+    return defaultExportedPath.parentPath.parentPath;
+  } else {
+    return null;
+  }
 }

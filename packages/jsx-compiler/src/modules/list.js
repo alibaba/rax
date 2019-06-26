@@ -3,6 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
+const createJSXBinding = require('../utils/createJSXBinding');
 const genExpression = require('../codegen/genExpression');
 
 function transformList(ast, adapter) {
@@ -42,6 +43,38 @@ function transformList(ast, adapter) {
                 [adapter.forIndex]: t.stringLiteral(indexName),
               }, [childNode])
             );
+            traverse(path, {
+              JSXExpressionContainer(childPath) {
+                const { node } = childPath;
+
+                switch (node.expression.type) {
+                  case 'ObjectExpression':
+                    if (childPath.parentPath.isJSXAttribute()) {
+                      // <Image source={{ uri: item.picUrl }} />
+                      // ->
+                      // <Image source="{{ uri: item.picUrl }}" />
+                      childPath.replaceWith(
+                        t.stringLiteral(
+                          genExpression(t.jsxExpressionContainer(node.expression), { concise: true })
+                        )
+                      );
+                    }
+                    break;
+
+                  case 'Identifier':
+                    if (node.expression.name === itemName || node.expression.name === indexName) {
+                      if (childPath.parentPath.isJSXElement()) {
+                        // <Text>{id}</Text> -> <Text>{{ id }}</Text>
+                        childPath.replaceWith(createJSXBinding(node.expression.name));
+                      } else if (childPath.parentPath.isJSXAttribute()) {
+                        // <Text id={id} /> -> <Text id="{{id}}" />
+                        childPath.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
+                      }
+                    }
+                    break;
+                }
+              },
+            });
           } else {
             throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
           }
@@ -81,10 +114,9 @@ function transformList(ast, adapter) {
             });
           }
           path.replaceWith(callee.object);
-          debugger;
         }
       }
-    }
+    },
   });
 }
 

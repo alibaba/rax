@@ -268,7 +268,7 @@ function genData(el, state) {
     data += `${genHandlers(el.nativeEvents, true, state.warn, { el, state })},`;
   }
   // slot target
-  if (el.slotTarget) {
+  if (el.slotTarget && !(el.attrs && el.attrs.some((item) => item.name === 'slot'))) {
     data += `slot:${el.slotTarget},`;
   }
   // scoped slots

@@ -25,8 +25,8 @@ export default function createContext(defaultValue) {
   const contextProp = '__context_' + uniqueId++ + '__';
 
   class Provider extends Component {
-    constructor() {
-      super();
+    constructor(props) {
+      super(props);
       this.emitter = new ValueEmitter(defaultValue);
     }
 

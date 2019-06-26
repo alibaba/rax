@@ -122,6 +122,53 @@ describe('renderToString', () => {
     expect(str).toBe('<h1> Hello rax</h1>');
   });
 
+  it('render with Context.Provider', () => {
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+          <MyComponent />
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyComponent() {
+      const value = useContext(ThemeContext);
+      return (
+        <div>Current theme is {value}.</div>
+      );
+    };
+
+    let str = renderToString(<MyContext />);
+    expect(str).toBe('<div>Current theme is dark.</div>');
+  });
+
+
+  it('render with Context.Consumer', () => {
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+          <MyComponent />
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyComponent() {
+      const value = useContext(ThemeContext);
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>Current theme is {value}.</div>}
+        </ThemeContext.Consumer>
+      );
+    };
+
+    let str = renderToString(<MyContext />);
+    expect(str).toBe('<div>Current theme is dark.</div>');
+  });
+
   it('render with context hook', () => {
     const NumberContext = createContext(5);
 
