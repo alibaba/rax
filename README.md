@@ -103,7 +103,7 @@ export default (props) => {
 ```js
 // app.jsx
 import {render} from 'rax';
-import DriverDOM from 'driver-dom';
+import * as DriverDOM from 'driver-dom';
 import Hello from './Hello';
 
 render(<Hello name="world" />, document.body, { driver: DriverDOM });
