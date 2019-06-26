@@ -5,7 +5,7 @@ import unmountComponentAtNode from 'rax-unmount-component-at-node';
 import findDOMNode from 'rax-find-dom-node';
 import createPortal from 'rax-create-portal';
 
-const raxDomRender = (element, container, callback) => render(
+const domRender = (element, container, callback) => render(
   element,
   container,
   {
@@ -15,7 +15,7 @@ const raxDomRender = (element, container, callback) => render(
 );
 
 export {
-  raxDomRender as render,
+  domRender as render,
   hydrate,
   unmountComponentAtNode,
   findDOMNode,
@@ -23,7 +23,7 @@ export {
 };
 
 export default {
-  render: raxDomRender,
+  render: domRender,
   hydrate,
   unmountComponentAtNode,
   findDOMNode,
