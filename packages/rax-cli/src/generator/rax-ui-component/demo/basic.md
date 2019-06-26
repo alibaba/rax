@@ -8,10 +8,8 @@ order: 1
 
 ```js
 import { createElement, render } from 'rax';
-import * as DriverWeex from 'driver-weex';
-import * as DriverDom from 'driver-dom';
+import DriverUniversal from 'driver-universal';
 import MyComponent from '../src';
-import { isWeex } from 'universal-env';
 
-render(<MyComponent />, document.body, { driver: isWeex ? DriverWeex : DriverDom });
+render(<MyComponent />, null, { driver: DriverUniversal });
 ```

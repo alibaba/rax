@@ -1,7 +1,5 @@
 import { createElement, render } from 'rax';
-import * as DriverWeex from 'driver-weex';
-import * as DriverDom from 'driver-dom';
-import { isWeex } from 'universal-env';
+import DriverUniversal from 'driver-universal';
 
 const DemoList = ({ demos = [] }) => {
   return (
@@ -19,5 +17,5 @@ const DemoList = ({ demos = [] }) => {
 };
 
 
-render(<DemoList demos={window.demos} />, document.body, { driver: isWeex ? DriverWeex : DriverDom });
+render(<DemoList demos={window.demos} />, null, { driver: DriverUniversal });
 

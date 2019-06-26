@@ -1,7 +1,5 @@
 import { createElement, render } from 'rax';
-import * as DriverWeex from 'driver-weex';
-import * as DriverDom from 'driver-dom';
-import { isWeex } from 'universal-env';
+import DriverUniversal from 'driver-universal';
 import MyComponent from '../src/index';
 
-render(<MyComponent />, document.body, { driver: isWeex ? DriverWeex : DriverDom });
+render(<MyComponent />, null, { driver: DriverUniversal });

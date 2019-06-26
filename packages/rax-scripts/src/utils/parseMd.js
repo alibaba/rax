@@ -10,10 +10,10 @@ function html2Escape(sHtml) {
 }
 
 /**
- * 解析 demo markdown
- * @param name 名称
- * @param content Markdown 内容
- * @param filePath 文件路径
+ * Parse demo markdown
+ * @param name
+ * @param content
+ * @param filePath
  * @returns { Object } result { meta: {name, order, title, desc } }
  */
 module.exports = (name, content, filePath) => {

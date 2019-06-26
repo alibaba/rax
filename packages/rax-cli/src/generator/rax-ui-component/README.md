@@ -1,13 +1,12 @@
 ---
-display: COMPONENT_NAME
+display: __ComponentName__
 family: other
 ---
 
-# __YourProjectName__
+# __ComponentName__
 
 hello world
 
-## 
 
 ## API
 
@@ -17,7 +16,7 @@ hello world
 |:---------------|:--------|:----|:----------|
 
 
-## CSS API
+### CSS API
 
 | 名称 | 说明 |
 |:---------------|:--------|
