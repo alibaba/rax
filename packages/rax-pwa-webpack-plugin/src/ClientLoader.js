@@ -12,7 +12,7 @@ module.exports = function(source) {
   if (ssr === 'true') {
     const functionName = '_PWA_page_component_';
     const renderCodeStr = withAppShell === 'true' ?
-      `render(createElement(AppShell, {...data, Component: (props) => createElement(${functionName}, props || {})}), document.getElementById('root'), { driver: DriverDOM, hydrate: true });` :
+      `render(createElement(AppShell, Object.assign(data || {}, { Component: function(props) {return createElement(${functionName}, props || {}); }})), document.getElementById('root'), { driver: DriverDOM, hydrate: true });` :
       `render(createElement(${functionName}, data || {}), document.getElementById('root'), { driver: DriverDOM, hydrate: true });`;
     code = source.replace('export default', `var ${functionName} =`);
     code += `

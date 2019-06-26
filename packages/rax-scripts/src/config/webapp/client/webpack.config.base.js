@@ -10,7 +10,7 @@ const getWebpackConfigBase = require('../webpack.config.base');
 const appConfig = require('../../app.config');
 const { getEntries } = require('../../index');
 
-const RaxPWAPlugin = require('rax-pwa-webpack-plugin/lib/RaxPWAPlugin');
+const { RaxPWAPlugin } = require('rax-pwa-webpack-plugin');
 
 const entryMap = {};
 if (appConfig.ssr) {
