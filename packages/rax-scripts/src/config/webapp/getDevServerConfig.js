@@ -8,7 +8,7 @@ module.exports = function getDevServerConfig() {
 
   const entries = getEntries();
   const pagesManifest = {};
-  Object.keys(entries).map(entry => {
+  Object.keys(entries).forEach(entry => {
     pagesManifest[entry] = path.resolve(appBuild, `server/${entry}.js`);
   });
 
