@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const qs = require('querystring');
 const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -29,6 +30,10 @@ const webpackConfigBase = getWebpackConfigBase({
   target: 'web'
 });
 
+if (!fs.existsSync(pathConfig.tempDirectory)) {
+  fs.mkdirSync(pathConfig.tempDirectory);
+}
+
 const webpackConfig = webpackMerge(webpackConfigBase, {
   target: 'web',
   entry: entryMap,
@@ -37,6 +42,7 @@ const webpackConfig = webpackMerge(webpackConfigBase, {
   },
   plugins: appConfig.ssr ? [
     new AssetsManifestPlugin({
+      dist: pathConfig.assetsManifest,
       publicPath: envConfig.publicPath
     })
   ] : [

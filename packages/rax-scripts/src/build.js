@@ -21,15 +21,15 @@ const jsx2mp = require('jsx2mp');
 const { getWebpackConfig } = require('./config/');
 
 function buildCompiler(config) {
-  return new Promise(async(resolve, reject) => {
-    const compiler = createWebpackCompiler(config);
+  const compiler = createWebpackCompiler(config);
 
-    compiler.run((err) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve();
-    });
+  compiler.run((err) => {
+    if (err) {
+      throw err;
+    }
+
+    console.log(colors.green('\nBuild successfully.'));
+    process.exit();
   });
 }
 
@@ -52,23 +52,12 @@ module.exports = function build(type = 'webapp') {
       componentCompiler();
     });
   } else {
-    rimraf(pathConfig.appBuild, async(err) => {
+    rimraf(pathConfig.appBuild, (err) => {
       if (err) {
         throw err;
       }
       const config = getWebpackConfig(type);
-
-      if (Array.isArray(config)) {
-        // when ssr is enabled, it should be build in sequence, like: client, server，serverless
-        for (var i = 0; i < config.length; i++) {
-          await buildCompiler(config[i]);
-        }
-      } else {
-        await buildCompiler(config);
-      }
-
-      console.log(colors.green('\nBuild successfully.'));
-      process.exit();
+      buildCompiler(config);
     });
   }
 };

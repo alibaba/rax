@@ -74,7 +74,7 @@ class DevServer {
 
     let assets = assetsManifest || {};
     if (assetsManifestPath) {
-      const assetsContent = this.readFileSyncFromWebpack(assetsManifestPath, res);
+      const assetsContent = fs.readFileSync(assetsManifestPath, res);
       assets = JSON.parse(assetsContent);
     };
 

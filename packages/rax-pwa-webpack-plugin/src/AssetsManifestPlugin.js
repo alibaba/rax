@@ -1,7 +1,6 @@
-import { RawSource } from 'webpack-sources';
 import path from 'path';
+import fs from 'fs';
 
-const ASSETS_MANIFEST = 'assets_manifest.json';
 const MAIN_ENTRY = 'entry';
 
 // This plugin creates a assets-manifest.json for all assets that are being output
@@ -53,7 +52,7 @@ export default class RaxAssetsManifest {
           };
         });
 
-        compilation.assets[ASSETS_MANIFEST] = new RawSource(JSON.stringify(assetMap, null, 2));
+        fs.writeFileSync(this.options.dist, JSON.stringify(assetMap, null, 2));
 
         callback();
       }
