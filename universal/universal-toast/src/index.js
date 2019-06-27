@@ -20,7 +20,10 @@ function showToastWindow(message) {
 
   toastWin.style.transform = 'translateX(-50%)';
   toastWin.style.webkitTransform = 'translateX(-50%)';
-  toastWin.innerHTML = message;
+  toastWin.innerHTML = '';
+  message.split('\n').forEach((element) => {
+    toastWin.innerHTML += `<p style="margin: 0px;">${element}</p>`;
+  });
 
   // setTimeout(() => {
   //   toastWin.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
