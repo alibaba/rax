@@ -19,7 +19,7 @@ const path = require('path');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
-const ssrDevServerConfig = require('./config/webapp/devServer.config');
+const getDevServerConfig = require('./config/webapp/getDevServerConfig');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
 const appConfig = require('./config/app.config');
@@ -49,6 +49,7 @@ module.exports = function start(type = 'webapp') {
 
     let devServer;
     if (appConfig.ssr) {
+      const ssrDevServerConfig = getDevServerConfig();
       devServer = new SSRDevServer(compiler, ssrDevServerConfig);
     } else {
       devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
