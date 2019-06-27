@@ -17,7 +17,7 @@ export default class RaxAssetsManifest {
       (compilation, callback) => {
         const { chunks } = compilation;
 
-        const assetMap = {};
+        const assetsMap = {};
 
         const mainChunk = chunks.find(
           c => c.name === MAIN_ENTRY
@@ -46,13 +46,13 @@ export default class RaxAssetsManifest {
             }
           });
 
-          assetMap[chunk.name] = {
+          assetsMap[chunk.name] = {
             styles,
             scripts
           };
         });
 
-        fs.writeFileSync(this.options.dist, JSON.stringify(assetMap, null, 2));
+        fs.writeFileSync(this.options.dist, JSON.stringify(assetsMap, null, 2));
 
         callback();
       }
