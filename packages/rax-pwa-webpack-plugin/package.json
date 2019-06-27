@@ -18,8 +18,5 @@
   "peerDependencies": {
     "rax": "^1.0.4",
     "rax-hydrate": "^1.0.1"
-  },
-  "dependencies": {
-    "webpack-sources": "^1.3.0"
   }
 }
