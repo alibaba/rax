@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const pathToRegexp = require('path-to-regexp');
 
-const getPagesConfig = (appConfig, pathConfig) => {
+const getSPAPagesConfig = (appConfig, pathConfig) => {
   const pagesConfig = {};
   const customePageConfig = appConfig.pages || {};
   fs.readdirSync(path.join(pathConfig.appSrc, 'pages')).map((file) => {
@@ -15,4 +15,4 @@ const getPagesConfig = (appConfig, pathConfig) => {
   return pagesConfig;
 };
 
-module.exports = getPagesConfig;
+module.exports = getSPAPagesConfig;

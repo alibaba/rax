@@ -7,9 +7,9 @@
 const fs = require('fs');
 const path = require('path');
 const qs = require('querystring');
-const isProductionMode = require('../utils/isProductionMode');
-const getPagesConfig = require('../utils/getPagesConfig');
-const getSPAEntryCodeStr = require('../utils/getSPAEntryCodeStr');
+const { isProductionMode } = require('../env');
+const getSPAPagesConfig = require('../getSPAPagesConfig');
+const getSPAEntryCodeStr = require('../getSPAEntryCodeStr');
 
 
 class RaxPWAPlugin {
@@ -47,7 +47,7 @@ class RaxPWAPlugin {
      * 4. write temporary files, entry.
      */
     if (withSPA) {
-      const pagesConfig = getPagesConfig(appConfig, pathConfig);
+      const pagesConfig = getSPAPagesConfig(appConfig, pathConfig);
       const newEntry = {
         entry: tempIndexFilePath
       };

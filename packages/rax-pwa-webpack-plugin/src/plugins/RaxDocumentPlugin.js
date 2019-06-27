@@ -6,10 +6,10 @@
 
 const fs = require('fs');
 const minify = require('html-minifier').minify;
-const isProductionMode = require('../utils/isProductionMode');
-const getPagesConfig = require('../utils/getPagesConfig');
-const AppShellHandler = require('../utils/AppShellHandler');
-const DocumentHandler = require('../utils/DocumentHandler');
+const { isProductionMode } = require('../env');
+const getSPAPagesConfig = require('../getSPAPagesConfig');
+const AppShellHandler = require('../AppShellHandler');
+const DocumentHandler = require('../DocumentHandler');
 
 const PLUGIN_NAME = 'RaxDocumentPlugin';
 
@@ -52,7 +52,7 @@ class RaxDocumentPlugin {
     }
 
     if (withSPA) {
-      const pagesConfig = getPagesConfig(appConfig, pathConfig);
+      const pagesConfig = getSPAPagesConfig(appConfig, pathConfig);
 
       // Prepare the skeleton diagram code, match the routing information when the page is initialized,
       // and insert the skeleton diagram of the corresponding page into the blank area of the page
@@ -61,13 +61,13 @@ class RaxDocumentPlugin {
           withSkeleton = true;
           if (pageName === 'index') {
             skeletonTemplate += `
-              if (isMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}") || (${withSSR} && pathname === '/') || (${!withSSR} && hash === '/')) {
+              if (isPathMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}") || (${withSSR} && pathname === '/') || (${!withSSR} && hash === '/')) {
                 document.getElementById("${withAppShell ? 'root-page' : 'root'}").innerHTML = '<img src="${pagesConfig[pageName].skeleton}"/>';
               }
             `;
           } else {
             skeletonTemplate += `
-              if (isMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}")) {
+              if (isPathMatched(${pagesConfig[pageName]._regexp}, "${withSSR ? 'history' : 'hash'}")) {
                 document.getElementById("${withAppShell ? 'root-page' : 'root'}").innerHTML = '<img src="${pagesConfig[pageName].skeleton}"/>';
               }
             `;
@@ -78,7 +78,7 @@ class RaxDocumentPlugin {
         skeletonTemplate = `
           var pathname = window.location.pathname + window.location.search;
           var hash = window.location.hash.replace("#", "");
-          var isMatched = function (regexp, type) {
+          var isPathMatched = function (regexp, type) {
             return "hash" === type ? regexp.test(hash) : "history" === type && regexp.test(pathname);
           };
         ` + skeletonTemplate;

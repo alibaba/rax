@@ -1,4 +1,4 @@
-import isMatched from './isMatched';
+import isPathMatched from './isPathMatched';
 
 function getCurrentComponent(pagesConfig, withSSR) {
   let currentComponent = null;
@@ -6,7 +6,7 @@ function getCurrentComponent(pagesConfig, withSSR) {
 
   for (let i = 0; i < pageNames.length; i++) {
     const currentPage = pagesConfig[pageNames[i]];
-    if (isMatched( withSSR ? 'history' : 'hash', currentPage.regexp, pageNames[i])) {
+    if (isPathMatched( withSSR ? 'history' : 'hash', currentPage.regexp, pageNames[i])) {
       currentComponent = currentPage.component;
       break;
     }

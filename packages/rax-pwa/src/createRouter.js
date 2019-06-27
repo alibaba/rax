@@ -1,7 +1,7 @@
 
 import { createElement, useState } from 'rax';
 import Error from './Error';
-import isMatched from './isMatched';
+import isPathMatched from './isPathMatched';
 import { createHashHistory, createBrowserHistory } from 'history';
 import { useRouter, push, replace, go } from 'rax-use-router';
 
@@ -178,7 +178,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
       return (
         <div style={{ position: 'relative' }}>
           {Object.keys(alivePageCache).map((pageName) => {
-            cachePageMatched = isMatched(withSSR ? 'history' : 'hash', alivePageCache[pageName].regexp, pageName);
+            cachePageMatched = isPathMatched(withSSR ? 'history' : 'hash', alivePageCache[pageName].regexp, pageName);
             const element = alivePageCache[pageName].component;
             if (cachePageMatched && element === null) {
               activateAlivePageComponent(pageName);

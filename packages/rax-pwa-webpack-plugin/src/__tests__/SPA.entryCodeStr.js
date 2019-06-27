@@ -1,4 +1,4 @@
-const getSPAEntryCodeStr = require('../utils/getSPAEntryCodeStr');
+const getSPAEntryCodeStr = require('../getSPAEntryCodeStr');
 
 const appConfig = {
   spa: true
