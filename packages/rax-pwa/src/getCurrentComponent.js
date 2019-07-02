@@ -25,5 +25,3 @@ function getCurrentComponent(pagesConfig, withSSR) {
 }
 
 export default getCurrentComponent;
-
-

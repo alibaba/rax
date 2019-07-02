@@ -3,36 +3,38 @@ var easyfile = require('easyfile');
 var path = require('path');
 
 var processPWAProject = (projectDir, projectType, projectFeatures, replacedPkg) => {
-  var appJSON;
-  if (projectType === 'webapp' && projectFeatures && projectFeatures.length) {
-    fs.unlinkSync(path.join(projectDir, 'src/index.js'));
-    fs.unlinkSync(path.join(projectDir, 'public/index.html'));
-    fs.rmdirSync(path.join(projectDir, 'public'));
+  if (projectType === 'webapp') {
+    var appJSON;
+    if (projectFeatures && projectFeatures.length) {
+      fs.unlinkSync(path.join(projectDir, 'src/index.js'));
+      fs.unlinkSync(path.join(projectDir, 'public/index.html'));
+      fs.rmdirSync(path.join(projectDir, 'public'));
 
-    var appJSONPath = path.join(projectDir, 'app.json');
-    var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
-    appJSON = JSON.parse(appJSONContent);
+      var appJSONPath = path.join(projectDir, 'app.json');
+      var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
+      appJSON = JSON.parse(appJSONContent);
 
-    projectFeatures.forEach((feature) => {
-      appJSON[feature] = true;
-    });
+      projectFeatures.forEach((feature) => {
+        appJSON[feature] = true;
+      });
 
-    var jsonString = JSON.stringify(appJSON, null, 2) + '\n';
-    fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
-  }
+      var jsonString = JSON.stringify(appJSON, null, 2) + '\n';
+      fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
+    }
 
-  if (appJSON && appJSON.spa) {
-    // SPA
-    var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js');
-    fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
-    fs.unlinkSync(spaIndexPath);
-    var packageJSON = JSON.parse(replacedPkg);
-    packageJSON.dependencies['rax-pwa'] = '^1.0.0';
-    replacedPkg = JSON.stringify(packageJSON, null, 2) + '\n';
-  } else {
-    fs.unlinkSync(path.join(projectDir, 'src/pages/about/index.js'));
-    fs.rmdirSync(path.join(projectDir, 'src/pages/about'));
-    fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
+    if (appJSON && appJSON.spa) {
+      // SPA
+      var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js');
+      fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
+      fs.unlinkSync(spaIndexPath);
+      var packageJSON = JSON.parse(replacedPkg);
+      packageJSON.dependencies['rax-pwa'] = '^1.0.0';
+      replacedPkg = JSON.stringify(packageJSON, null, 2) + '\n';
+    } else {
+      fs.unlinkSync(path.join(projectDir, 'src/pages/about/index.js'));
+      fs.rmdirSync(path.join(projectDir, 'src/pages/about'));
+      fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
+    }
   }
   return replacedPkg;
 };
