@@ -184,17 +184,12 @@ function matchLocation({ pathname, search }) {
   router.match(`${pathname}${search}`);
 }
 
-let routerInitialized = false;
 function getInitialComponent(routerConfig) {
-  if (routerInitialized) {
-    return [];
-  }
-
+  let initialComponent = [];
   if (typeof routerConfig === 'function') {
     routerConfig = routerConfig();
   }
 
-  let initialComponent = [];
   if (routerConfig.initialComponent) {
     initialComponent = routerConfig.initialComponent;
     if (initialComponent instanceof Promise) {
