@@ -22,7 +22,7 @@ class DevServer {
       pagesManifest,
     } = this.options;
 
-    Object.keys(pagesManifest).map(page => {
+    Object.keys(pagesManifest).forEach(page => {
       // _document, _shell
       if (page.indexOf('_') > -1) {
         return;
