@@ -12,11 +12,11 @@ const getConfig = (appDirectory) => {
       rax: 'rax',
     },
     resolve: {
-      extensions: ['.js', '.jsx', 'mjs'],
+      extensions: ['.js', '.jsx', '.mjs'],
     },
     module: {
       rules: [{
-        test: /\.jsx?$/,
+        test: /\.jsx?$/i,
         exclude: /node_modules/,
         use: [
           {

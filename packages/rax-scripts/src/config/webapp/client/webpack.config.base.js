@@ -35,26 +35,28 @@ if (!fs.existsSync(pathConfig.tempDirectory)) {
   fs.mkdirSync(pathConfig.tempDirectory);
 }
 
-const webpackPlugins = [];
+let webpackPlugins = [];
 
 if (appConfig.spa) {
-  webpackPlugins.push(new RaxPWAPlugin({ pathConfig, appConfig }));
+  webpackPlugins = [new RaxPWAPlugin({ pathConfig, appConfig })];
 }
 
 if (appConfig.ssr) {
-  webpackPlugins.push(
+  webpackPlugins = [
+    new RaxPWAPlugin({ pathConfig, appConfig }),
     new AssetsManifestPlugin({
       dist: pathConfig.assetsManifest,
       publicPath: envConfig.publicPath
-    })
-  );
+    })];
 }
 
 if (webpackPlugins.length === 0) {
-  webpackPlugins.push(new HtmlWebpackPlugin({
-    inject: true,
-    template: pathConfig.appHtml,
-  }));
+  webpackPlugins = [
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: pathConfig.appHtml,
+    })
+  ];
 }
 
 const webpackConfig = webpackMerge(webpackConfigBase, {

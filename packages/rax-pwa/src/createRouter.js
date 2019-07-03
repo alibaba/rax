@@ -5,7 +5,7 @@ import isPathMatched from './isPathMatched';
 import { createHashHistory, createBrowserHistory } from 'history';
 import { useRouter, push, replace, go } from 'rax-use-router';
 
-const interopRequire = (obj) => {
+const interopRequire = function(obj) {
   return obj && obj.__esModule ? obj.default : obj;
 };
 

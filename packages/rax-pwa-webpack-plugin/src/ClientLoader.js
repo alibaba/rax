@@ -8,7 +8,6 @@ module.exports = function(source) {
     withAppShell,
   } = query;
   let code = source;
-
   if (ssr === 'true') {
     const functionName = '_PWA_page_component_';
     const renderCodeStr = withAppShell === 'true' ?
@@ -19,7 +18,7 @@ module.exports = function(source) {
       import {render} from 'rax';
       import * as DriverDOM from 'driver-dom';
       ${withAppShell === 'true' ? "import AppShell from '../../shell/';" : ''}
-      window.onload = function(){
+      window.addEventListener( "load", function(){
         var data = null;
         try {
           data = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
@@ -27,13 +26,15 @@ module.exports = function(source) {
           // ignore
         }
         if (data !== null || !${functionName}.getInitialProps) {
-          ${renderCodeStr}
+          renderComponent();
         } else {
-          ${functionName}.getInitialProps().then(function(data) {
-            ${renderCodeStr}
-          });
+          ${functionName}.getInitialProps().then(renderComponent);
         }
-      }
+
+        function renderComponent() {
+          ${renderCodeStr}
+        }
+      })
     `;
   }
 
