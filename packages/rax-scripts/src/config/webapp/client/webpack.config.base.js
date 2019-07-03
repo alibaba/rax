@@ -1,12 +1,14 @@
 'use strict';
 
+const fs = require('fs');
 const qs = require('querystring');
 const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const pathConfig = require('../../path.config');
+const AssetsManifestPlugin = require('rax-pwa-webpack-plugin/lib/AssetsManifestPlugin').default;
 const getWebpackConfigBase = require('../webpack.config.base');
+const pathConfig = require('../../path.config');
 const appConfig = require('../../app.config');
+const envConfig = require('../../env.config');
 const { getEntries } = require('../../index');
 
 const ClientLoader = require.resolve('rax-pwa-webpack-plugin/lib/ClientLoader');
@@ -28,13 +30,22 @@ const webpackConfigBase = getWebpackConfigBase({
   target: 'web'
 });
 
+if (!fs.existsSync(pathConfig.tempDirectory)) {
+  fs.mkdirSync(pathConfig.tempDirectory);
+}
+
 const webpackConfig = webpackMerge(webpackConfigBase, {
   target: 'web',
   entry: entryMap,
   output: {
     filename: 'client/[name].js'
   },
-  plugins: appConfig.ssr ? [] : [
+  plugins: appConfig.ssr ? [
+    new AssetsManifestPlugin({
+      dist: pathConfig.assetsManifest,
+      publicPath: envConfig.publicPath
+    })
+  ] : [
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
