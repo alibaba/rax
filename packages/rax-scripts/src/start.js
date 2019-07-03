@@ -14,11 +14,12 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
-const SSRDevServer = require('./ssr/devServer');
+const SSRDevServer = require('rax-ssr-dev-server');
 const path = require('path');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
+const getDevServerConfig = require('./config/webapp/getDevServerConfig');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
 const appConfig = require('./config/app.config');
@@ -48,7 +49,8 @@ module.exports = function start(type = 'webapp') {
 
     let devServer;
     if (appConfig.ssr) {
-      devServer = new SSRDevServer(compiler);
+      const ssrDevServerConfig = getDevServerConfig();
+      devServer = new SSRDevServer(compiler, ssrDevServerConfig);
     } else {
       devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
     }

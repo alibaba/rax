@@ -1,6 +1,6 @@
 {
   "name": "rax-dom",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rax DOM render",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

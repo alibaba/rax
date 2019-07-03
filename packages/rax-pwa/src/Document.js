@@ -15,7 +15,7 @@ function Document(props) {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no" />
         <title>{title || 'WebApp'}</title>
-        {styles.map((style) => <link herf={style} rel="stylesheet" />)}
+        {styles.map((style) => <link href={style} rel="stylesheet" />)}
       </head>
       <body>
         <div id="root" dangerouslySetInnerHTML={{ __html: pageHtml || '' }} />

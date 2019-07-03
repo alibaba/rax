@@ -9,12 +9,8 @@ module.exports = function(source) {
     appConfigPath,
     appDocumentPath,
     appShellPath,
-    scripts,
-    styles,
+    assetsManifestPath,
   } = query;
-
-  const styleList = typeof styles === 'string' ? [styles] : styles;
-  const scriptList = typeof scripts === 'string' ? [scripts] : scripts;
 
   return `
     import RaxServer from 'rax-server';
@@ -22,11 +18,13 @@ module.exports = function(source) {
     import App from '${appPath}';
     ${appDocumentPath ? "import Document from '" + appDocumentPath + "';" : ''}
     ${appShellPath ? "import Shell from '" + appShellPath + "';" : ''}
-    import AppConfig from '${appConfigPath}';
+    import appConfig from '${appConfigPath}';
+    import assetsManifest from '${assetsManifestPath}';
 
+    const assets = assetsManifest['${page}'];
     const server = new RaxServer({
       document: {
-        title: AppConfig.title,
+        title: appConfig.title,
         ${appDocumentPath ? 'component: Document' : ''}
       },
       shell: {
@@ -34,10 +32,9 @@ module.exports = function(source) {
       },
       pages: {
         '${page}': {
-          title: AppConfig.pages && AppConfig.pages[${page}] ? AppConfig.pages[${page}].title : '',
+          title: appConfig.pages && appConfig.pages['${page}'] ? appConfig.pages['${page}'].title : '',
           component: App,
-          styles: ${JSON.stringify(styleList)},
-          scripts: ${JSON.stringify(scriptList)},
+          ...assets
         }
       }
     });
