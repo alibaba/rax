@@ -42,27 +42,6 @@ const getConfig = (appDirectory) => {
             }
           }
         ]
-      }, {
-        test: /\.css$/,
-        use: [
-          {
-            loader: require.resolve('css-loader'),
-          },
-          {
-            loader: require.resolve('postcss-loader'),
-            options: {
-              ident: 'postcss',
-              plugins: () => [
-                require('postcss-preset-env')({
-                  autoprefixer: {
-                    flexbox: 'no-2009',
-                  },
-                  stage: 3,
-                }),
-              ],
-            }
-          },
-        ]
       }]
     }
   };
