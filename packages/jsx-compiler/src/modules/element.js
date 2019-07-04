@@ -267,6 +267,15 @@ function transformTemplate(ast, scope = null, adapter) {
             t.jsxIdentifier(adapter.if),
             t.stringLiteral(createBinding(genExpression(node.expression.left)))
           ));
+          traverse(node.expression.left, {
+            MemberExpression(path) {
+              dynamicValue[path.node.object.name] = path.node.object;
+              path.skip();
+            },
+            Identifier(path) {
+              dynamicValue[path.node.name] = path.node;
+            },
+          });
           path.replaceWith(node.expression.right);
         } else {
           path.replaceWith(createJSXBinding(genExpression(node.expression)));
