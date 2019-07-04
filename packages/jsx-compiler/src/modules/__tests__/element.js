@@ -205,6 +205,14 @@ describe('Transform JSXElement', () => {
       expect(genDynamicAttrs(dynamicValue)).toMatchSnapshot();
     });
 
+    it('should handle text', () => {
+      const rawText = '<Text style={styles.name}>{data && data.itemTitle ? data.itemTitle : \'\'}</Text>';
+      const ast = parseExpression(rawText);
+      const dynamicValue = _transform(ast);
+      expect(genInlineCode(ast).code).toEqual('<Text style="{{styles.name}}">{{ _d0 }}</Text>');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ _d0: data && data.itemTitle ? data.itemTitle : \'\' }');
+    });
+
     it('unsupported', () => {
       expect(() => {
         _transform(parseExpression('<View>{a = 1}</View>'));
