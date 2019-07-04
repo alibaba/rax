@@ -4,7 +4,7 @@ const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 
-function transformTemplate(ast, scope = null) {
+function transformTemplate(ast, scope = null, adapter) {
   const dynamicValue = {};
 
   let ids = 0;
@@ -255,9 +255,22 @@ function transformTemplate(ast, scope = null) {
 
       // <tag isFoo={a.length > 1} />
       // => <tag isFoo="{{a.length > 1}}" />
-      case 'BinaryExpression':
-      case 'LogicalExpression': {
+      case 'BinaryExpression': {
         path.replaceWith(createJSXBinding(genExpression(node.expression)));
+        break;
+      }
+
+      case 'LogicalExpression': {
+        if (node.expression.operator === '&&' && t.isJSXElement(node.expression.right)) {
+          // foo && <Element />
+          node.expression.right.openingElement.attributes.push(t.jsxAttribute(
+            t.jsxIdentifier(adapter.if),
+            t.stringLiteral(createBinding(genExpression(node.expression.left)))
+          ));
+          path.replaceWith(node.expression.right);
+        } else {
+          path.replaceWith(createJSXBinding(genExpression(node.expression)));
+        }
         break;
       }
 
@@ -316,7 +329,7 @@ function isEventHandler(propKey) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      const dynamicValue = Object.assign({}, parsed.dynamicValue, transformTemplate(parsed.templateAST));
+      const dynamicValue = Object.assign({}, parsed.dynamicValue, transformTemplate(parsed.templateAST, null, options.adapter));
       const eventHandlers = parsed.eventHandlers = [];
       const properties = [];
       Object.keys(dynamicValue).forEach((key) => {
