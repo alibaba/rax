@@ -70,7 +70,7 @@ class RaxPWAPlugin {
       compiler.options.entry = newEntry;
     } else if (withSSR) {
       // SSR entry add ClientLoader
-      const ClientLoader = require.resolve('../ClientLoader.js');
+      const ClientLoader = require.resolve('../loaders/ClientLoader.js');
       const entries = compiler.options.entry;
       Object.keys(entries).forEach((key) => {
         const mainEntryFile = entries[key][0];

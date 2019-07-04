@@ -8,7 +8,7 @@ const pathConfig = require('../../path.config');
 
 const { getEntries } = require('../../index');
 
-const ServerlessLoader = require.resolve('rax-pwa-webpack-plugin/lib/ServerlessLoader');
+const ServerlessLoader = require.resolve('rax-pwa-webpack-plugin/lib/loaders/ServerlessLoader');
 
 const webpackConfigBase = getWebpackConfigBase({
   target: 'web'

@@ -1,5 +1,5 @@
-const ClientLoader = require('./ClientLoader');
-const ServerlessLoader = require('./ServerlessLoader');
+const ClientLoader = require('./loaders/ClientLoader');
+const ServerlessLoader = require('./loaders/ServerlessLoader');
 const RaxPWAPlugin = require('./RaxPWAPlugin');
 
 module.exports = {
