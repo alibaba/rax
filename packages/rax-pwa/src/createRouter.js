@@ -155,9 +155,9 @@ function createRouter(pagesConfig, withSSR = false, InitialComponent = null, ini
   return function(props) {
     routerProps = { ...props, router };
 
-    // if (InitialComponent) {
-    //   routerConfig.InitialComponent = <InitialComponent {...routerProps} {...initialComponentProps} />;
-    // }
+    if (InitialComponent) {
+      routerConfig.InitialComponent = <InitialComponent {...routerProps} {...initialComponentProps} />;
+    }
 
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
