@@ -184,22 +184,19 @@ function matchLocation({ pathname, search }) {
   router.match(`${pathname}${search}`);
 }
 
+
 function getInitialComponent(routerConfig) {
-  let initialComponent = [];
+  let InitialComponent = [];
+
   if (typeof routerConfig === 'function') {
     routerConfig = routerConfig();
   }
 
-  if (routerConfig.initialComponent) {
-    initialComponent = routerConfig.initialComponent;
-    if (initialComponent instanceof Promise) {
-      initialComponent = [];
-    } else if (typeof initialComponent === 'function') {
-      initialComponent = initialComponent({});
-    }
+  if (routerConfig.InitialComponent) {
+    InitialComponent = routerConfig.InitialComponent;
   }
 
-  return initialComponent;
+  return InitialComponent;
 }
 
 export function useRouter(routerConfig) {
@@ -221,7 +218,9 @@ export function useRouter(routerConfig) {
     });
 
     // Init path match
-    matchLocation(history.location);
+    if (!routerConfig.InitialComponent) {
+      matchLocation(history.location);
+    }
 
     const unlisten = history.listen((location, action) => {
       matchLocation(location);

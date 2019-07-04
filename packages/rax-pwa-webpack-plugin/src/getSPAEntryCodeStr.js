@@ -20,7 +20,7 @@ const getSPAEntryCodeStr = (options) => {
         path: '${pagesConfig[pageName].path}', 
         regexp: ${pagesConfig[pageName]._regexp},
         pageAlive: ${!!pagesConfig[pageName].pageAlive},
-        component: () => import(/* webpackChunkName: "${pageName}" */ '${pathConfig.appSrc}/pages/${pageName}/index'),
+        component: function() { return import(/* webpackChunkName: "${pageName}" */ '${pathConfig.appSrc}/pages/${pageName}/index') },
         ${pagesConfig[pageName].skeleton ? `skeleton: "${pagesConfig[pageName].skeleton}",` : ''}
         ${pagesConfig[pageName].title || appConfig.title ? `title: "${pagesConfig[pageName].title || appConfig.title}",` : ''}
       },
@@ -30,7 +30,7 @@ const getSPAEntryCodeStr = (options) => {
   if (pagesConfig._error) {
     pagesConfigCodeStr += `
       _error: {
-        component: () => import(/* webpackChunkName: "_error" */ '${pathConfig.appSrc}/pages/_error/index')
+        component: function() {return import(/* webpackChunkName: "_error" */ '${pathConfig.appSrc}/pages/_error/index')}
       }
     `;
   }
@@ -50,17 +50,17 @@ const getSPAEntryCodeStr = (options) => {
     import { createRouter, getCurrentComponent } from 'rax-pwa';
     ${importsCodeStr}
 
+    let initialProps;
     const pagesConfig = {
       ${pagesConfigCodeStr}
     };
     
-    const app = () => {
+    const app = function() {
       // Clear skeleton
       if (document.getElementById('root-page')) {
         document.getElementById('root-page').innerHTML = '';
       }
       
-      let initialProps;
       try {
         initialProps = JSON.parse(document.querySelector("[data-from='server']").innerHTML);
       } catch (e) {
@@ -69,21 +69,34 @@ const getSPAEntryCodeStr = (options) => {
 
       // In Code Splitting mode, the <Router /> is not rendering the routing content for the first time, result in unsuccessful hydrate components. 
       // Match the first component for hydrate
-      getCurrentComponent(pagesConfig, ${withSSR})().then((InitialComponent) => {
+      getCurrentComponent(pagesConfig, ${withSSR})().then(function(InitialComponent) {
         if (InitialComponent === null) {
           document.getElementById('root').innerHTML = '';
+          renderApp(InitialComponent);
         } else {
           InitialComponent = InitialComponent.__esModule ? InitialComponent.default : InitialComponent;
+          if(!${withSSR} && InitialComponent.getInitialProps) {
+            InitialComponent.getInitialProps().then(function(props) {
+              renderApp(InitialComponent, props);
+            }).catch(function(e){
+              renderApp(InitialComponent);  
+            });
+          } else {
+            renderApp(InitialComponent);
+          }
         }
-        const Router = createRouter(pagesConfig, ${withSSR}, InitialComponent);
-        const PageComponent = (props) => {
-          ${withAppShell && !withSSR ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
-        };
-        ${renderCodeStr}
       });
     };
 
-    ${withSSR}? window.onload = app : app();
+    const renderApp = function(InitialComponent, initialComponentProps) {
+      const Router = createRouter(pagesConfig, ${withSSR}, InitialComponent, initialComponentProps);
+      const PageComponent = function(props) {
+        ${withAppShell && !withSSR ? 'return <div id="root-page" ><Router {...props}/></div>;' : 'return <Router {...props}/>'}      
+      };
+      ${renderCodeStr}
+    };
+ 
+    ${withSSR}? window.addEventListener("load", app) : app();
   `;
 };
 

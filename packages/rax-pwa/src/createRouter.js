@@ -23,21 +23,16 @@ const processGetInitialProps = (name, Component, routerProps) => {
   if (isFirstLoadFromSSR) {
     return <Component {...routerProps} />;
   } else {
-    try {
-      return Component.getInitialProps().then((props) => {
-        return <Component {...routerProps} {...props} />;
-      }).catch((e) => {
-        console.log(`${name} pageInitialProps error: ` + e);
-        return <Component {...routerProps} />;
-      });
-    } catch (e) {
+    return Component.getInitialProps().then((props) => {
+      return <Component {...routerProps} {...props} />;
+    }).catch((e) => {
       console.log(`${name} pageInitialProps error: ` + e);
       return <Component {...routerProps} />;
-    }
+    });
   }
 };
 
-function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
+function createRouter(pagesConfig, withSSR = false, InitialComponent = null, initialComponentProps = {}) {
   let pageHistory = withSSR ? createBrowserHistory() : createHashHistory();
   if (!withSSR) isFirstLoadFromSSR = false;
   pageHistory.listen(() => {
@@ -48,7 +43,7 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   // page alive
   let withPageAlive = false;
   let alivePageCache = {};
-  let updateComponentTrigger = () => { };
+  let updateComponentTrigger = function() { };
 
   // base config
   let routerProps = {};
@@ -59,11 +54,6 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
     history: pageHistory,
     routes: []
   };
-
-
-  if (initialComponent) {
-    routerConfig.initialComponent = initialComponent;
-  }
 
   Object.keys(pagesConfig).forEach((page) => {
     const route = {
@@ -163,13 +153,15 @@ function createRouter(pagesConfig, withSSR = false, initialComponent = null) {
   };
 
   return function(props) {
+    routerProps = { ...props, router };
+
+    // if (InitialComponent) {
+    //   routerConfig.InitialComponent = <InitialComponent {...routerProps} {...initialComponentProps} />;
+    // }
+
     const { component } = useRouter(routerConfig);
     const [updateTemp, setUpdateTemp] = useState(null);
-    if (isFirstLoadFromSSR) {
-      routerProps = { ...props, router };
-    } else {
-      routerProps = { router };
-    }
+
     updateComponentTrigger = setUpdateTemp;
     if (!withPageAlive) {
       return component;

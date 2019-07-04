@@ -101,16 +101,16 @@ class RaxDocumentPlugin {
 
       if (!withSSR && (withAppShell || withDocumentJs)) {
         if (withAppShell && withDocumentJs) {
-          let appShellOk = false;
-          let documentOk = false;
+          let appShellReady = false;
+          let documentReady = false;
           function next(type) {
             if (type === 'appShell') {
-              appShellOk = true;
+              appShellReady = true;
             }
             if (type === 'document') {
-              documentOk = true;
+              documentReady = true;
             }
-            if (appShellOk && documentOk) {
+            if (appShellReady && documentReady) {
               runCallback();
             }
           }
