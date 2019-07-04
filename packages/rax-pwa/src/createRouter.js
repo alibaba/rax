@@ -19,7 +19,7 @@ const router = {
   push, replace, go
 };
 
-const processGetInitialProps = (name, Component, routerProps) => {
+const getComponentWithInitialProps = (name, Component, routerProps) => {
   if (isFirstLoadFromSSR) {
     return <Component {...routerProps} />;
   } else {
@@ -80,7 +80,7 @@ function createRouter(pagesConfig, withSSR = false, InitialComponent = null, ini
             document.title = pagesConfig[page].title;
           }
           if (Page.getInitialProps) {
-            return processGetInitialProps(page, Page, routerProps);
+            return getComponentWithInitialProps(page, Page, routerProps);
           }
           return <Page {...routerProps} />;
         });
@@ -112,7 +112,7 @@ function createRouter(pagesConfig, withSSR = false, InitialComponent = null, ini
       .then(interopRequire)
       .then((Page) => {
         if (Page.getInitialProps) {
-          processGetInitialProps(pageName, Page, routerProps).then((Component) => {
+          getComponentWithInitialProps(pageName, Page, routerProps).then((Component) => {
             alivePageCache[pageName].component = Component;
             updateComponentTrigger(pageHistory.location.pathname + pageName);
           });

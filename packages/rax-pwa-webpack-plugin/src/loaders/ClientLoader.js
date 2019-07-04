@@ -13,7 +13,19 @@ module.exports = function(source) {
     const renderCodeStr = withAppShell === 'true' ?
       `render(createElement(AppShell, Object.assign(data || {}, { Component: function(props) {return createElement(${functionName}, props || {}); }})), document.getElementById('root'), { driver: DriverDOM, hydrate: true });` :
       `render(createElement(${functionName}, data || {}), document.getElementById('root'), { driver: DriverDOM, hydrate: true });`;
-    code = source.replace('export default', `var ${functionName} =`);
+    // Get target function name
+    if (code.indexOf('export default') !== -1) {
+      // export default function ...
+      // export default Index
+      code = source.replace('export default', `var ${functionName} =`);
+    } else {
+      // export { Index as default };
+      // export { Index }
+      const test = /export { (\S*) }/.exec(code);
+      if (test) {
+        code += `var ${functionName} = ${test[1]}`;
+      }
+    }
     code += `
       import {render} from 'rax';
       import * as DriverDOM from 'driver-dom';
