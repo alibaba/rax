@@ -76,21 +76,23 @@ function transformRenderFunction(ast, adapter) {
               testAttrName = adapter.elseif;
             }
             const rightNode = expression.right;
-            const containerNode = rightNode && !t.isNullLiteral(rightNode)
-              ? createJSX('block', {
-                [testAttrName]: t.stringLiteral('{{' + testValue + '}}'),
-              }, [rightNode])
-              : null;
+            if (t.isJSXElement(rightNode)) {
+              const containerNode = rightNode && !t.isNullLiteral(rightNode)
+                ? createJSX('block', {
+                  [testAttrName]: t.stringLiteral('{{' + testValue + '}}'),
+                }, [rightNode])
+                : null;
 
-            templateVariables[varName].value.children.push(containerNode);
+              templateVariables[varName].value.children.push(containerNode);
+            }
           }
         });
-        if (!t.isIfStatement(alternate)) {
-          alternate.body.map(({expression}) => {
+        if (!t.isIfStatement(alternate) && alternate) {
+          alternate.body.map(({ expression }) => {
             if (t.isAssignmentExpression(expression) && expression.operator === '=') {
               const varName = expression.left.name;
               const rightNode = expression.right;
-              if (rightNode) {
+              if (t.isJSXElement(rightNode)) {
                 const containerNode = createJSX('block', {
                   [adapter.else]: t.stringLiteral('{{true}}'),
                 }, [rightNode]);
