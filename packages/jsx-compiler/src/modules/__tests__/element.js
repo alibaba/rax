@@ -218,7 +218,7 @@ describe('Transform JSXElement', () => {
       const dynamicValue = _transform(ast, null, { if: 'a:if' });
       const code = genInlineCode(ast).code;
       expect(code).toEqual('<View><Text a:if="{{arr && arr.length > 0}}">Hello</Text></View>');
-      expect(genDynamicAttrs(dynamicValue)).toEqual('{}');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ arr: arr }');
     });
 
     it('unsupported', () => {

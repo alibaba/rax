@@ -147,13 +147,16 @@ function transformTemplate(ast, adapter, templateVariables) {
           if (t.isNullLiteral(consequent)) consequent = t.jsxText('');
           if (t.isNullLiteral(alternate)) alternate = t.jsxText('');
 
-          replacement.push(createJSX('block', {
-            [adapter.if]: t.stringLiteral(conditionValue),
-          }, [consequent]));
-
-          replacement.push(createJSX('block', {
-            [adapter.else]: null,
-          }, [alternate]));
+          if (t.isJSXElement(consequent)) {
+            replacement.push(createJSX('block', {
+              [adapter.if]: t.stringLiteral(conditionValue),
+            }, [consequent]));
+          }
+          if (t.isJSXElement(alternate)) {
+            replacement.push(createJSX('block', {
+              [adapter.else]: null,
+            }, [alternate]));
+          }
 
           path.replaceWithMultiple(replacement);
           break;
