@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const qs = require('querystring');
 const { isProductionMode } = require('../env');
+const mkTempDir = require('../mkTempDir');
 const getSPAPagesConfig = require('../getSPAPagesConfig');
 const getSPAEntryCodeStr = require('../getSPAEntryCodeStr');
 
@@ -33,11 +34,8 @@ class RaxPWAPlugin {
     // Mark the current environment
     const isProductionLikeMode = isProductionMode(compiler);
 
-    try {
-      fs.mkdirSync(pathConfig.appDirectory + '/.temp');
-    } catch (e) {
-
-    }
+    // Make temp directory
+    mkTempDir(pathConfig.appDirectory);
 
     /**
      * Project Code pre-processing when SPA is turned on

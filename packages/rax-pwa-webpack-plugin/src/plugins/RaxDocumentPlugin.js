@@ -7,6 +7,7 @@
 const fs = require('fs');
 const minify = require('html-minifier').minify;
 const { isProductionMode } = require('../env');
+const mkTempDir = require('../mkTempDir');
 const getSPAPagesConfig = require('../getSPAPagesConfig');
 const AppShellHandler = require('../AppShellHandler');
 const DocumentHandler = require('../DocumentHandler');
@@ -45,11 +46,8 @@ class RaxDocumentPlugin {
       appDirectory: pathConfig.appDirectory
     });
 
-    try {
-      fs.mkdirSync(pathConfig.appDirectory + '/.temp');
-    } catch (e) {
-
-    }
+    // Make temp directory
+    mkTempDir(pathConfig.appDirectory);
 
     if (withSPA) {
       const pagesConfig = getSPAPagesConfig(appConfig, pathConfig);
