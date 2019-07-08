@@ -1,6 +1,7 @@
 'use strict';
 const webpackMerge = require('webpack-merge');
 const getWebpackConfigBase = require('../webpack.config.base');
+
 const { getEntries } = require('../../index');
 
 const entries = getEntries();

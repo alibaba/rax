@@ -6,6 +6,7 @@
 
 .DS_Store
 .idea/
+.temp/
 
 node_modules/
 build/
