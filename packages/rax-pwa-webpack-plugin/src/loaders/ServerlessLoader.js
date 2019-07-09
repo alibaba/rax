@@ -23,6 +23,7 @@ module.exports = function(source) {
 
     const assets = assetsManifest['${page}'];
     const server = new RaxServer({
+      driver: appConfig.driver,
       document: {
         title: appConfig.title,
         ${appDocumentPath ? 'component: Document' : ''}

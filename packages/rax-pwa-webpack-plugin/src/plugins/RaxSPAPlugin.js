@@ -70,10 +70,15 @@ class RaxPWAPlugin {
       // SSR entry add ClientLoader
       const ClientLoader = require.resolve('../loaders/ClientLoader.js');
       const entries = compiler.options.entry;
+      const options = {
+        ssr: true,
+        withAppShell: withAppShell,
+        driver: appConfig.driver
+      };
       Object.keys(entries).forEach((key) => {
         const mainEntryFile = entries[key][0];
         if (mainEntryFile.indexOf(ClientLoader) === -1) {
-          entries[key][0] = `${ClientLoader}?${qs.stringify({ ssr: true, withAppShell: withAppShell })}!${mainEntryFile}`;
+          entries[key][0] = `${ClientLoader}?${qs.stringify(options)}!${mainEntryFile}`;
         }
       });
     }

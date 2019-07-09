@@ -39,15 +39,17 @@ const getSPAEntryCodeStr = (options) => {
   // process App Shell
   if (withAppShell) {
     importsCodeStr += `import Shell from '${pathConfig.appShell}';`;
-    renderCodeStr += 'render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });';
+    renderCodeStr += 'render(<Shell Component={PageComponent} {...initialProps} />, document.getElementById("root"), { driver: Driver, hydrate: true });';
   } else {
-    renderCodeStr += 'render(<PageComponent {...initialProps} />, document.getElementById("root"), { driver: DriverDOM, hydrate: true });';
+    renderCodeStr += 'render(<PageComponent {...initialProps} />, document.getElementById("root"), { driver: Driver, hydrate: true });';
   }
 
+  const driverStr = appConfig.driver === 'universal' ? "import Driver from 'driver-universal/lib/dom';" : "import * as Driver from 'driver-dom'";
+
   return `
-    import * as DriverDOM from 'driver-dom';
     import { createElement, render, useState } from 'rax';
     import { createRouter, getCurrentComponent } from 'rax-pwa';
+    ${driverStr}
     ${importsCodeStr}
 
     let initialProps;

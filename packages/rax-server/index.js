@@ -4,6 +4,12 @@ const { createElement } = require('rax');
 const renderer = require('rax-server-renderer');
 const { Document, Error: _Error} = require('rax-pwa');
 
+const UNIVERSAL = 'universal';
+const UNIVERSAL_UNIT = {
+  'defaultUnit': 'rem',
+  'remRatio': 100
+};
+
 module.exports = class Server {
   constructor(options = {}) {
     const {
@@ -91,8 +97,14 @@ async function renderToHTML(req, res, options) {
     scripts = [],
     document,
     shell,
-    renderOpts
+    driver,
+    renderOpts = {}
   } = options;
+
+  const optionsForServerRenderer = Object.assign(
+    renderOpts,
+    driver === UNIVERSAL ? UNIVERSAL_UNIT : null
+  );
 
   if (!component) {
     throw new PageNotFoundError(page);
@@ -109,14 +121,14 @@ async function renderToHTML(req, res, options) {
       ctx,
       shell,
       component,
-      renderOpts
+      optionsForServerRenderer
     });
     pageData = result.data;
     pageHtml = result.html;
   } else {
     pageData = await getInitialProps(component, ctx);
     const pageElement = createElement(component, pageData);
-    pageHtml = renderer.renderToString(pageElement, renderOpts);
+    pageHtml = renderer.renderToString(pageElement, optionsForServerRenderer);
   }
 
   const documentComponent = document.component || Document;
@@ -128,10 +140,11 @@ async function renderToHTML(req, res, options) {
     pageData: JSON.stringify(pageData),
     styles,
     scripts,
+    driver,
     ...documentData
   });
 
-  const html = '<!doctype html>' + renderer.renderToString(documentElement, renderOpts);
+  const html = '<!doctype html>' + renderer.renderToString(documentElement, optionsForServerRenderer);
 
   return html;
 }

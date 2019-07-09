@@ -16,11 +16,14 @@ class DevServer {
     // eslint-disable-next-line new-cap
     const router = express.Router();
 
-    const server = new RaxServer();
-
     const {
       pagesManifest,
+      appConfig = {}
     } = this.options;
+
+    const server = new RaxServer({
+      driver: appConfig.driver
+    });
 
     Object.keys(pagesManifest).forEach(page => {
       // _document, _shell

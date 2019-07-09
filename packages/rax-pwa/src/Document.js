@@ -7,7 +7,13 @@ function Document(props) {
     title,
     styles,
     scripts,
+    driver
   } = props;
+
+  const baseFontSizeResetScript = <script dangerouslySetInnerHTML={{__html: `
+    var remUnit = document.documentElement.clientWidth / 750;
+    document.documentElement.style.fontSize = remUnit * 100 + 'px';
+  `}} />;
 
   return (
     <html>
@@ -16,6 +22,7 @@ function Document(props) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no" />
         <title>{title || 'WebApp'}</title>
         {styles.map((style) => <link href={style} rel="stylesheet" />)}
+        {driver === 'universal' ? baseFontSizeResetScript : null}
       </head>
       <body>
         <div id="root" dangerouslySetInnerHTML={{ __html: pageHtml || '' }} />
