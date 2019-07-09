@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-runtime",
-  "version": "0.0.0-beta.4",
+  "version": "0.0.0-beta.5",
   "description": "Runtime for jsx2mp.",
   "main": "dist/jsx2mp-runtime.esm.js",
   "files": [
@@ -19,8 +19,5 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-filesize": "^6.1.0",
     "rollup-plugin-replace": "^2.2.0"
-  },
-  "dependencies": {
-    "kebab-case": "^1.0.0"
   }
 }

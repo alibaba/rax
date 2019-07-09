@@ -1,4 +1,4 @@
-import kebabCase from 'kebab-case';
+import kebabCase from './kebabCase';
 /**
  * Create style string.
  * @param style {Object|Array} React like acceptable style props.
