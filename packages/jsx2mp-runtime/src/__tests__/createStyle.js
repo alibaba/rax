@@ -2,6 +2,11 @@ import createStyle from '../createStyle';
 
 describe('Create style', () => {
   describe('Types', () => {
+    it('should accept null or undefined', () => {
+      expect(createStyle(null)).toEqual('');
+      expect(createStyle(undefined)).toEqual('');
+    });
+
     it('should accept object', () => {
       const style = createStyle({
         color: 'red',
