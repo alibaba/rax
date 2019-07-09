@@ -3,11 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 
 const TEMPLATE_AST = 'templateAST';
 const DYNAMIC_STYLES = 'dynamicStyles';
-const stylePrefix = '_style';
-
-function getStyleName(dynamicStyles) {
-  return stylePrefix + dynamicStyles.length;
-}
+const stylePrefix = '_s';
 
 /**
  * Transform style object.
@@ -17,44 +13,37 @@ function getStyleName(dynamicStyles) {
  *          return { _style0 };
  */
 function transformStyle(ast, dynamicStyles) {
+  const dynamicValue = {};
+
+  function getStyleName() {
+    return stylePrefix + Object.keys(dynamicValue).length;
+  }
+
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
-      if (
-        t.isJSXExpressionContainer(node.value)
-        && node.name.name === 'style'
-        && (
-          t.isArrayExpression(node.value.expression)
-          || t.isObjectExpression(node.value.expression)
-        )) {
-        let styleObjectExpression = node.value.expression;
+      if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
+        const styleObjectExpression = node.value.expression;
 
-        if (t.isArrayExpression(styleObjectExpression)) {
-          let properties = [];
-          styleObjectExpression.elements.forEach((ele) => {
-            properties = properties.concat(ele.properties);
-          });
-          styleObjectExpression = {
-            type: 'ObjectExpression',
-            properties,
-          };
-        }
-
-        const styleName = getStyleName(dynamicStyles);
-        dynamicStyles.push(styleObjectExpression);
-
-        // <tag style="{{_style0}}" />
+        // <tag style="{{ _s0 }}" />
+        const styleName = getStyleName();
         node.value = t.stringLiteral('{{' + styleName + '}}');
+        dynamicValue[styleName] = t.callExpression(t.identifier('__create_style__'), [styleObjectExpression]);
       }
     },
   });
+  return dynamicValue;
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    const dynamicStyles = [];
-    transformStyle(parsed[TEMPLATE_AST], dynamicStyles);
+    const dynamicValue = transformStyle(parsed[TEMPLATE_AST]);
 
-    parsed[DYNAMIC_STYLES] = dynamicStyles;
+    if (Object.keys(dynamicValue).length > 0) {
+      parsed.dynamicValue = Object.assign({}, parsed.dynamicValue, dynamicValue);
+      parsed.useCreateStyle = true;
+    }
   },
+
+  _transform: transformStyle,
 };
