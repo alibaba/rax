@@ -92,7 +92,7 @@ module.exports = function templateLoader(content) {
   }
 
   const requireRenderHelpers = createRequire(stringifyRequest(this, runtimeHelpers.renderHelpers));
-  const renderFnScopeVariables = withScope(renderFn, prerveredVars, 'data'); // => var state = data.state;
+  const renderFnScopeVariables = withScope(renderFn, prerveredVars, '__data__'); // => var state = data.state;
 
   const webviewHelpers = ast.isWebView ?
     `module.exports.getWebViewSource = function (data) { return ${ast.webViewSrc}; };
@@ -122,7 +122,7 @@ module.exports = function templateLoader(content) {
     return `require(${subTemplatePath})(__render__, __templates_ref__);`;
   }).join(';\n')}
   
-    function render(data) {
+    function render(__data__) {
       ${renderFnScopeVariables}
       return ${render};
     }
