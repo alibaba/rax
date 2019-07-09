@@ -57,7 +57,7 @@ class DevServer {
     this.app = app;
   }
 
-  close() {}
+  close() { }
 
   listen(port, hostname, callback) {
     this.hostname = hostname;

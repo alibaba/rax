@@ -180,12 +180,27 @@ const router = {
   }
 };
 
-function matchLocation({pathname, search}) {
+function matchLocation({ pathname, search }) {
   router.match(`${pathname}${search}`);
 }
 
+
+function getInitialComponent(routerConfig) {
+  let InitialComponent = [];
+
+  if (typeof routerConfig === 'function') {
+    routerConfig = routerConfig();
+  }
+
+  if (routerConfig.InitialComponent) {
+    InitialComponent = routerConfig.InitialComponent;
+  }
+
+  return InitialComponent;
+}
+
 export function useRouter(routerConfig) {
-  const [component, setComponent] = useState([]);
+  const [component, setComponent] = useState(getInitialComponent(routerConfig));
 
   useLayoutEffect(() => {
     if (typeof routerConfig === 'function') {
@@ -203,7 +218,9 @@ export function useRouter(routerConfig) {
     });
 
     // Init path match
-    matchLocation(history.location);
+    if (!routerConfig.InitialComponent) {
+      matchLocation(history.location);
+    }
 
     const unlisten = history.listen((location, action) => {
       matchLocation(location);

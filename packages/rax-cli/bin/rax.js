@@ -150,6 +150,10 @@ function askProjectInformaction(name, verbose) {
         {
           name: 'server sider rendering (ssr)',
           value: 'ssr'
+        },
+        {
+          name: 'single page application (spa)',
+          value: 'spa'
         }
       ],
       default: false
