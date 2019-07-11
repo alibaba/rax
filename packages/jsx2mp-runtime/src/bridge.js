@@ -88,7 +88,7 @@ function getComponentCycles(Klass) {
   return cycles;
 }
 
-function createProxyMethods(events, Klass) {
+function createProxyMethods(events) {
   const methods = {};
   if (Array.isArray(events)) {
     events.forEach(eventName => {
@@ -160,7 +160,7 @@ function createConfig(component, options) {
     ...cycles,
   };
 
-  const proxiedMethods = createProxyMethods(events, Klass);
+  const proxiedMethods = createProxyMethods(events,);
   if (isPage) {
     Object.assign(config, proxiedMethods);
   } else {
