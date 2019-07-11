@@ -83,6 +83,8 @@ function getComponentCycles(Klass) {
     cycles.deriveDataFromProps = function(nextProps) {
       const nextState = this.instance.state;
       this.instance._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps, nextState);
+      this.instance._trigger(RENDER, nextProps);
+      this.instance._trigger(COMPONENT_DID_UPDATE, nextProps, nextState);
     };
   }
   return cycles;
