@@ -44,7 +44,7 @@ const getSPAEntryCodeStr = (options) => {
     renderCodeStr += 'render(<PageComponent {...initialProps} />, document.getElementById("root"), { driver: Driver, hydrate: true });';
   }
 
-  const driverStr = appConfig.driver === 'universal' ? "import Driver from 'driver-universal/lib/dom';" : "import * as Driver from 'driver-dom'";
+  const driverStr = appConfig.driver === 'universal' ? "import Driver from 'driver-universal';" : "import * as Driver from 'driver-dom'";
 
   return `
     import { createElement, render, useState } from 'rax';

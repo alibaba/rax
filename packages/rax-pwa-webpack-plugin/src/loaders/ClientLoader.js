@@ -28,7 +28,7 @@ module.exports = function(source) {
       }
     }
 
-    const driverStr = driver === 'universal' ? "import Driver from 'driver-universal/lib/dom';" : "import * as Driver from 'driver-dom'";
+    const driverStr = driver === 'universal' ? "import Driver from 'driver-universal';" : "import * as Driver from 'driver-dom'";
 
     code += `
       import {render} from 'rax';
