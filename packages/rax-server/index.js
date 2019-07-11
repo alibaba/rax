@@ -102,8 +102,8 @@ async function renderToHTML(req, res, options) {
   } = options;
 
   const optionsForServerRenderer = Object.assign(
-    renderOpts,
-    driver === UNIVERSAL ? UNIVERSAL_UNIT : null
+    driver === UNIVERSAL ? UNIVERSAL_UNIT : {},
+    renderOpts
   );
 
   if (!component) {
