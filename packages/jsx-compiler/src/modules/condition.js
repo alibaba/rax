@@ -197,7 +197,7 @@ function transformConditionalExpression(path, expression, adapter) {
     consequentReplacement.push(t.jsxText(consequent.value));
   }
   if (t.isStringLiteral(alternate)) {
-    alternateReplacement.push(t.jsxText(alternate.value))
+    alternateReplacement.push(t.jsxText(alternate.value));
   }
 
   // Transform from `'s' + str` to `{{ 's' + str }}`

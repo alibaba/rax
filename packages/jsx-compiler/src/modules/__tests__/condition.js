@@ -25,10 +25,10 @@ describe('Transform condition', () => {
   it("transform condition's alternate is conditional expression", () => {
     const ast = parseExpression(`
       <View>{empty ? <Empty /> : loading ? null : 'xxx' }</View>
-    `)
+    `);
     _transformTemplate(ast, adapter, {});
 
-    expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>')
+    expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>');
   });
 });
 
