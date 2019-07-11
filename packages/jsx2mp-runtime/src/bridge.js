@@ -88,7 +88,7 @@ function getComponentCycles(Klass) {
   return cycles;
 }
 
-function createProxyMethods(events) {
+function createProxyMethods(events, Klass) {
   const methods = {};
   if (Array.isArray(events)) {
     events.forEach(eventName => {
@@ -97,7 +97,7 @@ function createProxyMethods(events) {
         const event = args[args.length - 1];
         let context = this.instance; // Context default to Rax component instance.
 
-        const dataset = event.target.dataset;
+        const dataset = event ? event.target.dataset : {};
         const datasetArgs = [];
         // Universal event args
         const datasetKeys = Object.keys(dataset);
@@ -160,7 +160,7 @@ function createConfig(component, options) {
     ...cycles,
   };
 
-  const proxiedMethods = createProxyMethods(events);
+  const proxiedMethods = createProxyMethods(events, Klass);
   if (isPage) {
     Object.assign(config, proxiedMethods);
   } else {
