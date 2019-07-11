@@ -205,6 +205,22 @@ describe('Transform JSXElement', () => {
       expect(genDynamicAttrs(dynamicValue)).toMatchSnapshot();
     });
 
+    it('should handle text', () => {
+      const rawText = '<Text style={styles.name}>{data && data.itemTitle ? data.itemTitle : \'\'}</Text>';
+      const ast = parseExpression(rawText);
+      const dynamicValue = _transform(ast);
+      expect(genInlineCode(ast).code).toEqual('<Text style="{{styles.name}}">{{ _d0 }}</Text>');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ _d0: data && data.itemTitle ? data.itemTitle : \'\' }');
+    });
+
+    it('should handle ligical expression', () => {
+      const ast = parseExpression('<View>{ arr && arr.length > 0 && <Text>Hello</Text> }</View>');
+      const dynamicValue = _transform(ast, null, { if: 'a:if' });
+      const code = genInlineCode(ast).code;
+      expect(code).toEqual('<View><Text a:if="{{arr && arr.length > 0}}">Hello</Text></View>');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ arr: arr }');
+    });
+
     it('unsupported', () => {
       expect(() => {
         _transform(parseExpression('<View>{a = 1}</View>'));

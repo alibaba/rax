@@ -9,11 +9,13 @@ const SUPER_COMPONENT = 'Component';
 const CREATE_APP = 'createApp';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
+const CREATE_STYLE = 'createStyle';
 
 const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
+const SAFE_CREATE_STYLE = '__create_style__';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
@@ -81,13 +83,13 @@ module.exports = {
       }
     }
 
-    addDefine(parsed.ast, options.type, userDefineType, eventHandlers);
+    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle);
     removeRaxImports(parsed.ast);
     removeDefaultImports(parsed.ast);
   },
 };
 
-function addDefine(ast, type, userDefineType, eventHandlers) {
+function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -117,6 +119,14 @@ function addDefine(ast, type, userDefineType, eventHandlers) {
           t.identifier(SUPER_COMPONENT)
         ));
       }
+
+      if (useCreateStyle) {
+        specifiers.push(t.importSpecifier(
+          t.identifier(SAFE_CREATE_STYLE),
+          t.identifier(CREATE_STYLE)
+        ));
+      }
+
       path.node.body.unshift(
         t.importDeclaration(
           specifiers,

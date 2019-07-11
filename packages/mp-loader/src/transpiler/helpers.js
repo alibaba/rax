@@ -51,10 +51,7 @@ function normalizeMustache(exp, el) {
    */
   let result = exp;
   if (exp && hasExpression(exp)) {
-    const isInScope = isInFor(el);
-    result = transformExpression(exp, undefined, {
-      scope: isInScope ? '' : 'data'
-    });
+    result = transformExpression(exp, undefined, { scope: '' });
   }
   return result;
 }

@@ -13,9 +13,9 @@ const createPage = function(rootContext, distContext, sourcePath) {
   const sourceFilePath = resolveModule(rootContext + '/index.js', './' + sourcePath, '.jsx') || resolveModule(rootContext + '/index.js', './' + sourcePath, '.js');
 
   const transformed = transformJSX(sourceFilePath, 'page');
-  createComponent(rootContext, distContext, transformed.usingComponents);
+  createComponent(rootContext, distContext, distContext, transformed.usingComponents);
   transformed.config = formatConfing(transformed.config, rootContext);
-  writeFiles(resolve(distContext, sourcePath), transformed, rootContext);
+  writeFiles(resolve(distContext, sourcePath), transformed, rootContext, distContext);
 };
 
 module.exports = {
