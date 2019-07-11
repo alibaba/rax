@@ -12,4 +12,14 @@ describe('Transform condition', () => {
 
     expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><View /></block><block a:else><Text /></block></View>');
   });
+
+  it('transform conditional expression in JSXContainer2', () => {
+    const ast = parseExpression(`
+      <View>{foo ? <View /> : <Text />}</View>
+    `);
+    const { dynamicValue } = _transformTemplate(ast, adapter, {});
+
+    expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><View /></block><block a:else><Text /></block></View>');
+    expect(Object.keys(dynamicValue)).toEqual(['foo']);
+  });
 });

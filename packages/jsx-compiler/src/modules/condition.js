@@ -112,7 +112,20 @@ function transformRenderFunction(ast, adapter) {
   return templateVariables;
 }
 
+function assignDynamicValue(root, dynamicValue) {
+  traverse(root, {
+    MemberExpression(path) {
+      dynamicValue[path.node.object.name] = path.node.object;
+      path.skip();
+    },
+    Identifier(path) {
+      dynamicValue[path.node.name] = path.node;
+    },
+  });
+}
+
 function transformTemplate(ast, adapter, templateVariables) {
+  const dynamicValue = {};
   traverse(ast, {
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
@@ -148,6 +161,7 @@ function transformTemplate(ast, adapter, templateVariables) {
           if (t.isNullLiteral(alternate)) alternate = t.jsxText('');
 
           if (t.isJSXElement(consequent)) {
+            assignDynamicValue(test, dynamicValue);
             replacement.push(createJSX('block', {
               [adapter.if]: t.stringLiteral(conditionValue),
             }, [consequent]));
@@ -175,12 +189,14 @@ function transformTemplate(ast, adapter, templateVariables) {
       }
     },
   });
+  return { dynamicValue };
 }
 
 module.exports = {
   parse(parsed, code, options) {
     const templateVariables = transformRenderFunction(parsed[RENDER_FN_PATH], options.adapter);
-    transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
+    const { dynamicValue } = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
+    Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
   },
 
   // For test cases.
