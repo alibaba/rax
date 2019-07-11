@@ -160,7 +160,7 @@ function createConfig(component, options) {
     ...cycles,
   };
 
-  const proxiedMethods = createProxyMethods(events,);
+  const proxiedMethods = createProxyMethods(events);
   if (isPage) {
     Object.assign(config, proxiedMethods);
   } else {
