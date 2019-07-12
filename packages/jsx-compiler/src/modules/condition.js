@@ -149,6 +149,7 @@ function assignDynamicValue(root, dynamicValue) {
 }
 
 function transformTemplate(ast, adapter, templateVariables) {
+  const dynamicValue = {};
   traverse(ast, {
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
@@ -180,6 +181,7 @@ function transformTemplate(ast, adapter, templateVariables) {
       }
     },
   });
+  return { dynamicValue };
 }
 
 function transformConditionalExpression(path, expression, adapter) {
