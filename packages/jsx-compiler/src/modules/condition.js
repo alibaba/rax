@@ -6,6 +6,7 @@ const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
+const dynamicValue = {};
 
 function transformRenderFunction(ast, adapter) {
   const templateVariables = {};
@@ -135,6 +136,18 @@ function transformRenderFunction(ast, adapter) {
   return templateVariables;
 }
 
+function assignDynamicValue(root, dynamicValue) {
+  traverse(root, {
+    MemberExpression(path) {
+      dynamicValue[path.node.object.name] = path.node.object;
+      path.skip();
+    },
+    Identifier(path) {
+      dynamicValue[path.node.name] = path.node;
+    },
+  });
+}
+
 function transformTemplate(ast, adapter, templateVariables) {
   traverse(ast, {
     JSXExpressionContainer(path) {
@@ -216,6 +229,7 @@ function transformConditionalExpression(path, expression, adapter) {
   if (t.isJSXElement(alternate)) alternateReplacement.push(alternate);
 
   if (consequentReplacement.length > 0) {
+    assignDynamicValue(test, dynamicValue);
     replacement.push(
       createJSX(
         'block',
@@ -246,7 +260,8 @@ module.exports = {
       parsed[RENDER_FN_PATH],
       options.adapter,
     );
-    transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
+    transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables)
+    Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
   },
 
   // For test cases.
