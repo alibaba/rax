@@ -107,11 +107,12 @@ function createProxyMethods(events) {
         const datasetKeys = Object.keys(dataset);
         if (datasetKeys.length > 0) {
           datasetKeys.forEach((key) => {
-            if ('argContext' === key) {
+            if ('argContext' === key || 'arg-context' === key) {
               context = dataset[key] === 'this' ? this.instance : dataset[key];
             } else if (isDatasetArg(key)) {
-              // eg. arg0, arg1
-              datasetArgs[key.slice(3)] = dataset[key];
+              // eg. arg0, arg1, arg-0, arg-1
+              const index = DATASET_ARG_REG.exec(key)[1];
+              datasetArgs[index] = dataset[key];
             }
           });
         } else {
@@ -201,7 +202,7 @@ function isDatasetKebabArg(str) {
   return DATASET_KEBAB_ARG_REG.test(str);
 }
 
-const DATASET_ARG_REG = /arg\d+/;
+const DATASET_ARG_REG = /arg-?(\d+)/;
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
 }
