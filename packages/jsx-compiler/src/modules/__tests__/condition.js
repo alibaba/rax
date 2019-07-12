@@ -28,8 +28,9 @@ describe('Transform condition', () => {
     `);
     _transformTemplate(ast, adapter, {});
 
-    expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>')
-    ;
+    expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>');
+  });
+
   it('transform conditional expression in JSXContainer2', () => {
     const ast = parseExpression(`
       <View>{foo ? <View /> : <Text />}</View>
