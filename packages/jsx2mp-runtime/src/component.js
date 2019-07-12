@@ -67,6 +67,7 @@ export default class Component {
         if (typeof this.render !== 'function') throw new Error('It seems have no render method.');
         this.__updating = true;
         Host.current = this;
+        this._hookID = 0;
         const nextProps = args[0] || this._internal.props;
         this.props.__proto__ = nextProps;
         const updated = this.render(this.props);
