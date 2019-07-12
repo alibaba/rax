@@ -260,7 +260,7 @@ module.exports = {
       parsed[RENDER_FN_PATH],
       options.adapter,
     );
-    transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables)
+    transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
     Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
   },
 
