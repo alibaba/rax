@@ -6,7 +6,6 @@ const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
-const dynamicValue = {};
 
 function transformRenderFunction(ast, adapter) {
   const templateVariables = {};
@@ -150,6 +149,7 @@ function assignDynamicValue(root, dynamicValue) {
 
 function transformTemplate(ast, adapter, templateVariables) {
   const dynamicValue = {};
+
   traverse(ast, {
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
@@ -160,7 +160,7 @@ function transformTemplate(ast, adapter, templateVariables) {
 
       switch (node.expression.type) {
         case 'ConditionalExpression': {
-          const replacement = transformConditionalExpression(path, path.node.expression, adapter);
+          const { replacement } = transformConditionalExpression(path, path.node.expression, adapter, dynamicValue);
           path.replaceWithMultiple(replacement);
           break;
         }
@@ -181,10 +181,11 @@ function transformTemplate(ast, adapter, templateVariables) {
       }
     },
   });
-  return { dynamicValue };
+
+  return dynamicValue;
 }
 
-function transformConditionalExpression(path, expression, adapter) {
+function transformConditionalExpression(path, expression, adapter, dynamicValue) {
   let { test, consequent, alternate } = expression;
   const conditionValue = t.isStringLiteral(test)
     ? test.value
@@ -198,14 +199,16 @@ function transformConditionalExpression(path, expression, adapter) {
       path,
       consequent,
       adapter,
-    );
+      dynamicValue
+    ).replacement;
   }
   if (t.isConditionalExpression(alternate)) {
     alternateReplacement = transformConditionalExpression(
       path,
       alternate,
       adapter,
-    );
+      dynamicValue
+    ).replacement;
   }
   // Transform from string listrial to JSXText Node
   if (t.isStringLiteral(consequent)) {
@@ -253,7 +256,7 @@ function transformConditionalExpression(path, expression, adapter) {
       ),
     );
   }
-  return replacement;
+  return { replacement, dynamicValue };
 }
 
 module.exports = {
@@ -262,7 +265,7 @@ module.exports = {
       parsed[RENDER_FN_PATH],
       options.adapter,
     );
-    transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
+    const dynamicValue = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
     Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
   },
 
