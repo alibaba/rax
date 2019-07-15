@@ -270,7 +270,7 @@ function transformTemplate(ast, scope = null, adapter) {
         if (t.isMemberExpression(node.expression.callee)
           && t.isIdentifier(node.expression.callee.property, { name: 'map' })) {
           // Skip `array.map(iterableFunction)`.
-          path.stop();
+          path.skip();
           break;
         } else {
           // Fall through
