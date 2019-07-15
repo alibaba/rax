@@ -124,6 +124,50 @@ function transformTemplate(ast, scope = null, adapter) {
         break;
       }
 
+      case 'CallExpression':
+        if (
+          isEventHandler(genExpression(parentPath.node.name))
+          && t.isMemberExpression(node.expression.callee)
+          && t.isIdentifier(node.expression.callee.property, { name: 'bind' })
+        ) {
+          const callExp = node.expression;
+          const args = callExp.arguments;
+          const attributes = parentPath.parentPath.node.attributes;
+          if (Array.isArray(args)) {
+            args.forEach((arg, index) => {
+              if (index === 0) {
+                // first arg is `this` context.
+                const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
+                  concise: true,
+                  comments: false,
+                }));
+                attributes.push(
+                  t.jsxAttribute(
+                    t.jsxIdentifier('data-arg-context'),
+                    t.stringLiteral(strValue)
+                  )
+                );
+              } else {
+                attributes.push(
+                  t.jsxAttribute(
+                    t.jsxIdentifier('data-arg-' + (index - 1)),
+                    t.stringLiteral(createBinding(genExpression(arg, {
+                      concise: true,
+                      comments: false,
+                    })))
+                  )
+                );
+              }
+            });
+          }
+          const eventHandler = applyEventHandler();
+          dynamicValue[eventHandler] = callExp.callee.object;
+          path.replaceWith(t.stringLiteral(eventHandler));
+          break;
+        } else {
+          // Fall through switch.
+        }
+
       // <tag foo={fn()} foo={fn.method()} foo={a ? 1 : 2} />
       // => <tag foo="{{_d0}}" foo="{{_d1}}" foo="{{_d2}}" />
       // return {
@@ -132,7 +176,6 @@ function transformTemplate(ast, scope = null, adapter) {
       //   _d1: a ? 1 : 2,
       // };
       case 'NewExpression':
-      case 'CallExpression':
       case 'ObjectExpression':
       case 'ArrayExpression':
       case 'UnaryExpression':

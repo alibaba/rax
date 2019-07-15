@@ -96,7 +96,10 @@ function transformList(ast, adapter) {
             args.forEach((arg, index) => {
               if (index === 0) {
                 // first arg is `this` context.
-                const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg));
+                const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
+                  concise: true,
+                  comments: false,
+                }));
                 attributes.push(
                   t.jsxAttribute(
                     t.jsxIdentifier('data-arg-context'),
@@ -107,7 +110,10 @@ function transformList(ast, adapter) {
                 attributes.push(
                   t.jsxAttribute(
                     t.jsxIdentifier('data-arg-' + (index - 1)),
-                    t.stringLiteral(createBinding(genExpression(arg)))
+                    t.stringLiteral(createBinding(genExpression(arg, {
+                      concise: true,
+                      comments: false,
+                    })))
                   )
                 );
               }
