@@ -31,14 +31,23 @@ describe('Transform condition', () => {
     expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>');
   });
 
-  it('transform conditional expression in JSXContainer2', () => {
+  it('skip list dynamic value', () => {
     const ast = parseExpression(`
-      <View>{foo ? <View /> : <Text />}</View>
+      <view className="content">
+          {list.map(item => {
+            return (
+              <text>{item.type === 'FLOW_WALLET' ? 'M' : '¥'}</text>
+            );
+          })}
+        </view>
     `);
     const dynamicValue = _transformTemplate(ast, adapter, {});
-
-    expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><View /></block><block a:else><Text /></block></View>');
-    expect(Object.keys(dynamicValue)).toEqual(['foo']);
+    expect(Object.keys(dynamicValue)).toEqual([]);
+    expect(genCode(ast).code).toEqual('<view className="content">\n' +
+      '          {list.map(item => {\n' +
+      '    return <text><block a:if="{{item.type === \'FLOW_WALLET\'}}">M</block><block a:else>¥</block></text>;\n' +
+      '  })}\n' +
+      '        </view>');
   });
 });
 

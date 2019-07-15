@@ -151,6 +151,12 @@ function transformTemplate(ast, adapter, templateVariables) {
   const dynamicValue = {};
 
   traverse(ast, {
+    CallExpression(path) {
+      const { node } = path;
+      if (t.isMemberExpression(node.callee) && t.isIdentifier(node.callee.property, { name: 'map' })) {
+        node.__isList = true;
+      }
+    },
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
       if (parentPath.isJSXAttribute()) {
@@ -186,6 +192,7 @@ function transformTemplate(ast, adapter, templateVariables) {
 }
 
 function transformConditionalExpression(path, expression, adapter, dynamicValue) {
+  const listCallExpPath = path.findParent(p => p.isCallExpression() && p.node.__isList);
   let { test, consequent, alternate } = expression;
   const conditionValue = t.isStringLiteral(test)
     ? test.value
@@ -234,7 +241,9 @@ function transformConditionalExpression(path, expression, adapter, dynamicValue)
   if (t.isJSXElement(alternate)) alternateReplacement.push(alternate);
 
   if (consequentReplacement.length > 0) {
-    assignDynamicValue(test, dynamicValue);
+    if (!listCallExpPath) {
+      assignDynamicValue(test, dynamicValue);
+    }
     replacement.push(
       createJSX(
         'block',
