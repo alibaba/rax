@@ -126,6 +126,15 @@ describe('Transform JSXElement', () => {
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" onKeyPress="_e1" data-arg-context="this" data-arg-0="{{ a: 1 }}" data-arg-context="this" data-arg-0="{{\'hello\'}}" />');
       expect(genDynamicAttrs(dynamicValue)).toEqual('{ _e0: onClick, _e1: this.handleClick }');
     });
+
+    it('skip list', () => {
+      const raw = `<View>{arr.map((val, idx) => {
+        return <Text>{idx}</Text>;
+      })}</View>`
+      const ast = parseExpression(raw);
+      const dynamicValue = _transform(ast);
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{}');
+    });
   });
 
   describe('element', () => {

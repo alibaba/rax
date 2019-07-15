@@ -266,6 +266,15 @@ function transformTemplate(ast, scope = null, adapter) {
         break;
       }
 
+      case 'CallExpression':
+        if (t.isMemberExpression(node.expression.callee)
+          && t.isIdentifier(node.expression.callee.property, { name: 'map' })) {
+          // Skip `array.map(iterableFunction)`.
+          path.stop();
+          break;
+        } else {
+          // Fall through
+        }
 
       // <tag foo={fn()} foo={fn.method()} foo={a ? 1 : 2} />
       // => <tag foo="{{_d0}}" foo="{{_d1}}" foo="{{_d2}}" />
@@ -275,7 +284,6 @@ function transformTemplate(ast, scope = null, adapter) {
       //   _d1: a ? 1 : 2,
       // };
       case 'NewExpression':
-      case 'CallExpression':
       case 'ArrayExpression':
       case 'UnaryExpression':
       case 'ConditionalExpression':
