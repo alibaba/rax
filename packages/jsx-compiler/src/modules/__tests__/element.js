@@ -130,7 +130,7 @@ describe('Transform JSXElement', () => {
     it('skip list', () => {
       const raw = `<View>{arr.map((val, idx) => {
         return <Text>{idx}</Text>;
-      })}</View>`
+      })}</View>`;
       const ast = parseExpression(raw);
       const dynamicValue = _transform(ast);
       expect(genDynamicAttrs(dynamicValue)).toEqual('{}');
