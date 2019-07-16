@@ -7,6 +7,9 @@ const createJSXBinding = require('../utils/createJSXBinding');
 const genExpression = require('../codegen/genExpression');
 
 function transformList(ast, adapter) {
+  let iters = 0;
+  const dynamicValue = {};
+
   traverse(ast, {
     CallExpression(path) {
       const { node, parentPath } = path;
@@ -15,66 +18,62 @@ function transformList(ast, adapter) {
       if (parentPath.parentPath.isJSXElement()) {
         if (t.isMemberExpression(callee)) {
           if (t.isIdentifier(callee.property, { name: 'map' })) {
+            const iterId = iters++;
+            const replacedIter = '_l' + iterId;
+            dynamicValue[replacedIter] = node;
+
             // { foo.map(fn) }
             let childNode = null;
-            let itemName = 'item';
-            let indexName = 'index';
+            const itemName = '_item' + iterId;
+            const indexName = '_index' + iterId;
+            const scope = `${replacedIter}[${indexName}]`;
+
             if (t.isFunction(args[0])) {
+              const properties = [];
+              traverse(path, {
+                Identifier(path) {
+                  const { node, parentPath } = path;
+                  if (parentPath.isJSXExpressionContainer()) {
+                    // <view foo={bar} />
+                    properties.push(t.objectProperty(node, node));
+                    parentPath.replaceWith(t.stringLiteral(createBinding(`${scope}.${node.name}`)));
+                  } else if (false) {
+                    // <view foo={{ bar }} />
+                  } else if (parentPath.isMemberExpression() && parentPath.node.object === node && parentPath.node !== callee) {
+                    // <view foo={{ bar: item.bar }} />
+                    properties.push(t.objectProperty(node, node));
+                    parentPath.replaceWith((t.identifier(scope)));
+                  }
+                },
+              });
+
               // { foo.map(() => {}) }
-              const returnEl = t.isBlockStatement(args[0].body)
+              let returnEl;
+              if (t.isBlockStatement(args[0].body)) {
                 // () => { return xxx }
-                ? getReturnElementPath(args[0].body).get('argument').node
+                const returnElPath = getReturnElementPath(args[0].body).get('argument');
+                returnEl = returnElPath.node;
+                returnElPath.replaceWith(t.objectExpression(properties));
+              } else {
                 // () => (<jsx></jsx)
-                : args[0].body;
+                const returnElPath = path.get('arguments')[0].get('body');
+                returnEl = returnElPath.node;
+                returnElPath.replaceWith(t.objectExpression(properties));
+              }
+
               childNode = returnEl;
-              const itemParam = args[0].params[0];
-              const indexParam = args[0].params[1];
-              if (itemParam) itemName = itemParam.name;
-              if (indexParam) indexName = indexParam.name;
+
+              parentPath.replaceWith(
+                createJSX('block', {
+                  [adapter.for]: t.stringLiteral(createBinding(replacedIter)),
+                  [adapter.forItem]: t.stringLiteral(itemName),
+                  [adapter.forIndex]: t.stringLiteral(indexName),
+                }, [childNode])
+              );
             } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
               // { foo.map(this.xxx) }
               throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
             }
-
-            parentPath.replaceWith(
-              createJSX('block', {
-                [adapter.for]: t.stringLiteral(createBinding(genExpression(callee.object))),
-                [adapter.forItem]: t.stringLiteral(itemName),
-                [adapter.forIndex]: t.stringLiteral(indexName),
-              }, [childNode])
-            );
-            traverse(path, {
-              JSXExpressionContainer(childPath) {
-                const { node } = childPath;
-
-                switch (node.expression.type) {
-                  case 'ObjectExpression':
-                    if (childPath.parentPath.isJSXAttribute()) {
-                      // <Image source={{ uri: item.picUrl }} />
-                      // ->
-                      // <Image source="{{ uri: item.picUrl }}" />
-                      childPath.replaceWith(
-                        t.stringLiteral(
-                          genExpression(t.jsxExpressionContainer(node.expression), { concise: true })
-                        )
-                      );
-                    }
-                    break;
-
-                  case 'Identifier':
-                    if (node.expression.name === itemName || node.expression.name === indexName) {
-                      if (childPath.parentPath.isJSXElement()) {
-                        // <Text>{id}</Text> -> <Text>{{ id }}</Text>
-                        childPath.replaceWith(createJSXBinding(node.expression.name));
-                      } else if (childPath.parentPath.isJSXAttribute()) {
-                        // <Text id={id} /> -> <Text id="{{id}}" />
-                        childPath.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
-                      }
-                    }
-                    break;
-                }
-              },
-            });
           } else {
             throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
           }
@@ -124,11 +123,14 @@ function transformList(ast, adapter) {
       }
     },
   });
+
+  return { dynamicValue };
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    transformList(parsed.templateAST, options.adapter);
+    const { dynamicValue } = transformList(parsed.templateAST, options.adapter);
+    Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
   },
 
   // For test cases.
