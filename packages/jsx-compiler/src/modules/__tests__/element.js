@@ -113,6 +113,19 @@ describe('Transform JSXElement', () => {
 
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
     });
+
+    it('bind methods', () => {
+      const ast = parseExpression(`
+        <View 
+          onClick={onClick.bind(this, { a: 1 })}
+          onKeyPress={this.handleClick.bind(this, 'hello')}
+        />
+      `);
+      const dynamicValue = _transform(ast);
+
+      expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" onKeyPress="_e1" data-arg-context="this" data-arg-0="{{ a: 1 }}" data-arg-context="this" data-arg-0="{{\'hello\'}}" />');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ _e0: onClick, _e1: this.handleClick }');
+    });
   });
 
   describe('element', () => {

@@ -59,7 +59,7 @@ export function useState(initialState, stateKey) {
         // After this one render finish, will continue run.
         hook[2] = newState;
         if (stateKey !== undefined) {
-          currentInstance._update({ [stateKey]: newState });
+          currentInstance.setState({ [stateKey]: newState });
         }
       }
     };

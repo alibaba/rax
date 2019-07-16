@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const genExpression = require('../codegen/genExpression');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
@@ -16,6 +17,9 @@ const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
+
+const USE_EFFECT = 'useEffect';
+const USE_STATE = 'useState';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
@@ -83,13 +87,15 @@ module.exports = {
       }
     }
 
-    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle);
+    const hooks = transformHooks(parsed.renderFunctionPath);
+
+    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeRaxImports(parsed.ast);
     removeDefaultImports(parsed.ast);
   },
 };
 
-function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle) {
+function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -118,6 +124,12 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle) {
           t.identifier(SAFE_SUPER_COMPONENT),
           t.identifier(SUPER_COMPONENT)
         ));
+      }
+
+      if (Array.isArray(hooks)) {
+        hooks.forEach(id => {
+          specifiers.push(t.importSpecifier(t.identifier(id), t.identifier(id)));
+        });
       }
 
       if (useCreateStyle) {
@@ -196,4 +208,26 @@ function getReplacer(defaultExportedPath) {
   } else {
     return null;
   }
+}
+
+function transformHooks(root) {
+  let ret = {};
+  traverse(root, {
+    CallExpression(path) {
+      const { node } = path;
+      if (t.isIdentifier(node.callee, { name: USE_STATE })) {
+        if (t.isVariableDeclarator(path.parentPath.node) && t.isArrayPattern(path.parentPath.node.id)) {
+          const firstId = path.parentPath.node.id.elements[0];
+          node.arguments[1] = t.stringLiteral(firstId.name);
+          ret[USE_STATE] = true;
+        } else {
+          console.warn(`useState should be called with following: const [foo, setFoo] = useState(originalFoo); instead of ${genExpression(path.parentPath.node)}`);
+        }
+      } else if (t.isIdentifier(node.callee, { name: USE_EFFECT })) {
+        ret[USE_EFFECT] = true;
+      }
+    }
+  });
+
+  return Object.keys(ret);
 }

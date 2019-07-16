@@ -5,6 +5,8 @@ import kebabCase from './kebabCase';
  * @return {String} Style expression string inline.
  */
 export default function createStyle(style) {
+  if (style == null) return '';
+
   const styleType = typeof style;
   let ret = '';
 
