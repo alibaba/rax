@@ -95,8 +95,8 @@ module.exports = function templateLoader(content) {
   const renderFnScopeVariables = withScope(renderFn, prerveredVars, '__data__'); // => var state = data.state;
 
   const webviewHelpers = ast.isWebView ?
-    `module.exports.getWebViewSource = function (data) { return ${ast.webViewSrc}; };
-  module.exports.getWebViewOnMessage = function (data) { return ${ast.webViewOnMessage}; };` : '';
+    `module.exports.getWebViewSource = function (__data__) { ${renderFnScopeVariables} return ${ast.webViewSrc}; };
+  module.exports.getWebViewOnMessage = function (__data__) { ${renderFnScopeVariables} return ${ast.webViewOnMessage}; };` : '';
 
   const subTemplateRender = tplAlias ? `__parent_templates_ref__['${tplAlias}'] = render` : '';
 
