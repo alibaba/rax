@@ -77,7 +77,7 @@ function transformRenderFunction(ast, adapter) {
              * 2. parentNode's alternate start & end is same as current path start & end
              */
             if (
-              t.isIfStatement(nodePath.parentPath) &&
+              nodePath.parentPath.isIfStatement() &&
               t.isIfStatement(parentPathAlternate) &&
               parentPathAlternate.start === start &&
               parentPathAlternate.end === end
@@ -86,9 +86,7 @@ function transformRenderFunction(ast, adapter) {
             }
             const rightNode = expression.right;
             if (t.isJSXElement(rightNode)) {
-              const containerNode =
-                rightNode && !t.isNullLiteral(rightNode)
-                  ? createJSX(
+              const containerNode = createJSX(
                     'block',
                     {
                       [testAttrName]: t.stringLiteral(
@@ -96,11 +94,11 @@ function transformRenderFunction(ast, adapter) {
                       ),
                     },
                     [rightNode],
-                  )
-                  : null;
+                  );
 
               templateVariables[varName].value.children.push(containerNode);
             }
+            nodePath.remove();
           }
         });
         if (!t.isIfStatement(alternate) && alternate) {
@@ -115,7 +113,7 @@ function transformRenderFunction(ast, adapter) {
                 const containerNode = createJSX(
                   'block',
                   {
-                    [adapter.else]: t.stringLiteral('{{true}}'),
+                    [adapter.else]: null,
                   },
                   [rightNode],
                 );
