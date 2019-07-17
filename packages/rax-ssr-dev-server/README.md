@@ -77,3 +77,17 @@ assets info for pages
 absolute path for assets manifest file
 
 If assets manifest is update with compilation, you can save it to a temp file and config this option. SSR will read the assets manifest before each render.
+
+### proxy
+
+Proxying some URLs can be useful when you have a separate API backend development server and you want to send API requests on the same domain.
+
+Config for proxy is same as [webpack-dev-server](https://webpack.js.org/configuration/dev-server/#devserverproxy).
+
+```json
+{
+  "proxy": {
+    "/api": "http://localhost:3000"
+  }
+}
+```
