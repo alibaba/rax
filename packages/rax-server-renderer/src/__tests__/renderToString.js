@@ -65,6 +65,43 @@ describe('renderToString', () => {
     expect(str).toBe('<div style="flex:1;font-size:16px;width:100%;"></div>');
   });
 
+  it('style with rpx', () => {
+    const style = {
+      flex: 1,
+      fontSize: '16rpx',
+      width: '100%'
+    };
+
+    function MyComponent(props, context) {
+      return <div style={style} />;
+    }
+
+    let str = renderToString(<MyComponent />);
+    expect(str).toBe('<div style="flex:1;font-size:2.13333vw;width:100%;"></div>');
+  });
+
+  it('style with lineHeight', () => {
+    const styles = {
+      container: {
+        lineHeight: 1
+      },
+      text: {
+        lineHeight: '75rpx'
+      }
+    };
+
+    function MyComponent(props, context) {
+      return (
+        <div style={styles.container}>
+          <p style={styles.text}>Hello</p>
+        </div>
+      );
+    }
+
+    let str = renderToString(<MyComponent />);
+    expect(str).toBe('<div style="line-height:1;"><p style="line-height:10vw;">Hello</p></div>');
+  });
+
   it('render with dangerouslySetInnerHTML', () => {
     function MyComponent(props, context) {
       return <div dangerouslySetInnerHTML={{__html: '<hr>'}} />;
