@@ -2,6 +2,7 @@ const { _transformTemplate, _transformRenderFunction } = require('../condition')
 const { parseExpression } = require('../../parser');
 const adapter = require('../../adapter');
 const genCode = require('../../codegen/genCode');
+const genExpression = require('../../codegen/genExpression');
 
 describe('Transform condition', () => {
   it('transform conditional expression in JSXContainer', () => {
@@ -48,6 +49,25 @@ describe('Transform condition', () => {
       '    return <text><block a:if="{{item.type === \'FLOW_WALLET\'}}">M</block><block a:else>¥</block></text>;\n' +
       '  })}\n' +
       '        </view>');
+  });
+});
+
+describe('Transiform condition render function', () => {
+  it ('basic case', () => {
+    const ast = parseExpression(`(function render() {
+        let vdom;
+        if (a > 0) {
+          vdom = <view>case 1</view>
+        }
+        if (a > 1) {
+          vdom = <view>case 2</view>
+        }
+        return vdom;
+      })
+    `);
+
+    const tmpVars = _transformRenderFunction(ast, adapter);
+    expect(genExpression(tmpVars.vdom.value)).toEqual(`<block><block a:if="{{a > 0}}"><view>case 1</view></block><block a:if="{{a > 1}}"><view>case 2</view></block></block>`);
   });
 });
 
