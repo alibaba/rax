@@ -273,7 +273,7 @@ module.exports = {
       options.adapter,
     );
     if (t.isIdentifier(parsed[TEMPLATE_AST]) && parsed[TEMPLATE_AST].name in templateVariables) {
-      parsed[TEMPLATE_AST] = templateVariables[parsed[TEMPLATE_AST].name];
+      parsed[TEMPLATE_AST] = templateVariables[parsed[TEMPLATE_AST].name].value;
     } else {
       const dynamicValue = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
       Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
