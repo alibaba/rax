@@ -87,14 +87,14 @@ function transformRenderFunction(ast, adapter) {
             const rightNode = expression.right;
             if (t.isJSXElement(rightNode)) {
               const containerNode = createJSX(
-                    'block',
-                    {
-                      [testAttrName]: t.stringLiteral(
-                        '{{' + testValue + '}}',
-                      ),
-                    },
-                    [rightNode],
-                  );
+                'block',
+                {
+                  [testAttrName]: t.stringLiteral(
+                    '{{' + testValue + '}}',
+                  ),
+                },
+                [rightNode],
+              );
 
               templateVariables[varName].value.children.push(containerNode);
             }

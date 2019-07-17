@@ -19,15 +19,55 @@ function transformList(ast, adapter) {
     ArrowFunctionExpression: { enter: traverseFunction, },
     FunctionExpression: { enter: traverseFunction },
     CallExpression: {
+      enter(path) {
+        const { node, parentPath } = path;
+        const { callee, arguments: args } = node;
+        if (parentPath.parentPath.isJSXAttribute()) {
+          if (t.isMemberExpression(callee) && t.isIdentifier(callee.property, { name: 'bind' })) {
+            // <tag onClick={props.onClick.bind(this, item)} />
+            // => <tag onClick={props.onClick.bind(this, item)} />
+            // parentPath => JSXContainerExpression
+            // parentPath.parentPath => JSXAttribute
+            // parentPath.parentPath.parentPath => JSXOpeningElement
+            const { attributes } = parentPath.parentPath.parentPath.node;
+            if (Array.isArray(args)) {
+              args.forEach((arg, index) => {
+                if (index === 0) {
+                  // first arg is `this` context.
+                  const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
+                    concise: true,
+                    comments: false,
+                  }));
+                  attributes.push(
+                    t.jsxAttribute(
+                      t.jsxIdentifier('data-arg-context'),
+                      t.stringLiteral(strValue)
+                    )
+                  );
+                } else {
+                  attributes.push(
+                    t.jsxAttribute(
+                      t.jsxIdentifier('data-arg-' + (index - 1)),
+                      t.jsxExpressionContainer(arg)
+                    )
+                  );
+                }
+              });
+            }
+            path.replaceWith(callee.object);
+          }
+        }
+      },
       exit(path) {
         const { node, parentPath } = path;
         const { callee, arguments: args } = node;
+        let replacedIter;
 
         if (parentPath.parentPath.isJSXElement()) {
           if (t.isMemberExpression(callee)) {
             if (t.isIdentifier(callee.property, { name: 'map' })) {
               const iterId = iters++;
-              const replacedIter = '_l' + iterId;
+              replacedIter = '_l' + iterId;
               dynamicValue[replacedIter] = node;
 
               // { foo.map(fn) }
@@ -84,43 +124,6 @@ function transformList(ast, adapter) {
             throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
           } else if (t.isFunction(callee)) {
             throw new Error(`Currently using IIFE in JSX templates is not supported: ${genExpression(node)} 。`);
-          }
-        } else if (parentPath.parentPath.isJSXAttribute()) {
-          if (t.isMemberExpression(callee) && t.isIdentifier(callee.property, { name: 'bind' })) {
-            // <tag onClick={props.onClick.bind(this, item)} />
-            // => <tag onClick={props.onClick.bind(this, item)} />
-            // parentPath => JSXContainerExpression
-            // parentPath.parentPath => JSXAttribute
-            // parentPath.parentPath.parentPath => JSXOpeningElement
-            const attributes = parentPath.parentPath.parentPath.node.attributes;
-            if (Array.isArray(args)) {
-              args.forEach((arg, index) => {
-                if (index === 0) {
-                  // first arg is `this` context.
-                  const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
-                    concise: true,
-                    comments: false,
-                  }));
-                  attributes.push(
-                    t.jsxAttribute(
-                      t.jsxIdentifier('data-arg-context'),
-                      t.stringLiteral(strValue)
-                    )
-                  );
-                } else {
-                  attributes.push(
-                    t.jsxAttribute(
-                      t.jsxIdentifier('data-arg-' + (index - 1)),
-                      t.stringLiteral(createBinding(genExpression(arg, {
-                        concise: true,
-                        comments: false,
-                      })))
-                    )
-                  );
-                }
-              });
-            }
-            path.replaceWith(callee.object);
           }
         }
       },

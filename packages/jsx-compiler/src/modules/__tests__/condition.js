@@ -53,7 +53,7 @@ describe('Transform condition', () => {
 });
 
 describe('Transiform condition render function', () => {
-  it ('basic case', () => {
+  it('basic case', () => {
     const ast = parseExpression(`(function render() {
         let vdom;
         if (a > 0) {
@@ -69,7 +69,7 @@ describe('Transiform condition render function', () => {
     `);
 
     const tmpVars = _transformRenderFunction(ast, adapter);
-    expect(genExpression(tmpVars.vdom.value)).toEqual(`<block><block a:if="{{a > 0}}"><view>case 1</view></block><block a:else><view>case 1.1</view></block><block a:if="{{a > 1}}"><view>case 2</view></block></block>`);
+    expect(genExpression(tmpVars.vdom.value)).toEqual('<block><block a:if="{{a > 0}}"><view>case 1</view></block><block a:else><view>case 1.1</view></block><block a:if="{{a > 1}}"><view>case 2</view></block></block>');
     expect(genExpression(ast)).toEqual(`function render() {
   let vdom;
   return vdom;

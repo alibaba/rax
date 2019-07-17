@@ -27,7 +27,7 @@ describe('Transform list', () => {
     const { dynamicValue } = _transformList(ast, adapter);
 
     expect(genCode(ast).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><item data-value={_l0[_index0].val} data-key={_l0[_index0].idx} /></block></View>');
-    expect(genDynamicAttrs(dynamicValue)).toEqual(`{ _l0: arr.map((val, idx) => ({ val: val, idx: idx })) }`)
+    expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((val, idx) => ({ val: val, idx: idx })) }');
   });
 
   it('transform array.map in JSXContainer', () => {
@@ -39,19 +39,19 @@ describe('Transform list', () => {
     const { dynamicValue } = _transformList(ast, adapter);
 
     expect(genCode(ast).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><item data-value={_l0[_index0].val} data-key={_l0[_index0].idx} /></block></View>');
-    expect(genDynamicAttrs(dynamicValue)).toEqual(`{ _l0: arr.map((val, idx) => { return { val: val, idx: idx }; }) }`)
+    expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((val, idx) => { return { val: val, idx: idx }; }) }');
   });
 
   it('bind props', () => {
     const ast = parseExpression(`
       <View>{arr.map((val, idx) => <item
-        onClick={props.onClick.bind(this, item, 1)}
+        onClick={props.onClick.bind(this, val, 1)}
       />)}</View>
     `);
     const { dynamicValue } = _transformList(ast, adapter);
 
-    expect(genCode(ast).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><item onClick={props.onClick} data-arg-context="this" data-arg-0={_l0[_index0].item} data-arg-1="{{1}}" /></block></View>');
-    expect(genDynamicAttrs(dynamicValue)).toEqual(`{ _l0: arr.map((val, idx) => ({ val: val, idx: idx })) }`)
+    expect(genCode(ast).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><item onClick={props.onClick} data-arg-context="this" data-arg-0={_l0[_index0].val} data-arg-1={1} /></block></View>');
+    expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((val, idx) => ({ val: val, idx: idx })) }');
   });
 
   it('bind loop variable', () => {
@@ -63,7 +63,7 @@ describe('Transform list', () => {
     expect(genCode(ast).code).toEqual(`<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><image source={{
       uri: _l0[_index0].item.picUrl
     }} resizeMode={resizeMode} /></block></View>`);
-    expect(genDynamicAttrs(dynamicValue)).toEqual(`{ _l0: arr.map((item, idx) => ({ item: item, idx: idx })) }`)
+    expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((item, idx) => ({ item: item, idx: idx })) }');
   });
 
   it('bind loop item', () => {
@@ -73,7 +73,7 @@ describe('Transform list', () => {
     const ast = parseExpression(raw);
     const { dynamicValue } = _transformList(ast, adapter);
     expect(genCode(ast).code).toEqual('<View class="coupon-list"><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><Coupon coupon={_l0[_index0].coupon} onClick={this.handleClick} data-arg-context="this" data-arg-0={_l0[_index0].coupon} /></block></View>');
-    expect(genDynamicAttrs(dynamicValue)).toEqual(`{ _l0: couponList.map(coupon => ({ coupon: coupon })) }`)
+    expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: couponList.map(coupon => ({ coupon: coupon })) }');
   });
 
   it('loop elements', () => {
@@ -81,9 +81,9 @@ describe('Transform list', () => {
       return <Text>{idx}</Text>;
     })}</View>`;
     const ast = parseExpression(raw);
-    const { dynamicValue } =_transformList(ast, adapter);
+    const { dynamicValue } = _transformList(ast, adapter);
 
     expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><Text>{_l0[_index0].idx}</Text></block></View>');
-    expect(genDynamicAttrs(dynamicValue)).toEqual(`{ _l0: [1, 2, 3].map((val, idx) => { return { val: val, idx: idx }; }) }`)
+    expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: [1, 2, 3].map((val, idx) => { return { val: val, idx: idx }; }) }');
   });
 });
