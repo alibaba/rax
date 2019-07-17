@@ -68,7 +68,9 @@ module.exports = function(inputSource, inputSourceMap) {
   this.cacheable();
   const callback = this.async();
 
-  const loaderOptions = loaderUtils.parseQuery(this.query);
+  debugger;
+  const loaderOptions = loaderUtils.getOptions(this);
+  debugger;
   const resourcePath = this.resourcePath;
   const sourceMapTarget = path.basename(resourcePath);
 
