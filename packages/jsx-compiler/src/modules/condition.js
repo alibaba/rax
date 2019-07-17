@@ -272,8 +272,12 @@ module.exports = {
       parsed[RENDER_FN_PATH],
       options.adapter,
     );
-    const dynamicValue = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
-    Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
+    if (t.isIdentifier(parsed[TEMPLATE_AST]) && parsed[TEMPLATE_AST].name in templateVariables) {
+      parsed[TEMPLATE_AST] = templateVariables[parsed[TEMPLATE_AST].name];
+    } else {
+      const dynamicValue = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
+      Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
+    }
   },
 
   // For test cases.
