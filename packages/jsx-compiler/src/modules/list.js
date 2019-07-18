@@ -106,13 +106,13 @@ function transformList(ast, adapter) {
 
                 childNode = returnEl;
 
-                parentPath.replaceWith(
-                  createJSX('block', {
-                    [adapter.for]: t.stringLiteral(createBinding(replacedIter)),
-                    [adapter.forItem]: t.stringLiteral(itemName),
-                    [adapter.forIndex]: t.stringLiteral(indexName),
-                  }, [childNode])
-                );
+                const listBlock = createJSX('block', {
+                  [adapter.for]: t.stringLiteral(createBinding(replacedIter)),
+                  [adapter.forItem]: t.stringLiteral(itemName),
+                  [adapter.forIndex]: t.stringLiteral(indexName),
+                }, [childNode]);
+                listBlock.__isList = true;
+                parentPath.replaceWith(listBlock);
               } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
                 // { foo.map(this.xxx) }
                 throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
@@ -136,7 +136,6 @@ function transformList(ast, adapter) {
 
 module.exports = {
   parse(parsed, code, options) {
-    console.log(genExpression(parsed.templateAST))
     const { dynamicValue } = transformList(parsed.templateAST, options.adapter);
     Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
   },

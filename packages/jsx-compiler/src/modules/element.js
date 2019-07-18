@@ -45,6 +45,11 @@ function transformTemplate(ast, scope = null, adapter) {
       }
 
       case 'TemplateLiteral': {
+
+        if (path.findParent(p => p && p.node && p.node.__isList)) {
+          break;
+        }
+
         if (path.isTaggedTemplateExpression()) break;
 
         const { quasis, expressions } = node.expression;
@@ -96,10 +101,10 @@ function transformTemplate(ast, scope = null, adapter) {
           const id = applyEventHandler();
           dynamicValue[id] = node.expression;
           path.replaceWith(t.stringLiteral(id));
+        } else if (/^_l\d+/.test(node.expression.name)) {
+          // Ignore list variables.
         } else {
-          const id = applyDynamicValue();
-          dynamicValue[id] = node.expression;
-          path.replaceWith(t.stringLiteral(createBinding(id)));
+          dynamicValue[node.expression.name] = node.expression;
         }
         break;
       }
