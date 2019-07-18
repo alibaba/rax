@@ -199,44 +199,43 @@ function transformConditionalExpression(path, expression, adapter, dynamicValue)
   let consequentReplacement = [];
   let alternateReplacement = [];
 
-  if (t.isConditionalExpression(consequent)) {
-    consequentReplacement = transformConditionalExpression(
-      path,
-      consequent,
-      adapter,
-      dynamicValue
-    ).replacement;
-  }
-  if (t.isConditionalExpression(alternate)) {
-    alternateReplacement = transformConditionalExpression(
-      path,
-      alternate,
-      adapter,
-      dynamicValue
-    ).replacement;
-  }
-  // Transform from string listrial to JSXText Node
-  if (t.isStringLiteral(consequent)) {
-    consequentReplacement.push(t.jsxText(consequent.value));
-  }
-  if (t.isStringLiteral(alternate)) {
-    alternateReplacement.push(t.jsxText(alternate.value));
+  if (t.isExpression(consequent)) {
+    if (t.isConditionalExpression(consequent)) {
+      consequentReplacement = transformConditionalExpression(
+        path,
+        consequent,
+        adapter,
+        dynamicValue
+      ).replacement;
+    } else if (/Literal$/.test(consequent.type)) {
+      // Transform from literal type to JSXText Node
+      const value = consequent.value ? String(consequent.value) : '';
+      consequentReplacement.push(t.jsxText(value));
+    } else if (t.isJSXElement(consequent)) {
+      consequentReplacement.push(consequent);
+    } else {
+      consequentReplacement.push(t.jsxExpressionContainer(consequent));
+    }
   }
 
-  // Transform from `'s' + str` to `{{ 's' + str }}`
-  if (t.isBinaryExpression(consequent)) {
-    consequentReplacement.push(t.jsxExpressionContainer(consequent));
+  if (t.isExpression(alternate)) {
+    if (t.isConditionalExpression(alternate)) {
+      alternateReplacement = transformConditionalExpression(
+        path,
+        alternate,
+        adapter,
+        dynamicValue
+      ).replacement;
+    } else if (t.isNullLiteral(alternate)) {
+      // Ignore null
+    } else if (/Literal$/.test(alternate.type)) {
+      alternateReplacement.push(t.jsxText(String(alternate.value)));
+    } else if (t.isJSXElement(alternate)) {
+      alternateReplacement.push(alternate);
+    } else {
+      alternateReplacement.push(t.jsxExpressionContainer(alternate));
+    }
   }
-  if (t.isBinaryExpression(alternate)) {
-    alternateReplacement.push(t.jsxExpressionContainer(alternate));
-  }
-
-  // Empty value to replace null literial.
-  if (t.isNullLiteral(consequent)) consequentReplacement.push(t.jsxText(''));
-  if (t.isNullLiteral(alternate)) alternateReplacement.push(alternate = t.jsxText(''));
-
-  if (t.isJSXElement(consequent)) consequentReplacement.push(consequent);
-  if (t.isJSXElement(alternate)) alternateReplacement.push(alternate);
 
   if (consequentReplacement.length > 0) {
     if (!listCallExpPath) {

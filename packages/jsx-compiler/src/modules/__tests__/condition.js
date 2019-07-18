@@ -50,6 +50,22 @@ describe('Transform condition', () => {
       '  })}\n' +
       '        </view>');
   });
+
+  it('transform conditional expression with list', () => {
+    const ast = parseExpression(`
+      <View>
+        { tabList ? tabList.map(tab => {
+          return <View>{tab}</View>
+        }) : 123 }
+      </View>
+    `);
+    _transformTemplate(ast, adapter, {});
+    expect(genCode(ast).code).toEqual(`<View>
+        <block a:if="{{tabList}}">{tabList.map(tab => {
+      return <View>{tab}</View>;
+    })}</block><block a:else>123</block>
+      </View>`);
+  });
 });
 
 describe('Transiform condition render function', () => {
