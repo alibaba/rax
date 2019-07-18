@@ -108,7 +108,7 @@ function transformList(ast, adapter) {
 
                 parentPath.replaceWith(
                   createJSX('block', {
-                    [adapter.for]: t.jsxExpressionContainer(t.identifier(replacedIter)),
+                    [adapter.for]: t.stringLiteral(createBinding(replacedIter)),
                     [adapter.forItem]: t.stringLiteral(itemName),
                     [adapter.forIndex]: t.stringLiteral(indexName),
                   }, [childNode])
