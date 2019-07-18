@@ -62,8 +62,9 @@ function transformList(ast, adapter) {
         const { node, parentPath } = path;
         const { callee, arguments: args } = node;
         let replacedIter;
+        const parentJSXElement = path.findParent(p => p.isJSXElement());
 
-        if (parentPath.parentPath.isJSXElement()) {
+        if (parentJSXElement) {
           if (t.isMemberExpression(callee)) {
             if (t.isIdentifier(callee.property, { name: 'map' })) {
               const iterId = iters++;
@@ -135,6 +136,7 @@ function transformList(ast, adapter) {
 
 module.exports = {
   parse(parsed, code, options) {
+    console.log(genExpression(parsed.templateAST))
     const { dynamicValue } = transformList(parsed.templateAST, options.adapter);
     Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
   },
