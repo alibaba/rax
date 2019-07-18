@@ -348,6 +348,11 @@ function transformTemplate(ast, scope = null, adapter) {
         path.remove();
         break;
 
+      // {<div></div>} => <div></div>
+      case 'JSXElement':
+        path.replaceWith(node.expression);
+        break;
+
       case 'ObjectExpression':
         break;
 
