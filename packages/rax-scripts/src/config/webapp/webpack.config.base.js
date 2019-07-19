@@ -7,7 +7,6 @@ const babelConfig = require('../babel.config');
 
 module.exports = function getWebpackBaseConfig(options = {}) {
   const target = options.target || 'web';
-  const viewportWidth = options.viewportWidth;
   return {
     mode: webpackConfig.mode,
     context: webpackConfig.context,
@@ -76,9 +75,7 @@ module.exports = function getWebpackBaseConfig(options = {}) {
                     },
                     stage: 3,
                   }),
-                  require('postcss-plugin-rpx2vw')({
-                    viewportWidth,
-                  }),
+                  require('postcss-plugin-rpx2vw')(),
                 ],
               }
             },
