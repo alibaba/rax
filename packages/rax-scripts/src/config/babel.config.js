@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const type = process.env.TYPE;
 const disableJSXPlus = process.env.DISABLE_JSX_PLUS;
 
-const config = module.exports = {
+const config = {
   presets: [
     require.resolve('@babel/preset-flow'),
     [
@@ -71,3 +71,5 @@ if (!disableJSXPlus) {
   config.plugins.push(require.resolve('babel-plugin-transform-jsx-class'));
   console.log(chalk.green('[JSX+] Stynax enabled.'));
 }
+
+module.exports = config;
