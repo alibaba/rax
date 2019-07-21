@@ -279,6 +279,12 @@ function transformTemplate(ast, scope = null, adapter) {
       // <tag key={this.props.name} key2={a.b} />
       // => <tag key="{{name}}" key2="{{a.b}}" />
       case 'MemberExpression': {
+        const obj = node.expression.object;
+        if (t.isIdentifier(obj) && !/^_l\d+/.test(obj.name)) {
+          const id = applyDynamicValue();
+          dynamicValue[id] = obj;
+          node.expression.object = t.identifier(id);
+        }
         let exp = genExpression(node.expression);
         exp = exp
           .replace(/this.props./, '')

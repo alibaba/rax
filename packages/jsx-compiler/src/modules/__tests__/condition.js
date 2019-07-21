@@ -44,11 +44,12 @@ describe('Transform condition', () => {
     `);
     const dynamicValue = _transformTemplate(ast, adapter, {});
     expect(Object.keys(dynamicValue)).toEqual([]);
-    expect(genCode(ast).code).toEqual('<view className="content">\n' +
-      '          {list.map(item => {\n' +
-      '    return <text><block a:if="{{item.type === \'FLOW_WALLET\'}}">M</block><block a:else>¥</block></text>;\n' +
-      '  })}\n' +
-      '        </view>');
+    expect(genCode(ast).code).toEqual(
+      `<view className=\"content\">
+          {list.map(item => {
+    return <text><block a:if={item.type === 'FLOW_WALLET'}>M</block><block a:else>¥</block></text>;
+  })}
+        </view>`);
   });
 
   it('transform conditional expression with list', () => {
