@@ -187,12 +187,12 @@ function transformTemplate(ast, scope = null, adapter) {
           if (t.isIdentifier(left) && !/^_l\d+/.test(left.name)) {
             const id = applyDynamicValue();
             dynamicValue[id] = Object.assign({}, left);
-            left.name = id;
+            test.left = t.identifier(id);
           }
           if (t.isIdentifier(right) && !/^_l\d+/.test(right.name)) {
             const id = applyDynamicValue();
-            dynamicValue[id] = Object.assign({}, right);
-            right.name = id;
+            dynamicValue[id] = right;
+            test.right = t.identifier(id);
           }
           path.replaceWith(t.stringLiteral(createBinding(genExpression(node.expression))));
           break;
