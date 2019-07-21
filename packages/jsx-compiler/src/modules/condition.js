@@ -98,7 +98,12 @@ function transformRenderFunction(ast, adapter) {
 
               templateVariables[varName].value.children.push(containerNode);
             }
-            nodePath.remove();
+            const parent = nodePath.findParent(p => p.isClassMethod({key: {
+              name: 'render'
+            }}));
+            if (parent) {
+              nodePath.remove();
+            }
           }
         });
         if (!t.isIfStatement(alternate) && alternate) {
