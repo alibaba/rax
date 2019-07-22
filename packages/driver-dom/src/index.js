@@ -1,3 +1,4 @@
+/* global DEVICE_WIDTH, VIEWPORT_WIDTH */
 /**
  * Driver for Web DOM
  **/
@@ -15,6 +16,7 @@ const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const TRUE = true;
 const EMPTY = '';
+const DEFAULT_VIEWPORT = 750;
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
 const UNITLESS_NUMBER_PROPS = {
@@ -80,6 +82,10 @@ export function setViewportWidth(width) {
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
+}
+
+function getClientWidth() {
+  return document.documentElement.clientWidth;
 }
 
 export function createBody() {
