@@ -26,7 +26,7 @@ describe('Transform list', () => {
     `);
     const { dynamicValue } = _transformList(ast, adapter);
 
-    expect(genCode(ast).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><item data-value={_l0[_index0].val} data-key={_l0[_index0].idx} /></block></View>');
+    expect(genCode(ast).code).toEqual('<View><block a:for="{{_l0}}" a:for-item="_item0" a:for-index="_index0"><item data-value={_l0[_index0].val} data-key={_l0[_index0].idx} /></block></View>');
     expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((val, idx) => ({ val: val, idx: idx })) }');
   });
 
@@ -38,7 +38,7 @@ describe('Transform list', () => {
     `);
     const { dynamicValue } = _transformList(ast, adapter);
 
-    expect(genCode(ast).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><item data-value={_l0[_index0].val} data-key={_l0[_index0].idx} /></block></View>');
+    expect(genCode(ast).code).toEqual( '<View><block a:for="{{_l0}}" a:for-item="_item0" a:for-index="_index0"><item data-value={_l0[_index0].val} data-key={_l0[_index0].idx} /></block></View>');
     expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((val, idx) => { return { val: val, idx: idx }; }) }');
   });
 
@@ -50,7 +50,7 @@ describe('Transform list', () => {
     `);
     const { dynamicValue } = _transformList(ast, adapter);
 
-    expect(genCode(ast).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><item onClick={props.onClick} data-arg-context="this" data-arg-0={_l0[_index0].val} data-arg-1={1} /></block></View>');
+    expect(genCode(ast).code).toEqual('<View><block a:for="{{_l0}}" a:for-item="_item0" a:for-index="_index0"><item onClick={props.onClick} data-arg-context="this" data-arg-0={_l0[_index0].val} data-arg-1={1} /></block></View>');
     expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((val, idx) => ({ val: val, idx: idx })) }');
   });
 
@@ -60,7 +60,7 @@ describe('Transform list', () => {
     `);
     const { dynamicValue } = _transformList(ast, adapter);
 
-    expect(genCode(ast).code).toEqual(`<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><image source={{
+    expect(genCode(ast).code).toEqual(`<View><block a:for=\"{{_l0}}\" a:for-item=\"_item0\" a:for-index=\"_index0\"><image source={{
       uri: _l0[_index0].item.picUrl
     }} resizeMode={resizeMode} /></block></View>`);
     expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((item, idx) => ({ item: item, idx: idx })) }');
@@ -72,7 +72,7 @@ describe('Transform list', () => {
       }</View>`;
     const ast = parseExpression(raw);
     const { dynamicValue } = _transformList(ast, adapter);
-    expect(genCode(ast).code).toEqual('<View class="coupon-list"><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><Coupon coupon={_l0[_index0].coupon} onClick={this.handleClick} data-arg-context="this" data-arg-0={_l0[_index0].coupon} /></block></View>');
+    expect(genCode(ast).code).toEqual('<View class="coupon-list"><block a:for="{{_l0}}" a:for-item="_item0" a:for-index="_index0"><Coupon coupon={_l0[_index0].coupon} onClick={this.handleClick} data-arg-context="this" data-arg-0={_l0[_index0].coupon} /></block></View>');
     expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: couponList.map(coupon => ({ coupon: coupon })) }');
   });
 
@@ -83,7 +83,7 @@ describe('Transform list', () => {
     const ast = parseExpression(raw);
     const { dynamicValue } = _transformList(ast, adapter);
 
-    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={_l0} a:for-item="_item0" a:for-index="_index0"><Text>{_l0[_index0].idx}</Text></block></View>');
+    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for="{{_l0}}" a:for-item="_item0" a:for-index="_index0"><Text>{_l0[_index0].idx}</Text></block></View>');
     expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: [1, 2, 3].map((val, idx) => { return { val: val, idx: idx }; }) }');
   });
 });
