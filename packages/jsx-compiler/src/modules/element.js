@@ -20,8 +20,6 @@ function transformTemplate(ast, scope = null, adapter) {
   // Handle attributes.
   function transformAttr(path) {
     const { node, parentPath } = path;
-    path.stop();
-
     switch (node.expression.type) {
       // <tag key={'string'} />
       // => <tag key="string" />
@@ -45,7 +43,6 @@ function transformTemplate(ast, scope = null, adapter) {
       }
 
       case 'TemplateLiteral': {
-
         if (path.findParent(p => p && p.node && p.node.__isList)) {
           break;
         }
@@ -103,8 +100,11 @@ function transformTemplate(ast, scope = null, adapter) {
           path.replaceWith(t.stringLiteral(id));
         } else if (/^_l\d+/.test(node.expression.name)) {
           // Ignore list variables.
+          path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
         } else {
-          dynamicValue[node.expression.name] = node.expression;
+          const id = applyDynamicValue();
+          dynamicValue[id] = node.expression;
+          path.replaceWith(t.stringLiteral(createBinding(id)));
         }
         break;
       }
@@ -180,11 +180,27 @@ function transformTemplate(ast, scope = null, adapter) {
       //   _d1: fn.method(),
       //   _d1: a ? 1 : 2,
       // };
+      case 'ConditionalExpression':
+        const { test } = node.expression;
+        if (t.isBinaryExpression(test)) {
+          const { left, right } = test;
+          if (t.isIdentifier(left) && !/^_l\d+/.test(left.name)) {
+            const id = applyDynamicValue();
+            dynamicValue[id] = Object.assign({}, left);
+            test.left = t.identifier(id);
+          }
+          if (t.isIdentifier(right) && !/^_l\d+/.test(right.name)) {
+            const id = applyDynamicValue();
+            dynamicValue[id] = right;
+            test.right = t.identifier(id);
+          }
+          path.replaceWith(t.stringLiteral(createBinding(genExpression(node.expression))));
+          break;
+        }
       case 'NewExpression':
       case 'ObjectExpression':
       case 'ArrayExpression':
       case 'UnaryExpression':
-      case 'ConditionalExpression':
       case 'RegExpLiteral': {
         const id = applyDynamicValue();
         dynamicValue[id] = node.expression;
@@ -263,6 +279,12 @@ function transformTemplate(ast, scope = null, adapter) {
       // <tag key={this.props.name} key2={a.b} />
       // => <tag key="{{name}}" key2="{{a.b}}" />
       case 'MemberExpression': {
+        const obj = node.expression.object;
+        if (t.isIdentifier(obj) && !/^_l\d+/.test(obj.name)) {
+          const id = applyDynamicValue();
+          dynamicValue[id] = obj;
+          node.expression.object = t.identifier(id);
+        }
         let exp = genExpression(node.expression);
         exp = exp
           .replace(/this.props./, '')
@@ -388,7 +410,7 @@ function transformTemplate(ast, scope = null, adapter) {
         // <View>{xxx}</View>
         transformElement(path);
       }
-    },
+    }
   });
 
   return dynamicValue;
