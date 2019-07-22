@@ -56,19 +56,30 @@ function transformList(ast, adapter) {
             path.replaceWith(callee.object);
           }
         }
-      },
-      exit(path) {
-        const { node, parentPath } = path;
-        const { callee, arguments: args } = node;
+
         let replacedIter;
         const parentJSXElement = path.findParent(p => p.isJSXElement());
 
         if (parentJSXElement) {
           if (t.isMemberExpression(callee)) {
             if (t.isIdentifier(callee.property, { name: 'map' })) {
+              const parentListJSXElementPath = path.findParent(p => p.isJSXElement() && p.node.__isList);
+              const parentListMeta = parentListJSXElementPath
+                ? parentListJSXElementPath.node.__listMeta
+                : null;
               const iterId = iters++;
-              replacedIter = '_l' + iterId;
-              dynamicValue[replacedIter] = node;
+              if (parentListMeta) {
+                replacedIter = parentListMeta.itemName + '.' + '_l' + iterId;
+                const key = t.identifier('_l' + iterId);
+                parentListMeta.properties.push(t.objectProperty(key, node));
+                // Reset name to original for callee.object.
+                if (t.isIdentifier(node.callee.object) && node.callee.object.__originalName) {
+                  node.callee.object.name = node.callee.object.__originalName;
+                }
+              } else {
+                replacedIter = '_l' + iterId;
+                dynamicValue[replacedIter] = node;
+              }
 
               // { foo.map(fn) }
               let childNode = null;
@@ -81,8 +92,19 @@ function transformList(ast, adapter) {
                 args[0].params.forEach((id, index) => {
                   if (!t.isIdentifier(id)) return;
                   const originalName = id.name;
-                  const replacement = `${scope}.${id.name}`;
-                  fnScope.rename(id.name, replacement);
+                  const replacement = `${itemName}.${id.name}`;
+                  path.traverse({
+                    Identifier(idPath) {
+                      if (idPath.node === id) return;
+                      if (idPath.node.__skipReplace) return;
+                      if (idPath.node.name === originalName) {
+                        idPath.node.__originalName = idPath.node.name;
+                        idPath.node.name = replacement;
+                        // Mark for element to not add to dynamic value.
+                        idPath.node.__skipDynamicValue = true;
+                      }
+                    }
+                  });
 
                   // Reset params to original.
                   const key = args[0].params[index] = t.identifier(originalName);
@@ -111,19 +133,15 @@ function transformList(ast, adapter) {
                   [adapter.forIndex]: t.stringLiteral(indexName),
                 }, [childNode]);
                 listBlock.__isList = true;
+                listBlock.__listMeta = {
+                  itemName, indexName, properties
+                };
                 parentPath.replaceWith(listBlock);
               } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
                 // { foo.map(this.xxx) }
                 throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
               }
-            } else {
-              throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
             }
-          } else if (t.isIdentifier(callee)) {
-            // { foo(args) }
-            throw new Error(`Syntax conversion using ${genExpression(node)} in JSX templates is currently not supported, and can be replaced with static templates or state calculations in advance.`);
-          } else if (t.isFunction(callee)) {
-            throw new Error(`Currently using IIFE in JSX templates is not supported: ${genExpression(node)} 。`);
           }
         }
       },

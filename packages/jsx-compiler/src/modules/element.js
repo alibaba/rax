@@ -266,7 +266,9 @@ function transformTemplate(ast, scope = null, adapter) {
           const value = node.expression.name || node.expression.value;
           path.replaceWith(createJSXBinding('' + value));
           // Only idenfitier should be listed in dynamic values.
-          if (t.isIdentifier(node.expression)) dynamicValue[value] = node.expression;
+          if (t.isIdentifier(node.expression) && !node.expression.__skipDynamicValue) {
+            dynamicValue[value] = node.expression;
+          }
         }
         break;
       }
@@ -351,7 +353,9 @@ function transformTemplate(ast, scope = null, adapter) {
               path.skip();
             },
             Identifier(path) {
-              dynamicValue[path.node.name] = path.node;
+              if (!path.node.__skipDynamicValue) {
+                dynamicValue[path.node.name] = path.node;
+              }
             },
           });
           path.replaceWith(node.expression.right);
