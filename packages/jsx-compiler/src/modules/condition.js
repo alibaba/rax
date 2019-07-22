@@ -59,6 +59,7 @@ function transformRenderFunction(ast, adapter) {
             t.isAssignmentExpression(expression) &&
             expression.operator === '='
           ) {
+            let shouldRemove = false;
             const varName = expression.left.name;
             if (!templateVariables[varName].value) {
               templateVariables[expression.left.name].value = createJSX(
@@ -97,8 +98,12 @@ function transformRenderFunction(ast, adapter) {
               );
 
               templateVariables[varName].value.children.push(containerNode);
+              shouldRemove = true;
             }
-            nodePath.remove();
+
+            if (shouldRemove) {
+              nodePath.remove();
+            }
           }
         });
         if (!t.isIfStatement(alternate) && alternate) {

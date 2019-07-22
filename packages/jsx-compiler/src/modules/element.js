@@ -381,9 +381,11 @@ function transformTemplate(ast, scope = null, adapter) {
     },
     JSXExpressionContainer(path) {
       const { parentPath } = path;
+      // <View foo={bar} />
       if (parentPath.isJSXAttribute()) {
         transformAttr(path);
       } else if (parentPath.isJSXElement()) {
+        // <View>{xxx}</View>
         transformElement(path);
       }
     },
