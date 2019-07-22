@@ -102,7 +102,9 @@ function styleToCSS(style, options = {}) {
       // Noop
     } else if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
       unit = options.defaultUnit;
-    } else if (typeof val === 'string' && val.indexOf('rpx') > -1) {
+    }
+
+    if (typeof val === 'string' && val.indexOf('rpx') > -1 || unit === 'rpx') {
       val = rpx2vw(val, options);
       unit = val === 0 ? '' : 'vw';
     }

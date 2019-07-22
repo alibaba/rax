@@ -102,6 +102,30 @@ describe('renderToString', () => {
     expect(str).toBe('<div style="line-height:1;"><p style="line-height:10vw;">Hello</p></div>');
   });
 
+  it('render with options which set default unit to rpx', () => {
+    const styles = {
+      container: {
+        lineHeight: 1
+      },
+      text: {
+        fontSize: 75
+      }
+    };
+
+    function MyComponent(props, context) {
+      return (
+        <div style={styles.container}>
+          <p style={styles.text}>Hello</p>
+        </div>
+      );
+    }
+
+    let str = renderToString(<MyComponent />, {
+      defaultUnit: 'rpx'
+    });
+    expect(str).toBe('<div style="line-height:1;"><p style="font-size:10vw;">Hello</p></div>');
+  });
+
   it('render with dangerouslySetInnerHTML', () => {
     function MyComponent(props, context) {
       return <div dangerouslySetInnerHTML={{__html: '<hr>'}} />;
