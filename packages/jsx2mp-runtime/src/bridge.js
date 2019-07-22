@@ -32,7 +32,7 @@ function getPageCycles(Klass) {
         path: getCurrentPageUrl(),
         query: options,
       };
-      this.setData(this.instance.state);
+      this.data = this.instance.state;
       this.instance._trigger(COMPONENT_WILL_MOUNT);
       this.instance._trigger(RENDER);
     },
@@ -57,7 +57,7 @@ function getComponentCycles(Klass) {
     // `this` point to page/component insatnce.
     this.instance = new Klass(this.props);
     this.instance._setInternal(this);
-    this.setData(this.instance.state);
+    this.data = this.instance.state;
     this.instance._trigger(COMPONENT_WILL_MOUNT);
     this.instance._trigger(RENDER);
     if (!isSupportComponent2) {
