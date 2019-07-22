@@ -1,6 +1,8 @@
 /**
  * Driver for Web DOM
  **/
+import { convertUnit, setRem } from 'style-unit';
+
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -48,6 +50,33 @@ let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
 let isHydrating = false;
+
+let deviceWidth = null;
+let viewportWidth = null;
+
+function getDeviceWidth() {
+  return deviceWidth || typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || getClientWidth();
+}
+
+/**
+ * Manually set device width.
+ * @param width {Number} Device pixel width.
+ */
+export function setDeviceWidth(width) {
+  deviceWidth = width;
+}
+
+function getViewportWidth() {
+  return viewportWidth || typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || DEFAULT_VIEWPORT;
+}
+
+/**
+ * Manually set viewport width.
+ * @param width {Number} Viewport pixel width.
+ */
+export function setViewportWidth(width) {
+  viewportWidth = width;
+}
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
@@ -123,6 +152,18 @@ function findHydrationChild(parent) {
 }
 
 export function createElement(type, props, component) {
+  // Transformed
+  if (props.hasOwnProperty(STYLE)) {
+    const style = props[STYLE];
+    const transformedStyle = {};
+    for (let prop in style) {
+      if (style.hasOwnProperty(prop)) {
+        transformedStyle[prop] = convertUnit(style[prop], prop);
+      }
+    }
+    props[STYLE] = transformedStyle;
+  }
+
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
 
@@ -303,6 +344,7 @@ export function setStyle(node, style) {
 }
 
 export function beforeRender({ hydrate }) {
+  setRem(getDeviceWidth() / getViewportWidth());
   isHydrating = hydrate;
 }
 
