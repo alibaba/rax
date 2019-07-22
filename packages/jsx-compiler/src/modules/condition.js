@@ -103,7 +103,7 @@ function transformRenderFunction(ast, adapter) {
             const parent = nodePath.findParent(p => p.isClassMethod({key: {
               name: 'render'
             }}));
-            
+
             if (parent && shouldRemove) {
               nodePath.remove();
             }

@@ -13,7 +13,7 @@ import {
   COMPONENT_WILL_UNMOUNT,
   COMPONENT_WILL_RECEIVE_PROPS,
 } from './cycles';
-import {enqueueRender} from "./enqueueRender";
+import {enqueueRender} from './enqueueRender';
 
 export default class Component {
   constructor() {
