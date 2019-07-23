@@ -70,7 +70,6 @@ function transformTemplate(ast, scope = null, adapter) {
           nodes.unshift(t.stringLiteral(''));
         }
 
-
         let retString = '';
         for (let i = 0; i < nodes.length; i++) {
           if (t.isStringLiteral(nodes[i])) {
@@ -260,6 +259,18 @@ function transformTemplate(ast, scope = null, adapter) {
       case 'NumericLiteral':
       case 'BooleanLiteral':
       case 'Identifier': {
+        if (path.findParent(p => {
+          return p.isJSXElement() && p.node.openingElement.attributes.some((attr) => {
+            if (t.isJSXAttribute(attr)) {
+              if (
+                attr.name.name === 'a:for-item'
+                || attr.name.name === 'a:for-index'
+              ) return attr.value.value === node.expression.name;
+              return false;
+            }
+          });
+        })) break;
+
         if (t.isIdentifier(node.expression, { name: 'undefined' })) {
           path.remove();
         } else {
@@ -282,6 +293,19 @@ function transformTemplate(ast, scope = null, adapter) {
       // => <tag key="{{name}}" key2="{{a.b}}" />
       case 'MemberExpression': {
         const obj = node.expression.object;
+        if (path.findParent(p => {
+          return p.isJSXElement() && p.node.openingElement.attributes.some((attr) => {
+            if (t.isJSXAttribute(attr)) {
+              console.log(111, attr.value.value, attr.name.name)
+              if (
+                attr.name.name === 'a:for-item'
+                || attr.name.name === 'a:for-index'
+              ) return attr.value.value === obj.name;
+              return false;
+            }
+          });
+        })) break;
+
         if (t.isIdentifier(obj) && !/^_l\d+/.test(obj.name)) {
           const id = applyDynamicValue();
           dynamicValue[id] = obj;
