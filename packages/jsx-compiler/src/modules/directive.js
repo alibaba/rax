@@ -169,8 +169,8 @@ module.exports = {
     if (parsed.renderFunctionPath) {
       Object.assign(
         parsed.dynamicValue = parsed.dynamicValue || {},
-        transformDirectiveCondition(parsed.renderFunctionPath),
-        transformDirectiveList(parsed.renderFunctionPath),
+        transformDirectiveCondition(parsed.templateAST),
+        transformDirectiveList(parsed.templateAST),
       );
     }
   },
