@@ -58,7 +58,6 @@ export default class Component {
     currentCycles.push(fn);
   }
 
-
   /**
    * Trigger lifecycle with args.
    * @param cycle {String} Name of lifecycle.
