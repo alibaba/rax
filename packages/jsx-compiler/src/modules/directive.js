@@ -114,6 +114,10 @@ function transformDirectiveList(ast) {
                 t.stringLiteral(arg.name)
               )
             );
+
+            // Mark skip ids.
+            const skipIds = node.skipIds = node.skipIds || new Map();
+            skipIds.set(arg.name, true);
           });
           node.__jsxlist = null;
         }

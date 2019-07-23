@@ -221,14 +221,21 @@ function transformTemplate(ast, scope = null, adapter) {
       // => <tag isFoo="{{a.length > 1}}" />
       case 'BinaryExpression':
       case 'LogicalExpression': {
+        const elThatContainSkipIds = path.findParent(p => p.isJSXElement() && p.node.skipIds);
+        const skipIds = elThatContainSkipIds
+          && elThatContainSkipIds.node
+          && elThatContainSkipIds.node.skipIds;
         traverse(node.expression, {
-          Identifier(path) {
-            const parentMem = path.findParent(p => p.isMemberExpression());
-            if (parentMem
-              && parentMem.node.object === path.node
-              || parentMem === null
-            ) {
-              dynamicValue[path.node.name] = path.node;
+          Identifier(idPath) {
+            const parentMem = idPath.findParent(p => p.isMemberExpression());
+            if (parentMem && parentMem.node.object === idPath.node) {
+              if (skipIds && !skipIds.has(idPath.node.name)) {
+                dynamicValue[idPath.node.name] = idPath.node;
+              } else if (!skipIds) {
+                dynamicValue[idPath.node.name] = idPath.node;
+              }
+            } else if (!parentMem) {
+              dynamicValue[idPath.node.name] = idPath.node;
             }
           },
         });
@@ -270,17 +277,7 @@ function transformTemplate(ast, scope = null, adapter) {
       case 'NumericLiteral':
       case 'BooleanLiteral':
       case 'Identifier': {
-        if (path.findParent(p => {
-          return p.isJSXElement() && p.node.openingElement.attributes.some((attr) => {
-            if (t.isJSXAttribute(attr)) {
-              if (
-                attr.name.name === 'a:for-item'
-                || attr.name.name === 'a:for-index'
-              ) return attr.value.value === node.expression.name;
-              return false;
-            }
-          });
-        })) {
+        if (t.isIdentifier(node.expression) && path.findParent(p => p.isJSXElement() && p.node.skipIds && p.node.skipIds.has(node.expression.name || node.expression))) {
           path.replaceWith(createJSXBinding(genExpression(node.expression)));
           break;
         }
@@ -307,17 +304,7 @@ function transformTemplate(ast, scope = null, adapter) {
       // => <tag key="{{name}}" key2="{{a.b}}" />
       case 'MemberExpression': {
         const obj = node.expression.object;
-        if (path.findParent(p => {
-          return p.isJSXElement() && p.node.openingElement.attributes.some((attr) => {
-            if (t.isJSXAttribute(attr)) {
-              if (
-                attr.name.name === 'a:for-item'
-                || attr.name.name === 'a:for-index'
-              ) return attr.value.value === obj.name;
-              return false;
-            }
-          });
-        })) {
+        if (path.findParent(p => p.isJSXElement() && p.node.skipIds && p.node.skipIds.has(obj.name))) {
           path.replaceWith(createJSXBinding(genExpression(node.expression)));
           break;
         }
