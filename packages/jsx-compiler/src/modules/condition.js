@@ -100,11 +100,8 @@ function transformRenderFunction(ast, adapter) {
               templateVariables[varName].value.children.push(containerNode);
               shouldRemove = true;
             }
-            const parent = nodePath.findParent(p => p.isClassMethod({key: {
-              name: 'render'
-            }}));
 
-            if (parent && shouldRemove) {
+            if (shouldRemove) {
               nodePath.remove();
             }
           }
