@@ -81,11 +81,8 @@ function transformDirectiveCondition(ast) {
             ? t.jsxAttribute(t.jsxIdentifier(miniappDirectives[type]))
             : t.jsxAttribute(
               t.jsxIdentifier(miniappDirectives[type]),
-              t.stringLiteral(`{{${genExpression(value)}}}`)
+              t.jsxExpressionContainer(value)
             );
-          if (t.isIdentifier(value)) {
-            dynamicValue[value.name] = value;
-          }
           attributes.push(attr);
         });
       }

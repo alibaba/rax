@@ -221,6 +221,17 @@ function transformTemplate(ast, scope = null, adapter) {
       // => <tag isFoo="{{a.length > 1}}" />
       case 'BinaryExpression':
       case 'LogicalExpression': {
+        traverse(node.expression, {
+          Identifier(path) {
+            const parentMem = path.findParent(p => p.isMemberExpression());
+            if (parentMem
+              && parentMem.node.object === path.node
+              || parentMem === null
+            ) {
+              dynamicValue[path.node.name] = path.node;
+            }
+          },
+        });
         path.replaceWith(t.stringLiteral(createBinding(genExpression(node.expression))));
         break;
       }
@@ -296,7 +307,6 @@ function transformTemplate(ast, scope = null, adapter) {
         if (path.findParent(p => {
           return p.isJSXElement() && p.node.openingElement.attributes.some((attr) => {
             if (t.isJSXAttribute(attr)) {
-              console.log(111, attr.value.value, attr.name.name)
               if (
                 attr.name.name === 'a:for-item'
                 || attr.name.name === 'a:for-index'
