@@ -17,6 +17,8 @@ module.exports = [
   require('./list'),
   // Directive a:if
   require('./condition'),
+  // JSX+ Directives
+  require('./directive'),
   // Handle Rax base components.
   require('./components'),
   // Parse and generate template.
