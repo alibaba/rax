@@ -48,6 +48,17 @@ export default class Component {
     return ++this._hookID;
   }
 
+  _cycles = {};
+
+  /**
+   * Register a lifecycle function.
+   */
+  _registerLifeCycle(cycle, fn) {
+    const currentCycles = this._cycles[cycle] = this._cycles[cycle] || [];
+    currentCycles.push(fn);
+  }
+
+
   /**
    * Trigger lifecycle with args.
    * @param cycle {String} Name of lifecycle.
@@ -64,6 +75,12 @@ export default class Component {
       case ON_SHOW:
       case ON_HIDE:
         if (isFunction(this[cycle])) this[cycle](...args);
+        if (this._cycles.hasOwnProperty(cycle)) {
+          let fn;
+          while (fn = this._cycles[cycle].pop()) { // eslint-disable-line
+            fn(...args);
+          }
+        }
         break;
 
       case RENDER:
