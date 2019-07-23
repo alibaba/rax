@@ -280,7 +280,10 @@ function transformTemplate(ast, scope = null, adapter) {
               return false;
             }
           });
-        })) break;
+        })) {
+          path.replaceWith(createJSXBinding(genExpression(node.expression)));
+          break;
+        }
 
         if (t.isIdentifier(node.expression, { name: 'undefined' })) {
           path.remove();
@@ -314,7 +317,10 @@ function transformTemplate(ast, scope = null, adapter) {
               return false;
             }
           });
-        })) break;
+        })) {
+          path.replaceWith(createJSXBinding(genExpression(node.expression)));
+          break;
+        }
 
         if (t.isIdentifier(obj) && !/^_l\d+/.test(obj.name)) {
           const id = applyDynamicValue();
