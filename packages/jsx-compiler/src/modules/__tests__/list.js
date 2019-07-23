@@ -56,13 +56,13 @@ describe('Transform list', () => {
 
   it('bind list variable', () => {
     const ast = parseExpression(`
-      <View>{arr.map((item, idx) => <image source={{ uri: item.picUrl }} resizeMode={resizeMode} />)}</View>
+      <View>{arr.map((item, idx) => <View>{item.title}<image source={{ uri: item.picUrl }} resizeMode={resizeMode} /></View>)}</View>
     `);
     const { dynamicValue } = _transformList(ast, adapter);
 
-    expect(genCode(ast).code).toEqual(`<View><block a:for=\"{{_l0}}\" a:for-item=\"_item0\" a:for-index=\"_index0\"><image source={{
-      uri: _item0.item.picUrl
-    }} resizeMode={resizeMode} /></block></View>`);
+    expect(genCode(ast).code).toEqual(`<View><block a:for=\"{{_l0}}\" a:for-item=\"_item0\" a:for-index=\"_index0\"><View>{_item0.item.title}<image source={{
+        uri: _item0.item.picUrl
+      }} resizeMode={resizeMode} /></View></block></View>`);
     expect(genDynamicAttrs(dynamicValue)).toEqual('{ _l0: arr.map((item, idx) => ({ item: item, idx: idx })) }');
   });
 
