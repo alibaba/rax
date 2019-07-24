@@ -89,6 +89,10 @@ function transformTemplate(ast, scope = null, adapter) {
       // =>
       // <tag style="{{_d0}}" />
       case 'Identifier': {
+        let skipIds;
+        const hasSkipIdParentPath = path.findParent(p => p.isJSXElement() && p.node.skipIds);
+        if (hasSkipIdParentPath) skipIds = hasSkipIdParentPath.node.skipIds;
+
         if (node.expression.name === 'undefined') {
           path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
         } else if (isEventHandler(genExpression(parentPath.node.name))) {
@@ -97,8 +101,9 @@ function transformTemplate(ast, scope = null, adapter) {
           const id = applyEventHandler();
           dynamicValue[id] = node.expression;
           path.replaceWith(t.stringLiteral(id));
-        } else if (/^_l\d+/.test(node.expression.name)) {
-          // Ignore list variables.
+        } else if (/^_l\d+/.test(node.expression.name) || (skipIds && skipIds.has(node.expression.name))) {
+          // 1. Ignore list variables.
+          // 2. <View x-for={item in value} />
           path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
         } else {
           const id = applyDynamicValue();
@@ -277,7 +282,7 @@ function transformTemplate(ast, scope = null, adapter) {
       case 'NumericLiteral':
       case 'BooleanLiteral':
       case 'Identifier': {
-        if (t.isIdentifier(node.expression) && path.findParent(p => p.isJSXElement() && p.node.skipIds && p.node.skipIds.has(node.expression.name || node.expression))) {
+        if (t.isIdentifier(node.expression) && path.findParent(p => p.isJSXElement() && p.node.skipIds && p.node.skipIds.has(node.expression.name))) {
           path.replaceWith(createJSXBinding(genExpression(node.expression)));
           break;
         }
