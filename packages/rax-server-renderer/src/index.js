@@ -117,15 +117,10 @@ function styleToCSS(style, options = {}) {
 
 function rpx2vw(val, opts) {
   const pixels = parseFloat(val);
-  const parsedVal = toFixed(pixels / opts.viewportWidth * 100, opts.unitPrecision);
+  const vw = pixels / opts.viewportWidth * 100;
+  const parsedVal = parseFloat(vw.toFixed(opts.unitPrecision));
+
   return parsedVal;
-}
-
-function toFixed(number, precision) {
-  const multiplier = Math.pow(10, precision + 1);
-  const wholeNumber = Math.floor(number * multiplier);
-
-  return Math.round(wholeNumber / 10) * 10 / multiplier;
 }
 
 const updater = {
