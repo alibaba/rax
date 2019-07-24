@@ -1,6 +1,6 @@
 {
   "name": "driver-universal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Driver for Universal App.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -18,7 +18,7 @@
   "dependencies": {
     "driver-dom": "^1.0.0",
     "driver-weex": "^1.0.0",
-    "style-unit": "^1.0.1-0",
+    "style-unit": "^1.0.1",
     "universal-env": "^1.0.0"
   }
 }
