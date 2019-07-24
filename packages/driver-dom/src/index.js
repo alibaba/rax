@@ -1,9 +1,8 @@
-/* global DEVICE_WIDTH, VIEWPORT_WIDTH */
 /**
  * Driver for Web DOM
  **/
-import { convertUnit, setRem } from 'style-unit';
-
+const IS_RPX_REG = /\d+rpx/;
+const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -16,7 +15,6 @@ const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 const TRUE = true;
 const EMPTY = '';
-const DEFAULT_VIEWPORT = 750;
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
 const UNITLESS_NUMBER_PROPS = {
@@ -53,39 +51,22 @@ let tagNamePrefix = EMPTY;
 let isSVGMode = false;
 let isHydrating = false;
 
-let deviceWidth = null;
-let viewportWidth = null;
-
-function getDeviceWidth() {
-  return deviceWidth || typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || getClientWidth();
+function unitTransformer(n) {
+  return parseFloat(n) / 7.5 + 'vw';
 }
 
-/**
- * Manually set device width.
- * @param width {Number} Device pixel width.
- */
-export function setDeviceWidth(width) {
-  deviceWidth = width;
+function calcRpxToVw(value) {
+  return value.replace(RPX_REG, unitTransformer);
 }
 
-function getViewportWidth() {
-  return viewportWidth || typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || DEFAULT_VIEWPORT;
-}
-
-/**
- * Manually set viewport width.
- * @param width {Number} Viewport pixel width.
- */
-export function setViewportWidth(width) {
-  viewportWidth = width;
+function convertUnit(value) {
+  return IS_RPX_REG.test(value)
+    ? calcRpxToVw(value)
+    : value;
 }
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
-}
-
-function getClientWidth() {
-  return document.documentElement.clientWidth;
 }
 
 export function createBody() {
@@ -158,21 +139,8 @@ function findHydrationChild(parent) {
 }
 
 export function createElement(type, props, component) {
-  // Transformed
-  if (props.hasOwnProperty(STYLE)) {
-    const style = props[STYLE];
-    const transformedStyle = {};
-    for (let prop in style) {
-      if (style.hasOwnProperty(prop)) {
-        transformedStyle[prop] = convertUnit(style[prop], prop);
-      }
-    }
-    props[STYLE] = transformedStyle;
-  }
-
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
-
   let node;
   let hydrationChild = null;
 
@@ -342,15 +310,19 @@ export function setAttribute(node, propKey, propValue) {
 }
 
 export function setStyle(node, style) {
-  let nodeStyle = node.style;
+  // Support Object[] typeof style.
+  if (Array.isArray(style)) style = style.reduce((s, curr) => Object.assign(s, curr), {});
+
+  const nodeStyle = node.style;
   for (let prop in style) {
     let propValue = style[prop];
-    nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop] ? propValue + 'px' : propValue;
+    nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop]
+      ? propValue + 'px'
+      : convertUnit(propValue);
   }
 }
 
 export function beforeRender({ hydrate }) {
-  setRem(getDeviceWidth() / getViewportWidth());
   isHydrating = hydrate;
 }
 
