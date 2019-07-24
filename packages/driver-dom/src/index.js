@@ -13,41 +13,9 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
-const TRUE = true;
 const EMPTY = '';
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
-const UNITLESS_NUMBER_PROPS = {
-  animationIterationCount: TRUE,
-  borderImageOutset: TRUE,
-  borderImageSlice: TRUE,
-  borderImageWidth: TRUE,
-  boxFlex: TRUE,
-  boxFlexGroup: TRUE,
-  boxOrdinalGroup: TRUE,
-  columnCount: TRUE,
-  flex: TRUE,
-  flexGrow: TRUE,
-  flexPositive: TRUE,
-  flexShrink: TRUE,
-  flexNegative: TRUE,
-  flexOrder: TRUE,
-  gridRow: TRUE,
-  gridColumn: TRUE,
-  fontWeight: TRUE,
-  // Main-stream browsers(like chrome) will not remove webkit prefix in the short term.
-  // ref: CSSOM webkit-based attribute: https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-webkit-cased-attribute
-  webkitLineClamp: TRUE,
-  lineClamp: TRUE,
-  lineHeight: TRUE,
-  opacity: TRUE,
-  order: TRUE,
-  orphans: TRUE,
-  tabSize: TRUE,
-  widows: TRUE,
-  zIndex: TRUE,
-  zoom: TRUE
-};
 
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
@@ -79,7 +47,6 @@ function unitTransformer(n) {
 function toFixed(number, precision) {
   const multiplier = Math.pow(10, precision + 1);
   const wholeNumber = Math.floor(number * multiplier);
-
   return Math.round(wholeNumber / 10) * 10 / multiplier;
 }
 
@@ -340,13 +307,8 @@ export function setAttribute(node, propKey, propValue) {
 export function setStyle(node, style) {
   // Support Object[] typeof style.
   if (Array.isArray(style)) style = style.reduce((s, curr) => Object.assign(s, curr), {});
-
-  const nodeStyle = node.style;
   for (let prop in style) {
-    let propValue = style[prop];
-    nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop]
-      ? propValue + 'px'
-      : convertUnit(propValue);
+    node.style[prop] = convertUnit(style[prop]);
   }
 }
 
