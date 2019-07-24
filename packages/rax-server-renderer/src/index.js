@@ -82,13 +82,16 @@ function merge(target) {
   return target;
 }
 
+const DEFAULT_STYLE_OPTIONS = {
+  defaultUnit: 'px',
+  viewportWidth: 750,
+  unitPrecision: 5
+};
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
 
 function styleToCSS(style, options = {}) {
-  let defaultUnit = options.defaultUnit || 'px';
-  let remRatio = options.remRatio;
   let css = '';
 
   if (Array.isArray(style)) {
@@ -100,24 +103,29 @@ function styleToCSS(style, options = {}) {
     let val = style[prop];
     let unit = '';
 
-    if (UNITLESS_NUMBER_PROPS[prop]) {
+    if (typeof val === 'number' && UNITLESS_NUMBER_PROPS[prop]) {
       // Noop
     } else if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
-      unit = defaultUnit;
-    } else if (remRatio && typeof val === 'string' && val.indexOf('rem') > -1) {
-      // stylesheet-loader will transform padding: 40 to paddingTop: '40rem' ...
-      val = parseFloat(val);
-      unit = 'rem';
+      unit = options.defaultUnit;
     }
 
-    if (unit === 'rem' && remRatio) {
-      val = val / remRatio;
+    if (typeof val === 'string' && val.indexOf('rpx') > -1 || unit === 'rpx') {
+      val = rpx2vw(val, options);
+      unit = val === 0 ? '' : 'vw';
     }
 
     prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();
     css = css + `${prop}:${val}${unit};`;
   }
   return css;
+}
+
+function rpx2vw(val, opts) {
+  const pixels = parseFloat(val);
+  const vw = pixels / opts.viewportWidth * 100;
+  const parsedVal = parseFloat(vw.toFixed(opts.unitPrecision));
+
+  return parsedVal;
 }
 
 const updater = {
@@ -302,5 +310,5 @@ function renderElementToString(element, context, options) {
 }
 
 exports.renderToString = function renderToString(element, options = {}) {
-  return renderElementToString(element, EMPTY_OBJECT, options);
+  return renderElementToString(element, EMPTY_OBJECT, Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
 };
