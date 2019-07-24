@@ -20,5 +20,5 @@ The driver should implement follow method:
 * setAttribute(node, propKey, propValue)
 * removeAttribute(node, propKey)
 * setStyle(node, styleObject)
-* *beforeRender({element, hybrate, container})
-* *afterRender({element, hybrate, container})
+* *beforeRender({element, hydrate, container})
+* *afterRender({element, hydrate, container})

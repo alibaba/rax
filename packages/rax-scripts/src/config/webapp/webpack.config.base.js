@@ -75,6 +75,7 @@ module.exports = function getWebpackBaseConfig(options = {}) {
                     },
                     stage: 3,
                   }),
+                  require('postcss-plugin-rpx2vw')(),
                 ],
               }
             },

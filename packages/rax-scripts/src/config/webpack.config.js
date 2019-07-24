@@ -26,6 +26,7 @@ module.exports = {
   entry: {},
   resolve: {
     alias: {
+      'babel-runtime-jsx-plus': require.resolve('babel-runtime-jsx-plus'),
       '@babel/runtime': getBabelRuntimePath()
     },
     extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts', '.tsx'],

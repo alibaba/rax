@@ -88,8 +88,8 @@ Array [
     return render;
   }
   
-  module.exports.getWebViewSource = function (data) { return \\"http://foo/bar\\"; };
-  module.exports.getWebViewOnMessage = function (data) { return \\"handleMessage\\"; };
+  module.exports.getWebViewSource = function (__data__) {  return \\"http://foo/bar\\"; };
+  module.exports.getWebViewOnMessage = function (__data__) {  return \\"handleMessage\\"; };
   ",
 ]
 `;
