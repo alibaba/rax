@@ -47,12 +47,28 @@ module.exports = function start(type = 'webapp') {
     const webpackConfig = getWebpackConfig(type, 'dev');
     const compiler = createWebpackCompiler(webpackConfig);
 
-    let devServer;
+    const devServerConfig = webpackDevServerConfig;
+
     if (appConfig.ssr) {
       const ssrDevServerConfig = getDevServerConfig();
-      devServer = new SSRDevServer(compiler, ssrDevServerConfig);
+      Object.assign(devServerConfig, ssrDevServerConfig);
+    }
+
+    // rewire webpack dev config
+    if (Array.isArray(webpackConfig)) {
+      const customConfig = webpackConfig.find(config => {
+        return config.devServer;
+      });
+      customConfig && Object.assign(devServerConfig, customConfig.devServer);
+    } else if (webpackConfig.devServer) {
+      Object.assign(devServerConfig, webpackConfig.devServer);
+    }
+
+    let devServer;
+    if (appConfig.ssr) {
+      devServer = new SSRDevServer(compiler, devServerConfig);
     } else {
-      devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+      devServer = new WebpackDevServer(compiler, devServerConfig);
     }
 
     // Launch WebpackDevServer.

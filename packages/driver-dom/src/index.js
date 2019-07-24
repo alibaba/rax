@@ -35,6 +35,9 @@ const UNITLESS_NUMBER_PROPS = {
   gridRow: TRUE,
   gridColumn: TRUE,
   fontWeight: TRUE,
+  // Main-stream browsers(like chrome) will not remove webkit prefix in the short term.
+  // ref: CSSOM webkit-based attribute: https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-webkit-cased-attribute
+  webkitLineClamp: TRUE,
   lineClamp: TRUE,
   lineHeight: TRUE,
   opacity: TRUE,
