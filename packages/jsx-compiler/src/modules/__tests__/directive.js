@@ -2,7 +2,6 @@ const t = require('@babel/types');
 const { _transformCondition, _transformList } = require('../directive');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
-const genCode = require('../../codegen/genCode');
 
 describe('Directives', () => {
   describe('list', () => {
@@ -21,9 +20,8 @@ describe('Directives', () => {
       const ast = parseExpression(`
         <View x-if={value}></View>
       `);
-      const dynamicValue = _transformCondition(ast);
-      expect(genExpression(ast)).toEqual('<View a:if="{{value}}"></View>');
-      expect(dynamicValue.value.name).toEqual('value');
+      _transformCondition(ast);
+      expect(genExpression(ast)).toEqual('<View a:if={value}></View>');
     });
   });
 });
