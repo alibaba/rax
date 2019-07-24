@@ -65,6 +65,86 @@ describe('renderToString', () => {
     expect(str).toBe('<div style="flex:1;font-size:16px;width:100%;"></div>');
   });
 
+  it('style with list', () => {
+    const styles = {
+      title: {
+        fontSize: 16,
+      },
+      container: {
+        flex: 1,
+        width: '100%'
+      }
+    };
+
+    function MyComponent(props, context) {
+      return <div style={[styles.container, styles.title]} />;
+    }
+
+    const str = renderToString(<MyComponent />);
+    expect(str).toBe('<div style="flex:1;width:100%;font-size:16px;"></div>');
+  });
+
+  it('style with rpx', () => {
+    const style = {
+      flex: 1,
+      fontSize: '16rpx',
+      width: '100%'
+    };
+
+    function MyComponent(props, context) {
+      return <div style={style} />;
+    }
+
+    const str = renderToString(<MyComponent />);
+    expect(str).toBe('<div style="flex:1;font-size:2.13333vw;width:100%;"></div>');
+  });
+
+  it('style with lineHeight', () => {
+    const styles = {
+      container: {
+        lineHeight: 1
+      },
+      text: {
+        lineHeight: '75rpx'
+      }
+    };
+
+    function MyComponent(props, context) {
+      return (
+        <div style={styles.container}>
+          <p style={styles.text}>Hello</p>
+        </div>
+      );
+    }
+
+    const str = renderToString(<MyComponent />);
+    expect(str).toBe('<div style="line-height:1;"><p style="line-height:10vw;">Hello</p></div>');
+  });
+
+  it('render with options which set default unit to rpx', () => {
+    const styles = {
+      container: {
+        lineHeight: 1
+      },
+      text: {
+        fontSize: 75
+      }
+    };
+
+    function MyComponent(props, context) {
+      return (
+        <div style={styles.container}>
+          <p style={styles.text}>Hello</p>
+        </div>
+      );
+    }
+
+    const str = renderToString(<MyComponent />, {
+      defaultUnit: 'rpx'
+    });
+    expect(str).toBe('<div style="line-height:1;"><p style="font-size:10vw;">Hello</p></div>');
+  });
+
   it('render with dangerouslySetInnerHTML', () => {
     function MyComponent(props, context) {
       return <div dangerouslySetInnerHTML={{__html: '<hr>'}} />;
