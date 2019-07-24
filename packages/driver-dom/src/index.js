@@ -70,10 +70,6 @@ export function setUnitPrecision(n) {
 }
 
 function unitTransformer(n) {
-  console.log(
-    parseFloat(n) / (viewportWidth / 100),
-    toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision)
-  )
   return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
 }
 
