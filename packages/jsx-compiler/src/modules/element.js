@@ -101,7 +101,7 @@ function transformTemplate(ast, scope = null, adapter) {
           const id = applyEventHandler();
           dynamicValue[id] = node.expression;
           path.replaceWith(t.stringLiteral(id));
-        } else if (/^_l\d+/.test(node.expression.name) || (skipIds && skipIds.has(node.expression.name))) {
+        } else if (/^_l\d+/.test(node.expression.name) || skipIds && skipIds.has(node.expression.name)) {
           // 1. Ignore list variables.
           // 2. <View x-for={item in value} />
           path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
