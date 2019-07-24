@@ -81,6 +81,34 @@ module.exports = function getWebpackBaseConfig(options = {}) {
             },
           ]
         },
+        {
+          test: /\.less$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+            },
+            {
+              loader: require.resolve('css-loader'),
+            },
+            {
+              loader: require.resolve('less-loader'),
+            },
+            {
+              loader: require.resolve('postcss-loader'),
+              options: {
+                ident: 'postcss',
+                plugins: () => [
+                  require('postcss-preset-env')({
+                    autoprefixer: {
+                      flexbox: 'no-2009',
+                    },
+                    stage: 3,
+                  }),
+                ],
+              }
+            },
+          ]
+        },
         // load inline images using image-source-loader for Image
         {
           test: /\.(svg|png|webp|jpe?g|gif)$/i,
