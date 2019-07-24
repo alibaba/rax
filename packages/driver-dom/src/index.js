@@ -50,9 +50,38 @@ let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
 let isHydrating = false;
+let viewportWidth = 750;
+let unitPrecision = 4;
+
+/**
+ * Set viewport width.
+ * @param vp {Number} Viewport width, default to 750.
+ */
+export function setViewportWidth(vp) {
+  viewportWidth = vp;
+}
+
+/**
+ * Set unit precision.
+ * @param n {Number} Unit precision, default to 4.
+ */
+export function setUnitPrecision(n) {
+  unitPrecision = n;
+}
 
 function unitTransformer(n) {
-  return parseFloat(n) / 7.5 + 'vw';
+  console.log(
+    parseFloat(n) / (viewportWidth / 100),
+    toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision)
+  )
+  return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
+}
+
+function toFixed(number, precision) {
+  const multiplier = Math.pow(10, precision + 1);
+  const wholeNumber = Math.floor(number * multiplier);
+
+  return Math.round(wholeNumber / 10) * 10 / multiplier;
 }
 
 function calcRpxToVw(value) {
