@@ -76,7 +76,7 @@ describe('renderToString', () => {
       return <div style={style} />;
     }
 
-    let str = renderToString(<MyComponent />);
+    const str = renderToString(<MyComponent />);
     expect(str).toBe('<div style="flex:1;font-size:2.13333vw;width:100%;"></div>');
   });
 
@@ -98,7 +98,7 @@ describe('renderToString', () => {
       );
     }
 
-    let str = renderToString(<MyComponent />);
+    const str = renderToString(<MyComponent />);
     expect(str).toBe('<div style="line-height:1;"><p style="line-height:10vw;">Hello</p></div>');
   });
 
@@ -120,7 +120,7 @@ describe('renderToString', () => {
       );
     }
 
-    let str = renderToString(<MyComponent />, {
+    const str = renderToString(<MyComponent />, {
       defaultUnit: 'rpx'
     });
     expect(str).toBe('<div style="line-height:1;"><p style="font-size:10vw;">Hello</p></div>');
