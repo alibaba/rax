@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const pathConfig = require('./path.config');
 const appConfig = require('./app.config');
+const rewireWebpackConfig = require('../utils/rewireWebpackConfig');
 
 const webpackConfigMap = {
   webapp: {
@@ -15,7 +16,7 @@ const webpackConfigMap = {
 };
 
 exports.getWebpackConfig = (type, env = 'prod') => {
-  let config = [];
+  let config;
   if (type === 'webapp') {
     config = [
       require(`${webpackConfigMap.webapp.client}.${env}`)
@@ -28,11 +29,11 @@ exports.getWebpackConfig = (type, env = 'prod') => {
         config.push(require(`${webpackConfigMap.webapp.serverless}.${env}`));
       }
     }
-
-    return config;
+  } else {
+    config = require(`${webpackConfigMap[type]}.${env}`);
   }
 
-  return require(`${webpackConfigMap[type]}.${env}`);
+  return rewireWebpackConfig(config);
 };
 
 exports.getEntries = () => {

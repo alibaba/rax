@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const pathConfig = require('./path.config');
+const appConfig = require('./app.config');
 const path = require('path');
 
 const tsLoader = require.resolve('ts-loader');
@@ -11,7 +12,7 @@ const getBabelRuntimePath = () => {
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
-const publicPath = process.env.PUBLIC_PATH || '/';
+const publicPath = appConfig.publicPath || process.env.PUBLIC_PATH || '/';
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
@@ -25,6 +26,7 @@ module.exports = {
   entry: {},
   resolve: {
     alias: {
+      'babel-runtime-jsx-plus': require.resolve('babel-runtime-jsx-plus'),
       '@babel/runtime': getBabelRuntimePath()
     },
     extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts', '.tsx'],

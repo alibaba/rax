@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports['template-loader Template 1'] = `
+exports[`template-loader Template 1`] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
@@ -18,7 +18,7 @@ Array [
   
     
   
-    function render(data) {
+    function render(__data__) {
       
       return [_c(__components_ref__['view']||'view',[_c(__components_ref__['text']||'text',[_v(\\"hello world\\")])])];
     }
@@ -31,7 +31,7 @@ Array [
 ]
 `;
 
-exports['template-loader options 1'] = `
+exports[`template-loader options 1`] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
@@ -49,7 +49,7 @@ Array [
   
     
   
-    function render(data) {
+    function render(__data__) {
       
       return _c('page', { 'data-userview-root': 'true' }, null, [_c(__components_ref__['view']||'view',[_c(__components_ref__['text']||'text',[_v(\\"hello world\\")])])]);
     }
@@ -62,7 +62,7 @@ Array [
 ]
 `;
 
-exports['template-loader web-view 1'] = `
+exports[`template-loader web-view 1`] = `
 Array [
   "module.exports = function (__render__ ) {
     // Register render first
@@ -80,7 +80,7 @@ Array [
   
     
   
-    function render(data) {
+    function render(__data__) {
       
       return [_c(__components_ref__['web-view']||'web-view',{onMessage:this.handleMessage})];
     }
@@ -88,8 +88,8 @@ Array [
     return render;
   }
   
-  module.exports.getWebViewSource = function (data) { return \\"http://foo/bar\\"; };
-  module.exports.getWebViewOnMessage = function (data) { return \\"handleMessage\\"; };
+  module.exports.getWebViewSource = function (__data__) {  return \\"http://foo/bar\\"; };
+  module.exports.getWebViewOnMessage = function (__data__) {  return \\"handleMessage\\"; };
   ",
 ]
 `;

@@ -90,7 +90,7 @@ module.exports = [
                     },
                     stage: 3,
                   }),
-                  require('./postcss-plugin-rpx2rem'),
+                  require('postcss-plugin-rpx2vw')(),
                 ],
               }
             },

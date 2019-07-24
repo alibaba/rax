@@ -65,10 +65,17 @@ export default class Component {
 
       case RENDER:
         if (typeof this.render !== 'function') throw new Error('It seems have no render method.');
+        this.__updating = true;
+        Host.current = this;
+        this._hookID = 0;
+        const nextProps = args[0] || this._internal.props;
+        this.props.__proto__ = nextProps;
         const updated = this.render(this.props);
         const { functions, data } = devideUpdated(updated);
         Object.assign(this._methods, functions);
-        this._internal.setData(data);
+        this._internal.setData(data, () => {
+          this.__updating = false;
+        });
         break;
     }
   }

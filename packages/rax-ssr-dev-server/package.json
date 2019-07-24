@@ -1,6 +1,6 @@
 {
   "name": "rax-ssr-dev-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rax SSR dev server.",
   "license": "BSD-3-Clause",
   "main": "index.js",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
+    "http-proxy-middleware": "^0.19.1",
     "rax-server": "^1.0.0",
     "webpack-dev-middleware": "^3.7.0",
     "webpack-hot-middleware": "^2.25.0"

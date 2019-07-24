@@ -1,5 +1,6 @@
 import { createApp, createPage, createComponent } from './bridge';
 import Component from './component';
+import createStyle from './createStyle';
 import { checkEnv } from './env';
 
 /**
@@ -13,6 +14,8 @@ export {
   createComponent,
 
   Component,
+
+  createStyle,
 };
 
 /* hooks */

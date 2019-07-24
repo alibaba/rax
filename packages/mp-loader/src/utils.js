@@ -77,7 +77,7 @@ const createRequire = exports.createRequire = function(modulePath) {
 // provide scope vars
 // provide render helper vars
 const renderHelperFns = exports.renderHelperFns = '_c,_s,_l,_t,_m,_v,_e,_cx,_u';
-const staticPreveredIdentifiers = 'data,true,false,null,$event,__components_refs__';
+const staticPreveredIdentifiers = '__data__,true,false,null,$event,__components_refs__';
 const prerveredVars = exports.prerveredVars = makeMap(renderHelperFns + ',' + staticPreveredIdentifiers + ',' + '_w');
 exports.renderHelperVars = renderHelperFns
   .split(',')

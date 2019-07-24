@@ -4,7 +4,7 @@ const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 
-function transformTemplate(ast, scope = null) {
+function transformTemplate(ast, scope = null, adapter) {
   const dynamicValue = {};
 
   let ids = 0;
@@ -124,6 +124,50 @@ function transformTemplate(ast, scope = null) {
         break;
       }
 
+      case 'CallExpression':
+        if (
+          isEventHandler(genExpression(parentPath.node.name))
+          && t.isMemberExpression(node.expression.callee)
+          && t.isIdentifier(node.expression.callee.property, { name: 'bind' })
+        ) {
+          const callExp = node.expression;
+          const args = callExp.arguments;
+          const attributes = parentPath.parentPath.node.attributes;
+          if (Array.isArray(args)) {
+            args.forEach((arg, index) => {
+              if (index === 0) {
+                // first arg is `this` context.
+                const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
+                  concise: true,
+                  comments: false,
+                }));
+                attributes.push(
+                  t.jsxAttribute(
+                    t.jsxIdentifier('data-arg-context'),
+                    t.stringLiteral(strValue)
+                  )
+                );
+              } else {
+                attributes.push(
+                  t.jsxAttribute(
+                    t.jsxIdentifier('data-arg-' + (index - 1)),
+                    t.stringLiteral(createBinding(genExpression(arg, {
+                      concise: true,
+                      comments: false,
+                    })))
+                  )
+                );
+              }
+            });
+          }
+          const eventHandler = applyEventHandler();
+          dynamicValue[eventHandler] = callExp.callee.object;
+          path.replaceWith(t.stringLiteral(eventHandler));
+          break;
+        } else {
+          // Fall through switch.
+        }
+
       // <tag foo={fn()} foo={fn.method()} foo={a ? 1 : 2} />
       // => <tag foo="{{_d0}}" foo="{{_d1}}" foo="{{_d2}}" />
       // return {
@@ -132,7 +176,6 @@ function transformTemplate(ast, scope = null) {
       //   _d1: a ? 1 : 2,
       // };
       case 'NewExpression':
-      case 'CallExpression':
       case 'ObjectExpression':
       case 'ArrayExpression':
       case 'UnaryExpression':
@@ -255,9 +298,31 @@ function transformTemplate(ast, scope = null) {
 
       // <tag isFoo={a.length > 1} />
       // => <tag isFoo="{{a.length > 1}}" />
-      case 'BinaryExpression':
-      case 'LogicalExpression': {
+      case 'BinaryExpression': {
         path.replaceWith(createJSXBinding(genExpression(node.expression)));
+        break;
+      }
+
+      case 'LogicalExpression': {
+        if (node.expression.operator === '&&' && t.isJSXElement(node.expression.right)) {
+          // foo && <Element />
+          node.expression.right.openingElement.attributes.push(t.jsxAttribute(
+            t.jsxIdentifier(adapter.if),
+            t.stringLiteral(createBinding(genExpression(node.expression.left)))
+          ));
+          traverse(node.expression.left, {
+            MemberExpression(path) {
+              dynamicValue[path.node.object.name] = path.node.object;
+              path.skip();
+            },
+            Identifier(path) {
+              dynamicValue[path.node.name] = path.node;
+            },
+          });
+          path.replaceWith(node.expression.right);
+        } else {
+          path.replaceWith(createJSXBinding(genExpression(node.expression)));
+        }
         break;
       }
 
@@ -316,7 +381,7 @@ function isEventHandler(propKey) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      const dynamicValue = Object.assign({}, parsed.dynamicValue, transformTemplate(parsed.templateAST));
+      const dynamicValue = Object.assign({}, parsed.dynamicValue, transformTemplate(parsed.templateAST, null, options.adapter));
       const eventHandlers = parsed.eventHandlers = [];
       const properties = [];
       Object.keys(dynamicValue).forEach((key) => {
