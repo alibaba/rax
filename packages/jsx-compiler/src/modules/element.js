@@ -186,14 +186,18 @@ function transformTemplate(ast, scope = null, adapter) {
       // };
       case 'ConditionalExpression':
         const { test } = node.expression;
+        const elThatContainSkipIds = path.findParent(p => p.isJSXElement() && p.node.skipIds);
+        const skipIds = elThatContainSkipIds
+          && elThatContainSkipIds.node
+          && elThatContainSkipIds.node.skipIds;
         if (t.isBinaryExpression(test)) {
           const { left, right } = test;
-          if (t.isIdentifier(left) && !/^_l\d+/.test(left.name)) {
+          if (t.isIdentifier(left) && !/^_l\d+/.test(left.name) && skipIds && !skipIds.has(left.name)) {
             const id = applyDynamicValue();
             dynamicValue[id] = Object.assign({}, left);
             test.left = t.identifier(id);
           }
-          if (t.isIdentifier(right) && !/^_l\d+/.test(right.name)) {
+          if (t.isIdentifier(right) && !/^_l\d+/.test(right.name) && skipIds && !skipIds.has(right.name)) {
             const id = applyDynamicValue();
             dynamicValue[id] = right;
             test.right = t.identifier(id);
