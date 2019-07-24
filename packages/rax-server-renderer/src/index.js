@@ -93,6 +93,11 @@ const CSSPropCache = {};
 
 function styleToCSS(style, options = {}) {
   let css = '';
+
+  if (Array.isArray(style)) {
+    style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
+  }
+
   // Use var avoid v8 warns "Unsupported phi use of const or let variable"
   for (var prop in style) {
     let val = style[prop];

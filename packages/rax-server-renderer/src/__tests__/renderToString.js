@@ -65,6 +65,25 @@ describe('renderToString', () => {
     expect(str).toBe('<div style="flex:1;font-size:16px;width:100%;"></div>');
   });
 
+  it('style with list', () => {
+    const styles = {
+      title: {
+        fontSize: 16,
+      },
+      container: {
+        flex: 1,
+        width: '100%'
+      }
+    };
+
+    function MyComponent(props, context) {
+      return <div style={[styles.container, styles.title]} />;
+    }
+
+    const str = renderToString(<MyComponent />);
+    expect(str).toBe('<div style="flex:1;width:100%;font-size:16px;"></div>');
+  });
+
   it('style with rpx', () => {
     const style = {
       flex: 1,
