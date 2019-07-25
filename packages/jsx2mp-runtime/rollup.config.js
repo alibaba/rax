@@ -14,6 +14,9 @@ const babelConfig = {
       },
     ],
   ],
+  plugins: [
+    '@babel/plugin-proposal-class-properties'
+  ]
 };
 
 const banner =

@@ -66,10 +66,12 @@ module.exports = {
           const alias = getComponentAlias(node.name.name);
           removeImport(alias);
           if (alias) {
-            node.name = t.jsxIdentifier(alias.name);
-            // handle with close tag too.
-            if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(alias.name);
-            usingComponents[alias.name] = getComponentPath(alias);
+            // Miniapp template tag name does not support special characters.
+            const componentTag = alias.name.replace(/@|\//g, '_');
+            node.name = t.jsxIdentifier(componentTag);
+            // Handle with close tag too.
+            if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(componentTag);
+            usingComponents[componentTag] = getComponentPath(alias);
 
             /**
              * Handle with special attrs.

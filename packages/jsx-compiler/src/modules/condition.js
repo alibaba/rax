@@ -59,6 +59,7 @@ function transformRenderFunction(ast, adapter) {
             t.isAssignmentExpression(expression) &&
             expression.operator === '='
           ) {
+            let shouldRemove = false;
             const varName = expression.left.name;
             if (!templateVariables[varName].value) {
               templateVariables[expression.left.name].value = createJSX(
@@ -77,7 +78,7 @@ function transformRenderFunction(ast, adapter) {
              * 2. parentNode's alternate start & end is same as current path start & end
              */
             if (
-              t.isIfStatement(nodePath.parentPath) &&
+              nodePath.parentPath.isIfStatement() &&
               t.isIfStatement(parentPathAlternate) &&
               parentPathAlternate.start === start &&
               parentPathAlternate.end === end
@@ -86,20 +87,22 @@ function transformRenderFunction(ast, adapter) {
             }
             const rightNode = expression.right;
             if (t.isJSXElement(rightNode)) {
-              const containerNode =
-                rightNode && !t.isNullLiteral(rightNode)
-                  ? createJSX(
-                    'block',
-                    {
-                      [testAttrName]: t.stringLiteral(
-                        '{{' + testValue + '}}',
-                      ),
-                    },
-                    [rightNode],
-                  )
-                  : null;
+              const containerNode = createJSX(
+                'block',
+                {
+                  [testAttrName]: t.stringLiteral(
+                    '{{' + testValue + '}}',
+                  ),
+                },
+                [rightNode],
+              );
 
               templateVariables[varName].value.children.push(containerNode);
+              shouldRemove = true;
+            }
+
+            if (shouldRemove) {
+              nodePath.remove();
             }
           }
         });
@@ -115,7 +118,7 @@ function transformRenderFunction(ast, adapter) {
                 const containerNode = createJSX(
                   'block',
                   {
-                    [adapter.else]: t.stringLiteral('{{true}}'),
+                    [adapter.else]: null,
                   },
                   [rightNode],
                 );
@@ -151,6 +154,12 @@ function transformTemplate(ast, adapter, templateVariables) {
   const dynamicValue = {};
 
   traverse(ast, {
+    CallExpression(path) {
+      const { node } = path;
+      if (t.isMemberExpression(node.callee) && t.isIdentifier(node.callee.property, { name: 'map' })) {
+        node.__isList = true;
+      }
+    },
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
       if (parentPath.isJSXAttribute()) {
@@ -186,60 +195,67 @@ function transformTemplate(ast, adapter, templateVariables) {
 }
 
 function transformConditionalExpression(path, expression, adapter, dynamicValue) {
+  const listCallExpPath = path.findParent(p => p.isCallExpression() && p.node.__isList);
   let { test, consequent, alternate } = expression;
-  const conditionValue = t.isStringLiteral(test)
-    ? test.value
-    : createBinding(genExpression(test));
+  let conditionValue;
+  if (/Expression$/.test(test.type)) {
+    conditionValue = t.jsxExpressionContainer(test);
+  } else {
+    conditionValue = t.isStringLiteral(test)
+      ? test
+      : t.stringLiteral(createBinding(genExpression(test)));
+  }
   const replacement = [];
   let consequentReplacement = [];
   let alternateReplacement = [];
 
-  if (t.isConditionalExpression(consequent)) {
-    consequentReplacement = transformConditionalExpression(
-      path,
-      consequent,
-      adapter,
-      dynamicValue
-    ).replacement;
-  }
-  if (t.isConditionalExpression(alternate)) {
-    alternateReplacement = transformConditionalExpression(
-      path,
-      alternate,
-      adapter,
-      dynamicValue
-    ).replacement;
-  }
-  // Transform from string listrial to JSXText Node
-  if (t.isStringLiteral(consequent)) {
-    consequentReplacement.push(t.jsxText(consequent.value));
-  }
-  if (t.isStringLiteral(alternate)) {
-    alternateReplacement.push(t.jsxText(alternate.value));
+  if (t.isExpression(consequent)) {
+    if (t.isConditionalExpression(consequent)) {
+      consequentReplacement = transformConditionalExpression(
+        path,
+        consequent,
+        adapter,
+        dynamicValue
+      ).replacement;
+    } else if (/Literal$/.test(consequent.type)) {
+      // Transform from literal type to JSXText Node
+      const value = consequent.value ? String(consequent.value) : '';
+      consequentReplacement.push(t.jsxText(value));
+    } else if (t.isJSXElement(consequent)) {
+      consequentReplacement.push(consequent);
+    } else {
+      consequentReplacement.push(t.jsxExpressionContainer(consequent));
+    }
   }
 
-  // Transform from `'s' + str` to `{{ 's' + str }}`
-  if (t.isBinaryExpression(consequent)) {
-    consequentReplacement.push(t.jsxExpressionContainer(consequent));
+  if (t.isExpression(alternate)) {
+    if (t.isConditionalExpression(alternate)) {
+      alternateReplacement = transformConditionalExpression(
+        path,
+        alternate,
+        adapter,
+        dynamicValue
+      ).replacement;
+    } else if (t.isNullLiteral(alternate)) {
+      // Ignore null
+    } else if (/Literal$/.test(alternate.type)) {
+      alternateReplacement.push(t.jsxText(String(alternate.value)));
+    } else if (t.isJSXElement(alternate)) {
+      alternateReplacement.push(alternate);
+    } else {
+      alternateReplacement.push(t.jsxExpressionContainer(alternate));
+    }
   }
-  if (t.isBinaryExpression(alternate)) {
-    alternateReplacement.push(t.jsxExpressionContainer(alternate));
-  }
-
-  // Empty value to replace null literial.
-  if (t.isNullLiteral(consequent)) consequentReplacement.push(t.jsxText(''));
-  if (t.isNullLiteral(alternate)) alternateReplacement.push(alternate = t.jsxText(''));
-
-  if (t.isJSXElement(consequent)) consequentReplacement.push(consequent);
-  if (t.isJSXElement(alternate)) alternateReplacement.push(alternate);
 
   if (consequentReplacement.length > 0) {
-    assignDynamicValue(test, dynamicValue);
+    if (!listCallExpPath) {
+      assignDynamicValue(test, dynamicValue);
+    }
     replacement.push(
       createJSX(
         'block',
         {
-          [adapter.if]: t.stringLiteral(conditionValue),
+          [adapter.if]: conditionValue,
         },
         consequentReplacement,
       ),
@@ -265,8 +281,12 @@ module.exports = {
       parsed[RENDER_FN_PATH],
       options.adapter,
     );
-    const dynamicValue = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
-    Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
+    if (t.isIdentifier(parsed[TEMPLATE_AST]) && parsed[TEMPLATE_AST].name in templateVariables) {
+      parsed[TEMPLATE_AST] = templateVariables[parsed[TEMPLATE_AST].name].value;
+    } else {
+      const dynamicValue = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables);
+      Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
+    }
   },
 
   // For test cases.

@@ -32,9 +32,9 @@ describe('Create style', () => {
   });
 
   describe('functional', () => {
-    it('should transform unit', () => {
+    it('should not transform unit', () => {
       const style = createStyle({
-        fontSize: 20,
+        fontSize: '20rpx',
       });
       expect(style).toEqual('font-size: 20rpx;');
     });
