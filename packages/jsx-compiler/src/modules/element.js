@@ -4,7 +4,7 @@ const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 
-function transformTemplate(ast, scope = null, adapter) {
+function transformTemplate(ast, scope = null, adapter, CDP = {}) {
   const dynamicValue = {};
 
   let ids = 0;
@@ -108,6 +108,10 @@ function transformTemplate(ast, scope = null, adapter) {
         } else {
           const id = applyDynamicValue();
           dynamicValue[id] = node.expression;
+          const jsxEl = path.findParent(p => p.isJSXElement()).node;
+          if (jsxEl.__pid && CDP[jsxEl.__pid]) {
+            CDP[jsxEl.__pid][node.expression.name] = id;
+          }
           path.replaceWith(t.stringLiteral(createBinding(id)));
         }
         break;
@@ -127,6 +131,10 @@ function transformTemplate(ast, scope = null, adapter) {
           exp = exp
             .replace(/this.props./, '')
             .replace(/this.state./, '');
+          const jsxEl = path.findParent(p => p.isJSXElement()).node;
+          if (jsxEl.__pid && CDP[jsxEl.__pid]) {
+            CDP[jsxEl.__pid][exp] = exp;
+          }
           path.replaceWith(t.stringLiteral(createBinding(exp)));
         }
 
@@ -463,7 +471,16 @@ function isEventHandler(propKey) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      const dynamicValue = Object.assign({}, parsed.dynamicValue, transformTemplate(parsed.templateAST, null, options.adapter));
+      const dynamicValue = Object.assign(
+        {},
+        parsed.dynamicValue,
+        transformTemplate(
+          parsed.templateAST,
+          null,
+          options.adapter,
+          parsed.componentDependentProps
+        )
+      );
       const eventHandlers = parsed.eventHandlers = [];
       const properties = [];
       Object.keys(dynamicValue).forEach((key) => {

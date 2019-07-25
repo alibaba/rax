@@ -150,7 +150,7 @@ function createConfig(component, options) {
   if (!isClassComponent(component)) {
     Klass = class extends Component {
       render(props) {
-        return component(props);
+        return component.call(this, props);
       }
     };
   } else {

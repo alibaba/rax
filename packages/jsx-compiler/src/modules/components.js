@@ -8,14 +8,15 @@ const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
 
-
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
+let tagCount = 0;
 
 /**
  * Rax components.
  */
 module.exports = {
   parse(parsed, code, options) {
+    const CDP = parsed.componentDependentProps = {};
     const usingComponents = parsed.usingComponents = {};
 
     function getComponentAlias(tagName) {
@@ -60,7 +61,7 @@ module.exports = {
 
     traverse(parsed.templateAST, {
       JSXOpeningElement(path) {
-        const { node, scope, parent } = path;
+        const { node, scope, parent, parentPath } = path;
 
         if (t.isJSXIdentifier(node.name)) { // <View />
           const alias = getComponentAlias(node.name.name);
@@ -68,6 +69,16 @@ module.exports = {
           if (alias) {
             // Miniapp template tag name does not support special characters.
             const componentTag = alias.name.replace(/@|\//g, '_');
+
+            // <tag __pid="pid" />
+            const pid = '' + tagCount++;
+            parentPath.node.__pid = pid;
+            CDP[pid] = CDP[pid] || {};
+
+            node.attributes.push(t.jsxAttribute(
+              t.jsxIdentifier('__pid'),
+              t.stringLiteral(pid)
+            ));
             node.name = t.jsxIdentifier(componentTag);
             // Handle with close tag too.
             if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(componentTag);
