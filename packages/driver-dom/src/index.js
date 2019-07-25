@@ -9,6 +9,11 @@ const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const TEXT_CONTENT_ATTR = 'textContent';
+const CREATE_ELEMENT = 'createElement';
+const CREATE_COMMENT = 'createComment';
+const CREATE_TEXT_NODE = 'createTextNode';
+const SET_ATTRIBUTE = 'setAttribute';
+const REMOVE_ATTRIBUTE = 'removeAttribute';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const TEXT_NODE = 3;
@@ -16,6 +21,7 @@ const COMMENT_NODE = 8;
 const EMPTY = '';
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
+const DOCUMENT = document;
 
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
@@ -65,7 +71,7 @@ export function setTagNamePrefix(prefix) {
 }
 
 export function createBody() {
-  return document.body;
+  return DOCUMENT.body;
 }
 
 export function createEmpty(component) {
@@ -79,15 +85,15 @@ export function createEmpty(component) {
       if (hydrationChild.nodeType === COMMENT_NODE) {
         return hydrationChild;
       } else {
-        node = document.createComment(EMPTY);
+        node = DOCUMENT[CREATE_COMMENT](EMPTY);
         replaceChild(node, hydrationChild, parent);
       }
     } else {
-      node = document.createComment(EMPTY);
+      node = DOCUMENT[CREATE_COMMENT](EMPTY);
       node[HYDRATION_APPEND] = true;
     }
   } else {
-    node = document.createComment(EMPTY);
+    node = DOCUMENT[CREATE_COMMENT](EMPTY);
   }
 
   return node;
@@ -107,15 +113,15 @@ export function createText(text, component) {
         }
         return hydrationChild;
       } else {
-        node = document.createTextNode(text);
+        node = DOCUMENT[CREATE_TEXT_NODE](text);
         replaceChild(node, hydrationChild, parent);
       }
     } else {
-      node = document.createTextNode(text);
+      node = DOCUMENT[CREATE_TEXT_NODE](text);
       node[HYDRATION_APPEND] = true;
     }
   } else {
-    node = document.createTextNode(text);
+    node = DOCUMENT[CREATE_TEXT_NODE](text);
   }
 
   return node;
@@ -141,12 +147,12 @@ export function createElement(type, props, component) {
 
   function createNode() {
     if (isSVGMode) {
-      node = document.createElementNS(SVG_NS, type);
+      node = DOCUMENT.createElementNS(SVG_NS, type);
     } else if (tagNamePrefix) {
       let tagNamePrefix = typeof tagNamePrefix === 'function' ? tagNamePrefix(type) : tagNamePrefix;
-      node = document.createElement(tagNamePrefix + type);
+      node = DOCUMENT[CREATE_ELEMENT](tagNamePrefix + type);
     } else {
-      node = document.createElement(type);
+      node = DOCUMENT[CREATE_ELEMENT](type);
     }
   }
 
@@ -168,7 +174,7 @@ export function createElement(type, props, component) {
             // Remove rendered node attribute that not existed
             attributeName !== CLASS && attributeName !== STYLE && propValue == null
           ) {
-            hydrationChild.removeAttribute(attributeName);
+            hydrationChild[REMOVE_ATTRIBUTE](attributeName);
             continue;
           }
 
@@ -197,10 +203,8 @@ export function createElement(type, props, component) {
   }
 
   for (let prop in props) {
-    let value = props[prop];
-    if (prop === CHILDREN) {
-      continue;
-    }
+    const value = props[prop];
+    if (prop === CHILDREN) continue;
 
     if (value != null) {
       if (prop === STYLE) {
@@ -266,9 +270,7 @@ export function removeAttribute(node, propKey) {
     return node.innerHTML = null;
   }
 
-  if (propKey === CLASS_NAME) {
-    propKey = CLASS;
-  }
+  if (propKey === CLASS_NAME) propKey = CLASS;
 
   if (propKey in node) {
     try {
@@ -277,35 +279,33 @@ export function removeAttribute(node, propKey) {
     } catch (e) { }
   }
 
-  node.removeAttribute(propKey);
+  node[REMOVE_ATTRIBUTE](propKey);
 }
 
 export function setAttribute(node, propKey, propValue) {
+  console.log(node, propKey, propValue)
   if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-    const html = propValue.__html;
-    if (node.innerHTML !== html) {
-      return node.innerHTML = html;
-    }
+    return node.innerHTML = propValue.__html;
   }
 
-  if (propKey === CLASS_NAME) {
-    propKey = CLASS;
-  }
+  if (propKey === CLASS_NAME) propKey = CLASS;
 
   if (propKey in node) {
     try {
       // Some node property is readonly when in strict mode
       node[propKey] = propValue;
     } catch (e) {
-      node.setAttribute(propKey, propValue);
+      node[SET_ATTRIBUTE](propKey, propValue);
     }
   } else {
-    node.setAttribute(propKey, propValue);
+    node[SET_ATTRIBUTE](propKey, propValue);
   }
 }
 
 export function setStyle(node, style) {
   // Support Object[] typeof style.
+  // Hack handle array like object, which created by rax core.
+  if (typeof style === 'object' && style.hasOwnProperty('0')) style = Array.prototype.slice.call(style);
   if (Array.isArray(style)) style = style.reduce((s, curr) => Object.assign(s, curr), {});
   for (let prop in style) {
     node.style[prop] = convertUnit(style[prop]);
