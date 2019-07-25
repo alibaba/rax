@@ -25,7 +25,6 @@ export default class Component {
     this._hooks = {};
     this.hooks = []; // ??
     this._hookID = 0;
-    on(RENDER, () => this._dirtyCheck());
   }
 
   setState(partialState, callback) {
@@ -106,7 +105,6 @@ export default class Component {
         data.$ready = true;
         this._internal.setData(data, () => {
           this.__updating = false;
-          emit(RENDER);
         });
         break;
     }
