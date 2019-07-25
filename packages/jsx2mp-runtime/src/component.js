@@ -13,11 +13,7 @@ import {
   COMPONENT_WILL_UNMOUNT,
   COMPONENT_WILL_RECEIVE_PROPS,
 } from './cycles';
-<<<<<<< HEAD
 import { enqueueRender } from './enqueueRender';
-=======
-import {enqueueRender} from './enqueueRender';
->>>>>>> release/jsx2mp-0801
 
 export default class Component {
   constructor() {
