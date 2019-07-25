@@ -4,6 +4,8 @@
 const IS_RPX_REG = /\d+rpx/;
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
+const __HTML = '__html';
+const INNER_HTML = 'innerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
@@ -267,7 +269,7 @@ export function removeEventListener(node, eventName, eventHandler) {
 
 export function removeAttribute(node, propKey) {
   if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-    return node.innerHTML = null;
+    return node[INNER_HTML] = null;
   }
 
   if (propKey === CLASS_NAME) propKey = CLASS;
@@ -283,9 +285,9 @@ export function removeAttribute(node, propKey) {
 }
 
 export function setAttribute(node, propKey, propValue) {
-  console.log(node, propKey, propValue)
-  if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-    return node.innerHTML = propValue.__html;
+  // For reduce innerHTML operation to improve performance.
+  if (propKey === DANGEROUSLY_SET_INNER_HTML && node[INNER_HTML] !== propValue[__HTML]) {
+    return node[INNER_HTML] = propValue[__HTML];
   }
 
   if (propKey === CLASS_NAME) propKey = CLASS;
