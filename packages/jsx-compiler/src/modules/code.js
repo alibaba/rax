@@ -124,7 +124,6 @@ module.exports = {
         if (propMaps.length > 0) fnBody.splice(firstReturnStatementIdx, 0, callUpdateProps);
       });
     }
-
   },
 };
 

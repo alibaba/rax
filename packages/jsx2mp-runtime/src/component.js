@@ -100,7 +100,7 @@ export default class Component {
         const updated = this.render(this.props = nextProps, this.state = nextState);
         const { functions, data } = devideUpdated(updated);
         Object.assign(this._methods, functions);
-        data['$ready'] = true;
+        data.$ready = true;
         this._internal.setData(data, () => {
           this.__updating = false;
         });

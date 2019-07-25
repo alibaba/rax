@@ -25,4 +25,4 @@ my.$updateProps = function(trigger, instanceId, propsFromTrigger) {
       // targetComponent._updateComponent();
     });
   }
-}
+};
