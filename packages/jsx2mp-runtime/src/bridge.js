@@ -101,7 +101,7 @@ function createProxyMethods(events) {
         const event = args[args.length - 1];
         let context = this.instance; // Context default to Rax component instance.
 
-        const dataset = event ? event.target.dataset : {};
+        const dataset = event && event.target ? event.target.dataset : {};
         const datasetArgs = [];
         // Universal event args
         const datasetKeys = Object.keys(dataset);

@@ -13,7 +13,11 @@ import {
   COMPONENT_WILL_UNMOUNT,
   COMPONENT_WILL_RECEIVE_PROPS,
 } from './cycles';
+<<<<<<< HEAD
 import { enqueueRender } from './enqueueRender';
+=======
+import {enqueueRender} from './enqueueRender';
+>>>>>>> release/jsx2mp-0801
 
 export default class Component {
   constructor() {
@@ -25,6 +29,7 @@ export default class Component {
     this._hooks = {};
     this.hooks = []; // ??
     this._hookID = 0;
+    on(RENDER, () => this._dirtyCheck());
   }
 
   setState(partialState, callback) {
@@ -94,15 +99,18 @@ export default class Component {
         this._hookID = 0;
         const nextProps = args[0] || this._internal.props;
         const nextState = args[1] || this._internal.data;
+
         if (nextProps.hasOwnProperty('__pid')) {
           setComponentInstance(nextProps.__pid, this);
         }
+
         const updated = this.render(this.props = nextProps, this.state = nextState);
         const { functions, data } = devideUpdated(updated);
         Object.assign(this._methods, functions);
         data.$ready = true;
         this._internal.setData(data, () => {
           this.__updating = false;
+          emit(RENDER);
         });
         break;
     }

@@ -79,6 +79,7 @@ module.exports = {
               t.jsxIdentifier('__pid'),
               t.stringLiteral(pid)
             ));
+
             node.name = t.jsxIdentifier(componentTag);
             // Handle with close tag too.
             if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(componentTag);
