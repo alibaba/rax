@@ -103,7 +103,7 @@ module.exports = {
         if (t.isReturnStatement(fnBody[i])) firstReturnStatementIdx = i;
       }
 
-      const updateProps = t.memberExpression(t.identifier('my'), t.identifier('$updateProps'));
+      const updateProps = t.memberExpression(t.identifier('this'), t.identifier('_updateChildProps'));
       const CDP = parsed.componentDependentProps || {};
 
       Object.keys(CDP).forEach((pid) => {
@@ -116,7 +116,6 @@ module.exports = {
           ));
         });
         const updatePropsArgs = [
-          t.thisExpression(),
           t.stringLiteral(pid),
           t.objectExpression(propMaps)
         ];
