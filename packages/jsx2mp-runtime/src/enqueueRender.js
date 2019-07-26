@@ -1,7 +1,6 @@
-/* global my */
+import nextTick from './nextTick';
 import { RENDER } from './cycles';
 
-const nextTick = my.nextTick ? my.nextTick : setTimeout;
 let queue = [];
 
 export function enqueueRender(component) {

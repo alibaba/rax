@@ -1,5 +1,5 @@
-/* global my */
-const nextTick = my.nextTick || setTimeout;
+import nextTick from './nextTick';
+
 const componentIntances = {};
 
 export function setComponentInstance(instanceId, instance) {
@@ -15,7 +15,7 @@ function getProps(component, propMaps) {
   return props;
 }
 
-my.$updateProps = function(trigger, instanceId, propsFromTrigger) {
+export function updateChildProps(trigger, instanceId, propsFromTrigger) {
   const targetComponent = componentIntances[instanceId];
   if (trigger && targetComponent) {
     nextTick(() => {
