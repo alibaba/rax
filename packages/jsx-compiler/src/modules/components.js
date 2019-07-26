@@ -16,7 +16,7 @@ let tagCount = 0;
  */
 module.exports = {
   parse(parsed, code, options) {
-    const CDP = parsed.componentDependentProps = {};
+    const componentsDependentProps = parsed.componentDependentProps = {};
     const usingComponents = parsed.usingComponents = {};
 
     function getComponentAlias(tagName) {
@@ -73,7 +73,7 @@ module.exports = {
             // <tag __pid="pid" />
             const pid = '' + tagCount++;
             parentPath.node.__pid = pid;
-            CDP[pid] = CDP[pid] || {};
+            componentsDependentProps[pid] = componentsDependentProps[pid] || {};
 
             node.attributes.push(t.jsxAttribute(
               t.jsxIdentifier('__pid'),

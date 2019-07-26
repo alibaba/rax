@@ -4,7 +4,7 @@ const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 
-function transformTemplate(ast, scope = null, adapter, CDP = {}) {
+function transformTemplate(ast, scope = null, adapter, componentsDependentProps = {}) {
   const dynamicValue = {};
 
   let ids = 0;
@@ -109,8 +109,8 @@ function transformTemplate(ast, scope = null, adapter, CDP = {}) {
           const id = applyDynamicValue();
           dynamicValue[id] = node.expression;
           const jsxEl = path.findParent(p => p.isJSXElement()).node;
-          if (jsxEl.__pid && CDP[jsxEl.__pid]) {
-            CDP[jsxEl.__pid][node.expression.name] = id;
+          if (jsxEl.__pid && componentsDependentProps[jsxEl.__pid]) {
+            componentsDependentProps[jsxEl.__pid][node.expression.name] = id;
           }
           path.replaceWith(t.stringLiteral(createBinding(id)));
         }
@@ -132,8 +132,8 @@ function transformTemplate(ast, scope = null, adapter, CDP = {}) {
             .replace(/this.props./, '')
             .replace(/this.state./, '');
           const jsxEl = path.findParent(p => p.isJSXElement()).node;
-          if (jsxEl.__pid && CDP[jsxEl.__pid]) {
-            CDP[jsxEl.__pid][exp] = exp;
+          if (jsxEl.__pid && componentsDependentProps[jsxEl.__pid]) {
+            componentsDependentProps[jsxEl.__pid][exp] = exp;
           }
           path.replaceWith(t.stringLiteral(createBinding(exp)));
         }

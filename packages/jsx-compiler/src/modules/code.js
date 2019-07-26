@@ -104,12 +104,12 @@ module.exports = {
       }
 
       const updateProps = t.memberExpression(t.identifier('this'), t.identifier('_updateChildProps'));
-      const CDP = parsed.componentDependentProps || {};
+      const componentsDependentProps = parsed.componentDependentProps || {};
 
-      Object.keys(CDP).forEach((pid) => {
+      Object.keys(componentsDependentProps).forEach((pid) => {
         const propMaps = [];
-        Object.keys(CDP[pid]).forEach(key => {
-          const value = CDP[pid][key];
+        Object.keys(componentsDependentProps[pid]).forEach(key => {
+          const value = componentsDependentProps[pid][key];
           propMaps.push(t.objectProperty(
             t.stringLiteral(key),
             t.stringLiteral(value)
