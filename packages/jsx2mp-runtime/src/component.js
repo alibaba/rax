@@ -73,7 +73,9 @@ export default class Component {
     Object.assign(this._methods, methods);
   }
 
-  _updateChildProps() {}
+  _updateChildProps(instanceId, props) {
+    updateChildProps(this, instanceId, props);
+  }
 
   // Todo
   _mountComponent() {}
