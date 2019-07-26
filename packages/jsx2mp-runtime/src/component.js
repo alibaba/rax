@@ -2,7 +2,7 @@
  * Base Component class definition.
  */
 import Host from './host';
-import { setComponentInstance } from './updater';
+import { setComponentInstance, updateChildProps } from './updater';
 import {
   RENDER,
   ON_SHOW,
@@ -57,6 +57,24 @@ export default class Component {
     currentCycles.push(fn);
   }
 
+  /**
+   * Used in render cycle
+   * @private
+   */
+  _updateData(data) {
+    data.$ready = true;
+    this.__updating = true;
+    this._internal.setData(data, () => {
+      this.__updating = false;
+    });
+  }
+
+  _updateMethods(methods) {
+    Object.assign(this._methods, methods);
+  }
+
+  _updateChildProps() {}
+
   // Todo
   _mountComponent() {}
   _updateComponent() {}
@@ -89,7 +107,6 @@ export default class Component {
       case RENDER:
         if (this.__updating) return;
         if (typeof this.render !== 'function') throw new Error('It seems have no render method.');
-        this.__updating = true;
         Host.current = this;
         this._hookID = 0;
         const nextProps = args[0] || this._internal.props;
@@ -99,13 +116,7 @@ export default class Component {
           setComponentInstance(nextProps.__pid, this);
         }
 
-        const updated = this.render(this.props = nextProps, this.state = nextState);
-        const { functions, data } = devideUpdated(updated);
-        Object.assign(this._methods, functions);
-        data.$ready = true;
-        this._internal.setData(data, () => {
-          this.__updating = false;
-        });
+        this.render(this.props = nextProps, this.state = nextState);
         break;
     }
   }
@@ -120,18 +131,6 @@ export default class Component {
     this.props = internal.props;
     if (!this.state) this.state = {};
     Object.assign(this.state, internal.data);
-  }
-
-  _dirtyCheck() {
-    if (this.__updating) return;
-    this._dirty = false;
-    for (let key in this._internal.props) {
-      if (this._internal.props.hasOwnProperty(key) && this._internal.props[key] !== this.props[key]) {
-        this._dirty = true;
-        break;
-      }
-    }
-    if (this._dirty) enqueueRender(this);
   }
 }
 
