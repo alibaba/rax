@@ -75,7 +75,7 @@ export function useState(initialState, stateKey) {
   const hook = hooks[hookID];
   if (!sameValue(hook[0], hook[2])) {
     hook[0] = hook[2];
-    currentInstance.shouldUpdate = true;
+    currentInstance.__shouldUpdate = true;
   }
 
   if (stateKey !== undefined) {
@@ -266,7 +266,7 @@ export function useReducer(reducer, initialArg, init) {
 
   if (!sameValue(next, hook[0])) {
     hook[0] = next;
-    currentInstance.shouldUpdate = true;
+    currentInstance.__shouldUpdate = true;
   }
 
   queue.eagerReducer = reducer;

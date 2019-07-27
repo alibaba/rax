@@ -11,7 +11,7 @@ import {
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
   COMPONENT_WILL_UNMOUNT,
-  COMPONENT_WILL_RECEIVE_PROPS,
+  COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
 import { enqueueRender } from './enqueueRender';
 
@@ -20,23 +20,34 @@ export default class Component {
     this.state = {};
     this.props = {};
 
-    this.shouldUpdate = false;
+    this.__shouldUpdate = false;
     this._methods = {};
     this._hooks = {};
     this.hooks = []; // ??
     this._hookID = 0;
+
+    this._pendingStates = [];
+    this._pendingCallbacks = [];
   }
 
-  setState(partialState, callback) {
-    this._internal.setData(partialState, () => {
-      Object.assign(this.state, partialState); // Lazily assign to state.
-      this._trigger(RENDER); // Trigger rerender.
-      callback && callback();
-    });
+  // Bind to this instance.
+  setState = (partialState, callback) => {
+    if (partialState != null) {
+      this._pendingStates.push(partialState);
+    }
+
+    if (typeof callback === 'function') {
+      this._pendingCallbacks.push(callback);
+    }
+
+    enqueueRender(this);
   }
 
-  forceUpdate(callback) {
-    this.setState({}, callback);
+  forceUpdate = (callback) => {
+    if (typeof callback === 'function') {
+      this._pendingCallbacks.push(callback);
+    }
+    this._updateComponent();
   }
 
   getHooks() {
@@ -77,9 +88,88 @@ export default class Component {
     updateChildProps(this, instanceId, props);
   }
 
-  // Todo
-  _mountComponent() {}
-  _updateComponent() {}
+  _collectState() {
+
+  }
+
+  _mountComponent() {
+    // Step 1: get state from getDerivedStateFromProps,
+    // __getDerivedStateFromProps is a reference to constructor.getDerivedStateFromProps
+    if (this.__getDerivedStateFromProps) {
+      const getDerivedStateFromProps = this.__getDerivedStateFromProps;
+      const partialState = getDerivedStateFromProps(this.props, this.state);
+      if (partialState) this.state = Object.assign({}, partialState);
+    }
+
+    // Step 2: trigger will mount.
+    this._trigger(COMPONENT_WILL_MOUNT);
+
+    // Step3: trigger render.
+    this._trigger(RENDER);
+
+    // Step4: mark __mounted = true
+    this.__mounted = true;
+
+    // Step5: trigger did mount and onShow
+    this._trigger(COMPONENT_DID_MOUNT);
+    this._trigger(ON_SHOW);
+
+    // Step6: create prevProps and prevState reference
+    this.prevProps = this.props;
+    this.prevState = this.state;
+  }
+
+  _updateComponent() {
+    // Step1: propTypes check, now skipped.
+    // Step2: make props to prevProps, and trigger willReceiveProps
+    const nextProps = this.props; // actually this is nextProps
+    const prevProps = this.props = this.prevProps || this.props;
+    if (this.__mounted) {
+      this._trigger(COMPONENT_WILL_RECEIVE_PROPS, this.props);
+    }
+
+    // Step3: collect pending state
+    let nextState = this._collectState();
+    const prevState = this.prevState || this.state;
+
+    // Step4: update state if defined getDerivedStateFromProps
+    let stateFromProps;
+    if (this.__getDerivedStateFromProps) {
+      const getDerivedStateFromProps = this.__getDerivedStateFromProps;
+      const partialState = getDerivedStateFromProps(nextProps, nextState);
+      if (partialState) stateFromProps = Object.assign({}, partialState);
+    }
+    // if null, means not to update state.
+    if (stateFromProps !== undefined) nextState = stateFromProps;
+
+    // Step5: judge shouldComponentUpdate
+    if (this.__mounted) {
+      this.__shouldUpdate = true;
+      if (
+        !this.__forceUpdate
+        && this.shouldComponentUpdate
+        && this.shouldComponentUpdate(nextProps, nextState) === false
+      ) {
+        this.__shouldUpdate = false;
+      } else {
+        // Step6: trigger will update
+        this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
+      }
+    }
+
+    this.props = nextProps;
+    this.state = nextState;
+    this.__forceUpdate = false;
+
+    // Step8: trigger render
+    if (this.__shouldUpdate) {
+      this._trigger(RENDER);
+    }
+
+    this.prevProps = this.props;
+    this.prevState = this.state;
+  }
+
   _unmountComponent() {}
 
   /**

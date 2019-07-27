@@ -11,6 +11,7 @@ import {
   COMPONENT_WILL_RECEIVE_PROPS,
   COMPONENT_WILL_UNMOUNT,
 } from './cycles';
+const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
 /**
  * Reference relationship.
@@ -56,6 +57,11 @@ function getComponentCycles(Klass) {
   function onInit() {
     // `this` point to page/component insatnce.
     this.instance = new Klass(this.props);
+    this.instance.type = Klass;
+    if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
+      this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
+    }
+
     this.instance._setInternal(this);
     this.data = this.instance.state;
     this.instance._trigger(COMPONENT_WILL_MOUNT);
