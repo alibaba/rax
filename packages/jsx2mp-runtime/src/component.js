@@ -75,10 +75,7 @@ export default class Component {
       case ON_HIDE:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
-          let fn;
-          while (fn = this._cycles[cycle].pop()) { // eslint-disable-line
-            fn(...args);
-          }
+          this._cycles[cycle].forEach(fn => fn(...args));
         }
         break;
 
@@ -90,7 +87,8 @@ export default class Component {
         this._hookID = 0;
         const nextProps = args[0] || this._internal.props;
         const nextState = args[1] || this._internal.data;
-        const updated = this.render(this.props = nextProps, this.state = nextState);
+        this.state = nextState;
+        const updated = this.render(this.props = nextProps);
         const { functions, data } = devideUpdated(updated);
         Object.assign(this._methods, functions);
         this._internal.setData(data, () => {
