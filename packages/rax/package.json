@@ -21,7 +21,9 @@
     "rax-is-valid-element": "^1.0.0",
     "rax-clone-element": "^1.0.0",
     "rax-children": "^1.0.0",
-    "rax-create-factory": "^1.0.0"
+    "rax-create-factory": "^1.0.0",
+    "csstype": "^2.6.6",
+    "prop-types": "^15.7.2"
   },
   "devDependencies": {
     "rax-proptypes": "^1.0.0"
