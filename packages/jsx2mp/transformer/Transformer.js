@@ -1,8 +1,11 @@
 const compiler = require('jsx-compiler');
 const { readFileSync } = require('fs-extra');
-const { relative } = require('path');
+const { relative, join } = require('path');
 const { writeFile } = require('../utils/file');
 const removeExt = require('../utils/removeExt');
+
+// Make .jsx be resolved by require.resolve.
+require.extensions['.jsx'] = require.extensions['.js'];
 
 /**
  * Write files
@@ -10,11 +13,16 @@ const removeExt = require('../utils/removeExt');
  * @param transformed {Object} jsx to miniapp object.
  * @param rootContext {String} root Path
  */
-const writeFiles = function(distPath, transformed, rootContext) {
+const writeFiles = function(distPath, transformed, rootContext, distContext) {
   writeFile(distPath + '.axml', transformed.template, rootContext);
   writeFile(distPath + '.json', JSON.stringify(transformed.config, null, 2) + '\n', rootContext);
   writeFile(distPath + '.js', transformed.code, rootContext);
   writeFile(distPath + '.acss', transformed.style, rootContext);
+  if (transformed.assets) {
+    Object.keys(transformed.assets).forEach((path) => {
+      writeFile(join(distContext, path), transformed.assets[path], rootContext);
+    });
+  }
 };
 
 /**
@@ -23,6 +31,7 @@ const writeFiles = function(distPath, transformed, rootContext) {
  * @param type {String} transform file type
  */
 const transformJSX = function(sourcePath, type) {
+  sourcePath = require.resolve(sourcePath);
   const jsxFileContent = readFileSync(sourcePath, 'utf-8');
   const transformed = compiler(jsxFileContent, Object.assign({}, compiler.baseOptions, {
     filePath: sourcePath,

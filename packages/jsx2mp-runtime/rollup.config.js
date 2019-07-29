@@ -10,9 +10,13 @@ const babelConfig = {
       {
         targets: 'iOS >= 8',
         loose: true,
+        include: ['transform-computed-properties'],
       },
     ],
   ],
+  plugins: [
+    '@babel/plugin-proposal-class-properties'
+  ]
 };
 
 const banner =

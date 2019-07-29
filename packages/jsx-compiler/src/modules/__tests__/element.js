@@ -113,6 +113,28 @@ describe('Transform JSXElement', () => {
 
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
     });
+
+    it('bind methods', () => {
+      const ast = parseExpression(`
+        <View 
+          onClick={onClick.bind(this, { a: 1 })}
+          onKeyPress={this.handleClick.bind(this, 'hello')}
+        />
+      `);
+      const dynamicValue = _transform(ast);
+
+      expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" onKeyPress="_e1" data-arg-context="this" data-arg-0="{{ a: 1 }}" data-arg-context="this" data-arg-0="{{\'hello\'}}" />');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ _e0: onClick, _e1: this.handleClick }');
+    });
+
+    it('skip list', () => {
+      const raw = `<View>{arr.map((val, idx) => {
+        return <Text>{idx}</Text>;
+      })}</View>`;
+      const ast = parseExpression(raw);
+      const dynamicValue = _transform(ast);
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{}');
+    });
   });
 
   describe('element', () => {
@@ -203,6 +225,22 @@ describe('Transform JSXElement', () => {
       </View>`);
 
       expect(genDynamicAttrs(dynamicValue)).toMatchSnapshot();
+    });
+
+    it('should handle text', () => {
+      const rawText = '<Text style={styles.name}>{data && data.itemTitle ? data.itemTitle : \'\'}</Text>';
+      const ast = parseExpression(rawText);
+      const dynamicValue = _transform(ast);
+      expect(genInlineCode(ast).code).toEqual('<Text style="{{styles.name}}">{{ _d0 }}</Text>');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ _d0: data && data.itemTitle ? data.itemTitle : \'\' }');
+    });
+
+    it('should handle ligical expression', () => {
+      const ast = parseExpression('<View>{ arr && arr.length > 0 && <Text>Hello</Text> }</View>');
+      const dynamicValue = _transform(ast, null, { if: 'a:if' });
+      const code = genInlineCode(ast).code;
+      expect(code).toEqual('<View><Text a:if="{{arr && arr.length > 0}}">Hello</Text></View>');
+      expect(genDynamicAttrs(dynamicValue)).toEqual('{ arr: arr }');
     });
 
     it('unsupported', () => {

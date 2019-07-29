@@ -19,6 +19,9 @@ const UNITLESS_NUMBER_PROPS = {
   gridRow: true,
   gridColumn: true,
   fontWeight: true,
+  // Main-stream browsers(like chrome) will not remove webkit prefix in the short term.
+  // ref: CSSOM webkit-based attribute: https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-webkit-cased-attribute
+  webkitLineClamp: true,
   lineClamp: true,
   // We make lineHeight default is px that is diff with w3c spec
   // lineHeight: true,
@@ -32,8 +35,7 @@ const UNITLESS_NUMBER_PROPS = {
   // Weex only
   lines: true
 };
-const IS_REM_REG = /\d+(rem|rpx)/;
-const REM_REG = /[-+]?\d*\.?\d+(rem|rpx)/g;
+const REM_REG = /^[-+]?\d*\.?\d+(rem|rpx)?$/g;
 const GLOBAL_REM_UNIT = '__global_rem_unit__';
 const global =
   typeof window === 'object'
@@ -55,7 +57,7 @@ if (getRem() === undefined) {
  * @returns {Boolean}
  */
 export function isRem(str) {
-  return IS_REM_REG.test(str);
+  return typeof str === 'string' && REM_REG.test(str);
 }
 
 /**
@@ -99,7 +101,7 @@ export function convertUnit(val, prop, remUnit = getRem()) {
   if (prop && isUnitNumber(val, prop)) {
     return calcUnitNumber(val, remUnit);
   } else if (isRem(val)) {
-    return calcRem(val, remUnit, );
+    return calcRem(val, remUnit);
   } else {
     return val;
   }

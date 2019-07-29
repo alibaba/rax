@@ -14,11 +14,12 @@ process.on('unhandledRejection', err => {
 const colors = require('chalk');
 const jsx2mp = require('jsx2mp');
 const WebpackDevServer = require('webpack-dev-server');
-const SSRDevServer = require('./ssr/devServer');
+const SSRDevServer = require('rax-ssr-dev-server');
 const path = require('path');
 
 const createWebpackCompiler = require('./utils/createWebpackCompiler');
 const webpackDevServerConfig = require('./config/webpackDevServer.config');
+const getDevServerConfig = require('./config/webapp/getDevServerConfig');
 const envConfig = require('./config/env.config');
 const pathConfig = require('./config/path.config');
 const appConfig = require('./config/app.config');
@@ -46,11 +47,28 @@ module.exports = function start(type = 'webapp') {
     const webpackConfig = getWebpackConfig(type, 'dev');
     const compiler = createWebpackCompiler(webpackConfig);
 
+    const devServerConfig = webpackDevServerConfig;
+
+    if (appConfig.ssr) {
+      const ssrDevServerConfig = getDevServerConfig();
+      Object.assign(devServerConfig, ssrDevServerConfig);
+    }
+
+    // rewire webpack dev config
+    if (Array.isArray(webpackConfig)) {
+      const customConfig = webpackConfig.find(config => {
+        return config.devServer;
+      });
+      customConfig && Object.assign(devServerConfig, customConfig.devServer);
+    } else if (webpackConfig.devServer) {
+      Object.assign(devServerConfig, webpackConfig.devServer);
+    }
+
     let devServer;
     if (appConfig.ssr) {
-      devServer = new SSRDevServer(compiler);
+      devServer = new SSRDevServer(compiler, devServerConfig);
     } else {
-      devServer = new WebpackDevServer(compiler, webpackDevServerConfig);
+      devServer = new WebpackDevServer(compiler, devServerConfig);
     }
 
     // Launch WebpackDevServer.
@@ -61,11 +79,28 @@ module.exports = function start(type = 'webapp') {
         process.exit(1);
       }
 
-      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}/`;
+      const serverUrl = `${envConfig.protocol}//${envConfig.host}:${envConfig.port}`;
+
+      function tipWeex(bundlePath) {
+        console.log(colors.green('[Weex] Scan the weex bundle url:'));
+        console.log(`    ${colors.underline.white(serverUrl + bundlePath + '?wh_weex=true')}`);
+      }
+
+      function tipWeb() {
+        console.log(colors.green('[Web] Starting the development server at:'));
+        console.log(`    ${colors.underline.white(serverUrl)}`);
+      }
 
       console.log('');
-      console.log(colors.green('Starting the development server at:'));
-      console.log(`    ${colors.underline.white(serverUrl)}`);
+      if (type === 'weexapp') {
+        tipWeex('/index.js');
+      } else if (type === 'webapp') {
+        tipWeb();
+      } else if (type === 'universalapp') {
+        tipWeb();
+        console.log('');
+        tipWeex('/index.weex.js');
+      }
       console.log('');
 
       ['SIGINT', 'SIGTERM'].forEach(function(sig) {

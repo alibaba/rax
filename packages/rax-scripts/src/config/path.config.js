@@ -37,9 +37,12 @@ const nodePaths = (process.env.NODE_PATH || '')
   .filter(Boolean)
   .map(resolveApp);
 
+const appBuild = resolveApp(process.env.OUTPUT_PATH || 'build');
+const tempDirectory = resolveApp('.temp');
+
 const paths = {
   appDirectory: appDirectory,
-  appBuild: resolveApp(process.env.OUTPUT_PATH || 'build'),
+  appBuild: appBuild,
   appDist: resolveApp('dist'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
@@ -54,6 +57,8 @@ const paths = {
   appNodeModules: resolveApp('node_modules'),
   componentDemoJs: resolveModule(resolveApp, 'demo/index'),
   nodePaths: nodePaths,
+  tempDirectory: tempDirectory,
+  assetsManifest: path.join(tempDirectory, 'assets_manifest.json'),
 };
 
 module.exports = paths;

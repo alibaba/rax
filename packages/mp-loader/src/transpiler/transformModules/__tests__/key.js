@@ -17,6 +17,7 @@ describe('Transpile module: key', () => {
       key: 'tabs-index-{{idx}}',
     };
     transformNode(el);
-    expect(el.key).toEqual('("tabs-index-") + (data[\'idx\'])');
+    // Tips: idx decleared by `var idx = __data__.idx`.
+    expect(el.key).toEqual('("tabs-index-") + (idx)');
   });
 });

@@ -18,7 +18,7 @@ module.exports = function getWebpackBaseConfig(options = {}) {
     plugins: [
       new MiniCssExtractPlugin({
         filename: 'client/[name].css',
-        chunkFilename: 'client/[id].css',
+        chunkFilename: 'client/[name].css',
       }),
       webpackConfig.plugins.define,
       webpackConfig.plugins.caseSensitivePaths,
@@ -63,6 +63,35 @@ module.exports = function getWebpackBaseConfig(options = {}) {
             },
             {
               loader: require.resolve('css-loader'),
+            },
+            {
+              loader: require.resolve('postcss-loader'),
+              options: {
+                ident: 'postcss',
+                plugins: () => [
+                  require('postcss-preset-env')({
+                    autoprefixer: {
+                      flexbox: 'no-2009',
+                    },
+                    stage: 3,
+                  }),
+                  require('postcss-plugin-rpx2vw')(),
+                ],
+              }
+            },
+          ]
+        },
+        {
+          test: /\.less$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+            },
+            {
+              loader: require.resolve('css-loader'),
+            },
+            {
+              loader: require.resolve('less-loader'),
             },
             {
               loader: require.resolve('postcss-loader'),

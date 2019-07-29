@@ -2,10 +2,6 @@
   flex-direction: column;
 }
 
-.home-logo {
-  width: 150rpx;
-}
-
 .home-intro {
   margin: 50rpx;
 }

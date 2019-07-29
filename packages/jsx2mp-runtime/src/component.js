@@ -2,6 +2,7 @@
  * Base Component class definition.
  */
 import Host from './host';
+import { on, emit } from './eventEmitter';
 import {
   RENDER,
   ON_SHOW,
@@ -12,6 +13,7 @@ import {
   COMPONENT_WILL_UNMOUNT,
   COMPONENT_WILL_RECEIVE_PROPS,
 } from './cycles';
+import {enqueueRender} from './enqueueRender';
 
 export default class Component {
   constructor() {
@@ -23,6 +25,7 @@ export default class Component {
     this._hooks = {};
     this.hooks = []; // ??
     this._hookID = 0;
+    on(RENDER, () => this._dirtyCheck());
   }
 
   setState(partialState, callback) {
@@ -45,6 +48,16 @@ export default class Component {
     return ++this._hookID;
   }
 
+  _cycles = {};
+
+  /**
+   * Register a lifecycle function.
+   */
+  _registerLifeCycle(cycle, fn) {
+    const currentCycles = this._cycles[cycle] = this._cycles[cycle] || [];
+    currentCycles.push(fn);
+  }
+
   /**
    * Trigger lifecycle with args.
    * @param cycle {String} Name of lifecycle.
@@ -61,14 +74,29 @@ export default class Component {
       case ON_SHOW:
       case ON_HIDE:
         if (isFunction(this[cycle])) this[cycle](...args);
+        if (this._cycles.hasOwnProperty(cycle)) {
+          let fn;
+          while (fn = this._cycles[cycle].pop()) { // eslint-disable-line
+            fn(...args);
+          }
+        }
         break;
 
       case RENDER:
+        if (this.__updating) return;
         if (typeof this.render !== 'function') throw new Error('It seems have no render method.');
-        const updated = this.render(this.props);
+        this.__updating = true;
+        Host.current = this;
+        this._hookID = 0;
+        const nextProps = args[0] || this._internal.props;
+        const nextState = args[1] || this._internal.data;
+        const updated = this.render(this.props = nextProps, this.state = nextState);
         const { functions, data } = devideUpdated(updated);
         Object.assign(this._methods, functions);
-        this._internal.setData(data);
+        this._internal.setData(data, () => {
+          this.__updating = false;
+          emit(RENDER);
+        });
         break;
     }
   }
@@ -80,8 +108,21 @@ export default class Component {
    */
   _setInternal(internal) {
     this._internal = internal;
-    this.props.__proto__ = internal.props;
-    this.state.__proto__ = internal.data;
+    this.props = internal.props;
+    if (!this.state) this.state = {};
+    Object.assign(this.state, internal.data);
+  }
+
+  _dirtyCheck() {
+    if (this.__updating) return;
+    this._dirty = false;
+    for (let key in this._internal.props) {
+      if (this._internal.props.hasOwnProperty(key) && this._internal.props[key] !== this.props[key]) {
+        this._dirty = true;
+        break;
+      }
+    }
+    if (this._dirty) enqueueRender(this);
   }
 }
 

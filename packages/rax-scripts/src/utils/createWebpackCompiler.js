@@ -2,7 +2,6 @@
 /* eslint no-console: 0 */
 const colors = require('chalk');
 
-const rewireWebpackConfig = require('./rewireWebpackConfig');
 const webpack = require('webpack');
 
 /**
@@ -16,10 +15,8 @@ const webpack = require('webpack');
 module.exports = (webpackConfig) => {
   let compiler;
 
-  const config = rewireWebpackConfig(webpackConfig);
-
   try {
-    compiler = webpack(config);
+    compiler = webpack(webpackConfig);
   } catch (err) {
     console.error(colors.red('[ERR]: Failed to compile.'));
     console.log('');
@@ -41,7 +38,6 @@ module.exports = (webpackConfig) => {
       stats.toString({
         assets: true,
         colors: true,
-        children: false,
         chunks: false,
         entrypoints: false,
         modules: false,

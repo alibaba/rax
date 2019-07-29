@@ -1,6 +1,7 @@
 import Host from './host';
 import { scheduleEffect, invokeEffects } from './scheduler';
 import sameValue from './sameValue';
+import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 
 function getCurrentInstance() {
   return Host.current;
@@ -59,7 +60,7 @@ export function useState(initialState, stateKey) {
         // After this one render finish, will continue run.
         hook[2] = newState;
         if (stateKey !== undefined) {
-          currentInstance._update({ [stateKey]: newState });
+          currentInstance.setState({ [stateKey]: newState });
         }
       }
     };
@@ -135,9 +136,9 @@ function useEffectImpl(effect, inputs, defered) {
       inputs
     };
 
-    currentInstance._registerLifeCycle('didMount', create);
-    currentInstance._registerLifeCycle('willUnmount', destory);
-    currentInstance._registerLifeCycle('didUpdate', () => {
+    currentInstance._registerLifeCycle(COMPONENT_DID_MOUNT, create);
+    currentInstance._registerLifeCycle(COMPONENT_WILL_UNMOUNT, destory);
+    currentInstance._registerLifeCycle(COMPONENT_DID_UPDATE, () => {
       const { prevInputs, inputs, create } = hooks[hookID];
       if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();

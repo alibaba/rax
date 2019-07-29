@@ -118,6 +118,7 @@ function parse(code, options) {
     imported,
     exported,
     defaultExportedPath,
+    assets: {},
   };
 
   // Reverse to call parse.

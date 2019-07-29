@@ -6,17 +6,18 @@ const removeExt = require('../utils/removeExt');
  * Create component files
  * @param usingComponents {Object} using Components
  * @param distPath {String} dist Path
- * @param rootContext {String} root Path
+ * @param rootContext {String} root path for root.
+ * @param distContext {String} dist path for root.
  */
-const createComponent = function(rootContext, distPath, usingComponents) {
+const createComponent = function(rootContext, distContext, distPath, usingComponents) {
   for (let [key, value] of Object.entries(usingComponents)) {
     if (isCustomComponent(value)) {
       const relativePath = relative(rootContext, value);
       const componentDistPath = removeExt(resolve(distPath, relativePath));
       const transformed = transformJSX(value, 'component');
+      createComponent(rootContext, distContext, distPath, transformed.config.usingComponents);
       transformed.config = formatConfing(transformed.config, rootContext);
-      writeFiles(componentDistPath, transformed, rootContext);
-      createComponent(rootContext, distPath, { usingComponents: transformed.usingComponents });
+      writeFiles(componentDistPath, transformed, rootContext, distContext);
     }
   }
 };

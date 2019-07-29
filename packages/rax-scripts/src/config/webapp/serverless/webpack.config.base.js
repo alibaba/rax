@@ -5,10 +5,10 @@ const qs = require('querystring');
 const webpackMerge = require('webpack-merge');
 const getWebpackConfigBase = require('../webpack.config.base');
 const pathConfig = require('../../path.config');
-const { getEntries } = require('../../index');
-const envConfig = require('../../env.config');
 
-const ServerlessLoader = require.resolve('rax-pwa-webpack-plugin/lib/ServerlessLoader');
+const { getEntries } = require('../../index');
+
+const ServerlessLoader = require.resolve('rax-pwa-webpack-plugin/lib/loaders/ServerlessLoader');
 
 const webpackConfigBase = getWebpackConfigBase({
   target: 'web'
@@ -31,8 +31,7 @@ Object.keys(entries).map((entry) => {
     appConfigPath: pathConfig.appConfig,
     appDocumentPath: entries._document ? entries._document : '',
     appShellPath: entries._shell ? entries._shell : '',
-    styles: [`${envConfig.publicPath}client/${entry}.css`],
-    scripts: [`${envConfig.publicPath}client/${entry}.js`],
+    assetsManifestPath: pathConfig.assetsManifest
   };
 
   pages[entry] = `${ServerlessLoader}?${qs.stringify(query)}!${entries[entry]}`;

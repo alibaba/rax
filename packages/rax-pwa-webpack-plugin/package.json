@@ -1,6 +1,6 @@
 {
   "name": "rax-pwa-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Webpack plugins for rax pwa project.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,7 +16,16 @@
     "npm": ">=3.0.0"
   },
   "peerDependencies": {
-    "rax": "^1.0.4",
+    "rax": "^1.0.0",
     "rax-hydrate": "^1.0.1"
+  },
+  "dependencies": {
+    "css-loader": "^2.1.1",
+    "html-minifier": "^4.0.0",
+    "loader-utils": "^1.2.3",
+    "path-to-regexp": "^3.0.0",
+    "rax-pwa": "^1.0.0",
+    "rax-server-renderer": "^1.0.1",
+    "webpack": "^4.32.2"
   }
 }

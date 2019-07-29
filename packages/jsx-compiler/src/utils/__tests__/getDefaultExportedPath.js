@@ -65,4 +65,19 @@ describe('getDefaultExportedPath', () => {
     const defaultExportedPath = getDefaultExportedPath(parseCode(code));
     expect(defaultExportedPath.node.type).toEqual('FunctionDeclaration');
   });
+
+  it('#5', () => {
+    const code = `
+      import { createElement, Component } from 'rax';
+      import View from 'rax-view';
+      import './index.css';
+      
+      class Foo extends Component {}
+      
+      export default Foo;
+    `;
+
+    const defaultExportedPath = getDefaultExportedPath(parseCode(code));
+    expect(defaultExportedPath.node.type).toEqual('ClassDeclaration');
+  });
 });
