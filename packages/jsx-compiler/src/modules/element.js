@@ -491,7 +491,6 @@ module.exports = {
         } else {
           dataProperties.push(t.objectProperty(t.stringLiteral(key), dynamicValue[key]));
         }
-
       });
       const updateData = t.memberExpression(
         t.thisExpression(),
