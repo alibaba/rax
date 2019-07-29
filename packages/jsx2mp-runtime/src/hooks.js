@@ -107,7 +107,7 @@ function useEffectImpl(effect, inputs, defered) {
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
   inputs = inputs === undefined ? null : inputs;
-  
+
   if (!hooks[hookID]) {
     const create = (immediately) => {
       if (!immediately && defered) return scheduleEffect(() => create(true));
