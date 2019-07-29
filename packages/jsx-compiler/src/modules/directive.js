@@ -165,6 +165,19 @@ function transformDirectiveList(ast) {
   return dynamicValue;
 }
 
+function transformDirectiveFragment(ast) {
+  function transformFragment(path) {
+    if (t.isJSXIdentifier(path.node.name, { name: 'Fragment' })) {
+      path.get('name').replaceWith(t.jsxIdentifier('block'));
+    }
+  }
+
+  traverse(ast, {
+    JSXOpeningElement: transformFragment,
+    JSXClosingElement: transformFragment,
+  });
+  return null;
+}
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
@@ -177,4 +190,5 @@ module.exports = {
   },
   _transformList: transformDirectiveList,
   _transformCondition: transformDirectiveCondition,
+  _transformFragment: transformDirectiveFragment,
 };

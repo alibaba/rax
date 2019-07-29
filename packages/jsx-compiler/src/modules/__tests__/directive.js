@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { _transformCondition, _transformList } = require('../directive');
+const { _transformCondition, _transformList, _transformFragment } = require('../directive');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
 
@@ -22,6 +22,16 @@ describe('Directives', () => {
       `);
       _transformCondition(ast);
       expect(genExpression(ast)).toEqual('<View a:if={value}></View>');
+    });
+  });
+
+  describe('fragment', () => {
+    it('simple', () => {
+      const ast = parseExpression(`
+        <Fragment foo="bar"></Fragment>
+      `);
+      _transformFragment(ast);
+      expect(genExpression(ast)).toEqual('<block foo="bar"></block>');
     });
   });
 });
