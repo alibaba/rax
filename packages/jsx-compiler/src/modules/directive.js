@@ -138,7 +138,7 @@ function transformDirectiveListAttr(ast) {
   return dynamicValue;
 }
 
-function transformDirectiveList(ast) {
+function transformDirectiveListDynamicValue(ast) {
   const dynamicValue = {};
   traverse(ast, {
     JSXElement: {
@@ -175,14 +175,19 @@ function transformDirectiveList(ast) {
   return dynamicValue;
 }
 
+function transformDirectiveList(ast) {
+  return Object.assign({},
+    transformDirectiveListAttr(ast),
+    transformDirectiveListDynamicValue(ast));
+}
+
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       Object.assign(
         parsed.dynamicValue = parsed.dynamicValue || {},
         transformDirectiveCondition(parsed.templateAST),
-        transformDirectiveListAttr(parsed.templateAST),
-        transformDirectiveList(parsed.templateAST),
+        transformDirectiveList(parsed.templateAST)
       );
     }
   },
