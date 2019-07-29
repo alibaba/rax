@@ -11,6 +11,7 @@ import {
   COMPONENT_WILL_RECEIVE_PROPS,
   COMPONENT_WILL_UNMOUNT,
 } from './cycles';
+
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
 /**

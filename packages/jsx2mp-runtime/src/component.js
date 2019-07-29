@@ -89,8 +89,19 @@ export default class Component {
   }
 
   _collectState() {
-
+    const state = Object.assign({}, this.state);
+    let parialState;
+    while (parialState = this._pendingStates.shift()) { // eslint-disable-line
+      if (parialState == null) continue; // eslint-disable-line
+      if (typeof parialState === 'function') {
+        Object.assign(state, parialState.call(this, state, this.props));
+      } else {
+        Object.assign(state, parialState);
+      }
+    }
+    return state;
   }
+
 
   _mountComponent() {
     // Step 1: get state from getDerivedStateFromProps,

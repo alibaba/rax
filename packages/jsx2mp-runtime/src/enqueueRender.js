@@ -13,6 +13,6 @@ export function rerender() {
   let component;
   // eslint-disable-next-line
   while (component = list.pop()) {
-    if (component._dirty) component._trigger(RENDER);
+    component._updateComponent();
   }
 }

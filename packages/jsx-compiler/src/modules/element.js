@@ -482,16 +482,32 @@ module.exports = {
         )
       );
       const eventHandlers = parsed.eventHandlers = [];
-      const properties = [];
+      const dataProperties = [];
+      const methodsProperties = [];
       Object.keys(dynamicValue).forEach((key) => {
         if (/_e\d+$/.test(key)) {
           eventHandlers.push(key);
+          methodsProperties.push(t.objectProperty(t.stringLiteral(key), dynamicValue[key]));
+        } else {
+          dataProperties.push(t.objectProperty(t.stringLiteral(key), dynamicValue[key]));
         }
-        properties.push(t.objectProperty(t.stringLiteral(key), dynamicValue[key]));
+
       });
-      parsed.renderFunctionPath.node.body.body.push(
-        t.returnStatement(t.objectExpression(properties))
+      const updateData = t.memberExpression(
+        t.thisExpression(),
+        t.identifier('_updateData')
       );
+      const updateMethods = t.memberExpression(
+        t.thisExpression(),
+        t.identifier('_updateMethods')
+      );
+      const fnBody = parsed.renderFunctionPath.node.body.body;
+      fnBody.push(t.expressionStatement(t.callExpression(updateData, [
+        t.objectExpression(dataProperties)
+      ])));
+      fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
+        t.objectExpression(methodsProperties)
+      ])));
     }
   },
   // For test export.

@@ -120,7 +120,7 @@ module.exports = {
           t.objectExpression(propMaps)
         ];
         const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
-        if (propMaps.length > 0) fnBody.splice(firstReturnStatementIdx, 0, callUpdateProps);
+        if (propMaps.length > 0) fnBody.push(callUpdateProps);
       });
     }
   },

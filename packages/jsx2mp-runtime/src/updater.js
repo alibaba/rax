@@ -21,8 +21,7 @@ export function updateChildProps(trigger, instanceId, propsFromTrigger) {
     nextTick(() => {
       const nextProps = getProps(trigger, propsFromTrigger);
       targetComponent.props = nextProps;
-      targetComponent._trigger('render');
-      // targetComponent._updateComponent();
+      targetComponent._updateComponent();
     });
   }
 };
