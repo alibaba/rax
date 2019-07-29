@@ -1,5 +1,6 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
+const dynamicValueHelper = require('../utils/dynamicValueHelper');
 const genExpression = require('../codegen/genExpression');
 
 const directiveIf = 'x-if';
@@ -91,38 +92,9 @@ function transformDirectiveCondition(ast) {
   return dynamicValue;
 }
 
-function transformDirectiveList(ast) {
+function transformDirectiveListAttr(ast) {
   const dynamicValue = {};
   traverse(ast, {
-    JSXElement: {
-      exit(path) {
-        const { node } = path;
-        const { attributes } = node.openingElement;
-        if (node.__jsxlist) {
-          const { args, iterValue } = node.__jsxlist;
-          dynamicValue[iterValue.name] = iterValue;
-          attributes.push(
-            t.jsxAttribute(
-              t.jsxIdentifier('a:for'),
-              t.stringLiteral(`{{${genExpression(iterValue)}}}`)
-            )
-          );
-          args.forEach((arg, index) => {
-            attributes.push(
-              t.jsxAttribute(
-                t.jsxIdentifier(['a:for-item', 'a:for-index'][index]),
-                t.stringLiteral(arg.name)
-              )
-            );
-
-            // Mark skip ids.
-            const skipIds = node.skipIds = node.skipIds || new Map();
-            skipIds.set(arg.name, true);
-          });
-          node.__jsxlist = null;
-        }
-      }
-    },
     JSXAttribute(path) {
       const { node } = path;
       if (t.isJSXIdentifier(node.name, { name: 'x-for' })) {
@@ -165,13 +137,56 @@ function transformDirectiveList(ast) {
   return dynamicValue;
 }
 
+function transformDirectiveListDynamicValue(ast) {
+  const dynamicValue = {};
+  traverse(ast, {
+    JSXElement: {
+      enter(path) {
+        const { node } = path;
+        const { attributes } = node.openingElement;
+        if (node.__jsxlist) {
+          const { args, iterValue } = node.__jsxlist;
+          const skipIds = node.skipIds = node.skipIds || new Map();
+          skipIds.set(iterValue.name, true);
+
+          dynamicValueHelper.setValueInDirectiveList(path, iterValue, dynamicValue);
+          attributes.push(
+            t.jsxAttribute(
+              t.jsxIdentifier('a:for'),
+              t.stringLiteral(`{{${genExpression(iterValue)}}}`)
+            )
+          );
+          args.forEach((arg, index) => {
+            attributes.push(
+              t.jsxAttribute(
+                t.jsxIdentifier(['a:for-item', 'a:for-index'][index]),
+                t.stringLiteral(arg.name)
+              )
+            );
+            // Mark skip ids.
+            skipIds.set(arg.name, true);
+          });
+          node.__jsxlist = null;
+        }
+      }
+    }
+  });
+  return dynamicValue;
+}
+
+function transformDirectiveList(ast) {
+  return Object.assign({},
+    transformDirectiveListAttr(ast),
+    transformDirectiveListDynamicValue(ast));
+}
+
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       Object.assign(
         parsed.dynamicValue = parsed.dynamicValue || {},
         transformDirectiveCondition(parsed.templateAST),
-        transformDirectiveList(parsed.templateAST),
+        transformDirectiveList(parsed.templateAST)
       );
     }
   },

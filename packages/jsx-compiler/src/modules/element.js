@@ -3,6 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
+const dynamicValueHelper = require('../utils/dynamicValueHelper');
 
 function transformTemplate(ast, scope = null, adapter) {
   const dynamicValue = {};
@@ -230,24 +231,7 @@ function transformTemplate(ast, scope = null, adapter) {
       // => <tag isFoo="{{a.length > 1}}" />
       case 'BinaryExpression':
       case 'LogicalExpression': {
-        const elThatContainSkipIds = path.findParent(p => p.isJSXElement() && p.node.skipIds);
-        const skipIds = elThatContainSkipIds
-          && elThatContainSkipIds.node
-          && elThatContainSkipIds.node.skipIds;
-        traverse(node.expression, {
-          Identifier(idPath) {
-            const parentMem = idPath.findParent(p => p.isMemberExpression());
-            if (parentMem && parentMem.node.object === idPath.node) {
-              if (skipIds && !skipIds.has(idPath.node.name)) {
-                dynamicValue[idPath.node.name] = idPath.node;
-              } else if (!skipIds) {
-                dynamicValue[idPath.node.name] = idPath.node;
-              }
-            } else if (!parentMem) {
-              dynamicValue[idPath.node.name] = idPath.node;
-            }
-          },
-        });
+        dynamicValueHelper.setValueInDirectiveList(path, node.expression, dynamicValue);
         path.replaceWith(t.stringLiteral(createBinding(genExpression(node.expression))));
         break;
       }
