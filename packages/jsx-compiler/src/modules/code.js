@@ -92,6 +92,37 @@ module.exports = {
     addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeRaxImports(parsed.ast);
     removeDefaultImports(parsed.ast);
+
+    /**
+     * $updateProps: collect props dependencies.
+     */
+    if (parsed.renderFunctionPath) {
+      const fnBody = parsed.renderFunctionPath.node.body.body;
+      let firstReturnStatementIdx = -1;
+      for (let i = 0, l = fnBody.length; i < l; i++) {
+        if (t.isReturnStatement(fnBody[i])) firstReturnStatementIdx = i;
+      }
+
+      const updateProps = t.memberExpression(t.identifier('this'), t.identifier('_updateChildProps'));
+      const componentsDependentProps = parsed.componentDependentProps || {};
+
+      Object.keys(componentsDependentProps).forEach((pid) => {
+        const propMaps = [];
+        Object.keys(componentsDependentProps[pid]).forEach(key => {
+          const value = componentsDependentProps[pid][key];
+          propMaps.push(t.objectProperty(
+            t.stringLiteral(key),
+            t.stringLiteral(value)
+          ));
+        });
+        const updatePropsArgs = [
+          t.stringLiteral(pid),
+          t.objectExpression(propMaps)
+        ];
+        const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
+        if (propMaps.length > 0) fnBody.push(callUpdateProps);
+      });
+    }
   },
 };
 
