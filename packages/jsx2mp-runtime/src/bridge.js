@@ -1,6 +1,5 @@
 /* global getCurrentPages */
 import Component from './component';
-import { supportComponent2 } from './env';
 import {
   RENDER,
   ON_SHOW,
@@ -11,6 +10,7 @@ import {
   COMPONENT_WILL_RECEIVE_PROPS,
   COMPONENT_WILL_UNMOUNT,
 } from './cycles';
+import { setComponentInstance, getComponentProps } from './updater';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
@@ -35,68 +35,56 @@ function getPageCycles(Klass) {
         query: options,
       };
       this.data = this.instance.state;
-      this.instance._trigger(COMPONENT_WILL_MOUNT);
-      this.instance._trigger(RENDER);
+
+      if (this.instance.__ready) return;
+      this.instance.__ready = true;
+      this.instance._mountComponent();
     },
-    onReady() {
-      this.instance._trigger(COMPONENT_DID_MOUNT);
-    },
+    onReady() {}, // noop
     onUnload() {
       this.instance._trigger(COMPONENT_WILL_UNMOUNT);
     },
     onShow() {
-      this.instance._trigger(ON_SHOW);
+      if (this.instance.__mounted) this.instance._trigger(ON_SHOW);
     },
     onHide() {
-      this.instance._trigger(ON_HIDE);
+      if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     },
   };
 }
 
 function getComponentCycles(Klass) {
-  const isSupportComponent2 = supportComponent2();
-  function onInit() {
-    // `this` point to page/component insatnce.
-    this.instance = new Klass(this.props);
-    this.instance.type = Klass;
-    if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
-      this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
-    }
+  return {
+    didMount() {
+      // `this` point to page/component insatnce.
+      const props = Object.assign({}, this.props, getComponentProps(this.props.__pid));
 
-    this.instance._setInternal(this);
-    this.data = this.instance.state;
-    this.instance._trigger(COMPONENT_WILL_MOUNT);
-    this.instance._trigger(RENDER);
-    if (!isSupportComponent2) {
-      this.instance._trigger(COMPONENT_DID_MOUNT);
-    }
-  }
+      this.instance = new Klass(props);
+      this.instance.type = Klass;
 
-  const cycles = {
-    didMount: onInit,
-    didUpdate() {
-      this.instance._trigger(COMPONENT_DID_UPDATE);
+      if (this.props.hasOwnProperty('__pid')) {
+        const componentId = this.props.__pid;
+        setComponentInstance(componentId, this.instance);
+      }
+
+      if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
+        this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
+      }
+
+      this.instance._setInternal(this);
+      this.data = this.instance.state;
+      this.instance._mountComponent();
     },
+    didUpdate() {},
     didUnmount() {
       this.instance._trigger(COMPONENT_WILL_UNMOUNT);
+
+      // Clean up hooks
+      this.hooks.forEach(hook => {
+        if (typeof hook.destory === 'function') hook.destory();
+      });
     },
   };
-
-  if (isSupportComponent2) {
-    cycles.onInit = onInit;
-    cycles.didMount = function() {
-      this.instance._trigger(COMPONENT_DID_MOUNT);
-    };
-    cycles.deriveDataFromProps = function(nextProps) {
-      if (!this.instance.__updating) {
-        const nextState = this.instance.state;
-        this.instance._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps, nextState);
-        this.instance._trigger(RENDER, nextProps);
-        this.instance._trigger(COMPONENT_DID_UPDATE, nextProps, nextState);
-      }
-    };
-  }
-  return cycles;
 }
 
 function createProxyMethods(events) {

@@ -209,15 +209,11 @@ export default class Component {
 
       case RENDER:
         if (this.__updating) return;
-        if (typeof this.render !== 'function') throw new Error('It seems have no render method.');
+        if (typeof this.render !== 'function') throw new Error('It seems component have no render method.');
         Host.current = this;
         this._hookID = 0;
-        const nextProps = args[0] || this._internal.props;
-        const nextState = args[1] || this._internal.data;
-
-        if (nextProps.hasOwnProperty('__pid')) {
-          setComponentInstance(nextProps.__pid, this);
-        }
+        const nextProps = args[0] || this.props;
+        const nextState = args[1] || this.state;
 
         this.render(this.props = nextProps, this.state = nextState);
         break;
