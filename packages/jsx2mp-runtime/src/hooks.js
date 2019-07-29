@@ -139,18 +139,15 @@ function useEffectImpl(effect, inputs, defered) {
 
     currentInstance._registerLifeCycle(COMPONENT_DID_MOUNT, create);
     currentInstance._registerLifeCycle(COMPONENT_WILL_UNMOUNT, destory);
-    currentInstance._registerLifeCycle(COMPONENT_DID_UPDATE, () => {
-      const { prevInputs, inputs, create } = hooks[hookID];
-      if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
-        destory();
-        create();
-      }
-    });
   } else {
     const hook = hooks[hookID];
-    const { create, inputs: prevInputs } = hook;
+    const { create, inputs: prevInputs, destory } = hook;
     hook.inputs = inputs;
     hook.prevInputs = prevInputs;
+    if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
+      destory();
+      create();
+    }
     create.current = effect;
   }
 }

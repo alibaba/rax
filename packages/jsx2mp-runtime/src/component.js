@@ -201,10 +201,7 @@ export default class Component {
       case ON_HIDE:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
-          let fn;
-          while (fn = this._cycles[cycle].pop()) { // eslint-disable-line
-            fn(...args);
-          }
+          this._cycles[cycle].forEach(fn => fn(...args));
         }
         break;
 
