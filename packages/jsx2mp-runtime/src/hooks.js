@@ -141,6 +141,7 @@ function useEffectImpl(effect, inputs, defered) {
     currentInstance._registerLifeCycle(COMPONENT_WILL_UNMOUNT, destory);
     currentInstance._registerLifeCycle(COMPONENT_DID_UPDATE, () => {
       const { prevInputs, inputs, create } = hooks[hookID];
+      debugger
       if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
         create();

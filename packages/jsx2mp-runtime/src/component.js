@@ -76,6 +76,7 @@ export default class Component {
   _updateData(data) {
     data.$ready = true;
     this.__updating = true;
+    Object.assign(this.state, data);
     this._internal.setData(data, () => {
       this.__updating = false;
     });
@@ -176,13 +177,23 @@ export default class Component {
     // Step8: trigger render
     if (this.__shouldUpdate) {
       this._trigger(RENDER);
+      this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
     }
 
     this.prevProps = this.props;
     this.prevState = this.state;
   }
 
-  _unmountComponent() {}
+  _unmountComponent() {
+    this._trigger(COMPONENT_WILL_UNMOUNT);
+
+    // Clean up hooks
+    this.hooks.forEach(hook => {
+      if (isFunction(hook.destory)) hook.destory();
+    });
+    this._internal.instance = null;
+    this._internal = null;
+  }
 
   /**
    * Trigger lifecycle with args.

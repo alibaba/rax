@@ -1,6 +1,6 @@
 /* global getCurrentPages */
 import Component from './component';
-import { ON_SHOW, ON_HIDE, COMPONENT_WILL_UNMOUNT } from './cycles';
+import { ON_SHOW, ON_HIDE, COMPONENT_WILL_UNMOUNT, COMPONENT_DID_UPDATE } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import isFunction from './isFunction';
 
@@ -34,7 +34,7 @@ function getPageCycles(Klass) {
     },
     onReady() {}, // noop
     onUnload() {
-      this.instance._trigger(COMPONENT_WILL_UNMOUNT);
+      this.instance._unmountComponent();
     },
     onShow() {
       if (this.instance.__mounted) this.instance._trigger(ON_SHOW);
@@ -69,12 +69,7 @@ function getComponentCycles(Klass) {
     },
     didUpdate() {},
     didUnmount() {
-      this.instance._trigger(COMPONENT_WILL_UNMOUNT);
-
-      // Clean up hooks
-      this.hooks.forEach(hook => {
-        if (isFunction(hook.destory)) hook.destory();
-      });
+      this.instance._unmountComponent();
     },
   };
 }
