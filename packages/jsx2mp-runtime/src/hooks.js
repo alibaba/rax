@@ -80,11 +80,7 @@ export function useState(initialState, stateKey) {
   }
 
   if (stateKey !== undefined) {
-    if (currentInstance._internal) {
-      currentInstance._internal.setData({ [stateKey]: hook[0] });
-    } else {
-      currentInstance._state[stateKey] = hook[0];
-    }
+    currentInstance._updateData({ [stateKey]: hook[0] });
   }
 
   return hook;
@@ -141,7 +137,6 @@ function useEffectImpl(effect, inputs, defered) {
     currentInstance._registerLifeCycle(COMPONENT_WILL_UNMOUNT, destory);
     currentInstance._registerLifeCycle(COMPONENT_DID_UPDATE, () => {
       const { prevInputs, inputs, create } = hooks[hookID];
-      debugger
       if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
         create();
@@ -149,7 +144,7 @@ function useEffectImpl(effect, inputs, defered) {
     });
   } else {
     const hook = hooks[hookID];
-    const { create, inputs: prevInputs } = hook;
+    const { create, inputs: prevInputs, destory } = hook;
     hook.inputs = inputs;
     hook.prevInputs = prevInputs;
     create.current = effect;

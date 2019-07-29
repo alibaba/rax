@@ -2,7 +2,7 @@
  * Base Component class definition.
  */
 import Host from './host';
-import { updateChildProps } from './updater';
+import { updateChildProps, removeComponentProps } from './updater';
 import { enqueueRender } from './enqueueRender';
 import isFunction from './isFunction';
 import {
@@ -74,6 +74,7 @@ export default class Component {
    * @private
    */
   _updateData(data) {
+    if (!this._internal) return;
     data.$ready = true;
     this.__updating = true;
     Object.assign(this.state, data);
@@ -186,13 +187,14 @@ export default class Component {
 
   _unmountComponent() {
     this._trigger(COMPONENT_WILL_UNMOUNT);
-
     // Clean up hooks
     this.hooks.forEach(hook => {
       if (isFunction(hook.destory)) hook.destory();
     });
     this._internal.instance = null;
     this._internal = null;
+    this.__mounted = false;
+    removeComponentProps(this.props.__pid);
   }
 
   /**
@@ -212,10 +214,7 @@ export default class Component {
       case ON_HIDE:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
-          let fn;
-          while (fn = this._cycles[cycle].pop()) { // eslint-disable-line
-            fn(...args);
-          }
+          this._cycles[cycle].forEach(fn => fn(...args));
         }
         break;
 

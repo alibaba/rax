@@ -15,6 +15,12 @@ export function getComponentProps(pid) {
   else return null;
 }
 
+export function removeComponentProps(pid) {
+  if (propsMap.hasOwnProperty(pid)) {
+    delete propsMap[pid];
+  }
+}
+
 function getNextProps(component, propsFromTrigger) {
   const props = {};
   for (let prop in propsFromTrigger) {
