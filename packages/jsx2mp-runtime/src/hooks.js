@@ -1,6 +1,7 @@
 import Host from './host';
 import { scheduleEffect, invokeEffects } from './scheduler';
 import sameValue from './sameValue';
+import isFunction from './isFunction';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 
 function getCurrentInstance() {
@@ -38,7 +39,7 @@ export function useState(initialState, stateKey) {
   if (!hooks[hookID]) {
     // If the initial state is the result of an expensive computation,
     // you may provide a function instead for lazy initial state.
-    if (typeof initialState === 'function') {
+    if (isFunction(initialState)) {
       initialState = initialState();
     }
 
@@ -51,7 +52,7 @@ export function useState(initialState, stateKey) {
       const hook = hooks[hookID];
       const eagerState = hook[2];
       // function updater
-      if (typeof newState === 'function') {
+      if (isFunction(newState)) {
         newState = newState(eagerState);
       }
 
@@ -158,7 +159,7 @@ export function useImperativeHandle(ref, create, inputs) {
   const nextInputs = inputs != null ? inputs.concat([ref]) : null;
 
   useLayoutEffect(() => {
-    if (typeof ref === 'function') {
+    if (isFunction(ref)) {
       ref(create());
       return () => ref(null);
     } else if (ref != null) {

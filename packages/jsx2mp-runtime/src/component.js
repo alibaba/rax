@@ -2,7 +2,9 @@
  * Base Component class definition.
  */
 import Host from './host';
-import { setComponentInstance, updateChildProps } from './updater';
+import { updateChildProps } from './updater';
+import { enqueueRender } from './enqueueRender';
+import isFunction from './isFunction';
 import {
   RENDER,
   ON_SHOW,
@@ -13,7 +15,6 @@ import {
   COMPONENT_WILL_UNMOUNT,
   COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
-import { enqueueRender } from './enqueueRender';
 
 export default class Component {
   constructor() {
@@ -36,7 +37,7 @@ export default class Component {
       this._pendingStates.push(partialState);
     }
 
-    if (typeof callback === 'function') {
+    if (isFunction(callback)) {
       this._pendingCallbacks.push(callback);
     }
 
@@ -44,7 +45,7 @@ export default class Component {
   }
 
   forceUpdate = (callback) => {
-    if (typeof callback === 'function') {
+    if (isFunction(callback)) {
       this._pendingCallbacks.push(callback);
     }
     this._updateComponent();
@@ -93,7 +94,7 @@ export default class Component {
     let parialState;
     while (parialState = this._pendingStates.shift()) { // eslint-disable-line
       if (parialState == null) continue; // eslint-disable-line
-      if (typeof parialState === 'function') {
+      if (isFunction(parialState)) {
         Object.assign(state, parialState.call(this, state, this.props));
       } else {
         Object.assign(state, parialState);
@@ -209,7 +210,7 @@ export default class Component {
 
       case RENDER:
         if (this.__updating) return;
-        if (typeof this.render !== 'function') throw new Error('It seems component have no render method.');
+        if (!isFunction(this.render)) throw new Error('It seems component have no render method.');
         Host.current = this;
         this._hookID = 0;
         const nextProps = args[0] || this.props;
@@ -233,19 +234,3 @@ export default class Component {
   }
 }
 
-function devideUpdated(updated) {
-  const functions = {};
-  const data = {};
-  Object.keys(updated).forEach(key => {
-    if (isFunction(updated[key])) {
-      functions[key] = updated[key];
-    } else {
-      data[key] = updated[key];
-    }
-  });
-  return { functions, data };
-}
-
-function isFunction(fn) {
-  return typeof fn === 'function';
-}

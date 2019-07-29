@@ -1,16 +1,8 @@
 /* global getCurrentPages */
 import Component from './component';
-import {
-  RENDER,
-  ON_SHOW,
-  ON_HIDE,
-  COMPONENT_DID_MOUNT,
-  COMPONENT_DID_UPDATE,
-  COMPONENT_WILL_MOUNT,
-  COMPONENT_WILL_RECEIVE_PROPS,
-  COMPONENT_WILL_UNMOUNT,
-} from './cycles';
+import { ON_SHOW, ON_HIDE, COMPONENT_WILL_UNMOUNT } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
+import isFunction from './isFunction';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
@@ -81,7 +73,7 @@ function getComponentCycles(Klass) {
 
       // Clean up hooks
       this.hooks.forEach(hook => {
-        if (typeof hook.destory === 'function') hook.destory();
+        if (isFunction(hook.destory)) hook.destory();
       });
     },
   };
