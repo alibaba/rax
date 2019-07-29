@@ -180,8 +180,8 @@ const router = {
   }
 };
 
-function matchLocation({ pathname, search }) {
-  router.match(`${pathname}${search}`);
+function matchLocation({ pathname }) {
+  router.match(pathname);
 }
 
 
