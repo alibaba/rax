@@ -122,11 +122,12 @@ export default class Component {
     this._trigger(RENDER);
 
     // Step4: mark __mounted = true
-    this.__mounted = true;
+    if (!this.__mounted) {
+      this.__mounted = true;
 
-    // Step5: trigger did mount and onShow
-    this._trigger(COMPONENT_DID_MOUNT);
-    this._trigger(ON_SHOW);
+      // Step5: trigger did mount
+      this._trigger(COMPONENT_DID_MOUNT);
+    }
 
     // Step6: create prevProps and prevState reference
     this.prevProps = this.props;
@@ -138,7 +139,7 @@ export default class Component {
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
-    if (this.__mounted) {
+    if (this.__mounted && diffProps(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, this.props);
     }
 
@@ -208,6 +209,7 @@ export default class Component {
       case COMPONENT_WILL_MOUNT:
       case COMPONENT_DID_MOUNT:
       case COMPONENT_WILL_RECEIVE_PROPS:
+      case COMPONENT_WILL_UPDATE:
       case COMPONENT_DID_UPDATE:
       case COMPONENT_WILL_UNMOUNT:
       case ON_SHOW:
@@ -244,3 +246,9 @@ export default class Component {
   }
 }
 
+function diffProps(prev, next) {
+  for (let key in next) {
+    if (next[key] !== prev[key]) return true;
+  }
+  return false;
+}
