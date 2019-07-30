@@ -66,9 +66,11 @@ const getStyleFunctionTemplete = `function _getStyle(classNameExpression) {
   return style;
 }`;
 
-function getTransfromCode(code) {
+function getTransfromCode(code, opts) {
   return transform(code, {
-    plugins: [jSXStylePlugin, syntaxJSX]
+    plugins: [
+      [jSXStylePlugin, opts],
+      syntaxJSX]
   }).code;
 }
 
@@ -272,6 +274,20 @@ import appStyleSheet from './app.css';
 
 var _styleSheet = appStyleSheet;
 render(<div style={_styleSheet["header"]} />);`);
+  });
+
+  it('dont remove className', () => {
+    expect(getTransfromCode(`
+import { createElement, render } from 'rax';
+import './app.css';
+
+render(<div className="header" />);
+`, { retainClassName: true })).toBe(`
+import { createElement, render } from 'rax';
+import appStyleSheet from './app.css';
+
+var _styleSheet = appStyleSheet;
+render(<div className="header" style={_styleSheet["header"]} />);`);
   });
 });
 
