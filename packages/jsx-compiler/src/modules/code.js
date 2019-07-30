@@ -87,11 +87,42 @@ module.exports = {
       }
     }
 
-    const hooks = transformHooks(parsed.renderFunctionPath);
+    const hooks = collectHooks(parsed.renderFunctionPath);
 
     addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeRaxImports(parsed.ast);
     removeDefaultImports(parsed.ast);
+
+    /**
+     * $updateProps: collect props dependencies.
+     */
+    if (parsed.renderFunctionPath) {
+      const fnBody = parsed.renderFunctionPath.node.body.body;
+      let firstReturnStatementIdx = -1;
+      for (let i = 0, l = fnBody.length; i < l; i++) {
+        if (t.isReturnStatement(fnBody[i])) firstReturnStatementIdx = i;
+      }
+
+      const updateProps = t.memberExpression(t.identifier('this'), t.identifier('_updateChildProps'));
+      const componentsDependentProps = parsed.componentDependentProps || {};
+
+      Object.keys(componentsDependentProps).forEach((pid) => {
+        const propMaps = [];
+        Object.keys(componentsDependentProps[pid]).forEach(key => {
+          const value = componentsDependentProps[pid][key];
+          propMaps.push(t.objectProperty(
+            t.stringLiteral(key),
+            value
+          ));
+        });
+        const updatePropsArgs = [
+          t.stringLiteral(pid),
+          t.objectExpression(propMaps)
+        ];
+        const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
+        if (propMaps.length > 0) fnBody.push(callUpdateProps);
+      });
+    }
   },
 };
 
@@ -210,21 +241,14 @@ function getReplacer(defaultExportedPath) {
   }
 }
 
-function transformHooks(root) {
+function collectHooks(root) {
   let ret = {};
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee, { name: USE_STATE })) {
-        if (t.isVariableDeclarator(path.parentPath.node) && t.isArrayPattern(path.parentPath.node.id)) {
-          const firstId = path.parentPath.node.id.elements[0];
-          node.arguments[1] = t.stringLiteral(firstId.name);
-          ret[USE_STATE] = true;
-        } else {
-          console.warn(`useState should be called with following: const [foo, setFoo] = useState(originalFoo); instead of ${genExpression(path.parentPath.node)}`);
-        }
-      } else if (t.isIdentifier(node.callee, { name: USE_EFFECT })) {
-        ret[USE_EFFECT] = true;
+      if (t.isIdentifier(node.callee, { name: USE_STATE })
+        || t.isIdentifier(node.callee, { name: USE_EFFECT })) {
+        ret[node.callee.name] = true;
       }
     }
   });

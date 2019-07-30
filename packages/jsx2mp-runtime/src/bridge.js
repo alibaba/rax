@@ -1,16 +1,9 @@
 /* global getCurrentPages */
 import Component from './component';
-import { supportComponent2 } from './env';
-import {
-  RENDER,
-  ON_SHOW,
-  ON_HIDE,
-  COMPONENT_DID_MOUNT,
-  COMPONENT_DID_UPDATE,
-  COMPONENT_WILL_MOUNT,
-  COMPONENT_WILL_RECEIVE_PROPS,
-  COMPONENT_WILL_UNMOUNT,
-} from './cycles';
+import { ON_SHOW, ON_HIDE } from './cycles';
+import { setComponentInstance, getComponentProps } from './updater';
+
+const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
 /**
  * Reference relationship.
@@ -33,63 +26,50 @@ function getPageCycles(Klass) {
         query: options,
       };
       this.data = this.instance.state;
-      this.instance._trigger(COMPONENT_WILL_MOUNT);
-      this.instance._trigger(RENDER);
+
+      if (this.instance.__ready) return;
+      this.instance.__ready = true;
+      this.instance._mountComponent();
     },
-    onReady() {
-      this.instance._trigger(COMPONENT_DID_MOUNT);
-    },
+    onReady() {}, // noop
     onUnload() {
-      this.instance._trigger(COMPONENT_WILL_UNMOUNT);
+      this.instance._unmountComponent();
     },
     onShow() {
-      this.instance._trigger(ON_SHOW);
+      if (this.instance.__mounted) this.instance._trigger(ON_SHOW);
     },
     onHide() {
-      this.instance._trigger(ON_HIDE);
+      if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     },
   };
 }
 
 function getComponentCycles(Klass) {
-  const isSupportComponent2 = supportComponent2();
-  function onInit() {
-    // `this` point to page/component insatnce.
-    this.instance = new Klass(this.props);
-    this.instance._setInternal(this);
-    this.data = this.instance.state;
-    this.instance._trigger(COMPONENT_WILL_MOUNT);
-    this.instance._trigger(RENDER);
-    if (!isSupportComponent2) {
-      this.instance._trigger(COMPONENT_DID_MOUNT);
-    }
-  }
+  return {
+    didMount() {
+      // `this` point to page/component insatnce.
+      const props = Object.assign({}, this.props, getComponentProps(this.props.__pid));
+      this.instance = new Klass(props);
+      this.instance.type = Klass;
 
-  const cycles = {
-    didMount: onInit,
-    didUpdate() {
-      this.instance._trigger(COMPONENT_DID_UPDATE);
+      if (this.props.hasOwnProperty('__pid')) {
+        const componentId = this.props.__pid;
+        setComponentInstance(componentId, this.instance);
+      }
+
+      if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
+        this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
+      }
+
+      this.instance._setInternal(this);
+      this.data = this.instance.state;
+      this.instance._mountComponent();
     },
+    didUpdate() {},
     didUnmount() {
-      this.instance._trigger(COMPONENT_WILL_UNMOUNT);
+      this.instance._unmountComponent();
     },
   };
-
-  if (isSupportComponent2) {
-    cycles.onInit = onInit;
-    cycles.didMount = function() {
-      this.instance._trigger(COMPONENT_DID_MOUNT);
-    };
-    cycles.deriveDataFromProps = function(nextProps) {
-      if (!this.instance.__updating) {
-        const nextState = this.instance.state;
-        this.instance._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps, nextState);
-        this.instance._trigger(RENDER, nextProps);
-        this.instance._trigger(COMPONENT_DID_UPDATE, nextProps, nextState);
-      }
-    };
-  }
-  return cycles;
 }
 
 function createProxyMethods(events) {
@@ -139,6 +119,14 @@ function createProxyMethods(events) {
   return methods;
 }
 
+function createAnonymousClass(render) {
+  return class extends Component {
+    render(props) {
+      return render.call(this, props);
+    }
+  };
+}
+
 /**
  * Bridge from Rax component class to MiniApp Component constructor.
  * @param {Class|Function} component Rax component definition.
@@ -146,16 +134,9 @@ function createProxyMethods(events) {
  * @return {Object} MiniApp constructor's config.
  */
 function createConfig(component, options) {
-  let Klass;
-  if (!isClassComponent(component)) {
-    Klass = class extends Component {
-      render(props) {
-        return component(props);
-      }
-    };
-  } else {
-    Klass = component;
-  }
+  const Klass = isClassComponent(component)
+    ? component
+    : createAnonymousClass(component);
 
   const { events, isPage } = options;
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
