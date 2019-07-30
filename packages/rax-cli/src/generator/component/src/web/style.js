@@ -1,6 +1,4 @@
-import { CSSProperties } from 'rax';
-
-const styles: { [key: string]: CSSProperties } = {
+const styles = {
   initial: {
     border: '0 solid black',
     boxSizing: 'border-box',

@@ -1,10 +1,9 @@
 import { createElement } from 'rax';
 import { isWeex } from 'universal-env';
-import { Props } from './types';
 import WeexComponent from './weex';
 import WebComponent from './web';
 
-export default (props: Props) => {
+export default props => {
   if (isWeex) {
     return <WeexComponent {...props} />;
   } else {

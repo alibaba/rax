@@ -1,8 +1,7 @@
 import { createElement } from 'rax';
-import { Props } from '../types';
 import styles from './style';
 
-const MyComponent = (props: Props) => {
+const MyComponent = props => {
   const { style, ...rest } = props;
   let styleProps = {
     ...styles.initial,
