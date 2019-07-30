@@ -17,4 +17,3 @@ export {
   cloneElement,
 };
 export default Rax;
-
