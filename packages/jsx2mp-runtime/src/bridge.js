@@ -1,8 +1,7 @@
 /* global getCurrentPages */
 import Component from './component';
-import { ON_SHOW, ON_HIDE, COMPONENT_WILL_UNMOUNT, COMPONENT_DID_UPDATE } from './cycles';
+import { ON_SHOW, ON_HIDE } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-import isFunction from './isFunction';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
@@ -121,6 +120,14 @@ function createProxyMethods(events) {
   return methods;
 }
 
+function createAnonymousClass(render) {
+  return class extends Component {
+    render(props) {
+      return render.call(this, props);
+    }
+  }
+}
+
 /**
  * Bridge from Rax component class to MiniApp Component constructor.
  * @param {Class|Function} component Rax component definition.
@@ -128,16 +135,9 @@ function createProxyMethods(events) {
  * @return {Object} MiniApp constructor's config.
  */
 function createConfig(component, options) {
-  let Klass;
-  if (!isClassComponent(component)) {
-    Klass = class extends Component {
-      render(props) {
-        return component.call(this, props);
-      }
-    };
-  } else {
-    Klass = component;
-  }
+  const Klass = isClassComponent(component)
+    ? component
+    : createAnonymousClass(component);
 
   const { events, isPage } = options;
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
