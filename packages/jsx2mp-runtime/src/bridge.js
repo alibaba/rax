@@ -125,7 +125,7 @@ function createAnonymousClass(render) {
     render(props) {
       return render.call(this, props);
     }
-  }
+  };
 }
 
 /**
