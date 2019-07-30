@@ -3,49 +3,82 @@ const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
+const CodeError = require('../utils/CodeError');
 
-function transformTemplate(ast, scope = null, adapter, componentsDependentProps = {}) {
-  const dynamicValue = {};
+const ATTR = Symbol('attribute');
+const ELE = Symbol('element');
+/**
+ * 1. Normalize jsxExpressionContainer to binding var.
+ * 2. Collect dynamicValue (dependent identifiers)
+ * 3. Normalize function bounds.
+ * @param ast
+ * @param scope
+ * @param adapter
+ * @param sourceCode
+ */
+function transformTemplate(ast, scope = null, adapter, sourceCode) {
+  const dynamicValues = [];
+  const dynamicEvents = [];
+  const applyDynamicValueName = () => '_d' + dynamicValues.length;
+  const applyDynamicEventName = () => '_e' + dynamicEvents.length;
 
-  let ids = 0;
-  function applyDynamicValue() {
-    return (scope ? scope : '') + '_d' + ids++;
-  }
+  function handleJSXExpressionContainer(path) {
+    const { parentPath, node } = path;
+    if (node.__transformed) return;
 
-  let events = 0;
-  function applyEventHandler() {
-    return (scope ? scope : '') + '_e' + events++;
-  }
+    const type = parentPath.isJSXAttribute()
+      ? ATTR // <View foo={bar} />
+      : ELE; // <View>{xxx}</View>
+    const { expression } = node;
 
-  // Handle attributes.
-  function transformAttr(path) {
-    const { node, parentPath } = path;
-    switch (node.expression.type) {
-      // <tag key={'string'} />
-      // => <tag key="string" />
-      case 'StringLiteral': {
-        path.replaceWith(t.stringLiteral(node.expression.value));
+    switch (expression.type) {
+      // <div foo={'string'} /> -> <div foo="string" />
+      // <div>{'hello world'}</div> -> <div>hello world</div>
+      case 'StringLiteral':
+        if (type === ATTR) path.replaceWith(expression);
+        else if (type === ELE) path.replaceWith(t.jsxText(expression.value));
         break;
-      }
 
-      // <tag key={key} n={10} />
-      // => <tag key="{{key}}" n="{{10}}" />
+      // <div foo={100} /> -> <div foo="{{100}}" />
+      // <div>{100}</div>  -> <div>100</div>
       case 'NumericLiteral':
-      case 'BooleanLiteral': {
-        const value = node.expression.name || node.expression.value;
-        path.replaceWith(t.stringLiteral(createBinding(value)));
+        if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(expression.value)));
+        else if (type === ELE) path.replaceWith(t.jsxText(String(expression.value)));
         break;
-      }
 
-      case 'NullLiteral': {
-        path.replaceWith(t.stringLiteral(createBinding('null')));
+      // <div foo={true} /> -> <div foo="{{true}}" />
+      // <div>{true}</div>  -> <div></div>
+      case 'BooleanLiteral':
+        if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(expression.value)));
+        else if (type === ELE) path.remove();
         break;
-      }
 
-      case 'TemplateLiteral': {
-        if (path.findParent(p => p && p.node && p.node.__isList)) {
-          break;
+      // <div foo={null} /> -> <div foo="{{null}}" />
+      // <div>{null}</div>  -> <div></div>
+      case 'NullLiteral':
+        if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding('null')));
+        else if (type === ELE) path.remove();
+        break;
+
+      // <div foo={/foo/} /> -> <div foo="{{_dx}}" />
+      // <div>/regexp/</div>  -> <div>{{ _dx }}</div>
+      case 'RegExpLiteral':
+        const dynamicName = applyDynamicValueName();
+        if (type === ATTR) {
+          path.replaceWith(t.stringLiteral(createBinding(dynamicName)));
+        } else if (type === ELE) {
+          path.replaceWith(createJSXBinding(dynamicName));
         }
+        dynamicValues.push({
+          name: dynamicName,
+          value: expression,
+        });
+        break;
+
+      // <div foo={`hello ${exp}`} /> -> <div foo="hello {{exp}}" />
+      // <div>/regexp/</div>  -> <div>{{ _dx }}</div>
+      case 'TemplateLiteral':
+        if (type === ELE) throw new CodeError(sourceCode, node, node.loc, 'Unsupported TemplateLiteral in JSXElement Children:');
 
         if (path.isTaggedTemplateExpression()) break;
 
@@ -76,367 +109,177 @@ function transformTemplate(ast, scope = null, adapter, componentsDependentProps 
             retString += nodes[i].value;
           } else {
             const id = genExpression(nodes[i], { concise: true });
-            dynamicValue[id] = nodes[i];
+            dynamicValues.push({
+              name: id,
+              value: nodes[i],
+            });
             retString += createBinding(id);
           }
         }
 
         path.replaceWith(t.stringLiteral(retString));
         break;
-      }
 
-      // <tag style={style} />
-      // =>
-      // <tag style="{{_d0}}" />
-      case 'Identifier': {
-        let skipIds;
-        const hasSkipIdParentPath = path.findParent(p => p.isJSXElement() && p.node.skipIds);
-        if (hasSkipIdParentPath) skipIds = hasSkipIdParentPath.node.skipIds;
-
-        if (node.expression.name === 'undefined') {
-          path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
-        } else if (isEventHandler(genExpression(parentPath.node.name))) {
-          // <tag onClick={handleClick} />
-          // => <tag onClick="_e0" />
-          const id = applyEventHandler();
-          dynamicValue[id] = node.expression;
-          path.replaceWith(t.stringLiteral(id));
-        } else if (/^_l\d+/.test(node.expression.name) || skipIds && skipIds.has(node.expression.name)) {
-          // 1. Ignore list variables.
-          // 2. <View x-for={item in value} />
-          path.replaceWith(t.stringLiteral(createBinding(node.expression.name)));
-        } else {
-          const id = applyDynamicValue();
-          dynamicValue[id] = node.expression;
-          const jsxEl = path.findParent(p => p.isJSXElement()).node;
-          if (jsxEl.__pid && componentsDependentProps[jsxEl.__pid]) {
-            componentsDependentProps[jsxEl.__pid][node.expression.name] = id;
+      // <div foo={bar} /> -> <div foo="{{bar}}" />
+      // <div>{bar}</div>  -> <div>{{ bar }}</div>
+      case 'Identifier':
+        if (type === ATTR) {
+          if (expression.name === 'undefined') {
+            parentPath.remove(); // Remove jsxAttribute
+            break;
+          } else {
+            path.replaceWith(t.stringLiteral(createBinding(expression.name)));
           }
-          path.replaceWith(t.stringLiteral(createBinding(id)));
+        } else if (type === ELE) {
+          if (expression.name === 'undefined') {
+            path.remove(); // Remove expression
+            break;
+          } else {
+            path.replaceWith(createJSXBinding(expression.name));
+          }
         }
-        break;
-      }
-
-      case 'MemberExpression': {
-        if (isEventHandler(genExpression(parentPath.node.name))) {
-          // <tag onClick={this.handleClick} />
-          // => <tag onClick="_e0" />
-          const id = applyEventHandler();
-          dynamicValue[id] = node.expression;
-          path.replaceWith(t.stringLiteral(id));
-        } else {
-          // <tag key={this.props.name} key2={a.b} />
-          // => <tag key="{{name}}" key2="{{a.b}}" />
-          let exp = genExpression(node.expression);
-          exp = exp
-            .replace(/this.props./, '')
-            .replace(/this.state./, '');
-          const jsxEl = path.findParent(p => p.isJSXElement()).node;
-          if (jsxEl.__pid && componentsDependentProps[jsxEl.__pid]) {
-            componentsDependentProps[jsxEl.__pid][exp] = exp;
-          }
-          path.replaceWith(t.stringLiteral(createBinding(exp)));
-        }
-
-        break;
-      }
-
-      case 'CallExpression':
-        if (
-          isEventHandler(genExpression(parentPath.node.name))
-          && t.isMemberExpression(node.expression.callee)
-          && t.isIdentifier(node.expression.callee.property, { name: 'bind' })
-        ) {
-          const callExp = node.expression;
-          const args = callExp.arguments;
-          const attributes = parentPath.parentPath.node.attributes;
-          if (Array.isArray(args)) {
-            args.forEach((arg, index) => {
-              if (index === 0) {
-                // first arg is `this` context.
-                const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
-                  concise: true,
-                  comments: false,
-                }));
-                attributes.push(
-                  t.jsxAttribute(
-                    t.jsxIdentifier('data-arg-context'),
-                    t.stringLiteral(strValue)
-                  )
-                );
-              } else {
-                attributes.push(
-                  t.jsxAttribute(
-                    t.jsxIdentifier('data-arg-' + (index - 1)),
-                    t.stringLiteral(createBinding(genExpression(arg, {
-                      concise: true,
-                      comments: false,
-                    })))
-                  )
-                );
-              }
-            });
-          }
-          const eventHandler = applyEventHandler();
-          dynamicValue[eventHandler] = callExp.callee.object;
-          path.replaceWith(t.stringLiteral(eventHandler));
-          break;
-        } else {
-          // Fall through switch.
-        }
-
-      // <tag foo={fn()} foo={fn.method()} foo={a ? 1 : 2} />
-      // => <tag foo="{{_d0}}" foo="{{_d1}}" foo="{{_d2}}" />
-      // return {
-      //   _d0: fn(),
-      //   _d1: fn.method(),
-      //   _d1: a ? 1 : 2,
-      // };
-      case 'ConditionalExpression':
-        const { test } = node.expression;
-        const elThatContainSkipIds = path.findParent(p => p.isJSXElement() && p.node.skipIds);
-        const skipIds = elThatContainSkipIds
-          && elThatContainSkipIds.node
-          && elThatContainSkipIds.node.skipIds;
-        if (t.isBinaryExpression(test)) {
-          const { left, right } = test;
-          if (t.isIdentifier(left) && !/^_l\d+/.test(left.name) && skipIds && !skipIds.has(left.name)) {
-            const id = applyDynamicValue();
-            dynamicValue[id] = Object.assign({}, left);
-            test.left = t.identifier(id);
-          }
-          if (t.isIdentifier(right) && !/^_l\d+/.test(right.name) && skipIds && !skipIds.has(right.name)) {
-            const id = applyDynamicValue();
-            dynamicValue[id] = right;
-            test.right = t.identifier(id);
-          }
-          path.replaceWith(t.stringLiteral(createBinding(genExpression(node.expression))));
-          break;
-        }
-      case 'NewExpression':
-      case 'ObjectExpression':
-      case 'ArrayExpression':
-      case 'UnaryExpression':
-      case 'RegExpLiteral': {
-        const id = applyDynamicValue();
-        dynamicValue[id] = node.expression;
-        path.replaceWith(t.stringLiteral(createBinding(id)));
-        break;
-      }
-
-      // <tag onClick={() => {}} />
-      // => <tag onClick="_e0" />
-      case 'ArrowFunctionExpression':
-      case 'FunctionExpression': {
-        const id = applyEventHandler();
-        dynamicValue[id] = node.expression;
-        path.replaceWith(t.stringLiteral(id));
-        break;
-      }
-
-      // <tag isFoo={a.length > 1} />
-      // => <tag isFoo="{{a.length > 1}}" />
-      case 'BinaryExpression':
-      case 'LogicalExpression': {
-        const elThatContainSkipIds = path.findParent(p => p.isJSXElement() && p.node.skipIds);
-        const skipIds = elThatContainSkipIds
-          && elThatContainSkipIds.node
-          && elThatContainSkipIds.node.skipIds;
-        traverse(node.expression, {
-          Identifier(idPath) {
-            const parentMem = idPath.findParent(p => p.isMemberExpression());
-            if (parentMem && parentMem.node.object === idPath.node) {
-              if (skipIds && !skipIds.has(idPath.node.name)) {
-                dynamicValue[idPath.node.name] = idPath.node;
-              } else if (!skipIds) {
-                dynamicValue[idPath.node.name] = idPath.node;
-              }
-            } else if (!parentMem) {
-              dynamicValue[idPath.node.name] = idPath.node;
-            }
-          },
+        dynamicValues.push({
+          name: expression.name,
+          value: expression,
         });
-        path.replaceWith(t.stringLiteral(createBinding(genExpression(node.expression))));
         break;
-      }
 
-      // <tag isFoo={a,b} />
-      // => <tag isFoo="{{b}}" />
-      case 'SequenceExpression': {
-        const { expressions } = node.expression;
-        const exp = genExpression(expressions[expressions.length - 1]);
-        path.replaceWith(t.stringLiteral(createBinding(exp)));
-        break;
-      }
-
-      default: {
-        throw new Error(
-          'Unsupported stynax in JSX. ' + node.expression.type + ': "' + genExpression(node) + '"'
-        );
-      }
-    }
-  }
-
-  // Handle elements.
-  function transformElement(path) {
-    const { node } = path;
-
-    switch (node.expression.type) {
-      // {'string'}
-      // string
-      case 'StringLiteral': {
-        path.replaceWith(t.identifier(node.expression.value));
-        break;
-      }
-
-      // {foo}
-      // => {{ foo }}
-      case 'NumericLiteral':
-      case 'BooleanLiteral':
-      case 'Identifier': {
-        if (t.isIdentifier(node.expression) && path.findParent(p => p.isJSXElement() && p.node.skipIds && p.node.skipIds.has(node.expression.name))) {
-          path.replaceWith(createJSXBinding(genExpression(node.expression)));
-          break;
-        }
-
-        if (t.isIdentifier(node.expression, { name: 'undefined' })) {
-          path.remove();
-        } else {
-          const value = node.expression.name || node.expression.value;
-          path.replaceWith(createJSXBinding('' + value));
-          // Only idenfitier should be listed in dynamic values.
-          if (t.isIdentifier(node.expression) && !node.expression.__skipDynamicValue) {
-            dynamicValue[value] = node.expression;
-          }
-        }
-        break;
-      }
-
-      case 'NullLiteral': {
-        path.remove();
-        break;
-      }
-
-      // <tag key={this.props.name} key2={a.b} />
-      // => <tag key="{{name}}" key2="{{a.b}}" />
-      case 'MemberExpression': {
-        const obj = node.expression.object;
-        if (path.findParent(p => p.isJSXElement() && p.node.skipIds && p.node.skipIds.has(obj.name))) {
-          path.replaceWith(createJSXBinding(genExpression(node.expression)));
-          break;
-        }
-
-        if (t.isIdentifier(obj) && !/^_l\d+/.test(obj.name)) {
-          const id = applyDynamicValue();
-          dynamicValue[id] = obj;
-          node.expression.object = t.identifier(id);
-        }
-        let exp = genExpression(node.expression);
-        exp = exp
-          .replace(/this.props./, '')
-          .replace(/this.state./, '');
-        path.replaceWith(createJSXBinding(exp));
-        break;
-      }
-
-      case 'CallExpression':
-        if (t.isMemberExpression(node.expression.callee)
-          && t.isIdentifier(node.expression.callee.property, { name: 'map' })) {
-          // Skip `array.map(iterableFunction)`.
-          path.skip();
-          break;
-        } else {
-          // Fall through
-        }
-
-      // <tag foo={fn()} foo={fn.method()} foo={a ? 1 : 2} />
-      // => <tag foo="{{_d0}}" foo="{{_d1}}" foo="{{_d2}}" />
-      // return {
-      //   _d0: fn(),
-      //   _d1: fn.method(),
-      //   _d1: a ? 1 : 2,
-      // };
-      case 'NewExpression':
-      case 'ArrayExpression':
-      case 'UnaryExpression':
-      case 'ConditionalExpression':
-      case 'RegExpLiteral': {
-        const id = applyDynamicValue();
-        dynamicValue[id] = node.expression;
-        path.replaceWith(createJSXBinding(id));
-        break;
-      }
-
-      // <tag onClick={() => {}} />
-      // => <tag onClick="_e0" />
-      case 'ArrowFunctionExpression':
-      case 'FunctionExpression': {
-        const id = applyEventHandler();
-        dynamicValue[id] = node.expression;
-        path.replaceWith(createJSXBinding(id));
-        break;
-      }
-
-      // <tag isFoo={a.length > 1} />
-      // => <tag isFoo="{{a.length > 1}}" />
-      case 'BinaryExpression': {
-        path.replaceWith(createJSXBinding(genExpression(node.expression)));
-        break;
-      }
-
-      case 'LogicalExpression': {
-        if (node.expression.operator === '&&' && t.isJSXElement(node.expression.right)) {
-          // foo && <Element />
-          node.expression.right.openingElement.attributes.push(t.jsxAttribute(
-            t.jsxIdentifier(adapter.if),
-            t.stringLiteral(createBinding(genExpression(node.expression.left)))
-          ));
-          traverse(node.expression.left, {
-            MemberExpression(path) {
-              dynamicValue[path.node.object.name] = path.node.object;
-              path.skip();
-            },
-            Identifier(path) {
-              if (!path.node.__skipDynamicValue) {
-                dynamicValue[path.node.name] = path.node;
-              }
-            },
-          });
-          path.replaceWith(node.expression.right);
-        } else {
-          path.replaceWith(createJSXBinding(genExpression(node.expression)));
-        }
-        break;
-      }
-
-      // <tag isFoo={a,b} />
-      // => <tag isFoo="{{b}}" />
-      case 'SequenceExpression': {
-        const { expressions } = node.expression;
-        const exp = genExpression(expressions[expressions.length - 1]);
-        path.replaceWith(createJSXBinding(exp));
-        break;
-      }
-
-      // Special to avoid loop.
+      // Remove no usage.
       case 'JSXEmptyExpression':
         path.remove();
         break;
 
-      // {<div></div>} => <div></div>
-      case 'JSXElement':
-        path.replaceWith(node.expression);
+      // <tag onClick={() => {}} /> => <tag onClick="_e0" />
+      // <tag>{() => {}}</tag> => throw Error
+      case 'ArrowFunctionExpression':
+      case 'FunctionExpression':
+        if (type === ELE) throw new CodeError(sourceCode, node, node.loc, 'Unsupported Function in JSXElement:');
+
+        if (!isEventHandler(parentPath.node.name.name)) throw new CodeError(sourceCode, node, node.loc, `Only EventHandlers are supported in Mini Program, eg: onClick/onChange, instead of "${parentPath.node.name.name}".`);
+
+        const name = applyDynamicEventName();
+        dynamicEvents.push({ name, value: expression });
+        path.replaceWith(t.stringLiteral(name));
         break;
 
+      // <tag key={this.props.name} key2={a.b} /> => <tag key="{{name}}" key2="{{a.b}}" />
+      // <tag>{ foo.bar }</tag> => <tag>{{ foo.bar }}</tag>
+      case 'MemberExpression':
+        if (type === ATTR) {
+          if (isEventHandler(parentPath.node.name.name)) {
+            const name = applyDynamicEventName();
+            dynamicEvents.push({
+              name,
+              value: expression
+            });
+            path.replaceWith(t.stringLiteral(name));
+          } else {
+            const name = applyDynamicValueName();
+            dynamicValues.push({
+              name,
+              value: expression
+            });
+            path.replaceWith(t.stringLiteral(createBinding(name)));
+          }
+        } else if (type === ELE) {
+          const name = applyDynamicValueName();
+          dynamicValues.push({
+            name,
+            value: expression
+          });
+          path.replaceWith(createJSXBinding(name));
+        }
+        break;
+
+      // <tag foo={fn()} /> => <tag foo="{{_d0}} /> _d0 = fn();
+      // <tag>{fn()}</tag> => <tag>{{ _d0 }}</tag> _d0 = fn();
+      case 'CallExpression':
+        if (type === ATTR) {
+          if (
+            isEventHandler(parentPath.node.name.name)
+            && t.isMemberExpression(expression.callee)
+            && t.isIdentifier(expression.callee.property, { name: 'bind' })
+          ) {
+            // function bounds
+            const callExp = node.expression;
+            const args = callExp.arguments;
+            const { attributes } = parentPath.parentPath.node;
+            if (Array.isArray(args)) {
+              args.forEach((arg, index) => {
+                if (index === 0) {
+                  // first arg is `this` context.
+                  const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
+                    concise: true,
+                    comments: false,
+                  }));
+                  attributes.push(
+                    t.jsxAttribute(
+                      t.jsxIdentifier('data-arg-context'),
+                      t.stringLiteral(strValue)
+                    )
+                  );
+                } else {
+                  attributes.push(
+                    t.jsxAttribute(
+                      t.jsxIdentifier('data-arg-' + (index - 1)),
+                      t.stringLiteral(createBinding(genExpression(arg, {
+                        concise: true,
+                        comments: false,
+                      })))
+                    )
+                  );
+                }
+              });
+            }
+            const name = applyDynamicEventName();
+            dynamicEvents.push({
+              name, value: callExp.callee.object
+            });
+            path.replaceWith(t.stringLiteral(name));
+          } else {
+            const name = applyDynamicValueName();
+            dynamicValues.push({
+              name, value: expression
+            });
+            path.replaceWith(t.stringLiteral(createBinding(name)));
+          }
+        } else if (type === ELE) {
+          // Skip `array.map(iterableFunction)`.
+          const name = applyDynamicValueName();
+          dynamicValues.push({
+            name, value: expression
+          });
+          path.replaceWith(createJSXBinding(name));
+        }
+        break;
+
+      case 'ConditionalExpression':
+      case 'BinaryExpression':
+      case 'UnaryExpression':
+      case 'LogicalExpression':
+      case 'SequenceExpression':
+      case 'NewExpression':
       case 'ObjectExpression':
+      case 'ArrayExpression':
+        if (templateSupportedExpression(path)) {
+          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(genExpression(expression))));
+          else if (type === ELE) path.replaceWith(createJSXBinding(genExpression(expression)));
+        } else {
+          const name = applyDynamicValueName();
+          dynamicValues.push({
+            name, value: expression,
+          });
+          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(name)));
+          else if (type === ELE) path.replaceWith(createJSXBinding(name));
+        }
         break;
 
       default: {
-        throw new Error(
-          'Unsupported stynax in JSX. ' + node.expression.type + ': "' + genExpression(node) + '"'
-        );
+        throw new CodeError(sourceCode, node, node.loc, `Unsupported Stynax in JSX Elements, ${expression.type}:`);
       }
     }
+
+    node.__transformed = true;
   }
 
   traverse(ast, {
@@ -449,38 +292,75 @@ function transformTemplate(ast, scope = null, adapter, componentsDependentProps 
         path.remove();
       }
     },
-    JSXExpressionContainer(path) {
-      const { parentPath } = path;
-      // <View foo={bar} />
-      if (parentPath.isJSXAttribute()) {
-        transformAttr(path);
-      } else if (parentPath.isJSXElement()) {
-        // <View>{xxx}</View>
-        transformElement(path);
-      }
-    }
+    JSXExpressionContainer: handleJSXExpressionContainer,
   });
 
-  return dynamicValue;
+  const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {
+    const name = curr.name || '_d' + (vals.length - 1);
+    prev[name] = curr.value;
+    return prev;
+  }, {});
+  const dynamicEvent = dynamicEvents.reduce((prev, curr, vals) => {
+    const name = curr.name || '_e' + (vals.length - 1);
+    prev[name] = curr.value;
+    return prev;
+  }, {});
+  return { dynamicValue, dynamicEvent };
 }
 
 function isEventHandler(propKey) {
   return /^on[A-Z]/.test(propKey);
 }
 
+function templateSupportedExpression(path) {
+  let supported = true;
+  if (path.isCallExpression()) return false;
+  if (path.isTemplateLiteral()) return false;
+  if (path.isUnaryExpression()) return false;
+
+  function unsupported(p) {
+    supported = false;
+    p.stop();
+  }
+  traverse(path, {
+    NewExpression: unsupported,
+    CallExpression: unsupported,
+    UnaryExpression: unsupported,
+    TemplateLiteral: unsupported,
+    // It's hard to process objectExpression nested, same as arrayExp.
+    ObjectExpression: unsupported,
+    ArrayExpression: unsupported,
+    TaggedTemplateExpression: unsupported,
+    MemberExpression(p) {
+      const { parentPath } = p;
+      const jsxExpContainer = p.findParent(_ => _.isJSXExpressionContainer());
+      const object = p.get('object');
+      const property = p.get('property');
+      if (
+        jsxExpContainer
+        && object.isThisExpression()
+        && property.isIdentifier({ name: 'state' })
+        && parentPath.isMemberExpression()
+        && parentPath.parentPath.isMemberExpression()
+      ) {
+        const sourceCode = parentPath.parentPath.getSource();
+        if (sourceCode.includes('[') && sourceCode.includes(']')) {
+          unsupported(p);
+        }
+      }
+    }
+  });
+
+  return supported;
+}
+
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      const dynamicValue = Object.assign(
-        {},
-        parsed.dynamicValue,
-        transformTemplate(
-          parsed.templateAST,
-          null,
-          options.adapter,
-          parsed.componentDependentProps
-        )
-      );
+      const { dynamicValue, dynamicEvent } = transformTemplate(parsed.templateAST, null, options.adapter, code);
+
+      Object.assign(parsed.dynamicValue, dynamicValue);
+
       const eventHandlers = parsed.eventHandlers = [];
       const dataProperties = [];
       const methodsProperties = [];
