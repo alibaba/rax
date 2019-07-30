@@ -1,4 +1,4 @@
-import * as Rax from '../index';
+import * as Rax from '../../index';
 import Children from 'rax-children';
 import isValidElement from 'rax-is-valid-element';
 import createFactory from 'rax-create-factory';
@@ -9,7 +9,7 @@ Rax.isValidElement = isValidElement;
 Rax.createFactory = createFactory;
 Rax.cloneElement = cloneElement;
 
-export * from '../index';
+export * from '../../index';
 export {
   Children,
   isValidElement,
