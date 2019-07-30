@@ -295,17 +295,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode) {
     JSXExpressionContainer: handleJSXExpressionContainer,
   });
 
-  const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {
-    const name = curr.name || '_d' + (vals.length - 1);
-    prev[name] = curr.value;
-    return prev;
-  }, {});
-  const dynamicEvent = dynamicEvents.reduce((prev, curr, vals) => {
-    const name = curr.name || '_e' + (vals.length - 1);
-    prev[name] = curr.value;
-    return prev;
-  }, {});
-  return { dynamicValue, dynamicEvent };
+  return { dynamicValues, dynamicEvents };
 }
 
 function isEventHandler(propKey) {
@@ -357,20 +347,24 @@ function templateSupportedExpression(path) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      const { dynamicValue, dynamicEvent } = transformTemplate(parsed.templateAST, null, options.adapter, code);
+      const { dynamicValues, dynamicEvents } = transformTemplate(parsed.templateAST, null, options.adapter, code);
 
+      const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {
+        const name = curr.name || '_d' + (vals.length - 1);
+        prev[name] = curr.value;
+        return prev;
+      }, {});
       Object.assign(parsed.dynamicValue, dynamicValue);
 
       const eventHandlers = parsed.eventHandlers = [];
       const dataProperties = [];
       const methodsProperties = [];
-      Object.keys(dynamicValue).forEach((key) => {
-        if (/_e\d+$/.test(key)) {
-          eventHandlers.push(key);
-          methodsProperties.push(t.objectProperty(t.stringLiteral(key), dynamicValue[key]));
-        } else {
-          dataProperties.push(t.objectProperty(t.stringLiteral(key), dynamicValue[key]));
-        }
+      dynamicEvents.forEach(({ name, value }) => {
+        eventHandlers.push(name);
+        methodsProperties.push(t.objectProperty(t.stringLiteral(name), value));
+      });
+      dynamicValues.forEach(({ name, value }) => {
+        dataProperties.push(t.objectProperty(t.stringLiteral(name), value));
       });
       const updateData = t.memberExpression(
         t.thisExpression(),
