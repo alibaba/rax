@@ -129,7 +129,7 @@ class TouchDemo extends Component {
 
 对于复杂的手势事件，我们可以使用 `panresponder`。  
 
-与 React Native 中的 PanResponder 相同，响应手势的基本单位是 responder ， 任何一个 View 组件可以被当做一个 responder ，对已一个在屏幕上移动的 move 手势来说， 它的流程大概是这样的：`respond move -> grant -> move -> release`
+与 React Native 中的 PanResponder 相同，响应手势的基本单位是 responder ， 任何一个 View 组件可以被当做一个 responder ，对于一个在屏幕上移动的 move 手势来说， 它的流程大概是这样的：`respond move -> grant -> move -> release`
 
 ```jsx
 this._panResponder = PanResponder.create({
