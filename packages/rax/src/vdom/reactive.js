@@ -56,37 +56,30 @@ class ReactiveComponent extends Component {
   }
 
   readContext(context) {
-    const Provider = context.Provider;
-    const unmaskContext = this._internal._context;
-    const contextProp = Provider.contextProp;
+    const readEmitter = context.Provider.readEmitter;
+    const contextEmitter = readEmitter(this);
+    const mountId = this._internal._mountID;
 
-    const contextEmitter = unmaskContext[contextProp];
+    if (!contextEmitter[mountId]) {
+      // One context one updater bind
+      contextEmitter[mountId] = {};
 
-    if (contextEmitter) {
-      const mountId = this._internal._mountID;
+      const contextUpdater = (newContext) => {
+        if (newContext !== contextEmitter[mountId].renderedContext) {
+          this.shouldUpdate = true;
+          this.update();
+        }
+      };
 
-      if (!contextEmitter[mountId]) {
-        // One context one updater bind
-        contextEmitter[mountId] = {};
+      contextEmitter.on(contextUpdater);
 
-        const contextUpdater = (newContext) => {
-          if (newContext !== contextEmitter[mountId].renderedContext) {
-            this.update();
-          }
-        };
-
-        contextEmitter.on(contextUpdater);
-
-        this.willUnmount.push(() => {
-          delete contextEmitter[mountId];
-          contextEmitter.off(contextUpdater);
-        });
-      }
-
-      return contextEmitter[mountId].renderedContext = contextEmitter.value;
+      this.willUnmount.push(() => {
+        delete contextEmitter[mountId];
+        contextEmitter.off(contextUpdater);
+      });
     }
 
-    return Provider.defaultValue;
+    return contextEmitter[mountId].renderedContext = contextEmitter.value;
   }
 
   componentWillMount() {

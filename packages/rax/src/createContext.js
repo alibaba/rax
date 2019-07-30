@@ -19,27 +19,19 @@ class ValueEmitter {
   }
 }
 
-let uniqueId = 0;
-
 export default function createContext(defaultValue) {
-  const contextProp = '__context_' + uniqueId++ + '__';
+  const stack = [];
+  const defaultEmitter = new ValueEmitter(defaultValue);
 
   class Provider extends Component {
     constructor(props) {
       super(props);
-      this.emitter = new ValueEmitter(defaultValue);
+      const value = this.props.value !== undefined ? this.props.value : defaultValue;
+      this.emitter = new ValueEmitter(value);
     }
 
-    getChildContext() {
-      return {
-        [contextProp]: this.emitter
-      };
-    }
-
-    componentWillMount() {
-      if (this.props.value !== undefined) {
-        this.emitter.value = this.props.value;
-      }
+    componentDidMount() {
+      stack.pop();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -49,55 +41,55 @@ export default function createContext(defaultValue) {
     }
 
     componentDidUpdate(prevProps) {
+      stack.pop();
       if (this.props.value !== prevProps.value) {
         this.emitter.emit();
       }
     }
 
     render() {
+      stack.push(this.emitter);
       return this.props.children;
     }
   }
 
-  Provider.childContextTypes = {
-    [contextProp]: () => {}
-  };
-  Provider.contextProp = contextProp;
-  Provider.defaultValue = defaultValue;
+  function readEmitter(instance) {
+    const emitter = stack[stack.length - 1];
+    if (emitter) return emitter;
+    while (instance) {
+      if (instance instanceof Provider) {
+        break;
+      }
+      instance = instance._internal._parentInstance;
+    }
+    return instance && instance.emitter || defaultEmitter;
+  }
+
+  Provider.readEmitter = readEmitter;
 
   class Consumer extends Component {
-    constructor(props, context) {
-      super(props, context);
-      this.state = {
-        value: this.readContext(this.context)
-      };
-
+    componentWillMount() {
+      this.emitter = readEmitter(this);
+      this.setState({
+        value: this.emitter.value
+      });
       this.onUpdate = value => this.state.value !== value && this.setState({value});
     }
 
-    readContext(context) {
-      return context[contextProp] ? context[contextProp].value : defaultValue;
-    }
-
     componentDidMount() {
-      if (this.context[contextProp]) {
-        this.context[contextProp].on(this.onUpdate);
-      }
+      this.emitter.on(this.onUpdate);
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-      const newContextValue = this.readContext(nextContext);
-      if (this.state.value !== newContextValue) {
+    componentWillReceiveProps() {
+      if (this.state.value !== this.emitter.value) {
         this.setState({
-          value: newContextValue
+          value: this.emitter.value
         });
       }
     }
 
     componentWillUnmount() {
-      if (this.context[contextProp]) {
-        this.context[contextProp].off(this.onUpdate);
-      }
+      this.emitter.off(this.onUpdate);
     }
 
     render() {
@@ -108,10 +100,6 @@ export default function createContext(defaultValue) {
       }
     }
   }
-
-  Consumer.contextTypes = {
-    [contextProp]: () => {}
-  };
 
   return {
     Provider,
