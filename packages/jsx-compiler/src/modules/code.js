@@ -24,6 +24,8 @@ const USE_STATE = 'useState';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
+const isCoreModule = (mod) => /^@core\//.test(mod);
+
 function getConstructor(type) {
   switch (type) {
     case 'app': return 'App';
@@ -45,16 +47,19 @@ module.exports = {
     let userDefineType;
 
     if (options.type === 'app') {
-      userDefineType = 'class';
-      const { id, superClass, body, decorators } = defaultExportedPath.node;
-      defaultExportedPath.parentPath.replaceWith(
-        t.variableDeclaration('var', [
-          t.variableDeclarator(
-            t.identifier(EXPORTED_DEF),
-            t.classExpression(id, superClass, body, decorators)
-          )
-        ])
-      );
+      userDefineType = 'function';
+      const { id, generator, async, params, body } = defaultExportedPath.node;
+      const replacer = getReplacer(defaultExportedPath);
+      if (replacer) {
+        replacer.replaceWith(
+          t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.identifier(EXPORTED_DEF),
+              t.functionExpression(id, params, body, generator, async)
+            )
+          ])
+        );
+      }
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
       const { id, generator, async, params, body } = defaultExportedPath.node;
@@ -89,11 +94,23 @@ module.exports = {
 
     const hooks = transformHooks(parsed.renderFunctionPath);
 
+    renameCoreModule(parsed.ast);
     addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeRaxImports(parsed.ast);
     removeDefaultImports(parsed.ast);
   },
 };
+
+function renameCoreModule(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isCoreModule(source.node.value)) {
+        source.replaceWith(t.stringLiteral(RUNTIME));
+      }
+    }
+  });
+}
 
 function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks) {
   let safeCreateInstanceId;
