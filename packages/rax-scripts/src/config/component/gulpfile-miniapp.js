@@ -7,9 +7,9 @@ const vinylBuffer = require('vinyl-buffer');
 const babelConfig = require('./babel.config');
 
 const cwd = process.cwd();
-const FILES_PATTERN = `${cwd}/+(src|demo)/miniapp/**/*`;
+const FILES_PATTERN = `${cwd}/+(src|demo)/**/*`;
 const dist = path.resolve(cwd, './_miniapp');
-const extTypes = ['ts', 'json', 'axml'];
+const extTypes = ['js', 'ts', 'json', 'axml', 'acss'];
 
 babelConfig.presets.unshift(require.resolve('@babel/preset-typescript'));
 
@@ -24,12 +24,23 @@ gulp.task('ts', () => {
     .pipe(gulp.dest(dist));
 });
 
+gulp.task('js', () => {
+  return gulp
+    .src(`${FILES_PATTERN}.js`)
+    .pipe(babel(babelConfig))
+    .pipe(gulp.dest(dist));
+});
+
 gulp.task('json', () => {
   return gulp.src(`${FILES_PATTERN}.json`).pipe(gulp.dest(dist));
 });
 
 gulp.task('axml', () => {
   return gulp.src(`${FILES_PATTERN}.axml`).pipe(gulp.dest(dist));
+});
+
+gulp.task('acss', () => {
+  return gulp.src(`${FILES_PATTERN}.acss`).pipe(gulp.dest(dist));
 });
 
 gulp.task('app.js', () => {
@@ -93,7 +104,7 @@ gulp.task(
   'default',
   gulp.series(
     'clean',
-    gulp.parallel('ts', 'json', 'axml', 'app file'),
+    gulp.parallel('js', 'ts', 'json', 'axml', 'acss', 'app file'),
     gulp.series('watch')
   )
 );
