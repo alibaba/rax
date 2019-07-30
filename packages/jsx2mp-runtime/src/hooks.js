@@ -3,6 +3,7 @@ import { scheduleEffect, invokeEffects } from './scheduler';
 import sameValue from './sameValue';
 import isFunction from './isFunction';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
+import { enqueueRender } from './enqueueRender';
 
 function getCurrentInstance() {
   return Host.current;
@@ -31,7 +32,7 @@ function areInputsEqual(inputs, prevInputs) {
   return true;
 }
 
-export function useState(initialState, stateKey) {
+export function useState(initialState) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
@@ -60,8 +61,12 @@ export function useState(initialState, stateKey) {
         // Current instance is in render update phase.
         // After this one render finish, will continue run.
         hook[2] = newState;
-        if (stateKey !== undefined) {
-          currentInstance.setState({ [stateKey]: newState });
+
+        if (getCurrentInstance() === currentInstance) {
+          // Marked as is scheduled that could finish hooks.
+          enqueueRender(currentInstance);
+        } else {
+          currentInstance._updateComponent();
         }
       }
     };
@@ -77,10 +82,6 @@ export function useState(initialState, stateKey) {
   if (!sameValue(hook[0], hook[2])) {
     hook[0] = hook[2];
     currentInstance.__shouldUpdate = true;
-  }
-
-  if (stateKey !== undefined) {
-    currentInstance._updateData({ [stateKey]: hook[0] });
   }
 
   return hook;

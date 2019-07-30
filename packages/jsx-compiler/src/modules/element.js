@@ -136,6 +136,14 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           if (expression.name === 'undefined') {
             parentPath.remove(); // Remove jsxAttribute
             break;
+          } else if (isEventHandler(attributeName)) {
+            const name = applyDynamicEventName();
+            dynamicEvents.push({
+              name,
+              value: expression,
+              isDirective: isDirectiveAttr(attributeName)
+            });
+            path.replaceWith(t.stringLiteral(name));
           } else {
             path.replaceWith(t.stringLiteral(createBinding(expression.name)));
           }
@@ -182,8 +190,8 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       // <tag>{ foo.bar }</tag> => <tag>{{ foo.bar }}</tag>
       case 'MemberExpression':
         if (type === ATTR) {
-          const name = applyDynamicEventName();
           if (isEventHandler(attributeName)) {
+            const name = applyDynamicEventName();
             dynamicEvents.push({
               name,
               value: expression,
