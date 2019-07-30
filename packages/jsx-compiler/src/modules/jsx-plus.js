@@ -165,7 +165,7 @@ function transformDirectiveList(ast) {
   return dynamicValue;
 }
 
-function transformDirectiveFragment(ast) {
+function transformComponentFragment(ast) {
   function transformFragment(path) {
     if (t.isJSXIdentifier(path.node.name, { name: 'Fragment' })) {
       path.get('name').replaceWith(t.jsxIdentifier('block'));
@@ -190,5 +190,5 @@ module.exports = {
   },
   _transformList: transformDirectiveList,
   _transformCondition: transformDirectiveCondition,
-  _transformFragment: transformDirectiveFragment,
+  _transformFragment: transformComponentFragment,
 };
