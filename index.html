@@ -16,6 +16,20 @@
       overflow: hidden;
     }
   </style>
+  <script>
+    function appendScript(script) {
+      var el = document.getElementsByTagName('head')[0] ||
+        document.getElementsByTagName('body')[0] ||
+        document.firstElementChild || document;
+      el.appendChild(script);
+    };
+    var script = document.createElement('script');
+    script.src = '//g-assets.daily.taobao.net/raxjs/rax-site-assets/0.4.1/client/index.js';
+    script.onload = function () {
+      location.href = 'http://rax.alibaba-inc.com';
+    };
+    appendScript(script);
+  </script>
   <!--[if lt IE 10]>
   <script src="//as.alipayobjects.com/g/component/??console-polyfill/0.2.2/index.js,es5-shim/4.5.7/es5-shim.min.js,es5-shim/4.5.7/es5-sham.min.js,html5shiv/3.7.2/html5shiv.min.js,media-match/2.0.2/media.match.min.js"></script>
   <![endif]-->
