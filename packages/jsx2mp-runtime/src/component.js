@@ -105,7 +105,6 @@ export default class Component {
     return state;
   }
 
-
   _mountComponent() {
     // Step 1: get state from getDerivedStateFromProps,
     // __getDerivedStateFromProps is a reference to constructor.getDerivedStateFromProps
@@ -135,6 +134,8 @@ export default class Component {
   }
 
   _updateComponent() {
+    if (!this.__mounted) return;
+
     // Step1: propTypes check, now skipped.
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.props; // actually this is nextProps

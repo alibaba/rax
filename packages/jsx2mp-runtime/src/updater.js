@@ -35,12 +35,12 @@ function getNextProps(component, propsFromTrigger) {
   return props;
 }
 
-export function updateChildProps(trigger, instanceId, propsFromTrigger) {
+export function updateChildProps(trigger, instanceId, nextProps) {
   const targetComponent = componentIntances[instanceId];
   if (trigger && targetComponent) {
+    // Create a new object reference.
+    propsMap[instanceId] = targetComponent.props = Object.assign({}, targetComponent.props, nextProps);
     nextTick(() => {
-      const nextProps = getNextProps(trigger, propsFromTrigger);
-      propsMap[instanceId] = targetComponent.props = Object.assign(targetComponent.props, nextProps);
       targetComponent._updateComponent();
     });
   }

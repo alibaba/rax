@@ -112,7 +112,7 @@ module.exports = {
           const value = componentsDependentProps[pid][key];
           propMaps.push(t.objectProperty(
             t.stringLiteral(key),
-            t.stringLiteral(value)
+            value
           ));
         });
         const updatePropsArgs = [
