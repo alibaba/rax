@@ -3,7 +3,7 @@
 const path = require('path');
 const address = require('address');
 
-// const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
+const hmrClient = require.resolve('../hmr/webpackHotDevClient.entry');
 const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
 
 module.exports = (webConfig) => {
@@ -12,14 +12,11 @@ module.exports = (webConfig) => {
 
   webConfig.mode('development');
   webConfig.devtool('inline-module-source-map');
-  // webConfig.entry('index.web')
-  //   .add(hmrClient)
-  //   .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${pathConfig.universalAppEntry}`);
   
   webConfig.entry('index.web')
+    .add(hmrClient)
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
 
-  // const weexConfig = _.cloneDeep(config);
   const publicPath = '/';
 
   webConfig.devServer

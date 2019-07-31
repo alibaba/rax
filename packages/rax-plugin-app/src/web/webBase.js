@@ -3,9 +3,10 @@ const _ = require('lodash');
 const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
-const babelConfig = require('../babel.config');
-const UniversalDocumentPlugin = require('../universal-document-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const UniversalDocumentPlugin = require('../universal-document-plugin');
+
+const babelConfig = require('../babel.config');
 
 const babelConfigWeb = babelMerge.all([{
   plugins: [require.resolve('rax-hot-loader/babel')],
