@@ -1,10 +1,9 @@
-cd ../universal-app-shell-loader
-tnpm i rax
 cd ../rax-plugin-app
-tnpm i rax
-
-cd ../rax-plugin-app
+tnpm link ../raxappTest/node_modules/rax
 tnpm link ../universal-app-shell-loader
+
+cd ../universal-app-runtime
+tnpm link ../raxappTest/node_modules/rax
 
 cd ../raxappTest
 tnpm link ../rax-scripts

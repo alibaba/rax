@@ -62,7 +62,7 @@
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.4",
     "uglifyjs-webpack-plugin": "^2.1.2",
-    "universal-app-shell-loader": "^0.2.0-3",
+    "universal-app-shell-loader": "^0.2.0-4",
     "webpack": "^4.27.1",
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-chain": "^6.0.0",
