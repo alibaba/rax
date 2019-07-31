@@ -1,3 +1,4 @@
+const { join } = require('path');
 const { getOptions } = require('loader-utils');
 
 const historyMemory = {
