@@ -16,6 +16,87 @@
       overflow: hidden;
     }
   </style>
+  <script>
+    var privateURL =
+      'https://private-alipayobjects.alipay.com/alipay-rmsdeploy-image/rmsportal/VmvVUItLdPNqKlNGuRHi.png?r=' +
+      Date.now();
+    var img = new Image();
+    var storageKey = 'alibaba-redirect-no-help';
+    var alibabaRedirectNoHelp = window.localStorage.getItem(storageKey) === 'TRUE';
+
+    img.onload = showRedirectWidget;
+    if (!alibabaRedirectNoHelp) {
+      img.src = privateURL;
+      setTimeout(() => {
+        img.src = null;
+      }, 1500);
+    }
+
+    function showRedirectWidget() {
+      var maxWidth = 1180;
+      var verticalGap = 8;
+      var horizontalGap = 12;
+
+      var widget = document.createElement('div');
+      widget.style.cssText = [
+        'position: fixed',
+        'bottom: 0',
+        'width: 100%',
+        'background: #FFF',
+        'box-shadow: 0 -1px 3px #eaf0f6'
+      ].join(';');
+
+      var content = document.createElement('div');
+      content.style.cssText = [
+        'max-width:' + maxWidth + 'px',
+        'padding: 0 ' + horizontalGap + 'px',
+        'margin: 0 auto',
+      ].join(';');
+      content.innerHTML =
+        '<p>检测到您是内网用户，是否跳转到内部官网 rax.alibaba-inc.com 以获取更多信息？</p>' +
+        '<p>Detected that you are an Alibaba user, do you jump to the internal website rax.alibaba-inc.com for more information?</p>';
+
+      var buttons = document.createElement('div');
+      buttons.style.cssText = [
+        'margin-top:' + verticalGap + 'px',
+        'margin-bottom:' + horizontalGap + 'px',
+        'text-align: right',
+      ].join(';');
+
+      var acceptBtn = document.createElement('div');
+      acceptBtn.style.cssText = [
+        'display: inline-block',
+        'border: 1px solid #000',
+        'background: #000',
+        'color: #FFF',
+        'padding: ' + verticalGap + 'px ' + horizontalGap + 'px',
+        'margin-right:' + horizontalGap + 'px',
+      ].join(';');
+      acceptBtn.innerHTML = '好';
+      acceptBtn.addEventListener('click', function () {
+        window.location.href = 'http://rax.alibaba-inc.com';
+      }, false);
+
+      var closeBtn = document.createElement('div');
+      closeBtn.style.cssText = [
+        'display: inline-block',
+        'border: 1px solid #000',
+        'padding: ' + verticalGap + 'px ' + horizontalGap + 'px',
+        'margin-right:' + horizontalGap + 'px',
+      ].join(';');
+      closeBtn.innerHTML = '不再提示';
+      closeBtn.addEventListener('click', function () {
+        widget.style.display = 'none';
+        window.localStorage.setItem(storageKey, 'TRUE');
+      }, false);
+
+      buttons.appendChild(acceptBtn);
+      buttons.appendChild(closeBtn);
+      content.appendChild(buttons);
+      widget.appendChild(content);
+      document.body.appendChild(widget);
+    }
+  </script>
   <!--[if lt IE 10]>
   <script src="//as.alipayobjects.com/g/component/??console-polyfill/0.2.2/index.js,es5-shim/4.5.7/es5-shim.min.js,es5-shim/4.5.7/es5-sham.min.js,html5shiv/3.7.2/html5shiv.min.js,media-match/2.0.2/media.match.min.js"></script>
   <![endif]-->
