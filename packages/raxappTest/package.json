@@ -3,7 +3,8 @@
   "scripts": {
     "build": "rax-scripts build",
     "dev": "rax-scripts dev",
-    "link": "./link.sh"
+    "link": "./link.sh",
+    "setup": "tnpm ii && npm run link"
   },
   "dependencies": {
     "driver-universal": "^1.0.1",

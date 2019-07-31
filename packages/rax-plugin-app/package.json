@@ -56,7 +56,6 @@
     "postcss-loader": "^3.0.0",
     "postcss-plugin-rpx2vw": "^0.0.1",
     "postcss-preset-env": "^6.6.0",
-    "rax": "^1.0.8",
     "rax-hot-loader": "^0.6.5",
     "rax-server-renderer": "^1.0.0",
     "strip-ansi": "^5.0.0",
