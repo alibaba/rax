@@ -1,16 +1,15 @@
-## <%= answers.name%>
-<%= answers.description %>
+## __YourProjectName__
 
 ## Install
 
 ```
-$ npm install <%= answers.name%> --save
+$ npm install __YourProjectName__ --save
 ```
 
 ## Usage
 
 ```
-import MyComponent from '<%= answers.name%>';
+import MyComponent from '__YourProjectName__';
 ```
 
 ## API
