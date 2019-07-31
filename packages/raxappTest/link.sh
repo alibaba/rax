@@ -1,11 +1,11 @@
 cd ../rax-plugin-app
-cnpm link ../raxappTest/node_modules/rax
-cnpm link ../universal-app-shell-loader
+npm link ../raxappTest/node_modules/rax
+npm link ../universal-app-shell-loader
 
 cd ../universal-app-runtime
-cnpm link ../raxappTest/node_modules/rax
+npm link ../raxappTest/node_modules/rax
 
 cd ../raxappTest
-cnpm link ../rax-scripts
-cnpm link ../rax-plugin-app
-cnpm link ../universal-app-runtime
+npm link ../rax-scripts
+npm link ../rax-plugin-app
+npm link ../universal-app-runtime
