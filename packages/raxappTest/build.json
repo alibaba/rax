@@ -1,5 +1,5 @@
 {
   "plugins": [
-    "rax-plugin-base"
+    ["rax-plugin-app", { "targets": ["web"]}]
   ]
 }

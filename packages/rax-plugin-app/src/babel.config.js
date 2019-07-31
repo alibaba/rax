@@ -1,6 +1,5 @@
 const chalk = require('chalk');
 
-const type = process.env.TYPE;
 const disableJSXPlus = process.env.DISABLE_JSX_PLUS;
 
 const config = {
@@ -14,7 +13,7 @@ const config = {
           ios: '8'
         },
         loose: true,
-        modules: type === 'miniprogram' ? 'commonjs' : 'auto',
+        modules: 'auto',
         include: [
           'transform-computed-properties'
         ]

@@ -1,7 +1,7 @@
 {
-  "name": "rax-plugin-base",
+  "name": "rax-plugin-app",
   "version": "0.1.0-0",
-  "description": "Universal App Shell for Rax",
+  "description": "rax app base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
   "repository": {
