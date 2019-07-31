@@ -1,2 +1,2 @@
-cnpm link ../rax-scripts
-cnpm link ../rax-plugin-app
+tnpm link ../rax-scripts
+tnpm link ../rax-plugin-app
