@@ -8,4 +8,4 @@ module.exports = (config) => {
 
   config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);
-}
+};

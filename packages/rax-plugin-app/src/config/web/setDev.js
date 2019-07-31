@@ -12,7 +12,7 @@ module.exports = (config) => {
 
   config.mode('development');
   config.devtool('inline-module-source-map');
-  
+
   config.entry('index.web')
     .add(hmrClient)
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
@@ -29,4 +29,4 @@ module.exports = (config) => {
     .overlay(false)
     .host(address.ip())
     .public(address.ip());
-}
+};

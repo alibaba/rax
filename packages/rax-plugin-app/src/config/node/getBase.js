@@ -1,5 +1,6 @@
 'use strict';
 
+const webpack = require('webpack');
 const getWebpackBase = require('../getWebpackBase');
 const { setEntries } = require('./setEntries');
 
@@ -13,7 +14,7 @@ module.exports = () => {
   config.output
     .filename('server/[name].js')
     .libraryTarget('commonjs2');
-  
+
   config.externals({
     rax: 'rax',
   });

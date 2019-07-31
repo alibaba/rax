@@ -5,5 +5,5 @@ module.exports = (config) => {
   config.devtool('source-map');
 
   config.optimization
-    .minimize(false)
+    .minimize(false);
 };

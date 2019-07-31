@@ -1,5 +1,4 @@
 'use strict';
-const _ = require('lodash');
 const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
@@ -45,7 +44,7 @@ module.exports = () => {
       .end()
     .use('ts')
       .loader(require.resolve('ts-loader'));
-  
+
   config.module.rule('css')
     .test(/\.css?$/)
     .use('minicss')
@@ -68,7 +67,7 @@ module.exports = () => {
           require('postcss-plugin-rpx2vw')(),
         ],
       });
-  
+
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
     .use('source')
@@ -92,6 +91,6 @@ module.exports = () => {
 
   config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);
-  
+
   return config;
 };
