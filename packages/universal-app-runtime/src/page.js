@@ -26,7 +26,7 @@ export function usePageEffect(cycle, callback) {
     if (initialShow === false) {
       initialShow = true;
       useEffect(() => {
-        invokeCycle('show')
+        invokeCycle('show');
       });
     }
   }

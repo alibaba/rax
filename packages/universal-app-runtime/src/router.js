@@ -12,7 +12,7 @@ export function useRouter(routerConfig) {
   function Router(props) {
     const { component } = RaxUseRouter.useRouter(() => routerConfig);
 
-    if (!component || (Array.isArray(component) && component.length === 0)) {
+    if (!component || Array.isArray(component) && component.length === 0) {
       // Return null directly if not matched.
       return null;
     } else {
