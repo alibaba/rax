@@ -4,7 +4,7 @@ const { readFileSync, existsSync } = require('fs');
 const path = require('path');
 const cwd = process.cwd();
 
-const babelConfig = require('./babel.config.js');
+const babelConfig = require('../config/babel.config.js');
 
 module.exports = class UniversalDocumentPlugin {
   constructor(options) {

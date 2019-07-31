@@ -5,14 +5,11 @@ const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const UniversalDocumentPlugin = require('../utils/universal-document-plugin');
+const UniversalDocumentPlugin = require('../../plugins/UniversalDocumentPlugin');
 const babelConfig = require('../babel.config');
 
-const babelConfigWeex = babelMerge.all([{
-  plugins: [
-    require.resolve('babel-plugin-transform-jsx-stylesheet'),
-    require.resolve('rax-hot-loader/babel'),
-  ],
+const babelConfigWeb = babelMerge.all([{
+  plugins: [require.resolve('rax-hot-loader/babel')],
 }, babelConfig]);
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -35,7 +32,7 @@ module.exports = () => {
       .end()
     .use('babel')
       .loader(require.resolve('babel-loader'))
-      .options(babelConfigWeex);
+      .options(babelConfigWeb);
 
   config.module.rule('tsx')
     .test(/\.tsx?$/)

@@ -3,13 +3,17 @@ const _ = require('lodash');
 const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const UniversalDocumentPlugin = require('../utils/universal-document-plugin');
+const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
+const UniversalDocumentPlugin = require('../../plugins/UniversalDocumentPlugin');
+
 const babelConfig = require('../babel.config');
 
-const babelConfigWeb = babelMerge.all([{
-  plugins: [require.resolve('rax-hot-loader/babel')],
+const babelConfigWeex = babelMerge.all([{
+  plugins: [
+    require.resolve('babel-plugin-transform-jsx-stylesheet'),
+    require.resolve('rax-hot-loader/babel'),
+  ],
 }, babelConfig]);
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -32,7 +36,7 @@ module.exports = () => {
       .end()
     .use('babel')
       .loader(require.resolve('babel-loader'))
-      .options(babelConfigWeb);
+      .options(babelConfigWeex);
 
   config.module.rule('tsx')
     .test(/\.tsx?$/)
@@ -41,33 +45,15 @@ module.exports = () => {
       .end()
     .use('babel')
       .loader(require.resolve('babel-loader'))
-      .options(babelConfigWeb)
+      .options(babelConfigWeex)
       .end()
     .use('ts')
       .loader(require.resolve('ts-loader'));
   
   config.module.rule('css')
     .test(/\.css?$/)
-    .use('minicss')
-      .loader(MiniCssExtractPlugin.loader)
-      .end()
     .use('css')
-      .loader(require.resolve('css-loader'))
-      .end()
-    .use('postcss')
-      .loader(require.resolve('postcss-loader'))
-      .options({
-        ident: 'postcss',
-        plugins: () => [
-          require('postcss-preset-env')({
-            autoprefixer: {
-              flexbox: 'no-2009',
-            },
-            stage: 3,
-          }),
-          require('postcss-plugin-rpx2vw')(),
-        ],
-      });
+      .loader(require.resolve('stylesheet-loader'))
   
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
@@ -84,11 +70,8 @@ module.exports = () => {
       render: serverRender.renderToString,
     }]);
 
-  config.plugin('minicss')
-    .use(MiniCssExtractPlugin, [{
-      filename: '[name].css',
-      chunkFilename: '[id].css',
-    }]);
+  config.plugin('weexFrame')
+    .use(WeexFrameworkBanner);
 
   config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);

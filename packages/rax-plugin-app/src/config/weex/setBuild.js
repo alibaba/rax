@@ -10,8 +10,8 @@ module.exports = (config) => {
 
   config.mode('production');
   config.devtool('source-map');
-  config.entry('index.web')
-    .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
+  config.entry('index.weex')
+    .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=weex!${appEntry}`);
 
   config.optimization
     .minimize(true)
@@ -22,7 +22,7 @@ module.exports = (config) => {
         sourceMap: true,
       }])
       .end()
-    .minimizer('optimizeCss')
+    .minimizer('optimizeCSS')
       .use(OptimizeCSSAssetsPlugin, [{
         canPrint: true,
       }]);
