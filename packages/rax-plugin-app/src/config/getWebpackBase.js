@@ -1,13 +1,12 @@
+const path = require('path');
 const webpack = require('webpack');
 const Chain = require('webpack-chain');
-
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const path = require('path');
 
-module.exports = () => {
+module.exports = (rootDir) => {
   const config = new Chain();
 
-  const appBuild = path.resolve(process.cwd(), 'build');
+  const appBuild = path.resolve(rootDir, 'build');
 
   // Webpack uses `publicPath` to determine where the app is being served from.
   // In development, we always serve from the root. This makes config easier.
@@ -17,20 +16,20 @@ module.exports = () => {
   // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
   const publicUrl = publicPath.replace(/\/$/, '');
 
-  config.mode(process.env.NODE_ENV);
   config.target('web');
-  config.context(process.cwd());
+  config.context(rootDir);
 
   config.resolve.alias
     .set('babel-runtime-jsx-plus', require.resolve('babel-runtime-jsx-plus'))
+    // @babel/runtime has no index
     .set('@babel/runtime', path.dirname(require.resolve('@babel/runtime/package.json')));
 
   config.resolve.extensions
-    .merge(['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts', '.tsx']);
+    .merge(['.js', '.json', '.jsx', '.html', '.ts', '.tsx']);
 
   config.output
     .path(appBuild)
-    .filename('js/[name].js',)
+    .filename('[name].js')
     .publicPath(publicPath);
 
   config.plugin('define')

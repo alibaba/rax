@@ -2,12 +2,12 @@ import { createElement } from 'rax';
 
 function Document(props) {
   const {
-    styles = [], // 页面所依赖的 css 资源
-    scripts = [], // 页面所依赖的 js 资源
-    title, // 从 app.json 中读取
-    pageHtml, // SSR 特有，页面初始 html
-    pageData, // SSR 特有，页面初始数据
-    userAgent // SSR 特有，用户自定义数据
+    styles = [], // style file
+    scripts = [], // js file
+    title, // set in app.json
+    pageHtml, // for SSR, origin html
+    pageData, // for SSR，origin data
+    userAgent // for SSR，custom data
   } = props;
 
   return (
@@ -16,32 +16,30 @@ function Document(props) {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no" />
         <title>{title}</title>
-        {/* 页面所依赖的 css 资源 */}
         {
           styles.map((style) => <link herf={style} rel="stylesheet" />)
         }
-        {/* 自定义的脚本 */}
+        {/* custom script */}
         <script dangerouslySetInnerHTML={{__html: `
           window.test = 123;
         `}} />
       </head>
       <body>
-        {/* 页面容器节点 */}
+        {/* root container */}
         <div id="root" dangerouslySetInnerHTML={{ __html: pageHtml || '' }} />
-        {/* SSR 特有，用户自定义数据 */}
+        {/* for SSR，custom data */}
         <div>Your user agent: {userAgent}</div>
-        {/* 页面所依赖的 js 资源 */}
         {
           scripts.map((script) => <script src={script} />)
         }
-        {/* SSR 特有，页面初始数据 */}
+        {/* for SSR origin data */}
         <script data-from="server" type="application/json" dangerouslySetInnerHTML={{__html: pageData}} />
       </body>
     </html>
   );
 }
 
-// SSR 场景下自定义数据源
+// SSR custom data source
 Document.getInitalProps = (req, res) => {
   const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
   return { userAgent };

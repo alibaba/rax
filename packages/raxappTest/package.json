@@ -2,9 +2,10 @@
   "private": true,
   "scripts": {
     "build": "rax-scripts build",
-    "dev": "rax-scripts dev",
+    "start": "rax-scripts start",
     "link": "./link.sh",
-    "setup": "tnpm ii && npm run link"
+    "reset": "rm -rf node_modules && cnpm i",
+    "setup": "npm run reset && npm run link"
   },
   "dependencies": {
     "driver-universal": "^1.0.1",

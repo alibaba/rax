@@ -6,8 +6,8 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
 
-module.exports = (config) => {
-  const appEntry = path.resolve(process.cwd(), 'src/app.js');
+module.exports = (config, rootDir) => {
+  const appEntry = path.resolve(rootDir, 'src/app.js');
 
   config.mode('production');
   config.devtool('source-map');

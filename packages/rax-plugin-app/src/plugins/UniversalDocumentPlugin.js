@@ -1,9 +1,7 @@
-const { RawSource } = require('webpack-sources');
-const babel = require('@babel/core');
-const { readFileSync, existsSync } = require('fs');
 const path = require('path');
-
-const cwd = process.cwd();
+const babel = require('@babel/core');
+const { RawSource } = require('webpack-sources');
+const { readFileSync, existsSync } = require('fs');
 
 const babelConfig = require('../config/babel.config.js');
 
@@ -14,33 +12,31 @@ module.exports = class UniversalDocumentPlugin {
     }
     this.render = options.render;
 
-    this.documentPath = 'src/document/index.jsx';
-
-    if (options.path) {
-      this.documentPath = options.path;
-    }
+    this.rootDir = options.rootDir ? options.rootDir : process.cwd();
+    this.documentPath = options.path ? options.path : 'src/document/index.jsx';
   }
 
   apply(compiler) {
-    // emit is asynchronous hook, tapping into it using tapAsync, you can use tapPromise/tap(synchronous) as well
     compiler.hooks.emit.tapAsync('UniversalDocumentPlugin', (compilation, callback) => {
-      const filename = path.resolve(cwd, this.documentPath);
+      const filename = path.resolve(this.rootDir, this.documentPath);
       if (!existsSync(filename)) throw new Error(`File ${filename} is not exists, please check.`);
 
+      // get document code
       const fileContent = readFileSync(filename, 'utf-8');
       const { code } = babel.transformSync(fileContent, babelConfig);
 
+      // code export
       const fn = new Function('module', 'exports', 'require', code);
-      const module = { exports: {} };
-      fn(module, module.exports, require);
-      const exported = module.exports.__esModule ? module.exports.default : module.exports;
-      const source = this.render(require('rax').createElement(exported, {
-        styles: [],
-        scripts: ['/index.web.js'],
+      fn({ exports: {} }, module.exports, require);
+      const documentElement = module.exports.__esModule ? module.exports.default : module.exports;
 
+      // get document html string
+      const source = this.render(require('rax').createElement(documentElement, {
+        styles: ['/index.web.css'],
+        scripts: ['/index.web.js'],
       }));
 
-      // Insert this list into the webpack build as a new file asset:
+      // insert html file
       compilation.assets['index.html'] = new RawSource(source);
 
       callback();

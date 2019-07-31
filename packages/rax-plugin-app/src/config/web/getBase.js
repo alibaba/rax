@@ -14,8 +14,8 @@ const babelConfigWeb = babelMerge.all([{
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
 
-module.exports = () => {
-  const config = getWebpackBase();
+module.exports = (rootDir) => {
+  const config = getWebpackBase(rootDir);
 
   config.output.filename('[name].js');
 
@@ -80,6 +80,7 @@ module.exports = () => {
 
   config.plugin('document')
     .use(UniversalDocumentPlugin, [{
+      rootDir,
       render: serverRender.renderToString,
     }]);
 
