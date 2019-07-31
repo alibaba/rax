@@ -147,7 +147,9 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
           }
         }
       },
-      JSXOpeningElement({ container }, { file }) {
+      JSXOpeningElement({ container }, { file, opts }) {
+        const { retainClassName = false } = opts;
+
         const cssFileCount = file.get('cssFileCount') || 0;
         if (cssFileCount < 1) {
           return;
@@ -177,12 +179,15 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
 
 
         if (hasClassName) {
-          // development env: change className to __class
-          if (process.env.NODE_ENV === 'development' && classNameAttribute.name) {
-            classNameAttribute.name.name = '__class';
-          } else {
-            // Remove origin className
-            attributes.splice(attributes.indexOf(classNameAttribute), 1);
+          // Dont remove className
+          if (!retainClassName) {
+            // development env: change className to __class
+            if (process.env.NODE_ENV === 'development' && classNameAttribute.name) {
+              classNameAttribute.name.name = '__class';
+            } else {
+              // Remove origin className
+              attributes.splice(attributes.indexOf(classNameAttribute), 1);
+            }
           }
 
           if (
