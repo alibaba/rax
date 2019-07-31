@@ -4,38 +4,40 @@ const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UniversalDocumentPlugin = require('../universal-document-plugin');
 
+const UniversalDocumentPlugin = require('../utils/universal-document-plugin');
 const babelConfig = require('../babel.config');
 
-const babelConfigWeb = babelMerge.all([{
-  plugins: [require.resolve('rax-hot-loader/babel')],
+const babelConfigWeex = babelMerge.all([{
+  plugins: [
+    require.resolve('babel-plugin-transform-jsx-stylesheet'),
+    require.resolve('rax-hot-loader/babel'),
+  ],
 }, babelConfig]);
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const getWebpackConfig = require('../webpack.config');
+const getWebpackBase = require('../getWebpackBase');
 
 module.exports = () => {
-  const webConfig = getWebpackConfig();
+  const config = getWebpackBase();
 
-  webConfig.output.filename('[name].js');
+  config.output.filename('[name].js');
 
-  webConfig.externals({
-    '@core/app': 'window.__core__',
-    '@core/page': 'window.__core__',
-    '@core/router': 'window.__core__',
-  })
+  config.resolve.alias
+    .set('@core/app', 'universal-app-runtime')
+    .set('@core/page', 'universal-app-runtime')
+    .set('@core/router', 'universal-app-runtime');
 
-  webConfig.module.rule('jsx')
+  config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
     .exclude
       .add(/(node_modules|bower_components)/)
       .end()
     .use('babel')
       .loader(require.resolve('babel-loader'))
-      .options(babelConfigWeb);
+      .options(babelConfigWeex);
 
-  webConfig.module.rule('tsx')
+  config.module.rule('tsx')
     .test(/\.tsx?$/)
     .exclude
       .add(/(node_modules|bower_components)/)
@@ -47,7 +49,7 @@ module.exports = () => {
     .use('ts')
       .loader(require.resolve('ts-loader'));
   
-  webConfig.module.rule('css')
+  config.module.rule('css')
     .test(/\.css?$/)
     .use('minicss')
       .loader(MiniCssExtractPlugin.loader)
@@ -70,7 +72,7 @@ module.exports = () => {
         ],
       });
   
-  webConfig.module.rule('assets')
+  config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
     .use('source')
       .loader(require.resolve('image-source-loader'));
@@ -80,19 +82,19 @@ module.exports = () => {
       .use(BundleAnalyzerPlugin);
   }
 
-  webConfig.plugin('document')
+  config.plugin('document')
     .use(UniversalDocumentPlugin, [{
       render: serverRender.renderToString,
     }]);
 
-  webConfig.plugin('minicss')
+  config.plugin('minicss')
     .use(MiniCssExtractPlugin, [{
       filename: '[name].css',
       chunkFilename: '[id].css',
     }]);
 
-  webConfig.plugin('noError')
+  config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);
   
-  return webConfig;
+  return config;
 };

@@ -1,27 +1,26 @@
-const webBase = require('./web/webBase');
-const webDev = require('./web/webDev');
-const webBuild = require('./web/webBuild');
 
 /**
  * options {
  *    targets: ['web']
  * }
  */
-
 module.exports = ({ chainWebpack, registerConfig }, options = {}) => {
   const { targets = [] } = options;
 
   targets.forEach(target => {
-    if (target === 'web') {
-      registerConfig('web', webBase());
+      const getBase = require(`./${target}/getBase`);
+      const setDev = require(`./${target}/setDev`);
+      const setBuild = require(`./${target}/setBuild`);
+      
+      registerConfig(target, getBase());
   
       chainWebpack((config, { command }) => {
         if (command === 'dev') {
-          webDev(config.get('web'))
+          setDev(config.get(target))
         }
 
         if (command === 'build') {
-          webBuild(config.get('web'))
+          setBuild(config.get(target))
         }
       });
     }

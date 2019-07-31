@@ -22,16 +22,7 @@ function Document(props) {
         }
         {/* 自定义的脚本 */}
         <script dangerouslySetInnerHTML={{__html: `
-          window.__core__ = {
-            useAppEffect: function() {},
-            usePageEffect: function() {},
-            useRouter: function(routerConfig) {
-              return {
-                Router: routerConfig.routes[0].component,
-              }
-            }
-
-          };
+          window.test = 123;
         `}} />
       </head>
       <body>
