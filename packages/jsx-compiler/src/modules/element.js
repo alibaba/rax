@@ -4,6 +4,7 @@ const genExpression = require('../codegen/genExpression');
 const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 const CodeError = require('../utils/CodeError');
+const DynamicBinding = require('../utils/DynamicBinding');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -19,15 +20,12 @@ const isDirectiveAttr = (attr) => /^(a:|wx:|x-)/.test(attr);
  * @param sourceCode
  */
 function transformTemplate(ast, scope = null, adapter, sourceCode, componentDependentProps = {}) {
-  const dynamicValues = [];
-  const dynamicEvents = [];
-  const applyDynamicValueName = () => '_d' + dynamicValues.length;
-  const applyDynamicEventName = () => '_e' + dynamicEvents.length;
+  const dynamicValues = new DynamicBinding('_d');
+  const dynamicEvents = new DynamicBinding('_e');
 
   function handleJSXExpressionContainer(path) {
     const { parentPath, node } = path;
     if (node.__transformed) return;
-
     const type = parentPath.isJSXAttribute()
       ? ATTR // <View foo={bar} />
       : ELE; // <View>{xxx}</View>
@@ -38,6 +36,8 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
     const jsxEl = type === ATTR
       ? path.findParent(p => p.isJSXElement()).node
       : null;
+
+    const isDirective = isDirectiveAttr(attributeName);
 
     switch (expression.type) {
       // <div foo={'string'} /> -> <div foo="string" />
@@ -71,17 +71,15 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       // <div foo={/foo/} /> -> <div foo="{{_dx}}" />
       // <div>/regexp/</div>  -> <div>{{ _dx }}</div>
       case 'RegExpLiteral':
-        const dynamicName = applyDynamicValueName();
+        const dynamicName = dynamicValues.add({
+          expression,
+          isDirective
+        });
         if (type === ATTR) {
           path.replaceWith(t.stringLiteral(createBinding(dynamicName)));
         } else if (type === ELE) {
           path.replaceWith(createJSXBinding(dynamicName));
         }
-        dynamicValues.push({
-          name: dynamicName,
-          value: expression,
-          isDirective: isDirectiveAttr(attributeName)
-        });
         break;
 
       // <div foo={`hello ${exp}`} /> -> <div foo="hello {{exp}}" />
@@ -117,12 +115,11 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           if (t.isStringLiteral(nodes[i])) {
             retString += nodes[i].value;
           } else {
-            const id = genExpression(nodes[i], { concise: true });
-            dynamicValues.push({
-              name: id,
-              value: nodes[i],
+            const name = dynamicValues.add({
+              expression: nodes[i],
+              isDirective
             });
-            retString += createBinding(id);
+            retString += createBinding(name);
           }
         }
 
@@ -137,17 +134,19 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             parentPath.remove(); // Remove jsxAttribute
             break;
           } else if (isEventHandler(attributeName)) {
-            const name = applyDynamicEventName();
-            dynamicEvents.push({
-              name,
-              value: expression,
-              isDirective: isDirectiveAttr(attributeName)
+            const name = dynamicEvents.add({
+              expression,
+              isDirective
             });
             path.replaceWith(t.stringLiteral(name));
           } else {
-            path.replaceWith(t.stringLiteral(createBinding(expression.name)));
+            const name = dynamicValues.add({
+              expression,
+              isDirective
+            });
+            path.replaceWith(t.stringLiteral(createBinding(name)));
           }
-          if (!isDirectiveAttr(attributeName) && jsxEl.__pid) {
+          if (!isDirective && jsxEl.__pid) {
             componentDependentProps[jsxEl.__pid][attributeName] = expression;
           }
         } else if (type === ELE) {
@@ -155,14 +154,13 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             path.remove(); // Remove expression
             break;
           } else {
-            path.replaceWith(createJSXBinding(expression.name));
+            const name = dynamicValues.add({
+              expression,
+              isDirective
+            });
+            path.replaceWith(createJSXBinding(name));
           }
         }
-        dynamicValues.push({
-          name: expression.name,
-          value: expression,
-          isDirective: isDirectiveAttr(attributeName)
-        });
         break;
 
       // Remove no usage.
@@ -178,10 +176,9 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
 
         if (!isEventHandler(attributeName)) throw new CodeError(sourceCode, node, node.loc, `Only EventHandlers are supported in Mini Program, eg: onClick/onChange, instead of "${attributeName}".`);
 
-        const name = applyDynamicEventName();
-        dynamicEvents.push({
-          name, value: expression,
-          isDirective: isDirectiveAttr(attributeName)
+        const name = dynamicEvents.add({
+          expression,
+          isDirective
         });
         path.replaceWith(t.stringLiteral(name));
         break;
@@ -191,31 +188,25 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       case 'MemberExpression':
         if (type === ATTR) {
           if (isEventHandler(attributeName)) {
-            const name = applyDynamicEventName();
-            dynamicEvents.push({
-              name,
-              value: expression,
-              isDirective: isDirectiveAttr(attributeName)
+            const name = dynamicEvents.add({
+              expression,
+              isDirective
             });
             path.replaceWith(t.stringLiteral(name));
           } else {
-            const name = applyDynamicValueName();
-            dynamicValues.push({
-              name,
-              value: expression,
-              isDirective: isDirectiveAttr(attributeName)
+            const name = dynamicValues.add({
+              expression,
+              isDirective
             });
             path.replaceWith(t.stringLiteral(createBinding(name)));
-            if (!isDirectiveAttr(attributeName) && jsxEl.__pid) {
+            if (!isDirective && jsxEl.__pid) {
               componentDependentProps[jsxEl.__pid][name] = expression;
             }
           }
         } else if (type === ELE) {
-          const name = applyDynamicValueName();
-          dynamicValues.push({
-            name,
-            value: expression,
-            isDirective: false
+          const name = dynamicValues.add({
+            expression,
+            isDirective
           });
           path.replaceWith(createJSXBinding(name));
         }
@@ -226,7 +217,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       case 'CallExpression':
         if (type === ATTR) {
           if (
-            isEventHandler()
+            isEventHandler(attributeName)
             && t.isMemberExpression(expression.callee)
             && t.isIdentifier(expression.callee.property, { name: 'bind' })
           ) {
@@ -261,25 +252,23 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
                 }
               });
             }
-            const name = applyDynamicEventName();
-            dynamicEvents.push({
-              name, value: callExp.callee.object
+            const name = dynamicEvents.add({
+              expression: callExp.callee.object,
+              isDirective
             });
             path.replaceWith(t.stringLiteral(name));
           } else {
-            const name = applyDynamicValueName();
-            dynamicValues.push({
-              name, value: expression,
-              isDirective: isDirectiveAttr(attributeName)
+            const name = dynamicValues.add({
+              expression,
+              isDirective
             });
             path.replaceWith(t.stringLiteral(createBinding(name)));
           }
         } else if (type === ELE) {
           // Skip `array.map(iterableFunction)`.
-          const name = applyDynamicValueName();
-          dynamicValues.push({
-            name, value: expression,
-            isDirective: false,
+          const name = dynamicValues.add({
+            expression,
+            isDirective
           });
           path.replaceWith(createJSXBinding(name));
         }
@@ -297,10 +286,9 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(genExpression(expression))));
           else if (type === ELE) path.replaceWith(createJSXBinding(genExpression(expression)));
         } else {
-          const name = applyDynamicValueName();
-          dynamicValues.push({
-            name, value: expression,
-            isDirective: isDirectiveAttr(attributeName)
+          const name = dynamicValues.add({
+            expression,
+            isDirective
           });
           if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(name)));
           else if (type === ELE) path.replaceWith(createJSXBinding(name));
@@ -328,7 +316,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
     JSXExpressionContainer: handleJSXExpressionContainer,
   });
 
-  return { dynamicValues, dynamicEvents };
+  return { dynamicValues: dynamicValues.getStore(), dynamicEvents: dynamicEvents.getStore() };
 }
 
 function isEventHandler(propKey) {
