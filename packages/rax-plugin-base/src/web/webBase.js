@@ -46,18 +46,6 @@ module.exports = () => {
     .use('ts')
       .loader(require.resolve('ts-loader'));
   
-  webConfig.module.rule('tsx')
-    .test(/\.tsx?$/)
-    .exclude
-      .add(/(node_modules|bower_components)/)
-      .end()
-    .use('babel')
-      .loader(require.resolve('babel-loader'))
-      .options(babelConfigWeb)
-      .end()
-    .use('ts')
-      .loader(require.resolve('ts-loader'));
-  
   webConfig.module.rule('css')
     .test(/\.css?$/)
     .use('minicss')
