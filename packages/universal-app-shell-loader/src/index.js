@@ -75,10 +75,15 @@ module.exports = function(content) {
       const appProps = {
         routerConfig: getRouterConfig(),
       };
-      const app = definedApp(appProps);
       
       ${fixRootStyle}
-      render(app, null, { driver: DriverUniversal });
+      
+      function Entry() {
+        const app = definedApp(appProps);
+        return app;
+      }
+      
+      render(createElement(Entry), null, { driver: DriverUniversal });
     `;
     return source;
   } else {
