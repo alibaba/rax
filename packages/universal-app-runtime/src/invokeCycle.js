@@ -1,12 +1,12 @@
 
-export default function invokeCycle(cycleMap, cycle) {
+export default function invokeCycle(cycleMap, cycle, ...args) {
   if (cycleMap.hasOwnProperty(cycle)) {
     const cycles = cycleMap[cycle];
     let fn;
     let error;
     while (fn = cycles.shift()) { // eslint-disable-line
       try {
-        fn();
+        fn(...args);
       } catch (err) {
         error = err;
       }

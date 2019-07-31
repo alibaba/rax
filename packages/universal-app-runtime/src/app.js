@@ -7,6 +7,6 @@ export function useAppEffect(cycle, callback) {
   cycles.push(callback);
 }
 
-export function invokeAppCycle(cycle) {
-  invokeCycle(appCycles, cycle);
+export function invokeAppCycle(cycle, ...args) {
+  invokeCycle(appCycles, cycle, ...args);
 }
