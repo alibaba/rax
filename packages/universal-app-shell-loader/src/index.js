@@ -56,8 +56,9 @@ module.exports = function(content) {
 
     const source = `
       import definedApp from '${this.resourcePath}';
-      import { render } from '${renderMoudle}';
+      import { render, createElement } from '${renderMoudle}';
       import { ${historyMemory[historyType]} as createHistory } from 'history';
+      import { _invokeAppCycle } from 'universal-app-runtime';
       import DriverUniversal from 'driver-universal';
       
       const interopRequire = (mod) => mod && mod.__esModule ? mod.default : mod;
@@ -78,8 +79,17 @@ module.exports = function(content) {
       
       ${fixRootStyle}
       
+      let appLaunched = false;
+      
       function Entry() {
         const app = definedApp(appProps);
+        const startOptions = {};
+
+        if (!appLaunched) {
+          appLaunched = true;
+          _invokeAppCycle('launch', startOptions);
+        }
+
         return app;
       }
       
