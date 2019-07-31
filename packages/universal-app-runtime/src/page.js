@@ -1,11 +1,12 @@
 import { useEffect } from 'rax';
 import { isWeb, isWeex } from 'universal-env';
 
-const nextTick = typeof setImmediate === 'function' ? setImmediate : setTimeout;
 const visibleListeners = {
   show: [],
   hide: [],
 };
+let initialShow = false;
+let prevVisibleState = true;
 
 export function usePageEffect(cycle, callback) {
   switch (cycle) {
@@ -19,12 +20,17 @@ export function usePageEffect(cycle, callback) {
         };
       });
   }
-}
 
-let prevVisibleState = true;
-nextTick(() => {
-  invokeCycle('show');
-});
+  // Invoke first time show.
+  if (cycle === 'show') {
+    if (initialShow === false) {
+      initialShow = true;
+      useEffect(() => {
+        invokeCycle('show')
+      });
+    }
+  }
+}
 
 function invokeCycle(cycle, ...args) {
   for (let i = 0, l = visibleListeners[cycle].length; i < l; i++) {

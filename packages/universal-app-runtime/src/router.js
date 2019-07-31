@@ -9,8 +9,18 @@ export function useRouter(routerConfig) {
   const { history = createHashHistory(), routes } = routerConfig;
   _history = history;
 
-  const { component } = RaxUseRouter.useRouter(() => routerConfig);
-  return { Router: () => component };
+  function Router(props) {
+    const { component } = RaxUseRouter.useRouter(() => routerConfig);
+
+    if (!component || (Array.isArray(component) && component.length === 0)) {
+      // Return null directly if not matched.
+      return null;
+    } else {
+      return createElement(component, props);
+    }
+  }
+
+  return { Router };
 }
 
 export function Link(props) {
