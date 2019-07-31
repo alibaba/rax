@@ -95,7 +95,8 @@ module.exports = {
 
     'no-empty': 'off',
     'indent': ['error', 2, {
-      'SwitchCase': 1
+      'SwitchCase': 1,
+      'MemberExpression': false
     }],
     'camelcase': ['off', {
       'properties': 'always'

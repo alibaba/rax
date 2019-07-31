@@ -1,22 +1,17 @@
 {
-  "name": "rax-scripts",
-  "version": "2.0.0-0",
+  "name": "rax-plugin-base",
+  "version": "0.1.0-0",
+  "description": "Universal App Shell for Rax",
   "license": "BSD-3-Clause",
-  "description": "Project scripts for Rax.",
-  "bin": {
-    "rax-scripts": "bin/rax-scripts.js"
-  },
+  "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/alibaba/rax.git"
+    "url": "git+https://github.com/alibaba/rax.git"
   },
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "engines": {
-    "npm": ">=3.0.0"
-  },
   "dependencies": {
     "@babel/core": "7.2.0",
     "@babel/plugin-proposal-class-properties": "7.2.0",
@@ -86,26 +81,28 @@
     "postcss-loader": "^3.0.0",
     "postcss-plugin-rpx2vw": "^0.0.1",
     "postcss-preset-env": "^6.6.0",
+    "rax": "^1.0.8",
     "rax-hot-loader": "^0.6.5",
     "rax-hot-module-replacement-webpack-plugin": "^0.6.5",
     "rax-hydrate": "^1.0.1",
     "rax-pwa-webpack-plugin": "^1.0.0-0",
     "rax-server": "^1.0.0-3",
+    "rax-server-renderer": "^1.0.0",
     "rax-ssr-dev-server": "^1.0.0",
     "rax-webpack-plugin": "^0.6.5",
     "rimraf": "^2.6.2",
-    "scripts-core": "0.1.0-0",
     "strip-ansi": "^5.0.0",
     "stylesheet-loader": "^0.6.5",
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.4",
     "uglifyjs-webpack-plugin": "^2.1.2",
-    "universal-app-shell-loader": "^0.1.1",
+    "universal-app-shell-loader": "^0.2.0-0",
     "uppercamelcase": "^3.0.0",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",
     "webpack": "^4.27.1",
     "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-chain": "^6.0.0",
     "webpack-dev-middleware": "^3.7.0",
     "webpack-dev-server": "^3.1.11",
     "webpack-hot-middleware": "^2.25.0",
