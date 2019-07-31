@@ -8,9 +8,13 @@ const babelConfig = require('../config/babel.config.js');
 module.exports = class UniversalDocumentPlugin {
   constructor(options) {
     if (!options.render) {
-      throw new Error('document need render');
+      throw new Error('Document file need a render');
     }
     this.render = options.render;
+
+    if (!options.path) {
+      throw new Error('Please specify document file location with the path attribute');
+    }
 
     this.rootDir = options.rootDir ? options.rootDir : process.cwd();
     this.documentPath = options.path ? options.path : 'src/document/index.jsx';

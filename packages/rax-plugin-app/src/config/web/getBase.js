@@ -81,6 +81,7 @@ module.exports = (rootDir) => {
   config.plugin('document')
     .use(UniversalDocumentPlugin, [{
       rootDir,
+      path: 'src/document/index.jsx',
       render: serverRender.renderToString,
     }]);
 
