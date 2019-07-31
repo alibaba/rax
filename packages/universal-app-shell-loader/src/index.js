@@ -47,10 +47,12 @@ module.exports = function(content) {
      * ]
      */
     const assembleRoutes = routes.map((route, index) => {
+      // First level function to support hooks will autorun function type state,
+      // Second level function to support rax-use-router rule autorun function type component.
       return `routes.push({
         index: ${index},
         path: '${route.path}',
-        component: interopRequire(require('${getDepPath(route.component, this.rootContext)}')),
+        component: () => () => interopRequire(require('${getDepPath(route.component, this.rootContext)}')),
       });`;
     }).join('\n');
 
