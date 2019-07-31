@@ -7,7 +7,7 @@ export default function invokeCycle(cycleMap, cycle) {
     while (fn = cycles.shift()) { // eslint-disable-line
       try {
         fn();
-      } catch(err) {
+      } catch (err) {
         error = err;
       }
     }

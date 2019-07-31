@@ -8,5 +8,8 @@
     "history": "^4.9.0",
     "querystring": "^0.2.0",
     "rax-use-router": "^2.0.2"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.8"
   }
 }

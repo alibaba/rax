@@ -1,6 +1,6 @@
 import { useAppEffect, invokeAppCycle as _invokeAppCycle } from './app';
 import { usePageEffect, invokePageCycle as _invokePageCycle } from './page';
-import { useRouter, push, go, goBack, goForward, canGo, replace  } from './router';
+import { useRouter, push, go, goBack, goForward, canGo, replace } from './router';
 
 export {
   // core app

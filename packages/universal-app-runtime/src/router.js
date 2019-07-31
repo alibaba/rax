@@ -9,8 +9,8 @@ export function useRouter(routerConfig) {
   const { history = createHashHistory(), routes } = routerConfig;
   _history = history;
 
-  const { component } = RaxUseRouter.useRouter(() => routerConfig)
-  return { Router: () => component }
+  const { component } = RaxUseRouter.useRouter(() => routerConfig);
+  return { Router: () => component };
 }
 
 export function Link(props) {
