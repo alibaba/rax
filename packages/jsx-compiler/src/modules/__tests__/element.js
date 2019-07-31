@@ -80,17 +80,33 @@ describe('Transform JSXElement', () => {
       const ast = parseExpression(sourceCode);
       const { dynamicValues, dynamicEvents } = _transform(ast, null, null, sourceCode);
 
-      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo.bar.c, _d3: fn(), _d4: foo.method(), _d5: a() ? 1 : 2, _d6: ~a, _d7: new Foo(), _d8: delete foo.bar, _d9: typeof aaa, _d10: { ...{ a: 1 } } }');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo.bar.c, _d3: fn(), _d4: foo.method(), _d5: a, _d6: a() ? 1 : 2, _d7: ~a, _d8: b, _d9: c, _d10: new Foo(), _d11: delete foo.bar, _d12: typeof aaa, _d13: { ...{ a: 1 } } }');
 
       expect(genDynamicAttrs(dynamicEvents)).toEqual('{ _e0: event => { console.log(event); }, _e1: event => console.log(event), _e2: function (event) { console.log(event); } }');
 
-      expect(genInlineCode(ast).code).toEqual('<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{_d0}}" state="{{_d1}}" member="{{_d2}}" call1="{{_d3}}" call2="{{_d4}}" conditional="{{a ? 1 : 2}}" conditionalComplex="{{_d5}}" compare="{{a >= 1}}" math="{{a - 1}}" bitwise="{{_d6}}" logical="{{a || b}}" stringOp="{{\'a\' + c}}" comma="{{a, c}}" inst="{{_d7}}" delete="{{_d8}}" type="{{_d9}}" relation="{{\'a\' in b}}" group="{{a + 1}}" spread="{{_d10}}" />');
+      expect(genInlineCode(ast).code).toEqual('<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{_d0}}" state="{{_d1}}" member="{{_d2}}" call1="{{_d3}}" call2="{{_d4}}" conditional="{{_d5 ? 1 : 2}}" conditionalComplex="{{_d6}}" compare="{{_d5 >= 1}}" math="{{_d5 - 1}}" bitwise="{{_d7}}" logical="{{_d5 || _d8}}" stringOp="{{\'a\' + _d9}}" comma="{{_d5, _d9}}" inst="{{_d10}}" delete="{{_d11}}" type="{{_d12}}" relation="{{\'a\' in _d8}}" group="{{_d5 + 1}}" spread="{{_d13}}" />');
     });
 
     it('unsupported', () => {
       expect(() => {
         _transform(parseExpression('<View assign={a = 1} />'));
       }).toThrowError();
+    });
+
+    it('should handle MemberExpression', () => {
+      const sourceCode = '<View>{a ? a.b.c : 1}</View>';
+      const ast = parseExpression(sourceCode);
+      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      expect(genInlineCode(ast).code).toEqual('<View>{{ _d0 ? _d0.b.c : 1 }}</View>');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: a }');
+    });
+
+    it('should handle nested MemberExpression', () => {
+      const sourceCode = '<View>{a ? a.b[c.d] : 1}</View>';
+      const ast = parseExpression(sourceCode);
+      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      expect(genInlineCode(ast).code).toEqual('<View>{{ _d0 ? _d0.b[_d1.d] : 1 }}</View>');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: a, _d1: c }');
     });
   });
 
@@ -215,30 +231,30 @@ describe('Transform JSXElement', () => {
         {{ _d2 }}
         {{ _d3 }}
         {{ _d4 }}
-        {{ a ? 1 : 2 }}
-        {{ a >= 1 }}
-        {{ a - 1 }}
-        {{ _d5 }}
-        {{ a || b }}
-        {{ 'a' + c }}
-        {{ a, c }}
+        {{ _d5 ? 1 : 2 }}
+        {{ _d5 >= 1 }}
+        {{ _d5 - 1 }}
         {{ _d6 }}
-        {{ _d7 }}
-        {{ _d8 }}
-        {{ 'a' in b }}
-        {{ a + 1 }}
+        {{ _d5 || _d7 }}
+        {{ 'a' + _d8 }}
+        {{ _d5, _d8 }}
         {{ _d9 }}
+        {{ _d10 }}
+        {{ _d11 }}
+        {{ 'a' in _d7 }}
+        {{ _d5 + 1 }}
+        {{ _d12 }}
       </View>`);
 
-      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo.bar.c, _d3: fn(), _d4: foo.method(), _d5: ~a, _d6: new Foo(), _d7: delete foo.bar, _d8: typeof aaa, _d9: { ...{ a: 1 } } }');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo.bar.c, _d3: fn(), _d4: foo.method(), _d5: a, _d6: ~a, _d7: b, _d8: c, _d9: new Foo(), _d10: delete foo.bar, _d11: typeof aaa, _d12: { ...{ a: 1 } } }');
     });
 
     it('should handle text', () => {
       const sourceCode = '<Text style={styles.name}>{data && data.itemTitle ? data.itemTitle : \'\'}</Text>';
       const ast = parseExpression(sourceCode);
       const { dynamicValues } = _transform(ast, null, null, sourceCode);
-      expect(genInlineCode(ast).code).toEqual('<Text style="{{_d0}}">{{ data && data.itemTitle ? data.itemTitle : \'\' }}</Text>');
-      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: styles.name }');
+      expect(genInlineCode(ast).code).toEqual('<Text style="{{_d0}}">{{ _d1 && _d1.itemTitle ? _d1.itemTitle : \'\' }}</Text>');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: styles.name, _d1: data }');
     });
 
     it('unsupported', () => {

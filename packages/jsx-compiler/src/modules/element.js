@@ -22,7 +22,6 @@ const isDirectiveAttr = (attr) => /^(a:|wx:|x-)/.test(attr);
 function transformTemplate(ast, scope = null, adapter, sourceCode, componentDependentProps = {}) {
   const dynamicValues = new DynamicBinding('_d');
   const dynamicEvents = new DynamicBinding('_e');
-
   function handleJSXExpressionContainer(path) {
     const { parentPath, node } = path;
     if (node.__transformed) return;
@@ -282,19 +281,37 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       case 'NewExpression':
       case 'ObjectExpression':
       case 'ArrayExpression':
-        if (templateSupportedExpression(path)) {
-          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(genExpression(expression))));
-          else if (type === ELE) path.replaceWith(createJSXBinding(genExpression(expression)));
-        } else {
-          const name = dynamicValues.add({
+        if (hasComplexExpression(path)) {
+          const expressionName = dynamicValues.add({
             expression,
             isDirective
           });
-          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(name)));
-          else if (type === ELE) path.replaceWith(createJSXBinding(name));
+          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(expressionName)));
+          else if (type === ELE) path.replaceWith(createJSXBinding(expressionName));
+        } else {
+          path.traverse({
+            Identifier(innerPath) {
+              if (innerPath.node.__transformed) return;
+              if (innerPath.parentPath.isMemberExpression()) return;
+              const name = dynamicValues.add({
+                expression: innerPath.node,
+                isDirective
+              });
+              const replaceNode = t.identifier(name);
+              replaceNode.__transformed = true;
+              innerPath.replaceWith(replaceNode);
+            },
+            MemberExpression(innerPath) {
+              if (innerPath.node.__transformed) return;
+              const replaceNode = transformMemberExpression(innerPath.node, dynamicValues, isDirective);
+              innerPath.replaceWithMultiple(replaceNode);
+              innerPath.node.__transformed = true;
+            }
+          });
+          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(genExpression(expression))));
+          else if (type === ELE) path.replaceWith(createJSXBinding(genExpression(expression)));
         }
         break;
-
       default: {
         throw new CodeError(sourceCode, node, node.loc, `Unsupported Stynax in JSX Elements, ${expression.type}:`);
       }
@@ -323,46 +340,55 @@ function isEventHandler(propKey) {
   return /^on[A-Z]/.test(propKey);
 }
 
-function templateSupportedExpression(path) {
-  let supported = true;
-  if (path.isCallExpression()) return false;
-  if (path.isTemplateLiteral()) return false;
-  if (path.isUnaryExpression()) return false;
-
-  function unsupported(p) {
-    supported = false;
+function hasComplexExpression(path) {
+  let complex = false;
+  if (path.isCallExpression()) return true;
+  if (path.isTemplateLiteral()) return true;
+  if (path.isUnaryExpression()) return true;
+  function isComplex(p) {
+    complex = true;
     p.stop();
   }
   traverse(path, {
-    NewExpression: unsupported,
-    CallExpression: unsupported,
-    UnaryExpression: unsupported,
-    TemplateLiteral: unsupported,
+    NewExpression: isComplex,
+    CallExpression: isComplex,
+    UnaryExpression: isComplex,
+    TemplateLiteral: isComplex,
     // It's hard to process objectExpression nested, same as arrayExp.
-    ObjectExpression: unsupported,
-    ArrayExpression: unsupported,
-    TaggedTemplateExpression: unsupported,
-    MemberExpression(p) {
-      const { parentPath } = p;
-      const jsxExpContainer = p.findParent(_ => _.isJSXExpressionContainer());
-      const object = p.get('object');
-      const property = p.get('property');
-      if (
-        jsxExpContainer
-        && object.isThisExpression()
-        && property.isIdentifier({ name: 'state' })
-        && parentPath.isMemberExpression()
-        && parentPath.parentPath.isMemberExpression()
-      ) {
-        const sourceCode = parentPath.parentPath.getSource();
-        if (sourceCode.includes('[') && sourceCode.includes(']')) {
-          unsupported(p);
-        }
-      }
-    }
+    ObjectExpression: isComplex,
+    ArrayExpression: isComplex,
+    TaggedTemplateExpression: isComplex,
   });
 
-  return supported;
+  return complex;
+}
+
+function transformMemberExpression(expression, dynamicBinding, isDirective) {
+  const { object, property, computed } = expression;
+  let objectReplaceNode = object;
+  let propertyReplaceNode = property;
+  if (!object.__transformed) {
+    if (t.isIdentifier(object)) {
+      const name = dynamicBinding.add({
+        expression: object,
+        isDirective
+      });
+      const replaceNode = t.identifier(name);
+      replaceNode.__transformed = true;
+      objectReplaceNode = replaceNode;
+    }
+    if (t.isMemberExpression(object)) {
+      objectReplaceNode = transformMemberExpression(object, dynamicBinding, isDirective);
+    }
+  }
+
+  if (!property.__transformed) {
+    if (t.isMemberExpression(property)) {
+      propertyReplaceNode = transformMemberExpression(property, dynamicBinding, isDirective);
+    }
+  }
+
+  return t.memberExpression(objectReplaceNode, propertyReplaceNode, computed);
 }
 
 module.exports = {
