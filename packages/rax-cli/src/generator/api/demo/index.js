@@ -3,11 +3,11 @@ import { createElement, render } from 'rax';
 import DriverUniversal from 'driver-universal';
 import View from 'rax-view';
 import Text from 'rax-text';
-import API from '../src/';
+import api from '../src/';
 
 const App = () => {
   const handleClick = () => {
-    API();
+    api();
   };
   return (
     // @ts-ignore
