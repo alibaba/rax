@@ -45,7 +45,7 @@ module.exports = class TemplateProcesser {
           backup: true,
         });
       });
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
 
@@ -58,17 +58,17 @@ module.exports = class TemplateProcesser {
       const fns = this.fns;
       const files = getFiles(this.template);
 
-      for(let i = 0; i < fns.length; i++) {
+      for (let i = 0; i < fns.length; i++) {
         const fn = fns[i];
         fn.call(this, files);
       }
 
       return files;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
-}
+};
 
 function getFiles(dir) {
   const files = [];
@@ -85,7 +85,7 @@ function getFiles(dir) {
       } else {
         fileMapGenerator(currPath);
       }
-    })
+    });
   }
 
   fileMapGenerator(dir);

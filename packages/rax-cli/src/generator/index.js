@@ -3,12 +3,12 @@ const path = require('path');
 const TemplateProcesser = require('./template-processer');
 
 // Rename files start with '_'
-function renameFile (files) {
+function renameFile(files) {
   files.forEach(file => {
     if (file.name[0] === '_') {
       file.name = file.name.replace(/^_/, '.');
     }
-  })
+  });
 }
 
 // Render ejs template
@@ -16,8 +16,8 @@ function ejsRender(data) {
   return (files) => {
     files.forEach(file => {
       file.content = ejs.render(file.content, data);
-    })
-  }
+    });
+  };
 }
 
 module.exports = function(args) {
