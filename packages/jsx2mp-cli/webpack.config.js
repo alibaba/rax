@@ -1,5 +1,6 @@
 const { readJSONSync } = require('fs-extra');
 const { join } = require('path');
+const RuntimeWebpackPlugin = require('./plugins/runtime');
 
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
 const PageLoader = require.resolve('jsx2mp-loader/src/page-loader');
@@ -10,9 +11,12 @@ const BabelLoader = require.resolve('babel-loader');
 
 function getBabelConfig() {
   return {
-    presets: ['@babel/preset-env', '@babel/preset-react'],
+    presets: [
+      require.resolve('@babel/preset-env'),
+      require.resolve('@babel/preset-react'),
+    ],
     plugins: [
-      '@babel/plugin-proposal-class-properties'
+      require.resolve('@babel/plugin-proposal-class-properties'),
     ],
   };
 }
@@ -23,6 +27,11 @@ function getEntry(appConfig) {
   if (Array.isArray(appConfig.routes)) {
     appConfig.routes.forEach(({ path, component }) => {
       entry['page@' + component] = PageLoader + '!' + getDepPath(component);
+    });
+  } else if (Array.isArray(appConfig.pages)) {
+    // Compatible with pages.
+    appConfig.pages.forEach((pagePath) => {
+      entry['page@' + pagePath] = PageLoader + '!' + getDepPath(pagePath);
     });
   }
   return entry;
@@ -74,6 +83,9 @@ module.exports = {
       }
     ],
   },
+  resolve: {
+    extensions: ['.js', '.jsx', '.json'],
+  },
   externals: [
     function(context, request, callback) {
       if (/^@core\//.test(request)) {
@@ -84,5 +96,8 @@ module.exports = {
       }
       callback();
     },
+  ],
+  plugins: [
+    new RuntimeWebpackPlugin(),
   ],
 };

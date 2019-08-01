@@ -1,10 +1,18 @@
-const { readFileSync } = require('fs-extra');
-const { join, relative } = require('path');
-const { copySync, readJSONSync } = require('fs-extra');
+const { join, dirname, relative } = require('path');
+const { copySync, lstatSync, removeSync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
+const { transformSync } = require('@babel/core');
+const getBabelConfig = require('./getBabelConfig');
 const cached = require('./cached');
+
+const AppLoader = require.resolve('./app-loader');
+const PageLoader = require.resolve('./page-loader');
+const ComponentLoader = require.resolve('./component-loader');
 
 const dependenciesCache = {};
 module.exports = function fileLoader(content) {
+  const loaderHandled = this.loaders.some(({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1);
+  if (loaderHandled) return;
+
   const rawContent = readFileSync(this.resourcePath);
   const rootContext = this.rootContext;
   const currentNodeModulePath = join(rootContext, 'node_modules');
@@ -24,14 +32,42 @@ module.exports = function fileLoader(content) {
   if (isNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmName = getNpmName(relativeNpmPath);
+    const sourcePackageJSONPath = join(currentNodeModulePath, npmName, 'package.json');
+    if ('miniappConfig' in readJSONSync(sourcePackageJSONPath)) {
+      // is miniapp component
+      // Copy whole directory
+      if (!dependenciesCache[npmName]) {
+        dependenciesCache[npmName] = true;
+        if (isSymbolic(join(currentNodeModulePath, npmName))) {
+          throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.')
+        }
+        copySync(
+          join(currentNodeModulePath, npmName),
+          join(distPath, 'npm', npmName)
+        );
+      }
+    } else {
+      // Copy package.json
+      if (!dependenciesCache[npmName]) {
+        dependenciesCache[npmName] = true;
+        const target = join(distPath, 'npm', npmName, 'package.json');
+        if (!existsSync(target))
+          copySync(
+            sourcePackageJSONPath,
+            target,
+            { errorOnExist: false }
+          );
+      }
 
-    if (!dependenciesCache[npmName]) {
-      dependenciesCache[npmName] = true;
-      // Copy a whole directory.
-      copySync(
-        join(currentNodeModulePath, npmName),
-        join(distPath, 'npm', npmName)
-      );
+      // Copy file
+      const splitedNpmPath = relativeNpmPath.split('/');
+      splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
+      const distSourcePath = join(distPath, 'npm', npmName, splitedNpmPath.join('/'));
+      const { code, map } = renameImport(rawContent);
+      const distSourceDirPath = dirname(distSourcePath);
+      if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
+      writeFileSync(distSourcePath, code, 'utf-8');
+      writeJSONSync(distSourcePath + '.map', map);
     }
   } else {
     const relativeFilePath = relative(rootContext, this.resourcePath);
@@ -42,3 +78,19 @@ module.exports = function fileLoader(content) {
   return content;
 };
 
+function renameImport(rawCode) {
+  return transformSync(rawCode, {
+    plugins: [require('./babel-plugin-rename-import')]
+  });
+}
+
+function isSymbolic(path) {
+  try {
+    return lstatSync(path).isSymbolicLink();
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return false;
+    }
+    throw err;
+  }
+}

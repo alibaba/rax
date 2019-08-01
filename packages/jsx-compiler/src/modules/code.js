@@ -45,6 +45,8 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
+    if (!defaultExportedPath || !defaultExportedPath.node) return; // Can not found default export.
+
     let userDefineType;
 
     if (options.type === 'app') {

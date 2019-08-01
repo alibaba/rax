@@ -19,9 +19,27 @@ module.exports = function componentLoader(content) {
 
   const transformed = compiler(rawContent, compilerOptions);
 
+  const config = Object.assign({}, transformed.config);
+  if (config.usingComponents) {
+    const usingComponents = {};
+    Object.keys(config.usingComponents).forEach(key => {
+      const value = config.usingComponents[key];
+      if (/^c-/.test(key)) {
+        let result = relative(rootContext, value); // components/Repo.jsx
+        result = removeExt(result); // components/Repo
+        usingComponents[key] = '/' + result;
+      } else {
+        usingComponents[key] = value;
+      }
+    });
+    config.usingComponents = usingComponents;
+  }
+
+  const distFileDir = dirname(distFileWithoutExt);
+  if (!existsSync(distFileDir)) mkdirSync(distFileDir);
   writeFileSync(distFileWithoutExt + '.js', transformed.code);
   writeFileSync(distFileWithoutExt + '.axml', transformed.template);
-  writeJSONSync(distFileWithoutExt + '.json', transformed.config, { spaces: 2 });
+  writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   if (transformed.style) {
     writeFileSync(distFileWithoutExt + '.acss', transformed.style);
   }
