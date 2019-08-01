@@ -1,5 +1,6 @@
 const { join } = require('path');
 const { copySync } = require('fs-extra');
+
 const runtime = 'jsx2mp-runtime';
 
 module.exports = class JSX2MPRuntimePlugin {
@@ -17,4 +18,4 @@ module.exports = class JSX2MPRuntimePlugin {
       }
     );
   }
-}
+};
