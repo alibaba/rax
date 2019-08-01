@@ -22,6 +22,7 @@ class ReactiveComponent extends Component {
     this.isScheduled = false;
     this.shouldUpdate = false;
     this._children = null;
+    this.dependencies = new Map();
 
     this.state = {};
 
@@ -56,30 +57,28 @@ class ReactiveComponent extends Component {
   }
 
   readContext(context) {
-    const readEmitter = context.Provider.readEmitter;
-    const contextEmitter = readEmitter(this);
-    const mountId = this._internal._mountID;
-
-    if (!contextEmitter[mountId]) {
-      // One context one updater bind
-      contextEmitter[mountId] = {};
+    let contextItem = this.dependencies.get(context);
+    if (!contextItem) {
+      const readEmitter = context.Provider.readEmitter;
+      const contextEmitter = readEmitter(this);
+      contextItem = {
+        emitter: contextEmitter,
+        renderedContext: contextEmitter.value,
+        off: () => {},
+      };
 
       const contextUpdater = (newContext) => {
-        if (newContext !== contextEmitter[mountId].renderedContext) {
+        if (newContext !== contextItem.renderedContext) {
           this.shouldUpdate = true;
           this.update();
         }
       };
 
-      contextEmitter.on(contextUpdater);
-
-      this.willUnmount.push(() => {
-        delete contextEmitter[mountId];
-        contextEmitter.off(contextUpdater);
-      });
+      contextItem.emitter.on(contextUpdater);
+      contextItem.off = () => contextItem.emitter.off(contextUpdater);
+      this.dependencies.set(context, contextItem);
     }
-
-    return contextEmitter[mountId].renderedContext = contextEmitter.value;
+    return contextItem.renderedContext = contextItem.emitter.value;
   }
 
   componentWillMount() {
@@ -100,6 +99,7 @@ class ReactiveComponent extends Component {
 
   componentWillUnmount() {
     this.willUnmount.forEach(handler => handler());
+    this.dependencies.forEach(contextItem => contextItem.off());
   }
 
   update() {
