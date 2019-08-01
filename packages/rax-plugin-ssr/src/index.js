@@ -1,12 +1,11 @@
-const cloneDeep = require('lodash/cloneDeep');
 const SSRDevServer = require('rax-ssr-dev-server');
 
 const getSSRBase = require('./ssr/getBase');
 const setSSRBuild = require('./ssr/setBuild');
 const setSSRDev = require('./ssr/setDev');
-const runSSRDev = require('./ssr/runDev');
 
 const setWebBase = require('./setWebBase');
+const setDevServerConfig = require('./ssr/setDevServerConfig');
 
 // can‘t clone webpack chain object
 module.exports = ({ chainWebpack, registerConfig, setDevServer, rootDir, onHook, log }) => {
@@ -21,6 +20,7 @@ module.exports = ({ chainWebpack, registerConfig, setDevServer, rootDir, onHook,
     }
 
     if (command === 'dev') {
+      setDevServerConfig(webConfig, rootDir);
       setDevServer(SSRDevServer);
       setSSRDev(config.get('ssr'), rootDir);
     }
