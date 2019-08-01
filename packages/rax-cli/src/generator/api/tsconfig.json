@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "esNext",
+    "target": "es2015",
+    "jsx": "preserve",
+    "jsxFactory": "createElement",
+
+    "moduleResolution": "node",
+    "baseUrl": ".",
+
+    "rootDir": "src",
+    "downlevelIteration": true,
+    "alwaysStrict": true,
+    "outDir": "lib",
+    "strict": true,
+    "preserveConstEnums": true,
+    "experimentalDecorators": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/__tests__"]
+}
