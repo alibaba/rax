@@ -1,15 +1,15 @@
-const pluginApp = ({ chainweexpack, registerConfig, rootDir }, options = {}) => {
+const pluginApp = ({ chainWebpack, registerConfig, rootDir }, options = {}) => {
   const { targets = [] } = options;
 
   targets.forEach(target => {
-    if (target === 'weex' || target === 'weex') {
+    if (target === 'web' || target === 'weex') {
       const getBase = require(`./config/${target}/getBase`);
       const setDev = require(`./config/${target}/setDev`);
       const setBuild = require(`./config/${target}/setBuild`);
 
       registerConfig(target, getBase(rootDir));
 
-      chainweexpack((config, { command }) => {
+      chainWebpack((config, { command }) => {
         if (command === 'dev') {
           setDev(config.get(target), rootDir);
         }
