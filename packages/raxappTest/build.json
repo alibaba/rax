@@ -1,5 +1,6 @@
 {
   "plugins": [
-    ["rax-plugin-app", { "targets": ["web"]}]
+    ["rax-plugin-app", { "targets": ["web"]}],
+    "rax-plugin-ssr"
   ]
 }

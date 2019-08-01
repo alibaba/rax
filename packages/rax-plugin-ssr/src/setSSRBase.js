@@ -1,9 +1,11 @@
 'use strict';
 
-const { getEntries } = require('./getEntries');
+const getEntries = require('./getEntries');
 
 module.exports = (config, rootDir) => {
   const entries = getEntries(rootDir);
+
+  config.entryPoints.clear();
 
   Object.keys(entries).forEach((key) => {
     config.entry(key)
@@ -26,7 +28,7 @@ module.exports = (config, rootDir) => {
     rax: 'rax',
   });
 
-  config.plugin('document').clear();
+  config.plugins.delete('document');
 
   return config;
 };

@@ -4,12 +4,12 @@ const path = require('path');
 const AssetsManifestPlugin = require('rax-pwa-webpack-plugin/lib/AssetsManifestPlugin').default;
 const { RaxPWAPlugin } = require('rax-pwa-webpack-plugin');
 
-const { getEntries } = require('./getEntries');
+const getEntries = require('./getEntries');
 
 module.exports = (config, rootDir) => {
   const entries = getEntries(rootDir);
 
-  config.entry.clear();
+  config.entryPoints.clear();
 
   Object.keys(entries).forEach((key) => {
     config.entry(key)
