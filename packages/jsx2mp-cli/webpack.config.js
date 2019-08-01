@@ -105,7 +105,7 @@ module.exports = {
     new webpack.ProgressPlugin( (percentage) => {
       if (percentage === 0) {
         buildStartTime = Date.now();
-        spinner = ora('Building...').start();
+        spinner = ora({ text: 'Building...', spinner: 'arc' }).start();
       } else if (percentage === 1) {
         const endTime = Date.now();
         spinner.succeed(`DONE. [${endTime - buildStartTime}ms]`);
