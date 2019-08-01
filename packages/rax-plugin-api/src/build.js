@@ -20,6 +20,12 @@ module.exports = (rootDir) => {
 
   console.log(chalk.green('\n🚀  Build start... '));
 
+  const tsProject = ts.createProject('tsconfig.json', {
+    skipLibCheck: true,
+    declaration: true,
+    declarationDir: BUILD_DIR
+  });
+
   gulp.task('clean', function(done) {
     fs.removeSync(BUILD_DIR);
     done();
@@ -35,9 +41,11 @@ module.exports = (rootDir) => {
 
   // for ts/tsx.
   gulp.task('ts', function() {
-    return gulp
-      .src([TS_FILES_PATTERN], { ignore: IGNORE_PATTERN })
-      .pipe(ts())
+    return tsProject.src().pipe(tsProject())
+      .on('error', (err) => {
+        console.error(err);
+        process.exit(1);
+      })
       .pipe(gulp.dest(BUILD_DIR));
   });
 

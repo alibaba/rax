@@ -18,7 +18,13 @@ module.exports = (rootDir) => {
 
   const BUILD_DIR = path.resolve(rootDir, 'lib');
 
-  console.log(chalk.green('\n🚀  Build start... '));
+  console.log(chalk.green('\n🚀  Start watch... '));
+
+  const tsProject = ts.createProject('tsconfig.json', {
+    skipLibCheck: true,
+    declaration: true,
+    declarationDir: BUILD_DIR
+  });
 
   gulp.task('clean', function(done) {
     fs.removeSync(BUILD_DIR);
@@ -35,9 +41,12 @@ module.exports = (rootDir) => {
 
   // for ts/tsx.
   gulp.task('ts', function() {
-    return gulp
-      .src([TS_FILES_PATTERN], { ignore: IGNORE_PATTERN })
-      .pipe(ts())
+    return tsProject.src()
+      .pipe(tsProject())
+      .on('error', (err) => {
+        console.error(err);
+        process.exit(1);
+      })
       .pipe(gulp.dest(BUILD_DIR));
   });
 
@@ -48,6 +57,10 @@ module.exports = (rootDir) => {
       .pipe(gulp.dest(BUILD_DIR));
   });
 
+  gulp.watch([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['js']);
+  gulp.watch([TS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['ts']);
+  gulp.watch([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['js']);
+
   runSequence(
     'clean',
     [
@@ -56,6 +69,6 @@ module.exports = (rootDir) => {
       'copyOther',
     ],
     () => {
-      console.log(chalk.green('\n  Build Successfully... '));
+      console.log(chalk.green('\n  Start Successfully... '));
     });
 };
