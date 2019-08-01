@@ -125,35 +125,58 @@ function askProjectInformaction(name, verbose) {
       message: 'What\'s your project type?',
       choices: [
         {
-          name: 'UniversalApp (Build application that works multi-platform)',
-          value: 'univeraslapp'
+          name: 'App (Build application that works multi-platform)',
+          value: 'app'
         },
         {
-          name: 'WebApp (Build application that only works in broswers)',
-          value: 'webapp'
-        },
-        {
-          name: 'Component (Build component for universal application include web)',
+          name: 'Component (Build component for application include web)',
           value: 'component'
+        },
+        {
+          name: 'API (Build universal API library)',
+          value: 'api'
         }
       ],
-      default: 'univeraslapp'
+      default: 'app'
+    },
+    {
+      type: 'checkbox',
+      name: 'projectTargets',
+      when: function(answers) {
+        return answers.projectType === 'app';
+      },
+      validate: function(targets) {
+        if (targets && targets.length > 0) return true;
+        return 'Choose at least one of target.';
+      },
+      message: 'Do you want to build to these targets?',
+      choices: [
+        {
+          name: 'web',
+          value: 'web'
+        },
+        {
+          name: 'weex',
+          value: 'weex'
+        },
+        {
+          name: 'miniapp',
+          value: 'miniapp'
+        }
+      ],
+      default: false
     },
     {
       type: 'checkbox',
       name: 'projectFeatures',
       when: function(answers) {
-        return answers.projectType === 'webapp';
+        return answers.projectType === 'app' && answers.projectTargets.includes('web');
       },
       message: 'Do you want to enable these features?',
       choices: [
         {
           name: 'server sider rendering (ssr)',
           value: 'ssr'
-        },
-        {
-          name: 'single page application (spa)',
-          value: 'spa'
         }
       ],
       default: false
@@ -197,6 +220,7 @@ function createProject(name, verbose, userAnswers) {
     projectType: userAnswers.projectType,
     projectFeatures: userAnswers.projectFeatures,
     projectAuthor: userAnswers.projectAuthor,
+    projectTargets: userAnswers.projectTargets,
     verbose: verbose,
   }).then(function(directory) {
     if (autoInstallModules) {
