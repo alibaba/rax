@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const { join } = require('path');
 const genExpression = require('../codegen/genExpression');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -22,7 +23,7 @@ const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 
 const EXPORTED_DEF = '__def__';
-const RUNTIME = 'jsx2mp-runtime';
+const RUNTIME = '/npm/jsx2mp-runtime';
 
 const isCoreModule = (mod) => /^@core\//.test(mod);
 
@@ -94,15 +95,16 @@ module.exports = {
 
     const hooks = collectHooks(parsed.renderFunctionPath);
 
-    renameCoreModule(parsed.ast);
-    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeRaxImports(parsed.ast);
+    renameCoreModule(parsed.ast);
+    renameNpmModules(parsed.ast);
+    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
     /**
-     * $updateProps: collect props dependencies.
+     * updateChildProps: collect props dependencies.
      */
-    if (parsed.renderFunctionPath) {
+    if (options.type !=='app' && parsed.renderFunctionPath) {
       const fnBody = parsed.renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {
@@ -138,6 +140,18 @@ function renameCoreModule(ast) {
       const source = path.get('source');
       if (source.isStringLiteral() && isCoreModule(source.node.value)) {
         source.replaceWith(t.stringLiteral(RUNTIME));
+      }
+    }
+  });
+}
+
+
+function renameNpmModules(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && ['.', '/'].indexOf(source.node.value[0]) === -1) {
+        source.replaceWith(t.stringLiteral(join('/npm', source.node.value)));
       }
     }
   });
