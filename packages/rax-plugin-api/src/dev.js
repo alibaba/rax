@@ -2,21 +2,23 @@
 
 const chalk = require('chalk');
 const path = require('path');
-const babel = require('gulp-babel');
-const ts = require('gulp-typescript');
-const fs = require('fs-extra');
-
 const gulp = require('gulp');
+const ts = require('gulp-typescript');
+const babel = require('gulp-babel');
+const fs = require('fs-extra');
 const runSequence = require('run-sequence').use(gulp);
 
-const babelConfig = require('./babel.config');
-
-const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
-const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';
-const IGNORE_PATTERN = '**/__tests__/**';
-
 module.exports = (rootDir) => {
+  const babelConfig = require('./babel.config');
+
+  const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
+  const TS_FILES_PATTERN = 'src/**/*.+(ts|tsx)';
+  const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';
+  const IGNORE_PATTERN = '**/__tests__/**';
+
   const BUILD_DIR = path.resolve(rootDir, 'lib');
+
+  console.log(chalk.green('\n🚀  Start watch... '));
 
   const tsProject = ts.createProject('tsconfig.json', {
     skipLibCheck: true,
@@ -25,13 +27,12 @@ module.exports = (rootDir) => {
   });
 
   gulp.task('clean', function(done) {
-    console.log(chalk.green('\n🚀  Build start... '));
-    fs.removeSync(path.resolve(rootDir, 'dist'));
+    fs.removeSync(BUILD_DIR);
     done();
   });
 
   // for js/jsx.
-  gulp.task('babel', function() {
+  gulp.task('js', function() {
     return gulp
       .src([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN })
       .pipe(babel(babelConfig))
@@ -50,19 +51,24 @@ module.exports = (rootDir) => {
   });
 
   // for other.
-  gulp.task('other', function() {
+  gulp.task('copyOther', function() {
     return gulp
       .src([OTHER_FILES_PATTERN], { ignore: IGNORE_PATTERN })
       .pipe(gulp.dest(BUILD_DIR));
   });
 
+  gulp.watch([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['js']);
+  gulp.watch([TS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['ts']);
+  gulp.watch([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['js']);
+
   runSequence(
     'clean',
     [
-      'babel',
-      'other',
+      'js',
+      'ts',
+      'copyOther',
     ],
     () => {
-      console.log(chalk.green('\n🎉  Build successfully.'));
+      console.log(chalk.green('\n  Start Successfully... '));
     });
 };
