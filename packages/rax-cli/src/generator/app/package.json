@@ -1,0 +1,26 @@
+{
+  "name": "<%= projectName %>",
+  "author": "<%= projectAuthor %>",
+  "scripts": {
+    "build": "rax-scripts build",
+    "start": "rax-scripts start",
+    "test": "rax-scripts test --type=component",
+    "lint": "eslint --ext .js --ext .jsx --ext .ts --ext .tsx ./src"
+  },
+  "dependencies": {
+    "driver-universal": "^1.0.1",
+    "history": "^4.9.0",
+    "rax": "^1.0.8",
+    "universal-app-runtime": "^0.1.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "driver-universal": "^1.0.0",
+    "eslint": "^5.16.0",
+    "eslint-config-rax": "^0.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-react": "^7.12.4",
+    "rax-scripts": "^1.3.11",
+    "rax-plugin-app": "^0.1.0-0"
+  }
+}

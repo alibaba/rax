@@ -1,4 +1,4 @@
-# WebApp Starter Kit
+# <%= projectName %>
 
 ## Getting Started
 
