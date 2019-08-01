@@ -56,7 +56,7 @@ export default function createContext(defaultValue) {
   function readEmitter(instance) {
     const emitter = stack[stack.length - 1];
     if (emitter) return emitter;
-    while (instance) {
+    while (instance && instance._internal) {
       if (instance instanceof Provider) {
         break;
       }
@@ -70,9 +70,9 @@ export default function createContext(defaultValue) {
   class Consumer extends Component {
     componentWillMount() {
       this.emitter = readEmitter(this);
-      this.setState({
+      this.state = {
         value: this.emitter.value
-      });
+      };
       this.onUpdate = value => this.state.value !== value && this.setState({value});
     }
 

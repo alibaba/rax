@@ -167,9 +167,9 @@ class ReactiveComponent {
   }
 
   readContext(context) {
-    const Provider = context.Provider;
-    const contextProp = Provider.contextProp;
-    return this.context[contextProp] ? this.context[contextProp].value : Provider.defaultValue;
+    const readEmitter = context.Provider.readEmitter;
+    const contextEmitter = readEmitter(this);
+    return contextEmitter.value;
   }
 
   render() {
