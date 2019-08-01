@@ -182,8 +182,8 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
         path.replaceWith(t.stringLiteral(name));
         break;
 
-      // <tag key={this.props.name} key2={a.b} /> => <tag key="{{name}}" key2="{{a.b}}" />
-      // <tag>{ foo.bar }</tag> => <tag>{{ foo.bar }}</tag>
+      // <tag key={this.props.name} key2={a.b} /> => <tag key="{{_d0.name}}" key2="{{_d1.b}}" />
+      // <tag>{ foo.bar }</tag> => <tag>{{ _d0.bar }}</tag>
       case 'MemberExpression':
         if (type === ATTR) {
           if (isEventHandler(attributeName)) {
@@ -191,23 +191,20 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
               expression,
               isDirective
             });
-            path.replaceWith(t.stringLiteral(name));
+            const replaceNode = t.stringLiteral(name);
+            replaceNode.__transformed = true;
+            path.replaceWith(replaceNode);
           } else {
-            const name = dynamicValues.add({
-              expression,
-              isDirective
-            });
-            path.replaceWith(t.stringLiteral(createBinding(name)));
+            const replaceNode = transformMemberExpression(expression, dynamicValues, isDirective);
+            replaceNode.__transformed = true;
+            path.replaceWith(t.stringLiteral(createBinding(genExpression(replaceNode))));
             if (!isDirective && jsxEl.__pid) {
               componentDependentProps[jsxEl.__pid][name] = expression;
             }
           }
         } else if (type === ELE) {
-          const name = dynamicValues.add({
-            expression,
-            isDirective
-          });
-          path.replaceWith(createJSXBinding(name));
+          const replaceNode = transformMemberExpression(expression, dynamicValues, isDirective);
+          path.replaceWith(createJSXBinding(genExpression(replaceNode)));
         }
         break;
 
@@ -301,11 +298,12 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
               replaceNode.__transformed = true;
               innerPath.replaceWith(replaceNode);
             },
+            // <tag>{a ? a.b[c.d] : 1}</tag> => <tag>{{_d0 ? _d0.b[_d1.d] : 1}}</tag>
             MemberExpression(innerPath) {
               if (innerPath.node.__transformed) return;
               const replaceNode = transformMemberExpression(innerPath.node, dynamicValues, isDirective);
-              innerPath.replaceWithMultiple(replaceNode);
-              innerPath.node.__transformed = true;
+              replaceNode.__transformed = true;
+              innerPath.replaceWith(replaceNode);
             }
           });
           if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(genExpression(expression))));
@@ -368,6 +366,16 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
   let objectReplaceNode = object;
   let propertyReplaceNode = property;
   if (!object.__transformed) {
+    // if object is ThisExpression, replace thw whole expression with _d0
+    if (t.isThisExpression(object)) {
+      const name = dynamicBinding.add({
+        expression,
+        isDirective
+      });
+      const replaceNode = t.identifier(name);
+      replaceNode.__transformed = true;
+      return replaceNode;
+    }
     if (t.isIdentifier(object)) {
       const name = dynamicBinding.add({
         expression: object,
