@@ -1,6 +1,0 @@
-{
-  "defaultTitle": "Rax demo",
-  "usingComponents": {
-    "rax-demo": "../../src/miniapp/index"
-  }
-}

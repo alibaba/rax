@@ -4,8 +4,6 @@
   "scripts": {
     "build": "rax-scripts build",
     "start": "rax-scripts start",
-    "test": "rax-scripts test --type=component",
-    "lint": "eslint --ext .js --ext .jsx --ext .ts --ext .tsx ./src"
   },
   "dependencies": {
     "driver-universal": "^1.0.1",

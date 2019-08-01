@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "module": "esNext",
-    "target": "es2015",
+    "module": "commonjs",
+    "target": "es5",
     "jsx": "preserve",
     "jsxFactory": "createElement",
-
-     "moduleResolution": "node",
+    "moduleResolution": "node",
     "baseUrl": ".",
-
-     "rootDir": "src",
+    "rootDir": "src",
     "downlevelIteration": true,
     "alwaysStrict": true,
     "outDir": "lib",

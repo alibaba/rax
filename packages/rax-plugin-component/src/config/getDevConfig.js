@@ -59,7 +59,7 @@ module.exports = (rootDir) => {
   config.plugin('html')
     .use(HtmlWebpackPlugin, [{
       inject: true,
-      template: path.resolve(rootDir, './public/index.html')
+      template: path.resolve(__dirname, './demo.html')
     }]);
 
   config.plugin('noError')
