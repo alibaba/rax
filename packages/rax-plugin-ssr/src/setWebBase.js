@@ -7,15 +7,6 @@ const { RaxPWAPlugin } = require('rax-pwa-webpack-plugin');
 const getEntries = require('./getEntries');
 
 module.exports = (config, rootDir) => {
-  const entries = getEntries(rootDir);
-
-  config.entryPoints.clear();
-
-  Object.keys(entries).forEach((key) => {
-    config.entry(key)
-      .add(entries[key]);
-  });
-
   config.plugin('raxpwa')
     .use(RaxPWAPlugin, [{
       pathConfig: {

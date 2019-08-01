@@ -1,14 +1,36 @@
 const chalk = require('chalk');
 const address = require('address');
+const path = require('path');
 const deepmerge = require('deepmerge');
 const webpack = require('webpack');
 const SSRDevServer = require('rax-ssr-dev-server');
 
-module.exports = (config, log) => {
+const getEntries = require('../getEntries');
+
+module.exports = (config, rootDir, log) => {
+  const entries = getEntries(rootDir);
+  const pagesManifest = {};
+  Object.keys(entries).forEach(entry => {
+    pagesManifest[entry] = path.resolve(rootDir, `build/server/${entry}.js`);
+  });
+
   const webpackConfig = config.toConfig();
   let devServerConfig = {
-    port: 9999,
+    port: 10100,
     host: address.ip(),
+    appConfig: {
+      title: 'test_title',
+      pages: {
+        home: {
+          path: '/home',
+          title: 'homePage',
+        }
+      },
+      spa: true,
+      ssr: true
+    },
+    pagesManifest,
+    assetsManifestPath: path.resolve(rootDir, '.temp/assets_manifest.json')
   };
 
   if (webpackConfig.devServer) {

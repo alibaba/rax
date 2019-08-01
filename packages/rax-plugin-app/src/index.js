@@ -1,4 +1,4 @@
-module.exports = ({ chainWebpack, registerConfig, rootDir }, options = {}) => {
+const pluginApp = ({ chainWebpack, registerConfig, rootDir }, options = {}) => {
   const { targets = [] } = options;
 
   targets.forEach(target => {
@@ -19,3 +19,9 @@ module.exports = ({ chainWebpack, registerConfig, rootDir }, options = {}) => {
     });
   });
 };
+
+pluginApp.getWebBase = require('./config/web/getBase');
+pluginApp.setWebDev = require('./config/web/setDev');
+pluginApp.setWebBuild = require('./config/web/setBuild');
+
+module.exports = pluginApp;

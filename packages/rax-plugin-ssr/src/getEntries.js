@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 
-module.exports = (rootDir) => {
+module.exports = (rootDir, isWeb) => {
   const appDirectory = rootDir;
   const appSrc = path.resolve(appDirectory, 'src');
 
@@ -19,7 +19,7 @@ module.exports = (rootDir) => {
   });
 
   const documentPath = path.resolve(appSrc, 'document/index.jsx');
-  if (fs.existsSync(documentPath)) {
+  if (fs.existsSync(documentPath) && !isWeb) {
     entries._document = documentPath;
   }
 
