@@ -1,16 +1,20 @@
 import { createElement } from 'rax';
 import * as RaxUseRouter from 'rax-use-router';
+import { isWeb } from 'universal-env';
 import { createHashHistory } from 'history';
 import encodeQS from 'querystring/encode';
 
+
 let _history = null;
+let _routerConfig = {};
 
 export function useRouter(routerConfig) {
-  const { history = createHashHistory(), routes } = routerConfig;
+  _routerConfig = routerConfig;
+  const { history = createHashHistory(), routes } = _routerConfig;
   _history = history;
 
   function Router(props) {
-    const { component } = RaxUseRouter.useRouter(() => routerConfig);
+    const { component } = RaxUseRouter.useRouter(() => _routerConfig);
 
     if (!component || Array.isArray(component) && component.length === 0) {
       // Return null directly if not matched.
@@ -67,6 +71,33 @@ export function goForward() {
 export function canGo(n) {
   checkHistory();
   return _history.canGo(n);
+}
+
+// PWA Function
+export function preload(config) {
+  if (!isWeb) return;
+  if (config.pageIndex !== undefined) {
+    _routerConfig.routes[config.pageIndex].component();
+  } else {
+    const linkElement = document.createElement('link');
+    linkElement.rel = 'preload';
+    linkElement.as = config.as;
+    linkElement.href = config.href;
+    config.crossorigin && (linkElement.crossorigin = true);
+    document.head.appendChild(linkElement);
+  }
+}
+
+export function prerender(config) {
+  if (!isWeb) return;
+  if (config.pageIndex !== undefined) {
+    _routerConfig.routes[config.pageIndex].component();
+  } else {
+    const linkElement = document.createElement('link');
+    linkElement.rel = 'prerender';
+    linkElement.href = config.href;
+    document.head.appendChild(linkElement);
+  }
 }
 
 function checkHistory() {
