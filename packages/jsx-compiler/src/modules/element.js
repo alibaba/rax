@@ -139,11 +139,15 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             });
             path.replaceWith(t.stringLiteral(name));
           } else {
-            const name = dynamicValues.add({
-              expression,
-              isDirective
-            });
-            path.replaceWith(t.stringLiteral(createBinding(name)));
+            if (!expression.__jsxlistArgs) {
+              const name = dynamicValues.add({
+                expression,
+                isDirective
+              });
+              path.replaceWith(t.stringLiteral(createBinding(name)));
+            } else {
+              path.replaceWith(t.stringLiteral(createBinding(expression.name)));
+            }
           }
           if (!isDirective && jsxEl.__pid) {
             componentDependentProps[jsxEl.__pid][attributeName] = expression;
@@ -153,11 +157,15 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             path.remove(); // Remove expression
             break;
           } else {
-            const name = dynamicValues.add({
-              expression,
-              isDirective
-            });
-            path.replaceWith(createJSXBinding(name));
+            if (!expression.__jsxlistArgs) {
+              const name = dynamicValues.add({
+                expression,
+                isDirective
+              });
+              path.replaceWith(createJSXBinding(name));
+            } else {
+              path.replaceWith(createJSXBinding(expression.name));
+            }
           }
         }
         break;
@@ -288,8 +296,10 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
         } else {
           path.traverse({
             Identifier(innerPath) {
-              if (innerPath.node.__transformed) return;
-              if (innerPath.parentPath.isMemberExpression()) return;
+              if (innerPath.node.__transformed
+              || innerPath.parentPath.isMemberExpression()
+              || innerPath.node.__jsxlistArgs) return;
+
               const name = dynamicValues.add({
                 expression: innerPath.node,
                 isDirective
