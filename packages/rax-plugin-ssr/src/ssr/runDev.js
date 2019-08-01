@@ -5,7 +5,17 @@ const deepmerge = require('deepmerge');
 const webpack = require('webpack');
 const SSRDevServer = require('rax-ssr-dev-server');
 
+
+const getEntries = require('../getEntries');
+
 module.exports = (config, rootDir, log) => {
+  debugger;
+  const entries = getEntries(rootDir);
+  const pagesManifest = {};
+  Object.keys(entries).forEach(entry => {
+    pagesManifest[entry] = path.resolve(rootDir, `build/server/${entry}.js`);
+  });
+
   const webpackConfig = config.toConfig();
 
   const absoluteAppJSONPath = path.join(rootDir, 'src/app.json');
@@ -21,7 +31,7 @@ module.exports = (config, rootDir, log) => {
   });
 
   let devServerConfig = {
-    port: 9999,
+    port: 10100,
     host: address.ip(),
     routes
   };

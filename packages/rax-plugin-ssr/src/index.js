@@ -1,30 +1,28 @@
-// const clone = require('lodash.clonedeep');
-const clone = require('lodash.clone');
+const cloneDeep = require('lodash/cloneDeep');
 
-const setSSRBase = require('./setSSRBase');
-const setSSRBuild = require('./setSSRBuild');
+const getSSRBase = require('./ssr/getBase');
+const setSSRBuild = require('./ssr/setBuild');
+const setSSRDev = require('./ssr/setDev');
+const runSSRDev = require('./ssr/runDev');
 
 const setWebBase = require('./setWebBase');
 
-const runSSRDev = require('./runSSRDev');
-
+// can‘t clone webpack chain object
 module.exports = ({ chainWebpack, registerConfig, rootDir, onHook, log }) => {
   chainWebpack((config, { command }) => {
     const webConfig = config.get('web');
-    // const ssrConfig = clone(config.get('web'));
-    const ssrConfig = webConfig;
 
-    // registerConfig('ssr', ssrConfig);
-
-    setSSRBase(ssrConfig, rootDir);
-    // setWebBase(webConfig, rootDir);
+    setWebBase(webConfig, rootDir);
 
     if (command === 'build') {
-      setSSRBuild(ssrConfig);
+      registerConfig('ssr', getSSRBase(rootDir));
+      setSSRBuild(config.get('ssr'), rootDir);
     }
 
     onHook('after.dev', () => {
-      runSSRDev(ssrConfig, rootDir, log);
+      const devConfig = getSSRBase(rootDir);
+      setSSRDev(devConfig, rootDir);
+      runSSRDev(devConfig, rootDir, log);
     });
   });
 };

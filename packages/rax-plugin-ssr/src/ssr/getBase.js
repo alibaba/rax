@@ -1,16 +1,10 @@
 'use strict';
 
-const getEntries = require('./getEntries');
+const { getWebBase } = require('rax-plugin-app');
 
-module.exports = (config, rootDir) => {
-  const entries = getEntries(rootDir);
-
-  config.entryPoints.clear();
-
-  Object.keys(entries).forEach((key) => {
-    config.entry(key)
-      .add(entries[key]);
-  });
+// Can‘t clone webpack chain object, so generate a new chain and reset config
+module.exports = (rootDir) => {
+  const config = getWebBase(rootDir);
 
   config.resolve.alias
     .clear()

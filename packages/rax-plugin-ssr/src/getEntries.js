@@ -3,7 +3,7 @@ const qs = require('querystring');
 
 const SSRLoader = require.resolve('./loader');
 
-module.exports = (rootDir) => {
+module.exports = (rootDir, isWeb) => {
   const appDirectory = rootDir;
   const appSrc = path.resolve(appDirectory, 'src');
 

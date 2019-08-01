@@ -25,6 +25,7 @@ module.exports = (config, rootDir) => {
     .contentBase(appPublic)
     .watchContentBase(true)
     .hot(true)
+    .quiet(true)
     .publicPath(publicPath)
     .overlay(false)
     .host(address.ip())
