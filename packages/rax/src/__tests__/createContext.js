@@ -6,6 +6,7 @@ import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
+import createRef from '../createRef';
 
 describe('createContext', () => {
   function createNodeElement(tagName) {
@@ -250,5 +251,167 @@ describe('createContext', () => {
       'Consumer render',
     ]);
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
+  });
+
+  it('provider bails out if children and value are unchanged (like sCU)', () => {
+    const container = createNodeElement('div');
+    const Context = createContext(0);
+    let logs = [];
+
+    function Child() {
+      logs.push('Child');
+      return <span>Child</span>;
+    }
+
+    const children = <Child />;
+
+    function App(props) {
+      logs.push('App');
+      return (
+        <Context.Provider value={props.value}>{children}</Context.Provider>
+      );
+    }
+
+    // Initial mount
+    render(<App value={1} />, container);
+    expect(logs).toEqual(['App', 'Child']);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('Child');
+
+    // Update
+    logs = [];
+    render(<App value={1} />, container);
+    expect(logs).toEqual(['App'
+    // Child does not re-render
+    ]);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('Child');
+  });
+
+  it('provider does not bail out if legacy context changed above', () => {
+    const container = createNodeElement('div');
+    const Context = createContext(0);
+    let logs = [];
+
+    function Child() {
+      logs.push('Child');
+      return <span>Child</span>;
+    }
+
+    const children = <Child />;
+
+    const legacyProviderRef = createRef();
+    const appRef = createRef();
+
+    class LegacyProvider extends Component {
+      static childContextTypes = {
+        legacyValue: () => {},
+      };
+      state = {legacyValue: 1};
+      getChildContext() {
+        return {legacyValue: this.state.legacyValue};
+      }
+      render() {
+        legacyProviderRef.current = this;
+        logs.push('LegacyProvider');
+        return this.props.children;
+      }
+    }
+
+    class App extends Component {
+      state = {value: 1};
+      render() {
+        appRef.current = this;
+        logs.push('App');
+        return (
+          <Context.Provider value={this.state.value}>
+            {this.props.children}
+          </Context.Provider>
+        );
+      }
+    }
+
+    // Initial mount
+    render(
+      <LegacyProvider>
+        <App value={1}>
+          {children}
+        </App>
+      </LegacyProvider>, container,
+    );
+    expect(logs).toEqual(['LegacyProvider', 'App', 'Child']);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('Child');
+
+    // Update App with same value (should bail out)
+    logs = [];
+    appRef.current.setState({value: 1});
+    jest.runAllTimers();
+    expect(logs).toEqual(['App']);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('Child');
+
+    // Update LegacyProvider (should not bail out)
+    logs = [];
+    legacyProviderRef.current.setState({value: 1});
+    jest.runAllTimers();
+    expect(logs).toEqual(['LegacyProvider', 'App', 'Child']);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('Child');
+
+    // Update App with same value (should bail out)
+    logs = [];
+    appRef.current.setState({value: 1});
+    jest.runAllTimers();
+    expect(logs).toEqual(['App']);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('Child');
+  });
+
+  it('should only update consumer when context change', () => {
+    const container = createNodeElement('div');
+    const Context = createContext('theme-default');
+    let logs = [];
+
+    class ThemeProvider extends Component {
+      state = {
+        theme: 'theme1'
+      }
+      render() {
+        logs.push('ThemeProvider');
+        return <Context.Provider value={this.state.theme}>{this.props.children}</Context.Provider>;
+      }
+    }
+
+    function ThemeDisplay(props) {
+      logs.push('ThemeDisplay');
+      return <span>{props.theme}</span>;
+    }
+
+    function ThemeConsumer() {
+      return <Context.Consumer>
+        {
+          theme => <ThemeDisplay theme={theme} />
+        }
+      </Context.Consumer>;
+    }
+
+    function OtherChild() {
+      logs.push('OtherChild');
+      return <span>OtherChild</span>;
+    }
+
+    function App() {
+      logs.push('App');
+      return [<OtherChild />, <ThemeConsumer />];
+    }
+
+    const themeProvider = render(<ThemeProvider><App /></ThemeProvider>, container);
+    expect(logs).toEqual(['ThemeProvider', 'App', 'OtherChild', 'ThemeDisplay']);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('OtherChild');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('theme1');
+
+    logs = [];
+    themeProvider.setState({
+      theme: 'theme2'
+    });
+    jest.runAllTimers();
+    expect(logs).toEqual(['ThemeProvider', 'ThemeDisplay']);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('OtherChild');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('theme2');
   });
 });

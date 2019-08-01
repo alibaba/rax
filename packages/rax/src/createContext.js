@@ -36,7 +36,7 @@ export default function createContext(defaultValue) {
 
     componentWillReceiveProps(nextProps) {
       if (this.props.value !== nextProps.value) {
-        this.emitter.value = nextProps.value;
+        this.emitter.value = nextProps.value !== undefined ? nextProps.value : defaultValue;
       }
     }
 
