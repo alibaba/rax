@@ -23,6 +23,12 @@ module.exports = function pageLoader(content) {
   const distFileWithoutExt = removeExt(join(distPath, relativeSourcePath));
 
   const config = Object.assign({}, transformed.config);
+  if (Array.isArray(transformed.dependencies)) {
+    transformed.dependencies.forEach(dep => {
+      this.addDependency(dep);
+    });
+  }
+
   if (config.usingComponents) {
     const usingComponents = {};
     Object.keys(config.usingComponents).forEach(key => {
