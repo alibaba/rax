@@ -3,6 +3,7 @@
 const chalk = require('chalk');
 const path = require('path');
 const babel = require('gulp-babel');
+const ts = require('gulp-typescript');
 const fs = require('fs-extra');
 
 const gulp = require('gulp');
@@ -17,6 +18,12 @@ const IGNORE_PATTERN = '**/__tests__/**';
 module.exports = (rootDir) => {
   const BUILD_DIR = path.resolve(rootDir, 'lib');
 
+  const tsProject = ts.createProject('tsconfig.json', {
+    skipLibCheck: true,
+    declaration: true,
+    declarationDir: BUILD_DIR
+  });
+
   gulp.task('clean', function(done) {
     console.log(chalk.green('\n🚀  Build start... '));
     fs.removeSync(path.resolve(rootDir, 'dist'));
@@ -28,6 +35,17 @@ module.exports = (rootDir) => {
     return gulp
       .src([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN })
       .pipe(babel(babelConfig))
+      .pipe(gulp.dest(BUILD_DIR));
+  });
+
+  // for ts/tsx.
+  gulp.task('ts', function() {
+    return tsProject.src()
+      .pipe(tsProject())
+      .on('error', (err) => {
+        console.error(err);
+        process.exit(1);
+      })
       .pipe(gulp.dest(BUILD_DIR));
   });
 
