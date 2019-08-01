@@ -1,3 +1,5 @@
 {
-  "type": "api"
+  "plugins": [
+    "rax-plugin-api"
+  ]
 }
