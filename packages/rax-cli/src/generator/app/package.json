@@ -3,7 +3,7 @@
   "author": "<%= projectAuthor %>",
   "scripts": {
     "build": "rax-scripts build",
-    "start": "rax-scripts start",
+    "start": "rax-scripts start"
   },
   "dependencies": {
     "driver-universal": "^1.0.1",
