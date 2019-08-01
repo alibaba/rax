@@ -18,7 +18,7 @@
     "eslint-config-rax": "^0.0.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-react": "^7.12.4",
-    "rax-scripts": "^1.3.11",
-    "rax-plugin-app": "^0.1.0-0"
+    "rax-scripts": "^2.0.0-0",
+    "rax-plugin-app": "^0.1.0-1"
   }
 }
