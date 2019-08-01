@@ -20,6 +20,7 @@
     "lodash.clone": "^4.5.0",
     "lodash.clonedeep": "^4.5.0",
     "rax-pwa-webpack-plugin": "^1.0.0-0",
+    "rax-server-renderer": "^1.1.0",
     "rax-ssr-dev-server": "^1.0.0",
     "webpack": "^4.38.0"
   }

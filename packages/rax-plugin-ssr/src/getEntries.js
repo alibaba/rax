@@ -1,32 +1,39 @@
 const path = require('path');
-const fs = require('fs-extra');
+const qs = require('querystring');
+
+const SSRLoader = require.resolve('./loader');
 
 module.exports = (rootDir) => {
   const appDirectory = rootDir;
   const appSrc = path.resolve(appDirectory, 'src');
 
+  const absoluteAppPath = path.join(appDirectory, 'src/app.js');
+  const absoluteAppJSONPath = path.join(appDirectory, 'src/app.json');
+  const absoluteDocumentPath = path.join(appDirectory, 'src/document/index.jsx');
+  const absoluteShellPath = path.join(appDirectory, 'src/shell/index.jsx');
+
+  const appJSON = require(absoluteAppJSONPath);
+  const routes = appJSON.routes;
+
   const entries = {};
 
-  const files = fs.readdirSync(path.resolve(appSrc, 'pages'));
-  files.map((file) => {
-    const absolutePath = path.resolve(appSrc, 'pages', file);
-    const pathStat = fs.statSync(absolutePath);
+  routes.forEach((route) => {
+    const entry = route.name || route.component.replace(/\//g, '_');
+    const absolutePagePath = path.resolve(appSrc, route.component);
 
-    if (pathStat.isDirectory()) {
-      const relativePath = path.relative(appDirectory, absolutePath);
-      entries[file] = './' + path.join(relativePath, '/');
-    }
+    const query = {
+      path: route.path,
+      absoluteDocumentPath,
+      absoluteShellPath,
+      absoluteAppPath,
+      absolutePagePath,
+      absoluteAppJSONPath,
+      // errorPath: path.join(appDirectory, 'src/pages/error/index.jsx'), // 从 route 中读取
+      // assetsManifestPath: pathConfig.assetsManifest
+    };
+
+    entries[entry] = `${SSRLoader}?${qs.stringify(query)}!${absolutePagePath}`;
   });
-
-  const documentPath = path.resolve(appSrc, 'document/index.jsx');
-  if (fs.existsSync(documentPath)) {
-    entries._document = documentPath;
-  }
-
-  const shellPath = path.resolve(appSrc, 'shell/index.jsx');
-  if (fs.existsSync(shellPath)) {
-    entries._shell = shellPath;
-  }
 
   return entries;
 };

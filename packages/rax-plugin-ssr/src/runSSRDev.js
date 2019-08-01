@@ -1,14 +1,29 @@
+const path = require('path');
 const chalk = require('chalk');
 const address = require('address');
 const deepmerge = require('deepmerge');
 const webpack = require('webpack');
 const SSRDevServer = require('rax-ssr-dev-server');
 
-module.exports = (config, log) => {
+module.exports = (config, rootDir, log) => {
   const webpackConfig = config.toConfig();
+
+  const absoluteAppJSONPath = path.join(rootDir, 'src/app.json');
+  const appJSON = require(absoluteAppJSONPath);
+
+  const distDir = config.output.get('path');
+  const filename = config.output.get('filename');
+
+  const routes = {};
+  appJSON.routes.forEach((route) => {
+    const pathName = route.name || route.component.replace(/\//g, '_');
+    routes[route.path] = path.join(distDir, filename.replace('[name]', pathName));
+  });
+
   let devServerConfig = {
     port: 9999,
     host: address.ip(),
+    routes
   };
 
   if (webpackConfig.devServer) {

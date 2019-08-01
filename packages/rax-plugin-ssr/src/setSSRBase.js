@@ -16,7 +16,8 @@ module.exports = (config, rootDir) => {
     .clear()
     .set('@core/app', 'universal-app-runtime')
     .set('@core/page', 'universal-app-runtime')
-    .set('@core/router', 'universal-app-runtime');
+    .set('@core/router', 'universal-app-runtime')
+    .set('rax-server-renderer', require.resolve('rax-server-renderer'));
 
   config.target('node');
 

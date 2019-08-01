@@ -2,14 +2,21 @@ import { createElement } from 'rax';
 import * as RaxUseRouter from 'rax-use-router';
 import { createHashHistory } from 'history';
 import encodeQS from 'querystring/encode';
+import { isWeb } from 'universal-env';
 
 let _history = null;
 
 export function useRouter(routerConfig) {
-  const { history = createHashHistory(), routes } = routerConfig;
-  _history = history;
+  if (isWeb) {
+    const { history = createHashHistory(), routes } = routerConfig;
+    _history = history;
+  }
 
   function Router(props) {
+    if (routerConfig.defaultComponet) {
+      return createElement(routerConfig.defaultComponet, props);
+    }
+
     const { component } = RaxUseRouter.useRouter(() => routerConfig);
 
     if (!component || Array.isArray(component) && component.length === 0) {

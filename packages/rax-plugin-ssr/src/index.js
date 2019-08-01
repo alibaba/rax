@@ -24,7 +24,7 @@ module.exports = ({ chainWebpack, registerConfig, rootDir, onHook, log }) => {
     }
 
     onHook('after.dev', () => {
-      runSSRDev(ssrConfig, log);
+      runSSRDev(ssrConfig, rootDir, log);
     });
   });
 };
