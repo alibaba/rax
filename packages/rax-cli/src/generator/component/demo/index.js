@@ -1,5 +1,5 @@
-import {createElement, render} from 'rax';
-import * as DriverDOM from 'driver-dom';
-import App from '../src/index';
+import { createElement, render } from 'rax';
+import DriverUniversal from 'driver-universal';
+import MyComponent from '../src/index';
 
-render(<App />, document.body, { driver: DriverDOM });
+render(<MyComponent />, null, { driver: DriverUniversal });
