@@ -8,7 +8,6 @@ const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
 
-
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 
 /**
@@ -51,7 +50,7 @@ module.exports = {
         // npm module
         const pkg = getComponentConfig(alias.from);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
-          return join(alias.from, pkg.miniappConfig.main);
+          return join('/npm', alias.from, pkg.miniappConfig.main);
         } else {
           console.warn('Can not found compatible rax miniapp component "' + pkg.name + '".');
         }
