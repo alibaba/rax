@@ -104,7 +104,7 @@ module.exports = {
     /**
      * updateChildProps: collect props dependencies.
      */
-    if (options.type !=='app' && parsed.renderFunctionPath) {
+    if (options.type !== 'app' && parsed.renderFunctionPath) {
       const fnBody = parsed.renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {

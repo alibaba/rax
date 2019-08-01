@@ -33,6 +33,7 @@
     "inquirer": "^6.2.2",
     "jsx-compiler": "^0.1.0",
     "kebab-case": "^1.0.0",
+    "memory-fs": "^0.4.1",
     "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6"
   },

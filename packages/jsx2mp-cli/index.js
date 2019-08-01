@@ -5,7 +5,7 @@ const webpack = require('webpack');
 function build() {
   const compiler = webpack(config);
   compiler.outputFileSystem = new MemFs();
-  compiler.run(handleCompiled)
+  compiler.run(handleCompiled);
 }
 
 function watch() {

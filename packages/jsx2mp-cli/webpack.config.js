@@ -1,5 +1,6 @@
 const { readJSONSync } = require('fs-extra');
 const { join } = require('path');
+
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
 const PageLoader = require.resolve('jsx2mp-loader/src/page-loader');
 const ComponentLoader = require.resolve('jsx2mp-loader/src/component-loader');
@@ -13,16 +14,16 @@ function getBabelConfig() {
     plugins: [
       '@babel/plugin-proposal-class-properties'
     ],
-  }
+  };
 }
 
 function getEntry(appConfig) {
   const entry = {};
-  entry['app'] = AppLoader + '!./app.js';
+  entry.app = AppLoader + '!./app.js';
   if (Array.isArray(appConfig.routes)) {
     appConfig.routes.forEach(({ path, component }) => {
       entry['page@' + component] = PageLoader + '!' + getDepPath(component);
-    })
+    });
   }
   return entry;
 }
@@ -48,7 +49,7 @@ let appConfig;
 try {
   appConfig = readJSONSync(join(cwd, 'app.json'));
 } catch (err) {
-  console.log(err)
+  console.log(err);
   console.error('Can not found app.json in current work directory, please check.');
   process.exit(1);
 }
@@ -74,7 +75,7 @@ module.exports = {
     ],
   },
   externals: [
-    function (context, request, callback) {
+    function(context, request, callback) {
       if (/^@core\//.test(request)) {
         return callback(null, `commonjs2 ${request}`);
       }
@@ -84,4 +85,4 @@ module.exports = {
       callback();
     },
   ],
-}
+};

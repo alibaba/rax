@@ -11,7 +11,7 @@ module.exports = function fileLoader(content) {
   const distPath = this._compiler.outputPath;
 
   const isNodeModule = cached(function isNodeModule(path) {
-    return path.indexOf(currentNodeModulePath)  === 0;
+    return path.indexOf(currentNodeModulePath) === 0;
   });
 
   const getNpmName = cached(function getNpmName(relativeNpmPath) {
@@ -40,5 +40,5 @@ module.exports = function fileLoader(content) {
   }
 
   return content;
-}
+};
 

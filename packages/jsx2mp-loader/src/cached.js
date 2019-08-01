@@ -4,4 +4,4 @@ module.exports = function cached(fn) {
     const hit = cache[str];
     return hit || (cache[str] = fn(str));
   };
-}
+};
