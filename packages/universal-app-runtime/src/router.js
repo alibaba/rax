@@ -1,6 +1,6 @@
-import { createElement } from 'rax';
+import { createElement, useRef, useImperativeHandle } from 'rax';
 import * as RaxUseRouter from 'rax-use-router';
-import { isWeb } from 'universal-env';
+import { isWeex, isWeb } from 'universal-env';
 import { createHashHistory } from 'history';
 import encodeQS from 'querystring/encode';
 
@@ -33,8 +33,11 @@ export function useRouter(routerConfig) {
   return { Router };
 }
 
-export function Link(props) {
-  const { to, query, hash, state, type = 'span', onClick, ...others } = props;
+export function Link(props, ref) {
+  const defaultType = isWeex ? 'a' : 'span';
+  const { to, query, hash, state, type = defaultType, onClick, children, style = {}, ...others } = props;
+  const linkRef = useRef(null);
+
   const throughProps = Object.assign({}, others, {
     onClick: (evt) => {
       if (to) {
@@ -46,6 +49,38 @@ export function Link(props) {
       onClick && onClick(evt);
     }
   });
+
+  let content = children;
+  if (typeof children === 'string') {
+    const textStyle = Object.assign({
+      border: '0 solid black',
+      boxSizing: 'border-box',
+      display: 'block',
+      flexDirection: 'column',
+      alignContent: 'flex-start',
+      flexShrink: 0,
+    }, {
+      color: style.color,
+      lines: style.lines,
+      fontSize: style.fontSize,
+      fontStyle: style.fontStyle,
+      fontWeight: style.fontWeight,
+      textDecoration: style.textDecoration || 'none',
+      textAlign: style.textAlign,
+      fontFamily: style.fontFamily,
+      textOverflow: style.textOverflow,
+    });
+    content = createElement(isWeex ? 'text' : 'span', { style: textStyle, children });
+    throughProps.children = content;
+  } else {
+    throughProps.children = children;
+  }
+
+  useImperativeHandle(ref, () => ({
+    _nativeNode: linkRef.current
+  }));
+  throughProps.ref = linkRef;
+
   return createElement(type, throughProps);
 }
 

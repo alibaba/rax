@@ -1,5 +1,5 @@
 'use strict';
-
+const webpack = require('webpack');
 const { getWebBase } = require('rax-plugin-app');
 const getEntries = require('./getEntries');
 
@@ -30,6 +30,13 @@ module.exports = (rootDir) => {
   config.externals({
     rax: 'rax',
   });
+
+  // config.plugins.delete('minicss');
+
+  // config.plugin('ingnorecss')
+  // .use(webpack.IgnorePlugin, [{
+  //   resourceRegExp: /\.css?$/
+  // }]);
 
   config.plugins.delete('document');
   config.plugins.delete('PWAAppShell');

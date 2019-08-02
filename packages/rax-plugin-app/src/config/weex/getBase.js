@@ -21,7 +21,7 @@ const getWebpackBase = require('../getWebpackBase');
 module.exports = (rootDir) => {
   const config = getWebpackBase(rootDir);
 
-  config.output.filename('[name].js');
+  config.output.filename('weex/[name].js');
 
   config.resolve.alias
     .set('@core/app', 'universal-app-runtime')
@@ -64,12 +64,12 @@ module.exports = (rootDir) => {
       .use(BundleAnalyzerPlugin);
   }
 
-  config.plugin('document')
-    .use(UniversalDocumentPlugin, [{
-      rootDir,
-      path: 'src/document/index.jsx',
-      render: serverRender.renderToString,
-    }]);
+  // config.plugin('document')
+  //   .use(UniversalDocumentPlugin, [{
+  //     rootDir,
+  //     path: 'src/document/index.jsx',
+  //     render: serverRender.renderToString,
+  //   }]);
 
   config.plugin('weexFrame')
     .use(WeexFrameworkBanner);
