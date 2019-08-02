@@ -20,6 +20,18 @@ function ejsRender(data) {
   };
 }
 
+/**
+ * Template generator.
+ * @param  {Object} args - describe the generator arguements
+ * @param  {String} args.root - The absolute path of project directory
+ * @param  {String} args.directoryName - The folder name
+ * @param  {String} args.projectName - Kebabcased project name
+ * @param  {String} args.projectType - Kebabcased project type
+ * @param  {String} args.projectAuthor - The name of project author
+ * @param  {String} args.projectTargets- The build targets of project
+ * @param  {String} args.projectFeatures- The features of project
+ * @return {Promise}
+ */
 module.exports = function(args) {
   const projectDir = args.root;
   const projectType = args.projectType;
