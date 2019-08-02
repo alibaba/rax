@@ -13,7 +13,7 @@ module.exports = (config, rootDir) => {
   config.mode('development');
   config.devtool('inline-module-source-map');
 
-  config.entry('index.weex')
+  config.entry('index')
     .add(hmrClient)
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=weex!${appEntry}`);
 
@@ -22,7 +22,7 @@ module.exports = (config, rootDir) => {
   config.devServer
     .compress(true)
     .clientLogLevel('error')
-    .contentBase(appPublic)
+    .contentBase(path.resolve(rootDir, 'build'))
     .watchContentBase(true)
     .hot(true)
     .publicPath(publicPath)

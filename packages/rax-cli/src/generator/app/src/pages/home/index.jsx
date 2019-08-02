@@ -19,7 +19,9 @@ export default function Home() {
     <View className="home">
       <Text>hello, world</Text>
       <Link to="/about">Link to about</Link>
-      <View onClick={() => push('/about')}>push to about</View>
+      <View onClick={() => push('/about')}>
+        <Text>Push to about</Text>
+      </View>
     </View>
   );
 }
