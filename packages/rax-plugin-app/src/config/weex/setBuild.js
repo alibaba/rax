@@ -10,7 +10,7 @@ module.exports = (config, rootDir) => {
 
   config.mode('production');
   config.devtool('source-map');
-  config.entry('weex/index')
+  config.entry('index')
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=weex!${appEntry}`);
 
   config.optimization

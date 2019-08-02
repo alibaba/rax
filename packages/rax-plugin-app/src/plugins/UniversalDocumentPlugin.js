@@ -36,6 +36,7 @@ module.exports = class UniversalDocumentPlugin {
 
       // get document html string
       const source = this.render(require('rax').createElement(documentElement, {
+        publicPath: '/',
         styles: ['web/index.css'],
         scripts: ['web/index.js'],
       }));

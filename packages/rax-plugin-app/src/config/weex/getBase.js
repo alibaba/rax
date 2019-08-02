@@ -21,7 +21,7 @@ const getWebpackBase = require('../getWebpackBase');
 module.exports = (rootDir) => {
   const config = getWebpackBase(rootDir);
 
-  config.output.filename('[name].js');
+  config.output.filename('weex/[name].js');
 
   config.resolve.alias
     .set('@core/app', 'universal-app-runtime')

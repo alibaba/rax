@@ -18,7 +18,7 @@ const getWebpackBase = require('../getWebpackBase');
 module.exports = (rootDir) => {
   const config = getWebpackBase(rootDir);
 
-  config.output.filename('[name].js');
+  config.output.filename('web/[name].js');
 
   config.resolve.alias
     .set('@core/app', 'universal-app-runtime')
@@ -95,8 +95,8 @@ module.exports = (rootDir) => {
 
   config.plugin('minicss')
     .use(MiniCssExtractPlugin, [{
-      filename: '[name].css',
-      chunkFilename: '[id].css',
+      filename: 'web/[name].css',
+      chunkFilename: 'web/[id].css',
     }]);
 
   config.plugin('noError')
