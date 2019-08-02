@@ -1,0 +1,5 @@
+{
+  "plugins": [
+    "rax-plugin-component"
+  ]
+}

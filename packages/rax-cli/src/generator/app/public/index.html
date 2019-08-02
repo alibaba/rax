@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Rax Component Demo</title>
+  <script>
+  	(function(global){if(global.define){return}var modules={};var inGuard=false;function def(id,deps,factory){if(deps instanceof Function){factory=deps;deps=[]}modules[id]={factory:factory,deps:deps,module:{exports:{}},isInitialized:false,hasError:false,}}function req(id){if(id.indexOf("@weex-module")===0){return{}}var originId=id;var mod=modules[id];if(!mod){id=id+"/index";mod=modules[id]}if(mod&&mod.isInitialized){return mod.module.exports}return requireImpl(id,originId)}function requireImpl(id,originId){if(global.ErrorUtils&&!inGuard){inGuard=true;var returnValue;try{returnValue=requireImpl.apply(this,arguments)}catch(e){global.ErrorUtils.reportFatalError(e)}inGuard=false;return returnValue}var mod=modules[id];if(!mod){throw new Error('Requiring unknown module "'+originId+'"')}if(mod.hasError){throw new Error('Requiring module "'+originId+'" which threw an exception')}try{mod.isInitialized=true;mod.factory(req,mod.module.exports,mod.module)}catch(e){mod.hasError=true;mod.isInitialized=false;throw e}return mod.module.exports}global.define=def;global.require=req})(this||typeof global==="object"&&global||typeof window==="object"&&window);
+  </script>
+</head>
+<body>
+</body>
+</html>

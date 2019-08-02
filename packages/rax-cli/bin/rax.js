@@ -25,12 +25,8 @@ if (!semver.satisfies(process.version, '>=8')) {
   process.exit(1);
 }
 
-const fs = require('fs');
 const path = require('path');
-const execSync = require('child_process').execSync;
-const spawn = require('cross-spawn');
-const inquirer = require('inquirer');
-const cli = require('../src/');
+const init = require('../src/');
 const argv = require('minimist')(process.argv.slice(2));
 
 const RAX_PACKAGE_JSON_PATH = path.resolve(
@@ -72,148 +68,6 @@ switch (commands[0]) {
     break;
 }
 
-function init(name, verbose) {
-  Promise.resolve(fs.existsSync(name))
-    .then(function(dirExists) {
-      if (dirExists) {
-        return createAfterConfirmation(name, verbose);
-      } else {
-        return;
-      }
-    })
-    .then(function() {
-      return askProjectInformaction(name, verbose);
-    })
-    .then(function(answers) {
-      return createProject(name, verbose, answers);
-    })
-    .catch(function(err) {
-      console.error('Error occured', err.stack);
-      process.exit(1);
-    });
-}
-
-function createAfterConfirmation(name, verbose) {
-  var property = {
-    type: 'confirm',
-    name: 'continueWhileDirectoryExists',
-    message: 'Directory ' + name + ' already exists. Continue?',
-    default: false
-  };
-
-  return inquirer.prompt(property).then(function(answers) {
-    if (answers && answers.continueWhileDirectoryExists) {
-      return true;
-    } else {
-      console.log('Project initialization canceled.');
-      process.exit(1);
-    }
-  });
-}
-
-function askProjectInformaction(name, verbose) {
-  var questions = [
-    {
-      type: 'input',
-      name: 'projectName',
-      message: 'What\'s your project name?',
-      default: name
-    },
-    {
-      type: 'list',
-      name: 'projectType',
-      message: 'What\'s your project type?',
-      choices: [
-        {
-          name: 'UniversalApp (Build application that works multi-platform)',
-          value: 'univeraslapp'
-        },
-        {
-          name: 'WebApp (Build application that only works in broswers)',
-          value: 'webapp'
-        },
-        {
-          name: 'Component (Build component for universal application include web)',
-          value: 'component'
-        }
-      ],
-      default: 'univeraslapp'
-    },
-    {
-      type: 'checkbox',
-      name: 'projectFeatures',
-      when: function(answers) {
-        return answers.projectType === 'webapp';
-      },
-      message: 'Do you want to enable these features?',
-      choices: [
-        {
-          name: 'server sider rendering (ssr)',
-          value: 'ssr'
-        },
-        {
-          name: 'single page application (spa)',
-          value: 'spa'
-        }
-      ],
-      default: false
-    },
-    {
-      type: 'input',
-      name: 'projectAuthor',
-      message: 'What\'s author\'s name?',
-      default: 'rax'
-    },
-    {
-      type: 'confirm',
-      name: 'autoInstallModules',
-      message: 'Do you want to install dependences automatically after initialization?',
-      default: 'y'
-    }
-  ];
-  return inquirer.prompt(questions);
-}
-
-function createProject(name, verbose, userAnswers) {
-  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
-  var root = path.resolve(name);
-  var projectName = userAnswers.projectName;
-  var autoInstallModules = userAnswers.autoInstallModules;
-
-  console.log(
-    'Creating a new Rax project in',
-    root
-  );
-
-  if (!fs.existsSync(root)) {
-    fs.mkdirSync(root);
-  }
-  process.chdir(root);
-
-  cli.init({
-    root: root,
-    directoryName: name,
-    projectName: projectName,
-    projectType: userAnswers.projectType,
-    projectFeatures: userAnswers.projectFeatures,
-    projectAuthor: userAnswers.projectAuthor,
-    verbose: verbose,
-  }).then(function(directory) {
-    if (autoInstallModules) {
-      return install(directory, verbose);
-    } else {
-      return false;
-    }
-  }).then(function(isAutoInstalled) {
-    console.log(chalk.white.bold('To run your app:'));
-    console.log(chalk.white('   cd ' + projectName));
-    if (!isAutoInstalled) {
-      console.log(chalk.white('   ' + (pkgManager === 'npm' ? 'npm install' : 'yarn')));
-    }
-    console.log(chalk.white('   ' + pkgManager + ' start'));
-  });
-}
-
 function checkForVersionArgument() {
   if (argv._.length === 0 && (argv.v || argv.version)) {
     console.log('rax-cli: ' + require('../package.json').version);
@@ -224,42 +78,4 @@ function checkForVersionArgument() {
     }
     process.exit();
   }
-}
-
-function shouldUseYarn() {
-  try {
-    execSync('yarn --version', {stdio: 'ignore'});
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-/**
- * run npm/yarn install
- * @param directory - the cwd directory
- * @param verbose - enable verbose mode
- * @returns {Promise}
- */
-function install(directory, verbose) {
-  console.log(chalk.white.bold('Install dependencies:'));
-
-  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
-  var args = ['install'];
-  if (verbose) {
-    args.push('--verbose');
-  }
-
-  return new Promise(function(resolve) {
-    var proc = spawn(pkgManager, args, {stdio: 'inherit', cwd: directory});
-
-    proc.on('close', function(code) {
-      if (code !== 0) {
-        console.error('`' + pkgManager + ' install` failed');
-        resolve(false);
-      } else {
-        resolve(true);
-      }
-    });
-  });
 }

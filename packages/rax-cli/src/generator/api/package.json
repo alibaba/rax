@@ -1,31 +1,25 @@
 {
   "name": "<%= projectName %>",
   "author": "<%= projectAuthor %>",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.1.0",
+  "license": "BSD-3-Clause",
   "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "scripts": {
     "start": "rax-scripts start",
     "build": "rax-scripts build"
   },
+  "pre-commit": ["lint"],
   "keywords": [
-    "Rax",
-    "rax-component"
+    "Rax"
   ],
   "engines": {
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^1.0.1"
-  },
-  "peerDependencies": {
-    "rax": "^1.0.0"
+    "universal-env": "^1.0.0"
   },
   "devDependencies": {
-    "driver-universal": "^1.0.0",
-    "rax": "^1.0.0",
     "rax-scripts": "^2.0.0-0",
-    "rax-plugin-component": "^0.1.0-1"
+    "rax-plugin-api": "^0.1.0-1"
   }
 }
