@@ -1,13 +1,11 @@
 import { createElement } from 'rax';
 
 function Document(props) {
+  <%_ if (projectFeatures.includes('ssr')) { -%>
   const {
-    styles = [], // style file
-    scripts = [], // js file
-    title, // set in app.json
-    pageHtml, // for SSR, origin html
-    pageData, // for SSR，origin data
-    userAgent // for SSR，custom data
+    publicPath,
+    initialHtml,
+    initialData,
   } = props;
 
   return (
@@ -15,34 +13,39 @@ function Document(props) {
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no" />
-        <title>{title}</title>
-        {
-          styles.map((style) => <link herf={style} rel="stylesheet" />)
-        }
-        {/* custom script */}
-        <script dangerouslySetInnerHTML={{__html: `
-          window.test = 123;
-        `}} />
+        <title>WebApp</title>
+        <link href={`${publicPath}index.web.css`} rel="stylesheet" />
       </head>
       <body>
         {/* root container */}
-        <div id="root" dangerouslySetInnerHTML={{ __html: pageHtml || '' }} />
-        {/* for SSR，custom data */}
-        <div>Your user agent: {userAgent}</div>
-        {
-          scripts.map((script) => <script src={script} />)
-        }
-        {/* for SSR origin data */}
-        <script data-from="server" type="application/json" dangerouslySetInnerHTML={{__html: pageData}} />
+        <div id="root" dangerouslySetInnerHTML={{ __html: initialHtml || '' }} />
+        <script src={`${publicPath}index.web.js`} />
+        {/* initial data from server side */}
+        <script data-from="server" type="application/json" dangerouslySetInnerHTML={{__html: initialData}} />
       </body>
     </html>
   );
-}
+  <%_ } else { -%>
+  const {
+    publicPath
+  } = props;
 
-// SSR custom data source
-Document.getInitalProps = (req, res) => {
-  const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
-  return { userAgent };
-};
+  return (
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+        <title>WebApp</title>
+        <link href={`${publicPath}index.web.css`} rel="stylesheet" />
+      </head>
+      <body>
+        {/* root container */}
+        <div id="root" />
+        <script src={`${publicPath}index.web.js`} />
+      </body>
+    </html>
+  );
+  <%_ } -%>
+}
 
 export default Document;
