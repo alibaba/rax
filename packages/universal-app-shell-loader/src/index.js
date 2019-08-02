@@ -35,17 +35,47 @@ module.exports = function(content) {
      * Web only compatible with 750rpx.
      */
     if (options.type === 'web') {
+      let appRenderMethod = '';
       const mutiple = options.mutiple || 100;
       fixRootStyle = `
         const html = document.documentElement;
         html.style.fontSize = html.clientWidth / 750 * ${mutiple} + 'px';
       `;
-      appRender = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal });';
-      // app shell
       if (existsSync(join(this.rootContext, 'src/shell/index.jsx'))) {
-        appRender = `import Shell from "${getDepPath('shell/index', this.rootContext)}";`;
-        appRender += 'render(createElement(Shell, {}, createElement(Entry)), document.getElementById("root"), { driver: DriverUniversal, hydrate: true });';
+        // app shell
+        appRender += `import Shell from "${getDepPath('shell/index', this.rootContext)}";`;
+        appRenderMethod = `
+          // process Shell.getInitialProps
+          const shellProps = {};
+          if (withSSR && window.__initialData__.shellData !== null) {
+            Object.assign(shellProps, window.__initialData__.shellData);
+          } else if (Shell.getInitialProps) {
+            Object.assign(shellProps, await Shell.getInitialProps());
+          }
+          render(createElement(Shell, shellProps, createElement(Entry)), document.getElementById("root"), { driver: DriverUniversal, hydrate: true });
+        `;
+      } else {
+        // common web app
+        appRenderMethod = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal, hydrate: withSSR });';
       }
+
+      appRender += `
+        const renderApp = async function() {
+          // process SSR History
+          if (withSSR) {
+            Object.assign(appProps, window.__initialData__.appData);
+          }
+          
+          // process App.getInitialProps
+          if (withSSR && window.__initialData__.appData !== null) {
+            Object.assign(appProps, window.__initialData__.appData);
+          } else if (definedApp.getInitialProps) {
+            Object.assign(appProps, await definedApp.getInitialProps());
+          }
+          ${appRenderMethod}
+        }
+        renderApp();
+      `;
     }
 
     /**
@@ -60,7 +90,11 @@ module.exports = function(content) {
     const assembleRoutes = routes.map((route, index) => {
       // First level function to support hooks will autorun function type state,
       // Second level function to support rax-use-router rule autorun function type component.
-      const dynamicImportComponent = `() => import(/* webpackChunkName: "${route.component.replace(/\//g, '_')}" */ '${getDepPath(route.component, this.rootContext)}').then((mod) => () => interopRequire(mod))`;
+      const dynamicImportComponent =
+      `() => 
+          import(/* webpackChunkName: "${route.component.replace(/\//g, '_')}" */ '${getDepPath(route.component, this.rootContext)}')
+          .then((mod) => { return () => interopRequire(mod)})
+      `;
       const importComponent = `() => () => interopRequire(require('${getDepPath(route.component, this.rootContext)}'))`;
 
       return `routes.push({
@@ -78,7 +112,8 @@ module.exports = function(content) {
       import DriverUniversal from 'driver-universal';
       
       const interopRequire = (mod) => mod && mod.__esModule ? mod.default : mod;
-
+      const withSSR = !!window.__initialData__;
+      
       const getRouterConfig = () => {
         const routes = [];
         ${assembleRoutes}
