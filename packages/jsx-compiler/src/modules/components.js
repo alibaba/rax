@@ -32,8 +32,7 @@ module.exports = {
     function getComponentConfig(pkgName) {
       const pkgPath = moduleResolve(options.filePath, join(pkgName, 'package.json'));
       if (!pkgPath) {
-        console.log(chalk.yellow(`Can not resolve rax component "${pkgName}", please check you have this module installed.`));
-        throw new Error('MODULE_NOT_RESOLVE');
+        throw new Error(`MODULE_NOT_RESOLVE: Can not resolve rax component "${pkgName}", please check you have this module installed.`);
       }
       return readJSONSync(pkgPath);
     }
@@ -103,8 +102,7 @@ module.exports = {
                           const binding = attrPath.scope.getBinding(node.value.expression.name);
                           fnExp = binding.path.node;
                         } else if (t.isMemberExpression(node.value.expression)) {
-                          console.log(chalk.red(`Not support MemberExpression at render function: "${genExpression(node)}", please use anonymous function instead.`));
-                          throw new Error('NOT_SUPPORTED');
+                          throw new Error(`NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(node)}", please use anonymous function instead.`);
                         }
 
                         if (fnExp) {
@@ -141,8 +139,7 @@ module.exports = {
               }
             }
           } else {
-            console.log(chalk.red('Unsupported type of sub components.' + genExpression(node)));
-            throw new Error('NOT_SUPPORTED');
+            throw new Error(`NOT_SUPPORTED: Unsupported type of sub components. ${genExpression(node)}`);
           }
         }
       },
