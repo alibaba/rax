@@ -1,16 +1,20 @@
 import { createElement } from 'rax';
 import * as RaxUseRouter from 'rax-use-router';
+import { isWeb } from 'universal-env';
 import { createHashHistory } from 'history';
 import encodeQS from 'querystring/encode';
 
+
 let _history = null;
+let _routerConfig = {};
 
 export function useRouter(routerConfig) {
-  const { history = createHashHistory(), routes } = routerConfig;
+  _routerConfig = routerConfig;
+  const { history = createHashHistory(), routes } = _routerConfig;
   _history = history;
 
   function Router(props) {
-    const { component } = RaxUseRouter.useRouter(() => routerConfig);
+    const { component } = RaxUseRouter.useRouter(() => _routerConfig);
 
     if (!component || Array.isArray(component) && component.length === 0) {
       // Return null directly if not matched.
@@ -67,6 +71,46 @@ export function goForward() {
 export function canGo(n) {
   checkHistory();
   return _history.canGo(n);
+}
+
+/**
+ * Preload WebApp's page resource.
+ * @param config {Object}
+ * eg:
+ *  1. preload({pageIndex: 0})  // preload dynamic import page bundle
+ *  2. preload({href: '//xxx.com/font.woff', as: 'font', crossorigin: true}); // W3C preload
+ */
+export function preload(config) {
+  if (!isWeb) return;
+  if (config.pageIndex !== undefined) {
+    _routerConfig.routes[config.pageIndex].component();
+  } else {
+    const linkElement = document.createElement('link');
+    linkElement.rel = 'preload';
+    linkElement.as = config.as;
+    linkElement.href = config.href;
+    config.crossorigin && (linkElement.crossorigin = true);
+    document.head.appendChild(linkElement);
+  }
+}
+
+/**
+ * Rrerender WebApp's page content.
+ * @param config {Object}
+ * eg:
+ *  1. prerender({pageIndex: 0})  // preload dynamic import page bundle for now(todo page alive)
+ *  2. prerender({href:'https://m.taobao.com'}); // W3C prerender
+ */
+export function prerender(config) {
+  if (!isWeb) return;
+  if (config.pageIndex !== undefined) {
+    _routerConfig.routes[config.pageIndex].component();
+  } else {
+    const linkElement = document.createElement('link');
+    linkElement.rel = 'prerender';
+    linkElement.href = config.href;
+    document.head.appendChild(linkElement);
+  }
 }
 
 function checkHistory() {
