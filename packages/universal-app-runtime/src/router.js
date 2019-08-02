@@ -6,20 +6,21 @@ import encodeQS from 'querystring/encode';
 
 let _history = null;
 let _routerConfig = {};
-// current process Page.getInitialProps page
-let _currentComponent = null;
-// current process Page.getInitialProps props
-let _currentInitialPropsProps = {};
-// html first SSR InitialPropsProps
-let _currentSSRInitialPropsProps = null;
+
+// current process Page.getInitialProps path
+let _currentPagePath;
+// The initialProps
+let _initialProps = {};
+// The initialPropsProps from SSR
+let _initialPropsFromSSR = null;
 // Mark if the page is loaded for the first time.
 // If it is the first time to load, SSR pageInitialProps is taken from the scripts.
 // If the SPA has switched routes then each sub-component needs to run getInitialProps
-let _isReadSSRInitialPropsProps = false;
+let _isReadInitialPropsFromSSR = false;
 
 try {
   if (window.__initialData__) {
-    _currentSSRInitialPropsProps = window.__initialData__.pageData;
+    _initialPropsFromSSR = window.__initialData__.pageData;
   }
 } catch (e) {
   // ignore SSR window is not defined
@@ -35,7 +36,7 @@ export function useRouter(routerConfig) {
   }
 
   function Router(props) {
-    const [updateFlag, setUpdateFlag] = useState(0);
+    const [currentPath, setCurrentPath] = useState('');
 
     if (routerConfig.defaultComponet) {
       return createElement(routerConfig.defaultComponet, props);
@@ -48,31 +49,29 @@ export function useRouter(routerConfig) {
       return null;
     } else {
       // process Page.getInitialProps
-      if (_currentComponent !== component) {
-        _currentInitialPropsProps = {};
-        _currentComponent = component;
-
+      if (currentPath !== _currentPagePath) {
+        _initialProps = {};
+        _currentPagePath = _history.location.pathname;
         // SSR project the first time is initialized from global data,
         // after that the data will be obtained from the component's own getInitialProps
-        if (_currentSSRInitialPropsProps && !_isReadSSRInitialPropsProps) {
+        if (_initialPropsFromSSR !== null && !_isReadInitialPropsFromSSR) {
           // After routing switching, it is considered not the first rendering.
-          _isReadSSRInitialPropsProps = true;
-          _currentInitialPropsProps = _currentSSRInitialPropsProps;
+          _initialProps = _initialPropsFromSSR;
+          _isReadInitialPropsFromSSR = true;
         } else if (component.getInitialProps) {
-          let newUpdateFlag = updateFlag + 1;
           // wait getInitialProps
           component.getInitialProps().then((props) => {
-            setUpdateFlag(newUpdateFlag);
-            _currentInitialPropsProps = props;
+            setCurrentPath(_currentPagePath);
+            _initialProps = props;
           }, () => {
-            setUpdateFlag(++newUpdateFlag);
-            _currentInitialPropsProps = {};
+            setCurrentPath(_currentPagePath);
+            _initialProps = {};
           });
           return null;
         }
       }
 
-      return createElement(component, { ...props, ..._currentInitialPropsProps });
+      return createElement(component, { ...props, ..._initialProps });
     }
   }
 
