@@ -1,6 +1,8 @@
+const webpack = require('webpack');
 const { readJSONSync } = require('fs-extra');
 const { join } = require('path');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
+const ora = require('ora');
 
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
 const PageLoader = require.resolve('jsx2mp-loader/src/page-loader');
@@ -8,6 +10,7 @@ const ComponentLoader = require.resolve('jsx2mp-loader/src/component-loader');
 const FileLoader = require.resolve('jsx2mp-loader/src/file-loader');
 
 const BabelLoader = require.resolve('babel-loader');
+let spinner, buildStartTime;
 
 function getBabelConfig() {
   return {
@@ -64,7 +67,7 @@ try {
 }
 
 module.exports = {
-  mode: 'development',
+  mode: 'production', // will be fast
   entry: getEntry(appConfig),
   context: cwd,
   module: {
@@ -99,5 +102,14 @@ module.exports = {
   ],
   plugins: [
     new RuntimeWebpackPlugin(),
+    new webpack.ProgressPlugin( (percentage) => {
+      if (percentage === 0) {
+        buildStartTime = Date.now();
+        spinner = ora({ text: 'Building...', spinner: 'arc' }).start();
+      } else if (percentage === 1) {
+        const endTime = Date.now();
+        spinner.succeed(`DONE. [${endTime - buildStartTime}ms]`);
+      }
+    })
   ],
 };

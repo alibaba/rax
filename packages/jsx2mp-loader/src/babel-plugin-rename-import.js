@@ -1,4 +1,5 @@
 const { join } = require('path');
+
 const PREFIX = '/npm';
 const WEEX_MODULE_REG = /^@weex\//;
 
@@ -42,4 +43,4 @@ module.exports = function visitor({ types: t }) {
       }
     }
   };
-}
+};

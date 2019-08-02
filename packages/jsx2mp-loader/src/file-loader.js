@@ -39,7 +39,7 @@ module.exports = function fileLoader(content) {
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
         if (isSymbolic(join(currentNodeModulePath, npmName))) {
-          throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.')
+          throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.');
         }
         copySync(
           join(currentNodeModulePath, npmName),
@@ -63,7 +63,7 @@ module.exports = function fileLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = join(distPath, 'npm', npmName, splitedNpmPath.join('/'));
-      const { code, map } = renameImport(rawContent);
+      const { code, map } = transformCode(rawContent);
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
       writeFileSync(distSourcePath, code, 'utf-8');
@@ -78,9 +78,20 @@ module.exports = function fileLoader(content) {
   return content;
 };
 
-function renameImport(rawCode) {
+function transformCode(rawCode) {
+  const presets = [];
+  const plugins = [
+    require('./babel-plugin-rename-import'), // for rename npm modules.
+  ];
+
+  // Compile to ES5 for build.
+  if (process.env.JSX2MP_ENV === 'build') {
+    presets.push(require('@babel/preset-env'));
+    plugins.push(require('@babel/plugin-proposal-class-properties'));
+  }
+
   return transformSync(rawCode, {
-    plugins: [require('./babel-plugin-rename-import')]
+    presets, plugins,
   });
 }
 
