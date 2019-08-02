@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
+    "webpack": "^4.39.0",
     "address": "^1.1.0",
     "chalk": "^2.4.2",
     "deepmerge": "^4.0.0",
@@ -20,7 +21,6 @@
     "lodash": "^4.17.15",
     "rax-plugin-app": "^0.1.0-0",
     "rax-pwa-webpack-plugin": "^1.0.0-0",
-    "rax-ssr-dev-server": "^1.0.0",
-    "webpack": "^4.38.0"
+    "rax-ssr-dev-server": "^1.0.0"
   }
 }
