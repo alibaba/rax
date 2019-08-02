@@ -193,7 +193,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             replaceNode.__transformed = true;
             path.replaceWith(t.stringLiteral(createBinding(genExpression(replaceNode))));
             if (!isDirective && jsxEl.__pid) {
-              componentDependentProps[jsxEl.__pid][name] = expression;
+              componentDependentProps[jsxEl.__pid][replaceNode.name] = expression;
             }
           }
         } else if (type === ELE) {
@@ -391,6 +391,13 @@ function hasComplexExpression(path) {
  * Transform MemberExpression
  * */
 function transformMemberExpression(expression, dynamicBinding, isDirective) {
+  if (checkMemberHasThis(expression)) {
+    const name = dynamicBinding.add({
+      expression,
+      isDirective
+    });
+    return t.identifier(name);
+  }
   const { object, property, computed } = expression;
   let objectReplaceNode = object;
   let propertyReplaceNode = property;
@@ -442,6 +449,21 @@ function transformIdentifier(expression, dynamicBinding, isDirective) {
   return replaceNode;
 }
 
+function checkMemberHasThis(expression) {
+  const { object, property } = expression;
+  let hasThisExpression = false;
+  if (t.isThisExpression(object)) {
+    hasThisExpression = true;
+  }
+  if (t.isIdentifier(object)) {
+    hasThisExpression = false;
+  }
+  if (t.isMemberExpression(object)) {
+    hasThisExpression = checkMemberHasThis(object);
+  }
+  return hasThisExpression;
+}
+
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
@@ -453,32 +475,7 @@ module.exports = {
         return prev;
       }, {});
       Object.assign(parsed.dynamicValue, dynamicValue);
-
-      const eventHandlers = parsed.eventHandlers = [];
-      const dataProperties = [];
-      const methodsProperties = [];
-      dynamicEvents.forEach(({ name, value }) => {
-        eventHandlers.push(name);
-        methodsProperties.push(t.objectProperty(t.stringLiteral(name), value));
-      });
-      dynamicValues.forEach(({ name, value }) => {
-        dataProperties.push(t.objectProperty(t.stringLiteral(name), value));
-      });
-      const updateData = t.memberExpression(
-        t.thisExpression(),
-        t.identifier('_updateData')
-      );
-      const updateMethods = t.memberExpression(
-        t.thisExpression(),
-        t.identifier('_updateMethods')
-      );
-      const fnBody = parsed.renderFunctionPath.node.body.body;
-      fnBody.push(t.expressionStatement(t.callExpression(updateData, [
-        t.objectExpression(dataProperties)
-      ])));
-      fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
-        t.objectExpression(methodsProperties)
-      ])));
+      parsed.dynamicEvents = dynamicEvents;
     }
   },
   // For test export.

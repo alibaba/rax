@@ -27,7 +27,7 @@ module.exports = class DynamicBinding {
 
   add({
     expression,
-    isDirective
+    isDirective = false
   }) {
     const keys = Object.keys(this._map);
     if (keys.length === 0) {

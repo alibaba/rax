@@ -97,6 +97,8 @@ module.exports = {
      * $updateProps: collect props dependencies.
      */
     if (parsed.renderFunctionPath) {
+      addUpdateData(parsed.dynamicValue, parsed.renderFunctionPath);
+      addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
       const fnBody = parsed.renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {
@@ -162,7 +164,6 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
           specifiers.push(t.importSpecifier(t.identifier(id), t.identifier(id)));
         });
       }
-
       if (useCreateStyle) {
         specifiers.push(t.importSpecifier(
           t.identifier(SAFE_CREATE_STYLE),
@@ -254,4 +255,40 @@ function collectHooks(root) {
   });
 
   return Object.keys(ret);
+}
+
+function addUpdateData(dynamicValue, renderFunctionPath) {
+  const dataProperties = [];
+
+  Object.keys(dynamicValue).forEach(name => {
+    dataProperties.push(t.objectProperty(t.stringLiteral(name), dynamicValue[name]));
+  });
+
+  const updateData = t.memberExpression(
+    t.thisExpression(),
+    t.identifier('_updateData')
+  );
+
+  const fnBody = renderFunctionPath.node.body.body;
+  fnBody.push(t.expressionStatement(t.callExpression(updateData, [
+    t.objectExpression(dataProperties)
+  ])));
+}
+
+function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
+  const methodsProperties = [];
+  dynamicEvent.forEach(({ name, value }) => {
+    eventHandlers.push(name);
+    methodsProperties.push(t.objectProperty(t.stringLiteral(name), value));
+  });
+
+  const updateMethods = t.memberExpression(
+    t.thisExpression(),
+    t.identifier('_updateMethods')
+  );
+  const fnBody = renderFunctionPath.node.body.body;
+
+  fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
+    t.objectExpression(methodsProperties)
+  ])));
 }
