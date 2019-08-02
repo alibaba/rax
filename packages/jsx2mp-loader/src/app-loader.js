@@ -1,6 +1,7 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
 const { relative, join } = require('path');
 const compiler = require('jsx-compiler');
+const moduleResolve = require('./moduleResolve');
 
 function createImportStatement(req) {
   return `import '${req}';`;
@@ -13,9 +14,21 @@ function generateDependencies(dependencies) {
     .join('\n');
 }
 
+function getRelativePath (filePath) {
+  let relativePath;
+  if (filePath[0] === '/') {
+    relativePath = `.${filePath}`
+  } else if (filePath[0] === '.') {
+    relativePath = filePath;
+  } else {
+    relativePath = `./${filePath}`
+  }
+  return relativePath;
+}
+
 module.exports = function appLoader(content) {
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
-  const config = readJSONSync(join(this.rootContext, 'app.json'));
+  const config = readJSONSync(join(this.rootContext, 'src/app.json'));
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     filePath: this.resourcePath,
     type: 'app',
@@ -54,7 +67,7 @@ function transformAppConfig(originalConfig) {
         if (Array.isArray(value)) {
           // only resolve first level of routes.
           value.forEach(({ path, component }) => {
-            pages.push(component);
+            pages.push(moduleResolve('src', getRelativePath(component)));
           });
         }
         config.pages = pages;

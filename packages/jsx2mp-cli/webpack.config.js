@@ -26,7 +26,7 @@ function getBabelConfig() {
 
 function getEntry(appConfig) {
   const entry = {};
-  entry.app = AppLoader + '!./app.js';
+  entry.app = AppLoader + '!./src/app.js';
   if (Array.isArray(appConfig.routes)) {
     appConfig.routes.forEach(({ path, component }) => {
       entry['page@' + component] = PageLoader + '!' + getDepPath(component);
@@ -45,13 +45,11 @@ function getEntry(appConfig) {
  * /pages/foo -> based on rootContext
  * pages/foo -> based on src, add prefix: './'
  */
-function getDepPath(path, rootContext = '') {
-  if (path[0] === '.') {
-    return path;
-  } else if (path[0] === '/') {
+function getDepPath(path, rootContext = 'src') {
+  if (path[0] === '.' || path[0] === '/') {
     return join(rootContext, path);
   } else {
-    return './' + path;
+    return `./${rootContext}/${path}`;
   }
 }
 
@@ -59,7 +57,7 @@ const cwd = process.cwd();
 let appConfig;
 
 try {
-  appConfig = readJSONSync(join(cwd, 'app.json'));
+  appConfig = readJSONSync(join(cwd, 'src/app.json'));
 } catch (err) {
   console.log(err);
   console.error('Can not found app.json in current work directory, please check.');
