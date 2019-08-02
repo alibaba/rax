@@ -64,7 +64,6 @@ class ReactiveComponent extends Component {
       contextItem = {
         emitter: contextEmitter,
         renderedContext: contextEmitter.value,
-        off: () => {},
       };
 
       const contextUpdater = (newContext) => {
@@ -75,7 +74,9 @@ class ReactiveComponent extends Component {
       };
 
       contextItem.emitter.on(contextUpdater);
-      contextItem.off = () => contextItem.emitter.off(contextUpdater);
+      this.willUnmount.push(() => {
+        contextItem.emitter.off(contextUpdater);
+      });
       this.dependencies.set(context, contextItem);
     }
     return contextItem.renderedContext = contextItem.emitter.value;
@@ -99,7 +100,6 @@ class ReactiveComponent extends Component {
 
   componentWillUnmount() {
     this.willUnmount.forEach(handler => handler());
-    this.dependencies.forEach(contextItem => contextItem.off());
   }
 
   update() {
