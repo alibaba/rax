@@ -11,7 +11,7 @@
     "rax": "^1.0.8",
     "rax-view": "^1.0.0",
     "rax-text": "^1.0.0",
-    "universal-app-runtime": "^0.1.1"
+    "universal-app-runtime": "^0.1.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
