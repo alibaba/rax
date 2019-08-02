@@ -33,7 +33,7 @@ export function Link(props) {
         if (hash) url += '#' + hash;
         push(url, state);
       }
-      onClick(evt);
+      onClick && onClick(evt);
     }
   });
   return createElement(type, throughProps);
