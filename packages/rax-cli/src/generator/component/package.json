@@ -1,8 +1,8 @@
 {
-  "name": "__YourProjectName__",
+  "name": "<%= projectName %>",
+  "author": "<%= projectAuthor %>",
   "version": "0.0.1",
   "description": "",
-  "author": "__AuthorName__",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {

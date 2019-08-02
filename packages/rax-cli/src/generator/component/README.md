@@ -1,15 +1,15 @@
-## __YourProjectName__
+## <%= projectName %>
 
 ## Install
 
 ```
-$ npm install __YourProjectName__ --save
+$ npm install <%= projectName %> --save
 ```
 
 ## Usage
 
 ```
-import MyComponent from '__YourProjectName__';
+import MyComponent from '<%= projectName %>';
 ```
 
 ## API
@@ -36,7 +36,7 @@ class App extends Component {
   render() {
     return (
       <View>
-      	{ /* your code */ } 
+      	{ /* your code */ }
       </View>
     );
   }
