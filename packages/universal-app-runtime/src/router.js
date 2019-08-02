@@ -73,7 +73,13 @@ export function canGo(n) {
   return _history.canGo(n);
 }
 
-// PWA Function
+/**
+ * Preload WebApp's page resource.
+ * @param config {Object}
+ * eg:
+ *  1. preload({pageIndex: 0})  // preload dynamic import page bundle
+ *  2. preload({href: '//xxx.com/font.woff', as: 'font', crossorigin: true}); // W3C preload
+ */
 export function preload(config) {
   if (!isWeb) return;
   if (config.pageIndex !== undefined) {
@@ -88,6 +94,13 @@ export function preload(config) {
   }
 }
 
+/**
+ * Rrerender WebApp's page content.
+ * @param config {Object}
+ * eg:
+ *  1. prerender({pageIndex: 0})  // preload dynamic import page bundle for now(todo page alive)
+ *  2. prerender({href:'https://m.taobao.com'}); // W3C prerender
+ */
 export function prerender(config) {
   if (!isWeb) return;
   if (config.pageIndex !== undefined) {

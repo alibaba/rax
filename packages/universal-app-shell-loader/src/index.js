@@ -60,7 +60,7 @@ module.exports = function(content) {
     const assembleRoutes = routes.map((route, index) => {
       // First level function to support hooks will autorun function type state,
       // Second level function to support rax-use-router rule autorun function type component.
-      const dynamicImportComponent = `() => import(/* webpackChunkName: "${route.component.replace(/\//g, '.')}" */ '${getDepPath(route.component, this.rootContext)}').then((mod) => () => interopRequire(mod))`;
+      const dynamicImportComponent = `() => import(/* webpackChunkName: "${route.component.replace(/\//g, '_')}" */ '${getDepPath(route.component, this.rootContext)}').then((mod) => () => interopRequire(mod))`;
       const importComponent = `() => () => interopRequire(require('${getDepPath(route.component, this.rootContext)}'))`;
 
       return `routes.push({

@@ -35,6 +35,7 @@ module.exports = class PWAAppShellPlugin {
       // get shell element string
       const source = this.render(require('rax').createElement(shellElement, {}));
 
+      // pre-render app shell element to index.html
       compilation.assets['index.html'] = new RawSource(htmlValue.replace(
         /<div(.*?) id=\"root\">(.*?)<\/div>/,
         `<div id="root">${source}</div>`
