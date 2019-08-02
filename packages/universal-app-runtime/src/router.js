@@ -1,4 +1,4 @@
-import { createElement, useRef, useImperativeHandle } from 'rax';
+import { createElement, useRef, useState, useImperativeHandle } from 'rax';
 import * as RaxUseRouter from 'rax-use-router';
 import { isWeex, isWeb } from 'universal-env';
 import { createHashHistory } from 'history';
@@ -6,6 +6,25 @@ import encodeQS from 'querystring/encode';
 
 let _history = null;
 let _routerConfig = {};
+// current process Page.getInitialProps page
+let _currentComponent = null;
+// current process Page.getInitialProps props
+let _currentInitialPropsProps = {};
+// html first SSR InitialPropsProps
+let _currentSSRInitialPropsProps = null;
+// Mark if the page is loaded for the first time.
+// If it is the first time to load, SSR pageInitialProps is taken from the scripts.
+// If the SPA has switched routes then each sub-component needs to run getInitialProps
+let _isReadSSRInitialPropsProps = false;
+
+try {
+  if (window.__initialData__) {
+    _currentSSRInitialPropsProps = window.__initialData__.pageData;
+  }
+} catch (e) {
+  // ignore SSR window is not defined
+}
+
 
 export function useRouter(routerConfig) {
   _routerConfig = routerConfig;
@@ -16,6 +35,8 @@ export function useRouter(routerConfig) {
   }
 
   function Router(props) {
+    const [updateFlag, setUpdateFlag] = useState(0);
+
     if (routerConfig.defaultComponet) {
       return createElement(routerConfig.defaultComponet, props);
     }
@@ -26,7 +47,32 @@ export function useRouter(routerConfig) {
       // Return null directly if not matched.
       return null;
     } else {
-      return createElement(component, props);
+      // process Page.getInitialProps
+      if (_currentComponent !== component) {
+        _currentInitialPropsProps = {};
+        _currentComponent = component;
+
+        // SSR project the first time is initialized from global data,
+        // after that the data will be obtained from the component's own getInitialProps
+        if (_currentSSRInitialPropsProps && !_isReadSSRInitialPropsProps) {
+          // After routing switching, it is considered not the first rendering.
+          _isReadSSRInitialPropsProps = true;
+          _currentInitialPropsProps = _currentSSRInitialPropsProps;
+        } else if (component.getInitialProps) {
+          let newUpdateFlag = updateFlag + 1;
+          // wait getInitialProps
+          component.getInitialProps().then((props) => {
+            setUpdateFlag(newUpdateFlag);
+            _currentInitialPropsProps = props;
+          }, () => {
+            setUpdateFlag(++newUpdateFlag);
+            _currentInitialPropsProps = {};
+          });
+          return null;
+        }
+      }
+
+      return createElement(component, { ...props, ..._currentInitialPropsProps });
     }
   }
 
