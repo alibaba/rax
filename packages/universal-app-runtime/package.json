@@ -1,6 +1,6 @@
 {
   "name": "universal-app-runtime",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Provide framework level runtime support of universal app.",
   "main": "src/index.js",
   "author": "Rax Team",
