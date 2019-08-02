@@ -13,7 +13,7 @@ module.exports = (config, rootDir) => {
   config.mode('development');
   config.devtool('inline-module-source-map');
 
-  config.entry('index.weex')
+  config.entry('weex/index')
     .add(hmrClient)
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=weex!${appEntry}`);
 

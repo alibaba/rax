@@ -36,8 +36,8 @@ module.exports = class UniversalDocumentPlugin {
 
       // get document html string
       const source = this.render(require('rax').createElement(documentElement, {
-        styles: ['/index.web.css'],
-        scripts: ['/index.web.js'],
+        styles: ['web/index.css'],
+        scripts: ['web/index.js'],
       }));
 
       // insert html file

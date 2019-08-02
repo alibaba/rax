@@ -11,7 +11,7 @@ module.exports = (config, rootDir) => {
 
   config.mode('production');
   config.devtool('source-map');
-  config.entry('index.web')
+  config.entry('web/index')
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
 
   config.optimization
