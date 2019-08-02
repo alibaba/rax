@@ -202,8 +202,10 @@ function renderElementToString(element, context, options) {
   if (type) {
     const props = element.props || EMPTY_OBJECT;
     if (type.prototype && type.prototype.render) {
-      const instance = new type(props, context, updater); // eslint-disable-line new-cap
+      const instance = new type(props, context); // eslint-disable-line new-cap
       let currentContext = instance.context = context;
+      // Inject the updater into instance
+      instance.updater = updater;
 
       let childContext;
       if (instance.getChildContext) {

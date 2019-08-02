@@ -70,9 +70,9 @@ export default function createContext(defaultValue) {
   class Consumer extends Component {
     componentWillMount() {
       this.emitter = readEmitter(this);
-      this.state = {
+      this.setState({
         value: this.emitter.value
-      };
+      });
       this.onUpdate = value => this.state.value !== value && this.setState({value});
     }
 
