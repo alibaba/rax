@@ -5,7 +5,9 @@ const TemplateProcesser = require('./template-processer');
 // Rename files start with '_'
 function renameFile(files) {
   files.forEach(file => {
-    if (file.name[0] === '_') {
+    if (file.name === '_package.json') {
+      file.name = file.name.replace(/^_/, '');
+    } else {
       file.name = file.name.replace(/^_/, '.');
     }
   });
