@@ -9,7 +9,8 @@ module.exports = function(content) {
     absoluteShellPath,
     absoluteAppPath,
     absolutePagePath,
-    absoluteAppJSONPath
+    absoluteAppJSONPath,
+    publicPath
   } = query;
 
   const hasShell = fs.existsSync(absoluteShellPath);
@@ -49,11 +50,12 @@ module.exports = function(content) {
         }
       }));
     
-      const contentHtml = renderer.renderToString(contentElement);
+      const initialHtml = renderer.renderToString(contentElement);
     
       const documentProps = {
-        pageHtml: contentHtml,
-        pageData: JSON.stringify(initialData)
+        initialHtml: initialHtml,
+        initialData: JSON.stringify(initialData),
+        publicPath: '${publicPath}'
       };
     
       await getInitialProps(Document, ctx);

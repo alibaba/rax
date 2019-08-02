@@ -28,8 +28,7 @@ module.exports = (rootDir) => {
       absoluteAppPath,
       absolutePagePath,
       absoluteAppJSONPath,
-      // errorPath: path.join(appDirectory, 'src/pages/error/index.jsx'), // 从 route 中读取
-      // assetsManifestPath: pathConfig.assetsManifest
+      publicPath: '/'
     };
 
     entries[entry] = `${SSRLoader}?${qs.stringify(query)}!${absolutePagePath}`;
