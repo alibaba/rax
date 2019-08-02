@@ -1,0 +1,15 @@
+{
+  "routes": [
+    {
+      "path": "/page1",
+      "component": "pages/home"
+    },
+    {
+      "path": "/about",
+      "component": "pages/about"
+    }
+  ],
+  "window": {
+    "defaultTitle": "testApp"
+  }
+}
