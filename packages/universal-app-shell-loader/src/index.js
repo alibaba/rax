@@ -1,5 +1,6 @@
 const { join } = require('path');
 const { getOptions } = require('loader-utils');
+const { existsSync } = require('fs');
 
 const historyMemory = {
   hash: 'createHashHistory',
@@ -21,11 +22,15 @@ module.exports = function(content) {
       routes = [];
     }
 
+    let appRender = '';
     let fixRootStyle = '';
     /**
      * Weex only support memory history.
      */
-    if (options.type === 'weex') historyType = 'memory';
+    if (options.type === 'weex') {
+      historyType = 'memory';
+      appRender = 'render(createElement(Entry), null, { driver: DriverUniversal });';
+    }
     /**
      * Web only compatible with 750rpx.
      */
@@ -35,6 +40,12 @@ module.exports = function(content) {
         const html = document.documentElement;
         html.style.fontSize = html.clientWidth / 750 * ${mutiple} + 'px';
       `;
+      appRender = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal });';
+      // app shell
+      if (existsSync(join(this.rootContext, 'src/shell/index.jsx'))) {
+        appRender = `import Shell from "${getDepPath('shell/index', this.rootContext)}";`;
+        appRender += 'render(createElement(Shell, {}, createElement(Entry)), document.getElementById("root"), { driver: DriverUniversal, hydrate: true });';
+      }
     }
 
     /**
@@ -49,10 +60,13 @@ module.exports = function(content) {
     const assembleRoutes = routes.map((route, index) => {
       // First level function to support hooks will autorun function type state,
       // Second level function to support rax-use-router rule autorun function type component.
+      const dynamicImportComponent = `() => import(/* webpackChunkName: "${route.component.replace(/\//g, '_')}" */ '${getDepPath(route.component, this.rootContext)}').then((mod) => () => interopRequire(mod))`;
+      const importComponent = `() => () => interopRequire(require('${getDepPath(route.component, this.rootContext)}'))`;
+
       return `routes.push({
         index: ${index},
         path: '${route.path}',
-        component: () => () => interopRequire(require('${getDepPath(route.component, this.rootContext)}')),
+        component: ${options.type === 'web' ? dynamicImportComponent : importComponent}
       });`;
     }).join('\n');
 
@@ -95,7 +109,7 @@ module.exports = function(content) {
         return app;
       }
       
-      render(createElement(Entry), null, { driver: DriverUniversal });
+      ${appRender}
     `;
     return source;
   } else {

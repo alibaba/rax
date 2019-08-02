@@ -5,6 +5,7 @@ const babelMerge = require('babel-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const UniversalDocumentPlugin = require('../../plugins/UniversalDocumentPlugin');
+const PWAAppShellPlugin = require('../../plugins/PWAAppShellPlugin');
 const babelConfig = require('../babel.config');
 
 const babelConfigWeb = babelMerge.all([{
@@ -82,6 +83,13 @@ module.exports = (rootDir) => {
     .use(UniversalDocumentPlugin, [{
       rootDir,
       path: 'src/document/index.jsx',
+      render: serverRender.renderToString,
+    }]);
+
+  config.plugin('PWAAppShell')
+    .use(PWAAppShellPlugin, [{
+      rootDir,
+      path: 'src/shell/index.jsx',
       render: serverRender.renderToString,
     }]);
 

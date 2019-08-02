@@ -7,7 +7,8 @@ export default function App(props) {
   useAppEffect('launch', (options) => {
 
   });
-  const { Router, history } = useRouter(routerConfig); // 统一接口的 useRouter
+
+  const { Router } = useRouter(routerConfig);
 
   return <Router {...props} />;
 }
