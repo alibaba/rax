@@ -9,7 +9,9 @@ export default () => {
     <View>
       <Text>Hello Rax</Text>
       <Site />
-      <View onClick={() => push('/')}>Go home</View>
+      <View onClick={() => push('/')}>
+        <Text>Go home</Text>
+      </View>
     </View>
   );
 };
