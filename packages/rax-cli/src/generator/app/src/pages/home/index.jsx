@@ -1,7 +1,10 @@
-import { createElement } from 'rax';
 import './index.css';
+import { createElement } from 'rax';
 import { usePageEffect } from '@core/page';
-import { push } from '@core/router';
+// app should use Link in @core/router rather than rax-link
+import { push, Link } from '@core/router';
+import Text from 'rax-text';
+import View from 'rax-view';
 
 export default function Home() {
   usePageEffect('show', () => {
@@ -13,10 +16,10 @@ export default function Home() {
   });
 
   return (
-    <div className="test">
-      hello, world
-      <a onClick={() => push('/about')} />
-      <button onClick={() => push('/about')}>Go about</button>
-    </div>
+    <View className="home">
+      <Text>hello, world</Text>
+      <Link to="/about">Link to about</Link>
+      <View onClick={() => push('/about')}>push to about</View>
+    </View>
   );
 }

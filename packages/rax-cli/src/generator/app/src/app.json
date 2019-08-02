@@ -1,7 +1,7 @@
 {
   "routes": [
     {
-      "path": "/page1",
+      "path": "/",
       "component": "pages/home"
     },
     {
@@ -10,6 +10,6 @@
     }
   ],
   "window": {
-    "defaultTitle": "testApp"
+    "defaultTitle": "Rax App 1.0"
   }
 }
