@@ -49,7 +49,7 @@ export function useRouter(routerConfig) {
       return null;
     } else {
       // process Page.getInitialProps
-      if (currentPath !== _currentPagePath) {
+      if (_currentPagePath !== _history.location.pathname) {
         _initialProps = {};
         _currentPagePath = _history.location.pathname;
         // SSR project the first time is initialized from global data,
@@ -63,14 +63,15 @@ export function useRouter(routerConfig) {
           component.getInitialProps().then((props) => {
             _initialProps = props;
             setCurrentPath(_currentPagePath);
-          }, () => {
+          }).catch(() => {
             _initialProps = {};
             setCurrentPath(_currentPagePath);
           });
           return null;
+        } else {
+          setCurrentPath(_currentPagePath);
         }
       }
-
       return createElement(component, { ...props, ..._initialProps });
     }
   }
