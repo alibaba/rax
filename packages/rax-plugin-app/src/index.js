@@ -1,8 +1,11 @@
-const pluginApp = ({ chainWebpack, registerConfig, rootDir }, options = {}) => {
+const chalk = require('chalk');
+
+const pluginApp = ({ chainWebpack, registerConfig, rootDir, onHook }, options = {}) => {
   const { targets = [] } = options;
 
   targets.forEach(target => {
     if (target === 'web' || target === 'weex') {
+
       const getBase = require(`./config/${target}/getBase`);
       const setDev = require(`./config/${target}/setDev`);
       const setBuild = require(`./config/${target}/setBuild`);
@@ -18,6 +21,13 @@ const pluginApp = ({ chainWebpack, registerConfig, rootDir }, options = {}) => {
           setBuild(config.get(target), rootDir);
         }
       });
+
+      if (target === 'weex') {
+        onHook('after.dev', ({url}) => {
+          console.log(chalk.green('[Weex] Starting the development server at:'));
+          console.log('   ', chalk.underline.white(`${url}/weex/index.js?wh_weex=true`));
+        });
+      }
     }
   });
 };

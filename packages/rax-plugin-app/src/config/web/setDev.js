@@ -8,12 +8,11 @@ const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader')
 
 module.exports = (config, rootDir) => {
   const appEntry = path.resolve(rootDir, 'src/app.js');
-  const appPublic = path.resolve(rootDir, 'public');
 
   config.mode('development');
   config.devtool('inline-module-source-map');
 
-  config.entry('index.web')
+  config.entry('index')
     .add(hmrClient)
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
 
@@ -22,7 +21,7 @@ module.exports = (config, rootDir) => {
   config.devServer
     .compress(true)
     .clientLogLevel('error')
-    .contentBase(appPublic)
+    .contentBase(path.resolve(rootDir, 'build'))
     .watchContentBase(true)
     .hot(true)
     .quiet(true)
