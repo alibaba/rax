@@ -101,7 +101,7 @@ function transformDirectiveList(ast, adapter) {
             Identifier(innerPath) {
               const { node } = innerPath;
               if (args.find(arg => arg.name === node.name)) {
-                node.__jsxlistArgs = true;
+                node.__xforArgs = true;
               }
             }
           });
