@@ -31,12 +31,12 @@ module.exports = (rootDir) => {
     rax: 'rax',
   });
 
-  config.plugins.delete('minicss');
+  // config.plugins.delete('minicss');
 
-  config.plugin('ingnorecss')
-  .use(webpack.IgnorePlugin, [{
-    resourceRegExp: /\.css?$/
-  }]);
+  // config.plugin('ingnorecss')
+  // .use(webpack.IgnorePlugin, [{
+  //   resourceRegExp: /\.css?$/
+  // }]);
 
   config.plugins.delete('document');
 
