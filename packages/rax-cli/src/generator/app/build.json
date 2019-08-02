@@ -1,8 +1,10 @@
 {
   "plugins": [
     <%_ if (projectFeatures.includes('ssr')) { -%>
-    "rax-plugin-ssr",
+      ["rax-plugin-app", { "targets": ["<%- projectTargets.join('", "') %>"]}],
+      "rax-plugin-ssr",
+    <%_ } else { -%>
+      ["rax-plugin-app", { "targets": ["<%- projectTargets.join('", "') %>"]}]
     <%_ } -%>
-    ["rax-plugin-app", { "targets": ["<%- projectTargets.join('", "') %>"]}]
   ]
 }
