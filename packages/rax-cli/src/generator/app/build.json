@@ -1,10 +1,9 @@
+<%_ const isSSR = projectFeatures.includes('ssr') -%>
 {
   "plugins": [
-    <%_ if (projectFeatures.includes('ssr')) { -%>
-      ["rax-plugin-app", { "targets": ["<%- projectTargets.join('", "') %>"]}],
-      "rax-plugin-ssr",
-    <%_ } else { -%>
-      ["rax-plugin-app", { "targets": ["<%- projectTargets.join('", "') %>"]}]
+    ["rax-plugin-app", { "targets": ["<%- projectTargets.join('", "') %>"]}]<%_ if (isSSR) { -%>,<%_ } %>
+    <%_ if (isSSR) { -%>
+    "rax-plugin-ssr"
     <%_ } -%>
   ]
 }
