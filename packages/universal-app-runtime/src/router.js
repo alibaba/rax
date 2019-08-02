@@ -61,11 +61,11 @@ export function useRouter(routerConfig) {
         } else if (component.getInitialProps) {
           // wait getInitialProps
           component.getInitialProps().then((props) => {
-            setCurrentPath(_currentPagePath);
             _initialProps = props;
-          }, () => {
             setCurrentPath(_currentPagePath);
+          }, () => {
             _initialProps = {};
+            setCurrentPath(_currentPagePath);
           });
           return null;
         }
