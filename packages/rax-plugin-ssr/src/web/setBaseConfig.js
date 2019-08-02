@@ -4,8 +4,6 @@ const path = require('path');
 const AssetsManifestPlugin = require('rax-pwa-webpack-plugin/lib/AssetsManifestPlugin').default;
 const { RaxPWAPlugin } = require('rax-pwa-webpack-plugin');
 
-const getEntries = require('./getEntries');
-
 module.exports = (config, rootDir) => {
   config.plugin('raxpwa')
     .use(RaxPWAPlugin, [{

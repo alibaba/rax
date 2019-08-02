@@ -1,7 +1,9 @@
+'use strict';
 const path = require('path');
 const address = require('address');
+const getBaseWebpackConfig = require('./getBaseConfig');
 
-module.exports = (config, rootDir, log) => {
+function setDevServerConfig(config, rootDir) {
   const absoluteAppJSONPath = path.join(rootDir, 'src/app.json');
   const appJSON = require(absoluteAppJSONPath);
 
@@ -15,7 +17,18 @@ module.exports = (config, rootDir, log) => {
     routes[route.path] = path.join(distDir, filename.replace('[name]', pathName));
   });
 
+  config.devServer.hot(false);
   config.devServer.port(9999);
   config.devServer.host(address.ip());
   config.devServer.set('routes', routes);
+}
+
+module.exports = (rootDir) => {
+  const config = getBaseWebpackConfig(rootDir);
+
+  config.mode('development');
+
+  setDevServerConfig(config, rootDir);
+
+  return config;
 };
