@@ -1,4 +1,5 @@
 'use strict';
+const path = require('path');
 const { getWebBase } = require('rax-plugin-app');
 const getEntries = require('./getEntries');
 
@@ -35,11 +36,22 @@ module.exports = (rootDir) => {
 
   config.plugins.delete('minicss');
   config.module.rules.delete('css');
-  config.module.rule('css')
-  .test(/\.css?$/)
-  .use('ignorecss')
-    .loader(require.resolve('./ignoreLoader'))
-    .end();
+
+  const buildConfigPath = path.resolve(rootDir, 'build.json');
+  const buildConfig = require(buildConfigPath);
+
+  if (buildConfig.inlineStyle) {
+    config.module.rule('css')
+    .test(/\.css?$/)
+    .use('css')
+      .loader(require.resolve('stylesheet-loader'));
+  } else {
+    config.module.rule('css')
+    .test(/\.css?$/)
+    .use('ignorecss')
+      .loader(require.resolve('./ignoreLoader'))
+      .end();
+  }
 
   return config;
 };
