@@ -39,6 +39,7 @@ module.exports = (rootDir) => {
   // }]);
 
   config.plugins.delete('document');
+  config.plugins.delete('PWAAppShell');
 
   return config;
 };

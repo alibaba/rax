@@ -5,7 +5,6 @@ const pluginApp = ({ chainWebpack, registerConfig, rootDir, onHook }, options = 
 
   targets.forEach(target => {
     if (target === 'web' || target === 'weex') {
-
       const getBase = require(`./config/${target}/getBase`);
       const setDev = require(`./config/${target}/setDev`);
       const setBuild = require(`./config/${target}/setBuild`);
