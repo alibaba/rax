@@ -1,5 +1,4 @@
 'use strict';
-const webpack = require('webpack');
 const { getWebBase } = require('rax-plugin-app');
 const getEntries = require('./getEntries');
 
@@ -32,6 +31,7 @@ module.exports = (rootDir) => {
   });
 
   config.plugins.delete('document');
+  config.plugins.delete('PWAAppShell');
 
   config.plugins.delete('minicss');
   config.module.rules.delete('css');
