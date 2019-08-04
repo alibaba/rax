@@ -13,9 +13,9 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "webpack": "^4.39.0",
     "address": "^1.1.0",
     "rax-plugin-app": "^0.1.0-0",
-    "rax-ssr-dev-server": "^1.0.0"
+    "rax-ssr-dev-server": "^1.0.0",
+    "universal-app-shell-loader": "^0.1.1"
   }
 }

@@ -31,14 +31,15 @@ module.exports = (rootDir) => {
     rax: 'rax',
   });
 
-  // config.plugins.delete('minicss');
-
-  // config.plugin('ingnorecss')
-  // .use(webpack.IgnorePlugin, [{
-  //   resourceRegExp: /\.css?$/
-  // }]);
-
   config.plugins.delete('document');
+
+  config.plugins.delete('minicss');
+  config.module.rules.delete('css');
+  config.module.rule('css')
+  .test(/\.css?$/)
+  .use('ignorecss')
+    .loader(require.resolve('./ignoreLoader'))
+    .end();
 
   return config;
 };

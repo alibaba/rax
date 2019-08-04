@@ -96,7 +96,7 @@ module.exports = (rootDir) => {
   config.plugin('minicss')
     .use(MiniCssExtractPlugin, [{
       filename: 'web/[name].css',
-      chunkFilename: 'web/[id].css',
+      chunkFilename: 'web/[name].css',
     }]);
 
   config.plugin('noError')
