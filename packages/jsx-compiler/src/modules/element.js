@@ -193,7 +193,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             replaceNode.__transformed = true;
             path.replaceWith(t.stringLiteral(createBinding(genExpression(replaceNode))));
             if (!isDirective && jsxEl.__pid) {
-              componentDependentProps[jsxEl.__pid][replaceNode.name] = expression;
+              componentDependentProps[jsxEl.__pid][attributeName] = expression;
             }
           }
         } else if (type === ELE) {
