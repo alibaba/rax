@@ -19,9 +19,9 @@ function Document(props) {
       <body>
         {/* root container */}
         <div id="root" dangerouslySetInnerHTML={{ __html: initialHtml || '' }} />
-        <script src={`${publicPath}web/index.js`} />
         {/* initial data from server side */}
         <script data-from="server" dangerouslySetInnerHTML={{__html: 'window.__INITIAL_DATA__=' + initialData}} />
+        <script src={`${publicPath}web/index.js`} />
       </body>
     </html>
   );

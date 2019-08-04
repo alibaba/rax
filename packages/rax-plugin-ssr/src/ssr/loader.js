@@ -55,7 +55,7 @@ module.exports = function(content) {
     
       const documentProps = {
         initialHtml: initialHtml,
-        initialData: 'window.__INITIAL_DATA__=' + JSON.stringify(initialData),
+        initialData: JSON.stringify(initialData),
         publicPath: '${publicPath}',
         pageName: '${pageName}'
       };
