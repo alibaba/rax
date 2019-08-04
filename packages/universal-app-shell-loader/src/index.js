@@ -1,6 +1,7 @@
 const { join } = require('path');
 const { getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
+const pathToRegexp = require('path-to-regexp');
 
 const historyMemory = {
   hash: 'createHashHistory',
@@ -24,6 +25,8 @@ module.exports = function(content) {
 
     let appRender = '';
     let fixRootStyle = '';
+    let importMods = '';
+
     /**
      * Weex only support memory history.
      */
@@ -41,6 +44,8 @@ module.exports = function(content) {
         const html = document.documentElement;
         html.style.fontSize = html.clientWidth / 750 * ${mutiple} + 'px';
       `;
+      importMods += 'import { getCurrentComponent } from "rax-pwa";';
+
       if (existsSync(join(this.rootContext, 'src/shell/index.jsx'))) {
         // app shell
         appRender += `import Shell from "${getDepPath('shell/index', this.rootContext)}";`;
@@ -61,11 +66,6 @@ module.exports = function(content) {
 
       appRender += `
         const renderApp = async function() {
-          // process SSR History
-          if (withSSR) {
-            Object.assign(appProps, window.__initialData__.appData);
-          }
-          
           // process App.getInitialProps
           if (withSSR && window.__initialData__.appData !== null) {
             Object.assign(appProps, window.__initialData__.appData);
@@ -74,7 +74,15 @@ module.exports = function(content) {
           }
           ${appRenderMethod}
         }
-        renderApp();
+
+        getCurrentComponent(appProps.routerConfig.routes, withSSR)().then(function(InitialComponent) {
+          if (InitialComponent === null) {
+            renderApp();
+          } else {
+            appProps.routerConfig.InitialComponent = InitialComponent;
+            renderApp();
+          }
+        });
       `;
     }
 
@@ -99,6 +107,7 @@ module.exports = function(content) {
 
       return `routes.push({
         index: ${index},
+        regexp: ${pathToRegexp(route.path).toString()},
         path: '${route.path}',
         component: ${options.type === 'web' ? dynamicImportComponent : importComponent}
       });`;
@@ -110,6 +119,7 @@ module.exports = function(content) {
       import { ${historyMemory[historyType]} as createHistory } from 'history';
       import { _invokeAppCycle } from 'universal-app-runtime';
       import DriverUniversal from 'driver-universal';
+      ${importMods}
       
       const interopRequire = (mod) => mod && mod.__esModule ? mod.default : mod;
       const withSSR = !!window.__initialData__;
