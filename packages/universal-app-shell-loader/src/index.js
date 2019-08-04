@@ -47,8 +47,8 @@ module.exports = function(content) {
         appRenderMethod = `
           // process Shell.getInitialProps
           const shellProps = {};
-          if (withSSR && window.__initialData__.shellData !== null) {
-            Object.assign(shellProps, window.__initialData__.shellData);
+          if (withSSR && window.__INITIAL_DATA__.shellData !== null) {
+            Object.assign(shellProps, window.__INITIAL_DATA__.shellData);
           } else if (Shell.getInitialProps) {
             Object.assign(shellProps, await Shell.getInitialProps());
           }
@@ -63,12 +63,12 @@ module.exports = function(content) {
         const renderApp = async function() {
           // process SSR History
           if (withSSR) {
-            Object.assign(appProps, window.__initialData__.appData);
+            Object.assign(appProps, window.__INITIAL_DATA__.appData);
           }
           
           // process App.getInitialProps
-          if (withSSR && window.__initialData__.appData !== null) {
-            Object.assign(appProps, window.__initialData__.appData);
+          if (withSSR && window.__INITIAL_DATA__.appData !== null) {
+            Object.assign(appProps, window.__INITIAL_DATA__.appData);
           } else if (definedApp.getInitialProps) {
             Object.assign(appProps, await definedApp.getInitialProps());
           }
@@ -112,7 +112,7 @@ module.exports = function(content) {
       import DriverUniversal from 'driver-universal';
       
       const interopRequire = (mod) => mod && mod.__esModule ? mod.default : mod;
-      const withSSR = !!window.__initialData__;
+      const withSSR = !!window.__INITIAL_DATA__;
       
       const getRouterConfig = () => {
         const routes = [];

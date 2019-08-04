@@ -19,8 +19,8 @@ let _initialPropsFromSSR = null;
 let _isReadInitialPropsFromSSR = false;
 
 try {
-  if (window.__initialData__) {
-    _initialPropsFromSSR = window.__initialData__.pageData;
+  if (window.__INITIAL_DATA__) {
+    _initialPropsFromSSR = window.__INITIAL_DATA__.pageData;
   }
 } catch (e) {
   // ignore SSR window is not defined

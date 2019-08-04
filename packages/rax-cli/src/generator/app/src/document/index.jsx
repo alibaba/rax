@@ -21,7 +21,7 @@ function Document(props) {
         <div id="root" dangerouslySetInnerHTML={{ __html: initialHtml || '' }} />
         <script src={`${publicPath}web/index.js`} />
         {/* initial data from server side */}
-        <script data-from="server" type="application/json" dangerouslySetInnerHTML={{__html: initialData}} />
+        <script data-from="server" dangerouslySetInnerHTML={{__html: 'window.__INITIAL_DATA__=' + initialData}} />
       </body>
     </html>
   );
