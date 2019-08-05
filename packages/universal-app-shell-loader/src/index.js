@@ -76,12 +76,10 @@ module.exports = function(content) {
         }
         if (withSSR) {
           getCurrentComponent(appProps.routerConfig.routes, true)().then(function(InitialComponent) {
-            if (InitialComponent === null) {
-              renderApp();
-            } else {
+            if (InitialComponent !== null) {
               appProps.routerConfig.InitialComponent = InitialComponent;
-              renderApp();
             }
+            renderApp();
           });
         } else {
           renderApp();
