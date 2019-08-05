@@ -40,6 +40,7 @@ function watch(options = {}) {
   compiler.watch(watchOpts, (...args) => {
     handleCompiled(...args);
     afterCompiled && afterCompiled(...args);
+    console.log('\nWatching file changes...')
   });
 }
 
@@ -56,12 +57,12 @@ function handleCompiled(err, stats) {
     consoleClear();
     spinner.fail('Failed to compile.\n');
     for (let e of errors) {
-      console.log(e.error.message + '\n');
+      console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));
       if (process.env.DEBUG === 'true') {
         console.log(e.error.stack);
       }
     }
-    console.log(chalk.yellow('You can set environment `DEBUG=true` to show error stacks.'));
+    console.log(chalk.yellow('Set environment `DEBUG=true` to see detail error stacks.'));
   }
 }
 
