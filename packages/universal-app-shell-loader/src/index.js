@@ -74,15 +74,18 @@ module.exports = function(content) {
           }
           ${appRenderMethod}
         }
-
-        getCurrentComponent(appProps.routerConfig.routes, withSSR)().then(function(InitialComponent) {
-          if (InitialComponent === null) {
-            renderApp();
-          } else {
-            appProps.routerConfig.InitialComponent = InitialComponent;
-            renderApp();
-          }
-        });
+        if (withSSR) {
+          getCurrentComponent(appProps.routerConfig.routes, true)().then(function(InitialComponent) {
+            if (InitialComponent === null) {
+              renderApp();
+            } else {
+              appProps.routerConfig.InitialComponent = InitialComponent;
+              renderApp();
+            }
+          });
+        } else {
+          renderApp();
+        }
       `;
     }
 
