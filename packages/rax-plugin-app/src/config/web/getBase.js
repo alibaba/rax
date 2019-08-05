@@ -51,26 +51,8 @@ module.exports = (context) => {
 
   config.module.rule('css')
     .test(/\.css?$/)
-    .use('minicss')
-      .loader(MiniCssExtractPlugin.loader)
-      .end()
     .use('css')
-      .loader(require.resolve('css-loader'))
-      .end()
-    .use('postcss')
-      .loader(require.resolve('postcss-loader'))
-      .options({
-        ident: 'postcss',
-        plugins: () => [
-          require('postcss-preset-env')({
-            autoprefixer: {
-              flexbox: 'no-2009',
-            },
-            stage: 3,
-          }),
-          require('postcss-plugin-rpx2vw')(),
-        ],
-      });
+      .loader(require.resolve('stylesheet-loader'));
 
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)

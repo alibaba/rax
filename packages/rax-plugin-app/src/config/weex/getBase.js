@@ -9,7 +9,6 @@ const babelConfig = require('../babel.config');
 
 const babelConfigWeex = babelMerge.all([{
   plugins: [
-    require.resolve('babel-plugin-transform-jsx-stylesheet'),
     require.resolve('rax-hot-loader/babel'),
   ],
 }, babelConfig]);

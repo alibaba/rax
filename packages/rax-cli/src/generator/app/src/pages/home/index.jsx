@@ -5,6 +5,7 @@ import { usePageEffect } from '@core/page';
 import { push, Link } from '@core/router';
 import Text from 'rax-text';
 import View from 'rax-view';
+import Image from 'rax-image';
 
 export default function Home() {
   usePageEffect('show', () => {
@@ -16,7 +17,10 @@ export default function Home() {
   });
 
   return (
-    <View className="home">
+    <View>
+      <View className="header">
+
+      </View>
       <Text>hello, world</Text>
       <Link to="/about">Link to about</Link>
       <View onClick={() => push('/about')}>
