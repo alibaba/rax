@@ -51,7 +51,9 @@ module.exports = function(content) {
         }
       }));
     
-      const initialHtml = renderer.renderToString(contentElement);
+      const initialHtml = renderer.renderToString(contentElement, {
+        defaultUnit: 'rpx'
+      });
     
       const documentProps = {
         initialHtml: initialHtml,

@@ -29,31 +29,17 @@ module.exports = (context) => {
     .set('@core/page', 'universal-app-runtime')
     .set('@core/router', 'universal-app-runtime');
 
-  config.module.rule('jsx')
-    .test(/\.(js|mjs|jsx)$/)
-    .exclude
-      .add(/(node_modules|bower_components)/)
-      .end()
-    .use('babel')
-      .loader(require.resolve('babel-loader'))
-      .options(babelConfigWeb);
-
-  config.module.rule('tsx')
-    .test(/\.tsx?$/)
-    .exclude
-      .add(/(node_modules|bower_components)/)
-      .end()
-    .use('babel')
-      .loader(require.resolve('babel-loader'))
-      .options(babelConfigWeb)
-      .end()
-    .use('ts')
-      .loader(require.resolve('ts-loader'));
-
   const buildConfigPath = path.resolve(rootDir, 'build.json');
   const buildConfig = require(buildConfigPath);
 
+  let babelConfig = babelConfigWeb;
   if (buildConfig.inlineStyle) {
+    babelConfig = babelMerge.all([{
+      plugins: [
+        require.resolve('babel-plugin-transform-jsx-stylesheet')
+      ],
+    }, babelConfig]);
+
     config.module.rule('css')
     .test(/\.css?$/)
     .use('css')
@@ -88,6 +74,27 @@ module.exports = (context) => {
       chunkFilename: 'web/[name].css',
     }]);
   }
+
+  config.module.rule('jsx')
+  .test(/\.(js|mjs|jsx)$/)
+  .exclude
+    .add(/(node_modules|bower_components)/)
+    .end()
+  .use('babel')
+    .loader(require.resolve('babel-loader'))
+    .options(babelConfig);
+
+  config.module.rule('tsx')
+  .test(/\.tsx?$/)
+  .exclude
+    .add(/(node_modules|bower_components)/)
+    .end()
+  .use('babel')
+    .loader(require.resolve('babel-loader'))
+    .options(babelConfig)
+    .end()
+  .use('ts')
+    .loader(require.resolve('ts-loader'));
 
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
