@@ -51,7 +51,7 @@ module.exports = function(content) {
         appRender += `import Shell from "${getDepPath('shell/index', this.rootContext)}";`;
         appRenderMethod = `
           // process Shell.getInitialProps
-          const shellProps = {};
+          const shellProps = {...appProps};
           if (withSSR && window.__INITIAL_DATA__.shellData !== null) {
             Object.assign(shellProps, window.__INITIAL_DATA__.shellData);
           } else if (Shell.getInitialProps) {
@@ -108,7 +108,7 @@ module.exports = function(content) {
 
       return `routes.push({
         index: ${index},
-        regexp: ${pathToRegexp(route.path).toString()},
+        _regexp: ${pathToRegexp(route.path).toString()},
         path: '${route.path}',
         component: ${options.type === 'web' ? dynamicImportComponent : importComponent}
       });`;
