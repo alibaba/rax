@@ -5,7 +5,8 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
 
-module.exports = (config, rootDir) => {
+module.exports = (config, context) => {
+  const { rootDir } = context;
   const appEntry = path.resolve(rootDir, 'src/app.js');
 
   config.mode('production');
