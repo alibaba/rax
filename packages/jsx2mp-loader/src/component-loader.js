@@ -52,8 +52,11 @@ module.exports = function componentLoader(content) {
   function isCustomComponent(name, usingComponents = {}) {
     const matchingPath = join(dirname(resourcePath), name);
     for (let key in usingComponents) {
-      if (usingComponents.hasOwnProperty(key)
-        && usingComponents[key].indexOf(matchingPath) === 0) return true;
+      if (
+        usingComponents.hasOwnProperty(key)
+        && usingComponents[key]
+        && usingComponents[key].indexOf(matchingPath) === 0
+      ) return true;
     }
     return false;
   }
