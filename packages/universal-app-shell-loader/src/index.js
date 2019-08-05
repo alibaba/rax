@@ -108,7 +108,7 @@ module.exports = function(content) {
 
       return `routes.push({
         index: ${index},
-        _regexp: ${pathToRegexp(route.path).toString()},
+        regexp: ${pathToRegexp(route.path).toString()},
         path: '${route.path}',
         component: ${options.type === 'web' ? dynamicImportComponent : importComponent}
       });`;
