@@ -17,6 +17,7 @@ module.exports = class UniversalDocumentPlugin {
     }
 
     this.rootDir = options.rootDir ? options.rootDir : process.cwd();
+    this.publicPath = options.publicPath ? options.publicPath : '/';
     this.documentPath = options.path ? options.path : 'src/document/index.jsx';
   }
 
@@ -36,8 +37,8 @@ module.exports = class UniversalDocumentPlugin {
 
       // get document html string
       const source = this.render(require('rax').createElement(documentElement, {
-        publicPath: '/',
-        styles: ['web/index.css'],
+        publicPath: this.publicPath,
+        styles: [],
         scripts: ['web/index.js'],
       }));
 
