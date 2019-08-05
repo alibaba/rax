@@ -34,7 +34,7 @@ module.exports = {
 
   externals: [
     function(context, request, callback) {
-      if (request.indexOf('@weex-module') !== -1) {
+      if (request.indexOf('@weex-module') === 0) {
         return callback(null, 'commonjs ' + request);
       }
       callback();
