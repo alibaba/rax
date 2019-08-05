@@ -23,12 +23,12 @@ function setDevServerConfig(config, rootDir) {
   config.devServer.set('routes', routes);
 }
 
-module.exports = (rootDir) => {
-  const config = getBaseWebpackConfig(rootDir);
+module.exports = (context) => {
+  const config = getBaseWebpackConfig(context);
 
   config.mode('development');
 
-  setDevServerConfig(config, rootDir);
+  setDevServerConfig(config, context.rootDir);
 
   return config;
 };

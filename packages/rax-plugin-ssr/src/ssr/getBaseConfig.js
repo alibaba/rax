@@ -4,8 +4,9 @@ const { getWebBase } = require('rax-plugin-app');
 const getEntries = require('./getEntries');
 
 // Can‘t clone webpack chain object, so generate a new chain and reset config
-module.exports = (rootDir) => {
-  const config = getWebBase(rootDir);
+module.exports = (context) => {
+  const { rootDir } = context;
+  const config = getWebBase(context);
 
   config.entryPoints.clear();
 

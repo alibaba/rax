@@ -5,17 +5,25 @@ const getSSRDevConfig = require('./ssr/getDevConfig');
 const setWebBaseConfig = require('./web/setBaseConfig');
 
 // can‘t clone webpack chain object
-module.exports = ({ chainWebpack, registerConfig, setDevServer, rootDir, onHook, log }) => {
+module.exports = ({ chainWebpack, registerConfig, setDevServer, context }) => {
   chainWebpack((config, { command }) => {
+    // TODO
+    context.userConfig = Object.assign(context.userConfig, {
+      outputDir: 'build',
+      publicPath: '/',
+      devPublicPath: '/',
+    });
+
+    const rootDir = context.rootDir;
     setWebBaseConfig(config, rootDir);
 
     let ssrConfig;
     if (command === 'build') {
-      ssrConfig = getSSRBuildConfig(rootDir);
+      ssrConfig = getSSRBuildConfig(context);
     }
 
     if (command === 'dev') {
-      ssrConfig = getSSRDevConfig(rootDir);
+      ssrConfig = getSSRDevConfig(context);
       setDevServer(SSRDevServer);
     }
 

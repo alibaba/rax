@@ -9,7 +9,10 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const hmrClient = require.resolve('../hmr/webpackHotDevClient.entry');
 const babelConfig = require('./babel.config');
 
-module.exports = (rootDir) => {
+module.exports = (context) => {
+  const { rootDir, userConfig } = context;
+  const { outputDir } = userConfig;
+
   const config = new Chain();
 
   config.mode('development');
@@ -29,7 +32,7 @@ module.exports = (rootDir) => {
     .add(path.resolve(rootDir, 'demo/index'));
 
   config.output
-    .path(path.resolve(rootDir, 'build'))
+    .path(path.resolve(rootDir, outputDir))
     .filename('[name].js')
     .publicPath('/');
 
@@ -37,20 +40,6 @@ module.exports = (rootDir) => {
     .use(RaxWebpackPlugin, [{
       target: 'bundle',
       externalBuiltinModules: false
-    }]);
-
-  config.plugin('define')
-    .use(webpack.DefinePlugin, [{
-      'process.env': {
-        // Useful for determining whether we’re running in production mode.
-        // Most importantly, it switches React into the correct mode.
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-        // Useful for resolving the correct path to static assets in `public`.
-        // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
-        // This should only be used as an escape hatch. Normally you would put
-        // images into the `src` and `import` them in code to get their paths.
-        PUBLIC_URL: JSON.stringify(''),
-      },
     }]);
 
   config.plugin('caseSensitivePaths')

@@ -16,8 +16,11 @@ const babelConfigWeb = babelMerge.all([{
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
 
-module.exports = (rootDir) => {
-  const config = getWebpackBase(rootDir);
+module.exports = (context) => {
+  const { rootDir, userConfig } = context;
+  const { publicPath } = userConfig;
+
+  const config = getWebpackBase(context);
 
   config.output.filename('web/[name].js');
 
@@ -99,6 +102,7 @@ module.exports = (rootDir) => {
   config.plugin('document')
     .use(UniversalDocumentPlugin, [{
       rootDir,
+      publicPath,
       path: 'src/document/index.jsx',
       render: serverRender.renderToString,
     }]);

@@ -1,74 +1,32 @@
 'use strict';
 
 const chalk = require('chalk');
-const path = require('path');
 const gulp = require('gulp');
-const ts = require('gulp-typescript');
-const babel = require('gulp-babel');
-const fs = require('fs-extra');
+
 const runSequence = require('run-sequence').use(gulp);
 
-module.exports = (rootDir) => {
-  const babelConfig = require('./babel.config');
+const registerTask = require('./registerTask');
 
-  const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
-  const TS_FILES_PATTERN = 'src/**/*.+(ts|tsx)';
-  const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';
-  const IGNORE_PATTERN = '**/__tests__/**';
+const {
+  JS_FILES_PATTERN,
+  TS_FILES_PATTERN,
+  OTHER_FILES_PATTERN,
+  IGNORE_PATTERN,
+} = require('./filePattern');
 
-  const BUILD_DIR = path.resolve(rootDir, 'lib');
-
-  console.log(chalk.green('\n🚀  Start watch... '));
-
-  const tsProject = ts.createProject('tsconfig.json', {
-    skipLibCheck: true,
-    declaration: true,
-    declarationDir: BUILD_DIR
-  });
-
-  gulp.task('clean', function(done) {
-    fs.removeSync(BUILD_DIR);
-    done();
-  });
-
-  // for js/jsx.
-  gulp.task('js', function() {
-    return gulp
-      .src([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN })
-      .pipe(babel(babelConfig))
-      .pipe(gulp.dest(BUILD_DIR));
-  });
-
-  // for ts/tsx.
-  gulp.task('ts', function() {
-    return tsProject.src()
-      .pipe(tsProject())
-      .on('error', (err) => {
-        console.error(err);
-        process.exit(1);
-      })
-      .pipe(gulp.dest(BUILD_DIR));
-  });
-
-  // for other.
-  gulp.task('copyOther', function() {
-    return gulp
-      .src([OTHER_FILES_PATTERN], { ignore: IGNORE_PATTERN })
-      .pipe(gulp.dest(BUILD_DIR));
-  });
+module.exports = (context, options, log) => {
+  const tasks = registerTask(context, options, log, gulp);
 
   gulp.watch([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['js']);
-  gulp.watch([TS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['ts']);
   gulp.watch([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['js']);
 
-  runSequence(
-    'clean',
-    [
-      'js',
-      'ts',
-      'copyOther',
-    ],
-    () => {
-      console.log(chalk.green('\n  Start Successfully... '));
-    });
+  if (options.enableTypescript) {
+    gulp.watch([TS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['ts']);
+  }
+
+  log.info('api', chalk.green('Develop watch server start... '));
+
+  runSequence(...tasks, () => {
+    log.info('api', chalk.green('Develop watch has been started'));
+  });
 };

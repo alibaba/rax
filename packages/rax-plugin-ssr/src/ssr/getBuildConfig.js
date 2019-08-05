@@ -1,8 +1,8 @@
 'use strict';
 const getBaseWebpackConfig = require('./getBaseConfig');
 
-module.exports = (rootDir) => {
-  const config = getBaseWebpackConfig(rootDir);
+module.exports = (context) => {
+  const config = getBaseWebpackConfig(context);
 
   config.mode('production');
 
