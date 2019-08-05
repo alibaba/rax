@@ -1,4 +1,4 @@
-const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
+const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
 const { relative, join, dirname, extname } = require('path');
 const compiler = require('jsx-compiler');
 
@@ -41,7 +41,7 @@ module.exports = function componentLoader(content) {
   }
 
   const distFileDir = dirname(distFileWithoutExt);
-  if (!existsSync(distFileDir)) mkdirSync(distFileDir);
+  if (!existsSync(distFileDir)) mkdirpSync(distFileDir);
   writeFileSync(distFileWithoutExt + '.js', transformed.code);
   writeFileSync(distFileWithoutExt + '.axml', transformed.template);
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
