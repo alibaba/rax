@@ -40,7 +40,7 @@ function watch(options = {}) {
   compiler.watch(watchOpts, (...args) => {
     handleCompiled(...args);
     afterCompiled && afterCompiled(...args);
-    console.log('\nWatching file changes...')
+    console.log('\nWatching file changes...');
   });
 }
 

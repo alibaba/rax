@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const { readJSONSync } = require('fs-extra');
 const { join } = require('path');
+const chalk = require('chalk');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
 const spinner = require('./utils/spinner');
 
@@ -66,6 +67,7 @@ try {
 module.exports = (options = {}) => ({
   mode: 'production', // will be fast
   entry: getEntry(appConfig),
+  target: 'node',
   context: cwd,
   module: {
     rules: [
@@ -101,6 +103,11 @@ module.exports = (options = {}) => ({
     },
   ],
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"',
+      }
+    }),
     new RuntimeWebpackPlugin(),
     new webpack.ProgressPlugin( (percentage, message) => {
       if (percentage === 0) {
@@ -108,7 +115,7 @@ module.exports = (options = {}) => ({
         spinner.start('Compiling...');
       } else if (percentage === 1) {
         const endTime = Date.now();
-        spinner.succeed(`Compiled successfully!\n\nTime: [${endTime - buildStartTime}ms]`);
+        spinner.succeed(`${chalk.green('Successfully compiled!')}\n\nCost: [${endTime - buildStartTime}ms]`);
       }
     })
   ],
