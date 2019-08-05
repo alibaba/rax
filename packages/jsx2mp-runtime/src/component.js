@@ -222,7 +222,6 @@ export default class Component {
         break;
 
       case RENDER:
-        if (this.__updating) return;
         if (!isFunction(this.render)) throw new Error('It seems component have no render method.');
         Host.current = this;
         this._hookID = 0;

@@ -42,11 +42,22 @@ module.exports = function componentLoader(content) {
 
   const distFileDir = dirname(distFileWithoutExt);
   if (!existsSync(distFileDir)) mkdirpSync(distFileDir);
+  // Write code
   writeFileSync(distFileWithoutExt + '.js', transformed.code);
+  // Write template
   writeFileSync(distFileWithoutExt + '.axml', transformed.template);
+  // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
+  // Write acss style
   if (transformed.style) {
     writeFileSync(distFileWithoutExt + '.acss', transformed.style);
+  }
+  // Write extra assets
+  if (transformed.assets) {
+    Object.keys(transformed.assets).forEach((asset) => {
+      const content = transformed.assets[asset];
+      writeFileSync(join(distPath, asset), content);
+    });
   }
 
   function isCustomComponent(name, usingComponents = {}) {

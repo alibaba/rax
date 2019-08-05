@@ -1,8 +1,7 @@
 const { join, dirname, relative } = require('path');
-const { copySync, lstatSync, removeSync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
+const { copySync, lstatSync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
-const getBabelConfig = require('./getBabelConfig');
 const cached = require('./cached');
 
 const AppLoader = require.resolve('./app-loader');
@@ -25,10 +24,8 @@ module.exports = function fileLoader(content) {
   });
 
   const getNpmName = cached(function getNpmName(relativeNpmPath) {
-    const dirname = (/([^\/]+)\//.exec(relativeNpmPath) || [])[1];
-    const pkgPath = join(dirname, 'package.json');
-    const pkg = readJSONSync(join(currentNodeModulePath, pkgPath));
-    return pkg.name;
+    const isScopedNpm = relativeNpmPath[0] === '@';
+    return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
   if (isNodeModule(this.resourcePath)) {
@@ -63,6 +60,7 @@ module.exports = function fileLoader(content) {
 
       // Copy file
       const splitedNpmPath = relativeNpmPath.split('/');
+      if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = join(distPath, 'npm', npmName, splitedNpmPath.join('/'));
       const { code, map } = transformCode(rawContent, loaderOptions);

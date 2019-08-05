@@ -476,6 +476,7 @@ module.exports = {
       }, {});
       Object.assign(parsed.dynamicValue, dynamicValue);
       parsed.dynamicEvents = dynamicEvents;
+      parsed.eventHandlers = dynamicEvents.map(e => e.name);
     }
   },
   // For test export.
