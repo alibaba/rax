@@ -15,6 +15,7 @@ module.exports = function getWebpackBaseConfig(options = {}) {
     entry: webpackConfig.entry,
     output: webpackConfig.output,
     resolve: webpackConfig.resolve,
+    externals: webpackConfig.externals,
     plugins: [
       new MiniCssExtractPlugin({
         filename: 'client/[name].css',
