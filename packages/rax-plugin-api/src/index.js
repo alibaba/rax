@@ -1,12 +1,18 @@
+const deepmerge = require('deepmerge');
+
+const defaultUserConfig = require('./defaultUserConfig');
 const build = require('./build');
 const dev = require('./dev');
 
-module.exports = ({ command, rootDir }, options = {}) => {
+module.exports = ({ context, log }, options = {}) => {
+  context.userConfig = deepmerge(defaultUserConfig, context.userConfig);
+
+  const { command } = context;
   if (command === 'dev') {
-    dev(rootDir);
+    dev(context, options, log);
   }
 
   if (command === 'build') {
-    build(rootDir);
+    build(context, options, log);
   }
 };
