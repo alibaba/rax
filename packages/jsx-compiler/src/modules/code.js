@@ -213,6 +213,16 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
       );
 
       // Component(__create_component__(__class_def__));
+      const args = [t.identifier(EXPORTED_DEF)];
+      // __create_component__(__class_def__, { events: ['_e*']})
+      if (eventHandlers.length > 0) {
+        args.push(
+          t.objectExpression([
+            t.objectProperty(t.identifier('events'), t.arrayExpression(eventHandlers.map(e => t.stringLiteral(e))))
+          ])
+        );
+      }
+
       path.node.body.push(
         t.expressionStatement(
           t.callExpression(
@@ -220,12 +230,7 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
             [
               t.callExpression(
                 t.identifier(safeCreateInstanceId),
-                [
-                  t.identifier(EXPORTED_DEF),
-                  t.objectExpression([
-                    t.objectProperty(t.identifier('events'), t.arrayExpression(eventHandlers.map(e => t.stringLiteral(e))))
-                  ])
-                ]
+                args
               )
             ],
           )
