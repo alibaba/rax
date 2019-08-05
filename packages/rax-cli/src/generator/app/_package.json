@@ -10,11 +10,11 @@
     "rax-server-renderer": "^1.1.0",
     <%_ } -%>
     "driver-universal": "^1.0.1",
+    "history": "^4.9.0",
+    "rax": "^1.0.8",
     <%_ if (projectTargets.includes('web')) { -%>
     "rax-pwa": "^1.0.2",
     <%_ } -%>
-    "history": "^4.9.0",
-    "rax": "^1.0.8",
     "rax-view": "^1.0.0",
     "rax-text": "^1.0.0",
     "universal-app-runtime": "^0.1.3"
