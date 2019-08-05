@@ -1,5 +1,5 @@
 {
   "plugins": [
-    "rax-plugin-api"
+    ["rax-plugin-api", { "enableTypescript": true }]
   ]
 }
