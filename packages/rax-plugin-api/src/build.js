@@ -8,7 +8,10 @@ const babel = require('gulp-babel');
 const fs = require('fs-extra');
 const runSequence = require('run-sequence').use(gulp);
 
-module.exports = (rootDir) => {
+module.exports = (context) => {
+  const { rootDir, userConfig } = context;
+  const { outputDir } = userConfig;
+
   const babelConfig = require('./babel.config');
 
   const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
@@ -16,7 +19,7 @@ module.exports = (rootDir) => {
   const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';
   const IGNORE_PATTERN = '**/__tests__/**';
 
-  const BUILD_DIR = path.resolve(rootDir, 'lib');
+  const BUILD_DIR = path.resolve(rootDir, outputDir);
 
   console.log(chalk.green('\n🚀  Build start... '));
 

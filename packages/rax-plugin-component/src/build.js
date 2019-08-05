@@ -9,14 +9,17 @@ const fs = require('fs-extra');
 const gulp = require('gulp');
 const runSequence = require('run-sequence').use(gulp);
 
-const babelConfig = require('./babel.config');
+const babelConfig = require('./config/babel.config');
 
 const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
 const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';
 const IGNORE_PATTERN = '**/__tests__/**';
 
-module.exports = (rootDir) => {
-  const BUILD_DIR = path.resolve(rootDir, 'lib');
+module.exports = (context) => {
+  const { rootDir, userConfig } = context;
+  const { outputDir } = userConfig;
+
+  const BUILD_DIR = path.resolve(rootDir, outputDir);
 
   const tsProject = ts.createProject('tsconfig.json', {
     skipLibCheck: true,
@@ -26,7 +29,7 @@ module.exports = (rootDir) => {
 
   gulp.task('clean', function(done) {
     console.log(chalk.green('\n🚀  Build start... '));
-    fs.removeSync(path.resolve(rootDir, 'dist'));
+    fs.removeSync(BUILD_DIR);
     done();
   });
 
