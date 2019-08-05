@@ -20,6 +20,16 @@ module.exports = (context) => {
   config.resolve.extensions
     .merge(['.js', '.json', '.jsx', '.html', '.ts', '.tsx']);
 
+  // external weex module
+  config.externals([
+    function(context, request, callback) {
+      if (request.indexOf('@weex-module') !== -1) {
+        return callback(null, 'commonjs ' + request);
+      }
+      callback();
+    }
+  ]);
+
   config.output
     .path(path.resolve(rootDir, outputDir))
     .filename('[name].js')
