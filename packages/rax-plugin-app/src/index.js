@@ -1,6 +1,11 @@
 const chalk = require('chalk');
+const deepmerge = require('deepmerge');
+const defaultUserConfig = require('./config/defaultUserConfig');
 
-module.exports = ({ chainWebpack, registerConfig, rootDir, onHook }, options = {}) => {
+module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {}) => {
+  // set default config
+  context.userConfig = deepmerge(context.userConfig, defaultUserConfig);
+
   const { targets = [] } = options;
 
   targets.forEach(target => {
@@ -9,15 +14,15 @@ module.exports = ({ chainWebpack, registerConfig, rootDir, onHook }, options = {
       const setDev = require(`./config/${target}/setDev`);
       const setBuild = require(`./config/${target}/setBuild`);
 
-      registerConfig(target, getBase(rootDir));
+      registerConfig(target, getBase(context));
 
       chainWebpack((config, { command }) => {
         if (command === 'dev') {
-          setDev(config.get(target), rootDir);
+          setDev(config.get(target), context);
         }
 
         if (command === 'build') {
-          setBuild(config.get(target), rootDir);
+          setBuild(config.get(target), context);
         }
       });
 

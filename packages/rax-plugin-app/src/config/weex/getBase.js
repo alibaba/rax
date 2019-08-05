@@ -4,7 +4,6 @@ const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
 
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
-const UniversalDocumentPlugin = require('../../plugins/UniversalDocumentPlugin');
 
 const babelConfig = require('../babel.config');
 
@@ -18,8 +17,10 @@ const babelConfigWeex = babelMerge.all([{
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
 
-module.exports = (rootDir) => {
-  const config = getWebpackBase(rootDir);
+module.exports = (context) => {
+  const { rootDir } = context;
+
+  const config = getWebpackBase(context);
 
   config.output.filename('weex/[name].js');
 
@@ -63,13 +64,6 @@ module.exports = (rootDir) => {
     config.plugin('analyze')
       .use(BundleAnalyzerPlugin);
   }
-
-  // config.plugin('document')
-  //   .use(UniversalDocumentPlugin, [{
-  //     rootDir,
-  //     path: 'src/document/index.jsx',
-  //     render: serverRender.renderToString,
-  //   }]);
 
   config.plugin('weexFrame')
     .use(WeexFrameworkBanner);
