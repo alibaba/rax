@@ -103,7 +103,7 @@ module.exports = {
     new webpack.ProgressPlugin( (percentage, message) => {
       if (percentage === 0) {
         buildStartTime = Date.now();
-        spinner.start('Compiling...')
+        spinner.start('Compiling...');
       } else if (percentage === 1) {
         const endTime = Date.now();
         spinner.succeed(`Compiled successfully!\n\nTime: [${endTime - buildStartTime}ms]`);

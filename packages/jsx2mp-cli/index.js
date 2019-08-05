@@ -40,7 +40,7 @@ function handleCompiled(err, stats) {
       if (process.env.DEBUG === 'true') {
         console.log(e.error.stack);
       }
-      console.log(chalk.yellow('You can set debug mode to show error stacks.'))
+      console.log(chalk.yellow('You can set debug mode to show error stacks.'));
     }
   }
 }

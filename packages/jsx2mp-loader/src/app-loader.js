@@ -14,14 +14,14 @@ function generateDependencies(dependencies) {
     .join('\n');
 }
 
-function getRelativePath (filePath) {
+function getRelativePath(filePath) {
   let relativePath;
   if (filePath[0] === '/') {
-    relativePath = `.${filePath}`
+    relativePath = `.${filePath}`;
   } else if (filePath[0] === '.') {
     relativePath = filePath;
   } else {
-    relativePath = `./${filePath}`
+    relativePath = `./${filePath}`;
   }
   return relativePath;
 }

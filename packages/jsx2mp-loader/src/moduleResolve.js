@@ -30,17 +30,17 @@ function loadAsFile(module, extensions) {
 
 function loadAsDirectory(module, extensions) {
   if (!existsSync(module)) {
-      return;
+    return;
   }
   let stat = statSync(module);
   if (stat.isDirectory()) {
     for (let e of extensions) {
       if (existsSync(module + `/index${e}`) && statSync(module + `/index${e}`).isFile()) {
         return join(module, '/index');
-      } 
+      }
     }
   } else if (stat.isFile()) {
-      return loadAsFile(module, extensions);
+    return loadAsFile(module, extensions);
   }
 }
 
@@ -48,19 +48,19 @@ function nodeModulesPaths(start) {
   let parts = start.split(sep);
 
   if (!parts[parts.length - 1]) {
-      parts.pop();
+    parts.pop();
   }
 
   let i = parts.length - 1;
   let dirs = [];
   while (i >= 0) {
-      if ('node_modules' === parts[i]) {
-          i -= 1;
-          continue;
-      }
-      let dir = join(parts.slice(0, i + 1).join(sep) || sep, 'node_modules');
-      dirs.push(dir);
+    if ('node_modules' === parts[i]) {
       i -= 1;
+      continue;
+    }
+    let dir = join(parts.slice(0, i + 1).join(sep) || sep, 'node_modules');
+    dirs.push(dir);
+    i -= 1;
   }
   return dirs;
 }
@@ -70,12 +70,12 @@ function loadNpmModules(module, start, extension) {
   let paths = nodeModulesPaths(start);
 
   for (let i = 0; i < paths.length; ++i) {
-      let dependencyPath = join(paths[i], module);
-      target = loadAsFile(dependencyPath, extension) || loadAsDirectory(dependencyPath, extension);
+    let dependencyPath = join(paths[i], module);
+    target = loadAsFile(dependencyPath, extension) || loadAsDirectory(dependencyPath, extension);
 
-      if (target) {
-          break;
-      }
+    if (target) {
+      break;
+    }
   }
   return target;
 }
@@ -90,11 +90,10 @@ function loadNpmModules(module, start, extension) {
 module.exports = function resolve(script, dependency, extensions = ['.js', '.jsx']) {
   let target;
   if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
-      let dependencyPath = join(script, dependency);
-      target = loadAsFile(dependencyPath, extensions) || loadAsDirectory(dependencyPath, extensions);
-
+    let dependencyPath = join(script, dependency);
+    target = loadAsFile(dependencyPath, extensions) || loadAsDirectory(dependencyPath, extensions);
   } else {
-      target = loadNpmModules(dependency, dirname(script), extensions);
+    target = loadNpmModules(dependency, dirname(script), extensions);
   }
   return target;
 };
