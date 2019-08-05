@@ -31,6 +31,16 @@ module.exports = {
     },
     extensions: ['.js', '.json', '.jsx', '.html', '.vue', '.sfc', '.ts', '.tsx'],
   },
+
+  externals: [
+    function(context, request, callback) {
+      if (request.indexOf('@weex-module') !== -1) {
+        return callback(null, 'commonjs ' + request);
+      }
+      callback();
+    }
+  ],
+
   output: {
     pathinfo: process.env.NODE_ENV === 'development',
     // Next line is not used in dev but WebpackDevServer crashes without it:

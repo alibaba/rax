@@ -9,6 +9,7 @@ module.exports = {
   // Compile target should "web" when use hot reload
   target: webpackConfig.target,
   entry: webpackConfig.entry,
+  externals: webpackConfig.externals,
   output: Object.assign({}, webpackConfig.output, {
     filename: '[name].js',
   }),
