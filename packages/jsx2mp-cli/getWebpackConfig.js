@@ -6,7 +6,6 @@ const spinner = require('./utils/spinner');
 
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
 const PageLoader = require.resolve('jsx2mp-loader/src/page-loader');
-const ComponentLoader = require.resolve('jsx2mp-loader/src/component-loader');
 const FileLoader = require.resolve('jsx2mp-loader/src/file-loader');
 
 const BabelLoader = require.resolve('babel-loader');
@@ -64,7 +63,7 @@ try {
   process.exit(1);
 }
 
-module.exports = {
+module.exports = (options = {}) => ({
   mode: 'production', // will be fast
   entry: getEntry(appConfig),
   context: cwd,
@@ -74,7 +73,10 @@ module.exports = {
         test: /\.jsx?$/,
         use: [
           {
-            loader: FileLoader
+            loader: FileLoader,
+            options: {
+              mode: options.mode,
+            },
           },
           {
             loader: BabelLoader,
@@ -110,4 +112,4 @@ module.exports = {
       }
     })
   ],
-};
+});

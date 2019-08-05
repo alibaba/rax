@@ -1,6 +1,7 @@
 const { join, dirname, relative } = require('path');
 const { copySync, lstatSync, removeSync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
 const { transformSync } = require('@babel/core');
+const { getOptions } = require('loader-utils');
 const getBabelConfig = require('./getBabelConfig');
 const cached = require('./cached');
 
@@ -13,6 +14,7 @@ module.exports = function fileLoader(content) {
   const loaderHandled = this.loaders.some(({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1);
   if (loaderHandled) return;
 
+  const loaderOptions = getOptions(this);
   const rawContent = readFileSync(this.resourcePath);
   const rootContext = this.rootContext;
   const currentNodeModulePath = join(rootContext, 'node_modules');
@@ -63,7 +65,7 @@ module.exports = function fileLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = join(distPath, 'npm', npmName, splitedNpmPath.join('/'));
-      const { code, map } = transformCode(rawContent);
+      const { code, map } = transformCode(rawContent, loaderOptions);
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
       writeFileSync(distSourcePath, code, 'utf-8');
@@ -78,14 +80,14 @@ module.exports = function fileLoader(content) {
   return content;
 };
 
-function transformCode(rawCode) {
+function transformCode(rawCode, loaderOptions) {
   const presets = [];
   const plugins = [
     require('./babel-plugin-rename-import'), // for rename npm modules.
   ];
 
   // Compile to ES5 for build.
-  if (process.env.JSX2MP_ENV === 'build') {
+  if (loaderOptions.mode === 'build') {
     presets.push(require('@babel/preset-env'));
     plugins.push(require('@babel/plugin-proposal-class-properties'));
   }

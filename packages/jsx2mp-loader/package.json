@@ -13,6 +13,7 @@
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "fs-extra": "^8.1.0",
-    "jsx-compiler": "^0.1.7"
+    "jsx-compiler": "^0.1.7",
+    "loader-utils": "^1.2.3"
   }
 }
