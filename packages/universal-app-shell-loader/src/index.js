@@ -51,6 +51,7 @@ module.exports = function(content) {
         appRender += `import Shell from "${getDepPath('shell/index', this.rootContext)}";`;
         appRenderMethod = `
           // process Shell.getInitialProps
+          // use global props appProps as shell default props
           const shellProps = {...appProps};
           if (withSSR && window.__INITIAL_DATA__.shellData !== null) {
             Object.assign(shellProps, window.__INITIAL_DATA__.shellData);
