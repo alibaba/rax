@@ -11,7 +11,7 @@ module.exports = (context) => {
 
   config.entryPoints.clear();
 
-  const entries = getEntries(rootDir);
+  const entries = getEntries(config, context);
   Object.keys(entries).forEach((key) => {
     config.entry(key)
       .add(entries[key]);

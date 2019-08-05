@@ -3,7 +3,9 @@ const qs = require('querystring');
 
 const SSRLoader = require.resolve('./loader');
 
-module.exports = (rootDir) => {
+module.exports = (config, context) => {
+  const { rootDir } = context;
+  const publicPath = config.output.get('publicPath');
   const appDirectory = rootDir;
   const appSrc = path.resolve(appDirectory, 'src');
 
@@ -29,7 +31,7 @@ module.exports = (rootDir) => {
       absoluteAppPath,
       absolutePagePath,
       absoluteAppJSONPath,
-      publicPath: '/'
+      publicPath
     };
 
     entries[entry] = `${SSRLoader}?${qs.stringify(query)}!${absolutePagePath}`;
