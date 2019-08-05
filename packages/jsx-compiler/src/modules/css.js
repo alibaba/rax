@@ -53,8 +53,10 @@ module.exports = {
   generate(ret, parsed, options) {
     ret.style = ret.style || '';
     ret.assets = ret.assets || {};
+    ret.dependencies = ret.dependencies || [];
     if (parsed.cssFiles) {
       parsed.cssFiles.forEach((cssFile) => {
+        ret.dependencies.push(cssFile.filename);
         if (cssFile.type === 'cssObject') {
           const relativePath = relative(options.cwd, cssFile.filename);
           ret.assets[relativePath + '.js'] = createCSSModule(cssFile.content);

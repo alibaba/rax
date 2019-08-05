@@ -1,4 +1,5 @@
 /* global getCurrentPages */
+import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
@@ -156,13 +157,29 @@ function createConfig(component, options) {
   return config;
 }
 
+function noop() {}
+
 /**
  * Bridge App definition.
- * @param Klass
+ * @param definedApp
  * @return instance
  */
-export function createApp(Klass) {
-  return new Klass();
+export function createApp(definedApp) {
+  const appProps = { routerConfig: null };
+  const appConfig = {
+    _updateData: noop,
+    _updateMethods: noop,
+    onLaunch(options) {
+      if (Array.isArray(appCycles.launch)) {
+        let fn;
+        while (fn = appCycles.launch.pop()) { // eslint-disable-line
+          fn.call(appConfig, options);
+        }
+      }
+    },
+  };
+  definedApp.call(appConfig, appProps);
+  return appConfig;
 }
 
 export function createPage(definition, options = {}) {

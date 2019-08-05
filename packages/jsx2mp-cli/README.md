@@ -1,4 +1,4 @@
-# jsx2mp
+# jsx2mp-cli
 
 A cli tool to transform Rax JSX based project to MiniApp.
 

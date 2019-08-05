@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const { join } = require('path');
 const genExpression = require('../codegen/genExpression');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -22,7 +23,9 @@ const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 
 const EXPORTED_DEF = '__def__';
-const RUNTIME = 'jsx2mp-runtime';
+const RUNTIME = '/npm/jsx2mp-runtime';
+
+const isCoreModule = (mod) => /^@core\//.test(mod);
 
 function getConstructor(type) {
   switch (type) {
@@ -42,19 +45,24 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
+    if (!defaultExportedPath || !defaultExportedPath.node) return; // Can not found default export.
+
     let userDefineType;
 
     if (options.type === 'app') {
-      userDefineType = 'class';
-      const { id, superClass, body, decorators } = defaultExportedPath.node;
-      defaultExportedPath.parentPath.replaceWith(
-        t.variableDeclaration('var', [
-          t.variableDeclarator(
-            t.identifier(EXPORTED_DEF),
-            t.classExpression(id, superClass, body, decorators)
-          )
-        ])
-      );
+      userDefineType = 'function';
+      const { id, generator, async, params, body } = defaultExportedPath.node;
+      const replacer = getReplacer(defaultExportedPath);
+      if (replacer) {
+        replacer.replaceWith(
+          t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.identifier(EXPORTED_DEF),
+              t.functionExpression(id, params, body, generator, async)
+            )
+          ])
+        );
+      }
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
       const { id, generator, async, params, body } = defaultExportedPath.node;
@@ -89,16 +97,19 @@ module.exports = {
 
     const hooks = collectHooks(parsed.renderFunctionPath);
 
-    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeRaxImports(parsed.ast);
+    renameCoreModule(parsed.ast);
+    renameNpmModules(parsed.ast);
+    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
     /**
-     * $updateProps: collect props dependencies.
+     * updateChildProps: collect props dependencies.
      */
-    if (parsed.renderFunctionPath) {
+    if (options.type !== 'app' && parsed.renderFunctionPath) {
       addUpdateData(parsed.dynamicValue, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
+
       const fnBody = parsed.renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {
@@ -127,6 +138,29 @@ module.exports = {
     }
   },
 };
+
+function renameCoreModule(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isCoreModule(source.node.value)) {
+        source.replaceWith(t.stringLiteral(RUNTIME));
+      }
+    }
+  });
+}
+
+
+function renameNpmModules(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && ['.', '/'].indexOf(source.node.value[0]) === -1) {
+        source.replaceWith(t.stringLiteral(join('/npm', source.node.value)));
+      }
+    }
+  });
+}
 
 function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks) {
   let safeCreateInstanceId;

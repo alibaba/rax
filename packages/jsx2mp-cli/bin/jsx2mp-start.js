@@ -9,9 +9,12 @@ program
   .action((cmd) => {
     const workDirectory = resolve(process.env.CWD || process.cwd());
     const distDirectory = resolve(workDirectory, cmd.dist);
+    const enableWatch = true;
 
-    require('..')(workDirectory, distDirectory, {
-      enableWatch: false,
+    require('..').watch({
+      workDirectory,
+      distDirectory,
+      enableWatch,
       type: cmd.type,
       dist: cmd.dist,
       entry: cmd.entry,
