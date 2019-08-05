@@ -6,8 +6,6 @@ const createBinding = require('../utils/createBinding');
 const genExpression = require('../codegen/genExpression');
 
 function transformList(ast, adapter) {
-  let iters = 0;
-  const dynamicValue = {};
   let fnScope;
 
   function traverseFunction(path) {
@@ -54,107 +52,80 @@ function transformList(ast, adapter) {
               });
             }
             path.replaceWith(callee.object);
+            // node is tagged with __bindEvent, avoid be transformed when exit
+            path.node.__bindEvent = true;
           }
         }
-
-        let replacedIter;
-        const parentJSXElement = path.findParent(p => p.isJSXElement());
-
-        if (parentJSXElement) {
-          if (t.isMemberExpression(callee)) {
-            if (t.isIdentifier(callee.property, { name: 'map' })) {
-              const parentListJSXElementPath = path.findParent(p => p.isJSXElement() && p.node.__isList);
-              const parentListMeta = parentListJSXElementPath
-                ? parentListJSXElementPath.node.__listMeta
-                : null;
-              const iterId = iters++;
-              if (parentListMeta) {
-                replacedIter = parentListMeta.itemName + '.' + '_l' + iterId;
-                const key = t.identifier('_l' + iterId);
-                parentListMeta.properties.push(t.objectProperty(key, node));
-                // Reset name to original for callee.object.
-                if (t.isIdentifier(node.callee.object) && node.callee.object.__originalName) {
-                  node.callee.object.name = node.callee.object.__originalName;
-                }
-              } else {
-                replacedIter = '_l' + iterId;
-                dynamicValue[replacedIter] = node;
-              }
-
-              // { foo.map(fn) }
-              let childNode = null;
-              const itemName = '_item' + iterId;
-              const indexName = '_index' + iterId;
-              const scope = `${replacedIter}[${indexName}]`;
-
-              if (t.isFunction(args[0])) {
-                const properties = [];
-                args[0].params.forEach((id, index) => {
-                  if (!t.isIdentifier(id)) return;
-                  const originalName = id.name;
-                  const replacement = `${itemName}.${id.name}`;
-                  path.traverse({
-                    Identifier(idPath) {
-                      if (idPath.node === id) return;
-                      if (idPath.node.__skipReplace) return;
-                      if (idPath.node.name === originalName) {
-                        idPath.node.__originalName = idPath.node.name;
-                        idPath.node.name = replacement;
-                        // Mark for element to not add to dynamic value.
-                        idPath.node.__skipDynamicValue = true;
-                      }
-                    }
-                  });
-
-                  // Reset params to original.
-                  const key = args[0].params[index] = t.identifier(originalName);
-                  properties.push(t.objectProperty(key, key));
-                });
-
-                // { foo.map(() => {}) }
-                let returnEl;
-                if (t.isBlockStatement(args[0].body)) {
-                  // () => { return xxx }
-                  const returnElPath = getReturnElementPath(args[0].body).get('argument');
-                  returnEl = returnElPath.node;
-                  returnElPath.replaceWith(t.objectExpression(properties));
-                } else {
-                  // () => (<jsx></jsx)
-                  const returnElPath = path.get('arguments')[0].get('body');
-                  returnEl = returnElPath.node;
-                  returnElPath.replaceWith(t.objectExpression(properties));
-                }
-
-                childNode = returnEl;
-
-                const listBlock = createJSX('block', {
-                  [adapter.for]: t.stringLiteral(createBinding(replacedIter)),
-                  [adapter.forItem]: t.stringLiteral(itemName),
-                  [adapter.forIndex]: t.stringLiteral(indexName),
-                }, [childNode]);
-                listBlock.__isList = true;
-                listBlock.__listMeta = {
-                  itemName, indexName, properties
-                };
-                parentPath.replaceWith(listBlock);
-              } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
-                // { foo.map(this.xxx) }
-                throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
-              }
-            }
-          }
-        }
-      },
+      }
     },
-  });
+    exit(path) {
+      const { node, parentPath } = path;
+      if (node.__transformedList) return;
+      node.__transformedList = true;
+      const { callee, arguments: args } = node;
+      const parentJSXElement = path.findParent(p => p.isJSXElement());
+      if (parentJSXElement) {
+        if (t.isMemberExpression(callee)) {
+          if (t.isIdentifier(callee.property, {
+            name: 'map'
+          })) {
+            /*
+            * params is item & index
+            * <block a:for-item="params[0]" a:for-index="params[1]" ></block>
+            * */
+            if (t.isFunction(args[0])) {
+              const { params, body } = args[0];
+              const forItem = params[0] || t.identifier('item');
+              const forIndex = params[1] || t.identifier('index');
+              const properties = [];
+              let returnElPath;
+              if (t.isBlockStatement(body)) {
+                returnElPath = getReturnElementPath(body).get('argument');
+              } else {
+                returnElPath = path.get('arguments')[0].get('body');
+              }
+              returnElPath.traverse({
+                Identifier(innerPath) {
+                  if (innerPath.findParent(p => p.node.__bindEvent)) return;
+                  if (innerPath.node.name === forItem.name) {
+                    innerPath.node.__mapArgs = {
+                      item: forItem.name
+                    };
+                  }
+                  if (innerPath.node.name === forIndex.name) {
+                    innerPath.node.__mapArgs = {};
+                  }
+                  if (innerPath.scope.hasBinding(innerPath.node.name)) {
+                    innerPath.node.__mapArgs = {
+                      item: forItem.name
+                    };
+                    properties.push(t.objectProperty(innerPath.node, innerPath.node));
+                  }
+                }
+              });
 
-  return { dynamicValue };
+              const listBlock = createJSX('block', {
+                [adapter.for]: t.jsxExpressionContainer(node),
+                [adapter.forItem]: t.stringLiteral(forItem.name),
+                [adapter.forIndex]: t.stringLiteral(forIndex.name)
+              }, [returnElPath.node]);
+
+              parentPath.replaceWith(listBlock);
+              returnElPath.replaceWith(t.objectExpression(properties));
+            }
+          } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
+            // { foo.map(this.xxx) }
+            throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
+          }
+        }
+      }
+    }
+  });
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    const { dynamicValue } = transformList(parsed.templateAST, options.adapter);
-    Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
+    transformList(parsed.templateAST, options.adapter);
   },
 
   // For test cases.
