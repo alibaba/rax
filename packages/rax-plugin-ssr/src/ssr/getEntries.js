@@ -23,6 +23,7 @@ module.exports = (rootDir) => {
 
     const query = {
       path: route.path,
+      pageName: entry,
       absoluteDocumentPath,
       absoluteShellPath,
       absoluteAppPath,

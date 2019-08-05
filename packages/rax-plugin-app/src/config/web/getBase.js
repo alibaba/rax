@@ -1,4 +1,5 @@
 'use strict';
+const path = require('path');
 const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
@@ -46,7 +47,16 @@ module.exports = (rootDir) => {
     .use('ts')
       .loader(require.resolve('ts-loader'));
 
-  config.module.rule('css')
+  const buildConfigPath = path.resolve(rootDir, 'build.json');
+  const buildConfig = require(buildConfigPath);
+
+  if (buildConfig.inlineStyle) {
+    config.module.rule('css')
+    .test(/\.css?$/)
+    .use('css')
+      .loader(require.resolve('stylesheet-loader'));
+  } else {
+    config.module.rule('css')
     .test(/\.css?$/)
     .use('minicss')
       .loader(MiniCssExtractPlugin.loader)
@@ -68,6 +78,13 @@ module.exports = (rootDir) => {
           require('postcss-plugin-rpx2vw')(),
         ],
       });
+
+    config.plugin('minicss')
+    .use(MiniCssExtractPlugin, [{
+      filename: 'web/[name].css',
+      chunkFilename: 'web/[name].css',
+    }]);
+  }
 
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
@@ -91,12 +108,6 @@ module.exports = (rootDir) => {
       rootDir,
       path: 'src/shell/index.jsx',
       render: serverRender.renderToString,
-    }]);
-
-  config.plugin('minicss')
-    .use(MiniCssExtractPlugin, [{
-      filename: 'web/[name].css',
-      chunkFilename: 'web/[name].css',
     }]);
 
   config.plugin('noError')
