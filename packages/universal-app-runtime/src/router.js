@@ -1,6 +1,6 @@
 import { createElement, useRef, useState, useImperativeHandle } from 'rax';
 import * as RaxUseRouter from 'rax-use-router';
-import { isWeex, isWeb } from 'universal-env';
+import { isWeex, isWeb, isNode } from 'universal-env';
 import { createHashHistory } from 'history';
 import encodeQS from 'querystring/encode';
 
@@ -38,8 +38,9 @@ export function useRouter(routerConfig) {
   function Router(props) {
     const [currentPath, setCurrentPath] = useState('');
 
-    if (routerConfig.defaultComponet) {
-      return createElement(routerConfig.defaultComponet, props);
+    // return initial component in ssr
+    if (isNode && routerConfig.InitialComponent) {
+      return createElement(routerConfig.InitialComponent, props);
     }
 
     const { component } = RaxUseRouter.useRouter(() => _routerConfig);

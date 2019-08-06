@@ -46,7 +46,7 @@ module.exports = function(content) {
 
       const contentElement = createElement(Shell, null, createElement(App, {
         routerConfig: {
-          defaultComponet: Component,
+          InitialComponent: Component,
           routes: appJSON.routes
         }
       }));
