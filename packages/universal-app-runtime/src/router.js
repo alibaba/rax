@@ -80,57 +80,6 @@ export function useRouter(routerConfig) {
   return { Router };
 }
 
-export function Link(props, ref) {
-  const defaultType = isWeex ? 'a' : 'span';
-  const { to, query, hash, state, type = defaultType, onClick, children, style = {}, ...others } = props;
-  const linkRef = useRef(null);
-
-  const throughProps = Object.assign({}, others, {
-    onClick: (evt) => {
-      if (to) {
-        let url = to;
-        if (query) url += '?' + encodeQS(query);
-        if (hash) url += '#' + hash;
-        push(url, state);
-      }
-      onClick && onClick(evt);
-    }
-  });
-
-  let content = children;
-  if (typeof children === 'string') {
-    const textStyle = Object.assign({
-      border: '0 solid black',
-      boxSizing: 'border-box',
-      display: 'block',
-      flexDirection: 'column',
-      alignContent: 'flex-start',
-      flexShrink: 0,
-    }, {
-      color: style.color,
-      lines: style.lines,
-      fontSize: style.fontSize,
-      fontStyle: style.fontStyle,
-      fontWeight: style.fontWeight,
-      textDecoration: style.textDecoration || 'none',
-      textAlign: style.textAlign,
-      fontFamily: style.fontFamily,
-      textOverflow: style.textOverflow,
-    });
-    content = createElement(isWeex ? 'text' : 'span', { style: textStyle, children });
-    throughProps.children = content;
-  } else {
-    throughProps.children = children;
-  }
-
-  useImperativeHandle(ref, () => ({
-    _nativeNode: linkRef.current
-  }));
-  throughProps.ref = linkRef;
-
-  return createElement(type, throughProps);
-}
-
 export function push(path, state) {
   checkHistory();
   return _history.push(path, state);

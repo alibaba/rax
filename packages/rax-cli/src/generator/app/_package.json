@@ -12,22 +12,20 @@
     "driver-universal": "^1.0.1",
     "history": "^4.9.0",
     "rax": "^1.0.8",
+    "rax-image": "^1.0.3",
+    "rax-link": "^1.0.1",
     <%_ if (projectTargets.includes('web')) { -%>
     "rax-pwa": "^1.0.2",
     <%_ } -%>
     "rax-view": "^1.0.0",
     "rax-text": "^1.0.0",
+    "rax-view": "^1.0.0",
     "universal-app-runtime": "^0.1.3"
   },
   "devDependencies": {
     <%_ if (projectFeatures.includes('ssr')) { -%>
-    "rax-plugin-ssr": "^0.0.0",
+    "rax-plugin-ssr": "^0.1.0",
     <%_ } -%>
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-config-rax": "^0.0.0",
-    "eslint-plugin-import": "^2.17.2",
-    "eslint-plugin-react": "^7.12.4",
     "rax-scripts": "^2.0.0-0",
     "rax-plugin-app": "^0.1.0-1"
   }
