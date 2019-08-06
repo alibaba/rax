@@ -3,8 +3,9 @@
 let router;
 
 export function useRouter(routerConfig) {
-  router = { config: routerConfig, history: routerConfig.history };
-  return { Router: null, history: routerConfig.history }; // just noop
+  const history = routerConfig && routerConfig.history;
+  router = { config: routerConfig, history };
+  return { Router: null, history }; // just noop
 }
 
 /**
