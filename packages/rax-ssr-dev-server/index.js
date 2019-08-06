@@ -38,7 +38,8 @@ class DevServer {
     app.use(
       devMiddleware(compiler, {
         serverSideRender: true,
-        index: false
+        index: false,
+        logLevel: 'error'
       })
     );
 
