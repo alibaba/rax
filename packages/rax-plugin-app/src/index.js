@@ -8,7 +8,7 @@ module.exports = (api, options) => {
   const { context } = api;
   const { command } = context;
   // set default config
-  context.userConfig = deepmerge(context.userConfig, defaultUserConfig);
+  context.userConfig = deepmerge(defaultUserConfig, context.userConfig);
 
   if (command === 'build') {
     build(api, options);

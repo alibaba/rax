@@ -17,12 +17,13 @@ module.exports = class UniversalDocumentPlugin {
     }
 
     this.rootDir = options.rootDir ? options.rootDir : process.cwd();
-    this.publicPath = options.publicPath ? options.publicPath : '/';
     this.documentPath = options.path ? options.path : 'src/document/index.jsx';
   }
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync('UniversalDocumentPlugin', (compilation, callback) => {
+      const { publicPath } = compilation.outputOptions;
+
       const filename = path.resolve(this.rootDir, this.documentPath);
       if (!existsSync(filename)) throw new Error(`File ${filename} is not exists, please check.`);
 
@@ -37,7 +38,7 @@ module.exports = class UniversalDocumentPlugin {
 
       // get document html string
       const source = this.render(require('rax').createElement(documentElement, {
-        publicPath: this.publicPath,
+        publicPath,
         styles: [],
         scripts: ['web/index.js'],
       }));
