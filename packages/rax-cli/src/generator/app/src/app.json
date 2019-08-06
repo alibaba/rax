@@ -3,11 +3,11 @@
   "routes": [
     {
       "path": "/",
-      "component": "pages/home"
+      "component": "pages/Home"
     },
     {
       "path": "/about",
-      "component": "pages/about"
+      "component": "pages/About"
     }
   ],
   <%_ if (isSSR) { -%>

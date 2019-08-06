@@ -21,17 +21,8 @@ export default (props) => {
       <Text className="info">More infomation about</Text>
       <Text className="info">how to cutomize this project</Text>
       <View className="box">
-        <Text className="info">check the</Text>
-        <Link className="info" href="https://rax.js.org" target="__blank">
-          Rax Documation
-        </Link>
-      </View>
-
-      <Text className="info">More about Rax</Text>
-      <View className="box">
-        <Text className="info">check the</Text>
-        <Link className="info" href="https://github.com/alibaba/rax" target="__blank">
-          Rax Gihub
+        <Link className="info" href="/about">
+          about
         </Link>
       </View>
     </View>
