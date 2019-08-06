@@ -4,7 +4,7 @@ const defaultUserConfig = require('./config/defaultUserConfig');
 const build = require('./build');
 const dev = require('./dev');
 
-module.exports = (api, options) => {
+const pluginApp = (api, options) => {
   const { context } = api;
   const { command } = context;
   // set default config
@@ -18,3 +18,13 @@ module.exports = (api, options) => {
     dev(api, options);
   }
 };
+
+pluginApp.getWebBase = require('./config/web/getBase');
+pluginApp.setWebDev = require('./config/web/setDev');
+pluginApp.setWebBuild = require('./config/web/setBuild');
+
+pluginApp.getWeexBase = require('./config/weex/getBase');
+pluginApp.setWeexDev = require('./config/weex/setDev');
+pluginApp.setWeexBuild = require('./config/weex/setBuild');
+
+module.exports = pluginApp;
