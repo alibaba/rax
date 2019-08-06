@@ -3,9 +3,12 @@ const jsx2mp = require('jsx2mp-cli');
 
 const getOutputPath = require('./getOutputPath');
 
-module.exports = (context) => {
+module.exports = (context, cancelClear) => {
   const outputPath = getOutputPath(context);
-  fs.removeSync(outputPath);
+
+  if (!cancelClear) {
+    fs.removeSync(outputPath);
+  }
 
   return new Promise((resolve, reject) => {
     jsx2mp.build({

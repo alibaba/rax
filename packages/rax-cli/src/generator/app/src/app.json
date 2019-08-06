@@ -4,10 +4,6 @@
     {
       "path": "/",
       "component": "pages/home"
-    },
-    {
-      "path": "/about",
-      "component": "pages/about"
     }
   ],
   <%_ if (isSSR) { -%>

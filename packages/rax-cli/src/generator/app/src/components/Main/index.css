@@ -1,6 +1,6 @@
 .home {
   align-items: center;
-  margin-top: 30rpx;
+  margin-top: 200rpx;
 }
 
 .logo {
@@ -15,14 +15,6 @@
   margin: 20rpx 0;
 }
 
-.box {
-  flex-direction: row;
-}
-
 .info {
-  font-size: 42rpx;
-}
-
-.btn {
-  margin-bottom: 20rpx;
+  font-size: 36rpx;
 }

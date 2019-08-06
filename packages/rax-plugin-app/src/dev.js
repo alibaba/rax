@@ -39,7 +39,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
       return;
     }
 
-    console.log(chalk.green('Rax development server has been started:'));
+    console.log(chalk.green('Rax development server has been started:'));
     console.log();
 
     if (~targets.indexOf('web')) {
@@ -55,7 +55,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
     }
 
     if (~targets.indexOf('miniapp')) {
-      console.log(chalk.green('[Miniapp] Watching file changes at:'));
+      console.log(chalk.green('[Miniapp] Use miniapp developer tools to open the following folder:'));
       console.log('   ', chalk.underline.white(getMpOuput(context)));
       console.log();
     }
@@ -86,7 +86,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
       if (~targets.indexOf('miniapp')) {
         const mpBuild = require('./config/miniapp/build');
         let mpBuildErr = null;
-        const mpInfo = await mpBuild(context);
+        const mpInfo = await mpBuild(context, true);
 
         if (mpInfo.err || mpInfo.stats.hasErrors()) {
           mpBuildErr = mpInfo;
