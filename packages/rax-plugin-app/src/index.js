@@ -4,7 +4,7 @@ const defaultUserConfig = require('./config/defaultUserConfig');
 
 module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {}) => {
   // set default config
-  context.userConfig = deepmerge(context.userConfig, defaultUserConfig);
+  context.userConfig = deepmerge(defaultUserConfig, context.userConfig);
 
   const { targets = [] } = options;
 
