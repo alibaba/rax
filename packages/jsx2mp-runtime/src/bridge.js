@@ -123,6 +123,7 @@ function createProxyMethods(events) {
 function createAnonymousClass(render) {
   return class extends Component {
     render(props) {
+      console.log('call render', props);
       return render.call(this, props);
     }
   };
