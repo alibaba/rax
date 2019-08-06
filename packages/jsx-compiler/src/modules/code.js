@@ -143,9 +143,9 @@ module.exports = {
         const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
         if (propMaps.length > 0) {
           (parentNode || fnBody).push(callUpdateProps);
-        } else if (parentNode && parentNode.remove) {
+        } else if ((parentNode || fnBody).length === 0) {
           // Remove empty loop exp.
-          parentNode.remove();
+          parentNode.remove && parentNode.remove();
         }
       });
     }

@@ -101,6 +101,7 @@ module.exports = {
                   ? grandJSXListEl.node.__jsxlist.loopBlockStatement.body
                   : fnBody;
 
+                body.push(loopExp);
                 // Can be removed if not used.
                 block.body.remove = () => {
                   const index = body.indexOf(loopExp);
