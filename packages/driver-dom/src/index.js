@@ -338,12 +338,9 @@ export function setAttribute(node, propKey, propValue) {
 }
 
 export function setStyle(node, style) {
-  // Support Object[] typeof style.
-  if (Array.isArray(style)) style = style.reduce((s, curr) => Object.assign(s, curr), {});
-
   const nodeStyle = node.style;
   for (let prop in style) {
-    let propValue = style[prop];
+    const propValue = style[prop];
     nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop]
       ? propValue + 'px'
       : convertUnit(propValue);
