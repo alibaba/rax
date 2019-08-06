@@ -7,13 +7,6 @@ const setWebBaseConfig = require('./web/setBaseConfig');
 // can‘t clone webpack chain object
 module.exports = ({ chainWebpack, registerConfig, setDevServer, context }) => {
   chainWebpack((config, { command }) => {
-    // TODO
-    context.userConfig = Object.assign(context.userConfig, {
-      outputDir: 'build',
-      publicPath: '/',
-      devPublicPath: '/',
-    });
-
     const rootDir = context.rootDir;
     setWebBaseConfig(config, rootDir);
 

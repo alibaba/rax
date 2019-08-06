@@ -25,6 +25,7 @@ module.exports = (config, context) => {
     .contentBase(path.resolve(rootDir, 'build'))
     .watchContentBase(true)
     .hot(true)
+    .quiet(true)
     .publicPath(publicPath)
     .overlay(false)
     .host(address.ip())
