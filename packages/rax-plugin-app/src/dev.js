@@ -7,10 +7,6 @@ const getMpOuput = require('./config/miniapp/getOutputPath');
 module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {}) => {
   const { targets = [] } = options;
 
-  let normalInfo = null;
-
-  let emitDevLog = false;
-
   function devCompileLog({ url, err, stats }) {
     consoleClear(true);
 
@@ -55,9 +51,12 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
     }
   }
 
+  // run miniapp watch when targets has only miniapp
   if (targets.length === 1 && targets[0] === 'miniapp') {
     const mpDev = require('./config/miniapp/dev');
-    onHook('after.dev', devCompileLog);
+    onHook('after.dev', () => {
+      mpDev(context, devCompileLog);
+    });
   } else {
     targets.forEach(target => {
       if (target === 'weex' || target === 'web') {
@@ -73,17 +72,20 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
     });
 
     onHook('after.devCompile', async({ url, err, stats }) => {
-      const mpBuild = require('./config/miniapp/build');
-      let mpBuildErr = null;
-      const mpInfo = await mpBuild(context);
+      // run miniapp build while targets have web or weex, for log control
+      if (~targets.indexOf('miniapp')) {
+        const mpBuild = require('./config/miniapp/build');
+        let mpBuildErr = null;
+        const mpInfo = await mpBuild(context);
 
-      if (mpInfo.err || mpInfo.stats.hasErrors()) {
-        mpBuildErr = mpInfo;
-      }
+        if (mpInfo.err || mpInfo.stats.hasErrors()) {
+          mpBuildErr = mpInfo;
+        }
 
-      if (mpBuildErr) {
-        err = mpBuildErr.err;
-        stats = mpBuildErr.stats;
+        if (mpBuildErr) {
+          err = mpBuildErr.err;
+          stats = mpBuildErr.stats;
+        }
       }
 
       devCompileLog({
