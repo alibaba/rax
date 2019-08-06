@@ -28,12 +28,6 @@ function createAfterConfirmation(name) {
 function askProjectInformaction(name) {
   const questions = [
     {
-      type: 'input',
-      name: 'projectName',
-      message: 'What\'s your project name?',
-      default: name
-    },
-    {
       type: 'list',
       name: 'projectType',
       message: 'What\'s your project type?',
@@ -132,9 +126,9 @@ function createProject(name, verbose, userAnswers) {
     directoryName: name,
     projectName: projectName,
     projectType: userAnswers.projectType,
-    projectFeatures: userAnswers.projectFeatures,
-    projectAuthor: userAnswers.projectAuthor,
-    projectTargets: userAnswers.projectTargets,
+    projectFeatures: userAnswers.projectFeatures || [],
+    projectAuthor: userAnswers.projectAuthor || '',
+    projectTargets: userAnswers.projectTargets || [],
     verbose: verbose,
   }).then(function(directory) {
     if (autoInstallModules) {

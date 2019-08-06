@@ -16,8 +16,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
 
 module.exports = (context) => {
-  const { rootDir, userConfig } = context;
-  const { publicPath } = userConfig;
+  const { rootDir } = context;
 
   const config = getWebpackBase(context);
 
@@ -67,7 +66,6 @@ module.exports = (context) => {
   config.plugin('document')
     .use(UniversalDocumentPlugin, [{
       rootDir,
-      publicPath,
       path: 'src/document/index.jsx',
       render: serverRender.renderToString,
     }]);
