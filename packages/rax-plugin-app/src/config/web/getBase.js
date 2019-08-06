@@ -17,7 +17,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
 
 module.exports = (context) => {
-  const { rootDir } = context;
+  const { rootDir, userConfig } = context;
 
   const config = getWebpackBase(context);
 
@@ -28,11 +28,8 @@ module.exports = (context) => {
     .set('@core/page', 'universal-app-runtime')
     .set('@core/router', 'universal-app-runtime');
 
-  const buildConfigPath = path.resolve(rootDir, 'build.json');
-  const buildConfig = require(buildConfigPath);
-
   let babelConfig = babelConfigWeb;
-  if (buildConfig.inlineStyle) {
+  if (userConfig.inlineStyle) {
     babelConfig = babelMerge.all([{
       plugins: [
         require.resolve('babel-plugin-transform-jsx-stylesheet')

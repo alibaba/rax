@@ -68,7 +68,6 @@ if (!disableJSXPlus) {
   config.plugins.push(require.resolve('babel-plugin-transform-jsx-slot'));
   config.plugins.push([require.resolve('babel-plugin-transform-jsx-fragment'), { moduleName: 'rax' }]);
   config.plugins.push(require.resolve('babel-plugin-transform-jsx-class'));
-  console.log(chalk.green('[JSX+] Stynax enabled.'));
 }
 
 module.exports = config;

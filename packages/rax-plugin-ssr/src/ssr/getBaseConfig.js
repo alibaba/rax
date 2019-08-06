@@ -6,7 +6,7 @@ const babelConfig = require('./babel.config');
 
 // Can‘t clone webpack chain object, so generate a new chain and reset config
 module.exports = (context) => {
-  const { rootDir } = context;
+  const { rootDir, userConfig } = context;
   const config = getWebBase(context);
 
   config.entryPoints.clear();
@@ -35,10 +35,7 @@ module.exports = (context) => {
   config.plugins.delete('minicss');
   config.module.rules.delete('css');
 
-  const buildConfigPath = path.resolve(rootDir, 'build.json');
-  const buildConfig = require(buildConfigPath);
-
-  if (buildConfig.inlineStyle) {
+  if (userConfig.inlineStyle) {
     babelConfig.plugins.push(require.resolve('babel-plugin-transform-jsx-stylesheet'));
 
     config.module.rules.delete('jsx');
