@@ -22,7 +22,7 @@ class ReactiveComponent extends Component {
     this.isScheduled = false;
     this.shouldUpdate = false;
     this._children = null;
-    this.dependencies = new Map();
+    this._dependencies = {};
 
     this.state = {};
 
@@ -57,9 +57,11 @@ class ReactiveComponent extends Component {
   }
 
   readContext(context) {
-    let contextItem = this.dependencies.get(context);
+    const Provider = context.Provider;
+    const contextProp = Provider.contextProp;
+    let contextItem = this._dependencies[contextProp];
     if (!contextItem) {
-      const readEmitter = context.Provider.readEmitter;
+      const readEmitter = Provider.readEmitter;
       const contextEmitter = readEmitter(this);
       contextItem = {
         emitter: contextEmitter,
@@ -77,7 +79,7 @@ class ReactiveComponent extends Component {
       this.willUnmount.push(() => {
         contextItem.emitter.off(contextUpdater);
       });
-      this.dependencies.set(context, contextItem);
+      this._dependencies[contextProp] = contextItem;
     }
     return contextItem.renderedContext = contextItem.emitter.value;
   }

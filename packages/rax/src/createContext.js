@@ -19,7 +19,10 @@ class ValueEmitter {
   }
 }
 
+let uniqueId = 0;
+
 export default function createContext(defaultValue) {
+  const contextProp = '__context_' + uniqueId++ + '__';
   const stack = [];
   const defaultEmitter = new ValueEmitter(defaultValue);
 
@@ -66,6 +69,7 @@ export default function createContext(defaultValue) {
   }
 
   Provider.readEmitter = readEmitter;
+  Provider.contextProp = contextProp;
 
   class Consumer extends Component {
     componentWillMount() {
