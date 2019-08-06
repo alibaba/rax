@@ -98,7 +98,7 @@
     "rax-ssr-dev-server": "^1.0.0",
     "rax-webpack-plugin": "^0.6.5",
     "rimraf": "^2.6.2",
-    "scripts-core": "^0.1.0",
+    "scripts-core": "^0.1.1-1",
     "strip-ansi": "^5.0.0",
     "stylesheet-loader": "^0.6.5",
     "ts-loader": "^5.3.3",
