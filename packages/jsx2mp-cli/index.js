@@ -54,7 +54,7 @@ function handleCompiled(err, stats) {
   }
   if (stats.hasErrors()) {
     const errors = stats.compilation.errors;
-    consoleClear();
+    consoleClear(true);
     spinner.fail('Failed to compile.\n');
     for (let e of errors) {
       console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));

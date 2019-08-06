@@ -142,8 +142,9 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             const replaceNode = transformIdentifier(expression, dynamicValues, isDirective);
             path.replaceWith(t.stringLiteral(createBinding(genExpression(replaceNode))));
           }
-          if (!isDirective && jsxEl.__pid) {
-            componentDependentProps[jsxEl.__pid][attributeName] = expression;
+          if (!isDirective && jsxEl.__tagId) {
+            componentDependentProps[jsxEl.__tagId].props = componentDependentProps[jsxEl.__tagId].props || {};
+            componentDependentProps[jsxEl.__tagId].props[attributeName] = expression;
           }
         } else if (type === ELE) {
           if (expression.name === 'undefined') {
@@ -192,8 +193,9 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             const replaceNode = transformMemberExpression(expression, dynamicValues, isDirective);
             replaceNode.__transformed = true;
             path.replaceWith(t.stringLiteral(createBinding(genExpression(replaceNode))));
-            if (!isDirective && jsxEl.__pid) {
-              componentDependentProps[jsxEl.__pid][attributeName] = expression;
+            if (!isDirective && jsxEl.__tagId) {
+              componentDependentProps[jsxEl.__tagId].props = componentDependentProps[jsxEl.__tagId].props || {};
+              componentDependentProps[jsxEl.__tagId].props[attributeName] = expression;
             }
           }
         } else if (type === ELE) {

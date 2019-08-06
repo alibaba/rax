@@ -13,14 +13,14 @@ module.exports = [
   require('./element'),
   // Handle template style attr
   require('./style'),
+  // Handle Rax base components.
+  require('./components'),
   // Directive a:for
   require('./list'),
   // Directive a:if
   require('./condition'),
   // JSX+ Directives
   require('./jsx-plus'),
-  // Handle Rax base components.
-  require('./components'),
   // Parse and generate template.
   require('./template'),
 ];

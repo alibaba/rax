@@ -196,7 +196,7 @@ export default class Component {
     this._internal.instance = null;
     this._internal = null;
     this.__mounted = false;
-    removeComponentProps(this.props.__pid);
+    removeComponentProps(this.props.__tagId);
   }
 
   /**

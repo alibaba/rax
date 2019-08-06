@@ -49,12 +49,12 @@ function getComponentCycles(Klass) {
   return {
     didMount() {
       // `this` point to page/component insatnce.
-      const props = Object.assign({}, this.props, getComponentProps(this.props.__pid));
+      const props = Object.assign({}, this.props, getComponentProps(this.props.__tagId));
       this.instance = new Klass(props);
       this.instance.type = Klass;
 
-      if (this.props.hasOwnProperty('__pid')) {
-        const componentId = this.props.__pid;
+      if (this.props.hasOwnProperty('__tagId')) {
+        const componentId = this.props.__tagId;
         setComponentInstance(componentId, this.instance);
       }
 
