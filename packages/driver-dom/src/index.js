@@ -58,10 +58,10 @@ let unitPrecision = 4;
 
 /**
  * Set viewport width.
- * @param vp {Number} Viewport width, default to 750.
+ * @param viewport {Number} Viewport width, default to 750.
  */
-export function setViewportWidth(vp) {
-  viewportWidth = vp;
+export function setViewportWidth(viewport) {
+  viewportWidth = viewport;
 }
 
 /**
