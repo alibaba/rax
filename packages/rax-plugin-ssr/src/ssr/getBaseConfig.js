@@ -29,10 +29,6 @@ module.exports = (context) => {
     .filename('server/[name].js')
     .libraryTarget('commonjs2');
 
-  config.externals({
-    rax: 'rax',
-  });
-
   config.plugins.delete('document');
   config.plugins.delete('PWAAppShell');
 
