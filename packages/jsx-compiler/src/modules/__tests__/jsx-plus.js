@@ -1,7 +1,8 @@
 const t = require('@babel/types');
-const { _transformCondition, _transformList } = require('../directive');
+const { _transformCondition, _transformList, _transformFragment } = require('../jsx-plus');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
+const adapter = require('../../adapter');
 
 describe('Directives', () => {
   describe('list', () => {
@@ -9,9 +10,8 @@ describe('Directives', () => {
       const ast = parseExpression(`
         <View x-for={val in array}>{val}</View>
       `);
-      const dynamicValue = _transformList(ast);
-      expect(genExpression(ast)).toEqual('<View a:for="{{array}}" a:for-item="val">{val}</View>');
-      expect(dynamicValue.array.name).toEqual('array');
+      _transformList(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View a:for={array} a:for-item="val">{val}</View>');
     });
   });
 
@@ -20,8 +20,18 @@ describe('Directives', () => {
       const ast = parseExpression(`
         <View x-if={value}></View>
       `);
-      _transformCondition(ast);
+      _transformCondition(ast, adapter);
       expect(genExpression(ast)).toEqual('<View a:if={value}></View>');
+    });
+  });
+
+  describe('fragment', () => {
+    it('simple', () => {
+      const ast = parseExpression(`
+        <Fragment foo="bar"></Fragment>
+      `);
+      _transformFragment(ast);
+      expect(genExpression(ast)).toEqual('<block foo="bar"></block>');
     });
   });
 });

@@ -138,28 +138,10 @@ function transformRenderFunction(ast, adapter) {
   return templateVariables;
 }
 
-function assignDynamicValue(root, dynamicValue) {
-  traverse(root, {
-    MemberExpression(path) {
-      dynamicValue[path.node.object.name] = path.node.object;
-      path.skip();
-    },
-    Identifier(path) {
-      dynamicValue[path.node.name] = path.node;
-    },
-  });
-}
-
 function transformTemplate(ast, adapter, templateVariables) {
   const dynamicValue = {};
 
   traverse(ast, {
-    CallExpression(path) {
-      const { node } = path;
-      if (t.isMemberExpression(node.callee) && t.isIdentifier(node.callee.property, { name: 'map' })) {
-        node.__isList = true;
-      }
-    },
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
       if (parentPath.isJSXAttribute()) {
@@ -248,9 +230,6 @@ function transformConditionalExpression(path, expression, adapter, dynamicValue)
   }
 
   if (consequentReplacement.length > 0) {
-    if (!listCallExpPath) {
-      assignDynamicValue(test, dynamicValue);
-    }
     replacement.push(
       createJSX(
         'block',

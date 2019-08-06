@@ -1,14 +1,14 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
-const genExpression = require('../codegen/genExpression');
+const DynamicBinding = require('../utils/DynamicBinding');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
 const directiveElse = 'x-else';
-const miniappDirectives = {
-  [directiveIf]: 'a:if',
-  [directiveElseif]: 'a:elif',
-  [directiveElse]: 'a:else',
+const conditionTypes = {
+  [directiveIf]: 'if',
+  [directiveElseif]: 'elseif',
+  [directiveElse]: 'else',
 };
 
 /**
@@ -24,7 +24,7 @@ function getCondition(jsxElement) {
           case directiveElseif:
           case directiveElse:
             return {
-              type: attributes[i].name.name,
+              type: conditionTypes[attributes[i].name.name],
               value: t.isJSXExpressionContainer(attributes[i].value)
                 ? attributes[i].value.expression
                 : attributes[i].value,
@@ -37,16 +37,14 @@ function getCondition(jsxElement) {
   return null;
 }
 
-function transformDirectiveCondition(ast) {
-  const dynamicValue = {};
+function transformDirectiveCondition(ast, adapter) {
   traverse(ast, {
     JSXElement(path) {
-      const { node, parentPath } = path;
+      const { node } = path;
       const condition = getCondition(node);
-      if (condition !== null && condition.value !== null && condition.type === directiveIf) {
+      if (condition !== null && condition.value !== null && condition.type === conditionTypes[directiveIf]) {
         const { type, value, index } = condition;
         const conditions = [];
-
         node.openingElement.attributes.splice(index, 1);
         conditions.push({
           type,
@@ -77,10 +75,10 @@ function transformDirectiveCondition(ast) {
 
         conditions.forEach(({ type, value, jsxElement }) => {
           const { attributes } = jsxElement.openingElement;
-          const attr = type === directiveElse
-            ? t.jsxAttribute(t.jsxIdentifier(miniappDirectives[type]))
+          const attr = type === conditionTypes[directiveElse]
+            ? t.jsxAttribute(t.jsxIdentifier(adapter[type]))
             : t.jsxAttribute(
-              t.jsxIdentifier(miniappDirectives[type]),
+              t.jsxIdentifier(adapter[type]),
               t.jsxExpressionContainer(value)
             );
           attributes.push(attr);
@@ -88,38 +86,44 @@ function transformDirectiveCondition(ast) {
       }
     }
   });
-  return dynamicValue;
 }
 
-function transformDirectiveList(ast) {
-  const dynamicValue = {};
+function transformDirectiveList(ast, adapter) {
+  const dynamicValues = new DynamicBinding('_d');
   traverse(ast, {
     JSXElement: {
       exit(path) {
         const { node } = path;
         const { attributes } = node.openingElement;
-        if (node.__jsxlist) {
+        if (node.__jsxlist && !node.__jsxlist.generated) {
           const { args, iterValue } = node.__jsxlist;
-          dynamicValue[iterValue.name] = iterValue;
+          path.traverse({
+            Identifier(innerPath) {
+              const { node } = innerPath;
+              if (args.find(arg => arg.name === node.name)) {
+                node.__xforArgs = true;
+              }
+            }
+          });
           attributes.push(
             t.jsxAttribute(
-              t.jsxIdentifier('a:for'),
-              t.stringLiteral(`{{${genExpression(iterValue)}}}`)
+              t.jsxIdentifier(adapter.for),
+              t.jsxExpressionContainer(iterValue)
             )
           );
           args.forEach((arg, index) => {
             attributes.push(
               t.jsxAttribute(
-                t.jsxIdentifier(['a:for-item', 'a:for-index'][index]),
+                t.jsxIdentifier([adapter.forItem, adapter.forIndex][index]),
                 t.stringLiteral(arg.name)
               )
             );
-
             // Mark skip ids.
             const skipIds = node.skipIds = node.skipIds || new Map();
             skipIds.set(arg.name, true);
           });
-          node.__jsxlist = null;
+
+          node.__jsxlist.generated = true;
         }
       }
     },
@@ -154,27 +158,39 @@ function transformDirectiveList(ast) {
           // x-for={value}, x-for={callExp()}, ...
           iterValue = expression;
         }
-
         const parentJSXEl = path.findParent(p => p.isJSXElement());
-        parentJSXEl.node.__jsxlist = { args: params, iterValue };
-
+        parentJSXEl.node.__jsxlist = { args: params, iterValue, jsxplus: true };
         path.remove();
       }
     }
   });
-  return dynamicValue;
+  return dynamicValues.getStore();
 }
 
+function transformComponentFragment(ast) {
+  function transformFragment(path) {
+    if (t.isJSXIdentifier(path.node.name, { name: 'Fragment' })) {
+      path.get('name').replaceWith(t.jsxIdentifier('block'));
+    }
+  }
+
+  traverse(ast, {
+    JSXOpeningElement: transformFragment,
+    JSXClosingElement: transformFragment,
+  });
+  return null;
+}
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       Object.assign(
         parsed.dynamicValue = parsed.dynamicValue || {},
-        transformDirectiveCondition(parsed.templateAST),
-        transformDirectiveList(parsed.templateAST),
+        transformDirectiveCondition(parsed.templateAST, options.adapter),
       );
+      transformDirectiveList(parsed.templateAST, options.adapter);
     }
   },
   _transformList: transformDirectiveList,
   _transformCondition: transformDirectiveCondition,
+  _transformFragment: transformComponentFragment,
 };

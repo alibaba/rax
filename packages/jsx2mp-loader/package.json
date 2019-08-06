@@ -1,0 +1,19 @@
+{
+  "name": "jsx2mp-loader",
+  "version": "0.1.0",
+  "description": "",
+  "main": "src/app-loader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rax Team",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "fs-extra": "^8.1.0",
+    "jsx-compiler": "^0.1.7",
+    "loader-utils": "^1.2.3"
+  }
+}

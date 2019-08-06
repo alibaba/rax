@@ -1,21 +1,22 @@
 const { join } = require('path');
 const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
-const chalk = require('chalk');
 const { _transform: transformTemplate } = require('./element');
 const genExpression = require('../codegen/genExpression');
 const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
-
+const Expression = require('../utils/Expression');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
+let tagCount = 0;
 
 /**
  * Rax components.
  */
 module.exports = {
   parse(parsed, code, options) {
+    const componentsDependentProps = parsed.componentDependentProps = {};
     const usingComponents = parsed.usingComponents = {};
 
     function getComponentAlias(tagName) {
@@ -31,8 +32,7 @@ module.exports = {
     function getComponentConfig(pkgName) {
       const pkgPath = moduleResolve(options.filePath, join(pkgName, 'package.json'));
       if (!pkgPath) {
-        console.log(chalk.yellow(`Can not resolve rax component "${pkgName}", please check you have this module installed.`));
-        throw new Error('MODULE_NOT_RESOLVE');
+        throw new Error(`MODULE_NOT_RESOLVE: Can not resolve rax component "${pkgName}", please check you have this module installed.`);
       }
       return readJSONSync(pkgPath);
     }
@@ -51,7 +51,7 @@ module.exports = {
         // npm module
         const pkg = getComponentConfig(alias.from);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
-          return join(alias.from, pkg.miniappConfig.main);
+          return join('/npm', alias.from, pkg.miniappConfig.main);
         } else {
           console.warn('Can not found compatible rax miniapp component "' + pkg.name + '".');
         }
@@ -60,7 +60,7 @@ module.exports = {
 
     traverse(parsed.templateAST, {
       JSXOpeningElement(path) {
-        const { node, scope, parent } = path;
+        const { node, scope, parent, parentPath } = path;
 
         if (t.isJSXIdentifier(node.name)) { // <View />
           const alias = getComponentAlias(node.name.name);
@@ -68,6 +68,55 @@ module.exports = {
           if (alias) {
             // Miniapp template tag name does not support special characters.
             const componentTag = alias.name.replace(/@|\//g, '_');
+            const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
+
+            // <tag __tagId="tagId" />
+            let tagId = '' + tagCount++;
+            if (parentJSXListEl) {
+              const { args } = parentJSXListEl.node.__jsxlist;
+              const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
+              parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+              tagId += '-{{' + indexValue + '}}';
+            }
+            parentPath.node.__tagId = tagId;
+            componentsDependentProps[tagId] = componentsDependentProps[tagId] || {};
+            if (parentPath.node.__tagIdExpression) {
+              componentsDependentProps[tagId].tagIdExpression = parentPath.node.__tagIdExpression;
+
+              if (parsed.renderFunctionPath) {
+                const { args, iterValue, loopFnBody } = parentJSXListEl.node.__jsxlist;
+                const __args = [
+                  args[0] || t.identifier('item'),
+                  args[1] || t.identifier('index'),
+                ];
+                const callee = t.memberExpression(iterValue, t.identifier('forEach'));
+                const block = t.blockStatement([]);
+
+                const loopArgs = [t.arrowFunctionExpression(__args, block)];
+                const loopExp = t.expressionStatement(t.callExpression(callee, loopArgs));
+
+                const fnBody = parsed.renderFunctionPath.node.body.body;
+                const grandJSXListEl = parentJSXListEl.findParent(p => p.node.__jsxlist);
+                const body = grandJSXListEl && grandJSXListEl.node.__jsxlist.loopBlockStatement
+                  ? grandJSXListEl.node.__jsxlist.loopBlockStatement.body
+                  : fnBody;
+
+                body.push(loopExp);
+                // Can be removed if not used.
+                block.body.remove = () => {
+                  const index = body.indexOf(loopExp);
+                  body.splice(index, 1);
+                };
+                componentsDependentProps[tagId].parentNode = block.body;
+                parentJSXListEl.node.__jsxlist.loopBlockStatement = block;
+              }
+            }
+
+            node.attributes.push(t.jsxAttribute(
+              t.jsxIdentifier('__tagId'),
+              t.stringLiteral(tagId)
+            ));
+
             node.name = t.jsxIdentifier(componentTag);
             // Handle with close tag too.
             if (parent.closingElement) parent.closingElement.name = t.jsxIdentifier(componentTag);
@@ -91,8 +140,7 @@ module.exports = {
                           const binding = attrPath.scope.getBinding(node.value.expression.name);
                           fnExp = binding.path.node;
                         } else if (t.isMemberExpression(node.value.expression)) {
-                          console.log(chalk.red(`Not support MemberExpression at render function: "${genExpression(node)}", please use anonymous function instead.`));
-                          throw new Error('NOT_SUPPORTED');
+                          throw new Error(`NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(node)}", please use anonymous function instead.`);
                         }
 
                         if (fnExp) {
@@ -129,8 +177,7 @@ module.exports = {
               }
             }
           } else {
-            console.log(chalk.red('Unsupported type of sub components.' + genExpression(node)));
-            throw new Error('NOT_SUPPORTED');
+            throw new Error(`NOT_SUPPORTED: Unsupported type of sub components. ${genExpression(node)}`);
           }
         }
       },
