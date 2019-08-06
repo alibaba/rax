@@ -20,6 +20,7 @@ const webpackConfigDev = {
   }),
   mode: webpackConfig.mode,
   context: webpackConfig.context,
+  externals: webpackConfig.externals,
   // Compile target should "web" when use hot reload
   target: webpackConfig.target,
   resolve: webpackConfig.resolve,
