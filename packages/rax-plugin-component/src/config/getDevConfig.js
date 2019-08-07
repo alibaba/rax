@@ -81,6 +81,7 @@ module.exports = (context) => {
     .contentBase(appPublic)
     .watchContentBase(true)
     .hot(true)
+    .quiet(true)
     .publicPath('/')
     .overlay(false)
     .host(address.ip())

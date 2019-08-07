@@ -1,6 +1,6 @@
 {
   "name": "universal-app-shell-loader",
-  "version": "0.2.0-4",
+  "version": "0.2.0-5",
   "description": "Universal App Shell for Rax",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
