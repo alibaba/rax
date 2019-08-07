@@ -1,6 +1,8 @@
 /**
  * Driver for Web DOM
  **/
+const IS_RPX_REG = /\d+rpx/;
+const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -51,6 +53,45 @@ let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
 let isHydrating = false;
+let viewportWidth = 750;
+let unitPrecision = 4;
+
+/**
+ * Set viewport width.
+ * @param viewport {Number} Viewport width, default to 750.
+ */
+export function setViewportWidth(viewport) {
+  viewportWidth = viewport;
+}
+
+/**
+ * Set unit precision.
+ * @param n {Number} Unit precision, default to 4.
+ */
+export function setUnitPrecision(n) {
+  unitPrecision = n;
+}
+
+function unitTransformer(n) {
+  return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
+}
+
+function toFixed(number, precision) {
+  const multiplier = Math.pow(10, precision + 1);
+  const wholeNumber = Math.floor(number * multiplier);
+
+  return Math.round(wholeNumber / 10) * 10 / multiplier;
+}
+
+function calcRpxToVw(value) {
+  return value.replace(RPX_REG, unitTransformer);
+}
+
+function convertUnit(value) {
+  return IS_RPX_REG.test(value)
+    ? calcRpxToVw(value)
+    : value;
+}
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
@@ -128,7 +169,6 @@ function findHydrationChild(parent) {
 export function createElement(type, props, component) {
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
-
   let node;
   let hydrationChild = null;
 
@@ -298,10 +338,12 @@ export function setAttribute(node, propKey, propValue) {
 }
 
 export function setStyle(node, style) {
-  let nodeStyle = node.style;
+  const nodeStyle = node.style;
   for (let prop in style) {
-    let propValue = style[prop];
-    nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop] ? propValue + 'px' : propValue;
+    const propValue = style[prop];
+    nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop]
+      ? propValue + 'px'
+      : convertUnit(propValue);
   }
 }
 
