@@ -31,6 +31,7 @@ let isSVGMode = false;
 let isHydrating = false;
 let viewportWidth = 750;
 let unitPrecision = 4;
+let decimalPixelTransformer = (value) => value;
 
 /**
  * Set viewport width.
@@ -48,6 +49,16 @@ export function setUnitPrecision(n) {
   unitPrecision = n;
 }
 
+/**
+ * Set a function to transform unit of pixel,
+ * default to passthrough.
+ * @param {Function} transformer function
+ */
+export function setDecimalPixelTransformer(transformer) {
+  decimalPixelTransformer = transformer;
+}
+
+
 function unitTransformer(n) {
   return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
 }
@@ -63,6 +74,7 @@ function calcRpxToVw(value) {
 }
 
 function convertUnit(value) {
+  value = decimalPixelTransformer(value);
   return IS_RPX_REG.test(value)
     ? calcRpxToVw(value)
     : value;
