@@ -19,7 +19,6 @@
     <%_ } -%>
     "rax-view": "^1.0.0",
     "rax-text": "^1.0.0",
-    "rax-view": "^1.0.0",
     "universal-app-runtime": "^0.1.5-0"
   },
   "devDependencies": {

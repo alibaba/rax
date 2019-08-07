@@ -5,10 +5,7 @@ const getOutputPath = require('./getOutputPath');
 
 module.exports = (context, cancelClear) => {
   const outputPath = getOutputPath(context);
-
-  if (!cancelClear) {
-    fs.removeSync(outputPath);
-  }
+  fs.removeSync(outputPath);
 
   return new Promise((resolve, reject) => {
     jsx2mp.build({

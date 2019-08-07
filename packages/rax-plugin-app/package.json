@@ -50,7 +50,7 @@
     "deepmerge": "^4.0.0",
     "fs-extra": "^8.1.0",
     "image-source-loader": "^0.6.5",
-    "jsx2mp-cli": "^0.1.0-beta.1",
+    "jsx2mp-cli": "^0.1.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "loader-utils": "^1.1.0",
