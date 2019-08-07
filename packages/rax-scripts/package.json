@@ -1,6 +1,6 @@
 {
   "name": "rax-scripts",
-  "version": "2.0.0-2",
+  "version": "2.0.0",
   "license": "BSD-3-Clause",
   "description": "Project scripts for Rax.",
   "bin": {
@@ -95,10 +95,10 @@
     "rax-hydrate": "^1.0.1",
     "rax-pwa-webpack-plugin": "^1.0.0-0",
     "rax-server": "^1.0.0-3",
-    "rax-ssr-dev-server": "^2.0.0-0",
+    "rax-ssr-dev-server": "^2.0.0",
     "rax-webpack-plugin": "^0.6.5",
     "rimraf": "^2.6.2",
-    "scripts-core": "^0.1.1-1",
+    "scripts-core": "^0.1.1",
     "strip-ansi": "^5.0.0",
     "stylesheet-loader": "^0.6.5",
     "ts-loader": "^5.3.3",
