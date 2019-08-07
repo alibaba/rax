@@ -50,7 +50,7 @@ export function useRouter(routerConfig) {
       return null;
     } else {
       // process Page.getInitialProps
-      if (_currentPagePath !== _history.location.pathname) {
+      if (isWeb && _currentPagePath !== _history.location.pathname) {
         _initialProps = {};
         _currentPagePath = _history.location.pathname;
         // SSR project the first time is initialized from global data,

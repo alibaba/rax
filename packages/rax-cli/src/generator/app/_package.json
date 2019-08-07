@@ -19,14 +19,13 @@
     <%_ } -%>
     "rax-view": "^1.0.0",
     "rax-text": "^1.0.0",
-    "rax-view": "^1.0.0",
-    "universal-app-runtime": "^0.1.3"
+    "universal-app-runtime": "^0.1.5-0"
   },
   "devDependencies": {
     <%_ if (projectFeatures.includes('ssr')) { -%>
-    "rax-plugin-ssr": "^0.1.0",
+    "rax-plugin-ssr": "^0.1.0-1",
     <%_ } -%>
-    "rax-scripts": "^2.0.0-0",
-    "rax-plugin-app": "^0.1.0-1"
+    "rax-scripts": "^2.0.0-2",
+    "rax-plugin-app": "^0.1.0-4"
   }
 }

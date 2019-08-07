@@ -19,7 +19,7 @@
     "universal-env": "^1.0.0"
   },
   "devDependencies": {
-    "rax-scripts": "^2.0.0-0",
-    "rax-plugin-api": "^0.1.0-1"
+    "rax-scripts": "^2.0.0-2",
+    "rax-plugin-api": "^0.1.0-2"
   }
 }
