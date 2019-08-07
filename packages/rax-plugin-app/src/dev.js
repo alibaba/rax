@@ -1,6 +1,7 @@
 const path = require('path');
 const chalk = require('chalk');
 const consoleClear = require('console-clear');
+const qrcode = require('qrcode-terminal');
 
 const getMpOuput = require('./config/miniapp/getOutputPath');
 const mpDev = require('./config/miniapp/dev');
@@ -64,8 +65,11 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
     }
 
     if (~targets.indexOf('weex')) {
+      const weexUrl = `${devUrl}/weex/index.js?wh_weex=true`;
       console.log(chalk.green('[Weex] Development server at:'));
-      console.log('   ', chalk.underline.white(`${devUrl}/weex/index.js?wh_weex=true`));
+      console.log('   ', chalk.underline.white(weexUrl));
+      console.log();
+      qrcode.generate(weexUrl, {small: true});
       console.log();
     }
 
