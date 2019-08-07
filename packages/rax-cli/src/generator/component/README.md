@@ -1,16 +1,15 @@
-## <%= answers.name%>
-<%= answers.description %>
+## <%= projectName %>
 
 ## Install
 
 ```
-$ npm install <%= answers.name%> --save
+$ npm install <%= projectName %> --save
 ```
 
 ## Usage
 
 ```
-import MyComponent from '<%= answers.name%>';
+import MyComponent from '<%= projectName %>';
 ```
 
 ## API
@@ -37,7 +36,7 @@ class App extends Component {
   render() {
     return (
       <View>
-      	{ /* your code */ } 
+      	{ /* your code */ }
       </View>
     );
   }
