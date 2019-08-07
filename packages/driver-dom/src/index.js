@@ -34,10 +34,10 @@ let unitPrecision = 4;
 
 /**
  * Set viewport width.
- * @param vp {Number} Viewport width, default to 750.
+ * @param viewport {Number} Viewport width, default to 750.
  */
-export function setViewportWidth(vp) {
-  viewportWidth = vp;
+export function setViewportWidth(viewport) {
+  viewportWidth = viewport;
 }
 
 /**
@@ -305,10 +305,6 @@ export function setAttribute(node, propKey, propValue) {
 }
 
 export function setStyle(node, style) {
-  // Support Object[] typeof style.
-  // Hack handle array like object, which created by rax core.
-  if (typeof style === 'object' && style.hasOwnProperty('0')) style = Array.prototype.slice.call(style);
-  if (Array.isArray(style)) style = style.reduce((s, curr) => Object.assign(s, curr), {});
   for (let prop in style) {
     node.style[prop] = convertUnit(style[prop]);
   }

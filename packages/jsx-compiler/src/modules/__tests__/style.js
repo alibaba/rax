@@ -11,10 +11,10 @@ function genInlineCode(ast) {
   });
 }
 
-function genDynamicAttrs(dynamicValue) {
+function genDynamicAttrs(dynamicValues) {
   const properties = [];
-  Object.keys(dynamicValue).forEach((key) => {
-    properties.push(t.objectProperty(t.identifier(key), dynamicValue[key]));
+  dynamicValues.map(dynamicValue => {
+    properties.push(t.objectProperty(t.identifier(dynamicValue.name), dynamicValue.value));
   });
   return genInlineCode(t.objectExpression(properties)).code;
 }
@@ -25,8 +25,8 @@ describe('Transform style', () => {
     const expected = '<Text style="{{_s0}}">hello</Text>';
     const expectedDynamicValue = '{ _s0: __create_style__(styles.name) }';
     const ast = parseExpression(raw);
-    const dynamicValue = _transform(ast);
+    const dynamicValues = _transform(ast);
     expect(genExpression(ast)).toEqual(expected);
-    expect(genDynamicAttrs(dynamicValue)).toEqual(expectedDynamicValue);
+    expect(genDynamicAttrs(dynamicValues)).toEqual(expectedDynamicValue);
   });
 });

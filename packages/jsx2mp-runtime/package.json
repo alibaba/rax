@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-runtime",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Runtime for jsx2mp.",
   "main": "dist/jsx2mp-runtime.esm.js",
   "files": [
@@ -13,6 +13,7 @@
   "author": "Rax Team",
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.4.5",
     "cross-env": "^5.2.0",
     "rollup": "^1.13.1",

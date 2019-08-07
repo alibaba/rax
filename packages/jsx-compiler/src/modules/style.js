@@ -3,7 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 
 const TEMPLATE_AST = 'templateAST';
 const DYNAMIC_STYLES = 'dynamicStyles';
-const stylePrefix = '_s';
+const DynamicBinding = require('../utils/DynamicBinding');
 
 /**
  * Transform style object.
@@ -13,11 +13,7 @@ const stylePrefix = '_s';
  *          return { _style0 };
  */
 function transformStyle(ast, dynamicStyles) {
-  const dynamicValue = {};
-
-  function getStyleName() {
-    return stylePrefix + Object.keys(dynamicValue).length;
-  }
+  const dynamicValue = new DynamicBinding('_s');
 
   traverse(ast, {
     JSXAttribute(path) {
@@ -26,20 +22,25 @@ function transformStyle(ast, dynamicStyles) {
         const styleObjectExpression = node.value.expression;
 
         // <tag style="{{ _s0 }}" />
-        const styleName = getStyleName();
-        node.value = t.stringLiteral('{{' + styleName + '}}');
-        dynamicValue[styleName] = t.callExpression(t.identifier('__create_style__'), [styleObjectExpression]);
+        const name = dynamicValue.add({
+          expression: t.callExpression(t.identifier('__create_style__'), [styleObjectExpression]),
+        });
+        node.value = t.stringLiteral('{{' + name + '}}');
       }
     },
   });
-  return dynamicValue;
+  return dynamicValue.getStore();
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    const dynamicValue = transformStyle(parsed[TEMPLATE_AST]);
-
-    if (Object.keys(dynamicValue).length > 0) {
+    const dynamicValues = transformStyle(parsed[TEMPLATE_AST]);
+    const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {
+      const name = curr.name;
+      prev[name] = curr.value;
+      return prev;
+    }, {});
+    if (dynamicValues.length > 0) {
       parsed.dynamicValue = Object.assign({}, parsed.dynamicValue, dynamicValue);
       parsed.useCreateStyle = true;
     }

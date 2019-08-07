@@ -1,13 +1,7 @@
+import scheduler from './nextTick';
+
 let updateCallbacks = [];
 let effectCallbacks = [];
-let scheduler = setTimeout;
-
-if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
-  // Wrapper timer for hijack timers in jest
-  scheduler = (callback) => {
-    setTimeout(callback, 0);
-  };
-}
 
 // Schedule before next render
 export function schedule(callback) {

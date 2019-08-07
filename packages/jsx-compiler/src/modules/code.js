@@ -1,5 +1,6 @@
 const t = require('@babel/types');
-const genExpression = require('../codegen/genExpression');
+const { join } = require('path');
+const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
@@ -22,7 +23,9 @@ const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 
 const EXPORTED_DEF = '__def__';
-const RUNTIME = 'jsx2mp-runtime';
+const RUNTIME = '/npm/jsx2mp-runtime';
+
+const isCoreModule = (mod) => /^@core\//.test(mod);
 
 function getConstructor(type) {
   switch (type) {
@@ -42,19 +45,24 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
+    if (!defaultExportedPath || !defaultExportedPath.node) return; // Can not found default export.
+
     let userDefineType;
 
     if (options.type === 'app') {
-      userDefineType = 'class';
-      const { id, superClass, body, decorators } = defaultExportedPath.node;
-      defaultExportedPath.parentPath.replaceWith(
-        t.variableDeclaration('var', [
-          t.variableDeclarator(
-            t.identifier(EXPORTED_DEF),
-            t.classExpression(id, superClass, body, decorators)
-          )
-        ])
-      );
+      userDefineType = 'function';
+      const { id, generator, async, params, body } = defaultExportedPath.node;
+      const replacer = getReplacer(defaultExportedPath);
+      if (replacer) {
+        replacer.replaceWith(
+          t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.identifier(EXPORTED_DEF),
+              t.functionExpression(id, params, body, generator, async)
+            )
+          ])
+        );
+      }
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
       const { id, generator, async, params, body } = defaultExportedPath.node;
@@ -87,13 +95,98 @@ module.exports = {
       }
     }
 
-    const hooks = transformHooks(parsed.renderFunctionPath);
+    const hooks = collectHooks(parsed.renderFunctionPath);
 
-    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeRaxImports(parsed.ast);
+    renameCoreModule(parsed.ast);
+    renameNpmModules(parsed.ast);
+    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
+
+    /**
+     * updateChildProps: collect props dependencies.
+     */
+    if (options.type !== 'app' && parsed.renderFunctionPath) {
+      addUpdateData(parsed.dynamicValue, parsed.renderFunctionPath);
+      addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
+
+      const fnBody = parsed.renderFunctionPath.node.body.body;
+      let firstReturnStatementIdx = -1;
+      for (let i = 0, l = fnBody.length; i < l; i++) {
+        if (t.isReturnStatement(fnBody[i])) firstReturnStatementIdx = i;
+      }
+
+      const updateProps = t.memberExpression(t.identifier('this'), t.identifier('_updateChildProps'));
+      const componentsDependentProps = parsed.componentDependentProps || {};
+
+      Object.keys(componentsDependentProps).forEach((tagId) => {
+        const { props, tagIdExpression, parentNode } = componentsDependentProps[tagId];
+
+        // Setup propMaps.
+        const propMaps = [];
+        props && Object.keys(props).forEach(key => {
+          const value = props[key];
+          propMaps.push(t.objectProperty(
+            t.stringLiteral(key),
+            value
+          ));
+        });
+
+        let argPIDExp = tagIdExpression
+          ? genTagIdExp(tagIdExpression)
+          : t.stringLiteral(tagId);
+
+        const updatePropsArgs = [
+          argPIDExp,
+          t.objectExpression(propMaps)
+        ];
+        const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
+        if (propMaps.length > 0) {
+          (parentNode || fnBody).push(callUpdateProps);
+        } else if ((parentNode || fnBody).length === 0) {
+          // Remove empty loop exp.
+          parentNode.remove && parentNode.remove();
+        }
+      });
+    }
   },
 };
+
+function genTagIdExp(expressions) {
+  let ret = '';
+  for (let i = 0, l = expressions.length; i < l; i++) {
+    if (expressions[i] && expressions[i].isExpression) {
+      ret += expressions[i];
+    } else {
+      ret += JSON.stringify(expressions[i]);
+    }
+    if (i !== l - 1) ret += ' + "-" + ';
+  }
+  return parseExpression(ret);
+}
+
+function renameCoreModule(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isCoreModule(source.node.value)) {
+        source.replaceWith(t.stringLiteral(RUNTIME));
+      }
+    }
+  });
+}
+
+
+function renameNpmModules(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && ['.', '/'].indexOf(source.node.value[0]) === -1) {
+        source.replaceWith(t.stringLiteral(join('/npm', source.node.value)));
+      }
+    }
+  });
+}
 
 function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks) {
   let safeCreateInstanceId;
@@ -131,7 +224,6 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
           specifiers.push(t.importSpecifier(t.identifier(id), t.identifier(id)));
         });
       }
-
       if (useCreateStyle) {
         specifiers.push(t.importSpecifier(
           t.identifier(SAFE_CREATE_STYLE),
@@ -147,6 +239,16 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
       );
 
       // Component(__create_component__(__class_def__));
+      const args = [t.identifier(EXPORTED_DEF)];
+      // __create_component__(__class_def__, { events: ['_e*']})
+      if (eventHandlers.length > 0) {
+        args.push(
+          t.objectExpression([
+            t.objectProperty(t.identifier('events'), t.arrayExpression(eventHandlers.map(e => t.stringLiteral(e))))
+          ])
+        );
+      }
+
       path.node.body.push(
         t.expressionStatement(
           t.callExpression(
@@ -154,12 +256,7 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
             [
               t.callExpression(
                 t.identifier(safeCreateInstanceId),
-                [
-                  t.identifier(EXPORTED_DEF),
-                  t.objectExpression([
-                    t.objectProperty(t.identifier('events'), t.arrayExpression(eventHandlers.map(e => t.stringLiteral(e))))
-                  ])
-                ]
+                args
               )
             ],
           )
@@ -210,24 +307,53 @@ function getReplacer(defaultExportedPath) {
   }
 }
 
-function transformHooks(root) {
+function collectHooks(root) {
   let ret = {};
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee, { name: USE_STATE })) {
-        if (t.isVariableDeclarator(path.parentPath.node) && t.isArrayPattern(path.parentPath.node.id)) {
-          const firstId = path.parentPath.node.id.elements[0];
-          node.arguments[1] = t.stringLiteral(firstId.name);
-          ret[USE_STATE] = true;
-        } else {
-          console.warn(`useState should be called with following: const [foo, setFoo] = useState(originalFoo); instead of ${genExpression(path.parentPath.node)}`);
-        }
-      } else if (t.isIdentifier(node.callee, { name: USE_EFFECT })) {
-        ret[USE_EFFECT] = true;
+      if (t.isIdentifier(node.callee, { name: USE_STATE })
+        || t.isIdentifier(node.callee, { name: USE_EFFECT })) {
+        ret[node.callee.name] = true;
       }
     }
   });
 
   return Object.keys(ret);
+}
+
+function addUpdateData(dynamicValue, renderFunctionPath) {
+  const dataProperties = [];
+
+  Object.keys(dynamicValue).forEach(name => {
+    dataProperties.push(t.objectProperty(t.stringLiteral(name), dynamicValue[name]));
+  });
+
+  const updateData = t.memberExpression(
+    t.thisExpression(),
+    t.identifier('_updateData')
+  );
+
+  const fnBody = renderFunctionPath.node.body.body;
+  fnBody.push(t.expressionStatement(t.callExpression(updateData, [
+    t.objectExpression(dataProperties)
+  ])));
+}
+
+function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
+  const methodsProperties = [];
+  dynamicEvent.forEach(({ name, value }) => {
+    eventHandlers.push(name);
+    methodsProperties.push(t.objectProperty(t.stringLiteral(name), value));
+  });
+
+  const updateMethods = t.memberExpression(
+    t.thisExpression(),
+    t.identifier('_updateMethods')
+  );
+  const fnBody = renderFunctionPath.node.body.body;
+
+  fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
+    t.objectExpression(methodsProperties)
+  ])));
 }

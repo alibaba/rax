@@ -27,9 +27,5 @@ export default function createStyle(style) {
 }
 
 function transformUnit(val) {
-  if (typeof val === 'number') {
-    return val + 'rpx';
-  } else {
-    return val;
-  }
+  return val;
 }

@@ -1,21 +1,31 @@
 import { createApp, createPage, createComponent } from './bridge';
+import { useAppEffect } from './app';
+import { usePageEffect } from './page';
+import { useRouter, withRouter, push, replace, go, goBack, goForward, canGo } from './router';
 import Component from './component';
 import createStyle from './createStyle';
-import { checkEnv } from './env';
-
-/**
- * Check the runtime environment is compatible.
- */
-checkEnv();
 
 export {
   createApp,
   createPage,
   createComponent,
+  createStyle,
 
   Component,
 
-  createStyle,
+  // Cycle
+  useAppEffect,
+  usePageEffect,
+
+  // Router
+  useRouter,
+  withRouter,
+  push,
+  replace,
+  go,
+  goBack,
+  goForward,
+  canGo,
 };
 
 /* hooks */
