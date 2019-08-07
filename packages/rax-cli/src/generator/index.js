@@ -5,11 +5,7 @@ const TemplateProcesser = require('./template-processer');
 // Rename files start with '_'
 function renameFile(files) {
   files.forEach(file => {
-    if (file.name === '_package.json') {
-      file.name = file.name.replace(/^_/, '');
-    } else {
-      file.name = file.name.replace(/^_/, '.');
-    }
+    file.name = file.name.replace(/^_/, '.');
   });
 }
 
@@ -20,6 +16,20 @@ function ejsRender(data) {
       file.content = ejs.render(file.content, data);
     });
   };
+}
+
+function processPackageJson(files) {
+  const pkgIndex = files.findIndex(file => file.name === 'package.json');
+  const ejsPkgIndex = files.findIndex(file => file.name === '_package.json');
+  if (ejsPkgIndex !== 1) {
+    // rename _package.json
+    files[ejsPkgIndex].name = files[ejsPkgIndex].name.replace(/^_/, '');
+    if (pkgIndex !== -1) {
+      // delete package.json when _package.json exists.
+      files.splice(pkgIndex, 1);
+    }
+  }
+  return files;
 }
 
 /**
@@ -41,6 +51,7 @@ module.exports = function(args) {
   const templates = path.join(__dirname, projectType);
 
   new TemplateProcesser(templates)
+    .use(processPackageJson)
     .use(renameFile)
     .use(ejsRender(args))
     .done(projectDir);
