@@ -77,14 +77,21 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
   }
 
   if (~targets.indexOf('miniapp')) {
-    onHook('after.dev', () => {
+    if (targets.length > 1) {
+      onHook('after.dev', () => {
+        mpDev(context, (args) => {
+          devCompletedArr.push(args);
+          if (devCompletedArr.length === 2) {
+            devCompileLog();
+          }
+        });
+      });
+    } else {
       mpDev(context, (args) => {
         devCompletedArr.push(args);
-        if (devCompletedArr.length === 2) {
-          devCompileLog();
-        }
+        devCompileLog();
       });
-    });
+    }
   }
 
   targets.forEach(target => {

@@ -26,6 +26,6 @@
     "rax-plugin-ssr": "^0.1.0",
     <%_ } -%>
     "rax-scripts": "^2.0.0",
-    "rax-plugin-app": "^0.1.0"
+    "rax-plugin-app": "^0.1.1"
   }
 }
