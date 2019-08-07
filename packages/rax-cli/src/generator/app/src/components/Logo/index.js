@@ -1,6 +1,7 @@
-import styles from './index.css';
 import { createElement } from 'rax';
 import Image from 'rax-image';
+
+import styles from './index.css';
 
 export default (props) => {
   return (
