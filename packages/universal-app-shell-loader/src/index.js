@@ -24,7 +24,6 @@ module.exports = function(content) {
     }
 
     let appRender = '';
-    let fixRootStyle = '';
     let importMods = '';
 
     /**
@@ -39,11 +38,6 @@ module.exports = function(content) {
      */
     if (options.type === 'web') {
       let appRenderMethod = '';
-      const mutiple = options.mutiple || 100;
-      fixRootStyle = `
-        const html = document.documentElement;
-        html.style.fontSize = html.clientWidth / 750 * ${mutiple} + 'px';
-      `;
       importMods += 'import { getCurrentComponent } from "rax-pwa";';
 
       if (existsSync(join(this.rootContext, 'src/shell/index.jsx'))) {
@@ -139,8 +133,6 @@ module.exports = function(content) {
       const appProps = {
         routerConfig: getRouterConfig(),
       };
-      
-      ${fixRootStyle}
       
       let appLaunched = false;
       
