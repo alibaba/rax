@@ -21,7 +21,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
         err = devInfo.err;
         stats = devInfo.stats;
       }
-    })
+    });
 
     devCompletedArr = [];
 
