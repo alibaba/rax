@@ -1,7 +1,6 @@
 /**
  * Driver for Web DOM
  **/
-const IS_RPX_REG = /\d+rpx/;
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const __HTML = '__html';
@@ -58,7 +57,6 @@ export function setDecimalPixelTransformer(transformer) {
   decimalPixelTransformer = transformer;
 }
 
-
 function unitTransformer(n) {
   return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
 }
@@ -69,16 +67,26 @@ function toFixed(number, precision) {
   return Math.round(wholeNumber / 10) * 10 / multiplier;
 }
 
+/**
+ * Create a cached version of a pure function.
+ */
+function cached(fn) {
+  const cache = Object.create(null);
+  return function cachedFn(str) {
+    return cache[str] || (cache[str] = fn(str));
+  };
+}
+
 function calcRpxToVw(value) {
   return value.replace(RPX_REG, unitTransformer);
 }
 
-function convertUnit(value) {
-  value = decimalPixelTransformer(value);
-  return IS_RPX_REG.test(value)
-    ? calcRpxToVw(value)
-    : value;
+function isRpx(str) {
+  return str.slice(0, -3) === 'rpx';
 }
+
+// Cache the convert fn.
+const convertUnit = cached((value) => isRpx(value) ? calcRpxToVw(value) : value);
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
