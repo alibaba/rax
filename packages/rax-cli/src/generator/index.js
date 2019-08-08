@@ -13,7 +13,9 @@ function renameFile(files) {
 function ejsRender(data) {
   return (files) => {
     files.forEach(file => {
-      file.content = ejs.render(file.content, data);
+      if (/\.ejs$/.test(file.name)) {
+        file.content = ejs.render(file.content, data);
+      }
     });
   };
 }
