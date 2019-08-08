@@ -77,12 +77,16 @@ function cached(fn) {
   };
 }
 
-const calcRpxToVw = (value) => value.replace(RPX_REG, unitTransformer);
-const isRpx = cached((str) => str.slice(0, -3) === 'rpx');
-
-function convertUnit(value) {
-  return isRpx(value) ? calcRpxToVw(value) : value;
+function calcRpxToVw(value) {
+  return value.replace(RPX_REG, unitTransformer);
 }
+
+function isRpx(str) {
+  return str.slice(0, -3) === 'rpx';
+}
+
+// Cache the convert fn.
+const convertUnit = cached((value) => isRpx(value) ? calcRpxToVw(value) : value);
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
