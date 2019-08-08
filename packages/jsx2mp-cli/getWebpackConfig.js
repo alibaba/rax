@@ -70,6 +70,9 @@ try {
 module.exports = (options = {}) => ({
   mode: 'production', // will be fast
   entry: getEntry(appConfig, options),
+  output: {
+    path: options.distDirectory
+  },
   target: 'node',
   context: cwd,
   module: {

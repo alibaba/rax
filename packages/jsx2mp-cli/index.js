@@ -12,7 +12,12 @@ const chalk = require('chalk');
  */
 function build(options = {}) {
   const { afterCompiled } = options;
-  let config = getWebpackConfig({ mode: 'build', platform: options.platform });
+  let config = getWebpackConfig({
+    mode: 'build',
+    platform: options.platform,
+    distDirectory: options.distDirectory
+  });
+
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
