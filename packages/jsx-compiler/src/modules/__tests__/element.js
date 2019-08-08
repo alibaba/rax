@@ -3,6 +3,7 @@ const { _transform } = require('../element');
 const { parseExpression } = require('../../parser');
 const genCode = require('../../codegen/genCode');
 const traverse = require('../../utils/traverseNodePath');
+const adapter = require('../../adapter');
 
 function genInlineCode(ast) {
   return genCode(ast, {
@@ -107,6 +108,15 @@ describe('Transform JSXElement', () => {
       const { dynamicValues } = _transform(ast, null, null, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<View>{{ _d0 ? _d0.b[_d1.d] : 1 }}</View>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: a, _d1: c }');
+    });
+
+    it('should adapt attribute key', () => {
+      const sourceCode = '<View key={\'key\'}>{ bar }</View>';
+      const ast = parseExpression(sourceCode);
+      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
+      const code = genInlineCode(ast).code;
+      expect(code).toEqual('<View a:key=\'key\'>{{ _d0 }}</View>');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: bar }');
     });
   });
 
