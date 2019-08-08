@@ -80,7 +80,7 @@ function getFiles(dir) {
       if (easyfile.isFile(currPath)) {
         files.push({
           content: fs.readFileSync(currPath, 'utf-8'),
-          name: path.relative(dir, currPath).replace(/\.ejs$/, ''),
+          name: path.relative(dir, currPath),
         });
       } else {
         fileMapGenerator(currPath);
