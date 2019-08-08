@@ -343,7 +343,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       const attrName = node.name.name;
       // adapt the key attribute
       if (attrName === 'key') {
-        node.name.name = adapter['key'];
+        node.name.name = adapter.key;
       }
       // Remove ref.
       if (attrName === 'ref') {

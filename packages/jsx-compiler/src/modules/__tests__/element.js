@@ -111,7 +111,7 @@ describe('Transform JSXElement', () => {
     });
 
     it('should adapt attribute key', () => {
-      const sourceCode = `<View key={'key'}>{ bar }</View>`;
+      const sourceCode = '<View key={\'key\'}>{ bar }</View>';
       const ast = parseExpression(sourceCode);
       const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
       const code = genInlineCode(ast).code;
