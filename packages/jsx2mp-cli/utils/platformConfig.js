@@ -1,28 +1,28 @@
 module.exports = {
   'ali': {
     type: 'ali',
-    suffix: {
+    extension: {
       xml: 'axml',
       css: 'acss',
     }
   },
   'wechat': {
     type: 'wechat',
-    suffix: {
+    extension: {
       xml: 'wxml',
       css: 'wxss',
     }
   },
   'baidu': {
     type: 'baidu',
-    suffix: {
+    extension: {
       xml: 'swan',
       css: 'css',
     }
   },
   'tt': {
     type: 'tt',
-    suffix: {
+    extension: {
       xml: 'ttml',
       css: 'ttss'
     }

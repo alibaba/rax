@@ -52,12 +52,12 @@ module.exports = function pageLoader(content) {
   // Write js content
   writeFileSync(distFileWithoutExt + '.js', transformed.code);
   // Write template
-  writeFileSync(distFileWithoutExt + '.' + platform.suffix.xml, transformed.template);
+  writeFileSync(distFileWithoutExt + '.' + platform.extension.xml, transformed.template);
   // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   // Write acss style
   if (transformed.style) {
-    writeFileSync(distFileWithoutExt + '.' + platform.suffix.css, transformed.style);
+    writeFileSync(distFileWithoutExt + '.' + platform.extension.css, transformed.style);
   }
   // Write extra assets
   if (transformed.assets) {
