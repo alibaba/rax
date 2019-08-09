@@ -24,17 +24,20 @@ function getBabelConfig() {
   };
 }
 
-function getEntry(appConfig) {
+function getEntry(appConfig, options) {
   const entry = {};
   entry.app = AppLoader + '!./src/app.js';
+  let loaderParams = { platform: options.platform };
+  loaderParams = JSON.stringify(loaderParams);
+
   if (Array.isArray(appConfig.routes)) {
     appConfig.routes.forEach(({ path, component }) => {
-      entry['page@' + component] = PageLoader + '!' + getDepPath(component);
+      entry['page@' + component] = PageLoader + '?' + loaderParams + '!' + getDepPath(component);
     });
   } else if (Array.isArray(appConfig.pages)) {
     // Compatible with pages.
     appConfig.pages.forEach((pagePath) => {
-      entry['page@' + pagePath] = PageLoader + '!' + getDepPath(pagePath);
+      entry['page@' + pagePath] = PageLoader + '?' + loaderParams + '!' + getDepPath(pagePath);
     });
   }
   return entry;
@@ -66,7 +69,10 @@ try {
 
 module.exports = (options = {}) => ({
   mode: 'production', // will be fast
-  entry: getEntry(appConfig),
+  entry: getEntry(appConfig, options),
+  output: {
+    path: options.distDirectory
+  },
   target: 'node',
   context: cwd,
   module: {
@@ -78,6 +84,7 @@ module.exports = (options = {}) => ({
             loader: FileLoader,
             options: {
               mode: options.mode,
+              platform: options.platform
             },
           },
           {
@@ -109,7 +116,7 @@ module.exports = (options = {}) => ({
       }
     }),
     new RuntimeWebpackPlugin(),
-    new webpack.ProgressPlugin( (percentage, message) => {
+    new webpack.ProgressPlugin((percentage, message) => {
       if (percentage === 0) {
         buildStartTime = Date.now();
         spinner.start('Compiling...');
