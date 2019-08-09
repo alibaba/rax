@@ -120,7 +120,7 @@ function askProjectInformaction(name) {
       choices: [
         {
           name: 'App (Build application that works multi-platform)',
-          value: 'app'
+          value: 'scaffold'
         },
         {
           name: 'Component (Build component for application include web)',
@@ -131,13 +131,13 @@ function askProjectInformaction(name) {
           value: 'api'
         }
       ],
-      default: 'app'
+      default: 'scaffold'
     },
     {
       type: 'checkbox',
       name: 'projectTargets',
       when: function(answers) {
-        return answers.projectType === 'app';
+        return answers.projectType === 'scaffold';
       },
       validate: function(targets) {
         if (targets && targets.length > 0) return true;
@@ -164,7 +164,7 @@ function askProjectInformaction(name) {
       type: 'checkbox',
       name: 'projectFeatures',
       when: function(answers) {
-        return answers.projectType === 'app' && answers.projectTargets.includes('web');
+        return answers.projectType === 'scaffold' && answers.projectTargets.includes('web');
       },
       message: 'Do you want to enable these features?',
       choices: [
