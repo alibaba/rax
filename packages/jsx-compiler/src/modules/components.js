@@ -170,7 +170,12 @@ module.exports = {
             if (alias) {
               const pkg = getComponentConfig(alias.from);
               if (pkg && pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name]) {
-                node.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
+                let subComponent = pkg.miniappConfig.subComponents[property.name];
+                node.name = t.jsxIdentifier(subComponent.tagNameMap);
+                // subComponent default style
+                if (subComponent.attributes && subComponent.attributes.style) {
+                  path.parentPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('style'), t.stringLiteral(subComponent.attributes.style)));
+                }
                 if (path.parentPath.node.closingElement) {
                   path.parentPath.node.closingElement.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
                 }
