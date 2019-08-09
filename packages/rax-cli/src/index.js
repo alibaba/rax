@@ -15,7 +15,7 @@ const generate = require('./generator');
 function downloadTemplate(template, destPath) {
   return getNpmTarball(template).then(tarball => {
     return getAndExtractTarball(destPath, tarball);
-  })
+  });
 }
 
 module.exports = {
@@ -41,6 +41,6 @@ module.exports = {
         rimraf.sync(downloadPath);
         return res;
       });
-    })
+    });
   }
 };

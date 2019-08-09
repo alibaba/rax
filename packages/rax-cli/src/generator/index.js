@@ -39,7 +39,7 @@ module.exports = function(template, args) {
   const ejsData = {
     ...args,
     npmName: args.projectName, // Be consistent with ice-devtools
-  }
+  };
 
   new TemplateProcesser(template)
     .use(ejsRender(ejsData))
