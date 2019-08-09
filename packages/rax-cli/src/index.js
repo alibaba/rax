@@ -1,4 +1,22 @@
+const path = require('path');
+const rimraf = require('rimraf');
+const {
+  getNpmTarball,
+  getAndExtractTarball,
+} = require('ice-npm-utils');
 const generate = require('./generator');
+
+/**
+ * download project template from npm
+ * @param {String} template template name
+ * @param {String} destPath download path
+ * @return {Promise}
+ */
+function downloadTemplate(template, destPath) {
+  return getNpmTarball(template).then(tarball => {
+    return getAndExtractTarball(destPath, tarball);
+  })
+}
 
 module.exports = {
   /**
@@ -13,6 +31,16 @@ module.exports = {
    * @return {Promise}
    */
   init(args) {
-    return generate(args);
+    const downloadPath = path.join(args.root, '.rax-cli-template');
+    const templatePath = path.join(downloadPath, 'template', args.projectType);
+
+    rimraf.sync(downloadPath);
+
+    return downloadTemplate('rax-template', downloadPath).then(() => {
+      return generate(templatePath, args).then(res => {
+        rimraf.sync(downloadPath);
+        return res;
+      });
+    })
   }
 };

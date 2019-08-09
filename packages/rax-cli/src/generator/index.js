@@ -1,15 +1,11 @@
 const ejs = require('ejs');
 const path = require('path');
-const TemplateProcesser = require('./template-processer');
+const TemplateProcesser = require('./templateProcesser');
 
 // Rename files start with '_'
 function renameFile(files) {
   files.forEach(file => {
-    if (file.name === '_package.json') {
-      file.name = file.name.replace(/^_/, '');
-    } else {
-      file.name = file.name.replace(/^_/, '.');
-    }
+    file.name = file.name.replace(/^_/, '.').replace(/\.ejs$/, '');
   });
 }
 
@@ -17,13 +13,16 @@ function renameFile(files) {
 function ejsRender(data) {
   return (files) => {
     files.forEach(file => {
-      file.content = ejs.render(file.content, data);
+      if (/\.ejs$/.test(file.name)) {
+        file.content = ejs.render(file.content, data);
+      }
     });
   };
 }
 
 /**
  * Template generator.
+ * @param  {String} template - describe the template path
  * @param  {Object} args - describe the generator arguements
  * @param  {String} args.root - The absolute path of project directory
  * @param  {String} args.directoryName - The folder name
@@ -34,15 +33,17 @@ function ejsRender(data) {
  * @param  {String} args.projectFeatures- The features of project
  * @return {Promise}
  */
-module.exports = function(args) {
+module.exports = function(template, args) {
   const projectDir = args.root;
-  const projectType = args.projectType;
 
-  const templates = path.join(__dirname, projectType);
+  const ejsData = {
+    ...args,
+    npmName: args.projectName, // Be consistent with ice-devtools
+  }
 
-  new TemplateProcesser(templates)
+  new TemplateProcesser(template)
+    .use(ejsRender(ejsData))
     .use(renameFile)
-    .use(ejsRender(args))
     .done(projectDir);
 
   process.chdir(projectDir);
