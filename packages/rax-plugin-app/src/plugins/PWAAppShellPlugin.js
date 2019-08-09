@@ -14,6 +14,7 @@ const interopRequire = (obj) => {
 module.exports = class PWAAppShellPlugin {
   constructor(options) {
     this.render = options.render;
+    this.isMultiPageWebApp = options.isMultiPageWebApp;
     this.rootDir = options.rootDir ? options.rootDir : process.cwd();
     this.shellPath = options.path ? options.path : 'src/shell/index.jsx';
   }
@@ -43,6 +44,18 @@ module.exports = class PWAAppShellPlugin {
         `<div id="root">${content}</div>`
       ));
 
+      // MPA
+      if (this.isMultiPageWebApp) {
+        const entryObj = compiler.options.entry;
+        Object.keys(entryObj).forEach(entry => {
+          const pageHtmlValue = compilation.assets[`web/${entry}.html`].source();
+          compilation.assets[`web/${entry}.html`] = new RawSource(pageHtmlValue.replace(
+            /<div(.*?) id=\"root\">(.*?)<\/div>/,
+            `<div id="root">${content}</div>`
+          ));
+        });
+      }
+
       callback();
     });
 
@@ -52,9 +65,11 @@ module.exports = class PWAAppShellPlugin {
       if (compiler.options.mode === 'production' || !compiler.options.mode) {
         const jsFile = path.join(compiler.options.output.path, outputFilename);
         const mapFile = jsFile + '.map';
+        const htmlFile = jsFile.replace(/\.js$/, '.html');
 
         existsSync(jsFile) && unlinkSync(jsFile);
         existsSync(mapFile) && unlinkSync(mapFile);
+        existsSync(htmlFile) && unlinkSync(htmlFile);
       }
     });
   }

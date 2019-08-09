@@ -101,6 +101,7 @@ module.exports = (context) => {
 
   config.plugin('document')
     .use(UniversalDocumentPlugin, [{
+      isMultiPageWebApp: userConfig.spa === false,
       rootDir,
       path: 'src/document/index.jsx',
       render: serverRender.renderToString,
@@ -108,6 +109,7 @@ module.exports = (context) => {
 
   config.plugin('PWAAppShell')
     .use(PWAAppShellPlugin, [{
+      isMultiPageWebApp: userConfig.spa === false,
       rootDir,
       path: 'src/shell/index.jsx',
       render: serverRender.renderToString,

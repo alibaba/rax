@@ -15,7 +15,7 @@ module.exports = class UniversalDocumentPlugin {
     if (!options.path) {
       throw new Error('Please specify document file location with the path attribute');
     }
-
+    this.isMultiPageWebApp = options.isMultiPageWebApp;
     this.rootDir = options.rootDir ? options.rootDir : process.cwd();
     this.documentPath = options.path ? options.path : 'src/document/index.jsx';
   }
@@ -45,6 +45,21 @@ module.exports = class UniversalDocumentPlugin {
 
       // insert html file
       compilation.assets['index.html'] = new RawSource(source);
+
+      // MPA
+      if (this.isMultiPageWebApp) {
+        const entryObj = compiler.options.entry;
+        Object.keys(entryObj).forEach(entry => {
+          // get document html string
+          const pageSource = this.render(require('rax').createElement(documentElement, {
+            publicPath,
+            styles: [],
+            scripts: [`web/${entry}.js`],
+          }));
+          // insert html file
+          compilation.assets[`web/${entry}.html`] = new RawSource(pageSource);
+        });
+      }
 
       callback();
     });
