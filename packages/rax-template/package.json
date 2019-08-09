@@ -1,0 +1,26 @@
+{
+  "name": "rax-template",
+  "version": "0.1.0-1",
+  "description": "Rax 初始模板",
+  "files": [
+    "template"
+  ],
+  "keywords": [
+    "rax"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "license": "BSD-3-Clause",
+  "publishConfig": {
+    "access": "public"
+  },
+  "materialConfig": {
+    "type": "rax"
+  }
+}
