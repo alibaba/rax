@@ -27,7 +27,6 @@ const config = {
     ]
   ],
   plugins: [
-    require.resolve('babel-plugin-transform-jsx-stylesheet'),
     [
       require.resolve('@babel/plugin-transform-runtime'),
       {

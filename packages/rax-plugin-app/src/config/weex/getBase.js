@@ -1,6 +1,5 @@
 'use strict';
 const webpack = require('webpack');
-const serverRender = require('rax-server-renderer');
 const babelMerge = require('babel-merge');
 
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
@@ -9,7 +8,7 @@ const babelConfig = require('../babel.config');
 
 const babelConfigWeex = babelMerge.all([{
   plugins: [
-    require.resolve('rax-hot-loader/babel'),
+    require.resolve('babel-plugin-transform-jsx-stylesheet')
   ],
 }, babelConfig]);
 
@@ -17,8 +16,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
 
 module.exports = (context) => {
-  const { rootDir } = context;
-
   const config = getWebpackBase(context);
 
   config.output.filename('weex/[name].js');
