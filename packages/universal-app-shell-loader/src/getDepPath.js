@@ -1,3 +1,4 @@
+const { join } = require('path');
 /**
  * ./pages/foo -> based on src, return original
  * /pages/foo -> based on rootContext
@@ -11,4 +12,4 @@ module.exports = function getDepPath(path, rootContext = '') {
   } else {
     return './' + path;
   }
-}
+};
