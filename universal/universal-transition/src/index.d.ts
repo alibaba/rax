@@ -72,6 +72,6 @@ export interface TransitionOptions {
     delay: number;
 }
 
-export function transition(el: ReactNode | Array<ReactNode>, style: React.CSSProperties, option: TransitionOptions, callback?: () => void): void;
+export default function transition(el: ReactNode | Array<ReactNode>, style: React.CSSProperties, option: TransitionOptions, callback?: () => void): void;
 
 
