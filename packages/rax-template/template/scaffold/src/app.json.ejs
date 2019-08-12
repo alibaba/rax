@@ -1,0 +1,15 @@
+<%_ const isSSR = projectFeatures.includes('ssr') -%>
+{
+  "routes": [
+    {
+      "path": "/",
+      "component": "pages/Home/index"
+    }
+  ],
+  <%_ if (isSSR) { -%>
+  "historyType": "browser",
+  <%_ } -%>
+  "window": {
+    "defaultTitle": "Rax App 1.0"
+  }
+}

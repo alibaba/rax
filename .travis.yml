@@ -24,11 +24,9 @@ jobs:
           sources: google-chrome
           packages: google-chrome-stable
       skip_cleanup: true
-      before_script:
-        - npm run setup
-        - export DISPLAY=:99.0
-        - sh -e /etc/init.d/xvfb start
-        - sleep 3                   # give xvfb some time to start
+      # https://docs.travis-ci.com/user/gui-and-headless-browsers/#using-services-xvfb
+      services:
+        - xvfb
       script: npm run bench
 
 stages:

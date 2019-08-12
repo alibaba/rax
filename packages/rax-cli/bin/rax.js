@@ -2,6 +2,14 @@
 
 // Update notifications
 const updateNotifier = require('update-notifier');
+const fs = require('fs');
+const path = require('path');
+const execSync = require('child_process').execSync;
+const spawn = require('cross-spawn');
+const inquirer = require('inquirer');
+const argv = require('minimist')(process.argv.slice(2));
+
+const cli = require('../src/');
 const pkg = require('../package.json');
 
 updateNotifier({pkg: pkg}).notify();
@@ -24,14 +32,6 @@ if (!semver.satisfies(process.version, '>=8')) {
   console.log(message);
   process.exit(1);
 }
-
-const fs = require('fs');
-const path = require('path');
-const execSync = require('child_process').execSync;
-const spawn = require('cross-spawn');
-const inquirer = require('inquirer');
-const cli = require('../src/');
-const argv = require('minimist')(process.argv.slice(2));
 
 const RAX_PACKAGE_JSON_PATH = path.resolve(
   process.cwd(),
@@ -93,8 +93,8 @@ function init(name, verbose) {
     });
 }
 
-function createAfterConfirmation(name, verbose) {
-  var property = {
+function createAfterConfirmation(name) {
+  const property = {
     type: 'confirm',
     name: 'continueWhileDirectoryExists',
     message: 'Directory ' + name + ' already exists. Continue?',
@@ -111,49 +111,66 @@ function createAfterConfirmation(name, verbose) {
   });
 }
 
-function askProjectInformaction(name, verbose) {
-  var questions = [
-    {
-      type: 'input',
-      name: 'projectName',
-      message: 'What\'s your project name?',
-      default: name
-    },
+function askProjectInformaction(name) {
+  const questions = [
     {
       type: 'list',
       name: 'projectType',
       message: 'What\'s your project type?',
       choices: [
         {
-          name: 'UniversalApp (Build application that works multi-platform)',
-          value: 'univeraslapp'
+          name: 'App (Build application that works multi-platform)',
+          value: 'scaffold'
         },
         {
-          name: 'WebApp (Build application that only works in broswers)',
-          value: 'webapp'
-        },
-        {
-          name: 'Component (Build component for universal application include web)',
+          name: 'Component (Build component for application include web)',
           value: 'component'
+        },
+        {
+          name: 'API (Build universal API library)',
+          value: 'api'
         }
       ],
-      default: 'univeraslapp'
+      default: 'scaffold'
+    },
+    {
+      type: 'checkbox',
+      name: 'projectTargets',
+      when: function(answers) {
+        return answers.projectType === 'scaffold';
+      },
+      validate: function(targets) {
+        if (targets && targets.length > 0) return true;
+        return 'Choose at least one of target.';
+      },
+      message: 'Do you want to build to these targets?',
+      choices: [
+        {
+          name: 'web',
+          value: 'web'
+        },
+        {
+          name: 'weex',
+          value: 'weex'
+        },
+        {
+          name: 'miniapp',
+          value: 'miniapp'
+        }
+      ],
+      default: false
     },
     {
       type: 'checkbox',
       name: 'projectFeatures',
       when: function(answers) {
-        return answers.projectType === 'webapp';
+        return answers.projectType === 'scaffold' && answers.projectTargets.includes('web');
       },
       message: 'Do you want to enable these features?',
       choices: [
         {
           name: 'server sider rendering (ssr)',
           value: 'ssr'
-        },
-        {
-          name: 'single page application (spa)',
-          value: 'spa'
         }
       ],
       default: false
@@ -175,10 +192,10 @@ function askProjectInformaction(name, verbose) {
 }
 
 function createProject(name, verbose, userAnswers) {
-  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
-  var root = path.resolve(name);
-  var projectName = userAnswers.projectName;
-  var autoInstallModules = userAnswers.autoInstallModules;
+  const pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
+  const root = path.resolve(name);
+  const projectName = name;
+  const autoInstallModules = userAnswers.autoInstallModules;
 
   console.log(
     'Creating a new Rax project in',
@@ -192,11 +209,11 @@ function createProject(name, verbose, userAnswers) {
 
   cli.init({
     root: root,
-    directoryName: name,
     projectName: projectName,
     projectType: userAnswers.projectType,
-    projectFeatures: userAnswers.projectFeatures,
-    projectAuthor: userAnswers.projectAuthor,
+    projectFeatures: userAnswers.projectFeatures || [],
+    projectAuthor: userAnswers.projectAuthor || '',
+    projectTargets: userAnswers.projectTargets || [],
     verbose: verbose,
   }).then(function(directory) {
     if (autoInstallModules) {
@@ -244,14 +261,14 @@ function shouldUseYarn() {
 function install(directory, verbose) {
   console.log(chalk.white.bold('Install dependencies:'));
 
-  var pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
-  var args = ['install'];
+  const pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
+  const args = ['install'];
   if (verbose) {
     args.push('--verbose');
   }
 
   return new Promise(function(resolve) {
-    var proc = spawn(pkgManager, args, {stdio: 'inherit', cwd: directory});
+    const proc = spawn(pkgManager, args, {stdio: 'inherit', cwd: directory});
 
     proc.on('close', function(code) {
       if (code !== 0) {
