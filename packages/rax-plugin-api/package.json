@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "rax api base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -19,7 +19,7 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^8.0.0",
     "gulp-typescript": "^5.0.1",
-    "rax-compile-config": "^0.1.0",
+    "rax-compile-config": "^0.1.1",
     "run-sequence": "^2.2.1"
   }
 }

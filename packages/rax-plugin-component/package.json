@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-component",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "rax component base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -28,7 +28,7 @@
     "html-webpack-plugin": "^3.2.0",
     "image-source-loader": "^0.6.5",
     "loader-utils": "^1.1.0",
-    "rax-compile-config": "^0.1.0",
+    "rax-compile-config": "^0.1.1",
     "rax-hot-loader": "^0.6.5",
     "rax-webpack-plugin": "^0.6.5",
     "run-sequence": "^2.2.1",
