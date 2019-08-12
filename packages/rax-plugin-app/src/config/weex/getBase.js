@@ -31,7 +31,7 @@ module.exports = (context) => {
       .options(babelConfig);
 
   config.module.rule('tsx')
-    .test(/\.tsx?$/)
+    .test(/\.(ts|tsx)?$/)
     .exclude
       .add(/(node_modules|bower_components)/)
       .end()
