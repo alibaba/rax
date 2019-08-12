@@ -19,7 +19,7 @@ program
       workDirectory,
       enableWatch,
       type: cmd.type,
-      entry: cmd.type === 'component' ? cmd.entry : 'src/',
+      entry: cmd.type === 'component' ? cmd.entry : 'src/app.js',
       dist: cmd.dist,
     }
 

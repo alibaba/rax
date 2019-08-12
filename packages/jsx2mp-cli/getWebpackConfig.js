@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const { readJSONSync } = require('fs-extra');
-const { join, resolve, relative } = require('path');
+const { join, resolve, relative, dirname } = require('path');
 const chalk = require('chalk');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
 const spinner = require('./utils/spinner');
@@ -26,7 +26,8 @@ function getBabelConfig() {
   };
 }
 
-function getEntry(type, cwd, entryPath) {
+function getEntry(type, cwd, entryFilePath) {
+  const entryPath = dirname(entryFilePath);
   const entry = {};
   
   if (type === 'project') {
@@ -41,19 +42,19 @@ function getEntry(type, cwd, entryPath) {
     entry.app = AppLoader + '?' + JSON.stringify({ entryPath }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.forEach(({ path, component }) => {
-        entry['page@' + component] = PageLoader + '?' + JSON.stringify({ entryPath }) +  '!' + getDepPath(component, entryPath);
+        entry['page@' + component] = PageLoader + '?' + JSON.stringify({ entryPath: entryFilePath}) +  '!' + getDepPath(component, entryPath);
       });
     } else if (Array.isArray(appConfig.pages)) {
       // Compatible with pages.
       appConfig.pages.forEach((pagePath) => {
-        entry['page@' + pagePath] = PageLoader + '!' + getDepPath(pagePath, entryPath);
+        entry['page@' + component] = PageLoader + '?' + JSON.stringify({ entryPath: entryFilePath}) +  '!' + getDepPath(pagePath, entryPath);
+        
       });
     }
   }
   if (type === 'component') {
-    entry.component = ComponentLoader + '?' + JSON.stringify({ entryPath }) + '!' + entryPath;
+    entry.component = ComponentLoader + '?' + JSON.stringify({ entryPath: entryFilePath }) + '!' + entryFilePath;
   }
-  console.log('entry', entry);
   return entry;
 }
 
@@ -66,21 +67,21 @@ function getDepPath(path, rootContext) {
   if (path[0] === '.' || path[0] === '/') {
     return join(rootContext, path);
   } else {
-    return `./${rootContext}${path}`;
+    return `./${rootContext}/${path}`;
   }
 }
 
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  const { entryPath, type, workDirectory } = options;
-    let resolvedEntryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx');
-    let relativeEntryPath = relative(workDirectory, resolvedEntryPath);
-    console.log("TCL: relativeEntryPath", relativeEntryPath)
+  let { entryPath, type, workDirectory } = options;
+  if (entryPath[0] !== '.') entryPath = './' + entryPath;
+  entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
+  const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
   
   return {
     mode: 'production', // Will be fast
-    entry: getEntry(type, cwd, entryPath),
+    entry: getEntry(type, cwd, relativeEntryFilePath),
     target: 'node',
     context: cwd,
     module: {
@@ -92,7 +93,7 @@ module.exports = (options = {}) => {
               loader: FileLoader,
               options: {
                 mode: options.mode,
-                entryPath: entryPath
+                entryPath: relativeEntryFilePath
               },
             },
             {

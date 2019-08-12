@@ -94,7 +94,7 @@ module.exports = function fileLoader(content) {
     }
   } else {
     const relativeFilePath = relative(
-      join(rootContext, loaderOptions.entryPath),
+      join(rootContext, dirname(loaderOptions.entryPath)),
       this.resourcePath
     );
     const distSourcePath = join(distPath, relativeFilePath);

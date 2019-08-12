@@ -13,7 +13,7 @@ module.exports = function componentLoader(content) {
   const rootContext = this.rootContext;
 
   const distPath = this._compiler.outputPath;
-  const relativeSourcePath = relative(join(this.rootContext, loaderOptions.entryPath), this.resourcePath);
+  const relativeSourcePath = relative(join(this.rootContext, dirname(loaderOptions.entryPath)), this.resourcePath);
   const targetFilePath = join(distPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(distPath, relativeSourcePath));
 
