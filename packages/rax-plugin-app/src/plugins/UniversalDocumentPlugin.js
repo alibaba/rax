@@ -2,8 +2,9 @@ const path = require('path');
 const babel = require('@babel/core');
 const { RawSource } = require('webpack-sources');
 const { readFileSync, existsSync } = require('fs');
+const { getBabelConfig } = require('rax-compile-config');
 
-const babelConfig = require('../config/babel.config.js');
+const babelConfig = getBabelConfig();
 
 module.exports = class UniversalDocumentPlugin {
   constructor(options) {

@@ -43,4 +43,4 @@ module.exports = (config, context) => {
     .overlay(false)
     .host(address.ip())
     .public(address.ip());
-}
+};

@@ -1,14 +1,11 @@
 'use strict';
 const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
-const babelMerge = require('babel-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { getBabelConfig } = require('rax-compile-config');
 
 const UniversalDocumentPlugin = require('../../plugins/UniversalDocumentPlugin');
 const PWAAppShellPlugin = require('../../plugins/PWAAppShellPlugin');
-const babelConfig = require('../babel.config');
-
-let babelConfigWeb = babelMerge.all([{}, babelConfig]);
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
@@ -18,6 +15,10 @@ module.exports = (context) => {
 
   const config = getWebpackBase(context);
 
+  const babelConfig = getBabelConfig({
+    styleSheet: !!userConfig.inlineStyle
+  });
+
   config.output.filename('web/[name].js');
 
   config.resolve.alias
@@ -26,12 +27,6 @@ module.exports = (context) => {
     .set('@core/router', 'universal-app-runtime');
 
   if (userConfig.inlineStyle) {
-    babelConfigWeb = babelMerge.all([{
-      plugins: [
-        require.resolve('babel-plugin-transform-jsx-stylesheet')
-      ],
-    }, babelConfigWeb]);
-
     config.module.rule('css')
       .test(/\.css?$/)
       .use('css')
@@ -75,7 +70,7 @@ module.exports = (context) => {
     .end()
   .use('babel')
     .loader(require.resolve('babel-loader'))
-    .options(babelConfigWeb);
+    .options(babelConfig);
 
   config.module.rule('tsx')
   .test(/\.tsx?$/)
@@ -84,7 +79,7 @@ module.exports = (context) => {
     .end()
   .use('babel')
     .loader(require.resolve('babel-loader'))
-    .options(babelConfigWeb)
+    .options(babelConfig)
     .end()
   .use('ts')
     .loader(require.resolve('ts-loader'));
