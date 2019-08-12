@@ -3,8 +3,9 @@ const path = require('path');
 const ts = require('gulp-typescript');
 const babel = require('gulp-babel');
 const fs = require('fs-extra');
+const { getBabelConfig } = require('rax-compile-config');
 
-const babelConfig = require('./babel.config');
+const babelConfig = getBabelConfig();
 
 const {
   JS_FILES_PATTERN,

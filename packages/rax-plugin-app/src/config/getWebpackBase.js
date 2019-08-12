@@ -1,10 +1,10 @@
 const path = require('path');
-const webpack = require('webpack');
 const Chain = require('webpack-chain');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const { setBabelAlias } = require('rax-compile-config');
 
 module.exports = (context) => {
-  const { rootDir, userConfig, command } = context;
+  const { rootDir, userConfig } = context;
   const { publicPath, outputDir } = userConfig;
 
   const config = new Chain();
@@ -12,17 +12,14 @@ module.exports = (context) => {
   config.target('web');
   config.context(rootDir);
 
-  config.resolve.alias
-    .set('babel-runtime-jsx-plus', require.resolve('babel-runtime-jsx-plus'))
-    // @babel/runtime has no index
-    .set('@babel/runtime', path.dirname(require.resolve('@babel/runtime/package.json')));
+  setBabelAlias(config);
 
   config.resolve.extensions
     .merge(['.js', '.json', '.jsx', '.html', '.ts', '.tsx']);
 
   // external weex module
   config.externals([
-    function(context, request, callback) {
+    function(ctx, request, callback) {
       if (request.indexOf('@weex-module') !== -1) {
         return callback(null, 'commonjs ' + request);
       }

@@ -24,6 +24,8 @@ module.exports = (context, options, log) => {
     gulp.watch([TS_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['ts']);
   }
 
+  gulp.watch([OTHER_FILES_PATTERN], { ignore: IGNORE_PATTERN }, ['copyOther']);
+
   log.info('api', chalk.green('Develop watch server start... '));
 
   runSequence(...tasks, () => {

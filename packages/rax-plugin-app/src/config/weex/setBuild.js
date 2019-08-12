@@ -3,6 +3,7 @@
 const path = require('path');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
 const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
 
 module.exports = (config, context) => {
