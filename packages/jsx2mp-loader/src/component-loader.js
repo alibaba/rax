@@ -1,21 +1,28 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
 const { relative, join, dirname, extname } = require('path');
+const { getOptions } = require('loader-utils');
+
 const compiler = require('jsx-compiler');
 
 const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
+  const loaderOptions = getOptions(this);
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
-  const compilerOptions = Object.assign({}, compiler.baseOptions, {
-    filePath: this.resourcePath,
-    type: 'component',
-  });
+
   const distPath = this._compiler.outputPath;
-  const relativeSourcePath = relative(this.rootContext, this.resourcePath);
+  const relativeSourcePath = relative(join(this.rootContext, loaderOptions.entryPath), this.resourcePath);
   const targetFilePath = join(distPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(distPath, relativeSourcePath));
+
+  const compilerOptions = Object.assign({}, compiler.baseOptions, {
+    filePath: this.resourcePath,
+    distPath,
+    targetFileDir: dirname(targetFilePath),
+    type: 'component',
+  });
 
   const transformed = compiler(rawContent, compilerOptions);
 
@@ -29,10 +36,12 @@ module.exports = function componentLoader(content) {
     const usingComponents = {};
     Object.keys(config.usingComponents).forEach(key => {
       const value = config.usingComponents[key];
+
       if (/^c-/.test(key)) {
-        let result = relative(rootContext, value); // components/Repo.jsx
-        result = removeExt(result); // components/Repo
-        usingComponents[key] = '/' + result;
+        let result = './' + relative(dirname(this.resourcePath) ,value); // ./components/Repo.jsx
+        result = removeExt(result); // ./components/Repo
+
+        usingComponents[key] = result;
       } else {
         usingComponents[key] = value;
       }
@@ -75,7 +84,7 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath } });
     } else {
       denpendencies.push({ name });
     }
@@ -89,9 +98,9 @@ module.exports = function componentLoader(content) {
 
 function generateDependencies(dependencies) {
   return dependencies
-    .map(({ name, loader }) => {
+    .map(({ name, loader, options }) => {
       let mod = name;
-      if (loader) mod = loader + '!' + mod;
+      if (loader) mod = loader + '?' + JSON.stringify(options) + '!' + mod;
       return createImportStatement(mod);
     })
     .join('\n');

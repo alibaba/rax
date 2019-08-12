@@ -1,7 +1,8 @@
 const {
   sep,
   join,
-  dirname
+  dirname,
+  relative
 } = require('path');
 const {
   existsSync,
@@ -92,6 +93,7 @@ module.exports = function resolve(script, dependency, extensions = ['.js', '.jsx
   if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
     let dependencyPath = join(script, dependency);
     target = loadAsFile(dependencyPath, extensions) || loadAsDirectory(dependencyPath, extensions);
+    target = relative(script, target);
   } else {
     target = loadNpmModules(dependency, dirname(script), extensions);
   }

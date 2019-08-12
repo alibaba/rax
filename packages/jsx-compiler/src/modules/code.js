@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { join } = require('path');
+const { join, relative } = require('path');
 const genExpression = require('../codegen/genExpression');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -43,10 +43,9 @@ function getConstructor(type) {
  * 4. Transform 'rax' to 'rax/dist/rax.min.js' in case of 小程序开发者工具 not support `process`.
  */
 module.exports = {
-  parse(parsed, code, options) {
+  parse(parsed, code, options) {   
     const { defaultExportedPath, eventHandlers = [] } = parsed;
     if (!defaultExportedPath || !defaultExportedPath.node) return; // Can not found default export.
-
     let userDefineType;
 
     if (options.type === 'app') {
@@ -98,9 +97,9 @@ module.exports = {
     const hooks = collectHooks(parsed.renderFunctionPath);
 
     removeRaxImports(parsed.ast);
-    renameCoreModule(parsed.ast);
+    renameCoreModule(parsed.ast, options.distPath, options.targetFileDir);
     renameNpmModules(parsed.ast);
-    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    addDefine(parsed.ast, options.type, options.distPath, options.targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
     /**
@@ -139,12 +138,14 @@ module.exports = {
   },
 };
 
-function renameCoreModule(ast) {
+function renameCoreModule(ast, distPath, targetFileDir) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
       if (source.isStringLiteral() && isCoreModule(source.node.value)) {
-        source.replaceWith(t.stringLiteral(RUNTIME));
+        let runtimeRelativePath = relative(targetFileDir, join(distPath, RUNTIME));
+        runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
+        source.replaceWith(t.stringLiteral(runtimeRelativePath));
       }
     }
   });
@@ -162,7 +163,7 @@ function renameNpmModules(ast) {
   });
 }
 
-function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks) {
+function addDefine(ast, type, distPath, targetFileDir, userDefineType, eventHandlers, useCreateStyle, hooks) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -205,10 +206,13 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
         ));
       }
 
+      let runtimeRelativePath = relative(targetFileDir, join(distPath, RUNTIME));
+      runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
+
       path.node.body.unshift(
         t.importDeclaration(
           specifiers,
-          t.stringLiteral(RUNTIME)
+          t.stringLiteral(runtimeRelativePath)
         )
       );
 

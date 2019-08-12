@@ -29,8 +29,8 @@ function build(options = {}) {
  * @param options
  */
 function watch(options = {}) {
-  const { afterCompiled } = options;
-  let config = getWebpackConfig({ mode: 'watch' });
+  const { afterCompiled, type, entry, workDirectory } = options;
+  let config = getWebpackConfig({ mode: 'watch', entryPath: entry, type, workDirectory });
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
