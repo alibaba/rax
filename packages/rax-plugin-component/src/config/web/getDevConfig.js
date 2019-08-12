@@ -6,8 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
-const hmrClient = require.resolve('../hmr/webpackHotDevClient.entry');
-const babelConfig = require('./babel.config');
+const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
+const babelConfig = require('../babel.config');
 
 module.exports = (context) => {
   const { rootDir, userConfig } = context;
@@ -48,7 +48,7 @@ module.exports = (context) => {
   config.plugin('html')
     .use(HtmlWebpackPlugin, [{
       inject: true,
-      template: path.resolve(__dirname, './demo.html')
+      template: path.resolve(__dirname, '../demo.html')
     }]);
 
   config.plugin('noError')
