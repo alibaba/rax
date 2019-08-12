@@ -82,7 +82,7 @@ function calcRpxToVw(value) {
 }
 
 function isRpx(str) {
-  return str.slice(0, -3) === 'rpx';
+  return typeof str === 'string' && str.slice(0, -3) === 'rpx';
 }
 
 // Cache the convert fn.

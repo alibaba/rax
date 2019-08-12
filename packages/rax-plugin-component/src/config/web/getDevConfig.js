@@ -5,9 +5,16 @@ const Chain = require('webpack-chain');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 
 const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
-const babelConfig = require('../babel.config');
+
+const babelConfig = getBabelConfig({
+  styleSheet: true,
+  custom: {
+    ignore: ['**/**/*.d.ts']
+  }
+});
 
 module.exports = (context) => {
   const { rootDir, userConfig } = context;
@@ -18,10 +25,7 @@ module.exports = (context) => {
   config.mode('development');
   config.context(rootDir);
 
-  config.resolve.alias
-    .set('babel-runtime-jsx-plus', require.resolve('babel-runtime-jsx-plus'))
-    // @babel/runtime has no index
-    .set('@babel/runtime', path.dirname(require.resolve('@babel/runtime/package.json')));
+  setBabelAlias(config);
 
   config.resolve.extensions
     .merge(['.js', '.json', '.jsx', '.html']);
