@@ -33,7 +33,10 @@ describe('Transform list', () => {
     _transformList(ast, adapter);
 
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => {
-    return {};
+    return {
+      val: val,
+      idx: idx
+    };
   })} a:for-item="val" a:for-index="idx"><item data-value={val} data-key={idx} /></block></View>`);
   });
 
@@ -57,7 +60,6 @@ describe('Transform list', () => {
     _transformList(ast, adapter);
 
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, idx) => ({
-    item: item,
     item: item
   }))} a:for-item="item" a:for-index="idx"><View>{item.title}<image source={{
         uri: item.picUrl
@@ -71,7 +73,6 @@ describe('Transform list', () => {
     const ast = parseExpression(raw);
     _transformList(ast, adapter);
     expect(genCode(ast).code).toEqual(`<View class="coupon-list"><block a:for={couponList.map(coupon => ({
-    coupon: coupon,
     coupon: coupon
   }))} a:for-item="coupon" a:for-index="index"><Coupon coupon={coupon} onClick={this.handleClick} data-arg-context="this" data-arg-0={coupon} /></block></View>`);
   });
@@ -83,7 +84,7 @@ describe('Transform list', () => {
     const ast = parseExpression(raw);
     _transformList(ast, adapter);
 
-    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={[1, 2, 3].map((val, idx) => { return {}; })} a:for-item="val" a:for-index="idx"><Text>{idx}</Text></block></View>');
+    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={[1, 2, 3].map((val, idx) => { return { idx: idx }; })} a:for-item="val" a:for-index="idx"><Text>{idx}</Text></block></View>');
   });
 
   it('nested list', () => {
@@ -114,8 +115,8 @@ describe('Transform list', () => {
     expect(genCode(ast, { concise: true }).code).toEqual(`<View className="header" onClick={() => { setWorkYear(workYear + 1); }}>
   <View style={{ color: 'red' }}>workYear: {workYear}</View>
   <View style={{ color: 'red' }}>count: {count}</View>
-  <block a:for={arr.map(l1 => { return { l2: l2 }; })} a:for-item="l1" a:for-index="index"><View>
-        <block a:for={l1.map(l2 => { return {}; })} a:for-item="l2" a:for-index="index"><View>{l2}</View></block>
+  <block a:for={arr.map(l1 => { return { l1: l1, l2: l2 }; })} a:for-item="l1" a:for-index="index"><View>
+        <block a:for={l1.map(l2 => { return { l2: l2 }; })} a:for-item="l2" a:for-index="index"><View>{l2}</View></block>
       </View></block>
   <Loading count={count} />
   {props.children}
