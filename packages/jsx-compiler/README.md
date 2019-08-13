@@ -21,7 +21,8 @@ Run jsx compiler.
 
 - type: Required, enum of `app`, `page`, `component`.
 - distPath: Required, string of dist path.
-- targetFileDir: Required, string of target file directory.
+- sourcePath: Required, string of source path.
+- resourcePath: Required, string of original file path.
 
 ```js
 const compile = require('jsx-compiler');

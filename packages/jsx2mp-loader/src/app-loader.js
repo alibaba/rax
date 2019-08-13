@@ -39,13 +39,16 @@ module.exports = function appLoader(content) {
   const distPath = this._compiler.outputPath;
   if (!existsSync(distPath)) mkdirSync(distPath);
 
-  const relativeSourcePath = relative(join(this.rootContext, loaderOptions.entryPath), this.resourcePath);
+  const sourcePath = join(this.rootContext, entryPath);
+  const relativeSourcePath = relative(sourcePath, this.resourcePath);
   const targetFilePath = join(distPath, relativeSourcePath);
 
+  const targetFileDir = dirname(join(distPath, relative(sourcePath, this.resourcePath)));
+
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
-    filePath: this.resourcePath,
+    resourcePath: this.resourcePath,
     distPath,
-    targetFileDir: dirname(targetFilePath),
+    sourcePath,
     type: 'app',
   });
   const transformed = compiler(rawContent, compilerOptions);

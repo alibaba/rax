@@ -7,20 +7,22 @@ const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform } = loaderOptions;
+  const { platform, entryPath } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
 
   const distPath = this._compiler.outputPath;
-  const relativeSourcePath = relative(join(this.rootContext, dirname(loaderOptions.entryPath)), this.resourcePath);
+  const sourcePath = join(this.rootContext, dirname(entryPath));
+  const relativeSourcePath = relative(sourcePath, this.resourcePath);
   const targetFilePath = join(distPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(distPath, relativeSourcePath));
-
+  // console.log('targetFileDir', dirname(targetFilePath));
+  // console.log('合成路径：', dirname(join(distPath, relative(sourcePath, this.resourcePath))))
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
-    filePath: this.resourcePath,
+    resourcePath: this.resourcePath,
     distPath,
-    targetFileDir: dirname(targetFilePath),
+    sourcePath,
     type: 'component',
     platform
   });

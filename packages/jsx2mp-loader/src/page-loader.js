@@ -8,19 +8,20 @@ const ComponentLoader = require.resolve('./component-loader');
 
 module.exports = function pageLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform } = loaderOptions;
+  const { platform, entryPath } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
 
   const distPath = this._compiler.outputPath;
-  const relativeSourcePath = relative(join(this.rootContext, dirname(loaderOptions.entryPath)), this.resourcePath);
+  const sourcePath = join(this.rootContext, dirname(entryPath));
+  const relativeSourcePath = relative(sourcePath, this.resourcePath);
   const targetFilePath = join(distPath, relativeSourcePath);
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
-    filePath: this.resourcePath,
+    resourcePath: this.resourcePath,
     distPath,
-    targetFileDir: dirname(targetFilePath),
+    sourcePath,
     type: 'page',
     platform
   });
@@ -67,6 +68,7 @@ module.exports = function pageLoader(content) {
   // Write extra assets
   if (transformed.assets) {
     Object.keys(transformed.assets).forEach((asset) => {
+      console.log('asset', asset);
       const content = transformed.assets[asset];
       const assetDirectory = dirname(join(distPath, asset));
       if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);

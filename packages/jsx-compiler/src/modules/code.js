@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { join, relative } = require('path');
+const { join, relative, dirname } = require('path');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -96,10 +96,12 @@ module.exports = {
 
     const hooks = collectHooks(parsed.renderFunctionPath);
 
+    const targetFileDir = dirname(join(options.distPath, relative(options.sourcePath, options.resourcePath)));
+
     removeRaxImports(parsed.ast);
-    renameCoreModule(parsed.ast, options.distPath, options.targetFileDir);
+    renameCoreModule(parsed.ast, options.distPath, targetFileDir);
     renameNpmModules(parsed.ast);
-    addDefine(parsed.ast, options.type, options.distPath, options.targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    addDefine(parsed.ast, options.type, options.distPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
     /**
