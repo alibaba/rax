@@ -61,6 +61,8 @@ module.exports = function componentLoader(content) {
   if (transformed.assets) {
     Object.keys(transformed.assets).forEach((asset) => {
       const content = transformed.assets[asset];
+      const assetDirectory = dirname(join(distPath, asset));
+      if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
       writeFileSync(join(distPath, asset), content);
     });
   }
