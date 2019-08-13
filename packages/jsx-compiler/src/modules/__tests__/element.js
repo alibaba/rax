@@ -33,7 +33,7 @@ describe('Transform JSXElement', () => {
 
     it('should handle literial types', () => {
       const sourceCode = `
-        <View 
+        <View
           bool={true}
           str={'string'}
           num={8}
@@ -53,7 +53,7 @@ describe('Transform JSXElement', () => {
 
     it('should handle expression types', () => {
       const sourceCode = `
-        <View 
+        <View
           onFn1={(event) => { console.log(event) }}
           onFn2={(event) => console.log(event)}
           onFn3={function(event) {console.log(event)}}
@@ -123,7 +123,7 @@ describe('Transform JSXElement', () => {
   describe('event handlers', () => {
     it('class methods', () => {
       const ast = parseExpression(`
-        <View 
+        <View
           onClick={this.handleClick}
         />
       `);
@@ -137,7 +137,7 @@ describe('Transform JSXElement', () => {
 
     it('prop methods', () => {
       const ast = parseExpression(`
-        <View 
+        <View
           onClick={props.onClick}
         />
       `);
@@ -149,7 +149,7 @@ describe('Transform JSXElement', () => {
 
     it('bind methods', () => {
       const ast = parseExpression(`
-        <View 
+        <View
           onClick={onClick.bind(this, { a: 1 })}
           onKeyPress={this.handleClick.bind(this, 'hello')}
         />

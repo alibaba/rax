@@ -11,13 +11,15 @@ const chalk = require('chalk');
  * @param options
  */
 function build(options = {}) {
-  const { afterCompiled, platform, distDirectory } = options;
+  const { afterCompiled, platform, type, entry, workDirectory, distDirectory } = options;
   let config = getWebpackConfig({
     mode: 'build',
+    entryPath: entry,
     platform,
-    distDirectory,
+    type,
+    workDirectory,
+    distDirectory
   });
-
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
@@ -34,17 +36,18 @@ function build(options = {}) {
  * @param options
  */
 function watch(options = {}) {
-  const { afterCompiled, platform, distDirectory } = options;
+  const { afterCompiled, type, entry, platform, workDirectory, distDirectory } = options;
   let config = getWebpackConfig({
     mode: 'watch',
+    entryPath: entry,
+    type,
+    workDirectory,
     platform,
     distDirectory,
   });
-
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
-
   const compiler = webpack(config);
   const watchOpts = {};
   compiler.outputFileSystem = new MemFs();

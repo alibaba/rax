@@ -4,24 +4,25 @@ const program = require('commander');
 const platformConfig = require('../utils/platformConfig');
 
 program
-  .option('-e, --entry <entry>', 'set entry of component', 'index')
+  .option('--type <type>', 'set type of project | component', 'project')
   .option('-p, --platform <platform>', 'set target mini-application platform', 'ali')
-  .option('-t, --type <type>', 'set type of project|component', 'project')
-  .option('-d, --dist <dist>', 'set export path', 'dist')
+  .option('--entry <entry>', 'set entry of component', 'index')
+  .option('--dist <dist>', 'set export path', 'dist')
   .action((cmd) => {
     const workDirectory = resolve(process.env.CWD || process.cwd());
     const distDirectory = resolve(workDirectory, cmd.dist);
     const platform = platformConfig[cmd.platform];
 
-    require('..').build({
+    const options = {
       workDirectory,
       distDirectory,
       enableWatch: false,
       type: cmd.type,
+      entry: cmd.type === 'component' ? cmd.entry : 'src/app.js',
       dist: cmd.dist,
-      entry: cmd.entry,
-      platform: platform
-    });
+      platform
+    };
+    require('..').build(options);
   });
 
 program.parse(process.argv);

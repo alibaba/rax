@@ -1,4 +1,4 @@
-const { join } = require('path');
+const { join, relative } = require('path');
 const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
 const { _transform: transformTemplate } = require('./element');
@@ -51,7 +51,9 @@ module.exports = {
         // npm module
         const pkg = getComponentConfig(alias.from);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
-          return join('/npm', alias.from, pkg.miniappConfig.main);
+          let npmRelativePath = relative(options.targetFileDir, join(options.distPath, '/npm'));
+          npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
+          return './' + join(npmRelativePath, alias.from, pkg.miniappConfig.main);
         } else {
           console.warn('Can not found compatible rax miniapp component "' + pkg.name + '".');
         }

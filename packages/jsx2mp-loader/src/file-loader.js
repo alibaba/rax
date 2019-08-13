@@ -10,11 +10,13 @@ const ComponentLoader = require.resolve('./component-loader');
 
 const dependenciesCache = {};
 module.exports = function fileLoader(content) {
-  const loaderHandled = this.loaders.some(({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1);
+  const loaderHandled = this.loaders.some(
+    ({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1
+  );
   if (loaderHandled) return;
 
   const loaderOptions = getOptions(this);
-  const rawContent = readFileSync(this.resourcePath);
+  const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const rootContext = this.rootContext;
   const currentNodeModulePath = join(rootContext, 'node_modules');
   const distPath = this._compiler.outputPath;
@@ -68,11 +70,7 @@ module.exports = function fileLoader(content) {
         dependenciesCache[npmName] = true;
         const target = join(distPath, 'npm', npmName, 'package.json');
         if (!existsSync(target))
-          copySync(
-            sourcePackageJSONPath,
-            target,
-            { errorOnExist: false }
-          );
+          copySync(sourcePackageJSONPath, target, { errorOnExist: false });
       }
 
       // Copy file
@@ -87,18 +85,30 @@ module.exports = function fileLoader(content) {
       writeJSONSync(distSourcePath + '.map', map);
     }
   } else {
-    const relativeFilePath = relative(rootContext, this.resourcePath);
+    const relativeFilePath = relative(
+      join(rootContext, dirname(loaderOptions.entryPath)),
+      this.resourcePath
+    );
     const distSourcePath = join(distPath, relativeFilePath);
-    copySync(this.resourcePath, distSourcePath);
+    const distSourceDirPath = dirname(distSourcePath);
+    const npmRelativePath = relative(dirname(distSourcePath), join(distPath, '/npm/'));
+    const { code } = transformCode(rawContent, loaderOptions, npmRelativePath);
+
+    if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
+    writeFileSync(distSourcePath, code, 'utf-8');
   }
 
   return content;
 };
 
-function transformCode(rawCode, loaderOptions) {
+function transformCode(rawCode, loaderOptions, npmRelativePath = '') {
   const presets = [];
   const plugins = [
-    require('./babel-plugin-rename-import'), // for rename npm modules.
+    [
+      require('./babel-plugin-rename-import'),
+      { npmRelativePath }
+
+    ] // for rename npm modules.
   ];
 
   // Compile to ES5 for build.

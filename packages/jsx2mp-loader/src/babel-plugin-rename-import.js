@@ -1,6 +1,5 @@
 const { join } = require('path');
 
-const PREFIX = '/npm';
 const WEEX_MODULE_REG = /^@weex\//;
 
 function isNpmModule(value) {
@@ -12,19 +11,21 @@ function isWeexModule(value) {
 }
 
 module.exports = function visitor({ types: t }) {
-  const source = (value) => t.stringLiteral(join(PREFIX, value));
+  const source = (value, prefix) => t.stringLiteral(join(prefix, value));
   return {
     visitor: {
-      ImportDeclaration(path) {
+      ImportDeclaration(path, state) {
+        const { npmRelativePath } = state.opts;
         const { value } = path.node.source;
         if (isWeexModule(value)) {
           path.remove();
         } else if (isNpmModule(value)) {
-          path.node.source = source(value);
+          path.node.source = source(value, npmRelativePath);
         }
       },
 
-      CallExpression(path) {
+      CallExpression(path, state) {
+        const { npmRelativePath } = state.opts;
         const { node } = path;
         if (
           node.callee.name === 'require' &&
@@ -36,7 +37,7 @@ module.exports = function visitor({ types: t }) {
             path.replaceWith(t.nullLiteral);
           } else if (isNpmModule(node.arguments[0].value)) {
             path.node.arguments = [
-              source(node.arguments[0].value)
+              source(node.arguments[0].value, npmRelativePath)
             ];
           }
         }
