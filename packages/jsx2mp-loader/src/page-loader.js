@@ -68,7 +68,6 @@ module.exports = function pageLoader(content) {
   // Write extra assets
   if (transformed.assets) {
     Object.keys(transformed.assets).forEach((asset) => {
-      console.log('asset', asset);
       const content = transformed.assets[asset];
       const assetDirectory = dirname(join(distPath, asset));
       if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
