@@ -2,8 +2,9 @@ const path = require('path');
 const babel = require('@babel/core');
 const { RawSource } = require('webpack-sources');
 const { readFileSync, existsSync } = require('fs');
+const { getBabelConfig } = require('rax-compile-config');
 
-const babelConfig = require('../config/babel.config.js');
+const babelConfig = getBabelConfig();
 
 module.exports = class UniversalDocumentPlugin {
   constructor(options) {
@@ -22,7 +23,9 @@ module.exports = class UniversalDocumentPlugin {
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync('UniversalDocumentPlugin', (compilation, callback) => {
-      const { publicPath } = compilation.outputOptions;
+      const config = compilation.options;
+      const isDev = config.mode === 'development';
+      const publicPath = isDev ? config.devServer.publicPath : config.output.publicPath;
 
       const filename = path.resolve(this.rootDir, this.documentPath);
       if (!existsSync(filename)) throw new Error(`File ${filename} is not exists, please check.`);

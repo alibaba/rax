@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const consoleClear = require('console-clear');
 
 const getMpOuput = require('./config/miniapp/getOutputPath');
+const handleErr = require('./handleErr');
 
 module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {}) => {
   const { targets = [] } = options;
@@ -43,22 +44,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
       stats = mpBuildErr.stats;
     }
 
-    if (err) {
-      console.error(err.stack || err);
-      if (err.details) {
-        console.error(err.details);
-      }
-      return;
-    }
-    if (stats.hasErrors()) {
-      const errors = stats.compilation.errors;
-      for (let e of errors) {
-        console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));
-        if (process.env.DEBUG === 'true') {
-          console.log(e.error.stack);
-        }
-      }
-      console.log(chalk.yellow('Set environment `DEBUG=true` to see detail error stacks.'));
+    if (!handleErr(err, stats)) {
       return;
     }
 

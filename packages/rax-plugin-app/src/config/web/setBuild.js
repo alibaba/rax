@@ -14,10 +14,8 @@ module.exports = (config, context) => {
   setEntry(config, rootDir, userConfig);
 
   config.optimization
-    .minimize(true)
     .minimizer('uglify')
       .use(UglifyJSPlugin, [{
-        include: /\.min\.js$/,
         cache: true,
         sourceMap: true,
       }])

@@ -5,11 +5,17 @@ const path = require('path');
 const babel = require('gulp-babel');
 const ts = require('gulp-typescript');
 const fs = require('fs-extra');
+const { getBabelConfig } = require('rax-compile-config');
 
 const gulp = require('gulp');
 const runSequence = require('run-sequence').use(gulp);
 
-const babelConfig = require('./config/babel.config');
+const babelConfig = getBabelConfig({
+  styleSheet: true,
+  custom: {
+    ignore: ['**/**/*.d.ts']
+  }
+});
 
 const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
 const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';

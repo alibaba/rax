@@ -8,7 +8,7 @@ const setEntry = require('./setEntry');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
-  const { publicPath } = userConfig;
+  const { devPublicPath } = userConfig;
 
   config.mode('development');
   config.devtool('inline-module-source-map');
@@ -34,7 +34,7 @@ module.exports = (config, context) => {
     .watchContentBase(true)
     .hot(true)
     .quiet(true)
-    .publicPath(publicPath)
+    .publicPath(devPublicPath)
     .overlay(false)
     .host(address.ip())
     .public(address.ip());
