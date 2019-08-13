@@ -11,8 +11,8 @@ const chalk = require('chalk');
  * @param options
  */
 function build(options = {}) {
-  const { afterCompiled } = options;
-  let config = getWebpackConfig({ mode: 'build' });
+  const { afterCompiled, type, entry, workDirectory } = options;
+  let config = getWebpackConfig({ mode: 'build', entryPath: entry, type, workDirectory });
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
