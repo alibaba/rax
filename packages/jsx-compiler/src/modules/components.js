@@ -1,4 +1,4 @@
-const { join, relative } = require('path');
+const { join, relative, dirname } = require('path');
 const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
 const { _transform: transformTemplate } = require('./element');
@@ -30,7 +30,7 @@ module.exports = {
     }
 
     function getComponentConfig(pkgName) {
-      const pkgPath = moduleResolve(options.filePath, join(pkgName, 'package.json'));
+      const pkgPath = moduleResolve(options.resourcePath, join(pkgName, 'package.json'));
       if (!pkgPath) {
         throw new Error(`MODULE_NOT_RESOLVE: Can not resolve rax component "${pkgName}", please check you have this module installed.`);
       }
@@ -40,18 +40,19 @@ module.exports = {
     function getComponentPath(alias) {
       if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
         // alias.local
-        if (!options.filePath) {
-          throw new Error('`filePath` must be passed to calc dependency path.');
+        if (!options.resourcePath) {
+          throw new Error('`resourcePath` must be passed to calc dependency path.');
         }
 
-        const filename = moduleResolve(options.filePath, alias.from, '.jsx')
-          || moduleResolve(options.filePath, alias.from, '.js');
+        const filename = moduleResolve(options.resourcePath, alias.from, '.jsx')
+          || moduleResolve(options.resourcePath, alias.from, '.js');
         return filename;
       } else {
         // npm module
         const pkg = getComponentConfig(alias.from);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
-          let npmRelativePath = relative(options.targetFileDir, join(options.distPath, '/npm'));
+          const targetFileDir = dirname(join(options.distPath, relative(options.sourcePath, options.resourcePath)));
+          let npmRelativePath = relative(targetFileDir, join(options.distPath, '/npm'));
           npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
           return './' + join(npmRelativePath, alias.from, pkg.miniappConfig.main);
         } else {
