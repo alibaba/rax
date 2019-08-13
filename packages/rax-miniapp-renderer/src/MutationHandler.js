@@ -37,7 +37,7 @@ export default class MutationHandler {
     let sharedNodeMap = this.sharedNodeMap;
     let vnode = target;
 
-    if (vnode && vnode.nodeName === 'BODY') {
+    if (vnode && vnode.nodeName === 'BODY' && vnode.$$id) {
       this.mountNode.$$id = vnode.$$id;
     }
 

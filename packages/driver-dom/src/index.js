@@ -1,63 +1,99 @@
 /**
  * Driver for Web DOM
  **/
+const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
+const __HTML = '__html';
+const INNER_HTML = 'innerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const TEXT_CONTENT_ATTR = 'textContent';
+const CREATE_ELEMENT = 'createElement';
+const CREATE_COMMENT = 'createComment';
+const CREATE_TEXT_NODE = 'createTextNode';
+const SET_ATTRIBUTE = 'setAttribute';
+const REMOVE_ATTRIBUTE = 'removeAttribute';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
-const TRUE = true;
 const EMPTY = '';
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
-const UNITLESS_NUMBER_PROPS = {
-  animationIterationCount: TRUE,
-  borderImageOutset: TRUE,
-  borderImageSlice: TRUE,
-  borderImageWidth: TRUE,
-  boxFlex: TRUE,
-  boxFlexGroup: TRUE,
-  boxOrdinalGroup: TRUE,
-  columnCount: TRUE,
-  flex: TRUE,
-  flexGrow: TRUE,
-  flexPositive: TRUE,
-  flexShrink: TRUE,
-  flexNegative: TRUE,
-  flexOrder: TRUE,
-  gridRow: TRUE,
-  gridColumn: TRUE,
-  fontWeight: TRUE,
-  // Main-stream browsers(like chrome) will not remove webkit prefix in the short term.
-  // ref: CSSOM webkit-based attribute: https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-webkit-cased-attribute
-  webkitLineClamp: TRUE,
-  lineClamp: TRUE,
-  lineHeight: TRUE,
-  opacity: TRUE,
-  order: TRUE,
-  orphans: TRUE,
-  tabSize: TRUE,
-  widows: TRUE,
-  zIndex: TRUE,
-  zoom: TRUE
-};
+const DOCUMENT = document;
 
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
 let isHydrating = false;
+let viewportWidth = 750;
+let unitPrecision = 4;
+let decimalPixelTransformer = (value) => value;
+
+/**
+ * Set viewport width.
+ * @param viewport {Number} Viewport width, default to 750.
+ */
+export function setViewportWidth(viewport) {
+  viewportWidth = viewport;
+}
+
+/**
+ * Set unit precision.
+ * @param n {Number} Unit precision, default to 4.
+ */
+export function setUnitPrecision(n) {
+  unitPrecision = n;
+}
+
+/**
+ * Set a function to transform unit of pixel,
+ * default to passthrough.
+ * @param {Function} transformer function
+ */
+export function setDecimalPixelTransformer(transformer) {
+  decimalPixelTransformer = transformer;
+}
+
+function unitTransformer(n) {
+  return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
+}
+
+function toFixed(number, precision) {
+  const multiplier = Math.pow(10, precision + 1);
+  const wholeNumber = Math.floor(number * multiplier);
+  return Math.round(wholeNumber / 10) * 10 / multiplier;
+}
+
+/**
+ * Create a cached version of a pure function.
+ */
+function cached(fn) {
+  const cache = Object.create(null);
+  return function cachedFn(str) {
+    return cache[str] || (cache[str] = fn(str));
+  };
+}
+
+function calcRpxToVw(value) {
+  return value.replace(RPX_REG, unitTransformer);
+}
+
+function isRpx(str) {
+  return typeof str === 'string' && str.slice(0, -3) === 'rpx';
+}
+
+// Cache the convert fn.
+const convertUnit = cached((value) => isRpx(value) ? calcRpxToVw(value) : value);
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
 }
 
 export function createBody() {
-  return document.body;
+  return DOCUMENT.body;
 }
 
 export function createEmpty(component) {
@@ -71,15 +107,15 @@ export function createEmpty(component) {
       if (hydrationChild.nodeType === COMMENT_NODE) {
         return hydrationChild;
       } else {
-        node = document.createComment(EMPTY);
+        node = DOCUMENT[CREATE_COMMENT](EMPTY);
         replaceChild(node, hydrationChild, parent);
       }
     } else {
-      node = document.createComment(EMPTY);
+      node = DOCUMENT[CREATE_COMMENT](EMPTY);
       node[HYDRATION_APPEND] = true;
     }
   } else {
-    node = document.createComment(EMPTY);
+    node = DOCUMENT[CREATE_COMMENT](EMPTY);
   }
 
   return node;
@@ -99,15 +135,15 @@ export function createText(text, component) {
         }
         return hydrationChild;
       } else {
-        node = document.createTextNode(text);
+        node = DOCUMENT[CREATE_TEXT_NODE](text);
         replaceChild(node, hydrationChild, parent);
       }
     } else {
-      node = document.createTextNode(text);
+      node = DOCUMENT[CREATE_TEXT_NODE](text);
       node[HYDRATION_APPEND] = true;
     }
   } else {
-    node = document.createTextNode(text);
+    node = DOCUMENT[CREATE_TEXT_NODE](text);
   }
 
   return node;
@@ -128,18 +164,17 @@ function findHydrationChild(parent) {
 export function createElement(type, props, component) {
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
-
   let node;
   let hydrationChild = null;
 
   function createNode() {
     if (isSVGMode) {
-      node = document.createElementNS(SVG_NS, type);
+      node = DOCUMENT.createElementNS(SVG_NS, type);
     } else if (tagNamePrefix) {
       let tagNamePrefix = typeof tagNamePrefix === 'function' ? tagNamePrefix(type) : tagNamePrefix;
-      node = document.createElement(tagNamePrefix + type);
+      node = DOCUMENT[CREATE_ELEMENT](tagNamePrefix + type);
     } else {
-      node = document.createElement(type);
+      node = DOCUMENT[CREATE_ELEMENT](type);
     }
   }
 
@@ -161,7 +196,7 @@ export function createElement(type, props, component) {
             // Remove rendered node attribute that not existed
             attributeName !== CLASS && attributeName !== STYLE && propValue == null
           ) {
-            hydrationChild.removeAttribute(attributeName);
+            hydrationChild[REMOVE_ATTRIBUTE](attributeName);
             continue;
           }
 
@@ -190,10 +225,8 @@ export function createElement(type, props, component) {
   }
 
   for (let prop in props) {
-    let value = props[prop];
-    if (prop === CHILDREN) {
-      continue;
-    }
+    const value = props[prop];
+    if (prop === CHILDREN) continue;
 
     if (value != null) {
       if (prop === STYLE) {
@@ -256,12 +289,10 @@ export function removeEventListener(node, eventName, eventHandler) {
 
 export function removeAttribute(node, propKey) {
   if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-    return node.innerHTML = null;
+    return node[INNER_HTML] = null;
   }
 
-  if (propKey === CLASS_NAME) {
-    propKey = CLASS;
-  }
+  if (propKey === CLASS_NAME) propKey = CLASS;
 
   if (propKey in node) {
     try {
@@ -270,38 +301,32 @@ export function removeAttribute(node, propKey) {
     } catch (e) { }
   }
 
-  node.removeAttribute(propKey);
+  node[REMOVE_ATTRIBUTE](propKey);
 }
 
 export function setAttribute(node, propKey, propValue) {
-  if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-    const html = propValue.__html;
-    if (node.innerHTML !== html) {
-      return node.innerHTML = html;
-    }
+  // For reduce innerHTML operation to improve performance.
+  if (propKey === DANGEROUSLY_SET_INNER_HTML && node[INNER_HTML] !== propValue[__HTML]) {
+    return node[INNER_HTML] = propValue[__HTML];
   }
 
-  if (propKey === CLASS_NAME) {
-    propKey = CLASS;
-  }
+  if (propKey === CLASS_NAME) propKey = CLASS;
 
   if (propKey in node) {
     try {
       // Some node property is readonly when in strict mode
       node[propKey] = propValue;
     } catch (e) {
-      node.setAttribute(propKey, propValue);
+      node[SET_ATTRIBUTE](propKey, propValue);
     }
   } else {
-    node.setAttribute(propKey, propValue);
+    node[SET_ATTRIBUTE](propKey, propValue);
   }
 }
 
 export function setStyle(node, style) {
-  let nodeStyle = node.style;
   for (let prop in style) {
-    let propValue = style[prop];
-    nodeStyle[prop] = typeof propValue === 'number' && !UNITLESS_NUMBER_PROPS[prop] ? propValue + 'px' : propValue;
+    node.style[prop] = convertUnit(style[prop]);
   }
 }
 

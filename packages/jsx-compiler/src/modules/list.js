@@ -66,13 +66,11 @@ function transformList(ast, adapter) {
       const parentJSXElement = path.findParent(p => p.isJSXElement());
       if (parentJSXElement) {
         if (t.isMemberExpression(callee)) {
-          if (t.isIdentifier(callee.property, {
-            name: 'map'
-          })) {
+          if (t.isIdentifier(callee.property, { name: 'map' })) {
             /*
             * params is item & index
             * <block a:for-item="params[0]" a:for-index="params[1]" ></block>
-            * */
+            */
             if (t.isFunction(args[0])) {
               const { params, body } = args[0];
               const forItem = params[0] || t.identifier('item');
@@ -92,14 +90,25 @@ function transformList(ast, adapter) {
                       item: forItem.name
                     };
                   }
+
                   if (innerPath.node.name === forIndex.name) {
                     innerPath.node.__mapArgs = {};
                   }
-                  if (innerPath.scope.hasBinding(innerPath.node.name)) {
+
+                  if (
+                    innerPath.scope.hasBinding(innerPath.node.name)
+                    || innerPath.node.name === forItem.name
+                    || innerPath.node.name === forIndex.name
+                  ) {
                     innerPath.node.__mapArgs = {
                       item: forItem.name
                     };
-                    properties.push(t.objectProperty(innerPath.node, innerPath.node));
+
+                    // Skip duplicate keys.
+                    if (!properties.some(
+                      pty => pty.key.name === innerPath.node.name)) {
+                      properties.push(t.objectProperty(innerPath.node, innerPath.node));
+                    }
                   }
                 }
               });
@@ -107,8 +116,16 @@ function transformList(ast, adapter) {
               const listBlock = createJSX('block', {
                 [adapter.for]: t.jsxExpressionContainer(node),
                 [adapter.forItem]: t.stringLiteral(forItem.name),
-                [adapter.forIndex]: t.stringLiteral(forIndex.name)
+                [adapter.forIndex]: t.stringLiteral(forIndex.name),
               }, [returnElPath.node]);
+
+              // Mark jsx list meta for generate by code.
+              listBlock.__jsxlist = {
+                args: [t.identifier(forItem.name), t.identifier(forIndex.name)],
+                iterValue: callee.object,
+                generated: true,
+                jsxplus: false,
+              };
 
               parentPath.replaceWith(listBlock);
               returnElPath.replaceWith(t.objectExpression(properties));

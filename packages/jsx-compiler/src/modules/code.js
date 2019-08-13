@@ -1,6 +1,6 @@
 const t = require('@babel/types');
 const { join, relative } = require('path');
-const genExpression = require('../codegen/genExpression');
+const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
@@ -43,7 +43,7 @@ function getConstructor(type) {
  * 4. Transform 'rax' to 'rax/dist/rax.min.js' in case of 小程序开发者工具 not support `process`.
  */
 module.exports = {
-  parse(parsed, code, options) {   
+  parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
     if (!defaultExportedPath || !defaultExportedPath.node) return; // Can not found default export.
     let userDefineType;
@@ -118,25 +118,51 @@ module.exports = {
       const updateProps = t.memberExpression(t.identifier('this'), t.identifier('_updateChildProps'));
       const componentsDependentProps = parsed.componentDependentProps || {};
 
-      Object.keys(componentsDependentProps).forEach((pid) => {
+      Object.keys(componentsDependentProps).forEach((tagId) => {
+        const { props, tagIdExpression, parentNode } = componentsDependentProps[tagId];
+
+        // Setup propMaps.
         const propMaps = [];
-        Object.keys(componentsDependentProps[pid]).forEach(key => {
-          const value = componentsDependentProps[pid][key];
+        props && Object.keys(props).forEach(key => {
+          const value = props[key];
           propMaps.push(t.objectProperty(
             t.stringLiteral(key),
             value
           ));
         });
+
+        let argPIDExp = tagIdExpression
+          ? genTagIdExp(tagIdExpression)
+          : t.stringLiteral(tagId);
+
         const updatePropsArgs = [
-          t.stringLiteral(pid),
+          argPIDExp,
           t.objectExpression(propMaps)
         ];
         const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
-        if (propMaps.length > 0) fnBody.push(callUpdateProps);
+        if (propMaps.length > 0) {
+          (parentNode || fnBody).push(callUpdateProps);
+        } else if ((parentNode || fnBody).length === 0) {
+          // Remove empty loop exp.
+          parentNode.remove && parentNode.remove();
+        }
       });
     }
   },
 };
+
+function genTagIdExp(expressions) {
+  let ret = '';
+  for (let i = 0, l = expressions.length; i < l; i++) {
+    if (expressions[i] && expressions[i].isExpression) {
+      ret += expressions[i];
+    } else {
+      ret += JSON.stringify(expressions[i]);
+    }
+    if (i !== l - 1) ret += ' + "-" + ';
+  }
+  return parseExpression(ret);
+}
 
 function renameCoreModule(ast, distPath, targetFileDir) {
   traverse(ast, {

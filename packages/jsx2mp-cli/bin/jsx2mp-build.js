@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 const { resolve } = require('path');
 const program = require('commander');
+const platformConfig = require('../utils/platformConfig');
 
 program
   .option('--type <type>', 'set type of project | component', 'project')
+  .option('-p, --platform <platform>', 'set target mini-application platform', 'ali')
   .option('--entry <entry>', 'set entry of component', 'index')
   .option('--dist <dist>', 'set export path', 'dist')
   .action((cmd) => {
@@ -11,16 +13,13 @@ program
     const distDirectory = resolve(workDirectory, cmd.dist);
 
     const options = {
-      webpackConfig: {
-        output: {
-          path: distDirectory
-        }
-      },
       workDirectory,
+      distDirectory,
       enableWatch: false,
       type: cmd.type,
       entry: cmd.type === 'component' ? cmd.entry : 'src/app.js',
       dist: cmd.dist,
+      platform
     }
     require('..').build(options);
   });

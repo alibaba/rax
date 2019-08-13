@@ -1,6 +1,6 @@
 {
   "name": "jsx-compiler",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "license": "BSD-3-Clause",
   "description": "Parser for Rax JSX Statements.",
   "main": "src/index.js",
@@ -25,7 +25,7 @@
     "fs-extra": "^7.0.1",
     "kebab-case": "^1.0.0",
     "md5": "^2.2.1",
-    "stylesheet-loader": "^0.6.5"
+    "stylesheet-loader": "^0.6.6-0"
   },
   "devDependencies": {
     "jest": "^24.5.0"

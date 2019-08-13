@@ -374,48 +374,49 @@ async function computeResultsMEM(
 }
 
 function buildDriver(benchmarkOptions) {
-  let logPref = new selenium_webdriver.logging.Preferences();
-  logPref.setLevel(
-    selenium_webdriver.logging.Type.PERFORMANCE,
-    selenium_webdriver.logging.Level.ALL
-  );
-  logPref.setLevel(
-    selenium_webdriver.logging.Type.BROWSER,
-    selenium_webdriver.logging.Level.ALL
-  );
-  let options = new chrome.Options();
+  let args = [
+    '--js-flags=--expose-gc',
+    '--enable-precise-memory-info',
+    '--no-first-run',
+    '--disable-background-networking',
+    '--disable-background-timer-throttling',
+    '--disable-cache',
+    '--disable-translate',
+    '--disable-sync',
+    '--disable-extensions',
+    '--disable-default-apps',
+    '--window-size=1200,800'
+  ];
+
   if (benchmarkOptions.headless) {
-    options = options.addArguments('--headless');
-    options = options.addArguments('--disable-gpu'); // https://bugs.chromium.org/p/chromium/issues/detail?id=737678
+    args.push('--headless');
+    args.push('--disable-gpu'); // https://bugs.chromium.org/p/chromium/issues/detail?id=737678
+    args.push('--no-sandbox');
   }
-  options = options.addArguments('--js-flags=--expose-gc');
-  options = options.addArguments('--no-sandbox');
-  options = options.addArguments('--no-first-run');
-  options = options.addArguments('--enable-automation');
-  options = options.addArguments('--disable-infobars');
-  options = options.addArguments('--disable-background-networking');
-  options = options.addArguments('--disable-background-timer-throttling');
-  options = options.addArguments('--disable-cache');
-  options = options.addArguments('--disable-translate');
-  options = options.addArguments('--disable-sync');
-  options = options.addArguments('--disable-extensions');
-  options = options.addArguments('--disable-default-apps');
-  options = options.addArguments('--window-size=1200,800');
-  if (benchmarkOptions.chromeBinaryPath)
-    options = options.setChromeBinaryPath(benchmarkOptions.chromeBinaryPath);
-  options = options.setLoggingPrefs(logPref);
-  options = options.setPerfLoggingPrefs({
-    enableNetwork: true,
-    enablePage: true,
-    traceCategories: lighthouse.traceCategories.join(', ')
+
+  let caps = new selenium_webdriver.Capabilities({
+    browserName: 'chrome',
+    platform: 'ANY',
+    version: 'stable',
+    'goog:chromeOptions': {
+      args: args,
+      'perfLoggingPrefs': {
+        'enableNetwork': true,
+        'enablePage': true,
+        'traceCategories': 'devtools.timeline,blink.user_timing'
+      },
+      'excludeSwitches': [ 'enable-automation' ]
+    },
+    'goog:loggingPrefs': {
+      'browser': 'ALL',
+      'performance': 'ALL'
+    }
   });
-  // Do the following lines really cause https://github.com/krausest/js-framework-benchmark/issues/303 ?
-  // let service = new chrome.ServiceBuilder(args.chromeDriver).build();
-  // return chrome.Driver.createSession(options, service);
-  return new selenium_webdriver.Builder()
-    .forBrowser('chrome')
-    .setChromeOptions(options)
-    .build();
+  // port probing fails sometimes on windows, the following driver construction avoids probing:
+  let service = new chrome.ServiceBuilder().setPort(benchmarkOptions.chromePort).build();
+  var driver = chrome.Driver.createSession(caps, service);
+
+  return driver;
 }
 
 async function forceGC(framework, driver) {

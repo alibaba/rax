@@ -8,7 +8,3 @@ export function useAppEffect(cycle, callback) {
       break;
   }
 }
-
-export function useRouter(routerConfig) {
-  return { Router: null }; // noop
-}

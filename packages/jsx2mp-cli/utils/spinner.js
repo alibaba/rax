@@ -8,7 +8,7 @@ const methods = ['start', 'succeed'];
 for (let method of methods) {
   const tempMethod = spinner[method];
   spinner[method] = function(...arg) {
-    consoleClear();
+    consoleClear(true);
     tempMethod.apply(this, arg);
   };
 }

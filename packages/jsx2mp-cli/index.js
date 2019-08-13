@@ -11,8 +11,15 @@ const chalk = require('chalk');
  * @param options
  */
 function build(options = {}) {
-  const { afterCompiled, type, entry, workDirectory } = options;
-  let config = getWebpackConfig({ mode: 'build', entryPath: entry, type, workDirectory });
+  const { afterCompiled, platform, type, entry, workDirectory, distDirectory } = options;
+  let config = getWebpackConfig({
+    mode: 'build',
+    entryPath: entry,
+    platform,
+    type,
+    workDirectory,
+    distDirectory
+  });
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
@@ -29,8 +36,15 @@ function build(options = {}) {
  * @param options
  */
 function watch(options = {}) {
-  const { afterCompiled, type, entry, workDirectory } = options;
-  let config = getWebpackConfig({ mode: 'watch', entryPath: entry, type, workDirectory });
+  const { afterCompiled, type, entry, platform, workDirectory, distDirectory } = options;
+  let config = getWebpackConfig({
+    mode: 'watch',
+    entryPath: entry,
+    type,
+    workDirectory,
+    platform,
+    distDirectory,
+  });
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
@@ -54,7 +68,7 @@ function handleCompiled(err, stats) {
   }
   if (stats.hasErrors()) {
     const errors = stats.compilation.errors;
-    consoleClear();
+    consoleClear(true);
     spinner.fail('Failed to compile.\n');
     for (let e of errors) {
       console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));

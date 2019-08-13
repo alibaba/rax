@@ -1,12 +1,12 @@
 const { join, relative } = require('path');
 const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
-const chalk = require('chalk');
 const { _transform: transformTemplate } = require('./element');
 const genExpression = require('../codegen/genExpression');
 const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
+const Expression = require('../utils/Expression');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 let tagCount = 0;
@@ -70,15 +70,53 @@ module.exports = {
           if (alias) {
             // Miniapp template tag name does not support special characters.
             const componentTag = alias.name.replace(/@|\//g, '_');
+            const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
 
-            // <tag __pid="pid" />
-            const pid = '' + tagCount++;
-            parentPath.node.__pid = pid;
-            componentsDependentProps[pid] = componentsDependentProps[pid] || {};
+            // <tag __tagId="tagId" />
+            let tagId = '' + tagCount++;
+            if (parentJSXListEl) {
+              const { args } = parentJSXListEl.node.__jsxlist;
+              const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
+              parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+              tagId += '-{{' + indexValue + '}}';
+            }
+            parentPath.node.__tagId = tagId;
+            componentsDependentProps[tagId] = componentsDependentProps[tagId] || {};
+            if (parentPath.node.__tagIdExpression) {
+              componentsDependentProps[tagId].tagIdExpression = parentPath.node.__tagIdExpression;
+
+              if (parsed.renderFunctionPath) {
+                const { args, iterValue, loopFnBody } = parentJSXListEl.node.__jsxlist;
+                const __args = [
+                  args[0] || t.identifier('item'),
+                  args[1] || t.identifier('index'),
+                ];
+                const callee = t.memberExpression(iterValue, t.identifier('forEach'));
+                const block = t.blockStatement([]);
+
+                const loopArgs = [t.arrowFunctionExpression(__args, block)];
+                const loopExp = t.expressionStatement(t.callExpression(callee, loopArgs));
+
+                const fnBody = parsed.renderFunctionPath.node.body.body;
+                const grandJSXListEl = parentJSXListEl.findParent(p => p.node.__jsxlist);
+                const body = grandJSXListEl && grandJSXListEl.node.__jsxlist.loopBlockStatement
+                  ? grandJSXListEl.node.__jsxlist.loopBlockStatement.body
+                  : fnBody;
+
+                body.push(loopExp);
+                // Can be removed if not used.
+                block.body.remove = () => {
+                  const index = body.indexOf(loopExp);
+                  body.splice(index, 1);
+                };
+                componentsDependentProps[tagId].parentNode = block.body;
+                parentJSXListEl.node.__jsxlist.loopBlockStatement = block;
+              }
+            }
 
             node.attributes.push(t.jsxAttribute(
-              t.jsxIdentifier('__pid'),
-              t.stringLiteral(pid)
+              t.jsxIdentifier('__tagId'),
+              t.stringLiteral(tagId)
             ));
 
             node.name = t.jsxIdentifier(componentTag);
@@ -134,7 +172,12 @@ module.exports = {
             if (alias) {
               const pkg = getComponentConfig(alias.from);
               if (pkg && pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name]) {
-                node.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
+                let subComponent = pkg.miniappConfig.subComponents[property.name];
+                node.name = t.jsxIdentifier(subComponent.tagNameMap);
+                // subComponent default style
+                if (subComponent.attributes && subComponent.attributes.style) {
+                  path.parentPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('style'), t.stringLiteral(subComponent.attributes.style)));
+                }
                 if (path.parentPath.node.closingElement) {
                   path.parentPath.node.closingElement.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
                 }

@@ -1,13 +1,13 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
 const { relative, join, dirname, extname } = require('path');
-const { getOptions } = require('loader-utils');
-
 const compiler = require('jsx-compiler');
+const { getOptions } = require('loader-utils');
 
 const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
   const loaderOptions = getOptions(this);
+  const { platform } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
@@ -22,6 +22,7 @@ module.exports = function componentLoader(content) {
     distPath,
     targetFileDir: dirname(targetFilePath),
     type: 'component',
+    platform
   });
 
   const transformed = compiler(rawContent, compilerOptions);
@@ -54,17 +55,19 @@ module.exports = function componentLoader(content) {
   // Write code
   writeFileSync(distFileWithoutExt + '.js', transformed.code);
   // Write template
-  writeFileSync(distFileWithoutExt + '.axml', transformed.template);
+  writeFileSync(distFileWithoutExt + '.' + platform.extension.xml, transformed.template);
   // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   // Write acss style
   if (transformed.style) {
-    writeFileSync(distFileWithoutExt + '.acss', transformed.style);
+    writeFileSync(distFileWithoutExt + '.' + platform.extension.css, transformed.style);
   }
   // Write extra assets
   if (transformed.assets) {
     Object.keys(transformed.assets).forEach((asset) => {
       const content = transformed.assets[asset];
+      const assetDirectory = dirname(join(distPath, asset));
+      if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
       writeFileSync(join(distPath, asset), content);
     });
   }
@@ -76,7 +79,9 @@ module.exports = function componentLoader(content) {
         usingComponents.hasOwnProperty(key)
         && usingComponents[key]
         && usingComponents[key].indexOf(matchingPath) === 0
-      ) return true;
+      ) {
+        return true;
+      }
     }
     return false;
   }

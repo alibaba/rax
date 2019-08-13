@@ -95,7 +95,7 @@ function transformDirectiveList(ast, adapter) {
       exit(path) {
         const { node } = path;
         const { attributes } = node.openingElement;
-        if (node.__jsxlist) {
+        if (node.__jsxlist && !node.__jsxlist.generated) {
           const { args, iterValue } = node.__jsxlist;
           path.traverse({
             Identifier(innerPath) {
@@ -123,7 +123,7 @@ function transformDirectiveList(ast, adapter) {
             skipIds.set(arg.name, true);
           });
 
-          node.__jsxlist = null;
+          node.__jsxlist.generated = true;
         }
       }
     },
@@ -159,7 +159,7 @@ function transformDirectiveList(ast, adapter) {
           iterValue = expression;
         }
         const parentJSXEl = path.findParent(p => p.isJSXElement());
-        parentJSXEl.node.__jsxlist = { args: params, iterValue };
+        parentJSXEl.node.__jsxlist = { args: params, iterValue, jsxplus: true };
         path.remove();
       }
     }

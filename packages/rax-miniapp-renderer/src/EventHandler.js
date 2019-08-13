@@ -81,7 +81,12 @@ export default class EventHandler {
 
   addNoBubblesEventListener(node, name) {
     const listener = (evt) => {
-      const target = {$$id: node.$$id};
+      const target = { $$id: node.$$id };
+
+      if (node === document.body) {
+        target.nodeName = 'BODY';
+      }
+
       this.postMessage({
         type: 'event',
         event: {

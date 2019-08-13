@@ -1,14 +1,5 @@
 const { join, dirname, relative } = require('path');
-const {
-  copySync,
-  lstatSync,
-  existsSync,
-  mkdirpSync,
-  writeJSONSync,
-  writeFileSync,
-  readFileSync,
-  readJSONSync
-} = require('fs-extra');
+const { copySync, lstatSync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
@@ -36,36 +27,42 @@ module.exports = function fileLoader(content) {
 
   const getNpmName = cached(function getNpmName(relativeNpmPath) {
     const isScopedNpm = relativeNpmPath[0] === '@';
-    return relativeNpmPath
-      .split('/')
-      .slice(0, isScopedNpm ? 2 : 1)
-      .join('/');
+    return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
   if (isNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmName = getNpmName(relativeNpmPath);
-    const sourcePackageJSONPath = join(
-      currentNodeModulePath,
-      npmName,
-      'package.json'
-    );
-    if ('miniappConfig' in readJSONSync(sourcePackageJSONPath)) {
-      // is miniapp component
-      // Copy whole directory
+    const sourcePackageJSONPath = join(currentNodeModulePath, npmName, 'package.json');
+    const pkg = readJSONSync(sourcePackageJSONPath);
+    if ('miniappConfig' in pkg) {
+      // Copy whole directory for miniapp component
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
         if (isSymbolic(join(currentNodeModulePath, npmName))) {
-          throw new Error(
-            'Unsupported symbol link from ' +
-              npmName +
-              ', please use npm or yarn instead.'
-          );
+          throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.');
         }
         copySync(
           join(currentNodeModulePath, npmName),
           join(distPath, 'npm', npmName)
         );
+        // modify referenced component location
+        if (pkg.miniappConfig.main) {
+          const componentConfigPath = join(distPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+          if (existsSync(componentConfigPath)) {
+            const componentConfig = readJSONSync(componentConfigPath);
+            if (componentConfig.usingComponents) {
+              for (let key in componentConfig.usingComponents) {
+                if (componentConfig.usingComponents.hasOwnProperty(key)) {
+                  componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
+                }
+              }
+            }
+            writeJSONSync(componentConfigPath, componentConfig);
+          } else {
+            this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
+          }
+        }
       }
     } else {
       // Copy package.json
@@ -80,12 +77,7 @@ module.exports = function fileLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
-      const distSourcePath = join(
-        distPath,
-        'npm',
-        npmName,
-        splitedNpmPath.join('/')
-      );
+      const distSourcePath = join(distPath, 'npm', npmName, splitedNpmPath.join('/'));
       const { code, map } = transformCode(rawContent, loaderOptions);
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -126,8 +118,7 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '') {
   }
 
   return transformSync(rawCode, {
-    presets,
-    plugins
+    presets, plugins,
   });
 }
 

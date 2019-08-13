@@ -9,6 +9,10 @@ import {
   RENDER,
   ON_SHOW,
   ON_HIDE,
+  ON_PAGE_SCROLL,
+  ON_REACH_BOTTOM,
+  ON_PULL_DOWN_REFRESH,
+  ON_SHARE_APP_MESSAGE,
   COMPONENT_DID_MOUNT,
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
@@ -196,7 +200,7 @@ export default class Component {
     this._internal.instance = null;
     this._internal = null;
     this.__mounted = false;
-    removeComponentProps(this.props.__pid);
+    removeComponentProps(this.props.__tagId);
   }
 
   /**
@@ -206,6 +210,7 @@ export default class Component {
    * @private
    */
   _trigger(cycle, ...args) {
+    let ret;
     switch (cycle) {
       case COMPONENT_WILL_MOUNT:
       case COMPONENT_DID_MOUNT:
@@ -215,6 +220,9 @@ export default class Component {
       case COMPONENT_WILL_UNMOUNT:
       case ON_SHOW:
       case ON_HIDE:
+      case ON_PAGE_SCROLL:
+      case ON_REACH_BOTTOM:
+      case ON_PULL_DOWN_REFRESH:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
@@ -230,7 +238,12 @@ export default class Component {
 
         this.render(this.props = nextProps, this.state = nextState);
         break;
+
+      case ON_SHARE_APP_MESSAGE:
+        if (isFunction(this[cycle])) ret = this[cycle](...args);
+        break;
     }
+    return ret;
   }
 
   /**

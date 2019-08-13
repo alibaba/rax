@@ -78,6 +78,6 @@ function convertCSSUnit(raw, originExt = 'rem', targetExt = 'rpx') {
 }
 
 function createCSSModule(content) {
-  const loaderContext = {};
+  const loaderContext = { query: '?disableLog=true' };
   return stylesheetLoader.call(loaderContext, content);
 }

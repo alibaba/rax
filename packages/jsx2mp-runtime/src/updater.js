@@ -1,7 +1,7 @@
 import nextTick from './nextTick';
 
 const propsMap = {
-  // pid ->
+  // tagId ->
 };
 const componentIntances = {};
 
@@ -10,14 +10,14 @@ export function setComponentInstance(instanceId, instance) {
   componentIntances[instanceId] = instance;
 }
 
-export function getComponentProps(pid) {
-  if (propsMap.hasOwnProperty(pid)) return propsMap[pid];
+export function getComponentProps(tagId) {
+  if (propsMap.hasOwnProperty(tagId)) return propsMap[tagId];
   else return null;
 }
 
-export function removeComponentProps(pid) {
-  if (propsMap.hasOwnProperty(pid)) {
-    delete propsMap[pid];
+export function removeComponentProps(tagId) {
+  if (propsMap.hasOwnProperty(tagId)) {
+    delete propsMap[tagId];
   }
 }
 

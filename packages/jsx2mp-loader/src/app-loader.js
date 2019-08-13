@@ -29,7 +29,7 @@ function getRelativePath(filePath) {
   return relativePath;
 }
 
-module.exports = function appLoader(content) { 
+module.exports = function appLoader(content) {
   const loaderOptions = getOptions(this);
   const { entryPath } = loaderOptions;
   const appConfigPath = removeExt(this.resourcePath) + '.json';
