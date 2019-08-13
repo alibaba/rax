@@ -202,8 +202,8 @@ describe('Transform JSXElement', () => {
       expect(genInlineCode(ast).code).toEqual(`<View>
           string
           8
-
-
+          
+          
           {{ _d0 }}
           {{ _d1 }}
           {{ _d2 }}
