@@ -6,15 +6,23 @@ const address = require('address');
 const Chain = require('webpack-chain');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
+
 const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
-const babelConfig = require('../babel.config');
 
 module.exports = (context) => {
   const { rootDir, userConfig } = context;
   const { outputDir } = userConfig;
 
   const config = new Chain();
+
+  const babelConfig = getBabelConfig({
+    styleSheet: true,
+    custom: {
+      ignore: ['**/**/*.d.ts']
+    }
+  });
 
   config.target('web');
   config.context(rootDir);

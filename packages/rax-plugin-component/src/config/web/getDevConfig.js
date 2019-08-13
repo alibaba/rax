@@ -9,18 +9,18 @@ const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 
 const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
 
-const babelConfig = getBabelConfig({
-  styleSheet: true,
-  custom: {
-    ignore: ['**/**/*.d.ts']
-  }
-});
-
 module.exports = (context) => {
   const { rootDir, userConfig } = context;
   const { outputDir } = userConfig;
 
   const config = new Chain();
+
+  const babelConfig = getBabelConfig({
+    styleSheet: !!userConfig.inlineStyle,
+    custom: {
+      ignore: ['**/**/*.d.ts']
+    }
+  });
 
   config.mode('development');
   config.context(rootDir);
