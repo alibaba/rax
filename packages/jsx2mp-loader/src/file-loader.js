@@ -32,9 +32,9 @@ module.exports = function fileLoader(content) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmName = getNpmName(relativeNpmPath);
     const sourcePackageJSONPath = join(currentNodeModulePath, npmName, 'package.json');
-    if ('miniappConfig' in readJSONSync(sourcePackageJSONPath)) {
-      // is miniapp component
-      // Copy whole directory
+    const pkg = readJSONSync(sourcePackageJSONPath);
+    if ('miniappConfig' in pkg) {
+      // Copy whole directory for miniapp component
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
         if (isSymbolic(join(currentNodeModulePath, npmName))) {
@@ -44,6 +44,23 @@ module.exports = function fileLoader(content) {
           join(currentNodeModulePath, npmName),
           join(distPath, 'npm', npmName)
         );
+        // modify referenced component location
+        if (pkg.miniappConfig.main) {
+          const componentConfigPath = join(distPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+          if (existsSync(componentConfigPath)) {
+            const componentConfig = readJSONSync(componentConfigPath);
+            if (componentConfig.usingComponents) {
+              for (let key in componentConfig.usingComponents) {
+                if (componentConfig.usingComponents.hasOwnProperty(key)) {
+                  componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
+                }
+              }
+            }
+            writeJSONSync(componentConfigPath, componentConfig);
+          } else {
+            this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
+          }
+        }
       }
     } else {
       // Copy package.json
