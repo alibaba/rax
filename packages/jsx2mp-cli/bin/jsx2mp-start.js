@@ -20,7 +20,7 @@ program
       type: cmd.type,
       dist: cmd.dist,
       entry: cmd.entry,
-      platform: platform
+      platform,
     });
   });
 
