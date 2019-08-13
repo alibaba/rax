@@ -39,19 +39,9 @@ module.exports = class UniversalDocumentPlugin {
       fn({ exports: {} }, module.exports, require);
       const documentElement = module.exports.__esModule ? module.exports.default : module.exports;
 
-      // get document html string
-      const source = this.render(require('rax').createElement(documentElement, {
-        publicPath,
-        styles: [],
-        scripts: ['web/index.js'],
-      }));
-
-      // insert html file
-      compilation.assets['index.html'] = new RawSource(source);
-
       // MPA
-      if (this.isMultiPageWebApp) {
-        const entryObj = compiler.options.entry;
+      // if (this.isMultiPageWebApp) {
+        const entryObj = config.entry;
         Object.keys(entryObj).forEach(entry => {
           // get document html string
           const pageSource = this.render(require('rax').createElement(documentElement, {
@@ -62,7 +52,15 @@ module.exports = class UniversalDocumentPlugin {
           // insert html file
           compilation.assets[`web/${entry}.html`] = new RawSource(pageSource);
         });
-      }
+      // } else {
+      //   const source = this.render(require('rax').createElement(documentElement, {
+      //     publicPath,
+      //     styles: [],
+      //     scripts: ['web/index.js'],
+      //   }));
+      //   // insert html file
+      //   compilation.assets['index.html'] = new RawSource(source);
+      // }
 
       callback();
     });
