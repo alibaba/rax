@@ -51,13 +51,33 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
       return;
     }
     if (stats.hasErrors()) {
-      const errors = stats.compilation.errors;
-      for (let e of errors) {
-        console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));
-        if (process.env.DEBUG === 'true') {
-          console.log(e.error.stack);
+      let errArr = [];
+      try {
+        errArr = stats.stats.map(v => v.compilation.errors);
+      } catch (e) {
+        errArr = [stats.compilation.errors];
+      }
+
+      for (let errors of errArr) {
+        for (let e of errors) {
+          let errMessage;
+          let errStack;
+
+          try {
+            errMessage = e.message;
+            errStack = e.stack;
+          } catch (_err) {
+            errMessage = e.error.message;
+            errStack = e.error.stack;
+          }
+
+          console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${errMessage} \n`));
+          if (process.env.DEBUG === 'true') {
+            console.log(errStack);
+          }
         }
       }
+
       console.log(chalk.yellow('Set environment `DEBUG=true` to see detail error stacks.'));
       return;
     }
