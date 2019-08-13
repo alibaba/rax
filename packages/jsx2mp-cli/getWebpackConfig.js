@@ -43,13 +43,12 @@ function getEntry(type, cwd, entryFilePath, options) {
     entry.app = AppLoader + '?' + JSON.stringify({ entryPath }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.forEach(({ path, component }) => {
-        entry['page@' + component] = PageLoader + '?' + loaderParams +  '!' + getDepPath(component, entryPath);
+        entry['page@' + component] = PageLoader + '?' + loaderParams + '!' + getDepPath(component, entryPath);
       });
     } else if (Array.isArray(appConfig.pages)) {
       // Compatible with pages.
       appConfig.pages.forEach((pagePath) => {
-        entry['page@' + component] = PageLoader + '?' + loaderParams +  '!' + getDepPath(pagePath, entryPath);
-
+        entry['page@' + pagePath] = PageLoader + '?' + loaderParams + '!' + getDepPath(pagePath, entryPath);
       });
     }
   }
@@ -140,5 +139,5 @@ module.exports = (options = {}) => {
         }
       })
     ],
-  }
+  };
 };

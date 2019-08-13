@@ -44,7 +44,7 @@ module.exports = function pageLoader(content) {
     Object.keys(config.usingComponents).forEach(key => {
       const value = config.usingComponents[key];
       if (/^c-/.test(key)) {
-        let result = './' + relative(dirname(this.resourcePath) ,value); // components/Repo.jsx
+        let result = './' + relative(dirname(this.resourcePath), value); // components/Repo.jsx
         result = removeExt(result); // components/Repo
         usingComponents[key] = result;
       } else {
@@ -88,7 +88,7 @@ module.exports = function pageLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath , platform: loaderOptions.platform } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform } });
     } else {
       denpendencies.push({ name });
     }
@@ -108,7 +108,7 @@ function generateDependencies(dependencies) {
   return dependencies
     .map(({ name, loader, options }) => {
       let mod = name;
-      if (loader) mod = loader + '?' + JSON.stringify(options) +  '!' + mod;
+      if (loader) mod = loader + '?' + JSON.stringify(options) + '!' + mod;
       return createImportStatement(mod);
     })
     .join('\n');

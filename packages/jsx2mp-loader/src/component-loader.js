@@ -39,7 +39,7 @@ module.exports = function componentLoader(content) {
       const value = config.usingComponents[key];
 
       if (/^c-/.test(key)) {
-        let result = './' + relative(dirname(this.resourcePath) ,value); // ./components/Repo.jsx
+        let result = './' + relative(dirname(this.resourcePath), value); // ./components/Repo.jsx
         result = removeExt(result); // ./components/Repo
 
         usingComponents[key] = result;

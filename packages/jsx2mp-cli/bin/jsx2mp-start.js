@@ -21,7 +21,7 @@ program
       entry: cmd.type === 'component' ? cmd.entry : 'src/app.js',
       dist: cmd.dist,
       platform
-    }
+    };
 
     require('..').watch(options);
   });

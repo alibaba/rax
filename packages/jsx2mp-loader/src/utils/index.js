@@ -7,4 +7,4 @@ function removeExt(path) {
 
 module.exports = {
   removeExt
-} 
+};
