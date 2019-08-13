@@ -16,10 +16,8 @@ module.exports = (config, context) => {
     .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=weex!${appEntry}`);
 
   config.optimization
-    .minimize(true)
     .minimizer('uglify')
       .use(UglifyJSPlugin, [{
-        include: /\.min\.js$/,
         cache: true,
         sourceMap: true,
       }])
