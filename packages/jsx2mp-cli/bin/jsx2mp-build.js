@@ -11,6 +11,7 @@ program
   .action((cmd) => {
     const workDirectory = resolve(process.env.CWD || process.cwd());
     const distDirectory = resolve(workDirectory, cmd.dist);
+    const platform = platformConfig[cmd.platform];
 
     const options = {
       workDirectory,
