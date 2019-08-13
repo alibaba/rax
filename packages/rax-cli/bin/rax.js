@@ -60,7 +60,7 @@ switch (commands[0]) {
       );
       process.exit(1);
     } else {
-      init(commands[1], argv.verbose, argv.version);
+      init(commands[1], argv.verbose, argv.template);
     }
     break;
   default:
@@ -72,7 +72,7 @@ switch (commands[0]) {
     break;
 }
 
-function init(name, verbose) {
+function init(name, verbose, template) {
   Promise.resolve(fs.existsSync(name))
     .then(function(dirExists) {
       if (dirExists) {
@@ -85,7 +85,7 @@ function init(name, verbose) {
       return askProjectInformaction(name, verbose);
     })
     .then(function(answers) {
-      return createProject(name, verbose, answers);
+      return createProject(name, verbose, template, answers);
     })
     .catch(function(err) {
       console.error('Error occured', err.stack);
@@ -191,7 +191,7 @@ function askProjectInformaction(name) {
   return inquirer.prompt(questions);
 }
 
-function createProject(name, verbose, userAnswers) {
+function createProject(name, verbose, template, userAnswers) {
   const pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   const root = path.resolve(name);
   const projectName = name;
@@ -215,6 +215,7 @@ function createProject(name, verbose, userAnswers) {
     projectAuthor: userAnswers.projectAuthor || '',
     projectTargets: userAnswers.projectTargets || [],
     verbose: verbose,
+    template: template,
   }).then(function(directory) {
     if (autoInstallModules) {
       return install(directory, verbose);

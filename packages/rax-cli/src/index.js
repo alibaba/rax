@@ -31,16 +31,27 @@ module.exports = {
    * @return {Promise}
    */
   init(args) {
-    const downloadPath = path.join(args.root, '.rax-cli-template');
-    const templatePath = path.join(downloadPath, 'template', args.projectType);
+    const template = args.template || 'rax-template';
 
-    rimraf.sync(downloadPath);
+    // template is a local path
+    if (/^(\/|\.)/.test(template)) {
+      const templatePath = path.resolve('../', template, 'template', args.projectType);
 
-    return downloadTemplate('rax-template', downloadPath).then(() => {
       return generate(templatePath, args).then(res => {
-        rimraf.sync(downloadPath);
         return res;
       });
-    });
+    } else {
+      const downloadPath = path.join(args.root, '.rax-cli-template');
+      const templatePath = path.join(downloadPath, 'template', args.projectType);
+
+      rimraf.sync(downloadPath);
+
+      return downloadTemplate(template, downloadPath).then(() => {
+        return generate(templatePath, args).then(res => {
+          rimraf.sync(downloadPath);
+          return res;
+        });
+      });
+    }
   }
 };
