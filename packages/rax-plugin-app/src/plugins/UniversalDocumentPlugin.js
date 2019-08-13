@@ -23,7 +23,9 @@ module.exports = class UniversalDocumentPlugin {
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync('UniversalDocumentPlugin', (compilation, callback) => {
-      const { publicPath } = compilation.outputOptions;
+      const config = compilation.options;
+      const isDev = config.mode === 'development';
+      const publicPath = isDev ? config.devServer.publicPath : config.output.publicPath;
 
       const filename = path.resolve(this.rootDir, this.documentPath);
       if (!existsSync(filename)) throw new Error(`File ${filename} is not exists, please check.`);
