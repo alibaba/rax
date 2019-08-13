@@ -35,6 +35,7 @@ module.exports = {
 
     // template is a local path
     if (/^(\/|\.)/.test(template)) {
+      // current work dir is args.root
       const templatePath = path.resolve('../', template, 'template', args.projectType);
 
       return generate(templatePath, args).then(res => {
