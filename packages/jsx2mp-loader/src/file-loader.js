@@ -66,7 +66,7 @@ module.exports = function fileLoader(content) {
       // Copy package.json
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
-        const target = join(distPath, 'npm', npmName, 'package.json');
+        const target = normalizeFileName(join(distPath, 'npm', npmName, 'package.json'));
         if (!existsSync(target))
           copySync(
             sourcePackageJSONPath,
@@ -79,7 +79,7 @@ module.exports = function fileLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
-      const distSourcePath = join(distPath, 'npm', npmName, splitedNpmPath.join('/'));
+      const distSourcePath = normalizeFileName(join(distPath, 'npm', npmName, splitedNpmPath.join('/')));
       const { code, map } = transformCode(rawContent, loaderOptions);
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -98,7 +98,9 @@ module.exports = function fileLoader(content) {
 function transformCode(rawCode, loaderOptions) {
   const presets = [];
   const plugins = [
-    require('./babel-plugin-rename-import'), // for rename npm modules.
+    [require('./babel-plugin-rename-import'), {
+      normalizeFileName
+    }], // for rename npm modules.
   ];
 
   // Compile to ES5 for build.
@@ -121,4 +123,11 @@ function isSymbolic(path) {
     }
     throw err;
   }
+}
+
+/**
+ * For that alipay build folder can not contain `@`, escape to `_`.
+ */
+function normalizeFileName(filename) {
+  return filename.replace(/@/g, '_');
 }

@@ -11,8 +11,17 @@ function isWeexModule(value) {
   return WEEX_MODULE_REG.test(value);
 }
 
-module.exports = function visitor({ types: t }) {
-  const source = (value) => t.stringLiteral(join(PREFIX, value));
+const defaultOptions = {
+  normalizeFileName: (s) => s,
+};
+
+module.exports = function visitor({ types: t }, options) {
+  options = Object.assign({}, defaultOptions, options);
+  const source = (value) => t.stringLiteral(
+    options.normalizeFileName(
+      join(PREFIX, value)
+    )
+  );
   return {
     visitor: {
       ImportDeclaration(path) {
