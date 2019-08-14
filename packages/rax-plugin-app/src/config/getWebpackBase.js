@@ -1,6 +1,9 @@
 const webpack = require('webpack');
 const Chain = require('webpack-chain');
+const babelMerge = require('babel-merge');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 
 const babelConfig = getBabelConfig({
@@ -8,8 +11,7 @@ const babelConfig = getBabelConfig({
 });
 
 module.exports = (context) => {
-  const { rootDir } = context;
-
+  const { rootDir, command } = context;
   const config = new Chain();
 
   config.target('web');
@@ -71,6 +73,39 @@ module.exports = (context) => {
 
   config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);
+
+
+  if (command === 'dev') {
+    config.mode('development');
+    config.devtool('inline-module-source-map');
+
+    config.module.rule('jsx')
+      .use('babel')
+      .tap(options => babelMerge.all([{
+        plugins: [require.resolve('rax-hot-loader/babel')],
+      }, options]));
+
+    config.module.rule('tsx')
+      .use('babel')
+        .tap(options => babelMerge.all([{
+          plugins: [require.resolve('rax-hot-loader/babel')],
+        }, options]));
+  } else if (command === 'build') {
+    config.mode('production');
+    config.devtool('source-map');
+
+    config.optimization
+      .minimizer('uglify')
+        .use(UglifyJSPlugin, [{
+          cache: true,
+          sourceMap: true,
+        }])
+        .end()
+      .minimizer('optimizeCSS')
+        .use(OptimizeCSSAssetsPlugin, [{
+          canPrint: true,
+        }]);
+  }
 
   return config;
 };

@@ -39,7 +39,6 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
 
       chainWebpack((config) => {
         setDev(config.getConfig(target), context);
-        setUserConfig(config.getConfig(target), context, target);
       });
     }
   });

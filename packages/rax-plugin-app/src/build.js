@@ -2,7 +2,6 @@ const path = require('path');
 const chalk = require('chalk');
 const consoleClear = require('console-clear');
 
-const setUserConfig = require('./config/user/setConfig');
 const getMpOuput = require('./config/miniapp/getOutputPath');
 
 module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {}) => {
@@ -19,7 +18,6 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
 
       chainWebpack((config) => {
         setBuild(config.getConfig(target), context);
-        setUserConfig(config.getConfig(target), context, target);
       });
     }
 
