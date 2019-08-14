@@ -12,16 +12,15 @@ module.exports = function componentLoader(content) {
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
 
-  const distPath = this._compiler.outputPath;
+  const outputPath = this._compiler.outputPath;
   const sourcePath = join(this.rootContext, dirname(entryPath));
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
-  const targetFilePath = join(distPath, relativeSourcePath);
-  const distFileWithoutExt = removeExt(join(distPath, relativeSourcePath));
-  // console.log('targetFileDir', dirname(targetFilePath));
-  // console.log('合成路径：', dirname(join(distPath, relative(sourcePath, this.resourcePath))))
+  const targetFilePath = join(outputPath, relativeSourcePath);
+  const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
+
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
-    distPath,
+    outputPath,
     sourcePath,
     type: 'component',
     platform
@@ -68,9 +67,9 @@ module.exports = function componentLoader(content) {
   if (transformed.assets) {
     Object.keys(transformed.assets).forEach((asset) => {
       const content = transformed.assets[asset];
-      const assetDirectory = dirname(join(distPath, asset));
+      const assetDirectory = dirname(join(outputPath, asset));
       if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
-      writeFileSync(join(distPath, asset), content);
+      writeFileSync(join(outputPath, asset), content);
     });
   }
 

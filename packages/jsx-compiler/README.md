@@ -20,7 +20,7 @@ export default class extends Component {
 Run jsx compiler.
 
 - type: Required, enum of `app`, `page`, `component`.
-- distPath: Required, string of dist path.
+- outputPath: Required, string of dist path.
 - sourcePath: Required, string of source path.
 - resourcePath: Required, string of original file path.
 
