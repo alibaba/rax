@@ -267,6 +267,14 @@ describe('Transform JSXElement', () => {
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: styles, _d1: data }');
     });
 
+    it('should collect object expression', () => {
+      const sourceCode = '<Image style={{...styles.avator, ...styles[\`\${rank}Avator\`]}} source={{ uri: avator }}></Image>';
+      const ast = parseExpression(sourceCode);
+      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      expect(genInlineCode(ast).code).toEqual('<Image style="{{_d0}}" source="{{ uri: _d1 }}"></Image>');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: { ...styles.avator, ...styles[`${rank}Avator`] }, _d1: avator }');
+    });
+
     it('unsupported', () => {
       expect(() => {
         _transform(parseExpression('<View>{a = 1}</View>'));
