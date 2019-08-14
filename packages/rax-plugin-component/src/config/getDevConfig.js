@@ -7,7 +7,7 @@ const RaxWebpackPlugin = require('rax-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 
-const hmrClient = require.resolve('../hmr/webpackHotDevClient.entry');
+const { hmrClient } = require('rax-compile-config');
 
 const babelConfig = getBabelConfig({
   styleSheet: true,
