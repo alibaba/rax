@@ -32,16 +32,19 @@ module.exports = class PWAAppShellPlugin {
 
     // Render into index.html
     compiler.hooks.emit.tapAsync(NAME, async(compilation, callback) => {
-      const htmlValue = compilation.assets['index.html'].source();
       const shellValue = compilation.assets[outputFilename].source();
       const AppShell = interopRequire(eval('var window = {};' + shellValue));
       const content = this.render(require('rax').createElement(AppShell, {}));
 
       // Pre-render App-Shell renderToString element to index.html
-      compilation.assets['index.html'] = new RawSource(htmlValue.replace(
-        /<div(.*?) id=\"root\">(.*?)<\/div>/,
-        `<div id="root">${content}</div>`
-      ));
+      const entryObj = compilation.options.entry;
+      Object.keys(entryObj).forEach(entry => {
+        const pageHtmlValue = compilation.assets[`web/${entry}.html`].source();
+        compilation.assets[`web/${entry}.html`] = new RawSource(pageHtmlValue.replace(
+          /<div(.*?) id=\"root\">(.*?)<\/div>/,
+          `<div id="root">${content}</div>`
+        ));
+      });
 
       callback();
     });
@@ -52,9 +55,11 @@ module.exports = class PWAAppShellPlugin {
       if (compiler.options.mode === 'production' || !compiler.options.mode) {
         const jsFile = path.join(compiler.options.output.path, outputFilename);
         const mapFile = jsFile + '.map';
+        const htmlFile = jsFile.replace(/\.js$/, '.html');
 
         existsSync(jsFile) && unlinkSync(jsFile);
         existsSync(mapFile) && unlinkSync(mapFile);
+        existsSync(htmlFile) && unlinkSync(htmlFile);
       }
     });
   }

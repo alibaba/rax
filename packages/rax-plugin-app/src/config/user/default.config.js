@@ -7,6 +7,7 @@ module.exports = {
   devPublicPath: '/',
   devServer: {
     compress: true,
+    disableHostCheck: true,
     clientLogLevel: 'error',
     historyApiFallback: true,
     hot: true,

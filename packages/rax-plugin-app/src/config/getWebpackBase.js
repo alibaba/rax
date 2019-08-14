@@ -6,9 +6,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 
-const babelConfig = getBabelConfig({
-  styleSheet: true
-});
+const babelConfig = getBabelConfig();
 
 module.exports = (context) => {
   const { rootDir, command } = context;
@@ -43,25 +41,25 @@ module.exports = (context) => {
       .loader(require.resolve('stylesheet-loader'));
 
   config.module.rule('jsx')
-  .test(/\.(js|mjs|jsx)$/)
-  .exclude
-    .add(/(node_modules|bower_components)/)
-    .end()
-  .use('babel')
-    .loader(require.resolve('babel-loader'))
-    .options(babelConfig);
+    .test(/\.(js|mjs|jsx)$/)
+    .exclude
+      .add(/(node_modules|bower_components)/)
+      .end()
+    .use('babel')
+      .loader(require.resolve('babel-loader'))
+      .options(babelConfig);
 
   config.module.rule('tsx')
-  .test(/\.(ts|tsx)?$/)
-  .exclude
-    .add(/(node_modules|bower_components)/)
-    .end()
-  .use('babel')
-    .loader(require.resolve('babel-loader'))
-    .options(babelConfig)
-    .end()
-  .use('ts')
-    .loader(require.resolve('ts-loader'));
+    .test(/\.(ts|tsx)?$/)
+    .exclude
+      .add(/(node_modules|bower_components)/)
+      .end()
+    .use('babel')
+      .loader(require.resolve('babel-loader'))
+      .options(babelConfig)
+      .end()
+    .use('ts')
+      .loader(require.resolve('ts-loader'));
 
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
@@ -81,15 +79,11 @@ module.exports = (context) => {
 
     config.module.rule('jsx')
       .use('babel')
-      .tap(options => babelMerge.all([{
-        plugins: [require.resolve('rax-hot-loader/babel')],
-      }, options]));
+        .tap(opt => addHotLoader(opt));
 
     config.module.rule('tsx')
       .use('babel')
-        .tap(options => babelMerge.all([{
-          plugins: [require.resolve('rax-hot-loader/babel')],
-        }, options]));
+        .tap(opt => addHotLoader(opt));
   } else if (command === 'build') {
     config.mode('production');
     config.devtool('source-map');
@@ -109,3 +103,9 @@ module.exports = (context) => {
 
   return config;
 };
+
+function addHotLoader(babelConfig) {
+  return babelMerge.all([{
+    plugins: [require.resolve('rax-hot-loader/babel')],
+  }, babelConfig]);
+}

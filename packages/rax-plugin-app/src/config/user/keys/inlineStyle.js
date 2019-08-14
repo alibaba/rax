@@ -1,16 +1,31 @@
 const _ = require('lodash');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const babelMerge = require('babel-merge');
 
 module.exports = (config, context, value, target) => {
-  if (target === 'web' && !value) {
-    // extract css file in web while inlineStyle is false
-    config.module.rule('css').clear();
+  // enbale inlineStyle
+  if (target === 'weex' || value) {
+    config.module.rule('css')
+      .test(/\.css?$/)
+      .use('css')
+        .loader(require.resolve('stylesheet-loader'));
+
+    config.module.rule('jsx')
+      .use('babel')
+        .tap(opt => addStylePlugin(opt));
+
+    config.module.rule('tsx')
+      .use('babel')
+        .tap(opt => addStylePlugin(opt));
+  // disable inlineStyle
+  } else if (target === 'web' && !value) {
+    // extract css file in web while inlineStyle is disabled
     config.module.rule('css')
       .test(/\.css?$/)
       .use('minicss')
         .loader(MiniCssExtractPlugin.loader)
         .end()
-      .use('csss')
+      .use('css')
         .loader(require.resolve('css-loader'))
         .end()
       .use('postcss')
@@ -28,14 +43,6 @@ module.exports = (config, context, value, target) => {
           ],
         });
 
-    config.module.rule('jsx')
-      .use('babel')
-        .tap((options) => removeBabelPlugin(options));
-
-    config.module.rule('tsx')
-      .use('babel')
-        .tap((options) => removeBabelPlugin(options));
-
     config.plugin('minicss')
       .use(MiniCssExtractPlugin, [{
         filename: 'web/[name].css',
@@ -44,15 +51,8 @@ module.exports = (config, context, value, target) => {
   }
 };
 
-function removeBabelPlugin(config) {
-  config.plugins = config.plugins.filter(v => {
-    let name = v;
-    if (_.isArray(v)) {
-      name = v[0];
-    }
-
-    return !_.includes(name, 'babel-plugin-transform-jsx-stylesheet');
-  });
-
-  return config;
+function addStylePlugin(babelConfig) {
+  return babelMerge.all([{
+    plugins: [require.resolve('babel-plugin-transform-jsx-stylesheet')],
+  }, babelConfig]);
 }

@@ -3,6 +3,7 @@ const babel = require('@babel/core');
 const { RawSource } = require('webpack-sources');
 const { readFileSync, existsSync } = require('fs');
 const { getBabelConfig } = require('rax-compile-config');
+const { createElement } = require('rax');
 
 const babelConfig = getBabelConfig();
 
@@ -16,7 +17,6 @@ module.exports = class UniversalDocumentPlugin {
     if (!options.path) {
       throw new Error('Please specify document file location with the path attribute');
     }
-
     this.rootDir = options.rootDir ? options.rootDir : process.cwd();
     this.documentPath = options.path ? options.path : 'src/document/index.jsx';
   }
@@ -38,15 +38,17 @@ module.exports = class UniversalDocumentPlugin {
       fn({ exports: {} }, module.exports, require);
       const documentElement = module.exports.__esModule ? module.exports.default : module.exports;
 
-      // get document html string
-      const source = this.render(require('rax').createElement(documentElement, {
-        publicPath,
-        styles: [],
-        scripts: ['web/index.js'],
-      }));
-
-      // insert html file
-      compilation.assets['index.html'] = new RawSource(source);
+      const entryObj = config.entry;
+      Object.keys(entryObj).forEach(entry => {
+        // get document html string
+        const pageSource = this.render(createElement(documentElement, {
+          publicPath,
+          styles: [],
+          scripts: [`web/${entry}.js`],
+        }));
+        // insert html file
+        compilation.assets[`web/${entry}.html`] = new RawSource(pageSource);
+      });
 
       callback();
     });
