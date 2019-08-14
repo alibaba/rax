@@ -36,18 +36,18 @@ module.exports = function appLoader(content) {
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const config = readJSONSync(appConfigPath);
 
-  const distPath = this._compiler.outputPath;
-  if (!existsSync(distPath)) mkdirSync(distPath);
+  const outputPath = this._compiler.outputPath;
+  if (!existsSync(outputPath)) mkdirSync(outputPath);
 
   const sourcePath = join(this.rootContext, entryPath);
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
-  const targetFilePath = join(distPath, relativeSourcePath);
+  const targetFilePath = join(outputPath, relativeSourcePath);
 
-  const targetFileDir = dirname(join(distPath, relative(sourcePath, this.resourcePath)));
+  const targetFileDir = dirname(join(outputPath, relative(sourcePath, this.resourcePath)));
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
-    distPath,
+    outputPath,
     sourcePath,
     type: 'app',
   });
@@ -56,11 +56,11 @@ module.exports = function appLoader(content) {
   this.addDependency(appConfigPath);
 
   const transformedAppConfig = transformAppConfig(entryPath, config);
-  writeFileSync(join(distPath, 'app.js'), transformed.code);
-  writeJSONSync(join(distPath, 'app.json'), transformedAppConfig, { spaces: 2 });
+  writeFileSync(join(outputPath, 'app.js'), transformed.code);
+  writeJSONSync(join(outputPath, 'app.json'), transformedAppConfig, { spaces: 2 });
 
   if (transformed.style) {
-    writeFileSync(join(distPath, 'app.acss'), transformed.style);
+    writeFileSync(join(outputPath, 'app.acss'), transformed.style);
   }
 
   return [

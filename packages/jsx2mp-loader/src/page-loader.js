@@ -13,14 +13,14 @@ module.exports = function pageLoader(content) {
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
 
-  const distPath = this._compiler.outputPath;
+  const outputPath = this._compiler.outputPath;
   const sourcePath = join(this.rootContext, dirname(entryPath));
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
-  const targetFilePath = join(distPath, relativeSourcePath);
+  const targetFilePath = join(outputPath, relativeSourcePath);
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
-    distPath,
+    outputPath,
     sourcePath,
     type: 'page',
     platform
@@ -31,7 +31,7 @@ module.exports = function pageLoader(content) {
   const pageDistDir = dirname(targetFilePath);
   if (!existsSync(pageDistDir)) mkdirpSync(pageDistDir);
 
-  const distFileWithoutExt = removeExt(join(distPath, relativeSourcePath));
+  const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
 
   const config = Object.assign({}, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
@@ -69,9 +69,9 @@ module.exports = function pageLoader(content) {
   if (transformed.assets) {
     Object.keys(transformed.assets).forEach((asset) => {
       const content = transformed.assets[asset];
-      const assetDirectory = dirname(join(distPath, asset));
+      const assetDirectory = dirname(join(outputPath, asset));
       if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
-      writeFileSync(join(distPath, asset), content);
+      writeFileSync(join(outputPath, asset), content);
     });
   }
 

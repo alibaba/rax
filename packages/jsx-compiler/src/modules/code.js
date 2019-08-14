@@ -96,12 +96,12 @@ module.exports = {
 
     const hooks = collectHooks(parsed.renderFunctionPath);
 
-    const targetFileDir = dirname(join(options.distPath, relative(options.sourcePath, options.resourcePath)));
+    const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
 
     removeRaxImports(parsed.ast);
-    renameCoreModule(parsed.ast, options.distPath, targetFileDir);
+    renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
     renameNpmModules(parsed.ast);
-    addDefine(parsed.ast, options.type, options.distPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
     /**
@@ -166,12 +166,12 @@ function genTagIdExp(expressions) {
   return parseExpression(ret);
 }
 
-function renameCoreModule(ast, distPath, targetFileDir) {
+function renameCoreModule(ast, outputPath, targetFileDir) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
       if (source.isStringLiteral() && isCoreModule(source.node.value)) {
-        let runtimeRelativePath = relative(targetFileDir, join(distPath, RUNTIME));
+        let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
         runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
         source.replaceWith(t.stringLiteral(runtimeRelativePath));
       }
@@ -191,7 +191,7 @@ function renameNpmModules(ast) {
   });
 }
 
-function addDefine(ast, type, distPath, targetFileDir, userDefineType, eventHandlers, useCreateStyle, hooks) {
+function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHandlers, useCreateStyle, hooks) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -234,7 +234,7 @@ function addDefine(ast, type, distPath, targetFileDir, userDefineType, eventHand
         ));
       }
 
-      let runtimeRelativePath = relative(targetFileDir, join(distPath, RUNTIME));
+      let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
       runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
 
       path.node.body.unshift(

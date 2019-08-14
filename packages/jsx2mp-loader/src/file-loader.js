@@ -19,7 +19,7 @@ module.exports = function fileLoader(content) {
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const rootContext = this.rootContext;
   const currentNodeModulePath = join(rootContext, 'node_modules');
-  const distPath = this._compiler.outputPath;
+  const outputPath = this._compiler.outputPath;
 
   const isNodeModule = cached(function isNodeModule(path) {
     return path.indexOf(currentNodeModulePath) === 0;
@@ -44,11 +44,11 @@ module.exports = function fileLoader(content) {
         }
         copySync(
           join(currentNodeModulePath, npmName),
-          join(distPath, 'npm', npmName)
+          join(outputPath, 'npm', npmName)
         );
         // modify referenced component location
         if (pkg.miniappConfig.main) {
-          const componentConfigPath = join(distPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+          const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
           if (existsSync(componentConfigPath)) {
             const componentConfig = readJSONSync(componentConfigPath);
             if (componentConfig.usingComponents) {
@@ -68,7 +68,7 @@ module.exports = function fileLoader(content) {
       // Copy package.json
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
-        const target = join(distPath, 'npm', npmName, 'package.json');
+        const target = join(outputPath, 'npm', npmName, 'package.json');
         if (!existsSync(target))
           copySync(sourcePackageJSONPath, target, { errorOnExist: false });
       }
@@ -77,7 +77,7 @@ module.exports = function fileLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
-      const distSourcePath = join(distPath, 'npm', npmName, splitedNpmPath.join('/'));
+      const distSourcePath = join(outputPath, 'npm', npmName, splitedNpmPath.join('/'));
       const { code, map } = transformCode(rawContent, loaderOptions);
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -89,9 +89,9 @@ module.exports = function fileLoader(content) {
       join(rootContext, dirname(loaderOptions.entryPath)),
       this.resourcePath
     );
-    const distSourcePath = join(distPath, relativeFilePath);
+    const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
-    const npmRelativePath = relative(dirname(distSourcePath), join(distPath, '/npm/'));
+    const npmRelativePath = relative(dirname(distSourcePath), join(outputPath, '/npm/'));
     const { code } = transformCode(rawContent, loaderOptions, npmRelativePath);
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
