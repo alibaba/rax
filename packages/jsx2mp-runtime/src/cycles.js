@@ -7,3 +7,7 @@ export const COMPONENT_WILL_UPDATE = 'componentWillUpdate';
 export const COMPONENT_DID_UPDATE = 'componentDidUpdate';
 export const ON_SHOW = 'onShow';
 export const ON_HIDE = 'onHide';
+export const ON_PAGE_SCROLL = 'onPageScroll';
+export const ON_SHARE_APP_MESSAGE = 'onShareAppMessage';
+export const ON_REACH_BOTTOM = 'onReachBottom';
+export const ON_PULL_DOWN_REFRESH = 'onPullDownRefresh';

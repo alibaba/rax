@@ -1,17 +1,11 @@
 'use strict';
-const path = require('path');
 const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
-const babelMerge = require('babel-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { getBabelConfig } = require('rax-compile-config');
 
 const UniversalDocumentPlugin = require('../../plugins/UniversalDocumentPlugin');
 const PWAAppShellPlugin = require('../../plugins/PWAAppShellPlugin');
-const babelConfig = require('../babel.config');
-
-const babelConfigWeb = babelMerge.all([{
-  plugins: [require.resolve('rax-hot-loader/babel')],
-}, babelConfig]);
 
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const getWebpackBase = require('../getWebpackBase');
@@ -21,6 +15,10 @@ module.exports = (context) => {
 
   const config = getWebpackBase(context);
 
+  const babelConfig = getBabelConfig({
+    styleSheet: !!userConfig.inlineStyle
+  });
+
   config.output.filename('web/[name].js');
 
   config.resolve.alias
@@ -28,29 +26,41 @@ module.exports = (context) => {
     .set('@core/page', 'universal-app-runtime')
     .set('@core/router', 'universal-app-runtime');
 
-  let babelConfig = babelConfigWeb;
   if (userConfig.inlineStyle) {
-    babelConfig = babelMerge.all([{
-      plugins: [
-        require.resolve('babel-plugin-transform-jsx-stylesheet')
-      ],
-    }, babelConfig]);
-
     config.module.rule('css')
-    .test(/\.css?$/)
-    .use('css')
-      .loader(require.resolve('stylesheet-loader'));
+      .test(/\.css?$/)
+      .use('css')
+        .loader(require.resolve('stylesheet-loader'));
   } else {
+    // extract css file in web
     config.module.rule('css')
-    .test(/\.css?$/)
-    .use('css')
-      .loader(require.resolve('stylesheet-loader'));
+      .test(/\.css?$/)
+      .use('minicss')
+        .loader(MiniCssExtractPlugin.loader)
+        .end()
+      .use('csss')
+        .loader(require.resolve('css-loader'))
+        .end()
+      .use('postcss')
+        .loader(require.resolve('postcss-loader'))
+        .options({
+          ident: 'postcss',
+          plugins: () => [
+            require('postcss-preset-env')({
+              autoprefixer: {
+                flexbox: 'no-2009',
+              },
+              stage: 3,
+            }),
+            require('postcss-plugin-rpx2vw')(),
+          ],
+        });
 
     config.plugin('minicss')
-    .use(MiniCssExtractPlugin, [{
-      filename: 'web/[name].css',
-      chunkFilename: 'web/[name].css',
-    }]);
+      .use(MiniCssExtractPlugin, [{
+        filename: 'web/[name].css',
+        chunkFilename: 'web/[name].css',
+      }]);
   }
 
   config.module.rule('jsx')
@@ -63,7 +73,7 @@ module.exports = (context) => {
     .options(babelConfig);
 
   config.module.rule('tsx')
-  .test(/\.tsx?$/)
+  .test(/\.(ts|tsx)?$/)
   .exclude
     .add(/(node_modules|bower_components)/)
     .end()

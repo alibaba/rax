@@ -6,10 +6,4 @@ coverage
 expected
 website
 gh-pages
-weex
 vendors
-
-# these directories include ejs template
-packages/rax-cli/src/generator/app
-packages/rax-cli/src/generator/api
-packages/rax-cli/src/generator/component

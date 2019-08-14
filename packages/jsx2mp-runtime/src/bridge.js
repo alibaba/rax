@@ -1,7 +1,7 @@
 /* global getCurrentPages */
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
@@ -16,7 +16,7 @@ const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
  *    setData     <--------------    setState
  */
 function getPageCycles(Klass) {
-  return {
+  let config = {
     onLoad(options) {
       this.instance = new Klass(this.props);
       // Reverse sync from state to data.
@@ -41,8 +41,16 @@ function getPageCycles(Klass) {
     },
     onHide() {
       if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
-    },
+    }
   };
+
+  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH].forEach((hook) => {
+    config[hook] = function(e) {
+      return this.instance._trigger(hook, e);
+    };
+  });
+
+  return config;
 }
 
 function getComponentCycles(Klass) {

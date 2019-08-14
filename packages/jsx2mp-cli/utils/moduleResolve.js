@@ -81,8 +81,9 @@ function loadNpmModules(module, start, extension) {
  */
 module.exports = function resolve(script, dependency, extension = '.js') {
   let target;
+
   if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
-    let dependencyPath = join(dirname(script), dependency);
+    let dependencyPath = join(script, dependency);
     target = loadAsFile(dependencyPath, extension) || loadAsDirectory(dependencyPath, extension);
   } else {
     target = loadNpmModules(dependency, dirname(script), extension);

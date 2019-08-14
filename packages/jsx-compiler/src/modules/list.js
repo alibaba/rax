@@ -62,7 +62,6 @@ function transformList(ast, adapter) {
       const { node, parentPath } = path;
       if (node.__transformedList) return;
       node.__transformedList = true;
-
       const { callee, arguments: args } = node;
       const parentJSXElement = path.findParent(p => p.isJSXElement());
       if (parentJSXElement) {
@@ -91,14 +90,25 @@ function transformList(ast, adapter) {
                       item: forItem.name
                     };
                   }
+
                   if (innerPath.node.name === forIndex.name) {
                     innerPath.node.__mapArgs = {};
                   }
-                  if (innerPath.scope.hasBinding(innerPath.node.name)) {
+
+                  if (
+                    innerPath.scope.hasBinding(innerPath.node.name)
+                    || innerPath.node.name === forItem.name
+                    || innerPath.node.name === forIndex.name
+                  ) {
                     innerPath.node.__mapArgs = {
                       item: forItem.name
                     };
-                    properties.push(t.objectProperty(innerPath.node, innerPath.node));
+
+                    // Skip duplicate keys.
+                    if (!properties.some(
+                      pty => pty.key.name === innerPath.node.name)) {
+                      properties.push(t.objectProperty(innerPath.node, innerPath.node));
+                    }
                   }
                 }
               });

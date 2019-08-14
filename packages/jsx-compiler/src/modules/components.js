@@ -1,4 +1,4 @@
-const { join } = require('path');
+const { join, relative, dirname } = require('path');
 const { readJSONSync } = require('fs-extra');
 const t = require('@babel/types');
 const { _transform: transformTemplate } = require('./element');
@@ -30,7 +30,7 @@ module.exports = {
     }
 
     function getComponentConfig(pkgName) {
-      const pkgPath = moduleResolve(options.filePath, join(pkgName, 'package.json'));
+      const pkgPath = moduleResolve(options.resourcePath, join(pkgName, 'package.json'));
       if (!pkgPath) {
         throw new Error(`MODULE_NOT_RESOLVE: Can not resolve rax component "${pkgName}", please check you have this module installed.`);
       }
@@ -40,18 +40,21 @@ module.exports = {
     function getComponentPath(alias) {
       if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
         // alias.local
-        if (!options.filePath) {
-          throw new Error('`filePath` must be passed to calc dependency path.');
+        if (!options.resourcePath) {
+          throw new Error('`resourcePath` must be passed to calc dependency path.');
         }
 
-        const filename = moduleResolve(options.filePath, alias.from, '.jsx')
-          || moduleResolve(options.filePath, alias.from, '.js');
+        const filename = moduleResolve(options.resourcePath, alias.from, '.jsx')
+          || moduleResolve(options.resourcePath, alias.from, '.js');
         return filename;
       } else {
         // npm module
         const pkg = getComponentConfig(alias.from);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
-          return join('/npm', alias.from, pkg.miniappConfig.main);
+          const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
+          let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
+          npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
+          return './' + join(npmRelativePath, alias.from, pkg.miniappConfig.main);
         } else {
           console.warn('Can not found compatible rax miniapp component "' + pkg.name + '".');
         }
@@ -170,7 +173,12 @@ module.exports = {
             if (alias) {
               const pkg = getComponentConfig(alias.from);
               if (pkg && pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name]) {
-                node.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
+                let subComponent = pkg.miniappConfig.subComponents[property.name];
+                node.name = t.jsxIdentifier(subComponent.tagNameMap);
+                // subComponent default style
+                if (subComponent.attributes && subComponent.attributes.style) {
+                  path.parentPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('style'), t.stringLiteral(subComponent.attributes.style)));
+                }
                 if (path.parentPath.node.closingElement) {
                   path.parentPath.node.closingElement.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
                 }

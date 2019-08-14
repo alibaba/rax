@@ -5,6 +5,7 @@ const address = require('address');
 
 const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
 const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
+const babelMerge = require('babel-merge');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
@@ -14,6 +15,18 @@ module.exports = (config, context) => {
 
   config.mode('development');
   config.devtool('inline-module-source-map');
+
+  config.module.rule('jsx')
+    .use('babel')
+      .tap(options => babelMerge.all([{
+        plugins: [require.resolve('rax-hot-loader/babel')],
+      }, options]));
+
+  config.module.rule('tsx')
+    .use('babel')
+      .tap(options => babelMerge.all([{
+        plugins: [require.resolve('rax-hot-loader/babel')],
+      }, options]));
 
   config.entry('index')
     .add(hmrClient)
@@ -30,4 +43,4 @@ module.exports = (config, context) => {
     .overlay(false)
     .host(address.ip())
     .public(address.ip());
-}
+};
