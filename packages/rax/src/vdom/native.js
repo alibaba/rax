@@ -139,7 +139,8 @@ class NativeComponent extends BaseComponent {
     this.updateProperties(prevProps, nextProps);
 
     // If the prevElement has no child, mount children directly
-    if (prevProps.children && prevProps.children.length === 0) {
+    if (prevProps.children == null ||
+      Array.isArray(prevProps.children) && prevProps.children.length === 0) {
       this.mountChildren(nextProps.children, nextContext);
     } else {
       this.updateChildren(nextProps.children, nextContext);
