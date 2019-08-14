@@ -51,8 +51,8 @@ module.exports = {
         // npm module
         const pkg = getComponentConfig(alias.from);
         if (pkg.miniappConfig && pkg.miniappConfig.main) {
-          const targetFileDir = dirname(join(options.distPath, relative(options.sourcePath, options.resourcePath)));
-          let npmRelativePath = relative(targetFileDir, join(options.distPath, '/npm'));
+          const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
+          let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
           npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
           return './' + join(npmRelativePath, alias.from, pkg.miniappConfig.main);
         } else {
