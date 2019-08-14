@@ -340,6 +340,11 @@ class NativeComponent extends BaseComponent {
     let prevFirstNativeNode;
     let shouldUnmountPrevFirstChild;
 
+    let shouldRemoveAllChildren = false;
+    if (nextChildrenElements && nextChildrenElements.length > 0 && driver.removeChildren) {
+      shouldRemoveAllChildren = true;
+    }
+
     // Unmount children that are no longer present.
     if (prevChildren != null) {
       for (let name in prevChildren) {
@@ -356,7 +361,7 @@ class NativeComponent extends BaseComponent {
             prevFirstNativeNode = prevFirstNativeNode[0];
           }
         } else if (shouldUnmount) {
-          prevChild.unmountComponent();
+          prevChild.unmountComponent(shouldRemoveAllChildren);
         }
       }
     }
@@ -442,7 +447,11 @@ class NativeComponent extends BaseComponent {
     }
 
     if (shouldUnmountPrevFirstChild) {
-      prevFirstChild.unmountComponent();
+      prevFirstChild.unmountComponent(shouldRemoveAllChildren);
+    }
+
+    if (shouldRemoveAllChildren) {
+      driver.removeChildren(this._nativeNode);
     }
 
     this._renderedChildren = nextChildren;

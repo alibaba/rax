@@ -355,3 +355,11 @@ export function afterRender({ container }) {
     isHydrating = false;
   }
 }
+
+/**
+ * Remove all children from node.
+ * @NOTE: Fast path support in web.
+ */
+export function removeChildren(node) {
+  node.innerHTML = '';
+}
