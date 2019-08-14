@@ -268,7 +268,7 @@ describe('Transform JSXElement', () => {
     });
 
     it('should collect object expression', () => {
-      const sourceCode = `<Image style={{...styles.avator, ...styles[\`\${rank}Avator\`]}} source={{ uri: avator }}></Image>`;
+      const sourceCode = '<Image style={{...styles.avator, ...styles[\`\${rank}Avator\`]}} source={{ uri: avator }}></Image>';
       const ast = parseExpression(sourceCode);
       const { dynamicValues } = _transform(ast, null, null, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Image style="{{_d0}}" source="{{ uri: _d1 }}"></Image>');
