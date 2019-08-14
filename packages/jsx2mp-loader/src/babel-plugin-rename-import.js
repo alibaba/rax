@@ -1,6 +1,5 @@
 const { join } = require('path');
 
-const PREFIX = '/npm';
 const WEEX_MODULE_REG = /^@weex\//;
 
 function isNpmModule(value) {
@@ -17,11 +16,13 @@ const defaultOptions = {
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const source = (value) => t.stringLiteral(
-    options.normalizeFileName(
-      join(PREFIX, value)
+  const { normalizeFileName, npmRelativePath } = options;
+  const source = (value, prefix) => t.stringLiteral(
+    normalizeFileName(
+      join(prefix, value)
     )
   );
+
   return {
     visitor: {
       ImportDeclaration(path) {
@@ -29,7 +30,7 @@ module.exports = function visitor({ types: t }, options) {
         if (isWeexModule(value)) {
           path.remove();
         } else if (isNpmModule(value)) {
-          path.node.source = source(value);
+          path.node.source = source(value, npmRelativePath);
         }
       },
 
@@ -45,7 +46,7 @@ module.exports = function visitor({ types: t }, options) {
             path.replaceWith(t.nullLiteral);
           } else if (isNpmModule(node.arguments[0].value)) {
             path.node.arguments = [
-              source(node.arguments[0].value)
+              source(node.arguments[0].value, npmRelativePath)
             ];
           }
         }

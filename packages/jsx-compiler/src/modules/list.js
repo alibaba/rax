@@ -62,7 +62,6 @@ function transformList(ast, adapter) {
       const { node, parentPath } = path;
       if (node.__transformedList) return;
       node.__transformedList = true;
-
       const { callee, arguments: args } = node;
       const parentJSXElement = path.findParent(p => p.isJSXElement());
       if (parentJSXElement) {
@@ -86,7 +85,6 @@ function transformList(ast, adapter) {
               returnElPath.traverse({
                 Identifier(innerPath) {
                   if (innerPath.findParent(p => p.node.__bindEvent)) return;
-
                   if (innerPath.node.name === forItem.name) {
                     innerPath.node.__mapArgs = {
                       item: forItem.name
