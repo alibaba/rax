@@ -2,6 +2,8 @@ const { join } = require('path');
 const { getOptions } = require('loader-utils');
 const { existsSync } = require('fs');
 const pathToRegexp = require('path-to-regexp');
+const getDepPath = require('./getDepPath');
+const getSourceCode = require('./getSourceCode');
 const babel = require('@babel/core');
 const { getBabelConfig } = require('rax-compile-config');
 
@@ -18,7 +20,7 @@ const historyMemory = {
  */
 module.exports = function(content) {
   const options = getOptions(this) || {};
-  const renderMoudle = options.renderModule || 'rax';
+  const renderModule = options.renderModule || 'rax';
 
   if (!this.data.appConfig) {
     return content;
@@ -102,7 +104,7 @@ module.exports = function(content) {
     // First level function to support hooks will autorun function type state,
     // Second level function to support rax-use-router rule autorun function type component.
     const dynamicImportComponent =
-    `() =>
+      `() =>
       import(/* webpackChunkName: "${route.component.replace(/\//g, '_')}" */ '${getDepPath(route.component, this.rootContext)}')
       .then((mod) => () => interopRequire(mod))
     `;
@@ -116,47 +118,17 @@ module.exports = function(content) {
     });`;
   }).join('\n');
 
-  const source = `
-    import definedApp from '${this.resourcePath}';
-    import { render, createElement } from '${renderMoudle}';
-    import { ${historyMemory[historyType]} as createHistory } from 'history';
-    import { _invokeAppCycle } from 'universal-app-runtime';
-    import DriverUniversal from 'driver-universal';
-    ${importMods}
-
-    const interopRequire = (mod) => mod && mod.__esModule ? mod.default : mod;
-    const withSSR = !!window.__INITIAL_DATA__;
-
-    const getRouterConfig = () => {
-      const routes = [];
-      ${assembleRoutes}
-      return {
-        history: createHistory(),
-        routes,
-      };
-    };
-
-    ${/* Extendable app props. */''}
-    const appProps = {
-      routerConfig: getRouterConfig(),
-    };
-
-    let appLaunched = false;
-
-    function Entry() {
-      const app = definedApp(appProps);
-      const startOptions = {};
-
-      if (!appLaunched) {
-        appLaunched = true;
-        _invokeAppCycle('launch', startOptions);
-      }
-
-      return app;
-    }
-
-    ${appRender}
-  `;
+  const source = getSourceCode({
+    appRender,
+    assembleRoutes,
+    importMods,
+    routes,
+    renderModule,
+    definedAppPath: this.resourcePath,
+    historyMemory: historyMemory[historyType],
+    isMultiPageWebApp: options.isMultiPageWebApp,
+    routeIndex: options.routeIndex
+  });
 
   const { code } = babel.transformSync(source, babelConfig);
 
@@ -182,18 +154,3 @@ module.exports.pitch = function(remainingRequest, precedingRequest, data) {
     throw new Error('Can not get app.json, please check.');
   }
 };
-
-/**
- * ./pages/foo -> based on src, return original
- * /pages/foo -> based on rootContext
- * pages/foo -> based on src, add prefix: './'
- */
-function getDepPath(path, rootContext = '') {
-  if (path[0] === '.') {
-    return path;
-  } else if (path[0] === '/') {
-    return join(rootContext, path);
-  } else {
-    return './' + path;
-  }
-}

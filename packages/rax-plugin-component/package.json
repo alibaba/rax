@@ -27,12 +27,10 @@
     "gulp-typescript": "^5.0.1",
     "html-webpack-plugin": "^3.2.0",
     "image-source-loader": "^0.6.5",
-    "loader-utils": "^1.1.0",
     "rax-compile-config": "^0.1.1",
     "rax-hot-loader": "^0.6.5",
     "rax-webpack-plugin": "^0.6.5",
     "run-sequence": "^2.2.1",
-    "strip-ansi": "^5.0.0",
     "typescript": "^3.5.3",
     "webpack": "^4.27.1",
     "webpack-chain": "^6.0.0"

@@ -1,19 +1,15 @@
 'use strict';
 
-const path = require('path');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
+const setEntry = require('../setEntry');
 
 module.exports = (config, context) => {
-  const { rootDir } = context;
-  const appEntry = path.resolve(rootDir, 'src/app.js');
-
   config.mode('production');
   config.devtool('source-map');
-  config.entry('index')
-    .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
+
+  setEntry(config, context, 'web');
 
   config.optimization
     .minimizer('uglify')

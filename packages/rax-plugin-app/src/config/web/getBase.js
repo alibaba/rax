@@ -1,5 +1,4 @@
 'use strict';
-const webpack = require('webpack');
 const serverRender = require('rax-server-renderer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { getBabelConfig } = require('rax-compile-config');
@@ -107,9 +106,6 @@ module.exports = (context) => {
       path: 'src/shell/index.jsx',
       render: serverRender.renderToString,
     }]);
-
-  config.plugin('noError')
-    .use(webpack.NoEmitOnErrorsPlugin);
 
   return config;
 };

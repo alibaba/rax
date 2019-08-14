@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const Chain = require('webpack-chain');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { setBabelAlias } = require('rax-compile-config');
@@ -34,6 +35,9 @@ module.exports = (context) => {
 
   config.plugin('caseSensitivePaths')
     .use(CaseSensitivePathsPlugin);
+
+  config.plugin('noError')
+    .use(webpack.NoEmitOnErrorsPlugin);
 
   return config;
 };
