@@ -1,5 +1,4 @@
 'use strict';
-const webpack = require('webpack');
 const { getBabelConfig } = require('rax-compile-config');
 
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
@@ -59,9 +58,6 @@ module.exports = (context) => {
 
   config.plugin('weexFrame')
     .use(WeexFrameworkBanner);
-
-  config.plugin('noError')
-    .use(webpack.NoEmitOnErrorsPlugin);
 
   return config;
 };

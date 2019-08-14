@@ -17,7 +17,6 @@ module.exports = class UniversalDocumentPlugin {
     if (!options.path) {
       throw new Error('Please specify document file location with the path attribute');
     }
-    this.isMultiPageWebApp = options.isMultiPageWebApp;
     this.rootDir = options.rootDir ? options.rootDir : process.cwd();
     this.documentPath = options.path ? options.path : 'src/document/index.jsx';
   }

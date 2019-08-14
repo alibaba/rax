@@ -43,7 +43,6 @@
     "rax-compile-config": "^0.1.1",
     "rax-hot-loader": "^0.6.5",
     "rax-server-renderer": "^1.0.0",
-    "strip-ansi": "^5.0.0",
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.4",
     "uglifyjs-webpack-plugin": "^2.1.2",

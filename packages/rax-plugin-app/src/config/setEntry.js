@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs-extra');
 
-const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
+const { hmrClient } = require('rax-compile-config');
 
-const MulitPageLoader = require.resolve('../../loaders/MulitPageLoader');
+const MulitPageLoader = require.resolve('../loaders/MulitPageLoader');
 const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
 
 function getDepPath(rootDir, com) {
@@ -14,7 +14,10 @@ function getDepPath(rootDir, com) {
   }
 };
 
-module.exports = (config, rootDir, userConfig, isDev = false) => {
+module.exports = (config, context, type) => {
+  const { rootDir, userConfig, command } = context;
+  const isDev = command === 'dev';
+
   if (userConfig.spa === false) {
     // MPA
     let routes = [];
@@ -33,7 +36,7 @@ module.exports = (config, rootDir, userConfig, isDev = false) => {
       }
 
       const pageEntry = getDepPath(rootDir, route.component);
-      entryConfig.add(`${MulitPageLoader}?type=web!${pageEntry}`);
+      entryConfig.add(`${MulitPageLoader}?type=${type}!${pageEntry}`);
     });
   } else {
     // SPA
@@ -42,6 +45,6 @@ module.exports = (config, rootDir, userConfig, isDev = false) => {
     if (isDev) {
       entryConfig.add(hmrClient);
     }
-    entryConfig.add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
+    entryConfig.add(`${UNIVERSAL_APP_SHELL_LOADER}?type=${type}!${appEntry}`);
   }
 };

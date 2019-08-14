@@ -4,11 +4,11 @@ const path = require('path');
 const address = require('address');
 const babelMerge = require('babel-merge');
 
-const setEntry = require('./setEntry');
+const setEntry = require('../setEntry');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
-  const { devPublicPath } = userConfig;
+  const { devPublicPath, outputDir } = userConfig;
 
   config.mode('development');
   config.devtool('inline-module-source-map');
@@ -25,12 +25,12 @@ module.exports = (config, context) => {
       plugins: [require.resolve('rax-hot-loader/babel')],
     }, options]));
 
-  setEntry(config, rootDir, userConfig, true);
+  setEntry(config, context, 'web');
 
   config.devServer
     .compress(true)
     .clientLogLevel('error')
-    .contentBase(path.resolve(rootDir, 'build'))
+    .contentBase(path.resolve(rootDir, outputDir))
     .watchContentBase(true)
     .hot(true)
     .quiet(true)
