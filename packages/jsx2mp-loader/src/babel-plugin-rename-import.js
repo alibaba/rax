@@ -10,12 +10,22 @@ function isWeexModule(value) {
   return WEEX_MODULE_REG.test(value);
 }
 
-module.exports = function visitor({ types: t }) {
-  const source = (value, prefix) => t.stringLiteral(join(prefix, value));
+const defaultOptions = {
+  normalizeFileName: (s) => s,
+};
+
+module.exports = function visitor({ types: t }, options) {
+  options = Object.assign({}, defaultOptions, options);
+  const { normalizeFileName, npmRelativePath } = options;
+  const source = (value, prefix) => t.stringLiteral(
+    normalizeFileName(
+      join(prefix, value)
+    )
+  );
+
   return {
     visitor: {
-      ImportDeclaration(path, state) {
-        const { npmRelativePath } = state.opts;
+      ImportDeclaration(path) {
         const { value } = path.node.source;
         if (isWeexModule(value)) {
           path.remove();
@@ -24,8 +34,7 @@ module.exports = function visitor({ types: t }) {
         }
       },
 
-      CallExpression(path, state) {
-        const { npmRelativePath } = state.opts;
+      CallExpression(path) {
         const { node } = path;
         if (
           node.callee.name === 'require' &&

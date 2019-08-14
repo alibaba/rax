@@ -185,7 +185,7 @@ function renameNpmModules(ast) {
     ImportDeclaration(path) {
       const source = path.get('source');
       if (source.isStringLiteral() && ['.', '/'].indexOf(source.node.value[0]) === -1) {
-        source.replaceWith(t.stringLiteral(join('/npm', source.node.value)));
+        source.replaceWith(t.stringLiteral(normalizeFileName(join('/npm', source.node.value))));
       }
     }
   });
@@ -362,4 +362,11 @@ function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
   fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
     t.objectExpression(methodsProperties)
   ])));
+}
+
+/**
+ * For that alipay build folder can not contain `@`, escape to `_`.
+ */
+function normalizeFileName(filename) {
+  return filename.replace(/@/g, '_');
 }

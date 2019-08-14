@@ -68,7 +68,7 @@ module.exports = function fileLoader(content) {
       // Copy package.json
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
-        const target = join(outputPath, 'npm', npmName, 'package.json');
+        const target = normalizeFileName(join(outputPath, 'npm', npmName, 'package.json'));
         if (!existsSync(target))
           copySync(sourcePackageJSONPath, target, { errorOnExist: false });
       }
@@ -77,8 +77,12 @@ module.exports = function fileLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
-      const distSourcePath = join(outputPath, 'npm', npmName, splitedNpmPath.join('/'));
-      const { code, map } = transformCode(rawContent, loaderOptions);
+
+      const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
+
+      const npmRelativePath = relative(this.resourcePath, join(outputPath, 'npm'));
+      const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath);
+
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
       writeFileSync(distSourcePath, code, 'utf-8');
@@ -91,7 +95,8 @@ module.exports = function fileLoader(content) {
     );
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
-    const npmRelativePath = relative(dirname(distSourcePath), join(outputPath, '/npm/'));
+    const npmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
+
     const { code } = transformCode(rawContent, loaderOptions, npmRelativePath);
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -106,7 +111,7 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '') {
   const plugins = [
     [
       require('./babel-plugin-rename-import'),
-      { npmRelativePath }
+      { npmRelativePath, normalizeFileName }
 
     ] // for rename npm modules.
   ];
@@ -131,4 +136,11 @@ function isSymbolic(path) {
     }
     throw err;
   }
+}
+
+/**
+ * For that alipay build folder can not contain `@`, escape to `_`.
+ */
+function normalizeFileName(filename) {
+  return filename.replace(/@/g, '_');
 }
