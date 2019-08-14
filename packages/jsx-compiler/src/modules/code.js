@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { join } = require('path');
+const { join, relative, dirname } = require('path');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -46,7 +46,6 @@ module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
     if (!defaultExportedPath || !defaultExportedPath.node) return; // Can not found default export.
-
     let userDefineType;
 
     if (options.type === 'app') {
@@ -97,10 +96,12 @@ module.exports = {
 
     const hooks = collectHooks(parsed.renderFunctionPath);
 
+    const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
+
     removeRaxImports(parsed.ast);
-    renameCoreModule(parsed.ast);
+    renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
     renameNpmModules(parsed.ast);
-    addDefine(parsed.ast, options.type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
     /**
@@ -165,12 +166,14 @@ function genTagIdExp(expressions) {
   return parseExpression(ret);
 }
 
-function renameCoreModule(ast) {
+function renameCoreModule(ast, outputPath, targetFileDir) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
       if (source.isStringLiteral() && isCoreModule(source.node.value)) {
-        source.replaceWith(t.stringLiteral(RUNTIME));
+        let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
+        runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
+        source.replaceWith(t.stringLiteral(runtimeRelativePath));
       }
     }
   });
@@ -182,13 +185,13 @@ function renameNpmModules(ast) {
     ImportDeclaration(path) {
       const source = path.get('source');
       if (source.isStringLiteral() && ['.', '/'].indexOf(source.node.value[0]) === -1) {
-        source.replaceWith(t.stringLiteral(join('/npm', source.node.value)));
+        source.replaceWith(t.stringLiteral(normalizeFileName(join('/npm', source.node.value))));
       }
     }
   });
 }
 
-function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks) {
+function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHandlers, useCreateStyle, hooks) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -231,10 +234,13 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
         ));
       }
 
+      let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
+      runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
+
       path.node.body.unshift(
         t.importDeclaration(
           specifiers,
-          t.stringLiteral(RUNTIME)
+          t.stringLiteral(runtimeRelativePath)
         )
       );
 
@@ -356,4 +362,11 @@ function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
   fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
     t.objectExpression(methodsProperties)
   ])));
+}
+
+/**
+ * For that alipay build folder can not contain `@`, escape to `_`.
+ */
+function normalizeFileName(filename) {
+  return filename.replace(/@/g, '_');
 }
