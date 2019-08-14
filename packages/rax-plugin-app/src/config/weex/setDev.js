@@ -8,8 +8,7 @@ const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader')
 const babelMerge = require('babel-merge');
 
 module.exports = (config, context) => {
-  const { rootDir, userConfig } = context;
-  const { devPublicPath } = userConfig;
+  const { rootDir } = context;
 
   const appEntry = path.resolve(rootDir, 'src/app.js');
 
@@ -37,9 +36,9 @@ module.exports = (config, context) => {
     .clientLogLevel('error')
     .contentBase(path.resolve(rootDir, 'build'))
     .watchContentBase(true)
+    .historyApiFallback(true)
     .hot(true)
     .quiet(true)
-    .publicPath(devPublicPath)
     .overlay(false)
     .host(address.ip())
     .public(address.ip());

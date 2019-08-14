@@ -1,8 +1,8 @@
-const path = require('path');
 const chalk = require('chalk');
 const consoleClear = require('console-clear');
 const qrcode = require('qrcode-terminal');
 
+const setUserConfig = require('./config/user/setConfig');
 const getMpOuput = require('./config/miniapp/getOutputPath');
 const mpDev = require('./config/miniapp/dev');
 
@@ -11,6 +11,51 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
 
   let devUrl = '';
   let devCompletedArr = [];
+
+  if (~targets.indexOf('miniapp')) {
+    if (targets.length > 1) {
+      onHook('after.dev', () => {
+        mpDev(context, (args) => {
+          devCompletedArr.push(args);
+          if (devCompletedArr.length === 2) {
+            devCompileLog();
+          }
+        });
+      });
+    } else {
+      mpDev(context, (args) => {
+        devCompletedArr.push(args);
+        devCompileLog();
+      });
+    }
+  }
+
+  targets.forEach(target => {
+    if (target === 'weex' || target === 'web') {
+      const getBase = require(`./config/${target}/getBase`);
+      const setDev = require(`./config/${target}/setDev`);
+
+      registerConfig(target, getBase(context));
+
+      chainWebpack((config) => {
+        setDev(config.getConfig(target), context);
+        setUserConfig(config.getConfig(target), context, target);
+      });
+    }
+  });
+
+  onHook('after.devCompile', async(args) => {
+    devUrl = args.url;
+    devCompletedArr.push(args);
+    // run miniapp build while targets have web or weex, for log control
+    if (~targets.indexOf('miniapp')) {
+      if (devCompletedArr.length === 2) {
+        devCompileLog();
+      }
+    } else {
+      devCompileLog();
+    }
+  });
 
   function devCompileLog() {
     consoleClear(true);
@@ -79,48 +124,4 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
       console.log();
     }
   }
-
-  if (~targets.indexOf('miniapp')) {
-    if (targets.length > 1) {
-      onHook('after.dev', () => {
-        mpDev(context, (args) => {
-          devCompletedArr.push(args);
-          if (devCompletedArr.length === 2) {
-            devCompileLog();
-          }
-        });
-      });
-    } else {
-      mpDev(context, (args) => {
-        devCompletedArr.push(args);
-        devCompileLog();
-      });
-    }
-  }
-
-  targets.forEach(target => {
-    if (target === 'weex' || target === 'web') {
-      const getBase = require(`./config/${target}/getBase`);
-      const setDev = require(`./config/${target}/setDev`);
-
-      registerConfig(target, getBase(context));
-
-      chainWebpack((config) => {
-        setDev(config.getConfig(target), context);
-      });
-    }
-  });
-
-  onHook('after.devCompile', async(args) => {
-    devUrl = args.url;
-    devCompletedArr.push(args);
-    // run miniapp build while targets have web or weex, for log control
-    if (~targets.indexOf('miniapp')) {
-      if (devCompletedArr.length === 2) {
-        devCompileLog();
-      }
-    } else {
-      devCompileLog();
-    }
-  });
 };
