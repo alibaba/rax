@@ -340,10 +340,9 @@ class NativeComponent extends BaseComponent {
     let prevFirstNativeNode;
     let shouldUnmountPrevFirstChild;
 
-    let shouldRemoveAllChildren = false;
-    if (nextChildrenElements && nextChildrenElements.length > 0 && driver.removeChildren) {
-      shouldRemoveAllChildren = true;
-    }
+    // Directly remove all children from component, if nextChildren is empty.
+    // `driver.removeChildren` is optional driver protocol.
+    let shouldRemoveAllChildren = Boolean(nextChildrenElements && nextChildrenElements.length > 0 && driver.removeChildren);
 
     // Unmount children that are no longer present.
     if (prevChildren != null) {
