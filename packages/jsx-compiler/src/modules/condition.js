@@ -177,15 +177,17 @@ function transformTemplate(ast, adapter, templateVariables) {
 }
 
 function transformConditionalExpression(path, expression, adapter, dynamicValue) {
-  const listCallExpPath = path.findParent(p => p.isCallExpression() && p.node.__isList);
   let { test, consequent, alternate } = expression;
+
   let conditionValue;
   if (/Expression$/.test(test.type)) {
     conditionValue = t.jsxExpressionContainer(test);
+  } else if (t.isStringLiteral(test)) {
+    conditionValue = test;
   } else {
-    conditionValue = t.isStringLiteral(test)
-      ? test
-      : t.stringLiteral(createBinding(genExpression(test)));
+    // Other literal types or identifier.
+    conditionValue = t.stringLiteral(createBinding(genExpression(test)));
+    if (t.isIdentifier(test)) dynamicValue[test.name] = test;
   }
   const replacement = [];
   let consequentReplacement = [];

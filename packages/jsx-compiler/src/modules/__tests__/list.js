@@ -4,13 +4,6 @@ const { parseExpression } = require('../../parser');
 const adapter = require('../../adapter');
 const genCode = require('../../codegen/genCode');
 
-function genInlineCode(ast) {
-  return genCode(ast, {
-    comments: false, // Remove template comments.
-    concise: true, // Reduce whitespace, but not to disable all.
-  });
-}
-
 describe('Transform list', () => {
   it('transform array.map in JSXContainer with inline return', () => {
     const ast = parseExpression(`
