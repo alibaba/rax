@@ -80,7 +80,7 @@ module.exports = function fileLoader(content) {
 
       const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
 
-      const npmRelativePath = relative(this.resourcePath, join(outputPath, 'npm'));
+      const npmRelativePath = join(relative(distSourcePath, join(outputPath, 'npm')), 'npm');
       const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath);
 
       const distSourceDirPath = dirname(distSourcePath);
