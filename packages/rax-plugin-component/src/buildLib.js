@@ -9,6 +9,8 @@ const { getBabelConfig } = require('rax-compile-config');
 
 const gulp = require('gulp');
 const runSequence = require('run-sequence').use(gulp);
+const mpBuild = require('./config/miniapp/build');
+const getMpOuput = require('./config/miniapp/getOutputPath');
 
 const babelConfig = getBabelConfig({
   styleSheet: true,
@@ -21,10 +23,11 @@ const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
 const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';
 const IGNORE_PATTERN = '**/__tests__/**';
 
-module.exports = (context, options, log) => {
+module.exports = async({ context, onHook, log }, options = {}) => {
   const { rootDir, userConfig } = context;
-  const { enableTypescript } = options;
+  const { enableTypescript, targets = [] } = options;
   const { outputDir } = userConfig;
+
 
   log.info('component', chalk.green('Build start... '));
 
@@ -99,7 +102,32 @@ module.exports = (context, options, log) => {
     ];
   }
 
-  runSequence(...tasks, () => {
+  runSequence(...tasks, async() => {
     log.info('component', chalk.green('Build Successfully'));
+
+    // build miniapp
+    if (~targets.indexOf('miniapp')) {
+      fs.removeSync(path.join(BUILD_DIR, 'miniapp'));
+      const {err, stats} = await mpBuild(context);
+
+      if (err) {
+        console.error(err.stack || err);
+        if (err.details) {
+          console.error(err.details);
+        }
+        return;
+      }
+      if (stats.hasErrors()) {
+        const errors = stats.compilation.errors;
+        for (let e of errors) {
+          console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));
+          if (process.env.DEBUG === 'true') {
+            console.log(e.error.stack);
+          }
+        }
+        console.log(chalk.yellow('Set environment `DEBUG=true` to see detail error stacks.'));
+        return;
+      }
+    }
   });
 };
