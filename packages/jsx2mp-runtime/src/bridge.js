@@ -44,18 +44,15 @@ function getPageCycles(Klass) {
       if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
   };
-
   [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH].forEach((hook) => {
     config[hook] = function(e) {
       return this.instance._trigger(hook, e);
     };
   });
-
   return config;
 }
 
 function getComponentCycles(Klass) {
-
   return vendor.getComponentLifecycle({
     mount: function() {
       const props = Object.assign({}, this.props, getComponentProps(this.props.__tagId));
