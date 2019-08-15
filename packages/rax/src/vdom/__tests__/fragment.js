@@ -506,5 +506,5 @@ describe('FragmentComponent', function() {
 
     jest.runAllTimers();
     expect(el.childNodes[0].childNodes).toEqual([]);
-  })
+  });
 });
