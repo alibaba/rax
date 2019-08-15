@@ -11,13 +11,15 @@ const chalk = require('chalk');
  * @param options
  */
 function build(options = {}) {
-  const { afterCompiled } = options;
+  const { afterCompiled, platform, type, entry, workDirectory, distDirectory } = options;
   let config = getWebpackConfig({
     mode: 'build',
-    platform: options.platform,
-    distDirectory: options.distDirectory
+    entryPath: entry,
+    platform,
+    type,
+    workDirectory,
+    distDirectory
   });
-
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
@@ -34,8 +36,15 @@ function build(options = {}) {
  * @param options
  */
 function watch(options = {}) {
-  const { afterCompiled } = options;
-  let config = getWebpackConfig({ mode: 'watch' });
+  const { afterCompiled, type, entry, platform, workDirectory, distDirectory } = options;
+  let config = getWebpackConfig({
+    mode: 'watch',
+    entryPath: entry,
+    type,
+    workDirectory,
+    platform,
+    distDirectory,
+  });
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }

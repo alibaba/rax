@@ -33,7 +33,7 @@ describe('Transform JSXElement', () => {
 
     it('should handle literial types', () => {
       const sourceCode = `
-        <View 
+        <View
           bool={true}
           str={'string'}
           num={8}
@@ -53,7 +53,7 @@ describe('Transform JSXElement', () => {
 
     it('should handle expression types', () => {
       const sourceCode = `
-        <View 
+        <View
           onFn1={(event) => { console.log(event) }}
           onFn2={(event) => console.log(event)}
           onFn3={function(event) {console.log(event)}}
@@ -123,7 +123,7 @@ describe('Transform JSXElement', () => {
   describe('event handlers', () => {
     it('class methods', () => {
       const ast = parseExpression(`
-        <View 
+        <View
           onClick={this.handleClick}
         />
       `);
@@ -137,7 +137,7 @@ describe('Transform JSXElement', () => {
 
     it('prop methods', () => {
       const ast = parseExpression(`
-        <View 
+        <View
           onClick={props.onClick}
         />
       `);
@@ -149,7 +149,7 @@ describe('Transform JSXElement', () => {
 
     it('bind methods', () => {
       const ast = parseExpression(`
-        <View 
+        <View
           onClick={onClick.bind(this, { a: 1 })}
           onKeyPress={this.handleClick.bind(this, 'hello')}
         />
@@ -265,6 +265,14 @@ describe('Transform JSXElement', () => {
       const { dynamicValues } = _transform(ast, null, null, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Text style="{{_d0.name}}">{{ _d1 && _d1.itemTitle ? _d1.itemTitle : \'\' }}</Text>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: styles, _d1: data }');
+    });
+
+    it('should collect object expression', () => {
+      const sourceCode = '<Image style={{...styles.avator, ...styles[\`\${rank}Avator\`]}} source={{ uri: avator }}></Image>';
+      const ast = parseExpression(sourceCode);
+      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      expect(genInlineCode(ast).code).toEqual('<Image style="{{_d0}}" source="{{ uri: _d1 }}"></Image>');
+      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: { ...styles.avator, ...styles[`${rank}Avator`] }, _d1: avator }');
     });
 
     it('unsupported', () => {

@@ -1,35 +1,55 @@
+const t = require('@babel/types');
 const { _transformTemplate, _transformRenderFunction } = require('../condition');
 const { parseExpression } = require('../../parser');
 const adapter = require('../../adapter');
 const genCode = require('../../codegen/genCode');
 const genExpression = require('../../codegen/genExpression');
 
+function genInlineCode(ast) {
+  return genCode(ast, {
+    comments: false, // Remove template comments.
+    concise: true, // Reduce whitespace, but not to disable all.
+  });
+}
+
+function genDynamicValue(dynamicValue) {
+  const properties = [];
+  Object.keys(dynamicValue).forEach((key) => {
+    const value = dynamicValue[key];
+    properties.push(t.objectProperty(t.identifier(key), value));
+  });
+  return genInlineCode(t.objectExpression(properties)).code;
+}
+
 describe('Transform condition', () => {
   it('transform conditional expression in JSXContainer', () => {
     const ast = parseExpression(`
       <View>{foo ? <View /> : <Text />}</View>
     `);
-    _transformTemplate(ast, adapter, {});
+    const dynamicValue = _transformTemplate(ast, adapter, {});
 
     expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><View /></block><block a:else><Text /></block></View>');
+    expect(genDynamicValue(dynamicValue)).toEqual('{ foo: foo }');
   });
 
   it("transform conditional's consequent is conditional expression", () => {
     const ast = parseExpression(`
       <View>{foo ? bar ? <Bar /> : <View /> : <Text />}</View>
     `);
-    _transformTemplate(ast, adapter, {});
+    const dynamicValue = _transformTemplate(ast, adapter, {});
 
     expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><block a:if="{{bar}}"><Bar /></block><block a:else><View /></block></block><block a:else><Text /></block></View>');
+    expect(genDynamicValue(dynamicValue)).toEqual('{ foo: foo, bar: bar }');
   });
 
   it("transform condition's alternate is conditional expression", () => {
     const ast = parseExpression(`
       <View>{empty ? <Empty /> : loading ? null : 'xxx' }</View>
     `);
-    _transformTemplate(ast, adapter, {});
+    const dynamicValue = _transformTemplate(ast, adapter, {});
 
     expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>');
+    expect(genDynamicValue(dynamicValue)).toEqual('{ empty: empty, loading: loading }');
   });
 
   it('skip list dynamic value', () => {
@@ -60,12 +80,13 @@ describe('Transform condition', () => {
         }) : 123 }
       </View>
     `);
-    _transformTemplate(ast, adapter, {});
+    const dynamicValue = _transformTemplate(ast, adapter, {});
     expect(genCode(ast).code).toEqual(`<View>
         <block a:if="{{tabList}}">{tabList.map(tab => {
       return <View>{tab}</View>;
     })}</block><block a:else>123</block>
       </View>`);
+    expect(genDynamicValue(dynamicValue)).toEqual('{ tabList: tabList }');
   });
 });
 

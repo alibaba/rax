@@ -1,75 +1,50 @@
-var fs = require('fs');
-var easyfile = require('easyfile');
-var path = require('path');
+const ejs = require('ejs');
+const path = require('path');
+const TemplateProcesser = require('./templateProcesser');
 
-var processPWAProject = (projectDir, projectFeatures, replacedPkg) => {
-  var appJSON;
-  if (projectFeatures && projectFeatures.length) {
-    fs.unlinkSync(path.join(projectDir, 'src/index.js'));
-    fs.unlinkSync(path.join(projectDir, 'public/index.html'));
-    fs.rmdirSync(path.join(projectDir, 'public'));
+// Rename files start with '_'
+function renameFile(files) {
+  files.forEach(file => {
+    file.name = file.name.replace(/^_/, '.').replace(/\.ejs$/, '');
+  });
+}
 
-    var appJSONPath = path.join(projectDir, 'app.json');
-    var appJSONContent = fs.readFileSync(appJSONPath, 'utf-8');
-    appJSON = JSON.parse(appJSONContent);
-
-    projectFeatures.forEach((feature) => {
-      appJSON[feature] = true;
+// Render ejs template
+function ejsRender(data) {
+  return (files) => {
+    files.forEach(file => {
+      if (/\.ejs$/.test(file.name)) {
+        file.content = ejs.render(file.content, data);
+      }
     });
+  };
+}
 
-    var jsonString = JSON.stringify(appJSON, null, 2) + '\n';
-    fs.writeFileSync(appJSONPath, jsonString, 'utf-8');
-  }
+/**
+ * Template generator.
+ * @param  {String} template - describe the template path
+ * @param  {Object} args - describe the generator arguements
+ * @param  {String} args.root - The absolute path of project directory
+ * @param  {String} args.directoryName - The folder name
+ * @param  {String} args.projectName - Kebabcased project name
+ * @param  {String} args.projectType - Kebabcased project type
+ * @param  {String} args.projectAuthor - The name of project author
+ * @param  {String} args.projectTargets- The build targets of project
+ * @param  {String} args.projectFeatures- The features of project
+ * @return {Promise}
+ */
+module.exports = function(template, args) {
+  const projectDir = args.root;
 
-  if (appJSON && appJSON.spa) {
-    // SPA
-    var spaIndexPath = path.join(projectDir, 'src/pages/index/index.spa.js');
-    fs.writeFileSync(path.join(projectDir, 'src/pages/index/index.js'), fs.readFileSync(spaIndexPath, 'utf-8'), 'utf-8');
-    fs.unlinkSync(spaIndexPath);
-    var packageJSON = JSON.parse(replacedPkg);
-    packageJSON.dependencies['rax-pwa'] = '^1.0.0';
-    replacedPkg = JSON.stringify(packageJSON, null, 2) + '\n';
-  } else {
-    fs.unlinkSync(path.join(projectDir, 'src/pages/about/index.js'));
-    fs.rmdirSync(path.join(projectDir, 'src/pages/about'));
-    fs.unlinkSync(path.join(projectDir, 'src/pages/index/index.spa.js'));
-  }
+  const ejsData = {
+    ...args,
+    npmName: args.projectName, // Be consistent with ice-devtools
+  };
 
-  return replacedPkg;
-};
-
-module.exports = function(args) {
-  var projectDir = args.root;
-  var projectName = args.projectName;
-  var projectAuthor = args.projectAuthor;
-  var projectType = args.projectType;
-  var projectFeatures = args.projectFeatures;
-
-  var templates = path.join(__dirname, projectType);
-  var pkgPath = path.join(projectDir, 'package.json');
-  easyfile.copy(templates, projectDir, {
-    force: true,
-    backup: true,
-  });
-
-  // Rename files start with '_'
-  var files = easyfile.readdir(projectDir);
-  files.forEach(function(filename) {
-    if (filename[0] === '_') {
-      easyfile.rename(
-        path.join(projectDir, filename),
-        path.join(projectDir, filename.replace(/^_/, '.'))
-      );
-    }
-  });
-
-  var replacedPkg = fs.readFileSync(pkgPath, 'utf-8')
-    .replace('__YourProjectName__', projectName)
-    .replace('__AuthorName__', projectAuthor);
-  if (projectType === 'webapp') {
-    replacedPkg = processPWAProject(projectDir, projectFeatures, replacedPkg);
-  }
-  fs.writeFileSync(pkgPath, replacedPkg);
+  new TemplateProcesser(template)
+    .use(ejsRender(ejsData))
+    .use(renameFile)
+    .done(projectDir);
 
   process.chdir(projectDir);
   return Promise.resolve(projectDir);

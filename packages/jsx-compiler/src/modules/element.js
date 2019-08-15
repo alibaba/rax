@@ -308,7 +308,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
                 const { key, value } = property;
                 let replaceNode;
                 if (t.isIdentifier(value)) {
-                  replaceNode = transformIdentifier(innerPath.node, dynamicValues, isDirective);
+                  replaceNode = transformIdentifier(value, dynamicValues, isDirective);
                 }
                 if (t.isMemberExpression(value)) {
                   replaceNode = transformMemberExpression(value, dynamicValues, isDirective);

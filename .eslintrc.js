@@ -9,6 +9,7 @@ module.exports = {
     'commonjs': true
   },
   'plugins': [
+    'ejs',
     'react',
     'import'
   ],
@@ -95,7 +96,8 @@ module.exports = {
 
     'no-empty': 'off',
     'indent': ['error', 2, {
-      'SwitchCase': 1
+      'SwitchCase': 1,
+      'MemberExpression': 'off'
     }],
     'camelcase': ['off', {
       'properties': 'always'
