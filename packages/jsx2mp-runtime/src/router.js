@@ -1,4 +1,4 @@
-/* global my */
+import vendor from './adapter/adapter.ali.js';
 
 let router;
 
@@ -23,14 +23,14 @@ export function withRouter(Klass) {
  * Navigate to given path.
  */
 export function push(path) {
-  return my.navigateTo({ url: path });
+  return vendor.navigateTo({ url: path });
 }
 
 /**
  * Navigate replace.
  */
 export function replace(path) {
-  return my.redirectTo({ url: path });
+  return vendor.redirectTo({ url: path });
 }
 
 /**
@@ -44,7 +44,7 @@ export function go() {
  * Navigate back.
  */
 export function goBack(n = 1) {
-  return my.navigateBack({ delta: n });
+  return vendor.navigateBack({ delta: n });
 }
 
 /**

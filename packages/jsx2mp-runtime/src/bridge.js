@@ -3,6 +3,7 @@ import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
+import vendor from './adapter/adapter.ali';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
@@ -54,9 +55,9 @@ function getPageCycles(Klass) {
 }
 
 function getComponentCycles(Klass) {
-  return {
-    didMount() {
-      // `this` point to page/component insatnce.
+
+  return vendor.getComponentLifecycle({
+    mount: function() {
       const props = Object.assign({}, this.props, getComponentProps(this.props.__tagId));
       this.instance = new Klass(props);
       this.instance.type = Klass;
@@ -74,11 +75,10 @@ function getComponentCycles(Klass) {
       this.data = this.instance.state;
       this.instance._mountComponent();
     },
-    didUpdate() {},
-    didUnmount() {
+    unmount: function() {
       this.instance._unmountComponent();
-    },
-  };
+    }
+  });
 }
 
 function createProxyMethods(events) {
@@ -150,7 +150,7 @@ function createConfig(component, options) {
   const { events, isPage } = options;
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
   const config = {
-    data() {},
+    data: {},
     props: {},
     ...cycles,
   };
@@ -204,11 +204,13 @@ function isClassComponent(Klass) {
 }
 
 const DATASET_KEBAB_ARG_REG = /data-arg-\d+/;
+
 function isDatasetKebabArg(str) {
   return DATASET_KEBAB_ARG_REG.test(str);
 }
 
 const DATASET_ARG_REG = /arg-?(\d+)/;
+
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
 }
