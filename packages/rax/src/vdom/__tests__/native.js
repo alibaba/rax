@@ -167,4 +167,56 @@ describe('NativeComponent', function() {
     expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('a');
     expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('d');
   });
+
+  it('updates empty children can remove all directly', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, [3, 4, 5, 6], 7];
+      }
+    }
+
+    class App extends Component {
+      constructor(props) {
+        super();
+        this.state = {count: 0};
+      }
+      render() {
+        return (
+          <div>
+            { this.state.count === 2 ? null : <Frag /> }
+          </div>
+        );
+      }
+    }
+
+    let instance = render(<App />, el);
+    let container = el.childNodes[0];
+
+    expect(container.childNodes.length).toEqual(7);
+
+    instance.setState({ count: 1 });
+    jest.runAllTimers();
+    expect(container.childNodes.length).toEqual(7);
+
+    // Test for fast path to removeChildren.
+    let callRemoveChildrenTimes = 0;
+    Host.driver.removeChildren = (node) => {
+      node.childNodes.length = 0;
+      callRemoveChildrenTimes++;
+    };
+    instance.setState({ count: 2 });
+    jest.runAllTimers();
+    expect(container.childNodes.length).toEqual(0);
+    expect(callRemoveChildrenTimes).toEqual(1);
+    delete Host.driver.removeChildren; // Reset driver
+
+    // Test downgrade logical works.
+    instance.setState({ count: 1 });
+    jest.runAllTimers();
+    instance.setState({ count: 2 });
+    jest.runAllTimers();
+    expect(container.childNodes.length).toEqual(0);
+  });
 });
