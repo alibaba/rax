@@ -4,30 +4,25 @@ const { RawSource } = require('webpack-sources');
 const { readFileSync, existsSync } = require('fs');
 const { getBabelConfig } = require('rax-compile-config');
 const { createElement } = require('rax');
+const { renderToString } = require('rax-server-renderer');
 
 const babelConfig = getBabelConfig();
 
 module.exports = class UniversalDocumentPlugin {
   constructor(options) {
-    if (!options.render) {
-      throw new Error('Document file need a render');
-    }
-    this.render = options.render;
-
     if (!options.path) {
       throw new Error('Please specify document file location with the path attribute');
     }
-    this.rootDir = options.rootDir ? options.rootDir : process.cwd();
+
     this.documentPath = options.path ? options.path : 'src/document/index.jsx';
   }
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync('UniversalDocumentPlugin', (compilation, callback) => {
       const config = compilation.options;
-      const isDev = config.mode === 'development';
-      const publicPath = isDev ? config.devServer.publicPath : config.output.publicPath;
+      const publicPath = config.output.publicPath;
 
-      const filename = path.resolve(this.rootDir, this.documentPath);
+      const filename = path.resolve(config.context, this.documentPath);
       if (!existsSync(filename)) throw new Error(`File ${filename} is not exists, please check.`);
 
       // get document code
@@ -42,7 +37,7 @@ module.exports = class UniversalDocumentPlugin {
       const entryObj = config.entry;
       Object.keys(entryObj).forEach(entry => {
         // get document html string
-        const pageSource = this.render(createElement(documentElement, {
+        const pageSource = renderToString(createElement(documentElement, {
           publicPath,
           styles: [],
           scripts: [`web/${entry}.js`],

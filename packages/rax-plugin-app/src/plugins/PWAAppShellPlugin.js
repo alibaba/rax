@@ -1,6 +1,8 @@
 const path = require('path');
 const { RawSource } = require('webpack-sources');
 const { existsSync, unlinkSync } = require('fs');
+const { createElement } = require('rax');
+const { renderToString } = require('rax-server-renderer');
 
 const NAME = 'PWAAppShellPlugin';
 const FILE_NAME = '__PWA_APP_SHELL__';
@@ -13,17 +15,20 @@ const interopRequire = (obj) => {
 // When user loaded entry javascript file, it will hydrate the App-Shell component.
 module.exports = class PWAAppShellPlugin {
   constructor(options) {
-    this.render = options.render;
-    this.rootDir = options.rootDir ? options.rootDir : process.cwd();
+    if (!options.path) {
+      throw new Error('Please specify shell file location with the path attribute');
+    }
+
     this.shellPath = options.path ? options.path : 'src/shell/index.jsx';
   }
 
   apply(compiler) {
-    const file = path.resolve(this.rootDir, this.shellPath);
+    const config = compiler.options;
+    const file = path.resolve(config.context, this.shellPath);
     // Only Web projects are supported. Effective when the user directory contains 'shell/index.jsx'
-    if (compiler.options.target !== 'web' || !existsSync(file)) return;
+    if (config.target !== 'web' || !existsSync(file)) return;
 
-    const outputFilename = compiler.options.output.filename.replace('[name]', FILE_NAME);
+    const outputFilename = config.output.filename.replace('[name]', FILE_NAME);
 
     // Compile App-Shell
     compiler.hooks.entryOption.tap(NAME, (context, entry) => {
@@ -34,7 +39,7 @@ module.exports = class PWAAppShellPlugin {
     compiler.hooks.emit.tapAsync(NAME, async(compilation, callback) => {
       const shellValue = compilation.assets[outputFilename].source();
       const AppShell = interopRequire(eval('var window = {};' + shellValue));
-      const content = this.render(require('rax').createElement(AppShell, {}));
+      const content = renderToString(createElement(AppShell, {}));
 
       // Pre-render App-Shell renderToString element to index.html
       const entryObj = compilation.options.entry;
@@ -52,8 +57,8 @@ module.exports = class PWAAppShellPlugin {
 
     // Delete temp files
     compiler.hooks.done.tap(NAME, () => {
-      if (compiler.options.mode === 'production' || !compiler.options.mode) {
-        const jsFile = path.join(compiler.options.output.path, outputFilename);
+      if (config.mode === 'production' || !config.mode) {
+        const jsFile = path.join(config.output.path, outputFilename);
         const mapFile = jsFile + '.map';
         const htmlFile = jsFile.replace(/\.js$/, '.html');
 
