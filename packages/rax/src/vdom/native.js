@@ -96,7 +96,9 @@ class NativeComponent extends BaseComponent {
     let renderedChildren = this._renderedChildren;
 
     if (renderedChildren) {
-      for (let name in renderedChildren) {
+      let keys = Object.keys(renderedChildren);
+      let name;
+      while(name = keys.shift()) {
         let renderedChild = renderedChildren[name];
         renderedChild.unmountComponent(shouldNotRemoveChild);
       }
