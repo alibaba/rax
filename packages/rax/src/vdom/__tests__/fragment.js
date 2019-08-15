@@ -462,4 +462,49 @@ describe('FragmentComponent', function() {
     expect(frgmentInstance._renderedChildren['.2']._parent).toBe(el);
     expect(frgmentInstance._renderedChildren['.2']._renderedChildren['.2']._parent).toBe(el);
   });
+
+  it('should unmount correct after updated', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, [3, 4, 5, 6], 7];
+      }
+    }
+
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count === 2 ? null :
+                <Frag />
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, el);
+
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+
+    instance.setState({
+      count: 1
+    });
+
+    jest.runAllTimers();
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+
+    instance.setState({
+      count: 2
+    });
+
+    jest.runAllTimers();
+    expect(el.childNodes[0].childNodes).toEqual([]);
+  })
 });

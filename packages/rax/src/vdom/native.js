@@ -430,8 +430,8 @@ class NativeComponent extends BaseComponent {
 
         // Push to nextNativeNode
         if (Array.isArray(lastPlacedNode)) {
-          lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
           nextNativeNode = nextNativeNode.concat(lastPlacedNode);
+          lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
         } else {
           nextNativeNode.push(lastPlacedNode);
         }
