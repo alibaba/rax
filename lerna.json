@@ -1,14 +1,13 @@
 {
-  "lerna": "2.0.0",
   "version": "1.0.0",
   "packages": [
-    "packages/*",
-    "universal/*",
-    "examples/*"
+    "packages/*"
   ],
-  "commands": {
+  "command": {
     "bootstrap": {
-      "npmClientArgs": ["--no-package-lock"]
+      "npmClientArgs": [
+        "--no-package-lock"
+      ]
     },
     "publish": {
       "skipGit": true,

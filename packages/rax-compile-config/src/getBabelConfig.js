@@ -83,7 +83,7 @@ module.exports = (userOptions = {}) => {
         require.resolve('babel-plugin-transform-jsx-class'),
       ],
     });
-    console.log(chalk.green('[JSX+] Stynax enabled.'));
+    // console.log(chalk.green('[JSX+] Stynax enabled.'));
   }
 
   if (styleSheet) {
