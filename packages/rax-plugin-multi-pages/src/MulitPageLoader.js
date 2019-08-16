@@ -1,4 +1,3 @@
-const { join } = require('path');
 const { getOptions } = require('loader-utils');
 const babel = require('@babel/core');
 const { getBabelConfig } = require('rax-compile-config');
