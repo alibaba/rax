@@ -5,12 +5,11 @@ const path = require('path');
 const babel = require('gulp-babel');
 const ts = require('gulp-typescript');
 const fs = require('fs-extra');
-const { getBabelConfig, handleWebpackErr } = require('rax-compile-config');
+const { getBabelConfig } = require('rax-compile-config');
 
 const gulp = require('gulp');
 const runSequence = require('run-sequence').use(gulp);
 const mpBuild = require('./config/miniapp/build');
-const getMpOuput = require('./config/miniapp/getOutputPath');
 
 const babelConfig = getBabelConfig({
   styleSheet: true,
@@ -101,15 +100,19 @@ module.exports = async({ context, log }, options = {}) => {
     ];
   }
 
-  runSequence(...tasks, async() => {
-    // build miniapp
-    if (~targets.indexOf('miniapp')) {
-      fs.removeSync(path.join(BUILD_DIR, 'miniapp'));
-      const {err, stats} = await mpBuild(context);
+  return new Promise((resolve, reject) => {
+    runSequence(...tasks, async() => {
+      // build miniapp
+      if (~targets.indexOf('miniapp')) {
+        fs.removeSync(path.join(BUILD_DIR, 'miniapp'));
+        const mpErr = await mpBuild(context);
 
-      if (!handleWebpackErr(err, stats)) {
-        return;
+        if (mpErr) {
+          resolve(mpErr);
+        }
       }
-    }
+
+      resolve();
+    });
   });
 };
