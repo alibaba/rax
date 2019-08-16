@@ -25,19 +25,19 @@ module.exports = function fileLoader(content) {
     return path.indexOf(currentNodeModulePath) === 0;
   });
 
-  const getNpmName = cached(function getNpmName(relativeNpmPath) {
+  const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
     const isScopedNpm = relativeNpmPath[0] === '@';
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
   if (isNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
-    let npmName = getNpmName(relativeNpmPath);
-    const sourcePackagePath = join(currentNodeModulePath, npmName);
+    const npmFolderName = getNpmFolderName(relativeNpmPath);
+    const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
     const sourcePackageJSONPath = join(sourcePackagePath, 'package.json');
 
     const pkg = readJSONSync(sourcePackageJSONPath);
-    npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
+    const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
 
     if ('miniappConfig' in pkg) {
       // Copy whole directory for miniapp component
