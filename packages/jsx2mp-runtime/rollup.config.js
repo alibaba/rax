@@ -9,7 +9,20 @@ const banner =
         ' * Released under the BSD-3-Clause License.\n' +
         ' */';
 
-function buildBabelConfig(platform) {
+function getPropsIdentifierName(platform) {
+  switch (platform) {
+    case 'wx':
+    case 'bd':
+    case 'tt':
+      return 'properties';
+
+    case 'ali':
+    default:
+      return 'props';
+  }
+}
+
+function getBabelConfig({ platform = 'ali' }) {
   return {
     presets: [
       [
@@ -23,13 +36,14 @@ function buildBabelConfig(platform) {
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
-      ['./src/babel-plugins/import-vendor-replace-plugin', { platform }],
-      ['./src/babel-plugins/third-mp-properties-plugin', { platform }],
+
+      // Support different adatpers replacement.
+      ['./scripts/import-adapter-replace-plugin', { platform }],
     ]
   };
 }
 
-function buildRollupConfig(platform) {
+function getRollupConfig(platform) {
   return {
     input: 'src/index.js',
     output: [
@@ -42,15 +56,16 @@ function buildRollupConfig(platform) {
     ],
     plugins: [
       replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        'PROPS': JSON.stringify(getPropsIdentifierName(platform)),
       }),
-      babel(buildBabelConfig(platform)),
+      babel(getBabelConfig({ platform })),
       filesize(),
     ],
   };
 }
 
 export default [
-  buildRollupConfig('ali'),
-  buildRollupConfig('wx')
+  getRollupConfig('ali'),
+  getRollupConfig('wx'),
 ];

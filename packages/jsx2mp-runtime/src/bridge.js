@@ -1,9 +1,9 @@
-/* global getCurrentPages */
+/* global getCurrentPages, PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-import vendor from './adapter/adapter.ali';
+import { getComponentLifecycle } from '@@ADAPTER@@';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
@@ -19,7 +19,7 @@ const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 function getPageCycles(Klass) {
   let config = {
     onLoad(options) {
-      this.instance = new Klass(this.props);
+      this.instance = new Klass(this[PROPS]);
       // Reverse sync from state to data.
       this.instance._setInternal(this);
       // Add route information for page.
@@ -53,14 +53,14 @@ function getPageCycles(Klass) {
 }
 
 function getComponentCycles(Klass) {
-  return vendor.getComponentLifecycle({
+  return getComponentLifecycle({
     mount: function() {
-      const props = Object.assign({}, this.props, getComponentProps(this.props.__tagId));
+      const props = Object.assign({}, this[PROPS], getComponentProps(this[PROPS].__tagId));
       this.instance = new Klass(props);
       this.instance.type = Klass;
 
-      if (this.props.hasOwnProperty('__tagId')) {
-        const componentId = this.props.__tagId;
+      if (this[PROPS].hasOwnProperty('__tagId')) {
+        const componentId = this[PROPS].__tagId;
         setComponentInstance(componentId, this.instance);
       }
 
@@ -102,12 +102,12 @@ function createProxyMethods(events) {
             }
           });
         } else {
-          Object.keys(this.props).forEach(key => {
+          Object.keys(this[PROPS]).forEach(key => {
             if ('data-arg-context' === key) {
-              context = this.props[key] === 'this' ? this.instance : this.props[key];
+              context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
             } else if (isDatasetKebabArg(key)) {
               // `data-arg-` length is 9.
-              datasetArgs[key.slice(9)] = this.props[key];
+              datasetArgs[key.slice(9)] = this[PROPS][key];
             }
           });
         }

@@ -1,3 +1,4 @@
+/* global PROPS */
 /**
  * Base Component class definition.
  */
@@ -253,7 +254,7 @@ export default class Component {
    */
   _setInternal(internal) {
     this._internal = internal;
-    this.props = internal.props;
+    this.props = internal[PROPS];
     if (!this.state) this.state = {};
     Object.assign(this.state, internal.data);
   }
