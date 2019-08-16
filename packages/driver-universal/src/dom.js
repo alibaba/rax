@@ -36,22 +36,11 @@ const driver = Object.assign({}, DriverDOM, {
     return DriverDOM.beforeRender(options);
   },
   setStyle(node, style) {
-    const tranformedStyle = {};
-
     if (Array.isArray(style)) {
       style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
     }
 
-    for (let prop in style) {
-      if (style.hasOwnProperty(prop)) {
-        let val = style[prop];
-        if (Flexbox.isFlexProp(prop)) {
-          Flexbox[prop](val, tranformedStyle);
-        } else {
-          tranformedStyle[prop] = convertUnit(val, prop);
-        }
-      }
-    }
+    const tranformedStyle = transformStyle(style);
 
     for (let prop in tranformedStyle) {
       if (tranformedStyle.hasOwnProperty(prop)) {
@@ -66,6 +55,24 @@ const driver = Object.assign({}, DriverDOM, {
     }
   },
 });
+
+function transformStyle(style, ret = {}) {
+  for (let prop in style) {
+    if (style.hasOwnProperty(prop)) {
+      let val = style[prop];
+      if (typeof val === 'object') {
+        delete style[prop];
+        transformStyle(val, ret);
+      } else if (Flexbox.isFlexProp(prop)) {
+        Flexbox[prop](val, ret);
+      } else {
+        ret[prop] = convertUnit(val, prop);
+      }
+    }
+  }
+
+  return ret;
+}
 
 function normalizeEventName(node, eventName, props) {
   const tagName = node.tagName.toLowerCase();
