@@ -11,7 +11,7 @@ module.exports = (context, devCompileLog) => {
 
   return new Promise(resolve => {
     jsx2mp.build({
-      entry: 'src/miniapp/index',
+      entry: 'src/index',
       type: 'component',
       workDirectory: path.resolve(process.cwd()),
       distDirectory: outputPath,

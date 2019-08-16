@@ -1,12 +1,13 @@
 const consoleClear = require('console-clear');
 const qrcode = require('qrcode-terminal');
 const chalk = require('chalk');
+const path = require('path');
 const { handleWebpackErr } = require('rax-compile-config');
 
-const getMpOuput = require('./config/miniapp/getOutputPath');
 const mpDev = require('./config/miniapp/dev');
 
 module.exports = ({ registerConfig, context, onHook }, options = {}) => {
+  const { rootDir } = context;
   const { targets = [] } = options;
 
   // set dev config
@@ -58,7 +59,7 @@ module.exports = ({ registerConfig, context, onHook }, options = {}) => {
 
     if (~targets.indexOf('miniapp')) {
       console.log(chalk.green('[Miniapp] Use miniapp developer tools to open the following folder:'));
-      console.log('   ', chalk.underline.white(getMpOuput(context)));
+      console.log('   ', chalk.underline.white(path.resolve(rootDir, 'demo/miniapp')));
       console.log();
     }
   }

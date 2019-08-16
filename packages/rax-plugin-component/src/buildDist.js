@@ -1,14 +1,13 @@
 'use strict';
 
 const path = require('path');
-const webpack = require('webpack');
 const Chain = require('webpack-chain');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = ({ registerConfig, context }, options = {}) => {
   const { targets = [] } = options;
-  const { rootDir, userConfig, pkg } = context;
+  const { rootDir, userConfig } = context;
   const { distDir } = userConfig;
 
   targets.forEach(target => {
@@ -59,11 +58,6 @@ module.exports = ({ registerConfig, context }, options = {}) => {
         .test(/\.(svg|png|webp|jpe?g|gif)$/i)
         .use('source')
           .loader(require.resolve('image-source-loader'));
-
-      config.plugin('DefinePlugin')
-        .use(webpack.DefinePlugin, [{
-          'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-        }]);
 
       registerConfig('component', config);
     }

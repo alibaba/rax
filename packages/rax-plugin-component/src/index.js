@@ -7,7 +7,6 @@ const dev = require('./dev');
 
 module.exports = (api, options = {}) => {
   api.context.userConfig = deepmerge(defaultUserConfig, api.context.userConfig);
-  const { targets = [] } = options;
   const { command } = api.context;
 
   // set dev config

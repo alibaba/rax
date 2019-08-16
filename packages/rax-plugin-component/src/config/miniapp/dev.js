@@ -2,15 +2,14 @@ const fs = require('fs-extra');
 const jsx2mp = require('jsx2mp-cli');
 const path = require('path');
 
-const getOutputPath = require('./getOutputPath');
-
 module.exports = (context, devCompileLog) => {
-  const outputPath = getOutputPath(context);
+  const { rootDir } = context;
+  const outputPath = path.resolve(rootDir, 'demo/miniapp/components/Target');
 
   fs.removeSync(outputPath);
 
   jsx2mp.watch({
-    entry: 'src/miniapp/index',
+    entry: 'src/index',
     type: 'component',
     workDirectory: path.resolve(process.cwd()),
     distDirectory: outputPath,
