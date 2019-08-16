@@ -10,7 +10,7 @@ module.exports = (context, devCompileLog) => {
   jsx2mp.watch({
     entry: 'src/app',
     type: 'project',
-    workDirectory: process.cwd(),
+    workDirectory: context.rootDir,
     distDirectory: outputPath,
     enableWatch: true,
     platform: 'ali',
