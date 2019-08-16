@@ -1,7 +1,4 @@
 const deepmerge = require('deepmerge');
-const consoleClear = require('console-clear');
-const qrcode = require('qrcode-terminal');
-const chalk = require('chalk');
 
 const defaultUserConfig = require('./config/defaultUserConfig');
 const buildLib = require('./buildLib.js');

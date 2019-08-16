@@ -67,6 +67,18 @@ module.exports = (context) => {
       .loader(require.resolve('babel-loader'))
       .options(babelConfig);
 
+  config.module.rule('tsx')
+    .test(/\.tsx?$/)
+    .exclude
+      .add(/(node_modules|bower_components)/)
+      .end()
+    .use('babel')
+      .loader(require.resolve('babel-loader'))
+      .options(babelConfig)
+      .end()
+    .use('ts')
+      .loader(require.resolve('ts-loader'));
+
   config.module.rule('css')
     .test(/\.css?$/)
     .use('css')

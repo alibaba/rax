@@ -2,14 +2,13 @@
 const webpack = require('webpack');
 const path = require('path');
 const address = require('address');
-// const babelMerge = require('babel-merge');
 const Chain = require('webpack-chain');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
 
-const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
+const { hmrClient } = require('rax-compile-config');
 
 module.exports = (context) => {
   const { rootDir, userConfig } = context;
@@ -36,7 +35,7 @@ module.exports = (context) => {
   config.resolve.alias
     .set('babel-runtime-jsx-plus', require.resolve('babel-runtime-jsx-plus'))
     // @babel/runtime has no index
-    .set('@babel/runtime', path.dirname(require.resolve('@babel/runtime/package.json')))
+    .set('@babel/runtime', path.dirname(require.resolve('@babel/runtime/package.json')));
 
   config.resolve.extensions
     .merge(['.js', '.json', '.jsx', '.html', '.ts', '.tsx']);
@@ -65,22 +64,22 @@ module.exports = (context) => {
       .loader(require.resolve('babel-loader'))
       .options(babelConfig);
 
-  // config.module.rule('tsx')
-  //   .test(/\.tsx?$/)
-  //   .exclude
-  //     .add(/(node_modules|bower_components)/)
-  //     .end()
-  //   .use('babel')
-  //     .loader(require.resolve('babel-loader'))
-  //     .options(babelConfig)
-  //     .end()
-  //   .use('ts')
-  //     .loader(require.resolve('ts-loader'));
+  config.module.rule('tsx')
+    .test(/\.tsx?$/)
+    .exclude
+      .add(/(node_modules|bower_components)/)
+      .end()
+    .use('babel')
+      .loader(require.resolve('babel-loader'))
+      .options(babelConfig)
+      .end()
+    .use('ts')
+      .loader(require.resolve('ts-loader'));
 
   config.module.rule('css')
     .test(/\.css?$/)
     .use('css')
-      .loader(require.resolve('stylesheet-loader'))
+      .loader(require.resolve('stylesheet-loader'));
 
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
