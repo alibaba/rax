@@ -12,10 +12,10 @@ module.exports = function({ types: t }, { platform = 'ali' }) {
       StringLiteral(path, { filename }) {
         const { node } = path;
         if (node.value === ADAPTER_REPLACER) {
-          let rel = relative(dirname(filename), targetAdapterFilename)
+          let rel = relative(dirname(filename), targetAdapterFilename);
           if (rel[0] !== '.') rel = './' + rel; // add `./` prefix for relative filename.
 
-          path.replaceWith(t.stringLiteral(rel))
+          path.replaceWith(t.stringLiteral(rel));
         }
       },
     }
