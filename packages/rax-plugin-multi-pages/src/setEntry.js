@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs-extra');
-
 const { hmrClient } = require('rax-compile-config');
 
 const MulitPageLoader = require.resolve('./MulitPageLoader');
@@ -14,7 +13,8 @@ function getDepPath(rootDir, com) {
 };
 
 module.exports = (config, context, type) => {
-  const { rootDir, command } = context;
+  const { rootDir, command, userConfig } = context;
+  const { outputDir } = userConfig;
   const isDev = command === 'dev';
 
   // MPA
@@ -29,8 +29,12 @@ module.exports = (config, context, type) => {
 
   config.entryPoints.clear();
 
+  const entrys = [];
+
   routes.forEach((route) => {
-    const entryConfig = config.entry(route.component.replace(/pages\/([^\/]*)\/index/g, (str, $) => $));
+    const entryName = route.component.replace(/pages\/([^\/]*)\/index/g, (str, $) => $);
+    entrys.push(entryName);
+    const entryConfig = config.entry(entryName);
     if (isDev) {
       entryConfig.add(hmrClient);
     }
@@ -38,4 +42,17 @@ module.exports = (config, context, type) => {
     const pageEntry = getDepPath(rootDir, route.component);
     entryConfig.add(`${MulitPageLoader}?type=${type}!${pageEntry}`);
   });
+
+  if (command === 'dev' && type === 'web') {
+    config.devServer.set('before', (app, devServer) => {
+      const memFs = devServer.compiler.compilers[0].outputFileSystem;
+      entrys.forEach(entry => {
+        app.get(`/${entry}`, function(req, res) {
+          const htmlPath = path.resolve(rootDir, outputDir, `web/${entry}.html`);
+          const outPut = memFs.readFileSync(htmlPath).toString();
+          res.send(outPut);
+        });
+      });
+    });
+  }
 };
