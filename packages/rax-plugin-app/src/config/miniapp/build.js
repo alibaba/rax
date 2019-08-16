@@ -13,7 +13,7 @@ module.exports = (context) => {
       type: 'project',
       workDirectory: context.rootDir,
       distDirectory: outputPath,
-      enableWatch: true,
+      enableWatch: false,
       platform: 'ali',
       afterCompiled: (err, stats) => {
         resolve({
