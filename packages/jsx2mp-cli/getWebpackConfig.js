@@ -1,10 +1,11 @@
 const webpack = require('webpack');
 const { readJSONSync } = require('fs-extra');
-const { join, resolve, relative, dirname } = require('path');
+const { join, relative, dirname } = require('path');
 const chalk = require('chalk');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
 const spinner = require('./utils/spinner');
 const moduleResolve = require('./utils/moduleResolve');
+const platformConfig = require('./utils/platformConfig');
 
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
 const PageLoader = require.resolve('jsx2mp-loader/src/page-loader');
@@ -29,7 +30,11 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
-  let loaderParams = JSON.stringify({ platform: options.platform, entryPath: entryFilePath });
+
+  let loaderParams = JSON.stringify({
+    platform: platformConfig[options.platform],
+    entryPath: entryFilePath
+  });
 
   if (type === 'project') {
     let appConfig = null;
@@ -97,7 +102,7 @@ module.exports = (options = {}) => {
               options: {
                 mode: options.mode,
                 entryPath: relativeEntryFilePath,
-                platform: options.platform
+                platform: platformConfig[options.platform]
               },
             },
             {
