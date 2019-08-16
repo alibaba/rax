@@ -1,11 +1,10 @@
 const chalk = require('chalk');
 const consoleClear = require('console-clear');
-const address = require('address');
 const qrcode = require('qrcode-terminal');
 
 const getMpOuput = require('./config/miniapp/getOutputPath');
 const mpDev = require('./config/miniapp/dev');
-const handleErr = require('./handleErr');
+const { handleWebpackErr } = require('rax-compile-config');
 
 module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {}) => {
   const { targets = [] } = options;
@@ -71,7 +70,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
 
     devCompletedArr = [];
 
-    if (!handleErr(err, stats)) {
+    if (!handleWebpackErr(err, stats)) {
       return;
     }
 
