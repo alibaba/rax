@@ -1,6 +1,6 @@
 import "./jsx";
 
-export declare namespace Rax {
+declare namespace Rax {
 
   //
   // Rax Element
@@ -177,3 +177,5 @@ export declare namespace Rax {
   function render(element: ElementChildren, parent: Element | Document | DocumentFragment, options?: RenderOption<T>, callback?: () => void): void
 
 }
+
+export default Rax;
