@@ -3,7 +3,7 @@ const { readdirSync } = require('fs');
 
 const pluginDir = path.join(__dirname, './plugins');
 const pluginList = readdirSync(pluginDir);
-module.exports = ({ chainWebpack }, option) => {
+module.exports = ({ chainWebpack, context }, option) => {
   chainWebpack((config, { command }) => {
     try {
       // Only run in web app.
@@ -12,6 +12,7 @@ module.exports = ({ chainWebpack }, option) => {
           config.plugin(plugin.replace(/\.js$/, ''))
             .use(require(`${pluginDir}/${plugin}`), [{
               ...option,
+              context,
               command
             }]);
         });
