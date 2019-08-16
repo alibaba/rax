@@ -7,7 +7,6 @@ const RaxWebpackPlugin = require('rax-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
-
 const { hmrClient } = require('rax-compile-config');
 
 module.exports = (context) => {
@@ -22,6 +21,8 @@ module.exports = (context) => {
       ignore: ['**/**/*.d.ts']
     }
   });
+
+  setBabelAlias(config);
 
   config.target('web');
   config.context(rootDir);
@@ -38,7 +39,7 @@ module.exports = (context) => {
     .set('@babel/runtime', path.dirname(require.resolve('@babel/runtime/package.json')));
 
   config.resolve.extensions
-    .merge(['.js', '.json', '.jsx', '.html', '.ts', '.tsx']);
+    .merge(['.js', '.json', '.jsx', '.ts', '.tsx', '.html']);
 
   // external weex module
   config.externals([

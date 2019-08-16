@@ -1,13 +1,12 @@
-const deepmerge = require('deepmerge');
 const consoleClear = require('console-clear');
 const qrcode = require('qrcode-terminal');
 const chalk = require('chalk');
+const { handleWebpackErr } = require('rax-compile-config');
 
-const defaultUserConfig = require('./config/defaultUserConfig');
 const getMpOuput = require('./config/miniapp/getOutputPath');
 const mpDev = require('./config/miniapp/dev');
 
-module.exports = ({ chainWebpack, registerConfig, context, onHook, log }, options = {}) => {
+module.exports = ({ registerConfig, context, onHook }, options = {}) => {
   const { targets = [] } = options;
 
   // set dev config
@@ -35,32 +34,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook, log }, option
 
     devCompletedArr = [];
 
-    if (err) {
-      console.error(err.stack || err);
-      if (err.details) {
-        console.error(err.details);
-      }
-      return;
-    }
-
-    if (stats.hasErrors()) {
-      let errArr = [];
-      try {
-        errArr = stats.stats.map(v => v.compilation.errors);
-      } catch (e) {
-        errArr = [stats.compilation.errors];
-      }
-
-      for (let errors of errArr) {
-        for (let e of errors) {
-          console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));
-          if (process.env.DEBUG === 'true') {
-            console.log(e.error.stack);
-          }
-        }
-      }
-
-      console.log(chalk.yellow('Set environment `DEBUG=true` to see detail error stacks.'));
+    if (!handleWebpackErr(err, stats)) {
       return;
     }
 
