@@ -1,12 +1,12 @@
+'use strict';
+
 const path = require('path');
-const chalk = require('chalk');
 const webpack = require('webpack');
-const consoleClear = require('console-clear');
 const Chain = require('webpack-chain');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
 const nodeExternals = require('webpack-node-externals');
 
-module.exports = ({ registerConfig, context, onHook, log }, options = {}) => {
+module.exports = ({ registerConfig, context }, options = {}) => {
   const { targets = [] } = options;
   const { rootDir, userConfig, pkg } = context;
   const { distDir } = userConfig;

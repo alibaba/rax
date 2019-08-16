@@ -35,6 +35,7 @@
     "rax-hot-loader": "^0.6.5",
     "rax-webpack-plugin": "^0.6.5",
     "run-sequence": "^2.2.1",
+    "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "vinyl-source-stream": "^2.0.0",
     "webpack": "^4.27.1",

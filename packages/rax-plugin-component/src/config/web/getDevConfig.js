@@ -6,7 +6,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RaxWebpackPlugin = require('rax-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
-
 const { hmrClient } = require('rax-compile-config');
 
 module.exports = (context) => {
@@ -28,7 +27,7 @@ module.exports = (context) => {
   setBabelAlias(config);
 
   config.resolve.extensions
-    .merge(['.js', '.json', '.jsx', '.html']);
+    .merge(['.js', '.json', '.jsx', '.ts', '.tsx', '.html']);
 
   config.devtool('inline-module-source-map');
   config.entry('index')
@@ -66,6 +65,18 @@ module.exports = (context) => {
     .use('babel')
       .loader(require.resolve('babel-loader'))
       .options(babelConfig);
+
+  config.module.rule('tsx')
+    .test(/\.tsx?$/)
+    .exclude
+      .add(/(node_modules|bower_components)/)
+      .end()
+    .use('babel')
+      .loader(require.resolve('babel-loader'))
+      .options(babelConfig)
+      .end()
+    .use('ts')
+      .loader(require.resolve('ts-loader'));
 
   config.module.rule('css')
     .test(/\.css?$/)
