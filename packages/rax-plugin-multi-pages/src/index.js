@@ -66,7 +66,7 @@ module.exports = ({ context, chainWebpack, onHook }) => {
       entrys.forEach(({ entryName }) => {
         const weexUrl = `${url}/weex/${entryName}.js?wh_weex=true`;
         console.log('   ', chalk.underline.white(weexUrl));
-        if (process.env.DEBUG === 'true') {
+        if (process.env.QRCODE === 'true') {
           console.log();
           qrcode.generate(weexUrl, {small: true});
         }
