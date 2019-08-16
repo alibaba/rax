@@ -25,25 +25,30 @@ module.exports = function fileLoader(content) {
     return path.indexOf(currentNodeModulePath) === 0;
   });
 
-  const getNpmName = cached(function getNpmName(relativeNpmPath) {
+  const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
     const isScopedNpm = relativeNpmPath[0] === '@';
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
   if (isNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
-    const npmName = getNpmName(relativeNpmPath);
-    const sourcePackageJSONPath = join(currentNodeModulePath, npmName, 'package.json');
+    const npmFolderName = getNpmFolderName(relativeNpmPath);
+    const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
+    const sourcePackageJSONPath = join(sourcePackagePath, 'package.json');
+
     const pkg = readJSONSync(sourcePackageJSONPath);
+    const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
+
     if ('miniappConfig' in pkg) {
       // Copy whole directory for miniapp component
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
-        if (isSymbolic(join(currentNodeModulePath, npmName))) {
+        if (isSymbolic(sourcePackagePath)) {
           throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.');
         }
+
         copySync(
-          join(currentNodeModulePath, npmName),
+          sourcePackagePath,
           join(outputPath, 'npm', npmName)
         );
         // modify referenced component location
