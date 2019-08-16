@@ -20,6 +20,9 @@ export default class extends Component {
 Run jsx compiler.
 
 - type: Required, enum of `app`, `page`, `component`.
+- outputPath: Required, string of dist path.
+- sourcePath: Required, string of source path.
+- resourcePath: Required, string of original file path.
 
 ```js
 const compile = require('jsx-compiler');

@@ -29,7 +29,7 @@ module.exports = {
       if (!renderFnPath) return;
 
       const returnPath = getReturnElementPath(renderFnPath);
-      if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.filePath);
+      if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.resourcePath);
 
       parsed[TEMPLATE_AST] = returnPath.get('argument').node;
       parsed[RENDER_FN_PATH] = renderFnPath;

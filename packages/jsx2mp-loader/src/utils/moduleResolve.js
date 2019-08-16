@@ -1,38 +1,47 @@
-const { sep, join, dirname } = require('path');
-const { existsSync, statSync, readFileSync } = require('fs-extra');
+const {
+  sep,
+  join,
+  dirname,
+  relative
+} = require('path');
+const {
+  existsSync,
+  statSync,
+  readFileSync
+} = require('fs-extra');
 
 function startsWith(prevString, nextString) {
   return prevString.indexOf(nextString) === 0;
 }
+function removeExtension(filePath) {
+  const index = filePath.lastIndexOf('.');
+  return filePath.substr(0, index);
+}
 
-function loadAsFile(module, extension) {
-  if (existsSync(module + extension) && statSync(module + extension).isFile()) {
-    return module + extension;
-  }
-
+function loadAsFile(module, extensions) {
   if (existsSync(module) && statSync(module).isFile()) {
-    return module;
+    return removeExtension(module);
+  }
+  for (let e of extensions) {
+    if (existsSync(module + e) && statSync(module + e).isFile()) {
+      return module;
+    }
   }
 }
 
-function loadAsDirectory(module, extension) {
+function loadAsDirectory(module, extensions) {
   if (!existsSync(module)) {
     return;
   }
-
   let stat = statSync(module);
-
   if (stat.isDirectory()) {
-    let packagePath = module + '/package.json';
-    if (existsSync(packagePath) && statSync(packagePath).isFile()) {
-      let pkg = JSON.parse(readFileSync(packagePath, 'utf-8'));
-      let main = join(module, pkg.main || 'index' + extension);
-      return loadAsFile(main) || loadAsDirectory(main);
-    } else if (existsSync(module + '/index' + extension) && statSync(module + '/index' + extension).isFile()) {
-      return join(module, '/index' + extension);
+    for (let e of extensions) {
+      if (existsSync(module + `/index${e}`) && statSync(module + `/index${e}`).isFile()) {
+        return join(module, '/index');
+      }
     }
   } else if (stat.isFile()) {
-    return loadAsFile(module, extension);
+    return loadAsFile(module, extensions);
   }
 }
 
@@ -73,20 +82,20 @@ function loadNpmModules(module, start, extension) {
 }
 
 /**
- * Resolve node path.
- * @param script
- * @param dependency
- * @param extension
- * @return {*}
- */
-module.exports = function resolve(script, dependency, extension = '.js') {
+* Resolve node path.
+* @param script
+* @param dependency
+* @param extension
+* @return {*}
+*/
+module.exports = function resolve(script, dependency, extensions = ['.js', '.jsx']) {
   let target;
-
   if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
     let dependencyPath = join(script, dependency);
-    target = loadAsFile(dependencyPath, extension) || loadAsDirectory(dependencyPath, extension);
+    target = loadAsFile(dependencyPath, extensions) || loadAsDirectory(dependencyPath, extensions);
+    target = relative(script, target);
   } else {
-    target = loadNpmModules(dependency, dirname(script), extension);
+    target = loadNpmModules(dependency, dirname(script), extensions);
   }
   return target;
 };
