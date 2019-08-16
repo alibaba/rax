@@ -11,17 +11,10 @@ module.exports = (context, devCompileLog) => {
   jsx2mp.watch({
     entry: 'src/index',
     type: 'component',
-    workDirectory: path.resolve(process.cwd()),
+    workDirectory: process.cwd(),
     distDirectory: outputPath,
     enableWatch: true,
-    // platform: 'ali',
-    platform: {
-      type: 'ali',
-      extension: {
-        xml: 'axml',
-        css: 'acss',
-      }
-    },
+    platform: 'ali',
     afterCompiled: (err, stats) => {
       devCompileLog({
         err,

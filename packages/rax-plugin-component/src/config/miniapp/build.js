@@ -13,17 +13,10 @@ module.exports = (context, devCompileLog) => {
     jsx2mp.build({
       entry: 'src/index',
       type: 'component',
-      workDirectory: path.resolve(process.cwd()),
+      workDirectory: process.cwd(),
       distDirectory: outputPath,
       enableWatch: false,
-      // platform: 'ali',
-      platform: {
-        type: 'ali',
-        extension: {
-          xml: 'axml',
-          css: 'acss',
-        }
-      },
+      platform: 'ali',
       afterCompiled: (err, stats) => {
         resolve({
           err,
