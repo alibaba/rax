@@ -1,9 +1,9 @@
 const path = require('path');
 const chalk = require('chalk');
 const consoleClear = require('console-clear');
+const { handleWebpackErr } = require('rax-compile-config');
 
 const getMpOuput = require('./config/miniapp/getOutputPath');
-const handleErr = require('./handleErr');
 
 module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {}) => {
   const { targets = [] } = options;
@@ -44,7 +44,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
       stats = mpBuildErr.stats;
     }
 
-    if (!handleErr(err, stats)) {
+    if (!handleWebpackErr(err, stats)) {
       return;
     }
 
