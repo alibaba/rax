@@ -9,11 +9,12 @@ module.exports = (context, cancelClear) => {
 
   return new Promise((resolve, reject) => {
     jsx2mp.build({
-      webpackConfig: {
-        output: {
-          path: outputPath
-        }
-      },
+      entry: 'src/app',
+      type: 'project',
+      workDirectory: process.cwd(),
+      distDirectory: outputPath,
+      enableWatch: true,
+      platform: 'ali',
       afterCompiled: (err, stats) => {
         resolve({
           err,

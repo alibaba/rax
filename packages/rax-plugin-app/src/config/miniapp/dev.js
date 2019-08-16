@@ -8,11 +8,12 @@ module.exports = (context, devCompileLog) => {
   fs.removeSync(outputPath);
 
   jsx2mp.watch({
-    webpackConfig: {
-      output: {
-        path: outputPath
-      }
-    },
+    entry: 'src/app',
+    type: 'project',
+    workDirectory: process.cwd(),
+    distDirectory: outputPath,
+    enableWatch: true,
+    platform: 'ali',
     afterCompiled: (err, stats) => {
       devCompileLog({
         err,
