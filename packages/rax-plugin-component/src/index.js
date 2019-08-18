@@ -1,6 +1,6 @@
 const deepmerge = require('deepmerge');
 
-const defaultUserConfig = require('./config/defaultUserConfig');
+const defaultUserConfig = require('./config/user/default.config');
 const dev = require('./dev');
 const build = require('./build');
 

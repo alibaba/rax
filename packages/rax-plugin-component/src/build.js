@@ -2,12 +2,11 @@
 
 const path = require('path');
 const chalk = require('chalk');
-const Chain = require('webpack-chain');
 const consoleClear = require('console-clear');
 
 const { handleWebpackErr } = require('rax-compile-config');
 
-const setDistBuild = require('./config/setDistBuild');
+const getDistConfig = require('./config/getDistConfig');
 const buildLib = require('./buildLib');
 
 module.exports = (api, options = {}) => {
@@ -18,8 +17,7 @@ module.exports = (api, options = {}) => {
 
   targets.forEach(target => {
     if (target === 'weex' || target === 'web') {
-      const config = new Chain();
-      setDistBuild(config, context);
+      const config = getDistConfig(context);
       registerConfig('component', config);
     }
   });

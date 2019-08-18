@@ -13,9 +13,9 @@ module.exports = ({ registerConfig, context, onHook }, options = {}) => {
   // set dev config
   targets.forEach(target => {
     if (target === 'weex' || target === 'web') {
-      const getDevConfig = require(`./config/${target}/getDevConfig`);
-
-      registerConfig('component', getDevConfig(context));
+      const getDev = require(`./config/${target}/getDev`);
+      const config = getDev(context);
+      registerConfig('component', config);
     }
   });
 

@@ -1,37 +1,25 @@
-'use strict';
 const webpack = require('webpack');
-const path = require('path');
-const address = require('address');
 const Chain = require('webpack-chain');
-const RaxWebpackPlugin = require('rax-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
-const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
-const { hmrClient } = require('rax-compile-config');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
+const babelConfig = getBabelConfig({
+  custom: {
+    ignore: ['**/**/*.d.ts']
+  }
+});
 
 module.exports = (context) => {
-  const { rootDir, userConfig } = context;
-  const { outputDir } = userConfig;
+  const { rootDir, command } = context;
 
   const config = new Chain();
-
-  const babelConfig = getBabelConfig({
-    styleSheet: true,
-    custom: {
-      ignore: ['**/**/*.d.ts']
-    }
-  });
 
   setBabelAlias(config);
 
   config.target('web');
   config.context(rootDir);
-
-  config.devtool('inline-module-source-map');
-
-  config.entry('index')
-    .add(hmrClient)
-    .add(path.resolve(rootDir, 'demo/index'));
 
   config.resolve.extensions
     .merge(['.js', '.json', '.jsx', '.ts', '.tsx', '.html']);
@@ -45,11 +33,6 @@ module.exports = (context) => {
       callback();
     }
   ]);
-
-  config.output
-    .path(path.resolve(rootDir, outputDir))
-    .filename('weex/[name].js')
-    .publicPath('/');
 
   config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
@@ -85,31 +68,28 @@ module.exports = (context) => {
   config.plugin('caseSensitivePaths')
     .use(CaseSensitivePathsPlugin);
 
-  config.plugin('raxWebpack')
-    .use(RaxWebpackPlugin, [{
-      target: 'bundle',
-      externalBuiltinModules: false
-    }]);
-
-  config.plugin('weexFrame')
-    .use(WeexFrameworkBanner);
-
   config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);
 
-  const appPublic = path.resolve(rootDir, 'public');
+  if (command === 'dev') {
+    config.mode('development');
+    config.devtool('inline-module-source-map');
+  } else if (command === 'build') {
+    config.mode('production');
+    config.devtool('source-map');
 
-  config.devServer
-    .compress(true)
-    .clientLogLevel('error')
-    .contentBase(appPublic)
-    .watchContentBase(true)
-    .hot(true)
-    .quiet(true)
-    .publicPath('/')
-    .overlay(false)
-    .host(address.ip())
-    .public(address.ip());
+    config.optimization
+      .minimizer('uglify')
+        .use(UglifyJSPlugin, [{
+          cache: true,
+          sourceMap: true,
+        }])
+        .end()
+      .minimizer('optimizeCSS')
+        .use(OptimizeCSSAssetsPlugin, [{
+          canPrint: true,
+        }]);
+  }
 
   return config;
 };
