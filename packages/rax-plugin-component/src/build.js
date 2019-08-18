@@ -1,105 +1,50 @@
 'use strict';
 
-const chalk = require('chalk');
 const path = require('path');
-const babel = require('gulp-babel');
-const ts = require('gulp-typescript');
-const fs = require('fs-extra');
-const { getBabelConfig } = require('rax-compile-config');
+const chalk = require('chalk');
+const consoleClear = require('console-clear');
 
-const gulp = require('gulp');
-const runSequence = require('run-sequence').use(gulp);
+const { handleWebpackErr } = require('rax-compile-config');
 
-const babelConfig = getBabelConfig({
-  styleSheet: true,
-  custom: {
-    ignore: ['**/**/*.d.ts']
-  }
-});
+const getDistConfig = require('./config/getDistConfig');
+const buildLib = require('./buildLib');
 
-const JS_FILES_PATTERN = 'src/**/*.+(js|jsx)';
-const OTHER_FILES_PATTERN = 'src/**/*.!(js|jsx|ts|tsx)';
-const IGNORE_PATTERN = '**/__tests__/**';
-
-module.exports = (context, options, log) => {
+module.exports = (api, options = {}) => {
+  const { registerConfig, context, onHook } = api;
+  const { targets = [] } = options;
   const { rootDir, userConfig } = context;
-  const { enableTypescript } = options;
-  const { outputDir } = userConfig;
+  const { distDir, outputDir } = userConfig;
 
-  log.info('component', chalk.green('Build start... '));
-
-  const BUILD_DIR = path.resolve(rootDir, outputDir);
-
-  gulp.task('clean', function(done) {
-    log.info('component', `Cleaning build directory ${BUILD_DIR}`);
-    fs.removeSync(BUILD_DIR);
-    log.info('component', 'Build directory has been Cleaned');
-    done();
+  targets.forEach(target => {
+    if (target === 'weex' || target === 'web') {
+      const config = getDistConfig(context);
+      registerConfig('component', config);
+    }
   });
 
-  // for js/jsx.
-  gulp.task('js', function() {
-    log.info('component', 'Compiling javascript files');
-    return gulp
-      .src([JS_FILES_PATTERN], { ignore: IGNORE_PATTERN })
-      .pipe(babel(babelConfig))
-      .pipe(gulp.dest(BUILD_DIR))
-      .on('end', () => {
-        log.info('component', 'Javascript files have been compiled');
-      });
-  });
+  onHook('after.build', async({ err, stats }) => {
+    consoleClear(true);
 
-  if (enableTypescript) {
-    const tsProject = ts.createProject('tsconfig.json', {
-      skipLibCheck: true,
-      declaration: true,
-      declarationDir: BUILD_DIR,
-      outDir: BUILD_DIR
-    });
+    const libBuildErr = await buildLib(api, options);
 
-    // for ts/tsx.
-    gulp.task('ts', function() {
-      log.info('component', 'Compiling typescript files');
-      return tsProject.src()
-        .pipe(tsProject())
-        .pipe(gulp.dest(BUILD_DIR))
-        .on('end', () => {
-          log.info('component', 'Typescript files have been compiled');
-        });
-    });
-  }
+    if (libBuildErr) {
+      err = libBuildErr.err;
+      stats = libBuildErr.stats;
+    }
 
-  // for other.
-  gulp.task('copyOther', function() {
-    log.info('component', 'Copy other files');
-    return gulp
-      .src([OTHER_FILES_PATTERN], { ignore: IGNORE_PATTERN })
-      .pipe(gulp.dest(BUILD_DIR))
-      .on('end', () => {
-        log.info('component', 'Other Files have been copied');
-      });
-  });
+    if (!handleWebpackErr(err, stats)) {
+      return;
+    }
 
-  let tasks = [
-    'clean',
-    [
-      'js',
-      'copyOther',
-    ],
-  ];
+    console.log(chalk.green('Rax Component build finished:'));
+    console.log();
 
-  if (enableTypescript) {
-    tasks = [
-      'clean',
-      [
-        'js',
-        'ts',
-        'copyOther',
-      ],
-    ];
-  }
+    console.log(chalk.green('Component lib at:'));
+    console.log('   ', chalk.underline.white(path.resolve(rootDir, outputDir)));
+    console.log();
 
-  runSequence(...tasks, () => {
-    log.info('component', chalk.green('Build Successfully'));
+    console.log(chalk.green('Component dist at:'));
+    console.log('   ', chalk.underline.white(path.resolve(rootDir, distDir)));
+    console.log();
   });
 };

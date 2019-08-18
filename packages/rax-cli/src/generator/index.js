@@ -35,7 +35,6 @@ function ejsRender(data) {
  */
 module.exports = function(template, args) {
   const projectDir = args.root;
-
   const ejsData = {
     ...args,
     npmName: args.projectName, // Be consistent with ice-devtools

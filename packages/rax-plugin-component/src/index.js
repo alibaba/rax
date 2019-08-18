@@ -1,18 +1,19 @@
 const deepmerge = require('deepmerge');
 
-const defaultUserConfig = require('./config/defaultUserConfig');
-const getDevConfig = require('./config/getDevConfig');
+const defaultUserConfig = require('./config/user/default.config');
+const dev = require('./dev');
 const build = require('./build');
 
-module.exports = ({ chainWebpack, registerConfig, context, log }, options = {}) => {
-  context.userConfig = deepmerge(defaultUserConfig, context.userConfig);
+module.exports = (api, options = {}) => {
+  api.context.userConfig = deepmerge(defaultUserConfig, api.context.userConfig);
+  const { command } = api.context;
 
-  const { command } = context;
+  // set dev config
   if (command === 'dev') {
-    registerConfig('component', getDevConfig(context));
+    dev(api, options);
   }
 
   if (command === 'build') {
-    build(context, options, log);
+    build(api, options);
   }
 };
