@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-multi-pages",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "rax app base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -22,6 +22,6 @@
     "fs-extra": "^8.1.0",
     "loader-utils": "^1.1.0",
     "qrcode-terminal": "^0.12.0",
-    "rax-compile-config": "^0.1.1"
+    "rax-compile-config": "^0.1.2"
   }
 }

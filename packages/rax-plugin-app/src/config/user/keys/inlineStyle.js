@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const babelMerge = require('babel-merge');
 

@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-component",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "rax component base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -35,7 +35,7 @@
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "qrcode-terminal": "^0.12.0",
-    "rax-compile-config": "^0.1.1",
+    "rax-compile-config": "^0.1.2",
     "rax-hot-loader": "^0.6.5",
     "rax-webpack-plugin": "^0.6.5",
     "run-sequence": "^2.2.1",
