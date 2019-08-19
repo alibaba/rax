@@ -7,6 +7,8 @@ const defaultOptions = {
   hot: false,
 };
 
+let logOnce = true;
+
 module.exports = (userOptions = {}) => {
   const options = Object.assign({}, defaultOptions, userOptions);
   const { hot, styleSheet, disableJSXPlus, custom = {} } = options;
@@ -83,7 +85,11 @@ module.exports = (userOptions = {}) => {
         require.resolve('babel-plugin-transform-jsx-class'),
       ],
     });
-    // console.log(chalk.green('[JSX+] Stynax enabled.'));
+
+    if (logOnce) {
+      console.log(chalk.green('[JSX+] Stynax enabled.'));
+      logOnce = false;
+    }
   }
 
   if (styleSheet) {
