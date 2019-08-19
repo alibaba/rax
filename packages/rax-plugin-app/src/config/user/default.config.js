@@ -1,5 +1,3 @@
-const address = require('address');
-
 module.exports = {
   inlineStyle: true,
   outputDir: 'build',
@@ -13,7 +11,7 @@ module.exports = {
     hot: true,
     quiet: true,
     overlay: false,
-    host: address.ip(),
+    host: '0.0.0.0',
     port: 9999,
   }
 };

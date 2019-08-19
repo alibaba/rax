@@ -1,6 +1,7 @@
 const chalk = require('chalk');
 const consoleClear = require('console-clear');
 const qrcode = require('qrcode-terminal');
+const address = require('address');
 
 const getMpOuput = require('./config/miniapp/getOutputPath');
 const mpDev = require('./config/miniapp/dev');
@@ -11,6 +12,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
 
   let devUrl = '';
   let devCompletedArr = [];
+  let weexDevPort = 9999;
 
   if (~targets.indexOf('miniapp')) {
     if (targets.length > 1) {
@@ -45,6 +47,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
 
   onHook('after.devCompile', async(args) => {
     devUrl = args.url;
+    weexDevPort = new URL(args.url).port;
     devCompletedArr.push(args);
     // run miniapp build while targets have web or weex, for log control
     if (~targets.indexOf('miniapp')) {
@@ -84,7 +87,7 @@ module.exports = ({ chainWebpack, registerConfig, context, onHook }, options = {
     }
 
     if (~targets.indexOf('weex')) {
-      const weexUrl = `${devUrl}/weex/index.js?wh_weex=true`;
+      const weexUrl = `http://${address.ip()}:${weexDevPort}/weex/index.js?wh_weex=true`;
       console.log(chalk.green('[Weex] Development server at:'));
       console.log('   ', chalk.underline.white(weexUrl));
       console.log();
