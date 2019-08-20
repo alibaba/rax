@@ -31,7 +31,7 @@ export default function createElement(type, config, children) {
   if (config != null) {
     let hasReservedProps = false;
 
-    if (config.ref) {
+    if (config.ref != null) {
       hasReservedProps = true;
       ref = config.ref;
       if (typeof ref === 'string' && !ownerComponent) {
@@ -39,13 +39,15 @@ export default function createElement(type, config, children) {
       }
     }
 
-    if (config.key !== undefined) {
+    if (config.key != null) {
       hasReservedProps = true;
       key = String(config.key);
     }
 
+    // if no reserved props, assign config to props for better performance
     if (hasReservedProps) {
       for (propName in config) {
+        // extract reserved props
         if (!RESERVED_PROPS[propName]) {
           props[propName] = config[propName];
         }
