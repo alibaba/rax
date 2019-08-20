@@ -5,6 +5,7 @@ module.exports = {
   outputDir: 'build',
   publicPath: '/',
   devPublicPath: '/',
+  exclude: 'node_modules',
   devServer: {
     compress: true,
     disableHostCheck: true,

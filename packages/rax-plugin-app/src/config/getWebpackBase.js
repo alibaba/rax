@@ -42,18 +42,12 @@ module.exports = (context) => {
 
   config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
-    .exclude
-      .add(/(node_modules|bower_components)/)
-      .end()
     .use('babel')
       .loader(require.resolve('babel-loader'))
       .options(babelConfig);
 
   config.module.rule('tsx')
     .test(/\.(ts|tsx)?$/)
-    .exclude
-      .add(/(node_modules|bower_components)/)
-      .end()
     .use('babel')
       .loader(require.resolve('babel-loader'))
       .options(babelConfig)
