@@ -1,9 +1,11 @@
 'use strict';
 const path = require('path');
-const address = require('address');
-const getBaseWebpackConfig = require('./getBaseConfig');
 
-function setDevServerConfig(config, rootDir) {
+module.exports = (config, context) => {
+  const { rootDir } = context;
+
+  config.mode('development');
+
   const absoluteAppJSONPath = path.join(rootDir, 'src/app.json');
   const appJSON = require(absoluteAppJSONPath);
 
@@ -18,17 +20,7 @@ function setDevServerConfig(config, rootDir) {
   });
 
   config.devServer.hot(false);
-  config.devServer.port(9999);
-  config.devServer.host(address.ip());
   config.devServer.set('routes', routes);
-}
-
-module.exports = (context) => {
-  const config = getBaseWebpackConfig(context);
-
-  config.mode('development');
-
-  setDevServerConfig(config, context.rootDir);
 
   return config;
 };

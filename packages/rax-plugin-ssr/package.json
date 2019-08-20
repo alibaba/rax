@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "address": "^1.0.1",
-    "rax-ssr-dev-server": "^2.0.0-0",
-    "universal-app-shell-loader": "^0.2.3"
+    "qs": "^6.8.0",
+    "rax-compile-config": "^0.1.2",
+    "rax-ssr-dev-server": "^2.0.0"
   }
 }

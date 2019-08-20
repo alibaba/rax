@@ -13,13 +13,15 @@ module.exports = function(content) {
   if (options.type === 'weex') {
     appRender = 'render(createElement(Entry), null, { driver: DriverUniversal });';
   } else {
-    appRender = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal });';
+    appRender = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal, hydrate: withSSR });';
   }
 
   const source = `
     import { render, createElement } from '${renderModule}';
     import Component from '${this.resourcePath}';
     import DriverUniversal from 'driver-universal';
+
+    const withSSR = !!window.__INITIAL_DATA__;
 
     function Entry() {
       return createElement(Component);

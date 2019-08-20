@@ -1,25 +1,27 @@
 const SSRDevServer = require('rax-ssr-dev-server');
 
-const getSSRBuildConfig = require('./ssr/getBuildConfig');
-const getSSRDevConfig = require('./ssr/getDevConfig');
-const setWebBaseConfig = require('./web/setBaseConfig');
+const getSSRBase = require('./ssr/getBase');
+const setSSRBuild = require('./ssr/setBuild');
+const setSSRDev = require('./ssr/setDev');
+
+const setWebDev = require('./web/setDev');
 
 // can‘t clone webpack chain object
 module.exports = ({ chainWebpack, registerConfig, setDevServer, context }) => {
-  chainWebpack((config, { command }) => {
-    const rootDir = context.rootDir;
-    setWebBaseConfig(config, rootDir);
+  const { command } = context;
+  const ssrConfig = getSSRBase(context);
+  registerConfig('ssr', ssrConfig);
 
-    let ssrConfig;
+  chainWebpack((config) => {
     if (command === 'build') {
-      ssrConfig = getSSRBuildConfig(context);
+      setSSRBuild(config.getConfig('ssr'), context);
     }
 
     if (command === 'dev') {
-      ssrConfig = getSSRDevConfig(context);
+      setSSRDev(config.getConfig('ssr'), context);
+      setWebDev(config.getConfig('web'), context);
+
       setDevServer(SSRDevServer);
     }
-
-    registerConfig('ssr', ssrConfig);
   });
 };

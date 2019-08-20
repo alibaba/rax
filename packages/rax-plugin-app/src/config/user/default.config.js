@@ -9,7 +9,6 @@ module.exports = {
     compress: true,
     disableHostCheck: true,
     clientLogLevel: 'error',
-    historyApiFallback: true,
     hot: true,
     quiet: true,
     overlay: false,
