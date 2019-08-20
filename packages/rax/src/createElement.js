@@ -1,6 +1,5 @@
 import Host from './vdom/host';
 import Element from './vdom/element';
-import flattenChildren from './vdom/flattenChildren';
 
 const RESERVED_PROPS = {
   key: true,
@@ -30,18 +29,29 @@ export default function createElement(type, config, children) {
   const ownerComponent = Host.owner;
 
   if (config != null) {
-    ref = config.ref === undefined ? null : config.ref;
-    key = config.key === undefined ? null : String(config.key);
+    let hasReservedProps = false;
 
-    if (typeof ref === 'string' && !ownerComponent) {
-      console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+    if (config.ref) {
+      hasReservedProps = true;
+      ref = config.ref;
+      if (typeof ref === 'string' && !ownerComponent) {
+        console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+      }
     }
 
-    // Remaining properties are added to a new props object
-    for (propName in config) {
-      if (!RESERVED_PROPS[propName]) {
-        props[propName] = config[propName];
+    if (config.key !== undefined) {
+      hasReservedProps = true;
+      key = String(config.key);
+    }
+
+    if (hasReservedProps) {
+      for (propName in config) {
+        if (!RESERVED_PROPS[propName]) {
+          props[propName] = config[propName];
+        }
       }
+    } else {
+      props = config;
     }
   }
 
@@ -58,7 +68,7 @@ export default function createElement(type, config, children) {
           childArray[i] = arguments[i + 2];
         }
       }
-      props.children = flattenChildren(childArray);
+      props.children = childArray;
     }
   }
 
