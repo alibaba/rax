@@ -84,8 +84,7 @@ module.exports = function fileLoader(content) {
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
 
       const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
-
-      const npmRelativePath = relative(this.resourcePath, join(outputPath, 'npm'));
+      const npmRelativePath = relative(dirname(this.resourcePath), currentNodeModulePath);
       const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath);
 
       const distSourceDirPath = dirname(distSourcePath);
