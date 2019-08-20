@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-flatten-jsx-children",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "flatten children when transforming JSX elements.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
