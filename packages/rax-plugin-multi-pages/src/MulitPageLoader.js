@@ -36,7 +36,7 @@ module.exports = function(content) {
       appRenderMethod = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal, hydrate: withSSR });';
     }
 
-    appRender += `
+    appRender = `
       const renderApp = async function() {
         // process App.getInitialProps
         if (withSSR && window.__INITIAL_DATA__.pageData !== null) {
