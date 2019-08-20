@@ -56,7 +56,7 @@ module.exports = function componentLoader(content) {
   // Write code
   writeFileSync(distFileWithoutExt + '.js', transformed.code);
   // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
+  writeFileSync(distFileWithoutExt + '.' + platform.extension.xml, transformed.template);
   // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   // Write acss style

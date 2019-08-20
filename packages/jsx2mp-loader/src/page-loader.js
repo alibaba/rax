@@ -58,7 +58,7 @@ module.exports = function pageLoader(content) {
   // Write js content
   writeFileSync(distFileWithoutExt + '.js', transformed.code);
   // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
+  writeFileSync(distFileWithoutExt + '.' + platform.extension.xml, transformed.template);
   // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   // Write acss style
@@ -79,7 +79,7 @@ module.exports = function pageLoader(content) {
     const matchingPath = join(dirname(resourcePath), name);
     for (let key in usingComponents) {
       if (usingComponents.hasOwnProperty(key)
-          && usingComponents[key].indexOf(matchingPath) === 0) {
+        && usingComponents[key].indexOf(matchingPath) === 0) {
         return true;
       }
     }
