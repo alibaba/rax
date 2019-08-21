@@ -15,10 +15,10 @@ module.exports = (context) => {
   }
 
   return routes.map((route) => {
-    const entryName = route.component.replace(/pages\/([^\/]*)\/index/g, (str, $) => $);
+    const entryName = route.name || route.component.replace(/\//g, '_');
 
     return {
-      entryName: entryName,
+      entryName,
       ...route
     };
   });

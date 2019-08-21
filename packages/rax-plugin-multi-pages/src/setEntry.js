@@ -11,15 +11,15 @@ function getDepPath(rootDir, com) {
   }
 };
 
-module.exports = (config, context, entrys, type) => {
+module.exports = (config, context, entries, type) => {
   const { rootDir, command } = context;
   const isDev = command === 'dev';
 
   config.entryPoints.clear();
 
-  entrys.forEach(({ entryName, component }) => {
+  entries.forEach(({ entryName, component }) => {
     const entryConfig = config.entry(entryName);
-    if (isDev) {
+    if (isDev && process.env.RAX_SSR !== 'true') {
       entryConfig.add(hmrClient);
     }
 

@@ -5,11 +5,11 @@ module.exports = {
   outputDir: 'build',
   publicPath: '/',
   devPublicPath: '/',
+  exclude: 'node_modules',
   devServer: {
     compress: true,
     disableHostCheck: true,
     clientLogLevel: 'error',
-    historyApiFallback: true,
     hot: true,
     quiet: true,
     overlay: false,

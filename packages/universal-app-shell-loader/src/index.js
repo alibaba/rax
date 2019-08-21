@@ -126,7 +126,6 @@ module.exports = function(content) {
     renderModule,
     definedAppPath: this.resourcePath,
     historyMemory: historyMemory[historyType],
-    isMultiPageWebApp: options.isMultiPageWebApp,
     routeIndex: options.routeIndex
   });
 
