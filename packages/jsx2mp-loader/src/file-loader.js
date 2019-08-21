@@ -8,7 +8,8 @@ const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
 const ComponentLoader = require.resolve('./component-loader');
 
-const dependenciesCache = {};
+const MINIAPP_CONFIG_FIELD = 'miniappConfig';
+
 module.exports = function fileLoader(content) {
   const loaderHandled = this.loaders.some(
     ({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1
@@ -40,41 +41,31 @@ module.exports = function fileLoader(content) {
     const pkg = readJSONSync(sourcePackageJSONPath);
     const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
 
-    if ('miniappConfig' in pkg) {
-      // Copy whole directory for miniapp component
-      if (!dependenciesCache[npmName]) {
-        dependenciesCache[npmName] = true;
-        if (isSymbolic(sourcePackagePath)) {
-          throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.');
-        }
+    // Is miniapp compatible component.
+    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main) {
+      // Only copy first level directory for miniapp component
+      const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
+      const source = join(sourcePackagePath, firstLevelFolder);
+      const target = join(outputPath, 'npm', npmName, firstLevelFolder);
+      mkdirpSync(target);
+      copySync(source, target);
 
-        copySync(
-          sourcePackagePath,
-          join(outputPath, 'npm', npmName)
-        );
-        // modify referenced component location
-        if (pkg.miniappConfig.main) {
-          const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
-          if (existsSync(componentConfigPath)) {
-            const componentConfig = readJSONSync(componentConfigPath);
-            if (componentConfig.usingComponents) {
-              for (let key in componentConfig.usingComponents) {
-                if (componentConfig.usingComponents.hasOwnProperty(key)) {
-                  componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
-                }
-              }
+      // Modify referenced component location
+      const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+      if (existsSync(componentConfigPath)) {
+        const componentConfig = readJSONSync(componentConfigPath);
+        if (componentConfig.usingComponents) {
+          for (let key in componentConfig.usingComponents) {
+            if (componentConfig.usingComponents.hasOwnProperty(key)) {
+              componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
             }
-            writeJSONSync(componentConfigPath, componentConfig);
-          } else {
-            this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
           }
         }
+        writeJSONSync(componentConfigPath, componentConfig);
+      } else {
+        this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
       }
     } else {
-      if (!dependenciesCache[npmName]) {
-        dependenciesCache[npmName] = true;
-      }
-
       // Copy file
       const splitedNpmPath = relativeNpmPath.split('/');
       if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
