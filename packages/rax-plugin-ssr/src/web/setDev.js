@@ -8,5 +8,7 @@ module.exports = (config) => {
     config.entry(entryName).merge(entryArr);
   }
 
+  config.devServer.delete('before');
+
   return config;
 };

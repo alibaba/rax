@@ -1,5 +1,9 @@
 const qs = require('qs');
 const fs = require('fs');
+const babel = require('@babel/core');
+const { getBabelConfig } = require('rax-compile-config');
+
+const babelConfig = getBabelConfig();
 
 module.exports = function(content) {
   const query = typeof this.query === 'string' ? qs.parse(this.query.substr(1)) : this.query;
@@ -18,18 +22,9 @@ module.exports = function(content) {
 
   const hasShell = fs.existsSync(absoluteShellPath);
   const shellStr = hasShell ? `import Shell from '${absoluteShellPath}'` : 'const Shell = function (props) { return props.children };';
-  const appStr = isMultiPages === 'false' ? `import App from '${absoluteAppPath}';` : 'const App = function (props) { return props.children };';
 
-  return `
-    import { createElement } from 'rax';
-    import renderer from 'rax-server-renderer';
-
-    import Page from '${absolutePagePath}';
-    import Document from '${absoluteDocumentPath}';
-    import appJSON from '${absoluteAppJSONPath}';
-
-    ${appStr}
-    ${shellStr}
+  let renderHtmlFnc = `
+    import App from '${absoluteAppPath}';
 
     async function renderComponentToHTML(req, res, Component) {
       const ctx = {
@@ -73,6 +68,58 @@ module.exports = function(content) {
 
       return html;
     }
+  `;
+
+  if (isMultiPages === 'true') {
+    renderHtmlFnc = `
+      async function renderComponentToHTML(req, res, Component) {
+        const ctx = {
+          req,
+          res
+        };
+
+        const shellData = await getInitialProps(Shell, ctx);
+        const pageData = await getInitialProps(Component, ctx);
+
+        const initialData = {
+          shellData,
+          pageData
+        };
+
+        const contentElement = createElement(Shell, null, createElement(Component));
+
+        const initialHtml = renderer.renderToString(contentElement, {
+          defaultUnit: 'rpx'
+        });
+
+        const documentProps = {
+          initialHtml: initialHtml,
+          initialData: JSON.stringify(initialData),
+          publicPath: '${publicPath}',
+          pageName: '${pageName}',
+          styles: [],
+          scripts: ${JSON.stringify(scripts)}
+        };
+
+        await getInitialProps(Document, ctx);
+        const documentElement = createElement(Document, documentProps);;
+        const html = '<!doctype html>' + renderer.renderToString(documentElement);
+
+        return html;
+      }
+    `;
+  }
+
+  const source = `
+    import { createElement } from 'rax';
+    import renderer from 'rax-server-renderer';
+
+    import Page from '${absolutePagePath}';
+    import Document from '${absoluteDocumentPath}';
+    import appJSON from '${absoluteAppJSONPath}';
+    ${shellStr}
+
+    ${renderHtmlFnc}
 
     export async function render(req, res) {
       const html = await renderToHTML(req, res);
@@ -105,4 +152,8 @@ module.exports = function(content) {
       return props;
     }
   `;
+
+  const { code } = babel.transformSync(source, babelConfig);
+
+  return code;
 };
