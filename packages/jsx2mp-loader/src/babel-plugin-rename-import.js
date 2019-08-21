@@ -42,7 +42,6 @@ module.exports = function visitor({ types: t }, options) {
           node.arguments &&
           node.arguments.length === 1
         ) {
-
           if (t.isStringLiteral(node.arguments[0])) {
             if (isWeexModule(node.arguments[0].value)) {
               path.replaceWith(t.nullLiteral());
@@ -52,6 +51,7 @@ module.exports = function visitor({ types: t }, options) {
               ];
             }
           } else if (t.isExpression(node.arguments[0])) {
+            // require with expression, can not staticly find target.
             console.warn(chalk.yellow(`Critical requirement of "${path.toString()}", which have been removed at \n${state.filename}.`));
             path.replaceWith(t.nullLiteral());
           }

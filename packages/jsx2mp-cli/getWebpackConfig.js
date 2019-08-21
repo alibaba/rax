@@ -30,9 +30,10 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
+  const { platform = 'ali' } = options;
 
   let loaderParams = JSON.stringify({
-    platform: platformConfig[options.platform],
+    platform: platformConfig[platform],
     entryPath: entryFilePath
   });
 
@@ -79,7 +80,7 @@ function getDepPath(path, rootContext) {
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  let { entryPath, type, workDirectory, distDirectory } = options;
+  let { entryPath, type, workDirectory, distDirectory, platform = 'ali' } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
   entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
@@ -102,7 +103,7 @@ module.exports = (options = {}) => {
               options: {
                 mode: options.mode,
                 entryPath: relativeEntryFilePath,
-                platform: platformConfig[options.platform]
+                platform: platformConfig[platform]
               },
             },
             {
@@ -133,7 +134,7 @@ module.exports = (options = {}) => {
           NODE_ENV: '"production"',
         }
       }),
-      new RuntimeWebpackPlugin(),
+      new RuntimeWebpackPlugin({ platform }),
       new webpack.ProgressPlugin( (percentage, message) => {
         if (percentage === 0) {
           buildStartTime = Date.now();
