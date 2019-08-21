@@ -48,7 +48,9 @@ module.exports = function fileLoader(content) {
       const source = join(sourcePackagePath, firstLevelFolder);
       const target = join(outputPath, 'npm', npmName, firstLevelFolder);
       mkdirpSync(target);
-      copySync(source, target);
+      copySync(source, target, {
+        filter: (filename) => !/__(mocks|tests?)__/.test(filename),
+      });
 
       // Modify referenced component location
       const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
