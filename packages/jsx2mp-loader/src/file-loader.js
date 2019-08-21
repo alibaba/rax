@@ -20,6 +20,7 @@ module.exports = function fileLoader(content) {
   const rootContext = this.rootContext;
   const currentNodeModulePath = join(rootContext, 'node_modules');
   const outputPath = this._compiler.outputPath;
+  const relativeResourcePath = relative(rootContext, this.resourcePath);
 
   const isNodeModule = cached(function isNodeModule(path) {
     return path.indexOf(currentNodeModulePath) === 0;
@@ -85,7 +86,7 @@ module.exports = function fileLoader(content) {
 
       const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
       const npmRelativePath = relative(dirname(this.resourcePath), currentNodeModulePath);
-      const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath);
+      const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath, relativeResourcePath);
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -101,7 +102,7 @@ module.exports = function fileLoader(content) {
     const distSourceDirPath = dirname(distSourcePath);
     const npmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
 
-    const { code } = transformCode(rawContent, loaderOptions, npmRelativePath);
+    const { code } = transformCode(rawContent, loaderOptions, npmRelativePath, relativeResourcePath);
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     writeFileSync(distSourcePath, code, 'utf-8');
@@ -110,7 +111,7 @@ module.exports = function fileLoader(content) {
   return content;
 };
 
-function transformCode(rawCode, loaderOptions, npmRelativePath = '') {
+function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePath) {
   const presets = [];
   const plugins = [
     [
@@ -128,6 +129,7 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '') {
 
   return transformSync(rawCode, {
     presets, plugins,
+    filename: resourcePath,
   });
 }
 
