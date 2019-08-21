@@ -1,6 +1,8 @@
 import Host from './vdom/host';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
+import { invokeMinifiedError } from './error';
+import { isString, isArray } from './is';
 
 const RESERVED_PROPS = {
   key: true,
@@ -10,7 +12,7 @@ const RESERVED_PROPS = {
 function getRenderErrorInfo() {
   const ownerComponent = Host.owner;
   if (ownerComponent) {
-    var name = ownerComponent.getName();
+    const name = ownerComponent.getName();
     if (name) {
       return ' Check the render method of `' + name + '`.';
     }
@@ -20,7 +22,11 @@ function getRenderErrorInfo() {
 
 export default function createElement(type, config, children) {
   if (type == null) {
-    throw Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
+    } else {
+      invokeMinifiedError();
+    }
   }
   // Reserved names are extracted
   let props = {};
@@ -33,8 +39,10 @@ export default function createElement(type, config, children) {
     ref = config.ref === undefined ? null : config.ref;
     key = config.key === undefined ? null : String(config.key);
 
-    if (typeof ref === 'string' && !ownerComponent) {
-      console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+    if (process.env.NODE_ENV !== 'production') {
+      if (isString(ref) && !ownerComponent) {
+        console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+      }
     }
 
     // Remaining properties are added to a new props object
@@ -48,7 +56,7 @@ export default function createElement(type, config, children) {
   // Children arguments can be more than one
   const childrenLength = arguments.length - 2;
   if (childrenLength > 0) {
-    if (childrenLength === 1 && !Array.isArray(children)) {
+    if (childrenLength === 1 && !isArray(children)) {
       props.children = children;
     } else {
       let childArray = children;

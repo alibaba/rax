@@ -1,4 +1,5 @@
 import Component from './vdom/component';
+import { isFunction, isArray } from './is';
 
 class ValueEmitter {
   constructor(defaultValue) {
@@ -98,8 +99,8 @@ export default function createContext(defaultValue) {
 
     render() {
       let children = this.props.children;
-      let consumer = Array.isArray(children) ? children[0] : children;
-      if (typeof consumer === 'function') {
+      let consumer = isArray(children) ? children[0] : children;
+      if (isFunction(consumer)) {
         return consumer(this.state.value);
       }
     }

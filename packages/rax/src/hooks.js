@@ -1,6 +1,8 @@
 import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
+import { isFunction } from './is';
+import { invokeMinifiedError } from './error';
 
 function getCurrentInstance() {
   return Host.owner && Host.owner._instance;
@@ -11,7 +13,11 @@ function getCurrentRenderingInstance() {
   if (currentInstance) {
     return currentInstance;
   } else {
-    throw Error('Hooks can only be called inside a component.');
+    if (process.env.NODE_ENV === 'production') {
+      invokeMinifiedError();
+    } else {
+      throw new Error('Hooks can only be called inside a component.');
+    }
   }
 }
 
@@ -37,7 +43,7 @@ export function useState(initialState) {
   if (!hooks[hookID]) {
     // If the initial state is the result of an expensive computation,
     // you may provide a function instead for lazy initial state.
-    if (typeof initialState === 'function') {
+    if (isFunction(initialState)) {
       initialState = initialState();
     }
 
@@ -50,7 +56,7 @@ export function useState(initialState) {
       const hook = hooks[hookID];
       const eagerState = hook[2];
       // function updater
-      if (typeof newState === 'function') {
+      if (isFunction(newState)) {
         newState = newState(eagerState);
       }
 
@@ -152,7 +158,7 @@ export function useImperativeHandle(ref, create, inputs) {
   const nextInputs = inputs != null ? inputs.concat([ref]) : null;
 
   useLayoutEffect(() => {
-    if (typeof ref === 'function') {
+    if (isFunction(ref)) {
       ref(create());
       return () => ref(null);
     } else if (ref != null) {

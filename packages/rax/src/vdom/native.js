@@ -6,6 +6,7 @@ import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
+import { isFunction, isArray } from '../is';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -140,7 +141,7 @@ class NativeComponent extends BaseComponent {
 
     // If the prevElement has no child, mount children directly
     if (prevProps.children == null ||
-      Array.isArray(prevProps.children) && prevProps.children.length === 0) {
+      isArray(prevProps.children) && prevProps.children.length === 0) {
       this.mountChildren(nextProps.children, nextContext);
     } else {
       this.updateChildren(nextProps.children, nextContext);
@@ -181,7 +182,7 @@ class NativeComponent extends BaseComponent {
         // Remove event
         const eventListener = prevProps[propKey];
 
-        if (typeof eventListener === 'function') {
+        if (isFunction(eventListener)) {
           driver.removeEventListener(
             nativeNode,
             propKey.slice(2).toLowerCase(),
@@ -244,11 +245,11 @@ class NativeComponent extends BaseComponent {
         // Update event binding
         let eventName = propKey.slice(2).toLowerCase();
 
-        if (typeof prevProp === 'function') {
+        if (isFunction(prevProp)) {
           driver.removeEventListener(nativeNode, eventName, prevProp, nextProps);
         }
 
-        if (typeof nextProp === 'function') {
+        if (isFunction(nextProp)) {
           driver.addEventListener(nativeNode, eventName, nextProp, nextProps);
         }
       } else {
@@ -359,7 +360,7 @@ class NativeComponent extends BaseComponent {
           prevFirstChild = prevChild;
           prevFirstNativeNode = prevFirstChild.getNativeNode();
 
-          if (Array.isArray(prevFirstNativeNode)) {
+          if (isArray(prevFirstNativeNode)) {
             prevFirstNativeNode = prevFirstNativeNode[0];
           }
         } else if (shouldUnmount) {
@@ -413,7 +414,7 @@ class NativeComponent extends BaseComponent {
 
           let parent = this.getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
-          if (Array.isArray(parent)) {
+          if (isArray(parent)) {
             parent = this._parent;
           }
 
@@ -432,7 +433,7 @@ class NativeComponent extends BaseComponent {
         lastPlacedNode = nextChild.getNativeNode();
 
         // Push to nextNativeNode
-        if (Array.isArray(lastPlacedNode)) {
+        if (isArray(lastPlacedNode)) {
           nextNativeNode = nextNativeNode.concat(lastPlacedNode);
           lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
         } else {
@@ -441,7 +442,7 @@ class NativeComponent extends BaseComponent {
       }
 
       // Sync update native refs
-      if (Array.isArray(this._nativeNode)) {
+      if (isArray(this._nativeNode)) {
         // Clear all and push the new array
         this._nativeNode.splice(0, this._nativeNode.length);
         for (let i = 0; i < nextNativeNode.length; i++) {
