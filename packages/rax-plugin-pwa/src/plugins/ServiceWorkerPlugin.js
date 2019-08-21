@@ -51,7 +51,7 @@ module.exports = class SaveToDesktopPlugin {
         cacheId: serviceWorker.cacheId || pkg.name,
         skipWaiting: serviceWorker.skipWaiting || false,
         clientsClaim: serviceWorker.clientsClaim || false,
-      }
+      };
 
       const swCode = templateGenerator(swTemplate)(data);
       const regSwCode = templateGenerator(regSwTemplate)(data);
@@ -65,6 +65,6 @@ module.exports = class SaveToDesktopPlugin {
       compilation.assets[REG_SW_FILE_PATH] = new RawSource(regSwCode);
       compilation.assets[HTML_PATH] = new RawSource(htmlCode);
       callback();
-    })
+    });
   }
-}
+};
