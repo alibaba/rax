@@ -22,7 +22,7 @@ export default {
       if (process.env.NODE_ENV !== 'production') {
         return console.error('ref: multiple version of Rax used in project.');
       } else {
-        invokeMinifiedError();
+        invokeMinifiedError(3);
       }
     }
 

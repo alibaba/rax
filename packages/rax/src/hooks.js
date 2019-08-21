@@ -14,7 +14,7 @@ function getCurrentRenderingInstance() {
     return currentInstance;
   } else {
     if (process.env.NODE_ENV === 'production') {
-      invokeMinifiedError();
+      invokeMinifiedError(1);
     } else {
       throw new Error('Hooks can only be called inside a component.');
     }

@@ -27,7 +27,7 @@ function instantiateComponent(element) {
 
 export function throwInvalidComponentError(element) {
   if (process.env.NODE_ENV === 'production') {
-    invokeMinifiedError();
+    invokeMinifiedError(2);
   } else {
     throw new Error(`Invalid element type: ${element}. (current: ${isObject(element) && Object.keys(element) || typeof element})`);
   }

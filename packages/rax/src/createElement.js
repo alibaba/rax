@@ -25,7 +25,7 @@ export default function createElement(type, config, children) {
     if (process.env.NODE_ENV !== 'production') {
       throw new Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
     } else {
-      invokeMinifiedError();
+      invokeMinifiedError(0);
     }
   }
   // Reserved names are extracted
