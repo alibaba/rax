@@ -4,10 +4,28 @@ const babelMerge = require('babel-merge');
 module.exports = (config, context, value, target) => {
   // enbale inlineStyle
   if (target === 'weex' || value) {
-    config.module.rule('css')
-      .test(/\.css?$/)
-      .use('css')
-        .loader(require.resolve('stylesheet-loader'));
+    if (target === 'weex') {
+      config.module.rule('css')
+        .test(/\.css?$/)
+        .use('css')
+          .loader(require.resolve('stylesheet-loader'));
+    }
+
+    if (target === 'web') {
+      config.module.rule('css')
+        .test(/\.css?$/)
+        .use('css')
+          .loader(require.resolve('stylesheet-loader'))
+          .end()
+        .use('postcss')
+          .loader(require.resolve('postcss-loader'))
+          .options({
+            ident: 'postcss',
+            plugins: () => [
+              require('postcss-plugin-rpx2vw')(),
+            ],
+          });
+    }
 
     config.module.rule('jsx')
       .use('babel')
