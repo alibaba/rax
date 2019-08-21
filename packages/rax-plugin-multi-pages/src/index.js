@@ -20,7 +20,7 @@ module.exports = ({ context, chainWebpack, onHook }) => {
     if (~targets.indexOf('web')) {
       setEntry(config.getConfig('web'), context, entries, 'web');
 
-      if (command === 'dev') {
+      if (command === 'dev' && !~plugins.indexOf('rax-plugin-ssr')) {
         const webConfig = config.getConfig('web');
         webConfig.devServer.set('before', (app, devServer) => {
           const memFs = devServer.compiler.compilers[0].outputFileSystem;
@@ -37,19 +37,6 @@ module.exports = ({ context, chainWebpack, onHook }) => {
 
     if (~targets.indexOf('weex')) {
       setEntry(config.getConfig('weex'), context, entries, 'weex');
-    }
-
-    // set ssr dev route
-    if (~plugins.indexOf('rax-plugin-ssr') && command === 'dev') {
-      const ssrConfig = config.getConfig('ssr');
-      ssrConfig.devServer.delete('routes');
-      const distDir = ssrConfig.output.get('path');
-      const filename = ssrConfig.output.get('filename');
-      const ssrRoutes = {};
-      entries.map(({entryName}) => {
-        ssrRoutes[`/web/${entryName}`] = path.join(distDir, filename.replace('[name]', entryName));
-      });
-      ssrConfig.devServer.set('routes', ssrRoutes);
     }
   });
 

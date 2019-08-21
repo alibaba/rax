@@ -1,5 +1,3 @@
-const SSRDevServer = require('rax-ssr-dev-server');
-
 const getSSRBase = require('./ssr/getBase');
 const setSSRBuild = require('./ssr/setBuild');
 const setSSRDev = require('./ssr/setDev');
@@ -20,8 +18,6 @@ module.exports = ({ chainWebpack, registerConfig, setDevServer, context }) => {
     if (command === 'dev') {
       setSSRDev(config.getConfig('ssr'), context);
       setWebDev(config.getConfig('web'), context);
-
-      setDevServer(SSRDevServer);
     }
   });
 };

@@ -12,21 +12,23 @@ module.exports = function(content) {
     absoluteAppJSONPath,
     publicPath,
     pageName,
+    isMultiPages,
     scripts
   } = query;
 
   const hasShell = fs.existsSync(absoluteShellPath);
   const shellStr = hasShell ? `import Shell from '${absoluteShellPath}'` : 'const Shell = function (props) { return props.children };';
+  const appStr = isMultiPages === 'false' ? `import App from '${absoluteAppPath}';` : 'const App = function (props) { return props.children };';
 
   return `
     import { createElement } from 'rax';
     import renderer from 'rax-server-renderer';
 
-    import App from '${absoluteAppPath}';
     import Page from '${absolutePagePath}';
     import Document from '${absoluteDocumentPath}';
     import appJSON from '${absoluteAppJSONPath}';
 
+    ${appStr}
     ${shellStr}
 
     async function renderComponentToHTML(req, res, Component) {

@@ -4,7 +4,10 @@ const qs = require('qs');
 const SSRLoader = require.resolve('./loader');
 
 module.exports = (config, context) => {
-  const { rootDir } = context;
+  const { rootDir, userConfig } = context;
+  const { plugins } = userConfig;
+  const isMultiPages = !!~plugins.indexOf('rax-plugin-multi-pages');
+
   const publicPath = config.output.get('publicPath');
   const appSrc = path.resolve(rootDir, 'src');
 
@@ -31,6 +34,7 @@ module.exports = (config, context) => {
       absolutePagePath,
       absoluteAppJSONPath,
       publicPath,
+      isMultiPages,
       scripts: [`web/${entry}.js`]
     };
 
