@@ -1,4 +1,5 @@
 const { join } = require('path');
+const chalk = require('chalk');
 
 const WEEX_MODULE_REG = /^@weex\//;
 
@@ -34,20 +35,25 @@ module.exports = function visitor({ types: t }, options) {
         }
       },
 
-      CallExpression(path) {
+      CallExpression(path, state) {
         const { node } = path;
         if (
           node.callee.name === 'require' &&
           node.arguments &&
-          node.arguments.length === 1 &&
-          t.isStringLiteral(node.arguments[0])
+          node.arguments.length === 1
         ) {
-          if (isWeexModule()) {
-            path.replaceWith(t.nullLiteral);
-          } else if (isNpmModule(node.arguments[0].value)) {
-            path.node.arguments = [
-              source(node.arguments[0].value, npmRelativePath)
-            ];
+
+          if (t.isStringLiteral(node.arguments[0])) {
+            if (isWeexModule(node.arguments[0].value)) {
+              path.replaceWith(t.nullLiteral());
+            } else if (isNpmModule(node.arguments[0].value)) {
+              path.node.arguments = [
+                source(node.arguments[0].value, npmRelativePath)
+              ];
+            }
+          } else if (t.isExpression(node.arguments[0])) {
+            console.warn(chalk.yellow(`Critical requirement of "${path.toString()}", which have been removed at \n${state.filename}.`));
+            path.replaceWith(t.nullLiteral());
           }
         }
       }
