@@ -12,15 +12,14 @@ function getDepPath(rootDir, com) {
 };
 
 module.exports = (config, context, entries, type) => {
-  const { rootDir, command, userConfig } = context;
-  const { plugins } = userConfig;
+  const { rootDir, command } = context;
   const isDev = command === 'dev';
 
   config.entryPoints.clear();
 
   entries.forEach(({ entryName, component }) => {
     const entryConfig = config.entry(entryName);
-    if (isDev && !~plugins.indexOf('rax-plugin-ssr')) {
+    if (isDev && process.env.RAX_SSR !== 'true') {
       entryConfig.add(hmrClient);
     }
 

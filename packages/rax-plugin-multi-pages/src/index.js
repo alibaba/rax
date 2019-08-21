@@ -9,7 +9,7 @@ const setEntry = require('./setEntry');
 
 module.exports = ({ context, chainWebpack, onHook }) => {
   const { rootDir, command, userConfig } = context;
-  const { outputDir, plugins } = userConfig;
+  const { outputDir } = userConfig;
   const entries = getEntries(context);
 
   let targets = [];
@@ -20,7 +20,7 @@ module.exports = ({ context, chainWebpack, onHook }) => {
     if (~targets.indexOf('web')) {
       setEntry(config.getConfig('web'), context, entries, 'web');
 
-      if (command === 'dev' && !~plugins.indexOf('rax-plugin-ssr')) {
+      if (command === 'dev' && process.env.RAX_SSR !== 'true') {
         const webConfig = config.getConfig('web');
         webConfig.devServer.set('before', (app, devServer) => {
           const memFs = devServer.compiler.compilers[0].outputFileSystem;

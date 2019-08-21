@@ -9,6 +9,7 @@ const babelConfig = getBabelConfig();
 module.exports = function(content) {
   const options = getOptions(this) || {};
   const renderModule = options.renderModule || 'rax';
+  const withSSR = process.env.RAX_SSR === 'true';
 
   let appRender = '';
   let importStr = '';
@@ -57,7 +58,7 @@ module.exports = function(content) {
     import DriverUniversal from 'driver-universal';
     ${importStr}
 
-    const withSSR = !!window.__INITIAL_DATA__;
+    const withSSR = ${withSSR};
 
     const comProps = {};
 

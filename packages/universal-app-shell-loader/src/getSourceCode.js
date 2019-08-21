@@ -1,4 +1,6 @@
 module.exports = (options) => {
+  const withSSR = process.env.RAX_SSR === 'true';
+
   return `
     import definedApp from '${options.definedAppPath}';
     import { render, createElement } from '${options.renderModule}';
@@ -8,7 +10,7 @@ module.exports = (options) => {
     ${options.importMods}
 
     const interopRequire = (mod) => mod && mod.__esModule ? mod.default : mod;
-    const withSSR = !!window.__INITIAL_DATA__;
+    const withSSR = ${withSSR};
 
     const getRouterConfig = () => {
       const routes = [];
