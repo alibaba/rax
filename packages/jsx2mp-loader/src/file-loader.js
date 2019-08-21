@@ -71,12 +71,8 @@ module.exports = function fileLoader(content) {
         }
       }
     } else {
-      // Copy package.json
       if (!dependenciesCache[npmName]) {
         dependenciesCache[npmName] = true;
-        const target = normalizeFileName(join(outputPath, 'npm', npmName, 'package.json'));
-        if (!existsSync(target))
-          copySync(sourcePackageJSONPath, target, { errorOnExist: false });
       }
 
       // Copy file
