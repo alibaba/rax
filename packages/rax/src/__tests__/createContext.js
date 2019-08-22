@@ -196,7 +196,7 @@ describe('createContext', () => {
         return (
           <Context.Provider value={this.props.value}>
             <Context.Consumer>
-              {() => (consumerCount++ ,<div />)}
+              {() => (consumerCount++, <div />)}
             </Context.Consumer>
             <Indirection>
               <Context.Consumer>
