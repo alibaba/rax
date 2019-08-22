@@ -1,4 +1,5 @@
 const rollup = require('rollup');
+const memory = require('rollup-plugin-memory');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
@@ -17,6 +18,14 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
   const bundle = await rollup.rollup({
     input: `./packages/${packageName}/${entry}`,
     plugins: [
+      packageName === 'rax' && format === 'iife' ? memory({
+        path: `./packages/${packageName}/${entry}`,
+        contents: `
+        import * as Rax from './index.js';
+        if (typeof module!='undefined') module.exports = Rax;
+        else self.Rax = Rax;
+        `
+      }) : null,
       resolve(),
       commonjs({
         // style-unit for build while packages linked
@@ -63,7 +72,10 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
 
     console.log(file, `${(size / 1024).toPrecision(3)}kb (gzip)`);
   } else {
-    const ext = format === 'esm' ? '.mjs' : '.js';
+    let ext = format === 'esm' ? '.mjs' : '.js';
+    if (packageName === 'rax' && format === 'umd') {
+      ext = '.umd.js';
+    }
     await bundle.write({
       ...output,
       format,
@@ -72,9 +84,10 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
   }
 }
 
+build({ package: 'rax', name: 'Rax', format: 'iife' });
+build({ package: 'rax', name: 'Rax', format: 'iife', shouldMinify: true });
 build({ package: 'rax', name: 'Rax' });
 build({ package: 'rax', name: 'Rax', format: 'esm' });
-build({ package: 'rax', name: 'Rax', shouldMinify: true });
 
 build({ package: 'driver-dom', name: 'DriverDOM' });
 build({ package: 'driver-dom', name: 'DriverDOM', format: 'esm' });
@@ -90,3 +103,4 @@ build({ package: 'driver-worker', name: 'DriverWorker', shouldMinify: true });
 
 build({ package: 'rax-miniapp-renderer', format: 'cjs' });
 build({ package: 'rax-miniapp-renderer', format: 'cjs', shouldMinify: true });
+
