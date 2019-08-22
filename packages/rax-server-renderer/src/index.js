@@ -90,7 +90,7 @@ const DEFAULT_STYLE_OPTIONS = {
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
-const CSS_CACHE_KEY = '__cssValue__';
+const CSS_CACHE_KEY = '__css__';
 
 function styleToCSS(style, options = {}) {
   const isObject = typeof style === 'object';
