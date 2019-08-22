@@ -90,17 +90,17 @@ const DEFAULT_STYLE_OPTIONS = {
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
-const CSSCacheKey = '__cssValue__';
+const CSS_CACHE_KEY = '__cssValue__';
 
 function styleToCSS(style, options = {}) {
   const isObject = typeof style === 'object';
 
   // reuse the css value from cache
-  if (isObject && style[CSSCacheKey]) {
-    return style[CSSCacheKey];
+  if (isObject && style[CSS_CACHE_KEY]) {
+    return style[CSS_CACHE_KEY];
   }
 
-  let css = 'i';
+  let css = '';
 
   if (Array.isArray(style)) {
     style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
@@ -128,7 +128,7 @@ function styleToCSS(style, options = {}) {
 
   if (isObject) {
     // cache css value for elements reuse the same style
-    Object.defineProperty(style, CSSCacheKey, {
+    Object.defineProperty(style, CSS_CACHE_KEY, {
       value: css
     });
   }
