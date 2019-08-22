@@ -1,13 +1,16 @@
 {
   "name": "<%= npmName %>",
   "author": "<%= projectAuthor %>",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "start": "rax-scripts start",
     "build": "rax-scripts build"
+  },
+  "miniappConfig": {
+    "main": "lib/miniapp/index"
   },
   "keywords": [
     "Rax",
@@ -17,7 +20,8 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^1.0.1"
+    "rax-text": "^1.0.0",
+    "rax-view": "^1.0.0"
   },
   "peerDependencies": {
     "rax": "^1.0.0"

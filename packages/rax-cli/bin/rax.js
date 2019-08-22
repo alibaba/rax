@@ -60,7 +60,7 @@ switch (commands[0]) {
       );
       process.exit(1);
     } else {
-      init(commands[1], argv.verbose, argv.version);
+      init(commands[1], argv.verbose, argv.template);
     }
     break;
   default:
@@ -72,7 +72,7 @@ switch (commands[0]) {
     break;
 }
 
-function init(name, verbose) {
+function init(name, verbose, template) {
   Promise.resolve(fs.existsSync(name))
     .then(function(dirExists) {
       if (dirExists) {
@@ -85,7 +85,7 @@ function init(name, verbose) {
       return askProjectInformaction(name, verbose);
     })
     .then(function(answers) {
-      return createProject(name, verbose, answers);
+      return createProject(name, verbose, template, answers);
     })
     .catch(function(err) {
       console.error('Error occured', err.stack);
@@ -112,86 +112,10 @@ function createAfterConfirmation(name) {
 }
 
 function askProjectInformaction(name) {
-  const questions = [
-    {
-      type: 'list',
-      name: 'projectType',
-      message: 'What\'s your project type?',
-      choices: [
-        {
-          name: 'App (Build application that works multi-platform)',
-          value: 'scaffold'
-        },
-        {
-          name: 'Component (Build component for application include web)',
-          value: 'component'
-        },
-        {
-          name: 'API (Build universal API library)',
-          value: 'api'
-        }
-      ],
-      default: 'scaffold'
-    },
-    {
-      type: 'checkbox',
-      name: 'projectTargets',
-      when: function(answers) {
-        return answers.projectType === 'scaffold';
-      },
-      validate: function(targets) {
-        if (targets && targets.length > 0) return true;
-        return 'Choose at least one of target.';
-      },
-      message: 'Do you want to build to these targets?',
-      choices: [
-        {
-          name: 'web',
-          value: 'web'
-        },
-        {
-          name: 'weex',
-          value: 'weex'
-        },
-        {
-          name: 'miniapp',
-          value: 'miniapp'
-        }
-      ],
-      default: false
-    },
-    {
-      type: 'checkbox',
-      name: 'projectFeatures',
-      when: function(answers) {
-        return answers.projectType === 'scaffold' && answers.projectTargets.includes('web');
-      },
-      message: 'Do you want to enable these features?',
-      choices: [
-        {
-          name: 'server sider rendering (ssr)',
-          value: 'ssr'
-        }
-      ],
-      default: false
-    },
-    {
-      type: 'input',
-      name: 'projectAuthor',
-      message: 'What\'s author\'s name?',
-      default: 'rax'
-    },
-    {
-      type: 'confirm',
-      name: 'autoInstallModules',
-      message: 'Do you want to install dependences automatically after initialization?',
-      default: 'y'
-    }
-  ];
-  return inquirer.prompt(questions);
+  return inquirer.prompt(cli.config.promptQuestion);
 }
 
-function createProject(name, verbose, userAnswers) {
+function createProject(name, verbose, template, userAnswers) {
   const pkgManager = shouldUseYarn() ? 'yarn' : 'npm';
   const root = path.resolve(name);
   const projectName = name;
@@ -215,6 +139,7 @@ function createProject(name, verbose, userAnswers) {
     projectAuthor: userAnswers.projectAuthor || '',
     projectTargets: userAnswers.projectTargets || [],
     verbose: verbose,
+    template: template,
   }).then(function(directory) {
     if (autoInstallModules) {
       return install(directory, verbose);

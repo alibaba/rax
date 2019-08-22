@@ -5,6 +5,7 @@ const {
   getAndExtractTarball,
 } = require('ice-npm-utils');
 const generate = require('./generator');
+const config = require('./config');
 
 /**
  * download project template from npm
@@ -20,27 +21,53 @@ function downloadTemplate(template, destPath) {
 
 module.exports = {
   /**
+   * export global config
+   */
+  config,
+
+  /**
    * The entry of init.
    * @param  {Object} args - describe the init arguements
    * @param  {String} args.root - The absolute path of project directory
    * @param  {String} args.projectName - Kebabcased project name
    * @param  {String} args.projectType - Kebabcased project type
    * @param  {String} args.projectAuthor - The name of project author
-   * @param  {String} args.projectTargets- The build targets of project
-   * @param  {String} args.projectFeatures- The features of project
+   * @param  {Array} args.projectTargets- The build targets of project
+   * @param  {Array} args.projectFeatures- The features of project
    * @return {Promise}
    */
   init(args) {
-    const downloadPath = path.join(args.root, '.rax-cli-template');
-    const templatePath = path.join(downloadPath, 'template', args.projectType);
+    const defaultInfo = {
+      root: process.cwd(),
+      projectName: '',
+      projectAuthor: '',
+      projectType: 'scaffold',
+      projectTargets: ['web'],
+      projectFeatures: [],
+    };
+    const projectInfo = Object.assign({}, defaultInfo, args);
+    const template = projectInfo.template || 'rax-template';
 
-    rimraf.sync(downloadPath);
+    // template is a local path
+    if (/^(\/|\.)/.test(template)) {
+      // current work dir is projectInfo.root
+      const templatePath = path.resolve('../', template, 'template', projectInfo.projectType);
 
-    return downloadTemplate('rax-template', downloadPath).then(() => {
-      return generate(templatePath, args).then(res => {
-        rimraf.sync(downloadPath);
+      return generate(templatePath, projectInfo).then(res => {
         return res;
       });
-    });
+    } else {
+      const downloadPath = path.join(projectInfo.root, '.rax-cli-template');
+      const templatePath = path.join(downloadPath, 'template', projectInfo.projectType);
+
+      rimraf.sync(downloadPath);
+
+      return downloadTemplate(template, downloadPath).then(() => {
+        return generate(templatePath, projectInfo).then(res => {
+          rimraf.sync(downloadPath);
+          return res;
+        });
+      });
+    }
   }
 };
