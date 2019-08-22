@@ -5,9 +5,9 @@ import { name, version, author } from './package.json';
 
 function getPropsIdentifierName(platform) {
   switch (platform) {
-    case 'wx':
-    case 'bd':
-    case 'tt':
+    case 'wechat':
+    case 'baidu':
+    case 'toutiao':
       return 'properties';
 
     case 'ali':
@@ -66,5 +66,5 @@ function getRollupConfig(platform) {
 
 export default [
   getRollupConfig('ali'),
-  getRollupConfig('wx'),
+  getRollupConfig('wechat'),
 ];
