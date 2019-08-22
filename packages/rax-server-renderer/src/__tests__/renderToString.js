@@ -121,6 +121,86 @@ describe('renderToString', () => {
     expect(str).toBe('<div style="line-height:1;"><p style="line-height:10vw;">Hello</p></div>');
   });
 
+  it('render items with same style', () => {
+    const style = {
+      color: '#f00',
+      fontSize: '16px'
+    };
+
+    function MyComponent(props, context) {
+      const data = [1, 2];
+      return (
+        <div>
+          {
+            data.map(() => <div style={style}>hello</div>)
+          }
+        </div>
+      );
+    }
+
+    const str = renderToString(<MyComponent />);
+    expect(str).toBe('<div><div style="color:#f00;font-size:16px;">hello</div><div style="color:#f00;font-size:16px;">hello</div></div>');
+  });
+
+  it('render items with a base style', () => {
+    const style = {
+      color: '#f00',
+      fontSize: '16px'
+    };
+
+    function MyComponent(props, context) {
+      const data = [1, 2];
+      return (
+        <div>
+          {
+            data.map((item, index) => <div style={{...style, fontSize: index + 'px'}}>hello</div>)
+          }
+        </div>
+      );
+    }
+
+    const str = renderToString(<MyComponent />);
+    expect(str).toBe('<div><div style="color:#f00;font-size:0px;">hello</div><div style="color:#f00;font-size:1px;">hello</div></div>');
+  });
+
+  it('render items with change to base style', () => {
+    const style = {
+      color: '#f00',
+      fontSize: '16px'
+    };
+
+    function MyComponent(props, context) {
+      const data = [1, 2];
+      return (
+        <div>
+          {
+            data.map((item, index) => {
+              // after map, style.fontSize will be 1px
+              style.fontSize = index + 'px';
+              return <div style={style}>hello</div>;
+            })
+          }
+        </div>
+      );
+    }
+
+    const str = renderToString(<MyComponent />);
+    expect(str).toBe('<div><div style="color:#f00;font-size:1px;">hello</div><div style="color:#f00;font-size:1px;">hello</div></div>');
+  });
+
+  it('render component with style from props', () => {
+    function MyComponent(props, context) {
+      return (
+        <div style={{fontSize: props.size + 'px'}}>
+          hello
+        </div>
+      );
+    }
+
+    const str = renderToString(<MyComponent size={12} />);
+    expect(str).toBe('<div style="font-size:12px;">hello</div>');
+  });
+
   it('render with options which set default unit to rpx', () => {
     const styles = {
       container: {
