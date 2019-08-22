@@ -1,7 +1,7 @@
 import { createElement, render } from 'rax';
 import * as DriverDOM from '../../';
 
-describe('Support css custome properties', () => {
+describe('Support CSS Custom Properties', () => {
   let container;
   let logs;
   const setProperty = CSSStyleDeclaration.prototype.setProperty;
@@ -22,14 +22,14 @@ describe('Support css custome properties', () => {
     logs = [];
   });
 
-  it('CSS custome properties works.', () => {
+  it('CSS Custom Properties works.', () => {
     render((
       <div style={{
         '--backgroundColor': 'red',
         backgroundColor: 'var(--backgroundColor)',
         width: '200px'
       }}>
-        Test CSS Cutome Properties.
+        Test CSS Custom Properties.
       </div>
     ), container, {
       driver: DriverDOM
