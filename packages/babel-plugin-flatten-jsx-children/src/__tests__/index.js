@@ -20,13 +20,6 @@ function getTransfromCode(code, opts) {
   }).code;
 }
 
-// getTransfromCode(`
-// <div>
-//   <div>a</div>
-//   <div>b</div>
-// </div>
-//     `);
-
 describe('flatten children for createElement', () => {
   it('flatten children', () => {
     expect(getTransfromCode(`
