@@ -12,13 +12,20 @@ function getTransfromCode(code, opts) {
       require.resolve('@babel/preset-react'),
     ],
     plugins: [
+      flattenChildrenPlugin,
       ['@babel/plugin-transform-react-jsx', {
         pragma: 'createElement'
       }],
-      flattenChildrenPlugin
     ],
   }).code;
 }
+
+// getTransfromCode(`
+// <div>
+//   <div>a</div>
+//   <div>b</div>
+// </div>
+//     `);
 
 describe('flatten children for createElement', () => {
   it('flatten children', () => {
