@@ -7,6 +7,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
+import { isFunction } from '../types';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -25,7 +26,7 @@ function handleError(instance, error) {
 
   while (instance) {
     let internal = instance._internal;
-    if (typeof instance.componentDidCatch === 'function') {
+    if (isFunction(instance.componentDidCatch)) {
       boundary = instance;
       break;
     } else if (internal && internal._parentInstance) {
@@ -88,7 +89,7 @@ class CompositeComponent extends BaseComponent {
       if (componentPrototype && componentPrototype.render) {
         // Class Component instance
         instance = new Component(publicProps, publicContext);
-      } else if (typeof Component === 'function') {
+      } else if (isFunction(Component)) {
         // Functional reactive component with hooks
         instance = new ReactiveComponent(Component, ref);
       } else {
@@ -270,7 +271,7 @@ class CompositeComponent extends BaseComponent {
       let partial = queue[i];
       Object.assign(
         nextState,
-        typeof partial === 'function' ?
+        isFunction(partial) ?
           partial.call(instance, nextState, props, context) :
           partial
       );
