@@ -4,7 +4,7 @@
   "description": "Runtime for jsx2mp.",
   "miniprogram": {
     "ali": "dist/jsx2mp-runtime.ali.esm.js",
-    "wx": "dist/jsx2mp-runtime.wx.esm.js"
+    "wechat": "dist/jsx2mp-runtime.wx.esm.js"
   },
   "files": [
     "dist"

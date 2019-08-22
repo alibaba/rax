@@ -100,7 +100,11 @@ module.exports = {
 
     removeRaxImports(parsed.ast);
     renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
-    renameNpmModules(parsed.ast);
+
+    const currentNodeModulePath = join(options.sourcePath, 'npm');
+    const npmRelativePath = relative(dirname(options.resourcePath), currentNodeModulePath);
+    renameNpmModules(parsed.ast, npmRelativePath, options.resourcePath, options.cwd);
+
     addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
@@ -179,13 +183,36 @@ function renameCoreModule(ast, outputPath, targetFileDir) {
   });
 }
 
+const WEEX_MODULE_REG = /^@weex(-module)?\//;
 
-function renameNpmModules(ast) {
+function isNpmModule(value) {
+  return !(value[0] === '.' || value[0] === '/');
+}
+
+function isWeexModule(value) {
+  return WEEX_MODULE_REG.test(value);
+}
+
+
+function renameNpmModules(ast, npmRelativePath, filename, cwd) {
+  const source = (value, prefix, filename, rootContext) => {
+    const nodeModulePath = join(rootContext, 'node_modules');
+    const target = require.resolve(value, { paths: [nodeModulePath] });
+    const modulePathSuffix = relative(join(nodeModulePath, value), target);
+    // ret => '../npm/_ali/universal-goldlog/lib/index.js
+    let ret = join(prefix, value, modulePathSuffix);
+    if (ret[0] !== '.') ret = './' + ret;
+
+    return t.stringLiteral(normalizeFileName(ret));
+  };
+
   traverse(ast, {
     ImportDeclaration(path) {
-      const source = path.get('source');
-      if (source.isStringLiteral() && ['.', '/'].indexOf(source.node.value[0]) === -1) {
-        source.replaceWith(t.stringLiteral(normalizeFileName(join('/npm', source.node.value))));
+      const { value } = path.node.source;
+      if (isWeexModule(value)) {
+        path.remove();
+      } else if (isNpmModule(value)) {
+        path.node.source = source(value, npmRelativePath, filename, cwd);
       }
     }
   });
