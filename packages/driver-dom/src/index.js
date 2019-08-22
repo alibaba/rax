@@ -326,7 +326,13 @@ export function setAttribute(node, propKey, propValue) {
 
 export function setStyle(node, style) {
   for (let prop in style) {
-    node.style[prop] = convertUnit(style[prop]);
+    // Support CSS custom properties
+    const convertedValue = convertUnit(style[prop]);
+    if (prop[0] === '-' && prop[1] === '-') {
+      node.style.setProperty(prop, convertedValue);
+    } else {
+      node.style[prop] = convertedValue;
+    }
   }
 }
 
@@ -338,7 +344,7 @@ function recolectHydrationChild(hydrationParent) {
   const nativeLength = hydrationParent.childNodes.length;
   const vdomLength = hydrationParent[HYDRATION_INDEX] || 0;
   if (nativeLength - vdomLength > 0) {
-    for (let i = nativeLength - 1; i >= vdomLength; i-- ) {
+    for (let i = nativeLength - 1; i >= vdomLength; i--) {
       hydrationParent.removeChild(hydrationParent.childNodes[i]);
     }
   }
