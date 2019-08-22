@@ -1,5 +1,6 @@
 const rollup = require('rollup');
 const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
 const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
@@ -17,6 +18,11 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
     input: `./packages/${packageName}/${entry}`,
     plugins: [
       resolve(),
+      commonjs({
+        // style-unit for build while packages linked
+        // use /pakacges/ would get error and it seemed to be a rollup-plugin-commonjs bug
+        include: /(node_modules|style-unit)/,
+      }),
       babel({
         exclude: 'node_modules/**', // only transpile our source code
         presets: [

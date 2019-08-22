@@ -6,6 +6,7 @@ function Document(props) {
     publicPath,
     initialHtml,
     initialData,
+    scripts,
   } = props;
 
   return (
@@ -20,13 +21,14 @@ function Document(props) {
         <div id="root" dangerouslySetInnerHTML={{ __html: initialHtml || '' }} />
         {/* initial data from server side */}
         <script data-from="server" dangerouslySetInnerHTML={{__html: 'window.__INITIAL_DATA__=' + initialData}} />
-        <script src={`${publicPath}web/index.js`} />
+        {scripts.map((src) => <script src={`${publicPath}${src}`} />)}
       </body>
     </html>
   );
   <%_ } else { -%>
   const {
-    publicPath
+    publicPath,
+    scripts
   } = props;
 
   return (
@@ -39,7 +41,7 @@ function Document(props) {
       <body>
         {/* root container */}
         <div id="root" />
-        <script src={`${publicPath}web/index.js`} />
+        {scripts.map((src) => <script src={`${publicPath}${src}`} />)}
       </body>
     </html>
   );
