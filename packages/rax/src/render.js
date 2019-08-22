@@ -1,6 +1,6 @@
 import inject from './vdom/inject';
 import Instance from './vdom/instance';
-import { isFunction } from './is';
+import { isFunction } from './types';
 
 function render(element, container, options, callback) {
   // Compatible with `render(element, container, callback)`

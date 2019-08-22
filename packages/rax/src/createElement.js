@@ -2,7 +2,7 @@ import Host from './vdom/host';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
 import { invokeMinifiedError } from './error';
-import { isString, isArray } from './is';
+import { isString, isArray } from './types';
 
 const RESERVED_PROPS = {
   key: true,

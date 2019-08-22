@@ -7,7 +7,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
-import { isFunction } from '../is';
+import { isFunction } from '../types';
 
 function performInSandbox(fn, instance, callback) {
   try {

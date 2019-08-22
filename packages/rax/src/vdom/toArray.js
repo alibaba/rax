@@ -1,4 +1,4 @@
-import { isArray } from '../is';
+import { isArray } from '../types';
 
 export default function toArray(obj) {
   if (!isArray(obj)) {

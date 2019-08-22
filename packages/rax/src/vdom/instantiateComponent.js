@@ -1,5 +1,5 @@
 import Host from './host';
-import { isString, isNumber, isObject, isArray } from '../is';
+import { isString, isNumber, isObject, isArray } from '../types';
 import { invokeMinifiedError } from '../error';
 
 function instantiateComponent(element) {

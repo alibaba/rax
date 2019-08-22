@@ -1,5 +1,5 @@
 import { useState, useEffect } from './hooks';
-import { isFunction, isArray } from './is';
+import { isFunction, isArray } from './types';
 
 class ValueEmitter {
   constructor(defaultValue) {

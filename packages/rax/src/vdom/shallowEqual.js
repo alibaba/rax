@@ -1,4 +1,4 @@
-import { isObject } from '../is';
+import { isObject } from '../types';
 
 const hasOwnProperty = {}.hasOwnProperty;
 

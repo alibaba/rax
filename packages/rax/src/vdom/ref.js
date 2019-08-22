@@ -2,7 +2,7 @@
  * Ref manager
  */
 import { invokeMinifiedError } from '../error';
-import { isFunction, isObject } from '../is';
+import { isFunction, isObject } from '../types';
 
 export default {
   update(prevElement, nextElement, component) {

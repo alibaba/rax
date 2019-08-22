@@ -1,4 +1,4 @@
-import { isArray } from '../is';
+import { isArray } from '../types';
 
 function traverseChildren(children, result) {
   if (isArray(children)) {

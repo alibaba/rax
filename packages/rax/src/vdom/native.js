@@ -6,7 +6,7 @@ import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
-import { isFunction, isArray } from '../is';
+import { isFunction, isArray } from '../types';
 
 const STYLE = 'style';
 const CHILDREN = 'children';

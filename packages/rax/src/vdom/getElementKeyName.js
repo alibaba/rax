@@ -1,4 +1,4 @@
-import { isString } from '../is';
+import { isString } from '../types';
 
 export default (children, element, index) => {
   const elementKey = element && element.key;

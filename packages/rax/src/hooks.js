@@ -1,7 +1,7 @@
 import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
-import { isFunction } from './is';
+import { isFunction } from './types';
 import { invokeMinifiedError } from './error';
 
 function getCurrentInstance() {
