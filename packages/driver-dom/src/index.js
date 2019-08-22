@@ -326,7 +326,12 @@ export function setAttribute(node, propKey, propValue) {
 
 export function setStyle(node, style) {
   for (let prop in style) {
-    node.style[prop] = convertUnit(style[prop]);
+    //Support CSS custom properties
+    if(prop.indexOf('--') === 0){
+      node.style.setProperty(prop,convertUnit(style[prop]));
+    }else{
+      node.style[prop] = convertUnit(style[prop]);
+    }
   }
 }
 
