@@ -1,4 +1,4 @@
-import Component from './vdom/component';
+import { useState, useEffect } from './hooks';
 import { isFunction, isArray } from './is';
 
 class ValueEmitter {
@@ -23,38 +23,28 @@ class ValueEmitter {
 let uniqueId = 0;
 
 export default function createContext(defaultValue) {
-  const contextProp = '__context_' + uniqueId++ + '__';
+  const contextProp = '__ctx' + uniqueId++;
   const stack = [];
   const defaultEmitter = new ValueEmitter(defaultValue);
 
-  class Provider extends Component {
-    constructor(props) {
-      super(props);
-      const value = this.props.value !== undefined ? this.props.value : defaultValue;
-      this.emitter = new ValueEmitter(value);
-    }
+  function Provider(props) {
+    const propsValue = props.value !== undefined ? props.value : defaultValue;
+    const [value, setValue] = useState(propsValue);
+    const [emitter] = useState(() => new ValueEmitter(value));
+    emitter.value = propsValue;
 
-    componentDidMount() {
+    if (propsValue !== value) setValue(propsValue);
+
+    useEffect(() => {
       stack.pop();
-    }
+    });
 
-    componentWillReceiveProps(nextProps) {
-      if (this.props.value !== nextProps.value) {
-        this.emitter.value = nextProps.value !== undefined ? nextProps.value : defaultValue;
-      }
-    }
+    useEffect(() => {
+      emitter.emit();
+    }, [value]);
 
-    componentDidUpdate(prevProps) {
-      stack.pop();
-      if (this.props.value !== prevProps.value) {
-        this.emitter.emit();
-      }
-    }
-
-    render() {
-      stack.push(this.emitter);
-      return this.props.children;
-    }
+    stack.push(emitter);
+    return props.children;
   }
 
   function readEmitter(instance) {
@@ -72,37 +62,32 @@ export default function createContext(defaultValue) {
   Provider.readEmitter = readEmitter;
   Provider.contextProp = contextProp;
 
-  class Consumer extends Component {
-    componentWillMount() {
-      this.emitter = readEmitter(this);
-      this.setState({
-        value: this.emitter.value
-      });
-      this.onUpdate = value => this.state.value !== value && this.setState({value});
+  function Consumer(props) {
+    const [emitter] = useState(() => readEmitter(this));
+    const [value, setValue] = useState(emitter.value);
+
+    if (value !== emitter.value) {
+      setValue(emitter.value);
+      return; // Interrupt execution of consumer.
     }
 
-    componentDidMount() {
-      this.emitter.on(this.onUpdate);
-    }
-
-    componentWillReceiveProps() {
-      if (this.state.value !== this.emitter.value) {
-        this.setState({
-          value: this.emitter.value
-        });
+    function onUpdate(updatedValue) {
+      if (value !== updatedValue) {
+        setValue(updatedValue);
       }
     }
 
-    componentWillUnmount() {
-      this.emitter.off(this.onUpdate);
-    }
+    useEffect(() => {
+      emitter.on(onUpdate);
+      return () => {
+        emitter.off(onUpdate);
+      };
+    }, []);
 
-    render() {
-      let children = this.props.children;
-      let consumer = isArray(children) ? children[0] : children;
-      if (isFunction(consumer)) {
-        return consumer(this.state.value);
-      }
+    const children = props.children;
+    const consumer = isArray(children) ? children[0] : children;
+    if (isFunction(consumer)) {
+      return consumer(value);
     }
   }
 
