@@ -1,8 +1,9 @@
-/* global getCurrentPages */
+/* global getCurrentPages, PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
+import { getComponentLifecycle } from '@@ADAPTER@@';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 
@@ -18,7 +19,7 @@ const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 function getPageCycles(Klass) {
   let config = {
     onLoad(options) {
-      this.instance = new Klass(this.props);
+      this.instance = new Klass(this[PROPS]);
       // Reverse sync from state to data.
       this.instance._setInternal(this);
       // Add route information for page.
@@ -43,26 +44,23 @@ function getPageCycles(Klass) {
       if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
   };
-
   [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH].forEach((hook) => {
     config[hook] = function(e) {
       return this.instance._trigger(hook, e);
     };
   });
-
   return config;
 }
 
 function getComponentCycles(Klass) {
-  return {
-    didMount() {
-      // `this` point to page/component insatnce.
-      const props = Object.assign({}, this.props, getComponentProps(this.props.__tagId));
+  return getComponentLifecycle({
+    mount: function() {
+      const props = Object.assign({}, this[PROPS], getComponentProps(this[PROPS].__tagId));
       this.instance = new Klass(props);
       this.instance.type = Klass;
 
-      if (this.props.hasOwnProperty('__tagId')) {
-        const componentId = this.props.__tagId;
+      if (this[PROPS].hasOwnProperty('__tagId')) {
+        const componentId = this[PROPS].__tagId;
         setComponentInstance(componentId, this.instance);
       }
 
@@ -74,11 +72,10 @@ function getComponentCycles(Klass) {
       this.data = this.instance.state;
       this.instance._mountComponent();
     },
-    didUpdate() {},
-    didUnmount() {
+    unmount: function() {
       this.instance._unmountComponent();
-    },
-  };
+    }
+  });
 }
 
 function createProxyMethods(events) {
@@ -105,12 +102,12 @@ function createProxyMethods(events) {
             }
           });
         } else {
-          Object.keys(this.props).forEach(key => {
+          Object.keys(this[PROPS]).forEach(key => {
             if ('data-arg-context' === key) {
-              context = this.props[key] === 'this' ? this.instance : this.props[key];
+              context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
             } else if (isDatasetKebabArg(key)) {
               // `data-arg-` length is 9.
-              datasetArgs[key.slice(9)] = this.props[key];
+              datasetArgs[key.slice(9)] = this[PROPS][key];
             }
           });
         }
@@ -150,7 +147,7 @@ function createConfig(component, options) {
   const { events, isPage } = options;
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
   const config = {
-    data() {},
+    data: {},
     props: {},
     ...cycles,
   };
@@ -204,11 +201,13 @@ function isClassComponent(Klass) {
 }
 
 const DATASET_KEBAB_ARG_REG = /data-arg-\d+/;
+
 function isDatasetKebabArg(str) {
   return DATASET_KEBAB_ARG_REG.test(str);
 }
 
 const DATASET_ARG_REG = /arg-?(\d+)/;
+
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
 }

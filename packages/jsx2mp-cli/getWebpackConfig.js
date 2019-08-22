@@ -1,10 +1,11 @@
 const webpack = require('webpack');
 const { readJSONSync } = require('fs-extra');
-const { join, resolve, relative, dirname } = require('path');
+const { join, relative, dirname } = require('path');
 const chalk = require('chalk');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
 const spinner = require('./utils/spinner');
 const moduleResolve = require('./utils/moduleResolve');
+const platformConfig = require('./utils/platformConfig');
 
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
 const PageLoader = require.resolve('jsx2mp-loader/src/page-loader');
@@ -29,7 +30,12 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
-  let loaderParams = JSON.stringify({ platform: options.platform, entryPath: entryFilePath });
+  const { platform = 'ali' } = options;
+
+  let loaderParams = JSON.stringify({
+    platform: platformConfig[platform],
+    entryPath: entryFilePath
+  });
 
   if (type === 'project') {
     let appConfig = null;
@@ -74,7 +80,7 @@ function getDepPath(path, rootContext) {
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  let { entryPath, type, workDirectory, distDirectory } = options;
+  let { entryPath, type, workDirectory, distDirectory, platform = 'ali' } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
   entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
@@ -97,7 +103,7 @@ module.exports = (options = {}) => {
               options: {
                 mode: options.mode,
                 entryPath: relativeEntryFilePath,
-                platform: options.platform
+                platform: platformConfig[platform]
               },
             },
             {
@@ -128,7 +134,7 @@ module.exports = (options = {}) => {
           NODE_ENV: '"production"',
         }
       }),
-      new RuntimeWebpackPlugin(),
+      new RuntimeWebpackPlugin({ platform }),
       new webpack.ProgressPlugin( (percentage, message) => {
         if (percentage === 0) {
           buildStartTime = Date.now();

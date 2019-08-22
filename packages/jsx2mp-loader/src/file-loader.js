@@ -8,7 +8,8 @@ const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
 const ComponentLoader = require.resolve('./component-loader');
 
-const dependenciesCache = {};
+const MINIAPP_CONFIG_FIELD = 'miniappConfig';
+
 module.exports = function fileLoader(content) {
   const loaderHandled = this.loaders.some(
     ({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1
@@ -20,68 +21,61 @@ module.exports = function fileLoader(content) {
   const rootContext = this.rootContext;
   const currentNodeModulePath = join(rootContext, 'node_modules');
   const outputPath = this._compiler.outputPath;
+  const relativeResourcePath = relative(rootContext, this.resourcePath);
 
   const isNodeModule = cached(function isNodeModule(path) {
     return path.indexOf(currentNodeModulePath) === 0;
   });
 
-  const getNpmName = cached(function getNpmName(relativeNpmPath) {
+  const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
     const isScopedNpm = relativeNpmPath[0] === '@';
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
   if (isNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
-    const npmName = getNpmName(relativeNpmPath);
-    const sourcePackageJSONPath = join(currentNodeModulePath, npmName, 'package.json');
+    const npmFolderName = getNpmFolderName(relativeNpmPath);
+    const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
+    const sourcePackageJSONPath = join(sourcePackagePath, 'package.json');
+
     const pkg = readJSONSync(sourcePackageJSONPath);
-    if ('miniappConfig' in pkg) {
-      // Copy whole directory for miniapp component
-      if (!dependenciesCache[npmName]) {
-        dependenciesCache[npmName] = true;
-        if (isSymbolic(join(currentNodeModulePath, npmName))) {
-          throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.');
-        }
-        copySync(
-          join(currentNodeModulePath, npmName),
-          join(outputPath, 'npm', npmName)
-        );
-        // modify referenced component location
-        if (pkg.miniappConfig.main) {
-          const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
-          if (existsSync(componentConfigPath)) {
-            const componentConfig = readJSONSync(componentConfigPath);
-            if (componentConfig.usingComponents) {
-              for (let key in componentConfig.usingComponents) {
-                if (componentConfig.usingComponents.hasOwnProperty(key)) {
-                  componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
-                }
-              }
+    const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
+
+    // Is miniapp compatible component.
+    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main) {
+      // Only copy first level directory for miniapp component
+      const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
+      const source = join(sourcePackagePath, firstLevelFolder);
+      const target = join(outputPath, 'npm', npmName, firstLevelFolder);
+      mkdirpSync(target);
+      copySync(source, target, {
+        filter: (filename) => !/__(mocks|tests?)__/.test(filename),
+      });
+
+      // Modify referenced component location
+      const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+      if (existsSync(componentConfigPath)) {
+        const componentConfig = readJSONSync(componentConfigPath);
+        if (componentConfig.usingComponents) {
+          for (let key in componentConfig.usingComponents) {
+            if (componentConfig.usingComponents.hasOwnProperty(key)) {
+              componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
             }
-            writeJSONSync(componentConfigPath, componentConfig);
-          } else {
-            this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
           }
         }
+        writeJSONSync(componentConfigPath, componentConfig);
+      } else {
+        this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
       }
     } else {
-      // Copy package.json
-      if (!dependenciesCache[npmName]) {
-        dependenciesCache[npmName] = true;
-        const target = normalizeFileName(join(outputPath, 'npm', npmName, 'package.json'));
-        if (!existsSync(target))
-          copySync(sourcePackageJSONPath, target, { errorOnExist: false });
-      }
-
       // Copy file
       const splitedNpmPath = relativeNpmPath.split('/');
       if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
 
       const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
-
-      const npmRelativePath = relative(this.resourcePath, join(outputPath, 'npm'));
-      const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath);
+      const npmRelativePath = relative(dirname(this.resourcePath), currentNodeModulePath);
+      const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath, relativeResourcePath);
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -97,7 +91,7 @@ module.exports = function fileLoader(content) {
     const distSourceDirPath = dirname(distSourcePath);
     const npmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
 
-    const { code } = transformCode(rawContent, loaderOptions, npmRelativePath);
+    const { code } = transformCode(rawContent, loaderOptions, npmRelativePath, relativeResourcePath);
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     writeFileSync(distSourcePath, code, 'utf-8');
@@ -106,7 +100,7 @@ module.exports = function fileLoader(content) {
   return content;
 };
 
-function transformCode(rawCode, loaderOptions, npmRelativePath = '') {
+function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePath) {
   const presets = [];
   const plugins = [
     [
@@ -124,6 +118,7 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '') {
 
   return transformSync(rawCode, {
     presets, plugins,
+    filename: resourcePath,
   });
 }
 
