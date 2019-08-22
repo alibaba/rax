@@ -9,7 +9,7 @@ module.exports = (err, stats) => {
     return false;
   }
 
-  if (stats.hasErrors()) {
+  if (stats && stats.hasErrors()) {
     let errArr = [];
     try {
       errArr = stats.stats.map(v => v.compilation.errors);

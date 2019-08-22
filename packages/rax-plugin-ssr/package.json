@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-ssr",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "rax ssr plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "address": "^1.0.1",
-    "rax-ssr-dev-server": "^2.0.0-0",
-    "universal-app-shell-loader": "^0.2.3"
+    "@babel/core": "7.2.0",
+    "qs": "^6.8.0",
+    "rax-compile-config": "^0.1.2"
   }
 }

@@ -30,7 +30,7 @@ try {
 export function useRouter(routerConfig) {
   _routerConfig = routerConfig;
 
-  if (isWeb) {
+  if (!isNode) {
     const { history = createHashHistory(), routes } = routerConfig;
     _history = history;
   }

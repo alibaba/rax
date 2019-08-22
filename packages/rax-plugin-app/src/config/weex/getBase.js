@@ -3,6 +3,7 @@
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
 const getWebpackBase = require('../getWebpackBase');
 const setEntry = require('../setEntry');
+const setUserConfig = require('../user/setConfig');
 
 module.exports = (context) => {
   const config = getWebpackBase(context);
@@ -12,6 +13,8 @@ module.exports = (context) => {
 
   config.plugin('weexFrame')
     .use(WeexFrameworkBanner);
+
+  setUserConfig(config, context, 'weex');
 
   return config;
 };

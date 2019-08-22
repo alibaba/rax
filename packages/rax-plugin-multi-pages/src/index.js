@@ -4,13 +4,13 @@ const consoleClear = require('console-clear');
 const { handleWebpackErr } = require('rax-compile-config');
 const qrcode = require('qrcode-terminal');
 
-const getEntrys = require('./getEntrys');
+const getEntries = require('./getEntries');
 const setEntry = require('./setEntry');
 
 module.exports = ({ context, chainWebpack, onHook }) => {
   const { rootDir, command, userConfig } = context;
   const { outputDir } = userConfig;
-  const entrys = getEntrys(context);
+  const entries = getEntries(context);
 
   let targets = [];
 
@@ -18,14 +18,14 @@ module.exports = ({ context, chainWebpack, onHook }) => {
     targets = context.__configArr.map(v => v.name);
 
     if (~targets.indexOf('web')) {
-      setEntry(config.getConfig('web'), context, entrys, 'web');
+      setEntry(config.getConfig('web'), context, entries, 'web');
 
-      if (command === 'dev') {
+      if (command === 'dev' && process.env.RAX_SSR !== 'true') {
         const webConfig = config.getConfig('web');
         webConfig.devServer.set('before', (app, devServer) => {
           const memFs = devServer.compiler.compilers[0].outputFileSystem;
-          entrys.forEach(({ entryName }) => {
-            app.get(`/${entryName}`, function(req, res) {
+          entries.forEach(({ entryName }) => {
+            app.get(`/web/${entryName}`, function(req, res) {
               const htmlPath = path.resolve(rootDir, outputDir, `web/${entryName}.html`);
               const outPut = memFs.readFileSync(htmlPath).toString();
               res.send(outPut);
@@ -36,7 +36,7 @@ module.exports = ({ context, chainWebpack, onHook }) => {
     }
 
     if (~targets.indexOf('weex')) {
-      setEntry(config.getConfig('weex'), context, entrys, 'weex');
+      setEntry(config.getConfig('weex'), context, entries, 'weex');
     }
   });
 
@@ -55,15 +55,15 @@ module.exports = ({ context, chainWebpack, onHook }) => {
 
     if (~targets.indexOf('web')) {
       console.log(chalk.green('[Web] Development server at:'));
-      entrys.forEach(({ entryName }) => {
-        console.log('   ', chalk.underline.white(`${url}/${entryName}`));
+      entries.forEach(({ entryName }) => {
+        console.log('   ', chalk.underline.white(`${url}/web/${entryName}`));
       });
       console.log();
     }
 
     if (~targets.indexOf('weex')) {
       console.log(chalk.green('[Weex] Development server at:'));
-      entrys.forEach(({ entryName }) => {
+      entries.forEach(({ entryName }) => {
         const weexUrl = `${url}/weex/${entryName}.js?wh_weex=true`;
         console.log('   ', chalk.underline.white(weexUrl));
         if (process.env.QRCODE === 'true') {
