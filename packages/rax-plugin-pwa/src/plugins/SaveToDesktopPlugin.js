@@ -20,7 +20,7 @@ module.exports = class SaveToDesktopPlugin {
   }
 
   apply(compiler) {
-    const { manifest, context } = this.options
+    const { manifest, context } = this.options;
 
     if (!manifest) {
       // Exit if no manifest config
@@ -34,19 +34,19 @@ module.exports = class SaveToDesktopPlugin {
       const icons = [];
       const iconFile = path.join(rootDir, manifest.icon || '');
       const mimeType = mime.getType(iconFile);
-      
+
       if (!manifest.icon) throw new Error('Can not find icon in manifest');
       if (!existsSync(iconFile)) throw new Error(`File '${iconFile}' is not exists, please check.`);
       if (!supportedMimeTypes.includes(mimeType)) throw new Error(`File '${iconFile}' is not support, supported MIME types are "image/png", "image/jpeg", "image/bmp".`);
       // Process image
       jimp.read(iconFile, (err, img) => {
-        if (err) throw new IconError(`It was not possible to read '${iconFile}'.`)
+        if (err) throw new Error(`It was not possible to read '${iconFile}'.`);
         // Resize image to specific size
         iconSizes.forEach((currentSize) => {
           const dimensions = `${currentSize}x${currentSize}`;
           const fileName = `public/icon_${dimensions}.${mime.getExtension(mimeType)}`;
           const iconPublicUrl = publicPath + fileName;
-          // Resize image 
+          // Resize image
           img.resize(currentSize, currentSize).getBuffer(mimeType, (resizeErr, buffer) => {
             if (resizeErr) throw new Error(`It was not possible to retrieve buffer of '${iconFile}'.`);
             compilation.assets[fileName] = new RawSource(buffer);
@@ -69,12 +69,12 @@ module.exports = class SaveToDesktopPlugin {
         };
         delete manifestJsonValue.icon;
         compilation.assets['web/manifest.json'] = new RawSource(JSON.stringify(manifestJsonValue));
-        // Generate Html tags        
-        compilation.assets['index.html'] = new RawSource(
-          compilation.assets['index.html'].source().replace('<head>', `<head>${tags}`)
+        // Generate Html tags
+        compilation.assets['web/index.html'] = new RawSource(
+          compilation.assets['web/index.html'].source().replace('<head>', `<head>${tags}`)
         );
         callback();
       });
     });
   }
-}
+};
