@@ -1,5 +1,0 @@
-<view class="my-title" data-x="{{x}}">
-  <view data-extra>slot: <slot></slot></view>
-</view>
-<view>x: {{x}}</view>
-<button onTap="handleTap">plus<text>One</text></button>
