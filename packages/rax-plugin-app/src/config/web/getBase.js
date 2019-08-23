@@ -4,6 +4,7 @@ const UniversalDocumentPlugin = require('../../plugins/UniversalDocumentPlugin')
 const PWAAppShellPlugin = require('../../plugins/PWAAppShellPlugin');
 const getWebpackBase = require('../getWebpackBase');
 const setEntry = require('../setEntry');
+const setUserConfig = require('../user/setConfig');
 
 module.exports = (context) => {
   const config = getWebpackBase(context);
@@ -20,6 +21,8 @@ module.exports = (context) => {
     .use(PWAAppShellPlugin, [{
       path: 'src/shell/index.jsx',
     }]);
+
+  setUserConfig(config, context, 'web');
 
   return config;
 };

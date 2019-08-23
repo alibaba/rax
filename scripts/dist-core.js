@@ -36,7 +36,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
         ],
       }),
       replace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
+        'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),
       }),
       shouldMinify ? uglify({
         compress: {

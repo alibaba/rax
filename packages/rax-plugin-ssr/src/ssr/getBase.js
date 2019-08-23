@@ -15,12 +15,6 @@ module.exports = (context) => {
       .add(entries[key]);
   });
 
-  config.resolve.alias
-    .clear()
-    .set('@core/app', 'universal-app-runtime')
-    .set('@core/page', 'universal-app-runtime')
-    .set('@core/router', 'universal-app-runtime');
-
   config.target('node');
 
   config.output
