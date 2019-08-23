@@ -6,27 +6,27 @@ module.exports = function() {
       JSXElement(path) {
         const { node } = path;
         if (node.children.length > 0) {
-          let chidlren = [];
+          let children = [];
 
           node.children.forEach(n => {
             if (t.isJSXText(n)) {
               const str = n.value.trim();
               if (str) {
-                chidlren.push(t.stringLiteral(str));
+                children.push(t.stringLiteral(str));
               }
             } else if (t.isJSXExpressionContainer(n)) {
               if (t.isArrayExpression(n.expression)) {
-                chidlren = chidlren.concat(n.expression.elements);
+                children = children.concat(n.expression.elements);
               } else {
-                chidlren.push(n.expression);
+                children.push(n.expression);
               }
             } else {
-              chidlren.push(n);
+              children.push(n);
             }
           });
 
-          if (chidlren.length > 1) {
-            let arrayExpression = t.jsxExpressionContainer(t.arrayExpression(chidlren));
+          if (children.length > 1) {
+            let arrayExpression = t.jsxExpressionContainer(t.arrayExpression(children));
             node.children = [arrayExpression];
           }
         }
