@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-app",
-  "version": "0.1.10",
+  "version": "0.1.11-1",
   "description": "rax app base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -33,6 +33,7 @@
     "less-loader": "^5.0.0",
     "loader-utils": "^1.1.0",
     "lodash": "^4.17.15",
+    "mime": "^2.4.4",
     "mini-css-extract-plugin": "^0.5.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "postcss": "^7.0.17",

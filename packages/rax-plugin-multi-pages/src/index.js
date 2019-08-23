@@ -25,7 +25,7 @@ module.exports = ({ context, chainWebpack, onHook }) => {
         webConfig.devServer.set('before', (app, devServer) => {
           const memFs = devServer.compiler.compilers[0].outputFileSystem;
           entries.forEach(({ entryName }) => {
-            app.get(`/web/${entryName}`, function(req, res) {
+            app.get(`/pages/${entryName}`, function(req, res) {
               const htmlPath = path.resolve(rootDir, outputDir, `web/${entryName}.html`);
               const outPut = memFs.readFileSync(htmlPath).toString();
               res.send(outPut);
@@ -56,7 +56,7 @@ module.exports = ({ context, chainWebpack, onHook }) => {
     if (~targets.indexOf('web')) {
       console.log(chalk.green('[Web] Development server at:'));
       entries.forEach(({ entryName }) => {
-        console.log('   ', chalk.underline.white(`${url}/web/${entryName}`));
+        console.log('   ', chalk.underline.white(`${url}/pages/${entryName}`));
       });
       console.log();
     }
