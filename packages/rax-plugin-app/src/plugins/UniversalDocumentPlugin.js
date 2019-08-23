@@ -23,7 +23,7 @@ module.exports = class UniversalDocumentPlugin {
       this.insertScript = options.insertScript;
     }
 
-    this.documentPath = options.path ? options.path : 'src/document/index.jsx';
+    this.documentPath = options.path;
   }
 
   apply(compiler) {

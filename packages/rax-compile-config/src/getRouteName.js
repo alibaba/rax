@@ -14,8 +14,14 @@ module.exports = (route, rootDir) => {
     return route.component.replace(/\//g, '_');
   }
 
-  if (routeName === 'directory') {
-    console.log(path.dirname(route.component));
-    return path.dirname(route.component);
+  if (routeName === 'pages') {
+    try {
+      // get Home from pages/Home/index or pages/Home
+      const name = route.component.match(/pages\/([^\/]*)/);
+      return name[1];
+    } catch (e) {
+      console.error('"routeName": "pages" mode request routes in /pages directory');
+      process.exit(1);
+    }
   }
 };
