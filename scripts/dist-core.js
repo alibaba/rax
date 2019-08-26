@@ -7,25 +7,31 @@ const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
 
-async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd' }) {
+const IIFE = 'iife';
+
+function transformBundleFormat({input, name, format, useDefault}) {
+  return format === IIFE ? memory({
+    path: input,
+    contents: `
+    import ${useDefault ? name : `* as ${name}`} from './index.js';
+    if (typeof module !== 'undefined') module.exports = ${name};
+    else self.${name} = ${name};
+    `
+  }) : null;
+}
+
+async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd', useDefault = false }) {
   const output = {
     name,
     exports: 'named',
     sourcemap: true
   };
-
+  const input = `./packages/${packageName}/${entry}`;
   // For development
   const bundle = await rollup.rollup({
-    input: `./packages/${packageName}/${entry}`,
+    input,
     plugins: [
-      packageName === 'rax' && format === 'iife' ? memory({
-        path: `./packages/${packageName}/${entry}`,
-        contents: `
-        import * as Rax from './index.js';
-        if (typeof module!='undefined') module.exports = Rax;
-        else self.Rax = Rax;
-        `
-      }) : null,
+      transformBundleFormat({ input, name, format, useDefault }),
       resolve(),
       commonjs({
         // style-unit for build while packages linked
@@ -72,9 +78,12 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
 
     console.log(file, `${(size / 1024).toPrecision(3)}kb (gzip)`);
   } else {
-    let ext = format === 'esm' ? '.mjs' : '.js';
-    if (packageName === 'rax' && format === 'umd') {
-      ext = '.umd.js';
+    let ext = '.js';
+    switch (format) {
+      case 'umd': ext = '.umd.js';
+        break;
+      case 'esm': ext = '.mjs';
+        break;
     }
     await bundle.write({
       ...output,
@@ -84,22 +93,25 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
   }
 }
 
-build({ package: 'rax', name: 'Rax', format: 'iife' });
-build({ package: 'rax', name: 'Rax', format: 'iife', shouldMinify: true });
 build({ package: 'rax', name: 'Rax' });
+build({ package: 'rax', name: 'Rax', format: IIFE });
+build({ package: 'rax', name: 'Rax', format: IIFE, shouldMinify: true });
 build({ package: 'rax', name: 'Rax', format: 'esm' });
 
 build({ package: 'driver-dom', name: 'DriverDOM' });
+build({ package: 'driver-dom', name: 'DriverDOM', format: IIFE });
+build({ package: 'driver-dom', name: 'DriverDOM', format: IIFE, shouldMinify: true });
 build({ package: 'driver-dom', name: 'DriverDOM', format: 'esm' });
-build({ package: 'driver-dom', name: 'DriverDOM', shouldMinify: true });
 
 build({ package: 'driver-weex', name: 'DriverWeex' });
+build({ package: 'driver-weex', name: 'DriverWeex', format: IIFE });
+build({ package: 'driver-weex', name: 'DriverWeex', format: IIFE, shouldMinify: true });
 build({ package: 'driver-weex', name: 'DriverWeex', format: 'esm' });
-build({ package: 'driver-weex', name: 'DriverWeex', shouldMinify: true });
 
 build({ package: 'driver-worker', name: 'DriverWorker' });
+build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, useDefault: true });
+build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, useDefault: true, shouldMinify: true });
 build({ package: 'driver-worker', name: 'DriverWorker', format: 'esm' });
-build({ package: 'driver-worker', name: 'DriverWorker', shouldMinify: true });
 
 build({ package: 'rax-miniapp-renderer', format: 'cjs' });
 build({ package: 'rax-miniapp-renderer', format: 'cjs', shouldMinify: true });
