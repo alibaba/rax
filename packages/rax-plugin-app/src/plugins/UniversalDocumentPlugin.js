@@ -50,11 +50,13 @@ module.exports = class UniversalDocumentPlugin {
 
       const entryObj = config.entry;
       Object.keys(entryObj).forEach(entry => {
+        const files = compilation.entrypoints.get(entry).getFiles();
+        const fileName = files.filter(v => ~v.indexOf('.js'));
         // get document html string
         const pageSource = '<!DOCTYPE html>' + renderToString(createElement(documentElement, {
           publicPath,
           styles: [],
-          scripts: [`web/${entry}.js`]
+          scripts: fileName
         }));
 
         // insert html file
