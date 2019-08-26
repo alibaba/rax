@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const mime = require('mime');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
@@ -13,15 +14,16 @@ module.exports = (config, context) => {
 
     app.get('/*', function(req, res) {
       const url = req.url.lastIndexOf('/') === req.url.length - 1 ? 'web/index.html' : req.url;
-      const filePath = path.join(rootDir, outputDir, url);
+      let filePath = path.join(rootDir, outputDir, url);
 
-      if (memFs.existsSync(filePath)) {
-        const outPut = memFs.readFileSync(filePath).toString();
-        res.send(outPut);
-      } else {
-        const outPut = memFs.readFileSync(htmlPath).toString();
-        res.send(outPut);
+      if (!memFs.existsSync(filePath)) {
+        filePath = htmlPath;
       }
+
+      const outPut = memFs.readFileSync(filePath).toString();
+      const mimeType = mime.getType(filePath);
+      res.setHeader('Content-Type', `${mimeType}; charset=utf8`);
+      res.send(outPut);
     });
   });
 };

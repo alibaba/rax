@@ -14,19 +14,33 @@ module.exports = class UniversalDocumentPlugin {
       throw new Error('Please specify document file location with the path attribute');
     }
 
-    this.documentPath = options.path ? options.path : 'src/document/index.jsx';
+    // for internal weex publish
+    if (options.publicPath) {
+      this.publicPath = options.publicPath;
+    }
+    // for internal weex publish
+    if (options.insertScript) {
+      this.insertScript = options.insertScript;
+    }
+
+    this.documentPath = options.path;
   }
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync('UniversalDocumentPlugin', (compilation, callback) => {
       const config = compilation.options;
-      const publicPath = config.output.publicPath;
+      const publicPath = this.publicPath ? this.publicPath : config.output.publicPath;
 
       const filename = path.resolve(config.context, this.documentPath);
       if (!existsSync(filename)) throw new Error(`File ${filename} is not exists, please check.`);
 
       // get document code
-      const fileContent = readFileSync(filename, 'utf-8');
+      let fileContent = readFileSync(filename, 'utf-8');
+      if (this.insertScript) {
+        const insertStr = `\n<script dangerouslySetInnerHTML={{__html: "${this.insertScript}"}} />`;
+        fileContent = fileContent.replace(/<body>{1}/, '<body>' + insertStr);
+      }
+
       const { code } = babel.transformSync(fileContent, babelConfig);
 
       // code export
@@ -37,11 +51,12 @@ module.exports = class UniversalDocumentPlugin {
       const entryObj = config.entry;
       Object.keys(entryObj).forEach(entry => {
         // get document html string
-        const pageSource = renderToString(createElement(documentElement, {
+        const pageSource = '<!DOCTYPE html>' + renderToString(createElement(documentElement, {
           publicPath,
           styles: [],
-          scripts: [`web/${entry}.js`],
+          scripts: [`web/${entry}.js`]
         }));
+
         // insert html file
         compilation.assets[`web/${entry}.html`] = new RawSource(pageSource);
       });

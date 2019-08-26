@@ -1,5 +1,6 @@
 'use strict';
 const path = require('path');
+const { getRouteName } = require('rax-compile-config');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
@@ -17,10 +18,10 @@ module.exports = (config, context) => {
   const routes = [];
 
   appJSON.routes.forEach((route) => {
-    const pathName = route.name || route.component.replace(/\//g, '_');
+    const pathName = getRouteName(route, rootDir);
     let routePath = route.path;
     if (isMultiPages) {
-      routePath = `/web/${pathName}`;
+      routePath = `/pages/${pathName}`;
     }
     routes.push({
       path: routePath,

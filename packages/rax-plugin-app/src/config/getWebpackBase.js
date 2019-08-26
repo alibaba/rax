@@ -35,11 +35,6 @@ module.exports = (context) => {
     }
   ]);
 
-  config.module.rule('css')
-    .test(/\.css?$/)
-    .use('css')
-      .loader(require.resolve('stylesheet-loader'));
-
   config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
     .use('babel')

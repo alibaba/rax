@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
+const { getRouteName } = require('rax-compile-config');
 
 module.exports = (context) => {
   const { rootDir } = context;
@@ -15,7 +16,7 @@ module.exports = (context) => {
   }
 
   return routes.map((route) => {
-    const entryName = route.name || route.component.replace(/\//g, '_');
+    const entryName = getRouteName(route, rootDir);
 
     return {
       entryName,
