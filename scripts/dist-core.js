@@ -115,4 +115,3 @@ build({ package: 'driver-worker', name: 'DriverWorker', format: 'esm' });
 
 build({ package: 'rax-miniapp-renderer', format: 'cjs' });
 build({ package: 'rax-miniapp-renderer', format: 'cjs', shouldMinify: true });
-
