@@ -1,3 +1,4 @@
+/* global wx */
 import { isWeex, isWeb } from 'universal-env';
 import { shared } from 'rax';
 
