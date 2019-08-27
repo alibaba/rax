@@ -19,17 +19,22 @@ const defaultOptions = {
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
   const { normalizeFileName, npmRelativePath } = options;
-  const source = (value, prefix, filename, rootContext) => {
+  const source = (npmName, prefix, filename, rootContext) => {
     // Example:
     // value => '@ali/universal-goldlog'
     // prefix => '../npm'
     // filename => '/Users/xxx/workspace/yyy/src/utils/logger.js'
     // rootContext => '/Users/xxx/workspace/yyy/'
     const nodeModulePath = join(rootContext, 'node_modules');
-    const target = require.resolve(value, { paths: [nodeModulePath] });
-    const modulePathSuffix = relative(join(nodeModulePath, value), target);
+    const searchPaths = [nodeModulePath];
+    const target = require.resolve(npmName, { paths: searchPaths });
+
+    // In tnpm, target will be like following (symbol linked path):
+    // ***/_universal-toast_1.0.0_universal-toast/lib/index.js
+    const moduleBasePath = join(require.resolve(join(npmName, 'package.json'), { paths: searchPaths }), '..');
+    const modulePathSuffix = relative(moduleBasePath, target);
     // ret => '../npm/_ali/universal-goldlog/lib/index.js
-    return t.stringLiteral(normalizeFileName(join(prefix, value, modulePathSuffix)));
+    return t.stringLiteral(normalizeFileName(join(prefix, npmName, modulePathSuffix)));
   };
 
   return {
