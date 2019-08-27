@@ -195,13 +195,18 @@ function isWeexModule(value) {
 
 
 function renameNpmModules(ast, npmRelativePath, filename, cwd) {
-  const source = (value, prefix, filename, rootContext) => {
+  const source = (npmName, prefix, filename, rootContext) => {
     const nodeModulePath = join(rootContext, 'node_modules');
-    const target = require.resolve(value, { paths: [nodeModulePath] });
-    const modulePathSuffix = relative(join(nodeModulePath, value), target);
-    // ret => '../npm/_ali/universal-goldlog/lib/index.js
-    let ret = join(prefix, value, modulePathSuffix);
+    const searchPaths = [nodeModulePath];
+    const target = require.resolve(npmName, { paths: searchPaths });
+    // In tnpm, target will be like following (symbol linked path):
+    // ***/_universal-toast_1.0.0_universal-toast/lib/index.js
+    const moduleBasePath = join(require.resolve(join(npmName, 'package.json'), { paths: searchPaths }), '..');
+    const modulePathSuffix = relative(moduleBasePath, target);
+
+    let ret = join(prefix, npmName, modulePathSuffix);
     if (ret[0] !== '.') ret = './' + ret;
+    // ret => '../npm/_ali/universal-toast/lib/index.js
 
     return t.stringLiteral(normalizeFileName(ret));
   };
