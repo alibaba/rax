@@ -9,18 +9,29 @@ const gzipSize = require('gzip-size');
 
 const IIFE = 'iife';
 
-function transformBundleFormat({input, name, format, useDefault}) {
+function transformBundleFormat({input, name, format, exportDefault}) {
   return format === IIFE ? memory({
     path: input,
     contents: `
-    import ${useDefault ? name : `* as ${name}`} from './index.js';
+    import ${exportDefault ? name : `* as ${name}`} from './index.js';
     if (typeof module !== 'undefined') module.exports = ${name};
     else self.${name} = ${name};
     `
   }) : null;
 }
 
-async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd', useDefault = false }) {
+function getExtension(format) {
+  let ext = '.js';
+  switch (format) {
+    case 'umd': ext = '.umd.js';
+      break;
+    case 'esm': ext = '.mjs';
+      break;
+  }
+  return ext;
+}
+
+async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd', exportDefault = false }) {
   const output = {
     name,
     exports: 'named',
@@ -31,7 +42,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
   const bundle = await rollup.rollup({
     input,
     plugins: [
-      transformBundleFormat({ input, name, format, useDefault }),
+      transformBundleFormat({ input, name, format, exportDefault }),
       resolve(),
       commonjs({
         // style-unit for build while packages linked
@@ -78,13 +89,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
 
     console.log(file, `${(size / 1024).toPrecision(3)}kb (gzip)`);
   } else {
-    let ext = '.js';
-    switch (format) {
-      case 'umd': ext = '.umd.js';
-        break;
-      case 'esm': ext = '.mjs';
-        break;
-    }
+    const ext = getExtension(format);
     await bundle.write({
       ...output,
       format,
@@ -109,8 +114,8 @@ build({ package: 'driver-weex', name: 'DriverWeex', format: IIFE, shouldMinify: 
 build({ package: 'driver-weex', name: 'DriverWeex', format: 'esm' });
 
 build({ package: 'driver-worker', name: 'DriverWorker' });
-build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, useDefault: true });
-build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, useDefault: true, shouldMinify: true });
+build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, exportDefault: true });
+build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, exportDefault: true, shouldMinify: true });
 build({ package: 'driver-worker', name: 'DriverWorker', format: 'esm' });
 
 build({ package: 'rax-miniapp-renderer', format: 'cjs' });
