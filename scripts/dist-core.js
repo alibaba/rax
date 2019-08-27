@@ -6,14 +6,18 @@ const babel = require('rollup-plugin-babel');
 const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
+const path = require('path');
 
 const IIFE = 'iife';
+const UMD = 'umd';
+const ESM = 'esm';
+const CJS = 'cjs';
 
-function transformBundleFormat({input, name, format, exportDefault}) {
+function transformBundleFormat({input, name, format, entry, shouldExportDefault}) {
   return format === IIFE ? memory({
     path: input,
     contents: `
-    import ${exportDefault ? name : `* as ${name}`} from './index.js';
+    import ${shouldExportDefault ? name : `* as ${name}`} from './${path.basename(entry)}';
     if (typeof module !== 'undefined') module.exports = ${name};
     else self.${name} = ${name};
     `
@@ -31,7 +35,7 @@ function getExtension(format) {
   return ext;
 }
 
-async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd', exportDefault = false }) {
+async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = UMD, shouldExportDefault = false }) {
   const output = {
     name,
     exports: 'named',
@@ -42,7 +46,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
   const bundle = await rollup.rollup({
     input,
     plugins: [
-      transformBundleFormat({ input, name, format, exportDefault }),
+      transformBundleFormat({ input, name, format, entry, shouldExportDefault }),
       resolve(),
       commonjs({
         // style-unit for build while packages linked
@@ -101,22 +105,22 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
 build({ package: 'rax', name: 'Rax' });
 build({ package: 'rax', name: 'Rax', format: IIFE });
 build({ package: 'rax', name: 'Rax', format: IIFE, shouldMinify: true });
-build({ package: 'rax', name: 'Rax', format: 'esm' });
+build({ package: 'rax', name: 'Rax', format: ESM });
 
 build({ package: 'driver-dom', name: 'DriverDOM' });
 build({ package: 'driver-dom', name: 'DriverDOM', format: IIFE });
 build({ package: 'driver-dom', name: 'DriverDOM', format: IIFE, shouldMinify: true });
-build({ package: 'driver-dom', name: 'DriverDOM', format: 'esm' });
+build({ package: 'driver-dom', name: 'DriverDOM', format: ESM });
 
 build({ package: 'driver-weex', name: 'DriverWeex' });
 build({ package: 'driver-weex', name: 'DriverWeex', format: IIFE });
 build({ package: 'driver-weex', name: 'DriverWeex', format: IIFE, shouldMinify: true });
-build({ package: 'driver-weex', name: 'DriverWeex', format: 'esm' });
+build({ package: 'driver-weex', name: 'DriverWeex', format: ESM });
 
 build({ package: 'driver-worker', name: 'DriverWorker' });
-build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, exportDefault: true });
-build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, exportDefault: true, shouldMinify: true });
-build({ package: 'driver-worker', name: 'DriverWorker', format: 'esm' });
+build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, shouldExportDefault: true });
+build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, shouldExportDefault: true, shouldMinify: true });
+build({ package: 'driver-worker', name: 'DriverWorker', format: ESM });
 
-build({ package: 'rax-miniapp-renderer', format: 'cjs' });
-build({ package: 'rax-miniapp-renderer', format: 'cjs', shouldMinify: true });
+build({ package: 'rax-miniapp-renderer', format: CJS });
+build({ package: 'rax-miniapp-renderer', format: CJS, shouldMinify: true });
