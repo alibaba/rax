@@ -25,7 +25,7 @@ module.exports = ({ context, chainWebpack, onHook }) => {
         webConfig.devServer.set('before', (app, devServer) => {
           const memFs = devServer.compiler.compilers[0].outputFileSystem;
           entries.forEach(({ entryName }) => {
-            const entryPath = new RegExp(`\/page\/${entryName}\\/?((?!\\.(js|html|css|json)).)*$`);
+            const entryPath = new RegExp(`\/pages\/${entryName}\\/?((?!\\.(js|html|css|json)).)*$`);
             app.get(entryPath, function(req, res) {
               const htmlPath = path.resolve(rootDir, outputDir, `web/${entryName}.html`);
               const outPut = memFs.readFileSync(htmlPath).toString();
