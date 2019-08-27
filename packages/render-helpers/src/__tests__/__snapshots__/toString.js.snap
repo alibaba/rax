@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`toString types should accept function 1`] = `
-"function () {
-        return 'hello world';
-      }"
-`;
