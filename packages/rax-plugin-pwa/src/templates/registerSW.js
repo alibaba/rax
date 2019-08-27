@@ -8,11 +8,17 @@ module.exports = `/**
 */
 ;(function() {
   if ('serviceWorker' in navigator) {
+    <% if (unregister) { %>
+    navigator.serviceWorker.ready.then(registration => {
+      registration.unregister();
+    });
+    <% } else { %>
     navigator.serviceWorker.register('./sw.js').then((registration) => {
       console.log('Registration successful, scope is:', registration.scope);
     }).catch((error) => {
       console.log('Service Worker registration failed, error:', error);
     });
+    <% } %>
   }
 })();
 `;

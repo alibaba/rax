@@ -51,10 +51,11 @@ module.exports = class SaveToDesktopPlugin {
         cacheId: serviceWorker.cacheId || pkg.name,
         skipWaiting: serviceWorker.skipWaiting || false,
         clientsClaim: serviceWorker.clientsClaim || false,
+        unregister: serviceWorker.unregister || false,
       };
 
-      const swCode = templateGenerator(swTemplate)(data);
       const regSwCode = templateGenerator(regSwTemplate)(data);
+      const swCode = templateGenerator(swTemplate)(data);
       const scriptCode = `<script src="/${REG_SW_FILE_PATH}" type="text/javascript" crossorigin="anonymous"></script>`;
       const htmlCode = compilation
         .assets[HTML_PATH]
