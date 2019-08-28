@@ -8,7 +8,7 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction } from '../types';
-import {CURRENT_ELEMENT, INSTANCE, INTERNAL, RENDERED_COMPONENT} from '../constant';
+import {CURRENT_ELEMENT, INSTANCE, INTERNAL, IS_PENGDING_FORCE_UPDATE, RENDERED_COMPONENT} from '../constant';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -223,7 +223,7 @@ class CompositeComponent extends BaseComponent {
     // Even if this component is scheduled for another async update,
     // it would still be ignored because these fields are reset.
     this._pendingStateQueue = null;
-    this._isPendingForceUpdate = false;
+    this[IS_PENGDING_FORCE_UPDATE] = false;
 
     this.destoryComponent();
   }
@@ -347,7 +347,7 @@ class CompositeComponent extends BaseComponent {
     let nextState = this._processPendingState(nextProps, nextContext);
 
     // ShouldComponentUpdate is not called when forceUpdate is used
-    if (!this._isPendingForceUpdate) {
+    if (!this[IS_PENGDING_FORCE_UPDATE]) {
       if (instance.shouldComponentUpdate) {
         shouldUpdate = performInSandbox(() => {
           return instance.shouldComponentUpdate(nextProps, nextState, nextContext);
@@ -360,7 +360,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (shouldUpdate) {
-      this._isPendingForceUpdate = false;
+      this[IS_PENGDING_FORCE_UPDATE] = false;
       // Will set `this.props`, `this.state` and `this.context`.
       let prevContext = instance.context;
 

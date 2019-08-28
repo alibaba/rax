@@ -7,7 +7,7 @@ import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction, isArray } from '../types';
-import { CURRENT_ELEMENT, INSTANCE, INTERNAL } from '../constant';
+import {CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE} from '../constant';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -109,16 +109,16 @@ export default class NativeComponent extends BaseComponent {
   }
 
   unmountComponent(shouldNotRemoveChild) {
-    if (this._nativeNode) {
+    if (this[NATIVE_NODE]) {
       let ref = this[CURRENT_ELEMENT].ref;
       if (ref) {
         Ref.detach(this[CURRENT_ELEMENT]._owner, ref, this);
       }
 
-      Instance.remove(this._nativeNode);
+      Instance.remove(this[NATIVE_NODE]);
 
       if (!shouldNotRemoveChild) {
-        Host.driver.removeChild(this._nativeNode, this._parent);
+        Host.driver.removeChild(this[NATIVE_NODE], this._parent);
 
         // If the parent node has been removed, child node don't need to be removed
         shouldNotRemoveChild = true;
@@ -445,11 +445,11 @@ export default class NativeComponent extends BaseComponent {
       }
 
       // Sync update native refs
-      if (isArray(this._nativeNode)) {
+      if (isArray(this[NATIVE_NODE])) {
         // Clear all and push the new array
-        this._nativeNode.splice(0, this._nativeNode.length);
-        for (let i = 0; i < nextNativeNode.length; i++) {
-          this._nativeNode.push(nextNativeNode[i]);
+        this[NATIVE_NODE].splice(0, this[NATIVE_NODE].length);
+        for (let i = 0, l = nextNativeNode.length; i < l; i++) {
+          this[NATIVE_NODE].push(nextNativeNode[i]);
         }
       }
     }
@@ -459,7 +459,7 @@ export default class NativeComponent extends BaseComponent {
     }
 
     if (shouldRemoveAllChildren) {
-      driver.removeChildren(this._nativeNode);
+      driver.removeChildren(this[NATIVE_NODE]);
     }
 
     this._renderedChildren = nextChildren;

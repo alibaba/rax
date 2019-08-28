@@ -2,7 +2,7 @@ import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
 import toArray from './toArray';
-import {CURRENT_ELEMENT, INSTANCE, INTERNAL} from '../constant';
+import {CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE} from '../constant';
 
 /**
  * Fragment Component
@@ -49,7 +49,7 @@ class FragmentComponent extends NativeComponent {
   }
 
   unmountComponent(shouldNotRemoveChild) {
-    let nativeNode = this._nativeNode;
+    let nativeNode = this[NATIVE_NODE];
 
     if (nativeNode) {
       Instance.remove(nativeNode);
