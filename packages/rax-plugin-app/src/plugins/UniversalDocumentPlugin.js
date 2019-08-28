@@ -38,7 +38,7 @@ module.exports = class UniversalDocumentPlugin {
       let fileContent = readFileSync(filename, 'utf-8');
       if (this.insertScript) {
         const insertStr = `\n<script dangerouslySetInnerHTML={{__html: "${this.insertScript}"}} />`;
-        fileContent = fileContent.replace(/<body>{1}/, '<body>' + insertStr);
+        fileContent = fileContent.replace(/(<body[^>]*>)/, `$1${insertStr}`);
       }
 
       const { code } = babel.transformSync(fileContent, babelConfig);
@@ -50,11 +50,13 @@ module.exports = class UniversalDocumentPlugin {
 
       const entryObj = config.entry;
       Object.keys(entryObj).forEach(entry => {
+        const files = compilation.entrypoints.get(entry).getFiles();
+        const fileName = files.filter(v => ~v.indexOf('.js'));
         // get document html string
         const pageSource = '<!DOCTYPE html>' + renderToString(createElement(documentElement, {
           publicPath,
           styles: [],
-          scripts: [`web/${entry}.js`]
+          scripts: fileName
         }));
 
         // insert html file
