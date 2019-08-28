@@ -32,7 +32,7 @@ function enqueueState(internal, partialState) {
 
 function runCallbacks(callbacks, context) {
   if (callbacks) {
-    for (let i = 0; i < callbacks.length; i++) {
+    for (let i = 0, len = callbacks.length; i < len; i++) {
       callbacks[i].call(context);
     }
   }
@@ -148,17 +148,17 @@ function requestUpdate(component, partialState, callback) {
 }
 
 const Updater = {
-  setState: function(component, partialState, callback) {
+  setState(component, partialState, callback) {
     // Flush all effects first before update state
     if (!Host.isUpdating) {
       flushEffect();
     }
     requestUpdate(component, partialState, callback);
   },
-  forceUpdate: function(component, callback) {
+  forceUpdate(component, callback) {
     requestUpdate(component, null, callback);
   },
-  runCallbacks: runCallbacks
+  runCallbacks,
 };
 
 export default Updater;

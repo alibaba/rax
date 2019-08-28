@@ -75,20 +75,22 @@ class NativeComponent extends BaseComponent {
   _mountChildren(parent, children, context, nativeNodeMounter) {
     let renderedChildren = this._renderedChildren = {};
 
-    let renderedChildrenImage = children.map((element, index) => {
-      let renderedChild = instantiateComponent(element);
-      let name = getElementKeyName(renderedChildren, element, index);
+    const renderedChildrenImage = [];
+    for (let i = 0, l = children.length; i < l; i++) {
+      const element = children[i];
+      const renderedChild = instantiateComponent(element);
+      const name = getElementKeyName(renderedChildren, element, i);
       renderedChildren[name] = renderedChild;
-      renderedChild._mountIndex = index;
+      renderedChild._mountIndex = i;
       // Mount children
-      let mountImage = renderedChild.mountComponent(
+      const mountImage = renderedChild.mountComponent(
         parent,
         this._instance,
         context,
         nativeNodeMounter
       );
-      return mountImage;
-    });
+      renderedChildrenImage.push(mountImage);
+    }
 
     return renderedChildrenImage;
   }
@@ -345,7 +347,7 @@ class NativeComponent extends BaseComponent {
     // `driver.removeChildren` is optional driver protocol.
     let shouldRemoveAllChildren = Boolean(
       driver.removeChildren
-      && nextChildrenElements === null || nextChildrenElements && nextChildrenElements.length === 0
+      && (nextChildrenElements === null || nextChildrenElements && !nextChildrenElements.length)
     );
 
     // Unmount children that are no longer present.
