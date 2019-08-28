@@ -63,6 +63,7 @@ module.exports = async({ context, log }, options = {}) => {
       log.info('component', 'Compiling typescript files');
       return tsProject.src()
         .pipe(tsProject())
+        .pipe(babel(babelConfig))
         .pipe(gulp.dest(BUILD_DIR))
         .on('end', () => {
           log.info('component', 'Typescript files have been compiled');
