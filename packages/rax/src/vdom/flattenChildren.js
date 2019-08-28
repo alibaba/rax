@@ -14,12 +14,9 @@ export default function flattenChildren(children) {
   if (children == null) {
     return children;
   }
-  let result = [];
+  const result = [];
   traverseChildren(children, result);
 
-  if (result.length === 1) {
-    result = result[0];
-  }
-
-  return result;
+  // If length equal 1, return the only one.
+  return result.length - 1 ? result : result[0];
 }
