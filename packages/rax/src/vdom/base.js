@@ -1,12 +1,12 @@
 import Host from './host';
-import { INTERNAL } from '../constant';
+import { CURRENT_ELEMENT, INTERNAL } from '../constant';
 
 /**
  * Base Component
  */
 export default class BaseComponent {
   constructor(element) {
-    this._currentElement = element;
+    this[CURRENT_ELEMENT] = element;
   }
 
   initComponent(parent, parentInstance, context) {
@@ -21,7 +21,7 @@ export default class BaseComponent {
       Host.reconciler.unmountComponent(this);
     }
 
-    this._currentElement = null;
+    this[CURRENT_ELEMENT] = null;
     this._nativeNode = null;
     this._parent = null;
     this._parentInstance = null;
@@ -56,7 +56,7 @@ export default class BaseComponent {
   }
 
   getName() {
-    let currentElement = this._currentElement;
+    let currentElement = this[CURRENT_ELEMENT];
     let type = currentElement && currentElement.type;
 
     return (

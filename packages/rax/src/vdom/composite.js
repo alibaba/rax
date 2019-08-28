@@ -8,7 +8,7 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction } from '../types';
-import { INTERNAL } from '../constant';
+import { CURRENT_ELEMENT, INTERNAL } from '../constant';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -73,7 +73,7 @@ class CompositeComponent extends BaseComponent {
       Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
-    let currentElement = this._currentElement;
+    let currentElement = this[CURRENT_ELEMENT];
     let Component = currentElement.type;
     let ref = currentElement.ref;
     let publicProps = currentElement.props;
@@ -208,7 +208,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (this._renderedComponent != null) {
-      let currentElement = this._currentElement;
+      let currentElement = this[CURRENT_ELEMENT];
       let ref = currentElement.ref;
 
       if (!currentElement.type.forwardRef && ref) {
@@ -233,7 +233,7 @@ class CompositeComponent extends BaseComponent {
    * `contextTypes`
    */
   _processContext(context) {
-    let Component = this._currentElement.type;
+    let Component = this[CURRENT_ELEMENT].type;
     let contextTypes = Component.contextTypes;
 
     if (!contextTypes) {
@@ -332,7 +332,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Update refs
-    if (this._currentElement.type.forwardRef) {
+    if (this[CURRENT_ELEMENT].type.forwardRef) {
       instance.prevForwardRef = prevElement.ref;
       instance.forwardRef = nextElement.ref;
     } else {
@@ -373,7 +373,7 @@ class CompositeComponent extends BaseComponent {
       }, instance);
 
       // Replace with next
-      this._currentElement = nextElement;
+      this[CURRENT_ELEMENT] = nextElement;
       this._context = nextUnmaskedContext;
       instance.props = nextProps;
       instance.state = nextState;
@@ -391,7 +391,7 @@ class CompositeComponent extends BaseComponent {
     } else {
       // If it's determined that a component should not update, we still want
       // to set props and state but we shortcut the rest of the update.
-      this._currentElement = nextElement;
+      this[CURRENT_ELEMENT] = nextElement;
       this._context = nextUnmaskedContext;
       instance.props = nextProps;
       instance.state = nextState;
@@ -416,7 +416,7 @@ class CompositeComponent extends BaseComponent {
    */
   _updateRenderedComponent(context) {
     let prevRenderedComponent = this._renderedComponent;
-    let prevRenderedElement = prevRenderedComponent._currentElement;
+    let prevRenderedElement = prevRenderedComponent[CURRENT_ELEMENT];
 
     let instance = this._instance;
     let nextRenderedElement;

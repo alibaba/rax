@@ -1,7 +1,7 @@
 import Host from './host';
 import { flushEffect, schedule } from './scheduler';
 import runCallbacks from '../runCallbacks';
-import { INTERNAL } from '../constant';
+import { CURRENT_ELEMENT, INTERNAL } from '../constant';
 
 // Dirty components store
 let dirtyComponents = [];
@@ -46,7 +46,7 @@ function runUpdate(component) {
   let callbacks = getPendingCallbacks(internal);
   setPendingCallbacks(internal, null);
 
-  let prevElement = internal._currentElement;
+  let prevElement = internal[CURRENT_ELEMENT];
   let prevUnmaskedContext = internal._context;
   let nextUnmaskedContext = internal._penddingContext || prevUnmaskedContext;
   internal._penddingContext = undefined;

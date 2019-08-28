@@ -7,7 +7,7 @@ import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction, isArray } from '../types';
-import { INTERNAL } from '../constant';
+import { CURRENT_ELEMENT, INTERNAL } from '../constant';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -21,7 +21,7 @@ export default class NativeComponent extends BaseComponent {
   mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.initComponent(parent, parentInstance, context);
 
-    const currentElement = this._currentElement;
+    const currentElement = this[CURRENT_ELEMENT];
     const props = currentElement.props;
     const type = currentElement.type;
     const children = props.children;
@@ -110,9 +110,9 @@ export default class NativeComponent extends BaseComponent {
 
   unmountComponent(shouldNotRemoveChild) {
     if (this._nativeNode) {
-      let ref = this._currentElement.ref;
+      let ref = this[CURRENT_ELEMENT].ref;
       if (ref) {
-        Ref.detach(this._currentElement._owner, ref, this);
+        Ref.detach(this[CURRENT_ELEMENT]._owner, ref, this);
       }
 
       Instance.remove(this._nativeNode);
@@ -133,7 +133,7 @@ export default class NativeComponent extends BaseComponent {
 
   updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
-    this._currentElement = nextElement;
+    this[CURRENT_ELEMENT] = nextElement;
 
     Ref.update(prevElement, nextElement, this);
 
@@ -315,7 +315,7 @@ export default class NativeComponent extends BaseComponent {
         let nextElement = nextChildrenElements[index];
         let name = getElementKeyName(nextChildren, nextElement, index);
         let prevChild = prevChildren && prevChildren[name];
-        let prevElement = prevChild && prevChild._currentElement;
+        let prevElement = prevChild && prevChild[CURRENT_ELEMENT];
         let prevContext = prevChild && prevChild._context;
 
         // Try to update between the two of some name that has some element type,

@@ -1,3 +1,5 @@
+import { CURRENT_ELEMENT } from '../constant';
+
 export default function getComponentTree(element) {
   var children = null;
   var props = null;
@@ -13,7 +15,7 @@ export default function getComponentTree(element) {
   if (typeof element !== 'object') {
     nodeType = 'Text';
     text = element + '';
-  } else if (element._currentElement === null || element._currentElement === false) {
+  } else if (element[CURRENT_ELEMENT] === null || element[CURRENT_ELEMENT] === false) {
     nodeType = 'Empty';
   } else if (element._renderedComponent) {
     nodeType = 'NativeWrapper';
@@ -26,20 +28,20 @@ export default function getComponentTree(element) {
     }
   } else if (element._renderedChildren) {
     children = childrenList(element._renderedChildren);
-  } else if (element._currentElement && element._currentElement.props) {
+  } else if (element[CURRENT_ELEMENT] && element[CURRENT_ELEMENT].props) {
     // This is a native node without rendered children -- meaning the children
     // prop is just a string or (in the case of the <option>) a list of
     // strings & numbers.
-    children = element._currentElement.props.children;
+    children = element[CURRENT_ELEMENT].props.children;
   }
 
-  if (!props && element._currentElement && element._currentElement.props) {
-    props = element._currentElement.props;
+  if (!props && element[CURRENT_ELEMENT] && element[CURRENT_ELEMENT].props) {
+    props = element[CURRENT_ELEMENT].props;
   }
 
   // != used deliberately here to catch undefined and null
-  if (element._currentElement != null) {
-    type = element._currentElement.type;
+  if (element[CURRENT_ELEMENT] != null) {
+    type = element[CURRENT_ELEMENT].type;
     if (typeof type === 'string') {
       name = type;
     } else if (element.getName) {
@@ -47,7 +49,7 @@ export default function getComponentTree(element) {
       name = element.getName();
       // 0.14 top-level wrapper
       // TODO(jared): The backend should just act as if these don't exist.
-      if (element._renderedComponent && element._currentElement.props === element._renderedComponent._currentElement) {
+      if (element._renderedComponent && element[CURRENT_ELEMENT].props === element._renderedComponent[CURRENT_ELEMENT]) {
         nodeType = 'Wrapper';
       }
       if (name === null) {
