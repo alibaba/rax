@@ -38,7 +38,7 @@ module.exports = class UniversalDocumentPlugin {
       let fileContent = readFileSync(filename, 'utf-8');
       if (this.insertScript) {
         const insertStr = `\n<script dangerouslySetInnerHTML={{__html: "${this.insertScript}"}} />`;
-        fileContent = fileContent.replace(/(<body.*>)/, `$1${insertStr}`);
+        fileContent = fileContent.replace(/(<body[^>]*>)/, `$1${insertStr}`);
       }
 
       const { code } = babel.transformSync(fileContent, babelConfig);
