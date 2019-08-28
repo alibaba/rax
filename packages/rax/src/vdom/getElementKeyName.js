@@ -1,6 +1,6 @@
 import { isString } from '../types';
 
-export default (children, element, index) => {
+export default function getElementKeyName(children, element, index) {
   const elementKey = element && element.key;
   const defaultName = '.' + index.toString(36); // Inner child name default format fallback
 
@@ -21,4 +21,4 @@ export default (children, element, index) => {
   } else {
     return defaultName;
   }
-};
+}
