@@ -1,7 +1,6 @@
 const address = require('address');
 
 module.exports = {
-  inlineStyle: true,
   outputDir: 'lib',
   distDir: 'build',
   publicPath: '/',
