@@ -44,7 +44,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
           keep_fargs: false,
           unsafe: true,
           pure_getters: true
-        }
+        },
       }) : null,
     ]
   });

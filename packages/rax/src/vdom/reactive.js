@@ -1,11 +1,14 @@
 import Host from './host';
 import Component from './component';
+import runCallbacks from '../runCallbacks';
+import { invokeMinifiedError } from '../error';
+import { INTERNAL, IS_PENGDING_FORCE_UPDATE} from '../constant';
 
 const RE_RENDER_LIMIT = 24;
 /**
  * Functional Reactive Component Class Wrapper
  */
-class ReactiveComponent extends Component {
+export default class ReactiveComponent extends Component {
   constructor(pureRender, ref) {
     super();
     // A pure function
@@ -89,7 +92,7 @@ class ReactiveComponent extends Component {
   }
 
   componentDidMount() {
-    this.didMount.forEach(handler => handler());
+    runCallbacks(this.didMount);
   }
 
   componentWillReceiveProps() {
@@ -97,15 +100,15 @@ class ReactiveComponent extends Component {
   }
 
   componentDidUpdate() {
-    this.didUpdate.forEach(handler => handler());
+    runCallbacks(this.didUpdate);
   }
 
   componentWillUnmount() {
-    this.willUnmount.forEach(handler => handler());
+    runCallbacks(this.willUnmount);
   }
 
   update() {
-    this._internal._isPendingForceUpdate = true;
+    this[INTERNAL][IS_PENGDING_FORCE_UPDATE] = true;
     this.setState({});
   }
 
@@ -122,7 +125,11 @@ class ReactiveComponent extends Component {
     while (this.isScheduled) {
       this._reRenders++;
       if (this._reRenders > RE_RENDER_LIMIT) {
-        throw Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
+        if (process.env.NODE_ENV !== 'production') {
+          throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
+        } else {
+          invokeMinifiedError(4);
+        }
       }
 
       this._hookID = 0;
@@ -138,5 +145,3 @@ class ReactiveComponent extends Component {
     return this._children;
   }
 }
-
-export default ReactiveComponent;

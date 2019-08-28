@@ -2,6 +2,7 @@ import Host from './host';
 import createElement from '../createElement';
 import instantiateComponent from './instantiateComponent';
 import Root from './root';
+import {INTERNAL} from '../constant';
 
 /**
  * Instance manager
@@ -15,7 +16,7 @@ export default {
       // Record root instance to roots map
       if (instance.rootID) {
         Host.rootInstances[instance.rootID] = instance;
-        Host.rootComponents[instance.rootID] = instance._internal;
+        Host.rootComponents[instance.rootID] = instance[INTERNAL];
       }
     }
   },
@@ -56,7 +57,7 @@ export default {
     // Get the context from the conceptual parent component.
     let parentContext;
     if (parent) {
-      let parentInternal = parent._internal;
+      let parentInternal = parent[INTERNAL];
       parentContext = parentInternal._processChildContext(parentInternal._context);
     }
 
@@ -65,7 +66,7 @@ export default {
     if (prevRootInstance && prevRootInstance.rootID) {
       if (parentContext) {
         // Using _penddingContext to pass new context
-        prevRootInstance._internal._penddingContext = parentContext;
+        prevRootInstance[INTERNAL]._penddingContext = parentContext;
       }
       prevRootInstance.update(element);
       return prevRootInstance;
@@ -84,7 +85,7 @@ export default {
 
     if (process.env.NODE_ENV !== 'production') {
       // Devtool render new root hook
-      Host.reconciler.renderNewRootComponent(rootInstance._internal._renderedComponent);
+      Host.reconciler.renderNewRootComponent(rootInstance[INTERNAL]._renderedComponent);
 
       Host.measurer && Host.measurer.afterRender();
     }

@@ -8,6 +8,7 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction } from '../types';
+import { INTERNAL } from '../constant';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -25,7 +26,7 @@ function handleError(instance, error) {
   let boundary;
 
   while (instance) {
-    let internal = instance._internal;
+    let internal = instance[INTERNAL];
     if (isFunction(instance.componentDidCatch)) {
       boundary = instance;
       break;
@@ -38,7 +39,7 @@ function handleError(instance, error) {
 
   if (boundary) {
     // Should not attempt to recover an unmounting error boundary
-    const boundaryInternal = boundary._internal;
+    const boundaryInternal = boundary[INTERNAL];
     if (boundaryInternal) {
       let callbackQueue = boundaryInternal._pendingCallbacks || (boundaryInternal._pendingCallbacks = []);
       callbackQueue.push(() => boundary.componentDidCatch(error));
@@ -107,7 +108,7 @@ class CompositeComponent extends BaseComponent {
 
     // Inject the updater into instance
     instance.updater = updater;
-    instance._internal = this;
+    instance[INTERNAL] = this;
     this._instance = instance;
 
     // Init state, must be set to an object or null

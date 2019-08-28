@@ -1,9 +1,10 @@
 import Host from './host';
+import { INTERNAL } from '../constant';
 
 /**
  * Base Component
  */
-class BaseComponent {
+export default class BaseComponent {
   constructor(element) {
     this._currentElement = element;
   }
@@ -27,7 +28,7 @@ class BaseComponent {
     this._context = null;
 
     if (this._instance) {
-      this._instance._internal = null;
+      this._instance[INTERNAL] = null;
       this._instance = null;
     }
   }
@@ -40,9 +41,8 @@ class BaseComponent {
       Host.reconciler.mountComponent(this);
     }
 
-    let instance = {
-      _internal: this
-    };
+    const instance = {};
+    instance[INTERNAL] = this;
 
     return instance;
   }
@@ -90,5 +90,3 @@ class BaseComponent {
     return this.getNativeNode();
   }
 }
-
-export default BaseComponent;

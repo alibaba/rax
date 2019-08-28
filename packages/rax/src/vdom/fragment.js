@@ -2,6 +2,7 @@ import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
 import toArray from './toArray';
+import {INTERNAL} from '../constant';
 
 /**
  * Fragment Component
@@ -10,9 +11,8 @@ class FragmentComponent extends NativeComponent {
   mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.initComponent(parent, parentInstance, context);
 
-    let instance = {
-      _internal: this,
-    };
+    let instance = {};
+    instance[INTERNAL] = this;
     this._instance = instance;
 
     // Mount children

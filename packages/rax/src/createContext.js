@@ -1,5 +1,6 @@
 import { useState, useEffect } from './hooks';
 import { isFunction, isArray } from './types';
+import { INTERNAL } from './constant';
 
 class ValueEmitter {
   constructor(defaultValue) {
@@ -50,11 +51,11 @@ export default function createContext(defaultValue) {
   function readEmitter(instance) {
     const emitter = stack[stack.length - 1];
     if (emitter) return emitter;
-    while (instance && instance._internal) {
+    while (instance && instance[INTERNAL]) {
       if (instance instanceof Provider) {
         break;
       }
-      instance = instance._internal._parentInstance;
+      instance = instance[INTERNAL]._parentInstance;
     }
     return instance && instance.emitter || defaultEmitter;
   }

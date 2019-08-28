@@ -7,6 +7,7 @@ import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction, isArray } from '../types';
+import { INTERNAL } from '../constant';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -16,7 +17,7 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 /**
  * Native Component
  */
-class NativeComponent extends BaseComponent {
+export default class NativeComponent extends BaseComponent {
   mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.initComponent(parent, parentInstance, context);
 
@@ -30,10 +31,10 @@ class NativeComponent extends BaseComponent {
     this._prevStyleCopy = Object.assign({}, props.style);
 
     let instance = {
-      _internal: this,
       type,
       props,
     };
+    instance[INTERNAL] = this;
 
     this._instance = instance;
 
@@ -471,5 +472,3 @@ class NativeComponent extends BaseComponent {
     return nativeNode;
   }
 }
-
-export default NativeComponent;

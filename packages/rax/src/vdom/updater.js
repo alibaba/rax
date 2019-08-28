@@ -1,5 +1,7 @@
 import Host from './host';
 import { flushEffect, schedule } from './scheduler';
+import runCallbacks from '../runCallbacks';
+import { INTERNAL } from '../constant';
 
 // Dirty components store
 let dirtyComponents = [];
@@ -30,16 +32,8 @@ function enqueueState(internal, partialState) {
   stateQueue.push(partialState);
 }
 
-function runCallbacks(callbacks, context) {
-  if (callbacks) {
-    for (let i = 0, len = callbacks.length; i < len; i++) {
-      callbacks[i].call(context);
-    }
-  }
-}
-
 function runUpdate(component) {
-  let internal = component._internal;
+  let internal = component[INTERNAL];
   if (!internal) {
     return;
   }
@@ -72,7 +66,7 @@ function runUpdate(component) {
 }
 
 function mountOrderComparator(c1, c2) {
-  return c2._internal._mountID - c1._internal._mountID;
+  return c2[INTERNAL]._mountID - c1[INTERNAL]._mountID;
 }
 
 function performUpdate() {
@@ -116,7 +110,7 @@ function scheduleUpdate(component, shouldAsyncUpdate) {
 }
 
 function requestUpdate(component, partialState, callback) {
-  let internal = component._internal;
+  let internal = component[INTERNAL];
 
   if (!internal) {
     return;
