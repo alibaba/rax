@@ -25,16 +25,6 @@ module.exports = (context) => {
     .set('@core/page', 'universal-app-runtime')
     .set('@core/router', 'universal-app-runtime');
 
-  // external weex module
-  config.externals([
-    function(ctx, request, callback) {
-      if (request.indexOf('@weex-module') !== -1) {
-        return callback(null, 'commonjs ' + request);
-      }
-      callback();
-    }
-  ]);
-
   config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
     .use('babel')

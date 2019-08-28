@@ -12,6 +12,15 @@ module.exports = (context) => {
 
   config.output.filename('web/[name].js');
 
+  config.externals([
+    function(ctx, request, callback) {
+      if (request.indexOf('@weex-module') !== -1) {
+        return callback(null, 'undefined');
+      }
+      callback();
+    }
+  ]);
+
   config.plugin('document')
     .use(UniversalDocumentPlugin, [{
       path: 'src/document/index.jsx',
