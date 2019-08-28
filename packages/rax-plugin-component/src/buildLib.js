@@ -24,8 +24,9 @@ const IGNORE_PATTERN = '**/__tests__/**';
 
 module.exports = async({ context, log }, options = {}) => {
   const { rootDir, userConfig } = context;
-  const { enableTypescript, targets = [] } = options;
+  const { targets = [] } = options;
   const { outputDir } = userConfig;
+  const enableTypescript = fs.existsSync(path.join(rootDir, 'tsconfig.json'));
 
   log.info('component', chalk.green('Build start... '));
   const BUILD_DIR = path.resolve(rootDir, outputDir);
@@ -162,7 +163,7 @@ module.exports = async({ context, log }, options = {}) => {
       // build miniapp
       log.info('component', 'Starting build miniapp lib');
       if (enableTypescript) {
-        runSequence(...getTasks(true, true), async() => {
+        runSequence(...getTasks(enableTypescript, buildMiniapp), async() => {
           const mpErr = await mpBuild(context, 'lib/miniappTemp/index');
 
           log.info('component', 'Remove temp directory');
