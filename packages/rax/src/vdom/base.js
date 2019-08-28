@@ -1,5 +1,5 @@
 import Host from './host';
-import { CURRENT_ELEMENT, INTERNAL } from '../constant';
+import {CURRENT_ELEMENT, INSTANCE, INTERNAL} from '../constant';
 
 /**
  * Base Component
@@ -27,9 +27,9 @@ export default class BaseComponent {
     this._parentInstance = null;
     this._context = null;
 
-    if (this._instance) {
-      this._instance[INTERNAL] = null;
-      this._instance = null;
+    if (this[INSTANCE]) {
+      this[INSTANCE][INTERNAL] = null;
+      this[INSTANCE] = null;
     }
   }
 

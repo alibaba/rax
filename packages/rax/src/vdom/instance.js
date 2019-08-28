@@ -2,7 +2,7 @@ import Host from './host';
 import createElement from '../createElement';
 import instantiateComponent from './instantiateComponent';
 import Root from './root';
-import {INTERNAL} from '../constant';
+import {INTERNAL, RENDERED_COMPONENT} from '../constant';
 
 /**
  * Instance manager
@@ -85,7 +85,7 @@ export default {
 
     if (process.env.NODE_ENV !== 'production') {
       // Devtool render new root hook
-      Host.reconciler.renderNewRootComponent(rootInstance[INTERNAL]._renderedComponent);
+      Host.reconciler.renderNewRootComponent(rootInstance[INTERNAL][RENDERED_COMPONENT]);
 
       Host.measurer && Host.measurer.afterRender();
     }

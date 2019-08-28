@@ -8,7 +8,7 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction } from '../types';
-import { CURRENT_ELEMENT, INTERNAL } from '../constant';
+import {CURRENT_ELEMENT, INSTANCE, INTERNAL, RENDERED_COMPONENT} from '../constant';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -109,7 +109,7 @@ class CompositeComponent extends BaseComponent {
     // Inject the updater into instance
     instance.updater = updater;
     instance[INTERNAL] = this;
-    this._instance = instance;
+    this[INSTANCE] = instance;
 
     // Init state, must be set to an object or null
     let initialState = instance.state;
@@ -153,8 +153,8 @@ class CompositeComponent extends BaseComponent {
       Host.owner = null;
     }
 
-    this._renderedComponent = instantiateComponent(renderedElement);
-    this._renderedComponent.mountComponent(
+    this[RENDERED_COMPONENT] = instantiateComponent(renderedElement);
+    this[RENDERED_COMPONENT].mountComponent(
       this._parent,
       instance,
       this._processChildContext(context),
@@ -197,7 +197,7 @@ class CompositeComponent extends BaseComponent {
   }
 
   unmountComponent(shouldNotRemoveChild) {
-    let instance = this._instance;
+    let instance = this[INSTANCE];
 
     // Unmounting a composite component maybe not complete mounted
     // when throw error in component constructor stage
@@ -207,7 +207,7 @@ class CompositeComponent extends BaseComponent {
       }, instance);
     }
 
-    if (this._renderedComponent != null) {
+    if (this[RENDERED_COMPONENT] != null) {
       let currentElement = this[CURRENT_ELEMENT];
       let ref = currentElement.ref;
 
@@ -215,8 +215,8 @@ class CompositeComponent extends BaseComponent {
         Ref.detach(currentElement._owner, ref, this);
       }
 
-      this._renderedComponent.unmountComponent(shouldNotRemoveChild);
-      this._renderedComponent = null;
+      this[RENDERED_COMPONENT].unmountComponent(shouldNotRemoveChild);
+      this[RENDERED_COMPONENT] = null;
     }
 
     // Reset pending fields
@@ -248,7 +248,7 @@ class CompositeComponent extends BaseComponent {
   }
 
   _processChildContext(currentContext) {
-    let instance = this._instance;
+    let instance = this[INSTANCE];
     // The getChildContext method context should be current instance
     let childContext = instance.getChildContext && instance.getChildContext();
 
@@ -260,7 +260,7 @@ class CompositeComponent extends BaseComponent {
   }
 
   _processPendingState(props, context) {
-    let instance = this._instance;
+    let instance = this[INSTANCE];
     let queue = this._pendingStateQueue;
     if (!queue) {
       return instance.state;
@@ -287,7 +287,7 @@ class CompositeComponent extends BaseComponent {
     prevUnmaskedContext,
     nextUnmaskedContext
   ) {
-    let instance = this._instance;
+    let instance = this[INSTANCE];
 
     // Maybe update component that has already been unmounted or failed mount.
     if (!instance) {
@@ -415,10 +415,10 @@ class CompositeComponent extends BaseComponent {
    * Call the component's `render` method and update the DOM accordingly.
    */
   _updateRenderedComponent(context) {
-    let prevRenderedComponent = this._renderedComponent;
+    let prevRenderedComponent = this[RENDERED_COMPONENT];
     let prevRenderedElement = prevRenderedComponent[CURRENT_ELEMENT];
 
-    let instance = this._instance;
+    let instance = this[INSTANCE];
     let nextRenderedElement;
 
     Host.owner = this;
@@ -459,8 +459,8 @@ class CompositeComponent extends BaseComponent {
       let prevNativeNode = prevRenderedComponent.getNativeNode();
       prevRenderedComponent.unmountComponent(true);
 
-      this._renderedComponent = instantiateComponent(nextRenderedElement);
-      this._renderedComponent.mountComponent(
+      this[RENDERED_COMPONENT] = instantiateComponent(nextRenderedElement);
+      this[RENDERED_COMPONENT].mountComponent(
         this._parent,
         instance,
         this._processChildContext(context),
@@ -496,14 +496,14 @@ class CompositeComponent extends BaseComponent {
   }
 
   getNativeNode() {
-    let renderedComponent = this._renderedComponent;
+    let renderedComponent = this[RENDERED_COMPONENT];
     if (renderedComponent) {
       return renderedComponent.getNativeNode();
     }
   }
 
   getPublicInstance() {
-    let instance = this._instance;
+    let instance = this[INSTANCE];
     // The functional components cannot be given refs
     if (instance instanceof ReactiveComponent) {
       return null;

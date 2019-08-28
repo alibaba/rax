@@ -1,7 +1,7 @@
 import Host from './host';
 import { flushEffect, schedule } from './scheduler';
 import runCallbacks from '../runCallbacks';
-import { CURRENT_ELEMENT, INTERNAL } from '../constant';
+import {CURRENT_ELEMENT, INTERNAL, RENDERED_COMPONENT} from '../constant';
 
 // Dirty components store
 let dirtyComponents = [];
@@ -120,7 +120,7 @@ function requestUpdate(component, partialState, callback) {
     enqueueCallback(internal, callback);
   }
 
-  const hasComponentRendered = internal._renderedComponent;
+  const hasComponentRendered = internal[RENDERED_COMPONENT];
 
   // setState
   if (partialState) {

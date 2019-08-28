@@ -1,6 +1,7 @@
 import Instance from '../vdom/instance';
 import Host from '../vdom/host';
 import reconciler from './reconciler';
+import { RENDERED_COMPONENT } from '../constant';
 
 const renderer = {
   ComponentTree: {
@@ -9,8 +10,8 @@ const renderer = {
     },
     getNodeFromInstance(inst) {
       // inst is an internal instance (but could be a composite)
-      while (inst._renderedComponent) {
-        inst = inst._renderedComponent;
+      while (inst[RENDERED_COMPONENT]) {
+        inst = inst[RENDERED_COMPONENT];
       }
 
       if (inst) {
@@ -26,7 +27,7 @@ const renderer = {
 
       // Ignore display top-level root component
       for (let rootID in Host.rootComponents) {
-        rootComponents[rootID] = Host.rootComponents[rootID]._renderedComponent;
+        rootComponents[rootID] = Host.rootComponents[rootID][RENDERED_COMPONENT];
       }
 
       return rootComponents;

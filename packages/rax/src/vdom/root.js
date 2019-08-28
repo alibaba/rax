@@ -1,5 +1,5 @@
 import Component from './component';
-import {INTERNAL} from '../constant';
+import {INTERNAL, RENDERED_COMPONENT} from '../constant';
 
 let rootID = 1;
 
@@ -16,7 +16,7 @@ class Root extends Component {
   }
 
   getRenderedComponent() {
-    return this[INTERNAL]._renderedComponent;
+    return this[INTERNAL][RENDERED_COMPONENT];
   }
 
   update(element) {

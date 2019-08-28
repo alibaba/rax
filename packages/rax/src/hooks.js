@@ -3,9 +3,10 @@ import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
 import { isFunction } from './types';
 import { invokeMinifiedError } from './error';
+import {INSTANCE} from './constant';
 
 function getCurrentInstance() {
-  return Host.owner && Host.owner._instance;
+  return Host.owner && Host.owner[INSTANCE];
 }
 
 function getCurrentRenderingInstance() {

@@ -3,6 +3,7 @@
  */
 import { invokeMinifiedError } from '../error';
 import { isFunction, isObject } from '../types';
+import { INSTANCE } from '../constant';
 
 export default {
   update(prevElement, nextElement, component) {
@@ -39,7 +40,7 @@ export default {
     } else if (isObject(ref)) {
       ref.current = instance;
     } else {
-      ownerComponent._instance.refs[ref] = instance;
+      ownerComponent[INSTANCE].refs[ref] = instance;
     }
   },
   detach(ownerComponent, ref, component) {
@@ -52,8 +53,8 @@ export default {
 
       if (isObject(ref) && ref.current === instance) {
         ref.current = null;
-      } else if (ownerComponent._instance.refs[ref] === instance) {
-        delete ownerComponent._instance.refs[ref];
+      } else if (ownerComponent[INSTANCE].refs[ref] === instance) {
+        delete ownerComponent[INSTANCE].refs[ref];
       }
     }
   }

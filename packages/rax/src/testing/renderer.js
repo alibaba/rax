@@ -2,6 +2,7 @@ import inject from '../vdom/inject';
 import Instance from '../vdom/instance';
 import ServerDriver from 'driver-server';
 import Serializer from './serializer';
+import {INSTANCE} from '../constant';
 
 // Init
 inject({
@@ -19,7 +20,7 @@ export default {
     };
 
     renderedComponent.getInstance = () => {
-      return renderedComponent._instance;
+      return renderedComponent[INSTANCE];
     };
 
     renderedComponent.update = (element) => {

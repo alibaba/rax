@@ -7,7 +7,7 @@ import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction, isArray } from '../types';
-import { CURRENT_ELEMENT, INTERNAL } from '../constant';
+import { CURRENT_ELEMENT, INSTANCE, INTERNAL } from '../constant';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -36,7 +36,7 @@ export default class NativeComponent extends BaseComponent {
     };
     instance[INTERNAL] = this;
 
-    this._instance = instance;
+    this[INSTANCE] = instance;
 
     let mountChildren = () => {
       if (children != null) {
@@ -86,7 +86,7 @@ export default class NativeComponent extends BaseComponent {
       // Mount children
       const mountImage = renderedChild.mountComponent(
         parent,
-        this._instance,
+        this[INSTANCE],
         context,
         nativeNodeMounter
       );
@@ -423,7 +423,7 @@ export default class NativeComponent extends BaseComponent {
 
           nextChild.mountComponent(
             parent,
-            this._instance,
+            this[INSTANCE],
             context,
             insertNodes // Insert nodes mounter
           );
@@ -466,7 +466,7 @@ export default class NativeComponent extends BaseComponent {
   }
 
   createNativeNode() {
-    const instance = this._instance;
+    const instance = this[INSTANCE];
     const nativeNode = Host.driver.createElement(instance.type, instance.props, this);
     Instance.set(nativeNode, instance);
     return nativeNode;
