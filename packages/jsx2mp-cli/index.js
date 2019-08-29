@@ -21,7 +21,8 @@ function build(options = {}) {
     entry = DEFAULT_ENTRY,
     platform = DEFAULT_PLATFORM,
     workDirectory = cwd,
-    distDirectory = join(cwd, DEFAULT_DIST)
+    distDirectory = join(cwd, DEFAULT_DIST),
+    skipClearStdout = false
   } = options;
 
   let config = getWebpackConfig({
@@ -38,9 +39,9 @@ function build(options = {}) {
   }
   const compiler = webpack(config);
   compiler.outputFileSystem = new MemFs();
-  compiler.run((...args) => {
-    handleCompiled(...args);
-    afterCompiled && afterCompiled(...args);
+  compiler.run((err, stats) => {
+    handleCompiled(err, stats, { skipClearStdout });
+    afterCompiled && afterCompiled(err, stats);
   });
 }
 
@@ -55,7 +56,8 @@ function watch(options = {}) {
     entry = DEFAULT_ENTRY,
     platform = DEFAULT_PLATFORM,
     workDirectory = cwd,
-    distDirectory = join(cwd, DEFAULT_DIST)
+    distDirectory = join(cwd, DEFAULT_DIST),
+    skipClearStdout = false
   } = options;
 
   let config = getWebpackConfig({
@@ -74,14 +76,14 @@ function watch(options = {}) {
   const compiler = webpack(config);
   const watchOpts = {};
   compiler.outputFileSystem = new MemFs();
-  compiler.watch(watchOpts, (...args) => {
-    handleCompiled(...args);
-    afterCompiled && afterCompiled(...args);
+  compiler.watch(watchOpts, (err, stats) => {
+    handleCompiled(err, stats, { skipClearStdout });
+    afterCompiled && afterCompiled(err, stats);
     console.log('\nWatching file changes...');
   });
 }
 
-function handleCompiled(err, stats) {
+function handleCompiled(err, stats, { skipClearStdout }) {
   if (err) {
     console.error(err.stack || err);
     if (err.details) {
@@ -91,7 +93,7 @@ function handleCompiled(err, stats) {
   }
   if (stats.hasErrors()) {
     const errors = stats.compilation.errors;
-    consoleClear(true);
+    if (!skipClearStdout) consoleClear(true);
     spinner.fail('Failed to compile.\n');
     for (let e of errors) {
       console.log(chalk.red(`    ${errors.indexOf(e) + 1}. ${e.error.message} \n`));
