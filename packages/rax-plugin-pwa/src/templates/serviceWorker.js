@@ -13,7 +13,7 @@ module.exports = `/**
 let preCacheUrlList = <%= JSON.stringify(preCacheUrlList) %>;
 
 // ignore following assets, match thougth regExp
-let passiveCachePatternList = <%= JSON.stringify(passiveCachePatternList) %>;
+let ignorePatternList = <%= JSON.stringify(ignorePatternList) %>;
 
 // chche following assets, match thougth regExp
 let savedCachePatternList = <%= JSON.stringify(savedCachePatternList) %>;
@@ -58,8 +58,8 @@ self.addEventListener('fetch', e => {
   if (
     e.request.method != 'GET' ||
     !savedCachePatternList.some(pat => url.href.match(pat) != null) ||
-    // ignore passiveCachePatternList
-    passiveCachePatternList.some(pat => url.href.match(pat) != null)
+    // ignore ignorePatternList
+    ignorePatternList.some(pat => url.href.match(pat) != null)
   ) {
     return;
   }

@@ -6,17 +6,17 @@ const regSwTemplate = require('../templates/registerSW');
 
 const isArray = Array.isArray;
 
-const PLUGIN_NAME = 'PWA_SerViceWorkerPlugin';
+const PLUGIN_NAME = 'PWA_ServiceWorkerPlugin';
 const HTML_PATH = 'web/index.html';
 const REG_SW_FILE_PATH = 'web/regSW.pwa.js';
 const SW_FILE_PATH = 'web/sw.js';
 const DEFAULT_PASSIVE_LIST = ['/regSW.pwa.js/i'];
 
-function patternToString(i) {
-  return i.toString();
+function patternToString(pattern) {
+  return pattern.toString();
 }
 
-module.exports = class SaveToDesktopPlugin {
+module.exports = class ServiceWorkerPlugin {
   constructor(options) {
     this.options = options;
   }
@@ -38,12 +38,12 @@ module.exports = class SaveToDesktopPlugin {
           : [],
         // Ignore following assets, match thougth regExp
         // The service worker file can not be cache
-        passiveCachePatternList: isArray(serviceWorker.preCacheUrlList)
+        ignorePatternList: isArray(serviceWorker.ignorePatternList)
           ? DEFAULT_PASSIVE_LIST
-            .concat(serviceWorker.preCacheUrlList)
+            .concat(serviceWorker.ignorePatternList)
             .map(patternToString)
           : DEFAULT_PASSIVE_LIST,
-        // Chche following assets, match thougth regExp
+        // Cache following assets, match thougth regExp
         savedCachePatternList: isArray(serviceWorker.savedCachePatternList)
           ? serviceWorker.savedCachePatternList.map(patternToString)
           : [],
