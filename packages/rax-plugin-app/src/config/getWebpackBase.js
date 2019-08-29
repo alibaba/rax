@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const Chain = require('webpack-chain');
 const babelMerge = require('babel-merge');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
@@ -57,6 +58,9 @@ module.exports = (context) => {
 
   config.plugin('caseSensitivePaths')
     .use(CaseSensitivePathsPlugin);
+
+  config.plugin('copyWebpackPlugin')
+    .use(CopyWebpackPlugin, [[{ from: 'src/public', to: 'public' }]]);
 
   config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);
