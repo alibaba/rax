@@ -1,6 +1,5 @@
 import Host from './vdom/host';
 import Element from './vdom/element';
-import flattenChildren from './vdom/flattenChildren';
 import { invokeMinifiedError } from './error';
 import { isString, isArray } from './types';
 
@@ -36,20 +35,33 @@ export default function createElement(type, config, children) {
   const ownerComponent = Host.owner;
 
   if (config != null) {
-    ref = config.ref === undefined ? null : config.ref;
-    key = config.key === undefined ? null : String(config.key);
+    let hasReservedProps = false;
 
-    if (process.env.NODE_ENV !== 'production') {
-      if (isString(ref) && !ownerComponent) {
-        console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+    if (config.ref != null) {
+      hasReservedProps = true;
+      ref = config.ref;
+      if (process.env.NODE_ENV !== 'production') {
+        if (isString(ref) && !ownerComponent) {
+          console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+        }
       }
     }
 
-    // Remaining properties are added to a new props object
-    for (propName in config) {
-      if (!RESERVED_PROPS[propName]) {
-        props[propName] = config[propName];
+    if (config.key != null) {
+      hasReservedProps = true;
+      key = String(config.key);
+    }
+
+    // if no reserved props, assign config to props for better performance
+    if (hasReservedProps) {
+      for (propName in config) {
+        // extract reserved props
+        if (!RESERVED_PROPS[propName]) {
+          props[propName] = config[propName];
+        }
       }
+    } else {
+      props = config;
     }
   }
 
@@ -66,7 +78,7 @@ export default function createElement(type, config, children) {
           childArray[i] = arguments[i + 2];
         }
       }
-      props.children = flattenChildren(childArray);
+      props.children = childArray;
     }
   }
 
