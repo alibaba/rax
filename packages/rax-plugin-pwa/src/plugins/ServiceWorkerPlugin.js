@@ -10,7 +10,7 @@ const PLUGIN_NAME = 'PWA_ServiceWorkerPlugin';
 const HTML_PATH = 'web/index.html';
 const REG_SW_FILE_PATH = 'web/regSW.pwa.js';
 const SW_FILE_PATH = 'web/sw.js';
-const DEFAULT_PASSIVE_LIST = ['/regSW.pwa.js/i'];
+const DEFAULT_IGNORE_LIST = ['/regSW.pwa.js/i'];
 
 function patternToString(pattern) {
   return pattern.toString();
@@ -39,10 +39,10 @@ module.exports = class ServiceWorkerPlugin {
         // Ignore following assets, match thougth regExp
         // The service worker file can not be cache
         ignorePatternList: isArray(serviceWorker.ignorePatternList)
-          ? DEFAULT_PASSIVE_LIST
+          ? DEFAULT_IGNORE_LIST
             .concat(serviceWorker.ignorePatternList)
             .map(patternToString)
-          : DEFAULT_PASSIVE_LIST,
+          : DEFAULT_IGNORE_LIST,
         // Cache following assets, match thougth regExp
         savedCachePatternList: isArray(serviceWorker.savedCachePatternList)
           ? serviceWorker.savedCachePatternList.map(patternToString)
