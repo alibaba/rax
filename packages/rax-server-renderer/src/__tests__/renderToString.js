@@ -372,4 +372,43 @@ describe('renderToString', () => {
     let str = renderToString(<MyComponent initialCount={0} />);
     expect(str).toBe('<div>Count: 0</div>');
   });
+
+  it('render with pre compined html and attrs', () => {
+    function View(props) {
+      return (
+        <div>{props.name}</div>
+      );
+    }
+
+    function MyComponent(props) {
+      // <div className="container" title={props.title}>
+      //   <div>hello</div>
+      //   <View name={props.name} />
+      //   {props.version}
+      // </div>
+
+      return (
+        [{
+          __html: '<div class="container"'
+        }, {
+          __attrs: {
+            title: props.title
+          }
+        }, {
+          __html: '>'
+        }, [{
+          __html: '<div>'
+        }, 'hello', {
+          __html: '</div>'
+        }], createElement(View, {
+          name: props.name
+        }), props.version, {
+          __html: '</div>'
+        }]
+      );
+    }
+
+    let str = renderToString(<MyComponent title="welcome" name="rax" version="1.0" />);
+    expect(str).toBe('<div class="container" title="welcome"><div>hello</div><div>rax</div>1.0</div>');
+  });
 });
