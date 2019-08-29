@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-const { join } = require('path');
-=======
 const { join, relative } = require('path');
 const { existsSync, statSync } = require('fs-extra');
->>>>>>> release/jsx2mp-0829
 const chalk = require('chalk');
 
 const WEEX_MODULE_REG = /^@weex(-module)?\//;
@@ -77,11 +73,7 @@ module.exports = function visitor({ types: t }, options) {
               path.replaceWith(t.nullLiteral());
             } else if (isNpmModule(node.arguments[0].value)) {
               path.node.arguments = [
-<<<<<<< HEAD
-                source(node.arguments[0].value, npmRelativePath)
-=======
                 source(node.arguments[0].value, npmRelativePath, state.filename, state.cwd)
->>>>>>> release/jsx2mp-0829
               ];
             }
           } else if (t.isExpression(node.arguments[0])) {

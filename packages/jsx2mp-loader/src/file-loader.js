@@ -28,11 +28,7 @@ module.exports = function fileLoader(content) {
   });
 
   const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
-<<<<<<< HEAD
-    const isScopedNpm = relativeNpmPath[0] === '@';
-=======
     const isScopedNpm = /^_?@/.test(relativeNpmPath);
->>>>>>> release/jsx2mp-0829
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
@@ -45,31 +41,6 @@ module.exports = function fileLoader(content) {
     const pkg = readJSONSync(sourcePackageJSONPath);
     const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
 
-<<<<<<< HEAD
-    if ('miniappConfig' in pkg) {
-      // Copy whole directory for miniapp component
-      if (!dependenciesCache[npmName]) {
-        dependenciesCache[npmName] = true;
-        if (isSymbolic(sourcePackagePath)) {
-          throw new Error('Unsupported symbol link from ' + npmName + ', please use npm or yarn instead.');
-        }
-
-        copySync(
-          sourcePackagePath,
-          join(outputPath, 'npm', npmName)
-        );
-        // modify referenced component location
-        if (pkg.miniappConfig.main) {
-          const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
-          if (existsSync(componentConfigPath)) {
-            const componentConfig = readJSONSync(componentConfigPath);
-            if (componentConfig.usingComponents) {
-              for (let key in componentConfig.usingComponents) {
-                if (componentConfig.usingComponents.hasOwnProperty(key)) {
-                  componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
-                }
-              }
-=======
     // Is miniapp compatible component.
     if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main) {
       // Only copy first level directory for miniapp component
@@ -89,7 +60,6 @@ module.exports = function fileLoader(content) {
           for (let key in componentConfig.usingComponents) {
             if (componentConfig.usingComponents.hasOwnProperty(key)) {
               componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
->>>>>>> release/jsx2mp-0829
             }
           }
         }
@@ -164,15 +134,10 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
   };
 
   return transformSync(rawCode, {
-<<<<<<< HEAD
-    presets, plugins,
-    filename: resourcePath,
-=======
     presets,
     plugins,
     filename: resourcePath,
     parserOpts: babelParserOption,
->>>>>>> release/jsx2mp-0829
   });
 }
 

@@ -1,10 +1,6 @@
 {
   "name": "jsx2mp-loader",
-<<<<<<< HEAD
-  "version": "0.1.2",
-=======
   "version": "0.1.4",
->>>>>>> release/jsx2mp-0829
   "description": "",
   "main": "src/app-loader.js",
   "scripts": {
