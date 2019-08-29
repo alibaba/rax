@@ -1,3 +1,5 @@
+const { readFileSync, existsSync } = require('fs');
+const { join } = require('path');
 const rollup = require('rollup');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
@@ -6,12 +8,40 @@ const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
 
-async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd' }) {
+const INTERNEL_VARS = 'internal_variables.txt';
+
+async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd', mangleProps }) {
   const output = {
     name,
     exports: 'named',
     sourcemap: true
   };
+
+  const uglifyOptions = {
+    compress: {
+      loops: false,
+      keep_fargs: false,
+      unsafe: true,
+      pure_getters: true
+    },
+  };
+
+  // Apply internal_variables.txt rules.
+  if (shouldMinify) {
+    const internalVarFile = join(__dirname, '../packages', packageName, INTERNEL_VARS);
+    if (existsSync(internalVarFile)) {
+      const internalVariableDeclearation = readFileSync(internalVarFile, 'utf-8');
+      const internalVariableList = internalVariableDeclearation
+        .split(/\n/)
+        .filter(line => line && line[0] !== '#');
+
+      uglifyOptions.mangle = {
+        properties: {
+          regex: new RegExp('^(' + internalVariableList.join('|') + ')'),
+        },
+      };
+    }
+  }
 
   // For development
   const bundle = await rollup.rollup({
@@ -38,14 +68,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
       replace({
         'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),
       }),
-      shouldMinify ? uglify({
-        compress: {
-          loops: false,
-          keep_fargs: false,
-          unsafe: true,
-          pure_getters: true
-        },
-      }) : null,
+      shouldMinify ? uglify(uglifyOptions) : null,
     ]
   });
 
