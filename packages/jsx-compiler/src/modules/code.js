@@ -193,15 +193,27 @@ function isWeexModule(value) {
   return WEEX_MODULE_REG.test(value);
 }
 
+function getNpmName(value) {
+  const isScopedNpm = /^_?@/.test(value);
+  return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
+}
 
 function renameNpmModules(ast, npmRelativePath, filename, cwd) {
-  const source = (npmName, prefix, filename, rootContext) => {
+  const source = (value, prefix, filename, rootContext) => {
+    const npmName = getNpmName(value);
     const nodeModulePath = join(rootContext, 'node_modules');
     const searchPaths = [nodeModulePath];
     const target = require.resolve(npmName, { paths: searchPaths });
     // In tnpm, target will be like following (symbol linked path):
     // ***/_universal-toast_1.0.0_universal-toast/lib/index.js
-    const moduleBasePath = join(require.resolve(join(npmName, 'package.json'), { paths: searchPaths }), '..');
+    let packageJSONPath;
+    try {
+      packageJSONPath = require.resolve(join(npmName, 'package.json'), { paths: searchPaths });
+    } catch (err) {
+      throw new Error(`You may not have npm installed: "${npmName}"`);
+    }
+
+    const moduleBasePath = join(packageJSONPath, '..');
     const modulePathSuffix = relative(moduleBasePath, target);
 
     let ret = join(prefix, npmName, modulePathSuffix);
