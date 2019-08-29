@@ -103,7 +103,7 @@ function buildOpeningElementAttributes(attribs, file) {
   while (attribs.length) {
     const prop = attribs.shift();
 
-    if (prop.name.name === 'dangerouslySetInnerHTML') {
+    if (prop.name && prop.name.name === 'dangerouslySetInnerHTML') {
       innerHTML = prop.value.expression;
     } else if (t.isJSXSpreadAttribute(prop)) {
       _props = pushProps(_props, objs);

@@ -12,7 +12,9 @@ function getTransfromCode(code, opts) {
       require.resolve('@babel/preset-react'),
     ],
     plugins: [
-      jsxToHtmlPlugin,
+      [jsxToHtmlPlugin, {
+        useBuiltIns: true
+      }],
       ['@babel/plugin-transform-react-jsx', {
         pragma: 'createElement'
       }],
@@ -93,6 +95,28 @@ describe('transform jsx to html', () => {
 }], [{
   __html: "<div>"
 }, "b ", props.index, {
+  __html: "</div>"
+}], {
+  __html: "</div>"
+}];`);
+  });
+
+  it('transform wisth jsx spread attribute', () => {
+    expect(getTransfromCode(`
+<div className={className} {...props}>
+  <div>a</div>
+</div>
+    `)).toBe(`[{
+  __html: "<div"
+}, {
+  __attrs: Object.assign({
+    className: className
+  }, props)
+}, {
+  __html: ">"
+}, [{
+  __html: "<div>"
+}, "a", {
   __html: "</div>"
 }], {
   __html: "</div>"
