@@ -1,46 +1,21 @@
 'use strict';
 
 const path = require('path');
-const address = require('address');
-
-const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
-const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
-const babelMerge = require('babel-merge');
+const mime = require('mime');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
-  const { publicPath } = userConfig;
+  const { outputDir } = userConfig;
 
-  const appEntry = path.resolve(rootDir, 'src/app.js');
+  // history fall back
+  const htmlPath = path.resolve(rootDir, outputDir, 'web/index.html');
+  config.devServer.set('before', (app, devServer) => {
+    let memFs = devServer.compiler.compilers[0].outputFileSystem;
 
-  config.mode('development');
-  config.devtool('inline-module-source-map');
-
-  config.module.rule('jsx')
-    .use('babel')
-      .tap(options => babelMerge.all([{
-        plugins: [require.resolve('rax-hot-loader/babel')],
-      }, options]));
-
-  config.module.rule('tsx')
-    .use('babel')
-      .tap(options => babelMerge.all([{
-        plugins: [require.resolve('rax-hot-loader/babel')],
-      }, options]));
-
-  config.entry('index')
-    .add(hmrClient)
-    .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
-
-  config.devServer
-    .compress(true)
-    .clientLogLevel('error')
-    .contentBase(path.resolve(rootDir, 'build'))
-    .watchContentBase(true)
-    .hot(true)
-    .quiet(true)
-    .publicPath(publicPath)
-    .overlay(false)
-    .host(address.ip())
-    .public(address.ip());
+    // not match .js .html files
+    app.get(/^\/?((?!\.(js|html|css|json)).)*$/, function(req, res) {
+      const outPut = memFs.readFileSync(htmlPath).toString();
+      res.send(outPut);
+    });
+  });
 };

@@ -1,5 +1,7 @@
+import { isArray } from '../types';
+
 function traverseChildren(children, result) {
-  if (Array.isArray(children)) {
+  if (isArray(children)) {
     for (let i = 0, l = children.length; i < l; i++) {
       traverseChildren(children[i], result);
     }

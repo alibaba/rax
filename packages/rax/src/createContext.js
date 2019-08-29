@@ -1,4 +1,5 @@
-import Component from './vdom/component';
+import { useState, useEffect } from './hooks';
+import { isFunction, isArray } from './types';
 
 class ValueEmitter {
   constructor(defaultValue) {
@@ -22,96 +23,73 @@ class ValueEmitter {
 let uniqueId = 0;
 
 export default function createContext(defaultValue) {
-  const contextProp = '__context_' + uniqueId++ + '__';
+  const contextProp = '__ctx' + uniqueId++;
+  const stack = [];
+  const defaultEmitter = new ValueEmitter(defaultValue);
 
-  class Provider extends Component {
-    constructor(props) {
-      super(props);
-      this.emitter = new ValueEmitter(defaultValue);
-    }
+  function Provider(props) {
+    const propsValue = props.value !== undefined ? props.value : defaultValue;
+    const [value, setValue] = useState(propsValue);
+    const [emitter] = useState(() => new ValueEmitter(value));
+    emitter.value = propsValue;
 
-    getChildContext() {
-      return {
-        [contextProp]: this.emitter
-      };
-    }
+    if (propsValue !== value) setValue(propsValue);
 
-    componentWillMount() {
-      if (this.props.value !== undefined) {
-        this.emitter.value = this.props.value;
-      }
-    }
+    useEffect(() => {
+      stack.pop();
+    });
 
-    componentWillReceiveProps(nextProps) {
-      if (this.props.value !== nextProps.value) {
-        this.emitter.value = nextProps.value;
-      }
-    }
+    useEffect(() => {
+      emitter.emit();
+    }, [value]);
 
-    componentDidUpdate(prevProps) {
-      if (this.props.value !== prevProps.value) {
-        this.emitter.emit();
-      }
-    }
-
-    render() {
-      return this.props.children;
-    }
+    stack.push(emitter);
+    return props.children;
   }
 
-  Provider.childContextTypes = {
-    [contextProp]: () => {}
-  };
+  function readEmitter(instance) {
+    const emitter = stack[stack.length - 1];
+    if (emitter) return emitter;
+    while (instance && instance._internal) {
+      if (instance instanceof Provider) {
+        break;
+      }
+      instance = instance._internal._parentInstance;
+    }
+    return instance && instance.emitter || defaultEmitter;
+  }
+
+  Provider.readEmitter = readEmitter;
   Provider.contextProp = contextProp;
-  Provider.defaultValue = defaultValue;
 
-  class Consumer extends Component {
-    constructor(props, context) {
-      super(props, context);
-      this.state = {
-        value: this.readContext(this.context)
+  function Consumer(props) {
+    const [emitter] = useState(() => readEmitter(this));
+    const [value, setValue] = useState(emitter.value);
+
+    if (value !== emitter.value) {
+      setValue(emitter.value);
+      return; // Interrupt execution of consumer.
+    }
+
+    function onUpdate(updatedValue) {
+      if (value !== updatedValue) {
+        setValue(updatedValue);
+      }
+    }
+
+    useEffect(() => {
+      emitter.on(onUpdate);
+      return () => {
+        emitter.off(onUpdate);
       };
+    }, []);
 
-      this.onUpdate = value => this.state.value !== value && this.setState({value});
-    }
-
-    readContext(context) {
-      return context[contextProp] ? context[contextProp].value : defaultValue;
-    }
-
-    componentDidMount() {
-      if (this.context[contextProp]) {
-        this.context[contextProp].on(this.onUpdate);
-      }
-    }
-
-    componentWillReceiveProps(nextProps, nextContext) {
-      const newContextValue = this.readContext(nextContext);
-      if (this.state.value !== newContextValue) {
-        this.setState({
-          value: newContextValue
-        });
-      }
-    }
-
-    componentWillUnmount() {
-      if (this.context[contextProp]) {
-        this.context[contextProp].off(this.onUpdate);
-      }
-    }
-
-    render() {
-      let children = this.props.children;
-      let consumer = Array.isArray(children) ? children[0] : children;
-      if (typeof consumer === 'function') {
-        return consumer(this.state.value);
-      }
+    const children = props.children;
+    const consumer = isArray(children) ? children[0] : children;
+    if (isFunction(consumer)) {
+      return consumer(value);
     }
   }
-
-  Consumer.contextTypes = {
-    [contextProp]: () => {}
-  };
 
   return {
     Provider,

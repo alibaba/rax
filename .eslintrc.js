@@ -9,7 +9,6 @@ module.exports = {
     'commonjs': true
   },
   'plugins': [
-    'ejs',
     'react',
     'import'
   ],

@@ -4,7 +4,9 @@ import { RENDER } from './cycles';
 let queue = [];
 
 export function enqueueRender(component) {
-  if (queue.push(component) === 1) nextTick(rerender);
+  if (!component.__isQueued && (component.__isQueued = true) && queue.push(component) === 1) {
+    nextTick(rerender);
+  }
 }
 
 export function rerender() {
@@ -13,6 +15,9 @@ export function rerender() {
   let component;
   // eslint-disable-next-line
   while (component = list.pop()) {
-    component._updateComponent();
+    if (component.__isQueued) {
+      component._updateComponent();
+      component.__isQueued = false;
+    }
   }
 }

@@ -6,6 +6,7 @@ import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
+import { isFunction, isArray } from '../types';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -139,7 +140,8 @@ class NativeComponent extends BaseComponent {
     this.updateProperties(prevProps, nextProps);
 
     // If the prevElement has no child, mount children directly
-    if (prevProps.children && prevProps.children.length === 0) {
+    if (prevProps.children == null ||
+      isArray(prevProps.children) && prevProps.children.length === 0) {
       this.mountChildren(nextProps.children, nextContext);
     } else {
       this.updateChildren(nextProps.children, nextContext);
@@ -180,7 +182,7 @@ class NativeComponent extends BaseComponent {
         // Remove event
         const eventListener = prevProps[propKey];
 
-        if (typeof eventListener === 'function') {
+        if (isFunction(eventListener)) {
           driver.removeEventListener(
             nativeNode,
             propKey.slice(2).toLowerCase(),
@@ -243,11 +245,11 @@ class NativeComponent extends BaseComponent {
         // Update event binding
         let eventName = propKey.slice(2).toLowerCase();
 
-        if (typeof prevProp === 'function') {
+        if (isFunction(prevProp)) {
           driver.removeEventListener(nativeNode, eventName, prevProp, nextProps);
         }
 
-        if (typeof nextProp === 'function') {
+        if (isFunction(nextProp)) {
           driver.addEventListener(nativeNode, eventName, nextProp, nextProps);
         }
       } else {
@@ -339,6 +341,13 @@ class NativeComponent extends BaseComponent {
     let prevFirstNativeNode;
     let shouldUnmountPrevFirstChild;
 
+    // Directly remove all children from component, if nextChildren is empty (null, [], '').
+    // `driver.removeChildren` is optional driver protocol.
+    let shouldRemoveAllChildren = Boolean(
+      driver.removeChildren
+      && nextChildrenElements === null || nextChildrenElements && nextChildrenElements.length === 0
+    );
+
     // Unmount children that are no longer present.
     if (prevChildren != null) {
       for (let name in prevChildren) {
@@ -351,11 +360,11 @@ class NativeComponent extends BaseComponent {
           prevFirstChild = prevChild;
           prevFirstNativeNode = prevFirstChild.getNativeNode();
 
-          if (Array.isArray(prevFirstNativeNode)) {
+          if (isArray(prevFirstNativeNode)) {
             prevFirstNativeNode = prevFirstNativeNode[0];
           }
         } else if (shouldUnmount) {
-          prevChild.unmountComponent();
+          prevChild.unmountComponent(shouldRemoveAllChildren);
         }
       }
     }
@@ -405,7 +414,7 @@ class NativeComponent extends BaseComponent {
 
           let parent = this.getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
-          if (Array.isArray(parent)) {
+          if (isArray(parent)) {
             parent = this._parent;
           }
 
@@ -422,16 +431,18 @@ class NativeComponent extends BaseComponent {
 
         // Get the last child
         lastPlacedNode = nextChild.getNativeNode();
-        // Push to nextNativeNode
-        nextNativeNode = nextNativeNode.concat(lastPlacedNode);
 
-        if (Array.isArray(lastPlacedNode)) {
+        // Push to nextNativeNode
+        if (isArray(lastPlacedNode)) {
+          nextNativeNode = nextNativeNode.concat(lastPlacedNode);
           lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
+        } else {
+          nextNativeNode.push(lastPlacedNode);
         }
       }
 
       // Sync update native refs
-      if (Array.isArray(this._nativeNode)) {
+      if (isArray(this._nativeNode)) {
         // Clear all and push the new array
         this._nativeNode.splice(0, this._nativeNode.length);
         for (let i = 0; i < nextNativeNode.length; i++) {
@@ -441,7 +452,11 @@ class NativeComponent extends BaseComponent {
     }
 
     if (shouldUnmountPrevFirstChild) {
-      prevFirstChild.unmountComponent();
+      prevFirstChild.unmountComponent(shouldRemoveAllChildren);
+    }
+
+    if (shouldRemoveAllChildren) {
+      driver.removeChildren(this._nativeNode);
     }
 
     this._renderedChildren = nextChildren;

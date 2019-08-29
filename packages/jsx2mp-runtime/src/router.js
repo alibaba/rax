@@ -1,4 +1,4 @@
-/* global my */
+import { navigateTo, redirectTo, navigateBack} from '@@ADAPTER@@';
 
 let router;
 
@@ -23,14 +23,14 @@ export function withRouter(Klass) {
  * Navigate to given path.
  */
 export function push(path) {
-  return my.navigateTo({ url: path });
+  return navigateTo({ url: path });
 }
 
 /**
  * Navigate replace.
  */
 export function replace(path) {
-  return my.redirectTo({ url: path });
+  return redirectTo({ url: path });
 }
 
 /**
@@ -44,7 +44,7 @@ export function go() {
  * Navigate back.
  */
 export function goBack(n = 1) {
-  return my.navigateBack({ delta: n });
+  return navigateBack({ delta: n });
 }
 
 /**

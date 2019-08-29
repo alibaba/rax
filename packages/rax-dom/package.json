@@ -1,6 +1,6 @@
 {
   "name": "rax-dom",
-  "version": "1.0.1",
+  "version": "1.0.2-0",
   "description": "Rax DOM render",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,7 +16,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "driver-dom": "^1.0.0",
+    "driver-dom": "2.0.1-0",
     "rax-hydrate": "^1.0.0",
     "rax-unmount-component-at-node": "^1.0.0",
     "rax-find-dom-node": "^1.0.0",

@@ -12,6 +12,7 @@ module.exports = ({ chainWebpack, context }, option) => {
           config.plugin(plugin.replace(/\.js$/, ''))
             .use(require(`${pluginDir}/${plugin}`), [{
               ...option,
+              context,
               command
             }]);
         });

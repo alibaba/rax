@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`renderStyle style binding should accept array 1`] = `
-Object {
-  "background": "yellow",
-  "color": "red",
-}
-`;

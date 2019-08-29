@@ -4,7 +4,7 @@ import * as DriverDOM from '../../';
 describe('svg', () => {
   let container;
 
-  beforeEach( () => {
+  beforeEach(() => {
     container = document.createElement('div');
     (document.body || document.documentElement).appendChild(container);
   });
@@ -12,7 +12,7 @@ describe('svg', () => {
   it('should create SVG with SVG namespace URI', () => {
     render((
       <svg height="90" width="200">
-        <text x="10" y="20" style={{fill: 'red'}}>
+        <text x="10" y="20" style={{ fill: 'red' }}>
           <tspan x="10" y="45">First line.</tspan>
           <tspan x="10" y="70">Second line.</tspan>
         </text>

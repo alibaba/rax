@@ -1,5 +1,7 @@
+import { isArray } from '../types';
+
 export default function toArray(obj) {
-  if (!Array.isArray(obj)) {
+  if (!isArray(obj)) {
     obj = [obj];
   }
   return obj;

@@ -1,7 +1,10 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
-const { relative, join } = require('path');
+const { relative, join, dirname } = require('path');
 const compiler = require('jsx-compiler');
-const moduleResolve = require('./moduleResolve');
+const { getOptions } = require('loader-utils');
+const moduleResolve = require('./utils/moduleResolve');
+const { removeExt } = require('./utils');
+
 
 function createImportStatement(req) {
   return `import '${req}';`;
@@ -27,28 +30,37 @@ function getRelativePath(filePath) {
 }
 
 module.exports = function appLoader(content) {
+  const loaderOptions = getOptions(this);
+  const { entryPath } = loaderOptions;
+  const appConfigPath = removeExt(this.resourcePath) + '.json';
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
-  const config = readJSONSync(join(this.rootContext, 'src/app.json'));
+  const config = readJSONSync(appConfigPath);
+
+  const outputPath = this._compiler.outputPath;
+  if (!existsSync(outputPath)) mkdirSync(outputPath);
+
+  const sourcePath = join(this.rootContext, entryPath);
+  const relativeSourcePath = relative(sourcePath, this.resourcePath);
+  const targetFilePath = join(outputPath, relativeSourcePath);
+
+  const targetFileDir = dirname(join(outputPath, relative(sourcePath, this.resourcePath)));
+
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
-    filePath: this.resourcePath,
+    resourcePath: this.resourcePath,
+    outputPath,
+    sourcePath,
     type: 'app',
   });
   const transformed = compiler(rawContent, compilerOptions);
 
-  const distPath = this._compiler.outputPath;
-  if (!existsSync(distPath)) mkdirSync(distPath);
+  this.addDependency(appConfigPath);
 
-  const relativeSourcePath = relative(this.rootContext, this.resourcePath);
-  const targetFilePath = join(distPath, relativeSourcePath);
-
-  this.addDependency(join(this.rootContext, 'app.json'));
-
-  const transformedAppConfig = transformAppConfig(config);
-  writeFileSync(join(distPath, 'app.js'), transformed.code);
-  writeJSONSync(join(distPath, 'app.json'), transformedAppConfig, { spaces: 2 });
+  const transformedAppConfig = transformAppConfig(entryPath, config);
+  writeFileSync(join(outputPath, 'app.js'), transformed.code);
+  writeJSONSync(join(outputPath, 'app.json'), transformedAppConfig, { spaces: 2 });
 
   if (transformed.style) {
-    writeFileSync(join(distPath, 'app.acss'), transformed.style);
+    writeFileSync(join(outputPath, 'app.acss'), transformed.style);
   }
 
   return [
@@ -57,7 +69,7 @@ module.exports = function appLoader(content) {
   ].join('\n');
 };
 
-function transformAppConfig(originalConfig) {
+function transformAppConfig(entryPath, originalConfig) {
   const config = {};
   for (let key in originalConfig) {
     const value = originalConfig[key];
@@ -67,7 +79,7 @@ function transformAppConfig(originalConfig) {
         if (Array.isArray(value)) {
           // only resolve first level of routes.
           value.forEach(({ path, component }) => {
-            pages.push(moduleResolve('src', getRelativePath(component)));
+            pages.push(moduleResolve(entryPath, getRelativePath(component)));
           });
         }
         config.pages = pages;

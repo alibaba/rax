@@ -1,18 +1,20 @@
 const path = require('path');
-const qs = require('querystring');
+const qs = require('qs');
 
 const SSRLoader = require.resolve('./loader');
 
 module.exports = (config, context) => {
-  const { rootDir } = context;
-  const publicPath = config.output.get('publicPath');
-  const appDirectory = rootDir;
-  const appSrc = path.resolve(appDirectory, 'src');
+  const { rootDir, userConfig } = context;
+  const { plugins } = userConfig;
+  const isMultiPages = !!~plugins.indexOf('rax-plugin-multi-pages');
 
-  const absoluteAppPath = path.join(appDirectory, 'src/app.js');
-  const absoluteAppJSONPath = path.join(appDirectory, 'src/app.json');
-  const absoluteDocumentPath = path.join(appDirectory, 'src/document/index.jsx');
-  const absoluteShellPath = path.join(appDirectory, 'src/shell/index.jsx');
+  const publicPath = config.output.get('publicPath');
+  const appSrc = path.resolve(rootDir, 'src');
+
+  const absoluteAppPath = path.join(rootDir, 'src/app.js');
+  const absoluteAppJSONPath = path.join(rootDir, 'src/app.json');
+  const absoluteDocumentPath = path.join(rootDir, 'src/document/index.jsx');
+  const absoluteShellPath = path.join(rootDir, 'src/shell/index.jsx');
 
   const appJSON = require(absoluteAppJSONPath);
   const routes = appJSON.routes;
@@ -31,7 +33,9 @@ module.exports = (config, context) => {
       absoluteAppPath,
       absolutePagePath,
       absoluteAppJSONPath,
-      publicPath
+      publicPath,
+      isMultiPages,
+      scripts: [`web/${entry}.js`]
     };
 
     entries[entry] = `${SSRLoader}?${qs.stringify(query)}!${absolutePagePath}`;

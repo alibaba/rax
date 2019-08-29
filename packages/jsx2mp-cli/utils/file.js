@@ -5,7 +5,7 @@ const {
   writeFileSync
 } = require('fs-extra');
 const { relative } = require('path');
-const colors = require('colors');
+const chalk = require('chalk');
 
 /**
  * Get file content as utf-8 text.
@@ -33,7 +33,7 @@ const isDirectory = function(path) {
  */
 const writeFile = function(path, content, rootPath) {
   ensureFileSync(path);
-  console.log(colors.green('Write'), relative(rootPath, path));
+  console.log(chalk.green('Write'), relative(rootPath, path));
   writeFileSync(path, content, 'utf-8');
 };
 
