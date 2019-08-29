@@ -37,6 +37,8 @@ function build(options = {}) {
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
+  spinner.shouldClear = !skipClearStdout;
+
   const compiler = webpack(config);
   compiler.outputFileSystem = new MemFs();
   compiler.run((err, stats) => {
@@ -72,6 +74,7 @@ function watch(options = {}) {
   if (options.webpackConfig) {
     config = mergeWebpack(config, options.webpackConfig);
   }
+  spinner.shouldClear = !skipClearStdout;
 
   const compiler = webpack(config);
   const watchOpts = {};
