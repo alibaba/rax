@@ -51,15 +51,14 @@ module.exports = function() {
           if (innerHTML) {
             // {__html: 'First &middot; Second'}
             // structure of dangerouslySetInnerHTML is same as {KEY_FOR_HTML: xxx}
-            result.push(innerHTML);
+            pushResult(innerHTML, result);
           } else {
             const children = t.react.buildChildren(openingPath.parent);
-            result = result.concat(children);
+            flattenChildren(children, result);
           }
 
           if (path.node.closingElement || innerHTML) {
-            html = '</' + tagName + '>';
-            result.push(buildObject(KEY_FOR_HTML, t.stringLiteral(html)));
+            pushResult(t.stringLiteral('</' + tagName + '>'), result);
           }
 
           if (result && result.length) {
@@ -70,6 +69,59 @@ module.exports = function() {
     }
   };
 };
+
+// flatten and push children to result
+function flattenChildren(children, result) {
+  for (var i = 0, l = children.length; i < l; i++) {
+    let child = children[i];
+    if (t.isArrayExpression(child)) {
+      flattenChildren(child.elements, result);
+    } else if (Array.isArray(child)) {
+      flattenChildren(child, result);
+    } else {
+      pushResult(child, result);
+    }
+  }
+}
+
+// push value to result and merge sibling string
+function pushResult(value, result) {
+  const len = result.length;
+
+  if (len) {
+    const lastIdx = len - 1;
+    const lastChild = result[lastIdx];
+
+    if (isStringObject(lastChild)) {
+      if (isStringObject(value)) {
+        updateStringObject(lastChild, value.properties[0].value.value);
+      } else if (t.isStringLiteral(value)) {
+        updateStringObject(lastChild, value.value);
+      } else {
+        result.push(value);
+      }
+    } else if (t.isStringLiteral(value)) {
+      result.push(buildObject(KEY_FOR_HTML, value));
+    } else {
+      result.push(value);
+    }
+  } else if (t.isStringLiteral(value)) {
+    result.push(buildObject(KEY_FOR_HTML, value));
+  } else {
+    result.push(value);
+  }
+}
+
+function isStringObject(obj) {
+  return t.isObjectExpression(obj)
+  && obj.properties[0]
+  && obj.properties[0].key.name === '__html'
+  && t.isStringLiteral(obj.properties[0].value);
+};
+
+function updateStringObject(obj, value) {
+  obj.properties[0].value.value = obj.properties[0].value.value + value;
+}
 
 function buildObject(name, value) {
   let obj = t.objectProperty(t.identifier(name), value);

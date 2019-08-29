@@ -30,17 +30,7 @@ describe('transform jsx to html', () => {
   <div>b</div>
 </div>
     `)).toBe(`[{
-  __html: "<div>"
-}, [{
-  __html: "<div>"
-}, "a", {
-  __html: "</div>"
-}], [{
-  __html: "<div>"
-}, "b", {
-  __html: "</div>"
-}], {
-  __html: "</div>"
+  __html: "<div><div>a</div><div>b</div></div>"
 }];`);
   });
 
@@ -63,13 +53,9 @@ describe('transform jsx to html', () => {
   <div>b</div>
 </View>
     `)).toBe(`createElement(View, null, [{
-  __html: "<div>"
-}, "a", {
-  __html: "</div>"
+  __html: "<div>a</div>"
 }], [{
-  __html: "<div>"
-}, "b", {
-  __html: "</div>"
+  __html: "<div>b</div>"
 }]);`);
   });
 
@@ -87,17 +73,11 @@ describe('transform jsx to html', () => {
     onClick: onClick
   }
 }, {
-  __html: ">"
-}, [{
-  __html: "<div>"
-}, "a ", props.index, {
-  __html: "</div>"
-}], [{
-  __html: "<div>"
-}, "b ", props.index, {
-  __html: "</div>"
-}], {
-  __html: "</div>"
+  __html: "><div>a "
+}, props.index, {
+  __html: "</div><div>b "
+}, props.index, {
+  __html: "</div></div>"
 }];`);
   });
 
@@ -113,13 +93,7 @@ describe('transform jsx to html', () => {
     className: className
   }, props)
 }, {
-  __html: ">"
-}, [{
-  __html: "<div>"
-}, "a", {
-  __html: "</div>"
-}], {
-  __html: "</div>"
+  __html: "><div>a</div></div>"
 }];`);
   });
 
@@ -130,10 +104,8 @@ const slot = <div>slot</div>;
 <div className="container">
   {slot}
 </div>
-    `)).toBe(`var slot = [{
-  __html: "<div>"
-}, "slot", {
-  __html: "</div>"
+`)).toBe(`var slot = [{
+  __html: "<div>slot</div>"
 }];
 [{
   __html: "<div class=\\"container\\">"
@@ -160,23 +132,19 @@ const slot = createElement('div', null, 'slot');
     expect(getTransfromCode(`
 <div dangerouslySetInnerHTML={{__html: "<div>a</div>"}} />
     `)).toBe(`[{
-  __html: "<div>"
-}, {
-  __html: "<div>a</div>"
-}, {
-  __html: "</div>"
+  __html: "<div><div>a</div></div>"
 }];`);
   });
 
   it('tansform with children and innnerHtml', () => {
     expect(getTransfromCode(`
-<div dangerouslySetInnerHTML={{__html: "<div>a</div>"}}>
+<div dangerouslySetInnerHTML={{__html: a}}>
   123
 </div>
     `)).toBe(`[{
   __html: "<div>"
 }, {
-  __html: "<div>a</div>"
+  __html: a
 }, {
   __html: "</div>"
 }];`);
