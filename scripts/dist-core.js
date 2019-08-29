@@ -10,7 +10,7 @@ const gzipSize = require('gzip-size');
 
 const INTERNEL_VARS = 'internal_variables.txt';
 
-async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd', mangleProps }) {
+async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = 'umd' }) {
   const output = {
     name,
     exports: 'named',
