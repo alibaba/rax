@@ -9,7 +9,7 @@ describe('Transform list', () => {
     const ast = parseExpression(`
       <View>{arr.map((val, idx) => <item data-value={val} data-key={idx} />)}</View>
     `);
-    _transformList(ast, adapter);
+    _transformList(ast, [],adapter);
 
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => ({
     val: val,
@@ -23,7 +23,7 @@ describe('Transform list', () => {
         return <item data-value={val} data-key={idx} />
       })}</View>
     `);
-    _transformList(ast, adapter);
+    _transformList(ast, [], adapter);
 
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => {
     return {
@@ -39,7 +39,7 @@ describe('Transform list', () => {
         onClick={props.onClick.bind(this, val, 1)}
       />)}</View>
     `);
-    _transformList(ast, adapter);
+    _transformList(ast, [], adapter);
 
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => ({
     val: val
@@ -50,7 +50,7 @@ describe('Transform list', () => {
     const ast = parseExpression(`
       <View>{arr.map((item, idx) => <View>{item.title}<image source={{ uri: item.picUrl }} resizeMode={resizeMode} /></View>)}</View>
     `);
-    _transformList(ast, adapter);
+    _transformList(ast, [], adapter);
 
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, idx) => ({
     item: item
@@ -64,7 +64,7 @@ describe('Transform list', () => {
         couponList.map(coupon => <Coupon coupon={coupon} onClick={this.handleClick.bind(this, coupon)} />)
       }</View>`;
     const ast = parseExpression(raw);
-    _transformList(ast, adapter);
+    _transformList(ast, [], adapter);
     expect(genCode(ast).code).toEqual(`<View class="coupon-list"><block a:for={couponList.map(coupon => ({
     coupon: coupon
   }))} a:for-item="coupon" a:for-index="index"><Coupon coupon={coupon} onClick={this.handleClick} data-arg-context="this" data-arg-0={coupon} /></block></View>`);
@@ -75,7 +75,7 @@ describe('Transform list', () => {
       return <Text>{idx}</Text>;
     })}</View>`;
     const ast = parseExpression(raw);
-    _transformList(ast, adapter);
+    _transformList(ast, [], adapter);
 
     expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={[1, 2, 3].map((val, idx) => { return { idx: idx }; })} a:for-item="val" a:for-index="idx"><Text>{idx}</Text></block></View>');
   });
@@ -103,7 +103,7 @@ describe('Transform list', () => {
   {props.children}
 </View>`;
     const ast = parseExpression(raw);
-    _transformList(ast, adapter);
+    _transformList(ast, [], adapter);
 
     expect(genCode(ast, { concise: true }).code).toEqual(`<View className="header" onClick={() => { setWorkYear(workYear + 1); }}>
   <View style={{ color: 'red' }}>workYear: {workYear}</View>

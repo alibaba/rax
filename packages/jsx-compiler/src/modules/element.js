@@ -440,7 +440,10 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
  * */
 function transformIdentifier(expression, dynamicBinding, isDirective) {
   let replaceNode;
-  if (expression.__xforArgs || expression.__mapArgs && !expression.__mapArgs.item) {
+  if (expression.__xforArgs
+    || expression.__mapArgs && !expression.__mapArgs.item
+    || expression.__templateVar) {
+    // The identifier is x-for args or template variable or map's index
     replaceNode = expression;
   } else if (expression.__mapArgs && expression.__mapArgs.item) {
     replaceNode = t.memberExpression(t.identifier(expression.__mapArgs.item), expression);
