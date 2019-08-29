@@ -1,5 +1,5 @@
 import Host from './host';
-import {CURRENT_ELEMENT, INSTANCE, INTERNAL} from '../constant';
+import {CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE} from '../constant';
 
 /**
  * Base Component
@@ -22,7 +22,7 @@ export default class BaseComponent {
     }
 
     this[CURRENT_ELEMENT] = null;
-    this._nativeNode = null;
+    this[NATIVE_NODE] = null;
     this._parent = null;
     this._parentInstance = null;
     this._context = null;
@@ -48,8 +48,8 @@ export default class BaseComponent {
   }
 
   unmountComponent(shouldNotRemoveChild) {
-    if (this._nativeNode && !shouldNotRemoveChild) {
-      Host.driver.removeChild(this._nativeNode, this._parent);
+    if (this[NATIVE_NODE] && !shouldNotRemoveChild) {
+      Host.driver.removeChild(this[NATIVE_NODE], this._parent);
     }
 
     this.destoryComponent();
@@ -79,11 +79,11 @@ export default class BaseComponent {
   }
 
   getNativeNode() {
-    if (this._nativeNode == null) {
-      this._nativeNode = this.createNativeNode();
+    if (this[NATIVE_NODE] == null) {
+      this[NATIVE_NODE] = this.createNativeNode();
     }
 
-    return this._nativeNode;
+    return this[NATIVE_NODE];
   }
 
   getPublicInstance() {
