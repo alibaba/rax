@@ -9,7 +9,7 @@ describe('Transform list', () => {
     const ast = parseExpression(`
       <View>{arr.map((val, idx) => <item data-value={val} data-key={idx} />)}</View>
     `);
-    _transformList(ast, [],adapter);
+    _transformList(ast, [], adapter);
 
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => ({
     val: val,
