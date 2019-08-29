@@ -117,10 +117,27 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
     plugins.push(require('@babel/plugin-proposal-class-properties'));
   }
 
+  const babelParserOption = {
+    plugins: [
+      'classProperties',
+      'jsx',
+      'flow',
+      'flowComment',
+      'trailingFunctionCommas',
+      'asyncFunctions',
+      'exponentiationOperator',
+      'asyncGenerators',
+      'objectRestSpread',
+      ['decorators', { decoratorsBeforeExport: false }],
+      'dynamicImport',
+    ], // support all plugins
+  };
+
   return transformSync(rawCode, {
     presets,
     plugins,
     filename: resourcePath,
+    parserOpts: babelParserOption,
   });
 }
 
