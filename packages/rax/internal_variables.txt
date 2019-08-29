@@ -1,13 +1,24 @@
 # The listed internal variables is only used within project,
 # which can be compressed in distubution files.
 _\w+
+
+initComponent
 mountComponent
 unmountComponent
 updateComponent
+
 mountChildren
 unmountChildren
 updateChildren
+
 updateProperties
+
 getPublicInstance
+
 shouldUpdate
+isUpdating
+isScheduled
+
+getNativeNode
 createNativeNode
+mountNativeNode

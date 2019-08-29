@@ -7,6 +7,7 @@ import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction, isArray } from '../types';
+import assign from '../assign';
 import {CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE} from '../constant';
 
 const STYLE = 'style';
@@ -28,7 +29,7 @@ export default class NativeComponent extends BaseComponent {
     const appendType = props.append || TREE; // Default is tree
 
     // Clone a copy for style diff
-    this._prevStyleCopy = Object.assign({}, props.style);
+    this._prevStyleCopy = assign({}, props.style);
 
     let instance = {
       type,
@@ -220,7 +221,7 @@ export default class NativeComponent extends BaseComponent {
       if (propKey === STYLE) {
         if (nextProp) {
           // Clone property
-          nextProp = this._prevStyleCopy = Object.assign({}, nextProp);
+          nextProp = this._prevStyleCopy = assign({}, nextProp);
         } else {
           this._prevStyleCopy = null;
         }

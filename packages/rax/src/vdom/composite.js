@@ -8,6 +8,7 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction } from '../types';
+import assign from '../assign';
 import {CURRENT_ELEMENT, INSTANCE, INTERNAL, IS_PENGDING_FORCE_UPDATE, RENDERED_COMPONENT} from '../constant';
 
 function performInSandbox(fn, instance, callback) {
@@ -253,7 +254,7 @@ class CompositeComponent extends BaseComponent {
     let childContext = instance.getChildContext && instance.getChildContext();
 
     if (childContext) {
-      return Object.assign({}, currentContext, childContext);
+      return assign({}, currentContext, childContext);
     }
 
     return currentContext;
@@ -267,10 +268,10 @@ class CompositeComponent extends BaseComponent {
     }
     // Reset pending queue
     this._pendingStateQueue = null;
-    let nextState = Object.assign({}, instance.state);
+    let nextState = assign({}, instance.state);
     for (let i = 0; i < queue.length; i++) {
       let partial = queue[i];
-      Object.assign(
+      assign(
         nextState,
         isFunction(partial) ?
           partial.call(instance, nextState, props, context) :
