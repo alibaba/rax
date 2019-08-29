@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-multi-pages",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "rax app base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",

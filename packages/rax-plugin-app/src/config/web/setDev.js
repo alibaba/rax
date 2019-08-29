@@ -12,17 +12,9 @@ module.exports = (config, context) => {
   config.devServer.set('before', (app, devServer) => {
     let memFs = devServer.compiler.compilers[0].outputFileSystem;
 
-    app.get('/*', function(req, res) {
-      const url = req.url.lastIndexOf('/') === req.url.length - 1 ? 'web/index.html' : req.url;
-      let filePath = path.join(rootDir, outputDir, url);
-
-      if (!memFs.existsSync(filePath)) {
-        filePath = htmlPath;
-      }
-
-      const outPut = memFs.readFileSync(filePath).toString();
-      const mimeType = mime.getType(filePath);
-      res.setHeader('Content-Type', `${mimeType}; charset=utf8`);
+    // not match .js .html files
+    app.get(/^\/?((?!\.(js|html|css|json)).)*$/, function(req, res) {
+      const outPut = memFs.readFileSync(htmlPath).toString();
       res.send(outPut);
     });
   });

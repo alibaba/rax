@@ -63,7 +63,6 @@ module.exports = (config, context, value, target) => {
     config.plugin('minicss')
       .use(MiniCssExtractPlugin, [{
         filename: 'web/[name].css',
-        chunkFilename: 'web/[name].css',
       }]);
   }
 };
