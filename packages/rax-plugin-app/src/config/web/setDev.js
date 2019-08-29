@@ -1,46 +1,29 @@
 'use strict';
 
 const path = require('path');
-const address = require('address');
-
-const hmrClient = require.resolve('../../hmr/webpackHotDevClient.entry');
-const UNIVERSAL_APP_SHELL_LOADER = require.resolve('universal-app-shell-loader');
-const babelMerge = require('babel-merge');
+const mime = require('mime');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
-  const { publicPath } = userConfig;
+  const { outputDir } = userConfig;
 
-  const appEntry = path.resolve(rootDir, 'src/app.js');
+  // history fall back
+  const htmlPath = path.resolve(rootDir, outputDir, 'web/index.html');
+  config.devServer.set('before', (app, devServer) => {
+    let memFs = devServer.compiler.compilers[0].outputFileSystem;
 
-  config.mode('development');
-  config.devtool('inline-module-source-map');
+    app.get('/*', function(req, res) {
+      const url = req.url.lastIndexOf('/') === req.url.length - 1 ? 'web/index.html' : req.url;
+      let filePath = path.join(rootDir, outputDir, url);
 
-  config.module.rule('jsx')
-    .use('babel')
-      .tap(options => babelMerge.all([{
-        plugins: [require.resolve('rax-hot-loader/babel')],
-      }, options]));
+      if (!memFs.existsSync(filePath)) {
+        filePath = htmlPath;
+      }
 
-  config.module.rule('tsx')
-    .use('babel')
-      .tap(options => babelMerge.all([{
-        plugins: [require.resolve('rax-hot-loader/babel')],
-      }, options]));
-
-  config.entry('index')
-    .add(hmrClient)
-    .add(`${UNIVERSAL_APP_SHELL_LOADER}?type=web!${appEntry}`);
-
-  config.devServer
-    .compress(true)
-    .clientLogLevel('error')
-    .contentBase(path.resolve(rootDir, 'build'))
-    .watchContentBase(true)
-    .hot(true)
-    .quiet(true)
-    .publicPath(publicPath)
-    .overlay(false)
-    .host(address.ip())
-    .public(address.ip());
+      const outPut = memFs.readFileSync(filePath).toString();
+      const mimeType = mime.getType(filePath);
+      res.setHeader('Content-Type', `${mimeType}; charset=utf8`);
+      res.send(outPut);
+    });
+  });
 };

@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "style-unit": "^1.0.1-0"
+    "style-unit": "^1.0.2"
   },
   "devDependencies": {
     "rax": "^0.6.7"

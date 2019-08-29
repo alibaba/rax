@@ -1,4 +1,3 @@
-const fs = require('fs');
 const express = require('express');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');

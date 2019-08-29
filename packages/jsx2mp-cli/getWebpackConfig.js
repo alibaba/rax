@@ -22,6 +22,7 @@ function getBabelConfig() {
       require.resolve('@babel/preset-react'),
     ],
     plugins: [
+      require.resolve('@babel/plugin-proposal-export-default-from'),
       require.resolve('@babel/plugin-proposal-class-properties'),
     ],
   };

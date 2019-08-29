@@ -1,6 +1,8 @@
 /*
  * Ref manager
  */
+import { invokeMinifiedError } from '../error';
+import { isFunction, isObject } from '../types';
 
 export default {
   update(prevElement, nextElement, component) {
@@ -17,7 +19,11 @@ export default {
   },
   attach(ownerComponent, ref, component) {
     if (!ownerComponent) {
-      return console.error('ref: multiple version of Rax used in project.');
+      if (process.env.NODE_ENV !== 'production') {
+        return console.error('ref: multiple version of Rax used in project.');
+      } else {
+        invokeMinifiedError(3);
+      }
     }
 
     let instance = component.getPublicInstance();
@@ -28,23 +34,23 @@ export default {
       }
     }
 
-    if (typeof ref === 'function') {
+    if (isFunction(ref)) {
       ref(instance);
-    } else if (typeof ref === 'object') {
+    } else if (isObject(ref)) {
       ref.current = instance;
     } else {
       ownerComponent._instance.refs[ref] = instance;
     }
   },
   detach(ownerComponent, ref, component) {
-    if (typeof ref === 'function') {
+    if (isFunction(ref)) {
       // When the referenced component is unmounted and whenever the ref changes, the old ref will be called with null as an argument.
       ref(null);
     } else {
       // Must match component and ref could detach the ref on owner when A's before ref is B's current ref
       let instance = component.getPublicInstance();
 
-      if (typeof ref === 'object' && ref.current === instance) {
+      if (isObject(ref) && ref.current === instance) {
         ref.current = null;
       } else if (ownerComponent._instance.refs[ref] === instance) {
         delete ownerComponent._instance.refs[ref];

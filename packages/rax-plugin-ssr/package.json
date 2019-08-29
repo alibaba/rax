@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-ssr",
-  "version": "0.1.1",
+  "version": "0.1.5",
   "description": "rax ssr plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -12,10 +12,13 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "peerDependencies": {
+    "rax-plugin-app": "^0.1.0"
+  },
   "dependencies": {
     "address": "^1.0.1",
-    "rax-plugin-app": "^0.1.0-0",
-    "rax-ssr-dev-server": "^2.0.0-0",
-    "universal-app-shell-loader": "^0.2.0"
+    "@babel/core": "7.2.0",
+    "qs": "^6.8.0",
+    "rax-compile-config": "^0.1.2"
   }
 }

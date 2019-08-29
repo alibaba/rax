@@ -188,29 +188,34 @@ describe('createContext', () => {
         return this.props.children;
       }
     }
+    let consumerCount = 0;
+    let consumerWithIndirectionCount = 0;
+
     class App extends Component {
       render() {
         return (
           <Context.Provider value={this.props.value}>
-            <Context.Consumer ref="consumer">
-              {() => <div />}
+            <Context.Consumer>
+              {() => (consumerCount++, <div />)}
             </Context.Consumer>
             <Indirection>
-              <Context.Consumer ref="consumerWithIndirection">
-                {() => <div />}
+              <Context.Consumer>
+                {() => (consumerWithIndirectionCount++, <div />)}
               </Context.Consumer>
             </Indirection>
           </Context.Provider>
         );
       }
     }
-    const instance = render(<App value={2} />, container);
-    const spyConsumerRender = jest.spyOn(instance.refs.consumer, 'render');
-    const spyConsumerWithIndirection = jest.spyOn(instance.refs.consumerWithIndirection, 'render');
+    render(<App value={2} />, container);
+    jest.runAllTimers();
+    consumerCount = consumerWithIndirectionCount = 0;
+
     render(<App value={3} />, container);
     jest.runAllTimers();
-    expect(spyConsumerRender).toHaveBeenCalledTimes(1);
-    expect(spyConsumerWithIndirection).toHaveBeenCalledTimes(1);
+
+    expect(consumerCount).toEqual(1);
+    expect(consumerWithIndirectionCount).toEqual(1);
   });
 
   it('Consumer child should be rendered in the right order', () => {
@@ -243,7 +248,7 @@ describe('createContext', () => {
       }
     }
     render(<App />, container);
-    Yield = [];
+    Yield.length = 0;
     render(<App value={2} />, container);
     expect(Yield).toEqual([
       'App',

@@ -1,4 +1,3 @@
-import * as Rax from './lib/index';
+import Rax from './lib/index';
 
 export = Rax;
-export as namespace Rax;

@@ -1,5 +1,10 @@
 {
   "plugins": [
-    "rax-plugin-component"
+    [
+      "rax-plugin-component",
+      {
+        "targets": ["<%- projectTargets.join('", "') %>"]
+      }
+    ]
   ]
 }

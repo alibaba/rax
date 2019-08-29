@@ -1,12 +1,13 @@
 import { createElement } from 'rax';
-import { isWeex } from 'universal-env';
-import WeexComponent from './weex';
-import WebComponent from './web';
+import View from 'rax-view';
+import Text from 'rax-text';
 
-export default props => {
-  if (isWeex) {
-    return <WeexComponent {...props} />;
-  } else {
-    return <WebComponent {...props} />;
-  }
+const MyComponent = () => {
+  return (
+    <View>
+      <Text>Hello World!</Text>
+    </View>
+  );
 };
+
+export default MyComponent;

@@ -100,7 +100,11 @@ module.exports = {
 
     removeRaxImports(parsed.ast);
     renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
-    renameNpmModules(parsed.ast);
+
+    const currentNodeModulePath = join(options.sourcePath, 'npm');
+    const npmRelativePath = relative(dirname(options.resourcePath), currentNodeModulePath);
+    renameNpmModules(parsed.ast, npmRelativePath, options.resourcePath, options.cwd);
+
     addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
     removeDefaultImports(parsed.ast);
 
@@ -179,13 +183,53 @@ function renameCoreModule(ast, outputPath, targetFileDir) {
   });
 }
 
+const WEEX_MODULE_REG = /^@weex(-module)?\//;
 
-function renameNpmModules(ast) {
+function isNpmModule(value) {
+  return !(value[0] === '.' || value[0] === '/');
+}
+
+function isWeexModule(value) {
+  return WEEX_MODULE_REG.test(value);
+}
+
+function getNpmName(value) {
+  const isScopedNpm = /^_?@/.test(value);
+  return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
+}
+
+function renameNpmModules(ast, npmRelativePath, filename, cwd) {
+  const source = (value, prefix, filename, rootContext) => {
+    const npmName = getNpmName(value);
+    const nodeModulePath = join(rootContext, 'node_modules');
+    const searchPaths = [nodeModulePath];
+    const target = require.resolve(npmName, { paths: searchPaths });
+    // In tnpm, target will be like following (symbol linked path):
+    // ***/_universal-toast_1.0.0_universal-toast/lib/index.js
+    let packageJSONPath;
+    try {
+      packageJSONPath = require.resolve(join(npmName, 'package.json'), { paths: searchPaths });
+    } catch (err) {
+      throw new Error(`You may not have npm installed: "${npmName}"`);
+    }
+
+    const moduleBasePath = join(packageJSONPath, '..');
+    const modulePathSuffix = relative(moduleBasePath, target);
+
+    let ret = join(prefix, npmName, modulePathSuffix);
+    if (ret[0] !== '.') ret = './' + ret;
+    // ret => '../npm/_ali/universal-toast/lib/index.js
+
+    return t.stringLiteral(normalizeFileName(ret));
+  };
+
   traverse(ast, {
     ImportDeclaration(path) {
-      const source = path.get('source');
-      if (source.isStringLiteral() && ['.', '/'].indexOf(source.node.value[0]) === -1) {
-        source.replaceWith(t.stringLiteral(normalizeFileName(join('/npm', source.node.value))));
+      const { value } = path.node.source;
+      if (isWeexModule(value)) {
+        path.remove();
+      } else if (isNpmModule(value)) {
+        path.node.source = source(value, npmRelativePath, filename, cwd);
       }
     }
   });

@@ -8,7 +8,8 @@ const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
 const ComponentLoader = require.resolve('./component-loader');
 
-const dependenciesCache = {};
+const MINIAPP_CONFIG_FIELD = 'miniappConfig';
+
 module.exports = function fileLoader(content) {
   const loaderHandled = this.loaders.some(
     ({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1
@@ -27,7 +28,11 @@ module.exports = function fileLoader(content) {
   });
 
   const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
+<<<<<<< HEAD
     const isScopedNpm = relativeNpmPath[0] === '@';
+=======
+    const isScopedNpm = /^_?@/.test(relativeNpmPath);
+>>>>>>> release/jsx2mp-0829
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
@@ -40,6 +45,7 @@ module.exports = function fileLoader(content) {
     const pkg = readJSONSync(sourcePackageJSONPath);
     const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
 
+<<<<<<< HEAD
     if ('miniappConfig' in pkg) {
       // Copy whole directory for miniapp component
       if (!dependenciesCache[npmName]) {
@@ -63,25 +69,38 @@ module.exports = function fileLoader(content) {
                   componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
                 }
               }
+=======
+    // Is miniapp compatible component.
+    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main) {
+      // Only copy first level directory for miniapp component
+      const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
+      const source = join(sourcePackagePath, firstLevelFolder);
+      const target = join(outputPath, 'npm', npmName, firstLevelFolder);
+      mkdirpSync(target);
+      copySync(source, target, {
+        filter: (filename) => !/__(mocks|tests?)__/.test(filename),
+      });
+
+      // Modify referenced component location
+      const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+      if (existsSync(componentConfigPath)) {
+        const componentConfig = readJSONSync(componentConfigPath);
+        if (componentConfig.usingComponents) {
+          for (let key in componentConfig.usingComponents) {
+            if (componentConfig.usingComponents.hasOwnProperty(key)) {
+              componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
+>>>>>>> release/jsx2mp-0829
             }
-            writeJSONSync(componentConfigPath, componentConfig);
-          } else {
-            this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
           }
         }
+        writeJSONSync(componentConfigPath, componentConfig);
+      } else {
+        this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
       }
     } else {
-      // Copy package.json
-      if (!dependenciesCache[npmName]) {
-        dependenciesCache[npmName] = true;
-        const target = normalizeFileName(join(outputPath, 'npm', npmName, 'package.json'));
-        if (!existsSync(target))
-          copySync(sourcePackageJSONPath, target, { errorOnExist: false });
-      }
-
       // Copy file
       const splitedNpmPath = relativeNpmPath.split('/');
-      if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
+      if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
 
       const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
@@ -118,7 +137,8 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
       require('./babel-plugin-rename-import'),
       { npmRelativePath, normalizeFileName }
 
-    ] // for rename npm modules.
+    ], // for rename npm modules.
+    require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
   ];
 
   // Compile to ES5 for build.
@@ -127,21 +147,33 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
     plugins.push(require('@babel/plugin-proposal-class-properties'));
   }
 
+  const babelParserOption = {
+    plugins: [
+      'classProperties',
+      'jsx',
+      'flow',
+      'flowComment',
+      'trailingFunctionCommas',
+      'asyncFunctions',
+      'exponentiationOperator',
+      'asyncGenerators',
+      'objectRestSpread',
+      ['decorators', { decoratorsBeforeExport: false }],
+      'dynamicImport',
+    ], // support all plugins
+  };
+
   return transformSync(rawCode, {
+<<<<<<< HEAD
     presets, plugins,
     filename: resourcePath,
+=======
+    presets,
+    plugins,
+    filename: resourcePath,
+    parserOpts: babelParserOption,
+>>>>>>> release/jsx2mp-0829
   });
-}
-
-function isSymbolic(path) {
-  try {
-    return lstatSync(path).isSymbolicLink();
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      return false;
-    }
-    throw err;
-  }
 }
 
 /**
