@@ -1,5 +1,5 @@
 /**
- * PWA_SnapshotPlugin
+ * Snapshot Plugin
  * Store the innerHTML of the root element when the page is onload, and we call this innerHTML as snapshot.
  * When you visit the same page, the snapshot will be rendered first, and then hydrate the root element.
  * PWA_SnapshotPlugin can make the page render faster.

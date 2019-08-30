@@ -1,5 +1,5 @@
 /**
- * PWA_SaveToDesktopPlugin
+ * Save To Desktop Plugin
  * https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Add_to_home_screen
  * 1. create manifest.json
  * 2. process icon file to multi-size
