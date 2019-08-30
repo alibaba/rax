@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="//gw.alicdn.com/tfs/TB1oBQrXKT2gK0jSZFvXXXnFXXa-152-148.png" type="image/x-icon">
   <link rel="shortcut icon" href="//gw.alicdn.com/tfs/TB1oBQrXKT2gK0jSZFvXXXnFXXa-152-148.png">
-  <link rel="stylesheet" type="text/css" href="//g.alicdn.com/raxjs/rax-site-assets/0.4.16/client/index.css">
+  <link rel="stylesheet" type="text/css" href="//g.alicdn.com/raxjs/rax-site-assets/0.4.17/client/index.css">
   <style>
     a[title="站长统计"] {
       display: block;
@@ -52,6 +52,7 @@
         'bottom: 0',
         'width: 100%',
         'background: #FFF',
+        'z-index': 99999,
         'box-shadow: 0 -1px 3px #eaf0f6'
       ].join(';');
 
@@ -116,20 +117,7 @@
 <body class="loading">
 <div id="react-content" style="overflow: auto">
 </div>
-<script>
-  (function() {
-    window.RAX_API_ORIGIN = 'https://api.zeroling.com/rax';
-    var oldOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url, isAsync){
-      var reg = new RegExp('^' + location.origin + '/api');
-      if (reg.test(url)) {
-        url = url.replace(reg, 'https://api.zeroling.com/rax/api');
-      }
-      oldOpen.apply(this, [method, url, isAsync]);
-    }
-  })();
-</script>
-<script src="//g.alicdn.com/raxjs/rax-site-assets/0.4.16/client/index.js"></script>
+<script src="//g.alicdn.com/raxjs/rax-site-assets/0.4.17/client/index.js"></script>
 <script async src="//g.alicdn.com/alilog/mlog/aplus_v2.js"></script>
 <script async src="//g.alicdn.com/dingding/dingtalk-jsapi/2.0.57/dingtalk.open.js"></script>
 <script src="//s11.cnzz.com/z_stat.php?id=1261584477&web_id=1261584477" language="JavaScript"></script>
