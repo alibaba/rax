@@ -4,18 +4,7 @@ const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const genExpression = require('../codegen/genExpression');
-
-function enhanceIndexOf(arr, checkFn) {
-  let idx = -1;
-  arr.some((item, index) => {
-    if (checkFn(item, index)) {
-      idx = index;
-      return true;
-    }
-    return false;
-  });
-  return idx;
-}
+const findIndex = require('../utils/findIndex');
 
 function transformList(ast, renderItemFunctions, adapter) {
   let fnScope;
@@ -129,7 +118,7 @@ function transformList(ast, renderItemFunctions, adapter) {
                   if (node.name.name === 'data'
                     && t.isStringLiteral(node.value)
                   ) {
-                    const fnIdx = enhanceIndexOf(renderItemFunctions, (fn) => node.value.value === `{{...${fn.name}}}`);
+                    const fnIdx = findIndex(renderItemFunctions, (fn) => node.value.value === `{{...${fn.name}}}`);
                     if (fnIdx > -1) {
                       const renderItem = renderItemFunctions[fnIdx];
                       node.value = t.stringLiteral(`${node.value.value.replace('...', `...${forItem.name}.`)}`);
