@@ -19,10 +19,9 @@ export function schedule(callback) {
 
 // Flush before next render
 export function flush() {
-  let callbacks = updateCallbacks;
-  if (callbacks.length !== 0) {
-    updateCallbacks = [];
-    callbacks.forEach(callback => callback());
+  let callback;
+  while (callback = updateCallbacks.shift()) {
+    callback();
   }
 }
 
@@ -34,9 +33,8 @@ export function scheduleEffect(callback) {
 }
 
 export function flushEffect() {
-  let callbacks = effectCallbacks;
-  if (callbacks.length !== 0) {
-    effectCallbacks = [];
-    callbacks.forEach(callback => callback());
+  let callback;
+  while (callback = effectCallbacks.shift()) {
+    callback();
   }
 }
