@@ -88,20 +88,15 @@ output
 
 ```js
 [{
-  __html: "<div class=\\"container\\""
+  __html: "<div class=\"container\""
 }, {
   __attrs: {
     style: style,
     onClick: onClick
   }
 }, {
-  __html: ">"
-}, [{
-  __html: "<div>"
-}, "a ", props.index, {
-  __html: "</div>"
-}], {
-  __html: "</div>"
+  __html: "><div>a "
+}, props.index, {
+  __html: "</div></div>"
 }]
-
 ```

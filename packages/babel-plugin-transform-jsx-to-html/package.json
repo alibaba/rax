@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-transform-jsx-to-html",
   "version": "0.1.0",
-  "description": "Transform JSX to Html.",
+  "description": "Transform JSX to HTML.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
