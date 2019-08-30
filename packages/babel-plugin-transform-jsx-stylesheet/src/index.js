@@ -177,7 +177,6 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
           }
         }
 
-
         if (hasClassName) {
           // Dont remove className
           if (!retainClassName) {
@@ -219,10 +218,24 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
             // style={this.props.useCustom ? custom : null} ConditionalExpression
             // style={custom || other} LogicalExpression
             } else {
-              styleAttribute.value.expression = t.arrayExpression(arrayExpression.concat(expression));
+              const mergeArrayExpression = arrayExpression.concat(expression);
+              mergeArrayExpression.unshift(t.objectExpression([]));
+              styleAttribute.value.expression = t.callExpression(
+                t.memberExpression(t.identifier('Object'), t.identifier('assign')),
+                mergeArrayExpression
+              );
             }
           } else {
-            let expression = arrayExpression.length === 1 ? arrayExpression[0] : t.arrayExpression(arrayExpression);
+            if (arrayExpression.length > 1) {
+              // Object.assign({}, ...)
+              arrayExpression.unshift(t.objectExpression([]));
+            }
+            let expression = arrayExpression.length === 1 ?
+              arrayExpression[0] :
+              t.callExpression(
+                t.memberExpression(t.identifier('Object'), t.identifier('assign')),
+                arrayExpression
+              );
             attributes.push(t.jSXAttribute(t.jSXIdentifier('style'), t.jSXExpressionContainer(expression)));
           }
         }
