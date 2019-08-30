@@ -373,7 +373,7 @@ describe('renderToString', () => {
     expect(str).toBe('<div>Count: 0</div>');
   });
 
-  it('render with pre compined html and attrs', () => {
+  it('render with pre compiled html and attrs', () => {
     function View(props) {
       return (
         <div>{props.name}</div>
@@ -410,5 +410,52 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyComponent title="welcome" name="rax" version="1.0" />);
     expect(str).toBe('<div class="container" title="welcome"><div>hello</div><div>rax</div>1.0</div>');
+  });
+
+  it('render pre compiled html with state hook', () => {
+    function MyComponent(props) {
+      const [name, setName] = useState(props.name);
+
+      return [
+        {
+          __html: '<h1>Hello ',
+        },
+        name,
+        {
+          __html: '</h1>'
+        }
+      ];
+    };
+
+    let str = renderToString(<MyComponent name="rax" />);
+    expect(str).toBe('<h1>Hello rax</h1>');
+  });
+
+  it('render pre compiled html with context', () => {
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+          <MyComponent />
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyComponent() {
+      const value = useContext(ThemeContext);
+      return [
+        {
+          __html: '<div>Current theme is ',
+        },
+        value,
+        {
+          __html: '</div>'
+        }
+      ];
+    };
+
+    let str = renderToString(<MyContext />);
+    expect(str).toBe('<div>Current theme is dark</div>');
   });
 });
