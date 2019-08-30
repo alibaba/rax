@@ -117,19 +117,6 @@
 <body class="loading">
 <div id="react-content" style="overflow: auto">
 </div>
-<script>
-  (function() {
-    window.RAX_API_ORIGIN = 'https://api.zeroling.com/rax';
-    var oldOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url, isAsync){
-      var reg = new RegExp('^' + location.origin + '/api');
-      if (reg.test(url)) {
-        url = url.replace(reg, 'https://api.zeroling.com/rax/api');
-      }
-      oldOpen.apply(this, [method, url, isAsync]);
-    }
-  })();
-</script>
 <script src="//g.alicdn.com/raxjs/rax-site-assets/0.4.17/client/index.js"></script>
 <script async src="//g.alicdn.com/alilog/mlog/aplus_v2.js"></script>
 <script async src="//g.alicdn.com/dingding/dingtalk-jsapi/2.0.57/dingtalk.open.js"></script>
