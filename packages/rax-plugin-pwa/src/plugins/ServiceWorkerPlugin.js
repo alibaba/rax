@@ -1,15 +1,15 @@
 const templateGenerator = require('lodash.template');
 const { RawSource } = require('webpack-sources');
-const SWTemplate = require('../templates/serviceWorker');
-const SWTriggerTemplate = require('../templates/SWTrigger');
+const SWTemplate = require('../templates/sw');
+const SWBSTemplate = require('../templates/swbs');
 
 const isArray = Array.isArray;
 
 const PLUGIN_NAME = 'PWA_ServiceWorkerPlugin';
 const HTML_PATH = 'web/index.html';
-const SW_TRIGGER_FILE_PATH = 'web/sw-trigger.js';
+const SWBS_FILE_PATH = 'web/swbs.js';
 const SW_FILE_PATH = 'web/sw.js';
-const DEFAULT_IGNORE_LIST = ['/sw-trigger.js/i'];
+const DEFAULT_IGNORE_LIST = ['/swbs.js/i'];
 
 function patternToString(pattern) {
   return pattern.toString();
@@ -53,16 +53,16 @@ module.exports = class ServiceWorkerPlugin {
         unregister: serviceWorker.unregister || false,
       };
 
-      const SWTriggerCode = templateGenerator(SWTriggerTemplate)(data);
+      const SWBSCode = templateGenerator(SWBSTemplate)(data);
       const SWCode = templateGenerator(SWTemplate)(data);
-      const scriptCode = `<script src="/${SW_TRIGGER_FILE_PATH}" type="text/javascript" crossorigin="anonymous"></script>`;
+      const scriptCode = `<script src="/${SWBS_FILE_PATH}" type="text/javascript" crossorigin="anonymous"></script>`;
       const htmlCode = compilation
         .assets[HTML_PATH]
         .source()
         .replace('</body>', `${scriptCode}</body>`);
 
       compilation.assets[SW_FILE_PATH] = new RawSource(SWCode);
-      compilation.assets[SW_TRIGGER_FILE_PATH] = new RawSource(SWTriggerCode);
+      compilation.assets[SWBS_FILE_PATH] = new RawSource(SWBSCode);
       compilation.assets[HTML_PATH] = new RawSource(htmlCode);
       callback();
     });

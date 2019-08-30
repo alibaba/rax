@@ -1,6 +1,6 @@
 module.exports = `/**
 *
-* Register a service worker.
+* Service worker bootstrap.
 *
 * Service worker lets your app load faster and work offline.
 * More information read https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
