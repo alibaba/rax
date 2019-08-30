@@ -11,7 +11,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Schedule before next render
 export function schedule(callback) {
-  updateCallbacks.length === 0 && scheduler(flush);
+  if (updateCallbacks.length === 0) {
+    scheduler(flush);
+  }
   updateCallbacks.push(callback);
 }
 
@@ -24,7 +26,9 @@ export function flush() {
 }
 
 export function scheduleEffect(callback) {
-  effectCallbacks.length === 0 && scheduler(flushEffect);
+  if (effectCallbacks.length === 0) {
+    scheduler(flushEffect);
+  }
   effectCallbacks.push(callback);
 }
 
