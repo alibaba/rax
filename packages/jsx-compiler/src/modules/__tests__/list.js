@@ -1,4 +1,3 @@
-const t = require('@babel/types');
 const { _transformList } = require('../list');
 const { parseExpression } = require('../../parser');
 const adapter = require('../../adapter');
