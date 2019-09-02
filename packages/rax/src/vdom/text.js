@@ -1,6 +1,5 @@
 import Host from './host';
 import BaseComponent from './base';
-import { CURRENT_ELEMENT } from '../constant';
 
 /**
  * Text Component
@@ -11,11 +10,11 @@ class TextComponent extends BaseComponent {
     // If text is some value that do not update even there number 1 and string "1"
     if (prevElement !== nextElement) {
       // Replace current element
-      this[CURRENT_ELEMENT] = nextElement;
-      Host.driver.updateText(this.$_getNativeNode(), this[CURRENT_ELEMENT]);
+      this.$_currentElement = nextElement;
+      Host.driver.updateText(this.$_getNativeNode(), this.$_currentElement);
 
       if (process.env.NODE_ENV !== 'production') {
-        this._stringText = this[CURRENT_ELEMENT];
+        this._stringText = this.$_currentElement;
         Host.reconciler.receiveComponent(this);
       }
     }
@@ -23,9 +22,9 @@ class TextComponent extends BaseComponent {
 
   $_createNativeNode() {
     if (process.env.NODE_ENV !== 'production') {
-      this._stringText = this[CURRENT_ELEMENT];
+      this._stringText = this.$_currentElement;
     }
-    return Host.driver.createText(this[CURRENT_ELEMENT], this);
+    return Host.driver.createText(this.$_currentElement, this);
   }
 }
 

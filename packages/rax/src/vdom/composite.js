@@ -9,7 +9,7 @@ import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction } from '../types';
 import assign from '../assign';
-import { CURRENT_ELEMENT, INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -74,7 +74,7 @@ class CompositeComponent extends BaseComponent {
       Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
-    let currentElement = this[CURRENT_ELEMENT];
+    let currentElement = this.$_currentElement;
     let Component = currentElement.type;
     let ref = currentElement.ref;
     let publicProps = currentElement.props;
@@ -209,7 +209,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (this[RENDERED_COMPONENT] != null) {
-      let currentElement = this[CURRENT_ELEMENT];
+      let currentElement = this.$_currentElement;
       let ref = currentElement.ref;
 
       if (!currentElement.type.forwardRef && ref) {
@@ -234,7 +234,7 @@ class CompositeComponent extends BaseComponent {
    * `contextTypes`
    */
   $_processContext(context) {
-    let Component = this[CURRENT_ELEMENT].type;
+    let Component = this.$_currentElement.type;
     let contextTypes = Component.contextTypes;
 
     if (!contextTypes) {
@@ -333,7 +333,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Update refs
-    if (this[CURRENT_ELEMENT].type.forwardRef) {
+    if (this.$_currentElement.type.forwardRef) {
       instance.prevForwardRef = prevElement.ref;
       instance.forwardRef = nextElement.ref;
     } else {
@@ -374,7 +374,7 @@ class CompositeComponent extends BaseComponent {
       }, instance);
 
       // Replace with next
-      this[CURRENT_ELEMENT] = nextElement;
+      this.$_currentElement = nextElement;
       this._context = nextUnmaskedContext;
       instance.props = nextProps;
       instance.state = nextState;
@@ -392,7 +392,7 @@ class CompositeComponent extends BaseComponent {
     } else {
       // If it's determined that a component should not update, we still want
       // to set props and state but we shortcut the rest of the update.
-      this[CURRENT_ELEMENT] = nextElement;
+      this.$_currentElement = nextElement;
       this._context = nextUnmaskedContext;
       instance.props = nextProps;
       instance.state = nextState;
@@ -417,7 +417,7 @@ class CompositeComponent extends BaseComponent {
    */
   $_updateRenderedComponent(context) {
     let prevRenderedComponent = this[RENDERED_COMPONENT];
-    let prevRenderedElement = prevRenderedComponent[CURRENT_ELEMENT];
+    let prevRenderedElement = prevRenderedComponent.$_currentElement;
 
     let instance = this[INSTANCE];
     let nextRenderedElement;

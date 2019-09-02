@@ -2,7 +2,7 @@ import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
 import toArray from './toArray';
-import { CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
+import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 /**
  * Fragment Component
@@ -16,7 +16,7 @@ class FragmentComponent extends NativeComponent {
     this[INSTANCE] = instance;
 
     // Mount children
-    this.$_mountChildren(this[CURRENT_ELEMENT], context);
+    this.$_mountChildren(this.$_currentElement, context);
 
     let fragment = this.$_getNativeNode();
 
@@ -29,7 +29,7 @@ class FragmentComponent extends NativeComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      this[CURRENT_ELEMENT].type = FragmentComponent;
+      this.$_currentElement.type = FragmentComponent;
       Host.reconciler.mountComponent(this);
     }
 
@@ -69,11 +69,11 @@ class FragmentComponent extends NativeComponent {
 
   $_updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
-    this[CURRENT_ELEMENT] = nextElement;
-    this.$_updateChildren(this[CURRENT_ELEMENT], nextContext);
+    this.$_currentElement = nextElement;
+    this.$_updateChildren(this.$_currentElement, nextContext);
 
     if (process.env.NODE_ENV !== 'production') {
-      this[CURRENT_ELEMENT].type = FragmentComponent;
+      this.$_currentElement.type = FragmentComponent;
       Host.reconciler.receiveComponent(this);
     }
   }
