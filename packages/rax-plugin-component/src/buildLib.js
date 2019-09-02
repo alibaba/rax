@@ -24,11 +24,11 @@ const IGNORE_PATTERN = '**/__tests__/**';
 
 module.exports = async({ context, log }, options = {}) => {
   const { rootDir, userConfig } = context;
-  const { enableTypescript, targets = [] } = options;
+  const { targets = [] } = options;
   const { outputDir } = userConfig;
+  const enableTypescript = fs.existsSync(path.join(rootDir, 'tsconfig.json'));
 
   log.info('component', chalk.green('Build start... '));
-
   const BUILD_DIR = path.resolve(rootDir, outputDir);
 
   gulp.task('clean', function(done) {
@@ -50,26 +50,24 @@ module.exports = async({ context, log }, options = {}) => {
       });
   });
 
-  if (enableTypescript) {
-    const tsProject = ts.createProject('tsconfig.json', {
-      skipLibCheck: true,
-      declaration: true,
-      declarationDir: BUILD_DIR,
-      outDir: BUILD_DIR
-    });
+  const tsProject = ts.createProject('tsconfig.json', {
+    skipLibCheck: true,
+    declaration: true,
+    declarationDir: BUILD_DIR,
+    outDir: BUILD_DIR
+  });
 
-    // for ts/tsx.
-    gulp.task('ts', function() {
-      log.info('component', 'Compiling typescript files');
-      return tsProject.src()
-        .pipe(tsProject())
-        .pipe(babel(babelConfig))
-        .pipe(gulp.dest(BUILD_DIR))
-        .on('end', () => {
-          log.info('component', 'Typescript files have been compiled');
-        });
-    });
-  }
+  // for ts/tsx.
+  gulp.task('ts', function() {
+    log.info('component', 'Compiling typescript files');
+    return tsProject.src()
+      .pipe(tsProject())
+      .pipe(babel(babelConfig))
+      .pipe(gulp.dest(BUILD_DIR))
+      .on('end', () => {
+        log.info('component', 'Typescript files have been compiled');
+      });
+  });
 
   // for other.
   gulp.task('copyOther', function() {
@@ -82,38 +80,106 @@ module.exports = async({ context, log }, options = {}) => {
       });
   });
 
-  let tasks = [
-    'clean',
-    [
-      'js',
-      'copyOther',
-    ],
-  ];
+  // for miniapp build
+  const buildTemp = path.resolve(rootDir, outputDir, 'miniappTemp');
+  gulp.task('miniappClean', function(done) {
+    log.info('component', `Cleaning miniapp build directory ${buildTemp}`);
+    fs.removeSync(buildTemp);
+    log.info('component', 'Build directory has been Cleaned');
+    done();
+  });
 
-  if (enableTypescript) {
-    tasks = [
+  const miniappTsProject = ts.createProject('tsconfig.json', {
+    skipLibCheck: true,
+    declaration: true,
+    declarationDir: BUILD_DIR,
+    outDir: BUILD_DIR
+  });
+
+  //  build ts/tsx to miniapp
+  gulp.task('miniappTs', function() {
+    log.info('component', 'Compiling typescript files for miniapp');
+    return miniappTsProject.src()
+      .pipe(miniappTsProject())
+      .pipe(gulp.dest(buildTemp))
+      .on('end', () => {
+        log.info('component', 'Typescript files have been compiled');
+      });
+  });
+
+  // for other.
+  gulp.task('miniappCopyOther', function() {
+    log.info('component', 'Copy other files for miniapp');
+    return gulp
+      .src([OTHER_FILES_PATTERN], { ignore: IGNORE_PATTERN })
+      .pipe(gulp.dest(buildTemp))
+      .on('end', () => {
+        log.info('component', 'Other Files have been copied');
+      });
+  });
+
+  function getTasks(enableTS, buildMiniapp) {
+    if (enableTS) {
+      if (buildMiniapp) {
+        return [
+          'miniappClean',
+          [
+            'miniappTs',
+            'miniappCopyOther',
+          ],
+        ];
+      }
+
+      return [
+        'clean',
+        [
+          'js',
+          'ts',
+          'copyOther',
+        ],
+      ];
+    }
+
+    return [
       'clean',
       [
         'js',
-        'ts',
         'copyOther',
       ],
     ];
   }
 
   return new Promise((resolve, reject) => {
-    runSequence(...tasks, async() => {
+    const buildMiniapp = ~targets.indexOf('miniapp');
+
+    fs.removeSync(path.join(BUILD_DIR, 'miniappTemp'));
+
+    // build web & weex
+    runSequence(...getTasks(enableTypescript), async() => {
+      if (!buildMiniapp) {
+        return resolve();
+      }
+
       // build miniapp
-      if (~targets.indexOf('miniapp')) {
-        fs.removeSync(path.join(BUILD_DIR, 'miniapp'));
+      log.info('component', 'Starting build miniapp lib');
+      if (enableTypescript) {
+        runSequence(...getTasks(enableTypescript, buildMiniapp), async() => {
+          const mpErr = await mpBuild(context, 'lib/miniappTemp/index');
+
+          log.info('component', 'Remove temp directory');
+          fs.removeSync(path.join(BUILD_DIR, 'miniappTemp'));
+
+          if (mpErr) {
+            resolve(mpErr);
+          }
+        });
+      } else {
         const mpErr = await mpBuild(context);
 
         if (mpErr) {
           resolve(mpErr);
         }
       }
-
-      resolve();
     });
   });
 };

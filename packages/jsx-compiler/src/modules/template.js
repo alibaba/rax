@@ -5,6 +5,9 @@ const isClassComponent = require('../utils/isClassComponent');
 const traverse = require('../utils/traverseNodePath');
 const getReturnElementPath = require('../utils/getReturnElementPath');
 const genExpression = require('../codegen/genExpression');
+const createJSX = require('../utils/createJSX');
+const createBinding = require('../utils/createBinding');
+const findIndex = require('../utils/findIndex');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
@@ -30,21 +33,31 @@ module.exports = {
 
       const returnPath = getReturnElementPath(renderFnPath);
       if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.resourcePath);
-
-      parsed[TEMPLATE_AST] = returnPath.get('argument').node;
+      let returnArgument = returnPath.get('argument').node;
+      if (!['JSXText', 'JSXExpressionContainer', 'JSXSpreadChild', 'JSXElement', 'JSXFragment'].includes(returnArgument.type)) {
+        returnArgument = t.jsxExpressionContainer(returnArgument);
+      }
+      parsed[TEMPLATE_AST] = createJSX('block', {
+        [options.adapter.if]: t.stringLiteral(createBinding('$ready')),
+      }, [returnArgument]);
       parsed[RENDER_FN_PATH] = renderFnPath;
       returnPath.remove();
     }
   },
   generate(ret, parsed, options) {
     if (parsed[TEMPLATE_AST]) {
+      const lastTemplateDefineIdx = findIndex(parsed[TEMPLATE_AST].children,
+        (node) => t.isJSXElement(node) && node.openingElement.name.name !== 'template');
+      const templateDefineNodes = parsed[TEMPLATE_AST].children.splice(0, lastTemplateDefineIdx);
       ret.template = [
-        '<block a:if="{{$ready}}">',
+        ...templateDefineNodes.map(node => genExpression(node, {
+          comments: false,
+          concise: true,
+        })),
         genExpression(parsed[TEMPLATE_AST], {
-          comments: false, // Remove template comments.
-          concise: true, // Reduce whitespace, but not to disable all.
-        }),
-        '</block>'
+          comments: false,
+          concise: true,
+        })
       ].join('\n');
     }
   },

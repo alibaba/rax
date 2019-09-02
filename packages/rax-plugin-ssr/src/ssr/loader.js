@@ -17,6 +17,7 @@ module.exports = function(content) {
     publicPath,
     pageName,
     isMultiPages,
+    styles,
     scripts
   } = query;
 
@@ -58,7 +59,7 @@ module.exports = function(content) {
         initialData: JSON.stringify(initialData),
         publicPath: '${publicPath}',
         pageName: '${pageName}',
-        styles: [],
+        styles: ${JSON.stringify(styles)},
         scripts: ${JSON.stringify(scripts)}
       };
 
@@ -97,7 +98,7 @@ module.exports = function(content) {
           initialData: JSON.stringify(initialData),
           publicPath: '${publicPath}',
           pageName: '${pageName}',
-          styles: [],
+          styles: ${JSON.stringify(styles)},
           scripts: ${JSON.stringify(scripts)}
         };
 
