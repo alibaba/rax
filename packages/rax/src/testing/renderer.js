@@ -35,7 +35,7 @@ export default {
       }
 
       Instance.remove(container);
-      component._internal.$_unmountComponent();
+      component._internal.unmountComponent();
 
       return true;
     };

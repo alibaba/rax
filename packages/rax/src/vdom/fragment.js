@@ -48,7 +48,7 @@ class FragmentComponent extends NativeComponent {
     });
   }
 
-  $_unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     let nativeNode = this[NATIVE_NODE];
 
     if (nativeNode) {

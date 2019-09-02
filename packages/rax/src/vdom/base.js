@@ -47,7 +47,7 @@ export default class BaseComponent {
     return instance;
   }
 
-  $_unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     if (this[NATIVE_NODE] && !shouldNotRemoveChild) {
       Host.driver.removeChild(this[NATIVE_NODE], this._parent);
     }

@@ -197,7 +197,7 @@ class CompositeComponent extends BaseComponent {
     return instance;
   }
 
-  $_unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     let instance = this[INSTANCE];
 
     // Unmounting a composite component maybe not complete mounted
@@ -216,7 +216,7 @@ class CompositeComponent extends BaseComponent {
         Ref.detach(currentElement._owner, ref, this);
       }
 
-      this[RENDERED_COMPONENT].$_unmountComponent(shouldNotRemoveChild);
+      this[RENDERED_COMPONENT].unmountComponent(shouldNotRemoveChild);
       this[RENDERED_COMPONENT] = null;
     }
 
@@ -458,7 +458,7 @@ class CompositeComponent extends BaseComponent {
       }
     } else {
       let prevNativeNode = prevRenderedComponent.$_getNativeNode();
-      prevRenderedComponent.$_unmountComponent(true);
+      prevRenderedComponent.unmountComponent(true);
 
       this[RENDERED_COMPONENT] = instantiateComponent(nextRenderedElement);
       this[RENDERED_COMPONENT].$_mountComponent(

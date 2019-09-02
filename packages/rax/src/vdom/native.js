@@ -103,13 +103,13 @@ export default class NativeComponent extends BaseComponent {
     if (renderedChildren) {
       for (let name in renderedChildren) {
         let renderedChild = renderedChildren[name];
-        renderedChild.$_unmountComponent(shouldNotRemoveChild);
+        renderedChild.unmountComponent(shouldNotRemoveChild);
       }
       this._renderedChildren = null;
     }
   }
 
-  $_unmountComponent(shouldNotRemoveChild) {
+  unmountComponent(shouldNotRemoveChild) {
     if (this[NATIVE_NODE]) {
       let ref = this.$_currentElement.ref;
       if (ref) {
@@ -368,7 +368,7 @@ export default class NativeComponent extends BaseComponent {
             prevFirstNativeNode = prevFirstNativeNode[0];
           }
         } else if (shouldUnmount) {
-          prevChild.$_unmountComponent(shouldRemoveAllChildren);
+          prevChild.unmountComponent(shouldRemoveAllChildren);
         }
       }
     }
@@ -456,7 +456,7 @@ export default class NativeComponent extends BaseComponent {
     }
 
     if (shouldUnmountPrevFirstChild) {
-      prevFirstChild.$_unmountComponent(shouldRemoveAllChildren);
+      prevFirstChild.unmountComponent(shouldRemoveAllChildren);
     }
 
     if (shouldRemoveAllChildren) {
