@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-loader",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "",
   "main": "src/app-loader.js",
   "scripts": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-export-default-from": "^7.5.2",
     "@babel/preset-env": "^7.5.5",
     "chalk": "^2.4.2",
     "fs-extra": "^8.1.0",

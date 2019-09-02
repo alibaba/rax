@@ -112,7 +112,7 @@ module.exports = {
      * updateChildProps: collect props dependencies.
      */
     if (options.type !== 'app' && parsed.renderFunctionPath) {
-      addUpdateData(parsed.dynamicValue, parsed.renderFunctionPath);
+      addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
 
       const fnBody = parsed.renderFunctionPath.node.body.body;
@@ -193,15 +193,32 @@ function isWeexModule(value) {
   return WEEX_MODULE_REG.test(value);
 }
 
+function getNpmName(value) {
+  const isScopedNpm = /^_?@/.test(value);
+  return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
+}
 
 function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   const source = (value, prefix, filename, rootContext) => {
+    const npmName = getNpmName(value);
     const nodeModulePath = join(rootContext, 'node_modules');
-    const target = require.resolve(value, { paths: [nodeModulePath] });
-    const modulePathSuffix = relative(join(nodeModulePath, value), target);
-    // ret => '../npm/_ali/universal-goldlog/lib/index.js
-    let ret = join(prefix, value, modulePathSuffix);
+    const searchPaths = [nodeModulePath];
+    const target = require.resolve(npmName, { paths: searchPaths });
+    // In tnpm, target will be like following (symbol linked path):
+    // ***/_universal-toast_1.0.0_universal-toast/lib/index.js
+    let packageJSONPath;
+    try {
+      packageJSONPath = require.resolve(join(npmName, 'package.json'), { paths: searchPaths });
+    } catch (err) {
+      throw new Error(`You may not have npm installed: "${npmName}"`);
+    }
+
+    const moduleBasePath = join(packageJSONPath, '..');
+    const modulePathSuffix = relative(moduleBasePath, target);
+
+    let ret = join(prefix, npmName, modulePathSuffix);
     if (ret[0] !== '.') ret = './' + ret;
+    // ret => '../npm/_ali/universal-toast/lib/index.js
 
     return t.stringLiteral(normalizeFileName(ret));
   };
@@ -355,11 +372,15 @@ function collectHooks(root) {
   return Object.keys(ret);
 }
 
-function addUpdateData(dynamicValue, renderFunctionPath) {
+function addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath) {
   const dataProperties = [];
 
   Object.keys(dynamicValue).forEach(name => {
     dataProperties.push(t.objectProperty(t.stringLiteral(name), dynamicValue[name]));
+  });
+
+  renderItemFunctions.map(renderItemFn => {
+    dataProperties.push(t.objectProperty(t.stringLiteral(renderItemFn.name), renderItemFn.node));
   });
 
   const updateData = t.memberExpression(
