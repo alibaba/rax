@@ -1,7 +1,7 @@
 import Host from './host';
 import { flushEffect, schedule } from './scheduler';
 import runCallbacks from '../runCallbacks';
-import {CURRENT_ELEMENT, INTERNAL, IS_PENGDING_FORCE_UPDATE, RENDERED_COMPONENT} from '../constant';
+import {CURRENT_ELEMENT, INTERNAL, RENDERED_COMPONENT} from '../constant';
 
 // Dirty components store
 let dirtyComponents = [];
@@ -51,7 +51,7 @@ function runUpdate(component) {
   let nextUnmaskedContext = internal.$_penddingContext || prevUnmaskedContext;
   internal.$_penddingContext = undefined;
 
-  if (getPendingStateQueue(internal) || internal[IS_PENGDING_FORCE_UPDATE]) {
+  if (getPendingStateQueue(internal) || internal.$_isPendingForceUpdate) {
     internal.$_updateComponent(
       prevElement,
       prevElement,
@@ -133,7 +133,7 @@ function requestUpdate(component, partialState, callback) {
     }
   } else {
     // forceUpdate
-    internal[IS_PENGDING_FORCE_UPDATE] = true;
+    internal.$_isPendingForceUpdate = true;
 
     if (hasComponentRendered) {
       scheduleUpdate(component);

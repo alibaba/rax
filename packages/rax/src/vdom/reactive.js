@@ -2,7 +2,7 @@ import Host from './host';
 import Component from './component';
 import runCallbacks from '../runCallbacks';
 import { invokeMinifiedError } from '../error';
-import { INTERNAL, IS_PENGDING_FORCE_UPDATE} from '../constant';
+import { INTERNAL } from '../constant';
 
 const RE_RENDER_LIMIT = 24;
 /**
@@ -108,7 +108,7 @@ export default class ReactiveComponent extends Component {
   }
 
   update() {
-    this[INTERNAL][IS_PENGDING_FORCE_UPDATE] = true;
+    this[INTERNAL].$_isPendingForceUpdate = true;
     this.setState({});
   }
 
