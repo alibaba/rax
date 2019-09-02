@@ -90,6 +90,7 @@ export default class Component {
       const useSetData = {};
       for (let key in data) {
         if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
+          console.log('enter splice');
           useSpliceData[key] = [this.state[key].length, 0, ...data[key].slice(this.state[key].length)];
         } else {
           useSetData[key] = data[key];
