@@ -31,16 +31,17 @@ The fastest way to build universal application.
 
 ## Quick Start
 
-Install the Rax CLI tools to init project:
+Create a new Rax project using `create-rax`:
 
 ```sh
-$ npm install rax-cli -g
-$ rax init <YourProjectName>
+$ npm init rax <YourProjectName>
 ```
 
 Start local server to launch project:
+
 ```sh
-$ cd YourProjectName
+$ cd <YourProjectName>
+$ npm install
 $ npm run start
 ```
 
