@@ -1,4 +1,3 @@
-const t = require('@babel/types');
 const { _transformCondition, _transformList, _transformFragment } = require('../jsx-plus');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');

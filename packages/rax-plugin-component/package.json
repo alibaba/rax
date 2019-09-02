@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-component",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "rax component base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -19,6 +19,7 @@
     "address": "^1.0.1",
     "babel-loader": "8.0.4",
     "babel-merge": "^3.0.0",
+    "babel-plugin-transform-jsx-stylesheet": "^0.6.7",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chalk": "^2.4.2",
     "console-clear": "^1.1.1",
@@ -45,6 +46,7 @@
     "rax-webpack-plugin": "^0.6.5",
     "run-sequence": "^2.2.1",
     "style-loader": "^1.0.0",
+    "stylesheet-loader": "^0.6.5",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "uglifyjs-webpack-plugin": "^2.1.2",
