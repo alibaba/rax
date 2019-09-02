@@ -4,14 +4,14 @@ const path = require('path');
 
 const getOutputPath = require('./getOutputPath');
 
-module.exports = (context, devCompileLog) => {
+module.exports = (context, customEntry) => {
   const outputPath = getOutputPath(context);
 
   fs.removeSync(outputPath);
 
   return new Promise(resolve => {
     jsx2mp.build({
-      entry: 'src/index',
+      entry: customEntry || 'src/index',
       type: 'component',
       workDirectory: process.cwd(),
       distDirectory: outputPath,

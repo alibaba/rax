@@ -24,16 +24,6 @@ module.exports = (context) => {
   config.resolve.extensions
     .merge(['.js', '.json', '.jsx', '.ts', '.tsx', '.html']);
 
-  // external weex module
-  config.externals([
-    function(_context, request, callback) {
-      if (request.indexOf('@weex-module') !== -1) {
-        return callback(null, 'commonjs ' + request);
-      }
-      callback();
-    }
-  ]);
-
   config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
     .exclude
