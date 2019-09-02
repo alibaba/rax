@@ -83,6 +83,9 @@ export default class Component {
     data.$ready = true;
     this.__updating = true;
     Object.assign(this.state, data);
+    /**
+     * Todo: optimize list render
+     * */
     this._internal.setData(data, () => {
       this.__updating = false;
     });
