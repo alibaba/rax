@@ -90,15 +90,9 @@ const DEFAULT_STYLE_OPTIONS = {
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
-const CSS_CACHE_KEY = '__css__';
 
 function styleToCSS(style, options = {}) {
   const isObject = typeof style === 'object';
-
-  // reuse the css value from cache
-  if (isObject && style[CSS_CACHE_KEY]) {
-    return style[CSS_CACHE_KEY];
-  }
 
   let css = '';
 
@@ -126,14 +120,41 @@ function styleToCSS(style, options = {}) {
     css = css + `${prop}:${val}${unit};`;
   }
 
-  if (isObject) {
-    // cache css value for elements reuse the same style
-    Object.defineProperty(style, CSS_CACHE_KEY, {
-      value: css
-    });
-  }
-
   return css;
+}
+
+function propsToString(props, options) {
+  let html = '';
+  for (var prop in props) {
+    var value = props[prop];
+
+    if (prop === 'children') {
+      // Ignore children prop
+    } else if (prop === 'style') {
+      html = html + ` style="${styleToCSS(value, options)}"`;
+    } else if (prop === 'className') {
+      html = html + ` class="${escapeText(value)}"`;
+    } else if (prop === 'defaultValue') {
+      if (!props.value) {
+        html = html + ` value="${typeof value === 'string' ? escapeText(value) : value}"`;
+      }
+    } else if (prop === 'defaultChecked') {
+      if (!props.checked) {
+        html = html + ` checked="${value}"`;
+      }
+    } else if (prop === 'dangerouslySetInnerHTML') {
+      // Ignore innerHTML
+    } else {
+      if (typeof value === 'string') {
+        html = html + ` ${prop}="${escapeText(value)}"`;
+      } else if (typeof value === 'number') {
+        html = html + ` ${prop}="${String(value)}"`;
+      } else if (typeof value === 'boolean') {
+        html = html + ` ${prop}`;
+      }
+    }
+  }
+  return html;
 }
 
 function rpx2vw(val, opts) {
@@ -213,6 +234,16 @@ function renderElementToString(element, context, options) {
     return html;
   }
 
+  // pre compiled html
+  if (element.__html) {
+    return element.__html;
+  }
+
+  // pre compiled attrs
+  if (element.__attrs) {
+    return propsToString(element.__attrs, options);
+  }
+
   const type = element.type;
 
   if (type) {
@@ -266,37 +297,11 @@ function renderElementToString(element, context, options) {
       return renderElementToString(renderedElement, context, options);
     } else if (typeof type === 'string') {
       const isVoidElement = VOID_ELEMENTS[type];
-      let html = `<${type}`;
+      let html = `<${type}${propsToString(props, options)}`;
       let innerHTML;
 
-      for (var prop in props) {
-        var value = props[prop];
-
-        if (prop === 'children') {
-          // Ignore children prop
-        } else if (prop === 'style') {
-          html = html + ` style="${styleToCSS(value, options)}"`;
-        } else if (prop === 'className') {
-          html = html + ` class="${escapeText(value)}"`;
-        } else if (prop === 'defaultValue') {
-          if (!props.value) {
-            html = html + ` value="${typeof value === 'string' ? escapeText(value) : value}"`;
-          }
-        } else if (prop === 'defaultChecked') {
-          if (!props.checked) {
-            html = html + ` checked="${value}"`;
-          }
-        } else if (prop === 'dangerouslySetInnerHTML') {
-          innerHTML = value.__html;
-        } else {
-          if (typeof value === 'string') {
-            html = html + ` ${prop}="${escapeText(value)}"`;
-          } else if (typeof value === 'number') {
-            html = html + ` ${prop}="${String(value)}"`;
-          } else if (typeof value === 'boolean') {
-            html = html + ` ${prop}`;
-          }
-        }
+      if (props.dangerouslySetInnerHTML) {
+        innerHTML = props.dangerouslySetInnerHTML.__html;
       }
 
       if (isVoidElement) {
