@@ -9,7 +9,6 @@ const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
 
-const INTERNEL_VARS = 'internal_variables.txt';
 const IIFE = 'iife';
 const UMD = 'umd';
 const ESM = 'esm';
@@ -54,21 +53,13 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
     },
   };
 
-  // Apply internal_variables.txt rules.
   if (shouldMinify) {
-    const internalVarFile = join(__dirname, '../packages', packageName, INTERNEL_VARS);
-    if (existsSync(internalVarFile)) {
-      const internalVariableDeclearation = readFileSync(internalVarFile, 'utf-8');
-      const internalVariableList = internalVariableDeclearation
-        .split(/\n/)
-        .filter(line => line && line[0] !== '#');
-
-      uglifyOptions.mangle = {
-        properties: {
-          regex: new RegExp('^(' + internalVariableList.join('|') + ')'),
-        },
-      };
-    }
+    // Apply mangle rules.
+    uglifyOptions.mangle = {
+      properties: {
+        regex: /^\$_/,
+      },
+    };
   }
 
   // For development

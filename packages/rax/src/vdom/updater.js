@@ -7,19 +7,19 @@ import {CURRENT_ELEMENT, INTERNAL, IS_PENGDING_FORCE_UPDATE, RENDERED_COMPONENT}
 let dirtyComponents = [];
 
 function getPendingCallbacks(internal) {
-  return internal._pendingCallbacks;
+  return internal.$_pendingCallbacks;
 }
 
 function setPendingCallbacks(internal, callbacks) {
-  return internal._pendingCallbacks = callbacks;
+  return internal.$_pendingCallbacks = callbacks;
 }
 
 function getPendingStateQueue(internal) {
-  return internal._pendingStateQueue;
+  return internal.$_pendingStateQueue;
 }
 
 function setPendingStateQueue(internal, partialState) {
-  return internal._pendingStateQueue = partialState;
+  return internal.$_pendingStateQueue = partialState;
 }
 
 function enqueueCallback(internal, callback) {
@@ -38,7 +38,7 @@ function runUpdate(component) {
     return;
   }
 
-  Host.isUpdating = true;
+  Host.$_isUpdating = true;
 
   // If updateComponent happens to enqueue any new updates, we
   // shouldn't execute the callbacks until the next render happens, so
@@ -48,11 +48,11 @@ function runUpdate(component) {
 
   let prevElement = internal[CURRENT_ELEMENT];
   let prevUnmaskedContext = internal._context;
-  let nextUnmaskedContext = internal._penddingContext || prevUnmaskedContext;
-  internal._penddingContext = undefined;
+  let nextUnmaskedContext = internal.$_penddingContext || prevUnmaskedContext;
+  internal.$_penddingContext = undefined;
 
   if (getPendingStateQueue(internal) || internal[IS_PENGDING_FORCE_UPDATE]) {
-    internal.updateComponent(
+    internal.$_updateComponent(
       prevElement,
       prevElement,
       prevUnmaskedContext,
@@ -62,7 +62,7 @@ function runUpdate(component) {
 
   runCallbacks(callbacks, component);
 
-  Host.isUpdating = false;
+  Host.$_isUpdating = false;
 }
 
 function mountOrderComparator(c1, c2) {
@@ -70,7 +70,7 @@ function mountOrderComparator(c1, c2) {
 }
 
 function performUpdate() {
-  if (Host.isUpdating) {
+  if (Host.$_isUpdating) {
     return schedule(performUpdate);
   }
 
@@ -128,7 +128,7 @@ function requestUpdate(component, partialState, callback) {
     // State pending when request update in componentWillMount and componentWillReceiveProps,
     // isPendingState default is false value (false or null) and set to true after componentWillReceiveProps,
     // _renderedComponent is null when componentWillMount exec.
-    if (!internal._isPendingState && hasComponentRendered) {
+    if (!internal.$_isPendingState && hasComponentRendered) {
       scheduleUpdate(component, true);
     }
   } else {
@@ -144,7 +144,7 @@ function requestUpdate(component, partialState, callback) {
 const Updater = {
   setState(component, partialState, callback) {
     // Flush all effects first before update state
-    if (!Host.isUpdating) {
+    if (!Host.$_isUpdating) {
       flushEffect();
     }
     requestUpdate(component, partialState, callback);

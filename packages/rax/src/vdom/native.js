@@ -8,7 +8,7 @@ import BaseComponent from './base';
 import toArray from './toArray';
 import { isFunction, isArray } from '../types';
 import assign from '../assign';
-import {CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE} from '../constant';
+import { CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -19,8 +19,8 @@ const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
  * Native Component
  */
 export default class NativeComponent extends BaseComponent {
-  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.initComponent(parent, parentInstance, context);
+  $_mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.$_initComponent(parent, parentInstance, context);
 
     const currentElement = this[CURRENT_ELEMENT];
     const props = currentElement.props;
@@ -29,7 +29,7 @@ export default class NativeComponent extends BaseComponent {
     const appendType = props.append || TREE; // Default is tree
 
     // Clone a copy for style diff
-    this._prevStyleCopy = assign({}, props.style);
+    this.$_prevStyleCopy = assign({}, props.style);
 
     let instance = {
       type,
@@ -41,17 +41,17 @@ export default class NativeComponent extends BaseComponent {
 
     let mountChildren = () => {
       if (children != null) {
-        this.mountChildren(children, context);
+        this.$_mountChildren(children, context);
       }
     };
 
     if (appendType === TREE) {
       // Should after process children when mount by tree mode
       mountChildren();
-      this.mountNativeNode(nativeNodeMounter);
+      this.$_mountNativeNode(nativeNodeMounter);
     } else {
       // Should before process children when mount by node mode
-      this.mountNativeNode(nativeNodeMounter);
+      this.$_mountNativeNode(nativeNodeMounter);
       mountChildren();
     }
 
@@ -67,14 +67,14 @@ export default class NativeComponent extends BaseComponent {
     return instance;
   }
 
-  mountChildren(children, context) {
+  $_mountChildren(children, context) {
     children = toArray(children);
 
-    const nativeNode = this.getNativeNode();
-    return this._mountChildren(nativeNode, children, context);
+    const nativeNode = this.$_getNativeNode();
+    return this.$_mountChildrenImpl(nativeNode, children, context);
   }
 
-  _mountChildren(parent, children, context, nativeNodeMounter) {
+  $_mountChildrenImpl(parent, children, context, nativeNodeMounter) {
     let renderedChildren = this._renderedChildren = {};
 
     const renderedChildrenImage = [];
@@ -83,9 +83,9 @@ export default class NativeComponent extends BaseComponent {
       const renderedChild = instantiateComponent(element);
       const name = getElementKeyName(renderedChildren, element, i);
       renderedChildren[name] = renderedChild;
-      renderedChild._mountIndex = i;
+      renderedChild.$_mountIndex = i;
       // Mount children
-      const mountImage = renderedChild.mountComponent(
+      const mountImage = renderedChild.$_mountComponent(
         parent,
         this[INSTANCE],
         context,
@@ -97,19 +97,19 @@ export default class NativeComponent extends BaseComponent {
     return renderedChildrenImage;
   }
 
-  unmountChildren(shouldNotRemoveChild) {
+  $_unmountChildren(shouldNotRemoveChild) {
     let renderedChildren = this._renderedChildren;
 
     if (renderedChildren) {
       for (let name in renderedChildren) {
         let renderedChild = renderedChildren[name];
-        renderedChild.unmountComponent(shouldNotRemoveChild);
+        renderedChild.$_unmountComponent(shouldNotRemoveChild);
       }
       this._renderedChildren = null;
     }
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  $_unmountComponent(shouldNotRemoveChild) {
     if (this[NATIVE_NODE]) {
       let ref = this[CURRENT_ELEMENT].ref;
       if (ref) {
@@ -126,13 +126,13 @@ export default class NativeComponent extends BaseComponent {
       }
     }
 
-    this.unmountChildren(shouldNotRemoveChild);
+    this.$_unmountChildren(shouldNotRemoveChild);
 
-    this._prevStyleCopy = null;
-    this.destoryComponent();
+    this.$_prevStyleCopy = null;
+    this.$_destoryComponent();
   }
 
-  updateComponent(prevElement, nextElement, prevContext, nextContext) {
+  $_updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
     this[CURRENT_ELEMENT] = nextElement;
 
@@ -141,14 +141,14 @@ export default class NativeComponent extends BaseComponent {
     let prevProps = prevElement.props;
     let nextProps = nextElement.props;
 
-    this.updateProperties(prevProps, nextProps);
+    this.$_updateProperties(prevProps, nextProps);
 
     // If the prevElement has no child, mount children directly
     if (prevProps.children == null ||
       isArray(prevProps.children) && prevProps.children.length === 0) {
-      this.mountChildren(nextProps.children, nextContext);
+      this.$_mountChildren(nextProps.children, nextContext);
     } else {
-      this.updateChildren(nextProps.children, nextContext);
+      this.$_updateChildren(nextProps.children, nextContext);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -156,12 +156,12 @@ export default class NativeComponent extends BaseComponent {
     }
   }
 
-  updateProperties(prevProps, nextProps) {
+  $_updateProperties(prevProps, nextProps) {
     let propKey;
     let styleName;
     let styleUpdates;
     const driver = Host.driver;
-    const nativeNode = this.getNativeNode();
+    const nativeNode = this.$_getNativeNode();
 
     for (propKey in prevProps) {
       // Continue children and null value prop or nextProps has some propKey that do noting
@@ -176,12 +176,12 @@ export default class NativeComponent extends BaseComponent {
 
       if (propKey === STYLE) {
         // Remove all style
-        let lastStyle = this._prevStyleCopy;
+        let lastStyle = this.$_prevStyleCopy;
         for (styleName in lastStyle) {
           styleUpdates = styleUpdates || {};
           styleUpdates[styleName] = '';
         }
-        this._prevStyleCopy = null;
+        this.$_prevStyleCopy = null;
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
         // Remove event
         const eventListener = prevProps[propKey];
@@ -205,7 +205,7 @@ export default class NativeComponent extends BaseComponent {
 
     for (propKey in nextProps) {
       let nextProp = nextProps[propKey];
-      let prevProp = propKey === STYLE ? this._prevStyleCopy :
+      let prevProp = propKey === STYLE ? this.$_prevStyleCopy :
         prevProps != null ? prevProps[propKey] : undefined;
 
       // Continue children or prevProp equal nextProp
@@ -221,9 +221,9 @@ export default class NativeComponent extends BaseComponent {
       if (propKey === STYLE) {
         if (nextProp) {
           // Clone property
-          nextProp = this._prevStyleCopy = assign({}, nextProp);
+          nextProp = this.$_prevStyleCopy = assign({}, nextProp);
         } else {
-          this._prevStyleCopy = null;
+          this.$_prevStyleCopy = null;
         }
 
         if (prevProp != null) {
@@ -297,7 +297,7 @@ export default class NativeComponent extends BaseComponent {
     }
   }
 
-  updateChildren(nextChildrenElements, context) {
+  $_updateChildren(nextChildrenElements, context) {
     // prev rendered children
     let prevChildren = this._renderedChildren;
     let driver = Host.driver;
@@ -324,7 +324,7 @@ export default class NativeComponent extends BaseComponent {
         if (prevChild != null && shouldUpdateComponent(prevElement, nextElement)) {
           if (prevElement !== nextElement || prevContext !== context) {
             // Pass the same context when updating chidren
-            prevChild.updateComponent(prevElement, nextElement, context,
+            prevChild.$_updateComponent(prevElement, nextElement, context,
               context);
           }
 
@@ -333,7 +333,7 @@ export default class NativeComponent extends BaseComponent {
           // Unmount the prevChild when some name with nextChild but different element type,
           // and move child node in next children loop
           if (prevChild) {
-            prevChild._unmount = true;
+            prevChild.$_unmount = true;
           }
           // The child must be instantiated before it's mounted.
           nextChildren[name] = instantiateComponent(nextElement);
@@ -356,19 +356,19 @@ export default class NativeComponent extends BaseComponent {
     if (prevChildren != null) {
       for (let name in prevChildren) {
         let prevChild = prevChildren[name];
-        let shouldUnmount = prevChild._unmount || !nextChildren[name];
+        let shouldUnmount = prevChild.$_unmount || !nextChildren[name];
 
         // Store old first child ref for append node ahead and maybe delay remove it
         if (!prevFirstChild) {
           shouldUnmountPrevFirstChild = shouldUnmount;
           prevFirstChild = prevChild;
-          prevFirstNativeNode = prevFirstChild.getNativeNode();
+          prevFirstNativeNode = prevFirstChild.$_getNativeNode();
 
           if (isArray(prevFirstNativeNode)) {
             prevFirstNativeNode = prevFirstNativeNode[0];
           }
         } else if (shouldUnmount) {
-          prevChild.unmountComponent(shouldRemoveAllChildren);
+          prevChild.$_unmountComponent(shouldRemoveAllChildren);
         }
       }
     }
@@ -408,21 +408,21 @@ export default class NativeComponent extends BaseComponent {
 
         // Try to move the some key prevChild but current not at the some position
         if (prevChild === nextChild) {
-          let prevChildNativeNode = prevChild.getNativeNode();
+          let prevChildNativeNode = prevChild.$_getNativeNode();
 
-          if (prevChild._mountIndex !== nextIndex) {
+          if (prevChild.$_mountIndex !== nextIndex) {
             insertNodes(prevChildNativeNode);
           }
         } else {
           // Mount nextChild that in prevChildren there has no some name
 
-          let parent = this.getNativeNode();
+          let parent = this.$_getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
           if (isArray(parent)) {
             parent = this._parent;
           }
 
-          nextChild.mountComponent(
+          nextChild.$_mountComponent(
             parent,
             this[INSTANCE],
             context,
@@ -431,10 +431,10 @@ export default class NativeComponent extends BaseComponent {
         }
 
         // Update to the latest mount order
-        nextChild._mountIndex = nextIndex++;
+        nextChild.$_mountIndex = nextIndex++;
 
         // Get the last child
-        lastPlacedNode = nextChild.getNativeNode();
+        lastPlacedNode = nextChild.$_getNativeNode();
 
         // Push to nextNativeNode
         if (isArray(lastPlacedNode)) {
@@ -456,7 +456,7 @@ export default class NativeComponent extends BaseComponent {
     }
 
     if (shouldUnmountPrevFirstChild) {
-      prevFirstChild.unmountComponent(shouldRemoveAllChildren);
+      prevFirstChild.$_unmountComponent(shouldRemoveAllChildren);
     }
 
     if (shouldRemoveAllChildren) {
@@ -466,7 +466,7 @@ export default class NativeComponent extends BaseComponent {
     this._renderedChildren = nextChildren;
   }
 
-  createNativeNode() {
+  $_createNativeNode() {
     const instance = this[INSTANCE];
     const nativeNode = Host.driver.createElement(instance.type, instance.props, this);
     Instance.set(nativeNode, instance);

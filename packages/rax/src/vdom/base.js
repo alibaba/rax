@@ -9,14 +9,14 @@ export default class BaseComponent {
     this[CURRENT_ELEMENT] = element;
   }
 
-  initComponent(parent, parentInstance, context) {
+  $_initComponent(parent, parentInstance, context) {
     this._parent = parent;
     this._parentInstance = parentInstance;
     this._context = context;
     this._mountID = Host.mountID++;
   }
 
-  destoryComponent() {
+  $_destoryComponent() {
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.unmountComponent(this);
     }
@@ -33,9 +33,9 @@ export default class BaseComponent {
     }
   }
 
-  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.initComponent(parent, parentInstance, context);
-    this.mountNativeNode(nativeNodeMounter);
+  $_mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.$_initComponent(parent, parentInstance, context);
+    this.$_mountNativeNode(nativeNodeMounter);
 
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.mountComponent(this);
@@ -47,15 +47,15 @@ export default class BaseComponent {
     return instance;
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  $_unmountComponent(shouldNotRemoveChild) {
     if (this[NATIVE_NODE] && !shouldNotRemoveChild) {
       Host.driver.removeChild(this[NATIVE_NODE], this._parent);
     }
 
-    this.destoryComponent();
+    this.$_destoryComponent();
   }
 
-  getName() {
+  $_getName() {
     let currentElement = this[CURRENT_ELEMENT];
     let type = currentElement && currentElement.type;
 
@@ -67,8 +67,8 @@ export default class BaseComponent {
     );
   }
 
-  mountNativeNode(nativeNodeMounter) {
-    let nativeNode = this.getNativeNode();
+  $_mountNativeNode(nativeNodeMounter) {
+    let nativeNode = this.$_getNativeNode();
     let parent = this._parent;
 
     if (nativeNodeMounter) {
@@ -78,15 +78,15 @@ export default class BaseComponent {
     }
   }
 
-  getNativeNode() {
+  $_getNativeNode() {
     if (this[NATIVE_NODE] == null) {
-      this[NATIVE_NODE] = this.createNativeNode();
+      this[NATIVE_NODE] = this.$_createNativeNode();
     }
 
     return this[NATIVE_NODE];
   }
 
-  getPublicInstance() {
-    return this.getNativeNode();
+  $_getPublicInstance() {
+    return this.$_getNativeNode();
   }
 }

@@ -13,7 +13,7 @@ export default {
   create(element) {
     let container = ServerDriver.createBody();
     let rootComponent = Instance.mount(element, container, {});
-    let renderedComponent = rootComponent.getRenderedComponent();
+    let renderedComponent = rootComponent.$_getRenderedComponent();
 
     renderedComponent.toJSON = () => {
       return new Serializer(container).toJSON();
@@ -35,7 +35,7 @@ export default {
       }
 
       Instance.remove(container);
-      component._internal.unmountComponent();
+      component._internal.$_unmountComponent();
 
       return true;
     };

@@ -27,7 +27,7 @@ export default {
       }
     }
 
-    let instance = component.getPublicInstance();
+    let instance = component.$_getPublicInstance();
 
     if (process.env.NODE_ENV !== 'production') {
       if (instance == null) {
@@ -49,7 +49,7 @@ export default {
       ref(null);
     } else {
       // Must match component and ref could detach the ref on owner when A's before ref is B's current ref
-      let instance = component.getPublicInstance();
+      let instance = component.$_getPublicInstance();
 
       if (isObject(ref) && ref.current === instance) {
         ref.current = null;

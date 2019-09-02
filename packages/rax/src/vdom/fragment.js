@@ -2,23 +2,23 @@ import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
 import toArray from './toArray';
-import {CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE} from '../constant';
+import { CURRENT_ELEMENT, INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 /**
  * Fragment Component
  */
 class FragmentComponent extends NativeComponent {
-  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.initComponent(parent, parentInstance, context);
+  $_mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.$_initComponent(parent, parentInstance, context);
 
     let instance = {};
     instance[INTERNAL] = this;
     this[INSTANCE] = instance;
 
     // Mount children
-    this.mountChildren(this[CURRENT_ELEMENT], context);
+    this.$_mountChildren(this[CURRENT_ELEMENT], context);
 
-    let fragment = this.getNativeNode();
+    let fragment = this.$_getNativeNode();
 
     if (nativeNodeMounter) {
       nativeNodeMounter(fragment, parent);
@@ -36,10 +36,10 @@ class FragmentComponent extends NativeComponent {
     return instance;
   }
 
-  mountChildren(children, context) {
-    let fragment = this.getNativeNode();
+  $_mountChildren(children, context) {
+    let fragment = this.$_getNativeNode();
 
-    return this._mountChildren(this._parent, children, context, (nativeNode) => {
+    return this.$_mountChildrenImpl(this._parent, children, context, (nativeNode) => {
       nativeNode = toArray(nativeNode);
 
       for (let i = 0; i < nativeNode.length; i++) {
@@ -48,7 +48,7 @@ class FragmentComponent extends NativeComponent {
     });
   }
 
-  unmountComponent(shouldNotRemoveChild) {
+  $_unmountComponent(shouldNotRemoveChild) {
     let nativeNode = this[NATIVE_NODE];
 
     if (nativeNode) {
@@ -62,15 +62,15 @@ class FragmentComponent extends NativeComponent {
     }
 
     // Do not need remove child when their parent is removed
-    this.unmountChildren(true);
+    this.$_unmountChildren(true);
 
-    this.destoryComponent();
+    this.$_destoryComponent();
   }
 
-  updateComponent(prevElement, nextElement, prevContext, nextContext) {
+  $_updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
     this[CURRENT_ELEMENT] = nextElement;
-    this.updateChildren(this[CURRENT_ELEMENT], nextContext);
+    this.$_updateChildren(this[CURRENT_ELEMENT], nextContext);
 
     if (process.env.NODE_ENV !== 'production') {
       this[CURRENT_ELEMENT].type = FragmentComponent;
@@ -78,7 +78,7 @@ class FragmentComponent extends NativeComponent {
     }
   }
 
-  createNativeNode() {
+  $_createNativeNode() {
     return [];
   }
 }
