@@ -82,13 +82,30 @@ export default class Component {
     if (!this._internal) return;
     data.$ready = true;
     this.__updating = true;
-    Object.assign(this.state, data);
     /**
-     * Todo: optimize list render
+     * In alibaba miniapp can use $spliceData optimize long list
      * */
-    this._internal.setData(data, () => {
-      this.__updating = false;
-    });
+    if (this._internal.$spliceData) {
+      const useSpliceData = {};
+      const useSetData = {};
+      for (let key in data) {
+        if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
+          useSpliceData[key] = [this.state[key].length, 0, ...data[key].slice(this.state[key].length)];
+        } else {
+          useSetData[key] = data[key];
+        }
+      }
+      Promise.all([generatePromise(this._internal.setData.bind(this, useSetData)),
+        generatePromise(this._internal.$spliceData.bind(this, useSpliceData))]).then(() => {
+        Object.assign(this.state, data);
+        this.__updating = false;
+      });
+    } else {
+      this._internal.setData(data, () => {
+        Object.assign(this.state, data);
+        this.__updating = false;
+      });
+    }
   }
 
   _updateMethods(methods) {
@@ -268,4 +285,16 @@ function diffProps(prev, next) {
     if (next[key] !== prev[key]) return true;
   }
   return false;
+}
+
+function diffArray(prev, next) {
+  if (!Array.isArray(prev)) return false;
+  // Only concern about list append case
+  return next.slice(0, prev.length).every((val, index) => prev[index] === val);
+}
+
+function generatePromise(targetFn) {
+  return new Promise((resolve) => {
+    targetFn(resolve);
+  });
 }
