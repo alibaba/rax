@@ -42,7 +42,7 @@
     "minimist": "^1.2.0",
     "rax-webpack-plugin": "^0.6.5",
     "rimraf": "^2.6.2",
-    "rollup": "^1.1.2",
+    "rollup": "^1.20.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.2",
     "rollup-plugin-memory": "^3.0.0",
