@@ -1,6 +1,5 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
-const DynamicBinding = require('../utils/DynamicBinding');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -89,7 +88,6 @@ function transformDirectiveCondition(ast, adapter) {
 }
 
 function transformDirectiveList(ast, adapter) {
-  const dynamicValues = new DynamicBinding('_d');
   traverse(ast, {
     JSXElement: {
       exit(path) {
@@ -164,7 +162,6 @@ function transformDirectiveList(ast, adapter) {
       }
     }
   });
-  return dynamicValues.getStore();
 }
 
 function transformComponentFragment(ast) {
@@ -183,10 +180,7 @@ function transformComponentFragment(ast) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      Object.assign(
-        parsed.dynamicValue = parsed.dynamicValue || {},
-        transformDirectiveCondition(parsed.templateAST, options.adapter),
-      );
+      transformDirectiveCondition(parsed.templateAST, options.adapter);
       transformDirectiveList(parsed.templateAST, options.adapter);
     }
   },

@@ -112,7 +112,7 @@ module.exports = {
      * updateChildProps: collect props dependencies.
      */
     if (options.type !== 'app' && parsed.renderFunctionPath) {
-      addUpdateData(parsed.dynamicValue, parsed.renderFunctionPath);
+      addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
 
       const fnBody = parsed.renderFunctionPath.node.body.body;
@@ -372,11 +372,15 @@ function collectHooks(root) {
   return Object.keys(ret);
 }
 
-function addUpdateData(dynamicValue, renderFunctionPath) {
+function addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath) {
   const dataProperties = [];
 
   Object.keys(dynamicValue).forEach(name => {
     dataProperties.push(t.objectProperty(t.stringLiteral(name), dynamicValue[name]));
+  });
+
+  renderItemFunctions.map(renderItemFn => {
+    dataProperties.push(t.objectProperty(t.stringLiteral(renderItemFn.name), renderItemFn.node));
   });
 
   const updateData = t.memberExpression(
