@@ -7,7 +7,7 @@
     "jsx2mp": "bin/jsx2mp.js"
   },
   "scripts": {
-    "test": "jest --coverage --testPathIgnorePatterns=__modules__",
+    "test": "jest",
     "test:watch": "npm run test -- --watchAll"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
