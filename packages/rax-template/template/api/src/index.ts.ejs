@@ -1,13 +1,7 @@
-import { isWeex, isMiniApp } from 'universal-env';
+import { Options } from './types';
 
-let func: () => Promise<any>;
-
-if (isWeex) {
-  func = require('./weex').default;
-} else if (isMiniApp) {
-  func = require('./miniapp').default;
-} else {
-  func = require('./web').default;
-}
+let func = (options: Options): Promise<any> => {
+  return Promise.resolve(options);
+};
 
 export default func;

@@ -1,0 +1,13 @@
+import api from '../api/index';
+
+Page({
+  onLoad() {
+  },
+  onShow() {
+  },
+  handleTap() {
+    api().then(() => {
+      alert('tap');
+    })
+  }
+});
