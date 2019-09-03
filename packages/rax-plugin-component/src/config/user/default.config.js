@@ -1,8 +1,9 @@
 const address = require('address');
 
 module.exports = {
-  inlineStyle: true,
   outputDir: 'lib',
+  devOutputDir: 'lib',
+  devWatchLib: false,
   distDir: 'build',
   publicPath: '/',
   devPublicPath: '/',

@@ -1,6 +1,5 @@
 const fs = require('fs-extra');
 const jsx2mp = require('jsx2mp-cli');
-const path = require('path');
 
 const getOutputPath = require('./getOutputPath');
 
