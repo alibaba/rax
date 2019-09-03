@@ -1,1 +1,0 @@
-Webpack config for web app
