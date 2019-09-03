@@ -109,8 +109,8 @@ self.addEventListener('fetch', e => {
   // return cache
   e.respondWith(
     Promise.race([clonedFetch.catch(_ => cached), useCached])
-      .then(_res => {
-        return _res || clonedFetch;
+      .then(res => {
+        return res || clonedFetch;
       })
       .catch(_ => {
         if (isNavigate) return caches.match('/offline/');
@@ -121,11 +121,11 @@ self.addEventListener('fetch', e => {
   let fetchedCopy = clonedFetch.then(_res => _res.clone());
   e.waitUntil(
     Promise.all([fetchedCopy, caches.match(e.request)])
-      .then(([_resp, _cresp]) => {
-        let fModified = _resp.headers.get('last-modified');
-        let cModified = _cresp && _cresp.headers.get('last-modified');
+      .then(([resp, cresp]) => {
+        let fModified = resp.headers.get('last-modified');
+        let cModified = cresp && cresp.headers.get('last-modified');
         if (isNavigate || !fModified || fModified != cModified) {
-          return saveCache(e.request, _resp);
+          return saveCache(e.request, resp);
         }
       })
       .catch(_ => { })
