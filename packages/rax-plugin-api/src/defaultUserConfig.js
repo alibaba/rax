@@ -1,3 +1,5 @@
 module.exports = {
-  outputDir: 'lib'
+  outputDir: 'lib',
+  devWatchLib: true,
+  devOutputDir: 'demo/miniapp/api', // watch for miniapp
 };

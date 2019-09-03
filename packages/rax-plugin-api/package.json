@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-api",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "rax api base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -15,11 +15,6 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "deepmerge": "^4.0.0",
-    "fs-extra": "^8.1.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^8.0.0",
-    "gulp-typescript": "^5.0.1",
-    "rax-compile-config": "^0.1.2",
-    "run-sequence": "^2.2.1"
+    "rax-plugin-component": "^0.1.9"
   }
 }

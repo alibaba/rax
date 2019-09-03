@@ -1,18 +1,31 @@
+const chalk = require('chalk');
+const path = require('path');
 const deepmerge = require('deepmerge');
+const plugin = require('rax-plugin-component');
 
 const defaultUserConfig = require('./defaultUserConfig');
-const build = require('./build');
-const dev = require('./dev');
 
-module.exports = ({ context, log }, options = {}) => {
-  context.userConfig = deepmerge(defaultUserConfig, context.userConfig);
+module.exports = (api, options = {}) => {
+  api.context.userConfig = deepmerge(defaultUserConfig, api.context.userConfig);
 
-  const { command } = context;
+  const { command } = api.context;
+
+  options = {
+    ...options,
+    targets: ['web', 'weex']
+  };
+
   if (command === 'dev') {
-    dev(context, options, log);
+    plugin(api, options);
+
+    api.onHook('after.devCompile', () => {
+      console.log(chalk.green('[Miniapp] Use miniapp developer tools to open the following folder:'));
+      console.log('   ', chalk.underline.white(path.resolve(api.context.rootDir, 'demo/miniapp')));
+      console.log();
+    });
   }
 
   if (command === 'build') {
-    build(context, options, log);
+    plugin(api, options);
   }
 };
