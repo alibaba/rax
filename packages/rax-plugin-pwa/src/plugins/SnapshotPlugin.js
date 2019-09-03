@@ -31,7 +31,7 @@ module.exports = class SnapshotPlugin {
 
     try {
       // Told universal-app-shell-loader to use hydrate
-      const targetIdx = config.entry.index.findIndex(item => ~item.indexOf('universal-app-shell-loader') && /\/src\/app\.js$/.test(item));
+      const targetIdx = config.entry.index.findIndex(item => ~item.indexOf('UniversalAppShellLoader') && /\/src\/app\.js$/.test(item));
       config.entry.index[targetIdx] = config.entry.index[targetIdx].replace('type=web', 'type=web&&PWASnapshot=true');
     } catch (e) {
       console.warn('Hydrate snapshot failed: your Rax engineering may out of date!');

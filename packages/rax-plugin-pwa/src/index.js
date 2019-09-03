@@ -9,12 +9,14 @@ module.exports = ({ chainWebpack, context }, option) => {
       // Only run in web app.
       if (config.getConfig('web')) {
         pluginList.forEach((plugin) => {
-          config.plugin(plugin.replace(/\.js$/, ''))
-            .use(require(`${pluginDir}/${plugin}`), [{
-              ...option,
-              context,
-              command
-            }]);
+          if (/\.js$/.test(plugin)) {
+            config.plugin(plugin.replace(/\.js$/, ''))
+              .use(require(`${pluginDir}/${plugin}`), [{
+                ...option,
+                context,
+                command
+              }]);
+          }
         });
       }
     } catch (e) {
