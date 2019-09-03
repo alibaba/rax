@@ -9,10 +9,10 @@ let jsonContent, jsContent, axmlContent;
 const currentCwd = process.cwd();
 const cwd = currentCwd.indexOf('jsx2mp-cli') === -1 ? join(currentCwd, 'packages/jsx2mp-cli') : currentCwd;
 
-const execSyncWithCwd  = (command) => {
+const execSyncWithCwd = (command) => {
   execSync(command, {
     cwd
-  })
+  });
 };
 
 beforeAll(() => {
