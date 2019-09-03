@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const RaxWebpackPlugin = require('rax-webpack-plugin');
 const { hmrClient } = require('rax-compile-config');
 
 const getBaseWebpack = require('../getBaseWebpack');
@@ -17,11 +16,28 @@ module.exports = (context) => {
   config.output
     .filename('[name].js');
 
-  config.plugin('raxWebpack')
-    .use(RaxWebpackPlugin, [{
-      target: 'bundle',
-      externalBuiltinModules: false
-    }]);
+  config.module.rule('css')
+    .test(/\.css?$/)
+    .use('style')
+      .loader(require.resolve('style-loader'))
+      .end()
+    .use('css')
+      .loader(require.resolve('css-loader'))
+      .end()
+    .use('postcss')
+      .loader(require.resolve('postcss-loader'))
+      .options({
+        ident: 'postcss',
+        plugins: () => [
+          require('postcss-preset-env')({
+            autoprefixer: {
+              flexbox: 'no-2009',
+            },
+            stage: 3,
+          }),
+          require('postcss-plugin-rpx2vw')(),
+        ],
+      });
 
   config.plugin('html')
     .use(HtmlWebpackPlugin, [{

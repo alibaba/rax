@@ -6,6 +6,7 @@ function Document(props) {
     publicPath,
     initialHtml,
     initialData,
+    styles,
     scripts,
   } = props;
 
@@ -15,6 +16,7 @@ function Document(props) {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no" />
         <title><%= npmName %></title>
+        {styles.map((src) => <link rel="stylesheet" href={`${publicPath}${src}`} />)}
       </head>
       <body>
         {/* root container */}
@@ -28,6 +30,7 @@ function Document(props) {
   <%_ } else { -%>
   const {
     publicPath,
+    styles,
     scripts
   } = props;
 
@@ -37,6 +40,7 @@ function Document(props) {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1, user-scalable=no" />
         <title><%= npmName %></title>
+        {styles.map((src) => <link rel="stylesheet" href={`${publicPath}${src}`} />)}
       </head>
       <body>
         {/* root container */}

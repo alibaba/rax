@@ -21,6 +21,7 @@ const historyMemory = {
 module.exports = function(content) {
   const options = getOptions(this) || {};
   const renderModule = options.renderModule || 'rax';
+  const PWASnapshot = options.PWASnapshot;
 
   if (!this.data.appConfig) {
     return content;
@@ -65,7 +66,7 @@ module.exports = function(content) {
       `;
     } else {
       // common web app
-      appRenderMethod = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal, hydrate: withSSR });';
+      appRenderMethod = 'render(createElement(Entry), document.getElementById("root"), { driver: DriverUniversal, hydrate: withSSR || ${PWASnapshot} });';
     }
 
     appRender += `
@@ -78,8 +79,9 @@ module.exports = function(content) {
         }
         ${appRenderMethod}
       }
-      if (withSSR) {
-        getCurrentComponent(appProps.routerConfig.routes, true)().then(function(InitialComponent) {
+      
+      if (withSSR ${PWASnapshot ? "|| localStorage.getItem('__INITIAL_HTML_' + currentHistory.location.pathname + '__')" : ''} ) {
+        getCurrentComponent(appProps.routerConfig.routes, withSSR)().then(function(InitialComponent) {
           if (InitialComponent !== null) {
             appProps.routerConfig.InitialComponent = InitialComponent;
           }

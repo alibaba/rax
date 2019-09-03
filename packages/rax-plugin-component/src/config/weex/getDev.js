@@ -1,6 +1,5 @@
 'use strict';
 const path = require('path');
-const RaxWebpackPlugin = require('rax-webpack-plugin');
 const WeexFrameworkBanner = require('../../plugins/WeexFrameworkBannerPlugin');
 const { hmrClient } = require('rax-compile-config');
 
@@ -19,14 +18,13 @@ module.exports = (context) => {
   config.output
     .filename('weex/[name].js');
 
-  config.plugin('raxWebpack')
-    .use(RaxWebpackPlugin, [{
-      target: 'bundle',
-      externalBuiltinModules: false
-    }]);
-
   config.plugin('weexFrame')
     .use(WeexFrameworkBanner);
+
+  config.module.rule('css')
+    .test(/\.css?$/)
+    .use('css')
+      .loader(require.resolve('stylesheet-loader'));
 
   setUserConfig(config, context, 'weex');
 

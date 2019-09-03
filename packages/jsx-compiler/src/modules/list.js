@@ -4,8 +4,9 @@ const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const genExpression = require('../codegen/genExpression');
+const findIndex = require('../utils/findIndex');
 
-function transformList(ast, adapter) {
+function transformList(ast, renderItemFunctions, adapter) {
   let fnScope;
 
   function traverseFunction(path) {
@@ -110,6 +111,21 @@ function transformList(ast, adapter) {
                       properties.push(t.objectProperty(innerPath.node, innerPath.node));
                     }
                   }
+                },
+                JSXAttribute(innerPath) {
+                  // Handle renderItem
+                  const { node } = innerPath;
+                  if (node.name.name === 'data'
+                    && t.isStringLiteral(node.value)
+                  ) {
+                    const fnIdx = findIndex(renderItemFunctions, (fn) => node.value.value === `{{...${fn.name}}}`);
+                    if (fnIdx > -1) {
+                      const renderItem = renderItemFunctions[fnIdx];
+                      node.value = t.stringLiteral(`${node.value.value.replace('...', `...${forItem.name}.`)}`);
+                      properties.push(t.objectProperty(t.identifier(renderItem.name), renderItem.node));
+                      renderItemFunctions.splice(fnIdx, 1);
+                    }
+                  }
                 }
               });
 
@@ -129,10 +145,10 @@ function transformList(ast, adapter) {
 
               parentPath.replaceWith(listBlock);
               returnElPath.replaceWith(t.objectExpression(properties));
+            } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
+              // { foo.map(this.xxx) }
+              throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
             }
-          } else if (t.isIdentifier(args[0]) || t.isMemberExpression(args[0])) {
-            // { foo.map(this.xxx) }
-            throw new Error(`The syntax conversion for ${genExpression(node)} is currently not supported. Please use inline functions.`);
           }
         }
       }
@@ -142,7 +158,7 @@ function transformList(ast, adapter) {
 
 module.exports = {
   parse(parsed, code, options) {
-    transformList(parsed.templateAST, options.adapter);
+    transformList(parsed.templateAST, parsed.renderItemFunctions, options.adapter);
   },
 
   // For test cases.

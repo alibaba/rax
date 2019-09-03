@@ -6,6 +6,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const babelConfig = getBabelConfig({
+  styleSheet: true,
   custom: {
     ignore: ['**/**/*.d.ts']
   }
@@ -23,16 +24,6 @@ module.exports = (context) => {
 
   config.resolve.extensions
     .merge(['.js', '.json', '.jsx', '.ts', '.tsx', '.html']);
-
-  // external weex module
-  config.externals([
-    function(_context, request, callback) {
-      if (request.indexOf('@weex-module') !== -1) {
-        return callback(null, 'commonjs ' + request);
-      }
-      callback();
-    }
-  ]);
 
   config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
@@ -54,11 +45,6 @@ module.exports = (context) => {
       .end()
     .use('ts')
       .loader(require.resolve('ts-loader'));
-
-  config.module.rule('css')
-    .test(/\.css?$/)
-    .use('css')
-      .loader(require.resolve('stylesheet-loader'));
 
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)

@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const Chain = require('webpack-chain');
 const babelMerge = require('babel-merge');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { getBabelConfig, setBabelAlias } = require('rax-compile-config');
@@ -25,16 +26,6 @@ module.exports = (context) => {
     .set('@core/page', 'universal-app-runtime')
     .set('@core/router', 'universal-app-runtime');
 
-  // external weex module
-  config.externals([
-    function(ctx, request, callback) {
-      if (request.indexOf('@weex-module') !== -1) {
-        return callback(null, 'commonjs ' + request);
-      }
-      callback();
-    }
-  ]);
-
   config.module.rule('jsx')
     .test(/\.(js|mjs|jsx)$/)
     .use('babel')
@@ -57,6 +48,9 @@ module.exports = (context) => {
 
   config.plugin('caseSensitivePaths')
     .use(CaseSensitivePathsPlugin);
+
+  config.plugin('copyWebpackPlugin')
+    .use(CopyWebpackPlugin, [[{ from: 'src/public', to: 'public' }]]);
 
   config.plugin('noError')
     .use(webpack.NoEmitOnErrorsPlugin);

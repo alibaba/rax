@@ -1,11 +1,12 @@
 const path = require('path');
 const qs = require('qs');
+const { getRouteName } = require('rax-compile-config');
 
 const SSRLoader = require.resolve('./loader');
 
 module.exports = (config, context) => {
   const { rootDir, userConfig } = context;
-  const { plugins } = userConfig;
+  const { plugins, inlineStyle } = userConfig;
   const isMultiPages = !!~plugins.indexOf('rax-plugin-multi-pages');
 
   const publicPath = config.output.get('publicPath');
@@ -22,7 +23,7 @@ module.exports = (config, context) => {
   const entries = {};
 
   routes.forEach((route) => {
-    const entry = route.name || route.component.replace(/\//g, '_');
+    const entry = getRouteName(route, rootDir);
     const absolutePagePath = path.resolve(appSrc, route.component);
 
     const query = {
@@ -35,7 +36,8 @@ module.exports = (config, context) => {
       absoluteAppJSONPath,
       publicPath,
       isMultiPages,
-      scripts: [`web/${entry}.js`]
+      styles: inlineStyle ? [] : [`web/${entry}.css`],
+      scripts: isMultiPages ? [`web/${entry}.js`] : [`web/${entry}.js`, 'web/index.js']
     };
 
     entries[entry] = `${SSRLoader}?${qs.stringify(query)}!${absolutePagePath}`;
