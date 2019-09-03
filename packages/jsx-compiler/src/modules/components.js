@@ -115,6 +115,13 @@ module.exports = {
               }
             }
 
+            if (alias.isCustomEl) {
+              node.attributes.push(t.jsxAttribute(
+                t.jsxIdentifier('__parentId'),
+                t.stringLiteral('{{__tagId}}')
+              ));
+            }
+
             node.attributes.push(t.jsxAttribute(
               t.jsxIdentifier('__tagId'),
               t.stringLiteral(tagId)

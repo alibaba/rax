@@ -6,17 +6,17 @@ describe('Parse imported', () => {
       import Hello from './Hello';
       import Rax, { Component } from 'rax';
     `))).toEqual({
-      './Hello': [{ default: true, external: false, local: 'Hello', name: 'c-702789' }],
+      './Hello': [{ default: true, isCustomEl: true, local: 'Hello', name: 'c-702789' }],
       rax: [
         {
           default: true,
-          external: true,
+          isCustomEl: false,
           local: 'Rax',
           name: 'rax',
         },
         {
           default: false,
-          external: true,
+          isCustomEl: false,
           importFrom: 'Component',
           local: 'Component',
           name: 'rax'
