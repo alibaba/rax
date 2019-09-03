@@ -22,6 +22,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
+  cp.execSync('cd ..');
   cp.execSync('npm unlink');
   cp.execSync('npm unlink ../jsx2mp-loader');
   cp.execSync('cd ../jsx2mp-loader && npm unlink ../jsx-compiler');
@@ -32,10 +33,12 @@ afterAll(() => {
 
 describe('Component compiled result', () => {
   it('should return correct axml', () => {
-    expect(axmlContent).toEqual(
-      `<block a:if="{{$ready}}">
-<rax-view __tagId="0">Hello World!</rax-view>
-</block>`
+//     expect(axmlContent).toEqual(
+//       `<block a:if="{{$ready}}">
+// <rax-view __tagId="0">Hello World!</rax-view>
+// </block>`
+  expect(axmlContent).toEqual(
+    `<rax-view __tagId="0">Hello World!</rax-view>`
     );
   });
 
