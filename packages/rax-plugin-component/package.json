@@ -1,6 +1,6 @@
 {
   "name": "rax-plugin-component",
-  "version": "0.1.9-1",
+  "version": "0.1.9",
   "description": "rax component base plugins",
   "license": "BSD-3-Clause",
   "main": "src/index.js",
@@ -39,7 +39,7 @@
     "postcss-plugin-rpx2vw": "^0.0.1",
     "postcss-preset-env": "^6.6.0",
     "qrcode-terminal": "^0.12.0",
-    "rax-compile-config": "0.1.4-1",
+    "rax-compile-config": "^0.1.4",
     "rax-hot-loader": "^0.6.5",
     "rax-webpack-plugin": "^0.6.5",
     "run-sequence": "^2.2.1",
