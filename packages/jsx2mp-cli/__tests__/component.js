@@ -1,31 +1,36 @@
 const { readFileSync } = require('fs');
-const cp = require('child_process');
+const { join } = require('path');
+const { execSync } = require('child_process');
 
 const compileCommand = 'jsx2mp build --type component --entry ./component --dist ./dist';
 
 let jsonContent, jsContent, axmlContent;
 
+const currentCwd = process.cwd();
+const cwd = currentCwd.indexOf('jsx2mp-cli') === -1 ? join(currentCwd, 'packages/jsx2mp-cli') : currentCwd;
+
+const execSyncWithCwd  = (command) => {
+  execSync(command, {
+    cwd
+  })
+};
+
 beforeAll(() => {
   // link self
-  cp.execSync('npm link');
-  // link loader
-  cp.execSync('npm link ../jsx2mp-loader');
-  // cd loader . link compiler
-  cp.execSync('cd ../jsx2mp-loader && npm link ../jsx-compiler');
+  execSyncWithCwd('npm link');
 
-  cp.execSync(`cd demo && npm install && ${compileCommand}`);
+  execSyncWithCwd(`cd demo && npm install && ${compileCommand}`);
+
   // read from file and get compiled result
-  jsonContent = readFileSync('demo/dist/component.json', {encoding: 'utf8'});
-  jsContent = readFileSync('demo/dist/component.js', {encoding: 'utf8'});
-  axmlContent = readFileSync('demo/dist/component.axml', {encoding: 'utf8'});
+  jsonContent = readFileSync(join(cwd, 'demo/dist/component.json'), {encoding: 'utf8'});
+  jsContent = readFileSync(join(cwd, 'demo/dist/component.js'), {encoding: 'utf8'});
+  axmlContent = readFileSync(join(cwd, 'demo/dist/component.axml'), {encoding: 'utf8'});
 });
 
 afterAll(() => {
-  cp.execSync('npm unlink');
-  cp.execSync('npm unlink ../jsx2mp-loader');
-  console.log(cp.execSync('pwd').toString());
-  cp.execSync('cd ../jsx2mp-loader && npm unlink ../jsx-compiler');
-  cp.execSync('rm -rf demo/dist');
+  execSyncWithCwd('npm unlink');
+
+  execSyncWithCwd('rm -rf demo/dist');
 });
 
 describe('Component compiled result', () => {
