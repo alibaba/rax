@@ -80,7 +80,7 @@ module.exports = function(content) {
         ${appRenderMethod}
       }
       
-      if (withSSR ${PWASnapshot ? "|| localStorage.getItem('__INITIAL_HTML_' + currentHistory.location.pathname+ '__')" : ''} ) {
+      if (withSSR ${PWASnapshot ? "|| localStorage.getItem('__INITIAL_HTML_' + currentHistory.location.pathname + '__')" : ''} ) {
         getCurrentComponent(appProps.routerConfig.routes, withSSR)().then(function(InitialComponent) {
           if (InitialComponent !== null) {
             appProps.routerConfig.InitialComponent = InitialComponent;

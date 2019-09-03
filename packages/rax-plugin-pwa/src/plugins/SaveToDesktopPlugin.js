@@ -22,7 +22,7 @@ const defaultManifest = {
 };
 
 const iconSizes = [96, 128, 180, 256, 512];
-const supportedMimeTypes = [jimp.MIME_PNG, jimp.MIME_JPEG, jimp.MIME_BMP];
+const supportedMIMETypes = [jimp.MIME_PNG, jimp.MIME_JPEG, jimp.MIME_BMP];
 
 module.exports = class SaveToDesktopPlugin {
   constructor(options) {
@@ -47,7 +47,7 @@ module.exports = class SaveToDesktopPlugin {
 
       if (!manifest.icon) throw new Error('Can not find icon in manifest');
       if (!existsSync(iconFile)) throw new Error(`File '${iconFile}' is not exists, please check.`);
-      if (!supportedMimeTypes.includes(mimeType)) throw new Error(`File '${iconFile}' is not support, supported MIME types are "image/png", "image/jpeg", "image/bmp".`);
+      if (!supportedMIMETypes.includes(mimeType)) throw new Error(`File '${iconFile}' is not support, supported MIME types are "image/png", "image/jpeg", "image/bmp".`);
       // Process image
       jimp.read(iconFile, (err, img) => {
         if (err) throw new Error(`It was not possible to read '${iconFile}'.`);
@@ -72,13 +72,13 @@ module.exports = class SaveToDesktopPlugin {
         });
 
         // Write manifest.json
-        const manifestJsonValue = {
+        const manifestJSONValue = {
           ...defaultManifest,
           ...manifest,
           icons,
         };
-        delete manifestJsonValue.icon;
-        compilation.assets['web/manifest.json'] = new RawSource(JSON.stringify(manifestJsonValue));
+        delete manifestJSONValue.icon;
+        compilation.assets['web/manifest.json'] = new RawSource(JSON.stringify(manifestJSONValue));
         // Generate Html tags
         compilation.assets['web/index.html'] = new RawSource(
           compilation.assets['web/index.html'].source().replace('<head>', `<head>${tags}`)
