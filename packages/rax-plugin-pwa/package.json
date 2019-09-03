@@ -1,0 +1,22 @@
+{
+  "name": "rax-plugin-pwa",
+  "version": "0.1.0",
+  "description": "Rax PWA plugins",
+  "license": "BSD-3-Clause",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "html-minifier": "^4.0.0",
+    "jimp": "^0.6.4",
+    "lodash.template": "^4.5.0",
+    "mime": "^2.4.4",
+    "webpack-sources": "^1.4.3"
+  }
+}

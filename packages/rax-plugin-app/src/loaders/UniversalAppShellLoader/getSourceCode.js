@@ -11,12 +11,13 @@ module.exports = (options) => {
 
     const interopRequire = (mod) => mod && mod.__esModule ? mod.default : mod;
     const withSSR = ${withSSR};
+    const currentHistory = createHistory();
 
     const getRouterConfig = () => {
       const routes = [];
       ${options.assembleRoutes}
       return {
-        history: createHistory(),
+        history: currentHistory,
         routes,
       };
     };
