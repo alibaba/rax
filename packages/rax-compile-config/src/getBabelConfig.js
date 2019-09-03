@@ -94,7 +94,9 @@ module.exports = (userOptions = {}) => {
 
   if (styleSheet) {
     configArr.push({
-      plugins: [require.resolve('babel-plugin-transform-jsx-stylesheet')]
+      plugins: [
+        [require.resolve('babel-plugin-transform-jsx-stylesheet'), { retainClassName: true }]
+      ]
     });
   }
 

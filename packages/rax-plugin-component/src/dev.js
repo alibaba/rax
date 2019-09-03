@@ -4,10 +4,13 @@ const chalk = require('chalk');
 const path = require('path');
 const { handleWebpackErr } = require('rax-compile-config');
 
+const watchLib = require('./watchLib');
 const mpDev = require('./config/miniapp/dev');
 
-module.exports = ({ registerConfig, context, onHook }, options = {}) => {
-  const { rootDir } = context;
+module.exports = (api, options = {}) => {
+  const { registerConfig, context, onHook } = api;
+  const { rootDir, userConfig } = context;
+  const { devWatchLib } = userConfig;
   const { targets = [] } = options;
 
   // set dev config
@@ -80,6 +83,12 @@ module.exports = ({ registerConfig, context, onHook }, options = {}) => {
         devCompileLog();
       });
     }
+  }
+
+  if (devWatchLib) {
+    onHook('after.dev', () => {
+      watchLib(api, options);
+    });
   }
 
   onHook('after.devCompile', async(args) => {

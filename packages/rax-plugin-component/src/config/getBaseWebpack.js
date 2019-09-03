@@ -6,6 +6,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const babelConfig = getBabelConfig({
+  styleSheet: true,
   custom: {
     ignore: ['**/**/*.d.ts']
   }
@@ -44,11 +45,6 @@ module.exports = (context) => {
       .end()
     .use('ts')
       .loader(require.resolve('ts-loader'));
-
-  config.module.rule('css')
-    .test(/\.css?$/)
-    .use('css')
-      .loader(require.resolve('stylesheet-loader'));
 
   config.module.rule('assets')
     .test(/\.(svg|png|webp|jpe?g|gif)$/i)
