@@ -17,8 +17,8 @@ module.exports = function(content) {
     publicPath,
     pageName,
     isMultiPages,
-    styles,
-    scripts
+    styles = [],
+    scripts = []
   } = query;
 
   const hasShell = fs.existsSync(absoluteShellPath);
