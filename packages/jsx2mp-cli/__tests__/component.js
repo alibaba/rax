@@ -35,7 +35,7 @@ afterAll(() => {
 
 describe('Component compiled result', () => {
   it('should return correct axml', () => {
-    expect(axmlContent).toEqual(`<rax-view __tagId="0">Hello World!</rax-view>`);
+    expect(axmlContent).toEqual('<rax-view __tagId="0">Hello World!</rax-view>');
   });
 
   it('should return correct js', () => {
