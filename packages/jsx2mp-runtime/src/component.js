@@ -81,6 +81,7 @@ export default class Component {
   _updateData(data) {
     if (!this._internal) return;
     data.$ready = true;
+    data.__tagId = this.props.__tagId;
     this.__updating = true;
     /**
      * In alibaba miniapp can use $spliceData optimize long list
@@ -90,23 +91,17 @@ export default class Component {
       const useSetData = {};
       for (let key in data) {
         if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          console.log('enter splice');
           useSpliceData[key] = [this.state[key].length, 0, ...data[key].slice(this.state[key].length)];
         } else {
           useSetData[key] = data[key];
         }
       }
-      Promise.all([generatePromise(this._internal.setData.bind(this, useSetData)),
-        generatePromise(this._internal.$spliceData.bind(this, useSpliceData))]).then(() => {
-        Object.assign(this.state, data);
-        this.__updating = false;
-      });
+      this._internal.setData(useSetData);
+      this._internal.$spliceData(useSpliceData);
     } else {
-      this._internal.setData(data, () => {
-        Object.assign(this.state, data);
-        this.__updating = false;
-      });
+      this._internal.setData(data);
     }
+    Object.assign(this.state, data);
   }
 
   _updateMethods(methods) {
@@ -291,11 +286,6 @@ function diffProps(prev, next) {
 function diffArray(prev, next) {
   if (!Array.isArray(prev)) return false;
   // Only concern about list append case
+  if (prev.length === next.length) return false;
   return next.slice(0, prev.length).every((val, index) => prev[index] === val);
-}
-
-function generatePromise(targetFn) {
-  return new Promise((resolve) => {
-    targetFn(resolve);
-  });
 }
