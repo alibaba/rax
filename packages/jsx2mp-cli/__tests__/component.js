@@ -13,7 +13,6 @@ beforeAll(() => {
   // cd loader . link compiler
   cp.execSync('cd ../jsx2mp-loader && npm link ../jsx-compiler');
 
-  cp.execSync('cd ../jsx2mp-cli');
   cp.execSync(`cd demo && npm install && ${compileCommand}`);
   // read from file and get compiled result
   jsonContent = readFileSync('demo/dist/component.json', {encoding: 'utf8'});
@@ -22,24 +21,19 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  cp.execSync('cd ..');
   cp.execSync('npm unlink');
   cp.execSync('npm unlink ../jsx2mp-loader');
+  console.log(cp.execSync('pwd').toString());
   cp.execSync('cd ../jsx2mp-loader && npm unlink ../jsx-compiler');
-
-  cp.execSync('cd ../jsx2mp-cli');
   cp.execSync('rm -rf demo/dist');
 });
 
 describe('Component compiled result', () => {
   it('should return correct axml', () => {
-//     expect(axmlContent).toEqual(
-//       `<block a:if="{{$ready}}">
-// <rax-view __tagId="0">Hello World!</rax-view>
-// </block>`
-  expect(axmlContent).toEqual(
-    `<rax-view __tagId="0">Hello World!</rax-view>`
-    );
+    expect(axmlContent).toEqual(
+      `<block a:if="{{$ready}}">
+<rax-view __tagId="0">Hello World!</rax-view>
+</block>`);
   });
 
   it('should return correct js', () => {
