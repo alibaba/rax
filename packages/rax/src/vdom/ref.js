@@ -3,6 +3,7 @@
  */
 import { invokeMinifiedError } from '../error';
 import { isFunction, isObject } from '../types';
+import { INSTANCE } from '../constant';
 
 export default {
   update(prevElement, nextElement, component) {
@@ -26,7 +27,7 @@ export default {
       }
     }
 
-    let instance = component.getPublicInstance();
+    let instance = component.__getPublicInstance();
 
     if (process.env.NODE_ENV !== 'production') {
       if (instance == null) {
@@ -39,7 +40,7 @@ export default {
     } else if (isObject(ref)) {
       ref.current = instance;
     } else {
-      ownerComponent._instance.refs[ref] = instance;
+      ownerComponent[INSTANCE].refs[ref] = instance;
     }
   },
   detach(ownerComponent, ref, component) {
@@ -48,12 +49,12 @@ export default {
       ref(null);
     } else {
       // Must match component and ref could detach the ref on owner when A's before ref is B's current ref
-      let instance = component.getPublicInstance();
+      let instance = component.__getPublicInstance();
 
       if (isObject(ref) && ref.current === instance) {
         ref.current = null;
-      } else if (ownerComponent._instance.refs[ref] === instance) {
-        delete ownerComponent._instance.refs[ref];
+      } else if (ownerComponent[INSTANCE].refs[ref] === instance) {
+        delete ownerComponent[INSTANCE].refs[ref];
       }
     }
   }

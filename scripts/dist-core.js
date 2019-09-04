@@ -1,3 +1,5 @@
+const { readFileSync, existsSync } = require('fs');
+const { join, basename } = require('path');
 const rollup = require('rollup');
 const memory = require('rollup-plugin-memory');
 const resolve = require('rollup-plugin-node-resolve');
@@ -6,7 +8,6 @@ const babel = require('rollup-plugin-babel');
 const uglify = require('rollup-plugin-uglify').uglify;
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
-const path = require('path');
 
 const IIFE = 'iife';
 const UMD = 'umd';
@@ -17,7 +18,7 @@ function transformBundleFormat({input, name, format, entry, shouldExportDefault}
   return format === IIFE ? memory({
     path: input,
     contents: `
-    import ${shouldExportDefault ? name : `* as ${name}`} from './${path.basename(entry)}';
+    import ${shouldExportDefault ? name : `* as ${name}`} from './${basename(entry)}';
     if (typeof module !== 'undefined') module.exports = ${name};
     else self.${name} = ${name};
     `
@@ -36,12 +37,31 @@ function getExtension(format) {
 }
 
 async function build({ package: packageName, entry = 'src/index.js', name, shouldMinify = false, format = UMD, shouldExportDefault = false }) {
+  const input = `./packages/${packageName}/${entry}`;
   const output = {
     name,
     exports: 'named',
     sourcemap: true
   };
-  const input = `./packages/${packageName}/${entry}`;
+
+  const uglifyOptions = {
+    compress: {
+      loops: false,
+      keep_fargs: false,
+      unsafe: true,
+      pure_getters: true
+    },
+  };
+
+  if (shouldMinify) {
+    // Apply mangle rules.
+    uglifyOptions.mangle = {
+      properties: {
+        regex: /^__/,
+      },
+    };
+  }
+
   // For development
   const bundle = await rollup.rollup({
     input,
@@ -68,14 +88,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
       replace({
         'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),
       }),
-      shouldMinify ? uglify({
-        compress: {
-          loops: false,
-          keep_fargs: false,
-          unsafe: true,
-          pure_getters: true
-        }
-      }) : null,
+      shouldMinify ? uglify(uglifyOptions) : null,
     ]
   });
 

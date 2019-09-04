@@ -1,28 +1,31 @@
 import Host from './host';
 import Component from './component';
+import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
+import { invokeMinifiedError } from '../error';
+import { INTERNAL } from '../constant';
 
 const RE_RENDER_LIMIT = 24;
 /**
  * Functional Reactive Component Class Wrapper
  */
-class ReactiveComponent extends Component {
+export default class ReactiveComponent extends Component {
   constructor(pureRender, ref) {
     super();
     // A pure function
-    this._render = pureRender;
+    this.__render = pureRender;
     this._hookID = 0;
     // Number of rerenders
-    this._reRenders = 0;
+    this.__reRenders = 0;
     this._hooks = {};
     // Handles store
     this.didMount = [];
     this.didUpdate = [];
     this.willUnmount = [];
     // Is render scheduled
-    this.isScheduled = false;
+    this.__isScheduled = false;
     this.shouldUpdate = false;
-    this._children = null;
-    this._dependencies = {};
+    this.__children = null;
+    this.__dependencies = {};
 
     this.state = {};
 
@@ -59,7 +62,7 @@ class ReactiveComponent extends Component {
   readContext(context) {
     const Provider = context.Provider;
     const contextProp = Provider.contextProp;
-    let contextItem = this._dependencies[contextProp];
+    let contextItem = this.__dependencies[contextProp];
     if (!contextItem) {
       const readEmitter = Provider.readEmitter;
       const contextEmitter = readEmitter(this);
@@ -79,7 +82,7 @@ class ReactiveComponent extends Component {
       this.willUnmount.push(() => {
         contextItem.emitter.off(contextUpdater);
       });
-      this._dependencies[contextProp] = contextItem;
+      this.__dependencies[contextProp] = contextItem;
     }
     return contextItem.renderedContext = contextItem.emitter.value;
   }
@@ -89,7 +92,7 @@ class ReactiveComponent extends Component {
   }
 
   componentDidMount() {
-    this.didMount.forEach(handler => handler());
+    invokeFunctionsWithContext(this.didMount);
   }
 
   componentWillReceiveProps() {
@@ -97,15 +100,15 @@ class ReactiveComponent extends Component {
   }
 
   componentDidUpdate() {
-    this.didUpdate.forEach(handler => handler());
+    invokeFunctionsWithContext(this.didUpdate);
   }
 
   componentWillUnmount() {
-    this.willUnmount.forEach(handler => handler());
+    invokeFunctionsWithContext(this.willUnmount);
   }
 
   update() {
-    this._internal._isPendingForceUpdate = true;
+    this[INTERNAL].__isPendingForceUpdate = true;
     this.setState({});
   }
 
@@ -115,28 +118,30 @@ class ReactiveComponent extends Component {
     }
 
     this._hookID = 0;
-    this._reRenders = 0;
-    this.isScheduled = false;
-    let children = this._render(this.props, this.forwardRef ? this.forwardRef : this.context);
+    this.__reRenders = 0;
+    this.__isScheduled = false;
+    let children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
 
-    while (this.isScheduled) {
-      this._reRenders++;
-      if (this._reRenders > RE_RENDER_LIMIT) {
-        throw Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
+    while (this.__isScheduled) {
+      this.__reRenders++;
+      if (this.__reRenders > RE_RENDER_LIMIT) {
+        if (process.env.NODE_ENV !== 'production') {
+          throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
+        } else {
+          invokeMinifiedError(4);
+        }
       }
 
       this._hookID = 0;
-      this.isScheduled = false;
-      children = this._render(this.props, this.forwardRef ? this.forwardRef : this.context);
+      this.__isScheduled = false;
+      children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
 
     if (this.shouldUpdate) {
-      this._children = children;
+      this.__children = children;
       this.shouldUpdate = false;
     }
 
-    return this._children;
+    return this.__children;
   }
 }
-
-export default ReactiveComponent;

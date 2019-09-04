@@ -1,62 +1,62 @@
 import Host from './host';
+import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 /**
  * Base Component
  */
-class BaseComponent {
+export default class BaseComponent {
   constructor(element) {
-    this._currentElement = element;
+    this.__currentElement = element;
   }
 
-  initComponent(parent, parentInstance, context) {
+  __initComponent(parent, parentInstance, context) {
     this._parent = parent;
     this._parentInstance = parentInstance;
     this._context = context;
     this._mountID = Host.mountID++;
   }
 
-  destoryComponent() {
+  __destoryComponent() {
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.unmountComponent(this);
     }
 
-    this._currentElement = null;
-    this._nativeNode = null;
+    this.__currentElement = null;
+    this[NATIVE_NODE] = null;
     this._parent = null;
     this._parentInstance = null;
     this._context = null;
 
-    if (this._instance) {
-      this._instance._internal = null;
-      this._instance = null;
+    if (this[INSTANCE]) {
+      this[INSTANCE][INTERNAL] = null;
+      this[INSTANCE] = null;
     }
   }
 
-  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.initComponent(parent, parentInstance, context);
-    this.mountNativeNode(nativeNodeMounter);
+  __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.__initComponent(parent, parentInstance, context);
+    this.__mountNativeNode(nativeNodeMounter);
 
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.mountComponent(this);
     }
 
-    let instance = {
-      _internal: this
-    };
+    const instance = {};
+    instance[INTERNAL] = this;
 
     return instance;
   }
 
   unmountComponent(shouldNotRemoveChild) {
-    if (this._nativeNode && !shouldNotRemoveChild) {
-      Host.driver.removeChild(this._nativeNode, this._parent);
+    if (this[NATIVE_NODE] && !shouldNotRemoveChild) {
+      Host.driver.removeChild(this[NATIVE_NODE], this._parent);
     }
 
-    this.destoryComponent();
+    this.__destoryComponent();
   }
 
-  getName() {
-    let currentElement = this._currentElement;
+  __getName() {
+    let currentElement = this.__currentElement;
     let type = currentElement && currentElement.type;
 
     return (
@@ -67,8 +67,8 @@ class BaseComponent {
     );
   }
 
-  mountNativeNode(nativeNodeMounter) {
-    let nativeNode = this.getNativeNode();
+  __mountNativeNode(nativeNodeMounter) {
+    let nativeNode = this.__getNativeNode();
     let parent = this._parent;
 
     if (nativeNodeMounter) {
@@ -78,17 +78,15 @@ class BaseComponent {
     }
   }
 
-  getNativeNode() {
-    if (this._nativeNode == null) {
-      this._nativeNode = this.createNativeNode();
+  __getNativeNode() {
+    if (this[NATIVE_NODE] == null) {
+      this[NATIVE_NODE] = this.__createNativeNode();
     }
 
-    return this._nativeNode;
+    return this[NATIVE_NODE];
   }
 
-  getPublicInstance() {
-    return this.getNativeNode();
+  __getPublicInstance() {
+    return this.__getNativeNode();
   }
 }
-
-export default BaseComponent;

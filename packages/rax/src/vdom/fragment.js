@@ -2,23 +2,23 @@ import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
 import toArray from './toArray';
+import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 /**
  * Fragment Component
  */
 class FragmentComponent extends NativeComponent {
-  mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.initComponent(parent, parentInstance, context);
+  __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.__initComponent(parent, parentInstance, context);
 
-    let instance = {
-      _internal: this,
-    };
-    this._instance = instance;
+    let instance = {};
+    instance[INTERNAL] = this;
+    this[INSTANCE] = instance;
 
     // Mount children
-    this.mountChildren(this._currentElement, context);
+    this.__mountChildren(this.__currentElement, context);
 
-    let fragment = this.getNativeNode();
+    let fragment = this.__getNativeNode();
 
     if (nativeNodeMounter) {
       nativeNodeMounter(fragment, parent);
@@ -29,17 +29,17 @@ class FragmentComponent extends NativeComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      this._currentElement.type = FragmentComponent;
+      this.__currentElement.type = FragmentComponent;
       Host.reconciler.mountComponent(this);
     }
 
     return instance;
   }
 
-  mountChildren(children, context) {
-    let fragment = this.getNativeNode();
+  __mountChildren(children, context) {
+    let fragment = this.__getNativeNode();
 
-    return this._mountChildren(this._parent, children, context, (nativeNode) => {
+    return this.__mountChildrenImpl(this._parent, children, context, (nativeNode) => {
       nativeNode = toArray(nativeNode);
 
       for (let i = 0; i < nativeNode.length; i++) {
@@ -49,7 +49,7 @@ class FragmentComponent extends NativeComponent {
   }
 
   unmountComponent(shouldNotRemoveChild) {
-    let nativeNode = this._nativeNode;
+    let nativeNode = this[NATIVE_NODE];
 
     if (nativeNode) {
       Instance.remove(nativeNode);
@@ -62,23 +62,23 @@ class FragmentComponent extends NativeComponent {
     }
 
     // Do not need remove child when their parent is removed
-    this.unmountChildren(true);
+    this.__unmountChildren(true);
 
-    this.destoryComponent();
+    this.__destoryComponent();
   }
 
-  updateComponent(prevElement, nextElement, prevContext, nextContext) {
+  __updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
-    this._currentElement = nextElement;
-    this.updateChildren(this._currentElement, nextContext);
+    this.__currentElement = nextElement;
+    this.__updateChildren(this.__currentElement, nextContext);
 
     if (process.env.NODE_ENV !== 'production') {
-      this._currentElement.type = FragmentComponent;
+      this.__currentElement.type = FragmentComponent;
       Host.reconciler.receiveComponent(this);
     }
   }
 
-  createNativeNode() {
+  __createNativeNode() {
     return [];
   }
 }

@@ -2,7 +2,7 @@ import Host from './host';
 import {isString, isNumber, isObject, isArray, isNull} from '../types';
 import { invokeMinifiedError } from '../error';
 
-function instantiateComponent(element) {
+export default function instantiateComponent(element) {
   let instance;
 
   if (element === undefined || isNull(element) || element === false || element === true) {
@@ -32,5 +32,3 @@ export function throwInvalidComponentError(element) {
     throw new Error(`Invalid element type: ${element}. (current: ${isObject(element) && Object.keys(element) || typeof element})`);
   }
 }
-
-export default instantiateComponent;
