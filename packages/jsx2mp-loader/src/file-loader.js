@@ -109,6 +109,16 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
 
     ], // for rename npm modules.
     require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
+    [
+      require('babel-plugin-transform-define'),
+      {
+        'process.env.NODE_ENV': loaderOptions.mode === 'build' ? 'production' : 'development',
+      }
+    ],
+    [
+      require('babel-plugin-minify-dead-code-elimination'),
+      { optimizeRawSize: true }
+    ]
   ];
 
   // Compile to ES5 for build.
