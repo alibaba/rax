@@ -1,1 +1,0 @@
-Webpack config for mini-program app
