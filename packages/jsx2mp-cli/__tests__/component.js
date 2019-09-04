@@ -16,7 +16,6 @@ const execSyncWithCwd = (command) => {
 };
 
 beforeAll(() => {
-
   execSyncWithCwd(`cd demo && npm install && ${compileCommand}`);
 
   // read from file and get compiled result
