@@ -1,4 +1,4 @@
-import { isObject } from '../types';
+import {isNull, isObject} from '../types';
 
 const hasOwnProperty = {}.hasOwnProperty;
 
@@ -28,7 +28,7 @@ export default function shallowEqual(objA, objB) {
     return true;
   }
 
-  if (!isObject(objA) || objA === null || !isObject(objB) || objB === null) {
+  if (!isObject(objA) || isNull(objA) || !isObject(objB) || isNull(objB)) {
     return false;
   }
 

@@ -1,3 +1,9 @@
+export const NULL = null;
+
+export function isNull(obj) {
+  return obj === NULL;
+}
+
 export function isFunction(obj) {
   return typeof obj === 'function';
 }

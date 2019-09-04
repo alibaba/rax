@@ -1,7 +1,7 @@
 import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
-import { isFunction } from './types';
+import {isFunction, isNull} from './types';
 import { invokeMinifiedError } from './error';
 
 function getCurrentInstance() {
@@ -22,7 +22,7 @@ function getCurrentRenderingInstance() {
 }
 
 function areInputsEqual(inputs, prevInputs) {
-  if (prevInputs === null || inputs.length !== prevInputs.length) {
+  if (isNull(prevInputs) || inputs.length !== prevInputs.length) {
     return false;
   }
 
@@ -198,7 +198,7 @@ export function useMemo(create, inputs) {
     hooks[hookID] = [create(), inputs];
   } else {
     const prevInputs = hooks[hookID][1];
-    if (inputs === null || !areInputsEqual(inputs, prevInputs)) {
+    if (isNull(inputs) || !areInputsEqual(inputs, prevInputs)) {
       hooks[hookID] = [create(), inputs];
     }
   }
