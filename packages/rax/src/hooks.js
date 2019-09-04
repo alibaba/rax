@@ -1,7 +1,7 @@
 import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
-import {isFunction, isNull} from './types';
+import { isFunction, isNull } from './types';
 import { invokeMinifiedError } from './error';
 import { INSTANCE } from './constant';
 
@@ -110,48 +110,48 @@ function useEffectImpl(effect, inputs, defered) {
   inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
-    const create = (immediately) => {
-      if (!immediately && defered) return scheduleEffect(() => create(true));
-      const { current } = create;
+    const __create = (immediately) => {
+      if (!immediately && defered) return scheduleEffect(() => __create(true));
+      const { current } = __create;
       if (current) {
-        destory.current = current();
-        create.current = null;
+        __destory.current = current();
+        __create.current = null;
       }
     };
 
-    const destory = (immediately) => {
-      if (!immediately && defered) return scheduleEffect(() => destory(true));
-      const { current } = destory;
+    const __destory = (immediately) => {
+      if (!immediately && defered) return scheduleEffect(() => __destory(true));
+      const { current } = __destory;
       if (current) {
         current();
-        destory.current = null;
+        __destory.current = null;
       }
     };
 
-    create.current = effect;
+    __create.current = effect;
 
     hooks[hookID] = {
-      create,
-      destory,
-      prevInputs: inputs,
-      inputs
+      __create,
+      __destory,
+      __prevInputs: inputs,
+      __inputs: inputs
     };
 
-    currentInstance.__didMount.push(create);
-    currentInstance.__willUnmount.push(destory);
+    currentInstance.__didMount.push(__create);
+    currentInstance.__willUnmount.push(__destory);
     currentInstance.__didUpdate.push(() => {
-      const { prevInputs, inputs, create } = hooks[hookID];
-      if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
-        destory();
-        create();
+      const { __prevInputs, __inputs, __create } = hooks[hookID];
+      if (__inputs == null || !areInputsEqual(__inputs, __prevInputs)) {
+        __destory();
+        __create();
       }
     });
   } else {
     const hook = hooks[hookID];
-    const { create, inputs: prevInputs } = hook;
-    hook.inputs = inputs;
-    hook.prevInputs = prevInputs;
-    create.current = effect;
+    const { __create, __inputs: prevInputs } = hook;
+    hook.__inputs = inputs;
+    hook.__prevInputs = prevInputs;
+    __create.current = effect;
   }
 }
 

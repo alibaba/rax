@@ -88,7 +88,7 @@ export default class ReactiveComponent extends Component {
   }
 
   componentWillMount() {
-    this.shouldUpdate = true;
+    this.__shouldUpdate = true;
   }
 
   componentDidMount() {
@@ -96,7 +96,7 @@ export default class ReactiveComponent extends Component {
   }
 
   componentWillReceiveProps() {
-    this.shouldUpdate = true;
+    this.__shouldUpdate = true;
   }
 
   componentDidUpdate() {
@@ -137,7 +137,7 @@ export default class ReactiveComponent extends Component {
       children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
 
-    if (this.shouldUpdate) {
+    if (this.__shouldUpdate) {
       this.__children = children;
       this.__shouldUpdate = false;
     }
