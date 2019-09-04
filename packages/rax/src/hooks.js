@@ -227,17 +227,17 @@ export function useReducer(reducer, initialArg, init) {
       const queue = hook[2];
 
       if (getCurrentInstance() === currentInstance) {
-        queue.actions.push(action);
+        queue.__actions.push(action);
         currentInstance.__isScheduled = true;
       } else {
-        const currentState = queue.eagerState;
-        const eagerReducer = queue.eagerReducer;
+        const currentState = queue.__eagerState;
+        const eagerReducer = queue.__eagerReducer;
         const eagerState = eagerReducer(currentState, action);
         if (is(eagerState, currentState)) {
           return;
         }
-        queue.eagerState = eagerState;
-        queue.actions.push(action);
+        queue.__eagerState = eagerState;
+        queue.__actions.push(action);
         currentInstance.update();
       }
     };
@@ -246,9 +246,9 @@ export function useReducer(reducer, initialArg, init) {
       initialState,
       dispatch,
       {
-        actions: [],
-        eagerReducer: reducer,
-        eagerState: initialState
+        __actions: [],
+        __eagerReducer: reducer,
+        __eagerState: initialState
       }
     ];
   }
@@ -258,11 +258,11 @@ export function useReducer(reducer, initialArg, init) {
   let next = hook[0];
 
   if (currentInstance.__reRenders > 0) {
-    for (let i = 0; i < queue.actions.length; i++) {
-      next = reducer(next, queue.actions[i]);
+    for (let i = 0; i < queue.__actions.length; i++) {
+      next = reducer(next, queue.__actions[i]);
     }
   } else {
-    next = queue.eagerState;
+    next = queue.__eagerState;
   }
 
   if (!is(next, hook[0])) {
@@ -270,8 +270,8 @@ export function useReducer(reducer, initialArg, init) {
     currentInstance.__shouldUpdate = true;
   }
 
-  queue.eagerReducer = reducer;
-  queue.eagerState = next;
-  queue.actions.length = 0;
+  queue.__eagerReducer = reducer;
+  queue.__eagerState = next;
+  queue.__actions.length = 0;
   return hooks[hookID];
 }
