@@ -1,6 +1,6 @@
 import Host from './host';
 import { flushEffect, schedule } from './scheduler';
-import runCallbacks from '../runCallbacks';
+import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import { INTERNAL, RENDERED_COMPONENT } from '../constant';
 
 // Dirty components store
@@ -60,7 +60,7 @@ function runUpdate(component) {
     );
   }
 
-  runCallbacks(callbacks, component);
+  invokeFunctionsWithContext(callbacks, component);
 
   Host.__isUpdating = false;
 }
@@ -152,7 +152,7 @@ const Updater = {
   forceUpdate(component, callback) {
     requestUpdate(component, null, callback);
   },
-  runCallbacks,
+  runCallbacks: invokeFunctionsWithContext,
 };
 
 export default Updater;

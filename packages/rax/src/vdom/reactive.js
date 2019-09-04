@@ -1,6 +1,6 @@
 import Host from './host';
 import Component from './component';
-import runCallbacks from '../runCallbacks';
+import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import { invokeMinifiedError } from '../error';
 import { INTERNAL } from '../constant';
 
@@ -92,7 +92,7 @@ export default class ReactiveComponent extends Component {
   }
 
   componentDidMount() {
-    runCallbacks(this.didMount);
+    invokeFunctionsWithContext(this.didMount);
   }
 
   componentWillReceiveProps() {
@@ -100,11 +100,11 @@ export default class ReactiveComponent extends Component {
   }
 
   componentDidUpdate() {
-    runCallbacks(this.didUpdate);
+    invokeFunctionsWithContext(this.didUpdate);
   }
 
   componentWillUnmount() {
-    runCallbacks(this.willUnmount);
+    invokeFunctionsWithContext(this.willUnmount);
   }
 
   update() {
