@@ -6,7 +6,7 @@ import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
 import BaseComponent from './base';
 import toArray from './toArray';
-import { isFunction, isArray } from '../types';
+import {isFunction, isArray, isNull} from '../types';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -345,7 +345,7 @@ class NativeComponent extends BaseComponent {
     // `driver.removeChildren` is optional driver protocol.
     let shouldRemoveAllChildren = Boolean(
       driver.removeChildren
-      && nextChildrenElements === null || nextChildrenElements && nextChildrenElements.length === 0
+      && isNull(nextChildrenElements) || nextChildrenElements && nextChildrenElements.length === 0
     );
 
     // Unmount children that are no longer present.
