@@ -3,7 +3,7 @@
 import css from 'css';
 import transformer from './transformer';
 import loaderUtils from 'loader-utils';
-import {resetMessage} from './promptMessage';
+import {getErrorMessages, getWarnMessages, resetMessage} from './promptMessage';
 
 const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
@@ -20,6 +20,10 @@ module.exports = function(source) {
   }
 
   const parsedQuery = loaderUtils.parseQuery(this.query);
+
+  if (typeof parsedQuery.disableLog === 'undefined') {
+    parsedQuery.disableLog = true;
+  }
   const parsedData = parse(parsedQuery, stylesheet);
 
   return genStyleContent(parsedData, parsedQuery);
@@ -90,14 +94,39 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const {styles, fontFaceRules, mediaRules} = parsedData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
+  const warnMessageOutput = parsedQuery.disableLog ? '' : getWarnMessageOutput();
 
   resetMessage();
 
   return `var _styles = ${stringifyData(styles)};
   ${fontFaceContent}
   ${mediaContent}
+  ${warnMessageOutput}
   module.exports = _styles;
   `;
+};
+
+const getWarnMessageOutput = () => {
+  const errorMessages = getErrorMessages();
+  const warnMessages = getWarnMessages();
+  let output = '';
+
+  if (errorMessages) {
+    output += `
+  if (process.env.NODE_ENV !== 'production') {
+    console.error('${errorMessages}');
+  }
+    `;
+  }
+  if (warnMessages) {
+    output += `
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn('${warnMessages}');
+  }
+    `;
+  }
+
+  return output;
 };
 
 const getMediaContent = (mediaRules) => {
