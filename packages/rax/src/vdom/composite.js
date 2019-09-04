@@ -42,7 +42,7 @@ function handleError(instance, error) {
     // Should not attempt to recover an unmounting error boundary
     const boundaryInternal = boundary[INTERNAL];
     if (boundaryInternal) {
-      let callbackQueue = boundaryInternal.$$pendingCallbacks || (boundaryInternal.$$pendingCallbacks = []);
+      let callbackQueue = boundaryInternal.__pendingCallbacks || (boundaryInternal.__pendingCallbacks = []);
       callbackQueue.push(() => boundary.componentDidCatch(error));
     }
   } else {
@@ -66,22 +66,22 @@ if (process.env.NODE_ENV !== 'production') {
  * Composite Component
  */
 class CompositeComponent extends BaseComponent {
-  $$mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.$$initComponent(parent, parentInstance, context);
-    this.$$updateCount = 0;
+  __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.__initComponent(parent, parentInstance, context);
+    this.__updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
-    let currentElement = this.$$currentElement;
+    let currentElement = this.__currentElement;
     let Component = currentElement.type;
     let ref = currentElement.ref;
     let publicProps = currentElement.props;
     let componentPrototype = Component.prototype;
 
     // Context process
-    let publicContext = this.$$processContext(context);
+    let publicContext = this.__processContext(context);
 
     // Initialize the public class
     let instance;
@@ -139,7 +139,7 @@ class CompositeComponent extends BaseComponent {
     if (renderedElement == null) {
       Host.owner = this;
       // Process pending state when call setState in componentWillMount
-      instance.state = this.$$processPendingState(publicProps, publicContext);
+      instance.state = this.__processPendingState(publicProps, publicContext);
 
       performInSandbox(() => {
         if (process.env.NODE_ENV !== 'production') {
@@ -155,10 +155,10 @@ class CompositeComponent extends BaseComponent {
     }
 
     this[RENDERED_COMPONENT] = instantiateComponent(renderedElement);
-    this[RENDERED_COMPONENT].$$mountComponent(
+    this[RENDERED_COMPONENT].__mountComponent(
       this._parent,
       instance,
-      this.$$processChildContext(context),
+      this.__processChildContext(context),
       nativeNodeMounter
     );
 
@@ -183,9 +183,9 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Trigger setState callback in componentWillMount or boundary callback after rendered
-    let callbacks = this.$$pendingCallbacks;
+    let callbacks = this.__pendingCallbacks;
     if (callbacks) {
-      this.$$pendingCallbacks = null;
+      this.__pendingCallbacks = null;
       updater.runCallbacks(callbacks, instance);
     }
 
@@ -209,7 +209,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (this[RENDERED_COMPONENT] != null) {
-      let currentElement = this.$$currentElement;
+      let currentElement = this.__currentElement;
       let ref = currentElement.ref;
 
       if (!currentElement.type.forwardRef && ref) {
@@ -223,18 +223,18 @@ class CompositeComponent extends BaseComponent {
     // Reset pending fields
     // Even if this component is scheduled for another async update,
     // it would still be ignored because these fields are reset.
-    this.$$pendingStateQueue = null;
-    this.$$isPendingForceUpdate = false;
+    this.__pendingStateQueue = null;
+    this.__isPendingForceUpdate = false;
 
-    this.$$destoryComponent();
+    this.__destoryComponent();
   }
 
   /**
    * Filters the context object to only contain keys specified in
    * `contextTypes`
    */
-  $$processContext(context) {
-    let Component = this.$$currentElement.type;
+  __processContext(context) {
+    let Component = this.__currentElement.type;
     let contextTypes = Component.contextTypes;
 
     if (!contextTypes) {
@@ -248,7 +248,7 @@ class CompositeComponent extends BaseComponent {
     return maskedContext;
   }
 
-  $$processChildContext(currentContext) {
+  __processChildContext(currentContext) {
     let instance = this[INSTANCE];
     // The getChildContext method context should be current instance
     let childContext = instance.getChildContext && instance.getChildContext();
@@ -260,14 +260,14 @@ class CompositeComponent extends BaseComponent {
     return currentContext;
   }
 
-  $$processPendingState(props, context) {
+  __processPendingState(props, context) {
     let instance = this[INSTANCE];
-    let queue = this.$$pendingStateQueue;
+    let queue = this.__pendingStateQueue;
     if (!queue) {
       return instance.state;
     }
     // Reset pending queue
-    this.$$pendingStateQueue = null;
+    this.__pendingStateQueue = null;
     let nextState = assign({}, instance.state);
     for (let i = 0; i < queue.length; i++) {
       let partial = queue[i];
@@ -282,7 +282,7 @@ class CompositeComponent extends BaseComponent {
     return nextState;
   }
 
-  $$updateComponent(
+  __updateComponent(
     prevElement,
     nextElement,
     prevUnmaskedContext,
@@ -307,7 +307,7 @@ class CompositeComponent extends BaseComponent {
     if (this._context === nextUnmaskedContext) {
       nextContext = instance.context;
     } else {
-      nextContext = this.$$processContext(nextUnmaskedContext);
+      nextContext = this.__processContext(nextUnmaskedContext);
       willReceive = true;
     }
 
@@ -325,15 +325,15 @@ class CompositeComponent extends BaseComponent {
 
     if (hasReceived) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
-      this.$$isPendingState = true;
+      this.__isPendingState = true;
       performInSandbox(() => {
         instance.componentWillReceiveProps(nextProps, nextContext);
       }, instance);
-      this.$$isPendingState = false;
+      this.__isPendingState = false;
     }
 
     // Update refs
-    if (this.$$currentElement.type.forwardRef) {
+    if (this.__currentElement.type.forwardRef) {
       instance.prevForwardRef = prevElement.ref;
       instance.forwardRef = nextElement.ref;
     } else {
@@ -345,10 +345,10 @@ class CompositeComponent extends BaseComponent {
     let prevProps = instance.props;
     let prevState = instance.state;
     // TODO: could delay execution processPendingState
-    let nextState = this.$$processPendingState(nextProps, nextContext);
+    let nextState = this.__processPendingState(nextProps, nextContext);
 
     // ShouldComponentUpdate is not called when forceUpdate is used
-    if (!this.$$isPendingForceUpdate) {
+    if (!this.__isPendingForceUpdate) {
       if (instance.shouldComponentUpdate) {
         shouldUpdate = performInSandbox(() => {
           return instance.shouldComponentUpdate(nextProps, nextState, nextContext);
@@ -361,7 +361,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (shouldUpdate) {
-      this.$$isPendingForceUpdate = false;
+      this.__isPendingForceUpdate = false;
       // Will set `this.props`, `this.state` and `this.context`.
       let prevContext = instance.context;
 
@@ -374,13 +374,13 @@ class CompositeComponent extends BaseComponent {
       }, instance);
 
       // Replace with next
-      this.$$currentElement = nextElement;
+      this.__currentElement = nextElement;
       this._context = nextUnmaskedContext;
       instance.props = nextProps;
       instance.state = nextState;
       instance.context = nextContext;
 
-      this.$$updateRenderedComponent(nextUnmaskedContext);
+      this.__updateRenderedComponent(nextUnmaskedContext);
 
       performInSandbox(() => {
         if (instance.componentDidUpdate) {
@@ -392,7 +392,7 @@ class CompositeComponent extends BaseComponent {
     } else {
       // If it's determined that a component should not update, we still want
       // to set props and state but we shortcut the rest of the update.
-      this.$$currentElement = nextElement;
+      this.__currentElement = nextElement;
       this._context = nextUnmaskedContext;
       instance.props = nextProps;
       instance.state = nextState;
@@ -400,9 +400,9 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Flush setState callbacks set in componentWillReceiveProps or boundary callback
-    let callbacks = this.$$pendingCallbacks;
+    let callbacks = this.__pendingCallbacks;
     if (callbacks) {
-      this.$$pendingCallbacks = null;
+      this.__pendingCallbacks = null;
       updater.runCallbacks(callbacks, instance);
     }
 
@@ -415,9 +415,9 @@ class CompositeComponent extends BaseComponent {
   /**
    * Call the component's `render` method and update the DOM accordingly.
    */
-  $$updateRenderedComponent(context) {
+  __updateRenderedComponent(context) {
     let prevRenderedComponent = this[RENDERED_COMPONENT];
-    let prevRenderedElement = prevRenderedComponent.$$currentElement;
+    let prevRenderedElement = prevRenderedComponent.__currentElement;
 
     let instance = this[INSTANCE];
     let nextRenderedElement;
@@ -438,10 +438,10 @@ class CompositeComponent extends BaseComponent {
 
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
       const prevRenderedUnmaskedContext = prevRenderedComponent._context;
-      const nextRenderedUnmaskedContext = this.$$processChildContext(context);
+      const nextRenderedUnmaskedContext = this.__processChildContext(context);
 
       if (prevRenderedElement !== nextRenderedElement || prevRenderedUnmaskedContext !== nextRenderedUnmaskedContext) {
-        prevRenderedComponent.$$updateComponent(
+        prevRenderedComponent.__updateComponent(
           prevRenderedElement,
           nextRenderedElement,
           prevRenderedUnmaskedContext,
@@ -457,14 +457,14 @@ class CompositeComponent extends BaseComponent {
         });
       }
     } else {
-      let prevNativeNode = prevRenderedComponent.$$getNativeNode();
+      let prevNativeNode = prevRenderedComponent.__getNativeNode();
       prevRenderedComponent.unmountComponent(true);
 
       this[RENDERED_COMPONENT] = instantiateComponent(nextRenderedElement);
-      this[RENDERED_COMPONENT].$$mountComponent(
+      this[RENDERED_COMPONENT].__mountComponent(
         this._parent,
         instance,
-        this.$$processChildContext(context),
+        this.__processChildContext(context),
         (newNativeNode, parent) => {
           prevNativeNode = toArray(prevNativeNode);
           newNativeNode = toArray(newNativeNode);
@@ -496,14 +496,14 @@ class CompositeComponent extends BaseComponent {
     }
   }
 
-  $$getNativeNode() {
+  __getNativeNode() {
     let renderedComponent = this[RENDERED_COMPONENT];
     if (renderedComponent) {
-      return renderedComponent.$$getNativeNode();
+      return renderedComponent.__getNativeNode();
     }
   }
 
-  $$getPublicInstance() {
+  __getPublicInstance() {
     let instance = this[INSTANCE];
     // The functional components cannot be given refs
     if (instance instanceof ReactiveComponent) {

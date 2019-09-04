@@ -113,7 +113,7 @@ import appStyleSheet from './app.css';
 var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header1"], _styleSheet["header2"]]} />;
+    return <div style={Object.assign({}, _styleSheet["header1"], _styleSheet["header2"])} />;
   }
 }`);
   });
@@ -174,7 +174,7 @@ var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);
 
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header2"], styles.header1]} />;
+    return <div style={Object.assign({}, _styleSheet["header2"], styles.header1)} />;
   }
 }`);
   });
@@ -197,9 +197,9 @@ import appStyleSheet from './app.css';
 var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
-    return <div style={[_styleSheet["header"], {
+    return <div style={Object.assign({}, _styleSheet["header"], {
       height: 100
-    }]} />;
+    })} />;
   }
 }`);
   });

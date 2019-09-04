@@ -21,6 +21,8 @@ module.exports = [
   require('./condition'),
   // JSX+ Directives
   require('./jsx-plus'),
+  // Handle render function
+  require('./render-function'),
   // Parse and generate template.
   require('./template'),
 ];

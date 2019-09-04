@@ -5,26 +5,26 @@ import BaseComponent from './base';
  * Text Component
  */
 class TextComponent extends BaseComponent {
-  $$updateComponent(prevElement, nextElement, context) {
+  __updateComponent(prevElement, nextElement, context) {
     nextElement = String(nextElement);
     // If text is some value that do not update even there number 1 and string "1"
     if (prevElement !== nextElement) {
       // Replace current element
-      this.$$currentElement = nextElement;
-      Host.driver.updateText(this.$$getNativeNode(), this.$$currentElement);
+      this.__currentElement = nextElement;
+      Host.driver.updateText(this.__getNativeNode(), this.__currentElement);
 
       if (process.env.NODE_ENV !== 'production') {
-        this._stringText = this.$$currentElement;
+        this._stringText = this.__currentElement;
         Host.reconciler.receiveComponent(this);
       }
     }
   }
 
-  $$createNativeNode() {
+  __createNativeNode() {
     if (process.env.NODE_ENV !== 'production') {
-      this._stringText = this.$$currentElement;
+      this._stringText = this.__currentElement;
     }
-    return Host.driver.createText(this.$$currentElement, this);
+    return Host.driver.createText(this.__currentElement, this);
   }
 }
 

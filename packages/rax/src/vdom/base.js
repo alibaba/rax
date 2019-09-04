@@ -6,22 +6,22 @@ import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
  */
 export default class BaseComponent {
   constructor(element) {
-    this.$$currentElement = element;
+    this.__currentElement = element;
   }
 
-  $$initComponent(parent, parentInstance, context) {
+  __initComponent(parent, parentInstance, context) {
     this._parent = parent;
     this._parentInstance = parentInstance;
     this._context = context;
     this._mountID = Host.mountID++;
   }
 
-  $$destoryComponent() {
+  __destoryComponent() {
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.unmountComponent(this);
     }
 
-    this.$$currentElement = null;
+    this.__currentElement = null;
     this[NATIVE_NODE] = null;
     this._parent = null;
     this._parentInstance = null;
@@ -33,9 +33,9 @@ export default class BaseComponent {
     }
   }
 
-  $$mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.$$initComponent(parent, parentInstance, context);
-    this.$$mountNativeNode(nativeNodeMounter);
+  __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.__initComponent(parent, parentInstance, context);
+    this.__mountNativeNode(nativeNodeMounter);
 
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.mountComponent(this);
@@ -52,11 +52,11 @@ export default class BaseComponent {
       Host.driver.removeChild(this[NATIVE_NODE], this._parent);
     }
 
-    this.$$destoryComponent();
+    this.__destoryComponent();
   }
 
-  $$getName() {
-    let currentElement = this.$$currentElement;
+  __getName() {
+    let currentElement = this.__currentElement;
     let type = currentElement && currentElement.type;
 
     return (
@@ -67,8 +67,8 @@ export default class BaseComponent {
     );
   }
 
-  $$mountNativeNode(nativeNodeMounter) {
-    let nativeNode = this.$$getNativeNode();
+  __mountNativeNode(nativeNodeMounter) {
+    let nativeNode = this.__getNativeNode();
     let parent = this._parent;
 
     if (nativeNodeMounter) {
@@ -78,15 +78,15 @@ export default class BaseComponent {
     }
   }
 
-  $$getNativeNode() {
+  __getNativeNode() {
     if (this[NATIVE_NODE] == null) {
-      this[NATIVE_NODE] = this.$$createNativeNode();
+      this[NATIVE_NODE] = this.__createNativeNode();
     }
 
     return this[NATIVE_NODE];
   }
 
-  $$getPublicInstance() {
-    return this.$$getNativeNode();
+  __getPublicInstance() {
+    return this.__getNativeNode();
   }
 }

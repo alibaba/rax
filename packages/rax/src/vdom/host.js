@@ -5,7 +5,7 @@ export default {
   mountID: 1,
   // Current owner component
   owner: null,
-  $$isUpdating: false,
+  __isUpdating: false,
   // Roots
   rootComponents: {},
   rootInstances: {},

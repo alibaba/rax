@@ -1,6 +1,0 @@
-Page({
-  onLoad() {
-  },
-  onShow() {
-  }
-});

@@ -12,20 +12,20 @@ export default class ReactiveComponent extends Component {
   constructor(pureRender, ref) {
     super();
     // A pure function
-    this.$$render = pureRender;
+    this.__render = pureRender;
     this._hookID = 0;
     // Number of rerenders
-    this.$$reRenders = 0;
+    this.__reRenders = 0;
     this._hooks = {};
     // Handles store
     this.didMount = [];
     this.didUpdate = [];
     this.willUnmount = [];
     // Is render scheduled
-    this.$$isScheduled = false;
+    this.__isScheduled = false;
     this.shouldUpdate = false;
-    this.$$children = null;
-    this.$$dependencies = {};
+    this.__children = null;
+    this.__dependencies = {};
 
     this.state = {};
 
@@ -62,7 +62,7 @@ export default class ReactiveComponent extends Component {
   readContext(context) {
     const Provider = context.Provider;
     const contextProp = Provider.contextProp;
-    let contextItem = this.$$dependencies[contextProp];
+    let contextItem = this.__dependencies[contextProp];
     if (!contextItem) {
       const readEmitter = Provider.readEmitter;
       const contextEmitter = readEmitter(this);
@@ -82,7 +82,7 @@ export default class ReactiveComponent extends Component {
       this.willUnmount.push(() => {
         contextItem.emitter.off(contextUpdater);
       });
-      this.$$dependencies[contextProp] = contextItem;
+      this.__dependencies[contextProp] = contextItem;
     }
     return contextItem.renderedContext = contextItem.emitter.value;
   }
@@ -108,7 +108,7 @@ export default class ReactiveComponent extends Component {
   }
 
   update() {
-    this[INTERNAL].$$isPendingForceUpdate = true;
+    this[INTERNAL].__isPendingForceUpdate = true;
     this.setState({});
   }
 
@@ -118,13 +118,13 @@ export default class ReactiveComponent extends Component {
     }
 
     this._hookID = 0;
-    this.$$reRenders = 0;
-    this.$$isScheduled = false;
-    let children = this.$$render(this.props, this.forwardRef ? this.forwardRef : this.context);
+    this.__reRenders = 0;
+    this.__isScheduled = false;
+    let children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
 
-    while (this.$$isScheduled) {
-      this.$$reRenders++;
-      if (this.$$reRenders > RE_RENDER_LIMIT) {
+    while (this.__isScheduled) {
+      this.__reRenders++;
+      if (this.__reRenders > RE_RENDER_LIMIT) {
         if (process.env.NODE_ENV !== 'production') {
           throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
         } else {
@@ -133,15 +133,15 @@ export default class ReactiveComponent extends Component {
       }
 
       this._hookID = 0;
-      this.$$isScheduled = false;
-      children = this.$$render(this.props, this.forwardRef ? this.forwardRef : this.context);
+      this.__isScheduled = false;
+      children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
 
     if (this.shouldUpdate) {
-      this.$$children = children;
+      this.__children = children;
       this.shouldUpdate = false;
     }
 
-    return this.$$children;
+    return this.__children;
   }
 }

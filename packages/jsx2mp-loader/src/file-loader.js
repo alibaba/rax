@@ -28,7 +28,7 @@ module.exports = function fileLoader(content) {
   });
 
   const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
-    const isScopedNpm = relativeNpmPath[0] === '@';
+    const isScopedNpm = /^_?@/.test(relativeNpmPath);
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
@@ -70,7 +70,7 @@ module.exports = function fileLoader(content) {
     } else {
       // Copy file
       const splitedNpmPath = relativeNpmPath.split('/');
-      if (relativeNpmPath[0] === '@') splitedNpmPath.shift(); // Extra shift for scoped npm.
+      if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
 
       const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
@@ -107,7 +107,8 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
       require('./babel-plugin-rename-import'),
       { npmRelativePath, normalizeFileName }
 
-    ] // for rename npm modules.
+    ], // for rename npm modules.
+    require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
   ];
 
   // Compile to ES5 for build.
@@ -116,21 +117,28 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
     plugins.push(require('@babel/plugin-proposal-class-properties'));
   }
 
-  return transformSync(rawCode, {
-    presets, plugins,
-    filename: resourcePath,
-  });
-}
+  const babelParserOption = {
+    plugins: [
+      'classProperties',
+      'jsx',
+      'flow',
+      'flowComment',
+      'trailingFunctionCommas',
+      'asyncFunctions',
+      'exponentiationOperator',
+      'asyncGenerators',
+      'objectRestSpread',
+      ['decorators', { decoratorsBeforeExport: false }],
+      'dynamicImport',
+    ], // support all plugins
+  };
 
-function isSymbolic(path) {
-  try {
-    return lstatSync(path).isSymbolicLink();
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      return false;
-    }
-    throw err;
-  }
+  return transformSync(rawCode, {
+    presets,
+    plugins,
+    filename: resourcePath,
+    parserOpts: babelParserOption,
+  });
 }
 
 /**

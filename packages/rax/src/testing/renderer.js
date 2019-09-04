@@ -13,7 +13,7 @@ export default {
   create(element) {
     let container = ServerDriver.createBody();
     let rootComponent = Instance.mount(element, container, {});
-    let renderedComponent = rootComponent.$$getRenderedComponent();
+    let renderedComponent = rootComponent.__getRenderedComponent();
 
     renderedComponent.toJSON = () => {
       return new Serializer(container).toJSON();

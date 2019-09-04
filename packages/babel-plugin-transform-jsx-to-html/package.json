@@ -1,7 +1,7 @@
 {
-  "name": "babel-plugin-transform-jsx-stylesheet",
-  "version": "0.6.8",
-  "description": "Transform stylesheet selector to style in JSX Elements.",
+  "name": "babel-plugin-transform-jsx-to-html",
+  "version": "0.1.0",
+  "description": "Transform JSX to HTML.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -16,10 +16,12 @@
     "npm": ">=3.0.0"
   },
   "devDependencies": {
-    "babel-core": "^6.23.1",
-    "babel-plugin-syntax-jsx": "^6.18.0"
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0"
   },
   "dependencies": {
-    "camelcase": "^3.0.0"
+    "@babel/types": "^7.5.5",
+    "esutils": "^2.0.3"
   }
 }

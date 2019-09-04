@@ -1,11 +1,11 @@
 import Host from './host';
-import { isString, isNumber, isObject, isArray } from '../types';
+import {isString, isNumber, isObject, isArray, isNull} from '../types';
 import { invokeMinifiedError } from '../error';
 
 export default function instantiateComponent(element) {
   let instance;
 
-  if (element === undefined || element === null || element === false || element === true) {
+  if (element === undefined || isNull(element) || element === false || element === true) {
     instance = new Host.Empty();
   } else if (isArray(element)) {
     instance = new Host.Fragment(element);

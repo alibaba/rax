@@ -14,7 +14,7 @@ function render(element, container, options, callback) {
   inject(options);
 
   let rootComponent = Instance.mount(element, container, options);
-  let componentInstance = rootComponent.$$getPublicInstance();
+  let componentInstance = rootComponent.__getPublicInstance();
 
   if (callback) {
     callback.call(componentInstance);

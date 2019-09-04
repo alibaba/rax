@@ -57,7 +57,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
     // Apply mangle rules.
     uglifyOptions.mangle = {
       properties: {
-        regex: /^\$$/,
+        regex: /^__/,
       },
     };
   }

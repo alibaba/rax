@@ -1,7 +1,7 @@
 import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
-import { isFunction } from './types';
+import {isFunction, isNull} from './types';
 import { invokeMinifiedError } from './error';
 import { INSTANCE } from './constant';
 
@@ -23,7 +23,7 @@ function getCurrentRenderingInstance() {
 }
 
 function areInputsEqual(inputs, prevInputs) {
-  if (prevInputs === null || inputs.length !== prevInputs.length) {
+  if (isNull(prevInputs) || inputs.length !== prevInputs.length) {
     return false;
   }
 
@@ -50,7 +50,7 @@ export function useState(initialState) {
 
     const setState = newState => {
       // Flush all effects first before update state
-      if (!Host.$$isUpdating) {
+      if (!Host.__isUpdating) {
         flushEffect();
       }
 
@@ -67,7 +67,7 @@ export function useState(initialState) {
         hook[2] = newState;
         if (getCurrentInstance() === currentInstance) {
           // Marked as is scheduled that could finish hooks.
-          currentInstance.$$isScheduled = true;
+          currentInstance.__isScheduled = true;
         } else {
           currentInstance.update();
         }
@@ -199,7 +199,7 @@ export function useMemo(create, inputs) {
     hooks[hookID] = [create(), inputs];
   } else {
     const prevInputs = hooks[hookID][1];
-    if (inputs === null || !areInputsEqual(inputs, prevInputs)) {
+    if (isNull(inputs) || !areInputsEqual(inputs, prevInputs)) {
       hooks[hookID] = [create(), inputs];
     }
   }
@@ -217,7 +217,7 @@ export function useReducer(reducer, initialArg, init) {
 
     const dispatch = action => {
       // Flush all effects first before update state
-      if (!Host.$$isUpdating) {
+      if (!Host.__isUpdating) {
         flushEffect();
       }
 
@@ -228,7 +228,7 @@ export function useReducer(reducer, initialArg, init) {
 
       if (getCurrentInstance() === currentInstance) {
         queue.actions.push(action);
-        currentInstance.$$isScheduled = true;
+        currentInstance.__isScheduled = true;
       } else {
         const currentState = queue.eagerState;
         const eagerReducer = queue.eagerReducer;
@@ -257,7 +257,7 @@ export function useReducer(reducer, initialArg, init) {
   const queue = hook[2];
   let next = hook[0];
 
-  if (currentInstance.$$reRenders > 0) {
+  if (currentInstance.__reRenders > 0) {
     for (let i = 0; i < queue.actions.length; i++) {
       next = reducer(next, queue.actions[i]);
     }
