@@ -109,7 +109,8 @@ export default class Component {
   }
 
   _updateChildProps(instanceId, props) {
-    updateChildProps(this, instanceId, props);
+    const chlidInstanceId = this.props.__parentId ? this.props.__parentId + '-' + instanceId : instanceId;
+    updateChildProps(this, chlidInstanceId, props);
   }
 
   _collectState() {
