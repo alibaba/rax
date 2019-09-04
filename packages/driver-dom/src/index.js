@@ -364,8 +364,8 @@ export function afterRender({ container }) {
 
 /**
  * Remove all children from node.
- * @NOTE: Fast path support in web.
+ * @NOTE: Optimization at web.
  */
 export function removeChildren(node) {
-  node.innerHTML = '';
+  node.textContent = '';
 }
