@@ -18,12 +18,12 @@ export default class ReactiveComponent extends Component {
     this.__reRenders = 0;
     this._hooks = {};
     // Handles store
-    this.didMount = [];
-    this.didUpdate = [];
-    this.willUnmount = [];
+    this.__didMount = [];
+    this.__didUpdate = [];
+    this.__willUnmount = [];
     // Is render scheduled
     this.__isScheduled = false;
-    this.shouldUpdate = false;
+    this.__shouldUpdate = false;
     this.__children = null;
     this.__dependencies = {};
 
@@ -51,11 +51,11 @@ export default class ReactiveComponent extends Component {
     }
   }
 
-  getHooks() {
+  __getHooks() {
     return this._hooks;
   }
 
-  getHookID() {
+  __getHookID() {
     return ++this._hookID;
   }
 
@@ -73,13 +73,13 @@ export default class ReactiveComponent extends Component {
 
       const contextUpdater = (newContext) => {
         if (newContext !== contextItem.renderedContext) {
-          this.shouldUpdate = true;
+          this.__shouldUpdate = true;
           this.update();
         }
       };
 
       contextItem.emitter.on(contextUpdater);
-      this.willUnmount.push(() => {
+      this.__willUnmount.push(() => {
         contextItem.emitter.off(contextUpdater);
       });
       this.__dependencies[contextProp] = contextItem;
@@ -92,7 +92,7 @@ export default class ReactiveComponent extends Component {
   }
 
   componentDidMount() {
-    invokeFunctionsWithContext(this.didMount);
+    invokeFunctionsWithContext(this.__didMount);
   }
 
   componentWillReceiveProps() {
@@ -100,11 +100,11 @@ export default class ReactiveComponent extends Component {
   }
 
   componentDidUpdate() {
-    invokeFunctionsWithContext(this.didUpdate);
+    invokeFunctionsWithContext(this.__didUpdate);
   }
 
   componentWillUnmount() {
-    invokeFunctionsWithContext(this.willUnmount);
+    invokeFunctionsWithContext(this.__willUnmount);
   }
 
   update() {
@@ -139,7 +139,7 @@ export default class ReactiveComponent extends Component {
 
     if (this.shouldUpdate) {
       this.__children = children;
-      this.shouldUpdate = false;
+      this.__shouldUpdate = false;
     }
 
     return this.__children;

@@ -38,8 +38,8 @@ function areInputsEqual(inputs, prevInputs) {
 
 export function useState(initialState) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.getHookID();
-  const hooks = currentInstance.getHooks();
+  const hookID = currentInstance.__getHookID();
+  const hooks = currentInstance.__getHooks();
 
   if (!hooks[hookID]) {
     // If the initial state is the result of an expensive computation,
@@ -84,7 +84,7 @@ export function useState(initialState) {
   const hook = hooks[hookID];
   if (!is(hook[0], hook[2])) {
     hook[0] = hook[2];
-    currentInstance.shouldUpdate = true;
+    currentInstance.__shouldUpdate = true;
   }
 
   return hook;
@@ -105,8 +105,8 @@ export function useLayoutEffect(effect, inputs) {
 
 function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.getHookID();
-  const hooks = currentInstance.getHooks();
+  const hookID = currentInstance.__getHookID();
+  const hooks = currentInstance.__getHooks();
   inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
@@ -137,9 +137,9 @@ function useEffectImpl(effect, inputs, defered) {
       inputs
     };
 
-    currentInstance.didMount.push(create);
-    currentInstance.willUnmount.push(destory);
-    currentInstance.didUpdate.push(() => {
+    currentInstance.__didMount.push(create);
+    currentInstance.__willUnmount.push(destory);
+    currentInstance.__didUpdate.push(() => {
       const { prevInputs, inputs, create } = hooks[hookID];
       if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
         destory();
@@ -173,8 +173,8 @@ export function useImperativeHandle(ref, create, inputs) {
 
 export function useRef(initialValue) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.getHookID();
-  const hooks = currentInstance.getHooks();
+  const hookID = currentInstance.__getHookID();
+  const hooks = currentInstance.__getHooks();
 
   if (!hooks[hookID]) {
     hooks[hookID] = {
@@ -191,8 +191,8 @@ export function useCallback(callback, inputs) {
 
 export function useMemo(create, inputs) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.getHookID();
-  const hooks = currentInstance.getHooks();
+  const hookID = currentInstance.__getHookID();
+  const hooks = currentInstance.__getHooks();
   inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
@@ -209,8 +209,8 @@ export function useMemo(create, inputs) {
 
 export function useReducer(reducer, initialArg, init) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.getHookID();
-  const hooks = currentInstance.getHooks();
+  const hookID = currentInstance.__getHookID();
+  const hooks = currentInstance.__getHooks();
 
   if (!hooks[hookID]) {
     const initialState = init !== undefined ? init(initialArg) : initialArg;
@@ -267,7 +267,7 @@ export function useReducer(reducer, initialArg, init) {
 
   if (!is(next, hook[0])) {
     hook[0] = next;
-    currentInstance.shouldUpdate = true;
+    currentInstance.__shouldUpdate = true;
   }
 
   queue.eagerReducer = reducer;
