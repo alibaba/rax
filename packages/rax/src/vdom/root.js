@@ -11,11 +11,11 @@ class Root extends Component {
     this.rootID = rootID++;
   }
 
-  $_getPublicInstance() {
-    return this.$_getRenderedComponent().$_getPublicInstance();
+  $$getPublicInstance() {
+    return this.$$getRenderedComponent().$$getPublicInstance();
   }
 
-  $_getRenderedComponent() {
+  $$getRenderedComponent() {
     return this[INTERNAL][RENDERED_COMPONENT];
   }
 

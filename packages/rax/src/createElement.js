@@ -11,7 +11,7 @@ const RESERVED_PROPS = {
 function getRenderErrorInfo() {
   const ownerComponent = Host.owner;
   if (ownerComponent) {
-    const name = ownerComponent.$_getName();
+    const name = ownerComponent.$$getName();
     if (name) {
       return ' Check the render method of `' + name + '`.';
     }

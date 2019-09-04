@@ -8,17 +8,17 @@ import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
  * Fragment Component
  */
 class FragmentComponent extends NativeComponent {
-  $_mountComponent(parent, parentInstance, context, nativeNodeMounter) {
-    this.$_initComponent(parent, parentInstance, context);
+  $$mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.$$initComponent(parent, parentInstance, context);
 
     let instance = {};
     instance[INTERNAL] = this;
     this[INSTANCE] = instance;
 
     // Mount children
-    this.$_mountChildren(this.$_currentElement, context);
+    this.$$mountChildren(this.$$currentElement, context);
 
-    let fragment = this.$_getNativeNode();
+    let fragment = this.$$getNativeNode();
 
     if (nativeNodeMounter) {
       nativeNodeMounter(fragment, parent);
@@ -29,17 +29,17 @@ class FragmentComponent extends NativeComponent {
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      this.$_currentElement.type = FragmentComponent;
+      this.$$currentElement.type = FragmentComponent;
       Host.reconciler.mountComponent(this);
     }
 
     return instance;
   }
 
-  $_mountChildren(children, context) {
-    let fragment = this.$_getNativeNode();
+  $$mountChildren(children, context) {
+    let fragment = this.$$getNativeNode();
 
-    return this.$_mountChildrenImpl(this._parent, children, context, (nativeNode) => {
+    return this.$$mountChildrenImpl(this._parent, children, context, (nativeNode) => {
       nativeNode = toArray(nativeNode);
 
       for (let i = 0; i < nativeNode.length; i++) {
@@ -62,23 +62,23 @@ class FragmentComponent extends NativeComponent {
     }
 
     // Do not need remove child when their parent is removed
-    this.$_unmountChildren(true);
+    this.$$unmountChildren(true);
 
-    this.$_destoryComponent();
+    this.$$destoryComponent();
   }
 
-  $_updateComponent(prevElement, nextElement, prevContext, nextContext) {
+  $$updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
-    this.$_currentElement = nextElement;
-    this.$_updateChildren(this.$_currentElement, nextContext);
+    this.$$currentElement = nextElement;
+    this.$$updateChildren(this.$$currentElement, nextContext);
 
     if (process.env.NODE_ENV !== 'production') {
-      this.$_currentElement.type = FragmentComponent;
+      this.$$currentElement.type = FragmentComponent;
       Host.reconciler.receiveComponent(this);
     }
   }
 
-  $_createNativeNode() {
+  $$createNativeNode() {
     return [];
   }
 }

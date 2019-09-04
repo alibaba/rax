@@ -58,15 +58,15 @@ export default {
     let parentContext;
     if (parent) {
       let parentInternal = parent[INTERNAL];
-      parentContext = parentInternal.$_processChildContext(parentInternal._context);
+      parentContext = parentInternal.$$processChildContext(parentInternal._context);
     }
 
     // Update root component
     let prevRootInstance = this.get(container);
     if (prevRootInstance && prevRootInstance.rootID) {
       if (parentContext) {
-        // Using $_penddingContext to pass new context
-        prevRootInstance[INTERNAL].$_penddingContext = parentContext;
+        // Using $$penddingContext to pass new context
+        prevRootInstance[INTERNAL].$$penddingContext = parentContext;
       }
       prevRootInstance.update(element);
       return prevRootInstance;
@@ -75,7 +75,7 @@ export default {
     // Init root component with empty children
     let renderedComponent = instantiateComponent(createElement(Root));
     let defaultContext = parentContext || {};
-    let rootInstance = renderedComponent.$_mountComponent(container, null, defaultContext);
+    let rootInstance = renderedComponent.$$mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
     // Mount new element through update queue avoid when there is in rendering phase
     rootInstance.update(element);

@@ -50,7 +50,7 @@ export function useState(initialState) {
 
     const setState = newState => {
       // Flush all effects first before update state
-      if (!Host.$_isUpdating) {
+      if (!Host.$$isUpdating) {
         flushEffect();
       }
 
@@ -67,7 +67,7 @@ export function useState(initialState) {
         hook[2] = newState;
         if (getCurrentInstance() === currentInstance) {
           // Marked as is scheduled that could finish hooks.
-          currentInstance.$_isScheduled = true;
+          currentInstance.$$isScheduled = true;
         } else {
           currentInstance.update();
         }
@@ -217,7 +217,7 @@ export function useReducer(reducer, initialArg, init) {
 
     const dispatch = action => {
       // Flush all effects first before update state
-      if (!Host.$_isUpdating) {
+      if (!Host.$$isUpdating) {
         flushEffect();
       }
 
@@ -228,7 +228,7 @@ export function useReducer(reducer, initialArg, init) {
 
       if (getCurrentInstance() === currentInstance) {
         queue.actions.push(action);
-        currentInstance.$_isScheduled = true;
+        currentInstance.$$isScheduled = true;
       } else {
         const currentState = queue.eagerState;
         const eagerReducer = queue.eagerReducer;
@@ -257,7 +257,7 @@ export function useReducer(reducer, initialArg, init) {
   const queue = hook[2];
   let next = hook[0];
 
-  if (currentInstance.$_reRenders > 0) {
+  if (currentInstance.$$reRenders > 0) {
     for (let i = 0; i < queue.actions.length; i++) {
       next = reducer(next, queue.actions[i]);
     }
