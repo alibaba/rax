@@ -18,9 +18,9 @@ export default class ReactiveComponent extends Component {
     this.__reRenders = 0;
     this._hooks = {};
     // Handles store
-    this.__didMount = [];
-    this.__didUpdate = [];
-    this.__willUnmount = [];
+    this.didMount = [];
+    this.didUpdate = [];
+    this.willUnmount = [];
     // Is render scheduled
     this.__isScheduled = false;
     this.__shouldUpdate = false;
@@ -79,7 +79,7 @@ export default class ReactiveComponent extends Component {
       };
 
       contextItem.emitter.on(contextUpdater);
-      this.__willUnmount.push(() => {
+      this.willUnmount.push(() => {
         contextItem.emitter.off(contextUpdater);
       });
       this.__dependencies[contextProp] = contextItem;
@@ -92,7 +92,7 @@ export default class ReactiveComponent extends Component {
   }
 
   componentDidMount() {
-    invokeFunctionsWithContext(this.__didMount);
+    invokeFunctionsWithContext(this.didMount);
   }
 
   componentWillReceiveProps() {
@@ -100,11 +100,11 @@ export default class ReactiveComponent extends Component {
   }
 
   componentDidUpdate() {
-    invokeFunctionsWithContext(this.__didUpdate);
+    invokeFunctionsWithContext(this.didUpdate);
   }
 
   componentWillUnmount() {
-    invokeFunctionsWithContext(this.__willUnmount);
+    invokeFunctionsWithContext(this.willUnmount);
   }
 
   update() {
