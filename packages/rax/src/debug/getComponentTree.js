@@ -1,4 +1,4 @@
-import { CURRENT_ELEMENT } from '../constant';
+import {CURRENT_ELEMENT, INSTANCE, RENDERED_COMPONENT} from '../constant';
 
 export default function getComponentTree(element) {
   var children = null;
@@ -17,17 +17,17 @@ export default function getComponentTree(element) {
     text = element + '';
   } else if (element[CURRENT_ELEMENT] === null || element[CURRENT_ELEMENT] === false) {
     nodeType = 'Empty';
-  } else if (element._renderedComponent) {
+  } else if (element[RENDERED_COMPONENT]) {
     nodeType = 'NativeWrapper';
-    children = [element._renderedComponent];
-    props = element._instance.props;
-    state = element._instance.state;
-    context = element._instance.context;
+    children = [element[RENDERED_COMPONENT]];
+    props = element[INSTANCE].props;
+    state = element[INSTANCE].state;
+    context = element[INSTANCE].context;
     if (context && Object.keys(context).length === 0) {
       context = null;
     }
-  } else if (element._renderedChildren) {
-    children = childrenList(element._renderedChildren);
+  } else if (element[RENDERED_COMPONENT]) {
+    children = childrenList(element[RENDERED_COMPONENT]);
   } else if (element[CURRENT_ELEMENT] && element[CURRENT_ELEMENT].props) {
     // This is a native node without rendered children -- meaning the children
     // prop is just a string or (in the case of the <option>) a list of
@@ -63,13 +63,13 @@ export default function getComponentTree(element) {
     }
   }
 
-  if (element._instance) {
+  if (element[INSTANCE]) {
     // TODO: React ART currently falls in this bucket, but this doesn't
     // actually make sense and we should clean this up after stabilizing our
     // API for backends
-    let inst = element._instance;
-    if (inst._renderedChildren) {
-      children = childrenList(inst._renderedChildren);
+    let inst = element[INSTANCE];
+    if (inst[RENDERED_COMPONENT]) {
+      children = childrenList(inst[RENDERED_COMPONENT]);
     }
   }
 
