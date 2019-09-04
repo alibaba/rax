@@ -88,6 +88,8 @@ function isRpx(str) {
 // Cache the convert fn.
 const convertUnit = cached((value) => isRpx(value) ? calcRpxToVw(value) : value);
 
+const isEventProp = cached((prop) => EVENT_PREFIX_REGEXP.test(prop));
+
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
 }
@@ -202,7 +204,7 @@ export function createElement(type, props, component) {
 
           if (attributeName === STYLE) {
             // Remove invalid style prop, and direct reset style to child avoid diff style
-            for (let i = 0; i < hydrationChild.style.length; i++) {
+            for (let i = 0, l = hydrationChild.style.length; i < l; i++) {
               let stylePropName = hydrationChild.style[i];
               if (!propValue[stylePropName]) {
                 hydrationChild.style[stylePropName] = EMPTY;
@@ -231,7 +233,7 @@ export function createElement(type, props, component) {
     if (value != null) {
       if (prop === STYLE) {
         setStyle(node, value);
-      } else if (EVENT_PREFIX_REGEXP.test(prop)) {
+      } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
         setAttribute(node, prop, value);
@@ -364,8 +366,8 @@ export function afterRender({ container }) {
 
 /**
  * Remove all children from node.
- * @NOTE: Fast path support in web.
+ * @NOTE: Optimization at web.
  */
 export function removeChildren(node) {
-  node.innerHTML = '';
+  node.textContent = '';
 }

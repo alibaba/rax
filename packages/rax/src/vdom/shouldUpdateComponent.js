@@ -1,8 +1,8 @@
-import { isArray, isString, isNumber, isObject } from '../types';
+import {isArray, isString, isNumber, isObject, isNull} from '../types';
 
 function shouldUpdateComponent(prevElement, nextElement) {
-  let prevEmpty = prevElement === null;
-  let nextEmpty = nextElement === null;
+  let prevEmpty = isNull(prevElement);
+  let nextEmpty = isNull(nextElement);
   if (prevEmpty || nextEmpty) {
     return prevEmpty === nextEmpty;
   }

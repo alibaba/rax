@@ -2,6 +2,7 @@ import inject from '../vdom/inject';
 import Instance from '../vdom/instance';
 import ServerDriver from 'driver-server';
 import Serializer from './serializer';
+import {INSTANCE} from '../constant';
 
 // Init
 inject({
@@ -12,14 +13,14 @@ export default {
   create(element) {
     let container = ServerDriver.createBody();
     let rootComponent = Instance.mount(element, container, {});
-    let renderedComponent = rootComponent.getRenderedComponent();
+    let renderedComponent = rootComponent.__getRenderedComponent();
 
     renderedComponent.toJSON = () => {
       return new Serializer(container).toJSON();
     };
 
     renderedComponent.getInstance = () => {
-      return renderedComponent._instance;
+      return renderedComponent[INSTANCE];
     };
 
     renderedComponent.update = (element) => {

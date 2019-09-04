@@ -5,6 +5,7 @@ import TextComponent from './text';
 import CompositeComponent from './composite';
 import FragmentComponent from './fragment';
 import reconciler from '../devtools/reconciler';
+import { invokeMinifiedError } from '../error';
 
 export default function inject({ driver, measurer }) {
   // Inject component class
@@ -18,7 +19,11 @@ export default function inject({ driver, measurer }) {
   Host.driver = driver || Host.driver;
 
   if (!Host.driver) {
-    throw Error('Driver not found.');
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error('Driver not found.');
+    } else {
+      invokeMinifiedError(5);
+    }
   }
 
   if (process.env.NODE_ENV !== 'production') {
