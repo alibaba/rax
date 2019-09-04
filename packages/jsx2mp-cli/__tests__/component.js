@@ -2,7 +2,7 @@ const { readFileSync } = require('fs');
 const { join } = require('path');
 const { execSync } = require('child_process');
 
-const compileCommand = 'jsx2mp build --type component --entry ./component --dist ./dist';
+const compileCommand = '../bin/jsx2mp.js build --type component --entry ./component --dist ./dist';
 
 let jsonContent, jsContent, axmlContent;
 
@@ -16,8 +16,6 @@ const execSyncWithCwd = (command) => {
 };
 
 beforeAll(() => {
-  // link self
-  execSyncWithCwd('npm link');
 
   execSyncWithCwd(`cd demo && npm install && ${compileCommand}`);
 
@@ -28,8 +26,6 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  execSyncWithCwd('npm unlink');
-
   execSyncWithCwd('rm -rf demo/dist');
 });
 
