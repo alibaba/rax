@@ -38,8 +38,8 @@ function areInputsEqual(inputs, prevInputs) {
 
 export function useState(initialState) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.__getHookID();
-  const hooks = currentInstance.__getHooks();
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
     // If the initial state is the result of an expensive computation,
@@ -105,8 +105,8 @@ export function useLayoutEffect(effect, inputs) {
 
 function useEffectImpl(effect, inputs, defered) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.__getHookID();
-  const hooks = currentInstance.__getHooks();
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
   inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
@@ -173,8 +173,8 @@ export function useImperativeHandle(ref, create, inputs) {
 
 export function useRef(initialValue) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.__getHookID();
-  const hooks = currentInstance.__getHooks();
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
     hooks[hookID] = {
@@ -191,8 +191,8 @@ export function useCallback(callback, inputs) {
 
 export function useMemo(create, inputs) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.__getHookID();
-  const hooks = currentInstance.__getHooks();
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
   inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
@@ -209,8 +209,8 @@ export function useMemo(create, inputs) {
 
 export function useReducer(reducer, initialArg, init) {
   const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.__getHookID();
-  const hooks = currentInstance.__getHooks();
+  const hookID = currentInstance.getHookID();
+  const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
     const initialState = init !== undefined ? init(initialArg) : initialArg;
