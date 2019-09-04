@@ -51,11 +51,11 @@ export default class ReactiveComponent extends Component {
     }
   }
 
-  __getHooks() {
+  getHooks() {
     return this._hooks;
   }
 
-  __getHookID() {
+  getHookID() {
     return ++this._hookID;
   }
 
