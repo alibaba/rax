@@ -1,3 +1,4 @@
+import invokeFunctionsWithContext from './invokeFunctionsWithContext';
 import { useState, useEffect } from './hooks';
 import { isFunction, isArray } from './types';
 import { INTERNAL } from './constant';
@@ -17,7 +18,7 @@ class ValueEmitter {
   }
 
   emit() {
-    this.handlers.forEach(handler => handler(this.value));
+    invokeFunctionsWithContext(this.handlers, null, this.value);
   }
 }
 
