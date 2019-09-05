@@ -55,7 +55,7 @@ class FragmentComponent extends NativeComponent {
       Instance.remove(nativeNode);
 
       if (!shouldNotRemoveChild) {
-        for (let i = 0; i < nativeNode.length; i++) {
+        for (let i = 0, l = nativeNode.length; i < l; i++) {
           Host.driver.removeChild(nativeNode[i]);
         }
       }
