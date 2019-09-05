@@ -63,7 +63,7 @@ export default class NativeComponent extends BaseComponent {
   }
 
   __mountChildren(children, context) {
-    if (!children) return children;
+    if (children == null) return children;
 
     children = toArray(children);
 
