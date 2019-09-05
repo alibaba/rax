@@ -490,10 +490,8 @@ class CompositeComponent extends BaseComponent {
           }
 
           // If the new length less then prev
-          if (newNativeNode.length < prevNativeNode.length) {
-            for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
-              driver.removeChild(prevNativeNode[i]);
-            }
+          for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
+            driver.removeChild(prevNativeNode[i]);
           }
         }
       );
