@@ -5,7 +5,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
 import BaseComponent from './base';
-import toArray from './toArray';
+import toArray from '../toArray';
 import { isFunction, isArray, isNull } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';

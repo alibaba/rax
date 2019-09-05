@@ -6,7 +6,7 @@ import instantiateComponent, { throwInvalidComponentError } from './instantiateC
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
-import toArray from './toArray';
+import toArray from '../toArray';
 import { scheduler } from './scheduler';
 import { isFunction } from '../types';
 import assign from '../assign';

@@ -1,7 +1,7 @@
 import Host from './host';
 import NativeComponent from './native';
 import Instance from './instance';
-import toArray from './toArray';
+import toArray from '../toArray';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 /**

@@ -1,7 +1,8 @@
 import invokeFunctionsWithContext from './invokeFunctionsWithContext';
 import { useState, useEffect } from './hooks';
-import { isFunction, isArray } from './types';
+import { isFunction } from './types';
 import { INTERNAL } from './constant';
+import toArray from './toArray';
 
 class ValueEmitter {
   constructor(defaultValue) {
@@ -87,7 +88,7 @@ export default function createContext(defaultValue) {
     }, []);
 
     const children = props.children;
-    const consumer = isArray(children) ? children[0] : children;
+    const consumer = toArray(children)[0];
     if (isFunction(consumer)) {
       return consumer(value);
     }
