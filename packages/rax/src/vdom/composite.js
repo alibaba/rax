@@ -11,6 +11,7 @@ import { scheduler } from './scheduler';
 import { isFunction } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -187,7 +188,7 @@ class CompositeComponent extends BaseComponent {
     let callbacks = this.__pendingCallbacks;
     if (callbacks) {
       this.__pendingCallbacks = null;
-      updater.runCallbacks(callbacks, instance);
+      invokeFunctionsWithContext(callbacks, instance);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -235,17 +236,16 @@ class CompositeComponent extends BaseComponent {
    * `contextTypes`
    */
   __processContext(context) {
+    let maskedContext = {};
     let Component = this.__currentElement.type;
     let contextTypes = Component.contextTypes;
 
-    if (!contextTypes) {
-      return {};
+    if (contextTypes) {
+      for (let contextName in contextTypes) {
+        maskedContext[contextName] = context[contextName];
+      }
     }
 
-    let maskedContext = {};
-    for (let contextName in contextTypes) {
-      maskedContext[contextName] = context[contextName];
-    }
     return maskedContext;
   }
 
