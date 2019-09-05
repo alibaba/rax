@@ -34,8 +34,6 @@ describe('Support CSS custom properties', () => {
       driver: DriverDOM
     });
 
-    console.log(logs);
-
     expect(logs).toEqual([['--backgroundColor', 'red']]);
   });
 });
