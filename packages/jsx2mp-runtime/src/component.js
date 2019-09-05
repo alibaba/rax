@@ -293,8 +293,8 @@ function diffProps(prev, next) {
 function diffArray(prev, next) {
   if (!Array.isArray(prev)) return false;
   // Only concern about list append case
-  if (next.length === 0) return true;
-  if (prev.length === 0) return true;
+  if (next.length === 0) return false;
+  if (prev.length === 0) return false;
   return next.slice(0, prev.length).every((val, index) => prev[index] === val);
 }
 
