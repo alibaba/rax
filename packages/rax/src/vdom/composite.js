@@ -321,10 +321,8 @@ class CompositeComponent extends BaseComponent {
       nextProps = nextElement.props;
       willReceive = true;
     }
-
-    let hasReceived = willReceive && instance.componentWillReceiveProps;
-
-    if (hasReceived) {
+    
+    if (willReceive && instance.componentWillReceiveProps) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
       this.__isPendingState = true;
       performInSandbox(() => {
