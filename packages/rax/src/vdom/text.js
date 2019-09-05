@@ -6,12 +6,12 @@ import BaseComponent from './base';
  */
 class TextComponent extends BaseComponent {
   __updateComponent(prevElement, nextElement, context) {
-    nextElement = String(nextElement);
+    nextElement = '' + nextElement;
     // If text is some value that do not update even there number 1 and string "1"
     if (prevElement !== nextElement) {
       // Replace current element
       this.__currentElement = nextElement;
-      Host.driver.updateText(this.__getNativeNode(), this.__currentElement);
+      Host.driver.updateText(this.__getNativeNode(), nextElement);
 
       if (process.env.NODE_ENV !== 'production') {
         this._stringText = this.__currentElement;
