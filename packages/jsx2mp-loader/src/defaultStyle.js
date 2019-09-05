@@ -1,4 +1,4 @@
-module.exports = `._rax-view {
+module.exports = `.__rax-view {
   border: 0 solid black;
   display:flex;
   flex-direction:column;

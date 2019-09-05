@@ -30,7 +30,7 @@ afterAll(() => {
 
 describe('Component compiled result', () => {
   it('should return correct axml', () => {
-    expect(axmlContent).toEqual('<block a:if="{{$ready}}"><view __tagId="0" class="default-view-style">Hello World!</view></block>');
+    expect(axmlContent).toEqual('<block a:if="{{$ready}}"><view __tagId="0" class="__rax-view">Hello World!</view></block>');
   });
 
   it('should return correct js', () => {
