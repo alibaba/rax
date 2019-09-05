@@ -65,10 +65,8 @@ export default class NativeComponent extends BaseComponent {
   __mountChildren(children, context) {
     if (children == null) return children;
 
-    children = toArray(children);
-
     const nativeNode = this.__getNativeNode();
-    return this.__mountChildrenImpl(nativeNode, children, context);
+    return this.__mountChildrenImpl(nativeNode, toArray(children), context);
   }
 
   __mountChildrenImpl(parent, children, context, nativeNodeMounter) {
