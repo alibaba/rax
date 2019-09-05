@@ -83,31 +83,7 @@ export default class Component {
     data.$ready = true;
     data.__tagId = this.props.__tagId;
     this.__updating = true;
-    /**
-     * In alibaba miniapp can use $spliceData optimize long list
-     * */
-    if (this._internal.$spliceData) {
-      const useSpliceData = {};
-      const useSetData = {};
-      for (let key in data) {
-        if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
-        } else {
-          if (diffData(this.state[key], data[key])) {
-            useSetData[key] = data[key];
-          }
-        }
-      }
-      if (!isEmptyObj(useSetData)) {
-        this._internal.setData(useSetData);
-      }
-      if (!isEmptyObj(useSpliceData)) {
-        this._internal.$spliceData(useSpliceData);
-      }
-    } else {
-      this._internal.setData(data);
-    }
-    Object.assign(this.state, data);
+    this._setData(data);
   }
 
   _updateMethods(methods) {
@@ -281,6 +257,35 @@ export default class Component {
     if (!this.state) this.state = {};
     Object.assign(this.state, internal.data);
   }
+  /**
+   * Internal set data method
+   * @param data {Object}
+   * */
+  _setData(data) {
+    // In alibaba miniapp can use $spliceData optimize long list
+    if (this._internal.$spliceData) {
+      const useSpliceData = {};
+      const useSetData = {};
+      for (let key in data) {
+        if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
+          useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
+        } else {
+          if (diffData(this.state[key], data[key])) {
+            useSetData[key] = data[key];
+          }
+        }
+      }
+      if (!isEmptyObj(useSetData)) {
+        this._internal.setData(useSetData);
+      }
+      if (!isEmptyObj(useSpliceData)) {
+        this._internal.$spliceData(useSpliceData);
+      }
+    } else {
+      this._internal.setData(data);
+    }
+    Object.assign(this.state, data);
+  }
 }
 
 function diffProps(prev, next) {
@@ -314,5 +319,8 @@ function diffData(prevData, nextData) {
 }
 
 function isEmptyObj(obj) {
-  return Object.keys(obj).length === 0;
+  for (let key in obj) {
+    return false;
+  }
+  return true;
 }
