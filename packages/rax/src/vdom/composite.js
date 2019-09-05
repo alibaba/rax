@@ -300,7 +300,7 @@ class CompositeComponent extends BaseComponent {
       Host.measurer && Host.measurer.beforeUpdateComponent(this._mountID, this);
     }
 
-    let willReceive = false;
+    let willReceive;
     let nextContext;
     let nextProps;
 
