@@ -79,11 +79,9 @@ export default class BaseComponent {
   }
 
   __getNativeNode() {
-    if (this[NATIVE_NODE] == null) {
-      this[NATIVE_NODE] = this.__createNativeNode();
-    }
-
-    return this[NATIVE_NODE];
+    return this[NATIVE_NODE] == null
+      ? this[NATIVE_NODE] = this.__createNativeNode()
+      : this[NATIVE_NODE];
   }
 
   __getPublicInstance() {
