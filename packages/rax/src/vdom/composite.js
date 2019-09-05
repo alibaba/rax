@@ -7,6 +7,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from './toArray';
+import { scheduler } from './scheduler';
 import { isFunction } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
@@ -47,7 +48,7 @@ function handleError(instance, error) {
     }
   } else {
     // Do not break when error happens
-    setTimeout(() => {
+    scheduler(() => {
       throw error;
     }, 0);
   }
@@ -382,11 +383,11 @@ class CompositeComponent extends BaseComponent {
 
       this.__updateRenderedComponent(nextUnmaskedContext);
 
-      performInSandbox(() => {
-        if (instance.componentDidUpdate) {
+      if (instance.componentDidUpdate) {
+        performInSandbox(() => {
           instance.componentDidUpdate(prevProps, prevState, prevContext);
-        }
-      }, instance);
+        }, instance);
+      }
 
       if (process.env.NODE_ENV !== 'production') {
         // Calc update count.

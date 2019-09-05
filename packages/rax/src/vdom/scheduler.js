@@ -1,6 +1,6 @@
 let updateCallbacks = [];
 let effectCallbacks = [];
-let scheduler = setTimeout;
+export let scheduler = setTimeout;
 
 if (process.env.NODE_ENV !== 'production') {
   // Wrapper timer for hijack timers in jest
