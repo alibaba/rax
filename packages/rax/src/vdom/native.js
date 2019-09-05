@@ -373,29 +373,24 @@ export default class NativeComponent extends BaseComponent {
       let nextIndex = 0;
       let lastPlacedNode = null;
       let nextNativeNode = [];
-
-      function insertNodes(nativeNodes, parent) {
+      let insertNodes = (nativeNodes, parent) => {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
 
-        if (lastPlacedNode) {
-          // Should reverse order when insert new child after lastPlacedNode:
-          // [lastPlacedNode, *newChild1, *newChild2]
-          for (let i = nativeNodes.length - 1; i >= 0; i--) {
-            driver.insertAfter(nativeNodes[i], lastPlacedNode);
-          }
-        } else if (prevFirstNativeNode) {
-          // [*newChild1, *newChild2, prevFirstNativeNode]
-          for (let i = 0; i < nativeNodes.length; i++) {
+        for (let i = 0, l = nativeNodes.length; i < l; i++) {
+          if (lastPlacedNode) {
+            // Should reverse order when insert new child after lastPlacedNode:
+            // [lastPlacedNode, *newChild1, *newChild2]
+            driver.insertAfter(nativeNodes[l - i - 1], lastPlacedNode);
+          } else if (prevFirstNativeNode) {
+            // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
-          }
-        } else if (parent) {
-          // [*newChild1, *newChild2]
-          for (let i = 0; i < nativeNodes.length; i++) {
+          } else if (parent) {
+            // [*newChild1, *newChild2]
             driver.appendChild(nativeNodes[i], parent);
           }
         }
-      }
+      };
 
       for (let name in nextChildren) {
         let nextChild = nextChildren[name];
