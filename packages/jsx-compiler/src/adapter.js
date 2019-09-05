@@ -16,7 +16,7 @@ const parserAdapters = {
     view: {
       onClick: 'onTap',
       onLongPress: 'onLongTap',
-      className: 'default-view-style'
+      className: '_rax-view'
     },
   },
   'wechat': {

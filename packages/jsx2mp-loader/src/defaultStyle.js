@@ -1,4 +1,4 @@
-module.exports = `.default-view-style {
+module.exports = `._rax-view {
   border: 0 solid black;
   display:flex;
   flex-direction:column;
