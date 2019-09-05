@@ -26,11 +26,11 @@ export default class NativeComponent extends BaseComponent {
     const currentElement = this.__currentElement;
     const props = currentElement.props;
     const type = currentElement.type;
-    const children = props.children;
+    const children = props[CHILDREN];
     const appendType = props.append || TREE; // Default is tree
 
     // Clone a copy for style diff
-    this.__prevStyleCopy = assign({}, props.style);
+    this.__prevStyleCopy = assign({}, props[STYLE]);
 
     let instance = {
       type,
@@ -40,20 +40,14 @@ export default class NativeComponent extends BaseComponent {
 
     this[INSTANCE] = instance;
 
-    let mountChildren = () => {
-      if (children != null) {
-        this.__mountChildren(children, context);
-      }
-    };
-
     if (appendType === TREE) {
       // Should after process children when mount by tree mode
-      mountChildren();
+      this.__mountChildren(children, context);
       this.__mountNativeNode(nativeNodeMounter);
     } else {
       // Should before process children when mount by node mode
       this.__mountNativeNode(nativeNodeMounter);
-      mountChildren();
+      this.__mountChildren(children, context);
     }
 
     // Ref acttach
@@ -69,6 +63,8 @@ export default class NativeComponent extends BaseComponent {
   }
 
   __mountChildren(children, context) {
+    if (!children) return children;
+
     children = toArray(children);
 
     const nativeNode = this.__getNativeNode();
@@ -145,11 +141,11 @@ export default class NativeComponent extends BaseComponent {
     this.__updateProperties(prevProps, nextProps);
 
     // If the prevElement has no child, mount children directly
-    if (prevProps.children == null ||
-      isArray(prevProps.children) && prevProps.children.length === 0) {
-      this.__mountChildren(nextProps.children, nextContext);
+    if (prevProps[CHILDREN] == null ||
+      isArray(prevProps[CHILDREN]) && prevProps[CHILDREN].length === 0) {
+      this.__mountChildren(nextProps[CHILDREN], nextContext);
     } else {
-      this.__updateChildren(nextProps.children, nextContext);
+      this.__updateChildren(nextProps[CHILDREN], nextContext);
     }
 
     if (process.env.NODE_ENV !== 'production') {
