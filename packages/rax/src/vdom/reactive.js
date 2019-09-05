@@ -11,6 +11,9 @@ const RE_RENDER_LIMIT = 24;
 export default class ReactiveComponent extends Component {
   constructor(pureRender, ref) {
     super();
+    // Marked ReactiveComponent.
+    this.__isReactiveComponent = true;
+
     // A pure function
     this.__render = pureRender;
     this._hookID = 0;

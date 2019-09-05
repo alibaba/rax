@@ -505,10 +505,10 @@ class CompositeComponent extends BaseComponent {
 
   __getPublicInstance() {
     let instance = this[INSTANCE];
+
     // The functional components cannot be given refs
-    if (instance instanceof ReactiveComponent) {
-      return null;
-    }
+    if (instance.__isReactiveComponent) return null;
+
     return instance;
   }
 }
