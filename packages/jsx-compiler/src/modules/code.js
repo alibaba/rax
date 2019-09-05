@@ -64,7 +64,7 @@ module.exports = {
       }
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
-      const { id, generator, async, params, body } = defaultExportedPath.node;
+      const { id, generator, async, body, params } = defaultExportedPath.node;
       const replacer = getReplacer(defaultExportedPath);
       if (replacer) {
         replacer.replaceWith(
@@ -112,9 +112,6 @@ module.exports = {
      * updateChildProps: collect props dependencies.
      */
     if (options.type !== 'app' && parsed.renderFunctionPath) {
-      addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
-      addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
-
       const fnBody = parsed.renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {
@@ -150,9 +147,11 @@ module.exports = {
           (parentNode || fnBody).push(callUpdateProps);
         } else if ((parentNode || fnBody).length === 0) {
           // Remove empty loop exp.
-          parentNode.remove && parentNode.remove();
+          parentNode && parentNode.remove && parentNode.remove();
         }
       });
+      addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
+      addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
     }
   },
 };

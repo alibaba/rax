@@ -2,7 +2,7 @@ const { readFileSync } = require('fs');
 const { join } = require('path');
 const { execSync } = require('child_process');
 
-const compileCommand = 'jsx2mp build --type component --entry ./component --dist ./dist';
+const compileCommand = '../bin/jsx2mp.js build --type component --entry ./component --dist ./dist';
 
 let jsonContent, jsContent, axmlContent;
 
@@ -16,9 +16,6 @@ const execSyncWithCwd = (command) => {
 };
 
 beforeAll(() => {
-  // link self
-  execSyncWithCwd('npm link');
-
   execSyncWithCwd(`cd demo && npm install && ${compileCommand}`);
 
   // read from file and get compiled result
@@ -28,14 +25,12 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  execSyncWithCwd('npm unlink');
-
   execSyncWithCwd('rm -rf demo/dist');
 });
 
 describe('Component compiled result', () => {
   it('should return correct axml', () => {
-    expect(axmlContent).toEqual('<rax-view __tagId="0">Hello World!</rax-view>');
+    expect(axmlContent).toEqual('<block a:if="{{$ready}}"><view __tagId="0" class="__rax-view">Hello World!</view></block>');
   });
 
   it('should return correct js', () => {
@@ -55,10 +50,7 @@ Component(__create_component__(__def__));`
   it('should return correct json', () => {
     expect(jsonContent).toEqual(
       `{
-  "component": true,
-  "usingComponents": {
-    "rax-view": "./npm/rax-view/lib/miniapp/index"
-  }
+  "component": true
 }
 `
     );
