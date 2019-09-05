@@ -98,13 +98,10 @@ export default class Component {
           }
         }
       }
-      if (!isPlainObj(useSetData)) {
-        console.log('start', Date.now());
-        this._internal.setData(useSetData, () => {
-          console.log('end', Date.now());
-        });
+      if (!isEmptyObj(useSetData)) {
+        this._internal.setData(useSetData);
       }
-      if (!isPlainObj(useSpliceData)) {
+      if (!isEmptyObj(useSpliceData)) {
         this._internal.$spliceData(useSpliceData);
       }
     } else {
@@ -316,6 +313,6 @@ function diffData(prevData, nextData) {
   }
 }
 
-function isPlainObj(obj) {
+function isEmptyObj(obj) {
   return Object.keys(obj).length === 0;
 }
