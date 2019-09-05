@@ -1,5 +1,5 @@
 import Host from './host';
-import Ref from './ref';
+import { detachRef, attachRef, updateRef } from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
@@ -58,7 +58,7 @@ export default class NativeComponent extends BaseComponent {
 
     // Ref acttach
     if (currentElement && currentElement.ref) {
-      Ref.attach(currentElement._owner, currentElement.ref, this);
+      attachRef(currentElement._owner, currentElement.ref, this);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -114,7 +114,7 @@ export default class NativeComponent extends BaseComponent {
     if (this[NATIVE_NODE]) {
       let ref = this.__currentElement.ref;
       if (ref) {
-        Ref.detach(this.__currentElement._owner, ref, this);
+        detachRef(this.__currentElement._owner, ref, this);
       }
 
       Instance.remove(this[NATIVE_NODE]);
@@ -137,7 +137,7 @@ export default class NativeComponent extends BaseComponent {
     // Replace current element
     this.__currentElement = nextElement;
 
-    Ref.update(prevElement, nextElement, this);
+    updateRef(prevElement, nextElement, this);
 
     let prevProps = prevElement.props;
     let nextProps = nextElement.props;

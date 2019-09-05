@@ -1,7 +1,7 @@
 import ReactiveComponent from './reactive';
 import updater from './updater';
 import Host from './host';
-import Ref from './ref';
+import { attachRef, updateRef, detachRef } from './ref';
 import instantiateComponent, { throwInvalidComponentError } from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
@@ -168,7 +168,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (!currentElement.type.forwardRef && ref) {
-      Ref.attach(currentElement._owner, ref, this);
+      attachRef(currentElement._owner, ref, this);
     }
 
     if (instance.componentDidMount) {
@@ -214,7 +214,7 @@ class CompositeComponent extends BaseComponent {
       let ref = currentElement.ref;
 
       if (!currentElement.type.forwardRef && ref) {
-        Ref.detach(currentElement._owner, ref, this);
+        detachRef(currentElement._owner, ref, this);
       }
 
       this[RENDERED_COMPONENT].unmountComponent(shouldNotRemoveChild);
@@ -338,7 +338,7 @@ class CompositeComponent extends BaseComponent {
       instance.prevForwardRef = prevElement.ref;
       instance.forwardRef = nextElement.ref;
     } else {
-      Ref.update(prevElement, nextElement, this);
+      updateRef(prevElement, nextElement, this);
     }
 
     // Shoud update default
