@@ -11,7 +11,7 @@ import chalk from 'chalk';
 
 class Validation {
   static validate(camelCaseProperty, prop, value, selectors = '', position = {}, log) {
-    if (log) return {};
+    if (!log) return {};
     if (allStylePropTypes[camelCaseProperty]) {
       let error = allStylePropTypes[camelCaseProperty](value, prop, selectors);
 

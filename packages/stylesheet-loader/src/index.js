@@ -21,9 +21,8 @@ module.exports = function(source) {
 
   const parsedQuery = loaderUtils.parseQuery(this.query);
 
-  if (typeof parsedQuery.log === 'undefined') {
-    parsedQuery.log = true;
-  }
+  parsedQuery.log = parsedQuery.log === 'true';
+
   const parsedData = parse(parsedQuery, stylesheet);
 
   return genStyleContent(parsedData, parsedQuery);
@@ -94,7 +93,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const {styles, fontFaceRules, mediaRules} = parsedData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
-  const warnMessageOutput = parsedQuery.log ? '' : getWarnMessageOutput();
+  const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
 
   resetMessage();
 
