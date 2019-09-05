@@ -12,6 +12,12 @@ const parserAdapters = {
     key: 'a:key',
 
     modulePathSuffix: '/lib/miniapp/index',
+
+    view: {
+      onClick: 'onTap',
+      onLongPress: 'onLongTap',
+      className: '__rax-view'
+    },
   },
   'wechat': {
     if: 'wx:if',
@@ -23,6 +29,14 @@ const parserAdapters = {
     key: 'wx:key',
 
     modulePathSuffix: '/lib/miniapp-wx/index',
+    view: {
+      onClick: 'bindtap',
+      onLongPress: 'bindlongpress',
+      onTouchStart: 'bindtouchstart',
+      onTouchEnd: 'bindtouchend',
+      onTouchMove: 'bindtouchmove',
+      onTouchCancel: 'bindtouchcancel'
+    },
   },
 };
 

@@ -44,11 +44,11 @@ function getImported(ast) {
         if (RELATIVE_COMPONENTS_REG.test(source)) {
           // alias = 'c-xxxxx'
           ret.name = getTagName(source);
-          ret.external = false;
+          ret.isCustomEl = true;
         } else {
           // alias = 'rax-view'
           ret.name = source;
-          ret.external = true;
+          ret.isCustomEl = false;
         }
         imported[source].push(ret);
       });

@@ -81,7 +81,7 @@ function getDepPath(path, rootContext) {
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  let { entryPath, type, workDirectory, distDirectory, platform = 'ali' } = options;
+  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
   entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
@@ -132,7 +132,7 @@ module.exports = (options = {}) => {
     plugins: [
       new webpack.DefinePlugin({
         'process.env': {
-          NODE_ENV: '"production"',
+          NODE_ENV: mode === 'build' ? '"production"' : '"development"',
         }
       }),
       new RuntimeWebpackPlugin({ platform }),
