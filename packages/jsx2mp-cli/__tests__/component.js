@@ -30,7 +30,7 @@ afterAll(() => {
 
 describe('Component compiled result', () => {
   it('should return correct axml', () => {
-    expect(axmlContent).toEqual('<block a:if="{{$ready}}"><rax-view __tagId="0">Hello World!</rax-view></block>');
+    expect(axmlContent).toEqual('<block a:if="{{$ready}}"><view __tagId="0" class="default-view-style">Hello World!</view></block>');
   });
 
   it('should return correct js', () => {
@@ -50,10 +50,7 @@ Component(__create_component__(__def__));`
   it('should return correct json', () => {
     expect(jsonContent).toEqual(
       `{
-  "component": true,
-  "usingComponents": {
-    "rax-view": "./npm/rax-view/lib/miniapp/index"
-  }
+  "component": true
 }
 `
     );
