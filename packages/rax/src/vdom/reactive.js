@@ -26,7 +26,7 @@ export default class ReactiveComponent extends Component {
     this.willUnmount = [];
     // Is render scheduled
     this.__isScheduled = false;
-    this.shouldUpdate = false;
+    this.__shouldUpdate = false;
     this.__children = null;
     this.__dependencies = {};
 
@@ -76,7 +76,7 @@ export default class ReactiveComponent extends Component {
 
       const contextUpdater = (newContext) => {
         if (newContext !== contextItem.renderedContext) {
-          this.shouldUpdate = true;
+          this.__shouldUpdate = true;
           this.update();
         }
       };
@@ -91,7 +91,7 @@ export default class ReactiveComponent extends Component {
   }
 
   componentWillMount() {
-    this.shouldUpdate = true;
+    this.__shouldUpdate = true;
   }
 
   componentDidMount() {
@@ -99,7 +99,7 @@ export default class ReactiveComponent extends Component {
   }
 
   componentWillReceiveProps() {
-    this.shouldUpdate = true;
+    this.__shouldUpdate = true;
   }
 
   componentDidUpdate() {
@@ -140,9 +140,9 @@ export default class ReactiveComponent extends Component {
       children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
 
-    if (this.shouldUpdate) {
+    if (this.__shouldUpdate) {
       this.__children = children;
-      this.shouldUpdate = false;
+      this.__shouldUpdate = false;
     }
 
     return this.__children;

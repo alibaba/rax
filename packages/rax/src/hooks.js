@@ -1,7 +1,7 @@
 import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
-import {isFunction, isNull} from './types';
+import { isFunction, isNull } from './types';
 import { invokeMinifiedError } from './error';
 import { INSTANCE } from './constant';
 
@@ -84,7 +84,7 @@ export function useState(initialState) {
   const hook = hooks[hookID];
   if (!is(hook[0], hook[2])) {
     hook[0] = hook[2];
-    currentInstance.shouldUpdate = true;
+    currentInstance.__shouldUpdate = true;
   }
 
   return hook;
@@ -110,48 +110,48 @@ function useEffectImpl(effect, inputs, defered) {
   inputs = inputs === undefined ? null : inputs;
 
   if (!hooks[hookID]) {
-    const create = (immediately) => {
-      if (!immediately && defered) return scheduleEffect(() => create(true));
-      const { current } = create;
+    const __create = (immediately) => {
+      if (!immediately && defered) return scheduleEffect(() => __create(true));
+      const { current } = __create;
       if (current) {
-        destory.current = current();
-        create.current = null;
+        __destory.current = current();
+        __create.current = null;
       }
     };
 
-    const destory = (immediately) => {
-      if (!immediately && defered) return scheduleEffect(() => destory(true));
-      const { current } = destory;
+    const __destory = (immediately) => {
+      if (!immediately && defered) return scheduleEffect(() => __destory(true));
+      const { current } = __destory;
       if (current) {
         current();
-        destory.current = null;
+        __destory.current = null;
       }
     };
 
-    create.current = effect;
+    __create.current = effect;
 
     hooks[hookID] = {
-      create,
-      destory,
-      prevInputs: inputs,
-      inputs
+      __create,
+      __destory,
+      __prevInputs: inputs,
+      __inputs: inputs
     };
 
-    currentInstance.didMount.push(create);
-    currentInstance.willUnmount.push(destory);
+    currentInstance.didMount.push(__create);
+    currentInstance.willUnmount.push(__destory);
     currentInstance.didUpdate.push(() => {
-      const { prevInputs, inputs, create } = hooks[hookID];
-      if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
-        destory();
-        create();
+      const { __prevInputs, __inputs, __create } = hooks[hookID];
+      if (__inputs == null || !areInputsEqual(__inputs, __prevInputs)) {
+        __destory();
+        __create();
       }
     });
   } else {
     const hook = hooks[hookID];
-    const { create, inputs: prevInputs } = hook;
-    hook.inputs = inputs;
-    hook.prevInputs = prevInputs;
-    create.current = effect;
+    const { __create, __inputs: prevInputs } = hook;
+    hook.__inputs = inputs;
+    hook.__prevInputs = prevInputs;
+    __create.current = effect;
   }
 }
 
@@ -227,17 +227,17 @@ export function useReducer(reducer, initialArg, init) {
       const queue = hook[2];
 
       if (getCurrentInstance() === currentInstance) {
-        queue.actions.push(action);
+        queue.__actions.push(action);
         currentInstance.__isScheduled = true;
       } else {
-        const currentState = queue.eagerState;
-        const eagerReducer = queue.eagerReducer;
+        const currentState = queue.__eagerState;
+        const eagerReducer = queue.__eagerReducer;
         const eagerState = eagerReducer(currentState, action);
         if (is(eagerState, currentState)) {
           return;
         }
-        queue.eagerState = eagerState;
-        queue.actions.push(action);
+        queue.__eagerState = eagerState;
+        queue.__actions.push(action);
         currentInstance.update();
       }
     };
@@ -246,9 +246,9 @@ export function useReducer(reducer, initialArg, init) {
       initialState,
       dispatch,
       {
-        actions: [],
-        eagerReducer: reducer,
-        eagerState: initialState
+        __actions: [],
+        __eagerReducer: reducer,
+        __eagerState: initialState
       }
     ];
   }
@@ -258,20 +258,20 @@ export function useReducer(reducer, initialArg, init) {
   let next = hook[0];
 
   if (currentInstance.__reRenders > 0) {
-    for (let i = 0; i < queue.actions.length; i++) {
-      next = reducer(next, queue.actions[i]);
+    for (let i = 0; i < queue.__actions.length; i++) {
+      next = reducer(next, queue.__actions[i]);
     }
   } else {
-    next = queue.eagerState;
+    next = queue.__eagerState;
   }
 
   if (!is(next, hook[0])) {
     hook[0] = next;
-    currentInstance.shouldUpdate = true;
+    currentInstance.__shouldUpdate = true;
   }
 
-  queue.eagerReducer = reducer;
-  queue.eagerState = next;
-  queue.actions.length = 0;
+  queue.__eagerReducer = reducer;
+  queue.__eagerState = next;
+  queue.__actions.length = 0;
   return hooks[hookID];
 }
