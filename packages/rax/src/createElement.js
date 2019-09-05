@@ -50,7 +50,7 @@ export default function createElement(type, config, children) {
 
     if (config.key != null) {
       hasReservedProps = true;
-      key = String(config.key);
+      key = '' + config.key;
     }
 
     // if no reserved props, assign config to props for better performance
