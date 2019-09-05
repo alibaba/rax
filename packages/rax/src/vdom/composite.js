@@ -364,11 +364,11 @@ class CompositeComponent extends BaseComponent {
 
       // Cannot use this.setState() in componentWillUpdate.
       // If need to update state in response to a prop change, use componentWillReceiveProps instead.
-      performInSandbox(() => {
-        if (instance.componentWillUpdate) {
+      if (instance.componentWillUpdate) {
+        performInSandbox(() => {
           instance.componentWillUpdate(nextProps, nextState, nextContext);
-        }
-      }, instance);
+        }, instance);
+      }
 
       // Replace with next
       this.__currentElement = nextElement;
