@@ -3,8 +3,8 @@
  * Base Component class definition.
  */
 import Host from './host';
-import { updateChildProps, removeComponentProps } from './updater';
-import { enqueueRender } from './enqueueRender';
+import {updateChildProps, removeComponentProps} from './updater';
+import {enqueueRender} from './enqueueRender';
 import isFunction from './isFunction';
 import {
   RENDER,
@@ -47,14 +47,14 @@ export default class Component {
     }
 
     enqueueRender(this);
-  }
+  };
 
   forceUpdate = (callback) => {
     if (isFunction(callback)) {
       this._pendingCallbacks.push(callback);
     }
     this._updateComponent();
-  }
+  };
 
   getHooks() {
     return this._hooks;
@@ -91,13 +91,22 @@ export default class Component {
       const useSetData = {};
       for (let key in data) {
         if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          useSpliceData[key] = [this.state[key].length, 0, ...data[key].slice(this.state[key].length)];
+          useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
-          useSetData[key] = data[key];
+          if (diffData(this.state[key], data[key])) {
+            useSetData[key] = data[key];
+          }
         }
       }
-      this._internal.setData(useSetData);
-      this._internal.$spliceData(useSpliceData);
+      if (!isPlainObj(useSetData)) {
+        console.log('start', Date.now());
+        this._internal.setData(useSetData, () => {
+          console.log('end', Date.now());
+        });
+      }
+      if (!isPlainObj(useSpliceData)) {
+        this._internal.$spliceData(useSpliceData);
+      }
     } else {
       this._internal.setData(data);
     }
@@ -287,6 +296,26 @@ function diffProps(prev, next) {
 function diffArray(prev, next) {
   if (!Array.isArray(prev)) return false;
   // Only concern about list append case
-  if (prev.length === next.length) return false;
+  if (next.length === 0) return false;
+  if (prev.length === 0) return false;
   return next.slice(0, prev.length).every((val, index) => prev[index] === val);
+}
+
+function diffData(prevData, nextData) {
+  const prevType = typeof prevData;
+  const nextType = typeof nextData;
+  if (prevType !== nextType) return true;
+  if (prevType === 'object' && prevData !== null) {
+    const prevKeys = Object.keys(prevData);
+    const nextKeys = Object.keys(nextData);
+    if (prevKeys.length !== nextKeys.length) return true;
+    if (prevKeys.length === 0) return false;
+    return !prevKeys.some(key => prevData[key] === nextData[key] );
+  } else {
+    return prevData !== nextData;
+  }
+}
+
+function isPlainObj(obj) {
+  return Object.keys(obj).length === 0;
 }

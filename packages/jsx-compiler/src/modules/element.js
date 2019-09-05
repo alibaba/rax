@@ -5,6 +5,7 @@ const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 const CodeError = require('../utils/CodeError');
 const DynamicBinding = require('../utils/DynamicBinding');
+const baseComponents = require('../baseComponents');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -349,8 +350,42 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       if (attrName === 'ref') {
         path.remove();
       }
+      if (attrName === 'className') {
+        node.name.name = 'class';
+      }
     },
     JSXExpressionContainer: handleJSXExpressionContainer,
+    JSXOpeningElement: {
+      exit(path) {
+        const { node, parent } = path;
+        const componentTagNode = node.name;
+        if (t.isJSXIdentifier(componentTagNode)) {
+          const name = componentTagNode.name;
+          const replaceName = baseComponents[name];
+          if (replaceName) {
+            componentTagNode.name = replaceName;
+            if (parent.closingElement) {
+              parent.closingElement.name = t.jsxIdentifier(replaceName);
+            }
+            const propsMap = adapter[replaceName];
+            let hasClassName = false;
+            node.attributes.forEach(attr => {
+              if (t.isJSXIdentifier(attr.name)) {
+                if (attr.name.name === 'class') {
+                  attr.value.value = propsMap.className + ' ' + attr.value.value;
+                  hasClassName = true;
+                } else if (propsMap[attr.name.name]) {
+                  attr.name.name = propsMap[attr.name.name];
+                }
+              }
+            });
+            if (!hasClassName) {
+              node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'), t.stringLiteral(propsMap.className)));
+            }
+          }
+        }
+      }
+    }
   });
 
   return { dynamicValues: dynamicValues.getStore(), dynamicEvents: dynamicEvents.getStore() };

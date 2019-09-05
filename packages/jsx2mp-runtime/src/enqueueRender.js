@@ -16,6 +16,7 @@ export function rerender() {
   // eslint-disable-next-line
   while (component = list.pop()) {
     if (component.__isQueued) {
+      console.log('will update', component)
       component._updateComponent();
       component.__isQueued = false;
     }
