@@ -28,7 +28,7 @@ function handleError(instance, error) {
 
   while (instance) {
     let internal = instance[INTERNAL];
-    if (isFunction(instance.componentDidCatch)) {
+    if (instance.componentDidCatch) {
       boundary = instance;
       break;
     } else if (internal && internal._parentInstance) {
@@ -388,7 +388,7 @@ class CompositeComponent extends BaseComponent {
         }
       }, instance);
 
-      this._updateCount++;
+      this.__updateCount++;
     } else {
       // If it's determined that a component should not update, we still want
       // to set props and state but we shortcut the rest of the update.
