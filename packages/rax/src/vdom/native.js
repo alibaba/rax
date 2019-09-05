@@ -372,7 +372,7 @@ export default class NativeComponent extends BaseComponent {
       // `nextIndex` will increment for each child in `nextChildren`
       let nextIndex = 0;
       let lastPlacedNode = null;
-      let nextNativeNode = [];
+      let nextNativeNodes = [];
       let insertNodes = (nativeNodes, parent) => {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
@@ -426,22 +426,20 @@ export default class NativeComponent extends BaseComponent {
         // Get the last child
         lastPlacedNode = nextChild.__getNativeNode();
 
-        // Push to nextNativeNode
+        // Push to nextNativeNodes
         if (isArray(lastPlacedNode)) {
-          nextNativeNode = nextNativeNode.concat(lastPlacedNode);
+          nextNativeNodes = nextNativeNodes.concat(lastPlacedNode);
           lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
         } else {
-          nextNativeNode.push(lastPlacedNode);
+          nextNativeNodes.push(lastPlacedNode);
         }
       }
 
       // Sync update native refs
       if (isArray(this[NATIVE_NODE])) {
         // Clear all and push the new array
-        this[NATIVE_NODE].splice(0, this[NATIVE_NODE].length);
-        for (let i = 0, l = nextNativeNode.length; i < l; i++) {
-          this[NATIVE_NODE].push(nextNativeNode[i]);
-        }
+        this[NATIVE_NODE].length = 0;
+        assign(this[NATIVE_NODE], nextNativeNodes);
       }
     }
 
