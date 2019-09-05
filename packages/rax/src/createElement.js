@@ -1,5 +1,6 @@
 import Host from './vdom/host';
 import Element from './vdom/element';
+import flattenChildren from './vdom/flattenChildren';
 import { invokeMinifiedError } from './error';
 import { isString, isArray } from './types';
 
@@ -78,7 +79,7 @@ export default function createElement(type, config, children) {
           childArray[i] = arguments[i + 2];
         }
       }
-      props.children = childArray;
+      props.children = flattenChildren(childArray);
     }
   }
 
