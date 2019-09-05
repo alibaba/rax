@@ -68,9 +68,9 @@ if (process.env.NODE_ENV !== 'production') {
 class CompositeComponent extends BaseComponent {
   __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.__initComponent(parent, parentInstance, context);
-    this.__updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
+      this._updateCount = 0;
       Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
@@ -388,7 +388,10 @@ class CompositeComponent extends BaseComponent {
         }
       }, instance);
 
-      this.__updateCount++;
+      if (process.env.NODE_ENV !== 'production') {
+        // Calc update count.
+        this._updateCount++;
+      }
     } else {
       // If it's determined that a component should not update, we still want
       // to set props and state but we shortcut the rest of the update.
