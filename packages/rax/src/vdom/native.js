@@ -30,7 +30,7 @@ export default class NativeComponent extends BaseComponent {
     const appendType = props.append || TREE; // Default is tree
 
     // Clone a copy for style diff
-    this.__prevStyleCopy = assign({}, props.style);
+    this.__prevStyleCopy = assign(Object.create(null), props.style);
 
     let instance = {
       type,
@@ -76,7 +76,7 @@ export default class NativeComponent extends BaseComponent {
   }
 
   __mountChildrenImpl(parent, children, context, nativeNodeMounter) {
-    let renderedChildren = this._renderedChildren = {};
+    let renderedChildren = this._renderedChildren = Object.create(null);
 
     const renderedChildrenImage = [];
     for (let i = 0, l = children.length; i < l; i++) {
@@ -222,7 +222,7 @@ export default class NativeComponent extends BaseComponent {
       if (propKey === STYLE) {
         if (nextProp) {
           // Clone property
-          nextProp = this.__prevStyleCopy = assign({}, nextProp);
+          nextProp = this.__prevStyleCopy = assign(Object.create(null), nextProp);
         } else {
           this.__prevStyleCopy = null;
         }
@@ -231,14 +231,14 @@ export default class NativeComponent extends BaseComponent {
           // Unset styles on `prevProp` but not on `nextProp`.
           for (styleName in prevProp) {
             if (!nextProp || !nextProp[styleName] && nextProp[styleName] !== 0) {
-              styleUpdates = styleUpdates || {};
+              styleUpdates = styleUpdates || Object.create(null);
               styleUpdates[styleName] = '';
             }
           }
           // Update styles that changed since `prevProp`.
           for (styleName in nextProp) {
             if (prevProp[styleName] !== nextProp[styleName]) {
-              styleUpdates = styleUpdates || {};
+              styleUpdates = styleUpdates || Object.create(null);
               styleUpdates[styleName] = nextProp[styleName];
             }
           }
@@ -307,7 +307,7 @@ export default class NativeComponent extends BaseComponent {
       return;
     }
 
-    let nextChildren = {};
+    let nextChildren = Object.create(null);
 
     if (nextChildrenElements != null) {
       nextChildrenElements = toArray(nextChildrenElements);
