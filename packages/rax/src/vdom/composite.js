@@ -403,7 +403,7 @@ class CompositeComponent extends BaseComponent {
     let callbacks = this.__pendingCallbacks;
     if (callbacks) {
       this.__pendingCallbacks = null;
-      updater.runCallbacks(callbacks, instance);
+      invokeFunctionsWithContext(callbacks, instance);
     }
 
     if (process.env.NODE_ENV !== 'production') {

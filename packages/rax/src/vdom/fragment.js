@@ -11,9 +11,8 @@ class FragmentComponent extends NativeComponent {
   __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.__initComponent(parent, parentInstance, context);
 
-    let instance = {};
+    let instance = this[INSTANCE] = {};
     instance[INTERNAL] = this;
-    this[INSTANCE] = instance;
 
     // Mount children
     this.__mountChildren(this.__currentElement, context);
