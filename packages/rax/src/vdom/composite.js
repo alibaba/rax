@@ -313,12 +313,10 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Distinguish between a props update versus a simple state update
-    if (prevElement === nextElement) {
-      // Skip checking prop types again -- we don't read component.props to avoid
-      // warning for DOM component props in this upgrade
-      nextProps = nextElement.props;
-    } else {
-      nextProps = nextElement.props;
+    // Skip checking prop types again -- we don't read component.props to avoid
+    // warning for DOM component props in this upgrade
+    nextProps = nextElement.props;
+    if (prevElement !== nextElement) {
       willReceive = true;
     }
 
