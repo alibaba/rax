@@ -1,11 +1,11 @@
-const { readFileSync, existsSync } = require('fs');
-const { join, basename } = require('path');
+const { green } = require('chalk');
+const { basename } = require('path');
 const rollup = require('rollup');
 const memory = require('rollup-plugin-memory');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
-const uglify = require('rollup-plugin-uglify').uglify;
+const { uglify } = require('rollup-plugin-uglify');
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
 
@@ -104,7 +104,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
       level: 6
     });
 
-    console.log(file, `${(size / 1024).toPrecision(3)}kb (gzip)`);
+    console.log(file, `${green((size / 1024).toPrecision(8) + 'KiB')} (Gzipped)`);
   } else {
     const ext = getExtension(format);
     await bundle.write({

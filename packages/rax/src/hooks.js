@@ -211,9 +211,10 @@ export function useReducer(reducer, initialArg, init) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
+  const hook = hooks[hookID];
 
-  if (!hooks[hookID]) {
-    const initialState = init !== undefined ? init(initialArg) : initialArg;
+  if (!hook) {
+    const initialState = isFunction(init) ? init(initialArg) : initialArg;
 
     const dispatch = action => {
       // Flush all effects first before update state
@@ -253,7 +254,6 @@ export function useReducer(reducer, initialArg, init) {
     ];
   }
 
-  const hook = hooks[hookID];
   const queue = hook[2];
   let next = hook[0];
 
