@@ -24,7 +24,7 @@ const chokidar = require('chokidar');
 const SRC_DIR = 'src';
 const BUILD_DIR = 'lib';
 const JS_FILES_PATTERN = '**/*.js';
-const IGNORE_PATTERN = '**/__tests__/**';
+const IGNORE_PATTERN = '**/{__tests__,__mocks__}/**';
 
 const args = parseArgs(process.argv);
 const customPackages = args.packages;
