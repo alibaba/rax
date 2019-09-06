@@ -12,9 +12,9 @@ export function updateRef(prevElement, nextElement, component) {
   // Update refs in owner component
   if (prevRef !== nextRef) {
     // Detach prev RenderedElement's ref
-    prevRef != null && detachRef(prevElement._owner, prevRef, component);
+    prevRef && detachRef(prevElement._owner, prevRef, component);
     // Attach next RenderedElement's ref
-    nextRef != null && attachRef(nextElement._owner, nextRef, component);
+    nextRef && attachRef(nextElement._owner, nextRef, component);
   }
 }
 
