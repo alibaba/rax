@@ -81,10 +81,8 @@ export default class ReactiveComponent extends Component {
         }
       };
 
-      contextItem.emitter.on(contextUpdater);
-      this.willUnmount.push(() => {
-        contextItem.emitter.off(contextUpdater);
-      });
+      contextEmitter.on(contextUpdater);
+      this.willUnmount.push(contextEmitter.off.bind(contextEmitter, contextUpdater));
       this.__dependencies[contextProp] = contextItem;
     }
     return contextItem.renderedContext = contextItem.emitter.value;
