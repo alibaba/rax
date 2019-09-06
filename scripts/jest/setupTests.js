@@ -1,0 +1,3 @@
+expect.extend({
+  ...require('./toWarnDev')
+});

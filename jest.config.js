@@ -7,9 +7,10 @@ module.exports = {
   'collectCoverage': true,
   'verbose': true,
   'setupFiles': [
-    './scripts/jest.js',
+    './scripts/jest/setupEnvironment.js',
     'jest-localstorage-mock'
   ],
+  'setupTestFrameworkScriptFile': './scripts/jest/setupTests.js',
   'testPathIgnorePatterns': [
     '/node_modules/',
     '/fixtures/',
