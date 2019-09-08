@@ -19,7 +19,7 @@ describe('transformer', () => {
   it('should return null when writing multiple selectors', () => {
     const result = transformer.sanitizeSelector('.abc .bcd');
 
-    expect(result).toBe(null);
+    expect(result).toBe('abc_bcd');
   });
 
   it('should convert prop with camelCase', () => {

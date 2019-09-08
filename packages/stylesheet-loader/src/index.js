@@ -20,6 +20,9 @@ module.exports = function(source) {
   }
 
   const parsedQuery = loaderUtils.parseQuery(this.query);
+
+  parsedQuery.log = parsedQuery.log === 'true';
+
   const parsedData = parse(parsedQuery, stylesheet);
 
   return genStyleContent(parsedData, parsedQuery);
@@ -36,10 +39,10 @@ const parse = (parsedQuery, stylesheet) => {
 
     // normal rule
     if (rule.type === RULE) {
-      style = transformer.convert(rule, parsedQuery.disableLog);
+      style = transformer.convert(rule, parsedQuery.log);
 
       rule.selectors.forEach((selector) => {
-        let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator, rule.position, parsedQuery.disableLog);
+        let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator, rule.position, parsedQuery.log);
 
         if (sanitizedSelector) {
           // handle pseudo class
@@ -90,7 +93,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const {styles, fontFaceRules, mediaRules} = parsedData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
-  const warnMessageOutput = parsedQuery.disableLog ? '' : getWarnMessageOutput();
+  const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
 
   resetMessage();
 

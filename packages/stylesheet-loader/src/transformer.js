@@ -20,13 +20,13 @@ const COLOR_PROPERTIES = {
 };
 
 export default {
-  sanitizeSelector(selector, transformDescendantCombinator = false, position = { start: { line: 0, column: 0 } }, disableLog = false) {
+  sanitizeSelector(selector, transformDescendantCombinator = false, position = { start: { line: 0, column: 0 } }, log = false) {
     // tag selector suffix @
     if (/^[a-zA-Z]/.test(selector)) {
       selector = '@' + selector;
     }
     // filter multiple extend selectors
-    if (!disableLog && !transformDescendantCombinator && !/^[.|@|#][a-zA-Z0-9_:\-]+$/.test(selector)) {
+    if (log && !transformDescendantCombinator && !/^[.|@|#][a-zA-Z0-9_:\-]+$/.test(selector)) {
       const message = `line: ${position.start.line}, column: ${position.start.column} - "${selector}" is not a valid selector (e.g. ".abc、.abcBcd、.abc_bcd")`;
       console.error(chalk.red.bold(message));
       pushErrorMessage(message);
@@ -64,7 +64,7 @@ export default {
     return result;
   },
 
-  convert(rule, disableLog) {
+  convert(rule, log) {
     let style = {};
 
     if (rule.tagName === 'text') {
@@ -80,7 +80,7 @@ export default {
       let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
 
-      Validation.validate(camelCaseProperty, declaration.property, declaration.value, rule.selectors.join(', '), declaration.position, disableLog);
+      Validation.validate(camelCaseProperty, declaration.property, declaration.value, rule.selectors.join(', '), declaration.position, log);
       if (particular[camelCaseProperty]) {
         let particularResult = particular[camelCaseProperty](value);
         if (particularResult.isDeleted) {
