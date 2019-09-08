@@ -1,11 +1,11 @@
 import Host from './host';
-import Ref from './ref';
+import { detachRef, attachRef, updateRef } from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
 import Instance from './instance';
 import BaseComponent from './base';
-import toArray from './toArray';
+import toArray from '../toArray';
 import { isFunction, isArray, isNull } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
@@ -26,11 +26,11 @@ export default class NativeComponent extends BaseComponent {
     const currentElement = this.__currentElement;
     const props = currentElement.props;
     const type = currentElement.type;
-    const children = props.children;
+    const children = props[CHILDREN];
     const appendType = props.append || TREE; // Default is tree
 
     // Clone a copy for style diff
-    this.__prevStyleCopy = assign({}, props.style);
+    this.__prevStyleCopy = assign({}, props[STYLE]);
 
     let instance = {
       type,
@@ -40,25 +40,19 @@ export default class NativeComponent extends BaseComponent {
 
     this[INSTANCE] = instance;
 
-    let mountChildren = () => {
-      if (children != null) {
-        this.__mountChildren(children, context);
-      }
-    };
-
     if (appendType === TREE) {
       // Should after process children when mount by tree mode
-      mountChildren();
+      this.__mountChildren(children, context);
       this.__mountNativeNode(nativeNodeMounter);
     } else {
       // Should before process children when mount by node mode
       this.__mountNativeNode(nativeNodeMounter);
-      mountChildren();
+      this.__mountChildren(children, context);
     }
 
     // Ref acttach
     if (currentElement && currentElement.ref) {
-      Ref.attach(currentElement._owner, currentElement.ref, this);
+      attachRef(currentElement._owner, currentElement.ref, this);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -69,10 +63,10 @@ export default class NativeComponent extends BaseComponent {
   }
 
   __mountChildren(children, context) {
-    children = toArray(children);
+    if (children == null) return children;
 
     const nativeNode = this.__getNativeNode();
-    return this.__mountChildrenImpl(nativeNode, children, context);
+    return this.__mountChildrenImpl(nativeNode, toArray(children), context);
   }
 
   __mountChildrenImpl(parent, children, context, nativeNodeMounter) {
@@ -114,7 +108,7 @@ export default class NativeComponent extends BaseComponent {
     if (this[NATIVE_NODE]) {
       let ref = this.__currentElement.ref;
       if (ref) {
-        Ref.detach(this.__currentElement._owner, ref, this);
+        detachRef(this.__currentElement._owner, ref, this);
       }
 
       Instance.remove(this[NATIVE_NODE]);
@@ -137,7 +131,7 @@ export default class NativeComponent extends BaseComponent {
     // Replace current element
     this.__currentElement = nextElement;
 
-    Ref.update(prevElement, nextElement, this);
+    updateRef(prevElement, nextElement, this);
 
     let prevProps = prevElement.props;
     let nextProps = nextElement.props;
@@ -145,11 +139,11 @@ export default class NativeComponent extends BaseComponent {
     this.__updateProperties(prevProps, nextProps);
 
     // If the prevElement has no child, mount children directly
-    if (prevProps.children == null ||
-      isArray(prevProps.children) && prevProps.children.length === 0) {
-      this.__mountChildren(nextProps.children, nextContext);
+    if (prevProps[CHILDREN] == null ||
+      isArray(prevProps[CHILDREN]) && prevProps[CHILDREN].length === 0) {
+      this.__mountChildren(nextProps[CHILDREN], nextContext);
     } else {
-      this.__updateChildren(nextProps.children, nextContext);
+      this.__updateChildren(nextProps[CHILDREN], nextContext);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -378,30 +372,25 @@ export default class NativeComponent extends BaseComponent {
       // `nextIndex` will increment for each child in `nextChildren`
       let nextIndex = 0;
       let lastPlacedNode = null;
-      let nextNativeNode = [];
-
-      function insertNodes(nativeNodes, parent) {
+      let nextNativeNodes = [];
+      let insertNodes = (nativeNodes, parent) => {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
 
-        if (lastPlacedNode) {
-          // Should reverse order when insert new child after lastPlacedNode:
-          // [lastPlacedNode, *newChild1, *newChild2]
-          for (let i = nativeNodes.length - 1; i >= 0; i--) {
-            driver.insertAfter(nativeNodes[i], lastPlacedNode);
-          }
-        } else if (prevFirstNativeNode) {
-          // [*newChild1, *newChild2, prevFirstNativeNode]
-          for (let i = 0; i < nativeNodes.length; i++) {
+        for (let i = 0, l = nativeNodes.length; i < l; i++) {
+          if (lastPlacedNode) {
+            // Should reverse order when insert new child after lastPlacedNode:
+            // [lastPlacedNode, *newChild1, *newChild2]
+            driver.insertAfter(nativeNodes[l - i - 1], lastPlacedNode);
+          } else if (prevFirstNativeNode) {
+            // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
-          }
-        } else if (parent) {
-          // [*newChild1, *newChild2]
-          for (let i = 0; i < nativeNodes.length; i++) {
+          } else if (parent) {
+            // [*newChild1, *newChild2]
             driver.appendChild(nativeNodes[i], parent);
           }
         }
-      }
+      };
 
       for (let name in nextChildren) {
         let nextChild = nextChildren[name];
@@ -437,22 +426,20 @@ export default class NativeComponent extends BaseComponent {
         // Get the last child
         lastPlacedNode = nextChild.__getNativeNode();
 
-        // Push to nextNativeNode
+        // Push to nextNativeNodes
         if (isArray(lastPlacedNode)) {
-          nextNativeNode = nextNativeNode.concat(lastPlacedNode);
+          nextNativeNodes = nextNativeNodes.concat(lastPlacedNode);
           lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
         } else {
-          nextNativeNode.push(lastPlacedNode);
+          nextNativeNodes.push(lastPlacedNode);
         }
       }
 
       // Sync update native refs
       if (isArray(this[NATIVE_NODE])) {
         // Clear all and push the new array
-        this[NATIVE_NODE].splice(0, this[NATIVE_NODE].length);
-        for (let i = 0, l = nextNativeNode.length; i < l; i++) {
-          this[NATIVE_NODE].push(nextNativeNode[i]);
-        }
+        this[NATIVE_NODE].length = 0;
+        assign(this[NATIVE_NODE], nextNativeNodes);
       }
     }
 

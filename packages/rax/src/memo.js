@@ -1,6 +1,8 @@
 import shallowEqual from './vdom/shallowEqual';
 
-export default function memo(type, compare = shallowEqual) {
+export default function memo(type, compare) {
+  compare = compare || shallowEqual;
+
   // Memo could composed
   if (type.compares) {
     type.compares.push(compare);

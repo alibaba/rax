@@ -21,15 +21,15 @@ export default class BaseComponent {
       Host.reconciler.unmountComponent(this);
     }
 
-    this.__currentElement = null;
-    this[NATIVE_NODE] = null;
-    this._parent = null;
-    this._parentInstance = null;
-    this._context = null;
+    this.__currentElement
+      = this[NATIVE_NODE]
+      = this._parent
+      = this._parentInstance
+      = this._context
+      = null;
 
     if (this[INSTANCE]) {
-      this[INSTANCE][INTERNAL] = null;
-      this[INSTANCE] = null;
+      this[INSTANCE] = this[INSTANCE][INTERNAL] = null;
     }
   }
 
@@ -79,11 +79,9 @@ export default class BaseComponent {
   }
 
   __getNativeNode() {
-    if (this[NATIVE_NODE] == null) {
-      this[NATIVE_NODE] = this.__createNativeNode();
-    }
-
-    return this[NATIVE_NODE];
+    return this[NATIVE_NODE] == null
+      ? this[NATIVE_NODE] = this.__createNativeNode()
+      : this[NATIVE_NODE];
   }
 
   __getPublicInstance() {

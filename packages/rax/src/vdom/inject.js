@@ -16,9 +16,7 @@ export default function inject({ driver, measurer }) {
   Host.Composite = CompositeComponent;
 
   // Inject render driver
-  Host.driver = driver || Host.driver;
-
-  if (!Host.driver) {
+  if (!(Host.driver = driver || Host.driver)) {
     if (process.env.NODE_ENV !== 'production') {
       throw new Error('Driver not found.');
     } else {

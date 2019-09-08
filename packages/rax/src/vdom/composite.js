@@ -1,15 +1,17 @@
 import ReactiveComponent from './reactive';
 import updater from './updater';
 import Host from './host';
-import Ref from './ref';
+import { attachRef, updateRef, detachRef } from './ref';
 import instantiateComponent, { throwInvalidComponentError } from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
-import toArray from './toArray';
+import toArray from '../toArray';
+import { scheduler } from './scheduler';
 import { isFunction } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -28,7 +30,7 @@ function handleError(instance, error) {
 
   while (instance) {
     let internal = instance[INTERNAL];
-    if (isFunction(instance.componentDidCatch)) {
+    if (instance.componentDidCatch) {
       boundary = instance;
       break;
     } else if (internal && internal._parentInstance) {
@@ -47,7 +49,7 @@ function handleError(instance, error) {
     }
   } else {
     // Do not break when error happens
-    setTimeout(() => {
+    scheduler(() => {
       throw error;
     }, 0);
   }
@@ -68,9 +70,9 @@ if (process.env.NODE_ENV !== 'production') {
 class CompositeComponent extends BaseComponent {
   __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
     this.__initComponent(parent, parentInstance, context);
-    this.__updateCount = 0;
 
     if (process.env.NODE_ENV !== 'production') {
+      this._updateCount = 0;
       Host.measurer && Host.measurer.beforeMountComponent(this._mountID, this);
     }
 
@@ -167,7 +169,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (!currentElement.type.forwardRef && ref) {
-      Ref.attach(currentElement._owner, ref, this);
+      attachRef(currentElement._owner, ref, this);
     }
 
     if (instance.componentDidMount) {
@@ -186,7 +188,7 @@ class CompositeComponent extends BaseComponent {
     let callbacks = this.__pendingCallbacks;
     if (callbacks) {
       this.__pendingCallbacks = null;
-      updater.runCallbacks(callbacks, instance);
+      invokeFunctionsWithContext(callbacks, instance);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -213,7 +215,7 @@ class CompositeComponent extends BaseComponent {
       let ref = currentElement.ref;
 
       if (!currentElement.type.forwardRef && ref) {
-        Ref.detach(currentElement._owner, ref, this);
+        detachRef(currentElement._owner, ref, this);
       }
 
       this[RENDERED_COMPONENT].unmountComponent(shouldNotRemoveChild);
@@ -234,17 +236,16 @@ class CompositeComponent extends BaseComponent {
    * `contextTypes`
    */
   __processContext(context) {
+    let maskedContext = {};
     let Component = this.__currentElement.type;
     let contextTypes = Component.contextTypes;
 
-    if (!contextTypes) {
-      return {};
+    if (contextTypes) {
+      for (let contextName in contextTypes) {
+        maskedContext[contextName] = context[contextName];
+      }
     }
 
-    let maskedContext = {};
-    for (let contextName in contextTypes) {
-      maskedContext[contextName] = context[contextName];
-    }
     return maskedContext;
   }
 
@@ -299,7 +300,7 @@ class CompositeComponent extends BaseComponent {
       Host.measurer && Host.measurer.beforeUpdateComponent(this._mountID, this);
     }
 
-    let willReceive = false;
+    let willReceive;
     let nextContext;
     let nextProps;
 
@@ -312,18 +313,14 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Distinguish between a props update versus a simple state update
-    if (prevElement === nextElement) {
-      // Skip checking prop types again -- we don't read component.props to avoid
-      // warning for DOM component props in this upgrade
-      nextProps = nextElement.props;
-    } else {
-      nextProps = nextElement.props;
+    // Skip checking prop types again -- we don't read component.props to avoid
+    // warning for DOM component props in this upgrade
+    nextProps = nextElement.props;
+    if (prevElement !== nextElement) {
       willReceive = true;
     }
 
-    let hasReceived = willReceive && instance.componentWillReceiveProps;
-
-    if (hasReceived) {
+    if (willReceive && instance.componentWillReceiveProps) {
       // Calling this.setState() within componentWillReceiveProps will not trigger an additional render.
       this.__isPendingState = true;
       performInSandbox(() => {
@@ -337,7 +334,7 @@ class CompositeComponent extends BaseComponent {
       instance.prevForwardRef = prevElement.ref;
       instance.forwardRef = nextElement.ref;
     } else {
-      Ref.update(prevElement, nextElement, this);
+      updateRef(prevElement, nextElement, this);
     }
 
     // Shoud update default
@@ -367,11 +364,11 @@ class CompositeComponent extends BaseComponent {
 
       // Cannot use this.setState() in componentWillUpdate.
       // If need to update state in response to a prop change, use componentWillReceiveProps instead.
-      performInSandbox(() => {
-        if (instance.componentWillUpdate) {
+      if (instance.componentWillUpdate) {
+        performInSandbox(() => {
           instance.componentWillUpdate(nextProps, nextState, nextContext);
-        }
-      }, instance);
+        }, instance);
+      }
 
       // Replace with next
       this.__currentElement = nextElement;
@@ -382,13 +379,16 @@ class CompositeComponent extends BaseComponent {
 
       this.__updateRenderedComponent(nextUnmaskedContext);
 
-      performInSandbox(() => {
-        if (instance.componentDidUpdate) {
+      if (instance.componentDidUpdate) {
+        performInSandbox(() => {
           instance.componentDidUpdate(prevProps, prevState, prevContext);
-        }
-      }, instance);
+        }, instance);
+      }
 
-      this._updateCount++;
+      if (process.env.NODE_ENV !== 'production') {
+        // Calc update count.
+        this._updateCount++;
+      }
     } else {
       // If it's determined that a component should not update, we still want
       // to set props and state but we shortcut the rest of the update.
@@ -403,7 +403,7 @@ class CompositeComponent extends BaseComponent {
     let callbacks = this.__pendingCallbacks;
     if (callbacks) {
       this.__pendingCallbacks = null;
-      updater.runCallbacks(callbacks, instance);
+      invokeFunctionsWithContext(callbacks, instance);
     }
 
     if (process.env.NODE_ENV !== 'production') {
@@ -486,10 +486,8 @@ class CompositeComponent extends BaseComponent {
           }
 
           // If the new length less then prev
-          if (newNativeNode.length < prevNativeNode.length) {
-            for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
-              driver.removeChild(prevNativeNode[i]);
-            }
+          for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
+            driver.removeChild(prevNativeNode[i]);
           }
         }
       );
@@ -505,10 +503,10 @@ class CompositeComponent extends BaseComponent {
 
   __getPublicInstance() {
     let instance = this[INSTANCE];
+
     // The functional components cannot be given refs
-    if (instance instanceof ReactiveComponent) {
-      return null;
-    }
+    if (instance.__isReactiveComponent) return null;
+
     return instance;
   }
 }

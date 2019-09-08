@@ -11,6 +11,9 @@ const RE_RENDER_LIMIT = 24;
 export default class ReactiveComponent extends Component {
   constructor(pureRender, ref) {
     super();
+    // Marked ReactiveComponent.
+    this.__isReactiveComponent = true;
+
     // A pure function
     this.__render = pureRender;
     this._hookID = 0;
@@ -78,10 +81,8 @@ export default class ReactiveComponent extends Component {
         }
       };
 
-      contextItem.emitter.on(contextUpdater);
-      this.willUnmount.push(() => {
-        contextItem.emitter.off(contextUpdater);
-      });
+      contextEmitter.on(contextUpdater);
+      this.willUnmount.push(contextEmitter.off.bind(contextEmitter, contextUpdater));
       this.__dependencies[contextProp] = contextItem;
     }
     return contextItem.renderedContext = contextItem.emitter.value;

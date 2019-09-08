@@ -1,7 +1,7 @@
 import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
-import { isFunction, isNull } from './types';
+import { isArray, isFunction, isNull } from './types';
 import { invokeMinifiedError } from './error';
 import { INSTANCE } from './constant';
 
@@ -156,7 +156,7 @@ function useEffectImpl(effect, inputs, defered) {
 }
 
 export function useImperativeHandle(ref, create, inputs) {
-  const nextInputs = inputs != null ? inputs.concat([ref]) : null;
+  const nextInputs = isArray(inputs) ? inputs.concat([ref]) : null;
 
   useLayoutEffect(() => {
     if (isFunction(ref)) {
@@ -211,9 +211,10 @@ export function useReducer(reducer, initialArg, init) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
+  const hook = hooks[hookID];
 
-  if (!hooks[hookID]) {
-    const initialState = init !== undefined ? init(initialArg) : initialArg;
+  if (!hook) {
+    const initialState = isFunction(init) ? init(initialArg) : initialArg;
 
     const dispatch = action => {
       // Flush all effects first before update state
@@ -253,7 +254,6 @@ export function useReducer(reducer, initialArg, init) {
     ];
   }
 
-  const hook = hooks[hookID];
   const queue = hook[2];
   let next = hook[0];
 
@@ -273,5 +273,6 @@ export function useReducer(reducer, initialArg, init) {
   queue.__eagerReducer = reducer;
   queue.__eagerState = next;
   queue.__actions.length = 0;
+
   return hooks[hookID];
 }
