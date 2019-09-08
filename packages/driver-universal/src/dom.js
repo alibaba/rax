@@ -49,7 +49,12 @@ const driver = Object.assign({}, DriverDOM, {
         if (Array.isArray(transformValue)) {
           for (let i = 0; i < transformValue.length; i++) node.style[prop] = transformValue[i];
         } else {
-          node.style[prop] = transformValue;
+          if (prop[0] === '-' && prop[1] === '-') {
+            // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty. style.setProperty do not support Camel-Case style properties.
+            node.style.setProperty(prop, transformValue);
+          } else {
+            node.style[prop] = transformValue;
+          }
         }
       }
     }
