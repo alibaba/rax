@@ -507,4 +507,168 @@ describe('FragmentComponent', function() {
     jest.runAllTimers();
     expect(el.childNodes[0].childNodes).toEqual([]);
   });
+
+  it('should render correct from empty array to other', function() {
+    let el = createNodeElement('div');
+
+    function F({ type }) {
+      if (type === 'empty') {
+        return [];
+      }
+      return <div>2</div>;
+    }
+
+    class App extends Component {
+      render() {
+        return (
+          [
+            <div>1</div>,
+            <F type={this.props.type} />,
+            <div>3</div>,
+          ]
+        );
+      }
+    }
+
+    render(<App type="empty" />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('3');
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+  });
+
+  it('fragment should diff correct when fist element is empty array', function() {
+    let el = createNodeElement('div');
+
+    function App(props) {
+      if (props.type === 'empty') {
+        return [
+          [[], [], []],
+          [],
+          [],
+          <span>0</span>,
+          <span>1</span>
+        ];
+      } else {
+        return [
+          <div>2</div>,
+          <span>0</span>,
+          <span>1</span>
+        ];
+      }
+    }
+
+    render(<App type="empty" />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('0');
+    expect(el.childNodes[1].childNodes[0].data).toBe('1');
+
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('2');
+    expect(el.childNodes[1].childNodes[0].data).toBe('0');
+    expect(el.childNodes[2].childNodes[0].data).toBe('1');
+  });
+
+  it('should render correct when embedded in fragment', function() {
+    let el = createNodeElement('div');
+
+    function App(props) {
+      if (props.type === 'empty') {
+        return [
+          [[], [], []],
+          [],
+          [],
+          <span>1</span>,
+          <span>2</span>
+        ];
+      } else {
+        return [
+          <div>3</div>,
+          <span>1</span>,
+          <span>2</span>
+        ];
+      }
+    }
+
+    render([<span>0</span>, <App type="empty" />, <span>3</span>], el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('0');
+    expect(el.childNodes[1].childNodes[0].data).toBe('1');
+    expect(el.childNodes[2].childNodes[0].data).toBe('2');
+
+    render([<span>0</span>, <App />, <span>4</span>], el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('0');
+    expect(el.childNodes[1].childNodes[0].data).toBe('3');
+    expect(el.childNodes[2].childNodes[0].data).toBe('1');
+    expect(el.childNodes[3].childNodes[0].data).toBe('2');
+    expect(el.childNodes[4].childNodes[0].data).toBe('4');
+  });
+
+  it('from empty array to not-empty', function() {
+    let el = createNodeElement('div');
+
+    function App(props) {
+      if (props.type === 'empty') {
+        return [
+          <span>0</span>,
+          [],
+          <span>3</span>,
+        ];
+      } else {
+        return [
+          <span>0</span>,
+          [
+            <span>1</span>,
+            <span>2</span>,
+          ],
+          <span>3</span>
+        ];
+      }
+    }
+
+    render(<App type="empty" />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('0');
+    expect(el.childNodes[1].childNodes[0].data).toBe('3');
+
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('0');
+    expect(el.childNodes[1].childNodes[0].data).toBe('1');
+    expect(el.childNodes[2].childNodes[0].data).toBe('2');
+    expect(el.childNodes[3].childNodes[0].data).toBe('3');
+  });
+
+  it('previous node is unmount', function() {
+    let el = createNodeElement('div');
+
+    function App(props) {
+      if (props.type === 'empty') {
+        return [
+          <span>0</span>,
+          <span>1</span>,
+          [[]],
+          <span>2</span>,
+        ];
+      } else {
+        return [
+          [],
+          [],
+          [
+            <span>1</span>,
+            <span>2</span>,
+          ],
+          <span>3</span>
+        ];
+      }
+    }
+
+    render(<App type="empty" />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('0');
+    expect(el.childNodes[1].childNodes[0].data).toBe('1');
+    expect(el.childNodes[2].childNodes[0].data).toBe('2');
+
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+  });
 });

@@ -8,7 +8,7 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from '../toArray';
 import { scheduler } from './scheduler';
-import { isFunction } from '../types';
+import { isFunction, isArray } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
@@ -457,7 +457,12 @@ class CompositeComponent extends BaseComponent {
         });
       }
     } else {
+      // If the new length large then prev
+      let lastNativeNode;
       let prevNativeNode = prevRenderedComponent.__getNativeNode();
+      if (isArray(prevNativeNode) && prevNativeNode.length === 0) {
+        lastNativeNode = Host.getHostPreviousSibling(prevRenderedComponent);
+      }
       prevRenderedComponent.unmountComponent(true);
 
       this[RENDERED_COMPONENT] = instantiateComponent(nextRenderedElement);
@@ -471,8 +476,6 @@ class CompositeComponent extends BaseComponent {
 
           const driver = Host.driver;
 
-          // If the new length large then prev
-          let lastNativeNode;
           for (let i = 0; i < newNativeNode.length; i++) {
             let nativeNode = newNativeNode[i];
             if (prevNativeNode[i]) {

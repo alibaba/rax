@@ -69,7 +69,28 @@ class FragmentComponent extends NativeComponent {
   __updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
     this.__currentElement = nextElement;
-    this.__updateChildren(this.__currentElement, nextContext);
+
+    if (prevElement.length === 0) {
+      if (nextElement.length !== 0) {
+        let lastNativeNode = Host.getHostPreviousSibling(this);
+        let fragment = this.__getNativeNode();
+        this.__mountChildrenImpl(this._parent, nextElement, nextContext, (nativeNode) => {
+          nativeNode = toArray(nativeNode);
+          let node;
+          while (node = nativeNode.shift()) {
+            fragment.push(node);
+            if (lastNativeNode) {
+              Host.driver.insertAfter(node, lastNativeNode);
+            } else {
+              Host.driver.appendChild(node, this._parent);
+            }
+            lastNativeNode = node;
+          }
+        });
+      }
+    } else {
+      this.__updateChildren(this.__currentElement, nextContext);
+    }
 
     if (process.env.NODE_ENV !== 'production') {
       this.__currentElement.type = FragmentComponent;
