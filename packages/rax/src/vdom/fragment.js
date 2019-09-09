@@ -72,21 +72,18 @@ class FragmentComponent extends NativeComponent {
 
     if (prevElement.length === 0) {
       if (nextElement.length !== 0) {
-        let lastNativeNode = Host.getHostPreviousSibling(this);
-        let fragment = this.__getNativeNode();
-        this.__mountChildrenImpl(this._parent, nextElement, nextContext, (nativeNode) => {
-          nativeNode = toArray(nativeNode);
-          let node;
-          while (node = nativeNode.shift()) {
-            fragment.push(node);
-            if (lastNativeNode) {
-              Host.driver.insertAfter(node, lastNativeNode);
+        this.__mountChildren(this.__currentElement, nextContext);
+        const nativeNodes = this.__getNativeNode();
+        if (nativeNodes.length > 0) {
+          const lastPlacedNode = Host.getHostPreviousSibling(this);
+          for (let i = 0, l = nativeNodes.length; i < l; i++) {
+            if (lastPlacedNode) {
+              Host.driver.insertAfter(nativeNodes[l - i - 1], lastPlacedNode);
             } else {
-              Host.driver.appendChild(node, this._parent);
+              Host.driver.appendChild(nativeNodes[i], this._parent);
             }
-            lastNativeNode = node;
           }
-        });
+        }
       }
     } else {
       this.__updateChildren(this.__currentElement, nextContext);
