@@ -318,7 +318,7 @@ export default class NativeComponent extends BaseComponent {
         // and move child in next children loop if need
         if (prevChild != null && shouldUpdateComponent(prevElement, nextElement)) {
           if (prevElement !== nextElement || prevContext !== context) {
-            // Pass the same context when updating chidren
+            // Pass the same context when updating children
             prevChild.__updateComponent(prevElement, nextElement, context,
               context);
           }

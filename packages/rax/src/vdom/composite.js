@@ -468,6 +468,7 @@ class CompositeComponent extends BaseComponent {
         (newNativeNode, parent) => {
           prevNativeNode = toArray(prevNativeNode);
           newNativeNode = toArray(newNativeNode);
+          let isFragmentNode = prevNativeNode && prevNativeNode.__isFragmentNode;
 
           const driver = Host.driver;
 
@@ -479,6 +480,14 @@ class CompositeComponent extends BaseComponent {
               driver.replaceChild(nativeNode, prevNativeNode[i]);
             } else if (lastNativeNode) {
               driver.insertAfter(nativeNode, lastNativeNode);
+            } else if (isFragmentNode) {
+              let mountIndex = this.__mountIndex;
+              let mountedNode = parent.childNodes && parent.childNodes[mountIndex];
+              if (mountedNode) {
+                driver.insertBefore(nativeNode, mountedNode, parent);
+              } else {
+                driver.appendChild(nativeNode, parent);
+              }
             } else {
               driver.appendChild(nativeNode, parent);
             }
