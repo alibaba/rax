@@ -69,6 +69,17 @@ export default function renderApp(App, options) {
       Object.assign(appProps, window.__INITIAL_DATA__.appData);
     }
 
-    processRenderWebApp(shellProps);
+    // Render
+    if (hydrate) {
+      // Avoid router empty initialComponent
+      getCurrentComponent(appProps.routerConfig.routes, withSSR)().then(function(InitialComponent) {
+        if (InitialComponent !== null) {
+          appProps.routerConfig.InitialComponent = InitialComponent;
+        }
+        processRenderWebApp(shellProps);
+      });
+    } else {
+      processRenderWebApp(shellProps);
+    }
   }
 };
