@@ -93,7 +93,6 @@ function transformList(ast, renderItemFunctions, adapter) {
                     || innerPath.node.name === forIndex.name
                     && !(t.isMemberExpression(innerPath.parent) && innerPath.parent.property !== innerPath.node)
                   ) {
-                    console.log(t.isMemberExpression(innerPath.parent));
                     innerPath.node.__listItem = {
                       jsxplus: false,
                       item: forItem.name
