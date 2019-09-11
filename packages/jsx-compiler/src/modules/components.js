@@ -45,31 +45,8 @@ module.exports = {
               componentsDependentProps[tagId].tagIdExpression = parentPath.node.__tagIdExpression;
 
               if (parsed.renderFunctionPath) {
-                const { args, iterValue, loopFnBody } = parentJSXListEl.node.__jsxlist;
-                const __args = [
-                  args[0] || t.identifier('item'),
-                  args[1] || t.identifier('index'),
-                ];
-                const callee = t.memberExpression(iterValue, t.identifier('forEach'));
-                const block = t.blockStatement([]);
-
-                const loopArgs = [t.arrowFunctionExpression(__args, block)];
-                const loopExp = t.expressionStatement(t.callExpression(callee, loopArgs));
-
-                const fnBody = parsed.renderFunctionPath.node.body.body;
-                const grandJSXListEl = parentJSXListEl.findParent(p => p.node.__jsxlist);
-                const body = grandJSXListEl && grandJSXListEl.node.__jsxlist.loopBlockStatement
-                  ? grandJSXListEl.node.__jsxlist.loopBlockStatement.body
-                  : fnBody;
-
-                body.push(loopExp);
-                // Can be removed if not used.
-                block.body.remove = () => {
-                  const index = body.indexOf(loopExp);
-                  body.splice(index, 1);
-                };
-                componentsDependentProps[tagId].parentNode = block.body;
-                parentJSXListEl.node.__jsxlist.loopBlockStatement = block;
+                const { loopFnBody } = parentJSXListEl.node.__jsxlist;
+                componentsDependentProps[tagId].parentNode = loopFnBody.body;
               }
             }
 

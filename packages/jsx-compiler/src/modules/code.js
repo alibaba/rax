@@ -144,7 +144,12 @@ module.exports = {
         ];
         const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
         if (propMaps.length > 0) {
-          (parentNode || fnBody).push(callUpdateProps);
+          const targetNode = parentNode || fnBody;
+          if (t.isReturnStatement(targetNode[targetNode.length - 1])) {
+            targetNode.splice(targetNode.length - 1, 0, callUpdateProps);
+          } else {
+            targetNode.push(callUpdateProps);
+          }
         } else if ((parentNode || fnBody).length === 0) {
           // Remove empty loop exp.
           parentNode && parentNode.remove && parentNode.remove();
