@@ -174,25 +174,25 @@ describe('Fragment', () => {
           [[], [], []],
           [],
           [],
-          <span id={'1'}>1</span>,
-          <span id={'2'}>2</span>
+          <span>1</span>,
+          <span>2</span>
         ];
       } else {
         return [
-          <div id={'3'}>3</div>,
-          <div id={'1'}>1</div>,
-          <div id={'2'}>2</div>
+          <div>3</div>,
+          <div>1</div>,
+          <div>2</div>
         ];
       }
     }
 
-    render([<span id={'0'}>0</span>, <App type="empty" />, <span id={'3'}>3</span>], el);
+    render([<span>0</span>, <App type="empty" />, <span>3</span>], el);
     expect(el.childNodes[0].childNodes[0].data).toBe('0');
     expect(el.childNodes[1].childNodes[0].data).toBe('1');
     expect(el.childNodes[2].childNodes[0].data).toBe('2');
     expect(el.childNodes[3].childNodes[0].data).toBe('3');
 
-    render([<div id={'0'}>0</div>, <App />, <div id={'4'}>4</div>], el);
+    render([<div>0</div>, <App />, <div>4</div>], el);
 
     expect(el.childNodes[0].childNodes[0].data).toBe('0');
     expect(el.childNodes[1].childNodes[0].data).toBe('3');
