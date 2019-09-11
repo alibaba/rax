@@ -1,6 +1,6 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
-const genExpression = require('../codegen/genExpression');
+
 const TEMPLATE_AST = 'templateAST';
 const DynamicBinding = require('../utils/DynamicBinding');
 
@@ -39,7 +39,6 @@ function shouldReplace(path) {
     traverse(node.value.expression, {
       Identifier(innerPath) {
         if (innerPath.node.__listItem) {
-          console.log(genExpression(node.value.expression))
           shouldReplace = false;
           innerPath.stop();
         }
