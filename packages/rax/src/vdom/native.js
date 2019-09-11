@@ -373,6 +373,7 @@ export default class NativeComponent extends BaseComponent {
       let nextIndex = 0;
       let lastPlacedNode = null;
       let nextNativeNodes = [];
+      let isFragmentParent;
       let insertNodes = (nativeNodes, parent) => {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
@@ -385,6 +386,8 @@ export default class NativeComponent extends BaseComponent {
           } else if (prevFirstNativeNode) {
             // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
+          } else if (isFragmentParent && parent[nextIndex]) {
+            driver.insertBefore(nativeNodes[i], parent[nextIndex]);
           } else if (parent) {
             // [*newChild1, *newChild2]
             driver.appendChild(nativeNodes[i], parent);
@@ -408,7 +411,8 @@ export default class NativeComponent extends BaseComponent {
 
           let parent = this.__getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
-          if (isArray(parent)) {
+          if (isArray(parent) && parent.__isFragmentNode) {
+            isFragmentParent = true;
             parent = this._parent;
           }
 
