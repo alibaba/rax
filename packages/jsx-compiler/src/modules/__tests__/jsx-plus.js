@@ -10,7 +10,12 @@ describe('Directives', () => {
         <View x-for={val in array}>{val}</View>
       `);
       _transformList(ast, adapter);
-      expect(genExpression(ast)).toEqual('<View a:for={array} a:for-item="val">{val}</View>');
+      expect(genExpression(ast)).toEqual(`<View a:for={array.map((val, index) => {
+  return {
+    val: val,
+    index: index
+  };
+})} a:for-item="val" a:for-index="index">{val}</View>`);
     });
   });
 

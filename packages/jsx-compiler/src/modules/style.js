@@ -1,8 +1,7 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
-
+const genExpression = require('../codegen/genExpression');
 const TEMPLATE_AST = 'templateAST';
-const DYNAMIC_STYLES = 'dynamicStyles';
 const DynamicBinding = require('../utils/DynamicBinding');
 
 /**
@@ -12,13 +11,13 @@ const DynamicBinding = require('../utils/DynamicBinding');
  *          var _style0 = { width: 100 };
  *          return { _style0 };
  */
-function transformStyle(ast, dynamicStyles) {
+function transformStyle(ast) {
   const dynamicValue = new DynamicBinding('_s');
 
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
-      if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
+      if (shouldReplace(path)) {
         const styleObjectExpression = node.value.expression;
 
         // <tag style="{{ _s0 }}" />
@@ -30,6 +29,25 @@ function transformStyle(ast, dynamicStyles) {
     },
   });
   return dynamicValue.getStore();
+}
+
+function shouldReplace(path) {
+  const { node } = path;
+  if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
+    let shouldReplace = true;
+    // List item has been replaced in list module
+    traverse(node.value.expression, {
+      Identifier(innerPath) {
+        if (innerPath.node.__listItem) {
+          console.log(genExpression(node.value.expression))
+          shouldReplace = false;
+          innerPath.stop();
+        }
+      }
+    });
+    return shouldReplace;
+  }
+  return false;
 }
 
 module.exports = {

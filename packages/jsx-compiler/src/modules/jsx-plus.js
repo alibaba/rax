@@ -98,8 +98,12 @@ function transformDirectiveList(ast, adapter) {
           path.traverse({
             Identifier(innerPath) {
               const { node } = innerPath;
-              if (args.find(arg => arg.name === node.name)) {
-                node.__xforArgs = true;
+              if (args.find(arg => arg.name === node.name)
+              ) {
+                node.__listItem = {
+                  jsxplus: true,
+                  item: args[0].name
+                };
               }
             }
           });
@@ -147,7 +151,7 @@ function transformDirectiveList(ast, adapter) {
             params = left.expressions;
           } else if (t.isIdentifier(left)) {
             // x-for={item in value}
-            params.push(left);
+            params = [left, t.identifier('index')];
           } else {
             // x-for={??? in value}
             throw new Error('Stynax error of x-for.');
@@ -155,9 +159,28 @@ function transformDirectiveList(ast, adapter) {
         } else {
           // x-for={value}, x-for={callExp()}, ...
           iterValue = expression;
+          params = [t.identifier('item'), t.identifier('index')];
         }
         const parentJSXEl = path.findParent(p => p.isJSXElement());
-        parentJSXEl.node.__jsxlist = { args: params, iterValue, jsxplus: true };
+        // Transform x-for iterValue to map function
+        const loopFnBody = t.blockStatement([
+          t.returnStatement(
+            t.objectExpression([
+              t.objectProperty(params[0], params[0]),
+              t.objectProperty(params[1], params[1])
+            ])
+          )
+        ]);
+        parentJSXEl.node.__jsxlist = {
+          args: params,
+          iterValue: t.callExpression(
+            t.memberExpression(iterValue, t.identifier('map')),
+            [
+              t.arrowFunctionExpression(params, loopFnBody)
+            ]),
+          loopFnBody,
+          jsxplus: true
+        };
         path.remove();
       }
     }
