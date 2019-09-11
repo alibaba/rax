@@ -23,14 +23,14 @@ export function withRouter(Klass) {
  * Navigate to given path.
  */
 export function push(path) {
-  return navigateTo({ url: path });
+  return navigateTo({ url: `/${router.config[path]}` });
 }
 
 /**
  * Navigate replace.
  */
 export function replace(path) {
-  return redirectTo({ url: path });
+  return redirectTo({ url: `/${router.config[path]}` });
 }
 
 /**
