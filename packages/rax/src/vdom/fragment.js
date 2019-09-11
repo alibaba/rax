@@ -3,6 +3,7 @@ import NativeComponent from './native';
 import Instance from './instance';
 import toArray from '../toArray';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
+import getHostPreviousSibling from './getHostPreviousSibling';
 
 /**
  * Fragment Component
@@ -75,7 +76,7 @@ class FragmentComponent extends NativeComponent {
         this.__mountChildren(this.__currentElement, nextContext);
         const nativeNodes = this.__getNativeNode();
         if (nativeNodes.length > 0) {
-          const lastPlacedNode = Host.getHostPreviousSibling(this);
+          const lastPlacedNode = getHostPreviousSibling(this);
           for (let i = 0, l = nativeNodes.length; i < l; i++) {
             if (lastPlacedNode) {
               Host.driver.insertAfter(nativeNodes[l - i - 1], lastPlacedNode);

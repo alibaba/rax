@@ -9,6 +9,7 @@ import toArray from '../toArray';
 import { isFunction, isArray, isNull } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
+import getHostPreviousSibling from './getHostPreviousSibling';
 
 
 const STYLE = 'style';
@@ -361,7 +362,7 @@ export default class NativeComponent extends BaseComponent {
           prevFirstNativeNode = prevFirstChild.__getNativeNode();
           if (isArray(prevFirstNativeNode)) {
             if (prevFirstNativeNode.length === 0) {
-              lastPlacedNode = Host.getHostPreviousSibling(prevFirstChild);
+              lastPlacedNode = getHostPreviousSibling(prevFirstChild);
             }
             prevFirstNativeNode = prevFirstNativeNode[0];
           }

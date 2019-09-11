@@ -12,6 +12,7 @@ import { isFunction, isArray } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
+import getHostPreviousSibling from './getHostPreviousSibling';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -461,7 +462,7 @@ class CompositeComponent extends BaseComponent {
       let lastNativeNode;
       let prevNativeNode = prevRenderedComponent.__getNativeNode();
       if (isArray(prevNativeNode) && prevNativeNode.length === 0) {
-        lastNativeNode = Host.getHostPreviousSibling(prevRenderedComponent);
+        lastNativeNode = getHostPreviousSibling(prevRenderedComponent);
       }
       prevRenderedComponent.unmountComponent(true);
 
