@@ -103,6 +103,103 @@ describe('Fragment', () => {
     expect(container.childNodes[0].nodeType).toBe(8);
   });
 
+  it('should render correct from no empty array to empty', function() {
+    let el = createNodeElement('div');
+
+    function F({ type }) {
+      if (type === 'empty') {
+        return [];
+      }
+      return <div>2</div>;
+    }
+
+    function G({ type }) {
+      if (type === 'empty') {
+        return ['1', '2'];
+      }
+      return [];
+    }
+
+    class App extends Component {
+      render() {
+        return (
+          [
+            <div>1</div>,
+            <G type={this.props.type} />,
+            <F type={this.props.type} />,
+            <div>3</div>,
+          ]
+        );
+      }
+    }
+
+    render(<App type="empty" />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].data).toBe('1');
+    expect(el.childNodes[2].data).toBe('2');
+    expect(el.childNodes[3].childNodes[0].data).toBe('3');
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+  });
+
+  it('should render correct when swap element position', function() {
+    let el = createNodeElement('div');
+
+    function F({ type }) {
+      if (type === 'empty') {
+        return [];
+      }
+      return <span>2</span>;
+    }
+
+    function G({ type }) {
+      if (type === 'empty') {
+        return ['1', '2'];
+      }
+      return [];
+    }
+
+    class App extends Component {
+      render() {
+        if (this.props.type === 'empty') {
+          return [
+            <F />,
+            <G />,
+            <div>1</div>
+          ];
+        }
+
+        return (
+          [
+            <div>1</div>,
+            <G type={this.props.type} />,
+            <F type={this.props.type} />,
+            <div>3</div>,
+          ]
+        );
+      }
+    }
+
+    render([<div>0</div>, <App />, <App type={'empty'} />, <span>10</span>], el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('0');
+    expect(el.childNodes[1].childNodes[0].data).toBe('1');
+    expect(el.childNodes[2].childNodes[0].data).toBe('2');
+    expect(el.childNodes[3].childNodes[0].data).toBe('3');
+    expect(el.childNodes[4].childNodes[0].data).toBe('2');
+    expect(el.childNodes[5].childNodes[0].data).toBe('1');
+
+    render([<App />, <div>0</div>, <App type={'empty'} />], el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+    expect(el.childNodes[3].childNodes[0].data).toBe('0');
+    expect(el.childNodes[4].childNodes[0].data).toBe('2');
+    expect(el.childNodes[5].childNodes[0].data).toBe('1');
+    expect(el.childNodes[6]).toBe(undefined);
+  });
+
   it('should render correct from empty array to other', function() {
     let el = createNodeElement('div');
 
@@ -132,6 +229,67 @@ describe('Fragment', () => {
     expect(el.childNodes[0].childNodes[0].data).toBe('1');
     expect(el.childNodes[1].childNodes[0].data).toBe('2');
     expect(el.childNodes[2].childNodes[0].data).toBe('3');
+  });
+
+  it('should render correct from mixed array to another mixed array', function() {
+    let el = createNodeElement('div');
+
+    function App(props) {
+      if (props.type === 'empty') {
+        return [
+          [<div>1</div>, <div>2</div>],
+          [
+            <div>3</div>,
+            <div>4</div>,
+            [<div>5</div>]
+          ]
+        ];
+      }
+
+      return [
+        [<div>1</div>],
+        [<div>2</div>, <div>3</div>],
+        <div>4</div>,
+        [[[<div>5</div>]]]
+      ];
+    }
+
+    render(<App type={'empty'} />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+    expect(el.childNodes[3].childNodes[0].data).toBe('4');
+    expect(el.childNodes[4].childNodes[0].data).toBe('5');
+
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+    expect(el.childNodes[3].childNodes[0].data).toBe('4');
+    expect(el.childNodes[4].childNodes[0].data).toBe('5');
+  });
+
+  it('should render correct when first element is replaced', function() {
+    let el = createNodeElement('div');
+
+    function App(props) {
+      if (props.type === 'empty') {
+        return [
+          [<div>111</div>],
+          <div>0</div>
+        ];
+      }
+
+      return [<span>2</span>, <div>0</div>];
+    }
+
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('2');
+    expect(el.childNodes[1].childNodes[0].data).toBe('0');
+
+    render(<App type={'empty'} />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('111');
+    expect(el.childNodes[1].childNodes[0].data).toBe('0');
   });
 
   it('fragment should diff correct when fist element is empty array', function() {
@@ -186,19 +344,23 @@ describe('Fragment', () => {
       }
     }
 
-    render([<span>0</span>, <App type="empty" />, <span>3</span>], el);
+    render([<span>0</span>, <App type="empty" />, <App />, <span>3</span>], el);
     expect(el.childNodes[0].childNodes[0].data).toBe('0');
     expect(el.childNodes[1].childNodes[0].data).toBe('1');
     expect(el.childNodes[2].childNodes[0].data).toBe('2');
     expect(el.childNodes[3].childNodes[0].data).toBe('3');
+    expect(el.childNodes[4].childNodes[0].data).toBe('1');
+    expect(el.childNodes[5].childNodes[0].data).toBe('2');
+    expect(el.childNodes[6].childNodes[0].data).toBe('3');
 
-    render([<div>0</div>, <App />, <div>4</div>], el);
+    render([<div>0</div>, <App />, <div>9</div>, <div>4</div>], el);
 
     expect(el.childNodes[0].childNodes[0].data).toBe('0');
     expect(el.childNodes[1].childNodes[0].data).toBe('3');
     expect(el.childNodes[2].childNodes[0].data).toBe('1');
     expect(el.childNodes[3].childNodes[0].data).toBe('2');
-    expect(el.childNodes[4].childNodes[0].data).toBe('4');
+    expect(el.childNodes[4].childNodes[0].data).toBe('9');
+    expect(el.childNodes[5].childNodes[0].data).toBe('4');
   });
 
   it('from empty array to not-empty', function() {
