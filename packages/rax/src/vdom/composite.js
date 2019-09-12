@@ -10,7 +10,8 @@ import toArray from '../toArray';
 import { scheduler } from './scheduler';
 import { isFunction } from '../types';
 import assign from '../assign';
-import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import { INSTANCE, INTERNAL, RENDERED_COMPONENT, PARENT_INSTANCE } from '../constant';
+import getPreviousSiblingNativeNodeOfComponent from './getPreviousSiblingNativeNodeOfComponent';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 
 function performInSandbox(fn, instance, callback) {
@@ -480,11 +481,10 @@ class CompositeComponent extends BaseComponent {
               driver.replaceChild(nativeNode, prevNativeNode[i]);
             } else if (lastNativeNode) {
               driver.insertAfter(nativeNode, lastNativeNode);
-            } else if (isFragmentNode) {
-              let mountIndex = this.__mountIndex;
-              let mountedNode = parent.childNodes && parent.childNodes[mountIndex];
+            } else if (isFragmentNode && this[PARENT_INSTANCE]) {
+              let mountedNode = getPreviousSiblingNativeNodeOfComponent(this);
               if (mountedNode) {
-                driver.insertBefore(nativeNode, mountedNode, parent);
+                driver.insertAfter(nativeNode, mountedNode, parent);
               } else {
                 driver.appendChild(nativeNode, parent);
               }

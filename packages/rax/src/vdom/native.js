@@ -9,6 +9,7 @@ import toArray from '../toArray';
 import { isFunction, isArray, isNull } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
+import getPreviousSiblingNativeNodeOfComponent from './getPreviousSiblingNativeNodeOfComponent';
 
 
 const STYLE = 'style';
@@ -344,7 +345,8 @@ export default class NativeComponent extends BaseComponent {
     // `driver.removeChildren` is optional driver protocol.
     let shouldRemoveAllChildren = Boolean(
       driver.removeChildren
-      && isNull(nextChildrenElements) || nextChildrenElements && !nextChildrenElements.length
+      // nextChildElements == null or nextChildElements is empty
+      && (isNull(nextChildrenElements) || nextChildrenElements && !nextChildrenElements.length)
     );
 
     // Unmount children that are no longer present.
@@ -377,7 +379,7 @@ export default class NativeComponent extends BaseComponent {
       let insertNodes = (nativeNodes, parent) => {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
-        let parentIndexNodes = parent && parent.childNodes[nextIndex];
+        let siblingNode = getPreviousSiblingNativeNodeOfComponent(this);
 
         for (let i = 0, l = nativeNodes.length; i < l; i++) {
           if (lastPlacedNode) {
@@ -387,10 +389,9 @@ export default class NativeComponent extends BaseComponent {
           } else if (prevFirstNativeNode) {
             // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
-          } else if (isFragmentParent && parentIndexNodes) {
-            // [*newChild1, *newChild2, parentIndexNodes]
-            // if parent is fragment node, insert node into original fragment node position
-            driver.insertAfter(nativeNodes[i], parent.childNodes[nextIndex]);
+          } else if (isFragmentParent && siblingNode) {
+            // if parent is fragment node, find nativeNode previousSibling node
+            driver.insertAfter(nativeNodes[i], siblingNode);
           } else if (parent) {
             // [*newChild1, *newChild2]
             driver.appendChild(nativeNodes[i], parent);
