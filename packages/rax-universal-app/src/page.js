@@ -8,7 +8,13 @@ const visibleListeners = {
 let initialShow = false;
 let prevVisibleState = true;
 
-export function usePageEffect(cycle, callback) {
+function emit(cycle, ...args) {
+  for (let i = 0, l = visibleListeners[cycle].length; i < l; i++) {
+    visibleListeners[cycle][i](...args);
+  }
+}
+
+function usePageLifecycle(cycle, callback) {
   switch (cycle) {
     case 'show':
     case 'hide':
@@ -26,27 +32,29 @@ export function usePageEffect(cycle, callback) {
     if (initialShow === false) {
       initialShow = true;
       useEffect(() => {
-        invokeCycle('show');
+        emit('show');
       });
     }
   }
 }
 
-function invokeCycle(cycle, ...args) {
-  for (let i = 0, l = visibleListeners[cycle].length; i < l; i++) {
-    visibleListeners[cycle][i](...args);
-  }
+export function usePageShow(callback) {
+  usePageLifecycle('show', callback);
+}
+
+export function usePageHide(callback) {
+  usePageLifecycle('hide', callback);
 }
 
 if (isWeb) {
   document.addEventListener('visibilitychange', function() {
     const currentVisibleState = document.visibilityState === 'visible';
     if (prevVisibleState !== currentVisibleState) {
-      invokeCycle(currentVisibleState ? 'show' : 'hide');
+      emit(currentVisibleState ? 'show' : 'hide');
     }
     prevVisibleState = currentVisibleState;
   });
 } else if (isWeex) {
+  // TODO: support weex
   // require('@weex/module')
-  // todo support weex.
 }

@@ -2,7 +2,6 @@ import { createElement, useRef, useState, useImperativeHandle } from 'rax';
 import * as RaxUseRouter from 'rax-use-router';
 import { isWeex, isWeb, isNode } from 'universal-env';
 import { createHashHistory } from 'history';
-import encodeQS from 'querystring/encode';
 
 let _history = null;
 let _routerConfig = {};
@@ -132,7 +131,7 @@ export function preload(config) {
 }
 
 /**
- * Rrerender WebApp's page content.
+ * Prerender WebApp's page content.
  * @param config {Object}
  * eg:
  *  1. prerender({pageIndex: 0})  // preload dynamic import page bundle for now(todo page alive)

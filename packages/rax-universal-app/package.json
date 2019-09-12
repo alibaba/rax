@@ -1,7 +1,7 @@
 {
-  "name": "universal-app-runtime",
-  "version": "0.3.0",
-  "description": "Provide framework level runtime support of universal app.",
+  "name": "rax-universal-app",
+  "version": "0.0.1",
+  "description": "Rax application framework for univesal app.",
   "main": "lib/index.js",
   "author": "Rax Team",
   "dependencies": {
