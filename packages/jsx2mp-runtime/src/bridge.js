@@ -167,10 +167,11 @@ function noop() {}
 /**
  * Bridge App definition.
  * @param definedApp
+ * @param routerMap
  * @return instance
  */
-export function createApp(definedApp) {
-  const appProps = { routerConfig: null };
+export function createApp(definedApp, routerMap) {
+  const appProps = { routerConfig: routerMap };
   const appConfig = {
     _updateData: noop,
     _updateMethods: noop,

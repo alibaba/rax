@@ -18,6 +18,7 @@ const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
+const SAFE_ROUTER_MAP = '__router_map__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
@@ -260,6 +261,20 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
   traverse(ast, {
     Program(path) {
       const localIdentifier = t.identifier(safeCreateInstanceId);
+      // Component(__create_component__(__class_def__));
+      const args = [t.identifier(EXPORTED_DEF)];
+
+      // Insert routerMap import declaration
+      if (type === 'app') {
+        path.node.body.unshift(
+          t.importDeclaration(
+            [t.importDefaultSpecifier(t.identifier(SAFE_ROUTER_MAP))],
+            t.stringLiteral('./routerMap')
+          )
+        );
+        // App(__create_app__(__class_def__, __router_map__));
+        args.push(t.identifier(SAFE_ROUTER_MAP));
+      }
 
       // import { createComponent as __create_component__ } from "/__helpers/component";
       const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
@@ -292,8 +307,6 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
         )
       );
 
-      // Component(__create_component__(__class_def__));
-      const args = [t.identifier(EXPORTED_DEF)];
       // __create_component__(__class_def__, { events: ['_e*']})
       if (eventHandlers.length > 0) {
         args.push(
