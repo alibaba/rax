@@ -1,4 +1,4 @@
-const { join, relative } = require('path');
+const { join, relative, dirname } = require('path');
 const { existsSync, statSync } = require('fs-extra');
 const chalk = require('chalk');
 
@@ -23,16 +23,16 @@ function getNpmName(value) {
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeFileName, npmRelativePath } = options;
-  const source = (value, prefix, filename, rootContext) => {
+  const { normalizeFileName, nodeModulesPathList } = options;
+  const source = (value, npmList, filename, rootContext) => {
     const npmName = getNpmName(value);
     // Example:
     // value => '@ali/universal-goldlog' or '@ali/xxx/foo/lib'
-    // prefix => '../npm'
+    // npmList => ['/Users/xxx/node_modules/xxx', '/Users/xxx/node_modules/aaa/node_modules/bbb']
     // filename => '/Users/xxx/workspace/yyy/src/utils/logger.js'
     // rootContext => '/Users/xxx/workspace/yyy/'
-    const nodeModulePath = join(rootContext, 'node_modules');
-    const searchPaths = [nodeModulePath];
+
+    const searchPaths = npmList.reverse();
     const target = require.resolve(value, { paths: searchPaths });
 
     // In tnpm, target will be like following (symbol linked path):
@@ -47,7 +47,8 @@ module.exports = function visitor({ types: t }, options) {
     const moduleBasePath = join(packageJSONPath, '..');
     const modulePathSuffix = relative(moduleBasePath, target);
     // ret => '../npm/_ali/universal-goldlog/lib/index.js
-    return t.stringLiteral(normalizeFileName(join(prefix, npmName, modulePathSuffix)));
+    const filePath = relative(dirname(filename), join(moduleBasePath, modulePathSuffix)).replace(/node_modules/g, 'npm');
+    return t.stringLiteral(normalizeFileName(filePath));
   };
 
   return {
@@ -57,7 +58,7 @@ module.exports = function visitor({ types: t }, options) {
         if (isWeexModule(value)) {
           path.remove();
         } else if (isNpmModule(value)) {
-          path.node.source = source(value, npmRelativePath, state.filename, state.cwd);
+          path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
         }
       },
 
@@ -73,7 +74,7 @@ module.exports = function visitor({ types: t }, options) {
               path.replaceWith(t.nullLiteral());
             } else if (isNpmModule(node.arguments[0].value)) {
               path.node.arguments = [
-                source(node.arguments[0].value, npmRelativePath, state.filename, state.cwd)
+                source(node.arguments[0].value, nodeModulesPathList, state.filename, state.cwd)
               ];
             }
           } else if (t.isExpression(node.arguments[0])) {

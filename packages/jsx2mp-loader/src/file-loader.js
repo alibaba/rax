@@ -19,12 +19,14 @@ module.exports = function fileLoader(content) {
   const loaderOptions = getOptions(this);
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const rootContext = this.rootContext;
-  const currentNodeModulePath = join(rootContext, 'node_modules');
+  const nodeModulesPathList = getNearestNodeModulesPath(rootContext, this.resourcePath);
+  const currentNodeModulePath = nodeModulesPathList[nodeModulesPathList.length - 1];
+  const rootNodeModulePath = join(rootContext, 'node_modules');
   const outputPath = this._compiler.outputPath;
   const relativeResourcePath = relative(rootContext, this.resourcePath);
 
   const isNodeModule = cached(function isNodeModule(path) {
-    return path.indexOf(currentNodeModulePath) === 0;
+    return path.indexOf(rootNodeModulePath) === 0;
   });
 
   const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
@@ -73,9 +75,9 @@ module.exports = function fileLoader(content) {
       if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
 
-      const distSourcePath = normalizeFileName(join(outputPath, 'npm', npmName, splitedNpmPath.join('/')));
-      const npmRelativePath = relative(dirname(this.resourcePath), currentNodeModulePath);
-      const { code, map } = transformCode(rawContent, loaderOptions, npmRelativePath, relativeResourcePath);
+      const { code, map } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath);
+
+      const distSourcePath = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath))).replace(/node_modules/g, 'npm');
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -89,9 +91,8 @@ module.exports = function fileLoader(content) {
     );
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
-    const npmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
 
-    const { code } = transformCode(rawContent, loaderOptions, npmRelativePath, relativeResourcePath);
+    const { code } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath);
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     writeFileSync(distSourcePath, code, 'utf-8');
@@ -100,12 +101,12 @@ module.exports = function fileLoader(content) {
   return content;
 };
 
-function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePath) {
+function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourcePath) {
   const presets = [];
   const plugins = [
     [
       require('./babel-plugin-rename-import'),
-      { npmRelativePath, normalizeFileName }
+      { normalizeFileName, nodeModulesPathList }
 
     ], // for rename npm modules.
     require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
@@ -156,4 +157,20 @@ function transformCode(rawCode, loaderOptions, npmRelativePath = '', resourcePat
  */
 function normalizeFileName(filename) {
   return filename.replace(/@/g, '_');
+}
+
+// root: /Users/chriscindy/Code/Test/myRaxMiniapp5.0
+// current: /Users/chriscindy/Code/Test/myRaxMiniapp5.0/node_modules/rax/lib/vdom/shouldUpdateComponent.js
+function getNearestNodeModulesPath(root, current) {
+  const relativePathArray = relative(root, current).split('/');
+  let index = root;
+  const result = [];
+  while (index !== current) {
+    const ifNodeModules = join(index, '/node_modules');
+    if (existsSync(ifNodeModules)) {
+      result.push(ifNodeModules);
+    }
+    index = join(index, relativePathArray.shift());
+  }
+  return result;
 }
