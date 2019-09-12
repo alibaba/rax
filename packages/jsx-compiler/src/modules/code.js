@@ -161,6 +161,7 @@ module.exports = {
       });
       addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
+      addProviderIniter(parsed.contextName, parsed.contextInitValue, parsed.renderFunctionPath);
     }
   },
 };
@@ -448,6 +449,18 @@ function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
   fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
     t.objectExpression(methodsProperties)
   ])));
+}
+
+function addProviderIniter(contextName, contextInitValue, renderFunctionPath) {
+  if (contextName) {
+    const ProviderIniter = t.memberExpression(
+      t.identifier(contextName),
+      t.identifier('Provider')
+    )
+    const fnBody = renderFunctionPath.node.body.body;
+
+    fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [contextInitValue])));
+  }
 }
 
 /**

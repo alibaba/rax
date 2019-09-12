@@ -108,22 +108,33 @@ module.exports = {
               }
             }
           }
-        } else if (t.isJSXMemberExpression(node.name)) { // <RecyclerView.Cell />
+        } else if (t.isJSXMemberExpression(node.name)) { // <RecyclerView.Cell /> or <context.Provider>
           const { object, property } = node.name;
           if (t.isJSXIdentifier(object) && t.isJSXIdentifier(property)) {
-            const alias = getComponentAlias(object.name, parsed.imported);
-            removeImport(parsed.ast, alias);
-            if (alias) {
-              const pkg = getComponentConfig(alias.from, options.resourcePath);
-              if (pkg && pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name]) {
-                let subComponent = pkg.miniappConfig.subComponents[property.name];
-                node.name = t.jsxIdentifier(subComponent.tagNameMap);
-                // subComponent default style
-                if (subComponent.attributes && subComponent.attributes.style) {
-                  path.parentPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('style'), t.stringLiteral(subComponent.attributes.style)));
-                }
-                if (path.parentPath.node.closingElement) {
-                  path.parentPath.node.closingElement.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
+            if(property.name === 'Provider') { // context.Provider>
+              const valueAttribute = node.attributes.find(a => t.isJSXIdentifier(a.name) && a.name.name === 'value')
+              const contextInitValue = valueAttribute.value.expression;
+
+              parsed.contextInitValue = contextInitValue;
+              parsed.contextName = object.name;
+              node.name = t.jsxIdentifier('block');
+              node.attributes = [];
+              path.parentPath.node.closingElement.name = t.jsxIdentifier('block');
+            } else { // <RecyclerView.Cell />
+              const alias = getComponentAlias(object.name, parsed.imported);
+              removeImport(parsed.ast, alias);
+              if (alias) {
+                const pkg = getComponentConfig(alias.from, options.resourcePath);
+                if (pkg && pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name]) {
+                  let subComponent = pkg.miniappConfig.subComponents[property.name];
+                  node.name = t.jsxIdentifier(subComponent.tagNameMap);
+                  // subComponent default style
+                  if (subComponent.attributes && subComponent.attributes.style) {
+                    path.parentPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('style'), t.stringLiteral(subComponent.attributes.style)));
+                  }
+                  if (path.parentPath.node.closingElement) {
+                    path.parentPath.node.closingElement.name = t.jsxIdentifier(pkg.miniappConfig.subComponents[property.name].tagNameMap);
+                  }
                 }
               }
             }

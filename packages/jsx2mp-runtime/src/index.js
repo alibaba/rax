@@ -4,12 +4,14 @@ import { usePageEffect } from './page';
 import { useRouter, withRouter, push, replace, go, goBack, goForward, canGo } from './router';
 import Component from './component';
 import createStyle from './createStyle';
+import createContext from './createContext';
 
 export {
   createApp,
   createPage,
   createComponent,
   createStyle,
+  createContext,
 
   Component,
 

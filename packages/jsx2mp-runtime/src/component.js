@@ -26,6 +26,8 @@ export default class Component {
     this.state = {};
     this.props = {};
 
+    this.__dependencies = {} // for context
+
     this.__shouldUpdate = false;
     this._methods = {};
     this._hooks = {};
@@ -107,6 +109,41 @@ export default class Component {
       }
     }
     return state;
+  }
+
+  _readContext(context) {
+    const Provider = context.Provider;
+    const contextProp = Provider.contextProp;
+    let contextItem = this.__dependencies[contextProp];
+    if (!contextItem) {
+      const readEmitter = Provider.readEmitter;
+      const contextEmitter = readEmitter(this);
+      contextItem = {
+        emitter: contextEmitter,
+        renderedContext: contextEmitter.value,
+      };
+
+      const contextUpdater = (newContext) => {
+        if (!Object.is(newContext, contextItem.renderedContext)) {
+          this.__shouldUpdate = true;
+          this._updateComponent();
+        }
+      };
+
+      contextItem.emitter.on(contextUpdater);
+      this._registerLifeCycle(COMPONENT_WILL_UNMOUNT, () => {
+        contextItem.emitter.off(contextUpdater);
+      });
+      this.__dependencies[contextProp] = contextItem;
+    }
+    return contextItem.renderedContext = contextItem.emitter.value;
+  }
+
+  _injectContextType() {
+    const contextType = this.constructor.contextType;
+    if (contextType) {
+      this.context = this._readContext(contextType);
+    }
   }
 
   _mountComponent() {
@@ -235,6 +272,8 @@ export default class Component {
         this._hookID = 0;
         const nextProps = args[0] || this.props;
         const nextState = args[1] || this.state;
+
+        this._injectContextType();
 
         this.render(this.props = nextProps, this.state = nextState);
         break;

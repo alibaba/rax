@@ -1,11 +1,19 @@
-const listeners = {};
+export default class ValueEmitter {
+  constructor(defaultValue) {
+    this.id = Math.random();
+    this.handlers = [];
+    this.value = defaultValue;
+  }
 
-export function on(evtName, callback) {
-  (listeners[evtName] = listeners[evtName] || []).push(callback);
-}
+  on(handler) {
+    this.handlers.push(handler);
+  }
 
-export function emit(evtName, ...args) {
-  (listeners[evtName] = listeners[evtName] || []).forEach(callback => {
-    callback(...args);
-  });
+  off(handler) {
+    this.handlers = this.handlers.filter(h => h !== handler);
+  }
+
+  emit() {
+    this.handlers.forEach(handler => handler(this.value));
+  }
 }
