@@ -379,7 +379,12 @@ export default class NativeComponent extends BaseComponent {
       let insertNodes = (nativeNodes, parent) => {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
-        let siblingNode = getPreviousSiblingNativeNodeOfComponent(this);
+        let siblingNode;
+
+        // only fragmentParent need to get the sibling node
+        if (isFragmentParent) {
+          siblingNode = getPreviousSiblingNativeNodeOfComponent(this);
+        }
 
         for (let i = 0, l = nativeNodes.length; i < l; i++) {
           if (lastPlacedNode) {
