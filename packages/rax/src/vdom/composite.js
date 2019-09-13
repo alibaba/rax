@@ -11,7 +11,7 @@ import { scheduler } from './scheduler';
 import { isFunction } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT, PARENT_INSTANCE } from '../constant';
-import getPreviousSiblingNativeNodeOfComponent from './getPreviousSiblingNativeNodeOfComponent';
+import getPreviousSiblingNativeNode from './getPreviousSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 
 function performInSandbox(fn, instance, callback) {
@@ -34,8 +34,8 @@ function handleError(instance, error) {
     if (instance.componentDidCatch) {
       boundary = instance;
       break;
-    } else if (internal && internal._parentInstance) {
-      instance = internal._parentInstance;
+    } else if (internal && internal[PARENT_INSTANCE]) {
+      instance = internal[PARENT_INSTANCE];
     } else {
       break;
     }
@@ -482,7 +482,7 @@ class CompositeComponent extends BaseComponent {
             } else if (lastNativeNode) {
               driver.insertAfter(nativeNode, lastNativeNode);
             } else if (isFragmentNode && this[PARENT_INSTANCE]) {
-              let mountedNode = getPreviousSiblingNativeNodeOfComponent(this);
+              let mountedNode = getPreviousSiblingNativeNode(this);
               if (mountedNode) {
                 driver.insertAfter(nativeNode, mountedNode, parent);
               } else {

@@ -1,6 +1,6 @@
 import Host from './host';
 import toArray from '../toArray';
-import { INTERNAL} from '../constant';
+import { INTERNAL, PARENT_INSTANCE } from '../constant';
 
 
 /**
@@ -10,10 +10,10 @@ import { INTERNAL} from '../constant';
  * @param component
  * @return nativeNode
  */
-export default function getPreviousSiblingNativeNodeOfComponent(component) {
+export default function getPreviousSiblingNativeNode(component) {
   let parent = component;
-  while (parent = component._parentInstance &&
-    component._parentInstance[INTERNAL]) {
+  while (parent = component[PARENT_INSTANCE] &&
+    component[PARENT_INSTANCE][INTERNAL]) {
     if (parent instanceof Host.Composite) {
       component = parent;
       continue;

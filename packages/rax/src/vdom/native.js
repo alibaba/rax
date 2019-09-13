@@ -9,7 +9,7 @@ import toArray from '../toArray';
 import { isFunction, isArray, isNull } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
-import getPreviousSiblingNativeNodeOfComponent from './getPreviousSiblingNativeNodeOfComponent';
+import getPreviousSiblingNativeNode from './getPreviousSiblingNativeNode';
 
 
 const STYLE = 'style';
@@ -383,7 +383,7 @@ export default class NativeComponent extends BaseComponent {
 
         // only fragmentParent need to get the sibling node
         if (isFragmentParent) {
-          siblingNode = getPreviousSiblingNativeNodeOfComponent(this);
+          siblingNode = getPreviousSiblingNativeNode(this);
         }
 
         for (let i = 0, l = nativeNodes.length; i < l; i++) {
