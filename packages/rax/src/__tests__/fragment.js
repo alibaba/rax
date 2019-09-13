@@ -431,4 +431,37 @@ describe('Fragment', () => {
     expect(el.childNodes[1].childNodes[0].data).toBe('2');
     expect(el.childNodes[2].childNodes[0].data).toBe('3');
   });
+
+  it('should render correct from not empty array to other', function() {
+    let el = createNodeElement('div');
+
+    function F({ type }) {
+      if (type === 'notEmpty') {
+        return ['4'];
+      }
+      return <div>2</div>;
+    }
+
+    class App extends Component {
+      render() {
+        return (
+          [
+            <div>1</div>,
+            <F type={this.props.type} />,
+            <div>3</div>,
+          ]
+        );
+      }
+    }
+
+    render(<App type={'notEmpty'} />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].data).toBe('4');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+    expect(el.childNodes[2].childNodes[0].data).toBe('3');
+  });
 });
