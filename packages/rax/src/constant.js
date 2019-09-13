@@ -4,3 +4,4 @@ export const INTERNAL = '_internal';
 export const INSTANCE = '_instance';
 export const NATIVE_NODE = '_nativeNode';
 export const RENDERED_COMPONENT = '_renderedComponent';
+export const CURRENT_ELEMENT = '__currentElement';
