@@ -5,11 +5,7 @@ import { invokeMinifiedError } from '../error';
 export default function instantiateComponent(element) {
   let instance;
 
-  if (element === undefined || isNull(element) || element === false || element === true) {
-    instance = new Host.Empty();
-  } else if (isArray(element)) {
-    instance = new Host.Fragment(element);
-  } else if (isObject(element) && element.type) {
+  if (isObject(element) && element !== null && element.type) {
     // Special case string values
     if (isString(element.type)) {
       instance = new Host.Native(element);
@@ -18,6 +14,10 @@ export default function instantiateComponent(element) {
     }
   } else if (isString(element) || isNumber(element)) {
     instance = new Host.Text(String(element));
+  } else if (element === undefined || isNull(element) || element === false || element === true) {
+    instance = new Host.Empty();
+  } else if (isArray(element)) {
+    instance = new Host.Fragment(element);
   } else {
     throwInvalidComponentError(element);
   }
