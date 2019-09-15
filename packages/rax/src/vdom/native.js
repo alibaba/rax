@@ -3,6 +3,7 @@ import { detachRef, attachRef, updateRef } from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
+import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import Instance from './instance';
 import BaseComponent from './base';
 import toArray from '../toArray';
