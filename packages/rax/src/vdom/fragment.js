@@ -77,9 +77,7 @@ class FragmentComponent extends NativeComponent {
   }
 
   __createNativeNode() {
-    let fragmentArr = [];
-    fragmentArr.__isFragmentNode = true;
-    return fragmentArr;
+    return [];
   }
 }
 

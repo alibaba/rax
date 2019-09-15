@@ -8,10 +8,10 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from '../toArray';
 import { scheduler } from './scheduler';
-import { isFunction } from '../types';
+import { isFunction, isArray } from '../types';
 import assign from '../assign';
-import { INSTANCE, INTERNAL, RENDERED_COMPONENT, PARENT_INSTANCE } from '../constant';
-import getPreviousSiblingNativeNode from './getPreviousSiblingNativeNode';
+import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 
 function performInSandbox(fn, instance, callback) {
@@ -34,8 +34,8 @@ function handleError(instance, error) {
     if (instance.componentDidCatch) {
       boundary = instance;
       break;
-    } else if (internal && internal[PARENT_INSTANCE]) {
-      instance = internal[PARENT_INSTANCE];
+    } else if (internal && internal.__parentInstance) {
+      instance = internal.__parentInstance;
     } else {
       break;
     }
@@ -469,7 +469,7 @@ class CompositeComponent extends BaseComponent {
         (newNativeNode, parent) => {
           prevNativeNode = toArray(prevNativeNode);
           newNativeNode = toArray(newNativeNode);
-          let isFragmentNode = prevNativeNode && prevNativeNode.__isFragmentNode;
+          let isFragmentAsPreNativeNode = isArray(prevNativeNode);
 
           const driver = Host.driver;
 
@@ -481,8 +481,8 @@ class CompositeComponent extends BaseComponent {
               driver.replaceChild(nativeNode, prevNativeNode[i]);
             } else if (lastNativeNode) {
               driver.insertAfter(nativeNode, lastNativeNode);
-            } else if (isFragmentNode && this[PARENT_INSTANCE]) {
-              let mountedNode = getPreviousSiblingNativeNode(this);
+            } else if (isFragmentAsPreNativeNode && this.__parentInstance) {
+              let mountedNode = getPrevSiblingNativeNode(this);
               if (mountedNode) {
                 driver.insertAfter(nativeNode, mountedNode, parent);
               } else {
