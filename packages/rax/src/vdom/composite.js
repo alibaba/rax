@@ -8,9 +8,10 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from '../toArray';
 import { scheduler } from './scheduler';
-import { isFunction } from '../types';
+import { isFunction, isArray } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 
 function performInSandbox(fn, instance, callback) {
@@ -33,8 +34,8 @@ function handleError(instance, error) {
     if (instance.componentDidCatch) {
       boundary = instance;
       break;
-    } else if (internal && internal._parentInstance) {
-      instance = internal._parentInstance;
+    } else if (internal && internal.__parentInstance) {
+      instance = internal.__parentInstance;
     } else {
       break;
     }
@@ -468,6 +469,7 @@ class CompositeComponent extends BaseComponent {
         (newNativeNode, parent) => {
           prevNativeNode = toArray(prevNativeNode);
           newNativeNode = toArray(newNativeNode);
+          let isFragmentAsPreNativeNode = isArray(prevNativeNode);
 
           const driver = Host.driver;
 
@@ -479,6 +481,13 @@ class CompositeComponent extends BaseComponent {
               driver.replaceChild(nativeNode, prevNativeNode[i]);
             } else if (lastNativeNode) {
               driver.insertAfter(nativeNode, lastNativeNode);
+            } else if (isFragmentAsPreNativeNode && this.__parentInstance) {
+              let mountedNode = getPrevSiblingNativeNode(this);
+              if (mountedNode) {
+                driver.insertAfter(nativeNode, mountedNode, parent);
+              } else {
+                driver.appendChild(nativeNode, parent);
+              }
             } else {
               driver.appendChild(nativeNode, parent);
             }

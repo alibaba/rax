@@ -40,7 +40,6 @@ class FragmentComponent extends NativeComponent {
 
     return this.__mountChildrenImpl(this._parent, children, context, (nativeNode) => {
       nativeNode = toArray(nativeNode);
-
       for (let i = 0; i < nativeNode.length; i++) {
         fragment.push(nativeNode[i]);
       }
