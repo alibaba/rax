@@ -20,7 +20,7 @@ The fastest way to build universal application.
 
 :christmas_tree: **Familiar:** React compatible API with Class Component and Hooks.
 
-:candy: **Tiny:** ~6.7 KB minified + gzipped.
+:candy: **Tiny:** ~6.4 KB minified + gzipped.
 
 :earth_asia: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could work more container that implements [driver specification](./docs/en-US/driver-spec.md).
 
