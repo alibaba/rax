@@ -271,7 +271,7 @@ class CompositeComponent extends BaseComponent {
     // Reset pending queue
     this.__pendingStateQueue = null;
     let nextState = assign({}, instance.state);
-    for (let i = 0; i < queue.length; i ++) {
+    for (let i = 0; i < queue.length; i++) {
       let partial = queue[i];
       assign(
         nextState,
