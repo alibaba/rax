@@ -71,7 +71,6 @@ function validateExplicitKey(element, parentType) {
   }
 
   warning(
-    false,
     'Each child in a list should have a unique "key" prop.%s%s',
     currentComponentErrorInfo,
     childOwner
