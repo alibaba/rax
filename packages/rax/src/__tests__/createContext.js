@@ -403,7 +403,7 @@ describe('createContext', () => {
 
     function App() {
       logs.push('App');
-      return [<OtherChild />, <ThemeConsumer />];
+      return [<OtherChild key={'other'} />, <ThemeConsumer key={'theme'} />];
     }
 
     const themeProvider = render(<ThemeProvider><App /></ThemeProvider>, container);

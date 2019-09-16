@@ -45,7 +45,7 @@ describe('FragmentComponent', function() {
     class Hello extends Component {
       render() {
         return [
-          <div>
+          <div key={'root'}>
             <span>hello</span>
             <span>{this.props.message}</span>
           </div>
@@ -137,8 +137,8 @@ describe('FragmentComponent', function() {
     class Hello extends Component {
       render() {
         return [
-          <span>1</span>,
-          <span>2</span>
+          <span key={'1'}>1</span>,
+          <span key={'2'}>2</span>
         ];
       }
     }
@@ -146,18 +146,18 @@ describe('FragmentComponent', function() {
     class World extends Component {
       render() {
         return [
-          <span>3</span>,
-          <span>4</span>
+          <span key={'3'}>3</span>,
+          <span key={'4'}>4</span>
         ];
       }
     }
 
     class MyComponent extends Component {
       state = {
-        list: [<Hello />]
+        list: [<Hello key={'hello'} />]
       }
       componentDidMount() {
-        this.state.list.push(<World />);
+        this.state.list.push(<World key={'world'} />);
         /* eslint-disable */
         this.setState(this.state);
         /* eslint-enable */
@@ -226,7 +226,7 @@ describe('FragmentComponent', function() {
       render() {
         let {condition} = this.props;
         return condition ? <Hello key="a" /> :
-          [[<Hello key="a" />, <div key="b">World</div>], <div />];
+          [[<Hello key="a" />, <div key="b">World</div>], <div key={'c'} />];
       }
     }
 
@@ -257,8 +257,8 @@ describe('FragmentComponent', function() {
     class MyComponent extends Component {
       render() {
         let {condition} = this.props;
-        return condition ? [null, <Hello />] :
-          [<div>Hello</div>, <Hello />];
+        return condition ? [null, <Hello key={'a'} />] :
+          [<div key={'b'}>Hello</div>, <Hello key={'c'} />];
       }
     }
 
@@ -304,7 +304,7 @@ describe('FragmentComponent', function() {
       render() {
         let {condition} = this.props;
         return condition ? [[<div key="b">World</div>, <Hello key="a" />]] :
-          [[<Hello key="a" />, <div key="b">World</div>], <div />];
+          [[<Hello key="a" />, <div key="b">World</div>], <div key={'c'} />];
       }
     }
 

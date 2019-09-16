@@ -151,21 +151,23 @@ describe('NativeComponent', function() {
         );
       }
     }
-    const instance = render(<App />, container);
-    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('d');
-    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('a');
-    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('e');
-    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('b');
-    expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('c');
+    expect(() => {
+      const instance = render(<App />, container);
+      expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('d');
+      expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('a');
+      expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('e');
+      expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('b');
+      expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('c');
 
-    instance.setState({count: 1});
-    jest.runAllTimers();
+      instance.setState({count: 1});
+      jest.runAllTimers();
 
-    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('c');
-    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('e');
-    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('b');
-    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('a');
-    expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('d');
+      expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('c');
+      expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('e');
+      expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('b');
+      expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('a');
+      expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('d');
+    }).toWarnDev('Warning: Each child in a list should have a unique "key" prop. Check the render method of `App`.', {withoutStack: true});
   });
 
   it('updates empty children can remove all directly', function() {
