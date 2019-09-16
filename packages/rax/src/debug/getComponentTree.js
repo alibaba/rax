@@ -1,4 +1,6 @@
-import {CURRENT_ELEMENT, INSTANCE, RENDERED_COMPONENT} from '../constant';
+import { INSTANCE, RENDERED_COMPONENT } from '../constant';
+
+const CURRENT_ELEMENT = '__currentElement';
 
 export default function getComponentTree(element) {
   var children = null;
