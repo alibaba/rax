@@ -1,4 +1,5 @@
 import { isString } from '../types';
+import warning from '../warning';
 
 export default function getElementKeyName(children, element, index) {
   const elementKey = element && element.key;
@@ -12,9 +13,7 @@ export default function getElementKeyName(children, element, index) {
 
     if (process.env.NODE_ENV !== 'production') {
       // Only the first child will be used when encountered two children with the same key
-      if (!keyUnique) {
-        console.warn(`Encountered two children with the same key "${elementKey}".`);
-      }
+      warning(keyUnique, `Encountered two children with the same key "${elementKey}".`);
     }
 
     return keyUnique ? keyName : defaultName;

@@ -3,6 +3,7 @@ import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
 import { invokeMinifiedError } from './error';
 import { isString, isArray } from './types';
+import warning from './warning';
 
 const RESERVED_PROPS = {
   key: true,
