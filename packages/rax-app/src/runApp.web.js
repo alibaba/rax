@@ -12,7 +12,7 @@ let pageInitialProps = {};
 const initialData = window.__INITIAL_DATA__ || {};
 
 function Entry(props) {
-  const [currentPath, setCurrentPath] = useState('');
+  const [tempPath, setTempPath] = useState('');
 
   const { routerConfig } = props;
   const { component } = useRouter(() => routerConfig);
@@ -20,15 +20,16 @@ function Entry(props) {
     // Return null directly if not matched.
     return null;
   } else {
+    // TODO new SSR app.js
     if (component.getInitialProps && currentPagePath !== currentHistory.location.pathname) {
       pageInitialProps = {};
       currentPagePath = currentHistory.location.pathname;
       component.getInitialProps().then((props) => {
         pageInitialProps = props;
-        setCurrentPath(currentPagePath);
+        setTempPath(currentPagePath);
       }).catch(() => {
         pageInitialProps = {};
-        setCurrentPath(currentPagePath);
+        setTempPath(currentPagePath);
       });
       return null;
     }
