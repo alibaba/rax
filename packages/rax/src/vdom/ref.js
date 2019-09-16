@@ -22,7 +22,7 @@ export function updateRef(prevElement, nextElement, component) {
 export function attachRef(ownerComponent, ref, component) {
   if (!ownerComponent) {
     if (process.env.NODE_ENV !== 'production') {
-      return warning(false, 'ref: multiple version of Rax used in project.');
+      return warning('ref: multiple version of Rax used in project.');
     } else {
       invokeMinifiedError(3);
     }
@@ -31,7 +31,9 @@ export function attachRef(ownerComponent, ref, component) {
   let instance = component.__getPublicInstance();
 
   if (process.env.NODE_ENV !== 'production') {
-    warning(instance, 'ref: do not attach ref to function components because they don’t have instances.');
+    if (instance == null) {
+      warning('ref: do not attach ref to function components because they don’t have instances.');
+    }
   }
 
   if (isFunction(ref)) {

@@ -12,8 +12,10 @@ export default function getElementKeyName(children, element, index) {
     let keyUnique = children[keyName] === undefined;
 
     if (process.env.NODE_ENV !== 'production') {
-      // Only the first child will be used when encountered two children with the same key
-      warning(keyUnique, `Encountered two children with the same key "${elementKey}".`);
+      if (!keyUnique) {
+        // Only the first child will be used when encountered two children with the same key
+        warning(`Encountered two children with the same key "${elementKey}".`);
+      }
     }
 
     return keyUnique ? keyName : defaultName;

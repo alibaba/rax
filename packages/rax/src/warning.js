@@ -1,15 +1,11 @@
 let warning = () => {};
 
 if (process.env.NODE_ENV !== 'production') {
-  warning = (condition, template, ...args) => {
+  warning = (template, ...args) => {
     if (template == null) {
       throw new Error(
         '`warning(condition, template, ...args)` requires a warning message template'
       );
-    }
-
-    if (condition) {
-      return;
     }
 
     if (typeof console !== 'undefined') {
