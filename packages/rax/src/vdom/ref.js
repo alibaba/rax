@@ -4,6 +4,7 @@
 import { invokeMinifiedError } from '../error';
 import { isFunction, isObject } from '../types';
 import { INSTANCE } from '../constant';
+import warning from '../warning';
 
 export function updateRef(prevElement, nextElement, component) {
   let prevRef = prevElement ? prevElement.ref : null;
@@ -21,7 +22,7 @@ export function updateRef(prevElement, nextElement, component) {
 export function attachRef(ownerComponent, ref, component) {
   if (!ownerComponent) {
     if (process.env.NODE_ENV !== 'production') {
-      return console.error('ref: multiple version of Rax used in project.');
+      return warning(false, 'ref: multiple version of Rax used in project.');
     } else {
       invokeMinifiedError(3);
     }
@@ -30,9 +31,7 @@ export function attachRef(ownerComponent, ref, component) {
   let instance = component.__getPublicInstance();
 
   if (process.env.NODE_ENV !== 'production') {
-    if (instance == null) {
-      console.error('ref: do not attach ref to function components because they don’t have instances.');
-    }
+    warning(instance, 'ref: do not attach ref to function components because they don’t have instances.');
   }
 
   if (isFunction(ref)) {
