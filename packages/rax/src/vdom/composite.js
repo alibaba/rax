@@ -351,7 +351,7 @@ class CompositeComponent extends BaseComponent {
         shouldUpdate = performInSandbox(() => {
           return instance.shouldComponentUpdate(nextProps, nextState, nextContext);
         }, instance);
-      } else if (instance.isPureComponent) {
+      } else if (instance.__isPureComponent) {
         // Pure Component
         shouldUpdate = !shallowEqual(prevProps, nextProps) ||
           !shallowEqual(prevState, nextState);
