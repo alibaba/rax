@@ -271,38 +271,42 @@ describe('cloneElement', () => {
   });
 
   it('should ignore undefined key and ref', function() {
-    var element = createFactory(ComponentClass)({
-      key: '12',
-      ref: '34',
-      foo: '56',
-    });
-    var props = {
-      key: undefined,
-      ref: undefined,
-      foo: 'ef',
-    };
-    var clone = cloneElement(element, props);
-    expect(clone.type).toBe(ComponentClass);
-    expect(clone.key).toBe('12');
-    expect(clone.ref).toBe('34');
-    expect(clone.props).toEqual({foo: 'ef'});
+    expect(() => {
+      var element = createFactory(ComponentClass)({
+        key: '12',
+        ref: '34',
+        foo: '56',
+      });
+      var props = {
+        key: undefined,
+        ref: undefined,
+        foo: 'ef',
+      };
+      var clone = cloneElement(element, props);
+      expect(clone.type).toBe(ComponentClass);
+      expect(clone.key).toBe('12');
+      expect(clone.ref).toBe('34');
+      expect(clone.props).toEqual({foo: 'ef'});
+    }).toWarnDev('createElement: adding a string ref "34" outside the render method.', {withoutStack: true});
   });
 
   it('should extract null key and ref', function() {
-    var element = createFactory(ComponentClass)({
-      key: '12',
-      ref: '34',
-      foo: '56',
-    });
-    var props = {
-      key: null,
-      ref: null,
-      foo: 'ef',
-    };
-    var clone = cloneElement(element, props);
-    expect(clone.type).toBe(ComponentClass);
-    expect(clone.key).toBe('null');
-    expect(clone.ref).toBe(null);
-    expect(clone.props).toEqual({foo: 'ef'});
+    expect(() => {
+      var element = createFactory(ComponentClass)({
+        key: '12',
+        ref: '34',
+        foo: '56',
+      });
+      var props = {
+        key: null,
+        ref: null,
+        foo: 'ef',
+      };
+      var clone = cloneElement(element, props);
+      expect(clone.type).toBe(ComponentClass);
+      expect(clone.key).toBe('null');
+      expect(clone.ref).toBe(null);
+      expect(clone.props).toEqual({foo: 'ef'});
+    }).toWarnDev('createElement: adding a string ref "34" outside the render method.', {withoutStack: true});
   });
 });
