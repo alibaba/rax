@@ -458,7 +458,13 @@ class CompositeComponent extends BaseComponent {
         });
       }
     } else {
+      let lastNativeNode = null;
       let prevNativeNode = prevRenderedComponent.__getNativeNode();
+      // Only prevNativeNode is empty fragment should find the prevSlibingNativeNode
+      if (isArray(prevNativeNode) && prevNativeNode.length === 0) {
+        lastNativeNode = getPrevSiblingNativeNode(prevRenderedComponent);
+      }
+
       prevRenderedComponent.unmountComponent(true);
 
       this[RENDERED_COMPONENT] = instantiateComponent(nextRenderedElement);
@@ -469,25 +475,16 @@ class CompositeComponent extends BaseComponent {
         (newNativeNode, parent) => {
           prevNativeNode = toArray(prevNativeNode);
           newNativeNode = toArray(newNativeNode);
-          let isFragmentAsPreNativeNode = isArray(prevNativeNode);
 
           const driver = Host.driver;
 
           // If the new length large then prev
-          let lastNativeNode;
           for (let i = 0; i < newNativeNode.length; i++) {
             let nativeNode = newNativeNode[i];
             if (prevNativeNode[i]) {
               driver.replaceChild(nativeNode, prevNativeNode[i]);
             } else if (lastNativeNode) {
               driver.insertAfter(nativeNode, lastNativeNode);
-            } else if (isFragmentAsPreNativeNode && this.__parentInstance) {
-              let mountedNode = getPrevSiblingNativeNode(this);
-              if (mountedNode) {
-                driver.insertAfter(nativeNode, mountedNode, parent);
-              } else {
-                driver.appendChild(nativeNode, parent);
-              }
             } else {
               driver.appendChild(nativeNode, parent);
             }
