@@ -6,8 +6,9 @@ import {INTERNAL, RENDERED_COMPONENT} from '../constant';
 
 /**
  * Instance manager
+ * @NOTE Key should not be compressed, for that will be added to native node and cause DOM Exception.
  */
-const KEY = '__r';
+const KEY = '_r';
 
 export default {
   set(node, instance) {
