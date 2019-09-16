@@ -14,7 +14,7 @@ import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import getNearestParent from './getNearestParent';
-import { validateChildKeys } from '../createElement';
+import { validateChildKeys } from '../validateChildKeys';
 
 function performInSandbox(fn, instance, callback) {
   try {
