@@ -295,6 +295,7 @@ function renderElementToString(element, context, options) {
       instance.context = context;
 
       shared.Host.owner = {
+        __getName: () => type.name,
         _instance: instance
       };
 
@@ -344,3 +345,4 @@ export function renderToString(element, options = {}) {
 export default {
   renderToString
 };
+
