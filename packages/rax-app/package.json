@@ -5,11 +5,11 @@
   "main": "lib/index.js",
   "author": "Rax Team",
   "dependencies": {
+    "driver-universal": "^1.0.2",
     "history": "^4.9.0",
     "querystring": "^0.2.0",
-    "rax-pwa": "^1.0.3",
     "rax-use-router": "^2.0.2",
-    "universal-env": "^1.0.1"
+    "universal-env": "^1.0.7"
   },
   "peerDependencies": {
     "rax": "^1.0.8"

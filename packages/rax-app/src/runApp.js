@@ -1,4 +1,6 @@
+import runWebApp from './runApp.web';
+
 export default function runApp(config) {
-  console.log(222);
-  console.log(config);
+  // TODO WEEX
+  runWebApp(config);
 }

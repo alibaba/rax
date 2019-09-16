@@ -1,56 +1,70 @@
-import { render, createElement } from 'rax';
+import { render, createElement, useState } from 'rax';
 import { useRouter } from 'rax-use-router';
 import { createHashHistory, createBrowserHistory } from 'history';
-import { getCurrentComponent } from 'rax-pwa';
 import UniversalDriver from 'driver-universal';
 import { emit } from './app';
 
-export default function runApp(config) {
-  // TODO: AppShell should not passby config
-  const { routes, withSSR, AppShell } = config;
+let currentHistory;
+let currentPagePath;
 
-  let currentHistory;
+let launched = false;
+let pageInitialProps = {};
+const initialData = window.__INITIAL_DATA__ || {};
+
+function Entry(props) {
+  const [currentPath, setCurrentPath] = useState('');
+
+  const { routerConfig } = props;
+  const { component } = useRouter(() => routerConfig);
+  if (!component || Array.isArray(component) && component.length === 0) {
+    // Return null directly if not matched.
+    return null;
+  } else {
+    if (component.getInitialProps && currentPagePath !== currentHistory.location.pathname) {
+      pageInitialProps = {};
+      currentPagePath = currentHistory.location.pathname;
+      component.getInitialProps().then((props) => {
+        pageInitialProps = props;
+        setCurrentPath(currentPagePath);
+      }).catch(() => {
+        pageInitialProps = {};
+        setCurrentPath(currentPagePath);
+      });
+      return null;
+    }
+    return createElement(component, { ...props, ...pageInitialProps });
+  }
+}
+
+export default function runApp(appConfig) {
+  const { routes, shell, hydrate = false } = appConfig;
+  const withSSR = !!window.__INITIAL_DATA__;
+
   if (withSSR) {
     currentHistory = createBrowserHistory();
   } else {
     currentHistory = createHashHistory();
   }
 
-  const initialData = window.__INITIAL_DATA__ || {};
-
-  let launched = false;
-
-  function renderEntry() {
-    if (!launched) {
-      launched = true;
-      emit('launch');
-    }
-
-    let { entry } = useRouter({
+  let entry = createElement(Entry, {
+    routerConfig: {
       history: currentHistory,
       routes,
-    });
-
-    if (AppShell !== null) {
-      entry = createElement(AppShell, { data: initialData.shellData }, entry);
     }
+  });
 
-    render(
-      entry,
-      document.getElementById('root'),
-      { driver: UniversalDriver, hydrate: withSSR }
-    );
+  if (shell) {
+    entry = createElement(shell.component, { data: initialData.shellData }, entry);
   }
 
-  if (withSSR) {
-    // Avoid router empty initialComponent
-    getCurrentComponent(routes, withSSR)().then( component => {
-      if (component !== null) {
-        routes.InitialComponent = component;
-      }
-      renderEntry();
-    });
-  } else {
-    renderEntry();
+  if (!launched) {
+    launched = true;
+    emit('launch');
   }
+
+  render(
+    entry,
+    document.getElementById('root'),
+    { driver: UniversalDriver, hydrate }
+  );
 }

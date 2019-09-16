@@ -2,7 +2,7 @@
 
 ## Usage
 ```js
-import { runApp } from 'rax-universal-app';
+import { runApp } from 'rax-app';
 import appConfig from './app.json';
 
 runApp(appConfig);
