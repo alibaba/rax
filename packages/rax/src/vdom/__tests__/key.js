@@ -81,17 +81,21 @@ describe('Key', function() {
       }
     }
 
-    render(<Foo value="foo" />, container);
-    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
-    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
-    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
-    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    expect(() => {
+      render(<Foo value="foo" />, container);
+      expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
+      expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
+      expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
+      expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    }).toWarnDev('Warning: Encountered two children with the same key "0".', {withoutStack: true});
 
-    render(<Foo value="bar" />, container);
-    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
-    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
-    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
-    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    expect(() => {
+      render(<Foo value="bar" />, container);
+      expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
+      expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
+      expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
+      expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    }).toWarnDev('Warning: Encountered two children with the same key "0".', {withoutStack: true});
   });
 
   it('should render right if unshift new element', function() {

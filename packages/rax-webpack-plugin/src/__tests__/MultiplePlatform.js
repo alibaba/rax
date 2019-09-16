@@ -11,7 +11,10 @@ const simpleConfig = {
 
 describe('MultiplePlatform', function() {
   it('not specified platform', function() {
-    expect(MultiplePlatform(simpleConfig)).toBe(simpleConfig);
+    expect(() => {
+      let platform = MultiplePlatform(simpleConfig);
+      expect(platform).toBe(simpleConfig);
+    }).toLowPriorityWarnDev('The `platforms` field is not specified!', {withoutStack: true});
   });
 
   it('specified platform is `weex`', function() {
@@ -358,7 +361,13 @@ describe('MultiplePlatform', function() {
         }
       }
     };
-    expect(MultiplePlatform(config)).toEqual(config);
+    expect(() => {
+      let platform = MultiplePlatform(config);
+      expect(platform).toEqual(config);
+    }).toLowPriorityWarnDev([
+      'The options.platforms is no available platform!',
+      'Accept platform list: ',
+    ], {withoutStack: true});
   });
 
   it('entry it is an Array not support', function() {
