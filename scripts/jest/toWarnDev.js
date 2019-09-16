@@ -221,19 +221,6 @@ const createMatcherFor = consoleMethod =>
           );
         }
 
-        if (lastWarningWithMismatchingFormat !== null) {
-          return {
-            message: () =>
-              `Received ${
-                lastWarningWithMismatchingFormat.args.length
-              } arguments for a message with ${
-                lastWarningWithMismatchingFormat.expectedArgCount
-              } placeholders:\n  ${this.utils.printReceived(
-                lastWarningWithMismatchingFormat.format
-              )}`,
-            pass: false,
-          };
-        }
 
         if (lastWarningWithExtraComponentStack !== null) {
           return {
