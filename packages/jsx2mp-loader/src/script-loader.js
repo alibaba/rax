@@ -118,7 +118,10 @@ function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourc
     ],
     [
       require('babel-plugin-minify-dead-code-elimination'),
-      { optimizeRawSize: true }
+      {
+        optimizeRawSize: true,
+        keepFnName: true
+      }
     ]
   ];
 
