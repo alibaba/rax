@@ -2,17 +2,7 @@ import Host from './vdom/host';
 import warning from './warning';
 import {isArray, isObject} from './types';
 import isValidElement from './isValidElement';
-
-export function getRenderErrorInfo() {
-  const ownerComponent = Host.owner;
-  if (ownerComponent) {
-    const name = ownerComponent.__getName();
-    if (name) {
-      return ' Check the render method of `' + name + '`.';
-    }
-  }
-  return '';
-}
+import getRenderErrorInfo from './getRenderErrorInfo';
 
 /**
  * Warn if there's no key explicitly set on dynamic arrays of children or
