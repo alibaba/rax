@@ -12,6 +12,10 @@ function isWeexModule(value) {
   return WEEX_MODULE_REG.test(value);
 }
 
+function isRaxModule(value) {
+  return value === 'rax';
+}
+
 const defaultOptions = {
   normalizeFileName: (s) => s,
 };
@@ -57,7 +61,9 @@ module.exports = function visitor({ types: t }, options) {
         const { value } = path.node.source;
         if (isWeexModule(value)) {
           path.remove();
-        } else if (isNpmModule(value)) {
+        } else if (isRaxModule(value)) {
+          path.node.source = t.stringLiteral('./' + join(npmRelativePath, 'jsx2mp-runtime'));
+        }  if (isNpmModule(value)) {
           path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
         }
       },
