@@ -37,11 +37,11 @@ function getCurrentComponentErrorInfo(parentType) {
 }
 
 function validateExplicitKey(element, parentType) {
-  if (!element._store || element._store.validated || element.key != null) {
+  if (element._validated || element.key != null) {
     return;
   }
 
-  element._store.validated = true;
+  element._validated = true;
 
   const currentComponentErrorInfo = getCurrentComponentErrorInfo(parentType);
   if (ownerHasKeyUseWarning[currentComponentErrorInfo]) {
@@ -82,9 +82,7 @@ export function validateChildKeys(node, parentType) {
       }
     }
   } else if (isValidElement(node)) {
-    if (node._store) {
-      node._store.validated = true;
-    }
+    node._validated = true;
   }
   // rax isn't support iterator object as element children
   // TODO: add validate when rax support iterator object as element.
