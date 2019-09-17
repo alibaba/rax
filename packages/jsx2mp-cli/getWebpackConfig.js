@@ -10,7 +10,9 @@ const platformConfig = require('./utils/platformConfig');
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
 const PageLoader = require.resolve('jsx2mp-loader/src/page-loader');
 const ComponentLoader = require.resolve('jsx2mp-loader/src/component-loader');
+const ScriptLoader = require.resolve('jsx2mp-loader/src/script-loader');
 const FileLoader = require.resolve('jsx2mp-loader/src/file-loader');
+
 
 const BabelLoader = require.resolve('babel-loader');
 let buildStartTime;
@@ -100,7 +102,7 @@ module.exports = (options = {}) => {
           test: /\.jsx?$/,
           use: [
             {
-              loader: FileLoader,
+              loader: ScriptLoader,
               options: {
                 mode: options.mode,
                 entryPath: relativeEntryFilePath,
@@ -112,6 +114,13 @@ module.exports = (options = {}) => {
               options: getBabelConfig(),
             }
           ]
+        },
+        {
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.webp$/],
+          loader: FileLoader,
+          options: {
+            entryPath: relativeEntryFilePath
+          },
         }
       ],
     },

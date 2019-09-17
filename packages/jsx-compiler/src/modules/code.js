@@ -28,6 +28,8 @@ const RUNTIME = '/npm/jsx2mp-runtime';
 
 const isCoreModule = (mod) => /^@core\//.test(mod);
 
+const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
+
 function getConstructor(type) {
   switch (type) {
     case 'app': return 'App';
@@ -101,6 +103,7 @@ module.exports = {
 
     removeRaxImports(parsed.ast);
     renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
+    renameFileModule(parsed.ast);
 
     const currentNodeModulePath = join(options.sourcePath, 'npm');
     const npmRelativePath = relative(dirname(options.resourcePath), currentNodeModulePath);
@@ -183,6 +186,23 @@ function renameCoreModule(ast, outputPath, targetFileDir) {
         let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
         runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
         source.replaceWith(t.stringLiteral(runtimeRelativePath));
+      }
+    }
+  });
+}
+
+// import img from '../assets/img.png' => const img = '../assets/img.png'
+function renameFileModule(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isFileModule(source.node.value)) {
+        source.parentPath.replaceWith(t.variableDeclaration('const', [
+          t.variableDeclarator(
+            t.identifier(path.get('specifiers')[0].node.local.name),
+            t.stringLiteral(source.node.value)
+          )
+        ]));
       }
     }
   });
