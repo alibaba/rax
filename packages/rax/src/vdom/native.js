@@ -336,9 +336,10 @@ export default class NativeComponent extends BaseComponent {
       }
     }
 
-    let prevFirstChild;
-    let prevFirstNativeNode;
-    let shouldUnmountPrevFirstChild;
+    let prevFirstChild = null;
+    let prevFirstNativeNode = null;
+    let shouldUnmountPrevFirstChild = false;
+    let lastPlacedNode = null;
 
     // Directly remove all children from component, if nextChildren is empty (null, [], '').
     // `driver.removeChildren` is optional driver protocol.
@@ -367,35 +368,35 @@ export default class NativeComponent extends BaseComponent {
           prevChild.unmountComponent(shouldRemoveAllChildren);
         }
       }
+
+      let prevNativeNode = this.__getNativeNode();
+      // When fragment embed fragment updated but prev fragment is empty
+      // that need to get the prev sibling native node.
+      // like: [ [] ] -> [ [1, 2] ]
+      if (isArray(prevNativeNode) && prevNativeNode.length === 0 ) {
+        lastPlacedNode = getPrevSiblingNativeNode(this);
+      }
     }
+
 
     if (nextChildren != null) {
       // `nextIndex` will increment for each child in `nextChildren`
       let nextIndex = 0;
-      let lastPlacedNode = null;
       let nextNativeNodes = [];
-      let isFragmentAsParent = false;
-      let insertNodes = (nativeNodes, parent) => {
+
+      function insertNodes(nativeNodes, parent) {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
-        let prevSiblingNativeNode;
-
-        // Only parent is fragment need to get the prev sibling node
-        if (isFragmentAsParent) {
-          prevSiblingNativeNode = getPrevSiblingNativeNode(this);
-        }
 
         for (let i = 0, l = nativeNodes.length; i < l; i++) {
           if (lastPlacedNode) {
             // Should reverse order when insert new child after lastPlacedNode:
-            // [lastPlacedNode, *newChild1, *newChild2]
+            // [lastPlacedNode, *newChild1, *newChild2],
+            // And if prev is empty fragment, lastPlacedNode is the prevSiblingNativeNode found.
             driver.insertAfter(nativeNodes[l - i - 1], lastPlacedNode);
           } else if (prevFirstNativeNode) {
             // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
-          } else if (prevSiblingNativeNode) {
-            // If parent is fragment, find nativeNode previous sibling node
-            driver.insertAfter(nativeNodes[i], prevSiblingNativeNode);
           } else if (parent) {
             // [*newChild1, *newChild2]
             driver.appendChild(nativeNodes[i], parent);
@@ -420,7 +421,6 @@ export default class NativeComponent extends BaseComponent {
           let parent = this.__getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
           if (isArray(parent)) {
-            isFragmentAsParent = true;
             parent = this._parent;
           }
 

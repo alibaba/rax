@@ -461,7 +461,8 @@ class CompositeComponent extends BaseComponent {
       let lastNativeNode = null;
       let prevNativeNode = prevRenderedComponent.__getNativeNode();
       // Only prevNativeNode is empty fragment should find the prevSlibingNativeNode
-      if (isArray(prevNativeNode) && prevNativeNode.length === 0) {
+      // And current root component is fragment, but not need find the prevSlibingNativeNode when init mounting
+      if (isArray(prevNativeNode) && prevNativeNode.length === 0 && instance.__rootID == null) {
         lastNativeNode = getPrevSiblingNativeNode(prevRenderedComponent);
       }
 
