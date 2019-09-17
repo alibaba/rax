@@ -19,7 +19,7 @@ export default class ReactiveComponent extends Component {
     this._hookID = 0;
     // Number of rerenders
     this.__reRenders = 0;
-    this._hooks = {};
+    this.__hooks = {};
     // Handles store
     this.didMount = [];
     this.didUpdate = [];
@@ -55,7 +55,7 @@ export default class ReactiveComponent extends Component {
   }
 
   getHooks() {
-    return this._hooks;
+    return this.__hooks;
   }
 
   getHookID() {
