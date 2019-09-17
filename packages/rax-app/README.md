@@ -1,4 +1,4 @@
-# Rax Universal App
+# Rax App
 
 ## Usage
 ```js
