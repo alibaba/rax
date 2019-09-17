@@ -1,4 +1,4 @@
 export default function(render) {
-  render.forwardRef = true;
+  render.__forwardRef = true;
   return render;
 }

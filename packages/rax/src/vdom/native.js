@@ -70,7 +70,7 @@ export default class NativeComponent extends BaseComponent {
   }
 
   __mountChildrenImpl(parent, children, context, nativeNodeMounter) {
-    let renderedChildren = this._renderedChildren = {};
+    let renderedChildren = this.__renderedChildren = {};
 
     const renderedChildrenImage = [];
     for (let i = 0, l = children.length; i < l; i++) {
@@ -93,14 +93,14 @@ export default class NativeComponent extends BaseComponent {
   }
 
   __unmountChildren(shouldNotRemoveChild) {
-    let renderedChildren = this._renderedChildren;
+    let renderedChildren = this.__renderedChildren;
 
     if (renderedChildren) {
       for (let name in renderedChildren) {
         let renderedChild = renderedChildren[name];
         renderedChild.unmountComponent(shouldNotRemoveChild);
       }
-      this._renderedChildren = null;
+      this.__renderedChildren = null;
     }
   }
 
@@ -294,7 +294,7 @@ export default class NativeComponent extends BaseComponent {
 
   __updateChildren(nextChildrenElements, context) {
     // prev rendered children
-    let prevChildren = this._renderedChildren;
+    let prevChildren = this.__renderedChildren;
     let driver = Host.driver;
 
     if (nextChildrenElements == null && prevChildren == null) {
@@ -467,7 +467,7 @@ export default class NativeComponent extends BaseComponent {
       driver.removeChildren(this[NATIVE_NODE]);
     }
 
-    this._renderedChildren = nextChildren;
+    this.__renderedChildren = nextChildren;
   }
 
   __createNativeNode() {
