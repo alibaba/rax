@@ -15,6 +15,7 @@
   "engines": {
     "npm": ">=3.0.0"
   },
+  "types": "./index.d.ts",
   "dependencies": {
     "driver-server": "^1.0.0",
     "@babel/runtime": "^7.2.0",
