@@ -70,7 +70,7 @@ export default function runApp(appConfig) {
   emit('launch');
 
   let rootEl = isWeex ? null : document.getElementById('root');
-  if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.')
+  if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.');
 
   return render(
     entry,
