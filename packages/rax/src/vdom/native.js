@@ -340,6 +340,7 @@ export default class NativeComponent extends BaseComponent {
     let isFragmentParent = isArray(parent);
     let prevFirstChild = null;
     let prevFirstNativeNode = null;
+    let isPrevFirstEmptyFragment = false;
     let shouldUnmountPrevFirstChild = false;
     let lastPlacedNode = null;
 
@@ -364,6 +365,7 @@ export default class NativeComponent extends BaseComponent {
           prevFirstNativeNode = prevFirstChild.__getNativeNode();
 
           if (isArray(prevFirstNativeNode)) {
+            isPrevFirstEmptyFragment = prevFirstNativeNode.length === 0;
             prevFirstNativeNode = prevFirstNativeNode[0];
           }
         } else if (shouldUnmount) {
@@ -371,10 +373,12 @@ export default class NativeComponent extends BaseComponent {
         }
       }
 
-      // When fragment embed fragment updated but prev fragment is empty
+      // 1. When fragment embed fragment updated but prev fragment is empty
       // that need to get the prev sibling native node.
       // like: [ [] ] -> [ [1, 2] ]
-      if (isFragmentParent && parent.length === 0 ) {
+      // 2. When prev fragment is empty and update to other type
+      // like: [ [], 1 ] -> [ 1, 2 ]
+      if (isFragmentParent && parent.length === 0 || isPrevFirstEmptyFragment) {
         lastPlacedNode = getPrevSiblingNativeNode(this);
       }
     }
