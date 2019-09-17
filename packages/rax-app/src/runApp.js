@@ -16,7 +16,6 @@ export function getHistory() {
   return history;
 }
 
-
 function Entry(props) {
   const { history, routes } = props;
   const { component } = useRouter(() => ({ history, routes }));
@@ -28,6 +27,7 @@ function Entry(props) {
     const [initialProps, setInitialProps] = useState(null);
 
     if (isWeb && component.getInitialProps && prevPagePath !== history.location.pathname) {
+      setInitialProps(null); // Reset page initialProps
       prevPagePath = history.location.pathname;
       useEffect(() => {
         component.getInitialProps().then((props) => {
@@ -70,7 +70,7 @@ export default function runApp(appConfig) {
   emit('launch');
 
   let rootEl = isWeex ? null : document.getElementById('root');
-  if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.')
+  if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.');
 
   return render(
     entry,
