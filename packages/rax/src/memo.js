@@ -4,10 +4,10 @@ export default function memo(type, compare) {
   compare = compare || shallowEqual;
 
   // Memo could composed
-  if (type.compares) {
-    type.compares.push(compare);
+  if (type.__compares) {
+    type.__compares.push(compare);
   } else {
-    type.compares = [compare];
+    type.__compares = [compare];
   }
 
   return type;

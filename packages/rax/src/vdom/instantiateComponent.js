@@ -8,16 +8,16 @@ export default function instantiateComponent(element) {
   if (isObject(element) && element !== null && element.type) {
     // Special case string values
     if (isString(element.type)) {
-      instance = new Host.Native(element);
+      instance = new Host.__Native(element);
     } else {
-      instance = new Host.Composite(element);
+      instance = new Host.__Composite(element);
     }
   } else if (isString(element) || isNumber(element)) {
-    instance = new Host.Text(String(element));
+    instance = new Host.__Text(String(element));
   } else if (element === undefined || isNull(element) || element === false || element === true) {
-    instance = new Host.Empty();
+    instance = new Host.__Empty();
   } else if (isArray(element)) {
-    instance = new Host.Fragment(element);
+    instance = new Host.__Fragment(element);
   } else {
     throwInvalidComponentError(element);
   }
