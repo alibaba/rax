@@ -92,7 +92,9 @@ module.exports = function scriptLoader(content) {
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
 
-    const { code } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath);
+    const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
+
+    const { code } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, rootNpmRelativePath);
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     writeFileSync(distSourcePath, code, 'utf-8');
@@ -101,12 +103,12 @@ module.exports = function scriptLoader(content) {
   return content;
 };
 
-function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourcePath) {
+function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourcePath, rootNpmRelativePath = '') {
   const presets = [];
   const plugins = [
     [
       require('./babel-plugin-rename-import'),
-      { normalizeFileName, nodeModulesPathList }
+      { normalizeFileName, nodeModulesPathList, rootNpmRelativePath }
 
     ], // for rename npm modules.
     require('@babel/plugin-proposal-export-default-from'), // for support of export defualt

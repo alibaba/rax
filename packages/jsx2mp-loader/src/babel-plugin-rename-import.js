@@ -27,7 +27,7 @@ function getNpmName(value) {
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeFileName, nodeModulesPathList } = options;
+  const { normalizeFileName, nodeModulesPathList, rootNpmRelativePath } = options;
   const source = (value, npmList, filename, rootContext) => {
     const npmName = getNpmName(value);
     // Example:
@@ -62,8 +62,8 @@ module.exports = function visitor({ types: t }, options) {
         if (isWeexModule(value)) {
           path.remove();
         } else if (isRaxModule(value)) {
-          path.node.source = t.stringLiteral('./' + join(npmRelativePath, 'jsx2mp-runtime'));
-        }  if (isNpmModule(value)) {
+          path.node.source = t.stringLiteral('./' + join(rootNpmRelativePath, 'jsx2mp-runtime'));
+        } else if (isNpmModule(value)) {
           path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
         }
       },
