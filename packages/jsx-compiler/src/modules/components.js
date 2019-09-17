@@ -112,7 +112,7 @@ module.exports = {
           const { object, property } = node.name;
           if (t.isJSXIdentifier(object) && t.isJSXIdentifier(property)) {
             const alias = getComponentAlias(object.name, parsed.imported);
-            removeImport(alias);
+            removeImport(parsed.ast, alias);
             if (alias) {
               const pkg = getComponentConfig(alias.from, options.resourcePath);
               if (pkg && pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name]) {
