@@ -7,7 +7,7 @@ export default function Index() {
   return (
     <View>
       Hello World!
-      <Image source={{ uri: img }}/>
+      <Image source={{ uri: img }} />
     </View>
   );
 }
