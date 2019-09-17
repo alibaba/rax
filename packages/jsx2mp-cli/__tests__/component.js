@@ -16,7 +16,7 @@ const execSyncWithCwd = (command) => {
 };
 
 beforeAll(() => {
-  execSyncWithCwd(`cd demo && npm install && ${compileCommand}`);
+  execSyncWithCwd(`cd demo && npm install --no-package-lock && ${compileCommand}`);
 
   // read from file and get compiled result
   jsonContent = readFileSync(join(cwd, 'demo/dist/component.json'), {encoding: 'utf8'});

@@ -13,7 +13,7 @@ A cli tool to transform Rax JSX based project to MiniApp.
 	```bash
 	npm install jsx2mp-cli -g
 	```
-	
+
 3. Transform your project.
 	```bash
 	cd myApp

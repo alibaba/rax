@@ -32,11 +32,11 @@ export default class ReactiveComponent extends Component {
 
     this.state = {};
 
-    if (pureRender.forwardRef) {
-      this.prevForwardRef = this.forwardRef = ref;
+    if (pureRender.__forwardRef) {
+      this.__prevForwardRef = this.__forwardRef = ref;
     }
 
-    const compares = pureRender.compares;
+    const compares = pureRender.__compares;
     if (compares) {
       this.shouldComponentUpdate = (nextProps) => {
         // Process composed compare
@@ -49,7 +49,7 @@ export default class ReactiveComponent extends Component {
           }
         }
 
-        return !arePropsEqual || this.prevForwardRef !== this.forwardRef;
+        return !arePropsEqual || this.__prevForwardRef !== this.__forwardRef;
       };
     }
   }
@@ -121,7 +121,7 @@ export default class ReactiveComponent extends Component {
     this._hookID = 0;
     this.__reRenders = 0;
     this.__isScheduled = false;
-    let children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
+    let children = this.__render(this.props, this.__forwardRef ? this.__forwardRef : this.context);
 
     while (this.__isScheduled) {
       this.__reRenders++;
@@ -135,7 +135,7 @@ export default class ReactiveComponent extends Component {
 
       this._hookID = 0;
       this.__isScheduled = false;
-      children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
+      children = this.__render(this.props, this.__forwardRef ? this.__forwardRef : this.context);
     }
 
     if (this.__shouldUpdate) {

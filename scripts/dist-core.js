@@ -41,7 +41,9 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
   const output = {
     name,
     exports: 'named',
-    sourcemap: true
+    sourcemap: true,
+    freeze: false,
+    strict: false,
   };
 
   const uglifyOptions = {
