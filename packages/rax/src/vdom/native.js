@@ -336,6 +336,8 @@ export default class NativeComponent extends BaseComponent {
       }
     }
 
+    let parent = this.__getNativeNode();
+    let isFragmentParent = isArray(parent);
     let prevFirstChild = null;
     let prevFirstNativeNode = null;
     let shouldUnmountPrevFirstChild = false;
@@ -369,11 +371,10 @@ export default class NativeComponent extends BaseComponent {
         }
       }
 
-      let prevNativeNode = this.__getNativeNode();
       // When fragment embed fragment updated but prev fragment is empty
       // that need to get the prev sibling native node.
       // like: [ [] ] -> [ [1, 2] ]
-      if (isArray(prevNativeNode) && prevNativeNode.length === 0 ) {
+      if (isFragmentParent && parent.length === 0 ) {
         lastPlacedNode = getPrevSiblingNativeNode(this);
       }
     }
@@ -384,7 +385,7 @@ export default class NativeComponent extends BaseComponent {
       let nextIndex = 0;
       let nextNativeNodes = [];
 
-      function insertNodes(nativeNodes, parent) {
+      function insertNodes(nativeNodes, parentNode) {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
 
@@ -397,12 +398,12 @@ export default class NativeComponent extends BaseComponent {
           } else if (prevFirstNativeNode) {
             // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
-          } else if (parent) {
+          } else if (parentNode) {
             // [*newChild1, *newChild2]
-            driver.appendChild(nativeNodes[i], parent);
+            driver.appendChild(nativeNodes[i], parentNode);
           }
         }
-      };
+      }
 
       for (let name in nextChildren) {
         let nextChild = nextChildren[name];
@@ -418,9 +419,8 @@ export default class NativeComponent extends BaseComponent {
         } else {
           // Mount nextChild that in prevChildren there has no some name
 
-          let parent = this.__getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
-          if (isArray(parent)) {
+          if (isFragmentParent) {
             parent = this._parent;
           }
 
