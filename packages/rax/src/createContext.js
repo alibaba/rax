@@ -57,7 +57,7 @@ export default function createContext(defaultValue) {
       if (instance instanceof Provider) {
         break;
       }
-      instance = instance[INTERNAL]._parentInstance;
+      instance = instance[INTERNAL].__parentInstance;
     }
     return instance && instance.emitter || defaultEmitter;
   }

@@ -36,9 +36,11 @@ describe('Component', () => {
       }
     }
 
-    let foo = <Foo key="key" ref="ref" />;
-    expect(foo.props.key).toBe(undefined);
-    expect(foo.props.ref).toBe(undefined);
+    expect(() => {
+      let foo = <Foo key="key" ref="ref" />;
+      expect(foo.props.key).toBe(undefined);
+      expect(foo.props.ref).toBe(undefined);
+    }).toWarnDev('createElement: adding a string ref "ref" outside the render method.', {withoutStack: true});
   });
 
   it('create a component based on state using initial values in this.props', function() {

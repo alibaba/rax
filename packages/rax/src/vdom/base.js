@@ -11,7 +11,7 @@ export default class BaseComponent {
 
   __initComponent(parent, parentInstance, context) {
     this._parent = parent;
-    this._parentInstance = parentInstance;
+    this.__parentInstance = parentInstance;
     this._context = context;
     this._mountID = Host.mountID++;
   }
@@ -24,7 +24,7 @@ export default class BaseComponent {
     this.__currentElement
       = this[NATIVE_NODE]
       = this._parent
-      = this._parentInstance
+      = this.__parentInstance
       = this._context
       = null;
 

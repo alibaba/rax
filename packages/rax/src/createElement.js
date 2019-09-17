@@ -3,6 +3,7 @@ import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
 import { invokeMinifiedError } from './error';
 import { isString, isArray } from './types';
+import warning from './warning';
 
 const RESERVED_PROPS = {
   key: true,
@@ -43,7 +44,7 @@ export default function createElement(type, config, children) {
       ref = config.ref;
       if (process.env.NODE_ENV !== 'production') {
         if (isString(ref) && !ownerComponent) {
-          console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+          warning('createElement: adding a string ref "' + ref + '" outside the render method.');
         }
       }
     }

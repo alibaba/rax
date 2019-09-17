@@ -156,7 +156,7 @@ module.exports = {
       {
         'peerDependencies': true,
         'devDependencies': [
-          '**/scripts/*.js',
+          '**/scripts/**/*.js',
           '**/__tests__/*.js',
           '**/__tests__/**/*.js',
           '**/*.config.js',

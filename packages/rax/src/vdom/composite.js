@@ -8,9 +8,10 @@ import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from '../toArray';
 import { scheduler } from './scheduler';
-import { isFunction } from '../types';
+import { isFunction, isArray } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 
 function performInSandbox(fn, instance, callback) {
@@ -33,8 +34,8 @@ function handleError(instance, error) {
     if (instance.componentDidCatch) {
       boundary = instance;
       break;
-    } else if (internal && internal._parentInstance) {
-      instance = internal._parentInstance;
+    } else if (internal && internal.__parentInstance) {
+      instance = internal.__parentInstance;
     } else {
       break;
     }
@@ -270,8 +271,8 @@ class CompositeComponent extends BaseComponent {
     // Reset pending queue
     this.__pendingStateQueue = null;
     let nextState = assign({}, instance.state);
-    let partial;
-    while (partial = queue.shift()) {
+    for (let i = 0; i < queue.length; i++) {
+      let partial = queue[i];
       assign(
         nextState,
         isFunction(partial) ?
@@ -350,7 +351,7 @@ class CompositeComponent extends BaseComponent {
         shouldUpdate = performInSandbox(() => {
           return instance.shouldComponentUpdate(nextProps, nextState, nextContext);
         }, instance);
-      } else if (instance.isPureComponent) {
+      } else if (instance.__isPureComponent) {
         // Pure Component
         shouldUpdate = !shallowEqual(prevProps, nextProps) ||
           !shallowEqual(prevState, nextState);
@@ -457,7 +458,13 @@ class CompositeComponent extends BaseComponent {
         });
       }
     } else {
+      let lastNativeNode = null;
       let prevNativeNode = prevRenderedComponent.__getNativeNode();
+      // Only prevNativeNode is empty fragment should find the prevSlibingNativeNode
+      if (isArray(prevNativeNode) && prevNativeNode.length === 0) {
+        lastNativeNode = getPrevSiblingNativeNode(prevRenderedComponent);
+      }
+
       prevRenderedComponent.unmountComponent(true);
 
       this[RENDERED_COMPONENT] = instantiateComponent(nextRenderedElement);
@@ -472,7 +479,6 @@ class CompositeComponent extends BaseComponent {
           const driver = Host.driver;
 
           // If the new length large then prev
-          let lastNativeNode;
           for (let i = 0; i < newNativeNode.length; i++) {
             let nativeNode = newNativeNode[i];
             if (prevNativeNode[i]) {

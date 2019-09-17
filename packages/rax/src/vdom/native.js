@@ -3,13 +3,13 @@ import { detachRef, attachRef, updateRef } from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
+import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import Instance from './instance';
 import BaseComponent from './base';
 import toArray from '../toArray';
 import { isFunction, isArray, isNull } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
-
 
 const STYLE = 'style';
 const CHILDREN = 'children';
@@ -318,7 +318,7 @@ export default class NativeComponent extends BaseComponent {
         // and move child in next children loop if need
         if (prevChild != null && shouldUpdateComponent(prevElement, nextElement)) {
           if (prevElement !== nextElement || prevContext !== context) {
-            // Pass the same context when updating chidren
+            // Pass the same context when updating children
             prevChild.__updateComponent(prevElement, nextElement, context,
               context);
           }
@@ -344,7 +344,8 @@ export default class NativeComponent extends BaseComponent {
     // `driver.removeChildren` is optional driver protocol.
     let shouldRemoveAllChildren = Boolean(
       driver.removeChildren
-      && isNull(nextChildrenElements) || nextChildrenElements && !nextChildrenElements.length
+      // nextChildElements == null or nextChildElements is empty
+      && (isNull(nextChildrenElements) || nextChildrenElements && !nextChildrenElements.length)
     );
 
     // Unmount children that are no longer present.
@@ -373,9 +374,16 @@ export default class NativeComponent extends BaseComponent {
       let nextIndex = 0;
       let lastPlacedNode = null;
       let nextNativeNodes = [];
+      let isFragmentAsParent = false;
       let insertNodes = (nativeNodes, parent) => {
         // The nativeNodes maybe fragment, so convert to array type
         nativeNodes = toArray(nativeNodes);
+        let prevSiblingNativeNode;
+
+        // Only parent is fragment need to get the prev sibling node
+        if (isFragmentAsParent) {
+          prevSiblingNativeNode = getPrevSiblingNativeNode(this);
+        }
 
         for (let i = 0, l = nativeNodes.length; i < l; i++) {
           if (lastPlacedNode) {
@@ -385,6 +393,9 @@ export default class NativeComponent extends BaseComponent {
           } else if (prevFirstNativeNode) {
             // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
+          } else if (prevSiblingNativeNode) {
+            // If parent is fragment, find nativeNode previous sibling node
+            driver.insertAfter(nativeNodes[i], prevSiblingNativeNode);
           } else if (parent) {
             // [*newChild1, *newChild2]
             driver.appendChild(nativeNodes[i], parent);
@@ -409,6 +420,7 @@ export default class NativeComponent extends BaseComponent {
           let parent = this.__getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
           if (isArray(parent)) {
+            isFragmentAsParent = true;
             parent = this._parent;
           }
 

@@ -64,7 +64,7 @@ describe('framework', () => {
         require("rax-test");
       `;
 
-    const instance = context.createInstance(1, `// { "framework": "Rax" }\n${code}`, {}) || {};
+    const instance = context.createInstance(1, `// { "framework": "Rax" }\n${code}`, __weex_options__) || {};
     expect(context.getRoot(1)).toEqual({
       type: 'div',
       ref: '_root',
