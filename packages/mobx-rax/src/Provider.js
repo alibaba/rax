@@ -1,4 +1,5 @@
-import { Children, Component } from 'rax';
+import { Component } from 'rax';
+import Children from 'rax-children';
 import { polyfill } from 'react-lifecycles-compat';
 import * as PropTypes from './propTypes';
 
