@@ -8,6 +8,7 @@ export Fragment from './fragment';
 export render from './render';
 export Component, { PureComponent } from './vdom/component';
 export version from './version';
+export isValidElement from './isValidElement';
 
 import Host from './vdom/host';
 import Instance from './vdom/instance';

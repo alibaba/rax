@@ -1,7 +1,7 @@
 import Host from './vdom/host';
 import warning from './warning';
 import {isArray, isObject} from './types';
-import isValidElement from 'rax-is-valid-element/src';
+import isValidElement from './isValidElement';
 
 export function getRenderErrorInfo() {
   const ownerComponent = Host.owner;
