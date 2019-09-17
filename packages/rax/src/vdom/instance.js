@@ -15,9 +15,9 @@ export default {
     if (!node[KEY]) {
       node[KEY] = instance;
       // Record root instance to roots map
-      if (instance.rootID) {
-        Host.rootInstances[instance.rootID] = instance;
-        Host.rootComponents[instance.rootID] = instance[INTERNAL];
+      if (instance.__rootID) {
+        Host.rootInstances[instance.__rootID] = instance;
+        Host.rootComponents[instance.__rootID] = instance[INTERNAL];
       }
     }
   },
@@ -28,9 +28,9 @@ export default {
     let instance = this.get(node);
     if (instance) {
       node[KEY] = null;
-      if (instance.rootID) {
-        delete Host.rootComponents[instance.rootID];
-        delete Host.rootInstances[instance.rootID];
+      if (instance.__rootID) {
+        delete Host.rootComponents[instance.__rootID];
+        delete Host.rootInstances[instance.__rootID];
       }
     }
   },
@@ -64,7 +64,7 @@ export default {
 
     // Update root component
     let prevRootInstance = this.get(container);
-    if (prevRootInstance && prevRootInstance.rootID) {
+    if (prevRootInstance && prevRootInstance.__rootID) {
       if (parentContext) {
         // Using __penddingContext to pass new context
         prevRootInstance[INTERNAL].__penddingContext = parentContext;
