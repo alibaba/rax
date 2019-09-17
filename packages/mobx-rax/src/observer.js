@@ -1,4 +1,5 @@
-import {createElement, Component, PureComponent, findDOMNode as baseFindDOMNode } from 'rax';
+import {createElement, Component, PureComponent} from 'rax';
+import baseFindDOMNode from 'rax-find-dom-node';
 import hoistStatics from 'hoist-non-react-statics';
 import { createAtom, Reaction, _allowStateChanges, $mobx } from 'mobx';
 import EventEmitter from './utils/EventEmitter';
