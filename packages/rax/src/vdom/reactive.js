@@ -16,7 +16,7 @@ export default class ReactiveComponent extends Component {
 
     // A pure function
     this.__render = pureRender;
-    this._hookID = 0;
+    this.__hookID = 0;
     // Number of rerenders
     this.__reRenders = 0;
     this.__hooks = {};
@@ -59,7 +59,7 @@ export default class ReactiveComponent extends Component {
   }
 
   getHookID() {
-    return ++this._hookID;
+    return ++this.__hookID;
   }
 
   readContext(context) {
@@ -118,7 +118,7 @@ export default class ReactiveComponent extends Component {
       Host.measurer && Host.measurer.beforeRender();
     }
 
-    this._hookID = 0;
+    this.__hookID = 0;
     this.__reRenders = 0;
     this.__isScheduled = false;
     let children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
@@ -133,7 +133,7 @@ export default class ReactiveComponent extends Component {
         }
       }
 
-      this._hookID = 0;
+      this.__hookID = 0;
       this.__isScheduled = false;
       children = this.__render(this.props, this.forwardRef ? this.forwardRef : this.context);
     }
