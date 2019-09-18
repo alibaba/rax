@@ -48,14 +48,14 @@ module.exports = function scriptLoader(content) {
       // Only copy first level directory for miniapp component
       const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
       const source = join(sourcePackagePath, firstLevelFolder);
-      const target = join(outputPath, 'npm', npmName, firstLevelFolder);
+      const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), firstLevelFolder));
       mkdirpSync(target);
       copySync(source, target, {
         filter: (filename) => !/__(mocks|tests?)__/.test(filename),
       });
 
       // Modify referenced component location
-      const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+      const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), pkg.miniappConfig.main + '.json'));
       if (existsSync(componentConfigPath)) {
         const componentConfig = readJSONSync(componentConfigPath);
         if (componentConfig.usingComponents) {
@@ -74,10 +74,9 @@ module.exports = function scriptLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
+      const distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
 
-      const { code, map } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath);
-
-      const distSourcePath = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath))).replace(/node_modules/g, 'npm');
+      const { code, map } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -92,9 +91,7 @@ module.exports = function scriptLoader(content) {
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
 
-    const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
-
-    const { code } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, rootNpmRelativePath);
+    const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     writeFileSync(distSourcePath, code, 'utf-8');
@@ -103,19 +100,30 @@ module.exports = function scriptLoader(content) {
   return content;
 };
 
-function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourcePath, rootNpmRelativePath = '') {
+/**
+ *
+ * @param {object} option
+ * @param {string} option.rawContent code to be transformed
+ * @param {string} option.mode transform mode, build or watch
+ * @param {array} option.nodeModulesPathList existed node_modules paths
+ * @param {array} option.relativeResourcePath current file path relative to rootContext
+ * @param {array} option.distSourcePath file path that transformed to
+ * @param {array} option.outputPath dist dir path
+ *
+ */
+function transformCode({rawContent, mode, nodeModulesPathList = [], relativeResourcePath, distSourcePath, outputPath}) {
   const presets = [];
   const plugins = [
     [
       require('./babel-plugin-rename-import'),
-      { normalizeFileName, nodeModulesPathList, rootNpmRelativePath }
+      { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath }
 
     ], // for rename npm modules.
     require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
     [
       require('babel-plugin-transform-define'),
       {
-        'process.env.NODE_ENV': loaderOptions.mode === 'build' ? 'production' : 'development',
+        'process.env.NODE_ENV': mode === 'build' ? 'production' : 'development',
       }
     ],
     [
@@ -128,7 +136,7 @@ function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourc
   ];
 
   // Compile to ES5 for build.
-  if (loaderOptions.mode === 'build') {
+  if (mode === 'build') {
     presets.push(require('@babel/preset-env'));
     plugins.push(require('@babel/plugin-proposal-class-properties'));
   }
@@ -149,10 +157,10 @@ function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourc
     ], // support all plugins
   };
 
-  return transformSync(rawCode, {
+  return transformSync(rawContent, {
     presets,
     plugins,
-    filename: resourcePath,
+    filename: relativeResourcePath,
     parserOpts: babelParserOption,
   });
 }
@@ -160,8 +168,8 @@ function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourc
 /**
  * For that alipay build folder can not contain `@`, escape to `_`.
  */
-function normalizeFileName(filename) {
-  return filename.replace(/@/g, '_');
+function normalizeNpmFileName(filename) {
+  return filename.replace(/@/g, '_').replace(/node_modules/g, 'npm');
 }
 
 // root: /Users/chriscindy/Code/Test/myRaxMiniapp5.0
