@@ -1,7 +1,5 @@
-export const NULL = null;
-
 export function isNull(obj) {
-  return obj === NULL;
+  return obj === null;
 }
 
 export function isFunction(obj) {
