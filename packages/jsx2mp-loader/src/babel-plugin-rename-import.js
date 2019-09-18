@@ -27,7 +27,7 @@ function getNpmName(value) {
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeFileName, nodeModulesPathList, rootNpmRelativePath } = options;
+  const { normalizeFileName, nodeModulesPathList, distSourcePath, outputPath } = options;
   const source = (value, npmList, filename, rootContext) => {
     const npmName = getNpmName(value);
     // Example:
@@ -51,7 +51,9 @@ module.exports = function visitor({ types: t }, options) {
     const moduleBasePath = join(packageJSONPath, '..');
     const modulePathSuffix = relative(moduleBasePath, target);
     // ret => '../npm/_ali/universal-goldlog/lib/index.js
-    const filePath = relative(dirname(filename), join(moduleBasePath, modulePathSuffix)).replace(/node_modules/g, 'npm');
+
+    const rootNodeModulePath = join(rootContext, 'node_modules');
+    const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target))).replace(/node_modules/g, 'npm');
     return t.stringLiteral(normalizeFileName(filePath));
   };
 
@@ -62,6 +64,7 @@ module.exports = function visitor({ types: t }, options) {
         if (isWeexModule(value)) {
           path.remove();
         } else if (isRaxModule(value)) {
+          const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
           path.node.source = t.stringLiteral('./' + join(rootNpmRelativePath, 'jsx2mp-runtime'));
         } else if (isNpmModule(value)) {
           path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);

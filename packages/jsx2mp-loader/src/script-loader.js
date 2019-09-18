@@ -48,14 +48,14 @@ module.exports = function scriptLoader(content) {
       // Only copy first level directory for miniapp component
       const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
       const source = join(sourcePackagePath, firstLevelFolder);
-      const target = join(outputPath, 'npm', npmName, firstLevelFolder);
+      const target = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), firstLevelFolder).replace(/node_modules/g, 'npm'));
       mkdirpSync(target);
       copySync(source, target, {
         filter: (filename) => !/__(mocks|tests?)__/.test(filename),
       });
 
       // Modify referenced component location
-      const componentConfigPath = join(outputPath, 'npm', npmName, pkg.miniappConfig.main + '.json');
+      const componentConfigPath = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), pkg.miniappConfig.main + '.json').replace(/node_modules/g, 'npm'));
       if (existsSync(componentConfigPath)) {
         const componentConfig = readJSONSync(componentConfigPath);
         if (componentConfig.usingComponents) {
@@ -74,10 +74,9 @@ module.exports = function scriptLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
-
-      const { code, map } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath);
-
       const distSourcePath = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath))).replace(/node_modules/g, 'npm');
+
+      const { code, map } = transformCode({rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -92,9 +91,7 @@ module.exports = function scriptLoader(content) {
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
 
-    const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
-
-    const { code } = transformCode(rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, rootNpmRelativePath);
+    const { code } = transformCode({rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     writeFileSync(distSourcePath, code, 'utf-8');
@@ -103,12 +100,12 @@ module.exports = function scriptLoader(content) {
   return content;
 };
 
-function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourcePath, rootNpmRelativePath = '') {
+function transformCode({rawContent, loaderOptions, nodeModulesPathList = [], relativeResourcePath, distSourcePath, outputPath}) {
   const presets = [];
   const plugins = [
     [
       require('./babel-plugin-rename-import'),
-      { normalizeFileName, nodeModulesPathList, rootNpmRelativePath }
+      { normalizeFileName, nodeModulesPathList, distSourcePath, outputPath }
 
     ], // for rename npm modules.
     require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
@@ -149,10 +146,10 @@ function transformCode(rawCode, loaderOptions, nodeModulesPathList = [], resourc
     ], // support all plugins
   };
 
-  return transformSync(rawCode, {
+  return transformSync(rawContent, {
     presets,
     plugins,
-    filename: resourcePath,
+    filename: relativeResourcePath,
     parserOpts: babelParserOption,
   });
 }
