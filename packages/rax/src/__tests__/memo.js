@@ -19,11 +19,11 @@ describe('memo', () => {
   }
 
   beforeEach(function() {
-    Host.__driver = ServerDriver;
+    Host.driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.__driver = null;
+    Host.driver = null;
   });
 
   it('will only shallowly compare complex objects in the props object', () => {

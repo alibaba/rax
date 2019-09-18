@@ -20,11 +20,11 @@ describe('findDOMNode', () => {
   }
 
   beforeEach(function() {
-    Host.__driver = ServerDriver;
+    Host.driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.__driver = null;
+    Host.driver = null;
   });
 
   it('findDOMNode with null', () => {
@@ -34,7 +34,7 @@ describe('findDOMNode', () => {
 
   it('findDOMNode with id', () => {
     let mockFn = jest.fn();
-    Host.__driver = {
+    Host.driver = {
       getElementById: mockFn
     };
     let node = findDOMNode('id');

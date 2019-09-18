@@ -25,11 +25,11 @@ describe('ReactiveComponent', function() {
   }
 
   beforeEach(function() {
-    Host.__driver = ServerDriver;
+    Host.driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.__driver = null;
+    Host.driver = null;
   });
 
   it('should render functional stateless component', function() {

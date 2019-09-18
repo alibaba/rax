@@ -40,7 +40,7 @@ function setStyles(node, styles) {
       }
     }
   } else if (isWeex) {
-    shared.Host.__driver.setStyle(node, styles);
+    shared.Host.driver.setStyle(node, styles);
   }
 }
 
@@ -52,7 +52,7 @@ function addEventListener(node, eventName, eventHandler, props) {
       return node.addEventListener(eventName, eventHandler);
     }
   } else if (isWeex) {
-    shared.Host.__driver.addEventListener(node, eventName, eventHandler, props);
+    shared.Host.driver.addEventListener(node, eventName, eventHandler, props);
   }
 }
 
@@ -74,7 +74,7 @@ function setAttribute(node, propKey, propValue) {
       node.setAttribute(propKey, propValue);
     }
   } else if (isWeex) {
-    shared.Host.__driver.setAttribute(node, propKey, propValue);
+    shared.Host.driver.setAttribute(node, propKey, propValue);
   }
 }
 

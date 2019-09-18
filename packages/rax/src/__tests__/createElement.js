@@ -18,11 +18,11 @@ describe('Element', () => {
   }
 
   beforeEach(function() {
-    Host.__driver = ServerDriver;
+    Host.driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.__driver = null;
+    Host.driver = null;
   });
 
   it('createElement', () => {

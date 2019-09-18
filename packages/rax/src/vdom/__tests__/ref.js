@@ -10,12 +10,12 @@ import createRef from '../../createRef';
 
 describe('Ref', function() {
   beforeEach(function() {
-    Host.__driver = ServerDriver;
+    Host.driver = ServerDriver;
     jest.useFakeTimers();
   });
 
   afterEach(function() {
-    Host.__driver = null;
+    Host.driver = null;
     jest.useRealTimers();
   });
 
@@ -56,9 +56,9 @@ describe('Ref', function() {
 
     let refHopsAround = render(<RefHopsAround />);
 
-    let firstDiv = Host.__driver.getElementById('first');
-    let secondDiv = Host.__driver.getElementById('second');
-    let thirdDiv = Host.__driver.getElementById('third');
+    let firstDiv = Host.driver.getElementById('first');
+    let secondDiv = Host.driver.getElementById('second');
+    let thirdDiv = Host.driver.getElementById('third');
 
     expect(refHopsAround.refs.hopRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);

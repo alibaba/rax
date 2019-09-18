@@ -5,7 +5,7 @@ export default {
   __mountID: 1,
   __isUpdating: false,
   // Inject
-  __driver: null,
+  driver: null,
   // Roots
   rootComponents: {},
   rootInstances: {},

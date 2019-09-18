@@ -18,7 +18,7 @@ function findDOMNode(instance) {
   }
 
   if (typeof instance == 'string') {
-    return Host.__driver.getElementById(instance);
+    return Host.driver.getElementById(instance);
   }
 
   if (typeof instance.render !== 'function') {

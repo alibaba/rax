@@ -7,11 +7,11 @@ const { Host } = shared;
 
 describe('unmountComponentAtNode', () => {
   beforeEach(() => {
-    Host.__driver = null;
+    Host.driver = null;
   });
 
   afterEach(() => {
-    Host.__driver = null;
+    Host.driver = null;
   });
 
   it('unmout component', () => {
@@ -19,7 +19,7 @@ describe('unmountComponentAtNode', () => {
     let removeChildMock = jest.fn();
     let body = {tagName: 'BODY'};
 
-    Host.__driver = {
+    Host.driver = {
       createElement() {
         return {tagName: 'DIV'};
       },

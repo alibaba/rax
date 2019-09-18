@@ -477,7 +477,7 @@ class CompositeComponent extends BaseComponent {
           prevNativeNode = toArray(prevNativeNode);
           newNativeNode = toArray(newNativeNode);
 
-          const driver = Host.__driver;
+          const driver = Host.driver;
 
           // If the new length large then prev
           for (let i = 0; i < newNativeNode.length; i++) {
