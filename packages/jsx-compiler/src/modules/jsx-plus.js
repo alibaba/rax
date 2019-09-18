@@ -144,8 +144,11 @@ function transformDirectiveList(ast, adapter) {
           if (t.isMemberExpression(iterValue)) {
             const parentList = iterValue.object.__listItem.parentList;
             parentList.returnProperties.push(t.objectProperty(iterValue.property, mapCallExpression));
+          } else if(t.isIdentifier(iterValue)) {
+            const parentList = iterValue.__listItem.parentList;
+            parentList.returnProperties[0] = t.objectProperty(iterValue, mapCallExpression);
           } else {
-            new CodeError(genExpression(iterValue), iterValue, iterValue.loc, 'Nested list only supports MemberExpression，like item.list.');
+            throw new Error('Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
           }
         } else {
           iterValue = mapCallExpression;
