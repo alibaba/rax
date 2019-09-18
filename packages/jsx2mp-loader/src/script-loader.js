@@ -80,7 +80,7 @@ module.exports = function scriptLoader(content) {
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
 
-      const { code, map } = transformCode({rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
+      const { code, map } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -95,7 +95,7 @@ module.exports = function scriptLoader(content) {
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
 
-    const { code } = transformCode({rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
+    const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     writeFileSync(distSourcePath, code, 'utf-8');
@@ -104,7 +104,18 @@ module.exports = function scriptLoader(content) {
   return content;
 };
 
-function transformCode({rawContent, loaderOptions, nodeModulesPathList = [], relativeResourcePath, distSourcePath, outputPath}) {
+/**
+ *
+ * @param {object} option
+ * @param {string} option.rawContent code to be transformed
+ * @param {string} option.mode transform mode, build or watch
+ * @param {array} option.nodeModulesPathList existed node_modules paths
+ * @param {array} option.relativeResourcePath current file path relative to rootContext
+ * @param {array} option.distSourcePath file path that transformed to
+ * @param {array} option.outputPath dist dir path
+ *
+ */
+function transformCode({rawContent, mode, nodeModulesPathList = [], relativeResourcePath, distSourcePath, outputPath}) {
   const presets = [];
   const plugins = [
     [
@@ -116,7 +127,7 @@ function transformCode({rawContent, loaderOptions, nodeModulesPathList = [], rel
     [
       require('babel-plugin-transform-define'),
       {
-        'process.env.NODE_ENV': loaderOptions.mode === 'build' ? 'production' : 'development',
+        'process.env.NODE_ENV': mode === 'build' ? 'production' : 'development',
       }
     ],
     [
@@ -129,7 +140,7 @@ function transformCode({rawContent, loaderOptions, nodeModulesPathList = [], rel
   ];
 
   // Compile to ES5 for build.
-  if (loaderOptions.mode === 'build') {
+  if (mode === 'build') {
     presets.push(require('@babel/preset-env'));
     plugins.push(require('@babel/plugin-proposal-class-properties'));
   }
