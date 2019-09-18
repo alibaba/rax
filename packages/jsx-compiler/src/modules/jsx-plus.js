@@ -1,5 +1,8 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
+const hasListItem = require('../utils/hasListItem');
+const CodeError = require('../utils/CodeError');
+const genExpression = require('../codegen/genExpression');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -89,46 +92,6 @@ function transformDirectiveCondition(ast, adapter) {
 
 function transformDirectiveList(ast, adapter) {
   traverse(ast, {
-    JSXElement: {
-      exit(path) {
-        const { node } = path;
-        const { attributes } = node.openingElement;
-        if (node.__jsxlist && !node.__jsxlist.generated) {
-          const { args, iterValue } = node.__jsxlist;
-          path.traverse({
-            Identifier(innerPath) {
-              const { node } = innerPath;
-              if (args.find(arg => arg.name === node.name)
-              ) {
-                node.__listItem = {
-                  jsxplus: true,
-                  item: args[0].name
-                };
-              }
-            }
-          });
-          attributes.push(
-            t.jsxAttribute(
-              t.jsxIdentifier(adapter.for),
-              t.jsxExpressionContainer(iterValue)
-            )
-          );
-          args.forEach((arg, index) => {
-            attributes.push(
-              t.jsxAttribute(
-                t.jsxIdentifier([adapter.forItem, adapter.forIndex][index]),
-                t.stringLiteral(arg.name)
-              )
-            );
-            // Mark skip ids.
-            const skipIds = node.skipIds = node.skipIds || new Map();
-            skipIds.set(arg.name, true);
-          });
-
-          node.__jsxlist.generated = true;
-        }
-      }
-    },
     JSXAttribute(path) {
       const { node } = path;
       if (t.isJSXIdentifier(node.name, { name: 'x-for' })) {
@@ -163,24 +126,38 @@ function transformDirectiveList(ast, adapter) {
         }
         const parentJSXEl = path.findParent(p => p.isJSXElement());
         // Transform x-for iterValue to map function
+        const properties = [
+          t.objectProperty(params[0], params[0]),
+          t.objectProperty(params[1], params[1])
+        ];
         const loopFnBody = t.blockStatement([
           t.returnStatement(
-            t.objectExpression([
-              t.objectProperty(params[0], params[0]),
-              t.objectProperty(params[1], params[1])
-            ])
+            t.objectExpression(properties)
           )
         ]);
+        const mapCallExpression = t.callExpression(
+          t.memberExpression(iterValue, t.identifier('map')),
+          [
+            t.arrowFunctionExpression(params, loopFnBody)
+          ]);
+        if (hasListItem(iterValue)) {
+          if (t.isMemberExpression(iterValue)) {
+            const parentList = iterValue.object.__listItem.parentList;
+            parentList.returnProperties.push(t.objectProperty(iterValue.property, mapCallExpression));
+          } else {
+            new CodeError(genExpression(iterValue), iterValue, iterValue.loc, 'Nested list only supports MemberExpression，like item.list.');
+          }
+        } else {
+          iterValue = mapCallExpression;
+        }
         parentJSXEl.node.__jsxlist = {
           args: params,
-          iterValue: t.callExpression(
-            t.memberExpression(iterValue, t.identifier('map')),
-            [
-              t.arrowFunctionExpression(params, loopFnBody)
-            ]),
+          iterValue,
           loopFnBody,
+          returnProperties: properties,
           jsxplus: true
         };
+        transformListJSXElement(path.parentPath.parentPath, adapter);
         path.remove();
       }
     }
@@ -199,6 +176,46 @@ function transformComponentFragment(ast) {
     JSXClosingElement: transformFragment,
   });
   return null;
+}
+
+function transformListJSXElement(path, adapter) {
+  const { node } = path;
+  const { attributes } = node.openingElement;
+  if (node.__jsxlist && !node.__jsxlist.generated) {
+    const { args, iterValue } = node.__jsxlist;
+    path.traverse({
+      Identifier(innerPath) {
+        const innerNode = innerPath.node;
+        if (args.find(arg => arg.name === innerNode.name)
+        ) {
+          innerNode.__listItem = {
+            jsxplus: true,
+            item: args[0].name,
+            parentList: node.__jsxlist
+          };
+        }
+      }
+    });
+    attributes.push(
+      t.jsxAttribute(
+        t.jsxIdentifier(adapter.for),
+        t.jsxExpressionContainer(iterValue)
+      )
+    );
+    args.forEach((arg, index) => {
+      attributes.push(
+        t.jsxAttribute(
+          t.jsxIdentifier([adapter.forItem, adapter.forIndex][index]),
+          t.stringLiteral(arg.name)
+        )
+      );
+      // Mark skip ids.
+      const skipIds = node.skipIds = node.skipIds || new Map();
+      skipIds.set(arg.name, true);
+    });
+
+    node.__jsxlist.generated = true;
+  }
 }
 module.exports = {
   parse(parsed, code, options) {
