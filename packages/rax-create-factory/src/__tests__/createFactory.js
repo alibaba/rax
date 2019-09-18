@@ -20,11 +20,11 @@ describe('cloneElement', () => {
   }
 
   beforeEach(function() {
-    Host.driver = ServerDriver;
+    Host.__driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.driver = null;
+    Host.__driver = null;
   });
 
   class ComponentClass extends Component {

@@ -317,7 +317,6 @@ describe('renderToString', () => {
     };
 
     function MyComponent() {
-      const value = useContext(ThemeContext);
       return (
         <ThemeContext.Consumer>
           {value => <div>Current theme is {value}.</div>}

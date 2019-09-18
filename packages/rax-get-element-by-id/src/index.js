@@ -4,7 +4,7 @@ import { shared } from 'rax';
 
 export default function getElementById(id) {
   if (isWeex) {
-    return shared.Host.driver.getElementById(id);
+    return shared.Host.__driver.getElementById(id);
   } else if (isWeb) {
     return document.getElementById(id);
   } else if (typeof my == 'object') {

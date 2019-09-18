@@ -92,8 +92,6 @@ const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
 
 function styleToCSS(style, options = {}) {
-  const isObject = typeof style === 'object';
-
   let css = '';
 
   if (Array.isArray(style)) {
@@ -183,7 +181,7 @@ const updater = {
 /**
  * Functional Reactive Component Class Wrapper
  */
-class ReactiveComponent {
+class ServerReactiveComponent {
   constructor(pureRender) {
     // A pure function
     this._render = pureRender;
@@ -204,16 +202,14 @@ class ReactiveComponent {
   }
 
   readContext(context) {
-    const readEmitter = context.Provider.readEmitter;
-    const contextEmitter = readEmitter(this);
+    const getEmitter = context.Provider.getEmitter;
+    const contextEmitter = getEmitter(this);
     return contextEmitter.value;
   }
 
   render() {
     this._hookID = 0;
-
     let children = this._render(this.props, this.context);
-
     return children;
   }
 }
@@ -285,7 +281,7 @@ function renderElementToString(element, context, options) {
       var renderedElement = instance.render();
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
-      const instance = new ReactiveComponent(type);
+      const instance = new ServerReactiveComponent(type);
       instance.props = props;
       instance.context = context;
 

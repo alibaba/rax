@@ -1,5 +1,5 @@
 import invokeFunctionsWithContext from './invokeFunctionsWithContext';
-import { useState, useEffect, getCurrentInstance } from './hooks';
+import { useState, useEffect, useLayoutEffect, getCurrentInstance } from './hooks';
 import { isFunction } from './types';
 import { INTERNAL } from './constant';
 import toArray from './toArray';
@@ -27,6 +27,7 @@ let uniqueId = 0;
 
 export default function createContext(defaultValue) {
   const contextProp = uniqueId++;
+  const emitterStack = [];
   const defaultEmitter = new ValueEmitter(defaultValue);
 
   // Provider Component
@@ -46,6 +47,14 @@ export default function createContext(defaultValue) {
 
     if (propsValue !== value) setValue(propsValue);
 
+    // Push emitter in willMount
+    emitterStack.push(emitter);
+    // FIXME: useLayoutEffect not execution when in SSR, and it expect to run
+    // Pop emitter in didMount or didUpdate
+    useLayoutEffect(() => {
+      emitterStack.pop();
+    });
+
     useEffect(() => {
       emitter.emit();
     }, [value]);
@@ -53,7 +62,11 @@ export default function createContext(defaultValue) {
     return props.children;
   }
 
-  function readEmitter(instance) {
+  function getEmitter(instance) {
+    // Server-side rendering should get emitter only by stack
+    const emitter = emitterStack[emitterStack.length - 1];
+    if (emitter) return emitter;
+
     // Find Provider parent over parent
     while (instance && instance[INTERNAL]) {
       // Provoide feature detection
@@ -66,12 +79,12 @@ export default function createContext(defaultValue) {
     return defaultEmitter;
   }
 
-  Provider.readEmitter = readEmitter;
+  Provider.getEmitter = getEmitter;
   Provider.__contextProp = contextProp;
 
   // Cuonsumer Component
   function Consumer(props) {
-    const [emitter] = useState(() => readEmitter(this));
+    const [emitter] = useState(() => getEmitter(this));
     const [value, setValue] = useState(emitter.value);
 
     if (value !== emitter.value) {
@@ -79,7 +92,7 @@ export default function createContext(defaultValue) {
       return; // Interrupt execution of consumer.
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       function onUpdate(updatedValue) {
         if (value !== updatedValue) {
           setValue(updatedValue);

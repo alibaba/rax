@@ -21,11 +21,11 @@ describe('createClass', () => {
   }
 
   beforeEach(function() {
-    Host.driver = ServerDriver;
+    Host.__driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.driver = null;
+    Host.__driver = null;
   });
 
   it('should copy `displayName` onto the Constructor', function() {

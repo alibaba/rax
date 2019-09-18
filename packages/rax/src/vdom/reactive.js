@@ -66,8 +66,7 @@ export default class ReactiveComponent extends Component {
     const contextProp = Provider.__contextProp;
     let contextItem = this.__dependencies[contextProp];
     if (!contextItem) {
-      const readEmitter = Provider.readEmitter;
-      const contextEmitter = readEmitter(this);
+      const contextEmitter = Provider.getEmitter(this);
       contextItem = {
         __emitter: contextEmitter,
         __renderedContext: contextEmitter.value,
