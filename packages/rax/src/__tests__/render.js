@@ -19,19 +19,19 @@ describe('render', () => {
   }
 
   beforeEach(function() {
-    Host.driver = ServerDriver;
+    Host.__driver = ServerDriver;
     jest.useFakeTimers();
   });
 
   afterEach(function() {
-    Host.driver = null;
+    Host.__driver = null;
     jest.useRealTimers();
   });
 
   it('render to default container', () => {
     let appendChildMock = jest.fn();
 
-    Host.driver = {
+    Host.__driver = {
       createElement() {
         return {tagName: 'DIV'};
       },

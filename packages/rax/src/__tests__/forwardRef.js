@@ -21,11 +21,11 @@ describe('forwardRef', () => {
   }
 
   beforeEach(function() {
-    Host.driver = ServerDriver;
+    Host.__driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.driver = null;
+    Host.__driver = null;
   });
 
   it('should update refs when switching between children', () => {

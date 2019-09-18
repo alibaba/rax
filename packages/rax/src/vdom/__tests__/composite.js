@@ -19,12 +19,12 @@ describe('CompositeComponent', function() {
   }
 
   beforeEach(function() {
-    Host.driver = ServerDriver;
+    Host.__driver = ServerDriver;
     jest.useFakeTimers();
   });
 
   afterEach(function() {
-    Host.driver = null;
+    Host.__driver = null;
     jest.useRealTimers();
   });
 

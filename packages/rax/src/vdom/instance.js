@@ -39,7 +39,7 @@ export default {
       Host.measurer && Host.measurer.beforeRender();
     }
 
-    const driver = Host.driver;
+    const driver = Host.__driver;
 
     // Real native root node is body
     if (container == null) {

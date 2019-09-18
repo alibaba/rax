@@ -49,7 +49,7 @@ export default class BaseComponent {
 
   unmountComponent(shouldNotRemoveChild) {
     if (this[NATIVE_NODE] && !shouldNotRemoveChild) {
-      Host.driver.removeChild(this[NATIVE_NODE], this._parent);
+      Host.__driver.removeChild(this[NATIVE_NODE], this._parent);
     }
 
     this.__destoryComponent();
@@ -74,7 +74,7 @@ export default class BaseComponent {
     if (nativeNodeMounter) {
       nativeNodeMounter(nativeNode, parent);
     } else {
-      Host.driver.appendChild(nativeNode, parent);
+      Host.__driver.appendChild(nativeNode, parent);
     }
   }
 

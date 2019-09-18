@@ -23,7 +23,7 @@ class FragmentComponent extends NativeComponent {
       nativeNodeMounter(fragment, parent);
     } else {
       for (let i = 0; i < fragment.length; i++) {
-        Host.driver.appendChild(fragment[i], parent);
+        Host.__driver.appendChild(fragment[i], parent);
       }
     }
 
@@ -54,7 +54,7 @@ class FragmentComponent extends NativeComponent {
 
       if (!shouldNotRemoveChild) {
         for (let i = 0, l = nativeNode.length; i < l; i++) {
-          Host.driver.removeChild(nativeNode[i]);
+          Host.__driver.removeChild(nativeNode[i]);
         }
       }
     }

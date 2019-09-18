@@ -20,11 +20,11 @@ describe('TextComponent', function() {
   }
 
   beforeEach(function() {
-    Host.driver = ServerDriver;
+    Host.__driver = ServerDriver;
   });
 
   afterEach(function() {
-    Host.driver = null;
+    Host.__driver = null;
   });
 
   it('updates a mounted text component in place', function() {

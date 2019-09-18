@@ -11,7 +11,7 @@ class TextComponent extends BaseComponent {
     if (prevElement !== nextElement) {
       // Replace current element
       this.__currentElement = nextElement;
-      Host.driver.updateText(this.__getNativeNode(), nextElement);
+      Host.__driver.updateText(this.__getNativeNode(), nextElement);
 
       if (process.env.NODE_ENV !== 'production') {
         this._stringText = this.__currentElement;
@@ -24,7 +24,7 @@ class TextComponent extends BaseComponent {
     if (process.env.NODE_ENV !== 'production') {
       this._stringText = this.__currentElement;
     }
-    return Host.driver.createText(this.__currentElement, this);
+    return Host.__driver.createText(this.__currentElement, this);
   }
 }
 

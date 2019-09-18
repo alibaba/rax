@@ -13,22 +13,21 @@ export default class ReactiveComponent extends Component {
     super();
     // Marked ReactiveComponent.
     this.__isReactiveComponent = true;
-
     // A pure function
     this.__render = pureRender;
     this.__hookID = 0;
     // Number of rerenders
     this.__reRenders = 0;
     this.__hooks = {};
-    // Handles store
-    this.didMount = [];
-    this.didUpdate = [];
-    this.willUnmount = [];
     // Is render scheduled
     this.__isScheduled = false;
     this.__shouldUpdate = false;
     this.__children = null;
     this.__dependencies = {};
+    // Handles store
+    this.didMount = [];
+    this.didUpdate = [];
+    this.willUnmount = [];
 
     this.state = {};
 
@@ -64,14 +63,14 @@ export default class ReactiveComponent extends Component {
 
   readContext(context) {
     const Provider = context.Provider;
-    const contextProp = Provider.contextProp;
+    const contextProp = Provider.__contextProp;
     let contextItem = this.__dependencies[contextProp];
     if (!contextItem) {
       const readEmitter = Provider.readEmitter;
       const contextEmitter = readEmitter(this);
       contextItem = {
-        emitter: contextEmitter,
-        renderedContext: contextEmitter.value,
+        __emitter: contextEmitter,
+        __renderedContext: contextEmitter.value,
       };
 
       const contextUpdater = (newContext) => {
@@ -85,7 +84,7 @@ export default class ReactiveComponent extends Component {
       this.willUnmount.push(contextEmitter.off.bind(contextEmitter, contextUpdater));
       this.__dependencies[contextProp] = contextItem;
     }
-    return contextItem.renderedContext = contextItem.emitter.value;
+    return contextItem.__renderedContext = contextItem.__emitter.value;
   }
 
   componentWillMount() {

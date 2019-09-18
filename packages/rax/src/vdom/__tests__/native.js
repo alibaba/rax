@@ -21,12 +21,12 @@ describe('NativeComponent', function() {
   }
 
   beforeEach(function() {
-    Host.driver = ServerDriver;
+    Host.__driver = ServerDriver;
     jest.useFakeTimers();
   });
 
   afterEach(function() {
-    Host.driver = null;
+    Host.__driver = null;
     jest.useRealTimers();
   });
 
@@ -202,7 +202,7 @@ describe('NativeComponent', function() {
 
     // Test for fast path to removeChildren.
     let callRemoveChildrenTimes = 0;
-    Host.driver.removeChildren = (node) => {
+    Host.__driver.removeChildren = (node) => {
       node.childNodes.length = 0;
       callRemoveChildrenTimes++;
     };
@@ -210,7 +210,7 @@ describe('NativeComponent', function() {
     jest.runAllTimers();
     expect(container.childNodes.length).toEqual(0);
     expect(callRemoveChildrenTimes).toEqual(1);
-    delete Host.driver.removeChildren; // Reset driver
+    delete Host.__driver.removeChildren; // Reset driver
 
     // Test downgrade logical works.
     instance.setState({ count: 1 });

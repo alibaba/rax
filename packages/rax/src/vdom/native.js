@@ -114,7 +114,7 @@ export default class NativeComponent extends BaseComponent {
       Instance.remove(this[NATIVE_NODE]);
 
       if (!shouldNotRemoveChild) {
-        Host.driver.removeChild(this[NATIVE_NODE], this._parent);
+        Host.__driver.removeChild(this[NATIVE_NODE], this._parent);
 
         // If the parent node has been removed, child node don't need to be removed
         shouldNotRemoveChild = true;
@@ -155,7 +155,7 @@ export default class NativeComponent extends BaseComponent {
     let propKey;
     let styleName;
     let styleUpdates;
-    const driver = Host.driver;
+    const driver = Host.__driver;
     const nativeNode = this.__getNativeNode();
 
     for (propKey in prevProps) {
@@ -295,7 +295,7 @@ export default class NativeComponent extends BaseComponent {
   __updateChildren(nextChildrenElements, context) {
     // prev rendered children
     let prevChildren = this.__renderedChildren;
-    let driver = Host.driver;
+    let driver = Host.__driver;
 
     if (nextChildrenElements == null && prevChildren == null) {
       return;
@@ -472,7 +472,7 @@ export default class NativeComponent extends BaseComponent {
 
   __createNativeNode() {
     const instance = this[INSTANCE];
-    const nativeNode = Host.driver.createElement(instance.type, instance.props, this);
+    const nativeNode = Host.__driver.createElement(instance.type, instance.props, this);
     Instance.set(nativeNode, instance);
     return nativeNode;
   }

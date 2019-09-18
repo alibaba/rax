@@ -4,11 +4,11 @@
 export default {
   __mountID: 1,
   __isUpdating: false,
+  // Inject
+  __driver: null,
   // Roots
   rootComponents: {},
   rootInstances: {},
   // Current owner component
   owner: null,
-  // Inject
-  driver: null,
 };
