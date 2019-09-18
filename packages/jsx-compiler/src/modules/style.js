@@ -2,8 +2,8 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 
 const TEMPLATE_AST = 'templateAST';
-const DYNAMIC_STYLES = 'dynamicStyles';
 const DynamicBinding = require('../utils/DynamicBinding');
+const hasListItem = require('../utils/hasListItem');
 
 /**
  * Transform style object.
@@ -12,13 +12,13 @@ const DynamicBinding = require('../utils/DynamicBinding');
  *          var _style0 = { width: 100 };
  *          return { _style0 };
  */
-function transformStyle(ast, dynamicStyles) {
+function transformStyle(ast) {
   const dynamicValue = new DynamicBinding('_s');
 
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
-      if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
+      if (shouldReplace(path)) {
         const styleObjectExpression = node.value.expression;
 
         // <tag style="{{ _s0 }}" />
@@ -30,6 +30,14 @@ function transformStyle(ast, dynamicStyles) {
     },
   });
   return dynamicValue.getStore();
+}
+
+function shouldReplace(path) {
+  const { node } = path;
+  if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
+    return !hasListItem(node.value.expression);
+  }
+  return false;
 }
 
 module.exports = {

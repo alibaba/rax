@@ -15,12 +15,12 @@ module.exports = [
   require('./style'),
   // Handle Rax base components.
   require('./components'),
+  // JSX+ Directives
+  require('./jsx-plus'),
   // Directive a:for
   require('./list'),
   // Directive a:if
   require('./condition'),
-  // JSX+ Directives
-  require('./jsx-plus'),
   // Handle render function
   require('./render-function'),
   // Parse and generate template.
