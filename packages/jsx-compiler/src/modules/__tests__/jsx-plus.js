@@ -34,6 +34,12 @@ describe('Directives', () => {
       _transformList(ast, adapter);
       expect(genExpression(ast))
         .toEqual(`<View a:for={array.map((item, index) => {
+  item = item.map((item2, index) => {
+    return {
+      item2: item2,
+      index: index
+    };
+  });
   return {
     item: item,
     index: index

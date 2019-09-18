@@ -141,12 +141,14 @@ function transformDirectiveList(ast, adapter) {
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
         if (hasListItem(iterValue)) {
+          let parentList;
           if (t.isMemberExpression(iterValue)) {
-            const parentList = iterValue.object.__listItem.parentList;
-            parentList.returnProperties.push(t.objectProperty(iterValue.property, mapCallExpression));
+            parentList = iterValue.object.__listItem.parentList;
           } else if(t.isIdentifier(iterValue)) {
-            const parentList = iterValue.__listItem.parentList;
-            parentList.returnProperties[0] = t.objectProperty(iterValue, mapCallExpression);
+            parentList = iterValue.__listItem.parentList;
+          }
+          if (parentList) {
+            parentList.loopFnBody.body.unshift(t.expressionStatement(t.assignmentExpression('=', iterValue, mapCallExpression)))
           } else {
             throw new Error('Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
           }
@@ -157,7 +159,6 @@ function transformDirectiveList(ast, adapter) {
           args: params,
           iterValue,
           loopFnBody,
-          returnProperties: properties,
           jsxplus: true
         };
         transformListJSXElement(path.parentPath.parentPath, adapter);
