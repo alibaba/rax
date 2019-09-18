@@ -37,7 +37,9 @@ function App(props) {
 
         getInitialPropsPromise.then((nextDefaultProps) => {
           if (nextDefaultProps) {
-            setInitialProps(Object.assign({}, initialProps, { [component.__path]: nextDefaultProps }));
+            const pageData = initialData && initialData.pagePath === component.__path ? initialData.pageData : {};
+            // Do not cache getInitialPropsPromise result
+            setInitialProps(Object.assign({}, { [component.__path]: Object.assign({}, pageData, nextDefaultProps) }));
           }
         }).catch((error) => {
           // In case of uncaught promise.
