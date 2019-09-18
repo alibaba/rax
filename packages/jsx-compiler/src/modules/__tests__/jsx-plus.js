@@ -10,10 +10,11 @@ const adapter = require('../../adapter');
 describe('Directives', () => {
   describe('list', () => {
     it('simple', () => {
-      const ast = parseExpression(`
-        <View x-for={val in array}>{val}</View>
-      `);
-      _transformList(ast, adapter);
+      const code = `
+      <View x-for={val in array}>{val}</View>
+    `;
+      const ast = parseExpression(code);
+      _transformList(ast, code, adapter);
       expect(genExpression(ast))
         .toEqual(`<View a:for={array.map((val, index) => {
   return {
@@ -24,14 +25,15 @@ describe('Directives', () => {
     });
 
     it('nested', () => {
-      const ast = parseExpression(`
-        <View x-for={item in array}>
-          <View x-for={item2 in item}>
-            {item2}
-          </View>
+      const code = `
+      <View x-for={item in array}>
+        <View x-for={item2 in item}>
+          {item2}
         </View>
-      `);
-      _transformList(ast, adapter);
+      </View>
+    `
+      const ast = parseExpression(code);
+      _transformList(ast, code, adapter);
       expect(genExpression(ast))
         .toEqual(`<View a:for={array.map((item, index) => {
   item = item.map((item2, index) => {
@@ -45,10 +47,10 @@ describe('Directives', () => {
     index: index
   };
 })} a:for-item="item" a:for-index="index">
-          <View a:for={item} a:for-item="item2" a:for-index="index">
-            {item2}
-          </View>
-        </View>`);
+        <View a:for={item} a:for-item="item2" a:for-index="index">
+          {item2}
+        </View>
+      </View>`);
     });
   });
 
