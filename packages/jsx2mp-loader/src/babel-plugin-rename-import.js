@@ -17,7 +17,7 @@ function isRaxModule(value) {
 }
 
 const defaultOptions = {
-  normalizeFileName: (s) => s,
+  normalizeNpmFileName: (s) => s,
 };
 
 function getNpmName(value) {
@@ -27,7 +27,7 @@ function getNpmName(value) {
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeFileName, nodeModulesPathList, distSourcePath, outputPath } = options;
+  const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath } = options;
   const source = (value, npmList, filename, rootContext) => {
     const npmName = getNpmName(value);
     // Example:
@@ -53,8 +53,8 @@ module.exports = function visitor({ types: t }, options) {
     // ret => '../npm/_ali/universal-goldlog/lib/index.js
 
     const rootNodeModulePath = join(rootContext, 'node_modules');
-    const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target))).replace(/node_modules/g, 'npm');
-    return t.stringLiteral(normalizeFileName(filePath));
+    const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target)));
+    return t.stringLiteral(normalizeNpmFileName(filePath));
   };
 
   return {

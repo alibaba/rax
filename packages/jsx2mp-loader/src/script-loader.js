@@ -48,14 +48,18 @@ module.exports = function scriptLoader(content) {
       // Only copy first level directory for miniapp component
       const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
       const source = join(sourcePackagePath, firstLevelFolder);
-      const target = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), firstLevelFolder).replace(/node_modules/g, 'npm'));
+      const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), firstLevelFolder));
       mkdirpSync(target);
       copySync(source, target, {
         filter: (filename) => !/__(mocks|tests?)__/.test(filename),
       });
 
       // Modify referenced component location
-      const componentConfigPath = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), pkg.miniappConfig.main + '.json').replace(/node_modules/g, 'npm'));
+      const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), pkg.miniappConfig.main + '.json'));
+      // target : /xxx/lib
+      // componentConfigPath: /xxx/lib/miniapp/index.json
+      // pkg.miniappConfig.main + '.json': "lib/miniapp/index.json"
+      const componentConfigPath = target + pkg.miniappConfig.main + '.json'
       if (existsSync(componentConfigPath)) {
         const componentConfig = readJSONSync(componentConfigPath);
         if (componentConfig.usingComponents) {
@@ -74,7 +78,7 @@ module.exports = function scriptLoader(content) {
       const splitedNpmPath = relativeNpmPath.split('/');
       if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
-      const distSourcePath = normalizeFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath))).replace(/node_modules/g, 'npm');
+      const distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
 
       const { code, map } = transformCode({rawContent, loaderOptions, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
@@ -105,7 +109,7 @@ function transformCode({rawContent, loaderOptions, nodeModulesPathList = [], rel
   const plugins = [
     [
       require('./babel-plugin-rename-import'),
-      { normalizeFileName, nodeModulesPathList, distSourcePath, outputPath }
+      { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath }
 
     ], // for rename npm modules.
     require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
@@ -157,8 +161,8 @@ function transformCode({rawContent, loaderOptions, nodeModulesPathList = [], rel
 /**
  * For that alipay build folder can not contain `@`, escape to `_`.
  */
-function normalizeFileName(filename) {
-  return filename.replace(/@/g, '_');
+function normalizeNpmFileName(filename) {
+  return filename.replace(/@/g, '_').replace(/node_modules/g, 'npm');
 }
 
 // root: /Users/chriscindy/Code/Test/myRaxMiniapp5.0
