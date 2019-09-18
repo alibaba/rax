@@ -56,10 +56,6 @@ module.exports = function scriptLoader(content) {
 
       // Modify referenced component location
       const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), pkg.miniappConfig.main + '.json'));
-      // target : /xxx/lib
-      // componentConfigPath: /xxx/lib/miniapp/index.json
-      // pkg.miniappConfig.main + '.json': "lib/miniapp/index.json"
-      const componentConfigPath = target + pkg.miniappConfig.main + '.json'
       if (existsSync(componentConfigPath)) {
         const componentConfig = readJSONSync(componentConfigPath);
         if (componentConfig.usingComponents) {
