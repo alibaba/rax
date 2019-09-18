@@ -90,7 +90,7 @@ function transformDirectiveCondition(ast, adapter) {
   });
 }
 
-function transformDirectiveList(ast, adapter) {
+function transformDirectiveList(ast, code, adapter) {
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
@@ -144,13 +144,13 @@ function transformDirectiveList(ast, adapter) {
           let parentList;
           if (t.isMemberExpression(iterValue)) {
             parentList = iterValue.object.__listItem.parentList;
-          } else if(t.isIdentifier(iterValue)) {
+          } else if (t.isIdentifier(iterValue)) {
             parentList = iterValue.__listItem.parentList;
           }
           if (parentList) {
-            parentList.loopFnBody.body.unshift(t.expressionStatement(t.assignmentExpression('=', iterValue, mapCallExpression)))
+            parentList.loopFnBody.body.unshift(t.expressionStatement(t.assignmentExpression('=', iterValue, mapCallExpression)));
           } else {
-            throw new Error('Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
+            throw new CodeError(code, iterValue, iterValue.loc, 'Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
           }
         } else {
           iterValue = mapCallExpression;
@@ -225,7 +225,7 @@ module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       transformDirectiveCondition(parsed.templateAST, options.adapter);
-      transformDirectiveList(parsed.templateAST, options.adapter);
+      transformDirectiveList(parsed.templateAST, code, options.adapter);
     }
   },
   _transformList: transformDirectiveList,
