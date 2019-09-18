@@ -31,7 +31,7 @@ describe('Directives', () => {
           {item2}
         </View>
       </View>
-    `
+    `;
       const ast = parseExpression(code);
       _transformList(ast, code, adapter);
       expect(genExpression(ast))
