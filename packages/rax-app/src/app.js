@@ -4,15 +4,9 @@ export function emit(cycle, ...args) {
   if (appCycles.hasOwnProperty(cycle)) {
     const cycles = appCycles[cycle];
     let fn;
-    let error;
     while (fn = cycles.shift()) { // eslint-disable-line
-      try {
-        fn(...args);
-      } catch (err) {
-        error = err;
-      }
+      fn(...args);
     }
-    if (error) throw error;
   }
 }
 
