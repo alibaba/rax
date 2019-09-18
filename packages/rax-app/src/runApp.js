@@ -7,40 +7,58 @@ import { emit } from './app';
 
 const INITIAL_DATA = '__INITIAL_DATA__';
 
-let prevPagePath;
 let history;
 let launched = false;
 const initialData = global[INITIAL_DATA];
 
-export function getHistory() {
-  return history;
-}
-
-function Entry(props) {
+function App(props) {
   const { history, routes } = props;
   const { component } = useRouter(() => ({ history, routes }));
 
-  if (!component || Array.isArray(component) && component.length === 0) {
+  if (isNullableComponent(component)) {
     // Return null directly if not matched.
     return null;
   } else {
-    const [initialProps, setInitialProps] = useState(null);
+    // {
+    //   [pagePath]: initialProps,
+    // }
+    const [initialProps, setInitialProps] = useState({});
 
-    if (isWeb && component.getInitialProps && prevPagePath !== history.location.pathname) {
-      setInitialProps(null); // Reset page initialProps
-      prevPagePath = history.location.pathname;
+    if (isWeb && component.getInitialProps && !initialProps[component.__path]) {
       useEffect(() => {
-        component.getInitialProps().then((props) => {
-          const isPageActive = prevPagePath === history.location.pathname;
-          if (isPageActive && props) setInitialProps(props);
+        const getInitialPropsPromise = component.getInitialProps();
+
+        // Check getInitialProps returns promise.
+        if (process.env.NODE_ENV !== 'production') {
+          if (!getInitialPropsPromise.then) {
+            throw new Error('getInitialProps should be async function or return a promise. See detail at "' + component.name + '".');
+          }
+        }
+
+        getInitialPropsPromise.then((nextDefaultProps) => {
+          if (nextDefaultProps) {
+            setInitialProps(Object.assign({}, initialProps, { [component.__path]: nextDefaultProps }));
+          }
         }).catch((error) => {
+          // In case of uncaught promise.
           throw error;
         });
       });
+
+      // Early return null if initialProps were not get.
+      return null;
     }
 
-    return createElement(component, Object.assign({}, props, initialProps));
+    return createElement(component, Object.assign({}, props, initialProps[component.__path]));
   }
+}
+
+function isNullableComponent(component) {
+  return !component || Array.isArray(component) && component.length === 0;
+}
+
+export function getHistory() {
+  return history;
 }
 
 export default function runApp(appConfig) {
@@ -59,11 +77,11 @@ export default function runApp(appConfig) {
     history = createHashHistory();
   }
 
-  let entry = createElement(Entry, { history, routes });
+  let appInstance = createElement(App, { history, routes });
 
   if (shell) {
     const shellData = initialData ? initialData.shellData : null;
-    entry = createElement(shell.component, { data: shellData }, entry);
+    appInstance = createElement(shell.component, { data: shellData }, appInstance);
   }
 
   // Emit app launch cycle.
@@ -73,7 +91,7 @@ export default function runApp(appConfig) {
   if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.');
 
   return render(
-    entry,
+    appInstance,
     rootEl,
     { driver: UniversalDriver, hydrate }
   );
