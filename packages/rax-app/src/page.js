@@ -1,12 +1,13 @@
 import { useEffect } from 'rax';
+import { getHistory } from './runApp';
 import { isWeb, isWeex } from 'universal-env';
 
 const visibleListeners = {
   show: [],
   hide: [],
 };
-let initialShow = false;
 let prevVisibleState = true;
+let prePathname = '';
 
 function emit(cycle, ...args) {
   for (let i = 0, l = visibleListeners[cycle].length; i < l; i++) {
@@ -19,22 +20,21 @@ function usePageLifecycle(cycle, callback) {
     case 'show':
     case 'hide':
       useEffect(() => {
+        if (cycle === 'show') {
+          callback();
+        }
         visibleListeners[cycle].push(callback);
         return () => {
           const index = visibleListeners[cycle].indexOf(callback);
+          const history = getHistory();
+          // When SPA componentWillUnMount call hide
+          if (isWeb && cycle === 'hide' && history && prePathname !== history.location.pathname) {
+            prePathname = history.location.pathname;
+            callback();
+          }
           visibleListeners[cycle].splice(index, 1);
         };
-      });
-  }
-
-  // Invoke first time show.
-  if (cycle === 'show') {
-    if (initialShow === false) {
-      initialShow = true;
-      useEffect(() => {
-        emit('show');
-      });
-    }
+      }, []);
   }
 }
 
