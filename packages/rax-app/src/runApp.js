@@ -1,6 +1,6 @@
 import { render, createElement } from 'rax';
 import { isWeex, isWeb } from 'universal-env';
-import { useRouter } from 'rax-use-router/src';
+import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
 import UniversalDriver from 'driver-universal';
 import { emit } from './app';
