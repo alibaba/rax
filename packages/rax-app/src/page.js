@@ -32,9 +32,9 @@ function usePageLifecycle(cycle, callback) {
           const history = getHistory();
           // When SPA componentWillUnMount call hide
           if (isWeb && cycle === HIDE && history && prePathname !== history.location.pathname) {
-            prePathname = history.location.pathname;
             callback();
           }
+          prePathname = history.location.pathname;
           visibleListeners[cycle].splice(index, 1);
         };
       }, []);
