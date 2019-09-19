@@ -28,9 +28,9 @@ function usePageLifecycle(cycle, callback) {
         visibleListeners[cycle].push(callback);
         return () => {
           const index = visibleListeners[cycle].indexOf(callback);
-          const history = getHistory();
           // When SPA componentWillUnMount call hide
-          if (isWeb && cycle === HIDE && history) {
+          // If user didn't use runApp create SPA, getHistory will return undefined.
+          if (cycle === HIDE && isWeb && getHistory()) {
             callback();
           }
           visibleListeners[cycle].splice(index, 1);
