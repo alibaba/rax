@@ -13,7 +13,7 @@ export default class BaseComponent {
     this._parent = parent;
     this.__parentInstance = parentInstance;
     this._context = context;
-    this._mountID = Host.mountID++;
+    this._mountID = Host.__mountID++;
   }
 
   __destoryComponent() {

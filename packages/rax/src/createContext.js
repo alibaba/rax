@@ -6,20 +6,20 @@ import toArray from './toArray';
 
 class ValueEmitter {
   constructor(defaultValue) {
-    this.handlers = [];
+    this.__handlers = [];
     this.value = defaultValue;
   }
 
   on(handler) {
-    this.handlers.push(handler);
+    this.__handlers.push(handler);
   }
 
   off(handler) {
-    this.handlers = this.handlers.filter(h => h !== handler);
+    this.__handlers = this.__handlers.filter(h => h !== handler);
   }
 
   emit() {
-    invokeFunctionsWithContext(this.handlers, null, this.value);
+    invokeFunctionsWithContext(this.__handlers, null, this.value);
   }
 }
 

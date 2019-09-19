@@ -1,5 +1,5 @@
 import Host from './host';
-import toArray from '../toArray';
+import { isArray } from '../types';
 import { INTERNAL } from '../constant';
 
 /**
@@ -13,19 +13,29 @@ export default function getPrevSiblingNativeNode(component) {
   let parent = component;
   while (parent = component.__parentInstance &&
     component.__parentInstance[INTERNAL]) {
-    if (parent instanceof Host.Composite) {
+    if (parent instanceof Host.__Composite) {
       component = parent;
       continue;
     }
 
-    const keys = Object.keys(parent._renderedChildren);
+    const keys = Object.keys(parent.__renderedChildren);
+    // Find previous sibling native node from current mount index
     for (let i = component.__mountIndex - 1; i >= 0; i--) {
-      const nativeNode = toArray(parent._renderedChildren[keys[i]].__getNativeNode());
-      if (nativeNode.length > 0) {
-        return nativeNode[nativeNode.length - 1];
+      const nativeNode = parent.__renderedChildren[keys[i]].__getNativeNode();
+      // Fragment component always return array
+      if (isArray(nativeNode)) {
+        if (nativeNode.length > 0) {
+          // Get the last one
+          return nativeNode[nativeNode.length - 1];
+        }
+      } else {
+        // Others maybe native node or empty node
+        return nativeNode;
       }
     }
-    if (parent instanceof Host.Fragment) {
+
+    // Find parent over parent
+    if (parent instanceof Host.__Fragment) {
       component = parent;
     } else {
       return null;

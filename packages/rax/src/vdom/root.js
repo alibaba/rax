@@ -7,8 +7,8 @@ class Root extends Component {
   constructor() {
     super();
     // Using fragment instead of null for avoid create a comment node when init mount
-    this.element = [];
-    this.rootID = rootID++;
+    this.__element = [];
+    this.__rootID = rootID++;
   }
 
   __getPublicInstance() {
@@ -20,12 +20,12 @@ class Root extends Component {
   }
 
   update(element) {
-    this.element = element;
+    this.__element = element;
     this.forceUpdate();
   }
 
   render() {
-    return this.element;
+    return this.__element;
   }
 }
 

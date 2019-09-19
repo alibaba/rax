@@ -1,16 +1,11 @@
 {
-  "name": "jsx2mp-cli-test-demo",
+  "private": true,
+  "name": "jsx2mp-cli-demo",
   "version": "1.0.0",
-  "description": "",
   "main": "component.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "rax": "^1.0.8",
+    "rax-image": "^1.1.1",
     "rax-view": "^1.0.2"
   }
 }

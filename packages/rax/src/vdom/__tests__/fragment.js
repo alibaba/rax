@@ -459,8 +459,8 @@ describe('FragmentComponent', function() {
     const instance = render(<Frag />, el);
     const frgmentInstance = instance._internal._renderedComponent;
     expect(frgmentInstance._parent).toBe(el);
-    expect(frgmentInstance._renderedChildren['.2']._parent).toBe(el);
-    expect(frgmentInstance._renderedChildren['.2']._renderedChildren['.2']._parent).toBe(el);
+    expect(frgmentInstance.__renderedChildren['.2']._parent).toBe(el);
+    expect(frgmentInstance.__renderedChildren['.2'].__renderedChildren['.2']._parent).toBe(el);
   });
 
   it('should unmount correct after updated', function() {

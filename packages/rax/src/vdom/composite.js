@@ -169,7 +169,7 @@ class CompositeComponent extends BaseComponent {
       handleError(instance, error);
     }
 
-    if (!currentElement.type.forwardRef && ref) {
+    if (!currentElement.type.__forwardRef && ref) {
       attachRef(currentElement._owner, ref, this);
     }
 
@@ -215,7 +215,7 @@ class CompositeComponent extends BaseComponent {
       let currentElement = this.__currentElement;
       let ref = currentElement.ref;
 
-      if (!currentElement.type.forwardRef && ref) {
+      if (!currentElement.type.__forwardRef && ref) {
         detachRef(currentElement._owner, ref, this);
       }
 
@@ -331,9 +331,9 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Update refs
-    if (this.__currentElement.type.forwardRef) {
-      instance.prevForwardRef = prevElement.ref;
-      instance.forwardRef = nextElement.ref;
+    if (this.__currentElement.type.__forwardRef) {
+      instance.__prevForwardRef = prevElement.ref;
+      instance.__forwardRef = nextElement.ref;
     } else {
       updateRef(prevElement, nextElement, this);
     }
@@ -461,7 +461,8 @@ class CompositeComponent extends BaseComponent {
       let lastNativeNode = null;
       let prevNativeNode = prevRenderedComponent.__getNativeNode();
       // Only prevNativeNode is empty fragment should find the prevSlibingNativeNode
-      if (isArray(prevNativeNode) && prevNativeNode.length === 0) {
+      // And current root component is fragment, but not need find the prevSlibingNativeNode when init mounting
+      if (isArray(prevNativeNode) && prevNativeNode.length === 0 && instance.__rootID == null) {
         lastNativeNode = getPrevSiblingNativeNode(prevRenderedComponent);
       }
 

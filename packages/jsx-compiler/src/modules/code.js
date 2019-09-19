@@ -18,6 +18,7 @@ const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
+const SAFE_ROUTER_MAP = '__router_map__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
@@ -26,6 +27,8 @@ const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
 const isCoreModule = (mod) => /^@core\//.test(mod);
+
+const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
 function getConstructor(type) {
   switch (type) {
@@ -100,6 +103,7 @@ module.exports = {
 
     removeRaxImports(parsed.ast);
     renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
+    renameFileModule(parsed.ast);
 
     const currentNodeModulePath = join(options.sourcePath, 'npm');
     const npmRelativePath = relative(dirname(options.resourcePath), currentNodeModulePath);
@@ -144,7 +148,12 @@ module.exports = {
         ];
         const callUpdateProps = t.expressionStatement(t.callExpression(updateProps, updatePropsArgs));
         if (propMaps.length > 0) {
-          (parentNode || fnBody).push(callUpdateProps);
+          const targetNode = parentNode || fnBody;
+          if (t.isReturnStatement(targetNode[targetNode.length - 1])) {
+            targetNode.splice(targetNode.length - 1, 0, callUpdateProps);
+          } else {
+            targetNode.push(callUpdateProps);
+          }
         } else if ((parentNode || fnBody).length === 0) {
           // Remove empty loop exp.
           parentNode && parentNode.remove && parentNode.remove();
@@ -182,6 +191,23 @@ function renameCoreModule(ast, outputPath, targetFileDir) {
   });
 }
 
+// import img from '../assets/img.png' => const img = '../assets/img.png'
+function renameFileModule(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isFileModule(source.node.value)) {
+        source.parentPath.replaceWith(t.variableDeclaration('const', [
+          t.variableDeclarator(
+            t.identifier(path.get('specifiers')[0].node.local.name),
+            t.stringLiteral(source.node.value)
+          )
+        ]));
+      }
+    }
+  });
+}
+
 const WEEX_MODULE_REG = /^@weex(-module)?\//;
 
 function isNpmModule(value) {
@@ -213,9 +239,10 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     }
 
     const moduleBasePath = join(packageJSONPath, '..');
+    const realNpmName = relative(nodeModulePath, moduleBasePath);
     const modulePathSuffix = relative(moduleBasePath, target);
 
-    let ret = join(prefix, npmName, modulePathSuffix);
+    let ret = join(prefix, realNpmName, modulePathSuffix);
     if (ret[0] !== '.') ret = './' + ret;
     // ret => '../npm/_ali/universal-toast/lib/index.js
 
@@ -255,6 +282,20 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
   traverse(ast, {
     Program(path) {
       const localIdentifier = t.identifier(safeCreateInstanceId);
+      // Component(__create_component__(__class_def__));
+      const args = [t.identifier(EXPORTED_DEF)];
+
+      // Insert routerMap import declaration
+      if (type === 'app') {
+        path.node.body.unshift(
+          t.importDeclaration(
+            [t.importDefaultSpecifier(t.identifier(SAFE_ROUTER_MAP))],
+            t.stringLiteral('./routerMap')
+          )
+        );
+        // App(__create_app__(__class_def__, __router_map__));
+        args.push(t.identifier(SAFE_ROUTER_MAP));
+      }
 
       // import { createComponent as __create_component__ } from "/__helpers/component";
       const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
@@ -287,8 +328,6 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
         )
       );
 
-      // Component(__create_component__(__class_def__));
-      const args = [t.identifier(EXPORTED_DEF)];
       // __create_component__(__class_def__, { events: ['_e*']})
       if (eventHandlers.length > 0) {
         args.push(

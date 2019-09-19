@@ -8,6 +8,7 @@ const findIndex = require('../utils/findIndex');
 
 function transformList(ast, renderItemFunctions, adapter) {
   let fnScope;
+  let useCreateStyle = false;
 
   function traverseFunction(path) {
     fnScope = path.scope;
@@ -86,29 +87,26 @@ function transformList(ast, renderItemFunctions, adapter) {
               returnElPath.traverse({
                 Identifier(innerPath) {
                   if (innerPath.findParent(p => p.node.__bindEvent)) return;
-                  if (innerPath.node.name === forItem.name) {
-                    innerPath.node.__mapArgs = {
-                      item: forItem.name
-                    };
-                  }
-
-                  if (innerPath.node.name === forIndex.name) {
-                    innerPath.node.__mapArgs = {};
-                  }
-
                   if (
                     innerPath.scope.hasBinding(innerPath.node.name)
                     || innerPath.node.name === forItem.name
                     || innerPath.node.name === forIndex.name
+                    && !(t.isMemberExpression(innerPath.parent) && innerPath.parent.property !== innerPath.node)
                   ) {
-                    innerPath.node.__mapArgs = {
+                    innerPath.node.__listItem = {
+                      jsxplus: false,
                       item: forItem.name
                     };
 
                     // Skip duplicate keys.
                     if (!properties.some(
                       pty => pty.key.name === innerPath.node.name)) {
-                      properties.push(t.objectProperty(innerPath.node, innerPath.node));
+                      let value = innerPath.node;
+                      if (innerPath.findParent(p => p.isJSXAttribute() && p.node.name.name === 'style')) {
+                        value = t.callExpression(t.identifier('__create_style__'), [value]);
+                        useCreateStyle = true;
+                      }
+                      properties.push(t.objectProperty(innerPath.node, value));
                     }
                   }
                 },
@@ -141,6 +139,7 @@ function transformList(ast, renderItemFunctions, adapter) {
                 iterValue: callee.object,
                 generated: true,
                 jsxplus: false,
+                loopFnBody: body
               };
 
               parentPath.replaceWith(listBlock);
@@ -154,11 +153,16 @@ function transformList(ast, renderItemFunctions, adapter) {
       }
     }
   });
+  return useCreateStyle;
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    transformList(parsed.templateAST, parsed.renderItemFunctions, options.adapter);
+    const useCreateStyle = transformList(parsed.templateAST, parsed.renderItemFunctions, options.adapter);
+    // In list item maybe use __create_style__
+    if (!parsed.useCreateStyle) {
+      parsed.useCreateStyle = useCreateStyle;
+    }
   },
 
   // For test cases.

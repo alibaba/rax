@@ -337,30 +337,25 @@ describe('Fragment', () => {
         ];
       } else {
         return [
-          <div>3</div>,
-          <div>1</div>,
-          <div>2</div>
+          <div>5</div>,
+          <span>1</span>,
+          <span>2</span>
         ];
       }
     }
 
-    render([<span>0</span>, <App type="empty" />, <App />, <span>3</span>], el);
+    render([<span>0</span>, <App type="empty" />, <span>3</span>], el);
     expect(el.childNodes[0].childNodes[0].data).toBe('0');
     expect(el.childNodes[1].childNodes[0].data).toBe('1');
     expect(el.childNodes[2].childNodes[0].data).toBe('2');
     expect(el.childNodes[3].childNodes[0].data).toBe('3');
-    expect(el.childNodes[4].childNodes[0].data).toBe('1');
-    expect(el.childNodes[5].childNodes[0].data).toBe('2');
-    expect(el.childNodes[6].childNodes[0].data).toBe('3');
 
-    render([<div>0</div>, <App />, <div>9</div>, <div>4</div>], el);
-
+    render([<span>0</span>, <App />, <span>4</span>], el);
     expect(el.childNodes[0].childNodes[0].data).toBe('0');
-    expect(el.childNodes[1].childNodes[0].data).toBe('3');
+    expect(el.childNodes[1].childNodes[0].data).toBe('5');
     expect(el.childNodes[2].childNodes[0].data).toBe('1');
     expect(el.childNodes[3].childNodes[0].data).toBe('2');
-    expect(el.childNodes[4].childNodes[0].data).toBe('9');
-    expect(el.childNodes[5].childNodes[0].data).toBe('4');
+    expect(el.childNodes[4].childNodes[0].data).toBe('4');
   });
 
   it('from empty array to not-empty', function() {
