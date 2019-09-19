@@ -55,6 +55,12 @@ if (isWeb) {
     prevVisibleState = currentVisibleState;
   });
 } else if (isWeex) {
-  // TODO: support weex
-  // require('@weex/module')
+  // https://weex.apache.org/docs/modules/globalEvent.html#addeventlistener
+  const globalEvent = weex.requireModule('globalEvent'); // eslint-disable-line
+  globalEvent.addEventListener('WXApplicationDidBecomeActiveEvent', function() {
+    emit('show');
+  });
+  globalEvent.addEventListener('WXApplicationWillResignActiveEvent', function() {
+    emit('hide');
+  });
 }
