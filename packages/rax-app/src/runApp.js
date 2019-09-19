@@ -1,66 +1,35 @@
-import { render, createElement, useState, useEffect } from 'rax';
+import { render, createElement } from 'rax';
 import { isWeex, isWeb } from 'universal-env';
-import { useRouter } from 'rax-use-router';
+import { useRouter } from 'rax-use-router/src';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
 import UniversalDriver from 'driver-universal';
 import { emit } from './app';
 
-const INITIAL_DATA = '__INITIAL_DATA__';
+const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
+const SHELL_DATA = 'shellData';
 
 let history;
 let launched = false;
-const initialData = global[INITIAL_DATA];
+const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
+
+export function getHistory() {
+  return history;
+}
 
 function App(props) {
-  const { history, routes } = props;
-  const { component } = useRouter(() => ({ history, routes }));
+  const { history, routes, InitialComponent, initialProps } = props;
+  const { component } = useRouter(() => ({ history, routes, InitialComponent }));
 
   if (isNullableComponent(component)) {
     // Return null directly if not matched.
     return null;
   } else {
-    // {
-    //   [pagePath]: initialProps,
-    // }
-    const [initialProps, setInitialProps] = useState({});
-
-    if (isWeb && component.getInitialProps && !initialProps[component.__path]) {
-      useEffect(() => {
-        const getInitialPropsPromise = component.getInitialProps();
-
-        // Check getInitialProps returns promise.
-        if (process.env.NODE_ENV !== 'production') {
-          if (!getInitialPropsPromise.then) {
-            throw new Error('getInitialProps should be async function or return a promise. See detail at "' + component.name + '".');
-          }
-        }
-
-        getInitialPropsPromise.then((nextDefaultProps) => {
-          if (nextDefaultProps) {
-            const pageData = initialData && initialData.pagePath === component.__path ? initialData.pageData : {};
-            // Do not cache getInitialPropsPromise result
-            setInitialProps(Object.assign({}, { [component.__path]: Object.assign({}, pageData, nextDefaultProps) }));
-          }
-        }).catch((error) => {
-          // In case of uncaught promise.
-          throw error;
-        });
-      });
-
-      // Early return null if initialProps were not get.
-      return null;
-    }
-
-    return createElement(component, Object.assign({}, props, initialProps[component.__path]));
+    return createElement(component, Object.assign({}, props, initialProps));
   }
 }
 
 function isNullableComponent(component) {
   return !component || Array.isArray(component) && component.length === 0;
-}
-
-export function getHistory() {
-  return history;
 }
 
 export default function runApp(appConfig) {
@@ -71,30 +40,73 @@ export default function runApp(appConfig) {
 
   if (isWeex) {
     history = createMemoryHistory();
-  } else if (initialData) {
-    // If that contains `initialData`, which means SSR is enabled,
+  } else if (initialDataFromSSR) {
+    // If that contains `initialDataFromSSR`, which means SSR is enabled,
     // we should use brower history to make it works.
     history = createBrowserHistory();
   } else {
     history = createHashHistory();
   }
 
-  let appInstance = createElement(App, { history, routes });
+  let _initialComponent;
+  return matchInitialComponent(history.location.pathname, routes)
+    .then((InitialComponent) => {
+      _initialComponent = InitialComponent;
 
-  if (shell) {
-    const shellData = initialData ? initialData.shellData : null;
-    appInstance = createElement(shell.component, { data: shellData }, appInstance);
+      let getInitialProps;
+      if (isWeb && (getInitialProps = InitialComponent().getInitialProps)) {
+        const getInitialPropsPromise = getInitialProps();
+
+        // Check getInitialProps returns promise.
+        if (process.env.NODE_ENV !== 'production') {
+          if (!getInitialPropsPromise.then) {
+            throw new Error('getInitialProps should be async function or return a promise. See detail at "' + component.name + '".');
+          }
+        }
+
+        return getInitialPropsPromise;
+      }
+    })
+    .then((initialProps) => {
+      let appInstance = createElement(App, {
+        history,
+        routes,
+        InitialComponent: _initialComponent,
+        initialProps
+      });
+
+      if (shell) {
+        const shellData = initialDataFromSSR ? initialDataFromSSR[SHELL_DATA] : null;
+        appInstance = createElement(shell.component, { data: shellData }, appInstance);
+      }
+
+      // Emit app launch cycle.
+      emit('launch');
+
+      let rootEl = isWeex ? null : document.getElementById('root');
+      if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.');
+
+      // Async render.
+      return render(
+        appInstance,
+        rootEl,
+        { driver: UniversalDriver, hydrate }
+      );
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+
+function matchInitialComponent(fullpath, routes) {
+  let InitialComponent = null;
+  for (let i = 0, l = routes.length; i < l; i ++) {
+    if (fullpath === routes[i].path || routes[i].regexp && routes[i].regexp.test(fullpath)) {
+      InitialComponent = routes[i].component;
+      if (typeof InitialComponent === 'function') InitialComponent = InitialComponent();
+      break;
+    }
   }
 
-  // Emit app launch cycle.
-  emit('launch');
-
-  let rootEl = isWeex ? null : document.getElementById('root');
-  if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.');
-
-  return render(
-    appInstance,
-    rootEl,
-    { driver: UniversalDriver, hydrate }
-  );
+  return Promise.resolve(InitialComponent);
 }
