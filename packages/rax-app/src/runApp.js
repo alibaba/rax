@@ -50,21 +50,23 @@ export default function runApp(appConfig) {
 
   let _initialComponent;
   return matchInitialComponent(history.location.pathname, routes)
-    .then((InitialComponent) => {
-      _initialComponent = InitialComponent;
+    .then((initialComponent) => {
+      _initialComponent = initialComponent;
 
-      let getInitialProps;
-      if (isWeb && (getInitialProps = InitialComponent().getInitialProps)) {
-        const getInitialPropsPromise = getInitialProps();
+      if (isWeb) {
+        let Component = initialComponent();
+        if (Component.getInitialProps) {
+          const getInitialPropsPromise = Component.getInitialProps();
 
-        // Check getInitialProps returns promise.
-        if (process.env.NODE_ENV !== 'production') {
-          if (!getInitialPropsPromise.then) {
-            throw new Error('getInitialProps should be async function or return a promise. See detail at "' + component.name + '".');
+          // Check getInitialProps returns promise.
+          if (process.env.NODE_ENV !== 'production') {
+            if (!getInitialPropsPromise.then) {
+              throw new Error('getInitialProps should be async function or return a promise. See detail at "' + Component.name + '".');
+            }
           }
-        }
 
-        return getInitialPropsPromise;
+          return getInitialPropsPromise;
+        }
       }
     })
     .then((initialProps) => {
@@ -99,14 +101,14 @@ export default function runApp(appConfig) {
 }
 
 function matchInitialComponent(fullpath, routes) {
-  let InitialComponent = null;
+  let initialComponent = null;
   for (let i = 0, l = routes.length; i < l; i ++) {
     if (fullpath === routes[i].path || routes[i].regexp && routes[i].regexp.test(fullpath)) {
-      InitialComponent = routes[i].component;
-      if (typeof InitialComponent === 'function') InitialComponent = InitialComponent();
+      initialComponent = routes[i].component;
+      if (typeof initialComponent === 'function') initialComponent = initialComponent();
       break;
     }
   }
 
-  return Promise.resolve(InitialComponent);
+  return Promise.resolve(initialComponent);
 }
