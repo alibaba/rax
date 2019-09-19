@@ -2,10 +2,13 @@ import { useEffect } from 'rax';
 import { getHistory } from './runApp';
 import { isWeb, isWeex } from 'universal-env';
 
-const visibleListeners = {
-  show: [],
-  hide: [],
-};
+const SHOW = 'show';
+const HIDE = 'hide';
+
+const visibleListeners = {};
+visibleListeners[SHOW] = [];
+visibleListeners[HIDE] = [];
+
 let prevVisibleState = true;
 let prePathname = '';
 
@@ -17,10 +20,10 @@ function emit(cycle, ...args) {
 
 function usePageLifecycle(cycle, callback) {
   switch (cycle) {
-    case 'show':
-    case 'hide':
+    case SHOW:
+    case HIDE:
       useEffect(() => {
-        if (cycle === 'show') {
+        if (cycle === SHOW) {
           callback();
         }
         visibleListeners[cycle].push(callback);
@@ -28,7 +31,7 @@ function usePageLifecycle(cycle, callback) {
           const index = visibleListeners[cycle].indexOf(callback);
           const history = getHistory();
           // When SPA componentWillUnMount call hide
-          if (isWeb && cycle === 'hide' && history && prePathname !== history.location.pathname) {
+          if (isWeb && cycle === HIDE && history && prePathname !== history.location.pathname) {
             prePathname = history.location.pathname;
             callback();
           }
@@ -39,18 +42,18 @@ function usePageLifecycle(cycle, callback) {
 }
 
 export function usePageShow(callback) {
-  usePageLifecycle('show', callback);
+  usePageLifecycle(SHOW, callback);
 }
 
 export function usePageHide(callback) {
-  usePageLifecycle('hide', callback);
+  usePageLifecycle(HIDE, callback);
 }
 
 if (isWeb) {
   document.addEventListener('visibilitychange', function() {
     const currentVisibleState = document.visibilityState === 'visible';
     if (prevVisibleState !== currentVisibleState) {
-      emit(currentVisibleState ? 'show' : 'hide');
+      emit(currentVisibleState ? SHOW : HIDE);
     }
     prevVisibleState = currentVisibleState;
   });
@@ -58,9 +61,9 @@ if (isWeb) {
   // https://weex.apache.org/docs/modules/globalEvent.html#addeventlistener
   const globalEvent = weex.requireModule('globalEvent'); // eslint-disable-line
   globalEvent.addEventListener('WXApplicationDidBecomeActiveEvent', function() {
-    emit('show');
+    emit(SHOW);
   });
   globalEvent.addEventListener('WXApplicationWillResignActiveEvent', function() {
-    emit('hide');
+    emit(HIDE);
   });
 }
