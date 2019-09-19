@@ -10,7 +10,6 @@ visibleListeners[SHOW] = [];
 visibleListeners[HIDE] = [];
 
 let prevVisibleState = true;
-let prePathname = '';
 
 function emit(cycle, ...args) {
   for (let i = 0, l = visibleListeners[cycle].length; i < l; i++) {
@@ -31,10 +30,9 @@ function usePageLifecycle(cycle, callback) {
           const index = visibleListeners[cycle].indexOf(callback);
           const history = getHistory();
           // When SPA componentWillUnMount call hide
-          if (isWeb && cycle === HIDE && history && prePathname !== history.location.pathname) {
+          if (isWeb && cycle === HIDE && history) {
             callback();
           }
-          prePathname = history.location.pathname;
           visibleListeners[cycle].splice(index, 1);
         };
       }, []);
