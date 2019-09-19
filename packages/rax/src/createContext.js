@@ -1,110 +1,69 @@
 import invokeFunctionsWithContext from './invokeFunctionsWithContext';
-import { useState, useEffect, useLayoutEffect, getCurrentInstance } from './hooks';
+import { useState, useLayoutEffect } from './hooks';
 import { isFunction } from './types';
-import { INTERNAL } from './constant';
 import toArray from './toArray';
+import ReactiveComponent from './vdom/reactive';
 
-class ValueEmitter {
-  constructor(defaultValue) {
-    this.__handlers = [];
-    this.value = defaultValue;
-  }
-
-  on(handler) {
-    this.__handlers.push(handler);
-  }
-
-  off(handler) {
-    this.__handlers = this.__handlers.filter(h => h !== handler);
-  }
-
-  emit() {
-    invokeFunctionsWithContext(this.__handlers, null, this.value);
-  }
-}
-
-let uniqueId = 0;
+let contextID = 0;
 
 export default function createContext(defaultValue) {
-  const contextProp = uniqueId++;
-  const emitterStack = [];
-  const defaultEmitter = new ValueEmitter(defaultValue);
+  const contextName = '_c' + contextID++;
 
   // Provider Component
-  function Provider(props) {
-    // Use a Provider to pass the value or default value to the tree below,
-    // Any component can read it, no matter how deep it is.
-    const propsValue = props.value !== undefined ? props.value : defaultValue;
-    const [value, setValue] = useState(propsValue);
-
-    const [emitter] = useState(() => {
-      const emitter = new ValueEmitter();
-      // Inject emitter to current instance
-      const instance = getCurrentInstance();
-      return instance.__emitter = emitter;
-    });
-    emitter.value = propsValue;
-
-    if (propsValue !== value) setValue(propsValue);
-
-    // Push emitter in willMount
-    emitterStack.push(emitter);
-    // FIXME: useLayoutEffect not execution when in SSR, and it expect to run
-    // Pop emitter in didMount or didUpdate
-    useLayoutEffect(() => {
-      emitterStack.pop();
-    });
-
-    useEffect(() => {
-      emitter.emit();
-    }, [value]);
-
-    return props.children;
-  }
-
-  function getEmitter(instance) {
-    // Server-side rendering should get emitter only by stack
-    const emitter = emitterStack[emitterStack.length - 1];
-    if (emitter) return emitter;
-
-    // Find Provider parent over parent
-    while (instance && instance[INTERNAL]) {
-      // Provoide feature detection
-      if (instance.__emitter) {
-        return instance.__emitter;
-      }
-      instance = instance[INTERNAL].__parentInstance;
+  class Provider {
+    constructor() {
+      this.__handlers = [];
     }
-    // Use defaultValue emitter when not have Provider over parent
-    return defaultEmitter;
+    __on(handler) {
+      this.__handlers.push(handler);
+    }
+    __off(handler) {
+      this.__handlers = this.__handlers.filter(h => h !== handler);
+    }
+    getValue() {
+      return this.props.value !== undefined ? this.props.value : defaultValue;
+    }
+    getChildContext() {
+      return {
+        [contextName]: this
+      };
+    }
+    shouldComponentUpdate(nextProps) {
+      return this.props.value !== nextProps.value;
+    }
+    componentDidUpdate() {
+      invokeFunctionsWithContext(this.__handlers, null, this.getValue());
+    }
+    render() {
+      return this.props.children;
+    }
   }
-
-  Provider.getEmitter = getEmitter;
-  Provider.__contextProp = contextProp;
 
   // Cuonsumer Component
-  function Consumer(props) {
-    const [emitter] = useState(() => getEmitter(this));
-    const [value, setValue] = useState(emitter.value);
+  function Consumer(props, context) {
+    const provider = context[contextName];
+    let value = provider && provider.getValue() || defaultValue;
+    const [prevValue, setValue] = useState(() => value);
 
-    if (value !== emitter.value) {
-      setValue(emitter.value);
+    if (value !== prevValue) {
+      setValue(value);
       return; // Interrupt execution of consumer.
     }
 
     useLayoutEffect(() => {
-      function onUpdate(updatedValue) {
-        if (value !== updatedValue) {
-          setValue(updatedValue);
+      if (provider) {
+        function onUpdate(updatedValue) {
+          if (value !== updatedValue) {
+            setValue(updatedValue);
+          }
         }
+
+        provider.__on(onUpdate);
+        return () => {
+          provider.__off(onUpdate);
+        };
       }
-
-      emitter.on(onUpdate);
-      return () => {
-        emitter.off(onUpdate);
-      };
-    }, []);
-
+    }, [provider]);
     // Consumer requires a function as a child.
     // The function receives the current context value.
     const consumer = toArray(props.children)[0];
@@ -113,8 +72,14 @@ export default function createContext(defaultValue) {
     }
   }
 
+  Consumer.contextTypes = {
+    [contextName]: null
+  };
+
   return {
     Provider,
     Consumer,
+    _contextName: contextName,
+    _defaultValue: defaultValue,
   };
 }

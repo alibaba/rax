@@ -201,10 +201,14 @@ class ServerReactiveComponent {
     return ++this._hookID;
   }
 
-  readContext(context) {
-    const getEmitter = context.Provider.getEmitter;
-    const contextEmitter = getEmitter(this);
-    return contextEmitter.value;
+  useContext(context) {
+    const contextName = context._contextName;
+
+    if (this.context[contextName]) {
+      return this.context[contextName].getValue();
+    } else {
+      return context._defaultValue;
+    }
   }
 
   render() {
@@ -246,6 +250,7 @@ function renderElementToString(element, context, options) {
     const props = element.props || EMPTY_OBJECT;
     if (type.prototype && type.prototype.render) {
       const instance = new type(props, context); // eslint-disable-line new-cap
+      instance.props = props;
       let currentContext = instance.context = context;
       // Inject the updater into instance
       instance.updater = updater;
@@ -328,6 +333,6 @@ function renderElementToString(element, context, options) {
   }
 }
 
-exports.renderToString = function renderToString(element, options = {}) {
+export function renderToString(element, options = {}) {
   return renderElementToString(element, EMPTY_OBJECT, Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
-};
+}

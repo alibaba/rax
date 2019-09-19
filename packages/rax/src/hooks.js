@@ -92,7 +92,7 @@ export function useState(initialState) {
 
 export function useContext(context) {
   const currentInstance = getCurrentRenderingInstance();
-  return currentInstance.readContext(context);
+  return currentInstance.useContext(context);
 }
 
 export function useEffect(effect, inputs) {

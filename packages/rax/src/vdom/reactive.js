@@ -61,29 +61,14 @@ export default class ReactiveComponent extends Component {
     return ++this.__hookID;
   }
 
-  readContext(context) {
-    const Provider = context.Provider;
-    const contextProp = Provider.__contextProp;
-    let contextItem = this.__dependencies[contextProp];
-    if (!contextItem) {
-      const contextEmitter = Provider.getEmitter(this);
-      contextItem = {
-        __emitter: contextEmitter,
-        __renderedContext: contextEmitter.value,
-      };
-
-      const contextUpdater = (newContext) => {
-        if (newContext !== contextItem.renderedContext) {
-          this.__shouldUpdate = true;
-          this.update();
-        }
-      };
-
-      contextEmitter.on(contextUpdater);
-      this.willUnmount.push(contextEmitter.off.bind(contextEmitter, contextUpdater));
-      this.__dependencies[contextProp] = contextItem;
+  useContext(context) {
+    const contextName = context._contextName;
+    const internalContext = this[INTERNAL]._context;
+    if (internalContext[contextName]) {
+      return internalContext[contextName].getValue();
+    } else {
+      return context._defaultValue;
     }
-    return contextItem.__renderedContext = contextItem.__emitter.value;
   }
 
   componentWillMount() {
