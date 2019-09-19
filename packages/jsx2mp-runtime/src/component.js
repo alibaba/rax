@@ -116,8 +116,9 @@ export default class Component {
     const contextProp = Provider.contextProp;
     let contextItem = this.__dependencies[contextProp];
     if (!contextItem) {
+
       const readEmitter = Provider.readEmitter;
-      const contextEmitter = readEmitter(this);
+      const contextEmitter = readEmitter();
       contextItem = {
         emitter: contextEmitter,
         renderedContext: contextEmitter.value,

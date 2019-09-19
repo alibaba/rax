@@ -22,6 +22,7 @@ const SAFE_ROUTER_MAP = '__router_map__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
+const USE_CONTEXT = 'useContext';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
@@ -161,7 +162,7 @@ module.exports = {
       });
       addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
-      addProviderIniter(parsed.contextName, parsed.contextInitValue, parsed.renderFunctionPath);
+      addProviderIniter(parsed.contextList, parsed.renderFunctionPath);
     }
   },
 };
@@ -402,7 +403,8 @@ function collectHooks(root) {
     CallExpression(path) {
       const { node } = path;
       if (t.isIdentifier(node.callee, { name: USE_STATE })
-        || t.isIdentifier(node.callee, { name: USE_EFFECT })) {
+        || t.isIdentifier(node.callee, { name: USE_EFFECT })
+        || t.isIdentifier(node.callee, { name: USE_CONTEXT })) {
         ret[node.callee.name] = true;
       }
     }
@@ -451,15 +453,17 @@ function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
   ])));
 }
 
-function addProviderIniter(contextName, contextInitValue, renderFunctionPath) {
-  if (contextName) {
-    const ProviderIniter = t.memberExpression(
-      t.identifier(contextName),
-      t.identifier('Provider')
-    )
-    const fnBody = renderFunctionPath.node.body.body;
+function addProviderIniter(contextList, renderFunctionPath) {
+  if (contextList) {
+    contextList.forEach(ctx => {
+      const ProviderIniter = t.memberExpression(
+        t.identifier(ctx.contextName),
+        t.identifier('Provider')
+      )
+      const fnBody = renderFunctionPath.node.body.body;
 
-    fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [contextInitValue])));
+      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
+    });
   }
 }
 

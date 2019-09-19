@@ -114,9 +114,16 @@ module.exports = {
             if(property.name === 'Provider') { // context.Provider>
               const valueAttribute = node.attributes.find(a => t.isJSXIdentifier(a.name) && a.name.name === 'value')
               const contextInitValue = valueAttribute.value.expression;
-
+              const contextItem = {
+                contextInitValue,
+                contextName: object.name
+              }
+              if (!parsed.contextList) {
+                parsed.contextList = [contextItem];
+              } else {
+                parsed.contextList.push(contextItem);
+              }
               parsed.contextInitValue = contextInitValue;
-              parsed.contextName = object.name;
               node.name = t.jsxIdentifier('block');
               node.attributes = [];
               path.parentPath.node.closingElement.name = t.jsxIdentifier('block');
