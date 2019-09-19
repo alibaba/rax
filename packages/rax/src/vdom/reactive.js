@@ -23,7 +23,7 @@ export default class ReactiveComponent extends Component {
     this.__isScheduled = false;
     this.__shouldUpdate = false;
     this.__children = null;
-    this.__dependencies = {};
+    this.__contexts = {};
     // Handles store
     this.didMount = [];
     this.didUpdate = [];
@@ -64,8 +64,26 @@ export default class ReactiveComponent extends Component {
   useContext(context) {
     const contextName = context._contextName;
     const internalContext = this[INTERNAL]._context;
-    if (internalContext[contextName]) {
-      return internalContext[contextName].getValue();
+    const provider = internalContext[contextName];
+
+    if (provider) {
+      let contextItem = this.__contexts[contextName];
+      const value = provider.getValue();
+      if (!contextItem) {
+        contextItem = {
+          __value: value
+        };
+        const handleContextChange = (newContext) => {
+          if (newContext !== contextItem.__value) {
+            this.__shouldUpdate = true;
+            this.update();
+          }
+        };
+        provider.on(handleContextChange);
+        this.willUnmount.push(() => provider.off(handleContextChange));
+        this.__contexts[contextName] = contextItem;
+      }
+      return value;
     } else {
       return context._defaultValue;
     }
