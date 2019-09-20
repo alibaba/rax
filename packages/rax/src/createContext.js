@@ -64,15 +64,9 @@ export default function createContext(defaultValue) {
 
     useLayoutEffect(() => {
       if (provider) {
-        function onUpdate(updatedValue) {
-          if (value !== updatedValue) {
-            setValue(updatedValue);
-          }
-        }
-
-        provider.__on(onUpdate);
+        provider.__on(setValue);
         return () => {
-          provider.__off(onUpdate);
+          provider.__off(setValue);
         };
       }
     }, [provider]);
