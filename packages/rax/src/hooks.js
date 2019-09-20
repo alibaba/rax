@@ -5,7 +5,7 @@ import { isArray, isFunction, isNull } from './types';
 import { invokeMinifiedError } from './error';
 import { INSTANCE } from './constant';
 
-export function getCurrentInstance() {
+function getCurrentInstance() {
   return Host.owner && Host.owner[INSTANCE];
 }
 
