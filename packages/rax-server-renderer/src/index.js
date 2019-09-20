@@ -202,10 +202,10 @@ class ServerReactiveComponent {
   }
 
   useContext(context) {
-    const contextName = context._contextName;
+    const contextID = context._contextID;
 
-    if (this.context[contextName]) {
-      return this.context[contextName].getValue();
+    if (this.context[contextID]) {
+      return this.context[contextID].getValue();
     } else {
       return context._defaultValue;
     }
@@ -256,8 +256,12 @@ function renderElementToString(element, context, options) {
       instance.updater = updater;
 
       let childContext;
+
       if (instance.getChildContext) {
         childContext = instance.getChildContext();
+      } else if (instance._getChildContext) {
+        // Only defined in Provider
+        childContext = instance._getChildContext();
       }
 
       if (childContext) {

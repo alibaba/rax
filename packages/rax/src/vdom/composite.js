@@ -254,7 +254,6 @@ class CompositeComponent extends BaseComponent {
     let instance = this[INSTANCE];
     // The getChildContext method context should be current instance
     let childContext = instance.getChildContext && instance.getChildContext();
-
     if (childContext) {
       return assign({}, currentContext, childContext);
     }
@@ -440,7 +439,8 @@ class CompositeComponent extends BaseComponent {
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
       const prevRenderedUnmaskedContext = prevRenderedComponent._context;
       const nextRenderedUnmaskedContext = this.__processChildContext(context);
-
+      // If getChildContext existed and invoked when component updated that will make
+      // prevRenderedUnmaskedContext not equal nextRenderedUnmaskedContext under the tree
       if (prevRenderedElement !== nextRenderedElement || prevRenderedUnmaskedContext !== nextRenderedUnmaskedContext) {
         prevRenderedComponent.__updateComponent(
           prevRenderedElement,

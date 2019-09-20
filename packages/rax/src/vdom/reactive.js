@@ -62,12 +62,11 @@ export default class ReactiveComponent extends Component {
   }
 
   useContext(context) {
-    const contextName = context._contextName;
-    const internalContext = this[INTERNAL]._context;
-    const provider = internalContext[contextName];
+    const contextID = context._contextID;
+    const provider = context.__getNearestProvider(this);
 
     if (provider) {
-      let contextItem = this.__contexts[contextName];
+      let contextItem = this.__contexts[contextID];
       const value = provider.getValue();
       if (!contextItem) {
         contextItem = {
@@ -79,9 +78,9 @@ export default class ReactiveComponent extends Component {
             this.update();
           }
         };
-        provider.on(handleContextChange);
-        this.willUnmount.push(() => provider.off(handleContextChange));
-        this.__contexts[contextName] = contextItem;
+        provider.__on(handleContextChange);
+        this.willUnmount.push(() => provider.__off(handleContextChange));
+        this.__contexts[contextID] = contextItem;
       }
       return value;
     } else {

@@ -2,16 +2,17 @@ import invokeFunctionsWithContext from './invokeFunctionsWithContext';
 import { useState, useLayoutEffect } from './hooks';
 import { isFunction } from './types';
 import toArray from './toArray';
-import ReactiveComponent from './vdom/reactive';
+import { INTERNAL } from './constant';
 
-let contextID = 0;
+let id = 0;
 
 export default function createContext(defaultValue) {
-  const contextName = '_c' + contextID++;
+  const contextID = '_c' + id++;
 
   // Provider Component
   class Provider {
     constructor() {
+      this.__contextID = contextID;
       this.__handlers = [];
     }
     __on(handler) {
@@ -20,16 +21,14 @@ export default function createContext(defaultValue) {
     __off(handler) {
       this.__handlers = this.__handlers.filter(h => h !== handler);
     }
-    getValue() {
-      return this.props.value !== undefined ? this.props.value : defaultValue;
-    }
-    getChildContext() {
+    // Like getChildContext but called in SSR
+    _getChildContext() {
       return {
-        [contextName]: this
+        [contextID]: this
       };
     }
-    shouldComponentUpdate(nextProps) {
-      return this.props.value !== nextProps.value;
+    getValue() {
+      return this.props.value !== undefined ? this.props.value : defaultValue;
     }
     componentDidUpdate() {
       invokeFunctionsWithContext(this.__handlers, null, this.getValue());
@@ -39,9 +38,22 @@ export default function createContext(defaultValue) {
     }
   }
 
+  function getNearestProvider(instance) {
+    let provider;
+    while (instance && instance[INTERNAL]) {
+      if (instance.__contextID === contextID) {
+        provider = instance;
+        break;
+      }
+      instance = instance[INTERNAL].__parentInstance;
+    }
+    return provider;
+  }
+
   // Cuonsumer Component
   function Consumer(props, context) {
-    const provider = context[contextName];
+    // Current `context[contextID]` only works in SSR
+    const provider = context[contextID] || getNearestProvider(this);
     let value = provider && provider.getValue() || defaultValue;
     const [prevValue, setValue] = useState(() => value);
 
@@ -72,14 +84,11 @@ export default function createContext(defaultValue) {
     }
   }
 
-  Consumer.contextTypes = {
-    [contextName]: null
-  };
-
   return {
     Provider,
     Consumer,
-    _contextName: contextName,
+    _contextID: contextID, // Export for SSR
     _defaultValue: defaultValue,
+    __getNearestProvider: getNearestProvider,
   };
 }
