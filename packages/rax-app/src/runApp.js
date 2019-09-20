@@ -1,4 +1,4 @@
-import { render, createElement } from 'rax';
+import { render, createElement, useState, useEffect } from 'rax';
 import { isWeex, isWeb } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
@@ -17,14 +17,46 @@ export function getHistory() {
 }
 
 function App(props) {
-  const { history, routes, InitialComponent, initialProps } = props;
+  const { history, routes, InitialComponent } = props;
   const { component } = useRouter(() => ({ history, routes, InitialComponent }));
 
   if (isNullableComponent(component)) {
     // Return null directly if not matched.
     return null;
   } else {
-    return createElement(component, Object.assign({}, props, initialProps));
+    const [pageInitialProps, setPageInitialProps] = useState(
+      // If SSR is enabled, set pageInitialProps: {pagePath: pageData}
+      initialDataFromSSR ? { [initialDataFromSSR.pagePath || '']: initialDataFromSSR.pageData || {} } : {}
+    );
+
+    // If SSR is enabled, process getInitialProps method
+    if (isWeb && initialDataFromSSR && component.getInitialProps && !pageInitialProps[component.__path]) {
+      useEffect(() => {
+        const getInitialPropsPromise = component.getInitialProps();
+
+        // Check getInitialProps returns promise.
+        if (process.env.NODE_ENV !== 'production') {
+          if (!getInitialPropsPromise.then) {
+            throw new Error('getInitialProps should be async function or return a promise. See detail at "' + Component.name + '".');
+          }
+        }
+
+        getInitialPropsPromise.then((nextDefaultProps) => {
+          if (nextDefaultProps) {
+            // Process pageData from SSR
+            const pageData = initialDataFromSSR && initialDataFromSSR.pagePath === component.__path ? initialDataFromSSR.pageData : {};
+            // Do not cache getInitialPropsPromise result
+            setPageInitialProps(Object.assign({}, { [component.__path]: Object.assign({}, pageData, nextDefaultProps) }));
+          }
+        }).catch((error) => {
+          // In case of uncaught promise.
+          throw error;
+        });
+      });
+      // Early return null if initialProps were not get.
+      return null;
+    }
+    return createElement(component, Object.assign({}, props, pageInitialProps[component.__path]));
   }
 }
 
@@ -52,29 +84,10 @@ export default function runApp(appConfig) {
   return matchInitialComponent(history.location.pathname, routes)
     .then((initialComponent) => {
       _initialComponent = initialComponent;
-
-      if (isWeb) {
-        let Component = initialComponent();
-        if (Component.getInitialProps) {
-          const getInitialPropsPromise = Component.getInitialProps();
-
-          // Check getInitialProps returns promise.
-          if (process.env.NODE_ENV !== 'production') {
-            if (!getInitialPropsPromise.then) {
-              throw new Error('getInitialProps should be async function or return a promise. See detail at "' + Component.name + '".');
-            }
-          }
-
-          return getInitialPropsPromise;
-        }
-      }
-    })
-    .then((initialProps) => {
       let appInstance = createElement(App, {
         history,
         routes,
-        InitialComponent: _initialComponent,
-        initialProps
+        InitialComponent: _initialComponent
       });
 
       if (shell) {
@@ -102,7 +115,7 @@ export default function runApp(appConfig) {
 
 function matchInitialComponent(fullpath, routes) {
   let initialComponent = null;
-  for (let i = 0, l = routes.length; i < l; i ++) {
+  for (let i = 0, l = routes.length; i < l; i++) {
     if (fullpath === routes[i].path || routes[i].regexp && routes[i].regexp.test(fullpath)) {
       initialComponent = routes[i].component;
       if (typeof initialComponent === 'function') initialComponent = initialComponent();
