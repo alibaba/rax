@@ -63,29 +63,27 @@ export default class ReactiveComponent extends Component {
 
   useContext(context) {
     const contextID = context._contextID;
-    const provider = context.__getNearestProvider(this);
+    let contextItem = this.__contexts[contextID];
 
-    if (provider) {
-      let contextItem = this.__contexts[contextID];
-      const value = provider.getValue();
-      if (!contextItem) {
-        contextItem = {
-          __value: value
-        };
-        const handleContextChange = (newContext) => {
-          if (newContext !== contextItem.__value) {
-            this.__shouldUpdate = true;
-            this.update();
-          }
+    if (!contextItem) {
+      const provider = context.__getNearestParentProvider(this);
+      contextItem = this.__contexts[contextID] = {
+        __provider: provider
+      };
+
+      if (provider) {
+        const handleContextChange = () => {
+          // Do not need check old value here
+          // because only value changed will emit change
+          this.__shouldUpdate = true;
+          this.__update();
         };
         provider.__on(handleContextChange);
         this.willUnmount.push(() => provider.__off(handleContextChange));
-        this.__contexts[contextID] = contextItem;
       }
-      return value;
-    } else {
-      return context._defaultValue;
     }
+
+    return contextItem.__provider ? contextItem.__provider.getValue() : context._defaultValue;
   }
 
   componentWillMount() {
@@ -108,7 +106,7 @@ export default class ReactiveComponent extends Component {
     invokeFunctionsWithContext(this.willUnmount);
   }
 
-  update() {
+  __update() {
     this[INTERNAL].__isPendingForceUpdate = true;
     this.setState({});
   }

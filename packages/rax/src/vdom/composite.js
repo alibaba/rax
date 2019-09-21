@@ -13,6 +13,7 @@ import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
+import getNearestParent from './getNearestParent';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -27,19 +28,7 @@ function performInSandbox(fn, instance, callback) {
 }
 
 function handleError(instance, error) {
-  let boundary;
-
-  while (instance) {
-    let internal = instance[INTERNAL];
-    if (instance.componentDidCatch) {
-      boundary = instance;
-      break;
-    } else if (internal && internal.__parentInstance) {
-      instance = internal.__parentInstance;
-    } else {
-      break;
-    }
-  }
+  let boundary = getNearestParent(instance, parent => parent.componentDidCatch);
 
   if (boundary) {
     // Should not attempt to recover an unmounting error boundary

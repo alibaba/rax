@@ -19,7 +19,7 @@ class Root extends Component {
     return this[INTERNAL][RENDERED_COMPONENT];
   }
 
-  update(element) {
+  __update(element) {
     this.__element = element;
     this.forceUpdate();
   }

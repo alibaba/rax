@@ -3,6 +3,7 @@ import { useState, useLayoutEffect } from './hooks';
 import { isFunction } from './types';
 import toArray from './toArray';
 import { INTERNAL } from './constant';
+import getNearestParent from './vdom/getNearestParent';
 
 let id = 0;
 
@@ -30,30 +31,24 @@ export default function createContext(defaultValue) {
     getValue() {
       return this.props.value !== undefined ? this.props.value : defaultValue;
     }
-    componentDidUpdate() {
-      invokeFunctionsWithContext(this.__handlers, null, this.getValue());
+    componentDidUpdate(prevProps) {
+      if (this.props.value !== prevProps.value) {
+        invokeFunctionsWithContext(this.__handlers, null, this.getValue());
+      }
     }
     render() {
       return this.props.children;
     }
   }
 
-  function getNearestProvider(instance) {
-    let provider;
-    while (instance && instance[INTERNAL]) {
-      if (instance.__contextID === contextID) {
-        provider = instance;
-        break;
-      }
-      instance = instance[INTERNAL].__parentInstance;
-    }
-    return provider;
+  function getNearestParentProvider(instance) {
+    return getNearestParent(instance, parent => parent.__contextID === contextID);
   }
 
   // Cuonsumer Component
   function Consumer(props, context) {
     // Current `context[contextID]` only works in SSR
-    const provider = context[contextID] || getNearestProvider(this);
+    const provider = context[contextID] || getNearestParentProvider(this);
     let value = provider && provider.getValue() || defaultValue;
     const [prevValue, setValue] = useState(() => value);
 
@@ -70,6 +65,7 @@ export default function createContext(defaultValue) {
         };
       }
     }, [provider]);
+
     // Consumer requires a function as a child.
     // The function receives the current context value.
     const consumer = toArray(props.children)[0];
@@ -83,6 +79,6 @@ export default function createContext(defaultValue) {
     Consumer,
     _contextID: contextID, // Export for SSR
     _defaultValue: defaultValue,
-    __getNearestProvider: getNearestProvider,
+    __getNearestParentProvider: getNearestParentProvider,
   };
 }
