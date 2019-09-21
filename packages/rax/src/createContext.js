@@ -48,7 +48,7 @@ export default function createContext(defaultValue) {
   // Cuonsumer Component
   function Consumer(props, context) {
     // Current `context[contextID]` only works in SSR
-    const provider = context[contextID] || getNearestParentProvider(this);
+    const [provider] = useState(() => context[contextID] || getNearestParentProvider(this));
     let value = provider && provider.getValue() || defaultValue;
     const [prevValue, setValue] = useState(() => value);
 
@@ -64,7 +64,7 @@ export default function createContext(defaultValue) {
           provider.__off(setValue);
         };
       }
-    }, [provider]);
+    }, []);
 
     // Consumer requires a function as a child.
     // The function receives the current context value.
