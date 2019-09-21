@@ -50,7 +50,7 @@ export default function createContext(defaultValue) {
     // Current `context[contextID]` only works in SSR
     const [provider] = useState(() => context[contextID] || getNearestParentProvider(this));
     let value = provider && provider.getValue() || defaultValue;
-    const [prevValue, setValue] = useState(() => value);
+    const [prevValue, setValue] = useState(value);
 
     if (value !== prevValue) {
       setValue(value);
