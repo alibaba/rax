@@ -711,6 +711,7 @@ describe('hooks', () => {
 
     logs = [];
     setValue(2);
+    jest.runAllTimers();
     expect(logs).toEqual([
       'Child'
     ]);
