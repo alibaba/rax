@@ -64,7 +64,9 @@ export default class ReactiveComponent extends Component {
   useContext(context) {
     const contextID = context._contextID;
     let contextItem = this.__contexts[contextID];
-
+    function getValue() {
+      return contextItem.__provider ? contextItem.__provider.getValue() : context._defaultValue;
+    }
     if (!contextItem) {
       const provider = context.__getNearestParentProvider(this);
       contextItem = this.__contexts[contextID] = {
@@ -73,17 +75,19 @@ export default class ReactiveComponent extends Component {
 
       if (provider) {
         const handleContextChange = () => {
-          // Do not need check old value here
-          // because only value changed will emit change
-          this.__shouldUpdate = true;
-          this.__update();
+          // Check the last value that maybe alread rerender
+          // avoid rerender twice when provider value changed
+          if (contextItem.__lastValue !== getValue()) {
+            this.__shouldUpdate = true;
+            this.__update();
+          }
         };
         provider.__on(handleContextChange);
         this.willUnmount.push(() => provider.__off(handleContextChange));
       }
     }
 
-    return contextItem.__provider ? contextItem.__provider.getValue() : context._defaultValue;
+    return contextItem.__lastValue = getValue();
   }
 
   componentWillMount() {
