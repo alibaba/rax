@@ -686,12 +686,6 @@ describe('hooks', () => {
     const context = createContext(4);
     let logs = [];
 
-    logs.flush = function() {
-      const result = [...logs];
-      logs.length = 0;
-      return result;
-    };
-
     function Parent() {
       return <context.Provider value={this.props.value}>{this.props.children}</context.Provider>;
     }
@@ -710,14 +704,14 @@ describe('hooks', () => {
     }
 
     render(<App />, container);
-    expect(logs.flush()).toEqual([
+    expect(logs).toEqual([
       'Child'
     ]);
     expect(container.childNodes[0].data).toEqual('1');
 
     logs = [];
     setValue(2);
-    expect(logs.flush()).toEqual([
+    expect(logs).toEqual([
       'Child'
     ]);
     expect(container.childNodes[0].data).toEqual('2');
