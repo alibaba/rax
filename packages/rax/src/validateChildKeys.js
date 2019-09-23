@@ -1,7 +1,6 @@
 import Host from './vdom/host';
 import warning from './warning';
 import {isArray, isObject} from './types';
-import isValidElement from './isValidElement';
 import getRenderErrorInfo from './getRenderErrorInfo';
 
 /**
@@ -26,12 +25,16 @@ function getCurrentComponentErrorInfo(parentType) {
   return info;
 }
 
+function isValidElement(object) {
+  return typeof object === 'object' && object !== null && object.type && !!object.props;
+}
+
 function validateExplicitKey(element, parentType) {
-  if (element._validated || element.key != null) {
+  if (element.__validated || element.key != null) {
     return;
   }
 
-  element._validated = true;
+  element.__validated = true;
 
   const currentComponentErrorInfo = getCurrentComponentErrorInfo(parentType);
   if (ownerHasKeyUseWarning[currentComponentErrorInfo]) {
@@ -72,7 +75,7 @@ export function validateChildKeys(node, parentType) {
       }
     }
   } else if (isValidElement(node)) {
-    node._validated = true;
+    node.__validated = true;
   }
   // rax isn't support iterator object as element children
   // TODO: add validate when rax support iterator object as element.

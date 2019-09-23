@@ -11,7 +11,7 @@ export default function Element(type, key, ref, props, owner) {
 
   if (process.env.NODE_ENV !== 'production') {
     // We make validation flag non-enumerable, so the test framework could ignore it
-    Object.defineProperty(element, '_validated', {
+    Object.defineProperty(element, '__validated', {
       configurable: false,
       enumerable: false,
       writable: true,
