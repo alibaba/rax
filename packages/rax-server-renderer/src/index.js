@@ -343,4 +343,4 @@ export function renderToString(element, options = {}) {
 
 export default {
   renderToString
-}
+};
