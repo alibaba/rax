@@ -26,6 +26,9 @@ const USE_STATE = 'useState';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
+/**
+ * match universal-app package
+ */
 const isCoreModule = (mod) => /^@core\//.test(mod);
 const isUniversalAppRuntime = (mod) => /^universal\-app\-runtime/.test(mod);
 
