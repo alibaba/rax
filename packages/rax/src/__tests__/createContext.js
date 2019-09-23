@@ -567,8 +567,8 @@ describe('createContext', () => {
     function App() {
       return (
         [
-          <MyContext />,
-          <MyContext2 />
+          <MyContext key={'1'} />,
+          <MyContext2 key={'2'} />
         ]
       );
     };
@@ -600,8 +600,8 @@ describe('createContext', () => {
     function App() {
       return (
         [
-          <MyContext />,
-          <MyContext2 />
+          <MyContext key={'1'} />,
+          <MyContext2 key={'2'} />
         ]
       );
     };
