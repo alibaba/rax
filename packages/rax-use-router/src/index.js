@@ -163,7 +163,7 @@ const router = {
       if (component instanceof Promise) {
         // Lazy loading component by import('./Foo')
         return component.then((component) => {
-          // Check current fullpath avoid router has changed before lazy laoding complete
+          // Check current fullpath avoid router has changed before lazy loading complete
           if (fullpath === router.fullpath) {
             router.triggerHandles(component);
           }

@@ -681,6 +681,43 @@ describe('hooks', () => {
     expect(container.childNodes[0].data).toEqual('1 (dark)');
   });
 
+  it('rerender only once when context changes', () => {
+    const container = createNodeElement('div');
+    const context = createContext(4);
+    let logs = [];
+
+    function Parent() {
+      return <context.Provider value={this.props.value}>{this.props.children}</context.Provider>;
+    }
+
+    function Child() {
+      logs.push('Child');
+      const val = useContext(context);
+      return val;
+    }
+
+    let setValue;
+    function App() {
+      const [val, setVal] = useState(1);
+      setValue = setVal;
+      return <Parent value={val}><Child /></Parent>;
+    }
+
+    render(<App />, container);
+    expect(logs).toEqual([
+      'Child'
+    ]);
+    expect(container.childNodes[0].data).toEqual('1');
+
+    logs = [];
+    setValue(2);
+    jest.runAllTimers();
+    expect(logs).toEqual([
+      'Child'
+    ]);
+    expect(container.childNodes[0].data).toEqual('2');
+  });
+
   describe('updates during the render phase', () => {
     it('restarts the render function and applies the new updates on top', () => {
       const container = createNodeElement('div');

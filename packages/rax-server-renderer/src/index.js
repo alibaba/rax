@@ -92,8 +92,6 @@ const NUMBER_REGEXP = /^[0-9]*$/;
 const CSSPropCache = {};
 
 function styleToCSS(style, options = {}) {
-  const isObject = typeof style === 'object';
-
   let css = '';
 
   if (Array.isArray(style)) {
@@ -183,7 +181,7 @@ const updater = {
 /**
  * Functional Reactive Component Class Wrapper
  */
-class ReactiveComponent {
+class ServerReactiveComponent {
   constructor(pureRender) {
     // A pure function
     this._render = pureRender;
@@ -203,17 +201,19 @@ class ReactiveComponent {
     return ++this._hookID;
   }
 
-  readContext(context) {
-    const readEmitter = context.Provider.readEmitter;
-    const contextEmitter = readEmitter(this);
-    return contextEmitter.value;
+  useContext(context) {
+    const contextID = context._contextID;
+
+    if (this.context[contextID]) {
+      return this.context[contextID].getValue();
+    } else {
+      return context._defaultValue;
+    }
   }
 
   render() {
     this._hookID = 0;
-
     let children = this._render(this.props, this.context);
-
     return children;
   }
 }
@@ -250,13 +250,18 @@ function renderElementToString(element, context, options) {
     const props = element.props || EMPTY_OBJECT;
     if (type.prototype && type.prototype.render) {
       const instance = new type(props, context); // eslint-disable-line new-cap
+      instance.props = props;
       let currentContext = instance.context = context;
       // Inject the updater into instance
       instance.updater = updater;
 
       let childContext;
+
       if (instance.getChildContext) {
         childContext = instance.getChildContext();
+      } else if (instance._getChildContext) {
+        // Only defined in Provider
+        childContext = instance._getChildContext();
       }
 
       if (childContext) {
@@ -285,7 +290,7 @@ function renderElementToString(element, context, options) {
       var renderedElement = instance.render();
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
-      const instance = new ReactiveComponent(type);
+      const instance = new ServerReactiveComponent(type);
       instance.props = props;
       instance.context = context;
 
@@ -332,6 +337,10 @@ function renderElementToString(element, context, options) {
   }
 }
 
-exports.renderToString = function renderToString(element, options = {}) {
+export function renderToString(element, options = {}) {
   return renderElementToString(element, EMPTY_OBJECT, Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
+}
+
+export default {
+  renderToString
 };
