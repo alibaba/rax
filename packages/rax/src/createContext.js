@@ -45,11 +45,11 @@ export default function createContext(defaultValue) {
     return getNearestParent(instance, parent => parent.__contextID === contextID);
   }
 
-  // Cuonsumer Component
+  // Consumer Component
   function Consumer(props, context) {
     // Current `context[contextID]` only works in SSR
     const [provider] = useState(() => context[contextID] || getNearestParentProvider(this));
-    let value = provider && provider.getValue() || defaultValue;
+    let value = provider ? provider.getValue() : defaultValue;
     const [prevValue, setValue] = useState(value);
 
     if (value !== prevValue) {
