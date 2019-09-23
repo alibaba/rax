@@ -62,7 +62,7 @@ function validateExplicitKey(element, parentType) {
   );
 }
 
-export function validateChildKeys(node, parentType) {
+export default function validateChildKeys(node, parentType) {
   if (!isObject(node)) {
     return;
   }

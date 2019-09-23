@@ -4,7 +4,7 @@ import flattenChildren from './vdom/flattenChildren';
 import { invokeMinifiedError } from './error';
 import { isString, isArray } from './types';
 import warning from './warning';
-import { validateChildKeys } from './validateChildKeys';
+import validateChildKeys from './validateChildKeys';
 import getRenderErrorInfo from './getRenderErrorInfo';
 
 const RESERVED_PROPS = {
