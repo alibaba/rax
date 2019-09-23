@@ -69,7 +69,7 @@ export function useState(initialState) {
           // Marked as is scheduled that could finish hooks.
           currentInstance.__isScheduled = true;
         } else {
-          currentInstance.update();
+          currentInstance.__update();
         }
       }
     };
@@ -92,7 +92,7 @@ export function useState(initialState) {
 
 export function useContext(context) {
   const currentInstance = getCurrentRenderingInstance();
-  return currentInstance.readContext(context);
+  return currentInstance.useContext(context);
 }
 
 export function useEffect(effect, inputs) {
@@ -239,7 +239,7 @@ export function useReducer(reducer, initialArg, init) {
         }
         queue.__eagerState = eagerState;
         queue.__actions.push(action);
-        currentInstance.update();
+        currentInstance.__update();
       }
     };
 

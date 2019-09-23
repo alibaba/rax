@@ -13,22 +13,21 @@ export default class ReactiveComponent extends Component {
     super();
     // Marked ReactiveComponent.
     this.__isReactiveComponent = true;
-
     // A pure function
     this.__render = pureRender;
     this.__hookID = 0;
     // Number of rerenders
     this.__reRenders = 0;
     this.__hooks = {};
-    // Handles store
-    this.didMount = [];
-    this.didUpdate = [];
-    this.willUnmount = [];
     // Is render scheduled
     this.__isScheduled = false;
     this.__shouldUpdate = false;
     this.__children = null;
-    this.__dependencies = {};
+    this.__contexts = {};
+    // Handles store
+    this.didMount = [];
+    this.didUpdate = [];
+    this.willUnmount = [];
 
     this.state = {};
 
@@ -62,30 +61,33 @@ export default class ReactiveComponent extends Component {
     return ++this.__hookID;
   }
 
-  readContext(context) {
-    const Provider = context.Provider;
-    const contextProp = Provider.contextProp;
-    let contextItem = this.__dependencies[contextProp];
-    if (!contextItem) {
-      const readEmitter = Provider.readEmitter;
-      const contextEmitter = readEmitter(this);
-      contextItem = {
-        emitter: contextEmitter,
-        renderedContext: contextEmitter.value,
-      };
-
-      const contextUpdater = (newContext) => {
-        if (newContext !== contextItem.renderedContext) {
-          this.__shouldUpdate = true;
-          this.update();
-        }
-      };
-
-      contextEmitter.on(contextUpdater);
-      this.willUnmount.push(contextEmitter.off.bind(contextEmitter, contextUpdater));
-      this.__dependencies[contextProp] = contextItem;
+  useContext(context) {
+    const contextID = context._contextID;
+    let contextItem = this.__contexts[contextID];
+    function getValue() {
+      return contextItem.__provider ? contextItem.__provider.getValue() : context._defaultValue;
     }
-    return contextItem.renderedContext = contextItem.emitter.value;
+    if (!contextItem) {
+      const provider = context.__getNearestParentProvider(this);
+      contextItem = this.__contexts[contextID] = {
+        __provider: provider
+      };
+
+      if (provider) {
+        const handleContextChange = () => {
+          // Check the last value that maybe alread rerender
+          // avoid rerender twice when provider value changed
+          if (contextItem.__lastValue !== getValue()) {
+            this.__shouldUpdate = true;
+            this.__update();
+          }
+        };
+        provider.__on(handleContextChange);
+        this.willUnmount.push(() => provider.__off(handleContextChange));
+      }
+    }
+
+    return contextItem.__lastValue = getValue();
   }
 
   componentWillMount() {
@@ -108,7 +110,7 @@ export default class ReactiveComponent extends Component {
     invokeFunctionsWithContext(this.willUnmount);
   }
 
-  update() {
+  __update() {
     this[INTERNAL].__isPendingForceUpdate = true;
     this.setState({});
   }

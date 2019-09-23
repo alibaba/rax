@@ -419,4 +419,78 @@ describe('createContext', () => {
     expect(container.childNodes[0].childNodes[0].data).toEqual('OtherChild');
     expect(container.childNodes[1].childNodes[0].data).toEqual('theme2');
   });
+
+  it('render two Consumer and one use default context value', function() {
+    const container = createNodeElement('div');
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+          <MyComponent />
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyComponent() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    };
+
+    function MyContext2() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    }
+
+    function App() {
+      return (
+        [
+          <MyContext />,
+          <MyContext2 />
+        ]
+      );
+    };
+
+    render(<App />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('dark');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('light');
+  });
+
+  it('render one Consumer use default context value', function() {
+    const container = createNodeElement('div');
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyContext2() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    }
+
+    function App() {
+      return (
+        [
+          <MyContext />,
+          <MyContext2 />
+        ]
+      );
+    };
+
+    render(<App />, container);
+    expect(container.childNodes[1].childNodes[0].data).toEqual('light');
+  });
 });

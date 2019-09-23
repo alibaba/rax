@@ -1,94 +1,74 @@
 import invokeFunctionsWithContext from './invokeFunctionsWithContext';
-import { useState, useEffect } from './hooks';
+import { useState, useLayoutEffect } from './hooks';
 import { isFunction } from './types';
-import { INTERNAL } from './constant';
 import toArray from './toArray';
+import { INTERNAL } from './constant';
+import getNearestParent from './vdom/getNearestParent';
 
-class ValueEmitter {
-  constructor(defaultValue) {
-    this.__handlers = [];
-    this.value = defaultValue;
-  }
-
-  on(handler) {
-    this.__handlers.push(handler);
-  }
-
-  off(handler) {
-    this.__handlers = this.__handlers.filter(h => h !== handler);
-  }
-
-  emit() {
-    invokeFunctionsWithContext(this.__handlers, null, this.value);
-  }
-}
-
-let uniqueId = 0;
+let id = 0;
 
 export default function createContext(defaultValue) {
-  const contextProp = '__ctx' + uniqueId++;
-  const stack = [];
-  const defaultEmitter = new ValueEmitter(defaultValue);
+  const contextID = '_c' + id++;
 
-  function Provider(props) {
-    const propsValue = props.value !== undefined ? props.value : defaultValue;
-    const [value, setValue] = useState(propsValue);
-    const [emitter] = useState(() => new ValueEmitter(value));
-    emitter.value = propsValue;
-
-    if (propsValue !== value) setValue(propsValue);
-
-    useEffect(() => {
-      stack.pop();
-    });
-
-    useEffect(() => {
-      emitter.emit();
-    }, [value]);
-
-    stack.push(emitter);
-    return props.children;
-  }
-
-  function readEmitter(instance) {
-    const emitter = stack[stack.length - 1];
-    if (emitter) return emitter;
-    while (instance && instance[INTERNAL]) {
-      if (instance instanceof Provider) {
-        break;
-      }
-      instance = instance[INTERNAL].__parentInstance;
+  // Provider Component
+  class Provider {
+    constructor() {
+      this.__contextID = contextID;
+      this.__handlers = [];
     }
-    return instance && instance.emitter || defaultEmitter;
+    __on(handler) {
+      this.__handlers.push(handler);
+    }
+    __off(handler) {
+      this.__handlers = this.__handlers.filter(h => h !== handler);
+    }
+    // Like getChildContext but called in SSR
+    _getChildContext() {
+      return {
+        [contextID]: this
+      };
+    }
+    getValue() {
+      return this.props.value !== undefined ? this.props.value : defaultValue;
+    }
+    componentDidUpdate(prevProps) {
+      if (this.props.value !== prevProps.value) {
+        invokeFunctionsWithContext(this.__handlers, null, this.getValue());
+      }
+    }
+    render() {
+      return this.props.children;
+    }
   }
 
-  Provider.readEmitter = readEmitter;
-  Provider.contextProp = contextProp;
+  function getNearestParentProvider(instance) {
+    return getNearestParent(instance, parent => parent.__contextID === contextID);
+  }
 
-  function Consumer(props) {
-    const [emitter] = useState(() => readEmitter(this));
-    const [value, setValue] = useState(emitter.value);
+  // Consumer Component
+  function Consumer(props, context) {
+    // Current `context[contextID]` only works in SSR
+    const [provider] = useState(() => context[contextID] || getNearestParentProvider(this));
+    let value = provider ? provider.getValue() : defaultValue;
+    const [prevValue, setValue] = useState(value);
 
-    if (value !== emitter.value) {
-      setValue(emitter.value);
+    if (value !== prevValue) {
+      setValue(value);
       return; // Interrupt execution of consumer.
     }
 
-    function onUpdate(updatedValue) {
-      if (value !== updatedValue) {
-        setValue(updatedValue);
+    useLayoutEffect(() => {
+      if (provider) {
+        provider.__on(setValue);
+        return () => {
+          provider.__off(setValue);
+        };
       }
-    }
-
-    useEffect(() => {
-      emitter.on(onUpdate);
-      return () => {
-        emitter.off(onUpdate);
-      };
     }, []);
 
-    const children = props.children;
-    const consumer = toArray(children)[0];
+    // Consumer requires a function as a child.
+    // The function receives the current context value.
+    const consumer = toArray(props.children)[0];
     if (isFunction(consumer)) {
       return consumer(value);
     }
@@ -97,5 +77,8 @@ export default function createContext(defaultValue) {
   return {
     Provider,
     Consumer,
+    _contextID: contextID, // Export for SSR
+    _defaultValue: defaultValue,
+    __getNearestParentProvider: getNearestParentProvider,
   };
 }
