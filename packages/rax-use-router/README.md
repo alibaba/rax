@@ -292,4 +292,4 @@ export default withRouter(Foo);
 <button onClick={ () => props.history.go(1) }>Go forward</button>
 ```
 
-More API see [history]()
+More API see [history](https://github.com/ReactTraining/history/tree/master/docs)
