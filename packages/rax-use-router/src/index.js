@@ -119,7 +119,7 @@ function matchRoute(route, baseUrl, pathname, parentParams) {
   };
 }
 
-
+let _routerConfig = null;
 const router = {
   history: null,
   handles: [],
@@ -188,14 +188,25 @@ function matchLocation({ pathname }) {
 function getInitialComponent(routerConfig) {
   let InitialComponent = [];
 
-  if (typeof routerConfig === 'function') {
-    routerConfig = routerConfig();
-  }
+  if (_routerConfig === null) {
+    if (typeof routerConfig === 'function') {
+      routerConfig = routerConfig();
+    }
 
-  if (routerConfig.InitialComponent) {
-    InitialComponent = routerConfig.InitialComponent;
+    if (process.env.NODE_ENV !== 'production') {
+      if (!routerConfig) {
+        throw new Error('useRouter should have routerConfig see: https://www.npmjs.com/package/rax-use-router.');
+      }
+      if (!routerConfig.history || !routerConfig.routes) {
+        throw new Error('routerConfig should contain history and routes see: https://www.npmjs.com/package/rax-use-router.');
+      }
+    }
+    _routerConfig = routerConfig;
   }
-  router.history = routerConfig.history;
+  if (_routerConfig.InitialComponent) {
+    InitialComponent = _routerConfig.InitialComponent;
+  }
+  router.history = _routerConfig.history;
 
   return InitialComponent;
 }
@@ -204,12 +215,8 @@ export function useRouter(routerConfig) {
   const [component, setComponent] = useState(getInitialComponent(routerConfig));
 
   useLayoutEffect(() => {
-    if (typeof routerConfig === 'function') {
-      routerConfig = routerConfig();
-    }
-
-    const history = routerConfig.history;
-    const routes = routerConfig.routes;
+    const history = _routerConfig.history;
+    const routes = _routerConfig.routes;
 
     router.root = Array.isArray(routes) ? { routes } : routes;
 
@@ -218,7 +225,7 @@ export function useRouter(routerConfig) {
     });
 
     // Init path match
-    if (!routerConfig.InitialComponent) {
+    if (!_routerConfig.InitialComponent) {
       matchLocation(history.location);
     }
 
