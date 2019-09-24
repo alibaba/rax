@@ -299,18 +299,6 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
       // Component(__create_component__(__class_def__));
       const args = [t.identifier(EXPORTED_DEF)];
 
-      // Insert routerMap import declaration
-      // if (type === 'app') {
-      //   path.node.body.unshift(
-      //     t.importDeclaration(
-      //       [t.importDefaultSpecifier(t.identifier(SAFE_ROUTER_MAP))],
-      //       t.stringLiteral('./routerMap')
-      //     )
-      //   );
-      //   // App(__create_app__(__class_def__, __router_map__));
-      //   args.push(t.identifier(SAFE_ROUTER_MAP));
-      // }
-
       // import { createComponent as __create_component__ } from "/__helpers/component";
       const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
       if ((type === 'page' || type === 'component') && userDefineType === 'class') {
