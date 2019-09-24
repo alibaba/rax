@@ -6,6 +6,7 @@ import { setComponentInstance, getComponentProps, executeCallbacks } from './upd
 import { getComponentLifecycle } from '@@ADAPTER@@';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
+let _appConfig;
 
 /**
  * Reference relationship.
@@ -187,6 +188,29 @@ export function createApp(definedApp, routerMap) {
   };
   definedApp.call(appConfig, appProps);
   return appConfig;
+}
+
+export function runApp(appConfig) {
+  if (_appConfig) {
+    throw new Error('runApp can only be called once.')
+  }
+
+  _appConfig = appConfig; // Store raw app config to parse router.
+  const appOptions = {
+    // Bridge app launch.
+    onLaunch(launchOptions) {
+      const launchQueue = appCycles['launch'];
+      if (Array.isArray(launchQueue) && launchQueue.length > 0) {
+        let fn;
+        while (fn = launchQueue.pop()) { // eslint-disable-line
+          fn.call(this, launchOptions);
+        }
+      }
+    },
+  };
+
+  // eslint-disable-next-line
+  App(appOptions);
 }
 
 export function createPage(definition, options = {}) {

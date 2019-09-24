@@ -10,11 +10,16 @@ export function useRouter(routerConfig) {
 
 /**
  * With router decorator.
+ * Inject history and location.
  * @param Klass
  */
 export function withRouter(Klass) {
   if (Klass) Klass.defaultProps = Klass.defaultProps || {};
-  Klass.defaultProps.router = router;
+  Object.assign(Klass.defaultProps, {
+    router,
+    history: router.history,
+    location: router.history.location,
+  });
 
   return Klass;
 }
