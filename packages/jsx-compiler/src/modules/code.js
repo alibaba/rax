@@ -8,17 +8,14 @@ const traverse = require('../utils/traverseNodePath');
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
 
-const CREATE_APP = 'createApp';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
 const CREATE_STYLE = 'createStyle';
 
 const SAFE_SUPER_COMPONENT = '__component__';
-const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
-const SAFE_ROUTER_MAP = '__router_map__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
