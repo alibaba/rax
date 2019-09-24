@@ -23,11 +23,8 @@ const USE_STATE = 'useState';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
-/**
- * match rax-app package
- */
-const isRaxApp = (mod) => /^rax\-app/.test(mod);
-
+const APP_RUNTIME = ['rax-app', '@core/app', '@core/page', '@core/router', 'universal-app-runtime'];
+const isAppRuntime = (mod) => APP_RUNTIME.indexOf(mod) > -1;
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
 function getConstructor(type) {
@@ -177,7 +174,7 @@ function renameCoreModule(ast, outputPath, targetFileDir) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
-      if (source.isStringLiteral() && isRaxApp(source.node.value)) {
+      if (source.isStringLiteral() && isAppRuntime(source.node.value)) {
         let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
         runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
         source.replaceWith(t.stringLiteral(runtimeRelativePath));
