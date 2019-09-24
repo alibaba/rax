@@ -1,5 +1,5 @@
 // Inspired by react-router and universal-router
-import { useState, useLayoutEffect } from 'rax';
+import { useState, useLayoutEffect, createElement } from 'rax';
 import pathToRegexp from 'path-to-regexp';
 
 const cache = {};
@@ -43,7 +43,7 @@ function matchPath(route, pathname, parentParams) {
   }
 
   const url = result[0];
-  const params = { ...parentParams };
+  const params = { ...parentParams, history: router.history, location: router.history.location };
 
   for (let i = 1; i < result.length; i++) {
     const key = keys[i - 1];
@@ -195,6 +195,7 @@ function getInitialComponent(routerConfig) {
   if (routerConfig.InitialComponent) {
     InitialComponent = routerConfig.InitialComponent;
   }
+  router.history = routerConfig.history;
 
   return InitialComponent;
 }
@@ -210,7 +211,6 @@ export function useRouter(routerConfig) {
     const history = routerConfig.history;
     const routes = routerConfig.routes;
 
-    router.history = history;
     router.root = Array.isArray(routes) ? { routes } : routes;
 
     const handleId = router.addHandle((component) => {
@@ -235,14 +235,13 @@ export function useRouter(routerConfig) {
   return { component };
 }
 
-export function push(fullpath) {
-  router.history.push(fullpath);
-}
+export function withRouter(Component) {
+  function Wrapper(props) {
+    const history = router.history;
+    return createElement(Component, { ...props, history, location: history.location });
+  };
 
-export function replace(fullpath) {
-  router.history.replace(fullpath);
-}
-
-export function go(n) {
-  router.history.go(n);
+  Wrapper.displayName = 'withRouter(' + (Component.displayName || Component.name) + ')';
+  Wrapper.WrappedComponent = Component;
+  return Wrapper;
 }
