@@ -11,7 +11,6 @@ module.exports = function pageLoader(content) {
   const { platform, entryPath } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
-  const rootContext = this.rootContext;
 
   const outputPath = this._compiler.outputPath;
   const sourcePath = join(this.rootContext, dirname(entryPath));

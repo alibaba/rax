@@ -50,8 +50,9 @@ function getEntry(type, cwd, entryFilePath, options) {
       process.exit(1);
     }
     entry.app = AppLoader + '?' + JSON.stringify({ entryPath }) + '!./' + join(entryPath, 'app.js');
-    if (Array.isArray(appConfig.source)) {
-      appConfig.source.forEach(({ path, component }) => {
+    if (Array.isArray(appConfig.routes)) {
+      appConfig.routes.forEach(({ source, component }) => {
+        component = source || component;
         entry['page@' + component] = PageLoader + '?' + loaderParams + '!' + getDepPath(component, entryPath);
       });
     } else if (Array.isArray(appConfig.pages)) {
