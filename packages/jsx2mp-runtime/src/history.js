@@ -25,6 +25,7 @@ class MiniAppHistory {
 class Location {
   constructor() {
     this._options = {};
+    this.hash = '';
   }
 
   __updatePageOption(options) {
@@ -42,10 +43,6 @@ class Location {
       }
     });
     return search;
-  }
-
-  get hash() {
-    return null;
   }
 
   get pathname() {

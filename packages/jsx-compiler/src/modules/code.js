@@ -23,8 +23,7 @@ const USE_STATE = 'useState';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
-const APP_RUNTIME = ['rax-app', '@core/app', '@core/page', '@core/router', 'universal-app-runtime'];
-const isAppRuntime = (mod) => APP_RUNTIME.indexOf(mod) > -1;
+const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
 function getConstructor(type) {

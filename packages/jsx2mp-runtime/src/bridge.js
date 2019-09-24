@@ -28,7 +28,10 @@ function getPageCycles(Klass) {
       this.instance._setInternal(this);
       // Add route information for page.
       history.location.__updatePageOption(options);
-      this.instance.props.history = history;
+      Object.assign(this.instance.props, {
+        history,
+        location: history.location
+      });
       this.data = this.instance.state;
 
       if (this.instance.__ready) return;
