@@ -132,7 +132,7 @@ describe('renderToString', () => {
       return (
         <div>
           {
-            data.map(() => <div style={style}>hello</div>)
+            data.map((_, i) => <div key={i} style={style}>hello</div>)
           }
         </div>
       );
@@ -153,7 +153,7 @@ describe('renderToString', () => {
       return (
         <div>
           {
-            data.map((item, index) => <div style={{...style, fontSize: index + 'px'}}>hello</div>)
+            data.map((item, index) => <div key={index} style={{...style, fontSize: index + 'px'}}>hello</div>)
           }
         </div>
       );
@@ -177,7 +177,7 @@ describe('renderToString', () => {
             data.map((item, index) => {
               // after map, style.fontSize will be 1px
               style.fontSize = index + 'px';
-              return <div style={style}>hello</div>;
+              return <div key={index} style={style}>hello</div>;
             })
           }
         </div>

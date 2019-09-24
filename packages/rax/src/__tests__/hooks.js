@@ -1703,7 +1703,7 @@ describe('hooks', () => {
         parentUpdateNum++;
         const [count, updateCount] = useState(0);
         updateParent = updateCount;
-        return [<span>{count}</span>, <ChildA />, <ChildB />];
+        return [<span key={'child1'}>{count}</span>, <ChildA key={'child2'} />, <ChildB key={'child3'} />];
       };
 
       function App() {

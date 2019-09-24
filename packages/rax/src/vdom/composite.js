@@ -14,6 +14,7 @@ import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import getNearestParent from './getNearestParent';
+import validateChildKeys from '../validateChildKeys';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -142,6 +143,10 @@ class CompositeComponent extends BaseComponent {
           renderedElement = instance.render();
         }
       }, instance, errorCallback);
+
+      if (process.env.NODE_ENV !== 'production') {
+        validateChildKeys(renderedElement, this.__currentElement.type);
+      }
 
       Host.owner = null;
     }

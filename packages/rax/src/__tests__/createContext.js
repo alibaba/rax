@@ -403,7 +403,7 @@ describe('createContext', () => {
 
     function App() {
       logs.push('App');
-      return [<OtherChild />, <ThemeConsumer />];
+      return [<OtherChild key={'other'} />, <ThemeConsumer key={'theme'} />];
     }
 
     const themeProvider = render(<ThemeProvider><App /></ThemeProvider>, container);
@@ -567,8 +567,8 @@ describe('createContext', () => {
     function App() {
       return (
         [
-          <MyContext />,
-          <MyContext2 />
+          <MyContext key={'1'} />,
+          <MyContext2 key={'2'} />
         ]
       );
     };
@@ -600,8 +600,8 @@ describe('createContext', () => {
     function App() {
       return (
         [
-          <MyContext />,
-          <MyContext2 />
+          <MyContext key={'1'} />,
+          <MyContext2 key={'2'} />
         ]
       );
     };

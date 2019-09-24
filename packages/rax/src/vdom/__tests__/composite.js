@@ -374,9 +374,9 @@ describe('CompositeComponent', function() {
           );
         }
         return [
-          <span>siblings</span>,
-          <BrokenRender />,
-          <span>siblings</span>
+          <span key={'1'}>siblings</span>,
+          <BrokenRender key={'error'} />,
+          <span key={'2'}>siblings</span>
         ];
       }
     }
@@ -751,8 +751,8 @@ describe('CompositeComponent', function() {
       render() {
         return (
           [
-            <span>{this.props.count}</span>,
-            <span>{this.state.count}</span>
+            <span key={'1'}>{this.props.count}</span>,
+            <span key={'2'}>{this.state.count}</span>
           ]
         );
       }
@@ -795,7 +795,7 @@ describe('CompositeComponent', function() {
 
     class App extends Component {
       render() {
-        return [<Parent1 />, <Parent2 />];
+        return [<Parent1 key={'a'} />, <Parent2 key={'b'} />];
       }
     }
     render(<App />, container);
